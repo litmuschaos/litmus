@@ -10,5 +10,5 @@ then
   docker tag ${IMAGEID} openebs/tests-fio:latest
   docker push openebs/tests-fio:latest; 
 else
-  echo "No docker credentials provided. Skip uploading openebs/tests-vdbench:latest to docker hub"; 
+  echo "No docker credentials provided. Skip uploading openebs/tests-fio:latest to docker hub"; 
 fi;

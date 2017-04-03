@@ -34,20 +34,30 @@ _build_tests_vdbench_image:
 	@echo "INFO: Building container image for performing vdbench tests"
 	cd vdbench && docker build -t openebs/tests-vdbench .
 
-
 _push_tests_vdbench_image:
 	@echo "INFO: Publish container (openebs/tests-vdbench)"
 	cd vdbench/buildscripts && ./push
 
+_build_tests_fio_image:
+	@echo "INFO: Building container image for performing fio tests"
+	cd fio && docker build -t openebs/tests-fio .
 
-build: deps _build_tests_vdbench_image _push_tests_vdbench_image
+_push_tests_fio_image:
+	@echo "INFO: Publish container (openebs/tests-fio)"
+	cd fio/buildscripts && ./push
+
+vdbench: deps _build_tests_vdbench_image _push_tests_vdbench_image
+
+fio: deps _build_tests_fio_image _push_tests_fio_image
+
+build: deps vdbench
 
 
 #
 # This is done to avoid conflict with a file of same name as the targets
 # mentioned in this makefile.
 #
-.PHONY: help deps build
+.PHONY: help deps build vdbench
 .DEFAULT_GOAL := build
 
 

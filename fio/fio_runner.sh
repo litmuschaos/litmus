@@ -17,8 +17,10 @@ IS_LOCAL_DIR=1
 
 # Use this to update the size of the volume
 updateTemplates() {
+  echo "update templates"
   for i in `ls templates/${TEST_TEMPLATES}/File*`; do sed -e "s|directory=/datadir1|directory=/$TEST_DIR|g" -i $i; done
   for i in `ls templates/${TEST_TEMPLATES}/File*`; do sed -e "s|runtime=60|runtime=$TEST_DURATION|g" -i $i; done
+  for i in `ls templates/${TEST_TEMPLATES}/File*`; do cat $i; done
 }
 
 
@@ -74,7 +76,7 @@ echo -e "Running $TEST_TEMPLATES Workloads\n"
 for i in `ls templates/${TEST_TEMPLATES}/ | cut -d "/" -f 3`
 do
  echo "######## Starting workload -- $i#######"
- fio --eta-newline=2s templates/${TEST_TEMPLATES}/$i -o output-$i-$timestamp 	
+ fio --eta-newline=2s templates/${TEST_TEMPLATES}/$i 
  echo "######## Ended workload -- $i#######"
 done  
 
