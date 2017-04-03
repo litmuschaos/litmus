@@ -50,7 +50,7 @@ vdbench: deps _build_tests_vdbench_image _push_tests_vdbench_image
 
 fio: deps _build_tests_fio_image _push_tests_fio_image
 
-build: deps vdbench
+build: deps vdbench fio
 
 
 #
