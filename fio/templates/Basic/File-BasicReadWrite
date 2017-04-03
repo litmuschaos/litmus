@@ -1,0 +1,10 @@
+[global]
+directory=/datadir1
+filesize=16m
+
+
+[basic-readwrite]
+rw=randread
+bs=4k
+time_based=1
+runtime=60
