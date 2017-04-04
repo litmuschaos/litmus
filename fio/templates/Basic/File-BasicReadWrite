@@ -4,7 +4,7 @@ filesize=16m
 
 
 [basic-readwrite]
-rw=randread
+rw=readwrite
 bs=4k
 time_based=1
 runtime=60
