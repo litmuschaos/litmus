@@ -1,0 +1,103 @@
+<pre>
+stdout/stderr for slave=localhost-0
+
+09:52:40.958 09:52:40.956 SlaveJvm execution parameter:  '-m localhost'
+09:52:40.958 09:52:40.958 SlaveJvm execution parameter:  '-n localhost-10-170424-09.52.40.324'
+09:52:40.958 09:52:40.958 SlaveJvm execution parameter:  '-l localhost-0'
+09:52:40.959 09:52:40.959 SlaveJvm execution parameter:  '-p 5570'
+09:52:40.959 09:52:40.959 SlaveJvm positional parameter: 'SlaveJvm'
+09:52:41.155 09:52:41.153 successfully connected to master localhost
+09:52:41.156 09:52:41.156 Connection to localhost using port 5570 successful
+09:52:41.427 09:52:41.427 execute(): /vagrant/vdbench/linux/linux_clock.suse
+09:52:41.474 09:52:41.474 ticks_per_second: 100
+09:52:41.510 09:52:41.510 execute(): ls -l /datadir1
+09:52:41.536 09:52:41.536 Configuration interpretation took 0.11 seconds
+
+Link to Run Definitions:         <A HREF="#_183264084">format_for_rd1 For loops: None</A>
+                                 <A HREF="#_476402209">rd1 For loops: None</A>
+
+09:52:41.862 09:52:41.862 File '/var/log/messages' does not exist. Monitoring bypassed
+09:52:41.863 09:52:41.863 File '/var/log/messages.1' does not exist. Monitoring bypassed
+09:52:41.863 09:52:41.863 Beginning of run setup
+09:52:41.864 09:52:41.864 **********************
+09:52:41.864 
+09:52:41.864 
+09:52:41.915 09:52:41.915 Deleting old file structure.
+09:52:41.919 09:52:41.919 Completed the creation of the directory list for /datadir1: 1 directories.
+09:52:41.920 09:52:41.920 Memory total Java heap:  123.750 MB; Free:   94.939 MB; Used:   28.811 MB;
+09:52:41.945 09:52:41.945 checkMemory()
+09:52:41.947 09:52:41.945 Memory total Java heap:  123.875 MB; Free:  108.378 MB; Used:   15.497 MB;
+09:52:41.955 09:52:41.954 Generated       32 file names; total anchor size: 320m
+09:52:41.956 09:52:41.954 Writing control file for anchor=/datadir1 at start of run.
+09:52:41.973 09:52:41.973 Completed control file for anchor=/datadir1 at start of run.  dirs: 1/0 files: 32/0 sizes: 320m/0.0/0/0.0
+09:52:41.993 09:52:41.993 Skew for fwd=format,fsd=fsd-datadir1,operation=read:    100.0
+09:52:42.011 09:52:42.011 Started 8 threads for fwd=format,fsd=fsd-datadir1
+09:52:42.012 09:52:42.011 Started 8 FwgThreads
+09:52:42.012 09:52:42.011 Waiting for task synchronization
+09:52:42.012 09:52:42.011 task_wait_start_complete: FwgThread OpFormat /datadir1 1
+09:52:42.214 09:52:42.211 task_wait_start_complete() end
+
+<a name="_183264084"></a><i><b>09:52:43.009 Starting RD=format_for_rd1</b></i>
+
+09:52:43.022 09:52:43.021 task_run_all(): 9 tasks
+09:52:43.560 09:52:43.559 Message to master: anchor=/datadir1 deleted 32 files; 695/sec
+09:52:43.561 09:52:43.561 Message to master: anchor=/datadir1 deleted 1 directories; 21/sec
+09:52:43.563 09:52:43.563 Message to master: anchor=/datadir1 mkdir complete.
+09:52:49.334 09:52:49.333 Message to master: anchor=/datadir1 create complete.
+09:52:49.450 09:52:49.450 
+09:52:49.450 09:52:49.450 Miscellaneous statistics:
+09:52:49.451 09:52:49.451 FILE_CREATES        Files created:                                32
+09:52:49.452 09:52:49.452 DIRECTORY_CREATES   Directories created:                           1
+09:52:49.454 09:52:49.453 FILE_DELETES        Files deleted:                                32
+09:52:49.454 09:52:49.454 DIRECTORY_DELETES   Directories deleted:                           1
+09:52:49.455 09:52:49.455 WRITE_OPENS         Files opened for write activity:              32
+09:52:49.459 09:52:49.459 DIR_EXISTS          Directory may not exist (yet):                 3
+09:52:49.460 09:52:49.460 FILE_CLOSES         Close requests:                               32
+09:52:49.460 09:52:49.460 
+09:52:49.461 09:52:49.460 Memory total Java heap:  123.938 MB; Free:  102.686 MB; Used:   21.252 MB;
+09:52:49.461 09:52:49.461 Maximum native memory allocation:    2,097,152; Current allocation:    2,097,152
+09:52:50.144 09:52:50.144 Writing control file for anchor=/datadir1 at end of run.
+09:52:50.170 09:52:50.170 Completed control file for anchor=/datadir1 at end of run.  dirs: 1/1 files: 32/32 sizes: 320m/320m/32/320m
+09:52:50.174 09:52:50.170 End of run
+09:52:50.174 09:52:50.170 **********
+09:52:50.175 
+09:52:50.175 
+09:52:50.347 09:52:50.347 Beginning of run setup
+09:52:50.348 09:52:50.348 **********************
+09:52:50.349 
+09:52:50.350 
+09:52:50.379 09:52:50.379 Reading control file for anchor=/datadir1
+09:52:50.380 09:52:50.380 Completed reading control file.
+09:52:50.383 09:52:50.382 Completed the creation of the directory list for /datadir1: 1 directories.
+09:52:50.383 09:52:50.383 Memory total Java heap:  123.938 MB; Free:  100.072 MB; Used:   23.865 MB;
+09:52:50.411 09:52:50.411 checkMemory()
+09:52:50.412 09:52:50.411 Memory total Java heap:  123.875 MB; Free:  108.481 MB; Used:   15.394 MB;
+09:52:50.420 09:52:50.420 Generated       32 file names; total anchor size: 320m
+09:52:50.422 09:52:50.420 Writing control file for anchor=/datadir1 at start of run.
+09:52:50.437 09:52:50.437 Completed control file for anchor=/datadir1 at start of run.  dirs: 1/1 files: 32/32 sizes: 320m/320m/0/0.0
+09:52:50.439 09:52:50.437 During anchor creation for anchor=/datadir1 there were 1 directories and 32 files
+09:52:50.440 09:52:50.437 Skew for fwd=fwd1,fsd=fsd-datadir1,operation=read:    100.0
+09:52:50.444 09:52:50.444 Started 4 threads for fwd=fwd1,fsd=fsd-datadir1,operation=read
+09:52:50.446 09:52:50.444 Started 4 FwgThreads
+09:52:50.446 09:52:50.444 Waiting for task synchronization
+09:52:50.447 09:52:50.444 task_wait_start_complete: FwgWaiter 1
+09:52:50.645 09:52:50.644 task_wait_start_complete() end
+
+<a name="_476402209"></a><i><b>09:52:51.003 Starting RD=rd1; elapsed=30; fwdrate=max. For loops: None</b></i>
+
+09:52:51.008 09:52:51.008 task_run_all(): 5 tasks
+09:53:21.452 09:53:21.451 
+09:53:21.453 09:53:21.451 Miscellaneous statistics:
+09:53:21.453 09:53:21.451 WRITE_OPENS         Files opened for write activity:             396
+09:53:21.454 09:53:21.451 FILE_BUSY           File busy:                                    29
+09:53:21.456 09:53:21.451 FILE_CLOSES         Close requests:                              396
+09:53:21.457 09:53:21.451 
+09:53:21.462 09:53:21.451 Memory total Java heap:  123.875 MB; Free:   79.009 MB; Used:   44.866 MB;
+09:53:21.463 09:53:21.452 Maximum native memory allocation:       65,536; Current allocation:       65,536
+09:53:21.463 09:53:21.452 Writing control file for anchor=/datadir1 at end of run.
+09:53:21.486 09:53:21.485 Completed control file for anchor=/datadir1 at end of run.  dirs: 1/1 files: 32/32 sizes: 320m/320m/32/320m
+09:53:21.488 09:53:21.485 End of run
+09:53:21.488 09:53:21.485 **********
+09:53:21.488 
+09:53:21.489 
+09:53:21.683 09:53:21.682 Memory total Java heap:  123.875 MB; Free:   78.764 MB; Used:   45.111 MB;

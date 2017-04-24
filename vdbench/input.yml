@@ -3,7 +3,7 @@
 # Storage Definition Paramters
 # This set of parameters identifies each physical or logical volume manager volume or file system file used in the requested workload.
 
-SDName: "sd1" # Unique name for this Storage Definition (SD).
+SDName: "fsd-datadir1" # Unique name for this Storage Definition (SD).
 Lun: "lun" # Name of raw disk or file system file.
 Size: "10M" # Size of the raw disk or file to use for workload.
 
@@ -20,8 +20,8 @@ Size: "10M" # Size of the files that are created
 # Worload Definition Paramters
 # The Workload Definition parameters describe what kind of workload must be executed using the storage definitions entered.
 
-WDName: "wd1" # Unique name for this Workload Definition (WD)
-SDForWD: "sd1" # Name(s) of Storage Definition(s) to use
+WDName: "fwd1" # Unique name for this Workload Definition (WD)
+SDForWD: "fsd*" # Name(s) of Storage Definition(s) to use
 IORate: "50" # Requested fixed I/O rate for this workload.
 ReadPercentage: "50" # Edit the read percentage
 TransferSize: "4k" # Data transfer size. Default 4k
@@ -38,7 +38,12 @@ FileSelect: "random" # How to select file names or directory names for processin
 #The Run Definition parameters define which of the earlier defined workloads need to be executed, what I/O rates need to be generated, and how long the workload will run.
 
 RDName: "rd1" # Unique name for this Run Definition (RD).
-WDForRD: "wd1" # Workload Definitions to use for this run.
+WDForRD: "fwd*" # Workload Definitions to use for this run.
 Duration: "30" # Elapsed time for this run in seconds. Default 30 seconds.
 Interval: "1" # Reporting interval in seconds.
 
+
+# File system Run Definition
+
+Fwdrate: "max" # How many file system operations per second
+Format: "yes" # During this run, if needed, create the complete file structure.
