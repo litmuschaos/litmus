@@ -1,6 +1,9 @@
 import yaml
+import subprocess
 
 
+paramFile="paramFile"
+outputDir="newdir"
 def createParam():
 	inputFile=open("input.yml",'r')
 	dataMap=yaml.load(inputFile)
@@ -26,11 +29,16 @@ def createParam():
 	inputFile.close()
 	return
 
+def runtest():
+	#subprocess.call(["ls", "-l"])
+	subprocess.call("./vdbench -f %s -o %s" %(paramFile,outputDir),shell=True)
+	return
 
 def main():
 	createParam()
+	runtest()
 	return 
-
+	
 
 main()
 
