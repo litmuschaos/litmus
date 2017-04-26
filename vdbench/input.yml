@@ -1,10 +1,11 @@
-#Edit this file to set your paramters to the vdbench test suite
+# Edit this file to set your parameters to the vdbench test suite
+# To get more information about the parameters go through the vdbench manual
+
 
 # Storage Definition Paramters
 # This set of parameters identifies each physical or logical volume manager volume or file system file used in the requested workload.
 
 SDName: "fsd-datadir1" # Unique name for this Storage Definition (SD).
-Lun: "lun" # Name of raw disk or file system file.
 Size: "10M" # Size of the raw disk or file to use for workload.
 
 
@@ -14,7 +15,6 @@ Anchor: "/datadir1" #name of the directory where the directory structure will be
 Depth: "1" # How many levels of directories to create under the anchor.
 Width: "1" # How many directories to create in each new directory.
 Files: "32" # How many files to create in the lowest level of directories.
-Size: "10M" # Size of the files that are created
 
 
 # Worload Definition Paramters
