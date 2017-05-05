@@ -1,0 +1,51 @@
+#Edit this file to set your paramters to the vdbench test suite
+# To get more information about the parameters go through the vdbench manual
+
+
+# Storage Definition Paramters
+# This set of parameters identifies each physical or logical volume manager volume or file system file used in the requested workload.
+
+SDName: "fsd-datadir1" # Unique name for this Storage Definition (SD).
+Lun: "lun" # Name of raw disk or file system file.
+Size: "10M" # Size of the raw disk or file to use for workload.
+
+
+#File system Definition paramters
+
+Anchor: "/datadir1" #name of the directory where the directory structure will be created
+Depth: "1" # How many levels of directories to create under the anchor.
+Width: "1" # How many directories to create in each new directory.
+Files: "32" # How many files to create in the lowest level of directories.
+Size: "10M" # Size of the files that are created
+
+
+# Worload Definition Paramters
+# The Workload Definition parameters describe what kind of workload must be executed using the storage definitions entered.
+
+WDName: "fwd1" # Unique name for this Workload Definition (WD)
+SDForWD: "fsd*" # Name(s) of Storage Definition(s) to use
+IORate: "50" # Requested fixed I/O rate for this workload.
+ReadPercentage: "50" # Edit the read percentage
+TransferSize: "4k" # Data transfer size. Default 4k
+
+#File system Workload Definition
+
+FileIO:  "random" # How file I/O will be done: random or sequential
+Threads: "4" #  How many concurrent threads to run for this workload. (Make sure you have at least one file for each thread).
+FileSelect: "random" # How to select file names or directory names for processing.
+
+
+#Run Definition paramters
+
+#The Run Definition parameters define which of the earlier defined workloads need to be executed, what I/O rates need to be generated, and how long the workload will run.
+
+RDName: "rd1" # Unique name for this Run Definition (RD).
+WDForRD: "fwd*" # Workload Definitions to use for this run.
+Duration: "30" # Elapsed time for this run in seconds. Default 30 seconds.
+Interval: "1" # Reporting interval in seconds.
+
+
+# File system Run Definition
+
+Fwdrate: "max" # How many file system operations per second
+Format: "yes" # During this run, if needed, create the complete file structure.
