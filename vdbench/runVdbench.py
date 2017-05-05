@@ -17,22 +17,24 @@ import csv
 
 matplotlib.use('Agg') # Set the back end of the matplotlib here
 
+from matplotlib import pyplot as plt
+
 # Scan the command line input
-
 inputpath=sys.argv[1]
-
 inputFile=open(inputpath,'r')
 dataMap=yaml.load(inputFile)
 
 # Set the output directories for param and vdbench output files
-
 outputDir="output2_"
 
+###### Append timestamp with the output directory ######
 def timeStamp(outputDir):
 	ts = time.time()
 	st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d_%H:%M:%S')	
 	outputDir=outputDir+st
 	return outputDir
+
+###### Creating Directories in the output_<timestamp> folder #######
 
 def createDirectories(outputDir,outputPlots,outputCSV):
 	#print(outputDir)
@@ -40,6 +42,8 @@ def createDirectories(outputDir,outputPlots,outputCSV):
 	subprocess.call("mkdir %s" %(outputPlots),shell=True)
 	subprocess.call("touch %s" %(outputCSV),shell=True)    
 	return
+
+###### Generate parameter file and set paramters for vdbench test suite ######
 
 def createParam(outputDir):
 	paramFile=outputDir+"/paramFile"
@@ -64,7 +68,7 @@ def createParam(outputDir):
 	inputFile.close()
 	return paramFile
 
-# Run the vdbench test suite
+##### Run the vdbench test suite ######
 
 def runtest(paramFile, outputDir):
 	testOutput=outputDir+"/testOutput"
@@ -72,7 +76,7 @@ def runtest(paramFile, outputDir):
 
 	return testOutput
 
-# Function to parse the flatfile to csv
+###### Function to parse the flatfile to csv #####
 
 def parseFlat(testOutput, outputCSV):
 
@@ -82,14 +86,40 @@ def parseFlat(testOutput, outputCSV):
 	return
 
 
-# Run the plotting script
-def callPlot():
+###### Run the plotting script ######
+
+def plot(outputCSV,outputPlots):
 	
+	data = pd.read_csv(outputCSV)
+
+	plt.plot(data['rate'])
+	plt.title('Rate')
+	plt.ylabel('Rate')
+	plt.xlabel('Time')
+	rate=outputPlots+"/Rate.png"
+	plt.savefig(rate)
+	
+	plt.plot(data['MB_read'])
+	plt.title('MB_Read')
+	plt.ylabel('MB_Read')
+	plt.xlabel('Time')
+	MB_Read=outputPlots+"/MB_Read.png"
+	plt.savefig(MB_Read)
+
+	plt.plot(data['Read_resp'],label="Read_Response_Time")
+	plt.plot(data['Read_rate'],label="Reads_Per_Second")
+	plt.plot(data['rate'])
+	plt.plot(data['MB_read'])
+	plt.title('Reads')
+	plt.xlabel('Time')
+	plt.ylabel('Quantity')
+	plt.legend()
+	Reads=outputPlots+"/Reads.png"
+	plt.savefig(Reads)
 	return
 
 def main():
 	
-	#callPlot()
 	outputDirectory=timeStamp(outputDir)
 	param=outputDirectory+"/param"
         outputPlots=outputDirectory+"/plots"
@@ -99,6 +129,7 @@ def main():
 	paramFile=createParam(outputDirectory)
 	testOutput=runtest(paramFile,outputDirectory)
 	parseFlat(testOutput,outputCSV)
+	plot(outputCSV,outputPlots)
 	return 
 	
 
