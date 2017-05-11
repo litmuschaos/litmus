@@ -1,10 +1,10 @@
-######################################################################################## 
-#Script to parse the YAML file and to set the
+########################################################################################### 
+# Script to parse the YAML file and to set the
 # paramters in the paramFile for the vdbench test suite
-# The destination directories like output for vdbench, graphs, csv, param are 
-# taken from the YAML file itself to make it more generic
+# The destination directories for vdbench test suite, CSV and plots are specified in 
+# outputDir. By default O/P dir is appended with timestamp and all files are placed there
 
-########################################################################################
+###########################################################################################
 
 import yaml
 import subprocess
@@ -25,7 +25,7 @@ inputFile=open(inputpath,'r')
 dataMap=yaml.load(inputFile)
 
 # Set the output directories for param and vdbench output files
-outputDir="output2_"
+outputDir="output_"
 
 ###### Append timestamp with the output directory ######
 def timeStamp(outputDir):
