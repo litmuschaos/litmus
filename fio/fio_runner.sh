@@ -9,7 +9,7 @@
 #######################################################################################################################
 
 TEST_TEMPLATES="Basic"
-TEST_DURATION=60
+TEST_DURATION=300
 TEST_DIR="datadir1"
 IS_LOCAL_DIR=1
 
@@ -76,7 +76,7 @@ echo -e "Running $TEST_TEMPLATES Workloads\n"
 for i in `ls templates/${TEST_TEMPLATES}/ | cut -d "/" -f 3`
 do
  echo "######## Starting workload -- $i#######"
- fio --eta-newline=2s templates/${TEST_TEMPLATES}/$i 
+ fio --eta-newline=1s templates/${TEST_TEMPLATES}/$i 
  echo "######## Ended workload -- $i#######"
 done  
 
