@@ -1,0 +1,56 @@
+####################################################################################
+###    Edit this file to set your paramters to the vdbench test suite
+###    To get more information about the parameters go through the vdbench manual
+####################################################################################
+
+
+# Basic paramters for the user to enter
+
+Anchor: "/datadir1" #name of the directory where the directory structure will be created
+Size: "10M" # Size of the raw disk or file to use for workload
+Duration: "30" # Elapsed time for this run in seconds. Default 30 seconds.
+
+
+##########################################################################################
+###    Advanced Paramters. Modify these only if needed
+##########################################################################################
+
+# Storage Definition Paramters
+
+SDName: "fsd-datadir1" # Unique name for this Storage Definition (SD).
+Lun: "lun" # Name of raw disk or file system file.
+
+#File system Definition paramters
+
+Depth: "1" # How many levels of directories to create under the anchor.
+Width: "1" # How many directories to create in each new directory.
+Files: "32" # How many files to create in the lowest level of directories.
+Size: "10M" # Size of the files that are created
+
+
+# Worload Definition Paramters
+
+WDName: "fwd1" # Unique name for this Workload Definition (WD)
+SDForWD: "fsd*" # Name(s) of Storage Definition(s) to use
+IORate: "50" # Requested fixed I/O rate for this workload.
+ReadPercentage: "50" # Edit the read percentage
+TransferSize: "4k" # Data transfer size. Default 4k
+
+#File system Workload Definition
+
+FileIO:  "random" # How file I/O will be done: random or sequential
+Threads: "4" #  How many concurrent threads to run for this workload. (Make sure you have at least one file for each thread).
+FileSelect: "random" # How to select file names or directory names for processing.
+
+
+#Run Definition paramters
+
+RDName: "rd1" # Unique name for this Run Definition (RD).
+WDForRD: "fwd*" # Workload Definitions to use for this run.
+Interval: "1" # Reporting interval in seconds.
+
+
+# File system Run Definition
+
+Fwdrate: "max" # How many file system operations per second
+Format: "yes" # During this run, if needed, create the complete file structure.
