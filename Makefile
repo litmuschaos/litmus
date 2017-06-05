@@ -46,11 +46,21 @@ _push_tests_fio_image:
 	@echo "INFO: Publish container (openebs/tests-fio)"
 	cd fio/buildscripts && ./push
 
+_build_tests_iometer_image:
+	@echo "INFO: Building container image for performing iometer tests"
+	cd iometer && docker build -t openebs/tests-iometer .
+
+_push_tests_iometer_image:
+	@echo "INFO: Publish container (openebs/tests-iometer)"
+	cd iometer/buildscripts && ./push
+
 vdbench: deps _build_tests_vdbench_image _push_tests_vdbench_image
 
 fio: deps _build_tests_fio_image _push_tests_fio_image
 
-build: deps vdbench fio
+iometer: deps _build_tests_iometer_image _push_tests_iometer_image
+
+build: deps vdbench fio iometer
 
 
 #
