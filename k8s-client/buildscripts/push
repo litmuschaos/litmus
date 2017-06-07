@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+IMAGEID=$( docker images -q openebs/k8s-client )
+
+if [ ! -z "${DNAME}" ] && [ ! -z "${DPASS}" ]; 
+then 
+  docker login -u "${DNAME}" -p "${DPASS}"; 
+  #Push to docker hub repository with latest tag
+  docker tag ${IMAGEID} openebs/k8s-client:latest
+  docker push openebs/k8s-client:latest; 
+else
+  echo "No docker credentials provided. Skip uploading openebs/k8s-client:latest to docker hub"; 
+fi;
