@@ -66,7 +66,7 @@ _build_k8s_client_image:
 
 _push_k8s_client_image:
 	@echo "INFO: Publish container (openebs/k8s-client)"
-	cd k8sclient/buildscripts && ./push
+	cd k8s-client/buildscripts && ./push
 
 k8s-client: deps _build_k8s_client_image _push_k8s_client_image
 
