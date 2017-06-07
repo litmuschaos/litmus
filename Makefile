@@ -38,6 +38,8 @@ _push_tests_vdbench_image:
 	@echo "INFO: Publish container (openebs/tests-vdbench)"
 	cd vdbench/buildscripts && ./push
 
+vdbench: deps _build_tests_vdbench_image _push_tests_vdbench_image
+
 _build_tests_fio_image:
 	@echo "INFO: Building container image for performing fio tests"
 	cd fio && docker build -t openebs/tests-fio .
@@ -45,6 +47,8 @@ _build_tests_fio_image:
 _push_tests_fio_image:
 	@echo "INFO: Publish container (openebs/tests-fio)"
 	cd fio/buildscripts && ./push
+
+fio: deps _build_tests_fio_image _push_tests_fio_image
 
 _build_tests_iometer_image:
 	@echo "INFO: Building container image for performing iometer tests"
@@ -54,20 +58,26 @@ _push_tests_iometer_image:
 	@echo "INFO: Publish container (openebs/tests-iometer)"
 	cd iometer/buildscripts && ./push
 
-vdbench: deps _build_tests_vdbench_image _push_tests_vdbench_image
-
-fio: deps _build_tests_fio_image _push_tests_fio_image
-
 iometer: deps _build_tests_iometer_image _push_tests_iometer_image
 
-build: deps vdbench fio iometer
+_build_k8s_client_image:
+	@echo "INFO: Building container image for performing k8s tests"
+	cd k8s-client && docker build -t openebs/k8s-client .
+
+_push_k8s_client_image:
+	@echo "INFO: Publish container (openebs/k8s-client)"
+	cd k8sclient/buildscripts && ./push
+
+k8s-client: deps _build_k8s_client_image _push_k8s_client__image
+
+build: deps vdbench fio iometer k8s-client
 
 
 #
 # This is done to avoid conflict with a file of same name as the targets
 # mentioned in this makefile.
 #
-.PHONY: help deps build vdbench
+.PHONY: help deps build vdbench iometer k8s-client
 .DEFAULT_GOAL := build
 
 
