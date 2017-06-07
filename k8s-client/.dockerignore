@@ -1,2 +1,4 @@
 Dockerfile
 buildscripts
+k8s-go-client-test.yaml
+*.md

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: k8s-go-client
+spec:
+  containers:
+  - image: openebs/k8s-client:latest
+    imagePullPolicy: IfNotPresent
+    name: k8s-go-client
+    #replace the listpods.go in the following args to your desired test file
+    args : ["/go/src/github.com/openebs/test-storage/k8s-client/listpods.go"]
