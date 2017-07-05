@@ -22,8 +22,8 @@ import (
 	"time"
 
 	//metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	metav1 "k8s.io/client-go/pkg/api/v1"
 	"k8s.io/client-go/kubernetes"
+	metav1 "k8s.io/client-go/pkg/api/v1"
 	"k8s.io/client-go/rest"
 )
 
@@ -40,10 +40,13 @@ func main() {
 	}
 	for {
 		pods, err := clientset.CoreV1().Pods("").List(metav1.ListOptions{})
+		pvs, err := clientset.CoreV1().PersistentVolumes().List(metav1.ListOptions{})
 		if err != nil {
 			panic(err.Error())
 		}
 		fmt.Printf("There are %d pods in the cluster\n", len(pods.Items))
+		fmt.Printf("There are %d PVs in the cluster\n", len(pvs.Items))
 		time.Sleep(10 * time.Second)
 	}
 }
+
