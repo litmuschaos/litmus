@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 
+	"time"
+
 	"k8s.io/client-go/kubernetes"
 	metav1 "k8s.io/client-go/pkg/api/v1"
 	"k8s.io/client-go/rest"
@@ -25,6 +27,7 @@ func main() {
 		}
 		for _, pv := range pvs.Items {
 			fmt.Printf("There's %s ", pv.GetName())
+			time.Sleep(10 * time.Second)
 		}
 	}
 }
