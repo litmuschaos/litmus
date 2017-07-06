@@ -25,7 +25,10 @@ func main() {
 		if err != nil {
 			panic(err.Error())
 		}
+		fmt.Println("...")
+
 		for _, pv := range pvs.Items {
+			fmt.Println("Getting PVs present")
 			fmt.Printf("There's %s ", pv.GetName())
 			time.Sleep(10 * time.Second)
 		}
