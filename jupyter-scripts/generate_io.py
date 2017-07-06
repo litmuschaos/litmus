@@ -5,7 +5,9 @@ Module for parallel reading writing to file
 """
 
 # import time
+import io
 from threading import Thread
+from requests import get
 
 class Reader(Thread):
     """
@@ -51,5 +53,18 @@ def run():
     """
     Reader("file.txt").start()
     Writer("file.txt").start()
+
+
+def download(url, file_name):
+    """
+    function to download file over http
+    url : URL of file to be downloaded
+    file_name : File name
+    """
+    with io.FileIO(file_name, "w") as file:
+        # get request
+        response = get(url)
+        # write to file
+        file.write(response.content)
 
 run()
