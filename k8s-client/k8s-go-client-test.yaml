@@ -5,7 +5,7 @@ metadata:
 spec:
   containers:
   - image: openebs/k8s-client:latest
-    imagePullPolicy: IfNotPresent
+    imagePullPolicy: Always
     name: k8s-go-client
     #replace the listpods.go in the following args to your desired test file
     args : ["/go/src/github.com/openebs/test-storage/k8s-client/pvinfo.go"]
