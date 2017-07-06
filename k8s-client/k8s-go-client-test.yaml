@@ -8,4 +8,4 @@ spec:
     imagePullPolicy: IfNotPresent
     name: k8s-go-client
     #replace the listpods.go in the following args to your desired test file
-    args : ["/go/src/github.com/openebs/test-storage/k8s-client/listpods.go"]
+    args : ["/go/src/github.com/openebs/test-storage/k8s-client/pvinfo.go"]
