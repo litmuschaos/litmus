@@ -25,7 +25,7 @@ func main() {
 
 		// pvs, err := clientset.CoreV1().PersistentVolumes().List(metav1.ListOptions{})
 		pvcs, err := clientset.CoreV1().PersistentVolumeClaims("").List(metav1.ListOptions{})
-
+		fmt.Println(pvcs)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -35,7 +35,8 @@ func main() {
 		// }
 
 		for _, pvc := range pvcs.Items {
-			fmt.Printf("Persistent Volume Claim: %s , Volume Name: %s", pvc.GetName(), pvc.Spec.VolumeName)
+			fmt.Printf("Persistent Volume Claim: %s \n", pvc.GetName())
+			fmt.Printf("Volume Name: %s", pvc.Spec.VolumeName)
 			time.Sleep(10 * time.Second)
 		}
 	}
