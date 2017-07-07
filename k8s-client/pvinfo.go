@@ -21,14 +21,12 @@ func main() {
 		panic(err.Error())
 	}
 	for {
-		pvs, err := clientset.CoreV1().Pods("").List(metav1.ListOptions{})
+		pvs, err := clientset.CoreV1().PersistentVolumes().List(metav1.ListOptions{})
 		if err != nil {
 			panic(err.Error())
 		}
-		fmt.Println("...")
-
+		fmt.Println("Getting PV's available")
 		for _, pv := range pvs.Items {
-			fmt.Println("Getting PVs present")
 			fmt.Printf("There's %s ", pv.GetName())
 			time.Sleep(10 * time.Second)
 		}
