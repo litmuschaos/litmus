@@ -22,8 +22,7 @@ func main() {
 	}
 	fmt.Println("In k8s client..")
 	for {
-
-		// pvs, err := clientset.CoreV1().PersistentVolumes().List(metav1.ListOptions{})
+		pods, err := clientset.CoreV1().Pods("").List(metav1.ListOptions{})
 		pvcs, err := clientset.CoreV1().PersistentVolumeClaims("").List(metav1.ListOptions{})
 		fmt.Println(pvcs)
 		if err != nil {
@@ -33,9 +32,12 @@ func main() {
 		// 	fmt.Printf("Persistent Volume:  %s ", pv.GetName())
 		// 	time.Sleep(10 * time.Second)
 		// }
-
+		for _, pod := range pods.Items {
+			fmt.Printf("Pod: %s Volumes: %s", pod.GetName(), pod.Spec.Volumes)
+		}
 		for _, pvc := range pvcs.Items {
 			fmt.Printf("Persistent Volume Claim: %s \n", pvc.GetName())
+			time.Sleep(5 * time.Second)
 			fmt.Printf("Volume Name: %s", pvc.Spec.VolumeName)
 			time.Sleep(10 * time.Second)
 		}
