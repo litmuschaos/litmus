@@ -32,8 +32,13 @@ func main() {
 		// 	time.Sleep(10 * time.Second)
 		// }
 		for _, pod := range pods.Items {
-			time.Sleep(10 * time.Second)
-			fmt.Printf("Pod: %s Volumes: %s", pod.GetName(), pod.Spec.Volumes)
+			fmt.Printf("Pod: %s", pod.GetName())
+			time.Sleep(5 * time.Second)
+
+			for _, volume := range pod.Spec.Volumes {
+				fmt.Printf("Volume: %s", volume)
+			}
+			time.Sleep(5 * time.Second)
 		}
 		/*
 			for _, pvc := range pvcs.Items {
