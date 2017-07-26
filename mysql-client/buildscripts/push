@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+IMAGEID=$( docker images -q openebs/tests-mysql-client )
+
+if [ ! -z "${DNAME}" ] && [ ! -z "${DPASS}" ]; 
+then 
+  docker login -u "${DNAME}" -p "${DPASS}"; 
+  #Push to docker hub repository with latest tag
+  docker tag ${IMAGEID} openebs/tests-mysql-client:latest
+  docker push openebs/tests-mysql-client:latest; 
+else
+  echo "No docker credentials provided. Skip uploading openebs/tests-mysql-client:latest to docker hub"; 
+fi;
