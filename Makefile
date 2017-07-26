@@ -70,7 +70,17 @@ _push_k8s_client_image:
 
 k8s-client: deps _build_k8s_client_image _push_k8s_client_image
 
-build: deps vdbench fio iometer k8s-client
+_build_tests_mysql_client_image:
+	@echo "INFO: Building container image for performing mysql tests"
+	cd mysql-client && docker build -t openebs/tests-mysql-client .
+
+_push_tests_mysql_client_image:
+	@echo "INFO: Publish container (openebs/tests-mysql-client)"
+	cd mysql-client/buildscripts && ./push
+
+mysql-client: deps _build_tests_mysql_client_image _push_tests_mysql_client_image
+
+build: deps vdbench fio iometer k8s-client mysql-client
 
 
 #
