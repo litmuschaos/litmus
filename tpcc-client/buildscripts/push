@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+IMAGEID=$( docker images -q openebs/tests-tpcc-client )
+
+if [ ! -z "${DNAME}" ] && [ ! -z "${DPASS}" ]; 
+then 
+  docker login -u "${DNAME}" -p "${DPASS}"; 
+  #Push to docker hub repository with latest tag
+  docker tag ${IMAGEID} openebs/tests-tpcc-client:latest
+  docker push openebs/tests-tpcc-client:latest; 
+else
+  echo "No docker credentials provided. Skip uploading openebs/tests-tpcc-client:latest to docker hub"; 
+fi;

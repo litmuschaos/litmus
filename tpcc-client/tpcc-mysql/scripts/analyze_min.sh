@@ -1,0 +1,1 @@
+cat $1 | grep -v HY000 | grep -v payment | grep -v neword | awk ' BEGIN { FS="[,(]"; s=0; cntr=0; aggr=0 } /MEASURING START/ { s=1} /STOPPING THREADS/ {s=0} /0/ { if (s==1) { cntr++; aggr+=$2; } if ( cntr==6 ) { printf ("%d\n",aggr) ; cntr=0; aggr=0  }  } '

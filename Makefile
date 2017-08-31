@@ -80,7 +80,17 @@ _push_tests_mysql_client_image:
 
 mysql-client: deps _build_tests_mysql_client_image _push_tests_mysql_client_image
 
-build: deps vdbench fio iometer k8s-client mysql-client
+_build_tests_tpcc_client_image:
+	@echo "INFO: Building container image for performing tpcc benchmark tests"
+	cd tpcc-client && docker build -t openebs/tests-tpcc-client .
+
+_push_tests_tpcc_client_image:
+	@echo "INFO: Publish container (openebs/tests-tpcc-client)"
+	cd tpcc-client/buildscripts && ./push
+
+tpcc-client: deps _build_tests_tpcc_client_image _push_tests_tpcc_client_image
+
+build: deps vdbench fio iometer k8s-client mysql-client tpcc-client
 
 
 #
