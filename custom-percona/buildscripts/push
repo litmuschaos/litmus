@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+IMAGEID=$( docker images -q openebs/tests-custom-percona )
+
+if [ ! -z "${DNAME}" ] && [ ! -z "${DPASS}" ]; 
+then 
+  docker login -u "${DNAME}" -p "${DPASS}"; 
+  #Push to docker hub repository with latest tag
+  docker tag ${IMAGEID} openebs/tests-custom-percona:latest
+  docker push openebs/tests-custom-percona:latest; 
+else
+  echo "No docker credentials provided. Skip uploading openebs/tests-custom-percona:latest to docker hub"; 
+fi;
