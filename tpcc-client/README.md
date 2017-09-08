@@ -50,7 +50,10 @@ orders, recording payments, checking the status of orders, and monitoring the le
   sudo docker logs -f  <tpcc-client-containerid>
   ```
   
-  
+## License
+
+openebs/test-storage is developed under Apache 2.0 License. Some components of the project are derived from other opensource projects
+like [axboe/fio](https://github.com/axboe/fio), [percona-Lab/tpcc-mysql](https://github.com/Percona-Lab/tpcc-mysql) and are distributed under their respective licenses.
   
 
 
