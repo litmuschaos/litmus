@@ -90,7 +90,17 @@ _push_tests_tpcc_client_image:
 
 tpcc-client: deps _build_tests_tpcc_client_image _push_tests_tpcc_client_image
 
-build: deps vdbench fio iometer k8s-client mysql-client tpcc-client
+_build_tests_custom_percona_image:
+	@echo "INFO: Building container image for integrating pmm with percona"
+	cd custom-percona && docker build -t openebs/tests-custom-percona .
+
+_push_tests_custom_percona_image:
+	@echo "INFO: Publish container (openebs/tests-custom-percona)"
+	cd custom-percona/buildscripts && ./push
+
+custom-percona: deps _build_tests_custom_percona_image _push_tests_custom_percona_image
+
+build: deps vdbench fio iometer k8s-client mysql-client tpcc-client custom-percona
 
 
 #
