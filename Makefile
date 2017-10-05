@@ -100,7 +100,27 @@ _push_tests_custom_percona_image:
 
 custom-percona: deps _build_tests_custom_percona_image _push_tests_custom_percona_image
 
-build: deps vdbench fio iometer k8s-client mysql-client tpcc-client custom-percona
+_build_tests_mysql_master_image:
+	@echo "INFO: Building container image for mysql-master"
+	cd mysql-master && docker build -t openebs/tests-mysql-master .
+
+_push_tests_mysql_master_image:
+	@echo "INFO: Publish container (openebs/tests-mysql-master)"
+	cd mysql-master/buildscripts && ./push
+
+mysql-master: deps _build_tests_mysql_master_image _push_tests_mysql_master_image
+
+_build_tests_mysql_slave_image:
+	@echo "INFO: Building container image for mysql-slave"
+	cd mysql-slave && docker build -t openebs/tests-mysql-slave .
+
+_push_tests_mysql_slave_image:
+	@echo "INFO: Publish container (openebs/tests-mysql-slave)"
+	cd mysql-slave/buildscripts && ./push
+
+mysql-slave: deps _build_tests_mysql_slave_image _push_tests_mysql_slave_image
+
+build: deps vdbench fio iometer k8s-client mysql-client tpcc-client custom-percona mysql-master mysql-slave
 
 
 #
