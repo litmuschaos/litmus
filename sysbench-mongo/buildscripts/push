@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+IMAGEID=$( docker images -q openebs/tests-sysbench-mongo )
+
+if [ ! -z "${DNAME}" ] && [ ! -z "${DPASS}" ]; 
+then 
+  docker login -u "${DNAME}" -p "${DPASS}"; 
+  #Push to docker hub repository with latest tag
+  docker tag ${IMAGEID} openebs/tests-sysbench-mongo:latest
+  docker push openebs/tests-sysbench-mongo:latest; 
+else
+  echo "No docker credentials provided. Skip uploading openebs/tests-sysbench-mongo:latest to docker hub"; 
+fi;

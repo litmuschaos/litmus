@@ -120,7 +120,17 @@ _push_tests_mysql_slave_image:
 
 mysql-slave: deps _build_tests_mysql_slave_image _push_tests_mysql_slave_image
 
-build: deps vdbench fio iometer k8s-client mysql-client tpcc-client custom-percona mysql-master mysql-slave
+_build_tests_sysbench_mongo_image:
+	@echo "INFO: Building container image for sysbench-mongo"
+	cd sysbench-mongo && docker build -t openebs/tests-sysbench-mongo .
+
+_push_tests_sysbench_mongo_image:
+	@echo "INFO: Publish container (openebs/tests-sysbench-mongo)"
+	cd sysbench-mongo/buildscripts && ./push
+
+sysbench-mongo: deps _build_tests_sysbench_mongo_image _push_tests_sysbench_mongo_image
+
+build: deps vdbench fio iometer k8s-client mysql-client tpcc-client custom-percona mysql-master mysql-slave sysbench-mongo
 
 
 #
