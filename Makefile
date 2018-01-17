@@ -130,7 +130,17 @@ _push_tests_sysbench_mongo_image:
 
 sysbench-mongo: deps _build_tests_sysbench_mongo_image _push_tests_sysbench_mongo_image
 
-build: deps vdbench fio iometer k8s-client mysql-client tpcc-client custom-percona mysql-master mysql-slave sysbench-mongo
+_build_tests_libiscsi_image:
+	@echo "INFO: Building container image for libiscsi"
+	cd libiscsi && docker build -t openebs/tests-libiscsi .
+
+_push_tests_libiscsi_image:
+	@echo "INFO: Publish container (openebs/tests-libiscsi)"
+	cd libiscsi/buildscripts && ./push
+
+libiscsi: deps _build_tests_libiscsi_image _push_tests_libiscsi_image
+
+build: deps vdbench fio iometer k8s-client mysql-client tpcc-client custom-percona mysql-master mysql-slave sysbench-mongo libiscsi
 
 
 #
