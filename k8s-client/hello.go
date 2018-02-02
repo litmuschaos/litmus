@@ -18,6 +18,6 @@ import (
 	"fmt"
 )
 
-func main() {
+func hmain() {
 	fmt.Printf("Hello World!")
 }

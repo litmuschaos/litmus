@@ -18,18 +18,36 @@ limitations under the License.
 package main
 
 import (
+	"flag"
 	"fmt"
 	"time"
 
+	//	"github.com/kubernetes/kubernetes/staging/src/k8s.io/client-go/tools/clientcmd"
+	"k8s.io/client-go/tools/clientcmd"
 	//metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	mach_apis_meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	//	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
 	"k8s.io/client-go/kubernetes"
-	metav1 "k8s.io/client-go/pkg/api/v1"
 	"k8s.io/client-go/rest"
 )
 
+var (
+	master     = flag.String("master", "", "Master's URL to communication if running from outside the cluster or if running apiserver with insecure flag.")
+	kubeconfig = flag.String("kubeconfig", "", "Absolute path to kubeconfig if running from outside the cluster or if running apiserver with insecure flag.")
+)
+
 func main() {
+	flag.Parse()
 	// creates the in-cluster config
-	config, err := rest.InClusterConfig()
+	var config *rest.Config
+	var err error
+	if *master != "" || *kubeconfig != "" {
+		fmt.Printf("Either master or kubeconfig specified. building kube config from that..\n")
+		config, err = clientcmd.BuildConfigFromFlags(*master, *kubeconfig)
+	} else {
+		config, err = rest.InClusterConfig()
+	}
 	if err != nil {
 		panic(err.Error())
 	}
@@ -39,8 +57,8 @@ func main() {
 		panic(err.Error())
 	}
 	for {
-		pods, err := clientset.CoreV1().Pods("").List(metav1.ListOptions{})
-		pvs, err := clientset.CoreV1().PersistentVolumes().List(metav1.ListOptions{})
+		pods, err := clientset.CoreV1().Pods("").List(mach_apis_meta_v1.ListOptions{})
+		pvs, err := clientset.CoreV1().PersistentVolumes().List(mach_apis_meta_v1.ListOptions{})
 		if err != nil {
 			panic(err.Error())
 		}
@@ -49,4 +67,3 @@ func main() {
 		time.Sleep(10 * time.Second)
 	}
 }
-
