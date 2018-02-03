@@ -43,8 +43,8 @@ func main() {
 	var config *rest.Config
 	var err error
 	if *master != "" || *kubeconfig != "" {
-		fmt.Printf("Either master or kubeconfig specified. building kube config from that..\n")
 		config, err = clientcmd.BuildConfigFromFlags(*master, *kubeconfig)
+		fmt.Printf("Client config was built using flags: Address: '%s' Kubeconfig: '%s' \n", *master, *kubeconfig)
 	} else {
 		config, err = rest.InClusterConfig()
 	}
