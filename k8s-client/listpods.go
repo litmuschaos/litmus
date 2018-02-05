@@ -33,8 +33,8 @@ import (
 )
 
 var (
-	master     = flag.String("master", "", "Master's URL to communication if running from outside the cluster or if running apiserver with insecure flag.")
-	kubeconfig = flag.String("kubeconfig", "", "Absolute path to kubeconfig if running from outside the cluster or if running apiserver with insecure flag.")
+	master     = flag.String("master", "", "Master's URL to communicate with kubernetes-apiserver if running from outside the cluster or if allowing insecure/Non SSL connection")
+	kubeconfig = flag.String("kubeconfig", "", "Absolute path to kubeconfig if running from outside the cluster.")
 )
 
 func main() {
