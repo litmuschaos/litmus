@@ -140,10 +140,19 @@ _push_tests_libiscsi_image:
 
 libiscsi: deps _build_tests_libiscsi_image _push_tests_libiscsi_image
 
-build: deps vdbench fio iometer k8s-client mysql-client tpcc-client custom-percona mysql-master mysql-slave sysbench-mongo libiscsi
+_build_logger_image:
+	@echo "INFO: Building container image for logger"
+	cd logger && docker build -t openebs/logger .
+
+_push_logger_image:
+	@echo "INFO: Publish container (openebs/logger)"
+	cd logger/buildscripts && ./push
+
+logger: deps _build_logger_image _push_logger_image
+
+build: deps vdbench fio iometer k8s-client mysql-client tpcc-client custom-percona mysql-master mysql-slave sysbench-mongo libiscsi logger 
 
 
-#
 # This is done to avoid conflict with a file of same name as the targets
 # mentioned in this makefile.
 #
