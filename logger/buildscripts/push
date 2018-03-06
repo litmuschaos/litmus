@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+IMAGEID=$( docker images -q openebs/logger )
+
+if [ ! -z "${DNAME}" ] && [ ! -z "${DPASS}" ]; 
+then 
+  docker login -u "${DNAME}" -p "${DPASS}"; 
+  #Push to docker hub repository with latest tag
+  docker tag ${IMAGEID} openebs/logger:latest
+  docker push openebs/logger:latest; 
+else
+  echo "No docker credentials provided. Skip uploading openebs/logger:latest to docker hub"; 
+fi;

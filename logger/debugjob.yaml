@@ -1,0 +1,34 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: debugjob
+spec:
+  template:
+    metadata:
+      name: debugjob
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: debugjob
+        image: logger 
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/bash"]
+        args: ["-c", "./logger.sh -d 5 -r maya,openebs,pvc; exit 0"]
+        volumeMounts:
+        - name: kubeconfig 
+          mountPath: /root/admin.conf
+          subPath: admin.conf
+        - name: logs
+          mountPath: /mnt 
+        tty: true 
+      volumes: 
+        - name: kubeconfig
+          configMap: 
+            name: kubeconfig 
+        - name: logs 
+          hostPath: 
+            path: /mnt
+            type: Directory 
+
+
