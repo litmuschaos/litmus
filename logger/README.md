@@ -1,21 +1,29 @@
-### Introduction to Logger
+## OpenEBS Logger FAQ
 
-- The logger container and debugjob K8s job have been created to aid troubleshoot/debugging on 
-  the kubernetes cluster by capturing the pod logs 
+### What is OpenEBS Logger   
+
+- The logger is an Kubernetes job which can be run on the cluster to extract pod logs and 
+  cluster info. It has been created to aid troubleshoot/debugging activities.
+
+- It runs the logger container *openebs/logger*
+
+- Recommended to run for a specifc duration to capture logs on issue reproduction attempts 
+
+### How does the Logger work
+
 - Logger uses a tool called "stern" to collect the pod logs.
-- It is also capable of executing kubectl commands to extract cluster state.
 
-### Steps to run the OpenEBS Logger kubernetes job (debugjob)
+- It uses kubectl commands to extract cluster info.
 
-- Identify the path to the kubeconfig file & create a config map with its content. This is
-  required to be passed to the stern binary in order to collect the pod logs. Typically, the 
-  kubeconfig file is available at /etc/kubernetes/admin.conf OR ~/.kube/config. It may also
-  be obtained from the ENV on the master/deployment node.
+### What are the pre-requisites to run Logger 
 
-  `kubectl create configmap kubeconfig --from-file=<path-to-kubeconfig-file>`
+- Logger needs the kubeconfig file mounted as a configmap (passed to stern binary) 
+  Kubeconfig is generally found in /etc/kubernetes/admin.conf or ~/.kube/config
 
-- In the command to be executed, edit the logging duration & pod regex to reflect which pods' 
-  logs should be captured and for how long.
+### How to run the Logger 
+
+- In the logger job's command, edit the logging duration (-d) & pod regex (-r) to specify
+  which pods' logs should be captured and for how long.
 
   `./logger.sh -d 5 -r maya,openebs,pvc;` 
 

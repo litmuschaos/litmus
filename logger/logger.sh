@@ -1,5 +1,15 @@
 #!/bin/bash
 
+#############################################################
+# This is a script that will run aggregate the logs of the 
+# kubernetes pods in the cluster. It also collects the ouput 
+# of certain kubectl commands that help in analyzing cluster
+# state. 
+#
+# TODO: Get node's systemd logs 
+#
+#############################################################
+
 function show_help(){
     cat << EOF
 Usage : $(basename "$0") -h help
@@ -10,7 +20,7 @@ Usage : $(basename "$0") -h help
 -d      Duration for log collection in minutes, ex: 10
 -r      Comma-separated string with starting literals of pod names, ex: pvc,maya
 
-Example: ./sternscript.sh -d 10 -r pvc,maya
+Example: ./logger.sh -d 10 -r pvc,maya,openebs
 EOF
 }
 

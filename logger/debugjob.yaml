@@ -11,9 +11,11 @@ spec:
       restartPolicy: Never
       containers:
       - name: debugjob
-        image: logger 
+        image: openebs/logger 
         imagePullPolicy: IfNotPresent
         command: ["/bin/bash"]
+        ## Specify duration in minutes
+        ## Provide a comma separated list of the pod literals
         args: ["-c", "./logger.sh -d 5 -r maya,openebs,pvc; exit 0"]
         volumeMounts:
         - name: kubeconfig 
@@ -24,10 +26,12 @@ spec:
         tty: true 
       volumes: 
         - name: kubeconfig
+          ## kubectl create configmap kubeconfig --from-file=<kubeconfig-file>
           configMap: 
             name: kubeconfig 
         - name: logs 
-          hostPath: 
+          ## Logs collected in /mnt/Logstash_<time_stamp>.tar 
+          hostPath:
             path: /mnt
             type: Directory 
 
