@@ -9,6 +9,14 @@
 
 - Recommended to run for a specifc duration to capture logs on issue reproduction attempts 
 
+### Why use logger 
+
+- Logger serves a purpose to obtain debug-info/quick logs in clusters where more standard
+  logging frameworks like EFK are not already configured. Logger creates a simple support bundle 
+  which can be provided to debug teams.
+
+- This may be the case with most "non-production/dev" infrastructures
+
 ### How does the Logger work
 
 - Logger uses a tool called "stern" to collect the pod logs.
