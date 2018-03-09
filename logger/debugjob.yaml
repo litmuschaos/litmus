@@ -1,0 +1,38 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: debugjob
+spec:
+  template:
+    metadata:
+      name: debugjob
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: debugjob
+        image: openebs/logger 
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/bash"]
+        ## Specify duration in minutes
+        ## Provide a comma separated list of the pod literals
+        args: ["-c", "./logger.sh -d 5 -r maya,openebs,pvc; exit 0"]
+        volumeMounts:
+        - name: kubeconfig 
+          mountPath: /root/admin.conf
+          subPath: admin.conf
+        - name: logs
+          mountPath: /mnt 
+        tty: true 
+      volumes: 
+        - name: kubeconfig
+          ## kubectl create configmap kubeconfig --from-file=<kubeconfig-file>
+          configMap: 
+            name: kubeconfig 
+        - name: logs 
+          ## Logs collected in /mnt/Logstash_<time_stamp>.tar 
+          hostPath:
+            path: /mnt
+            type: Directory 
+
+
