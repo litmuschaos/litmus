@@ -1,14 +1,16 @@
 #!/bin/bash
 
 #############################################################
-# This is a script that will run aggregate the logs of the 
-# kubernetes pods in the cluster. It also collects the ouput 
-# of certain kubectl commands that help in analyzing cluster
-# state. 
-#
-# TODO: Get node's systemd logs 
-#
+# This is a script that will aggregate the logs of selected 
+# kubernetes pods in the cluster. It also collects the host 
+# systemd (kubelet) logs and output of certain kubernetes 
+# (kubectl) commands that help in analyzing cluster state. 
 #############################################################
+
+
+#######################
+##   FUCNTION DEF    ##       
+#######################
 
 function show_help(){
     cat << EOF
@@ -23,6 +25,49 @@ Usage : $(basename "$0") -h help
 Example: ./logger.sh -d 10 -r pvc,maya,openebs
 EOF
 }
+
+function wait_for_sonopods(){
+# Checks whether the node-logger pods are in "Running" state
+
+pTimeOut=$1 && shift
+pList=($@)
+
+echo -n "Waiting for sonopods to run"
+
+for i in ${pList[@]}; do
+  c=1
+  while [[ $c -lt $pTimeOut && $(kubectl get pod $i -o go-template --template "{{.status.phase}}") != "Running" ]]; do
+    sleep 1
+    ((c++))
+    echo -n "."
+  done
+  if [ $c -eq $pTimeOut ]; then
+    echo "Unable to bring up node-logger pods, exiting.."
+    exit 1
+  fi
+done
+echo
+}
+
+function wait_for_logdump(){
+# Check whether the node logs are dumped successfully
+
+pList=($@)
+
+echo -n "Waiting for node log collection to complete"
+
+for i in ${pList[@]}; do
+  while [[ -z $(kubectl exec $i -- ls /tmp/results/done) ]]; do
+    sleep 1
+    echo -n "."
+  done
+done
+echo
+}
+
+#######################
+## VERIFY ARGUMENTS  ##
+#######################
 
 if (($# == 0)); then
     show_help
@@ -55,7 +100,21 @@ do
              exit 1 
              ;;
     esac
-done 		 
+done 
+
+
+#######################
+##   TEST VARIABLES  ##
+#######################
+
+# Time to wait for node-logger daemonset to instantiate
+podTimeOut=120
+
+########################
+##   RUN TEST STEPS   ##
+########################		 
+
+#%% STEP1: Get cluster state %%#
 
 # kubectl command list
 declare -a kube_array=("kubectl get nodes"
@@ -73,6 +132,8 @@ do
   eval $strout >> /mnt/kubectl_cluster_info.log                           
 done
 
+#%% STEP2: Get Pod Logs %%#
+
 # Instantiate stern logging on the selected pods w/ respective logfiles
 for i in $podregex; do
     stern $i* --kubeconfig=/root/admin.conf > /mnt/$i.log 2>&1 &
@@ -81,8 +142,27 @@ done
 # Collect logs in the background for specified duration
 sleep $(($logtime*60)) 
 
+#%% STEP3: Get Node Logs %%#
+
+# Deploy the node-logger daemonset
+kubectl apply -f nodelogger.yaml
+
+# Get the list of pods in the node-logger daemonset
+sonoPods=$(kubectl get pods --no-headers -l app=sono -o custom-columns=:metadata.name)
+
+# Check if node-logger pods are running
+wait_for_sonopods $podTimeOut $sonoPods;
+
+# Wait for node logs to be collected
+wait_for_logdump $sonoPods;
+
+echo "systemd logs collected on all nodes"
+
+# Remove the node-logger daemonset
+kubectl delete -f nodelogger.yaml
+
+#%% STEP4: Process logs %%#
+
 # Zip the pod logs & cleanup
-cd /mnt && tar -cvf Logstash_$(date +"%d_%m_%Y_%I_%M_%p").tar *.log && rm -f *.log 
-
-
+cd /mnt && tar -cvf Logstash_$(date +"%d_%m_%Y_%I_%M_%p").tar *.log && rm -f *.log  
 
