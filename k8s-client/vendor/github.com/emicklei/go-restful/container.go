@@ -32,7 +32,7 @@ type Container struct {
 	contentEncodingEnabled bool          // default is false
 }
 
-// NewContainer creates a new Container using a new ServeMux and default router (RouterJSR311)
+// NewContainer creates a new Container using a new ServeMux and default router (CurlyRouter)
 func NewContainer() *Container {
 	return &Container{
 		webServices:            []*WebService{},
@@ -74,7 +74,7 @@ func (c *Container) DoNotRecover(doNot bool) {
 	c.doNotRecover = doNot
 }
 
-// Router changes the default Router (currently RouterJSR311)
+// Router changes the default Router (currently CurlyRouter)
 func (c *Container) Router(aRouter RouteSelector) {
 	c.router = aRouter
 }
@@ -140,7 +140,7 @@ func (c *Container) addHandler(service *WebService, serveMux *http.ServeMux) boo
 func (c *Container) Remove(ws *WebService) error {
 	if c.ServeMux == http.DefaultServeMux {
 		errMsg := fmt.Sprintf("[restful] cannot remove a WebService from a Container using the DefaultServeMux: ['%v']", ws)
-		log.Printf(errMsg)
+		log.Print(errMsg)
 		return errors.New(errMsg)
 	}
 	c.webServicesLock.Lock()

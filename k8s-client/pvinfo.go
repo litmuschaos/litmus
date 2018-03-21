@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"time"
 
+	mach_apis_meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	metav1 "k8s.io/client-go/pkg/api/v1"
 	"k8s.io/client-go/rest"
 )
 
-func main() {
+func Amain() {
 	// create in cluster config
 	config, err := rest.InClusterConfig()
 	if err != nil {
@@ -21,7 +21,7 @@ func main() {
 	}
 	fmt.Println("In k8s client..")
 	for {
-		pods, err := clientset.CoreV1().Pods("").List(metav1.ListOptions{})
+		pods, err := clientset.CoreV1().Pods("").List(mach_apis_meta_v1.ListOptions{})
 		// pvcs, err := clientset.CoreV1().PersistentVolumeClaims("").List(metav1.ListOptions{})
 		// fmt.Println(pvcs)
 		if err != nil {
