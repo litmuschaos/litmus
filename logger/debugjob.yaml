@@ -1,4 +1,44 @@
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: debugjob
+  namespace: default
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  namespace: default
+  name: debugjob
+rules:
+  # The role's capabilities can be enhanced in future (ex: crd) 
+- apiGroups: ["*"]
+  resources: ["nodes","nodes/proxy"]
+  verbs: ["get","list"]
+- apiGroups: ["*"]
+  resources: ["namespaces","services","pods","pods/exec","deployments","daemonsets","statefulsets"]
+  verbs: ["*"]
+- apiGroups: ["*"]
+  resources: ["persistentvolumes","persistentvolumeclaims"]
+  verbs: ["*"]
+- apiGroups: ["storage.k8s.io"]
+  resources: ["storageclasses"]
+  verbs: ["*"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: debugjob
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: debugjob
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: debugjob
+  apiGroup: rbac.authorization.k8s.io
+---
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -9,6 +49,7 @@ spec:
       name: debugjob
     spec:
       restartPolicy: Never
+      serviceAccountName: debugjob 
       containers:
       - name: debugjob
         image: openebs/logger 
