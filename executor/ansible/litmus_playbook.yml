@@ -1,0 +1,14 @@
+---
+- hosts: localhost
+  gather_facts: yes
+
+  tasks:
+
+    - name: Obtain list of Kubernetes test job specifications 
+      include: utils/GetFiles.yaml
+        dir="{{ ansible_env.HOME }}/litmus/tests"
+        expr="^run_litmus"
+    
+    - name: Run the Kubernetes test jobs on selected storage providers 
+      include: utils/RunTest.yaml 
+      with_items: "{{ hostvars['localhost']['files'] }}"

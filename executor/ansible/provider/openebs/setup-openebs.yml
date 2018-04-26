@@ -1,0 +1,5 @@
+---
+- hosts: kubernetes-kubemasters 
+  roles: 
+    - {role: k8s-openebs-operator}
+

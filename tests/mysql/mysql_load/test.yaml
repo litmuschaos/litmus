@@ -1,0 +1,84 @@
+# TODO 
+# Change pod status checks to container status checks (containerStatuses)
+# O/P result
+
+- hosts: localhost
+  connection: local  
+
+  vars_files:
+    - test_vars.yaml
+ 
+  tasks:
+   - block:
+       - name: Check whether maya-apiserver pod is deployed
+         shell: >
+           kubectl get pod -l name=maya-apiserver --no-headers 
+           -o custom-columns=:status.phase 
+         args: 
+           executable: /bin/bash
+         register: result
+         until: "result.stdout == 'Running'"
+         delay: 30
+         retries: 12
+
+       - name: Replace volume-claim name with test params 
+         replace:
+           path: "{{ pod_yaml_alias }}"
+           regexp: '{{ item.0 }}'
+           replace: '{{ item.1 }}'
+         with_together:
+           - "{{replace_item}}"
+           - "{{replace_with}}"
+
+       - name: Replace the load duration with test params
+         lineinfile: 
+           path: "{{ pod_yaml_alias }}"
+           regexp: "\"run_duration\": \"60\""
+           line: "    \"run_duration\": \"{{mysql_load_duration}}\""
+
+       - name: Replace the storageclass placeholder with provider
+         replace:
+           path: "{{ pod_yaml_alias }}"
+           regexp: "testClass"
+           #replace: "{{ provider_sc }}"
+           replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+
+       - name: Deploy percona mysql pod
+         shell: kubectl apply -f {{ pod_yaml_alias }} 
+         args: 
+           executable: /bin/bash
+
+       - name: Confirm pod status is running
+         shell: >
+           kubectl get pods -l name=percona --no-headers 
+           -o custom-columns=:status.phase
+         args: 
+           executable: /bin/bash
+         register: result
+         until: "result.stdout == 'Running'"
+         delay: 120 
+         retries: 15
+
+       - name: Wait for I/O completion
+         wait_for: 
+           timeout: "{{ mysql_load_duration }}"
+
+       - name: Confirm pod status is completed
+         shell: >
+           kubectl get pods -l name=percona --no-headers 
+         args: 
+           executable: /bin/bash
+         register: result
+         until: "'Completed' in result.stdout"
+         delay: 120 
+         retries: 15
+
+       - set_fact:
+           flag: "Pass"
+
+     rescue: 
+       - set_fact: 
+           flag: "Fail"
+
+     always:
+       - include: test_cleanup.yaml

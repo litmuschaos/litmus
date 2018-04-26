@@ -1,0 +1,17 @@
+---
+- name: Obtain list of Kubernetes test job specifications
+  find:
+    paths: "{{ dir }}"
+    patterns: "{{ expr }}"
+    recurse: yes
+    use_regex: yes
+  register: result
+
+- name: Initialize an empty list for our files
+  set_fact:
+    files: []
+
+- name: Check output of files obtained
+  set_fact:
+    files: "{{ files }} + [ '{{ result.files[item|int].path }}' ]"
+  with_sequence: start=0 count="{{result.matched}}"
