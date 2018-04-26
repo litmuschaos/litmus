@@ -1,0 +1,31 @@
+---
+- name: Get pvc name to verify successful pvc deletion
+  shell: >
+    kubectl get pvc {{ replace_with.0 }} 
+    -o custom-columns=:spec.volumeName --no-headers
+  args:
+    executable: /bin/bash
+  register: pvc
+
+- name: Delete percona mysql pod 
+  shell: source ~/.profile; kubectl delete -f {{ pod_yaml_alias }}
+  args:
+    executable: /bin/bash
+
+- name: Confirm percona pod has been deleted
+  shell: source ~/.profile; kubectl get pods
+  args:
+    executable: /bin/bash
+  register: result
+  until: "'percona' not in result.stdout"
+  delay: 30 
+  retries: 12
+
+- name: Confirm pvc pod has been deleted
+  shell: source ~/.profile; kubectl get pods | grep {{ pvc.stdout }}
+  args:
+    executable: /bin/bash
+  register: result
+  failed_when: "'pvc' and 'Running' in result.stdout"
+  delay: 30
+  retries: 12

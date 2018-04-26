@@ -1,0 +1,91 @@
+# TODO
+# Separate out the testjob & sa,rbac definitions
+# Maintain identical resource names as a standard
+# Change test container 
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: litmus-test
+  namespace: default
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  namespace: default
+  name: litmus-test
+rules:
+  # The role's capabilities can be enhanced in future (ex: crd)
+- apiGroups: ["*"]
+  resources: ["nodes","nodes/proxy"]
+  verbs: ["get","list"]
+- apiGroups: ["*"]
+  resources: ["namespaces","services","pods","pods/exec","deployments","daemonsets","statefulsets","configmaps"]
+  verbs: ["*"]
+- apiGroups: ["*"]
+  resources: ["persistentvolumes","persistentvolumeclaims"]
+  verbs: ["*"]
+- apiGroups: ["storage.k8s.io"]
+  resources: ["storageclasses"]
+  verbs: ["*"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: litmus-test
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: litmus-test
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: litmus-test
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: litmus-test
+spec:
+  template:
+    metadata:
+      name: litmus-test
+    spec:
+      serviceAccountName: litmus-test
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: ksatchit/ansibletest
+        env: 
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: log_plays 
+          - name: PROVIDER_STORAGE_CLASS
+            value: openebs-standard 
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook test.yaml -i /etc/ansible/hosts; exit 0"]
+        volumeMounts:
+          - name: logs 
+            mountPath: /var/log/ansible 
+        tty: true
+      - name: logger
+        image: openebs/logger
+        command: ["/bin/bash"]
+        args: ["-c", "./logger.sh -d 10 -r maya,openebs,pvc,percona; exit 0"] 
+        volumeMounts:
+          - name: kubeconfig 
+            mountPath: /root/admin.conf
+            subPath: admin.conf
+          - name: logs
+            mountPath: /mnt 
+        tty: true 
+      volumes: 
+        - name: kubeconfig
+          configMap: 
+            name: kubeconfig 
+        - name: logs 
+          hostPath:
+            path: /mnt
+            type: Directory 
+
