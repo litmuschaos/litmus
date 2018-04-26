@@ -1,0 +1,121 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: odm-operator-verify
+  namespace: litmus
+  labels:
+    name: odm-operator-verify
+    test: deploy-minio
+data:
+  config: |-
+    components:
+      - kind: serviceaccount
+        name: openebs-maya-operator
+        namespace: default
+      - kind: clusterrole
+        name: openebs-maya-operator
+        namespace: default
+      - kind: clusterrolebinding
+        name: openebs-maya-operator
+        namespace: default
+      - kind: pod
+        labels: name=maya-apiserver
+        namespace: default
+      - kind: service
+        name: maya-apiserver-service
+        namespace: default
+      - kind: pod
+        labels: name=openebs-provisioner
+        namespace: default
+      - kind: sc
+        name: openebs-standalone
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: odm-application-verify
+  namespace: litmus
+  labels:
+    name: odm-application-verify
+    test: deploy-minio
+data:
+  config: |-
+    components:
+      - kind: service
+        name: odm-minio
+      - kind: deploy
+        name: odm-minio
+      - kind: pod
+        labels: app=minio
+      - kind: pvc
+        name: odm-minio
+        alias: pvc
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: odm-volume-verify
+  namespace: litmus
+  labels:
+    name: odm-volume-verify
+    test: deploy-minio
+data:
+  config: |-
+    components:
+      - kind: pod
+        labels: openebs/controller=jiva-controller
+      - kind: pod
+        labels: openebs/replica=jiva-replica
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: odm-test-the-feature
+  namespace: litmus
+  labels:
+    name: odm-test-the-feature
+    test: deploy-minio
+spec:
+  template:
+    spec:
+      serviceAccountName: litmus
+      containers:
+      - name: odm-test-the-feature
+        image: openebs/godog-runner:ci
+        command: ["/bin/sh", "./hack/godog.sh", "./tests/minio/deploy_minio"]
+        volumeMounts:
+        - mountPath: /etc/e2e/operator-verify
+          name: odm-operator-verify
+        - mountPath: /etc/e2e/application-verify
+          name: odm-application-verify
+        - mountPath: /etc/e2e/volume-verify
+          name: odm-volume-verify
+        - mountPath: /etc/e2e/application-launch
+          name: odm-application-launch
+      volumes:
+        - name: odm-operator-verify
+          configMap: 
+            name: odm-operator-verify
+            items:
+              - key: config
+                path: operator-verify.yaml
+        - name: odm-application-verify
+          configMap: 
+            name: odm-application-verify
+            items:
+              - key: config
+                path: application-verify.yaml
+        - name: odm-volume-verify
+          configMap: 
+            name: odm-volume-verify
+            items:
+              - key: config
+                path: volume-verify.yaml
+        - name: odm-application-launch
+          configMap: 
+            name: odm-application-launch
+            items:
+              - key: config
+                path: application-launch.yaml
+      restartPolicy: Never

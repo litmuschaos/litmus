@@ -1,8 +1,5 @@
-# Makefile for building Containers for Storage Testing
-# 
-# 
+# Makefile for building Litmus and its tools
 # Reference Guide - https://www.gnu.org/software/make/manual/make.html
-
 
 #
 # Internal variables or constants.
@@ -80,3 +77,13 @@ compile:
 	@echo "------------------"
 	@go test $(PACKAGES)
 
+.PHONY: all-tools
+all-tools: godog-runner-image
+
+.PHONY: godog-runner-image
+godog-runner-image:
+	@echo "------------------"
+	@echo "--> Build godog-runner image" 
+	@echo "------------------"
+	sudo docker build . -f tools/godog-runner/Dockerfile -t openebs/godog-runner:ci
+	REPONAME="openebs" IMGNAME="godog-runner" IMGTAG="ci" ./hack/push
