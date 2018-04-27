@@ -1,5 +1,5 @@
 ---
-test_name: DBSx_SQLx_LDTx_Run_TPCC_Load_On_SQL
+test_name: mysql_load 
 
 pod_yaml_alias: mysql.yaml
 
@@ -12,12 +12,3 @@ replace_with:
   - percona-db
 
 mysql_load_duration: 120
-
-test_logger: stern
-
-test_logger_url: https://github.com/wercker/stern/releases/download/1.6.0/stern_linux_amd64 
-
-test_pod_regex: maya*|openebs*|pvc*|percona*
-
-test_log_path: /var/logs/ansible/DBSx_SQLx_LDTx_Run_TPCC_Load_On_SQL
-

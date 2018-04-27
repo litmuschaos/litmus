@@ -2,18 +2,21 @@
 - name: Get pvc name to verify successful pvc deletion
   shell: >
     kubectl get pvc {{ replace_with.0 }} 
-    -o custom-columns=:spec.volumeName --no-headers
+    -o custom-columns=:spec.volumeName -n litmus 
+    --no-headers
   args:
     executable: /bin/bash
   register: pvc
 
 - name: Delete percona mysql pod 
-  shell: source ~/.profile; kubectl delete -f {{ pod_yaml_alias }}
+  shell: >
+    source ~/.profile; kubectl delete -f {{ pod_yaml_alias }} 
+    -n litmus 
   args:
     executable: /bin/bash
 
 - name: Confirm percona pod has been deleted
-  shell: source ~/.profile; kubectl get pods
+  shell: source ~/.profile; kubectl get pods -n litmus 
   args:
     executable: /bin/bash
   register: result
@@ -22,7 +25,9 @@
   retries: 12
 
 - name: Confirm pvc pod has been deleted
-  shell: source ~/.profile; kubectl get pods | grep {{ pvc.stdout }}
+  shell: >
+    source ~/.profile; 
+    kubectl get pods -n litmus | grep {{ pvc.stdout }}
   args:
     executable: /bin/bash
   register: result

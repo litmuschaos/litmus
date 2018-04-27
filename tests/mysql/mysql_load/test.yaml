@@ -13,7 +13,7 @@
        - name: Check whether maya-apiserver pod is deployed
          shell: >
            kubectl get pod -l name=maya-apiserver --no-headers 
-           -o custom-columns=:status.phase 
+           -o custom-columns=:status.phase --all-namespaces 
          args: 
            executable: /bin/bash
          register: result
@@ -44,14 +44,14 @@
            replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
 
        - name: Deploy percona mysql pod
-         shell: kubectl apply -f {{ pod_yaml_alias }} 
+         shell: kubectl apply -f {{ pod_yaml_alias }} -n litmus  
          args: 
            executable: /bin/bash
 
        - name: Confirm pod status is running
          shell: >
-           kubectl get pods -l name=percona --no-headers 
-           -o custom-columns=:status.phase
+           kubectl get pods -l name=percona -n litmus 
+           --no-headers -o custom-columns=:status.phase
          args: 
            executable: /bin/bash
          register: result
@@ -65,7 +65,8 @@
 
        - name: Confirm pod status is completed
          shell: >
-           kubectl get pods -l name=percona --no-headers 
+           kubectl get pods -l name=percona -n litmus 
+           --no-headers 
          args: 
            executable: /bin/bash
          register: result

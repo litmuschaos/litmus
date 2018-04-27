@@ -136,7 +136,7 @@ done
 
 # Instantiate stern logging on the selected pods w/ respective logfiles
 for i in $podregex; do
-    stern $i* --kubeconfig=/root/admin.conf > /mnt/$i.log 2>&1 &
+    stern $i* --kubeconfig=/root/admin.conf --all-namespaces > /mnt/$i.log 2>&1 &
 done 
 
 # Collect logs in the background for specified duration

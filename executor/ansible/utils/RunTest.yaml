@@ -31,12 +31,12 @@
       delegate_to: "{{groups['kubernetes-kubemasters'].0}}"
 
     - name: Verify the test Kubernetes job is Successful
-      # Using a default job name "litmus-test"
+      # Using a default job name "litmus"
       # Is it better to check "Completed" v/s "Successful"
       shell: >
         source ~/.profile; 
-        kubectl get job litmus-test --no-headers 
-        -o custom-columns=:status.succeeded
+        kubectl get job litmus --no-headers
+        -n litmus -o custom-columns=:status.succeeded
       args:
         executable: /bin/bash
       register: result
@@ -53,14 +53,15 @@
       delegate_to: "{{groups['kubernetes-kubemasters'].0}}"
     
     - name: Verify job is deleted successfully
-      # Using a default job name "litmus-test"
+      # Using a default job name "litmus"
       shell: >
         source ~/.profile; 
-        kubectl get job --no-headers -o custom-columns=:metadata.name
+        kubectl get job --no-headers 
+        -n litmus -o custom-columns=:metadata.name
       args:
         executable: /bin/bash
       delegate_to: "{{groups['kubernetes-kubemasters'].0}}"
-      until: "'litmus-test' not in result.stdout"
+      until: "'litmus' not in result.stdout"
      
   rescue: 
     - name: Handle job failure 
