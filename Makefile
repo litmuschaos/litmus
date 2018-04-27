@@ -78,7 +78,7 @@ compile:
 	@go test $(PACKAGES)
 
 .PHONY: all-tools
-all-tools: godog-runner-image
+all-tools: godog-runner-image ansible-runner-image
 
 .PHONY: godog-runner-image
 godog-runner-image:
@@ -87,3 +87,11 @@ godog-runner-image:
 	@echo "------------------"
 	sudo docker build . -f tools/godog-runner/Dockerfile -t openebs/godog-runner:ci
 	REPONAME="openebs" IMGNAME="godog-runner" IMGTAG="ci" ./hack/push
+
+.PHONY: ansible-runner-image
+ansible-runner-image:
+	@echo "------------------"
+	@echo "--> Build ansible-runner image" 
+	@echo "------------------"
+	sudo docker build . -f tools/ansible-runner/Dockerfile -t openebs/ansible-runner:ci
+	REPONAME="openebs" IMGNAME="ansible-runner" IMGTAG="ci" ./hack/push
