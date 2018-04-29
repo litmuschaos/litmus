@@ -22,47 +22,61 @@ Litmus can be used to test a given workload in a variety of Kubernetes environme
 
 Users have a Kubernetes environment with a given storage solution and would like to test a specific scenario.
 
+- Ensure that the storage operators, if any, have been setup on the Kubernetes cluster.
+
+- Clone the Litmus repo and setup a dedicated rbac for Litmus.
+
 ```
 git clone https://github.com/openebs/litmus.git
-cd litmus/tests
+cd litmus
+kubectl apply -f hack/rbac.yaml 
 ```
 
-The tests are organized here based on the workload. Select a workload and follow the instructions under the corresponding `<workload>/README`.
+- The tests are categorized based on application workloads, with different aspects/use-cases of the application 
+constituting a separate test. Select a workload and follow the instructions under the corresponding 
+`<workload>/<usecase>/README`.
 
-For example, to run a MySQL benchmarking test:
+  For example, to run a MySQL benchmarking test:
 
 ```
-cd mysql/mysql-storage-benchmarking/
+cd tests/mysql/mysql_storage_benchmark/
+<Modify the PROVIDER_STORAGE_CLASS in run_litmus_test.yaml>
 kubectl apply -f run_litmus_test.yaml
 ```
 
-The above test runs a Kubernetes job that:
-- Checks for the presence of a Kubernetes Cluster
-- Verifies that the StorageClass mentioned (default: openebs) is loaded in the cluster
-- Launches mysql application with storage
-- Runs mysql benchmark against mysql application
-- Provides the benchmark results
+  The above test runs a Kubernetes job that:
+  - Verifies that the StorageClass mentioned (default: openebs) is loaded in the cluster
+  - Launches mysql application with storage
+  - Runs a sample TPC-C benchmark against mysql application
+  - Provides the benchmark results
+  - Reverts system state/performs clean-up by removing deployments launched during the test
 
-As the test ends, the logs of the various storage pods, including the test results of this Kubernetes job are collected and saved in a temporary location. The `run_litmus_test.yaml` can be customized for the location for saving the logs, type of storage (StorageClass) to be used, etc. These details will be provided in the README.md located in the same folder as the test.
+As the test ends, the logs of the various storage pods, including the test results of this Kubernetes job are 
+collected and saved in a temporary location. The `run_litmus_test.yaml` can be customized for the location for 
+saving the logs, type of storage (StorageClass) to be used, etc..,
 
 # Running a Complete Test Suite
 
-The test suite is put together using a set of Ansible Playbooks which need to be customized to your environment with details such as:
-- The hosts or VMs or a public cloud account where the tests should be executed. 
-- The type of storage to be tested
-- The category of tests (all or a subset) that need to be executed
-- Enable/Disable some services like log collection, notification generation etc., 
+The Litmus test suite can be run on a kubernetes cluster using an ansible-based executor framework. 
+This involves: 
 
-You can login to any Linux host and execute the following:
+- Setting up ansible on any linux machine (ansible test harness), with SSH access to the kubernetes cluster 
+- Generating the ansible inventory file with host information (master/control node & hosts)
+- Modifying a global variables file to:
+   
+  - Set Provider and storage class
+  - Select test Category (call or subset)
+  - Enable/Disable some services like log collection, notifications etc..,
+
+Follow the executor/README for detailed instructions on how to perform above steps. Once these pre-requisites 
+have been met, execute the following on the ansible test harness:
 
 ```
-git clone https://github.com/openebs/litmus.git
-cd litmus/executor/ansible
-<modify/customize>
-run-litmus.sh
+./litmus/executor/ansible/run-litmus.sh
 ```
 
-The above script will verify that it has all the details required for it to proceed. And it provides you with a helpful message on the progress of the tests.
+The above script will verify that it has all the details required for it to proceed and provides you with 
+test task execution status. 
 
 *Litmus may take a while to show a reaction as it puts the system through rigorous scrutiny!*
 
