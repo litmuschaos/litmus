@@ -71,10 +71,12 @@ data:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: odm-test-the-feature
+  #name: odm-test-the-feature
+  name: litmus 
   namespace: litmus
   labels:
-    name: odm-test-the-feature
+    #name: odm-test-the-feature
+    name: litmus 
     test: deploy-minio
 spec:
   template:
