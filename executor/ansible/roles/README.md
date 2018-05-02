@@ -13,30 +13,26 @@ A brief outline of the functions associated with above components is described b
 
 - prerequisites : Installs python packages necessary for inventory generation
 
-- inventory : Generates the hosts file based on entries in machines.in. The also role provides an option to
-              setup passwordless SSH between the ansible host (localhost)  and the target hosts. In case the 
-              same is setup, the hosts file will not contain hostvars for the ansible_ssh_password
+- inventory : Generates the hosts file based on entries in ansible/inventory/machines.in.
 
-- common : Installs apt packages common to Maya Server & Storage Node cluster
+- k8s-localhost* : Prepares the test-harness for execution of kubernetes roles
 
-- master : Installs & configures maya server
+- kubernetes* : Installs kubernetes packages with dependencies 
 
-- hosts : Installs & configures openebs storage hosts
+- k8s-master* : Configures the kubernetes-master
 
-- vagrant : Makes some config changes in maya server & node setup if machines are vagrant VMs
+- k8s-host* : Configures the kubernetes-minions.
 
-- volume : Creates a volume according to input parameters in all.yml
+- k8s-openebs-operator : Installs the OpenEBS control plane (kubernetes operator) via kubectl 
 
-- localhost : Configures the client machine to run FIO container
+- k8s-openebs-operator-helm : Installs OpenEBS helm charts 
 
-- fio : Runs FIO profile in a test container after mounting block storage
+- k8s-openebs-cleanup : Removes the OpenEBS operator via kubectl 
 
-- cleanup : Tear down iSCSI sessions & destroys volume on the storage nodes
+- k8s-openebs-uninstall-helm : Purges the OpenEBS helm chart 
 
-- k8s-localhost: Prepares the test-harness for execution of kubernetes roles
+- logging : Consolidates & compresses pod logs (collected by stern)
 
-- k8s-master: Installs and configures the kubernetes-master
-
-- k8s-host: Installs and configures the kubernetes-minions. Also installs the openebs flexvol driver
+- ara : Installs ARA as a systemd service ansible host
 
 

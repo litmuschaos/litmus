@@ -1,2 +1,2 @@
 ---
-inventory_input_path: "{{hostvars['localhost'].playbook_dir}}/inventory"
+ inventory_input_path: "{{ inventory_dir }}"
