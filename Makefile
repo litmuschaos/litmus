@@ -10,6 +10,9 @@ IS_DOCKER_INSTALLED = $(shell which docker >> /dev/null 2>&1; echo $$?)
 # list only our namespaced directories
 PACKAGES = $(shell go list ./... | grep -v '/vendor/')
 
+.PHONY: all
+all: format metalint compile
+
 .PHONY: help
 help:
 	@echo ""
@@ -18,21 +21,13 @@ help:
 	@echo "\tmake all   -- [default] builds the litmus containers"
 	@echo ""
 
-
-_build_check_docker:
-	@if [ $(IS_DOCKER_INSTALLED) -eq 1 ]; \
-		then echo "" \
-		&& echo "ERROR:\tdocker is not installed. Please install it before build." \
-		&& echo "" \
-		&& exit 1; \
-		fi;
-
 # `make deps` needs to be run in a completely new environment
 # In case of go related issues, run below commands & verify:
 # go version    # ensure go1.9.1 or above
 # go env        # ensure if GOPATH is set
 # echo $PATH    # ensure if $GOPATH/bin is set
-deps: _build_check_docker
+.PHONY: godeps
+godeps:
 	@echo ""
 	@echo "INFO:\tverifying dependencies for Litmus ..."
 	@go get -u -v github.com/golang/lint/golint
@@ -42,8 +37,16 @@ deps: _build_check_docker
 	@go get -u -v github.com/alecthomas/gometalinter
 	@gometalinter --install
 
-.PHONY: all
-all: format metalint compile
+_build_check_docker:
+	@if [ $(IS_DOCKER_INSTALLED) -eq 1 ]; \
+		then echo "" \
+		&& echo "ERROR:\tdocker is not installed. Please install it before build." \
+		&& echo "" \
+		&& exit 1; \
+		fi;
+
+.PHONY: deps
+deps: _build_check_docker godeps
 
 .PHONY: format
 format:

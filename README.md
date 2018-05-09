@@ -1,22 +1,22 @@
-# Overview
+# Litmus
+Litmus test your application without the learning curves
+
+## Overview
 
 [![Build Status](https://travis-ci.org/openebs/litmus.svg?branch=master)](https://travis-ci.org/openebs/litmus)
 
-The primary objective of Litmus is to ensure a consistent and reliable behavior of Kubernetes for various persistent workloads and to catch hard-to-test bugs and unacceptable behaviors before users do.  Litmus can detect many more real-world issues than relatively simple issues identified by unit and integration tests. 
+The primary objective of Litmus is to ensure a consistent and reliable behavior of workloads running in Kubernetes. It also aims to catch hard-to-test bugs and unacceptable behaviors before users do. Litmus strives to detect real-world issues which escape during unit and integration tests.
 
-Litmus can also be used to determine if a given Kubernetes deployment is suitable for stateful workloads.  While Litmus tests and metrics were developed initially to test the resilience of container attached storage from OpenEBS and others - the use cases are broader and overall system resilience can be characterized.  
+While Litmus tests and metrics were developed initially to test if a given Kubernetes deployment is suitable for running on OpenEBS (_a kubernetes dynamic storage provisioner_); the use cases are broader and overall system resilience can be characterized.
 
-Litmus tests range from initial setup and configuration validation to deploying and running persistent workloads under various conditions and failures. Litmus comprises the following major components:
-- **Deployments** that help in setting up different types of Kubernetes Clusters like on-premise, cloud, OpenShift, etc. The default is that the deployment scripts to provision and configure OpenEBS storage, however, these deployments are easily extended to support other storage. 
-- **Framework** for test execution that includes: 
-  * Defining and running test suites 
-  * Capturing logs and generating reports about the test runs
-  * Fault/Error injection tools that help to perform chaos tests
-  * Examples that demonstrate how to integrate these test pipelines with Slack notifications
-- **Test modules** that can be triggered from within a Kubernetes cluster. Think of these a containerized tests. For instance, the **_mysql-client_** can be launched as a pod to validate the MySQL resiliency while the underlying nodes and the connected storage are subjected to chaos engineering.
-- **Tests** that themselves are written in easy to understand formats, either in plain English (thanks Godog!) or in Ansible Playbooks. These tests primarily interact with the Kubernetes cluster via **_kubectl_** making them highly portable.
+## How is Litmus different than others
+Litmus keeps end user in mind while designing its test scenarios. Litmus accepts user story & converts it to respective test logic. In other words, Litmus translates each statement present in the user story into corresponding kubernetes command. This provides a transparent view to the users if any particular statement was executed successfully or resulted in failures.
 
-Litmus can be used to test a given workload in a variety of Kubernetes environments, for example, a developer minikube or a GKE cluster with a specific storage solution or as a part of a full-fledged CI setup.
+In addition, each test logic is packaged as a dedicated container image making them highly portable across kubernetes deployments. This also helps verifying a feature by endusers after importing these containers in their CI/CD environments.
+
+There are other aspects to Litmus which may be refered from:
+- [litmus deep dive](docs/litmus_deep_dive.md)
+- [running test suite](docs/running_test_suite.md)
 
 # Running a specific Test
 
@@ -55,32 +55,7 @@ As the test ends, the logs of the various storage pods, including the test resul
 collected and saved in a temporary location. The `run_litmus_test.yaml` can be customized for the location for 
 saving the logs, type of storage (StorageClass) to be used, etc..,
 
-# Running a Complete Test Suite
-
-The Litmus test suite can be run on a kubernetes cluster using an ansible-based executor framework. 
-This involves: 
-
-- Setting up ansible on any linux machine (ansible test harness), with SSH access to the kubernetes cluster 
-- Generating the ansible inventory file with host information (master/control node & hosts)
-- Modifying a global variables file to:
-   
-  - Set Provider and storage class
-  - Select test Category (call or subset)
-  - Enable/Disable some services like log collection, notifications etc..,
-
-Follow the executor/README for detailed instructions on how to perform above steps. Once these pre-requisites 
-have been met, execute the following on the ansible test harness:
-
-```
-./litmus/executor/ansible/run-litmus.sh
-```
-
-The above script will verify that it has all the details required for it to proceed and provides you with 
-test task execution status. 
-
-*Litmus may take a while to show a reaction as it puts the system through rigorous scrutiny!*
-
-# Contributing
+## Ways to Contribute
 
 Litmus is in *_alpha_* stage and needs all the help you can provide to have it cover the ever-growing Kubernetes landscape. Please contribute by raising issues, improving the documentation, contributing to the core framework and tooling, etc. 
 
