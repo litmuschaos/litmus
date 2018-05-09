@@ -10,6 +10,9 @@ IS_DOCKER_INSTALLED = $(shell which docker >> /dev/null 2>&1; echo $$?)
 # list only our namespaced directories
 PACKAGES = $(shell go list ./... | grep -v '/vendor/')
 
+.PHONY: all
+all: format metalint compile
+
 .PHONY: help
 help:
 	@echo ""
@@ -17,7 +20,6 @@ help:
 	@echo "\tmake deps  -- will verify build dependencies are installed"
 	@echo "\tmake all   -- [default] builds the litmus containers"
 	@echo ""
-
 
 _build_check_docker:
 	@if [ $(IS_DOCKER_INSTALLED) -eq 1 ]; \
@@ -41,9 +43,6 @@ deps: _build_check_docker
 	@go get -u -v github.com/DATA-DOG/godog/cmd/godog
 	@go get -u -v github.com/alecthomas/gometalinter
 	@gometalinter --install
-
-.PHONY: all
-all: format metalint compile
 
 .PHONY: format
 format:
