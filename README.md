@@ -1,5 +1,6 @@
 # Litmus
-Litmus test your application without the learning curves
+Litmus test your stateful application on Kubernetes without learning curves.  Empower end users to quickly specify needed scenarios using English descriptions. 
+https://www.openebs.io/litmus
 
 ## Overview
 
