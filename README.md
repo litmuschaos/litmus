@@ -1,10 +1,12 @@
 # Litmus
+
+[![Build Status](https://travis-ci.org/openebs/litmus.svg?branch=master)](https://travis-ci.org/openebs/litmus)
+
 Litmus is chaos engineering for stateful workloads on Kubernetes -> hopefully without learning curves.  Our vision includes  enabling end users to quickly specify needed scenarios using English descriptions. 
+ 
 https://www.openebs.io/litmus
 
 ## Overview
-
-[![Build Status](https://travis-ci.org/openebs/litmus.svg?branch=master)](https://travis-ci.org/openebs/litmus)
 
 The primary objective of Litmus is to ensure a consistent and reliable behavior of workloads running in Kubernetes. It also aims to catch hard-to-test bugs and unacceptable behaviors before users do. Litmus strives to detect real-world issues which escape during unit and integration tests.
 
@@ -78,6 +80,10 @@ Feature: MySQL services are not affected due to node failures.
     Then wait for "60s",
     And verify MySQL-client can still access data.
 ```
+
+<p align="center">
+<img width="100%" height="500" src="images/litmus.svg">
+</p>
 
 For more details on contributing, please refer to [CONTRIBUTING.md](./CONTRIBUTING.md)
 
