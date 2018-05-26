@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 """
 Module for parallel reading writing to file
@@ -23,7 +23,6 @@ class Reader(Thread):
             for line in file.readlines():
                 print("Read " + line)
                 # time.sleep(1)
-            file.close()
 
 class Writer(Thread):
     """
@@ -35,12 +34,10 @@ class Writer(Thread):
 
     def run(self):
         # print(self.file_name)
-        file = open(self.file_name, 'w')
-        for i in range(1, 2000000):
-            print("Writing ", i)
-            file.write(str(i))
-            # time.sleep(1)
-        file.close()
+        with open(self.file_name, 'w') as file:
+            for i in range(1, 2000000):
+                print("Writing ", i)
+                file.write(str(i))
 
 def run():
     """
