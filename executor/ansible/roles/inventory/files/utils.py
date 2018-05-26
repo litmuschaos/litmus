@@ -32,10 +32,9 @@ def sshToOtherClient(ip, usrname, pwd, cmd):
 def replace(file, pattern, subst):
     """ Replace extra spaces around assignment operator in inventory """
 
-    file_handle = open(file, 'rb')
-    file_string = file_handle.read()
-    file_handle.close()
+    with open(file, 'rb') as file_handle:
+        file_string = file_handle.read()
+    
     file_string = (re.sub(pattern, subst, file_string))
-    file_handle = open(file, 'wb')
-    file_handle.write(file_string)
-    file_handle.close()
+    with open(file, 'wb') as file_handle:
+        file_handle.write(file_string)
