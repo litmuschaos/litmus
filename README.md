@@ -1,5 +1,5 @@
 # Litmus
-Litmus test your stateful application on Kubernetes without learning curves.  Empower end users to quickly specify needed scenarios using English descriptions. 
+Litmus is chaos engineering for stateful workloads on Kubernetes -> hopefully without learning curves.  Our vision includes  enabling end users to quickly specify needed scenarios using English descriptions. 
 https://www.openebs.io/litmus
 
 ## Overview
@@ -8,24 +8,26 @@ https://www.openebs.io/litmus
 
 The primary objective of Litmus is to ensure a consistent and reliable behavior of workloads running in Kubernetes. It also aims to catch hard-to-test bugs and unacceptable behaviors before users do. Litmus strives to detect real-world issues which escape during unit and integration tests.
 
-While Litmus tests and metrics were developed initially to test if a given Kubernetes deployment is suitable for running on OpenEBS (_a kubernetes dynamic storage provisioner_); the use cases are broader and overall system resilience can be characterized.
+While Litmus tests and metrics were developed initially to test if a given Kubernetes deployment is suitable for running on OpenEBS (_a kubernetes dynamic storage provisioner_); the use cases are broader and overall system resilience can be characterized before and during operations.  To learn more about OpenEBS please visit: www.openEBS.io
 
 ## How is Litmus different than others
-Litmus keeps end user in mind while designing its test scenarios. Litmus accepts user story & converts it to respective test logic. In other words, Litmus translates each statement present in the user story into corresponding kubernetes command. This provides a transparent view to the users if any particular statement was executed successfully or resulted in failures.
+Litmus is an overall project that incorporates pieces of a typical chaos engineering environment to deliver a more complete solution to Litmus users. 
 
-In addition, each test logic is packaged as a dedicated container image making them highly portable across kubernetes deployments. This also helps verifying a feature by endusers after importing these containers in their CI/CD environments.
+Also, Litmus incorporates some innovations in translating end user user stories directly into scenarios. Litmus accepts user stories in simple English text & converts them to logic.  Litmus translates each statement present in a user story into corresponding Kubernetes commands. This provides a transparent view to the users if any particular statement was executed successfully or resulted in failures.
 
-There are other aspects to Litmus which may be refered from:
+Additionally, test logic is packaged as dedicated containers which of course makes them portable across Kubernetes deployments. This containerization also helps to integrate these containers into CI/CD environments.
+
+There are other aspects to Litmus which are discussed:
 - [litmus deep dive](docs/litmus_deep_dive.md)
 - [running test suite](docs/running_test_suite.md)
 
 # Running a specific Test
 
-Users have a Kubernetes environment with a given storage solution and would like to test a specific scenario.
+Users have a Kubernetes environment with a given stateful workload and underlying storage and would like to test a specific scenarion:
 
-- Ensure that the storage operators, if any, have been setup on the Kubernetes cluster.
+- Ensure that the desired storage operators are actually available on a given Kubernetes cluster.
 
-- Clone the Litmus repo and setup a dedicated rbac for Litmus.
+- Clone the Litmus repo and setup a dedicated RBAC for Litmus.
 
 ```
 git clone https://github.com/openebs/litmus.git
@@ -46,7 +48,7 @@ kubectl apply -f run_litmus_test.yaml
 ```
 
   The above test runs a Kubernetes job that:
-  - Verifies that the StorageClass mentioned (default: openebs) is loaded in the cluster
+  - Verifies that the StorageClass mentioned (default: OpenEBS) is loaded in the cluster
   - Launches mysql application with storage
   - Runs a sample TPC-C benchmark against mysql application
   - Provides the benchmark results
@@ -54,7 +56,7 @@ kubectl apply -f run_litmus_test.yaml
 
 As the test ends, the logs of the various storage pods, including the test results of this Kubernetes job are 
 collected and saved in a temporary location. The `run_litmus_test.yaml` can be customized for the location for 
-saving the logs, type of storage (StorageClass) to be used, etc..,
+saving the logs, type of storage (StorageClass) to be used, etc..  This type of deployment test can be used to accelerate the feedback loop when deploying new pieces of a stack, whether underlying cloud or hardware, network, storage, or other.
 
 ## Ways to Contribute
 
