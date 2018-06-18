@@ -1,14 +1,17 @@
 ---
-test_name: mysql_load 
+## TEST-SPECIFIC PARAMS
 
+test_name: mysql-benchmark
 pod_yaml_alias: mysql.yaml
 
-replace_item:
-  - mysql-vol-claim
-  - mysql-path
+## PROVIDER-SPECIFIC PARARMS
 
-replace_with:
-  - percona-db-claim
-  - percona-db
+# OpenEBS
 
-mysql_load_duration: 120
+openebs_operator: 
+  - maya-apiserver
+  - openebs-provisioner
+
+# Local Volume 
+
+local_pv_name: local-pv  

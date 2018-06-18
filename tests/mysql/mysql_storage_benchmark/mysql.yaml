@@ -5,26 +5,6 @@
 #  kubectl logs percona -c tpcc-bench | awk '/TpmC/ && !/^<TpmC>/{print $0}' #
 #                                                                            #
 ##############################################################################
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: tpcc-config
-data:
-  
-  ## Customize the values as per test requirement
-  tpcc.conf: |-
-    {
-    "db_user": "root",
-    "db_password": "k8sDem0",
-    "warehouses": "1",
-    "connections": "16",
-    "warmup_period": "10",
-    "run_duration": "60",
-    "interval": "10"
-    }
-
 ---
 apiVersion: v1
 kind: Pod
@@ -37,7 +17,11 @@ spec:
   ## Ensures the pod enters "completed" state after 
   ## the tpcc-workload test duration 
   restartPolicy: Never
-  
+ 
+  ## Ensures the pod is scheduled on desired node
+  nodeSelector:
+    kubernetes.io/hostname: testNode 
+ 
   containers:
   
   # Runs latest percona database container
@@ -57,7 +41,7 @@ spec:
       name: mysql-path 
   
   # Runs a sample tpc-c workload sidecar container
-  # Wait for 60s to wait for MySQL to accept connections 
+  # Wait for 90s to wait for MySQL to accept connections 
   - name: tpcc-bench
     image: openebs/tests-tpcc-client
     command: ["/bin/bash"]
@@ -71,7 +55,7 @@ spec:
   volumes:
   - name: mysql-path
     persistentVolumeClaim:
-      claimName: mysql-vol-claim
+      claimName: testClaim 
   - name: tpcc-configmap
     configMap:
       name: tpcc-config
@@ -80,7 +64,7 @@ spec:
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: mysql-vol-claim
+  name: testClaim
 spec:
   storageClassName: testClass
   accessModes:

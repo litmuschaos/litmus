@@ -18,11 +18,17 @@ spec:
         image: ksatchit/ansibletest
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
-            value: log_plays 
+            value: log_plays
+ 
           - name: PROVIDER_STORAGE_CLASS
-            value: openebs-standard 
+            value: openebs-standard
+            #value: local-storage
+
+          - name: APP_NODE_SELECTOR
+            value: kubeminion-01  
+
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./mysql/mysql_load/test.yaml -i /etc/ansible/hosts -v; exit 0"]
+        args: ["-c", "ansible-playbook ./mysql/mysql_storage_benchmark/test.yaml -i /etc/ansible/hosts -v; exit 0"]
         volumeMounts:
           - name: logs 
             mountPath: /var/log/ansible 

@@ -1,0 +1,8 @@
+---
+- hosts: kubernetes-kubemasters 
+  roles: 
+    - role: k8s-local-pv
+      template_path: "{{ playbook_dir }}/templates"
+      local_storage_class: storage_class.yaml
+      local_pv: pv.yaml 
+

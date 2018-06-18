@@ -1,0 +1,51 @@
+---
+- name: Get kubernetes master name
+  shell: hostname
+  args:
+    executable: /bin/bash
+  register: result
+
+- name: Get kubernetes master status
+  shell: source ~/.profile; kubectl get nodes | grep {{ result.stdout.lower()}} | awk '{print $2}'
+  args:
+    executable: /bin/bash
+  register: result
+  until:  result.stdout == 'Ready'
+  delay: 60
+  retries: 10 
+  ignore_errors: true  
+
+- name: 
+  debug: 
+    msg: "Ending play, K8S Master NOT READY"
+  when: result.stdout != "Ready"
+
+- name: Ending Playbook Run - K8S master is NOT READY
+  meta: end_play
+  when: result.stdout != "Ready"
+
+- name: Copy local-storage artifacts to kube-master 
+  copy: 
+    src: "{{ item }}"
+    dest: "{{ ansible_env.HOME }}"
+  with_items: 
+    - "{{ template_path }}/{{ local_storage_class }}"
+    - "{{ template_path }}/{{ local_pv }}"
+
+- name: Deploy the local-pv storageclass
+  shell: >
+    source ~/.profile; 
+    kubectl apply -f {{ ansible_env.HOME }}/{{ local_storage_class }} 
+  args:
+    executable: /bin/bash
+  register: result
+  failed_when: "'storageclass' and ('created' or 'configured') not in result.stdout"
+
+- name: Create the local persistent volume 
+  shell: >
+    source ~/.profile;
+    kubectl apply -f {{ ansible_env.HOME }}/{{ local_pv }} 
+  args: 
+   executable: /bin/bash
+  register: result
+  failed_when: "'persistentvolume' and ('created' or 'configured') not in result.stdout"

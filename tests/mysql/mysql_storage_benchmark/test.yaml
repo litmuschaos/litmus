@@ -10,38 +10,76 @@
  
   tasks:
    - block:
-       - name: Check whether maya-apiserver pod is deployed
-         shell: >
-           kubectl get pod -l name=maya-apiserver --no-headers 
-           -o custom-columns=:status.phase --all-namespaces 
-         args: 
+
+       ## VERIFY AVAILABILITY OF SELECTED STORAGE CLASS  
+
+       - name: Check whether the provider storageclass is applied
+         shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
+         args:
            executable: /bin/bash
          register: result
-         until: "result.stdout == 'Running'"
-         delay: 30
-         retries: 12
 
-       - name: Replace volume-claim name with test params 
+       ## PERFORM PROVIDER SPECIFIC CHECKS FOR PRE-REQUISITES
+
+       - block:
+           - name: OpenEBS - Check whether operator pods are running
+             shell: >
+               kubectl get pod -l name={{ item }} --no-headers 
+               -o custom-columns=:status.phase --all-namespaces 
+             args: 
+             executable: /bin/bash
+             register: result
+             until: "result.stdout == 'Running'"
+             delay: 10
+             retries: 12
+             with_items: "{{ openebs_operator }}"
+         when: "'openebs-standard' in lookup('env','PROVIDER_STORAGE_CLASS')"    
+
+       - block: 
+           - name: Local PV - Check whether the local volume is created
+             shell: > 
+               kubectl get pv {{ local_pv_name }} --no-headers 
+               -o custom-columns=:spec.local
+             args:
+               executable: /bin/bash
+             register: local_volume_path
+         when: "'local-storage' in lookup('env','PROVIDER_STORAGE_CLASS')"  
+
+       ## PRE-CONDITION THE APPLICATION DEPLOYMENT SPECS WITH TEST PARAMS 
+                  
+       - name: Replace the app node placeholder with perf-intensive node
          replace:
            path: "{{ pod_yaml_alias }}"
-           regexp: '{{ item.0 }}'
-           replace: '{{ item.1 }}'
-         with_together:
-           - "{{replace_item}}"
-           - "{{replace_with}}"
+           regexp: "testNode"
+           replace: "{{ lookup('env','APP_NODE_SELECTOR') }}"
 
-       - name: Replace the load duration with test params
-         lineinfile: 
+       - name: Replace the pvc placeholder with test param
+         replace:
            path: "{{ pod_yaml_alias }}"
-           regexp: "\"run_duration\": \"60\""
-           line: "    \"run_duration\": \"{{mysql_load_duration}}\""
-
+           regexp: "testClaim"
+           replace: "{{ test_name }}"
+          
        - name: Replace the storageclass placeholder with provider
          replace:
            path: "{{ pod_yaml_alias }}"
            regexp: "testClass"
-           #replace: "{{ provider_sc }}"
            replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+       
+       ## RUN APPLICATION WORKLOAD TEST
+
+       - name: Display TPCC parameters 
+         shell: cat tpcc.conf
+         register: result 
+
+       - name: Obtain TPCC run duration from config  
+         set_fact:
+           mysql_load_duration: "{{ (result.stdout | from_json).run_duration }}"
+
+       - name: Create config map for TPCC properties
+         shell: >
+           kubectl create configmap tpcc-config --from-file=tpcc.conf 
+           -n litmus 
+         executable: /bin/bash
 
        - name: Deploy percona mysql pod
          shell: kubectl apply -f {{ pod_yaml_alias }} -n litmus  
