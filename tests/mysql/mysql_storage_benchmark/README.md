@@ -23,6 +23,9 @@ This job runs the `ansible-runner` container which executes the aforementioned t
     - By default, the OpenEBS storage class is passed as an ENV variable to the `ansible_runner` container. Replace with SC of
 desired storage provider. However, ensure the provider is already setup on the cluster
 
+    - Update the application node selector ENV variable to schedule the app on node with desired disk resources. In case of
+local persistent volumes, ensure that the node selected also has the PV created. 
+
     - The test folder may also contain several `setup_*.yaml` config maps as necessary inputs to the test job
 
 It is rcommended that the naming conventions of the test playbooks, setup config maps & test kubernetes jobs are maintained
