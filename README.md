@@ -23,7 +23,13 @@ There are other aspects to Litmus which are discussed:
 - [litmus deep dive](docs/litmus_deep_dive.md)
 - [running test suite](docs/running_test_suite.md)
 
-# Running a specific Test
+## Demo : Minio Deployment Using OpenEBS as Persistent Storage
+
+<p align="center">
+<img width="100%" height="500" src="images/litmus.svg">
+</p>
+
+## Running a specific Test
 
 Users have a Kubernetes environment with a given stateful workload and underlying storage and would like to test a specific scenarion:
 
@@ -81,13 +87,9 @@ Feature: MySQL services are not affected due to node failures.
     And verify MySQL-client can still access data.
 ```
 
-<p align="center">
-<img width="100%" height="500" src="images/litmus.svg">
-</p>
-
 For more details on contributing, please refer to [CONTRIBUTING.md](./CONTRIBUTING.md)
 
-# Reference Projects
+## Reference Projects
 
 Litmus makes use and extends several open source projects. Below are just some of the most commonly used projects. 
 
@@ -99,7 +101,7 @@ Litmus makes use and extends several open source projects. Below are just some o
 
 For a full list, please checkout the [./tools](./tools) directory.
 
-# License
+## License
 
 Litmus is licensed under the Apache License, Version 2.0. See [LICENSE](./LICENSE) for the full license text. Some of the projects used by the Litmus project may be governed by a different license, please refer to its specific license. 
 
