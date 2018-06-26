@@ -93,13 +93,13 @@ For more details on contributing, please refer to [CONTRIBUTING.md](./CONTRIBUTI
 
 Litmus makes use and extends several open source projects. Below are just some of the most commonly used projects. 
 
-- https://github.com/DATA-DOG/godog
-- https://www.ansible.com/
-- https://github.com/linki/chaoskube
-- https://github.com/alexei-led/pumba
-- https://github.com/wercker/stern
+- [DATA-DOG/godog](https://github.com/DATA-DOG/godog)
+- [ansible](https://www.ansible.com/)
+- [linki/chaoskube](https://github.com/linki/chaoskube)
+- [alexei-led/pumba](https://github.com/alexei-led/pumba)
+- [wercker/stern](https://github.com/wercker/stern)
 
-For a full list, please checkout the [./tools](./tools) directory.
+For a full list, please checkout the [tools](./tools) directory.
 
 ## License
 
