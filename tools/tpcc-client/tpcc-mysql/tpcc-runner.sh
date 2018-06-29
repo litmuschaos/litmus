@@ -29,6 +29,22 @@ fi
 # runtime     : ${T_P[5]}
 # interval    : ${T_P[6]}
 
+echo -e "\nWaiting for mysql server to start accepting connections.."
+retries=10;wait_retry=30
+for i in `seq 1 $retries`; do 
+  mysql -h $DB_SERVER_IP -u${T_P[0]} -p${T_P[1]} -e 'status' > /dev/null 2>&1
+  rc=$?
+  [ $rc -eq 0 ] && break
+  sleep $wait_retry 
+done 
+
+if [ $rc -ne 0 ];
+then
+  echo -e "\nFailed to connect to db server after trying for $(($retries * $wait_retry))s, exiting\n"
+  exit 1
+fi
+
+
 echo -e "\nCreating database.."
 mysqladmin -h $DB_SERVER_IP create $DB_NAME --user=${T_P[0]} --password=${T_P[1]} > /dev/null 2>&1
 if [ $? -ne 0 ];
