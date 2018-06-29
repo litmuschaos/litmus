@@ -1,5 +1,3 @@
-# TODO
-# Change test container 
 ---
 apiVersion: batch/v1
 kind: Job
@@ -15,7 +13,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: ksatchit/ansibletest
+        image: openebs/ansible-runner
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
             value: log_plays

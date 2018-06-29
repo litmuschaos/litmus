@@ -45,7 +45,7 @@ spec:
   - name: tpcc-bench
     image: openebs/tests-tpcc-client
     command: ["/bin/bash"]
-    args: ["-c", "sleep 60; ./tpcc-runner.sh 127.0.0.1 tpcc.conf; exit 0"]
+    args: ["-c", "./tpcc-runner.sh 127.0.0.1 tpcc.conf; exit 0"]
     volumeMounts:
       - name: tpcc-configmap
         mountPath: /tpcc-mysql/tpcc.conf
