@@ -1,0 +1,40 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: fio
+spec:
+  template:
+    metadata:
+      name: fio
+      labels:
+        name: fio 
+    spec:
+      restartPolicy: Never
+      nodeSelector:
+        kubernetes.io/hostname: testNode
+      containers:
+      - name: perfrunner
+        image: openebs/tests-fio
+        command: ["/bin/bash"]
+        args: ["-c", "./fio_runner.sh --template file/basic-rw --size 256m --duration 60; exit 0"]
+        volumeMounts:
+           - mountPath: /datadir
+             name: fio-vol
+        tty: true
+      volumes:
+      - name: fio-vol
+        persistentVolumeClaim:
+          claimName: testClaim 
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: testClaim 
+spec:
+  storageClassName: testClass
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: "5G"

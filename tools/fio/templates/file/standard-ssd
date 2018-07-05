@@ -1,0 +1,32 @@
+# Do some important numbers on SSD drives, to gauge what kind of
+# performance you might get out of them.
+#
+# Sequential read and write speeds are tested, these are expected to be
+# high. Random reads should also be fast, random writes are where crap
+# drives are usually separated from the good drives.
+#
+# This uses a queue depth of 32 (As this is more representative of mid-heavy disk use)
+
+[global]
+bs=4k
+ioengine=libaio
+iodepth=1
+direct=1
+directory=/datadir 
+filename=ssd.test.file
+
+[seq-read]
+rw=read
+stonewall
+
+[rand-read]
+rw=randread
+stonewall
+
+[seq-write]
+rw=write
+stonewall
+
+[rand-write]
+rw=randwrite
+stonewall

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #######################################################################################################################
 # Script Name   : bench_runner.sh         									      		
@@ -8,75 +8,96 @@
 # Script Author : Karthik											      
 #######################################################################################################################
 
-TEST_TEMPLATES="Basic"
+TEST_TEMPLATE="file/basic-rw"
+TEST_DIR="datadir"
+TEST_SIZE="256m"
 TEST_DURATION=60
-TEST_DIR="datadir1"
-IS_LOCAL_DIR=1
 
 # Function definition 
 
-# Use this to update the size of the volume
-updateTemplates() {
-  echo "update templates"
-  for i in `ls templates/${TEST_TEMPLATES}/File*`; do sed -e "s|directory=/datadir1|directory=/$TEST_DIR|g" -i $i; done
-  for i in `ls templates/${TEST_TEMPLATES}/File*`; do sed -e "s|runtime=60|runtime=$TEST_DURATION|g" -i $i; done
-  for i in `ls templates/${TEST_TEMPLATES}/File*`; do cat $i; done
+function show_help(){
+    cat << EOF
+Usage :       $(basename "$0") --template
+              $(basename "$0") --size
+              $(basename "$0") --duration
+              $(basename "$0") --help
+
+-h|--help    Display this help and exit  
+--template   Select the fio template to run 
+--size	     Provide the data sample size (in MB)
+--duration   Duration (in sec) 
+
+Example: ./fio_runner.sh --template file/basic-rw --size 1024m --duration 120  
+
+EOF
 }
 
+while [[ $# -gt 0 ]]
+do 
+    case $1 in
+        -h|-\?|--help) # Display usage summary
+                       show_help
+                       exit
+                       ;;
+        
+        --template)    # Optional argument to specify fio profile 
+                       if [[ -n $2 ]]; then
+                           TEST_TEMPLATE=$2
+                           if ! ls templates/$TEST_TEMPLATE > /dev/null 2>&1; then
+                               echo "ERROR: Template specified does not exist"
+                               exit 1 
+                           fi 
+                           shift 
+                       else
+                           echo 'ERROR: "--template" requires a valid fio profile'
+                           exit 1
+                       fi
+                       ;;
 
-if [ $# -gt 0 ];
-then
-  echo "Setting the test templates as $1"
-  TEST_TEMPLATES=$1
-  if [ ! -d "templates/$TEST_TEMPLATES" ]; then
-    echo "Specified templates do not exist."
+        --size)        # Optional argument to specify data sample size 
+                       if [[ -n $2 ]]; then
+                           TEST_SIZE=$2
+                           shift
+                       else
+                           echo 'ERROR: "--size" requires a valid data sample size in MB' 
+                           exit 1 
+                       fi 
+                       ;;
+         
+        --duration)    # Optional argument to specify fio run duration 
+                       if [[ -n $2 ]]; then
+                           TEST_DURATION=$2
+                           shift
+                       else
+                           echo 'ERROR: "--duration" requires a valid time period in sec'
+                           exit 1 
+                       fi 
+                       ;; 
+ 
+         --)           # End of all options 
+                       shift 
+                       break
+                       ;;
+
+         *)            # Default case: If no options, so break out of the loop
+                       break
+    esac
+    shift
+
+done                          
+                          
+#Verify that the datadir used by the templates is mounted
+if ! df -h -P | grep -q datadir > /dev/null 2>&1; then
+    echo -e "datadir not mounted successfully, exiting \n"
     exit 1
-  fi
 fi
 
-if [ $# -gt 1 ];
-then
-  echo "Setting the duration for tests as $2"
-  TEST_DURATION=$2
-fi
-
-if [ $# -gt 2 ];
-then
-  echo "Setting the test to local directory /tmp/$3"
-  TEST_DIR="tmp/$3"
-  IS_LOCAL_DIR=2
-fi
-
-
-#Verify that the datadir1 used by the templates is mounted
-if [ 2 -ne $IS_LOCAL_DIR ]; then
-  df -h -P | grep -q datadir1
-  if [ `echo $?` -ne 0 ]; then 
-    echo -e "datadir1 not mounted successfully, exiting \n"
-    exit
-  else 
-    echo "datadir1 mounted successfully"
-  fi
-else
-  mkdir -p /$TEST_DIR
-  if [ `echo $?` -ne 0 ]; then 
-    echo -e "/$TEST_DIR could not be created, exiting \n"
-    exit
-  fi
-  rm -rf /$TEST_DIR/*
-  echo "using /$TEST_DIR for testing"
-fi
-
-updateTemplates
-
-# Start vdbench I/O iterating through each template file
+# Start fio I/O iterating through each template file
 timestamp=`date +%d%m%Y_%H%M%S`
-echo -e "Running $TEST_TEMPLATES Workloads\n" 
-
-for i in `ls templates/${TEST_TEMPLATES}/ | cut -d "/" -f 3`
+for i in `ls templates/${TEST_TEMPLATE}`
 do
- echo "######## Starting workload -- $i#######"
- fio --eta-newline=2s templates/${TEST_TEMPLATES}/$i 
- echo "######## Ended workload -- $i#######"
+   profile=$(basename $i)
+   echo -e "\nRunning $profile test with size=$TEST_SIZE, runtime=$TEST_DURATION... Wait for results !!\n"
+   fio $i --size=$TEST_SIZE --runtime=$TEST_DURATION --output-format=json
 done  
 
