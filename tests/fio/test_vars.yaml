@@ -4,14 +4,3 @@
 test_name: fio-benchmark
 pod_yaml_alias: fio.yaml
 
-## PROVIDER-SPECIFIC PARARMS
-
-# OpenEBS
-
-openebs_operator: 
-  - maya-apiserver
-  - openebs-provisioner
-
-# Local Volume 
-
-local_pv_name: local-pv  
