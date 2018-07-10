@@ -47,6 +47,6 @@ spec:
             name: kubeconfig 
         - name: logs 
           hostPath:
-            path: /mnt
-            type: Directory 
+            path: /mnt/mysql_persistence_on_pod_eviction
+            type: ""
 

@@ -57,6 +57,6 @@ spec:
             name: kubeconfig 
         - name: logs 
           hostPath:
-            path: /mnt
-            type: Directory 
+            path: /mnt/fio
+            type: "" 
 
