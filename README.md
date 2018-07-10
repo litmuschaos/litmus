@@ -43,6 +43,14 @@ cd litmus
 kubectl apply -f hack/rbac.yaml 
 ```
 
+- Create a configmap from the cluster's in-cluster-config (kubeconfig) file with the data placed in "admin.conf". 
+Typically, this file is located at ~/.kube/config or /etc/kubernetes/admin.conf etc.., depending on the type of cluster setup. 
+To perform this step, copy the kubeconfig file into "admin.conf" (if it is named differently) and execute the following command:
+
+```
+kubectl create configmap kubeconfig --from-file=<path/to/admin.conf> -n litmus 
+```
+
 - The tests are categorized based on application workloads, with different aspects/use-cases of the application 
 constituting a separate test. Select a workload and follow the instructions under the corresponding 
 `<workload>/<usecase>/README`.
