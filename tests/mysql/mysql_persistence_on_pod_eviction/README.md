@@ -7,14 +7,16 @@ reschedule operation caused by immediate eviction effected by the Kubernetes nod
 
 ### Considerations
 
-- This test simulates one type of graceful node loss (other means include cordon+drain operations) 
+- This test requires a multi-node Kubernetes cluster 
+  *Note:* The min. count depends on individual storage solution's HA policies. For example OpenEBS needs 3-node cluster
+- This test simulates one type of graceful node loss (other means include cordon+drain operations)
 - The application reschedule time is also impacted by the amount of delay between disk attach and mount attempts by Kubernetes
 
 ### Steps to Run
 
-- Apply the litmus/hack/rbac.yaml to setup the Litmus namespace, service account, clusterrole and clusterrolebinding 
-- Create a configmap with content of kubernetes config file (needs to be named "admin.conf") 
-- Run the litmus test job 
+- Apply the litmus/hack/rbac.yaml to setup the Litmus namespace, service account, clusterrole and clusterrolebinding
+- Create a configmap with content of kubernetes config file (needs to be named "admin.conf")
+- Run the litmus test job
 - View the test run & pod logs on the litmus node at /mnt
 
 
