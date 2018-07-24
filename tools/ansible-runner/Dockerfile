@@ -17,4 +17,6 @@ RUN mkdir /etc/ansible/ /ansible
 RUN echo "[local]" >> /etc/ansible/hosts && \
     echo "127.0.0.1" >> /etc/ansible/hosts
 
-ADD ./tests ./ 
+ADD ./tests ./
+
+COPY ./executor/ansible/plugins/callback/actionable.py /usr/local/lib/python2.7/dist-packages/ansible/plugins/callback/ 
