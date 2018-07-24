@@ -51,7 +51,7 @@
 - name: Force kill the application pod using pumba 
   shell: >
     kubectl exec {{ pumba_pod.stdout}} -n litmus
-    -- timeout -t 120 pumba --interval 15s kill
+    -- timeout -t 40 pumba --interval 15s kill
     --signal SIGKILL re2:k8s_{{ app_container.stdout }};
   args:
     executable: /bin/bash
