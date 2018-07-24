@@ -1,29 +1,4 @@
 ---
-
-- block: 
-    - name: Verify if node taints are present 
-      shell: >
-        kubectl describe node 
-        {{ percona_node }}
-        | grep {{ taint }}
-      args:
-        executable: /bin/bash
-      register: output 
-      ignore_errors: true 
-
-    - name: Untaint the node if taints are present
-      shell: >
-        kubectl taint node 
-        {{ percona_node }}
-        {{ taint }}:NoExecute-
-      args:
-        executable: /bin/bash
-      register: result
-      failed_when: "'untainted' not in result.stdout"
-      when: output.rc == 0 
-
-  when: percona_node is defined
-
 - name: Get pvc name to verify successful pvc deletion
   shell: >
     kubectl get pvc {{ test_name }} 

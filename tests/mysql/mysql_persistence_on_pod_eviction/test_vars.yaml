@@ -1,6 +1,0 @@
----
-## TEST-SPECIFIC PARAMS
-
-test_name: mysql-persistence
-pod_yaml_alias: mysql.yaml
-taint: "node.kubernetes.io/out-of-disk"

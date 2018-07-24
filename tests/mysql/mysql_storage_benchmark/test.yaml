@@ -120,4 +120,11 @@
            flag: "Fail"
 
      always:
+       - name: Create results file
+         lineinfile:
+           create: yes
+           state: present
+           path: '/var/log/ansible/result.json'
+           line: '{ "Testname" : {{ test_name | to_json }}, "status" : {{ flag | to_json }} }'
+
        - include: test_cleanup.yaml
