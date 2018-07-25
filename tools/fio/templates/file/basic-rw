@@ -1,8 +1,0 @@
-[global]
-directory=/datadir
-filename=basic.test.file
-
-[basic-readwrite]
-rw=readwrite
-bs=4k
-time_based=1
