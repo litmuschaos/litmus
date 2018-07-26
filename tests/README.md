@@ -9,8 +9,9 @@ Each feature or test directory will contain a run_litmus.yaml, a Kubernetes Job 
 ### Pre-Requisites
 
 - Apply the litmus/hack/rbac.yaml on the Kubernetes Master. Litmus uses a dedicated service account to execute tests.
+- Ensure that the desired storage operators are actually available on a given Kubernetes cluster.
 - Litmus uses a stern-based logger pod which needs the kubeconfig file mounted as a configmap. Kubeconfig 
-  is generally found in /etc/kubernetes/admin.conf or ~/.kube/config 
+  is generally found in /etc/kubernetes/admin.conf or ~/.kube/config
 
-  ```kubectl create configmap kubeconfig --from-file=<path-of-kube-config-file>```
+  ```kubectl create configmap kubeconfig --from-file=<path-of-kube-config-file> -n litmus```
 
