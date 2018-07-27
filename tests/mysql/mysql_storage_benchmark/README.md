@@ -33,6 +33,8 @@ as described above in order to aid batch runs of all the litmus tests by the exe
 
 ### Running the test 
 
+[Pre-Requisites](https://github.com/openebs/litmus#running-a-specific-test)
+
 The test can be run using the following command:
 
 `kubectl apply -f run_litmus_test.yaml` 

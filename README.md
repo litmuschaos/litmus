@@ -29,7 +29,7 @@ There are other aspects to Litmus which are discussed:
 <img width="100%" height="500" src="images/litmus.svg">
 </p>
 
-## Running a specific Test
+## Pre-Requisites for running a specific Test
 
 Users have a Kubernetes environment with a given stateful workload and underlying storage and would like to test a specific scenarion:
 

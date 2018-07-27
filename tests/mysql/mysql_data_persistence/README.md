@@ -18,9 +18,7 @@ different types of failures, induced via "chaos" operations. Currently, the foll
 
 ### Steps to Run
 
-- Apply the litmus/hack/rbac.yaml to setup the Litmus namespace, service account, clusterrole and clusterrolebinding
-- Create a configmap with content of kubernetes config file (needs to be named "admin.conf")
-- Run the litmus test job after specifying the desired storage class and chaos type 
+[Pre-Requisites](https://github.com/openebs/litmus#running-a-specific-test)
 - View the following test info on the litmus node at /mnt/mysql_data_persistence : 
  
   - Pod logs at "Logstash_<timestamp>_.tar
