@@ -1,0 +1,22 @@
+# Description:  Creates a Virtual Private Cloud with the name openebs-e2e, that will be specified
+# with all other clusters. Using --subnet-mode=auto will create a subnet for every zone. This file
+# is ran at the begining of e2e tests
+# Author: Harshvardhan Karn
+###############################################################################################
+#Steps:
+#1. Create a VPC, openebs-e2e in Google Cloud
+###############################################################################################
+
+---
+- hosts: localhost
+  tasks:
+       - block:
+             - name: Creating VPC 'openebs-e2e'
+               shell: gcloud compute --project=openebs-ci networks create openebs-e2e --subnet-mode=auto
+             - name: Test Passed
+               set_fact:
+                 flag: "Test Passed"
+         rescue:
+             - name: Test Failed
+               set_fact:
+                 flag: "Test Failed"
