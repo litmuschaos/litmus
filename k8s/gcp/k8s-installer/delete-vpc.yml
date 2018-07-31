@@ -8,19 +8,16 @@
 
 ---
 - hosts: localhost
-  vars_files:
-    - gcp-vars.yml
   tasks:
        - block:
-             - block:
-                 - name: Deleting VPC `openebs-e2e`
-                   shell: gcloud compute routes delete $(gcloud compute routes list --filter="name:openebs AND network:openebs-e2e"  --format="get(name)") -q || gcloud compute --project=openebs-ci networks delete openebs-e2e -q
-               rescue:
-                 - name: Only VPC
-                   shell: gcloud compute --project=openebs-ci networks delete openebs-e2e -q 
-             - name: Test Passed
-               set_fact:
-                 flag: "Test Passed"
+           - name: Deleting Routes, if exists
+             shell: gcloud compute routes delete $(gcloud compute routes list --filter="network:{{ vpc_name }}"  --format="get(name)") -q
+             ignore_errors: yes
+           - name: Deleting VPC
+             shell: gcloud compute --project={{ project }} networks delete {{ vpc_name }} -q 
+           - name: Test Passed
+             set_fact:
+               flag: "Test Passed"
          rescue:
              - name: Test Failed
                set_fact:
