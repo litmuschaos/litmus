@@ -1,0 +1,63 @@
+# delete-pre-requisite.yml
+# Description:  Deleting pre requisite will delete VPC, Subnet and Internet Gateway
+
+###############################################################################################
+#Test Steps:
+
+#1. Disassociating route table fro aws.
+#2. Delete route table from aws.
+#3. Detach internet gateway from aws.
+#4. Delete internet gateway from aws.
+#4. Deleting the subnet from aws.
+#5. Deleting the VPC Network form aws.
+#6. Deleting temporary file which store the VpcId and SubnetId
+
+###############################################################################################
+
+---
+
+- hosts: localhost
+
+  vars:
+    association_id: "{{ lookup('lines', 'grep association_id /tmp/aws/id.csv | cut -d, -f5 | cut -d: -f2') }}"
+    route_table_id: "{{ lookup('lines', 'grep route_table_id /tmp/aws/id.csv | cut -d, -f4 | cut -d: -f2') }}"
+    gateway_id: "{{ lookup('lines', 'grep gateway_id /tmp/aws/id.csv | cut -d, -f3 | cut -d: -f2') }}"
+    subnet_id: "{{ lookup('lines', 'grep subnet_id /tmp/aws/id.csv | cut -d, -f2 | cut -d: -f2') }}"
+    vpc_id: "{{ lookup('lines', 'grep vpc_id /tmp/aws/id.csv | cut -d, -f1 | cut -d: -f2') }}"
+
+  tasks:
+    - block:
+        - name: Disassociating route table
+          shell: aws ec2 disassociate-route-table --association-id {{ association_id }}
+          ignore_errors: True
+      
+        - name: Deleting route table
+          shell: aws ec2 delete-route-table --route-table-id {{ route_table_id }}
+          ignore_errors: True
+      
+        - name: Detaching internet gateway
+          shell: aws ec2 detach-internet-gateway --internet-gateway-id {{ gateway_id }} --vpc-id {{ vpc_id }}
+          ignore_errors: True
+      
+        - name: Deleting Internet gateway
+          shell: aws ec2 delete-internet-gateway --internet-gateway-id {{ gateway_id }}
+          ignore_errors: True
+      
+        - name: Deleting subnet
+          shell: aws ec2 delete-subnet --subnet-id {{ subnet_id }}
+          ignore_errors: True
+      
+        - name: Deleting VPC
+          shell: aws ec2 delete-vpc --vpc-id {{ vpc_id }}
+      
+        - name: Deleting tmporary file
+          shell: rm /tmp/aws/id.csv
+
+        - name: Test Passed
+          set_fact:
+            flag: "Test Passed"
+
+    - rescue:
+        - name: Test Failed
+          set_fact:
+            flag: "Test Failed"
