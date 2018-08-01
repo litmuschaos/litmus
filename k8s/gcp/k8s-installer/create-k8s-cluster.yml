@@ -1,0 +1,54 @@
+# Description:  Generates a random name, & creates a bucket, InstanceGroup object and Initializes 
+# VMs running Kubernetes, in accordance to the node_count specified using kops in Google Cloud 
+# Author: Harshvardhan Karn
+###############################################################################################
+#Steps:
+#1. Generate a random 6 digit string using Python script
+#2. Create a bucket with the generated random Name
+#3. Create the Clusters, InstanceGroup objects and state store in bucket
+#4. Create the k8s Cluster, using VM instances.
+#5. Log a file with the name of Cluster inside /temp/run_id/gcp_cluster
+###############################################################################################
+
+---
+- hosts: localhost
+  vars:
+    cluster_name:
+  tasks:
+       - block:
+             - name: Generating Random Cluster Name
+               shell: python ../../cluster_name/namesgenerator.py
+               register: cluster_name
+               when: not cluster_name
+             - set_fact:
+                 cluster_name: "{{ cluster_name.stdout }}"
+               when: cluster_name.stdout is defined
+      
+             - name: Creating Bucket
+               shell: gsutil mb gs://{{ cluster_name }}/
+      
+             - name: Creating the Cluster & InstanceGroup objects in our state store
+               shell: |
+                 export KOPS_FEATURE_FLAGS=AlphaAllowGCE
+                 kops create cluster {{ cluster_name }}.k8s.local --kubernetes-version {{ k8s_version }} --zones us-central1-a --state gs://{{ cluster_name }}/ --project {{ project }} --node-count {{ nodes }} --networking kubenet --image "ubuntu-os-cloud/ubuntu-1604-xenial-v20170202" --vpc {{ vpc_name }}
+      
+             - name: Creating K8s Cluster
+               shell: |
+                 export KOPS_FEATURE_FLAGS=AlphaAllowGCE
+                 kops update cluster {{ cluster_name }}.k8s.local --state gs://{{ cluster_name }}/ --yes
+      
+             - name: Logging Cluster Name inside
+               shell: mkdir -p ~/logs/ && touch ~/logs/clusters
+               
+             - lineinfile: 
+                 create: yes
+                 state: present
+                 path: '~/logs/clusters'
+                 line: '{{ cluster_name }}'
+             - name: Test Passed
+               set_fact:
+                 flag: "Test Passed"
+         rescue:
+             - name: Test Failed
+               set_fact:
+                 flag: "Test Failed"
