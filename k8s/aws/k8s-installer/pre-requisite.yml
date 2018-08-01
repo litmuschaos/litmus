@@ -1,69 +1,81 @@
-# Pre-requisite.yml
-# Description:  This will create VPC, Subnet and Internet gateway which is used in creating cluster
+# pre-requisite.yml
+# Description:  This will create VPC, Subnet, Internet-Gateway and route-table which is used in creating cluster
 
 ###############################################################################################
 #Test Steps:
 
-#1. Create VPC network in aws
-#2. Modify vpc attribute
-#3. Create subnet inside the VPC Network
-#4. Create internet gateway for accessing VPC public
-#5. Attach internet gateway with VPC Network
-#6. Create route table using VpcId
-#7. Create route using route table ID
-#8. Associate route table with subnetID and route table ID
-#9. Modify subnet attribute
-#10. Create a csv file which store all Ids
+#1. Generate random name for vpc
+#2. Create VPC network in aws
+#3. Creating subnet for database servers
+#4. creating Internet gateway
+#5. Route Internet gateway
+#6. Create a csv file for store all Ids
 ###############################################################################################
 
 ---
 - hosts: localhost
 
+  vars_files:
+    - vars.yml
+  
   vars:
-    zone: eu-west-2
+    vpc_name:
 
   tasks:
-    - block: 
-        - name: create vpc in aws
-          shell: aws ec2 create-vpc --cidr-block 10.0.0.0/16 | grep VpcId | cut -d ":" -f2 | cut -d '"' -f2
-          register: vpc_id
-     
-        - name: Modify vpc attribute
-          shell: |
-            aws ec2 modify-vpc-attribute --vpc-id {{ vpc_id.stdout }} --enable-dns-support "{\"Value\":true}"
-            aws ec2 modify-vpc-attribute --vpc-id {{ vpc_id.stdout }} --enable-dns-hostnames "{\"Value\":true}"
-      
-        - name: Creating subnet in aws
-          shell: aws ec2 create-subnet --vpc-id {{ vpc_id.stdout }} --availability-zone {{ zone }}a --cidr-block 10.0.1.0/24 | grep SubnetId |  cut -d ":" -f2 | cut -d '"' -f2
-          register: subnet_id
-      
-        - name: creating internet gateway
-          shell: aws ec2 create-internet-gateway | grep InternetGatewayId | cut -d ":" -f2 | cut -d '"' -f2
-          register: gateway_id
-      
-        - name: Attaching internet gateway to VPC
-          shell: aws ec2 attach-internet-gateway --vpc-id {{ vpc_id.stdout }} --internet-gateway-id {{ gateway_id.stdout }}
-         
-        - name: Creating route table
-          shell: aws ec2 create-route-table --vpc-id {{ vpc_id.stdout }} | grep RouteTableId | cut -d ":" -f2 | cut -d '"' -f2
-          register: route_table_id
-      
-        - name: Creating route
-          shell: aws ec2 create-route --route-table-id {{ route_table_id.stdout }} --destination-cidr-block 0.0.0.0/0 --gateway-id {{ gateway_id.stdout }}
-      
-        - name: Associating route table
-          shell: aws ec2 associate-route-table  --subnet-id {{ subnet_id.stdout }} --route-table-id {{ route_table_id.stdout }} | grep AssociationId | cut -d ":" -f2 | cut -d '"' -f2
-          register: association_id
-      
-        - name: Modifying subnet attribute
-          shell: aws ec2 modify-subnet-attribute --subnet-id {{ subnet_id.stdout }} --map-public-ip-on-launch
-      
+    - block:
+        - name: Generate VPC random name
+          command: python ../../cluster_name/namesgenerator.py
+          register: vpc_name
+          when: not vpc_name
+        - set_fact:
+            vpc_name: "{{ vpc_name.stdout }}"
+          when: vpc_name.stdout is defined 
+        
+        - name: Creation of vpc
+          ec2_vpc_net:
+            name: "{{ vpc_name }}"
+            state: present
+            cidr_block: "{{ cidr_block }}"
+            region: "{{ region }}"
+            dns_hostnames: yes
+            dns_support: yes
+          register: vpc
+
+        - name: Creating subnet for database servers
+          ec2_vpc_subnet:
+            state: present
+            vpc_id: "{{ vpc.vpc.id }}"
+            cidr: "{{ cidr_block2 }}"
+            az: "{{ available_zone }}"
+            map_public: yes
+            wait: yes
+            wait_timeout: 300
+          register: subnet
+
+        - name: creating Internet gateway
+          ec2_vpc_igw:
+            vpc_id: "{{ vpc.vpc.id }}"
+            region: "{{ region }}"
+            state: present
+          register: igw
+
+        - name: Route Internet gateway
+          ec2_vpc_route_table:
+            vpc_id: "{{ vpc.vpc.id }}"
+            region: "{{ region }}"
+            subnets:
+              - "{{ subnet.subnet.id }}"
+            routes:
+              - dest: "{{ destination_cidr }}"
+                gateway_id: "{{ igw.gateway_id  }}"
+          register: route
+          
         - name: Create a csv file for store all Ids
           lineinfile:
             create: yes
             state: present
             path: "/tmp/aws/id.csv"
-            line: 'vpc_id:{{ vpc_id.stdout }},subnet_id:{{ subnet_id.stdout }},gateway_id:{{ gateway_id.stdout }},route_table_id:{{ route_table_id.stdout }},association_id:{{ association_id.stdout }}'
+            line: 'vpc_id:{{ vpc.vpc.id }},vpc_name:{{ vpc.vpc.tags.Name }},subnet_id:{{ subnet.subnet.id }},gateway_id:{{ igw.gateway_id }},route_table_id:{{ route.route_table.id }}'
             mode: 0755
 
         - name: Test Passed
