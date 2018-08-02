@@ -32,8 +32,11 @@
                  gcloud compute disks delete a-etcd-main-{{ cluster_name }}-k8s-local --zone=us-central1-a -q
                ignore_errors: yes
 
-             - name: Removing Cluster Name Log
-               shell: rm -v ~/logs/clusters
+             - name: Removing Cluster Name entry from log
+               lineinfile:
+                 path: ~/logs/clusters
+                 state: absent
+                 regexp: '{{ cluster_name }}'
                
              - name: Test Passed
                set_fact:

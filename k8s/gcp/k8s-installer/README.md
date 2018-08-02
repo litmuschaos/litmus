@@ -43,7 +43,8 @@ ansible-playbook delete-k8s-cluster.yml
 
 > cluster_name=my-Cluster
 
-It will delete the cluster specified else it will delete the last created cluster
+It will delete the cluster specified else it will delete the last created cluster.
+If you have created **multiple** cluster, you have to specify the, existing cluster name to be deleted in extra-vars.
 
 - Run `delete-vpc` to delete the existing VPC (if required)
 ```bash
