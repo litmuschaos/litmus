@@ -1,0 +1,36 @@
+# TODO 
+# Apply openebs operator and openebs storage class
+
+- hosts: localhost
+  connection: local  
+  tasks:
+   - name: Applying openebs operator
+     shell: kubectl --kubeconfig /root/admin.conf apply -f https://raw.githubusercontent.com/openebs/openebs/v0.6/k8s/openebs-operator.yaml 
+     args:
+       executable: /bin/bash
+
+   - name: Applying openebs storageclass 
+     shell: kubectl --kubeconfig /root/admin.conf apply -f https://raw.githubusercontent.com/openebs/openebs/v0.6/k8s/openebs-storageclasses.yaml 
+     args:
+       executable: /bin/bash
+
+   - name: Checking Maya-API-Server is running
+     shell: kubectl get po --all-namespaces | grep maya-apiserver | awk '{print $4}'
+     register: maya_api
+     until: "'Running' in maya_api.stdout"
+     delay: 30
+     retries: 100
+
+   - name: Checking OpenEBS-provisioner is running
+     shell: kubectl get po --all-namespaces | grep openebs-provisioner | awk '{print $4}'
+     register: openebs_prob
+     until: "'Running' in openebs_prob.stdout"
+     delay: 30
+     retries: 100
+
+   - name: Checking OpenEBS-Snapshot-Operator is running
+     shell: kubectl get po --all-namespaces | grep openebs-snapshot-operator | awk '{print $4}'
+     register: oso
+     until: "'Running' in oso.stdout"
+     delay: 30
+     retries: 100
