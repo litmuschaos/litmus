@@ -1,0 +1,60 @@
+# Creating-aws-cluster.yml
+########################################################################################################################################################################
+#Steps:
+
+#1. Creating ssh public key
+#2. Generate Random name for cluster
+#3. Creating aws bucket for storing cluster information
+#4. Creating cluster in aws using exixting VPC
+#5. Creating a file which store cluster name
+########################################################################################################################################################################
+
+---
+- hosts: localhost
+
+  vars_files:
+    - vars.yml
+
+  vars:
+    cluster_name:
+    subnet_id: "{{ lookup('lines', 'grep subnet_id /tmp/aws/id.csv | cut -d, -f3 | cut -d: -f2') }}"
+    vpc_id: "{{ lookup('lines', 'grep vpc_id /tmp/aws/id.csv | cut -d, -f1 | cut -d: -f2') }}"
+
+  tasks:
+    - block:
+        - name: Generate ssh public key
+          shell: mkdir -p ~/.ssh && ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa -y
+
+        - name: Generate random Cluster name
+          command: python ../../cluster_name/namesgenerator.py
+          register: cluster_name
+          when: not cluster_name
+        - set_fact:
+            cluster_name: "{{ cluster_name.stdout }}"
+          when: cluster_name.stdout is defined 
+
+        - name: AWS bucket creating
+          s3_bucket:
+            name: "k8s-bucket-{{ cluster_name }}"
+            region: "{{ region }}"
+            state: present
+
+        - name: AWS Cluster creating started
+          command: kops create cluster --name k8s-{{ cluster_name }}.k8s.local --zones {{ available_zone }} --node-count {{ node_count }} --state s3://k8s-bucket-{{ cluster_name }} --vpc {{ vpc_id }} --image {{ image }} --subnets {{ subnet_id }} --master-size {{ master_size }} --node-size {{ node_size }} --kubernetes-version {{ k8s_version }} --networking {{ networking }} --yes
+
+        - name: Create a csv file for store cluster name
+          lineinfile:
+            create: yes
+            state: present
+            path: "/tmp/aws/cluster_name.csv"
+            line: 'cluster_name:{{ cluster_name }}'
+            mode: 0755
+
+        - name: Test Passed
+          set_fact:
+            flag: "Test Passed"
+    
+    - rescue:
+        - name: Test Failed
+          set_fact:
+            flag: "Test Failed"

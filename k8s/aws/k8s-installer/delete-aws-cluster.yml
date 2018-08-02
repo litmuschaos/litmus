@@ -1,0 +1,49 @@
+#Delete-aws-cluster.yml
+#Description: This will delete aws cluster, bucket, tags from subnets and cluster name file
+
+########################################################################################################################################################################
+
+#Steps:
+#1. Deleting the aws cluster
+#2. Deleting aws bucket
+#4. Deleting cluster tag from subnet
+#5. Deleting cluster name file
+########################################################################################################################################################################
+
+---
+
+- hosts: localhost
+  
+  vars_files:
+    - vars.yml
+
+  vars:
+    cluster_name: "{{ lookup('lines', 'grep cluster_name /tmp/aws/cluster_name.csv | cut -d: -f2') }}"
+
+  tasks:
+    - block:
+        - name: Deleting aws cluster
+          command: kops delete cluster --name k8s-{{ cluster_name }}.k8s.local --state=s3://k8s-bucket-{{ cluster_name }} --yes
+          ignore_errors: True
+
+        - s3_bucket:
+            name: "k8s-bucket-{{ cluster_name }}"
+            region: "{{ region }}"
+            state: absent
+            force: yes
+
+        - name: Deleting cluster name from csv file
+          lineinfile:
+            state: absent
+            path: "/tmp/aws/cluster_name.csv"
+            regexp: ""
+            mode: 0755
+
+        - name: Test Passed
+          set_fact:
+            flag: "Test Passed"
+    
+    - rescue:
+        - name: Test Failed
+          set_fact:
+            flag: "Test Failed"

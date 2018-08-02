@@ -4,3 +4,8 @@ available_zone: eu-west-2a
 cidr_block: 10.0.0.0/16
 cidr_block2: 10.0.1.0/24
 destination_cidr: 0.0.0.0/0
+image: ami-6b3fd60c
+master_size: t2.large
+node_size: t2.large
+networking: kube-router
+node_count: 3
