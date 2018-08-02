@@ -1,0 +1,82 @@
+# delete-pre-requisite.yml
+# Description:  Deleting pre-requisite will delete VPC, Subnet, Internet-Gateway and route-table
+
+###############################################################################################
+#Test Steps:
+
+#1. Deleting route table and it's route.
+#2. Deleting Internet gateway
+#3. Deleting subnet for database servers.
+#4. deletion of Virtual Private Cloud.
+#5. Deletion csv file which store all Ids.
+
+###############################################################################################
+
+---
+- hosts: localhost
+
+  vars_files:
+    - vars.yml
+
+  vars:
+    route_table_id: "{{ lookup('lines', 'grep route_table_id /tmp/aws/id.csv | cut -d, -f5 | cut -d: -f2') }}"
+    gateway_id: "{{ lookup('lines', 'grep gateway_id /tmp/aws/id.csv | cut -d, -f4 | cut -d: -f2') }}"
+    subnet_id: "{{ lookup('lines', 'grep subnet_id /tmp/aws/id.csv | cut -d, -f3 | cut -d: -f2') }}"
+    vpc_name: "{{ lookup('lines', 'grep vpc_name /tmp/aws/id.csv | cut -d, -f2 | cut -d: -f2') }}"
+    vpc_id: "{{ lookup('lines', 'grep vpc_id /tmp/aws/id.csv | cut -d, -f1 | cut -d: -f2') }}"
+
+  tasks:
+    - block: 
+        - name: Deleting Route Table and Route
+          ec2_vpc_route_table:
+            route_table_id: "{{ route_table_id }}"
+            lookup: id
+            state: absent
+            vpc_id: "{{ vpc_id }}"
+            region: "{{ region }}"
+            subnets:
+              - "{{ subnet_id }}"
+            routes:
+              - dest: "{{ destination_cidr }}"
+                gateway_id: "{{ gateway_id }}"
+            purge_routes: yes
+            purge_subnets: yes
+            purge_tags: yes
+
+        - name: Deleting Internet gateway
+          ec2_vpc_igw:
+            vpc_id: "{{ vpc_id }}"
+            region: "{{ region }}"
+            state: absent
+
+        - name: deleting subnet for database servers
+          ec2_vpc_subnet:
+            state: absent
+            vpc_id: "{{ vpc_id }}"
+            cidr: "{{ cidr_block2 }}"
+            az: "{{ available_zone }}"
+            purge_tags: yes
+
+        - name: deletion of Virtual Private Cloud
+          ec2_vpc_net:
+            name: "{{ vpc_name }}"
+            state: absent
+            cidr_block: "{{ cidr_block }}"
+            purge_cidrs: yes
+            region: "{{ region }}"
+
+        - name: delete csv file which store all Ids
+          lineinfile:
+            state: absent
+            path: "/tmp/aws/id.csv"
+            regexp: ""
+            mode: 0755
+
+        - name: Test Passed
+          set_fact:
+            flag: "Test Passed"
+    
+    - rescue:
+        - name: Test Failed
+          set_fact:
+            flag: "Test Failed"

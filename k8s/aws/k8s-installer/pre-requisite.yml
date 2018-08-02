@@ -1,0 +1,88 @@
+# pre-requisite.yml
+# Description:  This will create VPC, Subnet, Internet-Gateway and route-table which is used in creating cluster
+
+###############################################################################################
+#Test Steps:
+
+#1. Generate random name for vpc
+#2. Create VPC network in aws
+#3. Creating subnet for database servers
+#4. creating Internet gateway
+#5. Route Internet gateway
+#6. Create a csv file for store all Ids
+###############################################################################################
+
+---
+- hosts: localhost
+
+  vars_files:
+    - vars.yml
+  
+  vars:
+    vpc_name:
+
+  tasks:
+    - block:
+        - name: Generate VPC random name
+          command: python ../../cluster_name/namesgenerator.py
+          register: vpc_name
+          when: not vpc_name
+        - set_fact:
+            vpc_name: "{{ vpc_name.stdout }}"
+          when: vpc_name.stdout is defined 
+        
+        - name: Creation of vpc
+          ec2_vpc_net:
+            name: "{{ vpc_name }}"
+            state: present
+            cidr_block: "{{ cidr_block }}"
+            region: "{{ region }}"
+            dns_hostnames: yes
+            dns_support: yes
+          register: vpc
+
+        - name: Creating subnet for database servers
+          ec2_vpc_subnet:
+            state: present
+            vpc_id: "{{ vpc.vpc.id }}"
+            cidr: "{{ cidr_block2 }}"
+            az: "{{ available_zone }}"
+            map_public: yes
+            wait: yes
+            wait_timeout: 300
+          register: subnet
+
+        - name: creating Internet gateway
+          ec2_vpc_igw:
+            vpc_id: "{{ vpc.vpc.id }}"
+            region: "{{ region }}"
+            state: present
+          register: igw
+
+        - name: Route Internet gateway
+          ec2_vpc_route_table:
+            vpc_id: "{{ vpc.vpc.id }}"
+            region: "{{ region }}"
+            subnets:
+              - "{{ subnet.subnet.id }}"
+            routes:
+              - dest: "{{ destination_cidr }}"
+                gateway_id: "{{ igw.gateway_id  }}"
+          register: route
+          
+        - name: Create a csv file for store all Ids
+          lineinfile:
+            create: yes
+            state: present
+            path: "/tmp/aws/id.csv"
+            line: 'vpc_id:{{ vpc.vpc.id }},vpc_name:{{ vpc.vpc.tags.Name }},subnet_id:{{ subnet.subnet.id }},gateway_id:{{ igw.gateway_id }},route_table_id:{{ route.route_table.id }}'
+            mode: 0755
+
+        - name: Test Passed
+          set_fact:
+            flag: "Test Passed"
+    
+    - rescue:
+        - name: Test Failed
+          set_fact:
+            flag: "Test Failed"
