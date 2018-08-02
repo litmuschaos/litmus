@@ -12,7 +12,7 @@
   tasks:
        - block:
              - name: Creating VPC 'openebs-e2e'
-               shell: gcloud compute --project=openebs-ci networks create openebs-e2e --subnet-mode=auto
+               shell: gcloud compute --project={{ project }} networks create {{ vpc_name }} --subnet-mode=auto
              - name: Test Passed
                set_fact:
                  flag: "Test Passed"

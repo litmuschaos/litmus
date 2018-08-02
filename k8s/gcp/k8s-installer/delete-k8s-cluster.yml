@@ -1,0 +1,47 @@
+# Description:  Deletes the Cluster and the Bucket associated the NAME passed as the extra-var
+# in playbook, e.g. --extra-vars="NAME=<cluster-name>" 
+# Author: Harshvardhan Karn
+###############################################################################################
+# Steps:
+# 1. Delete the Cluster
+# 2. Delete the Bucket
+###############################################################################################
+---
+- hosts: localhost
+  vars:
+    cluster_name:
+  tasks:
+       - block:
+             - name: Fetching Cluster Name
+               shell: cat ~/logs/clusters
+               register: cluster_name
+               when: not cluster_name
+             - set_fact:
+                 cluster_name: "{{ cluster_name.stdout }}"
+               when: cluster_name.stdout is defined
+
+             - name: Deleting Cluster
+               shell: kops delete cluster --yes --name {{ cluster_name }}.k8s.local --state gs://{{ cluster_name }}/
+             
+             - name: Deleting Bucket
+               shell: gsutil rm -r gs://{{ cluster_name }}/
+
+             - name: Deleting SSD/Disks
+               shell: |
+                 gcloud compute disks delete a-etcd-events-{{ cluster_name }}-k8s-local --zone=us-central1-a -q
+                 gcloud compute disks delete a-etcd-main-{{ cluster_name }}-k8s-local --zone=us-central1-a -q
+               ignore_errors: yes
+
+             - name: Removing Cluster Name entry from log
+               lineinfile:
+                 path: ~/logs/clusters
+                 state: absent
+                 regexp: '{{ cluster_name }}'
+               
+             - name: Test Passed
+               set_fact:
+                 flag: "Test Passed"
+         rescue:
+             - name: Test Failed
+               set_fact:
+                 flag: "Test Failed"
