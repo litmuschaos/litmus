@@ -7,7 +7,7 @@ import sys
 def timeout_handler(x,y):
     raise Exception('timeout')
 
-def get_nodes(node_count):
+def create_api():
     while True:
         try:
             v1=client.CoreV1Api()
@@ -17,7 +17,10 @@ def get_nodes(node_count):
             if e == 'timeout':
                 sys.exit(1)                
             time.sleep(5)
+    return v1
 
+def get_nodes(node_count):
+    v1 = create_api()
     while True:
         try:
             getNodes = v1.list_node()
@@ -29,17 +32,20 @@ def get_nodes(node_count):
                 sys.exit(1)
             time.sleep(5)
 
+def get_node_status(node_count):
+    count = 0
+    nodes = get_nodes(node_count)
+    for node in nodes:
+        obj = node.status.conditions
+        for i in obj:
+            if i.type == 'Ready':
+                count = count + 1
+    return count
+
 def checkCluster(node_count):
     while True:
         try:
-            count = 0
-            nodes = get_nodes(node_count)
-            for node in nodes:
-                obj = node.status.conditions
-                for i in obj:
-                    if i.type == 'Ready':
-                        count = count + 1
-
+            count = get_node_status(node_count)
             if count == int(node_count) + 1: # +1 master node
                 break
         except Exception as e:
@@ -47,15 +53,9 @@ def checkCluster(node_count):
             if e == 'timeout':
                 sys.exit(1)
             time.sleep(5)
-
     print('Cluster is Up and Running')
-signal.signal(signal.SIGALRM, timeout_handler)
-signal.alarm(900)
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-n', '--nodes', help='Node or Size of cluster', required=True)
-    args = parser.parse_args()
+def get_kube_config():
     while True:
         try:
             config.load_kube_config()
@@ -65,9 +65,21 @@ if __name__ == '__main__':
             if e == 'timeout':
                 sys.exit(1)
             time.sleep(5)
+
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-n', '--nodes', help='Node or Size of cluster', required=True)
+    args = parser.parse_args()
+    return args.nodes
+
+signal.signal(signal.SIGALRM, timeout_handler)
+signal.alarm(900)
+if __name__ == '__main__':
+    nodes = get_args()
+    get_kube_config()
     while True:
         try:
-            checkCluster(args.nodes)
+            checkCluster(nodes)
             break
         except Exception as e:
             print "Error Occured:", e
