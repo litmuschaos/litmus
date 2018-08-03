@@ -19,8 +19,6 @@ RUN echo "[local]" >> /etc/ansible/hosts && \
 
 ADD ./tests ./
 
-RUN mkdir -p ./openebs
-
-ADD Providers/OpenEBS/Installers/Operator/0.6/ansible/openebs.yaml ./openebs/openebs.yaml
+ADD Providers/OpenEBS/Installers/Operator/0.6/ ./
 
 COPY ./executor/ansible/plugins/callback/actionable.py /usr/local/lib/python2.7/dist-packages/ansible/plugins/callback/ 

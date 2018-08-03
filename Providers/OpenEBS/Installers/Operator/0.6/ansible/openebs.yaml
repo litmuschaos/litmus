@@ -2,35 +2,72 @@
 # Apply openebs operator and openebs storage class
 
 - hosts: localhost
-  connection: local  
+  connection: local
+
+  vars_files:
+  - vars.yaml
+
   tasks:
-   - name: Applying openebs operator
-     shell: kubectl --kubeconfig /root/admin.conf apply -f https://raw.githubusercontent.com/openebs/openebs/v0.6/k8s/openebs-operator.yaml 
-     args:
-       executable: /bin/bash
+    - name: Applying openebs operator
+      shell: \{{ kubeapply }} apply -f {{ openebsOperatorLink }} 
+      args:
+        executable: /bin/bash
 
-   - name: Applying openebs storageclass 
-     shell: kubectl --kubeconfig /root/admin.conf apply -f https://raw.githubusercontent.com/openebs/openebs/v0.6/k8s/openebs-storageclasses.yaml 
-     args:
-       executable: /bin/bash
+    - name: Applying openebs storageclass 
+      shell: \{{ kubeapply }} apply -f {{ openebsStorageclassLink }} 
+      args:
+        executable: /bin/bash
 
-   - name: Checking Maya-API-Server is running
-     shell: kubectl get po --all-namespaces | grep maya-apiserver | awk '{print $4}'
-     register: maya_api
-     until: "'Running' in maya_api.stdout"
-     delay: 30
-     retries: 100
+    - block:
+          - name: Checking Maya-API-Server is running
+            shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="maya-apiserver")].status.phase}'
+            register: maya_api
+            until: "'Running' in maya_api.stdout"
+            delay: 30
+            retries: 100
 
-   - name: Checking OpenEBS-provisioner is running
-     shell: kubectl get po --all-namespaces | grep openebs-provisioner | awk '{print $4}'
-     register: openebs_prob
-     until: "'Running' in openebs_prob.stdout"
-     delay: 30
-     retries: 100
+          - name: Checking OpenEBS-provisioner is running
+            shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="openebs-provisioner")].status.phase}'
+            register: openebs_prob
+            until: "'Running' in openebs_prob.stdout"
+            delay: 30
+            retries: 100
 
-   - name: Checking OpenEBS-Snapshot-Operator is running
-     shell: kubectl get po --all-namespaces | grep openebs-snapshot-operator | awk '{print $4}'
-     register: oso
-     until: "'Running' in oso.stdout"
-     delay: 30
-     retries: 100
+          - name: Get maya-apiserver pod name
+            shell: kubectl get pods -n {{ namespace }} --selector=name=maya-apiserver
+            args:
+              executable: /bin/bash
+            register: result_name
+
+          - name: Create fact for pod name
+            set_fact: 
+              pod_name: "{{ result_name.stdout_lines[1].split()[0] }}"
+
+          - name: Checking OpenEBS-Snapshot-Operator is running
+            shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="openebs-snapshot-operator")].status.phase}'
+            register: oso
+            until: "'Running' in oso.stdout"
+            delay: 30
+            retries: 100
+
+          - name: Confirm that maya-cli is available in the maya-apiserver pod
+            shell: kubectl exec {{pod_name}} -c maya-apiserver -n {{ namespace }} -- mayactl version
+            args:
+              executable: /bin/bash
+            register: result_vers
+            failed_when: "'m-apiserver status:  running' not in result_vers.stdout"
+
+          - name: Confirm that openebs storage classes are created
+            shell: kubectl get sc
+            args:
+              executable: /bin/bash
+            register: result_sc
+            until: "'openebs.io/provisioner-iscsi' in result_sc.stdout"
+            delay: 30 
+            retries: 100
+          
+          - set_fact:
+              flag: "Pass"
+      rescue: 
+        - set_fact: 
+            flag: "Fail"
