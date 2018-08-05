@@ -1,0 +1,14 @@
+---
+- hosts: localhost
+  connection: local
+
+  tasks:
+    - name: Deploying percona
+      shell: kubectl apply -f https://raw.githubusercontent.com/openebs/openebs/master/k8s/demo/percona/percona-openebs-deployment.yaml
+
+    - name: Checking percona is in running state
+      shell: kubectl get po --all-namespaces | grep percona | awk '{print $4}'
+      register: result
+      until: "'Running' in result.stdout"
+      delay: 100
+      retries: 100
