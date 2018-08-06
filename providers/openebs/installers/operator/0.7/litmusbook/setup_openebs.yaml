@@ -1,0 +1,36 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: litmus-openebs
+  namespace: litmus 
+spec:
+  template:
+    metadata:
+      name: litmus
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: openebs/ansible-runner:ci
+        imagePullPolicy: IfNotPresent
+        env: 
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: actionable
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./0.7/ansible/openebs.yaml -i /etc/ansible/hosts -v; exit 0"]
+        volumeMounts:
+          - name: kubeconfig 
+            mountPath: /root/admin.conf
+            subPath: admin.conf
+          - name: logs
+            mountPath: /var/log/ansible 
+      volumes: 
+        - name: kubeconfig
+          configMap: 
+            name: kubeconfig 
+        - name: logs 
+          hostPath:
+            path: /mnt/openebs
+            type: ""
