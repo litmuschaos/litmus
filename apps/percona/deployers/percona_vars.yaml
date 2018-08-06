@@ -1,0 +1,4 @@
+# Test-specific parametres
+
+percona_deployment: percona.yaml
+PROVIDER_STORAGE_CLASS: openebs-standard

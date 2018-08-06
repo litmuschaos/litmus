@@ -21,6 +21,10 @@ spec:
           - name: ANSIBLE_STDOUT_CALLBACK
             #value: log_plays
             value: actionable
+
+          - name: PROVIDER_STORAGE_CLASS
+            # Supported values: openebs-standard, local-storage
+            value: openebs-standard
  
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./percona/percona-installer.yaml -i /etc/ansible/hosts -v; exit 0"]

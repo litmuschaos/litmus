@@ -2,13 +2,28 @@
 - hosts: localhost
   connection: local
 
+  vars_files:
+    - percona_vars.yaml
+
   tasks:
+    - name: Check whether the provider storageclass is applied
+      shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
+      args:
+        executable: /bin/bash
+      register: result
+
+    - name: Replace the storageclass placeholder with provider
+      replace:
+        path: "{{ percona_deployment }}"
+        regexp: "testclaim"
+        replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+
     - name: Deploying percona
-      shell: kubectl apply -f https://raw.githubusercontent.com/openebs/openebs/master/k8s/demo/percona/percona-openebs-deployment.yaml
+      shell: kubectl apply -f {{ percona_deployment }}
 
     - name: Checking percona is in running state
       shell: kubectl get po --all-namespaces | grep percona | awk '{print $4}'
       register: result
       until: "'Running' in result.stdout"
-      delay: 100
+      delay: 10
       retries: 100
