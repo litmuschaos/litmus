@@ -47,7 +47,7 @@
                  line: '{{ cluster_name }}'
 
              - name: Checking Cluster availability
-               shell: python ../../utils/health/cluster_health_check.py -n {{ nodes }}
+               shell: python ../../utils/health/cluster_health_check.py -n {{ nodes | int + 1 }}
              - name: Test Passed
                set_fact:
                  flag: "Test Passed"
