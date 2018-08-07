@@ -14,7 +14,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: ranjnshashank855/percona-installer
+        image: openebs/percona-installer:ci
         imagePullPolicy: Always
 
         env: 
@@ -25,6 +25,9 @@ spec:
           - name: PROVIDER_STORAGE_CLASS
             # Supported values: openebs-standard, local-storage
             value: openebs-standard
+
+          - name: PROVIDER_PVC
+            value: openebs-percona
  
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./percona/percona-installer.yaml -i /etc/ansible/hosts -v; exit 0"]

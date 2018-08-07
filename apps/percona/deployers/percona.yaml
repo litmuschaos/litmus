@@ -37,14 +37,14 @@ spec:
       volumes:
         - name: data-vol
           persistentVolumeClaim:
-            claimName: openebs-percona 
+            claimName: testclaim
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: openebs-percona
+  name: testclaim
 spec:
-  storageClassName: openebs-percona
+  storageClassName: testclass
   accessModes:
     - ReadWriteOnce
   resources:
