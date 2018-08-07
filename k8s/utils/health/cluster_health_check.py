@@ -24,7 +24,7 @@ def get_nodes(node_count):
     while True:
         try:
             getNodes = v1.list_node()
-            if len(getNodes.items) == int(node_count) + 1:
+            if len(getNodes.items) == int(node_count):
                 return getNodes.items
         except Exception as e:
             print "error occured while getting nodes:", e
@@ -46,7 +46,7 @@ def checkCluster(node_count):
     while True:
         try:
             count = get_node_status(node_count)
-            if count == int(node_count) + 1: # +1 master node
+            if count == int(node_count):
                 break
         except Exception as e:
             print 'error occured while itirating over status object:', e
@@ -68,6 +68,7 @@ def get_kube_config():
 
 def get_args():
     parser = argparse.ArgumentParser()
+    # Pass total node count including master node in the cluster iusing flag -n or --nodes
     parser.add_argument('-n', '--nodes', help='Node or Size of cluster', required=True)
     args = parser.parse_args()
     return args.nodes
