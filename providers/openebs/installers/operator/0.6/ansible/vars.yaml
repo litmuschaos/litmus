@@ -3,4 +3,5 @@
 kubeapply: kubectl --kubeconfig /root/admin.conf
 namespace: openebs
 openebsOperatorLink: https://raw.githubusercontent.com/openebs/openebs/v0.6/k8s/openebs-operator.yaml
-openebsStorageclassLink: https://raw.githubusercontent.com/openebs/openebs/v0.6/k8s/openebs-storageclasses.yaml
+openebsStorageClassLink: sc.yaml
+openebsStoragePoolLink: sp.yaml

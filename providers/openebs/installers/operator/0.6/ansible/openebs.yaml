@@ -8,17 +8,28 @@
   - vars.yaml
 
   tasks:
-    - name: Applying openebs operator
-      shell: \{{ kubeapply }} apply -f {{ openebsOperatorLink }} 
-      args:
-        executable: /bin/bash
-
-    - name: Applying openebs storageclass 
-      shell: \{{ kubeapply }} apply -f {{ openebsStorageclassLink }} 
-      args:
-        executable: /bin/bash
-
     - block:
+          - name: Add path to openebs storage pool
+            replace:
+              dest: sp.yaml
+              regexp: '/mnt/openebs'
+              replace: "{{ lookup('env','mountPath') }}"           
+
+          - name: Applying openebs operator
+            shell: \{{ kubeapply }} apply -f {{ openebsOperatorLink }} 
+            args:
+              executable: /bin/bash
+
+          - name: Applying openebs storagepool 
+            shell: \{{ kubeapply }} apply -f {{ openebsStoragePoolLink }} 
+            args:
+              executable: /bin/bash
+
+          - name: Applying openebs storageclass 
+            shell: \{{ kubeapply }} apply -f {{ openebsStorageClassLink }} 
+            args:
+              executable: /bin/bash
+    
           - name: Checking Maya-API-Server is running
             shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="maya-apiserver")].status.phase}'
             register: maya_api
@@ -57,12 +68,21 @@
             register: result_vers
             failed_when: "'m-apiserver status:  running' not in result_vers.stdout"
 
+          - name: Confirm that openebs storage pools are created
+            shell: kubectl get sp
+            args:
+              executable: /bin/bash
+            register: result_sp
+            until: "'openebs-mntdir' in result_sp.stdout"
+            delay: 30 
+            retries: 100
+
           - name: Confirm that openebs storage classes are created
             shell: kubectl get sc
             args:
               executable: /bin/bash
             register: result_sc
-            until: "'openebs.io/provisioner-iscsi' in result_sc.stdout"
+            until: "'openebs-storageclass' in result_sc.stdout"
             delay: 30 
             retries: 100
           
