@@ -6,30 +6,39 @@
     - percona_vars.yaml
 
   tasks:
-    - name: Check whether the provider storageclass is applied
-      shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
-      args:
-        executable: /bin/bash
-      register: result
+    - block:
+        - name: Check whether the provider storageclass is applied
+          shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
+          args:
+            executable: /bin/bash
+          register: result
 
-    - name: Replace the pvc placeholder with provider
-      replace:
-        path: "{{ percona_deployment }}"
-        regexp: "testclaim"
-        replace: "{{ lookup('env','PROVIDER_PVC') }}"
+        - name: Replace the pvc placeholder with provider
+          replace:
+            path: "{{ percona_deployment }}"
+            regexp: "testclaim"
+            replace: "{{ lookup('env','PROVIDER_PVC') }}"
 
-    - name: Replace the storageclass placeholder with provider
-      replace:
-        path: "{{ percona_deployment }}"
-        regexp: "testclass"
-        replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+        - name: Replace the storageclass placeholder with provider
+          replace:
+            path: "{{ percona_deployment }}"
+            regexp: "testclass"
+            replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
 
-    - name: Deploying percona
-      shell: kubectl apply -f {{ percona_deployment }}
+        - name: Deploying percona
+          shell: kubectl create ns {{ namespace }} && kubectl apply -f {{ percona_deployment }} -n {{ namespace }}
 
-    - name: Checking percona is in running state
-      shell: kubectl get pods -o jsonpath='{.items[?(@.metadata.labels.name=="percona")].status.phase}'
-      register: result
-      until: "'Running' in result.stdout"
-      delay: 10
-      retries: 100
+        - name: Checking percona is in running state
+          shell: kubectl get pods --all-namespaces -o jsonpath='{.items[?(@.metadata.labels.name=="percona")].status.phase}'
+          register: result
+          until: "'Running' in result.stdout"
+          delay: 10
+          retries: 100
+
+        - set_fact:
+           flag: "Pass"
+
+    - rescue:
+        - set_fact:
+          flag: "Fail"
+          
