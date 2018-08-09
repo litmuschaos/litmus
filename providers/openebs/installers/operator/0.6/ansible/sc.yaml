@@ -5,7 +5,7 @@ metadata:
    name: openebs-storageclass
 provisioner: openebs.io/provisioner-iscsi
 parameters:
-  openebs.io/storage-pool: "sp-mntdir"
+  openebs.io/storage-pool: "openebs-mntdir"
   openebs.io/jiva-replica-count: "3"
   openebs.io/volume-monitor: "true"
   openebs.io/capacity: 5G
