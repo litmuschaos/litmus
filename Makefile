@@ -71,7 +71,7 @@ metalint:
 	@echo "------------------"
 	@echo "--> Running metalinter"
 	@echo "------------------"
-	@gometalinter $(PACKAGES)
+	@gometalinter $(PACKAGES) --exclude=gosec 
 
 .PHONY: compile
 compile:
