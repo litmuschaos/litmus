@@ -23,10 +23,19 @@ spec:
             #value: local-storage
 
           - name: APP_NODE_SELECTOR
-            value: kubeminion-01  
+            value: kubeminion-01 
 
+          - name: FIO_TEST_PROFILE
+            value: standard-ssd
+
+          - name: FIO_SAMPLE_SIZE
+            value: "128m"
+ 
+          - name: FIO_TESTRUN_PERIOD
+            value: "60"
+ 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./mysql/mysql_storage_benchmark/test.yaml -i /etc/ansible/hosts -v; exit 0"]
+        args: ["-c", "ansible-playbook ./fio/tests/test.yaml -i /etc/ansible/hosts -v; exit 0"]
         volumeMounts:
           - name: logs 
             mountPath: /var/log/ansible 
@@ -34,7 +43,7 @@ spec:
       - name: logger
         image: openebs/logger
         command: ["/bin/bash"]
-        args: ["-c", "./logger.sh -d 10 -r maya,openebs,pvc,percona; exit 0"] 
+        args: ["-c", "./logger.sh -d 10 -r maya,openebs,pvc,fio; exit 0"] 
         volumeMounts:
           - name: kubeconfig 
             mountPath: /root/admin.conf
@@ -48,6 +57,6 @@ spec:
             name: kubeconfig 
         - name: logs 
           hostPath:
-            path: /mnt/mysql_storage_benchmark
-            type: ""
+            path: /mnt/fio
+            type: "" 
 

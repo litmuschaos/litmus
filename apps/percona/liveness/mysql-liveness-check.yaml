@@ -1,0 +1,57 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mysql-liveness-check
+  labels:
+    name: mysql-liveness-check
+spec:
+
+  restartPolicy: Never
+
+  #affinity:
+  #  podAffinity: # (/podAntiAffinity)
+  #    requiredDuringSchedulingIgnoredDuringExecution:
+  #    - labelSelector:
+  #        matchExpressions:
+  #        - key: name
+  #          operator: In
+  #          values: 
+  #          - litmus # (/percona) 
+  #      topologyKey: kubernetes.io/hostname
+
+  containers:
+  - name: mysql-liveness-check
+    image: openebs/tests-mysql-client
+    env:
+        # Time period (in sec) b/w retries for DB init check
+      - name: INIT_WAIT_DELAY
+        value: "30"
+
+        # No of retries for DB init check 
+      - name: INIT_RETRY_COUNT
+        value: "10"
+
+        # Time period (in sec) b/w liveness checks
+      - name: LIVENESS_PERIOD_SECONDS
+        value: "10"
+
+        # Time period (in sec) b/w retries for db_connect failure
+      - name: LIVENESS_TIMEOUT_SECONDS
+        value: "10"
+
+        # No of retries after a db_connect failure before declaring liveness fail
+      - name: LIVENESS_RETRY_COUNT
+        value: "6"
+
+    command: ["/bin/bash"]
+    args: ["-c", "bash mysql-liveness-check.sh db-cred.cnf ; exit 0"]
+    tty: true 
+    volumeMounts:
+      - mountPath: /db-cred.cnf
+        subPath: db-cred.cnf
+        name: db-cred
+  volumes:
+    - name: db-cred
+      configMap:
+        name: db-cred  
