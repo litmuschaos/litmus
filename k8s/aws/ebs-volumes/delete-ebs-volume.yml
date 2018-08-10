@@ -1,0 +1,55 @@
+---
+- hosts: localhost
+  
+  vars_files:
+    - vars.yml
+
+  vars:
+    cluster_name: "{{ cluster_name }}"
+  
+  tasks:
+    - block:
+        - name: Gather fact about instances in AWS
+          ec2_instance_facts:
+            filters:
+              availability-zone: "{{ zone }}"
+              "tag:Name": "{{ cluster_name }}"
+          register: result
+
+        - name: Unmounting EBS Volume from Nodes 
+          shell: umount {{ device_name }}
+          become: true
+          delegate_to: "ubuntu@{{ item.public_ip_address }}"
+          with_items: "{{ result.instances }}"
+          ignore_errors: True
+
+        - name: Detaching EBS Volume
+          ec2_vol:
+            id: "{{ item }}"
+            instance: None
+            region: "{{ region }}"
+          with_lines: cat /tmp/aws/volume-id
+
+        - name: Deleting EBS volume in AWS
+          ec2_vol:
+            id: "{{ item }}"
+            state: absent
+            region: "{{ region }}"
+          with_lines: cat /tmp/aws/volume-id
+
+        - name: Delete csv file which store all Ids
+          lineinfile:
+            create: yes
+            state: absent
+            path: "/tmp/aws/volume-id"
+            regexp: ""
+            mode: 0755
+
+        - name: Test Passed
+          set_fact:
+            flag: "Test Passed"
+
+    - rescue:
+        - name: Test Failed
+          set_fact:
+            flag: "Test Failed"

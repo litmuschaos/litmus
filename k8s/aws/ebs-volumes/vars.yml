@@ -1,0 +1,7 @@
+---
+zone: eu-west-2a
+region: eu-west-2
+volume_size: 50
+volume_type: gp2
+device_name: /dev/xvdb
+mount_path: /mnt/openebs

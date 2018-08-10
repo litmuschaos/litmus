@@ -1,0 +1,61 @@
+---
+- hosts: localhost
+
+  vars_files:
+    - vars.yml
+
+  vars:
+    cluster_name: "{{ cluster_name }}"
+
+  tasks:
+    - block:
+        - name: Gather fact about instances in AWS
+          ec2_instance_facts:
+            filters:
+              availability-zone: "{{ zone }}"
+              "tag:Name": "{{ cluster_name }}"
+          register: result
+
+        - name: Creating and attaching EBS Volume in AWS
+          ec2_vol:
+            instance: "{{item.instance_id}}"
+            device_name: "{{ device_name }}"
+            region: "{{ region }}"
+            state: present
+            volume_size: "{{ volume_size }}"
+            volume_type: "{{ volume_type }}"
+            zone: "{{ zone }}"
+          register: volumes
+          with_items: "{{result.instances}}"
+
+        - name: Creating mount directory in Nodes
+          file:
+            path: "{{ mount_path }}"
+            state: directory
+          become: true
+          delegate_to: "ubuntu@{{ item.public_ip_address }}"
+          with_items: "{{ result.instances }}"
+
+        - name: Mounting EBS Volume to Nodes 
+          shell: mkfs.ext4 {{ device_name }}; mount -o sync {{ device_name }} {{ mount_path }}
+          become: true
+          delegate_to: "ubuntu@{{ item.public_ip_address }}"
+          with_items: "{{ result.instances }}"
+
+        - name: Create a csv file for store all Ids
+          lineinfile:
+            create: yes
+            state: present
+            path: "/tmp/aws/volume-id"
+            line: '{{ item.volume_id }}'
+            mode: 0755
+          with_items: "{{volumes.results}}"
+
+        - name: Test Passed
+          set_fact:
+            flag: "Test Passed"
+
+    - rescue:
+        - name: Test Failed
+          set_fact:
+            flag: "Test Failed"
