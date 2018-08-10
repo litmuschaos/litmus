@@ -22,3 +22,5 @@ ADD ./tests ./
 ADD providers/openebs/installers/operator/ ./
 
 COPY ./executor/ansible/plugins/callback/actionable.py /usr/local/lib/python2.7/dist-packages/ansible/plugins/callback/ 
+
+COPY ./hack/litmus-result.yaml ./
