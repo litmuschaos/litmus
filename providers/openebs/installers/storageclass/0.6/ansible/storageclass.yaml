@@ -1,0 +1,68 @@
+# TODO 
+# Apply openebs operator and openebs storage class
+
+- hosts: localhost
+  connection: local
+
+  vars_files:
+  - vars.yaml
+
+  tasks:
+    - block:
+          - name: Updating storage pool name
+            replace:
+              path: "sp.yaml"
+              regexp: "name: openebs-mntdir"
+              replace: "name: {{ lookup('env','STORAGE_POOL_NAME') }}"
+            when: lookup('env','STORAGE_POOL_NAME') | length > 0
+
+          - name: Updating pool path
+            replace:
+              path: "sp.yaml"
+              regexp: "path: \"/var/openebs\""
+              replace: "path: {{ lookup('env','STORAGE_PATH') }}"
+            when: lookup('env','STORAGE_PATH') | length > 0
+
+          - name: Updating pool name in storage class
+            replace:
+              path: "sc.yaml"
+              regexp: "openebs-mntdir"
+              replace: "{{ lookup('env','STORAGE_POOL_NAME') }}"
+            when: lookup('env','STORAGE_POOL_NAME') | length > 0
+
+          - name: Updating storage class name
+            replace:
+              path: "sc.yaml"
+              regexp: "name: openebs-storageclass"
+              replace: "name: {{ lookup('env','STORAGECLASS_NAME') }}"
+            when: lookup('env','STORAGECLASS_NAME') | length > 0
+
+          - name: Updating jiva replica count
+            replace:
+              path: "sc.yaml"
+              regexp: "openebs.io/jiva-replica-count: \"3\""
+              replace: "openebs.io/jiva-replica-count: \"{{ lookup('env','JIVA_REPLICA_COUNT') }}\""
+            when: lookup('env','JIVA_REPLICA_COUNT') | length > 0
+
+          - name: Updating jiva replica count
+            replace:
+              path: "sc.yaml"
+              regexp: "openebs.io/capacity: 5G"
+              replace: "openebs.io/capacity: {{ lookup('env','CAPACITY') }}"
+            when: lookup('env','CAPACITY') | length > 0
+
+          - name: Applying storage pool
+            shell: "{{ kubeapply }} apply -f {{ storage_pool }}" 
+            args:
+              executable: /bin/bash
+              
+          - name: Applying storage class
+            shell: "{{ kubeapply }} apply -f {{ storage_class }}" 
+            args:
+              executable: /bin/bash
+
+          - set_fact:
+              flag: "Pass"
+      rescue: 
+        - set_fact: 
+            flag: "Fail"

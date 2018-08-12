@@ -1,0 +1,5 @@
+---
+kubeapply: kubectl --kubeconfig /root/admin.conf
+namespace: openebs
+storage_pool: sp.yaml
+storage_class: sc.yaml
