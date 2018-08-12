@@ -21,7 +21,7 @@ spec:
           - name: ANSIBLE_STDOUT_CALLBACK
             value: actionable
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./0.6/ansible/openebs.yaml -i /etc/ansible/hosts -v; exit 0"]
+        args: ["-c", "ansible-playbook ./operator/0.6/ansible/openebs.yaml -i /etc/ansible/hosts -vvv; exit 0"]
         volumeMounts:
           - name: kubeconfig 
             mountPath: /root/admin.conf
