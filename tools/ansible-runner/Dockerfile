@@ -1,4 +1,5 @@
 FROM ubuntu
+
 LABEL maintainer="OpenEBS"
 
 RUN rm -rf /var/lib/apt/lists/* && apt-get clean && \
@@ -17,9 +18,7 @@ RUN mkdir /etc/ansible/ /ansible
 RUN echo "[local]" >> /etc/ansible/hosts && \
     echo "127.0.0.1" >> /etc/ansible/hosts
 
-ADD ./tests ./
-
-ADD providers/openebs/installers/operator/ ./
+ADD providers/openebs/installers/ ./
 
 COPY ./executor/ansible/plugins/callback/actionable.py /usr/local/lib/python2.7/dist-packages/ansible/plugins/callback/ 
 
