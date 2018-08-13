@@ -9,24 +9,43 @@
 
   tasks:
     - block:
-          - name: Add path to openebs storage pool
+
+          - name: Downloading openebs-operator.yaml
+            get_url:
+              url: "{{ openebs_operator_link }}"
+              dest: "{{ playbook_dir }}/openebs-operator.yaml"
+
+
+          - name: Updating maya api server image
             replace:
-              dest: sp.yaml
-              regexp: '/mnt/openebs'
-              replace: "{{ lookup('env','mountPath') }}"           
+              path: "openebs-operator.yaml"
+              regexp: "image: openebs/m-apiserver.*"
+              replace: "image: {{ lookup('env','MAYA_APISERVER_IMAGE') }}"
+            when: lookup('env','MAYA_APISERVER_IMAGE') | length > 0
+
+          - name: Updating openebs provisioner image
+            replace:
+              path: "openebs-operator.yaml"
+              regexp: "image: openebs/openebs-k8s-provisioner.*"
+              replace: "image: {{ lookup('env','OPENEBS_PROVISIONER_IMAGE') }}"
+            when: lookup('env','OPENEBS_PROVISIONER_IMAGE') | length > 0
+
+          - name: Updating openebs snapshot controller image
+            replace:
+              path: "openebs-operator.yaml"
+              regexp: "image: openebs/snapshot-controller.*"
+              replace: "image: {{ lookup('env','OPENEBS_SNAPSHOT_CONTROLLER_IMAGE') }}"
+            when: lookup('env','OPENEBS_SNAPSHOT_CONTROLLER_IMAGE') | length > 0
+
+          - name: Updating openebs snapshot provisioner image
+            replace:
+              path: "openebs-operator.yaml"
+              regexp: "image: openebs/snapshot-provisioner.*"
+              replace: "image: {{ lookup('env','OPENEBS_SNAPSHOT_PROVISIONER_IMAGE') }}"
+            when: lookup('env','OPENEBS_SNAPSHOT_PROVISIONER_IMAGE') | length > 0
 
           - name: Applying openebs operator
-            shell: \{{ kubeapply }} apply -f {{ openebsOperatorLink }} 
-            args:
-              executable: /bin/bash
-
-          - name: Applying openebs storagepool 
-            shell: \{{ kubeapply }} apply -f {{ openebsStoragePoolLink }} 
-            args:
-              executable: /bin/bash
-
-          - name: Applying openebs storageclass 
-            shell: \{{ kubeapply }} apply -f {{ openebsStorageClassLink }} 
+            shell: "{{ kubeapply }} apply -f {{ openebs_operator }}" 
             args:
               executable: /bin/bash
     
@@ -67,24 +86,6 @@
               executable: /bin/bash
             register: result_vers
             failed_when: "'m-apiserver status:  running' not in result_vers.stdout"
-
-          - name: Confirm that openebs storage pools are created
-            shell: kubectl get sp
-            args:
-              executable: /bin/bash
-            register: result_sp
-            until: "'openebs-mntdir' in result_sp.stdout"
-            delay: 30 
-            retries: 100
-
-          - name: Confirm that openebs storage classes are created
-            shell: kubectl get sc
-            args:
-              executable: /bin/bash
-            register: result_sc
-            until: "'openebs-storageclass' in result_sc.stdout"
-            delay: 30 
-            retries: 100
           
           - set_fact:
               flag: "Pass"
