@@ -1,0 +1,54 @@
+# TODO 
+# Delete storage pool and storage class
+
+- hosts: localhost
+  connection: local
+
+  vars_files:
+  - vars.yaml
+
+  tasks:
+    - block:
+          - template:
+              src: sp.j2
+              dest: "{{ storage_pool }}"
+
+          - template:
+              src: sc.j2
+              dest: "{{ storage_class }}"
+
+          - name: Deleting storage pool
+            shell: "{{ kubeapply }} delete -f {{ storage_pool }}"
+            args:
+              executable: /bin/bash
+            ignore_errors: True
+              
+          - name: Deleting storage class
+            shell: "{{ kubeapply }} delete -f {{ storage_class }}"
+            args:
+              executable: /bin/bash
+            ignore_errors: True
+
+          - name: Confirm that openebs storage pools are deleted
+            shell: kubectl get storagepool
+            args:
+              executable: /bin/bash
+            register: result_sp
+            until: "'{{ lookup('env','STORAGE_POOL_NAME') }}' not in result_sp.stdout"
+            delay: 30
+            retries: 100
+
+          - name: Confirm that openebs storage classes are deleted
+            shell: kubectl get storageclass
+            args:
+              executable: /bin/bash
+            register: result_sc
+            until: "'{{ lookup('env','STORAGECLASS_NAME') }}' not in result_sc.stdout"
+            delay: 30
+            retries: 100
+
+          - set_fact:
+              flag: "Pass"
+      rescue: 
+        - set_fact: 
+            flag: "Fail"

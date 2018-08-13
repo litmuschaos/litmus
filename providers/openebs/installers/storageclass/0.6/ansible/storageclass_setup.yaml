@@ -1,0 +1,54 @@
+# TODO 
+# Apply storage pool and storage class
+
+- hosts: localhost
+  connection: local
+
+  vars_files:
+  - vars.yaml
+
+  tasks:
+    - block:
+          - template:
+              src: sp.j2
+              dest: "{{ storage_pool }}"
+
+          - template:
+              src: sc.j2
+              dest: "{{ storage_class }}"
+
+          - name: Applying storage pool
+            shell: "{{ kubeapply }} apply -f {{ storage_pool }}" 
+            args:
+              executable: /bin/bash
+            ignore_errors: True
+              
+          - name: Applying storage class
+            shell: "{{ kubeapply }} apply -f {{ storage_class }}" 
+            args:
+              executable: /bin/bash
+            ignore_errors: True
+
+          - name: Confirm that openebs storage pools are created
+            shell: kubectl get storagepool
+            args:
+              executable: /bin/bash
+            register: result_sp
+            until: "'{{ lookup('env','STORAGE_POOL_NAME') }}' in result_sp.stdout"
+            delay: 30
+            retries: 100
+
+          - name: Confirm that openebs storage classes are created
+            shell: kubectl get storageclass
+            args:
+              executable: /bin/bash
+            register: result_sc
+            until: "'{{ lookup('env','STORAGECLASS_NAME') }}' in result_sc.stdout"
+            delay: 30
+            retries: 100
+
+          - set_fact:
+              flag: "Pass"
+      rescue: 
+        - set_fact: 
+            flag: "Fail"

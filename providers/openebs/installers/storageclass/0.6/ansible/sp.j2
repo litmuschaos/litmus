@@ -1,0 +1,8 @@
+---
+apiVersion: openebs.io/v1alpha1
+kind: StoragePool
+metadata:
+    name: {{ lookup('env','STORAGE_POOL_NAME') }}
+    type: hostdir
+spec:
+    path: "{{ lookup('env','STORAGE_PATH') }}"
