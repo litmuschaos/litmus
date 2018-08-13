@@ -14,7 +14,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: openebs/percona-installer:ci
+        image: ranjnshashank855/percona-installer:v4
         imagePullPolicy: Always
 
         env: 

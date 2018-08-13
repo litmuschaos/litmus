@@ -19,9 +19,9 @@ RUN echo "[local]" >> /etc/ansible/hosts && \
 
 #ADD ./tests ./
 
-ADD percona-installer.yaml/ ./
-ADD percona_vars.yaml/ ./
-ADD percona.yaml/ ./
+ADD percona-installer.yaml/ ./percona/
+ADD percona_vars.yaml/ ./percona/
+ADD percona.yaml/ ./percona/
 
 COPY actionable.py /usr/local/lib/python2.7/dist-packages/ansible/plugins/callback/ 
 
