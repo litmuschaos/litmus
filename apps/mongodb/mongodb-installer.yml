@@ -3,7 +3,7 @@
   connection: local
 
   vars_files:
-    - percona_vars.yaml
+    - mongodb_vars.yml
 
   tasks:
     - block:
@@ -15,13 +15,13 @@
 
         - name: Replace the pvc placeholder with provider
           replace:
-            path: "{{ percona_deployment }}"
+            path: "{{ mongodb_deployment }}"
             regexp: "testclaim"
             replace: "{{ lookup('env','PROVIDER_PVC') }}"
 
         - name: Replace the storageclass placeholder with provider
           replace:
-            path: "{{ percona_deployment }}"
+            path: "{{ mongodb_deployment }}"
             regexp: "testclass"
             replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
 
@@ -40,12 +40,11 @@
           delay: 30
           retries: 10
         
+        - name: Deploying Mongodb
+          shell: kubectl apply -f {{ mongodb_deployment }} -n {{ namespace }}
 
-        - name: Deploying percona
-          shell: kubectl apply -f {{ percona_deployment }} -n {{ namespace }}
-
-        - name: Checking percona is in running state
-          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="percona")].status.phase}'
+        - name: Checking mongodb is in running state
+          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.name=="mongo-0")].status.phase}'
           register: result
           until: "'Running' in result.stdout"
           delay: 10
