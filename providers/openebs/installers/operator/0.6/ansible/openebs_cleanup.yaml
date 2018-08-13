@@ -1,0 +1,31 @@
+# TODO 
+# Delete openebs operator
+
+- hosts: localhost
+  connection: local
+
+  vars_files:
+  - vars.yaml
+
+  tasks:
+    - block:
+          - name: Cleaning openebs operator
+            shell: "{{ kubeapply }} delete -f {{ openebs_operator_link }}" 
+            args:
+              executable: /bin/bash
+            ignore_errors: True
+
+          - name: Confirm pods has been deleted
+            shell: kubectl get pods --all-namespaces 
+            args:
+              executable: /bin/bash
+            register: result
+            until: '"maya-apiserver" and "openebs-provisioner" and "openebs-snapshot-operator" not in result.stdout'
+            delay: 30
+            retries: 100
+
+          - set_fact:
+              flag: "Pass"
+      rescue: 
+        - set_fact: 
+            flag: "Fail"
