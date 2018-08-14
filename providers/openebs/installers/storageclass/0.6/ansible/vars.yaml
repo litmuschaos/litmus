@@ -1,0 +1,4 @@
+---
+kubeapply: kubectl
+storage_pool: sp.yaml
+storage_class: sc.yaml
