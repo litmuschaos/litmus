@@ -1,3 +1,15 @@
+# delete-ebs-volume.yml
+# Description:  This will unmount, detach and delete EBS volume from each nodes of cluster
+###############################################################################################
+#Test Steps:
+
+#1. Gather fact about cluster
+#2. Unmount EBS Volumes from Ndoes
+#3. Detach Ebs volumes from nodes in  AWS
+#4. Delete EBS volumes from Nodes in AWS
+#5. Delete file content which store the volumes id
+###############################################################################################
+
 ---
 - hosts: localhost
   
@@ -16,12 +28,15 @@
               "tag:Name": "{{ cluster_name }}"
           register: result
 
-        - name: Unmounting EBS Volume from Nodes 
-          shell: umount {{ device_name }}
+        - name: unmounting EBS volumes to AWS Nodes
+          mount:
+            path: "{{mount_path}}"
+            src: "{{device_name}}"
+            fstype: ext4
+            state: unmounted
           become: true
           delegate_to: "ubuntu@{{ item.public_ip_address }}"
           with_items: "{{ result.instances }}"
-          ignore_errors: True
 
         - name: Detaching EBS Volume
           ec2_vol:

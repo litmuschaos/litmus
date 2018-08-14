@@ -1,3 +1,16 @@
+# create-ebs-volume.yml
+# Description:  This will create EBS volume in aws attach this volume to each nodes of cluster
+
+###############################################################################################
+#Test Steps:
+
+#1. Gather fact about cluster
+#2. Create and attach EBS Volume in AWS
+#3. create ext4 file system in EBS Volumes
+#4. Mount EBS Volumes to Ndoes
+#5. create a file for store volumes id
+###############################################################################################
+
 ---
 - hosts: localhost
 
@@ -28,16 +41,20 @@
           register: volumes
           with_items: "{{result.instances}}"
 
-        - name: Creating mount directory in Nodes
-          file:
-            path: "{{ mount_path }}"
-            state: directory
+        - name: Create ext4 filesystem in EBS Volumes
+          filesystem:
+            fstype: ext4
+            dev: "{{device_name}}"
           become: true
           delegate_to: "ubuntu@{{ item.public_ip_address }}"
           with_items: "{{ result.instances }}"
 
-        - name: Mounting EBS Volume to Nodes 
-          shell: mkfs.ext4 {{ device_name }}; mount -o sync {{ device_name }} {{ mount_path }}
+        - name: mounting EBS volumes to AWS Nodes
+          mount:
+            path: "{{mount_path}}"
+            src: "{{device_name}}"
+            fstype: ext4
+            state: mounted
           become: true
           delegate_to: "ubuntu@{{ item.public_ip_address }}"
           with_items: "{{ result.instances }}"
