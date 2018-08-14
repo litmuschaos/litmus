@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: litmus-openebs-setup
+  name: litmus-openebs-setup-v0.6
   namespace: litmus 
 spec:
   template:

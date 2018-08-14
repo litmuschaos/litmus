@@ -16,11 +16,24 @@
             ignore_errors: True
 
           - name: Confirm pods has been deleted
-            shell: kubectl get pods --all-namespaces 
+            shell: "kubectl get pods --all-namespaces"
             args:
               executable: /bin/bash
             register: result
-            until: '"maya-apiserver" and "openebs-provisioner" and "openebs-snapshot-operator" not in result.stdout'
+            until: ' item not in result.stdout'
+            with_items:
+              - "maya-apiserver"
+              - "openebs-provisioner"
+              - "openebs-snapshot-operator"
+            delay: 30
+            retries: 100
+
+          - name: Confirm that namspace has been deleted
+            shell: 'kubectl get namespaces'
+            args:
+              executable: /bin/bash
+            register: result
+            until: '"namespace" not in result.stdout'
             delay: 30
             retries: 100
 
