@@ -21,13 +21,11 @@
             shell: "{{ kubeapply }} apply -f {{ storage_pool }}" 
             args:
               executable: /bin/bash
-            ignore_errors: True
               
           - name: Applying storage class
             shell: "{{ kubeapply }} apply -f {{ storage_class }}" 
             args:
               executable: /bin/bash
-            ignore_errors: True
 
           - name: Confirm that openebs storage pools are created
             shell: kubectl get storagepool
