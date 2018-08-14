@@ -1,0 +1,51 @@
+# TODO 
+# Delete openebs operator and cas template
+
+- hosts: localhost
+  connection: local
+
+  vars_files:
+  - vars.yaml
+
+  tasks:
+    - block:
+          - name: Cleaning openebs operator
+            shell: "{{ kubeapply }} delete -f {{ openebs_operator_link }}"
+            args:
+              executable: /bin/bash
+            ignore_errors: True
+
+          - name: Cleaning cas template
+            shell: "{{ kubeapply }} delete -f {{ openebs_cas_template_link }}" 
+            args:
+              executable: /bin/bash
+            ignore_errors: True
+          
+          - name: Confirm pods has been deleted
+            shell: "kubectl get pods --all-namespaces"
+            args:
+              executable: /bin/bash
+            register: result
+            until: ' item not in result.stdout'
+            with_items:
+              - "maya-apiserver"
+              - "openebs-provisioner"
+              - "openebs-snapshot-operator"
+              - "node-disk-manager"
+            delay: 30
+            retries: 100
+
+          - name: Confirm that namspace has been deleted
+            shell: 'kubectl get namespaces'
+            args:
+              executable: /bin/bash
+            register: result
+            until: '"namespace" not in result.stdout'
+            delay: 30
+            retries: 100
+
+          - set_fact:
+              flag: "Pass"
+      rescue: 
+        - set_fact: 
+            flag: "Fail"

@@ -1,0 +1,7 @@
+---
+kubeapply: kubectl --kubeconfig /root/admin.conf
+namespace: openebs
+openebs_operator_link: https://raw.githubusercontent.com/openebs/openebs/master/k8s/openebs-operator.yaml
+openebs_cas_template_link: https://raw.githubusercontent.com/openebs/openebs/master/k8s/openebs-pre-release-features.yaml
+openebs_operator: openebs-operator.yaml
+openebs_cas_template: openebs-cas-template.yaml
