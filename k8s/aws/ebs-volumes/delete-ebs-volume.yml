@@ -1,0 +1,70 @@
+# delete-ebs-volume.yml
+# Description:  This will unmount, detach and delete EBS volume from each nodes of cluster
+###############################################################################################
+#Test Steps:
+
+#1. Gather fact about cluster
+#2. Unmount EBS Volumes from Ndoes
+#3. Detach Ebs volumes from nodes in  AWS
+#4. Delete EBS volumes from Nodes in AWS
+#5. Delete file content which store the volumes id
+###############################################################################################
+
+---
+- hosts: localhost
+  
+  vars_files:
+    - vars.yml
+
+  vars:
+    cluster_name: "{{ cluster_name }}"
+  
+  tasks:
+    - block:
+        - name: Gather fact about instances in AWS
+          ec2_instance_facts:
+            filters:
+              availability-zone: "{{ zone }}"
+              "tag:Name": "{{ cluster_name }}"
+          register: result
+
+        - name: unmounting EBS volumes to AWS Nodes
+          mount:
+            path: "{{mount_path}}"
+            src: "{{device_name}}"
+            fstype: ext4
+            state: unmounted
+          become: true
+          delegate_to: "ubuntu@{{ item.public_ip_address }}"
+          with_items: "{{ result.instances }}"
+
+        - name: Detaching EBS Volume
+          ec2_vol:
+            id: "{{ item }}"
+            instance: None
+            region: "{{ region }}"
+          with_lines: cat /tmp/aws/volume-id
+
+        - name: Deleting EBS volume in AWS
+          ec2_vol:
+            id: "{{ item }}"
+            state: absent
+            region: "{{ region }}"
+          with_lines: cat /tmp/aws/volume-id
+
+        - name: Delete csv file which store all Ids
+          lineinfile:
+            create: yes
+            state: absent
+            path: "/tmp/aws/volume-id"
+            regexp: ""
+            mode: 0755
+
+        - name: Test Passed
+          set_fact:
+            flag: "Test Passed"
+
+    - rescue:
+        - name: Test Failed
+          set_fact:
+            flag: "Test Failed"
