@@ -9,18 +9,22 @@ This litmus job installs OpenEBS v0.6 on a litmus enabled cluster. This job firs
 
 ### Installing
 
-This job can be easily started by just applying ```kubectl apply -f litmusbook/setup_openebs.yaml```.
+-> Starting the openebs setup job :```kubectl apply -f litmusbook/openebs_setup.yaml```.
+-> Deleting the setup job :```kubectl delete -f litmusbook/setup_setup.yaml```.
+-> Starting the openebs cleanup job :```kubectl apply -f litmusbook/openebs_cleanup.yaml```.
+-> Deleting the openebs cleanup job :```kubectl delete -f litmusbook/openebs_cleanup.yaml```.
 
 ### Note:
 
-Image names for openebs-operator can be explicitly passed by environment variable in the setup_openebs.yaml .
+Image names for openebs-operator can be explicitly passed by environment variable in the setup_openebs.yaml.
+
 Example:
 ```
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: litmus-openebs
+  name: litmus-openebs-setup
   namespace: litmus 
 spec:
   template:
@@ -39,9 +43,23 @@ spec:
           - name: ANSIBLE_STDOUT_CALLBACK
             value: actionable
           - name: MAYA_APISERVER_IMAGE
-            value: * image name *
+            value: * Enter the image name here *
+          - name: OPENEBS_PROVISIONER_IMAGE
+            value: * Enter the image name here *
+          - name: OPENEBS_SNAPSHOT_CONTROLLER_IMAGE
+            value: * Enter the image name here *
+          - name: OPENEBS_SNAPSHOT_PROVISIONER_IMAGE
+            value: * Enter the image name here *
+          - name: OPENEBS_IO_JIVA_CONTROLLER_IMAGE
+            value: * Enter the image name here *
+          - name: OPENEBS_IO_JIVA_REPLICA_IMAGE
+            value: * Enter the image name here *
+          - name: OPENEBS_IO_VOLUME_MONITOR_IMAGE
+            value: * Enter the image name here *
+          - name: OPENEBS_IO_JIVA_REPLICA_COUNT
+            value: * Enter the image name here *
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./operator/0.6/ansible/openebs.yaml -i /etc/ansible/hosts -vvv; exit 0"]
+        args: ["-c", "ansible-playbook ./operator/0.6/cleanup/ansible/openebs_cleanup.yaml -i /etc/ansible/hosts -vvv; exit 0"]
         volumeMounts:
           - name: kubeconfig 
             mountPath: /root/admin.conf
@@ -65,3 +83,7 @@ spec:
 -> OPENEBS_PROVISIONER_IMAGE  
 -> OPENEBS_SNAPSHOT_CONTROLLER_IMAGE  
 -> OPENEBS_SNAPSHOT_PROVISIONER_IMAGE  
+-> OPENEBS_IO_JIVA_CONTROLLER_IMAGE  
+-> OPENEBS_IO_JIVA_REPLICA_IMAGE  
+-> OPENEBS_IO_VOLUME_MONITOR_IMAGE  
+-> OPENEBS_IO_JIVA_REPLICA_COUNT    
