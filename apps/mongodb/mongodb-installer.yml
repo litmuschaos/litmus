@@ -44,9 +44,9 @@
           shell: kubectl apply -f {{ mongodb_deployment }} -n {{ namespace }}
 
         - name: Checking mongodb is in running state
-          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.name=="mongo-0")].status.phase}'
+          shell: kubectl get pods -o jsonpath='{.items[?(@.metadata.generateName=="mongo-")].status.phase}'
           register: result
-          until: "'Running' in result.stdout"
+          until: "{{result.stdout.split() | unique}}"
           delay: 10
           retries: 100
 
