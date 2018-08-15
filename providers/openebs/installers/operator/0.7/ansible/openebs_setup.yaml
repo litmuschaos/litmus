@@ -16,7 +16,7 @@
 
           - name: Downloading openebs-cas-template.yaml
             get_url:
-              url: "{{ openebs_operator_link }}"
+              url: "{{ openebs_cas_template_link }}"
               dest: "{{ playbook_dir }}/openebs-cas-template.yaml"
 
           - name: Updating maya api server image
