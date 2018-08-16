@@ -20,6 +20,8 @@ RUN echo "[local]" >> /etc/ansible/hosts && \
 
 ADD providers/openebs/installers/ ./
 
+ADD ./apps/ ./
+
 COPY ./executor/ansible/plugins/callback/actionable.py /usr/local/lib/python2.7/dist-packages/ansible/plugins/callback/ 
 
 COPY ./hack/litmus-result.yaml ./
