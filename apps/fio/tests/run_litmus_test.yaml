@@ -2,12 +2,13 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: litmus
+  generateName: litmus-fio-
   namespace: litmus 
 spec:
   template:
     metadata:
-      name: litmus
+      labels:
+        name: litmus
     spec:
       serviceAccountName: litmus
       restartPolicy: Never

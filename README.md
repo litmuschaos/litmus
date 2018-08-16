@@ -60,7 +60,7 @@ constituting a separate test. Select a workload and follow the instructions unde
 ```
 cd tests/mysql/mysql_storage_benchmark/
 <Modify the PROVIDER_STORAGE_CLASS in run_litmus_test.yaml>
-kubectl apply -f run_litmus_test.yaml
+kubectl create -f run_litmus_test.yaml
 ```
 
   The above test runs a Kubernetes job that:
@@ -73,6 +73,13 @@ kubectl apply -f run_litmus_test.yaml
 As the test ends, the logs of the various storage pods, including the test results of this Kubernetes job are 
 collected and saved in a temporary location. The `run_litmus_test.yaml` can be customized for the location for 
 saving the logs, type of storage (StorageClass) to be used, etc..  This type of deployment test can be used to accelerate the feedback loop when deploying new pieces of a stack, whether underlying cloud or hardware, network, storage, or other.
+
+- Notes: 
+
+  - To run the test, please ensure *kubectl create* is used as against *kubectl apply* as the test job uses the `generateName` API to autogenerate the
+  job name. This is to ensure a re-run of the job w/o deleting the previous instance doesn't throw an error. 
+
+  - To delete the job, use the `kubectl delete job <jobname>`. Deletion using *-f spec* can complain about non-matching name resources. 
 
 ## Ways to Contribute
 

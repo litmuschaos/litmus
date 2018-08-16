@@ -37,8 +37,7 @@ as described above in order to aid batch runs of all the litmus tests by the exe
 
 The test can be run using the following command:
 
-`kubectl apply -f run_litmus_test.yaml` 
-
+`kubectl create -f run_litmus_test.yaml` 
 
 ### Viewing test results & logs 
 
@@ -53,5 +52,3 @@ the test result, pod logs, playbook logs & node's systemd (kubelet) logs if avai
 All the litmus tests harness the enormous potential of `kubectl` which we believe is more than just a CLI tool
 
 
-
-  
