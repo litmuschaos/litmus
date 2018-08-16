@@ -1,6 +1,6 @@
 - name: Setup pumba chaos infrastructure
   shell: >
-    kubectl apply -f {{ playbook_dir }}/chaos/pumba/pumba_kube.yaml 
+    kubectl apply -f /chaoslib/pumba/pumba_kube.yaml 
     -n litmus 
   args:
     executable: /bin/bash
@@ -63,7 +63,7 @@
     timeout: 30
 
 - name: Delete the pumba daemonset 
-  shell: kubectl delete -f {{ playbook_dir }}/chaos/pumba/pumba_kube.yaml  
+  shell: kubectl delete -f /chaoslib/pumba/pumba_kube.yaml  
   args:
     executable: /bin/bash
   register: result

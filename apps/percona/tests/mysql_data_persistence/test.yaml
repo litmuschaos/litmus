@@ -88,16 +88,16 @@
            - mysql -uroot -pk8sDem0 -e 'create table ttbl (Data VARCHAR(20));' tdb
            - mysql -uroot -pk8sDem0 -e 'insert into ttbl (Data) VALUES ("tdata");' tdb
 
-       - include: chaos/kubectl/pod_evict_by_taint.yaml
+       - include: /chaoslib/kubectl/pod_evict_by_taint.yaml
          app: "{{ percona_pod_name }}"
          taint: "node.kubernetes.io/out-of-disk"
          when: chaos_util ==  "APP_POD_EVICT/KUBECTL"
 
-       - include: chaos/kubectl/cordon_drain_node.yaml
+       - include: /chaoslib/kubectl/cordon_drain_node.yaml
          app: "{{ percona_pod_name }}"
          when: chaos_util ==  "APP_NODE_DRAIN/KUBECTL"
          
-       - include: chaos/pumba/pod_failure_by_sigkill.yaml
+       - include: /chaoslib/pumba/pod_failure_by_sigkill.yaml
          app: "{{ percona_pod_name }}"
          when: chaos_util ==  "APP_POD_KILL/PUMBA"
 
