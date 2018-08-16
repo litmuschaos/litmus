@@ -1,0 +1,34 @@
+---
+# mayaonline can parse this yaml to obtain tests specific to applications (based on tag) & populate test params,
+# fulfill pre-requisites etc, before deployment. The params are explicitly typed to prompt right values from user.
+# Test parameters can be of different kinds such as ENV, configmap etc., with their own properties.
+# '@userdata' is a placeholder which is either autofilled/userfilled. If empty, use defaults. The test has tags which
+# will help with categorization & application-mapping
+
+
+tests:
+  - name: pod_kill
+    test_tags: ['mysql', 'pumba']
+    location: ./apps/percona/tests/mysql_data_persistence/run_litmus_test.yaml
+    test_params:
+      - name: DB_SERVER_IP
+        kind: env
+        type: string
+        value: 10.20.10.100
+        spec: '.spec.template.spec.containers[?(@.name=="ansibletest")].env[?(@.name=="DB_SERVER_IP")].value'
+      - name: DB_USER
+        kind: env
+        type: string
+        value: root
+        spec: '.spec.template.spec.containers[?(@.name=="ansibletest")].env[?(@.name=="DB_USER")].value'
+      - name: DB_PASSWORD
+        kind: env
+        type: string
+        value: k8sDem0
+        spec: '.spec.template.spec.containers[?(@.name=="ansibletest")].env[?(@.name=="DB_PASSWORD")].value'
+      - name: CHAOS_DURATION
+        kind: env
+        type: integer
+        value: 120
+        spec: '.spec.template.spec.containers[?(@.name=="ansibletest")].env[?(@.name=="CHAOS_DURATION")].value'
+          # In pod spec this still needs to be quoted/taken as string (https://github.com/kubernetes/kubernetes/issues/2763) 
