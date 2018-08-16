@@ -23,10 +23,10 @@
   tasks:
     - block:
         - name: Generate ssh public key
-          shell: mkdir -p ~/.ssh && ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa -y
+          shell: mkdir -p ~/.ssh && ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
 
         - name: Generate random Cluster name
-          command: python ../../cluster_name/namesgenerator.py
+          command: python ../../utils/name_generator/namesgenerator.py
           register: cluster_name
           when: not cluster_name
         - set_fact:
@@ -49,6 +49,9 @@
             path: "/tmp/aws/cluster_name.csv"
             line: 'cluster_name:{{ cluster_name }}'
             mode: 0755
+        
+        - name: Checking Cluster availability
+          shell: python ../../utils/health/cluster_health_check.py -n {{ node_count | int + 1 }}
 
         - name: Test Passed
           set_fact:
