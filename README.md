@@ -58,7 +58,7 @@ constituting a separate test. Select a workload and follow the instructions unde
   For example, to run a MySQL benchmarking test:
 
 ```
-cd tests/mysql/mysql_storage_benchmark/
+cd apps/percona/tests/mysql_storage_benchmark/
 <Modify the PROVIDER_STORAGE_CLASS in run_litmus_test.yaml>
 kubectl create -f run_litmus_test.yaml
 ```
