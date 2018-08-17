@@ -30,13 +30,13 @@ ansible-playbook pre-requisite.yml -vv --extra-vars "vpc_name=<name-of-vpc>"
 - Run `create-aws-cluster`, this will create a ssh public key, Bucket and the AWS cluster.
 
 ```bash
-ansible-playbook create-aws-cluster.yml -vv
+ansible-playbook create-aws-cluster.yml -vv --extra-vars "k8s_version=<Kubernetes_version>"
 ```
 **Optional**
 - User can also provide the Cluster name at the time of creation in `--extra-vars`
 
 ```bash
-ansible-playbook create-aws-cluster.yml -vv --extra-vars "cluster_name=<name-of-cluster>"
+ansible-playbook create-aws-cluster.yml -vv --extra-vars "k8s_version=<Kubernetes_version> cluster_name=<name-of-cluster>"
 ```
 ### Deleting AWS cluster
 
