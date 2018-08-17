@@ -16,8 +16,8 @@
 
           - name: Downloading openebs-cas-template.yaml
             get_url:
-              url: "{{ openebs_cas_template_link }}"
-              dest: "{{ playbook_dir }}/openebs-cas-template.yaml"
+              url: "{{ openebs_pre_release_link }}"
+              dest: "{{ playbook_dir }}/{{ openebs_pre_release }}"
 
           - name: Updating maya api server image
             replace:
@@ -130,7 +130,7 @@
               executable: /bin/bash
 
           - name: Applying openebs cas template
-            shell: "{{ kubeapply }} apply -f {{ openebs_cas_template }}"
+            shell: "{{ kubeapply }} apply -f {{ openebs_pre_release }}"
             args:
               executable: /bin/bash
     
