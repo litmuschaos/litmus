@@ -2,3 +2,4 @@
 
 mongodb_deployment: mongo-statefulset.yml
 namespace: litmus
+mongo_app: demo_app.yml

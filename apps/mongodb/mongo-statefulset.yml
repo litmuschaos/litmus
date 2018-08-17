@@ -40,7 +40,7 @@ spec:
          ports:
            - containerPort: 27017
          volumeMounts:
-           - name: testclaim
+           - name: 
              mountPath: /data/db
        - name: mongo-sidecar
          image: cvallance/mongo-k8s-sidecar
@@ -49,9 +49,9 @@ spec:
              value: "role=mongo,environment=test"
  volumeClaimTemplates:
  - metadata:
-     name: testclaim
+     name: 
    spec:
-     storageClassName: testclass
+     storageClassName: 
      accessModes:
        - ReadWriteOnce
      resources:

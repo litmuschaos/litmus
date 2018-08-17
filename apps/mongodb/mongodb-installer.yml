@@ -53,7 +53,38 @@
         - set_fact:
            flag: "Pass"
 
-    - rescue:
-        - set_fact:
-          flag: "Fail"
+      rescue:
+      - set_fact:
+         flag: "Fail"
+
+      always:  
+        - block:
+      
+            - include_tasks: "mongodb_check.yml" 
+              vars:
+                demo: "{{ mongo_app }}" 
+
+            - name: Check Passed
+              set_fact:
+               flag: "Check Passed"
+
+          rescue:
+            - set_fact:
+                flag: "Check Failed"   
+               
+        - block:
+              - include_tasks: "cleanup.yml"
+                vars: 
+                  demo: "{{ mongo_app }}"  
+              - name: Clean-up Passed
+                set_fact:
+                 flag: "Clean-up Passed"
+          rescue:
+            - set_fact: 
+                flag: "Clean-up Failed"
+ 
+         
+      
+     
+    
           

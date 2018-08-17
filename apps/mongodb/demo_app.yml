@@ -1,0 +1,35 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: demo-app
+spec:
+  selector:
+    matchLabels:
+      app: demo-app
+  template:
+    metadata:
+      labels:
+        app: demo-app
+    spec:
+      containers:
+      - name: openebs/demo-installer:ci
+        ports:
+        - containerPort: 8090
+        image: ranjnshashank855/node-backend:v2.1
+        args:
+        - "mongodb://mongo-0.mongo"
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:  
+  labels:
+    app: demo-app
+  name: mongo-jiva-backend-service
+spec:
+  ports:
+  - name: demo-app
+    port: 3000
+    protocol: TCP
+  selector:
+    app: demo-app
