@@ -4,17 +4,17 @@ kind: LitmusResult
 metadata:
 
   # name of the litmus testcase
-  name: @test # mysql_data_persistence
+  name: {{ test }} 
 spec:
 
   # holds information on the testcase
-  test-metadata:
-    app: @app # percona-mysql 
-    chaostype: @chaos # APP_POD_KILL/PUMBA
+  testMetadata:
+    app: {{ app }} 
+    chaostype: {{ chaostype }} 
 
   # holds the state of testcase,  manually updated by json merge patch
   # result is the useful value today, but anticipate phase use in future 
-  test-status: 
-    phase: @phase # completed 
-    result: @result # pass 
+  testStatus: 
+    phase: {{ phase }}  
+    result: {{ result }} 
 

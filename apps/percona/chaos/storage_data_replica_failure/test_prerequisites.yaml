@@ -1,0 +1,18 @@
+---
+- name: Identify the storage class used by the PVC
+  shell: >
+    kubectl get pvc {{ pvc }} -n {{ namespace }} 
+    --no-headers -o custom-columns=:spec.storageClassName
+  args:
+    executable: /bin/bash
+  register: storage_class
+
+- name: Record the storage class name
+  set_fact: 
+    sc: "{{ storage_class.stdout }}"
+
+- name: Identify the chaos util to be invoked 
+  template:
+    src: chaosutil.j2
+    dest: chaosutil.yaml
+
