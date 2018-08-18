@@ -32,6 +32,9 @@
             phase: in-progress
             verdict: none
 
+        - name: Analyze the cr yaml
+          shell: cat litmus-result.yaml
+
         - name: Apply the litmus result CR
           shell: kubectl apply -f litmus-result.yaml
           args:
@@ -68,6 +71,8 @@
         - include: "{{ chaos_util_path }}"
           app_ns: "{{ namespace }}"
           app_pvc: "{{ pvc }}"
+          network_delay: "{{ n_delay }}"
+          chaos_duration: "{{ c_duration }}"
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
@@ -103,6 +108,9 @@
             app: ""
             phase: completed
             verdict: "{{ flag }}"
+
+        - name: Analyze the cr yaml
+          shell: cat litmus-result.yaml
            
         - name: Apply the litmus result CR
           shell: kubectl apply -f litmus-result.yaml
