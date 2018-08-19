@@ -31,7 +31,7 @@ def create_api():
             v1=client.CoreV1Api()
             break
         except Exception as e:
-            #print "error occurred while creating core v1 api:", e
+            print "error occurred while creating core v1 api:", e
     return v1
 
 def get_nodes(node_count):
@@ -42,7 +42,7 @@ def get_nodes(node_count):
             if len(getNodes.items) == int(node_count):
                 return getNodes.items
         except Exception as e:
-            #print "error occured while getting nodes:", e
+            print "error occured while getting nodes:", e
 
 def get_node_status(node_count):
     count = 0
@@ -61,8 +61,8 @@ def checkCluster(node_count):
             if count == int(node_count):
                 break
         except Exception as e:
-            #print 'error occured while itirating over status object:', e
-    #print('Cluster is Up and Running')
+            print 'error occured while itirating over status object:', e
+    print('Cluster is Up and Running')
 
 def get_kube_config():
     while True:
@@ -70,7 +70,7 @@ def get_kube_config():
             config.load_kube_config()
             break
         except Exception as e:
-            #print "kubeconfig not loaded.\n",e, "retrying..."
+            print "kubeconfig not loaded.\n",e, "retrying..."
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -87,7 +87,7 @@ def init():
             exit = checkCluster(nodes)
             return exit
         except Exception as e:
-            #print "Error Occured:", e
+            print "Error Occured:", e
 
 if __name__ == '__main__':
     p = multiprocessing.Process(target=init, name="main")
