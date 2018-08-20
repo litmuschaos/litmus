@@ -44,8 +44,20 @@ spec:
         tty: true
       - name: logger
         image: openebs/logger
+        env:
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: MY_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          # spec.volumes is not supported by downward API
+          - name: MY_POD_HOSTPATH
+            value: /mnt/chaos/openebs_target_network_delay
         command: ["/bin/bash"]
-        args: ["-c", "./logger.sh -d 10 -r maya,openebs,pvc,percona; exit 0"] 
+        args: ["-c", "./logger.sh -d ansibletest -r maya,openebs,pvc,percona; exit 0"] 
         volumeMounts:
           - name: kubeconfig 
             mountPath: /root/admin.conf
