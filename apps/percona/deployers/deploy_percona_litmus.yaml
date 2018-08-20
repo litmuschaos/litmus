@@ -24,7 +24,7 @@ spec:
 
           - name: PROVIDER_STORAGE_CLASS
             # Supported values: openebs-standard, local-storage
-            value: openebs-standard
+            value: openebs-storageclass
 
           - name: PROVIDER_PVC
             value: openebs-percona
