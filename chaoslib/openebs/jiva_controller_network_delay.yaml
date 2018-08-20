@@ -1,10 +1,10 @@
 - name: Setup pumba chaos infrastructure
- shell: >
-   kubectl apply -f /chaoslib/pumba/pumba_kube.yaml
-   -n {{ app_ns }}
- args:
-   executable: /bin/bash
- register: result 
+  shell: >
+    kubectl apply -f /chaoslib/pumba/pumba_kube.yaml
+    -n {{ app_ns }}
+  args:
+    executable: /bin/bash
+  register: result 
 
 - name: Confirm that the pumba ds is running on all nodes
   shell: >
@@ -70,7 +70,7 @@
     timeout: 10
 
 - name: Delete the pumba daemonset 
-  shell: kubectl delete -f /chaoslib/pumba/pumba_kube.yaml  
+  shell: kubectl delete -f /chaoslib/pumba/pumba_kube.yaml -n {{ app_ns }} 
   args:
     executable: /bin/bash
   register: result
