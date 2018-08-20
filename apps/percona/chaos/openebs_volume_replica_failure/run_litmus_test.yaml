@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: storage-target-network-delay- 
+  generateName: openebs-volume-replica-failure- 
   namespace: litmus 
 spec:
   template:
@@ -30,14 +30,8 @@ spec:
           - name: APP_PVC
             value: "percona-mysql-claim"
 
-          - name: NETWORK_DELAY
-            value: "3000" # in milliseconds
-
-          - name: CHAOS_DURATION
-            value: "60" # in seconds
-
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./percona/chaos/storage_target_network_delay/test.yaml -i /etc/ansible/hosts -vv; exit 0"]
+        args: ["-c", "ansible-playbook ./percona/chaos/openebs_volume_replica_failure/test.yaml -i /etc/ansible/hosts -vv; exit 0"]
         volumeMounts:
           - name: logs 
             mountPath: /var/log/ansible 
@@ -59,6 +53,6 @@ spec:
             name: kubeconfig 
         - name: logs 
           hostPath:
-            path: /mnt/chaos/storage_target_network_delay
+            path: /mnt/chaos/openebs_volume_replica_failure
             type: ""
 

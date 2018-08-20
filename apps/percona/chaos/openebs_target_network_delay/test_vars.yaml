@@ -1,4 +1,4 @@
-test_name: storage-target-network-delay
+test_name: openebs-target-network-delay
 namespace: "{{ lookup('env','APP_NAMESPACE') }}"
 label: "{{ lookup('env','APP_LABEL') }}"
 pvc: "{{ lookup('env','APP_PVC') }}"
