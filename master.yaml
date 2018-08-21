@@ -10,7 +10,7 @@ tests:
     test_tags: ['mysql', 'openebs']
     specPath: ./apps/percona/chaos/openebs_volume_replica_failure/run_litmus_test.yaml
     patch:
-    - name: 'APPLICATION NAMESPACE'
+    - name: 'Application Namespace'
       desc: ''
       kind: env
       type: string
@@ -19,7 +19,7 @@ tests:
       value:
         name: APP_NAMESPACE
         value: percona
-    - name: 'APPLICATION LABEL'
+    - name: 'Application Label'
       desc: ''
       kind: env
       type: string
@@ -28,7 +28,7 @@ tests:
       value:
         name: APP_LABEL
         value: name=percona # Label is a key-value pair 
-    - name: 'APPLICATION VOLUME CLAIM'
+    - name: 'Application PVC'
       desc: ''
       kind: env
       type: string
@@ -42,7 +42,7 @@ tests:
     test_tags: ['mysql', 'openebs']
     specPath: ./apps/percona/chaos/openebs_target_network_delay/run_litmus_test.yaml
     patch:
-    - name: 'APPLICATION NAMESPACE'
+    - name: 'Application Namespace'
       desc: ''
       kind: env
       type: string
@@ -51,7 +51,7 @@ tests:
       value:
         name: APP_NAMESPACE
         value: percona
-    - name: 'APPLICATION LABEL'
+    - name: 'Application Label'
       desc: ''
       kind: env
       type: string
@@ -60,7 +60,7 @@ tests:
       value:
         name: APP_LABEL
         value: name=percona
-    - name: 'APPLICATION PERSISTENT VOLUME CLAIM'
+    - name: 'Application PVC'
       desc: ''
       kind: env
       type: string
@@ -69,7 +69,7 @@ tests:
       value:
         name: APP_PVC
         value: percona-mysql-claim
-    - name: 'DURATION OF NETWORK CHAOS'
+    - name: 'Network Chaos Duration'
       desc: ''
       kind: env
       type: string
