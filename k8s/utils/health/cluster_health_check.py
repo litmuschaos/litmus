@@ -31,7 +31,8 @@ def create_api():
             v1=client.CoreV1Api()
             break
         except Exception :
-            continue;
+            time.sleep(30)
+            continue
     return v1
 
 def get_nodes(node_count):
@@ -42,7 +43,8 @@ def get_nodes(node_count):
             if len(getNodes.items) == int(node_count):
                 return getNodes.items
         except Exception :
-            continue;
+            time.sleep(30)
+            continue
 
 def get_node_status(node_count):
     count = 0
@@ -61,7 +63,8 @@ def checkCluster(node_count):
             if count == int(node_count):
                 break
         except Exception :
-            continue;
+            time.sleep(30)
+            continue
     print('Cluster is Up and Running')
 
 def get_kube_config():
@@ -70,7 +73,8 @@ def get_kube_config():
             config.load_kube_config()
             break
         except Exception :
-            continue;
+            time.sleep(30)
+            continue
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -87,7 +91,8 @@ def init():
             checkCluster(nodes)
             return exit
         except Exception :
-            continue;
+            time.sleep(30)
+            continue
 
 if __name__ == '__main__':
     p = multiprocessing.Process(target=init, name="main")
