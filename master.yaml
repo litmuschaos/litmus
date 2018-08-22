@@ -4,10 +4,12 @@
 # Test parameters can be of different kinds such as ENV, configmap etc., with their own properties.
 # The test has tags which will help with categorization & application-mapping.
 
+# This master YAML uses JSONPointer to interpret the params: Refer https://tools.ietf.org/html/rfc6901#section-4
+
 
 tests:
   - name: openebs-volume-replica-failure
-    test_tags: ['mysql', 'openebs']
+    app_tags: ['mysql']
     specPath: ./apps/percona/chaos/openebs_volume_replica_failure/run_litmus_test.yaml
     patch:
     - name: 'Application Namespace'
@@ -15,31 +17,25 @@ tests:
       kind: env
       type: string
       op: 'replace'
-      path: '/spec/template/spec/containers/0/env/-'
-      value:
-        name: APP_NAMESPACE
-        value: percona
+      path: '/spec/template/spec/containers/0/env/1/value'
+      value: 'percona'
     - name: 'Application Label'
       desc: ''
       kind: env
       type: string
       op: 'replace'
-      path: '/spec/template/spec/containers/0/env/-'
-      value:
-        name: APP_LABEL
-        value: name=percona # Label is a key-value pair 
+      path: '/spec/template/spec/containers/0/env/2/value'
+      value: 'name=percona' # Label is a key-value pair
     - name: 'Application PVC'
       desc: ''
       kind: env
       type: string
       op: 'replace'
-      path: '/spec/template/spec/containers/0/env/-'
-      value:
-        name: APP_PVC
-        value: percona-mysql-claim
+      path: '/spec/template/spec/containers/0/env/3/value'
+      value: 'percona-mysql-claim'
  
   - name: openebs-target-network-delay
-    test_tags: ['mysql', 'openebs']
+    app_tags: ['mysql']
     specPath: ./apps/percona/chaos/openebs_target_network_delay/run_litmus_test.yaml
     patch:
     - name: 'Application Namespace'
@@ -47,35 +43,27 @@ tests:
       kind: env
       type: string
       op: 'replace'
-      path: '/spec/template/spec/containers/0/env/-'
-      value:
-        name: APP_NAMESPACE
-        value: percona
+      path: '/spec/template/spec/containers/0/env/1/value'
+      value: 'percona'
     - name: 'Application Label'
       desc: ''
       kind: env
       type: string
       op: 'replace'
-      path: '/spec/template/spec/containers/0/env/-'
-      value:
-        name: APP_LABEL
-        value: name=percona
+      path: '/spec/template/spec/containers/0/env/2/value'
+      value: 'name=percona'
     - name: 'Application PVC'
       desc: ''
       kind: env
       type: string
       op: 'replace'
-      path: '/spec/template/spec/containers/0/env/-'
-      value:
-        name: APP_PVC
-        value: percona-mysql-claim
+      path: '/spec/template/spec/containers/0/env/3/value'
+      value: 'percona-mysql-claim'
     - name: 'Network Chaos Duration'
       desc: ''
       kind: env
       type: string
       op: 'replace'
-      path: '/spec/template/spec/containers/0/env/-'
-      value:
-        name: CHAOS_DURATION
-        value: '60'
-          # In pod spec this still needs to be quoted/taken as string (https://github.com/kubernetes/kubernetes/issues/2763)
+      path: '/spec/template/spec/containers/0/env/4/value'
+      # In pod spec this still needs to be quoted/taken as string (https://github.com/kubernetes/kubernetes/issues/2763)
+      value: '60'
