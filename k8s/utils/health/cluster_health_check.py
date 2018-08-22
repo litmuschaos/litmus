@@ -20,24 +20,18 @@
 # To run the script: `python cluster_health_check.py --nodes 4`
 
 from kubernetes import client, config
+import multiprocessing
 import time
 import argparse
-import signal
 import sys
-
-def timeout_handler(x,y):
-    raise Exception('timeout')
 
 def create_api():
     while True:
         try:
             v1=client.CoreV1Api()
             break
-        except Exception as e:
-            print "error occurred while creating core v1 api:", e
-            if e == 'timeout':
-                sys.exit(1)                
-            time.sleep(5)
+        except Exception :
+            continue;
     return v1
 
 def get_nodes(node_count):
@@ -47,11 +41,8 @@ def get_nodes(node_count):
             getNodes = v1.list_node()
             if len(getNodes.items) == int(node_count):
                 return getNodes.items
-        except Exception as e:
-            print "error occured while getting nodes:", e
-            if e == 'timeout':
-                sys.exit(1)
-            time.sleep(5)
+        except Exception :
+            continue;
 
 def get_node_status(node_count):
     count = 0
@@ -69,11 +60,8 @@ def checkCluster(node_count):
             count = get_node_status(node_count)
             if count == int(node_count):
                 break
-        except Exception as e:
-            print 'error occured while itirating over status object:', e
-            if e == 'timeout':
-                sys.exit(1)
-            time.sleep(5)
+        except Exception :
+            continue;
     print('Cluster is Up and Running')
 
 def get_kube_config():
@@ -81,11 +69,8 @@ def get_kube_config():
         try:
             config.load_kube_config()
             break
-        except Exception as e:
-            print "kubeconfig not loaded.\n",e, "retrying..."
-            if e == 'timeout':
-                sys.exit(1)
-            time.sleep(5)
+        except Exception :
+            continue;
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -94,17 +79,29 @@ def get_args():
     args = parser.parse_args()
     return args.nodes
 
-signal.signal(signal.SIGALRM, timeout_handler)
-signal.alarm(900)
-if __name__ == '__main__':
+def init():
     nodes = get_args()
     get_kube_config()
     while True:
         try:
             checkCluster(nodes)
-            break
-        except Exception as e:
-            print "Error Occured:", e
-            if e == 'timeout':
-                sys.exit(5)
-            time.sleep(5)
+            return exit
+        except Exception :
+            continue;
+
+if __name__ == '__main__':
+    p = multiprocessing.Process(target=init, name="main")
+    p.start()
+    timeElapsed = 0
+    timeOut = 900
+    while(True):
+        if p.is_alive() is False:
+            p.terminate()
+            sys.exit(0)
+        # Setting Timeout to 900 seconds
+        elif timeElapsed == timeOut:
+            print "Error: time out! Program terminated after", timeOut, "seconds"
+            p.terminate()
+            sys.exit(1)
+        time.sleep(1)
+        timeElapsed += 1
