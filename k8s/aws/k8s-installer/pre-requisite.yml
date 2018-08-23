@@ -24,7 +24,7 @@
   tasks:
     - block:
         - name: Generate VPC random name
-          command: python ../../cluster_name/namesgenerator.py
+          command: python ../../utils/name_generator/namesgenerator.py
           register: vpc_name
           when: not vpc_name
         - set_fact:

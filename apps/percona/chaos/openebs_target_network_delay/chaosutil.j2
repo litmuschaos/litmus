@@ -1,0 +1,5 @@
+{% if sc is defined and sc == 'openebs-standard' %}
+ chaosutil: openebs/jiva_controller_network_delay.yaml
+{% elif sc is defined and sc == 'openebs-standard-cstor' %}
+ chaosutil: openebs/cstor_target_network_delay.yaml
+{% endif %}

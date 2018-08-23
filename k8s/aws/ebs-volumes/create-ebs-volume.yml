@@ -1,0 +1,78 @@
+# create-ebs-volume.yml
+# Description:  This will create EBS volume in aws attach this volume to each nodes of cluster
+
+###############################################################################################
+#Test Steps:
+
+#1. Gather fact about cluster
+#2. Create and attach EBS Volume in AWS
+#3. create ext4 file system in EBS Volumes
+#4. Mount EBS Volumes to Ndoes
+#5. create a file for store volumes id
+###############################################################################################
+
+---
+- hosts: localhost
+
+  vars_files:
+    - vars.yml
+
+  vars:
+    cluster_name: "{{ cluster_name }}"
+
+  tasks:
+    - block:
+        - name: Gather fact about instances in AWS
+          ec2_instance_facts:
+            filters:
+              availability-zone: "{{ zone }}"
+              "tag:Name": "{{ cluster_name }}"
+          register: result
+
+        - name: Creating and attaching EBS Volume in AWS
+          ec2_vol:
+            instance: "{{item.instance_id}}"
+            device_name: "{{ device_name }}"
+            region: "{{ region }}"
+            state: present
+            volume_size: "{{ volume_size }}"
+            volume_type: "{{ volume_type }}"
+            zone: "{{ zone }}"
+          register: volumes
+          with_items: "{{result.instances}}"
+
+        - name: Create ext4 filesystem in EBS Volumes
+          filesystem:
+            fstype: ext4
+            dev: "{{device_name}}"
+          become: true
+          delegate_to: "ubuntu@{{ item.public_ip_address }}"
+          with_items: "{{ result.instances }}"
+
+        - name: mounting EBS volumes to AWS Nodes
+          mount:
+            path: "{{mount_path}}"
+            src: "{{device_name}}"
+            fstype: ext4
+            state: mounted
+          become: true
+          delegate_to: "ubuntu@{{ item.public_ip_address }}"
+          with_items: "{{ result.instances }}"
+
+        - name: Create a csv file for store all Ids
+          lineinfile:
+            create: yes
+            state: present
+            path: "/tmp/aws/volume-id"
+            line: '{{ item.volume_id }}'
+            mode: 0755
+          with_items: "{{volumes.results}}"
+
+        - name: Test Passed
+          set_fact:
+            flag: "Test Passed"
+
+    - rescue:
+        - name: Test Failed
+          set_fact:
+            flag: "Test Failed"

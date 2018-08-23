@@ -2,12 +2,11 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: litmus
+  generateName: litmus-mysql-data-persistence-
   namespace: litmus 
 spec:
   template:
     metadata:
-      name: litmus
       labels:
         name: litmus 
     spec:

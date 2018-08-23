@@ -9,12 +9,10 @@
 
   tasks:
     - block:
-
           - name: Downloading openebs-operator.yaml
             get_url:
               url: "{{ openebs_operator_link }}"
               dest: "{{ playbook_dir }}/openebs-operator.yaml"
-
 
           - name: Updating maya api server image
             replace:
@@ -43,6 +41,34 @@
               regexp: "image: openebs/snapshot-provisioner.*"
               replace: "image: {{ lookup('env','OPENEBS_SNAPSHOT_PROVISIONER_IMAGE') }}"
             when: lookup('env','OPENEBS_SNAPSHOT_PROVISIONER_IMAGE') | length > 0
+
+          - name: Updating openebs jiva controller image
+            replace:
+              path: "openebs-operator.yaml"
+              regexp: "        - name: OPENEBS_IO_JIVA_CONTROLLER_IMAGE\n          value: \"openebs/jiva.*"
+              replace: "        - name: OPENEBS_IO_JIVA_CONTROLLER_IMAGE\n          value: \"{{ lookup('env','OPENEBS_IO_JIVA_CONTROLLER_IMAGE') }}\""
+            when: lookup('env','OPENEBS_IO_JIVA_CONTROLLER_IMAGE') | length > 0
+
+          - name: Updating openebs jiva replica image
+            replace:
+              path: "openebs-operator.yaml"
+              regexp: "        - name: OPENEBS_IO_JIVA_REPLICA_IMAGE\n          value: \"openebs/jiva.*"
+              replace: "        - name: OPENEBS_IO_JIVA_REPLICA_IMAGE\n          value: \"{{ lookup('env','OPENEBS_IO_JIVA_REPLICA_IMAGE') }}\""
+            when: lookup('env','OPENEBS_IO_JIVA_REPLICA_IMAGE') | length > 0
+
+          - name: Updating openebs io volume monitor image
+            replace:
+              path: "openebs-operator.yaml"
+              regexp: "        - name: OPENEBS_IO_VOLUME_MONITOR_IMAGE\n          value: \"openebs/m-exporter.*"
+              replace: "        - name: OPENEBS_IO_VOLUME_MONITOR_IMAGE\n          value: \"{{ lookup('env','OPENEBS_IO_VOLUME_MONITOR_IMAGE') }}\""
+            when: lookup('env','OPENEBS_IO_VOLUME_MONITOR_IMAGE') | length > 0
+
+          - name: Updating jiva replica count
+            replace:
+              path: "openebs-operator.yaml"
+              regexp: "        - name: OPENEBS_IO_JIVA_REPLICA_COUNT\n          value: \"3\""
+              replace: "        - name: OPENEBS_IO_JIVA_REPLICA_COUNT\n          value: \"{{ lookup('env','OPENEBS_IO_JIVA_REPLICA_COUNT') }}\""
+            when: lookup('env','OPENEBS_IO_JIVA_REPLICA_COUNT') | length > 0
 
           - name: Applying openebs operator
             shell: "{{ kubeapply }} apply -f {{ openebs_operator }}" 

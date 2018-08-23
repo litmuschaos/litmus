@@ -1,0 +1,53 @@
+- name: Derive PV from application PVC 
+  shell: >
+    kubectl get pvc {{ app_pvc }}
+    -o custom-columns=:spec.volumeName -n {{ app_ns }}
+    --no-headers
+  args:
+    executable: /bin/bash
+  register: pv
+
+- name: Record the jiva replica deployment of the PV
+  set_fact: 
+    # Depends on the naming convention in maya-apiserver (<pv-id>-rep)  
+    jiva_replica_deploy: "{{ pv.stdout }}-rep"
+
+- name: Get the resourceVersion of the replica deploy before fault injection
+  shell: >
+    kubectl get deploy {{ jiva_replica_deploy }} -n {{ app_ns }} 
+    -o yaml | grep resourceVersion | awk '{print $2}' | sed 's|"||g'
+  args:
+    executable: /bin/bash
+  register: rv_bef
+
+- name: Randomly pick a jiva replica pod belonging to the PV
+  shell: > 
+    kubectl get pods -l openebs/replica=jiva-replica
+    -n {{ app_ns }} --no-headers | grep {{ pv.stdout }} 
+    | shuf -n1 | awk '{print $1}'
+  args:
+    executable: /bin/bash
+  register: jiva_replica_pod
+
+- name: Kill the jiva replica pod 
+  shell: >
+    kubectl delete pod {{ jiva_replica_pod.stdout }} -n {{ app_ns }}
+  args:
+    executable: /bin/bash
+
+- name: Wait for 10s post fault injection 
+  wait_for:
+    timeout: 10
+
+- name: Get the resourceVersion of the replica deploy after fault injection
+  shell: >
+    kubectl get deploy {{ jiva_replica_deploy }} -n {{ app_ns }} 
+    -o yaml | grep resourceVersion | awk '{print $2}' | sed 's|"||g'
+  args:
+    executable: /bin/bash
+  register: rv_aft
+
+- name: Compare resourceVersions of replica deployment
+  debug:
+    msg: "Verified replica pods were restarted by fault injection"
+  failed_when: "rv_bef.stdout | int == rv_aft.stdout | int"

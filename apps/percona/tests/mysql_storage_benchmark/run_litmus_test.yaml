@@ -2,12 +2,13 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: litmus
+  generateName: litmus-mysql-storage-benchmark-
   namespace: litmus 
 spec:
   template:
     metadata:
-      name: litmus
+      labels:
+        name: litmus
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
@@ -16,7 +17,8 @@ spec:
         image: openebs/ansible-runner
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
-            value: log_plays
+            #value: log_plays
+            value: actionable
  
           - name: PROVIDER_STORAGE_CLASS
             value: openebs-standard
