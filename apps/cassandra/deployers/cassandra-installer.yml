@@ -1,0 +1,58 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - cassandra_vars.yml
+
+  tasks:
+    - block:
+        - name: Check whether the provider storageclass is applied
+          shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
+          args:
+            executable: /bin/bash
+          register: result
+
+        - name: Replace the pvc placeholder with provider
+          replace:
+            path: "{{ cassandra_deployment }}"
+            regexp: "testclaim"
+            replace: "{{ lookup('env','PROVIDER_PVC') }}"
+
+        - name: Replace the storageclass placeholder with provider
+          replace:
+            path: "{{ cassandra_deployment }}"
+            regexp: "testclass"
+            replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+
+        - name: Create test specific namespace.
+          shell: kubectl create ns {{ namespace }}
+          args:
+           executable: /bin/bas
+          when: namespace != 'litmus'
+
+        - name: Checking the status  of test specific namespace.
+          shell: kubectl get ns {{ namespace }} -o jsonpath='{.status.phase}'
+          args:
+           executable: /bin/bash
+          register: npstatus
+          until: "'Active' in npstatus.stdout"
+          delay: 30
+          retries: 10
+        
+        - name: Deploying Cassendra
+          shell: kubectl apply -f {{ cassandra_deployment }} -n {{ namespace }} 
+
+        - name: Checking Cassendra is in running state
+          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.generateName=="cassandra-")].status.phase}'
+          register: result
+          until: "((result.stdout_lines|unique)|length) == 1 and 'Running' in result.stdout"
+          delay: 10
+          retries: 100
+
+        - set_fact:
+          flag: "Pass"
+
+      rescue:
+      - set_fact:
+         flag: "Fail"  

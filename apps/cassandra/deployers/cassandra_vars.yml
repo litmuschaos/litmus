@@ -1,0 +1,2 @@
+cassandra_deployment: cassandra-statefulset.yml
+namespace: litmus
