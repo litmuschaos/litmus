@@ -173,7 +173,10 @@
             failed_when: "'m-apiserver status:  running' not in result_vers.stdout"
 
           - name: Getting the number of nodes
-            shell: kubectl get nodes | grep '<none>' | wc -l
+            #shell: kubectl get nodes | grep '<none>' | wc -l
+            shell: >
+              kubectl get nodes -o custom-columns=:spec.taints[*].key 
+              --no-headers | grep -iv master | wc -l
             args:
               executable: /bin/bash
             register: node_count
