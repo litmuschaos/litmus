@@ -19,15 +19,15 @@ spec:
 
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
-            #value: log_plays
-            value: actionable
+            #value: log_plays, actionable, default
+            value: default
 
           - name: PROVIDER_STORAGE_CLASS
             # Supported values: openebs-standard, local-storage
-            value: openebs-storageclass
+            value: openebs-standard
 
           - name: PROVIDER_PVC
-            value: openebs-percona
+            value: percona-mysql-claim
  
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./percona/deployers/percona-installer.yaml -i /etc/ansible/hosts -v; exit 0"]
