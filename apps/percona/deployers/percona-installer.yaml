@@ -32,7 +32,8 @@
           when: namespace != 'litmus'
 
         - name: Checking the status  of test specific namespace.
-          shell: kubectl get ns -o jsonpath='{.items[?(@.metadata.name=={{ namespace }})].status.phase}'
+          #shell: kubectl get ns -o jsonpath='{.items[?(@.metadata.name=={{ namespace }})].status.phase}'
+          shell: kubectl get ns {{ namespace }} -o custom-columns=:status.phase --no-headers 
           args:
            executable: /bin/bash
           register: npstatus
