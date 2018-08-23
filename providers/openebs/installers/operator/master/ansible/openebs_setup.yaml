@@ -185,6 +185,7 @@
             register: ndm_count
             until: (node_count.stdout)|int == (ndm_count.stdout)|int
             delay: 30
+            retries: 100
 
           - set_fact:
               flag: "Pass"
