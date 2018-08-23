@@ -1,3 +1,27 @@
+# A storage admin (human) may want to manage storage resources manually. This 
+# config file is expected to provide such option
+#
+# StoragePool : Is an instance of storage pool - i.e.
+#  - a directory on host-os, or
+#  - a directory on mounted-disk, 
+#
+# Define a storage pool for launching the replicas using
+#  local directory or mounted directory on kubernetes nodes
+#  
+# The following is an example of how a storagepool can be 
+# confgured with any other directory to be used for persisting 
+# the storage. 
+#
+# Note: OpenEBS uses /var/openebs as default directory, even if 
+# the following default storagepool is not added to the k8s cluster.
+#
+apiVersion: openebs.io/v1alpha1
+kind: StoragePool
+metadata:
+  name: default
+  type: hostdir
+spec:
+  path: "/var/openebs"
 ---
 apiVersion: openebs.io/v1alpha1
 kind: StoragePoolClaim
@@ -8,7 +32,7 @@ metadata:
     cas.openebs.io/delete-pool-template: cstor-pool-delete-default-0.7.0
 spec:
   name: {{ lookup('env','CSTOR_POOL_NAME') }}
-  type: openebs-cstor
+  type: disk
   maxPools: {{ lookup('env','MAX_POOLS') }}
   poolSpec:
     poolType: striped
