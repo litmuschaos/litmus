@@ -41,7 +41,7 @@ spec:
           - name: OPENEBS_IO_CAS_TEMPLATE_TO_LIST_VOLUME
             value:
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./operator/0.7/ansible/openebs_setup.yaml -i /etc/ansible/hosts -vv; exit 0"]
+        args: ["-c", "ansible-playbook ./operator/master/ansible/openebs_setup.yaml -i /etc/ansible/hosts -vv; exit 0"]
         volumeMounts:
           - name: kubeconfig 
             mountPath: /root/admin.conf
