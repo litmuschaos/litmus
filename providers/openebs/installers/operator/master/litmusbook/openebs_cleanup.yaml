@@ -21,7 +21,7 @@ spec:
           - name: ANSIBLE_STDOUT_CALLBACK
             value: actionable
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./operator/0.7/ansible/openebs_cleanup.yaml -i /etc/ansible/hosts -vv; exit 0"]
+        args: ["-c", "ansible-playbook ./operator/master/ansible/openebs_cleanup.yaml -i /etc/ansible/hosts -vv; exit 0"]
         volumeMounts:
           - name: kubeconfig 
             mountPath: /root/admin.conf
