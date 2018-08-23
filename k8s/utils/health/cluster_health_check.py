@@ -25,15 +25,16 @@ import time
 import argparse
 import sys
 
+
 def create_api():
     while True:
         try:
-            v1=client.CoreV1Api()
+            v1 = client.CoreV1Api()
             break
         except Exception :
             time.sleep(30)
-            continue
     return v1
+
 
 def get_nodes(node_count):
     v1 = create_api()
@@ -44,7 +45,7 @@ def get_nodes(node_count):
                 return getNodes.items
         except Exception :
             time.sleep(30)
-            continue
+
 
 def get_node_status(node_count):
     count = 0
@@ -56,6 +57,7 @@ def get_node_status(node_count):
                 count = count + 1
     return count
 
+
 def checkCluster(node_count):
     while True:
         try:
@@ -64,8 +66,8 @@ def checkCluster(node_count):
                 break
         except Exception :
             time.sleep(30)
-            continue
     print('Cluster is Up and Running')
+
 
 def get_kube_config():
     while True:
@@ -74,7 +76,7 @@ def get_kube_config():
             break
         except Exception :
             time.sleep(30)
-            continue
+
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -82,6 +84,7 @@ def get_args():
     parser.add_argument('-n', '--nodes', help='Node or Size of cluster', required=True)
     args = parser.parse_args()
     return args.nodes
+
 
 def init():
     nodes = get_args()
@@ -92,7 +95,7 @@ def init():
             return exit
         except Exception :
             time.sleep(30)
-            continue
+
 
 if __name__ == '__main__':
     p = multiprocessing.Process(target=init, name="main")
