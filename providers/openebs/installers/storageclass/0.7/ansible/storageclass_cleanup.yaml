@@ -1,0 +1,83 @@
+# TODO 
+# Delete storage pool and storage class
+
+- hosts: localhost
+  connection: local
+
+  vars_files:
+  - vars.yaml
+
+  tasks:
+    - block:
+          - block:
+              - template:
+                  src: storageclass-jiva.j2
+                  dest: "{{ storage_class_jiva }}"
+
+              - name: Deleting storage class
+                shell: "{{ kubeapply }} delete -f {{ storage_class_jiva }}" 
+                args:
+                  executable: /bin/bash
+                ignore_errors: True
+
+              - name: Confirm that openebs storage pools are deleted
+                shell: kubectl get storagepool
+                args:
+                  executable: /bin/bash
+                register: result_sp
+                until: "lookup('env','JIVA_POOL_NAME') not in result_sp.stdout"
+                delay: 30
+                retries: 100
+
+              - name: Confirm that openebs storage classes are deleted
+                shell: kubectl get storageclass
+                args:
+                  executable: /bin/bash
+                register: result_sc
+                until: "lookup('env','JIVA_STORAGECLASS_NAME') not in result_sc.stdout"
+                delay: 30
+                retries: 100
+            when: lookup('env','DELETE_JIVA') == "true"
+
+          - block:
+              - template:
+                  src: storageclass-cstor.j2
+                  dest: "{{ storage_class_cstor }}"
+
+              - name: Add the disks to the pool
+                lineinfile:
+                  path: "{{ storage_class_cstor }}"
+                  insertafter: 'diskList:'
+                  line: '     - {{ item }}'
+                with_items: "{{ lookup('env','DISK_LIST').split(\",\") }}"
+
+              - name: Deleting storage class
+                shell: "{{ kubeapply }} delete -f {{ storage_class_cstor }}" 
+                args:
+                  executable: /bin/bash
+                ignore_errors: True
+
+              - name: Confirm that openebs storage pools are deleted
+                shell: kubectl get storagepool
+                args:
+                  executable: /bin/bash
+                register: result_sp
+                until: "lookup('env','CSTOR_POOL_NAME') not in result_sp.stdout"
+                delay: 30
+                retries: 100
+
+              - name: Confirm that openebs storage classes are deleted
+                shell: kubectl get storageclass
+                args:
+                  executable: /bin/bash
+                register: result_sc
+                until: "lookup('env','CSTOR_STORAGECLASS_NAME') not in result_sc.stdout"
+                delay: 30
+                retries: 100 
+            when: lookup('env','DELETE_CSTOR') == "true"
+
+          - set_fact:
+              flag: "Pass"
+      rescue: 
+        - set_fact: 
+            flag: "Fail"

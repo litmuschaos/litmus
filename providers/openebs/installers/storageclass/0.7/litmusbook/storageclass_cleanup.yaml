@@ -1,0 +1,53 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: litmus-storageclass-cleanup-v0.7
+  namespace: litmus 
+spec:
+  template:
+    metadata:
+      name: litmus
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: openebs/ansible-runner:ci
+        imagePullPolicy: Always
+        env: 
+          - name: mountPath
+            value: /mnt/openebs
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: actionable
+          # Enable storageclass
+          - name: DELETE_JIVA
+            value: "true"
+          - name: DELETE_CSTOR
+            value: "false"
+          # Jiva configuration
+          - name: JIVA_POOL_NAME
+            value: openebs-mntdir
+          - name: JIVA_STORAGECLASS_NAME
+            value: openebs-storageclass
+          - name: STORAGE_PATH
+            value: /var/openebs
+          - name: OPENEBS_IO_JIVA_REPLICA_COUNT
+            value: "3"
+          - name: OPENEBS_IO_JIVA_CONTROLLER_IMAGE
+            value: openebs/jiva:0.6.0
+          - name: OPENEBS_IO_JIVA_REPLICA_IMAGE
+            value: openebs/jiva:0.6.0
+          - name: OPENEBS_IO_VOLUME_MONITOR_IMAGE
+            value: openebs/m-exporter:ci
+          # Cstor configuration
+          - name: CSTOR_POOL_NAME
+            value: cstor-pool-default-0.7.0
+          - name: MAX_POOLS
+            value: "3"
+          - name: CSTOR_STORAGECLASS_NAME
+            value: openebs-cstor-default-0.7.0
+          - name: DISK_LIST
+            value: 
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./storageclass/0.7/ansible/storageclass_cleanup.yaml -i /etc/ansible/hosts -vv; exit 0"]
