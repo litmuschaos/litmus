@@ -45,6 +45,8 @@ spec:
             value: cstor-pool-default-0.7.0
           - name: MAX_POOLS
             value: "3"
+          - name: CSTOR_CONTROLLER_IMAGE
+            value: openebs-cstor-default-0.7.0
           - name: CSTOR_STORAGECLASS_NAME
             value: openebs-cstor-default-0.7.0
           - name: DISK_LIST
