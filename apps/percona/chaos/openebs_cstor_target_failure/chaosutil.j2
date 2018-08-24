@@ -1,0 +1,5 @@
+{% if sc is defined and sc == 'openebs-standard' %}
+ chaosutil: openebs/jiva_replica_pod_failure.yaml
+{% elif sc is defined and sc == 'openebs-cstor-default-0.7.0' %}
+ chaosutil: openebs/openebs_cstor_target_failure.yaml
+{% endif %}
