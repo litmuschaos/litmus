@@ -18,7 +18,7 @@ spec:
         - containerPort: 8090
         image: openebs/demo-app
         args:
-        - "mongodb://mongo-0.mongo"
+        - "mongodb://mongo.litmus.svc.cluster.local"
         imagePullPolicy: Always
 ---
 apiVersion: v1
