@@ -1,0 +1,36 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: demo-app
+  namespace: litmus
+spec:
+  selector:
+    matchLabels:
+      app: demo-app
+  template:
+    metadata:
+      labels:
+        app: demo-app
+    spec:
+      containers:
+      - name: demo-app-backend-container
+        ports:
+        - containerPort: 8090
+        image: openebs/demo-app
+        args:
+        - "mongodb://mongo.litmus.svc.cluster.local"
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:  
+  labels:
+    app: demo-app
+  name: demo-app-service
+spec:
+  ports:
+  - name: demo-app
+    port: 3000
+    protocol: TCP
+  selector:
+    app: demo-app

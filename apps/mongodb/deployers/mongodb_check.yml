@@ -1,0 +1,44 @@
+---
+
+   - name: Deploying demo-app
+     shell: kubectl apply -f {{ demo }}
+
+   - name: Checking Demo-application is in running state
+     shell: kubectl get pods -n {{ ns }} -o jsonpath='{.items[?(@.metadata.labels.app=="demo-app")].status.phase}'
+     register: status
+     args:
+      executable: /bin/bash
+     until: "'Running' in status.stdout"
+     delay: 15
+     retries: 10
+
+   - name: Initialising mongodb
+     shell: kubectl exec -it mongo-0 -n {{ ns }} -- bash -c "mongo --eval '(rs.initiate())'" 
+     register: test
+
+   - debug:
+       var: test
+       verbosity: 2   
+
+   - name: Getting the Pod name of Demo-App
+     shell: kubectl get pods -n litmus -o jsonpath='{.items[?(@.metadata.labels.app=="demo-app")].metadata.name}'  
+     register: demo_pod
+     
+   - name: Pushing Data in mongoDb
+     shell: |
+       kubectl exec -it {{demo_pod.stdout}} -n {{ ns }} -- curl -X POST http://localhost:8090/users/ -H 'cache-control: no-cache' -H 'content-type: application/json' -d '{"Name":"Test1","company":"XYZ","post":"ABC"}' 
+     register: test
+   
+   - debug:
+       msg: "{{test.stdout}}"
+
+   - name: Checking for the Data in mongodb
+     shell: kubectl exec -it {{demo_pod.stdout}} -n {{ ns }} -- curl -X GET http://localhost:8090/users/
+     register: test1
+     failed_when: "'Name' not in test1.stdout"
+
+   - debug: 
+       msg: "{{test1.stdout}}"
+              
+
+            
