@@ -87,7 +87,7 @@
             app: ""
             chaostype: ""
             phase: completed
-            verdict: "{{ flag }}"
+            verdict: flag.stdout
            
         - name: Apply the litmus result CR
           shell: kubectl apply -f litmus-result.yaml
