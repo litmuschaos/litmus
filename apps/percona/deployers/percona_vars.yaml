@@ -2,3 +2,4 @@
 
 percona_deployment: percona.yaml
 namespace: litmus
+test_name: percona-deployment
