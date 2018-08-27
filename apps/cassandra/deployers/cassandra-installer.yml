@@ -70,11 +70,11 @@
           retries: 100
 
         - set_fact:
-          flag: "Pass"
+            flag: "Pass"
 
       rescue:
         - set_fact:
-           flag: "Fail"  
+            flag: "Fail"  
 
       always:
             ## RECORD END-OF-TEST IN LITMUS RESULT CR 
@@ -87,7 +87,7 @@
             app: ""
             chaostype: ""
             phase: completed
-            verdict: flag.stdout
+            verdict: "{{ flag }}"
            
         - name: Apply the litmus result CR
           shell: kubectl apply -f litmus-result.yaml
