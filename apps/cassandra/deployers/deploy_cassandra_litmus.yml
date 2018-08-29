@@ -1,0 +1,34 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: litmus-cassandra
+  namespace: litmus 
+spec:
+  template:
+    metadata:
+      name: litmus
+   
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: openebs/ansible-runner
+        imagePullPolicy: Always
+
+        env: 
+          - name: ANSIBLE_STDOUT_CALLBACK
+            #value: log_plays
+            value: actionable
+
+          - name: PROVIDER_STORAGE_CLASS
+            # Supported values: openebs-standard, local-storage
+            value: openebs-cassandra
+
+          - name: PROVIDER_PVC
+            value: openebs-cassandra
+ 
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./cassandra/deployers/cassandra-installer.yml -i /etc/ansible/hosts -v; exit 0"]
+        
