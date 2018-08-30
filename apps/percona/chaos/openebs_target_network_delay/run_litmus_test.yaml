@@ -22,7 +22,7 @@ spec:
             value: default
  
           - name: APP_NAMESPACE
-            value: "percona"
+            value: "litmus"
 
           - name: APP_LABEL
             value: "name=percona"

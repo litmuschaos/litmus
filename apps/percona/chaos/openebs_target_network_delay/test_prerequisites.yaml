@@ -42,7 +42,7 @@
 
     - name: Record the storage engine name
       set_fact:
-        stg_engine: "{{ openebs_stg_engine }}"
+        stg_engine: "{{ openebs_stg_engine.stdout }}"
   when: stg_prov == "openebs.io/provisioner-iscsi"
 
 - name: Identify the chaos util to be invoked 
