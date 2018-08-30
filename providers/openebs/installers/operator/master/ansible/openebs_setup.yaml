@@ -1,4 +1,4 @@
-# TODO 
+# TODO
 # Apply openebs operator and cas template
 
 - hosts: localhost
@@ -13,11 +13,6 @@
             get_url:
               url: "{{ openebs_operator_link }}"
               dest: "{{ playbook_dir }}/openebs-operator.yaml"
-
-          - name: Downloading openebs-cas-template.yaml
-            get_url:
-              url: "{{ openebs_pre_release_link }}"
-              dest: "{{ playbook_dir }}/{{ openebs_pre_release }}"
 
           - name: Updating maya api server image
             replace:
@@ -39,7 +34,7 @@
               regexp: "        - name: OPENEBS_IO_JIVA_CONTROLLER_IMAGE\n          value: \"openebs/jiva.*"
               replace: "        - name: OPENEBS_IO_JIVA_CONTROLLER_IMAGE\n          value: \"{{ lookup('env','OPENEBS_IO_JIVA_CONTROLLER_IMAGE') }}\""
             when: lookup('env','OPENEBS_IO_JIVA_CONTROLLER_IMAGE') | length > 0
-          
+
           - name: Updating openebs jiva controller image in openebs starndard storage class
             replace:
               path: "openebs-operator.yaml"
@@ -67,7 +62,7 @@
               regexp: "        - name: OPENEBS_IO_VOLUME_MONITOR_IMAGE\n          value: \"openebs/m-exporter.*"
               replace: "        - name: OPENEBS_IO_VOLUME_MONITOR_IMAGE\n          value: \"{{ lookup('env','OPENEBS_IO_VOLUME_MONITOR_IMAGE') }}\""
             when: lookup('env','OPENEBS_IO_VOLUME_MONITOR_IMAGE') | length > 0
-          
+
           - name: Updating openebs io volume monitor image in openebs standard storage class
             replace:
               path: "openebs-operator.yaml"
@@ -123,17 +118,12 @@
               regexp: "image: openebs/node-disk-manager-amd64.*"
               replace: "image: {{ lookup('env','NODE_DISK_MANAGER_IMAGE') }}"
             when: lookup('env','NODE_DISK_MANAGER_IMAGE') | length > 0
-        
+
           - name: Applying openebs operator
             shell: "{{ kubeapply }} apply -f {{ openebs_operator }}"
             args:
               executable: /bin/bash
 
-          - name: Applying openebs cas template
-            shell: "{{ kubeapply }} apply -f {{ openebs_pre_release }}"
-            args:
-              executable: /bin/bash
-    
           - name: Checking Maya-API-Server is running
             shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="maya-apiserver")].status.phase}'
             register: maya_api
@@ -174,7 +164,7 @@
 
           - name: Getting the number of nodes
             shell: kubectl get nodes --no-headers | grep -v master | wc -l
-            #  kubectl get nodes -o custom-columns=:spec.taints[*].key 
+            #  kubectl get nodes -o custom-columns=:spec.taints[*].key
             #  --no-headers | grep -iv master | wc -l
             args:
               executable: /bin/bash
