@@ -14,7 +14,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: dargas/ansible-runner:ci
+        image: openebs/ansible-runner
         imagePullPolicy: Always
 
         env: 
@@ -24,7 +24,7 @@ spec:
 
           - name: PROVIDER_STORAGE_CLASS
             # Supported values: openebs-standard, local-storage
-            value: openebs-cstor-sparse
+            value: openebs-standard
 
           - name: PROVIDER_PVC
             value: percona-mysql-claim
