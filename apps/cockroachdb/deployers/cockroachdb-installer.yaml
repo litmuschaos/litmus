@@ -1,0 +1,122 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - cockroachdb-vars.yaml
+
+  tasks:
+
+    - block:
+
+         ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - name: Generate the litmus result CR to reflect SOT (Start of Test) 
+          template: 
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars: 
+            test: "{{ test_name }}"
+            app: ""
+            chaostype: ""
+            phase: in-progress
+            verdict: none
+        
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          args:
+            executable: /bin/bash
+          register: lr_status 
+          failed_when: "lr_status.rc != 0"
+
+         ##Actual test
+        - name: Check whether the provider storageclass was created.
+          shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
+          args:
+            executable: /bin/bash
+          register: result
+
+        - name: Replace the pvc placeholder with provider
+          replace:
+            path: "{{ cockroachdb_deployment }}"
+            regexp: "testclaim"
+            replace: "{{ lookup('env','PROVIDER_PVC') }}"
+
+        - name: Replace the storageclass placeholder with provider
+          replace:
+            path: "{{ cockroachdb_deployment }}"
+            regexp: "testclass"
+            replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+
+        - name: Create test specific namespace.
+          shell: source ~/.profile;  kubectl create ns {{ namespace }}
+          args:
+           executable: /bin/bash
+          when: namespace != 'litmus'
+
+        - name: Checking the status of test specific namespace.
+          shell: kubectl get ns {{ namespace }} -o custom-columns=:status.phase --no-headers 
+          args:
+           executable: /bin/bash
+          register: npstatus
+          until: "'Active' in npstatus.stdout"
+          delay: 30
+          retries: 10
+        
+        - name: Deploying cockroachdb statefulset.
+          shell: kubectl apply -f {{ cockroachdb_deployment }} -n {{ namespace }}
+          args:
+            executable: /bin/bash
+         
+        - name: Deploying cockroachdb service
+          shell: kubectl apply -f {{ cockroachdb_svc }} -n {{ namespace }}
+          args:
+            executable: /bin/bash
+
+        - name: Check if all the replicas are started
+          shell: >
+            sleep 120;
+            replicas=`kubectl get sts -n {{ namespace }} -o custom-columns=:spec.replicas`; 
+            echo $replicas;
+            ready_replicas=`kubectl get sts -n {{ namespace }} -o custom-columns=:..readyReplicas`; 
+            echo $ready_replicas;
+          args:
+            executable: /bin/bash
+          register: rep_count
+          until: "rep_count.stdout_lines[0]|int == rep_count.stdout_lines[1]|int"
+          delay: 60
+          retries: 15
+          when: lookup('env','DEPLOY_TYPE') == 'statefulset'
+
+        - name: Check if cockroachdb replica pods are running.
+          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.app=="cockroachdb")].status.phase}'
+          register: result
+          until: "((result.stdout.split()|unique)|length) == 1 and 'Running' in result.stdout"
+          delay: 60
+          retries: 15
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - set_fact:
+            flag: "Fail"
+          
+      always:
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR 
+        - name: Generate the litmus result CR to reflect EOT (End of Test) 
+          template: 
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars: 
+            test: "{{ test_name }}"
+            app: ""
+            chaostype: ""
+            phase: completed
+            verdict: "{{ flag }}"
+           
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          args:
+            executable: /bin/bash
+          register: lr_status 
+          failed_when: "lr_status.rc != 0"
