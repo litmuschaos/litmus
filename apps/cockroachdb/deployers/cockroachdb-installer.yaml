@@ -72,19 +72,30 @@
           args:
             executable: /bin/bash
 
-        - name: Check if all the replicas are started
-          shell: >
-            sleep 120;
-            replicas=`kubectl get sts -n {{ namespace }} -o custom-columns=:spec.replicas`; 
-            echo $replicas;
-            ready_replicas=`kubectl get sts -n {{ namespace }} -o custom-columns=:..readyReplicas`; 
-            echo $ready_replicas;
-          args:
-            executable: /bin/bash
-          register: rep_count
-          until: "rep_count.stdout_lines[0]|int == rep_count.stdout_lines[1]|int"
-          delay: 60
-          retries: 15
+        - block:
+
+            - name: Obtain the number of replicas.
+              shell: >
+                replicas=`kubectl get sts -n {{ namespace }} -o custom-columns=:spec.replicas`; 
+                echo $replicas;
+              args:
+                executable: /bin/bash
+              register: rep_count
+              until: "rep_count.rc == 0"
+              delay: 60
+              retries: 15
+
+            - name: Obtain the ready replica count and compare with the replica count.
+              shell: >
+                ready_replicas=`kubectl get sts -n {{ namespace }} -o custom-columns=:..readyReplicas`;
+                echo $ready_replicas;
+              args:
+                executable: /bin/bash
+              register: ready_rep
+              until: "ready_rep.rc == 0 and ready_rep.stdout|int == rep_count.stdout|int"
+              delay: 60
+              retries: 15
+
           when: lookup('env','DEPLOY_TYPE') == 'statefulset'
 
         - name: Check if cockroachdb replica pods are running.
