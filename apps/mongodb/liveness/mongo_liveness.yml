@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: livess-mongo
+  name: liveness-mongo
  
 spec:
   template:
