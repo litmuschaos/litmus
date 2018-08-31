@@ -29,7 +29,7 @@
 
 - name: Identify the jiva controller pod belonging to the PV
   shell: > 
-    kubectl get pods -l openebs/controller=jiva-controller
+    kubectl get pods -l openebs.io/controller=jiva-controller
     -n {{ app_ns }} --no-headers | grep {{ pv.stdout }} 
     | awk '{print $1}'
   args:
