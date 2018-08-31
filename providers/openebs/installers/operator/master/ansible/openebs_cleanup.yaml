@@ -15,12 +15,6 @@
               executable: /bin/bash
             ignore_errors: True
 
-          - name: Cleaning cas template
-            shell: "{{ kubeapply }} delete -f {{ openebs_pre_release_link }}" 
-            args:
-              executable: /bin/bash
-            ignore_errors: True
-          
           - name: Confirm pods has been deleted
             shell: "kubectl get pods --all-namespaces"
             args:
