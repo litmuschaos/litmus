@@ -14,10 +14,10 @@
               url: "{{ openebs_operator_link }}"
               dest: "{{ playbook_dir }}/openebs-operator.yaml"
 
-          - name: Downloading openebs-cas-template.yaml
-            get_url:
-              url: "{{ openebs_pre_release_link }}"
-              dest: "{{ playbook_dir }}/{{ openebs_pre_release }}"
+              #- name: Downloading openebs-cas-template.yaml
+              #get_url:
+              #url: "{{ openebs_pre_release_link }}"
+              #dest: "{{ playbook_dir }}/{{ openebs_pre_release }}"
 
           - name: Updating maya api server image
             replace:
@@ -26,12 +26,12 @@
               replace: "image: {{ lookup('env','MAYA_APISERVER_IMAGE') }}"
             when: lookup('env','MAYA_APISERVER_IMAGE') | length > 0
 
-          - name: Updating openebs CAS template to list volume
-            replace:
-              path: "openebs-operator.yaml"
-              regexp: "        - name: OPENEBS_IO_CAS_TEMPLATE_TO_LIST_VOLUME\n          value: \"jiva-volume-list-default-0.7.0\""
-              replace: "        - name: OPENEBS_IO_CAS_TEMPLATE_TO_LIST_VOLUME\n          value: \"{{ lookup('env','OPENEBS_IO_CAS_TEMPLATE_TO_LIST_VOLUME') }}\""
-            when: lookup('env','OPENEBS_IO_CAS_TEMPLATE_TO_LIST_VOLUME') | length > 0
+            #          - name: Updating openebs CAS template to list volume
+            #replace:
+            #  path: "openebs-operator.yaml"
+            #  regexp: "        - name: OPENEBS_IO_CAS_TEMPLATE_TO_LIST_VOLUME\n          value: \"jiva-volume-list-default-0.7.0\""
+            #  replace: "        - name: OPENEBS_IO_CAS_TEMPLATE_TO_LIST_VOLUME\n          value: \"{{ lookup('env','OPENEBS_IO_CAS_TEMPLATE_TO_LIST_VOLUME') }}\""
+            #when: lookup('env','OPENEBS_IO_CAS_TEMPLATE_TO_LIST_VOLUME') | length > 0
 
           - name: Updating openebs jiva controller image
             replace:
@@ -40,12 +40,12 @@
               replace: "        - name: OPENEBS_IO_JIVA_CONTROLLER_IMAGE\n          value: \"{{ lookup('env','OPENEBS_IO_JIVA_CONTROLLER_IMAGE') }}\""
             when: lookup('env','OPENEBS_IO_JIVA_CONTROLLER_IMAGE') | length > 0
           
-          - name: Updating openebs jiva controller image in openebs starndard storage class
-            replace:
-              path: "openebs-operator.yaml"
-              regexp: "      - name: ControllerImage\n        value: openebs/jiva.*"
-              replace: "      - name: ControllerImage\n        value: {{ lookup('env','OPENEBS_IO_JIVA_CONTROLLER_IMAGE') }}"
-            when: lookup('env','OPENEBS_IO_JIVA_CONTROLLER_IMAGE') | length > 0
+            #- name: Updating openebs jiva controller image in openebs starndard storage class
+            #replace:
+            #  path: "openebs-operator.yaml"
+            #  regexp: "      - name: ControllerImage\n        value: openebs/jiva.*"
+            #  replace: "      - name: ControllerImage\n        value: {{ lookup('env','OPENEBS_IO_JIVA_CONTROLLER_IMAGE') }}"
+            #when: lookup('env','OPENEBS_IO_JIVA_CONTROLLER_IMAGE') | length > 0
 
           - name: Updating openebs jiva replica image
             replace:
@@ -54,12 +54,12 @@
               replace: "        - name: OPENEBS_IO_JIVA_REPLICA_IMAGE\n          value: \"{{ lookup('env','OPENEBS_IO_JIVA_REPLICA_IMAGE') }}\""
             when: lookup('env','OPENEBS_IO_JIVA_REPLICA_IMAGE') | length > 0
 
-          - name: Updating openebs jiva replica image in openebs standard storage class
-            replace:
-              path: "openebs-operator.yaml"
-              regexp: "      - name: ReplicaImage\n        value: openebs/jiva.*"
-              replace: "      - name: ReplicaImage\n        value: {{ lookup('env','OPENEBS_IO_JIVA_REPLICA_IMAGE') }}"
-            when: lookup('env','OPENEBS_IO_JIVA_REPLICA_IMAGE') | length > 0
+            #- name: Updating openebs jiva replica image in openebs standard storage class
+            #replace:
+            #  path: "openebs-operator.yaml"
+            #  regexp: "      - name: ReplicaImage\n        value: openebs/jiva.*"
+            #  replace: "      - name: ReplicaImage\n        value: {{ lookup('env','OPENEBS_IO_JIVA_REPLICA_IMAGE') }}"
+            #when: lookup('env','OPENEBS_IO_JIVA_REPLICA_IMAGE') | length > 0
 
           - name: Updating openebs io volume monitor image
             replace:
@@ -68,33 +68,33 @@
               replace: "        - name: OPENEBS_IO_VOLUME_MONITOR_IMAGE\n          value: \"{{ lookup('env','OPENEBS_IO_VOLUME_MONITOR_IMAGE') }}\""
             when: lookup('env','OPENEBS_IO_VOLUME_MONITOR_IMAGE') | length > 0
           
-          - name: Updating openebs io volume monitor image in openebs standard storage class
-            replace:
-              path: "openebs-operator.yaml"
-              regexp: "      - name: VolumeMonitorImage\n        value: openebs/m-exporter.*"
-              replace: "      - name: VolumeMonitorImage\n        value: {{ lookup('env','OPENEBS_IO_VOLUME_MONITOR_IMAGE') }}"
-            when: lookup('env','OPENEBS_IO_VOLUME_MONITOR_IMAGE') | length > 0
+            #- name: Updating openebs io volume monitor image in openebs standard storage class
+            #replace:
+            #  path: "openebs-operator.yaml"
+            #  regexp: "      - name: VolumeMonitorImage\n        value: openebs/m-exporter.*"
+            #  replace: "      - name: VolumeMonitorImage\n        value: {{ lookup('env','OPENEBS_IO_VOLUME_MONITOR_IMAGE') }}"
+            #when: lookup('env','OPENEBS_IO_VOLUME_MONITOR_IMAGE') | length > 0
 
-          - name: Updating jiva replica count
-            replace:
-              path: "openebs-operator.yaml"
-              regexp: "        - name: OPENEBS_IO_JIVA_REPLICA_COUNT\n          value: \"3\""
-              replace: "        - name: OPENEBS_IO_JIVA_REPLICA_COUNT\n          value: \"{{ lookup('env','OPENEBS_IO_JIVA_REPLICA_COUNT') }}\""
-            when: lookup('env','OPENEBS_IO_JIVA_REPLICA_COUNT') | length > 0
+            #- name: Updating jiva replica count
+            #replace:
+            #  path: "openebs-operator.yaml"
+            #  regexp: "        - name: OPENEBS_IO_JIVA_REPLICA_COUNT\n          value: \"3\""
+            #  replace: "        - name: OPENEBS_IO_JIVA_REPLICA_COUNT\n          value: \"{{ lookup('env','OPENEBS_IO_JIVA_REPLICA_COUNT') }}\""
+            #when: lookup('env','OPENEBS_IO_JIVA_REPLICA_COUNT') | length > 0
 
-          - name: Updating jiva replica count in standard storage class
-            replace:
-              path: "openebs-operator.yaml"
-              regexp: "      - name: ReplicaCount\n        value: \"3\""
-              replace: "      - name: ReplicaCount\n        value: \"{{ lookup('env','OPENEBS_IO_JIVA_REPLICA_COUNT') }}\""
-            when: lookup('env','OPENEBS_IO_JIVA_REPLICA_COUNT') | length > 0
+            #- name: Updating jiva replica count in standard storage class
+            #replace:
+            #  path: "openebs-operator.yaml"
+            #  regexp: "      - name: ReplicaCount\n        value: \"3\""
+            #  replace: "      - name: ReplicaCount\n        value: \"{{ lookup('env','OPENEBS_IO_JIVA_REPLICA_COUNT') }}\""
+            #when: lookup('env','OPENEBS_IO_JIVA_REPLICA_COUNT') | length > 0
 
-          - name: Updating jiva replica count in standard storage pool
-            replace:
-              path: "openebs-operator.yaml"
-              regexp: "openebs.io/jiva-replica-count: \"3\""
-              replace: "openebs.io/jiva-replica-count: \"{{ lookup('env','OPENEBS_IO_JIVA_REPLICA_COUNT') }}\""
-            when: lookup('env','OPENEBS_IO_JIVA_REPLICA_COUNT') | length > 0
+            #- name: Updating jiva replica count in standard storage pool
+            #replace:
+            #  path: "openebs-operator.yaml"
+            #  regexp: "openebs.io/jiva-replica-count: \"3\""
+            #  replace: "openebs.io/jiva-replica-count: \"{{ lookup('env','OPENEBS_IO_JIVA_REPLICA_COUNT') }}\""
+            #when: lookup('env','OPENEBS_IO_JIVA_REPLICA_COUNT') | length > 0
 
           - name: Updating openebs provisioner image
             replace:
@@ -129,10 +129,10 @@
             args:
               executable: /bin/bash
 
-          - name: Applying openebs cas template
-            shell: "{{ kubeapply }} apply -f {{ openebs_pre_release }}"
-            args:
-              executable: /bin/bash
+              #- name: Applying openebs cas template
+              #shell: "{{ kubeapply }} apply -f {{ openebs_pre_release }}"
+              #args:
+              #executable: /bin/bash
     
           - name: Checking Maya-API-Server is running
             shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="maya-apiserver")].status.phase}'
