@@ -36,7 +36,7 @@
 - name: Record the cstor target container name
   set_fact:
     # Depends on the naming convention in maya-apiserver (<pv-id>-rep)
-    cstor_target_name: "{{ pv.stdout }}-ctrl-con"
+    cstor_target_name: "{{ pv.stdout }}"
 
 - name: Get the node on which the cstor target is scheduled
   shell: >
@@ -58,7 +58,7 @@
   shell: >
     kubectl exec {{ pumba_pod.stdout }} -n {{ app_ns }} 
     -- pumba netem --interface eth0 --duration {{ chaos_duration }}s delay
-    --time {{ network_delay }} re2:k8s_{{ cstor_target_name }} 
+    --time {{ network_delay }} re2:k8s_cstor-istgt_{{ cstor_target_name }} 
   args:
     executable: /bin/bash
 
