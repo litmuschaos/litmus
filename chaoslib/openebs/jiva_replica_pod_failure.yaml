@@ -22,7 +22,7 @@
 
 - name: Randomly pick a jiva replica pod belonging to the PV
   shell: > 
-    kubectl get pods -l openebs/replica=jiva-replica
+    kubectl get pods -l openebs.io/replica=jiva-replica
     -n {{ app_ns }} --no-headers | grep {{ pv.stdout }} 
     | shuf -n1 | awk '{print $1}'
   args:
