@@ -48,15 +48,6 @@
             #  replace: "      - name: ControllerImage\n        value: {{ lookup('env','OPENEBS_IO_JIVA_CONTROLLER_IMAGE') }}"
             #when: lookup('env','OPENEBS_IO_JIVA_CONTROLLER_IMAGE') | length > 0
 
-
-          - name: Updating openebs jiva controller image in openebs starndard storage class
-            replace:
-              path: "openebs-operator.yaml"
-              regexp: "      - name: ControllerImage\n        value: openebs/jiva.*"
-              replace: "      - name: ControllerImage\n        value: {{ lookup('env','OPENEBS_IO_JIVA_CONTROLLER_IMAGE') }}"
-            when: lookup('env','OPENEBS_IO_JIVA_CONTROLLER_IMAGE') | length > 0
-
-
           - name: Updating openebs jiva replica image
             replace:
               path: "openebs-operator.yaml"
@@ -119,13 +110,6 @@
               path: "openebs-operator.yaml"
               regexp: "        - name: OPENEBS_IO_JIVA_REPLICA_COUNT\n          value: \"3\""
               replace: "        - name: OPENEBS_IO_JIVA_REPLICA_COUNT\n          value: \"{{ lookup('env','OPENEBS_IO_JIVA_REPLICA_COUNT') }}\""
-            when: lookup('env','OPENEBS_IO_JIVA_REPLICA_COUNT') | length > 0
-
-          - name: Updating jiva replica count in standard storage class
-            replace:
-              path: "openebs-operator.yaml"
-              regexp: "      - name: ReplicaCount\n        value: \"3\""
-              replace: "      - name: ReplicaCount\n        value: \"{{ lookup('env','OPENEBS_IO_JIVA_REPLICA_COUNT') }}\""
             when: lookup('env','OPENEBS_IO_JIVA_REPLICA_COUNT') | length > 0
 
           - name: Updating jiva replica count in standard storage pool
