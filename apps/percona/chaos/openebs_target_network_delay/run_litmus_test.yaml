@@ -14,12 +14,15 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: openebs/ansible-runner
+        image: openebs/ansible-runner:
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
             #value: log_plays
             #value: actionable
             value: default
+
+          - name: OPERATOR_NAMESPACE
+            value: "openebs"
  
           - name: APP_NAMESPACE
             value: "litmus"
