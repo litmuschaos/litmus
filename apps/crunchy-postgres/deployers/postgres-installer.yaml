@@ -77,7 +77,7 @@
 
             - name: Obtain the number of replicas.
               shell: >
-                kubectl get sts -n {{ namespace }} -o custom-columns=:spec.replicas
+                 kubectl get sts -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.app=="pgset")].spec.replicas}'
               args:
                 executable: /bin/bash
               register: rep_count
@@ -87,7 +87,7 @@
 
             - name: Obtain the ready replica count and compare with the replica count.
               shell: >
-                kubectl get sts -n {{ namespace }} -o custom-columns=:..readyReplicas
+                kubectl get sts -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.app=="pgset")].status.readyReplicas}'
               args:
                 executable: /bin/bash
               register: ready_rep
