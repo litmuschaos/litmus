@@ -13,7 +13,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: liveness
-        image: openebs/liveness-mongodb
+        image: ranjnshashank855/py-server:t2
         imagePullPolicy: Always
 
         env: 
@@ -37,7 +37,14 @@ spec:
             # No of retries after a db_connect failure before declaring liveness fail
           - name: LIVENESS_RETRY_COUNT
             value: "6"
+
+            # Namespace in which mongo is running  
+          - name: NAMESPACE
+            value: litmus
               
- 
+            # Servive name of mongodb  
+          - name: SERVICE_NAME
+            value: mongo
+
         command: ["/bin/bash"]
         args: ["-c", "python ./server.py ; exit 0"]
