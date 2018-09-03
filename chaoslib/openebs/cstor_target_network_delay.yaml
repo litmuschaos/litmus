@@ -27,29 +27,26 @@
     executable: /bin/bash
   register: pv
 
-- name: Identify the jiva controller pod belonging to the PV
-  shell: > 
-    kubectl get pods -l openebs.io/controller=jiva-controller
-    -n {{ app_ns }} --no-headers | grep {{ pv.stdout }} 
-    | awk '{print $1}'
+- name: Identify the cstor target pod belonging to the PV
+  shell: source ~/.profile; kubectl get pods -n {{ operator_ns }} -l openebs.io/target=cstor-target | grep {{ app_ns }}
   args:
     executable: /bin/bash
-  register: jiva_controller_pod
+  register: cstor_target_pod
 
-- name: Record the jiva controller container name
+- name: Record the cstor target container name
   set_fact:
     # Depends on the naming convention in maya-apiserver (<pv-id>-rep)
-    jiva_controller_name: "{{ pv.stdout }}-ctrl-con"
+    cstor_target_name: "{{ pv.stdout }}"
 
-- name: Get the node on which the jiva controller is scheduled
+- name: Get the node on which the cstor target is scheduled
   shell: >
-    kubectl get pod {{ jiva_controller_pod.stdout }} -n {{ app_ns }}
+    kubectl get pod {{ cstor_target_pod.stdout.split()[0] }} -n {{ operator_ns }}
     --no-headers -o custom-columns=:spec.nodeName
   args:
     executable: /bin/bash
   register: node  
 
-- name: Identify the pumba pod that co-exists with jiva controller
+- name: Identify the pumba pod that co-exists with cstor target
   shell: >
     kubectl get pods -l app=pumba -n {{ app_ns }} 
     -o jsonpath='{.items[?(@.spec.nodeName==''"{{ node.stdout }}"'')].metadata.name}'
@@ -57,11 +54,11 @@
     executable: /bin/bash
   register: pumba_pod
 
-- name: Inject egress delay of {{network_delay}}ms on jiva controller for {{ chaos_duration }}s
+- name: Inject egress delay of {{network_delay}}ms on cstor target for {{ chaos_duration }}s
   shell: >
     kubectl exec {{ pumba_pod.stdout }} -n {{ app_ns }} 
     -- pumba netem --interface eth0 --duration {{ chaos_duration }}s delay
-    --time {{ network_delay }} re2:k8s_{{ jiva_controller_name[:-1] }} 
+    --time {{ network_delay }} re2:k8s_cstor-istgt_{{ cstor_target_name }} 
   args:
     executable: /bin/bash
 
