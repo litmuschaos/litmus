@@ -8,11 +8,10 @@
 #4. Creating workers instance in packet
 #5. Create a file for store device Ids
 #6. Remove any Known hosts
-#7. copy file to master instance
+#7. copy file to instances
 #8. install kubeadm inside master
 #9. set kubeconfig to local
-#10. copy file to worker instances
-#11. joining workers node with master
+#10. joining workers node with master
 ###############################################################################################
 
 ---
@@ -78,12 +77,14 @@
           shell: cat ~/.ssh/known_hosts > ~/.ssh/known_hosts
           ignore_errors: true
 
-        - name: copy file to master instance
-          shell: scp master.sh root@{{ item.public_ipv4 }}:.
-          with_items: "{{ master.devices }}"
+        - name: copy file to instances
+          shell: scp pre_requisite.sh root@{{ item.public_ipv4 }}:.
+          with_items:
+            - "{{ master.devices }}"
+            - "{{ workers.devices }}"
 
         - name: install kubeadm inside master
-          shell: bash master.sh {{ item.public_ipv4 }} | grep "kubeadm join" | cut -d'"' -f2 | sed -e 's/^[ \t]*//'
+          shell: bash pre_requisite.sh {{ item.public_ipv4 }} master | grep "kubeadm join" | cut -d'"' -f2 | sed -e 's/^[ \t]*//'
           args:
             executable: /bin/bash
           delegate_to: "root@{{ item.public_ipv4 }}"
@@ -94,14 +95,10 @@
           shell: scp root@{{ item.public_ipv4 }}:/etc/kubernetes/admin.conf ~/.kube/config
           with_items: "{{ master.devices }}"
 
-        - name: copy file to worker instances
-          shell: scp workers.sh root@{{ item.public_ipv4 }}:.
-          with_items: "{{ workers.devices }}"
-
         - name: joining workers node with master
           args:
             executable: /bin/bash
-          shell: bash workers.sh && {{ storage.results[0].stdout }}
+          shell: bash pre_requisite.sh && {{ storage.results[0].stdout }}
           delegate_to: "root@{{ item.public_ipv4 }}"
           with_items: "{{ workers.devices }}"
   
