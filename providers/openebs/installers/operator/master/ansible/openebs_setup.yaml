@@ -21,6 +21,13 @@
               replace: "image: {{ lookup('env','MAYA_APISERVER_IMAGE') }}"
             when: lookup('env','MAYA_APISERVER_IMAGE') | length > 0
 
+          - name: Updating image pull policy
+            replace:
+              path: "openebs-operator.yaml"
+              regexp: "imagePullPolicy:.*"
+              replace: "imagePullPolicy: {{ lookup('env','IMAGE_PULL_POLICY') }}"
+            when: lookup('env','IMAGE_PULL_POLICY') | length > 0
+
           - name: Updating openebs io volume monitor image
             replace:
               path: "openebs-operator.yaml"
@@ -171,7 +178,7 @@
             register: node_count
 
           - name: Confirm if node-disk-manager is running in all the nodes
-            shell: kubectl get pods -n {{ namespace }} --selector=app=node-disk-manager | grep Running | wc -l
+            shell: kubectl get pods -n {{ namespace }} --selector=name={{ selector_name }} | grep Running | wc -l
             args:
               executable: /bin/bash
             register: ndm_count

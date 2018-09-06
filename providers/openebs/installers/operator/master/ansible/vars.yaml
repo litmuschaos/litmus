@@ -5,3 +5,4 @@ openebs_operator_link: https://raw.githubusercontent.com/openebs/openebs/master/
 openebs_pre_release_link: https://raw.githubusercontent.com/openebs/openebs/master/k8s/openebs-pre-release-features.yaml
 openebs_operator: openebs-operator.yaml
 openebs_pre_release: openebs_pre_release.yaml
+selector_name: openebs-ndm
