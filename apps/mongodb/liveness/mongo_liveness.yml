@@ -13,7 +13,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: liveness
-        image: ranjnshashank855/py-server:t2
+        image: openebs/liveness-mongodb
         imagePullPolicy: Always
 
         env: 
