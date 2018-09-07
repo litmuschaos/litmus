@@ -1,0 +1,37 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: liveness-pg
+ 
+spec:
+  template:
+    metadata:
+      name: liveness
+   
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: liveness
+        image: mockbot/live:c7
+        imagePullPolicy: Always
+
+        env: 
+
+          - name: NAMESPACE
+            value: postgres
+
+          - name: SERVICE_NAME
+            value: pgset
+           
+          - name: DATABASE
+            value: userdb
+
+          - name: USER
+            value: testuser
+
+          - name: PASSWORD
+            value: password 
+
+        command: ["/bin/bash"]
+        args: ["-c", "python ./liveness.py ; exit 0"]
