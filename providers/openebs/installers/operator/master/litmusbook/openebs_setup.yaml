@@ -40,6 +40,8 @@ spec:
             value:
           - name: OPENEBS_IO_CAS_TEMPLATE_TO_LIST_VOLUME
             value:
+          - name: IMAGE_PULL_POLICY
+            value:
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./operator/master/ansible/openebs_setup.yaml -i /etc/ansible/hosts -vv; exit 0"]
         volumeMounts:
