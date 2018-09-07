@@ -1,0 +1,35 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cassandra-liveness
+  namespace: litmus
+ 
+spec:
+  template:
+    metadata:
+      name: cassandra-liveness
+   
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: cassandra-liveness
+        image: openebs/cassandra-liveness
+        imagePullPolicy: Always
+
+        env: 
+
+            # Namespace in which application is running
+          - name: NAMESPACE
+            value: litmus
+    
+            # Service name of application
+          - name: SERVICE
+            value: cassandra
+    
+            # Port on which application is listening
+          - name: PORT
+            value: "9042"            
+ 
+        command: ["/bin/bash"]
+        args: ["-c", "python ./liveness.py ; exit 0"]
