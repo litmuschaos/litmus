@@ -84,7 +84,7 @@
             - "{{ workers.devices }}"
 
         - name: install kubeadm inside master
-          shell: bash pre_requisite.sh {{ item.public_ipv4 }} master | grep "kubeadm join" | cut -d'"' -f2 | sed -e 's/^[ \t]*//'
+          shell: bash pre_requisite.sh {{ item.public_ipv4 }} "{{ network_cidr }}" master | grep "kubeadm join" | cut -d'"' -f2 | sed -e 's/^[ \t]*//'
           args:
             executable: /bin/bash
           delegate_to: "root@{{ item.public_ipv4 }}"
