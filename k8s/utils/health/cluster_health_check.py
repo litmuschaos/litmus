@@ -14,7 +14,7 @@
 #
 # Info:
 # This Python script can be used to check the cluster readiness over multiple Clouds
-# providers like GCE, GKE and AWS with any number of nodes. Script does a series of 
+# providers like GCE, GKE and AWS with any number of nodes. Script does a series of
 # api calls to the kubernetes cluster, by utilising the Python client library for kubernetes.
 # Script terminates successfully once cluster is up or else fails after a T/O period of 900 seconds
 # To run the script: `python cluster_health_check.py --nodes 4`
@@ -31,7 +31,7 @@ def create_api():
         try:
             v1 = client.CoreV1Api()
             break
-        except Exception :
+        except Exception:
             time.sleep(30)
     return v1
 
@@ -43,8 +43,9 @@ def get_nodes(node_count):
             getNodes = v1.list_node()
             if len(getNodes.items) == int(node_count):
                 return getNodes.items
-        except Exception :
-            time.sleep(30)
+        except Exception as e:
+            print e
+        time.sleep(30)
 
 
 def get_node_status(node_count):
@@ -64,7 +65,7 @@ def checkCluster(node_count):
             count = get_node_status(node_count)
             if count == int(node_count):
                 break
-        except Exception :
+        except Exception:
             time.sleep(30)
     print('Cluster is Up and Running')
 
@@ -74,14 +75,15 @@ def get_kube_config():
         try:
             config.load_kube_config()
             break
-        except Exception :
+        except Exception:
             time.sleep(30)
 
 
 def get_args():
     parser = argparse.ArgumentParser()
     # Pass total node count including master node in the cluster iusing flag -n or --nodes
-    parser.add_argument('-n', '--nodes', help='Node or Size of cluster', required=True)
+    parser.add_argument(
+        '-n', '--nodes', help='Node or Size of cluster', required=True)
     args = parser.parse_args()
     return args.nodes
 
@@ -93,7 +95,7 @@ def init():
         try:
             checkCluster(nodes)
             return exit
-        except Exception :
+        except Exception:
             time.sleep(30)
 
 
