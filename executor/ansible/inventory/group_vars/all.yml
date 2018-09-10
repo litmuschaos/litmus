@@ -1,41 +1,21 @@
 ---
 #########################################
-# E2E Environment Specification         #
-#########################################
-
-platform: ubuntu
-storage_provider: openebs
-storage_class: openebs-standard
-
-#########################################
-# Kubernetes Deployment Specification   #
-#########################################
-
-#Kubernetes Version to be used for deployment
-#Accepted Entries (Valid Kubernetes Version): default:1.6.3
-#Accepted Entries (Valid Weave Version): default:1.9.4
-
-k8s_version: 1.8.2
-weave_version: 2.0.4
-
-#list of kubernetes versions released.
-#do not tamper the list unless you know
-#what you are doing...
-
-k8s_version_list:
-  - 1.8.2
-  - 1.8.7
-
-weave_version_list:
-  - 1.9.4
-  - 2.0.4 
-
-#########################################
 # Ansible Runtime Specifications        #
 #########################################
 
-#Option to enable slack notifications to specified channel
-#Accepted Entries(true, false): default:true
+#Provider storage class
+#Supported providers(openebs, local-pv)
+storage_class: openebs-standard
 
+#Option to enable slack notifications to specified channel
+#Accepted entries(true, false): default:true
 slack_notify: true
+
+#Select the desired application
+#Supported applications(percona, tba, all) 
+application:
+  - percona
+  - fio
+
+litmus_dir: "{{ ansible_env.HOME }}/git/litmus" 
 

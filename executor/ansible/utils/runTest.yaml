@@ -1,0 +1,44 @@
+---
+- name: Get the Test item from Test Job List
+  set_fact: 
+    test: "{{ item }}"
+
+- block:
+
+    - name: Replace the storage class based on provider
+      replace:
+        path: "{{ test }}"  
+        regexp: "openebs-standard"
+        replace: "{{ storage_class }}"
+
+    - name: Run the test Kubernetes job YAML
+      shell: source ~/.profile; kubectl create -f run_litmus_test.yaml
+      args:
+        executable: /bin/bash
+      delegate_to: "{{groups['kubernetes-kubemasters'].0}}"
+
+    - name: Verify the test Kubernetes job is Successful
+      # This is a placeholder task that waits 30m for job complete
+      shell: >
+        source ~/.profile; 
+        kubectl get job litmus --no-headers
+        -n litmus -o custom-columns=:status.succeeded
+      args:
+        executable: /bin/bash
+      register: result
+      delegate_to: "{{groups['kubernetes-kubemasters'].0}}"
+      until: "result.stdout|int == 1"
+      delay: 120
+      retries: 15
+
+    ## TODO: Result CR parse, slack notify if applicable
+     
+  rescue: 
+    - name: Handle job failure 
+      debug: 
+        msg: "Unable to complete test, please examine the job spec for {{ test }}" 
+  
+  always: 
+    - name: Message b/w test job runs 
+      debug: 
+        msg: "Moving to next test..."
