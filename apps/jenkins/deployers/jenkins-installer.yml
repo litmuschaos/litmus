@@ -48,7 +48,7 @@
         - name: Create test specific namespace.
           shell: source ~/.profile;  kubectl create ns {{ namespace }}
           args:
-           executable: /bin/bas
+           executable: /bin/bash
           when: namespace != 'litmus'
 
         - name: Checking the status  of test specific namespace.
