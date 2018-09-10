@@ -1,0 +1,41 @@
+# delete_packet_cluster.yml
+# Description:  This will delete a cluster in packet
+###############################################################################################
+#Test Steps:
+
+#1. Deleting instances in packet
+#2. Deleting device Id from file
+
+###############################################################################################
+
+---
+- hosts: localhost
+
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - block:
+        - name: Deleting instances in packet
+          packet_device:
+            project_id: "{{ project_id }}"
+            state: absent
+            device_ids: "{{ item }}"
+          with_lines: cat /tmp/packet/device_id
+
+        - name: Deleting device Id from file
+          lineinfile:
+            state: absent
+            path: "/tmp/packet/device_id"
+            regexp: ""
+            mode: 0755
+
+        - name: Deleting ssh key from packet
+          packet_sshkey:
+            key_file: ~/.ssh/id_rsa.pub
+            state: absent
+
+    - rescue:
+        - name: Test Failed
+          set_fact:
+            flag: "Test Failed"

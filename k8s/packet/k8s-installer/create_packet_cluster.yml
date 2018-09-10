@@ -1,0 +1,112 @@
+# create_packet_cluster.yml
+# Description:  This will create a cluster in packet using kubeadm
+###############################################################################################
+#Test Steps:
+#1. Generate ssh key for packet
+#2. Generate random Cluster name
+#3. Creating master instance in packet
+#4. Creating workers instance in packet
+#5. Create a file for store device Ids
+#6. Remove any Known hosts
+#7. copy file to instances
+#8. install kubeadm inside master
+#9. set kubeconfig to local
+#10. joining workers node with master
+###############################################################################################
+
+---
+- hosts: localhost
+
+  vars_files:
+    - vars.yml
+
+  vars:
+    cluster_name:
+
+  tasks:
+    - block:
+        - name: Generate ssh key for packet
+          packet_sshkey:
+            key_file: ~/.ssh/id_rsa.pub
+            state: present
+
+        - name: Generate random Cluster name
+          command: python ../../utils/name_generator/namesgenerator.py
+          register: cluster_name
+          when: not cluster_name
+        - set_fact:
+            cluster_name: "{{ cluster_name.stdout }}"
+          when: cluster_name.stdout is defined
+
+        - name: Creating master instance in packet
+          packet_device:
+            project_id: "{{ project_id }}"
+            hostnames: master-{{ cluster_name }}
+            count: "{{ master_count }}"
+            operating_system: "{{ os }}"
+            plan: baremetal_0
+            facility: "{{ location }}"
+            wait_for_public_IPv: 4
+            state: active
+          register: master
+
+        - name: Creating workers instance in packet
+          packet_device:
+            project_id: "{{ project_id }}"
+            hostnames: node-{{ cluster_name }}
+            count: "{{ workers_count }}"
+            operating_system: "{{ os }}"
+            plan: baremetal_0
+            facility: "{{ location }}"
+            wait_for_public_IPv: 4
+            state: active
+          register: workers
+
+        - name: Create a file for store device Ids
+          lineinfile:
+            create: yes
+            state: present
+            path: "/tmp/packet/device_id"
+            line: "{{ item.id }}"
+            mode: 0755
+          with_items:
+            - "{{ master.devices }}"
+            - "{{ workers.devices }}"
+
+        - name: Removing any known hosts
+          shell: cat ~/.ssh/known_hosts > ~/.ssh/known_hosts
+          ignore_errors: true
+
+        - name: copy file to instances
+          shell: scp pre_requisite.sh root@{{ item.public_ipv4 }}:.
+          with_items:
+            - "{{ master.devices }}"
+            - "{{ workers.devices }}"
+
+        - name: install kubeadm inside master
+          shell: bash pre_requisite.sh {{ item.public_ipv4 }} "{{ network_cidr }}" master | grep "kubeadm join" | cut -d'"' -f2 | sed -e 's/^[ \t]*//'
+          args:
+            executable: /bin/bash
+          delegate_to: "root@{{ item.public_ipv4 }}"
+          register: storage
+          with_items: "{{ master.devices }}"
+
+        - name: set kubeconfig to local
+          shell: scp root@{{ item.public_ipv4 }}:/etc/kubernetes/admin.conf ~/.kube/config
+          with_items: "{{ master.devices }}"
+
+        - name: joining workers node with master
+          args:
+            executable: /bin/bash
+          shell: bash pre_requisite.sh && {{ storage.results[0].stdout }}
+          delegate_to: "root@{{ item.public_ipv4 }}"
+          with_items: "{{ workers.devices }}"
+  
+        - name: Test Passed
+          set_fact:
+            flag: "Test Passed"
+
+    - rescue:
+        - name: Test Failed
+          set_fact:
+            flag: "Test Failed"

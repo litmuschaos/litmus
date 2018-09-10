@@ -1,0 +1,7 @@
+---
+project_id: bdbd5cf0-7453-434b-99f8-0c3e3f83dbe2
+workers_count: 3
+master_count: 1 # kubeadm support single master only
+location: ams1
+os: ubuntu_16_04
+network_cidr: 10.1.0.0/16
