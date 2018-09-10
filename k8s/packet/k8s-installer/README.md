@@ -8,7 +8,7 @@ These playbook act as a wrapper class for all the `kubeadm` and `packet`  comman
 
 - Ansible
 - packet-python >= 1.35
-- packet api token
+- packet api token (https://app.packet.net/users/example-id-cb2c1b67cc9/api-keys)
 - project_id
 
 ### Creating k8s cluster in packet
@@ -16,6 +16,8 @@ These playbook act as a wrapper class for all the `kubeadm` and `packet`  comman
 - Run `create_packet_cluster`, this will generate ssh public key and k8s cluster in packet.
 
 ```bash
+export PACKET_API_TOKEN=<api-token>
+
 ansible-playbook create_packet_cluster.yml -vv
 ```
 
