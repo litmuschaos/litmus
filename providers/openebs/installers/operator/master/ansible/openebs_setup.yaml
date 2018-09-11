@@ -186,6 +186,15 @@
             delay: 30
             retries: 100
 
+          - name: Confirm CAS Templates are deployed
+            shell: kubectl get cast -n {{ namespace }}
+            args:
+              executable: /bin/bash
+            register: result
+            until:  "result.rc ==0"
+            delay: 5
+            retries: 3
+
           - set_fact:
               flag: "Pass"
       rescue:
