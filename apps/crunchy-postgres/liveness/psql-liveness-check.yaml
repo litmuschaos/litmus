@@ -3,7 +3,8 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: liveness-pg
- 
+  namespace: litmus
+
 spec:
   template:
     metadata:
@@ -13,7 +14,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: liveness
-        image: mockbot/live:c7
+        image: mockbot/live:s1
         imagePullPolicy: Always
 
         env: 
