@@ -1,0 +1,9 @@
+---
+- name: Check {{ lvalue }} pod status
+  shell: kubectl get pods -n {{ ns }} -l {{lkey}}={{ lvalue }}
+  args:
+    executable: /bin/bash
+  register: result
+  until: "'Running' in result.stdout"
+  delay: 30
+  retries: 15
