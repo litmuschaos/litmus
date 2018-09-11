@@ -1,0 +1,35 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: jupyter-liveness
+  namespace: litmus
+ 
+spec:
+  template:
+    metadata:
+      name: jupyter-liveness
+   
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: jupyter-liveness
+        image: vvibhr995/j-liveness:vv1
+        imagePullPolicy: Always
+
+        env: 
+
+            # Namespace in which application is running
+          - name: NAMESPACE
+            value: jupyter
+    
+            # Service name of application
+          - name: SERVICE
+            value: jupyter-service
+    
+            # Port on which application is listening
+          - name: PORT
+            value: "8888"            
+ 
+        command: ["/bin/bash"]
+        args: ["-c", "python ./liveness.py ; exit 0"]
