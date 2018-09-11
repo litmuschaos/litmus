@@ -18,7 +18,7 @@ spec:
 
         env: 
 
-            # Time period (in sec) b/w retries for DB init check
+            # Time in min. for which simulator will run
           - name: MINUTES
             value: "1"
 
