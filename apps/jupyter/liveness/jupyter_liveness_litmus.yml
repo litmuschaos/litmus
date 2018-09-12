@@ -23,7 +23,7 @@ spec:
           - name: NAMESPACE
             value: jupyter
     
-            # Service name of application
+            # Service name of application deployment
           - name: SERVICE
             value: jupyter-service
     
