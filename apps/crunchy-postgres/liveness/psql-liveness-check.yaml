@@ -14,25 +14,54 @@ spec:
       restartPolicy: Never
       containers:
       - name: liveness
-        image: mockbot/live:s1
+        image: openebs/liveness-postgres
         imagePullPolicy: Always
 
         env: 
 
+            # Time period (in sec) b/w retries for DB init check
+          - name: INIT_WAIT_DELAY
+            value: "30"
+    
+            # No of retries for DB init check 
+          - name: INIT_RETRY_COUNT
+            value: "10"
+    
+            # Time period (in sec) b/w liveness checks
+          - name: LIVENESS_PERIOD_SECONDS
+            value: "10"
+    
+            # Time period (in sec) b/w retries for db_connect failure
+          - name: LIVENESS_TIMEOUT_SECONDS
+            value: "10"
+    
+            # No of retries after a db_connect failure before declaring liveness fail
+          - name: LIVENESS_RETRY_COUNT
+            value: "6"
+
+            # Namespace in Which Postgres is Running
           - name: NAMESPACE
             value: postgres
 
+            # Service Name of postgres 
           - name: SERVICE_NAME
             value: pgset
            
+            #Database name of postgres
           - name: DATABASE
             value: userdb
 
+            # Usr name of Postgres
           - name: USER
             value: testuser
 
+            # Password for the Postgres
           - name: PASSWORD
-            value: password 
+            value: password
+
+            # Port on which application is listening
+          - name: PORT
+            value: "5432"  
 
         command: ["/bin/bash"]
         args: ["-c", "python ./liveness.py ; exit 0"]
