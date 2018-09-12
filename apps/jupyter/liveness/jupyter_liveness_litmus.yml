@@ -14,7 +14,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: jupyter-liveness
-        image: vvibhr995/j-liveness:vv1
+        image: vvibhr995/jupyter-liv:v2
         imagePullPolicy: Always
 
         env: 
@@ -26,6 +26,9 @@ spec:
             # Service name of application deployment
           - name: SERVICE
             value: jupyter-service
+          
+          - name: SLEEP
+            value: "4"  
     
             # Port on which application is listening
           - name: PORT

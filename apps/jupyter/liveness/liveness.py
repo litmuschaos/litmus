@@ -8,6 +8,7 @@ import os
 port = os.environ['PORT']
 ns = os.environ['NAMESPACE']
 sv = os.environ['SERVICE']
+sleep = os.environ['SLEEP']
 
 def isOpen(ip,port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -30,4 +31,4 @@ if __name__ == '__main__':
         else:
             print("Liveness Failed")
             sys.stdout.flush()
-        time.sleep(4)
+        time.sleep(int(sleep))
