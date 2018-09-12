@@ -31,10 +31,8 @@
     - name: Getting Kubeconfig for the AKS Cluster
       shell: az aks get-credentials --resource-group aks-{{ cluster_name }}-rg --name aks-{{ cluster_name }}-cluster
 
-    - name: Logging Cluster Name inside
-      shell: mkdir -p ~/logs/ && touch ~/logs/clusters
-
-    - lineinfile:
+    - name: Logging Cluster Name
+      lineinfile:
         create: yes
         state: present
         path: "~/logs/azure_clusters"
