@@ -90,15 +90,18 @@
 
        - include: /chaoslib/kubectl/pod_evict_by_taint.yaml
          app: "{{ percona_pod_name }}"
+         app_ns: 'litmus'
          taint: "node.kubernetes.io/out-of-disk"
          when: chaos_util ==  "APP_POD_EVICT/KUBECTL"
 
        - include: /chaoslib/kubectl/cordon_drain_node.yaml
          app: "{{ percona_pod_name }}"
+         app_ns: 'litmus'
          when: chaos_util ==  "APP_NODE_DRAIN/KUBECTL"
          
        - include: /chaoslib/pumba/pod_failure_by_sigkill.yaml
          app: "{{ percona_pod_name }}"
+         app_ns: 'litmus'
          when: chaos_util ==  "APP_POD_KILL/PUMBA"
 
        - name: Confirm mysql pod status is running
