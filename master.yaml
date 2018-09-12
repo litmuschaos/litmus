@@ -9,7 +9,7 @@
 
 tests:
   - name: openebs-volume-replica-failure
-    app_tags: ['mysql,percona']
+    app_tags: ['mysql','percona']
     specPath: ./apps/percona/chaos/openebs_volume_replica_failure/run_litmus_test.yaml
     patch:
     - name: 'Application Namespace'
@@ -35,7 +35,7 @@ tests:
       value: 'percona-mysql-claim'
  
   - name: openebs-target-network-delay
-    app_tags: ['mysql,percona']
+    app_tags: ['mysql','percona']
     specPath: ./apps/percona/chaos/openebs_target_network_delay/run_litmus_test.yaml
     patch:
     - name: 'Application Namespace'
