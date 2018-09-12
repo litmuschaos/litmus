@@ -6,6 +6,7 @@
 #1. Generate a random Name Infix
 #2. Create a Resourse Group
 #3. Create the Clusters inside the resource group
+#4. Generate the kubeconfig file and merge it in ~/.kube/config
 #5. Log a file with the name of Cluster inside ~/logs/azure_clusters
 ###############################################################################################
 
