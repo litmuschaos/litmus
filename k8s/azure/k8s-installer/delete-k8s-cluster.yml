@@ -1,0 +1,37 @@
+# Description:  Deletes the Resource group as well as the AKS Cluster associated
+# Author: Harshvardhan Karn
+###############################################################################################
+# Steps:
+# 1. Delete the Cluster
+# 2. Delete the Logged cluster Infix
+###############################################################################################
+---
+- hosts: localhost
+  vars:
+    cluster_name:
+  tasks:
+       - block:
+             - name: Fetching Cluster Name
+               shell: cat ~/logs/azure_clusters
+               register: cluster_name
+               when: not cluster_name
+             - set_fact:
+                 cluster_name: "{{ cluster_name.stdout }}"
+               when: cluster_name.stdout is defined
+
+             - name: Deleting Resource Group & Cluster
+               shell: az group delete -n aks-{{ cluster_name }}-rg -y
+
+             - name: Removing Cluster Name entry from log
+               lineinfile:
+                 path: ~/logs/azure_clusters
+                 state: absent
+                 regexp: '{{ cluster_name }}'
+               
+             - name: Test Passed
+               set_fact:
+                 flag: "Test Passed"
+         rescue:
+             - name: Test Failed
+               set_fact:
+                 flag: "Test Failed"
