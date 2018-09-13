@@ -1,7 +1,7 @@
 - name: Setup pumba chaos infrastructure
   shell: >
     kubectl apply -f /chaoslib/pumba/pumba_kube.yaml 
-    -n litmus 
+    -n {{ app_ns }} 
   args:
     executable: /bin/bash
   register: result
@@ -10,7 +10,7 @@
   shell: >
     kubectl get pod -l app=pumba 
     --no-headers -o custom-columns=:status.phase
-    -n litmus | sort | uniq
+    -n {{ app_ns }} | sort | uniq
   args: 
     executable: /bin/bash
   register: result
@@ -20,7 +20,7 @@
 
 - name: Identify the application node
   shell: >
-    kubectl get pod {{ app }} -n litmus 
+    kubectl get pod {{ app }} -n {{ app_ns }}
     --no-headers -o custom-columns=:spec.nodeName
   args: 
     executable: /bin/bash
@@ -34,7 +34,7 @@
   shell: >
     kubectl get pod {{ app }} 
     --no-headers -o jsonpath={.spec.containers[*].name}
-    -n litmus 
+    -n {{ app_ns }} 
   args:
     executable: /bin/bash
   register: app_container
@@ -42,7 +42,7 @@
 - name: Record the pumba pod on app node 
   shell: >
     kubectl get pod -l app=pumba -o wide 
-    -n litmus | grep {{ app_node }} 
+    -n {{ app_ns }} | grep {{ app_node }} 
     | awk '{print $1}'
   args:
     executable: /bin/bash
@@ -50,7 +50,7 @@
     
 - name: Force kill the application pod using pumba 
   shell: >
-    kubectl exec {{ pumba_pod.stdout}} -n litmus
+    kubectl exec {{ pumba_pod.stdout}} -n {{ app_ns }}
     -- timeout -t 40 pumba --interval 15s kill
     --signal SIGKILL re2:k8s_{{ app_container.stdout }};
   args:
@@ -63,7 +63,8 @@
     timeout: 30
 
 - name: Delete the pumba daemonset 
-  shell: kubectl delete -f /chaoslib/pumba/pumba_kube.yaml  
+  shell: >
+    kubectl delete -f /chaoslib/pumba/pumba_kube.yaml -n {{ app_ns }}
   args:
     executable: /bin/bash
   register: result
@@ -71,7 +72,7 @@
 - name: Confirm that the pumba ds is deleted successfully
   shell: >
     kubectl get pod -l app=pumba 
-    --no-headers -n litmus  
+    --no-headers -n {{ app_ns }}
   args: 
     executable: /bin/bash
   register: result
