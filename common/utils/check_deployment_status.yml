@@ -1,0 +1,14 @@
+---
+# This util checks the application status in k8s cluster
+# The parameters required are
+#     - app_ns ( namespace where the application is deployed)
+#     - app_label ( Label of application in the form 'key=value'))
+
+- name: Check the pod status
+  shell: kubectl get pods -n {{ app_ns }} -l {{ app_label }}
+  args:
+    executable: /bin/bash
+  register: result
+  until: "'Running' in result.stdout"
+  delay: 30
+  retries: 15

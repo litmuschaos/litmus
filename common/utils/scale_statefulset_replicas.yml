@@ -1,0 +1,33 @@
+---
+# This utilty task file can scale up the statefulset application deployed in K8s cluster.
+# The parameters required are 
+#    - app_ns ( namespace in which applicaion is deployed)
+#    - app_label( Applicastions's label in the form key=value)
+#    - app_replica_count( Required number of application replicas)
+
+- name: Identifying the statefulset deployed.
+  shell: kubectl get statefulset -n {{ app_ns }} --no-headers -l {{ app_label }} -o custom-columns=:metadata.name
+  args:
+    executable: /bin/bash
+  register: result
+
+- name: Recording the application pod name.
+  set_fact:
+    sts_name: "{{ result.stdout }}"
+
+- name: scaling up the statefulset application.
+  shell: kubectl scale statefulsets {{ sts_name }} --replicas={{ app_replica_count }} -n {{ app_ns }}
+  args:
+    executable: /bin/bash
+  register: result
+  failed_when: "'scaled' not in result.stdout"
+
+- name: Check if all the application replicas are running.
+  shell: kubectl get statefulsets -n {{ app_ns }} --no-headers -l {{ app_label }} -o custom-columns=:..readyReplicas
+  args:
+    executable: /bin/bash
+  register: running_replicas
+  until: "running_replicas.stdout|int == app_replica_count|int"
+  delay: 60
+  retries: 15
+
