@@ -1,8 +1,0 @@
----
-- name: Deploy Application 
-  shell: kubectl apply -f {{ item }} -n {{ ns }}
-  args:
-    executable: /bin/bash
-  with_items: "{{ app_yml }}"
-
-

@@ -1,0 +1,23 @@
+---
+# This utility checks if all the replicas in a statefulset are running.
+# The parameters required are
+#     - app_ns (Namespace on which the application is deployed)
+#     - app_label( Label of application in the form 'key=value'))
+#     - 
+- name: Obtain the number of replicas.
+  shell: kubectl get statefulset -n {{ app_ns }} -l {{ app_label }} -o custom-columns=:spec.replicas
+  args:
+    executable: /bin/bash
+  register: rep_count
+  until: "rep_count.rc == 0"
+  delay: 60
+  retries: 15
+
+- name: Obtain the ready replica count and compare with the replica count.
+  shell: kubectl get statefulset -n {{ app_ns }} -l {{ app_label }} -o custom-columns=:..readyReplicas
+  args:
+    executable: /bin/bash
+  register: ready_rep
+  until: "ready_rep.rc == 0 and ready_rep.stdout|int == rep_count.stdout|int"
+  delay: 60
+  retries: 15

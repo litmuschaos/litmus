@@ -1,6 +1,6 @@
 - name: Identify the application node
   shell: >
-    kubectl get pod {{ app }} -n litmus 
+    kubectl get pod {{ app }} -n {{ app_ns }} 
     --no-headers -o custom-columns=:spec.nodeName
   args: 
     executable: /bin/bash

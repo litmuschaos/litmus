@@ -10,14 +10,15 @@ master() {
     sed -i "s/cgroup-driver=systemd/cgroup-driver=cgroupfs/g" /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
     systemctl daemon-reload
     systemctl restart kubelet
+    sleep 10
     kubeadm init --apiserver-advertise-address=$1 --apiserver-cert-extra-sans=10.0.2.15 --pod-network-cidr=$2
     mkdir -p $HOME/.kube
     cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
     chown $(id -u):$(id -g) $HOME/.kube/config
+    sysctl net.bridge.bridge-nf-call-iptables=1
     kubectl apply -f https://raw.githubusercontent.com/cloudnativelabs/kube-router/master/daemonset/kubeadm-kuberouter.yaml
 }
 
-if [ "$3" = "master" ]
-then
-  master
+if [ "$3" == "master" ];then
+  master $1 $2
 fi
