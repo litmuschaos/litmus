@@ -1,0 +1,27 @@
+---
+- name: Identifying the statefulset deployed.
+  shell: kubectl get statefulset -n {{ namespace }} --no-headers -l {{ lkey }}={{ lvalue }} -o custom-columns=:metadata.name
+  args:
+    executable: /bin/bash
+  register: result
+
+- name: Recording the application pod name.
+  set_fact:
+    sts_name: "{{ result.stdout }}"
+
+- name: scaling up the statefulset application.
+  shell: kubectl scale statefulsets {{ sts_name }} --replicas={{ replica_count }} -n {{ namespace }}
+  args:
+    executable: /bin/bash
+  register: result
+  failed_when: "'scaled' not in result.stdout"
+
+- name: Check if all the application replicas are running.
+  shell: kubectl get pods -n {{ namespace }} -l {{ lkey }}={{ lvalue }} -o custom-columns=:..readyReplicas
+  args:
+    executable: /bin/bash
+  register: running_replicas
+  until: "running_replicas.stdout|int == replica_count|int"
+  delay: 60
+  retries: 15
+
