@@ -17,7 +17,7 @@
   failed_when: "'scaled' not in result.stdout"
 
 - name: Check if all the application replicas are running.
-  shell: kubectl get pods -n {{ namespace }} -l {{ lkey }}={{ lvalue }} -o custom-columns=:..readyReplicas
+  shell: kubectl get statefulsets -n {{ namespace }} -l {{ lkey }}={{ lvalue }} -o custom-columns=:..readyReplicas
   args:
     executable: /bin/bash
   register: running_replicas
