@@ -19,7 +19,7 @@ spec:
         env: 
             # Time period (in sec) b/w retries for DB init check
           - name: NAMESPACE
-            value: litmus
+            value: postgres
     
             # Service name of postgres application 
           - name: SERVICE_NAME
