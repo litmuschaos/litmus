@@ -1,0 +1,38 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: jenkins-job-simulator
+ 
+spec:
+  template:
+    metadata:
+      name: jenkins-job-simulator
+   
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: jenkins-job-simulator
+        image: openebs/jenkins-simulator
+        imagePullPolicy: Always
+
+        env: 
+
+            # Time in min. for which simulator will run
+          - name: MINUTES
+            value: "1"
+
+          - name: SERVICE
+            value: jenkins-svc
+            
+          - name: NAMESPACE
+            value: litmus
+            
+          - name: PASSWORD
+            value: b3a0e3050cc0461aa17755f2537e0608
+
+          - name: USER
+            value: Admin
+              
+        command: ["/bin/bash"]
+        args: ["-c", "python ./job.py ; exit 0"]
