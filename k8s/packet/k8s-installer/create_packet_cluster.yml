@@ -6,12 +6,13 @@
 #2. Generate random Cluster name
 #3. Creating master instance in packet
 #4. Creating workers instance in packet
-#5. Create a file for store device Ids
-#6. Remove any Known hosts
-#7. copy file to instances
-#8. install kubeadm inside master
-#9. set kubeconfig to local
-#10. joining workers node with master
+#5. wait for ssh inside instances
+#6. Create a file for store device Ids
+#7. Remove any Known hosts
+#8. copy file to instances
+#9. install kubeadm inside master
+#10. set kubeconfig to local
+#11. joining workers node with master
 ###############################################################################################
 
 ---
@@ -44,10 +45,9 @@
             hostnames: master-{{ cluster_name }}
             count: "{{ master_count }}"
             operating_system: "{{ os }}"
-            plan: baremetal_0
+            plan: "{{ master_config }}"
             facility: "{{ location }}"
             wait_for_public_IPv: 4
-            state: active
           register: master
 
         - name: Creating workers instance in packet
@@ -56,11 +56,21 @@
             hostnames: node-{{ cluster_name }}
             count: "{{ workers_count }}"
             operating_system: "{{ os }}"
-            plan: baremetal_0
+            plan: "{{ workers_config }}"
             facility: "{{ location }}"
             wait_for_public_IPv: 4
-            state: active
           register: workers
+
+        - name: wait for ssh inside instances
+          wait_for:
+            delay: 1
+            host: "{{ item.public_ipv4 }}"
+            port: 22
+            state: started
+            timeout: 500
+          with_items:
+            - "{{ master.devices }}"
+            - "{{ workers.devices }}"
 
         - name: Create a file for store device Ids
           lineinfile:
