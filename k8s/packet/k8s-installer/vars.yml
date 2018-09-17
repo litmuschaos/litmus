@@ -5,3 +5,5 @@ master_count: 1 # kubeadm support single master only
 location: ams1
 os: ubuntu_16_04
 network_cidr: 10.1.0.0/16
+master_config: m1.xlarge.x86
+workers_config: t1.small.x86
