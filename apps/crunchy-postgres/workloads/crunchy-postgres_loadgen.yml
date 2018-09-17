@@ -13,7 +13,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: postgres-loadgen
-        image: openebs/postgres-loadgen
+        image: openebs/postgres-client
         imagePullPolicy: Always
 
         env: 
@@ -48,4 +48,6 @@ spec:
             #Number of transaction to perform
           - name: TRANSACTIONS
             value: "200"
-          
+
+        command: ["/bin/bash"]
+        args: ["-c", "./test.sh ; exit 0"] 
