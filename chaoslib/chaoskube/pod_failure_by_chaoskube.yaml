@@ -16,9 +16,9 @@
   delay: 20
   retries: 15
 
-- name: Set the replica pod name to variable
+- name: Set the chaoskube pod name to variable
   set_fact:
-    chaoskube_pod: "{{ chaoskube.stdout.split()[0] }}"
+    chaospod: "{{ chaoskube.stdout.split()[0] }}"
 
 - name: Get the name of the volume deployment
   shell: >
