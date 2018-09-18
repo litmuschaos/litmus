@@ -7,7 +7,7 @@
 
 - name: Confirm that chaoskube pod is running
   shell: >
-    kubectl get pod -l app=choaskube
+    kubectl get pod -l app=chaoskube
     --no-headers -n {{ namespace }}
   args:
     executable: /bin/bash
