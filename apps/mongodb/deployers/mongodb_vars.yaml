@@ -2,4 +2,4 @@
 
 mongodb_deployment: mongo-statefulset.yaml
 namespace: litmus
-test_name: Mongodb-Deployment
+test_name: mongodb-deployment
