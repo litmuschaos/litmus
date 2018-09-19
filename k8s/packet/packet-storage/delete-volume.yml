@@ -1,0 +1,44 @@
+# delete-volume.yml
+########################################################################################################################################################################
+#Steps:
+
+#1. Deleting volume in packet cloud using volume ID
+#2. Deleting volume ID form stored file
+########################################################################################################################################################################
+
+---
+- hosts: localhost
+  
+  vars:
+    packet_api_token: "{{ packet_api }}"
+  
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - block:
+        - name: Delete volume in packet cloud
+          uri:
+            url: "{{ base_url }}/storage/{{ item }}"
+            method: DELETE
+            headers:
+              X-Auth-Token: "{{ packet_api }}"
+            status_code: 204
+          with_lines: cat "/tmp/packet/volume_id"
+          ignore_errors: true
+
+        - name: Deleting Volume Id from file
+          lineinfile:
+            state: absent
+            path: "/tmp/packet/volume_id"
+            regexp: ""
+            mode: 0755
+
+        - name: Test Passed
+          set_fact:
+            flag: "Test Passed"
+
+    - rescue:
+        - name: Test Failed
+          set_fact:
+            flag: "Test Failed"
