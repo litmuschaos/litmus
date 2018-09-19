@@ -1,4 +1,4 @@
-cassandra_loadgen: cassandra-loadgen.yml
+cassandra_loadgen: cassandra-loadgen.yaml
 namespace: litmus
 test_name: cassandra-loadgen
 io_minutes: 3

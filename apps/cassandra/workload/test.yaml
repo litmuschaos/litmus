@@ -3,7 +3,7 @@
   connection: local
 
   vars_files:
-    - test_vars.yml
+    - test_vars.yaml
 
   tasks:
     - block:
