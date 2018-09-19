@@ -3,7 +3,7 @@
   connection: local
 
   vars_files:
-    - cockroachdb-vars.yaml
+    - cockroachdb_vars.yaml
 
   tasks:
 
