@@ -10,6 +10,37 @@
   tasks:
     - block:
           - block:
+            ## RECORD START of litmus job
+            - name: Record test instance/run ID
+              set_fact:
+                run_id: "{{ lookup('env','RUN_ID') }}"
+            - name: Construct testname appended with runID
+              set_fact:
+                test_name: "{{ installation_test_name }}-{{ run_id }}"
+            when: lookup('env','RUN_ID')
+
+          - name: Generate the litmus result CR to reflect Start of Installation
+            template:
+              src: /litmus-result.j2
+              dest: litmus-result.yaml
+            vars:
+              test: "{{ installation_test_name }}"
+              chaostype: ""
+              app: ""
+              phase: in-progress
+              verdict: none
+
+          - name: Analyze the cr yaml
+            shell: cat litmus-result.yaml
+
+          - name: Apply the litmus result CR
+            shell: kubectl apply -f litmus-result.yaml
+            args:
+              executable: /bin/bash
+            register: lr_status
+            failed_when: "lr_status.rc != 0"
+
+          - block:
               - template:
                   src: storageclass-jiva.j2
                   dest: "{{ storage_class_jiva }}"
@@ -79,3 +110,27 @@
       rescue: 
         - set_fact:
             flag: "Fail"
+
+      always:
+        ## Updating status to CR
+        - name: Generate the litmus result CR to reflect End Of Installation
+          template:
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars:
+            test: "{{ installation_test_name }}"
+            chaostype: ""
+            app: ""
+            phase: completed
+            verdict: "{{ flag }}"
+
+        - name: Analyze the cr yaml
+          shell: cat litmus-result.yaml
+          
+
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          args:
+            executable: /bin/bash
+          register: lr_status
+          failed_when: "lr_status.rc != 0"

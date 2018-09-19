@@ -32,5 +32,7 @@ spec:
             value: 5G
           - name: VOLUME_MONITOR 
             value: "true"
+          - name: RUN_ID
+            value:
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./storageclass/0.6/ansible/storageclass_setup.yaml -i /etc/ansible/hosts -vv; exit 0"]
