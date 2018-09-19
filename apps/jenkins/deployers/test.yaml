@@ -3,7 +3,7 @@
   connection: local
 
   vars_files:
-    - mongodb_vars.yaml
+    - test_vars.yaml
 
   tasks:
     - block:
@@ -25,6 +25,8 @@
             executable: /bin/bash
           register: lr_status 
           failed_when: "lr_status.rc != 0"
+
+         ##Actual test
         - name: Check whether the provider storageclass is applied
           shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
           args:
@@ -33,24 +35,24 @@
 
         - name: Replace the pvc placeholder with provider
           replace:
-            path: "{{ mongodb_deployment }}"
+            path: "{{ jenkins_deployment }}"
             regexp: "testclaim"
             replace: "{{ lookup('env','PROVIDER_PVC') }}"
 
         - name: Replace the storageclass placeholder with provider
           replace:
-            path: "{{ mongodb_deployment }}"
+            path: "{{ jenkins_deployment }}"
             regexp: "testclass"
             replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
 
         - name: Create test specific namespace.
           shell: source ~/.profile;  kubectl create ns {{ namespace }}
           args:
-           executable: /bin/bas
+           executable: /bin/bash
           when: namespace != 'litmus'
 
         - name: Checking the status  of test specific namespace.
-          shell: kubectl get ns {{ namespace }} -o jsonpath='{.status.phase}'
+          shell: kubectl get ns {{ namespace }} -o custom-columns=:status.phase --no-headers 
           args:
            executable: /bin/bash
           register: npstatus
@@ -58,24 +60,23 @@
           delay: 30
           retries: 10
         
-        - name: Deploying Mongodb
-          shell: kubectl apply -f {{ mongodb_deployment }} -n {{ namespace }} 
+        - name: Deploying Jenkins
+          shell: kubectl apply -f {{ jenkins_deployment }} -n {{ namespace }}
 
-        - name: Checking mongodb is in running state
-          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.generateName=="mongo-")].status.phase}'
+        - name: Checking Jenkins is in running state
+          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.app=="jenkins-app")].status.phase}'
           register: result
-          until: "((result.stdout_lines|unique)|length) == 1 and 'Running' in result.stdout"
+          until: "'Running' in result.stdout"
           delay: 10
           retries: 100
 
-      
         - set_fact:
             flag: "Pass"
 
       rescue:
         - set_fact:
             flag: "Fail"
-
+          
       always:
             ## RECORD END-OF-TEST IN LITMUS RESULT CR 
         - name: Generate the litmus result CR to reflect EOT (End of Test) 
@@ -94,10 +95,4 @@
           args:
             executable: /bin/bash
           register: lr_status 
-          failed_when: "lr_status.rc != 0"     
- 
-         
-      
-     
-    
-          
+          failed_when: "lr_status.rc != 0"

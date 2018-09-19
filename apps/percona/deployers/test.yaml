@@ -3,7 +3,7 @@
   connection: local
 
   vars_files:
-    - jenkins_vars.yaml
+    - test_vars.yaml
 
   tasks:
     - block:
@@ -35,20 +35,20 @@
 
         - name: Replace the pvc placeholder with provider
           replace:
-            path: "{{ jenkins_deployment }}"
+            path: "{{ percona_deployment }}"
             regexp: "testclaim"
             replace: "{{ lookup('env','PROVIDER_PVC') }}"
 
         - name: Replace the storageclass placeholder with provider
           replace:
-            path: "{{ jenkins_deployment }}"
+            path: "{{ percona_deployment }}"
             regexp: "testclass"
             replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
 
         - name: Create test specific namespace.
           shell: source ~/.profile;  kubectl create ns {{ namespace }}
           args:
-           executable: /bin/bash
+           executable: /bin/bas
           when: namespace != 'litmus'
 
         - name: Checking the status  of test specific namespace.
@@ -60,11 +60,11 @@
           delay: 30
           retries: 10
         
-        - name: Deploying Jenkins
-          shell: kubectl apply -f {{ jenkins_deployment }} -n {{ namespace }}
+        - name: Deploying percona
+          shell: kubectl apply -f {{ percona_deployment }} -n {{ namespace }}
 
-        - name: Checking Jenkins is in running state
-          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.app=="jenkins-app")].status.phase}'
+        - name: Checking percona is in running state
+          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="percona")].status.phase}'
           register: result
           until: "'Running' in result.stdout"
           delay: 10

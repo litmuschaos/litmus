@@ -3,11 +3,11 @@
   connection: local
 
   vars_files:
-    - jupyter_vars.yaml
+    - test_vars.yaml
 
   tasks:
     - block:
-        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+         ## RECORD START-OF-TEST IN LITMUS RESULT CR
         - name: Generate the litmus result CR to reflect SOT (Start of Test) 
           template: 
             src: /litmus-result.j2
@@ -25,46 +25,57 @@
             executable: /bin/bash
           register: lr_status 
           failed_when: "lr_status.rc != 0"
-
-        ## Actual Test to deploy Jupyter NoteBook on k8s
         - name: Check whether the provider storageclass is applied
           shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
           args:
             executable: /bin/bash
           register: result
 
+        - name: Replace the pvc placeholder with provider
+          replace:
+            path: "{{ mongodb_deployment }}"
+            regexp: "testclaim"
+            replace: "{{ lookup('env','PROVIDER_PVC') }}"
+
+        - name: Replace the storageclass placeholder with provider
+          replace:
+            path: "{{ mongodb_deployment }}"
+            regexp: "testclass"
+            replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+
         - name: Create test specific namespace.
           shell: source ~/.profile;  kubectl create ns {{ namespace }}
           args:
-           executable: /bin/bash
+           executable: /bin/bas
           when: namespace != 'litmus'
 
         - name: Checking the status  of test specific namespace.
-          shell: kubectl get ns {{ namespace }} -o custom-columns=:status.phase --no-headers 
+          shell: kubectl get ns {{ namespace }} -o jsonpath='{.status.phase}'
           args:
            executable: /bin/bash
           register: npstatus
           until: "'Active' in npstatus.stdout"
           delay: 30
           retries: 10
+        
+        - name: Deploying Mongodb
+          shell: kubectl apply -f {{ mongodb_deployment }} -n {{ namespace }} 
 
-        - name: Deploying jupyter notebook
-          shell: kubectl apply -f {{ jupyter_deployment }} -n {{ namespace }}
-
-        - name: Check if jupyter is deployed successfully
-          shell: kubectl get pods -n {{ namespace }} -l name=jupyter-server
+        - name: Checking mongodb is in running state
+          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.generateName=="mongo-")].status.phase}'
           register: result
-          until: "'Running' in result.stdout"
-          delay: 60
-          retries: 20
+          until: "((result.stdout_lines|unique)|length) == 1 and 'Running' in result.stdout"
+          delay: 10
+          retries: 100
 
+      
         - set_fact:
-           flag: "Pass"
+            flag: "Pass"
 
-    - rescue:
+      rescue:
         - set_fact:
-          flag: "Fail"
-          
+            flag: "Fail"
+
       always:
             ## RECORD END-OF-TEST IN LITMUS RESULT CR 
         - name: Generate the litmus result CR to reflect EOT (End of Test) 
@@ -83,4 +94,10 @@
           args:
             executable: /bin/bash
           register: lr_status 
-          failed_when: "lr_status.rc != 0"
+          failed_when: "lr_status.rc != 0"     
+ 
+         
+      
+     
+    
+          

@@ -33,4 +33,4 @@ spec:
             value: statefulset
  
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./crunchy-postgres/deployers/postgres-installer.yaml -i /etc/ansible/hosts -v; exit 0"] 
+        args: ["-c", "ansible-playbook ./crunchy-postgres/deployers/test.yaml -i /etc/ansible/hosts -v; exit 0"] 
