@@ -50,4 +50,4 @@ spec:
             value: "200"
 
         command: ["/bin/bash"]
-        args: ["-c", ".jenkins/deployers/test.sh ; exit 0"] 
+        args: ["-c", "./crunchy-postgres/workload/test.sh ; exit 0"] 
