@@ -30,5 +30,5 @@ spec:
             value: jenkins-claim
  
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./test.yml -i /etc/ansible/hosts -v; exit 0"]
+        args: ["-c", "ansible-playbook ./jenkins/deployers/test.yml -i /etc/ansible/hosts -v; exit 0"]
         
