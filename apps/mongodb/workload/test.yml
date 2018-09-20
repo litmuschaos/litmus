@@ -1,0 +1,88 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - name: Generate the litmus result CR to reflect SOT (Start of Test) 
+          template: 
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars: 
+            test: "{{ test_name }}"
+            app: ""
+            chaostype: ""
+            phase: in-progress
+            verdict: none
+        
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          args:
+            executable: /bin/bash
+          register: lr_status 
+          failed_when: "lr_status.rc != 0"
+
+        - name: Create test specific namespace.
+          shell: kubectl create ns {{ namespace }}
+          args:
+           executable: /bin/bash
+          when: namespace != 'litmus'
+
+        - name: Checking the status  of test specific namespace.
+          shell: kubectl get ns {{ namespace }} -o jsonpath='{.status.phase}'
+          args:
+           executable: /bin/bash
+          register: npstatus
+          until: "'Active' in npstatus.stdout"
+          delay: 30
+          retries: 10
+        
+        - name: Create Mongodb Loadgen Job
+          shell: kubectl apply -f {{ mongodb_loadgen }} -n {{ namespace }} 
+
+        - name: Verify load-gen pod is running
+          shell: kubectl get pods -n {{ namespace }} -l app=mongo-loadgen -o jsonpath='{.items[0].status.phase}'
+          args:
+            executable: /bin/bash
+          register: result
+          until: "'Running' in result.stdout"
+          delay: 30
+          retries: 15
+
+        - name: Verifying load-generation  
+          shell: kubectl exec -it mongo-0 -n {{ namespace }} -- mongo --eval 'db.getMongo().getDBNames()'
+          register: output
+          until: "'sbtest' in output.stdout"
+          delay: 30
+          retry: 15
+
+        - set_fact:
+            flag: "load_started"
+
+      rescue:
+        - set_fact:
+            flag: "load_failed"  
+
+      always:
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR 
+        - name: Generate the litmus result CR to reflect EOT (End of Test) 
+          template: 
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars: 
+            test: "{{ test_name }}"
+            app: ""
+            chaostype: ""
+            phase: completed
+            verdict: "{{ flag }}"
+           
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          args:
+            executable: /bin/bash
+          register: lr_status 
+          failed_when: "lr_status.rc != 0"
