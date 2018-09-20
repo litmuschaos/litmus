@@ -23,14 +23,14 @@
 - name: Get the name of the volume deployment
   shell: >
     kubectl get deployments -n {{ namespace }}
-    -l {{ label }} --no-headers
+    -l {{ label }} --no-headers -o=custom-columns=NAME:".metadata.name"
   args:
     executable: /bin/bash
   register: result_deploy
 
 - name: Set the deployment name to variable
   set_fact:
-    volume_deploy: "{{ result_deploy.stdout_lines[0].split()[0] }}"
+    volume_deploy: "{{ result_deploy.stdout }}"
 
 - name: Get the resourceVersion of the {{ volume_deploy }}
   shell: >
