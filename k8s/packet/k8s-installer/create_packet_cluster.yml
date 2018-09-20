@@ -23,6 +23,7 @@
 
   vars:
     cluster_name:
+    kubernetes_version: "{{ k8s_version }}"
 
   tasks:
     - block:
@@ -94,7 +95,7 @@
             - "{{ workers.devices }}"
 
         - name: install kubeadm inside master
-          shell: bash pre_requisite.sh "{{ item.public_ipv4 }}" "{{ network_cidr }}" master | grep "kubeadm join" | cut -d'"' -f2 | sed -e 's/^[ \t]*//'
+          shell: bash pre_requisite.sh "{{ kubernetes_version }}-00" "{{ item.public_ipv4 }}" "{{ network_cidr }}" master | grep "kubeadm join" | cut -d'"' -f2 | sed -e 's/^[ \t]*//'
           args:
             executable: /bin/bash
           delegate_to: "root@{{ item.public_ipv4 }}"
@@ -108,7 +109,7 @@
         - name: joining workers node with master
           args:
             executable: /bin/bash
-          shell: bash pre_requisite.sh && {{ storage.results[0].stdout }}
+          shell: bash pre_requisite.sh "{{ kubernetes_version }}-00" && {{ storage.results[0].stdout }}
           delegate_to: "root@{{ item.public_ipv4 }}"
           with_items: "{{ workers.devices }}"
   

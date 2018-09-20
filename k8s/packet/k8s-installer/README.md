@@ -9,7 +9,8 @@ These playbook act as a wrapper class for all the `kubeadm` and `packet`  comman
 - Ansible
 - packet-python >= 1.35
 - packet api token (https://app.packet.net/users/example-id-cb2c1b67cc9/api-keys)
-- project_id
+- project_id of packet cloud
+- `packet` directory present in location `/tmp`
 
 ### Creating k8s cluster in packet
 
@@ -18,15 +19,17 @@ These playbook act as a wrapper class for all the `kubeadm` and `packet`  comman
 ```bash
 export PACKET_API_TOKEN=<api-token>
 
-ansible-playbook create_packet_cluster.yml -vv
+ansible-playbook create_packet_cluster.yml --extra-vars "k8s_version=<version>" -vv
 ```
+
+**example** :- ansible-playbook create_packet_cluster.yml --extra-vars "k8s_version=1.10.0" -vv
 
 **Optional**
 
 - User can also provide the Cluster name at the time of creation in `--extra-vars`
 
 ```bash
-ansible-playbook create_packet_cluster.yml -vv --extra-vars cluster_name=<name-of-cluster>"
+ansible-playbook create_packet_cluster.yml -vv --extra-vars "k8s_version=<version> cluster_name=<name-of-cluster>"
 ```
 
 ### Deleting k8s cluster in packet
