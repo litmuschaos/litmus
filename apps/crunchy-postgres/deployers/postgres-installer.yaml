@@ -3,7 +3,7 @@
   connection: local
 
   vars_files:
-    - postgres-vars.yaml
+    - postgres_vars.yaml
 
   tasks:
     - block:

@@ -3,12 +3,10 @@
   connection: local
 
   vars_files:
-    - cockroachdb_vars.yaml
+    - jenkins_vars.yaml
 
   tasks:
-
     - block:
-
          ## RECORD START-OF-TEST IN LITMUS RESULT CR
         - name: Generate the litmus result CR to reflect SOT (Start of Test) 
           template: 
@@ -29,7 +27,7 @@
           failed_when: "lr_status.rc != 0"
 
          ##Actual test
-        - name: Check whether the provider storageclass was created.
+        - name: Check whether the provider storageclass is applied
           shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
           args:
             executable: /bin/bash
@@ -37,13 +35,13 @@
 
         - name: Replace the pvc placeholder with provider
           replace:
-            path: "{{ cockroachdb_deployment }}"
+            path: "{{ jenkins_deployment }}"
             regexp: "testclaim"
             replace: "{{ lookup('env','PROVIDER_PVC') }}"
 
         - name: Replace the storageclass placeholder with provider
           replace:
-            path: "{{ cockroachdb_deployment }}"
+            path: "{{ jenkins_deployment }}"
             regexp: "testclass"
             replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
 
@@ -53,7 +51,7 @@
            executable: /bin/bash
           when: namespace != 'litmus'
 
-        - name: Checking the status of test specific namespace.
+        - name: Checking the status  of test specific namespace.
           shell: kubectl get ns {{ namespace }} -o custom-columns=:status.phase --no-headers 
           args:
            executable: /bin/bash
@@ -62,44 +60,15 @@
           delay: 30
           retries: 10
         
-        - name: Deploying cockroachdb statefulset.
-          shell: kubectl apply -f {{ cockroachdb_deployment }} -n {{ namespace }}
-          args:
-            executable: /bin/bash
-         
-        - name: Deploying cockroachdb service
-          shell: kubectl apply -f {{ cockroachdb_svc }} -n {{ namespace }}
-          args:
-            executable: /bin/bash
+        - name: Deploying Jenkins
+          shell: kubectl apply -f {{ jenkins_deployment }} -n {{ namespace }}
 
-        - block:
-
-            - name: Obtain the number of replicas.
-              shell: kubectl get statefulset -n {{ namespace }} -l app=cockroachdb -o custom-columns=:spec.replicas
-              args:
-                executable: /bin/bash
-              register: rep_count
-              until: "rep_count.rc == 0"
-              delay: 60
-              retries: 15
-
-            - name: Obtain the ready replica count and compare with the replica count.
-              shell: kubectl get statefulset -n {{ namespace }} -l app=cockroachdb -o custom-columns=:..readyReplicas
-              args:
-                executable: /bin/bash
-              register: ready_rep
-              until: "ready_rep.rc == 0 and ready_rep.stdout|int == rep_count.stdout|int"
-              delay: 60
-              retries: 15
-
-          when: lookup('env','DEPLOY_TYPE') == 'statefulset'
-
-        - name: Check if cockroachdb replica pods are running.
-          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.app=="cockroachdb")].status.phase}'
+        - name: Checking Jenkins is in running state
+          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.app=="jenkins-app")].status.phase}'
           register: result
-          until: "((result.stdout.split()|unique)|length) == 1 and 'Running' in result.stdout"
-          delay: 60
-          retries: 15
+          until: "'Running' in result.stdout"
+          delay: 10
+          retries: 100
 
         - set_fact:
             flag: "Pass"

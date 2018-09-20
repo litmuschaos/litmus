@@ -3,11 +3,11 @@
   connection: local
 
   vars_files:
-    - cassandra_vars.yml
+    - mongodb_vars.yaml
 
   tasks:
     - block:
-        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+         ## RECORD START-OF-TEST IN LITMUS RESULT CR
         - name: Generate the litmus result CR to reflect SOT (Start of Test) 
           template: 
             src: /litmus-result.j2
@@ -25,7 +25,6 @@
             executable: /bin/bash
           register: lr_status 
           failed_when: "lr_status.rc != 0"
-
         - name: Check whether the provider storageclass is applied
           shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
           args:
@@ -34,26 +33,20 @@
 
         - name: Replace the pvc placeholder with provider
           replace:
-            path: "{{ cassandra_deployment }}"
+            path: "{{ mongodb_deployment }}"
             regexp: "testclaim"
             replace: "{{ lookup('env','PROVIDER_PVC') }}"
 
         - name: Replace the storageclass placeholder with provider
           replace:
-            path: "{{ cassandra_deployment }}"
+            path: "{{ mongodb_deployment }}"
             regexp: "testclass"
             replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
 
-        - name: Replace the default namespace in cassandra statefulset yaml
-          replace:
-            path: "{{ cassandra_deployment }}"
-            regexp: 'cassandra-0.cassandra.default.svc.cluster.local'
-            replace: 'cassandra-0.cassandra.{{ namespace }}.svc.cluster.local'
-
         - name: Create test specific namespace.
-          shell: kubectl create ns {{ namespace }}
+          shell: source ~/.profile;  kubectl create ns {{ namespace }}
           args:
-           executable: /bin/bash
+           executable: /bin/bas
           when: namespace != 'litmus'
 
         - name: Checking the status  of test specific namespace.
@@ -65,37 +58,23 @@
           delay: 30
           retries: 10
         
-        - name: Deploying Cassandra statefulset
-          shell: kubectl apply -f {{ cassandra_deployment }} -n {{ namespace }} 
+        - name: Deploying Mongodb
+          shell: kubectl apply -f {{ mongodb_deployment }} -n {{ namespace }} 
 
-        - block:
+        - name: Checking mongodb is in running state
+          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.generateName=="mongo-")].status.phase}'
+          register: result
+          until: "((result.stdout_lines|unique)|length) == 1 and 'Running' in result.stdout"
+          delay: 10
+          retries: 100
 
-            - name: Obtain the number of replicas.
-              shell: kubectl get statefulset -n {{ namespace }} -l app=cassandra -o custom-columns=:spec.replicas
-              args:
-                executable: /bin/bash
-              register: rep_count
-              until: "rep_count.rc == 0"
-              delay: 60
-              retries: 15
-
-            - name: Obtain the ready replica count and compare with the replica count.
-              shell: kubectl get statefulset -n {{ namespace }} -l app=cassandra -o custom-columns=:..readyReplicas
-              args:
-                executable: /bin/bash
-              register: ready_rep
-              until: "ready_rep.rc == 0 and ready_rep.stdout|int == rep_count.stdout|int"
-              delay: 60
-              retries: 15
-
-          when: lookup('env','DEPLOY_TYPE') == 'statefulset'
-
+      
         - set_fact:
             flag: "Pass"
 
       rescue:
         - set_fact:
-            flag: "Fail"  
+            flag: "Fail"
 
       always:
             ## RECORD END-OF-TEST IN LITMUS RESULT CR 
@@ -115,4 +94,10 @@
           args:
             executable: /bin/bash
           register: lr_status 
-          failed_when: "lr_status.rc != 0"
+          failed_when: "lr_status.rc != 0"     
+ 
+         
+      
+     
+    
+          

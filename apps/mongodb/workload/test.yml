@@ -3,11 +3,11 @@
   connection: local
 
   vars_files:
-    - mongodb_vars.yml
+    - test_vars.yml
 
   tasks:
     - block:
-         ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
         - name: Generate the litmus result CR to reflect SOT (Start of Test) 
           template: 
             src: /litmus-result.j2
@@ -25,28 +25,11 @@
             executable: /bin/bash
           register: lr_status 
           failed_when: "lr_status.rc != 0"
-        - name: Check whether the provider storageclass is applied
-          shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
-          args:
-            executable: /bin/bash
-          register: result
-
-        - name: Replace the pvc placeholder with provider
-          replace:
-            path: "{{ mongodb_deployment }}"
-            regexp: "testclaim"
-            replace: "{{ lookup('env','PROVIDER_PVC') }}"
-
-        - name: Replace the storageclass placeholder with provider
-          replace:
-            path: "{{ mongodb_deployment }}"
-            regexp: "testclass"
-            replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
 
         - name: Create test specific namespace.
-          shell: source ~/.profile;  kubectl create ns {{ namespace }}
+          shell: kubectl create ns {{ namespace }}
           args:
-           executable: /bin/bas
+           executable: /bin/bash
           when: namespace != 'litmus'
 
         - name: Checking the status  of test specific namespace.
@@ -58,23 +41,31 @@
           delay: 30
           retries: 10
         
-        - name: Deploying Mongodb
-          shell: kubectl apply -f {{ mongodb_deployment }} -n {{ namespace }} 
+        - name: Create Mongodb Loadgen Job
+          shell: kubectl apply -f {{ mongodb_loadgen }} -n {{ namespace }} 
 
-        - name: Checking mongodb is in running state
-          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.generateName=="mongo-")].status.phase}'
+        - name: Verify load-gen pod is running
+          shell: kubectl get pods -n {{ namespace }} -l app=mongo-loadgen -o jsonpath='{.items[0].status.phase}'
+          args:
+            executable: /bin/bash
           register: result
-          until: "((result.stdout_lines|unique)|length) == 1 and 'Running' in result.stdout"
-          delay: 10
-          retries: 100
+          until: "'Running' in result.stdout"
+          delay: 30
+          retries: 15
 
-      
+        - name: Verifying load-generation  
+          shell: kubectl exec -it mongo-0 -n {{ namespace }} -- mongo --eval 'db.getMongo().getDBNames()'
+          register: output
+          until: "'sbtest' in output.stdout"
+          delay: 30
+          retry: 15
+
         - set_fact:
-            flag: "Pass"
+            flag: "load_started"
 
       rescue:
         - set_fact:
-            flag: "Fail"
+            flag: "load_failed"  
 
       always:
             ## RECORD END-OF-TEST IN LITMUS RESULT CR 
@@ -94,10 +85,4 @@
           args:
             executable: /bin/bash
           register: lr_status 
-          failed_when: "lr_status.rc != 0"     
- 
-         
-      
-     
-    
-          
+          failed_when: "lr_status.rc != 0"

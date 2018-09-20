@@ -13,7 +13,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: liveness
-        image: openebs/liveness-mongodb
+        image: openebs/mongodb-client
         imagePullPolicy: Always
 
         env: 
