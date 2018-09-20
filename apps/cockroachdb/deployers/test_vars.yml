@@ -1,7 +1,7 @@
 ---
-cockroachdb_deployment: cockroachdb-sts.yml
+cockroachdb_deployment: cockroachdb_sts.yml
 
-cockroachdb_svc: cockroachdb-svc.yml 
+cockroachdb_svc: cockroachdb_svc.yml 
 
 namespace: cockroachdb
 
