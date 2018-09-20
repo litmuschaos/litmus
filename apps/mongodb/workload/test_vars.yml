@@ -1,0 +1,3 @@
+mongodb_loadgen: mongo-loadgen.yml
+namespace: litmus
+test_name: mongodb-loadgen
