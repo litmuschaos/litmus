@@ -1,0 +1,53 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: crunchy-loadgen
+  namespace: litmus
+spec:
+  template:
+    metadata:
+      name: crunchy-loadgen
+      
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: postgres-loadgen
+        image: openebs/postgres-client
+        imagePullPolicy: Always
+
+        env: 
+            # Time period (in sec) b/w retries for DB init check
+          - name: NAMESPACE
+            value: postgres
+    
+            # Service name of postgres application 
+          - name: SERVICE_NAME
+            value: pgset
+    
+            # Database Name 
+          - name: DATABASE_NAME
+            value: postgres
+    
+           # Password to access Database
+          - name: PASSWORD
+            value: password
+    
+           # Database user
+          - name: DATABASE_USER
+            value: testuser
+          
+            #Port on which crunchy databse is listening
+          - name: PORT
+            value: "5432"
+            
+            #Number of parallel transactions to perform
+          - name: PARALLEL_TRANSACTION
+            value: "5"
+            
+            #Number of transaction to perform
+          - name: TRANSACTIONS
+            value: "200"
+
+        command: ["/bin/bash"]
+        args: ["-c", ".jenkins/deployers/test.sh ; exit 0"] 

@@ -1,0 +1,5 @@
+# Test-specific parametres
+
+percona_deployment: percona.yml
+namespace: litmus
+test_name: percona-deployment

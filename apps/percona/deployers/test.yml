@@ -7,7 +7,7 @@
 
   tasks:
     - block:
-        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+         ## RECORD START-OF-TEST IN LITMUS RESULT CR
         - name: Generate the litmus result CR to reflect SOT (Start of Test) 
           template: 
             src: /litmus-result.j2
@@ -26,7 +26,7 @@
           register: lr_status 
           failed_when: "lr_status.rc != 0"
 
-     ## Actual Test to deploy Crunchy Postgress  on k8s
+         ##Actual test
         - name: Check whether the provider storageclass is applied
           shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
           args:
@@ -35,20 +35,20 @@
 
         - name: Replace the pvc placeholder with provider
           replace:
-            path: "{{ pg_statefulset }}"
+            path: "{{ percona_deployment }}"
             regexp: "testclaim"
             replace: "{{ lookup('env','PROVIDER_PVC') }}"
 
         - name: Replace the storageclass placeholder with provider
           replace:
-            path: "{{ pg_statefulset }}"
+            path: "{{ percona_deployment }}"
             regexp: "testclass"
             replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
 
         - name: Create test specific namespace.
           shell: source ~/.profile;  kubectl create ns {{ namespace }}
           args:
-           executable: /bin/bash
+           executable: /bin/bas
           when: namespace != 'litmus'
 
         - name: Checking the status  of test specific namespace.
@@ -59,48 +59,14 @@
           until: "'Active' in npstatus.stdout"
           delay: 30
           retries: 10
+        
+        - name: Deploying percona
+          shell: kubectl apply -f {{ percona_deployment }} -n {{ namespace }}
 
-        - name: Deploying postgres statefulset and services
-          shell: kubectl apply -f {{ pg_statefulset }} -n {{ namespace }}
-          args:
-            executable: /bin/bash
+        - name: Checking percona is in running state
+          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="percona")].status.phase}'
           register: result
-
-        - name: Verify that the postgres master and replica are available as cluster services
-          shell: kubectl get svc -n {{ namespace }}
-          args:
-            executable: /bin/bash
-          register: result_service
-          failed_when: "'pgset-primary' and 'pgset-replica' not in result_service.stdout"
-
-        - block:
-
-            - name: Obtain the number of replicas.
-              shell: >
-                 kubectl get sts -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.app=="pgset")].spec.replicas}'
-              args:
-                executable: /bin/bash
-              register: rep_count
-              until: "rep_count.rc == 0"
-              delay: 60
-              retries: 15
-
-            - name: Obtain the ready replica count and compare with the replica count.
-              shell: >
-                kubectl get sts -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.app=="pgset")].status.readyReplicas}'
-              args:
-                executable: /bin/bash
-              register: ready_rep
-              until: "ready_rep.rc == 0 and ready_rep.stdout|int == rep_count.stdout|int"
-              delay: 60
-              retries: 15
-
-          when: lookup('env','DEPLOY_TYPE') == 'statefulset'
-
-        - name: Checking postgress replicas pods are running state
-          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.app=="pgset")].status.phase}'
-          register: result
-          until: "((result.stdout_lines|unique)|length) == 1 and 'Running' in result.stdout"
+          until: "'Running' in result.stdout"
           delay: 10
           retries: 100
 

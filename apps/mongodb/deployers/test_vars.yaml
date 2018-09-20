@@ -1,5 +1,0 @@
-# Test-specific parametres
-
-mongodb_deployment: mongo-statefulset.yaml
-namespace: litmus
-test_name: mongodb-deployment

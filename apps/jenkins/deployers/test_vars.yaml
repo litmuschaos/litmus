@@ -1,4 +1,0 @@
-# Test specifiv parametres
-test_name: jenkins-deployment
-namespace: litmus
-jenkins_deployment: jenkins.yaml

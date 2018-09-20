@@ -26,7 +26,6 @@
           register: lr_status 
           failed_when: "lr_status.rc != 0"
 
-     ## Actual Test to deploy Crunchy Postgress  on k8s
         - name: Check whether the provider storageclass is applied
           shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
           args:
@@ -35,49 +34,44 @@
 
         - name: Replace the pvc placeholder with provider
           replace:
-            path: "{{ pg_statefulset }}"
+            path: "{{ cassandra_deployment }}"
             regexp: "testclaim"
             replace: "{{ lookup('env','PROVIDER_PVC') }}"
 
         - name: Replace the storageclass placeholder with provider
           replace:
-            path: "{{ pg_statefulset }}"
+            path: "{{ cassandra_deployment }}"
             regexp: "testclass"
             replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
 
+        - name: Replace the default namespace in cassandra statefulset yaml
+          replace:
+            path: "{{ cassandra_deployment }}"
+            regexp: 'cassandra-0.cassandra.default.svc.cluster.local'
+            replace: 'cassandra-0.cassandra.{{ namespace }}.svc.cluster.local'
+
         - name: Create test specific namespace.
-          shell: source ~/.profile;  kubectl create ns {{ namespace }}
+          shell: kubectl create ns {{ namespace }}
           args:
            executable: /bin/bash
           when: namespace != 'litmus'
 
         - name: Checking the status  of test specific namespace.
-          shell: kubectl get ns {{ namespace }} -o custom-columns=:status.phase --no-headers 
+          shell: kubectl get ns {{ namespace }} -o jsonpath='{.status.phase}'
           args:
            executable: /bin/bash
           register: npstatus
           until: "'Active' in npstatus.stdout"
           delay: 30
           retries: 10
-
-        - name: Deploying postgres statefulset and services
-          shell: kubectl apply -f {{ pg_statefulset }} -n {{ namespace }}
-          args:
-            executable: /bin/bash
-          register: result
-
-        - name: Verify that the postgres master and replica are available as cluster services
-          shell: kubectl get svc -n {{ namespace }}
-          args:
-            executable: /bin/bash
-          register: result_service
-          failed_when: "'pgset-primary' and 'pgset-replica' not in result_service.stdout"
+        
+        - name: Deploying Cassandra statefulset
+          shell: kubectl apply -f {{ cassandra_deployment }} -n {{ namespace }} 
 
         - block:
 
             - name: Obtain the number of replicas.
-              shell: >
-                 kubectl get sts -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.app=="pgset")].spec.replicas}'
+              shell: kubectl get statefulset -n {{ namespace }} -l app=cassandra -o custom-columns=:spec.replicas
               args:
                 executable: /bin/bash
               register: rep_count
@@ -86,8 +80,7 @@
               retries: 15
 
             - name: Obtain the ready replica count and compare with the replica count.
-              shell: >
-                kubectl get sts -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.app=="pgset")].status.readyReplicas}'
+              shell: kubectl get statefulset -n {{ namespace }} -l app=cassandra -o custom-columns=:..readyReplicas
               args:
                 executable: /bin/bash
               register: ready_rep
@@ -97,20 +90,13 @@
 
           when: lookup('env','DEPLOY_TYPE') == 'statefulset'
 
-        - name: Checking postgress replicas pods are running state
-          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.app=="pgset")].status.phase}'
-          register: result
-          until: "((result.stdout_lines|unique)|length) == 1 and 'Running' in result.stdout"
-          delay: 10
-          retries: 100
-
         - set_fact:
             flag: "Pass"
 
       rescue:
         - set_fact:
-            flag: "Fail"
-          
+            flag: "Fail"  
+
       always:
             ## RECORD END-OF-TEST IN LITMUS RESULT CR 
         - name: Generate the litmus result CR to reflect EOT (End of Test) 

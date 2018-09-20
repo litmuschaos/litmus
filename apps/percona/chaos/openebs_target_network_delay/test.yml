@@ -21,6 +21,18 @@
 
         ## RECORD START-OF-TEST IN LITMUS RESULT CR
 
+        - block:
+
+            - name: Record test instance/run ID
+              set_fact:
+                run_id: "{{ lookup('env','RUN_ID') }}"
+
+            - name: Construct testname appended with runID
+              set_fact:
+                test_name: "{{ test_name }}-{{ run_id }}"
+
+          when: lookup('env','RUN_ID')
+
         - name: Generate the litmus result CR to reflect SOT (Start of Test) 
           template: 
             src: /litmus-result.j2
@@ -31,6 +43,9 @@
             app: ""
             phase: in-progress
             verdict: none
+
+        - name: Analyze the cr yaml
+          shell: cat litmus-result.yaml
 
         - name: Apply the litmus result CR
           shell: kubectl apply -f litmus-result.yaml
@@ -45,11 +60,10 @@
           debug: 
             msg: 
               - "The application info is as follows:"
-              - "Namespace           : {{ namespace }}"
-              - "Target Namespace    : {{ target_namespace }}"
-              - "Label               : {{ label }}"
-              - "PVC                 : {{ pvc }}"  
-              - "StorageClass        : {{ sc }}"
+              - "Namespace    : {{ namespace }}"
+              - "Label        : {{ label }}"
+              - "PVC          : {{ pvc }}"  
+              - "StorageClass : {{ sc }}"
 
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
 
@@ -68,8 +82,9 @@
 
         - include: "{{ chaos_util_path }}"
           app_ns: "{{ namespace }}"
-          target_ns: "{{ target_namespace }}"
           app_pvc: "{{ pvc }}"
+          network_delay: "{{ n_delay }}"
+          chaos_duration: "{{ c_duration }}"
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
@@ -105,6 +120,9 @@
             app: ""
             phase: completed
             verdict: "{{ flag }}"
+
+        - name: Analyze the cr yaml
+          shell: cat litmus-result.yaml
            
         - name: Apply the litmus result CR
           shell: kubectl apply -f litmus-result.yaml
