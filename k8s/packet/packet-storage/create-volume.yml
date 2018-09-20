@@ -6,6 +6,8 @@
 #2. Creating a file for store volume ID
 #3. Getting cluster device ID from file
 #4. Attaching volume to devide in packet
+#5. Fetching device detail using device id
+#6. Executing volume attach command in nodes
 ########################################################################################################################################################################
 
 ---
@@ -64,11 +66,29 @@
              - "{{ volume_id.results }}"
              - "{{ device_id.stdout_lines }}"
 
+        - name: Fetch device detail using device id
+          uri:
+            url: "{{ base_url }}/devices/{{ item }}"
+            method: GET
+            headers:
+              X-Auth-Token: "{{ packet_api }}"
+            status_code: 200
+            body_format: json
+          register: device_ip
+          with_lines: cat "{{ device_id_location }}"
+
+        - name: Executing volume attach command in nodes
+          args:
+            executable: /bin/bash
+          shell: packet-block-storage-attach
+          delegate_to: "root@{{ item.json.ip_addresses[0].address }}"
+          with_items: "{{ device_ip.results }}"
+
         - name: Test Passed
           set_fact:
             flag: "Test Passed"
 
-    - rescue:
+      rescue:
         - name: Test Failed
           set_fact:
             flag: "Test Failed"

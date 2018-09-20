@@ -2,6 +2,8 @@
 ########################################################################################################################################################################
 #Steps:
 
+#1. Fetching device detail using device id
+#2. Executing volume Detach command in nodes
 #1. Deleting volume in packet cloud using volume ID
 #2. Deleting volume ID form stored file
 ########################################################################################################################################################################
@@ -17,6 +19,24 @@
 
   tasks:
     - block:
+        - name: Fetch device detail using device id
+          uri:
+            url: "{{ base_url }}/devices/{{ item }}"
+            method: GET
+            headers:
+              X-Auth-Token: "{{ packet_api }}"
+            status_code: 200
+            body_format: json
+          register: device_ip
+          with_lines: cat "{{ device_id_location }}"
+
+        - name: Executing volume Detach command in nodes
+          args:
+            executable: /bin/bash
+          shell: packet-block-storage-detach
+          delegate_to: "root@{{ item.json.ip_addresses[0].address }}"
+          with_items: "{{ device_ip.results }}"
+
         - name: Delete volume in packet cloud
           uri:
             url: "{{ base_url }}/storage/{{ item }}"
