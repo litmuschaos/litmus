@@ -22,14 +22,32 @@ export PACKET_API_TOKEN=<api-token>
 ansible-playbook create_packet_cluster.yml --extra-vars "k8s_version=<version>" -vv
 ```
 
-**example** :- ansible-playbook create_packet_cluster.yml --extra-vars "k8s_version=1.10.0" -vv
+**example** :- ansible-playbook create_packet_cluster.yml --extra-vars "k8s_version=1.10.0-00" -vv
 
 **Optional**
 
-- User can also provide the Cluster name at the time of creation in `--extra-vars`
+--extra-vars:
+
+1. k8s-version:
+   To get the available kubeadm versions run the below steps as a sudo user:
+
+   ```bash
+   apt-get update && apt-get install -y curl
+   curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+   touch /etc/apt/sources.list.d/kubernetes.list
+   sh -c 'echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list'
+   apt-get update
+   apt-cache madison kubeadm
+      kubeadm |  1.11.3-00 | https://apt.kubernetes.io kubernetes-xenial/main amd64 Packages
+      kubeadm |  1.10.8-00 | https://apt.kubernetes.io kubernetes-xenial/main amd64 Packages
+   ```
+
+2. clustername:
+
+- User can also provide the Cluster name at the time of creation
 
 ```bash
-ansible-playbook create_packet_cluster.yml -vv --extra-vars "k8s_version=<version> cluster_name=<name-of-cluster>"
+ansible-playbook create_packet_cluster.yml -vv --extra-vars "k8s_version=1.11.3-00 cluster_name=<name-of-cluster>"
 ```
 
 ### Deleting k8s cluster in packet
