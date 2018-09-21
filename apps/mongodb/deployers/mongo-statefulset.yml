@@ -31,12 +31,12 @@ spec:
        - name: mongo
          image: mongo
          command:
-           - mongod
-           - "--replSet"
-           - rs0
-           - "--smallfiles"
-           - "--noprealloc"
-           - "--bind_ip_all"
+           #- mongod
+           #- "--replSet"
+           #- rs0
+           #- "--smallfiles"
+           #- "--noprealloc"
+           #- "--bind_ip_all"
          ports:
            - containerPort: 27017
          volumeMounts:
