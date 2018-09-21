@@ -61,11 +61,11 @@
           retry: 15
 
         - set_fact:
-            flag: "load_started"
+            flag: "loadgen_started"
 
       rescue:
         - set_fact:
-            flag: "load_failed"  
+            flag: "loadgen_failed"  
 
       always:
             ## RECORD END-OF-TEST IN LITMUS RESULT CR 
