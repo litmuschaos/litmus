@@ -8,6 +8,8 @@ spec:
   template:
     metadata:
       name: litmus
+      labels:
+        app: percona-deployment
    
     spec:
       serviceAccountName: litmus

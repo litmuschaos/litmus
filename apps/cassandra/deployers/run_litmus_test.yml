@@ -8,6 +8,8 @@ spec:
   template:
     metadata:
       name: litmus
+      labels:
+        app: cassandra-deployment-litmus
    
     spec:
       serviceAccountName: litmus

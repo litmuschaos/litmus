@@ -9,6 +9,8 @@ spec:
     metadata:
       labels:
         name: litmus
+        labels:
+          app: fio-benchmark-litmus
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
