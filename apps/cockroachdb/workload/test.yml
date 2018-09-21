@@ -1,0 +1,79 @@
+---
+# This playbook generates the load on the cockroachdb application already deployed on the cluster.
+# Steps:
+# 1) Create litmus-result customr resource for logging.
+# 2) Create cockroachdb loadgen job
+# 3) 
+
+- hosts: localhost
+  connection: local
+
+  vars_files: 
+    - test_vars.yml
+
+  tasks:
+
+    - block:
+
+                ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - name: Generate the litmus result CR to reflect SOT (Start of Test)
+          template:
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars:
+            test: "{{ test_name }}"
+            app: ""
+            chaostype: ""
+            phase: in-progress
+            verdict: none
+
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          args:
+            executable: /bin/bash
+          register: lr_status
+          failed_when: "lr_status.rc != 0"
+
+        - name: Creating cockroachdb loadgen job
+          shell: kubectl apply -f {{ cockroachdb_loadgen }} -n {{ namespace }}
+          args:
+            executable: /bin/bash
+          register: result
+          failed_when: 'result.rc != 0'
+
+        - name: Verifying whether the cockroachdb loadgen pod is running.
+          shell: kubectl get pods -n litmus -l app=cockroachdb-lg
+          args:
+            executable: /bin/bash
+          register: pod_list
+          until: "'Running' in pod_list.stdout"
+          delay: 30
+          retries: 15
+        
+        - set_fact:
+            flag: "loadgen_started"
+
+      rescue:
+        - set_fact:
+            flag: "loadgen_failed"
+
+      always:
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - name: Generate the litmus result CR to reflect EOT (End of Test)
+          template:
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars:
+            test: "{{ test_name }}"
+            app: ""
+            chaostype: ""
+            phase: completed
+            verdict: "{{ flag }}"
+
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          args:
+            executable: /bin/bash
+          register: lr_status
+          failed_when: "lr_status.rc != 0" 
+

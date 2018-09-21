@@ -1,0 +1,7 @@
+---
+test_name: cockroachdb-load-generation
+
+namespace: cockroachdb
+
+cockroachdb_loadgen: cockroachdb_loadgen.yml
+
