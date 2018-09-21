@@ -9,7 +9,7 @@ spec:
     metadata:
       name: litmus
       labels:
-        apps: cockroachdb-deploy-litmus
+        apps: cockroachdb-deployment-litmus
    
     spec:
       serviceAccountName: litmus

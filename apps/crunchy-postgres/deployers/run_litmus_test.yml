@@ -9,7 +9,7 @@ spec:
     metadata:
       name: litmus
       labels:
-        app: postgres-deploy-litmus
+        app: postgres-deployment-litmus
    
     spec:
       serviceAccountName: litmus

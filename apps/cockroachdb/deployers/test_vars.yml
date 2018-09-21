@@ -5,6 +5,6 @@ cockroachdb_svc: cockroachdb_svc.yml
 
 namespace: cockroachdb
 
-test_name: cockroachdb-deploy
+test_name: cockroachdb-deployment
 
 
