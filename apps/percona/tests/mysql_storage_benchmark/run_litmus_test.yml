@@ -18,7 +18,7 @@ spec:
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
             #value: log_plays
-            value: actionable
+            value: default
  
           - name: PROVIDER_STORAGE_CLASS
             value: openebs-standard

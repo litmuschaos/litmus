@@ -19,7 +19,7 @@ spec:
         image: openebs/ansible-runner
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
-            value: log_plays
+            value: default
  
           - name: PROVIDER_STORAGE_CLASS
             value: openebs-standard
