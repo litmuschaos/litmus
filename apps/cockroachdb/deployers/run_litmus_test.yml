@@ -8,6 +8,8 @@ spec:
   template:
     metadata:
       name: litmus
+      labels:
+        apps: cockroachdb-deployment-litmus
    
     spec:
       serviceAccountName: litmus

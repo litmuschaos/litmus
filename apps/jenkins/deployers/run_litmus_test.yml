@@ -8,6 +8,8 @@ spec:
   template:
     metadata:
       name: litmus
+      labels:
+        app: jenkins-deployment-litmus
    
     spec:
       serviceAccountName: litmus
