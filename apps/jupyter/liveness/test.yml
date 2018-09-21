@@ -3,7 +3,7 @@
   connection: local
 
   vars_files:
-    - test_vars.yaml
+    - test_vars.yml
 
   tasks:
     - block:
@@ -83,16 +83,16 @@
           args:
             executable: /bin/bash
           register: logs
-          until: "'Liveness Running' or 'Liveness Failing' in logs.stdout"
+          until: "'Liveness Running' in logs.stdout"
           delay: 20
           retries: 10         
 
         - set_fact:
-            flag: "Liveness Pass"
+            flag: " Pass"
 
       rescue: 
         - set_fact: 
-            flag: "Liveness Fail"
+            flag: " Fail"
 
       always: 
 

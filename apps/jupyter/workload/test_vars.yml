@@ -1,4 +1,0 @@
-jupyter_loadgen: jupyter-loadgen.py
-namespace: jupyter
-test_name: jupyter-loadgen
-io_minutes: 3

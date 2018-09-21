@@ -9,30 +9,33 @@ spec:
   template:
     metadata:
       name: jupyter-liveness
+      labels:
+        app: jupyter-liveness
    
     spec:
       restartPolicy: Never
+      #nodeSelector:
+      #    context: liveness
       containers:
-      - name: jupyter-liveness
-        image: vvibhr995/jupyter-liv:v2
-        imagePullPolicy: Always
-
-        env: 
-
+        - name: jupyter-liveness
+          image: openebs/custom-liveness
+          imagePullPolicy: Always
+          env: 
             # Namespace in which application is running
           - name: NAMESPACE
             value: jupyter
-    
+
             # Service name of application deployment
           - name: SERVICE
             value: jupyter-service
-          
-          - name: SLEEP
+            
+            # Sleep time provided for job to run
+          - name: LIVENESS_TIMEOUT_SECONDS
             value: "4"  
     
             # Port on which application is listening
           - name: PORT
-            value: "8888"            
+            value: "8888"    
  
-        command: ["/bin/bash"]
-        args: ["-c", "python ./liveness.py ; exit 0"]
+          command: ["/bin/bash"]
+          args: ["-c", "python ./liveness.py ; exit 0"]

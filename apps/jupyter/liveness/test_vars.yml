@@ -1,0 +1,4 @@
+test_name: jupyter-liveness-test
+namespace: litmus
+liveness: run_liveness.yml 
+

@@ -15,19 +15,14 @@ spec:
       restartPolicy: Never
       containers:
       - name: jupyter-test
-        image: vvibhr995/testing-liveness:job    
+        image: openebs/ansible-runner:ci   
         imagePullPolicy: Always
-
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
             value: default
             
-          - name: APP_LABEL
-            value: jupyter-liveness  
-
           - name: RUN_ID
             value: ""  
-
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./jupyter/liveness/test.yml -vv -i /etc/ansible/hosts; exit 0"]
