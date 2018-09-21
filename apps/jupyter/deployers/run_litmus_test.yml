@@ -30,5 +30,5 @@ spec:
             value: jupyter-data-vol-claim
  
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./jupyter/test.yml -i /etc/ansible/hosts -v; exit 0"]
+        args: ["-c", "ansible-playbook ./jupyter/deployers/test.yml -i /etc/ansible/hosts -v; exit 0"]
         
