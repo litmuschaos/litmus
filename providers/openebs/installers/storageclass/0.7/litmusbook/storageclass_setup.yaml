@@ -20,6 +20,8 @@ spec:
             value: /mnt/openebs
           - name: ANSIBLE_STDOUT_CALLBACK
             value: actionable
+          - name: RUN_ID
+            value:
           # Enable storageclass
           - name: APPLY_JIVA
             value: "true"
@@ -35,9 +37,9 @@ spec:
           - name: OPENEBS_IO_JIVA_REPLICA_COUNT
             value: "3"
           - name: OPENEBS_IO_JIVA_CONTROLLER_IMAGE
-            value: openebs/jiva:0.6.0
+            value: openebs/jiva:0.7.0
           - name: OPENEBS_IO_JIVA_REPLICA_IMAGE
-            value: openebs/jiva:0.6.0
+            value: openebs/jiva:0.7.0
           - name: OPENEBS_IO_VOLUME_MONITOR_IMAGE
             value: openebs/m-exporter:ci
           # Cstor configuration
