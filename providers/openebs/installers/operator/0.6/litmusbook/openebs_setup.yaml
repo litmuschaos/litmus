@@ -36,6 +36,8 @@ spec:
             value:
           - name: OPENEBS_IO_JIVA_REPLICA_COUNT
             value:
+          - name: RUN_ID
+            value:
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./operator/0.6/ansible/openebs_setup.yaml -i /etc/ansible/hosts -vv; exit 0"]
         volumeMounts:

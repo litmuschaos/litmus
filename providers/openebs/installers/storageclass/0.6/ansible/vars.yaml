@@ -1,4 +1,5 @@
----
 kubeapply: kubectl
 storage_pool: sp.yaml
 storage_class: sc.yaml
+installation_test_name: storageclassinstallerv0.6
+cleanup_test_name: storageclasscleanupv0.6
