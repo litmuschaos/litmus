@@ -1,0 +1,3 @@
+crunchy_loadgen: crunchy_postgres_loadgen.yml
+namespace: litmus
+test_name: crunchy-postgres-loadgen
