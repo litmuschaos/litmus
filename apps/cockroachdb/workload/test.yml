@@ -3,7 +3,7 @@
 # Steps:
 # 1) Create litmus-result customr resource for logging.
 # 2) Create cockroachdb loadgen job
-# 3) 
+# 3) Verify if the corresponding pod is running successfully.
 
 - hosts: localhost
   connection: local
@@ -42,7 +42,7 @@
           failed_when: 'result.rc != 0'
 
         - name: Verifying whether the cockroachdb loadgen pod is running.
-          shell: kubectl get pods -n litmus -l app=cockroachdb-lg
+          shell: kubectl get pods -n {{ namespace }} -l app=cockroachdb-lg
           args:
             executable: /bin/bash
           register: pod_list
@@ -51,11 +51,11 @@
           retries: 15
         
         - set_fact:
-            flag: "loadgen_started"
+            flag: "Pass"
 
       rescue:
         - set_fact:
-            flag: "loadgen_failed"
+            flag: "Fail"
 
       always:
             ## RECORD END-OF-TEST IN LITMUS RESULT CR
