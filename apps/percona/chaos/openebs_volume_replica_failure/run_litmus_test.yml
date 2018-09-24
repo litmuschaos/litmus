@@ -8,7 +8,7 @@ spec:
   template:
     metadata:
       labels:
-        name: litmus 
+        name: openebs-volume-replica-failure 
     spec:
       serviceAccountName: litmus
       restartPolicy: Never

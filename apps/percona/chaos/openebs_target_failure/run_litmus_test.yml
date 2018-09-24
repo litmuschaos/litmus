@@ -2,13 +2,13 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: openebs-cstor-target-failure- 
+  generateName: openebs-target-failure- 
   namespace: litmus 
 spec:
   template:
     metadata:
       labels:
-        name: litmus 
+        name: openebs-target-failure 
     spec:
       serviceAccountName: litmus
       restartPolicy: Never

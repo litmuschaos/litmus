@@ -16,7 +16,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: mockbot/postsathya:v01
+        image: openebs/ansible-runner
         imagePullPolicy: Always
 
         env: 
