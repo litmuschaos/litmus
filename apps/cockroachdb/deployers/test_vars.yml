@@ -1,0 +1,10 @@
+---
+cockroachdb_deployment: cockroachdb_sts.yml
+
+cockroachdb_svc: cockroachdb_svc.yml 
+
+namespace: cockroachdb
+
+test_name: cockroachdb-deployment
+
+
