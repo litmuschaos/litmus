@@ -1,0 +1,3 @@
+pg_statefulset: postgres_statefulset.yml
+namespace: postgres
+test_name: postgres-deployment

@@ -1,0 +1,118 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - name: Generate the litmus result CR to reflect SOT (Start of Test) 
+          template: 
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars: 
+            test: "{{ test_name }}"
+            app: ""
+            chaostype: ""
+            phase: in-progress
+            verdict: none
+        
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          args:
+            executable: /bin/bash
+          register: lr_status 
+          failed_when: "lr_status.rc != 0"
+
+        - name: Check whether the provider storageclass is applied
+          shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
+          args:
+            executable: /bin/bash
+          register: result
+
+        - name: Replace the pvc placeholder with provider
+          replace:
+            path: "{{ cassandra_deployment }}"
+            regexp: "testclaim"
+            replace: "{{ lookup('env','PROVIDER_PVC') }}"
+
+        - name: Replace the storageclass placeholder with provider
+          replace:
+            path: "{{ cassandra_deployment }}"
+            regexp: "testclass"
+            replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+
+        - name: Replace the default namespace in cassandra statefulset yaml
+          replace:
+            path: "{{ cassandra_deployment }}"
+            regexp: 'cassandra-0.cassandra.default.svc.cluster.local'
+            replace: 'cassandra-0.cassandra.{{ namespace }}.svc.cluster.local'
+
+        - name: Create test specific namespace.
+          shell: kubectl create ns {{ namespace }}
+          args:
+           executable: /bin/bash
+          when: namespace != 'litmus'
+
+        - name: Checking the status  of test specific namespace.
+          shell: kubectl get ns {{ namespace }} -o jsonpath='{.status.phase}'
+          args:
+           executable: /bin/bash
+          register: npstatus
+          until: "'Active' in npstatus.stdout"
+          delay: 30
+          retries: 10
+        
+        - name: Deploying Cassandra statefulset
+          shell: kubectl apply -f {{ cassandra_deployment }} -n {{ namespace }} 
+
+        - block:
+
+            - name: Obtain the number of replicas.
+              shell: kubectl get statefulset -n {{ namespace }} -l app=cassandra -o custom-columns=:spec.replicas
+              args:
+                executable: /bin/bash
+              register: rep_count
+              until: "rep_count.rc == 0"
+              delay: 60
+              retries: 15
+
+            - name: Obtain the ready replica count and compare with the replica count.
+              shell: kubectl get statefulset -n {{ namespace }} -l app=cassandra -o custom-columns=:..readyReplicas
+              args:
+                executable: /bin/bash
+              register: ready_rep
+              until: "ready_rep.rc == 0 and ready_rep.stdout|int == rep_count.stdout|int"
+              delay: 60
+              retries: 15
+
+          when: lookup('env','DEPLOY_TYPE') == 'statefulset'
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - set_fact:
+            flag: "Fail"  
+
+      always:
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR 
+        - name: Generate the litmus result CR to reflect EOT (End of Test) 
+          template: 
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars: 
+            test: "{{ test_name }}"
+            app: ""
+            chaostype: ""
+            phase: completed
+            verdict: "{{ flag }}"
+           
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          args:
+            executable: /bin/bash
+          register: lr_status 
+          failed_when: "lr_status.rc != 0"

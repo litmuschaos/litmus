@@ -1,0 +1,5 @@
+# Test-specific parametres
+
+jupyter_deployment: jupyter_openebs.yml
+namespace: jupyter
+test_name: jupyter-deployment

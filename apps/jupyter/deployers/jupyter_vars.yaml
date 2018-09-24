@@ -1,5 +1,0 @@
-# Test-specific parametres
-
-jupyter_deployment: demo-jupyter-openebs.yaml
-namespace: jupyter
-test_name: jupyter-deployment

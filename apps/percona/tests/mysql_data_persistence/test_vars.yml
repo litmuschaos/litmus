@@ -1,0 +1,11 @@
+---
+## TEST-SPECIFIC PARAMS
+
+test_name: mysql-data-persistence
+pod_yaml_alias: mysql.yml
+supported_chaos_types: 
+  - APP_POD_EVICT/KUBECTL
+  - APP_NODE_DRAIN/KUBECTL
+  - APP_POD_KILL/PUMBA
+
+
