@@ -14,7 +14,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: loadgen
-        image: openebs/mongo-client
+        image: openebs/ansible-runner
         imagePullPolicy: Always
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
