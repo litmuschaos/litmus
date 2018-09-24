@@ -61,11 +61,11 @@
           retry: 15
 
         - set_fact:
-            flag: "pass"
+            flag: "Pass"
 
       rescue:
         - set_fact:
-            flag: "fail"  
+            flag: "Fail"  
 
       always:
             ## RECORD END-OF-TEST IN LITMUS RESULT CR 
