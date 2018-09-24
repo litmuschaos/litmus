@@ -41,14 +41,23 @@
           register: result
           failed_when: 'result.rc != 0'
 
-        - name: Verifying whether the cockroachdb loadgen pod is running.
-          shell: kubectl get pods -n {{ namespace }} -l app=cockroachdb-lg
+        - name: Obtain the cockroachdb pod name
+          shell: >
+            kubectl get pods -n {{ namespace }} -l app=cockroachdb -o jsonpath='{.items[0].metadata.name}'
           args:
             executable: /bin/bash
-          register: pod_list
-          until: "'Running' in pod_list.stdout"
-          delay: 30
-          retries: 15
+          register: pod_name
+
+        - name: Verify the data written
+          shell: >
+            kubectl exec -it {{ pod_name.stdout }} -n {{ namespace }} -- /cockroach/cockroach sql --insecure 
+            --host=cockroachdb-public.cockroachdb -d test -e 'show tables;' 
+          args:
+            executable: /bin/bash
+          register: tables
+          until: "'kv' in tables.stdout"
+          delay: 60
+          retries: 5
         
         - set_fact:
             flag: "Pass"
