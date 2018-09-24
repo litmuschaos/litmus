@@ -23,7 +23,7 @@
 
   vars:
     cluster_name:
-    kubernetes_version: "{{ k8s_version }}"
+    k8s_version:
 
   tasks:
     - block:
@@ -39,6 +39,10 @@
         - set_fact:
             cluster_name: "{{ cluster_name.stdout }}"
           when: cluster_name.stdout is defined
+
+        - set_fact:
+            k8s_version: "{{ default_k8s_version }}"
+          when: not k8s_version
 
         - name: Creating master instance in packet
           packet_device:
@@ -95,7 +99,7 @@
             - "{{ workers.devices }}"
 
         - name: install kubeadm inside master
-          shell: bash pre_requisite.sh "{{ kubernetes_version }}" "{{ item.public_ipv4 }}" "{{ network_cidr }}" master | grep "kubeadm join" | cut -d'"' -f2 | sed -e 's/^[ \t]*//'
+          shell: bash pre_requisite.sh "{{ k8s_version }}" "{{ item.public_ipv4 }}" "{{ network_cidr }}" master | grep "kubeadm join" | cut -d'"' -f2 | sed -e 's/^[ \t]*//'
           args:
             executable: /bin/bash
           delegate_to: "root@{{ item.public_ipv4 }}"
@@ -109,7 +113,7 @@
         - name: joining workers node with master
           args:
             executable: /bin/bash
-          shell: bash pre_requisite.sh "{{ kubernetes_version }}" && {{ storage.results[0].stdout }}
+          shell: bash pre_requisite.sh "{{ k8s_version }}" && {{ storage.results[0].stdout }}
           delegate_to: "root@{{ item.public_ipv4 }}"
           with_items: "{{ workers.devices }}"
   
