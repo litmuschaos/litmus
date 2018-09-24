@@ -41,7 +41,7 @@
           delay: 30
           retries: 10
         
-        - name: Create Cassandra Loadgen Job
+        - name: Create Crunchy-postgres Loadgen Job
           shell: kubectl apply -f {{ crunchy_loadgen }} -n {{ namespace }} 
 
         - name: Verify loadgen pod is running 
