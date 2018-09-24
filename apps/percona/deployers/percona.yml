@@ -9,11 +9,11 @@ spec:
   replicas: 1
   selector: 
     matchLabels:
-      name: percona 
+      testlabel 
   template: 
     metadata:
       labels: 
-        name: percona
+        testlabel
     spec:
       containers:
         - resources:

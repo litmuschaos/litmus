@@ -37,7 +37,13 @@
           replace:
             path: "{{ pg_statefulset }}"
             regexp: "testclaim"
-            replace: "{{ lookup('env','PROVIDER_PVC') }}"
+            replace: "{{ lookup('env','APP_PVC') }}"
+
+        - name: Replace the application label placeholder
+          replace:
+            path: "{{ pg_statefulset }}"
+            regexp: "testlabel"
+            replace: "{{ app_lkey }}: {{ app_lvalue }}"
 
         - name: Replace the storageclass placeholder with provider
           replace:
@@ -46,13 +52,13 @@
             replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
 
         - name: Create test specific namespace.
-          shell: source ~/.profile;  kubectl create ns {{ namespace }}
+          shell: source ~/.profile;  kubectl create ns {{ app_ns }}
           args:
            executable: /bin/bash
-          when: namespace != 'litmus'
+          when: app_ns != 'litmus'
 
         - name: Checking the status  of test specific namespace.
-          shell: kubectl get ns {{ namespace }} -o custom-columns=:status.phase --no-headers 
+          shell: kubectl get ns {{ app_ns }} -o custom-columns=:status.phase --no-headers 
           args:
            executable: /bin/bash
           register: npstatus
@@ -61,13 +67,13 @@
           retries: 10
 
         - name: Deploying postgres statefulset and services
-          shell: kubectl apply -f {{ pg_statefulset }} -n {{ namespace }}
+          shell: kubectl apply -f {{ pg_statefulset }} -n {{ app_ns }}
           args:
             executable: /bin/bash
           register: result
 
         - name: Verify that the postgres master and replica are available as cluster services
-          shell: kubectl get svc -n {{ namespace }}
+          shell: kubectl get svc -n {{ app_ns }}
           args:
             executable: /bin/bash
           register: result_service
@@ -77,7 +83,7 @@
 
             - name: Obtain the number of replicas.
               shell: >
-                 kubectl get sts -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.app=="pgset")].spec.replicas}'
+                 kubectl get sts -n {{ app_ns }} -o jsonpath='{.items[?(@.metadata.labels.{{app_lkey}}=="{{app_lvalue}}")].spec.replicas}'
               args:
                 executable: /bin/bash
               register: rep_count
@@ -87,7 +93,7 @@
 
             - name: Obtain the ready replica count and compare with the replica count.
               shell: >
-                kubectl get sts -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.app=="pgset")].status.readyReplicas}'
+                kubectl get sts -n {{ app_ns }} -o jsonpath='{.items[?(@.metadata.labels.{{app_lkey}}=="{{app_lvalue}}")].status.readyReplicas}'
               args:
                 executable: /bin/bash
               register: ready_rep
@@ -98,7 +104,7 @@
           when: lookup('env','DEPLOY_TYPE') == 'statefulset'
 
         - name: Checking postgress replicas pods are running state
-          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.app=="pgset")].status.phase}'
+          shell: kubectl get pods -n {{ app_ns }} -o jsonpath='{.items[?(@.metadata.labels.{{app_lkey}}=="{{app_lvalue}}")].status.phase}'
           register: result
           until: "((result.stdout_lines|unique)|length) == 1 and 'Running' in result.stdout"
           delay: 10

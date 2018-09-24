@@ -1,5 +1,7 @@
 # Test-specific parametres
 
 percona_deployment: percona.yml
-namespace: litmus
+app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+app_lkey: "{{ lookup('env','APP_LABEL_KEY') }}"
+app_lvalue: "{{ lookup('env','APP_LABEL_VALUE') }}"
 test_name: percona-deployment

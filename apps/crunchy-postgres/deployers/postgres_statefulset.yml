@@ -64,7 +64,7 @@ spec:
   template:
     metadata:
       labels:
-        app: pgset
+        testlabel
     spec:
       securityContext:
         fsGroup: 26

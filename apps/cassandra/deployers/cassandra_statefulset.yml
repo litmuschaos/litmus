@@ -24,11 +24,11 @@ spec:
   replicas: 3
   selector:
     matchLabels:
-      app: cassandra
+      testlabel
   template:
     metadata:
       labels:
-        app: cassandra
+        testlabel
     spec:
       containers:
       - name: cassandra

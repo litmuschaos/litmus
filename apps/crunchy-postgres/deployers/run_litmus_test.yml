@@ -16,7 +16,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: mockbot/postsathya:v01
+        image: openebs/ansible-runner
         imagePullPolicy: Always
 
         env: 
@@ -28,8 +28,19 @@ spec:
             # Supported values: openebs-standard, local-storage
             value: openebs-standard
 
-          - name: PROVIDER_PVC
+          - name: APP_PVC
             value: pgdata-claim
+
+            # Application label
+          - name: APP_LABEL_KEY
+            value: app
+
+          - name: APP_LABEL_VALUE
+            value: pgset
+
+            # Application namespace
+          - name: APP_NAMESPACE
+            value: postgres
 
           - name: DEPLOY_TYPE
             value: statefulset
