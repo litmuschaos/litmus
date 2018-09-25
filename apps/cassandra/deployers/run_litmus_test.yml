@@ -33,11 +33,8 @@ spec:
             value: openebs-cassandra
   
             # Application label
-          - name: APP_LABEL_KEY
-            value: app
-
-          - name: APP_LABEL_VALUE
-            value: cassandra
+          - name: APP_LABEL
+            value: 'app=cassandra'
 
             # Application namespace
           - name: APP_NAMESPACE
@@ -48,4 +45,3 @@ spec:
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./cassandra/deployers/test.yml -i /etc/ansible/hosts -v; exit 0"]
-        

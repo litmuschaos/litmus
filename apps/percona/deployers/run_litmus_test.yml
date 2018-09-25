@@ -32,11 +32,8 @@ spec:
             value: percona-mysql-claim
 
             # Application label
-          - name: APP_LABEL_KEY
-            value: name
-
-          - name: APP_LABEL_VALUE
-            value: percona
+          - name: APP_LABEL
+            value: 'name=percona'
 
             # Application namespace
           - name: APP_NAMESPACE

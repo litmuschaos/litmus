@@ -32,11 +32,8 @@ spec:
             value: jenkins-claim
 
             # Application label
-          - name: APP_LABEL_KEY
-            value: app
-
-          - name: APP_LABEL_VALUE
-            value: jenkins-app
+          - name: APP_LABEL
+            value: 'app=jenkins-app'
 
             # Application namespace
           - name: APP_NAMESPACE

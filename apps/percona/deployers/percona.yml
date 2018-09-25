@@ -9,11 +9,11 @@ spec:
   replicas: 1
   selector: 
     matchLabels:
-      testlabel 
+      lkey: lvalue 
   template: 
     metadata:
       labels: 
-        testlabel
+        lkey: lvalue
     spec:
       containers:
         - resources:

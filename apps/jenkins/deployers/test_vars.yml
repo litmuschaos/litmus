@@ -1,6 +1,5 @@
 # Test specifiv parametres
 test_name: jenkins-deployment
 app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
-app_lkey: "{{ lookup('env','APP_LABEL_KEY') }}"
-app_lvalue: "{{ lookup('env','APP_LABEL_VALUE') }}"
+app_label: "{{ lookup('env','APP_LABEL') }}"
 jenkins_deployment: jenkins.yml

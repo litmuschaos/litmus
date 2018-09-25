@@ -4,7 +4,7 @@ kind: Service
 metadata:
  name: mongo
  labels:
-   testlabel
+   lkey: lvalue
 spec:
  ports:
  - port: 27017
@@ -23,7 +23,7 @@ spec:
  template:
    metadata:
      labels:
-       testlabel
+       lkey: lvalue
        role: mongo
        environment: test
    spec:

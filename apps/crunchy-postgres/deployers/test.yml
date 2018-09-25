@@ -39,10 +39,15 @@
             regexp: "testclaim"
             replace: "{{ lookup('env','APP_PVC') }}"
 
+        - name: Get the application label values from env
+          set_fact:
+             app_lkey: "{{ app_label.split('=')[0] }}"
+             app_lvalue: "{{ app_label.split('=')[1] }}"
+
         - name: Replace the application label placeholder
           replace:
             path: "{{ pg_statefulset }}"
-            regexp: "testlabel"
+            regexp: "lkey: lvalue"
             replace: "{{ app_lkey }}: {{ app_lvalue }}"
 
         - name: Replace the storageclass placeholder with provider

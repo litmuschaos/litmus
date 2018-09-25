@@ -20,7 +20,7 @@ spec:
  template:
   metadata:
    labels:
-    testlabel
+    lkey: lvalue
   spec:
    securityContext:
      fsGroup: 1000
@@ -47,5 +47,5 @@ spec:
     - port: 80
       targetPort: 8080
   selector:
-    testlabel
+    lkey: lvalue
   type: NodePort

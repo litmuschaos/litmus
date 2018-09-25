@@ -16,7 +16,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: openebs/ansible-runner:ci
+        image: openebs/ansible-runner
         imagePullPolicy: Always
 
         env: 
@@ -32,11 +32,8 @@ spec:
             value: jupyter-data-vol-claim
 
             # Application label
-          - name: APP_LABEL_KEY
-            value: app
-
-          - name: APP_LABEL_VALUE
-            value: jupyter-server
+          - name: APP_LABEL
+            value: 'app=jupyter-server'
 
             # Application namespace
           - name: APP_NAMESPACE

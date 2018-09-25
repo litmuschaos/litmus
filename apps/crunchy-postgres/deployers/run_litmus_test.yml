@@ -32,11 +32,8 @@ spec:
             value: pgdata-claim
 
             # Application label
-          - name: APP_LABEL_KEY
-            value: app
-
-          - name: APP_LABEL_VALUE
-            value: pgset
+          - name: APP_LABEL
+            value: 'app=pgset'
 
             # Application namespace
           - name: APP_NAMESPACE

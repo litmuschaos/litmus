@@ -2,6 +2,5 @@
 
 jupyter_deployment: jupyter_openebs.yml
 app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
-app_lkey: "{{ lookup('env','APP_LABEL_KEY') }}"
-app_lvalue: "{{ lookup('env','APP_LABEL_VALUE') }}"
+app_label: "{{ lookup('env','APP_LABEL') }}"
 test_name: jupyter-deployment

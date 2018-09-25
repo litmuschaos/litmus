@@ -45,10 +45,15 @@
             regexp: "testclass"
             replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
 
+        - name: Get the application label values from env
+          set_fact:
+             app_lkey: "{{ app_label.split('=')[0] }}"
+             app_lvalue: "{{ app_label.split('=')[1] }}"
+
         - name: Replace the application label placeholder
           replace:
             path: "{{ percona_deployment }}"
-            regexp: "testlabel"
+            regexp: "lkey: lvalue"
             replace: "{{ app_lkey }}: {{ app_lvalue }}"      
 
         - name: Create test specific namespace.

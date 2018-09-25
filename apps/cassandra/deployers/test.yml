@@ -44,10 +44,15 @@
             regexp: "testclass"
             replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
 
+        - name: Get the application label values from env
+          set_fact:
+             app_lkey: "{{ app_label.split('=')[0] }}"
+             app_lvalue: "{{ app_label.split('=')[1] }}"
+
         - name: Replace the application label placeholder
           replace:
             path: "{{ cassandra_deployment }}"
-            regexp: "testlabel"
+            regexp: "lkey: lvalue"
             replace: "{{ app_lkey }}: {{ app_lvalue }}"
 
         - name: Replace the default namespace in cassandra statefulset yaml
@@ -77,7 +82,7 @@
         - block:
 
             - name: Obtain the number of replicas.
-              shell: kubectl get statefulset -n {{ app_ns }} -l "{{ app_lkey }}={{ app_lvalue }}"  -o custom-columns=:spec.replicas
+              shell: kubectl get statefulset -n {{ app_ns }} -l "{{ app_label }}"  -o custom-columns=:spec.replicas
               args:
                 executable: /bin/bash
               register: rep_count
@@ -86,7 +91,7 @@
               retries: 15
 
             - name: Obtain the ready replica count and compare with the replica count.
-              shell: kubectl get statefulset -n {{ app_ns }} -l "{{ app_lkey }}={{ app_lvalue }}" -o custom-columns=:..readyReplicas
+              shell: kubectl get statefulset -n {{ app_ns }} -l "{{ app_label }}" -o custom-columns=:..readyReplicas
               args:
                 executable: /bin/bash
               register: ready_rep
