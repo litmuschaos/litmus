@@ -9,6 +9,8 @@ spec:
     metadata:
       name: crunchy_postgres-loadgen
       namespace: litmus
+      labels:
+        app: crunchy-postgres-loadgen
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
