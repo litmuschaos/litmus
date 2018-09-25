@@ -10,11 +10,22 @@
 - hosts: localhost
   tasks:
        - block:
+           - name: Fetch VPC Name
+             shell: cat ~/logs/vpc
+             register: vpc
+           - set_fact:
+              vpc: "{{ vpc.stdout }}"
            - name: Deleting Routes, if exists
-             shell: gcloud compute routes delete $(gcloud compute routes list --filter="network:{{ vpc_name }}"  --format="get(name)") -q
+             shell: gcloud compute routes delete $(gcloud compute routes list --filter="network:{{ vpc }}"  --format="get(name)") -q
              ignore_errors: yes
            - name: Deleting VPC
-             shell: gcloud compute --project={{ project }} networks delete {{ vpc_name }} -q 
+             shell: gcloud compute --project={{ project }} networks delete {{ vpc }} -q 
+
+           - name: Removing VPC Name entry from log
+             lineinfile:
+               path: ~/logs/vpc
+               state: absent
+               regexp: '{{ vpc }}'
            - name: Test Passed
              set_fact:
                flag: "Test Passed"
