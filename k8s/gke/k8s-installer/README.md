@@ -38,10 +38,10 @@ ansible-playbook create-gke-cluster.yml --extra-vars "cluster_name=my-Cluster in
 
 ### Deleting the cluster
 
-- Run `delete-gke-cluster`, this will delete the cluster.
+- Run `delete-gke-cluster.yml`, this will delete the cluster.
 
 ```bash
-ansible-playbook delete-k8s-cluster.yml
+ansible-playbook delete-gke-cluster.yml
 ```
 This will delete the cluster which was last created using the `create-gke-cluster.yml`.
 
@@ -50,7 +50,7 @@ This will delete the cluster which was last created using the `create-gke-cluste
 > cluster_name=my-Cluster
 
 ```bash
-ansible-playbook delete-k8s-cluster.yml --extra-vars "cluster_name=my-Cluster"
+ansible-playbook delete-gke-cluster.yml --extra-vars "cluster_name=my-Cluster"
 ```
 ---
 
