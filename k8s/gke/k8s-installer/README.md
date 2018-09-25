@@ -11,7 +11,12 @@ The playbook uses google's ansible module `gcp_container_cluster` to bring up a 
 ### Setting up
 
 - Run `glcloud init`, and authenticate into your google account linked with the Google Cloud
+- Set Up the following environment variables.
 
+```
+export GCP_SERVICE_ACCOUNT_FILE=<path_of_service_account_json>
+export GKEUSER=<user_mail_id_for_service_account>
+```
 ---
 
 ### Running
