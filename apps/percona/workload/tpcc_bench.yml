@@ -1,0 +1,27 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: tpcc-bench
+spec:
+  template:
+    metadata:
+      name: tpcc-bench
+      labels:
+        app: percona-loadgen
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: tpcc-bench 
+        image: openebs/tests-tpcc-client
+        command: ["/bin/bash"]
+        args: ["-c", "./tpcc-runner.sh 10.104.51.149 tpcc.conf; exit 0"]
+        volumeMounts:
+        - name: tpcc-configmap
+          mountPath: /tpcc-mysql/tpcc.conf
+          subPath: tpcc.conf
+        tty: true 
+      volumes:
+        - name: tpcc-configmap
+          configMap:
+            name: tpcc-config

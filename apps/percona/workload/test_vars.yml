@@ -1,0 +1,3 @@
+percona_loadgen: tpcc_bench.yml
+namespace: litmus
+test_name: percona-loadgen

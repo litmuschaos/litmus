@@ -1,0 +1,24 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: percona-loadgen 
+  namespace: litmus
+spec:
+  template:
+    metadata:
+      name: percona-loadgen
+      namespace: litmus
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: loadgen
+        image: openebs/ansible-runner
+        imagePullPolicy: Always
+        env: 
+          - name: ANSIBLE_STDOUT_CALLBACK
+            #value: log_plays
+            value: actionable
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./percona/workload/test.yml -i /etc/ansible/hosts -v; exit 0"]
