@@ -19,6 +19,17 @@
             cluster_name: "{{ cluster_name.stdout }}"
           when: cluster_name.stdout is defined
 
+        - name: Generate SSH Keys 
+          shell: yes y | ssh-keygen -t rsa -N "" -f $HOME/.ssh/openebs_rsa -C openebs
+          args:
+            executable: /bin/bash
+          no_log: True
+
+        - name: Format SSH Key for GKE
+          shell: sed -i '1s/^/openebs:/' $HOME/.ssh/openebs_rsa.pub
+          args:
+            executable: /bin/bash
+
         - name: create GKE cluster
           gcp_container_cluster:
             name: "{{ cluster_name }}"
@@ -29,14 +40,13 @@
               machine_type: "{{ machine_type }}"
               disk_size_gb: "{{ disk_size_gb }}"
               image_type: "{{ image_type }}"
-              oauth_scopes:
-                - https://www.googleapis.com/auth/cloud-platform
             zone: "{{ zone }}"
             project: "{{ project }}"
             auth_kind: "{{ auth_kind }}"
             scopes:
               - https://www.googleapis.com/auth/cloud-platform
             state: present
+          no_log: True
 
         - name: Save cluster info
           lineinfile:
@@ -48,10 +58,27 @@
         - name: Get the kubeconfig and set kubectl for RBAC
           shell: gcloud container clusters get-credentials {{ cluster_name }} --zone={{ zone }}
           args:
-            executable: /bin/bash   
+            executable: /bin/bash
+          no_log: True 
 
         - name: Set kubectl context to admin context
           shell: kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user={{user}}
+          args:
+            executable: /bin/bash
+          no_log: True
+
+        - name: Get Nodes
+          shell: kubectl get nodes -o=custom-columns=NAME:.metadata.name --no-headers
+          args:
+            executable: /bin/bash
+          register: node_names
+
+        - name: Set SSH connections
+          shell: gcloud compute instances add-metadata {{item}} --metadata-from-file ssh-keys=$HOME/.ssh/openebs_rsa.pub --zone={{ zone }}
+          args:
+            executable: /bin/bash
+          loop: "{{ node_names.stdout_lines }}"
+          no_log: True
 
         - name: Set Test Status
           set_fact:
