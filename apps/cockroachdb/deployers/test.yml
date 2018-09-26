@@ -39,7 +39,24 @@
           replace:
             path: "{{ cockroachdb_deployment }}"
             regexp: "testclaim"
-            replace: "{{ lookup('env','PROVIDER_PVC') }}"
+            replace: "{{ lookup('env','APP_PVC') }}"
+
+        - name: Get the application label values from env
+          set_fact:
+             app_lkey: "{{ app_label.split('=')[0] }}"
+             app_lvalue: "{{ app_label.split('=')[1] }}"
+
+        - name: Replace the application label placeholder in deployment spec
+          replace:
+            path: "{{ cockroachdb_deployment }}"
+            regexp: "lkey: lvalue"
+            replace: "{{ app_lkey }}: {{ app_lvalue }}"
+
+        - name: Replace the application label placeholder in service spec
+          replace:
+            path: "{{ cockroachdb_svc }}"
+            regexp: "lkey: lvalue"
+            replace: "{{ app_lkey }}: {{ app_lvalue }}"
 
         - name: Replace the storageclass placeholder with provider
           replace:
@@ -48,13 +65,13 @@
             replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
 
         - name: Create test specific namespace.
-          shell: source ~/.profile;  kubectl create ns {{ namespace }}
+          shell: source ~/.profile;  kubectl create ns {{ app_ns }}
           args:
            executable: /bin/bash
-          when: namespace != 'litmus'
+          when: app_ns != 'litmus'
 
         - name: Checking the status of test specific namespace.
-          shell: kubectl get ns {{ namespace }} -o custom-columns=:status.phase --no-headers 
+          shell: kubectl get ns {{ app_ns }} -o custom-columns=:status.phase --no-headers 
           args:
            executable: /bin/bash
           register: npstatus
@@ -63,19 +80,19 @@
           retries: 10
         
         - name: Deploying cockroachdb statefulset.
-          shell: kubectl apply -f {{ cockroachdb_deployment }} -n {{ namespace }}
+          shell: kubectl apply -f {{ cockroachdb_deployment }} -n {{ app_ns }}
           args:
             executable: /bin/bash
          
         - name: Deploying cockroachdb service
-          shell: kubectl apply -f {{ cockroachdb_svc }} -n {{ namespace }}
+          shell: kubectl apply -f {{ cockroachdb_svc }} -n {{ app_ns }}
           args:
             executable: /bin/bash
 
         - block:
 
             - name: Obtain the number of replicas.
-              shell: kubectl get statefulset -n {{ namespace }} -l app=cockroachdb -o custom-columns=:spec.replicas
+              shell: kubectl get statefulset -n {{ app_ns }} -l "{{ app_label }}" -o custom-columns=:spec.replicas
               args:
                 executable: /bin/bash
               register: rep_count
@@ -84,7 +101,7 @@
               retries: 15
 
             - name: Obtain the ready replica count and compare with the replica count.
-              shell: kubectl get statefulset -n {{ namespace }} -l app=cockroachdb -o custom-columns=:..readyReplicas
+              shell: kubectl get statefulset -n {{ app_ns }} -l "{{ app_label }}" -o custom-columns=:..readyReplicas
               args:
                 executable: /bin/bash
               register: ready_rep
@@ -95,7 +112,7 @@
           when: lookup('env','DEPLOY_TYPE') == 'statefulset'
 
         - name: Check if cockroachdb replica pods are running.
-          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.app=="cockroachdb")].status.phase}'
+          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.{{app_lkey}}=="{{app_lvalue}}")].status.phase}'
           register: result
           until: "((result.stdout.split()|unique)|length) == 1 and 'Running' in result.stdout"
           delay: 60

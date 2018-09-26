@@ -42,6 +42,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: jupyter-service
+  labels:
+    lkey: lvalue
 spec:
   ports:
   - name: ui
