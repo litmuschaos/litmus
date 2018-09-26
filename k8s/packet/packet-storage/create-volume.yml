@@ -84,12 +84,12 @@
           delegate_to: "root@{{ item.json.ip_addresses[0].address }}"
           with_items: "{{ device_ip.results }}"
 
-        - name: Test Passed
+        - name: Set Test Status
           set_fact:
             flag: "Test Passed"
 
       rescue:
-        - name: Test Failed
+        - name: Set Test Status
           set_fact:
             flag: "Test Failed"
 
