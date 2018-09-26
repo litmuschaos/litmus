@@ -15,7 +15,7 @@
 - name: Get the resourceVersion of the target deploy before fault injection
   shell: >
     kubectl get deploy {{ jiva_controller_deploy }} -n {{ app_ns }} 
-    -o yaml | grep resourceVersion | awk '{print $2}' | sed 's|"||g'
+    -o=custom-columns=NAME:".metadata.resourceVersion" --no-headers
   args:
     executable: /bin/bash
   register: rv_bef
@@ -23,8 +23,7 @@
 - name: Get jiva controller pod belonging to the PV
   shell: > 
     kubectl get pods -l openebs.io/controller=jiva-controller
-    -n {{ app_ns }} --no-headers | grep {{ pv.stdout }} 
-    | shuf -n1 | awk '{print $1}'
+    -n {{ app_ns }} -o=custom-columns=NAME:".metadata.name" --no-headers
   args:
     executable: /bin/bash
   register: jiva_controller_pod
@@ -41,8 +40,8 @@
 
 - name: Get the resourceVersion of the target deploy after fault injection
   shell: >
-    kubectl get deploy {{ jiva_controller_deploy }} -n {{ app_ns }} 
-    -o yaml | grep resourceVersion | awk '{print $2}' | sed 's|"||g'
+    kubectl get deploy {{ jiva_controller_deploy }} -n {{ app_ns }}
+    -o=custom-columns=NAME:".metadata.resourceVersion" --no-headers 
   args:
     executable: /bin/bash
   register: rv_aft
