@@ -1,11 +1,10 @@
-
 ---
 apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: cockroachdb-budget
   labels:
-    app: cockroachdb
+    lkey: lvalue
 spec:
   selector:
     matchLabels:
@@ -22,7 +21,7 @@ spec:
   template:
     metadata:
       labels:
-        app: cockroachdb
+        lkey: lvalue
     spec:
       # Init containers are run only once in the lifetime of a pod, before
       # it's started up for the first time. It has to exit successfully
