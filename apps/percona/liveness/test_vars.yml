@@ -1,0 +1,6 @@
+test_name: mysql-liveness-test
+namespace: litmus
+liveness_label:  "{{ lookup('env','LIVENESS_LABEL') }}"
+percona_liveness: percona_liveness.yml
+db_cred_file: db-cred.cnf
+

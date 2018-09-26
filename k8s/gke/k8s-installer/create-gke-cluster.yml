@@ -1,0 +1,63 @@
+---
+- hosts: localhost
+  gather_facts: yes
+
+  vars_files:
+    - vars.yml
+  vars:
+    cluster_name:
+    test_case_name: "GKE_CREATE_CLUSTER"
+
+  tasks:
+    - block:
+        - name: Generating Random Cluster Name
+          shell: python ../../utils/name_generator/namesgenerator.py
+          register: cluster_name
+          when: not cluster_name
+
+        - set_fact:
+            cluster_name: "{{ cluster_name.stdout }}"
+          when: cluster_name.stdout is defined
+
+        - name: create GKE cluster
+          gcp_container_cluster:
+            name: "{{ cluster_name }}"
+            initial_node_count: "{{ initial_node_count }}"
+            monitoring_service: none
+            logging_service: none
+            node_config:
+              machine_type: "{{ machine_type }}"
+              disk_size_gb: "{{ disk_size_gb }}"
+              image_type: "{{ image_type }}"
+              oauth_scopes:
+                - https://www.googleapis.com/auth/cloud-platform
+            zone: "{{ zone }}"
+            project: "{{ project }}"
+            auth_kind: "{{ auth_kind }}"
+            scopes:
+              - https://www.googleapis.com/auth/cloud-platform
+            state: present
+
+        - name: Save cluster info
+          lineinfile:
+            create: yes
+            state: present
+            path: "~/logs/clusters"
+            line: "{{ cluster_name }}"
+
+        - name: Get the kubeconfig and set kubectl for RBAC
+          shell: gcloud container clusters get-credentials {{ cluster_name }} --zone={{ zone }}
+          args:
+            executable: /bin/bash   
+
+        - name: Set kubectl context to admin context
+          shell: kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user={{user}}
+
+        - name: Set Test Status
+          set_fact:
+            flag: "Test Passed"
+
+      rescue:  
+        - name: Set Test Status
+          set_fact:
+            flag: "Test Failed"

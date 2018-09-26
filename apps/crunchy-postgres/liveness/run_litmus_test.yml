@@ -2,39 +2,47 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: liveness-pg
-  namespace: litmus
-
+  name: crunchy-postgres-test
+  namespace: litmus 
 spec:
   template:
     metadata:
-      name: liveness
-   
+      name: crunchy-postgres-test
+      labels:
+        liveness: postgres-liveness      
     spec:
+      serviceAccountName: litmus
       restartPolicy: Never
       containers:
-      - name: liveness
-        image: openebs/postgres-client
+      - name: crunchy-postgres-test
+        image: openebs/ansible-runner:ci  
         imagePullPolicy: Always
-
         env: 
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: default
+            
+          - name: RUN_ID
+            value: ""  
 
+          - name: LIVENESS_LABEL
+            value: 'liveness=postgres'
+            
             # Time period (in sec) b/w retries for DB init check
           - name: INIT_WAIT_DELAY
             value: "30"
-    
-            # No of retries for DB init check 
+
+            # No of retries for DB init check
           - name: INIT_RETRY_COUNT
             value: "10"
-    
+
             # Time period (in sec) b/w liveness checks
           - name: LIVENESS_PERIOD_SECONDS
             value: "10"
-    
+
             # Time period (in sec) b/w retries for db_connect failure
           - name: LIVENESS_TIMEOUT_SECONDS
             value: "10"
-    
+
             # No of retries after a db_connect failure before declaring liveness fail
           - name: LIVENESS_RETRY_COUNT
             value: "6"
@@ -43,13 +51,9 @@ spec:
           - name: NAMESPACE
             value: postgres
 
-            # Service Name of postgres 
+            # Service Name of postgres
           - name: SERVICE_NAME
             value: pgset
-           
-            #Database name of postgres
-          - name: DATABASE
-            value: userdb
 
             # Usr name of Postgres
           - name: USER
@@ -64,4 +68,4 @@ spec:
             value: "5432"  
 
         command: ["/bin/bash"]
-        args: ["-c", "python ./liveness.py ; exit 0"]
+        args: ["-c", "ansible-playbook ./crunchy-postgres/liveness/test.yml -vv -i /etc/ansible/hosts; exit 0"]

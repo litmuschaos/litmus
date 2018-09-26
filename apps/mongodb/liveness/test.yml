@@ -53,25 +53,25 @@
           delay: 30
           retries: 10
 
-        - name: Obtaining the loadgen pod label from env.
+        - name: Obtaining the liveness pod label from env.
           set_fact:
             liveness_lkey: "{{ liveness_label.split('=')[0] }}"
             liveness_lvalue: "{{ liveness_label.split('=')[1] }}"
 
-        - name: Replace the label in loadgen job spec.
+        - name: Replace the label in liveness job spec.
           replace:
-            path: "{{ cassandra_liveness }}"
+            path: "{{ mongodb_liveness }}"
             regexp: "liveness_lkey: liveness_lvalue"
             replace: "{{ liveness_lkey }}: {{ liveness_lvalue }}"  
 
         ## STARTING OF LIVENESS CHECK  
 
         - name: Trigger liveness job for job creation.
-          shell:  kubectl create -f {{ cassandra_liveness }} -n {{ namespace }} 
+          shell:  kubectl create -f {{ mongodb_liveness }} -n {{ namespace }} 
 
         - name: Verify the liveness job pod created and running
           shell: > 
-              kubectl get pods -n {{ namespace }} -l {{liveness_lkey}}={{liveness_lvalue}}
+              kubectl get pods -n {{ namespace }} -l {{liveness_lkey}}={{liveness_lvalue}} 
               -o jsonpath='{.items[0].status.phase}'     
           args:
             executable: /bin/bash      

@@ -1,0 +1,5 @@
+test_name: mongo-liveness-test
+namespace: litmus
+liveness_label: "{{ lookup('env','LIVENESS_LABEL') }}"
+mongodb_liveness: mongodb_liveness.yml 
+

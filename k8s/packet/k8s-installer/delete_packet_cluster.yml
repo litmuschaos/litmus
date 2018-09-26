@@ -5,6 +5,7 @@
 
 #1. Deleting instances in packet
 #2. Deleting device Id from file
+#3. Deleting ssh key from packet
 
 ###############################################################################################
 
@@ -35,7 +36,11 @@
             key_file: ~/.ssh/id_rsa.pub
             state: absent
 
-    - rescue:
-        - name: Test Failed
+        - name: Set Test Status
+          set_fact:
+            flag: "Test Passed"
+
+      rescue:
+        - name: Set Test Status
           set_fact:
             flag: "Test Failed"

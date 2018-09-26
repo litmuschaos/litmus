@@ -2,30 +2,36 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: cassandra-liveness
- 
+  name: cassandra-test
+  namespace: litmus 
 spec:
   template:
     metadata:
-      name: cassandra-liveness
+      name: cassandra-test
       labels:
-        app: cassandra-liveness
-              
-   
+        liveness: cassandra-liveness      
     spec:
+      serviceAccountName: litmus
       restartPolicy: Never
       containers:
-      - name: cassandra-liveness
-        image: openebs/custom-liveness 
+      - name: cassandra-test
+        image: openebs/ansible-runner:ci    
         imagePullPolicy: Always
-
         env: 
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: default
+            
+          - name: RUN_ID
+            value: ""
+
+          - name: LIVENESS_LABEL
+            value: 'liveness=cassandra'  
 
            # Time period (in sec) b/w retries for app init check
           - name: INIT_WAIT_DELAY
             value: "30"
 
-           # No of retries for app init check 
+           # No of retries for app init check
           - name: INIT_RETRY_COUNT
             value: "10"
 
@@ -41,17 +47,14 @@ spec:
           - name: LIVENESS_RETRY_COUNT
             value: "6"
 
-            # Namespace in which application is running
-          - name: NAMESPACE
-            value: litmus
-    
             # Service name of application
           - name: SERVICE
             value: cassandra
-    
+
             # Port on which application is listening
           - name: PORT
-            value: "9042"            
- 
+            value: "9042"  
+
         command: ["/bin/bash"]
-        args: ["-c", "python ./liveness.py ; exit 0"]
+        args: ["-c", "ansible-playbook ./cassandra/liveness/test.yml -vv -i /etc/ansible/hosts; exit 0"]
+        

@@ -53,25 +53,34 @@
           delay: 30
           retries: 10
 
-        - name: Obtaining the loadgen pod label from env.
+
+        - name: Create a configmap with the db configuration of percona.
+          shell: source ~/.profile; kubectl create configmap db-cred --from-file={{ db_cred_file }} -n {{ namespace }}
+          args:
+            executable: /bin/bash
+          register: result
+          failed_when: "'configmap' and 'created' not in result.stdout"  
+
+        - name: Obtaining the liveness pod label from env.
           set_fact:
             liveness_lkey: "{{ liveness_label.split('=')[0] }}"
             liveness_lvalue: "{{ liveness_label.split('=')[1] }}"
 
-        - name: Replace the label in loadgen job spec.
+        - name: Replace the label in liveness job spec.
           replace:
-            path: "{{ cassandra_liveness }}"
+            path: "{{ percona_liveness }}"
             regexp: "liveness_lkey: liveness_lvalue"
-            replace: "{{ liveness_lkey }}: {{ liveness_lvalue }}"  
+            replace: "{{ liveness_lkey }}: {{ liveness_lvalue }}"
+  
 
         ## STARTING OF LIVENESS CHECK  
 
         - name: Trigger liveness job for job creation.
-          shell:  kubectl create -f {{ cassandra_liveness }} -n {{ namespace }} 
+          shell: kubectl create -f {{ percona_liveness }} -n {{ namespace }} 
 
         - name: Verify the liveness job pod created and running
           shell: > 
-              kubectl get pods -n {{ namespace }} -l {{liveness_lkey}}={{liveness_lvalue}}
+              kubectl get pods -n {{ namespace }} -l {{liveness_lkey}}={{liveness_lvalue}}  
               -o jsonpath='{.items[0].status.phase}'     
           args:
             executable: /bin/bash      
@@ -82,7 +91,7 @@
 
         - name: Get the name of liveness pod for liveness status check.
           shell: >
-              kubectl get pods -n {{ namespace }} -l  {{liveness_lkey}}={{liveness_lvalue}}
+              kubectl get pods -n {{ namespace }} -l {{liveness_lkey}}={{liveness_lvalue}}
               -o jsonpath='{.items[0].metadata.name}'  
           args:
             executable: /bin/bash 
@@ -94,7 +103,7 @@
           args:
             executable: /bin/bash
           register: logs
-          until: "'Liveness Running' in logs.stdout"
+          until: "'MySQL db server is alive' in logs.stdout"
           delay: 20
           retries: 10         
 

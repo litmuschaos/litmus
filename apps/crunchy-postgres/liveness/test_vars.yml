@@ -1,0 +1,5 @@
+test_name: crunchy-postgres-liveness-test
+namespace: litmus
+liveness_label: "{{ lookup('env','LIVENESS_LABEL') }}"
+postgres_liveness: crunchy_postgres_liveness.yml 
+

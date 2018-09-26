@@ -4,8 +4,8 @@
 
 #1. Fetching device detail using device id
 #2. Executing volume Detach command in nodes
-#1. Deleting volume in packet cloud using volume ID
-#2. Deleting volume ID form stored file
+#3. Deleting volume in packet cloud using volume ID
+#4. Deleting volume ID form stored file
 ########################################################################################################################################################################
 
 ---
@@ -54,11 +54,11 @@
             regexp: ""
             mode: 0755
 
-        - name: Test Passed
+        - name: Set Test Status
           set_fact:
             flag: "Test Passed"
 
-    - rescue:
-        - name: Test Failed
+      rescue:
+        - name: Set Test Status
           set_fact:
             flag: "Test Failed"

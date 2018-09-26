@@ -2,49 +2,60 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: liveness-mongo
- 
+  name: mongo-test
+  namespace: litmus 
 spec:
   template:
     metadata:
-      name: liveness
-   
+      name: mongo-test
+      labels:
+        liveness: mongodb-liveness      
     spec:
+      serviceAccountName: litmus
       restartPolicy: Never
       containers:
-      - name: liveness
-        image: openebs/mongodb-client
+      - name: mongo-test
+        image: openebs/ansible-runner:ci   
         imagePullPolicy: Always
-
         env: 
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: default
+            
+          - name: RUN_ID
+            value: ""
 
-            # Time period (in sec) b/w retries for DB init check
+          - name: LIVENESS_LABEL
+            value: 'liveness=mongodb'   
+
+          # Time period (in sec) b/w retries for DB init check
           - name: INIT_WAIT_DELAY
             value: "30"
-    
-            # No of retries for DB init check 
+
+            # No of retries for DB init check
           - name: INIT_RETRY_COUNT
             value: "10"
-    
+
             # Time period (in sec) b/w liveness checks
           - name: LIVENESS_PERIOD_SECONDS
             value: "10"
-    
+
             # Time period (in sec) b/w retries for db_connect failure
           - name: LIVENESS_TIMEOUT_SECONDS
             value: "10"
-    
+
             # No of retries after a db_connect failure before declaring liveness fail
           - name: LIVENESS_RETRY_COUNT
             value: "6"
 
-            # Namespace in which mongo is running  
+            # Namespace in which mongo is running
           - name: NAMESPACE
             value: litmus
-              
-            # Servive name of mongodb  
+
+            # Servive name of mongodb
           - name: SERVICE_NAME
             value: mongo
 
+
         command: ["/bin/bash"]
-        args: ["-c", "python ./server.py ; exit 0"]
+        args: ["-c", "ansible-playbook ./mongodb/liveness/test.yml -vv -i /etc/ansible/hosts; exit 0"]
+        
