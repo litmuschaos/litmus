@@ -33,14 +33,37 @@
             executable: /bin/bash
           register: result
 
+        - name: Replace the pvc placeholder with provider
+          replace:
+            path: "{{ jupyter_deployment }}"
+            regexp: "testclaim"
+            replace: "{{ lookup('env','APP_PVC') }}"
+
+        - name: Get the application label values from env
+          set_fact:
+             app_lkey: "{{ app_label.split('=')[0] }}"
+             app_lvalue: "{{ app_label.split('=')[1] }}"
+
+        - name: Replace the application label placeholder
+          replace:
+            path: "{{ jupyter_deployment }}"
+            regexp: "lkey: lvalue"
+            replace: "{{ app_lkey }}: {{ app_lvalue }}"
+
+        - name: Replace the storageclass placeholder with provider
+          replace:
+            path: "{{ jupyter_deployment }}"
+            regexp: "testclass"
+            replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+
         - name: Create test specific namespace.
-          shell: source ~/.profile;  kubectl create ns {{ namespace }}
+          shell: source ~/.profile;  kubectl create ns {{ app_ns }}
           args:
            executable: /bin/bash
-          when: namespace != 'litmus'
+          when: app_ns != 'litmus'
 
         - name: Checking the status  of test specific namespace.
-          shell: kubectl get ns {{ namespace }} -o custom-columns=:status.phase --no-headers 
+          shell: kubectl get ns {{ app_ns }} -o custom-columns=:status.phase --no-headers 
           args:
            executable: /bin/bash
           register: npstatus
@@ -49,10 +72,10 @@
           retries: 10
 
         - name: Deploying jupyter notebook
-          shell: kubectl apply -f {{ jupyter_deployment }} -n {{ namespace }}
+          shell: kubectl apply -f {{ jupyter_deployment }} -n {{ app_ns }}
 
         - name: Check if jupyter is deployed successfully
-          shell: kubectl get pods -n {{ namespace }} -l name=jupyter-server
+          shell: kubectl get pods -n {{ app_ns }} -l "{{ app_label }}"
           register: result
           until: "'Running' in result.stdout"
           delay: 60

@@ -9,7 +9,7 @@ kind: Service
 metadata:
   name: pgset
   labels:
-    app: pgset
+    lkey: lvalue
 spec:
   ports:
   - protocol: TCP
@@ -64,7 +64,7 @@ spec:
   template:
     metadata:
       labels:
-        app: pgset
+        lkey: lvalue
     spec:
       securityContext:
         fsGroup: 26

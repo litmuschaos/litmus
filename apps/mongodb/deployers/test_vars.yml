@@ -1,5 +1,6 @@
 # Test-specific parametres
 
 mongodb_deployment: mongo_statefulset.yml
-namespace: litmus
+app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+app_label: "{{ lookup('env','APP_LABEL') }}"
 test_name: mongodb-deployment
