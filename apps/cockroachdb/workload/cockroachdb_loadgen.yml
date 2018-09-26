@@ -16,5 +16,5 @@ spec:
         command:
           - "/kv"
           - "--duration"
-          - "5m"
-          - "postgres://root@cockroachdb.cockroachdb.svc.cluster.local:26257/kv?sslmode=disable"
+          - "time_duration"
+          - "postgres://root@svc_namespace.svc_name.svc.cluster.local:26257/kv?sslmode=disable"

@@ -34,6 +34,24 @@
           register: lr_status
           failed_when: "lr_status.rc != 0"
 
+        - name: Replace the arguments with values in loadgen yaml
+          replace:
+            path: "{{ cockroachdb_loadgen }}"
+            regexp: 'svc_namespace'
+            replace: "{{ lookup('env','APP_NS') }}"
+
+        - name: Replace the service name in loadgen yaml
+          replace:
+            path: "{{ cockroachdb_loadgen }}"
+            regexp: 'svc_name'
+            replace: "{{ lookup('env','SVC_NAME') }}"
+
+        - name: Update the time interval in loadgen yaml
+          replace:
+            path: "{{ cockroachdb_loadgen }}"
+            regexp: 'time_duration'
+            replace: "{{ lookup('env','TIME_INTERVAL') }}"
+
         - name: Creating cockroachdb loadgen job
           shell: kubectl apply -f {{ cockroachdb_loadgen }} -n {{ namespace }}
           args:
