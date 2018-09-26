@@ -56,7 +56,7 @@ kind: Service
 metadata:
   name: percona-mysql
   labels:
-    name: percona-mysql
+    lkey: lvalue
 spec:
   ports:
     - port: 3306
