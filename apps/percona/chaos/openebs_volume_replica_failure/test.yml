@@ -12,7 +12,7 @@
         - block:
 
             - name: Checking status of liveness pod
-              shell: kubectl get po -n {{ liveness_namespace }} -l {{ liveness_label }} -o jsonpath='{.items[0].status.phase}'
+              shell: kubectl get pod -n {{ liveness_namespace }} -l {{ liveness_label }} -o jsonpath='{.items[0].status.phase}'
               register: liveness_pod
               until: "'Running' in liveness_pod.stdout"
               delay: 10
@@ -107,7 +107,7 @@
         - block:
 
             - name: Checking status of liveness pod
-              shell: kubectl get po -n {{ liveness_namespace }} -l {{ liveness_label }} -o jsonpath='{.items[0].status.phase}'
+              shell: kubectl get pod -n {{ liveness_namespace }} -l {{ liveness_label }} -o jsonpath='{.items[0].status.phase}'
               register: liveness_pod
               until: "'Running' in liveness_pod.stdout"
               delay: 10
