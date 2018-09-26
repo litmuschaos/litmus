@@ -78,11 +78,11 @@
             line: 'vpc_id:{{ vpc.vpc.id }},vpc_name:{{ vpc.vpc.tags.Name }},subnet_id:{{ subnet.subnet.id }},gateway_id:{{ igw.gateway_id }},route_table_id:{{ route.route_table.id }}'
             mode: 0755
 
-        - name: Test Passed
+        - name: Set Test Status
           set_fact:
             flag: "Test Passed"
     
-    - rescue:
-        - name: Test Failed
+      rescue:
+        - name: Set Test Status
           set_fact:
             flag: "Test Failed"
