@@ -3,21 +3,43 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: cassandra-liveness
-  namespace: litmus
  
 spec:
   template:
     metadata:
       name: cassandra-liveness
+      labels:
+        app: cassandra-liveness
+              
    
     spec:
       restartPolicy: Never
       containers:
       - name: cassandra-liveness
-        image: openebs/cassandra-liveness
+        image: openebs/custom-liveness 
         imagePullPolicy: Always
 
         env: 
+
+           # Time period (in sec) b/w retries for app init check
+          - name: INIT_WAIT_DELAY
+            value: "30"
+
+           # No of retries for app init check 
+          - name: INIT_RETRY_COUNT
+            value: "10"
+
+           # Time period (in sec) b/w liveness checks
+          - name: LIVENESS_PERIOD_SECONDS
+            value: "10"
+
+           # Time period (in sec) b/w retries for app_connect failure
+          - name: LIVENESS_TIMEOUT_SECONDS
+            value: "10"
+
+           # No of retries after a app_connect failure before declaring liveness fail
+          - name: LIVENESS_RETRY_COUNT
+            value: "6"
 
             # Namespace in which application is running
           - name: NAMESPACE

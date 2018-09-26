@@ -1,0 +1,5 @@
+test_name: cassandra-liveness-test
+namespace: litmus
+run_id: "{{ lookup('env','RUN_ID') }}"
+liveness: run_litmus_test.yml 
+
