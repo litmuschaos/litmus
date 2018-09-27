@@ -7,4 +7,5 @@ image_type: Ubuntu
 zone: us-central1-a
 project: openebs-ci
 auth_kind: serviceaccount
-
+ssh_key_fn: gke_ssh_key
+ssh_user: gkeuser
