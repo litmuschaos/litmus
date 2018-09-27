@@ -9,7 +9,17 @@
     - block:
 
         ## DERIVE THE APP STORAGE CLASS AND CHAOS UTIL TO USE       
- 
+        - block:
+
+            - name: Checking status of liveness pod
+              shell: kubectl get pod -n {{ liveness_namespace }} -l {{ liveness_label }} -o jsonpath='{.items[0].status.phase}'
+              register: liveness_pod
+              until: "'Running' in liveness_pod.stdout"
+              delay: 10
+              retries: 10
+             
+          when: liveness_label != ''  
+
         - include: test_prerequisites.yml
   
         - include_vars:
@@ -93,6 +103,17 @@
           until: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
           delay: 10
           retries: 12
+
+        - block:
+
+            - name: Checking status of liveness pod
+              shell: kubectl get pod -n {{ liveness_namespace }} -l {{ liveness_label }} -o jsonpath='{.items[0].status.phase}'
+              register: liveness_pod
+              until: "'Running' in liveness_pod.stdout"
+              delay: 10
+              retries: 10
+             
+          when: liveness_label != ''  
 
         - set_fact:
             flag: "Pass"

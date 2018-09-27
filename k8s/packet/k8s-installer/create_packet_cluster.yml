@@ -117,11 +117,11 @@
           delegate_to: "root@{{ item.public_ipv4 }}"
           with_items: "{{ workers.devices }}"
   
-        - name: Test Passed
+        - name: Set Test Status
           set_fact:
             flag: "Test Passed"
 
-    - rescue:
-        - name: Test Failed
+      rescue:
+        - name: Set Test Status
           set_fact:
             flag: "Test Failed"
