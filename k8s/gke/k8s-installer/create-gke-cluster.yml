@@ -20,13 +20,13 @@
           when: cluster_name.stdout is defined
 
         - name: Generate SSH Keys 
-          shell: yes y | ssh-keygen -t rsa -N "" -f $HOME/.ssh/openebs_rsa -C openebs
+          shell: yes y | ssh-keygen -t rsa -N "" -f $HOME/.ssh/{{ ssh_key_fn }} -C {{ ssh_user }}
           args:
             executable: /bin/bash
           no_log: True
 
         - name: Format SSH Key for GKE
-          shell: sed -i '1s/^/openebs:/' $HOME/.ssh/openebs_rsa.pub
+          shell: sed -i '1s/^/{{ ssh_user }}:/' $HOME/.ssh/{{ ssh_key_fn }}.pub
           args:
             executable: /bin/bash
 
@@ -74,7 +74,7 @@
           register: node_names
 
         - name: Set SSH connections
-          shell: gcloud compute instances add-metadata {{item}} --metadata-from-file ssh-keys=$HOME/.ssh/openebs_rsa.pub --zone={{ zone }}
+          shell: gcloud compute instances add-metadata {{item}} --metadata-from-file ssh-keys=$HOME/.ssh/{{ ssh_key_fn }}.pub --zone={{ zone }}
           args:
             executable: /bin/bash
           loop: "{{ node_names.stdout_lines }}"
