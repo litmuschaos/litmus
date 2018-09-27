@@ -38,7 +38,7 @@
     - name: Creating the Cluster & InstanceGroup objects in our state store
       shell: |
         export KOPS_FEATURE_FLAGS=AlphaAllowGCE
-        kops create cluster {{ cluster_name }}.k8s.local --kubernetes-version {{ k8s_version }} --zones us-east1-b --state gs://{{ cluster_name }}/ --project {{ project }} --node-count {{ nodes }} --networking kubenet --image "ubuntu-os-cloud/ubuntu-1604-xenial-v20170202" --vpc {{ vpc }}
+        kops create cluster {{ cluster_name }}.k8s.local --kubernetes-version {{ k8s_version }} --zones {{zone}} --state gs://{{ cluster_name }}/ --project {{ project }} --node-count {{ nodes }} --networking kubenet --image "ubuntu-os-cloud/ubuntu-1604-xenial-v20170202" --vpc {{ vpc }}
     - name: Creating K8s Cluster
       shell: |
         export KOPS_FEATURE_FLAGS=AlphaAllowGCE
