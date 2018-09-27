@@ -2,6 +2,6 @@
   {% if stg_engine is defined and stg_engine == 'cstor' %}
     chaosutil: openebs/openebs_cstor_target_failure.yaml
   {% else %}
-    chaosutil: openebs/jiva_replica_pod_failure.yaml
+    chaosutil: openebs/jiva_controller_pod_failure.yaml
   {% endif %}
 {% endif %}
