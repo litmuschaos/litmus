@@ -14,11 +14,15 @@
 - hosts: localhost
   vars: 
     cluster_name:
+    zone:
   tasks:
     - name: Generating Random Cluster Name
       shell: python ../../utils/name_generator/namesgenerator.py
       register: cluster_name
       when: not cluster_name
+
+    - set_fact: zone="us-east1-b"
+      when: not zone
 
     - name: Get VPC Name
       shell: cat ~/logs/vpc
