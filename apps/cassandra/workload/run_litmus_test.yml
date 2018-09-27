@@ -19,6 +19,10 @@ spec:
           - name: ANSIBLE_STDOUT_CALLBACK
             #value: log_plays
             value: default
+
+          - name: RUN_ID
+            value: "" 
+            
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./cassandra/workload/test.yml -i /etc/ansible/hosts -v; exit 0"]
         
