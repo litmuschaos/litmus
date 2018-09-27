@@ -8,7 +8,7 @@ spec:
   template:
     metadata:
       labels:
-        name: litmus 
+        name: openebs-replica-network 
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
