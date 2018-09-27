@@ -15,7 +15,7 @@
 
     - block:
 
-                ## RECORD START-OF-TEST IN LITMUS RESULT CR
+           ## RECORD START-OF-TEST IN LITMUS RESULT CR
         - name: Generate the litmus result CR to reflect SOT (Start of Test)
           template:
             src: /litmus-result.j2
@@ -29,30 +29,54 @@
 
         - name: Apply the litmus result CR
           shell: kubectl apply -f litmus-result.yaml
-          args:
+          args: 
             executable: /bin/bash
           register: lr_status
           failed_when: "lr_status.rc != 0"
 
-        - name: Replace the arguments with values in loadgen yaml
+        - name: Obtaining the application label from env.
+          set_fact:
+            app_lkey: "{{ app_label.split('=')[0] }}"
+            app_lvalue: "{{ app_label.split('=')[1] }}"
+
+        - name: Obtaining the service name.
+          shell: kubectl get svc -n {{ namespace }} -l {{ app_lkey }}={{ app_lvalue }} -o jsonpath='{.items[0].metadata.name}'
+          args:
+            executable: /bin/bash
+          register: svc_name
+
+        - name: Recording the service name.
+          set_fact:
+            svc_name: "{{ svc_name.stdout }}"
+
+        - name: Form FQDN using namespace and service name.
+          set_fact:
+            fqdn: "{{ namespace }}.{{svc_name}}.svc.cluster.local"
+
+        - name: Obtaining the loadgen pod label from env.
+          set_fact:
+            loadgen_lkey: "{{ loadgen_label.split('=')[0] }}"
+            loadgen_lvalue: "{{ loadgen_label.split('=')[1] }}"
+
+        - name: Replace the label in loadgen job spec.
           replace:
             path: "{{ cockroachdb_loadgen }}"
-            regexp: 'svc_namespace'
-            replace: "{{ lookup('env','APP_NS') }}"
+            regexp: "loadgen_lkey: loadgen_lvalue"
+            replace: "{{ loadgen_lkey }}: {{ loadgen_lvalue }}"
 
-        - name: Replace the service name in loadgen yaml
+        - name: Place the FQDN in loadgen yaml.
           replace:
             path: "{{ cockroachdb_loadgen }}"
-            regexp: 'svc_name'
-            replace: "{{ lookup('env','SVC_NAME') }}"
+            regexp: 'fqdn'
+            replace: "{{ fqdn }}"
 
-        - name: Update the time interval in loadgen yaml
+        - name: Updating the time duration in loadgen yaml.
           replace:
             path: "{{ cockroachdb_loadgen }}"
             regexp: 'time_duration'
             replace: "{{ lookup('env','TIME_INTERVAL') }}"
-
-        - name: Creating cockroachdb loadgen job
+        
+        - name: Creating cockroachdb loadgen job.
           shell: kubectl apply -f {{ cockroachdb_loadgen }} -n {{ namespace }}
           args:
             executable: /bin/bash
@@ -61,7 +85,7 @@
 
         - name: Obtain the cockroachdb pod name
           shell: >
-            kubectl get pods -n {{ namespace }} -l app=cockroachdb -o jsonpath='{.items[0].metadata.name}'
+            kubectl get pods -n {{ namespace }} -l {{ app_lkey }}={{ app_lvalue }} -o jsonpath='{.items[0].metadata.name}'
           args:
             executable: /bin/bash
           register: pod_name

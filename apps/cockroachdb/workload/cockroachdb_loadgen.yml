@@ -6,7 +6,7 @@ spec:
   template:
     metadata:
       labels:
-        app: cockroachdb-lg
+        loadgen_lkey: loadgen_lvalue
     spec:
       restartPolicy: Never
       containers:
@@ -17,4 +17,4 @@ spec:
           - "/kv"
           - "--duration"
           - "time_duration"
-          - "postgres://root@svc_namespace.svc_name.svc.cluster.local:26257/kv?sslmode=disable"
+          - "postgres://root@fqdn:26257/kv?sslmode=disable"

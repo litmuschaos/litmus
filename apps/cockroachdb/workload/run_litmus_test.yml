@@ -24,8 +24,11 @@ spec:
           - name: APP_NS
             value: cockroachdb
 
-          - name: SVC_NAME
-            value: cockroachdb
+          - name: APP_LABEL
+            value: 'app=cockroachdb'
+
+          - name: LOADGEN_LABEL
+            value: 'loadgen=cockroachdb-load'
 
           - name: TIME_INTERVAL
             value: 5m
