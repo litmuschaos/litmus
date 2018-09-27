@@ -1,3 +1,4 @@
 crunchy_loadgen: crunchy_postgres_loadgen.yml
-namespace: litmus
+namespace: "{{ lookup('env','LOADGEN_NAMESPACE') }}"
 test_name: crunchy-postgres-loadgen
+app_label: "{{ lookup('env','APP_LABEL') }}"

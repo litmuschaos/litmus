@@ -7,7 +7,7 @@
 
   tasks:
     - block:
-        # RECORD START-OF-TEST IN LITMUS RESULT CR
+       ## RECORD START-OF-TEST IN LITMUS RESULT CR
         - name: Generate the litmus result CR to reflect SOT (Start of Test) 
           template: 
             src: /litmus-result.j2
@@ -25,6 +25,55 @@
             executable: /bin/bash
           register: lr_status 
           failed_when: "lr_status.rc != 0"
+
+        - name: Replace namespace placeholder in Crunchy-loadgen
+          replace:
+            path: "{{ crunchy_loadgen }}"
+            regexp: "name_space"
+            replace: "{{ namespace }}"
+
+        - name: Replace service placeholder in Crunchy-loadgen
+          replace:
+            path: "{{ crunchy_loadgen }}"
+            regexp: "servicename"
+            replace: "{{ lookup('env','SERVICE_NAME') }}"
+
+        - name: Replace database placeholder
+          replace:
+            path: "{{ crunchy_loadgen }}"
+            regexp: "dbname"
+            replace: "{{ lookup('env','DATABASE_NAME') }}"
+
+        - name: Replace password placeholder in Crunchy-loadgen
+          replace:
+            path: "{{ crunchy_loadgen }}"
+            regexp: "password"
+            replace: "{{ lookup('env','PASSWORD') }}"
+
+        - name: Replace database-user placeholder in Crunchy-loadgen
+          replace:
+            path: "{{ crunchy_loadgen }}"
+            regexp: "dbuser"
+            replace: "{{ lookup('env','DATABASE_USER') }}"
+
+        - name: Replace port placeholder in Crunchy-loadgen
+          replace:
+            path: "{{ crunchy_loadgen }}"
+            regexp: "port"
+            replace: "{{ lookup('env','PORT') }}" 
+
+        - name: Replace transaction placeholder in Crunchy-loadgen
+          replace:
+            path: "{{ crunchy_loadgen }}"
+            regexp: "transaction"
+            replace: "{{ lookup('env','TRANSACTIONS') }}"
+
+        - name: Replace parallel-transaction placeholder in Crunchy-loadgen
+          replace:
+            path: "{{ crunchy_loadgen }}"
+            regexp: "paralleltransaction"
+            replace: "{{ lookup('env','PARALLEL_TRANSACTION') }}"           
+    
 
         - name: Create test specific namespace.
           shell: kubectl create ns {{ namespace }}
@@ -45,7 +94,7 @@
           shell: kubectl apply -f {{ crunchy_loadgen }} -n {{ namespace }} 
 
         - name: Verify loadgen pod is running 
-          shell: kubectl get pods -n litmus -l app=crunchy-loadgen -o jsonpath='{.items[0].status.phase}'
+          shell: kubectl get pods -n {{ namespace }} -l {{ app_label }} -o jsonpath='{.items[0].status.phase}'
           args:
             executable: /bin/bash
           register: result
