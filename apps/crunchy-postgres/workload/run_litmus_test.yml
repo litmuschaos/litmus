@@ -16,7 +16,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: loadgen
-        image: ranjnshashank855/ansible-runner:test
+        image: openebs/ansible-runner:ci
         imagePullPolicy: Always
         env: 
           
