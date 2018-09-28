@@ -9,16 +9,39 @@ spec:
     metadata:
       name: percona-loadgen
       namespace: litmus
+      labels:
+        app: percona-loadgen
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
       containers:
       - name: loadgen
-        image: openebs/ansible-runner
+        image: openebs/ansible-runner:ci
         imagePullPolicy: Always
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
             #value: log_plays
-            value: actionable
+            value: default
+            
+          - name: APP_LABEL
+            value: name=percona
+
+            #Namespace in which loadgen pod will be deployed
+          - name: LOADGEN_NAMESPACE
+            value: litmus
+
+          - name: APP_SERVICE_LABEL
+            value: name=percona-mysql 
+            
+          - name: LOADGEN_LABEL
+            value: loadgen=percona-loadgen
+
+            # Database user name
+          - name: DB_USER
+            value: root
+
+          - name: DB_PASSWORD
+            value: k8sDem0
+
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./percona/workload/test.yml -i /etc/ansible/hosts -v; exit 0"]

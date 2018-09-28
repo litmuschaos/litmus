@@ -8,14 +8,14 @@ spec:
     metadata:
       name: tpcc-bench
       labels:
-        app: percona-loadgen
+        loadgen: percona-loadgen
     spec:
       restartPolicy: Never
       containers:
       - name: tpcc-bench 
-        image: openebs/tests-tpcc-client
+        image: openebs/tpcc-client
         command: ["/bin/bash"]
-        args: ["-c", "./tpcc-runner.sh 10.104.51.149 tpcc.conf; exit 0"]
+        args: ["-c", "./tpcc-runner.sh service_ip tpcc.conf; exit 0"]
         volumeMounts:
         - name: tpcc-configmap
           mountPath: /tpcc-mysql/tpcc.conf
