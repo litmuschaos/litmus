@@ -7,45 +7,49 @@
 #     - app_ns ( Namespace on which application has been deployed)
 # These arguments are to be obtained as environmental variables in the litmus-book.
 
+- block:
 
-- name: Obtaining the maya-api server pod name.
-  shell: kubectl get pod -n {{ operator_ns }} -l name=maya-apiserver -o custom-columns=:metadata.name
-  args:
-    executable: /bin/bash
-  register: result
+    - name: Obtaining the maya-api server pod name.
+      shell: kubectl get pod -n {{ operator_ns }} -l name=maya-apiserver -o custom-columns=:metadata.name
+      args:
+        executable: /bin/bash
+      register: result
 
-- name: setting the maya-apiserver pod name to a variable.
-  set_fact:
-    maya_pod: "{{ result.stdout }}"
+    - name: setting the maya-apiserver pod name to a variable.
+      set_fact:
+        maya_pod: "{{ result.stdout }}"
 
-- name: Creating openebs volume snapshot using mayactl.
-  shell: >
-    kubectl exec {{ maya_pod }} -n {{ operator_ns }} -c maya-apiserver
-    -- mayactl snapshot create --volname {{ volume_name }} -n {{ app_ns }}
-    --snapname {{ snapshot_name }}
-  args:
-    executable: /bin/bash
-  register: result
-  failed_when: "'Created' not in result_snap.stdout"
+    - name: Creating openebs volume snapshot using mayactl.
+      shell: >
+        kubectl exec {{ maya_pod }} -n {{ operator_ns }} -c maya-apiserver
+        -- mayactl snapshot create --volname {{ volume_name }} -n {{ app_ns }}
+        --snapname {{ snapshot_name }}
+      args:
+        executable: /bin/bash
+      register: result
+      failed_when: "'Created' not in result_snap.stdout"
 
-- name: Confirm successful snapshot creation
-  shell: >
-    kubectl exec {{ maya_pod }} -n {{ operator_ns }} -c maya-apiserver
-    -- mayactl snapshot list --volname {{ volume_name }} -n {{ app_ns }}
-  args:
-    executable: /bin/bash
-  register: snapshot_list
-  failed_when: "snapshot_name not in snapshot_list.stdout"
+    - name: Confirm successful snapshot creation
+      shell: >
+        kubectl exec {{ maya_pod }} -n {{ operator_ns }} -c maya-apiserver
+        -- mayactl snapshot list --volname {{ volume_name }} -n {{ app_ns }}
+      args:
+        executable: /bin/bash
+      register: snapshot_list
+      failed_when: "snapshot_name not in snapshot_list.stdout"
 
-# TODO
-# Tasks to be performed after creating snapshot
-       
-- name: Restore volume to earlier state using snapshot.
-  shell: >
-    kubectl exec {{ maya_pod }} -n openebs -c maya-apiserver
-    -- mayactl snapshot revert --volname {{ volume_name }} -n {{ app_ns }}
-    --snapname {{snap_name}}
-  args:
-    executable: /bin/bash
-  register: result
-  failed_when: "'Reverting to snapshot' not in result.stdout"
+  when: action == "create_snapshot"
+
+- block:
+
+    - name: Restore volume to earlier state using snapshot.
+      shell: >
+        kubectl exec {{ maya_pod }} -n openebs -c maya-apiserver
+        -- mayactl snapshot revert --volname {{ volume_name }} -n {{ app_ns }}
+        --snapname {{snap_name}}
+      args:
+        executable: /bin/bash
+      register: result
+      failed_when: "'Reverting to snapshot' not in result.stdout"
+
+  when: action == "restore_snapshot"
