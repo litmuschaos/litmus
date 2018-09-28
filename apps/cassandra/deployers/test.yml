@@ -36,7 +36,7 @@
           replace:
             path: "{{ cassandra_deployment }}"
             regexp: "testclaim"
-            replace: "{{ lookup('env','PROVIDER_PVC') }}"
+            replace: "{{ lookup('env','APP_PVC') }}"
 
         - name: Replace the storageclass placeholder with provider
           replace:
@@ -44,20 +44,31 @@
             regexp: "testclass"
             replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
 
+        - name: Get the application label values from env
+          set_fact:
+             app_lkey: "{{ app_label.split('=')[0] }}"
+             app_lvalue: "{{ app_label.split('=')[1] }}"
+
+        - name: Replace the application label placeholder
+          replace:
+            path: "{{ cassandra_deployment }}"
+            regexp: "lkey: lvalue"
+            replace: "{{ app_lkey }}: {{ app_lvalue }}"
+
         - name: Replace the default namespace in cassandra statefulset yaml
           replace:
             path: "{{ cassandra_deployment }}"
             regexp: 'cassandra-0.cassandra.default.svc.cluster.local'
-            replace: 'cassandra-0.cassandra.{{ namespace }}.svc.cluster.local'
+            replace: 'cassandra-0.cassandra.{{ app_ns }}.svc.cluster.local'
 
         - name: Create test specific namespace.
-          shell: kubectl create ns {{ namespace }}
+          shell: kubectl create ns {{ app_ns }}
           args:
            executable: /bin/bash
-          when: namespace != 'litmus'
+          when: app_ns != 'litmus'
 
         - name: Checking the status  of test specific namespace.
-          shell: kubectl get ns {{ namespace }} -o jsonpath='{.status.phase}'
+          shell: kubectl get ns {{ app_ns }} -o jsonpath='{.status.phase}'
           args:
            executable: /bin/bash
           register: npstatus
@@ -66,12 +77,12 @@
           retries: 10
         
         - name: Deploying Cassandra statefulset
-          shell: kubectl apply -f {{ cassandra_deployment }} -n {{ namespace }} 
+          shell: kubectl apply -f {{ cassandra_deployment }} -n {{ app_ns }} 
 
         - block:
 
             - name: Obtain the number of replicas.
-              shell: kubectl get statefulset -n {{ namespace }} -l app=cassandra -o custom-columns=:spec.replicas
+              shell: kubectl get statefulset -n {{ app_ns }} -l "{{ app_label }}"  -o custom-columns=:spec.replicas
               args:
                 executable: /bin/bash
               register: rep_count
@@ -80,7 +91,7 @@
               retries: 15
 
             - name: Obtain the ready replica count and compare with the replica count.
-              shell: kubectl get statefulset -n {{ namespace }} -l app=cassandra -o custom-columns=:..readyReplicas
+              shell: kubectl get statefulset -n {{ app_ns }} -l "{{ app_label }}" -o custom-columns=:..readyReplicas
               args:
                 executable: /bin/bash
               register: ready_rep

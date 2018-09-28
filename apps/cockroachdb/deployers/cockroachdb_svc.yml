@@ -5,7 +5,7 @@ metadata:
   # automatically load balance connections to the different database pods.
   name: cockroachdb-public
   labels:
-    app: cockroachdb
+    lkey: lvalue
 spec:
   ports:
   # The main port, served by gRPC, serves Postgres-flavor SQL, internode
@@ -29,7 +29,7 @@ metadata:
   # in most circumstances.
   name: cockroachdb
   labels:
-    app: cockroachdb
+    lkey: lvalue
   annotations:
     # This is needed to make the peer-finder work properly and to help avoid
     # edge cases where instance 0 comes up after losing its data and needs to

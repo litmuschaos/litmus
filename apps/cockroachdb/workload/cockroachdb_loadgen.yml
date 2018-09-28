@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cockroachdb-lg
+spec:
+  template:
+    metadata:
+      labels:
+        loadgen_lkey: loadgen_lvalue
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: cockroachdb-lg
+        image: cockroachdb/loadgen-kv:0.1
+        imagePullPolicy: IfNotPresent
+        command:
+          - "/kv"
+          - "--duration"
+          - "time_duration"
+          - "postgres://root@fqdn:26257/kv?sslmode=disable"
