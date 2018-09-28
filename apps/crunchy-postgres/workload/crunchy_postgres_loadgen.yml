@@ -8,7 +8,7 @@ spec:
     metadata:
       name: crunchy-loadgen
       labels:
-        loadgen: crunchy-loadgen
+        loadgen_lkey: loadgen_lvalue
       
     spec:
       restartPolicy: Never
