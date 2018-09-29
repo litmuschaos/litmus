@@ -5,5 +5,5 @@ storageclass_link: https://raw.githubusercontent.com/openebs/openebs/master/k8s/
 openebs_operator: openebs-operator.yaml
 storageclass: storageclass.yaml
 selector_name: openebs-ndm
-installation_test_name: openebsinstallerv0.7
-cleanup_test_name: openebscleanupv0.7
+installation_test_name: openebsinstaller
+cleanup_test_name: openebscleanup

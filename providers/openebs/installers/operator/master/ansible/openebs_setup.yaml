@@ -44,11 +44,21 @@
           get_url:
             url: "{{ openebs_operator_link }}"
             dest: "{{ playbook_dir }}/{{ openebs_operator }}"
+            force: yes
+         register: result
+         until:  "'OK' in result.msg"
+         delay: 5
+         retries: 3
 
         - name: Downloading openebs-storageclasses.yaml
           get_url:
             url: "{{ storageclass_link }}"
             dest: "{{ playbook_dir }}/{{ storageclass }}"
+            force: yes
+         register: result
+         until:  "'OK' in result.msg"
+         delay: 5
+         retries: 3
 
         - name: Updating maya api server image
           replace:
