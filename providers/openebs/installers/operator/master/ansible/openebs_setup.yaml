@@ -135,9 +135,12 @@
 
 
         - name: Checking Maya-API-Server is running
-          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="maya-apiserver")].status.phase}'
+          #shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="maya-apiserver")].status.phase}'
+          shell: >
+            kubectl get pods --no-headers -n openebs -l name=maya-apiserver
+            -o jsonpath='{.items[?(@.status.containerStatuses[*].name=="maya-apiserver")].status.containerStatuses[*].ready}' 
           register: maya_api
-          until: "'Running' in maya_api.stdout"
+          until: "'true' in maya_api.stdout"
           delay: 30
           retries: 100
 
