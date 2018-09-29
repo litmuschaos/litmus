@@ -14,20 +14,31 @@
 - hosts: localhost
   vars: 
     cluster_name:
+    zone:
   tasks:
     - name: Generating Random Cluster Name
       shell: python ../../utils/name_generator/namesgenerator.py
       register: cluster_name
       when: not cluster_name
+
+    - set_fact: zone="us-east1-b"
+      when: not zone
+
+    - name: Get VPC Name
+      shell: cat ~/logs/vpc
+      register: vpc
+
     - set_fact:
         cluster_name: "{{ cluster_name.stdout }}"
-      when: cluster_name.stdout is defined
+    - set_fact:
+        vpc: "{{ vpc.stdout }}"
+        
     - name: Creating Bucket
       shell: gsutil mb gs://{{ cluster_name }}/
     - name: Creating the Cluster & InstanceGroup objects in our state store
       shell: |
         export KOPS_FEATURE_FLAGS=AlphaAllowGCE
-        kops create cluster {{ cluster_name }}.k8s.local --kubernetes-version {{ k8s_version }} --zones us-east1-b --state gs://{{ cluster_name }}/ --project {{ project }} --node-count {{ nodes }} --networking kubenet --image "ubuntu-os-cloud/ubuntu-1604-xenial-v20170202" --vpc {{ vpc_name }}
+        kops create cluster {{ cluster_name }}.k8s.local --kubernetes-version {{ k8s_version }} --zones {{zone}} --state gs://{{ cluster_name }}/ --project {{ project }} --node-count {{ nodes }} --networking kubenet --image "ubuntu-os-cloud/ubuntu-1604-xenial-v20170202" --vpc {{ vpc }}
     - name: Creating K8s Cluster
       shell: |
         export KOPS_FEATURE_FLAGS=AlphaAllowGCE

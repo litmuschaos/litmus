@@ -11,8 +11,21 @@
 - hosts: localhost
   tasks:
        - block:
-             - name: Creating VPC 'openebs-e2e'
-               shell: gcloud compute --project={{ project }} networks create {{ vpc_name }} --subnet-mode=auto
+
+             - name: Generating Random VPC Name
+               shell: python ../../utils/name_generator/namesgenerator.py
+               register: vpc
+             - set_fact:
+                 vpc: "{{ vpc.stdout }}"
+             - name: Creating VPC
+               shell: gcloud compute --project={{ project }} networks create {{ vpc }} --subnet-mode=auto
+
+             - lineinfile:
+                 create: yes
+                 state: present
+                 path: "~/logs/vpc"
+                 line: "{{ vpc }}"
+
              - name: Test Passed
                set_fact:
                  flag: "Test Passed"
