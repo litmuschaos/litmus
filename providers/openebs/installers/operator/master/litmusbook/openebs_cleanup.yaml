@@ -8,6 +8,8 @@ spec:
   template:
     metadata:
       name: litmus
+      labels:
+        provider: openebs-cleanup
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
