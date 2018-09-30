@@ -1,3 +1,0 @@
-pg_statefulset: postgres-statefulset.yaml
-namespace: postgres
-test_name: postgres-deploy

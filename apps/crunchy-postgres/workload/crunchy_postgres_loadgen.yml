@@ -8,7 +8,7 @@ spec:
     metadata:
       name: crunchy-loadgen
       labels:
-        app: crunchy-loadgen
+        loadgen_lkey: loadgen_lvalue
       
     spec:
       restartPolicy: Never
@@ -20,15 +20,15 @@ spec:
         env: 
             # Time period (in sec) b/w retries for DB init check
           - name: NAMESPACE
-            value: litmus
+            value: name_space
     
             # Service name of postgres application 
           - name: SERVICE_NAME
-            value: pgset
+            value: servicename
     
             # Database Name 
           - name: DATABASE_NAME
-            value: postgres
+            value: dbname
     
            # Password to access Database
           - name: PASSWORD
@@ -36,19 +36,19 @@ spec:
     
            # Database user
           - name: DATABASE_USER
-            value: testuser
+            value: dbuser
           
             #Port on which crunchy databse is listening
           - name: PORT
-            value: "5432"
+            value: "port"
             
             #Number of parallel transactions to perform
           - name: PARALLEL_TRANSACTION
-            value: "5"
+            value: "paralleltransaction"
             
             #Number of transaction to perform
           - name: TRANSACTIONS
-            value: "200"
+            value: "transaction"
 
         command: ["/bin/bash"]
         args: ["-c", "./test.sh ; exit 0"] 

@@ -1,0 +1,64 @@
+# delete-volume.yml
+########################################################################################################################################################################
+#Steps:
+
+#1. Fetching device detail using device id
+#2. Executing volume Detach command in nodes
+#3. Deleting volume in packet cloud using volume ID
+#4. Deleting volume ID form stored file
+########################################################################################################################################################################
+
+---
+- hosts: localhost
+  
+  vars:
+    packet_api_token: "{{ packet_api }}"
+  
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - block:
+        - name: Fetch device detail using device id
+          uri:
+            url: "{{ base_url }}/devices/{{ item }}"
+            method: GET
+            headers:
+              X-Auth-Token: "{{ packet_api }}"
+            status_code: 200
+            body_format: json
+          register: device_ip
+          with_lines: cat "{{ device_id_location }}"
+
+        - name: Executing volume Detach command in nodes
+          args:
+            executable: /bin/bash
+          shell: packet-block-storage-detach
+          delegate_to: "root@{{ item.json.ip_addresses[0].address }}"
+          with_items: "{{ device_ip.results }}"
+
+        - name: Delete volume in packet cloud
+          uri:
+            url: "{{ base_url }}/storage/{{ item }}"
+            method: DELETE
+            headers:
+              X-Auth-Token: "{{ packet_api }}"
+            status_code: 204
+          with_lines: cat "/tmp/packet/volume_id"
+          ignore_errors: true
+
+        - name: Deleting Volume Id from file
+          lineinfile:
+            state: absent
+            path: "/tmp/packet/volume_id"
+            regexp: ""
+            mode: 0755
+
+        - name: Set Test Status
+          set_fact:
+            flag: "Test Passed"
+
+      rescue:
+        - name: Set Test Status
+          set_fact:
+            flag: "Test Failed"

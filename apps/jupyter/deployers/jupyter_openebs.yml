@@ -1,0 +1,57 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: jupyter-server
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        lkey: lvalue
+    spec:
+      containers:
+      - name: jupyter-server
+        imagePullPolicy: Always
+        image: satyamz/docker-jupyter:v0.4
+        ports:
+        - containerPort: 8888
+        env:
+        - name: GIT_REPO
+          value: https://github.com/vharsh/plot-demo.git
+        volumeMounts:
+        - name: data-vol
+          mountPath: /mnt/data
+      volumes:
+      - name: data-vol
+        persistentVolumeClaim:
+          claimName: testclaim
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: testclaim
+spec:
+  storageClassName: testclass
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5G
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jupyter-service
+  labels:
+    lkey: lvalue
+spec:
+  ports:
+  - name: ui
+    port: 8888
+    nodePort: 32424
+    protocol: TCP
+  selector:
+    lkey: lvalue
+  sessionAffinity: None
+  type: NodePort
+

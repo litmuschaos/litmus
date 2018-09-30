@@ -11,7 +11,7 @@ IS_DOCKER_INSTALLED = $(shell which docker >> /dev/null 2>&1; echo $$?)
 PACKAGES = $(shell go list ./... | grep -v '/vendor/')
 
 .PHONY: all
-all: format metalint compile
+all: format metalint compile all-tools
 
 .PHONY: help
 help:

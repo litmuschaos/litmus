@@ -1,0 +1,10 @@
+---
+test_name: cockroachdb-load-generation
+
+namespace: "{{ lookup('env','APP_NS') }}"
+
+cockroachdb_loadgen: cockroachdb_loadgen.yml
+
+app_label: "{{ lookup('env','APP_LABEL') }}"
+
+loadgen_label: "{{ lookup('env','LOADGEN_LABEL') }}"

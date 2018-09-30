@@ -1,0 +1,56 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: litmus-mysql-data-persistence-
+  namespace: litmus 
+spec:
+  template:
+    metadata:
+      labels:
+        name: litmus 
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: openebs/ansible-runner
+        env: 
+          - name: ANSIBLE_STDOUT_CALLBACK
+            #value: log_plays
+            value: default
+ 
+          - name: PROVIDER_STORAGE_CLASS
+            # Supported values: openebs-standard, local-storage
+            value: openebs-standard
+
+          - name: CHAOS_TYPE
+            # Supported values : APP_POD_EVICT/KUBECTL, APP_NODE_DRAIN/KUBECTL, APP_POD_KILL/PUMBA
+            value: "APP_POD_KILL/PUMBA"
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./percona/tests/mysql_data_persistence/test.yml -i /etc/ansible/hosts -v; exit 0"]
+        volumeMounts:
+          - name: logs 
+            mountPath: /var/log/ansible 
+        tty: true
+      - name: logger
+        image: openebs/logger
+        command: ["/bin/bash"]
+        args: ["-c", "./logger.sh -d 10 -r maya,openebs,pvc,percona; exit 0"] 
+        volumeMounts:
+          - name: kubeconfig 
+            mountPath: /root/admin.conf
+            subPath: admin.conf
+          - name: logs
+            mountPath: /mnt 
+        tty: true 
+      volumes: 
+        - name: kubeconfig
+          configMap: 
+            name: kubeconfig 
+        - name: logs 
+          hostPath:
+            path: /mnt/mysql_data_persistence
+            type: ""
+

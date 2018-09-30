@@ -1,0 +1,46 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: litmus-cockroachdb
+  namespace: litmus 
+spec:
+  template:
+    metadata:
+      name: litmus
+      labels:
+        apps: cockroachdb-deployment-litmus
+   
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: openebs/ansible-runner
+        imagePullPolicy: Always
+
+        env: 
+          - name: ANSIBLE_STDOUT_CALLBACK
+            #value: log_plays, actionable, default
+            value: default
+
+          - name: PROVIDER_STORAGE_CLASS
+            # Supported values: openebs-standard, local-storage
+            value: openebs-standard
+
+          - name: APP_PVC
+            value: cockroachdb-claim
+
+            # Application label
+          - name: APP_LABEL
+            value: 'app=cockroachdb'
+
+            # Application namespace
+          - name: APP_NAMESPACE
+            value: cockroachdb
+
+          - name: DEPLOY_TYPE
+            value: statefulset
+ 
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./cockroachdb/deployers/test.yml -i /etc/ansible/hosts -v; exit 0"]

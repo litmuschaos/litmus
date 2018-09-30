@@ -1,0 +1,122 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+         ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - name: Generate the litmus result CR to reflect SOT (Start of Test) 
+          template: 
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars: 
+            test: "{{ test_name }}"
+            app: ""
+            chaostype: ""
+            phase: in-progress
+            verdict: none
+        
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          args:
+            executable: /bin/bash
+          register: lr_status 
+          failed_when: "lr_status.rc != 0"
+        - name: Check whether the provider storageclass is applied
+          shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
+          args:
+            executable: /bin/bash
+          register: result
+
+        - name: Replace the pvc placeholder with provider
+          replace:
+            path: "{{ mongodb_deployment }}"
+            regexp: "testclaim"
+            replace: "{{ lookup('env','APP_PVC') }}"
+
+        - name: Replace the storageclass placeholder with provider
+          replace:
+            path: "{{ mongodb_deployment }}"
+            regexp: "testclass"
+            replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+
+        - name: Get the application label values from env
+          set_fact:
+             app_lkey: "{{ app_label.split('=')[0] }}"
+             app_lvalue: "{{ app_label.split('=')[1] }}"
+
+        - name: Replace the application label placeholder
+          replace:
+            path: "{{ mongodb_deployment }}"
+            regexp: "lkey: lvalue"
+            replace: "{{ app_lkey }}: {{ app_lvalue }}"            
+
+        - name: Create test specific namespace.
+          shell: source ~/.profile;  kubectl create ns {{ app_ns }}
+          args:
+           executable: /bin/bas
+          when: app_ns != 'litmus'
+
+        - name: Checking the status  of test specific namespace.
+          shell: kubectl get ns {{ app_ns }} -o jsonpath='{.status.phase}'
+          args:
+           executable: /bin/bash
+          register: npstatus
+          until: "'Active' in npstatus.stdout"
+          delay: 30
+          retries: 10
+        
+        - name: Deploying Mongodb
+          shell: kubectl apply -f {{ mongodb_deployment }} -n {{ app_ns }} 
+
+        - block:
+
+            - name: Obtain the number of replicas.
+              shell: kubectl get statefulset -n {{ app_ns }} -l "{{app_label}}" -o custom-columns=:spec.replicas
+              args:
+                executable: /bin/bash
+              register: rep_count
+              until: "rep_count.rc == 0"
+              delay: 60
+              retries: 15
+
+            - name: Obtain the ready replica count and compare with the replica count.
+              shell: kubectl get statefulset -n {{ app_ns }} -l "{{app_label}}" -o custom-columns=:..readyReplicas
+              args:
+                executable: /bin/bash
+              register: ready_rep
+              until: "ready_rep.rc == 0 and ready_rep.stdout|int == rep_count.stdout|int"
+              delay: 60
+              retries: 15
+
+          when: lookup('env','DEPLOY_TYPE') == 'statefulset'
+      
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - set_fact:
+            flag: "Fail"
+
+      always:
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR 
+        - name: Generate the litmus result CR to reflect EOT (End of Test) 
+          template: 
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars: 
+            test: "{{ test_name }}"
+            app: ""
+            chaostype: ""
+            phase: completed
+            verdict: "{{ flag }}"
+           
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          args:
+            executable: /bin/bash
+          register: lr_status
+          failed_when: "lr_status.rc != 0"   

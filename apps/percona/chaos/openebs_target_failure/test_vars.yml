@@ -1,0 +1,9 @@
+test_name: openebs-cstor-target-failure
+namespace: "{{ lookup('env','APP_NAMESPACE') }}"
+target_namespace: "{{ lookup('env','TARGET_NAMESPACE') }}"
+label: "{{ lookup('env','APP_LABEL') }}"
+pvc: "{{ lookup('env','APP_PVC') }}"
+liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
+liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
+
+

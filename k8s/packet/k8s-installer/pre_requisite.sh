@@ -3,7 +3,7 @@ apt-get update && apt-get install -y docker.io apt-transport-https curl
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 touch /etc/apt/sources.list.d/kubernetes.list
 sh -c 'echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list'
-apt-get update && apt-get install -y kubelet kubeadm kubectl
+apt-get update && apt-get install -y kubelet=$1 kubeadm=$1 kubectl=$1
 swapoff -a
 
 master() {
@@ -19,6 +19,6 @@ master() {
     kubectl apply -f https://raw.githubusercontent.com/cloudnativelabs/kube-router/master/daemonset/kubeadm-kuberouter.yaml
 }
 
-if [ "$3" == "master" ];then
-  master $1 $2
+if [ "$4" == "master" ];then
+  master $2 $3
 fi

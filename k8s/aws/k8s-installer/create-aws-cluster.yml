@@ -52,12 +52,12 @@
         
         - name: Checking Cluster availability
           shell: python ../../utils/health/cluster_health_check.py -n {{ node_count | int + 1 }}
-
-        - name: Test Passed
+      
+        - name: Set Test Status
           set_fact:
             flag: "Test Passed"
     
-    - rescue:
-        - name: Test Failed
+      rescue:
+        - name: Set Test Status
           set_fact:
             flag: "Test Failed"

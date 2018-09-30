@@ -20,7 +20,7 @@ spec:
  template:
   metadata:
    labels:
-    app: jenkins-app
+    lkey: lvalue
   spec:
    securityContext:
      fsGroup: 1000
@@ -42,10 +42,12 @@ apiVersion: v1
 kind: Service
 metadata:
   name: jenkins-svc
+  labels:
+    lkey: lvalue
 spec:
   ports:
     - port: 80
       targetPort: 8080
   selector:
-    app: jenkins-app
+    lkey: lvalue
   type: NodePort

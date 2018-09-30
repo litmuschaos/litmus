@@ -1,0 +1,6 @@
+# Test-specific parametres
+
+jupyter_deployment: jupyter_openebs.yml
+app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+app_label: "{{ lookup('env','APP_LABEL') }}"
+test_name: jupyter-deployment
