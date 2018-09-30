@@ -33,7 +33,7 @@
 
         - name: Replace the label in loadgen job spec.
           replace:
-            path: "{{ cockroachdb_loadgen }}"
+            path: "{{ percona_loadgen }}"
             regexp: "loadgen_lkey: loadgen_lvalue"
             replace: "{{ loadgen_lkey }}: {{ loadgen_lvalue }}"
 
