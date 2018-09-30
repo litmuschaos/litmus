@@ -1,0 +1,148 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+       ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - name: Generate the litmus result CR to reflect SOT (Start of Test) 
+          template: 
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars: 
+            test: "{{ test_name }}"
+            app: ""
+            chaostype: ""
+            phase: in-progress
+            verdict: none
+        
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          args:
+            executable: /bin/bash
+          register: lr_status 
+          failed_when: "lr_status.rc != 0"
+
+        - name: Obtaining the loadgen pod label from env.
+          set_fact:
+            loadgen_lkey: "{{ loadgen_label.split('=')[0] }}"
+            loadgen_lvalue: "{{ loadgen_label.split('=')[1] }}"
+
+        - name: Replace the label in loadgen job spec.
+          replace:
+            path: "{{ cockroachdb_loadgen }}"
+            regexp: "loadgen_lkey: loadgen_lvalue"
+            replace: "{{ loadgen_lkey }}: {{ loadgen_lvalue }}"
+
+        - name: Replace namespace placeholder in Crunchy-loadgen
+          replace:
+            path: "{{ crunchy_loadgen }}"
+            regexp: "name_space"
+            replace: "{{ namespace }}"
+
+        - name: Replace service placeholder in Crunchy-loadgen
+          replace:
+            path: "{{ crunchy_loadgen }}"
+            regexp: "servicename"
+            replace: "{{ lookup('env','SERVICE_NAME') }}"
+
+        - name: Replace database placeholder
+          replace:
+            path: "{{ crunchy_loadgen }}"
+            regexp: "dbname"
+            replace: "{{ lookup('env','DATABASE_NAME') }}"
+
+        - name: Replace password placeholder in Crunchy-loadgen
+          replace:
+            path: "{{ crunchy_loadgen }}"
+            regexp: "password"
+            replace: "{{ lookup('env','PASSWORD') }}"
+
+        - name: Replace database-user placeholder in Crunchy-loadgen
+          replace:
+            path: "{{ crunchy_loadgen }}"
+            regexp: "dbuser"
+            replace: "{{ lookup('env','DATABASE_USER') }}"
+
+        - name: Replace port placeholder in Crunchy-loadgen
+          replace:
+            path: "{{ crunchy_loadgen }}"
+            regexp: "port"
+            replace: "{{ lookup('env','PORT') }}" 
+
+        - name: Replace transaction placeholder in Crunchy-loadgen
+          replace:
+            path: "{{ crunchy_loadgen }}"
+            regexp: "transaction"
+            replace: "{{ lookup('env','TRANSACTIONS') }}"
+
+        - name: Replace parallel-transaction placeholder in Crunchy-loadgen
+          replace:
+            path: "{{ crunchy_loadgen }}"
+            regexp: "paralleltransaction"
+            replace: "{{ lookup('env','PARALLEL_TRANSACTION') }}"           
+    
+
+        - name: Create test specific namespace.
+          shell: kubectl create ns {{ namespace }}
+          args:
+           executable: /bin/bash
+          when: namespace != 'litmus'
+
+        - name: Checking the status  of test specific namespace.
+          shell: kubectl get ns {{ namespace }} -o jsonpath='{.status.phase}'
+          args:
+           executable: /bin/bash
+          register: npstatus
+          until: "'Active' in npstatus.stdout"
+          delay: 30
+          retries: 10
+        
+        - name: Create Crunchy-postgres Loadgen Job
+          shell: kubectl apply -f {{ crunchy_loadgen }} -n {{ namespace }} 
+
+        - name: Verify loadgen pod is running 
+          shell: kubectl get pods -n {{ namespace }} -l {{ loadgen_label }} -o jsonpath='{.items[0].status.phase}'
+          args:
+            executable: /bin/bash
+          register: result
+          until: "'Running' in result.stdout"
+          delay: 30
+          retries: 15
+
+        - name: Verifying Load-generation
+          shell: kubectl exec -it pgset-0 -n {{ namespace }} -- psql -c '\dt'
+          register: output
+          until: "'pgbench_accounts' in output.stdout"
+          delay: 30
+          retries: 15
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - set_fact:
+            flag: "Fail"  
+
+      always:
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR 
+        - name: Generate the litmus result CR to reflect EOT (End of Test) 
+          template: 
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars: 
+            test: "{{ test_name }}"
+            app: ""
+            chaostype: ""
+            phase: completed
+            verdict: "{{ flag }}"
+           
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          args:
+            executable: /bin/bash
+          register: lr_status 
+          failed_when: "lr_status.rc != 0"
