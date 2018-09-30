@@ -2,12 +2,14 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: litmus-openebs-setup-v0.7
+  name: litmus-openebs-setup
   namespace: litmus 
 spec:
   template:
     metadata:
       name: litmus
+      labels: 
+        provider: openebs-setup
     spec:
       serviceAccountName: litmus
       restartPolicy: Never

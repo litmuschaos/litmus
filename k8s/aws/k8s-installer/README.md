@@ -1,8 +1,11 @@
 # AWS platform specific code and scripts
+
 ## Amazon web service and setting up Kubernetes cluster using KOPS
-These playbook act as a wrapper class for all the `kops`, `aws`  command. 
+
+These playbook act as a wrapper class for all the `kops`, `aws`  command
 
 ### Prerequisites
+
 - kubectl
 - aws
 - kops
@@ -18,6 +21,7 @@ These playbook act as a wrapper class for all the `kops`, `aws`  command.
 ```bash
 ansible-playbook pre-requisite.yml -vv
 ```
+
 **Optional**
 
 - User can also provide the VPC name at the time of creation in `--extra-vars`
@@ -25,6 +29,7 @@ ansible-playbook pre-requisite.yml -vv
 ```bash
 ansible-playbook pre-requisite.yml -vv --extra-vars "vpc_name=<name-of-vpc>"
 ```
+
 ### Creating AWS Cluster
 
 - Run `create-aws-cluster`, this will create a ssh public key, Bucket and the AWS cluster.
@@ -32,12 +37,15 @@ ansible-playbook pre-requisite.yml -vv --extra-vars "vpc_name=<name-of-vpc>"
 ```bash
 ansible-playbook create-aws-cluster.yml -vv --extra-vars "k8s_version=<Kubernetes_version>"
 ```
+
 **Optional**
+
 - User can also provide the Cluster name at the time of creation in `--extra-vars`
 
 ```bash
 ansible-playbook create-aws-cluster.yml -vv --extra-vars "k8s_version=<Kubernetes_version> cluster_name=<name-of-cluster>"
 ```
+
 ### Deleting AWS cluster
 
 - Run `delete-aws-cluster`, this will delete the cluster as well as the Bucket associated with it.
@@ -53,4 +61,3 @@ ansible-playbook delete-aws-cluster.yml -vv
 ```bash
 ansible-playbook delete-pre-requisite.yml -vv
 ```
-

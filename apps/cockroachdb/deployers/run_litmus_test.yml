@@ -16,7 +16,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: openebs/ansible-runner:ci
+        image: openebs/ansible-runner
         imagePullPolicy: Always
 
         env: 
@@ -28,8 +28,16 @@ spec:
             # Supported values: openebs-standard, local-storage
             value: openebs-standard
 
-          - name: PROVIDER_PVC
+          - name: APP_PVC
             value: cockroachdb-claim
+
+            # Application label
+          - name: APP_LABEL
+            value: 'app=cockroachdb'
+
+            # Application namespace
+          - name: APP_NAMESPACE
+            value: cockroachdb
 
           - name: DEPLOY_TYPE
             value: statefulset

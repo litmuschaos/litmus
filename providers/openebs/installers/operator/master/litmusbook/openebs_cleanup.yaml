@@ -2,12 +2,14 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: litmus-openebs-cleanup-v0.7
+  name: litmus-openebs-cleanup
   namespace: litmus 
 spec:
   template:
     metadata:
       name: litmus
+      labels:
+        provider: openebs-cleanup
     spec:
       serviceAccountName: litmus
       restartPolicy: Never

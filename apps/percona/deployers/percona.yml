@@ -9,11 +9,11 @@ spec:
   replicas: 1
   selector: 
     matchLabels:
-      name: percona 
+      lkey: lvalue 
   template: 
     metadata:
       labels: 
-        name: percona
+        lkey: lvalue
     spec:
       containers:
         - resources:
@@ -56,7 +56,7 @@ kind: Service
 metadata:
   name: percona-mysql
   labels:
-    name: percona-mysql
+    lkey: lvalue
 spec:
   ports:
     - port: 3306

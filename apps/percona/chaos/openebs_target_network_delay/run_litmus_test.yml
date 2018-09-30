@@ -39,6 +39,12 @@ spec:
           - name: CHAOS_DURATION
             value: "60" # in seconds
 
+          - name: LIVENESS_APP_LABEL
+            value: ""
+
+          - name: LIVENESS_APP_NAMESPACE
+            value: ""
+
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./percona/chaos/openebs_target_network_delay/test.yml -i /etc/ansible/hosts -vv; exit 0"]
         volumeMounts:

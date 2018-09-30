@@ -18,6 +18,7 @@
             chaostype: ""
             phase: in-progress
             verdict: none
+            
         
         - name: Apply the litmus result CR
           shell: kubectl apply -f litmus-result.yaml
@@ -25,15 +26,44 @@
             executable: /bin/bash
           register: lr_status 
           failed_when: "lr_status.rc != 0"
+        
+        - name: Obtaining the loadgen pod label from env.
+          set_fact:
+            loadgen_lkey: "{{ loadgen_label.split('=')[0] }}"
+            loadgen_lvalue: "{{ loadgen_label.split('=')[1] }}"
+
+        - name: Replace the label in loadgen job spec.
+          replace:
+            path: "{{ mongodb_loadgen }}"
+            regexp: "loadgen_lkey: loadgen_lvalue"
+            replace: "{{ loadgen_lkey }}: {{ loadgen_lvalue }}"
+
+        - name: Replace service placeholder in mongo-loadgen
+          replace:
+            path: "{{ mongodb_loadgen }}"
+            regexp: "servicename"
+            replace: "{{ lookup('env','SERVICE_NAME') }}"
+
+        - name: Replace pod placeholder in mongo-loadgen
+          replace:
+            path: "{{ mongodb_loadgen }}"
+            regexp: "podname"
+            replace: "{{ lookup('env','POD_NAME') }}" 
+
+        - name: Replace database-name placeholder in mongo-loadgen
+          replace:
+            path: "{{ mongodb_loadgen }}"
+            regexp: "database_name"
+            replace: "{{ lookup('env','DATABASE_NAME') }}"       
 
         - name: Create test specific namespace.
-          shell: kubectl create ns {{ namespace }}
+          shell: kubectl create namespace {{ namespace }}
           args:
            executable: /bin/bash
           when: namespace != 'litmus'
 
         - name: Checking the status  of test specific namespace.
-          shell: kubectl get ns {{ namespace }} -o jsonpath='{.status.phase}'
+          shell: kubectl get namespace {{ namespace }} -o jsonpath='{.status.phase}'
           args:
            executable: /bin/bash
           register: npstatus
@@ -45,7 +75,7 @@
           shell: kubectl apply -f {{ mongodb_loadgen }} -n {{ namespace }} 
 
         - name: Verify load-gen pod is running
-          shell: kubectl get pods -n {{ namespace }} -l app=mongo-loadgen -o jsonpath='{.items[0].status.phase}'
+          shell: kubectl get pods -n {{ namespace }} -l {{ loadgen_label }} -o jsonpath='{.items[0].status.phase}'
           args:
             executable: /bin/bash
           register: result

@@ -38,11 +38,11 @@
             regexp: ""
             mode: 0755
 
-        - name: Test Passed
+        - name: Set Test Status
           set_fact:
             flag: "Test Passed"
     
-    - rescue:
-        - name: Test Failed
+      rescue:
+        - name: Set Test Status
           set_fact:
             flag: "Test Failed"

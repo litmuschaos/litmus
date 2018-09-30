@@ -3,7 +3,9 @@ cockroachdb_deployment: cockroachdb_sts.yml
 
 cockroachdb_svc: cockroachdb_svc.yml 
 
-namespace: cockroachdb
+app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+
+app_label: "{{ lookup('env','APP_LABEL') }}"
 
 test_name: cockroachdb-deployment
 
