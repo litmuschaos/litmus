@@ -48,7 +48,7 @@
 
         - name: Replace the label in loadgen job spec.
           replace:
-            path: "{{ mongodb_loadgen }}"
+            path: "{{ cassandra_loadgen }}"
             regexp: "loadgen_lkey: loadgen_lvalue"
             replace: "{{ loadgen_lkey }}: {{ loadgen_lvalue }}"
         
