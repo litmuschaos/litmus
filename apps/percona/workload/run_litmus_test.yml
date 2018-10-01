@@ -9,6 +9,7 @@ spec:
     metadata:
       name: percona-loadgen
       namespace: litmus
+      #loadgen for percona
       labels:
         loadgen: percona-loadjob
     spec:
