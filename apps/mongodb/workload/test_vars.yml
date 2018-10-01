@@ -1,0 +1,4 @@
+mongodb_loadgen: mongo_loadgen.yml
+namespace: litmus
+test_name: mongodb-loadgen
+loadgen_label: "{{ lookup('env','LOADGEN_LABEL') }}"
