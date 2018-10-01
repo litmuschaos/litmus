@@ -10,7 +10,7 @@ spec:
       name: percona-loadgen
       namespace: litmus
       labels:
-        app: percona-loadgen
+        loadgen: percona-loadjob
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
