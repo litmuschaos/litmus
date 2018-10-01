@@ -1,4 +1,4 @@
-test_name: openebs-cstor-target-failure
+test_name: openebs-target-failure
 namespace: "{{ lookup('env','APP_NAMESPACE') }}"
 target_namespace: "{{ lookup('env','TARGET_NAMESPACE') }}"
 label: "{{ lookup('env','APP_LABEL') }}"
