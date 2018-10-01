@@ -16,7 +16,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: loadgen
-        image: openebs/ansible-runner:ci
+        image: openebs/ansible-runner
         imagePullPolicy: Always
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
@@ -31,7 +31,7 @@ spec:
             value: litmus
 
           - name: APP_SERVICE_LABEL
-            value: name=percona-mysql 
+            value: name=percona
             
           - name: LOADGEN_LABEL
             value: loadgen=percona-loadgen
