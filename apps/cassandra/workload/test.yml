@@ -40,12 +40,23 @@
           until: "'Active' in npstatus.stdout"
           delay: 30
           retries: 10
+
+        - name: Obtaining the loadgen pod label from env.
+          set_fact:
+            loadgen_lkey: "{{ loadgen_label.split('=')[0] }}"
+            loadgen_lvalue: "{{ loadgen_label.split('=')[1] }}"
+
+        - name: Replace the label in loadgen job spec.
+          replace:
+            path: "{{ mongodb_loadgen }}"
+            regexp: "loadgen_lkey: loadgen_lvalue"
+            replace: "{{ loadgen_lkey }}: {{ loadgen_lvalue }}"
         
         - name: Create Cassandra Loadgen Job
           shell: kubectl apply -f {{ cassandra_loadgen }} -n {{ namespace }} 
 
         - name: Verify load is running for specified duration
-          shell: kubectl get pods -n {{ namespace }} -l app=cassandra-loadgen
+          shell: kubectl get pods -n {{ namespace }} -l {{ loadgen_label }}
           args:
             executable: /bin/bash
           register: result

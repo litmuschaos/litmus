@@ -10,7 +10,7 @@ spec:
       name: mongodb-loadgen
       namespace: litmus
       labels:
-        app: mongodb-loadgen
+        loadgen: mongodb-loadjob
     spec:
       serviceAccountName: litmus
       restartPolicy: Never

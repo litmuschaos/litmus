@@ -1,4 +1,5 @@
 cassandra_loadgen: cassandra_loadgen.yml
-namespace: litmus
+namespace: "{{ lookup('env','LOADGEN_NAMESPACE') }}"
 test_name: cassandra-loadgen
+loadgen_label: "{{ lookup('env','LOADGEN_LABEL') }}"
 io_minutes: 3

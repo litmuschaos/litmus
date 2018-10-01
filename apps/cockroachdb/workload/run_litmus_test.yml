@@ -9,7 +9,7 @@ spec:
     metadata:
       name: litmus
       labels:
-        loadgen: cockroachdb-load 
+        loadgen: cockroachdb-loadjob
     spec:
       serviceAccountName: litmus
       restartPolicy: Never

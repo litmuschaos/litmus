@@ -8,6 +8,9 @@ spec:
   template:
     metadata:
       name: litmus
+      labels:
+        loadgen: cassandra-loadjob
+
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
@@ -19,6 +22,12 @@ spec:
           - name: ANSIBLE_STDOUT_CALLBACK
             #value: log_plays
             value: default
+
+          - name: LOADGEN_NS
+            value: litmus
+
+          - name: LOADGEN_LABEL
+            value: 'loadgen=cassandra-loadgen'
+
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./cassandra/workload/test.yml -i /etc/ansible/hosts -v; exit 0"]
-        
+        args: ["-c", "ansible-playbook ./cassandra/workload/test.yml -i /etc/ansible/hosts -v; exit 0"]        
