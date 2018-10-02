@@ -9,7 +9,6 @@ spec:
     metadata:
       name: percona-loadgen
       namespace: litmus
-      #loadgen for percona
       labels:
         loadgen: percona-loadjob
     spec:
@@ -32,7 +31,7 @@ spec:
             value: litmus
 
           - name: APP_SERVICE_LABEL
-            value: name=percona-mysql 
+            value: name=percona
             
           - name: LOADGEN_LABEL
             value: loadgen=percona-loadgen
