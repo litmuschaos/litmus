@@ -13,7 +13,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: tpcc-bench 
-        image: openebs/tpcc-client
+        image: openebs/tests-tpcc-client
         command: ["/bin/bash"]
         args: ["-c", "./tpcc-runner.sh service_ip tpcc.conf; exit 0"]
         volumeMounts:
