@@ -15,8 +15,8 @@ spec:
       serviceAccountName: litmus
       restartPolicy: Never
       containers:
-      - name: loadgen
-        image: openebs/ansible-runner
+      - name: ansibletest
+        image: openebs/ansible-runner:ci
         imagePullPolicy: Always
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
