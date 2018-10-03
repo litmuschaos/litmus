@@ -9,7 +9,7 @@
 
 - block:
 
-    - name: Obtaining the maya-api server pod name.
+    - name: Obtaining the openebs openebs maya-api server pod name.
       shell: kubectl get pod -n {{ operator_ns }} -l name=maya-apiserver -o custom-columns=:metadata.name
       args:
         executable: /bin/bash
@@ -17,11 +17,11 @@
 
     - name: setting the maya-apiserver pod name to a variable.
       set_fact:
-        maya_pod: "{{ result.stdout }}"
+        mayapod_name: "{{ result.stdout }}"
 
     - name: Creating openebs volume snapshot using mayactl.
       shell: >
-        kubectl exec {{ maya_pod }} -n {{ operator_ns }} -c maya-apiserver
+        kubectl exec {{ mayapod_name }} -n {{ operator_ns }} -c maya-apiserver
         -- mayactl snapshot create --volname {{ volume_name }} -n {{ app_ns }}
         --snapname {{ snapshot_name }}
       args:
@@ -31,7 +31,7 @@
 
     - name: Confirm successful snapshot creation
       shell: >
-        kubectl exec {{ maya_pod }} -n {{ operator_ns }} -c maya-apiserver
+        kubectl exec {{ mayapod_name }} -n {{ operator_ns }} -c maya-apiserver
         -- mayactl snapshot list --volname {{ volume_name }} -n {{ app_ns }}
       args:
         executable: /bin/bash
@@ -44,7 +44,7 @@
 
     - name: Restore volume to earlier state using snapshot.
       shell: >
-        kubectl exec {{ maya_pod }} -n openebs -c maya-apiserver
+        kubectl exec {{ mayapod_name }} -n openebs -c maya-apiserver
         -- mayactl snapshot revert --volname {{ volume_name }} -n {{ app_ns }}
         --snapname {{snap_name}}
       args:
