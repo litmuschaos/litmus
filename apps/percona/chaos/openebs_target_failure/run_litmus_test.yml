@@ -22,16 +22,16 @@ spec:
             value: default
  
           - name: APP_NAMESPACE
-            value: "default"
+            value: litmus
 
           - name: TARGET_NAMESPACE
-            value: "openebs"
+            value: openebs
 
           - name: APP_LABEL
-            value: "name=percona"
+            value: 'name=percona'
 
           - name: APP_PVC
-            value: "demo-vol1-claim"
+            value: percona-mysql-claim
 
           - name: LIVENESS_APP_LABEL
             value: ""

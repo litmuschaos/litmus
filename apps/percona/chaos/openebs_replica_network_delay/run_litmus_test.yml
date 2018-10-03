@@ -22,16 +22,16 @@ spec:
             value: default
 
           - name: OPERATOR_NAMESPACE
-            value: "openebs"
+            value: openebs
  
           - name: APP_NAMESPACE
-            value: "litmus"
+            value: litmus
 
           - name: APP_LABEL
-            value: "name=percona"
+            value: 'name=percona'
 
           - name: APP_PVC
-            value: "percona-mysql-claim"
+            value: percona-mysql-claim
 
           - name: NETWORK_DELAY
             value: "3000" # in milliseconds

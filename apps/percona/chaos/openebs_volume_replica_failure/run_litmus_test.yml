@@ -22,13 +22,13 @@ spec:
             value: default
  
           - name: APP_NAMESPACE
-            value: "percona"
+            value: litmus
 
           - name: APP_LABEL
-            value: "name=percona"
+            value: 'name=percona'
 
           - name: APP_PVC
-            value: "percona-mysql-claim"
+            value: percona-mysql-claim
 
           - name: LIVENESS_APP_LABEL
             value: ""
