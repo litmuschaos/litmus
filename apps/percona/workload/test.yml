@@ -88,6 +88,13 @@
           until: "'tpcc-config' in config.stdout"
           delay: 15
           retries: 15
+
+        - name: Checking whether application is running
+          shell: kubectl get pod -n {{ namespace }} -l {{ app_label }}
+          register: running_status
+          until: "'Running' in running_status.stdout"
+          delay: 30
+          retries: 60
         
         - name: Create Percona Loadgen Job
           shell: kubectl apply -f {{ percona_loadgen }} -n {{ namespace }} 
