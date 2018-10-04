@@ -30,10 +30,7 @@
   register: cstor_target_pod
 
 - name: Kill the cstor target pod 
-  shell: >
-    kubectl delete pod {{ cstor_target_pod.stdout }} -n {{ target_ns }}
-  args:
-    executable: /bin/bash
+  shell: kubectl delete pod {{ cstor_target_pod.stdout }} -n {{ target_ns }} --grace-period=0 --force
 
 - name: Wait for 10s post fault injection 
   wait_for:
