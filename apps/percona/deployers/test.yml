@@ -69,7 +69,7 @@
             replace: "{{ app_lkey }}: {{ app_lvalue }}"      
 
         - name: Create test specific namespace.
-          shell: source ~/.profile;  kubectl create ns {{ app_ns }}
+          shell: kubectl create ns {{ app_ns }}
           args:
            executable: /bin/bash
           when: app_ns != 'litmus'
