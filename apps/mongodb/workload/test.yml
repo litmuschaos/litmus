@@ -95,6 +95,31 @@
             path: "{{ mongodb_loadgen }}"
             regexp: "database_name"
             replace: "{{ lookup('env','DATABASE_NAME') }}"       
+<<<<<<< 362985a909db9f4c0913d55f68a1260640008118
+=======
+
+        - name: Create test specific namespace.
+          shell: kubectl create namespace {{ namespace }}
+          args:
+           executable: /bin/bash
+          when: namespace != 'litmus'
+
+        - name: Checking the status  of test specific namespace.
+          shell: kubectl get namespace {{ namespace }} -o jsonpath='{.status.phase}'
+          args:
+           executable: /bin/bash
+          register: npstatus
+          until: "'Active' in npstatus.stdout"
+          delay: 30
+          retries: 10
+
+        - name: Checking whether application is running
+          shell: kubectl get pod {{ pod_name }} -n {{ namespace }} -o jsonpath='{.status.phase}'
+          register: running_status
+          until: "'Running' in running_status.stdout"
+          delay: 10
+          retries: 15  
+>>>>>>> Add a task to verigy application is running
         
         - name: Create Mongodb Loadgen Job
           shell: kubectl apply -f {{ mongodb_loadgen }} -n {{ namespace }} 
