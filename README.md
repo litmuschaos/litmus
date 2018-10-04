@@ -32,7 +32,7 @@ There are other aspects to Litmus which are discussed:
 
 ## Pre-Requisites for running a specific Test
 
-Users have a Kubernetes environment with a given stateful workload and underlying storage and would like to test a specific scenarion:
+Users have a Kubernetes environment with a given stateful workload and underlying storage and would like to test a specific scenario:
 
 - Ensure that the desired storage operators are actually available on a given Kubernetes cluster.
 
