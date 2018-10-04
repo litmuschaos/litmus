@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: litmus-mongodb
+  generateName: litmus-mongodb-
   namespace: litmus 
 spec:
   template:
