@@ -57,8 +57,8 @@
           shell: kubectl get pod -l {{ application_label }} -n {{ namespace }} 
           register: running_status
           until: "'Running' in running_status.stdout"
-          delay: 10
-          retries: 15     
+          delay: 30
+          retries: 60     
         
         - name: Create Cassandra Loadgen Job
           shell: kubectl apply -f {{ cassandra_loadgen }} -n {{ namespace }} 
