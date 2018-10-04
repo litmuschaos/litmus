@@ -3,3 +3,4 @@ namespace: "{{ lookup('env','LOADGEN_NS') }}"
 test_name: cassandra-loadgen
 loadgen_label: "{{ lookup('env','LOADGEN_LABEL') }}"
 io_minutes: 3
+application_label: "{{ lookup('env','APPLICATION_LABEL') }}"

@@ -51,6 +51,14 @@
             path: "{{ cassandra_loadgen }}"
             regexp: "loadgen_lkey: loadgen_lvalue"
             replace: "{{ loadgen_lkey }}: {{ loadgen_lvalue }}"
+
+
+        - name: Checking whether application is running
+          shell: kubectl get pod -l {{ application_label }} -n {{ namespace }} 
+          register: running_status
+          until: "'Running' in running_status.stdout"
+          delay: 30
+          retries: 60     
         
         - name: Create Cassandra Loadgen Job
           shell: kubectl apply -f {{ cassandra_loadgen }} -n {{ namespace }} 
