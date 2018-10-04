@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: litmus-jenkins
+  generateName: litmus-jenkins-
   namespace: litmus 
 spec:
   template:
