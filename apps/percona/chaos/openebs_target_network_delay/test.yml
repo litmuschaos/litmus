@@ -23,7 +23,7 @@
         - include: test_prerequisites.yml
   
         - include_vars:
-            file: chaosutil.yaml
+            file: chaosutil.yml
 
         - name: Record the chaos util path
           set_fact: 
