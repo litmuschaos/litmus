@@ -13,10 +13,10 @@ The primary objective of Litmus is to ensure a consistent and reliable behavior 
 
 While Litmus tests and metrics were developed initially to test if a given Kubernetes deployment is suitable for running on OpenEBS (_a kubernetes dynamic storage provisioner_); the use cases are broader and overall system resilience can be characterized before and during operations.  To learn more about OpenEBS please visit: www.openEBS.io
 
-## How is Litmus different than others
+## How is Litmus different from others
 Litmus is an overall project that incorporates pieces of a typical chaos engineering environment to deliver a more complete solution to Litmus users. 
 
-Also, Litmus incorporates some innovations in translating end user user stories directly into scenarios. Litmus accepts user stories in simple English text & converts them to logic.  Litmus translates each statement present in a user story into corresponding Kubernetes commands. This provides a transparent view to the users if any particular statement was executed successfully or resulted in failures.
+Also, Litmus incorporates some innovations in translating end user stories directly into scenarios. Litmus accepts user stories in simple English text & converts them to logic.  Litmus translates each statement present in a user story into corresponding Kubernetes commands. This provides a transparent view to the users if any particular statement was executed successfully or resulted in failures.
 
 Additionally, test logic is packaged as dedicated containers which of course makes them portable across Kubernetes deployments. This containerization also helps to integrate these containers into CI/CD environments.
 
