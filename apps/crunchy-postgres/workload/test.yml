@@ -32,7 +32,7 @@
             loadgen_lvalue: "{{ loadgen_label.split('=')[1] }}"
 
         - name: Obtaining the Service name 
-          shell: kubectl get service -n litmus -l  app={{ service_label }} -o jsonpath='{.items[0].metadata.name}'
+          shell: kubectl get service -n litmus -l {{ service_label }} -o jsonpath='{.items[0].metadata.name}'
           register: service_name    
 
         - name: Replace the label in loadgen job spec.
