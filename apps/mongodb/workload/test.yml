@@ -89,7 +89,7 @@
             replace: "{{ service_name.stdout }}"
 
         - name: Getting the Pod name of the Application
-          shell: kubectl get po -n {{ namespace }} -l lkey=lvalue -o jsonpath='{.items[0].metadata.name}'
+          shell: kubectl get po -n {{ namespace }} -l {{ app_label }} -o jsonpath='{.items[0].metadata.name}'
           register: pod_name   
 
         - name: Replace pod placeholder in mongo-loadgen
