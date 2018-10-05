@@ -116,7 +116,7 @@
               register: ready_rep
               until: "ready_rep.rc == 0 and ready_rep.stdout|int == rep_count.stdout|int"
               delay: 60
-              retries: 15
+              retries: 30 
 
           when: lookup('env','DEPLOY_TYPE') == 'statefulset'
 
