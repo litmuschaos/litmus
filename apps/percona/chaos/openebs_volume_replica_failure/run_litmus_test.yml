@@ -2,25 +2,25 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: openebs-volume-replica-failure- 
-  namespace: litmus 
+  generateName: openebs-volume-replica-failure-
+  namespace: litmus
 spec:
   template:
     metadata:
       labels:
-        name: openebs-volume-replica-failure 
+        name: openebs-volume-replica-failure
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: openebs/ansible-runner
-        env: 
+        image: openebs/ansible-runner:ci
+        env:
           - name: ANSIBLE_STDOUT_CALLBACK
             #value: log_plays
             #value: actionable
             value: default
- 
+
           - name: APP_NAMESPACE
             value: litmus
 
@@ -39,8 +39,8 @@ spec:
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./percona/chaos/openebs_volume_replica_failure/test.yml -i /etc/ansible/hosts -vv; exit 0"]
         volumeMounts:
-          - name: logs 
-            mountPath: /var/log/ansible 
+          - name: logs
+            mountPath: /var/log/ansible
         tty: true
       - name: logger
         image: openebs/logger
@@ -53,23 +53,23 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
-          # spec.volumes is not supported via downward API 
+          # spec.volumes is not supported via downward API
           - name: MY_POD_HOSTPATH
             value: /mnt/chaos/openebs-volume-replica-failure
         command: ["/bin/bash"]
-        args: ["-c", "./logger.sh -d ansibletest -r maya,openebs,pvc,percona; exit 0"] 
+        args: ["-c", "./logger.sh -d ansibletest -r maya,openebs,pvc,percona; exit 0"]
         volumeMounts:
-          - name: kubeconfig 
+          - name: kubeconfig
             mountPath: /root/admin.conf
             subPath: admin.conf
           - name: logs
-            mountPath: /mnt 
-        tty: true 
-      volumes: 
+            mountPath: /mnt
+        tty: true
+      volumes:
         - name: kubeconfig
-          configMap: 
-            name: kubeconfig 
-        - name: logs 
+          configMap:
+            name: kubeconfig
+        - name: logs
           hostPath:
             path: /mnt/chaos/openebs_volume_replica_failure
             type: ""
