@@ -24,7 +24,7 @@ spec:
             value: default
 
           - name: LOADGEN_LABEL
-            value: loadgen=mongo-loadgen
+            value: 'loadgen=mongo-loadgen'
 
           - name: DATABASE_NAME
             value: sbtest

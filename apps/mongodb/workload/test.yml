@@ -89,7 +89,7 @@
             replace: "{{ service_name.stdout }}"
 
         - name: Getting the Pod name of the Application
-          shell: kubectl get po -n {{ namespace }} -l {{ app_label }} -o jsonpath='{.items[0].metadata.name}'
+          shell: kubectl get pod -n {{ namespace }} -l {{ app_label }} -o jsonpath='{.items[0].metadata.name}'
           register: pod_name   
 
         - name: Replace pod placeholder in mongo-loadgen
@@ -103,8 +103,6 @@
             path: "{{ mongodb_loadgen }}"
             regexp: "database_name"
             replace: "{{ lookup('env','DATABASE_NAME') }}"       
-<<<<<<< 362985a909db9f4c0913d55f68a1260640008118
-=======
 
         - name: Create test specific namespace.
           shell: kubectl create namespace {{ namespace }}
@@ -125,9 +123,8 @@
           shell: kubectl get pod {{ pod_name.stdout }} -n {{ namespace }} -o jsonpath='{.status.phase}'
           register: running_status
           until: "'Running' in running_status.stdout"
-          delay: 10
+          delay: 60
           retries: 15  
->>>>>>> Add a task to verigy application is running
         
         - name: Create Mongodb Loadgen Job
           shell: kubectl apply -f {{ mongodb_loadgen }} -n {{ namespace }} 
@@ -142,7 +139,7 @@
           retries: 15
 
         - name: Verifying load-generation  
-          shell: kubectl exec -it mongo-0 -n {{ namespace }} -- mongo --eval 'db.getMongo().getDBNames()'
+          shell: kubectl exec -it {{ pod_name.stdout }} -n {{ namespace }} -- mongo --eval 'db.getMongo().getDBNames()'
           register: output
           until: "'sbtest' in output.stdout"
           delay: 30
