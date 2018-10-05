@@ -21,7 +21,7 @@ metadata:
     app: cassandra
 spec:
   serviceName: cassandra
-  replicas: 3
+  rkey: rvalue
   selector:
     matchLabels:
       lkey: lvalue
