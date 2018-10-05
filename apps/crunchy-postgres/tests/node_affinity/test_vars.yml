@@ -1,0 +1,4 @@
+test_name: node-affinity
+namespace: "{{ lookup('env','NAMESPACE') }}" 
+app_label: "{{ lookup('env','APPLICATION_LABEL') }}"
+pvc_name: "{{ lookup('env','PVC_NAME') }}"

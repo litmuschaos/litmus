@@ -1,0 +1,81 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+    
+        - name: Generate the litmus result CR to reflect SOT (Start of Test) 
+          template: 
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars: 
+            test: "{{ test_name }}"
+            app: ""
+            chaostype: ""
+            phase: in-progress
+            verdict: none
+    
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          args:
+            executable: /bin/bash
+          register: lr_status 
+          failed_when: "lr_status.rc != 0"
+
+        - name: Getting Pod name of Application
+          shell: kubectl get pod -n {{ namespace }} -l {{ app_label }} -o jsonpath='{.items[0].metadata.name}'
+          register: pod_name
+          
+        - name: Getting PVC name
+          shell: kubectl get pod -n {{ namespace }} -l pvc={{ pvc_name }}-{{ pod_name.stdout }} | awk 'NR == 3 {print $1}'
+          register: pvc
+
+        - name: Checking the status of replia-PVC pod
+          shell: kubectl get pod {{ pvc.stdout }} -n {{ namespace }} -o jsonpath='{.status.phase}'
+          register: status
+          until: "'Running' in status.stdout"
+          delay: 5
+          retires: 10
+
+        - name: Checking the node affinity for rep-PVC pod
+          include_tasks: "/funclib/kubectl/pod_node_affinity.yml"
+          vars:
+              ns: "{{ namespace }}"
+              pod_name: "{{ pvc.stdout }}"
+
+        - name: Checking the status of replia-PVC pod
+          shell: kubectl get po {{ new_pod_name.stdout }} -n {{ namespace }} -o jsonpath='{.status.phase}'
+          until: "'Running' in status.stdout"
+          delay: 5
+          retires: 10      
+
+        - set_fact:
+            flag: "Pass" 
+               
+      rescue:
+        - set_fact:
+            flag: "Fail"           
+  
+      always:    
+         
+        - name: Generate the litmus result CR to reflect EOT (End of Test) 
+          template: 
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars: 
+            test: "{{ test_name }}"
+            app: ""
+            chaostype: ""
+            phase: completed
+            verdict: "{{ flag }}"
+             
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          args:
+            executable: /bin/bash
+          register: lr_status
+          failed_when: "lr_status.rc != 0" 
