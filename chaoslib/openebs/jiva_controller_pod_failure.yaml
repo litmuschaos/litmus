@@ -22,8 +22,8 @@
 
 - name: Get jiva controller pod belonging to the PV
   shell: > 
-    kubectl get pods -l openebs.io/controller=jiva-controller
-    -n {{ app_ns }} -o=custom-columns=NAME:".metadata.name" --no-headers
+    kubectl get pods --no-headers -l openebs.io/controller=jiva-controller -n {{ app_ns }} 
+    -o jsonpath='{.items[?(@.metadata.labels.vsm=="{{ pv.stdout }}")].metadata.name}'
   args:
     executable: /bin/bash
   register: jiva_controller_pod
