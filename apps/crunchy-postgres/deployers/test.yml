@@ -7,7 +7,7 @@
 
   tasks:
     - block:
-       - block:
+        - block:
 
             - name: Record test instance/run ID
               set_fact:
