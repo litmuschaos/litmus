@@ -29,7 +29,7 @@ spec:
             value: openebs-mongodb
 
           - name: APP_PVC
-            value: openebs-mongodb
+            value: openebs-mongo
 
             # Application label
           - name: APP_LABEL
