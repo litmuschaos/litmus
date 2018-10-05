@@ -2,34 +2,59 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: cassandra-liveness
-  namespace: litmus
- 
+  name: cassandra-test
+  namespace: litmus 
 spec:
   template:
     metadata:
-      name: cassandra-liveness
-   
+      name: cassandra-test
+      labels:
+        liveness: cassandra-liveness      
     spec:
+      serviceAccountName: litmus
       restartPolicy: Never
       containers:
-      - name: cassandra-liveness
-        image: openebs/cassandra-liveness
+      - name: cassandra-test
+        image: openebs/ansible-runner:ci    
         imagePullPolicy: Always
-
         env: 
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: default
+            
+          - name: RUN_ID
+            value: ""
 
-            # Namespace in which application is running
-          - name: NAMESPACE
-            value: litmus
-    
+          - name: LIVENESS_LABEL
+            value: 'liveness=cassandra'  
+
+           # Time period (in sec) b/w retries for app init check
+          - name: INIT_WAIT_DELAY
+            value: "30"
+
+           # No of retries for app init check
+          - name: INIT_RETRY_COUNT
+            value: "10"
+
+           # Time period (in sec) b/w liveness checks
+          - name: LIVENESS_PERIOD_SECONDS
+            value: "10"
+
+           # Time period (in sec) b/w retries for app_connect failure
+          - name: LIVENESS_TIMEOUT_SECONDS
+            value: "10"
+
+           # No of retries after a app_connect failure before declaring liveness fail
+          - name: LIVENESS_RETRY_COUNT
+            value: "6"
+
             # Service name of application
           - name: SERVICE
             value: cassandra
-    
+
             # Port on which application is listening
           - name: PORT
-            value: "9042"            
- 
+            value: "9042"  
+
         command: ["/bin/bash"]
-        args: ["-c", "python ./liveness.py ; exit 0"]
+        args: ["-c", "ansible-playbook ./cassandra/liveness/test.yml -vv -i /etc/ansible/hosts; exit 0"]
+        

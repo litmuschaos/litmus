@@ -1,0 +1,5 @@
+test_name: cassandra-liveness-test
+namespace: litmus
+liveness_label: "{{ lookup('env','LIVENESS_LABEL') }}"
+cassandra_liveness: cassandra_liveness.yml 
+

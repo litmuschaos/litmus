@@ -1,0 +1,23 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cassandra-liveness
+ 
+spec:
+  template:
+    metadata:
+      name: cassandra-liveness
+      labels:
+        liveness_lkey: liveness_lvalue
+              
+   
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: cassandra-liveness
+        image: openebs/custom-liveness 
+        imagePullPolicy: Always
+        command: ["/bin/bash"]
+        args: ["-c", "python ./liveness.py ; exit 0"]
+        tty: true

@@ -1,0 +1,23 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: liveness-pg
+  namespace: litmus
+
+spec:
+  template:
+    metadata:
+      name: liveness
+      labels:
+        liveness_lkey: liveness_lvalue       
+   
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: liveness
+        image: openebs/postgres-client
+        imagePullPolicy: Always
+        command: ["/bin/bash"]
+        args: ["-c", "python ./liveness.py ; exit 0"]
+        tty: true

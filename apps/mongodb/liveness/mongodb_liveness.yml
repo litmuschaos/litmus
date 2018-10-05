@@ -1,0 +1,22 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: liveness-mongo
+ 
+spec:
+  template:
+    metadata:
+      name: liveness
+      labels:
+         liveness_lkey: liveness_lvalue
+   
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: liveness
+        image: openebs/mongodb-client
+        imagePullPolicy: Always
+        command: ["/bin/bash"]
+        args: ["-c", "python ./server.py ; exit 0"]
+        tty: true
