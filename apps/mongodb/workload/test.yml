@@ -78,17 +78,25 @@
             regexp: "loadgen_lkey: loadgen_lvalue"
             replace: "{{ loadgen_lkey }}: {{ loadgen_lvalue }}"
 
+        - name: Getting the Service name of the Application
+          shell: kubectl get service -n {{ namespace }} -l {{ app_label }} -o jsonpath='{.items[0].metadata.name}' 
+          register: service_name   
+
         - name: Replace service placeholder in mongo-loadgen
           replace:
             path: "{{ mongodb_loadgen }}"
             regexp: "servicename"
-            replace: "{{ lookup('env','SERVICE_NAME') }}"
+            replace: "{{ service_name.stdout }}"
+
+        - name: Getting the Pod name of the Application
+          shell: kubectl get po -n {{ namespace }} -l lkey=lvalue -o jsonpath='{.items[0].metadata.name}'
+          register: pod_name   
 
         - name: Replace pod placeholder in mongo-loadgen
           replace:
             path: "{{ mongodb_loadgen }}"
             regexp: "podname"
-            replace: "{{ lookup('env','POD_NAME') }}" 
+            replace: "{{ pod_name.stdout }}" 
 
         - name: Replace database-name placeholder in mongo-loadgen
           replace:
@@ -114,7 +122,7 @@
           retries: 10
 
         - name: Checking whether application is running
-          shell: kubectl get pod {{ pod_name }} -n {{ namespace }} -o jsonpath='{.status.phase}'
+          shell: kubectl get pod {{ pod_name.stdout }} -n {{ namespace }} -o jsonpath='{.status.phase}'
           register: running_status
           until: "'Running' in running_status.stdout"
           delay: 10

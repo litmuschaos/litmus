@@ -23,12 +23,6 @@ spec:
             #value: log_plays
             value: default
 
-          - name: POD_NAME
-            value: mongo-0
-
-          - name: SERVICE_NAME 
-            value: mongo
-
           - name: LOADGEN_LABEL
             value: loadgen=mongo-loadgen
 
