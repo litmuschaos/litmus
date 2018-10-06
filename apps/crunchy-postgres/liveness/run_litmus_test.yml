@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: liveness-pg
+  generateName: liveness-pg-
   namespace: litmus
 
 spec:

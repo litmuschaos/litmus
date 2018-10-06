@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: mongodb-loadgen 
+  generateName: mongodb-loadgen-
   namespace: litmus
 spec:
   template:
