@@ -8,6 +8,7 @@
   tasks:
     - block:
         - block:
+          # Add run id to test instance
             - name: Record test instance/run ID
               set_fact:
                 run_id: "{{ lookup('env','RUN_ID') }}"
