@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: odm-operator-verify
+  generateName: odm-operator-verify-
   namespace: litmus
   labels:
     name: odm-operator-verify
