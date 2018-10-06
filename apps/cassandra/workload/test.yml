@@ -15,7 +15,7 @@
             - name: Construct testname appended with runID
               set_fact:
                 test_name: "{{ test_name }}-{{ run_id }}"
-           when: lookup('env','RUN_ID')
+          when: lookup('env','RUN_ID')
 
         ## RECORD START-OF-TEST IN LITMUS RESULT CR
         - name: Generate the litmus result CR to reflect SOT (Start of Test) 
