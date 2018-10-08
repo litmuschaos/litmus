@@ -22,7 +22,7 @@ spec:
             value: default
 
           - name: APP_NAMESPACE
-            value: litmus
+            value: app-percona-ns 
 
           - name: TARGET_NAMESPACE
             value: openebs

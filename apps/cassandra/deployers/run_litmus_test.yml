@@ -38,7 +38,7 @@ spec:
 
             # Application namespace
           - name: APP_NAMESPACE
-            value: litmus
+            value: app-cassandra-ns 
 
           - name: DEPLOY_TYPE
             value: statefulset
