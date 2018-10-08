@@ -24,7 +24,7 @@ spec:
             value: default
 
           - name: LOADGEN_NS
-            value: litmus
+            value: app-cassandra-ns
 
           - name: LOADGEN_LABEL
             value: 'loadgen=cassandra-loadgen'

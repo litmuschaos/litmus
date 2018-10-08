@@ -25,7 +25,7 @@ spec:
             value: openebs
  
           - name: APP_NAMESPACE
-            value: litmus
+            value: app-percona-ns 
 
           - name: APP_LABEL
             value: 'name=percona'

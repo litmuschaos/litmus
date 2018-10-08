@@ -22,7 +22,7 @@ spec:
             value: default
 
           - name: APP_NS
-            value: cockroachdb
+            value: app-cockroachdb-ns
 
           - name: APP_LABEL
             value: 'app=cockroachdb'
