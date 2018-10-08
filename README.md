@@ -13,10 +13,10 @@ The primary objective of Litmus is to ensure a consistent and reliable behavior 
 
 While Litmus tests and metrics were developed initially to test if a given Kubernetes deployment is suitable for running on OpenEBS (_a kubernetes dynamic storage provisioner_); the use cases are broader and overall system resilience can be characterized before and during operations.  To learn more about OpenEBS please visit: www.openEBS.io
 
-## How is Litmus different than others
+## How is Litmus different from others
 Litmus is an overall project that incorporates pieces of a typical chaos engineering environment to deliver a more complete solution to Litmus users. 
 
-Also, Litmus incorporates some innovations in translating end user user stories directly into scenarios. Litmus accepts user stories in simple English text & converts them to logic.  Litmus translates each statement present in a user story into corresponding Kubernetes commands. This provides a transparent view to the users if any particular statement was executed successfully or resulted in failures.
+Also, Litmus incorporates some innovations in translating end user stories directly into scenarios. Litmus accepts user stories in simple English text & converts them to logic.  Litmus translates each statement present in a user story into corresponding Kubernetes commands. This provides a transparent view to the users if any particular statement was executed successfully or resulted in failures.
 
 Additionally, test logic is packaged as dedicated containers which of course makes them portable across Kubernetes deployments. This containerization also helps to integrate these containers into CI/CD environments.
 
@@ -32,25 +32,25 @@ There are other aspects to Litmus which are discussed:
 
 ## Pre-Requisites for running a specific Test
 
-Users have a Kubernetes environment with a given stateful workload and underlying storage and would like to test a specific scenarion:
+Users have a Kubernetes environment with a given stateful workload and underlying storage and would like to test a specific scenario:
 
 - Ensure that the desired storage operators are actually available on a given Kubernetes cluster.
 
 - Clone the Litmus repo and setup a dedicated RBAC for Litmus.
 
-```
-git clone https://github.com/openebs/litmus.git
-cd litmus
-kubectl apply -f hack/rbac.yaml 
-```
+  ```
+  git clone https://github.com/openebs/litmus.git
+  cd litmus
+  kubectl apply -f hack/rbac.yaml 
+  ```
 
 - Create a configmap from the cluster's in-cluster-config (kubeconfig) file with the data placed in "admin.conf". 
 Typically, this file is located at ~/.kube/config or /etc/kubernetes/admin.conf etc.., depending on the type of cluster setup. 
 To perform this step, copy the kubeconfig file into "admin.conf" (if it is named differently) and execute the following command:
 
-```
-kubectl create configmap kubeconfig --from-file=<path/to/admin.conf> -n litmus 
-```
+  ```
+  kubectl create configmap kubeconfig --from-file=<path/to/admin.conf> -n litmus 
+  ```
 
 - The tests are categorized based on application workloads, with different aspects/use-cases of the application 
 constituting a separate test. Select a workload and follow the instructions under the corresponding 
@@ -58,11 +58,11 @@ constituting a separate test. Select a workload and follow the instructions unde
 
   For example, to run a MySQL benchmarking test:
 
-```
-cd apps/percona/tests/mysql_storage_benchmark/
-<Modify the PROVIDER_STORAGE_CLASS in run_litmus_test.yaml>
-kubectl create -f run_litmus_test.yaml
-```
+  ```
+  cd apps/percona/tests/mysql_storage_benchmark/
+  <Modify the PROVIDER_STORAGE_CLASS in run_litmus_test.yaml>
+  kubectl create -f run_litmus_test.yaml
+  ```
 
   The above test runs a Kubernetes job that:
   - Verifies that the StorageClass mentioned (default: OpenEBS) is loaded in the cluster
@@ -120,4 +120,3 @@ For a full list, please checkout the [tools](./tools) directory.
 ## License
 
 Litmus is licensed under the Apache License, Version 2.0. See [LICENSE](./LICENSE) for the full license text. Some of the projects used by the Litmus project may be governed by a different license, please refer to its specific license. 
-

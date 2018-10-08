@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: mysql-liveness-check
+  generateName: mysql-liveness-check-
   labels:
     name: mysql-liveness-check
 spec:

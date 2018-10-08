@@ -2,24 +2,24 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: litmus-percona
-  namespace: litmus 
+  generateName: litmus-percona-
+  namespace: litmus
 spec:
   template:
     metadata:
       name: litmus
       labels:
         app: percona-deployment
-   
+
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: openebs/ansible-runner
+        image: openebs/ansible-runner:ci
         imagePullPolicy: Always
 
-        env: 
+        env:
           - name: ANSIBLE_STDOUT_CALLBACK
             #value: log_plays, actionable, default
             value: default
@@ -38,7 +38,7 @@ spec:
             # Application namespace
           - name: APP_NAMESPACE
             value: litmus
- 
+
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./percona/deployers/test.yml -i /etc/ansible/hosts -v; exit 0"]
-        
+

@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: percona-loadgen 
+  generateName: percona-loadgen-
   namespace: litmus
 spec:
   template:

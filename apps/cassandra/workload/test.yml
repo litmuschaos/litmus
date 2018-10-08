@@ -7,6 +7,16 @@
 
   tasks:
     - block:
+        - block:
+          # Add run id to test instance
+            - name: Record test instance/run ID
+              set_fact:
+                run_id: "{{ lookup('env','RUN_ID') }}"
+            - name: Construct testname appended with runID
+              set_fact:
+                test_name: "{{ test_name }}-{{ run_id }}"
+          when: lookup('env','RUN_ID')
+
         ## RECORD START-OF-TEST IN LITMUS RESULT CR
         - name: Generate the litmus result CR to reflect SOT (Start of Test) 
           template: 
@@ -51,6 +61,14 @@
             path: "{{ cassandra_loadgen }}"
             regexp: "loadgen_lkey: loadgen_lvalue"
             replace: "{{ loadgen_lkey }}: {{ loadgen_lvalue }}"
+
+
+        - name: Checking whether application is running
+          shell: kubectl get pod -l {{ application_label }} -n {{ namespace }} 
+          register: running_status
+          until: "'Running' in running_status.stdout"
+          delay: 30
+          retries: 60     
         
         - name: Create Cassandra Loadgen Job
           shell: kubectl apply -f {{ cassandra_loadgen }} -n {{ namespace }} 

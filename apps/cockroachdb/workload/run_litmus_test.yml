@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: cockroachdb-loadgen
+  generateName: cockroachdb-loadgen-
   namespace: litmus
 spec:
   template:

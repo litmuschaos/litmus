@@ -9,7 +9,7 @@ RUN rm -rf /var/lib/apt/lists/* && apt-get clean && \
 
 RUN pip install ansible
 
-ENV KUBE_LATEST_VERSION="v1.8.2"
+ENV KUBE_LATEST_VERSION="v1.12.0"
 RUN curl -L https://storage.googleapis.com/kubernetes-release/release/${KUBE_LATEST_VERSION}/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl && \
     chmod +x /usr/local/bin/kubectl
 

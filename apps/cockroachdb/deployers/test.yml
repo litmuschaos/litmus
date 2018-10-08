@@ -8,6 +8,17 @@
   tasks:
 
     - block:
+        - block:
+
+            - name: Record test instance/run ID
+              set_fact:
+                run_id: "{{ lookup('env','RUN_ID') }}"
+
+            - name: Construct testname appended with runID
+              set_fact:
+                test_name: "{{ test_name }}-{{ run_id }}"
+
+          when: lookup('env','RUN_ID')
 
          ## RECORD START-OF-TEST IN LITMUS RESULT CR
         - name: Generate the litmus result CR to reflect SOT (Start of Test) 
@@ -65,7 +76,7 @@
             replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
 
         - name: Create test specific namespace.
-          shell: source ~/.profile;  kubectl create ns {{ app_ns }}
+          shell: kubectl create ns {{ app_ns }}
           args:
            executable: /bin/bash
           when: app_ns != 'litmus'
@@ -107,7 +118,7 @@
               register: ready_rep
               until: "ready_rep.rc == 0 and ready_rep.stdout|int == rep_count.stdout|int"
               delay: 60
-              retries: 15
+              retries: 30
 
           when: lookup('env','DEPLOY_TYPE') == 'statefulset'
 
