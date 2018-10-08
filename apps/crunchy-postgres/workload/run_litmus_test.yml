@@ -2,15 +2,15 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: crunchy-postgres-loadgen 
+  generateName: crunchy-loadgen-litmus
   namespace: litmus
 spec:
   template:
     metadata:
-      name: crunchy_postgres-loadgen
+      name: crunchy-loadgen
       namespace: litmus
       labels:
-        app: crunchy-postgres-loadgen
+        app: crunchy-loadgen-litmus
     spec:
       serviceAccountName: litmus
       restartPolicy: Never

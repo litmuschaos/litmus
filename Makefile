@@ -10,8 +10,11 @@ IS_DOCKER_INSTALLED = $(shell which docker >> /dev/null 2>&1; echo $$?)
 # list only our namespaced directories
 PACKAGES = $(shell go list ./... | grep -v '/vendor/')
 
+# list of playbooks which should be validated
+PLAYBOOKS = $(shell find ./apps -iname 'test.yml' -printf '%P\n')
+
 .PHONY: all
-all: format metalint compile all-tools
+all: format metalint compile all-tools ansible-syntax-check
 
 .PHONY: help
 help:
@@ -98,3 +101,16 @@ ansible-runner-image:
 	@echo "------------------"
 	sudo docker build . -f tools/ansible-runner/Dockerfile -t openebs/ansible-runner:ci
 	REPONAME="openebs" IMGNAME="ansible-runner" IMGTAG="ci" ./hack/push
+
+.PHONY: ansible-syntax-check
+ansible-syntax-check:
+	@echo "------------------"
+	@echo "--> Check playbook syntax"
+	@echo "------------------"
+	rc_sum=0; \
+	for playbook in $(PLAYBOOKS); do \
+		sudo docker run --rm -ti --entrypoint=ansible-playbook openebs/ansible-runner:ci \
+		$${playbook} --syntax-check -i /etc/ansible/hosts -v; \
+		rc_sum=$$((rc_sum+$$?)); \
+	done; \
+	exit $${rc_sum}
