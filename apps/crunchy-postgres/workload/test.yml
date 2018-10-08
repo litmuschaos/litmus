@@ -32,8 +32,12 @@
             loadgen_lvalue: "{{ loadgen_label.split('=')[1] }}"
 
         - name: Obtaining the Service name 
-          shell: kubectl get service -n litmus -l {{ service_label }} -o jsonpath='{.items[0].metadata.name}'
+          shell: kubectl get service -n {{ namespace }} -l {{ app_label }} -o jsonpath='{.items[0].metadata.name}'
           register: service_name    
+
+        - name: Obtaining the POD name of Application
+          shell: kubectl get pod -n {{ namespace }} -l {{ app_label }} -o jsonpath='{.items[0].metadata.name}'
+          register: pod_name  
 
         - name: Replace the label in loadgen job spec.
           replace:
@@ -88,13 +92,6 @@
             path: "{{ crunchy_loadgen }}"
             regexp: "paralleltransaction"
             replace: "{{ lookup('env','PARALLEL_TRANSACTION') }}"           
-    
-
-        - name: Create test specific namespace.
-          shell: kubectl create ns {{ namespace }}
-          args:
-           executable: /bin/bash
-          when: namespace != 'litmus'
 
         - name: Checking the status  of test specific namespace.
           shell: kubectl get ns {{ namespace }} -o jsonpath='{.status.phase}'
@@ -118,7 +115,7 @@
           retries: 15
 
         - name: Verifying Load-generation
-          shell: kubectl exec -it pgset-0 -n {{ namespace }} -- psql -c '\dt'
+          shell: kubectl exec -it {{ pod_name.stdout }} -n {{ namespace }} -- psql -c '\dt'
           register: output
           until: "'pgbench_accounts' in output.stdout"
           delay: 30

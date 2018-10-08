@@ -15,7 +15,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: postgres-loadgen
-        image: openebs/postgres-client
+        image: openebs/tests-postgresql-client
         imagePullPolicy: Always
 
         env: 

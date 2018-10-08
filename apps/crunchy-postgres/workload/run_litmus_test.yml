@@ -24,16 +24,15 @@ spec:
             #value: log_plays
             value: default
 
+          - name: APP_LABEL
+            value: 'app=pgset'  
+
           - name: LOADGEN_LABEL
-            value: loadgen=crunchy-loadgen
+            value: 'loadgen=crunchy-loadgen'
              
             #namespace in which loadgen will run 
-          - name: LOADGEN_NAMESPACE
-            value: litmus
-    
-            # Service name of postgres application 
-          - name: SERVICE_LABEL
-            value: app=pgset
+          - name: APP_NAMESPACE
+            value: 'litmus'
     
             # Database Name 
           - name: DATABASE_NAME
