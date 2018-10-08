@@ -96,10 +96,10 @@
         - set_fact:
            flag: "Pass"
 
-    - rescue:
+      rescue:
         - set_fact:
-          flag: "Fail"
           
+            flag: "Fail"
       always:
             ## RECORD END-OF-TEST IN LITMUS RESULT CR 
         - name: Generate the litmus result CR to reflect EOT (End of Test) 

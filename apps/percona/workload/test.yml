@@ -117,7 +117,7 @@
           register: output
           until: "'tpcc-' in output.stdout"
           delay: 30
-          retry: 15
+          retries: 15
 
         - set_fact:
             flag: "Pass"
