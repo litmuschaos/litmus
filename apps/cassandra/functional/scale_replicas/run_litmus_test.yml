@@ -3,23 +3,23 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   generateName: litmus-replica-scale-
-  namespace: litmus 
+  namespace: litmus
 spec:
   template:
     metadata:
       name: litmus
       labels:
         app: cassandra-scaleup-litmus
-   
+
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: openebs/ansible-runner:ci
+        image: gprasath/ansible-runner:ci
         imagePullPolicy: Always
 
-        env: 
+        env:
           - name: ANSIBLE_STDOUT_CALLBACK
             value: default
 
@@ -38,6 +38,6 @@ spec:
             # The total number of replicas
           - name: REPLICA_COUNT
             value: '3'
-            
+
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./cassandra/functional/scale_replicas/test.yml -i /etc/ansible/hosts -v; exit 0"]
