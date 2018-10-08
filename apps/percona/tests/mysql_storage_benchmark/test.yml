@@ -27,7 +27,7 @@
                kubectl get pod -l name={{ item }} --no-headers 
                -o custom-columns=:status.phase --all-namespaces 
              args: 
-             executable: /bin/bash
+               executable: /bin/bash
              register: result
              until: "result.stdout == 'Running'"
              delay: 10
@@ -79,7 +79,8 @@
          shell: >
            kubectl create configmap tpcc-config --from-file=tpcc.conf 
            -n litmus 
-         executable: /bin/bash
+         args:
+           executable: /bin/bash
 
        - name: Deploy percona mysql pod
          shell: kubectl apply -f {{ pod_yaml_alias }} -n litmus  

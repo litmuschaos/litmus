@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: percona-loadgen 
+  generateName: percona-loadgen-
   namespace: litmus
 spec:
   template:
@@ -27,7 +27,7 @@ spec:
             value: name=percona
 
             #Namespace in which loadgen pod will be deployed
-          - name: LOADGEN_NAMESPACE
+          - name: APP_NAMESPACE
             value: litmus
 
           - name: APP_SERVICE_LABEL

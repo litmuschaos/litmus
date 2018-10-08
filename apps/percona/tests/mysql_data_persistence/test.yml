@@ -144,4 +144,4 @@
            path: '/var/log/ansible/result.json'
            line: '{ "Testname" : {{ test_name | to_json }}, "status" : {{ flag | to_json }} }'
 
-       - include: test_cleanup.yaml
+       - include: test_cleanup.yml
