@@ -3,7 +3,6 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   generateName: crunchy-loadgen-
-  namespace: litmus
 spec:
   template:
     metadata:
