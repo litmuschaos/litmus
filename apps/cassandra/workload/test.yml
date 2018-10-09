@@ -45,9 +45,9 @@
           delay: 30
           retries: 10
 
-        # Checking if the application is deployed.
-        #
-        - name: Obtain the number of replicas.
+        # Checking if the application is deployed before starting load generation.
+
+        - name: Obtaining the number of replicas.
           shell: kubectl get statefulset -n {{ namespace }} -l {{ application_label }} -o custom-columns=:spec.replicas
           args:
             executable: /bin/bash
@@ -92,9 +92,23 @@
           wait_for:
             timeout: "{{ (io_minutes) | int *60 }}"
 
+        - name: Obtaining the application pod name.
+          shell: kubectl get statefulset -n {{ namespace }} --no-headers -l {{ application_label }} -o custom-columns=:metadata.name
+          args:
+            executable: /bin/bash
+          register: result
+
+        - name: Recording the application pod name.
+          set_fact:
+            app_name: "{{ result.stdout }}"
+
+        - name: Forming one of the replicas name statefulset application name.
+          set_fact:
+            replica_name: "{{ app_name }}-0"
+
         - name: Verify load by using describe keyspaces
           shell: >
-            kubectl exec cassandra-0 -n {{ namespace }}
+            kubectl exec {{ replica_name }} -n {{ namespace }}
             -- cqlsh --execute "describe keyspaces;"
           args:
             executable: /bin/bash
