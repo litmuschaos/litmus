@@ -2,14 +2,14 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: litmus-cassandra-
+  generateName: litmus-replica-scale-
   namespace: litmus
 spec:
   template:
     metadata:
       name: litmus
       labels:
-        app: cassandra-deployment-litmus
+        app: cassandra-scaleup-litmus
 
     spec:
       serviceAccountName: litmus
@@ -21,16 +21,7 @@ spec:
 
         env:
           - name: ANSIBLE_STDOUT_CALLBACK
-            #value: log_plays
             value: default
-
-          - name: PROVIDER_STORAGE_CLASS
-            # Supported values: openebs-standard, local-storage
-            value: openebs-standard
-
-            # Application pvc
-          - name: APP_PVC
-            value: openebs-cassandra
 
             # Application label
           - name: APP_LABEL
@@ -38,13 +29,15 @@ spec:
 
             # Application namespace
           - name: APP_NAMESPACE
-            value: app-cass-ns 
+            value: app-cass-ns
 
+            # Deployment type either statefulset or deployment
           - name: DEPLOY_TYPE
             value: statefulset
 
-          - name: APP_REPLICA
-            value: 'replicas=2'
-            
+            # The total number of replicas
+          - name: REPLICA_COUNT
+            value: '3'
+
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./cassandra/deployers/test.yml -i /etc/ansible/hosts -v; exit 0"]
+        args: ["-c", "ansible-playbook ./cassandra/functional/scale_replicas/test.yml -i /etc/ansible/hosts -v; exit 0"]

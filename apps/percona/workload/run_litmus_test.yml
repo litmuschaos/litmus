@@ -27,8 +27,8 @@ spec:
             value: name=percona
 
             #Namespace in which loadgen pod will be deployed
-          - name: LOADGEN_NAMESPACE
-            value: litmus
+          - name: APP_NAMESPACE
+            value: app-percona-ns 
 
           - name: APP_SERVICE_LABEL
             value: name=percona

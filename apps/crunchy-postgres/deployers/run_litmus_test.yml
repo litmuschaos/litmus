@@ -37,7 +37,7 @@ spec:
 
             # Application namespace
           - name: APP_NAMESPACE
-            value: litmus
+            value: app-postgres-ns
 
           - name: DEPLOY_TYPE
             value: statefulset

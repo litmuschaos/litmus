@@ -1,0 +1,5 @@
+crunchy_loadgen: crunchy_postgres_loadgen.yml
+namespace: "{{ lookup('env','APP_NAMESPACE') }}"
+test_name: crunchy-loadgen
+loadgen_label: "{{ lookup('env','LOADGEN_LABEL') }}"
+app_label: "{{ lookup('env','SERVICE_LABEL') }}" 

@@ -8,22 +8,22 @@
   tasks:
     - block:
        ## RECORD START-OF-TEST IN LITMUS RESULT CR
-        - name: Generate the litmus result CR to reflect SOT (Start of Test) 
-          template: 
+        - name: Generate the litmus result CR to reflect SOT (Start of Test)
+          template:
             src: /litmus-result.j2
             dest: litmus-result.yaml
-          vars: 
+          vars:
             test: "{{ test_name }}"
             app: ""
             chaostype: ""
             phase: in-progress
             verdict: none
-        
+
         - name: Apply the litmus result CR
           shell: kubectl apply -f litmus-result.yaml
           args:
             executable: /bin/bash
-          register: lr_status 
+          register: lr_status
           failed_when: "lr_status.rc != 0"
 
         - name: Obtaining the loadgen pod label from env.
@@ -51,19 +51,13 @@
 
         - name: Getting the Sevice IP of Application
           shell: kubectl get svc -n {{ namespace }} -l {{ app_service_label }} -o jsonpath='{.items[0].spec.clusterIP}'
-          register: ip  
+          register: ip
 
         - name: Replace the Service IP placeholder
           replace:
             path: "{{ percona_loadgen }}"
             regexp: "service_ip"
             replace: "{{ ip.stdout }}"
-
-        - name: Create test specific namespace.
-          shell: kubectl create ns {{ namespace }}
-          args:
-           executable: /bin/bash
-          when: namespace != 'litmus'
 
         - name: Checking the status of test specific namespace.
           shell: kubectl get ns {{ namespace }} -o jsonpath='{.status.phase}'
@@ -74,7 +68,7 @@
           delay: 30
           retries: 10
 
-        - name: Checking for configmap  
+        - name: Checking for configmap
           shell: kubectl get configmap -n {{ namespace }}
           register: configmap
 
@@ -83,7 +77,7 @@
           when: "'tpcc-config' not in configmap.stdout"
 
         - name: Verifying successful creation of the configmap
-          shell: kubectl describe configmap -n {{ namespace }} 
+          shell: kubectl describe configmap -n {{ namespace }}
           register: config
           until: "'tpcc-config' in config.stdout"
           delay: 15
@@ -95,9 +89,9 @@
           until: "'Running' in running_status.stdout"
           delay: 30
           retries: 60
-        
+
         - name: Create Percona Loadgen Job
-          shell: kubectl apply -f {{ percona_loadgen }} -n {{ namespace }} 
+          shell: kubectl apply -f {{ percona_loadgen }} -n {{ namespace }}
 
         - name: Verify load-gen pod is running
           shell: kubectl get pods -n {{ namespace }} -l {{ loadgen_label }} -o jsonpath='{.items[0].status.phase}'
@@ -110,9 +104,9 @@
 
         - name: Getting the Percona POD name
           shell: kubectl get po -n {{ namespace }} -l {{ app_label }} -o jsonpath='{.items[0].metadata.name}'
-          register: pod_name  
+          register: pod_name
 
-        - name: Verifying load-generation  
+        - name: Verifying load-generation
           shell: kubectl exec -it {{ pod_name.stdout }} -n {{ namespace }} -- mysql -u{{ db_user }} -p{{ db_password }} -e "show databases"
           register: output
           until: "'tpcc-' in output.stdout"
@@ -124,24 +118,24 @@
 
       rescue:
         - set_fact:
-            flag: "Fail"  
+            flag: "Fail"
 
       always:
-            ## RECORD END-OF-TEST IN LITMUS RESULT CR 
-        - name: Generate the litmus result CR to reflect EOT (End of Test) 
-          template: 
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - name: Generate the litmus result CR to reflect EOT (End of Test)
+          template:
             src: /litmus-result.j2
             dest: litmus-result.yaml
-          vars: 
+          vars:
             test: "{{ test_name }}"
             app: ""
             chaostype: ""
             phase: completed
             verdict: "{{ flag }}"
-           
+
         - name: Apply the litmus result CR
           shell: kubectl apply -f litmus-result.yaml
           args:
             executable: /bin/bash
-          register: lr_status 
+          register: lr_status
           failed_when: "lr_status.rc != 0"
