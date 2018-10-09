@@ -37,7 +37,7 @@ spec:
 
             # Application namespace
           - name: APP_NAMESPACE
-            value: app-cockroachdb-ns
+            value: app-cdb-ns
 
           - name: DEPLOY_TYPE
             value: statefulset

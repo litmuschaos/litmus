@@ -29,7 +29,7 @@ spec:
 
             # Application namespace
           - name: APP_NAMESPACE
-            value: litmus
+            value: app-cass-ns
 
             # Deployment type either statefulset or deployment
           - name: DEPLOY_TYPE
