@@ -25,8 +25,8 @@ spec:
             value: default
 
           - name: PROVIDER_STORAGE_CLASS
-            # Supported values: openebs-standard, local-storage
-            value: openebs-standard
+            # Supported values: openebs-standard,openebs-standalone,local-storage
+            value: openebs-standalone
 
           - name: APP_PVC
             value: pgdata-claim
@@ -37,7 +37,7 @@ spec:
 
             # Application namespace
           - name: APP_NAMESPACE
-            value: app-postgres-ns
+            value: app-pgres-ns
 
           - name: DEPLOY_TYPE
             value: statefulset

@@ -21,22 +21,22 @@
           when: lookup('env','RUN_ID')
 
          ## RECORD START-OF-TEST IN LITMUS RESULT CR
-        - name: Generate the litmus result CR to reflect SOT (Start of Test) 
-          template: 
+        - name: Generate the litmus result CR to reflect SOT (Start of Test)
+          template:
             src: /litmus-result.j2
             dest: litmus-result.yaml
-          vars: 
+          vars:
             test: "{{ test_name }}"
             app: ""
             chaostype: ""
             phase: in-progress
             verdict: none
-        
+
         - name: Apply the litmus result CR
           shell: kubectl apply -f litmus-result.yaml
           args:
             executable: /bin/bash
-          register: lr_status 
+          register: lr_status
           failed_when: "lr_status.rc != 0"
 
          ##Actual test
@@ -82,19 +82,19 @@
           when: app_ns != 'litmus'
 
         - name: Checking the status of test specific namespace.
-          shell: kubectl get ns {{ app_ns }} -o custom-columns=:status.phase --no-headers 
+          shell: kubectl get ns {{ app_ns }} -o custom-columns=:status.phase --no-headers
           args:
            executable: /bin/bash
           register: npstatus
           until: "'Active' in npstatus.stdout"
           delay: 30
           retries: 10
-        
+
         - name: Deploying cockroachdb statefulset.
           shell: kubectl apply -f {{ cockroachdb_deployment }} -n {{ app_ns }}
           args:
             executable: /bin/bash
-         
+
         - name: Deploying cockroachdb service
           shell: kubectl apply -f {{ cockroachdb_svc }} -n {{ app_ns }}
           args:
@@ -135,23 +135,23 @@
       rescue:
         - set_fact:
             flag: "Fail"
-          
+
       always:
-            ## RECORD END-OF-TEST IN LITMUS RESULT CR 
-        - name: Generate the litmus result CR to reflect EOT (End of Test) 
-          template: 
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - name: Generate the litmus result CR to reflect EOT (End of Test)
+          template:
             src: /litmus-result.j2
             dest: litmus-result.yaml
-          vars: 
+          vars:
             test: "{{ test_name }}"
             app: ""
             chaostype: ""
             phase: completed
             verdict: "{{ flag }}"
-           
+
         - name: Apply the litmus result CR
           shell: kubectl apply -f litmus-result.yaml
           args:
             executable: /bin/bash
-          register: lr_status 
+          register: lr_status
           failed_when: "lr_status.rc != 0"
