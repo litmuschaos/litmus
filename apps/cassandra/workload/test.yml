@@ -18,29 +18,23 @@
           when: lookup('env','RUN_ID')
 
         ## RECORD START-OF-TEST IN LITMUS RESULT CR
-        - name: Generate the litmus result CR to reflect SOT (Start of Test) 
-          template: 
+        - name: Generate the litmus result CR to reflect SOT (Start of Test)
+          template:
             src: /litmus-result.j2
             dest: litmus-result.yaml
-          vars: 
+          vars:
             test: "{{ test_name }}"
             app: ""
             chaostype: ""
             phase: in-progress
             verdict: none
-        
+
         - name: Apply the litmus result CR
           shell: kubectl apply -f litmus-result.yaml
           args:
             executable: /bin/bash
-          register: lr_status 
+          register: lr_status
           failed_when: "lr_status.rc != 0"
-
-        - name: Create test specific namespace.
-          shell: kubectl create ns {{ namespace }}
-          args:
-           executable: /bin/bash
-          when: namespace != 'litmus'
 
         - name: Checking the status  of test specific namespace.
           shell: kubectl get ns {{ namespace }} -o jsonpath='{.status.phase}'
@@ -50,6 +44,26 @@
           until: "'Active' in npstatus.stdout"
           delay: 30
           retries: 10
+
+        # Checking if the application is deployed before starting load generation.
+
+        - name: Obtaining the number of replicas.
+          shell: kubectl get statefulset -n {{ namespace }} -l {{ application_label }} -o custom-columns=:spec.replicas
+          args:
+            executable: /bin/bash
+          register: rep_count
+          until: "rep_count.rc == 0"
+          delay: 60
+          retries: 30
+
+        - name: Obtain the ready replica count and compare with the replica count.
+          shell: kubectl get statefulset -n {{ namespace }} -l {{ application_label }} -o custom-columns=:..readyReplicas
+          args:
+            executable: /bin/bash
+          register: ready_rep
+          until: "ready_rep.rc == 0 and ready_rep.stdout|int == rep_count.stdout|int"
+          delay: 60
+          retries: 30
 
         - name: Obtaining the loadgen pod label from env.
           set_fact:
@@ -62,16 +76,8 @@
             regexp: "loadgen_lkey: loadgen_lvalue"
             replace: "{{ loadgen_lkey }}: {{ loadgen_lvalue }}"
 
-
-        - name: Checking whether application is running
-          shell: kubectl get pod -l {{ application_label }} -n {{ namespace }} 
-          register: running_status
-          until: "'Running' in running_status.stdout"
-          delay: 30
-          retries: 60     
-        
         - name: Create Cassandra Loadgen Job
-          shell: kubectl apply -f {{ cassandra_loadgen }} -n {{ namespace }} 
+          shell: kubectl apply -f {{ cassandra_loadgen }} -n {{ namespace }}
 
         - name: Verify load is running for specified duration
           shell: kubectl get pods -n {{ namespace }} -l {{ loadgen_label }}
@@ -86,9 +92,23 @@
           wait_for:
             timeout: "{{ (io_minutes) | int *60 }}"
 
+        - name: Obtaining the application pod name.
+          shell: kubectl get statefulset -n {{ namespace }} --no-headers -l {{ application_label }} -o custom-columns=:metadata.name
+          args:
+            executable: /bin/bash
+          register: result
+
+        - name: Recording the application pod name.
+          set_fact:
+            app_name: "{{ result.stdout }}"
+
+        - name: Forming one of the replicas name statefulset application name.
+          set_fact:
+            replica_name: "{{ app_name }}-0"
+
         - name: Verify load by using describe keyspaces
           shell: >
-            kubectl exec cassandra-0 -n {{ namespace }} 
+            kubectl exec {{ replica_name }} -n {{ namespace }}
             -- cqlsh --execute "describe keyspaces;"
           args:
             executable: /bin/bash
@@ -102,24 +122,24 @@
 
       rescue:
         - set_fact:
-            flag: "Fail"  
+            flag: "Fail"
 
       always:
-            ## RECORD END-OF-TEST IN LITMUS RESULT CR 
-        - name: Generate the litmus result CR to reflect EOT (End of Test) 
-          template: 
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - name: Generate the litmus result CR to reflect EOT (End of Test)
+          template:
             src: /litmus-result.j2
             dest: litmus-result.yaml
-          vars: 
+          vars:
             test: "{{ test_name }}"
             app: ""
             chaostype: ""
             phase: completed
             verdict: "{{ flag }}"
-           
+
         - name: Apply the litmus result CR
           shell: kubectl apply -f litmus-result.yaml
           args:
             executable: /bin/bash
-          register: lr_status 
+          register: lr_status
           failed_when: "lr_status.rc != 0"

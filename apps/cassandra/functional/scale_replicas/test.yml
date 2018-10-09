@@ -47,7 +47,7 @@
             replica_name: "{{ app_name }}-0"
 
         - name: Obtaining the rack name from nodetool.
-          shell: kubectl exec {{ replica_name }} -n litmus -- nodetool info | grep 'Rack' | awk '{print $3}'
+          shell: kubectl exec {{ replica_name }} -n {{ app_ns }} -- nodetool info | grep 'Rack' | awk '{print $3}'
           args:
             executable: /bin/bash
           register: rack_name

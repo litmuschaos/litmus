@@ -32,7 +32,7 @@ spec:
              
             #namespace in which loadgen will run 
           - name: APP_NAMESPACE
-            value: app-postgres-ns
+            value: app-pgres-ns
     
             # Database Name 
           - name: DATABASE_NAME

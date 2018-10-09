@@ -26,6 +26,35 @@
           register: lr_status 
           failed_when: "lr_status.rc != 0"
 
+        - name: Checking the status  of test specific namespace.
+          shell: kubectl get ns {{ namespace }} -o jsonpath='{.status.phase}'
+          args:
+           executable: /bin/bash
+          register: status
+          until: "'Active' in status.stdout"
+          delay: 30
+          retries: 10
+
+        # Checking if the application is deployed before starting load generation
+
+        - name: Obtain the number of statefulset replicas.
+          shell: kubectl get statefulset -n {{ namespace }} -l {{ app_label }} -o custom-columns=:spec.replicas
+          args:
+            executable: /bin/bash
+          register: rep_count
+          until: "rep_count.rc == 0"
+          delay: 60
+          retries: 15
+
+        - name: Obtain the ready replica count and compare with the replica count.
+          shell: kubectl get statefulset -n {{ namespace }} -l {{ app_label }} -o custom-columns=:..readyReplicas
+          args:
+            executable: /bin/bash
+          register: ready_rep
+          until: "ready_rep.rc == 0 and ready_rep.stdout|int == rep_count.stdout|int"
+          delay: 60
+          retries: 30
+
         - name: Obtaining the loadgen pod label from env.
           set_fact:
             loadgen_lkey: "{{ loadgen_label.split('=')[0] }}"
@@ -35,7 +64,7 @@
           shell: kubectl get service -n {{ namespace }} -l {{ app_label }} -o jsonpath='{.items[0].metadata.name}'
           register: service_name    
 
-        - name: Obtaining the POD name of Application
+        - name: Obtaining the application pod name
           shell: kubectl get pod -n {{ namespace }} -l {{ app_label }} -o jsonpath='{.items[0].metadata.name}'
           register: pod_name  
 
@@ -92,15 +121,6 @@
             path: "{{ crunchy_loadgen }}"
             regexp: "paralleltransaction"
             replace: "{{ lookup('env','PARALLEL_TRANSACTION') }}"           
-
-        - name: Checking the status  of test specific namespace.
-          shell: kubectl get ns {{ namespace }} -o jsonpath='{.status.phase}'
-          args:
-           executable: /bin/bash
-          register: npstatus
-          until: "'Active' in npstatus.stdout"
-          delay: 30
-          retries: 10
         
         - name: Create Crunchy-postgres Loadgen Job
           shell: kubectl apply -f {{ crunchy_loadgen }} -n {{ namespace }} 

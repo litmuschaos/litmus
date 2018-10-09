@@ -26,6 +26,24 @@
           register: lr_status
           failed_when: "lr_status.rc != 0"
 
+        - name: Checking the status of test specific namespace.
+          shell: kubectl get ns {{ namespace }} -o jsonpath='{.status.phase}'
+          args:
+           executable: /bin/bash
+          register: npstatus
+          until: "'Active' in npstatus.stdout"
+          delay: 30
+          retries: 10
+
+        # Ensuring if the application is running before starting load generation.
+
+        - name: Checking whether application is running
+          shell: kubectl get pod -n {{ namespace }} -l {{ app_label }}
+          register: running_status
+          until: "'Running' in running_status.stdout"
+          delay: 60
+          retries: 10
+
         - name: Obtaining the loadgen pod label from env.
           set_fact:
             loadgen_lkey: "{{ loadgen_label.split('=')[0] }}"
@@ -49,7 +67,7 @@
             regexp: "password"
             replace: "{{ db_password }}"
 
-        - name: Getting the Sevice IP of Application
+        - name: Getting the Service IP of Application
           shell: kubectl get svc -n {{ namespace }} -l {{ app_service_label }} -o jsonpath='{.items[0].spec.clusterIP}'
           register: ip
 
@@ -58,15 +76,6 @@
             path: "{{ percona_loadgen }}"
             regexp: "service_ip"
             replace: "{{ ip.stdout }}"
-
-        - name: Checking the status of test specific namespace.
-          shell: kubectl get ns {{ namespace }} -o jsonpath='{.status.phase}'
-          args:
-           executable: /bin/bash
-          register: npstatus
-          until: "'Active' in npstatus.stdout"
-          delay: 30
-          retries: 10
 
         - name: Checking for configmap
           shell: kubectl get configmap -n {{ namespace }}
@@ -82,13 +91,6 @@
           until: "'tpcc-config' in config.stdout"
           delay: 15
           retries: 15
-
-        - name: Checking whether application is running
-          shell: kubectl get pod -n {{ namespace }} -l {{ app_label }}
-          register: running_status
-          until: "'Running' in running_status.stdout"
-          delay: 30
-          retries: 60
 
         - name: Create Percona Loadgen Job
           shell: kubectl apply -f {{ percona_loadgen }} -n {{ namespace }}

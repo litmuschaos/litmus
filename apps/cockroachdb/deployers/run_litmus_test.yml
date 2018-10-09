@@ -25,8 +25,8 @@ spec:
             value: default
 
           - name: PROVIDER_STORAGE_CLASS
-            # Supported values: openebs-standard, local-storage
-            value: openebs-standard
+            # Supported values: openebs-standard,openebs-standalone,local-storage
+            value: openebs-standalone
 
           - name: APP_PVC
             value: cockroachdb-claim
