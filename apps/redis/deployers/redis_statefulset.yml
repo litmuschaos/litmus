@@ -94,5 +94,5 @@ spec:
   # *.redis.default.svc.cluster.local
   clusterIP: None
   selector:
-    app: redis
+    lkey: lvalue
 
