@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: crunchy-loadgen-litmus
+  generateName: crunchy-loadgen-litmus-
   namespace: litmus
 spec:
   template:
@@ -32,7 +32,7 @@ spec:
              
             #namespace in which loadgen will run 
           - name: APP_NAMESPACE
-            value: 'litmus'
+            value: app-postgres-ns
     
             # Database Name 
           - name: DATABASE_NAME
