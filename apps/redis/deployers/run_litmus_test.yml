@@ -16,7 +16,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: openebs/ansible-runner:ci
+        image: openebs/ansible-runner:ci 
         imagePullPolicy: Always
 
         env:
@@ -38,7 +38,7 @@ spec:
 
             # Application namespace
           - name: APP_NAMESPACE
-            value: redis
+            value: app-redis-ns
 
             # Supported values: Deployment ,statefulset.
           - name: DEPLOY_TYPE
