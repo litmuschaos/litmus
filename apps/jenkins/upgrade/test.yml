@@ -6,24 +6,24 @@
     - test_vars.yml
 
   tasks:
-    - block: 
+    - block:
 
         ## Record the funclib path ##
 
         - name: Record the funcutil  path
-          set_fact: 
+          set_fact:
             funclib_path: "/funclib/{{ funcutil }}"
 
         ## RECORD START-OF-TEST IN LITMUS RESULT CR
 
-        - name: Generate the litmus result CR to reflect SOT (Start of Test) 
-          template: 
+        - name: Generate the litmus result CR to reflect SOT (Start of Test)
+          template:
             src: /litmus-result.j2
             dest: litmus-result.yaml
-          vars: 
+          vars:
             test: "{{ test_name }}"
             chaostype: ""
-            app: ""
+            app: "jenkins"
             phase: in-progress
             verdict: none
 
@@ -31,20 +31,20 @@
           shell: kubectl apply -f litmus-result.yaml
           args:
             executable: /bin/bash
-          register: lr_status 
+          register: lr_status
           failed_when: "lr_status.rc != 0"
 
-        ## DISPLAY APP INFORMATION 
- 
+        ## DISPLAY APP INFORMATION
+
         - name: Display the app information passed via the test job
-          debug: 
-            msg: 
+          debug:
+            msg:
               - "The application info is as follows:"
               - "Namespace           : {{ app_namespace }}"
               - "Label               : {{ label }}"
 
 
-        - name: Verify that the AUT (Application Under Test) is running 
+        - name: Verify that the AUT (Application Under Test) is running
           shell: >
             kubectl get pods -n {{ app_namespace }} -l {{ label }} --no-headers
             -o custom-columns=:status.phase
@@ -60,7 +60,7 @@
         - include: "{{ funclib_path }}"
           app_ns: "{{ app_namespace }}"
           app_label: "{{ label }}"
-        
+
         - block:
 
             - name: Checking status of application pod
@@ -75,37 +75,37 @@
 
         - name: Checking the image of application pod post upgrade.
           shell: kubectl get {{ deploy_type  }} {{ app_name }}  -n {{ app_namespace}} -o jsonpath="{..image}"
-          args: 
+          args:
             executable: /bin/bash
           register: image_out
-          failed_when: "image_name not in image_out.stdout"   
+          failed_when: "image_name not in image_out.stdout"
 
         - set_fact:
             flag: "Pass"
 
-      rescue: 
-        - set_fact: 
+      rescue:
+        - set_fact:
             flag: "Fail"
 
-      always: 
+      always:
 
         ## RECORD END-OF-TEST IN LITMUS RESULT CR
- 
-        - name: Generate the litmus result CR to reflect EOT (End of Test) 
-          template: 
+
+        - name: Generate the litmus result CR to reflect EOT (End of Test)
+          template:
             src: /litmus-result.j2
             dest: litmus-result.yaml
-          vars: 
+          vars:
             test: "{{ test_name }}"
             chaostype: ""
-            app: ""
+            app: "jenkins"
             phase: completed
             verdict: "{{ flag }}"
-           
+
         - name: Apply the litmus result CR
           shell: kubectl apply -f litmus-result.yaml
           args:
             executable: /bin/bash
-          register: lr_status 
+          register: lr_status
           failed_when: "lr_status.rc != 0"
-           
+

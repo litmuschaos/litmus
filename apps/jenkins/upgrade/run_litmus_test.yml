@@ -30,7 +30,7 @@ spec:
 
             # Application namespace
           - name: APP_NAMESPACE
-            value: jenkins
+            value: app-jenkins-ns
 
             # Either deployment or statefulset
           - name: DEPLOY_TYPE

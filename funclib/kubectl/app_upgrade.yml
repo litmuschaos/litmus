@@ -1,6 +1,6 @@
 ---
 # This utilty task file can upgrade the statefulset or deployment application  in K8s cluster.
-# The parameters required are 
+# The parameters required are
 #    - app_ns ( namespace in which applicaion is deployed)
 #    - app_label( Applications's label in the form key=value)
 #    - deploy_type (Either 'deployment' or 'statefulset')
@@ -24,7 +24,7 @@
   failed_when: "'image updated' not in result.stdout"
 
 - name: Check if  the application pod is running after upgrade.
-  shell: kubectl get pod -n {{ app_name  }} --no-headers -l {{ app_label }} -o jsonpath='{.items[0].status.phase}'
+  shell: kubectl get pod -n {{ app_ns  }} --no-headers -l {{ app_label }} -o jsonpath='{.items[0].status.phase}'
   args:
     executable: /bin/bash
   register: Pod_status
