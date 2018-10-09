@@ -10,7 +10,7 @@ spec:
       name: crunchy-loadgen
       namespace: litmus
       labels:
-        app: crunchy-loadgen-litmus
+        loadgen: postgres-loadjob
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
