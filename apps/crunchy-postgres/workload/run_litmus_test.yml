@@ -2,28 +2,37 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: crunchy-loadgen-
+  generateName: crunchy-loadgen-litmus
   namespace: litmus
 spec:
   template:
     metadata:
       name: crunchy-loadgen
-      
+      namespace: litmus
+      labels:
+        app: crunchy-loadgen-litmus
     spec:
+      serviceAccountName: litmus
       restartPolicy: Never
       containers:
-      - name: postgres-loadgen
-        image: openebs/postgres-client
+      - name: ansibletest
+        image: openebs/ansible-runner:ci
         imagePullPolicy: Always
-
         env: 
-            # Time period (in sec) b/w retries for DB init check
-          - name: NAMESPACE
-            value: postgres
-    
-            # Service name of postgres application 
-          - name: SERVICE_NAME
-            value: pgset
+          
+          - name: ANSIBLE_STDOUT_CALLBACK
+            #value: log_plays
+            value: default
+
+          - name: APP_LABEL
+            value: 'app=pgset'  
+
+          - name: LOADGEN_LABEL
+            value: 'loadgen=crunchy-loadgen'
+             
+            #namespace in which loadgen will run 
+          - name: APP_NAMESPACE
+            value: 'litmus'
     
             # Database Name 
           - name: DATABASE_NAME
@@ -35,7 +44,7 @@ spec:
     
            # Database user
           - name: DATABASE_USER
-            value: testuser
+            value: postgres
           
             #Port on which crunchy databse is listening
           - name: PORT
@@ -47,7 +56,7 @@ spec:
             
             #Number of transaction to perform
           - name: TRANSACTIONS
-            value: "200"
+            value: "200"  
 
         command: ["/bin/bash"]
-        args: ["-c", "./crunchy-postgres/workload/test.sh ; exit 0"] 
+        args: ["-c", "ansible-playbook ./crunchy-postgres/workload/test.yml -i /etc/ansible/hosts -v; exit 0"]
