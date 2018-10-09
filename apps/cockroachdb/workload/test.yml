@@ -8,7 +8,7 @@
 - hosts: localhost
   connection: local
 
-  vars_files: 
+  vars_files:
     - test_vars.yml
 
   tasks:
@@ -29,10 +29,39 @@
 
         - name: Apply the litmus result CR
           shell: kubectl apply -f litmus-result.yaml
-          args: 
+          args:
             executable: /bin/bash
           register: lr_status
           failed_when: "lr_status.rc != 0"
+
+        - name: Checking the status  of test specific namespace.
+          shell: kubectl get ns {{ namespace }} -o jsonpath='{.status.phase}'
+          args:
+           executable: /bin/bash
+          register: npstatus
+          until: "'Active' in npstatus.stdout"
+          delay: 30
+          retries: 10
+     
+        # Check if the application is deployed.
+
+        - name: Obtain the number of statefulset replicas.
+          shell: kubectl get statefulset -n {{ namespace }} -l {{ app_label }} -o custom-columns=:spec.replicas
+          args:
+            executable: /bin/bash
+          register: rep_count
+          until: "rep_count.rc == 0"
+          delay: 60
+          retries: 15
+
+        - name: Obtain the ready replica count and compare with the replica count.
+          shell: kubectl get statefulset -n {{ namespace }} -l {{ app_label }} -o custom-columns=:..readyReplicas
+          args:
+            executable: /bin/bash
+          register: ready_rep
+          until: "ready_rep.rc == 0 and ready_rep.stdout|int == rep_count.stdout|int"
+          delay: 60
+          retries: 30
 
         - name: Obtaining the application label from env.
           set_fact:
@@ -75,7 +104,7 @@
             path: "{{ cockroachdb_loadgen }}"
             regexp: 'time_duration'
             replace: "{{ lookup('env','TIME_INTERVAL') }}"
-        
+
         - name: Creating cockroachdb loadgen job.
           shell: kubectl apply -f {{ cockroachdb_loadgen }} -n {{ namespace }}
           args:
@@ -92,15 +121,15 @@
 
         - name: Verify the data written
           shell: >
-            kubectl exec -it {{ pod_name.stdout }} -n {{ namespace }} -- /cockroach/cockroach sql --insecure 
-            --host=cockroachdb-public.cockroachdb -d test -e 'show tables;' 
+            kubectl exec -it {{ pod_name.stdout }} -n {{ namespace }} -- /cockroach/cockroach sql --insecure
+            --host=cockroachdb-public.cockroachdb -d test -e 'show tables;'
           args:
             executable: /bin/bash
           register: tables
           until: "'kv' in tables.stdout"
           delay: 60
           retries: 5
-        
+
         - set_fact:
             flag: "Pass"
 
@@ -126,5 +155,5 @@
           args:
             executable: /bin/bash
           register: lr_status
-          failed_when: "lr_status.rc != 0" 
+          failed_when: "lr_status.rc != 0"
 
