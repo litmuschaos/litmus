@@ -93,6 +93,17 @@
           delay: 10
           retries: 100
 
+        - name: Getting the Percona POD name
+          shell: kubectl get po -n {{ app_ns }} -l {{ app_label }} -o jsonpath='{.items[0].metadata.name}'
+          register: pod_name
+
+        - name: Check if db is ready for connections
+          shell: kubectl logs {{ pod_name.stdout }} -n {{ app_ns }} | grep 'ready for connections' | wc -l
+          register: initcheck
+          until: initcheck.stdout == "2"
+          delay: 60
+          retries: 20
+
         - set_fact:
             flag: "Pass"
 
