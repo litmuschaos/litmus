@@ -67,8 +67,8 @@
               shell: kubectl get pod -n {{ app_namespace }} -l {{ label }} -o jsonpath='{.items[0].status.phase}'
               register: app_pod
               until: "'Running' in app_pod.stdout"
-              delay: 10
-              retries: 10
+              delay: 15
+              retries: 30
 
           when: label != ''
 
