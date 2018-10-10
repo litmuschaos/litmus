@@ -24,11 +24,8 @@ RUN mkdir /etc/ansible/ /ansible && \
 
 #Copying Necessary Files
 COPY providers/openebs/installers/ ./
-
 COPY ./apps/ ./
-
 COPY ./chaoslib ./chaoslib/
-
+COPY ./funclib ./funclib/
 COPY ./executor/ansible/plugins/callback/actionable.py /usr/local/lib/python2.7/dist-packages/ansible/plugins/callback/ 
-
 COPY ./hack/litmus-result.j2 ./
