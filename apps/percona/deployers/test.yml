@@ -102,7 +102,7 @@
           register: initcheck
           until: initcheck.stdout == "2"
           delay: 60
-          retries: 20
+          retries: 15
 
         - set_fact:
             flag: "Pass"
