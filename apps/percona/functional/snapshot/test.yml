@@ -1,16 +1,20 @@
 # Description:
-# OpenEBS volume snapshot creation and restoring it to the earlier state..
+#      OpenEBS volume snapshot creation and restoring it to the earlier state.
 # Author: Giri
-# Prerequisites: Application deployed in K8s cluster.
+# Prerequisites: Application should have been deployed in K8s cluster.
 
 #########################################################################################################
-# Test steps:
-# Create LitmusResult CR.
-# Obtain volume name using the app label and app namespace provided as envs.
-# Create a database and a table.
-# Obtain maya-apiserver pod name and create snapshot.
-
-##########################################################################################################
+# Test steps:                                                                                           #
+# Create LitmusResult CR.                                                                               #
+# Obtain volume name using the app label and app namespace provided as envs.                            #
+# Create a database and a table.                                                                        #
+# Obtain maya-apiserver pod name and create snapshot.                                                   #
+# Modify the database.                                                                                  #
+# Restore the volume using the snapshot created.                                                        #
+# Check the data retention post restore.                                                                #
+# Update the LitmusResult CR.                                                                           #
+#                                                                                                       #
+#########################################################################################################
 
 - hosts: localhost
   connection: local
@@ -54,7 +58,7 @@
          failed_when: "lr_status.rc != 0"
 
        - name: Checking the status  of test specific namespace.
-         shell: kubectl get ns {{ app_ns }} -o jsonpath='{.status.phase}'
+         shell: kubectl get namespaces {{ app_ns }} -o jsonpath='{.status.phase}'
          args:
           executable: /bin/bash
          register: ns_status
@@ -62,7 +66,7 @@
          delay: 30
          retries: 10
 
-       - name: Obtain the application pod name using its label.
+       - name: Obtaining the application pod name using its label.
          shell: >
            kubectl get pods -n {{ app_ns }} -l {{ app_label }}
            --no-headers -o custom-columns=:metadata.name
@@ -70,7 +74,7 @@
            executable: /bin/bash
          register: app_pod
 
-       - name: Obtaining pvc name using pod name.
+       - name: Obtaining pvc name using the application pod name.
          shell: >
            kubectl get pod {{ app_pod.stdout }} -n {{ app_ns }}
            -o custom-columns=:..claimName --no-headers
@@ -78,7 +82,7 @@
            executable: /bin/bash
          register: pvc_name
 
-       - name: Obtaining PV name using PVC name.
+       - name: Obtaining PV name using application PVC name.
          shell: >
            kubectl get pvc {{ pvc_name.stdout }} -n {{ app_ns }}
            -o custom-columns=:spec.volumeName --no-headers
@@ -105,32 +109,36 @@
          register: result
          failed_when: "result.rc != 0"
 
-       - name: Perform file system sync on percona pod before creating the snapshot.
-         shell: kubectl exec {{ pod_name }} -n {{ app_ns}} -- bash -c "sync;sync;sync"
+       - name: Performing file system sync on percona pod before creating the snapshot.
+         shell: kubectl exec {{ pod_name }} -n {{ app_ns }} -- bash -c "sync;sync;sync"
          args:
            executable: /bin/bash
+
+       # Here, we include openebs_snapshot_restore.yml from litmus funclib for creating snapshot.
 
        - name: Creating snapshot.
          include_tasks: /funclib/openebs/openebs_snapshot_restore.yml
          vars:
            action: create_snapshot
 
-       - name: Make changes to the database.
+       - name: Make changes to the database created.
          shell: |
            kubectl exec -it {{ pod_name }} -n {{ app_ns }} -- mysql -u{{user_name}} -p{{ password }} -e "unlock tables;"
            kubectl exec -it {{ pod_name }} -n {{ app_ns }} -- mysql -u{{user_name}} -p{{ password }} -e "drop database tdb"
-           sleep 5
+           sleep 10
          args:
            executable: /bin/bash
          register: result
          failed_when: "result.rc != 0"
+
+         #Here we include funclib utility to restore the volume
 
        - name: Restoring the volume data using snapshot.
          include_tasks: /funclib/openebs/openebs_snapshot_restore.yml
          vars:
            action: restore_snapshot
 
-       - name: Delete application pod to force volume remount upon rescheduling.
+       - name: Delete the application pod to force volume remount upon rescheduling.
          shell: kubectl delete pod {{pod_name}} -n {{ app_ns }}
          args:
            executable: /bin/bash
@@ -158,7 +166,7 @@
          set_fact:
            pod_name: "{{ result.stdout }}"
 
-       - name: Verifying whether the restore operation is successful.
+       - name: Verifying whether the restore operation is successful by validating data.
          shell: >
            kubectl exec -it {{ pod_name }} -n {{ app_ns }} -- mysql -u{{ user_name }} -p{{ password }}
            -e "select * from ttbl;" tdb
