@@ -1,0 +1,7 @@
+test_name: jenkins-upgrade-test
+app_namespace: "{{ lookup('env','APP_NAMESPACE') }}"
+label: "{{ lookup('env','APP_LABEL') }}"
+funcutil: kubectl/app_upgrade.yml
+deploy_type: "{{ lookup('env','DEPLOY_TYPE') }}"
+image_name: "{{ lookup('env','IMAGE_NAME') }}"
+
