@@ -30,28 +30,47 @@
           shell: kubectl get pod -n {{ namespace }} -l {{ app_label }} -o jsonpath='{.items[0].metadata.name}'
           register: pod_name
           
-        - name: Getting PVC name
-          shell: kubectl get pod -n {{ namespace }} -l pvc={{ pvc_name }}-{{ pod_name.stdout }} | awk 'NR == 3 {print $1}'
-          register: pvc
+        - name: Getting replica-pod name
+          shell: kubectl get pod -n {{ namespace }} -l openebs.io/persistent-volume-claim={{ pvc_name }}-{{ pod_name.stdout }} -o jsonpath='{.items[1].metadata.name}'
+          register: rep_pod
 
-        - name: Checking the status of replia-PVC pod
-          shell: kubectl get pod {{ pvc.stdout }} -n {{ namespace }} -o jsonpath='{.status.phase}'
+        - name: Checking the status of replica pod
+          shell: kubectl get pod {{ rep_pod.stdout }} -n {{ namespace }} -o jsonpath='{.status.phase}'
           register: status
           until: "'Running' in status.stdout"
-          delay: 5
-          retires: 10
+          delay: 10
+          retries: 10
+ 
+        - name: Getting the Node name on which replica-pod is scheduled
+          shell: kubectl get pod {{ rep_pod.stdout }} -n {{ namespace }} -o jsonpath='{.spec.nodeName}' 
+          register: node
 
-        - name: Checking the node affinity for rep-PVC pod
+        - name: Obtaining the deployment name for the replica pod
+          shell: kubectl get deployments -n {{ namespace }} -l openebs.io/persistent-volume-claim={{ pvc_name }}-{{ pod_name.stdout }} -o jsonpath='{.items[1].metadata.name}'  
+          register: deployment_name
+
+        - name: Replacing the Node name in Patch yaml
+          replace:
+           path: "{{ patch_file }}"
+           regexp: 'nodename_where_replica_pod_got_scheduled'
+           replace: '{{ node.stdout }}'
+ 
+        - name: Update the replica deployment with node affinity property
+          shell: kubectl patch deployment {{ deployment_name.stdout }} -n {{ namespace }} -p "$(cat {{ patch_file }})"
+          register: patch_status
+          failed_when: "'patched' not in patch_status.stdout"
+    
+        - name: Checking the node affinity for replica-pod
           include_tasks: "/funclib/kubectl/pod_node_affinity.yml"
           vars:
               ns: "{{ namespace }}"
-              pod_name: "{{ pvc.stdout }}"
+              pod_name: "{{ rep_pod.stdout }}"
 
-        - name: Checking the status of replia-PVC pod
-          shell: kubectl get po {{ new_pod_name.stdout }} -n {{ namespace }} -o jsonpath='{.status.phase}'
+        - name: Checking the status of replica-pod
+          shell: kubectl get pod {{ new_pod_name.stdout }} -n {{ namespace }} -o jsonpath='{.status.phase}'
           until: "'Running' in status.stdout"
           delay: 5
-          retires: 10      
+          retries: 10      
 
         - set_fact:
             flag: "Pass" 

@@ -8,10 +8,10 @@
   shell: kubectl get pod {{ pod_name }} -n {{ ns }} -o jsonpath='{.spec.nodeName}'
   register: node_name
 
-- name: Cordening the Node
+- name: Cordoning the Node
   shell: kubectl cordon {{ node_name.stdout }}  
 
-- name: Checking whether Node is cordened
+- name: Checking whether Node is cordoned
   shell: kubectl get nodes {{ node_name.stdout }} -o jsonpath='{.spec.unschedulable}'
   register: result
   failed_when: "'true' not in result.stdout" 

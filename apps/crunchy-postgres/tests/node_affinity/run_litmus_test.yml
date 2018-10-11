@@ -2,36 +2,35 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: litmus
+  generateName: litmus-node-affinity-
   namespace: litmus 
 spec:
   template:
     metadata:
       name: litmus
       labels:
-        app: node_affinity
+        app: node-affinity
    
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: ranjnshashank855/ansible-runner:test
+        image: openebs/ansible-runner:ci
         imagePullPolicy: Always
 
         env: 
-          - name: ANSIBLE_STDOUT_CALLBACK
-            #value: log_plays
+          - name: ANSIBLE_STDOUT_CALLBACK 
             value: default
 
-          - name: NAMESPACE
-            value: litmus
+          - name: APP_NAMESPACE
+            value: 'app-pgres-ns'
 
           - name: APPLICATION_LABEL
-            value: lkey=lvalue
+            value: 'app=pgset'
 
           - name: PVC_NAME
-            value: crunchy-claim   
+            value: 'pgdata-claim'   
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./crunchy-postgres/tests/node_affinity/test.yml -i /etc/ansible/hosts -v; exit 0"]
