@@ -30,7 +30,7 @@
 - name: Pick a cStor target pod belonging to the PV
   shell: >
     kubectl get pods -l openebs.io/target=cstor-target
-    -n {{ target_ns }} --no-headers | grep {{ pv.stdout }}
+    -n {{ operator_ns }} --no-headers | grep {{ pv.stdout }}
     | shuf -n1 | awk '{print $1}'
   args:
     executable: /bin/bash
