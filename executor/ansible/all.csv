@@ -1,0 +1,4 @@
+deployers:/home/shashank/Desktop/workspace/litmus/apps/percona/deployers/run_litmus_test.yml:percona-deployment-litmus
+loadgen:/home/shashank/Desktop/workspace/litmus/apps/percona/workload/run_litmus_test.yml:percona-loadgen-litmus
+deployers:/home/shashank/Desktop/workspace/litmus/apps/mongodb/deployers/run_litmus_test.yml:mongodb-deployment-litmus
+chaos:/home/shashank/Desktop/workspace/litmus/apps/percona/chaos/run_litmus_test.yml:openebs-replica-network-delay-litmus
