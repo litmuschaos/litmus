@@ -1,0 +1,7 @@
+---
+## TEST-SPECIFIC PARAMS
+
+test_name: fio-data-integrity
+fio_write_yml: fio-write.yml
+fio_read_yml: fio-read.yml
+app_ns: "{{ lookup('env','FIO_NAMESPACE') }}"
