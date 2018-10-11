@@ -6,7 +6,6 @@ metadata:
 spec:
   template:
     metadata:
-      name: fio
       labels:
         name: fio 
     spec:

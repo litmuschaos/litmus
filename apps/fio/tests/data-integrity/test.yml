@@ -134,7 +134,7 @@
 
        - name: Obtaining the fio read job pod name
          shell: >
-           kubectl get pods -n fio -l name=fio-read -o custom-columns=:metadata.name --no-headers
+           kubectl get pods -n {{ app_ns }} -l name=fio-read -o custom-columns=:metadata.name --no-headers
          args:
            executable: /bin/bash
          register: read_pod
