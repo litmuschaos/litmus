@@ -20,14 +20,20 @@
           when: lookup('env','RUN_ID')
 
         ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - name: Get the application label values from env
+          set_fact:
+             app_lkey: "{{ app_label.split('=')[0] }}"
+             app_lvalue: "{{ app_label.split('=')[1] }}"
+
         - name: Generate the litmus result CR to reflect SOT (Start of Test)
           template:
             src: /litmus-result.j2
             dest: litmus-result.yaml
           vars:
             test: "{{ test_name }}"
-            app: ""
+            app: "{{ app_lvalue }}"
             chaostype: ""
+            testtype: "deployment"
             phase: in-progress
             verdict: none
 
@@ -129,7 +135,8 @@
             dest: litmus-result.yaml
           vars:
             test: "{{ test_name }}"
-            app: ""
+            app: "{{ app_lvalue }}"
+            testtype: "deployment"
             chaostype: ""
             phase: completed
             verdict: "{{ flag }}"
