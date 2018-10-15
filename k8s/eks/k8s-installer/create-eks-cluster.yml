@@ -35,7 +35,7 @@
           no_log: true
 
         - name: Create Cluster
-          shell: eksctl create cluster --name={{cluster_name}} --nodes={{initial_node_count}} --ssh-access=true --ssh-public-key={{cluster_name}} --region={{region}} --node-volume-size={{disk_size_gb}}
+          shell: eksctl create cluster --name={{cluster_name}} --nodes={{initial_node_count}} --ssh-access=true --ssh-public-key={{cluster_name}} --region={{region}} --node-volume-size={{disk_size_gb}} --node-type={{node_type}} --nodes-min={{nodes_min}} --nodes-max={{nodes_max}}
           args:
             executable: /bin/bash
 
