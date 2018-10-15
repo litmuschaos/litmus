@@ -1,0 +1,66 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: openebs-single-replica-failure-
+  namespace: litmus
+spec:
+  template:
+    metadata:
+      labels:
+        name: openebs-single-replica-failure
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: gprasath/ansible-runner:ci
+        imagePullPolicy: Always
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: default
+
+          - name: APP_NAMESPACE
+            value: app-cass-ns 
+
+          - name: APP_LABEL
+            value: 'app=cassandra'
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./cassandra/chaos/openebs_single_replica_failure/test.yml -i /etc/ansible/hosts -vv; exit 0"]
+        volumeMounts:
+          - name: logs
+            mountPath: /var/log/ansible
+        tty: true
+      - name: logger
+        image: openebs/logger
+        env:
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: MY_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          # spec.volumes is not supported via downward API
+          - name: MY_POD_HOSTPATH
+            value: /mnt/chaos/openebs-volume-replica-failure
+        command: ["/bin/bash"]
+        args: ["-c", "./logger.sh -d ansibletest -r maya,openebs,pvc,cassandra; exit 0"]
+        volumeMounts:
+          - name: kubeconfig
+            mountPath: /root/admin.conf
+            subPath: admin.conf
+          - name: logs
+            mountPath: /mnt
+        tty: true
+      volumes:
+        - name: kubeconfig
+          configMap:
+            name: kubeconfig
+        - name: logs
+          hostPath:
+            path: /mnt/chaos/openebs_single_replica_failure
+            type: ""
+

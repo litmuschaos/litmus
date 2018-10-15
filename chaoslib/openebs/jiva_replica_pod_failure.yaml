@@ -12,6 +12,14 @@
     # Depends on the naming convention in maya-apiserver (<pv-id>-rep)  
     jiva_replica_deploy: "{{ pv.stdout }}-rep"
 
+- name: Obtain the number of replicas in the deployment
+  shell: >
+    kubectl get deployment {{ jiva_replica_deploy }} -n {{ app_ns }}
+    --no-headers -o custom-columns=:spec.replicas
+  args:
+    executable: /bin/bash
+  register: replica_count
+
 - name: Get the resourceVersion of the replica deploy before fault injection
   shell: >
     kubectl get deploy {{ jiva_replica_deploy }} -n {{ app_ns }} 
@@ -38,6 +46,17 @@
 - name: Wait for 10s post fault injection 
   wait_for:
     timeout: 10
+
+- name: Check if the replica pod is scheduled back.
+  shell: >
+    kubectl get deployment {{ jiva_replica_deploy }} -n {{ app_ns }}
+    --no-headers -o custom-columns=:..readyReplicas
+  args:
+    executable: /bin/bash
+  register: available_replicas
+  until: "available_replicas.stdout | int == replica_count.stdout | int"
+  delay: 30
+  retries: 10
 
 - name: Get the resourceVersion of the replica deploy after fault injection
   shell: >
