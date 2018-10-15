@@ -78,23 +78,53 @@
             regexp: "loadgen_lkey: loadgen_lvalue"
             replace: "{{ loadgen_lkey }}: {{ loadgen_lvalue }}"
 
+        - name: Getting the Service name of the Application
+          shell: kubectl get service -n {{ namespace }} -l {{ app_label }} -o jsonpath='{.items[0].metadata.name}' 
+          register: service_name   
+
         - name: Replace service placeholder in mongo-loadgen
           replace:
             path: "{{ mongodb_loadgen }}"
             regexp: "servicename"
-            replace: "{{ lookup('env','SERVICE_NAME') }}"
+            replace: "{{ service_name.stdout }}"
+
+        - name: Getting the Pod name of the Application
+          shell: kubectl get pod -n {{ namespace }} -l {{ app_label }} -o jsonpath='{.items[0].metadata.name}'
+          register: pod_name   
 
         - name: Replace pod placeholder in mongo-loadgen
           replace:
             path: "{{ mongodb_loadgen }}"
             regexp: "podname"
-            replace: "{{ lookup('env','POD_NAME') }}" 
+            replace: "{{ pod_name.stdout }}" 
 
         - name: Replace database-name placeholder in mongo-loadgen
           replace:
             path: "{{ mongodb_loadgen }}"
             regexp: "database_name"
             replace: "{{ lookup('env','DATABASE_NAME') }}"       
+
+        - name: Create test specific namespace.
+          shell: kubectl create namespace {{ namespace }}
+          args:
+           executable: /bin/bash
+          when: namespace != 'litmus'
+
+        - name: Checking the status  of test specific namespace.
+          shell: kubectl get namespace {{ namespace }} -o jsonpath='{.status.phase}'
+          args:
+           executable: /bin/bash
+          register: npstatus
+          until: "'Active' in npstatus.stdout"
+          delay: 30
+          retries: 10
+
+        - name: Checking whether application is running
+          shell: kubectl get pod {{ pod_name.stdout }} -n {{ namespace }} -o jsonpath='{.status.phase}'
+          register: running_status
+          until: "'Running' in running_status.stdout"
+          delay: 60
+          retries: 15  
         
         - name: Create Mongodb Loadgen Job
           shell: kubectl apply -f {{ mongodb_loadgen }} -n {{ namespace }} 
@@ -109,7 +139,7 @@
           retries: 15
 
         - name: Verifying load-generation  
-          shell: kubectl exec -it mongo-0 -n {{ namespace }} -- mongo --eval 'db.getMongo().getDBNames()'
+          shell: kubectl exec -it {{ pod_name.stdout }} -n {{ namespace }} -- mongo --eval 'db.getMongo().getDBNames()'
           register: output
           until: "'sbtest' in output.stdout"
           delay: 30
