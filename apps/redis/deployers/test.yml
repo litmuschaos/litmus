@@ -1,0 +1,134 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+        - block:
+
+            - name: Record test instance/run ID
+              set_fact:
+                run_id: "{{ lookup('env','RUN_ID') }}"
+
+            - name: Construct testname appended with runID
+              set_fact:
+                test_name: "{{ test_name }}-{{ run_id }}"
+
+          when: lookup('env','RUN_ID')
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - name: Generate the litmus result CR to reflect SOT (Start of Test)
+          template:
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars:
+            test: "{{ test_name }}"
+            app: "redis"
+            chaostype: ""
+            phase: in-progress
+            verdict: none
+
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          register: lr_status
+          failed_when: "lr_status.rc != 0"
+
+        - name: Check whether the provider storageclass is applied
+          shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
+          register: result
+
+        - name: Replace the pvc placeholder with provider
+          replace:
+            path: "{{ redis_deployment }}"
+            regexp: "testclaim"
+            replace: "{{ lookup('env','APP_PVC') }}"
+
+        - name: Replace the storageclass placeholder with provider
+          replace:
+            path: "{{ redis_deployment }}"
+            regexp: "testclass"
+            replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+
+        - name: Get the application replica values from env
+          set_fact:
+             app_rkey: "{{ app_replica.split('=')[0] }}"
+             app_rvalue: "{{ app_replica.split('=')[1] }}"
+
+        - name: Replace the application label placeholder
+          replace:
+            path: "{{ redis_deployment }}"
+            regexp: "rkey: rvalue"
+            replace: "{{ app_rkey }}: {{ app_rvalue }}"
+
+        - name: Get the application label values from env
+          set_fact:
+             app_lkey: "{{ app_label.split('=')[0] }}"
+             app_lvalue: "{{ app_label.split('=')[1] }}"
+
+        - name: Replace the application label placeholder
+          replace:
+            path: "{{ redis_deployment }}"
+            regexp: "lkey: lvalue"
+            replace: "{{ app_lkey }}: {{ app_lvalue }}"
+
+        - name: Create test specific namespace.
+          shell: kubectl create ns {{ app_ns }}
+          when: app_ns != 'litmus'
+
+        - name: Checking the status  of test specific namespace.
+          shell: kubectl get ns {{ app_ns }} -o jsonpath='{.status.phase}'
+          register: npstatus
+          until: "'Active' in npstatus.stdout"
+          delay: 30
+          retries: 10
+
+        - name: Deploying Redis statefulset
+          shell: kubectl apply -f {{ redis_deployment }} -n {{ app_ns }}
+
+        - block:
+
+            - name: Obtain the number of replicas.
+              shell: kubectl get statefulset -n {{ app_ns }} -l "{{ app_label }}"  -o custom-columns=:spec.replicas
+              register: rep_count
+              until: "rep_count.rc == 0"
+              delay: 60
+              retries: 15
+
+            - name: Obtain the ready replica count and compare with the replica count.
+              shell: kubectl get statefulset -n {{ app_ns }} -l "{{ app_label }}" -o custom-columns=:..readyReplicas
+              register: ready_rep
+              until: "ready_rep.rc == 0 and ready_rep.stdout|int == rep_count.stdout|int"
+              delay: 60
+              retries: 30
+
+          when: lookup('env','DEPLOY_TYPE') == 'statefulset'
+
+        - name: Setting pass flag
+          set_fact:
+            flag: "Pass"
+
+      rescue:
+        - name: Setting fail flag
+          set_fact:
+            flag: "Fail"
+
+      always:
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - name: Generate the litmus result CR to reflect EOT (End of Test)
+          template:
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars:
+            test: "{{ test_name }}"
+            app: "redis"
+            chaostype: ""
+            phase: completed
+            verdict: "{{ flag }}"
+
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          register: lr_status
+          failed_when: "lr_status.rc != 0"
