@@ -14,7 +14,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: gprasath/ansible-runner:ci
+        image: openebs/ansible-runner:ci
         imagePullPolicy: Always
         env:
           - name: ANSIBLE_STDOUT_CALLBACK
@@ -45,7 +45,7 @@ spec:
                 fieldPath: metadata.namespace
           # spec.volumes is not supported via downward API
           - name: MY_POD_HOSTPATH
-            value: /mnt/chaos/openebs-volume-replica-failure
+            value: /mnt/chaos/openebs-single-replica-failure
         command: ["/bin/bash"]
         args: ["-c", "./logger.sh -d ansibletest -r maya,openebs,pvc,cassandra; exit 0"]
         volumeMounts:
