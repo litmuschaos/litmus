@@ -1,0 +1,53 @@
+---
+- hosts: localhost
+  gather_facts: yes
+
+  vars_files:
+    - vars.yml
+  vars:
+    cluster_name:
+    test_case_name: "EKS_DELETE_CLUSTER"
+
+  tasks:
+    - block:
+        - name: Fetch Cluster Name
+          shell: cat ~/logs/clusters
+          register: cluster_name
+          when: not cluster_name
+
+        - set_fact:
+            cluster_name: "{{ cluster_name.stdout }}"
+          when: cluster_name.stdout is defined
+
+        - name: Delete EKS cluster
+          shell: eksctl delete cluster --name={{cluster_name}} --region={{region}}
+          args:
+            executable: /bin/bash
+          no_log: true
+
+        - name: Delete the ec2 key pair
+          ec2_key:
+            name: "{{cluster_name}}"
+            region: "{{region}}"
+            state: absent
+          no_log: true
+
+        - name: Delete the generated PEM file
+          file:
+            path: "$HOME/{{cluster_name}}.pem"
+            state: absent
+
+        - name: Remove Cluster Info
+          lineinfile:
+            state: absent
+            path: "~/logs/clusters"
+            regexp: "{{ cluster_name }}"
+
+        - name: Set Test Status
+          set_fact:
+            flag: "Test Passed"
+
+      rescue:  
+        - name: Set Test Status
+          set_fact:
+            flag: "Test Failed"

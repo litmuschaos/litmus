@@ -1,0 +1,55 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: litmus-di-fio-
+  namespace: litmus 
+spec:
+  template:
+    metadata:
+      labels:
+        name: litmus
+        app: fio-di-litmus
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: openebs/ansible-runner:ci
+        env: 
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: default
+ 
+          - name: PROVIDER_STORAGE_CLASS
+            value: openebs-standard
+
+          - name: FIO_NAMESPACE
+            value: fio
+
+          - name: FIO_SAMPLE_SIZE
+            value: "128m"
+ 
+          - name: FIO_TESTRUN_PERIOD
+            value: "60"
+ 
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./fio/tests/data-integrity/test.yml -i /etc/ansible/hosts -v; exit 0"]
+        volumeMounts:
+          - name: logs 
+            mountPath: /var/log/ansible 
+        tty: true
+        volumeMounts:
+          - name: kubeconfig 
+            mountPath: /root/admin.conf
+            subPath: admin.conf
+          - name: logs
+            mountPath: /mnt 
+        tty: true 
+      volumes: 
+        - name: kubeconfig
+          configMap: 
+            name: kubeconfig 
+        - name: logs 
+          hostPath:
+            path: /mnt/fio
+            type: "" 

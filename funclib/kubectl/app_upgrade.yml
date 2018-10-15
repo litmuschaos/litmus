@@ -1,0 +1,49 @@
+---
+# This utilty task file can upgrade the statefulset or deployment application  in K8s cluster.
+# The parameters required are
+#    - app_ns ( namespace in which applicaion is deployed)
+#    - app_label( Applications's label in the form key=value)
+#    - deploy_type (Either 'deployment' or 'statefulset')
+# The above parameters should be obtained as environmental variables from the litmus-book.
+- name: Obtaining the deployment name.
+  shell: kubectl get {{ deploy_type }} -n {{ app_ns }} --no-headers -l {{ app_label }} -o custom-columns=:metadata.name
+  args:
+    executable: /bin/bash
+  register: result
+
+- name: Recording the application pod name.
+  set_fact:
+    app_name: "{{ result.stdout }}"
+
+- name: Get the image of application pre-upgrade.
+  shell: kubectl get {{ deploy_type  }} {{ app_name }}  -n {{ app_ns}} -o jsonpath="{..image}" 
+  args:
+    executable: /bin/bash
+  register: pre_image  
+
+- name: Record the image name of existing running application.
+  set_fact:
+    image: "{{pre_image.stdout }}"
+
+- block:
+
+    - name: Updating image of application to a required version.
+      shell: kubectl set image  {{ deploy_type}}/{{ app_name }} {{ app_name }}={{ image_name }} -n {{ app_ns }}
+      args:
+        executable: /bin/bash
+      register: result
+      failed_when: "'image updated' not in result.stdout"
+
+    - name: Check if  the application pod is running after upgrade.
+      shell: kubectl get pod -n {{ app_ns  }} --no-headers -l {{ app_label }} -o jsonpath='{.items[0].status.phase}'
+      args:
+        executable: /bin/bash
+      register: Pod_status
+      until: "'Running' in Pod_status.stdout"
+      delay: 30
+      retries: 15
+  when: lookup('env','IMAGE_NAME') != image
+        
+- debug:
+    msg: Provided image is already present
+  when: lookup('env','IMAGE_NAME') == image     

@@ -1,0 +1,83 @@
+---
+- hosts: localhost
+  gather_facts: yes
+
+  vars_files:
+    - vars.yml
+  vars:
+    cluster_name:
+    test_case_name: "EKS_CREATE_CLUSTER"
+
+  tasks:
+    - block:
+
+        - name: Generating Random Cluster Name
+          shell: python ../../utils/name_generator/namesgenerator.py
+          register: cluster_name
+          when: not cluster_name
+
+        - set_fact:
+            cluster_name: "{{ cluster_name.stdout }}"
+          when: cluster_name.stdout is defined
+
+        - name: create a new ec2 key pair, returns generated private key
+          ec2_key:
+            name: "{{cluster_name}}"
+            region: "{{region}}"
+          register: result
+          no_log: true
+
+        - name: Create SSH Key File
+          copy:
+            content: "{{ result.key.private_key }}"
+            dest: "$HOME/{{cluster_name}}.pem"
+            mode: '0400'
+          no_log: true
+
+        - name: Create Cluster
+          shell: eksctl create cluster --name={{cluster_name}} --nodes={{initial_node_count}} --ssh-access=true --ssh-public-key={{cluster_name}} --region={{region}} --node-volume-size={{disk_size_gb}} --node-type={{node_type}} --nodes-min={{nodes_min}} --nodes-max={{nodes_max}}
+          args:
+            executable: /bin/bash
+
+        - name: Save cluster info
+          lineinfile:
+            create: yes
+            state: present
+            path: "~/logs/clusters"
+            line: "{{ cluster_name }}"
+
+        - name: Gather fact about instances in AWS
+          ec2_instance_facts:
+            filters:
+              "tag:eksctl.cluster.k8s.io/v1alpha1/cluster-name": "{{cluster_name}}"
+          register: result
+          no_log: true
+
+        - name: Install ISCSI
+          shell: |
+            ssh -o StrictHostKeyChecking=no -i $HOME/{{cluster_name}}.pem \
+            {{ssh_user}}@{{item.public_ip_address}} \
+            "sudo yum install -y iscsi-initiator-utils"
+          args:
+            executable: /bin/bash
+          with_items: "{{ result.instances }}"
+          no_log: true
+
+        - name: Enable and Start ISCSI
+          shell: |
+            ssh -o StrictHostKeyChecking=no -i $HOME/{{cluster_name}}.pem \
+            {{ssh_user}}@{{item.public_ip_address}} \
+            "sudo systemctl enable iscsid && sudo systemctl start iscsid"
+          args:
+            executable: /bin/bash
+          with_items: "{{ result.instances }}"
+          no_log: true
+
+        - name: Set Test Status
+          set_fact:
+            flag: "Test Passed"
+
+      rescue:
+        - name: Set Test Status
+          set_fact:
+            flag: "Test Failed"

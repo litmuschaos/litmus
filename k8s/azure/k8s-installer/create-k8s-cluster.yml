@@ -27,7 +27,7 @@
       shell: az group create -l eastus -n aks-{{ cluster_name }}-rg
 
     - name: Creating AKS Cluster
-      shell: az aks create -n aks-{{ cluster_name }}-cluster  -g aks-{{ cluster_name }}-rg --node-count {{ nodes }} --node-vm-size Standard_D1 --generate-ssh-key
+      shell: az aks create -n aks-{{ cluster_name }}-cluster  -g aks-{{ cluster_name }}-rg --node-count {{ nodes }} --node-vm-size {{ node_size }} --generate-ssh-key
 
     - name: Getting Kubeconfig for the AKS Cluster
       shell: az aks get-credentials --resource-group aks-{{ cluster_name }}-rg --name aks-{{ cluster_name }}-cluster
