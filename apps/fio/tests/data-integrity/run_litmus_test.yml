@@ -38,6 +38,10 @@ spec:
           - name: logs 
             mountPath: /var/log/ansible 
         tty: true
+      - name: logger	
+        image: openebs/logger	
+        command: ["/bin/bash"]	
+        args: ["-c", "./logger.sh -d 10 -r maya,openebs,pvc,fio; exit 0"]
         volumeMounts:
           - name: kubeconfig 
             mountPath: /root/admin.conf
