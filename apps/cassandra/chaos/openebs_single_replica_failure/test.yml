@@ -104,7 +104,7 @@
             dest: litmus-result.yaml
           vars: 
             test: "{{ test_name }}"
-            chaostype: "aingle-replica-failure"
+            chaostype: "single-replica-failure"
             app: ""
             phase: completed
             verdict: "{{ flag }}"
