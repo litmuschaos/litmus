@@ -41,7 +41,7 @@
         - name: Verify that the AUT (Application Under Test) is running 
           shell: >
             kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers
-            -o custom-columns=:status.phase
+            -o jsonpath={.items[0].status.phase}
           args:
             executable: /bin/bash
           register: app_status
@@ -79,7 +79,7 @@
         - name: Verify AUT existence post fault-injection
           shell: >
             kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers
-            -o custom-columns=:status.phase
+            -o jsonpath={.items[0].status.phase}
           args:
             executable: /bin/bash
           register: app_status
