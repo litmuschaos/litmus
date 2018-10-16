@@ -33,7 +33,8 @@ help:
 godeps:
 	@echo ""
 	@echo "INFO:\tverifying dependencies for Litmus ..."
-	@go get -u -v github.com/golang/lint/golint
+	#@go get -u -v github.com/golang/lint/golint
+	@go get -u -v golang.org/x/lint/golint
 	@go get -u -v golang.org/x/tools/cmd/goimports
 	@go get -u -v github.com/golang/dep/cmd/dep
 	@go get -u -v github.com/DATA-DOG/godog/cmd/godog
