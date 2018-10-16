@@ -25,13 +25,9 @@
             executable: /bin/bash
           register: lr_status 
           failed_when: "lr_status.rc != 0"
-
-        - name: Getting Pod name of Application
-          shell: kubectl get pod -n {{ namespace }} -l {{ app_label }} -o jsonpath='{.items[0].metadata.name}'
-          register: pod_name
           
         - name: Getting replica-pod name
-          shell: kubectl get pod -n {{ namespace }} -l openebs.io/persistent-volume-claim={{ pvc_name }}-{{ pod_name.stdout }} -o jsonpath='{.items[1].metadata.name}'
+          shell: kubectl get pod -n {{ namespace }} -l openebs.io/replica=jiva-replica -o jsonpath='{.items[0].metadata.name}'
           register: rep_pod
 
         - name: Checking the status of replica pod
@@ -46,7 +42,7 @@
           register: node
 
         - name: Obtaining the deployment name for the replica pod
-          shell: kubectl get deployments -n {{ namespace }} -l openebs.io/persistent-volume-claim={{ pvc_name }}-{{ pod_name.stdout }} -o jsonpath='{.items[1].metadata.name}'  
+          shell: kubectl get deployments -n {{ namespace }} -l openebs.io/replica=jiva-replica -o jsonpath='{.items[0].metadata.name}'  
           register: deployment_name
 
         - name: Replacing the Node name in Patch yaml
