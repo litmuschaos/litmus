@@ -45,7 +45,7 @@
           args:
             executable: /bin/bash
           register: app_status
-          until: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
+          until: "'Running' in app_status.stdout"
           delay: 30
           retries: 12
 
@@ -83,7 +83,7 @@
           args:
             executable: /bin/bash
           register: app_status
-          until: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
+          until: "'Running' in app_status.stdout"
           delay: 30
           retries: 12
 
