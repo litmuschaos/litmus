@@ -1,0 +1,54 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: litmus-memleak-test-
+  namespace: litmus
+spec:
+  template:
+    metadata:
+      labels:
+        name: litmus
+        app: memleak-test
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: openebs/ansible-runner:ci
+        imagePullPolicy: Always
+        env: 
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: default
+ 
+          - name: PROVIDER_STORAGE_CLASS
+            value: openebs-standard
+
+          - name: APP_NAMESPACE
+            value: memleak
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./memleak/tests/test.yml -i /etc/ansible/hosts -v; exit 0"]
+        volumeMounts:
+          - name: logs 
+            mountPath: /var/log/ansible 
+        tty: true
+      - name: logger
+        image: openebs/logger
+        command: ["/bin/bash"]
+        args: ["-c", "./logger.sh -d 10 -r maya,openebs,pvc,memleak; exit 0"] 
+        volumeMounts:
+          - name: kubeconfig 
+            mountPath: /root/admin.conf
+            subPath: admin.conf
+          - name: logs
+            mountPath: /mnt 
+        tty: true 
+      volumes: 
+        - name: kubeconfig
+          configMap: 
+            name: kubeconfig 
+        - name: logs 
+          hostPath:
+            path: /mnt/memleak
+            type: "" 

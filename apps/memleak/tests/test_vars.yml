@@ -1,0 +1,6 @@
+---
+## TEST-SPECIFIC PARAMS
+
+test_name: memleak-test
+memleak_yml: memleak.yml
+app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
