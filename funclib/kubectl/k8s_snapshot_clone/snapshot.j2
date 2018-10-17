@@ -1,0 +1,8 @@
+apiVersion: volumesnapshot.external-storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: {{ snapshot_name }}
+  namespace: {{ app_ns }}
+spec:
+  persistentVolumeClaimName: {{ pvc_name }}
+

@@ -1,0 +1,18 @@
+---
+test_name: create-k8s-snapshot-clone
+
+app_label: "{{ lookup('env','APP_LABEL') }}"
+
+app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+
+user_name: "{{ lookup('env','DB_USER_NAME') }}"
+
+password: "{{ lookup('env','DB_PASSWORD') }}"
+
+pvc_name: "{{ lookup('env','APP_PVC') }}"
+
+snapshot_name: "{{ lookup('env','SNAPSHOT') }}"
+
+clone_claim_name: "{{ lookup('env','CLONE_VOL_CLAIM') }}"
+
+clone_app: "{{ lookup('env','CLONE_APP_NAME') }}"

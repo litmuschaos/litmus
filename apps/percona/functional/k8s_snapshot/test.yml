@@ -1,0 +1,172 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+        - block:
+
+            - name: Record test instance/run ID
+              set_fact:
+                run_id: "{{ lookup('env','RUN_ID') }}"
+
+            - name: Construct testname appended with runID
+              set_fact:
+                test_name: "{{ test_name }}-{{ run_id }}"
+
+          when: lookup('env','RUN_ID')
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - name: Generate the litmus result CR to reflect SOT (Start of Test)
+          template:
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars:
+            test: "{{ test_name }}"
+            app: "percona"
+            chaostype: ""
+            phase: in-progress
+            verdict: none
+
+        - name: Apply the litmus result CR
+          command: kubectl apply -f litmus-result.yaml
+          register: lr_status
+          failed_when: "lr_status.rc != 0"
+
+        - name: Check whether the snapshot specific storage class is created.
+          command: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
+          register: result
+
+        - name: Checking if the application is running.
+          shell: kubectl get pods -n {{ app_ns }} --no-headers -l {{ app_label }} -o custom-columns=:status.phase
+          args:
+            executable: /bin/bash
+          register: result
+          until: "'Running' in result.stdout"
+          delay: 30
+          retries: 15
+
+        - name: Obtaining the application pod name.
+          shell: kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers -o custom-columns=:metadata.name
+          args:
+            executable: /bin/bash
+          register: app_pod
+
+        - name: Recording application pod name in a variable.
+          set_fact:
+            pod_name: "{{ app_pod.stdout}}"
+
+        - name: Write a test database into percona mysql
+          shell: |
+            kubectl exec -it {{ pod_name }} -n {{ app_ns }} -- mysql -u{{ user_name }} -p{{ password }} -e "create database cloud;"
+            kubectl exec -it {{ pod_name }} -n {{ app_ns }} -- mysql -u{{ user_name }} -p{{ password }} -e "create table platforms (Data VARCHAR(20));" cloud
+            kubectl exec -it {{ pod_name }} -n {{ app_ns }} -- mysql -u{{ user_name }} -p{{ password }} -e "insert into platforms (Data) VALUES ('aws');" cloud
+            kubectl exec -it {{ pod_name }} -n {{ app_ns }} -- mysql -u{{ user_name}}  -p{{ password }} -e "flush tables with read lock;"
+          args:
+            executable: /bin/bash
+          register: db_result
+          failed_when: "db_result.rc != 0"
+
+        - name: Perform filesystem sync on percona pod before creating snapshot.
+          shell: >
+            kubectl exec {{pod_name}} -n {{ app_ns }} -- bash -c "sync;sync;sync"
+          args:
+            executable: /bin/bash
+
+       ## Include an utility from litmus funclib to create snapshot.This creates snapshot and validates successful creation.
+       
+        - name: Creating snapshot.
+          include_tasks: /funclib/kubectl/k8s_snapshot_clone/create_snapshot.yml
+
+       ## Include an utility from litmus funclib to create clone using volume snapshot.
+
+        - name: Creating clone using snapshot.
+          include_tasks: /funclib/kubectl/k8s_snapshot_clone/create_clone.yml
+
+        - name: Obtaining new PV name from the pvc.
+          shell: kubectl get pvc {{ clone_claim_name }} -n {{ app_ns }} -o custom-columns=:spec.volumeName --no-headers
+          args:
+            executable: /bin/bash
+          register: snap_pv
+
+        - name: List the corresponding storage replica pods..
+          shell: kubectl get pods -n {{ app_ns }} -l openebs.io/replica=jiva-replica | grep {{ snap_pv.stdout}} | awk '{print $1}'
+          args:
+            executable: /bin/bash
+          register: replica_list
+
+        - name: check if the sync is completed in all the above replicas.
+          shell: kubectl logs {{ item }} -n {{ app_ns }} | grep -i "Clone process completed successfully"
+          args:
+            executable: /bin/bash
+          register: result
+          with_items:
+            - "{{ replica_list.stdout_lines }}"
+          until: "result.rc == 0"
+          delay: 60
+          retries: 20
+
+        - name: Update the percona deployment spec with the clone pvc.
+          template:
+            src: percona.j2
+            dest: percona.yml
+
+        - name: Deploy the application using snapped volume.
+          shell: kubectl apply -f percona.yml -n {{ app_ns }}
+          args:
+            executable: /bin/bash
+
+        - name: Check if the new application pod is started.
+          shell: kubectl get pods -n {{ app_ns }} -l name={{ clone_app }}
+          args:
+            executable: /bin/bash
+          register: app_status
+          until: "'Running' in app_status.stdout"
+          delay: 60
+          retries: 10
+
+        - name: Obtaining the application pod name.
+          shell: kubectl get pods -n {{ app_ns }} -l name={{ clone_app }} --no-headers -o custom-columns=:metadata.name
+          args:
+            executable: /bin/bash
+          register: pod_name
+
+        - name: Validate the data in the new application pod db.
+          shell: kubectl exec -it {{ pod_name.stdout }} -n {{ app_ns }}  -- mysql -u{{ user_name }} -p{{ password }} -e "select * from platforms;" cloud;
+          args:
+            executable: /bin/bash
+          register: db_result
+          until: "'aws' in db_result.stdout"
+          delay: 60
+          retries: 15
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - set_fact:
+            flag: "Fail"
+
+      always:
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - name: Generate the litmus result CR to reflect EOT (End of Test)
+          template:
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars:
+            test: "{{ test_name }}"
+            app: "percona"
+            chaostype: ""
+            phase: completed
+            verdict: "{{ flag }}"
+
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          args:
+            executable: /bin/bash
+          register: lr_status
+          failed_when: "lr_status.rc != 0"
+
