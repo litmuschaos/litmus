@@ -1,4 +1,21 @@
 ---
+#Description: Creation of volume snapshot and clone.
+#Author: Giri
+#
+########################################################################################
+#Steps:                                                                                #
+#1) Creating LitmusResult CR for updating test result.                                 #
+#2) Checking if the application is running in k8s cluster.                             #
+#3) Dumping data into the database.                                                    #
+#4) Create snapshot using corresponding funclib utility.                               #
+#5) Verify snapshot creation and create clone using the snapshot.                      #
+#6) Ensure if the clone is created successfully.                                       #
+#7) Verify if the storage replicas are synchronised.                                   #
+#8) Create new application pod using the cloned volume.                                #
+#9) Verify the data in the new volume and compare it with the original one.            #
+#10) Update the LitmusResult CR.                                                       #
+########################################################################################
+
 - hosts: localhost
   connection: local
 

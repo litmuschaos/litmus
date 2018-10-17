@@ -7,7 +7,7 @@
      src: /funclib/kubectl/k8s_snapshot_clone/snapshot-claim.j2
      dest: snapshot-claim.yml
 
-- name: 8) Creating PVC from the snapshot
+- name: Creating PVC from the snapshot
   shell: kubectl apply -f snapshot-claim.yml
   args:
     executable: /bin/bash
