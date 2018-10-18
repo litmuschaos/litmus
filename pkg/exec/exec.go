@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+//go:generate mockgen -package exec -source=exec.go -destination exec_mock.go
 package exec
 
 import (

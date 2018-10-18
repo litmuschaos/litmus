@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+//go:generate mockgen -package kubectl -source=kubectl.go -destination kubectl_mock.go
+
 package kubectl
 
 import (
