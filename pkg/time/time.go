@@ -21,7 +21,7 @@ import (
 )
 
 // WaitFor pauses the current goroutine for the provided time.
-// This funcction is modelled using time.ParseDuration.
+// This function is modelled using time.ParseDuration.
 //
 // time.ParseDuration parses a duration string.
 // A duration string is a possibly signed sequence of
@@ -36,6 +36,8 @@ func WaitFor(duration string) (err error) {
 		return
 	}
 
-	time.Sleep(interval)
+	sleep(interval)
 	return
 }
+
+var sleep = time.Sleep
