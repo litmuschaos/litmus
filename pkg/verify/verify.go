@@ -231,7 +231,7 @@ func (v *KubeInstallVerify) IsDeployed() (yes bool, err error) {
 
 	for _, component := range v.installation.Components {
 		yes, err = v.isComponentDeployed(component)
-		if err != nil {
+		if err != nil || !yes {
 			break
 		}
 	}
@@ -248,7 +248,7 @@ func (v *KubeInstallVerify) IsDeleted() (yes bool, err error) {
 
 	for _, component := range v.installation.Components {
 		yes, err = v.isComponentDeleted(component)
-		if err != nil {
+		if err != nil || !yes {
 			break
 		}
 	}
@@ -269,7 +269,7 @@ func (v *KubeInstallVerify) IsRunning() (yes bool, err error) {
 		}
 
 		yes, err = v.isPodComponentRunning(component)
-		if err != nil {
+		if err != nil || !yes {
 			break
 		}
 	}
