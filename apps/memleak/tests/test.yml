@@ -20,24 +20,11 @@
          when: lookup('env','RUN_ID')
 
         ## RECORD START-OF-TEST IN LITMUS RESULT CR
-       - name: Generate the litmus result CR to reflect SOT (Start of Test)
-         template:
-           src: /litmus-result.j2
-           dest: litmus-result.yaml
+       - include_tasks: /common/utils/update_litmus_result_resource.yml
          vars:
-           test: "{{ test_name }}"
-           app: ""
-           chaostype: ""
-           phase: in-progress
-           verdict: none
+           status: 'SOT'
 
-       - name: Apply the litmus result CR
-         command: kubectl apply -f litmus-result.yaml
-         register: lr_status
-         failed_when: "lr_status.rc != 0"
-
-       ## VERIFY AVAILABILITY OF SELECTED STORAGE CLASS
-
+        ## VERIFY AVAILABILITY OF SELECTED STORAGE CLASS
        - name: Check whether the provider storageclass is applied
          shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
          args:
@@ -98,18 +85,6 @@
 
      always:
             ## RECORD END-OF-TEST IN LITMUS RESULT CR
-       - name: Generate the litmus result CR to reflect EOT (End of Test)
-         template:
-           src: /litmus-result.j2
-           dest: litmus-result.yaml
+       - include_tasks: /common/utils/update_litmus_result_resource.yml
          vars:
-           test: "{{ test_name }}"
-           app: ""
-           chaostype: ""
-           phase: completed
-           verdict: "{{ flag }}"
-
-       - name: Apply the litmus result CR
-         command: kubectl apply -f litmus-result.yaml
-         register: lr_status
-         failed_when: "lr_status.rc != 0"
+           status: 'EOT'
