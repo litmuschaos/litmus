@@ -79,11 +79,21 @@
           delay: 10
           retries: 12
 
+        - name: Get application pod name 
+          shell: >
+            kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers
+            -o=custom-columns=NAME:".metadata.name"
+          args:
+            executable: /bin/bash
+          register: app_pod_name
+
         ## APPLICATION FAULT INJECTION 
 
-        - include: "{{ chaosutil_path }}"
-          namespace: "{{ app_ns }}"
-          label: "{{ app_label }}"
+        - include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yaml 
+          vars:
+            action: "killapp"
+            app_pod: "{{ app_pod_name.stdout }}"
+            namespace: "{{ app_ns }}"
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
@@ -138,3 +148,7 @@
           register: lr_status 
           failed_when: "lr_status.rc != 0"
            
+        - include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yaml 
+          vars:
+            action: "deletepumba"
+            namespace: "{{ app_ns }}"
