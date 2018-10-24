@@ -1,0 +1,121 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+        - block:
+
+            - name: Record test instance/run ID
+              set_fact:
+                run_id: "{{ lookup('env','RUN_ID') }}"
+
+            - name: Construct testname appended with runID
+              set_fact:
+                test_name: "{{ test_name }}-{{ run_id }}"
+
+          when: lookup('env','RUN_ID')
+
+         ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - name: Generate the litmus result CR to reflect SOT (Start of Test)
+          template:
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars:
+            test: "{{ test_name }}"
+            app: "prometheus"
+            chaostype: ""
+            phase: in-progress
+            verdict: none
+
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          args:
+            executable: /bin/bash
+          register: lr_status
+          failed_when: "lr_status.rc != 0"
+
+         ##Actual test
+        - name: Check whether the provider storageclass is applied
+          shell: kubectl get storageclass {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
+          args:
+            executable: /bin/bash
+          register: result
+
+        - name: Replace the pvc placeholder with provider
+          replace:
+            path: "{{ prometheus_deployment }}"
+            regexp: "testclaim"
+            replace: "{{ lookup('env','APP_PVC') }}"
+
+        - name: Replace the storageclass placeholder with provider
+          replace:
+            path: "{{ prometheus_deployment }}"
+            regexp: "testclass"
+            replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+
+        - name: Get the application label values from env
+          set_fact:
+             app_lkey: "{{ app_label.split('=')[0] }}"
+             app_lvalue: "{{ app_label.split('=')[1] }}"
+
+        - name: Replace the application label placeholder
+          replace:
+            path: "{{ prometheus_deployment }}"
+            regexp: "lkey: lvalue"
+            replace: "{{ app_lkey }}: {{ app_lvalue }}"
+
+        - name: Create test specific namespace.
+          shell: kubectl create namespace {{ app_ns }}
+          args:
+           executable: /bin/bash
+          when: app_ns != 'litmus'
+
+        - name: Checking the status  of test specific namespace.
+          shell: kubectl get namespace {{ app_ns }} -o custom-columns=:status.phase --no-headers
+          args:
+           executable: /bin/bash
+          register: npstatus
+          until: "'Active' in npstatus.stdout"
+          delay: 30
+          retries: 10
+
+        - name: Deploying prometheus
+          shell: kubectl apply -f {{ prometheus_deployment }} -n {{ app_ns }}
+
+        - name: Checking prometheus is in running state
+          shell: kubectl get pods -n {{ app_ns }} -o jsonpath='{.items[?(@.metadata.labels.{{app_lkey}}=="{{app_lvalue}}")].status.phase}'
+          register: result
+          until: "'Running' in result.stdout"
+          delay: 30
+          retries: 10
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - set_fact:
+            flag: "Fail"
+
+      always:
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - name: Generate the litmus result CR to reflect EOT (End of Test)
+          template:
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars:
+            test: "{{ test_name }}"
+            app: "prometheus"
+            chaostype: ""
+            phase: completed
+            verdict: "{{ flag }}"
+
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          args:
+            executable: /bin/bash
+          register: lr_status
+          failed_when: "lr_status.rc != 0"
