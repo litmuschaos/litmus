@@ -61,11 +61,12 @@
           vars:
               ns: "{{ namespace }}"
               pod_name: "{{ rep_pod.stdout }}"
+              pod_label: "openebs.io/replica=jiva-replica"
 
         - name: Checking the status of replica-pod
           shell: kubectl get pod {{ new_pod_name.stdout }} -n {{ namespace }} -o jsonpath='{.status.phase}'
           until: "'Running' in status.stdout"
-          delay: 5
+          delay: 30
           retries: 10      
 
         - set_fact:
