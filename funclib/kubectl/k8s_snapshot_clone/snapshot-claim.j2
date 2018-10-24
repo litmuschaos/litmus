@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ clone_claim_name }}
+  namespace: {{ app_ns }}
+  annotations:
+    snapshot.alpha.kubernetes.io/snapshot: {{ snapshot_name }}
+spec:
+  storageClassName: openebs-snapshot-promoter
+  accessModes: [ "ReadWriteOnce" ]
+  resources:
+    requests:
+      storage: 5G
+

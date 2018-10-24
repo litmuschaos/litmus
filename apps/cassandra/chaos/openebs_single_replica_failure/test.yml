@@ -1,0 +1,118 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+        - block:
+ 
+            - name: Record test instance/run ID 
+              set_fact: 
+                run_id: "{{ lookup('env','RUN_ID') }}"
+           
+            - name: Construct testname appended with runID
+              set_fact:
+                test_name: "{{ test_name }}-{{ run_id }}"
+
+          when: lookup('env','RUN_ID')
+
+        - name: Generate the litmus result CR to reflect SOT (Start of Test) 
+          template: 
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars: 
+            test: "{{ test_name }}"
+            chaostype: "Single-replica-failure"
+            app: ""
+            phase: in-progress
+            verdict: none
+
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          args:
+            executable: /bin/bash
+          register: lr_status 
+          failed_when: "lr_status.rc != 0"
+
+        - name: Verify that the AUT (Application Under Test) is running 
+          shell: >
+            kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers
+            -o jsonpath={.items[0].status.phase}
+          args:
+            executable: /bin/bash
+          register: app_status
+          until: "'Running' in app_status.stdout"
+          delay: 30
+          retries: 12
+
+        - name: Obtaining the application pod name through its label.
+          shell: >
+             kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers 
+             -o jsonpath='{.items[0].metadata.name}'
+          args:
+            executable: /bin/bash
+          register: app_pod
+
+        - name: Obtaining the PVC through the application pod
+          shell: >
+            kubectl get pods {{ app_pod.stdout }} -n {{ app_ns }} 
+            --no-headers -o custom-columns=:..claimName
+          args:
+            executable: /bin/bash
+          register: pvc_name
+
+        - name: Recording PVC name in a variable.
+          set_fact:
+            pvc: "{{ pvc_name.stdout }}"
+
+        ## INCLUDING THE CHAOSLIB UTILITY TO KILL THE STORAGE REPLICA POD
+
+        - include: /chaoslib/openebs/jiva_replica_pod_failure.yaml
+          app_pvc: "{{ pvc }}"
+
+        ## POST-CHAOS APPLICATION LIVENESS CHECK
+
+        - name: Verify AUT existence post fault-injection
+          shell: >
+            kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers
+            -o jsonpath={.items[0].status.phase}
+          args:
+            executable: /bin/bash
+          register: app_status
+          until: "'Running' in app_status.stdout"
+          delay: 30
+          retries: 12
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue: 
+        - set_fact: 
+            flag: "Fail"
+
+      always: 
+
+        ## RECORD END-OF-TEST IN LITMUS RESULT CR
+ 
+        - name: Generate the litmus result CR to reflect EOT (End of Test) 
+          template: 
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars: 
+            test: "{{ test_name }}"
+            chaostype: "single-replica-failure"
+            app: ""
+            phase: completed
+            verdict: "{{ flag }}"
+           
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          args:
+            executable: /bin/bash
+          register: lr_status 
+          failed_when: "lr_status.rc != 0"
+           

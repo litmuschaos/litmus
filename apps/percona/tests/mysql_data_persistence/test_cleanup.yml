@@ -36,3 +36,8 @@
       retries: 12
   when: "'openebs-standard' in lookup('env','PROVIDER_STORAGE_CLASS')"
 
+- include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yaml
+  vars:
+    action: "deletepumba"
+    namespace: 'litmus'
+  when: chaos_util ==  "APP_POD_KILL/PUMBA"

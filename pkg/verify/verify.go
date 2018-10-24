@@ -317,7 +317,7 @@ func (v *KubeInstallVerify) isDeleteAnyRunningPod(alias string) (yes bool, err e
 	}
 
 	if len(strings.TrimSpace(c.Labels)) == 0 {
-		err = fmt.Errorf("unable to fetch component '%s' '%s': component labels are missing '%s'", c.Kind, alias)
+		err = fmt.Errorf("unable to fetch component '%s': component labels are missing '%s'", c.Kind, alias)
 		return
 	}
 
@@ -354,7 +354,7 @@ func (v *KubeInstallVerify) isDeleteOldestRunningPod(alias string) (yes bool, er
 
 	// check for presence of labels
 	if len(strings.TrimSpace(c.Labels)) == 0 {
-		err = fmt.Errorf("unable to fetch component '%s' '%s': component labels are missing '%s'", c.Kind, alias)
+		err = fmt.Errorf("unable to fetch component '%s': component labels are missing '%s'", c.Kind, alias)
 		return
 	}
 

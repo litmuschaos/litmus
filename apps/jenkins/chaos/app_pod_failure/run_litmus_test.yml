@@ -1,0 +1,73 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: application-pod-failure-
+  namespace: litmus
+spec:
+  template:
+    metadata:
+      labels:
+        name: application-pod-failure
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: openebs/ansible-runner:ci
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            #value: log_plays
+            #value: actionable
+            value: default
+
+          - name: APP_NAMESPACE
+            value: app-jenkins-ns 
+
+          - name: APP_LABEL
+            value: 'app=jenkins-app'
+
+          - name: LIVENESS_APP_LABEL
+            value: ""
+
+          - name: LIVENESS_APP_NAMESPACE
+            value: ""
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./jenkins/chaos/app_pod_failure/test.yml -i /etc/ansible/hosts -vv; exit 0"]
+        volumeMounts:
+          - name: logs
+            mountPath: /var/log/ansible
+        tty: true
+      - name: logger
+        image: openebs/logger
+        env:
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: MY_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          # spec.volumes is not supported via downward API
+          - name: MY_POD_HOSTPATH
+            value: /mnt/chaos/application-pod-failure
+        command: ["/bin/bash"]
+        args: ["-c", "./logger.sh -d ansibletest -r maya,openebs,pvc,jenkins; exit 0"]
+        volumeMounts:
+          - name: kubeconfig
+            mountPath: /root/admin.conf
+            subPath: admin.conf
+          - name: logs
+            mountPath: /mnt
+        tty: true
+      volumes:
+        - name: kubeconfig
+          configMap:
+            name: kubeconfig
+        - name: logs
+          hostPath:
+            path: /mnt/chaos/application-pod-failure
+            type: ""
+
