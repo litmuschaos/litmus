@@ -99,9 +99,11 @@
          app_ns: 'litmus'
          when: chaos_util ==  "APP_NODE_DRAIN/KUBECTL"
          
-       - include: /chaoslib/pumba/pod_failure_by_sigkill.yaml
-         app: "{{ percona_pod_name }}"
-         app_ns: 'litmus'
+       - include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yaml
+         vars:
+            action: "killapp"
+            app_pod: "{{ percona_pod_name }}"
+            namespace: 'litmus'
          when: chaos_util ==  "APP_POD_KILL/PUMBA"
 
        - name: Confirm mysql pod status is running
