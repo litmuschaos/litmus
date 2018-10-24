@@ -26,7 +26,7 @@
             dest: litmus-result.yaml
           vars:
             test: "{{ test_name }}"
-            app: ""
+            app: "prometheus"
             chaostype: ""
             phase: in-progress
             verdict: none
@@ -108,7 +108,7 @@
             dest: litmus-result.yaml
           vars:
             test: "{{ test_name }}"
-            app: ""
+            app: "prometheus"
             chaostype: ""
             phase: completed
             verdict: "{{ flag }}"
