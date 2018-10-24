@@ -1,0 +1,59 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: litmus-k8s-snapshot-
+  namespace: litmus
+spec:
+  template:
+    metadata:
+      name: litmus
+      labels:
+        app: k8s-snapshot-litmus
+
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: openebs/ansible-runner:ci
+        imagePullPolicy: Always
+
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: default
+
+          - name: APP_LABEL
+            value: 'name=percona'
+
+            # Application pvc
+          - name: APP_PVC
+            value: percona-mysql-claim
+
+            # Application namespace
+          - name: APP_NAMESPACE
+            value: app-percona-ns 
+
+          - name: SNAPSHOT
+            value: snap-percona
+
+          - name: CLONE_NAME
+            value: percona-clone-mysql-claim
+
+          - name: PROVIDER_STORAGE_CLASS
+            value: openebs-snapshot-promoter
+
+          - name: DB_USER_NAME
+            value: root
+
+          - name: DB_PASSWORD
+            value: k8sDem0
+
+          - name: CLONE_VOL_CLAIM
+            value: snap-mysql-claim
+
+          - name: CLONE_APP_NAME
+            value: percona-new
+            
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./percona/functional/k8s_snapshot/test.yml -i /etc/ansible/hosts -vv; exit 0"]

@@ -1,0 +1,26 @@
+---
+# This utility creates snapshot using K8s external storage API.
+#
+
+- name: Update the snapshot template with the values provided.
+  template:
+     src: /funclib/kubectl/k8s_snapshot_clone/snapshot.j2
+     dest: snapshot.yml
+
+- name: Creating the volume snapshot
+  shell: kubectl apply -f snapshot.yml
+  args:
+    executable: /bin/bash
+  register: sp
+  until: '"created" in sp.stdout'
+  delay: 30
+  retries: 5
+
+- name: Check if the snapshot is created successfully
+  shell: kubectl describe volumesnapshot {{ snapshot_name }} -n {{ app_ns }} | grep Message
+  args:
+    executable: /bin/bash
+  register: sp_out
+  until: "'Snapshot created successfully' in sp_out.stdout"
+  delay: 30
+  retries: 15
