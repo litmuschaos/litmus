@@ -34,7 +34,7 @@
           shell: kubectl get pod {{ rep_pod.stdout }} -n {{ namespace }} -o jsonpath='{.status.phase}'
           register: status
           until: "'Running' in status.stdout"
-          delay: 10
+          delay: 30
           retries: 10
  
         - name: Getting the Node name on which replica-pod is scheduled
@@ -77,6 +77,9 @@
             flag: "Fail"           
   
       always:    
+
+        - name: Uncordon node                          #This Task is added inside always becouse if the fails also node will beavlaible for scheduling.
+         shell: kubectl uncordon {{ node_name.stdout }}
          
         - name: Generate the litmus result CR to reflect EOT (End of Test) 
           template: 
@@ -96,5 +99,4 @@
           register: lr_status
           failed_when: "lr_status.rc != 0" 
 
-        - name: Uncordon node
-          shell: kubectl uncordon {{ node_name.stdout }}  
+         
