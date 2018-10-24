@@ -17,7 +17,6 @@ limitations under the License.
 package exec
 
 import (
-	"reflect"
 	"testing"
 )
 
@@ -38,7 +37,7 @@ func TestNewShellExec(t *testing.T) {
 	for k, v := range testCases {
 		t.Run(k, func(t *testing.T) {
 
-			if !reflect.DeepEqual(v.binary, v.expectValue.binary) {
+			if v.binary != v.expectValue.binary {
 				t.Errorf("expected %s got %s", v.expectValue.binary, v.binary)
 			}
 		})
