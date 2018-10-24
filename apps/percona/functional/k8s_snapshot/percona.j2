@@ -15,11 +15,6 @@ spec:
       labels: 
         name: {{ clone_app }}
     spec:
-      tolerations:
-      - key: "ak"
-        value: "av"
-        operator: "Equal"
-        effect: "NoSchedule"
       containers:
         - resources:
             limits:
