@@ -1,9 +1,9 @@
 # Running a Complete Test Suite
 
-The Litmus test suite can be run on a kubernetes cluster using an ansible-based executor framework. 
+The Litmus test suite can be run on a Kubernetes cluster using an Ansible-based executor framework. 
 This involves: 
 
-- Setting up ansible on any linux machine (ansible test harness), with SSH access to the kubernetes cluster 
+- Setting up Ansible on any Linux machine (Ansible test harness), with SSH access to the Kubernetes cluster 
 - Generating the ansible inventory file with host information (master/control node & hosts)
 - Modifying a global variables file to:
    
@@ -11,8 +11,8 @@ This involves:
   - Select test Category (call or subset)
   - Enable/Disable some services like log collection, notifications etc..,
 
-Follow the executor/README for detailed instructions on how to perform above steps. Once these pre-requisites 
-have been met, execute the following on the ansible test harness:
+Follow the executor/README for detailed instructions on how to perform the above steps. Once these pre-requisites 
+have been met, execute the following on the Ansible test harness:
 
 ```
 ./litmus/executor/ansible/run-litmus.sh
