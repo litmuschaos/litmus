@@ -95,3 +95,6 @@
             executable: /bin/bash
           register: lr_status
           failed_when: "lr_status.rc != 0" 
+
+        - name: Uncordon node
+          shell: kubectl uncordon {{ node_name.stdout }}  

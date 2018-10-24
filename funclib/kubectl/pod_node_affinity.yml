@@ -25,11 +25,8 @@
 
 - name: Uncordoning Node
   shell: kubectl uncordon {{ node_name.stdout }}
-
-- name: Checking whether Node is un-cordoned
-  shell: kubectl get nodes {{ node_name.stdout }} -o jsonpath='{.spec.unschedulable}'
-  register: result
-  failed_when: "'true' not in result.stdout" 
+  register: uncordon_status
+  failed_when: "'uncordoned' not in uncordon_status.stdout"
 
 - name: Checking for Running status of pod
   shell: kubectl get pod {{ new_pod_name.stdout }} -n {{ ns }} -o jsonpath='{.status.phase}'
