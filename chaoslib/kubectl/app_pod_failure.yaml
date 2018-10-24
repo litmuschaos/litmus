@@ -1,0 +1,12 @@
+- name: Get the application pod name 
+  shell: kubectl get pod -l {{ label }} -n {{ namespace }} -o=custom-columns=NAME:".metadata.name" --no-headers
+  args:
+    executable: /bin/bash
+  register: app_pod
+
+- name: Kill the application pod 
+  shell: >
+    kubectl delete pod {{ app_pod.stdout }} -n {{ app_ns }}
+  args:
+    executable: /bin/bash
+
