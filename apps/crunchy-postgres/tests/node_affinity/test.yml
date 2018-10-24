@@ -78,7 +78,7 @@
   
       always:    
 
-        - name: Uncordon node                          #This Task is added inside always becouse if the fails also node will beavlaible for scheduling.
+        - name: Uncordon node                          #This Task is added inside always because if it the fails node will be available for scheduling.
          shell: kubectl uncordon {{ node_name.stdout }}
          
         - name: Generate the litmus result CR to reflect EOT (End of Test) 
