@@ -29,6 +29,7 @@
           shell: sed -i '1s/^/{{ ssh_user }}:/' $HOME/.ssh/{{ ssh_key_fn }}.pub
           args:
             executable: /bin/bash
+            warn: False
 
         - name: create GKE cluster
           gcp_container_cluster:
@@ -47,6 +48,12 @@
               - https://www.googleapis.com/auth/cloud-platform
             state: present
           no_log: True
+
+        - name: Enable auto-scaling
+          shell: gcloud container clusters update {{ cluster_name }} --enable-autoscaling --min-nodes {{ initial_node_count }} --max-nodes {{ max_node_count }} --zone={{ zone }} --node-pool default-pool
+          args:
+            executable: /bin/bash
+            warn: False
 
         - name: Save cluster info
           lineinfile:
