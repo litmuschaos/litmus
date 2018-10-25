@@ -1,0 +1,4 @@
+deployers:/apps/percona/deployers/run_litmus_test.yml:percona-deployment-litmus
+loadgen:/apps/percona/workload/run_litmus_test.yml:percona-loadgen-litmus
+chaos:apps/percona/chaos/openebs_replica_network_delay:openebs-replica-network-delay-litmus
+

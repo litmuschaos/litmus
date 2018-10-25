@@ -1,0 +1,47 @@
+---
+- hosts: localhost
+  connection: local
+
+  tasks:
+    - block:
+
+        - name: Running the defined application 
+          shell: kubectl create -f {{ PATH }}
+
+        - name: Getting status of JOB
+          shell: kubectl get pod -n litmus  -l app={{ LABEL }} -o jsonpath='{.items[0].status.phase}'
+          register: status
+          until: "'Succeeded' in status.stdout"
+          delay: 30
+          retries: 30
+
+        - name: Checking the status of Ansible-test container
+          shell: kubectl get pod -n litmus -l app={{ LABEL }} -o jsonpath='{.items[0].status.containerStatuses[0].ready}'
+          register: container_status
+          until: "'false' in container_status.stdout"
+
+        - name: Getting result CR
+          shell: kubectl get lr {{ TESTNAME }} -o jsonpath='{.spec.testStatus.result}'   
+          register: result
+          until: "'none' not in result.stdout"
+          delay: 20
+          retries: 10
+          
+        - name: Updating the test-result csv
+          lineinfile:
+            path: /executor/ansible/result.csv
+            state: present
+            line: '{{ TYPE }} : {{ TESTNAME }} : {{ result.stdout }}'
+
+      rescue:
+        - set_fact:
+            flag: "Fail"
+          
+        - name: Updating the test-result csv
+          lineinfile:
+            path: /executor/ansible/result.csv
+            state: present
+            line: '{{ TYPE }} : {{ TESTNAME }} : {{ flag }}'  
+          
+       
+                                    
