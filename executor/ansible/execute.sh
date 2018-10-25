@@ -19,5 +19,5 @@ else
  var="$(cat result.csv | grep Pass | wc -l)"
  echo "Number of test Passed: $var" >> result.csv
  cat result.csv
- #rm result.csv
+ rm result.csv
 fi

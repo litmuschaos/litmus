@@ -29,7 +29,7 @@
           
         - name: Updating the test-result csv
           lineinfile:
-            path: /home/shashank/Desktop/test/result.csv
+            path: /executor/ansible/result.csv
             state: present
             line: '{{ TYPE }} : {{ TESTNAME }} : {{ result.stdout }}'
 
@@ -39,7 +39,7 @@
           
         - name: Updating the test-result csv
           lineinfile:
-            path: /home/shashank/Desktop/test/result.csv
+            path: /executor/ansible/result.csv
             state: present
             line: '{{ TYPE }} : {{ TESTNAME }} : {{ flag }}'  
           
