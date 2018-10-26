@@ -15,7 +15,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: openebs/ansible-runner:ci
+        image: dargas/ansible-runner:ci
         imagePullPolicy: Always
         env: 
           - name: mountPath

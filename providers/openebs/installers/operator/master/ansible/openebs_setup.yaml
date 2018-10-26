@@ -176,7 +176,7 @@
           failed_when: "'m-apiserver status:  running' not in result_vers.stdout"
 
         - name: Getting the number of nodes
-          shell: kubectl get nodes --no-headers | grep -v master | wc -l
+          shell: kubectl describe node | grep -i taints | grep none | wc -l
           #  kubectl get nodes -o custom-columns=:spec.taints[*].key
           #  --no-headers | grep -iv master | wc -l
           args:
@@ -188,7 +188,7 @@
           args:
             executable: /bin/bash
           register: ndm_count
-          until: (node_count.stdout)|int == (ndm_count.stdout)|int
+          until: (node_count.stdout)|int >= (ndm_count.stdout)|int
           delay: 30
           retries: 100
 

@@ -4,19 +4,20 @@ kind: Job
 metadata:
   generateName: liveness-pg-
   namespace: litmus
-
 spec:
   template:
     metadata:
       name: liveness
-   
+      labels:
+        liveness: node-chaos
     spec:
       restartPolicy: Never
+      nodeSelector:
+        kubernetes.io/hostname: test-node
       containers:
       - name: liveness
-        image: openebs/postgres-client
+        image: openebs/tests-postgresql-client
         imagePullPolicy: Always
-
         env: 
 
             # Time period (in sec) b/w retries for DB init check
@@ -37,11 +38,11 @@ spec:
     
             # No of retries after a db_connect failure before declaring liveness fail
           - name: LIVENESS_RETRY_COUNT
-            value: "6"
+            value: "2"
 
             # Namespace in Which Postgres is Running
           - name: NAMESPACE
-            value: postgres
+            value: app-pgres-ns
 
             # Service Name of postgres 
           - name: SERVICE_NAME
@@ -65,3 +66,8 @@ spec:
 
         command: ["/bin/bash"]
         args: ["-c", "python ./liveness.py ; exit 0"]
+      tolerations:
+      - key: "run"
+        operator: "Equal"
+        value: "litmuspod"
+        effect: "NoSchedule"

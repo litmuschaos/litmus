@@ -14,6 +14,8 @@ spec:
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
+      nodeSelector:
+        kubernetes.io/hostname: test-node 
       containers:
       - name: ansibletest
         image: openebs/ansible-runner:ci
@@ -44,3 +46,8 @@ spec:
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./crunchy-postgres/deployers/test.yml -i /etc/ansible/hosts -v; exit 0"]
+      tolerations:
+      - key: "run"
+        operator: "Equal"
+        value: "litmuspod"
+        effect: "NoSchedule"
