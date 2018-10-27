@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/openebs/litmus.svg?branch=master)](https://travis-ci.org/openebs/litmus)
 [![Docker Pulls](https://img.shields.io/docker/pulls/openebs/ansible-runner.svg)](https://hub.docker.com/r/openebs/ansible-runner)
 
-Litmus is chaos engineering for stateful workloads on Kubernetes -> hopefully without learning curves.  Our vision includes  enabling end users to quickly specify needed scenarios using English descriptions.
+Litmus is chaos engineering for stateful workloads on Kubernetes -> hopefully without learning curves.  Our vision includes enabling end users to quickly specify needed scenarios using English descriptions.
 
 https://www.openebs.io/litmus
 
@@ -11,12 +11,12 @@ https://www.openebs.io/litmus
 
 The primary objective of Litmus is to ensure a consistent and reliable behavior of workloads running in Kubernetes. It also aims to catch hard-to-test bugs and unacceptable behaviors before users do. Litmus strives to detect real-world issues which escape during unit and integration tests.
 
-While Litmus tests and metrics were developed initially to test if a given Kubernetes deployment is suitable for running on OpenEBS (_a kubernetes dynamic storage provisioner_); the use cases are broader and overall system resilience can be characterized before and during operations.  To learn more about OpenEBS please visit: www.openEBS.io
+While Litmus tests and metrics were developed initially to test if a given Kubernetes deployment is suitable for running on OpenEBS (_a Kubernetes dynamic storage provisioner_); the use cases are broader and overall system resilience can be characterized before and during operations.  To learn more about OpenEBS please visit: www.openEBS.io
 
 ## How Litmus is different from others
 Litmus is an overall project that incorporates pieces of a typical chaos engineering environment to deliver a more complete solution to Litmus users.
 
-Also, Litmus incorporates some innovations in translating end user stories directly into scenarios. Litmus accepts user stories in simple English text & converts them to logic.  Litmus translates each statement present in a user story into corresponding Kubernetes commands. This provides a transparent view to the users if any particular statement was executed successfully or resulted in failures.
+Also, Litmus incorporates some innovations in translating end-user stories directly into scenarios. Litmus accepts user stories in simple English text & converts them to logic.  Litmus translates each statement present in a user story into corresponding Kubernetes commands. This provides a transparent view to the users if any particular statement was executed successfully or resulted in failures.
 
 Additionally, test logic is packaged as dedicated containers which of course makes them portable across Kubernetes deployments. This containerization also helps to integrate these containers into CI/CD environments.
 
@@ -36,7 +36,7 @@ Users have a Kubernetes environment with a given stateful workload and underlyin
 
 - Ensure that the desired storage operators are actually available on a given Kubernetes cluster.
 
-- Clone the Litmus repo and setup a dedicated RBAC for Litmus.
+- Clone the Litmus repo and set up a dedicated RBAC for Litmus.
 
   ```
   git clone https://github.com/openebs/litmus.git
@@ -66,8 +66,8 @@ constituting a separate test. Select a workload and follow the instructions unde
 
   The above test runs a Kubernetes job that:
   - Verifies that the StorageClass mentioned (default: OpenEBS) is loaded in the cluster
-  - Launches mysql application with storage
-  - Runs a sample TPC-C benchmark against mysql application
+  - Launches MySQL application with storage
+  - Runs a sample TPC-C benchmark against the MySQL application
   - Provides the benchmark results
   - Reverts system state/performs clean-up by removing deployments launched during the test
 
@@ -78,7 +78,7 @@ saving the logs, type of storage (StorageClass) to be used, etc. This type of de
 - Notes:
 
   - To run the test, please ensure *kubectl create* is used as against *kubectl apply* as the test job uses the `generateName` API to autogenerate the
-  job name. This is to ensure a re-run of the job w/o deleting the previous instance doesn't throw an error.
+ job name. This is to ensure a re-run of the job w/o deleting the previous instance doesn't throw an error.
 
   - To delete the job, use the `kubectl delete job <jobname>`. Deletion using *-f spec* can complain about non-matching name resources.
 
