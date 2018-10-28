@@ -13,6 +13,12 @@ PACKAGES = $(shell go list ./... | grep -v '/vendor/')
 # list of playbooks which should be validated
 PLAYBOOKS = $(shell find ./apps -iname 'test.yml' -printf '%P\n')
 
+# Detect gopath
+ifndef $(GOPATH)
+    GOPATH=$(shell go env GOPATH)
+    export GOPATH
+endif
+
 .PHONY: all
 all: format metalint compile all-tools ansible-syntax-check
 
@@ -36,10 +42,8 @@ godeps:
 	#@go get -u -v github.com/golang/lint/golint
 	@go get -u -v golang.org/x/lint/golint
 	@go get -u -v golang.org/x/tools/cmd/goimports
-	@go get -u -v github.com/golang/dep/cmd/dep
 	@go get -u -v github.com/DATA-DOG/godog/cmd/godog
-	@go get -u -v github.com/alecthomas/gometalinter
-	@gometalinter --install
+	@which gometalinter > /dev/null || curl -L https://git.io/vp6lP | BINDIR=$(GOPATH)/bin sh
 
 _build_check_docker:
 	@if [ $(IS_DOCKER_INSTALLED) -eq 1 ]; \

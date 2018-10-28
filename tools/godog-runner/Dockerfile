@@ -11,12 +11,8 @@ RUN curl -L https://storage.googleapis.com/kubernetes-release/release/${KUBE_LAT
 
 # Install go tools
 RUN go get github.com/DATA-DOG/godog/cmd/godog
-RUN go get -u github.com/golang/dep/cmd/dep
 
 # Add source code
 RUN mkdir -p /go/src/github.com/openebs/litmus
 ADD . /go/src/github.com/openebs/litmus/
 WORKDIR /go/src/github.com/openebs/litmus/
-
-# Go dep
-RUN dep ensure
