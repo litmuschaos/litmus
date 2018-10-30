@@ -9,7 +9,10 @@
        app: ""
        chaostype: ""
        phase: in-progress
-       verdict: "{{ flag }}"
+       verdict: none
+
+   - name: Analyze the cr yaml
+     shell: cat litmus-result.yaml
 
    - name: Apply the litmus result CR
      shell: kubectl apply -f litmus-result.yaml
@@ -31,6 +34,9 @@
        chaostype: ""
        phase: completed
        verdict: "{{ flag }}"
+
+   - name: Analyze the cr yaml
+     shell: cat litmus-result.yaml
 
    - name: Apply the litmus result CR
      shell: kubectl apply -f litmus-result.yaml

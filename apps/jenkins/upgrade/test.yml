@@ -27,23 +27,10 @@
 
         ## RECORD START-OF-TEST IN LITMUS RESULT CR
 
-        - name: Generate the litmus result CR to reflect SOT (Start of Test)
-          template:
-            src: /litmus-result.j2
-            dest: litmus-result.yaml
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
           vars:
-            test: "{{ test_name }}"
-            chaostype: ""
+            status: 'SOT'
             app: "jenkins"
-            phase: in-progress
-            verdict: none
-
-        - name: Apply the litmus result CR
-          shell: kubectl apply -f litmus-result.yaml
-          args:
-            executable: /bin/bash
-          register: lr_status
-          failed_when: "lr_status.rc != 0"
 
         ## DISPLAY APP INFORMATION
 
@@ -102,21 +89,7 @@
 
         ## RECORD END-OF-TEST IN LITMUS RESULT CR
 
-        - name: Generate the litmus result CR to reflect EOT (End of Test)
-          template:
-            src: /litmus-result.j2
-            dest: litmus-result.yaml
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
           vars:
-            test: "{{ test_name }}"
-            chaostype: ""
+            status: 'EOT'
             app: "jenkins"
-            phase: completed
-            verdict: "{{ flag }}"
-
-        - name: Apply the litmus result CR
-          shell: kubectl apply -f litmus-result.yaml
-          args:
-            executable: /bin/bash
-          register: lr_status
-          failed_when: "lr_status.rc != 0"
-
