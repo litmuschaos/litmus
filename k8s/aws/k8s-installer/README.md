@@ -38,12 +38,32 @@ ansible-playbook pre-requisite.yml -vv --extra-vars "vpc_name=<name-of-vpc>"
 ansible-playbook create-aws-cluster.yml -vv --extra-vars "k8s_version=<Kubernetes_version>"
 ```
 
+example:  
+
+```bash
+ansible-playbook create-aws-cluster.yml -vv --extra-vars "k8s_version=1.10.0"
+```
+
 **Optional**
 
-- User can also provide the Cluster name at the time of creation in `--extra-vars`
+--extra-vars
+
+1 - Set Cluster Name
 
 ```bash
 ansible-playbook create-aws-cluster.yml -vv --extra-vars "k8s_version=<Kubernetes_version> cluster_name=<name-of-cluster>"
+```
+
+2 - Taint Node with specific key, value and effect
+
+```bash
+ansible-playbook create-aws-cluster.yml -vv --extra-vars "k8s_version=<Kubernetes_version> taint_value=<key=value:effect>"
+```
+
+example:
+
+```bash
+ansible-playbook create-aws-cluster.yml -vv --extra-vars "k8s_version=1.10.0 taint_value=ak=av:NoSchedule"
 ```
 
 ### Deleting AWS cluster
