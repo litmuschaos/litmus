@@ -12,9 +12,6 @@ kind: StorageClass
 metadata:
   name: {{ lookup('env','JIVA_STORAGECLASS_NAME') }}
   annotations:
-    cas.openebs.io/create-volume-template: jiva-volume-create-default-0.7.0
-    cas.openebs.io/delete-volume-template: jiva-volume-delete-default-0.7.0
-    cas.openebs.io/read-volume-template: jiva-volume-read-default-0.7.0
     cas.openebs.io/config: |
       - name: ControllerImage
         value: {{ lookup('env','OPENEBS_IO_JIVA_CONTROLLER_IMAGE') }}
