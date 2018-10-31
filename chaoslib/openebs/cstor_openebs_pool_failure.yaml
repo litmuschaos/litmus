@@ -15,10 +15,18 @@
     executable: /bin/bash
   register: sc
 
-- name: Get the pool deployment of SC
+- name: Derive SPC from SC
+  shell: >
+    kubectl get sc {{ sc.stdout }} -n {{ operator_ns }} -o yaml |
+    grep -A 1 -w "name: StoragePoolClaim" | grep -w value | awk '{print $2}'
+  args:
+    executable: /bin/bash
+  register: spc
+
+- name: Get the pool deployment of SPC
   shell: >
     kubectl get deployment -n {{ operator_ns }}
-    -l openebs.io/storage-pool-claim={{ sc.stdout }}
+    -l openebs.io/storage-pool-claim={{ spc.stdout }}
     --no-headers | shuf -n1 | awk '{print $1}'
   args:
     executable: /bin/bash
