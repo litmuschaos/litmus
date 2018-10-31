@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+//go:generate mockgen -package kubectl -source=kubectl.go -destination kubectl_mock.go
+
 package kubectl
 
 import (
@@ -170,7 +172,7 @@ func ArePodsRunning(k KubeRunner) (yes bool, err error) {
 	isReadyArr := strings.Split(isReady, " ")
 
 	if contains(isReadyArr, "false") {
-		err = fmt.Errorf("pod(s) are not running: '%#v' '%#v'", k, isReadyArr)
+		err = fmt.Errorf("pod(s) are not running: '%#v'", isReadyArr)
 		return
 	}
 
@@ -178,7 +180,7 @@ func ArePodsRunning(k KubeRunner) (yes bool, err error) {
 	if contains(isReadyArr, "true") {
 		yes = true
 	} else {
-		err = fmt.Errorf("status of pod(s) could not be determined: '%#v' '%#v'", k, isReadyArr)
+		err = fmt.Errorf("status of pod(s) could not be determined: '%#v'", isReadyArr)
 	}
 
 	return
