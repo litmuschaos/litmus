@@ -62,7 +62,7 @@
   args:
     executable: /bin/bash
   register: cstor_pool_pod_cnt
-  until: "cstor_pool_pod_cnt.stdout | int == 1 | int"
+  until: "cstor_pool_pod_cnt.stdout == \"1\""
   delay: 30
   retries: 10
 
@@ -76,5 +76,8 @@
 
 - name: Compare resourceVersions
   debug:
-    msg: "Verified pool pods were restarted by fault injection"
-  failed_when: "pool_deployment_revisionSource_before.stdout | int == pool_deployment_revisionSource_after.stdout | int"
+    msg:
+      - "Verified pool pods were restarted by fault injection"
+      - "Before: {{ pool_deployment_revisionSource_before.stdout }}"
+      - "After: {{ pool_deployment_revisionSource_after.stdout }}"
+  failed_when: "pool_deployment_revisionSource_before.stdout == pool_deployment_revisionSource_after.stdout"
