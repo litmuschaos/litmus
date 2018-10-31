@@ -2,12 +2,14 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: litmus-storageclass-setup-v0.7
+  name: litmus-storageclass-setup
   namespace: litmus 
 spec:
   template:
     metadata:
       name: litmus
+      labels:
+        provider: openebs-sc-setup
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
@@ -16,10 +18,8 @@ spec:
         image: openebs/ansible-runner:ci
         imagePullPolicy: Always
         env: 
-          - name: mountPath
-            value: /mnt/openebs
           - name: ANSIBLE_STDOUT_CALLBACK
-            value: actionable
+            value: default
           - name: RUN_ID
             value:
           # Enable storageclass
@@ -33,7 +33,7 @@ spec:
           - name: JIVA_STORAGECLASS_NAME
             value: openebs-storageclass
           - name: STORAGE_PATH
-            value: /var/openebs
+            value: /mnt/openebs
           - name: OPENEBS_IO_JIVA_REPLICA_COUNT
             value: "3"
           - name: OPENEBS_IO_JIVA_CONTROLLER_IMAGE
