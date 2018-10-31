@@ -38,20 +38,6 @@
   version = "v1.1.1"
 
 [[projects]]
-  branch = "master"
-  digest = "1:b6ce904eb33c378cdaa5e4c47de81adf962432d1179db174b22858371df1f34d"
-  name = "github.com/openebs/litmus"
-  packages = [
-    "pkg/exec",
-    "pkg/kubectl",
-    "pkg/time",
-    "pkg/util",
-    "pkg/verify",
-  ]
-  pruneopts = "UT"
-  revision = "10767b6990967e0b8ad5e0ba92f8031d9ee97380"
-
-[[projects]]
   digest = "1:40e195917a951a8bf867cd05de2a46aaf1806c50cf92eebf4c16f78cd196f747"
   name = "github.com/pkg/errors"
   packages = ["."]
@@ -102,11 +88,6 @@
     "github.com/DATA-DOG/godog/gherkin",
     "github.com/ghodss/yaml",
     "github.com/golang/mock/gomock",
-    "github.com/openebs/litmus/pkg/exec",
-    "github.com/openebs/litmus/pkg/kubectl",
-    "github.com/openebs/litmus/pkg/time",
-    "github.com/openebs/litmus/pkg/util",
-    "github.com/openebs/litmus/pkg/verify",
     "github.com/pkg/errors",
     "github.com/stretchr/testify/require",
   ]
