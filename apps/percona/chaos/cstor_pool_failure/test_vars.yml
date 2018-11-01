@@ -1,4 +1,4 @@
-test_name: cstor-openebs-pool-failure
+test_name: cstor-pool-failure
 namespace: "{{ lookup('env','APP_NAMESPACE') }}"
 label: "{{ lookup('env','APP_LABEL') }}"
 pvc: "{{ lookup('env','APP_PVC') }}"
