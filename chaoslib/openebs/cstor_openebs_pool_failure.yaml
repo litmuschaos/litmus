@@ -12,9 +12,6 @@
     kubectl get pvc {{ app_pvc }}
     -o custom-columns=:spec.storageClassName -n {{ app_ns }}
     --no-headers
-
-#    kubectl get pvc {{ app_pvc }} -n {{ app_ns }}
-#    -o json | jq '.spec.storageClassName'
   args:
     executable: /bin/bash
   register: sc
@@ -30,13 +27,16 @@
 
 - name: Set default value for replicacount if it is empty
   set_fact:
-    replicacount: 3
-  when: {{ replicacount.stdout }} == ""
+    replicacnt: 3
+  when: "replicacount.stdout == \"\""
+
+- name: Set default value for replicacount if it is non-empty
+  set_fact:
+    replicacnt: replicacount.stdout | int
+  when: "replicacount.stdout != \"\""
 
 - name: Derive SPC from SC - not required
   shell: >
-#    kubectl get sc {{ sc.stdout }} -n {{ operator_ns }} -o yaml |
-#    grep -A 1 -w "name: StoragePoolClaim" | grep -w value | awk '{print $2}'
     kubectl get sc {{ sc.stdout }} -n {{ operator_ns }} -o json |
     jq '.metadata.annotations."cas.openebs.io/config"' -r |
     grep -A 1 -w "name: StoragePoolClaim" | grep -w value | awk '{print $2}'
@@ -47,7 +47,7 @@
 - name: Get CVR count from pv
   shell: >
     kubectl get cvr -n {{ operator_ns }}
-    -l openebs.io/persistent-volume={{ pv.std_out }} --no-headers -o json |
+    -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers -o json |
     jq '.items | length'
   args:
     executable: /bin/bash
@@ -56,28 +56,25 @@
 - name: Compare ReplicaCount and cvr_count to verify provisioning
   debug:
     msg:
-      - "replicaCount: {{ replicacount.stdout }}"
-      - "cvr_count: {{ cvr_count.stdout }}"
-  failed_when: "replicacount.stdout != cvr_count.stdout"
+      - "replicaCount: replicacount.stdout"
+      - "replicaCountInt: replicacount.stdout | int"
+      - "replicacnt: replicacnt"
+      - "cvr_count: cvr_count.stdout | int"
+  failed_when: "replicacnt != cvr_count.stdout | int"
 
 - name: Get CVR list from pv
   shell: >
     kubectl get cvr -n {{ operator_ns }}
-    -l openebs.io/persistent-volume={{ pv.std_out }} --no-headers -o json |
+    -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers -o json |
     jq '.items[].status.phase'
   args:
     executable: /bin/bash
   register: cvr_status_phase
 
-- name: Check status of cvr
-  failed_when: "{{ item }} != \"Online\" "
-  with_items:
-    - "{{ cvr_status_phase.stdout_lines }}"
-
 - name: Get the pool deployment of SPC
   shell: >
     kubectl get cvr -n {{ operator_ns }}
-    -l openebs.io/persistent-volume={{ pv.std_out }} --no-headers -o json |
+    -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers -o json |
     jq '.items[].metadata.labels."cstorpool.openebs.io/name"' |
     shuf -n1 | awk '{print $1}'
   args:
@@ -114,7 +111,7 @@
   args:
     executable: /bin/bash
   register: cstor_pool_pod_cnt
-  until: "{{ cstor_pool_pod_cnt.stdout }} == \"1\""
+  until: "cstor_pool_pod_cnt.stdout == \"1\""
   delay: 30
   retries: 10
 
@@ -130,6 +127,6 @@
   debug:
     msg:
       - "Verified pool pods were restarted by fault injection"
-      - "Before: {{ pool_deployment_revisionSource_before.stdout }}"
-      - "After: {{ pool_deployment_revisionSource_after.stdout }}"
-  failed_when: "{{ pool_deployment_revisionSource_before.stdout }} == {{ pool_deployment_revisionSource_after.stdout }}"
+      - "Before: pool_deployment_revisionSource_before.stdout"
+      - "After: pool_deployment_revisionSource_after.stdout"
+  failed_when: "pool_deployment_revisionSource_before.stdout == pool_deployment_revisionSource_after.stdout"
