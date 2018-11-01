@@ -1,57 +1,85 @@
 ---
-apiVersion: v1
-kind: Pod
+apiVersion: batch/v1
+kind: Job
 metadata:
-  generateName: mysql-liveness-check-
-  labels:
-    name: mysql-liveness-check
+  generateName: percona-liveness-
+  namespace: litmus
 spec:
+  template:
+    metadata:
+      name: percona-liveness
+      namespace: litmus
+      labels:
+        # label used to track percona liveness job by ci-tool/test
+        liveness: percona-liveness
 
-  restartPolicy: Never
+        # label used for mass-liveness check upon infra-chaos
+        infra-aid: liveness
 
-  #affinity:
-  #  podAffinity: # (/podAntiAffinity)
-  #    requiredDuringSchedulingIgnoredDuringExecution:
-  #    - labelSelector:
-  #        matchExpressions:
-  #        - key: name
-  #          operator: In
-  #          values: 
-  #          - litmus # (/percona) 
-  #      topologyKey: kubernetes.io/hostname
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
 
-  containers:
-  - name: mysql-liveness-check
-    image: openebs/tests-mysql-client
-    env:
-        # Time period (in sec) b/w retries for DB init check
-      - name: INIT_WAIT_DELAY
-        value: "30"
+      #nodeSelector:
+      #  kubernetes.io/hostname:
 
-        # No of retries for DB init check 
-      - name: INIT_RETRY_COUNT
-        value: "10"
+      tolerations:
+        - key: "infra-aid"
+          value: "observer"
+          operator: "Equal"
+          effect: "NoSchedule"
+ 
+      containers:
+      - name: ansibletest
+        image: openebs/ansible-runner:ci
+        imagePullPolicy: Always
+        env: 
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: default
 
-        # Time period (in sec) b/w liveness checks
-      - name: LIVENESS_PERIOD_SECONDS
-        value: "10"
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
 
-        # Time period (in sec) b/w retries for db_connect failure
-      - name: LIVENESS_TIMEOUT_SECONDS
-        value: "10"
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./percona/liveness/test.yml -i /etc/ansible/hosts -v; exit 0"]
 
-        # No of retries after a db_connect failure before declaring liveness fail
-      - name: LIVENESS_RETRY_COUNT
-        value: "6"
+      - name: percona-liveness  
+        image: openebs/tests-mysql-client
+        env:
+          # Time period (in sec) b/w retries for DB init check
+          - name: INIT_WAIT_DELAY
+            value: "30"
+ 
+          # No of retries for DB init check
+          - name: INIT_RETRY_COUNT
+            value: "10"
 
-    command: ["/bin/bash"]
-    args: ["-c", "bash mysql-liveness-check.sh db-cred.cnf ; exit 0"]
-    tty: true 
-    volumeMounts:
-      - mountPath: /db-cred.cnf
-        subPath: db-cred.cnf
-        name: db-cred
-  volumes:
-    - name: db-cred
-      configMap:
-        name: db-cred  
+          # Time period (in sec) b/w liveness checks
+          - name: LIVENESS_PERIOD_SECONDS
+            value: "10"
+
+          # Time period (in sec) b/w retries for db_connect failure            
+          - name: LIVENESS_TIMEOUT_SECONDS
+            value: "10"
+
+          # No of retries after a db_connect failure before declaring liveness fail
+          - name: LIVENESS_RETRY_COUNT
+            value: "6"
+
+          # Application service label
+          - name: DB_SVC 
+            value: percona-mysql.app-percona-ns.svc.cluster.local 
+
+          # Database username  
+          - name: DB_USER
+            value: root
+ 
+          # Database password
+          - name: DB_PASSWORD
+            value: k8sDem0
+
+        command: ["/bin/bash"]
+        args: ["-c", "bash mysql-liveness-check.sh; exit 0"]
+        tty: true 
