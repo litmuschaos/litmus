@@ -35,15 +35,6 @@
     replicacnt: "{{ replicacount.stdout | int }}"
   when: "replicacount.stdout != \"\""
 
-- name: Derive SPC from SC - not required
-  shell: >
-    kubectl get sc {{ sc.stdout }} -n {{ operator_ns }} -o json |
-    jq '.metadata.annotations."cas.openebs.io/config"' -r |
-    grep -A 1 -w "name: StoragePoolClaim" | grep -w value | awk '{print $2}'
-  args:
-    executable: /bin/bash
-  register: spc
-
 - name: Get CVR count from pv
   shell: >
     kubectl get cvr -n {{ operator_ns }}
@@ -62,7 +53,7 @@
       - "cvr_count: {{ cvr_count.stdout | int }}"
   failed_when: "replicacnt|int != cvr_count.stdout|int"
 
-- name: Get CVR list from pv
+- name: Get CVR status list from pv
   shell: >
     kubectl get cvr -n {{ operator_ns }}
     -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers -o json |
@@ -77,7 +68,7 @@
   with_items:
     - "{{ cvr_status_phase.stdout_lines }}"
 
-- name: Get the pool deployment of SPC
+- name: Randomly select the pool deployment from cvr
   shell: >
     kubectl get cvr -n {{ operator_ns }}
     -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers -o json |
