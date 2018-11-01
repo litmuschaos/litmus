@@ -66,10 +66,16 @@
   shell: >
     kubectl get cvr -n {{ operator_ns }}
     -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers -o json |
-    jq '.items[].status.phase'
+    jq '.items[].status.phase' -r
   args:
     executable: /bin/bash
   register: cvr_status_phase
+
+- name: Check status of cvr
+  command: echo "{{ item }}"
+  failed_when: "item != \"Online\""
+  with_items:
+    - "{{ cvr_status_phase.stdout_lines }}"
 
 - name: Get the pool deployment of SPC
   shell: >
@@ -84,7 +90,7 @@
 - name: Get the resourceVersion of pool deployment
   shell: >
     kubectl get deployment {{ pool_deployment.stdout }}
-    -n {{ operator_ns }} -o json | jq '.metadata.resourceVersion'
+    -n {{ operator_ns }} -o json | jq '.metadata.resourceVersion' -r
   args:
     executable: /bin/bash
   register: pool_deployment_revisionSource_before
@@ -118,7 +124,7 @@
 - name: Get resourceVersion after pod delete
   shell: >
     kubectl get deployment {{ pool_deployment.stdout }}
-    -n {{ operator_ns }} -o json | jq '.metadata.resourceVersion'
+    -n {{ operator_ns }} -o json | jq '.metadata.resourceVersion' -r
   args:
     executable: /bin/bash
   register: pool_deployment_revisionSource_after
@@ -127,6 +133,6 @@
   debug:
     msg:
       - "Verified pool pods were restarted by fault injection"
-      - "Before: pool_deployment_revisionSource_before.stdout"
-      - "After: pool_deployment_revisionSource_after.stdout"
-  failed_when: "pool_deployment_revisionSource_before.stdout == pool_deployment_revisionSource_after.stdout"
+      - "Before: {{ pool_deployment_revisionSource_before.stdout }}"
+      - "After: {{ pool_deployment_revisionSource_after.stdout }}"
+  failed_when: "pool_deployment_revisionSource_before.stdout|int == pool_deployment_revisionSource_after.stdout|int"
