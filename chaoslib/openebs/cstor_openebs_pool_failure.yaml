@@ -27,12 +27,12 @@
 
 - name: Set default value for replicacount if it is empty
   set_fact:
-    replicacnt: 3
+    replicacnt: "3"
   when: "replicacount.stdout == \"\""
 
 - name: Set default value for replicacount if it is non-empty
   set_fact:
-    replicacnt: replicacount.stdout | int
+    replicacnt: "{{ replicacount.stdout | int }}"
   when: "replicacount.stdout != \"\""
 
 - name: Derive SPC from SC - not required
@@ -56,11 +56,11 @@
 - name: Compare ReplicaCount and cvr_count to verify provisioning
   debug:
     msg:
-      - "replicaCount: replicacount.stdout"
-      - "replicaCountInt: replicacount.stdout | int"
-      - "replicacnt: replicacnt"
-      - "cvr_count: cvr_count.stdout | int"
-  failed_when: "replicacnt != cvr_count.stdout | int"
+      - "replicaCount: {{ replicacount.stdout }}"
+      - "replicaCountInt: {{ replicacount.stdout | int }}"
+      - "replicacnt: {{ replicacnt }}"
+      - "cvr_count: {{ cvr_count.stdout | int }}"
+  failed_when: "replicacnt|int != cvr_count.stdout|int"
 
 - name: Get CVR list from pv
   shell: >
