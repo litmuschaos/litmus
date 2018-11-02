@@ -18,8 +18,8 @@
 
 - name: Derive ReplicaCount from SC
   shell: >
-    kubectl get sc {{ sc.stdout }} -n {{ operator_ns }} -o json |
-    jq '.metadata.annotations."cas.openebs.io/config"' -r |
+    kubectl get sc {{ sc.stdout }} -n {{ operator_ns }} --no-headers
+    -o jsonpath='{.metadata.annotations}' |
     grep -A 1 -w "name: ReplicaCount" | grep -w value | awk '{print $2}'
   args:
     executable: /bin/bash
@@ -38,8 +38,7 @@
 - name: Get CVR count from pv
   shell: >
     kubectl get cvr -n {{ operator_ns }}
-    -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers -o json |
-    jq '.items | length'
+    -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers | wc -l
   args:
     executable: /bin/bash
   register: cvr_count
@@ -56,8 +55,8 @@
 - name: Get CVR status list from pv
   shell: >
     kubectl get cvr -n {{ operator_ns }}
-    -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers -o json |
-    jq '.items[].status.phase' -r
+    -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers
+    -o jsonpath='{range .items[*]}{.status.phase}{"\n"}{end}'
   args:
     executable: /bin/bash
   register: cvr_status_phase
