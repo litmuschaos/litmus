@@ -1,0 +1,3 @@
+test_name: percona-liveness
+test_pod: "{{ lookup('env','MY_POD_NAME') }}"
+liveness_log: "MySQL db server is alive"
