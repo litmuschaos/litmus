@@ -6,7 +6,7 @@ LABEL maintainer="OpenEBS"
 RUN rm -rf /var/lib/apt/lists/* && \
     apt-get clean && \
     apt-get update --fix-missing || true && \
-    apt-get install -y jq python-minimal python-pip \
+    apt-get install -y python-minimal python-pip \
     curl openssh-client
 
 #Installing ansible

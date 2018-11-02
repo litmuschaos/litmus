@@ -67,6 +67,3 @@
   with_items:
     - "{{ cvr_status_phase.stdout_lines }}"
 
-- include: cstor_delete_pool_deployment.yaml
-
-- include: cstor_delete_pool_deployment.yaml

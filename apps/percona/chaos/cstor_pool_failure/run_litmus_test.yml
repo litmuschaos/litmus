@@ -57,7 +57,7 @@ spec:
           - name: MY_POD_HOSTPATH
             value: /mnt/chaos/cstor_pool_failure
         command: ["/bin/bash"]
-        args: ["-c", "./logger.sh -d ansibletest -r maya,openebs,pvc,percona; exit 0"]
+        args: ["-c", "./logger.sh -d ansibletest -r maya,openebs,pvc,percona,cstor; exit 0"]
         volumeMounts:
           - name: kubeconfig
             mountPath: /root/admin.conf
