@@ -1,8 +1,8 @@
 - name: Randomly select the pool deployment from cvr
   shell: >
     kubectl get cvr -n {{ operator_ns }}
-    -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers -o json |
-    jq '.items[].metadata.labels."cstorpool.openebs.io/name"' |
+    -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers
+    -o=jsonpath='{range .items[*]}{.metadata.labels.cstorpool\.openebs\.io\/name}{"\n"}{end}' |
     shuf -n1 | awk '{print $1}'
   args:
     executable: /bin/bash
@@ -11,7 +11,7 @@
 - name: Get the resourceVersion of pool deployment
   shell: >
     kubectl get deployment {{ pool_deployment.stdout }}
-    -n {{ operator_ns }} -o json | jq '.metadata.resourceVersion' -r
+    -n {{ operator_ns }} -o=jsonpath='{.metadata.resourceVersion}'
   args:
     executable: /bin/bash
   register: pool_deployment_revisionSource_before
@@ -45,7 +45,7 @@
 - name: Get resourceVersion after pod delete
   shell: >
     kubectl get deployment {{ pool_deployment.stdout }}
-    -n {{ operator_ns }} -o json | jq '.metadata.resourceVersion' -r
+    -n {{ operator_ns }} -o=jsonpath='{.metadata.resourceVersion}'
   args:
     executable: /bin/bash
   register: pool_deployment_revisionSource_after
