@@ -1,0 +1,64 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+        - block:
+
+            - name: Record test instance/run ID
+              set_fact:
+                run_id: "{{ lookup('env','RUN_ID') }}"
+
+            - name: Construct testname appended with runID
+              set_fact:
+                test_name: "{{ test_name }}-{{ run_id }}"
+
+          when: lookup('env','RUN_ID')
+        
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'SOT'
+
+        - name: Checking whether liveness container is running
+          shell: >
+            kubectl get pod {{ test_pod }} -n litmus 
+            -o jsonpath='{.status.containerStatuses[?(@.name=="postgres-liveness")].state}'
+          register: container_status
+          until: "'running' in container_status.stdout"
+          delay: 60
+          retries: 10
+
+        - name: Verifying whether liveness check is started successfully  
+          shell: kubectl logs {{ test_pod }} -n litmus -c postgres-liveness 
+          register: output
+          until: "liveness_log in output.stdout"
+          delay: 60 # Setting an upper bound that is >> general db init delays
+          retries: 20
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - set_fact:
+            flag: "Fail"
+
+      always:
+
+        ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
+
+        ## if flag=fail, task exits immediately; if flag=pass, runs indefinitely until liveness check ends
+        - name: Run until liveness container is terminated
+          shell: |
+            cmd="kubectl get pod {{ test_pod }} -n litmus -o jsonpath='{.status.containerStatuses[?(@.name==\"postgres-liveness\")].state}'"
+            while [[ ! $(eval $cmd) =~ 'terminated' ]]; do sleep 1; done
+          args:
+            executable: /bin/bash
+          register: output
