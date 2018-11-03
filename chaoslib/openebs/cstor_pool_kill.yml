@@ -1,0 +1,4 @@
+- include: cstor_verify_pool_provisioning.yml
+
+- include: cstor_kill_and_verify_pool.yml
+
