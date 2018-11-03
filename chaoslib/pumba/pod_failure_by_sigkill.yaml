@@ -40,7 +40,7 @@
       args:
         executable: /bin/bash
       register: container
-      when: app_container != ''
+      when: app_container == ''
 
     - name: Record the app_container
       set_fact:
