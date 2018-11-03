@@ -8,14 +8,6 @@
     executable: /bin/bash
   register: pool_deployment
 
-- name: Get the resourceVersion of pool deployment, not required
-  shell: >
-    kubectl get deployment {{ pool_deployment.stdout }}
-    -n {{ operator_ns }} -o=jsonpath='{.metadata.resourceVersion}'
-  args:
-    executable: /bin/bash
-  register: pool_deployment_revisionSource_before
-
 - name: Get the pod of pool deployment
   shell: >
     kubectl get pods -n {{ operator_ns }} |
@@ -81,15 +73,6 @@
   args:
     executable: /bin/bash
   register: restartCount_after
-
-
-- name: Get resourceVersion after pod delete, not required
-  shell: >
-    kubectl get deployment {{ pool_deployment.stdout }}
-    -n {{ operator_ns }} -o=jsonpath='{.metadata.resourceVersion}'
-  args:
-    executable: /bin/bash
-  register: pool_deployment_revisionSource_after
 
 - name: Compare restartCounts
   debug:
