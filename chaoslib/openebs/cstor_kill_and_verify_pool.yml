@@ -8,7 +8,7 @@
     executable: /bin/bash
   register: pool_deployment
 
-- name: Get the resourceVersion of pool deployment
+- name: Get the resourceVersion of pool deployment, not required
   shell: >
     kubectl get deployment {{ pool_deployment.stdout }}
     -n {{ operator_ns }} -o=jsonpath='{.metadata.resourceVersion}'
@@ -24,17 +24,36 @@
     executable: /bin/bash
   register: cstor_pool_pod
 
+- name: Get the runningStatus of pool pod
+  shell: >
+    kubectl get pod {{ cstor_pool_pod.stdout }} -n {{ operator_ns }}
+    -o=jsonpath='{range .status.containerStatuses[*]}{.state}{"\n"}{end}' |
+    grep -w running | wc -l
+  args:
+    executable: /bin/bash
+  register: runningStatusCount
+  until: "runningStatusCount.stdout == \"2\""
+  delay: 30
+  retries: 10
+
+- name: Get the restartCount of cstor-pool container
+  shell: >
+    kubectl get pod {{ cstor_pool_pod.stdout }} -n {{ operator_ns }}
+    -o=jsonpath='{.status.containerStatuses[?(@.name=="cstor-pool")].restartCount}'
+  args:
+    executable: /bin/bash
+  register: restartCount_before
+
 - include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yaml
   vars:
-    action: "kill_app"
+    action: "killapp"
     namespace: "{{ operator_ns }}"
     app_pod: "{{ cstor_pool_pod.stdout }}"
     app_container: "cstor_pool"
 
 - name: Check for pool pod in running state
   shell: >
-    kubectl get pods -n {{ operator_ns }} |
-    grep {{ pool_deployment.stdout }} | grep -v {{ cstor_pool_pod.stdout }} |
+    kubectl get pod {{ cstor_pool_pod.stdout }} -n {{ operator_ns }} |
     grep -w "Running" | wc -l
   args:
     executable: /bin/bash
@@ -43,7 +62,28 @@
   delay: 30
   retries: 10
 
-- name: Get resourceVersion after pod delete
+- name: Get the runningStatus of pool pod
+  shell: >
+    kubectl get pod {{ cstor_pool_pod.stdout }} -n {{ operator_ns }}
+    -o=jsonpath='{range .status.containerStatuses[*]}{.state}{"\n"}{end}' |
+    grep -w running | wc -l
+  args:
+    executable: /bin/bash
+  register: runningStatusCount
+  until: "runningStatusCount.stdout == \"2\""
+  delay: 30
+  retries: 10
+
+- name: Get the restartCount of cstor-pool container
+  shell: >
+    kubectl get pod {{ cstor_pool_pod.stdout }} -n {{ operator_ns }}
+    -o=jsonpath='{.status.containerStatuses[?(@.name=="cstor-pool")].restartCount}'
+  args:
+    executable: /bin/bash
+  register: restartCount_after
+
+
+- name: Get resourceVersion after pod delete, not required
   shell: >
     kubectl get deployment {{ pool_deployment.stdout }}
     -n {{ operator_ns }} -o=jsonpath='{.metadata.resourceVersion}'
@@ -51,11 +91,11 @@
     executable: /bin/bash
   register: pool_deployment_revisionSource_after
 
-- name: Compare resourceVersions
+- name: Compare restartCounts
   debug:
     msg:
       - "Verified pool pods were restarted by fault injection"
-      - "Before: {{ pool_deployment_revisionSource_before.stdout }}"
-      - "After: {{ pool_deployment_revisionSource_after.stdout }}"
-  failed_when: "pool_deployment_revisionSource_before.stdout|int == pool_deployment_revisionSource_after.stdout|int"
+      - "Before: {{ restartCount_before.stdout }}"
+      - "After: {{ restartCount_after.stdout }}"
+  failed_when: "restartCount_before.stdout|int >= restartCount_after.stdout|int"
 
