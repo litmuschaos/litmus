@@ -39,8 +39,14 @@
         -n {{ namespace }} 
       args:
         executable: /bin/bash
-      register: app_container
-      
+      register: container
+      when: app_container != ''
+
+    - name: Record the app_container
+      set_fact:
+        app_container: "{{ container.stdout }}"
+      when: app_container == ''
+
     - name: Record the pumba pod on app node 
       shell: >
         kubectl get pod -l app=pumba -o wide 
@@ -54,7 +60,7 @@
       shell: >
         kubectl exec {{ pumba_pod.stdout}} -n {{ namespace }}
         -- timeout -t 40 pumba --interval 15s kill
-        --signal SIGKILL re2:k8s_{{ app_container.stdout }};
+        --signal SIGKILL re2:k8s_{{ app_container }};
       args:
         executable: /bin/bash
       ignore_errors: true 

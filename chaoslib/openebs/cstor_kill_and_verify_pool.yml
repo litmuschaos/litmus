@@ -49,7 +49,7 @@
     action: "killapp"
     namespace: "{{ operator_ns }}"
     app_pod: "{{ cstor_pool_pod.stdout }}"
-    app_container: "cstor_pool"
+    app_container: "cstor-pool"
 
 - name: Check for pool pod in running state
   shell: >

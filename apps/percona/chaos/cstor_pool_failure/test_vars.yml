@@ -5,5 +5,5 @@ pvc: "{{ lookup('env','APP_PVC') }}"
 liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
 liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
 operator_ns: openebs
-
+chaos_type: pool-kill
 

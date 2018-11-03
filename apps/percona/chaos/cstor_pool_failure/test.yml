@@ -17,7 +17,6 @@
               until: "'Running' in liveness_pod.stdout"
               delay: 10
               retries: 10
-             
           when: liveness_label != ''  
 
         - include: test_prerequisites.yml
