@@ -2,3 +2,8 @@
 
 - include: cstor_kill_and_verify_pool.yml
 
+- include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yaml
+  vars:
+    action: "deletepumba"
+    namespace: "{{ operator_ns }}"
+
