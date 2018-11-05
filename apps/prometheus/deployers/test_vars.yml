@@ -1,6 +1,7 @@
 # Test-specific parametres
 
-prometheus_deployment: prometheus.yml
+application_deployment: prometheus.yml
 app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
 app_label: "{{ lookup('env','APP_LABEL') }}"
 test_name: prometheus-deployment
+application_name: prometheus

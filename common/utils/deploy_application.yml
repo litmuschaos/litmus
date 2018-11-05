@@ -4,7 +4,7 @@
 #     - app_yml ( Application spec)
 #     - app_ns  ( namespace where application needs to be deployed)
 
-- name: Deploy Application 
+- name: Deploy Application
   shell: kubectl apply -f {{ item }} -n {{ app_ns }}
   args:
     executable: /bin/bash

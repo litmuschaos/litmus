@@ -1,0 +1,35 @@
+---
+- block:
+    - name: Check whether the provider storageclass is applied
+      shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
+      args:
+        executable: /bin/bash
+      register: result
+
+    - name: Replace the pvc placeholder with provider
+      replace:
+        path: "{{ application_deployment }}"
+        regexp: "testclaim"
+        replace: "{{ lookup('env','APP_PVC') }}"
+
+    - name: Replace the storageclass placeholder with provider
+      replace:
+        path: "{{ application_deployment }}"
+        regexp: "testclass"
+        replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+
+    - include_tasks: /common/utils/fetch_repilca_values.yml
+      when: lookup('env', 'APP_REPLICA')
+
+    - name: Get the application label values from env
+      set_fact:
+         app_lkey: "{{ app_label.split('=')[0] }}"
+         app_lvalue: "{{ app_label.split('=')[1] }}"
+
+    - name: Replace the application label placeholder in deployment spec
+      replace:
+        path: "{{ application_deployment }}"
+        regexp: "lkey: lvalue"
+        replace: "{{ app_lkey }}: {{ app_lvalue }}"
+
+    - include_tasks: /common/utils/create_ns.yml

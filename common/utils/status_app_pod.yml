@@ -1,0 +1,7 @@
+---
+- name: Checking {{ application_name }} pod is in running state
+  shell: kubectl get pods -n {{ app_ns }} -o jsonpath='{.items[?(@.metadata.labels.{{app_lkey}}=="{{app_lvalue}}")].status.phase}'
+  register: result
+  until: "((result.stdout.split()|unique)|length) == 1 and 'Running' in result.stdout"
+  delay: '{{ delay }}'
+  retries: '{{ retries }}'

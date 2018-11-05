@@ -1,12 +1,14 @@
 ---
-cockroachdb_deployment: cockroachdb_sts.yml
+application_deployment: cockroachdb_sts.yml
 
-cockroachdb_svc: cockroachdb_svc.yml 
+application_svc: cockroachdb_svc.yml
 
 app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
 
 app_label: "{{ lookup('env','APP_LABEL') }}"
 
 test_name: cockroachdb-deployment
+
+application_name: cockroachdb
 
 

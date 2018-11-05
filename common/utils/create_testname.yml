@@ -1,0 +1,11 @@
+---
+- block:
+    - name: Record test instance/run ID
+      set_fact:
+        run_id: "{{ lookup('env','RUN_ID') }}"
+
+    - name: Construct testname appended with runID
+      set_fact:
+        test_name: "{{ test_name }}-{{ run_id }}"
+
+  when: lookup('env','RUN_ID')

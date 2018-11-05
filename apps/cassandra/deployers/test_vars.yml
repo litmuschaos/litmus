@@ -1,6 +1,6 @@
-cassandra_deployment: cassandra_statefulset.yml
+application_deployment: cassandra_statefulset.yml
 app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
 app_label: "{{ lookup('env','APP_LABEL') }}"
 test_name: cassandra-deployment
 app_replica: "{{ lookup('env','APP_REPLICA') }}"
-
+application_name: Cassandra statefulset
