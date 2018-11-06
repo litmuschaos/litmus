@@ -31,21 +31,21 @@
     - name: Record the application node name 
       set_fact:
         app_node: "{{ result.stdout }}"
-    
-    - name: Record the application container
-      shell: >
-        kubectl get pod {{ app_pod }} 
-        --no-headers -o jsonpath={.spec.containers[*].name}
-        -n {{ namespace }} 
-      args:
-        executable: /bin/bash
-      register: container
-      when: app_container == ''
 
-    - name: Record the app_container
-      set_fact:
-        app_container: "{{ container.stdout }}"
-      when: app_container == ''
+    - block:
+      - name: Record the application container
+        shell: >
+          kubectl get pod {{ app_pod }}
+          --no-headers -o jsonpath={.spec.containers[*].name}
+          -n {{ namespace }}
+        args:
+          executable: /bin/bash
+        register: container
+
+      - name: Record the app_container
+        set_fact:
+          app_container: "{{ container.stdout }}"
+    when: app_container is not defined
 
     - name: Record the pumba pod on app node 
       shell: >
