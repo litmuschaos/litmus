@@ -33,6 +33,7 @@
         app_node: "{{ result.stdout }}"
 
     - block:
+
       - name: Record the application container
         shell: >
           kubectl get pod {{ app_pod }}
@@ -45,7 +46,8 @@
       - name: Record the app_container
         set_fact:
           app_container: "{{ container.stdout }}"
-    when: app_container is not defined
+
+      when: app_container is undefined
 
     - name: Record the pumba pod on app node 
       shell: >
