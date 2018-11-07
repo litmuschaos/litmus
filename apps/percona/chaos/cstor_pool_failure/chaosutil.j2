@@ -1,6 +1,11 @@
 {% if stg_prov is defined and stg_prov == 'openebs.io/provisioner-iscsi' %}
   {% if stg_engine is defined and stg_engine == 'cstor' %}
-    chaosutil: openebs/cstor_pool_failure.yml
+    {% if chaos_type is defined and chaos_type == 'pool-kill' %}
+      chaosutil: openebs/cstor_pool_kill.yml
+    {% endif %}
+    {% if chaos_type is defined and chaos_type == 'pool-delete' %}
+      chaosutil: openebs/cstor_pool_delete.yml
+    {% endif %}
   {% else %} 
     chaosutil: openebs/jiva_replica_pod_failure.yaml
   {% endif %}
