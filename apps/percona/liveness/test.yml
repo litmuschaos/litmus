@@ -54,11 +54,15 @@
           vars:
             status: 'EOT'
 
-        ## if flag=fail, task exits immediately; if flag=pass, runs indefinitely until liveness check ends
+        ## if flag=fail, task exits immediately; if flag=pass, runs indefinitely until liveness check ends.
+        ## There are remote chances (delayed/slow db init) where flag/CR indicate "Fail", but percona-liveness \
+        ## container still runs. However, this is also to be considered a failure, as an init slower than \
+        ## 1200s (check verify task above) is to be brought to notice.
         - name: Run until liveness container is terminated
           shell: |
             cmd="kubectl get pod {{ test_pod }} -n litmus -o jsonpath='{.status.containerStatuses[?(@.name==\"percona-liveness\")].state}'"
-            while [[ ! $(eval $cmd) =~ 'terminated' ]]; do sleep 1; done
+            while true; do state=$(eval $cmd); rc=$?; if [[ $rc -eq 0 && ! $state =~ 'terminated' ]]; then sleep 1; else exit; fi; done
           args:
             executable: /bin/bash
           register: output
+          when: flag == "Pass"

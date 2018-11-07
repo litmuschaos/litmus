@@ -5,6 +5,7 @@ metadata:
   generateName: percona-liveness-
   namespace: litmus
 spec:
+  activeDeadlineSeconds: 5400
   template:
     metadata:
       name: percona-liveness
