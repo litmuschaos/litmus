@@ -9,6 +9,6 @@ app_label: "{{ lookup('env','APP_LABEL') }}"
 
 test_name: cockroachdb-deployment
 
-application_name: cockroachdb
+application_name: "cockroachdb"
 
 

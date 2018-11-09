@@ -4,4 +4,4 @@ application_deployment: percona.yml
 app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
 app_label: "{{ lookup('env','APP_LABEL') }}"
 test_name: percona-deployment
-application_name: percona
+application_name: "percona"
