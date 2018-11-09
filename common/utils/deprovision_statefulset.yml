@@ -1,0 +1,111 @@
+---
+
+# This Utility task file can delete the application and its underlying resources such as pvc and service from K8s cluster
+# This accepts application namespace, application label and application manifest file as input parameters.
+# The parameters used are
+#         - app_deployer ( Deployment yaml file )
+#         - app_ns       ( application namespace )
+#         - app_label    ( application label)
+#
+
+- name: Check if the statefulset application exists.
+  shell: kubectl get pods -n {{ app_ns }} -l {{ app_label }}
+  register: pods
+  failed_when: "'No resources found' in pods.stdout"
+
+- name: Obtaining PVCs related to the application.
+  shell: kubectl get pvc -n {{ app_ns }} -l {{ app_label }}  --no-headers -o custom-columns=:.metadata.name
+  register: pvc_list
+
+- name: Obtaining the PV names.
+  shell: kubectl get pvc {{ item }} -n {{ app_ns }} --no-headers -o custom-columns=:.spec.volumeName
+  register: pv_list
+  with_items:
+    - "{{ pvc_list.stdout_lines }}"
+
+## Replacing the item names in the respective deployer spec file.
+
+- name: Replace the PVC name in application deployer spec.
+  replace:
+    path: "{{ app_deployer }}"
+    regexp: "testclaim"
+    replace: "{{ lookup('env','APP_PVC') }}"
+  when: APP_PVC is defined
+
+- name: Replace the storageclass placeholder with provider
+  replace:
+    path: "{{ app_deployer }}"
+    regexp: "testclass"
+    replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+  when: PROVIDER_STORAGE_CLASS is defined
+
+- block:
+
+    - name: Get the application replica values from env
+      set_fact:
+        app_rkey: "{{ app_replica.split('=')[0] }}"
+        app_rvalue: "{{ app_replica.split('=')[1] }}"
+
+    - name: Replace the application label placeholder
+      replace:
+        path: "{{ app_deployer }}"
+        regexp: "rkey: rvalue"
+        replace: "{{ app_rkey }}: {{ app_rvalue }}"
+
+  when: APP_REPLICA is defined
+
+- block:
+
+    - name: Get the application label values from env
+      set_fact:
+        app_lkey: "{{ app_label.split('=')[0] }}"
+        app_lvalue: "{{ app_label.split('=')[1] }}"
+
+    - name: Replace the application label placeholder
+      replace:
+        path: "{{ app_deployer }}"
+        regexp: "lkey: lvalue"
+        replace: "{{ app_lkey }}: {{ app_lvalue }}"
+
+  when: APP_LABEL is defined
+
+- name: Delete the application and its related service.
+  shell: kubectl delete -f {{ app_deployer }} -n {{ app_ns }}
+  register: app
+  until: 'app.rc != 0'
+  delay: 30
+  retries: 10
+
+- name: Deleting the PVC
+  shell: kubectl delete pvc {{ item }} -n {{ app_ns }}
+  args:
+    executable: /bin/bash
+  with_items:
+    - "{{ pvc_list.stdout_lines }}"
+
+- name: Check if the PVCs are deleted
+  shell: kubectl get pvc -n {{ app_ns }}
+  register: list_pvc
+  until: "'No resources found' in list_pvc.stdout"
+  delay: 30
+  retries: 15
+
+- name: Check if all the components are deleted.
+  shell: kubectl get all -n {{ app_ns }}
+  register: result
+  until: "'No resources found' in result.stdout"
+  delay: 30
+  retries: 30
+
+- name: Deleting PV
+  shell: kubectl delete pv {{ item }}
+  args:
+    executable: /bin/bash
+  with_items:
+    - "{{ pv_list.stdout }}"
+
+- name: Delete the namespace.
+  shell: kubectl delete ns {{ app_ns }}
+  args:
+    executable: /bin/bash
+
