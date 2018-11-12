@@ -1,0 +1,11 @@
+---
+- name: Replace the application label placeholder in service spec
+  replace:
+    path: "{{ application_svc }}"
+    regexp: "lkey: lvalue"
+    replace: "{{ app_lkey }}: {{ app_lvalue }}"
+
+- name: Deploying {{ application_name }} service
+  shell: kubectl apply -f {{ application_svc }} -n {{ app_ns }}
+  args:
+    executable: /bin/bash

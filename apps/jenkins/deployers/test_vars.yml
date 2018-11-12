@@ -2,4 +2,5 @@
 test_name: jenkins-deployment
 app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
 app_label: "{{ lookup('env','APP_LABEL') }}"
-jenkins_deployment: jenkins.yml
+application_deployment: jenkins.yml
+application_name: "jenkins"

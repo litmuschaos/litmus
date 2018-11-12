@@ -1,0 +1,8 @@
+##Check if the database is ready for connection
+- name: Check if db is ready for connections
+  shell: kubectl logs {{ pod_name.stdout }} -n {{ app_ns }} | grep 'ready for connections' | wc -l
+  register: initcheck
+  until: initcheck.stdout == "2"
+  delay: 60
+  retries: 15
+
