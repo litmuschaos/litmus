@@ -83,4 +83,4 @@
   args:
     executable: /bin/bash
   register: pv_result
-  failed_when: pv_result.rc == 0
+  failed_when: "pv_name.stdout in pv_result.stdout"

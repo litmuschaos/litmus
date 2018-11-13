@@ -102,7 +102,7 @@
   args:
     executable: /bin/bash
   register: pv_result
-  failed_when: pv_result.rc == 0
+  failed_when: "item in pv_result.stdout"
   with_items:
     - "{{ pv_list.stdout }}"
 
