@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: litmus-storageclass-setup
+  generateName: storageclass-setup-
   namespace: litmus 
 spec:
   template:
@@ -15,7 +15,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: openebs/ansible-runner:ci
+        image: dargas/ansible-runner:ci
         imagePullPolicy: Always
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
@@ -24,7 +24,7 @@ spec:
             value:
           # Enable storageclass
           - name: APPLY_JIVA
-            value: "true"
+            value: "false"
           - name: APPLY_CSTOR
             value: "false"
           # Jiva configuration

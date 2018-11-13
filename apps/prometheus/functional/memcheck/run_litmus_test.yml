@@ -1,0 +1,60 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: litmus-cstor-memcheck-
+  namespace: litmus
+spec:
+  template:
+    metadata:
+      labels:
+        name: litmus
+        app: memcheck-cstor-test
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: dargas/ansible-runner:ci
+        imagePullPolicy: Always
+        env: 
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: default
+ 
+          - name: APP_LABEL
+            value: 'name=prometheus'
+
+          - name: APP_PVC
+            value: 'prometheus-claim'
+
+          - name: APP_NAMESPACE
+            value: app-prometheus
+
+          - name: TARGET_NAMESPACE
+            value: openebs
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./prometheus/functional/memcheck/test.yml -i /etc/ansible/hosts -v; exit 0"]
+        volumeMounts:
+          - name: logs 
+            mountPath: /var/log/ansible 
+        tty: true
+      - name: logger
+        image: openebs/logger
+        command: ["/bin/bash"]
+        args: ["-c", "./logger.sh -d 10 -r maya,openebs,pvc,memcheck; exit 0"] 
+        volumeMounts:
+          - name: kubeconfig 
+            mountPath: /root/admin.conf
+            subPath: admin.conf
+          - name: logs
+            mountPath: /mnt 
+        tty: true 
+      volumes: 
+        - name: kubeconfig
+          configMap: 
+            name: kubeconfig 
+        - name: logs 
+          hostPath:
+            path: /mnt/memcheck
+            type: "" 

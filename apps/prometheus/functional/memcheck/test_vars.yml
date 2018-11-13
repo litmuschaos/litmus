@@ -1,0 +1,8 @@
+---
+## TEST-SPECIFIC PARAMS
+
+test_name: memcheck-test
+app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+target_ns: "{{ lookup('env','TARGET_NAMESPACE') }}"
+label: "{{ lookup('env','APP_LABEL') }}"
+app_pvc: "{{ lookup('env','APP_PVC') }}"
