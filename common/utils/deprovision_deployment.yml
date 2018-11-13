@@ -36,14 +36,14 @@
     path: "{{ app_deployer }}"
     regexp: "testclaim"
     replace: "{{ lookup('env','APP_PVC') }}"
-  when: APP_PVC is defined
+  when: app_pvc is defined
 
 - name: Replace the storageclass placeholder with provider
   replace:
     path: "{{ app_deployer }}"
     regexp: "testclass"
     replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
-  when: PROVIDER_STORAGE_CLASS is defined
+  when: storage_class is defined
 
 - block:
 
@@ -57,7 +57,7 @@
         path: "{{ app_deployer }}"
         regexp: "lkey: lvalue"
         replace: "{{ app_lkey }}: {{ app_lvalue }}"
-  when: APP_LABEL is defined
+  when: app_label is defined
 
 - name: Delete the application deployment.
   shell: kubectl delete -f {{ app_deployer }} -n {{ app_ns }}
