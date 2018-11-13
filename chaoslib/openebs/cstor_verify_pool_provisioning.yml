@@ -1,0 +1,69 @@
+- name: Derive PV from application PVC 
+  shell: >
+    kubectl get pvc {{ app_pvc }}
+    -o custom-columns=:spec.volumeName -n {{ app_ns }}
+    --no-headers
+  args:
+    executable: /bin/bash
+  register: pv
+
+- name: Derive SC from application PVC 
+  shell: >
+    kubectl get pvc {{ app_pvc }}
+    -o custom-columns=:spec.storageClassName -n {{ app_ns }}
+    --no-headers
+  args:
+    executable: /bin/bash
+  register: sc
+
+- name: Derive ReplicaCount from SC
+  shell: >
+    kubectl get sc {{ sc.stdout }} -n {{ operator_ns }} --no-headers
+    -o jsonpath='{.metadata.annotations}' |
+    grep -A 1 -w "name: ReplicaCount" | grep -w value | awk '{print $2}'
+  args:
+    executable: /bin/bash
+  register: replicacount
+
+- name: Set default value for replicacount if it is empty
+  set_fact:
+    replicacnt: "3"
+  when: "replicacount.stdout == \"\""
+
+- name: Set default value for replicacount if it is non-empty
+  set_fact:
+    replicacnt: "{{ replicacount.stdout | int }}"
+  when: "replicacount.stdout != \"\""
+
+- name: Get CVR count from pv
+  shell: >
+    kubectl get cvr -n {{ operator_ns }}
+    -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers | wc -l
+  args:
+    executable: /bin/bash
+  register: cvr_count
+
+- name: Compare ReplicaCount and cvr_count to verify provisioning
+  debug:
+    msg:
+      - "replicaCount: {{ replicacount.stdout }}"
+      - "replicaCountInt: {{ replicacount.stdout | int }}"
+      - "replicacnt: {{ replicacnt }}"
+      - "cvr_count: {{ cvr_count.stdout | int }}"
+  failed_when: "replicacnt|int != cvr_count.stdout|int"
+
+- name: Get CVR status list from pv
+  shell: >
+    kubectl get cvr -n {{ operator_ns }}
+    -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers
+    -o jsonpath='{range .items[*]}{.status.phase}{"\n"}{end}'
+  args:
+    executable: /bin/bash
+  register: cvr_status_phase
+
+- name: Check status of cvr
+  command: echo "{{ item }}"
+  failed_when: "item != \"Online\""
+  with_items:
+    - "{{ cvr_status_phase.stdout_lines }}"
+

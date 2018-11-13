@@ -31,16 +31,24 @@
     - name: Record the application node name 
       set_fact:
         app_node: "{{ result.stdout }}"
-    
-    - name: Record the application container
-      shell: >
-        kubectl get pod {{ app_pod }} 
-        --no-headers -o jsonpath={.spec.containers[*].name}
-        -n {{ namespace }} 
-      args:
-        executable: /bin/bash
-      register: app_container
-      
+
+    - block:
+
+      - name: Record the application container
+        shell: >
+          kubectl get pod {{ app_pod }}
+          --no-headers -o jsonpath={.spec.containers[*].name}
+          -n {{ namespace }}
+        args:
+          executable: /bin/bash
+        register: container
+
+      - name: Record the app_container
+        set_fact:
+          app_container: "{{ container.stdout }}"
+
+      when: app_container is undefined
+
     - name: Record the pumba pod on app node 
       shell: >
         kubectl get pod -l app=pumba -o wide 
@@ -54,7 +62,7 @@
       shell: >
         kubectl exec {{ pumba_pod.stdout}} -n {{ namespace }}
         -- timeout -t 40 pumba --interval 15s kill
-        --signal SIGKILL re2:k8s_{{ app_container.stdout }};
+        --signal SIGKILL re2:k8s_{{ app_container }};
       args:
         executable: /bin/bash
       ignore_errors: true 

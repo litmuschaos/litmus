@@ -50,6 +50,18 @@ ansible-playbook create_packet_cluster.yml --extra-vars "k8s_version=<version>" 
 ansible-playbook create_packet_cluster.yml -vv --extra-vars "k8s_version=1.11.3-00 cluster_name=<name-of-cluster>"
 ```
 
+3. Taint Node:
+
+```bash
+ansible-playbook create_packet_cluster.yml -vv --extra-vars "k8s_version=1.11.3-00 taint_value=<taint_value>"
+```
+
+example:
+
+```bash
+ansible-playbook create_packet_cluster.yml -vv --extra-vars "k8s_version=1.11.3-00 taint_value=ak=av:NoSchedule"
+```
+
 ### Deleting k8s cluster in packet
 
 - Run `delete_packet_cluster`, this will delete the cluster as well as ssh key.

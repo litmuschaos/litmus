@@ -1,0 +1,60 @@
+- name: Randomly select the pool deployment from cvr
+  shell: >
+    kubectl get cvr -n {{ operator_ns }}
+    -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers
+    -o=jsonpath='{range .items[*]}{.metadata.labels.cstorpool\.openebs\.io\/name}{"\n"}{end}' |
+    shuf -n1 | awk '{print $1}'
+  args:
+    executable: /bin/bash
+  register: pool_deployment
+
+- name: Get the resourceVersion of pool deployment
+  shell: >
+    kubectl get deployment {{ pool_deployment.stdout }}
+    -n {{ operator_ns }} -o=jsonpath='{.metadata.resourceVersion}'
+  args:
+    executable: /bin/bash
+  register: pool_deployment_revisionSource_before
+
+- name: Get the pod of pool deployment
+  shell: >
+    kubectl get pods -n {{ operator_ns }} |
+    grep {{ pool_deployment.stdout }} | grep -w "Running" | awk '{print $1}'
+  args:
+    executable: /bin/bash
+  register: cstor_pool_pod
+
+- name: Delete the cstor pool pod for reschedule
+  shell: >
+    kubectl delete pod {{ cstor_pool_pod.stdout }} -n {{ operator_ns }}
+  args:
+    executable: /bin/bash
+
+- name: Check for pool pod in running state
+  shell: >
+    kubectl get pods -n {{ operator_ns }} |
+    grep {{ pool_deployment.stdout }} | grep -v {{ cstor_pool_pod.stdout }} |
+    grep -w "Running" | wc -l
+  args:
+    executable: /bin/bash
+  register: cstor_pool_pod_cnt
+  until: "cstor_pool_pod_cnt.stdout == \"1\""
+  delay: 30
+  retries: 10
+
+- name: Get resourceVersion after pod delete
+  shell: >
+    kubectl get deployment {{ pool_deployment.stdout }}
+    -n {{ operator_ns }} -o=jsonpath='{.metadata.resourceVersion}'
+  args:
+    executable: /bin/bash
+  register: pool_deployment_revisionSource_after
+
+- name: Compare resourceVersions
+  debug:
+    msg:
+      - "Verified pool pods were restarted by fault injection"
+      - "Before: {{ pool_deployment_revisionSource_before.stdout }}"
+      - "After: {{ pool_deployment_revisionSource_after.stdout }}"
+  failed_when: "pool_deployment_revisionSource_before.stdout|int == pool_deployment_revisionSource_after.stdout|int"
+

@@ -116,6 +116,23 @@
           shell: bash pre_requisite.sh "{{ k8s_version }}" && {{ storage.results[0].stdout }}
           delegate_to: "root@{{ item.public_ipv4 }}"
           with_items: "{{ workers.devices }}"
+
+        - block:
+            - name: Getting nodes name
+              shell: kubectl get nodes --no-headers | grep -v master | awk '{print $1}' | head -n 1
+              register: node_name
+
+            - name: Taint node using key and value
+              shell: kubectl taint nodes {{ node_name.stdout }} {{ taint_value }}
+
+            - name: Create a file for store taint node property
+              lineinfile:
+                create: yes
+                state: present
+                path: "/tmp/packet/node_property"
+                line: 'taint_node_name: {{ node_name.stdout }}, taint_value: {{ taint_value }}'
+                mode: 0755
+          when: taint_value is defined
   
         - name: Set Test Status
           set_fact:
