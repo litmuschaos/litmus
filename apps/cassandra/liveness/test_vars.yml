@@ -1,0 +1,3 @@
+test_name: cassandra-liveness
+test_pod: "{{ lookup('env','MY_POD_NAME') }}"
+liveness_log: "Liveness Running"
