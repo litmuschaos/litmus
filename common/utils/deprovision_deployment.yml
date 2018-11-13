@@ -78,7 +78,9 @@
   args:
     executable: /bin/bash
 
-- name: Delete the PV
-  shell: kubectl delete pv {{ pv_name.stdout }}
+- name: Check if the PV is deleted.
+  shell: kubectl get pv {{ pv_name.stdout }}
   args:
     executable: /bin/bash
+  register: pv_result
+  failed_when: pv_result.rc == 0

@@ -98,9 +98,11 @@
   retries: 30
 
 - name: Deleting PV
-  shell: kubectl delete pv {{ item }}
+  shell: kubectl get pv {{ item }}
   args:
     executable: /bin/bash
+  register: pv_result
+  failed_when: pv_result.rc == 0
   with_items:
     - "{{ pv_list.stdout }}"
 
