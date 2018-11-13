@@ -28,7 +28,7 @@ spec:
             value: memleak
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./memleak/tests/test.yml -i /etc/ansible/hosts -v; exit 0"]
+        args: ["-c", "ansible-playbook ./custom/tests/memcheck/test.yml -i /etc/ansible/hosts -v; exit 0"]
         volumeMounts:
           - name: logs
             mountPath: /var/log/ansible

@@ -1,0 +1,11 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: testclaim
+spec:
+  storageClassName: testclass
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5G
