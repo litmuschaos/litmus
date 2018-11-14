@@ -21,10 +21,10 @@ spec:
             value: default
  
           - name: PROVIDER_STORAGE_CLASS
-            value: openebs-jiva-default
+            value: openebs-standard
 
           - name: FIO_NAMESPACE
-            value: fio-jiva
+            value: fio
 
           - name: FIO_SAMPLE_SIZE
             value: "128m"
