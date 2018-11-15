@@ -76,6 +76,22 @@
           set_fact:
             pod_name: "{{ app_pod.stdout}}"
 
+        - name: Derive PV name from PVC
+          shell: >
+            kubectl get pvc {{ pvc_name }} -n {{ app_ns }}
+            --no-headers -o custom-columns=:spec.volumeName
+          args:
+            executable: /bin/bash
+          register: pv
+
+        - name: Obtaining the storage-engine name from PV.
+          shell: >
+            kubectl get pv {{ pv.stdout }} --no-headers
+            -o jsonpath="{.metadata.annotations.openebs\\.io/cas-type}"
+          args:
+            executable: /bin/bash
+          register: stg_engine
+
         - name: Write a test database into percona mysql
           shell: |
             kubectl exec -it {{ pod_name }} -n {{ app_ns }} -- mysql -u{{ user_name }} -p{{ password }} -e "create database cloud;"
@@ -97,6 +113,30 @@
        
         - name: Creating snapshot.
           include_tasks: /funclib/kubectl/k8s_snapshot_clone/create_snapshot.yml
+
+        - block:
+
+            - name: Obtaining the storage class used from PVC
+              shell: kubectl get pvc {{ pvc_name }} -n {{ app_ns }} --no-headers -o custom-columns=:.spec.storageClassName
+              register: app_sc
+
+            - name: Obtaining the SPC from storage class
+              shell: kubectl get sc {{ app_sc.stdout }} --no-headers  -o yaml | awk '/StoragePoolClaim/{getline; print}' | cut -d ':' -f2 | sed 's/"//g'
+              register: spc
+
+            - name: Obtaining the pool pods
+              shell: kubectl get pods -n {{ operator_ns }} | grep cstor-sparse-pool | awk '{print $1}'
+              register: pool_pods
+
+            - name: Checking if the snapshot is created in all the pool pods.
+              shell: kubectl exec -ti {{ item }} -n {{ operator_ns }} -- zfs list -t snapshot
+              register: snap_list
+              failed_when: "snapshot_name not in snap_list.stdout"
+              with_items:
+                - "{{ pool_pods.stdout_lines }}"
+
+          when: "stg_engine.stdout == 'cstor'"
+
 
        ## Include an utility from litmus funclib to create clone using volume snapshot.
 
