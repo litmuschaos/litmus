@@ -36,6 +36,9 @@ spec:
           - name: LIVENESS_APP_NAMESPACE
             value: ""
 
+          - name: DATA_PERSISTENCY
+            value: ""  
+
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./percona/chaos/cstor_pool_failure/test.yml -i /etc/ansible/hosts -vv; exit 0"]
         volumeMounts:

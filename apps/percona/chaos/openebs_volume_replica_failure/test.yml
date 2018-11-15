@@ -88,7 +88,8 @@
             pod_name: "{{ app_pod_name.stdout }}"
             dbuser: 'root'
             dbpassword: 'k8sDem0'
-            dbname: 'tdb'      
+            dbname: 'tdb'
+          when: data_persistance != ''      
 
         ## STORAGE FAULT INJECTION 
 
@@ -129,6 +130,7 @@
             dbuser: 'root'
             dbpassword: 'k8sDem0'
             dbname: 'tdb'  
+          when: data_persistance != ''
 
         - set_fact:
             flag: "Pass"

@@ -7,4 +7,5 @@ c_duration: "{{ lookup('env','CHAOS_DURATION') }}"
 operator_ns: "{{ lookup('env','OPERATOR_NAMESPACE') }}"
 liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
 liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
+data_persistance: "{{ lookup('env','DATA_PERSISTENCY') }}"
 
