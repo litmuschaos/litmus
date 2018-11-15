@@ -1,5 +1,6 @@
 kubeapply: kubectl
 storage_class_jiva: sc_jiva.yaml
 storage_class_cstor: sc_cstor.yaml
+storage_class_memcheck: sc_memcheck.yaml
 installation_test_name: storageclassinstaller
 cleanup_test_name: storageclasscleanup

@@ -1,0 +1,76 @@
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+   - block:
+
+       - block:
+
+            - name: Record test instance/run ID
+              set_fact:
+                run_id: "{{ lookup('env','RUN_ID') }}"
+
+            - name: Construct testname appended with runID
+              set_fact:
+                test_name: "{{ test_name }}-{{ run_id }}"
+
+         when: lookup('env','RUN_ID')
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+       - include_tasks: /common/utils/update_litmus_result_resource.yml
+         vars:
+           status: 'SOT'
+
+       - name: Verify that the AUT (Application Under Test) is running 
+         shell: >
+           kubectl get pods -n {{ app_ns }} -l {{ label }} --no-headers
+           -o custom-columns=:status.phase
+         args:
+           executable: /bin/bash
+         register: app_status
+         until: "'Running' in app_status.stdout"
+         delay: 10
+         retries: 12
+
+       - name: Derive PV from application PVC
+         shell: >
+           kubectl get pvc {{ app_pvc }}
+           -o custom-columns=:spec.volumeName -n {{ app_ns }}
+           --no-headers
+         args:
+           executable: /bin/bash
+         register: pv
+
+       - name: Pick a cStor target pod belonging to the PV
+         shell: >
+           kubectl get pods -l openebs.io/target=cstor-target
+           -n {{ target_ns }} --no-headers | grep {{ pv.stdout }}
+           | shuf -n1 | awk '{print $1}'
+         args:
+           executable: /bin/bash
+         register: cstor_target_pod
+
+           ## RUN MEMLEAK TEST
+
+       - name: Run python script for memory usage validation it takes couple of minutes
+         shell: python test-mem.py {{ cstor_target_pod.stdout }} {{ target_ns }}
+         args:
+           executable: /bin/bash
+         register: result
+         failed_when: "'Pass' not in result.stdout"
+
+       - set_fact:
+           flag: "Pass"
+
+     rescue:
+       - set_fact:
+           flag: "Fail"
+
+     always:
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR
+       - include_tasks: /common/utils/update_litmus_result_resource.yml
+         vars:
+           status: 'EOT'

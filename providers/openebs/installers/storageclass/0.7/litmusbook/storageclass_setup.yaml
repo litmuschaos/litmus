@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: litmus-storageclass-setup
+  generateName: storageclass-setup-
   namespace: litmus 
 spec:
   template:
@@ -24,7 +24,7 @@ spec:
             value:
           # Enable storageclass
           - name: APPLY_JIVA
-            value: "true"
+            value: "false"
           - name: APPLY_CSTOR
             value: "false"
           # Jiva configuration
