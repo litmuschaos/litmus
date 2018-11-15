@@ -76,17 +76,14 @@
          retries: 30 
 
        - name: Create some test data in the mysql database
-         shell: >
-           kubectl exec {{ percona_pod_name }} -n litmus 
-           -- {{ item }}
-         args:
-           executable: /bin/bash
-         register: result
-         failed_when: "result.rc != 0"
-         with_items:
-           - mysql -uroot -pk8sDem0 -e 'create database tdb;'
-           - mysql -uroot -pk8sDem0 -e 'create table ttbl (Data VARCHAR(20));' tdb
-           - mysql -uroot -pk8sDem0 -e 'insert into ttbl (Data) VALUES ("tdata");' tdb
+         include_tasks: "/common/utils/mysql_data_persistence.yml"
+         vars:
+           status: 'LOAD'
+           ns: 'litmus'
+           pod_name: "{{ percona_pod_name }}"
+           dbuser: 'root'
+           dbpassword: 'k8sDem0'
+           dbname: 'tdb'
 
        - include: /chaoslib/kubectl/pod_evict_by_taint.yaml
          app: "{{ percona_pod_name }}"
@@ -122,13 +119,15 @@
            percona_pod_name: "{{ result.stdout.split()[0] }}"
        
        - name: Verify mysql data persistence  
-         shell: > 
-           kubectl exec {{ percona_pod_name }} -n litmus
-           -- mysql -uroot -pk8sDem0 -e 'select * from ttbl' tdb;
-         args:
-           executable: /bin/bash
-         register: result 
-         failed_when: "'tdata' not in result.stdout"
+         include_tasks: "/common/utils/mysql_data_persistence.yml"
+         vars:
+           status: 'VERIFY'
+           ns: 'litmus'
+           pod_name: "{{ percona_pod_name }}"
+           dbuser: 'root'
+           dbpassword: 'k8sDem0'
+           dbname: 'tdb'
+
 
        - set_fact:
            flag: "Pass"

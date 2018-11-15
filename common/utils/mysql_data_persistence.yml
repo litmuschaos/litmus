@@ -1,0 +1,39 @@
+---
+- block:
+
+   - name: Create some test data in the mysql database
+     shell: >
+       kubectl exec {{ pod_name }} -n {{ ns }} 
+       -- {{ item }}
+     args:
+       executable: /bin/bash
+     register: result
+     failed_when: "result.rc != 0"
+     with_items:
+       - mysql -u{{ dbuser }} -p{{ dbpassword }} -e 'create database {{ dbname }};'
+       - mysql -u{{ dbuser }} -p{{ dbpassword }} -e 'create table ttbl (Data VARCHAR(20));' {{ dbname }}
+       - mysql -u{{ dbuser }} -p{{ dbpassword }} -e 'insert into ttbl (Data) VALUES ("tdata");' {{ dbname }}
+
+  when: status == "LOAD"
+
+- block:
+
+   - name: Checking for the Corrupted tables
+     shell: > 
+       kubectl exec {{ pod_name }} -n {{ ns }}
+       -- mysqlcheck -c {{ dbname }} -u{{ dbuser }} -p{{ dbpassword }}
+     args:
+       executable: /bin/bash
+     register: status 
+     failed_when: "'OK' not in status.stdout"
+
+   - name: Verify mysql data persistence 
+     shell: > 
+           kubectl exec {{ pod_name }} -n {{ ns }}
+           -- mysql -u{{ dbuser }} -p{{ dbpassword }} -e 'select * from ttbl' tdb;
+     args:
+       executable: /bin/bash
+     register: result 
+     failed_when: "'tdata' not in result.stdout"   
+
+  when: status == "VERIFY"
