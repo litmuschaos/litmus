@@ -46,5 +46,9 @@ spec:
           - name: APP_REPLICA
             value: 'replicas=2'
             
+          # Use 'deprovision' for app-clean up
+          - name: ACTION
+            value: ''
+
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./cassandra/deployers/test.yml -i /etc/ansible/hosts -v; exit 0"]
