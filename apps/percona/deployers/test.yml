@@ -12,36 +12,53 @@
         - include_tasks: /common/utils/create_testname.yml
 
          ## RECORD START-OF-TEST IN LITMUS RESULT CR
-        - include_tasks: /common/utils/update_litmus_result_resource.yml
+        - include_tasks: "/common/utils/update_litmus_result_resource.yml"
           vars:
             status: 'SOT'
+   
+        - block:
 
-         ##Actual test
+             ##Actual test
          ## Creating namespaces and making the application for deployment
-        - include_tasks: /common/utils/pre_create_app_deploy.yml
-
+            - include_tasks: /common/utils/pre_create_app_deploy.yml
+        
         ## Deploying the application
-        - include_tasks: /common/utils/deploy_single_app.yml
-          vars:
-            check_app_pod: 'yes'
-            delay: 10
-            retries: 100
+            - include_tasks: /common/utils/deploy_single_app.yml
+              vars:
+                check_app_pod: 'yes'
+                delay: 10
+                retries: 100
+    
+            ## Fetching the pod name
+            - include_tasks: /common/utils/fetch_app_pod.yml
+    
+            ## Checking the db is ready for connection
+            - include_tasks: /common/utils/check_db_connection.yml
+    
+            - set_fact:
+                flag: "Pass"  
 
-        ## Fetching the pod name
-        - include_tasks: /common/utils/fetch_app_pod.yml
+          when: "'deprovision' not in action"  
 
-        ## Checking the db is ready for connection
-        - include_tasks: /common/utils/check_db_connection.yml
+        - block:
 
-        - set_fact:
-            flag: "Pass"
+            - name: Deprovisioning the Application
+              include_tasks: "/common/utils/deprovision_deployment.yml"
+              vars:
+                app_deployer: "{{ application_deployment }}"
+
+            - set_fact:
+                flag: "Pass"  
+
+          when: "'deprovision' is in action"        
 
       rescue:
         - set_fact:
-            flag: "Fail"
+            flag: "Fail"     
 
       always:
             ## RECORD END-OF-TEST IN LITMUS RESULT CR
         - include_tasks: /common/utils/update_litmus_result_resource.yml
           vars:
             status: 'EOT'
+              
