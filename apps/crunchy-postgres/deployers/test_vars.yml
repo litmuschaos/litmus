@@ -1,4 +1,5 @@
-pg_statefulset: postgres_statefulset.yml
+application_deployment: postgres_statefulset.yml
 app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
 app_label: "{{ lookup('env','APP_LABEL') }}"
 test_name: postgres-deployment
+application_name: "postgres statefulset and services"

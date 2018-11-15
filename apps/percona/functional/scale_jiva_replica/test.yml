@@ -1,0 +1,83 @@
+---
+
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - vars.yml
+
+  tasks:
+
+   - block:
+
+      ## RECORD START-OF-TEST IN LITMUS RESULT CR
+       - include_tasks: /common/utils/update_litmus_result_resource.yml
+         vars:
+           status: 'SOT'
+
+       - name: Get the number of nodes in the cluster
+         shell: kubectl get nodes | grep 'none' | wc -l
+         args:
+           executable: /bin/bash
+         register: node_out
+        
+       - name: Fetch the node count from stdout
+         set_fact:
+            node_count: "{{node_out.stdout}}"
+        
+       - name: Get the replica deployment name
+         shell: kubectl get deployments -n {{ namespace }} -l openebs.io/replica=jiva-replica -o jsonpath='{.items[0].metadata.name}'
+         args:
+           executable: /bin/bash
+         register: rep_deployment_name
+        
+       - name: Get the controller deployment name 
+         shell: kubectl get deployment -n {{ namespace }} -l openebs.io/controller=jiva-controller -o jsonpath='{.items[0].metadata.name}'
+         args:
+           executable: /bin/bash
+         register: ctrl_deploy
+
+       - name: Obtaining the current replication factor
+         shell: kubectl get deployments {{ ctrl_deploy.stdout }} -n {{ namespace }} -o jsonpath='{.spec.template.spec.containers[0].env[0].value}'    
+         register: replication_factor
+
+       - name: Update Controller deployment
+         shell: kubectl set env deployment/{{ ctrl_deploy.stdout }} -n {{ namespace }}  REPLICATION_FACTOR="{{ node_count }}" 
+         register: update_ctrl 
+         until: "'env updated' in update_ctrl.stdout"
+         retries: 5
+         delay: 10
+         when: replication_factor.stdout != node_count 
+ 
+
+       #### scale up the storage replica using kubectl command ####
+        
+       - name: Scaleing-up Jiva replica
+         include_tasks: "/funclib/kubectl/scale_replicas.yml"
+         vars:
+             app_ns: "{{ namespace }}"
+             deploy_type: "deployment"
+             app_name: "{{ rep_deployment_name.stdout }}"   
+             app_label: "openebs.io/replica=jiva-replica"  
+             app_replica_count: "{{ node_count }}"
+
+        #### Check the replica access mode after scaling up using mayactl commands ####
+       - name: Check the replicas access mode
+         include_tasks: "/funclib/openebs/access-mode-check.yml"
+         vars:
+           ns: "{{ namespace }}"
+           pvc_name: "{{ persistant_vol_name }}"
+           operator_ns: "{{ operator_namespace }}"
+
+       - set_fact: 
+           flag: "Pass" 
+          
+     rescue:
+       - set_fact:
+           flag: "Fail"
+
+     always:
+           ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'

@@ -1,0 +1,46 @@
+
+       - name: Get the pv name
+         shell: kubectl get pvc {{ pvc_name }} -n {{ ns }} -o jsonpath='{.spec.volumeName}'
+         args:
+           executable: /bin/bash
+         register: pv_name
+         changed_when: True
+
+       - name: Get the nodes count
+         shell: kubectl get nodes | grep '<none>' | wc -l
+         args:
+           executable: /bin/bash
+         register: node_count
+
+       - name: Get the maya-apiserver pod name
+         shell:  kubectl get pods -n {{ operator_ns }} -l name=maya-apiserver --no-headers -o jsonpath='{.items[0].metadata.name}'
+         args:
+           executable: /bin/bash
+         register: mayapod
+         changed_when: True
+
+       - name: Get the volume list
+         shell: kubectl exec -it {{ mayapod.stdout }} -n {{ operator_ns }} -- mayactl volume list
+         args:
+           executable: /bin/bash
+         register: volname
+         changed_when: True
+         until: 'pv_name.stdout in volname.stdout'
+         delay: 30
+         retries: 5
+
+       - name: Get the replicas access mode
+         shell: >   
+            kubectl exec -it {{ mayapod.stdout }} -n {{ operator_ns }} -- mayactl volume info --volname "{{ pv_name.stdout }}" -n {{ ns }} | grep 'RW' | wc -l
+         args:
+           executable: /bin/bash
+         register: result
+         until: result.stdout| int == node_count.stdout | int
+         delay: 30
+         retries: 15
+         changed_when: True
+
+       - debug:
+           msg: "All the replicas are in sync"
+         when: "result.rc == 0"
+

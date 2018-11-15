@@ -40,6 +40,7 @@
             dbname: 'tdb'
           when: data_persistance != '' 
 
+
         - include_vars:
             file: chaosutil.yml    
 
@@ -119,6 +120,7 @@
             dbpassword: 'k8sDem0'
             dbname: 'tdb'
           when: data_persistance != '' 
+
 
         - block:
 

@@ -40,6 +40,24 @@
             register: lr_status
             failed_when: "lr_status.rc != 0"
 
+          - template:
+              src: storageclass-memcheck.j2
+              dest: "{{ storage_class_memcheck }}"
+
+          - name: Applying storage class
+            shell: "{{ kubeapply }} apply -f {{ storage_class_memcheck }}" 
+            args:
+              executable: /bin/bash
+
+          - name: Confirm that openebs storage classes are created
+            shell: kubectl get storageclass
+            args:
+              executable: /bin/bash
+            register: result_sc
+            until: "'cstor-memcheck' in result_sc.stdout"
+            delay: 30
+            retries: 3
+
           - block:
               - template:
                   src: storageclass-jiva.j2

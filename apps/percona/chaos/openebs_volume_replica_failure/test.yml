@@ -91,6 +91,7 @@
             dbname: 'tdb'
           when: data_persistance != ''      
 
+
         ## STORAGE FAULT INJECTION 
 
         - include: "{{ chaos_util_path }}"
@@ -131,6 +132,7 @@
             dbpassword: 'k8sDem0'
             dbname: 'tdb'  
           when: data_persistance != ''
+
 
         - set_fact:
             flag: "Pass"

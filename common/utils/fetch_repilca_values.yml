@@ -1,0 +1,15 @@
+---
+#Reading the replica values from env and replace them in application lable
+#placholder
+- name: Get the application replica values from env
+  set_fact:
+    app_rkey: "{{ app_replica.split('=')[0] }}"
+    app_rvalue: "{{ app_replica.split('=')[1] }}"
+
+- name: Replace the application label placeholder
+  replace:
+    path: "{{ application_deployment }}"
+    regexp: "rkey: rvalue"
+    replace: "{{ app_rkey }}: {{ app_rvalue }}"
+
+

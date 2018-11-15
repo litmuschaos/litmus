@@ -7,98 +7,58 @@
 
   tasks:
     - block:
-        - block:
 
-            - name: Record test instance/run ID
-              set_fact:
-                run_id: "{{ lookup('env','RUN_ID') }}"
-
-            - name: Construct testname appended with runID
-              set_fact:
-                test_name: "{{ test_name }}-{{ run_id }}"
-
-          when: lookup('env','RUN_ID')
+      ## Generating the testname for deployment
+        - include_tasks: /common/utils/create_testname.yml
 
          ## RECORD START-OF-TEST IN LITMUS RESULT CR
-        - include_tasks: /common/utils/update_litmus_result_resource.yml
+        - include_tasks: "/common/utils/update_litmus_result_resource.yml"
           vars:
             status: 'SOT'
+   
+        - block:
 
-         ##Actual test
-        - name: Check whether the provider storageclass is applied
-          shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
-          args:
-            executable: /bin/bash
-          register: result
+             ##Actual test
+         ## Creating namespaces and making the application for deployment
+            - include_tasks: /common/utils/pre_create_app_deploy.yml
+        
+        ## Deploying the application
+            - include_tasks: /common/utils/deploy_single_app.yml
+              vars:
+                check_app_pod: 'yes'
+                delay: 10
+                retries: 100
+    
+            ## Fetching the pod name
+            - include_tasks: /common/utils/fetch_app_pod.yml
+    
+            ## Checking the db is ready for connection
+            - include_tasks: /common/utils/check_db_connection.yml
+    
+            - set_fact:
+                flag: "Pass"  
 
-        - name: Replace the pvc placeholder with provider
-          replace:
-            path: "{{ percona_deployment }}"
-            regexp: "testclaim"
-            replace: "{{ lookup('env','APP_PVC') }}"
+          when: "'deprovision' not in action"  
 
-        - name: Replace the storageclass placeholder with provider
-          replace:
-            path: "{{ percona_deployment }}"
-            regexp: "testclass"
-            replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+        - block:
 
-        - name: Get the application label values from env
-          set_fact:
-             app_lkey: "{{ app_label.split('=')[0] }}"
-             app_lvalue: "{{ app_label.split('=')[1] }}"
+            - name: Deprovisioning the Application
+              include_tasks: "/common/utils/deprovision_deployment.yml"
+              vars:
+                app_deployer: "{{ application_deployment }}"
 
-        - name: Replace the application label placeholder
-          replace:
-            path: "{{ percona_deployment }}"
-            regexp: "lkey: lvalue"
-            replace: "{{ app_lkey }}: {{ app_lvalue }}"
+            - set_fact:
+                flag: "Pass"  
 
-        - name: Create test specific namespace.
-          shell: kubectl create ns {{ app_ns }}
-          args:
-           executable: /bin/bash
-          when: app_ns != 'litmus'
-
-        - name: Checking the status  of test specific namespace.
-          shell: kubectl get ns {{ app_ns }} -o custom-columns=:status.phase --no-headers
-          args:
-           executable: /bin/bash
-          register: npstatus
-          until: "'Active' in npstatus.stdout"
-          delay: 30
-          retries: 10
-
-        - name: Deploying percona
-          shell: kubectl apply -f {{ percona_deployment }} -n {{ app_ns }}
-
-        - name: Checking percona is in running state
-          shell: kubectl get pods -n {{ app_ns }} -o jsonpath='{.items[?(@.metadata.labels.{{app_lkey}}=="{{app_lvalue}}")].status.phase}'
-          register: result
-          until: "'Running' in result.stdout"
-          delay: 10
-          retries: 100
-
-        - name: Getting the Percona POD name
-          shell: kubectl get po -n {{ app_ns }} -l {{ app_label }} -o jsonpath='{.items[0].metadata.name}'
-          register: pod_name
-
-        - name: Check if db is ready for connections
-          shell: kubectl logs {{ pod_name.stdout }} -n {{ app_ns }} | grep 'ready for connections' | wc -l
-          register: initcheck
-          until: initcheck.stdout == "2"
-          delay: 60
-          retries: 15
-
-        - set_fact:
-            flag: "Pass"
+          when: "'deprovision' is in action"        
 
       rescue:
         - set_fact:
-            flag: "Fail"
+            flag: "Fail"     
 
       always:
             ## RECORD END-OF-TEST IN LITMUS RESULT CR
         - include_tasks: /common/utils/update_litmus_result_resource.yml
           vars:
             status: 'EOT'
+              
