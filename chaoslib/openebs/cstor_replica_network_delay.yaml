@@ -1,0 +1,191 @@
+#- name: Setup pumba chaos infrastructure
+#  shell: >
+#    kubectl apply -f /chaoslib/pumba/pumba_kube.yaml
+#    -n {{ app_ns }}
+#  args:
+#    executable: /bin/bash
+#  register: result
+
+#- name: Confirm that the pumba ds is running on all nodes
+#  shell: >
+#    kubectl get pod -l app=pumba
+#    --no-headers -o custom-columns=:status.phase
+#    -n {{ app_ns }} | sort | uniq
+#  args:
+#    executable: /bin/bash
+#  register: result
+#  until: "result.stdout == 'Running'"
+#  delay: 20
+#  retries: 15
+
+- name: Derive PV from application PVC
+  shell: >
+    kubectl get pvc {{ app_pvc }}
+    -o custom-columns=:spec.volumeName -n {{ app_ns }}
+    --no-headers
+  args:
+    executable: /bin/bash
+  register: pv
+
+- name: Get istgt target pod details
+  #shell: kubectl get pods  -l openebs.io/persistent-volume-claim="{{ APP_PVC }}" --all-namespaces -o custom-columns=:metadata.name
+  shell: kubectl get pods  -l openebs.io/persistent-volume-claim="percona-mysql-claim" --all-namespaces --no-headers -o custom-columns=:metadata.name
+  register: istgt_replica
+
+#kubectl get pods -n app-percona-ns  -l 'name=percona'  --no-headers -o custom-columns=:metadata.name
+- name: Get Application  pod details
+  #shell: kubectl get pods  -l openebs.io/persistent-volume-claim="{{ APP_PVC }}" --all-namespaces -o custom-columns=:metadata.name
+  shell: kubectl get pods -n {{ app_ns }}  -l {{ APP_LABEL }}  --no-headers -o custom-columns=:metadata.name
+  register: app_pod
+
+- name: Get list of cstor replicas pod belonging to the PV
+  shell: >
+    kubectl get pods -l app=cstor-pool
+    -n {{ operator_ns }} --no-headers | awk {'print $1'}
+  args:
+    executable: /bin/bash
+  register: cstor_replicas_pod
+
+#Select any cstor replica pod to inject packet loss
+- set_fact:
+    targeted_replica_pod: "{{ cstor_replicas_pod.stdout_lines | list | first }}"
+
+- name: Install tc command on targeted replica pod
+  shell: kubectl exec -it {{ targeted_replica_pod }} -n  openebs --container cstor-pool -- bash -c "apt-get update && apt-get -y install iproute2"
+  register: tc_apt_output
+
+- name: Inject packet loss on targeted replica
+  shell: kubectl exec -it {{ targeted_replica_pod }} -n  openebs --container cstor-pool -- bash -c "tc qdisc add dev eth0 root netem loss 100.00"
+  register: tc_output
+
+- name: Check if targeted replica is disconnected
+  shell: kubectl exec -it {{ istgt_replica.stdout }} -n openebs   --container  cstor-istgt -- istgtcontrol -q replica |json_pp |grep "\"status" |awk -F ':' '{print $2}' | tr -d ',' |wc -l
+  register: connected_replica
+  until: "connected_replica.stdout == \"2\""
+  delay: 30
+  retries: 10
+
+#- name: Get the node on which the targeted cstor replica is scheduled
+#  shell: >
+#    kubectl get pod {{ targeted_replica_pod }} -n {{ operator_ns }}
+#    --no-headers -o custom-columns=:spec.nodeName
+#  args:
+#    executable: /bin/bash
+#  register: node
+
+#- name: Identify the pumba pod that co-exists with targeted cstor replica pod
+#  shell: >
+#    kubectl get pods -l app=pumba -n {{ app_ns }}
+#    -o jsonpath='{.items[?(@.spec.nodeName==''"{{ node.stdout }}"'')].metadata.name}'
+#  args:
+#    executable: /bin/bash
+#  register: pumba_pod
+
+- name: Get current iostats from target
+  shell: kubectl exec -it {{ istgt_replica.stdout }} -n openebs --container cstor-istgt -- istgtcontrol -q iostats |json_pp| grep WriteIOPS |awk -F ':' '{print $2}' | tr -d -c 0-9
+  register: last_iostats
+
+#- name: Inject packet loss for {{ NETWORK_DELAY }}s on targeted cstor replica
+#  shell: >
+#    kubectl exec {{ pumba_pod.stdout }} -n {{ app_ns }}
+#    -- pumba --debug netem --interface eth0 -d {{ NETWORK_DELAY }}s loss
+#    -p 100 re2:^k8s_cstor-pool_{{ targeted_replica_pod }}
+#  args:
+#    executable: /bin/bash
+#  async: 400
+#  poll: 0
+#  register: async_results
+
+#- name: Wait for 60s post fault injection
+#  wait_for:
+#    timeout: 60
+
+- name: Generate database name
+  shell: cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1
+  register: new_db_name
+
+- name: Create new database in the mysql
+  include_tasks: "/common/utils/mysql_data_persistence.yml"
+  vars:
+    status: 'LOAD'
+    #ns: "app-percona-ns"
+    #pod_name: "percona-786c6b7c7f-7qkxm"
+    ns: "{{ app_ns }}"
+    pod_name: "{{ app_pod.stdout }}"
+    dbuser: 'root'
+    dbpassword: 'k8sDem0'
+    dbname: "{{ new_db_name.stdout }}"
+
+- name: Check if target got any new write IOs
+  shell: kubectl exec -it {{ istgt_replica.stdout }} -n openebs --container cstor-istgt -- istgtcontrol -q iostats |json_pp| grep WriteIOPS |awk -F ':' '{print $2}' | tr -d -c 0-9
+  register: iostats
+  retries: 3
+  delay: 3
+  until: iostats.stdout != last_iostats.stdout
+
+#- name: Check pumba async task status
+#  async_status:
+#    jid: "{{ async_results.ansible_job_id }}"
+#  register: async_poll_results
+#  until: async_poll_results.finished
+#  retries: 30
+#  delay: 15
+
+- name: Remove packet loss rule from targeted replica pod
+  shell: kubectl exec -it {{ targeted_replica_pod }} -n  openebs --container cstor-pool -- bash -c "tc qdisc del dev eth0 root netem loss 100.00"
+  register: apt_rc
+
+- name: Wait until all replica gets connected
+  shell: kubectl exec -it {{ istgt_replica.stdout }} -n openebs   --container  cstor-istgt -- istgtcontrol -q replica |json_pp |grep "\"status" |awk -F ':' '{print $2}' | tr -d ',' |wc -l
+  register: connected_replica
+  until: "connected_replica.stdout == \"3\""
+  delay: 30
+  retries: 10
+
+#- name: Delete the pumba daemonset
+#  shell: kubectl delete -f /chaoslib/pumba/pumba_kube.yaml -n {{ app_ns }}
+#  args:
+#    executable: /bin/bash
+#  register: result
+
+#- name: Confirm that the pumba ds is deleted successfully
+#  shell: >
+#    kubectl get pods -l app=pumba --no-headers -n {{ app_ns }}
+#  args:
+#    executable: /bin/bash
+#  register: result
+#  until: "'Running' not in result.stdout"
+#  delay: 20
+#  retries: 15
+
+- name: Wait until all replica becomes healthy
+  shell: kubectl exec -it {{ istgt_replica.stdout }} -n openebs   --container  cstor-istgt -- istgtcontrol -q replica |json_pp |grep "\"status" |awk -F ':' '{print $2}' | tr -d ','
+  register: replica_status
+  until: replica_status.stdout.find("DEGRADED") == -1
+  retries: 5
+  delay: 10
+
+- block:
+    - name: Install netcat on current host
+      shell: apt-get update && apt-get -y install netcat iproute2
+      register: dataset
+
+    - include: fetch_data_from_replica.yml
+      loop: "{{ cstor_replicas_pod.stdout_lines }}"
+      loop_control:
+        loop_var: rpod
+
+    - set_fact:
+        base_replica: "{{ cstor_replicas_pod.stdout_lines | list | first }}"
+
+    - name: compare data object
+      shell: diff {{ rpod }}.1.dump {{ base_replica }}.1.dump
+      loop: "{{ cstor_replicas_pod.stdout_lines }}"
+      loop_control:
+        loop_var: rpod
+
+    - name: compare meta data object
+      shell: diff {{ rpod }}.3.dump {{ base_replica }}.3.dump
+      loop: "{{ cstor_replicas_pod.stdout_lines }}"
+      loop_control:
+        loop_var: rpod

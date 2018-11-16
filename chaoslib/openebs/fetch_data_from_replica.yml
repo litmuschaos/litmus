@@ -1,0 +1,65 @@
+- name: Get replica id
+  shell: kubectl get pods {{ rpod }} -n openebs -o jsonpath='{.spec.containers[*].env[0].value}'
+  register: cstor_id
+
+- name: Check for dataset name
+  shell: kubectl exec -it {{ rpod }} -n  openebs --container cstor-pool -- zfs list cstor-{{ cstor_id.stdout }}/{{ pv.stdout }}
+  register: ds_exists
+
+#- name: delete existing snapshot
+#  shell: kubectl exec -it {{ rpod }} -n  openebs --container cstor-pool -- zfs destroy cstor-{{ cstor_id.stdout }}/app-percona-ns-percona-mysql-claim-4001043235@verify
+#register: snap_destroy
+
+- name: Take snapshot on dataset
+  shell: kubectl exec -it {{ rpod }} -n  openebs --container cstor-pool -- zfs snapshot cstor-{{ cstor_id.stdout }}/{{ pv.stdout }}@verify
+  register: snap_create
+
+- name: Dump snapshot datastream to a file
+  shell: kubectl exec -it {{ rpod }} -n  openebs --container cstor-pool -- bash -c "zfs send cstor-{{ cstor_id.stdout }}/{{ pv.stdout }}@verify > /snap.data"
+  register: dump_files
+
+- name: Destroy snapshot
+  shell: kubectl exec -it {{ rpod }} -n  openebs --container cstor-pool -- zfs destroy cstor-{{ cstor_id.stdout }}/{{ pv.stdout }}@verify
+  register: snap_destroy
+
+- name: Remove any object dump files from replica pod
+  shell: kubectl exec -it {{ rpod }} -n  openebs --container cstor-pool -- rm -rf 1.dump 3.dump
+  register: dump_rc
+
+- name: Parse snapshot stream and create dump files
+  shell: kubectl exec -it {{ rpod }} -n  openebs --container cstor-pool -- bash -c "zstreamdump -w -1 < /snap.data"
+  register: dump_rc
+
+- name: Install netcat on replica pod
+  shell: kubectl exec -it {{ rpod }} -n  openebs --container cstor-pool -- bash -c "apt-get update && apt-get -y install netcat"
+  register: nc_apt_output
+
+- name: Start receiver to receive data object from replica pod
+  command: bash -c "nc -l -p 9090 > {{ rpod }}.1.dump"
+  async: 6000
+  poll: 0
+  register: nc_receiver
+
+- name: Send data object from replica pod
+  shell: kubectl exec -it {{ rpod }} -n  openebs --container cstor-pool -- bash -c "nc -w 3 {{ ansible_default_ipv4.address }} 9090 < /1.dump"
+  register: data_sent
+
+# We can wait for nc receiver to exit or we can manually kill it
+- name: kill receiver
+  shell: bash -c "for i in `ps aux |grep \"nc -l -p 9090\" |grep -v grep |awk -F ' ' '{print $2}'`; do kill -9 $i; done"
+  register: nc_receiver
+
+
+- name: Start receiver to receive meta-data object from replica pod
+  command: bash -c "nc -l -p 9090 > {{ rpod }}.3.dump"
+  async: 6000
+  poll: 0
+  register: nc_receiver
+
+- name: Send meta-data object from replica pod
+  shell: kubectl exec -it {{ rpod }} -n  openebs --container cstor-pool -- bash -c "nc -w 3 {{ ansible_default_ipv4.address }} 9090 < /3.dump"
+  register: data_sent
+
+- name: kill receiver
+  shell: bash -c "for i in `ps aux |grep \"nc -l -p 9090\" |grep -v grep |awk -F ' ' '{print $2}'`; do kill -9 $i; done"
+  register: nc_receiver

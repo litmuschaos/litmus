@@ -1,0 +1,117 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+        ## DERIVE THE APP STORAGE CLASS AND CHAOS UTIL TO USE   
+        - block:
+
+            - name: Checking status of liveness pod
+              shell: kubectl get pod -n {{ liveness_namespace }} -l {{ liveness_label }} -o jsonpath='{.items[0].status.phase}'
+              register: liveness_pod
+              until: "'Running' in liveness_pod.stdout"
+              delay: 10
+              retries: 10
+
+          when: liveness_label != ''
+
+        - include: test_prerequisites.yml
+
+        - include_vars:
+            file: chaosutil.yml
+
+        - name: Record the chaos util path
+          set_fact:
+            chaos_util_path: "/chaoslib/{{ chaosutil }}"
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+
+        - block:
+
+            - name: Record test instance/run ID
+              set_fact:
+                run_id: "{{ lookup('env','RUN_ID') }}"
+
+            - name: Construct testname appended with runID
+              set_fact:
+                test_name: "{{ test_name }}-{{ run_id }}"
+
+          when: lookup('env','RUN_ID')
+
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'SOT'
+            chaostype: "{{ chaosutil.split('.')[0] }}"
+
+        ## DISPLAY APP INFORMATION
+
+        - name: Display the app information passed via the test job
+          debug:
+            msg:
+              - "The application info is as follows:"
+              - "Namespace    : {{ namespace }}"
+              - "Label        : {{ label }}"
+              - "PVC          : {{ pvc }}"
+              - "StorageClass : {{ sc }}"
+
+        ## PRE-CHAOS APPLICATION LIVENESS CHECK
+
+        - name: Verify that the AUT (Application Under Test) is running
+          shell: >
+            kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
+            -o custom-columns=:status.phase
+          args:
+            executable: /bin/bash
+          register: app_status
+          until: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
+          delay: 10
+          retries: 12
+
+        ## STORAGE TEST
+        - include: "{{ chaos_util_path }}"
+          app_ns: "{{ namespace }}"
+          app_pvc: "{{ pvc }}"
+
+        ## POST-CHAOS APPLICATION LIVENESS CHECK
+
+        - name: Verify AUT liveness post fault-injection
+          shell: >
+            kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
+            -o custom-columns=:status.phase
+          args:
+            executable: /bin/bash
+          register: app_status
+          until: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
+          delay: 10
+          retries: 12
+
+        - block:
+
+            - name: Checking status of liveness pod
+              shell: kubectl get pod -n {{ liveness_namespace }} -l {{ liveness_label }} -o jsonpath='{.items[0].status.phase}'
+              register: liveness_pod
+              until: "'Running' in liveness_pod.stdout"
+              delay: 10
+              retries: 10
+
+          when: liveness_label != ''
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - set_fact: 
+            flag: "Fail"
+
+      always:
+
+        ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
+            chaostype: "{{ chaosutil.split('.')[0] }}"
