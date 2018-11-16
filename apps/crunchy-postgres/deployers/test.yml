@@ -16,23 +16,35 @@
           vars:
             status: 'SOT'
 
-        ## Actual Test to deploy Crunchy Postgress  on k8s
-        ## Creating namespaces and making the application for deployment
-        - include_tasks: /common/utils/pre_create_app_deploy.yml
+        - block:
 
-        ## Deploying postgress statefulset and services
-        - include_tasks: /common/utils/deploy_single_app.yml
-          vars:
-            check_app_pod: 'yes'
-            delay: 10
-            retries: 100
+         ## Actual test
+         ## Creating namespaces and making the application for deployment
+            - include_tasks: /common/utils/pre_create_app_deploy.yml
 
-        - name: Verify that the postgres master and replica are available as cluster services
-          shell: kubectl get svc -n {{ app_ns }}
-          args:
-            executable: /bin/bash
-          register: result_service
-          failed_when: "'pgset-primary' and 'pgset-replica' not in result_service.stdout"
+         ## Deploying the application
+            - include_tasks: /common/utils/deploy_single_app.yml
+              vars:
+                check_app_pod: 'yes'
+                delay: 10
+                retries: 20
+
+            - name: Verify that the postgres master and replica are available as cluster services
+              shell: kubectl get svc -n {{ app_ns }}
+              args:
+                executable: /bin/bash
+              register: result_service
+              failed_when: "'pgset-primary' and 'pgset-replica' not in result_service.stdout"
+              when: "'deprovision' not in action"
+
+        - block:
+
+            - name: Deprovisioning the Application
+              include_tasks: /common/utils/deprovision_statefulset.yml
+              vars:
+                app_deployer: "{{ application_deployment }}"
+
+          when: "'deprovision' is in action"
 
         - set_fact:
             flag: "Pass"

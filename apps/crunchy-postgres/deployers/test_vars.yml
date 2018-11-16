@@ -3,3 +3,6 @@ app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
 app_label: "{{ lookup('env','APP_LABEL') }}"
 test_name: postgres-deployment
 application_name: "postgres statefulset and services"
+action: "{{ lookup('env','ACTION') }}"
+app_pvc: "{{ lookup('env','APP_PVC') }}"
+storage_class: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
