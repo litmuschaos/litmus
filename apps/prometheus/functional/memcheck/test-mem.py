@@ -17,7 +17,7 @@ while count < n:
     count = count + 1
     out = subprocess.Popen(used_mem_process,stdout=subprocess.PIPE,shell=True)
     used_mem = out.communicate()
-    mem_in_mb = int(used_mem[0])/1024
+    mem_in_mb = int(float(used_mem[0]))/1024
     print (mem_in_mb), "MB"
     if mem_in_mb < 500:
         time.sleep(20)
