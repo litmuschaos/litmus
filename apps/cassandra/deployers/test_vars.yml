@@ -4,3 +4,6 @@ app_label: "{{ lookup('env','APP_LABEL') }}"
 test_name: cassandra-deployment
 app_replica: "{{ lookup('env','APP_REPLICA') }}"
 application_name: "Cassandra statefulset"
+action: "{{ lookup('env','ACTION') }}"
+app_pvc: "{{ lookup('env','APP_PVC') }}"
+storage_class: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"

@@ -69,7 +69,7 @@
   args:
     executable: /bin/bash
   register: resource_list
-  until: "'No resources found' in resource_list.stdout"
+  until: "'No resources found' in resource_list.stderr"
   delay: 30
   retries: 30
 

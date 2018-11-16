@@ -16,23 +16,37 @@
           vars:
             status: 'SOT'
 
-        ## Actual test
-        ## Creating the namespaces and making application ready for deployment
-        - include_tasks: /common/utils/pre_create_app_deploy.yml
+        - block:
 
-        - name: Replace the default namespace in cassandra statefulset yaml
-          replace:
-            path: "{{ application_deployment }}"
-            regexp: 'cassandra-0.cassandra.default.svc.cluster.local'
-            replace: 'cassandra-0.cassandra.{{ app_ns }}.svc.cluster.local'
+         ## Actual test
+         ## Creating namespaces and making the application for deployment
+            - include_tasks: /common/utils/pre_create_app_deploy.yml
 
-        ## Deploying the application
-        - include_tasks: /common/utils/deploy_single_app.yml
-          vars:
-            check_app_pod: 'no'
+            - name: Replace the default namespace in cassandra statefulset yaml
+              replace:
+                path: "{{ application_deployment }}"
+                regexp: 'cassandra-0.cassandra.default.svc.cluster.local'
+                replace: 'cassandra-0.cassandra.{{ app_ns }}.svc.cluster.local'
 
-        - name: Setting pass flag
-          set_fact:
+         ## Deploying the application
+            - include_tasks: /common/utils/deploy_single_app.yml
+              vars:
+                check_app_pod: 'no'
+                delay: 10
+                retries: 20
+
+          when: "'deprovision' not in action"
+
+        - block:
+
+            - name: Deprovisioning the Application
+              include_tasks: /common/utils/deprovision_statefulset.yml
+              vars:
+                app_deployer: "{{ application_deployment }}"
+
+          when: "'deprovision' is in action"
+
+        - set_fact:
             flag: "Pass"
 
       rescue:
@@ -41,7 +55,7 @@
             flag: "Fail"
 
       always:
-            ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        ## RECORD END-OF-TEST IN LITMUS RESULT CR
         - include_tasks: /common/utils/update_litmus_result_resource.yml
           vars:
             status: 'EOT'

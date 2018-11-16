@@ -72,7 +72,7 @@
 - name: Delete the application and its related service.
   shell: kubectl delete -f {{ app_deployer }} -n {{ app_ns }}
   register: app
-  until: 'app.rc != 0'
+  until: 'app.rc == 0'
   delay: 30
   retries: 10
 
@@ -86,25 +86,16 @@
 - name: Check if the PVCs are deleted
   shell: kubectl get pvc -n {{ app_ns }}
   register: list_pvc
-  until: "'No resources found' in list_pvc.stdout"
+  until: "'No resources found' in list_pvc.stderr"
   delay: 30
   retries: 15
 
 - name: Check if all the components are deleted.
   shell: kubectl get all -n {{ app_ns }}
   register: result
-  until: "'No resources found' in result.stdout"
+  until: "'No resources found' in result.stderr"
   delay: 30
   retries: 30
-
-- name: Deleting PV
-  shell: kubectl get pv {{ item }}
-  args:
-    executable: /bin/bash
-  register: pv_result
-  failed_when: "item in pv_result.stdout"
-  with_items:
-    - "{{ pv_list.stdout }}"
 
 - name: Delete the namespace.
   shell: kubectl delete ns {{ app_ns }}

@@ -26,7 +26,7 @@ spec:
 
           - name: PROVIDER_STORAGE_CLASS
             # Supported values: openebs-standard, local-storage
-            value: openebs-cstor-custom
+            value: cstor-memcheck
 
           - name: APP_PVC
             value: 'prometheus-claim'
@@ -38,6 +38,10 @@ spec:
             # Application namespace
           - name: APP_NAMESPACE
             value: 'app-prometheus'
+
+            # Use 'deprovision' for app-clean up
+          - name: ACTION
+            value: ''  
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./prometheus/deployers/test.yml -i /etc/ansible/hosts -v; exit 0"]
