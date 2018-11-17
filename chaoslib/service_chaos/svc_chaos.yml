@@ -1,7 +1,7 @@
 - block:
     - name: Setup svc chaos infra
       shell: >
-        kubectl apply -f /chaoslib/service_chaos/svc_chaos_kube.yml 
+        kubectl create -f /chaoslib/service_chaos/svc_chaos_kube.yml 
         -n {{ namespace }}
       args:
         executable: /bin/bash
@@ -21,15 +21,15 @@
 
     - name: Obtaining the application pod name using its label.
       shell: >
-        kubectl get pods -n {{ app_ns }} -l {{ app_label }}
-        --no-headers -o custom-columns=:metadata.name
+        kubectl get pods -n {{ app_ns }} -l {{ app_label }} | grep
+        -w Running | awk '{print $1}'
       args:
         executable: /bin/bash
       register: app_pod
 
     - name: Identify the application node
       shell: >
-        kubectl get pod {{ app_pod }} -n {{ namespace }}
+        kubectl get pod {{ app_pod.stdout }} -n {{ namespace }}
         --no-headers -o custom-columns=:spec.nodeName
       args: 
         executable: /bin/bash
@@ -65,7 +65,7 @@
 
     - name: Delete svc chaos infra
       shell: >
-        kubectl delete -f /chaoslib/service_chaos/svc_chaos_kube.yml 
+        kubectl delete ds -l app=svc-chaos
         -n {{ namespace }}
       args:
         executable: /bin/bash

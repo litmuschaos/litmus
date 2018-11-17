@@ -75,12 +75,13 @@
         ## STORAGE FAULT INJECTION 
 
         - include: "{{ chaos_util_path }}"
-          app_ns: "{{ namespace }}"
-          app_label: "{{ label }}"
-          app_pvc: "{{ pvc }}"
-          network_delay: "{{ n_delay }}"
-          chaos_duration: "{{ c_duration }}"
-          action: svc_chaos
+          vars:
+            app_ns: "{{ namespace }}"
+            app_label: "{{ label }}"
+            app_pvc: "{{ pvc }}"
+            network_delay: "{{ n_delay }}"
+            chaos_duration: "{{ c_duration }}"
+            action: "svc_chaos"
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
