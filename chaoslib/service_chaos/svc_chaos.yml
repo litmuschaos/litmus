@@ -50,7 +50,7 @@
 
     - name: do svc restart
       shell: >
-        kubectl exec -it {{ svc_chaos_pod.stdout}} -n {{ namespace }} 
+        timeout 10 kubectl exec -it {{ svc_chaos_pod.stdout}} -n {{ namespace }} 
         -- bash -c "systemctl stop kube-docker-monitor && systemctl stop kubelet-monitor && systemctl stop {{ svc_chaos }} && sleep {{ c_duration }} && systemctl start {{ svc_chaos }} && systemctl start kube-docker-monitor && systemctl start kubelet-monitor"
       args:
         executable: /bin/bash
