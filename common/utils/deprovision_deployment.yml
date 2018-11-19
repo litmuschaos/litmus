@@ -69,7 +69,7 @@
   args:
     executable: /bin/bash
   register: resource_list
-  until: "app_pvc in resource_list.stderr"
+  until: "app_pvc not in resource_list.stdout"
   delay: 30
   retries: 20
 
