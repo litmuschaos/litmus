@@ -41,7 +41,7 @@ spec:
 
             # Use 'deprovision' for app-clean up
           - name: ACTION
-            value: ''
+            value: provision
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./jenkins/deployers/test.yml -i /etc/ansible/hosts -v; exit 0"]
