@@ -2,33 +2,33 @@
 
     - name: Setup pumba chaos infrastructure
       shell: >
-        kubectl apply -f /chaoslib/pumba/pumba_kube.yaml 
+        kubectl apply -f /chaoslib/pumba/pumba_kube.yaml
         -n {{ namespace }}
       args:
         executable: /bin/bash
       register: result
-    
+
     - name: Confirm that the pumba ds is running on all nodes
       shell: >
-        kubectl get pod -l app=pumba 
+        kubectl get pod -l app=pumba
         --no-headers -o custom-columns=:status.phase
         -n {{ namespace }} | sort | uniq
-      args: 
+      args:
         executable: /bin/bash
       register: result
       until: "result.stdout == 'Running'"
       delay: 20
       retries: 15
-    
+
     - name: Identify the application node
       shell: >
         kubectl get pod {{ app_pod }} -n {{ namespace }}
         --no-headers -o custom-columns=:spec.nodeName
-      args: 
+      args:
         executable: /bin/bash
-      register: result 
-               
-    - name: Record the application node name 
+      register: result
+
+    - name: Record the application node name
       set_fact:
         app_node: "{{ result.stdout }}"
 
@@ -36,9 +36,7 @@
 
       - name: Record the application container
         shell: >
-          kubectl get pod {{ app_pod }}
-          --no-headers -o jsonpath={.spec.containers[*].name}
-          -n {{ namespace }}
+          kubectl get pods -l {{ label }} -n {{ namespace }} -o jsonpath='{.items[0].spec.containers[0].name}'
         args:
           executable: /bin/bash
         register: container
@@ -49,49 +47,49 @@
 
       when: app_container is undefined
 
-    - name: Record the pumba pod on app node 
+    - name: Record the pumba pod on app node
       shell: >
-        kubectl get pod -l app=pumba -o wide 
-        -n {{ namespace }} | grep {{ app_node }} 
+        kubectl get pod -l app=pumba -o wide
+        -n {{ namespace }} | grep {{ app_node }}
         | awk '{print $1}'
       args:
         executable: /bin/bash
       register: pumba_pod
-        
-    - name: Force kill the application pod using pumba 
+
+    - name: Force kill the application pod using pumba
       shell: >
         kubectl exec {{ pumba_pod.stdout}} -n {{ namespace }}
         -- timeout -t 40 pumba --interval 15s kill
         --signal SIGKILL re2:k8s_{{ app_container }};
       args:
         executable: /bin/bash
-      ignore_errors: true 
+      ignore_errors: true
       register: result
-    
+
     - name: Wait for application pod reschedule
       wait_for:
         timeout: 30
-  
+
   when: action == "killapp"
- 
+
 - block:
 
-    - name: Delete the pumba daemonset 
+    - name: Delete the pumba daemonset
       shell: >
         kubectl delete -f /chaoslib/pumba/pumba_kube.yaml -n {{ namespace }}
       args:
         executable: /bin/bash
       register: result
-      
+
     - name: Confirm that the pumba ds is deleted successfully
       shell: >
-        kubectl get pod -l app=pumba 
+        kubectl get pod -l app=pumba
         --no-headers -n {{ namespace }}
-      args: 
+      args:
         executable: /bin/bash
       register: result
       until: "'Running' not in result.stdout"
       delay: 20
       retries: 15
-      
+
   when: action == "deletepumba"

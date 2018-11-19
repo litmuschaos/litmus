@@ -33,6 +33,9 @@ spec:
           - name: LIVENESS_APP_NAMESPACE
             value: ""
 
+          - name: DEPLOY_TYPE
+            value: deployment
+
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./jenkins/chaos/app_pod_failure/test.yml -i /etc/ansible/hosts -vv; exit 0"]
         volumeMounts:

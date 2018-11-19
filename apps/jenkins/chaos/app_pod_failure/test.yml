@@ -19,12 +19,6 @@
              
           when: liveness_label != ''  
 
-        ## Record the chaosutil path ##
-
-        - name: Record the chaosutil  path
-          set_fact:
-            chaosutil_path: "/chaoslib/kubectl/app_pod_failure.yaml"
-
         ## RECORD START-OF-TEST IN LITMUS RESULT CR
 
         - block:
@@ -68,46 +62,58 @@
 
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
 
-        - name: Verify that the AUT (Application Under Test) is running 
-          shell: >
-            kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers
-            -o custom-columns=:status.phase
-          args:
-            executable: /bin/bash
-          register: app_status
-          until: "'Running' in app_status.stdout"
-          delay: 10
-          retries: 12
+        - block:
+            - name: Verify that the AUT is running
+              include_tasks: /common/utils/check_deployment_status.yml
 
-        - name: Get application pod name 
-          shell: >
-            kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers
-            -o=custom-columns=NAME:".metadata.name"
-          args:
-            executable: /bin/bash
-          register: app_pod_name
+            - name: Get application pod name 
+              shell: >
+                kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers
+                -o=custom-columns=NAME:".metadata.name"
+              args:
+                executable: /bin/bash
+              register: app_pod_name
 
-        ## APPLICATION FAULT INJECTION 
+        ## APPLICATION FAULT INJECTION
 
-        - include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yaml 
-          vars:
-            action: "killapp"
-            app_pod: "{{ app_pod_name.stdout }}"
-            namespace: "{{ app_ns }}"
+            - include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yaml
+              vars:
+                action: "killapp"
+                app_pod: "{{ app_pod_name.stdout }}"
+                namespace: "{{ app_ns }}"
+                label: "{{ app_label }}"
+
+          when: lookup('env','DEPLOY_TYPE') == 'deployment'
+
+        - block:
+
+            - name: Verify that the AUT is running
+              include_tasks: /common/utils/check_deployment_status.yml
+
+            - name: Get application pod name
+              shell: >
+                kubectl get pod  -n {{ app_ns }} -l {{ app_label }} -o jsonpath='{.items[0].metadata.name}'
+              args:
+                executable: /bin/bash
+              register: app_pod_name
+
+
+        ## APPLICATION FAULT INJECTION
+
+            - include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yaml
+              vars:
+                action: "killapp"
+                app_pod: "{{ app_pod_name.stdout }}"
+                namespace: "{{ app_ns }}"
+                label: "{{ app_label }}"
+
+          when: lookup('env','DEPLOY_TYPE') == 'statefulset'
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
         - name: Verify AUT liveness post fault-injection
-          shell: >
-            kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers
-            -o custom-columns=:status.phase
-          args:
-            executable: /bin/bash
-          register: app_status
-          until: "'Running' in app_status.stdout"
-          delay: 10
-          retries: 12
-
+          include_tasks: /common/utils/check_deployment_status.yml
+  
         - block:
 
             - name: Checking status of liveness pod
