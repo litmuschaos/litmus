@@ -64,14 +64,14 @@
   args:
     executable: /bin/bash
 
-- name: Check if the application namespace doesn't have any resources.
-  shell: kubectl get all -n {{ app_ns }} --no-headers
+- name: Check if the PVC is deleted.
+  shell: kubectl get pvc -n {{ app_ns }} --no-headers
   args:
     executable: /bin/bash
   register: resource_list
-  until: "'No resources found' in resource_list.stderr"
+  until: "app_pvc in resource_list.stderr"
   delay: 30
-  retries: 30
+  retries: 20
 
 - name: Delete the namespace.
   shell: kubectl delete ns {{ app_ns }}
