@@ -19,35 +19,63 @@
     project: 
     cluster_name:
 
+  vars_files:
+    - vars.yml
+
   tasks:
-    - name: Fetching Cluster Name
-      shell: cat ~/logs/clusters
-      register: cluster_name
-      when: not cluster_name
 
-    - set_fact:
-        cluster_name: "{{ cluster_name.stdout }}"
-      when: cluster_name.stdout is defined
+    - block:
 
-    - name: get nodes
-      command:  gcloud compute instances list --filter="metadata.items.key['cluster-name']['value']~'{{cluster_name}}' name~'nodes'" --format json
-      register: response
+        - name: Fetching Cluster Name
+          shell: cat ~/logs/clusters
+          register: cluster_name
+          when: not cluster_name
 
-    - set_fact:
-        data: "{{ response.stdout }}"
+        - set_fact:
+            cluster_name: "{{ cluster_name.stdout }}"
+          when: cluster_name.stdout is defined
 
-    - local_action:
-        module: gce_pd
-        credentials_file: "{{ json }}"
-        service_account_email: "{{ email }}"
-        project_id: "{{ project }}"
-        instance_name: "{{item.name}}"
-        size_gb: 20
-        zone: us-central1-a
-        mode: READ_WRITE
-        name: "{{item.name + '-' + 'gpd'}}"
-      with_items: "{{ data }}"
+        - name: get nodes
+          command: >
+            gcloud compute instances list 
+            --filter="metadata.items.key['cluster-name']['value']~'{{cluster_name}}' name~'nodes'" 
+            --format json
+          register: response
 
-    - name: Mount Disks to the Instances
-      shell: gcloud compute --project openebs-ci ssh --zone us-central1-a {{ item.name }} --command "sudo mkfs.ext4 /dev/sdb && sudo mkdir -p /mnt/openebs && sudo mount -o discard,defaults /dev/sdb /mnt/openebs && sudo chmod a+w /mnt/openebs"
-      with_items: "{{ data }}"
+        - set_fact:
+            data: "{{ response.stdout }}"
+
+        - local_action:
+            module: gce_pd
+            credentials_file: "{{ json }}"
+            service_account_email: "{{ email }}"
+            project_id: "{{ project }}"
+            instance_name: "{{item.name}}"
+            size_gb: 20
+            zone: us-central1-a
+            mode: READ_WRITE
+            name: "{{item.name + '-' + 'gpd'}}"
+          with_items: "{{ data }}"
+
+        - block:
+
+            - name: Mount Disks to the Instances
+              shell: >
+                gcloud compute --project openebs-ci ssh 
+                --zone us-central1-a {{ item.name }} 
+                --command "sudo mkfs.ext4 /dev/sdb && sudo mkdir -p /mnt/openebs && sudo mount -o discard,defaults /dev/sdb /mnt/openebs && sudo chmod a+w /mnt/openebs"
+              with_items: "{{ data }}"
+
+          when: disk_action == 'format'
+
+        - name: update test status
+          set_fact: 
+            flag: "Test Passed"
+
+      rescue:
+
+        - name: update test status
+          set_fact:
+            flag: "Test Failed" 
+
+            

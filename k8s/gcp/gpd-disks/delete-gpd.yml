@@ -16,31 +16,46 @@
     email: 
     project: 
     cluster_name:
+
+  vars_files:
+    - vars.yml
+
   tasks:
-    - name: Fetching Cluster Name
-      shell: cat ~/logs/clusters
-      register: cluster_name
-      when: not cluster_name
 
-    - set_fact:
-        cluster_name: "{{ cluster_name.stdout }}"
-      when: cluster_name.stdout is defined
+    - block: 
 
-    - name: Get nodes
-      command:  gcloud compute instances list --filter="metadata.items.key['cluster-name']['value']~'{{cluster_name}}' name~'nodes'" --format json
-      register: response
+        - name: Fetching Cluster Name
+          shell: cat ~/logs/clusters
+          register: cluster_name
+          when: not cluster_name
+
+        - set_fact:
+            cluster_name: "{{ cluster_name.stdout }}"
+          when: cluster_name.stdout is defined
+
+        - name: Get nodes
+          command:  gcloud compute instances list --filter="metadata.items.key['cluster-name']['value']~'{{cluster_name}}' name~'nodes'" --format json
+          register: response
       
-    - set_fact:
-        data: "{{ response.stdout }}"
+        - set_fact:
+            data: "{{ response.stdout }}"
 
-    - local_action:
-        module: gce_pd
-        state: deleted
-        credentials_file: "{{ files }}"
-        service_account_email: "{{ email }}"
-        project_id: "{{ project }}"
-        instance_name: "{{item.name }}"
-        zone: us-central1-a
-        name: "{{ item.name + '-' + 'gpd' }}"
-      with_items: "{{ data }}"
+        - local_action:
+            module: gce_pd
+            state: deleted
+            credentials_file: "{{ files }}"
+            service_account_email: "{{ email }}"
+            project_id: "{{ project }}"
+            instance_name: "{{item.name }}"
+            zone: us-central1-a
+            name: "{{ item.name + '-' + 'gpd' }}"
+          with_items: "{{ data }}"
 
+        - name: update test status
+          set_fact: 
+            flag: "Test Passed"
+
+      rescue:
+        - name: update test status
+          set_fact: 
+            flag: "Test Failed"

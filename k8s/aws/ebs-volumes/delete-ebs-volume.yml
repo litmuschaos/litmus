@@ -28,15 +28,20 @@
               "tag:Name": "{{ cluster_name }}"
           register: result
 
-        - name: unmounting EBS volumes to AWS Nodes
-          mount:
-            path: "{{mount_path}}"
-            src: "{{device_name}}"
-            fstype: ext4
-            state: unmounted
-          become: true
-          delegate_to: "ubuntu@{{ item.public_ip_address }}"
-          with_items: "{{ result.instances }}"
+        - block: 
+
+            - name: unmounting EBS volumes to AWS Nodes
+              mount:
+                path: "{{mount_path}}"
+                src: "{{device_name}}"
+                fstype: ext4
+                state: unmounted
+              become: true
+              delegate_to: "ubuntu@{{ item.public_ip_address }}"
+              with_items: "{{ result.instances }}"
+
+          when: disk_action == 'format' 
+           
 
         - name: Detaching EBS Volume
           ec2_vol:
