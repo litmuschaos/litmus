@@ -61,11 +61,10 @@
               - "Label        : {{ app_label }}"
 
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
+        - name: Verify that the AUT is running
+          include_tasks: /common/utils/check_deployment_status.yml
 
         - block:
-            - name: Verify that the AUT is running
-              include_tasks: /common/utils/check_deployment_status.yml
-
             - name: Get application pod name 
               shell: >
                 kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers
@@ -73,8 +72,8 @@
               args:
                 executable: /bin/bash
               register: app_pod_name
-
-        ## APPLICATION FAULT INJECTION
+  
+             ## APPLICATION FAULT INJECTION
 
             - include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yaml
               vars:
@@ -87,9 +86,6 @@
 
         - block:
 
-            - name: Verify that the AUT is running
-              include_tasks: /common/utils/check_deployment_status.yml
-
             - name: Get application pod name
               shell: >
                 kubectl get pod  -n {{ app_ns }} -l {{ app_label }} -o jsonpath='{.items[0].metadata.name}'
@@ -97,8 +93,7 @@
                 executable: /bin/bash
               register: app_pod_name
 
-
-        ## APPLICATION FAULT INJECTION
+            ## APPLICATION FAULT INJECTION
 
             - include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yaml
               vars:

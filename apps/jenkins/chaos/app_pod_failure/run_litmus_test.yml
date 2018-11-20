@@ -14,7 +14,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: openebs/ansible-runner:ci
+        image: mockbot/ansible-runner:a6
         env:
           - name: ANSIBLE_STDOUT_CALLBACK
             #value: log_plays
