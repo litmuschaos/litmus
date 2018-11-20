@@ -71,8 +71,8 @@
 
 - name: Delete the application and its related service.
   shell: kubectl delete -f {{ app_deployer }} -n {{ app_ns }}
-  register: app
-  until: 'app.rc == 0'
+  register: app_status
+  until: 'app_status.rc == 0'
   delay: 30
   retries: 10
 
