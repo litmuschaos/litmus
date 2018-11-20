@@ -35,7 +35,8 @@
                 executable: /bin/bash
               register: result_service
               failed_when: "'pgset-primary' and 'pgset-replica' not in result_service.stdout"
-              when: "'deprovision' not in action"
+
+          when: "'deprovision' not in action"
 
         - block:
 
