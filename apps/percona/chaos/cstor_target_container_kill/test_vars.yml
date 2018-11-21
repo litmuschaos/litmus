@@ -1,0 +1,10 @@
+test_name: cstor-target-container-kill
+namespace: "{{ lookup('env','APP_NAMESPACE') }}"
+label: "{{ lookup('env','APP_LABEL') }}"
+pvc: "{{ lookup('env','APP_PVC') }}"
+liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
+data_persistance: "{{ lookup('env','DATA_PERSISTENCY') }}"
+liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
+operator_ns: openebs
+target_container: "{{ lookup('env','TARGET_CONTAINER') }}" 
+
