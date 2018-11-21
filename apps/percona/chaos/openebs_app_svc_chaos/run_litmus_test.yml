@@ -8,7 +8,7 @@ spec:
   template:
     metadata:
       labels:
-        name: openebs-app-svc-chaos-
+        name: openebs-app-svc-chaos
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
