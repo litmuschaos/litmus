@@ -1,0 +1,6 @@
+---
+## TEST-SPECIFIC PARAMS
+
+test_name: fio-benchmark
+pod_yaml_alias: fio.yml
+pvc_yaml_alias: testclaim-pvc.yml
