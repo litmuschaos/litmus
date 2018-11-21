@@ -41,23 +41,27 @@
           register: volumes
           with_items: "{{result.instances}}"
 
-        - name: Create ext4 filesystem in EBS Volumes
-          filesystem:
-            fstype: ext4
-            dev: "{{device_name}}"
-          become: true
-          delegate_to: "ubuntu@{{ item.public_ip_address }}"
-          with_items: "{{ result.instances }}"
+        - block: 
 
-        - name: mounting EBS volumes to AWS Nodes
-          mount:
-            path: "{{mount_path}}"
-            src: "{{device_name}}"
-            fstype: ext4
-            state: mounted
-          become: true
-          delegate_to: "ubuntu@{{ item.public_ip_address }}"
-          with_items: "{{ result.instances }}"
+            - name: Create ext4 filesystem in EBS Volumes
+              filesystem:
+                fstype: ext4
+                dev: "{{device_name}}"
+              become: true
+              delegate_to: "ubuntu@{{ item.public_ip_address }}"
+              with_items: "{{ result.instances }}"
+
+            - name: mounting EBS volumes to AWS Nodes
+              mount:
+                path: "{{mount_path}}"
+                src: "{{device_name}}"
+                fstype: ext4
+                state: mounted
+              become: true
+              delegate_to: "ubuntu@{{ item.public_ip_address }}"
+              with_items: "{{ result.instances }}"
+
+          when: disk_action == 'format'
 
         - name: Create a csv file for store all Ids
           lineinfile:
