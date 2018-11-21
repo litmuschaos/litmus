@@ -10,7 +10,7 @@
 - name: Pick a cStor target pod belonging to the PV
   shell: > 
     kubectl get pods -l openebs.io/target=cstor-target
-    -n {{ operator_ns }} --no-headers | grep {{ pv.stdout }} 
+    -n {{ target_ns }} --no-headers | grep {{ pv.stdout }} 
     | shuf -n1 | awk '{print $1}'
   args:
     executable: /bin/bash
@@ -18,8 +18,8 @@
 
 - name: Get the restartCount of cstor-istgt container
   shell: >
-    kubectl get pod {{ cstor_target_pod.stdout }} -n {{ operator_ns }}
-    -o=jsonpath='{.status.containerStatuses[?(@.name=="cstor-istgt")].restartCount}'
+    kubectl get pod {{ cstor_target_pod.stdout }} -n {{ target_ns }}
+    -o=jsonpath='{.status.containerStatuses[?(@.name==''"{{target_container}}"'')].restartCount}'
   args:
     executable: /bin/bash
   register: restartCount_before
@@ -27,13 +27,13 @@
 - include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yaml
   vars:
     action: "killapp"
-    namespace: "{{ operator_ns }}"
+    namespace: "{{ target_ns }}"
     app_pod: "{{ cstor_target_pod.stdout }}"
     app_container: "{{ target_container }}"
 
 - name: Check for target pod in running state
   shell: >
-    kubectl get pod {{ cstor_target_pod.stdout }} -n {{ operator_ns }} |
+    kubectl get pod {{ cstor_target_pod.stdout }} -n {{ target_ns }} |
     grep -w "Running" | wc -l
   args:
     executable: /bin/bash
@@ -44,7 +44,7 @@
 
 - name: Get the runningStatus of target pod
   shell: >
-    kubectl get pod {{ cstor_target_pod.stdout }} -n {{ operator_ns }}
+    kubectl get pod {{ cstor_target_pod.stdout }} -n {{ target_ns }}
     -o=jsonpath='{range .status.containerStatuses[*]}{.state}{"\n"}{end}' |
     grep -w running | wc -l
   args:
@@ -56,8 +56,8 @@
 
 - name: Get the restartCount of cstor-istgt container
   shell: >
-    kubectl get pod {{ cstor_target_pod.stdout }} -n {{ operator_ns }}
-    -o=jsonpath='{.status.containerStatuses[?(@.name=="cstor-istgt")].restartCount}'
+    kubectl get pod {{ cstor_target_pod.stdout }} -n {{ target_ns }}
+    -o=jsonpath='{.status.containerStatuses[?(@.name==''"{{target_container}}"'')].restartCount}'
   args:
     executable: /bin/bash
   register: restartCount_after

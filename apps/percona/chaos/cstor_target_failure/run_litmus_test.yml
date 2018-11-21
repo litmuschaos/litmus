@@ -2,19 +2,20 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: openebs-target-failure-
+  generateName: cstor-target-failure-
   namespace: litmus
 spec:
   template:
     metadata:
       labels:
-        name: openebs-target-failure
+        name: cstor-target-failure
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
       containers:
       - name: ansibletest
         image: openebs/ansible-runner:ci
+        imagePullPolicy: Always
         env:
           - name: ANSIBLE_STDOUT_CALLBACK
             #value: log_plays
@@ -41,9 +42,15 @@ spec:
 
           - name: DATA_PERSISTENCY
             value: ""             
+  
+          - name: CHAOS_TYPE
+            value: "target-kill"
+
+          - name: TARGET_CONTAINER
+            value: "cstor-istgt"
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./percona/chaos/openebs_target_failure/test.yml -i /etc/ansible/hosts -vv; exit 0"]
+        args: ["-c", "ansible-playbook ./percona/chaos/cstor_target_failure/test.yml -i /etc/ansible/hosts -vv; exit 0"]
         volumeMounts:
           - name: logs
             mountPath: /var/log/ansible
@@ -61,7 +68,7 @@ spec:
                 fieldPath: metadata.namespace
           # spec.volumes is not supported via downward API
           - name: MY_POD_HOSTPATH
-            value: /mnt/chaos/openebs-cstor-target-failure
+            value: /mnt/chaos/cstor-target-failure
         command: ["/bin/bash"]
         args: ["-c", "./logger.sh -d ansibletest -r maya,openebs,pvc,percona; exit 0"]
         volumeMounts:
@@ -77,6 +84,6 @@ spec:
             name: kubeconfig
         - name: logs
           hostPath:
-            path: /mnt/chaos/openebs_cstor_target_failure
+            path: /mnt/chaos/cstor_target_failure
             type: ""
 
