@@ -6,5 +6,5 @@ liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
 data_persistance: "{{ lookup('env','DATA_PERSISTENCY') }}"
 liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
 operator_ns: openebs
-chaos_type: pool-kill
+chaos_type: "{{ lookup('env','CHAOS_TYPE') }}" 
 

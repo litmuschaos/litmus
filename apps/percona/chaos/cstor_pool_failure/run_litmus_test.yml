@@ -12,6 +12,16 @@ spec:
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
+
+      #nodeSelector:
+      #  kubernetes.io/hostname:
+
+      tolerations:
+        - key: "infra-aid"
+          value: "observer"
+          operator: "Equal"
+          effect: "NoSchedule"
+
       containers:
       - name: ansibletest
         image: openebs/ansible-runner:ci
@@ -38,6 +48,9 @@ spec:
 
           - name: DATA_PERSISTENCY
             value: "enable"  
+
+          - name: CHAOS_TYPE
+            value: "pool-delete" 
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./percona/chaos/cstor_pool_failure/test.yml -i /etc/ansible/hosts -vv; exit 0"]
