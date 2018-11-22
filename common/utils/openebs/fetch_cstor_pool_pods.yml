@@ -1,0 +1,41 @@
+---
+# This util derives the cstor pool pods corresponding to the PVC. The input parameters required are
+#
+#         - {{ pvc }} - Name of PVC.
+#         - {{ namespace }} - Namespaces where application is deployed.
+#         - {{ operator_namespace }} - Namespace where openebs is deployed.
+#
+- name: Derive PV name from PVC.
+  shell: >
+     kubectl get pvc {{ pvc }} -n {{ namespace }}
+     --no-headers -o custom-columns=:spec.volumeName
+  args:
+    executable: /bin/bash
+  register: pv
+
+- name: Obtaining the pool deployments from cvr.
+  shell: >
+    kubectl get cvr -n {{ operator_namespace }}
+    -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers
+    -o=jsonpath='{range .items[*]}{.metadata.labels.cstorpool\.openebs\.io\/name}{"\n"}{end}'
+  args:
+    executable: /bin/bash
+  register: pool_deployment
+
+- name: Obtaining the replicasets corresponding to pool deployements.
+  shell: >
+    kubectl get rs --selector=app=cstor-pool -n {{ operator_namespace }} --no-headers
+    -o=jsonpath='{.items[?(@.metadata.ownerReferences[0].name=="{{item}}")].metadata.name}'
+  register: rs_list
+  with_items:
+    - "{{ pool_deployment.stdout_lines }}"
+
+- name: Obtaining the pool pods.
+  shell: >
+    kubectl get pod --selector=app=cstor-pool -n {{ operator_namespace }} --no-headers
+    -o=jsonpath='{.items[?(@.metadata.ownerReferences[0].name=="{{item.stdout}}")].metadata.name}'
+  register: pool_pods
+  with_items:
+    - "{{ rs_list.results }}"
+
+
