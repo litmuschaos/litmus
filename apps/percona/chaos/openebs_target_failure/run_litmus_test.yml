@@ -2,13 +2,13 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: cstor-target-failure-
+  generateName: openebs-target-failure-
   namespace: litmus
 spec:
   template:
     metadata:
       labels:
-        name: cstor-target-failure
+        name: openebs-target-failure
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
@@ -50,7 +50,7 @@ spec:
             value: "cstor-istgt"
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./percona/chaos/cstor_target_failure/test.yml -i /etc/ansible/hosts -vv; exit 0"]
+        args: ["-c", "ansible-playbook ./percona/chaos/openebs_target_failure/test.yml -i /etc/ansible/hosts -vv; exit 0"]
         volumeMounts:
           - name: logs
             mountPath: /var/log/ansible
@@ -68,7 +68,7 @@ spec:
                 fieldPath: metadata.namespace
           # spec.volumes is not supported via downward API
           - name: MY_POD_HOSTPATH
-            value: /mnt/chaos/cstor-target-failure
+            value: /mnt/chaos/openebs-target-failure
         command: ["/bin/bash"]
         args: ["-c", "./logger.sh -d ansibletest -r maya,openebs,pvc,percona; exit 0"]
         volumeMounts:
@@ -84,6 +84,6 @@ spec:
             name: kubeconfig
         - name: logs
           hostPath:
-            path: /mnt/chaos/cstor_target_failure
+            path: /mnt/chaos/openebs_target_failure
             type: ""
 
