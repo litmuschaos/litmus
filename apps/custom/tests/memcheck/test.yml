@@ -61,7 +61,7 @@
          retries: 10
 
        - name: Run python script for memory usage validation it takes couple of minutes
-         shell: python test-mem.py {{ app_ns }}
+         shell: python test-mem.py {{ app_ns }} {{ memory_bm }}
          args:
            executable: /bin/bash
          register: result

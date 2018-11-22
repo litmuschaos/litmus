@@ -23,7 +23,7 @@ spec:
           - name: ANSIBLE_STDOUT_CALLBACK
             value: default
           - name: OPENEBS_VERSION
-            value: v0.7.x
+            value: master
           - name: MAYA_APISERVER_IMAGE
             value:
           - name: OPENEBS_PROVISIONER_IMAGE
