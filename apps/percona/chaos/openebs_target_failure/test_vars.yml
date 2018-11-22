@@ -6,5 +6,6 @@ pvc: "{{ lookup('env','APP_PVC') }}"
 liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
 liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
 data_persistance: "{{ lookup('env','DATA_PERSISTENCY') }}"
-
+chaos_type: "{{ lookup('env','CHAOS_TYPE') }}"
+target_container: "{{ lookup('env','TARGET_CONTAINER') }}"
 
