@@ -8,6 +8,7 @@ import subprocess
 import time, os, sys
 list = []
 namespace = sys.argv[1]
+benchmark = sys.argv[2]
 cmd_cntrl_name = "kubectl get pod -n %s -l openebs.io/controller=jiva-controller --no-headers | awk '{print $1}'" %(namespace)
 print cmd_cntrl_name
 out = subprocess.Popen(cmd_cntrl_name,stdout=subprocess.PIPE,shell=True)
@@ -29,7 +30,7 @@ while count < n:
     used_mem = out.communicate()
     mem_in_mb = int(used_mem[0])/1024
     print mem_in_mb, "MB"
-    if mem_in_mb < 800:
+    if mem_in_mb < benchmark:
         time.sleep(20)
     else:
         print "Fail"
