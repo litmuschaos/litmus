@@ -9,7 +9,7 @@ spec:
     metadata:
       name: litmus
       labels:
-        app: percona-deployment-cstor
+        app: percona-deployment
 
     spec:
       serviceAccountName: litmus
