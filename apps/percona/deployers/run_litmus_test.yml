@@ -26,7 +26,7 @@ spec:
 
           - name: PROVIDER_STORAGE_CLASS
             # Supported values: openebs-standard, local-storage, openebs-standalone
-            value: openebs-standalone
+            value: openebs-standard
 
           - name: APP_PVC
             value: percona-mysql-claim
