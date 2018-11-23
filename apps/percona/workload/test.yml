@@ -56,14 +56,20 @@
         - name: Replace the db-user placeholder in tpcc-config file
           replace:
             path: "{{ tpcc_conf }}"
-            regexp: "testuser"
+            regexp: "test_user"
             replace: "{{ db_user }}"
 
         - name: Replace the password placeholder in tpcc-config file
           replace:
             path: "{{ tpcc_conf }}"
-            regexp: "password"
+            regexp: "test_password"
             replace: "{{ db_password }}"
+
+        - name: Replace the duration placeholder in tpcc-config file
+          replace:
+            path: "{{ tpcc_conf }}"
+            regexp: "test_duration"
+            replace: "{{ load_duration }}"
 
         - name: Getting the Service IP of Application
           shell: kubectl get svc -n {{ namespace }} -l {{ app_service_label }} -o jsonpath='{.items[0].spec.clusterIP}'
