@@ -112,7 +112,7 @@
           delay: 10
           retries: 12
 
-        - name: Delete the previous application pod
+        - name: Delete the application pod
           shell: kubectl delete pod {{ app_pod_name.stdout }} -n {{ namespace }}
           args:
            executable: /bin/bash
@@ -138,7 +138,7 @@
           delay: 10
           retries: 15
 
-        - name: Get the new application pod name
+        - name: Get the rescheduled  application pod name
           shell: >
             kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
             -o=custom-columns=NAME:".metadata.name"
