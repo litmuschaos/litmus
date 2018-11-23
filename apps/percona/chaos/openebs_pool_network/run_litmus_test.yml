@@ -34,7 +34,7 @@ spec:
             value: percona-mysql-claim
 
           - name: CHAOS_DURATION
-            value: '150'
+            value: '35'
 
           - name: NETWORK_CHAOS
             value: loss=100
