@@ -1,0 +1,58 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+      ## Generating the testname for deployment
+        - include_tasks: /common/utils/create_testname.yml
+
+         ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: "/common/utils/update_litmus_result_resource.yml"
+          vars:
+            status: 'SOT'
+  
+        - name: Get number of healthy minion's
+          shell: kubectl get nodes | grep 'Ready' | grep '<none>'
+          args:
+            executable: /bin/bash
+          register: node_count
+           
+        - name: Get list of disks attached
+          shell: kubectl get disks -l ndm.io/disk-type=disk --no-headers -o custom-columns=:metadata.name
+          args:
+            executable: /bin/bash
+          register: diskList
+          failed_when: "'disk' not in {{ diskList.stdout }}"
+
+        - name: Create cStor Disk Pool
+          shell: kubectl create -f {{ cstor_spc }}
+          args:
+            executable: /bin/bash
+
+        - name: Verify if cStor Disk Pool are created on each node
+          shell: kubectl get pods -n openebs -l openebs.io/storage-pool-claim={{ pool_name }} --no-headers -o custom-columns=:status.phase
+          args:
+            executable: /bin/bash
+          register: pool_count
+          until: pool_count.stdout_lines|length >= node_count.stdout_lines|length 
+          retries: 10
+          delay: 60
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - set_fact:
+            flag: "Fail"     
+
+      always:
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
+              

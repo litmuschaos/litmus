@@ -1,0 +1,17 @@
+---
+apiVersion: openebs.io/v1alpha1
+kind: StoragePoolClaim
+metadata:
+  name: {{ poolname }}
+  annotations:
+    cas.openebs.io/config: |
+      - name: CstorPoolImage
+        value: openebs/cstor-pool:{{ cstor_image }}
+      - name: CstorPoolMgmtImage
+        value: openebs/cstor-pool-mgmt:{{ cstor_image }}
+spec:
+  name: {{ poolname }}
+  type: disk
+  maxPools: 3
+  poolSpec:
+    poolType: {{ pooltype }}

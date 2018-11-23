@@ -1,0 +1,7 @@
+# Test-specific parametres
+
+cstor_spc: cstor-spc.yml
+test_name: cstor-disk-pool-provision
+pool_name: "{{ lookup('env','POOL_NAME') }}"
+pool_type: "{{ lookup('env','POOL_TYPE') }}"
+cstor_image: "{{ lookup('env','CSTOR_IMAGE') }}"
