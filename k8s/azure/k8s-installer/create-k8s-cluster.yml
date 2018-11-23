@@ -12,33 +12,44 @@
 
 ---
 - hosts: localhost
-  vars: 
+  vars:
     cluster_name:
   tasks:
-    - name: Generating Random Cluster Name
-      shell: python ../../utils/name_generator/namesgenerator.py
-      register: cluster_name
-      when: not cluster_name
-    - set_fact:
-        cluster_name: "{{ cluster_name.stdout }}"
-      when: cluster_name.stdout is defined
+    - block:
 
-    - name: Creating Resource Group
-      shell: az group create -l eastus -n aks-{{ cluster_name }}-rg
+        - name: Generating Random Cluster Name
+          shell: python ../../utils/name_generator/namesgenerator.py
+          register: cluster_name
+          when: not cluster_name
 
-    - name: Creating AKS Cluster
-      shell: az aks create -n aks-{{ cluster_name }}-cluster  -g aks-{{ cluster_name }}-rg --node-count {{ nodes }} --node-vm-size {{ node_size }} --generate-ssh-key
+        - set_fact:
+            cluster_name: "{{ cluster_name.stdout }}"
+          when: cluster_name.stdout is defined
 
-    - name: Getting Kubeconfig for the AKS Cluster
-      shell: az aks get-credentials --resource-group aks-{{ cluster_name }}-rg --name aks-{{ cluster_name }}-cluster
+        - name: Creating Resource Group
+          shell: az group create -l eastus -n aks-{{ cluster_name }}-rg
 
-    - name: Logging Cluster Name
-      lineinfile:
-        create: yes
-        state: present
-        path: "~/logs/azure_clusters"
-        line: "{{ cluster_name }}"
+        - name: Creating AKS Cluster
+          shell: az aks create -n aks-{{ cluster_name }}-cluster  -g aks-{{ cluster_name }}-rg --node-count {{ nodes }} --node-vm-size {{ node_size }} --generate-ssh-key
 
-    - name: Test Passed
-      set_fact:
-        flag: "Test Passed"
+        - name: Getting Kubeconfig for the AKS Cluster
+          shell: az aks get-credentials --resource-group aks-{{ cluster_name }}-rg --name aks-{{ cluster_name }}-cluster
+
+        - name: Logging Cluster Name
+          lineinfile:
+            create: yes
+            state: present
+            path: "~/logs/azure_clusters"
+            line: "{{ cluster_name }}"
+
+        - name: Test Passed
+          set_fact:
+            flag: "Test Passed"
+
+      rescue:
+        - name: Set Test Status
+          set_fact:
+            flag: "Test Failed"
+
+        - fail:
+            msg: "Cluster creation failed"
