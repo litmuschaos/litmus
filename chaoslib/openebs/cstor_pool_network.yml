@@ -15,16 +15,8 @@
     executable: /bin/bash
   register: result
   until: "result.stdout == 'Running'"
-  delay: 20
-  retries: 15  
-
-- name: Getting the Application pod name
-  shell:  kubectl get pods -n {{ ns }} -l {{ app_label }} --no-headers -o=custom-columns=NAME:".metadata.name"  
-  register: pod_name
-
-- name: Getting the node on which Application pod is scheduled
-  shell: kubectl get pod {{ pod_name.stdout }} -n {{ ns }} -o jsonpath='{.spec.nodeName}'
-  register: node
+  delay: 10
+  retries: 30  
 
 - name: Derive PV name from PVC
   shell: >
@@ -51,6 +43,10 @@
   args:
     executable: /bin/bash
   register: pool_pod
+
+- name: Getting the node on which above pool pod is scheduled
+  shell: kubectl get pod {{ pool_pod.stdout }} -n {{ operator_ns }} -o jsonpath='{.spec.nodeName}'
+  register: node
 
 - name: Installing tc package in cstor-pool container
   shell: kubectl exec -it {{ pool_pod.stdout }} -n {{ target_ns }} -c cstor-pool -- apt-get install iproute2 -y 
