@@ -142,3 +142,6 @@
         - name: Set Test Status
           set_fact:
             flag: "Test Failed"
+
+        - fail:
+            msg: "Cluster creation failed"
