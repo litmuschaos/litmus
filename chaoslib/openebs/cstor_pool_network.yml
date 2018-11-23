@@ -70,7 +70,7 @@
   shell: >
     kubectl exec {{ pumba_pod.stdout }} -n {{ ns }} 
     -- pumba netem --interface eth0 --duration {{ chaos_duration }}s loss
-    --percent 100 re2:k8s_{{container}}_{{pool_pod.stdout}}
+    --percent 100 re2:k8s_{{target_container}}_{{pool_pod.stdout}}
   args:
     executable: /bin/bash
 
