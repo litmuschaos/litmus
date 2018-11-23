@@ -1,0 +1,96 @@
+- name: Setup pumba chaos infrastructure
+  shell: >
+    kubectl apply -f /chaoslib/pumba/pumba_kube.yaml
+    -n {{ ns }}
+  args:
+    executable: /bin/bash
+  register: result 
+
+- name: Confirm that the pumba ds is running on all nodes
+  shell: >
+    kubectl get pod -l app=pumba 
+    --no-headers -o custom-columns=:status.phase
+    -n {{ ns }} | sort | uniq
+  args: 
+    executable: /bin/bash
+  register: result
+  until: "result.stdout == 'Running'"
+  delay: 10
+  retries: 30  
+
+- name: Derive PV name from PVC
+  shell: >
+    kubectl get pvc {{ pvc_name }} -n {{ ns }}
+    --no-headers -o custom-columns=:spec.volumeName
+  args:
+    executable: /bin/bash
+  register: pv
+
+- name: Obtaining the pool deployments from cvr
+  shell: >
+    kubectl get cvr -n {{ operator_ns }}
+    -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers
+    -o=jsonpath='{range .items[*]}{.metadata.labels.cstorpool\.openebs\.io\/name}{"\n"}{end}' |
+    shuf -n 1 | awk '{print $1}'
+  args:
+    executable: /bin/bash
+  register: pool_deployment
+
+- name: Get the pod of pool deployment
+  shell: >
+    kubectl get pods -n {{ operator_ns }} |
+    grep {{ pool_deployment.stdout }} | grep -w "Running" | awk '{print $1}'
+  args:
+    executable: /bin/bash
+  register: pool_pod
+
+- name: Getting the node on which above pool pod is scheduled
+  shell: kubectl get pod {{ pool_pod.stdout }} -n {{ operator_ns }} -o jsonpath='{.spec.nodeName}'
+  register: node
+
+- name: Installing tc package in cstor-pool container
+  shell: kubectl exec -it {{ pool_pod.stdout }} -n {{ target_ns }} -c cstor-pool -- apt-get install iproute2 -y 
+  register: install_status
+  args:
+    executable: /bin/bash
+
+- name: Getting the pumba pod name on derived node
+  shell: >
+    kubectl get pods -l app=pumba -n {{ ns }} 
+    -o jsonpath='{.items[?(@.spec.nodeName==''"{{node.stdout}}"'')].metadata.name}'
+  args:
+    executable: /bin/bash
+  register: pumba_pod 
+
+- name: Inject egress delay of {{network_delay}}ms on cstor target for {{ chaos_duration }}s
+  shell: >
+    kubectl exec {{ pumba_pod.stdout }} -n {{ ns }} 
+    -- pumba netem --interface eth0 --duration {{ chaos_duration }}s loss
+    --percent 100 re2:k8s_{{target_container}}_{{pool_pod.stdout}}
+  args:
+    executable: /bin/bash
+
+- name: Wait for 10s post fault injection 
+  wait_for:
+    timeout: 10
+
+- name: Delete the pumba daemonset 
+  shell: kubectl delete -f /chaoslib/pumba/pumba_kube.yaml -n {{ ns }} 
+  args:
+    executable: /bin/bash
+  register: result     
+
+- name: Confirm that the pumba ds is deleted successfully
+  shell: >
+    kubectl get pods -l app=pumba --no-headers -n {{ ns }}
+  args:
+    executable: /bin/bash
+  register: result
+  until: "'Running' not in result.stdout"
+  delay: 20
+  retries: 15      
+
+- name: Removing the tc package from cstor-pool
+  shell: kubectl exec -it {{ pool_pod.stdout }} -n {{ target_ns }} -c cstor-pool -- apt-get purge iproute2 -y
+  register: remove
+  failed_when: "'Removing iproute2' not in remove.stdout"     
