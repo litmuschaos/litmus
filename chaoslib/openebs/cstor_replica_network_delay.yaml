@@ -8,11 +8,11 @@
   register: pv
 
 - name: Get istgt target pod details
-  shell: kubectl get pods  -l openebs.io/persistent-volume-claim="{{ APP_PVC }}" -n {{ operator_ns }} -o custom-columns=:metadata.name --no-headers
+  shell: kubectl get pods  -l openebs.io/persistent-volume-claim="{{ pvc }}" -n {{ operator_ns }} -o custom-columns=:metadata.name --no-headers
   register: istgt_replica
 
 - name: Get Application  pod details
-  shell: kubectl get pods -n {{ app_ns }}  -l {{ APP_LABEL }}  --no-headers -o custom-columns=:metadata.name
+  shell: kubectl get pods -n {{ app_ns }}  -l {{ label }}  --no-headers -o custom-columns=:metadata.name
   register: app_pod
 
 - name: Create an empty list of replica pods.
