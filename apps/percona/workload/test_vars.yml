@@ -6,4 +6,5 @@ loadgen_label: "{{ lookup('env','LOADGEN_LABEL') }}"
 db_user: "{{ lookup('env','DB_USER') }}"
 db_password: "{{ lookup('env','DB_PASSWORD') }}"
 app_label: "{{ lookup('env','APP_LABEL') }}"
+load_duration: "{{ lookup('env','LOAD_DURATION') }}"
 tpcc_conf: tpcc.conf

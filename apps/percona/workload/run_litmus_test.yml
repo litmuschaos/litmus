@@ -43,5 +43,10 @@ spec:
           - name: DB_PASSWORD
             value: k8sDem0
 
+            # Bench duration (in min) 
+            # TODO: Use a tpcc-template to define workload w/ more granularity
+          - name: LOAD_DURATION
+            value: "600"
+
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./percona/workload/test.yml -i /etc/ansible/hosts -v; exit 0"]
