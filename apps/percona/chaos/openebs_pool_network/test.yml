@@ -71,8 +71,6 @@
             app_label: "{{ label }}"
             target_ns: "{{ target_namespace }}"
             chaos_duration: "{{ lookup('env','CHAOS_DURATION') }}"
-            chaos_param: "{{ lookup('env','CHAOS_PARAM') }}"
-            chaos_type: "{{ lookup('env','CHAOS_TYPE') }}"
             pvc_name: "{{ pvc }}"
           
 
