@@ -34,51 +34,22 @@
     executable: /bin/bash
   register: pv
 
-- name: Obtaining the storage class used from PVC
-  shell: kubectl get pvc {{ pvc_name }} -n {{ ns }} --no-headers -o custom-columns=:.spec.storageClassName
-  register: app_sc
-
-- name: Obtaining the SPC from storage class
-  shell: kubectl get sc {{ app_sc.stdout }} --no-headers  -o yaml | awk '/StoragePoolClaim/{getline; print}' | cut -d ':' -f2 | sed 's/"//g'
-  register: spc
-
 - name: Obtaining the pool deployments from cvr
   shell: >
     kubectl get cvr -n {{ operator_ns }}
     -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers
-    -o=jsonpath='{range .items[*]}{.metadata.labels.cstorpool\.openebs\.io\/name}{"\n"}{end}'
+    -o=jsonpath='{range .items[*]}{.metadata.labels.cstorpool\.openebs\.io\/name}{"\n"}{end}' |
+    shuf -n 1 | awk '{print $1}'
   args:
     executable: /bin/bash
   register: pool_deployment
 
-- name: Obtaining the replicasets corresponding to pool deployements.
+- name: Get the pod of pool deployment
   shell: >
-    kubectl get rs --selector=app=cstor-pool -n {{ operator_ns }} --no-headers
-    -o=jsonpath='{.items[?(@.metadata.ownerReferences[0].name=="{{item}}")].metadata.name}'
-  register: rs_list
-  with_items:
-    - "{{ pool_deployment.stdout_lines }}"
-
-- name: Obtaining the pool pods
-  shell: >
-    kubectl get pod --selector=app=cstor-pool -n {{ operator_ns }} --no-headers 
-    -o=jsonpath='{.items[?(@.metadata.ownerReferences[0].name=="{{item.stdout}}")].metadata.name}'
-  register: pool_pods
-  with_items:
-    - "{{ rs_list.results }}"
-
-- name: Obtaining the pool pod on app node
-  shell: >
-    kubectl get pod --selector=app=cstor-pool -n {{ operator_ns }} --no-headers 
-    -o=jsonpath='{range .items[?(@.spec.nodeName=="{{node.stdout}}")]}{.metadata.name}{"\n"}{end}'
-  register: pool_pod
+    kubectl get pods -n {{ operator_ns }} |
+    grep {{ pool_deployment.stdout }} | grep -w "Running" | awk '{print $1}'
   args:
     executable: /bin/bash
-  with_items:
-    - "{{ pool_pods.results }}"
-
-- name: Getting pool-pod on derived node
-  shell: kubectl get pods -n {{ target_ns }} -l app=cstor-pool -o jsonpath='{.items[?(@.spec.nodeName=="{{node.stdout}}")].metadata.name}'
   register: pool_pod
 
 - name: Installing tc package in cstor-pool container
@@ -99,7 +70,7 @@
   shell: >
     kubectl exec {{ pumba_pod.stdout }} -n {{ ns }} 
     -- pumba netem --interface eth0 --duration {{ chaos_duration }}s loss
-    --percent 100 re2:k8s_cstor-pool_cstor-sparse-pool; 
+    --percent 100 re2:k8s_{{container}}_{{pool_pod.stdout}}
   args:
     executable: /bin/bash
 
