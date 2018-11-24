@@ -14,8 +14,8 @@
     executable: /bin/bash
   register: result
   until: "'Running' in result.stdout"
-  delay: 30
-  retries: 10
+  delay: 5
+  retries: 60
 
 - name: Obtaining the PVC name using application label.
   shell: kubectl get pods -n {{ app_ns }} -l {{ app_label }} -o custom-columns=:..claimName --no-headers
@@ -70,8 +70,8 @@
     executable: /bin/bash
   register: resource_list
   until: "app_pvc not in resource_list.stdout"
-  delay: 30
-  retries: 20
+  delay: 5
+  retries: 120
 
 - name: Delete the namespace.
   shell: kubectl delete ns {{ app_ns }}
