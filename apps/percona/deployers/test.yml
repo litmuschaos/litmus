@@ -22,12 +22,12 @@
          ## Creating namespaces and making the application for deployment
             - include_tasks: /common/utils/pre_create_app_deploy.yml
         
-        ## Deploying the application
+        ## Deploying the application, upper bound wait time: 900s 
             - include_tasks: /common/utils/deploy_single_app.yml
               vars:
                 check_app_pod: 'yes'
-                delay: 10
-                retries: 100
+                delay: 5 
+                retries: 180
     
             ## Fetching the pod name
             - include_tasks: /common/utils/fetch_app_pod.yml
