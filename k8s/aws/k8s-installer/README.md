@@ -30,6 +30,12 @@ ansible-playbook pre-requisite.yml -vv
 ansible-playbook pre-requisite.yml -vv --extra-vars "vpc_name=<name-of-vpc>"
 ```
 
+example:
+
+```bash
+ansible-playbook pre-requisite.yml -vv --extra-vars "vpc_name=heavenly-scabiosa"
+```
+
 ### Creating AWS Cluster
 
 - Run `create-aws-cluster`, this will create a ssh public key, Bucket and the AWS cluster.

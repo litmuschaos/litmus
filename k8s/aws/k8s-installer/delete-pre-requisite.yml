@@ -54,7 +54,7 @@
             state: absent
             vpc_id: "{{ vpc_id }}"
             cidr: "{{ cidr_block2 }}"
-            az: "{{ available_zone }}"
+            az: "{{ zone }}"
             purge_tags: yes
 
         - name: deletion of Virtual Private Cloud
