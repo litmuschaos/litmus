@@ -19,7 +19,9 @@
   retries: 30  
 
 - name: Getting the Application pod name
-  shell:  kubectl get pods -n {{ ns }} -l {{ app_label }} --no-headers -o=custom-columns=NAME:".metadata.name"
+  shell: >
+    kubectl get pods -n {{ ns }} -l {{ app_label }} | grep
+    -w Running | awk '{print $1}' | head -1
   register: pod_name
 
 - name: Getting the node on which Application pod is scheduled
