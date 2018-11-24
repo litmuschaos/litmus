@@ -22,7 +22,7 @@
     - name: Obtaining the application pod name using its label.
       shell: >
         kubectl get pods -n {{ app_ns }} -l {{ app_label }} | grep
-        -w Running | awk '{print $1}'
+        -w Running | awk '{print $1}' | head -1 
       args:
         executable: /bin/bash
       register: app_pod
