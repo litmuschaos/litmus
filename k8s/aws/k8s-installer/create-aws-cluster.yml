@@ -41,7 +41,7 @@
             state: present
 
         - name: AWS Cluster creating started
-          command: kops create cluster --name k8s-{{ cluster_name }}.k8s.local --zones {{ available_zone }} --node-count {{ node_count }} --state s3://k8s-bucket-{{ cluster_name }} --vpc {{ vpc_id }} --image {{ image }} --subnets {{ subnet_id }} --master-size {{ master_size }} --node-size {{ node_size }} --kubernetes-version {{ k8s_version }} --networking {{ networking }} --yes
+          command: kops create cluster --name k8s-{{ cluster_name }}.k8s.local --zones {{ zone }} --node-count {{ node_count }} --state s3://k8s-bucket-{{ cluster_name }} --vpc {{ vpc_id }} --image {{ image }} --subnets {{ subnet_id }} --master-size {{ master_size }} --node-size {{ node_size }} --kubernetes-version {{ k8s_version }} --networking {{ networking }} --yes
 
         - name: Create a csv file for store cluster name
           lineinfile:

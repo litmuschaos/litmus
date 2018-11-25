@@ -22,10 +22,22 @@
 ansible-playbook create-ebs-volume.yml -vv --extra-vars "cluster_name=<aws-cluster-name>"
 ```
 
+Example:
+
+```bash
+ansible-playbook create-ebs-volume.yml -vv --extra-vars "cluster_name=nodes.k8s-compassionate-babbage.k8s.local"
+```
+
 ### Unmount, Detach and delete EBS Volume in AWS cluster
 
 - `delete-ebs-volume`, will unmount, detach and delete EBS volume from the provided cluster.
 
 ```bash
 ansible-playbook delete-ebs-volume.yml -vv --extra-vars "cluster_name=<aws-cluster-name>"
+```
+
+Example:
+
+```bash
+ansible-playbook delete-ebs-volume.yml -vv --extra-vars "cluster_name=nodes.k8s-compassionate-babbage.k8s.local"
 ```

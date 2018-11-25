@@ -46,7 +46,7 @@
             state: present
             vpc_id: "{{ vpc.vpc.id }}"
             cidr: "{{ cidr_block2 }}"
-            az: "{{ available_zone }}"
+            az: "{{ zone }}"
             map_public: yes
             wait: yes
             wait_timeout: 300
