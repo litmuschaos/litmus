@@ -117,6 +117,12 @@
           delegate_to: "root@{{ item.public_ipv4 }}"
           with_items: "{{ workers.devices }}"
 
+        - name: Installing xfs binaries to worker nodes
+          apt:
+            name: xfsprogs
+          delegate_to: "root@{{ item.public_ipv4 }}"
+          with_items: "{{ workers.devices }}"
+
         - block:
             - name: Getting nodes name
               shell: kubectl get nodes --no-headers | grep -v master | awk '{print $1}' | head -n 1
