@@ -17,7 +17,7 @@
             status: 'SOT'
   
         - name: Get number of healthy minion's
-          shell: kubectl get nodes | grep 'Ready' | grep '<none>'
+          shell: kubectl get nodes | grep -v 'master'
           args:
             executable: /bin/bash
           register: node_count
@@ -27,10 +27,22 @@
           args:
             executable: /bin/bash
           register: diskList
-          failed_when: "'disk' not in {{ diskList.stdout }}"
+          failed_when: "'disk-' not in diskList.stdout"
+
+        - name: Generate the litmus result CR to reflect SOT (Start of Test)
+          template:
+            src: cstor-spc.j2
+            dest: cstor-spc.yaml
+
+        - name: Add the discovered disks to the pool specs file.
+          lineinfile:
+            path: "{{ playbook_dir }}/{{ cstor_spc }}" 
+            insertafter: 'diskList:'
+            line: '     - {{ item }}'
+          with_items: "{{ diskList.stdout_lines }}"
 
         - name: Create cStor Disk Pool
-          shell: kubectl create -f {{ cstor_spc }}
+          shell: kubectl create -f "{{ playbook_dir }}/{{ cstor_spc }}"
           args:
             executable: /bin/bash
 

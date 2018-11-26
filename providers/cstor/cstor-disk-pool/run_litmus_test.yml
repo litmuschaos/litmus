@@ -30,12 +30,12 @@ spec:
 
             # Provide name POOL_TYPE for the cstor-pool Ex: stripped or mirrored
           - name: POOL_TYPE
-            value: stripped
+            value: striped
 
             # Provide name CSTOR_IMAGE for the cstor-pool. Default is ci
           - name: CSTOR_IMAGE
             value: ci
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./percona/deployers/test.yml -i /etc/ansible/hosts -v; exit 0"]
+        args: ["-c", "ansible-playbook ./cstor-disk-pool/test.yml -i /etc/ansible/hosts -v; exit 0"]
 
