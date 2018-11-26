@@ -32,7 +32,7 @@ spec:
             value: default
 
           - name: APP_NAMESPACE
-            value: percona-cstor
+            value: app-percona-ns
 
           - name: APP_LABEL
             value: 'name=percona'
