@@ -22,7 +22,7 @@ spec:
       restartPolicy: Never
 
       #nodeSelector:
-      #  kubernetes.io/hostname:
+      #  kubernetes.io/hostname: 
 
       tolerations:
         - key: "infra-aid"
