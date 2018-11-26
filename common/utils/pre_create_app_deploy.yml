@@ -32,4 +32,13 @@
         regexp: "lkey: lvalue"
         replace: "{{ app_lkey }}: {{ app_lvalue }}"
 
+    - name: Enable/Disable I/O based liveness probe 
+      shell: >
+        sed -i '/#<!-- BEGIN ANSIBLE MANAGED BLOCK -->/
+        ,/#<!-- END ANSIBLE MANAGED BLOCK -->/d' 
+        {{ application_deployment }}
+      args:
+        executable: /bin/bash
+      when: lookup('env', 'IO_PROBE') is defined and lookup('env', 'IO_PROBE') == "disabled"
+
     - include_tasks: /common/utils/create_ns.yml

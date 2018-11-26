@@ -34,12 +34,14 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/mysql
               name: data-vol
+          #<!-- BEGIN ANSIBLE MANAGED BLOCK -->
           livenessProbe:
             exec:
               command: ["bash", "sql-test.sh"]
             initialDelaySeconds: 60
             periodSeconds: 1
             timeoutSeconds: 10
+          #<!-- END ANSIBLE MANAGED BLOCK --> 
       volumes:
         - name: data-vol
           persistentVolumeClaim:
