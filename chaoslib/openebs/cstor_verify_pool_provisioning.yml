@@ -63,7 +63,7 @@
 
 - name: Check status of cvr
   command: echo "{{ item }}"
-  failed_when: "item != \"Online\""
+  failed_when: "item != \"Healthy\""
   with_items:
     - "{{ cvr_status_phase.stdout_lines }}"
 
