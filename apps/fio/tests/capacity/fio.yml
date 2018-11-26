@@ -15,9 +15,10 @@ spec:
         kubernetes.io/hostname: testNode
       containers:
       - name: perfrunner
-        image: openebs/tests-fio:ci
+        image: openebs/tests-fio
         command: ["/bin/bash"]
-        args: ["-c", "./fio_runner.sh --template file/basic-rw --size 256m --duration 60; exit 0"]
+        # value of testduration will be set to zero
+        args: ["-c", "./fio_runner.sh --template file/testtemplate --size testsize --duration testduration; exit 0"]
         volumeMounts:
            - mountPath: /datadir
              name: fio-vol

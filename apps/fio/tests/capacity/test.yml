@@ -30,13 +30,17 @@
 
        - name: Confirm pvc status is bound
          shell: >
-           kubectl get pvc --no-headers -n litmus
+           kubectl get pvc --no-headers -n litmus -l app=test-capacity
          args:
            executable: /bin/bash
          register: result
          until: "'openebs-standard' and 'Bound' in result.stdout"
-         delay: 120
-         retries: 15
+         delay: 30
+         retries: 50
+
+       - name: Wait for controller to get ready
+         wait_for:
+           timeout: 60
 
        ## RUN FIO WORKLOAD TEST
        - name: Populate the iterator with the values to loop
@@ -45,6 +49,7 @@
          args:
            executable: /bin/bash
          register: iterator
+
        - include: test_capacity.yml
          with_items: "{{ iterator.stdout_lines }}"
 

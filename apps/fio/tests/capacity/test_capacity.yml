@@ -12,26 +12,26 @@
 - name: Replace the default fio profile with user-defined profile
   replace:
     path: "{{ pod_yaml_alias }}"
-    regexp: "basic-rw"
+    regexp: "testtemplate"
     replace: "{{ lookup('env','FIO_TEST_PROFILE') }}"
 
 - name: Replace the default I/O sample size with user-defined profile
   replace:
     path: "{{ pod_yaml_alias }}"
-    regexp: "256m"
+    regexp: "testsize"
     replace: "{{ lookup('env','FIO_SAMPLE_SIZE') }}"
-
-- name: Replace the default I/O test duration with user-defined period
-  replace:
-    path: "{{ pod_yaml_alias }}"
-    regexp: "60"
-    replace: "{{ lookup('env','FIO_TESTRUN_PERIOD') }}"
 
 - name: Replace the pvc placeholder with test param in app spec
   replace:
     path: "{{ pod_yaml_alias }}"
     regexp: "testclaim"
     replace: "{{ test_name }}"
+
+- name: Replace the default I/O test duration with user-defined period
+  replace:
+    path: "{{ pod_yaml_alias }}"
+    regexp: "testduration"
+    replace: "{{ lookup('env','FIO_TESTRUN_PERIOD') }}"
 
 - name: Get controller svc
   shell: >
@@ -55,16 +55,16 @@
     body_format: json
   register: json_response
   until: json_response.json.data[0].readOnly == "false"
-  retries: 30
+  retries: 100
   delay: 60
 
 - name: Deploy fio test job
   shell: >
     kubectl apply -f {{ pod_yaml_alias }} -n litmus
-  args: 
+  args:
     executable: /bin/bash
 
-- name: Confirm fio pod status is running
+- name: Get name of fio pod
   shell: >
      kubectl get pods -l name=fio -n litmus
      --no-headers
@@ -72,18 +72,14 @@
     executable: /bin/bash
   register: result
   until: "'fio' and 'Running' in result.stdout"
-  delay: 120
-  retries: 15
+  delay: 10
+  retries: 30
 
 - name: Obtain name of fio pod
   set_fact:
     fio_pod_name: "{{ result.stdout.split()[0] }}"
 
-- name: Wait for fio pod to proceed with workload
-  wait_for:
-    timeout: 60
-
-- name: Re-Check fio pod status
+- name: Check fio pod status
   shell: >
     kubectl get pod {{ fio_pod_name }} -n litmus
     --no-headers -o custom-columns=:status.phase
@@ -92,7 +88,7 @@
   register: result
   failed_when: "result.stdout not in ['Running', 'Succeeded']"
 
-- name: Confirm fio job completion status (poll & wait for upperbound of 60 min)
+- name: Confirm fio job completion status (poll and wait every 120 sec)
   shell: >
     kubectl get pod {{ fio_pod_name }} -n litmus
     --no-headers -o custom-columns=:status.phase
@@ -142,7 +138,7 @@
   delay: 30
   retries: 12
 
-- name: Pick one replica randomly from list to two for deletion
+- name: Pick one replica randomly from list of two for deletion
   set_fact:
     random_replica: "{{ line_item }}"
   with_random_choice:

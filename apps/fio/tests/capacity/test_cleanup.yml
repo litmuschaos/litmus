@@ -1,13 +1,4 @@
 ---
-- name: Get pvc name to verify successful pvc deletion
-  shell: >
-    kubectl get pvc {{ test_name }} 
-    -o custom-columns=:spec.volumeName -n litmus 
-    --no-headers
-  args:
-    executable: /bin/bash
-  register: pv
-
 - name: Confirm fio pod has been deleted
   shell: >
     kubectl get pods -n litmus
@@ -18,11 +9,17 @@
   delay: 30
   retries: 12
 
-- block:
-    - name: Remove the local persistent volume 
-      shell: kubectl delete pv {{ pv.stdout }}
-      args:
-        executable: /bin/bash
-      register: result
-      failed_when: "'persistentvolume' and 'deleted' not in result.stdout"
-  when: "'openebs-standard' in lookup('env','PROVIDER_STORAGE_CLASS')"
+- name: Remove the local persistent volume 
+  shell: >
+    kubectl delete -f {{ pvc_yaml_alias }} -n litmus
+  args:
+    executable: /bin/bash
+
+- name: Check if pvc is deleted
+  shell: >
+    kubectl get pvc -n litmus -l app=test-capacity
+  args:
+    executable: /bin/bash
+  until: "'No resources found' in result.stderr"
+  delay: 10
+  retries: 30
