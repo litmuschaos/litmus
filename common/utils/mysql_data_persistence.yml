@@ -13,13 +13,14 @@
        - mysql -u{{ dbuser }} -p{{ dbpassword }} -e 'create database {{ dbname }};'
        - mysql -u{{ dbuser }} -p{{ dbpassword }} -e 'create table ttbl (Data VARCHAR(20));' {{ dbname }}
        - mysql -u{{ dbuser }} -p{{ dbpassword }} -e 'insert into ttbl (Data) VALUES ("tdata");' {{ dbname }}
+       - bash -c "for i in {1..100}; do tvalue=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 18 | head -n 1`; mysql -u{{ dbuser }} -p{{ dbpassword }}  -e \"insert into ttbl (Data) VALUES ('${tvalue}');\" {{ dbname }} ; done"
 
   when: status == "LOAD"
 
 - block:
 
    - name: Checking for the Corrupted tables
-     shell: > 
+     shell: >
        kubectl exec {{ pod_name }} -n {{ ns }}
        -- mysqlcheck -c {{ dbname }} -u{{ dbuser }} -p{{ dbpassword }}
      args:
@@ -28,7 +29,7 @@
      failed_when: "'OK' not in status.stdout"
 
    - name: Verify mysql data persistence 
-     shell: > 
+     shell: >
            kubectl exec {{ pod_name }} -n {{ ns }}
            -- mysql -u{{ dbuser }} -p{{ dbpassword }} -e 'select * from ttbl' tdb;
      args:
