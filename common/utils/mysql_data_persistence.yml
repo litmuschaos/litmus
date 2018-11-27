@@ -13,7 +13,6 @@
        - mysql -u{{ dbuser }} -p{{ dbpassword }} -e 'create database {{ dbname }};'
        - mysql -u{{ dbuser }} -p{{ dbpassword }} -e 'create table ttbl (Data VARCHAR(20));' {{ dbname }}
        - mysql -u{{ dbuser }} -p{{ dbpassword }} -e 'insert into ttbl (Data) VALUES ("tdata");' {{ dbname }}
-       - bash -c "for i in {1..100}; do tvalue=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 18 | head -n 1`; mysql -u{{ dbuser }} -p{{ dbpassword }}  -e \"insert into ttbl (Data) VALUES ('${tvalue}');\" {{ dbname }} ; done"
 
   when: status == "LOAD"
 
