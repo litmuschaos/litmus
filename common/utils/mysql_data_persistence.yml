@@ -31,10 +31,31 @@
    - name: Verify mysql data persistence 
      shell: >
            kubectl exec {{ pod_name }} -n {{ ns }}
-           -- mysql -u{{ dbuser }} -p{{ dbpassword }} -e 'select * from ttbl' tdb;
+           -- mysql -u{{ dbuser }} -p{{ dbpassword }} -e 'select * from ttbl' {{ dbname }};
      args:
        executable: /bin/bash
      register: result 
      failed_when: "'tdata' not in result.stdout"   
 
   when: status == "VERIFY"
+
+- block:
+
+   - name: Delete/drop MySQL database 
+     shell: > 
+       kubectl exec {{ pod_name }} -n {{ ns }}
+       -- mysql -u{{ dbuser }} -p{{ dbpassword }} -e 'drop database {{ dbname }}'; 
+     args:
+       executable: /bin/bash
+     register: status 
+
+   - name: Verify successful db delete 
+     shell: > 
+           kubectl exec {{ pod_name }} -n {{ ns }}
+           -- mysql -u{{ dbuser }} -p{{ dbpassword }} -e 'show databases';
+     args:
+       executable: /bin/bash
+     register: result 
+     failed_when: "dbname in result.stdout"   
+
+  when: status == "DELETE"
