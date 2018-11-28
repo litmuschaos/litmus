@@ -25,7 +25,7 @@
           when: cluster_name.stdout is defined
 
         - set_fact:
-            set_zone: "{{ set_zone }}"
+            set_zone: "{{ set_zone.stdout }}"
           when: set_zone.stdout is defined
 
         - name: Delete GKE cluster
