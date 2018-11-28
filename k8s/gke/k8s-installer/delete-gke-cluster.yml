@@ -15,9 +15,18 @@
           register: cluster_name
           when: not cluster_name
 
+        - name: Fetch Zone
+          shell: cat ~/logs/zone
+          register: set_zone
+          when: not set_zone
+
         - set_fact:
             cluster_name: "{{ cluster_name.stdout }}"
           when: cluster_name.stdout is defined
+
+        - set_fact:
+            set_zone: "{{ set_zone }}"
+          when: set_zone.stdout is defined
 
         - name: Delete GKE cluster
           gcp_container_cluster:
@@ -30,7 +39,7 @@
               image_type: "{{ image_type }}"
               oauth_scopes:
                 - https://www.googleapis.com/auth/cloud-platform
-            zone: "{{ zone }}"
+            zone: "{{ set_zone }}"
             project: "{{ project }}"
             auth_kind: "{{ auth_kind }}"
             scopes:
@@ -42,6 +51,12 @@
             state: absent
             path: "~/logs/clusters"
             regexp: "{{ cluster_name }}"
+
+        - name: Remove Zone Info
+          lineinfile:
+            state: absent
+            path: "~/logs/zone"
+            regexp: "{{ set_zone }}"
 
         - name: Set Test Status
           set_fact:

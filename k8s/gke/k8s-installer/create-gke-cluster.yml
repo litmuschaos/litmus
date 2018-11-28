@@ -55,7 +55,7 @@
           no_log: True
 
         - name: Enable auto-scaling
-          shell: gcloud container clusters update {{ cluster_name }} --enable-autoscaling --min-nodes {{ initial_node_count }} --max-nodes {{ max_node_count }} --zone={{ zone }} --node-pool default-pool
+          shell: gcloud container clusters update {{ cluster_name }} --enable-autoscaling --min-nodes {{ initial_node_count }} --max-nodes {{ max_node_count }} --zone={{ set_zone }} --node-pool default-pool
           args:
             executable: /bin/bash
             warn: False
@@ -67,8 +67,15 @@
             path: "~/logs/clusters"
             line: "{{ cluster_name }}"
 
+        - name: Save zone info
+          lineinfile:
+            create: yes
+            state: present
+            path: "~/logs/zone"
+            line: "{{ set_zone }}"
+
         - name: Get the kubeconfig and set kubectl for RBAC
-          shell: gcloud container clusters get-credentials {{ cluster_name }} --zone={{ zone }}
+          shell: gcloud container clusters get-credentials {{ cluster_name }} --zone={{ set_zone }}
           args:
             executable: /bin/bash
           no_log: True 
@@ -86,7 +93,7 @@
           register: node_names
 
         - name: Set SSH connections
-          shell: gcloud compute instances add-metadata {{item}} --metadata-from-file ssh-keys=$HOME/.ssh/{{ ssh_key_fn }}.pub --zone={{ zone }}
+          shell: gcloud compute instances add-metadata {{item}} --metadata-from-file ssh-keys=$HOME/.ssh/{{ ssh_key_fn }}.pub --zone={{ set_zone }}
           args:
             executable: /bin/bash
           loop: "{{ node_names.stdout_lines }}"
