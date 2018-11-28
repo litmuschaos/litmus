@@ -36,6 +36,9 @@ spec:
           - name: LIVENESS_APP_NAMESPACE
             value: "litmus"
 
+          - name: DATA_PERSISTENCY
+            value: ""
+
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./percona/chaos/drain_node/test.yml -i /etc/ansible/hosts -vv; exit 0"]
         volumeMounts:
