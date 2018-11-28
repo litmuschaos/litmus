@@ -27,7 +27,7 @@
               vars:
                 check_app_pod: 'yes'
                 delay: 10
-                retries: 20
+                retries: 100
 
             - name: Verify that the postgres master and replica are available as cluster services
               shell: kubectl get svc -n {{ app_ns }}
