@@ -31,6 +31,11 @@
             executable: /bin/bash
             warn: False
 
+        - name: Select a region to create the cluster
+          set_fact: 
+            set_zone: "{{ item }}"
+          with_random_choice: "{{ zone }}"
+
         - name: create GKE cluster
           gcp_container_cluster:
             name: "{{ cluster_name }}"
@@ -41,7 +46,7 @@
               machine_type: "{{ machine_type }}"
               disk_size_gb: "{{ disk_size_gb }}"
               image_type: "{{ image_type }}"
-            zone: "{{ zone }}"
+            zone: "{{ set_zone }}"
             project: "{{ project }}"
             auth_kind: "{{ auth_kind }}"
             scopes:
