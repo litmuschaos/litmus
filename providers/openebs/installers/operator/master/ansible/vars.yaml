@@ -7,5 +7,6 @@ storageclass_link: "https://raw.githubusercontent.com/openebs/openebs/{{ lookup(
 openebs_operator: openebs-operator.yaml
 storageclass: storageclass.yaml
 selector_name: openebs-ndm
+sparse_pool_label: 'app=cstor-pool'
 installation_test_name: openebsinstaller
 cleanup_test_name: openebscleanup

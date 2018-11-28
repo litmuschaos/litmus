@@ -129,39 +129,52 @@
           args:
             executable: /bin/bash
 
-        - name: Checking Maya-API-Server is running
-          #shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="maya-apiserver")].status.phase}'
+        - name: Verify that rolling update of maya-apiserver is completed
+          shell: >
+            kubectl get pods --no-headers -n openebs 
+            -l name=maya-apiserver | wc -l
+          args:
+            executable: /bin/bash
+          register: maya_count
+          until: "maya_count.stdout == '1'"
+          delay: 5
+          retries: 120
+
+        - name: Checking Maya-API-Server container status 
           shell: >
             kubectl get pods --no-headers -n openebs -l name=maya-apiserver
             -o jsonpath='{.items[?(@.status.containerStatuses[*].name=="maya-apiserver")].status.containerStatuses[*].ready}' 
           register: maya_api
-          until: "'true' in maya_api.stdout"
-          delay: 30
-          retries: 100
+          until: "maya_api.stdout == 'true'" 
+          delay: 5
+          retries: 120
 
         - name: Checking OpenEBS-provisioner is running
           shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="openebs-provisioner")].status.phase}'
           register: openebs_prob
           until: "'Running' in openebs_prob.stdout"
-          delay: 30
-          retries: 100
+          delay: 5
+          retries: 120
 
         - name: Get maya-apiserver pod name
-          shell: kubectl get pods -n {{ namespace }} --selector=name=maya-apiserver
+          shell: >
+            kubectl get pods -n {{ namespace }} 
+            --no-headers --selector=name=maya-apiserver
+            -o custom-columns=:metadata.name
           args:
             executable: /bin/bash
           register: result_name
 
         - name: Create fact for pod name
           set_fact:
-            pod_name: "{{ result_name.stdout_lines[1].split()[0] }}"
+            pod_name: "{{ result_name.stdout }}"
 
         - name: Checking OpenEBS-Snapshot-Operator is running
           shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="openebs-snapshot-operator")].status.phase}'
           register: oso
           until: "'Running' in oso.stdout"
-          delay: 30
-          retries: 100
+          delay: 5
+          retries: 120
 
         - name: Confirm that maya-cli is available in the maya-apiserver pod
           shell: kubectl exec {{pod_name}} -c maya-apiserver -n {{ namespace }} -- mayactl version
@@ -184,17 +197,26 @@
             executable: /bin/bash
           register: ndm_count
           until: (node_count.stdout)|int == (ndm_count.stdout)|int
-          delay: 30
-          retries: 100
+          delay: 5
+          retries: 120
+
+        - name: Confirm if sparse pool is running in all the nodes
+          shell: kubectl get pods -n {{ namespace }} --selector={{ sparse_pool_label }} | grep Running | wc -l
+          args:
+            executable: /bin/bash
+          register: sparse_pool_count
+          until: (node_count.stdout)|int == (sparse_pool_count.stdout)|int
+          delay: 5
+          retries: 120
 
         - name: Confirm CAS Templates are deployed
-          shell: kubectl get cast -n {{ namespace }}
+          shell: kubectl get castemplate -n {{ namespace }}
           args:
             executable: /bin/bash
           register: result
           until: "result.rc == 0"
-          delay: 30
-          retries: 100
+          delay: 5
+          retries: 120
 
         - set_fact:
             flag: "Pass"
