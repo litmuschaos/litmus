@@ -44,7 +44,7 @@ spec:
             value: statefulset
 
           - name: APP_REPLICA
-            value: 'replicas=2'
+            value: 'replicas=1'
             
           # Use 'deprovision' for app-clean up
           - name: ACTION
