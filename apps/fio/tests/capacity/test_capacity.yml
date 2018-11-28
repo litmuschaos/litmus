@@ -112,7 +112,7 @@
 - name: Get the name of replica pods
   shell: >
     kubectl get pods -l openebs.io/replica=jiva-replica
-    -n litmus --no-headers -o name | sed "s/^.\{4\}//"
+    -n litmus --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}'
   args:
     executable: /bin/bash
   register: replica_pod
