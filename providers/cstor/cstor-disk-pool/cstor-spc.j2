@@ -1,0 +1,25 @@
+---
+apiVersion: openebs.io/v1alpha1
+kind: StoragePoolClaim
+metadata:
+  name: {{ pool_name }}
+  annotations:
+    cas.openebs.io/config: |
+      - name: CstorPoolImage
+        value: openebs/cstor-pool:{{ cstor_image }}
+      - name: CstorPoolMgmtImage
+        value: openebs/cstor-pool-mgmt:{{ cstor_image }}
+spec:
+  name: {{ pool_name }}
+  type: disk
+  maxPools: 3
+  poolSpec:
+    poolType: {{ pool_type }}
+    cacheFile: /tmp/pool1.cache
+    overProvisioning: false
+  # NOTE - Appropriate disks need to be fetched using `kubectl get disks`
+  #
+  # `Disk` is a custom resource supported by OpenEBS with `node-disk-manager` 
+  # as the disk operator
+  disks:
+    diskList:
