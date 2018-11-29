@@ -1,0 +1,7 @@
+test_name: node-failure-taint
+namespace: "{{ lookup('env','APP_NAMESPACE') }}"
+label: "{{ lookup('env','APP_LABEL') }}"
+liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
+liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
+taint: "{{ lookup('env','TAINT_KEY') }}"
+data_persistance: "{{ lookup('env','DATA_PERSISTENCY') }}"
