@@ -1,4 +1,4 @@
-test_name: cstor-pool-failure
+test_name: openebs-pool-failure
 namespace: "{{ lookup('env','APP_NAMESPACE') }}"
 label: "{{ lookup('env','APP_LABEL') }}"
 pvc: "{{ lookup('env','APP_PVC') }}"
@@ -7,4 +7,4 @@ data_persistance: "{{ lookup('env','DATA_PERSISTENCY') }}"
 liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
 operator_ns: openebs
 chaos_type: "{{ lookup('env','CHAOS_TYPE') }}" 
-
+chaos_iterations: "{{ lookup('env','CHAOS_ITERATIONS') }}"

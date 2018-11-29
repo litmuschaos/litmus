@@ -1,5 +1,4 @@
 - include: cstor_verify_pool_provisioning.yml
 
 - include: cstor_delete_and_verify_pool_deployment.yml
-
-#- include: cstor_delete_and_verify_pool_deployment.yml
+  loop: "{{ range(0, chaos_repeat|int, 1)|list }}"
