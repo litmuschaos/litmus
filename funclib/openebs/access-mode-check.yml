@@ -30,8 +30,8 @@
          retries: 5
 
        - name: Get the replicas access mode
-         shell: >   
-            kubectl exec -it {{ mayapod.stdout }} -n {{ operator_ns }} -- mayactl volume info --volname "{{ pv_name.stdout }}" -n {{ ns }} | grep 'RW' | wc -l
+         shell: >
+            kubectl exec -it {{ mayapod.stdout }} -n {{ operator_ns }} -- mayactl volume describe --volname "{{ pv_name.stdout }}" -n {{ ns }} | grep 'RW' | wc -l
          args:
            executable: /bin/bash
          register: result
