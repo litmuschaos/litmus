@@ -1,0 +1,11 @@
+test_name: openebs-target-network-loss
+namespace: "{{ lookup('env','APP_NAMESPACE') }}"
+label: "{{ lookup('env','APP_LABEL') }}"
+pvc: "{{ lookup('env','APP_PVC') }}"
+n_delay: "{{ lookup('env','NETWORK_DELAY') }}" 
+c_duration: "{{ lookup('env','CHAOS_DURATION') }}"
+operator_ns: "{{ lookup('env','OPERATOR_NAMESPACE') }}"
+liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
+liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
+data_persistance: "{{ lookup('env','DATA_PERSISTENCY') }}"
+
