@@ -13,7 +13,14 @@ spec:
       serviceAccountName: litmus
       restartPolicy: Never
       #nodeSelector:
-      #  kubernetes.io/hostname: 
+      #  kubernetes.io/hostname:
+ 
+      tolerations:
+      - key: "infra-aid"
+        operator: "Equal"
+        value: "observer"
+        effect: "NoSchedule"
+
       containers:
       - name: ansibletest
         image: openebs/ansible-runner:ci
@@ -31,13 +38,13 @@ spec:
             value: 'name=percona'
 
           - name: LIVENESS_APP_LABEL
-            value: "liveness=node-chaos"
+            value: "liveness=percona-liveness"
 
           - name: LIVENESS_APP_NAMESPACE
             value: "litmus"
 
           - name: DATA_PERSISTENCY
-            value: ""
+            value: "enable"
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./percona/chaos/drain_node/test.yml -i /etc/ansible/hosts -vv; exit 0"]
@@ -78,8 +85,3 @@ spec:
             path: /mnt/chaos/node-failure-drain
             type: ""
 
-      tolerations:
-      - key: "infra-aid"
-        operator: "Equal"
-        value: "observer"
-        effect: "NoSchedule"
