@@ -36,6 +36,10 @@ spec:
           - name: CSTOR_IMAGE
             value: ci
 
+            # Provide name storage classs for cstor-disk-pool.
+          - name: STORAGE_CLASS_NAME
+            value: openebs-cstor-disk
+
           - name: OPERATOR_NS
             value: openebs
 
