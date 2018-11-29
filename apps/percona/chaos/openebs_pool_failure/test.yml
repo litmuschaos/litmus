@@ -102,6 +102,7 @@
         - include: "{{ chaos_util_path }}"
           app_ns: "{{ namespace }}"
           app_pvc: "{{ pvc }}"
+          chaos_repeat: "{{ chaos_iterations }}"
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
