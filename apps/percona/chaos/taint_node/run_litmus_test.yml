@@ -38,7 +38,7 @@ spec:
             value: 'name=percona'
 
           - name: LIVENESS_APP_LABEL
-            value: "liveness=node-chaos"
+            value: "liveness=percona-liveness"
 
           - name: LIVENESS_APP_NAMESPACE
             value: "litmus"
