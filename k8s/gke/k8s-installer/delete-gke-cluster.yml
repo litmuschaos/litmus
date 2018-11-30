@@ -6,6 +6,7 @@
     - vars.yml
   vars:
     cluster_name:
+    set_zone:
     test_case_name: "GKE_DELETE_CLUSTER"
 
   tasks:
