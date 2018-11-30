@@ -20,7 +20,7 @@
   shell: >
     kubectl get sc {{ sc.stdout }} -n {{ operator_ns }} --no-headers
     -o jsonpath='{.metadata.annotations}' |
-    grep -A 1 -w "name: ReplicaCount" | grep -w value | awk '{print $2}'
+    grep -A 1 -w "name: ReplicaCount" | grep -w value | awk '{print $2}' | cut -d '"' -f 2
   args:
     executable: /bin/bash
   register: replicacount
@@ -32,7 +32,7 @@
 
 - name: Set default value for replicacount if it is non-empty
   set_fact:
-    replicacnt: "{{ replicacount.stdout | int }}"
+    replicacnt: "{{ replicacount.stdout }}"
   when: "replicacount.stdout != \"\""
 
 - name: Get CVR count from pv
