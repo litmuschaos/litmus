@@ -8,4 +8,5 @@ svc_chaos: "{{ lookup('env','SVC_CHAOS') }}"
 operator_ns: "{{ lookup('env','OPERATOR_NAMESPACE') }}"
 liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
 liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
+test_bed: "{{ lookup('env','PLATFORM') }}"
 

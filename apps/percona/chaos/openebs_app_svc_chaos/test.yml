@@ -82,6 +82,7 @@
             network_delay: "{{ n_delay }}"
             chaos_duration: "{{ c_duration }}"
             action: "svc_chaos"
+            platform: "{{ test_bed }}"
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 

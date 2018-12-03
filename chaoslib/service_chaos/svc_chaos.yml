@@ -48,21 +48,57 @@
         executable: /bin/bash
       register: svc_chaos_pod
 
-    - name: do svc restart
-      shell: >
-        timeout 10 kubectl exec -it {{ svc_chaos_pod.stdout}} -n {{ namespace }} 
-        -- bash -c "systemctl stop kube-docker-monitor && systemctl stop kubelet-monitor && systemctl stop {{ svc_chaos }} && sleep {{ c_duration }} && systemctl start {{ svc_chaos }} && systemctl start kube-docker-monitor && systemctl start kubelet-monitor"
-      args:
-        executable: /bin/bash
-      ignore_errors: true 
-      register: result
+    - block:
+            
+       - name: do svc restart
+         shell: >
+           timeout 10 kubectl exec -it {{ svc_chaos_pod.stdout}} -n {{ namespace }} 
+           -- bash -c "systemctl stop kube-docker-monitor && systemctl stop kubelet-monitor && systemctl stop {{ svc_chaos }} && sleep {{ c_duration }} && systemctl start {{ svc_chaos }} && systemctl start kube-docker-monitor && systemctl start kubelet-monitor"
+         args:
+           executable: /bin/bash
+         ignore_errors: true 
+         register: result
 
-    - name: wait for svc chaos duration time
-      shell: >
-        sleep {{ c_duration }} 
-      args:
-        executable: /bin/bash
+       - name: wait for svc chaos duration time
+         shell: >
+           sleep {{ c_duration }} 
+         args:
+           executable: /bin/bash
 
+      when: platform == "GKE"
+
+    - block:
+
+       - name: Update docker health check interval
+         shell: >
+           timeout 10 kubectl exec -it {{ svc_chaos_pod.stdout}} -n {{ namespace }} 
+           -- bash -c "sed -i -e 's/sleep 30/sleep 300/g' /opt/kubernetes/helpers/docker-healthcheck"
+
+       - name: Stop the docker service
+         shell: >
+           timeout 10 kubectl exec -it {{ svc_chaos_pod.stdout}} -n {{ namespace }} 
+           -- bash -c "systemctl stop docker"
+
+       - name: Check the node status
+         shell: kubectl get nodes {{ app_node }}
+         args:
+           executable: /bin/bash
+         register: node_status
+         until: "'NotReady' in node_status.stdout"
+         delay: 30
+         retries: 10
+
+       - name: wait for svc chaos duration time
+         shell: >
+           sleep {{ c_duration }} 
+
+       - name: Start the docker service
+         shell: >
+           timeout 10 kubectl exec -it {{ svc_chaos_pod.stdout}} -n {{ namespace }} 
+           -- bash -c "systemctl start docker"
+
+      when: platform == "AWS"
+      
     - name: Delete svc chaos infra
       shell: >
         kubectl delete ds -l app=svc-chaos
