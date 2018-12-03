@@ -1,0 +1,15 @@
+test_name: node-mem-freeze
+
+app_ns: "{{ lookup('env','APP_NS') }}"
+
+app_label: "{{ lookup('env','APP_LABEL') }}"
+
+d_namespace: "{{ lookup('env','DAEMONSET_NAMESPACE')}}"
+
+io_script_image: "{{lookup('env','IO_image')}}"
+
+io_minutes: 5
+
+daemonset_file: node_memfreez_ds.yml     
+
+app_name: "{{lookup('env','APP_NAME')}}"

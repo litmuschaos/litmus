@@ -1,0 +1,42 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: node-mem-freezer-
+  namespace: litmus 
+spec:
+  template:
+    metadata:
+      name: litmus
+      labels:
+        freezer: node-mem
+
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: vvibhr995/version-chaos:l8
+        imagePullPolicy: Always
+        env: 
+          - name: ANSIBLE_STDOUT_CALLBACK
+            #value: log_plays
+            value: default
+
+          - name: APP_NAME
+            value: percona
+
+          - name: APP_NS
+            value: app-percona-ns
+
+          - name: DAEMONSET_NAMESPACE
+            value: node-infra-chaos
+
+          - name: IO_image
+            value: vvibhr995/build-simple:t1 
+
+          - name: APP_LABEL
+            value: 'name=percona'
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./percona/chaos/node_freeze/test.yml -i /etc/ansible/hosts -vv; exit 0"]        

@@ -1,0 +1,67 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+         ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: "/common/utils/update_litmus_result_resource.yml"
+          vars:
+            status: 'SOT'
+
+        - block:
+
+           ###Actual test
+           ## Check the status of application pod for performing test.
+            - include_tasks: "/common/utils/status_app_pod.yml"
+              vars:
+                application_name: '{{app_name}}'
+                app_lkey: "{{ app_label.split('=')[0] }}"
+                app_lvalue: "{{ app_label.split('=')[1] }}"
+                delay: 10
+                retries: 10
+
+           ## Fetch the name of running application pod.
+            - include_tasks: "/common/utils/fetch_app_pod.yml"
+              vars:
+                application_name: "{{ app_name }}"
+
+
+            - name: Recording the application pod name.
+              set_fact:
+                 Pod_name: "{{ pod_name.stdout }}"
+
+            ## Trigger the node_freeze tasks
+            - include_tasks: "/common/utils/node_infra_chaos.yml"
+              vars:
+                 daemon_namespace: "{{d_namespace}}"     
+                 daemonset: "{{ daemonset_file }}"
+
+                         
+            ## Check the status of application pod after performing test.
+            - include_tasks: "/common/utils/status_app_pod.yml"
+              vars:
+                application_name: "{{app_name}}"
+                app_lkey: "{{ app_label.split('=')[0] }}"
+                app_lvalue: "{{ app_label.split('=')[1] }}"
+                delay: 10
+                retries: 10
+            
+            
+            - set_fact:
+                flag: "Pass"    
+
+      rescue:
+            - set_fact:
+                flag: "Fail"
+
+      always:
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR
+            - include_tasks: "/common/utils/update_litmus_result_resource.yml"
+              vars:
+                status: 'EOT'
+

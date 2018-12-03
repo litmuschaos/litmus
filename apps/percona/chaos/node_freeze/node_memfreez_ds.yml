@@ -1,0 +1,32 @@
+---
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  generateName: node-chaos-
+spec:
+  template:
+    metadata:
+      labels:
+        app: node-chaos
+    spec:
+      containers:
+      - name: node-chaos
+        image: gitlab/dind:latest  
+        command: ["/bin/bash"]
+        args: ["-c", "sleep 10000"]
+        resources:
+          requests:
+            cpu: 10m
+            memory: 5M
+          limits:
+            cpu: 100m
+            memory: 20M
+        volumeMounts:
+          - name: bus
+            mountPath: /var/run
+        tty: true
+      volumes: 
+        - name: bus
+          hostPath:
+            path: /var/run
+
