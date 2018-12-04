@@ -1,5 +1,16 @@
 ---
 
+##########################################################
+# Author: VIBHOR KUMAR                                   #
+# Function:   Utils file for dameonset pod deploy        # 
+#             with docker in docker conatiner image.     #
+# Used :                                                 #
+#       **** TEST using this util:****                   #
+#                                                        #
+#       1)  litmus/app/percona/chaos/node_freeze/        #
+#                                                        #
+##########################################################
+
 - block:
    - name: Create namespace for daemonset pod.
      shell: kubectl create  ns {{ daemon_namespace }}
@@ -29,20 +40,20 @@
      retries: 5
 
 ## Check the node name where application pod is running.
-   - name: Obtain the name of running  application pod node name.
-     shell: kubectl get pod {{ Pod_name }} -o=custom-columns=:.spec.nodeName -n {{ app_ns }} --no-headers
+   - name: Obtain the node of running application pod .
+     shell: kubectl get pod {{ Pod_name }} -o=custom-columns=:.spec.nodeName -n {{ application_namespace }} --no-headers
      args:
        executable: /bin/bash
      register: node_name
 
    - name: Recording the application pod node name.
      set_fact:
-       Node_name: "{{ node_name.stdout }}"
+       node_name: "{{ node_name.stdout }}"
 
 
-   - name: Obtain the daemonset pod  name running on same application pod node.
+   - name: Obtain the daemonset pod name running on same application pod node.
      shell: >
-        kubectl get pods --field-selector spec.nodeName={{Node_name}}
+        kubectl get pods --field-selector spec.nodeName={{node_name}}
         -o custom-columns=:.metadata.name -n {{daemon_namespace}} --no-headers
      args:
        executable: /bin/bash
@@ -50,11 +61,11 @@
 
    - name: Recording the daemonset pod node name.
      set_fact:
-       Daemonset_pod: "{{daemonset_name.stdout}}"
+       daemonset_pod: "{{daemonset_name.stdout}}"
 
    - name: Generate the io using memleak script.
      shell:  >
-       kubectl exec  {{Daemonset_pod}} -n {{ daemon_namespace }}
+       kubectl exec  {{daemonset_pod}} -n {{ daemon_namespace }}
        docker run {{io_script_image}} python memleak.py &
 
    - name: Wait for {{ (io_minutes) | int *60 }} secs to run the script.
@@ -62,8 +73,8 @@
         timeout: "{{ (io_minutes) | int *60 }}"
 
 
-   - name: Check the status of node where daemonset pod and application pod is running.
-     shell: kubectl get node {{Node_name}} --no-headers | awk '{print $2}'
+   - name: Check the node status of daemonset pod and application pod.
+     shell: kubectl get node {{node_name}} --no-headers | awk '{print $2}'
      args:
        executable: /bin/bash
      register: Node_status
@@ -71,8 +82,8 @@
      delay: 20
      retries: 5
 
-   - name: Check the status of daemonset pod after io.
-     shell: kubectl get pod {{ Daemonset_pod }} -n {{ d_namespace }} -o jsonpath='{.status.reason}'
+   - name: Check the status of daemonset pod after memory consumption.
+     shell: kubectl get pod {{ daemonset_pod }} -n {{ daemon_namespace }} -o jsonpath='{.status.reason}'
      args:
        executable: /bin/bash
      register: afterio_status
@@ -80,15 +91,15 @@
      delay: 15
      retries: 15
 
-   - name: Reboot the daemonset pod in order to reboot the node.
-     shell: kubectl exec  {{ Daemonset_pod }} -n {{d_namespace}} init 6 &
+   - name: Reboot the node via daemonset pod.
+     shell: kubectl exec  {{ daemonset_pod }} -n {{daemon_namespace}} init 6 &
 
    - name: Wait for some second.
      wait_for:
        timeout: "{{ (io_minutes) | int *60}}"
 
    - name: Check the status of node .
-     shell: kubectl get node {{Node_name}} --no-headers | awk '{print $2}'
+     shell: kubectl get node {{node_name}} --no-headers | awk '{print $2}'
      args:
         executable: /bin/bash
      register: Node_status

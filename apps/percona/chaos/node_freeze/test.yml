@@ -40,7 +40,7 @@
               vars:
                  daemon_namespace: "{{d_namespace}}"     
                  daemonset: "{{ daemonset_file }}"
-
+                 application_namespace: '{{ app_ns }}'
                          
             ## Check the status of application pod after performing test.
             - include_tasks: "/common/utils/status_app_pod.yml"

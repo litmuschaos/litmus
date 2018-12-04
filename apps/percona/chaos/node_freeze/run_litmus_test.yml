@@ -33,7 +33,7 @@ spec:
             value: node-infra-chaos
 
           - name: IO_image
-            value: vvibhr995/build-simple:t1 
+            value: openebs/tests-memleak:latest
 
           - name: APP_LABEL
             value: 'name=percona'
