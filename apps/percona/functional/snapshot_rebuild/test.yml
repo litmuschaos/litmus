@@ -1,4 +1,13 @@
 ---
+## Test involved.
+#Check if the application is running already.
+#Selct one of the replicas.
+#Introduce packet drop in the selected replica.
+#Create snapshot.
+#check if the snapshot is not present in the degraded pod.
+#Bring up the replica.
+#Check if the snapshot is rebuilt.
+
 - hosts: localhost
   connection: local
 
@@ -57,11 +66,6 @@
           args:
             executable: /bin/bash
           register: healthy_pods
-
-          ## Pre-requisite for creation of snapshot - healthy pods should be greater than or equal to consistency factor.  
-          # - name: Exit the playbook if the healthy pods are lesser than the consistency factor.
-          #meta: end_play
-          #when: "healthy_pods.stdout < consistency_factor.stdout"
 
         - name: Create an empty list of replica pods.
           set_fact:
