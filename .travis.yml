@@ -3,7 +3,7 @@ sudo: required
 install: true
 language: go
 go:
-  - 1.9.1
+  - 1.11.2
 env:
   global:
     - GOARCH=amd64
