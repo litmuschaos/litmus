@@ -36,6 +36,7 @@
           command: python ../../utils/name_generator/namesgenerator.py
           register: cluster_name
           when: not cluster_name
+
         - set_fact:
             cluster_name: "{{ cluster_name.stdout }}"
           when: cluster_name.stdout is defined
@@ -122,6 +123,14 @@
             name: xfsprogs
           delegate_to: "root@{{ item.public_ipv4 }}"
           with_items: "{{ workers.devices }}"
+
+        - name: Disable swap on the nodes
+          include_tasks: ../../utils/swap_disable/swap_disable.yml
+          loop:
+            - "{{ master.devices }}"
+            - "{{ workers.devices }}"
+          loop_control:
+            loop_var: outer_item
 
         - block:
             - name: Getting nodes name
