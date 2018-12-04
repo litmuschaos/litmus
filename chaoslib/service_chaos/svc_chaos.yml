@@ -69,33 +69,9 @@
 
     - block:
 
-       - name: Update docker health check interval
-         shell: >
-           timeout 10 kubectl exec -it {{ svc_chaos_pod.stdout}} -n {{ namespace }} 
-           -- bash -c "sed -i -e 's/sleep 30/sleep 300/g' /opt/kubernetes/helpers/docker-healthcheck"
-
-       - name: Stop the docker service
-         shell: >
-           timeout 10 kubectl exec -it {{ svc_chaos_pod.stdout}} -n {{ namespace }} 
-           -- bash -c "systemctl stop docker"
-
-       - name: Check the node status
-         shell: kubectl get nodes {{ app_node }}
-         args:
-           executable: /bin/bash
-         register: node_status
-         until: "'NotReady' in node_status.stdout"
-         delay: 30
-         retries: 10
-
-       - name: wait for svc chaos duration time
-         shell: >
-           sleep {{ c_duration }} 
-
-       - name: Start the docker service
-         shell: >
-           timeout 10 kubectl exec -it {{ svc_chaos_pod.stdout}} -n {{ namespace }} 
-           -- bash -c "systemctl start docker"
+        - include_tasks: aws-docker.yml
+          vars:
+            docker: 'crash'
 
       when: platform == "AWS"
       
