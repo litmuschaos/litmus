@@ -8,3 +8,5 @@ liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
 operator_ns: openebs
 chaos_type: "{{ lookup('env','CHAOS_TYPE') }}" 
 chaos_iterations: "{{ lookup('env','CHAOS_ITERATIONS') }}"
+pool_debug_msg: 'uncorrectable I/O failure|suspended|ERROR ZFS event'
+chaos_duration: 600

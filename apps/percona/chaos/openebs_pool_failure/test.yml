@@ -103,6 +103,8 @@
           app_ns: "{{ namespace }}"
           app_pvc: "{{ pvc }}"
           chaos_repeat: "{{ chaos_iterations }}"
+          error_messages: "{{ pool_debug_msg }}"
+          post_chaos_soak_time : "{{ chaos_duration }}"
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
