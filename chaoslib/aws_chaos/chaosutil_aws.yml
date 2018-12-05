@@ -1,0 +1,11 @@
+---
+- name: Performing action on AWS ec2 instances
+  ec2:
+    spot_wait_timeout: 200
+    instance_ids: "{{ instance_id }}"
+    region: "{{ region }}"
+    state: "{{ action }}"
+    wait: True
+    vpc_subnet_id: "{{ subnet_id }}"
+    assign_public_ip: yes
+  ignore_errors: true

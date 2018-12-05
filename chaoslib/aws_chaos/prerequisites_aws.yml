@@ -1,0 +1,11 @@
+---
+- name: Installing pip
+  shell: apt install python-pip
+  args:
+    executable: /bin/bash
+
+- name: Installing boto
+  shell: pip install boto
+  args:
+    executable: /bin/bash
+
