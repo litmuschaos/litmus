@@ -86,7 +86,7 @@
 
         - name: wait to check node status
           shell: >
-            sleep {{ c_duration }}
+            sleep {{ c_duration |int + 100 }}
 
         - name: Check node status
           shell: kubectl get nodes {{ app_node }}
@@ -107,9 +107,7 @@
           args:
             executable: /bin/bash
           register: app_status
-          until: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
-          delay: 10
-          retries: 12
+          failed_when: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
 
         - block:
 

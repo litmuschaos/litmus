@@ -81,12 +81,6 @@
 
     - block:
 
-        - name: wait for svc chaos duration time
-          shell: >
-            sleep {{ c_duration }} 
-          args:
-            executable: /bin/bash
-
         - include_tasks: aws-docker.yml
           vars:
             docker: 'recover'

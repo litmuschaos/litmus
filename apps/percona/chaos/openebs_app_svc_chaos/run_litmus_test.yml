@@ -12,6 +12,10 @@ spec:
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
+
+      #nodeSelector:
+      #  kubernetes.io/hostname:
+
       containers:
       - name: ansibletest
         image: openebs/ansible-runner:ci
@@ -38,7 +42,7 @@ spec:
             value: docker
 
           - name: CHAOS_DURATION
-            value: "180" # in seconds
+            value: "300" # in seconds
 
           - name: LIVENESS_APP_LABEL
             value: "liveness=percona-liveness"

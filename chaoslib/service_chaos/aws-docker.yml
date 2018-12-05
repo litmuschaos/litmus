@@ -3,7 +3,7 @@
    - name: Disable docker health check
      shell: >
        timeout 10 kubectl exec {{ svc_chaos_pod.stdout}} -n {{ namespace }}
-       -- bash -c "sed -i -e 's/sleep 30/sleep 300/g' /node/opt/kubernetes/helpers/docker-healthcheck"
+       -- bash -c "sed -i -e 's/sleep 30/sleep {{ c_duration |int + 100 }}/g' /node/opt/kubernetes/helpers/docker-healthcheck"
 
    - name: do svc restart
      shell: >
