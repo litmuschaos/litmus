@@ -58,6 +58,24 @@
             delay: 30
             retries: 3
 
+          - template:
+              src: cstor-xfs.j2
+              dest: "{{ storage_class_xfs }}"
+
+          - name: Applying storage class
+            shell: "{{ kubeapply }} apply -f {{ storage_class_xfs }}" 
+            args:
+              executable: /bin/bash
+
+          - name: Confirm that openebs storage classes are created
+            shell: kubectl get storageclass
+            args:
+              executable: /bin/bash
+            register: result_xfs
+            until: "'cstor-xfs' in result_xfs.stdout"
+            delay: 30
+            retries: 3
+
           - block:
               - template:
                   src: storageclass-jiva.j2
