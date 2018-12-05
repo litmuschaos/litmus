@@ -4,7 +4,7 @@
       chaosutil: openebs/cstor_target_container_kill.yml
     {% endif %}
     {% if chaos_type is defined and chaos_type == 'target-delete' %}
-      chaosutil: openebs/cstor_target_failue.yaml
+      chaosutil: openebs/cstor_target_failure.yaml
     {% endif %}
   {% else %}
     chaosutil: openebs/jiva_controller_pod_failure.yaml
