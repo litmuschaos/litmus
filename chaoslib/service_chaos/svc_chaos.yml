@@ -47,7 +47,7 @@
       args:
         executable: /bin/bash
       register: svc_chaos_pod
-
+  
     - block:
             
        - name: do svc restart
@@ -74,7 +74,25 @@
             docker: 'crash'
 
       when: platform == "AWS"
-      
+
+  when: action == "svc_chaos_create"
+
+- block:      
+
+    - block:
+
+        - name: wait for svc chaos duration time
+          shell: >
+            sleep {{ c_duration }} 
+          args:
+            executable: /bin/bash
+
+        - include_tasks: aws-docker.yml
+          vars:
+            docker: 'recover'
+
+      when: platform == "AWS"
+
     - name: Delete svc chaos infra
       shell: >
         kubectl delete ds -l app=svc-chaos
@@ -95,5 +113,5 @@
       delay: 20
       retries: 15
  
-  when: action == "svc_chaos"
+  when: action == "svc_chaos_delete"
 

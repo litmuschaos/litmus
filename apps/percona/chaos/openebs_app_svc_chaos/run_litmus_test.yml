@@ -14,7 +14,8 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: dargas/ansible-runner:service
+        image: openebs/ansible-runner:ci
+        imagePullPolicy: Always
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
             #value: log_plays
@@ -37,7 +38,7 @@ spec:
             value: docker
 
           - name: CHAOS_DURATION
-            value: "60" # in seconds
+            value: "180" # in seconds
 
           - name: LIVENESS_APP_LABEL
             value: "liveness=percona-liveness"
