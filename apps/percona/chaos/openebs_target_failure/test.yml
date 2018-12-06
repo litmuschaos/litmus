@@ -135,6 +135,13 @@
             dbname: 'tdb' 
           when: data_persistance != ''       
 
+        ## Check application-target pod affinity
+        - include_tasks: /common/utils/openebs/target_affinity_check.yml
+          vars:
+            app_ns: "{{ namespace }}"
+            #operator_ns: works by var scope
+            app_label: "{{ label }}"
+            app_pvc: "{{ pvc }}"
 
         - set_fact:
             flag: "Pass"
