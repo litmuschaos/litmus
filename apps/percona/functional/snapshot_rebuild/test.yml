@@ -125,6 +125,7 @@
             target_pod: "{{ replica_pod }}"
             operator_namespace: "{{ operator_ns }}"
 
+        ## If there are no IOs happening on the volume, replica won't get disconnected
         - name: Check if the targeted replica is disconnected.
           shell: >
             kubectl exec -it {{ cstor_target.stdout }} -n {{ operator_ns }} --container  cstor-istgt 
