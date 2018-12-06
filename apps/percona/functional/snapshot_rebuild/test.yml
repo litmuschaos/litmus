@@ -25,8 +25,8 @@
           vars:
             status: 'SOT'
 
-        - name: Generate unique string for use in dbname
-          shell: echo $(mktemp) | cut -d '.' -f 2
+        - name: Generate unique string for use as snapname
+          shell: cat /dev/urandom | tr -cd 'a-z0-9' | head -c 8
           args:
             executable: /bin/bash
           register: snap_name
@@ -65,7 +65,7 @@
             executable: /bin/bash
           register: consistency_factor
 
-       - name: Create an empty list of replica pods.
+        - name: Create an empty list of replica pods.
           set_fact:
             cstor_replicas_pod : []
 
@@ -80,7 +80,7 @@
 
         - name: Find the replication factor by getting count of pool deployment Create an empty list of replica pods.
           set_fact:
-            replication_factor: {{ pool_deployment.stdout_lines | length }}
+            replication_factor: "{{ pool_deployment.stdout_lines|length }}"
 
         - name: Obtaining the replicasets corresponding to pool deployements.
           shell: >
@@ -130,7 +130,7 @@
             kubectl exec -it {{ cstor_target.stdout }} -n {{ operator_ns }} --container  cstor-istgt 
             -- istgtcontrol -q replica |json_pp | jq '.volumeStatus[0].replicaStatus[].status' | grep Healthy | wc -l
           register: connected_replica
-          until: "connected_replica.stdout == (healthy_pods.stdout | int - 1)"
+          until: "(connected_replica.stdout|int) == ((healthy_pods.stdout|int) - 1)"
           delay: 15
           retries: 30
         
@@ -138,7 +138,7 @@
           include_tasks: /funclib/kubectl/k8s_snapshot_clone/create_snapshot.yml 
           vars:
             app_ns: "{{ namespace }}"
-            snapshot_name: "{{ snap_name }}"
+            snapshot_name: "{{ snap_name.stdout }}"
             pvc_name: "{{ app_pvc }}"
 
         - name: Checking if the snapshot is not created in the degraded replica.
@@ -146,7 +146,7 @@
           args:
             executable: /bin/bash
           register: list_snap
-          failed_when: "snap_name in list_snap.stdout"
+          failed_when: "snap_name.stdout in list_snap.stdout"
 
         ## Removing the packet drop rule by including the relevant util..
         - include_tasks: "/chaoslib/openebs/inject_packet_loss_tc.yml"
@@ -187,7 +187,7 @@
           args:
             executable: /bin/bash
           register: list_snap
-          failed_when: "snap_name not in list_snap.stdout"
+          failed_when: "snap_name.stdout not in list_snap.stdout"
 
         - set_fact:
             flag: "Pass"

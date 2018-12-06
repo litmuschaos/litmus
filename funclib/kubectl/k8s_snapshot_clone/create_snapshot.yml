@@ -2,6 +2,13 @@
 # This utility creates snapshot using K8s external storage API.
 #
 
+- name: Display details
+  debug:
+    msg:
+      - "app_ns: {{ app_ns }}"
+      - "snapshot_name: {{ snapshot_name }}"
+      - "pvc_name: {{ pvc_name }}"
+
 - name: Update the snapshot template with the values provided.
   template:
      src: /funclib/kubectl/k8s_snapshot_clone/snapshot.j2
