@@ -25,6 +25,12 @@
           vars:
             status: 'SOT'
 
+        - name: Generate unique string for use in dbname
+          shell: echo $(mktemp) | cut -d '.' -f 2
+          args:
+            executable: /bin/bash
+          register: snap_name
+
          ## Check if the application is running.
         - name: Checking if the application is up and running.
           shell: kubectl get pods -n {{ namespace }} -l {{ application_label }} --no-headers -o custom-columns=:status.phase
@@ -59,15 +65,7 @@
             executable: /bin/bash
           register: consistency_factor
 
-        - name: Checking the number of healthy pods.
-          shell: >
-            kubectl exec -it {{ cstor_target.stdout }} -n {{ operator_ns }} --container  cstor-istgt 
-            -- istgtcontrol -q replica |json_pp |grep "\"replicaId" |awk -F ':' '{print $2}' | tr -d ',' |wc -l
-          args:
-            executable: /bin/bash
-          register: healthy_pods
-
-        - name: Create an empty list of replica pods.
+       - name: Create an empty list of replica pods.
           set_fact:
             cstor_replicas_pod : []
 
@@ -79,6 +77,10 @@
           args:
             executable: /bin/bash
           register: pool_deployment
+
+        - name: Find the replication factor by getting count of pool deployment Create an empty list of replica pods.
+          set_fact:
+            replication_factor: {{ pool_deployment.stdout_lines | length }}
 
         - name: Obtaining the replicasets corresponding to pool deployements.
           shell: >
@@ -105,78 +107,90 @@
         - set_fact:
             replica_pod: "{{ cstor_replicas_pod | list | first }}"
 
-        - block:
-
+        - name: Making sure number of healthy pods is equal to replication factor
+          shell: >
+            kubectl exec -it {{ cstor_target.stdout }} -n {{ operator_ns }} --container  cstor-istgt 
+            -- istgtcontrol -q replica |json_pp | jq '.volumeStatus[0].replicaStatus[].status' | grep Healthy | wc -l
+          args:
+            executable: /bin/bash
+          register: healthy_pods
+          until: "healthy_pods.stdout == replication_factor"
+          delay: 15
+          retries: 30
+ 
         ## Inducing the packet drop on the above pool pod.
-            - include_tasks: "/common/utils/inject_packet_loss_tc.yml"
-              vars:
-                status: "induce"
-                target_pod: "{{ replica_pod }}"
-                operator_namespace: "{{ operator_ns }}"
+        - include_tasks: "/chaoslib/openebs/inject_packet_loss_tc.yml"
+          vars:
+            status: "induce"
+            target_pod: "{{ replica_pod }}"
+            operator_namespace: "{{ operator_ns }}"
 
-            - name: Check if the targeted replica is disconnected.
-              shell: >
-                kubectl exec -it {{ cstor_target.stdout }} -n {{ operator_ns }} --container  cstor-istgt 
-                -- istgtcontrol -q replica |json_pp |grep "\"replicaId" |awk -F ':' '{print $2}' | tr -d ',' |wc -l
-              register: connected_replica
-              until: "connected_replica.stdout == \"2\""
-              delay: 30
-              retries: 15
+        - name: Check if the targeted replica is disconnected.
+          shell: >
+            kubectl exec -it {{ cstor_target.stdout }} -n {{ operator_ns }} --container  cstor-istgt 
+            -- istgtcontrol -q replica |json_pp | jq '.volumeStatus[0].replicaStatus[].status' | grep Healthy | wc -l
+          register: connected_replica
+          until: "connected_replica.stdout == (healthy_pods.stdout | int - 1)"
+          delay: 15
+          retries: 30
         
-            - name: Creating snapshot.
-              include_tasks: /funclib/kubectl/k8s_snapshot_clone/create_snapshot.yml 
-              vars:
-                app_ns: "{{ namespace }}"
-                snapshot_name: "{{ snap_name }}"
-                pvc_name: "{{ app_pvc }}"
+        - name: Creating snapshot.
+          include_tasks: /funclib/kubectl/k8s_snapshot_clone/create_snapshot.yml 
+          vars:
+            app_ns: "{{ namespace }}"
+            snapshot_name: "{{ snap_name }}"
+            pvc_name: "{{ app_pvc }}"
 
-            - name: Checking if the snapshot is not created in the degraded replica.
-              shell: kubectl exec -ti {{ replica_pod }} -n {{ operator_ns }} --container cstor-pool -- zfs list -t snapshot
-              args:
-                executable: /bin/bash
-              register: list_snap
-              until: "snap_name not in list_snap.stdout"
-              delay: 30
-              retries: 10
+        - name: Checking if the snapshot is not created in the degraded replica.
+          shell: kubectl exec -ti {{ replica_pod }} -n {{ operator_ns }} --container cstor-pool -- zfs list -t snapshot
+          args:
+            executable: /bin/bash
+          register: list_snap
+          failed_when: "snap_name in list_snap.stdout"
 
         ## Removing the packet drop rule by including the relevant util..
-            - include_tasks: "/common/utils/inject_packet_loss_tc.yml"
-              vars:
-                status: "remove"
-                target_pod: "{{ replica_pod }}"
-                operator_namespace: "{{ operator_ns }}"
+        - include_tasks: "/chaoslib/openebs/inject_packet_loss_tc.yml"
+          vars:
+            status: "remove"
+            target_pod: "{{ replica_pod }}"
+            operator_namespace: "{{ operator_ns }}"
 
-            - name: Form the snap name being rebuilt.
-              set_fact:
-                name: "{{ pv.stdout }}@rebuild_snap"
+        - name: Form the snap name being rebuilt.
+          set_fact:
+            name: "{{ pv.stdout }}@rebuild_snap"
 
-            - name: Check if the snapshot is being rebuilt.
-              shell: kubectl exec -it {{ replica_pod }} -n {{ operator_ns }} --container cstor-pool -- zfs list -t snapshot
-              args:
-                executable: /bin/bash
-              register: list_snap
-              until: "name in list_snap.stdout"
-              delay: 30
-              retries: 20
+        - name: Check if the snapshot is being rebuilt.
+          shell: kubectl exec -it {{ replica_pod }} -n {{ operator_ns }} --container cstor-pool -- zfs list -t snapshot
+          args:
+            executable: /bin/bash
+          register: list_snap
+          until: "name in list_snap.stdout"
+          delay: 30
+          retries: 20
  
-            - debug:
-                msg: "Snapshot is being rebuilt"
+        - debug:
+            msg: "Snapshot is being rebuilt"
 
-            - name: Check if the snapshot rebuild is successful.
-              shell: >
-                kubectl exec -ti {{ replica_pod }} -n {{ operator_ns }} -c cstor-pool 
-                -- zfs stats |json_pp| grep "rebuildStatus" |awk -F ':' '{print $2}' | tr -d '"' | tr -d ','
-              args:
-                executable: /bin/bash
-              register: snap_result
-              until: "'DONE' in snap_result.stdout"
-              delay: 20
-              retries: 100
+        - name: Check if the snapshot rebuild is successful.
+          shell: >
+            kubectl exec -ti {{ replica_pod }} -n {{ operator_ns }} -c cstor-pool 
+            -- zfs stats |json_pp| grep "rebuildStatus" |awk -F ':' '{print $2}' | tr -d '"' | tr -d ','
+          args:
+            executable: /bin/bash
+          register: snap_result
+          until: "'DONE' in snap_result.stdout"
+          delay: 20
+          retries: 100
 
-            - set_fact:
-                flag: "Pass"
+        - name: Check if the snapshot is rebuilt.
+          shell: kubectl exec -it {{ replica_pod }} -n {{ operator_ns }} --container cstor-pool -- zfs list -t snapshot
+          args:
+            executable: /bin/bash
+          register: list_snap
+          failed_when: "snap_name not in list_snap.stdout"
 
-          when: "healthy_pods.stdout >= consistency_factor.stdout" 
+        - set_fact:
+            flag: "Pass"
 
       rescue:
         - set_fact:
