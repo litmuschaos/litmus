@@ -35,22 +35,15 @@
               set_fact:
                  Pod_name: "{{ pod_name.stdout }}"
 
-            ## Trigger the node_freeze tasks
+            ## Trigger the node_freeze tasks and verify application pod status.
             - include_tasks: "/common/utils/node_infra_chaos.yml"
               vars:
                  daemon_namespace: "{{d_namespace}}"     
                  daemonset: "{{ daemonset_file }}"
                  application_namespace: '{{ app_ns }}'
-                         
-            ## Check the status of application pod after performing test.
-            - include_tasks: "/common/utils/status_app_pod.yml"
-              vars:
-                application_name: "{{app_name}}"
-                app_lkey: "{{ app_label.split('=')[0] }}"
-                app_lvalue: "{{ app_label.split('=')[1] }}"
-                delay: 10
-                retries: 10
-            
+                 application_name: '{{app_name}}'
+                 app_lkey: "{{ app_label.split('=')[0] }}"
+                 app_lvalue: "{{ app_label.split('=')[1] }}"
             
             - set_fact:
                 flag: "Pass"    

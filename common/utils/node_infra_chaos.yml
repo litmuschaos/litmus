@@ -1,16 +1,5 @@
 ---
 
-##########################################################
-# Author: VIBHOR KUMAR                                   #
-# Function:   Utils file for dameonset pod deploy        # 
-#             with docker in docker conatiner image.     #
-# Used :                                                 #
-#       **** TEST using this util:****                   #
-#                                                        #
-#       1)  litmus/app/percona/chaos/node_freeze/        #
-#                                                        #
-##########################################################
-
 - block:
    - name: Create namespace for daemonset pod.
      shell: kubectl create  ns {{ daemon_namespace }}
@@ -90,6 +79,14 @@
      until: "'NodeLost' in afterio_status.stdout"
      delay: 15
      retries: 15
+
+
+   #### Check the status of application pod during NODE FREEZE CHAOS ####   
+
+   - include_tasks: "/common/utils/status_app_pod.yml"
+     vars:
+        delay: 10
+        retries: 10    
 
    - name: Reboot the node via daemonset pod.
      shell: kubectl exec  {{ daemonset_pod }} -n {{daemon_namespace}} init 6 &
