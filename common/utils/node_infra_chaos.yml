@@ -39,7 +39,6 @@
      set_fact:
        node_name: "{{ node_name.stdout }}"
 
-
    - name: Obtain the daemonset pod name running on same application pod node.
      shell: >
         kubectl get pods --field-selector spec.nodeName={{node_name}}
@@ -88,19 +87,4 @@
         delay: 10
         retries: 10    
 
-   - name: Reboot the node via daemonset pod.
-     shell: kubectl exec  {{ daemonset_pod }} -n {{daemon_namespace}} init 6 &
-
-   - name: Wait for some second.
-     wait_for:
-       timeout: "{{ (io_minutes) | int *60}}"
-
-   - name: Check the status of node .
-     shell: kubectl get node {{node_name}} --no-headers | awk '{print $2}'
-     args:
-        executable: /bin/bash
-     register: Node_status
-     until: "'Ready' in Node_status.stdout"
-     delay: 20
-     retries: 20
 

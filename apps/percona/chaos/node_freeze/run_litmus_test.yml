@@ -32,11 +32,31 @@ spec:
           - name: DAEMONSET_NAMESPACE
             value: node-infra-chaos
 
+            ## IO_image has two values : memory consumption and CPU consumption.
           - name: IO_image
             value: openebs/tests-memleak:latest
+            #value: mittachaitu/forkbomb:latest
 
           - name: APP_LABEL
             value: 'name=percona'
+
+          - name: PLATFORM
+            value: "AWS"
+
+           ## Value of AWS_ACCESS_KEY_ID need to be replaced with original value
+          - name: AWS_ACCESS_KEY_ID
+            value: "access_key"
+
+          ## Value of AWS_SECRET_ACCESS_KEY need to be replaced with original value
+          - name: AWS_SECRET_ACCESS_KEY
+            value: "secret_key"
+
+          ## Actions can be performed on AWS ec2 instance and values (stopped,running,present,absent,restarted ansible-version >= 2.2)
+          - name: ACTION
+            value: "restarted"
+
+          - name: SUBNET_ID
+            value: "subnet_id"
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./percona/chaos/node_freeze/test.yml -i /etc/ansible/hosts -vv; exit 0"]        
