@@ -24,9 +24,16 @@ spec:
         volumeMounts:
           - name: bus
             mountPath: /var/run
+          - name: root
+            mountPath: /node
+        securityContext:
+          privileged: true
         tty: true
-      volumes: 
+      volumes:
         - name: bus
           hostPath:
             path: /var/run
-
+        - name: root
+          hostPath:
+            path: /
+            type: ""

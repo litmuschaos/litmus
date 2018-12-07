@@ -81,8 +81,23 @@
             app_pvc: "{{ pvc }}"
             network_delay: "{{ n_delay }}"
             chaos_duration: "{{ c_duration }}"
-            action: "svc_chaos"
+            action: "svc_chaos_create"
+            platform: "{{ test_bed }}"
 
+        - name: wait to check node status
+          shell: >
+            sleep {{ c_duration |int + 100 }}
+
+        - name: Check node status
+          shell: kubectl get nodes {{ app_node }}
+          args:
+            executable: /bin/bash
+          register: node_status
+          until: "'NotReady' in node_status.stdout"
+          delay: 30
+          retries: 10
+
+       
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
         - name: Verify AUT liveness post fault-injection
@@ -92,9 +107,7 @@
           args:
             executable: /bin/bash
           register: app_status
-          until: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
-          delay: 10
-          retries: 12
+          failed_when: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
 
         - block:
 
@@ -115,6 +128,12 @@
             flag: "Fail"
 
       always: 
+
+        - include: "{{ chaos_util_path }}"
+          vars:
+            app_ns: "{{ namespace }}"
+            action: "svc_chaos_delete"
+            platform: "{{ test_bed }}"
 
         ## RECORD END-OF-TEST IN LITMUS RESULT CR
  

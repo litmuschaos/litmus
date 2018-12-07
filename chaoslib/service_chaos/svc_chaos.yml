@@ -47,21 +47,45 @@
       args:
         executable: /bin/bash
       register: svc_chaos_pod
+  
+    - block:
+            
+       - name: do svc restart
+         shell: >
+           timeout 10 kubectl exec -it {{ svc_chaos_pod.stdout}} -n {{ namespace }} 
+           -- bash -c "systemctl stop kube-docker-monitor && systemctl stop kubelet-monitor && systemctl stop {{ svc_chaos }} && sleep {{ c_duration }} && systemctl start {{ svc_chaos }} && systemctl start kube-docker-monitor && systemctl start kubelet-monitor"
+         args:
+           executable: /bin/bash
+         ignore_errors: true 
+         register: result
 
-    - name: do svc restart
-      shell: >
-        timeout 10 kubectl exec -it {{ svc_chaos_pod.stdout}} -n {{ namespace }} 
-        -- bash -c "systemctl stop kube-docker-monitor && systemctl stop kubelet-monitor && systemctl stop {{ svc_chaos }} && sleep {{ c_duration }} && systemctl start {{ svc_chaos }} && systemctl start kube-docker-monitor && systemctl start kubelet-monitor"
-      args:
-        executable: /bin/bash
-      ignore_errors: true 
-      register: result
+       - name: wait for svc chaos duration time
+         shell: >
+           sleep {{ c_duration }} 
+         args:
+           executable: /bin/bash
 
-    - name: wait for svc chaos duration time
-      shell: >
-        sleep {{ c_duration }} 
-      args:
-        executable: /bin/bash
+      when: platform == "GKE"
+
+    - block:
+
+        - include_tasks: aws-docker.yml
+          vars:
+            docker: 'crash'
+
+      when: platform == "AWS"
+
+  when: action == "svc_chaos_create"
+
+- block:      
+
+    - block:
+
+        - include_tasks: aws-docker.yml
+          vars:
+            docker: 'recover'
+
+      when: platform == "AWS"
 
     - name: Delete svc chaos infra
       shell: >
@@ -83,5 +107,5 @@
       delay: 20
       retries: 15
  
-  when: action == "svc_chaos"
+  when: action == "svc_chaos_delete"
 
