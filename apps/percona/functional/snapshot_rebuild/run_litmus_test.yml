@@ -34,8 +34,5 @@ spec:
           - name: APP_NAMESPACE
             value: percona-cstor
 
-          - name: SNAPSHOT
-            value: test-snapshot
-
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./percona/functional/snapshot_rebuild/test.yml -i /etc/ansible/hosts -vv; exit 0"]
