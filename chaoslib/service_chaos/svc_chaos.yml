@@ -69,9 +69,9 @@
 
     - block:
 
-        - include_tasks: aws-docker.yml
+        - include_tasks: aws-service.yml
           vars:
-            docker: 'crash'
+            service: '{{ svc_chaos}}-crash'
 
       when: platform == "AWS"
 
@@ -83,7 +83,7 @@
 
         - include_tasks: aws-docker.yml
           vars:
-            docker: 'recover'
+            service: 'recover'
 
       when: platform == "AWS"
 

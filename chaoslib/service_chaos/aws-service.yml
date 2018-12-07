@@ -1,5 +1,21 @@
 - block:
 
+   - name: Update kubelet health check
+     shell: >
+       timeout 10 kubectl exec {{ svc_chaos_pod.stdout}} -n {{ namespace }}
+       -- bash -c "sed -i -e 's/RestartSec=2s/RestartSec=400s/g' /node/lib/systemd/system/kubelet.service"
+
+   - name: do svc restart
+     shell: >
+       timeout 10 kubectl exec {{ svc_chaos_pod.stdout}} -n {{ namespace }}
+       -- bash -c "systemctl stop {{ svc_chaos }} && sleep {{ c_duration }} && systemctl start {{ svc_chaos }}"
+     async: 6000
+     poll: 0
+
+  when: service == "kubelet-crash"
+  
+- block:
+
    - name: Disable docker health check
      shell: >
        timeout 10 kubectl exec {{ svc_chaos_pod.stdout}} -n {{ namespace }}
@@ -12,7 +28,7 @@
      async: 6000
      poll: 0
 
-  when: docker == "crash"
+  when: service == "docker-crash"
 
 - block:
 
@@ -36,4 +52,4 @@
      delay: 30
      retries: 10
 
-  when: docker == "recover"
+  when: service == "recover"
