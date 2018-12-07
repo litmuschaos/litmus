@@ -7,4 +7,4 @@ os: ubuntu_16_04
 network_cidr: 10.1.0.0/16
 master_config: t1.small.x86
 workers_config: t1.small.x86
-default_k8s_version: 1.10.0-00
+default_k8s_version: 1.12.3-00
