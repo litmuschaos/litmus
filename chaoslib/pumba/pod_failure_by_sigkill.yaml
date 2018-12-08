@@ -1,5 +1,4 @@
 - block:
-
     - name: Setup pumba chaos infrastructure
       shell: >
         kubectl apply -f /chaoslib/pumba/pumba_kube.yaml
@@ -56,24 +55,37 @@
         executable: /bin/bash
       register: pumba_pod
 
+    - name: Record restartCount
+      shell: >
+        kubectl get pod {{ app_pod }} -n {{ namespace }}
+        -o=jsonpath='{range .status.containerStatuses[*]}{.restartCount}{"\n"}{end}' | awk '{s+=$1} END { print s }'
+      args:
+        executable: /bin/bash
+      register: restartCnt_prev
+
     - name: Force kill the application pod using pumba
       shell: >
         kubectl exec {{ pumba_pod.stdout}} -n {{ namespace }}
-        -- timeout -t 40 pumba --interval 15s kill
-        --signal SIGKILL re2:k8s_{{ app_container }};
+        -- pumba kill --signal SIGKILL re2:k8s_{{ app_container }}_;
       args:
         executable: /bin/bash
       ignore_errors: true
       register: result
 
-    - name: Wait for application pod reschedule
-      wait_for:
-        timeout: 30
+    - name: Verify restartCount
+      shell: >
+        kubectl get pod {{ app_pod }} -n {{ namespace }}
+        -o=jsonpath='{range .status.containerStatuses[*]}{.restartCount}{"\n"}{end}' | awk '{s+=$1} END { print s }'
+      args:
+        executable: /bin/bash
+      register: restartCnt
+      until: "restartCnt.stdout|int > restartCnt_prev.stdout|int"
+      delay: 2
+      retries: 30
 
   when: action == "killapp"
 
 - block:
-
     - name: Delete the pumba daemonset
       shell: >
         kubectl delete -f /chaoslib/pumba/pumba_kube.yaml -n {{ namespace }}
