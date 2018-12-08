@@ -38,53 +38,55 @@
               set_fact:
                  Pod_name: "{{ pod_name.stdout }}"
 
-            ## Trigger the node_freeze tasks and verify application pod status.
+             ## Trigger the node_freeze tasks and verify application pod status.
             - include_tasks: "/common/utils/node_infra_chaos.yml"
               vars:
-                 daemon_namespace: "{{d_namespace}}"     
+                 daemon_namespace: "{{d_namespace}}"
                  daemonset: "{{ daemonset_file }}"
                  application_namespace: '{{ app_ns }}'
                  application_name: '{{app_name}}'
                  app_lkey: "{{ app_label.split('=')[0] }}"
                  app_lvalue: "{{ app_label.split('=')[1] }}"
 
+          always:
+           - block:
             ## Get AWS instance Id of the Application node
-            - name: Get the AWS instance Id of APP NOde
-              shell: kubectl get node {{ node_name }} -o jsonpath={.spec.providerID} | cut -d '/' -f 5
-              args:
-                executable: /bin/bash
-              register: instance_id
+               - name: Get the AWS instance Id of APP NOde
+                 shell: kubectl get node {{ node_name }} -o jsonpath={.spec.providerID} | cut -d '/' -f 5
+                 args:
+                   executable: /bin/bash
+                 register: instance_id
 
-            - name: Get region from app node
-              shell: >
-                kubectl get nodes {{node_name }}
-                -o jsonpath='{.metadata.labels.failure-domain\.beta\.kubernetes\.io\/region}'
-              register: region
+               - name: Get region from app node
+                 shell: >
+                    kubectl get nodes {{node_name }}
+                    -o jsonpath='{.metadata.labels.failure-domain\.beta\.kubernetes\.io\/region}'
+                 register: region
 
-            - set_fact:
-                instance_id: "{{ instance_id.stdout }}"
-                region: "{{ region.stdout }}"
+               - set_fact:
+                   instance_id: "{{ instance_id.stdout }}"
+                   region: "{{ region.stdout }}"
 
-            ## Execute the chaos util
-            - include_tasks: /chaoslib/aws_chaos/chaosutil_aws.yml
-              when: lookup('env', 'PLATFORM') == 'AWS'
+             ## Execute the chaos util
+               - include_tasks: /chaoslib/aws_chaos/chaosutil_aws.yml
+                 when: lookup('env', 'PLATFORM') == 'AWS'
 
 
-            - name: Wait for {{ (io_minutes) | int *60 }} secs to run the script.
-              wait_for:
-                   timeout: "{{ (io_minutes) | int *60 }}"
+               - name: Wait for {{ (io_minutes) | int *60 }} get the pod to running state.
+                 wait_for:
+                    timeout: "{{ (io_minutes) | int *60 }}"
               
              ## Check the status of application pod after performing test.
-            - include_tasks: "/common/utils/status_app_pod.yml"
-              vars:
-                application_name: "{{app_name}}"
-                app_lkey: "{{ app_label.split('=')[0] }}"
-                app_lvalue: "{{ app_label.split('=')[1] }}"
-                delay: 30
-                retries: 15
+               - include_tasks: "/common/utils/status_app_pod.yml"
+                 vars:
+                   application_name: "{{app_name}}"
+                   app_lkey: "{{ app_label.split('=')[0] }}"
+                   app_lvalue: "{{ app_label.split('=')[1] }}"
+                   delay: 30
+                   retries: 15
             
-            - set_fact:
-                flag: "Pass"    
+               - set_fact:
+                   flag: "Pass"    
 
       rescue:
             - set_fact:

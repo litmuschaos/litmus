@@ -43,7 +43,7 @@ spec:
           - name: PLATFORM
             value: "AWS"
 
-           ## Value of AWS_ACCESS_KEY_ID need to be replaced with original value
+            ### Value of AWS_ACCESS_KEY_ID need to be replaced with original value
           - name: AWS_ACCESS_KEY_ID
             value: "access_key"
 

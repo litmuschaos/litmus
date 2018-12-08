@@ -56,7 +56,7 @@
        kubectl exec  {{daemonset_pod}} -n {{ daemon_namespace }}
        docker run {{io_script_image}} python memleak.py &
 
-   - name: Wait for {{ (io_minutes) | int *60 }} secs to run the script.
+   - name: Wait for {{ (io_minutes) | int *60 }} secs for memory consumption.
      wait_for:
         timeout: "{{ (io_minutes) | int *60 }}"
 
@@ -70,14 +70,9 @@
      delay: 20
      retries: 5
 
-   - name: Check the status of daemonset pod after memory consumption.
-     shell: kubectl get pod {{ daemonset_pod }} -n {{ daemon_namespace }} -o jsonpath='{.status.reason}'
-     args:
-       executable: /bin/bash
-     register: afterio_status
-     until: "'NodeLost' in afterio_status.stdout"
-     delay: 15
-     retries: 15
+   - name: Wait for {{ (app_check_minutes) | int *60 }} secs to check the application status
+     wait_for:
+        timeout: "{{ (app_check_minutes) | int *60 }}"
 
 
    #### Check the status of application pod during NODE FREEZE CHAOS ####   
