@@ -16,8 +16,8 @@
         executable: /bin/bash
       register: result
       until: "result.stdout == 'Running'"
-      delay: 20
-      retries: 15
+      delay: 2
+      retries: 150
 
     - name: Identify the application node
       shell: >
@@ -58,7 +58,7 @@
     - name: Record restartCount
       shell: >
         kubectl get pod {{ app_pod }} -n {{ namespace }}
-        -o=jsonpath='{range .status.containerStatuses[*]}{.restartCount}{"\n"}{end}' | awk '{s+=$1} END { print s }'
+        -o=jsonpath='{.status.containerStatuses[?(@.name=="{{ app_container }}")].restartCount}'
       args:
         executable: /bin/bash
       register: restartCnt_prev
@@ -75,7 +75,7 @@
     - name: Verify restartCount
       shell: >
         kubectl get pod {{ app_pod }} -n {{ namespace }}
-        -o=jsonpath='{range .status.containerStatuses[*]}{.restartCount}{"\n"}{end}' | awk '{s+=$1} END { print s }'
+        -o=jsonpath='{.status.containerStatuses[?(@.name=="{{ app_container }}")].restartCount}'
       args:
         executable: /bin/bash
       register: restartCnt
@@ -101,7 +101,7 @@
         executable: /bin/bash
       register: result
       until: "'Running' not in result.stdout"
-      delay: 20
-      retries: 15
+      delay: 2
+      retries: 150
 
   when: action == "deletepumba"
