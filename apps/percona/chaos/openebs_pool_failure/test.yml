@@ -19,8 +19,6 @@
               retries: 10
           when: liveness_label != ''  
 
-        - include: test_prerequisites.yml
-
         - name: Get application pod name 
           shell: >
             kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
@@ -46,13 +44,15 @@
             dbname: "tdb{{ uniqstr.stdout }}"
           when: data_persistance != '' 
 
-
-        - include_vars:
-            file: chaosutil.yml    
+        - name: Record the chaos util path
+          set_fact:
+            chaos_util_path: "/chaoslib/openebs/cstor_pool_kill.yml"
+          when: chaos_type == "pool-kill"
 
         - name: Record the chaos util path
-          set_fact: 
-            chaos_util_path: "/chaoslib/{{ chaosutil }}"
+          set_fact:
+            chaos_util_path: "/chaoslib/openebs/cstor_pool_delete.yml"
+          when: chaos_type == "pool-delete"
 
         ## RECORD START-OF-TEST IN LITMUS RESULT CR
 
@@ -66,12 +66,11 @@
               set_fact:
                 test_name: "{{ test_name }}-{{ run_id }}"
 
+            - include_tasks: /common/utils/update_litmus_result_resource.yml
+              vars:
+                status: 'SOT'
+                chaostype: "{{ chaosutil.split('.')[0] }}"
           when: lookup('env','RUN_ID')
-
-        - include_tasks: /common/utils/update_litmus_result_resource.yml
-          vars:
-            status: 'SOT'
-            chaostype: "{{ chaosutil.split('.')[0] }}"
 
         ## DISPLAY APP INFORMATION 
  
@@ -82,7 +81,6 @@
               - "Namespace    : {{ namespace }}"
               - "Label        : {{ label }}"
               - "PVC          : {{ pvc }}"  
-              - "StorageClass : {{ sc }}"
 
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
 
@@ -162,8 +160,9 @@
       always: 
 
         ## RECORD END-OF-TEST IN LITMUS RESULT CR
-        - include_tasks: /common/utils/update_litmus_result_resource.yml
-          vars:
-            status: 'EOT'
-            chaostype: "{{ chaosutil.split('.')[0] }}"
-
+        - block:
+            - include_tasks: /common/utils/update_litmus_result_resource.yml
+              vars:
+                status: 'EOT'
+                chaostype: "{{ chaosutil.split('.')[0] }}"
+          when: lookup('env','RUN_ID')
