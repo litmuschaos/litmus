@@ -25,6 +25,7 @@ spec:
       containers:
       - name: ansibletest
         image: openebs/ansible-runner:ci
+        imagePullPolicy: Always
         env:
           - name: ANSIBLE_STDOUT_CALLBACK
             #value: log_plays
@@ -50,7 +51,7 @@ spec:
             value: "enable"  
 
           - name: CHAOS_TYPE
-            value: "pool-delete"
+            value: "pool-kill"
 
           - name: CHAOS_ITERATIONS
             value: "2" 
