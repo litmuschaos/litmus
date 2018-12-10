@@ -41,7 +41,7 @@ print list
 # A watermark of 800MB(re-calibrated based on results oberved from latest sanity run) 
 # profile chosen in this test
 # TODO: Identify better mem consumption strategies
-if all(i <= 800 for i in list):
+if all(i <= benchmark for i in list):
         print "Pass"
 else:
         print "Fail"
