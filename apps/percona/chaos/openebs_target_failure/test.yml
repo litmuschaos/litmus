@@ -102,6 +102,10 @@
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
+        - name: Wait (soak) for I/O on pools 
+          wait_for:
+            timeout: "{{ chaos_duration }}"
+
         - name: Verify AUT liveness post fault-injection
           shell: >
             kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
