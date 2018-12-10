@@ -70,26 +70,26 @@
      delay: 5
      retries: 60
 
-   
-     ### Check for application pod status #####
 
-   - include_tasks: "/common/utils/status_app_pod.yml"
-     vars:
-        delay: 5
-        retries: 60
+    ###### Check for the container status of  pod #######
 
-     ###### Check for the container status of  pod #######
-
-   - name: Checking container status of affected application pod.
+   - name: Checking container status of application pod.
      shell: >
-         kubectl get pods  -n   {{ app_ns }}
+         kubectl get pods -n  {{ app_ns }}
          -o jsonpath='{.items[?(@.metadata.labels.{{app_lkey}}=="{{app_lvalue}}")].status.containerStatuses[*].state}'
      args:
        executable: /bin/bash
      register: Container_status
-     until: "'running' not  in Container_status.stdout"
-     delay: 5
-     retries: 120
+     until: "'waiting' in Container_status.stdout"
+     delay: 10
+     retries: 60
+   
+     ### Check for application pod status #####
+   - include_tasks: "/common/utils/status_app_pod.yml"
+     vars:
+        delay: 5
+        retries: 10
+
   
 
 
