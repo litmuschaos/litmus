@@ -2,6 +2,7 @@
 
 application_deployment: percona.yml
 app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+operator_ns: 'openebs'
 app_label: "{{ lookup('env','APP_LABEL') }}"
 test_name: percona-deployment
 application_name: "percona"

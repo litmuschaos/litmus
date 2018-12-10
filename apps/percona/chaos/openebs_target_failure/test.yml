@@ -102,6 +102,10 @@
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
+        - name: Wait (soak) for I/O on pools 
+          wait_for:
+            timeout: "{{ chaos_duration }}"
+
         - name: Verify AUT liveness post fault-injection
           shell: >
             kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
@@ -135,6 +139,13 @@
             dbname: 'tdb' 
           when: data_persistance != ''       
 
+        ## Check application-target pod affinity
+        - include_tasks: /common/utils/openebs/target_affinity_check.yml
+          vars:
+            app_ns: "{{ namespace }}"
+            #operator_ns: works by var scope
+            app_label: "{{ label }}"
+            app_pvc: "{{ pvc }}"
 
         - set_fact:
             flag: "Pass"

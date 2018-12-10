@@ -4,7 +4,8 @@ kind: Deployment
 metadata:
   name: percona
   labels:
-    name: percona
+    lkey: lvalue
+    openebs.io/target-affinity: percona
 spec:
   replicas: 1
   selector: 
@@ -14,6 +15,7 @@ spec:
     metadata:
       labels: 
         lkey: lvalue
+        openebs.io/target-affinity: percona
     spec:
       containers:
         - resources:
@@ -51,6 +53,8 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: testclaim
+  labels: 
+    openebs.io/target-affinity: percona  
 spec:
   storageClassName: testclass
   accessModes:
@@ -70,5 +74,5 @@ spec:
     - port: 3306
       targetPort: 3306
   selector:
-      name: percona
+      lkey: lvalue
 

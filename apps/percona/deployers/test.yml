@@ -8,7 +8,7 @@
   tasks:
     - block:
 
-      ## Generating the testname for deployment
+        ## Generating the testname for deployment
         - include_tasks: /common/utils/create_testname.yml
 
          ## RECORD START-OF-TEST IN LITMUS RESULT CR
@@ -18,11 +18,11 @@
    
         - block:
 
-             ##Actual test
-         ## Creating namespaces and making the application for deployment
+            ## Actual test
+            ## Creating namespaces and making the application for deployment
             - include_tasks: /common/utils/pre_create_app_deploy.yml
         
-        ## Deploying the application, upper bound wait time: 900s 
+            ## Deploying the application, upper bound wait time: 900s 
             - include_tasks: /common/utils/deploy_single_app.yml
               vars:
                 check_app_pod: 'yes'
@@ -34,7 +34,10 @@
     
             ## Checking the db is ready for connection
             - include_tasks: /common/utils/check_db_connection.yml
-    
+   
+            ## Check application-target pod affinity
+            - include_tasks: /common/utils/openebs/target_affinity_check.yml
+
             - set_fact:
                 flag: "Pass"  
 
