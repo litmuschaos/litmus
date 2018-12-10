@@ -96,11 +96,6 @@
              ## Execute the chaos util
                - include_tasks: /chaoslib/aws_chaos/chaosutil_aws.yml
                  when: lookup('env', 'PLATFORM') == 'AWS'
-
-
-               - name: Wait for {{ (io_minutes) | int *60 }} get the pod to running state.
-                 wait_for:
-                    timeout: "{{ (io_minutes) | int *60 }}"
               
              ## Check the status of application pod after performing test.
                - include_tasks: "/common/utils/status_app_pod.yml"
