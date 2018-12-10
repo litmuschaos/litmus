@@ -8,6 +8,10 @@
   tasks:
     - block:
 
+
+        - include_tasks: /common/utils/application_liveness_check.yml
+          when: liveness_label != ''
+
         - include_tasks: /chaoslib/aws_chaos/prerequisites_aws.yml
           when: lookup('env','PLATFORM') == 'AWS'
 
@@ -25,8 +29,8 @@
                 application_name: '{{app_name}}'
                 app_lkey: "{{ app_label.split('=')[0] }}"
                 app_lvalue: "{{ app_label.split('=')[1] }}"
-                delay: 10
-                retries: 10
+                delay: 5
+                retries: 120
 
            ## Fetch the name of running application pod.
             - include_tasks: "/common/utils/fetch_app_pod.yml"
@@ -37,6 +41,28 @@
             - name: Recording the application pod name.
               set_fact:
                  Pod_name: "{{ pod_name.stdout }}"
+
+
+             ## Generate Database name
+            - name: Generate some random name for database creation
+              shell: >
+                 echo $(mktemp) | cut -d '.' -f 2
+              args:
+                executable: /bin/bash
+              register: randstr
+
+             ## Create Load for testing
+            - name: Create test load in the mysql database
+              include_tasks: /common/utils/mysql_data_persistence.yml
+              vars:
+                 status: 'LOAD'
+                 ns: "{{ app_ns }}"
+                 pod_name: "{{Pod_name}}"
+                 dbuser: 'root'
+                 dbpassword: 'k8sDem0'
+                 dbname: "tdb{{ randstr.stdout }}"
+              when: data_persistance != ''
+     
 
              ## Trigger the node_freeze tasks and verify application pod status.
             - include_tasks: "/common/utils/node_infra_chaos.yml"
@@ -82,15 +108,38 @@
                    application_name: "{{app_name}}"
                    app_lkey: "{{ app_label.split('=')[0] }}"
                    app_lvalue: "{{ app_label.split('=')[1] }}"
-                   delay: 30
-                   retries: 15
-            
+                   delay: 5
+                   retries: 120
+
+               - include_tasks: /common/utils/application_liveness_check.yml
+                 when: liveness_label != ''
+
+                 ## Fetch the name of running application pod.
+               - include_tasks: "/common/utils/fetch_app_pod.yml"
+                 vars:
+                    application_name: "{{ app_name }}"
+
+               - set_fact:
+                    rescheduled_pod:  "{{ pod_name.stdout }}"
+
+
+               - name: Verify mysql data persistence
+                 include_tasks: "/common/utils/mysql_data_persistence.yml"
+                 vars:
+                   status: 'VERIFY'
+                   ns: "{{ app_ns }}"
+                   pod_name: "{{ rescheduled_pod }}"
+                   dbuser: 'root'
+                   dbpassword: 'k8sDem0'
+                   dbname: "tdb{{ randstr.stdout }}"
+                 when: data_persistance != ''
+
                - set_fact:
                    flag: "Pass"    
 
-      rescue:
-            - set_fact:
-                flag: "Fail"
+             rescue:
+               - set_fact:
+                   flag: "Fail"
 
       always:
             ## RECORD END-OF-TEST IN LITMUS RESULT CR

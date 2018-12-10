@@ -16,7 +16,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: openebs/ansible-runner:ci
+        image: 
         imagePullPolicy: Always
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
@@ -40,8 +40,17 @@ spec:
           - name: APP_LABEL
             value: 'name=percona'
 
+          - name: LIVENESS_APP_LABEL
+            value: "liveness=percona-liveness"
+            
+          - name: LIVENESS_APP_NAMESPACE
+            value: "litmus"
+
           - name: PLATFORM
             value: "AWS"
+
+          - name: DATA_PERSISTENCY
+            value: "enable"  
 
             ### Value of AWS_ACCESS_KEY_ID need to be replaced with original value
           - name: AWS_ACCESS_KEY_ID

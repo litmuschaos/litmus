@@ -7,8 +7,8 @@
        executable: /bin/bash
      register: dnamespace
      until: "'created' in dnamespace.stdout"
-     delay: 10
-     retries: 2
+     delay: 5
+     retries: 60
 
    - name: Create daemonset pods.
      shell: kubectl create -f {{daemonset}} -n {{daemon_namespace}}
@@ -16,8 +16,8 @@
       executable: /bin/bash
      register: daemonset
      until: "'created' in daemonset.stdout"
-     delay: 30
-     retries: 5
+     delay: 5
+     retries: 60
 
    - name: Check daemonset pods are up and running.
      shell: kubectl get pods -n {{ daemon_namespace }}  -o custom-columns=:status.phase --no-headers
@@ -25,8 +25,8 @@
        executable: /bin/bash
      register:  daemon_status
      until: "'Running' in daemon_status.stdout"
-     delay: 20
-     retries: 5
+     delay: 5
+     retries: 120
 
 ## Check the node name where application pod is running.
    - name: Obtain the node of running application pod .
@@ -67,19 +67,29 @@
        executable: /bin/bash
      register: Node_status
      until: "'NotReady' in Node_status.stdout"
-     delay: 20
-     retries: 5
+     delay: 5
+     retries: 60
 
-   - name: Wait for {{ (app_check_minutes) | int *60 }} secs to check the application status
-     wait_for:
-        timeout: "{{ (app_check_minutes) | int *60 }}"
-
-
-   #### Check the status of application pod during NODE FREEZE CHAOS ####   
+   
+     ### Check for application pod status #####
 
    - include_tasks: "/common/utils/status_app_pod.yml"
      vars:
-        delay: 10
-        retries: 10    
+        delay: 5
+        retries: 60
+
+     ###### Check for the container status of  pod #######
+
+   - name: Checking container status of affected application pod.
+     shell: >
+         kubectl get pods  -n   {{ app_ns }}
+         -o jsonpath='{.items[?(@.metadata.labels.{{app_lkey}}=="{{app_lvalue}}")].status.containerStatuses[*].state}'
+     args:
+       executable: /bin/bash
+     register: Container_status
+     until: "'running' not  in Container_status.stdout"
+     delay: 5
+     retries: 120
+  
 
 
