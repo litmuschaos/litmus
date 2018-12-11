@@ -14,8 +14,6 @@ f_duration: 300
 
 daemonset: node_freeze.yml     
 
-nodeaction: "{{ lookup('env','NODEACTION')}}"
-
 subnet_id: "{{ lookup('env','SUBNET_ID') }}"
 
 data_persistance: "{{ lookup('env','DATA_PERSISTENCY') }}"
