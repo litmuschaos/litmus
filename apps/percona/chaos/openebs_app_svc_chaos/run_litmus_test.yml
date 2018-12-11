@@ -12,9 +12,14 @@ spec:
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
+
+      #nodeSelector:
+      #  kubernetes.io/hostname:
+
       containers:
       - name: ansibletest
         image: openebs/ansible-runner:ci
+        imagePullPolicy: Always
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
             #value: log_plays
@@ -37,13 +42,16 @@ spec:
             value: docker
 
           - name: CHAOS_DURATION
-            value: "60" # in seconds
+            value: "300" # in seconds
 
           - name: LIVENESS_APP_LABEL
-            value: ""
+            value: "liveness=percona-liveness"
 
           - name: LIVENESS_APP_NAMESPACE
-            value: ""
+            value: "litmus"
+
+          - name: PLATFORM
+            value: "AWS"
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./percona/chaos/openebs_app_svc_chaos/test.yml -i /etc/ansible/hosts -vv; exit 0"]

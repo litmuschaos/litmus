@@ -1,0 +1,38 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: litmus-k8s-snapshot-rebuild-
+  namespace: litmus
+spec:
+  template:
+    metadata:
+      name: litmus
+      labels:
+        app: k8s-snapshot-litmus-rebuild
+
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: openebs/ansible-runner:ci
+        imagePullPolicy: Always
+
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: default
+
+          - name: APP_LABEL
+            value: 'name=percona'
+
+            # Application pvc
+          - name: APP_PVC
+            value: percona-mysql-claim
+
+            # Application namespace
+          - name: APP_NAMESPACE
+            value: percona-cstor
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./percona/functional/snapshot_rebuild/test.yml -i /etc/ansible/hosts -vv; exit 0"]

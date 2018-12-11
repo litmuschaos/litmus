@@ -6,7 +6,7 @@ LABEL maintainer="OpenEBS"
 RUN rm -rf /var/lib/apt/lists/* && \
     apt-get clean && \
     apt-get update --fix-missing || true && \
-    apt-get install -y python-minimal python-pip netcat iproute2\
+    apt-get install -y python-minimal python-pip netcat iproute2 jq\
     curl openssh-client
 
 #Installing ansible
@@ -30,5 +30,6 @@ COPY ./apps/ ./
 COPY ./chaoslib ./chaoslib/
 COPY ./funclib ./funclib/
 COPY ./executor/ansible/plugins/callback/actionable.py /usr/local/lib/python2.7/dist-packages/ansible/plugins/callback/
+COPY ./executor/ansible/plugins/callback/timestamp.py /usr/local/lib/python2.7/dist-packages/ansible/plugins/callback/
 COPY ./hack/litmus-result.j2 ./
 COPY ./common/utils ./common/utils/

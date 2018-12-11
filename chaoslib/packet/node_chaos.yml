@@ -1,0 +1,66 @@
+## The utils takes the following params: app label, app namespace, packet project id, chaos action & chaos_duration
+
+- name: Obtaining the application pod name using its label.
+  shell: >
+    kubectl get pods -n {{ app_ns }} -l {{ app_label }} | grep
+    -w Running | awk '{print $1}' | head -1 
+  args:
+    executable: /bin/bash
+  register: app_pod
+
+- name: Identify the application node
+  shell: >
+    kubectl get pod {{ app_pod.stdout }} -n {{ namespace }}
+    --no-headers -o custom-columns=:spec.nodeName
+  args: 
+    executable: /bin/bash
+  register: result 
+               
+- name: Record the application node name 
+  set_fact:
+    app_node: "{{ result.stdout }}"
+
+- block:
+    - name: Power off packet device (node)
+      packet_device:
+        project_id: "{{ packet_project }}"
+        hostnames: "{{ app_node }}"
+        state: inactive
+
+    - name: Confirm node is lost/powered-off
+      shell: >
+        kubectl get node {{ app_node }}
+        --no-headers | awk '{print $2}'
+      args:
+        executable: /bin/bash
+      register: offline
+      until: offline.stdout == 'NotReady'
+      delay: 10
+      retries: 6
+  when: action == "node_power_off"
+
+    ## TODO: This wait is a "test" requirement, may not be needed in a 'chaoslib'
+    #- name: Wait for chaos duration period
+    #  wait_for:
+    #    timeout: {{ c_duration }}
+  
+- block: 
+
+    # Blocking call for power-on w/ a default timeout of 900s 
+    - name: Power on packet device (node) 
+      packet_device:
+        project_id: "{{ packet_project }}"
+        hostnames: "{{ app_node }}"
+        state: active 
+
+    - name: Confirm node is re-added/powered-on
+      shell: >
+        kubectl get node {{ app_node }}
+        --no-headers | awk '{print $2}'
+      register: online
+      until: online.stdout == 'Ready'
+      delay: 10 # Time taken for kubelet to start & rejoin cluster
+      retries: 6
+ 
+  when: action == "node_power_on"
+

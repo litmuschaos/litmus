@@ -1,0 +1,19 @@
+## This util takes a list of nodes ('items') from the calling playbook, with 
+## these node lists being passed as a loop item w/ loop_var 'outer_item'
+
+- name: Obtain node list from playbook
+  set_fact: 
+    nodes: "{{ outer_item }}"
+
+- name: Remove swapfile from /etc/fstab
+  lineinfile:
+    path: /etc/fstab
+    state: absent
+    regexp: 'swap'
+  delegate_to: "root@{{ item.public_ipv4 }}"
+  with_items: "{{ nodes }}"
+
+- name: Disabling swap on nodes
+  command: swapoff -a
+  delegate_to: "root@{{ item.public_ipv4 }}"
+  with_items: "{{ nodes }}"

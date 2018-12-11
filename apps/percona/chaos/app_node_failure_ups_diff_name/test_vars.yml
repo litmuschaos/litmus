@@ -1,12 +1,12 @@
-test_name: openebs-pool-failure
+---
+test_name: node-replacement
 namespace: "{{ lookup('env','APP_NAMESPACE') }}"
 label: "{{ lookup('env','APP_LABEL') }}"
-pvc: "{{ lookup('env','APP_PVC') }}"
 liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
-data_persistance: "{{ lookup('env','DATA_PERSISTENCY') }}"
 liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
+data_persistance: "{{ lookup('env','DATA_PERSISTENCY') }}"
+subnet_id: "{{ lookup('env', 'SUBNET_ID') }}"
+action: "{{ lookup('env','ACTION') }}"
+pvc: "{{lookup('env','APP_PVC') }}"
 operator_ns: openebs
-chaos_type: "{{ lookup('env','CHAOS_TYPE') }}" 
-chaos_iterations: "{{ lookup('env','CHAOS_ITERATIONS') }}"
 pool_debug_msg: 'uncorrectable I/O failure|suspended|ERROR ZFS event'
-chaos_duration: 600

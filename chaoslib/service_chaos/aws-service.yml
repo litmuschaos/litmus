@@ -1,0 +1,55 @@
+- block:
+
+   - name: Update kubelet health check
+     shell: >
+       timeout 10 kubectl exec {{ svc_chaos_pod.stdout}} -n {{ namespace }}
+       -- bash -c "sed -i -e 's/RestartSec=2s/RestartSec=400s/g' /node/lib/systemd/system/kubelet.service"
+
+   - name: do svc restart
+     shell: >
+       timeout 10 kubectl exec {{ svc_chaos_pod.stdout}} -n {{ namespace }}
+       -- bash -c "systemctl stop {{ svc_chaos }} && sleep {{ c_duration }} && systemctl start {{ svc_chaos }}"
+     async: 6000
+     poll: 0
+
+  when: service == "kubelet-crash"
+  
+- block:
+
+   - name: Disable docker health check
+     shell: >
+       timeout 10 kubectl exec {{ svc_chaos_pod.stdout}} -n {{ namespace }}
+       -- bash -c "sed -i -e 's/sleep 30/sleep {{ c_duration |int + 100 }}/g' /node/opt/kubernetes/helpers/docker-healthcheck"
+
+   - name: do svc restart
+     shell: >
+       timeout 10 kubectl exec {{ svc_chaos_pod.stdout}} -n {{ namespace }}
+       -- bash -c "systemctl stop {{ svc_chaos }} && sleep {{ c_duration }} && systemctl start {{ svc_chaos }}"
+     async: 6000
+     poll: 0
+
+  when: service == "docker-crash"
+
+- block:
+
+   - name: Record the svc chaos pod on given app node
+     shell: >
+       kubectl get pod -l app=svc-chaos -o wide
+       -n {{ namespace }} | grep {{ app_node }}
+     args:
+       executable: /bin/bash
+     register: re_svc_chaos_pod
+     until: "'Running' in re_svc_chaos_pod.stdout"
+     delay: 30
+     retries: 10
+
+   - name: Check node status
+     shell: kubectl get nodes {{ app_node }}
+     args:
+       executable: /bin/bash
+     register: node_status
+     until: "'Ready' in node_status.stdout"
+     delay: 30
+     retries: 10
+
+  when: service == "recover"
