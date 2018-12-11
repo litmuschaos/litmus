@@ -51,8 +51,8 @@
     executable: /bin/bash
   register: available_replicas
   until: "available_replicas.stdout | int == replica_count.stdout | int"
-  delay: 30
-  retries: 10
+  delay: 2
+  retries: 150
 
 - name: Get the resourceVersion of the replica deploy after fault injection
   shell: >

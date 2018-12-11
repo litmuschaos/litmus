@@ -20,8 +20,8 @@
         executable: /bin/bash
       register: result
       until: "'tainted' in result.stdout"
-      delay: 20
-      retries: 12
+      delay: 2
+      retries: 120
     
     - name: Wait for application pod reschedule (evict)
       # Do not untaint until evict occurs

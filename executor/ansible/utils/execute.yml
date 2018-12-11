@@ -12,8 +12,8 @@
           shell: kubectl get pod -n litmus  -l app={{ LABEL }} -o jsonpath='{.items[0].status.phase}'
           register: status
           until: "'Succeeded' in status.stdout"
-          delay: 30
-          retries: 30
+          delay: 5
+          retries: 180
 
         - name: Checking the status of Ansible-test container
           shell: kubectl get pod -n litmus -l app={{ LABEL }} -o jsonpath='{.items[0].status.containerStatuses[0].ready}'
@@ -24,8 +24,8 @@
           shell: kubectl get lr {{ TESTNAME }} -o jsonpath='{.spec.testStatus.result}'   
           register: result
           until: "'none' not in result.stdout"
-          delay: 20
-          retries: 10
+          delay: 2
+          retries: 100
           
         - name: Updating the test-result csv
           lineinfile:

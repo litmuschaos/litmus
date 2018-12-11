@@ -49,8 +49,8 @@
           executable: /bin/bash
          register: ns_status
          until: "'Active' in ns_status.stdout"
-         delay: 30
-         retries: 10
+         delay: 2
+         retries: 150
 
        - name: Obtaining the application pod name using its label.
          shell: >
@@ -137,8 +137,8 @@
            executable: /bin/bash
          register: result
          until: "'Running' in result.stdout"
-         delay: 30
-         retries: 15
+         delay: 3
+         retries: 150
 
        - name: Obtaining application pod details after restart.
          shell: >

@@ -28,8 +28,8 @@
            executable: /bin/bash
           register: npstatus
           until: "'Active' in npstatus.stdout"
-          delay: 30
-          retries: 10
+          delay: 2
+          retries: 150
 
         # Checking if the application is deployed before starting load generation.
 
@@ -39,8 +39,8 @@
             executable: /bin/bash
           register: rep_count
           until: "rep_count.rc == 0"
-          delay: 60
-          retries: 30
+          delay: 5
+          retries: 360
 
         - name: Obtain the ready replica count and compare with the replica count.
           shell: kubectl get statefulset -n {{ namespace }} -l {{ application_label }} -o custom-columns=:..readyReplicas
@@ -48,8 +48,8 @@
             executable: /bin/bash
           register: ready_rep
           until: "ready_rep.rc == 0 and ready_rep.stdout|int == rep_count.stdout|int"
-          delay: 60
-          retries: 30
+          delay: 5
+          retries: 360
 
         - name: Obtaining the loadgen pod label from env.
           set_fact:
@@ -71,8 +71,8 @@
             executable: /bin/bash
           register: result
           until: "'Running' in result.stdout"
-          delay: 30
-          retries: 15
+          delay: 2
+          retries: 225
 
         - name: Wait for {{ (io_minutes) | int *60 }} secs to run load.
           wait_for:
@@ -100,8 +100,8 @@
             executable: /bin/bash
           register: result
           until: "'keyspace1' in result.stdout"
-          delay: 60
-          retries: 5
+          delay: 5
+          retries: 60
 
         - set_fact:
             flag: "Pass"

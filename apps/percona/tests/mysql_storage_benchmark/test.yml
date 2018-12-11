@@ -95,8 +95,8 @@
            executable: /bin/bash
          register: result
          until: "result.stdout == 'Running'"
-         delay: 120 
-         retries: 15
+         delay: 5 
+         retries: 360
 
        - name: Wait for I/O completion
          wait_for: 
@@ -110,8 +110,8 @@
            executable: /bin/bash
          register: result
          until: "'Completed' in result.stdout"
-         delay: 120 
-         retries: 15
+         delay: 5 
+         retries: 360
 
        - set_fact:
            flag: "Pass"

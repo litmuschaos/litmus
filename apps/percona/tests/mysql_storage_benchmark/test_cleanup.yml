@@ -26,8 +26,8 @@
     executable: /bin/bash
   register: result
   until: "'percona' not in result.stdout"
-  delay: 30 
-  retries: 12
+  delay: 5 
+  retries: 72
 
 - block: 
     - name: Confirm pvc pod has been deleted
@@ -37,8 +37,8 @@
         executable: /bin/bash
       register: result
       failed_when: "'pvc' and 'Running' in result.stdout"
-      delay: 30
-      retries: 12
+      delay: 5
+      retries: 72
   when: "'openebs-standard' in lookup('env','PROVIDER_STORAGE_CLASS')"
 
 - block:

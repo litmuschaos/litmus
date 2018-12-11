@@ -34,8 +34,8 @@
           shell: kubectl get pod {{ rep_pod.stdout }} -n {{ namespace }} -o jsonpath='{.status.phase}'
           register: status
           until: "'Running' in status.stdout"
-          delay: 30
-          retries: 10
+          delay: 2
+          retries: 150
  
         - name: Getting the Node name on which replica-pod is scheduled
           shell: kubectl get pod {{ rep_pod.stdout }} -n {{ namespace }} -o jsonpath='{.spec.nodeName}' 
@@ -66,8 +66,8 @@
         - name: Checking the status of replica-pod
           shell: kubectl get pod {{ new_pod_name.stdout }} -n {{ namespace }} -o jsonpath='{.status.phase}'
           until: "'Running' in status.stdout"
-          delay: 30
-          retries: 10      
+          delay: 2
+          retries: 150      
 
         - set_fact:
             flag: "Pass" 

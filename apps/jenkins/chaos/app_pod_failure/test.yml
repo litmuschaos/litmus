@@ -14,8 +14,8 @@
               shell: kubectl get pod -n {{ liveness_namespace }} -l {{ liveness_label }} -o jsonpath='{.items[0].status.phase}'
               register: liveness_pod
               until: "'Running' in liveness_pod.stdout"
-              delay: 10
-              retries: 10
+              delay: 2
+              retries: 50
              
           when: liveness_label != ''  
 
@@ -115,8 +115,8 @@
               shell: kubectl get pod -n {{ liveness_namespace }} -l {{ liveness_label }} -o jsonpath='{.items[0].status.phase}'
               register: liveness_pod
               until: "'Running' in liveness_pod.stdout"
-              delay: 10
-              retries: 10
+              delay: 2
+              retries: 50
              
           when: liveness_label != ''  
 

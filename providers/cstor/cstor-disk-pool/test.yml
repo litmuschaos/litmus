@@ -52,8 +52,8 @@
             executable: /bin/bash
           register: pool_count
           until: pool_count.stdout_lines|length >= node_count.stdout_lines|length 
-          retries: 10
-          delay: 60
+          retries: 120
+          delay: 5
 
         - name: Get cStor Disk Pool names to verify the container statuses
           shell: kubectl get pods -n {{ operator_ns }} -l openebs.io/storage-pool-claim={{ pool_name }} -l app=cstor-pool --no-headers -o=custom-columns=NAME:".metadata.name"
@@ -71,8 +71,8 @@
           register: runningStatusCount
           with_items: "{{ cstor_pool_pod.stdout_lines }}"
           until: "runningStatusCount.stdout == \"2\""
-          delay: 30
-          retries: 10
+          delay: 5
+          retries: 60
 
         - set_fact:
             flag: "Pass"

@@ -111,15 +111,15 @@
           shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="maya-apiserver")].status.phase}'
           register: maya_api
           until: "'Running' in maya_api.stdout"
-          delay: 30
-          retries: 100
+          delay: 10
+          retries: 300
 
         - name: Checking OpenEBS-provisioner is running
           shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="openebs-provisioner")].status.phase}'
           register: openebs_prob
           until: "'Running' in openebs_prob.stdout"
-          delay: 30
-          retries: 100
+          delay: 3
+          retries: 1000
 
         - name: Get maya-apiserver pod name
           shell: kubectl get pods -n {{ namespace }} --selector=name=maya-apiserver
@@ -135,8 +135,8 @@
           shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="openebs-snapshot-operator")].status.phase}'
           register: oso
           until: "'Running' in oso.stdout"
-          delay: 30
-          retries: 100
+          delay: 3
+          retries: 1000
 
         - name: Confirm that maya-cli is available in the maya-apiserver pod
           shell: kubectl exec {{pod_name}} -c maya-apiserver -n {{ namespace }} -- mayactl version

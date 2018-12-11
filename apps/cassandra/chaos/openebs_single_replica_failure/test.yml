@@ -46,8 +46,8 @@
             executable: /bin/bash
           register: app_status
           until: "'Running' in app_status.stdout"
-          delay: 30
-          retries: 12
+          delay: 3
+          retries: 120
 
         - name: Obtaining the application pod name through its label.
           shell: >
@@ -84,8 +84,8 @@
             executable: /bin/bash
           register: app_status
           until: "'Running' in app_status.stdout"
-          delay: 30
-          retries: 12
+          delay: 3
+          retries: 120
 
         - set_fact:
             flag: "Pass"

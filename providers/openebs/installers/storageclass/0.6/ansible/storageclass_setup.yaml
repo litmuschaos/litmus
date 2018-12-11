@@ -54,8 +54,8 @@
             executable: /bin/bash
           register: apply_result
           until: "apply_result.rc == 0"
-          delay: 30
-          retries: 100
+          delay: 10
+          retries: 300
 
         - name: Applying storage class
           shell: "{{ kubeapply }} apply -f {{ storage_class }}"
@@ -63,8 +63,8 @@
             executable: /bin/bash
           register: apply_result
           until: "apply_result.rc == 0"
-          delay: 30
-          retries: 100
+          delay: 10
+          retries: 300
 
         - name: Confirm that openebs storage pools are created
           shell: kubectl get storagepool
@@ -72,8 +72,8 @@
             executable: /bin/bash
           register: result_sp
           until: "'{{ lookup('env','STORAGE_POOL_NAME') }}' in result_sp.stdout"
-          delay: 30
-          retries: 100
+          delay: 10
+          retries: 300
 
         - name: Confirm that openebs storage classes are created
           shell: kubectl get storageclass
@@ -81,8 +81,8 @@
             executable: /bin/bash
           register: result_sc
           until: "'{{ lookup('env','STORAGECLASS_NAME') }}' in result_sc.stdout"
-          delay: 30
-          retries: 100
+          delay: 10
+          retries: 300
 
         - set_fact:
             flag: "Pass"

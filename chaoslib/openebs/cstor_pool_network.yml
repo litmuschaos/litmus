@@ -15,8 +15,8 @@
     executable: /bin/bash
   register: result
   until: "result.stdout == 'Running'"
-  delay: 10
-  retries: 30  
+  delay: 2
+  retries: 150  
 
 - name: Getting the Application pod name
   shell: >
@@ -94,8 +94,8 @@
     executable: /bin/bash
   register: result
   until: "'Running' not in result.stdout"
-  delay: 20
-  retries: 15      
+  delay: 2
+  retries: 150
 
 - name: Removing the tc package from cstor-pool
   shell: kubectl exec -it {{ pool_pod.stdout }} -n {{ target_ns }} -c cstor-pool -- apt-get purge iproute2 -y

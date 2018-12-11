@@ -18,6 +18,6 @@
     executable: /bin/bash
   register: pvc_out
   until: "'Bound' in pvc_out.stdout"
-  delay: 60
-  retries: 10
+  delay: 6
+  retries: 100
 

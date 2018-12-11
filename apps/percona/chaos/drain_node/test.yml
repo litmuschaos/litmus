@@ -163,8 +163,8 @@
             executable: /bin/bash
           register: result
           until: "'uncordoned' in result.stdout"
-          delay: 20
-          retries: 12 
+          delay: 5
+          retries: 80
 
         - include_tasks: /common/utils/update_litmus_result_resource.yml
           vars:

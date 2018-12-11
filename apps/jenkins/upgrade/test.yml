@@ -50,8 +50,8 @@
             executable: /bin/bash
           register: app_status
           until: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
-          delay: 10
-          retries: 12
+          delay: 2
+          retries: 60
 
         ## APPLICATION UPGRADE START
 
@@ -65,8 +65,8 @@
               shell: kubectl get pod -n {{ app_namespace }} -l {{ label }} -o jsonpath='{.items[0].status.phase}'
               register: app_pod
               until: "'Running' in app_pod.stdout"
-              delay: 15
-              retries: 30
+              delay: 3
+              retries: 150
 
           when: label != ''
 

@@ -38,8 +38,8 @@
             executable: /bin/bash
           register: app_status
           until: "'Running' in app_status.stdout"
-          delay: 10
-          retries: 3
+          delay: 3
+          retries: 10
 
         - name: Derive PV name from PVC
           shell: >
@@ -115,8 +115,8 @@
             executable: /bin/bash
           register: healthy_pods
           until: "healthy_pods.stdout == replication_factor"
-          delay: 15
-          retries: 30
+          delay: 5
+          retries: 90
  
         ## Inducing the packet drop on the above pool pod.
         - include_tasks: "/chaoslib/openebs/inject_packet_loss_tc.yml"
@@ -132,8 +132,8 @@
             -- istgtcontrol -q replica |json_pp | jq '.volumeStatus[0].replicaStatus[].status' | grep Healthy | wc -l
           register: connected_replica
           until: "(connected_replica.stdout|int) == ((healthy_pods.stdout|int) - 1)"
-          delay: 15
-          retries: 30
+          delay: 5
+          retries: 90
         
         - name: Creating snapshot.
           include_tasks: /funclib/kubectl/k8s_snapshot_clone/create_snapshot.yml 
@@ -166,8 +166,8 @@
             executable: /bin/bash
           register: list_snap
           until: "name in list_snap.stdout"
-          delay: 30
-          retries: 20
+          delay: 5
+          retries: 120
  
         - debug:
             msg: "Snapshot is being rebuilt"

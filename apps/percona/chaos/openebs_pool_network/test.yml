@@ -15,8 +15,8 @@
               shell: kubectl get pod -n {{ liveness_namespace }} -l {{ liveness_label }} -o jsonpath='{.items[0].status.phase}'
               register: liveness_pod
               until: "'Running' in liveness_pod.stdout"
-              delay: 10
-              retries: 10
+              delay: 2
+              retries: 50
              
           when: liveness_label != ''  
 
@@ -60,8 +60,8 @@
             executable: /bin/bash
           register: app_status
           until: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
-          delay: 10
-          retries: 12
+          delay: 2
+          retries: 60
 
         ## STORAGE FAULT INJECTION 
 
@@ -84,8 +84,8 @@
             executable: /bin/bash
           register: app_status
           until: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
-          delay: 10
-          retries: 12
+          delay: 2
+          retries: 60
         
         - block:
 
@@ -93,8 +93,8 @@
               shell: kubectl get pod -n {{ liveness_namespace }} -l {{ liveness_label }} -o jsonpath='{.items[0].status.phase}'
               register: liveness_pod
               until: "'Running' in liveness_pod.stdout"
-              delay: 10
-              retries: 10
+              delay: 2
+              retries: 50
 
           when: liveness_label != ''
 

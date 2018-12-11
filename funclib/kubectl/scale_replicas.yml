@@ -30,6 +30,6 @@
     executable: /bin/bash
   register: running_replicas
   until: "running_replicas.stdout|int == app_replica_count|int"
-  delay: 60
-  retries: 15
+  delay: 5
+  retries: 180
 

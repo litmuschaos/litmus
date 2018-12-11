@@ -28,8 +28,8 @@
       register: result
       delegate_to: "{{groups['kubernetes-kubemasters'].0}}"
       until: "result.stdout|int == 1"
-      delay: 120
-      retries: 15
+      delay: 12
+      retries: 150
 
     ## TODO: Result CR parse, slack notify if applicable
      

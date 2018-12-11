@@ -40,8 +40,8 @@
            executable: /bin/bash
          register: npstatus
          until: "'Active' in npstatus.stdout"
-         delay: 30
-         retries: 10
+         delay: 2
+         retries: 150
 
        ## RUN MEMLEAK TEST
 
@@ -57,8 +57,8 @@
            executable: /bin/bash
          register: result
          until: "'Running' in result.stdout"
-         delay: 30
-         retries: 10
+         delay: 2
+         retries: 150
 
        - name: Run python script for memory usage validation it takes couple of minutes
          shell: python test-mem.py {{ app_ns }} {{ memory_bm }}

@@ -55,8 +55,8 @@
               executable: /bin/bash
             register: result_sc
             until: "'cstor-memcheck' in result_sc.stdout"
-            delay: 30
-            retries: 3
+            delay: 2
+            retries: 45
 
           - template:
               src: cstor-xfs.j2
@@ -73,8 +73,8 @@
               executable: /bin/bash
             register: result_xfs
             until: "'cstor-xfs' in result_xfs.stdout"
-            delay: 30
-            retries: 3
+            delay: 2
+            retries: 45
 
           - block:
               - template:
@@ -92,8 +92,8 @@
                   executable: /bin/bash
                 register: result_sp
                 until: "lookup('env','JIVA_POOL_NAME') in result_sp.stdout"
-                delay: 30
-                retries: 100
+                delay: 10
+                retries: 300
 
               - name: Confirm that openebs storage classes are created
                 shell: kubectl get storageclass
@@ -101,8 +101,8 @@
                   executable: /bin/bash
                 register: result_sc
                 until: "lookup('env','JIVA_STORAGECLASS_NAME') in result_sc.stdout"
-                delay: 30
-                retries: 100 
+                delay: 10
+                retries: 300 
             when: lookup('env','APPLY_JIVA') == "true"
 
           - block:
@@ -128,8 +128,8 @@
                   executable: /bin/bash
                 register: result_sp
                 until: "lookup('env','CSTOR_POOL_NAME') in result_sp.stdout"
-                delay: 30
-                retries: 100
+                delay: 10
+                retries: 300
 
               - name: Confirm that openebs storage classes are created
                 shell: kubectl get storageclass
@@ -137,8 +137,8 @@
                   executable: /bin/bash
                 register: result_sc
                 until: "lookup('env','CSTOR_STORAGECLASS_NAME') in result_sc.stdout"
-                delay: 30
-                retries: 100 
+                delay: 10
+                retries: 300 
             when: lookup('env','APPLY_CSTOR') == "true"
 
           - set_fact:

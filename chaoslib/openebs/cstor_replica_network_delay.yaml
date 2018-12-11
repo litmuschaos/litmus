@@ -74,8 +74,8 @@
   shell: kubectl exec -it {{ istgt_replica.stdout }} -n {{ operator_ns }} --container  cstor-istgt -- istgtcontrol -q replica |json_pp |grep "\"replicaId" |awk -F ':' '{print $2}' | tr -d ',' |wc -l
   register: connected_replica
   until: "connected_replica.stdout == \"2\""
-  delay: 30
-  retries: 10
+  delay: 2
+  retries: 150
 
 - name: Get current iostats from target
   shell: kubectl exec -it {{ istgt_replica.stdout }} -n {{ operator_ns }} --container cstor-istgt -- istgtcontrol -q iostats |json_pp| grep WriteIOPS |awk -F ':' '{print $2}' | tr -d -c 0-9
@@ -112,8 +112,8 @@
   shell: kubectl exec -it {{ istgt_replica.stdout }} -n {{ operator_ns }} --container  cstor-istgt -- istgtcontrol -q replica |json_pp |grep "\"replicaId" |awk -F ':' '{print $2}' | tr -d ',' |wc -l
   register: connected_replica
   until: "connected_replica.stdout == \"3\""
-  delay: 30
-  retries: 10
+  delay: 2
+  retries: 150
 
 - name: Wait until all replica becomes healthy
   shell: kubectl exec -it {{ istgt_replica.stdout }} -n {{ operator_ns }} --container  cstor-istgt -- istgtcontrol -q replica |json_pp |grep "\"status" |awk -F ':' '{print $2}' | tr -d ','

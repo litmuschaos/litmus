@@ -40,8 +40,8 @@
        executable: /bin/bash
      register: re_svc_chaos_pod
      until: "'Running' in re_svc_chaos_pod.stdout"
-     delay: 30
-     retries: 10
+     delay: 2
+     retries: 150
 
    - name: Check node status
      shell: kubectl get nodes {{ app_node }}
@@ -49,7 +49,7 @@
        executable: /bin/bash
      register: node_status
      until: "'Ready' in node_status.stdout"
-     delay: 30
-     retries: 10
+     delay: 2
+     retries: 150
 
   when: service == "recover"

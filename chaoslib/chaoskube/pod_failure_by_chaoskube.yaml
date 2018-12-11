@@ -13,8 +13,8 @@
     executable: /bin/bash
   register: chaoskube
   until: "'Running' in chaoskube.stdout"
-  delay: 20
-  retries: 15
+  delay: 2
+  retries: 150
 
 - name: Set the chaoskube pod name to variable
   set_fact:

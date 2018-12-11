@@ -30,15 +30,15 @@
             -o jsonpath='{.status.containerStatuses[?(@.name=="cassandra-liveness")].state}'
           register: container_status
           until: "'running' in container_status.stdout"
-          delay: 60
-          retries: 10
+          delay: 2
+          retries: 300
 
         - name: Verifying whether liveness check is started successfully  
           shell: kubectl logs {{ test_pod }} -n litmus -c cassandra-liveness 
           register: output
           until: "liveness_log in output.stdout"
-          delay: 60 # Setting an upper bound that is >> general db init delays
-          retries: 20
+          delay: 5 # Setting an upper bound that is >> general db init delays
+          retries: 240
 
         - set_fact:
             flag: "Pass"

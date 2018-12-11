@@ -57,8 +57,8 @@
            executable: /bin/bash
          register: result
          until: "'percona' and 'Running' in result.stdout"
-         delay: 60
-         retries: 15
+         delay: 5
+         retries: 180
 
        - name: Obtain name of mysql pod 
          set_fact: 
@@ -111,8 +111,8 @@
            executable: /bin/bash
          register: result
          until: "'percona' and 'Running' in result.stdout"
-         delay: 30 
-         retries: 20
+         delay: 5 
+         retries: 60
 
        - name: Obtain name of mysql pod 
          set_fact: 

@@ -45,8 +45,8 @@
          shell: kubectl set env deployment/{{ ctrl_deploy.stdout }} -n {{ namespace }}  REPLICATION_FACTOR="{{ node_count }}" 
          register: update_ctrl 
          until: "'env updated' in update_ctrl.stdout"
-         retries: 5
-         delay: 10
+         retries: 25
+         delay: 2
          when: replication_factor.stdout != node_count 
  
 

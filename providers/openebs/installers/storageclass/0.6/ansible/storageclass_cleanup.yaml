@@ -66,8 +66,8 @@
               executable: /bin/bash
             register: result_sp
             until: "'{{ lookup('env','STORAGE_POOL_NAME') }}' not in result_sp.stdout"
-            delay: 30
-            retries: 100
+            delay: 10
+            retries: 300
 
           - name: Confirm that openebs storage classes are deleted
             shell: kubectl get storageclass
@@ -75,8 +75,8 @@
               executable: /bin/bash
             register: result_sc
             until: "'{{ lookup('env','STORAGECLASS_NAME') }}' not in result_sc.stdout"
-            delay: 30
-            retries: 100
+            delay: 10
+            retries: 300
 
           - set_fact:
               flag: "Pass"

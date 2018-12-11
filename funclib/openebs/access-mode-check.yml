@@ -26,8 +26,8 @@
          register: volname
          changed_when: True
          until: 'pv_name.stdout in volname.stdout'
-         delay: 30
-         retries: 5
+         delay: 2
+         retries: 75
 
        - name: Get the replicas access mode
          shell: >
@@ -36,8 +36,8 @@
            executable: /bin/bash
          register: result
          until: result.stdout| int == node_count.stdout | int
-         delay: 30
-         retries: 15
+         delay: 3
+         retries: 150
          changed_when: True
 
        - debug:

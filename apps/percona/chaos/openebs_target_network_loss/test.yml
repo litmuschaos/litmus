@@ -124,8 +124,8 @@
             executable: /bin/bash
           register: pod_status
           until: "app_pod_name.stdout not in pod_status.stdout"
-          delay: 20
-          retries: 15
+          delay: 2
+          retries: 150
 
         - name: Check the application pod is rescheduled
           shell: >

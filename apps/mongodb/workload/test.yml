@@ -30,8 +30,8 @@
            executable: /bin/bash
           register: npstatus
           until: "'Active' in npstatus.stdout"
-          delay: 30
-          retries: 10
+          delay: 2
+          retries: 150
         
         # Checking if the application is deployed.
         
@@ -41,8 +41,8 @@
             executable: /bin/bash
           register: rep_count
           until: "rep_count.rc == 0"
-          delay: 60
-          retries: 15
+          delay: 6
+          retries: 150
 
         - name: Obtain the ready replica count and compare with the replica count.
           shell: kubectl get statefulset -n {{ namespace }} -l {{ app_label }} -o custom-columns=:..readyReplicas
@@ -50,8 +50,8 @@
             executable: /bin/bash
           register: ready_rep
           until: "ready_rep.rc == 0 and ready_rep.stdout|int == rep_count.stdout|int"
-          delay: 60
-          retries: 30
+          delay: 6
+          retries: 300
         
         - name: Obtaining the loadgen pod label from env.
           set_fact:
@@ -91,15 +91,15 @@
             executable: /bin/bash
           register: result
           until: "'Running' in result.stdout"
-          delay: 30
-          retries: 15
+          delay: 3
+          retries: 150
 
         - name: Verifying load-generation  
           shell: kubectl exec -it mongo-0 -n {{ namespace }} -- mongo --eval 'db.getMongo().getDBNames()'
           register: output
           until: "'sbtest' in output.stdout"
-          delay: 30
-          retries: 15
+          delay: 3
+          retries: 150
 
         - set_fact:
             flag: "Pass"

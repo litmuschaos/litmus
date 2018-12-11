@@ -54,8 +54,8 @@
            executable: /bin/bash
          register: npstatus
          until: "'Active' in npstatus.stdout"
-         delay: 30
-         retries: 10
+         delay: 3
+         retries: 100
 
        - name: Replace the data sample size with user-defined size
          replace:
@@ -90,8 +90,8 @@
            executable: /bin/bash
          register: result_fio_pod
          until: "'Completed' in result_fio_pod.stdout"
-         delay: 60
-         retries: 10
+         delay: 5
+         retries: 120
 
        - name: Verify the fio logs to check if run is complete w/o errors
          shell: >
@@ -134,8 +134,8 @@
            executable: /bin/bash
          register: result_read_job
          until: "'Completed' in result_read_job.stdout"
-         delay: 60
-         retries: 10
+         delay: 5
+         retries: 120
 
        - name: Verify the data integrity check
          shell: >

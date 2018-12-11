@@ -63,8 +63,8 @@
             executable: /bin/bash
           register: result
           until: "'Running' in result.stdout"
-          delay: 30
-          retries: 15
+          delay: 2
+          retries: 75
 
         - name: Obtaining the application pod name.
           shell: kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers -o custom-columns=:metadata.name
@@ -184,8 +184,8 @@
           with_items:
             - "{{ replica_list.stdout_lines }}"
           until: "result.rc == 0"
-          delay: 60
-          retries: 20
+          delay: 5
+          retries: 240
 
         - name: Update the percona deployment spec with the clone pvc.
           template:
@@ -203,8 +203,8 @@
             executable: /bin/bash
           register: app_status
           until: "'Running' in app_status.stdout"
-          delay: 60
-          retries: 10
+          delay: 5
+          retries: 120
 
         - name: Obtaining the application pod name.
           shell: kubectl get pods -n {{ app_ns }} -l name={{ clone_app }} --no-headers -o custom-columns=:metadata.name
@@ -218,8 +218,8 @@
             executable: /bin/bash
           register: db_result
           until: "'aws' in db_result.stdout"
-          delay: 60
-          retries: 15
+          delay: 5
+          retries: 180
 
         - set_fact:
             flag: "Pass"

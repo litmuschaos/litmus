@@ -15,8 +15,8 @@
     executable: /bin/bash
   register: result
   until: "result.stdout == 'Running'"
-  delay: 20
-  retries: 15
+  delay: 2
+  retries: 150
 
 - name: Derive PV from application PVC 
   shell: >
@@ -82,5 +82,5 @@
     executable: /bin/bash
   register: result
   until: "'Running' not in result.stdout"
-  delay: 20
-  retries: 15
+  delay: 2
+  retries: 150

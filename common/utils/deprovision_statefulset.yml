@@ -73,8 +73,8 @@
   shell: kubectl delete -f {{ app_deployer }} -n {{ app_ns }}
   register: app_status
   until: 'app_status.rc == 0'
-  delay: 30
-  retries: 10
+  delay: 2
+  retries: 150
 
 - name: Deleting the PVC
   shell: kubectl delete pvc {{ item }} -n {{ app_ns }}
@@ -87,8 +87,8 @@
   shell: kubectl get pvc -n {{ app_ns }}
   register: list_pvc
   until: "'No resources found' in list_pvc.stderr"
-  delay: 30
-  retries: 15
+  delay: 3
+  retries: 150
 
 - name: Delete the namespace.
   shell: kubectl delete ns {{ app_ns }}

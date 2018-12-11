@@ -39,8 +39,8 @@
     executable: /bin/bash
   register: cstor_pool_pod_cnt
   until: "cstor_pool_pod_cnt.stdout == \"1\""
-  delay: 30
-  retries: 10
+  delay: 2
+  retries: 150
 
 - name: Get resourceVersion after pod delete
   shell: >

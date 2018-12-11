@@ -40,8 +40,8 @@
         executable: /bin/bash
       register: Pod_status
       until: "'Running' in Pod_status.stdout"
-      delay: 30
-      retries: 15
+      delay: 3
+      retries: 150
   when: lookup('env','IMAGE_NAME') != image
         
 - debug:

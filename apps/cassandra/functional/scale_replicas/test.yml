@@ -44,8 +44,8 @@
             executable: /bin/bash
           register: result
           until: "result.stdout_lines != 0"
-          delay: 10
-          retries: 30
+          delay: 2
+          retries: 150
 
         - set_fact:
             flag: "Pass"

@@ -23,8 +23,8 @@
         ## Deploying the application
         - include_tasks: /common/utils/deploy_single_app.yml
           vars:
-          delay: 60
-          retries: 20
+          delay: 5
+          retries: 240
 
         - set_fact:
            flag: "Pass"
