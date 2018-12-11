@@ -121,30 +121,36 @@
 
         - block:
 
-            # Get AWS instance Id of the Application node
-            - name: Get the AWS instance Id of APP NOde
-              shell: kubectl get node {{ app_node }} -o jsonpath={.spec.providerID} | cut -d '/' -f 5
-              args:
-                executable: /bin/bash
-              register: instance_id
 
-            - name: Get region from app node
-              shell: >
-                 kubectl get nodes {{ app_node }}
-                 -o jsonpath='{.metadata.labels.failure-domain\.beta\.kubernetes\.io\/region}'
-              register: region
-
-            - set_fact:
-                instance_id: "{{ instance_id.stdout }}"
-                region: "{{ region.stdout }}"
+            ## Fetch the AWS instance details(instance_id, region)
+            - include_tasks: /common/utils/aws/fetch_aws_details.yml
+              when: lookup('env', 'PLATFORM') == 'AWS'    
 
             # Execute the chaos util
-
             - include_tasks: /chaoslib/aws_chaos/chaosutil_aws.yml
               vars:
                 action: "restarted"
 
-          when: lookup('env', 'PLATFORM') == 'AWS'          
+            # wait for some time and check node status
+
+            - name: wait after node restarted.
+              shell: >
+                  sleep {{ f_duration }}
+              args:
+                executable: /bin/bash
+
+            - name: Check the node status after node restarted.
+              shell: kubectl get node {{ app_node }} --no-headers | awk '{print $2}'
+              args:
+                executable: /bin/bash
+              register: node_status
+              until: "'Ready' in node_status.stdout"
+              delay: 5
+              retries: 60 
+                
+
+          when: lookup('env', 'PLATFORM') == 'AWS'     
+
 
         # RECORD END-OF-TEST IN LITMUS RESULT CR
         - include_tasks: "/common/utils/update_litmus_result_resource.yml"
