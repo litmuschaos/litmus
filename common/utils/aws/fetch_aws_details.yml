@@ -1,0 +1,18 @@
+---
+  ## Get AWS instance Id of the Application node
+- name: Get the AWS instance Id of APP NOde
+  shell: kubectl get node {{ app_node.stdout }} -o jsonpath={.spec.providerID} | cut -d '/' -f 5
+  args:
+    executable: /bin/bash
+  register: instance_id
+
+- name: Get region from app node
+  shell: >
+    kubectl get nodes {{ app_node.stdout }}
+    -o jsonpath='{.metadata.labels.failure-domain\.beta\.kubernetes\.io\/region}'
+  register: region
+
+  ## Values are used in another utils
+- set_fact:
+    instance_id: "{{ instance_id.stdout }}"
+    region: "{{ region.stdout }}"

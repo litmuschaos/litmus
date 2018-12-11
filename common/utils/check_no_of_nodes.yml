@@ -1,0 +1,31 @@
+---
+- block:
+
+   - name: Waiting for application pod reschedule (evict)
+     wait_for:
+       timeout: "{{ post_chaos_soak_time }}"
+
+   - name: Checking the status of chaos injected node
+     shell: kubectl get nodes --no-headers | grep -vi 'master'
+     args:
+       executable: /bin/bash
+     register: node_names
+     until: "'{{ app_node.stdout }}' not in node_names.stdout"
+     retries: "{{ retries }}"
+     delay: "{{ delay }}"
+
+  when: injected_node_chaos == "yes"
+
+
+- block:
+
+   - name: Checking the no.of nodes
+     shell: kubectl get nodes --no-headers | grep -vi 'master' | grep -i 'Ready'
+     args:
+       executable: /bin/bash
+     register: node_count
+     until: node_count.stdout_lines|length >= pre_chaos_node_count.stdout_lines|length
+     retries: "{{ retries }}"
+     delay: "{{ delay }}"
+
+  when: injected_node_chaos == "no"
