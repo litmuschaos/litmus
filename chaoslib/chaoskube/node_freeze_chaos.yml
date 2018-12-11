@@ -1,0 +1,81 @@
+---
+- block:
+
+   - name: Setup node freeze infra
+     shell: >
+       kubectl create -f {{ daemonset }} -n {{ namespace }}
+     args:
+       executable: /bin/bash
+     register: result
+    
+   - name: Confirm that node freeze chaos ds is running on all nodes
+     shell: >
+       kubectl get pod -l app=node-freeze
+       --no-headers -o custom-columns=:status.phase
+       -n {{ namespace }} | sort | uniq
+     args: 
+       executable: /bin/bash
+     register: result
+     until: "result.stdout == 'Running'"
+     delay: 20
+     retries: 15
+
+   - name: Obtaining the application pod name using its label.
+      shell: >
+        kubectl get pods -n {{ namespace }} -l {{ app_label }} | grep
+        -w Running | awk '{print $1}' | head -1 
+      args:
+        executable: /bin/bash
+      register: app_pod
+
+   - name: Identify the application node
+     shell: >
+        kubectl get pod {{ app_pod.stdout }} -n {{ namespace }}
+        --no-headers -o custom-columns=:spec.nodeName
+     args: 
+        executable: /bin/bash
+      register: result 
+               
+    - name: Record the application node name 
+      set_fact:
+        app_node: "{{ result.stdout }}"
+
+    - name: Record the node freeze chaos pod on given app node 
+      shell: >
+        kubectl get pod -l app=node-freeze -o wide 
+        -n {{ namespace }} | grep {{ app_node }} 
+        | awk '{print $1}'
+      args:
+        executable: /bin/bash
+      register: chaos_pod
+
+
+    - block:
+            
+       - name: Run docker container to trigger memory freeze on app node
+         shell: >
+           kubectl exec  {{ chaos_pod }} -n {{ namespace }}
+           docker run {{ freeze_image }} python memleak.py &
+         args:
+           executable: /bin/bash
+         ignore_errors: true 
+         register: result
+
+       - name: wait for node memory freeze
+         shell: >
+           sleep {{ f_duration }} 
+         args:
+           executable: /bin/bash
+
+       - name: Check the node status after memory consumption.
+         shell: kubectl get node {{ app_node }} --no-headers | awk '{print $2}'
+         args:
+           executable: /bin/bash
+         register: node_status
+         until: "'NotReady' in node_status.stdout"
+         delay: 5
+         retries: 60
+    
+      when: nodeaction == "memory-freeze"
+
+

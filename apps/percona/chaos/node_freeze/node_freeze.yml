@@ -2,15 +2,15 @@
 apiVersion: extensions/v1beta1
 kind: DaemonSet
 metadata:
-  generateName: node-chaos-
+  generateName: node-freeze-
 spec:
   template:
     metadata:
       labels:
-        app: node-chaos
+        app: node-freeze
     spec:
       containers:
-      - name: node-chaos
+      - name: node-freeze
         image: gitlab/dind:latest  
         command: ["/bin/bash"]
         args: ["-c", "sleep 10000"]

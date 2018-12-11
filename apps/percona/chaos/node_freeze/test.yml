@@ -8,137 +8,146 @@
   tasks:
     - block:
 
-
         - include_tasks: /common/utils/application_liveness_check.yml
           when: liveness_label != ''
 
         - include_tasks: /chaoslib/aws_chaos/prerequisites_aws.yml
           when: lookup('env','PLATFORM') == 'AWS'
 
-         ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        # RECORD START-OF-TEST IN LITMUS RESULT CR
         - include_tasks: "/common/utils/update_litmus_result_resource.yml"
           vars:
             status: 'SOT'
+       
+        # DISPLAY APP INFORMATION 
+ 
+        - name: Display the app information passed via the test job
+          debug: 
+            msg: 
+              - "The application info is as follows:"
+              - "Namespace    : {{ app_ns }}"
+              - "Label        : {{ app_label }}"
+
+        - name: Verify that the AUT (Application Under Test) is running
+          shell: >
+            kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers
+            -o custom-columns=:status.phase
+          args:
+            executable: /bin/bash
+          register: app_status
+          until: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
+          delay: 10
+          retries: 12
+
+        - name: Get application pod name
+          shell: >
+            kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers
+            -o=custom-columns=NAME:".metadata.name"
+          args:
+            executable: /bin/bash
+          register: app_pod_name
+
+        - name: Generate unique string for use in dbname
+          shell: echo $(mktemp) | cut -d '.' -f 2
+          args:
+            executable: /bin/bash
+          register: uniqstr
+
+        - name: Create some test data in the mysql database
+          include_tasks: "/common/utils/mysql_data_persistence.yml"
+          vars:
+            status: 'LOAD'
+            ns: "{{ app_ns }}"
+            pod_name: "{{ app_pod_name.stdout }}"
+            dbuser: 'root'
+            dbpassword: 'k8sDem0'
+            dbname: "tdb{{ uniqstr.stdout }}"
+          when: data_persistance != ''
+
+        ## STORAGE FAULT INJECTION 
+
+        - include_tasks: /chaoslib/chaoskube/node_freeze_chaos.yml
+          vars:
+            nodeaction: "memory-freeze"      
+            namespace: "{{ app_ns }}"
+
+        - name: wait for app pod to reschedule
+          shell: >
+            sleep {{ f_duration | int + 100 }}
+          args:
+            executable: /bin/bash
+
+        - name: Verify AUT liveness post fault-injection
+          shell: >
+            kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers
+            -o custom-columns=:status.phase
+          args:
+            executable: /bin/bash
+          register: app_status
+          until: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
+          delay: 10
+          retries: 12
+
+        - include_tasks: /common/utils/application_liveness_check.yml
+          when: liveness_label != ''
+
+        - name: Get application pod name
+          shell: >
+            kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers
+            -o=custom-columns=NAME:".metadata.name"
+          args:
+            executable: /bin/bash
+          register: rescheduled_app_pod
+
+        - name: Verify mysql data persistence
+          include_tasks: "/common/utils/mysql_data_persistence.yml"
+          vars:
+            status: 'VERIFY'
+            ns: "{{ app_ns }}"
+            pod_name: "{{ rescheduled_app_pod.stdout }}"
+            dbuser: 'root'
+            dbpassword: 'k8sDem0'
+            dbname: "tdb{{ uniqstr.stdout }}"
+          when: data_persistance != ''
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue: 
+        - set_fact: 
+            flag: "Fail"
+
+      always:
 
         - block:
 
-           ###Actual test
-           ## Check the status of application pod for performing test.
-            - include_tasks: "/common/utils/status_app_pod.yml"
-              vars:
-                application_name: '{{app_name}}'
-                app_lkey: "{{ app_label.split('=')[0] }}"
-                app_lvalue: "{{ app_label.split('=')[1] }}"
-                delay: 5
-                retries: 120
-
-           ## Fetch the name of running application pod.
-            - include_tasks: "/common/utils/fetch_app_pod.yml"
-              vars:
-                application_name: "{{ app_name }}"
-
-
-            - name: Recording the application pod name.
-              set_fact:
-                 Pod_name: "{{ pod_name.stdout }}"
-
-
-             ## Generate Database name
-            - name: Generate some random name for database creation
-              shell: >
-                 echo $(mktemp) | cut -d '.' -f 2
+            # Get AWS instance Id of the Application node
+            - name: Get the AWS instance Id of APP NOde
+              shell: kubectl get node {{ app_node }} -o jsonpath={.spec.providerID} | cut -d '/' -f 5
               args:
                 executable: /bin/bash
-              register: randstr
+              register: instance_id
 
-             ## Create Load for testing
-            - name: Create test load in the mysql database
-              include_tasks: /common/utils/mysql_data_persistence.yml
+            - name: Get region from app node
+              shell: >
+                 kubectl get nodes {{ app_node }}
+                 -o jsonpath='{.metadata.labels.failure-domain\.beta\.kubernetes\.io\/region}'
+              register: region
+
+            - set_fact:
+                instance_id: "{{ instance_id.stdout }}"
+                region: "{{ region.stdout }}"
+
+            # Execute the chaos util
+
+            - include_tasks: /chaoslib/aws_chaos/chaosutil_aws.yml
               vars:
-                 status: 'LOAD'
-                 ns: "{{ app_ns }}"
-                 pod_name: "{{Pod_name}}"
-                 dbuser: 'root'
-                 dbpassword: 'k8sDem0'
-                 dbname: "tdb{{ randstr.stdout }}"
-              when: data_persistance != ''
-     
+                action: "restarted"
 
-             ## Trigger the node_freeze tasks and verify application pod status.
-            - include_tasks: "/common/utils/node_infra_chaos.yml"
-              vars:
-                 daemon_namespace: "{{d_namespace}}"
-                 daemonset: "{{ daemonset_file }}"
-                 application_namespace: '{{ app_ns }}'
-                 application_name: '{{app_name}}'
-                 app_lkey: "{{ app_label.split('=')[0] }}"
-                 app_lvalue: "{{ app_label.split('=')[1] }}"
+          when: lookup('env', 'PLATFORM') == 'AWS'          
 
-          always:
-           - block:
-            ## Get AWS instance Id of the Application node
-               - name: Get the AWS instance Id of APP NOde
-                 shell: kubectl get node {{ node_name }} -o jsonpath={.spec.providerID} | cut -d '/' -f 5
-                 args:
-                   executable: /bin/bash
-                 register: instance_id
-
-               - name: Get region from app node
-                 shell: >
-                    kubectl get nodes {{node_name }}
-                    -o jsonpath='{.metadata.labels.failure-domain\.beta\.kubernetes\.io\/region}'
-                 register: region
-
-               - set_fact:
-                   instance_id: "{{ instance_id.stdout }}"
-                   region: "{{ region.stdout }}"
-
-             ## Execute the chaos util
-               - include_tasks: /chaoslib/aws_chaos/chaosutil_aws.yml
-                 when: lookup('env', 'PLATFORM') == 'AWS'
-              
-             ## Check the status of application pod after performing test.
-               - include_tasks: "/common/utils/status_app_pod.yml"
-                 vars:
-                   application_name: "{{app_name}}"
-                   app_lkey: "{{ app_label.split('=')[0] }}"
-                   app_lvalue: "{{ app_label.split('=')[1] }}"
-                   delay: 5
-                   retries: 120
-
-               - include_tasks: /common/utils/application_liveness_check.yml
-                 when: liveness_label != ''
-
-                 ## Fetch the name of running application pod.
-               - include_tasks: "/common/utils/fetch_app_pod.yml"
-                 vars:
-                    application_name: "{{ app_name }}"
-
-               - set_fact:
-                    rescheduled_pod:  "{{ pod_name.stdout }}"
-
-
-               - name: Verify mysql data persistence
-                 include_tasks: "/common/utils/mysql_data_persistence.yml"
-                 vars:
-                   status: 'VERIFY'
-                   ns: "{{ app_ns }}"
-                   pod_name: "{{ rescheduled_pod }}"
-                   dbuser: 'root'
-                   dbpassword: 'k8sDem0'
-                   dbname: "tdb{{ randstr.stdout }}"
-                 when: data_persistance != ''
-
-               - set_fact:
-                   flag: "Pass"    
-
-             rescue:
-               - set_fact:
-                   flag: "Fail"
-
-      always:
-            ## RECORD END-OF-TEST IN LITMUS RESULT CR
-            - include_tasks: "/common/utils/update_litmus_result_resource.yml"
-              vars:
-                status: 'EOT'
+        # RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: "/common/utils/update_litmus_result_resource.yml"
+          vars:
+            status: 'EOT'
 

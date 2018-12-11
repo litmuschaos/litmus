@@ -8,18 +8,13 @@ liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
 
 liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
 
+freeze_image: "{{lookup('env','IO_image')}}"
 
-d_namespace: "{{ lookup('env','DAEMONSET_NAMESPACE')}}"
+f_duration: 300
 
-io_script_image: "{{lookup('env','IO_image')}}"
+daemonset: node_freeze.yml     
 
-io_minutes: 5
-
-daemonset_file: node_memfreez_ds.yml     
-
-app_name: "{{lookup('env','APP_NAME')}}"
-
-action: "{{ lookup('env','ACTION')}}"
+nodeaction: "{{ lookup('env','NODEACTION')}}"
 
 subnet_id: "{{ lookup('env','SUBNET_ID') }}"
 

@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: node-mem-freezer-
+  generateName: node-freez-
   namespace: litmus 
 spec:
   template:
@@ -16,56 +16,45 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: 
+        image: vvibhr995/ansible-aws:cha1
         imagePullPolicy: Always
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
             #value: log_plays
             value: default
 
-          - name: APP_NAME
-            value: percona
-
           - name: APP_NS
             value: app-percona-ns
 
-          - name: DAEMONSET_NAMESPACE
-            value: node-infra-chaos
-
-            ## IO_image has two values : memory consumption and CPU consumption.
-          - name: IO_image
+            # freeze_image has two values : memory consumption and CPU consumption.
+          - name: freeze_image
             value: openebs/tests-memleak:latest
-            #value: mittachaitu/forkbomb:latest
 
           - name: APP_LABEL
             value: 'name=percona'
 
           - name: LIVENESS_APP_LABEL
-            value: "liveness=percona-liveness"
-            
+            value: ""
+
           - name: LIVENESS_APP_NAMESPACE
-            value: "litmus"
+            value: ""
 
           - name: PLATFORM
             value: "AWS"
 
           - name: DATA_PERSISTENCY
-            value: "enable"  
+            value: "enable"
 
-            ### Value of AWS_ACCESS_KEY_ID need to be replaced with original value
+          # Value of AWS_ACCESS_KEY_ID need to be replaced with original value
           - name: AWS_ACCESS_KEY_ID
-            value: "access_key"
+            value: "AKIAICS53AW5NEWR6IXA"
 
-          ## Value of AWS_SECRET_ACCESS_KEY need to be replaced with original value
+          # Value of AWS_SECRET_ACCESS_KEY need to be replaced with original value
           - name: AWS_SECRET_ACCESS_KEY
-            value: "secret_key"
-
-          ## Actions can be performed on AWS ec2 instance and values (stopped,running,present,absent,restarted ansible-version >= 2.2)
-          - name: ACTION
-            value: "restarted"
+            value: "iG0ddDqneHUXgwWnNgv3lJJ+LYffPTTGfq+1MAiU"
 
           - name: SUBNET_ID
-            value: "subnet_id"
+            value: "subnet-0daaf7c77da7e57f7"
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./percona/chaos/node_freeze/test.yml -i /etc/ansible/hosts -vv; exit 0"]        
