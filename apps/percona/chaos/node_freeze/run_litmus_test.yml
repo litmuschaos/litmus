@@ -47,14 +47,14 @@ spec:
 
           # Value of AWS_ACCESS_KEY_ID need to be replaced with original value
           - name: AWS_ACCESS_KEY_ID
-            value: "AKIAICS53AW5NEWR6IXA"
+            value: "access_key"
 
           # Value of AWS_SECRET_ACCESS_KEY need to be replaced with original value
           - name: AWS_SECRET_ACCESS_KEY
-            value: "iG0ddDqneHUXgwWnNgv3lJJ+LYffPTTGfq+1MAiU"
+            value: "secret_key"
 
           - name: SUBNET_ID
-            value: "subnet-0daaf7c77da7e57f7"
+            value: "subnet_id"
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./percona/chaos/node_freeze/test.yml -i /etc/ansible/hosts -vv; exit 0"]        

@@ -8,7 +8,7 @@ liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
 
 liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
 
-freeze_image: "{{lookup('env','IO_image')}}"
+freeze_image: "{{lookup('env','freeze_image')}}"
 
 f_duration: 300
 
