@@ -121,10 +121,8 @@
 
         - block:
 
-
             ## Fetch the AWS instance details(instance_id, region)
             - include_tasks: /common/utils/aws/fetch_aws_details.yml
-              when: lookup('env', 'PLATFORM') == 'AWS'    
 
             # Execute the chaos util
             - include_tasks: /chaoslib/aws_chaos/chaosutil_aws.yml
@@ -147,10 +145,8 @@
               until: "'Ready' in node_status.stdout"
               delay: 5
               retries: 60 
-                
-
+             
           when: lookup('env', 'PLATFORM') == 'AWS'     
-
 
         # RECORD END-OF-TEST IN LITMUS RESULT CR
         - include_tasks: "/common/utils/update_litmus_result_resource.yml"
