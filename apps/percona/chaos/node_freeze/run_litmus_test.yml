@@ -1,0 +1,63 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: node-freez-
+  namespace: litmus 
+spec:
+  template:
+    metadata:
+      name: litmus
+      labels:
+        freezer: node-mem
+
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      #nodeSelector:
+      #  kubernetes.io/hostname:
+
+      containers:
+      - name: ansibletest
+        image: openenbs/ansible-runner:ci
+        imagePullPolicy: Always
+        env: 
+          - name: ANSIBLE_STDOUT_CALLBACK
+            #value: log_plays
+            value: default
+
+          - name: APP_NS
+            value: app-percona-ns
+
+            # freeze_image has two values : memory consumption and CPU consumption.
+          - name: freeze_image
+            value: openebs/tests-memleak:latest
+
+          - name: APP_LABEL
+            value: 'name=percona'
+
+          - name: LIVENESS_APP_LABEL
+            value: ""
+
+          - name: LIVENESS_APP_NAMESPACE
+            value: ""
+
+          - name: PLATFORM
+            value: "AWS"
+
+          - name: DATA_PERSISTENCY
+            value: "enable"
+
+          # Value of AWS_ACCESS_KEY_ID need to be replaced with original value
+          - name: AWS_ACCESS_KEY_ID
+            value: "access_key"
+
+          # Value of AWS_SECRET_ACCESS_KEY need to be replaced with original value
+          - name: AWS_SECRET_ACCESS_KEY
+            value: "secret_key"
+
+          - name: SUBNET_ID
+            value: "subnet_id"
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./percona/chaos/node_freeze/test.yml -i /etc/ansible/hosts -vv; exit 0"]        

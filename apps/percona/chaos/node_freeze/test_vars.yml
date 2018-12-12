@@ -1,0 +1,19 @@
+test_name: node-mem-freeze
+
+app_ns: "{{ lookup('env','APP_NS') }}"
+
+app_label: "{{ lookup('env','APP_LABEL') }}"
+
+liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
+
+liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
+
+freeze_image: "{{lookup('env','freeze_image')}}"
+
+f_duration: 300
+
+daemonset: node_freeze.yml     
+
+subnet_id: "{{ lookup('env','SUBNET_ID') }}"
+
+data_persistance: "{{ lookup('env','DATA_PERSISTENCY') }}"
