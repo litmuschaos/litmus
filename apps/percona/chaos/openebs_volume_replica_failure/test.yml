@@ -62,15 +62,13 @@
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
 
         - name: Verify that the AUT (Application Under Test) is running 
-          shell: >
-            kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
-            -o custom-columns=:status.phase
-          args:
-            executable: /bin/bash
-          register: app_status
-          until: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
-          delay: 10
-          retries: 12
+          include_tasks: "/common/utils/status_app_pod.yml"
+          vars:
+            app_ns: "{{namespace}}" 
+            app_lkey: "{{ label.split('=')[0] }}"
+            app_lvalue: "{{ label.split('=')[1] }}"       
+            delay: 5
+            retries: 60
 
         - name: Get application pod name 
           shell: >
@@ -101,15 +99,13 @@
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
         - name: Verify AUT liveness post fault-injection
-          shell: >
-            kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
-            -o custom-columns=:status.phase
-          args:
-            executable: /bin/bash
-          register: app_status
-          until: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
-          delay: 10
-          retries: 12
+          include_tasks: "/common/utils/status_app_pod.yml"
+          vars:
+            app_ns: "{{namespace}}" 
+            app_lkey: "{{ label.split('=')[0] }}"
+            app_lvalue: "{{ label.split('=')[1] }}"       
+            delay: 5
+            retries: 60
 
         - block:
 
