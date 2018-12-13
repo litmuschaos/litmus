@@ -9,3 +9,7 @@
   args:
     executable: /bin/bash
 
+- name: Installing jmespath
+  shell: apt install python-jmespath
+  args:
+    executable: /bin/bash

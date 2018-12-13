@@ -1,0 +1,164 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+        ## Perform test pre-requisites to check if the AUT is deployed on cstor-disk-pool.
+        - include: test_prerequisites.yml
+
+        ## PRE-CHAOS APPLICATION LIVENESS CHECK
+        - block:
+
+            - name: Get the liveness pods
+              shell: kubectl get pod -n {{ liveness_namespace }} -l {{ liveness_label }} -o=custom-columns=NAME:".metadata.name" --no-headers
+              register: liveness_pods_before_chaos
+
+            - name: Checking status of liveness pods
+              shell: kubectl get pods {{ item }} -n {{ liveness_namespace }} -o=custom-columns=NAME:".status.phase" --no-headers
+              register: result
+              with_items: "{{ liveness_pods_before_chaos.stdout_lines }}"
+              until: "'Running' in result.stdout"
+              delay: 10
+              retries: 10
+             
+          when: liveness_label != ''  
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+
+        - block:
+ 
+            - name: Record test instance/run ID 
+              set_fact: 
+                run_id: "{{ lookup('env','RUN_ID') }}"
+           
+            - name: Construct testname appended with runID
+              set_fact:
+                test_name: "{{ test_name }}-{{ run_id }}"
+
+          when: lookup('env','RUN_ID')
+
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'SOT'
+            chaostype: "disk-failure"
+
+        ## DISPLAY APP INFORMATION 
+ 
+        - name: Display the app information passed via the test job
+          debug: 
+            msg: 
+              - "The application info is as follows:"
+              - "Namespace    : {{ namespace }}"
+              - "Label        : {{ label }}"
+
+        - name: Verify that the AUT (Application Under Test) is running
+          shell: >
+            kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
+            -o custom-columns=:status.phase
+          args:
+            executable: /bin/bash
+          register: app_status
+          until: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
+          delay: 10
+          retries: 12
+
+        - name: Get application pod name
+          shell: >
+            kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
+            -o=custom-columns=NAME:".metadata.name"
+          args:
+            executable: /bin/bash
+          register: app_pod_name
+
+        - name: Generate unique string for use in dbname
+          shell: echo $(mktemp) | cut -d '.' -f 2
+          args:
+            executable: /bin/bash
+          register: uniqstr
+
+        - name: Create some test data in the mysql database
+          include_tasks: "/common/utils/mysql_data_persistence.yml"
+          vars:
+            status: 'LOAD'
+            ns: "{{ namespace }}"
+            pod_name: "{{ app_pod_name.stdout }}"
+            dbuser: 'root'
+            dbpassword: 'k8sDem0'
+            dbname: "tdb{{ uniqstr.stdout }}"
+          when: data_persistance != ''
+
+        ## STORAGE FAULT INJECTION 
+        - include_tasks: /chaoslib/aws_chaos/disk_failure.yaml
+          vars:
+            action: "disk-fail"      
+            app_ns: "{{ namespace }}"
+            app: "{{ app_pod_name.stdout }}"
+
+        - name: Verify AUT liveness post fault-injection
+          shell: >
+            kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
+            -o custom-columns=:status.phase
+          args:
+            executable: /bin/bash
+          register: app_status
+          until: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
+          delay: 10
+          retries: 12
+
+        ## POST-CHAOS APPLICATION LIVENESS CHECK
+        - block:
+
+            - name: Get the liveness pods
+              shell: kubectl get pod -n {{ liveness_namespace }} -l {{ liveness_label }} -o=custom-columns=NAME:".metadata.name" --no-headers
+              register: liveness_pods_after_chaos
+
+            - name: Checking status of liveness pods
+              shell: kubectl get pods {{ item }} -n {{ liveness_namespace }} -o=custom-columns=NAME:".status.phase" --no-headers
+              register: result
+              with_items: "{{ liveness_pods_after_chaos.stdout_lines }}"
+              until: "'Running' in result.stdout"
+              delay: 10
+              retries: 10
+             
+          when: liveness_label != ''  
+
+        - name: Get application pod name
+          shell: >
+            kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
+            -o=custom-columns=NAME:".metadata.name"
+          args:
+            executable: /bin/bash
+          register: rescheduled_app_pod
+
+        - name: Verify mysql data persistence
+          include_tasks: "/common/utils/mysql_data_persistence.yml"
+          vars:
+            status: 'VERIFY'
+            ns: "{{ namespace }}"
+            pod_name: "{{ rescheduled_app_pod.stdout }}"
+            dbuser: 'root'
+            dbpassword: 'k8sDem0'
+            dbname: "tdb{{ uniqstr.stdout }}"
+          when: data_persistance != ''
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue: 
+        - set_fact: 
+            flag: "Fail"
+
+      always: 
+
+        ## RECORD END-OF-TEST IN LITMUS RESULT CR
+
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
+            chaostype: "drain-node"
+           
