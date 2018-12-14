@@ -11,6 +11,9 @@
         - include_tasks: /common/utils/application_liveness_check.yml
           when: liveness_label != ''
 
+         ## RECORD START OF THE TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/create_testname.yml
+
         - include_tasks: /chaoslib/aws_chaos/prerequisites_aws.yml
           when: lookup('env','PLATFORM') == 'AWS'
 
@@ -29,23 +32,13 @@
               - "Label        : {{ app_label }}"
 
         - name: Verify that the AUT (Application Under Test) is running
-          shell: >
-            kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers
-            -o custom-columns=:status.phase
-          args:
-            executable: /bin/bash
-          register: app_status
-          until: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
-          delay: 10
-          retries: 12
-
-        - name: Get application pod name
-          shell: >
-            kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers
-            -o=custom-columns=NAME:".metadata.name"
-          args:
-            executable: /bin/bash
-          register: app_pod_name
+          include_tasks: "/common/utils/status_app_pod.yml"
+          vars:
+            app_ns: "{{namespace}}"
+            app_lkey: "{{ label.split('=')[0] }}"
+            app_lvalue: "{{ label.split('=')[1] }}"
+            delay: 5
+            retries: 60   
 
         - name: Generate unique string for use in dbname
           shell: echo $(mktemp) | cut -d '.' -f 2
@@ -78,26 +71,16 @@
             executable: /bin/bash
 
         - name: Verify AUT liveness post fault-injection
-          shell: >
-            kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers
-            -o custom-columns=:status.phase
-          args:
-            executable: /bin/bash
-          register: app_status
-          until: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
-          delay: 10
-          retries: 12
+          include_tasks: "/common/utils/status_app_pod.yml"
+          vars:
+            app_ns: "{{namespace}}"
+            app_lkey: "{{ label.split('=')[0] }}"
+            app_lvalue: "{{ label.split('=')[1] }}"
+            delay: 5
+            retries: 60  
 
         - include_tasks: /common/utils/application_liveness_check.yml
           when: liveness_label != ''
-
-        - name: Get application pod name
-          shell: >
-            kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers
-            -o=custom-columns=NAME:".metadata.name"
-          args:
-            executable: /bin/bash
-          register: rescheduled_app_pod
 
         - name: Verify mysql data persistence
           include_tasks: "/common/utils/mysql_data_persistence.yml"
