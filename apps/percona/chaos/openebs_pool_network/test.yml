@@ -36,7 +36,6 @@
         - name: Verify that the AUT (Application Under Test) is running 
           include_tasks: /common/utils/status_app_pod.yml
           vars:
-            application_name: "Percona"
             app_ns: "{{ namespace }}"
             app_lkey: "{{ label.split('=')[0] }}"
             app_lvalue: "{{ label.split('=')[1] }}"
@@ -59,7 +58,6 @@
         - name: Verify AUT liveness post fault-injection
           include_tasks: /common/utils/status_app_pod.yml
           vars:
-            application_name: "Percona"
             app_ns: "{{ namespace }}"
             app_lkey: "{{ label.split('=')[0] }}"
             app_lvalue: "{{ label.split('=')[1] }}"

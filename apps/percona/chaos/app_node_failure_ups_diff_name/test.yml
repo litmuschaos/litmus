@@ -43,7 +43,6 @@
         ## Verify the APPLICATION UNDER TEST PRE CHAOS
         - include_tasks: /common/utils/status_app_pod.yml
           vars:
-            application_name: "Percona"
             app_ns: "{{ namespace }}"
             app_lkey: "{{ label.split('=')[0] }}"
             app_lvalue: "{{ label.split('=')[1] }}"
@@ -106,7 +105,6 @@
         ## Application verification after the POST chaos
         - include_tasks: /common/utils/status_app_pod.yml
           vars:
-            application_name: "Percona post chaos"
             app_ns: "{{ namespace }}"
             app_lkey: "{{ label.split('=')[0] }}"
             app_lvalue: "{{ label.split('=')[1] }}"

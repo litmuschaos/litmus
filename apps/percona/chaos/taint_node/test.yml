@@ -91,7 +91,7 @@
             -o=custom-columns=NAME:".metadata.name"
           args:
             executable: /bin/bash
-          register: rescheduled_app_pod  
+          register: rescheduled_app_pod 
 
         - name: Verify mysql data persistence
           include_tasks: "/common/utils/mysql_data_persistence.yml"
