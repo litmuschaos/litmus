@@ -40,9 +40,8 @@
 - name: Obtain the node where PV target pod resides
   shell: >
     kubectl get pod -n {{ target_ns }} 
-    -l openebs.io/persistent-volume={{ pv.stdout }}
     -l {{ target_label }}
-    --no-headers -o custom-columns=:spec.nodeName 
+    -o jsonpath='{.items[?(@.metadata.labels.openebs\.io\/persistent-volume=="{{ pv.stdout }}")].spec.nodeName}' 
   args:
     executable: /bin/bash
   register: target_node
