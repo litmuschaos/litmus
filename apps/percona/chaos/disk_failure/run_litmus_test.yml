@@ -37,6 +37,9 @@ spec:
           - name: APP_LABEL
             value: 'name=percona'
 
+          - name: APP_PVC
+            value: percona-mysql-claim
+
           - name: LIVENESS_APP_LABEL
             value: "liveness=percona-liveness"
 
@@ -45,6 +48,24 @@ spec:
 
           - name: DATA_PERSISTENCY
             value: "enable"
+
+          - name: PLATFORM
+            value: "AWS"
+
+          ## Value of AWS_ACCESS_KEY_ID need to be replaced with original value
+          - name: AWS_ACCESS_KEY_ID
+            value: "accessid"
+
+          ## Value of AWS_SECRET_ACCESS_KEY need to be replaced with original value
+          - name: AWS_SECRET_ACCESS_KEY
+            value: "secretid"
+
+          ## Value of EBS VOLUME_ID to perform disk operations
+          - name: VOLUME_ID
+            value: "volumeid"
+
+          - name: INSTANCE_NAME
+            value: "instancename"
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./percona/chaos/disk_failure/test.yml -i /etc/ansible/hosts -vv; exit 0"]

@@ -1,4 +1,8 @@
 ---
+## PRE-CHAOS APPLICATION LIVENESS CHECK
+- include_tasks: /common/utils/application_liveness_check.yml
+  when: liveness_label != ''
+
 - name: Identify the storage class used by the PVC
   shell: >
     kubectl get pvc {{ pvc }} -n {{ namespace }} 
@@ -45,17 +49,17 @@
     stg_engine: "{{ openebs_stg_engine.stdout }}"
   when: stg_prov == "openebs.io/provisioner-iscsi"
 
-- name: Identify the cstor pool being used by volume
+- name: Identify the spc being used by volume
   shell: >
     kubectl get sc {{ sc }} -o jsonpath="{.metadata.annotations.cas\\.openebs\\.io/config}" 
     | grep value |awk 'FNR == 1 {print}' | awk {'print $2'} | tr -d '"'
   args:
     executable: /bin/bash
-  register: cstor_pool
+  register: spc
 
 - name: Identify the cstor pool disk type
   shell: >
-    kubectl get spc {{ cstor_pool.stdout }} -o jsonpath="{.spec.type}"
+    kubectl get spc {{ spc.stdout }} -o jsonpath="{.spec.type}"
   args:
     executable: /bin/bash
   register: disk_type

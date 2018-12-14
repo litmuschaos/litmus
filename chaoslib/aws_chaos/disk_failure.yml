@@ -1,26 +1,17 @@
 --- 
-- name: Get Instance Name to list the disks attached
+- name: Record the cstor-pool pod on given app node
   shell: >
-    kubectl get pod {{ app }} -n {{ app_ns }}
-    --no-headers -o custom-columns=:spec.nodeName
+    kubectl get pod -l app=cstor-pool -l openebs.io/storage-pool-claim=cstor-disk-pool -o wide
+    -n {{ operator_ns }} | grep {{ instance_name }}
+    | awk '{print $1}'
   args:
     executable: /bin/bash
-  register: app_node
+  register: cstor_pool_pod
 
 - name: Fetch AWS instance details
   include_tasks: /common/utils/aws/fetch_aws_details.yml
   when: lookup('env', 'PLATFORM') == 'AWS'
-
-- name: Get EBS volume details 
-  include_tasks: /chaoslib/aws_chaos/ebs_volume_operations.yml
-  vars:
-    action_on_volume: 'list'
-  when: lookup('env', 'PLATFORM') == 'AWS'
-
-- set_fact: filtered={{ result.volumes | json_query('[?attachment_set.device!=`/dev/sda1`]') }}
-
-- set_fact: volume_id={{ item.id }}
-
+  
 - block:
 
     - name: Detach the disk from the node

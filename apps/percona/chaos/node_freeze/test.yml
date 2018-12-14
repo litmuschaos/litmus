@@ -123,6 +123,8 @@
 
             ## Fetch the AWS instance details(instance_id, region)
             - include_tasks: /common/utils/aws/fetch_aws_details.yml
+              vars:
+                instance_name: "{{ app_node }}"
 
             # Execute the chaos util
             - include_tasks: /chaoslib/aws_chaos/chaosutil_aws.yml

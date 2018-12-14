@@ -4,4 +4,7 @@ label: "{{ lookup('env','APP_LABEL') }}"
 liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
 liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
 data_persistance: "{{ lookup('env','DATA_PERSISTENCY') }}"
-
+pvc: "{{ lookup('env','APP_PVC') }}"
+volume_id: "{{ lookup('env','VOLUME_ID') }}"
+instance_name: "{{ lookup('env','INSTANCE_NAME') }}"
+operator_ns: openebs
