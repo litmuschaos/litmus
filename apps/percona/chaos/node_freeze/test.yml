@@ -40,7 +40,16 @@
             app_lkey: "{{ label.split('=')[0] }}"
             app_lvalue: "{{ label.split('=')[1] }}"
             delay: 5
-            retries: 60   
+            retries: 60
+
+        - name: Get application pod name
+          shell: >
+            kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers
+            -o=custom-columns=NAME:".metadata.name"
+          args:
+            executable: /bin/bash
+          register: app_pod_name
+     
 
         - name: Generate unique string for use in dbname
           shell: echo $(mktemp) | cut -d '.' -f 2
@@ -84,6 +93,14 @@
         - include_tasks: /common/utils/application_liveness_check.yml
           when: liveness_label != ''
 
+        - name: Get application pod name
+          shell: >
+            kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers
+            -o=custom-columns=NAME:".metadata.name"
+          args:
+            executable: /bin/bash
+          register: rescheduled_app_pod
+  
         - name: Verify mysql data persistence
           include_tasks: "/common/utils/mysql_data_persistence.yml"
           vars:

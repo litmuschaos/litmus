@@ -52,6 +52,14 @@
             delay: 5
             retries: 60
 
+        - name: Get application pod name
+          shell: >
+            kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
+            -o=custom-columns=NAME:".metadata.name"
+          args:
+            executable: /bin/bash
+          register: app_pod_name    
+
         - name: Create some test data in the mysql database
           include_tasks: "/common/utils/mysql_data_persistence.yml"
           vars:
@@ -91,12 +99,20 @@
         - include_tasks: /common/utils/application_liveness_check.yml
           when: liveness_label != ''
 
+        - name: Get application pod name
+          shell: >
+            kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
+            -o=custom-columns=NAME:".metadata.name"
+          args:
+            executable: /bin/bash
+          register: rescheduled_app_pod  
+
         - name: Verify mysql data persistence  
           include_tasks: "/common/utils/mysql_data_persistence.yml"
           vars:
             status: 'VERIFY'
             ns: "{{ namespace }}"
-            pod_name: "{{ app_pod_name.stdout }}"
+            pod_name: "{{ rescheduled_app_pod.stdout }}"
             dbuser: 'root'
             dbpassword: 'k8sDem0'
             dbname: 'tdb' 

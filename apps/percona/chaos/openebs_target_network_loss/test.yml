@@ -52,6 +52,14 @@
             delay: 5
             retries: 60
 
+        - name: Get application pod name
+          shell: >
+            kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
+            -o=custom-columns=NAME:".metadata.name"
+          args:
+            executable: /bin/bash
+          register: app_pod_name
+
         - name: Create some test data in the mysql database
           include_tasks: "/common/utils/mysql_data_persistence.yml"
           vars:
