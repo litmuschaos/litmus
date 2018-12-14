@@ -8,7 +8,8 @@
 #2. Create and attach EBS Volume in AWS
 #3. create ext4 file system in EBS Volumes
 #4. Mount EBS Volumes to Ndoes
-#5. create a file for store volumes id
+#5. Creating a file for store Volumes id
+#6. Creating a file for store disk-map information
 ###############################################################################################
 
 ---
@@ -63,12 +64,21 @@
 
           when: disk_action == 'format'
 
-        - name: Create a csv file for store all Ids
+        - name: Creating a file for store Volumes id
           lineinfile:
             create: yes
             state: present
             path: "/tmp/aws/volume-id"
             line: '{{ item.volume_id }}'
+            mode: 0755
+          with_items: "{{volumes.results}}"
+
+        - name: Creating a file for store disk-map information
+          lineinfile:
+            create: yes
+            state: present
+            path: "/tmp/aws/disk-map"
+            line: '{{ item.item.private_dns_name }},{{ item.volume_id }}'
             mode: 0755
           with_items: "{{volumes.results}}"
 
