@@ -21,6 +21,8 @@
         - include_tasks: "/common/utils/update_litmus_result_resource.yml"
           vars:
             status: 'SOT'
+            chaostype: "{{test_name}}"
+            app: "percona"
        
         # DISPLAY APP INFORMATION 
  
