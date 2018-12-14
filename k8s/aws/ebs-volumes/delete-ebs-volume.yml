@@ -57,11 +57,17 @@
             region: "{{ region }}"
           with_lines: cat /tmp/aws/volume-id
 
-        - name: Delete csv file which store all Ids
+        - name: Deleting file which store volumes Id
           lineinfile:
-            create: yes
             state: absent
             path: "/tmp/aws/volume-id"
+            regexp: ""
+            mode: 0755
+
+        - name: Deleting file which store disk-map information
+          lineinfile:
+            state: absent
+            path: "/tmp/aws/disk-map"
             regexp: ""
             mode: 0755
 
