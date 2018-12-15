@@ -144,8 +144,13 @@
               register: node_status
               until: "'Ready' in node_status.stdout"
               delay: 5
-              retries: 60 
-             
+              retries: 60
+
+            - include_tasks: /chaoslib/chaoskube/node_freeze_chaos.yml
+              vars:
+                namespace: "{{app_ns}}"
+                nodeaction: "node_chaos_delete"
+                 
           when: lookup('env', 'PLATFORM') == 'AWS'     
 
         # RECORD END-OF-TEST IN LITMUS RESULT CR

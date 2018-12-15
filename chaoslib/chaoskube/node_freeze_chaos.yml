@@ -58,23 +58,56 @@
         args:
           executable: /bin/bash
         ignore_errors: true 
-        register: result
-
-      - name: wait for node memory freeze
-        shell: >
-          sleep {{ f_duration }} 
-        args:
-          executable: /bin/bash
-
-      - name: Check the node status after memory consumption.
-        shell: kubectl get node {{ app_node }} --no-headers | awk '{print $2}'
-        args:
-          executable: /bin/bash
-        register: node_status
-        until: "'NotReady' in node_status.stdout"
-        delay: 5
-        retries: 60
    
      when: nodeaction == "memory-freeze"
 
+   - block:
+           
+      - name: Run CPU freeze docker container.
+        shell: >
+          kubectl exec {{ chaos_pod.stdout }} -n {{ namespace }} 
+          docker run {{ freeze_image }} & 
+        args:
+          executable: /bin/bash      
+        ignore_errors: true
+     
+     when: nodeaction == "cpu-freeze"   
+   
+   - name: wait for node memory freeze
+     shell: >
+        sleep {{ f_duration }}
+     args:
+       executable: /bin/bash
 
+   - name: Check the node status after node chaos.
+     shell: kubectl get node {{ app_node }} --no-headers | awk '{print $2}'
+     args:
+       executable: /bin/bash
+     register: node_statusi
+     until: "'NotReady' in node_status.stdout"
+     delay: 5
+     retries: 60        
+
+- block:
+     
+   - name: Delete node chaos infra
+     shell: >
+       kubectl delete ds -l app=node-freeze
+       -n {{ namespace }}
+     args:
+       executable: /bin/bash
+     register: result
+ 
+   - name: Confirm that the node chaos ds is stopped on all nodes
+     shell: >
+       kubectl get pod -l app=node-feeze
+       --no-headers -o custom-columns=:status.phase
+       -n {{ namespace }} | sort | uniq
+     args: 
+       executable: /bin/bash
+     register: result
+     until: "'Running' not in result.stdout"
+     delay: 20
+     retries: 15          
+
+  when: nodeaction == "node_choas_delete"
