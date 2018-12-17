@@ -88,7 +88,7 @@
           args:
             executable: /bin/bash
           register: cstor_pool
-          until: "'DEGRADED' or 'OFFLINE' not in cstor_pool.stdout"
+          until: "'DEGRADED' in cstor_pool.stdout or 'OFFLINE' in cstor_pool.stdout"
           delay: 5
           retries: 30
 
@@ -164,10 +164,18 @@
 
       always: 
 
+        ## RECOVER DISK ALWAYS
+        - include_tasks: /chaoslib/aws_chaos/disk_failure.yml
+          vars:
+            action: "disk-recover"      
+            app_ns: "{{ namespace }}"
+            app: "{{ app_pod_name.stdout }}"
+          ignore_errors: true
+
         ## RECORD END-OF-TEST IN LITMUS RESULT CR
 
         - include_tasks: /common/utils/update_litmus_result_resource.yml
           vars:
             status: 'EOT'
-            chaostype: "drain-node"
+            chaostype: "disk-failure"
            

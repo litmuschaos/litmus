@@ -15,21 +15,33 @@
 - block:
 
     - name: Detach the disk from the node
-      include_tasks: /chaoslib/aws_chaos/ebs_volume_operations.yml
-      vars:
-        action_on_volume: 'detach'
-      when: lookup('env', 'PLATFORM') == 'AWS'
+      shell: aws ec2 detach-volume --volume-id {{ volume_id }} --region {{ region }} --instance-id {{ instance_id }} --force
 
-  when: action == "disk-fail"
+    - name: Verify if disk is detached successfully
+      shell: aws ec2 describe-volumes --volume-id {{ volume_id }} --region {{ region }} | grep -i state
+      args:
+        executable: /bin/bash
+      register: detach_disk
+      until: "'available' not in detach_disk.stdout"
+      delay: 5
+      retries: 10
+
+  when: action == "disk-fail" and lookup('env', 'PLATFORM') == 'AWS'
 
 - block:
 
     - name: Attach the disk to the node
-      include_tasks: /chaoslib/aws_chaos/ebs_volume_operations.yml
-      vars:
-        action_on_volume: 'attach'
-      when: lookup('env', 'PLATFORM') == 'AWS'
+      shell: aws ec2 attach-volume --volume-id {{ volume_id }} --region {{ region }} --instance-id {{ instance_id }} --device /dev/xvdb
+  
+    - name: Verify if disk is attached successfully
+      shell: aws ec2 describe-volumes --volume-id {{ volume_id }} --region {{ region }} | grep -i state
+      args:
+        executable: /bin/bash
+      register: detach_disk
+      until: "'in-use' in detach_disk.stdout or 'attached' in detach_disk.stdout"
+      delay: 5
+      retries: 10
 
-  when: action == "disk-recover"
+  when: action == "disk-recover" and lookup('env', 'PLATFORM') == 'AWS'
 
 
