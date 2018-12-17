@@ -54,18 +54,18 @@ spec:
 
           ## Value of AWS_ACCESS_KEY_ID need to be replaced with original value
           - name: AWS_ACCESS_KEY_ID
-            value: "accessid"
+            value: "access_key"
 
           ## Value of AWS_SECRET_ACCESS_KEY need to be replaced with original value
           - name: AWS_SECRET_ACCESS_KEY
-            value: "secretid"
+            value: "secret_key"
 
           ## Value of EBS VOLUME_ID to perform disk operations
           - name: VOLUME_ID
-            value: "volumeid"
+            value: "volume_id"
 
           - name: INSTANCE_NAME
-            value: "instancename"
+            value: "instance_name"
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./percona/chaos/disk_failure/test.yml -i /etc/ansible/hosts -vv; exit 0"]
