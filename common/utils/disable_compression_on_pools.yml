@@ -1,0 +1,86 @@
+---
+- name: Wait for 15s for target pod to deploy
+  wait_for:
+    timeout: 15
+
+- name: Get the pv name from application namespace
+  shell: >
+    kubectl get pvc -n fio -o jsonpath={.items[0].spec.volumeName}
+  register: pv
+
+- name: Get the target name associated to PVC
+  shell: >
+    kubectl get po -n openebs --no-headers | grep {{ pv.stdout }} | awk '{ print $1 }'
+  register: target_pod
+
+- name: Check the status of the target pod
+  shell: kubectl get pod {{ target_pod.stdout }} -n {{ operator_ns }} -o jsonpath={.status.phase}
+  register: result_target_pod
+  until: "'Running' in result_target_pod.stdout"
+  delay: 3
+  retries: 30
+
+- name: Get list of pool deployments from cvr
+  shell: >
+    kubectl get cvr -n {{ operator_ns }}
+    -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers
+    -o=jsonpath='{range .items[*]}{.metadata.labels.cstorpool\.openebs\.io\/name}{"\n"}{end}'
+    | awk '{print $1}'
+  args:
+    executable: /bin/bash
+  register: pool_deployment_list
+
+- name: Obtaining the replicasets corresponding to pool deployements.
+  shell: >
+    kubectl get rs -l app=cstor-pool -n {{ operator_ns }} --no-headers
+    -o=jsonpath='{.items[?(@.metadata.ownerReferences[0].name=="{{item}}")].metadata.name}'
+  register: rs_list
+  with_items:
+    - "{{ pool_deployment_list.stdout_lines }}"
+
+- name: Obtaining the pool pods
+  shell: >
+    kubectl get pod -l app=cstor-pool -n {{ operator_ns }} --no-headers
+    -o=jsonpath='{.items[?(@.metadata.ownerReferences[0].name=="{{item.stdout}}")].metadata.name}'
+  register: pool_pod_list
+  with_items:
+    - "{{ rs_list.results }}"
+
+- set_fact:
+    #pool_pod_length: "{{ pool_pod_list.results | length }}"
+    pool_pod_named_list: "{{ pool_pod_named_list|default([])}}"
+
+- name: Build a list of replica pods
+  set_fact:
+    pool_pod_named_list : "{{ pool_pod_named_list  }} + [ '{{ item.stdout }}' ]"
+  with_items: "{{ pool_pod_list.results }}"
+
+- name: Get pool name from first pool pod
+  shell: >
+    kubectl exec {{ item }} -n {{ operator_ns }} -c cstor-pool zpool list | awk 'NR==2 {print $1}'
+  args:
+    executable: /bin/bash
+  register: pool_name
+  with_items:
+    - "{{ pool_pod_named_list }}"
+
+- set_fact:
+    pool_names_list: "{{ pool_names_list|default([])}}"
+
+- name: Build a list of replica pods
+  set_fact:
+    pool_names_list : "{{ pool_names_list  }} + [ '{{ item.stdout }}' ]"
+  with_items: "{{ pool_name.results }}"
+
+- debug:
+    msg: "{{ item }} are pool name"
+  with_items: "{{ pool_names_list }}"
+
+- name: Disable compression factor on pool/volumes
+  shell: >
+    kubectl exec {{ item.0 }} -n {{ operator_ns }} -c cstor-pool zfs set compression=off {{ item.1 }}/{{ pv.stdout }}
+  args:
+    executable: /bin/bash
+  with_together:
+    - "{{ pool_pod_named_list }}"
+    - "{{ pool_names_list }}"
