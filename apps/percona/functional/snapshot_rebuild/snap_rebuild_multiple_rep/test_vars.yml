@@ -1,5 +1,5 @@
 ---
-test_name: snapshot-failure
+test_name: snap-rebuild-multiple-rep
 
 app_pvc: "{{ lookup('env','APP_PVC') }}"
 
