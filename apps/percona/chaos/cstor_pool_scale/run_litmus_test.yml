@@ -1,0 +1,69 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: cstor-pool-scale-
+  namespace: litmus
+spec:
+  template:
+    metadata:
+      labels:
+        name: cstor-pool-scale
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: openebs/ansible-runner:ci
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            #value: log_plays
+            #value: actionable
+            value: default
+
+          - name: APP_NAMESPACE
+            value: app-percona-ns
+
+          - name: APP_LABEL
+            value: 'name=percona'
+
+          - name: APP_PVC
+            value: percona-mysql-claim
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./percona/chaos/cstor_pool_scale/test.yml -i /etc/ansible/hosts -vv; exit 0"]
+        volumeMounts:
+          - name: logs
+            mountPath: /var/log/ansible
+        tty: true
+      - name: logger
+        image: openebs/logger
+        env:
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: MY_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          # spec.volumes is not supported via downward API
+          - name: MY_POD_HOSTPATH
+            value: /mnt/chaos/cstor_verify_rebuild
+        command: ["/bin/bash"]
+        args: ["-c", "./logger.sh -d ansibletest -r maya,openebs,pvc,percona,cstor; exit 0"]
+        volumeMounts:
+          - name: kubeconfig
+            mountPath: /root/admin.conf
+            subPath: admin.conf
+          - name: logs
+            mountPath: /mnt
+        tty: true
+      volumes:
+        - name: kubeconfig
+          configMap:
+            name: kubeconfig
+        - name: logs
+          hostPath:
+            path: /mnt/chaos/cstor_verify_rebuild
+            type: ""
