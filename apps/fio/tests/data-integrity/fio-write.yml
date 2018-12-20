@@ -11,7 +11,7 @@ data:
      directory=/datadir
 
      [basic-fio]
-     rw=write
+     rw=randwrite
      bs=4k
      time_based=1
      runtime=60
@@ -33,9 +33,10 @@ spec:
       restartPolicy: Never
       containers:
       - name: perfrunner
-        image: openebs/tests-fio
+        image: openebs/tests-fio:latest
+        imagePullPolicy: Always
         command: ["/bin/bash"]
-        args: ["-c", "./fio_runner.sh --size 256m; exit 0"]
+        args: ["-c", "./fio_runner.sh --size 256m; sync;exit 0"]
         volumeMounts:
            - mountPath: /datadir
              name: demo-vol1
@@ -51,15 +52,3 @@ spec:
       - name: basic-configmap
         configMap:
           name: basic
----
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: demo-vol1-claim
-spec:
-  storageClassName: testclass
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: "5G"

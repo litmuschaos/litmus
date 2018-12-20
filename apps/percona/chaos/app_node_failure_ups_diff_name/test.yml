@@ -89,6 +89,8 @@
 
           ## Fetch the AWS instance details(instance_id, region)
         - include_tasks: /common/utils/aws/fetch_aws_details.yml
+          vars:
+            instance_name: "{{ app_node.stdout }}"
           when: lookup('env', 'PLATFORM') == 'AWS'
 
         ## Execute the chaos util

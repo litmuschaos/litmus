@@ -12,13 +12,7 @@
 
         - block:
 
-            - name: Record test instance/run ID
-              set_fact:
-                run_id: "{{ lookup('env','RUN_ID') }}"
-
-            - name: Construct testname appended with runID
-              set_fact:
-                test_name: "{{ test_name }}-{{ run_id }}"
+            - include_tasks: /common/utils/create_testname.yml           
 
           when: lookup('env','RUN_ID')
 
@@ -102,6 +96,12 @@
           retries: 5
           delay: 15   
 
+        - name: Generate unique string for use in dbname
+          shell: echo $(mktemp) | cut -d '.' -f 2
+          args:
+            executable: /bin/bash
+          register: uniqstr  
+
         - name: Create some test data in the mysql database
           include_tasks: "/common/utils/mysql_data_persistence.yml"
           vars:
@@ -110,10 +110,10 @@
             pod_name: "{{ app_pod_name.stdout }}"
             dbuser: 'root'
             dbpassword: 'k8sDem0'
-            dbname: 'tdb'
+            dbname: "tdb{{ uniqstr.stdout }}"
      
         - name: Getting the cvr name of running pool
-          shell: kubectl get cvr -n openebs -o jsonpath='{.items[?(@.metadata.labels.cstorpool\.openebs\.io/name!="{{ deployment_name.stdout }}")].metadata.name}' | awk '{print $1}'
+          shell: kubectl get cvr -n {{ operator_ns }} -o jsonpath='{.items[?(@.metadata.labels.cstorpool\.openebs\.io/name!="{{ deployment_name.stdout }}")].metadata.name}' | awk '{print $1}'
           register: cvr_name2   
 
         - name: Scaling-up cstor-pool
@@ -176,4 +176,4 @@
             pod_name: "{{ app_pod_name.stdout }}"
             dbuser: 'root'
             dbpassword: 'k8sDem0'
-            dbname: 'tdb'    
+            dbname: 'tdb{{ uniqstr.stdout }}'    

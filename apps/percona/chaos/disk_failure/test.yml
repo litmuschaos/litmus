@@ -1,0 +1,181 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+        ## Perform test pre-requisites to check if the AUT is deployed on cstor-disk-pool.
+        - include: test_prerequisites.yml
+
+        ## AWS Pre-requisites
+        - include_tasks: /chaoslib/aws_chaos/prerequisites_aws.yml
+          when: lookup('env','PLATFORM') == 'AWS'
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/create_testname.yml
+
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'SOT'
+            chaostype: "disk-failure"
+
+        ## VERIFY POOLS AND CVR STATUS BEFORE DISK CHAOS
+        - name: Verify pool and cvr health status
+          include_tasks: /chaoslib/openebs/cstor_verify_pool_provisioning.yml
+          vars:
+            app_pvc: "{{ pvc }}"
+            app_ns: "{{ namespace }}"
+
+        ## DISPLAY APP INFORMATION 
+        - name: Display the app information passed via the test job
+          debug: 
+            msg: 
+              - "The application info is as follows:"
+              - "Namespace    : {{ namespace }}"
+              - "Label        : {{ label }}"
+
+        - name: Verify that the AUT (Application Under Test) is running
+          shell: >
+            kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
+            -o custom-columns=:status.phase
+          args:
+            executable: /bin/bash
+          register: app_status
+          until: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
+          delay: 10
+          retries: 12
+
+        - name: Get application pod name
+          shell: >
+            kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
+            -o=custom-columns=NAME:".metadata.name"
+          args:
+            executable: /bin/bash
+          register: app_pod_name
+
+        - name: Generate unique string for use in dbname
+          shell: echo $(mktemp) | cut -d '.' -f 2
+          args:
+            executable: /bin/bash
+          register: uniqstr
+
+        - name: Create some test data in the mysql database
+          include_tasks: "/common/utils/mysql_data_persistence.yml"
+          vars:
+            status: 'LOAD'
+            ns: "{{ namespace }}"
+            pod_name: "{{ app_pod_name.stdout }}"
+            dbuser: 'root'
+            dbpassword: 'k8sDem0'
+            dbname: "tdb{{ uniqstr.stdout }}"
+          when: data_persistance != ''
+
+        ## INDUCE DISK FAILURE AND VERIFY CSTOR POOL AND APP STATUS
+        - include_tasks: /chaoslib/aws_chaos/disk_failure.yml
+          vars:
+            action: "disk-fail"      
+            app_ns: "{{ namespace }}"
+            app: "{{ app_pod_name.stdout }}"
+
+        - name: Check the cstor-pool status
+          shell: > 
+            kubectl exec -it {{ cstor_pool_pod.stdout }} -n {{ operator_ns }} 
+            -c cstor-pool -- bash -c "zpool status | grep state"
+          args:
+            executable: /bin/bash
+          register: cstor_pool
+          until: "'DEGRADED' in cstor_pool.stdout or 'OFFLINE' in cstor_pool.stdout"
+          delay: 5
+          retries: 30
+
+        - name: Verify AUT state post disk failure
+          shell: >
+            kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
+            -o custom-columns=:status.phase
+          args:
+            executable: /bin/bash
+          register: app_status
+          until: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
+          delay: 10
+          retries: 12
+
+        ## RECOVER DISK AND VERIFY CSTOR POOL AND APP STATUS
+        - include_tasks: /chaoslib/aws_chaos/disk_failure.yml
+          vars:
+            action: "disk-recover"      
+            app_ns: "{{ namespace }}"
+            app: "{{ app_pod_name.stdout }}"
+
+        - name: Check the cstor-pool status
+          shell: > 
+            kubectl exec -it {{ cstor_pool_pod.stdout }} -n {{ operator_ns }} 
+            -c cstor-pool -- bash -c "zpool status | grep state"
+          args:
+            executable: /bin/bash
+          register: cstor_pool_recover
+          until: "'ONLINE' not in cstor_pool_recover.stdout"
+          delay: 5
+          retries: 60
+
+        - name: Verify AUT state post disk failure
+          shell: >
+            kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
+            -o custom-columns=:status.phase
+          args:
+            executable: /bin/bash
+          register: app_status
+          until: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
+          delay: 10
+          retries: 12
+
+        ## POST-CHAOS APPLICATION LIVENESS CHECK
+        - include_tasks: /common/utils/application_liveness_check.yml
+          when: liveness_label != ''
+
+        - name: Get application pod name
+          shell: >
+            kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
+            -o=custom-columns=NAME:".metadata.name"
+          args:
+            executable: /bin/bash
+          register: rescheduled_app_pod
+
+        - name: Verify mysql data persistence
+          include_tasks: "/common/utils/mysql_data_persistence.yml"
+          vars:
+            status: 'VERIFY'
+            ns: "{{ namespace }}"
+            pod_name: "{{ rescheduled_app_pod.stdout }}"
+            dbuser: 'root'
+            dbpassword: 'k8sDem0'
+            dbname: "tdb{{ uniqstr.stdout }}"
+          when: data_persistance != ''
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue: 
+        - set_fact: 
+            flag: "Fail"
+
+      always: 
+
+        ## RECOVER DISK ALWAYS
+        - include_tasks: /chaoslib/aws_chaos/disk_failure.yml
+          vars:
+            action: "disk-recover"      
+            app_ns: "{{ namespace }}"
+            app: "{{ app_pod_name.stdout }}"
+          ignore_errors: true
+
+        ## RECORD END-OF-TEST IN LITMUS RESULT CR
+
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
+            chaostype: "disk-failure"
+           

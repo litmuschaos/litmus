@@ -1,0 +1,67 @@
+---
+## PRE-CHAOS APPLICATION LIVENESS CHECK
+- include_tasks: /common/utils/application_liveness_check.yml
+  when: liveness_label != ''
+
+- name: Identify the storage class used by the PVC
+  shell: >
+    kubectl get pvc {{ pvc }} -n {{ namespace }} 
+    --no-headers -o custom-columns=:spec.storageClassName
+  args:
+    executable: /bin/bash
+  register: storage_class
+
+- name: Identify the storage provisioner used by the SC
+  shell: >
+    kubectl get sc {{ storage_class.stdout }}
+    --no-headers -o custom-columns=:provisioner
+  args:
+    executable: /bin/bash
+  register: provisioner
+
+- name: Record the storage class name
+  set_fact: 
+    sc: "{{ storage_class.stdout }}"
+
+- name: Record the storage provisioner name
+  set_fact:
+    stg_prov: "{{ provisioner.stdout }}"
+
+- name: Derive PV name from PVC to query storage engine type (openebs)
+  shell: >
+    kubectl get pvc {{ pvc }} -n {{ namespace }}
+    --no-headers -o custom-columns=:spec.volumeName
+  args:
+    executable: /bin/bash
+  register: pv
+
+- name: Check for presence & value of cas type annotation
+  shell: >
+    kubectl get pv {{ pv.stdout }} --no-headers
+    -o jsonpath="{.metadata.annotations.openebs\\.io/cas-type}"
+  args:
+    executable: /bin/bash
+  register: openebs_stg_engine
+  failed_when: '"cstor" not in openebs_stg_engine.stdout'
+
+- name: Record the storage engine name
+  set_fact:
+    stg_engine: "{{ openebs_stg_engine.stdout }}"
+  when: stg_prov == "openebs.io/provisioner-iscsi"
+
+- name: Identify the spc being used by volume
+  shell: >
+    kubectl get sc {{ sc }} -o jsonpath="{.metadata.annotations.cas\\.openebs\\.io/config}" 
+    | grep value |awk 'FNR == 1 {print}' | awk {'print $2'} | tr -d '"'
+  args:
+    executable: /bin/bash
+  register: spc
+
+- name: Identify the cstor pool disk type
+  shell: >
+    kubectl get spc {{ spc.stdout }} -o jsonpath="{.spec.type}"
+  args:
+    executable: /bin/bash
+  register: disk_type
+  failed_when: '"disk" not in disk_type.stdout'
+
