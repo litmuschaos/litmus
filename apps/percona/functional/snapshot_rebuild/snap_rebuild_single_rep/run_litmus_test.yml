@@ -2,14 +2,14 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: litmus-k8s-snapshot-rebuild-
+  generateName: litmus-k8s-snap-single-rep-rebuild-
   namespace: litmus
 spec:
   template:
     metadata:
       name: litmus
       labels:
-        app: k8s-snapshot-litmus-rebuild
+        app: k8s-snap-single-rep-rebuild
 
     spec:
       serviceAccountName: litmus
@@ -35,4 +35,4 @@ spec:
             value: percona-cstor
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./percona/functional/snapshot_rebuild/test.yml -i /etc/ansible/hosts -vv; exit 0"]
+        args: ["-c", "ansible-playbook ./percona/functional/snapshot_rebuild/snap_rebuild_single_rep/test.yml -i /etc/ansible/hosts -vv; exit 0"]
