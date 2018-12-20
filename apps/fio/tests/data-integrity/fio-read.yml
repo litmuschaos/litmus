@@ -31,15 +31,19 @@ spec:
       restartPolicy: Never
       containers:
       - name: perfrunner
-        image: openebs/tests-fio
+        image: openebs/tests-fio:latest
+        imagePullPolicy: Always
         command: ["/bin/bash"]
-        args: ["-c", "./fio_runner.sh --size 128m; exit 0"]
+        args: ["-c", "./fio_runner.sh --size 256m; df -h;cat commands.sh > cp_commands.sh; chmod 775 cp_commands.sh; ./cp_commands.sh; df -h;exit 0"]
         volumeMounts:
            - mountPath: /datadir
              name: demo-vol1
            - mountPath: templates/file/basic-rw
              subPath: basic-rw
              name: basic-configmap-read
+           - mountPath: /commands.sh
+             subPath: commands.sh
+             name: commandconfig
         tty: true
 
       volumes:
@@ -49,3 +53,6 @@ spec:
       - name: basic-configmap-read
         configMap:
           name: basic-read
+      - name: commandconfig
+        configMap:
+          name: commandfile
