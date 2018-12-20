@@ -33,4 +33,7 @@
      ec2_vol:
         instance: "{{ instance_id }}"
         state: list
+        region: "{{ region }}"
+     register: result
+   
   when: action_on_volume == "list"

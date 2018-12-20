@@ -9,3 +9,7 @@
   args:
     executable: /bin/bash
 
+- name: Installing awscli
+  shell: pip install awscli
+  args:
+    executable: /bin/bash

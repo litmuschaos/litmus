@@ -1,0 +1,47 @@
+--- 
+- name: Record the cstor-pool pod on given app node
+  shell: >
+    kubectl get pod -l app=cstor-pool -l openebs.io/storage-pool-claim=cstor-disk-pool -o wide
+    -n {{ operator_ns }} | grep {{ instance_name }}
+    | awk '{print $1}'
+  args:
+    executable: /bin/bash
+  register: cstor_pool_pod
+
+- name: Fetch AWS instance details
+  include_tasks: /common/utils/aws/fetch_aws_details.yml
+  when: lookup('env', 'PLATFORM') == 'AWS'
+  
+- block:
+
+    - name: Detach the disk from the node
+      shell: aws ec2 detach-volume --volume-id {{ volume_id }} --region {{ region }} --instance-id {{ instance_id }} --force
+
+    - name: Verify if disk is detached successfully
+      shell: aws ec2 describe-volumes --volume-id {{ volume_id }} --region {{ region }} | grep -i state
+      args:
+        executable: /bin/bash
+      register: detach_disk
+      until: "'available' not in detach_disk.stdout"
+      delay: 5
+      retries: 10
+
+  when: action == "disk-fail" and lookup('env', 'PLATFORM') == 'AWS'
+
+- block:
+
+    - name: Attach the disk to the node
+      shell: aws ec2 attach-volume --volume-id {{ volume_id }} --region {{ region }} --instance-id {{ instance_id }} --device /dev/xvdb
+  
+    - name: Verify if disk is attached successfully
+      shell: aws ec2 describe-volumes --volume-id {{ volume_id }} --region {{ region }} | grep -i state
+      args:
+        executable: /bin/bash
+      register: detach_disk
+      until: "'in-use' in detach_disk.stdout or 'attached' in detach_disk.stdout"
+      delay: 5
+      retries: 10
+
+  when: action == "disk-recover" and lookup('env', 'PLATFORM') == 'AWS'
+
+
