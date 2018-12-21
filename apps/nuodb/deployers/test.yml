@@ -1,0 +1,75 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+        ## Generating the testname for deployment
+        - include_tasks: /common/utils/create_testname.yml
+
+         ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: "/common/utils/update_litmus_result_resource.yml"
+          vars:
+            status: 'SOT'
+   
+        - block:
+
+            ## Deploying the nuodb service, domain, sm and te 
+            - name: Deploying NUODB service, domain, storage manager and transaction engines
+              shell: kubectl create -f {{ item }}
+              args:
+                executable: /bin/bash
+              with_items: "{{ nuodb_spec }}"
+
+            - name: Verify if Nuodb admin, sm and te pods are running
+              shell: kubectl get pod -l app={{ item }}
+              args:
+                executable: /bin/bash
+              register: result
+              with_items: "{{ nuodb_labels }}"
+              until: "'Running' in result.stdout"
+              delay: 5
+              retries: 45
+
+            - set_fact:
+                flag: "Pass"  
+
+          when: "'deprovision' not in action"  
+
+        - block:
+
+            - name: Deprovision NUODB service, domain, storage manager and transaction engines
+              shell: kubectl delete -f {{ item }}
+              args:
+                executable: /bin/bash
+              with_items: "{{ nuodb_spec }}"
+
+            - name: Verify if Nuodb admin, sm and te pods are deleted
+              shell: kubectl get pod -l app={{ item }}
+              args:
+                executable: /bin/bash
+              register: result
+              with_items: "{{ nuodb_labels }}"
+              until: "'Running' in result.stdout"
+              delay: 5
+              retries: 45
+
+            - set_fact:
+                flag: "Pass"  
+
+          when: "'deprovision' is in action"        
+
+      rescue:
+        - set_fact:
+            flag: "Fail"     
+
+      always:
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
+              
