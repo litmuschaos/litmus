@@ -43,12 +43,12 @@
         ## Verify the APPLICATION UNDER TEST PRE CHAOS
         - include_tasks: /common/utils/status_app_pod.yml
           vars:
-            application_name: "Percona"
             app_ns: "{{ namespace }}"
             app_lkey: "{{ label.split('=')[0] }}"
             app_lvalue: "{{ label.split('=')[1] }}"
             delay: '2'
             retries: '60'
+
 
         ## Fetch app pod name
         - name: Get application pod name
@@ -56,7 +56,7 @@
             kubectl get po -n {{ namespace }} -l {{ label }} --no-headers -o=custom-columns=NAME:".metadata.name"
           args:
             executable: /bin/bash
-          register: app_pod_name
+          register: app_pod_name    
 
         ## Generate Database name
         - name: Generate some random name for database creation
@@ -107,10 +107,9 @@
         ## Application verification after the POST chaos
         - include_tasks: /common/utils/status_app_pod.yml
           vars:
-            application_name: "Percona post chaos"
             app_ns: "{{ namespace }}"
-            app_lkey: "name"
-            app_lvalue: "percona"
+            app_lkey: "{{ label.split('=')[0] }}"
+            app_lvalue: "{{ label.split('=')[1] }}"
             delay: '2'
             retries: '150'
 
