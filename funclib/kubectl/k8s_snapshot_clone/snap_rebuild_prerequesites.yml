@@ -1,0 +1,91 @@
+---
+        - name: Display details
+          debug:
+            msg:
+              - "app_ns: {{ app_ns }}"
+              - "pvc_name: {{ pvc_name }}"
+              - "app_label: {{ app_label }}"
+              - "ns: {{ operator_ns }}"
+
+         ## Check if the application is running.
+        - name: Checking if the application is up and running.
+          shell: kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers -o custom-columns=:status.phase
+          args:
+            executable: /bin/bash
+          register: app_status
+          until: "'Running' in app_status.stdout"
+          delay: 10
+          retries: 3
+
+        - name: Derive PV name from PVC
+          shell: >
+            kubectl get pvc {{ pvc_name }} -n {{ app_ns }}
+            --no-headers -o custom-columns=:spec.volumeName
+          args:
+            executable: /bin/bash
+          register: pv
+
+        - name: Derive the cstor target using pv.
+          shell: >
+            kubectl get pods -n {{ ns }} -l openebs.io/persistent-volume={{ pv.stdout }}
+            -l openebs.io/target=cstor-target -o custom-columns=:metadata.name --no-headers
+          args:
+            executable: /bin/bash
+          register: cstor_target
+
+        - name: Obtaining the consistency factor of cstor target.
+          shell: >
+            kubectl exec -it {{ cstor_target.stdout }} -n {{ ns }} --container cstor-istgt
+            -- cat /usr/local/etc/istgt/istgt.conf | grep -A8 "{{ pv.stdout }}" | grep ConsistencyFactor| cut -d ' ' -f 4
+          args:
+            executable: /bin/bash
+          register: consistency_factor
+
+        - name: Create an empty list of replica pods.
+          set_fact:
+            cstor_replicas_pod : []
+
+        - name: Obtaining the pool deployments from cvr
+          shell: >
+            kubectl get cvr -n {{ ns }}
+            -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers
+            -o=jsonpath='{range .items[*]}{.metadata.labels.cstorpool\.openebs\.io\/name}{"\n"}{end}'
+          args:
+            executable: /bin/bash
+          register: pool_deployment
+
+        - name: Find the replication factor by getting count of pool deployment Create an empty list of replica pods.
+          set_fact:
+            replication_factor: "{{ pool_deployment.stdout_lines|length }}"
+
+        - name: Obtaining the replicasets corresponding to pool deployements.
+          shell: >
+            kubectl get rs --selector=app=cstor-pool -n {{ ns }} --no-headers
+            -o=jsonpath='{.items[?(@.metadata.ownerReferences[0].name=="{{item}}")].metadata.name}'
+          register: rs_list
+          with_items:
+            - "{{ pool_deployment.stdout_lines }}"
+
+        - name: Obtaining the pool pods
+          shell: >
+            kubectl get pod --selector=app=cstor-pool -n {{ ns }} --no-headers
+            -o=jsonpath='{.items[?(@.metadata.ownerReferences[0].name=="{{item.stdout}}")].metadata.name}'
+          register: pool_pods
+          with_items:
+            - "{{ rs_list.results }}"
+
+        - name: Build a list of replica pods.
+          set_fact:
+            cstor_replicas_pod : "{{ cstor_replicas_pod }} + [ '{{ item.stdout }}' ]"
+          with_items: "{{ pool_pods.results }}"
+
+        - name: Making sure number of healthy pods is equal to replication factor
+          shell: >
+            kubectl exec -it {{ cstor_target.stdout }} -n {{ ns }} --container  cstor-istgt
+            -- istgtcontrol -q replica |json_pp | jq '.volumeStatus[0].replicaStatus[].status' | grep Healthy | wc -l
+          args:
+            executable: /bin/bash
+          register: healthy_pods
+          until: "healthy_pods.stdout == replication_factor"
+          delay: 15
+          retries: 30              

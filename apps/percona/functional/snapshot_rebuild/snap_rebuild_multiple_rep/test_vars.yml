@@ -1,0 +1,11 @@
+---
+test_name: snap-rebuild-multiple-rep
+
+app_pvc: "{{ lookup('env','APP_PVC') }}"
+
+namespace: "{{ lookup('env','APP_NAMESPACE') }}"
+
+application_label: "{{ lookup('env','APP_LABEL') }}"
+
+operator_ns: openebs
+
