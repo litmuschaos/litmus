@@ -24,7 +24,7 @@
 
        - name: Obtaining the application pod name using its label.
          shell: >
-           kubectl get pods -n {{ app_ns }} -l {{ app_label }} | grep
+           kubectl get pods -n {{ app_ns }} -l {{ application_label }} | grep
            -w Running | awk '{print $1}' | head -1
          args:
            executable: /bin/bash
@@ -57,7 +57,7 @@
            - name: Run docker container to trigger memory freeze on app node
              shell: >
                 kubectl exec  {{ chaos_pod.stdout }} -n {{ app_ns }}
-                docker run {{ freeze_image }} python memleak.py &
+                docker run {{ docker_image }} python memleak.py &
              args:
                executable: /bin/bash
              ignore_errors: true
@@ -78,7 +78,7 @@
            - name: Run CPU freeze docker container.
              shell: >
                kubectl exec {{ chaos_pod.stdout }} -n {{ app_ns }}
-               docker run {{ freeze_image }} &
+               docker run {{ docker_image }} &
              args:
                executable: /bin/bash
              ignore_errors: true
