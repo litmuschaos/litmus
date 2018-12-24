@@ -17,3 +17,5 @@ daemonset: node_freeze.yml
 subnet_id: "{{ lookup('env','SUBNET_ID') }}"
 
 data_persistance: "{{ lookup('env','DATA_PERSISTENCY') }}"
+
+test_bed: "{{ lookup('env','PLATFORM') }}" 

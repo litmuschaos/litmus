@@ -37,10 +37,10 @@ spec:
             value: 'name=percona'
 
           - name: LIVENESS_APP_LABEL
-            value: ""
+            value: "liveness=percona-liveness"
 
           - name: LIVENESS_APP_NAMESPACE
-            value: ""
+            value: "litmus"
 
           - name: PLATFORM
             value: "AWS"
