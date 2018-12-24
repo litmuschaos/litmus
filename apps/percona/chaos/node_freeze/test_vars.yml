@@ -1,6 +1,6 @@
 test_name: node-mem-freeze
 
-app_ns: "{{ lookup('env','APP_NS') }}"
+namespace: "{{ lookup('env','APP_NS') }}"
 
 app_label: "{{ lookup('env','APP_LABEL') }}"
 

@@ -15,7 +15,7 @@
     - name: Drain the application node
       shell: >
         kubectl drain {{ app_node }}
-        --ignore-daemonsets --force
+        --ignore-daemonsets --delete-local-data  --force
       args:
         executable: /bin/bash
       register: result
