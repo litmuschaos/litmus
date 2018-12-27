@@ -82,7 +82,7 @@
         - name: Making sure number of healthy pods is equal to replication factor
           shell: >
             kubectl exec -it {{ cstor_target.stdout }} -n {{ ns }} --container  cstor-istgt
-            -- istgtcontrol -q replica |json_pp | jq '.volumeStatus[0].replicaStatus[].status' | grep Healthy | wc -l
+            -- istgtcontrol -q replica |json_pp | jq '.volumeStatus[0].replicaStatus[].Mode' | grep Healthy | wc -l
           args:
             executable: /bin/bash
           register: healthy_pods
