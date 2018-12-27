@@ -115,8 +115,15 @@
   delay: 30
   retries: 10
 
-- name: Wait until all replica becomes healthy
+- name: Wait until volume becomes healthy
   shell: kubectl exec -it {{ istgt_replica.stdout }} -n {{ operator_ns }} --container  cstor-istgt -- istgtcontrol -q replica |json_pp |grep "\"status" |awk -F ':' '{print $2}' | tr -d ','
+  register: volume_status
+  until: volume_status.stdout.find("Degraded") == -1
+  retries: 50
+  delay: 10
+
+- name: Wait until all replica becomes healthy
+  shell: kubectl exec -it {{ istgt_replica.stdout }} -n {{ operator_ns }} --container  cstor-istgt -- istgtcontrol -q replica |json_pp |grep "\"Mode" |awk -F ':' '{print $2}' | tr -d ','
   register: replica_status
   until: replica_status.stdout.find("Degraded") == -1
   retries: 50
