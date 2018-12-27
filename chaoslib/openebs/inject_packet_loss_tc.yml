@@ -6,11 +6,18 @@
 
 - block:
 
+    - name: Checking whether tc is already installed
+      shell: kubectl exec -it {{ target_pod }} -n {{ operator_namespace }} --container cstor-pool 
+        -- bash -c "which tc"
+      register: tc_status 
+      ignore_errors: yes 
+
     - name: Install tc command on targeted replica pod
       shell: >
         kubectl exec -it {{ target_pod }} -n {{ operator_namespace }} --container cstor-pool 
         -- bash -c "apt-get update && apt-get -y install iproute2"
       register: tc_apt_output
+      when: "'tc' not in tc_status.stdout"
 
     - name: Inject packet loss on targeted replica
       shell: >
