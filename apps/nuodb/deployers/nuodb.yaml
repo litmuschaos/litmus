@@ -95,8 +95,8 @@ spec:
             fieldRef:
               fieldPath: metadata.namespace
         - { name: NUODB_DOMAIN_ENTRYPOINT,      value: "admin-0.domain" }
-        - { name: NUODB_ALT_ADDRESS,            value: "$(POD_NAME).domain.default.svc" }
-        - { name: NUODB_VARDIR,                 value: "/var/opt/nuodb/$(POD_NAME).default" }
+        - { name: NUODB_ALT_ADDRESS,            value: "$(POD_NAME).domain.litmus.svc" }
+        - { name: NUODB_VARDIR,                 value: "/var/opt/nuodb/$(POD_NAME).litmus" }
         args: [ "nuoadmin" ]
         livenessProbe:
           initialDelaySeconds: 30

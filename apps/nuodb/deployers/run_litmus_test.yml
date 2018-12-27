@@ -16,7 +16,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: dargas/ansible-runner:nuodb
+        image: openebs/ansible-runner:ci
         imagePullPolicy: Always
 
         env:

@@ -29,7 +29,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        - { name: PEER_ADDRESS,        value: "admin.default.svc" }
+        - { name: PEER_ADDRESS,        value: "admin.litmus.svc" }
         - { name: User1,               value: "User1" }
         - { name: YCSB_WORKLOAD,       value: "b" }
         - { name: LB_POLICY,           value: "" }

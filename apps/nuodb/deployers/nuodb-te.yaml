@@ -6,47 +6,51 @@ metadata:
   labels:
     app: nuodb
     group: nuodb
+    deploymentconfig: te
 spec:
   replicas: 1
-  selector:
-    matchLabels:
-      app: nuodb
   template:
     metadata:
       labels:
-        app: nuodb
+        app: te
+        deploymentconfig: te
+        database: nuodb
+        nodetype: te
     spec:
       containers:
-        - resources:
-            limits:
-              cpu: 0.5
-          name: te
-          image: nuodb/nuodb-ce:latest
-          imagePullPolicy: IfNotPresent
-          env:
-          - name: NODE_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: spec.nodeName
-          - name: POD_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
-          - name: NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
-          - { name: DB_NAME,             value: "testdb" }
-          - { name: NUOCMD_API_SERVER,   value: "admin.litmus.svc:8888"}
-          - { name: PEER_ADDRESS,        value: "admin.litmus.svc" }
-          - { name: NUODB_OPTIONS,       value: "mem 0.5g" }
-          args: [ "nuote", "--servers-ready-timeout", "300", "--database-created-timeout", "300" ]
-          ports:
-          - containerPort: 48006
-            protocol: TCP
-          terminationMessagePath: /dev/termination-log
-          terminationMessagePolicy: File
-          volumeMounts:
+      -
+        name: te
+        image: nuodb/nuodb-ce:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - { name: DB_NAME,             value: "nuodb" }
+        - { name: NUOCMD_API_SERVER,   value: "admin.litmus.svc:8888"}
+        - { name: PEER_ADDRESS,        value: "admin.litmus.svc" }
+        - { name: NUODB_LABELS,        value: "" }
+        - { name: NUODB_OPTIONS,       value: "mem 1g" }
+        args: [ "nuote", "--servers-ready-timeout", "300", "--database-created-timeout", "300" ]
+        ports:
+        - containerPort: 48006
+          protocol: TCP
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "1"
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
             - mountPath: /var/lib/mysql
               name: demo-vol1
       volumes:
