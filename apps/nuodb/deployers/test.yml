@@ -35,12 +35,31 @@
               delay: 5
               retries: 45
 
+            - name: Run ycsb load on Nuodb
+              shell: kubectl create -f nuodb-ycsb.yaml
+              args:
+                executable: /bin/bash
+
+            - name: Verify if the ycsb-load is running
+              shell: kubectl get pod -l app=ycsb-load
+              args:
+                executable: /bin/bash
+              register: result
+              until: "'Running' in result.stdout"
+              delay: 5
+              retries: 45
+              
             - set_fact:
                 flag: "Pass"  
 
           when: "'deprovision' not in action"  
 
         - block:
+
+            - name: Delete the ycsb load on Nuodb
+              shell: kubectl delete -f nuodb-ycsb.yaml
+              args:
+                executable: /bin/bash
 
             - name: Deprovision NUODB service, domain, storage manager and transaction engines
               shell: kubectl delete -f {{ item }}

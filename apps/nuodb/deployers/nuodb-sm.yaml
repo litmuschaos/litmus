@@ -50,8 +50,8 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        - { name: NUOCMD_API_SERVER,   value: "admin.default.svc:8890"}
-        - { name: PEER_ADDRESS,        value: "admin.default.svc" }
+        - { name: NUOCMD_API_SERVER,   value: "admin.litmus.svc:8888"}
+        - { name: PEER_ADDRESS,        value: "admin.litmus.svc" }
         - { name: NUODB_OPTIONS,       value: "mem 0.5g" }
         ports:
         - containerPort: 48006
@@ -59,7 +59,7 @@ spec:
         resources:
           requests:
             memory: "0.5Gi"
-            cpu: "500m"
+            cpu: "1"
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
 

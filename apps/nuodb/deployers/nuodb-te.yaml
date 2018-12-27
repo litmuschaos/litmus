@@ -2,7 +2,7 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: te-1
+  name: te
   labels:
     app: nuodb
     group: nuodb
@@ -37,9 +37,8 @@ spec:
               fieldRef:
                 fieldPath: metadata.namespace
           - { name: DB_NAME,             value: "testdb" }
-          - { name: NUOCMD_API_SERVER,   value: "admin.default.svc:8890"}
-          - { name: PEER_ADDRESS,        value: "admin.default.svc" }
-            #- { name: NUODB_LABELS,        value: "app=nuodb" }
+          - { name: NUOCMD_API_SERVER,   value: "admin.litmus.svc:8888"}
+          - { name: PEER_ADDRESS,        value: "admin.litmus.svc" }
           - { name: NUODB_OPTIONS,       value: "mem 0.5g" }
           args: [ "nuote", "--servers-ready-timeout", "300", "--database-created-timeout", "300" ]
           ports:

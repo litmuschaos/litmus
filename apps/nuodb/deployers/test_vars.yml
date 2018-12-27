@@ -1,13 +1,11 @@
 # Test-specific parametres
 
 nuodb_spec:
-  - nuodb-service.yaml
-  - nuodb-domain.yaml
+  - nuodb.yaml
   - nuodb-sm.yaml
   - nuodb-te.yaml
 nuodb_labels:
   - admin
-  - sm
   - nuodb
 app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
 operator_ns: 'openebs'
