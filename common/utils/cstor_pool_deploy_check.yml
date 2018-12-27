@@ -1,0 +1,24 @@
+---
+# This util checks if all the pool pods are running and are scheduled on different nodes.
+# This util takes namespace (ns) as var ('openebs')
+  
+- name: Obtain the number of CSP.
+  shell: kubectl get csp --no-headers | wc -l
+  args:
+    executable: /bin/bash
+  register: csp_count
+  
+- name: Checking all the pool pods are in running state  
+  shell: kubectl get po -l app=cstor-pool -n {{ ns }} -o jsonpath='{.items[?(@.status.phase=="Running")].metadata.name}' | wc -w
+  register: pool_pods
+  until: "pool_pods.stdout == csp_count.stdout"
+  retries: 5
+  delay: 10
+
+- name: Checking all the nodes are distinct
+  shell: kubectl get csp -o jsonpath='{.items[*].metadata.labels.kubernetes\.io/hostname}'
+  register: node_names 
+  failed_when: "{{ node_names.stdout.split(' ') | unique | count}} != csp_count.stdout|int"
+
+- debug:
+    msg: " NODE NAMES {{ node_names.stdout.split(' ') | unique }}"  
