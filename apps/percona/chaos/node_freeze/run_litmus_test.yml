@@ -35,7 +35,7 @@ spec:
 
             # node_freeze_action has two values: memory-freeze and cpu-freeze.
           - name: NODE_FREEZE_ACTION
-            value: "cpu-freeze"  
+            value: "memory-freeze"  
 
           - name: APP_LABEL
             value: 'name=percona'

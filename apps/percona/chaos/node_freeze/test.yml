@@ -91,7 +91,7 @@
           args:
             executable: /bin/bash
 
-        - name: Verify AUT liveness post fault-injection
+        - name: Verify that the AUT (Application Under Test) is running after post chaos.
           include_tasks: "/common/utils/status_app_pod.yml"
           vars:
             app_ns: "{{namespace}}"
