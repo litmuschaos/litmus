@@ -15,18 +15,37 @@
         - include_tasks: "/common/utils/update_litmus_result_resource.yml"
           vars:
             status: 'SOT'
-   
+       
+        - include_tasks: /common/utils/create_ns.yml
+
         - block:
+
+            - name: Replace the sc placeholder with ENV sc
+              replace:
+                path: "{{ item }}"
+                regexp: 'testsc'
+                replace: '{{ storage_class }}'
+              with_items: 
+                - nuodb-te.yaml
+
+            - name: Replace the namespace placeholder with ENV ns
+              replace:
+                path: "{{ item }}"
+                regexp: 'testns'
+                replace: '{{ app_ns }}'
+              with_items: 
+                - "{{ nuodb_spec }}"
+                - nuodb-ycsb.yaml
 
             ## Deploying the nuodb service, domain, sm and te 
             - name: Deploying NUODB service, domain, storage manager and transaction engines
-              shell: kubectl create -f {{ item }}
+              shell: kubectl create -f {{ item }} -n {{ app_ns }}
               args:
                 executable: /bin/bash
               with_items: "{{ nuodb_spec }}"
 
             - name: Verify if Nuodb admin, sm and te pods are running
-              shell: kubectl get pod -l app={{ item }}
+              shell: kubectl get pod -l app={{ item }} -n {{ app_ns }}
               args:
                 executable: /bin/bash
               register: result
@@ -36,12 +55,12 @@
               retries: 45
 
             - name: Run ycsb load on Nuodb
-              shell: kubectl create -f nuodb-ycsb.yaml
+              shell: kubectl create -f nuodb-ycsb.yaml -n {{ app_ns }}
               args:
                 executable: /bin/bash
 
             - name: Verify if the ycsb-load is running
-              shell: kubectl get pod -l app=ycsb-load
+              shell: kubectl get pod -l app=ycsb-load -n {{ app_ns }}
               args:
                 executable: /bin/bash
               register: result
@@ -57,18 +76,18 @@
         - block:
 
             - name: Delete the ycsb load on Nuodb
-              shell: kubectl delete -f nuodb-ycsb.yaml
+              shell: kubectl delete -f nuodb-ycsb.yaml -n {{ app_ns }}
               args:
                 executable: /bin/bash
 
             - name: Deprovision NUODB service, domain, storage manager and transaction engines
-              shell: kubectl delete -f {{ item }}
+              shell: kubectl delete -f {{ item }} -n {{ app_ns }}
               args:
                 executable: /bin/bash
               with_items: "{{ nuodb_spec }}"
 
             - name: Verify if Nuodb admin, sm and te pods are deleted
-              shell: kubectl get pod -l app={{ item }}
+              shell: kubectl get pod -l app={{ item }} -n {{ app_ns }}
               args:
                 executable: /bin/bash
               register: result

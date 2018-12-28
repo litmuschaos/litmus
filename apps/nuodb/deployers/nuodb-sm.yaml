@@ -45,8 +45,8 @@ spec:
         - { name: DB_NAME, value: "nuodb"}
         - { name: DB_USER, value: "dba"}
         - { name: DB_PASSWORD, value: "goalie"}
-        - { name: NUOCMD_API_SERVER,   value: "admin.litmus.svc:8888"}
-        - { name: PEER_ADDRESS,        value: "admin.litmus.svc" }
+        - { name: NUOCMD_API_SERVER,   value: "admin.testns.svc:8888"}
+        - { name: PEER_ADDRESS,        value: "admin.testns.svc" }
         - { name: NUODB_OPTIONS,       value: "mem 1g" }
         ports:
         - containerPort: 48006

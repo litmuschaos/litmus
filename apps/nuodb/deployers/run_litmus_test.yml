@@ -26,18 +26,17 @@ spec:
 
           - name: PROVIDER_STORAGE_CLASS
             # Supported values: openebs-standard, local-storage, openebs-standalone
-            value: openebs-standard
+            value: openebs-cstor-sparse
 
           - name: APP_PVC
             value: demo-vol-claim
 
+          - name: APP_NAMESPACE
+            value: nuodbns
+
             # Application label
           - name: APP_LABEL
             value: 'app=nuodb'
-
-            # Application namespace
-          - name: APP_NAMESPACE
-            value: app-nuodb-ns
 
             # Use 'deprovision' for app-clean up
           - name: ACTION

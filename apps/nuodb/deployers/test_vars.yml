@@ -6,6 +6,7 @@ nuodb_spec:
   - nuodb-te.yaml
 nuodb_labels:
   - admin
+  - sm
   - nuodb
 app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
 operator_ns: 'openebs'
