@@ -27,8 +27,7 @@
 
         - name: Derive the cstor target using pv.
           shell: >
-            kubectl get pods -n {{ ns }} -l openebs.io/persistent-volume={{ pv.stdout }}
-            -l openebs.io/target=cstor-target -o custom-columns=:metadata.name --no-headers
+            kubectl get pods -n {{ ns }} -l openebs.io/persistent-volume={{ pv.stdout }} -o custom-columns=:metadata.name --no-headers
           args:
             executable: /bin/bash
           register: cstor_target

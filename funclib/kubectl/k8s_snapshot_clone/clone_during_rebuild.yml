@@ -1,0 +1,29 @@
+---
+
+          ## Removing the packet drop rule by including the relevant util..
+        - include_tasks: "/chaoslib/openebs/inject_packet_loss_tc.yml"
+          vars:
+            status: "remove"
+            target_pod: "{{ tgt_rep_pod }}"
+            operator_namespace: "{{ target_ns }}"
+
+        - name: Form the snap name being rebuilt.
+          set_fact:
+            name: "{{ pv.stdout }}@rebuild_snap"
+
+        - name: Check if the snapshot is being rebuilt.
+          shell: kubectl exec -it {{ tgt_rep_pod }} -n {{ target_ns }} --container cstor-pool -- zfs list -t snapshot
+          args:
+            executable: /bin/bash
+          register: list_snap
+          until: "name in list_snap.stdout"
+          delay: 30
+          retries: 20
+
+        - debug:
+            msg: "Snapshot is being rebuilt"
+
+        - name: Creating clone using snapshot before rebuild happens.
+          include_tasks: /funclib/kubectl/k8s_snapshot_clone/create_clone.yml
+          vars:
+            app_ns: "{{ app_name }}"
