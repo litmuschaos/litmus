@@ -42,6 +42,9 @@ spec:
           - name: DATA_PERSISTENCY
             value: ""  
 
+          - name: LIVENESS_APP_LABEL
+            value: ""  
+
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./percona/chaos/openebs_replica_network_delay/test.yml -i /etc/ansible/hosts -vv; exit 0"]
         volumeMounts:
