@@ -108,57 +108,61 @@
       delay: 30
       retries: 15
 
-    - block:
+    - block:  
+                
+        - block:
+             
+            - name: Check if the ctrl-pod is deleted.
+              shell: >
+                 kubectl get pods -n {{ app_ns }}
+                 -l openebs.io/controller=jiva-controller --no-headers 
+              args:
+                executable: /bin/bash
+              register: ctrl_status     
+              until: "'No resources found' in ctrl_status.stderr"
+              delay: 5
+              retries: 15
+                
+            - name: Check if the  replica-pod is deleted.
+              shell: kubectl get pods -n {{ app_ns }} -l openebs.io/replica=jiva-replica
+              args:
+                executable: /bin/bash
+              register: rep_status
+              until: "'No resources found' in rep_status.stderr"
+              delay: 5
+              retries: 15    
 
-        - name: Check if the ctrl-pod is deleted.
-          shell: >
-             kubectl get pods -n {{ app_ns }}
-             -l openebs.io/controller=jiva-controller --no-headers 
-          args:
-            executable: /bin/bash
-          register: ctrl_status     
-          until: "'No resources found' in ctrl_status.stderr"
-          delay: 5
-          retries: 15
-            
-        - name: Check if the  replica-pod is deleted.
-          shell: kubectl get pods -n {{ app_ns }} -l openebs.io/replica=jiva-replica
-          args:
-            executable: /bin/bash
-          register: rep_status
-          until: "'No resources found' in rep_status.stderr"
-          delay: 5
-          retries: 15    
+          when: stg_engine == 'jiva'
 
-      when: stg_engine == 'jiva'
+        - block:
 
-    - block:
+            - name: Check if the target pod is deleted.
+              shell: >
+                  kubectl get pods -l openebs.io/target=cstor-target  -n {{ operator_ns }} --no-headers
+              args:
+                executable: /bin/bash     
+              register: target_status
+              until: " item.stdout  not  in target_status.stdout"
+              delay: 5
+              retries: 10
+              with_items:
+                - "{{ pv_list.results }}"      
 
-        - name: Check if the target pod is deleted.
-          shell: >
-              kubectl get pods -l openebs.io/target=cstor-target  -n {{ operator_ns }} --no-headers
-          args:
-            executable: /bin/bash     
-          register: target_status
-          until: " item.stdout  not  in target_status.stdout"
-          delay: 5
-          retries: 10
-          with_items:
-            - "{{ pv_list.results }}"      
+            - name: Check status of the pool deployments from cvr
+              shell: >
+                  kubectl get cvr -n {{ operator_ns }} --no-headers
+              args:
+                executable:  /bin/bash
+              register: cvr_status
+              until: " item.stdout not  in cvr_status.stdout"
+              delay: 5
+              retries: 10
+              with_items: 
+                - "{{ pv_list.results }}"    
 
-        - name: Check status of the pool deployments from cvr
-          shell: >
-              kubectl get cvr -n {{ operator_ns }} --no-headers
-          args:
-            executable:  /bin/bash
-          register: cvr_status
-          until: " item.stdout not  in cvr_status.stdout"
-          delay: 5
-          retries: 10
-          with_items: 
-            - "{{ pv_list.results }}"    
+          when: stg_engine == 'cstor'
 
-      when: stg_engine == 'cstor'
+      when: storage_class is defined
 
 - name: Delete the namespace.
   shell: kubectl delete ns {{ app_ns }}
