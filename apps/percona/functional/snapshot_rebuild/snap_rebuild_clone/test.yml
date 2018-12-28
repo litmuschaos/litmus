@@ -12,11 +12,11 @@
 #7) Create snapshot using corresponding funclib utility.                               #
 #8) Verify snapshot creation                                                           #
 #9) Perform the clone  scenarios using corresponding utility                           #
-#      I) clone snapshot after succesful rebuild.                                      #
+#      I) clone snapshot after successful rebuild.                                     #
 #      II) clone snapshot before rebuild begins.                                       #
 #      III) clone snapshot while rebuild is in progress.                               #
-#10) Ensure if the clone is created successfully.
-#11) Verify the snapshot rebuild is successfull.
+#10) Ensure if the clone is created successfully.                                      #
+#11) Verify the snapshot rebuild is successful.                                        #
 #12) Verify if the storage replicas are synchronised.                                  #
 #13) Create new application pod using the cloned volume.                               #
 #14) Verify the data in the new volume and compare it with the original one.           #

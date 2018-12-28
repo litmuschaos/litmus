@@ -16,7 +16,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: mockbot/ansibletest:ci
+        image: openebs/ansible-runner:ci
         imagePullPolicy: Always
 
         env:
@@ -55,7 +55,7 @@ spec:
             # clone action 
           - name: CLONE_ACTION
             # Supported values: post-rebuild,pre-rebuild,during-rebuild
-            value: "during-rebuild"
+            value: "post-rebuild"
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./percona/functional/snapshot_rebuild/snap_rebuild_clone/test.yml -i /etc/ansible/hosts -vv; exit 0"]
