@@ -22,17 +22,9 @@
          delay: 20
          retries: 15
 
-       - name: Obtaining the application pod name using its label.
-         shell: >
-           kubectl get pods -n {{ app_ns }} -l {{ application_label }} | grep
-           -w Running | awk '{print $1}' | head -1
-         args:
-           executable: /bin/bash
-         register: app_pod
-
        - name: Identify the application node
          shell: >
-           kubectl get pod {{ app_pod.stdout }} -n {{ app_ns }}
+           kubectl get pod {{ app_pod }} -n {{ app_ns }}
            --no-headers -o custom-columns=:spec.nodeName
          args:
             executable: /bin/bash
@@ -50,7 +42,6 @@
          args:
            executable: /bin/bash
          register: chaos_pod
-
 
        - block:
 

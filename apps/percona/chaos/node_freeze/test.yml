@@ -73,9 +73,10 @@
         - include_tasks: /chaoslib/chaoskube/node_freeze_chaos.yml
           vars:
             action: "node-chaos"
+            app_pod: "{{app_pod_name.stdout}}"
             application_label: "{{app_label}}"
             docker_image: "{{ freeze_image }}"
-            nodeaction: "cpu-freeze"
+            nodeaction: "{{ node_freeze_action }}"
             platform: "{{ test_bed }}"
             app_ns: "{{ namespace }}"
 
