@@ -1,0 +1,295 @@
+# TODO
+# Change pod status checks to container status checks (containerStatuses)
+# O/P result
+
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+   - block:
+
+       - block:
+
+            - name: Record test instance/run ID
+              set_fact:
+                run_id: "{{ lookup('env','RUN_ID') }}"
+
+            - name: Construct testname appended with runID
+              set_fact:
+                test_name: "{{ test_name }}-{{ run_id }}"
+
+         when: lookup('env','RUN_ID')
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+       - include_tasks: /common/utils/update_litmus_result_resource.yml
+         vars:
+           status: 'SOT'
+
+       ## VERIFY AVAILABILITY OF SELECTED STORAGE CLASS
+
+       - name: Check whether the provider storageclass is applied
+         shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
+         args:
+           executable: /bin/bash
+         register: result
+
+       - name: Replace the storageclass placeholder with provider
+         replace:
+           path: "{{ fio_write_yml }}"
+           regexp: "testclass"
+           replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+
+       - name: Create test specific namespace.
+         shell: kubectl create ns {{ app_ns }}
+         args:
+           executable: /bin/bash
+         when: app_ns != 'litmus'
+
+       - name: Checking the status  of test specific namespace.
+         shell: kubectl get ns {{ app_ns }} -o jsonpath='{.status.phase}'
+         args:
+           executable: /bin/bash
+         register: npstatus
+         until: "'Active' in npstatus.stdout"
+         delay: 30
+         retries: 10
+
+       - name: Get the no.of pods present
+         shell: kubectl get po -n {{ operator_ns }} -l {{ pool_label }} --no-headers | wc -l
+         register: total_pool_pods
+
+       - name: Fetch running Pool names
+         shell:  kubectl get po -l {{ pool_label }} -n {{ operator_ns }} -o jsonpath='{.items[?(@.status.phase=="Running")].metadata.name}'
+         args:
+           executable: /bin/bash
+         register: pool_names
+
+       - name: Cross check no.of pools pods are in running state
+         shell:  echo "{{ pool_names.stdout }}" | wc -w
+         args:
+           executable: /bin/bash
+         register: no_of_pools
+         failed_when: "{{ no_of_pools.stdout }} != {{ total_pool_pods.stdout }}"
+
+       - set_fact:
+           single_pool: "{{ pool_names.stdout.split(\"\ \")[0] }}"
+
+       - name: Fetch the pool Capacity
+         shell: kubectl exec {{ single_pool }} -n {{ operator_ns }} -c cstor-pool zpool list | awk 'FNR==2 {print $2}'
+         args:
+           executable: /bin/bash
+         register: pool_capacity
+
+       - name: Fetch the alphabet(G,M,m,g) from storage capacity
+         shell: echo "{{ pool_capacity.stdout }}" | grep -o -E '[A-Za-z]+'
+         args:
+           executable: /bin/bash
+         register: symbol
+
+       - name: Fetch the size from storage capacity
+         shell: echo "{{ pool_capacity.stdout }}" | grep -o -E '[0-9]+.[0-9]+'
+         args:
+           executable: /bin/bash
+         register: value_str
+
+       - set_fact:
+           value_num: '{{ value_str.stdout | float - 0.05}}'
+
+       - name: Increase the volume capacity in {{ pvc_yml }} to 98% of pool size
+         replace:
+           dest: "{{ pvc_yml }}"
+           regexp: "5G"
+           replace: "{{ value_num }}{{ symbol.stdout }}"
+
+       - name: Display
+         shell: "cat {{ pvc_yml }}"
+
+       - name: Deploy PVC to get size of volume requested application namespace
+         shell: kubectl apply -f {{ pvc_yml }} -n {{ app_ns }}
+         args:
+           executable: /bin/bash
+
+       - include_tasks: /common/utils/disable_compression_on_pools.yml
+         when: compression == 'off'
+
+       - set_fact:
+           value_num: '{{ ( (value_str.stdout | float - 0.2) * 0.94 * 1024) |  int }}'
+         when: "'G' in symbol.stdout"
+
+       - set_fact:
+           value_num: '{{ ((value_str.stdout | float - 0.2) * 0.94 * 1024 * 1024) | int }}'
+         when: "'T' in symbol.stdout"
+
+       - debug:
+           msg: "{{ value_num }}"
+
+       - name: Replace the data sample size with 90% of pvc size in {{ fio_write_yml }}
+         replace:
+           path: "{{ fio_write_yml }}"
+           regexp: "256m"
+           replace: "{{ value_num }}m"
+         when: "'G' in symbol.stdout or 'T' in symbol.stdout"
+
+       - name: Replace the data sample size with 90% 0f pvc size in {{ fio_read_yml }}
+         replace:
+           path: "{{ fio_read_yml }}"
+           regexp: "256m"
+           replace: "{{ value_num }}m"
+         when: "'G' in symbol.stdout or 'T' in symbol.stdout"
+
+       - name: Replace the default I/O test duration with user-defined period
+         replace:
+           path: "{{ fio_write_yml }}"
+           regexp: "60"
+           replace: "{{ lookup('env','FIO_TESTRUN_PERIOD') }}"
+
+       ## RUN FIO WORKLOAD TEST
+
+       - name: Deploy fio write test job
+         shell: kubectl apply -f {{ fio_write_yml }} -n {{ app_ns }}
+         args:
+           executable: /bin/bash
+
+       - name: Fetch the pod name in {{ app_ns }}
+         shell: >
+           kubectl get pods -n {{ app_ns }} -l name=fio-write -o custom-columns=:metadata.name --no-headers
+         args:
+           executable: /bin/bash
+         register: fio_pod_name
+
+       - name: Check the status of pod
+         shell: kubectl get po {{ fio_pod_name.stdout }} -n {{ app_ns }} -o jsonpath={.status.phase}
+         args:
+           executable: /bin/bash
+         register: status_fio_pod
+         until: "'Running' in status_fio_pod.stdout"
+         delay: 5
+         retries: 100
+
+       - name: Fetch the remaining space from application side
+         shell: kubectl exec {{ fio_pod_name.stdout }} -n {{ app_ns }} df /datadir | awk 'NR==2 {print $4}'
+         args:
+           executable: /bin/bash
+         register: space_left
+
+        ## Convert GB into Mb
+       - set_fact:
+           space_left_mb: '{{ (space_left.stdout| int / 20480) | round | int }}'
+
+       - set_fact:
+           fill_value: '{{ space_left_mb | int - 5 }}'
+         when: space_left_mb > 10
+
+       - name: Replace the space_left in commands.sh file with calculated value
+         replace:
+           path: "commands.sh"
+           regexp: "space_left"
+           replace: "{{ fill_value }}"
+         when: fill_value is defined
+
+       - name: Replace the space_left in commands.sh file with calculated value
+         replace:
+           path: "commands.sh"
+           regexp: "space_left"
+           replace: "{{ space_left_mb }}"
+         when: fill_value is not defined
+
+       - name: Check if fio write job is completed
+         shell: >
+           kubectl get pods -n {{ app_ns }} -o jsonpath='{.items[?(@.metadata.labels.name=="fio-write")].status.containerStatuses[*].state.terminated.reason}'
+         args:
+           executable: /bin/bash
+         register: result_fio_pod
+         until: "'Completed' in result_fio_pod.stdout"
+         delay: 60
+         retries: 900
+
+       - name: Verify the fio logs to check if run is complete w/o errors
+         shell: >
+           kubectl logs {{ fio_pod_name.stdout }} -n {{ app_ns }}
+           | grep -i error | cut -d ":" -f 2
+           | sort | uniq
+         args:
+           executable: /bin/bash
+         register: result
+         failed_when: result.stdout != " 0,"
+
+       - name: Replace the default I/O test duration with user-defined period
+         replace:
+           path: "{{ fio_read_yml }}"
+           regexp: "60"
+           replace: "{{ lookup('env','FIO_TESTRUN_PERIOD') }}"
+
+       - name: Checking for configmap
+         shell: kubectl get configmap -n {{ app_ns }}
+         register: configmap
+
+       - name: Create the configmap
+         shell: kubectl create cm commandfile --from-file=commands.sh -n {{ app_ns }}
+         args:
+           executable: /bin/bash
+         when: "'commandfile' not in configmap.stdout"
+
+       - name: Verify Successfull creation of configmap
+         shell: kubectl describe cm commandfile -n {{ app_ns }}
+         register: config
+         until: "'commandfile' in config.stdout"
+         delay: 5
+         retries: 20
+
+       - name: Deploy fio read test job
+         shell: kubectl apply -f {{ fio_read_yml }} -n {{ app_ns }}
+         args:
+           executable: /bin/bash
+
+       - name: Obtaining the fio read job pod name
+         shell: >
+           kubectl get pods -n {{ app_ns }} -l name=fio-read -o custom-columns=:metadata.name --no-headers
+         args:
+           executable: /bin/bash
+         register: read_pod
+
+       - name: Check if fio read job is completed
+         shell: >
+           kubectl get pods -n {{ app_ns }} -o jsonpath='{.items[?(@.metadata.labels.name=="fio-read")].status.containerStatuses[*].state.terminated.reason}'
+         args:
+           executable: /bin/bash
+         register: result_read_job
+         until: "'Completed' in result_read_job.stdout"
+         delay: 60
+         retries: 100
+
+       - name: Verify the data integrity check
+         shell: >
+           kubectl logs {{ read_pod.stdout }} -n {{ app_ns }}
+           | grep -i error | cut -d ":" -f 2
+           | sort | uniq
+         args:
+           executable: /bin/bash
+         register: result_di
+         failed_when: result_di.stdout != " 0,"
+#         ignore-errors: true
+
+       - name: Check for error while writing
+         shell: >
+           kubectl get logs {{ read_pod.stdout }} -n {{ app_ns }} | grep 'error caught' | wc -l
+         register: final_result
+         failed_when: final_result.stdout > 0
+
+       - set_fact:
+           flag: "Pass"
+
+     rescue:
+       - set_fact:
+           flag: "Fail"
+
+     always:
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
+
+        ####Container status check is in WIP #######
