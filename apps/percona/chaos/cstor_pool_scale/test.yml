@@ -1,0 +1,179 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+
+        - block:
+
+            - include_tasks: /common/utils/create_testname.yml           
+
+          when: lookup('env','RUN_ID')
+
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'SOT'
+            chaostype: "{{ test_name }}"
+
+        ## DISPLAY APP INFORMATION 
+ 
+        - name: Display the app information passed via the test job
+          debug: 
+            msg: 
+              - "The application info is as follows:"
+              - "Namespace    : {{ namespace }}"
+              - "Label        : {{ label }}"
+              - "PVC          : {{ pvc }}"  
+
+        ## PRE-CHAOS APPLICATION LIVENESS CHECK
+
+        - name: Verify that the AUT (Application Under Test) is running 
+          shell: >
+            kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
+            -o custom-columns=:status.phase
+          args:
+            executable: /bin/bash
+          register: app_status
+          until: "((app_status.stdout_lines|unique)|length) == 1 and 'Running' in app_status.stdout"
+          delay: 10
+          retries: 12
+
+        - name: Get application pod name 
+          shell: >
+            kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
+            -o=custom-columns=NAME:".metadata.name"
+          args:
+            executable: /bin/bash
+          register: app_pod_name  
+
+        - name: Getting the number of cstor-pool pods
+          shell: kubectl get pods -n {{ operator_ns }} -l app=cstor-pool --no-headers | wc -l
+          register: pool_count
+          failed_when: pool_count.stdout|int < 3  
+
+        - name: Getting the volume name
+          shell: kubectl get pvc -n {{ namespace }} -o jsonpath='{.items[0].spec.volumeName}'
+          register: vol_name  
+
+        - name: Get CVR status list from pv
+          shell: >
+            kubectl get cvr -n {{ operator_ns }}
+            -l openebs.io/persistent-volume={{ vol_name.stdout }} --no-headers
+            -o jsonpath='{range .items[*]}{.status.phase}{"\n"}{end}'
+          args:
+            executable: /bin/bash
+          register: cvr_status_phase
+
+        - name: Check status of cvr
+          command: echo "{{ item }}"
+          failed_when: "item != \"Offline\" and item != \"Degraded\" and item != \"Rebuilding\" and item != \"Healthy\""
+          with_items:
+            - "{{ cvr_status_phase.stdout_lines }}"
+  
+        - name: Getting the pool deployment name
+          shell: kubectl get deployment -l app=cstor-pool -n {{ operator_ns }} --no-headers -o jsonpath='{.items[0].metadata.name}'
+          register: deployment_name
+
+        - name: Getting the cvr for the deployment
+          shell: kubectl get cvr -l cstorpool.openebs.io/name={{ deployment_name.stdout }} -n {{ operator_ns }} -o jsonpath='{.items[0].metadata.name}'
+          register: cvr_name1  
+
+        - name: Scaling-down cstor-pool
+          shell: kubectl patch deployment {{ deployment_name.stdout }} -n {{ operator_ns }} --type=json -p='[{"op":"add", "path":"/spec/replicas", "value":"0"}]'
+          register: result1
+          failed_when: "'patched' not in result1.stdout"
+
+        - name: Checking for pool scale-down
+          shell: kubectl get pods -n {{ operator_ns }} -l app=cstor-pool --no-headers | wc -l
+          register: downscale_value
+          until: "(downscale_value.stdout|int) == ((pool_count.stdout|int)-1)"
+          retries: 5
+          delay: 15   
+
+        - name: Generate unique string for use in dbname
+          shell: echo $(mktemp) | cut -d '.' -f 2
+          args:
+            executable: /bin/bash
+          register: uniqstr  
+
+        - name: Create some test data in the mysql database
+          include_tasks: "/common/utils/mysql_data_persistence.yml"
+          vars:
+            status: 'LOAD'
+            ns: "{{ namespace }}"
+            pod_name: "{{ app_pod_name.stdout }}"
+            dbuser: 'root'
+            dbpassword: 'k8sDem0'
+            dbname: "tdb{{ uniqstr.stdout }}"
+     
+        - name: Getting the cvr name of running pool
+          shell: kubectl get cvr -n {{ operator_ns }} -o jsonpath='{.items[?(@.metadata.labels.cstorpool\.openebs\.io/name!="{{ deployment_name.stdout }}")].metadata.name}' | awk '{print $1}'
+          register: cvr_name2   
+
+        - name: Scaling-up cstor-pool
+          shell: kubectl patch deployment {{ deployment_name.stdout }} -n {{ operator_ns }} --type=json -p='[{"op":"add", "path":"/spec/replicas", "value":"1"}]'
+          register: result2
+          failed_when: "'patched' not in result2.stdout"
+
+        - name: Checking for pool scale-up
+          shell: kubectl get pods -n {{ operator_ns }} -l app=cstor-pool -o jsonpath='{.items[0].status.phase}'
+          register: upscale_value
+          until: "upscale_value.stdout =='Running'"
+          retries: 5
+          delay: 15
+
+        - name: Getting the cvr status
+          shell: kubectl get cvr {{ cvr_name1.stdout }} -n {{ operator_ns }} -o jsonpath='{.status.phase}'
+          register: cvr_status
+        
+        - block:
+
+            - name: Wait for volumes to be Rebuilding state
+              shell: kubectl get cvr {{ cvr_name1.stdout }} -n {{ operator_ns }} -o jsonpath='{.status.phase}'
+              register: volume_status
+              until: "volume_status.stdout =='Rebuilding'"
+              retries: 10
+              delay: 20
+
+          when: "cvr_status.stdout != 'Healthy'"  
+
+        - name: Recording the total allocated space in cvr
+          shell: kubectl get cvr {{ cvr_name2.stdout }} -n {{ operator_ns }} -o jsonpath='{.status.capacity.totalAllocated}' 
+          register: space1
+
+        - name: Compareing the allocated space
+          shell: kubectl get cvr {{ cvr_name1.stdout }} -n {{ operator_ns }} -o jsonpath='{.status.capacity.totalAllocated}'
+          register: space2
+          failed_when: "space1.stdout|int != space2.stdout|int"              
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue: 
+        - set_fact: 
+            flag: "Fail"
+
+      always: 
+
+        ## RECORD END-OF-TEST IN LITMUS RESULT CR
+ 
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
+            chaostype: "{{ test_name }}"
+
+        - name: Deleting test specific data from mysql database
+          include_tasks: "/common/utils/mysql_data_persistence.yml"
+          vars:
+            status: 'DELETE'
+            ns: "{{ namespace }}"
+            pod_name: "{{ app_pod_name.stdout }}"
+            dbuser: 'root'
+            dbpassword: 'k8sDem0'
+            dbname: 'tdb{{ uniqstr.stdout }}'    
