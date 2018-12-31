@@ -8,87 +8,161 @@
 #         - app_label    ( application label)
 #
 
-- name: Check if the statefulset application exists.
-  shell: kubectl get pods -n {{ app_ns }} -l {{ app_label }}
-  register: pods
-  failed_when: "'No resources found' in pods.stdout"
-
-- name: Obtaining PVCs related to the application.
-  shell: kubectl get pvc -n {{ app_ns }} -l {{ app_label }}  --no-headers -o custom-columns=:.metadata.name
-  register: pvc_list
-
-- name: Obtaining the PV names.
-  shell: kubectl get pvc {{ item }} -n {{ app_ns }} --no-headers -o custom-columns=:.spec.volumeName
-  register: pv_list
-  with_items:
-    - "{{ pvc_list.stdout_lines }}"
-
-## Replacing the item names in the respective deployer spec file.
-
-- name: Replace the PVC name in application deployer spec.
-  replace:
-    path: "{{ app_deployer }}"
-    regexp: "testclaim"
-    replace: "{{ lookup('env','APP_PVC') }}"
-  when: app_pvc is defined
-
-- name: Replace the storageclass placeholder with provider
-  replace:
-    path: "{{ app_deployer }}"
-    regexp: "testclass"
-    replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
-  when: storage_class is defined
-
 - block:
 
-    - name: Get the application replica values from env
-      set_fact:
-        app_rkey: "{{ app_replica.split('=')[0] }}"
-        app_rvalue: "{{ app_replica.split('=')[1] }}"
+    - name: Check if the statefulset application exists.
+      shell: kubectl get pods -n {{ app_ns }} -l {{ app_label }}
+      register: pods
+      failed_when: "'No resources found' in pods.stdout"
 
-    - name: Replace the application label placeholder
+    - name: Obtaining PVCs related to the application.
+      shell: kubectl get pvc -n {{ app_ns }} -l {{ app_label }}  --no-headers -o custom-columns=:.metadata.name
+      register: pvc_list
+
+    - name: Obtaining the PV names.
+      shell: kubectl get pvc {{ item }} -n {{ app_ns }} --no-headers -o custom-columns=:.spec.volumeName
+      register: pv_list
+      with_items:
+        - "{{ pvc_list.stdout_lines }}"
+
+    - name: Check for presence & value of cas type annotation
+      shell: >
+        kubectl get pv {{ item.stdout }} --no-headers
+        -o jsonpath="{.metadata.annotations.openebs\\.io/cas-type}"
+      args:
+        executable: /bin/bash
+      register: openebs_stg_engine
+      with_items:
+        - "{{ pv_list.results }}"
+
+    - name: Record the storage engine name
+      set_fact:
+        stg_engine: "{{ item.stdout_lines[0] }}"
+      with_items:
+        - "{{ openebs_stg_engine.results }}"
+
+    ## Replacing the item names in the respective deployer spec file.
+
+    - name: Replace the PVC name in application deployer spec.
       replace:
         path: "{{ app_deployer }}"
-        regexp: "rkey: rvalue"
-        replace: "{{ app_rkey }}: {{ app_rvalue }}"
+        regexp: "testclaim"
+        replace: "{{ lookup('env','APP_PVC') }}"
+      when: app_pvc is defined
 
-  when: app_replica is defined
-
-- block:
-
-    - name: Get the application label values from env
-      set_fact:
-        app_lkey: "{{ app_label.split('=')[0] }}"
-        app_lvalue: "{{ app_label.split('=')[1] }}"
-
-    - name: Replace the application label placeholder
+    - name: Replace the storageclass placeholder with provider
       replace:
         path: "{{ app_deployer }}"
-        regexp: "lkey: lvalue"
-        replace: "{{ app_lkey }}: {{ app_lvalue }}"
+        regexp: "testclass"
+        replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+      when: storage_class is defined
 
-  when: app_label is defined
+    - block:
 
-- name: Delete the application and its related service.
-  shell: kubectl delete -f {{ app_deployer }} -n {{ app_ns }}
-  register: app_status
-  until: 'app_status.rc == 0'
-  delay: 30
-  retries: 10
+        - name: Get the application replica values from env
+          set_fact:
+            app_rkey: "{{ app_replica.split('=')[0] }}"
+            app_rvalue: "{{ app_replica.split('=')[1] }}"
 
-- name: Deleting the PVC
-  shell: kubectl delete pvc {{ item }} -n {{ app_ns }}
-  args:
-    executable: /bin/bash
-  with_items:
-    - "{{ pvc_list.stdout_lines }}"
+        - name: Replace the application label placeholder
+          replace:
+            path: "{{ app_deployer }}"
+            regexp: "rkey: rvalue"
+            replace: "{{ app_rkey }}: {{ app_rvalue }}"
 
-- name: Check if the PVCs are deleted
-  shell: kubectl get pvc -n {{ app_ns }}
-  register: list_pvc
-  until: "'No resources found' in list_pvc.stderr"
-  delay: 30
-  retries: 15
+      when: app_replica is defined
+
+    - block:
+
+        - name: Get the application label values from env
+          set_fact:
+            app_lkey: "{{ app_label.split('=')[0] }}"
+            app_lvalue: "{{ app_label.split('=')[1] }}"
+
+        - name: Replace the application label placeholder
+          replace:
+            path: "{{ app_deployer }}"
+            regexp: "lkey: lvalue"
+            replace: "{{ app_lkey }}: {{ app_lvalue }}"
+
+      when: app_label is defined
+
+    - name: Delete the application and its related service.
+      shell: kubectl delete -f {{ app_deployer }} -n {{ app_ns }}
+      register: app_status
+      until: 'app_status.rc == 0'
+      delay: 30
+      retries: 10
+
+    - name: Deleting the PVC
+      shell: kubectl delete pvc {{ item }} -n {{ app_ns }}
+      args:
+        executable: /bin/bash
+      with_items:
+        - "{{ pvc_list.stdout_lines }}"
+
+    - name: Check if the PVCs are deleted
+      shell: kubectl get pvc -n {{ app_ns }}
+      register: list_pvc
+      until: "'No resources found' in list_pvc.stderr"
+      delay: 30
+      retries: 15
+
+    - block:  
+                
+        - block:
+             
+            - name: Check if the ctrl-pod is deleted.
+              shell: >
+                 kubectl get pods -n {{ app_ns }}
+                 -l openebs.io/controller=jiva-controller --no-headers 
+              args:
+                executable: /bin/bash
+              register: ctrl_status     
+              until: "'No resources found' in ctrl_status.stderr"
+              delay: 5
+              retries: 15
+                
+            - name: Check if the  replica-pod is deleted.
+              shell: kubectl get pods -n {{ app_ns }} -l openebs.io/replica=jiva-replica
+              args:
+                executable: /bin/bash
+              register: rep_status
+              until: "'No resources found' in rep_status.stderr"
+              delay: 5
+              retries: 15    
+
+          when: stg_engine == 'jiva'
+
+        - block:
+
+            - name: Check if the target pod is deleted.
+              shell: >
+                  kubectl get pods -l openebs.io/target=cstor-target  -n {{ operator_ns }} --no-headers
+              args:
+                executable: /bin/bash     
+              register: target_status
+              until: " item.stdout  not  in target_status.stdout"
+              delay: 5
+              retries: 10
+              with_items:
+                - "{{ pv_list.results }}"      
+
+            - name: Check status of the pool deployments from cvr
+              shell: >
+                  kubectl get cvr -n {{ operator_ns }} --no-headers
+              args:
+                executable:  /bin/bash
+              register: cvr_status
+              until: " item.stdout not  in cvr_status.stdout"
+              delay: 5
+              retries: 10
+              with_items: 
+                - "{{ pv_list.results }}"    
+
+          when: stg_engine == 'cstor'
+
+      when: storage_class is defined
 
 - name: Delete the namespace.
   shell: kubectl delete ns {{ app_ns }}
