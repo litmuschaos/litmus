@@ -7,7 +7,7 @@ nuodb_spec:
 nuodb_labels:
   - admin
   - sm
-  - nuodb
+  - te
 app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
 operator_ns: 'openebs'
 app_label: "{{ lookup('env','APP_LABEL') }}"
