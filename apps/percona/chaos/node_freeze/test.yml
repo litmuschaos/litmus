@@ -22,13 +22,14 @@
           vars:
             status: 'SOT'
             chaostype: "{{test_name}}"
-            app: "percona"
-       
-        # DISPLAY APP INFORMATION 
- 
+            app: "percona" 
+            
+
+        # DISPLAY APP INFORMATION
+
         - name: Display the app information passed via the test job
-          debug: 
-            msg: 
+          debug:
+            msg:
               - "The application info is as follows:"
               - "Namespace    : {{ namespace }}"
               - "Label        : {{ app_label }}"
@@ -49,7 +50,6 @@
           args:
             executable: /bin/bash
           register: app_pod_name
-     
 
         - name: Generate unique string for use in dbname
           shell: echo $(mktemp) | cut -d '.' -f 2
@@ -68,12 +68,22 @@
             dbname: "tdb{{ uniqstr.stdout }}"
           when: data_persistance != ''
 
-        ## STORAGE FAULT INJECTION 
+        ## STORAGE FAULT INJECTION
 
         - include_tasks: /chaoslib/chaoskube/node_freeze_chaos.yml
           vars:
-            nodeaction: "memory-freeze"      
+            action: "node-chaos"
+            app_pod: "{{app_pod_name.stdout}}"
+            application_label: "{{app_label}}"
+            docker_image: "{{ freeze_image }}"
+            nodeaction: "{{ node_freeze_action }}"
+            platform: "{{ test_bed }}"
             app_ns: "{{ namespace }}"
+
+        - name: Display application details from above utils.
+          debug:
+            msg:
+              - "APPLICATION_NODE_NAME    : {{ app_node }}"
 
         - name: wait for app pod to reschedule
           shell: >
@@ -81,26 +91,26 @@
           args:
             executable: /bin/bash
 
-        - name: Verify AUT liveness post fault-injection
+        - name: Verify that the AUT (Application Under Test) is running after post chaos.
           include_tasks: "/common/utils/status_app_pod.yml"
           vars:
             app_ns: "{{namespace}}"
-            app_lkey: "{{ label.split('=')[0] }}"
-            app_lvalue: "{{ label.split('=')[1] }}"
+            app_lkey: "{{ app_label.split('=')[0] }}"
+            app_lvalue: "{{ app_label.split('=')[1] }}"
             delay: 5
-            retries: 60  
+            retries: 60
 
         - include_tasks: /common/utils/application_liveness_check.yml
           when: liveness_label != ''
 
         - name: Get application pod name
           shell: >
-            kubectl get pods -n {{ app_ns }} -l {{ app_label }} --no-headers
+            kubectl get pods -n {{ namespace }} -l {{ app_label }} --no-headers
             -o=custom-columns=NAME:".metadata.name"
           args:
             executable: /bin/bash
           register: rescheduled_app_pod
-  
+
         - name: Verify mysql data persistence
           include_tasks: "/common/utils/mysql_data_persistence.yml"
           vars:
@@ -115,8 +125,8 @@
         - set_fact:
             flag: "Pass"
 
-      rescue: 
-        - set_fact: 
+      rescue:
+        - set_fact:
             flag: "Fail"
 
       always:
@@ -148,9 +158,14 @@
               register: node_status
               until: "'Ready' in node_status.stdout"
               delay: 5
-              retries: 60 
-             
-          when: lookup('env', 'PLATFORM') == 'AWS'     
+              retries: 60
+
+            - include_tasks: /chaoslib/chaoskube/node_freeze_chaos.yml
+              vars:
+                action: "node_chaos_delete"
+                app_ns: "{{ namespace }}"
+
+          when: lookup('env', 'PLATFORM') == 'AWS'
 
         # RECORD END-OF-TEST IN LITMUS RESULT CR
         - include_tasks: "/common/utils/update_litmus_result_resource.yml"
