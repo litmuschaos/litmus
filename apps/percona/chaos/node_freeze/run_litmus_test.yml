@@ -30,17 +30,21 @@ spec:
             value: app-percona-ns
 
             # freeze_image has two values : memory consumption and CPU consumption.
-          - name: freeze_image
+          - name: FREEZE_IMAGE
             value: openebs/tests-memleak:latest
+
+            # node_freeze_action has two values: memory-freeze and cpu-freeze.
+          - name: NODE_FREEZE_ACTION
+            value: "memory-freeze"  
 
           - name: APP_LABEL
             value: 'name=percona'
 
           - name: LIVENESS_APP_LABEL
-            value: ""
+            value: "liveness=percona-liveness"
 
           - name: LIVENESS_APP_NAMESPACE
-            value: ""
+            value: "litmus"
 
           - name: PLATFORM
             value: "AWS"

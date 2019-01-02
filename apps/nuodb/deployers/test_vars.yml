@@ -1,10 +1,18 @@
-application_deployment: cassandra_statefulset.yml
+# Test-specific parametres
+
+nuodb_spec:
+  - nuodb.yaml
+  - nuodb-sm.yaml
+  - nuodb-te.yaml
+nuodb_labels:
+  - admin
+  - sm
+  - te
 app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+operator_ns: 'openebs'
 app_label: "{{ lookup('env','APP_LABEL') }}"
-test_name: cassandra-deployment
-app_replica: "{{ lookup('env','APP_REPLICA') }}"
-application_name: "Cassandra statefulset"
+test_name: nuodb-deployment
+application_name: "nuodb"
 action: "{{ lookup('env','ACTION') }}"
 app_pvc: "{{ lookup('env','APP_PVC') }}"
 storage_class: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
-operator_ns: openebs

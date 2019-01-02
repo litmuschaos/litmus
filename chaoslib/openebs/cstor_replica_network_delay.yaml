@@ -62,9 +62,16 @@
 - set_fact:
     targeted_replica_pod: "{{ cstor_replicas_pod | list | first }}"
 
+- name: Checking whether tc is already installed
+  shell: kubectl exec -it {{ targeted_replica_pod }} -n {{ operator_ns }} --container cstor-pool 
+    -- bash -c "which tc"
+  register: tc_status    
+  ignore_errors: yes
+
 - name: Install tc command on targeted replica pod
   shell: kubectl exec -it {{ targeted_replica_pod }} -n {{ operator_ns }} --container cstor-pool -- bash -c "apt-get update && apt-get -y install iproute2"
   register: tc_apt_output
+  when: "'tc' not in tc_status.stdout"
 
 - name: Inject packet loss on targeted replica
   shell: kubectl exec -it {{ targeted_replica_pod }} -n {{ operator_ns }} --container cstor-pool -- bash -c "tc qdisc add dev eth0 root netem loss 100.00"
@@ -115,8 +122,15 @@
   delay: 30
   retries: 10
 
-- name: Wait until all replica becomes healthy
+- name: Wait until volume becomes healthy
   shell: kubectl exec -it {{ istgt_replica.stdout }} -n {{ operator_ns }} --container  cstor-istgt -- istgtcontrol -q replica |json_pp |grep "\"status" |awk -F ':' '{print $2}' | tr -d ','
+  register: volume_status
+  until: volume_status.stdout.find("Degraded") == -1
+  retries: 50
+  delay: 10
+
+- name: Wait until all replica becomes healthy
+  shell: kubectl exec -it {{ istgt_replica.stdout }} -n {{ operator_ns }} --container  cstor-istgt -- istgtcontrol -q replica |json_pp |grep "\"Mode" |awk -F ':' '{print $2}' | tr -d ','
   register: replica_status
   until: replica_status.stdout.find("Degraded") == -1
   retries: 50
