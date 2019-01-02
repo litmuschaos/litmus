@@ -8,7 +8,9 @@ liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
 
 liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
 
-freeze_image: "{{lookup('env','freeze_image')}}"
+freeze_image: "{{lookup('env','FREEZE_IMAGE')}}"
+
+node_freeze_action: "{{lookup('env','NODE_FREEZE_ACTION') }}"
 
 f_duration: 300
 
@@ -17,3 +19,7 @@ daemonset: node_freeze.yml
 subnet_id: "{{ lookup('env','SUBNET_ID') }}"
 
 data_persistance: "{{ lookup('env','DATA_PERSISTENCY') }}"
+
+test_bed: "{{ lookup('env','PLATFORM') }}"
+
+

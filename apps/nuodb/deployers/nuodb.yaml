@@ -1,0 +1,260 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    description: |
+      Headless service permitting us to retrieve DNS A records that point directly to the pods backing the service.
+    "service.alpha.kubernetes.io/tolerate-unready-endpoints": "true"
+  name: domain
+  labels:
+    app: nuodb
+    group: nuodb
+spec:
+  clusterIP: None
+  ports:
+  - { name: 8888-tcp,   port: 8888,   protocol: TCP,  targetPort: 8888  }
+  - { name: 48004-tcp,  port: 48004,  protocol: TCP,  targetPort: 48004 }
+  - { name: 48005-tcp,  port: 48005,  protocol: TCP,  targetPort: 48005 }
+  selector:
+    dns: domain
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    description: "Service (and load-balancer) for Admin pods."
+  labels:
+    app: nuodb
+    group: nuodb
+  name: admin
+spec:
+  ports:
+  - { name: 8888-tcp,   port: 8888,   protocol: TCP,  targetPort: 8888  }
+  - { name: 48004-tcp,  port: 48004,  protocol: TCP,  targetPort: 48004 }
+  - { name: 48005-tcp,  port: 48005,  protocol: TCP,  targetPort: 48005 }
+  selector:
+    app: admin
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer: {}
+
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: admin
+  labels:
+    app: nuodb
+    group: nuodb
+spec:
+  serviceName: domain
+  replicas: 1
+  selector:
+    matchLabels:
+      affinity: admin
+  template:
+    metadata:
+      labels:
+        dns: domain
+        app: admin
+        affinity: admin
+    spec:
+      containers:
+      - name: admin
+        image: nuodb/nuodb-ce:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - { containerPort: 8888,  protocol: TCP }
+        - { containerPort: 48004, protocol: TCP }
+        - { containerPort: 48005, protocol: TCP }
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "0.5"
+          limits:
+            memory: "1024Mi"
+            cpu: "1"
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - { name: NUODB_DOMAIN_ENTRYPOINT,      value: "admin-0.domain" }
+        - { name: NUODB_ALT_ADDRESS,            value: "$(POD_NAME).domain.testns.svc" }
+        - { name: NUODB_VARDIR,                 value: "/var/opt/nuodb/$(POD_NAME).testns" }
+        args: [ "nuoadmin" ]
+        livenessProbe:
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          tcpSocket:
+            port: 8888
+        readinessProbe:
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          exec:
+            command: [ "nuodocker", "check", "servers" ]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    description: "Service for redirect."
+  labels:
+    app: insights
+    group: nuodb
+  name: insights-server
+spec:
+  ports:
+  - { name: 8080-tcp,   port: 8080,   protocol: TCP,  targetPort: 8080  }
+  selector:
+    app: insights
+    group: nuodb
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer: {}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    description: "Config map for metrics input and insights output"
+  name: insights-configmap
+  labels:
+    group: nuodb
+data:
+  nuoca.yml.template: |
+    ---
+    NUOCA_LOGFILE: /var/log/nuodb/nuoca.log
+
+    INPUT_PLUGINS:
+    - NuoAdminNuoMon:
+       description : Collection from NuoDB engines
+       nuocaCollectionName: NuoMon
+       api_server: https://domain:8888
+       client_key:  /etc/nuodb/keys/nuocmd.pem
+    OUTPUT_PLUGINS:
+    - RestClient:
+        url: ${INSIGHTS_INGEST_URL}
+  nuoinsights: |
+    #!/bin/bash
+    . ${NUODB_HOME}/etc/nuodb_setup.sh
+    : ${NUOCMD_API_SERVER:=https://domain:8888}
+
+    SCRIPT=$(cat <<EOF
+    from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
+    from nuoca import NuoCA as nuoca
+    import nuodb_mgmt
+
+    PORT_NUMBER = 8080
+
+    def get_insights_dashboard():
+      conn = nuodb_mgmt.AdminConnection('${NUOCMD_API_SERVER}', '/etc/nuodb/keys/nuocmd.pem')
+      metadata = nuoca.get_insights_metadata(conn)
+      return metadata.get(nuoca.INSIGHTS_DASHBOARD_KEY,None)
+
+      #ingest_url    = metadata[nuoca.INSIGHTS_URL_KEY]
+      #subscriber_id = metadata[nuoca.INSIGHTS_ID_KEY]
+      #return ingest_url[:-6] + subscriber_id
+
+    class myHandler(BaseHTTPRequestHandler):
+      def do_GET(self):
+        new_path = get_insights_dashboard()
+        if new_path and new_path != "None":
+          self.send_response(307)
+          self.send_header('Location', new_path)
+          self.end_headers()
+        else:
+          self.send_response(404)
+        self.end_headers()
+        return
+
+    try:
+      server = HTTPServer(('', PORT_NUMBER), myHandler)
+      print 'Started httpserver on port ' , PORT_NUMBER
+
+      #Wait forever for incoming http requests
+      server.serve_forever()
+
+    except KeyboardInterrupt:
+      print '^C received, shutting down the web server'
+      server.socket.close()
+
+    EOF
+    )
+
+    export PYTHONPATH=/opt/nuodb/drivers/pynuoadmin
+    exec /opt/nuodb/etc/python/nuopython -c "${SCRIPT}"
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nuodb-insights
+  labels:
+    app: insights
+    group: nuodb
+spec:
+  initContainers:
+  - name: optin
+    image: nuodb/nuodb-ce:latest
+    imagePullPolicy: IfNotPresent
+    args:
+    - "/bin/sh"
+    - "-c"
+    - "[ \"${OPT_IN}\" == \"true\" ] && nuoca enable insights --connect-timeout 300 || nuoca disable insights --connect-timeout 300"
+    env:
+    - { name: NUOCMD_API_SERVER , value: "https://domain:8888" }
+  containers:
+  - name: insights
+    image: nuodb/nuodb-ce:latest
+    imagePullPolicy: IfNotPresent
+    args: [ "nuoca", "start" , "nuoca", "--insights" ]
+    env:
+    - { name: NUOCMD_API_SERVER , value: "https://domain:8888" }
+    volumeMounts:
+    - name: log-volume
+      mountPath: /var/log/nuodb
+    - name: config-insights
+      mountPath: /etc/nuodb/nuoca.yml.template
+      subPath: nuoca.yml.template
+  - name: insights-server
+    image: nuodb/nuodb-ce:latest
+    imagePullPolicy: IfNotPresent
+    args: [ "nuoinsights" ]
+    ports:
+    - { name: 8080-tcp,  containerPort: 8080,  protocol: TCP }
+    env:
+    - { name: NUOCMD_API_SERVER , value: "https://domain:8888" }
+    volumeMounts:
+    - name: log-volume
+      mountPath: /var/log/nuodb
+    - name: nuoinsights
+      mountPath: /usr/local/bin/nuoinsights
+      subPath: nuoinsights
+  volumes:
+  - name: log-volume
+    emptyDir: {}
+  - name: config-insights
+    configMap:
+      name: insights-configmap
+  - name: nuoinsights
+    configMap:
+      name: insights-configmap
+      defaultMode: 0754
