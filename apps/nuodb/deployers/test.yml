@@ -51,8 +51,8 @@
               register: result
               with_items: "{{ nuodb_labels }}"
               until: "'Running' in result.stdout"
-              delay: 5
-              retries: 45
+              delay: 10
+              retries: 60
 
             - name: Run ycsb load on Nuodb
               shell: kubectl create -f nuodb-ycsb.yaml -n {{ app_ns }}
@@ -65,8 +65,8 @@
                 executable: /bin/bash
               register: result
               until: "'Running' in result.stdout"
-              delay: 5
-              retries: 45
+              delay: 10
+              retries: 60
               
             - set_fact:
                 flag: "Pass"  
