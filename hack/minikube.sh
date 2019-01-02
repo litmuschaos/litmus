@@ -3,7 +3,7 @@
 set -o errexit
 set -o nounset
 
-CURDIR=`pwd`
+CURDIR=$(pwd)
 
 #Install latest minikube
 ls /usr/local/bin/minikube || \
@@ -40,11 +40,7 @@ grep "KUBECONFIG=$HOME/.kube/config" $HOME/.profile || \
 
 # Export above as well for `minikube start` to work 
 # in the same session of `vagrant up`
-export MINIKUBE_WANTUPDATENOTIFICATION=false
-export MINIKUBE_WANTREPORTERRORPROMPT=false
-export MINIKUBE_HOME=$HOME
-export CHANGE_MINIKUBE_NONE_USER=true
-export KUBECONFIG=$HOME/.kube/config
+export MINIKUBE_WANTUPDATENOTIFICATION=false MINIKUBE_WANTREPORTERRORPROMPT=false MINIKUBE_HOME=$HOME CHANGE_MINIKUBE_NONE_USER=true KUBECONFIG=$HOME/.kube/config
 
 # Permissions
 sudo chown -R $USER $HOME/.kube
