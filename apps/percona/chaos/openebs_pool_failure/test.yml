@@ -12,6 +12,12 @@
         - include_tasks: /common/utils/application_liveness_check.yml
           when: liveness_label != ''    
 
+          #  Check the cstor_pool_deploy status 
+        - include_tasks: /common/utils/cstor_pool_deploy_check.yml 
+          vars:
+            ns: "{{ operator_ns }}"     
+          when: chaos_type != ''
+
         - include: test_prerequisites.yml
 
         - name: Get application pod name 
