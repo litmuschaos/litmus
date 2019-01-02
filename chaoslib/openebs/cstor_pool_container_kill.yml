@@ -1,0 +1,69 @@
+- name: Derive PV from application PVC 
+  shell: >
+    kubectl get pvc {{ app_pvc }}
+    -o custom-columns=:spec.volumeName -n {{ app_ns }}
+    --no-headers
+  args:
+    executable: /bin/bash
+  register: pv
+
+- name: Randomly select the pool deployment from cvr
+  shell: >
+    kubectl get cvr -n {{ operator_ns }}
+    -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers
+    -o=jsonpath='{range .items[*]}{.metadata.labels.cstorpool\.openebs\.io\/name}{"\n"}{end}' |
+    shuf -n1 | awk '{print $1}'
+  args:
+    executable: /bin/bash
+  register: pool_deployment
+
+- name: Get the pod of pool deployment
+  shell: >
+    kubectl get pods -n {{ operator_ns }} |
+    grep {{ pool_deployment.stdout }} | grep -w "Running" | awk '{print $1}'
+  args:
+    executable: /bin/bash
+  register: cstor_pool_pod
+
+- name: Get the runningStatus of pool pod
+  shell: >
+    kubectl get pod {{ cstor_pool_pod.stdout }} -n {{ operator_ns }}
+    -o=jsonpath='{range .status.containerStatuses[*]}{.state}{"\n"}{end}' |
+    grep -w running | wc -l
+  args:
+    executable: /bin/bash
+  register: runningStatusCount
+  until: "runningStatusCount.stdout == \"2\""
+  delay: 2
+  retries: 150
+
+- include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yaml
+  vars:
+    action: "killapp"
+    namespace: "{{ operator_ns }}"
+    app_pod: "{{ cstor_pool_pod.stdout }}"
+    app_container: "{{ pool_container }}"
+
+- name: Check for pool pod in running state
+  shell: >
+    kubectl get pod {{ cstor_pool_pod.stdout }} -n {{ operator_ns }} |
+    grep -w "Running" | wc -l
+  args:
+    executable: /bin/bash
+  register: cstor_pool_pod_cnt
+  until: "cstor_pool_pod_cnt.stdout == \"1\""
+  delay: 2
+  retries: 150
+
+- name: Get the runningStatus of pool pod
+  shell: >
+    kubectl get pod {{ cstor_pool_pod.stdout }} -n {{ operator_ns }}
+    -o=jsonpath='{range .status.containerStatuses[*]}{.state}{"\n"}{end}' |
+    grep -w running | wc -l
+  args:
+    executable: /bin/bash
+  register: runningStatusCount
+  until: "runningStatusCount.stdout == \"2\""
+  delay: 2
+  retries: 150
+
