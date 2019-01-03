@@ -73,7 +73,7 @@
             chaos_util_path: "/funclib/{{ funcutil }}"
 
           ## Obtain cstor replica pods
-        - include_tasks: /funclib/kubectl/k8s_snapshot_clone/snap_rebuild_prerequesites.yml
+        - include_tasks: /funclib/kubectl/k8s_snapshot_clone/snap_rebuild_prerequisites.yml
           vars:
             app_ns: "{{ namespace }}"
             pvc_name: "{{ app_pvc }}"
@@ -120,10 +120,9 @@
         - name: Run dd on the application
           shell: >
             kubectl exec -it {{ app_pod_name }} -n {{ namespace }} 
-            -- bash -c "cd /var/lib/mysql; touch file1; dd if=/dev/urandom of=file1 bs=4k count=50000"
+            -- bash -c "cd /var/lib/mysql; dd if=/dev/urandom of=file1 bs=4k count=50000"
           args:
             executable: /bin/bash
-          register: dd
 
         - name: Perform filesystem sync on percona pod before creating snapshot.
           shell: >
