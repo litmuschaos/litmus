@@ -1,0 +1,62 @@
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: {{ clone_app }}
+  labels:
+    name: {{ clone_app }}
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      name: {{ clone_app }}
+  template: 
+    metadata:
+      labels: 
+        name: {{ clone_app }}
+    spec:
+      containers:
+        - resources:
+            limits:
+              cpu: 0.5
+          name: percona
+          image: openebs/tests-custom-percona:latest
+          imagePullPolicy: IfNotPresent
+          args:
+            - "--ignore-db-dir"
+            - "lost+found"
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: k8sDem0
+          ports:
+            - containerPort: 3306
+              name: percona
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: clone-percona
+          #<!-- BEGIN ANSIBLE MANAGED BLOCK -->
+          livenessProbe:
+            exec:
+              command: ["bash", "sql-test.sh"]
+            initialDelaySeconds: 60
+            periodSeconds: 1
+            timeoutSeconds: 10
+          #<!-- END ANSIBLE MANAGED BLOCK --> 
+      volumes:
+        - name: clone-percona
+          persistentVolumeClaim:
+            claimName: {{ clone_claim_name }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ clone_app }}
+  labels:
+    name: {{ clone_app }}
+spec:
+  ports:
+    - port: 3306
+      targetPort: 3306
+  selector:
+      name: {{ clone_app }}
+
