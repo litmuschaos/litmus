@@ -50,13 +50,8 @@ spec:
           - name: DATA_PERSISTENCY
             value: "enable"  
 
-            # chaos type has two vaue for killing zrepl and mgmt container of cstor pool.: pool-mgmt-kill and pool-zrepl-kill
           - name: CHAOS_TYPE
-            value: "pool-zrepl-kill"
-
-            # cstor pool having two conatiner to perform chaos : cstor-pool-mgmt and cstor-pool
-          - name: POOL_CONTAINER
-            value: "cstor-pool"  
+            value: "pool-kill"
 
           - name: CHAOS_ITERATIONS
             value: "2" 

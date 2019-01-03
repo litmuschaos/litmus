@@ -8,17 +8,9 @@
   tasks:
     - block:
 
-          ## DERIVE THE APP STORAGE CLASS AND CHAOS UTIL TO USE       
+        ## DERIVE THE APP STORAGE CLASS AND CHAOS UTIL TO USE       
         - include_tasks: /common/utils/application_liveness_check.yml
-          when: liveness_label != ''    
-
-          #  Check the cstor_pool_deploy status 
-        - include_tasks: /common/utils/cstor_pool_deploy_check.yml 
-          vars:
-            ns: "{{ operator_ns }}"     
-          when: chaos_type != ''
-
-        - include: test_prerequisites.yml
+          when: liveness_label != ''
 
         - name: Get application pod name 
           shell: >
@@ -45,15 +37,18 @@
             dbname: "tdb{{ uniqstr.stdout }}"
           when: data_persistance != '' 
 
-
-        - include_vars:
-            file: chaosutil.yml    
+        - name: Record the chaos util path
+          set_fact:
+            chaos_util_path: "/chaoslib/openebs/cstor_pool_kill.yml"
+          when: chaos_type == "pool-kill"
 
         - name: Record the chaos util path
-          set_fact: 
-            chaos_util_path: "/chaoslib/{{ chaosutil }}"
+          set_fact:
+            chaos_util_path: "/chaoslib/openebs/cstor_pool_delete.yml"
+          when: chaos_type == "pool-delete"
 
         ## RECORD START-OF-TEST IN LITMUS RESULT CR
+
         - include_tasks: /common/utils/create_testname.yml
 
         - include_tasks: /common/utils/update_litmus_result_resource.yml
@@ -70,7 +65,6 @@
               - "Namespace    : {{ namespace }}"
               - "Label        : {{ label }}"
               - "PVC          : {{ pvc }}"  
-              - "StorageClass : {{ sc }}"
 
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
         - name: Verify that the AUT (Application Under Test) is running
@@ -92,8 +86,8 @@
           post_chaos_soak_time : "{{ chaos_duration }}"
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
-        
-        - name: Verify AUT  post fault-injection
+
+        - name: Verify AUT liveness post fault-injection
           include_tasks: "/common/utils/status_app_pod.yml"
           vars:
             app_ns: "{{namespace}}"
@@ -101,6 +95,7 @@
             app_lvalue: "{{ label.split('=')[1] }}"
             delay: 5
             retries: 60
+
 
         - name: Verify mysql data persistence  
           include_tasks: "/common/utils/mysql_data_persistence.yml"
@@ -124,6 +119,7 @@
             dbname: "tdb{{ uniqstr.stdout }}"
           when: data_persistance != '' 
 
+          # Check application liveness post chaos
         - include_tasks: /common/utils/application_liveness_check.yml
           when: liveness_label != ''  
 
@@ -137,8 +133,9 @@
       always: 
 
         ## RECORD END-OF-TEST IN LITMUS RESULT CR
-        - include_tasks: /common/utils/update_litmus_result_resource.yml
-          vars:
-            status: 'EOT'
-            chaostype: "{{ chaosutil.split('.')[0] }}"
-
+        - block:
+            - include_tasks: /common/utils/update_litmus_result_resource.yml
+              vars:
+                status: 'EOT'
+                chaostype: "{{ chaosutil.split('.')[0] }}"
+          when: lookup('env','RUN_ID')

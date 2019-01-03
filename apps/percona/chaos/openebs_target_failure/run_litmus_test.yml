@@ -14,7 +14,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: openebs/ansible-runner:ci
+        image: vvibhr995/volumgmt-kill:latest
         imagePullPolicy: Always
         env:
           - name: ANSIBLE_STDOUT_CALLBACK
@@ -41,13 +41,15 @@ spec:
             value: ""
 
           - name: DATA_PERSISTENCY
-            value: ""             
-  
-          - name: CHAOS_TYPE
-            value: "target-kill"
+            value: ""            
 
+            # CHOS_TYPE values :  target-zrepl-kill , target-kill , target-delete 
+          - name: CHAOS_TYPE
+            value: "target-zrepl-kill"
+            
+            # TARGET_CONTAINER values: cstor-volume-mgmt , cstor-istgt
           - name: TARGET_CONTAINER
-            value: "cstor-istgt"
+            value: "cstor-volume-mgmt"
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./percona/chaos/openebs_target_failure/test.yml -i /etc/ansible/hosts -vv; exit 0"]
