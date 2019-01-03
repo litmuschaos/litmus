@@ -85,9 +85,9 @@
           register: cvr_name1  
 
         - name: Scaling-down cstor-pool
-          shell: kubectl patch deployment {{ deployment_name.stdout }} -n {{ operator_ns }} --type=json -p='[{"op":"add", "path":"/spec/replicas", "value":"0"}]'
+          shell: kubectl scale deployment {{ deployment_name.stdout }} -n {{ operator_ns }} --replicas=0 
           register: result1
-          failed_when: "'patched' not in result1.stdout"
+          failed_when: "'scaled' not in result1.stdout"
 
         - name: Checking for pool scale-down
           shell: kubectl get pods -n {{ operator_ns }} -l app=cstor-pool --no-headers | wc -l
@@ -117,9 +117,9 @@
           register: cvr_name2   
 
         - name: Scaling-up cstor-pool
-          shell: kubectl patch deployment {{ deployment_name.stdout }} -n {{ operator_ns }} --type=json -p='[{"op":"add", "path":"/spec/replicas", "value":"1"}]'
+          shell: kubectl scale deployment {{ deployment_name.stdout }} -n {{ operator_ns }} --replicas=1
           register: result2
-          failed_when: "'patched' not in result2.stdout"
+          failed_when: "'scaled' not in result2.stdout"
 
         - name: Checking for pool scale-up
           shell: kubectl get pods -n {{ operator_ns }} -l app=cstor-pool -o jsonpath='{.items[0].status.phase}'
