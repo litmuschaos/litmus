@@ -42,6 +42,14 @@ spec:
             value:
           - name: NODE_DISK_MANAGER_IMAGE
             value:
+          - name: OPENEBS_IO_CSTOR_TARGET_IMAGE
+            value:
+          - name: OPENEBS_IO_CSTOR_POOL_IMAGE
+            value:
+          - name: OPENEBS_IO_CSTOR_POOL_MGMT_IMAGE
+            value:
+          - name: OPENEBS_IO_CSTOR_VOLUME_MGMT_IMAGE
+            value:        
           - name: IMAGE_PULL_POLICY
             value:
           - name: RUN_ID
