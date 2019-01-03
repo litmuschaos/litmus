@@ -121,7 +121,7 @@
               register: target_status
               until: " pv_name.stdout  not  in target_status.stdout"
               delay: 5
-              retries: 10
+              retries: 20
 
             - name: Check status of the pool deployments from cvr
               shell: >
@@ -129,9 +129,9 @@
               args:
                 executable:  /bin/bash
               register: cvr_status
-              until: " pv_name.stdout not  in cvr_status.stdout"
+              until: " pv_name.stdout not in cvr_status.stdout"
               delay: 5
-              retries: 10
+              retries: 20
 
           when: stg_engine == 'cstor'  
 

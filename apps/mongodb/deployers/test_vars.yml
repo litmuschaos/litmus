@@ -1,5 +1,5 @@
 # Test-specific parametres
-
+operator_ns: openebs
 application_deployment: mongo_statefulset.yml
 app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
 app_label: "{{ lookup('env','APP_LABEL') }}"
