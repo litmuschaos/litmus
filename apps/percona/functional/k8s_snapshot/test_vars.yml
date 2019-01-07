@@ -13,7 +13,7 @@ pvc_name: "{{ lookup('env','APP_PVC') }}"
 
 snapshot_name: "{{ lookup('env','SNAPSHOT') }}"
 
-clone_claim_name: "{{ lookup('env','CLONE_VOL_CLAIM') }}"
+clone_claim: "{{ lookup('env','CLONE_VOL_CLAIM') }}"
 
 clone_app: "{{ lookup('env','CLONE_APP_NAME') }}"
 

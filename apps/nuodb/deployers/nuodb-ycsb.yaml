@@ -29,6 +29,9 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+        - { name: DB_NAME, value: "nuodb"}
+        - { name: DB_USER, value: "dba"}
+        - { name: DB_PASSWORD, value: "goalie"}
         - { name: PEER_ADDRESS,        value: "admin.testns.svc" }
         - { name: User1,               value: "User1" }
         - { name: YCSB_WORKLOAD,       value: "b" }
