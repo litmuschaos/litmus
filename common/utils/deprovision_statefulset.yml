@@ -142,9 +142,6 @@
               with_items:
                  - "{{ pv_list.stdout_lines }}"
 
-            - debug:
-                msg: "{{ target_status }}"
-
             - name: Check status of the pool deployments from cvr
               shell: >
                   kubectl get cvr -n {{ operator_ns }} -l openebs.io/persistent-volume={{ item }} --no-headers
