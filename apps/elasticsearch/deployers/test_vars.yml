@@ -1,4 +1,5 @@
 application_deployment: es-statefulset.yaml
+application_rbac: esearch_rbac.yml
 app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
 app_label: "{{ lookup('env','APP_LABEL') }}"
 test_name: elasticsearch-deployment
