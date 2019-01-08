@@ -35,7 +35,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: elasticsearch-logging
-  namespace: logging
+  #namespace: logging
   apiGroup: ""
 roleRef:
   kind: ClusterRole
