@@ -20,26 +20,20 @@
       register: pvc_list
 
     - name: Obtaining the PV names.
-      shell: kubectl get pvc {{ item }} -n {{ app_ns }} --no-headers -o custom-columns=:.spec.volumeName
+      shell: kubectl get pvc -l {{ app_label }} -n {{ app_ns }} --no-headers -o custom-columns=:.spec.volumeName
       register: pv_list
-      with_items:
-        - "{{ pvc_list.stdout_lines }}"
 
     - name: Check for presence & value of cas type annotation
       shell: >
-        kubectl get pv {{ item.stdout }} --no-headers
+        kubectl get pv {{ pv_list.stdout_lines[0] }} --no-headers
         -o jsonpath="{.metadata.annotations.openebs\\.io/cas-type}"
       args:
         executable: /bin/bash
       register: openebs_stg_engine
-      with_items:
-        - "{{ pv_list.results }}"
 
     - name: Record the storage engine name
       set_fact:
-        stg_engine: "{{ item.stdout_lines[0] }}"
-      with_items:
-        - "{{ openebs_stg_engine.results }}"
+        stg_engine: "{{ openebs_stg_engine.stdout }}"
 
     ## Replacing the item names in the respective deployer spec file.
 
@@ -108,21 +102,21 @@
       delay: 30
       retries: 15
 
-    - block:  
-                
+    - block:
+
         - block:
-             
+
             - name: Check if the ctrl-pod is deleted.
               shell: >
                  kubectl get pods -n {{ app_ns }}
-                 -l openebs.io/controller=jiva-controller --no-headers 
+                 -l openebs.io/controller=jiva-controller --no-headers
               args:
                 executable: /bin/bash
-              register: ctrl_status     
+              register: ctrl_status
               until: "'No resources found' in ctrl_status.stderr"
               delay: 5
               retries: 15
-                
+
             - name: Check if the  replica-pod is deleted.
               shell: kubectl get pods -n {{ app_ns }} -l openebs.io/replica=jiva-replica
               args:
@@ -130,7 +124,7 @@
               register: rep_status
               until: "'No resources found' in rep_status.stderr"
               delay: 5
-              retries: 15    
+              retries: 15
 
           when: stg_engine == 'jiva'
 
@@ -138,27 +132,27 @@
 
             - name: Check if the target pod is deleted.
               shell: >
-                  kubectl get pods -l openebs.io/target=cstor-target  -n {{ operator_ns }} --no-headers
+                  kubectl get pods -l openebs.io/persistent-volume={{ item }}  -n {{ operator_ns }} --no-headers
               args:
-                executable: /bin/bash     
+                executable: /bin/bash
               register: target_status
-              until: " item.stdout  not  in target_status.stdout"
+              until: "'No resources found' in target_status.stderr"
               delay: 5
-              retries: 10
+              retries: 20
               with_items:
-                - "{{ pv_list.results }}"      
+                 - "{{ pv_list.stdout_lines }}"
 
             - name: Check status of the pool deployments from cvr
               shell: >
-                  kubectl get cvr -n {{ operator_ns }} --no-headers
+                  kubectl get cvr -n {{ operator_ns }} -l openebs.io/persistent-volume={{ item }} --no-headers
               args:
                 executable:  /bin/bash
               register: cvr_status
-              until: " item.stdout not  in cvr_status.stdout"
+              until: "'No resources found.' in cvr_status.stderr"
               delay: 5
-              retries: 10
-              with_items: 
-                - "{{ pv_list.results }}"    
+              retries: 20
+              with_items:
+                - "{{ pv_list.stdout_lines }}"
 
           when: stg_engine == 'cstor'
 
