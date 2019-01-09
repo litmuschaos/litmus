@@ -25,7 +25,8 @@
                 path: "{{ item }}"
                 regexp: 'testsc'
                 replace: '{{ storage_class }}'
-              with_items: 
+              with_items:
+                - nuodb.yaml 
                 - nuodb-te.yaml
 
             - name: Replace the namespace placeholder with ENV ns
@@ -92,7 +93,7 @@
                 executable: /bin/bash
               register: result
               with_items: "{{ nuodb_labels }}"
-              until: "'Running' in result.stdout"
+              until: "'Running' not in result.stdout"
               delay: 5
               retries: 45
 
