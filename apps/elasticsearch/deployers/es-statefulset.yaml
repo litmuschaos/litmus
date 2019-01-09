@@ -1,4 +1,20 @@
 ---
+# Services
+apiVersion: v1
+kind: Service
+metadata:
+ name: elasticsearch-logging
+ # namespace: logging
+ labels:
+   lkey: lvalue
+spec:
+ ports:
+ - port: 9200
+   protocol: TCP
+   targetPort: db
+ selector:
+   k8s-app: elasticsearch-logging
+---
 # Elasticsearch deployment itself
 apiVersion: apps/v1
 kind: StatefulSet
@@ -71,3 +87,5 @@ spec:
       resources:
         requests:
           storage: 50G
+
+         
