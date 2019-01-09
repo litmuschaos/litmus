@@ -250,7 +250,8 @@ spec:
       subPath: nuoinsights
   volumes:
   - name: log-volume
-    emptyDir: {}
+    persistentVolumeClaim:
+      claimName: insights-vol-claim
   - name: config-insights
     configMap:
       name: insights-configmap
@@ -258,3 +259,15 @@ spec:
     configMap:
       name: insights-configmap
       defaultMode: 0754
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: insights-vol-claim
+spec:
+  storageClassName: testsc
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5G
