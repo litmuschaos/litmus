@@ -3,26 +3,23 @@
 apiVersion: v1
 kind: Service
 metadata:
- name: elasticsearch-logging
- # namespace: logging
- labels:
-   lkey: lvalue
+  name: elasticsearch-logging
+  labels:
+    lkey: lvalue
 spec:
- ports:
- - port: 9200
-   protocol: TCP
-   targetPort: db
- selector:
-   k8s-app: elasticsearch-logging
+  clusterIP: None
+  selector:
+    role: elasticsearch
+  ports:
+  - name: transport
+    port: 9300
+    protocol: TCP
 ---
 # Elasticsearch deployment itself
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: elasticsearch-logging
-  #  namespace: logging
-  labels:
-    lkey: lvalue
 spec:
   serviceName: elasticsearch-logging
   rkey: rvalue
@@ -33,6 +30,7 @@ spec:
     metadata:
       labels:
         lkey: lvalue
+        role: elasticsearch
     spec:
       securityContext:
         fsGroup: 1000 # fsGroup is used for elasticsearch container
@@ -88,6 +86,6 @@ spec:
       - ReadWriteOnce
       resources:
         requests:
-          storage: 50G
+          storage: 5G
 
          
