@@ -1,0 +1,73 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+        ## Generating the testname for deployment
+        - include_tasks: /common/utils/create_testname.yml
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'SOT'
+
+        - block:
+
+         ## Actual test
+         ## Creating namespaces and making the application for deployment
+            - include_tasks: /common/utils/pre_create_app_deploy.yml
+
+            - name: Replace the application label placeholder in rbac spec
+              replace:
+                 path: "{{ application_rbac }}"
+                 regexp: "lkey: lvalue"
+                 replace: "{{ app_lkey }}: {{ app_lvalue }}"
+
+            - name: Replace the namespace placeholder in rbac spec.
+              replace:
+                 path: "{{ application_rbac }}"
+                 regexp: "nsvalue"
+                 replace: "{{ lookup('env','APP_NAMESPACE') }}"
+           
+
+            - name: Deploying {{ application_name }} rbac.
+              shell: kubectl apply -f {{ application_rbac }}
+              args:
+                executable: /bin/bash
+
+         ## Deploying the application (statefulset/deployment) and its related services.
+            - include_tasks: /common/utils/deploy_single_app.yml
+              vars:
+                check_app_pod: 'no'
+                delay: 10
+                retries: 20
+
+          when: "'deprovision' not in action"
+
+        - block:
+
+            - name: Deprovisioning the Application
+              include_tasks: /common/utils/deprovision_statefulset.yml
+              vars:
+                app_deployer: "{{ application_deployment }}"
+
+          when: "'deprovision' is in action"
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - name: Setting fail flag
+          set_fact:
+            flag: "Fail"
+
+      always:
+        ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
