@@ -40,7 +40,7 @@
               args:
                 executable: /bin/bash
 
-         ## Deploying the application
+         ## Deploying the application (statefulset/deployment) and its related services.
             - include_tasks: /common/utils/deploy_single_app.yml
               vars:
                 check_app_pod: 'no'
