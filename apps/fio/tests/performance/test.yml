@@ -1,17 +1,17 @@
-# TODO 
+# TODO
 # Change pod status checks to container status checks (containerStatuses)
 # O/P result
 
 - hosts: localhost
-  connection: local  
+  connection: local
 
   vars_files:
     - test_vars.yml
- 
+
   tasks:
    - block:
 
-       ## VERIFY AVAILABILITY OF SELECTED STORAGE CLASS  
+       ## VERIFY AVAILABILITY OF SELECTED STORAGE CLASS
 
        - name: Check whether the provider storageclass is applied
          shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
@@ -19,8 +19,8 @@
            executable: /bin/bash
          register: result
 
-       ## PRE-CONDITION THE APPLICATION DEPLOYMENT SPECS WITH TEST PARAMS 
-                  
+       ## PRE-CONDITION THE APPLICATION DEPLOYMENT SPECS WITH TEST PARAMS
+
        - name: Replace the app node placeholder with perf-intensive node
          replace:
            path: "{{ pod_yaml_alias }}"
@@ -32,7 +32,7 @@
            path: "{{ pod_yaml_alias }}"
            regexp: "testClaim"
            replace: "{{ test_name }}"
-          
+
        - name: Replace the storageclass placeholder with provider
          replace:
            path: "{{ pod_yaml_alias }}"
@@ -42,73 +42,73 @@
        # FIO-SPECIFIC PRE-CONDITIONING
 
        - name: Replace the default fio profile with user-defined profile
-         replace: 
+         replace:
            path: "{{ pod_yaml_alias }}"
            regexp: "basic-rw"
            replace: "{{ lookup('env','FIO_TEST_PROFILE') }}"
 
        - name: Replace the data sample size with user-defined size
-         replace: 
+         replace:
            path: "{{ pod_yaml_alias }}"
            regexp: "256m"
            replace: "{{ lookup('env','FIO_SAMPLE_SIZE') }}"
 
        - name: Replace the default I/O test duration with user-defined period
-         replace: 
+         replace:
            path: "{{ pod_yaml_alias }}"
            regexp: "60"
            replace: "{{ lookup('env','FIO_TESTRUN_PERIOD') }}"
-       
+
        ## RUN FIO WORKLOAD TEST
 
        - name: Deploy fio test job
-         shell: kubectl apply -f {{ pod_yaml_alias }} -n litmus  
-         args: 
+         shell: kubectl apply -f {{ pod_yaml_alias }} -n litmus
+         args:
            executable: /bin/bash
 
        - name: Confirm fio pod status is running
          shell: >
-           kubectl get pods -l name=fio -n litmus 
-           --no-headers 
-         args: 
+           kubectl get pods -l name=fio -n litmus
+           --no-headers
+         args:
            executable: /bin/bash
          register: result
-         until: "'fio' and 'Running' in result.stdout" 
-         delay: 120 
+         until: "'fio' and 'Running' in result.stdout"
+         delay: 120
          retries: 15
 
-       - name: Obtain name of fio pod 
-         set_fact: 
+       - name: Obtain name of fio pod
+         set_fact:
            fio_pod_name: "{{ result.stdout.split()[0] }}"
- 
+
        - name: Wait for fio pod to proceed with workload
          wait_for:
            timeout: 60
 
-       - name: Re-Check fio pod status 
+       - name: Re-Check fio pod status
          shell: >
            kubectl get pod {{ fio_pod_name }} -n litmus
            --no-headers -o custom-columns=:status.phase
-         args: 
+         args:
            executable: /bin/bash
-         register: result 
+         register: result
          failed_when: "result.stdout not in ['Running', 'Succeeded']"
 
-       - name: Confirm fio job completion status (poll & wait for upperbound of 60 min) 
+       - name: Confirm fio job completion status (poll & wait for upperbound of 60 min)
          shell: >
-           kubectl get pod {{ fio_pod_name }} -n litmus 
+           kubectl get pod {{ fio_pod_name }} -n litmus
            --no-headers -o custom-columns=:status.phase
-         args: 
+         args:
            executable: /bin/bash
          register: result
          until: "'Succeeded' in result.stdout"
-         delay: 120 
+         delay: 120
          retries: 30
 
        - name: Verify the fio logs to check if run is complete w/o errors
          shell: >
-           kubectl logs {{ fio_pod_name }} -n litmus 
-           | grep -i error | cut -d ":" -f 2 
+           kubectl logs {{ fio_pod_name }} -n litmus
+           | grep -i error | cut -d ":" -f 2
            | sort | uniq
          args:
            executable: /bin/bash
@@ -118,9 +118,9 @@
        - set_fact:
            flag: "Pass"
 
-     rescue: 
-       - set_fact: 
+     rescue:
+       - set_fact:
            flag: "Fail"
 
      always:
-       - include: test_cleanup.yaml
+       - include: test_cleanup.yml
