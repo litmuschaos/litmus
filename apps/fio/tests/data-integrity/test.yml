@@ -62,6 +62,10 @@
          args:
            executable: /bin/bash
 
+       - set_fact:
+           pvc_label: demo-vol1-claim
+           execute: 1
+
        - include_tasks: /common/utils/disable_compression_on_pools.yml
          when: data_check == 'data_accessibility'
 
@@ -283,7 +287,7 @@
 
        - name: Check for error while writing
          shell: >
-           kubectl get logs {{ read_pod.stdout }} -n {{ app_ns }} | grep 'error caught' | wc -l
+           kubectl logs {{ read_pod.stdout }} -n {{ app_ns }} | grep 'error caught' | wc -l
          register: final_result
          failed_when: final_result.stdout > 0
 

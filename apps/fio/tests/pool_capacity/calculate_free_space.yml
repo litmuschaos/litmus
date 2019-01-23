@@ -1,0 +1,25 @@
+---
+- name: Fetch the pool Capacity
+  shell: kubectl exec {{ single_pool }} -n {{ operator_ns }} -c cstor-pool zpool list | awk 'FNR==2 {print $4}'
+  args:
+    executable: /bin/bash
+  register: pool_capacity
+
+- name: Fetch the alphabet(G,M,m,g) from storage capacity
+  shell: echo "{{ pool_capacity.stdout }}" | grep -o -E '[A-Za-z]+'
+  args:
+    executable: /bin/bash
+  register: symbol
+
+- name: Fetch the size from storage capacity
+  shell: echo "{{ pool_capacity.stdout }}" | grep -o -E '[0-9]+.[0-9]+'
+  args:
+    executable: /bin/bash
+  register: value_str
+
+- set_fact:
+    value_num: '{{ value_str.stdout | float - 0.5}}'
+
+- set_fact:
+    pvc_value: '{{ value_num }}'
+

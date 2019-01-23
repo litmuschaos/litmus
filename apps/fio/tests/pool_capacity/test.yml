@@ -1,0 +1,114 @@
+# TODO
+# Change pod status checks to container status checks (containerStatuses)
+# O/P result
+
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+   - block:
+
+       - block:
+
+            - name: Record test instance/run ID
+              set_fact:
+                run_id: "{{ lookup('env','RUN_ID') }}"
+
+            - name: Construct testname appended with runID
+              set_fact:
+                test_name: "{{ test_name }}-{{ run_id }}"
+
+         when: lookup('env','RUN_ID')
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+       - include_tasks: /common/utils/update_litmus_result_resource.yml
+         vars:
+           status: 'SOT'
+
+       ## VERIFY AVAILABILITY OF SELECTED STORAGE CLASS
+
+       - name: Check whether the provider storageclass is applied
+         shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
+         args:
+           executable: /bin/bash
+         register: result
+
+       - name: Chekck the restart count of pods
+         shell: kubectl get po -n {{ operator_ns }} -l {{ pool_label }} -o yaml | grep "restartCount:\ 0" | wc -l
+         args:
+           executable: /bin/bash
+         register: pre_replica_count
+
+       - name: Replace the storageclass placeholder with provider
+         replace:
+           path: "{{ fio_write_yml }}"
+           regexp: "testclass"
+           replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+
+       - name: Create test specific namespace.
+         shell: kubectl create ns {{ app_ns }}
+         args:
+           executable: /bin/bash
+         when: app_ns != 'litmus'
+
+       - name: Checking the status  of test specific namespace.
+         shell: kubectl get ns {{ app_ns }} -o jsonpath='{.status.phase}'
+         args:
+           executable: /bin/bash
+         register: npstatus
+         until: "'Active' in npstatus.stdout"
+         delay: 30
+         retries: 10
+
+       - name: Get the no.of pods present
+         shell: kubectl get po -n {{ operator_ns }} -l {{ pool_label }} --no-headers | wc -l
+         register: total_pool_pods
+
+       - name: Fetch running Pool names
+         shell:  kubectl get po -l {{ pool_label }} -n {{ operator_ns }} -o jsonpath='{.items[?(@.status.phase=="Running")].metadata.name}'
+         args:
+           executable: /bin/bash
+         register: pool_names
+
+       - name: Cross check no.of pools pods are in running state
+         shell:  echo "{{ pool_names.stdout }}" | wc -w
+         args:
+           executable: /bin/bash
+         register: no_of_pools
+         failed_when: "{{ no_of_pools.stdout }} != {{ total_pool_pods.stdout }}"
+
+         ## execute is used to skip pool related tasks like getting pool name
+         ## no_of_itterations will update to 0 if the size of pool is less than 1G
+         ## i value is used to append at the end of name and lables of pvc, fio-read, fio-write yamls
+       - set_fact:
+           single_pool: "{{ pool_names.stdout.split(\"\ \")[0] }}"
+           no_of_itterations: 1
+           execute: 1
+           i: 0
+
+       - include_tasks: fetch_free_pool_capacity.yml
+         loop: [1,2,3,4]
+
+       - name: Chekck the restart count of pods
+         shell: kubectl get po -n {{ operator_ns }} -l {{ pool_label }} -o yaml | grep "restartCount:\ 0" | wc -l
+         args:
+           executable: /bin/bash
+         register: post_replica_count
+         failed_when: "{{ pre_replica_count.stdout }} != {{ post_replica_count.stdout }}"
+
+       - set_fact:
+           flag: "Pass"
+
+     rescue:
+       - set_fact:
+           flag: "Fail"
+
+     always:
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
+
