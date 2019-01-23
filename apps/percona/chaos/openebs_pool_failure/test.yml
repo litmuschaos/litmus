@@ -54,7 +54,7 @@
         - include_tasks: /common/utils/update_litmus_result_resource.yml
           vars:
             status: 'SOT'
-            chaostype: "{{ chaosutil.split('.')[0] }}"
+            chaostype: "{{ test_name }}"
 
         ## DISPLAY APP INFORMATION 
  
