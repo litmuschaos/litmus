@@ -1,7 +1,7 @@
 --- 
 - name: Record the cstor-pool pod on given app node
   shell: >
-    kubectl get pod -l app=cstor-pool -l openebs.io/storage-pool-claim=cstor-disk-pool -o wide
+    kubectl get pod -l app=cstor-pool -l openebs.io/storage-pool-claim={{ pool_claim }} -o wide
     -n {{ operator_ns }} | grep {{ instance_name }}
     | awk '{print $1}'
   args:

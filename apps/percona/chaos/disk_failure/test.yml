@@ -77,7 +77,8 @@
         ## INDUCE DISK FAILURE AND VERIFY CSTOR POOL AND APP STATUS
         - include_tasks: /chaoslib/aws_chaos/disk_failure.yml
           vars:
-            action: "disk-fail"      
+            action: "disk-fail"
+            pool_claim: "{{ spc.stdout }}"      
             app_ns: "{{ namespace }}"
             app: "{{ app_pod_name.stdout }}"
 
@@ -103,10 +104,14 @@
           delay: 10
           retries: 12
 
+        - name: sleep for 60 seconds and continue with play
+          wait_for: timeout=60
+
         ## RECOVER DISK AND VERIFY CSTOR POOL AND APP STATUS
         - include_tasks: /chaoslib/aws_chaos/disk_failure.yml
           vars:
-            action: "disk-recover"      
+            action: "disk-recover"
+            pool_claim: "{{ spc.stdout }}"      
             app_ns: "{{ namespace }}"
             app: "{{ app_pod_name.stdout }}"
 
@@ -167,7 +172,8 @@
         ## RECOVER DISK ALWAYS
         - include_tasks: /chaoslib/aws_chaos/disk_failure.yml
           vars:
-            action: "disk-recover"      
+            action: "disk-recover"
+            pool_claim: "{{ spc.stdout }}"      
             app_ns: "{{ namespace }}"
             app: "{{ app_pod_name.stdout }}"
           ignore_errors: true
