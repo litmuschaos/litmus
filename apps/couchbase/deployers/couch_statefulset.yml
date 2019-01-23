@@ -2,13 +2,15 @@ apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
   name: couchbase
+  labels:
+     lkey: lvalue
 spec:
   serviceName: "couchbase"
-  replicas: 2
+  rkey: rvalue
   template:
     metadata:
       labels:
-        app: couchbase
+        lkey: lvalue
     spec:
       terminationGracePeriodSeconds: 0
       containers:
@@ -17,7 +19,7 @@ spec:
         ports:
         - containerPort: 8091
         volumeMounts:
-        - name: couchbase-data
+        - name: testclaim
           mountPath: /opt/couchbase/var
         env:
           - name: COUCHBASE_MASTER
@@ -26,9 +28,9 @@ spec:
             value: "false"
   volumeClaimTemplates:
   - metadata:
-      name: couchbase-data
+      name: testclaim
       annotations:
-        volume.beta.kubernetes.io/storage-class: openebs-cstor-sparse
+        volume.beta.kubernetes.io/storage-class: testclass
     spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:

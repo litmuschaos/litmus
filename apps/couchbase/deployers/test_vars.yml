@@ -7,4 +7,5 @@ test_name: couchbase-deployment
 application_name: "Couchbase"
 action: "{{ lookup('env','ACTION') }}"
 app_pvc: "{{ lookup('env','APP_PVC') }}"
+app_replica: "{{ lookup('env','APP_REPLICA') }}"
 storage_class: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"

@@ -26,10 +26,10 @@ spec:
 
           - name: PROVIDER_STORAGE_CLASS
             # Supported values: openebs-standard, local-storage
-            value: openebs-cstor-sparse
+            value: openebs-standalone
 
           - name: APP_PVC
-            value: couchbase-data
+            value: openebs-couchbase
 
             # Application label
           - name: APP_LABEL
@@ -38,6 +38,10 @@ spec:
             # Application namespace
           - name: APP_NAMESPACE
             value: app-couch-ns 
+
+            # Application replica
+          - name: APP_REPLICA
+            value: 'replicas=1'
 
           - name: DEPLOY_TYPE
             value: statefulset
