@@ -43,7 +43,16 @@
           shell: eksctl create cluster --name={{cluster_name}} --nodes={{initial_node_count}} --ssh-access=true --ssh-public-key={{cluster_name}} --region={{set_region}} --node-volume-size={{disk_size_gb}} --node-type={{node_type}} --nodes-min={{nodes_min}} --nodes-max={{nodes_max}} --max-pods-per-node={{max_pods_per_node}} --node-ami-family={{node_ami_family}}
           args:
             executable: /bin/bash
-
+     
+        - name: Check the status of the nodes
+          shell: kubectl get nodes | grep -ioEw "\<ready\>" | wc -l
+          args:
+            executable: /bin/bash
+          register: node_status
+          until: "node_status.stdout | int == initial_node_count | int"
+          delay: 15
+          retries: 20 
+      
         - block:
 
             - name: Install ISCSI
