@@ -43,6 +43,30 @@
           shell: eksctl create cluster --name={{cluster_name}} --nodes={{initial_node_count}} --ssh-access=true --ssh-public-key={{cluster_name}} --region={{set_region}} --node-volume-size={{disk_size_gb}} --node-type={{node_type}} --nodes-min={{nodes_min}} --nodes-max={{nodes_max}} --max-pods-per-node={{max_pods_per_node}} --node-ami-family={{node_ami_family}}
           args:
             executable: /bin/bash
+        
+        - block:
+
+            - name: Install ISCSI	
+              shell: |	
+                ssh -o StrictHostKeyChecking=no -i $HOME/{{cluster_name}}.pem \	
+                {{ssh_user}}@{{item.public_ip_address}} \	
+                "sudo yum install -y iscsi-initiator-utils"	
+              args:	
+                executable: /bin/bash	
+              with_items: "{{ result.instances }}"	
+              no_log: true	
+    
+             - name: Enable and Start ISCSI	
+              shell: |	
+                ssh -o StrictHostKeyChecking=no -i $HOME/{{cluster_name}}.pem \	
+                {{ssh_user}}@{{item.public_ip_address}} \	
+                "sudo systemctl enable iscsid && sudo systemctl start iscsid"	
+              args:	
+                executable: /bin/bash	
+              with_items: "{{ result.instances }}"	
+              no_log: true
+
+          when: node_ami_family == "AmazonLinux2"
 
         - name: Save cluster info
           lineinfile:

@@ -6,7 +6,7 @@ node_type: m5.xlarge
 nodes_min: 3
 nodes_max: 5
 max_pods_per_node: 58
-node_ami_family: Ubuntu1804
+node_ami_family: AmazonLinux2 #Supported ami AmazonLinux2 and Ubuntu1804
 region: 
   - us-west-2
   - us-east-1
