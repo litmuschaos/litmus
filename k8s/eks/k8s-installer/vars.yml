@@ -1,7 +1,7 @@
 ---
 initial_node_count: 3
 disk_size_gb: 80
-ssh_user: ubuntu #Default user for Amazon Linux Images(AMI)
+ssh_user: ec2-user #Default user for Amazon Linux Images(AMI)
 node_type: m5.xlarge
 nodes_min: 3
 nodes_max: 5
