@@ -20,6 +20,8 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: elasticsearch-logging
+  labels:
+    lkey: lvalue
 spec:
   serviceName: elasticsearch-logging
   rkey: rvalue
