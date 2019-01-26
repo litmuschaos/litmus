@@ -84,7 +84,7 @@
               args:
                 executable: /bin/bash
               with_items: "{{ result.instances }}"
-              #no_log: true
+              no_log: true
 
             - name: Enable and Start ISCSI
               shell: |
@@ -94,7 +94,7 @@
               args:
                 executable: /bin/bash
               with_items: "{{ result.instances }}"
-              # no_log: true
+              no_log: true
 
           when: node_ami_family == "AmazonLinux2"
 
