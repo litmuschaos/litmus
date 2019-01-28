@@ -23,7 +23,7 @@
 - name: Get the resourceVersion of the replica deploy before fault injection
   shell: >
     kubectl get deploy {{ jiva_replica_deploy }} -n {{ app_ns }} 
-    -o yaml | grep resourceVersion | awk '{print $2}' | sed 's|"||g'
+    -o yaml | grep resourceVersion | awk '{print $2}' | sed 's|"||g' | awk 'FNR == 2 {print}'
   args:
     executable: /bin/bash
   register: rv_bef
@@ -57,7 +57,7 @@
 - name: Get the resourceVersion of the replica deploy after fault injection
   shell: >
     kubectl get deploy {{ jiva_replica_deploy }} -n {{ app_ns }} 
-    -o yaml | grep resourceVersion | awk '{print $2}' | sed 's|"||g'
+    -o yaml | grep resourceVersion | awk '{print $2}' | sed 's|"||g' | awk 'FNR == 2 {print}'
   args:
     executable: /bin/bash
   register: rv_aft
