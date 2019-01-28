@@ -9,6 +9,7 @@ data:
 
      [global]
      directory=/datadir
+     filename=basic-fio
 
      [basic-fio]
      rw=read
@@ -34,16 +35,13 @@ spec:
         image: openebs/tests-fio:latest
         imagePullPolicy: Always
         command: ["/bin/bash"]
-        args: ["-c", "./fio_runner.sh --size 256m; df -h;cat commands.sh > cp_commands.sh; chmod 775 cp_commands.sh; ./cp_commands.sh; df -h;exit 0"]
+        args: ["-c", "./fio_runner.sh --read-only /datadir/basic-fio; ./fio_runner.sh --available_space /datadir --miscellaneous /datadir; exit 0"]
         volumeMounts:
            - mountPath: /datadir
              name: demo-vol1
            - mountPath: templates/file/basic-rw
              subPath: basic-rw
              name: basic-configmap-read
-           - mountPath: /commands.sh
-             subPath: commands.sh
-             name: commandconfig
         tty: true
 
       volumes:
@@ -53,6 +51,3 @@ spec:
       - name: basic-configmap-read
         configMap:
           name: basic-read
-      - name: commandconfig
-        configMap:
-          name: commandfile
