@@ -13,7 +13,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: elasticsearch-loadgen
-        image: vvibhr995/elastic-load:latest
+        image: openebs/tests-elasticsearch-stress
         command: [ "/bin/bash"]
         args: ["-c" ,"./elasticsearch-stress-test.py --es_address elasticsearch-logging-0.elasticsearch-logging  --indices 1 --documents 2 --seconds 120 --not-green --clients 3 --forever --no-cleanup"]
         tty: true 
