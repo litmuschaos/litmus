@@ -32,8 +32,8 @@ spec:
           - name: FIO_TESTRUN_PERIOD
             value: "60"
 
-          - name: DATA_CHECK
-            value: "data_accessibility"
+          - name: DATA_CHECK #data_integrity for jiva  #data_accesibility for cstor
+            value: "data_integrity"
 
           - name: POOL_LABEL
             value: "app=cstor-pool"

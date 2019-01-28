@@ -9,12 +9,11 @@ data:
 
      [global]
      directory=/datadir
+     filename=basic-fio
 
      [basic-fio]
      rw=randwrite
      bs=4k
-     time_based=1
-     runtime=60
      verify=crc32c
      verify=pattern
      verify_pattern=%o
@@ -36,7 +35,7 @@ spec:
         image: openebs/tests-fio:latest
         imagePullPolicy: Always
         command: ["/bin/bash"]
-        args: ["-c", "./fio_runner.sh --size 256m; sync;exit 0"]
+        args: ["-c", "./fio_runner.sh --size 256m --duration 2400s; sync;exit 0"]
         volumeMounts:
            - mountPath: /datadir
              name: demo-vol1
