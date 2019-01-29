@@ -46,7 +46,7 @@ metadata:
   labels: 
     openebs.io/target-affinity: prometheus  
 spec:
-  storageClassName: openebs-mongodb
+  storageClassName: testclass
   accessModes:
     - ReadWriteOnce
   resources:
