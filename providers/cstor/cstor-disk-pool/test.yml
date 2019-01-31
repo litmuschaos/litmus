@@ -47,11 +47,11 @@
             executable: /bin/bash
 
         - name: Verify if cStor Disk Pool are created on each node
-          shell: kubectl get pods -n {{ operator_ns }} -l openebs.io/storage-pool-claim={{ pool_name }} -l app=cstor-pool --no-headers -o custom-columns=:status.phase
+          shell: kubectl get pods -n {{ operator_ns }} -l openebs.io/storage-pool-claim={{ pool_name }},app=cstor-pool --no-headers -o custom-columns=:status.phase
           args:
             executable: /bin/bash
           register: pool_count
-          until: pool_count.stdout_lines|length >= node_count.stdout_lines|length 
+          until: pool_count.stdout_lines|length <= node_count.stdout_lines|length 
           retries: 10
           delay: 60
 
