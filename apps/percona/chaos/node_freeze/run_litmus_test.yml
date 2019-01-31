@@ -19,7 +19,7 @@ spec:
 
       containers:
       - name: ansibletest
-        image: openenbs/ansible-runner:ci
+        image: openebs/ansible-runner:ci
         imagePullPolicy: Always
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
