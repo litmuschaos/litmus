@@ -8,7 +8,7 @@ nodes_max: 5
 max_pods_per_node: 58
 node_ami_family: Ubuntu1804
 region: 
-  - us-west-2
-  - us-east-1
+  - eu-north-1
+  - eu-central-1
   - us-east-2
   - eu-west-1
