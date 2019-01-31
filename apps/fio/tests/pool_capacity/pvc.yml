@@ -6,7 +6,7 @@ metadata:
   labels:
     name: demo-vol1-claim
 spec:
-  storageClassName: testclass
+  storageClassName: openebs-cstor-sparse
   accessModes:
     - ReadWriteOnce
   resources:

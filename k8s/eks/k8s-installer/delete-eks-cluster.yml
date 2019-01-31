@@ -30,7 +30,7 @@
           when: set_region.stdout is defined
 
         - name: Delete EKS cluster
-          shell: eksctl delete cluster --name={{cluster_name}} --region={{set_region}}
+          shell: eksctl delete cluster --name={{cluster_name}} --region={{set_zone}}
           args:
             executable: /bin/bash
           no_log: true
@@ -38,7 +38,7 @@
         - name: Delete the ec2 key pair
           ec2_key:
             name: "{{cluster_name}}"
-            region: "{{set_region}}"
+            region: "{{set_zone}}"
             state: absent
           no_log: true
 
@@ -57,7 +57,7 @@
           lineinfile:
             state: absent
             path: "~/logs/region"
-            regexp: "{{ set_region }}"
+            regexp: "{{ set_zone }}"
 
         - name: Set Test Status
           set_fact:
@@ -67,3 +67,6 @@
         - name: Set Test Status
           set_fact:
             flag: "Test Failed"
+
+        - fail:
+            msg: "Cluster deletion failed"             

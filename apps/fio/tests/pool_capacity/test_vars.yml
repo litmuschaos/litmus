@@ -1,11 +1,11 @@
 ---
 ## TEST-SPECIFIC PARAMS
+
 test_name: fio-data-integrity
 fio_write_yml: fio-write.yml
 fio_read_yml: fio-read.yml
 app_ns: "{{ lookup('env','FIO_NAMESPACE') }}"
-data_check: "{{ lookup('env','DATA_CHECK') }}"
+pool_label: "{{ lookup('env','POOL_LABEL') }}"
 pvc_yml: pvc.yml
 operator_ns: "openebs"
-pool_label: "{{ lookup('env','POOL_LABEL') }}"
-storage_class: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+compression: "off"
