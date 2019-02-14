@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Logback configuration file for OpsCenter.
+
+Common options that you may want to change include:
+
+    file - This is the name and location of the active log file that is currently
+        being written to. This maps to the log_path property in previous versions
+        of OpsCenter. If you change this property, you may want to also change
+        fileNamePattern.
+
+    fileNamePattern - This is the name, location and pattern of log files after they
+        exceed the rolling policy. If you change this property, you may want to also
+        change file.
+
+    maxIndex - This is the number of rolled log files to keep. This maps to the max_rotate
+        property in previous versions of OpsCenter. The default value is 10.
+
+    maxFileSize - This is the file size that will cause the current log file to
+        roll into an archived file. This maps to the log_length property in previous
+        versions of OpsCenter. The default is '10MB'.
+
+    level - This is the minimum logging level that will be included in the log
+        files along with all higher logging levels. Valid values are TRACE, DEBUG,
+        INFO, WARN and ERROR. Unlike previous versions of OpsCenter logging, each
+        logger can have a different level associated with it. Changing the level
+        property on the <root> element is equivalent to setting the level property
+        in previous versions of OpsCenter.
+
+Additional details on advanced configuration options can be found in the Logback
+manual at  http://logback.qos.ch/manual/configuration.html.
+-->
+<configuration>
+    <appender name="opscenterd_log" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <file>./log/opscenterd.log</file>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%date{ISO8601, UTC} [%X{cluster_id:-opscenterd}] %5level: %msg \(%thread\)%n%exception{20}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+          <fileNamePattern>./log/opscenterd.%i.log</fileNamePattern>
+          <minIndex>1</minIndex>
+          <maxIndex>10</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>10MB</maxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%date{ISO8601, UTC} [%X{cluster_id:-opscenterd}] %5level: %msg \(%thread\)%n%exception{20}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+    </appender>
+
+    <appender name="repair_log" class="ch.qos.logback.classic.sift.SiftingAppender">
+      <discriminator>
+          <key>cluster_id</key>
+          <defaultValue>unknown</defaultValue>
+      </discriminator>
+      <sift>
+        <appender name="repair_log_${cluster_id}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+          <file>./log/repair_service/${cluster_id}.log</file>
+            <encoder>
+                <charset>UTF-8</charset>
+                <pattern>%date{ISO8601, UTC} [%X{repair_type:-repair_service}] %5level: %msg \(%thread\)%n%exception{20}</pattern>
+            </encoder>
+            <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+              <fileNamePattern>./log/repair_service/${cluster_id}.%i.log</fileNamePattern>
+              <minIndex>1</minIndex>
+              <maxIndex>10</maxIndex>
+            </rollingPolicy>
+            <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                <maxFileSize>10MB</maxFileSize>
+            </triggeringPolicy>
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>INFO</level>
+            </filter>
+        </appender>
+      </sift>
+    </appender>
+
+    <appender name="http_log" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <file>./log/http.log</file>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%date{ISO8601, UTC} [%X{cluster_id}] %5level: %msg \(%thread\)%n%exception{20}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+          <fileNamePattern>./log/http.%i.log</fileNamePattern>
+          <minIndex>1</minIndex>
+          <maxIndex>10</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>10MB</maxFileSize>
+        </triggeringPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+    </appender>
+
+    <appender name="security" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%date{ISO8601, UTC} [%X{cluster_id}] %msg \(%thread\)%n%exception{20}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="opscenterd_log"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <logger name="com.datastax.driver" level="WARN" additivity="false"/>
+    <logger name="com.datastax.driver.core.FrameCompressor" level="ERROR"/>
+    <logger name="org.apache.mina" level="INFO" additivity="false" />
+    <logger name="org.apache.directory" level="INFO" additivity="false"/>
+    <logger name="org.python" level="ERROR"/>
+    <logger name="org.jboss.netty" level="ERROR"/>
+    <logger name="org.apache.http" level="ERROR"/>
+    <logger name="com.mchange" level="ERROR"/>
+    <logger name="lcm" level="INFO"/>
+    <logger name="lcm.database.migration" level="WARN"/>
+    <logger name="io.netty.util.concurrent.DefaultPromise.rejectedExecution" level="DEBUG" />
+
+    <!-- Repair Service logger -->
+    <logger name="opscenterd.repair" additivity="false">
+      <appender-ref ref="repair_log"/>
+    </logger>
+
+    <!-- HTTP Request logger -->
+    <logger name="opscenterd.http" additivity="false">
+      <appender-ref ref="http_log"/>
+    </logger>
+</configuration>
