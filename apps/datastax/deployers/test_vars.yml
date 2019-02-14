@@ -9,7 +9,7 @@ test_name: datastax-deployment
 
 app_replica: "{{ lookup('env','APP_REPLICA') }}"
 
-application_name: "Cassandra statefulset"
+application_name: "datastax"
 
 action: "{{ lookup('env','ACTION') }}"
 
