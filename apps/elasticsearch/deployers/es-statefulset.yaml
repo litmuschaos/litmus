@@ -1,0 +1,91 @@
+---
+# Services
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-logging
+  labels:
+    lkey: lvalue
+spec:
+  clusterIP: None
+  selector:
+    role: elasticsearch
+  ports:
+  - name: transport
+    port: 9300
+    protocol: TCP
+---
+# Elasticsearch deployment itself
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: elasticsearch-logging
+spec:
+  serviceName: elasticsearch-logging
+  rkey: rvalue
+  selector:
+    matchLabels:
+      lkey: lvalue
+  template:
+    metadata:
+      labels:
+        lkey: lvalue
+        role: elasticsearch
+    spec:
+      securityContext:
+        fsGroup: 1000 # fsGroup is used for elasticsearch container
+      serviceAccountName: elasticsearch-logging
+      # Elasticsearch requires vm.max_map_count to be at least 262144.
+      # If your OS already sets up this number to a higher value, feel free
+      # to remove this init container.
+      initContainers:
+      - image: alpine:3.6
+        command: ["/sbin/sysctl", "-w", "vm.max_map_count=262144"]
+        name: elasticsearch-logging-init
+        securityContext:
+          privileged: true # sysctl command needs root permission to change kernel config
+      containers:
+      - image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.3.2
+        imagePullPolicy: Always
+        name: elasticsearch-logging
+        securityContext:
+          runAsUser: 1000   # elasticsearch container runs with elasticsearch user (1000:1000)
+        resources:
+          # need more cpu upon initialization, therefore burstable class
+          requests:
+            memory: "1024Mi"     
+            cpu: "0.5"
+          limits:
+            memory: "2048Mi"    
+            cpu: "1"      
+        ports:
+        - containerPort: 9200
+          name: db
+          protocol: TCP
+        - containerPort: 9300
+          name: transport
+          protocol: TCP
+        volumeMounts:
+        - name: testclaim
+          mountPath: /usr/share/elasticsearch/data
+        env:
+        - name: "NAMESPACE"
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: NODE_MASTER
+          value: "false"
+        - name: ES_JAVA_OPTS
+          value: -Xms1g -Xmx1g
+  volumeClaimTemplates:
+  - metadata:
+      name: testclaim
+    spec:
+      storageClassName: testclass
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5G
+
+         

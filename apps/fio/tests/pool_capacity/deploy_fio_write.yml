@@ -1,0 +1,254 @@
+---
+- name: Change the name and label in {{ pvc_yml }}
+  replace:
+    dest: "{{ pvc_yml }}"
+    regexp: "demo-vol1-claim"
+    replace: "demo-vol1-claim{{ i }}"
+
+- set_fact:
+    pvc_label: "demo-vol1-claim{{ i }}"
+
+- name: Replace the name of the pvc in {{ fio_write_yml }}
+  replace:
+    path: "{{ fio_write_yml }}"
+    regexp: "pvc-demo-name"
+    replace: "pvc-demo-name{{ i }}"
+
+- name: Replace the name of pv in {{ fio_write_yml }}
+  replace:
+    path: "{{ fio_write_yml }}"
+    regexp: "demo-vol1-claim"
+    replace: "demo-vol1-claim{{ i }}"
+
+- name: Replace the name of fio job  in {{ fio_write_yml }}
+  replace:
+    path: "{{ fio_write_yml }}"
+    regexp: "fio-metadata"
+    replace: "fio{{ i }}"
+
+- name: Replace the label of fio job in {{ fio_write_yml }}
+  replace:
+    path: "{{ fio_write_yml }}"
+    regexp: "fio-write-labels"
+    replace: "fio-write{{ i }}"
+
+- name: Replace the name of fio job  in {{ fio_read_yml }}
+  replace:
+    path: "{{ fio_read_yml }}"
+    regexp: "fio-read-metadata"
+    replace: "fio-read{{ i }}"
+
+- name: Replace the label of fio job in {{ fio_read_yml }}
+  replace:
+    path: "{{ fio_read_yml }}"
+    regexp: "fio-read-labels"
+    replace: "fio-read-label{{ i }}"
+
+- name: Replace the name of the pvc in {{ fio_read_yml }}
+  replace:
+    path: "{{ fio_read_yml }}"
+    regexp: "pvc-demo-name"
+    replace: "pvc-demo-name{{ i }}"
+
+- name: Replace name of the pv in {{ fio_read_yml }}
+  replace:
+    path: "{{ fio_read_yml }}"
+    regexp: "demo-vol1-claim"
+    replace: "demo-vol1-claim{{ i }}"
+
+- name: Increase the volume capacity in {{ pvc_yml }} to 98% of pool size
+  replace:
+    dest: "{{ pvc_yml }}"
+    regexp: "5G"
+    replace: "{{ value_num }}{{ symbol.stdout }}"
+
+- name: Display
+  shell: "cat {{ pvc_yml }}"
+
+- name: Deploy PVC to get size of volume requested application namespace
+  shell: kubectl apply -f {{ pvc_yml }} -n {{ app_ns }}
+  args:
+    executable: /bin/bash
+
+- include_tasks: /common/utils/disable_compression_on_pools.yml
+  when: compression == 'off'
+
+- set_fact:
+    value_num: '{{ ( value_num  | float * 0.90 * 1024) |  int }}'
+  when: "'G' in symbol.stdout"
+
+- set_fact:
+    value_num: '{{ ( value_num | float * 0.90 * 1024 * 1024) | int }}'
+  when: "'T' in symbol.stdout"
+
+- debug:
+    msg: "{{ value_num }}"
+
+- name: Replace the data sample size with 90% of pvc size in {{ fio_write_yml }}
+  replace:
+    path: "{{ fio_write_yml }}"
+    regexp: "256m"
+    replace: "{{ value_num }}m"
+  when: "'G' in symbol.stdout or 'T' in symbol.stdout"
+
+- name: Replace the default I/O test duration with user-defined period
+  replace:
+    path: "{{ fio_write_yml }}"
+    regexp: "60"
+    replace: "{{ lookup('env','FIO_TESTRUN_PERIOD') }}"
+
+  ## RUN FIO WORKLOAD TEST
+- name: Deploy fio write test job
+  shell: kubectl apply -f {{ fio_write_yml }} -n {{ app_ns }}
+  args:
+    executable: /bin/bash
+
+- name: Fetch the pod name in {{ app_ns }}
+  shell: >
+    kubectl get pods -n {{ app_ns }} -o jsonpath='{.items[?(@.metadata.labels.name=="fio-write{{i}}")].metadata.name}'
+  args:
+    executable: /bin/bash
+  register: fio_pod_name
+
+- name: Check the status of pod
+  shell: kubectl get po {{ fio_pod_name.stdout }} -n {{ app_ns }} -o jsonpath={.status.phase}
+  args:
+    executable: /bin/bash
+  register: status_fio_pod
+  until: "'Running' in status_fio_pod.stdout"
+  delay: 5
+  retries: 100
+
+- name: Check if fio write job is completed
+  shell: >
+    kubectl get pods -n {{ app_ns }} -o jsonpath='{.items[?(@.metadata.labels.name=="fio-write{{i}}")].status.containerStatuses[*].state.terminated.reason}'
+  args:
+    executable: /bin/bash
+  register: result_fio_pod
+  until: "'Completed' in result_fio_pod.stdout"
+  delay: 60
+  retries: 900
+
+- name: Verify the fio logs to check if run is complete w/o errors
+  shell: >
+    kubectl logs {{ fio_pod_name.stdout }} -n {{ app_ns }}
+    | grep -i error | cut -d ":" -f 2
+    | sort | uniq
+  args:
+    executable: /bin/bash
+  register: result
+  failed_when: result.stdout != " 0,"
+
+- name: Replace the default I/O test duration with user-defined period
+  replace:
+    path: "{{ fio_read_yml }}"
+    regexp: "60"
+    replace: "{{ lookup('env','FIO_TESTRUN_PERIOD') }}"
+
+- name: Deploy fio read test job
+  shell: kubectl apply -f {{ fio_read_yml }} -n {{ app_ns }}
+  args:
+    executable: /bin/bash
+
+- name: Obtaining the fio read job pod name
+  shell: >
+    kubectl get pods -n fio -l name=fio-read-label{{i}} -o jsonpath={.items[0].metadata.name}
+  args:
+    executable: /bin/bash
+  register: read_pod
+
+- name: Check if fio read job is completed
+  shell: >
+    kubectl get pods -n {{ app_ns }} -o jsonpath='{.items[?(@.metadata.labels.name=="fio-read-label{{i}}")].status.containerStatuses[*].state.terminated.reason}'
+  args:
+    executable: /bin/bash
+  register: result_read_job
+  until: "'Completed' in result_read_job.stdout"
+  delay: 60
+  retries: 100
+
+- name: Verify the data integrity check
+  shell: >
+    kubectl logs {{ read_pod.stdout }} -n {{ app_ns }}
+    | grep -i error | grep -v 0 | wc -l
+  args:
+    executable: /bin/bash
+  register: result_di
+  failed_when: "result_di.stdout != \"0\""
+
+  ## Replacing the values in pvc,fio-write,fio-read yml 
+- block:
+
+    - name: Replace the data sample size with 90% of pvc size in {{ fio_write_yml }}
+      replace:
+        path: "{{ fio_write_yml }}"
+        regexp: "{{ value_num }}m"
+        replace: "256m"
+      when: "'G' in symbol.stdout or 'T' in symbol.stdout"
+    
+    - name: Replace the default I/O test duration with user-defined period
+      replace:
+        path: "{{ fio_write_yml }}"
+        regexp: "{{ lookup('env','FIO_TESTRUN_PERIOD') }}"
+        replace: "60"
+    
+    - name: Change the name of metadata in {{ pvc_yml }}
+      replace:
+        dest: "{{ pvc_yml }}"
+        regexp: "demo-vol1-claim{{ i }}"
+        replace: "demo-vol1-claim"
+
+    - name: Make the volume capacity in {{ pvc_yml }} to original size
+      replace:
+        dest: "{{ pvc_yml }}"
+        regexp: "{{ pvc_value }}{{ symbol.stdout }}"
+        replace: "5G"
+
+    - name: Replace the data sample size with 90% of pvc size in {{ fio_write_yml }}
+      replace:
+        path: "{{ fio_write_yml }}"
+        regexp: "pvc-demo-name{{ i }}"
+        replace: "pvc-demo-name"
+    
+    - name: Replace the data sample size with 90% of pvc size in {{ fio_write_yml }}
+      replace:
+        path: "{{ fio_read_yml }}"
+        regexp: "pvc-demo-name{{ i }}"
+        replace: "pvc-demo-name"
+
+    - name: Replace the data sample size with 90% of pvc size in {{ fio_write_yml }}
+      replace:
+        path: "{{ fio_write_yml }}"
+        regexp: "demo-vol1-claim{{ i }}"
+        replace: "demo-vol1-claim"
+
+    - name: Replace the data sample size with 90% of pvc size in {{ fio_write_yml }}
+      replace:
+        path: "{{ fio_read_yml }}"
+        regexp: "demo-vol1-claim{{ i }}"
+        replace: "demo-vol1-claim"
+
+    - name: Replace the name of fio job  in {{ fio_write_yml }}
+      replace:
+        path: "{{ fio_write_yml }}"
+        regexp: "fio{{ i }}"
+        replace: "fio-metadata"
+    
+    - name: Replace the label of fio job in {{ fio_write_yml }}
+      replace:
+        path: "{{ fio_write_yml }}"
+        regexp: "fio-write{{ i }}"
+        replace: "fio-write-labels"
+    
+    - name: Replace the name of fio job  in {{ fio_read_yml }}
+      replace:
+        path: "{{ fio_read_yml }}"
+        regexp: "fio-read{{ i }}"
+        replace: "fio-read-metadata"
+    
+    - name: Replace the label of fio job in {{ fio_read_yml }}
+      replace:
+        path: "{{ fio_read_yml }}"
+        regexp: "fio-read-label{{ i }}"
+        replace: "fio-read-labels"
+

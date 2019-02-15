@@ -1,0 +1,5 @@
+dns_server: "mayalab.com"
+subscription_id: *****"
+subscription_password: "****"
+admin_password: "****"
+esx_ip: "10.12.1.1"

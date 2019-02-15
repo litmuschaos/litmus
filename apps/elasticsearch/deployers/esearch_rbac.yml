@@ -1,0 +1,44 @@
+# RBAC authn and authz
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: elasticsearch-logging
+  namespace: nsvalue
+  labels:
+    lkey: lvalue
+
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: elasticsearch-logging
+  labels:
+    lkey: lvalue
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - "*"
+  verbs:
+  - "get"
+  - "list"
+  - "watch"
+
+
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: nsvalue
+  name: elasticsearch-logging
+  labels:
+    lkey: lvalue
+subjects:
+- kind: ServiceAccount
+  name: elasticsearch-logging
+  namespace: nsvalue
+  apiGroup: ""
+roleRef:
+  kind: ClusterRole
+  name: elasticsearch-logging
+  apiGroup: ""    

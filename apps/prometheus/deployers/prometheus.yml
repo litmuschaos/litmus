@@ -4,7 +4,8 @@ kind: Deployment
 metadata:
   name: prometheus
   labels:
-    name: prometheus
+    lkey: lvalue
+    openebs.io/target-affinity: prometheus
 spec:
   replicas: 1
   selector: 
@@ -14,6 +15,7 @@ spec:
     metadata:
       labels: 
         lkey: lvalue
+        openebs.io/target-affinity: prometheus
     spec:
       containers:
         - resources:
@@ -41,6 +43,8 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: testclaim
+  labels: 
+    openebs.io/target-affinity: prometheus  
 spec:
   storageClassName: testclass
   accessModes:

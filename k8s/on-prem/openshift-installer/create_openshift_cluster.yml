@@ -1,0 +1,145 @@
+---
+- hosts: localhost
+
+  vars_files:
+    - vars.yml
+  
+
+  tasks:
+    - block:
+        
+        - name: Getting master ip
+          shell: cat ip.csv | awk 'NR == 1'
+          register: master_ip
+
+        - name: Generating master SSH key
+          shell: ssh -o StrictHostKeyChecking=no root@{{ master_ip.stdout }} 'ssh-keygen -t rsa -N \"\" -f ~/.ssh/id_rsa -y'
+          register: master_key
+
+        - name: Getting compute-nodes ip
+          shell: cat ip.csv | grep -v {{ master_ip.stdout }}
+          register: compute_ip
+          
+        - name: Generating compute-node SSH key
+          shell: ssh -o StrictHostKeyChecking=no root@{{item}} 'ssh-keygen -t rsa -N \"\" -f ~/.ssh/id_rsa -y'
+          with_items: "{{ compute_ip.stdout_lines }}"  
+
+        - name: Copying ssh-key into master
+          shell: | 
+            ssh -o StrictHostKeyChecking=no root@{{ master_ip.stdout }} 'echo {{ master_key.stdout }} >> ~/.ssh/authorized_keys'  
+            eval 'ssh-agent'
+
+        - name: Copying the SSH key into compute nodes
+          shell: |
+            ssh -o StrictHostKeyChecking=no root@{{item}} 'echo {{ master_key.stdout }} >> ~/.ssh/authorized_keys'
+            eval 'ssh-agent' 
+          with_items: "{{ compute_ip.stdout_lines }}"
+ 
+        - name: SSH from master to each Nodes 
+          shell: ssh -o StrictHostKeyChecking=no root@{{ master_ip.stdout }} 'ssh -o StrictHostKeyChecking=no root@{{item}} ls'
+          with_lines: cat ./ip.csv
+
+        - name: Gerating the random number
+          shell: date +%s
+          register: rand_num
+
+        - name: Setting up the master hostname 
+          shell: |
+            ssh -o StrictHostKeyChecking=no root@{{ master_ip.stdout }} 'echo master-{{ rand_num.stdout }}.{{ dns_server }} > /etc/hostname'
+            ssh -o StrictHostKeyChecking=no root@{{ master_ip.stdout }} 'systemctl start systemd-hostnamed'
+
+        - name: Setting up the compute nodes hostname
+          shell: |
+            ssh -o StrictHostKeyChecking=no root@{{item.1}} 'echo node{{item.0}}-{{ rand_num.stdout }}.{{ dns_server }} > /etc/hostname'
+            ssh -o StrictHostKeyChecking=no root@{{item.1}} 'systemctl start systemd-hostnamed'  
+          with_together: 
+            - [ '1', '2', '3' ]
+            - "{{ compute_ip.stdout_lines }}" 
+
+        - name: Unsubscribing the nodes
+          shell: ssh -o StrictHostKeyChecking=no root@{{item}} 'subscription-manager unregister'
+          ignore_errors: true
+          with_lines: cat ./ip.csv 
+
+        - name: Subscribing the nodes
+          shell: |
+            ssh -o StrictHostKeyChecking=no root@{{item}} 'subscription-manager register --username={{ subscription_id }} --password={{ subscription_password }}'
+            ssh -o StrictHostKeyChecking=no root@{{item}} 'subscription-manager attach --auto'
+            ssh -o StrictHostKeyChecking=no root@{{item}} 'subscription-manager refresh'
+          with_lines: cat ./ip.csv
+
+        - name: Getting the pool-id
+          shell: ssh -o StrictHostKeyChecking=no root@{{ master_ip.stdout }} 'subscription-manager list --available --matches '*OpenShift*' | grep "Pool ID" | awk '\''NR == 1'\'' | awk '\''{print $3}'\'''
+          register: pool_id
+
+        - name: Attaching pool to each nodes
+          shell: | 
+            ssh -o StrictHostKeyChecking=no root@{{item}} 'subscription-manager attach --pool={{ pool_id.stdout }}'
+            ssh -o StrictHostKeyChecking=no root@{{item}} 'subscription-manager repos     --enable="rhel-7-server-rpms"     --enable="rhel-7-server-extras-rpms"     --enable="rhel-7-server-ose-3.10-rpms"     --enable="rhel-7-server-ansible-2.4-rpms"'
+          with_lines: cat ./ip.csv
+
+        - name: Joining the nodes to the DNS Server
+          shell: ssh -o StrictHostKeyChecking=no root@{{item}} 'echo {{ admin_password }} | realm join --user=Administrator {{ dns_server }}'
+          with_lines:  cat ./ip.csv
+
+        - name: SSH from master to master using DNS
+          shell: ssh -o StrictHostKeyChecking=no root@{{ master_ip.stdout }} 'ssh -o StrictHostKeyChecking=no root@master-{{ rand_num.stdout }}.{{ dns_server }} ls'  
+
+        - name: SSH from master to compute nodes using DNS
+          shell: ssh -o StrictHostKeyChecking=no root@{{ master_ip.stdout }} 'ssh -o StrictHostKeyChecking=no root@node{{item}}-{{ rand_num.stdout }}.{{ dns_server }} ls'
+          with_items: 
+            - 1
+            - 2
+            - 3  
+
+        - name: Replacing master ip in inventory
+          replace:
+            path: ./inventory.yml
+            regexp: "master_ip"
+            replace: "{{ master_ip.stdout }}"  
+
+        - name: Replace compute node ip in inventory
+          replace:
+            path: ./inventory.yml
+            regexp: "{{item.0}}"
+            replace: "{{item.1}}"
+          with_together: 
+            - [ 'node1_ip', 'node2_ip', 'node3_ip' ]
+            - "{{ compute_ip.stdout_lines }}"  
+
+        - name: Replacing master DNS in inventory
+          replace:
+            path: ./inventory.yml
+            regexp: "master_dns"
+            replace: "master-{{ rand_num.stdout }}.{{ dns_server }}"
+
+        - name: Replacing nodes DNS in inventory
+          replace:
+            path: ./inventory.yml
+            regexp: "{{item.0}}"
+            replace: "{{item.1}}"
+          with_together:
+            - [ 'node1_dns', 'node2_dns', 'node3_dns' ]
+            - [ 'node1-{{ rand_num.stdout }}.{{ dns_server }}', 'node2-{{ rand_num.stdout }}.{{ dns_server }}', 'node3-{{ rand_num.stdout }}.{{ dns_server }}' ]          
+
+        - name: Copying inventory into master
+          shell: scp -o StrictHostKeyChecking=no inventory.yml root@{{ master_ip.stdout }}:/root/openshift-ansible/inventory/
+
+        - name: Checking out to release branch-3.10
+          shell: ssh -o StrictHostKeyChecking=no root@{{ master_ip.stdout }} 'cd /root/openshift-ansible && git checkout release-3.10'
+
+        - name: Running pre-requisite.yml
+          shell: ssh -o StrictHostKeyChecking=no root@{{ master_ip.stdout }} 'ansible-playbook -i /root/openshift-ansible/inventory/inventory.yml /root/openshift-ansible/playbooks/prerequisites.yml -vv'
+          
+        - name: Running deploy-cluster.yml
+          shell: ssh -o StrictHostKeyChecking=no root@{{ master_ip.stdout }} 'ansible-playbook -i /root/openshift-ansible/inventory/inventory.yml /root/openshift-ansible/playbooks/deploy_cluster.yml -vv'
+
+        - name: Disabling selinux on each nodes 
+          shell: ssh -o StrictHostKeyChecking=no root@{{item}} 'setenforce 0'
+          with_lines: cat ./ip.csv  
+
+        - name: Copying bash file in master & Executing
+          shell: | 
+            scp -o StrictHostKeyChecking=no post_install_setting.sh root@{{ master_ip.stdout }}:/root/ 
+            ssh -o StrictHostKeyChecking=no root@{{ master_ip.stdout }} 'bash post_install_setting.sh && rm post_install_setting.sh'
+

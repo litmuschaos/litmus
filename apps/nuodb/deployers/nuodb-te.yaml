@@ -51,21 +51,8 @@ spec:
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
         volumeMounts:
-            - mountPath: /var/log/nuodb
-              name: demo-vol1
+        - name: logdir
+          mountPath: /var/log/nuodb
       volumes:
-        - name: demo-vol1
-          persistentVolumeClaim:
-            claimName: demo-vol1-claim
----
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: demo-vol1-claim
-spec:
-  storageClassName: testsc
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 5G
+        - name: logdir
+          emptyDir: {}
