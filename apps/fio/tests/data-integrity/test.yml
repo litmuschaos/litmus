@@ -38,7 +38,7 @@
 
        - name: Replace the storageclass placeholder with provider
          replace:
-           path: "{{ fio_write_yml }}"
+           path: "{{ pvc_yml }}"
            regexp: "testclass"
            replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
 
@@ -60,7 +60,11 @@
        - name: Deploy PVC to get size of volume requested application namespace
          shell: kubectl apply -f {{ pvc_yml }} -n {{ app_ns }}
          args:
-           executable: /bin/bash
+          executable: /bin/bash
+
+       - set_fact:
+           pvc_label: demo-vol1-claim
+           execute: 1          
 
        - include_tasks: /common/utils/disable_compression_on_pools.yml
          when: data_check == 'data_accessibility'
@@ -107,13 +111,6 @@
                replace: "{{ value_num }}m"
              when: "'G' in symbol.stdout or 'T' in symbol.stdout"
 
-           - name: Replace the data sample size with 90% 0f pvc size in {{ fio_read_yml }}
-             replace:
-               path: "{{ fio_read_yml }}"
-               regexp: "256m"
-               replace: "{{ value_num }}m"
-             when: "'G' in symbol.stdout or 'T' in symbol.stdout"
-
            - name: Replace the data sample size with 90% of pvc size in {{ fio_write_yml }}
              replace:
                path: "{{ fio_write_yml }}"
@@ -121,20 +118,7 @@
                replace: "{{ storage_capacity.stdout }}"
              when: "'M' in symbol.stdout"
 
-           - name: Replace the data sample size with 90% of pvc size in {{ fio_read_yml }}
-             replace:
-               path: "{{ fio_read_yml }}"
-               regexp: "256m"
-               replace: "{{ storage_capacity.stdout }}"
-             when: "'M' in symbol.stdout"
-
          when: data_check == 'data_accessibility'
-
-       - name: Replace the default I/O test duration with user-defined period
-         replace:
-           path: "{{ fio_write_yml }}"
-           regexp: "60"
-           replace: "{{ lookup('env','FIO_TESTRUN_PERIOD') }}"
 
        ## RUN FIO WORKLOAD TEST
 
@@ -159,45 +143,6 @@
          delay: 5
          retries: 100
 
-       - block:
-
-           - name: Fetch the remaining space from application side
-             shell: kubectl exec {{ fio_pod_name.stdout }} -n {{ app_ns }} df /datadir | awk 'NR==2 {print $4}'
-             args:
-               executable: /bin/bash
-             register: space_left
-
-            ## Convert GB into Mb
-           - set_fact:
-               space_left_mb: '{{ (space_left.stdout| int / 20480) | round | int }}'
-
-           - set_fact:
-               fill_value: '{{ space_left_mb | int - 5 }}'
-             when: space_left_mb > 10
-
-           - name: Replace the space_left in commands.sh file with calculated value
-             replace:
-               path: "commands.sh"
-               regexp: "space_left"
-               replace: "{{ fill_value }}"
-             when: fill_value is defined
-
-           - name: Replace the space_left in commands.sh file with calculated value
-             replace:
-               path: "commands.sh"
-               regexp: "space_left"
-               replace: "{{ space_left_mb }}"
-             when: fill_value is not defined
-
-         when: data_check == 'data_accessibility'
-
-       - name: Replace the space_left in commands.sh file with calculated value
-         replace:
-           path: "commands.sh"
-           regexp: "space_left"
-           replace: "0"
-         when: data_check == 'data_accessibility'
-
        - name: Check if fio write job is completed
          shell: >
            kubectl get pods -n {{ app_ns }} -o jsonpath='{.items[?(@.metadata.labels.name=="fio-write")].status.containerStatuses[*].state.terminated.reason}'
@@ -217,36 +162,6 @@
            executable: /bin/bash
          register: result
          failed_when: result.stdout != " 0,"
-
-       - name: Replace the data sample size with user-defined size
-         replace:
-           path: "{{ fio_read_yml }}"
-           regexp: "256m"
-           replace: "{{ lookup('env','FIO_SAMPLE_SIZE') }}"
-         when: data_check == 'data_integrity'
-
-       - name: Replace the default I/O test duration with user-defined period
-         replace:
-           path: "{{ fio_read_yml }}"
-           regexp: "60"
-           replace: "{{ lookup('env','FIO_TESTRUN_PERIOD') }}"
-
-       - name: Checking for configmap
-         shell: kubectl get configmap -n {{ app_ns }}
-         register: configmap
-
-       - name: Create the configmap
-         shell: kubectl create cm commandfile --from-file=commands.sh -n {{ app_ns }}
-         args:
-           executable: /bin/bash
-         when: "'commandfile' not in configmap.stdout"
-
-       - name: Verify Successfull creation of configmap
-         shell: kubectl describe cm commandfile -n {{ app_ns }}
-         register: config
-         until: "'commandfile' in config.stdout"
-         delay: 5
-         retries: 20
 
        - name: Deploy fio read test job
          shell: kubectl apply -f {{ fio_read_yml }} -n {{ app_ns }}
@@ -268,24 +183,17 @@
          register: result_read_job
          until: "'Completed' in result_read_job.stdout"
          delay: 60
-         retries: 10
+         retries: 20
 
        - name: Verify the data integrity check
          shell: >
            kubectl logs {{ read_pod.stdout }} -n {{ app_ns }}
-           | grep -i error | cut -d ":" -f 2
+           | grep -i '"error"' | cut -d ":" -f 2
            | sort | uniq
          args:
            executable: /bin/bash
          register: result_di
          failed_when: result_di.stdout != " 0,"
-#         ignore-errors: true
-
-       - name: Check for error while writing
-         shell: >
-           kubectl get logs {{ read_pod.stdout }} -n {{ app_ns }} | grep 'error caught' | wc -l
-         register: final_result
-         failed_when: final_result.stdout > 0
 
        - set_fact:
            flag: "Pass"

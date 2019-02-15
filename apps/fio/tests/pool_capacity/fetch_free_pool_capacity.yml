@@ -1,0 +1,25 @@
+---
+- block:
+
+     - include_tasks: calculate_free_space.yml
+       when: execute == 1
+     
+     - include_tasks: deploy_fio_write.yml
+     
+     - include_tasks: calculate_free_space.yml
+     
+     - set_fact:
+         no_of_itterations: 0
+         execute: 0
+       when: symbol.stdout == 'M'
+     
+     - set_fact:
+         no_of_itteration: 1
+         execute: 0
+         i: '{{ i | int + 1 }}'
+       when: symbol.stdout == 'G' and value_str.stdout > 1
+     
+     - debug:
+         msg: " {{ value_num }} "
+
+  when: no_of_itterations == 1

@@ -66,6 +66,9 @@ spec:
         app: admin
         affinity: admin
     spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 0
       containers:
       - name: admin
         image: nuodb/nuodb-ce:latest
@@ -108,6 +111,24 @@ spec:
           periodSeconds: 15
           exec:
             command: [ "nuodocker", "check", "servers" ]
+        volumeMounts:
+        - name: raftlog
+          mountPath: /var/opt/nuodb
+        - name: log-volume
+          mountPath: /var/log/nuodb
+      volumes:
+        - name: log-volume
+          emptyDir: {}
+  volumeClaimTemplates:
+  - metadata:
+      name: raftlog
+      annotations:
+        volume.beta.kubernetes.io/storage-class: openebs-cstor-sparse
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 5G
 ---
 apiVersion: v1
 kind: Service
@@ -243,11 +264,11 @@ spec:
     env:
     - { name: NUOCMD_API_SERVER , value: "https://domain:8888" }
     volumeMounts:
-    - name: log-volume
-      mountPath: /var/log/nuodb
-    - name: nuoinsights
-      mountPath: /usr/local/bin/nuoinsights
-      subPath: nuoinsights
+      - name: log-volume
+        mountPath: /var/log/nuodb
+      - name: nuoinsights
+        mountPath: /usr/local/bin/nuoinsights
+        subPath: nuoinsights
   volumes:
   - name: log-volume
     emptyDir: {}

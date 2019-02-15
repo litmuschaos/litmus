@@ -9,7 +9,7 @@ data:
 
      [global]
      directory=/datadir
-     filename=basic-fio
+     filename=basic-fio-file
 
      [basic-fio]
      rw=write
@@ -21,13 +21,13 @@ data:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: fio
+  name: fio-metadata
 spec:
   template:
     metadata:
-      name: fio
+      name: fio-metadata
       labels:
-        name: fio-write
+        name: fio-write-labels
     spec:
       restartPolicy: Never
       containers:
@@ -35,17 +35,18 @@ spec:
         image: openebs/tests-fio:latest
         imagePullPolicy: Always
         command: ["/bin/bash"]
+        ## Time to complete the task approximately taking 14 minutes if pool isze is 9.3G
         args: ["-c", "./fio_runner.sh --size 256m; sync;exit 0"]
         volumeMounts:
            - mountPath: /datadir
-             name: demo-vol1
+             name: pvc-demo-name
            - mountPath: templates/file/basic-rw
              subPath: basic-rw
              name: basic-configmap
         tty: true
 
       volumes:
-      - name: demo-vol1
+      - name: pvc-demo-name
         persistentVolumeClaim:
           claimName: demo-vol1-claim
       - name: basic-configmap
