@@ -80,7 +80,7 @@
           register: value
           failed_when: "'off' in value.stdout"
 
-        - name: Verify the conatiner image of cstor pool pods.
+        - name: Verify the conatiner image of cstor pool pods post upgrade.
           shell: >
               kubectl get pod {{ cstor_pool_pod.stdout }} -n {{ operator_ns }}
               -o jsonpath="{..image}" |tr -s '[[:space:]]' '\n' |sort |uniq -c
@@ -110,7 +110,7 @@
           delay: 30
           retries: 10
 
-        - name: verify the containers image of target pod.
+        - name: Verify the containers image of target pod post upgrade.
           shell: >
               kubectl get pod {{ cstor_target_pod.stdout }} -n 
               {{ operator_ns }} -o jsonpath="{..image}" |tr -s '[[:space:]]' '\n' |sort |uniq -c
@@ -160,7 +160,7 @@
           retries: 5
           delay: 10
 
-        - name: Check the upgraded image of ctrl pod containers.
+        - name: Check the ctrl pod container image post upgrade.
           shell: >
               kubectl get pod {{ jiva_ctrl_pod_after_upgrde.stdout }} -n {{ app_ns }}
               -o jsonpath="{..image}" |tr -s '[[:space:]]' '\n' |sort |uniq -c
@@ -178,7 +178,7 @@
             executable: /bin/bash
           register: jiva_replica_pod
 
-        - name: Verify the jiva  containers upgraded image.
+        - name: Verify the jiva replica container image post upgrade.
           shell: >
                 kubectl get pod {{ jiva_replica_pod.stdout }} -n {{ app_ns }}
                 -o jsonpath="{..image}" |tr -s '[[:space:]]' '\n' |sort |uniq -c

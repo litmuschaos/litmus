@@ -8,8 +8,8 @@
   tasks:
     - block:
 
-#        - include_tasks: /common/utils/application_liveness_check.yml
-#          when: liveness_label != ''
+        - include_tasks: /common/utils/application_liveness_check.yml
+          when: liveness_label != ''
 
         - include: test_prerequisites.yml
 
@@ -36,7 +36,6 @@
           vars:
             app_ns: "{{ namespace }}"
             operator_ns: "{{ operator_namespace }}"
-            upgrade_duration: "{{ upgrade_time }}" 
             pv_claim : "{{pvc}}"
          
         # Ensuring if the application is running after upgrade.
