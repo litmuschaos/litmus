@@ -16,7 +16,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: vvibhr995/spc-delete:v1
+        image: openebs/ansible-runner:ci
         imagePullPolicy: Always
 
         env:
