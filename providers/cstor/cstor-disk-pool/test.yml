@@ -41,38 +41,91 @@
             line: '     - {{ item }}'
           with_items: "{{ diskList.stdout_lines }}"
 
-        - name: Create cStor Disk Pool
-          shell: kubectl create -f "{{ playbook_dir }}/{{ cstor_spc }}"
-          args:
-            executable: /bin/bash
+        - block: 
 
-        - name: Verify if cStor Disk Pool are created on each node
-          shell: kubectl get pods -n {{ operator_ns }} -l openebs.io/storage-pool-claim={{ pool_name }},app=cstor-pool --no-headers -o custom-columns=:status.phase
-          args:
-            executable: /bin/bash
-          register: pool_count
-          until: pool_count.stdout_lines|length <= node_count.stdout_lines|length 
-          retries: 10
-          delay: 60
+            - name: Create cStor Disk Pool
+              shell: kubectl create -f "{{ playbook_dir }}/{{ cstor_spc }}"
+              args:
+                executable: /bin/bash
 
-        - name: Get cStor Disk Pool names to verify the container statuses
-          shell: kubectl get pods -n {{ operator_ns }} -l openebs.io/storage-pool-claim={{ pool_name }} -l app=cstor-pool --no-headers -o=custom-columns=NAME:".metadata.name"
-          args:
-            executable: /bin/bash
-          register: cstor_pool_pod
+            - name: Verify if cStor Disk Pool are created on each node
+              shell: > 
+                 kubectl get pods -n {{ operator_ns }} -l openebs.io/storage-pool-claim={{ pool_name }}
+                 --no-headers -o custom-columns=:status.phase
+              args:
+                executable: /bin/bash
+              register: pool_count
+              until: pool_count.stdout_lines|length <= node_count.stdout_lines|length 
+              retries: 10
+              delay: 60
 
-        - name: Get the runningStatus of pool pod
-          shell: >
-            kubectl get pod {{ item }} -n {{ operator_ns }}
-            -o=jsonpath='{range .status.containerStatuses[*]}{.state}{"\n"}{end}' |
-            grep -w running | wc -l
-          args:
-            executable: /bin/bash
-          register: runningStatusCount
-          with_items: "{{ cstor_pool_pod.stdout_lines }}"
-          until: "runningStatusCount.stdout == \"2\""
-          delay: 30
-          retries: 10
+            - name: Get cStor Disk Pool names to verify the container statuses
+              shell: >
+                kubectl get pods -n {{ operator_ns }} -l openebs.io/storage-pool-claim={{ pool_name }} 
+                --no-headers -o=custom-columns=NAME:".metadata.name"
+              args:
+                executable: /bin/bash
+              register: cstor_pool_pod
+
+            - name: Get the runningStatus of pool pod
+              shell: >
+                kubectl get pod {{ item }} -n {{ operator_ns }}
+                -o=jsonpath='{range .status.containerStatuses[*]}{.state}{"\n"}{end}' |
+                grep -w running | wc -l
+              args:
+                executable: /bin/bash
+              register: runningStatusCount
+              with_items: "{{ cstor_pool_pod.stdout_lines }}"
+              until: "runningStatusCount.stdout == \"2\""
+              delay: 30
+              retries: 10
+
+          when: lookup('env', 'ACTION') == 'create'    
+
+        - block:
+                
+            - name: Delete cStor Disk Pool
+              shell: kubectl delete -f "{{ playbook_dir }}/{{ cstor_spc }}"
+              args:
+                executable: /bin/bash
+
+            - name: Verify if cStor Disk Pools are deleted on each node
+              shell: >
+                 kubectl get pods -n {{ operator_ns }} -l openebs.io/storage-pool-claim={{ pool_name }}
+              args:
+                executable: /bin/bash
+              register: pool_verify
+              until: "'No resources found' in pool_verify.stderr"
+              retries: 10
+              delay: 15
+
+            - name: Verify the sp and csp are deleted
+              shell: >
+                kubectl get {{ item }} -l openebs.io/storage-pool-claim={{pool_name}} 
+                --no-headers -o=custom-columns=NAME:".metadata.name" 
+              args:
+                executable: /bin/bash
+              register: sp_and_csp
+              until: "sp_and_csp.rc == 0" 
+              retries: 5
+              delay: 10 
+              with_items:
+                - sp
+                - csp  
+
+            - name: Verify related SC and SPC is deleted.
+              shell: kubectl get {{ item }} -o=jsonpath='{.items[?(@.metadata.name=="{{pool_name}}")].metadata.name}'      
+              args: 
+                executable: /bin/bash
+              register:  spc_and_sc
+              until: "spc_and_sc.rc == 0"
+              retries: 5
+              delay: 10
+              with_items:
+                - sc
+                - spc      
+
+          when: lookup('env', 'ACTION') == 'delete'      
 
         - set_fact:
             flag: "Pass"
