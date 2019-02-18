@@ -17,6 +17,9 @@ apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
  name: mongo
+ labels: 
+   lkey: lvalue
+   openebs.io/target-affinity: mongo 
 spec:
  serviceName: "mongo"
  replicas: 2
@@ -25,6 +28,7 @@ spec:
      labels:
        lkey: lvalue
        role: mongo
+       openebs.io/target-affinity: mongo
        environment: test
    spec:
      terminationGracePeriodSeconds: 10
@@ -51,6 +55,8 @@ spec:
  volumeClaimTemplates:
  - metadata:
      name: testclaim
+     labels: 
+       openebs.io/target-affinity: mongo
    spec:
      storageClassName: testclass
      accessModes:
