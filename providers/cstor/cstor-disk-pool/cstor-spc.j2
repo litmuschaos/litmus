@@ -35,4 +35,10 @@ metadata:
         value: "{{ pool_name }}"
       - name: ReplicaCount
         value: "3"
+      - name: VolumeControllerImage
+        value: openebs/cstor-volume-mgmt:{{ cstor_image }}
+      - name: VolumeTargetImage
+        value: openebs/cstor-istgt:{{ cstor_image }}
+      - name: VolumeMonitorImage
+        value: openebs/m-exporter:{{ cstor_image }}
 provisioner: openebs.io/provisioner-iscsi
