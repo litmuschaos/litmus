@@ -48,6 +48,13 @@
               args:
                 executable: /bin/bash
 
+            - name: Get the maxpool count of storage pool claim.
+              shell: kubectl get spc -o=jsonpath='{.items[?(@.metadata.name=="{{pool_name}}")].spec.maxPools}'   
+              args:
+                executable: /bin/bash  
+              register: maxpool_count
+                  
+
             - name: Verify if cStor Disk Pool are created on each node
               shell: > 
                  kubectl get pods -n {{ operator_ns }} -l openebs.io/storage-pool-claim={{ pool_name }}
@@ -55,9 +62,9 @@
               args:
                 executable: /bin/bash
               register: pool_count
-              until: pool_count.stdout_lines|length <= node_count.stdout_lines|length 
+              until: pool_count.stdout_lines|length == maxpool_count.stdout|int
               retries: 10
-              delay: 60
+              delay: 20
 
             - name: Get cStor Disk Pool names to verify the container statuses
               shell: >
