@@ -44,8 +44,8 @@ spec:
           - name: DEPLOY_TYPE
             value: statefulset
 
-            #- name: APP_REPLICA
-            #value: 'replicas=1'
+          - name: APP_REPLICA
+            value: 'replicas=3'
             
           # Use 'deprovision' for app-clean up
           - name: ACTION

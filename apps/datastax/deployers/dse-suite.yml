@@ -129,7 +129,7 @@ spec:
     matchLabels:
       lkey: lvalue
   serviceName: "dse"
-  replicas: 3
+  rkey: rvalue
   podManagementPolicy: OrderedReady
   updateStrategy:
     type: RollingUpdate
