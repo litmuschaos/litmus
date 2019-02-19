@@ -39,7 +39,7 @@ spec:
 
             # Application namespace
           - name: APP_NAMESPACE
-            value: app-dstax 
+            value: app-datastax 
 
           - name: DEPLOY_TYPE
             value: statefulset

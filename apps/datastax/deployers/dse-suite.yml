@@ -124,6 +124,8 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: dse
+  labels:
+    app: dse
 spec:
   selector:
     matchLabels:
