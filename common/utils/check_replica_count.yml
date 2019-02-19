@@ -1,7 +1,7 @@
 ---
 - block:
    - name: Obtain the number of replicas.
-     shell: kubectl get statefulset -n {{ app_ns }} -l "{{app_label}}" -o custom-columns=:spec.replicas
+     shell: kubectl get statefulset -n {{ app_ns }} --no-headers -l "{{app_label}}" -o custom-columns=:spec.replicas
      args:
        executable: /bin/bash
      register: rep_count
@@ -10,7 +10,7 @@
      retries: 15
 
    - name: Obtain the ready replica count and compare with the replica count.
-     shell: kubectl get statefulset -n {{ app_ns }} -l "{{app_label}}" -o custom-columns=:..readyReplicas
+     shell: kubectl get statefulset -n {{ app_ns }} -l "{{app_label}}" --no-headers -o custom-columns=:..readyReplicas
      args:
        executable: /bin/bash
      register: ready_rep

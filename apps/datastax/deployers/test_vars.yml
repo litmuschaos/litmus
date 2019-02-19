@@ -1,0 +1,20 @@
+---
+application_deployment: dse-suite.yml
+
+app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+
+app_label: "{{ lookup('env','APP_LABEL') }}"
+
+test_name: datastax-deployment
+
+app_replica: "{{ lookup('env','APP_REPLICA') }}"
+
+application_name: "datastax"
+
+action: "{{ lookup('env','ACTION') }}"
+
+app_pvc: "{{ lookup('env','APP_PVC') }}"
+
+storage_class: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+
+operator_ns: openebs
