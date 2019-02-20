@@ -113,24 +113,30 @@
               args:
                 executable: /bin/bash
               register: sp_and_csp
-              until: "sp_and_csp.rc == 0" 
+              until: sp_and_csp.stdout == ""
               retries: 5
               delay: 10 
               with_items:
                 - sp
                 - csp  
 
-            - name: Verify related SC and SPC is deleted.
-              shell: kubectl get {{ item }} -o=jsonpath='{.items[?(@.metadata.name=="{{pool_name}}")].metadata.name}'      
+            - name: Verify related SPC is deleted.
+              shell: kubectl get spc -o=jsonpath='{.items[?(@.metadata.name=="{{pool_name}}")].metadata.name}'      
               args: 
                 executable: /bin/bash
-              register:  spc_and_sc
-              until: "spc_and_sc.rc == 0"
+              register:  spc
+              until: "pool_name not in spc.stdout"
               retries: 5
               delay: 10
-              with_items:
-                - sc
-                - spc      
+
+            - name: Verify the storage class is deleted.
+              shell: kubectl get sc -o=jsonpath='{.items[?(@.metadata.name=="{{sc_name}}")].metadata.name}'  
+              args:
+                executable: /bin/bash
+              register: sc
+              until: "sc_name not in sc.stdout"
+              retries: 5
+              delay: 10   
 
           when: lookup('env', 'ACTION') == 'delete'      
 
