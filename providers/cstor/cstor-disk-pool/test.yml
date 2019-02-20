@@ -15,13 +15,13 @@
         - include_tasks: "/common/utils/update_litmus_result_resource.yml"
           vars:
             status: 'SOT'
-  
+
         - name: Get number of healthy minion's
           shell: kubectl get nodes | grep -v 'master'
           args:
             executable: /bin/bash
           register: node_count
-           
+
         - name: Get list of disks attached
           shell: kubectl get disks -l ndm.io/disk-type=disk --no-headers -o custom-columns=:metadata.name
           args:
@@ -36,12 +36,12 @@
 
         - name: Add the discovered disks to the pool specs file.
           lineinfile:
-            path: "{{ playbook_dir }}/{{ cstor_spc }}" 
+            path: "{{ playbook_dir }}/{{ cstor_spc }}"
             insertafter: 'diskList:'
             line: '     - {{ item }}'
           with_items: "{{ diskList.stdout_lines }}"
 
-        - block: 
+        - block:
 
             - name: Create cStor Disk Pool
               shell: kubectl create -f "{{ playbook_dir }}/{{ cstor_spc }}"
@@ -49,14 +49,14 @@
                 executable: /bin/bash
 
             - name: Get the maxpool count of storage pool claim.
-              shell: kubectl get spc -o=jsonpath='{.items[?(@.metadata.name=="{{pool_name}}")].spec.maxPools}'   
+              shell: kubectl get spc -o=jsonpath='{.items[?(@.metadata.name=="{{pool_name}}")].spec.maxPools}'
               args:
-                executable: /bin/bash  
+                executable: /bin/bash
               register: maxpool_count
-                  
+
 
             - name: Verify if cStor Disk Pool are created on each node
-              shell: > 
+              shell: >
                  kubectl get pods -n {{ operator_ns }} -l openebs.io/storage-pool-claim={{ pool_name }}
                  --no-headers -o custom-columns=:status.phase
               args:
@@ -68,7 +68,7 @@
 
             - name: Get cStor Disk Pool names to verify the container statuses
               shell: >
-                kubectl get pods -n {{ operator_ns }} -l openebs.io/storage-pool-claim={{ pool_name }} 
+                kubectl get pods -n {{ operator_ns }} -l openebs.io/storage-pool-claim={{ pool_name }}
                 --no-headers -o=custom-columns=NAME:".metadata.name"
               args:
                 executable: /bin/bash
@@ -87,10 +87,10 @@
               delay: 30
               retries: 10
 
-          when: lookup('env', 'ACTION') == 'create'    
+          when: lookup('env', 'ACTION') == 'create'
 
         - block:
-                
+
             - name: Delete cStor Disk Pool
               shell: kubectl delete -f "{{ playbook_dir }}/{{ cstor_spc }}"
               args:
@@ -108,21 +108,21 @@
 
             - name: Verify the sp and csp are deleted
               shell: >
-                kubectl get {{ item }} -l openebs.io/storage-pool-claim={{pool_name}} 
-                --no-headers -o=custom-columns=NAME:".metadata.name" 
+                kubectl get {{ item }} -l openebs.io/storage-pool-claim={{ pool_name }}
+                --no-headers -o=custom-columns=NAME:".metadata.name"
               args:
                 executable: /bin/bash
               register: sp_and_csp
               until: sp_and_csp.stdout == ""
               retries: 5
-              delay: 10 
+              delay: 10
               with_items:
                 - sp
-                - csp  
+                - csp
 
             - name: Verify related SPC is deleted.
-              shell: kubectl get spc -o=jsonpath='{.items[?(@.metadata.name=="{{pool_name}}")].metadata.name}'      
-              args: 
+              shell: kubectl get spc -o=jsonpath='{.items[?(@.metadata.name=="{{pool_name}}")].metadata.name}'
+              args:
                 executable: /bin/bash
               register:  spc
               until: "pool_name not in spc.stdout"
@@ -130,26 +130,26 @@
               delay: 10
 
             - name: Verify the storage class is deleted.
-              shell: kubectl get sc -o=jsonpath='{.items[?(@.metadata.name=="{{sc_name}}")].metadata.name}'  
+              shell: kubectl get sc -o=jsonpath='{.items[?(@.metadata.name=="{{sc_name}}")].metadata.name}'
               args:
                 executable: /bin/bash
               register: sc
               until: "sc_name not in sc.stdout"
               retries: 5
-              delay: 10   
+              delay: 10
 
-          when: lookup('env', 'ACTION') == 'delete'      
+          when: lookup('env', 'ACTION') == 'delete'
 
         - set_fact:
             flag: "Pass"
 
       rescue:
         - set_fact:
-            flag: "Fail"     
+            flag: "Fail"
 
       always:
             ## RECORD END-OF-TEST IN LITMUS RESULT CR
         - include_tasks: /common/utils/update_litmus_result_resource.yml
           vars:
             status: 'EOT'
-              
+
