@@ -1,0 +1,55 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: litmus-datastax-
+  namespace: litmus
+spec:
+  template:
+    metadata:
+      name: litmus
+      labels:
+        app: datastax-deployment-litmus
+
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: openebs/ansible-runner:ci
+        imagePullPolicy: Always
+
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            #value: log_plays
+            value: default
+
+          - name: PROVIDER_STORAGE_CLASS
+            # Supported values: openebs-standard,openebs-standalone,local-storage
+            # cstor-specific: openebs-cstor-sparse
+            value: openebs-cstor-sparse
+
+            # Application pvc
+          - name: APP_PVC
+            value: openebs-datastax
+
+            # Application label
+          - name: APP_LABEL
+            value: 'app=dse'
+
+            # Application namespace
+          - name: APP_NAMESPACE
+            value: app-datastax 
+
+          - name: DEPLOY_TYPE
+            value: statefulset
+
+          - name: APP_REPLICA
+            value: 'replicas=3'
+            
+          # Use 'deprovision' for app-clean up
+          - name: ACTION
+            value: provision
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./datastax/deployers/test.yml -i /etc/ansible/hosts -v; exit 0"]
