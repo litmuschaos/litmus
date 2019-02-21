@@ -67,7 +67,7 @@
             after: '- name: OPENEBS_IO_ENABLE_ANALYTICS'
             replace: 'value: "false"'          
 
-        - name: Changet the Node Disk manager Image
+        - name: Change the Node Disk manager Image
           replace:
             path: "{{ openebs_operator }}"
             regexp: quay.io/openebs/node-disk-manager-amd64:v0.2.0
