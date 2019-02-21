@@ -16,7 +16,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: openebs/ansible-runner:ci
+        image: vvibhr995/openebs-upgrade:tagname
         imagePullPolicy: Always
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
@@ -31,6 +31,10 @@ spec:
   
           - name: DEPLOY_TYPE
             value: deployment
+
+          # Provide name POOL_NAME for the cstor-pool (for cstor upgrade)
+          - name: POOL_NAME
+            value: cstor-disk-pool
 
             #Namespace in which loadgen pod will be deployed
           - name: APP_NAMESPACE
@@ -47,6 +51,9 @@ spec:
 
           - name: STORAGE_ENGINE
             value: "jiva"
+
+          - name: CURRENT_TAG
+            value: "0.8.0"  
 
           - name: RELEASE_TAG
             value: "0.8.1-RC1"

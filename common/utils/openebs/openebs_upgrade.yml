@@ -10,13 +10,6 @@
 - block:
 
     - block:
-        - name: Obtain the storage pool claim name.
-          shell: kubectl get spc --no-headers -o=custom-columns=NAME:.metadata.name
-          register: spc
-
-        - name: Record the spc.
-          set_fact:
-             storage_pool_claim: "{{ spc.stdout }}"
 
         - name: Subtitute the cstor pool and volume script with  upgrade version release tag.
           lineinfile:
@@ -26,6 +19,8 @@
           with_items:
            - { path: '/openebs_upgrade/cstor_pool_upgrade.sh', regexp: '^pool_upgrade_version=', line: 'pool_upgrade_version={{ new_tag }}'}
            - { path: '/openebs_upgrade/cstor_volume_upgrade.sh', regexp: '^target_upgrade_version=', line: 'target_upgrade_version={{ new_tag }}'}
+           - { path: '/openebs_upgrade/cstor_pool_upgrade.sh', regexp: '^current_version=', line: 'current_version={{ current_tag }}'}  
+           - { path: '/openebs_upgrade/cstor_volume_upgrade.sh', regexp: '^current_version=', line: 'current_version={{ current_tag }}'}  
 
         #  containers cstor_pool and cstor_pool_mgmt  upgrade from cstor_pool_upgrade.sh #
         #  containers cstor_istgt,maya-volume-exporter,cstor-volume-mgmt upgrade from cstor_volume_upgrade.sh 
@@ -36,7 +31,7 @@
             chdir: "/openebs_upgrade"
             executable: "/bin/bash"
           with_items:
-            - "./cstor_pool_upgrade.sh {{ storage_pool_claim }} {{ operator_ns }} "
+            - "./cstor_pool_upgrade.sh {{ pool_name }} {{ operator_ns }} "
             - "./cstor_volume_upgrade.sh {{ vol_name }} {{ operator_ns }}"
 
         - include_tasks: /common/utils/check_deployment_status.yml
@@ -134,9 +129,12 @@
 
         - name: Subtitute the target upgrade version release tag.
           lineinfile:
-            path: /openebs_upgrade/jiva_volume_upgrade.sh
-            regexp: '^target_upgrade_version='
-            line: 'target_upgrade_version={{ new_tag }}'
+            path: "{{ item.path }}"
+            regexp: "{{ item.regexp }}"
+            line: "{{ item.line }}"
+          with_items:
+            - { path: '/openebs_upgrade/jiva_volume_upgrade.sh', regexp: '^current_version=', line: 'current_version={{ current_tag }}'}
+            - { path: '/openebs_upgrade/jiva_volume_upgrade.sh', regexp: '^target_upgrade_version=', line: 'target_upgrade_version={{ new_tag }}'}  
 
         ## ctrl containers jiva and m-exporter + replica container jiva upgrade ##
 
