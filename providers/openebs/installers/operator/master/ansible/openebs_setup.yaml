@@ -67,6 +67,13 @@
             after: '- name: OPENEBS_IO_ENABLE_ANALYTICS'
             replace: 'value: "false"'          
 
+        - name: Change the Node Disk manager Image
+          replace:
+            path: "{{ openebs_operator }}"
+            regexp: quay.io/openebs/node-disk-manager-amd64:v0.2.0
+            replace: quay.io/openebs/node-disk-manager-amd64:{{ lookup('env','NODE_DISK_MANAGER_IMAGE') }}
+          when: lookup('env','NODE_DISK_MANAGER_IMAGE') | length > 0
+
         - name: Applying openebs operator
           shell: "{{ kubeapply }} apply -f {{ openebs_operator }}"
           args:
