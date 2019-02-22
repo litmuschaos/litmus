@@ -52,6 +52,8 @@ spec:
             value:        
           - name: IMAGE_PULL_POLICY
             value:
+          - name: OPENEBS_INFRA_CHAOS
+            value: 
           - name: RUN_ID
             value:          
         command: ["/bin/bash"]

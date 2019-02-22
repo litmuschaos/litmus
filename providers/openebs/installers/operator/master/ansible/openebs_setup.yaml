@@ -197,7 +197,17 @@
           args:
             executable: /bin/bash
           register: node_count
+          when: lookup('env','OPENEBS_INFRA_CHAOS') is not defined
 
+        - name: Getting the number of nodes
+          shell: kubectl describe node | grep -i taints | grep none | wc -l
+          #  kubectl get nodes -o custom-columns=:spec.taints[*].key
+          #  --no-headers | grep -iv master | wc -l
+          args:
+            executable: /bin/bash
+          register: node_count
+          when: lookup('env','OPENEBS_INFRA_CHAOS') is defined
+        
         - name: Confirm if node-disk-manager is running in all the nodes
           shell: kubectl get pods -n {{ namespace }} --selector=name={{ selector_name }} | grep Running | wc -l
           args:
