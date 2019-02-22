@@ -6,14 +6,6 @@
 
   tasks:
     - block:
-        
-        - name: Unsubscribing nodes
-          shell: ssh -o StrictHostKeyChecking=no root@{{item}} 'subscription-manager unregister'
-          with_lines: cat ./ip.csv
-
-        - name: Unregistering from DNS server
-          shell: ssh -o StrictHostKeyChecking=no root@{{item}} 'realm leave {{ dns_server }}'
-          with_lines: cat ./ip.csv
 
         - name: Getting the VM id
           shell: ssh -o StrictHostKeyChecking=no root@{{ esx_ip }} vim-cmd vmsvc/getallvms | grep {{item}} | awk '{print $1}'
@@ -21,7 +13,7 @@
           with_lines: cat ./vm_name.csv
 
         - name: Getting snapshot id
-          shell: ssh -o StrictHostKeyChecking=no root@{{ esx_ip }} vim-cmd vmsvc/snapshot.get {{item.stdout}} | grep "Snapshot Id" | awk '{print $4}'
+          shell: ssh -o StrictHostKeyChecking=no root@{{ esx_ip }} vim-cmd vmsvc/snapshot.get {{item.stdout}} | grep -A2 {{ snapshot_name }} | grep "Snapshot Id" | awk '{print $4}'
           register: snap_id
           with_items: "{{ vm_id.results }}" 
 

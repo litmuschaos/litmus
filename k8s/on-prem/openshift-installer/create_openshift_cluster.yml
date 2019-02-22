@@ -39,7 +39,7 @@
           shell: ssh -o StrictHostKeyChecking=no root@{{ master_ip.stdout }} 'ssh -o StrictHostKeyChecking=no root@{{item}} ls'
           with_lines: cat ./ip.csv
 
-        - name: Gerating the random number
+        - name: Generating random number
           shell: date +%s
           register: rand_num
 
@@ -56,6 +56,7 @@
             - [ '1', '2', '3' ]
             - "{{ compute_ip.stdout_lines }}" 
 
+#The VMs are already subscribed with some credentials. Need to unsubscribe the VMs & subscribe it again with new credentials.
         - name: Unsubscribing the nodes
           shell: ssh -o StrictHostKeyChecking=no root@{{item}} 'subscription-manager unregister'
           ignore_errors: true
@@ -128,10 +129,10 @@
         - name: Checking out to release branch-3.10
           shell: ssh -o StrictHostKeyChecking=no root@{{ master_ip.stdout }} 'cd /root/openshift-ansible && git checkout release-3.10'
 
-        - name: Running pre-requisite.yml
+        - name: Running Openshift pre-requisites
           shell: ssh -o StrictHostKeyChecking=no root@{{ master_ip.stdout }} 'ansible-playbook -i /root/openshift-ansible/inventory/inventory.yml /root/openshift-ansible/playbooks/prerequisites.yml -vv'
           
-        - name: Running deploy-cluster.yml
+        - name: Deploying openshift cluster
           shell: ssh -o StrictHostKeyChecking=no root@{{ master_ip.stdout }} 'ansible-playbook -i /root/openshift-ansible/inventory/inventory.yml /root/openshift-ansible/playbooks/deploy_cluster.yml -vv'
 
         - name: Disabling selinux on each nodes 
