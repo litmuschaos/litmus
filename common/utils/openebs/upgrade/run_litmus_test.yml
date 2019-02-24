@@ -36,7 +36,6 @@ spec:
           - name: POOL_NAME
             value: cstor-disk-pool
 
-            #Namespace in which loadgen pod will be deployed
           - name: APP_NAMESPACE
             value: app-percona-ns
 
