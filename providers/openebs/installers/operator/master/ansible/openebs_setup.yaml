@@ -197,41 +197,57 @@
           register: result_vers
           failed_when: "'m-apiserver status:  running' not in result_vers.stdout"
 
-        - name: Getting the number of nodes
-          shell: kubectl get node --no-headers | grep -v "master" | wc -l
-          #  kubectl get nodes -o custom-columns=:spec.taints[*].key
-          #  --no-headers | grep -iv master | wc -l
-          args:
-            executable: /bin/bash
-          register: node_count
-          when: lookup('env','OPENEBS_INFRA_CHAOS') != "infra_chaos"
+        - block:             
+            - name: Getting the number of nodes
+              shell: kubectl get node --no-headers | grep -v "master" | wc -l
+              args:
+                executable: /bin/bash
+              register: node_count
 
-        - name: Getting the number of nodes
-          shell: kubectl describe node | grep -i taints | grep none | wc -l
-          #  kubectl get nodes -o custom-columns=:spec.taints[*].key
-          #  --no-headers | grep -iv master | wc -l
-          args:
-            executable: /bin/bash
-          register: node_count
-          when: lookup('env','OPENEBS_INFRA_CHAOS') == "infra_chaos"
+            - name: Confirm if node-disk-manager is running in all the nodes
+              shell: kubectl get pods -n {{ namespace }} --selector=name={{ selector_name }} | grep Running | wc -l
+              args:
+                executable: /bin/bash
+              register: ndm_count
+              until: (node_count.stdout)|int == (ndm_count.stdout)|int
+              delay: 5
+              retries: 120
+
+            - name: Confirm if sparse pool is running in all the nodes
+              shell: kubectl get pods -n {{ namespace }} --selector={{ sparse_pool_label }} | grep Running | wc -l
+              args:
+                executable: /bin/bash
+              register: sparse_pool_count
+              until: (node_count.stdout)|int == (sparse_pool_count.stdout)|int
+              delay: 5
+              retries: 120  
+          when: lookup('env','OPENEBS_INFRA_CHAOS') != "infra_chaos"     
         
-        - name: Confirm if node-disk-manager is running in all the nodes
-          shell: kubectl get pods -n {{ namespace }} --selector=name={{ selector_name }} | grep Running | wc -l
-          args:
-            executable: /bin/bash
-          register: ndm_count
-          until: (node_count.stdout)|int == (ndm_count.stdout)|int
-          delay: 5
-          retries: 120
+        - block:
+            - name: Getting the number of nodes
+              shell: kubectl describe node | grep -i taints | grep none | wc -l
+              args:
+                executable: /bin/bash
+              register: node_count
+            
+            - name: Confirm if node-disk-manager is running in all the nodes
+              shell: kubectl get pods -n {{ namespace }} --selector=name={{ selector_name }} | grep Running | wc -l
+              args:
+                executable: /bin/bash
+              register: ndm_count
+              until: (node_count.stdout)|int == (ndm_count.stdout)|int
+              delay: 5
+              retries: 120
 
-        - name: Confirm if sparse pool is running in all the nodes
-          shell: kubectl get pods -n {{ namespace }} --selector={{ sparse_pool_label }} | grep Running | wc -l
-          args:
-            executable: /bin/bash
-          register: sparse_pool_count
-          until: (node_count.stdout)|int == (sparse_pool_count.stdout)|int
-          delay: 5
-          retries: 120
+            - name: Confirm if sparse pool is running in all the nodes
+              shell: kubectl get pods -n {{ namespace }} --selector={{ sparse_pool_label }} | grep Running | wc -l
+              args:
+                executable: /bin/bash
+              register: sparse_pool_count
+              until: (node_count.stdout)|int == (sparse_pool_count.stdout)|int
+              delay: 5
+              retries: 120  
+          when: lookup('env','OPENEBS_INFRA_CHAOS') == "infra_chaos"   
 
         - name: Confirm CAS Templates are deployed
           shell: kubectl get castemplate -n {{ namespace }}
