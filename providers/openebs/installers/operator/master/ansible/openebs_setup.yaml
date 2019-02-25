@@ -196,6 +196,7 @@
             executable: /bin/bash
           register: result_vers
           failed_when: "'m-apiserver status:  running' not in result_vers.stdout"
+
         - block:             
             - name: Getting the number of nodes
               shell: kubectl get node --no-headers | grep -v "master" | wc -l
@@ -247,8 +248,6 @@
               delay: 5
               retries: 120  
           when: lookup('env','OPENEBS_INFRA_CHAOS') == "infra_chaos"   
-    
-        
 
         - name: Confirm CAS Templates are deployed
           shell: kubectl get castemplate -n {{ namespace }}
