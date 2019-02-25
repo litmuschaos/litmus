@@ -1,0 +1,53 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: litmus-pvc-creation-
+  namespace: litmus
+spec:
+  template:
+    metadata:
+      name: litmus
+      labels:
+        app: busybox-deployment
+
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: vvibhr995/pvc100:v1 
+        imagePullPolicy: Always
+
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            #value: log_plays, actionable, default
+            value: default
+
+          - name: PROVIDER_STORAGE_CLASS
+            # Supported values: openebs-standard, local-storage, openebs-standalone
+            value: openebs-cstor-sparse
+
+            # Application label
+          - name: APP_LABEL
+            value: 'app=busybox'
+
+          - name: APP_PVC
+            value: busybox-claim
+
+            # deployment namespace
+          - name: DEPLOY_NAMESPACE
+            value: busybox
+
+          - name: DEPLOY_TYPE
+            value: 'deployment'
+
+          - name: PVC_COUNT
+            value: "5"
+     
+          - name: ACTION
+            value: 'create'
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./busybox/tests/pvc_creation/test.yml -i /etc/ansible/hosts -v; exit 0"]
+     
