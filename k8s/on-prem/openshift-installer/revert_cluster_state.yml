@@ -1,0 +1,26 @@
+---
+- hosts: localhost
+
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - block:
+
+        - name: Getting the VM id
+          shell: ssh -o StrictHostKeyChecking=no root@{{ esx_ip }} vim-cmd vmsvc/getallvms | grep {{item}} | awk '{print $1}'
+          register: vm_id
+          with_lines: cat ./vm_name.csv
+
+        - name: Getting snapshot id
+          shell: ssh -o StrictHostKeyChecking=no root@{{ esx_ip }} vim-cmd vmsvc/snapshot.get {{item.stdout}} | grep -A2 {{ snapshot_name }} | grep "Snapshot Id" | awk '{print $4}'
+          register: snap_id
+          with_items: "{{ vm_id.results }}" 
+
+        - name: Reverting to the previous snapshot
+          shell: |
+            ssh -o StrictHostKeyChecking=no root@{{ esx_ip }} vim-cmd vmsvc/snapshot.revert {{item.0.stdout}} {{item.1.stdout}} supressPowerOff
+            ssh -o StrictHostKeyChecking=no root@{{ esx_ip }} vim-cmd vmsvc/power.on {{item.0.stdout}}
+          with_together: 
+            - "{{ vm_id.results }}"
+            - "{{ snap_id.results }}"
