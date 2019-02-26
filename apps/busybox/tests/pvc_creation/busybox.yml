@@ -28,7 +28,7 @@ apiVersion: v1
 metadata:
   name: busybox-claim
 spec:
-  storageClassName: openebs-cstor-sparse
+  storageClassName: testclass
   accessModes:
     - ReadWriteOnce
   resources:

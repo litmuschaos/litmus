@@ -20,6 +20,12 @@
             executable: /bin/bash
           register: result
 
+        - name: Replace the storageclass placeholder with provider
+          replace:
+            path: "{{ application_deployment }}"
+            regexp: "testclass"
+            replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+
         ## Setting up iteration value to generate multiple values ##
         - set_fact:
             i: 0
