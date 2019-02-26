@@ -46,10 +46,11 @@
            app_label: "{{ app_lkey }}={{ app_lvalue }}{{i}}"
 
      when: lookup('env', 'ACTION') == 'create'
-   
+
+       ## Cleanup tasks for application  deployments ##  
    - block:
    
-       - name: Delete application and its deploy.
+       - name: Delete application and its deployments.
          shell: kubectl delete -f {{application_deployment}} -n {{namespace}}-{{i}}
          args:
            executable: /bin/bash
@@ -81,7 +82,8 @@
         dest: "{{application_deployment}}"
         regexp: "{{ app_lkey }}: {{ app_lvalue }}{{i}}"
         replace: "lkey: lvalue"
-   
+
+   ## For continuos iteration of "i" value ## 
    - set_fact:
        i: '{{ i | int + 1 }}'
    

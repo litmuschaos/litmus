@@ -26,7 +26,7 @@
             regexp: "testclass"
             replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
 
-        ## Setting up iteration value to generate multiple values ##
+        ## Setting up iteration value to generate continuos values ##
         - set_fact:
             i: 0
 
