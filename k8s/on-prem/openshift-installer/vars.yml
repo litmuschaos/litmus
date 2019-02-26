@@ -1,5 +1,5 @@
 dns_server: "mayalab.com"
-subscription_id: *****"
+subscription_id: "*****"
 subscription_password: "****"
 admin_password: "****"
 snapshot_name: "oc-cluster"
