@@ -30,8 +30,9 @@
         - set_fact:
             i: 0
 
-        ## Pre creation tasks ##
-        - include_tasks: "{{ pre_creation_tasks }}"
+
+        ## Required application and PVC creation tasks ##
+        - include_tasks: "{{ pvc_creation_tasks }}"
           with_sequence: start=0 count={{ pvc_count }}
 
         - set_fact:

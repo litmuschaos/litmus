@@ -43,7 +43,7 @@ spec:
             value: 'deployment'
 
           - name: PVC_COUNT
-            value: "5"
+            value: "100"
      
           - name: ACTION
             value: 'create'

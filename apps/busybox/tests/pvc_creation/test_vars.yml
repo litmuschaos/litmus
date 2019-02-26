@@ -4,7 +4,7 @@
 application_deployment: busybox.yml
 test_name: pvc-creation-test
 namespace: "{{ lookup('env','DEPLOY_NAMESPACE') }}" 
-pre_creation_tasks: main.yml
+pvc_creation_tasks: pvc_provision.yaml
 pvc_count: "{{ lookup('env','PVC_COUNT') }}"
 app_pvc: "{{ lookup('env','APP_PVC') }}"
 app_name: app_busybox

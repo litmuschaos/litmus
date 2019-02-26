@@ -59,6 +59,24 @@
          shell: kubectl delete ns {{namespace}}-{{i}}
          args:
            executable: /bin/bash
+  
+       - name: Verify the presence of application pod after deprovision.
+         shell: kubectl get pod -n {{namespace}}-{{i}} -o=custom-columns=NAME:.metadata.name --no-headers
+         args:
+           executable: /bin/bash
+         register: pod_status
+         until: "pod_status.rc == 0"
+         delay: 5
+         retries: 10
+         
+       - name: Verify the presence of application related PVC after deprovision.
+         shell: kubectl get pvc  -n {{namespace}}-{{i}} -o=custom-columns=NAME:.metadata.name --no-headers
+         args:
+           executable: /bin/bash
+         register: pvc_status
+         until: "pvc_status.rc == 0"
+         delay: 5
+         retries: 10 
      
      when: lookup('env', 'ACTION') == 'delete'
    
