@@ -1,0 +1,57 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: litmus-busybox-sts-
+  namespace: litmus
+spec:
+  template:
+    metadata:
+      name: litmus
+      labels:
+        app: busybox-statefulset-litmus
+
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: mockbot/ansible-runner:ci
+        imagePullPolicy: Always
+
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            #value: log_plays
+            value: default
+
+          - name: PROVIDER_STORAGE_CLASS
+            # Supported values: openebs-standard,openebs-standalone,local-storage
+            value: openebs-cstor-sparse
+
+            # Application pvc
+          - name: APP_PVC
+            value: openebs-busybox
+
+            # Application label
+          - name: APP_LABEL
+            value: 'app=busybox'
+
+            # Application namespace
+          - name: APP_NAMESPACE
+            value: app-busybox-ns 
+
+          - name: DEPLOY_TYPE
+            value: statefulset
+
+          - name: APP_REPLICA
+            value: 'replicas=2'
+
+          - name: SCALE_REPLICA_COUNT
+            value: '3'
+            
+          # Use 'deprovision' for app-clean up
+          - name: ACTION
+            value: provision
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./busybox/deployers/test.yml -i /etc/ansible/hosts -v; exit 0"]
