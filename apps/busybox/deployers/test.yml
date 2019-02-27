@@ -1,5 +1,4 @@
 ---
-
 #################### Test involved. ############################
 # 1. Obtain the storage class.                                 #
 # 2. Create a storage class for single volume replica.         #
@@ -131,12 +130,26 @@
               register: result
               failed_when: "'scaled' not in result.stdout"
 
+            - name: Obtain number of healthy PVC
+              shell: >
+                kubectl get pvc -n {{ app_ns }} -l {{ app_label }}  -o custom-columns=:.status.phase | grep Bound | wc -l
+              args:
+                executable: /bin/bash
+              register: pvc
+
+            - name: Get the pv list after scale up the application replica
+              shell: >
+                kubectl get pvc -n {{ app_ns }} -l {{ app_label }} -o custom-columns=:.spec.volumeName --no-headers | grep -v none | wc -l
+              args:
+                executable: /bin/bash
+              register: pvlist
+
             - name: Check if all the application replicas are running.
               shell: kubectl get statefulset -n {{ app_ns }} --no-headers -l {{ app_label }} -o custom-columns=:..readyReplicas
               args:
                 executable: /bin/bash
               register: running_replicas
-              until: "running_replicas.stdout|int == running_sp.stdout|int"
+              until: "running_replicas.stdout|int == pvlist.stdout|int == pvc.stdout|int"
               delay: 60
               retries: 15
               
