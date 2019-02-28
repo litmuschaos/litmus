@@ -34,7 +34,7 @@ spec:
 
             # Application label
           - name: APP_LABEL
-            value: 'app=busybox'
+            value: 'app=busybox-sts'
 
             # Application namespace
           - name: APP_NAMESPACE

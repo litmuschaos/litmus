@@ -152,6 +152,7 @@
               until: "running_replicas.stdout|int == pvlist.stdout|int == pvc.stdout|int"
               delay: 60
               retries: 15
+              ignore_errors: True
               
             - name: Get the pv list after scale up the application replica
               shell: >
