@@ -1,0 +1,52 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'SOT'
+         
+        ## VERIFY AVAILABILITY OF SELECTED STORAGE CLASS
+        - name: Check whether the provider storageclass is provided.
+          shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
+          args:
+            executable: /bin/bash
+          register: result
+
+        - name: Replace the storageclass placeholder with provider
+          replace:
+            path: "{{ application_deployment }}"
+            regexp: "testclass"
+            replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+
+        ## Setting up iteration value to generate continuos values ##
+        - set_fact:
+            i: 0
+
+
+        ## Required application and PVC creation tasks ##
+        - include_tasks: "{{ pvc_creation_tasks }}"
+          with_sequence: start=0 count={{ pvc_count }}
+
+        - set_fact:
+           flag: "Pass"
+
+      rescue:
+         - set_fact:
+             flag: "Fail"
+
+      always:
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR
+         - include_tasks: /common/utils/update_litmus_result_resource.yml
+           vars:
+               status: 'EOT'
+
+
+
