@@ -3,7 +3,7 @@
 
 application_deployment: busybox.yml
 
-test_name: pvc-creation-test
+test_name: bulk-pvc-creation-deletion
 
 namespace: "{{ lookup('env','DEPLOY_NAMESPACE') }}" 
 
