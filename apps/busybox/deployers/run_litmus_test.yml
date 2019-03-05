@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: litmus-busybox-sts-
+  generateName: litmus-sts-replica-distribution-
   namespace: litmus
 spec:
   template:
@@ -25,7 +25,6 @@ spec:
             value: default
 
           - name: PROVIDER_STORAGE_CLASS
-            # Supported values: openebs-standard,openebs-standalone,local-storage
             value: openebs-cstor-sparse
 
             # Application pvc

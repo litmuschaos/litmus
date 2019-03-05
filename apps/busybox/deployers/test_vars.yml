@@ -1,7 +1,7 @@
 application_deployment: busybox_statefulset.yml
 app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
 app_label: "{{ lookup('env','APP_LABEL') }}"
-test_name: busybox-deployment
+test_name: Replica-Distribution
 app_replica: "{{ lookup('env','APP_REPLICA') }}"
 application_name: "busybox statefulset"
 action: "{{ lookup('env','ACTION') }}"

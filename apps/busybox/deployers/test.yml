@@ -90,20 +90,20 @@
 
             - name: Get the total number of sp
               shell: >
-                kubectl get sp -l openebs.io/storage-pool-claim={{ pool_claim.stdout }} -o custom-columns=:.metadata.name --no-headers | wc -l
+                kubectl get csp -l openebs.io/storage-pool-claim={{ pool_claim.stdout }} -o custom-columns=:.metadata.name --no-headers | wc -l
               args:
                 executable: /bin/bash
-              register: running_sp
+		register: running_csp
 
             - name: Obtain the cstor storage pool list from cvr
               shell: >
                  kubectl get cvr -l openebs.io/replica-anti-affinity={{ app_lvalue }} -n {{ operator_ns }} -o jsonpath='{.items[*].metadata.labels.cstorpool\.openebs\.io/name}'
               args:
                 executable: /bin/bash
-              register: sp
+              register: csp
 
             - set_fact:
-                 sp_list: "{{ sp.stdout.split(' ') }}"
+                 csp_list: "{{ csp.stdout.split(' ') }}"
 
             - name: Verify the CVR's sceduled on different sp
               shell: >
@@ -113,7 +113,7 @@
               register: cvr_list
               failed_when: cvr_list.stdout != '1'
               with_items:
-                 - "{{ sp_list }}"
+                 - "{{ csp_list }}"
 
             - name: Obtain the application name 
               shell: >
@@ -152,7 +152,6 @@
               until: "running_replicas.stdout|int == pvlist.stdout|int == pvc.stdout|int"
               delay: 60
               retries: 15
-              ignore_errors: True
               
             - name: Get the pv list after scale up the application replica
               shell: >
@@ -170,10 +169,10 @@
                  kubectl get cvr -l openebs.io/replica-anti-affinity={{ app_lvalue }} -n {{ operator_ns }} -o jsonpath='{.items[*].metadata.labels.cstorpool\.openebs\.io/name}'
               args:
                 executable: /bin/bash
-              register: new_sp
+              register: new_csp
 
             - set_fact:
-                 new_sp_list: "{{ new_sp.stdout.split(' ') }}"
+                 new_csp_list: "{{ new_csp.stdout.split(' ') }}"
 
             - name: Verify the CVR's sceduled on different cstor storage pool
               shell: >
@@ -183,7 +182,7 @@
               register: cvr_list
               failed_when: cvr_list.stdout != '1'
               with_items:
-                 - "{{ new_sp_list }}"
+                 - "{{ new_csp_list }}"
 
           when: "'deprovision' not in action"
 
