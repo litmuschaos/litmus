@@ -93,7 +93,7 @@
                 kubectl get csp -l openebs.io/storage-pool-claim={{ pool_claim.stdout }} -o custom-columns=:.metadata.name --no-headers | wc -l
               args:
                 executable: /bin/bash
-		register: running_csp
+              register: running_csp
 
             - name: Obtain the cstor storage pool list from cvr
               shell: >
