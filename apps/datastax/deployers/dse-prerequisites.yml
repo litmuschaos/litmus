@@ -1,0 +1,46 @@
+# This util creates the kubernetes objects(configmaps) that are required for deploying DataStax enterprise.
+# Also creates a password for accessing OpsCenter where the default username is admin.
+
+---
+- name: Creating configmap for DSE
+  shell: >
+    kubectl create configmap -n {{ app_ns }} dse-config --from-file=common/dse/conf-dir/resources/cassandra/conf 
+    --from-file=common/dse/conf-dir/resources/dse/conf
+  args:
+    executable: /bin/bash
+  register: dse_conf
+  until: "'created' in dse_conf.stdout"
+  delay: 10
+  retries: 3
+
+- name: Creating configmap for OpsCenter
+  shell: >
+    kubectl create configmap -n {{ app_ns }} opsc-config --from-file=common/opscenter/conf-dir/agent/conf 
+    --from-file=common/opscenter/conf-dir/conf --from-file=common/opscenter/conf-dir/conf/event-plugins
+  args:
+    executable: /bin/bash
+  register: ops_conf
+  until: "'created' in ops_conf.stdout"
+  delay: 10
+  retries: 3
+
+- name: Creating configmap for OpsCenter
+  shell: >
+    kubectl create configmap -n {{ app_ns }} opsc-ssl-config 
+    --from-file=common/opscenter/conf-dir/conf/ssl
+  args:
+    executable: /bin/bash
+  register: conf
+  until: "'created' in conf.stdout"
+  delay: 10
+  retries: 3
+
+- name: Creating secret for OpsCenter
+  shell: >
+    kubectl apply -f common/secrets/opsc-secrets.yaml -n {{ app_ns }}
+  args:
+    executable: /bin/bash
+  register: pwd
+  until: "'created' in pwd.stdout"
+  delay: 10
+  retries: 3

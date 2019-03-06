@@ -1,0 +1,65 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+        ## Generating the testname for deployment.
+        - include_tasks: /common/utils/create_testname.yml
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR.
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'SOT'
+
+        - block:
+
+         ## Actual test
+         # Replace the place holders in the datastax manifest with the corresponding environmental values.
+            - include_tasks: /common/utils/pre_create_app_deploy.yml
+
+         # Create the configmaps and secret by including the below tasks file.
+
+            - include_tasks: dse-prerequisites.yml
+
+            - name: Replace the default namespace in datastax deployer manifest yaml
+              replace:
+                path: "{{ application_deployment }}"
+                regexp: 'testnamespace'
+                replace: '{{ app_ns }}'
+
+         ## Deploying the application
+            - include_tasks: /common/utils/deploy_single_app.yml
+              vars:
+                check_app_pod: 'no'
+                delay: 10
+                retries: 20
+
+          when: "'deprovision' not in action"
+
+        - block:
+
+            - name: Deprovisioning the Application
+              include_tasks: /common/utils/deprovision_statefulset.yml
+              vars:
+                app_deployer: "{{ application_deployment }}"
+
+          when: "'deprovision' is in action"
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - name: Setting fail flag
+          set_fact:
+            flag: "Fail"
+
+      always:
+        ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
