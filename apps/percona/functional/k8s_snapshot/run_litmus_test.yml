@@ -16,7 +16,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: gprasath/ansible-runner:ci
+        image: openebs/ansible-runner:ci
         imagePullPolicy: Always
 
         env:
@@ -32,7 +32,7 @@ spec:
 
             # Application namespace
           - name: APP_NAMESPACE
-            value: snap-percona 
+            value: app-percona-ns 
 
           - name: PROVIDER_STORAGE_CLASS
             value: openebs-snapshot-promoter
