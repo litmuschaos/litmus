@@ -51,6 +51,7 @@ kind: StatefulSet
 metadata:
   name: admin
   labels:
+    admin: nuodb
     app: nuodb
     group: nuodb
 spec:
@@ -62,6 +63,7 @@ spec:
   template:
     metadata:
       labels:
+        admin: nuodb
         dns: domain
         app: admin
         affinity: admin

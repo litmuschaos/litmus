@@ -39,6 +39,13 @@
                 - nuodb-ycsb.yaml
 
             ## Deploying the nuodb service, domain, sm and te 
+
+            - name: Disable THP for platforms like AWS,OpenShift
+              shell: kubectl create -f disable-thp.yaml -n {{ app_ns }}
+              args:
+                executable: /bin/bash
+              when: lookup('env','THP') == 'disable' 
+
             - name: Deploying NUODB service, domain, storage manager and transaction engines
               shell: kubectl create -f {{ item }} -n {{ app_ns }}
               args:

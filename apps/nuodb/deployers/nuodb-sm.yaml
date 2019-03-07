@@ -6,6 +6,7 @@ metadata:
   labels:
     app: nuodb
     group: nuodb
+    nodetype: sm
 spec:
   serviceName: sm
   replicas: 1
