@@ -30,7 +30,6 @@ spec:
         lkey: lvalue
         openebs.io/replica-anti-affinity: lvalue
     spec:
-      terminationGracePeriodSeconds: 1800
       containers:
       - name: busybox
         image: ubuntu
