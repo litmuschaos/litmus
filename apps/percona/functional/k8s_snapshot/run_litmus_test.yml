@@ -34,12 +34,6 @@ spec:
           - name: APP_NAMESPACE
             value: app-percona-ns 
 
-          - name: SNAPSHOT
-            value: snap-percona
-
-          - name: CLONE_NAME
-            value: percona-clone-mysql-claim
-
           - name: PROVIDER_STORAGE_CLASS
             value: openebs-snapshot-promoter
 

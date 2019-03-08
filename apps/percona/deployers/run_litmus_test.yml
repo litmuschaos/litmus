@@ -25,7 +25,7 @@ spec:
             value: default
 
           - name: PROVIDER_STORAGE_CLASS
-            # Supported values: openebs-standard, local-storage, openebs-standalone
+            # Supported values: openebs-standard, local-storage, openebs-standalone, openebs-cstor-sparse
             value: openebs-standard
 
           - name: APP_PVC
