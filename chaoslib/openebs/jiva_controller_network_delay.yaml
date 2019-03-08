@@ -49,6 +49,30 @@
     executable: /bin/bash
   register: node  
 
+- name: Get controller svc
+  shell: >
+    kubectl get svc -l openebs.io/controller-service=jiva-controller-svc
+    -n {{ app_ns }} --no-headers -o custom-columns=:spec.clusterIP
+  args:
+    executable: /bin/bash
+  register: controller_svc
+  failed_when: controller_svc.stdout == ""
+
+- name: Install jq package inside a controller container
+  shell: >
+    kubectl exec -it {{ jiva_controller_pod.stdout }} -n {{ app_ns }} -c {{ jiva_controller_name }} 
+    -- bash -c "apt-get update && apt-get install -y jq && apt-get install -y iproute2"
+  args:
+    executable: /bin/bash
+
+- name: Getting the ReplicaCount before injecting delay
+  shell: >
+   kubectl exec -it {{ jiva_controller_pod.stdout }} -n {{ app_ns }} 
+   -c {{ jiva_controller_name }} curl http://"{{controller_svc.stdout}}":9501/v1/volumes | jq -r '.data[].replicaCount'
+  args:
+    executable: /bin/bash
+  register: rcount_before
+
 - name: Identify the pumba pod that co-exists with jiva controller
   shell: >
     kubectl get pods -l app=pumba -n {{ app_ns }} 
@@ -65,10 +89,17 @@
   args:
     executable: /bin/bash
 
-- name: Wait for 10s post fault injection 
-  wait_for:
-    timeout: 10
-
+- name: Verifying the Replica getting disconnected
+  shell: >
+   kubectl exec -it {{ jiva_controller_pod.stdout }} -n {{ app_ns }} 
+   -c {{ jiva_controller_name }} curl http://"{{controller_svc.stdout}}":9501/v1/volumes | jq -r '.data[].replicaCount'
+  args:
+    executable: /bin/bash
+  register: resp
+  until: resp.stdout != rcount_before.stdout
+  retries: 10
+  delay: 15
+  
 - name: Delete the pumba daemonset 
   shell: kubectl delete -f /chaoslib/pumba/pumba_kube.yaml -n {{ app_ns }} 
   args:
@@ -84,3 +115,14 @@
   until: "'Running' not in result.stdout"
   delay: 20
   retries: 15
+
+- name: Verifying the replicas post network recovery
+  shell: >
+   kubectl exec -it {{ jiva_controller_pod.stdout }} -n {{ app_ns }} 
+   -c {{ jiva_controller_name }} curl http://"{{controller_svc.stdout}}":9501/v1/volumes | jq -r '.data[].replicaCount'
+  args:
+    executable: /bin/bash
+  register: replica
+  until: replica.stdout == rcount_before.stdout
+  retries: 10
+  delay: 15
