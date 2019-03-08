@@ -34,7 +34,7 @@ spec:
             value: percona-mysql-claim
 
           - name: NETWORK_DELAY
-            value: "3000" # in milliseconds
+            value: "60000" # in milliseconds
 
           - name: CHAOS_DURATION
             value: "60" # in seconds
