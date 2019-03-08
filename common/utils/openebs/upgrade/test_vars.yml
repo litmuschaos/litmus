@@ -8,3 +8,5 @@ liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
 version_tag: "{{ lookup('env','SOURCE_DESTINATION_TAG') }}"
 git_repo: https://github.com/openebs/openebs/trunk/k8s/upgrades/
 new_tag: "{{ lookup('env', 'RELEASE_TAG') }}"
+current_tag: "{{ lookup('env','CURRENT_TAG')}}"
+pool_name: "{{ lookup('env','POOL_NAME' ) }}"

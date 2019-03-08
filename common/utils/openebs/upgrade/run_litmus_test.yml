@@ -32,7 +32,10 @@ spec:
           - name: DEPLOY_TYPE
             value: deployment
 
-            #Namespace in which loadgen pod will be deployed
+          # Provide name POOL_NAME for the cstor-pool (for cstor upgrade)
+          - name: POOL_NAME
+            value: cstor-disk-pool
+
           - name: APP_NAMESPACE
             value: app-percona-ns
 
@@ -47,6 +50,9 @@ spec:
 
           - name: STORAGE_ENGINE
             value: "jiva"
+
+          - name: CURRENT_TAG
+            value: "0.8.0"  
 
           - name: RELEASE_TAG
             value: "0.8.1-RC1"
