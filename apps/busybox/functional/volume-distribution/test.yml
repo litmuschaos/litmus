@@ -1,0 +1,210 @@
+---
+#################### Test involved. ############################
+# 1. Obtain the storage class.                                 #
+# 2. Create a storage class for single volume replica.         #
+# 3. Deploy the busybox statefulset application with           #
+#     strict replica-anti-affinity label                       #
+# 4. Check the application status                              #
+# 5. Get the list of cStor storage pool of cvr's               #
+# 6. Verify the cvr's scheduled on different sp                #
+# 7. Scale up the application replica                          #
+# 8. Check whether cvr are scheduled on different sp.          #
+################################################################
+
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+          ## Generating the testname for deployment
+        - include_tasks: /common/utils/create_testname.yml
+
+          ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'SOT'
+
+        - block:
+            - name: Get the storage class yaml 
+              shell: kubectl get sc {{ storage_class }} -o yaml > cstor-disk-standalone.yaml 
+              args:
+                executable: /bin/bash
+
+            - name: Update the replica count storage class yaml
+              replace: 
+                path: cstor-disk-standalone.yaml
+                regexp: 'value: "3"'
+                after: '- name: ReplicaCount'
+                replace: 'value: "1"'
+          
+            - name: Update the storage class yaml
+              replace:
+                path: cstor-disk-standalone.yaml
+                regexp: "name: {{ storage_class }}"
+                replace: "name: openebs-cstor-disk-standalone"
+
+            - name: Create the storage class with single replica
+              shell: kubectl apply -f cstor-disk-standalone.yaml
+              args:
+                executable: /bin/bash
+
+              ## Creating namespaces and making the application for deployment
+            - include_tasks: /common/utils/pre_create_app_deploy.yml
+
+            - name: Replace the storage class in application deployment file 
+              replace: 
+                path: "{{ application_deployment }}"
+                regexp: "storageClassName: {{ storage_class }}"
+                replace: "storageClassName: openebs-cstor-disk-standalone"
+
+            - name: Replace the replica anti affinity label value
+              replace: 
+                path: "{{ application_deployment }}"
+                regexp: "openebs.io/replica-anti-affinity: lvalue"
+                replace: "openebs.io/replica-anti-affinity: {{ app_lvalue }}"
+
+              ## Deploying the application
+            - include_tasks: /common/utils/deploy_single_app.yml
+              vars:
+                check_app_pod: 'no'
+                delay: 10
+                retries: 20
+
+            - name: Get the pv list
+              shell: >
+                kubectl get pvc -n {{ app_ns }} -l {{ app_label }} -o custom-columns=:.spec.volumeName --no-headers
+              args:
+                executable: /bin/bash
+              register: pv_list
+
+            - name: Obtain the pool claim name from storage class
+              shell: >
+                kubectl get sc openebs-cstor-disk-standalone -o jsonpath='{.metadata.annotations}' | grep -A 1 -w "name: StoragePoolClaim" | grep value | awk '{print $2}' | cut -d '"' -f 2 | head -1
+              args:
+                executable: /bin/bash
+              register: pool_claim
+
+            - name: Get the total number of sp
+              shell: >
+                kubectl get csp -l openebs.io/storage-pool-claim={{ pool_claim.stdout }} -o custom-columns=:.metadata.name --no-headers | wc -l
+              args:
+                executable: /bin/bash
+              register: running_csp
+
+            - name: Obtain the cstor storage pool list from cvr
+              shell: >
+                 kubectl get cvr -l openebs.io/replica-anti-affinity={{ app_lvalue }} -n {{ operator_ns }} -o jsonpath='{.items[*].metadata.labels.cstorpool\.openebs\.io/name}'
+              args:
+                executable: /bin/bash
+              register: csp
+
+            - set_fact:
+                 csp_list: "{{ csp.stdout.split(' ') }}"
+
+            - name: Verify the CVR's sceduled on different sp
+              shell: >
+                kubectl get cvr -n {{ operator_ns }} -l openebs.io/replica-anti-affinity={{ app_lvalue }},cstorpool.openebs.io/name={{ item }} --no-headers | wc -l
+              args:
+                executable: /bin/bash
+              register: cvr_list
+              failed_when: cvr_list.stdout != '1'
+              with_items:
+                 - "{{ csp_list }}"
+
+            - name: Obtain the application name 
+              shell: >
+                kubectl get statefulset -n {{ app_ns }} -l {{ app_label }} -o custom-columns=:.metadata.name --no-headers
+              args:
+                executable: /bin/bash
+              register: app_name
+
+            - name: Scaleup the application replica
+              shell: >
+                kubectl scale statefulsets {{ app_name.stdout }} --replicas={{ app_replica_count }} -n {{ app_ns }}     
+              args: 
+                executable: /bin/bash
+              register: result
+              failed_when: "'scaled' not in result.stdout"
+
+            - name: Obtain number of healthy PVC
+              shell: >
+                kubectl get pvc -n {{ app_ns }} -l {{ app_label }}  -o custom-columns=:.status.phase | grep Bound | wc -l
+              args:
+                executable: /bin/bash
+              register: pvc
+
+            - name: Get the pv list after scale up the application replica
+              shell: >
+                kubectl get pvc -n {{ app_ns }} -l {{ app_label }} -o custom-columns=:.spec.volumeName --no-headers | grep -v none | wc -l
+              args:
+                executable: /bin/bash
+              register: pvlist
+
+            - name: Check if all the application replicas are running.
+              shell: kubectl get statefulset -n {{ app_ns }} --no-headers -l {{ app_label }} -o custom-columns=:..readyReplicas
+              args:
+                executable: /bin/bash
+              register: running_replicas
+              until: "running_replicas.stdout|int == pvlist.stdout|int == pvc.stdout|int"
+              delay: 60
+              retries: 15
+              
+            - name: Get the pv list after scale up the application replica
+              shell: >
+                kubectl get pvc -n {{ app_ns }} -l {{ app_label }} -o custom-columns=:.spec.volumeName --no-headers
+              args:
+                executable: /bin/bash
+              register: pv
+
+            - name: Obtain newly created pv list
+              set_fact:
+                 new_pv: "{{ (pv.stdout_lines | difference(pv_list.stdout_lines)) }}"
+
+            - name: Get the cstor storage pool list after scale up the application replica
+              shell: >
+                 kubectl get cvr -l openebs.io/replica-anti-affinity={{ app_lvalue }} -n {{ operator_ns }} -o jsonpath='{.items[*].metadata.labels.cstorpool\.openebs\.io/name}'
+              args:
+                executable: /bin/bash
+              register: new_csp
+
+            - set_fact:
+                 new_csp_list: "{{ new_csp.stdout.split(' ') }}"
+
+            - name: Verify the CVR's sceduled on different cstor storage pool
+              shell: >
+                kubectl get cvr -n {{ operator_ns }} -l openebs.io/replica-anti-affinity={{ app_lvalue }},cstorpool.openebs.io/name={{ item }} --no-headers | wc -l
+              args:
+                executable: /bin/bash
+              register: cvr_list
+              failed_when: cvr_list.stdout != '1'
+              with_items:
+                 - "{{ new_csp_list }}"
+
+          when: "'deprovision' not in action"
+
+        - block:
+
+            - name: Deprovisioning the Application
+              include_tasks: /common/utils/deprovision_statefulset.yml
+              vars:
+                app_deployer: "{{ application_deployment }}"
+
+          when: "'deprovision' is in action"
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - name: Setting fail flag
+          set_fact:
+            flag: "Fail"
+
+      always:
+        ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'

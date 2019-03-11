@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    lkey: lvalue
+  name: busybox
+spec:
+  clusterIP: None
+  selector:
+    lkey: lvalue
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: busybox
+  labels:
+    lkey: lvalue
+spec:
+  serviceName: busybox
+  rkey: rvalue
+  selector:
+    matchLabels:
+      lkey: lvalue
+      #The Label "openebs.io/replica-anti-affinity" 
+      #needs to be added in order to distribute volume replicas.
+      openebs.io/replica-anti-affinity: lvalue
+  template:
+    metadata:
+      labels:
+        lkey: lvalue
+        openebs.io/replica-anti-affinity: lvalue
+    spec:
+      containers:
+      - name: busybox
+        image: ubuntu
+        imagePullPolicy: IfNotPresent
+        command:
+          - sleep
+          - infinity
+        volumeMounts:
+        - name: testclaim
+          mountPath: /busybox
+  volumeClaimTemplates:
+  - metadata:
+      name: testclaim
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: testclass
+      resources:
+        requests:
+          storage: 1Gi
