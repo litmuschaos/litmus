@@ -1,5 +1,12 @@
 #!/bin/bash
-apt-get update && apt-get install -y docker.io apt-transport-https curl
+
+#Installing Docker
+apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+apt-get update && apt-get install -y docker-ce=18.06.3~ce~3-0~ubuntu
+
+#Installing Kubectl, Kubeadm & kubelet
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 touch /etc/apt/sources.list.d/kubernetes.list
 sh -c 'echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list'
