@@ -30,7 +30,7 @@ spec:
             value: openebs-busybox
 
             # Application label
-            # Use different 'LABEl' for deployment and statefulset application
+            # Use different 'LABEL' for deployment and statefulset application
           - name: APP_LABEL
             value: 'app=busybox-sts'
 
@@ -43,7 +43,11 @@ spec:
             # Use 'statefulset' for Busybox statefulset application
           - name: DEPLOY_TYPE
             value: statefulset
- 
+            
+            #Persistent Volume storage capacity
+          - name: PV_CAPACITY
+            value: 5G
+
             #Application replicas for statefulset application
           - name: APP_REPLICA
             value: 'replicas=2'

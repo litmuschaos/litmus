@@ -48,4 +48,4 @@ spec:
       storageClassName: testclass
       resources:
         requests:
-          storage: 1Gi
+          storage: teststorage

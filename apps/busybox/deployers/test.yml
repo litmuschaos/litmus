@@ -28,6 +28,12 @@
                 regexp: "openebs.io/replica-anti-affinity: lvalue"
                 replace: "openebs.io/replica-anti-affinity: {{ app_lvalue }}"
 
+            - name: Replace the volume capcity placeholder with provider
+              replace:
+                path: "{{ application_statefulset }}"
+                regexp: "teststorage"
+                replace: "{{ lookup('env','PV_CAPACITY') }}"
+
               ## Deploying the application
             - include_tasks: /common/utils/deploy_single_app.yml
               vars:
@@ -41,7 +47,13 @@
         - block:
               ## Creating namespaces and making the application for deployment
             - include_tasks: /common/utils/pre_create_app_deploy.yml
-              
+
+            - name: Replace the volume capcity placeholder with provider
+              replace:
+                path: "{{ application_deployment }}"
+                regexp: "teststorage"
+                replace: "{{ lookup('env','PV_CAPACITY') }}"
+
               ## Deploying the application
             - include_tasks: /common/utils/deploy_single_app.yml
               vars:
