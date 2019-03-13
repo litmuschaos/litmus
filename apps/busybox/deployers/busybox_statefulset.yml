@@ -32,11 +32,12 @@ spec:
     spec:
       containers:
       - name: busybox
-        image: ubuntu
+        image: busybox
         imagePullPolicy: IfNotPresent
         command:
-          - sleep
-          - infinity
+           - sh
+           - -c
+           - 'date > /busybox/date.txt; sync; sleep 5; sync; tail -f /dev/null;'
         volumeMounts:
         - name: testclaim
           mountPath: /busybox
