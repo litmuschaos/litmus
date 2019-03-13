@@ -16,7 +16,7 @@
           vars:
             status: 'SOT'
 
-        - name: Generate yaml to create storage class
+        - name: Generate yaml files to create storage class
           template:
             src: "{{ item.src }}"
             dest: "{{ item.dest }}"
@@ -26,7 +26,7 @@
 
         - block:
 
-            - name: Create storage class with specific storage policies
+            - name: Create storage classes with specific storage policies
               shell: kubectl apply -f {{ item }}
               args:
                 executable: /bin/bash
@@ -34,7 +34,7 @@
               with_items:
                 - "{{ storage_policies }}"
 
-            - name: Confirm that storage classes are created
+            - name: Confirm that the storage classes are created
               shell: kubectl get storageclass
               args:
                 executable: /bin/bash
@@ -50,7 +50,7 @@
 
         - block:
         
-            - name: Delete storage class with specific storage policies
+            - name: Delete storage classes with specific storage policies
               shell: kubectl delete -f {{ item }}
               args:
                 executable: /bin/bash
@@ -58,7 +58,7 @@
               with_items:
                 - "{{ storage_policies }}"
 
-            - name: Confirm that openebs storage classes are deleted
+            - name: Confirm that the storage classes are deleted
               shell: kubectl get storageclass
               args:
                 executable: /bin/bash

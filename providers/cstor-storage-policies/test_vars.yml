@@ -1,4 +1,4 @@
-# Test-specific parametres
+# Test-specific parameters
 test_name: cstor-storage-policies
 pool_name: "{{ lookup('env','POOL_NAME') }}"
 storage_policies:
