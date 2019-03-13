@@ -26,6 +26,7 @@ RUN mkdir /etc/ansible/ /ansible && \
 #Copying Necessary Files
 COPY providers/openebs/installers/ ./
 COPY providers/cstor/ ./
+COPY providers/ ./
 COPY ./apps/ ./
 COPY ./chaoslib ./chaoslib/
 COPY ./funclib ./funclib/
