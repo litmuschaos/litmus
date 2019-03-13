@@ -1,0 +1,94 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+          ## Generating the testname for deployment
+        - include_tasks: /common/utils/create_testname.yml
+
+          ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'SOT'
+
+        - block:
+              ## Creating namespaces and making the application for deployment
+            - include_tasks: /common/utils/pre_create_app_deploy.yml
+              vars:
+                application_deployment: "{{ application_statefulset }}"
+
+            - name: Replace the replica anti affinity label value
+              replace: 
+                path: "{{ application_statefulset }}"
+                regexp: "openebs.io/replica-anti-affinity: lvalue"
+                replace: "openebs.io/replica-anti-affinity: {{ app_lvalue }}"
+
+            - name: Replace the volume capcity placeholder with provider
+              replace:
+                path: "{{ application_statefulset }}"
+                regexp: "teststorage"
+                replace: "{{ lookup('env','PV_CAPACITY') }}"
+
+              ## Deploying the application
+            - include_tasks: /common/utils/deploy_single_app.yml
+              vars:
+                application_deployment: "{{ application_statefulset }}"
+                check_app_pod: 'no'
+                delay: 10
+                retries: 20
+
+          when: lookup('env','DEPLOY_TYPE') == 'statefulset'
+
+        - block:
+              ## Creating namespaces and making the application for deployment
+            - include_tasks: /common/utils/pre_create_app_deploy.yml
+
+            - name: Replace the volume capcity placeholder with provider
+              replace:
+                path: "{{ application_deployment }}"
+                regexp: "teststorage"
+                replace: "{{ lookup('env','PV_CAPACITY') }}"
+
+              ## Deploying the application
+            - include_tasks: /common/utils/deploy_single_app.yml
+              vars:
+                check_app_pod: 'yes'
+                delay: 10
+                retries: 20
+
+          when: lookup('env','DEPLOY_TYPE') == 'deployment'        
+
+        - block:
+
+            - name: Deprovisioning the Application
+              include_tasks: /common/utils/deprovision_statefulset.yml
+              vars:
+                app_deployer: "{{ application_statefulset }}"
+              when: lookup('env','DEPLOY_TYPE') == 'statefulset'
+
+            - name: Deprovisioning the Application
+              include_tasks: "/common/utils/deprovision_deployment.yml"
+              vars:
+                app_deployer: "{{ application_deployment }}"
+              when: lookup('env','DEPLOY_TYPE') == 'deployment'       
+
+          when: "'deprovision' is in action"
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - name: Setting fail flag
+          set_fact:
+            flag: "Fail"
+
+      always:
+        ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
