@@ -54,6 +54,11 @@
                 executable: /bin/bash
               register: maxpool_count
 
+            - name: Getting the number of nodes
+              shell: kubectl get node --no-headers | grep -v "master" | wc -l
+              args:
+                executable: /bin/bash
+              register: node_count
 
             - name: Verify if cStor Disk Pool are created on each node
               shell: >
@@ -62,7 +67,7 @@
               args:
                 executable: /bin/bash
               register: pool_count
-              until: pool_count.stdout_lines|length == maxpool_count.stdout|int
+              until: pool_count.stdout_lines|length == node_count.stdout|int
               retries: 10
               delay: 20
 
