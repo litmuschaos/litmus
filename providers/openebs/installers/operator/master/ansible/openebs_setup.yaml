@@ -213,18 +213,18 @@
               delay: 5
               retries: 120
 
-            - name: Get the maxpool count of storage pool claim.
-              shell: kubectl get spc -o=jsonpath='{.items[?(@.metadata.name=="cstor-sparse-pool")].spec.maxPools}'
-              args:
-                executable: /bin/bash
-              register: maxpool_count
+              #- name: Get the maxpool count of storage pool claim.
+              #shell: kubectl get spc -o=jsonpath='{.items[?(@.metadata.name=="cstor-sparse-pool")].spec.maxPools}'
+              #args:
+              #  executable: /bin/bash
+              #register: maxpool_count
 
             - name: Confirm if sparse pool is running in all the nodes
               shell: kubectl get pods -n {{ namespace }} --selector={{ sparse_pool_label }} | grep Running | wc -l
               args:
                 executable: /bin/bash
               register: sparse_pool_count
-              until: (maxpool_count.stdout)|int == (sparse_pool_count.stdout)|int
+              until: (sparse_pool_count.stdout)|int == 3
               delay: 5
               retries: 120  
           when: lookup('env','OPENEBS_INFRA_CHAOS') != "infra_chaos"     
@@ -245,18 +245,18 @@
               delay: 5
               retries: 120
 
-            - name: Get the maxpool count of storage pool claim.
-              shell: kubectl get spc -o=jsonpath='{.items[?(@.metadata.name=="cstor-sparse-pool")].spec.maxPools}'
-              args:
-                executable: /bin/bash
-              register: maxpool_count
+              # - name: Get the maxpool count of storage pool claim.
+              #shell: kubectl get spc -o=jsonpath='{.items[?(@.metadata.name=="cstor-sparse-pool")].spec.maxPools}'
+              #args:
+              #  executable: /bin/bash
+              #register: maxpool_count
 
             - name: Confirm if sparse pool is running in all the nodes
               shell: kubectl get pods -n {{ namespace }} --selector={{ sparse_pool_label }} | grep Running | wc -l
               args:
                 executable: /bin/bash
               register: sparse_pool_count
-              until: (maxpool_count.stdout)|int == (sparse_pool_count.stdout)|int
+              until: (sparse_pool_count.stdout)|int == 3
               delay: 5
               retries: 120  
           when: lookup('env','OPENEBS_INFRA_CHAOS') == "infra_chaos"   
