@@ -16,18 +16,29 @@
           vars:
             status: 'SOT'
 
-        - name: Get number of healthy minion's
-          shell: kubectl get nodes | grep -v 'master'
+        - name: Getting Used disks
+          shell: kubectl get sp -o jsonpath='{.items[*].spec.disks.diskList}' | tr " " "\n" |sed 's/[][]//g'
           args:
             executable: /bin/bash
-          register: node_count
+          register: used_disks
+      
+        - local_action: copy content={{ used_disks.stdout }} dest="./used_disks"
 
-        - name: Get list of disks attached
-          shell: kubectl get disks -l ndm.io/disk-type=disk --no-headers -o custom-columns=:metadata.name
-          args:
-            executable: /bin/bash
-          register: diskList
-          failed_when: "'disk-' not in diskList.stdout"
+        - name: Getting all disks
+          shell: kubectl get disks -o jsonpath='{.items[*].metadata.name}' | tr " " "\n"
+          register: all_disks
+
+        - local_action: copy content={{ all_disks.stdout }} dest="./all_disks"
+
+        - name: Copying content
+          shell: cat all_disks used_disks >> tmp_disks
+
+        - name: Getting list of unused disks attached
+          shell: |
+            sort used_disks > a1
+            sort all_disks > a2   
+            diff a2 a1 | grep -e "<" -e ">" | awk '{print $2}'        
+          register: diskList  
 
         - name: Generate the litmus result CR to reflect SOT (Start of Test)
           template:
@@ -48,13 +59,6 @@
               args:
                 executable: /bin/bash
 
-            - name: Get the maxpool count of storage pool claim.
-              shell: kubectl get spc -o=jsonpath='{.items[?(@.metadata.name=="{{pool_name}}")].spec.maxPools}'
-              args:
-                executable: /bin/bash
-              register: maxpool_count
-
-
             - name: Verify if cStor Disk Pool are created on each node
               shell: >
                  kubectl get pods -n {{ operator_ns }} -l openebs.io/storage-pool-claim={{ pool_name }}
@@ -62,7 +66,7 @@
               args:
                 executable: /bin/bash
               register: pool_count
-              until: pool_count.stdout_lines|length == maxpool_count.stdout|int
+              until: pool_count.stdout_lines|length == diskList.stdout_lines|length
               retries: 10
               delay: 20
 
