@@ -9,7 +9,7 @@ spec:
     metadata:
       name: litmus
       labels:
-        app: cstor-storge-policy
+        app: cstor-storage-policy
 
     spec:
       serviceAccountName: litmus
