@@ -16,12 +16,6 @@
           vars:
             status: 'SOT'
 
-        - name: Get number of healthy minion's
-          shell: kubectl get nodes | grep -v 'master'
-          args:
-            executable: /bin/bash
-          register: node_count
-
         - name: Getting Used disks
           shell: kubectl get sp -o jsonpath='{.items[*].spec.disks.diskList}' | tr " " "\n" |sed 's/[][]//g'
           args:
@@ -64,12 +58,6 @@
               shell: kubectl create -f "{{ playbook_dir }}/{{ cstor_spc }}"
               args:
                 executable: /bin/bash
-
-            - name: Getting the number of Disks
-              shell: kubectl get node --no-headers | grep -v "master" | wc -l
-              args:
-                executable: /bin/bash
-              register: node_count
 
             - name: Verify if cStor Disk Pool are created on each node
               shell: >
