@@ -1,13 +1,15 @@
 # Test-specific parametres
 
 nuodb_spec:
+  - admin-svc.yaml
   - nuodb.yaml
   - nuodb-sm.yaml
   - nuodb-te.yaml
+
 nuodb_labels:
-  - admin
-  - sm
-  - te
+  - a
+  - sm-a
+
 app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
 platform: "{{ lookup('env','PLATFORM') }}"
 operator_ns: 'openebs'

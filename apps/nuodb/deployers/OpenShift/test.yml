@@ -27,33 +27,30 @@
                 replace: '{{ storage_class }}'
               with_items:
                 - nuodb.yaml 
-                - nuodb-te.yaml
-
-            - name: Replace the sc placeholder with ENV sc
-              replace:
-                path: "{{ item }}"
-                regexp: '1000'
-                replace: '0'
-              with_items:
-                - nuodb.yaml 
                 - nuodb-sm.yaml
 
-            - name: Replace the namespace placeholder with ENV ns
-              replace:
-                path: "{{ item }}"
-                regexp: 'testns'
-                replace: '{{ app_ns }}'
-              with_items: 
-                - "{{ nuodb_spec }}"
-                - nuodb-ycsb.yaml
-
             ## Deploying the nuodb service, domain, sm and te 
+
+            - name: Label nodes
+              shell: |
+                 kubectl label nodes glusterfs=storage-host --all
+                 kubectl label nodes node-role.kubernetes.io/compute=true --all
+                 kubectl label nodes nuodb.com/zone=a --all
+                 kubectl label nodes region=us-east-1 --all
+              args:
+                executable: /bin/bash
+              ignore_errors: true
 
             - name: Disable THP for platforms like AWS,OpenShift
               shell: kubectl create -f disable-thp.yaml -n {{ app_ns }}
               args:
                 executable: /bin/bash
               when: lookup('env','THP') == 'disable' 
+
+            - name: Create secrets for database
+              shell: kubectl create -f database-secret.yaml -n {{ app_ns }}
+              args:
+                executable: /bin/bash
 
             - name: Deploying NUODB service, domain, storage manager and transaction engines
               shell: kubectl create -f {{ item }} -n {{ app_ns }}
@@ -71,31 +68,12 @@
               delay: 10
               retries: 60
 
-            - name: Run ycsb load on Nuodb
-              shell: kubectl create -f nuodb-ycsb.yaml -n {{ app_ns }}
-              args:
-                executable: /bin/bash
-
-            - name: Verify if the ycsb-load is running
-              shell: kubectl get pod -l app=ycsb-load -n {{ app_ns }}
-              args:
-                executable: /bin/bash
-              register: result
-              until: "'Running' in result.stdout"
-              delay: 10
-              retries: 60
-              
             - set_fact:
                 flag: "Pass"  
 
           when: "'deprovision' not in action"  
 
         - block:
-
-            - name: Delete the ycsb load on Nuodb
-              shell: kubectl delete -f nuodb-ycsb.yaml -n {{ app_ns }}
-              args:
-                executable: /bin/bash
 
             - name: Deprovision NUODB service, domain, storage manager and transaction engines
               shell: kubectl delete -f {{ item }} -n {{ app_ns }}
