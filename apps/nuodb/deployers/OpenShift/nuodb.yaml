@@ -3,7 +3,7 @@ kind: StatefulSet
 metadata:
   name: a
   labels:
-    app: domain
+    app: admin
     group: nuodb
     subgroup: admin
 spec:
@@ -16,7 +16,7 @@ spec:
   template:
     metadata:
       labels:
-        app: admin
+        app: a
         dns: domain
         group: nuodb
         affinity: nuoadmin
@@ -37,23 +37,16 @@ spec:
       securityContext:
         runAsUser: 0
         fsGroup: 0
+      imagePullSecrets:
+        - name: dockerlogin
       containers:
       - name: nuoadmin
         image: "nuodb/nuodb-ce:latest"
-#        command: ["sh", "-c", ". /opt/nuodb/drivers/pynuoadmin/nuocmd-complete"]
         imagePullPolicy: IfNotPresent
         ports:
         - { containerPort: 8888,  protocol: TCP }
         - { containerPort: 48004, protocol: TCP }
         - { containerPort: 48005, protocol: TCP }
-        lifecycle:
-          postStart:
-            exec:
-              command:
-                - "sh"
-                - "-c"
-                - >
-                  . /opt/nuodb/drivers/pynuoadmin/nuocmd-complete
         resources:
           requests:
             memory: "512Mi"
@@ -112,3 +105,4 @@ spec:
       resources:
         requests:
           storage: 5G
+

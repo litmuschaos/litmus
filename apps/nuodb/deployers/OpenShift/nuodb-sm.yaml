@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: sm-test
+  name: sm
   labels:
     group: nuodb
     subgroup: storage
@@ -11,42 +11,20 @@ spec:
   selector:
     matchLabels:
       nodetype: sm
-      app: sm
+      app: sm-a
       group: nuodb
   podManagementPolicy: Parallel
   template:
     metadata:
       labels:
         nodetype: sm
-        app: sm
+        app: sm-a
         group: nuodb
         subgroup: storage
     spec:
-      terminationGracePeriodSeconds: 15
       securityContext:
         runAsUser: 0
         fsGroup: 0
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - { key: "nuodb.com/zone",      operator: Exists }
-              - { key: "nuodb.com/zone",      operator: In, values: [ "a" ] }
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchLabels:
-                nodetype: sm
-            topologyKey: kubernetes.io/hostname
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 50
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                - { key: database, operator: In, values: [ "test" ] }
-                - { key: nodetype, operator: In, values: [ "te", "ssm" ] }
-              topologyKey: kubernetes.io/hostname
       containers:
       - name: sm
         image: nuodb/nuodb-ce:latest
@@ -65,32 +43,19 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        - name: DB_NAME
-          valueFrom:
-            secretKeyRef:
-              name: "nuodb.secret"
-              key: database-name
-        - name: DB_USER
-          valueFrom:
-            secretKeyRef:
-              name: "nuodb.secret"
-              key: database-username
-        - name: DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: "nuodb.secret"
-              key: database-password
-        - { name: NUOCMD_API_SERVER,   value: "a.$(NAMESPACE).svc:8888" }
-        - { name: PEER_ADDRESS,        value: "admin.$(NAMESPACE).svc" }
-        - { name: NUODB_OPTIONS,       value: "mem 8g" }
-        - { name: NUODB_LABELS,        value: "backup disabled" }
+        - { name: DB_NAME, value: "nuodb"}
+        - { name: DB_USER, value: "dba"}
+        - { name: DB_PASSWORD, value: "goalie"}
+        - { name: NUOCMD_API_SERVER,   value: "admin.nuodbcstor.svc:8888"}
+        - { name: PEER_ADDRESS,        value: "admin.nuodbcstor.svc" }
+        - { name: NUODB_OPTIONS,       value: "mem 1g" }
         ports:
         - containerPort: 48006
           protocol: TCP
         resources:
           requests:
-            memory: "8Gi"
-            cpu: "4"
+            memory: "1Gi"
+            cpu: "0.5"
         volumeMounts:
         - mountPath: /var/opt/nuodb/archive
           name: archive-volume
@@ -108,3 +73,4 @@ spec:
       resources:
         requests:
           storage: 20G
+

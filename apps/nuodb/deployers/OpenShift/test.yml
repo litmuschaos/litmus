@@ -31,11 +31,26 @@
 
             ## Deploying the nuodb service, domain, sm and te 
 
+            - name: Label nodes
+              shell: |
+                 kubectl label nodes glusterfs=storage-host --all
+                 kubectl label nodes node-role.kubernetes.io/compute=true --all
+                 kubectl label nodes nuodb.com/zone=a --all
+                 kubectl label nodes region=us-east-1 --all
+              args:
+                executable: /bin/bash
+              ignore_errors: true
+
             - name: Disable THP for platforms like AWS,OpenShift
               shell: kubectl create -f disable-thp.yaml -n {{ app_ns }}
               args:
                 executable: /bin/bash
               when: lookup('env','THP') == 'disable' 
+
+            - name: Create secrets for database
+              shell: kubectl create -f database-secret.yaml -n {{ app_ns }}
+              args:
+                executable: /bin/bash
 
             - name: Deploying NUODB service, domain, storage manager and transaction engines
               shell: kubectl create -f {{ item }} -n {{ app_ns }}

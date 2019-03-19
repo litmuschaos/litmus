@@ -38,8 +38,8 @@ spec:
           protocol: TCP
         resources:
           requests:
-            memory: "8Gi"
-            cpu: "4"
+            memory: "1Gi"
+            cpu: "0.5"
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
         env:
@@ -62,7 +62,7 @@ spec:
               key: database-name
         - { name: NUOCMD_API_SERVER,   value: "a.$(NAMESPACE).svc:8888" }
         - { name: PEER_ADDRESS,        value: "a.$(NAMESPACE).svc" }
-        - { name: NUODB_OPTIONS,       value: "mem 8g" }
+        - { name: NUODB_OPTIONS,       value: "mem 1g" }
         - { name: NUODB_LABELS,        value: "te te1)" }
         - { name: NODE_ZONE,           value: "a" }
         volumeMounts:
