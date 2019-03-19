@@ -1,0 +1,114 @@
+apiVersion: "apps/v1"
+kind: StatefulSet
+metadata:
+  name: a
+  labels:
+    app: domain
+    group: nuodb
+    subgroup: admin
+spec:
+  serviceName: domain
+  replicas: 1
+  selector:
+    matchLabels:
+      affinity: nuoadmin
+      group: nuodb
+  template:
+    metadata:
+      labels:
+        app: admin
+        dns: domain
+        group: nuodb
+        affinity: nuoadmin
+        subgroup: admin
+    spec:
+      nodeSelector:
+        nuodb.com/zone: a
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: affinity
+                operator: In
+                values: [ "nuoadmin" ]
+            topologyKey: "kubernetes.io/hostname"
+      terminationGracePeriodSeconds: 15
+      securityContext:
+        runAsUser: 0
+        fsGroup: 0
+      containers:
+      - name: nuoadmin
+        image: "nuodb/nuodb-ce:latest"
+#        command: ["sh", "-c", ". /opt/nuodb/drivers/pynuoadmin/nuocmd-complete"]
+        imagePullPolicy: IfNotPresent
+        ports:
+        - { containerPort: 8888,  protocol: TCP }
+        - { containerPort: 48004, protocol: TCP }
+        - { containerPort: 48005, protocol: TCP }
+        lifecycle:
+          postStart:
+            exec:
+              command:
+                - "sh"
+                - "-c"
+                - >
+                  . /opt/nuodb/drivers/pynuoadmin/nuocmd-complete
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "0.5"
+          limits:
+            memory: "1024Mi"
+            cpu: "1"
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - { name: NUODB_DOMAIN_ENTRYPOINT, value: "a-0.domain" }
+        - { name: NUODB_ALT_ADDRESS,       value: "$(POD_NAME).domain.$(NAMESPACE).svc" }
+        - { name: NUODB_VARDIR,            value: "/var/opt/nuodb/$(POD_NAME).$(NAMESPACE)" }
+        args: [ "nuoadmin" ]
+        livenessProbe:
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          tcpSocket:
+            port: 8888
+        readinessProbe:
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          exec:
+            command: [ "nuodocker", "check", "servers" ]
+          failureThreshold: 30
+          successThreshold: 2
+          timeoutSeconds: 1
+        volumeMounts:
+        - name: raftlog
+          mountPath: /var/opt/nuodb
+        - name: log-volume
+          mountPath: /var/log/nuodb
+      volumes:
+      # - name: raftlog
+      #   emptyDir: {}
+      - name: log-volume
+        emptyDir: {}
+  volumeClaimTemplates:
+  - metadata:
+      name: raftlog
+      labels:
+        group: nuodb
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: testsc
+      resources:
+        requests:
+          storage: 5G

@@ -1,6 +1,8 @@
 # Test-specific parametres
 
 nuodb_spec:
+  - database-secret.yaml
+  - admin-svc.yaml
   - nuodb.yaml
   - nuodb-sm.yaml
   - nuodb-te.yaml
