@@ -17,7 +17,7 @@
             status: 'SOT'
 
         - name: Getting Used disks
-          shell: kubectl get sp -o jsonpath='{.items[*].spec.disks.diskList}' | tr " " "\n" |sed 's/[][]//g'
+          shell: kubectl get sp -o jsonpath='{.items[*].spec.disks.diskList}' | grep -v sparse | tr " " "\n" |sed 's/[][]//g'
           args:
             executable: /bin/bash
           register: used_disks
@@ -25,7 +25,7 @@
         - local_action: copy content={{ used_disks.stdout }} dest="./used_disks"
 
         - name: Getting all disks
-          shell: kubectl get disks -o jsonpath='{.items[*].metadata.name}' | tr " " "\n"
+          shell: kubectl get disks -l ndm.io/disk-type=disk -o jsonpath='{.items[*].metadata.name}' | tr " " "\n"
           register: all_disks
 
         - local_action: copy content={{ all_disks.stdout }} dest="./all_disks"
@@ -59,6 +59,17 @@
               args:
                 executable: /bin/bash
 
+            - name: Verify if cStor Disk Pool are Running
+              shell: >
+                 kubectl get pods -n {{ operator_ns }} -l openebs.io/storage-pool-claim={{ pool_name }}
+                 --no-headers -o custom-columns=:status.phase
+              args:
+                executable: /bin/bash
+              register: pool_count
+              until: "((pool_count.stdout_lines|unique)|length) == 1 and 'Running' in pool_count.stdout"
+              retries: 20
+              delay: 45
+
             - name: Verify if cStor Disk Pool are created on each node
               shell: >
                  kubectl get pods -n {{ operator_ns }} -l openebs.io/storage-pool-claim={{ pool_name }}
@@ -68,7 +79,7 @@
               register: pool_count
               until: pool_count.stdout_lines|length == diskList.stdout_lines|length
               retries: 10
-              delay: 20
+              delay: 15
 
             - name: Get cStor Disk Pool names to verify the container statuses
               shell: >
