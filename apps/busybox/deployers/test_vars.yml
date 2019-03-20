@@ -2,7 +2,7 @@ application_statefulset: busybox_statefulset.yml
 application_deployment: busybox_deployment.yml
 app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
 app_label: "{{ lookup('env','APP_LABEL') }}"
-test_name: "busybox-{{ deploy_type }}"
+test_name: "busybox-{{ action }}-{{ app_ns }}"
 deploy_type: "{{ lookup('env','DEPLOY_TYPE') }}"
 app_replica: "{{ lookup('env','APP_REPLICA') }}"
 application_name: "busybox"
