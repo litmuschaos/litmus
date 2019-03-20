@@ -1,0 +1,106 @@
+---
+#Description: Creation of volume snapshot.
+#Author: Giri
+#
+########################################################################################
+#Steps:                                                                                #
+#1) Creating LitmusResult CR for updating test result.                                 #
+#2) Checking if the application is running in k8s cluster.                             #
+#3) Create snapshot using corresponding funclib utility.                               #
+#4) Verify snapshot creation in all the pool pods.                     
+#5) Update the LitmusResult CR.                                                       #
+########################################################################################
+
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+        ## Generating the testname for deployment
+        - include_tasks: /common/utils/create_testname.yml
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: "/common/utils/update_litmus_result_resource.yml"
+          vars:
+            status: 'SOT'
+
+        - name: Derive PV name from PVC
+          shell: >
+            kubectl get pvc {{ pvc_name }} -n {{ app_ns }}
+            --no-headers -o custom-columns=:spec.volumeName
+          args:
+            executable: /bin/bash
+          register: pv
+
+## Include an utility from litmus funclib to create snapshot.This creates snapshot and validates successful creation.
+       
+        - name: Creating snapshot.
+          include_tasks: /funclib/kubectl/k8s_snapshot_clone/create_snapshot.yml
+
+        - name: Obtaining the storage class used from PVC
+          shell: kubectl get pvc {{ pvc_name }} -n {{ app_ns }} --no-headers -o custom-columns=:.spec.storageClassName
+          args:
+            executable: /bin/bash
+          register: app_sc
+
+        - name: Obtaining the SPC from storage class
+          shell: kubectl get sc {{ app_sc.stdout }} --no-headers  -o yaml | awk '/StoragePoolClaim/{getline; print}' | cut -d ':' -f2 | sed 's/"//g'
+          args:
+            executable: /bin/bash
+          register: spc
+
+        - name: Obtaining the pool deployments from cvr
+          shell: >
+            kubectl get cvr -n {{ operator_ns }}
+            -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers
+            -o=jsonpath='{range .items[*]}{.metadata.labels.cstorpool\.openebs\.io\/name}{"\n"}{end}'
+          args:
+            executable: /bin/bash
+          register: pool_deployment
+
+        - name: Obtaining the replicasets corresponding to pool deployements.
+          shell: >
+            kubectl get rs --selector=app=cstor-pool -n {{ operator_ns }} --no-headers
+            -o=jsonpath='{.items[?(@.metadata.ownerReferences[0].name=="{{item}}")].metadata.name}'
+          args:
+            executable: /bin/bash
+          register: rs_list
+          with_items:
+            - "{{ pool_deployment.stdout_lines }}"
+
+        - name: Obtaining the pool pods
+          shell: >
+            kubectl get pod --selector=app=cstor-pool -n {{ operator_ns }} --no-headers 
+            -o=jsonpath='{.items[?(@.metadata.ownerReferences[0].name=="{{item.stdout}}")].metadata.name}'
+          args:
+            executable: /bin/bash
+          register: pool_pods
+          with_items:
+            - "{{ rs_list.results }}"
+
+        - name: Checking if the snapshot is created in all the pool pods.
+          shell: kubectl exec -ti {{ item.stdout }} -n {{ operator_ns }} -- zfs list -t snapshot
+          args:
+            executable: /bin/bash
+          register: snap_list
+          failed_when: "snapshot_name not in snap_list.stdout"
+          with_items:
+            - "{{ pool_pods.results }}"
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - set_fact:
+            flag: "Fail"
+
+      always:
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
+

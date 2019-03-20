@@ -1,0 +1,9 @@
+---
+test_name: create-snapshot
+
+app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+
+pvc_name: "{{ lookup('env','APP_PVC') }}"
+
+operator_ns: openebs
+
