@@ -1,15 +1,15 @@
 ---
 # This utility creates snapshot using K8s external storage API.
 #
-- name: Generate unique string for use as snapname
-  shell: cat /dev/urandom | tr -cd 'a-z0-9' | head -c 8
-  args:
-    executable: /bin/bash
-  register: snap_name
+#- name: Generate unique string for use as snapname
+#  shell: cat /dev/urandom | tr -cd 'a-z0-9' | head -c 8
+#  args:
+#    executable: /bin/bash
+#  register: snap_name
 
-- name: Form the snap name being rebuilt.
-  set_fact:
-    snapshot_name: "{{snap_name.stdout }}"
+#- name: Form the snap name being rebuilt.
+#  set_fact:
+#    snapshot_name: "{{snap_name.stdout }}"
 
 - name: Display details
   debug:

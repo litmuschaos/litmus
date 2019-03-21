@@ -7,3 +7,4 @@ pvc_name: "{{ lookup('env','APP_PVC') }}"
 
 operator_ns: openebs
 
+snapshot_name: "{{ lookup('env','snapshot') }}"
