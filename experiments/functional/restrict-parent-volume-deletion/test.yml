@@ -1,0 +1,54 @@
+---
+#Description: Creation of volume snapshot and clone.
+#
+########################################################################################
+#Steps:                                                                                #
+#1) Creating LitmusResult CR for updating test result.                                 #
+#2) Try to delete the volume which has clone and snapshot created.                     #
+#3) Update the result to the LitmusResult CR.                                          #
+########################################################################################
+
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+          ## Generating the testname for deployment
+        - include_tasks: /common/utils/create_testname.yml
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: "/common/utils/update_litmus_result_resource.yml"
+          vars:
+            status: 'SOT'
+
+        - name: Attempt deleting the volume which has descendants
+          shell: kubectl delete pvc {{ pvc_name }} -n {{ app_ns }}
+          args:
+            executable: /bin/bash
+          register: pvc_result
+          failed_when: pvc_result.rc == 0
+
+        - name: Check if the PVC is not deleted.
+          shell: kubectl get pvc {{ pvc_name }} -n {{ app_ns }} --no-headers -o custom-columns=:status.phase
+          args:
+            executable: /bin/bash
+          register: pvc_state
+          failed_when: "'Bound' not in pvc_state.stdout"
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - set_fact:
+            flag: "Fail"
+
+      always:
+           ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
+

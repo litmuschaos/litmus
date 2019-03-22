@@ -1,0 +1,60 @@
+---
+#Description: Creation of volume snapshot and clone.
+#
+########################################################################################
+#Steps:                                                                                #
+#1) Creating LitmusResult CR for updating test result.                                 #
+#2) Checking if the snapshot-promoter storage class is created.                        #
+#3) Use funclib util to create snapshot by passing environmental variables.            #
+#4) Check if the cloned pvc is created successfully.                                   #
+########################################################################################
+
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+          ## Generating the testname for deployment
+        - include_tasks: /common/utils/create_testname.yml
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: "/common/utils/update_litmus_result_resource.yml"
+          vars:
+            status: 'SOT'
+
+        - name: Check whether the snapshot specific storage class is created.
+          shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
+          args:
+            executable: /bin/bash
+          register: result
+
+        - name: Check if the snapshot is created.
+          shell: kubectl get volumesnapshot -n {{ app_ns }}
+          args:
+            executable: /bin/bash
+          register: snap_result
+          failed_when: "snapshot_name not in snap_result.stdout"
+
+       ## Include an utility from litmus funclib to create clone using volume snapshot.
+       ## Passing app_ns, snapshot_name,storage class and clone name as environmental variable.
+
+        - name: Creating clone using snapshot.
+          include_tasks: /funclib/kubectl/k8s_snapshot_clone/create_clone.yml
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - set_fact:
+            flag: "Fail"
+
+      always:
+           ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
+

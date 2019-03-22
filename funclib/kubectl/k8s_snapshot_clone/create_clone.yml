@@ -2,15 +2,22 @@
 ## This utility creates clone volume using the snapshot.
 # This utility creates snapshot using K8s external storage API.
 #
-- name: Generate unique string for use as clone claim.
-  shell: cat /dev/urandom | tr -cd 'a-z0-9' | head -c 8
-  args:
-    executable: /bin/bash
-  register: clone_name
+#- name: Generate unique string for use as clone claim.
+#  shell: cat /dev/urandom | tr -cd 'a-z0-9' | head -c 8
+#  args:
+#    executable: /bin/bash
+#  register: clone_name
 
-- name: Form the clone claim name.
-  set_fact:
-    clone_claim_name: "{{ clone_claim }}-{{ clone_name.stdout }}"
+#- name: Form the clone claim name.
+#  set_fact:
+#    clone_claim_name: "{{ clone_claim }}-{{ clone_name.stdout }}"
+#
+#
+#    The arguments necessary for this template are
+#        - app_ns  - application namespace
+#        - clone_claim_name - name for clone volume
+#        - snapshot_name - Name of snapshot
+#        - storage_class  - storageclass to create clone
 
 - name: Update the clone creation template with the values provided.
   template:
