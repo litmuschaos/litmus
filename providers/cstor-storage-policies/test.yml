@@ -23,6 +23,7 @@
           with_items:
              - { src: cstor-xfs-sc.j2,dest: cstor-xfs-sc.yml }
              - { src: cstor-volume-monitor-sc.j2,dest: cstor-volume-monitor-sc.yml }
+             - { src: cstor-disk-standalone.j2,dest: cstor-disk-standalone.yml }
 
         - block:
 
@@ -45,6 +46,7 @@
               with_items:
                 - openebs-cstor-xfs
                 - openebs-cstor-volume-monitor
+                - cstor-disk-standalone
 
           when: lookup('env','ACTION') == 'create'
 
