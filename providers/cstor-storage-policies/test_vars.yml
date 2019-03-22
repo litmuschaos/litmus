@@ -4,3 +4,4 @@ pool_name: "{{ lookup('env','POOL_NAME') }}"
 storage_policies:
   - cstor-xfs-sc.yml
   - cstor-volume-monitor-sc.yml
+  - cstor-disk-standalone.yml
