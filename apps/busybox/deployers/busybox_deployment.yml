@@ -2,11 +2,15 @@ apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
   name: app-busybox
+  labels:
+    lkey: lvalue
+    openebs.io/target-affinity: busybox
 spec:
   template:
     metadata:
       labels:
         lkey: lvalue
+        openebs.io/target-affinity: busybox
     spec:
       containers:
       - name: app-busybox
@@ -17,7 +21,7 @@ spec:
         env:
         volumeMounts:
         - name: data-vol
-          mountPath: /mnt/data
+          mountPath: /busybox
       volumes:
       - name: data-vol
         persistentVolumeClaim:
@@ -27,6 +31,8 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: testclaim
+  labels:
+    openebs.io/target-affinity: busybox
 spec:
   storageClassName: testclass
   accessModes:

@@ -2,8 +2,7 @@
   {% if stg_engine is defined and stg_engine == 'cstor' %}
     {% if chaos_type is defined and chaos_type == 'target-kill' or 'target-zrepl-kill' %}
       chaosutil: openebs/cstor_target_container_kill.yml
-    {% endif %}
-    {% if chaos_type is defined and chaos_type == 'target-delete' %}
+    {% else %}
       chaosutil: openebs/cstor_target_failure.yaml
     {% endif %}
   {% else %}
