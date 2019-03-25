@@ -50,6 +50,8 @@ spec:
             value:
           - name: OPENEBS_IO_CSTOR_VOLUME_MGMT_IMAGE
             value:        
+          - name: OPENEBS_IO_CSTOR_POOL_EXPORTER_IMAGE
+            value:  
           - name: IMAGE_PULL_POLICY
             value:
           - name: OPENEBS_INFRA_CHAOS

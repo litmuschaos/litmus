@@ -138,6 +138,12 @@
             executable: /bin/bash
           when: lookup('env','OPENEBS_IO_VOLUME_MONITOR_IMAGE') | length > 0
 
+        - name: Updating openebs cstor pool exporter image
+          shell: "{{ kubeapply }} set env deployment maya-apiserver \"OPENEBS_IO_CSTOR_POOL_EXPORTER_IMAGE={{ lookup('env','OPENEBS_IO_CSTOR_POOL_EXPORTER_IMAGE') }}\" -n {{ namespace }}"
+          args:
+            executable: /bin/bash
+          when: lookup('env','OPENEBS_IO_CSTOR_POOL_EXPORTER_IMAGE') | length > 0
+
         - name: Restarting all pods in openebs namespace
           shell: "kubectl delete po --all -n {{ namespace }}"
           args:
