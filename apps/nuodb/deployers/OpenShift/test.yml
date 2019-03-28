@@ -29,6 +29,17 @@
                 - nuodb.yaml 
                 - nuodb-sm.yaml
 
+            - name: Replace Nuodb version
+              replace:
+                path: "{{ item }}"
+                regexp: 'nuodb/nuodb-ce:latest'
+                replace: 'nuodb/nuodb-ee:latest'
+              with_items:
+                - nuodb.yaml 
+                - nuodb-sm.yaml
+                - nuodb-te.yml
+              when: lookup('env','NUODB_VERSION') == 'ee'
+
             ## Deploying the nuodb service, domain, sm and te 
 
             - name: Label nodes
