@@ -19,7 +19,7 @@ def compute_mem_func(args):
     """ this func computes the memory consumption over 10 iterations and returns the result """
     namespace = args.namespace
     targetname = args.target_name
-    threshold = args.mem_threshold
+    threshold = int(args.mem_threshold)
     mem_list = []
     getpid = "kubectl exec %s -n %s -- pidof %s" %(targetname, namespace, args.process_name)
     print getpid
@@ -54,7 +54,7 @@ def main():
     # A watermark of 500MB(re-calibrated based on results oberved from latest sanity run)
     # profile chosen in this test
     # TODO: Identify better mem consumption strategies
-    if all(i <= 500 for i in compute_mem_list):
+    if all(i <= int(args.mem_threshold) for i in compute_mem_list):
         print "Pass"
     else:
         print "Fail"
