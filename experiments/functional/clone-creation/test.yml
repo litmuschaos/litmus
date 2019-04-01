@@ -44,6 +44,9 @@
 
         - name: Creating clone using snapshot.
           include_tasks: /funclib/kubectl/k8s_snapshot_clone/create_clone.yml
+          vars:
+            capacity: "{{ volume_capacity }}"
+
 
         - set_fact:
             flag: "Pass"
