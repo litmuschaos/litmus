@@ -29,7 +29,7 @@ spec:
 
             # Application namespace
           - name: APP_NAMESPACE
-            value: app-busybox-ns 
+            value: app-busybox-ns
 
           - name: PROVIDER_STORAGE_CLASS
             value: openebs-snapshot-promoter
@@ -40,6 +40,9 @@ spec:
 
           - name: SNAPSHOT
             value: snapshot-busybox
+
+          - name: CAPACITY
+            value: 5G
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/functional/clone-creation/test.yml -i /etc/ansible/hosts -vv; exit 0"]
