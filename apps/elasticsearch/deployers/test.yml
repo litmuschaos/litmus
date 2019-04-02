@@ -32,7 +32,13 @@
               replace:
                  path: "{{ application_deployment }}"
                  regexp: "volumecapacity"
-                 replace: "{{ lookup('env','CAPACITY') }}"        
+                 replace: "{{ lookup('env','CAPACITY') }}" 
+
+            - name: Replace the namespace placeholder in rbac spec.
+              replace:
+                 path: "{{ application_rbac }}"
+                 regexp: "nsvalue"
+                 replace: "{{ lookup('env','APP_NAMESPACE') }}"     
 
             - name: Deploying {{ application_name }} rbac.
               shell: kubectl apply -f {{ application_rbac }}
