@@ -22,18 +22,17 @@
          ## Creating namespaces and making the application for deployment
             - include_tasks: /common/utils/pre_create_app_deploy.yml
 
-            - name: Replace the application label placeholder in rbac spec
+            - name: Replace the application label placeholder in elasticsearch manifest
               replace:
                  path: "{{ application_rbac }}"
                  regexp: "lkey: lvalue"
                  replace: "{{ app_lkey }}: {{ app_lvalue }}"
 
-            - name: Replace the namespace placeholder in rbac spec.
+            - name: Replace the storage capacity placeholder
               replace:
-                 path: "{{ application_rbac }}"
-                 regexp: "nsvalue"
-                 replace: "{{ lookup('env','APP_NAMESPACE') }}"
-           
+                 path: "{{ application_deployment }}"
+                 regexp: "volumecapacity"
+                 replace: "{{ lookup('env','CAPACITY') }}"        
 
             - name: Deploying {{ application_name }} rbac.
               shell: kubectl apply -f {{ application_rbac }}
