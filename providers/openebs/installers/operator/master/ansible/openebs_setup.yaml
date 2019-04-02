@@ -176,6 +176,13 @@
           delay: 5
           retries: 120
 
+        - name: Checking OpenEBS-admission-server is running
+          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.app=="admission-webhook")].status.phase}'
+          register: admission_web
+          until: "'Running' in admission_web.stdout"
+          delay: 5
+          retries: 120        
+
         - name: Get maya-apiserver pod name
           shell: >
             kubectl get pods -n {{ namespace }} 
@@ -225,14 +232,14 @@
               #  executable: /bin/bash
               #register: maxpool_count
 
-            - name: Confirm if sparse pool is running in all the nodes
-              shell: kubectl get pods -n {{ namespace }} --selector={{ sparse_pool_label }} | grep Running | wc -l
-              args:
-                executable: /bin/bash
-              register: sparse_pool_count
-              until: (sparse_pool_count.stdout)|int == 3
-              delay: 5
-              retries: 120  
+            # - name: Confirm if sparse pool is running in all the nodes
+            #   shell: kubectl get pods -n {{ namespace }} --selector={{ sparse_pool_label }} | grep Running | wc -l
+            #   args:
+            #     executable: /bin/bash
+            #   register: sparse_pool_count
+            #   until: (sparse_pool_count.stdout)|int == 3
+            #   delay: 5
+            #   retries: 120  
           when: lookup('env','OPENEBS_INFRA_CHAOS') != "infra_chaos"     
         
         - block:
@@ -257,14 +264,14 @@
               #  executable: /bin/bash
               #register: maxpool_count
 
-            - name: Confirm if sparse pool is running in all the nodes
-              shell: kubectl get pods -n {{ namespace }} --selector={{ sparse_pool_label }} | grep Running | wc -l
-              args:
-                executable: /bin/bash
-              register: sparse_pool_count
-              until: (sparse_pool_count.stdout)|int == 3
-              delay: 5
-              retries: 120  
+            # - name: Confirm if sparse pool is running in all the nodes
+            #   shell: kubectl get pods -n {{ namespace }} --selector={{ sparse_pool_label }} | grep Running | wc -l
+            #   args:
+            #     executable: /bin/bash
+            #   register: sparse_pool_count
+            #   until: (sparse_pool_count.stdout)|int == 3
+            #   delay: 5
+            #   retries: 120  
           when: lookup('env','OPENEBS_INFRA_CHAOS') == "infra_chaos"   
 
         - name: Confirm CAS Templates are deployed
