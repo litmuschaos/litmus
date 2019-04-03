@@ -16,7 +16,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: openebs/ansible-runner:ci
+        image: sushmash/ansible-runner:ci
         imagePullPolicy: Always
 
         env:
@@ -26,7 +26,7 @@ spec:
 
           - name: PROVIDER_STORAGE_CLASS
             # Supported values: openebs-standard,openebs-standalone,local-storage
-            value: openebs-standard
+            value: openebs-cstor-sparse
 
             # Application pvc
           - name: APP_PVC
