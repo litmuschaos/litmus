@@ -1,0 +1,6 @@
+---
+
+namespace: "{{ lookup('env','NAMESPACE') }}"
+
+update_deploy_file: update.json
+
