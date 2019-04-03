@@ -9,6 +9,13 @@
 
     - block:
 
+        - include_tasks: /common/utils/create_testname.yml
+
+          ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'SOT'
+
         - name: Install helm client
           shell: curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | bash
           args:
@@ -108,7 +115,7 @@
           delay: 30
           retries: 10
 
-        - name: Checking of the snapshot-operator is up.
+        - name: Checking if the snapshot-operator is up.
           shell: kubectl get pods -n {{ namespace }} -l component=snapshot-operator -o custom-columns=:status.phase --no-headers
           args:
             executable: /bin/bash
@@ -116,6 +123,20 @@
           until: "'Running' in operator.stdout"
           delay: 30
           retries: 10
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - name: Setting fail flag
+          set_fact:
+            flag: "Fail"
+
+      always:
+        ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
 
           
 

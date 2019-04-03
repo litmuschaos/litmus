@@ -2,5 +2,4 @@
 
 namespace: "{{ lookup('env','NAMESPACE') }}"
 
-update_deploy_file: update.json
-
+test_name: "deploy-openebs-helm"
