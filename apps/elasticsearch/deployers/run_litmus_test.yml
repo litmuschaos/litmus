@@ -15,8 +15,9 @@ spec:
       serviceAccountName: litmus
       restartPolicy: Never
       containers:
+
       - name: ansibletest
-        image: sushmash/ansible-runner:ci
+        image: openebs/ansible-runner:ci
         imagePullPolicy: Always
 
         env:
