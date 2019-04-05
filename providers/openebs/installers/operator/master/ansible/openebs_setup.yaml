@@ -74,6 +74,13 @@
             replace: quay.io/openebs/node-disk-manager-amd64:{{ lookup('env','NODE_DISK_MANAGER_IMAGE') }}
           when: lookup('env','NODE_DISK_MANAGER_IMAGE') | length > 0
 
+        - name: Change the openebs analytics value of openebs resources in operator YAML
+          replace:
+            path: "{{ openebs_operator }}"
+            regexp: 'value: "false"'
+            after: '- name: OPENEBS_IO_INSTALL_DEFAULT_CSTOR_SPARSE_POOL'
+            replace: 'value: "true"'          
+
         - name: Applying openebs operator
           shell: "{{ kubeapply }} apply -f {{ openebs_operator }}"
           args:
