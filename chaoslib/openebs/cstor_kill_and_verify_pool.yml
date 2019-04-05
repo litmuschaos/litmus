@@ -33,7 +33,7 @@
   args:
     executable: /bin/bash
   register: runningStatusCount
-  until: "runningStatusCount.stdout == \"3\""
+  until: "runningStatusCount.stdout == \"2\""
   delay: 2
   retries: 150
 
