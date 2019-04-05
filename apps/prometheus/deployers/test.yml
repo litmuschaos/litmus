@@ -21,6 +21,12 @@
          ## Actual test
          ## Creating namespaces and making the application for deployment
             - include_tasks: /common/utils/pre_create_app_deploy.yml
+            
+            - name: Replace the storage capacity placeholder
+              replace:
+                path: "{{ application_deployment }}"
+                regexp: volume-capacity
+                replace: "{{ lookup('env','VOLUME_CAPACITY') }}"
 
          ## Deploying the application
             - include_tasks: /common/utils/deploy_single_app.yml

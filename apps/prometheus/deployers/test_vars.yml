@@ -1,4 +1,4 @@
-# Test-specific parametres
+# Test-specific parameters
 operator_ns: openebs
 application_deployment: prometheus.yml
 app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
