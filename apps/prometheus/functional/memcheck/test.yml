@@ -56,7 +56,7 @@
            ## RUN MEMLEAK TEST
 
        - name: Run python script for memory usage validation it takes couple of minutes
-         shell: python test-mem.py {{ cstor_target_pod.stdout }} {{ target_ns }} 500 /usr/local/bin/istgt
+         shell: python test-mem.py -t {{ cstor_target_pod.stdout }} -n {{ target_ns }} -m 500 -p /usr/local/bin/istgt
          args:
            executable: /bin/bash
          register: result
