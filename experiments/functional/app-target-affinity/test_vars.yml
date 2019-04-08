@@ -1,0 +1,8 @@
+---
+test_name: app-target-affinity
+
+application_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+
+operatorns: "{{ lookup('env','OPERATOR_NS') }}"
+
+application_label: "{{ lookup('env','APP_LABEL') }}"

@@ -23,12 +23,12 @@ spec:
       lkey: lvalue
       #The Label "openebs.io/replica-anti-affinity" 
       #needs to be added in order to distribute volume replicas.
-      openebs.io/replica-anti-affinity: lvalue
+      affinity_label: lvalue
   template:
     metadata:
       labels:
         lkey: lvalue
-        openebs.io/replica-anti-affinity: lvalue
+        affinity_label: lvalue
     spec:
       containers:
       - name: busybox

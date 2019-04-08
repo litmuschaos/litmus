@@ -1,0 +1,58 @@
+---
+#Description: Checking application and Target scheduled on same node.
+#
+########################################################################################
+#Steps:                                                                                #
+#1) Creating LitmusResult CR for updating test result.                                 #
+#2) Obtain the PVC name by using application lable                                     #
+#2) Checking if the Application and Target scheduled on same node.                     #
+########################################################################################
+
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+          ## Generating the testname for deployment
+        - include_tasks: /common/utils/create_testname.yml
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: "/common/utils/update_litmus_result_resource.yml"
+          vars:
+            status: 'SOT'
+
+        - name: Obtain the pvc name of the application.
+          shell: >
+            kubectl get pvc -n {{ application_ns }} -l {{ application_label }} 
+            -o custom-columns=:metadata.name --no-headers
+          args:
+            executable: /bin/bash
+          register: pvc_name
+
+       ## Include an utility from litmus common utils to check the application target affinity.
+       ## Passing app_ns, app_pvc, operator_ns, app_label and clone name as environmental variable.
+
+        - include_tasks: /common/utils/openebs/target_affinity_check.yml
+          vars:
+            app_ns: "{{ application_ns}}"
+            app_label: "{{ application_label }}"
+            app_pvc: "{{ pvc_name.stdout }}"
+            operator_ns: "{{ operatorns }}"
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - set_fact:
+            flag: "Fail"
+
+      always:
+           ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
+

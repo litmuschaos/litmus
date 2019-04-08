@@ -22,11 +22,11 @@
               vars:
                 application_deployment: "{{ application_statefulset }}"
 
-            - name: Replace the replica anti affinity label value
-              replace: 
+            - name: Replace the affinity label annotation in statefulset yml
+              replace:
                 path: "{{ application_statefulset }}"
-                regexp: "openebs.io/replica-anti-affinity: lvalue"
-                replace: "openebs.io/replica-anti-affinity: {{ app_lvalue }}"
+                regexp: "affinity_label: lvalue"
+                replace: "{{ affinity_label }}: {{ app_lvalue }}"
 
             - name: Replace the volume capcity placeholder with provider
               replace:
@@ -48,6 +48,12 @@
               ## Creating namespaces and making the application for deployment
             - include_tasks: /common/utils/pre_create_app_deploy.yml
 
+            - name: Replace the affinity label annotation in deployment yml
+              replace:
+                path: "{{ application_deployment }}"
+                regexp: "affinity_label: lvalue"
+                replace: "{{ affinity_label }}: {{ app_lvalue }}"
+
             - name: Replace the volume capcity placeholder with provider
               replace:
                 path: "{{ application_deployment }}"
@@ -61,7 +67,7 @@
                 delay: 10
                 retries: 20
 
-          when: lookup('env','DEPLOY_TYPE') == 'deployment'        
+          when: lookup('env','DEPLOY_TYPE') == 'deployment'
 
         - block:
 
@@ -75,7 +81,7 @@
               include_tasks: "/common/utils/deprovision_deployment.yml"
               vars:
                 app_deployer: "{{ application_deployment }}"
-              when: lookup('env','DEPLOY_TYPE') == 'deployment'       
+              when: lookup('env','DEPLOY_TYPE') == 'deployment'
 
           when: "'deprovision' is in action"
 
