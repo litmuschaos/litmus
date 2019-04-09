@@ -24,19 +24,41 @@
           vars:
             status: 'SOT'
 
-        - name: Checking whether liveness container is running
-          shell: >
-            kubectl get pod {{ test_pod }} -n litmus 
-            -o jsonpath='{.status.containerStatuses[?(@.name=="busybox-liveness")].state}'
-          register: container_status
-          until: "'running' in container_status.stdout"
-          delay: 60
-          retries: 10
+        - name: Getting the application pod name
+          shell: kubectl get po -n {{ namespace }} -l {{ app_label }} -o jsonpath={.items[0].metadata.name}
+          register: pod_name
 
-        - name: Verifying whether liveness check is started successfully  
-          shell: kubectl logs {{ test_pod }} -n litmus -c busybox-liveness 
-          register: output
-          until: "liveness_log in output.stdout"
+        - name: Replacing the placeholder for pod-name
+          replace:
+            path: "{{ busybox_liveness }}"
+            regexp: "pod-name"
+            replace: "{{ pod_name.stdout }}"   
+
+        - name: Replacing the placeholder for namespace
+          replace:
+            path: "{{ busybox_liveness }}"
+            regexp: "app-namespace"
+            replace: "{{ namespace }}"   
+
+        - name: Replacing the placeholder for liveness-retry-count
+          replace:
+            path: "{{ busybox_liveness }}"
+            regexp: "liveness-retry-count"
+            replace: "{{ liveness_retry }}"   
+
+        - name: Replacing the placeholder for liveness-timeout
+          replace:
+            path: "{{ busybox_liveness }}"
+            regexp: "liveness-timeout-seconds"
+            replace: "{{ liveness_timeout }}"   
+
+        - name: Creating busybox-liveness job
+          shell: kubectl create -f {{ busybox_liveness }} 
+
+        - name: Verifying whether liveness pod is started successfully  
+          shell: kubectl get pod -n {{ namespace }} -l liveness=busybox-liveness -o jsonpath={.items[0].status.phase} 
+          register: pod_status
+          until: "'Running' in pod_status.stdout"
           delay: 60 
           retries: 20
 
@@ -54,12 +76,3 @@
           vars:
             status: 'EOT'
         
-        ## if flag=fail, task exits immediately; if flag=pass, runs indefinitely until liveness check ends.
-        - name: Run until liveness container is terminated
-          shell: |
-            cmd="kubectl get pod {{ test_pod }} -n litmus -o jsonpath='{.status.containerStatuses[?(@.name==\"busybox-liveness\")].state}'"
-            while true; do state=$(eval $cmd); rc=$?; if [[ $rc -eq 0 && ! $state =~ 'terminated' ]]; then sleep 1; else exit; fi; done
-          args:
-            executable: /bin/bash
-          register: output
-          when: flag == "Pass"
