@@ -25,8 +25,8 @@ spec:
             value: default
 
           - name: PROVIDER_STORAGE_CLASS
-            # Supported values: openebs-standard, local-storage
-            value: cstor-memcheck
+            # use any openebs supported storage class
+            value: openebs-cstor-sparse
 
           - name: APP_PVC
             value: 'prometheus-claim'
@@ -42,6 +42,9 @@ spec:
             # Use 'deprovision' for app-clean up
           - name: ACTION
             value: provision 
+          
+          - name: VOLUME_CAPACITY
+            value: "25G"
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./prometheus/deployers/test.yml -i /etc/ansible/hosts -v; exit 0"]
