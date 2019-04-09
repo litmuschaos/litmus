@@ -1,0 +1,286 @@
+---
+#Description: Creation of volume snapshot and clone in rebuild scenario.
+#Author: sathyaseelan
+
+########################################################################################
+#Steps:                                                                                #
+#1) Creating LitmusResult CR for updating test result.                                 #
+#2) Checking if the application is running in k8s cluster.                             #
+#3) Obtain the cstor sparse pool replica details using corresponding utility           #
+#4) Dumping data into the application                                                  #
+#5) Select one of the replicas.                                                        #
+#6) Introduce packet drop in the selected replica.                                     #
+#7) Create snapshot using corresponding funclib utility.                               #
+#8) Verify snapshot creation.                                                           #
+#9) Perform the clone  scenarios using corresponding utility                           #
+#      I) clone snapshot after successful rebuild.                                     #
+#      II) clone snapshot before rebuild begins.                                       #
+#      III) clone snapshot while rebuild is in progress.                               #
+#10) Ensure if the clone is created successfully.                                      #
+#11) Verify the snapshot rebuild is successful.                                        #
+#12) Verify if the storage replicas are synchronised.                                  #
+#13) Create new application pod using the cloned volume.                               #
+#14) Verify the data in the new volume and compare it with the original one.           #
+#15) Update the LitmusResult CR.                                                       #
+########################################################################################
+
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+          ## Generating the testname.
+        - include_tasks: /common/utils/create_testname.yml
+
+           ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: "/common/utils/update_litmus_result_resource.yml"
+          vars:
+            status: 'SOT'
+
+        - name: Apply the litmus result CR
+          command: kubectl apply -f litmus-result.yaml
+          register: lr_status
+          failed_when: "lr_status.rc != 0"
+
+        - name: Check whether the snapshot specific storage class is created.
+          command: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
+          register: result
+
+        - name: Checking if the application is running.
+          shell: >
+            kubectl get pods -n {{ namespace }} --no-headers 
+            -l {{ application_label }} -o custom-columns=:status.phase
+          args:
+            executable: /bin/bash
+          register: result
+          until: "'Running' in result.stdout"
+          delay: 30
+          retries: 15
+
+        - name: Identify the chaos util to be invoked
+          template:
+            src: chaosutil.j2
+            dest: chaosutil.yml
+
+        - include_vars:
+            file: chaosutil.yml
+
+        - name: Record the chaos util path
+          set_fact:
+            chaos_util_path: "/funclib/{{ funcutil }}"
+
+          ## Obtain cstor replica pods
+        - include_tasks: /funclib/kubectl/k8s_snapshot_clone/snap_rebuild_prerequisites.yml
+          vars:
+            app_ns: "{{ namespace }}"
+            pvc_name: "{{ app_pvc }}"
+            app_label: "{{ application_label }}"
+            ns: "{{ operator_ns }}"
+
+        - name: Display details
+          debug:
+            msg:
+              - "cstor_replicas: {{ cstor_replicas_pod }}"
+              - "Pv_name: {{ pv.stdout }}"
+
+        - name: Obtaining the application pod name.
+          shell: >
+            kubectl get pods -n {{ namespace }} -l {{ application_label }} 
+            --no-headers -o custom-columns=:metadata.name
+          args:
+            executable: /bin/bash
+          register: app_pod
+
+        - name: Recording application pod name in a variable.
+          set_fact:
+            app_pod_name: "{{ app_pod.stdout}}"
+
+        - name: Run dd on the application
+          shell: >
+            kubectl exec -it {{ app_pod_name }} -n {{ namespace }} 
+            -- sh -c "cd /busybox; dd if=/dev/urandom of=file1 bs=4k count=50000"
+          args:
+            executable: /bin/bash
+
+        - name: Perform filesystem sync on busybox pod before creating snapshot.
+          shell: >
+            kubectl exec {{ app_pod_name }} -n {{ namespace }} -- sh -c "sync;sync;sync"
+          args:
+            executable: /bin/bash
+
+        - name: check the md5sum of the file
+          shell: kubectl exec -it {{ app_pod_name }} -n {{ namespace }} -- sh -c "cd /busybox; md5sum file1"
+          args:
+            executable: /bin/bash
+          register: app_check
+
+           ##Select any cstor replica pod to inject packet loss
+        - set_fact:
+            replica_pod: "{{ cstor_replicas_pod | list | first }}"
+
+           ## Inducing the packet drop on the above pool pod.
+        - include_tasks: "/chaoslib/openebs/inject_packet_loss_tc.yml"
+          vars:
+            status: "induce"
+            target_pod: "{{ replica_pod }}"
+            operator_namespace: "{{ operator_ns }}"
+
+           ## If there are no IOs happening on the volume, replica won't get disconnected
+        - name: Check if the targeted replica is disconnected.
+          shell: >
+            kubectl exec -it {{ cstor_target.stdout }} -n {{ operator_ns }} --container  cstor-istgt
+            -- istgtcontrol -q replica |json_pp | jq '.volumeStatus[0].replicaStatus[].Mode' | grep Healthy | wc -l
+          register: connected_replica
+          until: "(connected_replica.stdout|int) == ((healthy_pods.stdout|int) - 1)"
+          delay: 15
+          retries: 30
+
+        - name: Creating snapshot.
+          include_tasks: /funclib/kubectl/k8s_snapshot_clone/create_snapshot.yml
+          vars:
+            app_ns: "{{ namespace }}"
+            pvc_name: "{{ app_pvc }}"
+
+        - name: Checking the snapshot status
+          include_tasks: /funclib/kubectl/k8s_snapshot_clone/snapshot_status.yml
+          vars:
+            app_ns: "{{ namespace }}"
+            snap_name: "{{ snapshot_name }}"
+            pvc_name: "{{ app_pvc }}"
+            action: 'Success'
+
+        - debug:
+            msg: "snapid_name: {{ snapid_name }}"
+
+        - name: Checking if the snapshot is not created in the degraded replica.
+          shell: >
+            kubectl exec -ti {{ replica_pod }} -n {{ operator_ns }} 
+            --container cstor-pool -- zfs list -t snapshot
+          args:
+            executable: /bin/bash
+          register: list_snap
+          failed_when: "snapid_name in list_snap.stdout"
+
+          # Perform the clone rebuild scenario from chos_util. 
+
+        - name: Perform the clone scenario using utils
+          include: "{{ chaos_util_path }}"
+          app_name: "{{ namespace }}"
+          target_ns: "{{ operator_ns }}"
+          tgt_rep_pod: "{{ replica_pod }}"
+          vol_capacity: "{{ volume_capacity }}"
+ 
+        - block:
+            - name: Check if the snapshot is being rebuilt.
+              shell: >
+                kubectl exec -it {{ replica_pod }} -n {{ operator_ns }} 
+                --container cstor-pool -- zfs list -t snapshot
+              args:
+                executable: /bin/bash
+              register: list_snap
+              until: "snapid_name in list_snap.stdout"
+              delay: 30
+              retries: 20
+    
+            - name: Check if the snapshot rebuild is successful.
+              shell: >
+                kubectl exec -ti {{ replica_pod }} -n {{ operator_ns }} -c cstor-pool
+                -- zfs stats |json_pp| grep "rebuildStatus" |awk -F ':' '{print $2}' | tr -d '"' | tr -d ','
+              args:
+                executable: /bin/bash
+              register: snap_result
+              until: "'DONE' in snap_result.stdout"
+              delay: 20
+              retries: 100
+
+          when: clone_action != 'post-rebuild'
+
+        - name: Obtaining new PV name from the pvc.
+          shell: >
+            kubectl get pvc {{ clone_claim_name }} -n {{ namespace }} 
+            -o custom-columns=:spec.volumeName --no-headers
+          args:
+            executable: /bin/bash
+          register: snap_pv
+
+        - name: check if the sync is completed in all the replicas.
+          shell: > 
+            kubectl exec -it {{ item }} -n {{ operator_ns }} 
+            --container cstor-pool -- zfs list | grep {{ snap_pv.stdout }}
+          args:
+            executable: /bin/bash
+          register: result
+          with_items:
+            - "{{ cstor_replicas_pod }}"
+          until: "snap_pv.stdout in result.stdout"
+          delay: 60
+          retries: 20
+
+        - name: Form a name for the clone application.
+          set_fact:
+            clone_app: "{{ cloned_app }}-{{ clone_action }}"
+
+        - name: Update the busybox deployment spec with the clone pvc.
+          template:
+            src: busybox.j2
+            dest: busybox.yml
+
+        - name: Deploy the application using snapped volume.
+          shell: kubectl apply -f busybox.yml -n {{ namespace }}
+          args:
+            executable: /bin/bash
+
+        - name: Check if the new application pod is started.
+          shell: kubectl get pods -n {{ namespace }} -l name={{ clone_app }}
+          args:
+            executable: /bin/bash
+          register: app_status
+          until: "'Running' in app_status.stdout"
+          delay: 60
+          retries: 10
+
+        - name: Obtaining the application pod name.
+          shell: >
+            kubectl get pods -n {{ namespace }} -l name={{ clone_app }} 
+            --no-headers -o custom-columns=:metadata.name
+          args:
+            executable: /bin/bash
+          register: new_pod_name
+
+        - name: check the md5sum of the file in cloned application.
+          shell: kubectl exec -it {{ new_pod_name.stdout }} -n {{ namespace }} -- sh -c "cd /busybox; md5sum file1"
+          args:
+            executable: /bin/bash
+          register: new_app_check
+          failed_when: new_app_check.stdout != app_check.stdout
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - set_fact:
+            flag: "Fail"
+
+      always:
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - name: Generate the litmus result CR to reflect EOT (End of Test)
+          template:
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars:
+            test: "{{ test_name }}"
+            app: "busybox"
+            chaostype: ""
+            phase: completed
+            verdict: "{{ flag }}"
+
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          args:
+            executable: /bin/bash
+          register: lr_status
+          failed_when: "lr_status.rc != 0"

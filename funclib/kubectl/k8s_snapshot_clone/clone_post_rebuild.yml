@@ -31,3 +31,4 @@
           include_tasks: /funclib/kubectl/k8s_snapshot_clone/create_clone.yml
           vars:
             app_ns: "{{ app_name }}"
+            capacity: "{{ vol_capacity }}"
