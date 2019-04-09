@@ -34,6 +34,13 @@ spec:
           - name: APP_LABEL
             value: 'app=busybox-sts'
 
+            # Affinity Label for Application
+            # openebs.io/target-affinity if for deployment and statefulset
+            # openebs.io/replica-anti-affinity if for statefulset application
+            # openebs.io/replica-anti-affinity needs to be added in order to distribute volume replicas.
+          - name: AFFINITY_LABEL
+            value: openebs.io/target-affinity
+
             # Application namespace
             # Use different 'namespace' for deployment and statefulset application
           - name: APP_NAMESPACE

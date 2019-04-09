@@ -4,13 +4,13 @@ metadata:
   name: app-busybox
   labels:
     lkey: lvalue
-    openebs.io/target-affinity: busybox
+    affinity_label: lvalue
 spec:
   template:
     metadata:
       labels:
         lkey: lvalue
-        openebs.io/target-affinity: busybox
+        affinity_label: lvalue
     spec:
       containers:
       - name: app-busybox
@@ -32,7 +32,7 @@ apiVersion: v1
 metadata:
   name: testclaim
   labels:
-    openebs.io/target-affinity: busybox
+    affinity_label: lvalue
 spec:
   storageClassName: testclass
   accessModes:
