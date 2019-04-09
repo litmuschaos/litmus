@@ -1,0 +1,26 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: {{ clone_app }}
+  labels:
+    name: {{ clone_app }}
+spec:
+  template:
+    metadata:
+      labels:
+        name: {{ clone_app }}
+    spec:
+      containers:
+      - name: {{ clone_app }}
+        imagePullPolicy: IfNotPresent
+        image: busybox
+        command: ["/bin/sh"]
+        args: ["-c", "while true; do sleep 10;done"]
+        env:
+        volumeMounts:
+        - name: {{ clone_app }}
+          mountPath: /busybox
+      volumes:
+      - name: {{ clone_app }}
+        persistentVolumeClaim:
+          claimName: {{ clone_claim_name }}

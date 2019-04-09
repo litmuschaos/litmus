@@ -1,0 +1,22 @@
+---
+test_name: k8s-snapshot-rebuild-clone
+
+application_label: "{{ lookup('env','APP_LABEL') }}"
+
+namespace: "{{ lookup('env','APP_NAMESPACE') }}"
+
+app_pvc: "{{ lookup('env','APP_PVC') }}"
+
+snapshot_name: "{{ lookup('env','SNAPSHOT_NAME') }}"
+
+clone_claim_name: "{{ lookup('env','CLONE_VOL_CLAIM') }}"
+
+cloned_app: "{{ lookup('env','CLONE_APP_NAME') }}"
+
+operator_ns: openebs
+
+storage_class: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+
+clone_action: "{{ lookup('env','CLONE_ACTION') }}"
+
+volume_capacity: "{{ lookup('env','CAPACITY') }}"
