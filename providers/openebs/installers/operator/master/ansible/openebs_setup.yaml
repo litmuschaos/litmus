@@ -183,12 +183,12 @@
           delay: 5
           retries: 120
 
-        - name: Checking OpenEBS-admission-server is running
-          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.app=="admission-webhook")].status.phase}'
-          register: admission_web
-          until: "'Running' in admission_web.stdout"
-          delay: 5
-          retries: 120        
+          #        - name: Checking OpenEBS-admission-server is running
+          #          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.app=="admission-webhook")].status.phase}'
+          #          register: admission_web
+          #          until: "'Running' in admission_web.stdout"
+          #          delay: 5
+          #          retries: 120
 
         - name: Get maya-apiserver pod name
           shell: >
