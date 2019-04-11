@@ -40,6 +40,18 @@
           register: lr_status
           failed_when: "lr_status.rc != 0"
 
+ # Creating pod security policy in the test cluster.
+ # Creating clusterrole with the pod security policy resources
+ # The service account used to create resources is specified in clusterrrolebinding.
+ # The namespace where openebs will be deployed is specified in the clusterrolebinding.
+ 
+        - name: Creating pod security policy, cluster role and clusterrolebinding
+          shell: kubectl apply -f "{{ psp_spec }}"
+          args:
+            executable: /bin/bash
+          register: psp_status
+          failed_when: "psp_status.rc != 0"
+
         - name: Downloading openebs-operator.yaml
           get_url:
             url: "{{ openebs_operator_link }}"
