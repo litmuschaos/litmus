@@ -48,7 +48,7 @@ spec:
           privileged: true # sysctl command needs root permission to change kernel config
       containers:
       - image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.3.2
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         name: elasticsearch-logging
         securityContext:
           runAsUser: 1000   # elasticsearch container runs with elasticsearch user (1000:1000)
