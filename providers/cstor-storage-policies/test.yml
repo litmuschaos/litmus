@@ -47,6 +47,7 @@
                 - openebs-cstor-xfs
                 - openebs-cstor-volume-monitor
                 - cstor-disk-standalone
+                - openebs-jiva-standalone
 
           when: lookup('env','ACTION') == 'create'
 

@@ -5,3 +5,4 @@ storage_policies:
   - cstor-xfs-sc.yml
   - cstor-volume-monitor-sc.yml
   - cstor-disk-standalone.yml
+  - jiva-standalone.yml
