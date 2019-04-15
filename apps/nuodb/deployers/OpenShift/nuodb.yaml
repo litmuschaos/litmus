@@ -3,7 +3,7 @@ kind: StatefulSet
 metadata:
   name: a
   labels:
-    app: admin
+    app: a
     group: nuodb
     subgroup: admin
 spec:
