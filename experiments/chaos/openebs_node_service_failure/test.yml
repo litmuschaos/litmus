@@ -1,0 +1,112 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+        - include_tasks: /common/utils/application_liveness_check.yml
+          when: liveness_label != ''
+
+        - include: test_prerequisites.yml
+  
+        - include_vars:
+            file: chaosutil.yml
+
+        - name: Record the chaos util path
+          set_fact: 
+            chaos_util_path: "/chaoslib/{{ chaosutil }}"
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /common/utils/create_testname.yml
+
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'SOT'
+            chaostype: "{{ chaosutil.split('.')[0] }}"
+
+        ## DISPLAY APP INFORMATION 
+ 
+        - name: Display the app information passed via the test job
+          debug: 
+            msg: 
+              - "The application info is as follows:"
+              - "Namespace    : {{ namespace }}"
+              - "Label        : {{ label }}"
+              - "PVC          : {{ pvc }}"  
+              - "StorageClass : {{ sc }}"
+
+        ## PRE-CHAOS APPLICATION LIVENESS CHECK
+
+        - name: Verify that the AUT (Application Under Test) is running
+          include_tasks: "/common/utils/status_app_pod.yml"
+          vars:
+            app_ns: "{{namespace}}" 
+            app_lkey: "{{ label.split('=')[0] }}"
+            app_lvalue: "{{ label.split('=')[1] }}"       
+            delay: 5
+            retries: 60 
+
+        ## STORAGE FAULT INJECTION 
+
+        - include: "{{ chaos_util_path }}"
+          vars:
+            app_ns: "{{ namespace }}"
+            app_label: "{{ label }}"
+            app_pvc: "{{ pvc }}"
+            network_delay: "{{ n_delay }}"
+            chaos_duration: "{{ c_duration }}"
+            action: "svc_chaos_create"
+            platform: "{{ test_bed }}"
+
+        - name: wait to check node status
+          shell: >
+            sleep {{ c_duration |int + 100 }}
+
+        - name: Check node status
+          shell: kubectl get nodes {{ app_node }}
+          args:
+            executable: /bin/bash
+          register: node_status
+          until: "'NotReady' in node_status.stdout"
+          delay: 30
+          retries: 10
+
+        ## POST-CHAOS APPLICATION LIVENESS CHECK
+
+        - name: Verify AUT liveness post fault-injection
+          include_tasks: "/common/utils/status_app_pod.yml"
+          vars:
+            app_ns: "{{namespace}}" 
+            app_lkey: "{{ label.split('=')[0] }}"
+            app_lvalue: "{{ label.split('=')[1] }}"       
+            delay: 5
+            retries: 60
+
+        - include_tasks: /common/utils/application_liveness_check.yml
+          when: liveness_label != ''
+   
+        - set_fact:
+            flag: "Pass"
+
+      rescue: 
+        - set_fact: 
+            flag: "Fail"
+
+      always: 
+
+        - include: "{{ chaos_util_path }}"
+          vars:
+            app_ns: "{{ namespace }}"
+            action: "svc_chaos_delete"
+            platform: "{{ test_bed }}"
+
+        ## RECORD END-OF-TEST IN LITMUS RESULT CR
+ 
+        - include_tasks: /common/utils/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
+            chaostype: "{{ chaosutil.split('.')[0] }}"
