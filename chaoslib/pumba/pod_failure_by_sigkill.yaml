@@ -18,6 +18,7 @@
       until: "result.stdout == 'Running'"
       delay: 2
       retries: 150
+      ignore_errors: true
 
     - name: Identify the application node
       shell: >
