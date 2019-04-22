@@ -28,6 +28,18 @@
                 regexp: volume-capacity
                 replace: "{{ lookup('env','VOLUME_CAPACITY') }}"
 
+            - name: Replace ClusterRoleBinding's namespace placeholder
+              replace:
+                path: "{{ application_deployment }}"
+                regexp: cr-namespace
+                replace: "{{ lookup('env','APP_NAMESPACE') }}"
+           
+            - name: Replace target affinity label placeholder
+              replace:
+                path: "{{ application_deployment }}"
+                regexp: "targetkey: lvalue"
+                replace: "{{ lookup('env','AFFINITY_LABEL') }}: {{ app_lvalue }}"
+
          ## Deploying the application
             - include_tasks: /common/utils/deploy_single_app.yml
               vars:
