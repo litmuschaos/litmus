@@ -17,7 +17,7 @@ spec:
       containers:
 
       - name: ansibletest
-        image: openebs/ansible-runner:ci
+        image: sushmash/ansible-runner:ci
         imagePullPolicy: Always
 
         env:
