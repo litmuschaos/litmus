@@ -35,7 +35,7 @@ spec:
         role: elasticsearch
     spec:
       securityContext:
-        fsGroup: 1000
+         fsGroup: 1000
       serviceAccountName: elasticsearch-logging
       # Elasticsearch requires vm.max_map_count to be at least 262144.
       # If your OS already sets up this number to a higher value, feel free
