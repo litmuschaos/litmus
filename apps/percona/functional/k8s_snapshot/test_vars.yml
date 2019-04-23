@@ -18,3 +18,5 @@ storage_class: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
 clone_app: "{{ lookup('env','CLONE_APP_NAME') }}"
 
 operator_ns: openebs
+
+snapshot_name: "{{ lookup('env','SNAPSHOT_NAME') }}"
