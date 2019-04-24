@@ -46,6 +46,9 @@ spec:
           - name: VOLUME_CAPACITY
             value: "25G"
 
+          - name: AFFINITY_LABEL
+            value: openebs.io/target-affinity
+
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./prometheus/deployers/test.yml -i /etc/ansible/hosts -v; exit 0"]
 
