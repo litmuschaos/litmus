@@ -75,6 +75,18 @@
            flag: "Fail"
 
      always:
+
+       - name: Deprovisioning test related resources
+         shell: |
+           kubectl delete -f {{ memleak_yml }} -n {{ app_ns }}
+
+       - name: Checking whether the application pod is removed
+         shell: kubectl get pod -n {{ app_ns }} -l name=memleak | wc -l 
+         register: pod_status
+         until: "'0' in pod_status.stdout"
+         retries: 10
+         delay: 5         
+
             ## RECORD END-OF-TEST IN LITMUS RESULT CR
        - include_tasks: /common/utils/update_litmus_result_resource.yml
          vars:
