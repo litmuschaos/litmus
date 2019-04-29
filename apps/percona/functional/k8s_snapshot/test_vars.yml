@@ -11,7 +11,7 @@ password: "{{ lookup('env','DB_PASSWORD') }}"
 
 pvc_name: "{{ lookup('env','APP_PVC') }}"
 
-clone_claim: "{{ lookup('env','CLONE_VOL_CLAIM') }}"
+clone_claim_name: "{{ lookup('env','CLONE_VOL_CLAIM') }}"
 
 storage_class: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
 
