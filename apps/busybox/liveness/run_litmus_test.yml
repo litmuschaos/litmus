@@ -2,16 +2,16 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: busybox-liveness-
+  generateName: litmus-busybox-liveness-
   namespace: litmus
 spec:
   activeDeadlineSeconds: 5400
   template:
     metadata:
-      name: busybox-liveness
+      name: litmus-busybox-liveness
       namespace: litmus
       labels:
-        liveness: busybox-liveness
+        liveness: litmus-busybox-liveness
 
         # label used for mass-liveness check upon infra-chaos
         infra-aid: liveness
@@ -33,16 +33,6 @@ spec:
               fieldRef:
                 fieldPath: metadata.name
 
-        command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./busybox/liveness/test.yml -i /etc/ansible/hosts -v; exit 0"]
-
-      - name: busybox-liveness  
-        image: ranjnshashank855/busybox-liveness-client
-        imagePullPolicy: Always
-
-        env:
-
-           
           - name: LIVENESS_TIMEOUT_SECONDS
             value: "10"
 
@@ -54,8 +44,12 @@ spec:
           - name: NAMESPACE
             value: app-busybox-ns 
 
-          - name: POD_NAME
-            value: busybox-0 
+          - name: APPLICATION_LABEL
+            value: 'app=busybox-sts'
 
         command: ["/bin/bash"]
-        args: ["-c", "./liveness.sh; exit 0"]
+        args: ["-c", "ansible-playbook ./busybox/liveness/test.yml -i /etc/ansible/hosts -v; exit 0"]
+
+           
+         
+
