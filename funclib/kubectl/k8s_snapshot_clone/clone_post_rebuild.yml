@@ -32,3 +32,4 @@
           vars:
             app_ns: "{{ app_name }}"
             capacity: "{{ vol_capacity }}"
+            pvc_name: "{{ app_pvc }}"
