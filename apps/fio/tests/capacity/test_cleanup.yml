@@ -1,0 +1,25 @@
+---
+- name: Confirm fio pod has been deleted
+  shell: >
+    kubectl get pods -n litmus
+  args:
+    executable: /bin/bash
+  register: result
+  until: "'fio_pod_name' not in result.stdout"
+  delay: 30
+  retries: 12
+
+- name: Remove the local persistent volume 
+  shell: >
+    kubectl delete -f {{ pvc_yaml_alias }} -n litmus
+  args:
+    executable: /bin/bash
+
+- name: Check if pvc is deleted
+  shell: >
+    kubectl get pvc -n litmus -l app=test-capacity
+  args:
+    executable: /bin/bash
+  until: "'No resources found' in result.stderr"
+  delay: 10
+  retries: 30

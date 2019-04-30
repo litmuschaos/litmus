@@ -1,0 +1,64 @@
+# TODO 
+# Change pod status checks to container status checks (containerStatuses)
+# O/P result
+
+- hosts: localhost
+  connection: local  
+
+  vars_files:
+    - test_vars.yml
+ 
+  tasks:
+   - block:
+       - name: Replace the pvc placeholder with test param in pvc spec
+         replace:
+           path: "{{ pvc_yaml_alias }}"
+           regexp: "testclaim"
+           replace: "{{ test_name }}"
+
+       - name: Replace the storageclass placeholder with provider
+         replace:
+           path: "{{ pvc_yaml_alias }}"
+           regexp: "testclass"
+           replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+
+       - name: Create pvc 
+         shell: >
+           kubectl apply -f {{ pvc_yaml_alias }} -n litmus
+         args:
+           executable: /bin/bash
+
+       - name: Confirm pvc status is bound
+         shell: >
+           kubectl get pvc --no-headers -n litmus -l app=test-capacity
+         args:
+           executable: /bin/bash
+         register: result
+         until: "'openebs-standard' and 'Bound' in result.stdout"
+         delay: 30
+         retries: 50
+
+       - name: Wait for controller to get ready
+         wait_for:
+           timeout: 60
+
+       ## RUN FIO WORKLOAD TEST
+       - name: Populate the iterator with the values to loop
+         shell: >
+           shuf -i 1-50 -n 20
+         args:
+           executable: /bin/bash
+         register: iterator
+
+       - include: test_capacity.yml
+         with_items: "{{ iterator.stdout_lines }}"
+
+       - set_fact:
+           flag: "Pass"
+
+     rescue: 
+       - set_fact: 
+           flag: "Fail"
+
+     always:
+       - include: test_cleanup.yml
