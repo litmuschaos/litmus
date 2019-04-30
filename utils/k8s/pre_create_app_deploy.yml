@@ -18,7 +18,7 @@
         regexp: "testclass"
         replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
 
-    - include_tasks: /common/utils/fetch_replica_values.yml
+    - include_tasks: /utils/k8s/fetch_replica_values.yml
       when: lookup('env', 'APP_REPLICA')
 
     - name: Get the application label values from env
@@ -41,4 +41,4 @@
         executable: /bin/bash
       when: lookup('env', 'IO_PROBE') is defined and lookup('env', 'IO_PROBE') == "disabled"
 
-    - include_tasks: /common/utils/create_ns.yml
+    - include_tasks: /utils/k8s/create_ns.yml
