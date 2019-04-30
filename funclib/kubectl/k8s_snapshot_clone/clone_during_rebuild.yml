@@ -1,5 +1,4 @@
 ---
-
           ## Removing the packet drop rule by including the relevant util..
         - include_tasks: "/chaoslib/openebs/inject_packet_loss_tc.yml"
           vars:
@@ -28,3 +27,4 @@
           vars:
             app_ns: "{{ app_name }}"
             capacity: "{{ vol_capacity }}"
+            pvc_name: "{{ app_pvc }}"
