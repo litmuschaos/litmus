@@ -40,4 +40,4 @@ spec:
             value: '2'
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./cassandra/functional/scale_replicas/test.yml -i /etc/ansible/hosts -v; exit 0"]
+        args: ["-c", "ansible-playbook ./experiments/functional/scale_app_replica/test.yml -i /etc/ansible/hosts -v; exit 0"]

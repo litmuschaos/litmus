@@ -24,7 +24,7 @@
          when: lookup('env','RUN_ID')
 
         ## RECORD START-OF-TEST IN LITMUS RESULT CR
-       - include_tasks: /common/utils/update_litmus_result_resource.yml
+       - include_tasks: /utils/fcm/update_litmus_result_resource.yml
          vars:
            status: 'SOT'
 
@@ -66,7 +66,7 @@
            pvc_label: demo-vol1-claim
            execute: 1          
 
-       - include_tasks: /common/utils/disable_compression_on_pools.yml
+       - include_tasks: /utils/scm/openebs/disable_compression_on_pools.yml
          when: data_check == 'data_accessibility'
 
        - name: Replace the data sample size with user-defined size
@@ -204,6 +204,6 @@
 
      always:
             ## RECORD END-OF-TEST IN LITMUS RESULT CR
-        - include_tasks: /common/utils/update_litmus_result_resource.yml
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
           vars:
             status: 'EOT'
