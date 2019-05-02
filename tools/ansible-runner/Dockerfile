@@ -24,10 +24,8 @@ RUN mkdir /etc/ansible/ /ansible && \
     echo "127.0.0.1" >> /etc/ansible/hosts
 
 #Copying Necessary Files
-COPY providers/openebs/installers/ ./
-COPY providers/cstor/ ./
-COPY providers/ ./
-COPY ./apps/ ./
+COPY providers/ ./providers
+COPY ./apps/ ./apps
 COPY ./chaoslib ./chaoslib/
 COPY ./funclib ./funclib/
 COPY ./hack/litmus-result.j2 ./
