@@ -1,6 +1,6 @@
 ---
 ## PRE-CHAOS APPLICATION LIVENESS CHECK
-- include_tasks: /common/utils/application_liveness_check.yml
+- include_tasks: /utils/k8s/application_liveness_check.yml
   when: liveness_label != ''
 
 - name: Identify the storage class used by the PVC

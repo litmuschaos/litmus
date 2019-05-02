@@ -62,7 +62,7 @@
 
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
         - name: Verify that the AUT is running
-          include_tasks: /common/utils/check_deployment_status.yml
+          include_tasks: /utils/k8s/check_deployment_status.yml
 
         - block:
             - name: Get application pod name 
@@ -107,7 +107,7 @@
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
         - name: Verify AUT liveness post fault-injection
-          include_tasks: /common/utils/check_deployment_status.yml
+          include_tasks: /utils/k8s/check_deployment_status.yml
   
         - block:
 

@@ -12,11 +12,11 @@
 
         - block:
 
-            - include_tasks: /common/utils/create_testname.yml           
+            - include_tasks: /utils/fcm/create_testname.yml           
 
           when: lookup('env','RUN_ID')
 
-        - include_tasks: /common/utils/update_litmus_result_resource.yml
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
           vars:
             status: 'SOT'
             chaostype: "{{ test_name }}"
@@ -103,7 +103,7 @@
           register: uniqstr  
 
         - name: Create some test data in the mysql database
-          include_tasks: "/common/utils/mysql_data_persistence.yml"
+          include_tasks: "/utils/scm/applications/mysql/mysql_data_persistence.yml"
           vars:
             status: 'LOAD'
             ns: "{{ namespace }}"
@@ -163,13 +163,13 @@
 
         ## RECORD END-OF-TEST IN LITMUS RESULT CR
  
-        - include_tasks: /common/utils/update_litmus_result_resource.yml
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
           vars:
             status: 'EOT'
             chaostype: "{{ test_name }}"
 
         - name: Deleting test specific data from mysql database
-          include_tasks: "/common/utils/mysql_data_persistence.yml"
+          include_tasks: "/utils/scm/applications/mysql/mysql_data_persistence.yml"
           vars:
             status: 'DELETE'
             ns: "{{ namespace }}"

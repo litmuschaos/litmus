@@ -47,5 +47,5 @@ spec:
             value: "enable"
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./percona/chaos/drain_node/test.yml -i /etc/ansible/hosts -vv; exit 0"]
+        args: ["-c", "ansible-playbook ./experiments/chaos/drain_node/test.yml -i /etc/ansible/hosts -vv; exit 0"]
 

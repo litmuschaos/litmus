@@ -9,13 +9,13 @@
     - block:
 
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
-        - include_tasks: /common/utils/application_liveness_check.yml
+        - include_tasks: /utils/k8s/application_liveness_check.yml
           when: liveness_label != ''
 
         ## RECORD START-OF-TEST IN LITMUS RESULT CR
-        - include_tasks: /common/utils/create_testname.yml
+        - include_tasks: /utils/fcm/create_testname.yml
 
-        - include_tasks: /common/utils/update_litmus_result_resource.yml
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
           vars:
             status: 'SOT'
             chaostype: "taint-node"
@@ -31,7 +31,7 @@
               - "Label        : {{ label }}"
 
         - name: Verify that the AUT (Application Under Test) is running
-          include_tasks: "/common/utils/status_app_pod.yml"
+          include_tasks: "/utils/k8s/status_app_pod.yml"
           vars:
             app_ns: "{{namespace}}"
             app_lkey: "{{ label.split('=')[0] }}"
@@ -54,7 +54,7 @@
           register: uniqstr
 
         - name: Create some test data in the mysql database
-          include_tasks: "/common/utils/mysql_data_persistence.yml"
+          include_tasks: "/utils/scm/applications/mysql/mysql_data_persistence.yml"
           vars:
             status: 'LOAD'
             ns: "{{ namespace }}"
@@ -73,7 +73,7 @@
             app: "{{ app_pod_name.stdout }}"
 
         - name: Verify AUT liveness post fault-injection
-          include_tasks: "/common/utils/status_app_pod.yml"
+          include_tasks: "/utils/k8s/status_app_pod.yml"
           vars:
             app_ns: "{{namespace}}"
             app_lkey: "{{ label.split('=')[0] }}"
@@ -82,7 +82,7 @@
             retries: 60
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
-        - include_tasks: /common/utils/application_liveness_check.yml
+        - include_tasks: /utils/k8s/application_liveness_check.yml
           when: liveness_label != ''
 
         - name: Get application pod name
@@ -94,7 +94,7 @@
           register: rescheduled_app_pod 
 
         - name: Verify mysql data persistence
-          include_tasks: "/common/utils/mysql_data_persistence.yml"
+          include_tasks: "/utils/scm/applications/mysql/mysql_data_persistence.yml"
           vars:
             status: 'VERIFY'
             ns: "{{ namespace }}"
@@ -123,7 +123,7 @@
           register: result
           failed_when: "'untainted' not in result.stdout"
 
-        - include_tasks: /common/utils/update_litmus_result_resource.yml
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
           vars:
             status: 'EOT'
             chaostype: "taint-node"
