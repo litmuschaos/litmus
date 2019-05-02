@@ -34,4 +34,4 @@ spec:
             value: 5m
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./cockroachdb/workload/test.yml -i /etc/ansible/hosts -v; exit 0"]
+        args: ["-c", "ansible-playbook ./apps/cockroachdb/workload/test.yml -i /etc/ansible/hosts -v; exit 0"]

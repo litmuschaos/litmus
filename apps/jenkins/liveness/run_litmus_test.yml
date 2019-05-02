@@ -44,7 +44,7 @@ spec:
                 fieldPath: metadata.name
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./jenkins/liveness/test.yml -i /etc/ansible/hosts -v; exit 0"]
+        args: ["-c", "ansible-playbook ./apps/jenkins/liveness/test.yml -i /etc/ansible/hosts -v; exit 0"]
 
       - name: jenkins-liveness  
         image: openebs/tests-custom-client

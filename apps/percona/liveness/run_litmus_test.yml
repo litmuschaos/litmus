@@ -44,7 +44,7 @@ spec:
                 fieldPath: metadata.name
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./percona/liveness/test.yml -i /etc/ansible/hosts -v; exit 0"]
+        args: ["-c", "ansible-playbook ./apps/percona/liveness/test.yml -i /etc/ansible/hosts -v; exit 0"]
 
       - name: percona-liveness  
         image: openebs/tests-mysql-client

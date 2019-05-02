@@ -53,4 +53,4 @@ spec:
             value: snapshot-percona
             
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./percona/functional/k8s_snapshot/test.yml -i /etc/ansible/hosts -vv; exit 0"]
+        args: ["-c", "ansible-playbook ./apps/percona/functional/k8s_snapshot/test.yml -i /etc/ansible/hosts -vv; exit 0"]

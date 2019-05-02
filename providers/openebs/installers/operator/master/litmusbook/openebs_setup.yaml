@@ -59,7 +59,7 @@ spec:
           - name: RUN_ID
             value:          
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./operator/master/ansible/openebs_setup.yaml -i /etc/ansible/hosts -vv; exit 0"]
+        args: ["-c", "ansible-playbook ./providers/operator/master/ansible/openebs_setup.yaml -i /etc/ansible/hosts -vv; exit 0"]
         volumeMounts:
           - name: kubeconfig 
             mountPath: /root/admin.conf
