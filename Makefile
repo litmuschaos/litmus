@@ -11,7 +11,7 @@ IS_DOCKER_INSTALLED = $(shell which docker >> /dev/null 2>&1; echo $$?)
 PLAYBOOKS = $(shell find ./ -iname 'test.yml' -printf '%P\n')
 
 .PHONY: all
-all: format metalint compile all-tools ansible-syntax-check
+all: all-tools ansible-syntax-check
 
 .PHONY: help
 help:
