@@ -11,7 +11,7 @@
    - block:
 
       ## RECORD START-OF-TEST IN LITMUS RESULT CR
-       - include_tasks: /common/utils/update_litmus_result_resource.yml
+       - include_tasks: /utils/fcm/update_litmus_result_resource.yml
          vars:
            status: 'SOT'
 
@@ -49,7 +49,6 @@
          delay: 10
          when: replication_factor.stdout != node_count 
  
-
        #### scale up the storage replica using kubectl command ####
         
        - name: Scaleing-up Jiva replica
@@ -78,6 +77,6 @@
 
      always:
            ## RECORD END-OF-TEST IN LITMUS RESULT CR
-        - include_tasks: /common/utils/update_litmus_result_resource.yml
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
           vars:
             status: 'EOT'

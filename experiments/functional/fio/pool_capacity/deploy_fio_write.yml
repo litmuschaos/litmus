@@ -70,7 +70,7 @@
   args:
     executable: /bin/bash
 
-- include_tasks: /common/utils/disable_compression_on_pools.yml
+- include_tasks: /utils/scm/openebs/disable_compression_on_pools.yml
   when: compression == 'off'
 
 - set_fact:
