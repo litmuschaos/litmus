@@ -9,10 +9,10 @@
     - block:
 
          ## Generating the testname for deployment
-        - include_tasks: /common/utils/create_testname.yml
+        - include_tasks: /utils/fcm/create_testname.yml
 
          ## RECORD START-OF-TEST IN LITMUS RESULT CR
-        - include_tasks: /common/utils/update_litmus_result_resource.yml
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
           vars:
             status: 'SOT'
 
@@ -20,7 +20,7 @@
 
          ## Actual test
          ## Creating namespaces and making the application for deployment
-            - include_tasks: /common/utils/pre_create_app_deploy.yml
+            - include_tasks: /utils/k8s/pre_create_app_deploy.yml
             
             - name: Replace the storage capacity placeholder
               replace:
@@ -41,7 +41,7 @@
                 replace: "{{ lookup('env','AFFINITY_LABEL') }}: {{ app_lvalue }}"
 
          ## Deploying the application
-            - include_tasks: /common/utils/deploy_single_app.yml
+            - include_tasks: /utils/k8s/deploy_single_app.yml
               vars:
                 check_app_pod: 'yes'
                 delay: 10
@@ -55,7 +55,7 @@
         - block:
 
             - name: Deprovisioning the Application
-              include_tasks: /common/utils/deprovision_deployment.yml
+              include_tasks: /utils/k8s/deprovision_deployment.yml
               vars:
                 app_deployer: "{{ application_deployment }}"
 
@@ -70,6 +70,6 @@
 
       always:
             ## RECORD END-OF-TEST IN LITMUS RESULT CR
-        - include_tasks: /common/utils/update_litmus_result_resource.yml
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
           vars:
             status: 'EOT'
