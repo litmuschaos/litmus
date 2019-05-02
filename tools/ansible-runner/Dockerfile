@@ -24,14 +24,13 @@ RUN mkdir /etc/ansible/ /ansible && \
     echo "127.0.0.1" >> /etc/ansible/hosts
 
 #Copying Necessary Files
-COPY providers/openebs/installers/ ./
-COPY providers/cstor/ ./
-COPY providers/ ./
-COPY ./apps/ ./
+#Copying OpenEBS installation playbooks
+COPY providers/ ./providers
+#Copying Application deployers
+COPY ./apps/ ./apps
 COPY ./chaoslib ./chaoslib/
 COPY ./funclib ./funclib/
-COPY ./executor/ansible/plugins/callback/actionable.py /usr/local/lib/python2.7/dist-packages/ansible/plugins/callback/
-COPY ./executor/ansible/plugins/callback/timestamp.py /usr/local/lib/python2.7/dist-packages/ansible/plugins/callback/
 COPY ./hack/litmus-result.j2 ./
-COPY ./common/utils ./common/utils/
+COPY ./utils ./utils/
+#Copying functional and chaos litmusbooks
 COPY experiments ./experiments
