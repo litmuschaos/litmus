@@ -8,7 +8,7 @@
 IS_DOCKER_INSTALLED = $(shell which docker >> /dev/null 2>&1; echo $$?)
 
 # list of playbooks which should be validated
-PLAYBOOKS = $(shell find ./apps -iname 'test.yml' -printf '%P\n')
+PLAYBOOKS = $(shell find ./ -iname 'test.yml' -printf '%P\n')
 
 .PHONY: all
 all: format metalint compile all-tools ansible-syntax-check
@@ -17,7 +17,6 @@ all: format metalint compile all-tools ansible-syntax-check
 help:
 	@echo ""
 	@echo "Usage:-"
-	@echo "\tmake deps  -- will verify build dependencies are installed"
 	@echo "\tmake all   -- [default] builds the litmus containers"
 	@echo ""
 
@@ -28,6 +27,12 @@ _build_check_docker:
 		&& echo "" \
 		&& exit 1; \
 		fi;
+
+.PHONY: deps
+deps: _build_check_docker
+
+.PHONY: all-tools
+all-tools: ansible-runner-image
 
 .PHONY: ansible-runner-image
 ansible-runner-image:
