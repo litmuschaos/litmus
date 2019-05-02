@@ -31,5 +31,5 @@ COPY ./apps/ ./
 COPY ./chaoslib ./chaoslib/
 COPY ./funclib ./funclib/
 COPY ./hack/litmus-result.j2 ./
-COPY ./common/utils ./common/utils/
+COPY ./utils ./utils/
 COPY experiments ./experiments
