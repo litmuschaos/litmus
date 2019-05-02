@@ -57,4 +57,4 @@ spec:
             value: "2" 
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./percona/chaos/openebs_pool_failure/test.yml -i /etc/ansible/hosts -vv; exit 0"]
+        args: ["-c", "ansible-playbook ./experiments/chaos/openebs_pool_failure/test.yml -i /etc/ansible/hosts -vv; exit 0"]

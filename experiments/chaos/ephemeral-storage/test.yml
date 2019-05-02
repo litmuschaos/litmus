@@ -10,14 +10,14 @@
     - block:
 
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
-        - include_tasks: /common/utils/application_liveness_check.yml
+        - include_tasks: /utils/k8s/application_liveness_check.yml
           when: liveness_label != ''
 
         ## RECORD START OF THE TEST IN LITMUS RESULT CR
-        - include_tasks: /common/utils/create_testname.yml
+        - include_tasks: /utils/fcm/create_testname.yml
 
         ## RECORD START-OF-NODE-CHAOS TEST IN LITMUS RESULT CR
-        - include_tasks: /common/utils/update_litmus_result_resource.yml
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
           vars:
             status: 'SOT'
             app: "percona"
@@ -31,7 +31,7 @@
               - "Label        : {{ label }}"
 
         ## Verify the APPLICATION UNDER TEST PRE CHAOS
-        - include_tasks: /common/utils/status_app_pod.yml
+        - include_tasks: /utils/k8s/status_app_pod.yml
           vars:
             app_ns: "{{ namespace }}"
             app_lkey: "{{ label.split('=')[0] }}"
@@ -58,7 +58,7 @@
 
         ## Create Load for testing
         - name: Create test load in the mysql database
-          include_tasks: /common/utils/mysql_data_persistence.yml
+          include_tasks: /utils/scm/applications/mysql/mysql_data_persistence.yml
           vars:
             status: 'LOAD'
             ns: "{{ namespace }}"
@@ -84,7 +84,7 @@
           when: lookup('env', 'PLATFORM') == 'GKE'
 
         ## Application verification after the POST chaos
-        - include_tasks: /common/utils/status_app_pod.yml
+        - include_tasks: /utils/k8s/status_app_pod.yml
           vars:
             app_ns: "{{ namespace }}"
             app_lkey: "{{ label.split('=')[0] }}"
@@ -93,7 +93,7 @@
             retries: '150'
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
-        - include_tasks: /common/utils/application_liveness_check.yml
+        - include_tasks: /utils/k8s/application_liveness_check.yml
           when: liveness_label != ''
 
         - name: Get application pod name
@@ -105,7 +105,7 @@
           register: rescheduled_app_pod
 
         - name: Verify mysql data persistence
-          include_tasks: "/common/utils/mysql_data_persistence.yml"
+          include_tasks: "/utils/scm/applications/mysql/mysql_data_persistence.yml"
           vars:
             status: 'VERIFY'
             ns: "{{ namespace }}"
@@ -123,13 +123,13 @@
             flag: "Fail"
 
       always:
-        - include_tasks: /common/utils/update_litmus_result_resource.yml
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
           vars:
             status: 'EOT'
             chaostype: "node-shutdown-up-diff-name"
             app: "percona"
 
-        - include_tasks: /common/utils/check_no_of_nodes.yml
+        - include_tasks: /utils/k8s/check_no_of_nodes.yml
           vars:
             injected_node_chaos: "no"
             delay: '5'

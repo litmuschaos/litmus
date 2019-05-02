@@ -8,17 +8,17 @@
   tasks:
     - block:
 
-        - include_tasks: /common/utils/application_liveness_check.yml
+        - include_tasks: /utils/k8s/application_liveness_check.yml
           when: liveness_label != ''
 
          ## RECORD START OF THE TEST IN LITMUS RESULT CR
-        - include_tasks: /common/utils/create_testname.yml
+        - include_tasks: /utils/fcm/create_testname.yml
 
         - include_tasks: /chaoslib/aws_chaos/prerequisites_aws.yml
           when: lookup('env','PLATFORM') == 'AWS'
 
         # RECORD START-OF-TEST IN LITMUS RESULT CR
-        - include_tasks: "/common/utils/update_litmus_result_resource.yml"
+        - include_tasks: "/utils/fcm/update_litmus_result_resource.yml"
           vars:
             status: 'SOT'
             chaostype: "{{test_name}}"
@@ -35,7 +35,7 @@
               - "Label        : {{ app_label }}"
 
         - name: Verify that the AUT (Application Under Test) is running
-          include_tasks: "/common/utils/status_app_pod.yml"
+          include_tasks: "/utils/k8s/status_app_pod.yml"
           vars:
             app_ns: "{{namespace}}"
             app_lkey: "{{ app_label.split('=')[0] }}"
@@ -58,7 +58,7 @@
           register: uniqstr
 
         - name: Create some test data in the mysql database
-          include_tasks: "/common/utils/mysql_data_persistence.yml"
+          include_tasks: "/utils/scm/applications/mysql/mysql_data_persistence.yml"
           vars:
             status: 'LOAD'
             ns: "{{ namespace }}"
@@ -92,7 +92,7 @@
             executable: /bin/bash
 
         - name: Verify that the AUT (Application Under Test) is running after post chaos.
-          include_tasks: "/common/utils/status_app_pod.yml"
+          include_tasks: "/utils/k8s/status_app_pod.yml"
           vars:
             app_ns: "{{namespace}}"
             app_lkey: "{{ app_label.split('=')[0] }}"
@@ -100,7 +100,7 @@
             delay: 5
             retries: 60
 
-        - include_tasks: /common/utils/application_liveness_check.yml
+        - include_tasks: /utils/k8s/application_liveness_check.yml
           when: liveness_label != ''
 
         - name: Get application pod name
@@ -112,7 +112,7 @@
           register: rescheduled_app_pod
 
         - name: Verify mysql data persistence
-          include_tasks: "/common/utils/mysql_data_persistence.yml"
+          include_tasks: "/utils/scm/applications/mysql/mysql_data_persistence.yml"
           vars:
             status: 'VERIFY'
             ns: "{{ namespace }}"
@@ -134,7 +134,7 @@
         - block:
 
             ## Fetch the AWS instance details(instance_id, region)
-            - include_tasks: /common/utils/aws/fetch_aws_details.yml
+            - include_tasks: /utils/scm/cloud/aws/fetch_aws_details.yml
               vars:
                 instance_name: "{{ app_node }}"
 
@@ -168,7 +168,7 @@
           when: lookup('env', 'PLATFORM') == 'AWS'
 
         # RECORD END-OF-TEST IN LITMUS RESULT CR
-        - include_tasks: "/common/utils/update_litmus_result_resource.yml"
+        - include_tasks: "/utils/fcm/update_litmus_result_resource.yml"
           vars:
             status: 'EOT'
 

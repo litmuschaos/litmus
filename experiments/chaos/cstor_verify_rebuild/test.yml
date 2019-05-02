@@ -8,7 +8,7 @@
   tasks:
     - block:
 
-        - include_tasks: /common/utils/application_liveness_check.yml
+        - include_tasks: /utils/k8s/application_liveness_check.yml
           when: liveness_label != ''
 
         - include: test_prerequisites.yml
@@ -22,9 +22,9 @@
 
         ## RECORD START-OF-TEST IN LITMUS RESULT CR
 
-        - include_tasks: /common/utils/create_testname.yml
+        - include_tasks: /utils/fcm/create_testname.yml
 
-        - include_tasks: /common/utils/update_litmus_result_resource.yml
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
           vars:
             status: 'SOT'
             chaostype: "{{ chaosutil.split('.')[0] }}"
@@ -42,7 +42,7 @@
 
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
         - name: Verify that the AUT (Application Under Test) is running
-          include_tasks: "/common/utils/status_app_pod.yml"
+          include_tasks: "/utils/k8s/status_app_pod.yml"
           vars:
             app_ns: "{{namespace}}"
             app_lkey: "{{ label.split('=')[0] }}"
@@ -58,7 +58,7 @@
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
         - name: Verify AUT liveness post fault-injection
-          include_tasks: "/common/utils/status_app_pod.yml"
+          include_tasks: "/utils/k8s/status_app_pod.yml"
           vars:
             app_ns: "{{namespace}}"
             app_lkey: "{{ label.split('=')[0] }}"
@@ -66,7 +66,7 @@
             delay: 5
             retries: 60
 
-        - include_tasks: /common/utils/application_liveness_check.yml
+        - include_tasks: /utils/k8s/application_liveness_check.yml
           when: liveness_label != ''
 
         - set_fact:
@@ -79,7 +79,7 @@
       always:
 
         ## RECORD END-OF-TEST IN LITMUS RESULT CR
-        - include_tasks: /common/utils/update_litmus_result_resource.yml
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
           vars:
             status: 'EOT'
             chaostype: "{{ chaosutil.split('.')[0] }}"

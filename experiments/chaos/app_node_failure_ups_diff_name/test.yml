@@ -10,11 +10,11 @@
     - block:
 
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
-        - include_tasks: /common/utils/application_liveness_check.yml
+        - include_tasks: /utils/k8s/application_liveness_check.yml
           when: liveness_label != ''
 
         ## RECORD START OF THE TEST IN LITMUS RESULT CR
-        - include_tasks: /common/utils/create_testname.yml
+        - include_tasks: /utils/fcm/create_testname.yml
 
         - include_tasks: /chaoslib/aws_chaos/prerequisites_aws.yml
           when: lookup('env','PLATFORM') == 'AWS'
@@ -26,7 +26,7 @@
           register: pre_chaos_node_count
 
         ## RECORD START-OF-NODE-CHAOS TEST IN LITMUS RESULT CR
-        - include_tasks: /common/utils/update_litmus_result_resource.yml
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
           vars:
             status: 'SOT'
             chaostype: "node-shutdown-up-diff-name"
@@ -41,7 +41,7 @@
               - "Label        : {{ label }}"
 
         ## Verify the APPLICATION UNDER TEST PRE CHAOS
-        - include_tasks: /common/utils/status_app_pod.yml
+        - include_tasks: /utils/k8s/status_app_pod.yml
           vars:
             app_ns: "{{ namespace }}"
             app_lkey: "{{ label.split('=')[0] }}"
@@ -68,7 +68,7 @@
 
         ## Create Load for testing
         - name: Create test load in the mysql database
-          include_tasks: /common/utils/mysql_data_persistence.yml
+          include_tasks: /utils/scm/applications/mysql/mysql_data_persistence.yml
           vars:
             status: 'LOAD'
             ns: "{{ namespace }}"
@@ -88,7 +88,7 @@
           register: app_node
 
           ## Fetch the AWS instance details(instance_id, region)
-        - include_tasks: /common/utils/aws/fetch_aws_details.yml
+        - include_tasks: /utils/scm/cloud/aws/fetch_aws_details.yml
           vars:
             instance_name: "{{ app_node.stdout }}"
           when: lookup('env', 'PLATFORM') == 'AWS'
@@ -97,7 +97,7 @@
         - include_tasks: /chaoslib/aws_chaos/chaosutil_aws.yml
           when: lookup('env', 'PLATFORM') == 'AWS'
 
-        - include_tasks: /common/utils/check_no_of_nodes.yml
+        - include_tasks: /utils/k8s/check_no_of_nodes.yml
           vars:
             post_chaos_soak_time: '40'
             injected_node_chaos: "yes"
@@ -105,7 +105,7 @@
             retries: '80'
 
         ## Application verification after the POST chaos
-        - include_tasks: /common/utils/status_app_pod.yml
+        - include_tasks: /utils/k8s/status_app_pod.yml
           vars:
             app_ns: "{{ namespace }}"
             app_lkey: "{{ label.split('=')[0] }}"
@@ -114,7 +114,7 @@
             retries: '150'
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
-        - include_tasks: /common/utils/application_liveness_check.yml
+        - include_tasks: /utils/k8s/application_liveness_check.yml
           when: liveness_label != ''
 
         - name: Get application pod name
@@ -126,7 +126,7 @@
           register: rescheduled_app_pod
 
         - name: Verify mysql data persistence
-          include_tasks: "/common/utils/mysql_data_persistence.yml"
+          include_tasks: "/utils/scm/applications/mysql/mysql_data_persistence.yml"
           vars:
             status: 'VERIFY'
             ns: "{{ namespace }}"
@@ -144,13 +144,13 @@
             flag: "Fail"
 
       always:
-        - include_tasks: /common/utils/update_litmus_result_resource.yml
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
           vars:
             status: 'EOT'
             chaostype: "node-shutdown-up-diff-name"
             app: "percona"
 
-        - include_tasks: /common/utils/check_no_of_nodes.yml
+        - include_tasks: /utils/k8s/check_no_of_nodes.yml
           vars:
             injected_node_chaos: "no"
             delay: '5'

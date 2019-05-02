@@ -49,4 +49,4 @@ spec:
           - name: DATA_PERSISTENCY
             value: "enable"
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./percona/chaos/taint_node/test.yml -i /etc/ansible/hosts -vv; exit 0"]
+        args: ["-c", "ansible-playbook ./experiments/chaos/taint_node/test.yml -i /etc/ansible/hosts -vv; exit 0"]

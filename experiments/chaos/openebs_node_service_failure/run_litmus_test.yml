@@ -54,5 +54,5 @@ spec:
             value: "AWS"
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./percona/chaos/openebs_app_svc_chaos/test.yml -i /etc/ansible/hosts -vv; exit 0"]
+        args: ["-c", "ansible-playbook ./experiments/chaos/openebs_app_svc_chaos/test.yml -i /etc/ansible/hosts -vv; exit 0"]
 
