@@ -12,5 +12,5 @@ before_install:
   - sudo apt-get install -y
   - sudo apt-get install -y curl
 script:
-  - make godeps
+        #  - make godeps
   - make
