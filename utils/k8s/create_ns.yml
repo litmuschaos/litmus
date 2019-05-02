@@ -14,5 +14,5 @@
     executable: /bin/bash
   when: app_ns != 'litmus' and app_ns not in ns_list.stdout_lines
 
-- include_tasks: /common/utils/status_testns.yml
+- include_tasks: /utils/k8s/status_testns.yml
 
