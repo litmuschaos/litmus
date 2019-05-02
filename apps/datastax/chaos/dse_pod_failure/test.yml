@@ -51,7 +51,7 @@
 
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
         - name: Verify that the AUT is running.
-          include_tasks: /common/utils/check_deployment_status.yml
+          include_tasks: /utils/k8s/check_deployment_status.yml
 
         - name: Get the application pod name using label.
           shell: >
@@ -70,7 +70,7 @@
             label: "{{ app_label }}"
 
         - name: Verify AUT liveness post fault-injection
-          include_tasks: /common/utils/check_deployment_status.yml
+          include_tasks: /utils/k8s/check_deployment_status.yml
   
         - set_fact:
             flag: "Pass"
