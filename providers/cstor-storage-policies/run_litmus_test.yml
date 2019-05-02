@@ -33,4 +33,4 @@ spec:
             value: create
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./cstor-storage-policies/test.yml -i /etc/ansible/hosts -v; exit 0"]
+        args: ["-c", "ansible-playbook ./providers/cstor-storage-policies/test.yml -i /etc/ansible/hosts -v; exit 0"]

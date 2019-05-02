@@ -29,4 +29,4 @@ spec:
             value: statefulset
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./nuodb/chaos/app_pod_failure/test.yml -i /etc/ansible/hosts -vv; exit 0"]
+        args: ["-c", "ansible-playbook ./apps/nuodb/chaos/app_pod_failure/test.yml -i /etc/ansible/hosts -vv; exit 0"]
