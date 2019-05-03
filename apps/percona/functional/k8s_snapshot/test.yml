@@ -163,6 +163,8 @@
 
         - name: Creating clone using snapshot.
           include_tasks: /funclib/kubectl/k8s_snapshot_clone/create_clone.yml
+          vars:
+            capacity: "{{ volume_capacity }}"
 
         - name: Obtaining new PV name from the pvc.
           shell: kubectl get pvc {{ clone_claim_name }} -n {{ app_ns }} -o custom-columns=:spec.volumeName --no-headers

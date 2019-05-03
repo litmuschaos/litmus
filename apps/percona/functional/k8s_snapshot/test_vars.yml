@@ -20,3 +20,5 @@ clone_app: "{{ lookup('env','CLONE_APP_NAME') }}"
 operator_ns: openebs
 
 snapshot_name: "{{ lookup('env','SNAPSHOT_NAME') }}"
+
+volume_capacity: "{{ lookup('env','CAPACITY') }}"
