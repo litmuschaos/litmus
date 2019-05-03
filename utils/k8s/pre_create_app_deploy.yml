@@ -18,7 +18,7 @@
         regexp: "testclass"
         replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
 
-    - include_tasks: /utils/k8s/fetch_replica_values.yml
+    - include_tasks: /utils/scm/openebs/fetch_replica_values.yml
       when: lookup('env', 'APP_REPLICA')
 
     - name: Get the application label values from env
