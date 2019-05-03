@@ -3,12 +3,12 @@ apiVersion: openebs.io/v1alpha1
 kind: StoragePoolClaim
 metadata:
   name: {{ pool_name }}
-  annotations:
-    cas.openebs.io/config: |
-      - name: CstorPoolImage
-        value: openebs/cstor-pool:{{ cstor_image }}
-      - name: CstorPoolMgmtImage
-        value: openebs/cstor-pool-mgmt:{{ cstor_image }}
+#  annotations:
+#    cas.openebs.io/config: |
+#      - name: CstorPoolImage
+#        value: openebs/cstor-pool:{{ cstor_image }}
+#      - name: CstorPoolMgmtImage
+#        value: openebs/cstor-pool-mgmt:{{ cstor_image }}
 spec:
   name: {{ pool_name }}
   type: disk
@@ -35,10 +35,10 @@ metadata:
         value: "{{ pool_name }}"
       - name: ReplicaCount
         value: "3"
-      - name: VolumeControllerImage
-        value: openebs/cstor-volume-mgmt:{{ cstor_image }}
-      - name: VolumeTargetImage
-        value: openebs/cstor-istgt:{{ cstor_image }}
-      - name: VolumeMonitorImage
-        value: openebs/m-exporter:{{ cstor_image }}
+#      - name: VolumeControllerImage
+#        value: openebs/cstor-volume-mgmt:{{ cstor_image }}
+#      - name: VolumeTargetImage
+#        value: openebs/cstor-istgt:{{ cstor_image }}
+#      - name: VolumeMonitorImage
+#        value: openebs/m-exporter:{{ cstor_image }}
 provisioner: openebs.io/provisioner-iscsi
