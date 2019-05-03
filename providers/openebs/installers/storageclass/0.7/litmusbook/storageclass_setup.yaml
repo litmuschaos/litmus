@@ -54,4 +54,4 @@ spec:
           - name: DISK_LIST
             value: 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./storageclass/0.7/ansible/storageclass_setup.yaml -i /etc/ansible/hosts -vv; exit 0"]
+        args: ["-c", "ansible-playbook ./providers/openebs/installers/storageclass/0.7/ansible/storageclass_setup.yaml -i /etc/ansible/hosts -vv; exit 0"]
