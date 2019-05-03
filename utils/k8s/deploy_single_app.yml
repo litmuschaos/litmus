@@ -7,6 +7,6 @@
 - include_tasks: /utils/k8s/status_app_pod.yml
   when: check_app_pod == 'yes'
 
-- include_tasks: /utils/k8s/check_replica_count.yml
+- include_tasks: /utils/scm/openebs/check_replica_count.yml
   when: lookup('env','DEPLOY_TYPE') == 'statefulset'
 
