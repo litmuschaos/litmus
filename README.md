@@ -1,6 +1,6 @@
 # Litmus
 
-[![Build Status](https://travis-ci.org/openebs/litmus.svg?branch=master)](https://travis-ci.org/openebs/litmus)
+[![Build Status](https://travis-ci.org/openebs/litmus.svg?branch=master)](https://travis-ci.org/litmuschaos/litmus)
 [![Docker Pulls](https://img.shields.io/docker/pulls/openebs/ansible-runner.svg)](https://hub.docker.com/r/openebs/ansible-runner)
 
 Litmus is chaos engineering for stateful workloads on Kubernetes -> hopefully without learning curves.  Our vision includes enabling end users to quickly specify needed scenarios using English descriptions.
