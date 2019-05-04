@@ -1,0 +1,62 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+        
+         ## Generating the testname for deployment
+        - include_tasks: /utils/fcm/create_testname.yml
+
+         ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
+          vars:
+            status: 'SOT'
+
+        - block:
+
+         ## Actual test
+         ## Creating namespaces and making the application for deployment
+            
+            - name: Replace avalanche app label
+              replace:
+                path: "{{ application_deployment }}"
+                regexp: "systemkey: systemvalue"
+                replace: "{{ lookup('env','APP_LABEL') }}"
+           
+            - name: Replace avalanche system label
+              replace:
+                path: "{{ application_deployment }}"
+                regexp: "lkey: lvalue"
+                replace: "{{ lookup('env','SYSTEM_LABEL') }}"
+
+            - name: Enable/Disable I/O based liveness probe 
+              shell: >
+                sed -i '/#<!-- BEGIN ANSIBLE MANAGED BLOCK -->/
+                ,/#<!-- END ANSIBLE MANAGED BLOCK -->/d' 
+                {{ application_deployment }}
+              args:
+                executable: /bin/bash
+              when: lookup('env', 'IO_PROBE') is defined and lookup('env', 'IO_PROBE') == "disabled"
+
+         ## Deploying the application
+            - include_tasks: /utils/k8s/deploy_single_app.yml
+              vars:
+                check_app_pod: 'yes'
+                delay: 10
+                retries: 100
+
+            - set_fact:
+                flag: "Pass"
+
+          when: "'deprovision' not in action"
+
+
+      always:
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'

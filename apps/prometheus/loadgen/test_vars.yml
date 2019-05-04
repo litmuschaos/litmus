@@ -1,0 +1,8 @@
+# Test-specific parameters
+operator_ns: openebs
+application_deployment: avalanche.yml
+app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+app_label: "{{ lookup('env','APP_LABEL') }}"
+test_name: avalanche-deployment
+application_name: "avalanche"
+action: "{{ lookup('env','ACTION') }}"

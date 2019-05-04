@@ -1,0 +1,35 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: avalanche
+  labels:
+    lkey : lvalue
+    systemkey : systemvalue
+    
+spec:
+  replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        avalanche/scrape: "true"
+      labels:
+        lkey : lvalue
+        systemkey : systemvalue
+    spec:
+      containers:
+      - name: avalanche
+        image: quay.io/freshtracks.io/avalanche
+        imagePullPolicy: IfNotPresent
+        args:
+        - --metric-count=100
+        - --series-count=10
+        - --port=9001
+        ports:
+        - containerPort: 9001
+          protocol: TCP
+          name: metrics    

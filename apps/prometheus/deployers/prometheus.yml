@@ -40,7 +40,7 @@ kind: ConfigMap
 metadata:
   name: openebs-prometheus-tunables
 data:
-  storage-retention: 24h
+  storage-retention: 15m
 ---
 # Define the openebs prometheus jobs
 kind: ConfigMap
@@ -52,20 +52,16 @@ data:
     global:
       external_labels:
         slave: slave1
-      scrape_interval: 5s
-      evaluation_interval: 5s
+      scrape_interval: 3m
+      evaluation_interval: 3m
     scrape_configs:
-    - job_name: 'prometheus'
-      scheme: http
+    - job_name: 'ft-avalanche'
       kubernetes_sd_configs:
       - role: pod
       relabel_configs:
-      - source_labels: [__meta_kubernetes_pod_label_name]
-        regex: prometheus
+      - source_labels: [__meta_kubernetes_pod_container_name]
+        regex: avalanche
         action: keep
-      - source_labels: [__meta_kubernetes_pod_name]
-        action: replace
-        target_label: kubernetes_pod_name
 ---
 # prometheus-deployment
 apiVersion: extensions/v1beta1
@@ -113,7 +109,7 @@ spec:
               # 1 *Hyperthread* on a bare-metal Intel processor with Hyperthreading
               cpu: "128m"
             limits:
-              memory: "700M"
+              memory: "5G"
               cpu: "500m"
           
           volumeMounts:
