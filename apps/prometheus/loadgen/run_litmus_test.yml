@@ -1,0 +1,42 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: litmus-avalanche-
+  namespace: litmus
+spec:
+  template:
+    metadata:
+      name: litmus
+      labels:
+        app: prometheus-loadgen-litmus
+
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: openebs/ansible-runner:ci
+        imagePullPolicy: Always
+
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            #value: log_plays, actionable, default
+            value: default
+
+            # Application label
+          - name: APP_LABEL
+            value: 'name=avalanche'
+
+            # Application namespace
+          - name: APP_NAMESPACE
+            value: 'app-prometheus'
+            
+            # Use 'deprovision' for app-clean up
+          - name: ACTION
+            value: provision 
+          
+      
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./apps/prometheus/loadgen/test.yml -i /etc/ansible/hosts -v; exit 0"]
+
