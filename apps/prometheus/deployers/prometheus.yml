@@ -52,8 +52,8 @@ data:
     global:
       external_labels:
         slave: slave1
-      scrape_interval: 1m
-      evaluation_interval: 1m
+      scrape_interval: 5m
+      evaluation_interval: 5m
     scrape_configs:
     - job_name: 'ft-avalanche'
       kubernetes_sd_configs:
