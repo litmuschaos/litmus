@@ -28,6 +28,10 @@ spec:
           - name: POOL_NAME
             value: cstor-sparse-pool
 
+            # The path where the local pv can be created
+          - name: POOL_PATH
+            value: "/var/openebs/local"
+
             ## two values: create and delete 
           - name: ACTION
             value: create
