@@ -24,6 +24,7 @@
              - { src: cstor-xfs-sc.j2,dest: cstor-xfs-sc.yml }
              - { src: cstor-volume-monitor-sc.j2,dest: cstor-volume-monitor-sc.yml }
              - { src: cstor-disk-standalone.j2,dest: cstor-disk-standalone.yml }
+             - { src: local-pv-hostpath.j2,dest: local-pv-hostpath.yml }
 
         - block:
 
@@ -48,6 +49,7 @@
                 - openebs-cstor-volume-monitor
                 - cstor-disk-standalone
                 - openebs-jiva-standalone
+                - local-pv-hostpath
 
           when: lookup('env','ACTION') == 'create'
 
@@ -72,6 +74,9 @@
               with_items:
                 - openebs-cstor-xfs
                 - openebs-cstor-volume-monitor
+                - local-pv-hostpath
+                - cstor-disk-standalone
+                - openebs-jiva-standalone
 
           when: lookup('env','ACTION') == 'delete'
 

@@ -1,8 +1,11 @@
 # Test-specific parameters
 test_name: cstor-storage-policies
 pool_name: "{{ lookup('env','POOL_NAME') }}"
+local_pv_hostpath: "{{ lookup('env','POOL_PATH') }}"
 storage_policies:
   - cstor-xfs-sc.yml
   - cstor-volume-monitor-sc.yml
   - cstor-disk-standalone.yml
   - jiva-standalone.yml
+  - local-pv-hostpath.yml
+
