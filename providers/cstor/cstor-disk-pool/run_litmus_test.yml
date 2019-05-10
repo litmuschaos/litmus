@@ -42,6 +42,9 @@ spec:
 
           - name: OPERATOR_NS
             value: openebs
+            # Number of cstor pool to be created based on disk distribution across the nodes
+          - name: CSTOR_POOL_COUNT
+            value: 5
 
             ## two values: create and delete 
           - name: ACTION
