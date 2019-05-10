@@ -77,7 +77,7 @@
               args:
                 executable: /bin/bash
               register: pool_count
-              until: pool_count.stdout_lines|length == diskList.stdout_lines|length
+              until: "(pool_count.stdout_lines|length) == (cstor_pool_count|int)" 
               retries: 10
               delay: 15
 
