@@ -35,8 +35,8 @@ spec:
           - name: OPERATOR_NS
             value: openebs
 
-            # To check affinity for deployments deploy type is deployment
-            # to check affinity for statefulset deploy type is statefulset
+            # To check affinity for deployments, 'DEPLOY_TYPE'  should be "deployment"
+            # To check affinity for statefulsets, 'DEPLOY_TYPE' should be "statefulset"
           - name: DEPLOY_TYPE
             value: deployment
 

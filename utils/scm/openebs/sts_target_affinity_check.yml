@@ -56,7 +56,7 @@
   - name: Obtain the node where PV target pod resides
     shell: >
       kubectl get pod -n {{ target_ns }} 
-      -l openebs.io/target=cstor-target
+      -l {{ target_label }}
       -o jsonpath='{.items[?(@.metadata.labels.openebs\.io\/persistent-volume-claim=="{{ item }}")].spec.nodeName}' 
     args:
       executable: /bin/bash
