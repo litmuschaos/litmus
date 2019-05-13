@@ -1,0 +1,81 @@
+  - name: Obtain node where app pod resides
+    shell: >
+      kubectl get pods -l {{ app_label }} -n {{ app_ns }}
+      --no-headers -o custom-columns=:spec.nodeName
+    args:
+      executable: /bin/bash
+    register: app_node
+
+  - name: Derive PVC from application pod
+    shell: >
+      kubectl get pods -l {{ app_label }} -n {{ app_ns }}
+      --no-headers -o custom-columns=:spec.volumes[0].persistentVolumeClaim.claimName
+    args:
+      executable: /bin/bash
+    register: pvc
+
+  - name: Derive PV from application PVC
+    shell: >
+      kubectl get pvc {{ item }} 
+      -o custom-columns=:spec.volumeName -n {{ app_ns }}
+      --no-headers
+    args:
+      executable: /bin/bash
+    register: pv
+    with_items: 
+        - "{{ pvc.stdout_lines }}"
+
+  - name: Derive storage engine from PV
+    shell: >
+      kubectl get pv {{ item.stdout_lines[0] }} --no-headers
+      -o jsonpath="{.metadata.annotations.openebs\\.io/cas-type}"
+    args:
+      executable: /bin/bash
+    register: stg_engine
+    with_items:
+        - "{{ pv.results }} "
+
+  - set_fact:
+      stg: "{{ stg|default([])}}"
+
+  - name: Build a list of storage engine
+    set_fact:
+      stg : "{{ stg  }} + [ '{{ item.stdout_lines[0] }}' ]"
+    with_items: "{{ stg_engine.results }}"
+
+  - set_fact:
+      target_ns: "{{ app_ns }}"
+      target_label: "openebs.io/controller=jiva-controller"
+    when: "((stg|unique)|length) == 1 and 'jiva' in stg"
+
+  - set_fact:
+      target_ns: "{{ operator_ns }}"
+      target_label: "openebs.io/target=cstor-target"
+    when: "((stg|unique)|length) == 1 and 'cstor' in stg"
+
+  - name: Obtain the node where PV target pod resides
+    shell: >
+      kubectl get pod -n {{ target_ns }} 
+      -l openebs.io/target=cstor-target
+      -o jsonpath='{.items[?(@.metadata.labels.openebs\.io\/persistent-volume-claim=="{{ item }}")].spec.nodeName}' 
+    args:
+      executable: /bin/bash
+    register: target_node
+    with_items: 
+        - "{{ pvc.stdout_lines }}"
+
+  - set_fact: 
+      targetnode: "{{ targetnode|default([])}}"
+
+  - name: Build a list of target nodes
+    set_fact:
+      targetnode : "{{ targetnode  }} + [ '{{ item.stdout_lines[0] }}' ]"
+    with_items: "{{ target_node.results }}"
+
+  - name: Verify whether the app & target pod co-exist on same node
+    debug: 
+      msg: "App and Target affinity is maintained"
+    failed_when: "item.0  !=  item.1"
+    with_together:
+      - "{{ targetnode }}"
+      - "{{ app_node.stdout_lines }}"

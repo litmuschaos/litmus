@@ -1,0 +1,5 @@
+{% if deploy_type is defined and deploy_type == 'deployment' %}
+  functional_util: scm/openebs/target_affinity_check.yml
+{% else %}
+  functional_util: scm/openebs/sts_target_affinity_check.yml
+{% endif %}

@@ -35,5 +35,10 @@ spec:
           - name: OPERATOR_NS
             value: openebs
 
+            # To check affinity for deployments deploy type is deployment
+            # to check affinity for statefulset deploy type is statefulset
+          - name: DEPLOY_TYPE
+            value: deployment
+
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/functional/app-target-affinity/test.yml -i /etc/ansible/hosts -vv; exit 0"]

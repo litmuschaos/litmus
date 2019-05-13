@@ -25,6 +25,18 @@
           vars:
             status: 'SOT'
 
+        - name: Identify the functional util to be invoked
+          template:
+            src: functional_util.j2
+            dest: functional_util.yml
+
+        - include_vars:
+            file: functional_util.yml
+
+        - name: Record the functional util path
+          set_fact: 
+            functional_util_path: "/utils/{{ functional_util }}"
+
         - name: Obtain the pvc name of the application.
           shell: >
             kubectl get pvc -n {{ application_ns }} -l {{ application_label }} 
@@ -33,15 +45,12 @@
             executable: /bin/bash
           register: pvc_name
 
-       ## Include an utility from litmus scm(solution common module) to check the application target affinity.
-       ## Passing app_ns, app_pvc, operator_ns, app_label and clone name as environmental variable.
-
-        - include_tasks: /utils/scm/openebs/target_affinity_check.yml
-          vars:
-            app_ns: "{{ application_ns}}"
-            app_label: "{{ application_label }}"
-            app_pvc: "{{ pvc_name.stdout }}"
-            operator_ns: "{{ operatorns }}"
+       ## Passing app_ns, app_pvc, operator_ns, app_label as environmental variable.
+        - include: "{{ functional_util_path }}"
+          app_ns: "{{ application_ns}}"
+          app_label: "{{ application_label }}"
+          app_pvc: "{{ pvc_name.stdout }}"
+          operator_ns: "{{ operatorns }}"
 
         - set_fact:
             flag: "Pass"
