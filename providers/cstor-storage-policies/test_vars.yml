@@ -2,10 +2,14 @@
 test_name: cstor-storage-policies
 pool_name: "{{ lookup('env','POOL_NAME') }}"
 local_pv_hostpath: "{{ lookup('env','POOL_PATH') }}"
+queue_depth_value: "{{ lookup('env','QUEUE_DEPTH') }}"
+lu_workers: "{{ lookup('env','LU_WORKER') }}"
+zvol_workers: "{{ lookup('env','ZVOL_WORKER') }}"
 storage_policies:
   - cstor-xfs-sc.yml
   - cstor-volume-monitor-sc.yml
   - cstor-disk-standalone.yml
   - jiva-standalone.yml
   - local-pv-hostpath.yml
+  - cstor-perf-parameters.yml
 
