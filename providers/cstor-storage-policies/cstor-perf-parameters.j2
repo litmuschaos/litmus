@@ -1,0 +1,17 @@
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: cstor-performance-config
+  annotations:
+    openebs.io/cas-type: cstor
+    cas.openebs.io/config: |
+      - name: StoragePoolClaim
+        value: "{{ pool_name }}"
+      - name: QueueDepth
+        value: "{{ queue_depth_value }}"
+      - name: Luworkers
+        value: "{{ lu_workers }}"
+      - name: ZvolWorkers
+        value: "{{ zvol_workers }}"
+provisioner: openebs.io/provisioner-iscsi

@@ -32,6 +32,15 @@ spec:
           - name: POOL_PATH
             value: "/var/openebs/local"
 
+          - name: QUEUE_DEPTH
+            value: "20"
+
+          - name: LU_WORKER
+            value: "10"
+
+          - name: ZVOL_WORKER
+            value: "4"
+
             ## two values: create and delete 
           - name: ACTION
             value: create

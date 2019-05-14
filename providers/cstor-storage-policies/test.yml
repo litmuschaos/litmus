@@ -25,6 +25,7 @@
              - { src: cstor-volume-monitor-sc.j2,dest: cstor-volume-monitor-sc.yml }
              - { src: cstor-disk-standalone.j2,dest: cstor-disk-standalone.yml }
              - { src: local-pv-hostpath.j2,dest: local-pv-hostpath.yml }
+             - { src: cstor-perf-parameters.j2,dest: cstor-perf-parameters.yml }
 
         - block:
 
@@ -50,6 +51,7 @@
                 - cstor-disk-standalone
                 - openebs-jiva-standalone
                 - local-pv-hostpath
+                - cstor-performance-config
 
           when: lookup('env','ACTION') == 'create'
 
