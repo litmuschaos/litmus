@@ -6,3 +6,5 @@ application_ns: "{{ lookup('env','APP_NAMESPACE') }}"
 operatorns: "{{ lookup('env','OPERATOR_NS') }}"
 
 application_label: "{{ lookup('env','APP_LABEL') }}"
+
+deploy_type: "{{ lookup('env','DEPLOY_TYPE') }}"
