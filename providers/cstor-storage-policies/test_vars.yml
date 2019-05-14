@@ -1,5 +1,5 @@
 # Test-specific parameters
-test_name: cstor-perf-parameters
+test_name: cstor-storage-policies
 pool_name: "{{ lookup('env','POOL_NAME') }}"
 local_pv_hostpath: "{{ lookup('env','POOL_PATH') }}"
 queue_depth_value: "{{ lookup('env','QUEUE_DEPTH') }}"
