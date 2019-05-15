@@ -17,7 +17,7 @@
             status: 'SOT'
 
         - block:
-            - block: 
+            - block:
                   ## Creating namespaces and making the application for deployment
                 - include_tasks: /utils/k8s/pre_create_app_deploy.yml
                   vars:
@@ -76,7 +76,7 @@
                     delay: 10
                     retries: 20
               when: "'deprovision' not in action"
-            
+
             - name: Deprovisioning the Application
               include_tasks: "/utils/k8s/deprovision_deployment.yml"
               vars:
