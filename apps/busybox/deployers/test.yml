@@ -17,73 +17,73 @@
             status: 'SOT'
 
         - block:
-              ## Creating namespaces and making the application for deployment
-            - include_tasks: /utils/k8s/pre_create_app_deploy.yml
-              vars:
-                application_deployment: "{{ application_statefulset }}"
+            - block:
+                  ## Creating namespaces and making the application for deployment
+                - include_tasks: /utils/k8s/pre_create_app_deploy.yml
+                  vars:
+                    application_deployment: "{{ application_statefulset }}"
 
-            - name: Replace the affinity label annotation in statefulset yml
-              replace:
-                path: "{{ application_statefulset }}"
-                regexp: "affinity_label: lvalue"
-                replace: "{{ affinity_label }}: {{ app_lvalue }}"
+                - name: Replace the affinity label annotation in statefulset yml
+                  replace:
+                    path: "{{ application_statefulset }}"
+                    regexp: "affinity_label: lvalue"
+                    replace: "{{ affinity_label }}: {{ app_lvalue }}"
 
-            - name: Replace the volume capcity placeholder with provider
-              replace:
-                path: "{{ application_statefulset }}"
-                regexp: "teststorage"
-                replace: "{{ lookup('env','PV_CAPACITY') }}"
+                - name: Replace the volume capcity placeholder with provider
+                  replace:
+                    path: "{{ application_statefulset }}"
+                    regexp: "teststorage"
+                    replace: "{{ lookup('env','PV_CAPACITY') }}"
 
-              ## Deploying the application
-            - include_tasks: /utils/k8s/deploy_single_app.yml
-              vars:
-                application_deployment: "{{ application_statefulset }}"
-                check_app_pod: 'no'
-                delay: 10
-                retries: 20
-
-          when: lookup('env','DEPLOY_TYPE') == 'statefulset'
-
-        - block:
-              ## Creating namespaces and making the application for deployment
-            - include_tasks: /utils/k8s/pre_create_app_deploy.yml
-
-            - name: Replace the affinity label annotation in deployment yml
-              replace:
-                path: "{{ application_deployment }}"
-                regexp: "affinity_label: lvalue"
-                replace: "{{ affinity_label }}: {{ app_lvalue }}"
-
-            - name: Replace the volume capcity placeholder with provider
-              replace:
-                path: "{{ application_deployment }}"
-                regexp: "teststorage"
-                replace: "{{ lookup('env','PV_CAPACITY') }}"
-
-              ## Deploying the application
-            - include_tasks: /utils/k8s/deploy_single_app.yml
-              vars:
-                check_app_pod: 'yes'
-                delay: 10
-                retries: 20
-
-          when: lookup('env','DEPLOY_TYPE') == 'deployment'
-
-        - block:
+                  ## Deploying the application
+                - include_tasks: /utils/k8s/deploy_single_app.yml
+                  vars:
+                    application_deployment: "{{ application_statefulset }}"
+                    check_app_pod: 'no'
+                    delay: 10
+                    retries: 20
+              when: "'deprovision' not in action"
 
             - name: Deprovisioning the Application
               include_tasks: /utils/k8s/deprovision_statefulset.yml
               vars:
                 app_deployer: "{{ application_statefulset }}"
-              when: lookup('env','DEPLOY_TYPE') == 'statefulset'
+              when: "'deprovision' is in action"
+
+          when: lookup('env','DEPLOY_TYPE') == 'statefulset'
+
+        - block:
+            - block:
+                  ## Creating namespaces and making the application for deployment
+                - include_tasks: /utils/k8s/pre_create_app_deploy.yml
+
+                - name: Replace the affinity label annotation in deployment yml
+                  replace:
+                    path: "{{ application_deployment }}"
+                    regexp: "affinity_label: lvalue"
+                    replace: "{{ affinity_label }}: {{ app_lvalue }}"
+
+                - name: Replace the volume capcity placeholder with provider
+                  replace:
+                    path: "{{ application_deployment }}"
+                    regexp: "teststorage"
+                    replace: "{{ lookup('env','PV_CAPACITY') }}"
+
+                  ## Deploying the application
+                - include_tasks: /utils/k8s/deploy_single_app.yml
+                  vars:
+                    check_app_pod: 'yes'
+                    delay: 10
+                    retries: 20
+              when: "'deprovision' not in action"
 
             - name: Deprovisioning the Application
               include_tasks: "/utils/k8s/deprovision_deployment.yml"
               vars:
                 app_deployer: "{{ application_deployment }}"
-              when: lookup('env','DEPLOY_TYPE') == 'deployment'
+              when: "'deprovision' is in action"
 
-          when: "'deprovision' is in action"
+          when: lookup('env','DEPLOY_TYPE') == 'deployment'
 
         - set_fact:
             flag: "Pass"
