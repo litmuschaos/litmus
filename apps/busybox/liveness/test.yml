@@ -24,46 +24,64 @@
           vars:
             status: 'SOT'
 
-        - name: Getting the application pod name
-          shell: kubectl get po -n {{ namespace }} -l {{ app_label }} -o jsonpath={.items[0].metadata.name}
-          register: pod_name
+        - block:
 
-        - name: Replacing the placeholder for pod-name
-          replace:
-            path: "{{ busybox_liveness }}"
-            regexp: "pod-name"
-            replace: "{{ pod_name.stdout }}"   
+            - name: Getting the application pod name
+              shell: kubectl get pod -n {{ namespace }} -l {{ app_label }} -o jsonpath={.items[0].metadata.name}
+              register: pod_name
+    
+            - name: Replacing the placeholder for pod-name
+              replace:
+                path: "{{ busybox_liveness }}"
+                regexp: "pod-name"
+                replace: "{{ pod_name.stdout }}"   
+    
+            - name: Replacing the placeholder for namespace
+              replace:
+                path: "{{ busybox_liveness }}"
+                regexp: "app-namespace"
+                replace: "{{ namespace }}"   
+    
+            - name: Replacing the placeholder for liveness-retry-count
+              replace:
+                path: "{{ busybox_liveness }}"
+                regexp: "liveness-retry-count"
+                replace: "{{ liveness_retry }}"   
+    
+            - name: Replacing the placeholder for liveness-timeout
+              replace:
+                path: "{{ busybox_liveness }}"
+                regexp: "liveness-timeout-seconds"
+                replace: "{{ liveness_timeout }}"   
+    
+            - name: Creating busybox-liveness job
+              shell: kubectl create -f {{ busybox_liveness }} 
+    
+            - name: Verifying whether liveness pod is started successfully  
+              shell: kubectl get pod -n {{ namespace }} -l liveness=busybox-liveness -o jsonpath={.items[0].status.phase} 
+              register: pod_status
+              until: "'Running' in pod_status.stdout"
+              delay: 60 
+              retries: 20
+    
+            - set_fact:
+                flag: "Pass"
+          
+          when: "'deprovision' not in action"
 
-        - name: Replacing the placeholder for namespace
-          replace:
-            path: "{{ busybox_liveness }}"
-            regexp: "app-namespace"
-            replace: "{{ namespace }}"   
+        - block: 
+            - name: Getting the busybox liveness job
+              shell: kubectl get job -l liveness=busybox-liveness -n {{ namespace }} -o jsonpath='{.items[0].metadata.name}'
+              register: liveness_job
 
-        - name: Replacing the placeholder for liveness-retry-count
-          replace:
-            path: "{{ busybox_liveness }}"
-            regexp: "liveness-retry-count"
-            replace: "{{ liveness_retry }}"   
+            - name: Deleting busybox liveness job
+              shell: kubectl delete job {{ liveness_job.stdout }} -n {{ namespace }}
 
-        - name: Replacing the placeholder for liveness-timeout
-          replace:
-            path: "{{ busybox_liveness }}"
-            regexp: "liveness-timeout-seconds"
-            replace: "{{ liveness_timeout }}"   
+            - set_fact:
+                flag: "Pass"
 
-        - name: Creating busybox-liveness job
-          shell: kubectl create -f {{ busybox_liveness }} 
+          when: "'deprovision' is in action"
 
-        - name: Verifying whether liveness pod is started successfully  
-          shell: kubectl get pod -n {{ namespace }} -l liveness=busybox-liveness -o jsonpath={.items[0].status.phase} 
-          register: pod_status
-          until: "'Running' in pod_status.stdout"
-          delay: 60 
-          retries: 20
-
-        - set_fact:
-            flag: "Pass"
 
       rescue:
         - set_fact:
