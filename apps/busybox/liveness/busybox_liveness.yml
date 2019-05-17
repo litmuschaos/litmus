@@ -59,7 +59,7 @@ spec:
  
       containers:
       - name: busybox-liveness  
-        image: openebs/busybox-liveness-client
+        image: openebs/busybox-client
         imagePullPolicy: Always
 
         env:
