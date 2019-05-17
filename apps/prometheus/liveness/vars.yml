@@ -1,0 +1,7 @@
+test_name: prometheus-liveness
+namespace: "{{ lookup('env','APP_NAMESPACE') }}"
+prometheus_liveness: prometheus_liveness.yml
+liveness_retry: "{{ lookup('env','LIVENESS_RETRY_COUNT') }}"
+liveness_timeout: "{{ lookup('env','LIVENESS_TIMEOUT_SECONDS') }}"
+liveness_period: "{{ lookup('env','LIVENESS_PERIOD_SECONDS') }}"
+liveness_log: "liveness-running"

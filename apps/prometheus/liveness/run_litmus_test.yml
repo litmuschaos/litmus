@@ -1,0 +1,46 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: litmus-prometheus-liveness-
+  namespace: litmus
+spec:
+  activeDeadlineSeconds: 5400
+  template:
+    metadata:
+      name: litmus-prometheus-liveness
+      namespace: litmus
+      labels:
+        liveness: litmus-prometheus-liveness
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+ 
+      containers:
+      - name: ansibletest
+        image: openebs/ansible-runner:ci
+        imagePullPolicy: Always
+        env: 
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: default
+
+          - name: LIVENESS_TIMEOUT_SECONDS
+            value: "10"
+
+          # number of retries when livenss-fails 
+          - name: LIVENESS_RETRY_COUNT
+            value: "5"
+          
+          - name: LIVENESS_PERIOD_SECONDS
+            value: "5"
+
+          # Namespace in which prometheus is running
+          - name: APP_NAMESPACE
+            value: 'app-prometheus'
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./apps/prometheus/liveness/test.yml -i /etc/ansible/hosts -v; exit 0"]
+
+           
+         
+
