@@ -48,6 +48,26 @@
             regexp: "liveness-period-seconds"
             replace: "{{ liveness_period }}"   
 
+        - name: Replacing the placeholder for liveness-period
+          replace:
+            path: "{{ prometheus_liveness }}"
+            regexp: "port"
+            replace: "{{ port }}"   
+
+        - name : Fetch app service name
+          shell: kubectl get svc -n {{ namespace }} -o jsonpath={.items[0].metadata.name}
+          register: service_name
+        
+        - name : Fetch app service endpoint
+          shell: kubectl get endpoints {{ service_name.stdout }} -n {{ namespace }} -o jsonpath={.subsets[0].addresses[0].ip}
+          register: service_endpoint
+        
+        - name: Replacing the placeholder for service-endpoint
+          replace:
+            path: "{{ prometheus_liveness }}"
+            regexp: "service-endpoint"
+            replace: "{{ service_endpoint.stdout }}"
+
         - name: Creating prometheus-liveness job
           shell: kubectl create -f {{ prometheus_liveness }} 
 
@@ -57,6 +77,8 @@
           until: "'Running' in pod_status.stdout"
           delay: 60 
           retries: 20
+
+        
 
         - set_fact:
             flag: "Pass"

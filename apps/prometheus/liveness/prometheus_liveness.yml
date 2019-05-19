@@ -54,7 +54,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: prometheus-liveness  
-        image: openebs/prometheus-liveness
+        image : openebs/service-liveness
         imagePullPolicy: Always
         env:
 
@@ -68,6 +68,12 @@ spec:
           - name: LIVENESS_PERIOD_SECONDS
             value: "liveness-period-seconds"
 
+          - name: SERVICE_ENDPOINT
+            value: "service-endpoint"
+
+          - name: PORT
+            value: "port"
+          
             # Namespace in which prometheus is running
           - name: APP_NAMESPACE
             value: "app-namespace"
