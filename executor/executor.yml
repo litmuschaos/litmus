@@ -55,8 +55,7 @@
 - name: Monitoring the litmus chaos job for completion
   shell: >
     kubectl get job -n litmus -l experiment={{ c_job_label.stdout }}
-    --no-headers -o custom-columns=:status.conditions[].type 
-    | sort | uniq
+    --no-headers -o custom-columns=:status.conditions[].type | sort | uniq
   args:
    executable: /bin/bash
   register: c_job_status
