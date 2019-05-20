@@ -1,0 +1,38 @@
+---
+- block:
+   - name: Generate the litmus result CR to reflect SOT (Start of Test)
+     template:
+       src: /chaos-result.j2
+       dest: chaos-result.yaml
+     vars:
+       test: "{{ c_experiment }}"
+       phase: ""
+       verdict: running
+
+   - name: Apply the litmus result CR
+     shell: kubectl apply -f chaos-result.yaml -n {{ namespace }}
+     args:
+       executable: /bin/bash
+     register: cr_status
+     failed_when: "cr_status.rc != 0"
+
+  when: status == "SOT"
+
+- block:
+   - name: Update the litmus result CR to reflect EOT (End of Test)
+     template:
+       src: /chaos-result.j2
+       dest: chaos-result.yaml
+     vars:
+       test: "{{ c_experiment }}"
+       phase: "" 
+       verdict: "{{ flag }}"
+
+   - name: Apply the litmus result CR
+     shell: kubectl apply -f chaos-result.yaml -n {{ namespace }}
+     args:
+       executable: /bin/bash
+     register: cr_status
+     failed_when: "cr_status.rc != 0"
+
+  when: status == "EOT"

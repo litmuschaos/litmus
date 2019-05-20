@@ -1,0 +1,22 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars:
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
+    c_experiment_list: "{{ lookup('env','EXPERIMENT_LIST').split(',')}}"
+    c_app_label: "{{ lookup('env','APP_LABEL') }}"
+    c_app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+   
+  tasks:
+    - debug:
+        msg: 
+          - "List of Chaos Experiments: {{ c_experiment_list }}"
+          - "Each experiment will be launched & monitored by the executor"
+          - "Beginning Execution, view experiment logs on respective job"
+       
+    - include: executor.yml 
+      with_items: "{{ c_experiment_list }}"
+
+
+

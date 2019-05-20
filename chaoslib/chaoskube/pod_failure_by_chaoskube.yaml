@@ -13,8 +13,8 @@
     executable: /bin/bash
   register: chaoskube
   until: "'Running' in chaoskube.stdout"
-  delay: 20
-  retries: 15
+  delay: 2
+  retries: 90
 
 - name: Set the chaoskube pod name to variable
   set_fact:
@@ -68,3 +68,10 @@
   debug:
     msg: "Verified replica pods were restarted by chaoskube"
   failed_when: "rv_bef.stdout | int == rv_aft.stdout | int"
+
+- name: Tear down chaoskube infrastructure
+  shell: |
+    kubectl delete -f /chaoslib/chaoskube/chaoskube.yaml -n {{ namespace }}
+    kubectl delete -f /chaoslib/chaoskube/rbac.yaml -n {{ namespace }}
+  args:
+    executable: /bin/bash

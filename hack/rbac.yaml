@@ -37,26 +37,3 @@ subjects:
 - kind: ServiceAccount
   name: litmus
   namespace: litmus
----
-apiVersion: apiextensions.k8s.io/v1beta1
-kind: CustomResourceDefinition
-metadata:
-  # name must match the spec fields below, and be in the form: <plural>.<group>
-  name: litmusresults.litmus.io
-spec:
-  # group name to use for REST API: /apis/<group>/<version>
-  group: litmus.io
-  # version name to use for REST API: /apis/<group>/<version>
-  version: v1alpha1
-  # either Namespaced or Cluster
-  scope: Cluster
-  names:
-    # plural name to be used in the URL: /apis/<group>/<version>/<plural>
-    plural: litmusresults
-    # singular name to be used as an alias on the CLI and for display
-    singular: litmusresult
-    # kind is normally the CamelCased singular type. Your resource manifests use this.
-    kind: LitmusResult
-    # shortNames allow shorter string to match your resource on the CLI
-    shortNames:
-    - lr

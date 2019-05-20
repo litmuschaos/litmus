@@ -1,0 +1,66 @@
+---
+- name: Verify if ChaosExperiment CR is available 
+  shell: >
+    kubectl get chaosexperiment {{ item }} 
+    --no-headers -o custom-columns=:metadata.name
+  args:
+    executable: /bin/bash
+  register: c_exp_name
+  failed_when: "item not in c_exp_name.stdout"
+
+- name: Derive chaos job path from spec of experiment
+  shell: >
+    kubectl get chaosexperiment {{ item }}
+    --no-headers -o custom-columns=:spec.definition.litmusbook
+  args:
+   executable: /bin/bash
+  register: c_job
+
+- name: Check if the experiment params match the default values
+  shell: >
+    kubectl set env -f {{ c_job.stdout }} APP_LABEL={{ c_app_label }} 
+    APP_NAMESPACE={{ c_app_ns }} CHAOSENGINE={{ c_engine }} --dry-run -o yaml
+  args:
+   executable: /bin/bash
+  register: diff
+
+- name: Patch the job spec if passed experiment params are non-default 
+  shell: >
+    kubectl set env -f {{ c_job.stdout }} APP_LABEL={{ c_app_label }} 
+    APP_NAMESPACE={{ c_app_ns }} CHAOSENGINE={{ c_engine }} --dry-run -o yaml
+    > tmp.yml; cp {{ item.yml }} > {{ c_job.stdout }}; rm tmp.yml
+  args:
+   executable: /bin/bash
+  when: diff.stdout != ""
+
+- name: Get litmus chaos job label to monitor its progress
+  shell: >
+    kubectl create -f {{ c_job.stdout }} 
+    --dry-run -o jsonpath='{.spec.template.metadata.labels.experiment}'
+  args:
+   executable: /bin/bash
+  register: c_job_label
+
+- debug:
+    msg: "Triggering chaos experiment: item"
+
+- name: Run the chaos experiment job
+  shell:
+    kubectl create -f {{ c_job.stdout }}
+  args:
+   executable: /bin/bash
+  register: c_trigger
+  failed_when: "c_trigger.rc != 0"
+  
+- name: Monitoring the litmus chaos job for completion
+  shell: >
+    kubectl get job -n litmus -l experiment={{ c_job_label.stdout }}
+    --no-headers -o custom-columns=:status.conditions[].type 
+    | sort | uniq
+  args:
+   executable: /bin/bash
+  register: c_job_status
+  until: c_job_status.stdout == "Complete"
+  delay: 2
+  retries: 150
+
