@@ -22,6 +22,9 @@
 - name: Getting the Pod name in Pending state
   shell: kubectl get pods -n {{ ns }} -l {{ pod_label }}  -o jsonpath='{.items[?(@.status.phase=="Pending")].metadata.name}'
   register: new_pod_name
+  until: "new_pod_name.stdout_lines is defined"
+  delay: 5
+  retries: 10 
 
 - name: Uncordoning Node
   shell: kubectl uncordon {{ node_name.stdout }}
