@@ -33,4 +33,4 @@ spec:
             value: 'pgdata-claim'   
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./experiments/tests/node_affinity/test.yml -i /etc/ansible/hosts -v; exit 0"]
+        args: ["-c", "ansible-playbook ./experiments/chaos/replica_node_affinity/test.yml -i /etc/ansible/hosts -v; exit 0"]

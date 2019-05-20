@@ -44,17 +44,6 @@
         - name: Obtaining the deployment name for the replica pod
           shell: kubectl get deployments -n {{ namespace }} -l openebs.io/replica=jiva-replica -o jsonpath='{.items[0].metadata.name}'  
           register: deployment_name
-
-        - name: Replacing the Node name in Patch yaml
-          replace:
-           path: "{{ patch_file }}"
-           regexp: 'nodename_where_replica_pod_got_scheduled'
-           replace: '{{ node.stdout }}'
- 
-        - name: Update the replica deployment with node affinity property
-          shell: kubectl patch deployment {{ deployment_name.stdout }} -n {{ namespace }} -p "$(cat {{ patch_file }})"
-          register: patch_status
-          failed_when: "'patched' not in patch_status.stdout"
     
         - name: Checking the node affinity for replica-pod
           include_tasks: "/funclib/kubectl/pod_node_affinity.yml"
