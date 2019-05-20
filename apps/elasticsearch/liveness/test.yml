@@ -50,10 +50,30 @@
           replace:
             path: "{{ elasticsearch_liveness }}"
             regexp: "liveness-timeout-seconds"
-            replace: "{{ liveness_timeout }}"   
+            replace: "{{ liveness_timeout }}"  
+
+        - name : Fetch app service name
+          shell: kubectl get svc -n {{ namespace }} -o jsonpath={.items[0].metadata.name}
+          register: name_of_service 
+
+        - name: Getting the port 
+          shell: kubectl get endpoints -n {{ namespace }} -o jsonpath={.items[0].subsets[0].ports[0].port}
+          register: port_no
+
+        - name: Replace the placeholder for service endpoint
+          replace:
+            path: "{{ elasticsearch_liveness }}"
+            regexp: "service_name"
+            replace: "{{ name_of_service.stdout }}"
+
+        - name: Replace the placeholder for service endpoint
+          replace:
+            path: "{{ elasticsearch_liveness }}"
+            regexp: "port"
+            replace: "{{ port_no.stdout }}"
 
         - name: Creating elasticsearch-liveness job
-          shell: kubectl create -f {{ elasticsearch_liveness }} 
+          shell: kubectl create -f {{ elasticsearch_liveness }} -n {{ namespace }} 
 
         - name: Verifying whether liveness pod is started successfully  
           shell: kubectl get pod -n {{ namespace }} -l liveness=elasticsearch-liveness -o jsonpath={.items[0].status.phase} 

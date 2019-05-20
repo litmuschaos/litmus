@@ -1,7 +1,7 @@
 test_name: elasticsearch-liveness
 namespace: "{{ lookup('env','NAMESPACE') }}"
 app_label: "{{ lookup('env','APPLICATION_LABEL') }}"
-elasticsearch_liveness: elasticsearch_liveness.yml
+elasticsearch_liveness: elasticsearch-liveness.yml
 liveness_retry: "{{ lookup('env','LIVENESS_RETRY_COUNT') }}"
 liveness_timeout: "{{ lookup('env','LIVENESS_TIMEOUT_SECONDS') }}"
 liveness_log: "liveness-running"

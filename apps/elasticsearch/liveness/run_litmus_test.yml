@@ -38,7 +38,7 @@ spec:
 
           # number of retries when livenss-fails 
           - name: LIVENESS_RETRY_COUNT
-            value: "5"
+            value: "15"
 
             # Namespace in which elasticsearch is running
           - name: NAMESPACE
