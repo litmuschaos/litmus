@@ -30,5 +30,7 @@ COPY ./chaoslib ./chaoslib/
 COPY ./funclib ./funclib/
 COPY ./hack/*.j2 ./
 COPY ./utils ./utils/
+COPY ./tools/plugins/actionable.py /usr/local/lib/python2.7/dist-packages/ansible/plugins/callback/
+COPY ./tools/plugins/timestamp.py /usr/local/lib/python2.7/dist-packages/ansible/plugins/callback/
 COPY experiments ./experiments
 COPY executor ./executor
