@@ -3,90 +3,109 @@
 [![Build Status](https://travis-ci.org/litmuschaos/litmus.svg?branch=master)](https://travis-ci.org/litmuschaos/litmus)
 [![Docker Pulls](https://img.shields.io/docker/pulls/openebs/ansible-runner.svg)](https://hub.docker.com/r/openebs/ansible-runner)
 
-Litmus is chaos engineering for stateful workloads on Kubernetes -> hopefully without learning curves.  Our vision includes enabling end users to quickly specify needed scenarios using English descriptions.
+Litmus is chaos engineering for workloads on Kubernetes -> hopefully without learning curves. Our vision 
+includes enabling end users to easily execute chaos experiments in their environments using a Kubernetes native 
+approach, where the chaos intent is specified in a declarative way.
 
-https://www.openebs.io/litmus
+https://litmuschaos.io/
 
 ## Overview
 
-The primary objective of Litmus is to ensure a consistent and reliable behavior of workloads running in Kubernetes. It also aims to catch hard-to-test bugs and unacceptable behaviors before users do. Litmus strives to detect real-world issues which escape during unit and integration tests.
+The primary objective of Litmus is to ensure a consistent and reliable behavior of workloads running in Kubernetes. 
+It also aims to catch hard-to-test bugs and unacceptable behaviors before users do. Litmus strives to detect the 
+real-world issues which escape during unit and integration tests.
 
-While Litmus tests and metrics were developed initially to test if a given Kubernetes deployment is suitable for running on OpenEBS (_a Kubernetes dynamic storage provisioner_); the use cases are broader and overall system resilience can be characterized before and during operations.  To learn more about OpenEBS please visit: www.openEBS.io
+While Litmus experiments were developed initially to test if a given stateful workload is suitable for running 
+on [OpenEBS](www.openebs.io)(_a Kubernetes dynamic storage provisioner_); the use cases are broader and overall 
+system resilience can be characterized before and during operations.  
 
 ## How Litmus is different from others
-Litmus is an overall project that incorporates pieces of a typical chaos engineering environment to deliver a more complete solution to Litmus users.
+Litmus is an umbrella project that incorporates different pieces of a typical chaos engineering environment to deliver a 
+complete solution to its users. Some of the core components include: 
 
-Also, Litmus incorporates some innovations in translating end-user stories directly into scenarios. Litmus accepts user stories in simple English text & converts them to logic.  Litmus translates each statement present in a user story into corresponding Kubernetes commands. This provides a transparent view to the users if any particular statement was executed successfully or resulted in failures.
+- [Litmus](https://github.com/litmuschaos/litmus): The actual execution framework & repository of ready/configurable chaos 
+  experiments (mostly written as ansible playbooks & executed as Kubernetes jobs). The jobs are often executed in CI pipelines 
+  as part of e2e (refer https://openebs.ci) 
 
-Additionally, test logic is packaged as dedicated containers which of course makes them portable across Kubernetes deployments. This containerization also helps to integrate these containers into CI/CD environments.
+- [Chaos-Operator](https://github.com/litmuschaos/chaos-operator): A Kubernetes Operator that watches & acts on custom 
+  resources defining litmus chaos experiment workflows. Typically used in deployment environments (dev/staging/pre-prod/prod) 
+  where chaos experiments can be scheduled & monitored against specific applications. 
 
-There are other aspects to Litmus which are discussed:
-- [litmus deep dive](docs/litmus_deep_dive.md)
-- [running test suite](docs/running_test_suite.md)
+- [Chaos-Exporter](https://github.com/litmuschaos/chaos-exporter): A Prometheus Exporter that exposes chaos metrics based 
+  on experiment results.
 
-## Demo: Minio Deployment Using OpenEBS as Persistent Storage
+The chaos experiments make use of facilitator containers in [test-tools](https://github.com/litmuschaos/test-tools) to 
+implement the chaos, load generation, logging and other utility functions. 
 
-<p align="center">
-<img width="100%" height="500" src="images/litmus.svg">
-</p>
+With Litmus, the test logic is packaged into dedicated containers which makes them portable across Kubernetes deployments. 
+This containerization also helps to integrate Litmus into CI/CD environments. 
 
-## Pre-Requisites for running a specific Test
+And as a developer friendly framework, it also provides helpful playbooks to quickly spin-up Kubernetes clusters on different 
+cloud & on-premise platforms on which to run the experiments! 
 
-Users have a Kubernetes environment with a given stateful workload and underlying storage and would like to test a specific scenario:
+For details on the architecture, implementation & reference usecases, please read the [litmus docs](https://docs.litmuschaos.io)
 
-- Ensure that the desired storage operators are actually available on a given Kubernetes cluster.
+## Getting Started
 
-- Clone the Litmus repo and set up a dedicated RBAC for Litmus.
+Litmus experiment jobs(also called Litmusbooks) run using a dedicated ServiceAccount in the Litmus namespace. Setup RBAC via 
+kubectl or helm, as shown below: 
+
+- kubectl: 
 
   ```
   git clone https://github.com/openebs/litmus.git
   cd litmus
   kubectl apply -f hack/rbac.yaml
+  kubectl apply -f hack/crds.yaml  
   ```
 
-- Create a configmap from the cluster's in-cluster-config (kubeconfig) file with the data placed in "admin.conf".
-Typically, this file is located at ~/.kube/config or /etc/kubernetes/admin.conf etc. depending on the type of cluster setup.
-To perform this step, copy the kubeconfig file into "admin.conf" (if it is named differently) and execute the following command:
+- helm: 
 
   ```
-  kubectl create configmap kubeconfig --from-file=<path/to/admin.conf> -n litmus
+  helm repo add https://litmuschaos.github.io/chaos-charts
+  helm install litmuschaos/litmusInfra --namespace=litmus
   ```
 
-- The tests are categorized based on application workloads, with different aspects/use-cases of the application
-constituting a separate test. Select a workload and follow the instructions under the corresponding
-`<workload>/<usecase>/README`.
+## Running an Experiment 
 
-  For example, to run a MySQL benchmarking test:
+Let's say, you'd like to test resiliency of a stateful application pod upon container crash
+
+- Locate the Experiment: Litmusbooks are typically placed in `experiments/<type>` folders. In this case, the corresponding
+  litmusbook is present at `experiments/chaos/app_pod_failure` 
+
+- Update the application (generally, the namespace and app labels) & chaos (if applicable) information passed as ENVs to 
+  the litmus job (`run_litmus_test.yml`). 
+
+- Run the litmusbook:
 
   ```
-  cd apps/percona/tests/mysql_storage_benchmark/
-  <Modify the PROVIDER_STORAGE_CLASS in run_litmus_test.yaml>
-  kubectl create -f run_litmus_test.yaml
+  kubectl create -f experiments/chaos/run_litmus_test.yml
   ```
+   
+## Get Experiment Results 
 
-  The above test runs a Kubernetes job that:
-  - Verifies that the StorageClass mentioned (default: OpenEBS) is loaded in the cluster
-  - Launches MySQL application with storage
-  - Runs a sample TPC-C benchmark against the MySQL application
-  - Provides the benchmark results
-  - Reverts system state/performs clean-up by removing deployments launched during the test
+Results are maintained in a custom resource (`litmusresult`) that bears the same name as the experiment. In this case,
+`application-pod-failure`. View the experiment status via:
 
-As the test ends, the logs of the various storage pods, including the test results of this Kubernetes job are
-collected and saved in a temporary location. The `run_litmus_test.yaml` can be customized for the location for
-saving the logs, type of storage (StorageClass) to be used, etc. This type of deployment test can be used to accelerate the feedback loop when deploying new pieces of a stack, whether underlying cloud or hardware, network, storage, or other.
+```
+kubectl describe lr application-pod-failure
+```
 
-- Notes:
+## Viewing Logs 
 
-  - To run the test, please ensure *kubectl create* is used as against *kubectl apply* as the test job uses the `generateName` API to autogenerate the
- job name. This is to ensure a re-run of the job w/o deleting the previous instance doesn't throw an error.
-
-  - To delete the job, use the `kubectl delete job <jobname>`. Deletion using *-f spec* can complain about non-matching name resources.
+Litmus pod (experiment-runner) console logs comprise of ansible playbbok run outputs & can be captured by any logging daemon
+(such as fluentd), with most reference implementations using it as part of a standard stack (EFK). However, you could also use 
+the stern-based [logger](https://github.com/litmuschaos/test-tools/tree/master/logger), either as a sidecar in the litmus job
+or a separate deployment to collect pod & system (kubelet) logs.
 
 ## Ways to Contribute
 
-Litmus is in *_alpha_* stage and needs all the help you can provide to have it cover the ever-growing Kubernetes landscape. Please contribute by raising issues, improving the documentation, contributing to the core framework and tooling, etc.
+Litmus is in *_alpha_* stage and needs all the help you can provide to have it cover the ever-growing Kubernetes landscape. 
+Please contribute by raising issues, improving the documentation, contributing to the core framework and tooling, etc.
 
-Another significant area of contribution is for you to describe your experiences/scenarios of running Stateful workloads in your Kubernetes Environment.  For example, you can describe feature or scenarios for a new workload or update the scenarios of existing workload as follows:
+Another significant area of contribution is for you to describe your experiences/scenarios of running different kind of 
+workloads (stateful & stateless) in your Kubernetes Environment.  For example, you can describe feature or failure (chaos) 
+scenarios for a new workload or update the scenarios of existing workload. An example template is provided below: 
 
 ```
 Feature: MySQL services are not affected due to node failures.
@@ -109,13 +128,12 @@ For more details on contributing, please refer to [CONTRIBUTING.md](./CONTRIBUTI
 
 Litmus makes use and extends several open source projects. Below are just some of the most commonly used projects.
 
-- [DATA-DOG/godog](https://github.com/DATA-DOG/godog)
 - [ansible](https://www.ansible.com/)
-- [linki/chaoskube](https://github.com/linki/chaoskube)
-- [alexei-led/pumba](https://github.com/alexei-led/pumba)
-- [wercker/stern](https://github.com/wercker/stern)
+- [chaoskube](https://github.com/linki/chaoskube)
+- [pumba](https://github.com/alexei-led/pumba)
+- [chaostoolkit](https://github.com/chaostoolkit/chaostoolkit)
 
-For a full list, please checkout the [tools](./tools) directory.
+For a full list, please checkout the [test-tools](https://github.com/litmuschaos/test-tools) repository.
 
 ## License
 
