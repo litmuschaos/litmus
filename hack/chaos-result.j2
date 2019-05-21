@@ -1,0 +1,13 @@
+---
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosResult
+metadata:
+  # name of the litmus testcase
+  name: {{ c_experiment }} 
+spec:
+  # holds the state of testcase,  manually updated by json merge patch
+  # result is the useful value today, but anticipate phase use in future 
+  experimentstatus: 
+    phase: {{ phase }}  
+    verdict: {{ verdict }} 
+

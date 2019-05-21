@@ -21,9 +21,18 @@
       retries: 30
       ignore_errors: true
 
+    - name: Select the app pod
+      shell: >
+        kubectl get pod -l {{ label }} -n {{ namespace }}
+        -o=custom-columns=NAME:".metadata.name" --no-headers
+        | shuf | head -1 
+      args:
+        executable: /bin/bash
+      register: app_pod_ut
+
     - name: Identify the application node
       shell: >
-        kubectl get pod {{ app_pod }} -n {{ namespace }}
+        kubectl get pod {{ app_pod_ut.stdout }} -n {{ namespace }}
         --no-headers -o custom-columns=:spec.nodeName
       args:
         executable: /bin/bash
@@ -59,7 +68,7 @@
 
     - name: Record restartCount
       shell: >
-        kubectl get pod {{ app_pod }} -n {{ namespace }}
+        kubectl get pod {{ app_pod_ut.stdout }} -n {{ namespace }}
         -o=jsonpath='{.status.containerStatuses[?(@.name=="{{ app_container }}")].restartCount}'
       args:
         executable: /bin/bash
@@ -76,7 +85,7 @@
 
     - name: Verify restartCount
       shell: >
-        kubectl get pod {{ app_pod }} -n {{ namespace }}
+        kubectl get pod {{ app_pod_ut.stdout }} -n {{ namespace }}
         -o=jsonpath='{.status.containerStatuses[?(@.name=="{{ app_container }}")].restartCount}'
       args:
         executable: /bin/bash
@@ -88,22 +97,40 @@
   when: action == "killapp"
 
 - block:
-    - name: Delete the pumba daemonset
-      shell: >
-        kubectl delete -f /chaoslib/pumba/pumba_kube.yaml -n {{ namespace }}
-      args:
-        executable: /bin/bash
-      register: result
 
-    - name: Confirm that the pumba ds is deleted successfully
+    - name: Check if pumba is indeed running
       shell: >
         kubectl get pod -l app=pumba
-        --no-headers -n {{ namespace }}
+        --no-headers -o custom-columns=:status.phase
+        -n {{ namespace }} | sort | uniq
       args:
         executable: /bin/bash
       register: result
-      until: "'Running' not in result.stdout"
+      until: "result.stdout == 'Running'"
       delay: 2
-      retries: 150
+      retries: 30
+      ignore_errors: true
+
+    - block: 
+
+        - name: Delete the pumba daemonset
+          shell: >
+            kubectl delete -f /chaoslib/pumba/pumba_kube.yaml -n {{ namespace }}
+          args:
+            executable: /bin/bash
+          register: result
+
+        - name: Confirm that the pumba ds is deleted successfully
+          shell: >
+            kubectl get pod -l app=pumba
+            --no-headers -n {{ namespace }}
+          args:
+            executable: /bin/bash
+          register: result
+          until: "'Running' not in result.stdout"
+          delay: 2
+          retries: 150
+
+      when: result.stdout == "Running"
 
   when: action == "deletepumba"

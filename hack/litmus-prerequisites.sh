@@ -21,6 +21,10 @@ echo "Applying the litmus RBAC.."
 kubectl apply -f rbac.yaml; retcode=$?
 error_handler $retcode msg="Unable to setup litmus RBAC, exiting" action="exit"
 
+echo "Applying the litmus(chaos) experiment result CRDs.."
+kubectl apply -f crds.yaml; retcode=$?
+error_handler $retcode msg="Unable to create result CRDs, exiting" action="exit"
+
 cp $answer admin.conf; retcode=$?
 error_handler $retcode msg="Unable to find the kubeconfig file, exiting" action="exit"
 
