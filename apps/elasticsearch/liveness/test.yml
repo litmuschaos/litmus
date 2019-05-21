@@ -42,8 +42,8 @@
             regexp: "liveness-timeout-seconds"
             replace: "{{ liveness_timeout }}"  
 
-        - name : Fetch app service name
-          shell: kubectl get svc -n {{ namespace }} -o jsonpath={.items[0].metadata.name}
+        - name : Getting the app service name
+          shell: kubectl get svc -n {{ namespace }} -l {{ app_label }} -o jsonpath={.items[0].metadata.name}
           register: name_of_service 
 
         - name: Getting the port 
