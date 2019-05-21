@@ -60,13 +60,13 @@
           shell: kubectl get endpoints -n {{ namespace }} -o jsonpath={.items[0].subsets[0].ports[0].port}
           register: port_no
 
-        - name: Replace the placeholder for service endpoint
+        - name: Replace the placeholder for service name 
           replace:
             path: "{{ elasticsearch_liveness }}"
             regexp: "service_name"
             replace: "{{ name_of_service.stdout }}"
 
-        - name: Replace the placeholder for service endpoint
+        - name: Replace the placeholder for port number
           replace:
             path: "{{ elasticsearch_liveness }}"
             regexp: "port"
