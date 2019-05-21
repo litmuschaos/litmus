@@ -47,8 +47,8 @@ For details on the architecture, implementation & reference usecases, please rea
 
 ## Getting Started
 
-Litmus experiment jobs(also called Litmusbooks) run using a dedicated ServiceAccount in the Litmus namespace. Setup RBAC via 
-kubectl or helm, as shown below: 
+Litmus experiment jobs(also called Litmusbooks) run using a dedicated ServiceAccount in the Litmus namespace. Setup RBAC & custom
+resource definitions (CRDs) via kubectl or helm, as shown below: 
 
 - kubectl: 
 
@@ -94,9 +94,9 @@ kubectl describe lr application-pod-failure
 ## Viewing Logs 
 
 Litmus pod (experiment-runner) console logs comprise of ansible playbbok run outputs & can be captured by any logging daemon
-(such as fluentd), with most reference implementations using it as part of a standard stack (EFK). However, you could also use 
-the stern-based [logger](https://github.com/litmuschaos/test-tools/tree/master/logger), either as a sidecar in the litmus job
-or a separate deployment to collect pod & system (kubelet) logs.
+(such as fluentd), with most reference implementations using it as part of a standard stack (Elasticsearch-Fluentd-Kibana). 
+However, you could also use the stern-based [logger](https://github.com/litmuschaos/test-tools/tree/master/logger), either as 
+a sidecar in the litmus job or a separate deployment to collect pod & system (kubelet) logs.
 
 ## Ways to Contribute
 
@@ -105,7 +105,7 @@ Please contribute by raising issues, improving the documentation, contributing t
 
 Another significant area of contribution is for you to describe your experiences/scenarios of running different kind of 
 workloads (stateful & stateless) in your Kubernetes Environment.  For example, you can describe feature or failure (chaos) 
-scenarios for a new workload or update the scenarios of existing workload. An example template is provided below: 
+scenarios for a new workload or update the scenarios of an existing workload. An example template is provided below: 
 
 ```
 Feature: MySQL services are not affected due to node failures.
@@ -126,7 +126,7 @@ For more details on contributing, please refer to [CONTRIBUTING.md](./CONTRIBUTI
 
 ## Reference Projects
 
-Litmus makes use and extends several open source projects. Below are just some of the most commonly used projects.
+Litmus makes use of and extends several open source projects. Below are just some of the commonly used projects.
 
 - [ansible](https://www.ansible.com/)
 - [chaoskube](https://github.com/linki/chaoskube)
@@ -137,4 +137,5 @@ For a full list, please checkout the [test-tools](https://github.com/litmuschaos
 
 ## License
 
-Litmus is licensed under the Apache License, Version 2.0. See [LICENSE](./LICENSE) for the full license text. Some of the projects used by the Litmus project may be governed by a different license, please refer to its specific license.
+Litmus is licensed under the Apache License, Version 2.0. See [LICENSE](./LICENSE) for the full license text. Some of 
+the projects used by the Litmus project may be governed by a different license, please refer to its specific license.
