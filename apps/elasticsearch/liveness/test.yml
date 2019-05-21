@@ -24,16 +24,6 @@
           vars:
             status: 'SOT'
 
-        - name: Getting the application pod name
-          shell: kubectl get po -n {{ namespace }} -l {{ app_label }} -o jsonpath={.items[0].metadata.name}
-          register: pod_name
-
-        - name: Replacing the placeholder for pod-name
-          replace:
-            path: "{{ elasticsearch_liveness }}"
-            regexp: "pod-name"
-            replace: "{{ pod_name.stdout }}"   
-
         - name: Replacing the placeholder for namespace
           replace:
             path: "{{ elasticsearch_liveness }}"

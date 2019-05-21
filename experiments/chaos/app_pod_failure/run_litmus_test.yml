@@ -22,10 +22,10 @@ spec:
             value: default
 
           - name: APP_NAMESPACE
-            value: app-jenkins-ns 
+            value: app-esearch-ns 
 
           - name: APP_LABEL
-            value: 'app=jenkins-app'
+            value: 'app=elasticsearch'
 
           - name: LIVENESS_APP_LABEL
             value: ""
@@ -34,7 +34,7 @@ spec:
             value: ""
 
           - name: DEPLOY_TYPE
-            value: deployment
+            value: statefulset
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/chaos/app_pod_failure/test.yml -i /etc/ansible/hosts -vv; exit 0"]

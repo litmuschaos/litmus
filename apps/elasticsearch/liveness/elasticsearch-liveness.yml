@@ -25,9 +25,6 @@ spec:
           - name: NAMESPACE
             value: app-namespace
                                      
-          - name: POD_NAME
-            value: pod-name
-
             # Service name of application
           - name: SERVICE
             value: "service_name"
