@@ -47,7 +47,7 @@
           register: name_of_service 
 
         - name: Getting the port 
-          shell: kubectl get endpoints -n {{ namespace }} -o jsonpath={.items[0].subsets[0].ports[0].port}
+          shell: kubectl get endpoints -n {{ namespace }} -l {{ app_label }} -o jsonpath={.items[0].subsets[0].ports[0].port}
           register: port_no
 
         - name: Replace the placeholder for service name 
