@@ -38,3 +38,4 @@ spec:
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/chaos/app_pod_failure/test.yml -i /etc/ansible/hosts -vv; exit 0"]
+
