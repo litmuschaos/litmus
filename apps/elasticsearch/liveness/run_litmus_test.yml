@@ -39,6 +39,9 @@ spec:
           - name: NAMESPACE
             value: app-esearch-ns 
 
+          - name: LIVENESS_LABEL
+            value: 'liveness=elasticsearch-liveness'  
+
           - name: APPLICATION_LABEL
             value: 'app=elasticsearch'
             

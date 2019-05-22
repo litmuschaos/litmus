@@ -66,7 +66,7 @@
           shell: kubectl create -f {{ elasticsearch_liveness }} -n {{ namespace }} 
 
         - name: Verifying whether liveness pod is started successfully  
-          shell: kubectl get pod -n {{ namespace }} -l liveness=elasticsearch-liveness -o jsonpath={.items[0].status.phase} 
+          shell: kubectl get pod -n {{ namespace }} -l {{ liveness_label }} -o jsonpath={.items[0].status.phase} 
           register: pod_status
           until: "'Running' in pod_status.stdout"
           delay: 60 
