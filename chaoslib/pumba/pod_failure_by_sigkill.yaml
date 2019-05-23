@@ -1,4 +1,6 @@
+--- 
 - block:
+
     - name: Setup pumba chaos infrastructure
       shell: >
         kubectl apply -f /chaoslib/pumba/pumba_kube.yaml
@@ -21,18 +23,32 @@
       retries: 30
       ignore_errors: true
 
-    - name: Select the app pod
-      shell: >
-        kubectl get pod -l {{ label }} -n {{ namespace }}
-        -o=custom-columns=NAME:".metadata.name" --no-headers
-        | shuf | head -1 
-      args:
-        executable: /bin/bash
-      register: app_pod_ut
+    - block:
+        - name: Select the app pod
+          shell: >
+            kubectl get pod -l {{ label }} -n {{ namespace }}
+            -o=custom-columns=NAME:".metadata.name" --no-headers
+            | shuf | head -1 
+          args:
+            executable: /bin/bash
+          register: pod_name
+
+        - name: Record application pod name
+          set_fact:
+            app_pod_ut: "{{ pod_name.stdout }}"     
+      when: app_pod is undefined
+
+    - block: 
+
+        - name: Record application pod name
+          set_fact: 
+            app_pod_ut: "{{ app_pod }}"
+
+      when: app_pod is defined 
 
     - name: Identify the application node
       shell: >
-        kubectl get pod {{ app_pod_ut.stdout }} -n {{ namespace }}
+        kubectl get pod {{ app_pod_ut }} -n {{ namespace }}
         --no-headers -o custom-columns=:spec.nodeName
       args:
         executable: /bin/bash
@@ -68,7 +84,7 @@
 
     - name: Record restartCount
       shell: >
-        kubectl get pod {{ app_pod_ut.stdout }} -n {{ namespace }}
+        kubectl get pod {{ app_pod_ut }} -n {{ namespace }}
         -o=jsonpath='{.status.containerStatuses[?(@.name=="{{ app_container }}")].restartCount}'
       args:
         executable: /bin/bash
@@ -85,7 +101,7 @@
 
     - name: Verify restartCount
       shell: >
-        kubectl get pod {{ app_pod_ut.stdout }} -n {{ namespace }}
+        kubectl get pod {{ app_pod_ut }} -n {{ namespace }}
         -o=jsonpath='{.status.containerStatuses[?(@.name=="{{ app_container }}")].restartCount}'
       args:
         executable: /bin/bash
