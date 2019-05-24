@@ -52,6 +52,7 @@
                 - openebs-jiva-standalone
                 - local-pv-hostpath
                 - cstor-performance-config
+                - jiva-openebs-ns
 
           when: lookup('env','ACTION') == 'create'
 
@@ -79,6 +80,8 @@
                 - local-pv-hostpath
                 - cstor-disk-standalone
                 - openebs-jiva-standalone
+                - cstor-performance-config                
+                - jiva-openebs-ns
 
           when: lookup('env','ACTION') == 'delete'
 

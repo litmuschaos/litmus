@@ -1,0 +1,6 @@
+---
+test_name: jiva-pods-openebs-ns
+
+app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+
+operator_ns: "{{ lookup('env','OPERATOR_NS') }}"

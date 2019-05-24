@@ -12,4 +12,4 @@ storage_policies:
   - jiva-standalone.yml
   - local-pv-hostpath.yml
   - cstor-perf-parameters.yml
-
+  - jiva-openebs-ns.yml
