@@ -1,0 +1,59 @@
+---
+#Description: Checking JIVA caontroller pod and Replica pods are scheduled on OpenEBS namespace.
+#
+########################################################################################
+#Steps:                                                                                #
+#1) Creating LitmusResult CR for updating test result.                                 #
+#2) Obtain the PVC name by using application label                                     #
+#3) Checking if the Application and Target scheduled on same node.                     #
+########################################################################################
+
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+          ## Generating the testname for deployment
+        - include_tasks: /utils/fcm/create_testname.yml
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: "/utils/fcm/update_litmus_result_resource.yml"
+          vars:
+            status: 'SOT'
+
+        - name: Obtain the pv name of the application.
+          shell: >
+            kubectl get pvc -n "{{ app_ns }}" -o custom-columns=:.spec.volumeName --no-headers
+          args:
+            executable: /bin/bash
+          register: pv_name
+
+        - name: Check if the pvc scheduled on operator namespace
+          shell: >
+            kubectl get pods --all-namespaces -l openebs.io/persistent-volume="{{ item }}"  
+            -o custom-columns=:.metadata.namespace --no-headers
+          args:
+            executable: /bin/bash
+          register: ctrl_rep_namespace
+          with_items:
+             - "{{ pv_name.stdout_lines }}"
+          until: "((ctrl_rep_namespace.stdout_lines|unique)|length) == 1 and operator_ns in ctrl_rep_namespace.stdout"
+          delay: 5
+          retries: 6
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - set_fact:
+            flag: "Fail"
+
+      always:
+           ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
