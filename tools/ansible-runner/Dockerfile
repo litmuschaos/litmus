@@ -10,7 +10,7 @@ RUN rm -rf /var/lib/apt/lists/* && \
     curl openssh-client
 
 #Installing ansible
-RUN pip install ansible
+RUN pip install ansible==2.7.3
 
 #Installing Kubectl
 ENV KUBE_LATEST_VERSION="v1.12.0"

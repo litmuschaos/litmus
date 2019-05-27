@@ -26,8 +26,8 @@
                 - name: Replace the affinity label annotation in statefulset yml
                   replace:
                     path: "{{ application_statefulset }}"
-                    regexp: "affinity_label: lvalue"
-                    replace: "{{ affinity_label }}: {{ app_lvalue }}"
+                    regexp: "affinity_label"
+                    replace: "{{ affinity_label }}"
 
                 - name: Replace the volume capcity placeholder with provider
                   replace:
@@ -60,8 +60,8 @@
                 - name: Replace the affinity label annotation in deployment yml
                   replace:
                     path: "{{ application_deployment }}"
-                    regexp: "affinity_label: lvalue"
-                    replace: "{{ affinity_label }}: {{ app_lvalue }}"
+                    regexp: "affinity_label"
+                    replace: "{{ affinity_label }}"
 
                 - name: Replace the volume capcity placeholder with provider
                   replace:
