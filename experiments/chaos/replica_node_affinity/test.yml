@@ -7,27 +7,19 @@
 
   tasks:
     - block:
-    
-        - name: Generate the litmus result CR to reflect SOT (Start of Test) 
-          template: 
-            src: /litmus-result.j2
-            dest: litmus-result.yaml
-          vars: 
-            test: "{{ test_name }}"
-            app: ""
-            chaostype: ""
-            phase: in-progress
-            verdict: none
-    
-        - name: Apply the litmus result CR
-          shell: kubectl apply -f litmus-result.yaml
-          args:
-            executable: /bin/bash
-          register: lr_status 
-          failed_when: "lr_status.rc != 0"
-          
+         
+        ## Create test name append with run_id 
+        - include_tasks: "/utils/fcm/create_testname.yml"
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: "/utils/fcm/update_litmus_result_resource.yml"
+          vars:
+            status: 'SOT'
+
         - name: Getting replica-pod name
-          shell: kubectl get pod -n {{ namespace }} -l openebs.io/replica=jiva-replica -o jsonpath='{.items[0].metadata.name}'
+          shell: >
+            kubectl get pod -n {{ namespace }} -l openebs.io/replica=jiva-replica 
+            -o jsonpath='{.items[0].metadata.name}'
           register: rep_pod
 
         - name: Checking the status of replica pod
@@ -42,7 +34,9 @@
           register: node
 
         - name: Obtaining the deployment name for the replica pod
-          shell: kubectl get deployments -n {{ namespace }} -l openebs.io/replica=jiva-replica -o jsonpath='{.items[0].metadata.name}'  
+          shell: >
+             kubectl get deployments -n {{ namespace }} -l openebs.io/replica=jiva-replica 
+             -o jsonpath='{.items[0].metadata.name}' 
           register: deployment_name
     
         - name: Checking the node affinity for replica-pod
@@ -53,7 +47,8 @@
               pod_label: "openebs.io/replica=jiva-replica"
 
         - name: Checking the status of replica-pod
-          shell: kubectl get pod {{ new_pod_name.stdout }} -n {{ namespace }} -o jsonpath='{.status.phase}'
+          shell: >
+             kubectl get pod {{ new_pod_name.stdout }} -n {{ namespace }} -o jsonpath='{.status.phase}'
           until: "'Running' in status.stdout"
           delay: 30
           retries: 10      
@@ -66,26 +61,11 @@
             flag: "Fail"           
   
       always:    
-
-        - name: Uncordon node                          #This Task is added inside always because if it the fails node will be available for scheduling.
+          #This Task is added inside always because if it the fails node will be available for scheduling
+        - name: Uncordon node                          
           shell: kubectl uncordon {{ node_name.stdout }}
          
-        - name: Generate the litmus result CR to reflect EOT (End of Test) 
-          template: 
-            src: /litmus-result.j2
-            dest: litmus-result.yaml
-          vars: 
-            test: "{{ test_name }}"
-            app: ""
-            chaostype: ""
-            phase: completed
-            verdict: "{{ flag }}"
-             
-        - name: Apply the litmus result CR
-          shell: kubectl apply -f litmus-result.yaml
-          args:
-            executable: /bin/bash
-          register: lr_status
-          failed_when: "lr_status.rc != 0" 
-
-         
+          ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: "/utils/fcm/update_litmus_result_resource.yml"
+          vars:
+            status: 'EOT' 
