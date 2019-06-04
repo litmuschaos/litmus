@@ -34,18 +34,7 @@
                  regexp: "affinity_label"
                  replace: "{{ affinity_label }}"
              
-            - name: Get the application label values from env
-              set_fact:
-                 app_lkey: "{{ app_label.split('=')[0] }}"
-                 app_lvalue: "{{ app_label.split('=')[1] }}"
-
-            - name: Replace the application label placeholder in deployment spec
-              replace:
-                 path: "{{ application_deployment }}"
-                 regexp: "lvalue"
-                 replace: "{{ app_lvalue }}"   
-                 
-         ## Deploying the application
+             ## Deploying the application
             - include_tasks: /utils/k8s/deploy_single_app.yml
               vars:
                 check_app_pod: 'yes'

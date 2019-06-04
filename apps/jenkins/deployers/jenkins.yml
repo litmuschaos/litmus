@@ -4,14 +4,14 @@ metadata:
   name: jenkins
   labels:
     lkey: lvalue
-    affinity_label: lvalue
+    affinity_label: jenkins
 spec:
   replicas: 1
   template:
     metadata:
       labels:
         lkey: lvalue
-        affinity_label: lvalue
+        affinity_label: jenkins
     spec:
       securityContext:
          fsGroup: 1000
@@ -34,7 +34,7 @@ apiVersion: v1
 metadata:
   name: testclaim
   labels:
-    affinity_label: lvalue
+    affinity_label: jenkins
 spec:
   storageClassName: testclass
   accessModes:
