@@ -25,12 +25,12 @@ spec:
   selector:
     matchLabels:
       lkey: lvalue
-      affinity_label: lvalue
+      affinity_label: cassandra
   template:
     metadata:
       labels:
         lkey: lvalue
-        affinity_label: lvalue
+        affinity_label: cassandra
     spec:
       containers:
       - name: cassandra
