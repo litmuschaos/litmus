@@ -38,7 +38,13 @@
               replace:
                  path: "{{ application_rbac }}"
                  regexp: "nsvalue"
-                 replace: "{{ lookup('env','APP_NAMESPACE') }}"     
+                 replace: "{{ lookup('env','APP_NAMESPACE') }}"  
+
+            - name: Replace the affinity label annotation in statefulset yml
+              replace:
+                 path: "{{ application_deployment }}"
+                 regexp: "affinity_label"
+                 replace: "{{ affinity_label }}"   
 
             - name: Deploying {{ application_name }} rbac.
               shell: kubectl apply -f {{ application_rbac }}

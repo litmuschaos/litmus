@@ -28,10 +28,14 @@ spec:
   selector:
     matchLabels:
       lkey: lvalue
+      #The Label "openebs.io/replica-anti-affinity" 
+      #needs to be added in order to distribute volume replicas.
+      affinity_label: elasticsearch-logging
   template:
     metadata:
       labels:
         lkey: lvalue
+        affinity_label: elasticsearch-logging
         role: elasticsearch
     spec:
       securityContext:

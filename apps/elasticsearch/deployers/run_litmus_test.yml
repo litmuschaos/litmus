@@ -37,6 +37,10 @@ spec:
           - name: APP_LABEL
             value: 'app=elasticsearch'
 
+           # Affinity Label for Application
+          - name: AFFINITY_LABEL
+            value: openebs.io/sts-target-affinity
+
             # Application namespace
           - name: APP_NAMESPACE
             value: app-esearch-ns 
