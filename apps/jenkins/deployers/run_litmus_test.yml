@@ -33,7 +33,7 @@ spec:
 
             # Application label
           - name: APP_LABEL
-            value: 'app=jenkins-app'
+            value: 'app=jenkins'
 
             # Affinity Label for Application
           - name: AFFINITY_LABEL
