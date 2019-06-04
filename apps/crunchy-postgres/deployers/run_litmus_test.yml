@@ -35,6 +35,10 @@ spec:
           - name: APP_LABEL
             value: 'app=pgset'
 
+            # Affinity Label for Application
+          - name: AFFINITY_LABEL
+            value: openebs.io/sts-target-affinity
+
             # Application namespace
           - name: APP_NAMESPACE
             value: app-pgres-ns
@@ -45,6 +49,10 @@ spec:
             # Use 'deprovision' for app-clean up
           - name: ACTION
             value: provision
+
+            # define a variable CAPACITY to accept the size given by user
+          - name: CAPACITY
+            value: 5G 
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./apps/crunchy-postgres/deployers/test.yml -i /etc/ansible/hosts -v; exit 0"]

@@ -15,12 +15,25 @@
         - include_tasks: /utils/fcm/update_litmus_result_resource.yml
           vars:
             status: 'SOT'
-
+          
+         
         - block:
 
          ## Actual test
          ## Creating namespaces and making the application for deployment
             - include_tasks: /utils/k8s/pre_create_app_deploy.yml
+            
+            - name: Replace the storage capacity placeholder
+              replace:
+                 path: "{{ application_deployment }}"
+                 regexp: "volume-capacity"
+                 replace: "{{ capacity }}" 
+
+            - name: Replace the affinity label annotation in statefulset yml
+              replace:
+                 path: "{{ application_deployment }}"
+                 regexp: "affinity_label"
+                 replace: "{{ affinity_label }}"
 
          ## Deploying the application
             - include_tasks: /utils/k8s/deploy_single_app.yml
@@ -34,8 +47,8 @@
               args:
                 executable: /bin/bash
               register: result_service
-              failed_when: "'pgset-primary' and 'pgset-replica' not in result_service.stdout"
-
+              failed_when: "'pgset-primary' and 'pgset-replica' not in result_service.stdout"        
+       
           when: "'deprovision' not in action"
 
         - block:
