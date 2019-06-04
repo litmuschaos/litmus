@@ -25,12 +25,10 @@ spec:
   selector:
     matchLabels:
       lkey: lvalue
-      affinity_label: lvalue
   template:
     metadata:
       labels:
         lkey: lvalue
-        affinity_label: lvalue
     spec:
       containers:
       - name: cassandra
@@ -100,6 +98,6 @@ spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-          storage: volume-capacity
+          storage: 5G
 
 

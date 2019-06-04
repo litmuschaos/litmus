@@ -16,31 +16,8 @@
           vars:
             status: 'SOT'
 
-        - name: Replace the storage capacity placeholder
-          replace:
-             path: "{{ application_deployment }}"
-             regexp: "volume-capacity"
-             replace: "{{ lookup('env','CAPACITY') }}" 
-
-        - name: Replace the affinity label annotation in statefulset yml
-          replace:
-             path: "{{ application_deployment }}"
-             regexp: "affinity_label"
-             replace: "{{ affinity_label }}"
-
-        - name: Get the application label values from env
-          set_fact:
-             app_lkey: "{{ app_label.split('=')[0] }}"
-             app_lvalue: "{{ app_label.split('=')[1] }}"
-
-        - name: Replace the application label placeholder in deployment spec
-          replace:
-             path: "{{ application_deployment }}"
-             regexp: "lvalue"
-             replace: "{{ app_lvalue }}"
-
-
         - block:
+
          ## Actual test
          ## Creating namespaces and making the application for deployment
             - include_tasks: /utils/k8s/pre_create_app_deploy.yml
@@ -51,7 +28,7 @@
                 regexp: 'cassandra-0.cassandra.default.svc.cluster.local'
                 replace: 'cassandra-0.cassandra.{{ app_ns }}.svc.cluster.local'
 
-             ## Deploying the application
+         ## Deploying the application
             - include_tasks: /utils/k8s/deploy_single_app.yml
               vars:
                 check_app_pod: 'no'

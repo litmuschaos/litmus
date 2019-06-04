@@ -36,10 +36,6 @@ spec:
           - name: APP_LABEL
             value: 'app=cassandra'
 
-            # Affinity Label for Application
-          - name: AFFINITY_LABEL
-            value: openebs.io/sts-target-affinity
-
             # Application namespace
           - name: APP_NAMESPACE
             value: app-cass-ns 
@@ -53,9 +49,6 @@ spec:
           # Use 'deprovision' for app-clean up
           - name: ACTION
             value: provision
-
-          - name: CAPACITY
-            value: 5G
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./apps/cassandra/deployers/test.yml -i /etc/ansible/hosts -v; exit 0"]
