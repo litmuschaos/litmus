@@ -69,14 +69,14 @@
           retries: 15
           delay: 2
 
-        - name: Check the application pod status
-          shell: >
-              kubectl get pods -n {{ app_ns }} -l {{ app_label }} 
-              -o custom-columns=:.status.containerStatuses[].state.waiting.reason --no-headers
-          args: 
-            executable: /bin/bash
-          register: app_status
-          failed_when: "app_status.stdout not in 'CrashLoopBackOff'"   
+        # - name: Check the application pod status
+        #   shell: >
+        #       kubectl get pods -n {{ app_ns }} -l {{ app_label }} 
+        #       -o custom-columns=:.status.containerStatuses[].state.waiting.reason --no-headers
+        #   args: 
+        #     executable: /bin/bash
+        #   register: app_status
+        #   failed_when: "app_status.stdout not in 'CrashLoopBackOff'"   
          
           ###############################################################
           #  TODO:                                                      #
