@@ -8,26 +8,39 @@
   tasks:
     - block:
 
-        ## Generating the testname for deployment
+          ## Generating the testname for deployment
         - include_tasks: /utils/fcm/create_testname.yml
 
          ## RECORD START-OF-TEST IN LITMUS RESULT CR
         - include_tasks: /utils/fcm/update_litmus_result_resource.yml
           vars:
-            status: 'SOT'
+            status: 'SOT'    
+
         - block:
 
          ## Actual test
          ## Creating namespaces and making the application for deployment
             - include_tasks: /utils/k8s/pre_create_app_deploy.yml
 
-         ## Deploying the application
+            - name: Replace the storage capacity placeholder
+              replace:
+                 path: "{{ application_deployment }}"
+                 regexp: "volume-capacity"
+                 replace: "{{ capacity }}" 
+
+            - name: Replace the affinity label annotation in statefulset yml
+              replace:
+                 path: "{{ application_deployment }}"
+                 regexp: "affinity_label"
+                 replace: "{{ affinity_label }}"
+             
+             ## Deploying the application
             - include_tasks: /utils/k8s/deploy_single_app.yml
               vars:
                 check_app_pod: 'yes'
                 delay: 10
                 retries: 100
-
+          
           when: "'deprovision' not in action"
 
         - block:

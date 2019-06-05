@@ -33,7 +33,11 @@ spec:
 
             # Application label
           - name: APP_LABEL
-            value: 'app=jenkins-app'
+            value: 'app=jenkins'
+
+            # Affinity Label for Application
+          - name: AFFINITY_LABEL
+            value: openebs.io/target-affinity
 
             # Application namespace
           - name: APP_NAMESPACE
@@ -42,6 +46,10 @@ spec:
             # Use 'deprovision' for app-clean up
           - name: ACTION
             value: provision
+           
+            # define a variable CAPACITY to accept the size given by user
+          - name: CAPACITY
+            value: 5G
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./apps/jenkins/deployers/test.yml -i /etc/ansible/hosts -v; exit 0"]
