@@ -63,4 +63,4 @@ spec:
        - ReadWriteOnce
      resources:
        requests:
-         storage: 5G
+         storage: volume-capacity

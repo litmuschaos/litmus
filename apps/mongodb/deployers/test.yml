@@ -20,14 +20,20 @@
 
          ## Actual test
          ## Creating namespaces and making the application for deployment
-            - include_tasks: /utils/k8s/pre_create_app_deploy.yml
+            - include_tasks: /utils/k8s/pre_create_app_deploy.yml 
+
+            - name: Replace the storage capacity placeholder
+              replace:
+                 path: "{{ application_deployment }}"
+                 regexp: "volume-capacity"
+                 replace: "{{ capacity }}"  
 
          ## Deploying the application
             - include_tasks: /utils/k8s/deploy_single_app.yml
               vars:
                 check_app_pod: 'no'
                 delay: 10
-                retries: 20
+                retries: 20        
 
           when: "'deprovision' not in action"
 
