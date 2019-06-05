@@ -65,6 +65,7 @@ spec:
     metadata:
       labels:
         lkey: lvalue
+        affinity_label: pgset
     spec:
       securityContext:
         fsGroup: 26
@@ -108,4 +109,4 @@ spec:
       storageClassName: testclass
       resources:
         requests:
-          storage: 5G
+          storage: volume-capacity
