@@ -19,7 +19,7 @@ metadata:
  name: mongo
  labels: 
    lkey: lvalue
-   openebs.io/target-affinity: mongo 
+   openebs.io/sts-target-affinity: mongo  #to schedule application pod and target pod on same node, use the label sts-target-affinity
 spec:
  serviceName: "mongo"
  replicas: 2
@@ -28,7 +28,7 @@ spec:
      labels:
        lkey: lvalue
        role: mongo
-       openebs.io/target-affinity: mongo
+       openebs.io/sts-target-affinity: mongo #to schedule application pod and target pod on same node, use the label sts-target-affinity
        environment: test
    spec:
      terminationGracePeriodSeconds: 10
@@ -56,11 +56,11 @@ spec:
  - metadata:
      name: testclaim
      labels: 
-       openebs.io/target-affinity: mongo
+       openebs.io/sts-target-affinity: mongo
    spec:
      storageClassName: testclass
      accessModes:
        - ReadWriteOnce
      resources:
        requests:
-         storage: 5G
+         storage: volume-capacity
