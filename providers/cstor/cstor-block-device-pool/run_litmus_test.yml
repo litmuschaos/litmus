@@ -1,0 +1,42 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: cstor-block-device-pool-provision-
+  namespace: litmus
+spec:
+  template:
+    metadata:
+      name: litmus
+      labels:
+        app: cstor-block-device-pool-provision
+
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: openebs/ansible-runner:ci
+        imagePullPolicy: Always
+
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            #value: log_plays, actionable, default
+            value: default
+
+            # Provide name POOL_NAME for the cstor-pool
+          - name: POOL_NAME
+            value: cstor-block-disk-pool
+
+          - name: OPERATOR_NS
+            value: openebs
+
+          - name: NODE_LABEL
+            value: "node-role.kubernetes.io/compute=true"
+
+          - name: DEVICE_CAPACITY
+            value: "20Gi"
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./providers/cstor/cstor-block-device-pool/test.yml -i /etc/ansible/hosts -v; exit 0"]
+
