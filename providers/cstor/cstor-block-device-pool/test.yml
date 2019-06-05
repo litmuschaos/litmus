@@ -17,7 +17,7 @@
             status: 'SOT'
 
         - name: Getting the compute node name
-          shell: kubectl get nodes -l node-role.kubernetes.io/compute=true -o jsonpath='{.items[*].metadata.name}' | tr " " "\n"
+          shell: kubectl get nodes -l {{ node_label }} -o jsonpath='{.items[*].metadata.name}' | tr " " "\n"
           register: nodes
 
         - name: Getting the Unclaimed block-device from each node

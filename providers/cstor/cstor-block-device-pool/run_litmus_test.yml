@@ -31,6 +31,9 @@ spec:
           - name: OPERATOR_NS
             value: openebs
 
+          - name: NODE_LABEL
+            value: "node-role.kubernetes.io/compute=true"
+
           - name: DEVICE_CAPACITY
             value: "20Gi"
 

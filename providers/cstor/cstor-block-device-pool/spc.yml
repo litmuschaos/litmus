@@ -9,3 +9,23 @@ spec:
     poolType: striped
   blockDevices:
     blockDeviceList:
+
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: openebs-cstor-disk
+  annotations:
+    openebs.io/cas-type: cstor
+    cas.openebs.io/config: |
+      - name: StoragePoolClaim
+        value: pool-name
+      - name: ReplicaCount
+        value: "3"
+#      - name: VolumeControllerImage
+#        value: openebs/cstor-volume-mgmt:{{ cstor_image }}
+#      - name: VolumeTargetImage
+#        value: openebs/cstor-istgt:{{ cstor_image }}
+#      - name: VolumeMonitorImage
+#        value: openebs/m-exporter:{{ cstor_image }}
+provisioner: openebs.io/provisioner-iscsi
