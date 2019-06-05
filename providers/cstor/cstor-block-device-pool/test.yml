@@ -1,0 +1,109 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+      ## Generating the testname for deployment
+        - include_tasks: /utils/fcm/create_testname.yml
+
+         ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: "/utils/fcm/update_litmus_result_resource.yml"
+          vars:
+            status: 'SOT'
+
+        - name: Getting the compute node name
+          shell: kubectl get nodes -l node-role.kubernetes.io/compute=true -o jsonpath='{.items[*].metadata.name}' | tr " " "\n"
+          register: nodes
+
+        - name: Getting the Unclaimed block-device from each node
+          shell: kubectl get blockdevice -n openebs -l kubernetes.io/hostname={{ item }} -o jsonpath='{.items[?(@.status.claimState=="Unclaimed")].metadata.name}' | tr " " "\n" | grep -v sparse | head -n 1
+          register: blockDevice
+          with_items: "{{ nodes.stdout_lines }}"
+
+        - set_fact:
+             device_count: "{{ blockDevice|length}}"
+
+        - name: Fetching and Replacing device capacity from ENV
+          replace:
+            path: ./block_device_claim.yml
+            regexp: "device-capacity"
+            replace: "{{ device_capacity }}"
+
+        - name: Creating Block-Device-Claim
+          shell: |
+            cat ./block_device_claim.yml > tmp_block_device_claim.yml
+            sed -i -e 's/device-name/{{item.1.stdout}}/g' -e 's/host-name/{{item.0}}/g' ./tmp_block_device_claim.yml
+            kubectl apply -f tmp_block_device_claim.yml
+            rm ./tmp_block_device_claim.yml
+          with_together: 
+            - "{{ nodes.stdout_lines }}"
+            - "{{ blockDevice.results }}" 
+
+        - name: Adding discovered block device into SPC spec
+          lineinfile:
+            path: "./spc.yml"
+            insertafter: 'blockDeviceList:'
+            line: '    - {{ item.stdout }}'
+          with_items: "{{ blockDevice.results }}"
+
+        - name: Replacing the pool name in SPC spec
+          replace:
+            path: ./spc.yml
+            regexp: "pool-name"
+            replace: "{{ pool_name }}"
+
+        - name: Create cstor disk pool
+          shell: kubectl apply -f spc.yml
+          args:
+            executable: /bin/bash
+
+        - name: Verify if cStor Disk Pool are Running
+          shell: >
+             kubectl get pods -n {{ operator_ns }} -l openebs.io/storage-pool-claim={{ pool_name }}
+             --no-headers -o custom-columns=:status.phase
+          args:
+            executable: /bin/bash
+          register: pool_count
+          until: "((pool_count.stdout_lines|unique)|length) == 1 and 'Running' in pool_count.stdout"
+          retries: 30
+          delay: 10
+
+        - name: Get cStor Disk Pool names to verify the container statuses
+          shell: >
+            kubectl get pods -n {{ operator_ns }} -l openebs.io/storage-pool-claim={{ pool_name }}
+            --no-headers -o=custom-columns=NAME:".metadata.name"
+          args:
+            executable: /bin/bash
+          register: cstor_pool_pod
+
+        - name: Get the runningStatus of pool pod
+          shell: >
+            kubectl get pod {{ item }} -n {{ operator_ns }}
+            -o=jsonpath='{range .status.containerStatuses[*]}{.state}{"\n"}{end}' |
+            grep -w running | wc -l
+          args:
+            executable: /bin/bash
+          register: runningStatusCount
+          with_items: "{{ cstor_pool_pod.stdout_lines }}"
+          until: "runningStatusCount.stdout == device_count"
+          delay: 30
+          retries: 10
+
+        - set_fact:
+            flag: "Pass"
+    
+      rescue:
+          - set_fact:
+              flag: "Fail"
+  
+      always:
+              ## RECORD END-OF-TEST IN LITMUS RESULT CR
+          - include_tasks: /utils/fcm/update_litmus_result_resource.yml
+            vars:
+              status: 'EOT'  
+        

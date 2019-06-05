@@ -1,0 +1,11 @@
+apiVersion: openebs.io/v1alpha1
+kind: StoragePoolClaim
+metadata:
+  name: pool-name
+spec:
+  name: pool-name
+  type: blockdevice
+  poolSpec:
+    poolType: striped
+  blockDevices:
+    blockDeviceList:

@@ -1,0 +1,7 @@
+# Test-specific parametres
+device_capacity: "{{ lookup('env', 'DEVICE_CAPACITY') }}"
+pool_name: cstor-block-disk
+operator_ns: "{{ lookup('env','OPERATOR_NS') }}"
+test_name: cstor-block-device-pool-provision
+pool_name: "{{ lookup('env','POOL_NAME') }}"
+
