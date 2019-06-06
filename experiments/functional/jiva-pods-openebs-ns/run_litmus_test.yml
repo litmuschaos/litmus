@@ -27,9 +27,32 @@ spec:
           - name: APP_NAMESPACE
             value: app-busybox-ns
 
+          - name: PROVIDER_STORAGE_CLASS
+            value: jiva-openebs-ns
+
+            # Application pvc
+          - name: APP_PVC
+            value: openebs-busybox
+
+          - name: APP_LABEL
+            value: 'app=busybox-sts'
+
+            # Use 'deployment'  for Busybox deployment application
+            # Use 'statefulset' for Busybox statefulset application
+          - name: DEPLOY_TYPE
+            value: deployment
+
+          - name: PV_CAPACITY
+            value: 5G
+
+            # Use 'deprovision' for app-clean up
+          - name: ACTION
+            value: provision
+
             #Target namespace
           - name: OPERATOR_NS
             value: openebs
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/functional/jiva-pods-openebs-ns/test.yml -i /etc/ansible/hosts -vv; exit 0"]
+                                                                                                                                                                      

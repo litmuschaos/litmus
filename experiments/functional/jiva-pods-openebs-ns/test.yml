@@ -24,6 +24,33 @@
         - include_tasks: "/utils/fcm/update_litmus_result_resource.yml"
           vars:
             status: 'SOT'
+        
+        - block:
+            - block:
+                  ## Creating namespaces and making the application for deployment
+                - include_tasks: /utils/k8s/pre_create_app_deploy.yml
+
+                - name: Replace the volume capcity placeholder with provider
+                  replace:
+                    path: "{{ application_deployment }}"
+                    regexp: "teststorage"
+                    replace: "{{ lookup('env','PV_CAPACITY') }}"
+
+                  ## Deploying the application
+                - include_tasks: /utils/k8s/deploy_single_app.yml
+                  vars:
+                    check_app_pod: 'yes'
+                    delay: 10
+                    retries: 20
+              when: "'deprovision' not in action"
+
+            - name: Deprovisioning the Application
+              include_tasks: "/utils/k8s/deprovision_deployment.yml"
+              vars:
+                app_deployer: "{{ application_deployment }}"
+              when: "'deprovision' is in action"
+
+          when: lookup('env','DEPLOY_TYPE') == 'deployment'
 
         - name: Obtain the pv name of the application.
           shell: >
