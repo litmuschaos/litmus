@@ -1,0 +1,44 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: rogue-busybox
+  labels:
+    app: rogue-busybox 
+    affinity_label: rogue-busybox
+spec:
+  template:
+    metadata:
+      labels:
+        app: rogue-busybox
+        affinity_label: rogue-busybox
+    spec:
+      containers:
+      - name: rogue-busybox
+        imagePullPolicy: IfNotPresent
+        image: busybox
+        command: ["/bin/sh"]
+        args: ["-c", "while true; do sleep 10;done"]
+        env:
+        volumeMounts:
+        - name: data-vol
+          mountPath: /busybox
+      volumes:
+      - name: data-vol
+        persistentVolumeClaim:
+          claimName: testclaim
+      nodeSelector:
+        kubernetes.io/hostname: k8shostname
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: testclaim
+  labels:
+    affinity_label: rogue-busybox
+spec:
+  storageClassName: k8sstorageclass
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10G

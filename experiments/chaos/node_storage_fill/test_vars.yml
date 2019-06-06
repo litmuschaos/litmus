@@ -1,0 +1,15 @@
+---
+#Test-specific parameters
+
+test_name: node-storage-filler
+
+app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+
+app_label: "{{ lookup('env','APP_LABEL') }}"
+
+spc: "{{ lookup('env','SPC_NAME') }}"
+
+operator_ns: openebs
+
+storage_class: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+
