@@ -40,33 +40,33 @@
                 check_app_pod: 'yes'
                 delay: 10
                 retries: 20
+
+            - name: Obtain the pv name of the application.
+              shell: >
+                kubectl get pvc -n "{{ app_ns }}" -o custom-columns=:.spec.volumeName --no-headers
+              args:
+                executable: /bin/bash
+              register: pv_name
+
+            - name: Check if the pvc scheduled on operator namespace
+              shell: >
+                kubectl get pods --all-namespaces -l openebs.io/persistent-volume="{{ item }}"  
+                -o custom-columns=:.metadata.namespace --no-headers
+              args:
+                executable: /bin/bash
+              register: ctrl_rep_namespace
+              with_items:
+                 - "{{ pv_name.stdout_lines }}"
+              until: "((ctrl_rep_namespace.stdout_lines|unique)|length) == 1 and operator_ns in ctrl_rep_namespace.stdout"
+              delay: 5
+              retries: 6              
           when: "'deprovision' not in action"
 
         - name: Deprovisioning the Application
           include_tasks: "/utils/k8s/deprovision_deployment.yml"
           vars:
             app_deployer: "{{ application_deployment }}"
-          when: "'deprovision' is in action"
-
-        - name: Obtain the pv name of the application.
-          shell: >
-            kubectl get pvc -n "{{ app_ns }}" -o custom-columns=:.spec.volumeName --no-headers
-          args:
-            executable: /bin/bash
-          register: pv_name
-
-        - name: Check if the pvc scheduled on operator namespace
-          shell: >
-            kubectl get pods --all-namespaces -l openebs.io/persistent-volume="{{ item }}"  
-            -o custom-columns=:.metadata.namespace --no-headers
-          args:
-            executable: /bin/bash
-          register: ctrl_rep_namespace
-          with_items:
-             - "{{ pv_name.stdout_lines }}"
-          until: "((ctrl_rep_namespace.stdout_lines|unique)|length) == 1 and operator_ns in ctrl_rep_namespace.stdout"
-          delay: 5
-          retries: 6
+          when: "'deprovision' is in action"      
 
         - set_fact:
             flag: "Pass"
