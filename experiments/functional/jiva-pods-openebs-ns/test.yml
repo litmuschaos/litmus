@@ -16,7 +16,6 @@
 
   tasks:
     - block:
-
           ## Generating the testname for deployment
         - include_tasks: /utils/fcm/create_testname.yml
 
