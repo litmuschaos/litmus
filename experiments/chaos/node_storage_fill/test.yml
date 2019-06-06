@@ -24,7 +24,6 @@
             msg: 
               - "The application info is as follows:"
               - "Namespace    : {{ app_ns }}"
-              - "Label        : {{ app_label }}"
               - "Storage pool claim : {{ spc }}"  
   
         - name: Obtaining the CSP name using SPC label and randomly picking one

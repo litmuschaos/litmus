@@ -5,8 +5,6 @@ test_name: node-storage-filler
 
 app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
 
-app_label: "{{ lookup('env','APP_LABEL') }}"
-
 spc: "{{ lookup('env','SPC_NAME') }}"
 
 operator_ns: openebs
