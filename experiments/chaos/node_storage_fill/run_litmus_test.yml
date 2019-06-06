@@ -12,9 +12,18 @@ spec:
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
+      #nodeSelector:
+      #  kubernetes.io/hostname:
+
+      tolerations:
+      - key: "infra-aid"
+        operator: "Equal"
+        value: "observer"
+        effect: "NoSchedule"
       containers:
       - name: ansibletest
         image: openebs/ansible-runner:ci
+        imagePullPolicy: Always
         env:
           - name: ANSIBLE_STDOUT_CALLBACK
             #value: log_plays
