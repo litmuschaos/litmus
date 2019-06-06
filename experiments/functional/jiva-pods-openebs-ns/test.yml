@@ -24,13 +24,12 @@
         - include_tasks: "/utils/fcm/update_litmus_result_resource.yml"
           vars:
             status: 'SOT'
-        
-      
+           
         - block:
               ## Creating namespaces and making the application for deployment
             - include_tasks: /utils/k8s/pre_create_app_deploy.yml
 
-            - name: Replace the volume capcity placeholder with provider
+            - name: Replace the volume capacity placeholder with provider
               replace:
                  path: "{{ application_deployment }}"
                  regexp: "teststorage"
