@@ -37,11 +37,6 @@ spec:
           - name: APP_LABEL
             value: 'app=busybox-sts'
 
-            # Use 'deployment'  for Busybox deployment application
-            # Use 'statefulset' for Busybox statefulset application
-          - name: DEPLOY_TYPE
-            value: deployment
-
           - name: PV_CAPACITY
             value: 5G
 
