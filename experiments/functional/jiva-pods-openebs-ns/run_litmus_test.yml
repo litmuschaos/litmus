@@ -25,7 +25,24 @@ spec:
 
             # Application namespace
           - name: APP_NAMESPACE
-            value: app-busybox-ns
+            value: jiva-openebs-ns
+
+          - name: PROVIDER_STORAGE_CLASS
+            value: jiva-openebs-ns
+
+            # Application pvc
+          - name: APP_PVC
+            value: openebs-busybox
+
+          - name: APP_LABEL
+            value: 'app=busybox-jiva'
+
+          - name: PV_CAPACITY
+            value: 5G
+
+            # Use 'deprovision' for app-clean up
+          - name: ACTION
+            value: provision
 
             #Target namespace
           - name: OPERATOR_NS

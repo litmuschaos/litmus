@@ -16,7 +16,6 @@
 
   tasks:
     - block:
-
           ## Generating the testname for deployment
         - include_tasks: /utils/fcm/create_testname.yml
 
@@ -24,26 +23,50 @@
         - include_tasks: "/utils/fcm/update_litmus_result_resource.yml"
           vars:
             status: 'SOT'
+           
+        - block:
+              ## Creating namespaces and making the application for deployment
+            - include_tasks: /utils/k8s/pre_create_app_deploy.yml
 
-        - name: Obtain the pv name of the application.
-          shell: >
-            kubectl get pvc -n "{{ app_ns }}" -o custom-columns=:.spec.volumeName --no-headers
-          args:
-            executable: /bin/bash
-          register: pv_name
+            - name: Replace the volume capacity placeholder with provider
+              replace:
+                 path: "{{ application_deployment }}"
+                 regexp: "teststorage"
+                 replace: "{{ lookup('env','PV_CAPACITY') }}"
 
-        - name: Check if the pvc scheduled on operator namespace
-          shell: >
-            kubectl get pods --all-namespaces -l openebs.io/persistent-volume="{{ item }}"  
-            -o custom-columns=:.metadata.namespace --no-headers
-          args:
-            executable: /bin/bash
-          register: ctrl_rep_namespace
-          with_items:
-             - "{{ pv_name.stdout_lines }}"
-          until: "((ctrl_rep_namespace.stdout_lines|unique)|length) == 1 and operator_ns in ctrl_rep_namespace.stdout"
-          delay: 5
-          retries: 6
+              ## Deploying the application
+            - include_tasks: /utils/k8s/deploy_single_app.yml
+              vars:
+                check_app_pod: 'yes'
+                delay: 10
+                retries: 20
+
+            - name: Obtain the pv name of the application.
+              shell: >
+                kubectl get pvc -n "{{ app_ns }}" -o custom-columns=:.spec.volumeName --no-headers
+              args:
+                executable: /bin/bash
+              register: pv_name
+
+            - name: Check if the pvc scheduled on operator namespace
+              shell: >
+                kubectl get pods --all-namespaces -l openebs.io/persistent-volume="{{ item }}"  
+                -o custom-columns=:.metadata.namespace --no-headers
+              args:
+                executable: /bin/bash
+              register: ctrl_rep_namespace
+              with_items:
+                 - "{{ pv_name.stdout_lines }}"
+              until: "((ctrl_rep_namespace.stdout_lines|unique)|length) == 1 and operator_ns in ctrl_rep_namespace.stdout"
+              delay: 5
+              retries: 6              
+          when: "'deprovision' not in action"
+
+        - name: Deprovisioning the Application
+          include_tasks: "/utils/k8s/deprovision_deployment.yml"
+          vars:
+            app_deployer: "{{ application_deployment }}"
+          when: "'deprovision' is in action"      
 
         - set_fact:
             flag: "Pass"
