@@ -20,7 +20,7 @@
   shell: >
     kubectl get sc {{ sc.stdout }} -n {{ operator_ns }} --no-headers
     -o jsonpath='{.metadata.annotations}' |
-    grep -A 1 -w "name: ReplicaCount" | grep -w value | awk '{print $2}' | cut -d '"' -f 2
+    grep  -A 2 "name: ReplicaCount" | head -2 | grep -v ReplicaCount | awk '{print $2}' | cut -d '"' -f2
   args:
     executable: /bin/bash
   register: replicacount
