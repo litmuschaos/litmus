@@ -80,9 +80,45 @@
         - name: Executing volume attach command in nodes
           args:
             executable: /bin/bash
-          shell: packet-block-storage-attach
+          shell: sleep 60 && packet-block-storage-attach
           delegate_to: "root@{{ item.json.ip_addresses[0].address }}"
           with_items: "{{ device_ip.results }}"
+          register: result
+          retries: 3
+          delay: 10
+          until: result is not failed
+
+        - block:
+            - name: Creating mount directory
+              file:
+                path: "{{ mount_path }}"
+                state: directory
+              delegate_to: "root@{{ item.json.ip_addresses[0].address }}"
+              with_items: "{{ device_ip.results }}"
+
+            - name: Create ext4 filesystem
+              filesystem:
+                fstype: ext4
+                dev: "/dev/mapper/{{ item.1.json.name }}"
+              become: true
+              delegate_to: "root@{{ item.0.json.ip_addresses[0].address }}"
+              with_together: 
+                 - "{{ device_ip.results }}"
+                 - "{{ volume_id.results }}"
+
+            - name: mounting disk to Nodes
+              mount:
+                path: "{{ mount_path }}"
+                src: "/dev/mapper/{{ item.1.json.name }}"
+                fstype: ext4
+                state: mounted
+              become: true
+              delegate_to: "root@{{ item.0.json.ip_addresses[0].address }}"
+              with_together: 
+                 - "{{ device_ip.results }}"
+                 - "{{ volume_id.results }}"
+
+          when: disk_action == 'format'
 
         - name: Set Test Status
           set_fact:
@@ -92,4 +128,3 @@
         - name: Set Test Status
           set_fact:
             flag: "Test Failed"
-
