@@ -30,6 +30,11 @@ c5bb635c-2fd8-4394-bbd3-10ceb81c0876
 ansible-playbook create-volume.yml -vv --extra-vars "packet_api=<packet-api-token>"
 ```
 
+--extra-vars
+```bash
+ansible-playbook create-volume.yml -vv --extra-vars "packet_api=<packet-api-token> disk_action=format
+```
+
 ### Detach and delete packet Volume
 
 - `delete-volume`, will detach and delete `Datera` volume using the volume id present in (/tmp/packet/volume_id).
