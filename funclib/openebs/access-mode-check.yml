@@ -7,7 +7,7 @@
          changed_when: True
 
        - name: Get the nodes count
-         shell: kubectl get nodes | grep '<none>' | wc -l
+         shell: kubectl get nodes -l {{ node_label }} --no-headers | wc -l
          args:
            executable: /bin/bash
          register: node_count
