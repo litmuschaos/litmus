@@ -16,7 +16,7 @@
            status: 'SOT'
 
        - name: Get the number of nodes in the cluster
-         shell: kubectl get nodes | grep 'none' | wc -l
+         shell: kubectl get nodes -l {{ node_label }} --no-headers | wc -l
          args:
            executable: /bin/bash
          register: node_out
@@ -37,6 +37,32 @@
            executable: /bin/bash
          register: ctrl_deploy
 
+       - name: Getting the node name on which replica is scheduled
+         shell: kubectl get deploy {{ rep_deployment_name.stdout }} -n {{ namespace }} -o jsonpath='{.spec.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].values[0]}' 
+         register: replica_node_name
+
+       - name: Getting the node name where replica is not scheduled
+         shell: kubectl get nodes -l {{ node_label }} -o jsonpath='{.items[?(@.metadata.name!="{{ replica_node_name.stdout }}")].metadata.name}' | tr " " "\n"
+         register: node_name
+
+       - name: Adding the replica node-name in patch file
+         lineinfile:
+            path: "./rep_patch.yml"
+            insertafter: 'values:'
+            line: '                - {{ replica_node_name.stdout }}'
+
+       - name: Adding node-name where replica is not scheduled in patch file
+         lineinfile:
+            path: "./rep_patch.yml"
+            insertafter: 'values:'
+            line: '                - {{item}}'
+         with_items: "{{ node_name.stdout_lines }}"
+
+       - name: Patching replica deployment
+         shell: kubectl patch deployment {{ rep_deployment_name.stdout }} -n {{ namespace }} --patch "$(cat rep_patch.yml)"
+         register: status
+         failed_when: "'patched' not in status.stdout"
+
        - name: Obtaining the current replication factor
          shell: kubectl get deployments {{ ctrl_deploy.stdout }} -n {{ namespace }} -o jsonpath='{.spec.template.spec.containers[0].env[0].value}'    
          register: replication_factor
@@ -51,7 +77,7 @@
  
        #### scale up the storage replica using kubectl command ####
         
-       - name: Scaleing-up Jiva replica
+       - name: Scaling-up Jiva replica
          include_tasks: "/funclib/kubectl/scale_replicas.yml"
          vars:
              app_ns: "{{ namespace }}"
