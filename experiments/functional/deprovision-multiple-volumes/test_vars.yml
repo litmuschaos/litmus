@@ -1,0 +1,16 @@
+---
+pvc_deployment: pvc.yml
+
+test_name: deprovision-all-pvc
+
+namespace: "{{ lookup('env','DEPLOY_NAMESPACE') }}" 
+
+pvc_creation_tasks: pvc_provision.yaml
+
+pvc_count: "{{ lookup('env','PVC_COUNT') }}"
+
+pvc_name: "{{ lookup('env','PVC_NAME') }}"
+
+pvc_label: "{{ lookup('env','PVC_LABEL') }}"
+
+operator_ns: "{{ lookup('env','OPERATOR_NS') }}"
