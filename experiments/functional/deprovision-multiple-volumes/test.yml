@@ -36,7 +36,7 @@
             regexp: "testclass"
             replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
 
-        ## Setting up iteration value to generate continuos values ##
+        ## Setting up iteration value to generate continuous values ##
         - set_fact:
             i: 0
 
@@ -46,7 +46,7 @@
 
         - name: Obtain the cstor pool pod list
           shell: >
-            kubectl get pods -n {{ operator_ns }} -l openebs.io/storage-pool-claim=cstor-block-disk-pool 
+            kubectl get pods -n {{ operator_ns }} -l openebs.io/storage-pool-claim={{ pool_pod_label }}
             -o custom-columns=:.metadata.name --no-headers
           args:
             executable: /bin/bash
@@ -61,7 +61,7 @@
 
         - name: Delete the all PVC and pool pods
           shell: >
-             kubectl delete pods -n {{ operator_ns }} {{ pool_pods.stdout_lines[0] }} && kubectl delete pvc -n {{ namespace }} --all
+             kubectl delete pods -n openebs {{ pool_pods.stdout_lines[0] }} && kubectl delete pvc -n {{ namespace }} --all
           args:
             executable: /bin/bash
           register: pod_pvc_delete
@@ -77,34 +77,47 @@
 
         - name: Check if the pool pods are in Running state
           shell: >
-             kubectl get pods -n {{ operator_ns }} -l openebs.io/storage-pool-claim=cstor-block-disk-pool 
+             kubectl get pods -n {{ operator_ns }} -l openebs.io/storage-pool-claim={{ pool_pod_label }} 
              -o custom-columns=:.status.phase --no-headers
           args:
             executable: /bin/bash
           register: pool_pod_status
           until: "((pool_pod_status.stdout_lines|unique)|length) == 1 and 'Running' in pool_pod_status.stdout"
           delay: 5
-          retries: 6          
+          retries: 6   
         
         - name: Get the newly created pool pod list
           shell: >
-             kubectl get pods -n {{ operator_ns }} -l openebs.io/storage-pool-claim=cstor-block-disk-pool
+             kubectl get pods -n {{ operator_ns }} -l openebs.io/storage-pool-claim={{ pool_pod_label }}
              -o custom-columns=:.metadata.name --no-headers
           args: 
             executable: /bin/bash
           register: new_pool_pod
 
+        - name: Check if the CVRs are deleted
+          shell: >
+             kubectl get cvr -n {{ operator_ns }} -l openebs.io/persistent-volume={{ item }}
+          args:
+            executable: /bin/bash
+          register: cvr_status
+          until: "'No resources found.' in cvr_status.stderr"
+          delay: 5
+          retries: 12
+          with_items:
+            - "{{ pv_name.stdout_lines }}"
+
         - name: sleep for 30 seconds and continue with play
           wait_for: timeout=30
 
-        - name: Check if the PV stales not there in pool pods
+        - name: Check is the volumes are not present in cstor pool pods
           shell: >
-             kubectl exec -it "{{ new_pool_pod.stdout_lines[0] }}" -n {{ operator_ns }} -c cstor-pool -- zfs list | grep {{ item }}
+             kubectl exec -it {{ item[0] }} -n {{ operator_ns }} -c cstor-pool -- zfs list | grep {{ item[1] }}
           args:
             executable: /bin/bash
           register: zfs_list
           failed_when: zfs_list.stdout != ""
           with_items:
+            - "{{ new_pool_pod.stdout_lines }}"
             - "{{ pv_name.stdout_lines }}"
 
         - set_fact:

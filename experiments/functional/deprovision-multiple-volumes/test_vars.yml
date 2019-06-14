@@ -14,3 +14,5 @@ pvc_name: "{{ lookup('env','PVC_NAME') }}"
 pvc_label: "{{ lookup('env','PVC_LABEL') }}"
 
 operator_ns: "{{ lookup('env','OPERATOR_NS') }}"
+
+pool_pod_label: "{{ lookup('env','POOL_POD_LABEL') }}"
