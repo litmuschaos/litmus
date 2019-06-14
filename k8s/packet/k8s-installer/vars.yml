@@ -8,3 +8,5 @@ network_cidr: 10.1.0.0/16
 master_config: t1.small.x86
 workers_config: t1.small.x86
 default_k8s_version: 1.12.3-00
+project_id: bdbd5cf0-7453-434b-99f8-0c3e3f83dbe2 # project id of packet cloud
+base_url: https://api.packet.net # base url for access packet api
