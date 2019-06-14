@@ -3,14 +3,14 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   generateName: container-kill-
-  namespace: litmus
+  #namespace: litmus
 spec:
   template:
     metadata:
       labels:
         experiment: container-kill
     spec:
-      serviceAccountName: litmus
+      serviceAccountName: CHAOS_SERVICE_ACCOUNT
       restartPolicy: Never
       containers:
       - name: ansibletest

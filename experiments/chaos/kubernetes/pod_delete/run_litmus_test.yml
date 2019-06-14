@@ -3,14 +3,20 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   generateName: pod-delete-
-  namespace: litmus
+
+  # Executed on application's namespace in case of automated runs 
+  # Provide appropriate namespace if executed manually 
+  # namespace: litmus
 spec:
   template:
     metadata:
       labels:
         experiment: pod-delete
     spec:
-      serviceAccountName: litmus
+      # Placeholder that is updated by the executor for automated runs
+      # Provide appropriate SA (with desired permissions) if executed manually
+      serviceAccountName: CHAOS_SERVICE_ACCOUNT
+
       restartPolicy: Never
       containers:
       - name: ansibletest
@@ -26,6 +32,9 @@ spec:
           - name: APP_LABEL
             value: 'app=nginx'
 
+          - name: APP_KIND
+            value: deployment
+
           - name: TOTAL_CHAOS_DURATION
             value: "15"
 
@@ -34,6 +43,11 @@ spec:
 
           - name: CHAOSENGINE
             value: "engine-nginx"
+
+          - name: CHAOSKUBE_SVC_ACC
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.serviceAccountName
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/chaos/kubernetes/pod_delete/test.yml -i /etc/ansible/hosts -vv; exit 0"]

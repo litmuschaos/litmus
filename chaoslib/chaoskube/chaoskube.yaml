@@ -1,3 +1,4 @@
+---
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
@@ -11,7 +12,7 @@ spec:
       labels:
         app: chaoskube
     spec:
-      serviceAccountName: chaoskube
+      serviceAccountName: CHAOS_SERVICE_ACCOUNT
       containers:
       - name: chaoskube
         image: quay.io/linki/chaoskube:v0.8.0
@@ -30,7 +31,7 @@ spec:
         #- --annotations=chaos.alpha.kubernetes.io/enabled=true
         
         # exclude all pods in the kube-system namespace
-        #- --namespaces=!kube-system
+        - --namespaces=CHAOS_NAMESPACE
         
         # don't kill anything on weekends
         #- --excluded-weekdays=Sat,Sun
@@ -46,10 +47,3 @@ spec:
         
         # terminate pods for real: this disables dry-run mode which is on by default
         #- --no-dry-run
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: chaoskube
-  labels:
-    app: chaoskube
