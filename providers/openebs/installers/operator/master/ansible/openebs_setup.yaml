@@ -82,10 +82,17 @@
         - name: Change the Node Disk manager Image
           replace:
             path: "{{ openebs_operator }}"
-            regexp: quay.io/openebs/node-disk-manager-amd64:v0.2.0
+            regexp: quay.io/openebs/node-disk-manager-amd64:ci
             replace: quay.io/openebs/node-disk-manager-amd64:{{ lookup('env','NODE_DISK_MANAGER_IMAGE') }}
           when: lookup('env','NODE_DISK_MANAGER_IMAGE') | length > 0
 
+        - name: Change the Node Disk operator Image
+          replace:
+            path: "{{ openebs_operator }}"
+            regexp: quay.io/openebs/node-disk-operator-amd64:ci
+            replace: quay.io/openebs/node-disk-operator-amd64:{{ lookup('env','NODE_DISK_MANAGER_IMAGE') }}
+          when: lookup('env','NODE_DISK_MANAGER_IMAGE') | length > 0
+       
         - name: Change the openebs analytics value of openebs resources in operator YAML
           replace:
             path: "{{ openebs_operator }}"
