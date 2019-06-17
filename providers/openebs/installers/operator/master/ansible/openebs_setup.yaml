@@ -77,8 +77,15 @@
             path: "{{ openebs_operator }}"
             regexp: 'value: "true"'
             after: '- name: OPENEBS_IO_ENABLE_ANALYTICS'
-            replace: 'value: "false"'          
+            replace: 'value: "false"'     
 
+        - name: Change the value of sparse file count in operator YAML
+          replace:
+            path: "{{ openebs_operator }}"
+            regexp: 'value: "1"'
+            after: '- name: SPARSE_FILE_COUNT'
+            replace: 'value: "{{ sparse_file_count }}"'          
+     
         - name: Change the Node Disk manager Image
           replace:
             path: "{{ openebs_operator }}"

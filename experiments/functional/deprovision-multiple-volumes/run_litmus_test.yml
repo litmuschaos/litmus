@@ -1,0 +1,52 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: litmus-pvc-deprovision-
+  namespace: litmus
+spec:
+  template:
+    metadata:
+      name: litmus
+      labels:
+        app: pvc-deprovision
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: openebs/ansible-runner:ci 
+        imagePullPolicy: Always
+
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            #value: log_plays, actionable, default
+            value: default
+
+          - name: PROVIDER_STORAGE_CLASS
+            # Supported values: local-storage, openebs-cstor-disk
+            value: openebs-cstor-disk
+
+            # Application label
+          - name: PVC_LABEL
+            value: name=test-pvc
+
+          - name: PVC_NAME
+            value: demo-pvc-claim
+
+            # deployment namespace
+          - name: DEPLOY_NAMESPACE
+            value: test-pvc
+
+          - name: OPERATOR_NS
+            value: openebs
+
+            # Number of application instances to be created.
+          - name: PVC_COUNT
+            value: "5"
+
+          - name: POOL_POD_LABEL
+            value: cstor-block-disk-pool
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./experiments/functional/deprovision-multiple-volumes/test.yml -i /etc/ansible/hosts -v; exit 0"] 

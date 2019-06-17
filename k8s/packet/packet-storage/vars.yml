@@ -6,3 +6,6 @@ size: 50 # size in GB
 device_id_location: /tmp/packet/device_id # file location where cluster device id stored
 project_id: bdbd5cf0-7453-434b-99f8-0c3e3f83dbe2 # project id of packet cloud
 mount_path: /var/openebs
+
+# options: attach,format
+disk_action: attach

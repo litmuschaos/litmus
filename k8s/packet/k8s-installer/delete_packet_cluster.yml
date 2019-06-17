@@ -17,11 +17,15 @@
 
   tasks:
     - block:
-        - name: Deleting instances in packet
-          packet_device:
-            project_id: "{{ project_id }}"
-            state: absent
-            device_ids: "{{ item }}"
+        # Force delete is set as true because detaching the volume from nodes is not working properly
+        - name: Fetch device detail using device id
+          uri:
+            url: "{{ base_url }}/projects/{{ project_id }}/devices/{{ item }}?force_delete=true"
+            method: DELETE
+            headers:
+              X-Auth-Token: "{{ packet_api }}"
+            status_code: 204
+            body_format: json
           with_lines: cat /tmp/packet/device_id
 
         - name: Deleting device Id from file
