@@ -18,9 +18,9 @@
   tasks:
     - block:
         # Force delete is set as true because detaching the volume from nodes is not working properly
-        - name: Fetch device detail using device id
+        - name: Deleting Instances in Packet
           uri:
-            url: "{{ base_url }}/projects/{{ project_id }}/devices/{{ item }}?force_delete=true"
+            url: "{{ base_url }}/devices/{{ item }}?force_delete=true"
             method: DELETE
             headers:
               X-Auth-Token: "{{ packet_api }}"
