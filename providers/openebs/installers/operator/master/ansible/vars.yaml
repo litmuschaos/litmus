@@ -12,4 +12,4 @@ installation_test_name: openebsinstaller
 cleanup_test_name: openebscleanup
 psp_spec: openebs_psp.yaml 
 sparse_file_count: "{{ lookup('env','SPARSE_FILE_COUNT') }}"
-analytics_value: "{{ lookup('env', 'ANALYTICS_VALUE') }}"
+analytics_value: "{{ lookup('env','ANALYTICS_VALUE') }}"
