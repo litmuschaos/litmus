@@ -60,7 +60,7 @@ spec:
             value:   
           - name: SPARSE_FILE_COUNT
             value: "10" 
-          - name: ANALYTICS_VALUE
+          - name: INSTALL_DEFAULT_CSP
             value:      
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./providers/openebs/installers/operator/master/ansible/openebs_setup.yaml -i /etc/ansible/hosts -vv; exit 0"]
