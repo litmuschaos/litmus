@@ -61,7 +61,7 @@ spec:
           - name: SPARSE_FILE_COUNT
             value: "10" 
           - name: ANALYTICS_VALUE
-            value: "true"       
+            value: ""       
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./providers/openebs/installers/operator/master/ansible/openebs_setup.yaml -i /etc/ansible/hosts -vv; exit 0"]
         volumeMounts:
