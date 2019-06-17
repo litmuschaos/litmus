@@ -57,7 +57,9 @@ spec:
           - name: OPENEBS_INFRA_CHAOS
             value: 
           - name: RUN_ID
-            value:          
+            value:   
+          - name: SPARSE_FILE_COUNT
+            value: "6"       
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./providers/openebs/installers/operator/master/ansible/openebs_setup.yaml -i /etc/ansible/hosts -vv; exit 0"]
         volumeMounts:
