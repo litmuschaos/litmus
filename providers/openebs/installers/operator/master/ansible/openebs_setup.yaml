@@ -105,7 +105,8 @@
             path: "{{ openebs_operator }}"
             regexp: 'value: "false"'
             after: '- name: OPENEBS_IO_INSTALL_DEFAULT_CSTOR_SPARSE_POOL'
-            replace: 'value: "true"'          
+            replace: 'value: "{{ install_default_csp }}"'  
+          when: lookup('env','INSTALL_DEFAULT_CSP') | length > 0             
 
         - name: Applying openebs operator
           shell: "{{ kubeapply }} apply -f {{ openebs_operator }}"
