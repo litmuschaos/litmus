@@ -84,7 +84,7 @@
             path: "{{ openebs_operator }}"
             regexp: 'value: "1"'
             after: '- name: SPARSE_FILE_COUNT'
-            replace: 'value: sparse_file_count'          
+            replace: 'value: "{{ sparse_file_count }}"'          
      
         - name: Change the Node Disk manager Image
           replace:
