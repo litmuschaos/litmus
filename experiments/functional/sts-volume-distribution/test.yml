@@ -130,6 +130,9 @@
               register: result
               failed_when: "'scaled' not in result.stdout"
 
+            - name: sleep for 60 seconds and continue with play
+              wait_for: timeout=60
+
             - name: Obtain number of healthy PVC
               shell: >
                 kubectl get pvc -n {{ app_ns }} -l {{ app_label }}  -o custom-columns=:.status.phase | grep Bound | wc -l
