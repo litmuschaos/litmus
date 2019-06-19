@@ -1,0 +1,197 @@
+- block:
+
+    - name: update nodeSelector for disk chaos pod
+      replace:
+        path: /chaoslib/disk_chaos/disk_chaos_kube.yml
+        regexp: NODE_UNDER_TEST
+        replace: "{{ n_name }}"
+
+    - name: update bi-directional mount paths for device 
+      replace:
+        path: /chaoslib/disk_chaos/disk_chaos_kube.yml
+        regexp: DISK_MOUNT_PATH
+        replace: "{{ d_mntpath }}"
+      when: 'd_mntpath is defined and d_mntpath != ""'
+      
+    - name: setup disk chaos infra
+      shell: >
+        kubectl create -f /chaoslib/disk_chaos/disk_chaos_kube.yml
+        -n {{ a_ns }}
+      args:
+        executable: /bin/bash
+      register: result
+    
+    - name: Confirm that the disk chaos pod is running 
+      shell: >
+        kubectl get pod -l app=disk-chaos
+        --no-headers -o custom-columns=:status.phase
+        -n {{ a_ns }}
+      args:
+        executable: /bin/bash
+      register: result
+      until: "result.stdout == 'Running'"
+      delay: 20
+      retries: 15
+
+    - name: Obtain the SCSI device name
+      set_fact:
+        disk: "{{ n_disk.split(\"/dev/\")[1] }}"
+
+    - name: Record the disk chaos pod name
+      shell: >
+        kubectl get pod -l app=disk-chaos
+        --no-headers -o custom-columns=:metadata.name
+        -n {{ a_ns }}
+      args:
+        executable: /bin/bash
+      register: result
+
+    - set_fact:
+        disk_chaos_pod: "{{ result.stdout }}"
+    
+    - name: Verify availability of specified disk
+      shell: >
+        timeout 10 kubectl exec -it {{ disk_chaos_pod }} -n {{ a_ns }}
+        -- bash -c "lsblk {{ n_disk }}"
+      args:
+        executable: /bin/bash
+      register: result
+      failed_when: "result.rc != 0"
+       
+    - name: Obtain identifer for specified disk 
+      shell: >
+        timeout 10 kubectl exec -it {{ disk_chaos_pod }} -n {{ a_ns }}
+        -- bash -c "lsblk -o UUID --noheadings {{ n_disk }} | tr -d '\n'"
+      args:
+        executable: /bin/bash
+      register: uuid
+
+    - block:
+        
+        - debug:
+            msg: "Disk UUID is {{ uuid.stdout }}"
+
+        - name: Check mount status of the specified disk
+          shell: >
+            timeout 10 kubectl exec -it {{ disk_chaos_pod }} -n {{ a_ns }}
+            -- bash -c "lsblk -o MOUNTPOINT --noheadings {{ n_disk }} | tr -d '\n'"
+          args:
+            executable: /bin/bash
+          register: mountpoint
+
+        - name: Get the mount options for the specified disk
+          shell: >
+            timeout 10 kubectl exec -it {{ disk_chaos_pod }} -n {{ a_ns }}
+            -- bash -c "grep {{ n_disk }} /host/mounts" | awk '{print $4}'
+          args:
+            executable: /bin/bash
+          register: mountoptions
+          when: 'mountpoint.stdout != ""'
+
+      when: 'uuid.stdout != ""'
+
+    - block: 
+
+        - debug:
+            msg: 
+              - "Disk is found to be un-utilized/un-formatted (no UUID found)"
+              - "Disk recovery validation will be skipped"
+
+      when: 'uuid.stdout == ""'
+
+    - name: Fail/Detach the specified disk  
+      shell: >
+        timeout 10 kubectl exec -it {{ disk_chaos_pod }} -n {{ a_ns }}
+        -- bash -c "echo 1 > /sys/block/{{ disk }}/device/delete"
+      args:
+        executable: /bin/bash
+      register: result
+      failed_when: 'result.rc != 0'
+      
+    - name: Verify disk has been removed 
+      shell: >
+        timeout 10 kubectl exec -it {{ disk_chaos_pod }} -n {{ a_ns }}
+        -- bash -c "lsblk | grep {{ n_disk }}"
+      args:
+        executable: /bin/bash
+      register: result_disk_check
+      failed_when: 'result_disk_check.rc != 1'  
+
+    - block:  
+        - name: Unmount the stale device mount  
+          shell: >
+            timeout 10 kubectl exec -it {{ disk_chaos_pod }} -n {{ a_ns }}
+            -- bash -c "umount {{ mountpoint.stdout }}"
+          args:
+            executable: /bin/bash
+          ignore_errors: true
+
+      when: 'mountpoint.stdout is defined and mountpoint.stdout != ""'
+
+    - name: Keep disk in detached state for {{ c_duration }}s
+      shell: sleep {{ c_duration }}
+
+    - name: List the available scsi host bus 
+      shell: >
+        timeout 10 kubectl exec -it {{ disk_chaos_pod }} -n {{ a_ns }}
+        -- bash -c "ls /sys/class/scsi_host/"
+      args:
+        executable: /bin/bash
+      register: result_host
+          
+    - name: Rescan the SCSI bus to rediscover/reattach disk
+      shell: >
+        timeout 10 kubectl exec -it {{ disk_chaos_pod }} -n {{ a_ns }}
+        -- bash -c "echo '- - -' > /sys/class/scsi_host/{{ item }}/scan"
+      args:
+        executable: /bin/bash
+      with_items: "{{ result_host.stdout_lines }}"
+
+    - block: 
+        - name: Verify disk device is re-attached (valid if disk formatted)
+          shell: >
+            timeout 10 kubectl exec -it {{ disk_chaos_pod }} -n {{ a_ns }}
+            -- bash -c "ls /dev/disk/by-uuid/{{ uuid.stdout }}"
+          args:
+            executable: /bin/bash
+          register: result_disk_check
+          failed_when: 'result_disk_check.rc != 0'
+
+      when: 'uuid.stdout != ""'
+ 
+    - block: 
+        - name: Remount the disk with mount original options 
+          shell: >
+            timeout 10 kubectl exec -it {{ disk_chaos_pod }} -n {{ a_ns }}
+            -- bash -c "mount -o {{ mountoptions.stdout }} /dev/disk/by-uuid/{{ uuid.stdout }} {{ mountpoint.stdout }}"
+          args:
+            executable: /bin/bash
+
+      when: 'mountpoint.stdout is defined and mountpoint.stdout != ""' 
+  
+  when: action == "disk_chaos_inject"
+
+- block: 
+    - name: Remove the disk chaos pod 
+      shell: >
+        kubectl delete -f /chaoslib/disk_chaos/disk_chaos_kube.yml
+        -n {{ a_ns }}
+      args:
+        executable: /bin/bash
+  
+    - name: Verify disk chaos pod has been removed
+      shell: >
+        kubectl get pod -l app=disk-chaos
+        --no-headers -o custom-columns=:status.phase
+        -n {{ a_ns }}
+      args:
+        executable: /bin/bash
+      register: result
+      until: "'Running' not in result.stdout"
+      delay: 20
+      retries: 15
+
+  when: action == "disk_chaos_remove"
+
+
+        

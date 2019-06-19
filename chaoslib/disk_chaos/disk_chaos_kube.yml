@@ -1,0 +1,56 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: disk-chaos
+  labels:
+    app: disk-chaos
+spec:
+  nodeSelector: 
+    kubernetes.io/hostname: NODE_UNDER_TEST
+  containers:
+  - name: disk-chaos
+    image: ubuntu:16.04
+    command: ["/bin/bash"]
+    args: ["-c", "sleep 100000"]
+    resources:
+      requests:
+        cpu: 10m
+        memory: 5M
+      limits:
+        cpu: 100m
+        memory: 20M
+    volumeMounts:
+      - name: udev
+        mountPath: /run/udev
+      - name: procmount
+        mountPath: /host/mounts
+      - name: sysfs
+        mountPath: /sys
+      - name: disk
+        mountPath: /dev/disk
+        # DISK_MOUNT_PATH is a placeholder 
+      - name: diskmount
+        mountPath: DISK_MOUNT_PATH
+        mountPropagation: Bidirectional  
+    securityContext:
+      privileged: true
+    #tty: true
+  volumes:
+    - name: udev
+      hostPath: 
+        path: /run/udev
+    - name: procmount
+      hostPath:
+        path: /proc/1/mounts 
+    - name: sysfs
+      hostPath:
+        path: /sys
+    - name: disk
+      hostPath: 
+        path: /dev/disk
+        type: Directory
+    - name: diskmount
+      hostPath:
+        path: DISK_MOUNT_PATH
+        type: Directory

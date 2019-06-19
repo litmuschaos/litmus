@@ -1,0 +1,43 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: disk-loss-
+  namespace: litmus
+spec:
+  template:
+    metadata:
+      labels:
+        experiment: disk-loss
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: ksatchit/ansible-runner:ci
+        imagePullPolicy: Always
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: default
+
+          - name: APP_NAMESPACE
+            value: default 
+
+          - name: APP_LABEL
+            value: 'app=nginx'
+
+          - name: TOTAL_CHAOS_DURATION
+            value: "15"
+
+          - name: DISK_DEVICE_PATH
+            value: '/dev/sdb'
+
+          - name: DISK_MOUNT_PATH
+            value: '/mnt'
+
+          - name: NODE_NAME
+            value: 'gke-playground-default-pool-1b790f33-269d' 
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./experiments/chaos/kubernetes/disk_loss/test.yml -i /etc/ansible/hosts -vv; exit 0"]
+
