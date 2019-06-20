@@ -10,4 +10,5 @@ application_name: "busybox"
 action: "{{ lookup('env','ACTION') }}"
 app_pvc: "{{ lookup('env','APP_PVC') }}"
 storage_class: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+perform_test: "{{ lookup('env','LOCAL_PV_TEST') }}"
 operator_ns: openebs

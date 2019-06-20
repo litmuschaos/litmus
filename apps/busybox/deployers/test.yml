@@ -75,6 +75,23 @@
                     check_app_pod: 'yes'
                     delay: 10
                     retries: 20
+                  when: "'true' not in perform_test"
+
+                - block:
+                    - name: Provisioning application
+                      shell: kubectl apply -f {{ application_deployment }} -n {{ app_ns }}
+
+                    - name: Getting the status of PVC
+                      shell: |
+                        sleep 10
+                        kubectl get pvc {{ app_pvc }} -n {{ app_ns }} -o jsonpath='{.status.phase}'
+                      register: pvc_status
+                      until: "'Pending' in pvc_status.stdout"
+                      delay: 2
+                      retries: 100  
+
+                  when: "'true' is in perform_test"
+
               when: "'deprovision' not in action"
 
             - name: Deprovisioning the Application
