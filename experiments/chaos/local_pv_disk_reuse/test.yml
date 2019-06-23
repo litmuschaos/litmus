@@ -28,7 +28,7 @@
           args:
             executable: /bin/bash
           register: bd_status
-          until: "((bd_status.stdout_lines|unique)|length) == 1 and 'Unclaimed' in bd_status.stdout"
+          until: "'Unclaimed' in bd_status.stdout"
           delay: 5
           retries: 6
           with_items:
