@@ -1,0 +1,50 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: litmus-disk-reuse-localpv-
+  namespace: litmus
+spec:
+  template:
+    metadata:
+      name: litmus
+      labels:
+        app: localpv-disk-reuse
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: openebs/ansible-runner:ci
+        imagePullPolicy: Always
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            #value: log_plays
+            value: default
+
+          - name: PROVIDER_STORAGE_CLASS
+            value: openebs-device
+
+            # Application pvc
+          - name: APP_PVC
+            value: openebs-busybox
+
+            # Application label
+            # Use different 'LABEL' for deployment and statefulset application
+          - name: APP_LABEL
+            value: 'app=busybox-sts'
+
+            # Application namespace
+          - name: APP_NAMESPACE
+            value: disk-reuse
+            
+            #Persistent Volume storage capacity
+          - name: PV_CAPACITY
+            value: 5G
+
+            #Application replicas for statefulset application
+          - name: APP_REPLICA
+            value: 'replicas=3'
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./experiments/chaos/local_pv_disk_reuse/test.yml -i /etc/ansible/hosts -v; exit 0"]
