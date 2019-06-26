@@ -92,7 +92,7 @@
         - name: Fill the root directory of rogue pod using fallocate.
           shell: > 
             kubectl exec -ti {{ rogue_pod.stdout }} -n {{ app_ns }} -- fallocate 
-            -l 500G /test.img
+            -l 50G /test.img
           args:
             executable: /bin/bash
           ignore_errors: yes
