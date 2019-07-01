@@ -57,6 +57,12 @@
             regexp: "pool-name"
             replace: "{{ pool_name }}"
 
+        - name: Replacing the pool type in SPC spec
+          replace:
+            path: ./spc.yml
+            regexp: "pool-type"
+            replace: "{{ pool_type }}"
+
         - name: Create cstor disk pool
           shell: kubectl apply -f spc.yml
           args:

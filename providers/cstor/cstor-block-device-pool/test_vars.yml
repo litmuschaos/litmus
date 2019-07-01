@@ -3,5 +3,6 @@ device_capacity: "{{ lookup('env', 'DEVICE_CAPACITY') }}"
 operator_ns: "{{ lookup('env','OPERATOR_NS') }}"
 test_name: cstor-block-device-pool-provision
 pool_name: "{{ lookup('env','POOL_NAME') }}"
+pool_type: "{{ lookup('env','POOL_TYPE') }}"
 node_label: "{{ lookup('env','NODE_LABEL') }}"
 

@@ -28,6 +28,9 @@ spec:
           - name: POOL_NAME
             value: cstor-block-disk-pool
 
+          - name: POOL_TYPE
+            value: striped
+
           - name: OPERATOR_NS
             value: openebs
 
