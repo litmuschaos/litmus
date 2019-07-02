@@ -147,7 +147,7 @@
              #           rm ./tmp_block_device_claim.yml
              #         with_together: 
              #           - "{{ nodes.stdout_lines }}"
-             #           - "{{ blockDevice.results }}"     
+             #           - "{{ blockDevice.results }}"
 
              #         - name: display spc.yml
              #           debug: var=item
@@ -159,7 +159,7 @@
             path: ./spc.yml
             regexp: "pool-name"
             replace: "{{ pool_name }}"
-        
+                                             
         - name: Create cstor disk pool
           shell: kubectl apply -f spc.yml
           args:
