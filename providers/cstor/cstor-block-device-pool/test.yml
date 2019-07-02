@@ -128,7 +128,10 @@
                line: '    - {{ item }}'
              with_items: "{{ bd_names }}" 
           
-          when: pool_type == "raidz2"     
+          when: pool_type == "raidz2"  
+
+        - set_fact:
+             device_count: "{{ blockDevice|length}}"   
 
         - name: Replacing the pool name in SPC spec
           replace:
