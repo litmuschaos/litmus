@@ -128,38 +128,14 @@
                line: '    - {{ item }}'
              with_items: "{{ bd_names }}" 
           
-          when: pool_type == "raidz2"
-
-        - set_fact:
-             device_count: "{{ blockDevice|length}}"
-
-             #        - name: Fetching and Replacing device capacity from ENV
-             #         replace:
-             #           path: ./block_device_claim.yml
-             #           regexp: "device-capacity"
-             #           replace: "{{ device_capacity }}"
-
-             #       - name: Creating Block-Device-Claim
-             #         shell: |
-             #           cat ./block_device_claim.yml > tmp_block_device_claim.yml
-             #           sed -i -e 's/device-name/{{item.1.stdout}}/g' -e 's/host-name/{{item.0}}/g' ./tmp_block_device_claim.yml
-             #           kubectl apply -f tmp_block_device_claim.yml
-             #           rm ./tmp_block_device_claim.yml
-             #         with_together: 
-             #           - "{{ nodes.stdout_lines }}"
-             #           - "{{ blockDevice.results }}"
-
-             #         - name: display spc.yml
-             #           debug: var=item
-             #           with_file:
-             #            - "spc.yml"
+          when: pool_type == "raidz2"     
 
         - name: Replacing the pool name in SPC spec
           replace:
             path: ./spc.yml
             regexp: "pool-name"
             replace: "{{ pool_name }}"
-                                             
+
         - name: Create cstor disk pool
           shell: kubectl apply -f spc.yml
           args:
