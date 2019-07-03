@@ -25,31 +25,28 @@ spec:
           - name: PROVIDER_STORAGE_CLASS
             value: openebs-cstor-disk
 
-            # Application pvc
           - name: APP_PVC
             value: nfs-pvc-claim
 
-            # Application label
           - name: APP_LABEL
             value: app=nfs
 
-            # Application namespace
           - name: APP_NAMESPACE
             value: app-nfs-ns
             
             #Persistent Volume storage capacity
           - name: PV_CAPACITY
-            value: 5G
+            value: 50G
 
           - name: NFS_STORAGE_CLASS_NAME
             value: openebs-nfs
          
             # NFS storage class Mount options
             # Supported values 3.x and 4.x
-          - name: NFS_MOUNT_TYPE
+          - name: NFS_VERSION
             value: vers=4.1
             
-          # Use 'deprovision' for app-clean up
+          # Use 'deprovision' for clean up
           - name: ACTION
             value: provision
 
