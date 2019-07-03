@@ -1,0 +1,79 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+          ## Generating the testname for deployment
+        - include_tasks: /utils/fcm/create_testname.yml
+
+          ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
+          vars:
+            status: 'SOT'
+
+        - block:
+              ## Creating namespaces and making the application for deployment
+            - include_tasks: /utils/k8s/pre_create_app_deploy.yml
+
+            - name: Replace the affinity label annotation in deployment yml
+              replace:
+                path: "{{ application_deployment }}"
+                regexp: "affinity_label"
+                replace: "{{ affinity_label }}"
+
+            - name: Replace the volume capcity placeholder with provider
+              replace:
+                path: "{{ application_deployment }}"
+                regexp: "teststorage"
+                replace: "{{ lookup('env','PV_CAPACITY') }}"
+
+            - name: Replace the application namespace in deployment spec
+              replace:
+                path: "{{ application_deployment }}"
+                regexp: "appnamespace"
+                replace: "{{ app_ns }}"
+
+            - name: Replace the nfs storage class name in nfs deployment spec
+              replace:
+                path: "{{ application_deployment }}"
+                regexp: "nfsstorageclass"
+                replace: "{{ nfs_storage_class }}"                
+
+            - name: Replace the nfs mount type in the spec
+              replace:
+                path: "{{ application_deployment }}"
+                regexp: "nfsvers"
+                replace: "{{ nfs_type }}"                
+
+              ## Deploying the application
+            - include_tasks: /utils/k8s/deploy_single_app.yml
+              vars:
+                check_app_pod: 'yes'
+                delay: 10
+                retries: 20
+          when: "'deprovision' not in action"
+
+        - name: Deprovisioning the Application
+          include_tasks: "/utils/k8s/deprovision_deployment.yml"
+          vars:
+            app_deployer: "{{ application_deployment }}"
+          when: "'deprovision' is in action"
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - name: Setting fail flag
+          set_fact:
+            flag: "Fail"
+
+      always:
+        ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
