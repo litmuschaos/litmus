@@ -131,13 +131,18 @@
           when: pool_type == "raidz2"  
 
         - set_fact:
-             device_count: "{{ blockDevice|length}}"   
+             device_count: "{{ blockDevice|length}}"  
 
         - name: Replacing the pool name in SPC spec
           replace:
             path: ./spc.yml
             regexp: "pool-name"
             replace: "{{ pool_name }}"
+
+        - name: Display spc.yml for verification 
+          debug: var=item
+          with_file:
+           - "spc.yml"
 
         - name: Create cstor disk pool
           shell: kubectl apply -f spc.yml
