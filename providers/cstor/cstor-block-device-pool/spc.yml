@@ -6,7 +6,7 @@ spec:
   name: pool-name
   type: disk
   poolSpec:
-    poolType: striped
+    poolType: pool-type
   blockDevices:
     blockDeviceList:
 

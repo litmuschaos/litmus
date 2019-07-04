@@ -28,6 +28,11 @@ spec:
           - name: POOL_NAME
             value: cstor-block-disk-pool
 
+           # Provide the value for POOL_TYPE 
+           # Supported values: striped, mirrored, raidz ,raidz2
+          - name: POOL_TYPE
+            value: striped
+
           - name: OPERATOR_NS
             value: openebs
 
