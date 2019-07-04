@@ -139,6 +139,12 @@
             regexp: "pool-name"
             replace: "{{ pool_name }}"
 
+        - name: Replacing the storage class name in SPC spec
+          replace:
+            path: ./spc.yml
+            regexp: "sc-name"
+            replace: "{{ sc_name }}"
+
         - name: Display spc.yml for verification 
           debug: var=item
           with_file:
