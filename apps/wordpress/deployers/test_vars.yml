@@ -1,0 +1,18 @@
+wordpress_application_deployment: wordpress.yml
+mysql_application_deployment: mysql.yml
+app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+app_label: "{{ lookup('env','APP_LABEL') }}"
+test_name: wordpress-deployment
+app_replica: "{{ lookup('env','APP_REPLICA') }}"
+application_name: "wordpress"
+action: "{{ lookup('env','ACTION') }}"
+mysql_pass: "{{ lookup('env','MYSQL_PASS') }}"
+mysql_pvc_claim: "{{ lookup('env','MYSQL_APP_PVC') }}"
+wordpress_pvc_claim: "{{ lookup('env','WORDPRESS_APP_PVC') }}"
+affinity_label: "{{ lookup('env','AFFINITY_LABEL') }}"
+mysql_storage_class: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+wordpress_storage_class: "{{ lookup('env','STORAGE_CLASS') }}"
+operator_ns: openebs
+access_mode: "{{ lookup('env','PVC_ACCESS_MODE') }}"
+mysql_capacity: "{{ lookup('env','MYSQL_PV_CAPACITY') }}"
+wordpress_capacity: "{{ lookup('env','WORDPRESS_PV_CAPACITY') }}"

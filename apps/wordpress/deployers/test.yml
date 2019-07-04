@@ -1,0 +1,120 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+        ## Generating the testname for deployment
+        - include_tasks: /utils/fcm/create_testname.yml
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
+          vars:
+            status: 'SOT'
+
+        - name: Replace the storage capacity placeholder
+          replace:
+             path: "{{ mysql_application_deployment }}"
+             regexp: "volume-capacity"
+             replace: "{{ mysql_capacity }}" 
+
+        - name: Replace the storageclass placeholder with provider
+          replace:
+            path: "{{ mysql_application_deployment }}"
+            regexp: "testclass"
+            replace: "{{ mysql_storage_class }}" 
+
+        - name: Replace the pvc placeholder with provider
+          replace:
+            path: "{{ mysql_application_deployment }}"
+            regexp: "testclaim"
+            replace: "{{ mysql_pvc_claim }}"
+
+        - name: Replace the affinity label annotation in statefulset yml
+          replace:
+             path: "{{ wordpress_application_deployment }}"
+             regexp: "affinity_label"
+             replace: "{{ affinity_label }}"
+          
+        - name: Replace the storageclass placeholder with provider
+          replace:
+            path: "{{ wordpress_application_deployment }}"
+            regexp: "testclass"
+            replace: "{{ wordpress_storage_class }}"            
+
+        - name: Replace the storage capacity placeholder
+          replace:
+             path: "{{ wordpress_application_deployment }}"
+             regexp: "volume-capacity"
+             replace: "{{ wordpress_capacity }}" 
+
+        - name: Replace the pvc placeholder with provider
+          replace:
+            path: "{{ wordpress_application_deployment }}"
+            regexp: "testclaim"
+            replace: "{{ wordpress_pvc_claim }}"
+
+        - name: Replace the access mode for the pvc
+          replace:
+            path: "{{ wordpress_application_deployment }}"
+            regexp: "accesstype"
+            replace: "{{ access_mode }}"
+
+        - block:
+
+            - include_tasks: /utils/k8s/pre_create_app_deploy.yml
+              vars: 
+                application_deployment: "{{ item }}"
+              with_items:
+                 - "{{ mysql_application_deployment }}"
+                 - "{{ wordpress_application_deployment }}"
+
+            - name: Create the mysql secrete pass
+              shell: kubectl create secret generic mysql-pass --from-literal=password={{ mysql_pass }} -n {{ app_ns }}
+              args:
+                executable: /bin/bash
+                          
+             ## Deploying the mysql application
+            - include_tasks: /utils/k8s/deploy_single_app.yml
+              vars:
+                check_app_pod: 'no'
+                delay: 10
+                retries: 20
+                application_deployment: "{{ item }}"
+              with_items:
+                 - "{{ mysql_application_deployment }}"
+                 - "{{ wordpress_application_deployment }}"
+
+          when: "'deprovision' not in action"
+
+        - block:
+
+            - name: Deprovisioning the Application
+              include_tasks: /utils/k8s/deprovision_deployment.yml
+              vars:
+                app_deployer: "{{ mysql_application_deployment }}"
+
+            - name: Deprovisioning the Application
+              include_tasks: /utils/k8s/deprovision_deployment.yml
+              vars:
+                app_deployer: "{{ wordpress_application_deployment }}"
+
+          when: "'deprovision' is in action"
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - name: Setting fail flag
+          set_fact:
+            flag: "Fail"
+
+      always:
+        ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
