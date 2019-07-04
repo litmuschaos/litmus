@@ -35,7 +35,7 @@ spec:
             
            # Provide the name of STORAGE_CLASS 
           - name: STORAGE_CLASS
-            value: openebs-cstor-striped
+            value: openebs-cstor-disk
 
           - name: OPERATOR_NS
             value: openebs
