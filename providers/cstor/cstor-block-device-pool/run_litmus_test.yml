@@ -32,6 +32,10 @@ spec:
            # Supported values: striped, mirrored, raidz ,raidz2
           - name: POOL_TYPE
             value: striped
+            
+           # Provide the name of STORAGE_CLASS 
+          - name: STORAGE_CLASS
+            value: openebs-cstor-striped
 
           - name: OPERATOR_NS
             value: openebs
