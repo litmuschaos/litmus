@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress
+  labels:
+    lkey: lvalue
+spec:
+  ports:
+    - port: 80
+  selector:
+    lkey: lvalue
+    tier: frontend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  labels:
+    lkey: lvalue
+spec:
+  selector:
+    matchLabels:
+      lkey: lvalue
+      tier: frontend
+  rkey: rvalue
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        lkey: lvalue
+        tier: frontend
+        type: workload
+    spec:
+      containers:
+      - image: wordpress:4.8-apache
+        name: wordpress
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: wordpress-mysql
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password
+        ports:
+        - containerPort: 80
+          name: wordpress
+        volumeMounts:
+        - name: wordpress-persistent-storage
+          mountPath: /var/www/html
+      volumes:
+      - name: wordpress-persistent-storage
+        persistentVolumeClaim:
+          claimName: testclaim
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: testclaim
+  annotations:
+    volume.beta.kubernetes.io/storage-class: "testclass"
+spec:
+  accessModes:
+    - accesstype
+  resources:
+    requests:
+      storage: volume-capacity
