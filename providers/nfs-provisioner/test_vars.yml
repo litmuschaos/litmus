@@ -1,0 +1,12 @@
+application_deployment: nfs-deployment.yml
+app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+app_label: "{{ lookup('env','APP_LABEL') }}"
+test_name: "nfs-provision"
+affinity_label: "{{ lookup('env','AFFINITY_LABEL') }}"
+application_name: "nfs"
+action: "{{ lookup('env','ACTION') }}"
+app_pvc: "{{ lookup('env','APP_PVC') }}"
+storage_class: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+nfs_storage_class: "{{ lookup('env','NFS_STORAGE_CLASS_NAME') }}"
+nfs_type: "{{ lookup('env','NFS_VERSION') }}"
+operator_ns: openebs
