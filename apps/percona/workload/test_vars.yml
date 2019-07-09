@@ -7,4 +7,8 @@ db_user: "{{ lookup('env','DB_USER') }}"
 db_password: "{{ lookup('env','DB_PASSWORD') }}"
 app_label: "{{ lookup('env','APP_LABEL') }}"
 load_duration: "{{ lookup('env','LOAD_DURATION') }}"
+test_warehouse: "{{ lookup('env','TPCC_WAREHOUSES') }}"
+test_connections: "{{ lookup('env','TPCC_CONNECTIONS') }}"
+test_warmup_period: "{{ lookup('env','TPCC_WARMUP_PERIOD') }}"
+test_interval: "{{ lookup('env','LOAD_INTERVAL') }}"
 tpcc_conf: tpcc.conf

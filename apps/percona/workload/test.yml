@@ -71,6 +71,30 @@
             regexp: "test_duration"
             replace: "{{ load_duration }}"
 
+        - name: Replace the warehouse placeholder in tpcc-config file
+          replace:
+            path: "{{ tpcc_conf }}"
+            regexp: "test_warehouse"
+            replace: "{{ test_warehouse }}"
+
+        - name: Replace the test connections placeholder in tpcc-config file
+          replace:
+            path: "{{ tpcc_conf }}"
+            regexp: "test_connections"
+            replace: "{{ test_connections }}"
+
+        - name: Replace the test warmup-period placeholder in tpcc-config file
+          replace:
+            path: "{{ tpcc_conf }}"
+            regexp: "test_warmup_period"
+            replace: "{{ test_warmup_period }}"
+
+        - name: Replace the test interval placeholder in tpcc-config file
+          replace:
+            path: "{{ tpcc_conf }}"
+            regexp: "test_interval"
+            replace: "{{ test_interval }}"            
+
         - name: Getting the Service IP of Application
           shell: kubectl get svc -n {{ namespace }} -l {{ app_service_label }} -o jsonpath='{.items[0].spec.clusterIP}'
           register: ip
