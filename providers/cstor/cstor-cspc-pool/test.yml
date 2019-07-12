@@ -1,0 +1,145 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+         ## Generating the testname for deployment
+        - include_tasks: /utils/fcm/create_testname.yml
+
+         ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: "/utils/fcm/update_litmus_result_resource.yml"
+          vars:
+            status: 'SOT'
+        - name: Getting the compute node name
+          shell: kubectl get nodes -l node-role.kubernetes.io/compute=true -o jsonpath='{.items[*].metadata.name}' | tr " " "\n"
+          register: nodes
+
+        - name: Getting the Unclaimed block-device from each node when pool type is STRIPE
+          shell: kubectl get blockdevice -n openebs -l kubernetes.io/hostname={{ item }} -o jsonpath='{.items[?(@.status.claimState=="Unclaimed")].metadata.name}' | tr " " "\n" | grep -v sparse | head -n 1
+          register: blockDevice
+          with_items: "{{ nodes.stdout_lines }}"
+
+        - name: Initialize an empty list to store block device names
+          set_fact:
+             bd_names: []
+
+        - name: Store name of all block devices in the list 
+          set_fact:
+            bd_names: "{{ bd_names + item.stdout_lines }}"
+          with_items:
+            - "{{ blockDevice.results }}"
+
+        - name: Add the block devices and node labels
+          template:
+            src: ./blockdevice.j2
+            dest: ./blockdevice-{{ item[0] }}.yml
+          with_together:
+            - "{{ nodes.stdout_lines }}"
+            - "{{ bd_names }}"
+
+        - name: Include the blockdevice template in the CSPC spec
+          blockinfile:
+            dest: ./cspc.yml
+            marker: "## {{ item }} Ansible Config ##"
+            insertafter: pools
+            state: present
+            block: |
+               {{ lookup('file', './blockdevice-{{ item }}.yml') }}
+          with_items:
+            - "{{ nodes.stdout_lines }}"
+
+        - set_fact:
+             device_count: "{{ blockDevice|length}}"              
+
+        - name: Replacing the pool name in CSPC spec
+          replace:
+            path: ./cspc.yml
+            regexp: "pool-name"
+            replace: "{{ pool_name }}"
+
+        - name: Replacing the pool group id in CSPC spec
+          replace:
+            path: ./cspc.yml
+            regexp: "pool-group"
+            replace: "{{ pool_group }}"
+
+        - name: Replacing the storage class name in CSPC spec
+          replace:
+            path: ./cspc.yml
+            regexp: "sc_name"
+            replace: "{{ sc_name }}"
+
+        - name: Replacing the namespace in CSPC spec
+          replace:
+            path: ./cspc.yml
+            regexp: "operator_ns"
+            replace: "{{ operator_ns }}"
+
+        - name: Replacing the pool type in CSPC spec
+          replace:
+            path: ./cspc.yml
+            regexp: "pool-type"
+            replace: "{{ pool_type }}"
+           
+         ## TODO: Included a task to create cstor disk pool for Mirrored,Raidz,Raidz2 types
+
+        - name: Display spc.yml for verification 
+          debug: var=item
+          with_file:
+           - "cspc.yml"
+
+        - name: Create cstor disk pool
+          shell: kubectl apply -f cspc.yml
+          args:
+            executable: /bin/bash
+
+        - name: Verify if cStor Disk Pool are Running
+          shell: >
+             kubectl get pods -n {{ operator_ns }} -l openebs.io/cstor-pool-cluster={{ pool_name }}
+             --no-headers -o custom-columns=:status.phase
+          args:
+            executable: /bin/bash
+          register: pool_count
+          until: "((pool_count.stdout_lines|unique)|length) == 1 and 'Running' in pool_count.stdout"
+          retries: 30
+          delay: 10
+
+        - name: Get cStor Disk Pool names to verify the container statuses
+          shell: >
+            kubectl get pods -n {{ operator_ns }} -l openebs.io/cstor-pool-cluster={{ pool_name }}
+            --no-headers -o=custom-columns=NAME:".metadata.name"
+          args:
+            executable: /bin/bash
+          register: cstor_pool_pod
+
+        - name: Get the runningStatus of pool pod
+          shell: >
+            kubectl get pod {{ item }} -n {{ operator_ns }}
+            -o=jsonpath='{range .status.containerStatuses[*]}{.state}{"\n"}{end}' |
+            grep -w running | wc -l
+          args:
+            executable: /bin/bash
+          register: runningStatusCount
+          with_items: "{{ cstor_pool_pod.stdout_lines }}"
+          until: "runningStatusCount.stdout == device_count"
+          delay: 30
+          retries: 10
+
+        - set_fact:
+            flag: "Pass"
+    
+      rescue:
+          - set_fact:
+              flag: "Fail"
+  
+      always:
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR
+          - include_tasks: /utils/fcm/update_litmus_result_resource.yml
+            vars:
+              status: 'EOT'  
+        

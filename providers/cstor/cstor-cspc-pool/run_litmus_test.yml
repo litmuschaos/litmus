@@ -1,0 +1,46 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: cstor-pool-provision-
+  namespace: litmus
+spec:
+  template:
+    metadata:
+      name: litmus
+      labels:
+        app: cstor-pool-provision
+
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: openebs/ansible-runner:ci
+        imagePullPolicy: Always
+
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            #value: log_plays, actionable, default
+            value: default
+
+            # Provide name POOL_NAME for the cstor-pool
+          - name: POOL_NAME
+            value: cstor-block-disk-pool
+
+           # Provide the value for POOL_TYPE 
+          - name: POOL_TYPE
+            value: striped
+            
+           # Provide the name of STORAGE_CLASS 
+          - name: STORAGE_CLASS
+            value: openebs-cstor-disk
+
+          - name: OPERATOR_NS
+            value: openebs
+
+          - name: POOL_GROUP
+            value: stripped
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./providers/cstor/cstor-cspc-pool/test.yml -i /etc/ansible/hosts -v; exit 0"]
