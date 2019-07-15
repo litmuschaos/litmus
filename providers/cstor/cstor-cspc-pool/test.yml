@@ -15,6 +15,7 @@
         - include_tasks: "/utils/fcm/update_litmus_result_resource.yml"
           vars:
             status: 'SOT'
+
         - name: Getting the compute node name
           shell: kubectl get nodes -l node-role.kubernetes.io/compute=true -o jsonpath='{.items[*].metadata.name}' | tr " " "\n"
           register: nodes
@@ -34,7 +35,8 @@
           with_items:
             - "{{ blockDevice.results }}"
 
-        - name: Add the block devices and node labels
+        # Creating the blockdevice template from blockdevice.j2 jinja template for each node
+        - name: Add the block devices and node labels for each nodes and create blockdevice template
           template:
             src: ./blockdevice.j2
             dest: ./blockdevice-{{ item[0] }}.yml
@@ -42,6 +44,9 @@
             - "{{ nodes.stdout_lines }}"
             - "{{ bd_names }}"
 
+        # Insert the blockdevice template created for each nodes into cspc spec
+        # blockinfile module will insert the external_files/block.
+        # marker line template will be replaced with the values in marker_begin (default="BEGIN") and marker_end (default="END").
         - name: Include the blockdevice template in the CSPC spec
           blockinfile:
             dest: ./cspc.yml
@@ -88,7 +93,7 @@
            
          ## TODO: Included a task to create cstor disk pool for Mirrored,Raidz,Raidz2 types
 
-        - name: Display spc.yml for verification 
+        - name: Display cspc.yml for verification 
           debug: var=item
           with_file:
            - "cspc.yml"
