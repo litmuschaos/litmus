@@ -1,0 +1,63 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: litmus-target-pod-schedule
+  namespace: litmus
+spec:
+  template:
+    metadata:
+      name: litmus
+      labels:
+        app: litmus-target-schedule
+
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: openebs/ansible-runner:ci
+        imagePullPolicy: Always
+
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: default
+
+            # Application namespace
+          - name: APP_NAMESPACE
+            value: app-busybox-ns
+
+          - name: APP_LABEL
+            value: app=busybox-deploy
+
+            #Target namespace
+          - name: OPERATOR_NS
+            value: openebs
+
+          - name: APP_PVC
+            value: openebs-busybox
+
+          - name: DEPLOY_TYPE
+            value: deployment
+            
+            # Give the node name where target pod should be scheduled
+          - name: TARGET_NODE
+            value: node1-1558702621.mayalabs.io
+           
+            # Provide the node label 
+          - name: NODE_LABEL
+            value: node=appnode
+
+            # Provide the name of STORAGE_CLASS 
+          - name: PROVIDER_STORAGE_CLASS
+            value: openebs-cstor-sc
+            
+            # Provide name POOL_NAME for the cstor-pool
+          - name: POOL_NAME
+            value: cstor-block-disk-pool
+
+          - name: PV_CAPACITY
+            value: 5G
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./experiments/functional/schedule-target-pod/test.yml -i /etc/ansible/hosts -vv; exit 0"]

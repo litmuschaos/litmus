@@ -1,0 +1,130 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+          ## Generating the testname for deployment
+        - include_tasks: /utils/fcm/create_testname.yml
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: "/utils/fcm/update_litmus_result_resource.yml"
+          vars:
+            status: 'SOT'
+
+        - name: Replacing the storage class name in storage class yaml file
+          replace:
+            path: ./storage_class.yml
+            regexp: "sc-name"
+            replace: "{{ sc_name }}"
+
+        - name: Replacing the pool type in storage class yaml file
+          replace:
+            path: ./storage_class.yml
+            regexp: "pool-type"
+            replace: "{{ pool_type }}"
+            
+        - name: Replacing the pool name in storage class yaml file
+          replace:
+            path: ./storage_class.yml
+            regexp: "pool-name"
+            replace: "{{ pool_name }}"
+            
+        - name: Get the node label values from env
+          set_fact:
+             node_lkey: "{{ node_label.split('=')[0] }}"
+             node_lvalue: "{{ node_label.split('=')[1] }}"
+
+        - name: Replace the node label placeholder in storage class yaml 
+          replace:
+            path: ./storage_class.yml
+            regexp: "lkey: lvalue"
+            replace: "{{ node_lkey }}: {{ node_lvalue }}"
+
+        - name: Give label to the node where target pod has to be scheduled
+          command: kubectl label nodes {{ target_node }} {{ node_lkey }}={{ node_lvalue }}
+                
+        - name: Create the storage class 
+          command: kubectl apply -f storage_class.yml 
+
+        - include_tasks: /utils/k8s/pre_create_app_deploy.yml
+      
+        - name: Replace the volume capcity placeholder with provider
+          replace:
+            path: "{{ application_deployment }}"
+            regexp: "teststorage"
+            replace: "{{ lookup('env','PV_CAPACITY') }}"
+
+        - include_tasks: /utils/k8s/deploy_single_app.yml
+          vars:
+            check_app_pod: 'yes'
+            delay: 10
+            retries: 20    
+
+        - name: Checking {{ application_name }} pod is in running state
+          shell: kubectl get pods -n {{ app_ns }} -o jsonpath='{.items[?(@.metadata.labels.{{app_lkey}}=="{{app_lvalue}}")].status.phase}'
+          register: result
+          until: "((result.stdout.split()|unique)|length) == 1 and 'Running' in result.stdout"
+          delay: 10
+          retries: 20
+                   
+        - name: Get the pvc of the {{ application_name }} application 
+          shell: kubectl get pvc -n {{ app_ns }} 
+          register: pvc_name_info
+
+        - name: Get the name of pvc of the application
+          set_fact:
+             pvc_name: "{{ pvc_name_info.stdout_lines[1].split()[2] }}"
+
+        - name: Get the target pod of the {{ application_name }} application
+          shell: kubectl get pods -n {{ operator_ns }} -o wide| grep {{ pvc_name }}
+          register: target_pod_info
+
+        - name: Obtain the name of target pod of {{ application_name }} application
+          set_fact:
+             target_pod: "{{ target_pod_info.stdout_lines[0].split()[0] }}"
+              
+        - name: Get the node name in which target pod is scheduled
+          shell: kubectl get pods {{ target_pod }} -n openebs -o jsonpath='{.spec.nodeName}'
+          register: node_name
+
+        - name: Display the message if target pod is scheduled in the node specified
+          debug:
+            msg:
+            - 'The target pod is scheduled in the same node specified'
+          when: "'{{ target_node }}' in node_name.stdout_lines"
+        
+        - name: Fail the play if target pod is not scheduled in specified node
+          fail: 
+            msg: "Target pod is scheduled in different node"
+          when: "'{{ target_node }}' not in node_name.stdout_lines"
+
+        - name: Check whether target pod is in running state or not 
+          shell: kubectl get pods {{ target_pod }} -n {{ operator_ns }} -o jsonpath='{.status.phase}'
+          register: result
+          until: "((result.stdout.split()|unique)|length) == 1 and 'Running' in result.stdout"
+          delay: 10
+          retries: 20
+
+        - name: Delete the label from node 
+          command: kubectl label nodes {{ target_node }} {{ node_lkey }}-   
+
+        - name: Delete the storage class 
+          command: kubectl delete -f storage_class.yml                   
+        
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - set_fact:
+            flag: "Fail"
+
+      always:
+           ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
