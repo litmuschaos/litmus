@@ -1,0 +1,200 @@
+# TODO
+# Change pod status checks to container status checks (containerStatuses)
+# O/P result
+
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+   - block:
+
+       - block:
+
+            - name: Record test instance/run ID
+              set_fact:
+                run_id: "{{ lookup('env','RUN_ID') }}"
+
+            - name: Construct testname appended with runID
+              set_fact:
+                test_name: "{{ test_name }}-{{ run_id }}"
+
+         when: lookup('env','RUN_ID')
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+       - include_tasks: /utils/fcm/update_litmus_result_resource.yml
+         vars:
+           status: 'SOT'
+
+       ## VERIFY AVAILABILITY OF SELECTED STORAGE CLASS
+
+       - name: Check whether the provider storageclass is applied
+         shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
+         args:
+           executable: /bin/bash
+         register: result
+
+       - name: Replace the storageclass placeholder with provider
+         replace:
+           path: "{{ pvc_yml }}"
+           regexp: "testclass"
+           replace: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
+
+       - name: Create test specific namespace.
+         shell: kubectl create ns {{ app_ns }}
+         args:
+           executable: /bin/bash
+         when: app_ns != 'litmus'
+
+       - name: Checking the status  of test specific namespace.
+         shell: kubectl get ns {{ app_ns }} -o jsonpath='{.status.phase}'
+         args:
+           executable: /bin/bash
+         register: npstatus
+         until: "'Active' in npstatus.stdout"
+         delay: 30
+         retries: 10
+
+       - name: Deploy PVC to get size of volume requested application namespace
+         shell: kubectl apply -f {{ pvc_yml }} -n {{ app_ns }}
+         args:
+          executable: /bin/bash
+
+       - set_fact:
+           pvc_label: demo-vol1-claim
+           execute: 1
+
+       - name: Get pv name
+         shell: >
+           kubectl get pvc --no-headers -n {{ app_ns }} -l name={{ pvc_label }} -o jsonpath='{range .items[*]}{.spec.volumeName}{"\n"}{end}'
+         args:
+           executable: /bin/bash
+         register: result
+
+       - set_fact:
+           pv_name: "{{ result.stdout }}"
+
+       - name: Replace the data sample size with the provider sample size in {{ fio_write_yml }}
+         replace:
+           path: "{{ fio_write_yml }}"
+           regexp: "256m"
+           replace: "{{ lookup('env','FIO_SAMPLE_SIZE') }}"
+
+       ## RUN FIO WORKLOAD TEST
+       - name: Deploy fio write test job
+         shell: kubectl apply -f {{ fio_write_yml }} -n {{ app_ns }}
+         args:
+           executable: /bin/bash
+
+       - name: Fetch the pod name in {{ app_ns }}
+         shell: >
+           kubectl get pods -n {{ app_ns }} -l name=fio-write -o custom-columns=:metadata.name --no-headers
+         args:
+           executable: /bin/bash
+         register: fio_pod_name
+
+       - name: Check the status of pod
+         shell: kubectl get po {{ fio_pod_name.stdout }} -n {{ app_ns }} -o jsonpath={.status.phase}
+         args:
+           executable: /bin/bash
+         register: status_fio_pod
+         until: "'Running' in status_fio_pod.stdout"
+         delay: 5
+         retries: 100
+
+       - name: Populate the iterator with the values to loop
+         shell: >
+           shuf -i 1-10 -n 5
+         args:
+           executable: /bin/bash
+         register: iterator
+
+       - name: Include replica restart test
+         include: "{{ replica_restart_yml }}"
+         with_items: "{{ iterator.stdout_lines }}"
+
+       - set_fact:
+           flag: "Pass"
+
+       - name: Include replica count test
+         include: "{{ check_replica_cnt_yml }}"
+
+       - set_fact:
+           flag: "Pass"
+
+       - name: Include snapshot delete test
+         include: "{{ snap_delete_yml }}"
+
+       - set_fact:
+           flag: "Pass"
+
+       - name: Check if fio write job is completed
+         shell: >
+           kubectl get pods -n {{ app_ns }} -o jsonpath='{.items[?(@.metadata.labels.name=="fio-write")].status.containerStatuses[*].state.terminated.reason}'
+         args:
+           executable: /bin/bash
+         register: result_fio_pod
+         until: "'Completed' in result_fio_pod.stdout"
+         delay: 60
+         retries: 900
+
+       - name: Verify the fio logs to check if run is complete w/o errors
+         shell: >
+           kubectl logs {{ fio_pod_name.stdout }} -n {{ app_ns }}
+           | grep -i error | cut -d ":" -f 2
+           | sort | uniq
+         args:
+           executable: /bin/bash
+         register: result
+         failed_when: result.stdout != " 0,"
+
+       - name: Deploy fio read test job
+         shell: kubectl apply -f {{ fio_read_yml }} -n {{ app_ns }}
+         args:
+           executable: /bin/bash
+
+       - name: Obtaining the fio read job pod name
+         shell: >
+           kubectl get pods -n {{ app_ns }} -l name=fio-read -o custom-columns=:metadata.name --no-headers
+         args:
+           executable: /bin/bash
+         register: read_pod
+
+       - name: Check if fio read job is completed
+         shell: >
+           kubectl get pods -n {{ app_ns }} -o jsonpath='{.items[?(@.metadata.labels.name=="fio-read")].status.containerStatuses[*].state.terminated.reason}'
+         args:
+           executable: /bin/bash
+         register: result_read_job
+         until: "'Completed' in result_read_job.stdout"
+         delay: 60
+         retries: 20
+
+       - name: Verify the data integrity check
+         shell: >
+           kubectl logs {{ read_pod.stdout }} -n {{ app_ns }}
+           | grep -i '"error"' | cut -d ":" -f 2
+           | sort | uniq
+         args:
+           executable: /bin/bash
+         register: result_di
+         failed_when: result_di.stdout != " 0,"
+
+       - set_fact:
+           flag: "Pass"
+
+     rescue:
+       - set_fact:
+           flag: "Fail"
+
+       - name: Cleanup the jobs
+         shell: >
+           kubectl delete ns {{ app_ns }}
+
+     always:
+            ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'

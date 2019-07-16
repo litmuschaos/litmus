@@ -1,0 +1,13 @@
+---
+## TEST-SPECIFIC PARAMS
+test_name: fio-data-integrity
+fio_write_yml: fio-write.yml
+fio_read_yml: fio-read.yml
+replica_restart_yml: test_replica_restart.yml
+snap_delete_yml: snapshot_delete_test.yml
+check_replica_cnt_yml: check_replica_count.yml
+app_ns: "{{ lookup('env','FIO_NAMESPACE') }}"
+data_check: "{{ lookup('env','DATA_CHECK') }}"
+pvc_yml: pvc.yml
+operator_ns: "openebs"
+storage_class: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
