@@ -1,9 +1,7 @@
 test_name: schedule-target-pod-on-node
 app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
 app_label: "{{ lookup('env','APP_LABEL') }}"
-deploy_type: "{{ lookup('env','DEPLOY_TYPE') }}"
 pool_name: "{{ lookup('env','POOL_NAME') }}"
-pool_type: "{{ lookup('env','POOL_TYPE') }}"
 sc_name: "{{ lookup('env', 'PROVIDER_STORAGE_CLASS') }}"
 node_label: "{{ lookup('env','NODE_LABEL') }}"
 target_node: "{{ lookup('env','TARGET_NODE') }}"

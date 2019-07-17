@@ -42,7 +42,7 @@ spec:
             
             # Give the node name where target pod should be scheduled
           - name: TARGET_NODE
-            value: node1-1558702621.mayalabs.io
+            value: node1
            
             # Provide the node label 
           - name: NODE_LABEL
