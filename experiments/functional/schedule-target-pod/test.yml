@@ -16,26 +16,21 @@
           vars:
             status: 'SOT'
 
-        - name: Replacing the storage class name in storage class yaml file
-          replace:
-            path: ./storage_class.yml
-            regexp: "sc-name"
-            replace: "{{ sc_name }}"
-                 
-        - name: Replacing the pool name in storage class yaml file
-          replace:
-            path: ./storage_class.yml
-            regexp: "pool-name"
-            replace: "{{ pool_name }}"
+        - name: Get the name of nodes in cluster
+          shell: kubectl get nodes -l node-role.kubernetes.io/compute=true -o jsonpath='{.items[*].metadata.name}' | tr " " "\n"
+          register: node_names
 
-        - name: Get the node name where target pod should be scheduled from the cluster
-          shell: kubectl get nodes | grep {{ target_node }}
-          register: node_name
-
-        - name: Get the name of the node from variable
+        - name: Select random node from the list of nodes
           set_fact:
-             target_node_name: "{{ node_name.stdout_lines[0].split()[0] }}"
-            
+            target_node: "{{ item }}"
+          with_random_choice: "{{ node_names.stdout_lines }}"  
+          when: lookup('env','TARGET_NODE') | length == 0
+          
+        - name: Set the node as target node if it is taken as input
+          set_fact:
+            target_node: "{{ target_node_name }}"  
+          when: lookup('env','TARGET_NODE') | length > 0        
+                 
         - name: Get the node label values from env
           set_fact:
              node_lkey: "{{ node_label.split('=')[0] }}"
@@ -43,15 +38,20 @@
 
         - name: Replace the node label placeholder in storage class yaml 
           replace:
-            path: ./storage_class.yml
+            path: ./storage_class.j2
             regexp: "lkey: lvalue"
             replace: "{{ node_lkey }}: {{ node_lvalue }}"
 
+        - name: Generate yaml file to create storage class from jinja template
+          template:
+            src: storage_class.j2
+            dest: "{{ storage_class }}"
+
         - name: Give label to the node where target pod has to be scheduled
-          command: kubectl label nodes {{ target_node_name }} {{ node_lkey }}={{ node_lvalue }}
+          command: kubectl label nodes {{ target_node }} {{ node_lkey }}={{ node_lvalue }}
                 
         - name: Create the storage class 
-          command: kubectl apply -f storage_class.yml 
+          command: kubectl apply -f {{ storage_class }}
 
         - include_tasks: /utils/k8s/pre_create_app_deploy.yml
       
@@ -79,71 +79,57 @@
           register: pvc_name
 
         - name: Get the target pod of the {{ application_name }} application
-          shell: kubectl get pods -n {{ operator_ns }} -o wide| grep {{ pvc_name.stdout }}
-          register: target_pod_info
-
-        - name: Obtain the name of target pod of {{ application_name }} application
-          set_fact:
-             target_pod: "{{ target_pod_info.stdout_lines[0].split()[0] }}"
-
+          shell: kubectl get pods -n {{ operator_ns }} -l openebs.io/persistent-volume={{ pvc_name.stdout }} -o jsonpath='{.items[0].metadata.name}'
+          register: target_pod
+       
         - name: Check whether target pod is in running state or not 
-          shell: kubectl get pods {{ target_pod }} -n {{ operator_ns }} -o jsonpath='{.status.phase}'
+          shell: kubectl get pods {{ target_pod.stdout }} -n {{ operator_ns }} -o jsonpath='{.status.phase}'
           register: result
           until: "((result.stdout.split()|unique)|length) == 1 and 'Running' in result.stdout"
           delay: 10
           retries: 20
               
         - name: Get the node name in which target pod is scheduled
-          shell: kubectl get pods {{ target_pod }} -n {{ operator_ns }} -o jsonpath='{.spec.nodeName}'
+          shell: kubectl get pods {{ target_pod.stdout }} -n {{ operator_ns }} -o jsonpath='{.spec.nodeName}'
           register: node_name
            
         - name: Fail the play if target pod is not scheduled in specified node
           fail: 
             msg: "Target pod is scheduled in different node"
-          when: "'{{ target_node_name }}' not in node_name.stdout_lines"   
+          when: "'{{ target_node }}' not in node_name.stdout_lines"   
 
         - name: Delete the target pod of {{ application_name }} application
-          shell: kubectl delete pods {{ target_pod }} -n {{ operator_ns }} 
+          shell: kubectl delete pods {{ target_pod.stdout }} -n {{ operator_ns }} 
 
         - name: Wait for 20 seconds to make sure that new target pod has come up
           wait_for:
             timeout: 20
 
         - name: Get the name of new target pod created
-          shell: kubectl get pods -n {{ operator_ns }} -o wide| grep {{ pvc_name.stdout }}
-          register: new_target_pod_info
-
-        - name: Obtain the name of new target pod from variable
-          set_fact:
-             new_target_pod: "{{ new_target_pod_info.stdout_lines[0].split()[0] }}"
+          shell: kubectl get pods -n {{ operator_ns }} -l openebs.io/persistent-volume={{ pvc_name.stdout }} -o jsonpath='{.items[0].metadata.name}'
+          register: new_target_pod     
 
         - name: Check whether new target pod is in running state or not 
-          shell: kubectl get pods {{ new_target_pod }} -n {{ operator_ns }} -o jsonpath='{.status.phase}'
+          shell: kubectl get pods {{ new_target_pod.stdout }} -n {{ operator_ns }} -o jsonpath='{.status.phase}' 
           register: result
           until: "((result.stdout.split()|unique)|length) == 1 and 'Running' in result.stdout"
           delay: 10
           retries: 20
 
         - name: Get the node name in which new target pod is scheduled
-          shell: kubectl get pods {{ new_target_pod }} -n {{ operator_ns }} -o jsonpath='{.spec.nodeName}'
+          shell: kubectl get pods {{ new_target_pod.stdout }} -n {{ operator_ns }} -o jsonpath='{.spec.nodeName}'
           register: name_of_node
 
         - name: Display the message if target pod is scheduled in the node specified
           debug:
             msg:
             - 'The target pod is scheduled in the same node specified'
-          when: "'{{ target_node_name }}' in name_of_node.stdout_lines" 
+          when: "'{{ target_node }}' in name_of_node.stdout_lines" 
 
         - name: Fail the play if target pod is not scheduled in specified node
           fail: 
             msg: "Target pod is scheduled in different node"
-          when: "'{{ target_node_name }}' not in node_name.stdout_lines"   
-
-        - name: Delete the label from node 
-          command: kubectl label nodes {{ target_node_name }} {{ node_lkey }}-   
-
-        - name: Delete the storage class 
-          command: kubectl delete -f storage_class.yml                   
+          when: "'{{ target_node }}' not in node_name.stdout_lines"                  
         
         - set_fact:
             flag: "Pass"
@@ -153,6 +139,12 @@
             flag: "Fail"
 
       always:
+        - name: Delete the label from node 
+          command: kubectl label nodes {{ target_node }} {{ node_lkey }}-   
+
+        - name: Delete the storage class 
+          command: kubectl delete -f {{ storage_class }}        
+    
            ## RECORD END-OF-TEST IN LITMUS RESULT CR
         - include_tasks: /utils/fcm/update_litmus_result_resource.yml
           vars:

@@ -1,14 +1,14 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: sc-name
+  name: "{{ sc_name }}"
   annotations:
     openebs.io/cas-type: cstor
     cas.openebs.io/config: |
       - name: StoragePoolClaim
-        value: pool-name
+        value: "{{ pool_name }}"
       - name: ReplicaCount
-        value: "3"
+        value: "{{ replica_count }}"
       - name: TargetNodeSelector
         value: |-
             lkey: lvalue
