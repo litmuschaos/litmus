@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: litmus-target-pod-schedule
+  generateName: litmus-target-pod-schedule-
   namespace: litmus
 spec:
   template:
