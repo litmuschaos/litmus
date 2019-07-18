@@ -5,16 +5,18 @@
     executable: /bin/bash
   register: replica_pod
 
-- name: Set the replica pod names to variables
+- name: Set the replica pod name to variable based on latest creation timestamp
   set_fact:
-    replica_name_three: "{{ replica_pod.stdout_lines[2].split()[0] }}"
+    replica_name: "{{ replica_pod.stdout_lines[2].split()[0] }}"
 
 - name: Delete replica with latest creation timestamp
   shell: >
-    kubectl delete pod {{ replica_name_three }} -n {{ app_ns }}
+    kubectl delete pod {{ replica_name }} -n {{ app_ns }}
   args:
     executable: /bin/bash
 
+# Pausing replica to distribute the data among the new snapshots
+# created after the restarts
 - name: Pause for some time for a new replica to come up
   pause:
     minutes: 1
