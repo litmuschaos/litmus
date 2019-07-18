@@ -20,7 +20,7 @@
           shell: kubectl get nodes -l node-role.kubernetes.io/compute=true -o jsonpath='{.items[*].metadata.name}' | tr " " "\n"
           register: node_names
 
-        - name: Select random node from the list of nodes
+        - name: Select random node from the list of nodes as target node
           set_fact:
             target_node: "{{ item }}"
           with_random_choice: "{{ node_names.stdout_lines }}"  
@@ -36,6 +36,9 @@
              node_lkey: "{{ node_label.split('=')[0] }}"
              node_lvalue: "{{ node_label.split('=')[1] }}"
 
+        - name: Give label to the node where target pod has to be scheduled
+          command: kubectl label nodes {{ target_node }} {{ node_lkey }}={{ node_lvalue }}
+
         - name: Replace the node label placeholder in jinja template 
           replace:
             path: ./storage_class.j2
@@ -45,10 +48,7 @@
         - name: Generate yaml file to create storage class from jinja template
           template:
             src: storage_class.j2
-            dest: "{{ storage_class }}"
-
-        - name: Give label to the node where target pod has to be scheduled
-          command: kubectl label nodes {{ target_node }} {{ node_lkey }}={{ node_lvalue }}
+            dest: "{{ storage_class }}"      
                 
         - name: Create the storage class 
           command: kubectl apply -f {{ storage_class }}
@@ -96,14 +96,21 @@
         - name: Fail the play if target pod is not scheduled in specified node
           fail: 
             msg: "Target pod is scheduled in different node"
-          when: "'{{ target_node }}' not in node_name.stdout_lines"   
+          when: "target_node not in node_name.stdout_lines"   
 
         - name: Delete the target pod of {{ application_name }} application
           shell: kubectl delete pods {{ target_pod.stdout }} -n {{ operator_ns }} 
 
-        - name: Wait for 20 seconds to make sure that new target pod has come up
+        - name: Get the name of all pods in {{ operator_ns }} namespace
+          shell: kubectl get pods -n {{ operator_ns }} -o jsonpath='{.items[*].metadata.name}'
+          register: pod_names
+
+        - name: Make sure that target pod is deleted and new pod has come up
           wait_for:
-            timeout: 20
+            timeout: 3
+          until: "target_pod.stdout not in pod_names.stdout"
+          delay: 5
+          retries: 10
 
         - name: Get the name of new target pod created
           shell: kubectl get pods -n {{ operator_ns }} -l openebs.io/persistent-volume={{ pvc_name.stdout }} -o jsonpath='{.items[0].metadata.name}'
@@ -124,12 +131,12 @@
           debug:
             msg:
             - 'The target pod is scheduled in the same node specified'
-          when: "'{{ target_node }}' in name_of_node.stdout_lines" 
+          when: "target_node in name_of_node.stdout_lines" 
 
         - name: Fail the play if target pod is not scheduled in specified node
           fail: 
             msg: "Target pod is scheduled in different node"
-          when: "'{{ target_node }}' not in node_name.stdout_lines"                  
+          when: "target_node not in node_name.stdout_lines"                  
         
         - set_fact:
             flag: "Pass"
