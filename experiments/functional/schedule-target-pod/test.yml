@@ -36,7 +36,7 @@
              node_lkey: "{{ node_label.split('=')[0] }}"
              node_lvalue: "{{ node_label.split('=')[1] }}"
 
-        - name: Replace the node label placeholder in storage class yaml 
+        - name: Replace the node label placeholder in jinja template 
           replace:
             path: ./storage_class.j2
             regexp: "lkey: lvalue"
