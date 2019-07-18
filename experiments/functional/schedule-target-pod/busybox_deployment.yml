@@ -1,0 +1,38 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: app-busybox
+  labels:
+    lkey: lvalue
+spec:
+  template:
+    metadata:
+      labels:
+        lkey: lvalue
+    spec:
+      containers:
+      - name: app-busybox
+        imagePullPolicy: IfNotPresent
+        image: busybox
+        command: ["/bin/sh"]
+        args: ["-c", "while true; do sleep 10;done"]
+        env:
+        volumeMounts:
+        - name: data-vol
+          mountPath: /busybox
+      volumes:
+      - name: data-vol
+        persistentVolumeClaim:
+          claimName: testclaim
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: testclaim
+spec:
+  storageClassName: testclass
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: teststorage
