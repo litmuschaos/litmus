@@ -1,0 +1,22 @@
+- name: Get the name of controller pod
+  shell: >
+    kubectl get pods -l openebs.io/controller=jiva-controller,openebs.io/persistent-volume={{ pv_name }} -n {{ app_ns }} -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}'
+  args:
+    executable: /bin/bash
+  register: controller_pod
+
+- name: List snapshots
+  shell: >
+    kubectl exec -it {{ controller_pod.stdout }} -n {{ app_ns }} -- jivactl snapshot ls | grep -v ID | tail -n +2
+  args:
+    executable: /bin/bash
+  register: snapshot_list
+
+- name: Delete snapshots
+  shell: >
+    kubectl exec -it {{ controller_pod.stdout }} -n {{ app_ns }} -- jivactl snapshot rm {{item}}
+  args:
+    executable: /bin/bash
+  register: snapshot_list
+  with_items: "{{ snapshot_list.stdout_lines }}"
+

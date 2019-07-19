@@ -1,0 +1,25 @@
+- name: Get the name of replica pods
+  shell: >
+    kubectl get pods -l openebs.io/replica=jiva-replica,openebs.io/persistent-volume={{ pv_name }} -n {{ app_ns }} --sort-by=.metadata.creationTimestamp -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}}'
+  args:
+    executable: /bin/bash
+  register: replica_pod
+
+- name: Set the replica pod name to variable based on latest creation timestamp
+  set_fact:
+    replica_name: "{{ replica_pod.stdout_lines[2].split()[0] }}"
+
+- name: Delete replica with latest creation timestamp
+  shell: >
+    kubectl delete pod {{ replica_name }} -n {{ app_ns }}
+  args:
+    executable: /bin/bash
+
+# Pausing replica to distribute the data among the new snapshots
+# created after the restarts
+- name: Pause for some time for a new replica to come up
+  pause:
+    minutes: 1
+
+
+
