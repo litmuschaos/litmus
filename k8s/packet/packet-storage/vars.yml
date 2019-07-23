@@ -1,6 +1,6 @@
 base_url: https://api.packet.net # base url for access packet api
 performance_tier: storage_1 # storage_1=Performance tier: Standard & storage_2 = Performance tier: Performance
-location: ams1 # location available: ams1, ewr1, nrt1 & sjc1
+location: sjc1 # location available: ams1, ewr1, nrt1 & sjc1
 billing_cycle: hourly
 size: 50 # size in GB
 device_id_location: /tmp/packet/device_id # file location where cluster device id stored
