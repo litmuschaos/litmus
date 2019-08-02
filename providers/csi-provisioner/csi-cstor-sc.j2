@@ -1,0 +1,10 @@
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: {{ storage_class }}
+provisioner: openebs-csi.openebs.io
+allowVolumeExpansion: true
+parameters:
+  storagePoolClaim: {{ spc }}
+  replicaCount: "{{ replica_count }}"

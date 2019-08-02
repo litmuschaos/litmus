@@ -1,0 +1,89 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+    - block:
+
+          ## Generating the testname for deployment
+        - include_tasks: /utils/fcm/create_testname.yml
+
+          ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
+          vars:
+            status: 'SOT'
+
+        - name: Deploy CSI Driver 
+          shell: >
+            kubectl apply -f https://raw.githubusercontent.com/openebs/csi/master/deploy/csi-operator.yaml
+          args:
+            executable: /bin/bash
+          register: result
+          failed_when: "result.rc != 0"
+          when: node_os == "ubuntu-16.06" or "centos"
+
+        - name: Deploy CSI Driver if os is ubuntu 18.04
+          shell: >
+            kubectl apply -f https://raw.githubusercontent.com/openebs/csi/master/deploy/csi-operator-ubuntu-18.04.yaml
+          args:
+            executable: /bin/bash
+          when: node_os == "ubuntu-18.04"
+
+        - name: check if csi-controller pod is running
+          shell: >
+            kubectl get pods -n kube-system -l app=openebs-csi-controller 
+            --no-headers -o custom-columns=:status.phase
+          args:
+            executable: /bin/bash
+          register: csi_controller
+          until: "'running' in csi_controller.stdout"
+          delay: 10
+          retries: 30
+
+        - name: Obtain the desired number of openebs-csi-node pods
+          shell: >
+            kubectl get ds -n kube-system openebs-csi-node --no-headers 
+            -o custom-columns=:status.desiredNumberScheduled
+          args:
+            executable: /bin/bash
+          register: desired_count
+
+        - name: Check if the desired count matches the ready pods
+          command: >
+            kubectl get ds -n kube-system openebs-csi-node --no-headers 
+            -o custom-columns=:status.numberReady
+          args:
+            executable: /bin/bash
+          register: ready_pods
+          until: "desired_count.stdout == ready_pods.stdout"
+          delay: 5
+          retries: 50
+
+        - name: Update the storage class template with the variables.
+          template:
+            src: csi-cstor-sc.j2
+            dest: csi-cstor-sc.yml
+
+        - name: Create Storageclass
+          shell: kubectl apply -f csi-cstor-sc.yml
+          args:
+            executable: /bin/bash
+          register: sc_result
+          failed_when: "sc_result != 0"
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - name: Setting fail flag
+          set_fact:
+            flag: "Fail"
+
+      always:
+        ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
