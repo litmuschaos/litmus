@@ -125,6 +125,14 @@
             #operator_ns: works by var scope
             app_label: "{{ label }}"
             app_pvc: "{{ pvc }}"
+          when: deploy_type == 'deployment'
+
+          ## Check statefulset application-target pod affinity
+        - include_tasks: /utils/scm/openebs/sts_target_affinity_check.yml
+          vars:
+            app_ns: "{{ namespace }}"
+            app_label: "{{ label }}"
+          when: deploy_type == 'statefulset'
 
         - set_fact:
             flag: "Pass"

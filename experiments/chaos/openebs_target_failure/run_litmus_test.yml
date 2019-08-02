@@ -51,6 +51,10 @@ spec:
           - name: TARGET_CONTAINER
             value: "cstor-volume-mgmt"
 
+           # DEPLOY_TYPE values: deployment, statefulset
+          - name: DEPLOY_TYPE
+            value: deployment
+
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/chaos/openebs_target_failure/test.yml -i /etc/ansible/hosts -vv; exit 0"]
 
