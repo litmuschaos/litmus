@@ -100,15 +100,22 @@
             - "{{ workers.devices }}"
 
         - name: install kubeadm inside master
-          shell: bash pre_requisite.sh "{{ k8s_version }}" "{{ item.public_ipv4 }}" "{{ network_cidr }}" master | grep "kubeadm join" | cut -d'"' -f2 | sed -e 's/^[ \t]*//'
+          shell: bash pre_requisite.sh "{{ k8s_version }}" "{{ item.public_ipv4 }}" "{{ network_cidr }}" master
           args:
             executable: /bin/bash
           delegate_to: "root@{{ item.public_ipv4 }}"
-          register: storage
           with_items: "{{ master.devices }}"
 
         - name: set kubeconfig to local
           shell: scp root@{{ item.public_ipv4 }}:/etc/kubernetes/admin.conf ~/.kube/config
+          with_items: "{{ master.devices }}"
+
+        - name: Generate Kubeadm Join command
+          shell: kubeadm token create --print-join-command
+          register: storage
+          args:
+            executable: /bin/bash
+          delegate_to: "root@{{ item.public_ipv4 }}"
           with_items: "{{ master.devices }}"
 
         - name: joining workers node with master

@@ -67,5 +67,5 @@ ansible-playbook create_packet_cluster.yml -vv --extra-vars "k8s_version=1.11.3-
 - Run `delete_packet_cluster`, this will delete the cluster as well as ssh key.
 
 ```bash
-ansible-playbook delete_packet_cluster.yml -vv
+ansible-playbook delete_packet_cluster.yml --extra-vars "packet_api=<token>" -vv
 ```
