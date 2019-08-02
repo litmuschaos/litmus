@@ -1,5 +1,5 @@
 # TODO
-# Apply openebs operator and cas template
+# Apply openebs operator.
 
 - hosts: localhost
   connection: local
@@ -210,12 +210,12 @@
           delay: 5
           retries: 120
 
-          #        - name: Checking OpenEBS-admission-server is running
-          #          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.app=="admission-webhook")].status.phase}'
-          #          register: admission_web
-          #          until: "'Running' in admission_web.stdout"
-          #          delay: 5
-          #          retries: 120
+        - name: Checking OpenEBS-admission-server is running
+          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.app=="admission-webhook")].status.phase}'
+          register: admission_web
+          until: "'Running' in admission_web.stdout"
+          delay: 5
+          retries: 120
 
         - name: Get maya-apiserver pod name
           shell: >
@@ -244,6 +244,25 @@
           register: result_vers
           failed_when: "'m-apiserver status:  running' not in result_vers.stdout"
 
+        - block:
+
+            - name: Get the maxpool count of storage pool claim.
+              shell: kubectl get spc -o=jsonpath='{.items[?(@.metadata.name=="cstor-sparse-pool")].spec.maxPools}'
+              args:
+                executable: /bin/bash
+              register: maxpool_count
+
+            - name: Confirm if sparse pool is running in all the nodes
+              shell: kubectl get pods -n {{ namespace }} --selector={{ sparse_pool_label }} | grep Running | wc -l
+              args:
+                executable: /bin/bash
+              register: sparse_pool_count
+              until: (sparse_pool_count.stdout)|int == (maxpool_count.stdout)|int
+              delay: 5
+              retries: 120  
+
+          when: lookup('env','INSTALL_DEFAULT_CSP') == "true"
+
         - block:             
             - name: Getting the number of nodes
               shell: kubectl get node --no-headers | grep -v "master" | wc -l
@@ -260,20 +279,6 @@
               delay: 5
               retries: 120
 
-              #- name: Get the maxpool count of storage pool claim.
-              #shell: kubectl get spc -o=jsonpath='{.items[?(@.metadata.name=="cstor-sparse-pool")].spec.maxPools}'
-              #args:
-              #  executable: /bin/bash
-              #register: maxpool_count
-
-            # - name: Confirm if sparse pool is running in all the nodes
-            #   shell: kubectl get pods -n {{ namespace }} --selector={{ sparse_pool_label }} | grep Running | wc -l
-            #   args:
-            #     executable: /bin/bash
-            #   register: sparse_pool_count
-            #   until: (sparse_pool_count.stdout)|int == 3
-            #   delay: 5
-            #   retries: 120  
           when: lookup('env','OPENEBS_INFRA_CHAOS') != "infra_chaos"     
         
         - block:
@@ -292,20 +297,6 @@
               delay: 5
               retries: 120
 
-              # - name: Get the maxpool count of storage pool claim.
-              #shell: kubectl get spc -o=jsonpath='{.items[?(@.metadata.name=="cstor-sparse-pool")].spec.maxPools}'
-              #args:
-              #  executable: /bin/bash
-              #register: maxpool_count
-
-            # - name: Confirm if sparse pool is running in all the nodes
-            #   shell: kubectl get pods -n {{ namespace }} --selector={{ sparse_pool_label }} | grep Running | wc -l
-            #   args:
-            #     executable: /bin/bash
-            #   register: sparse_pool_count
-            #   until: (sparse_pool_count.stdout)|int == 3
-            #   delay: 5
-            #   retries: 120  
           when: lookup('env','OPENEBS_INFRA_CHAOS') == "infra_chaos"   
 
         - name: Confirm CAS Templates are deployed
