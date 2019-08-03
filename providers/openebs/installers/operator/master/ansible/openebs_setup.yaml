@@ -251,6 +251,9 @@
               args:
                 executable: /bin/bash
               register: maxpool_count
+              until: maxpool_count.rc == 0
+              delay: 5
+              retries: 120
 
             - name: Confirm if sparse pool is running in all the nodes
               shell: kubectl get pods -n {{ namespace }} --selector={{ sparse_pool_label }} | grep Running | wc -l
