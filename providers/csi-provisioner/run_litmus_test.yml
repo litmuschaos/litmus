@@ -15,7 +15,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: gprasath/ansible-runner:ci
+        image: openebs/ansible-runner:ci
         imagePullPolicy: Always
         env:
           - name: ANSIBLE_STDOUT_CALLBACK
@@ -32,7 +32,7 @@ spec:
             value: cstor-sparse-pool
 
           - name: REPLICA_COUNT
-            value: 3
+            value: "3"
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./providers/csi-provisioner/test.yml -i /etc/ansible/hosts -v; exit 0"]

@@ -39,7 +39,7 @@
           args:
             executable: /bin/bash
           register: csi_controller
-          until: "'running' in csi_controller.stdout"
+          until: "'Running' in csi_controller.stdout"
           delay: 10
           retries: 30
 
@@ -72,7 +72,7 @@
           args:
             executable: /bin/bash
           register: sc_result
-          failed_when: "sc_result != 0"
+          failed_when: "sc_result.rc != 0"
 
         - set_fact:
             flag: "Pass"
