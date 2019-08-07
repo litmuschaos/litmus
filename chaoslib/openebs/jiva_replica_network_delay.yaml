@@ -66,7 +66,7 @@
 - name: Get controller svc
   shell: >
     kubectl get svc -l openebs.io/controller-service=jiva-controller-svc
-    -n {{ app_ns }} --no-headers -o custom-columns=:spec.clusterIP
+    -n {{ app_ns }} -o=jsonpath='{.items[0].spec.clusterIP}'
   args:
     executable: /bin/bash
   register: controller_svc
