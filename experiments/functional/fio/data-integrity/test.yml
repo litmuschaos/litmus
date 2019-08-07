@@ -11,24 +11,15 @@
   tasks:
    - block:
 
-       - block:
-
-            - name: Record test instance/run ID
-              set_fact:
-                run_id: "{{ lookup('env','RUN_ID') }}"
-
-            - name: Construct testname appended with runID
-              set_fact:
-                test_name: "{{ test_name }}-{{ run_id }}"
-
-         when: lookup('env','RUN_ID')
+        ## Generating the testname.
+       - include_tasks: /utils/fcm/create_testname.yml
 
         ## RECORD START-OF-TEST IN LITMUS RESULT CR
        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
          vars:
            status: 'SOT'
 
-       ## VERIFY AVAILABILITY OF SELECTED STORAGE CLASS
+        ## VERIFY AVAILABILITY OF SELECTED STORAGE CLASS
 
        - name: Check whether the provider storageclass is applied
          shell: kubectl get sc {{ lookup('env','PROVIDER_STORAGE_CLASS') }}
@@ -66,59 +57,11 @@
            pvc_label: demo-vol1-claim
            execute: 1          
 
-       - include_tasks: /utils/scm/openebs/disable_compression_on_pools.yml
-         when: data_check == 'data_accessibility'
-
        - name: Replace the data sample size with user-defined size
          replace:
            path: "{{ fio_write_yml }}"
            regexp: "256m"
            replace: "{{ lookup('env','FIO_SAMPLE_SIZE') }}"
-         when: data_check == 'data_integrity'
-
-       - block:
-
-           - name: Fetch the Storage from PVC using namespace(need to modify)
-             shell: kubectl get pvc -n {{ app_ns }} -o jsonpath={.items[0].spec.resources.requests.storage}
-             args:
-               executable: /bin/bash
-             register: storage_capacity
-
-           - name: Fetch the alphabet(G,M,m,g) from storage capacity
-             shell: echo "{{ storage_capacity.stdout }}" | grep -o -E '[A-Za-z]+'
-             args:
-               executable: /bin/bash
-             register: symbol
-
-           - name: Fetch the alphabet(G,M,m,g) from storage capacity
-             shell: echo "{{ storage_capacity.stdout }}" | grep -o -E '[0-9]+'
-             args:
-               executable: /bin/bash
-             register: value_str
-
-           - set_fact:
-               value_num: '{{ ( (value_str.stdout | int - 0.2) * 0.93 * 1024) |  int }}'
-             when: "'G' in symbol.stdout"
-
-           - set_fact:
-               value_num: '{{ ((value_str.stdout | int - 0.2) * 0.93 * 1024 * 1024) | int }}'
-             when: "'T' in symbol.stdout"
-
-           - name: Replace the data sample size with 90% of pvc size in {{ fio_write_yml }}
-             replace:
-               path: "{{ fio_write_yml }}"
-               regexp: "256m"
-               replace: "{{ value_num }}m"
-             when: "'G' in symbol.stdout or 'T' in symbol.stdout"
-
-           - name: Replace the data sample size with 90% of pvc size in {{ fio_write_yml }}
-             replace:
-               path: "{{ fio_write_yml }}"
-               regexp: "256m"
-               replace: "{{ storage_capacity.stdout }}"
-             when: "'M' in symbol.stdout"
-
-         when: data_check == 'data_accessibility'
 
        ## RUN FIO WORKLOAD TEST
 
@@ -141,17 +84,18 @@
          register: status_fio_pod
          until: "'Running' in status_fio_pod.stdout"
          delay: 5
-         retries: 100
+         retries: 30
 
        - name: Check if fio write job is completed
          shell: >
-           kubectl get pods -n {{ app_ns }} -o jsonpath='{.items[?(@.metadata.labels.name=="fio-write")].status.containerStatuses[*].state.terminated.reason}'
+           kubectl get pods -n {{ app_ns }} 
+           -o jsonpath='{.items[?(@.metadata.labels.name=="fio-write")].status.containerStatuses[*].state.terminated.reason}'
          args:
            executable: /bin/bash
          register: result_fio_pod
          until: "'Completed' in result_fio_pod.stdout"
-         delay: 60
-         retries: 900
+         delay: 15
+         retries: 30
 
        - name: Verify the fio logs to check if run is complete w/o errors
          shell: >
@@ -177,13 +121,14 @@
 
        - name: Check if fio read job is completed
          shell: >
-           kubectl get pods -n {{ app_ns }} -o jsonpath='{.items[?(@.metadata.labels.name=="fio-read")].status.containerStatuses[*].state.terminated.reason}'
+           kubectl get pods -n {{ app_ns }} 
+           -o jsonpath='{.items[?(@.metadata.labels.name=="fio-read")].status.containerStatuses[*].state.terminated.reason}'
          args:
            executable: /bin/bash
          register: result_read_job
          until: "'Completed' in result_read_job.stdout"
-         delay: 60
-         retries: 20
+         delay: 5
+         retries: 30
 
        - name: Verify the data integrity check
          shell: >

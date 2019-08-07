@@ -4,7 +4,6 @@ kind: ConfigMap
 metadata:
   name: basic-read
 data:
-
  basic-rw : |-
 
      [global]
@@ -35,7 +34,7 @@ spec:
         image: openebs/tests-fio:latest
         imagePullPolicy: Always
         command: ["/bin/bash"]
-        args: ["-c", "./fio_runner.sh --read-only /datadir/basic-fio; ./fio_runner.sh --available_space /datadir --miscellaneous /datadir; exit 0"]
+        args: ["-c", "./fio_runner.sh --read-only /datadir/basic-fio; exit 0"]
         volumeMounts:
            - mountPath: /datadir
              name: demo-vol1

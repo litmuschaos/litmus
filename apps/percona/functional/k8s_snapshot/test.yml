@@ -225,19 +225,19 @@
        
         ### Attempting to delete parent PVC which has clone.
 
-        - name: Attempt deleting volume which has clones.
-          shell: kubectl delete pvc {{ pvc_name }} -n {{ app_ns }}
-          args:
-            executable: /bin/bash
-          register: delete_pvc
-          failed_when: delete_pvc.rc == 0
+          #        - name: Attempt deleting volume which has clones.
+          #          shell: kubectl delete pvc {{ pvc_name }} -n {{ app_ns }}
+          #          args:
+          #            executable: /bin/bash
+          #          register: delete_pvc
+          #          failed_when: delete_pvc.rc == 0
 
-        - name: Check if the PVC is not deleted.
-          shell: kubectl get pvc {{ pvc_name }} -n {{ app_ns }} --no-headers -o custom-columns=:status.phase
-          args:
-            executable: /bin/bash
-          register: pvc_state
-          failed_when: "'Bound' not in pvc_state.stdout"
+          #        - name: Check if the PVC is not deleted.
+          #          shell: kubectl get pvc {{ pvc_name }} -n {{ app_ns }} --no-headers -o custom-columns=:status.phase
+          #          args:
+          #            executable: /bin/bash
+          #          register: pvc_state
+          #          failed_when: "'Bound' not in pvc_state.stdout"
 
         - set_fact:
             flag: "Pass"
