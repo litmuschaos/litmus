@@ -17,32 +17,81 @@
             status: 'SOT'
 
         - name: Getting the compute node name
-          shell: kubectl get nodes -l node-role.kubernetes.io/compute=true -o jsonpath='{.items[*].metadata.name}' | tr " " "\n"
+          shell: kubectl get nodes --no-headers | grep -v master | awk {'print $1'}
           register: nodes
 
-        - name: Getting the Unclaimed block-device from each node when pool type is STRIPE
-          shell: kubectl get blockdevice -n openebs -l kubernetes.io/hostname={{ item }} -o jsonpath='{.items[?(@.status.claimState=="Unclaimed")].metadata.name}' | tr " " "\n" | grep -v sparse | head -n 1
-          register: blockDevice
-          with_items: "{{ nodes.stdout_lines }}"
+        - block:
 
-        - name: Initialize an empty list to store block device names
-          set_fact:
-             bd_names: []
+            - name: Getting the Unclaimed block-device from each node when pool type is STRIPE
+              shell: kubectl get blockdevice -n openebs -l kubernetes.io/hostname={{ item }} -o jsonpath='{.items[?(@.status.claimState=="Unclaimed")].metadata.name}' | tr " " "\n" | grep -v sparse | head -n 1
+              register: blockDevice
+              with_items: "{{ nodes.stdout_lines }}"
 
-        - name: Store name of all block devices in the list 
-          set_fact:
-            bd_names: "{{ bd_names + item.stdout_lines }}"
-          with_items:
-            - "{{ blockDevice.results }}"
+            # Creating the blockdevice template from blockdevice_stripe.j2 jinja template for each node
+            - name: Add the block devices and node labels for each nodes and create blockdevice template
+              template:
+                src: ./blockdevice_stripe.j2
+                dest: ./blockdevice-{{ item[0] }}.yml
+              with_together:
+                - "{{ nodes.stdout_lines }}"
+                - "{{ blockDevice.results }}"
+          
+          when: pool_type == "stripe"
 
-        # Creating the blockdevice template from blockdevice.j2 jinja template for each node
-        - name: Add the block devices and node labels for each nodes and create blockdevice template
-          template:
-            src: ./blockdevice.j2
-            dest: ./blockdevice-{{ item[0] }}.yml
-          with_together:
-            - "{{ nodes.stdout_lines }}"
-            - "{{ bd_names }}"
+
+        - block:
+
+            - name: Getting the Unclaimed block-device from each node when pool type is MIRROR
+              shell: kubectl get blockdevice -n openebs -l kubernetes.io/hostname={{ item }} -o jsonpath='{.items[?(@.status.claimState=="Unclaimed")].metadata.name}' | tr " " "\n" | grep -v sparse | head -n 2
+              register: blockDevice
+              with_items: "{{ nodes.stdout_lines }}"
+
+            # Creating the blockdevice template from blockdevice_mirror.j2 jinja template for each node
+            - name: Add the block devices and node labels for each nodes and create blockdevice template
+              template:
+                src: ./blockdevice.j2
+                dest: ./blockdevice-{{ item[0] }}.yml
+              with_together:
+                - "{{ nodes.stdout_lines }}"
+                - "{{ blockDevice.results }}"
+          
+          when: pool_type == "mirror"
+
+        - block:
+
+            - name: Getting the Unclaimed block-device from each node when pool type is RAIDZ
+              shell: kubectl get blockdevice -n openebs -l kubernetes.io/hostname={{ item }} -o jsonpath='{.items[?(@.status.claimState=="Unclaimed")].metadata.name}' | tr " " "\n" | grep -v sparse | head -n 3
+              register: blockDevice
+              with_items: "{{ nodes.stdout_lines }}"
+
+            # Creating the blockdevice template from blockdevice_raidz.j2 jinja template for each node
+            - name: Add the block devices and node labels for each nodes and create blockdevice template
+              template:
+                src: ./blockdevice.j2
+                dest: ./blockdevice-{{ item[0] }}.yml
+              with_together:
+                - "{{ nodes.stdout_lines }}"
+                - "{{ blockDevice.results }}"
+          
+          when: pool_type == "raidz"
+
+        - block:
+
+            - name: Getting the Unclaimed block-device from each node when pool type is RAIDZ2
+              shell: kubectl get blockdevice -n openebs -l kubernetes.io/hostname={{ item }} -o jsonpath='{.items[?(@.status.claimState=="Unclaimed")].metadata.name}' | tr " " "\n" | grep -v sparse | head -n 6
+              register: blockDevice
+              with_items: "{{ nodes.stdout_lines }}"
+
+            # Creating the blockdevice template from blockdevice_raidz2.j2 jinja template for each node
+            - name: Add the block devices and node labels for each nodes and create blockdevice template
+              template:
+                src: ./blockdevice_raidz2.j2
+                dest: ./blockdevice-{{ item[0] }}.yml
+              with_together:
+                - "{{ nodes.stdout_lines }}"
+                - "{{ blockDevice.results }}"
+          
+          when: pool_type == "raidz2"                              
 
         # Insert the blockdevice template created for each nodes into cspc spec
         # blockinfile module will insert the external_files/block.
@@ -90,8 +139,6 @@
             path: ./cspc.yml
             regexp: "pool-type"
             replace: "{{ pool_type }}"
-           
-         ## TODO: Included a task to create cstor disk pool for Mirrored,Raidz,Raidz2 types
 
         - name: Display cspc.yml for verification 
           debug: var=item
@@ -146,5 +193,4 @@
             ## RECORD END-OF-TEST IN LITMUS RESULT CR
           - include_tasks: /utils/fcm/update_litmus_result_resource.yml
             vars:
-              status: 'EOT'  
-        
+              status: 'EOT'
