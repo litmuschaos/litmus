@@ -2,8 +2,6 @@
         kubernetes.io/hostname: {{ item[0] }}
       raidGroups:
       - blockDevices:
-        - blockDeviceName: {{ item[1].stdout_lines[0] }}
-        - blockDeviceName: {{ item[1].stdout_lines[1] }}
         type: pool-type
         name: pool-group
         isWriteCache: false
