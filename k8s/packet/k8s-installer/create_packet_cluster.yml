@@ -73,7 +73,7 @@
             host: "{{ item.public_ipv4 }}"
             port: 22
             state: started
-            timeout: 500
+            timeout: 1500
           with_items:
             - "{{ master.devices }}"
             - "{{ workers.devices }}"
