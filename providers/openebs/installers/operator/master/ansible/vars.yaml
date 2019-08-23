@@ -4,8 +4,10 @@ namespace: openebs
 #storageclass_link: https://raw.githubusercontent.com/openebs/openebs/master/k8s/openebs-storageclasses.yaml
 openebs_operator_link: "https://raw.githubusercontent.com/openebs/openebs/{{ lookup('env','OPENEBS_VERSION') }}/k8s/openebs-operator.yaml"
 storageclass_link: "https://raw.githubusercontent.com/openebs/openebs/{{ lookup('env','OPENEBS_VERSION') }}/k8s/openebs-storageclasses.yaml"
+cspc_operator_link: "https://raw.githubusercontent.com/openebs/openebs/{{ lookup('env','OPENEBS_VERSION') }}/k8s/cspc-operator.yaml"
 openebs_operator: openebs-operator.yaml
 storageclass: storageclass.yaml
+cspc_operator: cspc-operator.yaml
 selector_name: openebs-ndm
 sparse_pool_label: 'app=cstor-pool'
 installation_test_name: openebsinstaller

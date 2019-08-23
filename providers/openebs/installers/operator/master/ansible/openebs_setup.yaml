@@ -72,6 +72,23 @@
           delay: 5
           retries: 3
 
+        - name: Downloading openebs cspc-operator.yaml
+          get_url:
+            url: "{{ cspc_operator_link }}"
+            dest: "{{ playbook_dir }}/{{ cspc_operator }}"
+            force: yes
+          register: result
+          until:  "'OK' in result.msg"
+          delay: 5
+          retries: 3
+
+        - name: Change CSPC operator image
+          replace:
+            path: "{{ cspc_operator }}"
+            regexp: quay.io/openebs/cspc-operator:ci
+            replace: quay.io/openebs/cspc-operator:{{ lookup('env','MAYA_APISERVER_IMAGE') }}
+          when: lookup('env','MAYA_APISERVER_IMAGE') | length > 0
+
         - name: Change the openebs analytics value of openebs resources in operator YAML
           replace:
             path: "{{ openebs_operator }}"
@@ -117,6 +134,11 @@
           shell: "{{ kubeapply }} apply -f {{ storageclass }}"
           args:
             executable: /bin/bash
+
+        - name: Applying cspc operator
+          shell: "{{ kubeapply }} apply -f {{ cspc_operator }}"
+          args:
+            executable: /bin/bash        
 
         - name: Updating maya api server image
           shell: "{{ kubeapply }} set image deployment maya-apiserver maya-apiserver={{ lookup('env','MAYA_APISERVER_IMAGE') }} -n {{ namespace }}"
@@ -234,6 +256,13 @@
           shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="openebs-snapshot-operator")].status.phase}'
           register: oso
           until: "'Running' in oso.stdout"
+          delay: 5
+          retries: 120
+
+        - name: Checking OpenEBS-CSPC-Operator is running
+          shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="cspc-operator")].status.phase}'
+          register: cspc_status
+          until: "'Running' in cspc_status.stdout"
           delay: 5
           retries: 120
 
