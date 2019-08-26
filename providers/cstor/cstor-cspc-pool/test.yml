@@ -174,24 +174,37 @@
               shell: >
                 kubectl delete cspc {{ pool_name }} -n {{ operator_ns }}
               args: 
-                execuatble: /bin/bash
+                executable: /bin/bash
+
+            - name: Verify if the CStor Pool Cluster is deleted
+              shell: >
+                kubectl get cspc -n {{ operator_ns }}
               register: cspc_status
-              until: "{{ pool_name }} not in cspc_status.stdout"
+              until: '"{{ pool_name }}" not in cspc_status.stdout'
+              retries: 30
+              delay: 10
+
+            - name: Verify if the CSPI is getting removed
+              shell: >
+                kubectl get cspi -n {{ operator_ns }} -l openebs.io/cstor-pool-cluster={{ pool_name }}
+              args:
+                executable: /bin/bash
+              register: cspi_status
+              until: "'No resources found.' in cspi_status.stderr"
               retries: 30
               delay: 10
 
             - name: Verify if the cStor pool pods are deleted
               shell:
                 kubectl get pods -n {{ operator_ns }} -l openebs.io/cstor-pool-cluster={{ pool_name }}
-                --no-headers -o custom-columns=:status.phase
               args:
                 executable: /bin/bash
               register: pool_status
-              until: "'No resources found. in pool_status.stdout"
+              until: "'No resources found.' in pool_status.stderr"
               retries: 30
               delay: 10
 
-          when: deploy_mode =="delete"
+          when: deploy_mode == "delete"
 
         - set_fact:
             flag: "Pass"

@@ -5,6 +5,7 @@ metadata:
 spec:
   name: pool-name
   type: disk
+  maxPools: maxpool-count
   poolSpec:
     poolType: pool-type
   blockDevices:
