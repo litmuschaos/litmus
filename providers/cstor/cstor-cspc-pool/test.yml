@@ -134,11 +134,12 @@
 
             - name: Verify if cStor Pool are Running
               shell: >
-                kubectl get pods -n {{ operator_ns }} -l openebs.io/cstor-pool-cluster={{ pool_name }}
+                kubectl get pods -n {{ operator_ns }} -l openebs.io/cstor-pool={{ item }}
                 --no-headers -o custom-columns=:status.phase
               args:
                 executable: /bin/bash
               register: pool_count
+              with_items: "{{ cspi_name.stdout_lines }}"
               until: "((pool_count.stdout_lines|unique)|length) == 1 and 'Running' in pool_count.stdout"
               retries: 30
               delay: 10

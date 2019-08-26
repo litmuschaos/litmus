@@ -1,6 +1,6 @@
 ---
     - name: Getting the Unclaimed block-device from each node 
-      shell: kubectl get blockdevice -n openebs -l kubernetes.io/hostname={{ outer_item }} -o jsonpath='{.items[?(@.status.claimState=="Unclaimed")].metadata.name}' | tr " " "\n" | grep  -v sparse | head -n "{{ disk_count }}"
+      shell: kubectl get blockdevice -n openebs -l kubernetes.io/hostname={{ outer_item }} -o jsonpath='{.items[?(@.status.claimState=="Unclaimed")].metadata.name}' | tr " " "\n" | grep -v sparse | head -n "{{ disk_count }}"
       register: blockDevice
 
     - name: Add the block devices
