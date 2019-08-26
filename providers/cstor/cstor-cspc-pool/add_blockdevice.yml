@@ -1,0 +1,12 @@
+---
+    - name: Getting the Unclaimed block-device from each node 
+      shell: kubectl get blockdevice -n {{ operator_ns }} -l kubernetes.io/hostname={{ outer_item }} -o jsonpath='{.items[?(@.status.claimState=="Unclaimed")].metadata.name}' | tr " " "\n" | grep -v sparse | head -n "{{ disk_count }}"
+      register: blockDevice
+
+    - name: Add the block devices
+      lineinfile:
+        path: ./blockdevice-{{ outer_item }}.yml
+        insertafter: '- blockDevices:'
+        line: '        - blockDeviceName: {{ item }}'
+      with_items:
+          - "{{ blockDevice.stdout_lines }}"            
