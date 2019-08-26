@@ -20,6 +20,11 @@
           shell: kubectl get nodes --no-headers | grep -v master | awk {'print $1'}
           register: nodes
 
+        - name: Checking OpenEBS-CSPC-Operator is running
+          shell: kubectl get pods -n {{ operator_ns }} -o jsonpath='{.items[?(@.metadata.labels.name=="cspc-operator")].status.phase}'
+          register: cspc_status
+          failed_when: "'Running' not in cspc_status.stdout"
+
         - block:
             - name: set the value for the disk count to fetch the unclaimed blockDevice from each node
               set_fact:
@@ -98,7 +103,36 @@
               args:
                 executable: /bin/bash
 
-            - name: Verify if cStor Disk Pool are Running
+            - name: Check whether cspc is created
+              shell: >
+                kubectl get cspc -n {{ operator_ns }} -o custom-columns=:.metadata.name --no-headers
+              args:
+                executable: /bin/bash
+              register: cspc_name
+              until: "pool_name in cspc_name.stdout"
+              delay: 30
+              retries: 10
+  
+            - name: Obtain the CSPI name to verify the status
+              shell: >
+                kubectl get cspi -n {{ operator_ns}} -l openebs.io/cstor-pool-cluster={{ pool_name }} 
+                -o custom-columns=:.metadata.name --no-headers
+              args:
+                executable: /bin/bash
+              register: cspi_name
+
+            - name: Verify the status of CSPI
+              shell: >
+                kubectl get cspi -n {{ operator_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ item }}")].status.phase}'
+              args:
+                executable: /bin/bash
+              register: cspi_status
+              with_items: "{{ cspi_name.stdout_lines }}"
+              until: "'ONLINE' in cspi_status.stdout"
+              delay: 5
+              retries: 30
+
+            - name: Verify if cStor Pool are Running
               shell: >
                 kubectl get pods -n {{ operator_ns }} -l openebs.io/cstor-pool-cluster={{ pool_name }}
                 --no-headers -o custom-columns=:status.phase
@@ -109,7 +143,7 @@
               retries: 30
               delay: 10
 
-            - name: Get cStor Disk Pool names to verify the container statuses
+            - name: Get cStor Pool names to verify the container statuses
               shell: >
                 kubectl get pods -n {{ operator_ns }} -l openebs.io/cstor-pool-cluster={{ pool_name }}
                 --no-headers -o=custom-columns=NAME:".metadata.name"
@@ -129,6 +163,7 @@
               until: "runningStatusCount.stdout == device_count"
               delay: 30
               retries: 10
+              
           when: deploy_mode == "create"
 
 
@@ -136,9 +171,13 @@
 
             - name: Remove the CStor Pool Cluster
               shell: >
-                kubectl delete cspc {{ pool_name }} -n openebs
+                kubectl delete cspc {{ pool_name }} -n {{ operator_ns }}
               args: 
                 execuatble: /bin/bash
+              register: cspc_status
+              until: "{{ pool_name }} not in cspc_status.stdout"
+              retries: 30
+              delay: 10
 
             - name: Verify if the cStor pool pods are deleted
               shell:
@@ -151,7 +190,7 @@
               retries: 30
               delay: 10
 
-         when: deploy_mode =="delete"
+          when: deploy_mode =="delete"
 
         - set_fact:
             flag: "Pass"

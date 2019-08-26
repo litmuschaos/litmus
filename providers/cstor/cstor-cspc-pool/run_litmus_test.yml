@@ -26,7 +26,7 @@ spec:
 
             # Provide name POOL_NAME for the cstor-pool
           - name: POOL_NAME
-            value: cstor-block-disk-pool
+            value: cstor-cspc-disk-pool
 
            # Provide the value for POOL_TYPE 
           - name: POOL_TYPE
@@ -34,7 +34,7 @@ spec:
             
            # Provide the name of STORAGE_CLASS 
           - name: STORAGE_CLASS
-            value: openebs-cstor-disk
+            value: openebs-cstor-disk-cspc
 
           - name: OPERATOR_NS
             value: openebs
