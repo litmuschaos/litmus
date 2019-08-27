@@ -52,6 +52,8 @@ spec:
             value:        
           - name: OPENEBS_IO_CSTOR_POOL_EXPORTER_IMAGE
             value:  
+          - name: CSPC_OPERATOR_IMAGE
+            value:
           - name: IMAGE_PULL_POLICY
             value:
           - name: OPENEBS_INFRA_CHAOS

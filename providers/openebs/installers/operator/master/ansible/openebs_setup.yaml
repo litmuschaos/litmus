@@ -86,8 +86,8 @@
           replace:
             path: "{{ cspc_operator }}"
             regexp: quay.io/openebs/cspc-operator:ci
-            replace: quay.io/openebs/cspc-operator:{{ lookup('env','MAYA_APISERVER_IMAGE') }}
-          when: lookup('env','MAYA_APISERVER_IMAGE') | length > 0
+            replace: quay.io/openebs/cspc-operator:{{ lookup('env','CSPC_OPERATOR_IMAGE') }}
+          when: lookup('env','CSPC_OPERATOR_IMAGE') | length > 0
 
         - name: Change the openebs analytics value of openebs resources in operator YAML
           replace:
