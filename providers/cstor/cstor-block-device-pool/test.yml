@@ -56,6 +56,8 @@
 
             - block:
 
+              ## TODO : Obatin the blockDecice list with Inactive state also
+
               - name: Getting the Unclaimed block-devices from each node when pool type is MIRROR 
                 shell: kubectl get blockdevice -n openebs -l kubernetes.io/hostname={{ item }} -o jsonpath='{.items[?(@.status.claimState=="Unclaimed")].metadata.name}' | tr " " "\n" | grep -v sparse | head -n 2
                 register: blockDevice
@@ -176,7 +178,7 @@
 
             - name: Obtain the maxPool clount from spc
               shell: >
-                kubectl get spc {{ pool_name }} -o custom-columns=:.spec.maxPools --no-headers
+                kubectl get spc -o jsonpath='{.items[?(@.metadata.name=="{{ pool_name }}")].spec.maxPools}'
               args:
                 executable: /bin/bash
               register: maxPool_count
@@ -205,6 +207,14 @@
           when: deploy_mode == "create"
 
         - block:
+
+            - name: Obtain the claimed blockDevice list from bdc
+              shell: >
+                kubectl get bdc -n {{ operator_ns }} -l openebs.io/storage-pool-claim={{ pool_name }}
+                -o custom-columns=:.spec.blockDeviceName --no-headers
+              args:
+                executable: /bin/bash
+              register: blockdevice_name
 
             - name: Remove the SPC
               shell: kubectl delete spc {{ pool_name }}
@@ -235,6 +245,27 @@
                 executable: /bin/bash
               register: pool_status
               until: "'No resources found.' in pool_status.stderr"
+              retries: 30
+              delay: 10
+
+            - name: Verify if the BDC are deleted
+              shell: kubectl get bdc -n {{ operator_ns }} -l openebs.io/storage-pool-claim={{ pool_name }}
+              args:
+                executable: /bin/bash
+              register: bdc_status
+              until: "'No resources found.' in bdc_status.stderr"
+              retries: 30
+              delay: 10
+
+            - name: Verify if the blockDevices are unclaimed
+              shell: >
+                kubectl get blockdevices -n {{ operator_ns }} 
+                -o jsonpath='{.items[?(@.metadata.name=="{{ item }}")].status.claimState}'
+              args:
+                executable: /bin/bash
+              register: bd_status
+              with_items: "{{ blockdevice_name.stdout_lines }}"
+              until: "'Unclaimed' in bd_status.stdout"
               retries: 30
               delay: 10
 
