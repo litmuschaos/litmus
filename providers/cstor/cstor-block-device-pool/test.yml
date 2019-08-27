@@ -200,7 +200,7 @@
                 executable: /bin/bash
               register: runningStatusCount
               with_items: "{{ cstor_pool_pod.stdout_lines }}"
-              until: "runningStatusCount.stdout == maxPool_count.stdout"
+              until: "runningStatusCount.stdout == device_count"
               delay: 30
               retries: 10
           
