@@ -63,6 +63,7 @@
           vars:
             app_deployer: "{{ application_deployment }}"
           when: "'deprovision' is in action"
+          ignore_errors: True
 
         - set_fact:
             flag: "Pass"
