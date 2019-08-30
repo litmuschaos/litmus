@@ -134,7 +134,7 @@
 
             - name: Verify if cStor Pool are Running
               shell: >
-                kubectl get pods -n {{ operator_ns }} -l openebs.io/cstor-pool={{ item }}
+                kubectl get pods -n {{ operator_ns }} -l openebs.io/cstor-pool-instance={{ item }}
                 --no-headers -o custom-columns=:status.phase
               args:
                 executable: /bin/bash
