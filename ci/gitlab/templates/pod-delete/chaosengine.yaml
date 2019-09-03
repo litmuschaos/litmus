@@ -1,0 +1,15 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine
+spec:
+  monitor: false
+  appinfo: 
+    appns: %APP_NS
+    applabel: %APP_LABEL
+    appkind: %APP_KIND
+  chaosServiceAccount: %APP_SVC_ACC
+  experiments:
+    - name: pod-delete 
+      spec:
+        components: 
