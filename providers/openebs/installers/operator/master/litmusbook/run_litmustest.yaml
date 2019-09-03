@@ -2,20 +2,20 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: litmus-openebs-setup
+  name: litmus-openebs-runner
   namespace: litmus 
 spec:
   template:
     metadata:
       name: litmus
       labels: 
-        provider: openebs-setup
+        provider: openebs-runner
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: openebs/ansible-runner:ci
+        image: somesh2905/test-openebs:v2 
         imagePullPolicy: Always
         env: 
           - name: mountPath
@@ -56,14 +56,23 @@ spec:
             value:
           - name: OPENEBS_INFRA_CHAOS
             value: 
+
           - name: RUN_ID
-            value:   
+            value:
+
           - name: SPARSE_FILE_COUNT
             value: "10" 
+
           - name: INSTALL_DEFAULT_CSP
-            value:      
+            value:
+
+          - name: Action
+            value: Provision
+
+          - name: test_name
+            value: openebsinstaller  
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./providers/openebs/installers/operator/master/ansible/openebs_setup.yaml -i /etc/ansible/hosts -vv; exit 0"]
+        args: ["-c", "ansible-playbook ./providers/openebs/installers/operator/master/litmusbook/test.yaml  -vv; exit 0"]
         volumeMounts:
           - name: kubeconfig 
             mountPath: /root/admin.conf

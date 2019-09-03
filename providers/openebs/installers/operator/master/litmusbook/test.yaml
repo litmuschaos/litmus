@@ -1,0 +1,419 @@
+# TODO
+# Apply openebs operation.
+
+- hosts: 127.0.0.1
+  connection: local
+
+  vars_files:
+    - test_vars.yaml
+
+  tasks:
+
+    - block:
+
+        - block:
+            ## RECORD START of litmus job
+            - name: Record test instance/run ID
+              set_fact:
+                run_id: "{{ lookup('env','RUN_ID') }}"
+            - name: Construct testname appended with runID
+              set_fact:
+                TEST_NAME: "{{ lookup('env','test_name')}}"
+                test_name: "{{ TEST_NAME}}-{{ run_id }}"
+          when: lookup('env','RUN_ID')
+
+        - name: Generate the litmus result CR to reflect Start of Job
+          template:
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars:
+            test: "{{ lookup('env','test_name') }}"
+            chaostype: ""
+            app: ""
+            phase: in-progress
+            verdict: none
+
+        - name: Analyze the cr yaml
+          shell: cat litmus-result.yaml
+
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          args:
+            executable: /bin/bash
+          register: lr_status
+          failed_when: "lr_status.rc != 0"
+
+
+        - block:
+                ## START of provisioning
+                
+    # Creating pod security policy in the test cluster.
+    # Creating clusterrole with the pod security policy resources
+    # The service account used to create resources is specified in clusterrrolebinding.
+    # The namespace where openebs will be deployed is specified in the clusterrolebinding.
+    
+            - name: Creating pod security policy, cluster role and clusterrolebinding
+              shell: kubectl apply -f "{{ psp_spec }}"
+              args:
+                executable: /bin/bash
+              register: psp_status
+              failed_when: "psp_status.rc != 0"
+
+            - name: Downloading openebs-operator.yaml
+              get_url:
+                url: "{{ openebs_operator_link }}"
+                dest: "{{ playbook_dir }}/{{ openebs_operator }}"
+                force: yes
+              register: result
+              until:  "'OK' in result.msg"
+              delay: 5
+              retries: 3
+
+            - name: Downloading openebs-storageclasses.yaml
+              get_url:
+                url: "{{ storageclass_link }}"
+                dest: "{{ playbook_dir }}/{{ storageclass }}"
+                force: yes
+              register: result
+              until:  "'OK' in result.msg"
+              delay: 5
+              retries: 3
+
+            - name: Downloading openebs cspc-operator.yaml
+              get_url:
+                url: "{{ cspc_operator_link }}"
+                dest: "{{ playbook_dir }}/{{ cspc_operator }}"
+                force: yes
+              register: result
+              until:  "'OK' in result.msg"
+              delay: 5
+              retries: 3
+
+            - name: Change CSPC operator image
+              replace:
+                path: "{{ cspc_operator }}"
+                regexp: quay.io/openebs/cspc-operator:ci
+                replace: quay.io/openebs/cspc-operator:{{ lookup('env','MAYA_APISERVER_IMAGE') }}
+              when: lookup('env','MAYA_APISERVER_IMAGE') | length > 0
+
+            - name: Change the openebs analytics value of openebs resources in operator YAML
+              replace:
+                path: "{{ openebs_operator }}"
+                regexp: 'value: "true"'
+                after: '- name: OPENEBS_IO_ENABLE_ANALYTICS'
+                replace: 'value: "false"'     
+
+            - name: Change the value of sparse file count in operator YAML
+              replace:
+                path: "{{ openebs_operator }}"
+                regexp: 'value: "1"'
+                after: '- name: SPARSE_FILE_COUNT'
+                replace: 'value: "{{ sparse_file_count }}"'          
+        
+            - name: Change the Node Disk manager Image
+              replace:
+                path: "{{ openebs_operator }}"
+                regexp: quay.io/openebs/node-disk-manager-amd64:ci
+                replace: quay.io/openebs/node-disk-manager-amd64:{{ lookup('env','NODE_DISK_MANAGER_IMAGE') }}
+              when: lookup('env','NODE_DISK_MANAGER_IMAGE') | length > 0
+
+            - name: Change the Node Disk operator Image
+              replace:
+                path: "{{ openebs_operator }}"
+                regexp: quay.io/openebs/node-disk-operator-amd64:ci
+                replace: quay.io/openebs/node-disk-operator-amd64:{{ lookup('env','NODE_DISK_MANAGER_IMAGE') }}
+              when: lookup('env','NODE_DISK_MANAGER_IMAGE') | length > 0
+          
+            - name: Change the openebs analytics value of openebs resources in operator YAML
+              replace:
+                path: "{{ openebs_operator }}"
+                regexp: 'value: "false"'
+                after: '- name: OPENEBS_IO_INSTALL_DEFAULT_CSTOR_SPARSE_POOL'
+                replace: 'value: "{{ install_default_csp }}"'  
+              when: lookup('env','INSTALL_DEFAULT_CSP') | length > 0             
+
+            - name: Applying openebs operator
+              shell: "{{ kubeapply }} apply -f {{ openebs_operator }}"
+              args:
+                executable: /bin/bash
+
+            - name: Applying storageclasses
+              shell: "{{ kubeapply }} apply -f {{ storageclass }}"
+              args:
+                executable: /bin/bash
+
+            - name: Applying cspc operator
+              shell: "{{ kubeapply }} apply -f {{ cspc_operator }}"
+              args:
+                executable: /bin/bash        
+
+            - name: Updating maya api server image
+              shell: "{{ kubeapply }} set image deployment maya-apiserver maya-apiserver={{ lookup('env','MAYA_APISERVER_IMAGE') }} -n {{ namespace }}"
+              args:
+                executable: /bin/bash
+              when: lookup('env','MAYA_APISERVER_IMAGE') | length > 0
+
+            - name: Updating openebs jiva controller image
+              shell: "{{ kubeapply }} set env deployment maya-apiserver \"OPENEBS_IO_JIVA_CONTROLLER_IMAGE={{ lookup('env','OPENEBS_IO_JIVA_CONTROLLER_IMAGE') }}\" -n {{ namespace }}"
+              args:
+                executable: /bin/bash
+              when: lookup('env','OPENEBS_IO_JIVA_CONTROLLER_IMAGE') | length > 0
+
+            - name: Updating openebs jiva replica image
+              shell: "{{ kubeapply }} set env deployment maya-apiserver \"OPENEBS_IO_JIVA_REPLICA_IMAGE={{ lookup('env','OPENEBS_IO_JIVA_REPLICA_IMAGE') }}\" -n {{ namespace }}"
+              args:
+                executable: /bin/bash
+              when: lookup('env','OPENEBS_IO_JIVA_REPLICA_IMAGE') | length > 0
+
+            - name: Updating openebs jiva replica count
+              shell: "{{ kubeapply }} set env deployment maya-apiserver \"OPENEBS_IO_JIVA_REPLICA_COUNT={{ lookup('env','OPENEBS_IO_JIVA_REPLICA_COUNT') }}\" -n {{ namespace }}"
+              args:
+                executable: /bin/bash
+              when: lookup('env','OPENEBS_IO_JIVA_REPLICA_COUNT') | length > 0
+
+            - name: Updating openebs cstor target image
+              shell: "{{ kubeapply }} set env deployment maya-apiserver \"OPENEBS_IO_CSTOR_TARGET_IMAGE={{ lookup('env','OPENEBS_IO_CSTOR_TARGET_IMAGE') }}\" -n {{ namespace }}"
+              args:
+                executable: /bin/bash
+              when: lookup('env','OPENEBS_IO_CSTOR_TARGET_IMAGE') | length > 0
+
+            - name: Updating openebs cstor pool image
+              shell: "{{ kubeapply }} set env deployment maya-apiserver \"OPENEBS_IO_CSTOR_POOL_IMAGE={{ lookup('env','OPENEBS_IO_CSTOR_POOL_IMAGE') }}\" -n {{ namespace }}"
+              args:
+                executable: /bin/bash
+              when: lookup('env','OPENEBS_IO_CSTOR_POOL_IMAGE') | length > 0
+
+            - name: Updating openebs cstor pool management image
+              shell: "{{ kubeapply }} set env deployment maya-apiserver \"OPENEBS_IO_CSTOR_POOL_MGMT_IMAGE={{ lookup('env','OPENEBS_IO_CSTOR_POOL_MGMT_IMAGE') }}\" -n {{ namespace }}"
+              args:
+                executable: /bin/bash
+              when: lookup('env','OPENEBS_IO_CSTOR_POOL_MGMT_IMAGE') | length > 0
+
+            - name: Updating openebs cstor volume management image
+              shell: "{{ kubeapply }} set env deployment maya-apiserver \"OPENEBS_IO_CSTOR_VOLUME_MGMT_IMAGE={{ lookup('env','OPENEBS_IO_CSTOR_VOLUME_MGMT_IMAGE') }}\" -n {{ namespace }}"
+              args:
+                executable: /bin/bash
+              when: lookup('env','OPENEBS_IO_CSTOR_VOLUME_MGMT_IMAGE') | length > 0
+
+            - name: Updating openebs cstor volume monitor image
+              shell: "{{ kubeapply }} set env deployment maya-apiserver \"OPENEBS_IO_VOLUME_MONITOR_IMAGE={{ lookup('env','OPENEBS_IO_VOLUME_MONITOR_IMAGE') }}\" -n {{ namespace }}"
+              args:
+                executable: /bin/bash
+              when: lookup('env','OPENEBS_IO_VOLUME_MONITOR_IMAGE') | length > 0
+
+            - name: Updating openebs cstor pool exporter image
+              shell: "{{ kubeapply }} set env deployment maya-apiserver \"OPENEBS_IO_CSTOR_POOL_EXPORTER_IMAGE={{ lookup('env','OPENEBS_IO_CSTOR_POOL_EXPORTER_IMAGE') }}\" -n {{ namespace }}"
+              args:
+                executable: /bin/bash
+              when: lookup('env','OPENEBS_IO_CSTOR_POOL_EXPORTER_IMAGE') | length > 0
+
+            - name: Restarting all pods in openebs namespace
+              shell: "kubectl delete po --all -n {{ namespace }}"
+              args:
+                executable: /bin/bash
+
+            - name: Verify that rolling update of maya-apiserver is completed
+              shell: >
+                kubectl get pods --no-headers -n openebs 
+                -l name=maya-apiserver | wc -l
+              args:
+                executable: /bin/bash
+              register: maya_count
+              until: "maya_count.stdout == '1'"
+              delay: 5
+              retries: 120
+
+            - name: Checking Maya-API-Server container status 
+              shell: >
+                kubectl get pods --no-headers -n openebs -l name=maya-apiserver
+                -o jsonpath='{.items[?(@.status.containerStatuses[*].name=="maya-apiserver")].status.containerStatuses[*].ready}' 
+              register: maya_api
+              until: "maya_api.stdout == 'true'" 
+              delay: 5
+              retries: 120
+
+            - name: Checking OpenEBS-provisioner is running
+              shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="openebs-provisioner")].status.phase}'
+              register: openebs_prob
+              until: "'Running' in openebs_prob.stdout"
+              delay: 5
+              retries: 120
+
+            - name: Checking OpenEBS-admission-server is running
+              shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.app=="admission-webhook")].status.phase}'
+              register: admission_web
+              until: "'Running' in admission_web.stdout"
+              delay: 5
+              retries: 120
+
+            - name: Get maya-apiserver pod name
+              shell: >
+                kubectl get pods -n {{ namespace }} 
+                --no-headers --selector=name=maya-apiserver
+                -o custom-columns=:metadata.name
+              args:
+                executable: /bin/bash
+              register: result_name
+
+            - name: Create fact for pod name
+              set_fact:
+                pod_name: "{{ result_name.stdout }}"
+
+            - name: Checking OpenEBS-Snapshot-Operator is running
+              shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="openebs-snapshot-operator")].status.phase}'
+              register: oso
+              until: "'Running' in oso.stdout"
+              delay: 5
+              retries: 120
+
+            - name: Checking OpenEBS-CSPC-Operator is running
+              shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="cspc-operator")].status.phase}'
+              register: cspc_status
+              until: "'Running' in cspc_status.stdout"
+              delay: 5
+              retries: 120
+
+            - name: Confirm that maya-cli is available in the maya-apiserver pod
+              shell: kubectl exec {{pod_name}} -c maya-apiserver -n {{ namespace }} -- mayactl version
+              args:
+                executable: /bin/bash
+              register: result_vers
+              failed_when: "'m-apiserver status:  running' not in result_vers.stdout"
+
+            - block:
+
+                - name: Get the maxpool count of storage pool claim.
+                  shell: kubectl get spc -o=jsonpath='{.items[?(@.metadata.name=="cstor-sparse-pool")].spec.maxPools}'
+                  args:
+                    executable: /bin/bash
+                  register: maxpool_count
+                  until: maxpool_count.rc == 0
+                  delay: 5
+                  retries: 120
+
+                - name: Confirm if sparse pool is running in all the nodes
+                  shell: kubectl get pods -n {{ namespace }} --selector={{ sparse_pool_label }} | grep Running | wc -l
+                  args:
+                    executable: /bin/bash
+                  register: sparse_pool_count
+                  until: (sparse_pool_count.stdout)|int == (maxpool_count.stdout)|int
+                  delay: 5
+                  retries: 120  
+
+              when: lookup('env','INSTALL_DEFAULT_CSP') == "true"
+
+            - block:             
+                - name: Getting the number of nodes
+                  shell: kubectl get node --no-headers | grep -v "master" | wc -l
+                  args:
+                    executable: /bin/bash
+                  register: node_count
+
+                - name: Confirm if node-disk-manager is running in all the nodes
+                  shell: kubectl get pods -n {{ namespace }} --selector=name={{ selector_name }} | grep Running | wc -l
+                  args:
+                    executable: /bin/bash
+                  register: ndm_count
+                  until: (node_count.stdout)|int == (ndm_count.stdout)|int
+                  delay: 5
+                  retries: 120
+
+              when: lookup('env','OPENEBS_INFRA_CHAOS') != "infra_chaos"     
+            
+            - block:
+                - name: Getting the number of nodes
+                  shell: kubectl describe node | grep -i taints | grep none | wc -l
+                  args:
+                    executable: /bin/bash
+                  register: node_count
+                
+                - name: Confirm if node-disk-manager is running in all the nodes
+                  shell: kubectl get pods -n {{ namespace }} --selector=name={{ selector_name }} | grep Running | wc -l
+                  args:
+                    executable: /bin/bash
+                  register: ndm_count
+                  until: (node_count.stdout)|int == (ndm_count.stdout)|int
+                  delay: 5
+                  retries: 120
+
+              when: lookup('env','OPENEBS_INFRA_CHAOS') == "infra_chaos"   
+
+            - name: Confirm CAS Templates are deployed
+              shell: kubectl get castemplate -n {{ namespace }}
+              args:
+                executable: /bin/bash
+              register: result
+              until: "result.rc == 0"
+              delay: 5
+              retries: 120
+          
+          when: lookup('env','Action') == "Provision"
+
+    # TODO 
+    # Delete openebs operator and cas template
+
+        - block:
+              
+              - name: Cleaning openebs operator
+                shell: "{{ kubeapply }} delete -f {{ openebs_operator_link }}"
+                args:
+                  executable: /bin/bash
+                ignore_errors: True
+
+              - name: Confirm pods has been deleted
+                shell: "kubectl get pods --all-namespaces"
+                args:
+                  executable: /bin/bash
+                register: result
+                until: ' item not in result.stdout'
+                with_items:
+                  - "maya-apiserver"
+                  - "openebs-provisioner"
+                  - "openebs-snapshot-operator"
+                  - "openebs-ndm-operator"
+                  - "openebs-admission-server"
+                  - "openebs-localpv-provisioner"
+                delay: 30
+                retries: 100
+
+              - name: Confirm that namspace has been deleted
+                shell: 'kubectl get namespaces'
+                args:
+                  executable: /bin/bash
+                register: result
+                until: '"namespace" not in result.stdout'
+                delay: 30
+                retries: 100
+                
+          when: lookup('env','Action') == "Deprovision"  
+
+        - set_fact:
+              flag: "Pass"
+
+      rescue:
+        - set_fact:
+            flag: "Fail"
+
+      always:
+        ## Updating status to CR
+        - name: Generate the litmus result CR to reflect End of Job
+          template:
+            src: /litmus-result.j2
+            dest: litmus-result.yaml
+          vars:
+            test: "{{ lookup('env','test_name') }}"
+            chaostype: ""
+            app: ""
+            phase: completed
+            verdict: "{{ flag }}"
+
+        - name: Analyze the cr yaml
+          shell: cat litmus-result.yaml
+
+        - name: Apply the litmus result CR
+          shell: kubectl apply -f litmus-result.yaml
+          args:
+            executable: /bin/bash
+          register: lr_status
+          failed_when: "lr_status.rc != 0"
+  
