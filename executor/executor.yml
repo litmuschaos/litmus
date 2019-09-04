@@ -1,37 +1,53 @@
 ---
 - name: Verify if ChaosExperiment CR is available 
   shell: >
-    kubectl get chaosexperiment {{ item }} 
+    kubectl get chaosexperiment {{ c_experiment_name }} 
     --no-headers -o custom-columns=:metadata.name
   args:
     executable: /bin/bash
   register: c_exp_name
-  failed_when: "item not in c_exp_name.stdout"
+  failed_when: "c_experiment_name not in c_exp_name.stdout"
 
 - name: Derive chaos job path from spec of experiment
   shell: >
-    kubectl get chaosexperiment {{ item }}
+    kubectl get chaosexperiment {{ c_experiment_name }}
     --no-headers -o custom-columns=:spec.definition.litmusbook
   args:
    executable: /bin/bash
   register: c_job
 
-- name: Check if the experiment params match the default values
-  shell: >
-    kubectl set env -f {{ c_job.stdout }} APP_LABEL={{ c_app_label }} 
-    APP_NAMESPACE={{ c_app_ns }} CHAOSENGINE={{ c_engine }} --dry-run -o yaml
-  args:
-   executable: /bin/bash
-  register: diff
+- name: Replace the service account on the litmusbook
+  replace:
+    path: "{{ c_job.stdout }}"
+    regexp: 'CHAOS_SERVICE_ACCOUNT'
+    replace: "{{ c_svc_acc }}" 
 
-- name: Patch the job spec if passed experiment params are non-default 
+- name: Obtain the env param list length from spec of experiment
   shell: >
-    kubectl set env -f {{ c_job.stdout }} APP_LABEL={{ c_app_label }} 
-    APP_NAMESPACE={{ c_app_ns }} CHAOSENGINE={{ c_engine }} --dry-run -o yaml
-    > tmp.yml; cp {{ item.yml }} > {{ c_job.stdout }}; rm tmp.yml
+    kubectl get chaosexperiment {{ c_experiment_name }} -o json
+    | jq '.spec.definition.env | length'
   args:
-   executable: /bin/bash
-  when: diff.stdout != ""
+    executable: /bin/bash
+  register: c_env_length
+
+- set_fact:
+    envNameList: ["APP_NAMESPACE", "APP_LABEL", "APP_KIND", "CHAOSENGINE"]
+    envValueList: ["{{ c_app_ns }}", "{{ c_app_label }}", "{{ c_app_kind }}", "{{ c_engine }}"]
+
+- include: experiment_env_getter.yml
+  with_sequence: start=0 count="{{c_env_length.stdout | int}}"
+
+- name: display env lists
+  debug:
+    msg: "namelist: {{ envNameList }}, valuelist: {{ envValueList }}"
+
+- include: experiment_env_patcher.yml
+  vars:
+    envName: "{{ item.0 }}"
+    envValue: "{{ item.1 }}"
+  with_together:
+    - "{{ envNameList }}"
+    - "{{ envValueList }}"
 
 - name: Get litmus chaos job label to monitor its progress
   shell: >
@@ -41,8 +57,26 @@
    executable: /bin/bash
   register: c_job_label
 
+- block:
+
+    - name: Generate a simple random sleep duration
+      set_fact: 
+        rand_sleep: "{{ 180 | random }}"
+      when: c_max is not defined
+
+    - name: Generate a random sleep duration based on total chaos duration
+      set_fact: 
+        rand_sleep: "{{ (c_max|int / 4)|int | random }}"
+      when: c_max is defined 
+    
+    - name: Sleep for random duration before triggering experiments
+      wait_for:
+        timeout: "{{ rand_sleep }}" 
+      
+  when: c_rand is defined and c_rand == "true" 
+
 - debug:
-    msg: "Triggering chaos experiment: item"
+    msg: "Triggering chaos experiment: c_experiment_name"
 
 - name: Run the chaos experiment job
   shell:
@@ -54,12 +88,12 @@
   
 - name: Monitoring the litmus chaos job for completion
   shell: >
-    kubectl get job -n litmus -l experiment={{ c_job_label.stdout }}
+    kubectl get job -n {{ c_app_ns}} -l experiment={{ c_job_label.stdout }}
     --no-headers -o custom-columns=:status.conditions[].type | sort | uniq
   args:
    executable: /bin/bash
   register: c_job_status
   until: c_job_status.stdout == "Complete"
-  delay: 2
-  retries: 150
+  delay: 1
+  retries: 300
 

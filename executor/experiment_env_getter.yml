@@ -1,0 +1,23 @@
+- name: Get ENV names for Chaos Experiment
+  shell: >
+    kubectl get chaosexperiment {{ c_experiment_name }} -o json
+    | jq '.spec.definition.env[{{item}}].name' | tr -d "\""
+  args:
+    executable: /bin/bash
+  register: c_env_name
+
+- name: Get ENV values for Chaos Experiment
+  shell: >
+    kubectl get chaosexperiment {{ c_experiment_name }} -o json
+    | jq '.spec.definition.env[{{item}}].value' | tr -d "\""
+  args:
+    executable: /bin/bash
+  register: c_env_value
+
+- name: append envNameList
+  set_fact:
+    envNameList: "{{ envNameList + [c_env_name.stdout] }}"
+
+- name: append envValueList
+  set_fact:
+    envValueList: "{{ envValueList + [c_env_value.stdout] }}"

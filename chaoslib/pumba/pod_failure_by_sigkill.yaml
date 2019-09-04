@@ -19,8 +19,8 @@
         executable: /bin/bash
       register: result
       until: "result.stdout == 'Running'"
-      delay: 2
-      retries: 30
+      delay: 1
+      retries: 60
       ignore_errors: true
 
     - block:
@@ -123,8 +123,8 @@
         executable: /bin/bash
       register: result
       until: "result.stdout == 'Running'"
-      delay: 2
-      retries: 30
+      delay: 1
+      retries: 60
       ignore_errors: true
 
     - block: 
@@ -144,9 +144,9 @@
             executable: /bin/bash
           register: result
           until: "'Running' not in result.stdout"
-          delay: 2
+          delay: 1
           retries: 150
 
-      when: result.stdout == "Running"
+      when: result.stdout is defined and result.stdout == "Running"
 
   when: action == "deletepumba"

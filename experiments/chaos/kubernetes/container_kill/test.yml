@@ -35,8 +35,8 @@
             app_ns: "{{ a_ns }}" 
             app_lkey: "{{ a_label.split('=')[0] }}"
             app_lvalue: "{{ a_label.split('=')[1] }}"       
-            delay: 2
-            retries: 90
+            delay: 1
+            retries: 60
 
         ## FAULT INJECTION 
 
@@ -55,8 +55,8 @@
             app_ns: "{{ a_ns }}" 
             app_lkey: "{{ a_label.split('=')[0] }}"
             app_lvalue: "{{ a_label.split('=')[1] }}"       
-            delay: 2
-            retries: 90        
+            delay: 1
+            retries: 60        
 
         - set_fact:
             flag: "pass"
