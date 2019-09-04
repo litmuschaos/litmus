@@ -13,7 +13,7 @@ label: "{{ lookup('env','APP_LABEL') }}"
 pvc: "{{ lookup('env','APP_PVC') }}"
 liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
 liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
-data_persistance: "{{ lookup('env','DATA_PERSISTENCY') }}"
+data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
 chaos_type: "{{ lookup('env','CHAOS_TYPE') }}"
 target_container: "{{ lookup('env','TARGET_CONTAINER') }}"
 chaos_duration: 360
