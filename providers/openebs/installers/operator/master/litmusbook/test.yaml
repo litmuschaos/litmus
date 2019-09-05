@@ -10,38 +10,14 @@
   tasks:
 
     - block:
+    
+         ## GENERATING THE TEST NAME
+        - include_tasks: /utils/fcm/create_testname.yml
 
-        - block:
-            ## RECORD START of litmus job
-            - name: Record test instance/run ID
-              set_fact:
-                run_id: "{{ lookup('env','RUN_ID') }}"
-            - name: Construct testname appended with runID
-              set_fact:
-                TEST_NAME: "{{ lookup('env','test_name')}}"
-                test_name: "{{ TEST_NAME}}-{{ run_id }}"
-          when: lookup('env','RUN_ID')
-
-        - name: Generate the litmus result CR to reflect Start of operation
-          template:
-            src: /litmus-result.j2
-            dest: litmus-result.yaml
+         ##  RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: "/utils/fcm/update_litmus_result_resource.yml"
           vars:
-            test: "{{  lookup('env','test_name') }}"
-            chaostype: ""
-            app: ""
-            phase: in-progress
-            verdict: none
-
-        - name: Analyze the cr yaml
-          shell: cat litmus-result.yaml
-
-        - name: Apply the litmus result CR
-          shell: kubectl apply -f litmus-result.yaml
-          args:
-            executable: /bin/bash
-          register: lr_status
-          failed_when: "lr_status.rc != 0"
+            status: 'SOT'
 
         - block:
                 ## START of provisioning
@@ -213,7 +189,7 @@
 
             - name: Verify that rolling update of maya-apiserver is completed
               shell: >
-                kubectl get pods --no-headers -n openebs 
+                kubectl get pods --no-headers -n {{ namespace }} 
                 -l name=maya-apiserver | wc -l
               args:
                 executable: /bin/bash
@@ -224,7 +200,7 @@
 
             - name: Checking Maya-API-Server container status 
               shell: >
-                kubectl get pods --no-headers -n openebs -l name=maya-apiserver
+                kubectl get pods --no-headers -n {{ namespace }} -l name=maya-apiserver
                 -o jsonpath='{.items[?(@.status.containerStatuses[*].name=="maya-apiserver")].status.containerStatuses[*].ready}' 
               register: maya_api
               until: "maya_api.stdout == 'true'" 
@@ -291,7 +267,7 @@
                   retries: 120
 
                 - name: Confirm if sparse pool is running in all the nodes
-                  shell: kubectl get pods -n {{ namespace }} --selector={{ sparse_pool_label }} | grep Running | wc -l
+                  shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="sparse-pool")].status.phase}'
                   args:
                     executable: /bin/bash
                   register: sparse_pool_count
@@ -309,7 +285,7 @@
                   register: node_count
 
                 - name: Confirm if node-disk-manager is running in all the nodes
-                  shell: kubectl get pods -n {{ namespace }} --selector=name={{ selector_name }} | grep Running | wc -l
+                  shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="node-disk-manager")].status.phase}'
                   args:
                     executable: /bin/bash
                   register: ndm_count
@@ -358,6 +334,12 @@
                   executable: /bin/bash
                 ignore_errors: True
 
+              - name: Cleaning cspc operator
+                shell: "{{ kubeapply }} delete -f {{ cspc_operator_link }}"
+                args:
+                  executable: /bin/bash
+                ignore_errors: True
+
               - name: Confirm pods has been deleted
                 shell: "kubectl get pods --all-namespaces"
                 args:
@@ -374,7 +356,7 @@
                 delay: 30
                 retries: 100
 
-              - name: Confirm that namspace has been deleted
+              - name: Confirm that namespace has been deleted
                 shell: 'kubectl get namespaces'
                 args:
                   executable: /bin/bash
@@ -392,24 +374,7 @@
             flag: "Fail"
 
       always:
-        ## Updating status to CR
-        - name: Generate the litmus result CR to reflect End of operation
-          template:
-            src: /litmus-result.j2
-            dest: litmus-result.yaml
+        ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
           vars:
-            test: "{{ lookup('env','test_name')}}"
-            chaostype: ""
-            app: ""
-            phase: completed
-            verdict: "{{ flag }}"
-
-        - name: Analyze the cr yaml
-          shell: cat litmus-result.yaml
-
-        - name: Apply the litmus result CR
-          shell: kubectl apply -f litmus-result.yaml
-          args:
-            executable: /bin/bash
-          register: lr_status
-          failed_when: "lr_status.rc != 0"
+            status: 'EOT'
