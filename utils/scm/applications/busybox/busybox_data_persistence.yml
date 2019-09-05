@@ -4,14 +4,14 @@
    - name: Create some test data in the busybox app
      shell: >
        kubectl exec {{ pod_name }} -n {{ ns }} 
-       -- {{ item }}
+       -- sh -c "{{ item }}"
      args:
        executable: /bin/bash
      register: result
      failed_when: "result.rc != 0"
      with_items:
-       - dd if=/dev/urandom of={{ testfile }} bs={{ blocksize }} count={{ blockcount }} 
-       - md5sum {{ testfile }} > {{ testfile }}-pre-chaos-md5
+       - "dd if=/dev/urandom of=/busybox/{{ testfile }} bs={{ blocksize }} count={{ blockcount }}"
+       - "md5sum /busybox/{{ testfile }} > /busybox/{{ testfile }}-pre-chaos-md5"
 
   when: status == "LOAD"
 
@@ -60,16 +60,16 @@
    - name: Check the md5sum of stored data file
      shell: >
        kubectl exec {{ newpod_name.stdout }} -n {{ ns }}
-       --  md5sum {{ testfile }} > {{ testfile }}-post-chaos-md5
+       -- sh -c "md5sum /busybox/{{ testfile }} > /busybox/{{ testfile }}-post-chaos-md5"
      args:
        executable: /bin/bash
      register: status 
-     failed_when: "'OK' not in status.stdout"
+     failed_when: "status.rc != 0"
 
    - name: Verify whether data is consistent
      shell: >
            kubectl exec {{ newpod_name.stdout }} -n {{ ns }}
-           -- diff {{ testfile }}-pre-chaos-md5 {{ testfile }}-post-chaos-md5
+           -- sh -c "diff /busybox/{{ testfile }}-pre-chaos-md5 /busybox/{{ testfile }}-post-chaos-md5"
      args:
        executable: /bin/bash
      register: result 
@@ -89,7 +89,7 @@
    - name: Delete/drop the files 
      shell: > 
        kubectl exec {{ newpod_name.stdout }} -n {{ ns }}
-       -- rm -f {{ testfile }}*
+       -- sh -c "rm -f /busybox/{{ testfile }}*"
      args:
        executable: /bin/bash
      register: status 
@@ -97,7 +97,7 @@
    - name: Verify successful file delete 
      shell: > 
            kubectl exec {{ newpod_name.stdout }} -n {{ ns }}
-           -- ls
+           -- ls /busybox/
      args:
        executable: /bin/bash
      register: result 
