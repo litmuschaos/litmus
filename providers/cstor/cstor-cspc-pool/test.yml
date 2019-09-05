@@ -32,13 +32,21 @@
               loop: "{{ lookup('dict', bd_count) }}"
               when: "'{{ pool_type }}' in item.key"
 
-            # Creating the blockdevice template from blockdevice_stripe.j2 jinja template for each node
+            # Creating the blockdevice template from blockdevice.j2 jinja template for each node
             - name: Add node labels for each nodes and create blockdevice template
               template:
                 src: ./blockdevice.j2
                 dest: ./blockdevice-{{ item[0] }}.yml
               with_together:
                 - "{{ nodes.stdout_lines }}"
+
+            - name: Getting the Unclaimed block-device count
+              shell: kubectl get blockdevice -n {{ operator_ns }} -l kubernetes.io/hostname={{ item }} -o jsonpath='{.items[?(@.status.claimState=="Unclaimed")].metadata.name}' | tr " " "\n" | grep -v sparse | head -n "{{ disk_count }}"
+              register: bd_count
+              with_items: "{{ nodes.stdout_lines }}"
+
+            - set_fact:
+                device_count: "{{ bd_count|length}}"
 
             - name: Add the block devices for each node's block device template
               include_tasks: add_blockdevice.yml
@@ -59,9 +67,6 @@
                   {{ lookup('file', './blockdevice-{{ item }}.yml') }}
               with_items:
                 - "{{ nodes.stdout_lines }}"
-
-            - set_fact:
-                device_count: "{{ blockDevice|length}}"              
 
             - name: Replacing the pool name in CSPC spec
               replace:
