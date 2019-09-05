@@ -12,6 +12,8 @@ RUN rm -rf /var/lib/apt/lists/* && \
 #Installing ansible
 RUN pip install ansible==2.7.3
 
+RUN touch /mnt/parameters.yml
+
 #Installing Kubectl
 ENV KUBE_LATEST_VERSION="v1.12.0"
 RUN curl -L https://storage.googleapis.com/kubernetes-release/release/${KUBE_LATEST_VERSION}/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl && \
@@ -33,4 +35,3 @@ COPY ./utils ./utils/
 COPY ./tools/plugins /usr/local/lib/python2.7/dist-packages/ansible/plugins/callback/
 COPY experiments ./experiments
 COPY executor ./executor
-CMD touch /mnt/parameters.yml
