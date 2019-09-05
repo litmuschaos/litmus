@@ -33,3 +33,4 @@ COPY ./utils ./utils/
 COPY ./tools/plugins /usr/local/lib/python2.7/dist-packages/ansible/plugins/callback/
 COPY experiments ./experiments
 COPY executor ./executor
+CMD touch /mnt/parameters.yml
