@@ -10,8 +10,7 @@ storageclass: storageclass.yaml
 cspc_operator: cspc-operator.yaml
 selector_name: openebs-ndm
 sparse_pool_label: 'app=cstor-pool'
-installation_test_name: openebsinstaller
-cleanup_test_name: openebscleanup
+test_name: "{{ lookup('env','test') }}"
 psp_spec: openebs_psp.yaml 
 sparse_file_count: "{{ lookup('env','SPARSE_FILE_COUNT') }}"
 install_default_csp: "{{ lookup('env','INSTALL_DEFAULT_CSP') }}"

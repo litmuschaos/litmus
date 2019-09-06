@@ -267,7 +267,7 @@
                   retries: 120
 
                 - name: Confirm if sparse pool is running in all the nodes
-                  shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="sparse-pool")].status.phase}'
+                  shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="cstor-sparse-pool")].status.phase}'
                   args:
                     executable: /bin/bash
                   register: sparse_pool_count
@@ -285,7 +285,7 @@
                   register: node_count
 
                 - name: Confirm if node-disk-manager is running in all the nodes
-                  shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="node-disk-manager")].status.phase}'
+                  shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="openebs-ndm")].status.phase}'| grep Running | wc -w
                   args:
                     executable: /bin/bash
                   register: ndm_count
@@ -303,7 +303,7 @@
                   register: node_count
                 
                 - name: Confirm if node-disk-manager is running in all the nodes
-                  shell: kubectl get pods -n {{ namespace }} --selector=name={{ selector_name }} | grep Running | wc -l
+                  shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="openebs-ndm")].status.phase}'| grep Running | wc -w
                   args:
                     executable: /bin/bash
                   register: ndm_count

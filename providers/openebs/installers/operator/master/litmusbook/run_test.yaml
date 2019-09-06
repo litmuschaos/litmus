@@ -68,7 +68,7 @@ spec:
           - name: Action
             value: Provision
 
-          - name: test_name
+          - name: test
             value: openebsinstaller   
 
         command: ["/bin/bash"]
