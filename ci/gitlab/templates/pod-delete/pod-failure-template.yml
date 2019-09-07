@@ -6,7 +6,7 @@ variables:
   app_svc_account: default
 
 .pod_failure_template:
-  image: litmuschaos/gitlab-runner:ci
+  image: litmuschaos/gitlab-runner:demo
   script:
     - kubectl get crds | grep chaos
     - sed -i "s|%APP_NS|$app_ns|g; s|%APP_LABEL|$app_label|g; s|%APP_KIND|$app_kind|g; s|%APP_SVC_ACC|$app_svc_account|g" /gitlab/pod-templates/chaosengine.yaml 
