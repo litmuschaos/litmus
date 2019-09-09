@@ -4,7 +4,7 @@ test_name: fio-di-delete-jiva-snapshots
 fio_write_yml: fio-write.yml
 fio_read_yml: fio-read.yml
 replica_restart_yml: test_replica_restart.yml
-snap_delete_yml: snapshot_delete_test.yml
+snap_delete_verify_yml: snapshot_delete_verify_test.yml
 check_replica_cnt_yml: check_replica_count.yml
 app_ns: "{{ lookup('env','FIO_NAMESPACE') }}"
 data_check: "{{ lookup('env','DATA_CHECK') }}"

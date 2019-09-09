@@ -55,7 +55,7 @@
 
        - name: Get pv name
          shell: >
-           kubectl get pvc --no-headers -n {{ app_ns }} -l name={{ pvc_label }} -o jsonpath='{range .items[*]}{.spec.volumeName}{"\n"}{end}'
+           kubectl get pvc --no-headers -n {{ app_ns }} -l name={{ pvc_label }} -o jsonpath='{range .items[*]}{.spec.volumeName}'
          args:
            executable: /bin/bash
          register: result
@@ -93,7 +93,7 @@
 
        - name: Populate the iterator with the values to loop
          shell: >
-           shuf -i 1-10 -n 5
+           shuf -i 1-20 -n 15
          args:
            executable: /bin/bash
          register: iterator
@@ -104,9 +104,6 @@
 
        - name: Include replica count test
          include: "{{ check_replica_cnt_yml }}"
-
-       - name: Include snapshot delete test
-         include: "{{ snap_delete_yml }}"
 
        - name: Check if fio write job is completed
          shell: >
@@ -159,6 +156,10 @@
            executable: /bin/bash
          register: result_di
          failed_when: result_di.stdout != " 0,"
+
+       - name: Verify Snapshot deletion
+         include: "{{ snap_delete_verify_yml }}"
+             
 
        - set_fact:
            flag: "Pass"
