@@ -71,6 +71,28 @@
                 replace: quay.io/openebs/cspc-operator:{{ lookup('env','CSPC_OPERATOR_IMAGE') }}
               when: lookup('env','CSPC_OPERATOR_IMAGE') | length > 0
 
+            - name: Change OPENEBS_IO_CSPI_MGMT image 
+              replace:
+                path: "{{ cspc_operator }}"
+                regexp: quay.io/openebs/cspi-mgmt:ci
+                replace: quay.io/openebs/cspi-mgmt:{{ lookup('env','CSPC_OPERATOR_IMAGE') }}
+              when: lookup('env','CSPC_OPERATOR_IMAGE') | length > 0
+
+            - name: Change OPENEBS_IO_CSTOR_POOL image
+              replace:
+                path: "{{ cspc_operator }}"
+                regexp: quay.io/openebs/cstor-pool:ci
+                replace: quay.io/openebs/cstor-pool:{{ lookup('env','CSPC_OPERATOR_IMAGE') }}
+              when: lookup('env','CSPC_OPERATOR_IMAGE') | length > 0
+
+            - name: Change OPENEBS_IO_CSTOR_POOL_EXPORTER image
+              replace:
+                path: "{{ cspc_operator }}"
+                regexp: quay.io/openebs/m-exporter:ci
+                replace: quay.io/openebs/m-exporter:{{ lookup('env','CSPC_OPERATOR_IMAGE') }}
+              when: lookup('env','CSPC_OPERATOR_IMAGE') | length > 0
+  
+
             - name: Change the openebs analytics value of openebs resources in operator YAML
               replace:
                 path: "{{ openebs_operator }}"
