@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: target-failure
+  name: replica-failure
   namespace: litmus
 data:
   parameters.yml: |
@@ -57,4 +57,4 @@ spec:
       volumes:
         - name: parameters
           configMap:
-            name: target-failure
+            name: replica-failure
