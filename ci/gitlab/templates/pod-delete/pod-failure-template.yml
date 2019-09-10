@@ -11,6 +11,6 @@ variables:
     - kubectl get crds | grep chaos
     - sed -i "s|%APP_NS|$app_ns|g; s|%APP_LABEL|$app_label|g; s|%APP_KIND|$app_kind|g; s|%APP_SVC_ACC|$app_svc_account|g" /gitlab/pod-templates/chaosengine.yaml 
     - kubectl apply -f /gitlab/pod-templates/chaosengine.yaml
-    - sleep 120 #job instantiation 
+    - sleep 60 #wait for chaos job instantiation & result CR creation
     - /gitlab/utils/result_check.sh engine-pod-delete
   
