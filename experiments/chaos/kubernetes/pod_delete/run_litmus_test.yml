@@ -41,6 +41,9 @@ spec:
           - name: CHAOS_INTERVAL
             value: "5"
 
+          - name: FORCE
+            value: "true"
+
           - name: CHAOSENGINE
             value: "engine-nginx"
 
