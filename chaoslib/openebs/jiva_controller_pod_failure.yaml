@@ -12,6 +12,11 @@
     # Depends on the naming convention in maya-apiserver (<pv-id>-rep)  
     jiva_controller_deploy: "{{ pv.stdout }}-ctrl"
 
+- name: Record the jiva controller container name
+  set_fact:
+    # Depends on the naming convention in maya-apiserver (<pv-id>-rep)
+    jiva_controller_name: "{{ pv.stdout }}-ctrl-con"
+
 - name: Get the resourceVersion of the target deploy before fault injection
   shell: >
     kubectl get deploy {{ jiva_controller_deploy }} -n {{ app_ns }} 
@@ -28,15 +33,61 @@
     executable: /bin/bash
   register: jiva_controller_pod
 
+- name: Get controller svc
+  shell: >
+    kubectl get svc -l openebs.io/controller-service=jiva-controller-svc 
+    -n {{ app_ns }} -o=jsonpath='{.items[0].spec.clusterIP}'
+  args:
+    executable: /bin/bash
+  register: controller_svc
+  failed_when: controller_svc.stdout == ""
+
+- name: Install jq package inside a controller container
+  shell: >
+    kubectl exec -it {{ jiva_controller_pod.stdout }} -n {{ app_ns }} -c {{ jiva_controller_name }} 
+    -- bash -c "apt-get update && apt-get install -y jq"
+  args:
+    executable: /bin/bash
+
+- name: Getting the Replicastatus before killing controller
+  shell: >
+   kubectl exec -it {{ jiva_controller_pod.stdout }} -n {{ app_ns }} 
+   -c {{ jiva_controller_name }} curl http://"{{controller_svc.stdout}}":9501/v1/replicas | jq -r '.data[].mode'
+  args:
+    executable: /bin/bash
+  register: rstatus_before  
+
 - name: Kill the jiva controller pod 
   shell: >
     kubectl delete pod {{ jiva_controller_pod.stdout }} -n {{ app_ns }}
   args:
     executable: /bin/bash
 
-- name: Wait for 10s post fault injection 
-  wait_for:
-    timeout: 10  
+- name: Get jiva controller pod belonging to the PV
+  shell: >
+    kubectl get pods --no-headers -l openebs.io/controller=jiva-controller -n {{ app_ns }}
+    -o jsonpath="{.items[?(@.metadata.labels.openebs\\.io/persistent-volume==\"{{pv.stdout}}\")].metadata.name}"
+  args:
+    executable: /bin/bash
+  register: jctrl_pod_after
+
+- name: Install jq package inside a controller container
+  shell: >
+    kubectl exec -it {{ jctrl_pod_after.stdout }} -n {{ app_ns }} -c {{ jiva_controller_name }}
+    -- bash -c "apt-get update && apt-get install -y jq"
+  args:
+    executable: /bin/bash
+
+- name: Getting the Replicastatus after killing the controller
+  shell: >
+   kubectl exec -it {{ jctrl_pod_after.stdout }} -n {{ app_ns }}
+   -c {{ jiva_controller_name }} curl http://"{{controller_svc.stdout}}":9501/v1/replicas | jq -r '.data[].mode'
+  args:
+    executable: /bin/bash
+  register: rstatus_after
+  until: "((rstatus_after.stdout_lines|unique)|length) == 1 and 'RW' in rstatus_after.stdout"
+  retries: 30
+  delay: 10
 
 - name: Get the resourceVersion of the target deploy after fault injection
   shell: >
@@ -49,5 +100,5 @@
 - name: Compare resourceVersions of target deployment
   debug:
     msg: "Verified target pods were restarted by fault injection"
-  failed_when: "rv_bef.stdout | int == rv_aft.stdout | int"    
+  failed_when: "rv_bef.stdout | int == rv_aft.stdout | int"
 
