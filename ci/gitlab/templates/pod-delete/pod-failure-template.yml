@@ -19,4 +19,5 @@ variables:
 
     # monitor chaos job & verify results 
     - /gitlab/utils/result_check.sh chaos-pod-delete
+
   
