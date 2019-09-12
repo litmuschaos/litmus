@@ -1,0 +1,28 @@
+- name: Derive chaos iterations
+  set_fact:
+    chaos_iterations: "{{ (chaos_duration|int / chaos_interval|int)|int }}"
+
+- name: Set min chaos count to 1 if interval > duration
+  set_fact: 
+    chaos_iterations: 1
+  when: "chaos_iterations == '0'" 
+
+- name: Kill application pods randomly for the specified duration
+  shell: |
+    kubectl get pods -l {{ label }} -n {{ namespace }} --no-headers -o custom-columns=:metadata.name | shuf -n 1 | xargs kubectl delete pod --force --grace-period=0 --wait=false
+    sleep {{ chaos_interval }}
+  args:
+    executable: /bin/bash
+  register: result
+  with_sequence: start=1 end={{ chaos_iterations }}
+  when: "c_force == 'true'"
+
+- name: Kill application pods randomly for the specified duration
+  shell: |
+    kubectl get pods -l {{ label }} -n {{ namespace }} --no-headers -o custom-columns=:metadata.name | shuf -n 1 | xargs kubectl delete pod 
+    sleep {{ chaos_interval }}
+  args:
+    executable: /bin/bash
+  register: result
+  with_sequence: start=1 end={{ chaos_iterations }}
+  when: "c_force == 'false' or c_force == ''" 
