@@ -350,17 +350,17 @@
     # Delete openebs operator and cas template
 
         - block:  
-              - name: Cleaning openebs operator
-                shell: "{{ kubeapply }} delete -f {{ openebs_operator_link }}"
-                args:
-                  executable: /bin/bash
-                ignore_errors: True
-
               - name: Cleaning cspc operator
                 shell: "{{ kubeapply }} delete -f {{ cspc_operator_link }}"
                 args:
                   executable: /bin/bash
                 ignore_errors: True
+
+              - name: Cleaning openebs operator
+                shell: "{{ kubeapply }} delete -f {{ openebs_operator_link }}"
+                args:
+                  executable: /bin/bash
+                ignore_errors: True  
 
               - name: Confirm pods has been deleted
                 shell: "kubectl get pods --all-namespaces"
