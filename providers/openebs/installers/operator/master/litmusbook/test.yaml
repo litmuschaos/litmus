@@ -363,7 +363,7 @@
                 ignore_errors: True  
 
               - name: Confirm pods has been deleted
-                shell: "kubectl get pods --all-namespaces"
+                shell: kubectl get pods -n openebs
                 args:
                   executable: /bin/bash
                 register: result
@@ -375,6 +375,7 @@
                   - "openebs-ndm-operator"
                   - "openebs-admission-server"
                   - "openebs-localpv-provisioner"
+                  - "openebs-ndm"
                 delay: 30
                 retries: 100
 
@@ -383,7 +384,7 @@
                 args:
                   executable: /bin/bash
                 register: result
-                until: '"namespace" not in result.stdout'
+                until: 'namespace not in result.stdout'
                 delay: 30
                 retries: 100
   
