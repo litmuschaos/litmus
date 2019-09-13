@@ -64,12 +64,8 @@ spec:
             value: "10" 
           - name: INSTALL_DEFAULT_CSP
             value:   
-
           - name: Action
-            value: Provision
-
-          - name: test
-            value: openebsinstaller   
+            value: provision   
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./providers/openebs/installers/operator/master/litmusbook/test.yaml -i /etc/ansible/hosts -vv; exit 0"]

@@ -344,7 +344,7 @@
               delay: 5
               retries: 120
 
-          when: lookup('env','Action') == "Provision"
+          when: lookup('env','Action') == "provision"
 
     # TODO 
     # Delete openebs operator and cas template
@@ -387,7 +387,7 @@
                 delay: 30
                 retries: 100
   
-          when: lookup('env','Action') == "Deprovision" 
+          when: lookup('env','Action') == "deprovision" 
 
         - set_fact:
             flag: "Pass"
