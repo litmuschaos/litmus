@@ -85,7 +85,7 @@
   args:
     executable: /bin/bash
   register: rstatus_after
-  until: "((rstatus_after.stdout_lines|unique)|length) == 1 and 'RW' in rstatus_after.stdout"
+  until: "rstatus_after.stdout_lines == rstatus_before.stdout_lines and 'RW' in rstatus_after.stdout"
   retries: 30
   delay: 10
 
