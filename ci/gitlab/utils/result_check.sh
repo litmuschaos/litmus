@@ -1,7 +1,7 @@
 #!/bin/bash
 
 result_check_retry_limit=5; result_check_retry_count=0
-result_check_cmd="kubectl get chaosresult $1 -o custom-columns=:spec.experimentstatus.verdict --no-headers"
+result_check_cmd="kubectl get chaosresult $1 -o custom-columns=:spec.experimentstatus.verdict --no-headers 2> /dev/null"
 
 echo "## start chaos job monitor ##"
 
