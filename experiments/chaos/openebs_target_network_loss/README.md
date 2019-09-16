@@ -63,15 +63,15 @@ Based on the value of env DATA_PERSISTENCE, the corresponding data consistency u
       blocksize: 4k
       blockcount: 1024
       testfile: difiletest
+
 It is recommended to pass test-name for configmap and mount the corresponding configmap as volume in the litmus pod. The above snippet holds the parameters required for validation data consistency in busybox application.
 
 For percona-mysql, the following parameters are to be injected into configmap.
 
-parameters.yml: |
-  dbuser: root
-  dbpassword: k8sDem0
-  dbname: tdb
-The configmap data will be utilised by litmus experiments as its variables while executing the scenario.
+    parameters.yml: |
+      dbuser: root
+      dbpassword: k8sDem0
+      dbname: tdb
 
-Based on the data provided, litmus checks if the data is consistent after recovering from induced chaos.
+The configmap data will be utilised by litmus experiments as its variables while executing the scenario. Based on the data provided, litmus checks if the data is consistent after recovering from induced chaos.
 
