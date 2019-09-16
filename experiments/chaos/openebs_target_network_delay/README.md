@@ -50,8 +50,7 @@
 | LIVENESS_APP_LABEL     | Unique Labels in `key=value` format for external liveness pod, if any |
 | DATA_PERSISTENCY       | Data accessibility & integrity verification post recovery (enabled, disabled) |
 
-
-​### Procedure
+### Procedure
 ​
 This scenario validates the behaviour of application and OpenEBS persistent volumes in the amidst of chaos induced on OpenEBS data plane and control plane components.
 ​
