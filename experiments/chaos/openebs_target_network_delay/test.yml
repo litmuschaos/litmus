@@ -101,7 +101,7 @@
           when: liveness_label != ''
     
         - name: Verify application data persistence  
-          include_tasks: "/utils/scm/applications/mysql/mysql_data_persistence.yml"
+          include: "{{ data_consistency_util_path }}"
           vars:
             status: 'VERIFY'
             ns: "{{ namespace }}"
