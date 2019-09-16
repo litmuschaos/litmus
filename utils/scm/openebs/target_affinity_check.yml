@@ -1,32 +1,41 @@
 - name: Obtain node where app pod resides
-  shell: >
-    kubectl get pods -l {{ app_label }} -n {{ app_ns }}
-    --no-headers -o custom-columns=:spec.nodeName
-  args:
-    executable: /bin/bash
+  k8s_facts:
+    kind: Pod
+    label_selectors:
+      - "{{ app_label }}"
+    namespace: "{{ app_ns }}"
   register: app_node
 
+- debug:
+    msg: "{{ item.spec.nodeName }}"
+  with_items: "{{ app_node.resources }}"
+
+
 - name: Derive PV from application PVC
-  shell: >
-    kubectl get pvc {{ app_pvc }}
-    -o custom-columns=:spec.volumeName -n {{ app_ns }}
-    --no-headers
-  args:
-    executable: /bin/bash
+  k8s_facts:
+    kind: PersistentVolumeClaim 
+    name: "{{ app_pvc }}"
+    namespace: "{{ app_ns }}"
   register: pv
 
+- debug:
+    msg: "{{ item.spec.volumeName }}"
+  with_items: "{{ pv.resources }}"
+
 - name: Derive storage engine from PV
-  shell: >
-    kubectl get pv {{ pv.stdout }} --no-headers
-    -o jsonpath="{.metadata.annotations.openebs\\.io/cas-type}"
-  args:
-    executable: /bin/bash
+  k8s_facts:
+    kind: PersistentVolume
+    name: "{{ pv.resources.0.spec.volumeName }}"
   register: stg_engine
+
+- debug:
+    msg: "{{ item.metadata.annotations['openebs.io/cas-type']}}"
+  with_items: "{{ stg_engine.resources }}"
 
 - set_fact: 
     target_ns: "{{ app_ns }}"
     target_label: "openebs.io/controller=jiva-controller"
-  when: stg_engine.stdout == 'jiva'
+  when: stg_engine.resources.0.metadata.annotations['openebs.io/cas-type'] == 'jiva'
 
 
 ## TODO: Account for the case where cstor target can reside in app_ns
@@ -35,19 +44,18 @@
 - set_fact:
     target_ns: "{{ operator_ns }}"
     target_label: "openebs.io/target=cstor-target"
-  when: stg_engine.stdout == 'cstor' and target_in_app_ns is undefined
+  when: stg_engine.resources.0.metadata.annotations['openebs.io/cas-type'] == 'cstor' and target_in_app_ns is undefined
 
 - name: Obtain the node where PV target pod resides
-  shell: >
-    kubectl get pod -n {{ target_ns }} 
-    -l {{ target_label }}
-    -o jsonpath='{.items[?(@.metadata.labels.openebs\.io\/persistent-volume=="{{ pv.stdout }}")].spec.nodeName}' 
-  args:
-    executable: /bin/bash
+  k8s_facts:
+    kind: Pod
+    namespace: "{{ target_ns }}"
+    label_selectors:
+      - "{{ target_label }}"
+      - "openebs.io/persistent-volume={{ pv.resources.0.spec.volumeName }}"
   register: target_node
 
 - name: Verify whether the app & target pod co-exist on same node
   debug: 
     msg: "App and Target affinity is maintained"
-  failed_when: target_node.stdout != app_node.stdout
-  
+  failed_when: target_node.resources.0.spec.nodeName != app_node.resources.0.spec.nodeName

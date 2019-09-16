@@ -1,4 +1,3 @@
----
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -49,4 +48,3 @@ spec:
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./apps/percona/deployers/test.yml -i /etc/ansible/hosts -v; exit 0"]
-     

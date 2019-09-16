@@ -1,18 +1,20 @@
 ---
 - name: Obtain list of existing namespaces
-  shell: >
-    kubectl get ns 
-    --no-headers 
-    -o custom-columns=:metadata.name
-  args: 
-    executable: /bin/bash
+  k8s_facts:
+    kind: Namespace
   register: ns_list
+ 
+- debug: 
+    msg: "{{item.metadata.name}}"
+  with_items: "{{ns_list.resources}}"
 
 - name: Create test specific namespace.
-  shell: kubectl create ns {{ app_ns }}
-  args:
-    executable: /bin/bash
-  when: app_ns != 'litmus' and app_ns not in ns_list.stdout_lines
+  k8s:
+    kind: Namespace
+    name: "{{ app_ns }}"
+    state: present
+  when: app_ns != 'litmus' and app_ns not in item.metadata.name
+  with_items: "{{ ns_list.resources }}"
 
 - include_tasks: /utils/k8s/status_testns.yml
 

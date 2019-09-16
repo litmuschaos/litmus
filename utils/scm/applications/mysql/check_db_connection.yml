@@ -1,6 +1,6 @@
-##Check if the database is ready for connection, upper bound wait time: 900s 
+#Check if the database is ready for connection, upper bound wait time: 900s 
 - name: Check if db is ready for connections
-  shell: kubectl logs {{ pod_name.stdout }} -n {{ app_ns }} | grep 'ready for connections' | wc -l
+  shell: kubectl logs {{ pod_name.resources.0.metadata.name }} -n {{ app_ns }} | grep 'ready for connections' | wc -l
   register: initcheck
   until: initcheck.stdout == "2"
   delay: 5

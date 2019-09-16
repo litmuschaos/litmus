@@ -1,10 +1,10 @@
 ---
 - name: Checking the status  of test specific namespace.
-  shell: kubectl get ns {{ app_ns }} -o custom-columns=:status.phase --no-headers
-  args:
-    executable: /bin/bash
+  k8s_facts:
+    kind: Namespace
+    name: "{{ app_ns }}"
   register: npstatus
-  until: "'Active' in npstatus.stdout"
+  until: "'Active' in npstatus.resources.0.status.phase"
   delay: 30
   retries: 10
 

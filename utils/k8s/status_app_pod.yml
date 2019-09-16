@@ -16,4 +16,3 @@
   until: "((result.stdout.split()|unique)|length) == 1 and 'Running' in result.stdout"
   delay: '{{ delay }}'
   retries: '{{ retries }}'
-

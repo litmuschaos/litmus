@@ -1,19 +1,33 @@
 ---
 - block:
    - name: Obtain the number of replicas.
-     shell: kubectl get statefulset -n {{ app_ns }} --no-headers -l "{{app_label}}" -o custom-columns=:spec.replicas
-     args:
-       executable: /bin/bash
+     k8s_facts:
+       kind: StatefulSet
+       namespace: "{{ app_ns }}"
+       label_selectors:
+         - "{{ app_label }}"
      register: rep_count
-     until: "rep_count.rc == 0"
+     until: "rep_count is succeeded "
      delay: 60
      retries: 15
 
+   - debug:
+       msg: "{{ item.spec.replicas }}"
+     with_items: "{{ rep_count.resources }}"
+    
+
    - name: Obtain the ready replica count and compare with the replica count.
-     shell: kubectl get statefulset -n {{ app_ns }} -l "{{app_label}}" --no-headers -o custom-columns=:..readyReplicas
-     args:
-       executable: /bin/bash
+     k8s_facts: 
+       kind: StatefulSet 
+       namespace: "{{ app_ns }}"
+       label_selectors:
+         - "{{ app_label }}"
      register: ready_rep
-     until: "ready_rep.rc == 0 and ready_rep.stdout|int == rep_count.stdout|int"
+
+   - debug:
+       msg: "{{ item.status.currentReplicas }}"
+     with_items: "{{ ready_rep.resources }}"
+
+     until: "ready_rep is succeeded and ready_rep.resources.0.status.updatedReplicas |int == rep_count.resources.0.spec.replicas |int"
      delay: 60
      retries: 30

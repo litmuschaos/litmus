@@ -2,7 +2,12 @@
 #Deploying application on k8's cluster and cross checking whether the
 #application is deployed successfully.
 - name: Deploying {{ application_name }}
-  shell: kubectl apply -f {{ application_deployment }} -n {{ app_ns }}
+  k8s:
+    state: present
+    src: "{{ application_deployment }}"
+    namespace: "{{ app_ns }}"
+    merge_type: merge  
+  register: result
 
 - include_tasks: /utils/k8s/status_app_pod.yml
   when: check_app_pod == 'yes'
