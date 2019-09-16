@@ -27,7 +27,6 @@
    - debug:
        msg: "{{ item.status.currentReplicas }}"
      with_items: "{{ ready_rep.resources }}"
-
      until: "ready_rep is succeeded and ready_rep.resources.0.status.updatedReplicas |int == rep_count.resources.0.spec.replicas |int"
      delay: 60
      retries: 30
