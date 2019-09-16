@@ -1,4 +1,13 @@
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: target-network-loss
+  namespace: litmus
+data:
+  parameters.yml: |
+
+---
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -45,8 +54,16 @@ spec:
           - name: LIVENESS_APP_NAMESPACE
             value: ""
 
-          - name: DATA_PERSISTENCY
-            value: 'enable'
+          - name: DATA_PERSISTENCE
+            value: ""
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/chaos/openebs_target_network_loss/test.yml -i /etc/ansible/hosts -vv; exit 0"]
+
+        volumeMounts:
+        - name: parameters
+          mountPath: /mnt/
+      volumes:
+        - name: parameters
+          configMap:
+            name: target-network-loss  
