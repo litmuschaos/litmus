@@ -288,14 +288,23 @@
                   delay: 5
                   retries: 120
 
-                - name: Confirm if sparse pool is running in all the nodes
-                  shell: kubectl get pods -n {{ namespace }} -o jsonpath='{.items[?(@.metadata.labels.name=="cstor-sparse-pool")].status.phase}'
+                - name: Confirm if sparse pool is created in all the nodes
+                  shell: kubectl get pods -n {{ namespace }} -l openebs.io/storage-pool-claim==cstor-sparse-pool -o custom-columns=:status.phase --no-headers  
                   args:
                     executable: /bin/bash
                   register: sparse_pool_count
-                  until: (sparse_pool_count.stdout)|int == (maxpool_count.stdout)|int
+                  until: "(sparse_pool_count.stdout_lines)|length == (maxpool_count.stdout)|int"
                   delay: 5
                   retries: 120  
+
+                - name: Confirm if sparse pool is running in all the nodes
+                  shell: kubectl get pods -n openebs -l openebs.io/storage-pool-claim=cstor-sparse-pool -o custom-columns=:.status.phase --no-headers|uniq
+                  args:
+                    executable: /bin/bash
+                  register: sparse_pool_count
+                  until: "sparse_pool_count.stdout == 'Running'"
+                  delay: 5
+                  retries: 120 
 
               when: lookup('env','INSTALL_DEFAULT_CSP') == "true"
 
