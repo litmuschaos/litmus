@@ -37,14 +37,18 @@
         name: "{{ pvc_name.resources.0.spec.volumes.0.persistentVolumeClaim.claimName }}"
         namespace: "{{ app_ns }}"
       register: pv_name
+
     - debug:
         msg: "{{ item.spec.volumeName  }}"
       with_items: "{{ pv_name.resources }}"
 
+    - set_fact:
+        pvname: "{{ pv_name.resources.0.spec.volumeName }}"
+
     - name: Check for presence & value of cas type annotation
       k8s_facts:
         kind: PersistentVolume
-        name: "{{ pv_name.resources.0.spec.volumeName }}"
+        name: "{{ pvname}}"
       register: openebs_stg_engine
 
     - debug: 
@@ -54,7 +58,8 @@
 
     - name: Record the storage engine name
       set_fact:
-        stg_engine: "{{ openebs_stg_engine.resources.0.metadata.annotations['openebs.io/cas-type'] }}"
+        stg_engine: "{{ item.metadata.annotations['openebs.io/cas-type'] }}"
+      with_items: "{{  openebs_stg_engine.resources }}"
     
     ## Replacing the item names in the respective deployer spec file.
     - name: Replace the PVC name in application deployer spec.
@@ -94,6 +99,8 @@
       k8s_facts:
         kind: PersistentVolumeClaim
         namespace: "{{ app_ns }}"
+        label_selectors:
+          - "{{ app_label }}"
       register: resource_list
       until: resource_list.resources | length < 1
       delay: 5
@@ -134,7 +141,7 @@
                 kind: Pod
                 label_selectors:
                   - "openebs.io/target=cstor-target"
-                  - "pv_name.resources.0.spec.volumName"
+                  - "{{ pvname }}"
                 namespace: "{{ operator_ns }}"        
               register: target_status
               until: " target_status.resources | length < 1"
@@ -146,7 +153,7 @@
                 kind: CStorVolumeReplica
                 namespace: "{{ operator_ns }}"
                 label_selectors:
-                  - "pv_name.resources.0.spec.volumName"
+                  - "{{ pvname }}"
               register: cvr_status
               until: " cvr_status.resources | length < 1 "
               delay: 5
@@ -165,6 +172,9 @@
 - name: Check if the PV is deleted.
   k8s_facts:
     kind: PersistentVolume
-    name: "pv_name.resources.0.spec.volumName" 
+    name: "{{ pvname }}"
+    label_selectors:
+      - "{{ app_label }}"
   register: pv_result
   failed_when: "pv_result.resources | length > 1"
+  
