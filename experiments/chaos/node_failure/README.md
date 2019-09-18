@@ -75,3 +75,6 @@ Based on the data provided, litmus checks if the data is consistent after recove
 
 ESX password has to updated through k8s secret created. The litmus runner can retrieve the password from secret as environmental variable and utilize it for performing admin operations on the server.
 
+
+
+Note: To perform admin operatons on vmware, the VM display name in hypervisor should match its hostname.
