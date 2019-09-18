@@ -1,8 +1,8 @@
 ---
-# This util can handle 'power on' and 'power off' operations on VMware based virtual machines. Make sure that passwordless ssh
-# to ESX server is enabled.
+# This util can handle 'power on' and 'power off' operations on VMware based virtual machines.
 # The parameters required by this util are
 #    - ESX IP
+#    - ESX root Password
 #    - The target virtual machine name
 #    - Operation, either 'on' or 'off'
 #

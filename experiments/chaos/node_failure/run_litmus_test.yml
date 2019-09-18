@@ -49,16 +49,15 @@ spec:
           - name: APP_NAMESPACE
             value: app-percona-ns
 
-          - name: APP_PVC
-            value: percona-mysql-claim
-
           - name: APP_LABEL
             value: 'name=percona'
 
+          # The platform where k8s cluster is created.
           - name: PLATFORM
             value: "vmware"
 
-          - name: ESX_host_IP
+          # The IP address of ESX HOST
+          - name: ESX_HOST_IP
             value: ""
 
           - name: ESX_PASSWORD
@@ -67,6 +66,7 @@ spec:
                 name: host-password 
                 key: password
 
+          # Application name to pick the relevant data persistence check util
           - name: DATA_PERSISTENCE
             value: "" 
 

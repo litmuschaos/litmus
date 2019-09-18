@@ -11,8 +11,6 @@ platform: "{{ lookup('env','PLATFORM') }}"
 
 host_ip: "{{ lookup('env','ESX_HOST_IP') }}"
 
-operator_ns: openebs
-
 esx_pwd: "{{ lookup('env','ESX_PASSWORD') }}"
 
 data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
