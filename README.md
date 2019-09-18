@@ -1,4 +1,4 @@
-# Litmus
+<img alt="LitmusChaos" src="logo.png" width="50%" height="50%">
 
 
 [![Build Status](https://travis-ci.org/litmuschaos/litmus.svg?branch=master)](https://travis-ci.org/litmuschaos/litmus)
