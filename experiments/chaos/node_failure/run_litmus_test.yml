@@ -30,6 +30,8 @@ spec:
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
+      #nodeSelector:
+      #  kubernetes.io/hostname:
 
       tolerations:
       - key: "infra-aid"
