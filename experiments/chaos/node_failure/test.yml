@@ -104,6 +104,11 @@
           delay: 30
           retries: 15
 
+        # wait 5 minutes
+        - name: Wait for the application pod to get evicted
+          wait_for:
+            timeout: 300
+
         ## Application verification after injecting chaos
         - include_tasks: /utils/k8s/status_app_pod.yml
           vars:
@@ -116,20 +121,12 @@
         - name: Check if the application pod is rescheduled
           shell: >
             kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
-            -o=custom-columns=NAME:".metadata.name"
+            -o wide | grep -v {{ app_node.stdout }} | awk '{print $3}'
           args:
             executable: /bin/bash
           register: rescheduled_app_pod
-
-        - name: Check the application status
-          shell: >
-            kubectl get pods {{ rescheduled_app_pod.stdout }} --no-headers
-            -o custom-columns=:status.phase
-          args:
-            executable: /bin/bash
-          register: state
-          until: "'Running' in state.stdout"
-          delay: 5
+          until: "'Running' in rescheduled_app_pod.stdout"
+          delay: 10
           retries: 30
 
         - name: Verify application data persistence

@@ -14,7 +14,7 @@ metadata:
   name: host-password
 type: Opaque
 data:
-  password: YzEwdWRieXQzQDE2NTg=
+  password:
 
 ---
 apiVersion: batch/v1
@@ -54,9 +54,6 @@ spec:
 
           - name: APP_LABEL
             value: 'name=percona'
-
-          - name: DATA_PERSISTENCY
-            value: "enable"
 
           - name: PLATFORM
             value: "vmware"
