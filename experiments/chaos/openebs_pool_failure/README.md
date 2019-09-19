@@ -72,4 +72,4 @@ The configmap data will be utilised by litmus experiments as its variables while
 | ---------------------- | ------------------------------------------------------------ |
 | LIVENESS_APP_NAMESPACE | Namespace in which external liveness pods are deployed, if any |
 | LIVENESS_APP_LABEL     | Unique Labels in `key=value` format for external liveness pod, if any |
-| DATA_PERSISTENCY       | Data accessibility & integrity verification post recovery (enabled, disabled) |
+| DATA_PERSISTENCE       | Data accessibility & integrity verification post recovery (enabled, disabled) |
