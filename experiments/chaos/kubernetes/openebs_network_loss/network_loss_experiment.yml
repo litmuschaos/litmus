@@ -1,0 +1,53 @@
+apiVersion: litmuschaos.io/v1alpha1
+description:
+  message: |
+    Network loss between Pod and PVC belonging to a deployment/statefulset/daemonset
+kind: ChaosExperiment
+metadata:
+  labels:
+    litmuschaos.io/name: kubernetes
+  name: pod-network-loss
+  namespace: litmus
+spec:
+  definition:
+    args:
+    - -c
+    - ansible-playbook ./experiments/chaos/openebs_target_network_loss/test.yml -i /etc/ansible/hosts -i /etc/ansible/hosts
+      -vv; exit 0
+    command:
+    - /bin/bash
+    env:
+    - name: ANSIBLE_STDOUT_CALLBACK
+      value: default
+
+    - name: OPERATOR_NAMESPACE
+      value: openebs
+
+    - name: APP_NAMESPACE
+      value: default # NS of deployed app (Mandatory)
+
+    - name: APP_LABEL
+      value: '' # deployed app label (Mandatory)
+
+    - name: APP_PVC
+      value: '' # PVC name (Mandatory)
+
+    - name: NETWORK_DELAY
+      value: "240000" # in milliseconds (Mandatory)
+
+    - name: CHAOS_DURATION
+      value: "240" # in seconds (Mandatory)
+
+    - name: LIVENESS_APP_LABEL
+      value: "" # (Optional)
+
+    - name: LIVENESS_APP_NAMESPACE
+      value: "" # (Optional)
+
+    - name: DATA_PERSISTENCY
+      value: 'enable'
+
+    image: "" # (Optional)
+    labels:
+      name: pod-network-loss
+    litmusbook: /experiments/chaos/openebs_target_network_loss/run_litmus_test.yml
