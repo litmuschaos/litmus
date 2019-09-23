@@ -22,6 +22,7 @@
             dest: "{{ item.dest }}"
           with_items:
              - { src: cstor-xfs-sc.j2,dest: cstor-xfs-sc.yml }
+             - { src: jiva-xfs-sc.j2,dest: jiva-xfs-sc.yml }
              - { src: cstor-volume-monitor-sc.j2,dest: cstor-volume-monitor-sc.yml }
              - { src: cstor-disk-standalone.j2,dest: cstor-disk-standalone.yml }
              - { src: local-pv-hostpath.j2,dest: local-pv-hostpath.yml }
@@ -47,6 +48,7 @@
               retries: 5
               with_items:
                 - openebs-cstor-xfs
+                - openebs-jiva-xfs
                 - openebs-cstor-volume-monitor
                 - cstor-disk-standalone
                 - openebs-jiva-standalone
@@ -76,6 +78,7 @@
               retries: 5
               with_items:
                 - openebs-cstor-xfs
+                - openebs-jiva-xfs
                 - openebs-cstor-volume-monitor
                 - local-pv-hostpath
                 - cstor-disk-standalone
