@@ -37,6 +37,21 @@
 - include: experiment_env_getter.yml
   with_sequence: start=0 count="{{c_env_length.stdout | int}}"
 
+- name: Obtain the env param list length from spec of Engine
+  shell: >
+    kubectl get chaosengine engine-nginx -o json 
+    | jq '.spec.experiments[] | select(.name == "{{ c_experiment_name }}") | .spec.components | length'
+  args:
+    executable: /bin/bash
+  register: c_engine_envlen
+
+- include: engine_env_getter.yml
+  with_sequence: start=0 count="{{ c_engine_envlen.stdout | int }}"
+
+- name: display env lists
+  debug:
+    msg: "namelist: {{ envNameList }}, valuelist: {{ envValueList }}"
+
 - name: display env lists
   debug:
     msg: "namelist: {{ envNameList }}, valuelist: {{ envValueList }}"
