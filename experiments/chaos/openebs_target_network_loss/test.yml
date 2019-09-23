@@ -104,7 +104,7 @@
           vars:
             status: 'VERIFY'
             ns: "{{ namespace }}"
-            pod_name: "{{ new_pod_name.stdout }}"
+            pod_name: "{{ app_pod_name.stdout }}"
           when: data_persistence != ''
 
         - set_fact:

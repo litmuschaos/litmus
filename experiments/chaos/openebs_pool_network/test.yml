@@ -4,13 +4,28 @@
 
   vars_files:
     - test_vars.yml
+    - /mnt/parameters.yml
 
   tasks:
     - block:
 
           ## PRE-CHAOS APPLICATION LIVENESS CHECK
+
         - include_tasks: /utils/k8s/application_liveness_check.yml
           when: liveness_label != ''
+
+        - name: Identify the data consistency util to be invoked
+          template:
+            src: data_persistence.j2
+            dest: data_persistence.yml
+
+        - include_vars:
+            file: data_persistence.yml
+       
+        - name: Record the data consistency util path
+          set_fact:
+            data_consistency_util_path: "{{ consistencyutil }}"
+          when: data_persistence != ''
 
         ## RECORD START OF THE TEST IN LITMUS RESULT CR
         - include_tasks: /utils/fcm/create_testname.yml 
@@ -41,7 +56,23 @@
             app_lvalue: "{{ label.split('=')[1] }}"
             delay: '2'
             retries: '60'
-  
+
+        - name: Get application pod name 
+          shell: >
+            kubectl get pods -n {{ namespace }} -l {{ label }} --no-headers
+            -o=custom-columns=NAME:".metadata.name"
+          args:
+            executable: /bin/bash
+          register: app_pod_name 
+
+        - name: Create some test data 
+          include: "{{ data_consistency_util_path }}"
+          vars:
+            status: 'LOAD'
+            ns: "{{ namespace }}"
+            pod_name: "{{ app_pod_name.stdout }}"
+          when: data_persistence != ''  
+        
         ## STORAGE FAULT INJECTION 
 
         - include: "/chaoslib/openebs/cstor_pool_network.yml"
@@ -52,7 +83,6 @@
             chaos_duration: "{{ lookup('env','CHAOS_DURATION') }}"
             pvc_name: "{{ pvc }}"
           
-
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
         - name: Verify AUT liveness post fault-injection
@@ -63,12 +93,17 @@
             app_lvalue: "{{ label.split('=')[1] }}"
             delay: '2'
             retries: '60'
-          
-         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
+        - name: Verify application data persistence
+          include: "{{ data_consistency_util_path }}"
+          vars:
+            status: 'VERIFY'
+            ns: "{{ namespace }}"
+            pod_name: "{{ app_pod_name.stdout }}"
+          when: data_persistence != ''
+          
         - include_tasks: /utils/k8s/application_liveness_check.yml
           when: liveness_label != ''
-
 
         - set_fact:
             flag: "Pass"

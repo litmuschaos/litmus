@@ -3,7 +3,7 @@ namespace: "{{ lookup('env','APP_NAMESPACE') }}"
 label: "{{ lookup('env','APP_LABEL') }}"
 pvc: "{{ lookup('env','APP_PVC') }}"
 liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
-data_persistance: "{{ lookup('env','DATA_PERSISTENCY') }}"
+data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
 liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
 operator_ns: openebs
 chaos_type: "{{ lookup('env','CHAOS_TYPE') }}" 
