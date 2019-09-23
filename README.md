@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/litmuschaos/litmus.svg?branch=master)](https://travis-ci.org/litmuschaos/litmus)
 [![Docker Pulls](https://img.shields.io/docker/pulls/openebs/ansible-runner.svg)](https://hub.docker.com/r/openebs/ansible-runner)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3202/badge)](https://bestpractices.coreinfrastructure.org/projects/3202)
 
 Litmus is chaos engineering for workloads on Kubernetes -> hopefully without learning curves. Our vision 
 includes enabling end users to easily execute chaos experiments in their environments using a Kubernetes native 
