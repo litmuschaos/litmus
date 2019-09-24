@@ -12,6 +12,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: host-password
+  namespace: litmus
 type: Opaque
 data:
   password:
