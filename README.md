@@ -7,7 +7,7 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/openebs/ansible-runner.svg)](https://hub.docker.com/r/openebs/ansible-runner)
 
 ## Important Links
-<a href="https://landscape.cncf.io/selected=litmus" target=_blank>CNCF Landscape</a>
+<a href="https://landscape.cncf.io/selected=litmus" target="_blank">CNCF Landscape</a>
 
 ## License
 
