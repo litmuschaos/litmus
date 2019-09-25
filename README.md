@@ -4,6 +4,9 @@
 
 [![Build Status](https://travis-ci.org/litmuschaos/litmus.svg?branch=master)](https://travis-ci.org/litmuschaos/litmus)
 [![Docker Pulls](https://img.shields.io/docker/pulls/openebs/ansible-runner.svg)](https://hub.docker.com/r/openebs/ansible-runner)
+![GitHub stars](https://img.shields.io/github/stars/litmuschaos/litmus?style=social)
+![GitHub issues](https://img.shields.io/github/issues/litmuschaos/litmus)
+![Twitter Follow](https://img.shields.io/twitter/follow/litmuschaos?style=social)
 
 ## Overview
 Litmus provides tools to orchestrate chaos on Kubernetes so help SREs find weaknesses on their deployment and fix them. Litmus takes a cloud-native approach to create, manage and monitor chaos. Chaos is orchestrated using the following Kubernetes Custom Resource Definitions (**CRDS**):
@@ -16,19 +19,29 @@ Chaos experiments are hosted on <a href="https://hub.litmuschaos.io" target="_bl
 
 ## Use cases
 
+- **For Developers**: To run chaos experiments during application development as an extention of unit testing or integration testing
+- **For CI pipeline builders**: To run chaos as a pipeline stage to rule out the bugs when the application is subjected to fail paths
+- **For SREs**: To plan and schedule chaos experiments into the application and/or surrounding infrastructure. This practice identifies the weaknesses in the system and increases the resilience.
+
+
 ## Installation
 
 ## Running Chaos Experiments
 
 ## Viewing Chaos results
 
-## Chaos Hub
+
 
 ## Contributing to Chaos Hub
 
 ## Applications for which Chaos Experiments are available
 
 ## Adopters
+- MayaData Director
+- OpenEBS.ci
+- Wipro Gecko
+
+(*Send a PR to this page if you are using Litmus in your chaos engineering practice*)
 
 ## License
 
@@ -37,5 +50,6 @@ the projects used by the Litmus project may be governed by a different license, 
 
 ## Important Links
 <a href="https://landscape.cncf.io/selected=litmus">
-  <img src="https://landscape.cncf.io/images/left-logo.svg" alt="Litmus on CNCF Landscape" width="150">
+  CNCF Landscape <img src="https://landscape.cncf.io/images/left-logo.svg" alt="Litmus on CNCF Landscape" width="50">
 </a>
+
