@@ -35,8 +35,6 @@ Chaos experiments are hosted on <a href="https://hub.litmuschaos.io" target="_bl
 ## Contributing to Chaos Hub
 See <a href="https://github.com/litmuschaos/community-charts/blob/master/CONTRIBUTING.md" target="_blank">Contributing to chaos hub</a>
 
-## Applications for which Chaos Experiments are available
-
 ## Adopters
 
 
@@ -48,7 +46,10 @@ Litmus is licensed under the Apache License, Version 2.0. See [LICENSE](./LICENS
 the projects used by the Litmus project may be governed by a different license, please refer to its specific license.
 
 ## Important Links
+<a href="https://docs.litmuschaos.io">
+  Litmus Docs <img src="https://avatars0.githubusercontent.com/u/49853472?s=200&v=4" alt="Litmus Docs" height="15">
+</a>
 <a href="https://landscape.cncf.io/selected=litmus">
-  CNCF Landscape <img src="https://landscape.cncf.io/images/left-logo.svg" alt="Litmus on CNCF Landscape" width="50">
+  CNCF Landscape <img src="https://landscape.cncf.io/images/left-logo.svg" alt="Litmus on CNCF Landscape" height="15">
 </a>
 
