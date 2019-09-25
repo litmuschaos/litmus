@@ -2,9 +2,9 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: openebs-cstor-xfs
+  name: openebs-jiva-xfs
   annotations:
-    openebs.io/cas-type: cstor
+    openebs.io/cas-type: jiva
     cas.openebs.io/config: |
       - name: StoragePoolClaim
         value: "{{ pool_name }}"

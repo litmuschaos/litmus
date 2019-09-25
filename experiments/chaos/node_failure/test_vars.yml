@@ -1,0 +1,16 @@
+---
+# Test specific parameters
+
+test_name: node-failure
+
+namespace: "{{ lookup('env','APP_NAMESPACE') }}"
+
+label: "{{ lookup('env','APP_LABEL') }}"
+
+platform: "{{ lookup('env','PLATFORM') }}"
+
+host_ip: "{{ lookup('env','ESX_HOST_IP') }}"
+
+esx_pwd: "{{ lookup('env','ESX_PASSWORD') }}"
+
+data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"

@@ -1,4 +1,13 @@
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pool-network
+  namespace: litmus
+data:
+  parameters.yml: |
+
+---
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -48,5 +57,16 @@ spec:
           - name: LIVENESS_APP_NAMESPACE
             value: ""
 
+          - name: DATA_PERSISTENCE
+            value: ""
+
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/chaos/openebs_pool_network/test.yml -i /etc/ansible/hosts -vv; exit 0"]
+
+        volumeMounts:
+        - name: parameters
+          mountPath: /mnt/
+      volumes:
+        - name: parameters
+          configMap:
+            name: pool-network  

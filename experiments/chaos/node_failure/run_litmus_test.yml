@@ -2,43 +2,51 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: pool-failure
+  name: node-failure
   namespace: litmus
 data:
   parameters.yml: |
 
 ---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: host-password
+  namespace: litmus
+type: Opaque
+data:
+  password:
+
+---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: openebs-pool-failure-
+  generateName: node-failure-
   namespace: litmus
 spec:
   template:
     metadata:
       labels:
-        name: openebs-pool-failure
+        name: node-failure
     spec:
       serviceAccountName: litmus
       restartPolicy: Never
-
       #nodeSelector:
       #  kubernetes.io/hostname:
 
       tolerations:
-        - key: "infra-aid"
-          value: "observer"
-          operator: "Equal"
-          effect: "NoSchedule"
+      - key: "infra-aid"
+        operator: "Equal"
+        value: "observer"
+        effect: "NoSchedule"
 
       containers:
       - name: ansibletest
         image: openebs/ansible-runner:ci
         imagePullPolicy: Always
         env:
+
           - name: ANSIBLE_STDOUT_CALLBACK
-            #value: log_plays
-            #value: actionable
             value: default
 
           - name: APP_NAMESPACE
@@ -47,31 +55,30 @@ spec:
           - name: APP_LABEL
             value: 'name=percona'
 
-          - name: APP_PVC
-            value: percona-mysql-claim
+          # The platform where k8s cluster is created.
+          - name: PLATFORM
+            value: "vmware"
 
-          - name: LIVENESS_APP_LABEL
+          # The IP address of ESX HOST
+          - name: ESX_HOST_IP
             value: ""
 
-          - name: LIVENESS_APP_NAMESPACE
-            value: ""
+          - name: ESX_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: host-password 
+                key: password
 
+          # Application name to pick the relevant data persistence check util
           - name: DATA_PERSISTENCE
-            value: ""  
-
-          - name: CHAOS_TYPE
-            value: "pool-kill"
-
-          - name: CHAOS_ITERATIONS
-            value: "2" 
+            value: "" 
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./experiments/chaos/openebs_pool_failure/test.yml -i /etc/ansible/hosts -vv; exit 0"]
-
+        args: ["-c", "ansible-playbook ./experiments/chaos/node_failure/test.yml -i /etc/ansible/hosts -vv; exit 0"]
         volumeMounts:
         - name: parameters
           mountPath: /mnt/
       volumes:
         - name: parameters
           configMap:
-            name: pool-failure   
+            name: node-failure

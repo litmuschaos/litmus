@@ -94,10 +94,9 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: testclaim
-      annotations:
-        volume.beta.kubernetes.io/storage-class: testclass
     spec:
       accessModes: [ "ReadWriteOnce" ]
+      storageClassName: testclass
       resources:
         requests:
           storage: volume-capacity

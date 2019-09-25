@@ -7,6 +7,7 @@
 ![GitHub stars](https://img.shields.io/github/stars/litmuschaos/litmus?style=social)
 ![GitHub issues](https://img.shields.io/github/issues/litmuschaos/litmus)
 ![Twitter Follow](https://img.shields.io/twitter/follow/litmuschaos?style=social)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3202/badge)](https://bestpractices.coreinfrastructure.org/projects/3202)
 
 ## Overview
 Litmus is a toolset to do cloud-native chaos engineering. Litmus provides tools to orchestrate chaos on Kubernetes to help SREs find weaknesses on their deployments. SREs use Litmus to run chaos experiments initially in staging environment and eventually in production to find bugs, vulnerabilities. Fixing the weaknesses leads to increased resilience of the system. 
