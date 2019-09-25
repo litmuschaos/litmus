@@ -49,6 +49,7 @@ the projects used by the Litmus project may be governed by a different license, 
 <a href="https://docs.litmuschaos.io">
   Litmus Docs <img src="https://avatars0.githubusercontent.com/u/49853472?s=200&v=4" alt="Litmus Docs" height="15">
 </a>
+<br>
 <a href="https://landscape.cncf.io/selected=litmus">
   CNCF Landscape <img src="https://landscape.cncf.io/images/left-logo.svg" alt="Litmus on CNCF Landscape" height="15">
 </a>
