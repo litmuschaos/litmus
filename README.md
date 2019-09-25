@@ -2,12 +2,14 @@
 
 
 
-
 [![Build Status](https://travis-ci.org/litmuschaos/litmus.svg?branch=master)](https://travis-ci.org/litmuschaos/litmus)
 [![Docker Pulls](https://img.shields.io/docker/pulls/openebs/ansible-runner.svg)](https://hub.docker.com/r/openebs/ansible-runner)
 
+
 ## Important Links
-<a href="https://landscape.cncf.io/selected=litmus" target="_blank">CNCF Landscape</a>
+<a href="https://landscape.cncf.io/selected=litmus">
+  <img src="https://landscape.cncf.io/images/left-logo.svg" alt="Litmus on CNCF Landscape" width="150">
+</a>
 
 ## License
 
