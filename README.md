@@ -33,15 +33,14 @@ Chaos experiments are hosted on <a href="https://hub.litmuschaos.io" target="_bl
 
 
 ## Contributing to Chaos Hub
+See <a href="https://github.com/litmuschaos/community-charts/blob/master/CONTRIBUTING.md" target="_blank">Contributing to chaos hub</a>
 
 ## Applications for which Chaos Experiments are available
 
 ## Adopters
-- MayaData Director
-- OpenEBS.ci
-- Wipro Gecko
 
-(*Send a PR to this page if you are using Litmus in your chaos engineering practice*)
+
+(*Send a PR to the above page if you are using Litmus in your chaos engineering practice*)
 
 ## License
 
