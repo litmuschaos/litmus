@@ -1,4 +1,4 @@
-<img alt="LitmusChaos" src="https://landscape.cncf.io/logos/litmus.svg" width="100">
+<img alt="LitmusChaos" src="https://landscape.cncf.io/logos/litmus.svg" width="200">
 
 
 
