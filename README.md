@@ -4,9 +4,9 @@
 
 [![Build Status](https://travis-ci.org/litmuschaos/litmus.svg?branch=master)](https://travis-ci.org/litmuschaos/litmus)
 [![Docker Pulls](https://img.shields.io/docker/pulls/openebs/ansible-runner.svg)](https://hub.docker.com/r/openebs/ansible-runner)
-![GitHub stars](https://img.shields.io/github/stars/litmuschaos/litmus?style=social)
-![GitHub issues](https://img.shields.io/github/issues/litmuschaos/litmus)
-![Twitter Follow](https://img.shields.io/twitter/follow/litmuschaos?style=social)
+[![GitHub stars](https://img.shields.io/github/stars/litmuschaos/litmus?style=social)](https://github.com/litmuschaos/litmus/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/litmuschaos/litmus)](https://github.com/litmuschaos/litmus/issues)
+[![Twitter Follow](https://img.shields.io/twitter/follow/litmuschaos?style=social)](https://twitter.com/LitmusChaos)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3202/badge)](https://bestpractices.coreinfrastructure.org/projects/3202)
 
 ## Overview
@@ -27,12 +27,8 @@ Chaos experiments are hosted on <a href="https://hub.litmuschaos.io" target="_bl
 - **For SREs**: To plan and schedule chaos experiments into the application and/or surrounding infrastructure. This practice identifies the weaknesses in the system and increases the resilience.
 
 
-## Installation
-
-## Running Chaos Experiments
-
-## Viewing Chaos results
-
+## Getting Started with Litmus
+See <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" target="_blank">Litmus Docs</a>.
 
 
 ## Contributing to Chaos Hub
