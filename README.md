@@ -27,12 +27,8 @@ Chaos experiments are hosted on <a href="https://hub.litmuschaos.io" target="_bl
 - **For SREs**: To plan and schedule chaos experiments into the application and/or surrounding infrastructure. This practice identifies the weaknesses in the system and increases the resilience.
 
 
-## Installation
-
-## Running Chaos Experiments
-
-## Viewing Chaos results
-
+## Getting Started with Litmus
+See <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" target="_blank">Litmus Docs</a>.
 
 
 ## Contributing to Chaos Hub
