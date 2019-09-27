@@ -1,7 +1,0 @@
-test_name: redis-deployment
-application_deployment: redis_statefulset.yml
-app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
-app_label: "{{ lookup('env','APP_LABEL') }}"
-app_replica: "{{ lookup('env','APP_REPLICA') }}"
-application_name: "Redis_statefulset"
-

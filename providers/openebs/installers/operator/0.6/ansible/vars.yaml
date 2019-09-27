@@ -1,6 +1,0 @@
-kubeapply: kubectl --kubeconfig /root/admin.conf
-namespace: openebs
-openebs_operator_link: https://raw.githubusercontent.com/openebs/openebs/v0.6/k8s/openebs-operator.yaml
-openebs_operator: openebs-operator.yaml
-installation_test_name: openebsinstallerv0.6
-cleanup_test_name: openebscleanupv0.6

@@ -1,3 +1,0 @@
-test_name: jenkins-liveness
-test_pod: "{{ lookup('env','MY_POD_NAME') }}"
-liveness_log: "Liveness Running" 

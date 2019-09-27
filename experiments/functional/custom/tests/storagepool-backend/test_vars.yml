@@ -1,9 +1,0 @@
----
-## TEST-SPECIFIC PARAMS
-
-test_name: sp-test
-test_pvc_yaml: test_pvc.yml
-app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
-app_pvc: "{{ lookup('env','APP_PVC') }}"
-storageclass: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
-

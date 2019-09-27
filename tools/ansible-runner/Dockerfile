@@ -26,10 +26,7 @@ RUN mkdir /etc/ansible/ /ansible && \
     echo "127.0.0.1" >> /etc/ansible/hosts
 
 #Copying Necessary Files
-COPY providers/ ./providers
-COPY ./apps/ ./apps
 COPY ./chaoslib ./chaoslib/
-COPY ./funclib ./funclib/
 COPY ./hack/*.j2 ./
 COPY ./utils ./utils/
 COPY ./tools/plugins /usr/local/lib/python2.7/dist-packages/ansible/plugins/callback/

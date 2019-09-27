@@ -1,9 +1,0 @@
-mongodb_loadgen: mongo_loadgen.yml
-
-namespace: "{{ lookup('env','APP_NAMESPACE') }}"
-
-test_name: mongodb-loadgen
-
-loadgen_label: "{{ lookup('env','LOADGEN_LABEL') }}"
-
-app_label: "{{ lookup('env','APP_LABEL') }}"
