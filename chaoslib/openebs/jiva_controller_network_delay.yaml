@@ -81,10 +81,10 @@
     executable: /bin/bash
   register: pumba_pod
 
-- name: Inject egress delay of {{network_delay}}ms on jiva controller for {{ chaos_duration }}s
+- name: Inject egress delay of {{network_delay}}ms on jiva controller for {{ chaos_duration }}ms
   shell: >
     kubectl exec {{ pumba_pod.stdout }} -n {{ app_ns }} 
-    -- pumba netem --interface eth0 --duration {{ chaos_duration }}s delay
+    -- pumba netem --interface eth0 --duration {{ chaos_duration }}ms delay
     --time {{ network_delay }} re2:k8s_{{ jiva_controller_name[:-1] }} 
   args:
     executable: /bin/bash
