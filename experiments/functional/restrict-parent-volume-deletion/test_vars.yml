@@ -1,8 +1,0 @@
----
-test_name: delete-parent-volume
-
-app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
-
-pvc_name: "{{ lookup('env','APP_PVC') }}"
-
-snapshot_name: "{{ lookup('env','SNAPSHOT') }}"

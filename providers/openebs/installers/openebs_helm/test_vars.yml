@@ -1,5 +1,0 @@
----
-
-namespace: "{{ lookup('env','NAMESPACE') }}"
-
-test_name: "deploy-openebs-helm"

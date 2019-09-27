@@ -1,5 +1,0 @@
-{% if data_persistence is defined and data_persistence == 'mysql' %}
-   consistencyutil: /utils/scm/applications/mysql/mysql_data_persistence.yml
-  {% elif data_persistence is defined and data_persistence == 'busybox' %}
-   consistencyutil: /utils/scm/applications/busybox/busybox_data_persistence.yml
-{% endif %}

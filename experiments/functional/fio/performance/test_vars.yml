@@ -1,6 +1,0 @@
----
-## TEST-SPECIFIC PARAMS
-
-test_name: fio-benchmark
-pod_yaml_alias: fio.yml
-

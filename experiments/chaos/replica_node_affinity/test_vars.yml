@@ -1,5 +1,0 @@
-test_name: replica-pod-stickiness
-namespace: "{{ lookup('env','APP_NAMESPACE') }}" 
-app_label: "{{ lookup('env','APPLICATION_LABEL') }}"
-pvc_name: "{{ lookup('env','PVC_NAME') }}"
-

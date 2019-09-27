@@ -1,6 +1,0 @@
----
-## TEST-SPECIFIC PARAMS
-test_name: volume-capacity
-app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
-operator_ns: "openebs"
-app_label: "{{ lookup('env','APP_LABEL') }}"

@@ -1,6 +1,0 @@
-elasticsearch_loadgen: elasticsearch_loadgen.yml
-namespace: "{{ lookup('env','LOADGEN_NS') }}"
-test_name: cassandra-loadgen
-loadgen_label: "{{ lookup('env','LOADGEN_LABEL') }}"
-io_minutes: 2
-app_label: "{{ lookup('env','APPLICATION_LABEL') }}"

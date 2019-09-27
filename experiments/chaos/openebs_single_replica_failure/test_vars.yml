@@ -1,9 +1,0 @@
----
-test_name: openebs-single-replica-failure
-
-app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
-
-app_label: "{{ lookup('env','APP_LABEL') }}"
-
-
-

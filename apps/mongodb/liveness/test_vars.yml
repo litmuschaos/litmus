@@ -1,3 +1,0 @@
-test_name: mongodb-liveness
-test_pod: "{{ lookup('env','MY_POD_NAME') }}"
-liveness_log: "liveness Running"
