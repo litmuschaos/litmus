@@ -15,7 +15,9 @@
        msg: "{{ item.spec.replicas }}"
      with_items: "{{ rep_count.resources }}"
     
-
+   - pause:
+       seconds: 30
+   
    - name: Obtain the ready replica count and compare with the replica count.
      k8s_facts: 
        kind: StatefulSet 
