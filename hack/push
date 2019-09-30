@@ -3,7 +3,7 @@ set -e
 
 if [ -z "${REPONAME}" ]
 then 
-  REPONAME="openebs"
+  REPONAME="litmuschaos"
 fi
 
 if [ -z "${IMGNAME}" ] || [ -z "${IMGTAG}" ]; 
