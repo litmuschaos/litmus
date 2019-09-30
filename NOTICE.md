@@ -1,7 +1,7 @@
-The source code developed for the OpenEBS Project is licensed 
+The source code developed for the LitmusChaos Project is licensed 
 under Apache 2.0. 
 
-However, the OpenEBS project contains unmodified/modified 
+However, the LitmusChaos project contains unmodified/modified 
 subcomponents from other OpenSource Projects with separate
 copyright notices and license terms. 
 

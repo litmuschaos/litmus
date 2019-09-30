@@ -1,9 +1,0 @@
-application_statefulset: busybox_statefulset.yml
-app_ns: "{{ lookup('env','APP_NAMESPACE') }}"
-app_label: "{{ lookup('env','APP_LABEL') }}"
-test_name: "local-pv-disk-reusability"
-app_replica: "{{ lookup('env','APP_REPLICA') }}"
-application_name: "busybox"
-app_pvc: "{{ lookup('env','APP_PVC') }}"
-storage_class: "{{ lookup('env','PROVIDER_STORAGE_CLASS') }}"
-operator_ns: openebs
