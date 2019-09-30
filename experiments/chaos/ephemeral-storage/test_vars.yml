@@ -1,9 +1,0 @@
----
-test_name: ephemeral-storage
-namespace: "{{ lookup('env','APP_NAMESPACE') }}"
-label: "{{ lookup('env','APP_LABEL') }}"
-liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
-liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
-data_persistance: "{{ lookup('env','DATA_PERSISTENCY') }}"
-pvc: "{{lookup('env','APP_PVC') }}"
-operator_ns: openebs

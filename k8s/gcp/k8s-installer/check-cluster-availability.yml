@@ -1,4 +1,0 @@
-- hosts: localhost
-  tasks:
-    - name: Checking Cluster availability
-      shell: python ../../utils/health/cluster_health_check.py -n {{ nodes | int + 1 }}
