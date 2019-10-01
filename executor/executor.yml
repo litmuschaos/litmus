@@ -34,7 +34,7 @@
     envNameList: ["APP_NAMESPACE", "APP_LABEL", "APP_KIND", "CHAOSENGINE"]
     envValueList: ["{{ c_app_ns }}", "{{ c_app_label }}", "{{ c_app_kind }}", "{{ c_engine }}"]
     c_env_list: ""
-    maplist: {}
+    envdict: {}
 
 
 - name: Obtain the labels from the experiment
@@ -72,14 +72,14 @@
 - include: engine_env_getter.yml
   with_sequence: start=0 count="{{ c_engine_envlen.stdout | int }}"
 
-- name: show dictionary
+- name: Fetching env from dictionary
   set_fact:
     c_env_list: "{{ c_env_list + \" --env=\" + item.key + \"=\" + item.value }}"
-  with_dict: "{{ maplist }}"
+  with_dict: "{{ envdict }}"
 
 - name: display env lists
   debug:
-    msg: "namelist: {{ envNameList }}, valuelist: {{ envValueList }}, maplist: {{ c_env_list }}, configMap_available: {{ configMap_available.stdout }}"
+    msg: "namelist: {{ envNameList }}, valuelist: {{ envValueList }}, maplist: {{ c_env_list }}"
 
 - block:
 
