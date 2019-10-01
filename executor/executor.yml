@@ -40,21 +40,21 @@
     kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.labels}' | sed 's/map//g' | tr -d [ | tr -d ] | tr ":" =
   args:
     executable: /bin/bash
-  register: c_labels
+  register: c_job_labels
 
 - name: Obtain the args from the experiment
   shell: >
     kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.args[0]}{" \""}{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.args[1]}{"\""}'
   args:
     executable: /bin/bash
-  register: c_args
+  register: c_job_args
 
 - name: Fetching data for the configmap
   shell: >
     kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.configmaps[0].data.parameters\.yml}'
   args:
     executable: /bin/bash
-  register: c_map
+  register: configMap_available
 
 - include: experiment_env_getter.yml
   with_sequence: start=0 count="{{c_env_length.stdout | int}}"
@@ -86,19 +86,19 @@
 
 - name: Run the chaos experiment job
   shell:
-    kubectl run {{ c_experiment_name }} --restart=OnFailure --image=shubh214/ansible-runner:test8 
+    kubectl run {{ c_experiment_name }} --restart=OnFailure --image=openebs/ansible-runner:ci
     --namespace={{c_app_ns}} --serviceaccount={{ c_svc_acc }} --image-pull-policy=Always 
-    --labels={{c_labels.stdout}} {{c_env_list}}  --command -- /bin/bash {{c_args.stdout}}  
+    --labels={{c_job_labels.stdout}} {{c_env_list}}  --command -- /bin/bash {{c_job_args.stdout}}  
   args:
     executable: /bin/bash
-  when: c_map.stdout == ''
+  when:  configMap_available == ''
   
 - include: experiment_configmap.yml
-  when: c_map.stdout != ''
+  when:  configMap_available != ''
   
 - name: Monitoring the litmus chaos job for completion
   shell: >
-    kubectl get job -n {{ c_app_ns}} -l experiment={{ c_job_label.stdout }}
+    kubectl get job -n {{ c_app_ns}} -l experiment={{ c_job_labels.stdout }}
     --no-headers -o custom-columns=:status.conditions[].type | sort | uniq
   args:
    executable: /bin/bash
