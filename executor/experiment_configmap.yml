@@ -43,7 +43,7 @@
     state: present
     line: '      {{item}}'
   with_items:
-  - "    name: target-failure"
+  - "    name: {{configMapName.stdout}}"
   - "  configMap:"
   - "- name: parameters"
   - "volumes:"
