@@ -4,7 +4,7 @@
   experiments listed in the chaosengine
 - To learn more about the chaosengine & chaosexperiment resources, see [chaos operator](https://github.com/litmuschaos/chaos-operator)
 
-## Limitations:
+## Limitations
 
 - It is unable to parse more than one configmap.
 - The name of file which contains data for configmap in experimentCR should be parameters.yml
