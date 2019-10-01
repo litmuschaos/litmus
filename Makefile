@@ -39,7 +39,7 @@ ansible-runner-image:
 	@echo "------------------"
 	@echo "--> Build ansible-runner image" 
 	@echo "------------------"
-	sudo docker build . -f build/ansible-runner/Dockerfile -t shubh214/ansible-runner:test8
+	sudo docker build . -f build/ansible-runner/Dockerfile -t openebs/ansible-runner:ci
 	REPONAME="litmuschaos" IMGNAME="ansible-runner" IMGTAG="ci" ./hack/push
 
 .PHONY: ansible-syntax-check
