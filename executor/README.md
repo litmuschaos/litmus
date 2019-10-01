@@ -62,7 +62,18 @@ spec:
   - name: container-kill
     spec:
       components:
-      - name: TARGET_CONTAINER   <------ ADD HERE            
+      - name: TARGET_CONTAINER   <------ ADD HERE  
         value: jackma
 ```
+
+
+### Limitations
+
+- It is unable to parse more than one configmap.
+
+- The name of file which contains data for configmap in experimentCR should be parameters.yml
+
+- The configmap is mount in the /mnt/ directory
+
+
   

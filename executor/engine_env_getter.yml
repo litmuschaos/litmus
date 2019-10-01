@@ -17,6 +17,7 @@
 - name: append envNameList from ChaosEngine
   set_fact:
     envNameList: "{{ envNameList + [c_engine_name.stdout] }}"
+    maplist: "{{maplist | combine({c_engine_name.stdout : c_engine_value.stdout})}}"
 
 - name: append envValueList from ChaosEngine
   set_fact:
