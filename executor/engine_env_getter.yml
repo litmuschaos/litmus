@@ -1,6 +1,6 @@
 - name: Get ENV names for Chaos Engine
   shell: >
-    kubectl get chaosengine engine-nginx -o json 
+    kubectl get chaosengine {{ c_engine }} -o json 
     | jq '.spec.experiments[] | select(.name == "{{ c_experiment_name }}") | .spec.components[{{item}}].name' | tr -d "\""
   args:
     executable: /bin/bash
@@ -8,7 +8,7 @@
 
 - name: Get ENV values for Chaos Engine
   shell: >
-    kubectl get chaosengine engine-nginx -o json
+    kubectl get chaosengine {{ c_engine }} -o json
     | jq '.spec.experiments[] | select(.name == "{{ c_experiment_name }}") | .spec.components[{{item}}].value' | tr -d "\""
   args:
     executable: /bin/bash

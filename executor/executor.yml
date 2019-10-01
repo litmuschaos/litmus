@@ -39,7 +39,7 @@
 
 - name: Obtain the env param list length from spec of Engine
   shell: >
-    kubectl get chaosengine engine-nginx -o json 
+    kubectl get chaosengine {{ c_engine }} -o json 
     | jq '.spec.experiments[] | select(.name == "{{ c_experiment_name }}") | .spec.components | length'
   args:
     executable: /bin/bash
@@ -91,7 +91,7 @@
   when: c_rand is defined and c_rand == "true" 
 
 - debug:
-    msg: "Triggering chaos experiment: c_experiment_name"
+    msg: "Triggering chaos experiment: {{ c_experiment_name }}"
 
 - name: Run the chaos experiment job
   shell:
@@ -100,7 +100,7 @@
    executable: /bin/bash
   register: c_trigger
   failed_when: "c_trigger.rc != 0"
-  
+
 - name: Monitoring the litmus chaos job for completion
   shell: >
     kubectl get job -n {{ c_app_ns}} -l experiment={{ c_job_label.stdout }}
