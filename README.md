@@ -74,6 +74,8 @@ Let's say, you'd like to test resiliency of a stateful application pod upon cont
 - Locate the Experiment: Litmusbooks are typically placed in `experiments/<type>` folders. In this case, the corresponding
   litmusbook is present at `experiments/chaos/app_pod_failure` 
 
+- Check the .yaml file of the experiments, if you have to override those ENV_VARIABLES, add those variables, in the .spec.experiements.name==EXPERIMENT_NAME, .spec.compenents, in other words, add those ENV_VARIABLES in the chaos-engine per experiments components to OVERRIDE those static variables.
+
 - Update the application (generally, the namespace and app labels) & chaos (if applicable) information passed as ENVs to 
   the litmus job (`run_litmus_test.yml`). 
 
