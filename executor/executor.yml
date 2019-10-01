@@ -33,6 +33,28 @@
 - set_fact:
     envNameList: ["APP_NAMESPACE", "APP_LABEL", "APP_KIND", "CHAOSENGINE"]
     envValueList: ["{{ c_app_ns }}", "{{ c_app_label }}", "{{ c_app_kind }}", "{{ c_engine }}"]
+    c_env_list: ""
+
+- name: Obtain the labels from the experiment
+  shell: >
+    kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.labels}' | sed 's/map//g' | tr -d [ | tr -d ] | tr ":" =
+  args:
+    executable: /bin/bash
+  register: c_job_labels
+
+- name: Obtain the args from the experiment
+  shell: >
+    kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.args[0]}{" \""}{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.args[1]}{"\""}'
+  args:
+    executable: /bin/bash
+  register: c_job_args
+
+- name: Fetching data for the configmap
+  shell: >
+    kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.configmaps[0].data.parameters\.yml}'
+  args:
+    executable: /bin/bash
+  register: configMap_available
 
 - include: experiment_env_getter.yml
   with_sequence: start=0 count="{{c_env_length.stdout | int}}"
@@ -51,26 +73,6 @@
 - name: display env lists
   debug:
     msg: "namelist: {{ envNameList }}, valuelist: {{ envValueList }}"
-
-- name: display env lists
-  debug:
-    msg: "namelist: {{ envNameList }}, valuelist: {{ envValueList }}"
-
-- include: experiment_env_patcher.yml
-  vars:
-    envName: "{{ item.0 }}"
-    envValue: "{{ item.1 }}"
-  with_together:
-    - "{{ envNameList }}"
-    - "{{ envValueList }}"
-
-- name: Get litmus chaos job label to monitor its progress
-  shell: >
-    kubectl create -f {{ c_job.stdout }} 
-    --dry-run -o jsonpath='{.spec.template.metadata.labels.experiment}'
-  args:
-   executable: /bin/bash
-  register: c_job_label
 
 - block:
 
@@ -95,15 +97,19 @@
 
 - name: Run the chaos experiment job
   shell:
-    kubectl create -f {{ c_job.stdout }}
+    kubectl run {{ c_experiment_name }} --restart=OnFailure --image=openebs/ansible-runner:ci
+    --namespace={{c_app_ns}} --serviceaccount={{ c_svc_acc }} --image-pull-policy=Always 
+    --labels={{c_job_labels.stdout}} {{c_env_list}}  --command -- /bin/bash {{c_job_args.stdout}}  
   args:
-   executable: /bin/bash
-  register: c_trigger
-  failed_when: "c_trigger.rc != 0"
+    executable: /bin/bash
+  when:  configMap_available == ''
+  
+- include: experiment_configmap.yml
+  when:  configMap_available != ''
 
 - name: Monitoring the litmus chaos job for completion
   shell: >
-    kubectl get job -n {{ c_app_ns}} -l experiment={{ c_job_label.stdout }}
+    kubectl get job -n {{ c_app_ns}} -l experiment={{ c_job_labels.stdout }}
     --no-headers -o custom-columns=:status.conditions[].type | sort | uniq
   args:
    executable: /bin/bash

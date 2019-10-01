@@ -17,7 +17,9 @@
 - name: append envNameList
   set_fact:
     envNameList: "{{ envNameList + [c_env_name.stdout] }}"
+    c_env_list: "{{ c_env_list + \" --env=\" + c_env_name.stdout + \"=\" }}"
 
 - name: append envValueList
   set_fact:
     envValueList: "{{ envValueList + [c_env_value.stdout] }}"
+    c_env_list: "{{ c_env_list + c_env_value.stdout }}"

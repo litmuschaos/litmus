@@ -1,0 +1,56 @@
+- name: Fetching data for the configmap
+  shell: >
+    kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.configmaps[0].data.parameters\.yml}' > parameters.yml
+  args:
+    executable: /bin/bash
+  
+- name: Fetching name of configmap
+  shell: >
+    kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.configmaps[0].name}'
+  args:
+    executable: /bin/bash
+  register: configMapName
+
+- name: Creating configmap
+  shell:
+    kubectl create configmap {{configMapName.stdout}} --from-file=parameters.yml -n {{c_app_ns}}
+  args:
+    executable: /bin/bash
+
+- name: Run the chaos experiment job
+  shell:
+    kubectl run {{ c_experiment_name }} --restart=OnFailure --image=openebs/ansible-runner:ci
+    --namespace={{c_app_ns}} --serviceaccount={{ c_svc_acc }} --image-pull-policy=Always 
+    --labels={{c_job_labels.stdout}} {{c_env_list}} --dry-run -oyaml --command -- /bin/bash {{c_job_args.stdout}} > cjob.yml
+  args:
+    executable: /bin/bash
+
+- name: Include the volumeMounts in jobYml
+  lineinfile:
+    dest: cjob.yml
+    insertafter: "resources: {}"
+    state: present
+    line: '        {{item}}'
+  with_items:
+  - "  mountPath: /mnt/"
+  - "- name: parameters"
+  - "volumeMounts:"
+
+- name: Include the volumes in jobYml
+  lineinfile:
+    dest: cjob.yml
+    insertafter: "serviceAccountName"
+    state: present
+    line: '      {{item}}'
+  with_items:
+  - "    name: {{configMapName.stdout}}"
+  - "  configMap:"
+  - "- name: parameters"
+  - "volumes:"
+
+- name: create job
+  shell:
+    kubectl create -f cjob.yml -n {{c_app_ns}} 
+  args:
+    executable: /bin/bash
+

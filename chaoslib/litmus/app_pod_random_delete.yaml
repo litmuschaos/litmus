@@ -9,7 +9,7 @@
 
 - name: Kill application pods randomly for the specified duration
   shell: |
-    kubectl get pods -l {{ label }} -n {{ namespace }} --no-headers -o custom-columns=:metadata.name | shuf -n 1 | xargs kubectl delete pod --force --grace-period=0 --wait=false
+    kubectl get pods -l {{ label }} -n {{ namespace }} --no-headers -o custom-columns=:metadata.name | shuf -n 1 | xargs kubectl delete pod -n {{ namespace }}  --force --grace-period=0 --wait=false
     sleep {{ chaos_interval }}
   args:
     executable: /bin/bash
@@ -19,7 +19,7 @@
 
 - name: Kill application pods randomly for the specified duration
   shell: |
-    kubectl get pods -l {{ label }} -n {{ namespace }} --no-headers -o custom-columns=:metadata.name | shuf -n 1 | xargs kubectl delete pod 
+    kubectl get pods -l {{ label }} -n {{ namespace }} --no-headers -o custom-columns=:metadata.name | shuf -n 1 | xargs kubectl delete pod -n {{ namespace }} 
     sleep {{ chaos_interval }}
   args:
     executable: /bin/bash
