@@ -100,7 +100,7 @@
   when: c_rand is defined and c_rand == "true" 
 
 - debug:
-    msg: "Triggering chaos experiment: c_experiment_name"
+    msg: "Triggering chaos experiment: {{c_experiment_name}} "
 
 - name: Run the chaos experiment job
   shell:
