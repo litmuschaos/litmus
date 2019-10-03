@@ -17,6 +17,7 @@
 - name: append envNameList
   set_fact:
     envNameList: "{{ envNameList + [c_env_name.stdout] }}"
+    envdict: "{{envdict | combine({c_env_name.stdout : c_env_value.stdout})}}"
 
 - name: append envValueList
   set_fact:
