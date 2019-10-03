@@ -1,0 +1,44 @@
+- name: Generate the powerfulseal deployment spec from template
+  template:
+    src: /chaoslib/powerfulseal/powerfulseal.j2
+    dest: powerfulseal.yml
+
+- name: Setup powerfulseal to initiate random pod chaos 
+  shell:
+    kubectl apply -f powerfulseal.yml -n {{ a_ns }}
+  args:
+    executable: /bin/bash
+  register: result
+  failed_when: "result.rc != 0"
+
+- name: Confirm that powerfulseal pod is running
+  shell: >
+    kubectl get pod -l name=powerfulseal --no-headers -n {{ a_ns }}
+  args:
+    executable: /bin/bash
+  register: result
+  until: "'Running' in result.stdout"
+  delay: 1
+  retries: 90
+  
+- name: Wait for chaos duration
+  wait_for: timeout={{ c_duration }}
+
+- name: Tear down the powerfulseal deployment
+  shell: 
+    kubectl delete -f powerfulseal.yml -n {{ a_ns }}
+  args:
+    executable: /bin/bash
+  register: result
+  failed_when: "result.rc != 0"
+
+- name: Confirm that powerfulseal pod is cleaned up
+  shell: >
+    kubectl get pod -l name=powerfulseal --no-headers -n {{ a_ns }}
+  args:
+    executable: /bin/bash
+  register: result
+  until: "'Running' not in result.stdout"
+  delay: 1
+  retries: 120
+
