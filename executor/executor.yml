@@ -44,6 +44,13 @@
     executable: /bin/bash
   register: c_job_labels
 
+- name: Fetching image from the chaosexperiment
+  shell: >
+    kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.image}'
+  args:
+    executable: /bin/bash
+  register: c_image
+
 - name: Obtain the args from the experiment
   shell: >
     kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.args[0]}{" \""}{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.args[1]}{"\""}'
@@ -72,7 +79,7 @@
 - include: engine_env_getter.yml
   with_sequence: start=0 count="{{ c_engine_envlen.stdout | int }}"
 
-- name: merging envs from chaosengine
+- name: merging appinfo from chaosengine
   set_fact: 
     envdict: "{{envdict | combine({\"APP_NAMESPACE\" : c_app_ns},{\"APP_LABEL\" : c_app_label},{\"APP_KIND\" : c_app_kind},{\"CHAOSENGINE\" : c_engine})}}"
 
@@ -108,7 +115,7 @@
 
 - name: Run the chaos experiment job
   shell:
-    kubectl run {{ c_experiment_name }} --restart=OnFailure --image=openebs/ansible-runner:ci
+    kubectl run {{ c_experiment_name }} --restart=OnFailure --image={{c_image.stdout}}
     --namespace={{c_app_ns}} --serviceaccount={{ c_svc_acc }} --image-pull-policy=Always 
     --labels={{c_job_labels.stdout}} {{c_env_list}}  --command -- /bin/bash {{c_job_args.stdout}}  
   args:
