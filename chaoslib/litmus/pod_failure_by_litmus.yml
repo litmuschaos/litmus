@@ -20,7 +20,7 @@
 - name: Kill application pods randomly for the specified duration
   shell: |
     kubectl get pods -l {{ a_label }} -n {{ a_ns }} --no-headers -o custom-columns=:metadata.name | shuf -n 1 | xargs kubectl delete pod -n {{ a_ns }}
-    sleep {{ chaos_interval }}
+    sleep {{ c_interval }}
   args:
     executable: /bin/bash
   register: result
