@@ -16,7 +16,7 @@
   tasks:
     - block:
 
-        - include: test_prerequisites.yml
+        - include: pod_delete_ansible_prerequisites.yml
       
         - include_vars:
             file: chaosutil.yml

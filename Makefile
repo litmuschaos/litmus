@@ -8,7 +8,8 @@
 IS_DOCKER_INSTALLED = $(shell which docker >> /dev/null 2>&1; echo $$?)
 
 # list of playbooks which should be validated
-PLAYBOOKS = $(shell find ./ -iname 'test.yml' -printf '%P\n')
+#PLAYBOOKS = $(shell find ./ -iname 'test.yml' -printf '%P\n')
+PLAYBOOKS = $(shell find ./ -iname *.yml -printf '%P\n' | grep 'ansible_logic.yml')
 
 .PHONY: all
 all: all-tools ansible-syntax-check
