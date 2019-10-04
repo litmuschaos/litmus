@@ -8,19 +8,19 @@
   register: c_exp_name
   failed_when: "c_experiment_name not in c_exp_name.stdout"
 
-- name: Derive chaos job path from spec of experiment
-  shell: >
-    kubectl get chaosexperiment {{ c_experiment_name }}
-    --no-headers -o custom-columns=:spec.definition.litmusbook
-  args:
-   executable: /bin/bash
-  register: c_job
+#- name: Derive chaos job path from spec of experiment
+#  shell: >
+#    kubectl get chaosexperiment {{ c_experiment_name }}
+#    --no-headers -o custom-columns=:spec.definition.litmusbook
+##  args:
+#   executable: /bin/bash
+#  register: c_job
 
-- name: Replace the service account on the litmusbook
-  replace:
-    path: "{{ c_job.stdout }}"
-    regexp: 'CHAOS_SERVICE_ACCOUNT'
-    replace: "{{ c_svc_acc }}" 
+#- name: Replace the service account on the litmusbook
+#  replace:
+#    path: "{{ c_job.stdout }}"
+#    regexp: 'CHAOS_SERVICE_ACCOUNT'
+#    replace: "{{ c_svc_acc }}" 
 
 - name: Obtain the env param list length from spec of experiment
   shell: >
