@@ -30,6 +30,10 @@ Chaos experiments are hosted on <a href="https://hub.litmuschaos.io" target="_bl
 - **For SREs**: To plan and schedule chaos experiments into the application and/or surrounding infrastructure. This practice identifies the weaknesses in the system and increases the resilience.
 
 
+## Demo 
+[![asciicast](https://asciinema.org/a/MOPQfmzA5NxgBs8DkMGROXpQw.svg)](https://asciinema.org/a/MOPQfmzA5NxgBs8DkMGROXpQw)
+
+
 ## Getting Started with Litmus
 See <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" target="_blank">Litmus Docs</a>.
 
@@ -42,10 +46,11 @@ See <a href="https://github.com/litmuschaos/community-charts/blob/master/CONTRIB
 
 (*Send a PR to the above page if you are using Litmus in your chaos engineering practice*)
 
-## License
 
+## License
 Litmus is licensed under the Apache License, Version 2.0. See [LICENSE](./LICENSE) for the full license text. Some of 
 the projects used by the Litmus project may be governed by a different license, please refer to its specific license.
+
 
 ## Important Links
 <a href="https://docs.litmuschaos.io">
