@@ -72,6 +72,10 @@
 - include: engine_env_getter.yml
   with_sequence: start=0 count="{{ c_engine_envlen.stdout | int }}"
 
+- name: merging envs from chaosengine
+  set_fact: 
+    envdict: "{{envdict | combine({\"APP_NAMESPACE\" : c_app_ns},{\"APP_LABEL\" : c_app_label},{\"APP_KIND\" : c_app_kind},{\"CHAOSENGINE\" : c_engine})}}"
+
 - name: Fetching env from dictionary
   set_fact:
     c_env_list: "{{ c_env_list + \" --env=\" + item.key + \"=\" + item.value }}"
