@@ -19,7 +19,7 @@
 
 - name: Run the chaos experiment job
   shell:
-    kubectl run {{ c_experiment_name }} --restart=OnFailure --image=openebs/ansible-runner:ci
+    kubectl run {{ c_experiment_name }} --restart=OnFailure --image={{c_image.stdout}}
     --namespace={{c_app_ns}} --serviceaccount={{ c_svc_acc }} --image-pull-policy=Always 
     --labels={{c_job_labels.stdout}} {{c_env_list}} --dry-run -oyaml --command -- /bin/bash {{c_job_args.stdout}} > cjob.yml
   args:
