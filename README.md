@@ -45,7 +45,7 @@ See <a href="https://github.com/litmuschaos/community-charts/blob/master/CONTRIB
 ## License
 
 Litmus is licensed under the Apache License, Version 2.0. See [LICENSE](./LICENSE) for the full license text. Some of 
-the projects used by the Litmus project may be governed by a different license, please refer to its specific license.
+the projects used by the Litmus project may be governed by a different license, so please refer to its specific license.
 
 ## Important Links
 <a href="https://docs.litmuschaos.io">
