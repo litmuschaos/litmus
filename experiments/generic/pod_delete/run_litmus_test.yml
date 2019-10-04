@@ -3,10 +3,6 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   generateName: pod-delete-
-
-  # Executed on application's namespace in case of automated runs 
-  # Provide appropriate namespace if executed manually 
-  # namespace: litmus
 spec:
   template:
     metadata:
@@ -16,21 +12,20 @@ spec:
       # Placeholder that is updated by the executor for automated runs
       # Provide appropriate SA (with desired permissions) if executed manually
       serviceAccountName: CHAOS_SERVICE_ACCOUNT
-
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: openebs/ansible-runner:ci
+        image: litmuschaos/ansible-runner:ci
         imagePullPolicy: Always
         env:
           - name: ANSIBLE_STDOUT_CALLBACK
-            value: actionable
+            value: default
 
           - name: APP_NAMESPACE
             value: default 
 
           - name: APP_LABEL
-            value: 'app=nginx'
+            value: 'app=hello'
 
           - name: APP_KIND
             value: deployment
@@ -44,14 +39,19 @@ spec:
           - name: FORCE
             value: "true"
 
-          - name: CHAOSENGINE
-            value: "engine-nginx"
+          ## env var that describes the library used to execute the chaos
+          ## default: litmus. Supported values: litmus, powerfulseal, chaoskube
+          - name: LIB
+            value: ""
 
-          - name: CHAOSKUBE_SVC_ACC
+          - name: CHAOSENGINE
+            value: ""
+
+          - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:
               fieldRef:
                 fieldPath: spec.serviceAccountName
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./experiments/chaos/kubernetes/pod_delete/test.yml -i /etc/ansible/hosts; exit 0"]
+        args: ["-c", "ansible-playbook ./experiments/generic/pod_delete/test.yml -i /etc/ansible/hosts; exit 0"]
 
