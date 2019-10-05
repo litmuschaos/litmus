@@ -136,4 +136,48 @@
   delay: 1
   retries: 300
 
+- name: Fetching verdict from the chaos result CR
+  shell: >
+     kubectl get chaosresult -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_engine }}-{{ c_experiment_name }}")].spec.experimentstatus.verdict}'
+  args:
+   executable: /bin/bash
+  register: c_verdict
 
+- name: Fetching phase from the chaos result CR
+  shell: >
+     kubectl get chaosresult -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_engine }}-{{ c_experiment_name }}")].spec.experimentstatus.phase}'
+  args:
+   executable: /bin/bash
+  register: c_phase
+
+- debug:
+    msg: "verdict : {{c_verdict.stdout}}"
+
+- name: Patch the chaosengine status
+  template:
+    src: /chaos-engine.j2
+    dest: chaos-engine.yaml
+  vars:
+    c_engine_name: "{{ c_engine }}"
+    app_ns: "{{ c_app_ns }}"
+    app_labels: "{{ c_app_label }}"
+    svc_acc:  "{{ c_svc_acc }}"
+    experiment_name: "{{ c_experiment_name}}"
+    phase: "{{ c_phase.stdout }}" 
+    verdict: "{{ c_verdict.stdout }}"
+
+- name: Apply the chaos engine CR
+  shell: kubectl apply -f chaos-engine.yaml -n {{ c_app_ns }}
+  args:
+    executable: /bin/bash
+
+- name: Display chaos-engine yaml 
+  shell: >
+    kubectl get chaosengine {{ c_engine }} -n {{ c_app_ns }} -oyaml
+  args:
+    executable: /bin/bash
+  register: c_engine_yaml
+
+- debug:
+    msg: "engine : {{ c_engine_yaml.stdout }}" 
+ 
