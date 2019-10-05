@@ -1,0 +1,20 @@
+---
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: {{ c_engine_name }}
+  namespace: {{ app_ns }}
+spec:
+  appinfo:
+    appns: {{ app_ns }}
+    applabel: {{ app_labels }}
+  chaosServiceAccount: {{ svc_acc }}
+  experiments:
+    - name: {{ experiment_name }}
+      spec:
+        components:
+status:
+  experiments:
+    - name: {{ experiment_name }}
+      phase: {{ phase }}
+      verdict: {{ verdict }}
