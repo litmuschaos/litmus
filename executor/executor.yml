@@ -153,18 +153,21 @@
 - debug:
     msg: "verdict : {{c_verdict.stdout}}"
 
-- name: Patch the chaosengine status
-  template:
-    src: /chaos-engine.j2
+- name: fetch chaos-engine yaml
+  shell: >
+    kubectl get chaosengine {{c_engine}} -n {{ c_app_ns }} -oyaml > chaos-engine.yaml
+  args:
+    executable: /bin/bash
+
+- name: patch the chaosengine status
+  lineinfile:
     dest: chaos-engine.yaml
-  vars:
-    c_engine_name: "{{ c_engine }}"
-    app_ns: "{{ c_app_ns }}"
-    app_labels: "{{ c_app_label }}"
-    svc_acc:  "{{ c_svc_acc }}"
-    experiment_name: "{{ c_experiment_name}}"
-    phase: "{{ c_phase.stdout }}" 
-    verdict: "{{ c_verdict.stdout }}"
+    state: present
+    line: '  {{item}}'
+  with_items:
+  - "  name: {{c_experiment_name}}"
+  - "  status: {{c_phase.stdout}}"
+  - "  verdict: {{c_verdict.stdout}}"
 
 - name: Apply the chaos engine CR
   shell: kubectl apply -f chaos-engine.yaml -n {{ c_app_ns }}
@@ -180,4 +183,3 @@
 
 - debug:
     msg: "engine : {{ c_engine_yaml.stdout }}" 
- 
