@@ -1,0 +1,21 @@
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72.37 85.53">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+      }
+
+      .cls-2 {
+        fill: #58c6d4;
+      }
+    </style>
+  </defs>
+  <title>litmus-logo-dark-bg-icon-08</title>
+  <g>
+    <g id="Layer_1-2" data-name="Layer 1-2">
+      <path class="cls-1" d="M18.83,16.49h7.75V38.07H18.83Z"/>
+      <path class="cls-1" d="M11.61,8.73V73.56a6,6,0,0,0,6,6H57.93a5.93,5.93,0,0,0,5.94-5.94V8.73Zm15,29.33V71.85H18.83V16.49h7.76Zm30,33.79h-23V64.1h23Z"/>
+    </g>
+    <rect class="cls-2" x="18.83" y="16.5" width="7.77" height="21.58"/>
+  </g>
+</svg>
