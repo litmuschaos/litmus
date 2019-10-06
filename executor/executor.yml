@@ -153,7 +153,7 @@
 - debug:
     msg: "verdict : {{c_verdict.stdout}}"
 
-- name: fetch chaos-engine yaml
+- name: Fetching chaos engine yaml file
   shell: >
     kubectl get chaosengine {{c_engine}} -n {{ c_app_ns }} -oyaml > chaos-engine.yaml
   args:
@@ -163,11 +163,11 @@
   lineinfile:
     dest: chaos-engine.yaml
     state: present
-    line: '  {{item}}'
+    line: '{{item}}'
   with_items:
-  - "  name: {{c_experiment_name}}"
-  - "  status: {{c_phase.stdout}}"
-  - "  verdict: {{c_verdict.stdout}}"
+  - "  - name: {{c_experiment_name}}"
+  - "    status: {{c_phase.stdout}}"
+  - "    verdict: {{c_verdict.stdout}}"
 
 - name: Apply the chaos engine CR
   shell: kubectl apply -f chaos-engine.yaml -n {{ c_app_ns }}
