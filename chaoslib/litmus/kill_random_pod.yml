@@ -29,9 +29,6 @@
   register: result
   when: "c_force == 'false' or c_force == ''" 
 
-- debug:
-    var: result
-
 - name: Wait for the interval timer
   pause:
     seconds: "{{c_interval}}"
