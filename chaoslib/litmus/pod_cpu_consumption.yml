@@ -1,0 +1,38 @@
+- name: Getting the pod description 
+  shell: kubectl describe pod {{ pod_name }} -n {{ app_ns }} | less
+  register: pod_desc
+
+- block:
+
+  - block:
+
+      - name: Get CPU Limits of the pod 
+        shell: kubectl get po -n {{ app_ns }}  -l {{app_lkey}}="{{app_lvalue}}" -o jsonpath="{.items[0].spec.containers[0].resources.limits.cpu}"
+        register: cpu_limits 
+
+      - name: Giving a cpu spike of {{ cpu_limits.stdout }} to the pod
+        shell: >
+          kubectl exec -it {{ pod_name }} -n {{ app_ns }} -- bash -c "apt-get update; apt-get install stress; stress --cpu {{ cpu_limits.stdout }} --timeout 60; exit"
+        args:
+          executable: /bin/bash
+        ignore_errors: yes
+
+    when: pod_desc.stdout.find('Limits') != -1
+
+
+  - block: 
+
+      - name: Get CPU Limits of the Node
+        shell: kubectl describe nodes {{ node_name }} | grep -A 2 'Limits' | awk '{print $4}' | tail -n1
+        register: node_cpu
+
+      - name: Giving a cpu spike of {{ node_cpu.stdout }} to the pods
+        shell: >
+          kubectl exec -it {{ pod_name }} -n {{ app_ns }} -- bash -c "apt-get update; apt-get install stress; stress -c {{ node_cpu.stdout }} --timeout 60; exit"
+        args:
+          executable: /bin/bash
+        ignore_errors: True
+
+    when: pod_desc.stdout.find('Limits') == -1  
+
+  when: lookup('env', 'PLATFORM') == 'GKE'            

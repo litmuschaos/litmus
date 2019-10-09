@@ -1,0 +1,84 @@
+---
+- hosts: localhost
+  connection: local  
+
+  vars_files:
+    - test_vars.yml
+
+  tasks:
+
+    - block:
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /utils/fcm/create_testname.yml
+   
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
+          vars:
+            status: 'SOT'
+            chaostype: "cpu-consumption"
+
+         ## DISPLAY APP INFORMATION 
+        - name: Display the app information passed via the test job
+          debug: 
+            msg: 
+              - "The application info is as follows:"
+              - "Namespace    : {{ namespace }}"
+              - "Label        : {{ label }}"
+
+         ## PRE-CHAOS APPLICATION LIVENESS CHECK
+        - name: Verify that the AUT (Application Under Test) is running
+          include_tasks: "/utils/k8s/status_app_pod.yml"
+          vars:
+            app_ns: "{{ namespace }}"
+            app_lkey: "{{ label.split('=')[0] }}"
+            app_lvalue: "{{ label.split('=')[1] }}"
+            delay: 5
+            retries: 60
+
+         ## GETTING THE POD NAME OF THE APPLICATION
+        - name: Getting the pod name of the Applicaiton
+          shell: kubectl get pod -n {{ namespace }} --field-selector status.phase=Running -l {{ label }} -o=custom-columns=NAME:".metadata.name" --no-headers
+          register: pod_names
+
+         ## GETTING THE PRE CHAOS NODE NAME OF APPLICATION 
+        - name: Getting the pre-chaos node name of application 
+          shell: kubectl get po {{ pod_names.stdout }} -n {{ namespace }} -o=custom-columns=NODE:".spec.nodeName" --no-headers
+          register: node_names
+
+         ## GIVING THE CPU SPIKE TO THE POD 
+        - name: Giving a CPU spike to the pod
+          include_tasks: pod_cpu_consumption.yml
+          vars:
+            app_ns: "{{ namespace }}"
+            pod_name: "{{ pod_names.stdout }}"
+            node_name: "{{ node_names.stdout }}" 
+            app_lkey: "{{ label.split('=')[0] }}"
+            app_lvalue: "{{ label.split('=')[1] }}" 
+            delay: 5
+            retries: 60
+
+        ## CHECK THE STATUS OF THE APPLICATION POST CHAOS
+        - name: Getting the status of Application Post chaos
+          shell: kubectl get pod -n {{ namespace }} -l {{ label }}--no-headers -o custom-columns=:status.phase
+          register: po_status
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - set_fact:
+            flag: "Fail"
+    
+      always:
+
+         ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        - include_tasks: /utils/fcm/update_litmus_result_resource.yml
+          vars:
+            status: 'EOT'
+            chaostype: "{{ test_name }}"
+
+
+
+
+
+
