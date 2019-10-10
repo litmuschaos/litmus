@@ -9,8 +9,8 @@ RUN rm -rf /var/lib/apt/lists/* && \
     apt-get install -y python-minimal python-pip netcat iproute2 jq sshpass \
     curl openssh-client
 
-#Installing ansible
-RUN pip install ansible==2.7.3
+#Installing ansible and dependencies for k8s module
+RUN pip install ansible==2.7.3 openshift jmespath
 
 RUN touch /mnt/parameters.yml
 
