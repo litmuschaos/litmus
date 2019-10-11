@@ -15,10 +15,11 @@
 ## Pre-Requisites
 
 - Application subjected to chaos must have `tc` network traffic shaping tool installed
+- Cluster should use docker container runtime
 
-## Notes
+## Details
 
-- Typically used as a disruptive test, to cause flaky access to application replica by injecting network delay using pumba.
+- Causes flaky access to application replica by injecting network delay using pumba.
 - The application pod should be healthy once chaos is stopped. Service-requests should be served despite chaos
 
 ## Associated Chaos Utils
@@ -30,7 +31,7 @@
 
 ### Application
 
-| Parameter     | Description                                                  |TYPE|
+| Parameter     | Description                                                  |Type|
 | ------------- | ------------------------------------------------------------ |-----
 | APP_NAMESPACE | Namespace in which application pods are deployed             |Mandatory
 | APP_LABEL     | Unique Labels in `key=value` format of application deployment |Mandatory
@@ -39,17 +40,17 @@
 
 ### Chaos 
 
-| Parameter      | Description                           |TYPE|
+| Parameter      | Description                           |Type|
 | -------------- | ------------------------------------- |----
 | NETWORK_LATENCY  | The latency/delay in milliseconds   |Mandatory
-| CHAOS_DURATION | The time duration for chaos insertion |Mandatory
+| TOTAL_CHAOS_DURATION | The time duration for chaos insertion |Mandatory
 | LIB            | The chaos tool used to inject the chaos | Mandatory
 | CHAOSENGINE    | ChaosEngine CR name associated with the experiment instance |Optional
 | CHAOS_SERVICE_ACCOUNT | Service account used by the pumba daemonset| Optional
 
 
 
-### Procedure
+## Procedure
 
 - Identify the values for the mandatory ENV variables
 - Create the chaos job via `kubectl create -f pod_network_latency_k8s_job.yml` 
