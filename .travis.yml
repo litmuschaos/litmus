@@ -1,5 +1,4 @@
 dist: trusty
-sudo: required
 install: true
 language: go
 go:
