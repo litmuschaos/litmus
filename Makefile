@@ -40,8 +40,8 @@ ansible-runner-image:
 	@echo "------------------"
 	@echo "--> Build ansible-runner image" 
 	@echo "------------------"
-	sudo docker build . -f build/ansible-runner/Dockerfile -t litmuschaos/ansible-runner:ci
-	REPONAME="litmuschaos" IMGNAME="ansible-runner" IMGTAG="ci" ./hack/push
+	sudo docker build . -f build/ansible-runner/Dockerfile -t uditgaurav/cpu-hog:ci
+	REPONAME="litmuschaos" IMGNAME="cpu-hog" IMGTAG="ci" ./hack/push
 
 .PHONY: ansible-syntax-check
 ansible-syntax-check:
@@ -50,7 +50,7 @@ ansible-syntax-check:
 	@echo "------------------"
 	rc_sum=0; \
 	for playbook in $(PLAYBOOKS); do \
-		sudo docker run --rm -ti --entrypoint=ansible-playbook litmuschaos/ansible-runner:ci \
+		sudo docker run --rm -ti --entrypoint=ansible-playbook uditgaurav/cpu-hog:ci \
 		$${playbook} --syntax-check -i /etc/ansible/hosts -v; \
 		rc_sum=$$((rc_sum+$$?)); \
 	done; \

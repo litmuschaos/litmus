@@ -14,7 +14,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: openebs/ansible-runner:ci
+        image: litmuschaos/ansible-runner:ci
         imagePullPolicy: Always
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
@@ -27,16 +27,16 @@ spec:
           ## ENTER THE LABEL OF THE APPLICATION
           - name: APP_LABEL
             value: "app=hello"
-
+          
+          ## ENTER THE KIND OF APPLICATION 
+          ## WORKING FOR 'deployment' TYPE OF APPLICATION
           - name: APP_KIND
             value: "deployment"
 
           - name: PLATFORM
             value: "GKE"
-
-          - name: ZONE_NAME
-            value: "us-central1-a"
           
+          ## THE TOTAL_CHAOS_DURATION SHOULD NOT BE MORE THAN 180
           - name: TOTAL_CHAOS_DURATION
             value: "60"
             

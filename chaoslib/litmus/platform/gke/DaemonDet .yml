@@ -14,4 +14,4 @@ spec:
         imagePullPolicy: Always
         name: cpu-hog
         command: ["/bin/bash"]
-        args: ["-c", "sleep 10000"]
+        args: ["-c", "sleep infinity"]

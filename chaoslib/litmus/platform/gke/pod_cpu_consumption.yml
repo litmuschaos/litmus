@@ -3,7 +3,7 @@
   k8s_facts:
     kind: Pod
     label_selectors:
-      - "run=nginx"
+      - "{{ a_label }}"
   register: no_name
 
 - set_fact:
@@ -53,40 +53,30 @@
     cpu_limit: "{{ c_limit | json_query('resources[0].status.capacity.cpu') }}"
 
 ## GIVING CPU SPIKE
-- name: Giving CPU spike
+- name: Giving CPU spike ...
   shell: kubectl exec -it {{ pod_ds_app }} -n {{ a_ns }} -- bash -c "stress --cpu {{ cpu_limit }} --timeout {{ c_duration }}; exit"
   args:
     executable: /bin/bash
+  async: 180
+  poll: 5
 
 ## GETTING THE NODE STATUS
 - name: Getting the node status
   shell: kubectl get no {{ node_name }} | awk '{print $2}' | tail -n1
-  register: no_status
+  register: node_status
 
-- block:
-   
-    ## RESTARTING THE NODE IF IT IS IN NOT READY STATE
-    - name: Restarting the application node
-      shell: gcloud compute instances reset {{ node_name }} --zone={{ c_zone }}
-     
-    - name: Waiting for 120 seconds to reset node 
-      wait_for:
-        timeout: 300
-      
-    - name: Getting the node status
-      shell: kubectl get no {{ node_name }} | awk '{print $2}' | tail -n1
-      register: node_status
-      until: node_name.stdout == 'Ready'
-      delay: 10
-      retries: 30 
-  
-  when: no_status.stdout != 'Ready'
+## GETTING DAEMONSET NAME
+- name: Getting daemonset name  
+  k8s_facts:
+    kind: DaemonSet
+    label_selectors:
+      - app=cpu-hog
+  register: d_name
+
+- set_fact:
+    ds_name: "{{ d_name | json_query('resources[0].metadata.name')}}"
 
 ## DELETING THE DAEMONSET
 - name: Deleting the DaemonSet
-  k8s:
-    state: absent
-    namespace: "{{ a_ns }}"
-    src: /chaoslib/litmus/platform/gke/DaemonSet.yml
-
+  shell: kubectl delete ds {{ ds_name }}
 
