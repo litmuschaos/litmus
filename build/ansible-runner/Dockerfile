@@ -15,9 +15,6 @@ RUN pip install ansible==2.7.3
 #Installing jmespath
 RUN pip install jmespath
 
-#Installing stress
-RUN apt-get install stress
-
 RUN touch /mnt/parameters.yml
 
 #Installing Kubectl
