@@ -90,11 +90,10 @@
   until: "result.stdout == 'Running'"
   delay: 1
   retries: 60
-  ignore_errors: true
 
 - name: Record the disk-fill pod on app node
   shell: >
-    kubectl get pod -l app=disk-fill -o wide -n {{ a_ns }} | grep {{ app_node.stdout }} | awk '{print $1}'
+    kubectl get pod -l app=disk-fill -o wide -n {{ namespace }} | grep {{ app_node.stdout }} | awk '{print $1}'
   args:
     executable: /bin/bash
   register: disk_fill_pod
