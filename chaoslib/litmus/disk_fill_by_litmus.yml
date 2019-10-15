@@ -7,28 +7,28 @@
 
 - name: Get ephemeral-storage Limit Value
   shell: >
-    kubectl get pod {{ pod_name.stdout }} -n {{ namespace }} -o jsonpath='{.spec.containers[?(@.name=="{{ app_container }}")].resources.limits.ephemeral-storage}' | grep -Eo '+|[0-9]+'
+    kubectl get pods {{ pod_name.stdout }} -n {{ namespace }} -o jsonpath='{.spec.containers[?(@.name=="{{ app_container }}")].resources.limits.ephemeral-storage}' | grep -Eo '+|[0-9]+'
   args:
     executable: /bin/bash
   register: limit_value
 
 - name: Get ephemeral-storage Limit storage unit
   shell: >
-    kubectl get pod {{ pod_name.stdout }} -n {{ namespace }} -o jsonpath='{.spec.containers[?(@.name=="{{ app_container }}")].resources.limits.ephemeral-storage}' | grep -Eo '[[:alpha:]]+'
+    kubectl get pods {{ pod_name.stdout }} -n {{ namespace }} -o jsonpath='{.spec.containers[?(@.name=="{{ app_container }}")].resources.limits.ephemeral-storage}' | grep -Eo '[[:alpha:]]+'
   args:
     executable: /bin/bash
   register: limit_value_storage
 
 - name: Get ephemeral-storage Request Value
   shell: >
-    kubectl get pod {{ pod_name.stdout }} -n {{ namespace }} -o jsonpath='{.spec.containers[?(@.name=="{{ app_container }}")].resources.requests.ephemeral-storage}' | grep -Eo '+|[0-9]+'
+    kubectl get pods {{ pod_name.stdout }} -n {{ namespace }} -o jsonpath='{.spec.containers[?(@.name=="{{ app_container }}")].resources.requests.ephemeral-storage}' | grep -Eo '+|[0-9]+'
   args:
     executable: /bin/bash
   register: req_value
 
 - name: Get ephemeral-storage Request storage unit
   shell: >
-    kubectl get pod {{ pod_name.stdout }} -n {{ namespace }} -o jsonpath='{.spec.containers[?(@.name=="{{ app_container }}")].resources.requests.ephemeral-storage}' | grep -Eo '[[:alpha:]]+'
+    kubectl get pods {{ pod_name.stdout }} -n {{ namespace }} -o jsonpath='{.spec.containers[?(@.name=="{{ app_container }}")].resources.requests.ephemeral-storage}' | grep -Eo '[[:alpha:]]+'
   args:
     executable: /bin/bash
   register: req_value_storage
@@ -62,14 +62,14 @@
 
 - name: Get the Container ID
   shell: >
-    kubectl get po {{ pod_name.stdout }} -n {{ namespace }} -o jsonpath='{.status.containerStatuses[?(@.name=="{{ app_container }}")].containerID}' | awk -F'//' '{print $2}'
+    kubectl get pods {{ pod_name.stdout }} -n {{ namespace }} -o jsonpath='{.status.containerStatuses[?(@.name=="{{ app_container }}")].containerID}' | awk -F'//' '{print $2}'
   args:
     executable: /bin/bash
   register: containerID
 
 - name: Identify the application node
   shell: >
-    kubectl get pod {{ pod_name.stdout }} -n {{ namespace }} --no-headers -o custom-columns=:spec.nodeName
+    kubectl get pods {{ pod_name.stdout }} -n {{ namespace }} --no-headers -o custom-columns=:spec.nodeName
   args:
     executable: /bin/bash
   register: app_node
@@ -83,7 +83,7 @@
   
 - name: Confirm that the disk-fill ds is running on all nodes
   shell: >
-    kubectl get pod -l app=disk-fill --no-headers -o custom-columns=:status.phase -n {{ namespace }} | sort | uniq
+    kubectl get pods -l app=disk-fill --no-headers -o custom-columns=:status.phase -n {{ namespace }} | sort | uniq
   args:
     executable: /bin/bash
   register: result
@@ -93,7 +93,7 @@
 
 - name: Record the disk-fill pod on app node
   shell: >
-    kubectl get pod -l app=disk-fill -o wide -n {{ namespace }} | grep {{ app_node.stdout }} | awk '{print $1}'
+    kubectl get pods -l app=disk-fill -o wide -n {{ namespace }} | grep {{ app_node.stdout }} | awk '{print $1}'
   args:
     executable: /bin/bash
   register: disk_fill_pod
@@ -130,7 +130,7 @@
 
 - name: Count for file creation 
   set_fact:
-    fill_count: "{{ fill_storage|int / 4}}"
+    fill_count: "{{ fill_storage|int / 4 }}"
 
 - name: Change count for file creation to integer
   set_fact:
@@ -140,9 +140,9 @@
   shell: >
     kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ namespace }} -- bash -c "cd /diskfill/{{ containerID.stdout }} && dd if=/dev/urandom of=/diskfill/{{ containerID.stdout }}/diskfill bs={{ bs }} count={{ fill_count_int }}"
 
-- name: Check if the Pod is evicted
+- name: Check Pod Status
   shell: >
-    kubectl get pod {{ pod_name.stdout }} -n {{ namespace }} --no-headers | awk '{print $3}'
+    kubectl get pods {{ pod_name.stdout }} -n {{ namespace }} --no-headers | awk '{print $3}'
   args:
     executable: /bin/bash
   register: pod_status
