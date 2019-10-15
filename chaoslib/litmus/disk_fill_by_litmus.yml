@@ -74,14 +74,14 @@
     executable: /bin/bash
   register: app_node
 
-- name: Create the DS for Disk-Fill
+- name: Create the DaemonSet for Disk-Fill
   shell: >
     kubectl apply -f /experiments/generic/disk_fill/disk_fill_ds.yaml -n {{ namespace }}
   args:
     executable: /bin/bash
   register: ds_status
   
-- name: Confirm that the disk-fill ds is running on all nodes
+- name: Confirm that the disk-fill daemonSet is running on all nodes
   shell: >
     kubectl get pods -l app=disk-fill --no-headers -o custom-columns=:status.phase -n {{ namespace }} | sort | uniq
   args:
