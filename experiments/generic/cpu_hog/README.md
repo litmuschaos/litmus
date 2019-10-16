@@ -2,7 +2,7 @@
 
 | Type  | Description              | K8s Platform |
 | ----- | ------------------------ | ------------ |
-| Chaos | CPU -HOG | GKE          |
+| Chaos | CPU -HOG | ANY          |
 
 ## Entry-Criteria
 
@@ -40,14 +40,14 @@
 | Parameter     | Description                                                  |Type|
 | ------------- | ------------------------------------------------------------ |----
 | PLATFORM      | The platform on with the chaos will work.                    |Mandatory
-| CHAOSENGINE| ChaosEngine CR name associated with the experiment instance| Optional| Mandatory
-| CHAOS_SERVICE_ACCOUNT	| Service account used by the pumba daemonset | Optional| Mandatory
-| TOTAL_CHAOS_DURATION| Time duration for with the chaos will be injected      | Mandatory  
+| CHAOSENGINE| ChaosEngine CR name associated with the experiment instance     |Mandatory
+| CHAOS_SERVICE_ACCOUNT	| Service account used by the pumba daemonset          |Mandatory
+| TOTAL_CHAOS_DURATION| Time duration for with the chaos will be injected      |Mandatory  
 
 ## Procedure
 
 - Identify the values for the mandatory ENV variables
-- Create the chaos job via `kubectl create -f container_kill_k8s_job.yml`
-- Check result of the experiment via `kubectl describe chaosresult container-kill` (prefix chaosengine name to experiment name if applicable)
+- Create the chaos job via `kubectl create -f cpu_hog_k8s_job.yml`
+- Check result of the experiment via `kubectl describe chaosresult cpu_hog` (prefix chaosengine name to experiment name if applicable)
 - View experiment logs via `kubectl logs -f <chaos-pod-name>` 
 
