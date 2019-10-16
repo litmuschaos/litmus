@@ -34,7 +34,7 @@ spec:
             value: "deployment"
 
           - name: PLATFORM
-            value: "ALL"
+            value: "ANY"
           
           ## THE TOTAL_CHAOS_DURATION SHOULD NOT BE MORE THAN 180
           - name: TOTAL_CHAOS_DURATION
