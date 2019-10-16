@@ -1,19 +1,15 @@
-FROM ubuntu
+FROM ubuntu:bionic
 
 LABEL maintainer="LitmusChaos"
 
 #Installing necessary ubuntu packages
-RUN rm -rf /var/lib/apt/lists/* && \
-    apt-get clean && \
+RUN apt-get clean && \
     apt-get update --fix-missing || true && \
-    apt-get install -y python-minimal python-pip netcat iproute2 jq sshpass \
-    curl openssh-client
+    apt-get install -y --no-install-recommends python-minimal python-pip netcat iproute2 jq sshpass \
+    curl openssh-client python-setuptools && rm -rf /var/lib/apt/lists/* 
 
-#Installing ansible
-RUN pip install ansible==2.7.3
-
-#Installing jmespath
-RUN pip install jmespath
+#Installing ansible and dependencies for k8s module
+RUN pip install ansible==2.7.3 openshift jmespath
 
 RUN touch /mnt/parameters.yml
 

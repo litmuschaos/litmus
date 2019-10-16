@@ -14,7 +14,7 @@
   k8s:
     state: present
     namespace: "{{ a_ns }}"
-    src: /chaoslib/litmus/platform/gke/DaemonSet.yml
+    src: /chaoslib/litmus/platform/gke/cpu-hog-daemonset.yml
 
 ## CHECKING THE STATUS OF DAEMONSET
 - name: Checking the status of DaemonSet
