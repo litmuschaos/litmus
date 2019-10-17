@@ -1,0 +1,34 @@
+- name: Get a list of all pods from given namespace
+  k8s_facts:
+    kind: Pod
+    namespace: "{{ a_ns }}"
+    label_selectors:
+      - "{{a_label}}"
+  register: pod_list
+
+- name: Select a random pod to kill
+  set_fact:
+    a_pod_to_kill: "{{ pod_list.resources | random | json_query('metadata.name') }}"
+
+- debug:
+    msg: "Killing pod {{a_pod_to_kill}}"
+
+- name: Force Kill application pod
+  shell: |
+    kubectl delete pod -n {{ a_ns }} --force --grace-period=0 --wait=false {{a_pod_to_kill}}
+  args:
+    executable: /bin/bash
+  register: result
+  when: "c_force == 'true'"
+
+- name: Kill application pod
+  shell: |
+    kubectl delete pod -n {{ a_ns }} --grace-period=0 --wait=false {{a_pod_to_kill}}
+  args:
+    executable: /bin/bash
+  register: result
+  when: "c_force == 'false' or c_force == ''" 
+
+- name: Wait for the interval timer
+  pause:
+    seconds: "{{c_interval}}"

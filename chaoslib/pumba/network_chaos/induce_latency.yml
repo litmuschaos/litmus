@@ -1,0 +1,7 @@
+- name: Inject egress delay of {{n_latency}}ms on app pod for {{ c_duration }}ms 
+  shell: > 
+    kubectl exec {{ pumba_pod.stdout }} -n {{ a_ns }} 
+    -- pumba netem --interface {{ n_interface }} --duration {{ c_duration }}ms delay
+    --time {{ n_latency }} re2:k8s_{{ c_container }}_{{ app_pod.stdout }}
+  args:
+    executable: /bin/bash
