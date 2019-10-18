@@ -46,7 +46,7 @@
 
 ## Procedure
 
--  Identify the values for the mandatory ENV variables
--  Create the chaos job via `kubectl create -f cpu_hog_k8s_job.yml`
--  Check result of the experiment via `kubectl describe chaosresult cpu_hog` (prefix chaosengine name to experiment name if applicable)
--  View experiment logs via `kubectl logs -f <chaos-pod-name>` 
+-   Identify the values for the mandatory ENV variables
+-   Create the chaos job via `kubectl create -f cpu_hog_k8s_job.yml`
+-   Check result of the experiment via `kubectl describe chaosresult cpu_hog` (prefix chaosengine name to experiment name if applicable)
+-   View experiment logs via `kubectl logs -f <chaos-pod-name>` 
