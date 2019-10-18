@@ -40,7 +40,7 @@ spec:
             value: "70" 
 
           - name: TOTAL_CHAOS_DURATION
-            value: "60000" #in ms
+            value: "60000" # in ms
             
           - name: LIB
             value: "pumba"
