@@ -29,20 +29,20 @@
 
 ### Application
 
-| Parameter     | Description                                                  |Type       |
-| ------------- | ------------------------------------------------------------ |-----------|
-| APP_NAMESPACE | Namespace in which application pods are deployed             |Mandatory  |
-| APP_LABEL     | Unique Labels in `key=value` format of application deployment|Mandatory  |
-| APP_KIND      | Type of application `deployment`for deployment application   |Mandatory  |
+| Parameter     | Description                                                  | Type       |
+| ------------- | ------------------------------------------------------------ | -----------|
+| APP_NAMESPACE | Namespace in which application pods are deployed             | Mandatory  |
+| APP_LABEL     | Unique Labels in `key=value` format of application deployment| Mandatory  |
+| APP_KIND      | Type of application `deployment`for deployment application   | Mandatory  |
 
 ### Chaos
 
-| Parameter             | Description                                                  |Type      |
-| ----------------------| ------------------------------------------------------------ |----------|
-| PLATFORM              | The platform on with the chaos will work.                    |Mandatory |
-| CHAOSENGINE           | ChaosEngine CR name associated with the experiment instance  |Mandatory |
-| CHAOS_SERVICE_ACCOUNT	| Service account used by the pumba daemonset                  |Mandatory |
-| TOTAL_CHAOS_DURATION  | Time duration for with the chaos will be injected            |Mandatory | 
+| Parameter             | Description                                                 | Type      |
+| ----------------------| ----------------------------------------------------------- | ----------|
+| PLATFORM              | The platform on with the chaos will work.                   | Mandatory |
+| CHAOSENGINE           | ChaosEngine CR name associated with the experiment instance | Mandatory |
+| CHAOS_SERVICE_ACCOUNT	| Service account used by the pumba daemonset                 | Mandatory |
+| TOTAL_CHAOS_DURATION  | Time duration for with the chaos will be injected           | Mandatory | 
 
 ## Procedure
 
