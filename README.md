@@ -27,7 +27,7 @@ Chaos experiments are hosted on <a href="https://hub.litmuschaos.io" target="_bl
 
 - **For Developers**: To run chaos experiments during application development as an extension of unit testing or integration testing.
 - **For CI pipeline builders**: To run chaos as a pipeline stage to find bugs when the application is subjected to fail paths in a pipeline.
-- **For SREs**: To plan and schedule chaos experiments into the application and/or surrounding infrastructure. This practice identifies the weaknesses in the system and increases the resilience.
+- **For SREs(Site Reliability Engineering)**: To plan and schedule chaos experiments into the application and/or surrounding infrastructure. This practice identifies the weaknesses in the system and increases the resilience.
 
 
 ## Demo 
