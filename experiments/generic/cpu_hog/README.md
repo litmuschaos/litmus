@@ -2,7 +2,7 @@
 
 | Type  | Description             | K8s Platform |
 | ----- | ----------------------- | ------------ |
-| Chaos | CPU -HOG                |   ANY        | 
+| Chaos | CPU-HOG                |   ANY        | 
 
 ## Entry-Criteria
 
