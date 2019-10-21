@@ -1,8 +1,8 @@
 ## Experiment Metadata
 
-| Type  | Description              | K8s Platform |
-| ----- | ------------------------ | ------------ |
-| Chaos | CPU -HOG                 |   ANY        | 
+| Type  | Description             | K8s Platform |
+| ----- | ----------------------- | ------------ |
+| Chaos | CPU -HOG                |   ANY        | 
 
 ## Entry-Criteria
 
@@ -19,6 +19,7 @@
 ## Details
 
 -   In this experiment, a CPU spike is given to a pod running on some node. The amount of CPU spike will be equal to the CPU capacity of the node on which the pod is scheduled.
+-   This test is in alpha state and recovery may have to be done manually.
 
 ## Associated Chaos Utils 
 
