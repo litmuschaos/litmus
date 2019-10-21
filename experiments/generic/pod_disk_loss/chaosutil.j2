@@ -1,6 +1,0 @@
-{% if cloud_platform is defined and cloud_platform == 'GCP' %}
-   c_util: /chaoslib/litmus/pod_disk_loss.yml
-   pod_status: /utils/common/status_app_pod.yml
-   disk_status: /utils/cloud/gcp/status_disk.yml
-   update_chaos_result: /utils/runtime/update_chaos_result_resource.yml
-{% endif %}
