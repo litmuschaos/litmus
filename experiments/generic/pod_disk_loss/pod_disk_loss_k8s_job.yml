@@ -1,0 +1,21 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: pod-disk-loss-
+  namespace: litmus
+spec:
+  template:
+    metadata:
+      labels:
+        experiment: pod-disk-loss
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: imrajdas/ansible-runner:latest
+        imagePullPolicy: Always
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./experiments/generic/pod_disk_loss/pod_disk_loss_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
+

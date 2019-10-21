@@ -1,0 +1,9 @@
+- name: Getting disk users
+  shell: gcloud compute disks describe {{ disk_name }} --zone {{ zone_name }} --format="csv(users)"
+  register: disk_users
+
+- name: Checking node name in disk users
+  shell: echo "node is found in the disk users"
+  with_items: "{{ disk_users.stdout_lines }}"
+  when: item == 'https://www.googleapis.com/compute/v1/projects/{{ project_id }}/zones/{{ zone_name }}/instances/{{ node_name }}'
+  register: disk_status

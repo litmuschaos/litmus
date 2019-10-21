@@ -1,0 +1,87 @@
+
+- hosts: localhost
+  connection: local  
+
+  vars:
+    c_experiment: "disk-loss"
+    a_ns: "default"
+    a_label: "run=mynginx"
+    cloud_platform: "GCP"
+    node_name: "gke-standard-cluster-1-default-pool-6fbe7e65-7pn9"
+    disk_name: "disk-1"
+    zone_name: "us-central1-a"
+    project_id: "mayadata-demo-247709"
+
+  tasks:
+
+    - block:
+        - include: pod_disk_loss_ansible_prerequisites.yml
+
+        - include_vars:
+            file: chaosutil.yml 
+
+        ## GENERATE EXP RESULT NAME
+        - block:
+            - name: Construct chaos result name (experiment_name)
+              set_fact:
+                c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
+          when: lookup('env','CHAOSENGINE')
+
+        # RECORD START-OF-EXPERIMENT IN LITMUSCHAOS RESULT CR
+        - include_tasks: "{{ update_chaos_result }}"
+          vars:
+            status: 'SOT'
+            namespace: "{{ a_ns }}"
+
+        ## PRE-CHAOS APPLICATION LIVENESS CHECK
+        - name: Verify that the AUT (Application Under Test) is running
+          include_tasks: "{{ pod_status }}"
+          vars:
+            app_ns: "{{ a_ns }}"
+            app_lkey: "{{ a_label.split('=')[0] }}"
+            app_lvalue: "{{ a_label.split('=')[1] }}"
+            delay: 5
+            retries: 60
+
+        - name: Verify that the node is connected to the disk 
+          include_tasks: "{{ disk_status }}"
+          vars:
+            node_name: "gke-standard-cluster-1-default-pool-6fbe7e65-7pn9"
+            disk_name: "disk-1"
+            zone_name: "us-central1-a"
+            project_id: "mayadata-demo-247709"
+
+         ## INJECTING CHAOS 
+        - name: Injecting the chaos
+          include_tasks: "{{ c_util }}"
+          vars:
+            cloud_platform: "GCP"
+            node_name: "gke-standard-cluster-1-default-pool-6fbe7e65-7pn9"
+            disk_name: "disk-1"
+            zone_name: "us-central1-a"
+            
+        ## POST-CHAOS APPLICATION LIVENESS CHECK
+        - name: Verify AUT liveness post fault-injection
+          include_tasks: "/utils/common/status_app_pod.yml"
+          vars:
+            app_ns: "{{ a_ns }}" 
+            app_lkey: "{{ a_label.split('=')[0] }}"
+            app_lvalue: "{{ a_label.split('=')[1] }}"       
+            delay: 1
+            retries: 60   
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+
+        - set_fact:
+            flag: "Fail"
+
+      always:
+
+        ## RECORD END-OF-TEST IN LITMUSCHAOS RESULT CR
+        - include_tasks: "{{ update_chaos_result }}"
+          vars:
+            status: 'EOT'
+            namespace: "{{ a_ns }}"
