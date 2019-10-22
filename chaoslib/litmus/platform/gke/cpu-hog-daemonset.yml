@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: cpu-hog
+spec:
+  template:
+    metadata:
+      labels:
+        app: cpu-hog
+      name: cpu-hog
+    spec:
+      containers:
+      - image: litmuschaos/cpu:latest
+        imagePullPolicy: Always
+        name: cpu-hog
+        command: ["/bin/bash"]
+        args: ["-c", "sleep 10000"]
