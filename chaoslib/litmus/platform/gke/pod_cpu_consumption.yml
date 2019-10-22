@@ -1,0 +1,82 @@
+ ## GETTING THE PRE CHAOS NODE NAME OF APPLICATION 
+- name: Getting the pre-chaos node name of application 
+  k8s_facts:
+    kind: Pod
+    label_selectors:
+      - "{{ a_label }}"
+  register: no_name
+
+- set_fact:
+    node_name: "{{ no_name | json_query('resources[0].spec.nodeName')}}"
+
+## CREATING  A DAEMONSET  FOR CPU-HOG
+- name: Creating a DaemonSet for cpu-hog
+  k8s:
+    state: present
+    namespace: "{{ a_ns }}"
+    src: /chaoslib/litmus/platform/gke/cpu-hog-daemonset.yml
+
+## CHECKING THE STATUS OF DAEMONSET
+- name: Checking the status of DaemonSet
+  k8s_facts:
+    kind: Pod
+    namespace: "{{ a_ns }}"
+    label_selectors:
+      - app=cpu-hog
+  register: pod_ds
+  until: "{{pod_ds | json_query('resources[*].status.phase') | unique | length==1}} and {{pod_ds | json_query('resources[0].status.phase') == 'Running'}}"
+  delay: 5
+  retries: 60
+
+## GETTING THE POD NAME OF DS FROM APPLICATION NODE
+- name: Getting the pod name of DS from application node
+  k8s_facts:
+    kind: Pod
+    namespace: "{{ a_ns }}"
+    field_selectors:
+      - spec.nodeName={{node_name}}
+    label_selectors:
+      - app=cpu-hog
+  register: po_ds_app
+
+- set_fact:
+    pod_ds_app: "{{ po_ds_app | json_query('resources[0].metadata.name') }}"
+
+## GETTING THE NODE CPU CAPACITY
+- name: Getting the node cpu capacity
+  k8s_facts:
+    kind: Node
+    name: "{{ node_name }}"
+  register: c_limit
+
+- set_fact:
+    cpu_limit: "{{ c_limit | json_query('resources[0].status.capacity.cpu') }}"
+
+## GIVING CPU SPIKE
+- name: Giving CPU spike ...
+  shell: kubectl exec -it {{ pod_ds_app }} -n {{ a_ns }} -- bash -c "stress --cpu {{ cpu_limit }} --timeout {{ c_duration }}; exit"
+  args:
+    executable: /bin/bash
+  async: 180
+  poll: 5
+
+## GETTING THE NODE STATUS
+- name: Getting the node status
+  shell: kubectl get no {{ node_name }} | awk '{print $2}' | tail -n1
+  register: node_status
+
+## GETTING DAEMONSET NAME
+- name: Getting daemonset name  
+  k8s_facts:
+    kind: DaemonSet
+    label_selectors:
+      - app=cpu-hog
+  register: d_name
+
+- set_fact:
+    ds_name: "{{ d_name | json_query('resources[0].metadata.name')}}"
+
+## DELETING THE DAEMONSET
+- name: Deleting the DaemonSet
+  shell: kubectl delete ds {{ ds_name }}
+
