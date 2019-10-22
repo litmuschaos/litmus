@@ -38,11 +38,17 @@ There are several areas of Litmus that could use your help. For starters, you co
 
 We use the Developer Certificate of Origin (DCO) as an additional safeguard for the LitmusChaos project. This is a well established and widely used mechanism to assure that contributors have confirmed their right to license their contribution under the project's license. Please add a line to every git commit message:
 
-````
+```
   Signed-off-by: Random J Developer <random@developer.example.org>
-````
+```
 
 Use your real name (sorry, no pseudonyms or anonymous contributions). The email id should match the email id provided in your GitHub profile. 
 If you set your `user.name` and `user.email` in git config, you can sign your commit automatically with `git commit -s`. 
 
 You can also use git [aliases](https://git-scm.com/book/tr/v2/Git-Basics-Git-Aliases) like `git config --global alias.ci 'commit -s'`. Now you can commit with `git ci` and the commit will be signed.
+
+## Community
+
+The litmus community will have a weekly contributor sync-up on Tuesdays 16.00-16.30IST / 12.30-13.00CEST 
+- The sync up meeting is held online on [Google Hangouts](https://meet.google.com/uvt-ozaw-bvp)
+- The release items are tracked in this [planning sheet](https://docs.google.com/spreadsheets/d/15svGB99bDcSTkwAYttH1QzP5WJSb-dFKbPzl-9WqmXM). 
