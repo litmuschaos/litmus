@@ -1,7 +1,5 @@
 ## Steps to Bootstrap a Chaos Experiment
 
-(Ref: [Contributing a Chaos Chart](https://github.com/litmuschaos/chaos-charts/blob/master/CONTRIBUTING.md))
-
 The artefacts associated with a chaos-experiment are summarized below: 
 
 - Submitted in the litmuschaos/litmus repository, under the experiments/*chaos category* folder
