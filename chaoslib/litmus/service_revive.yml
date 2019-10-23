@@ -1,6 +1,6 @@
 - name: Get ConfigMap data
   shell: |
-    kubectl get configmap -n "{{ s_ns }}" "{{s_name}}" -o jsonpath='{.data.service\.yaml}'
+    kubectl get configmap -n "{{ a_ns }}" "{{s_name}}" -o jsonpath='{.data.service\.yaml}'
   args:
     executable: /bin/bash
   register: service_yaml
@@ -16,4 +16,4 @@
 
 - name: Delete ConfigMap
   shell: |
-    kubectl delete configmap -n "{{ s_ns }}" "{{s_name}}"
+    kubectl delete configmap -n "{{ a_ns }}" "{{s_name}}"
