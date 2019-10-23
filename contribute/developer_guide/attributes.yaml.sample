@@ -1,0 +1,21 @@
+---
+name: kill-hello-replicas
+version: 0.1.0
+category: hello-world
+repository: https://github.com/litmuschaos/demo-app/tree/master/sample_apps/hellonode
+community: https://kubernetes.slack.com/messages/CNXNB0ZTN
+description: "kills hello-world pods in a random manner"
+keywords:
+  - pods
+  - kubernetes
+  - hello-world
+  - nodejs
+maturity: alpha
+maintainers:
+  - ksatchit@mayadata.io
+contributors:
+  - ksatchit@mayadata.io
+min_kubernetes_version: 1.12.0
+references:
+  - https://docs.litmuschaos.io/docs/getstarted/
+
