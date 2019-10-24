@@ -74,7 +74,7 @@
 
 - name: Create the DaemonSet for Disk-Fill
   shell: >
-    kubectl apply -f /experiments/generic/disk_fill/disk_fill_ds.yaml -n {{ a_ns }}
+    kubectl apply -f /chaoslib/litmus/disk_fill/disk_fill_ds.yaml -n {{ a_ns }}
   args:
     executable: /bin/bash
   register: ds_status

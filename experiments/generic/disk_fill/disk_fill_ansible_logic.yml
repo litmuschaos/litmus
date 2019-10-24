@@ -2,7 +2,7 @@
 - hosts: localhost
   connection: local
   vars_files: 
-    - /experiments/generic/disk_fill/test_vars_diskfill.yml
+    - /chaoslib/litmus/disk_fill/test_vars_diskfill.yml
   vars:
     c_util: "/chaoslib/litmus/disk_fill/disk_fill_by_litmus.yml"
     c_container: "{{ lookup('env','TARGET_CONTAINER') }}"
