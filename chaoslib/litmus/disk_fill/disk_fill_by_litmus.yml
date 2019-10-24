@@ -42,22 +42,7 @@
   set_fact:
     limit_storage_KB: "{{ lookup('vars', limit_value_storage.stdout)}}"
 
-- name: Multiply the request value with unit in KB
-  set_fact:
-    req_KB: "{{ req_value.stdout|int * req_storage_KB|int }}"
-
-- name: Multiply the limit value with unit in KB
-  set_fact:
-    limit_KB: "{{ limit_value.stdout|int * limit_storage_KB|int }}"
-
-- name: Convert the fill percent
-  set_fact: 
-    fill: "{{ fill_percentage |float / 100 }}"
-
-- name: Fill percent into storage
-  set_fact:
-    to_fill: "{{ fill|float * limit_KB|float }}"
-
+- include_tasks: /chaoslib/litmus/disk_fill/convert_fill_percentage.yml
 - name: Get the Container ID
   shell: >
     kubectl get pods {{ pod_name.stdout }} -n {{ a_ns }} -o jsonpath='{.status.containerStatuses[?(@.name=="{{ c_container }}")].containerID}' | awk -F'//' '{print $2}'
@@ -81,7 +66,7 @@
   
 - name: Confirm that the disk-fill daemonSet is running on all nodes
   shell: >
-    kubectl get pod -l app=disk-fill --no-headers --template "{{range .items}}{{if eq .spec.nodeName $(kubectl get nodes --no-headers --field-selector spec.unschedulable=false | grep Ready | awk '{printf "\"%s\" ", $1}')}}{{.status.phase}}{{\"\n\"}}{{end}}{{end}}" -n {{ a_ns }} | sort | uniq
+    kubectl get pods -l app=disk-fill --no-headers --template "{{range .items}}{{if eq .spec.nodeName $(kubectl get nodes --no-headers --field-selector spec.unschedulable=false | grep Ready | awk '{printf "\"%s\" ", $1}')}}{{.status.phase}}{{\"\n\"}}{{end}}{{end}}" -n {{ a_ns }} | sort | uniq
   args:
     executable: /bin/bash
   register: result
@@ -89,7 +74,7 @@
   delay: 1
   retries: 60
   ignore_errors: true
-
+  
 - name: Record the disk-fill pod on app node
   shell: >
     kubectl get pods -l app=disk-fill -o jsonpath='{.items[?(@.spec.nodeName=="{{app_node.stdout}}")].metadata.name}'

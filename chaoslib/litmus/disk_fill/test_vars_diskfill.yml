@@ -1,5 +1,5 @@
 ## All the variables needed for conversion
-## from the storage unit int KB
+## from the storage unit into KB
 ## pow function corresponds to raising the first variable
 ## to the power of the second
 K: "1"
