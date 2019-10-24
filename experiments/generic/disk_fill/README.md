@@ -14,7 +14,7 @@
 
 ## Details
 
-- Causes Disk Stress buy filling up the Ephemeral Storage of the Pod using one of it containers.
+- Causes Disk Stress by filling up the Ephemeral Storage of the Pod using one of it containers.
 - Causes Pod to get Evicted if the Pod exceeds it Ephemeral Storage Limit.
 - Tests the Ephemeral Storage Limits, to ensure those parameters are sufficient.
 
@@ -56,3 +56,6 @@
 ` (prefix chaosengine name to experiment name if applicable)
 - View experiment logs via `kubectl logs -f <chaos-pod-name>`
 
+## Limitations
+
+- Need Kubernetes Version > 1.13

@@ -123,38 +123,32 @@
   set_fact:
     fill_storage: "{{ to_fill|int - used_storage|int }}"
 
-- name: Block size for file creation
-  set_fact:
-    bs: 4K
+- include_tasks: /chaoslib/litmus/disk_fill/file_creation.yml
 
-- name: Count for file creation 
-  set_fact:
-    fill_count: "{{ fill_storage|int / 4 }}"
-
-- name: Change count for file creation to integer
-  set_fact:
-    fill_count_int: "{{ fill_count|int }}"
-
-- name: File creation
-  shell: >
-    kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ a_ns }} -- bash -c "cd /diskfill/{{ containerID.stdout }} && dd if=/dev/urandom of=/diskfill/{{ containerID.stdout }}/diskfill bs={{ bs }} count={{ fill_count_int }}"
-
-- name: Check Pod Status
-  shell: >
-    kubectl get pods {{ pod_name.stdout }} -n {{ a_ns }} --no-headers | awk '{print $3}'
-  args:
-    executable: /bin/bash
-  register: pod_status
+- include_tasks: /utils/common/status_app_pod.yml
+  vars:
+    app_ns: "{{ a_ns }}" 
+    app_lkey: "{{ a_label.split('=')[0] }}"
+    app_lvalue: "{{ a_label.split('=')[1] }}"       
+    delay: 1
+    retries: 60 
 
 - name: Waiting for Chaos Duration
   wait_for:
     timeout: "{{ c_duration }}"
+
+- name: Get the Pod Status 
+  shell: >
+    kubectl get pod {{ pod_name.stdout }} -n {{ a_ns }} -o jsonpath='{.status.phase}'
+  args:
+    executable: /bin/bash
+  register: pod_status
 
 - name: If Pod is not evicted / running
   shell: >
     kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ a_ns }} -- bash -c "rm -rf /diskfill/{{ containerID.stdout }}/diskfill"
   when: pod_status.stdout != "Evicted"
 
-- name: Delete DaemonSet if disk-fill
+- name: Delete DaemonSet disk-fill
   shell: >
     kubectl delete ds disk-fill
