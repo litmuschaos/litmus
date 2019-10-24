@@ -203,7 +203,15 @@
     job_name: "{{ c_experiment_name }}-{{random_string.stdout}}"
     phase: "{{ c_phase.stdout }}" 
     verdict: "{{ c_verdict.stdout  }}"
- 
+
+- name: set Job Name to a variable
+  set_fact:
+    job_name: "{{ c_experiment_name }}-{{random_string.stdout}}"
+
+- name: dance
+  debug:
+    msg: "{{ job_name }}"
+
 - name: Apply the chaos engine CR
   shell: kubectl apply -f chaos-engine.yaml -n {{ c_app_ns }}
   args:
@@ -219,3 +227,14 @@
 - debug:
     msg: "engine : {{ c_engine_yaml.stdout }}" 
  
+- name: Get the cleaUp state
+  shell: >
+    kubectl get chaosengine {{ c_engine }} -n {{ c_app_ns }} -o jsonpath='{.spec.cleanUp}'
+  args:
+    executable: /bin/bash
+  register: cleanUp
+
+- name: Delete job if the cleanUp status is cleanUp
+  shell: >
+    kubectl delete job {{ job_name }} -n {{ c_app_ns }} 
+  when: cleanUp.stdout == "cleanUp"

@@ -1,3 +1,7 @@
+## All the variables needed for conversion
+## from the storage unit int KB
+## pow function corresponds to raising the first variable
+## to the power of the second
 K: "1"
 M: "{{ 10 | pow(3) }}"
 G: "{{ 10 | pow(6) }}"

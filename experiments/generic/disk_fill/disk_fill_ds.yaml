@@ -16,7 +16,7 @@ spec:
         volumeMounts:
           - name: udev
             mountPath: /diskfill
-            mountPropagation: Bidirectional
+            mountPropagation: HostToContainer
         securityContext:
           privileged: true
       volumes:

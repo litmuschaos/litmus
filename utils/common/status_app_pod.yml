@@ -1,8 +1,7 @@
 ---
 - name: Get the container status of application.
   shell: >
-     kubectl get pod -n {{ app_ns }} -l {{app_lkey}}="{{app_lvalue}}"
-     -o custom-columns=:..containerStatuses[].state --no-headers | grep -w "running"
+     kubectl get pod -n {{ app_ns }} -l {{app_lkey}}="{{app_lvalue}}" -o custom-columns=:..containerStatuses[].state --no-headers | grep -w "running"
   args:
     executable: /bin/bash
   register: containerStatus

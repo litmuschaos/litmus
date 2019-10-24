@@ -1,16 +1,17 @@
 ---
 - hosts: localhost
   connection: local
-
+  vars_files: 
+    - /experiments/generic/disk_fill/test_vars_diskfill.yml
   vars:
-    c_util: "/chaoslib/litmus/disk_fill_by_litmus.yml"
+    c_util: "/chaoslib/litmus/disk_fill/disk_fill_by_litmus.yml"
     c_container: "{{ lookup('env','TARGET_CONTAINER') }}"
     c_experiment: "disk-fill"
     c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_label: "{{ lookup('env','APP_LABEL') }}"
-    fill_percentage: "{{ lookup('env','FILL_PERCENT') }}"
-  
+    fill_percentage: "{{ lookup('env','FILL_PERCENTAGE') }}"
+    
   tasks:
     - block:
 
@@ -44,12 +45,12 @@
 
         - include_tasks: "{{ c_util }}"
           vars:
-            namespace: "{{ a_ns }}"
-            label: "{{ a_label }}"
-            app_container: "{{ c_container }}"
-            action: "killapp"
-            fill_percent: "{{ fill_percentage }}"
-            chaos_duration: "{{ c_duration }}"
+            #namespace: "{{ a_ns }}"
+            #label: "{{ a_label }}"
+            #app_container: "{{ c_container }}"
+            action: "disk-fill"
+            #fill_percent: "{{ fill_percentage }}"
+            #chaos_duration: "{{ c_duration }}"
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
