@@ -22,8 +22,8 @@ Litmus takes a cloud-native approach to create, manage and monitor chaos. Chaos 
 
 Chaos experiments are hosted on <a href="https://hub.litmuschaos.io" target="_blank">hub.litmuschaos.io</a>. It is a central hub where the application developers or vendors share their chaos experiments so that their users can use them to increase the resilience of the applications in production.
 
-## SChematic Diagram 
-<img src="https://imgur.com/vjIfXjP">
+## SChematic Diagram of Litmuschaos
+<img src="https://github.com/Apollo9999/litmus/blob/master/schematicdiagram.png">
 
 https://imgur.com/vjIfXjP
 
