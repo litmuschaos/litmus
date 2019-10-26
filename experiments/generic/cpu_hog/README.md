@@ -14,7 +14,7 @@
 
 ## Pre-Requisites
 
--   Custer should use docker container runtime
+-   Cluster should use docker container runtime
 
 ## Details
 
