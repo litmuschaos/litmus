@@ -6,7 +6,7 @@ type: Opaque
 stringData:
   data: |
     #
-    # Paste you service account
+    # Paste your service account
     #
 ---
 apiVersion: batch/v1
