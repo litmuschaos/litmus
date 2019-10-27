@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gcp
+type: Opaque
+stringData:
+  data: |
+    #
+    # Paste you service account
+    #
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: disk-loss-
+  namespace: litmus
+spec:
+  template:
+    metadata:
+      labels:
+        name: disk-loss
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: litmuschaos/ansible-runner:ci
+        imagePullPolicy: Always
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: 'default'
+
+          - name: CHAOS_NAMESPACE
+            value: ''
+            
+          - name: APP_CHECK
+            value: '' # Check true if you want to check app, after and before chaos
+
+          - name: APP_LABEL
+            value: '' # Enter the App_label, if you set APP_CHECK to true
+
+          - name: APP_NAMESPACE
+            value: '' # Enter the APP_NAMESPACE, if you set APP_CHECK to true
+
+          - name: FORCE
+            value: 'true'
+
+          - name: CLOUD_PLATFORM
+            value: '' # Only GCP is supported
+
+          - name: PROJECT_ID 
+            value: '' # Enter the project id for gcp only
+
+          - name: NODE_NAME
+            value: '' # Node name
+
+          - name: DISK_NAME
+            value: ''  # disk name
+
+          - name: ZONE_NAME
+            value: '' # zone name
+
+          - name: CHAOSENGINE
+            value: '' # Enter the chaosengine name
+
+        command: ['/bin/bash']
+        args: ['-c', 'ansible-playbook ./experiments/generic/disk_loss/disk_loss_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0']

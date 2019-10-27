@@ -1,0 +1,107 @@
+- hosts: localhost
+  connection: local
+
+  vars:
+    cloud_platform: "{{ lookup('env','CLOUD_PLATFORM') }}"
+    c_experiment: disk-loss
+    a_check: "{{ lookup('env', 'APP_CHECK') }}"
+    a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+    c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
+    a_label: "{{ lookup('env','APP_LABEL') }}"
+
+  tasks:
+
+    - block:
+        - include: disk_loss_ansible_prerequisites.yml
+
+        - include_vars:
+            file: chaosutil.yml 
+
+        ## GENERATE EXP RESULT NAME
+        - block:
+            - name: Construct chaos result name (experiment_name)
+              set_fact:
+                c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
+          when: lookup('env','CHAOSENGINE')
+
+        # RECORD START-OF-EXPERIMENT IN LITMUSCHAOS RESULT CR
+        - include_tasks: "{{ update_chaos_result }}"
+          vars:
+            status: 'SOT'
+            namespace: "{{ c_ns }}"
+
+        ## PRE-CHAOS APPLICATION LIVENESS CHECK
+        - name: Verify that the AUT (Application Under Test) is running
+          include_tasks: "{{ pod_status }}"
+          vars:
+            app_ns: "{{ a_ns }}"
+            app_lkey: "{{ a_label.split('=')[0] }}"
+            app_lvalue: "{{ a_label.split('=')[1] }}"
+            delay: 5
+            retries: 60
+          when: "a_check == 'true'"
+
+        # Gcloud configuration task
+        - name: Gcloud configuration
+          include_tasks: "{{ gcloud_config }}"
+          vars:
+            chaos_ns: "{{ c_ns }}"
+            project_id: "{{ lookup('env','PROJECT_ID') }}"
+
+          when: "cloud_platform == 'GCP'"
+
+        ## PRE-CHAOS DISK LIVENESS CHECK
+        - name: Verify that the disk is connected to node (pre)
+          include_tasks: "{{ gcp_disk_status }}"
+          vars:
+            node_name: "{{ lookup('env','NODE_NAME') }}"
+            disk_name: "{{ lookup('env','DISK_NAME') }}"
+            zone_name: "{{ lookup('env','ZONE_NAME') }}"
+            project_id: "{{ lookup('env','PROJECT_ID') }}"
+            status: "check_gcp_disk"
+
+         ## INJECTING CHAOS 
+        - name: Injecting the chaos
+          include_tasks: "{{ c_util }}"
+          vars:
+            cloud_platform: "{{ lookup('env','CLOUD_PLATFORM') }}"
+            node_name: "{{ lookup('env','NODE_NAME') }}"
+            disk_name: "{{ lookup('env','DISK_NAME') }}"
+            zone_name: "{{ lookup('env','ZONE_NAME') }}"
+            
+        # POST-CHAOS APPLICATION LIVENESS CHECK
+        - name: Verify AUT liveness post fault-injection
+          include_tasks: "{{ pod_status }}"
+          vars:
+            app_ns: "{{ a_ns }}" 
+            app_lkey: "{{ a_label.split('=')[0] }}"
+            app_lvalue: "{{ a_label.split('=')[1] }}"       
+            delay: 1
+            retries: 60   
+          when: "a_check == 'true'"
+
+        ## POST-CHAOS DISK LIVENESS CHECK
+        - name: Verify that the disk is connected to node (post)
+          include_tasks: "{{ gcp_disk_status }}"
+          vars:
+            node_name: "{{ lookup('env','NODE_NAME') }}"
+            disk_name: "{{ lookup('env','DISK_NAME') }}"
+            zone_name: "{{ lookup('env','ZONE_NAME') }}"
+            project_id: "{{ lookup('env','PROJECT_ID') }}"
+            status: "check_gcp_disk"
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+
+        - set_fact:
+            flag: "Fail"
+
+      always:
+
+        ## RECORD END-OF-TEST IN LITMUSCHAOS RESULT CR
+        - include_tasks: "{{ update_chaos_result }}"
+          vars:
+            status: 'EOT'
+            namespace: "{{ c_ns }}"

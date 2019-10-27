@@ -1,0 +1,7 @@
+- block:
+    - name: Detaching the disk
+      shell: gcloud compute instances detach-disk {{ node_name }} --device-name {{ disk_name }} --zone {{ zone_name }}
+      
+    - name: Attaching the disk
+      shell: gcloud compute instances attach-disk {{ node_name }} --device-name {{ disk_name }} --disk {{ disk_name }} --zone {{ zone_name }}
+  when: "cloud_platform == 'GCP'"
