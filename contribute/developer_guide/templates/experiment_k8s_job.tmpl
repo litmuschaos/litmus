@@ -2,48 +2,41 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: pod-network-loss- 
+  generateName: {{ name }}-
 spec:
   template:
     metadata:
       labels:
-        experiment: pod-network-loss
+        experiment: {{ name }}
     spec:
       # Placeholder that is updated by the executor for automated runs
       # Provide appropriate SA (with desired permissions) if executed manually
-      serviceAccountName: CHAOS_SERVICE_ACCOUNT
+      serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
       restartPolicy: Never
       containers:
       - name: ansibletest
         image: litmuschaos/ansible-runner:ci
         imagePullPolicy: Always
-        env: 
+        env:
           - name: ANSIBLE_STDOUT_CALLBACK
             value: default
 
           - name: APP_NAMESPACE
-            value: default 
+            value: ""
 
           - name: APP_LABEL
-            value: 'app=hello'
+            value: ""
 
           - name: APP_KIND
-            value: deployment
-
-          - name: TARGET_CONTAINER
-            value: "flux-test"
-
-          - name: NETWORK_INTERFACE
-            value: "eth0"
-
-          - name: NETWORK_PACKET_LOSS_PERCENTAGE
-            value: "70" # in percentage
+            value: "" 
 
           - name: TOTAL_CHAOS_DURATION
-            value: "60000" # in ms
-            
+            value: ""
+
+          ## env var that describes the library used to execute the chaos
+          ## default: litmus. Supported values: litmus, powerfulseal, chaoskube
           - name: LIB
-            value: "pumba"
+            value: ""
 
           - name: CHAOSENGINE
             value: ""
@@ -54,5 +47,5 @@ spec:
                 fieldPath: spec.serviceAccountName
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./experiments/generic/pod_network_loss/pod_network_loss_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
-        
+        args: ["-c", "ansible-playbook ./experiments/{{ chart }}/{{ name }}/{{ name }}-ansible-logic.yml -i /etc/ansible/hosts; exit 0"]
+
