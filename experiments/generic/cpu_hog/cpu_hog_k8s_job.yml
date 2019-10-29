@@ -1,0 +1,56 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: cpu-hog-
+spec:
+  template:
+    metadata:
+      labels:
+        experiment: cpu-hog
+
+    spec:
+      serviceAccountName: CHAOS_SERVICE_ACCOUNT
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: litmuschaos/ansible-runner:ci
+        imagePullPolicy: Always
+        env: 
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: "default"
+
+          ## ENTER THE NAMESPACE WHERE THE APPLICATION IS RUNNING
+          - name: APP_NAMESPACE
+            value: "default" 
+
+          ## ENTER THE LABEL OF THE APPLICATION
+          - name: APP_LABEL
+            value: "app=hello"
+          
+          ## ENTER THE KIND OF APPLICATION 
+          ## WORKING FOR 'deployment' TYPE OF APPLICATION
+          - name: APP_KIND
+            value: "deployment"
+
+          - name: PLATFORM
+            value: "ANY"
+          
+          ## THE TOTAL_CHAOS_DURATION SHOULD NOT BE MORE THAN 180
+          - name: TOTAL_CHAOS_DURATION
+            value: "60"
+            
+          - name: LIB
+            value: ""
+
+          - name: CHAOSENGINE
+            value: ""
+          
+          - name: CHAOS_SERVICE_ACCOUNT
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.serviceAccountName
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./experiments/generic/cpu_hog/cpu_hog_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]        
+

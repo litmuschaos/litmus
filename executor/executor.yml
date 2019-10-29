@@ -127,9 +127,13 @@
     executable: /bin/bash
   register: random_string
 
+- name: Register the Job Name for further use
+  set_fact:
+    job_name: "{{ c_experiment_name }}-{{random_string.stdout}}"
+
 - name: Run the chaos experiment job
   shell:
-    kubectl run {{ c_experiment_name }}-{{random_string.stdout}} --restart=OnFailure --image={{c_image.stdout}}
+    kubectl run {{ job_name }} --restart=OnFailure --image={{c_image.stdout}}
     --namespace={{c_app_ns}} --serviceaccount={{ c_svc_acc }} --image-pull-policy=Always 
     --labels={{c_job_labels.stdout}} {{c_env_list}}  --command -- /bin/bash {{c_job_args.stdout}}  
   args:
@@ -141,7 +145,7 @@
   
 - name: Monitoring the litmus chaos job for completion
   shell: >
-    kubectl get job {{c_experiment_name}}-{{random_string.stdout}} -n {{ c_app_ns}} 
+    kubectl get job {{ job_name }} -n {{ c_app_ns}} 
     --no-headers -o custom-columns=:status.conditions[].type | sort | uniq
   args:
    executable: /bin/bash
@@ -226,15 +230,15 @@
 
 - debug:
     msg: "engine : {{ c_engine_yaml.stdout }}" 
- 
-- name: Get the cleaUp state
+
+- name: Get the jobCleanUpPolicy
   shell: >
-    kubectl get chaosengine {{ c_engine }} -n {{ c_app_ns }} -o jsonpath='{.spec.cleanUp}'
+    kubectl get chaosengine {{ c_engine }} -n {{ c_app_ns }} -o jsonpath='{.spec.jobCleanUpPolicy}'
   args:
     executable: /bin/bash
-  register: cleanUp
+  register: jobCleanUpPolicy
 
-- name: Delete job if the cleanUp status is cleanUp
+- name: Delete job if the jobCleanUpPolicy status is delete
   shell: >
     kubectl delete job {{ job_name }} -n {{ c_app_ns }} 
-  when: cleanUp.stdout == "cleanUp"
+  when: jobCleanUpPolicy.stdout == "delete"

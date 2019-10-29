@@ -23,7 +23,7 @@ spec:
             value: default 
 
           - name: APP_LABEL
-            value: 'app=nginx'
+            value: 'app=hello'
 
           - name: TARGET_CONTAINER
             value: "nginx"

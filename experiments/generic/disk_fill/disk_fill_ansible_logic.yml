@@ -45,12 +45,7 @@
 
         - include_tasks: "{{ c_util }}"
           vars:
-            #namespace: "{{ a_ns }}"
-            #label: "{{ a_label }}"
-            #app_container: "{{ c_container }}"
             action: "disk-fill"
-            #fill_percent: "{{ fill_percentage }}"
-            #chaos_duration: "{{ c_duration }}"
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 

@@ -96,22 +96,6 @@
     executable: /bin/bash
   register: pod_current_size
 
-
-#- name: Echo the filled storage unit to get the integer part for multiplication
-#  shell: >
-#    echo {{ pod_current_size_full.stdout }} | grep -Eo '[[:alpha:]]+'
-#  args:
-#    executable: /bin/bash
-#  register: pod_current_storage_unit
-
-#- name: Fetch the value of Used ephemeral-storage Unit in KB
-#  set_fact:
-#    used_storage_KB: "{{ lookup('vars', pod_current_storage_unit.stdout) }}"
-
-#- name: Total size of Used ephemeral-storage in KB
-#  set_fact:
-#    used_storage: "{{ pod_current_size.stdout_lines[0]|int * used_storage_KB|int }}"
-
 - name: Total Used Ephemeral Storage in KB
   set_fact:
     used_storage: "{{ pod_current_size.stdout }}"
