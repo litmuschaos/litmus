@@ -15,17 +15,17 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: shubh214/ansible-runner:test10
+        image: litmuschaos/ansible-runner:ci
         imagePullPolicy: Always
         env:
           - name: ANSIBLE_STDOUT_CALLBACK
             value: default
 
           - name: APP_NAMESPACE
-            value: shubham
+            value: ""
 
           - name: APP_LABEL
-            value: 'name=percona'
+            value: ''
 
           - name: APP_KIND
             value: deployment

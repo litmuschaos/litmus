@@ -77,6 +77,7 @@
           include: "{{ data_consistency_util_path }}"
           vars:
             status: 'LOAD'
+            ns: "{{a_ns}}"
             app_pod_name: "{{ app_pod_name.stdout }}"
           when: data_persistence != ''  
 
@@ -97,6 +98,7 @@
           include: "{{ data_consistency_util_path }}"
           vars:
             status: 'VERIFY'
+            ns: "{{a_ns}}"
             app_pod_name: "{{ app_pod_name.stdout }}"
           when: data_persistence != '' 
 
@@ -112,6 +114,7 @@
           include: "{{ data_consistency_util_path }}"
           vars:
             status: 'DELETE'
+            ns: "{{a_ns}}"
             app_pod_name: "{{ new_app_pod.stdout }}"
           when: data_persistence != '' 
 
