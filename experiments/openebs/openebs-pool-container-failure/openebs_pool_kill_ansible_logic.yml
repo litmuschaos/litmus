@@ -24,7 +24,7 @@
 
         - name: Record the chaos util path
           set_fact:
-            chaos_util_path: "/experiments/openebs/openebs_pool_failure/cstor_pool_kill.yml"
+            chaos_util_path: "/experiments/openebs/openebs-pool-container-failure/cstor_pool_kill.yml"
 
         - name: Record the data consistency util path
           set_fact:
@@ -53,14 +53,14 @@
             msg: 
               - "The application info is as follows:"
               - "Namespace    : {{ a_ns }}"
-              - "Label        : {{ label }}"
+              - "Label        : {{ a_label }}"
               - "PVC          : {{ a_pvc }}"  
 
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
 
         - name: Get application pod name 
           shell: >
-            kubectl get pods -n {{ a_ns }} -l {{ label }} --no-headers
+            kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers
             -o=custom-columns=NAME:".metadata.name"
           args:
             executable: /bin/bash
@@ -102,7 +102,7 @@
 
         - name: Get application pod name
           shell: >
-            kubectl get pods -n {{ a_ns }} -l {{ label }} --no-headers
+            kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers
             -o=custom-columns=NAME:".metadata.name"
           args:
             executable: /bin/bash

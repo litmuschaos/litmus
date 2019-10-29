@@ -30,6 +30,7 @@
   vars:
     action: "killapp"
     namespace: "{{ operator_ns }}"
+    label: "app=cstor-pool"
     app_pod: "{{ cstor_pool_pod }}"
     app_container: "cstor-pool"
 
