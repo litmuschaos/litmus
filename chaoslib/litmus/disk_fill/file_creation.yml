@@ -12,4 +12,4 @@
 
 - name: File creation
   shell: >
-    kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ a_ns }} -- bash -c "cd /diskfill/{{ containerID.stdout }} && dd if=/dev/urandom of=/diskfill/{{ containerID.stdout }}/diskfill bs={{ bs }} count={{ fill_count_int }}"
+    kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ a_ns }} -- sh -c "cd /diskfill/{{ containerID.stdout }} && dd if=/dev/urandom of=/diskfill/{{ containerID.stdout }}/diskfill bs={{ bs }} count={{ fill_count_int }}"

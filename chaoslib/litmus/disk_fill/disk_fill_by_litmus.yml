@@ -84,14 +84,22 @@
 
 - name: Exec into the pod to get ephemeral-storage size
   shell: >
-    kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ a_ns }} -- bash -c "cd /diskfill && cd {{ containerID.stdout }} && du -h |tail -n1 | awk '{print $1}' | grep -Eo '+|[0-9]+'"
+    kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ a_ns }} -- sh -c "cd /diskfill && cd {{ containerID.stdout }} && du -h |tail -n1 | awk '{print $1}'"
+  args:
+    executable: /bin/bash
+  register: pod_current_size_full
+
+- name: Echo the filled storage to get the integer part for multiplication
+  shell: >
+    echo {{ pod_current_size_full.stdout }} | grep -Eo '+|[0-9]+'
   args:
     executable: /bin/bash
   register: pod_current_size
 
-- name: Exec into the pod to get ephemeral-storage unit
+
+- name: Echo the filled storage unit to get the integer part for multiplication
   shell: >
-    kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ a_ns }} -- bash -c "cd /diskfill && cd {{ containerID.stdout }} && du -h |tail -n1 | awk '{print $1}' | grep -Eo '[[:alpha:]]+'"
+    echo {{ pod_current_size_full.stdout }} | grep -Eo '[[:alpha:]]+'
   args:
     executable: /bin/bash
   register: pod_current_storage_unit
@@ -102,7 +110,7 @@
 
 - name: Total size of Used ephemeral-storage in KB
   set_fact:
-    used_storage: "{{ pod_current_size.stdout|int * used_storage_KB|int }}"
+    used_storage: "{{ pod_current_size.stdout_lines[0]|int * used_storage_KB|int }}"
 
 - name: Subtract to get the file allocation size
   set_fact:
@@ -131,7 +139,7 @@
 
 - name: If Pod is not evicted / running
   shell: >
-    kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ a_ns }} -- bash -c "rm -rf /diskfill/{{ containerID.stdout }}/diskfill"
+    kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ a_ns }} -- sh -c "rm -rf /diskfill/{{ containerID.stdout }}/diskfill"
   when: pod_status.stdout != "Evicted"
 
 - name: Delete DaemonSet disk-fill

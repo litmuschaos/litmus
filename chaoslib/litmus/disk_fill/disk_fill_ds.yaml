@@ -10,7 +10,10 @@ spec:
       name: disk-fill
     spec:
       containers:
-      - image: nginx
+      - image: alpine
+        args:
+        - sleep
+        - "1000000"
         imagePullPolicy: Always
         name: disk-fill
         volumeMounts:
