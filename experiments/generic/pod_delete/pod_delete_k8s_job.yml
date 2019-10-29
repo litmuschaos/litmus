@@ -11,21 +11,21 @@ spec:
     spec:
       # Placeholder that is updated by the executor for automated runs
       # Provide appropriate SA (with desired permissions) if executed manually
-      serviceAccountName: CHAOS_SERVICE_ACCOUNT
+      serviceAccountName: litmus
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: litmuschaos/ansible-runner:ci
+        image: shubh214/ansible-runner:test10
         imagePullPolicy: Always
         env:
           - name: ANSIBLE_STDOUT_CALLBACK
             value: default
 
           - name: APP_NAMESPACE
-            value: default 
+            value: shubham
 
           - name: APP_LABEL
-            value: 'app=hello'
+            value: 'name=percona'
 
           - name: APP_KIND
             value: deployment
