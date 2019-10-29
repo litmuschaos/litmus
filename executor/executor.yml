@@ -208,14 +208,6 @@
     phase: "{{ c_phase.stdout }}" 
     verdict: "{{ c_verdict.stdout  }}"
 
-- name: set Job Name to a variable
-  set_fact:
-    job_name: "{{ c_experiment_name }}-{{random_string.stdout}}"
-
-- name: dance
-  debug:
-    msg: "{{ job_name }}"
-
 - name: Apply the chaos engine CR
   shell: kubectl apply -f chaos-engine.yaml -n {{ c_app_ns }}
   args:
