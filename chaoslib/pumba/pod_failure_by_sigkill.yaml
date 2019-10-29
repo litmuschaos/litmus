@@ -9,11 +9,16 @@
         executable: /bin/bash
       register: result
 
-      #TODO Verify pumba ds pods status against Ready Nodes
+      # Verifies pumba ds pods status against Ready Nodes
+      # The nested kubectl command returns (via command substitution) a list of Ready nodes: 
+      # Its field selector removes unschedulable nodes that might return "Ready,SchedulingDisabled", 
+      # the grep filters the output to just "Ready" nodes, and the awk returns just the node names in the single-line format: "node01" "node02" "node03" "node04"
+      # This list is then passed into the Go-template output formatter, so that the main 'kubectl get pod...' 
+      # command only returns the status of the pods on the Ready nodes (e.g. {{if eq .spec.nodeName "node01" "node02" "node03" "node04"}}{{.status.phase}})
     - name: Confirm that the pumba ds is running on all nodes
       shell: >
         kubectl get pod -l app=pumba
-        --no-headers -o custom-columns=:status.phase
+        --no-headers --template "{{range .items}}{{if eq .spec.nodeName $(kubectl get nodes --no-headers --field-selector spec.unschedulable=false | grep Ready | awk '{printf "\"%s\" ", $1}')}}{{.status.phase}}{{\"\n\"}}{{end}}{{end}}"
         -n {{ namespace }} | sort | uniq
       args:
         executable: /bin/bash
