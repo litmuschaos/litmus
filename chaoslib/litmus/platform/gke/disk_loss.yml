@@ -1,0 +1,14 @@
+- name: Detaching the disk
+  shell: gcloud compute instances detach-disk {{ node_name }} --device-name {{ disk_name }} --zone {{ zone_name }}
+
+- name: chaos injection for {{ c_duration }}s
+  wait_for:
+    timeout: "{{ c_duration }}"
+
+- name: Verify that the disk is connected to node (post)
+  include_tasks: "{{ gcp_disk_status }}"
+  
+- block:
+  - name: If disk is not attached, it will attach manually
+    shell: gcloud compute instances attach-disk {{ node_name }} --device-name {{ disk_name }} --disk {{ disk_name }} --zone {{ zone_name }}
+  when: "inuse == false"

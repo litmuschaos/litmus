@@ -1,26 +1,16 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: gcp
-type: Opaque
-stringData:
-  data: |
-    #
-    # Paste your service account
-    #
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
   generateName: disk-loss-
-  namespace: litmus
+  namespace: CHAOS_NAMESPACE
 spec:
   template:
     metadata:
       labels:
         name: disk-loss
     spec:
-      serviceAccountName: litmus
+      serviceAccountName: CHAOS_SERVICE_ACCOUNT
       restartPolicy: Never
       containers:
       - name: ansibletest
@@ -31,7 +21,7 @@ spec:
             value: 'default'
 
           - name: CHAOS_NAMESPACE
-            value: ''
+            value: '' # This is a chaos namespace which will create all infra chaos resources in that namespace
             
           - name: APP_CHECK
             value: '' # Check true if you want to check app, after and before chaos
@@ -43,10 +33,13 @@ spec:
             value: '' # Enter the APP_NAMESPACE, if you set APP_CHECK to true
 
           - name: FORCE
-            value: 'true'
+            value: ''
 
           - name: CLOUD_PLATFORM
             value: '' # Only GCP is supported
+
+          - name: CHAOS_DURATION
+            value: '' # Enter the time duration after the disk is dettached
 
           - name: PROJECT_ID 
             value: '' # Enter the project id for gcp only
@@ -59,6 +52,12 @@ spec:
 
           - name: ZONE_NAME
             value: '' # zone name
+          
+          - name: GCP_SERVICE_ACC_NAME
+            value: '' # Enter the gcp service account name, stores in secret 
+          
+          - name: GCP_SERVICE_ACC_NAMESPACE
+            value: '' # Enter the gcp service account namespace, stores in secret 
 
           - name: CHAOSENGINE
             value: '' # Enter the chaosengine name

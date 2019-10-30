@@ -2,11 +2,10 @@
   shell: gcloud compute disks describe {{ disk_name }} --zone {{ zone_name }} --format="csv(users)"
   register: disk_users
 
-- include: disk_loss_ansible_prerequisites.yml
+- name: Disk status check
+  template:
+    src: disk_status_check.j2
+    dest: disk_status_check.yml
 
 - include_vars:
-    file: chaosutil.yml
-   
-- name: Checking disk is attached to node
-  shell: echo "disk attached"   
-  when: "inuse == true"
+    file: disk_status_check.yml
