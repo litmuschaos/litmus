@@ -94,8 +94,8 @@
 
 -   To provide a chaos executor (runner) & exporter (monitor) of choice, provide the image names (in the form registry/user/image:tag) in the chaosEngine as shown below. The defaults at this point correspond to the litmuschaos CI images in dockerhub:
     
-  -  Executor: litmuschaos/ansible-runner:ci
-  -  Monitor: litmuschaos/chaos-exporter:ci
+    -  Executor: litmuschaos/ansible-runner:ci
+    -  Monitor: litmuschaos/chaos-exporter:ci
 
 -  Make changes in the ChaosEngine CR manifest,
         
