@@ -11,7 +11,7 @@ spec:
     spec:
       # Placeholder that is updated by the executor for automated runs
       # Provide appropriate SA (with desired permissions) if executed manually
-      serviceAccountName: CHAOS_SERVICE_ACCOUNT
+      serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
       restartPolicy: Never
       containers:
       - name: ansibletest
@@ -21,17 +21,21 @@ spec:
           - name: ANSIBLE_STDOUT_CALLBACK
             value: default
 
+           # provide application namespace
           - name: APP_NAMESPACE
-            value: default 
+            value: ""
 
+           # provide application labels
           - name: APP_LABEL
-            value: 'app=hello'
+            value: ""
 
+           # provide application kind
           - name: APP_KIND
-            value: deployment
+            value: ""
 
+            # provide target container name
           - name: TARGET_CONTAINER
-            value: "flux-test"
+            value: ""
 
           - name: NETWORK_INTERFACE
             value: "eth0"
@@ -44,7 +48,12 @@ spec:
             
           - name: LIB
             value: "pumba"
+          
+           # provide lib image
+          - name: LIB_IMAGE
+            value: "gaiaadm/pumba:0.4.8" 
 
+           # provide chaosengine name
           - name: CHAOSENGINE
             value: ""
 

@@ -1,9 +1,22 @@
 --- 
+- name: Patch the chaoslib image
+  template:
+    src:  /chaoslib/pumba/pumba.j2
+    dest: /chaoslib/pumba/pumba_kube.yml
+  vars:
+    pumba_image: "{{ lib_image }}"
+
+- name: Display pumba_kube yaml 
+  shell: >
+    cat /chaoslib/pumba/pumba_kube.yml
+  args:
+    executable: /bin/bash
+
 - block:
 
     - name: Setup pumba chaos infrastructure
       shell: >
-        kubectl apply -f /chaoslib/pumba/pumba_kube.yaml
+        kubectl apply -f /chaoslib/pumba/pumba_kube.yml
         -n {{ namespace }}
       args:
         executable: /bin/bash
@@ -136,7 +149,7 @@
 
         - name: Delete the pumba daemonset
           shell: >
-            kubectl delete -f /chaoslib/pumba/pumba_kube.yaml -n {{ namespace }}
+            kubectl delete -f /chaoslib/pumba/pumba_kube.yml -n {{ namespace }}
           args:
             executable: /bin/bash
           register: result

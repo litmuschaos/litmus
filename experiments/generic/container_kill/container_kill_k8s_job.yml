@@ -9,7 +9,7 @@ spec:
       labels:
         experiment: container-kill
     spec:
-      serviceAccountName: CHAOS_SERVICE_ACCOUNT
+      serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
       restartPolicy: Never
       containers:
       - name: ansibletest
@@ -18,16 +18,24 @@ spec:
         env:
           - name: ANSIBLE_STDOUT_CALLBACK
             value: default
+           
+          # provide application namespace
+          - name: APP_NAMESPACE 
+            value: ""
 
-          - name: APP_NAMESPACE
-            value: default 
-
+          # provide application labels
           - name: APP_LABEL
-            value: 'app=nginx'
+            value: ""
 
+           # provide lib image
+          - name: LIB_IMAGE  
+            value: "gaiaadm/pumba:0.4.8" 
+
+           # provide target container name
           - name: TARGET_CONTAINER
-            value: "nginx"
+            value: ""
 
+           # provide chaosengine name
           - name: CHAOSENGINE 
             value: ""
 
