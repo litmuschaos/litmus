@@ -1,4 +1,4 @@
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 import yaml
 import os
 import sys
@@ -93,7 +93,8 @@ def main():
 
     # Store the litmus root from bootstrap folder
     litmus_root = path = os.path.abspath(os.path.join("..", os.pardir))
-    env = Environment(loader = FileSystemLoader('./'), trim_blocks=True, lstrip_blocks=True)
+    #env = Environment(loader = FileSystemLoader('./'), trim_blocks=True, lstrip_blocks=True, autoescape=True)
+    env = Environment(loader = FileSystemLoader('./'), trim_blocks=True, lstrip_blocks=True, autoescape=select_autoescape(['yaml']))
 
     # if generate_type is chart, only create the chart(top)-level CSV & package manifests 
     if entity_type == 'chart':
