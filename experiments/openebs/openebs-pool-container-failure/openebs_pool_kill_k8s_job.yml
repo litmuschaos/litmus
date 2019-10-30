@@ -17,11 +17,11 @@ spec:
       labels:
         experiment: openebs-pool-container-failure
     spec:
-      serviceAccountName: litmus
+      serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: openebs/ansible-runner:ci
+        image: litmuschaos/ansible-runner:ci
         imagePullPolicy: Always
         env:
           - name: OPENEBS_NS

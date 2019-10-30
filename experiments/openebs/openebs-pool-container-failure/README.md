@@ -1,29 +1,41 @@
 ## Experiment Metadata
 
-| Type  | Description                                         | Storage | K8s Platform |
-| ----- | --------------------------------------------------- | ------- | ------------ |
-| Chaos | Kill the pool pod and check if gets scheduled again | OpenEBS | Any          |
+<table>
+<tr>
+<th> Type </th>
+<th>  Description  </th>
+<th> Storage </th>
+<th> K8s Platform </th>
+</tr>
+<tr>
+<td> Chaos </td>
+<td> Kill the pool container and check if gets scheduled again </td>
+<td> OPENEBS </td>
+<td> Any </td>
+</tr>
+</table>
 
 ## Entry-Criteria
 
-- Application services are accessible & pods are healthy
-- Application writes are successful 
+-   Application services are accessible & pods are healthy
+-   Application writes are successful 
 
 ## Exit-Criteria
 
-- Application services are accessible & pods are healthy
-- Data written prior to chaos is successfully retrieved/read
-- Database consistency is maintained as per db integrity check utils
-- Storage target pods are healthy
+-   Application services are accessible & pods are healthy
+-   Data written prior to chaos is successfully retrieved/read
+-   Database consistency is maintained as per db integrity check utils
+-   Storage target pods are healthy
 
 ## Notes
 
-- Typically used as a disruptive test, to cause loss of access to storage pool by killing it.
-- The pool pod should start again and it should be healthy.
+-   Typically used as a disruptive test, to cause loss of access to storage pool by killing it.
+-   The pool pod should start again and it should be healthy.
 
 ## Associated Utils 
 
-- `cstor_pool_kill.yml`,`pod_failure_by_sigkill.yaml`
+-   [pumba/pod_failure_by_sigkill.yaml](/chaoslib/pumba/pod_failure_by_sigkill.yaml) 
+-   [cstor_pool_kill.yml](/experiments/openebs/openebs-pool-container-failure/cstor_pool_kill.yml) 
 
 ### Procedure
 
@@ -53,23 +65,55 @@ The configmap data will be utilised by litmus experiments as its variables while
 
 ### Application
 
-| Parameter     | Description                                                  |
-| ------------- | ------------------------------------------------------------ |
-| APP_NAMESPACE | Namespace in which application pods are deployed             |
-| APP_LABEL     | Unique Labels in `key=value` format of application deployment |
-| APP_PVC       | Name of persistent volume claim used for app's volume mounts |
+<table>
+<tr>
+<th>  Parameter   </t>
+<th>  Description    </th>
+</tr>
+<tr> 
+<td> APP_NAMESPACE </td>
+<td> Namespace in which application pods are deployed  </td>
+</tr>
+<tr> 
+<td> APP_LABEL </td>
+<td>  Unique Labels in `key=value` format of application deployment </td>
+</tr>
+<tr> 
+<td> APP_PVC  </td>
+<td> Name of persistent volume claim used for app's volume mounts </td>
+</tr>
+</table>
 
 ### Chaos 
 
-| Parameter        | Description                      |
-| ---------------- | -------------------------------- |
-| CHAOS_TYPE       | The type of chaos to be induced. |
-| CHAOS_ITERATIONS | The number of chaos iterations   |
+<table>
+<tr>
+<th> Parameter </th>
+<th> Description </th>
+</tr>
+<tr> 
+<td> CHAOS_ITERATIONS </td>
+<td> The number of chaos iterations </td>
+</tr>
+</table>
 
 ### Health Checks 
-
-| Parameter              | Description                                                  |
-| ---------------------- | ------------------------------------------------------------ |
-| LIVENESS_APP_NAMESPACE | Namespace in which external liveness pods are deployed, if any |
-| LIVENESS_APP_LABEL     | Unique Labels in `key=value` format for external liveness pod, if any |
-| DATA_PERSISTENCE       | Data accessibility & integrity verification post recovery. To check against busybox set value: "busybox" and for percona, set value: "mysql"|
+                           
+<table>
+<tr>
+<th>  Parameter   </t>
+<th>  Description    </th>
+</tr>
+<tr> 
+<td> LIVENESS_APP_NAMESPACE </td>
+<td> Namespace in which external liveness pods are deployed, if any  </td>
+</tr>
+<tr> 
+<td> LIVENESS_APP_LABEL </td>
+<td>  Unique Labels in `key=value` format for external liveness pod, if any  </td>
+</tr>
+<tr> 
+<td> DATA_PERSISTENCE </td>
+<td> Data accessibility & integrity verification post recovery. To check                                   against busybox set value: "busybox" and for percona, set value: "mysql"  </td>
+</tr>
+</table>

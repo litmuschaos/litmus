@@ -10,7 +10,7 @@
 
 - name: Get list of pool deployments from cvr
   shell: >
-    kubectl get cvr -n {{ operator_ns }}
+    kubectl get cvr -n {{ openebs_ns }}
     -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers
     -o=jsonpath='{range .items[*]}{.metadata.labels.cstorpool\.openebs\.io\/name}{"\n"}{end}'
     | awk '{print $1}'
@@ -18,9 +18,9 @@
     executable: /bin/bash
   register: pool_deployment_list
 
-- name: Obtaining the replicasets corresponding to pool deployements.
+- name: Obtaining the replicasets corresponding to pool deployments.
   shell: >
-    kubectl get rs -l {{p_label}} -n {{ operator_ns }} --no-headers
+    kubectl get rs -l {{ pool_label }} -n {{ openebs_ns }} --no-headers
     -o=jsonpath='{.items[?(@.metadata.ownerReferences[0].name=="{{deployment}}")].metadata.name}'
   register: rs_list
   loop: "{{ pool_deployment_list.stdout_lines }}"
@@ -29,7 +29,7 @@
   
 - name: Obtaining the pool pods
   shell: >
-    kubectl get pod -l {{p_label}} -n {{ operator_ns }} --no-headers
+    kubectl get pod -l {{ pool_label }} -n {{ openebs_ns }} --no-headers
     -o=jsonpath='{.items[?(@.metadata.ownerReferences[0].name=="{{rs.stdout}}")].metadata.name}'
   register: pool_pod_list
   loop: "{{ rs_list.results }}"

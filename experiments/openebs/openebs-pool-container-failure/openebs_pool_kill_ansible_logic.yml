@@ -2,9 +2,23 @@
 - hosts: localhost
   connection: local
 
+  vars:
+    a_label: "{{ lookup('env','APP_LABEL') }}"
+    a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+    a_pvc: "{{ lookup('env','APP_PVC') }}"
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
+    c_experiment: openebs-pool-container-failure
+    chaos_duration: 600
+    chaos_iterations: "{{ lookup('env','CHAOS_ITERATIONS') }}"
+    data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
+    liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
+    liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
+    openebs_ns: "{{ lookup('env','OPENEBS_NS') }}"
+    pool_debug_msg: 'uncorrectable I/O failure|suspended|ERROR ZFS event'
+    
   vars_files:
-    - test_vars.yml
     - /mnt/parameters.yml
+    - /experiments/openebs/openebs_components.yml
 
   tasks:
     - block:
@@ -44,7 +58,7 @@
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'SOT'
-            namespace: "{{a_ns}}"
+            namespace: "{{ a_ns }}"
 
         ## DISPLAY APP INFORMATION 
  
@@ -69,7 +83,7 @@
         - name: Verify that the AUT (Application Under Test) is running
           include_tasks: "/utils/common/status_app_pod.yml"
           vars:
-            application_name: "{{app_pod_name.stdout}}"
+            application_name: "{{ app_pod_name.stdout }}"
             delay: 5
             retries: 60
 
@@ -77,7 +91,7 @@
           include: "{{ data_consistency_util_path }}"
           vars:
             status: 'LOAD'
-            ns: "{{a_ns}}"
+            ns: "{{ a_ns }}"
             app_pod_name: "{{ app_pod_name.stdout }}"
           when: data_persistence != ''  
 
@@ -98,7 +112,7 @@
           include: "{{ data_consistency_util_path }}"
           vars:
             status: 'VERIFY'
-            ns: "{{a_ns}}"
+            ns: "{{ a_ns }}"
             app_pod_name: "{{ app_pod_name.stdout }}"
           when: data_persistence != '' 
 
@@ -114,7 +128,7 @@
           include: "{{ data_consistency_util_path }}"
           vars:
             status: 'DELETE'
-            ns: "{{a_ns}}"
+            ns: "{{ a_ns }}"
             app_pod_name: "{{ new_app_pod.stdout }}"
           when: data_persistence != '' 
 
@@ -134,4 +148,4 @@
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'
-            namespace: "{{a_ns}}"
+            namespace: "{{ a_ns }}"
