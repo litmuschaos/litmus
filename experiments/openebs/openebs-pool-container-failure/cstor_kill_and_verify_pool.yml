@@ -16,7 +16,7 @@
               
 - name: Get the runningStatus of pool pod
   shell: >
-    kubectl get pod {{ cstor_pool_pod }} -n {{ operator_ns }}
+    kubectl get pod {{ cstor_pool_pod }} -n {{ openebs_ns }}
     -o=jsonpath='{range .status.containerStatuses[*]}{.state}{"\n"}{end}' |
     grep -w running | wc -l
   args:
@@ -29,14 +29,14 @@
 - include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yaml
   vars:
     action: "killapp"
-    namespace: "{{ operator_ns }}"
+    namespace: "{{ openebs_ns }}"
     label: "app=cstor-pool"
     app_pod: "{{ cstor_pool_pod }}"
     app_container: "cstor-pool"
 
 - name: Check for pool pod in running state
   shell: >
-    kubectl get pod {{ cstor_pool_pod }} -n {{ operator_ns }} |
+    kubectl get pod {{ cstor_pool_pod }} -n {{ openebs_ns }} |
     grep -w "Running" | wc -l
   args:
     executable: /bin/bash
@@ -47,7 +47,7 @@
 
 - name: Get the runningStatus of pool pod
   shell: >
-    kubectl get pod {{ cstor_pool_pod }} -n {{ operator_ns }}
+    kubectl get pod {{ cstor_pool_pod }} -n {{ openebs_ns }}
     -o=jsonpath='{range .status.containerStatuses[*]}{.state}{"\n"}{end}' |
     grep -w running | wc -l
   args:

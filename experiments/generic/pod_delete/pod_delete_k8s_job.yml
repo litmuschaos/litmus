@@ -11,7 +11,7 @@ spec:
     spec:
       # Placeholder that is updated by the executor for automated runs
       # Provide appropriate SA (with desired permissions) if executed manually
-      serviceAccountName: litmus
+      serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
       restartPolicy: Never
       containers:
       - name: ansibletest
@@ -19,33 +19,36 @@ spec:
         imagePullPolicy: Always
         env:
           - name: ANSIBLE_STDOUT_CALLBACK
-            value: default
+            value: 'default'
 
+          # provide application namespace
           - name: APP_NAMESPACE
-            value: ""
+            value: ''
 
+          # provide application labels
           - name: APP_LABEL
             value: ''
 
+           # provide application kind
           - name: APP_KIND
-            value: deployment
+            value: ''
 
           - name: TOTAL_CHAOS_DURATION
-            value: "15"
+            value: '15'
 
           - name: CHAOS_INTERVAL
-            value: "5"
+            value: '5'
 
           - name: FORCE
-            value: "true"
+            value: 'true'
 
           ## env var that describes the library used to execute the chaos
           ## default: litmus. Supported values: litmus, powerfulseal, chaoskube
           - name: LIB
-            value: ""
+            value: ''
 
           - name: CHAOSENGINE
-            value: ""
+            value: ''
 
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:
