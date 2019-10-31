@@ -25,6 +25,14 @@ spec:
           - name: APP_NAMESPACE
             value: ''
 
+           # provide application labels
+          - name: APP_LABEL
+            value: ''
+
+           # provide application kind
+          - name: APP_KIND
+            value: ''
+
           # provide application labels
           - name: APP_LABEL
             value: ''
@@ -33,12 +41,15 @@ spec:
           - name: APP_KIND
             value: ''
 
-           # provide target container name
           - name: TARGET_CONTAINER
             value: ''
 
           - name: NETWORK_INTERFACE
             value: 'eth0'
+
+           # provide lib image
+          - name: LIB_IMAGE
+            value: 'gaiaadm/pumba:0.4.8' 
 
           - name: NETWORK_LATENCY
             value: '60000' # in ms
@@ -49,6 +60,7 @@ spec:
           - name: LIB
             value: 'pumba'
 
+           # provide chaosengine name
           - name: CHAOSENGINE
             value: ''
 
