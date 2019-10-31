@@ -1,14 +1,15 @@
+# All code here is not indented because j2 is space sensitive
 # Initially, it "inuse" set to false
-{% set ns = node(inuse=false) %}
+{% set disk = namespace(inuse=false) %}
 {% set expect_user = 'https://www.googleapis.com/compute/v1/projects/' + project_id + '/zones/' + zone_name + '/instances/' + node_name %}
 # loop through all the disk users and checks if current_user is equal to expect_user
 {% for current_user in disk_users.stdout_lines  %}
 {% if current_user == expect_user %}
 # If the condition is true, then set "inuse" to true
-{% set ns.inuse = true %}
+{% set disk.inuse = true %}
 {% endif %}
 {% endfor %}
-{% if ns.inuse == true %}
+{% if disk.inuse == true %}
 inuse: true
 {% else %}
 inuse: false

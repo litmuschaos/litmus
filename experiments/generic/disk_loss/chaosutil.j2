@@ -1,10 +1,6 @@
 # All code here is not indented because j2 is space sensitive
 
 # checks if cloud_platform is set or not
-{% if cloud_platform is defined and gcp_account_name is defined and gcp_account_ns is defined and cloud_platform == 'GCP' or cloud_platform == 'AWS' %}
+{% if cloud_platform is defined and cloud_platform == 'GCP' or cloud_platform == 'AWS' %}
 c_util: /chaoslib/litmus/platform/gke/disk_loss.yml
-update_chaos_result: /utils/runtime/update_chaos_result_resource.yml
-pod_status: /utils/common/status_app_pod.yml
-gcp_disk_status: /utils/cloud/gcp/status_disk.yml
-gcloud_config: /utils/cloud/gcp/gcloud_configure.yml
 {% endif %}

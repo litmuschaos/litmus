@@ -5,7 +5,7 @@
     a_check: "{{ lookup('env', 'APP_CHECK') }}"
     a_label: "{{ lookup('env','APP_LABEL') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
-    c_duration: "{{ lookup('env','CHAOS_DURATION') }}"
+    c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
     c_experiment: disk-loss
     cloud_platform: "{{ lookup('env','CLOUD_PLATFORM') }}"
     c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
@@ -32,14 +32,14 @@
           when: lookup('env','CHAOSENGINE')
 
         # RECORD START-OF-EXPERIMENT IN LITMUSCHAOS RESULT CR
-        - include_tasks: "{{ update_chaos_result }}"
+        - include_tasks: "/utils/runtime/update_chaos_result_resource.yml"
           vars:
             status: 'SOT'
             namespace: "{{ c_ns }}"
 
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
         - name: Verify that the AUT (Application Under Test) is running
-          include_tasks: "{{ pod_status }}"
+          include_tasks: "/utils/common/status_app_pod.yml"
           vars:
             app_ns: "{{ a_ns }}"
             app_lkey: "{{ a_label.split('=')[0] }}"
@@ -48,17 +48,18 @@
             retries: 60
           when: "a_check == 'true'"
 
-        # Gcloud configuration task
-        - name: Gcloud configuration
-          include_tasks: "{{ gcloud_config }}"
+        # Gcloud authentication
+        - name: Gcloud authentication
+          include_tasks: "/utils/cloud/gcp/gcloud_configure.yml"
           when: "cloud_platform == 'GCP'"
 
         ## PRE-CHAOS DISK LIVENESS CHECK
         - name: Verify that the disk is connected to node (pre)
-          include_tasks: "{{ gcp_disk_status }}"
+          include_tasks: "/utils/cloud/gcp/status_disk.yml"
 
-        - name: Checking disk is attached to node
-          shell: echo "disk attached"   
+        # Checking disk is attached to node
+        - debug: 
+            msg: echo "disk attached"   
           when: "inuse == true"
 
          ## INJECTING CHAOS 
@@ -67,7 +68,7 @@
             
         # POST-CHAOS APPLICATION LIVENESS CHECK
         - name: Verify AUT liveness post fault-injection
-          include_tasks: "{{ pod_status }}"
+          include_tasks: "/utils/common/status_app_pod.yml"
           vars:
             app_ns: "{{ a_ns }}" 
             app_lkey: "{{ a_label.split('=')[0] }}"
@@ -78,10 +79,11 @@
 
         ## POST-CHAOS DISK LIVENESS CHECK
         - name: Verify that the disk is connected to node (post)
-          include_tasks: "{{ gcp_disk_status }}"
+          include_tasks: "/utils/cloud/gcp/status_disk.yml"
 
-        - name: Checking disk is attached to node
-          shell: echo "disk attached"   
+        # Checking disk is attached to node
+        - debug: 
+            msg: echo "disk attached"   
           when: "inuse == true"
 
         - set_fact:
@@ -95,7 +97,7 @@
       always:
 
         ## RECORD END-OF-TEST IN LITMUSCHAOS RESULT CR
-        - include_tasks: "{{ update_chaos_result }}"
+        - include_tasks: "/utils/runtime/update_chaos_result_resource.yml"
           vars:
             status: 'EOT'
             namespace: "{{ c_ns }}"

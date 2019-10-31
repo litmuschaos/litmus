@@ -1,8 +1,5 @@
-- name: Getting gcloud service account key
-  shell: kubectl get secret {{ gcp_account_name }} -o=jsonpath="{.data.data}" -n {{ c_ns }} | base64 --decode >> secret.json
-
 - name: authenticate gcloud service account
-  shell: gcloud auth activate-service-account --key-file=secret.json
+  shell: gcloud auth activate-service-account --key-file=/mnt/parameters.yml
 
 - name: Gcloud project setting
   shell: gcloud config set project {{ project_id }}
