@@ -18,6 +18,22 @@ spec:
         env:
           - name: ANSIBLE_STDOUT_CALLBACK
             value: 'default'
+           
+          # provide application namespace
+          - name: APP_NAMESPACE 
+            value: ''
+
+          # provide application labels
+          - name: APP_LABEL
+            value: ''
+
+           # provide lib image
+          - name: LIB_IMAGE  
+            value: 'gaiaadm/pumba:0.4.8' 
+
+           # provide target container name
+          - name: TARGET_CONTAINER
+            value: ''
 
           # provide application namespace
           - name: APP_NAMESPACE
@@ -25,7 +41,7 @@ spec:
 
             # provide application labels
           - name: APP_LABEL
-            value: ''
+            value: ''>>>>>>> master
 
           # provide target container
           - name: TARGET_CONTAINER

@@ -20,6 +20,18 @@ spec:
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
             value: 'default'
+
+           # provide application namespace
+          - name: APP_NAMESPACE
+            value: ''
+
+           # provide application labels
+          - name: APP_LABEL
+            value: ''
+
+           # provide application kind
+          - name: APP_KIND
+            value: ''
  
           # provide application namespace
           - name: APP_NAMESPACE
@@ -48,7 +60,12 @@ spec:
             
           - name: LIB
             value: 'pumba'
+          
+           # provide lib image
+          - name: LIB_IMAGE
+            value: 'gaiaadm/pumba:0.4.8' 
 
+           # provide chaosengine name
           - name: CHAOSENGINE
             value: ''
 
