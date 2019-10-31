@@ -11,7 +11,7 @@
   retries: 150
 
 - name: Checking {{ application_name }} pod is in running state
-  shell: kubectl get pods -n {{ a_ns }} -l {{ a_label }} -o custom-columns=:.status.phase --no-headers 
+  shell: kubectl get pods -n {{ a_ns }} -l {{app_lkey}}="{{app_lvalue}}" -o custom-columns=:.status.phase --no-headers 
   register: result
   until: "((result.stdout.split()|unique)|length) == 1 and 'Running' in result.stdout"
   delay: '{{ delay }}'

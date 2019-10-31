@@ -43,6 +43,7 @@
     limit_storage_KB: "{{ limit_value_storage.stdout }}"
 
 - include_tasks: /chaoslib/litmus/disk_fill/convert_fill_percentage.yml
+
 - name: Get the Container ID
   shell: >
     kubectl get pods {{ pod_name.stdout }} -n {{ a_ns }} -o jsonpath='{.status.containerStatuses[?(@.name=="{{ c_container }}")].containerID}' | awk -F'//' '{print $2}'

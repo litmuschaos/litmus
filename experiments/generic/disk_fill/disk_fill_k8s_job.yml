@@ -9,7 +9,7 @@ spec:
       labels:
         experiment: disk-fill
     spec:
-      serviceAccountName: CHAOS_SERVICE_ACCOUNT
+      serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
       restartPolicy: Never
       containers:
       - name: ansibletest
@@ -17,25 +17,25 @@ spec:
         imagePullPolicy: Always
         env:
           - name: ANSIBLE_STDOUT_CALLBACK
-            value: default
+            value: 'default'
 
           - name: APP_NAMESPACE
-            value: default 
+            value: '' 
 
           - name: APP_LABEL
-            value: 'app=hello'
+            value: ''
 
           - name: TARGET_CONTAINER
-            value: "nginx"
+            value: ''
 
           - name: CHAOSENGINE 
-            value: ""
+            value: ''
 
           - name: FILL_PERCENTAGE
-            value: "60"
+            value: ''
           
           - name: TOTAL_CHAOS_DURATION
-            value: "60"
+            value: ''
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/generic/disk_fill/disk_fill_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
