@@ -1,7 +1,14 @@
 ---
+- name: Checking {{ application_name }} pod is in running state
+  shell: kubectl get pods -n {{ a_ns }} -l {{ a_label }} -o custom-columns=:.status.phase --no-headers
+  register: result
+  until: "((result.stdout.split()|unique)|length) == 1 and 'Running' in result.stdout"
+  delay: '{{ delay }}'
+  retries: '{{ retries }}'
+
 - name: Get the container status of application.
   shell: >
-     kubectl get pod -n {{ app_ns }} -l {{ a_label }}
+     kubectl get pod -n {{ a_ns }} -l {{ a_label }}
      -o custom-columns=:..containerStatuses[].state --no-headers | grep -w "running"
   args:
     executable: /bin/bash
@@ -10,10 +17,5 @@
   delay: 2
   retries: 150
 
-- name: Checking {{ application_name }} pod is in running state
-  shell: kubectl get pods -n {{ a_ns }} -l {{app_lkey}}="{{app_lvalue}}" -o custom-columns=:.status.phase --no-headers 
-  register: result
-  until: "((result.stdout.split()|unique)|length) == 1 and 'Running' in result.stdout"
-  delay: '{{ delay }}'
-  retries: '{{ retries }}'
+
 
