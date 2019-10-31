@@ -105,7 +105,7 @@
     - name: Force kill the application pod using pumba
       shell: >
         kubectl exec {{ pumba_pod.stdout}} -n {{ namespace }}
-        -- pumba kill --signal SIGKILL re2:k8s_{{ app_container }}_;
+        -- pumba kill --signal SIGKILL re2:k8s_{{ app_container }}_{{ app_pod_ut }};
       args:
         executable: /bin/bash
       ignore_errors: true

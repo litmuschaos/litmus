@@ -35,7 +35,19 @@ spec:
           - name: TARGET_CONTAINER
             value: ''
 
-           # provide chaosengine name
+          # provide application namespace
+          - name: APP_NAMESPACE
+            value: ''
+
+            # provide application labels
+          - name: APP_LABEL
+            value: ''>>>>>>> master
+
+          # provide target container
+          - name: TARGET_CONTAINER
+            value: ''
+
+          # provide chaosengine name
           - name: CHAOSENGINE 
             value: ''
 
