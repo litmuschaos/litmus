@@ -15,21 +15,21 @@
 
 ## Entry-Criteria
 
-- The disk is healthy before chaos injection
+-   The disk is healthy before chaos injection
 
 ## Exit-Criteria
 
-- The disk is healthy post chaos injection
+-   The disk is healthy post chaos injection
 
 ## Details
 
-- In this experiment, the external disk is detached from the node and wait for the chaos duration for automatically attached. If it failed to attach manually. It will be attached manually.
-- This chaos experiment is in beta state.
+-   In this experiment, the external disk is detached from the node and wait for the chaos duration for automatically attached. If it failed to attach manually. It will be attached manually.
+-   This chaos experiment is in beta state.
 
 ## Associated Chaos Utils 
 
-- litmuslib
-  - [litmus/disk_losss.yml](/chaoslib/litmus/platform/gke/disk_loss.yml)
+-   litmuslib
+    -   [litmus/disk_losss.yml](/chaoslib/litmus/platform/gke/disk_loss.yml)
 
 ## Litmusbook Environment Variables
 
@@ -113,8 +113,8 @@
 
 ## Procedure
 
-- Identify the values for the mandatory ENV variables
-- Create the chaos job via `kubectl create -f disk_loss_k8s_job.yml`
-- Check the result of the experiment via `kubectl describe chaosresult disk_loss` (prefix chaosengine name to experiment name if applicable)
-- View experiment logs via `kubectl logs -f <chaos-pod-name>`
+-   Identify the values for the mandatory ENV variables
+-   Create the chaos job via `kubectl create -f disk_loss_k8s_job.yml`
+-   Check the result of the experiment via `kubectl describe chaosresult disk_loss` (prefix chaosengine name to experiment name if applicable)
+-   View experiment logs via `kubectl logs -f <chaos-pod-name>`
 
