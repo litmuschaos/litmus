@@ -6,12 +6,6 @@
   vars:
     pumba_image: "{{ lib_image }}"
 
-- name: Display pumba_kube yaml 
-  shell: >
-    cat /chaoslib/pumba/pumba_kube.yml
-  args:
-    executable: /bin/bash
-
 - block: 
     - name: Setup pumba chaos infrastructure
       shell: >
