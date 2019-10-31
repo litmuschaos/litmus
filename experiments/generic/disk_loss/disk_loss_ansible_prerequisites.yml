@@ -1,0 +1,4 @@
+- name: Identify the chaos util to be invoked 
+  template:
+    src: chaosutil.j2
+    dest: chaosutil.yml
