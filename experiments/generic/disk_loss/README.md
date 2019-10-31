@@ -1,8 +1,17 @@
 ## Experiment Metadata
 
-| Type  | Description              | K8s Platform |
-| ----- | ------------------------ | ------------ |
-| Chaos | External Disk loss from the node  | GKE/AWS      |
+<table>
+<tr>
+<th> Type </th>
+<th>  Description  </th>
+<th> K8s Platform </th>
+</tr>
+<tr>
+<td> Chaos </td>
+<td> External Disk loss from the node </td>
+<td> GKE/AWS </td>
+</tr>
+</table>
 
 ## Entry-Criteria
 
@@ -26,25 +35,81 @@
 
 ### Application
 
-| Parameter     | Description                                                  |Type|
-| ------------- | ------------------------------------------------------------ |----
-| APP_CHECK | If it checks to true, the experiment will check the status of the application.             |Optional
-| APP_NAMESPACE | Namespace in which application pods are deployed             |Optional
-| APP_LABEL     | Unique Labels in `key=value` format of application deployment |Optional
+<table>
+<tr>
+<th> Parameter </th>
+<th> Description  </th>
+<th> Type </th>
+</tr>
+<tr>
+<td> APP_CHECK </td>
+<td> If it checks to true, the experiment will check the status of the application. </td>
+<td> Optional </td>
+</tr>
+<tr>
+<td> APP_NAMESPACE </td>
+<td> Namespace in which application pods are deployed </td>
+<td> Optional </td>
+</tr>
+<tr>
+<td> APP_LABEL </td>
+<td> Unique Labels in `key=value` format of application deployment </td>
+<td> Optional </td>
+</tr>
+</table>
 
 ### Chaos
 
-| Parameter     | Description                                                  |Type|
-| ------------- | ------------------------------------------------------------ |----
-| TOTAL_CHAOS_DURATION |The time duration for chaos insertion (sec)             |Mandatory
-| CHAOS_NAMESPACE | This is a chaos namespace which will create all infra chaos resources in that namespace | Mandatory
-| CLOUD_NAMESPACE | Cloud Platform name | Mandatory
-| PROJECT_ID     | GCP project ID|Mandatory
-| NODE_NAME     | Node name |Mandatory
-| DISK_NAME     | Disk Name|Mandatory
-| ZONE_NAME     | Zone Name|Mandatory
-| CHAOSENGINE| ChaosEngine CR name associated with the experiment instance| Optional
-| CHAOS_SERVICE_ACCOUNT    | Service account used by the powerfulseal deployment | Optional
+<table>
+<tr>
+<th> Parameter </th>
+<th> Description  </th>
+<th> Type </th>
+</tr>
+<tr>
+<td> TOTAL_CHAOS_DURATION </td>
+<td> The time duration for chaos insertion (sec) </td>
+<td> Mandatory </td>
+</tr>
+<tr>
+<td> CHAOS_NAMESPACE </td>
+<td> Cloud Platform name </td>
+<td> Mandatory </td>
+</tr>
+<td> CLOUD_NAMESPACE </td>
+<td> This is a chaos namespace which will create all infra chaos resources in that namespace </td>
+<td> Mandatory </td>
+</tr>
+</tr>
+<td> PROJECT_ID </td>
+<td> GCP project ID </td>
+<td> Mandatory </td>
+</tr>
+</tr>
+<td> NODE_NAME </td>
+<td> Node name of the cluster </td>
+<td> Mandatory </td>
+</tr>
+<td> DISK_NAME </td>
+<td> Disk Name of the node, it must be an external disk. </td>
+<td> Mandatory </td>
+</tr>
+</tr>
+</tr>
+<td> ZONE_NAME </td>
+<td> Zone Name of the node </td>
+<td> Mandatory </td>
+</tr>
+</tr>
+<td> CHAOSENGINE </td>
+<td> ChaosEngine CR name associated with the experiment instance </td>
+<td> Mandatory </td>
+</tr>
+<td> CHAOS_SERVICE_ACCOUNT </td>
+<td> Service account used by the litmus </td>
+<td> Mandatory </td>
+</tr>
+</table>
 
 ## Procedure
 
