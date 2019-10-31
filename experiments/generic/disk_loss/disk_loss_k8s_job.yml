@@ -3,7 +3,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   generateName: disk-loss-
-  namespace: %CHAOSNAMESPACE%
+  namespace: %CHAOS_NAMESPACE%
 spec:
   template:
     metadata:

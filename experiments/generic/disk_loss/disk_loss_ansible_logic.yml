@@ -10,8 +10,6 @@
     cloud_platform: "{{ lookup('env','CLOUD_PLATFORM') }}"
     c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
     disk_name: "{{ lookup('env','DISK_NAME') }}"
-    gcp_account_name: "{{ lookup('env','GCP_SERVICE_ACC_NAME') }}"
-    gcp_account_ns: "{{ lookup('env','GCP_SERVICE_ACC_NAMESPACE') }}"
     node_name: "{{ lookup('env','NODE_NAME') }}"
     project_id: "{{ lookup('env','PROJECT_ID') }}"
     zone_name: "{{ lookup('env','ZONE_NAME') }}"
