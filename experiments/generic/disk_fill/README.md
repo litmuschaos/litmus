@@ -92,9 +92,11 @@
 ## Procedure
 
 -  Identify the values for the mandatory ENV variables
+
 -  Create the chaos job via `kubectl create -f disk_fill_k8s_job.yml`
--  Check result of the experiment via `kubectl describe chaosresult disk-fill:x
-` (prefix chaosengine name to experiment name if applicable)
+
+-  Check result of the experiment via `kubectl describe chaosresult disk-fill` (prefix chaosengine name to experiment name if applicable)
+
 -  View experiment logs via `kubectl logs -f <chaos-pod-name>`
 
 ## Limitations
