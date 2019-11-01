@@ -34,8 +34,7 @@
 
         - name: Verify that the AUT (Application Under Test) is running 
           include_tasks: /utils/common/status_app_pod.yml
-          vars:
-            app_ns: "{{ a_ns }}"       
+          vars:     
             delay: 1
             retries: 60
 
@@ -49,8 +48,7 @@
 
         - name: Verify AUT liveness post fault-injection
           include_tasks: /utils/common/status_app_pod.yml
-          vars:
-            app_ns: "{{ a_ns }}"      
+          vars:     
             delay: 1
             retries: 60        
 
