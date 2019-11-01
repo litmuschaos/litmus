@@ -33,7 +33,6 @@
     executable: /bin/bash
   register: req_value_storage
 
-
 - name: Fetch the value of Request ephemeral-storage Unit in KB
   set_fact:
     req_storage_KB: "{{ req_value_storage.stdout }}"
