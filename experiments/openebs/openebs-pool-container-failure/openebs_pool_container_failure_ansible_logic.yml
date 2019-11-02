@@ -92,7 +92,7 @@
           vars:
             status: 'LOAD'
             ns: "{{ a_ns }}"
-            app_pod_name: "{{ app_pod_name.stdout }}"
+            pod_name: "{{ app_pod_name.stdout }}"
           when: data_persistence != ''  
 
         ## STORAGE FAULT INJECTION 
@@ -113,7 +113,7 @@
           vars:
             status: 'VERIFY'
             ns: "{{ a_ns }}"
-            app_pod_name: "{{ app_pod_name.stdout }}"
+            pod_name: "{{ app_pod_name.stdout }}"
           when: data_persistence != '' 
 
         - name: Get application pod name
@@ -129,7 +129,7 @@
           vars:
             status: 'DELETE'
             ns: "{{ a_ns }}"
-            app_pod_name: "{{ new_app_pod.stdout }}"
+            pod_name: "{{ new_app_pod.stdout }}"
           when: data_persistence != '' 
 
           # Check application liveness post chaos

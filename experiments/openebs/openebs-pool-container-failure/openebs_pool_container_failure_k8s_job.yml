@@ -24,11 +24,12 @@ spec:
         image: litmuschaos/ansible-runner:ci
         imagePullPolicy: Always
         env:
-          - name: OPENEBS_NS
-            value: openebs
-
           - name: ANSIBLE_STDOUT_CALLBACK
             value: 'default'
+           
+           #provide openebs namespace
+          - name: OPENEBS_NS
+            value: 'openebs'
 
          # provide application namespace
           - name: APP_NAMESPACE
