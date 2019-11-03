@@ -17,12 +17,12 @@ spec:
       labels:
         name: openebs-pool-pod-failure
     spec:
-      serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
+      serviceAccountName: litmus
       restartPolicy: Never
 
       containers:
       - name: ansibletest
-        image: litmuschaos/ansible-runner:ci
+        image: shubh214/ansible-runner:ci
         imagePullPolicy: Always
         env:
           - name: ANSIBLE_STDOUT_CALLBACK
@@ -34,15 +34,18 @@ spec:
 
           #provide application namespace
           - name: APP_NAMESPACE
-            value: ''
+            value: 'shubham'
 
           #provide application labels
           - name: APP_LABEL
-            value: ''
+            value: 'name=percona'
 
            #provide application pvc
           - name: APP_PVC
-            value: ''
+            value: 'percona-mysql-claim'
+
+          - name: FORCE
+            value: 'true'
 
           - name: LIVENESS_APP_LABEL
             value: ''
@@ -57,7 +60,7 @@ spec:
             value: '2'
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./experiments/openebs/openebs_pool_pod_failure/openebs_pool_pod_failure_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
+        args: ["-c", "ansible-playbook ./experiments/openebs/openebs-pool-pod-failure/openebs_pool_pod_failure_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
 
         volumeMounts:
         - name: parameters

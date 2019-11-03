@@ -24,11 +24,12 @@
     executable: /bin/bash
   register: cstor_pool_pod
 
+# including chaoslib kill-random-pod
 - name: Delete the cstor pool pod for reschedule
-  shell: >
-    kubectl delete pod {{ cstor_pool_pod.stdout }} -n {{ openebs_ns }}
-  args:
-    executable: /bin/bash
+  include_tasks: /chaoslib/litmus/kill_random_pod.yml
+  vars:
+    app_ns: "{{ openebs_ns }}"
+    app_pod_name: "{{ cstor_pool_pod.stdout }}"
 
 - name: Check for pool pod in running state
   shell: >

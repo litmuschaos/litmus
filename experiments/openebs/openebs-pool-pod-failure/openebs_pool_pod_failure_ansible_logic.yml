@@ -6,10 +6,12 @@
     a_label: "{{ lookup('env','APP_LABEL') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_pvc: "{{ lookup('env','APP_PVC') }}"
+    c_duration: 600
+    c_interval: 5
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     c_experiment: openebs-pool-pod-failure
-    chaos_duration: 600
-    chaos_iterations: "{{ lookup('env','CHAOS_ITERATIONS') }}"
+    c_force: "{{ lookup('env','FORCE') }}"
+    c_iterations: "{{ lookup('env','CHAOS_ITERATIONS') }}"
     data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
     liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
     liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
@@ -38,7 +40,7 @@
 
         - name: Record the chaos util path
           set_fact:
-            chaos_util_path: "/experiments/openebs/openebs_pool_pod_failure/cstor_pool_delete.yml"
+            chaos_util_path: "/experiments/openebs/openebs-pool-pod-failure/cstor_pool_delete.yml"
 
         - name: Record the data consistency util path
           set_fact:
@@ -101,7 +103,7 @@
 
         - include: "{{ chaos_util_path }}"
           error_messages: "{{ pool_debug_msg }}"
-          post_chaos_soak_time : "{{ chaos_duration }}"
+          post_chaos_soak_time : "{{ c_duration }}"
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
