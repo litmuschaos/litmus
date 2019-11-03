@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: data-persistence-configmap
+  name: pool-pod-delete
 data:
   parameters.yml: |
 
@@ -17,12 +17,12 @@ spec:
       labels:
         name: openebs-pool-pod-failure
     spec:
-      serviceAccountName: litmus
+      serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
       restartPolicy: Never
 
       containers:
       - name: ansibletest
-        image: shubh214/ansible-runner:ci
+        image: litmuschaos/ansible-runner:ci
         imagePullPolicy: Always
         env:
           - name: ANSIBLE_STDOUT_CALLBACK
@@ -34,15 +34,15 @@ spec:
 
           #provide application namespace
           - name: APP_NAMESPACE
-            value: 'shubham'
+            value: ''
 
           #provide application labels
           - name: APP_LABEL
-            value: 'name=percona'
+            value: ''
 
            #provide application pvc
           - name: APP_PVC
-            value: 'percona-mysql-claim'
+            value: ''
 
           - name: FORCE
             value: 'true'
@@ -68,4 +68,4 @@ spec:
       volumes:
         - name: parameters
           configMap:
-            name: data-persistence-configmap
+            name: pool-pod-delete

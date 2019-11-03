@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: data-persistence-configmap
+  name: pool-container-kill
 data:
   parameters.yml: |
 
@@ -43,6 +43,10 @@ spec:
           - name: APP_PVC
             value: ''
 
+           # provide lib image
+          - name: LIB_IMAGE  
+            value: 'gaiaadm/pumba:0.4.8'
+
           - name: LIVENESS_APP_LABEL
             value: ''
 
@@ -67,4 +71,4 @@ spec:
       volumes:
         - name: parameters
           configMap:
-            name: data-persistence-configmap
+            name: pool-container-kill
