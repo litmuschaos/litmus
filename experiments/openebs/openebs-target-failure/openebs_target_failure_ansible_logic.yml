@@ -6,18 +6,20 @@
     a_label: "{{ lookup('env','APP_LABEL') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_pvc: "{{ lookup('env','APP_PVC') }}"
-    c_duration: 600
-    c_interval: 5
-    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
-    c_experiment: openebs-pool-pod-failure
+    c_experiment: openebs-target-failure
     c_force: "{{ lookup('env','FORCE') }}"
-    c_iterations: "{{ lookup('env','CHAOS_ITERATIONS') }}"
+    c_interval: 5
+    chaos_duration: 120
+    chaos_type: "{{ lookup('env','CHAOS_TYPE') }}"
+    cri: "{{ lookup('env','CONTAINER_RUNTIME') }}"
     data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
+    deploy_type: "{{ lookup('env','DEPLOY_TYPE') }}"
+    lib_image: "{{ lookup('env','LIB_IMAGE') }}"
     liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
     liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
-    openebs_ns: openebs
-    pool_debug_msg: 'uncorrectable I/O failure|suspended|ERROR ZFS event'
-   
+    openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
+    target_container: "{{ lookup('env','TARGET_CONTAINER') }}"
+
   vars_files:
     - /mnt/parameters.yml
     - /experiments/openebs/openebs_components.yml
@@ -26,38 +28,27 @@
     - block:
 
          ## PRE-CHAOS APPLICATION LIVENESS CHECK
-
         - include_tasks: /utils/common/application_liveness_check.yml
           when: liveness_label != ''
 
-        - name: Identify the data consistency util to be invoked
-          template:
-            src: data_persistence.j2
-            dest: data_persistence.yml
+        - include: test_prerequisites.yml
 
         - include_vars:
             file: data_persistence.yml
 
+        - include_vars:
+            file: chaosutil.yml
+
         - name: Record the chaos util path
-          set_fact:
-            chaos_util_path: "/experiments/openebs/openebs-pool-pod-failure/cstor_pool_delete.yml"
+          set_fact: 
+            chaos_util_path: "{{ chaosutil }}"
 
         - name: Record the data consistency util path
           set_fact:
             data_consistency_util_path: "{{ consistencyutil }}"
           when: data_persistence != ''
 
-        ## GENERATE EXP RESULT NAME
-        - block:
-
-            - name: Construct chaos result name (experiment_name)
-              set_fact:
-                c_result: "{{ c_engine }}-{{ c_experiment }}"
-
-          when: c_engine != ''
-
         ## RECORD START-OF-TEST IN LITMUS RESULT CR
-
         - include_tasks: /utils/runtime/create_testname.yml
 
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
@@ -71,56 +62,20 @@
           debug: 
             msg: 
               - "The application info is as follows:"
-              - "Namespace    : {{ a_ns }}"
-              - "Label        : {{ a_label }}"
-              - "PVC          : {{ a_pvc }}"  
+              - "Namespace           : {{ a_ns }}"
+              - "Target Namespace    : {{ openebs_ns }}"
+              - "Label               : {{ a_label }}"
+              - "PVC                 : {{ a_pvc }}"  
+              - "StorageClass        : {{ sc }}"
 
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
-        - name: Get application pod name 
-          shell: >
-            kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers
-            -o=custom-columns=NAME:".metadata.name"
-          args:
-            executable: /bin/bash
-          register: app_pod_name 
 
-        - name: Verify that the AUT (Application Under Test) is running
+        - name: Verify that the AUT (Application Under Test) is running 
           include_tasks: "/utils/common/status_app_pod.yml"
-          vars:
-            application_name: "{{ app_pod_name.stdout }}"
+          vars:   
+            application_name: "{{ app_pod_name.stdout }}"  
             delay: 5
             retries: 60
-
-        - name: Create some test data 
-          include: "{{ data_consistency_util_path }}"
-          vars:
-            status: 'LOAD'
-            ns: "{{ a_ns }}"
-            pod_name: "{{ app_pod_name.stdout }}"
-          when: data_persistence != ''  
-
-        ## STORAGE FAULT INJECTION 
-
-        - include: "{{ chaos_util_path }}"
-          error_messages: "{{ pool_debug_msg }}"
-          post_chaos_soak_time : "{{ c_duration }}"
-
-        ## POST-CHAOS APPLICATION LIVENESS CHECK
-
-        - name: Verify AUT liveness post fault-injection
-          include_tasks: "/utils/common/status_app_pod.yml"
-          vars:
-            application_name: "{{ app_pod_name.stdout }}"
-            delay: 5
-            retries: 60
- 
-        - name: Verify application data persistence  
-          include: "{{ data_consistency_util_path }}"
-          vars:
-            status: 'VERIFY'
-            ns: "{{ a_ns }}"
-            pod_name: "{{ app_pod_name.stdout }}"
-          when: data_persistence != '' 
 
         - name: Get application pod name
           shell: >
@@ -128,19 +83,60 @@
             -o=custom-columns=NAME:".metadata.name"
           args:
             executable: /bin/bash
-          register: new_app_pod  
+          register: app_pod_name    
 
-        - name: Verify successful database delete
+        - name: Create some test data
           include: "{{ data_consistency_util_path }}"
           vars:
-            status: 'DELETE'
+            status: 'LOAD'
             ns: "{{ a_ns }}"
-            pod_name: "{{ new_app_pod.stdout }}"
-          when: data_persistence != '' 
+            pod_name: "{{ app_pod_name.stdout }}"
+          when: data_persistence != ''
 
-          # Check application liveness post chaos
+        ## STORAGE FAULT INJECTION 
+
+        - include: "{{ chaos_util_path }}"
+  
+        ## POST-CHAOS APPLICATION LIVENESS CHECK
+
+        - name: Wait (soak) for I/O on pools 
+          wait_for:
+            timeout: "{{ chaos_duration }}"
+
+        - name: Verify AUT liveness post fault-injection
+          include_tasks: "/utils/common/status_app_pod.yml"
+          vars:
+            application_name: "{{ app_pod_name.stdout }}"    
+            delay: 5
+            retries: 60        
+
+        ## POST-CHAOS APPLICATION LIVENESS CHECK
         - include_tasks: /utils/common/application_liveness_check.yml
-          when: liveness_label != ''  
+          when: liveness_label != ''
+
+        - name: Get application pod name
+          shell: >
+            kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers
+            -o=custom-columns=NAME:".metadata.name"
+          args:
+            executable: /bin/bash
+          register: rescheduled_app_pod  
+
+        - name: Verify application data persistence
+          include: "{{ data_consistency_util_path }}"
+          vars:
+            status: 'VERIFY'
+            ns: "{{ a_ns }}"
+            pod_name: "{{ rescheduled_app_pod.stdout }}"                 
+          when: data_persistence != ''
+
+        ## Check application-target pod affinity
+        - include_tasks: /utils/apps/openebs/target_affinity_check.yml
+          when: deploy_type == 'deployment'
+
+          ## Check statefulset application-target pod affinity
+        - include_tasks: /utils/apps/openebs/sts_target_affinity_check.yml
+          when: deploy_type == 'statefulset'
 
         - set_fact:
             flag: "Pass"
@@ -150,7 +146,9 @@
             flag: "Fail"
 
       always: 
-         ## RECORD END-OF-TEST IN LITMUS RESULT CR
+
+        ## RECORD END-OF-TEST IN LITMUS RESULT CR
+ 
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'
