@@ -76,35 +76,42 @@
 <td> Cloud Platform name </td>
 <td> Mandatory </td>
 </tr>
+<tr>
 <td> CLOUD_NAMESPACE </td>
 <td> This is a chaos namespace which will create all infra chaos resources in that namespace </td>
 <td> Mandatory </td>
 </tr>
-</tr>
+<tr>
 <td> PROJECT_ID </td>
 <td> GCP project ID </td>
 <td> Mandatory </td>
 </tr>
-</tr>
+<tr>
 <td> NODE_NAME </td>
 <td> Node name of the cluster </td>
 <td> Mandatory </td>
 </tr>
+<tr>
 <td> DISK_NAME </td>
 <td> Disk Name of the node, it must be an external disk. </td>
 <td> Mandatory </td>
 </tr>
+<tr>
+<td> DEVICE_NAME </td>
+<td> Enter the device name which you wanted to mount only for AWS. </td>
+<td> Mandatory </td>
 </tr>
-</tr>
+<tr>
 <td> ZONE_NAME </td>
 <td> Zone Name of the node </td>
 <td> Mandatory </td>
 </tr>
-</tr>
+<tr>
 <td> CHAOSENGINE </td>
 <td> ChaosEngine CR name associated with the experiment instance </td>
 <td> Mandatory </td>
 </tr>
+<tr>
 <td> CHAOS_SERVICE_ACCOUNT </td>
 <td> Service account used by the litmus </td>
 <td> Mandatory </td>

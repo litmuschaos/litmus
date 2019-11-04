@@ -1,0 +1,11 @@
+- name: Getting disk users
+  shell: aws ec2 describe-volumes --volume-ids {{ disk_name }} --query 'Volumes[].Attachments[]' --output json --region {{ zone_name }}
+  register: disk_users
+
+- name: Disk status check
+  template:
+    src: disk_status_check.j2
+    dest: disk_status_check.yml
+
+- include_vars:
+    file: disk_status_check.yml

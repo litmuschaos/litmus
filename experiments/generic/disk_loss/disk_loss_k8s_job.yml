@@ -57,6 +57,10 @@ spec:
           # Enter the disk name
           - name: DISK_NAME
             value: ''  
+          
+          # Enter the device name
+          - name: DEVICE_NAME
+            value: '/dev/sdb'
 
           # Enter the zone name
           - name: ZONE_NAME
