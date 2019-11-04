@@ -1,5 +1,5 @@
 # RELEASE GUIDELINES
-- There is a scheduled release on every 15 of the month on the following repositories:
+- There is a scheduled release on every 15th of the month on the following repositories:
   - [Litmus](https://github.com/litmuschaos/litmus)
   - [Chaos-Operator](https://github.com/litmuschaos/chaos-operator)
   - [Chaos-Exporter](https://github.com/litmuschaos/chaos-exporter)
