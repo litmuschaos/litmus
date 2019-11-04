@@ -69,7 +69,7 @@ func main() {
 	svcAcc := os.Getenv("CHAOS_SVC_ACC")
 	//rand := os.Getenv("RANDOM")
 	//max := os.Getenv("MAX_DURATION")
-	experimentList = "pod-delete,container-kill"
+	experimentList = "pod-delete"
 	experiments := strings.Split(experimentList, ",")
 	fmt.Println(experiments)
 	//fmt.Println(config)
@@ -86,6 +86,10 @@ func main() {
 		if !isFound {
 			break
 		}
+		k := goUtils.GetList("default", "pod-delete", config)
+		fmt.Println(k)
+		goUtils.OverWriteList("default", "chaos", config, k, "pod-delete")
+		fmt.Println(k)
 
 	}
 	//fmt.Println(ans)
