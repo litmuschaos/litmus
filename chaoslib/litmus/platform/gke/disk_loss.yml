@@ -1,5 +1,9 @@
 - name: Detaching the disk
+<<<<<<< HEAD
   shell: gcloud compute instances detach-disk {{ node_name }} --disk {{ disk_name }} --zone {{ zone_name }}
+=======
+  shell: gcloud compute instances detach-disk {{ node_name }} --device-name {{ disk_name }} --zone {{ zone_name }}
+>>>>>>> upstream/master
 
 - name: chaos injection for {{ c_duration }}s
   wait_for:

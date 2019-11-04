@@ -84,7 +84,11 @@
         - name: Verify that the disk is connected to node (post)
           include_tasks: "/utils/cloud/gcp/status_disk.yml"
           when: "cloud_platform == 'GCP'"
-
+        
+        - name: Verify that the disk is connected to node (pre)
+          include_tasks: "/utils/cloud/aws/status_disk.yml"
+          when: "cloud_platform == 'AWS'"
+          
         # Checking disk is attached to node
         - debug: 
             msg: echo "disk attached"   

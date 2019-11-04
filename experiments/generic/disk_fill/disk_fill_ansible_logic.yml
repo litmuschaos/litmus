@@ -1,71 +1,68 @@
 ---
 - hosts: localhost
   connection: local
-
+  vars_files: 
+    - /chaoslib/litmus/disk_fill/test_vars_diskfill.yml
   vars:
-    c_experiment: "pod-network-latency"
-    c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
+    c_util: "/chaoslib/litmus/disk_fill/disk_fill_by_litmus.yml"
     c_container: "{{ lookup('env','TARGET_CONTAINER') }}"
-    n_latency: "{{ lookup('env','NETWORK_LATENCY') }}"
-    n_interface: "{{ lookup('env','NETWORK_INTERFACE') }}"
-    c_lib: "{{ lookup('env','LIB') }}"
+    c_experiment: "disk-fill"
+    c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_label: "{{ lookup('env','APP_LABEL') }}"
-    a_kind: "{{ lookup('env','APP_KIND') }}"
-    lib_image: "{{ lookup('env','LIB_IMAGE') }}"
-
+    fill_percentage: "{{ lookup('env','FILL_PERCENTAGE') }}"
+    
   tasks:
     - block:
 
-        ## DETERMINE THE CHAOSLIB TASKFILES TO BE USED
-        - include: pod_network_latency_ansible_prerequisites.yml
-
-        - include_vars:
-            file: chaosutil.yml
-
         ## GENERATE EXP RESULT NAME
-        - block: 
+        - block:
+
             - name: Construct chaos result name (experiment_name)
-              set_fact: 
+              set_fact:
                 c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
-          when: lookup('env','CHAOSENGINE')
+
+          when: lookup('env','CHAOSENGINE')    
 
         ## RECORD START-OF-EXPERIMENT IN LITMUSCHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
-          vars: 
+          vars:
             status: 'SOT'
             namespace: "{{ a_ns }}"
 
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
+
         - name: Verify that the AUT (Application Under Test) is running 
-          include_tasks: "/utils/common/status_app_pod.yml"
-          vars:      
+          include_tasks: /utils/common/status_app_pod.yml
+          vars:     
             delay: 1
             retries: 60
 
         ## FAULT INJECTION 
+
         - include_tasks: "{{ c_util }}"
+          vars:
+            action: "disk-fill"
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
+
         - name: Verify AUT liveness post fault-injection
-          include_tasks: "/utils/common/status_app_pod.yml"
-          vars:    
+          include_tasks: /utils/common/status_app_pod.yml
+          vars:     
             delay: 1
             retries: 60        
-
 
         - set_fact:
             flag: "pass"
 
-    
       rescue: 
         - set_fact: 
             flag: "fail"
-      
+
       always: 
 
         ## RECORD END-OF-TEST IN LITMUSCHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'
-            namespace: "{{ a_ns }}"  
+            namespace: "{{ a_ns }}"

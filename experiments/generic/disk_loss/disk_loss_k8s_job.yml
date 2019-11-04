@@ -60,7 +60,7 @@ spec:
           
           # Enter the device name
           - name: DEVICE_NAME
-            value: '/dev/sdb'
+            value: ''
 
           # Enter the zone name
           - name: ZONE_NAME
