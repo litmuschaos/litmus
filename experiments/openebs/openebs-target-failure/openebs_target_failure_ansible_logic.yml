@@ -48,9 +48,18 @@
             data_consistency_util_path: "{{ consistencyutil }}"
           when: data_persistence != ''
 
-        ## RECORD START-OF-TEST IN LITMUS RESULT CR
         - include_tasks: /utils/runtime/create_testname.yml
 
+         ## GENERATE EXP RESULT NAME
+        - block:
+
+            - name: Construct chaos result name (experiment_name)
+              set_fact:
+                c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
+
+          when: lookup('env','CHAOSENGINE') 
+
+         ## RECORD START-OF-TEST IN CHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'SOT'
@@ -147,7 +156,7 @@
 
       always: 
 
-        ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        ## RECORD END-OF-TEST IN CHAOS RESULT CR
  
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:

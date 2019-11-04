@@ -90,7 +90,7 @@ After injecting the chaos into the component specified via environmental variabl
 
 Based on the value of  env `DATA_PERSISTENCE`,  the corresponding data consistency util will be executed. At present only busybox and percona-mysql are supported. Along with specifying env in the litmus experiment, user needs to pass name for configmap and the data consistency specific parameters required via configmap in the format as follows:
 
-```
+```yml
     parameters.yml: |
       blocksize: 4k
       blockcount: 1024
@@ -101,11 +101,11 @@ It is recommended to pass test-name for configmap and mount the corresponding co
 
 For percona-mysql, the following parameters are to be injected into configmap.
 
-```
+```yml
     parameters.yml: |
       dbuser: root
-      dbpassword: k8sDem0
-      dbname: tdb
+      dbpassword: k8sDemo
+      dbname: tbd
 ```
 
 The configmap data will be utilised by litmus experiments as its variables while executing the scenario.

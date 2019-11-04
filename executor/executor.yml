@@ -207,7 +207,7 @@
     job_name: "{{ c_experiment_name }}-{{random_string.stdout}}"
     phase: "{{ c_phase.stdout }}" 
     verdict: "{{ c_verdict.stdout  }}"
- 
+
 - name: Apply the chaos engine CR
   shell: kubectl apply -f chaos-engine.yaml -n {{ c_app_ns }}
   args:
