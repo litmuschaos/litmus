@@ -1,0 +1,152 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars:
+    a_label: "{{ lookup('env','APP_LABEL') }}"
+    a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+    a_pvc: "{{ lookup('env','APP_PVC') }}"
+    c_duration: "{{ lookup('env','CHAOS_DURATION') }}"
+    c_experiment: "openebs-target-network-loss"
+    c_force: "{{ lookup('env','FORCE') }}"
+    c_interval: "5"
+    data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
+    lib_image: "{{ lookup('env','LIB_IMAGE') }}"
+    liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
+    liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
+    n_delay: "{{ lookup('env','NETWORK_DELAY') }}" 
+    openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
+
+  vars_files:
+    - /mnt/parameters.yml
+    - /experiments/openebs/openebs_components.yml
+
+  tasks:
+    - block:
+
+        - include_tasks: /utils/common/application_liveness_check.yml
+          when: liveness_label != ''    
+
+        ## DERIVE THE APP STORAGE CLASS AND CHAOS UTIL TO USE
+
+        - include: test_prerequisites.yml
+
+        - include_vars:
+            file: data_persistence.yml
+
+        - include_vars:
+            file: chaosutil.yml
+
+        - name: Record the chaos util path
+          set_fact:
+            chaos_util_path: "{{ chaosutil }}"
+
+        - name: Record the data consistency util path
+          set_fact:
+            data_consistency_util_path: "{{ consistencyutil }}"
+          when: data_persistence != ''
+
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        
+        - include_tasks: /utils/runtime/create_testname.yml
+
+        ## GENERATE EXP RESULT NAME
+        - block:
+
+            - name: Construct chaos result name (experiment_name)
+              set_fact:
+                c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
+
+          when: lookup('env','CHAOSENGINE') 
+
+        - include_tasks: /utils/runtime/update_chaos_result_resource.yml
+          vars:
+            status: 'SOT'
+            namespace: "{{ a_ns }}"
+
+        ## DISPLAY APP INFORMATION
+
+        - name: Display the app information passed via the test job
+          debug:
+            msg:
+              - "The application info is as follows:"
+              - "Namespace    : {{ a_ns }}"
+              - "Label        : {{ a_label }}"
+              - "PVC          : {{ a_pvc }}"
+              - "StorageClass : {{ sc }}"
+
+        ## PRE-CHAOS APPLICATION LIVENESS CHECK
+        - name: Verify that the AUT (Application Under Test) is running
+          include_tasks: "/utils/common/status_app_pod.yml"
+          vars:     
+            delay: 5
+            retries: 60
+
+        - name: Get application pod name
+          shell: >
+            kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers
+            -o=custom-columns=NAME:".metadata.name"
+          args:
+            executable: /bin/bash
+          register: app_pod_name
+
+        - name: Create some test data
+          include: "{{ data_consistency_util_path }}"
+          vars:
+            status: 'LOAD'
+            ns: "{{ a_ns }}"
+            pod_name: "{{ app_pod_name.stdout }}"
+          when: data_persistence != ''
+
+        ## STORAGE FAULT INJECTION
+
+        - include: "{{ chaos_util_path }}"
+
+        ## POST-CHAOS APPLICATION LIVENESS CHECK
+
+        # including chaoslib kill-random-pod
+        - name: Kill the application pod
+          include_tasks: /chaoslib/litmus/kill_random_pod.yml
+          vars:
+            app_ns: "{{ a_ns }}"
+            app_pod_name: "{{ app_pod_name.stdout }}"
+
+        - name: Verify if the application pod is deleted
+          shell: >
+            kubectl get pods -n {{ a_ns }}
+          args:
+            executable: /bin/bash
+          register: podstatus
+          until: '"{{ app_pod_name.stdout }}" not in podstatus.stdout'
+          retries: 2
+          delay: 150
+
+        - name: Obtain the newly created pod name for application
+          shell: >
+            kubectl get pods -n {{ a_ns }} -l {{ a_label }} -o jsonpath='{.items[].metadata.name}'
+          args:
+            executable: /bin/bash
+          register: newpod_name
+
+        - name: Checking application pod is in running state
+          shell: kubectl get pods -n {{ a_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ newpod_name.stdout }}")].status.containerStatuses[*].state.waiting.reason}'
+          register: result
+          until: "((result.stdout.split()|unique)|length) == 1 and 'Running' not in result.stdout"
+          delay: 2
+          retries: 150
+
+        - set_fact:
+            flag: "Pass"
+
+      rescue:
+        - set_fact:
+            flag: "Fail"
+
+      always:
+
+        ## RECORD END-OF-TEST IN LITMUS RESULT CR
+
+        - include_tasks: /utils/runtime/update_chaos_result_resource.yml
+          vars:
+            status: 'EOT'
+            namespace: "{{ a_ns }}"

@@ -31,4 +31,4 @@
 
 - name: Wait for the interval timer
   pause:
-    seconds: "{{c_interval}}"
+    seconds: "{{ c_interval }}"
