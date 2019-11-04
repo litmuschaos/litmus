@@ -1,0 +1,78 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: data-persistence-configmap
+data:
+  parameters.yml: |
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: openebs-target-network-loss- 
+spec:
+  template:
+    metadata:
+      labels:
+        name: openebs-target-network-loss
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: shubh214/ansible-runner:ci
+        imagePullPolicy: Always
+        env: 
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: 'default'
+
+          # provide openebs namespace
+          - name: OPENEBS_NAMESPACE
+            value: 'openebs'
+ 
+          # provide application namespace
+          - name: APP_NAMESPACE
+            value: 'shubham'
+
+           # provide application label
+          - name: APP_LABEL
+            value: 'name=percona'
+
+          - name: FORCE
+            value: 'true'
+
+           # provide application pvc
+          - name: APP_PVC
+            value: 'percona-mysql-claim'
+
+          # provide lib image
+          - name: LIB_IMAGE  
+            value: 'gaiaadm/pumba:0.4.8' 
+
+          - name: NETWORK_DELAY
+            value: '240000' # in milliseconds
+
+          - name: CHAOS_DURATION
+            value: '240000' # in milliseconds
+
+          - name: LIVENESS_APP_LABEL
+            value: ''
+
+          - name: LIVENESS_APP_NAMESPACE
+            value: ''
+
+          - name: DATA_PERSISTENCE
+            value: ''
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./experiments/openebs/openebs-target-network-loss/openebs_target_network_loss_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
+
+        volumeMounts:
+        - name: parameters
+          mountPath: /mnt/
+      volumes:
+        - name: parameters
+          configMap:
+            name: data-persistence-configmap
+            
