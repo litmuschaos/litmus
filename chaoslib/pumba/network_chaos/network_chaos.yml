@@ -53,6 +53,8 @@
       register: pumba_pod 
 
     - include_tasks: /chaoslib/pumba/network_chaos/induce_latency.yml
+      vars:
+        app_pod: "{{ app_pod.stdout }}"
       when: "n_latency is defined"
 
     - include_tasks: /chaoslib/pumba/network_chaos/induce_packet_loss.yml
