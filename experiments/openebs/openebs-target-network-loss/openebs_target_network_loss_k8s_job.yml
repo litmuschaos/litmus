@@ -17,11 +17,11 @@ spec:
       labels:
         name: openebs-target-network-loss
     spec:
-      serviceAccountName: litmus
+      serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: shubh214/ansible-runner:ci
+        image: litmuschaos/ansible-runner:ci
         imagePullPolicy: Always
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
@@ -33,18 +33,18 @@ spec:
  
           # provide application namespace
           - name: APP_NAMESPACE
-            value: 'shubham'
+            value: ''
 
            # provide application label
           - name: APP_LABEL
-            value: 'name=percona'
+            value: ''
 
           - name: FORCE
             value: 'true'
 
            # provide application pvc
           - name: APP_PVC
-            value: 'percona-mysql-claim'
+            value: ''
 
           # provide lib image
           - name: LIB_IMAGE  
