@@ -1,4 +1,10 @@
 ---
+- name: Execute Go file
+  shell: ./executor
+  args:
+    executable: /bin/bash
+  register: new_exc
+
 - name: Verify if ChaosExperiment CR is available 
   shell: >
     kubectl get chaosexperiment {{ c_experiment_name }} 
