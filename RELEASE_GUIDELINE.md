@@ -4,7 +4,7 @@
     -   [Chaos-Operator](https://github.com/litmuschaos/chaos-operator)
     -   [Chaos-Exporter](https://github.com/litmuschaos/chaos-exporter)
 -   Repositories use release version according to the [Semantic Versioning](https://semver.org/)
--   Docker images with release tags are pushed upon creation of a github release. The CI configuration to enable this can be found . The CI configuration to enable this can be found on the following repositories:
+-   Docker images with release tags are pushed upon creation of a github release. The CI configuration to enable this can be found. The CI configuration to enable this can be found on the following repositories:
     -   [Litmus](https://github.com/litmuschaos/litmus/blob/master/.travis.yml)
     -   [Chaos-Operator](https://github.com/litmuschaos/chaos-operator/blob/master/.circleci/config.yml)
     -   [Chaos-Exporter](https://github.com/litmuschaos/chaos-exporter/blob/master/.travis.yml)
@@ -14,12 +14,12 @@
     -   [litmuschaos/chaos-exporter](https://cloud.docker.com/u/litmuschaos/repository/docker/litmuschaos/chaos-exporter)
 -   Tracking of releases is done on Github [project board](https://github.com/litmuschaos/litmus/projects)
 -   The flow of the release is done by the following steps:
-    -   Sprint Planning and a feature request from the community
+    -   Sprint Planning with feature request from the community
     -   Development of feature
     -   RC1 build
-    -   More RC build will be done on community request
+    -   More RC build will be done on a need bases
     -   Testing is done after the RC1 build
-    -   Cherry picking the commits to the release branch after the post RC build
+    -   Cherry picking the commits to the release branch post RC build
     -   Release is done
 -   Releases
     -   Pre Release Version (Development)
