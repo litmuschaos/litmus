@@ -20,7 +20,7 @@ import (
 )
 
 func OverWriteList(appns string, chaosEngine string, config *rest.Config, m map[string]string, chaosExperiment string) map[string]string {
-	_, litmusClientSet, err := generateClientSets(config)
+	_, litmusClientSet, err := GenerateClientSets(config)
 	if err != nil {
 		log.Info(err)
 	}

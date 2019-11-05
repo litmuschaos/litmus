@@ -20,7 +20,7 @@ import (
 )
 
 func GetList(appns string, chaosExperiment string, config *rest.Config) map[string]string {
-	_, litmusClientSet, err := generateClientSets(config)
+	_, litmusClientSet, err := GenerateClientSets(config)
 	if err != nil {
 		log.Info(err)
 	}

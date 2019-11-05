@@ -19,7 +19,7 @@ import (
 	k8serror "k8s.io/apimachinery/pkg/api/errors"
 )
 
-func generateClientSets(config *rest.Config) (*kubernetes.Clientset, *clientV1alpha1.Clientset, error) {
+func GenerateClientSets(config *rest.Config) (*kubernetes.Clientset, *clientV1alpha1.Clientset, error) {
 	k8sClientSet, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		return nil, nil, fmt.Errorf("unable to generate kubernetes clientSet %s: ", err)
@@ -32,7 +32,7 @@ func generateClientSets(config *rest.Config) (*kubernetes.Clientset, *clientV1al
 }
 
 func CheckExperimentInAppNamespace(appns string, chaosExperiment string, config *rest.Config) bool {
-	_, litmusClientSet, err := generateClientSets(config)
+	_, litmusClientSet, err := GenerateClientSets(config)
 	//fmt.Println(k8sClientSet)
 	if err != nil {
 		log.Error(err)
