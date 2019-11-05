@@ -6,8 +6,8 @@
 -   Repositories use release version according to the [Semantic Versioning](https://semver.org/)
 -   Docker images with release tags are pushed upon creation of a github release. The CI configuration to enable this can be found . The CI configuration to enable this can be found on the following repositories:
     -   [Litmus](https://github.com/litmuschaos/litmus/blob/master/.travis.yml)
-    -   [ChaosOperator](https://github.com/litmuschaos/chaos-operator/blob/master/.circleci/config.yml)
-    -   [ChaosExporter](https://github.com/litmuschaos/chaos-exporter/blob/master/.travis.yml)
+    -   [Chaos-Operator](https://github.com/litmuschaos/chaos-operator/blob/master/.circleci/config.yml)
+    -   [Chaos-Exporter](https://github.com/litmuschaos/chaos-exporter/blob/master/.travis.yml)
 -   Following are the docker images:
     -   [Litmus Ansible Runner](https://cloud.docker.com/u/litmuschaos/repository/docker/litmuschaos/ansible-runner)
     -   [Chaos-Operator](https://cloud.docker.com/u/litmuschaos/repository/docker/litmuschaos/chaos-operator)
