@@ -14,7 +14,7 @@
     lib_image: "{{ lookup('env','LIB_IMAGE') }}"
     liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
     liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
-    n_delay: "{{ lookup('env','NETWORK_DELAY') }}" 
+    packet_loss_perc: "{{ lookup('env','NETWORK_PACKET_LOSS_PERCENTAGE') }}"  
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
 
   vars_files:

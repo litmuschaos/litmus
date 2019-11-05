@@ -41,7 +41,7 @@
   include_tasks: /chaoslib/pumba/network_chaos/network_chaos.yml
   vars:
     n_interface: "eth0"
-    n_latency: "{{ n_delay }}"
+    n_packet_loss: "{{ packet_loss_perc }}"
     c_container: "{{ jiva_controller_container_name }}"
     app_pod:  "{{ jiva_controller_pod_name }}"
     app_ns: "{{ a_ns }}"

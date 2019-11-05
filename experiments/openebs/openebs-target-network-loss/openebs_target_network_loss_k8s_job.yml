@@ -50,8 +50,8 @@ spec:
           - name: LIB_IMAGE  
             value: 'gaiaadm/pumba:0.4.8' 
 
-          - name: NETWORK_DELAY
-            value: '240000' # in milliseconds
+          - name: NETWORK_PACKET_LOSS_PERCENTAGE
+            value: '100' # in percentage
 
           - name: CHAOS_DURATION
             value: '240000' # in milliseconds
