@@ -1,4 +1,4 @@
-FROM ubuntu:bionic
+FROM ubuntu:18.04
 
 LABEL maintainer="LitmusChaos"
 
@@ -36,3 +36,7 @@ COPY ./utils ./utils/
 COPY ./build/plugins /usr/local/lib/python2.7/dist-packages/ansible/plugins/callback/
 COPY experiments ./experiments
 COPY executor ./executor
+COPY bin ./bin
+COPY ./bin/exec /usr/local/bin/exec
+
+ENTRYPOINT ["exec"]
