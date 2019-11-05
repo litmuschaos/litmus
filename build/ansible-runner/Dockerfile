@@ -11,7 +11,12 @@ RUN apt-get clean && \
 #Installing ansible and dependencies for k8s module
 RUN pip install ansible==2.7.3 openshift jmespath
 
-RUN touch /mnt/parameters.yml
+RUN touch /mnt/parameters.yml /mnt/cloud_config.yml
+
+#Installing gcloud 
+RUN curl -sSL https://sdk.cloud.google.com | bash
+ENV PATH $PATH:/root/google-cloud-sdk/bin
+RUN gcloud --version
 
 #Installing Kubectl
 ENV KUBE_LATEST_VERSION="v1.12.0"

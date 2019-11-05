@@ -40,10 +40,7 @@
 
         - name: Verify that the AUT (Application Under Test) is running 
           include_tasks: "/utils/common/status_app_pod.yml"
-          vars:
-            app_ns: "{{ a_ns }}" 
-            app_lkey: "{{ a_label.split('=')[0] }}"
-            app_lvalue: "{{ a_label.split('=')[1] }}"       
+          vars:     
             delay: 1
             retries: 60
 
@@ -57,10 +54,7 @@
 
         - name: Verify AUT liveness post fault-injection
           include_tasks: "/utils/common/status_app_pod.yml"
-          vars:
-            app_ns: "{{ a_ns }}" 
-            app_lkey: "{{ a_label.split('=')[0] }}"
-            app_lvalue: "{{ a_label.split('=')[1] }}"       
+          vars:    
             delay: 1
             retries: 60        
 
