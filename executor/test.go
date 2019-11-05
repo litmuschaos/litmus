@@ -5,7 +5,8 @@ import (
 	//"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	//appsv1 "k8s.io/api/apps/v1"
 	//apiv1 "k8s.io/api/core/v1"
-	//metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	batchv1 "k8s.io/apimachinery/pkg/apis/batch/v1"
 	//"k8s.io/client-go/kubernetes"
 	//"error"
 	//"flag"
@@ -181,6 +182,13 @@ func main() {
 		if err != nil {
 			log.Info(err)
 		}
+		var watchJob string
+		watchJob = "Running"
+		for watchJob == "Running" {
+			getJob := clientSet.BatchV1().Jobs(appNamespace).Get(jobName,metav1.GetOptions{})
+			jobStatus := getJob.
+		} 
+		
 	}
 	//fmt.Println(ans)
 }

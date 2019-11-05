@@ -5,7 +5,7 @@ import (
 	//"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	//appsv1 "k8s.io/api/apps/v1"
 	//apiv1 "k8s.io/api/core/v1"
-	//metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	//"k8s.io/client-go/kubernetes"
 	//"error"
 	//"flag"
@@ -19,6 +19,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	"os"
 	"strings"
+	"time"
 )
 
 // getKubeConfig setup the config for access cluster resource
@@ -180,6 +181,19 @@ func main() {
 		log.Info("Jobcreation", "jobCreation result", jobCreationResult)
 		if err != nil {
 			log.Info(err)
+		}
+		var jobStatus int32
+		jobStatus = 1
+		for jobStatus == 1 {
+			getJob, err := clientSet.BatchV1().Jobs(appNamespace).Get(jobName, metav1.GetOptions{})
+			if err != nil {
+				log.Info("Unable to get the job : ")
+				log.Infoln(err)
+			}
+			jobStatus = getJob.Status.Active
+			log.Info("Watching for Job Name : " + jobName + " status of Job : ")
+			log.Infoln(jobStatus)
+			time.Sleep(5 * time.Second)
 		}
 	}
 	//fmt.Println(ans)
