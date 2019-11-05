@@ -1,62 +1,16 @@
 --- 
-- name: Patch the chaoslib image
-  template:
-    src:  /chaoslib/pumba/pumba.j2
-    dest: /chaoslib/pumba/pumba_kube.yml
-  vars:
-    pumba_image: "{{ lib_image }}"
-
-- name: Setup pumba chaos infrastructure
-  shell: >
-    kubectl apply -f /chaoslib/pumba/pumba_kube.yml
-    -n {{ a_ns }}
-  args:
-    executable: /bin/bash
-  register: result 
-
-- name: Confirm that the pumba ds is running on all nodes
-  shell: >
-    kubectl get pod -l app=pumba 
-    --no-headers -o custom-columns=:status.phase
-    -n {{ a_ns }} | sort | uniq
-  args: 
-    executable: /bin/bash
-  register: result
-  until: "result.stdout == 'Running'"
-  delay: 20
-  retries: 15
-
-- name: Derive PV from application PVC 
-  shell: >
-    kubectl get pvc {{ a_pvc }}
-    -o custom-columns=:spec.volumeName -n {{ a_ns }}
-    --no-headers
-  args:
-    executable: /bin/bash
-  register: pv
-
 - name: Identify the jiva controller pod belonging to the PV
   shell: > 
     kubectl get pods -l {{ jiva_controller_pod_label }}
-    -n {{ a_ns }} --no-headers | grep {{ pv.stdout }} 
-    | awk '{print $1}'
+    -n {{ a_ns }} -o jsonpath='{.items[?(@.metadata.labels.openebs\.io/persistent-volume=="{{ pv_name }}")].metadata.name}'
   args:
     executable: /bin/bash
   register: jiva_controller_pod
 
 - name: Record the jiva controller pod and container name
   set_fact:
-    # Depends on the naming convention in maya-apiserver (<pv-id>-rep)
     jiva_controller_container_name: "{{ pv.stdout }}-{{ jiva_controller_pod_suffix }}-{{ jiva_controller_container_suffix }}"
-    jiva_controller_pod_name: "{{ pv.stdout }}-{{ jiva_controller_pod_suffix }}"
-
-- name: Get the node on which the jiva controller is scheduled
-  shell: >
-    kubectl get pod {{ jiva_controller_pod.stdout }} -n {{ a_ns }}
-    --no-headers -o custom-columns=:spec.nodeName
-  args:
-    executable: /bin/bash
-  register: node  
+    jiva_controller_pod_name: "{{ jiva_controller_pod.stdout }}"
 
 - name: Get controller svc
   shell: >
@@ -82,22 +36,15 @@
     executable: /bin/bash
   register: rcount_before
 
-- name: Identify the pumba pod that co-exists with jiva controller
-  shell: >
-    kubectl get pods -l app=pumba -n {{ a_ns }} 
-    -o jsonpath='{.items[?(@.spec.nodeName==''"{{ node.stdout }}"'')].metadata.name}'
-  args:
-    executable: /bin/bash
-  register: pumba_pod
-
-# including pumba lib  -> induce_latency
+# including pumba lib  -> network_chaos
 - name: Inject egress delay of {{ n_delay }}ms on jiva controller for {{ c_duration }}ms
-  include_tasks: /chaoslib/pumba/network_chaos/induce_latency.yml
+  include_tasks: /chaoslib/pumba/network_chaos/network_chaos.yml
   vars:
     n_interface: "eth0"
     n_latency: "{{ n_delay }}"
     c_container: "{{ jiva_controller_container_name }}"
     app_pod:  "{{ jiva_controller_pod_name }}"
+    app_ns: "{{ a_ns }}"
 
 - name: Verifying the Replica getting disconnected
   shell: >
@@ -109,23 +56,7 @@
   until: resp.stdout != rcount_before.stdout
   retries: 10
   delay: 15
-
-- name: Delete the pumba daemonset 
-  shell: kubectl delete -f /chaoslib/pumba/pumba_kube.yml -n {{ a_ns }} 
-  args:
-    executable: /bin/bash
-  register: result
-
-- name: Confirm that the pumba ds is deleted successfully
-  shell: >
-    kubectl get pods -l app=pumba --no-headers -n {{ a_ns }}
-  args:
-    executable: /bin/bash
-  register: result
-  until: "'Running' not in result.stdout"
-  delay: 20
-  retries: 15
-
+  
 - name: Verifying the replicas post network recovery
   shell: >
    kubectl exec -it {{ jiva_controller_pod.stdout }} -n {{ a_ns }} 

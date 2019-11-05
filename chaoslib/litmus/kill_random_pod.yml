@@ -1,21 +1,24 @@
-- name: Get a list of all pods from given namespace
-  k8s_facts:
-    kind: Pod
-    namespace: "{{ a_ns }}"
-    label_selectors:
-      - "{{a_label}}"
-  register: pod_list
+- block:
+    - name: Get a list of all pods from given namespace
+      k8s_facts:
+        kind: Pod
+        namespace: "{{ app_ns }}"
+        label_selectors:
+          - "{{ app_label }}"
+      register: pod_list
 
-- name: Select a random pod to kill
-  set_fact:
-    a_pod_to_kill: "{{ pod_list.resources | random | json_query('metadata.name') }}"
+    - name: Select a random pod to kill
+      set_fact:
+        app_pod_name: "{{ pod_list.resources | random | json_query('metadata.name') }}"
+
+  when: "app_pod_name is undefined"
 
 - debug:
-    msg: "Killing pod {{a_pod_to_kill}}"
+    msg: "Killing pod {{ app_pod_name }}"
 
 - name: Force Kill application pod
   shell: |
-    kubectl delete pod -n {{ a_ns }} --force --grace-period=0 --wait=false {{a_pod_to_kill}}
+    kubectl delete pod -n {{ app_ns }} --force --grace-period=0 --wait=false {{ app_pod_name }}
   args:
     executable: /bin/bash
   register: result
@@ -23,7 +26,7 @@
 
 - name: Kill application pod
   shell: |
-    kubectl delete pod -n {{ a_ns }} --grace-period=0 --wait=false {{a_pod_to_kill}}
+    kubectl delete pod -n {{ app_ns }} --grace-period=0 --wait=false {{ app_pod_name }}
   args:
     executable: /bin/bash
   register: result

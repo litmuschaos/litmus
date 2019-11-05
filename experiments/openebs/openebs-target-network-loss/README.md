@@ -24,9 +24,7 @@
 
 ## Exit-Criteria
 
--   Application services are accessible & pods are healthy
--   Data written prior to chaos is successfully retrieved/read
--   Database consistency is maintained as per db integrity check utils
+-   Application services are accessible & pods should not be in running state
 -   Storage target pods are healthy
 
 ## Notes
