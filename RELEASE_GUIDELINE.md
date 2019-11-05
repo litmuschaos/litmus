@@ -1,4 +1,4 @@
-# RELEASE GUIDELINES
+# RELEASE-GUIDELINES
 -   There is a scheduled release on the 15th of every month on the following repositories:
     -   [Litmus](https://github.com/litmuschaos/litmus)
     -   [Chaos-Operator](https://github.com/litmuschaos/chaos-operator)
@@ -36,6 +36,7 @@
             <td><a href="https://github.com/litmuschaos/litmus/releases/tag/0.8.0-RC1">Release Notes</a></td>
           </tr>
         </table>
+
     -   Current version (Stable)
         <table>
           <tr>
@@ -44,6 +45,7 @@
             <td><a href="https://github.com/litmuschaos/litmus/releases/tag/0.7.0">Release Notes</a></td>
           </tr>
         </table>
+
     -   Past Versions
         Here you can find previous versions of the documentation.
         <table>
@@ -54,4 +56,4 @@
           </tr>
         </table>
 
- -   For more info, please visit [here](https://docs.litmuschaos.io/versions/).
+-   For more info, please visit [here](https://docs.litmuschaos.io/versions/).
