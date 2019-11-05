@@ -9,9 +9,9 @@
     -   [Chaos-Operator](https://github.com/litmuschaos/chaos-operator/blob/master/.circleci/config.yml)
     -   [Chaos-Exporter](https://github.com/litmuschaos/chaos-exporter/blob/master/.travis.yml)
 -   Following are the docker images:
-    -   [Litmus Ansible Runner](https://cloud.docker.com/u/litmuschaos/repository/docker/litmuschaos/ansible-runner)
-    -   [Chaos-Operator](https://cloud.docker.com/u/litmuschaos/repository/docker/litmuschaos/chaos-operator)
-    -   [Chaos-Exporter](https://cloud.docker.com/u/litmuschaos/repository/docker/litmuschaos/chaos-exporter)
+    -   [litmuschaos/ansible-runner](https://cloud.docker.com/u/litmuschaos/repository/docker/litmuschaos/ansible-runner)
+    -   [litmuschaos/chaos-operator](https://cloud.docker.com/u/litmuschaos/repository/docker/litmuschaos/chaos-operator)
+    -   [litmuschaos/chaos-exporter](https://cloud.docker.com/u/litmuschaos/repository/docker/litmuschaos/chaos-exporter)
 -   Tracking of releases is done on Github [project board](https://github.com/litmuschaos/litmus/projects)
 -   The flow of the release is done by the following steps:
     -   Sprint Planning and a feature request from the community
