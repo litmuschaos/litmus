@@ -1,6 +1,6 @@
 ## Experiment Maturity Guidelines
 
-This documents lists the criteria as per which the maturity levels of chaos experiments can be derived.
+This document lists the criteria as per which the maturity levels of chaos experiments can be derived.
 
 <table>
 
