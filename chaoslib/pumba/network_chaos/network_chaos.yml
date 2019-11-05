@@ -27,18 +27,25 @@
       retries: 60
       ignore_errors: true
 
-    - name: Select the app pod
-      shell: >
-        kubectl get pod -l {{ a_label }} -n {{ a_ns }}
-        -o=custom-columns=:metadata.name --no-headers
-        | shuf | head -1 
-      args:
-        executable: /bin/bash
-      register: app_pod
+    - block:  
+      - name: Select the app pod
+        shell: >
+          kubectl get pod -l {{ a_label }} -n {{ a_ns }}
+          -o=custom-columns=:metadata.name --no-headers
+          | shuf | head -1 
+        args:
+          executable: /bin/bash
+        register: app_pod_name
+
+      - name: Record app pod name
+        set_fact:
+          app_pod: "{{ app_pod_name.stdout }}"
+
+      when: "app_pod is undefined"
 
     - name: Identify the application node
       shell: >
-        kubectl get pod {{ app_pod.stdout }} -n {{ a_ns }}
+        kubectl get pod {{ app_pod }} -n {{ app_ns }}
         --no-headers -o custom-columns=:spec.nodeName
       args:
         executable: /bin/bash
@@ -53,8 +60,6 @@
       register: pumba_pod 
 
     - include_tasks: /chaoslib/pumba/network_chaos/induce_latency.yml
-      vars:
-        app_pod: "{{ app_pod.stdout }}"
       when: "n_latency is defined"
 
     - include_tasks: /chaoslib/pumba/network_chaos/induce_packet_loss.yml
@@ -62,7 +67,7 @@
      
     - name: Tear down pumba infrastructure
       shell: >
-        kubectl delete -f /chaoslib/pumba/pumba_kube.yaml -n {{ a_ns }} 
+        kubectl delete -f /chaoslib/pumba/pumba_kube.yml -n {{ a_ns }} 
       args:
         executable: /bin/bash
 

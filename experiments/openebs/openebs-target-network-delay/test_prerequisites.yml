@@ -11,9 +11,13 @@
         executable: /bin/bash
       register: pv
 
+    - name: Record pv name 
+      set_fact:
+        pv_name: "{{ pv.stdout }}"
+
     - name: Check for presence & value of cas type annotation
       shell: >
-        kubectl get pv {{ pv.stdout }} --no-headers
+        kubectl get pv {{ pv_name }} --no-headers
         -o jsonpath="{.metadata.annotations.openebs\\.io/cas-type}"
       args:
         executable: /bin/bash

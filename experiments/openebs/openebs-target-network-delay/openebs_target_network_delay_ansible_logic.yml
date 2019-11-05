@@ -55,7 +55,7 @@
 
           when: lookup('env','CHAOSENGINE') 
 
-        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+        ## RECORD START-OF-TEST IN CHAOS RESULT CR
 
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
@@ -100,10 +100,6 @@
         ## STORAGE FAULT INJECTION 
 
         - include: "{{ chaos_util_path }}"
-          app_ns: "{{ namespace }}"
-          app_pvc: "{{ pvc }}"
-          network_delay: "{{ n_delay }}"
-          chaos_duration: "{{ c_duration }}"
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
@@ -133,7 +129,7 @@
 
       always: 
 
-        ## RECORD END-OF-TEST IN LITMUS RESULT CR
+        ## RECORD END-OF-TEST IN CHAOS RESULT CR
  
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
