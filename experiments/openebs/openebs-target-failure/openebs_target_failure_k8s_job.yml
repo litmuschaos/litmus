@@ -68,7 +68,7 @@ spec:
             # For cstor-target-failure Use    : target-delete
             # For Jiva-Controller-container-kill Use : jiva-ctrl-kill
 
-          - name: CHAOS_TYPE**logs-cstor ta**logs-cstor target container failure****logs-cstor target container failure**rget container failure**
+          - name: CHAOS_TYPE
             value: 'jiva-ctrl-kill'
             
             # TARGET_CONTAINER values: cstor-volume-mgmt , cstor-istgt
