@@ -17,7 +17,7 @@
     -   Sprint Planning and a feature request from the community
     -   Development of feature
     -   RC1 build
-    -   More RC build will be done, on community request
+    -   More RC build will be done on community request
     -   Testing is done after the RC1 build
     -   Cherry picking the commits to the release branch after the post RC build
     -   Release is done
