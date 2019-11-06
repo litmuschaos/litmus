@@ -2,14 +2,9 @@
 - name: Pick the jiva controller pod
   include_tasks: /utils/apps/openebs/fetch_jiva_controller_pod.yml
 
-- name: Record the jiva controller deployment of the PV
-  set_fact: 
-    # Depends on the naming convention in maya-apiserver (<pv-id>-rep)  
+- name: Record the jiva controller deployment and container name
+  set_fact:  
     jiva_controller_deploy: "{{ pv.stdout }}-{{ jiva_controller_pod_suffix }}"
-
-- name: Record the jiva controller container name
-  set_fact:
-    # Depends on the naming convention in maya-apiserver (<pv-id>-rep)
     jiva_controller_name: "{{ pv.stdout }}-{{ jiva_controller_pod_suffix }}-{{ jiva_controller_container_suffix }}"
 
 - name: Get the resourceVersion of the target deploy before fault injection

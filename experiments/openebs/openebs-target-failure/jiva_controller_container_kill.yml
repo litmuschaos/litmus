@@ -23,10 +23,11 @@
     app_container: "{{ ctrl_container }}"
   when: cri == 'docker'
 
-- include_tasks: /chaoslib/containerd_chaos/crictl-chaos.yml
+- include_tasks: /chaoslib/litmus/container_kill/containerd_chaos/crictl-chaos.yml
   vars:
     action: "killapp"
     app_pod: "{{ jiva_controller_pod.stdout }}"
+    namespace: "{{ a_ns }}"
     app_container: "{{ ctrl_container }}"
   when: cri == 'containerd'
 

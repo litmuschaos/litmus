@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: data-persistence-configmap
+  name: target-failure
 data:
   parameters.yml: |
 
@@ -91,4 +91,4 @@ spec:
       volumes:
         - name: parameters
           configMap:
-            name: data-persistence-configmap
+            name: target-failure
