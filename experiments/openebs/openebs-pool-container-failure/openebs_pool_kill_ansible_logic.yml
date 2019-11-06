@@ -11,6 +11,7 @@
     chaos_duration: 600
     chaos_iterations: "{{ lookup('env','CHAOS_ITERATIONS') }}"
     data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
+    lib_image: "{{ lookup('env','LIB_IMAGE') }}"
     liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
     liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
     openebs_ns: "{{ lookup('env','OPENEBS_NS') }}"
