@@ -43,6 +43,9 @@
 
       when: "app_pod is undefined"
 
+    # here app_ns is the namespace of pod on which we are performing network loss/delay
+    # in genric experiments app_ns is same as a_ns
+    # in openebs experiments app_ns is the namespace where openebs is installed i.e, openebs
     - name: Identify the application node
       shell: >
         kubectl get pod {{ app_pod }} -n {{ app_ns }}

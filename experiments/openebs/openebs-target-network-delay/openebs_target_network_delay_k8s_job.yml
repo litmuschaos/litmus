@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: data-persistence-configmap
+  name: target-network-delay
 data:
   parameters.yml: |
 
@@ -71,5 +71,5 @@ spec:
       volumes:
         - name: parameters
           configMap:
-            name: data-persistence-configmap
+            name:  target-network-delay
             
