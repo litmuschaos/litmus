@@ -43,7 +43,8 @@ spec:
           - name: APP_PVC
             value: ''
 
-        # provide lib image
+        # only pumba supported
+        # For pumba image use : gaiaadm/pumba:0.4.8
           - name: LIB_IMAGE
             value: 'gaiaadm/pumba:0.4.8' 
 
