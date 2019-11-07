@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: disk-fill
+spec:
+  template:
+    metadata:
+      labels:
+        app: disk-fill
+      name: disk-fill
+    spec:
+      containers:
+      - image: alpine
+        args:
+        - sleep
+        - "10000"
+        imagePullPolicy: Always
+        name: disk-fill
+        volumeMounts:
+          - name: udev
+            mountPath: /diskfill
+            mountPropagation: HostToContainer
+        securityContext:
+          privileged: true
+      volumes:
+        - name: udev
+          hostPath:
+            path: /var/lib/docker/containers
