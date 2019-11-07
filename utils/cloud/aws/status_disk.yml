@@ -1,5 +1,7 @@
 - name: Getting disk users
-  shell: aws ec2 describe-volumes --volume-ids {{ disk_name }} --query 'Volumes[].Attachments[]' --output json --region {{ zone_name }}
+  ec2_vol_facts:
+    filters:
+      volume-id: "{{ disk_name }}"
   register: disk_users
 
 - name: Disk status check

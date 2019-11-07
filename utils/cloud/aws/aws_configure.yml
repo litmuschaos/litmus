@@ -1,2 +1,2 @@
 - name: authenticate aws account
-  shell: cp /mnt/parameters.yml /root/.aws/credentials
+  shell: cp /mnt/cloud_config.yml /root/.aws/credentials

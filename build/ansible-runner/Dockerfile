@@ -8,8 +8,9 @@ RUN apt-get clean && \
     apt-get install -y --no-install-recommends python-minimal python-pip netcat iproute2 jq sshpass \
     curl openssh-client python-setuptools && rm -rf /var/lib/apt/lists/* 
 
+RUN pip install --upgrade pip
 #Installing ansible and dependencies for k8s module
-RUN pip install ansible==2.7.3 openshift jmespath
+RUN pip install ansible==2.7.3 openshift jmespath boto boto3
 
 RUN mkdir -p /root/.aws && touch /mnt/parameters.yml /mnt/cloud_config.yml /root/.aws/credentials
 
@@ -22,9 +23,6 @@ RUN gcloud --version
 ENV KUBE_LATEST_VERSION="v1.12.0"
 RUN curl -L https://storage.googleapis.com/kubernetes-release/release/${KUBE_LATEST_VERSION}/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl && \
     chmod +x /usr/local/bin/kubectl
-
-#Installing aws cli
-RUN pip install awscli
     
 #Adding hosts entries and making ansible folders
 RUN mkdir /etc/ansible/ /ansible && \
