@@ -35,11 +35,11 @@
 
 - name: Fetch the value of Request ephemeral-storage Unit in KB
   set_fact:
-    req_storage_KB: "{{ req_value_storage.stdout }}"
+    req_storage_KB: "{{ lookup('vars', req_value_storage.stdout) }}"
 
 - name: Fetch the value of Limit ephemeral-storage Unit in KB
   set_fact:
-    limit_storage_KB: "{{ limit_value_storage.stdout }}"
+    limit_storage_KB: "{{ lookup('vars', limit_value_storage.stdout) }}"
 
 - include_tasks: /chaoslib/litmus/disk_fill/convert_fill_percentage.yml
 
