@@ -72,4 +72,4 @@ spec:
       volumes:
         - name: parameters
           configMap:
-            name: pool-container-kill
+            name:  pool-container-kill
