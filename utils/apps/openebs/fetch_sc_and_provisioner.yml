@@ -21,4 +21,4 @@
 
 - name: Record the storage provisioner name
   set_fact:
-    stg_prov: "{{ provisioner.stdout }}" 
+    stg_prov: "{{ provisioner.stdout }}"
