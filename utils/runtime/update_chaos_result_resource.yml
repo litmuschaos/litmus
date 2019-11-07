@@ -4,6 +4,7 @@
      template:
        src: /chaos-result.j2
        dest: chaos-result.yaml
+       lstrip_blocks: yes
      vars:
        test: "{{ c_experiment }}"
        phase: ""
@@ -23,6 +24,7 @@
      template:
        src: /chaos-result.j2
        dest: chaos-result.yaml
+       lstrip_blocks: yes
      vars:
        test: "{{ c_experiment }}"
        phase: "" 
