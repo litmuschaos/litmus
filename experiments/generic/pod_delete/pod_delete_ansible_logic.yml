@@ -48,7 +48,8 @@
 
         - include_tasks: "{{ c_util }}"
           vars:
-            c_svc_acc: "{{ lookup('env','CHAOS_SERVICE_ACCOUNT') }}"
+            app_ns: "{{ a_ns }}"
+            app_label: "{{ a_label }}"
           
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 

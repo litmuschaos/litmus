@@ -6,17 +6,18 @@
     a_label: "{{ lookup('env','APP_LABEL') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_pvc: "{{ lookup('env','APP_PVC') }}"
+    c_duration: 600
+    c_interval: 5
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
-    c_experiment: openebs-pool-container-failure
-    chaos_duration: 600
-    chaos_iterations: "{{ lookup('env','CHAOS_ITERATIONS') }}"
+    c_experiment: openebs-pool-pod-failure
+    c_force: "{{ lookup('env','FORCE') }}"
+    c_iterations: "{{ lookup('env','CHAOS_ITERATIONS') }}"
     data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
-    lib_image: "{{ lookup('env','LIB_IMAGE') }}"
     liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
     liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
-    openebs_ns: "{{ lookup('env','OPENEBS_NS') }}"
+    openebs_ns: openebs
     pool_debug_msg: 'uncorrectable I/O failure|suspended|ERROR ZFS event'
-    
+   
   vars_files:
     - /mnt/parameters.yml
     - /experiments/openebs/openebs_components.yml
@@ -39,14 +40,14 @@
 
         - name: Record the chaos util path
           set_fact:
-            chaos_util_path: "/experiments/openebs/openebs-pool-container-failure/cstor_pool_kill.yml"
+            chaos_util_path: "/experiments/openebs/openebs-pool-pod-failure/cstor_pool_delete.yml"
 
         - name: Record the data consistency util path
           set_fact:
             data_consistency_util_path: "{{ consistencyutil }}"
           when: data_persistence != ''
 
-         ## GENERATE EXP RESULT NAME
+        ## GENERATE EXP RESULT NAME
         - block:
 
             - name: Construct chaos result name (experiment_name)
@@ -55,7 +56,10 @@
 
           when: c_engine != ''
 
-        ## RECORD START-OF-EXPERIMENT IN CHAOS RESULT CR
+        ## RECORD START-OF-TEST IN LITMUS RESULT CR
+
+        - include_tasks: /utils/runtime/create_testname.yml
+
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'SOT'
@@ -72,7 +76,6 @@
               - "PVC          : {{ a_pvc }}"  
 
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
-
         - name: Get application pod name 
           shell: >
             kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers
@@ -100,12 +103,14 @@
 
         - include: "{{ chaos_util_path }}"
           error_messages: "{{ pool_debug_msg }}"
+          post_chaos_soak_time : "{{ c_duration }}"
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
         - name: Verify AUT liveness post fault-injection
           include_tasks: "/utils/common/status_app_pod.yml"
           vars:
+            application_name: "{{ app_pod_name.stdout }}"
             delay: 5
             retries: 60
  
@@ -145,7 +150,7 @@
             flag: "Fail"
 
       always: 
-         ## RECORD END-OF-TEST IN CHAOS RESULT CR
+         ## RECORD END-OF-TEST IN LITMUS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'

@@ -105,5 +105,3 @@
           retries: 15
 
       when: "pumb_deploy_result.rc == 0"
-
-
