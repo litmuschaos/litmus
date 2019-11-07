@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: pool-container-kill
+  name: target-network-delay
 data:
   parameters.yml: |
 
@@ -10,12 +10,12 @@ data:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: openebs-pool-container-failure-
+  generateName: openebs-target-network-delay- 
 spec:
   template:
     metadata:
       labels:
-        experiment: openebs-pool-container-failure
+        name: openebs-target-network-delay 
     spec:
       serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
       restartPolicy: Never
@@ -23,31 +23,37 @@ spec:
       - name: ansibletest
         image: litmuschaos/ansible-runner:ci
         imagePullPolicy: Always
-        env:
+        env: 
           - name: ANSIBLE_STDOUT_CALLBACK
             value: 'default'
-           
-           #provide openebs namespace
-          - name: OPENEBS_NS
-            value: 'openebs'
 
-         # provide application namespace
+         # provide openebs namespace
+          - name: OPENEBS_NAMESPACE
+            value: 'openebs'
+ 
+         # provide  application namespace
           - name: APP_NAMESPACE
             value: ''
 
-        # provide application labels
+         # provide  application label
           - name: APP_LABEL
             value: ''
 
-        # provide application pvc
+         # provide  application pvc
           - name: APP_PVC
             value: ''
 
-         # only pumba supported
-         # For pumba image use : gaiaadm/pumba:0.4.8
+        # only pumba supported
+        # For pumba image use : gaiaadm/pumba:0.4.8
           - name: LIB_IMAGE
             value: 'gaiaadm/pumba:0.4.8' 
 
+          - name: NETWORK_DELAY
+            value: '60000' # in milliseconds
+
+          - name: CHAOS_DURATION
+            value: '60000' # in milliseconds
+            
           - name: LIVENESS_APP_LABEL
             value: ''
 
@@ -55,21 +61,16 @@ spec:
             value: ''
 
           - name: DATA_PERSISTENCE
-            value: ''
-
-          - name: CHAOS_ITERATIONS
-            value: '2'
-
-          - name: CHAOSENGINE
-            value: ''
+            value: ''  
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./experiments/openebs/openebs-pool-container-failure/openebs_pool_kill_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
-
+        args: ["-c", "ansible-playbook ./experiments/openebs/openebs-target-network-delay/openebs_target_network_delay_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
+        
         volumeMounts:
         - name: parameters
           mountPath: /mnt/
       volumes:
         - name: parameters
           configMap:
-            name: pool-container-kill
+            name:  target-network-delay
+            
