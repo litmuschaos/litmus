@@ -105,11 +105,6 @@
 
 - include_tasks: /chaoslib/litmus/disk_fill/file_creation.yml
 
-- include_tasks: /utils/common/status_app_pod.yml
-  vars:     
-    delay: 1
-    retries: 60 
-
 - name: Waiting for Chaos Duration
   wait_for:
     timeout: "{{ c_duration }}"
@@ -121,10 +116,22 @@
     executable: /bin/bash
   register: pod_status
 
+- name: Check if the pod is Evicted
+  shell: >
+    kubectl get pod {{ pod_name.stdout }} -n {{ a_ns }} -o jsonpath='{.status.reason}'
+  args:
+    executable: /bin/bash
+  register: eviction_status
+
+- name: Delete Pod if evicted
+  shell: >
+    kubectl delete pod {{ pod_name.stdout }} -n {{ a_ns }}
+  when: eviction_status.stdout == "Evicted"
+
 - name: If Pod is not evicted / running
   shell: >
     kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ a_ns }} -- sh -c "rm -rf /diskfill/{{ containerID.stdout }}/diskfill"
-  when: pod_status.stdout != "Evicted"
+  when: pod_status.stdout == "Running"
 
 - name: Delete DaemonSet disk-fill
   shell: >
