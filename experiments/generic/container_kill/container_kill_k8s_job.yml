@@ -41,7 +41,7 @@ spec:
 
             # provide application labels
           - name: APP_LABEL
-            value: ''>>>>>>> master
+            value: ''
 
           # provide target container
           - name: TARGET_CONTAINER
