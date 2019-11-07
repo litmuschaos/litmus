@@ -44,7 +44,6 @@
             app_pod: "{{ pod_name.stdout }}"     
       when: app_pod is undefined
 
-
     - name: Identify the node where application is running
       shell: >
         kubectl get pod {{ app_pod }} -n {{ namespace }}

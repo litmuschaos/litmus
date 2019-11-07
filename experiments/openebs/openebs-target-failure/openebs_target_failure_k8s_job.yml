@@ -43,13 +43,16 @@ spec:
           - name: APP_PVC
             value: ''
 
+        #  it can be true or false, depending upon scenario - allowed force deletion or not
           - name: FORCE
             value: 'true'
 
           - name: LIVENESS_APP_LABEL
             value: ''
 
-         # provide lib image
+         # LIB_IMAGE can be - gaiaadm/pumba:0.4.8, gprasath/crictl:ci
+         # For pumba image use : gaiaadm/pumba:0.4.8
+         # For containerd image use : gprasath/crictl:ci
           - name: LIB_IMAGE
             value: 'gaiaadm/pumba:0.4.8'
 
@@ -59,6 +62,7 @@ spec:
           - name: DATA_PERSISTENCE
             value: ''
             
+          # Specify the container runtime used , to pick the relevant chaos util  
           - name: CONTAINER_RUNTIME
             value: 'docker' 
 

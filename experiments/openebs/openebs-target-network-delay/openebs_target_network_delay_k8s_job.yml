@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: target-network-loss
+  name: target-network-delay
 data:
   parameters.yml: |
 
@@ -10,12 +10,12 @@ data:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: openebs-target-network-loss- 
+  generateName: openebs-target-network-delay- 
 spec:
   template:
     metadata:
       labels:
-        name: openebs-target-network-loss
+        name: openebs-target-network-delay 
     spec:
       serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
       restartPolicy: Never
@@ -27,36 +27,33 @@ spec:
           - name: ANSIBLE_STDOUT_CALLBACK
             value: 'default'
 
-          # provide openebs namespace
+         # provide openebs namespace
           - name: OPENEBS_NAMESPACE
             value: 'openebs'
  
-          # provide application namespace
+         # provide  application namespace
           - name: APP_NAMESPACE
             value: ''
 
-           # provide application label
+         # provide  application label
           - name: APP_LABEL
             value: ''
 
-          - name: FORCE
-            value: 'true'
-
-           # provide application pvc
+         # provide  application pvc
           - name: APP_PVC
             value: ''
 
-           # only pumba supported
-           # For pumba image use : gaiaadm/pumba:0.4.8
-          - name: LIB_IMAGE  
+        # only pumba supported
+        # For pumba image use : gaiaadm/pumba:0.4.8
+          - name: LIB_IMAGE
             value: 'gaiaadm/pumba:0.4.8' 
 
-          - name: NETWORK_PACKET_LOSS_PERCENTAGE
-            value: '100' # in percentage
+          - name: NETWORK_DELAY
+            value: '60000' # in milliseconds
 
           - name: CHAOS_DURATION
-            value: '240000' # in milliseconds
-
+            value: '60000' # in milliseconds
+            
           - name: LIVENESS_APP_LABEL
             value: ''
 
@@ -64,16 +61,16 @@ spec:
             value: ''
 
           - name: DATA_PERSISTENCE
-            value: ''
+            value: ''  
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./experiments/openebs/openebs-target-network-loss/openebs_target_network_loss_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
-
+        args: ["-c", "ansible-playbook ./experiments/openebs/openebs-target-network-delay/openebs_target_network_delay_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
+        
         volumeMounts:
         - name: parameters
           mountPath: /mnt/
       volumes:
         - name: parameters
           configMap:
-            name: target-network-loss
+            name:  target-network-delay
             

@@ -64,4 +64,4 @@
       - "Verified pool pods were restarted by fault injection"
       - "Before: {{ restartCount_before.stdout }}"
       - "After: {{ restartCount_after.stdout }}"
-  failed_when: "restartCount_before.stdout|int >= restartCount_after.stdout|int"
+  failed_when: "{{ restartCount_after.stdout|int }} != {{ restartCount_before.stdout|int + 1 }}"
