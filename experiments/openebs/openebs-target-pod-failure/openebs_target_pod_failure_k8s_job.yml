@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: openebs-pool-container-failure
+  name: openebs-target-pod-failure
 data:
   parameters.yml: |
 
@@ -10,12 +10,12 @@ data:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: openebs-pool-container-failure-
+  generateName: openebs-target-pod-failure-
 spec:
   template:
     metadata:
       labels:
-        experiment: openebs-pool-container-failure
+        name: openebs-target-pod-failure
     spec:
       serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
       restartPolicy: Never
@@ -26,16 +26,16 @@ spec:
         env:
           - name: ANSIBLE_STDOUT_CALLBACK
             value: 'default'
-           
-           #provide openebs namespace
-          - name: OPENEBS_NS
-            value: 'openebs'
 
          # provide application namespace
           - name: APP_NAMESPACE
             value: ''
 
-        # provide application labels
+        # provide openebs namespace
+          - name: OPENEBS_NAMESPACE
+            value: 'openebs'
+
+         # provide application label
           - name: APP_LABEL
             value: ''
 
@@ -43,10 +43,9 @@ spec:
           - name: APP_PVC
             value: ''
 
-         # only pumba supported
-         # For pumba image use : gaiaadm/pumba:0.4.8
-          - name: LIB_IMAGE
-            value: 'gaiaadm/pumba:0.4.8' 
+        #  it can be true or false, depending upon scenario - allowed force deletion or not
+          - name: FORCE
+            value: 'true'
 
           - name: LIVENESS_APP_LABEL
             value: ''
@@ -57,14 +56,18 @@ spec:
           - name: DATA_PERSISTENCE
             value: ''
 
-          - name: CHAOS_ITERATIONS
-            value: '2'
+          - name: CHAOS_INTERVAL
+            value: '5'
 
-          - name: CHAOSENGINE
-            value: ''
+          - name: CHAOS_DURATION
+            value: '120'
+            
+           # DEPLOY_TYPE values: deployment, statefulset
+          - name: DEPLOY_TYPE
+            value: 'deployment'
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./experiments/openebs/openebs-pool-container-failure/openebs_pool_kill_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
+        args: ["-c", "ansible-playbook ./experiments/openebs/openebs-target-pod-failure/openebs_target_pod_failure_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
 
         volumeMounts:
         - name: parameters
@@ -72,4 +75,4 @@ spec:
       volumes:
         - name: parameters
           configMap:
-            name: openebs-pool-container-failure
+            name: openebs-target-pod-failure

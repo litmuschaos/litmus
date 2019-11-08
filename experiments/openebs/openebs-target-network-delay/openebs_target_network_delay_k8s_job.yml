@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: target-network-delay
+  name: openebs-target-network-delay
 data:
   parameters.yml: |
 
@@ -72,5 +72,5 @@ spec:
       volumes:
         - name: parameters
           configMap:
-            name:  target-network-delay
+            name: openebs-target-network-delay
             
