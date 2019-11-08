@@ -1,0 +1,14 @@
+- name: Creates directory for aws configuration
+  file:
+    path: /root/.aws
+    state: directory
+
+- name: Creating credential file in aws directory
+  file: 
+    path: /root/.aws/credentials
+    state: touch 
+
+- name: Copying aws credentials from cloud_config
+  copy: 
+    src: /mnt/cloud_config.yml
+    dest:   /root/.aws/credentials

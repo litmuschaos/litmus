@@ -10,6 +10,7 @@
     cloud_platform: "{{ lookup('env','CLOUD_PLATFORM') }}"
     c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
     disk_name: "{{ lookup('env','DISK_NAME') }}"
+    device_name: "{{ lookup('env', 'DEVICE_NAME') }}"
     node_name: "{{ lookup('env','NODE_NAME') }}"
     project_id: "{{ lookup('env','PROJECT_ID') }}"
     zone_name: "{{ lookup('env','ZONE_NAME') }}"
@@ -47,14 +48,24 @@
         - name: Gcloud authentication
           include_tasks: "/utils/cloud/gcp/gcloud_configure.yml"
           when: "cloud_platform == 'GCP'"
+        
+        # AWS authentication
+        - name: AWS authentication
+          include_tasks: "/utils/cloud/aws/aws_configure.yml"
+          when: "cloud_platform == 'AWS'"
 
         ## PRE-CHAOS DISK LIVENESS CHECK
         - name: Verify that the disk is connected to node (pre)
           include_tasks: "/utils/cloud/gcp/status_disk.yml"
+          when: "cloud_platform == 'GCP'"
+
+        - name: Verify that the disk is connected to node (pre)
+          include_tasks: "/utils/cloud/aws/status_disk.yml"
+          when: "cloud_platform == 'AWS'"
 
         # Checking disk is attached to node
         - debug: 
-            msg: echo "disk attached"   
+            msg: "disk attached"   
           when: "inuse == true"
 
          ## INJECTING CHAOS 
@@ -72,10 +83,15 @@
         ## POST-CHAOS DISK LIVENESS CHECK
         - name: Verify that the disk is connected to node (post)
           include_tasks: "/utils/cloud/gcp/status_disk.yml"
-
+          when: "cloud_platform == 'GCP'"
+        
+        - name: Verify that the disk is connected to node (post)
+          include_tasks: "/utils/cloud/aws/status_disk.yml"
+          when: "cloud_platform == 'AWS'"
+          
         # Checking disk is attached to node
         - debug: 
-            msg: echo "disk attached"   
+            msg: "disk attached"   
           when: "inuse == true"
 
         - set_fact:
