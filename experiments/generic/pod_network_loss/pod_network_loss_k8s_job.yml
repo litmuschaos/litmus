@@ -33,18 +33,6 @@ spec:
           - name: APP_KIND
             value: ''
  
-          # provide application namespace
-          - name: APP_NAMESPACE
-            value: ''
- 
-          # provide application labels
-          - name: APP_LABEL
-            value: ''
-
-          # provide application kind
-          - name: APP_KIND
-            value: ''
-
           # provide target conatiner
           - name: TARGET_CONTAINER
             value: ''

@@ -9,16 +9,23 @@
 
   - name: Select a random pod to kill
     set_fact:
-      app_pod_name: "{{ pod_list.resources | random | json_query('metadata.name') }}"
+      app_pod: "{{ pod_list.resources | random | json_query('metadata.name') }}"
 
   when: app_pod_name is undefined
 
+- block:
+  - name: Record app pod 
+    set_fact:
+      app_pod: "{{ app_pod_name }}"
+
+  when: app_pod_name is defined
+
 - debug:
-    msg: "Killing pod {{ app_pod_name }}"
+    msg: "Killing pod {{ app_pod }}"
 
 - name: Force Kill application pod
   shell: |
-    kubectl delete pod -n {{ app_ns }} --force --grace-period=0 --wait=false {{ app_pod_name }}
+    kubectl delete pod -n {{ app_ns }} --force --grace-period=0 --wait=false {{ app_pod }}
   args:
     executable: /bin/bash
   register: result
@@ -26,7 +33,7 @@
 
 - name: Kill application pod
   shell: |
-    kubectl delete pod -n {{ app_ns }} --grace-period=0 --wait=false {{ app_pod_name }}
+    kubectl delete pod -n {{ app_ns }} --grace-period=0 --wait=false {{ app_pod }}
   args:
     executable: /bin/bash
   register: result
