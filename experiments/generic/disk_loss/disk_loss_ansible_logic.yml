@@ -65,7 +65,7 @@
 
         # Checking disk is attached to node
         - debug: 
-            msg: echo "disk attached"   
+            msg: "disk attached"   
           when: "inuse == true"
 
          ## INJECTING CHAOS 
@@ -91,7 +91,7 @@
           
         # Checking disk is attached to node
         - debug: 
-            msg: echo "disk attached"   
+            msg: "disk attached"   
           when: "inuse == true"
 
         - set_fact:
