@@ -1,3 +1,5 @@
+# ec2_vol_facts is deprecated, once python2 is upgraded to python3 in ansible runner
+# we can change ec2_vol_facts to ec2_vol_info.
 - name: Getting disk users
   ec2_vol_facts:
     filters:

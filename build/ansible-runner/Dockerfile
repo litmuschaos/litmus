@@ -12,7 +12,7 @@ RUN pip install --upgrade pip
 #Installing ansible and dependencies for k8s module
 RUN pip install ansible==2.7.3 openshift jmespath boto boto3
 
-RUN mkdir -p /root/.aws && touch /mnt/parameters.yml /mnt/cloud_config.yml /root/.aws/credentials
+RUN touch /mnt/parameters.yml /mnt/cloud_config.yml
 
 #Installing gcloud 
 RUN curl -sSL https://sdk.cloud.google.com | bash
