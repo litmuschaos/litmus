@@ -45,6 +45,8 @@
 
         ## FAULT INJECTION 
         - include_tasks: "{{ c_util }}"
+          vars:
+            app_ns: "{{ a_ns }}"
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
         - name: Verify AUT liveness post fault-injection

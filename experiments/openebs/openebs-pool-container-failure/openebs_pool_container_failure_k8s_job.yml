@@ -1,0 +1,75 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pool-container-kill
+data:
+  parameters.yml: |
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: openebs-pool-container-failure-
+spec:
+  template:
+    metadata:
+      labels:
+        experiment: openebs-pool-container-failure
+    spec:
+      serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: litmuschaos/ansible-runner:ci
+        imagePullPolicy: Always
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: 'default'
+           
+           #provide openebs namespace
+          - name: OPENEBS_NS
+            value: 'openebs'
+
+         # provide application namespace
+          - name: APP_NAMESPACE
+            value: ''
+
+        # provide application labels
+          - name: APP_LABEL
+            value: ''
+
+        # provide application pvc
+          - name: APP_PVC
+            value: ''
+
+         # only pumba supported
+         # For pumba image use : gaiaadm/pumba:0.4.8
+          - name: LIB_IMAGE
+            value: 'gaiaadm/pumba:0.4.8' 
+
+          - name: LIVENESS_APP_LABEL
+            value: ''
+
+          - name: LIVENESS_APP_NAMESPACE
+            value: ''
+
+          - name: DATA_PERSISTENCE
+            value: ''
+
+          - name: CHAOS_ITERATIONS
+            value: '2'
+
+          - name: CHAOSENGINE
+            value: ''
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./experiments/openebs/openebs-pool-container-failure/openebs_pool_kill_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
+
+        volumeMounts:
+        - name: parameters
+          mountPath: /mnt/
+      volumes:
+        - name: parameters
+          configMap:
+            name:  pool-container-kill
