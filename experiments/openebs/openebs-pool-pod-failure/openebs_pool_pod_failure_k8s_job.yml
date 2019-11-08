@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: data-persistence-configmap
+  name: pool-pod-delete
 data:
   parameters.yml: |
 
@@ -10,37 +10,42 @@ data:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: openebs-pool-container-failure-
+  generateName: openebs-pool-pod-failure-
 spec:
   template:
     metadata:
       labels:
-        experiment: openebs-pool-container-failure
+        name: openebs-pool-pod-failure
     spec:
       serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
       restartPolicy: Never
+
       containers:
       - name: ansibletest
         image: litmuschaos/ansible-runner:ci
         imagePullPolicy: Always
         env:
-          - name: OPENEBS_NS
-            value: openebs
-
           - name: ANSIBLE_STDOUT_CALLBACK
             value: 'default'
+          
+          #provide openebs namespace
+          - name: OPENEBS_NS
+            value: 'openebs'
 
-         # provide application namespace
+          #provide application namespace
           - name: APP_NAMESPACE
             value: ''
 
-        # provide application labels
+          #provide application labels
           - name: APP_LABEL
             value: ''
 
-        # provide application pvc
+           #provide application pvc
           - name: APP_PVC
             value: ''
+
+          - name: FORCE
+            value: 'true'
 
           - name: LIVENESS_APP_LABEL
             value: ''
@@ -49,16 +54,13 @@ spec:
             value: ''
 
           - name: DATA_PERSISTENCE
-            value: ''
+            value: '' 
 
           - name: CHAOS_ITERATIONS
             value: '2'
 
-          - name: CHAOSENGINE
-            value: ''
-
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./experiments/openebs/openebs-pool-container-failure/openebs_pool_kill_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
+        args: ["-c", "ansible-playbook ./experiments/openebs/openebs-pool-pod-failure/openebs_pool_pod_failure_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
 
         volumeMounts:
         - name: parameters
@@ -66,4 +68,4 @@ spec:
       volumes:
         - name: parameters
           configMap:
-            name: data-persistence-configmap
+            name: pool-pod-delete
