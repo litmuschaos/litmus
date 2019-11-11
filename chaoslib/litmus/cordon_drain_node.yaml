@@ -1,0 +1,45 @@
+- name: Identify the application node
+  shell: >
+    kubectl get pod {{ app_pod }} -n {{ app_ns }} 
+    --no-headers -o custom-columns=:spec.nodeName
+  args: 
+    executable: /bin/bash
+  register: result 
+               
+- name: Record the application node name 
+  set_fact:
+    app_node: "{{ result.stdout }}"
+
+- block:
+    
+  - name: Drain the application node
+    shell: >
+      kubectl drain {{ app_node }} --ignore-daemonsets --delete-local-data  --force
+    args:
+      executable: /bin/bash
+    register: result
+    until: "'cordoned' in result.stdout"
+    delay: 20
+    retries: 12
+    
+  - name: Wait for application pod reschedule (evict)
+    # Do not untaint until evict occurs
+    wait_for:
+      timeout: 30
+    
+  when: action == "drain"
+
+- block:
+
+    - name: Uncordon the application node
+      shell: >
+        kubectl uncordon {{ app_node }}
+      args:
+        executable: /bin/bash
+      register: result
+      until: "'uncordoned' in result.stdout"
+      delay: 20
+      retries: 12
+      
+  when: action == "uncordon"
+
