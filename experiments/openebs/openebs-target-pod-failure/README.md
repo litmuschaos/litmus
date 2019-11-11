@@ -9,7 +9,7 @@
 </tr>
 <tr>
 <td> Chaos </td>
-<td> Kill the cstor target/Jiva controller container and check if gets created again </td>
+<td> Kill the cstor/jiva target/controller pod and check if gets created again </td>
 <td> OPENEBS </td>
 <td> Any </td>
 </tr>
@@ -33,10 +33,8 @@
 -   The container should be created again and it should be healthy.
 
 ## Associated Utils 
--   [cstor_target_container_kill.yml](/experiments/openebs/openebs-target-failure/cstor_target_container_kill.yml)
--   [cstor_target_failure.yaml](/experiments/openebs/openebs-target-failure/cstor_target_failure.yaml)
--   [jiva_controller_container_kill.yml](/experiments/openebs/openebs-target-failure/jiva_controller_container_kill.yml)
--   [jiva_controller_pod_failure.yaml](/experiments/openebs/openebs-target-failure/jiva_controller_pod_failure.yaml)
+-   [cstor_target_failure.yaml](/experiments/openebs/openebs-target-pod-failure/cstor_target_failure.yaml)
+-   [jiva_controller_pod_failure.yaml](/experiments/openebs/openebs-target-pod-failure/jiva_controller_pod_failure.yaml)
 -   [fetch_cstor_target_pod.yml](/utils/apps/openebs/fetch_cstor_target_pod.yml)
 -   [fetch_jiva_controller_pod.yml](/utils/apps/openebs/fetch_jiva_controller_pod.yml)
 -   [fetch_sc_and_provisioner.yml](/utils/apps/openebs/fetch_sc_and_provisioner.yml)
@@ -66,19 +64,6 @@
 <tr> 
 <td>   DATA_PERSISTENCE  </td>
 <td> Specify the application name against which data consistency has to be ensured. Example: busybox   </td>
-</tr>
-</table>
-
-### Chaos 
-
-<table>
-<tr>
-<th> CHAOS_TYPE   </th>
-<th> The type of chaos to be induced. </th>
-</tr>
-<tr> 
-<td> TARGET_CONTAINER </td>
-<td> The container against which chaos has to be induced. </td>
 </tr>
 </table>
 

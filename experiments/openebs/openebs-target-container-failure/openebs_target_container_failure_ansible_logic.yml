@@ -8,9 +8,8 @@
     a_pvc: "{{ lookup('env','APP_PVC') }}"
     c_experiment: openebs-target-failure
     c_force: "{{ lookup('env','FORCE') }}"
-    c_interval: 5
-    chaos_duration: 120
-    chaos_type: "{{ lookup('env','CHAOS_TYPE') }}"
+    c_interval: "{{ lookup('env','CHAOS_INTERVAL') }}"
+    chaos_duration: "{{ lookup('env','CHAOS_DURATION') }}"
     cri: "{{ lookup('env','CONTAINER_RUNTIME') }}"
     data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
     deploy_type: "{{ lookup('env','DEPLOY_TYPE') }}"
