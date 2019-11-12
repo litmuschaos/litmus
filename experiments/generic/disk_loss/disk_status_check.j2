@@ -11,6 +11,7 @@
 {% set disk.inuse = true %}
 {% endif %}
 {% endfor %}
+{% endif %}
 
 # For AWS
 {% elif cloud_platform is defined and cloud_platform == 'AWS' %}
@@ -22,12 +23,12 @@
 {% set disk.inuse = true %}
 {% endif %}
 {% endfor %}
+{% endif %}
 
 # This will append inuse: true/false
 {% if disk.inuse == true %}
 inuse: true
 {% else %}
 inuse: false
-{% endif %}
 {% endif %}
 
