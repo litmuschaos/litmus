@@ -11,14 +11,14 @@
     set_fact:
       app_pod: "{{ pod_list.resources | random | json_query('metadata.name') }}"
 
-  when: app_pod_name is undefined
+  when: app_pod_name is undefined or app_pod_name == ''
 
 - block:
   - name: Record app pod 
     set_fact:
       app_pod: "{{ app_pod_name }}"
 
-  when: app_pod_name is defined
+  when: app_pod_name is defined and app_pod_name != ''
 
 - debug:
     msg: "Killing pod {{ app_pod }}"
