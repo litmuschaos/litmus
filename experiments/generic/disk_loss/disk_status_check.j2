@@ -22,12 +22,12 @@
 {% set disk.inuse = true %}
 {% endif %}
 {% endfor %}
+{% endif %}
 
 # This will append inuse: true/false
 {% if disk.inuse == true %}
 inuse: true
 {% else %}
 inuse: false
-{% endif %}
 {% endif %}
 
