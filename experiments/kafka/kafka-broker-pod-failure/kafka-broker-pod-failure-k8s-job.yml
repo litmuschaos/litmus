@@ -1,0 +1,89 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: kafka-broker-pod-failure-
+spec:
+  template:
+    metadata:
+      labels:
+        experiment: kafka-broker-pod-failure
+    spec:
+      # Placeholder that is updated by the executor for automated runs
+      # Provide appropriate SA (with desired permissions) if executed manually
+      serviceAccountName: nginx
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: ksatchit/ansible-runner:ci
+        imagePullPolicy: Always
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: 'default'
+
+          # provide application namespace
+          - name: KAFKA_NAMESPACE
+            value: 'default'
+
+          # provide application labels
+          - name: KAFKA_LABEL
+            value: 'app=cp-kafka'
+
+           # provide application kind
+          - name: KAFKA_KIND
+            value: 'statefulset'
+
+          - name: KAFKA_BROKER
+            value: ''
+
+          - name: KAFKA_LIVENESS_STREAM
+            value: 'enabled'
+
+          - name: KAFKA_REPLICATION_FACTOR
+            value: '3'
+
+          - name: KAFKA_SERVICE
+            value: 'kafka-demo-cp-kafka-headless'
+
+          - name: KAFKA_PORT
+            value: '9092'
+
+          - name: ZOOKEEPER_NAMESPACE
+            value: 'default'
+
+          # provide application labels
+          - name: ZOOKEEPER_LABEL
+            value: 'app=cp-zookeeper'
+
+
+          - name: ZOOKEEPER_SERVICE
+            value: 'kafka-demo-cp-zookeeper-headless'
+
+          - name: ZOOKEEPER_PORT
+            value: '2181'
+
+          - name: TOTAL_CHAOS_DURATION
+            value: '15'
+
+          - name: CHAOS_INTERVAL
+            value: '5'
+
+          - name: FORCE
+            value: 'true'
+
+          ## env var that describes the library used to execute the chaos
+          ## default: litmus. Supported values: litmus, powerfulseal, chaoskube
+          - name: LIB
+            value: ''
+
+          - name: CHAOSENGINE
+            value: ''
+
+          - name: CHAOS_SERVICE_ACCOUNT
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.serviceAccountName
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./experiments/kafka/kafka-broker-pod-failure/kafka-broker-pod-failure-ansible-logic.yml -vv -i /etc/ansible/hosts; exit 0"]
+
