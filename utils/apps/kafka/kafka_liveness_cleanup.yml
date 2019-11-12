@@ -1,0 +1,16 @@
+- name: Remove the Kafka liveness pod 
+  shell: 
+    kubectl delete -f kafka_liveness.yml -n {{ kafka_ns }}
+  args:
+    executable: /bin/bash
+  register: result
+    
+- name: Confirm that the Kafka liveness pod is deleted successfully
+  shell:
+    kubectl get pod -l name=kafka-liveness --no-headers -n {{ kafka_ns }}
+  args: 
+    executable: /bin/bash
+  register: result
+  until: "'Running' not in result.stdout"
+  delay: 1
+  retries: 120
