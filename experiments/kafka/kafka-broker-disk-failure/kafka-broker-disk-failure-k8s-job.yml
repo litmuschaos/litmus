@@ -2,16 +2,16 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: kafka-broker-pod-failure-
+  generateName: kafka-broker-disk-failure-
 spec:
   template:
     metadata:
       labels:
-        experiment: kafka-broker-pod-failure
+        experiment: kafka-broker-disk-failure
     spec:
       # Placeholder that is updated by the executor for automated runs
       # Provide appropriate SA (with desired permissions) if executed manually
-      serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
+      serviceAccountName: %CHAOS_SERVICE_ACCOUNT% 
       restartPolicy: Never
       containers:
       - name: ansibletest
@@ -21,6 +21,7 @@ spec:
           - name: ANSIBLE_STDOUT_CALLBACK
             value: 'default'
 
+           # provide application kind
           - name: KAFKA_KIND
             value: 'statefulset'
 
@@ -28,13 +29,19 @@ spec:
             value: 'enabled'
 
           - name: TOTAL_CHAOS_DURATION
-            value: '15'
+            value: '30'
 
-          - name: CHAOS_INTERVAL
-            value: '5'
+          - name: CLOUD_PLATFORM
+            value: 'GCP'
 
-          - name: FORCE
-            value: 'true'
+          - name: PROJECT_ID
+            value: ''
+
+          - name: DISK_NAME
+            value: ''
+
+          - name: ZONE_NAME
+            value: '' 
 
           - name: KAFKA_NAMESPACE
             value: ''
@@ -66,11 +73,6 @@ spec:
           - name: ZOOKEEPER_PORT
             value: ''
 
-          ## env var that describes the library used to execute the chaos
-          ## default: litmus. Supported values: litmus, powerfulseal, chaoskube
-          - name: LIB
-            value: ''
-
           - name: CHAOSENGINE
             value: ''
 
@@ -80,5 +82,12 @@ spec:
                 fieldPath: spec.serviceAccountName
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./experiments/kafka/kafka-broker-pod-failure/kafka-broker-pod-failure-ansible-logic.yml -vv -i /etc/ansible/hosts; exit 0"]
+        args: ["-c", "ansible-playbook ./experiments/kafka/kafka-broker-disk-failure/kafka-broker-disk-failure-ansible-logic.yml -vv -i /etc/ansible/hosts; exit 0"]
+        volumeMounts:
+        - name: parameters
+          mountPath: /mnt/
+      volumes: 
+        - name: parameters 
+          secret:
+            secretName: %SECRET_NAME%
 
