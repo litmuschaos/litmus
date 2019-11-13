@@ -1,49 +1,55 @@
-### Sanple ChaosEngine manifest to execute kafka broker kill experiment
+### Sample ChaosEngine manifest to execute kafka broker kill experiment
 
-    ```
+-   To override experiment defaults, add the ENV variables in `spec.components` of the experiment. 
+
+    ```yml
     apiVersion: litmuschaos.io/v1alpha1
     kind: ChaosEngine
     metadata:
-      name: engine-nginx
+      name: kafka-chaos
       namespace: default
     spec:
       appinfo: 
         appns: default
-        applabel: ''
+        applabel: 'app=cp-kafka'
         appkind: statefulset
-      chaosServiceAccount: default
-      monitoring: true
+      chaosServiceAccount: kafka-sa
+      monitoring: false
       experiments:
         - name: kafka-broker-pod-failure
           spec:
-          components:             <--- ADD ALL ENV VARIABLES HERE - WHICH NEEDS TO BE OVERRIDDEN
-            - name: KAFKA_NAMESPACE
-              value: ''
+            components:  
+              # choose based on available kafka broker replicas           
+              - name: KAFKA_REPLICATION_FACTOR
+                value: '3'
 
-            - name: KAFKA_LABEL
-              value: ''
+              # get via "kubectl get pods --show-labels -n <kafka-namespace>"
+              - name: KAFKA_LABEL
+                value: 'app=cp-kafka'
 
-            - name: KAFKA_BROKER
-              value: ''
+              - name: KAFKA_NAMESPACE
+                value: 'default'
+     
+              # get via "kubectl get svc -n <kafka-namespace>" 
+              - name: KAFKA_SERVICE
+                value: 'kafka-cp-kafka-headless'
 
-            - name: KAFKA_REPLICATION_FACTOR
-              value: ''
+              # get via "kubectl get svc -n <kafka-namespace>  
+              - name: KAFKA_PORT
+                value: '9092'
 
-            - name: KAFKA_SERVICE
-              value: ''
+              - name: ZOOKEEPER_NAMESPACE
+                value: 'default'
 
-            - name: KAFKA_PORT
-              value: ''
+              # get via "kubectl get pods --show-labels -n <zk-namespace>"
+              - name: ZOOKEEPER_LABEL
+                value: 'app=cp-zookeeper'
 
-            - name: ZOOKEEPER_NAMESPACE
-              value: ''
+              # get via "kubectl get svc -n <zk-namespace>  
+              - name: ZOOKEEPER_SERVICE
+                value: 'kafka-cp-zookeeper-headless'
 
-            - name: ZOOKEEPER_LABEL
-              value: ''
-
-            - name: ZOOKEEPER_SERVICE
-              value: ''
-
-            - name: ZOOKEEPER_PORT
-              value: ''
+              # get via "kubectl get svc -n <zk-namespace>  
+              - name: ZOOKEEPER_PORT
+                value: '2181'
     ```
