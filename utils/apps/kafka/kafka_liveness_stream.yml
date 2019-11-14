@@ -36,15 +36,32 @@
     kubectl get pods -n {{ kafka_ns }} -l name=kafka-liveness -o jsonpath='{.items[0].metadata.name}' 
   register: kafka_liveness_pod
 
-- name: Obtain the leader broker ordinality for the topic (partition) created by kafka-liveness
-  shell: > 
-    kubectl exec {{ kafka_liveness_pod.stdout }} -n {{ kafka_ns }} -c kafka-consumer 
-    -- kafka-topics --topic {{ kafka_topic }} --describe --zookeeper {{ zk_service }}:{{ zk_port }}
-    | grep -o 'Leader: [^[:space:]]*' | awk '{print $2}'
-  args:
-    executable: /bin/bash
-  register: ordinality
-  failed_when: "ordinality.rc != 0"
+- block: 
+
+    - name: Obtain the leader broker ordinality for the topic (partition) created by kafka-liveness
+      shell: > 
+        kubectl exec {{ kafka_liveness_pod.stdout }} -n {{ kafka_ns }} -c kafka-consumer 
+        -- kafka-topics --topic {{ kafka_topic }} --describe --zookeeper {{ zk_service }}:{{ zk_port }}
+        | grep -o 'Leader: [^[:space:]]*' | awk '{print $2}'
+      args:
+        executable: /bin/bash
+      register: ordinality
+      failed_when: "ordinality.rc != 0"
+  when: kafka_instance is not defined or kafka_instance == ''
+
+- block: 
+
+    - name: Obtain the leader broker ordinality for the topic (partition) created by kafka-liveness
+      shell: > 
+        kubectl exec {{ kafka_liveness_pod.stdout }} -n {{ kafka_ns }} -c kafka-consumer 
+        -- kafka-topics --topic {{ kafka_topic }} --describe --zookeeper {{ zk_service }}:{{ zk_port }}/{{ kafka_instance }}
+        | grep -o 'Leader: [^[:space:]]*' | awk '{print $2}'
+      args:
+        executable: /bin/bash
+      register: ordinality
+      failed_when: "ordinality.rc != 0"
+  when: kafka_instance is defined and kafka_instance != ''
+
 
 - name: Determine the leader broker pod name
   shell: 
