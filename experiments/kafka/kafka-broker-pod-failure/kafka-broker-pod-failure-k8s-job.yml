@@ -36,6 +36,9 @@ spec:
           - name: FORCE
             value: 'true'
 
+          - name: KAFKA_INSTANCE_NAME
+            value: ''
+
           - name: KAFKA_NAMESPACE
             value: ''
 
