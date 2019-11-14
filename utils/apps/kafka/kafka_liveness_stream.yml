@@ -45,8 +45,12 @@
         | grep -o 'Leader: [^[:space:]]*' | awk '{print $2}'
       args:
         executable: /bin/bash
-      register: ordinality
+      register: ordinality_non_instance
       failed_when: "ordinality.rc != 0"
+
+    - set_fact: 
+        ordinality: "{{ ordinality_non_instance.stdout }}"
+
   when: kafka_instance is not defined or kafka_instance == ''
 
 - block: 
@@ -58,8 +62,12 @@
         | grep -o 'Leader: [^[:space:]]*' | awk '{print $2}'
       args:
         executable: /bin/bash
-      register: ordinality
+      register: ordinality_instance
       failed_when: "ordinality.rc != 0"
+
+    - set_fact: 
+        ordinality: "{{ ordinality_instance.stdout }}"
+
   when: kafka_instance is defined and kafka_instance != ''
 
 
