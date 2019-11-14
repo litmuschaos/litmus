@@ -40,10 +40,7 @@
 
         - name: Verify that the AUT (Application Under Test) is running 
           include_tasks: "/utils/common/status_app_pod.yml"
-          vars:
-            app_ns: "{{ a_ns }}" 
-            app_lkey: "{{ a_label.split('=')[0] }}"
-            app_lvalue: "{{ a_label.split('=')[1] }}"       
+          vars:     
             delay: 1
             retries: 60
 
@@ -51,16 +48,14 @@
 
         - include_tasks: "{{ c_util }}"
           vars:
-            c_svc_acc: "{{ lookup('env','CHAOS_SERVICE_ACCOUNT') }}"
+            app_ns: "{{ a_ns }}"
+            app_label: "{{ a_label }}"
           
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
         - name: Verify AUT liveness post fault-injection
           include_tasks: "/utils/common/status_app_pod.yml"
-          vars:
-            app_ns: "{{ a_ns }}" 
-            app_lkey: "{{ a_label.split('=')[0] }}"
-            app_lvalue: "{{ a_label.split('=')[1] }}"       
+          vars:    
             delay: 1
             retries: 60        
 

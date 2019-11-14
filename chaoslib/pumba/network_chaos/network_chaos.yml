@@ -1,0 +1,107 @@
+---
+- name: Patch the chaoslib image
+  template:
+    src:  /chaoslib/pumba/pumba.j2
+    dest: /chaoslib/pumba/pumba_kube.yml
+  vars:
+    pumba_image: "{{ lib_image }}"
+
+- block: 
+    - name: Setup pumba chaos infrastructure
+      shell: >
+        kubectl apply -f /chaoslib/pumba/pumba_kube.yml -n {{ a_ns }}
+      args: 
+        executable: /bin/bash
+      register: pumb_deploy_result
+
+    - name: Confirm that the pumba ds is running on all nodes
+      shell: >
+        kubectl get pod -l app=pumba
+        --no-headers -o custom-columns=:status.phase
+        -n {{ a_ns }} | sort | uniq
+      args:
+        executable: /bin/bash
+      register: result
+      until: "result.stdout == 'Running'"
+      delay: 1
+      retries: 60
+      ignore_errors: true
+
+    - block:  
+      - name: Select the app pod
+        shell: >
+          kubectl get pod -l {{ a_label }} -n {{ a_ns }}
+          -o=custom-columns=:metadata.name --no-headers
+          | shuf | head -1 
+        args:
+          executable: /bin/bash
+        register: app_pod_name
+
+      - name: Record app pod name
+        set_fact:
+          app_pod: "{{ app_pod_name.stdout }}"
+
+      when: "app_pod is undefined"
+
+    # here app_ns is the namespace of pod on which we are performing network loss/delay
+    # in genric experiments app_ns is same as a_ns
+    # in openebs experiments app_ns is the namespace where openebs is installed i.e, openebs
+    - name: Identify the application node
+      shell: >
+        kubectl get pod {{ app_pod }} -n {{ app_ns }}
+        --no-headers -o custom-columns=:spec.nodeName
+      args:
+        executable: /bin/bash
+      register: app_node
+
+    - name: Identify the pumba pod that co-exists with app pod
+      shell: >
+        kubectl get pods -l app=pumba -n {{ a_ns }} 
+        -o jsonpath='{.items[?(@.spec.nodeName==''"{{ app_node.stdout }}"'')].metadata.name}'
+      args:
+        executable: /bin/bash
+      register: pumba_pod 
+
+    - include_tasks: /chaoslib/pumba/network_chaos/induce_latency.yml
+      when: "n_latency is defined"
+
+    - include_tasks: /chaoslib/pumba/network_chaos/induce_packet_loss.yml
+      when: "n_packet_loss is defined"
+     
+    - name: Tear down pumba infrastructure
+      shell: >
+        kubectl delete -f /chaoslib/pumba/pumba_kube.yml -n {{ a_ns }} 
+      args:
+        executable: /bin/bash
+
+    - name: Confirm that the pumba ds is deleted successfully
+      shell: >
+        kubectl get pods -l app=pumba --no-headers -n {{ a_ns }}
+      args:
+        executable: /bin/bash
+      register: result
+      until: "'Running' not in result.stdout"
+      delay: 20
+      retries: 15
+
+  rescue: 
+
+    - block: 
+
+        - name: Tear down pumba infrastructure, if setup
+          shell: >
+            kubectl delete -f /chaoslib/pumba/pumba_kube.yml -n {{ a_ns }} 
+          args:
+            executable: /bin/bash
+        
+        - name: Confirm that the pumba ds is deleted successfully
+          shell: >
+            kubectl get pods -l app=pumba --no-headers -n {{ a_ns }}
+          args:
+            executable: /bin/bash
+          register: result
+          until: "'Running' not in result.stdout"
+          delay: 20
+          retries: 15
+
+      when: "pumb_deploy_result.rc == 0"
