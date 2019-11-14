@@ -13,6 +13,8 @@ spec:
     env: 
       - name: TOPIC_NAME
         value: {{ kafka_topic }}
+      - name: KAFKA_INSTANCE_NAME
+        value: {{ kafka_instance }} 
       - name: ZOOKEEPER_SERVICE
         value: {{ zk_service }}
       - name: ZOOKEEPER_PORT

@@ -8,6 +8,7 @@
     c_interval: "{{ lookup('env','CHAOS_INTERVAL') }}"
     c_force: "{{ lookup('env','FORCE') }}"
     c_lib: "{{ lookup('env','LIB') }}"
+    kafka_instance: "{{ lookup('env','KAFKA_INSTANCE_NAME') }}"
     kafka_ns: "{{ lookup('env','KAFKA_NAMESPACE') }}"
     kafka_label: "{{ lookup('env','KAFKA_LABEL') }}"
     kafka_kind: "{{ lookup('env','KAFKA_KIND') }}"
