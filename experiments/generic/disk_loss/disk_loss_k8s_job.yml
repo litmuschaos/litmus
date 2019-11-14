@@ -57,6 +57,10 @@ spec:
           # Enter the disk name
           - name: DISK_NAME
             value: ''  
+          
+          # Enter the device name
+          - name: DEVICE_NAME
+            value: ''
 
           # Enter the zone name
           - name: ZONE_NAME
@@ -70,7 +74,7 @@ spec:
         args: ['-c', 'ansible-playbook ./experiments/generic/disk_loss/disk_loss_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0']
         volumeMounts:
         - name: parameters
-          mountPath: /mnt/
+          mountPath: /tmp/
       volumes:
         - name: parameters 
         # Enter the secret name of the service account, you want to mount
