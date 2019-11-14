@@ -65,7 +65,7 @@
 
 - name: Determine the leader broker pod name
   shell: 
-    kubectl get pods -l app=cp-kafka --no-headers -o custom-columns=:metadata.name | grep '^.*-{{ ordinality.stdout }}$'
+    kubectl get pods -l {{ kafka_label }} --no-headers -o custom-columns=:metadata.name | grep '^.*-{{ ordinality.stdout }}$'
   args:
     executable: /bin/bash
   register: leader_broker
