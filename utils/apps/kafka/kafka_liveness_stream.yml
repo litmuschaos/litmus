@@ -46,7 +46,7 @@
       args:
         executable: /bin/bash
       register: ordinality_non_instance
-      failed_when: "ordinality.rc != 0"
+      failed_when: "ordinality_non_instance.rc != 0"
 
     - set_fact: 
         ordinality: "{{ ordinality_non_instance.stdout }}"
@@ -63,7 +63,7 @@
       args:
         executable: /bin/bash
       register: ordinality_instance
-      failed_when: "ordinality.rc != 0"
+      failed_when: "ordinality_instance.rc != 0"
 
     - set_fact: 
         ordinality: "{{ ordinality_instance.stdout }}"
@@ -77,7 +77,7 @@
   args:
     executable: /bin/bash
   register: leader_broker
-  failed_when: "result.rc != 0"
+  failed_when: "leader_broker.rc != 0"
 
 - name: Set the kafka broker to be subjected to chaos
   set_fact: 
