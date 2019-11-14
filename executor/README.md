@@ -132,3 +132,7 @@
 -   The name of file which contains data for configmap in experimentCR should be parameters.yml
 
 -   The configmap is mounted in this default directory: /mnt/ 
+
+-   Executor is currently unable to parse more than one secret.
+
+-   The secret is mounted in this default directory: /tmp/ 
