@@ -28,6 +28,10 @@ spec:
           - name: KAFKA_LIVENESS_STREAM
             value: 'enabled'
 
+          # in milliseconds
+          - name: KAFKA_CONSUMER_TIMEOUT
+            value: '30000'
+
           - name: TOTAL_CHAOS_DURATION
             value: '30'
 

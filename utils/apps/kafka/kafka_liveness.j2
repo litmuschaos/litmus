@@ -6,6 +6,7 @@ metadata:
   labels: 
     name: kafka-liveness 
 spec:
+  restartPolicy: Never
   initContainers:
   - name: kafka-topic-creator
     image: litmuschaos/kafka-client:ci
@@ -39,11 +40,13 @@ spec:
     command:
       - sh
       - -c
-      - "./producer.sh"
+      - "stdbuf -oL ./producer.sh"
   - name: kafka-consumer
     image: litmuschaos/kafka-client:ci
     imagePullPolicy: Always
     env:
+      - name: KAFKA_CONSUMER_TIMEOUT
+        value: "{{ kafka_consumer_timeout }}"
       - name: TOPIC_NAME
         value: {{ kafka_topic }}
       - name: KAFKA_SERVICE
@@ -53,4 +56,4 @@ spec:
     command:
       - sh
       - -c
-      - "./consumer.sh"
+      - "stdbuf -oL ./consumer.sh"
