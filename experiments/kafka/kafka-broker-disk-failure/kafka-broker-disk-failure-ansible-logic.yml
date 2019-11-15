@@ -15,6 +15,7 @@
     kafka_instance: "{{ lookup('env','KAFKA_INSTANCE_NAME') }}"
     kafka_broker: "{{ lookup('env','KAFKA_BROKER') }}"
     kafka_stream: "{{ lookup('env','KAFKA_LIVENESS_STREAM') }}" 
+    kafka_consumer_timeout: "{{ lookup('env','KAFKA_CONSUMER_TIMEOUT') }}" 
     kafka_service: "{{ lookup('env','KAFKA_SERVICE') }}"
     kafka_port: "{{ lookup('env','KAFKA_PORT') }}" 
     kafka_replication_factor: "{{ lookup('env','KAFKA_REPLICATION_FACTOR') }}" 
