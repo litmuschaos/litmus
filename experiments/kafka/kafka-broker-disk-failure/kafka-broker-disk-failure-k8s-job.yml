@@ -52,6 +52,9 @@ spec:
           - name: KAFKA_BROKER
             value: ''
 
+          - name: KAFKA_INSTANCE_NAME
+            value: ''
+
           - name: KAFKA_REPLICATION_FACTOR
             value: ''
 
