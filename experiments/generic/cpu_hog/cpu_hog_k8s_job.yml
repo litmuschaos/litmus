@@ -53,4 +53,3 @@ spec:
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/generic/cpu_hog/cpu_hog_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]        
-
