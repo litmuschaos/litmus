@@ -1,0 +1,39 @@
+---
+- name: Pick the cstor target pod
+  include_tasks: /utils/apps/openebs/fetch_cstor_target_pod.yml
+  
+- name: Record the cstor target deployment of the PV
+  set_fact:  
+    cstor_target_deploy: "{{ pv.stdout }}-{{ cstor_target_pod_suffix }}"
+
+- name: Get the resourceVersion of the target deploy before fault injection
+  shell: >
+    kubectl get deployment {{ cstor_target_deploy }}
+    -n {{ openebs_ns }} -o=jsonpath='{.metadata.resourceVersion}'
+  args:
+    executable: /bin/bash
+  register: rv_bef
+
+# including litmus chaoslib -> kill-random-pod
+- name: Kill the cstor target pod 
+  include_tasks: /chaoslib/litmus/kill_random_pod.yml
+  vars:
+    app_ns: "{{ openebs_ns }}"
+    app_pod_name: "{{ cstor_target_pod.stdout }}"
+
+- name: Wait for 10s post fault injection 
+  wait_for:
+    timeout: 10  
+
+- name: Get the resourceVersion of the target deploy after fault injection
+  shell: >
+    kubectl get deployment {{ cstor_target_deploy }}
+    -n {{ openebs_ns }} -o=jsonpath='{.metadata.resourceVersion}'
+  args:
+    executable: /bin/bash
+  register: rv_aft
+
+- name: Compare resourceVersions of target deployment
+  debug:
+    msg: "Verified target pods were restarted by fault injection"
+  failed_when: "rv_bef.stdout | int == rv_aft.stdout | int"    
