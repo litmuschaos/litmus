@@ -89,6 +89,41 @@
             - name: FORCE
               value: "true"
     ```
+    
+### How to Override Executor and Exporter image
+
+-   To provide a chaos executor (runner) & exporter (monitor) of choice, provide the image names (in the form registry/user/image:tag) in the chaosEngine as shown below. The defaults at this point correspond to the litmuschaos CI images in dockerhub:
+    
+    -   Executor: litmuschaos/ansible-runner:ci
+    -   Monitor: litmuschaos/chaos-exporter:ci
+
+-   Make changes in the ChaosEngine CR manifest,
+        
+    ```
+    apiVersion: litmuschaos.io/v1alpha1
+    kind: ChaosEngine
+    metadata:
+      name: engine-nginx
+      namespace: litmus 
+    spec:
+      jobCleanUpPolicy: ""  
+      appinfo: 
+        appns: litmus
+        # FYI, To see app label, apply kubectl get pods --show-labels
+        applabel: "app=hello-deployment"
+      components:
+        monitor:
+          image: ""     <----------- ADD EXPORTER(MONITOR) IMAGE HERE
+        runner:
+          image: ""      <----------- ADD EXECUTOR(RUNNER) IMAGE HERE
+      chaosServiceAccount: litmus 
+      experiments:
+        - name: pod-delete
+          spec:
+            components:
+            - name: FORCE
+              value: "true"
+    ```
 
 ### Limitations
 
@@ -97,3 +132,7 @@
 -   The name of file which contains data for configmap in experimentCR should be parameters.yml
 
 -   The configmap is mounted in this default directory: /mnt/ 
+
+-   Executor is currently unable to parse more than one secret.
+
+-   The secret is mounted in this default directory: /tmp/ 

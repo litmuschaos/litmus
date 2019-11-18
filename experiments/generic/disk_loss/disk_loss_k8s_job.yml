@@ -1,0 +1,82 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: disk-loss-
+  namespace: %CHAOS_NAMESPACE%
+spec:
+  template:
+    metadata:
+      labels:
+        name: disk-loss
+    spec:
+      serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: litmuschaos/ansible-runner:ci
+        imagePullPolicy: Always
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: 'default'
+
+          # Check true if you want to check app, after and before chaos
+          - name: APP_CHECK
+            value: 'true' 
+
+          # Enter the App_label, if you set APP_CHECK to true
+          - name: APP_LABEL
+            value: ''
+
+          # Enter the APP_NAMESPACE, if you set APP_CHECK to true
+          - name: APP_NAMESPACE
+            value: ''
+
+          # This is a chaos namespace which will create all infra chaos resources in that namespace
+          - name: CHAOS_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+
+          # Only GCP is supported
+          - name: CLOUD_PLATFORM
+            value: ''
+
+          # Enter the time duration after the disk is dettached
+          - name: TOTAL_CHAOS_DURATION
+            value: ''
+
+          # Enter the project id for gcp only
+          - name: PROJECT_ID 
+            value: ''
+
+          # Enter the node name
+          - name: NODE_NAME
+            value: '' 
+
+          # Enter the disk name
+          - name: DISK_NAME
+            value: ''  
+          
+          # Enter the device name
+          - name: DEVICE_NAME
+            value: ''
+
+          # Enter the zone name
+          - name: ZONE_NAME
+            value: '' 
+          
+          # Enter the chaosengine name
+          - name: CHAOSENGINE
+            value: '' 
+
+        command: ['/bin/bash']
+        args: ['-c', 'ansible-playbook ./experiments/generic/disk_loss/disk_loss_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0']
+        volumeMounts:
+        - name: parameters
+          mountPath: /tmp/
+      volumes:
+        - name: parameters 
+        # Enter the secret name of the service account, you want to mount
+          secret:
+            secretName: %SECRET_NAME%

@@ -8,16 +8,21 @@ RUN apt-get clean && \
     apt-get install -y --no-install-recommends python-minimal python-pip netcat iproute2 jq sshpass \
     curl openssh-client python-setuptools && rm -rf /var/lib/apt/lists/* 
 
+RUN pip install --upgrade pip
 #Installing ansible and dependencies for k8s module
-RUN pip install ansible==2.7.3 openshift jmespath
+RUN pip install ansible==2.7.3 openshift jmespath boto boto3
 
-RUN touch /mnt/parameters.yml
+RUN touch /mnt/parameters.yml /mnt/cloud_config.yml
+
+#Installing gcloud 
+RUN curl -sSL https://sdk.cloud.google.com | bash
+ENV PATH $PATH:/root/google-cloud-sdk/bin
+RUN gcloud --version
 
 #Installing Kubectl
 ENV KUBE_LATEST_VERSION="v1.12.0"
 RUN curl -L https://storage.googleapis.com/kubernetes-release/release/${KUBE_LATEST_VERSION}/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl && \
-    chmod +x /usr/local/bin/kubectl && \
-    curl -o /usr/local/bin/aws-iam-authenticator https://amazon-eks.s3-us-west-2.amazonaws.com/1.10.3/2018-07-26/bin/linux/amd64/aws-iam-authenticator && \chmod +x /usr/local/bin/aws-iam-authenticator
+    chmod +x /usr/local/bin/kubectl
     
 #Adding hosts entries and making ansible folders
 RUN mkdir /etc/ansible/ /ansible && \

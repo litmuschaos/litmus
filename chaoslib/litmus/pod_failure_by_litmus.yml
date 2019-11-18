@@ -1,13 +1,19 @@
 - name: Derive chaos iterations
   set_fact:
-    chaos_iterations: "{{ (c_duration|int / c_interval|int)|int }}"
+    c_iterations: "{{ (c_duration|int / c_interval|int)|int }}"
+  when: c_iterations is undefined
+
+- name: Derive chaos interval
+  set_fact:
+    c_interval: "{{ (c_duration|int / c_iterations|int)|int }}"
+  when: c_interval is undefined
 
 - name: Set min chaos count to 1 if interval > duration
   set_fact: 
-    chaos_iterations: 1
-  when: "chaos_iterations == '0'" 
+    c_iterations: 1
+  when: "c_iterations == '0'" 
 
 - name: Kill random pod
   include: kill_random_pod.yml
-  with_sequence: start=1 end={{ chaos_iterations }}
+  with_sequence: start=1 end={{ c_iterations }}
   

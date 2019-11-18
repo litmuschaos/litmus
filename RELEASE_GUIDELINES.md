@@ -1,0 +1,59 @@
+## RELEASE GUIDELINES
+
+-   There is a scheduled release on the 15th of every month on the following repositories:
+    -   [Litmus](https://github.com/litmuschaos/litmus)
+    -   [Chaos-Operator](https://github.com/litmuschaos/chaos-operator)
+    -   [Chaos-Exporter](https://github.com/litmuschaos/chaos-exporter)
+
+-   Repositories use release version according to the [Semantic Versioning](https://semver.org/)
+
+-   Docker images with release tags are pushed upon creation of a github release (commits to master push images with `ci` tags) 
+
+-   Following are the docker images:
+    -   [litmuschaos/ansible-runner](https://cloud.docker.com/u/litmuschaos/repository/docker/litmuschaos/ansible-runner)
+    -   [litmuschaos/chaos-operator](https://cloud.docker.com/u/litmuschaos/repository/docker/litmuschaos/chaos-operator)
+    -   [litmuschaos/chaos-exporter](https://cloud.docker.com/u/litmuschaos/repository/docker/litmuschaos/chaos-exporter)
+
+-   Tracking of releases is done on Github [project board](https://github.com/litmuschaos/litmus/projects)
+
+-   The release flow consists of the following steps:
+
+    -   Sprint Planning based on backlogs & feature requests from the community
+    -   Feature Development with unit-tests & integration/bdd (behaviour driven development) tests 
+    -   Code/Enhancement freeze with release branch & RC1 (Release Candidate) creation 
+    -   User & Dev Documentation 
+    -   Execution of (end-to-end) tests against chaos charts, followed by fixes to issues identified 
+    -   Cherry pick of commits from master (fixes) to release branch 
+    -   Doc sanity tests  
+    -   Litmus release with change log 
+
+-   Releases
+    -   Pre Release Version (Development)
+         <table>
+          <tr>
+            <td>0.8.0-RC-1</td>
+            <td><a href="https://docs.litmuschaos.io/docs/getstarted">Documentation</a></td>
+            <td><a href="https://github.com/litmuschaos/litmus/releases/tag/0.8.0-RC1">Release Notes</a></td>
+          </tr>
+        </table>
+
+    -   Current version (Stable)
+        <table>
+          <tr>
+            <td>0.7.0</td>
+            <td><a href="https://docs.litmuschaos.io/docs/getstarted">Documentation</a></td>
+            <td><a href="https://github.com/litmuschaos/litmus/releases/tag/0.7.0">Release Notes</a></td>
+          </tr>
+        </table>
+
+    -   Past Versions
+        Here you can find previous versions of the documentation.
+        <table>
+          <tr>
+            <td>0.6.0</td>
+            <td><a href="https://docs.litmuschaos.io/docs/0.6.0/overview">Documentation</a></td>
+            <td><a href="https://github.com/litmuschaos/litmus/releases/tag/0.6.0">Release Notes</a></td>
+          </tr>
+        </table>
+
+-   For more info, please visit [here](https://docs.litmuschaos.io/versions/).
