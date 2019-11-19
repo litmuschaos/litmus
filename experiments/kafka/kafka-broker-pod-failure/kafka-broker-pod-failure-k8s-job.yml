@@ -27,6 +27,9 @@ spec:
           - name: KAFKA_LIVENESS_STREAM
             value: 'enabled'
 
+          - name: KAFKA_LIVENESS_IMAGE
+            value: 'litmuschaos/kafka-client:ci'
+
           # in milliseconds
           - name: KAFKA_CONSUMER_TIMEOUT
             value: '30000'

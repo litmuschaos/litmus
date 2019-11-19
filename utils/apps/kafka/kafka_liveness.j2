@@ -9,7 +9,7 @@ spec:
   restartPolicy: Never
   initContainers:
   - name: kafka-topic-creator
-    image: litmuschaos/kafka-client:ci
+    image: {{ kafka_liveness_image }}
     imagePullPolicy: Always
     env: 
       - name: TOPIC_NAME
@@ -28,7 +28,7 @@ spec:
       - "./topic.sh"
   containers:
   - name: kafka-producer
-    image: litmuschaos/kafka-client:ci
+    image: {{ kafka_liveness_image }}
     imagePullPolicy: Always
     env:
       - name: TOPIC_NAME
@@ -42,7 +42,7 @@ spec:
       - -c
       - "stdbuf -oL ./producer.sh"
   - name: kafka-consumer
-    image: litmuschaos/kafka-client:ci
+    image: {{ kafka_liveness_image }}
     imagePullPolicy: Always
     env:
       - name: KAFKA_CONSUMER_TIMEOUT
