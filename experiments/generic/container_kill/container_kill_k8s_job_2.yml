@@ -1,0 +1,44 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: container-kill-
+spec:
+  template:
+    metadata:
+      labels:
+        experiment: container-kill
+    spec:
+      serviceAccountName: nginx
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: ansible-runner:v1
+        imagePullPolicy: Never
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: 'default'
+           
+          # provide application namespace
+          - name: APP_NAMESPACE 
+            value: 'default'
+
+          # provide application labels
+          - name: APP_LABEL
+            value: 'run=myserver'
+
+           # provide lib image
+          - name: LIB_IMAGE  
+            value: 'gaiaadm/pumba:0.4.8' 
+
+           # provide target container name
+          - name: TARGET_CONTAINER
+            value: 'myserver'
+
+          # provide chaosengine name
+          - name: CHAOSENGINE 
+            value: 'engine-nginx'
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./experiments/generic/container_kill/container_kill_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
+
