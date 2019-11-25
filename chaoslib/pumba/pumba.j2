@@ -4,6 +4,9 @@ kind: DaemonSet
 metadata:
   name: pumba
 spec:
+  selector:
+    matchLabels:
+      app: pumba
   template:
     metadata:
       labels:
