@@ -13,8 +13,11 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: ansible-runner:v1
-        imagePullPolicy: Never
+        #for using my own runner
+        #image: ansible-runner:v1
+        #imagePullPolicy: Never
+        image: litmuschaos/ansible-runner:ci
+        imagePullPolicy: Always
         env:
           - name: ANSIBLE_STDOUT_CALLBACK
             value: 'default'
