@@ -154,7 +154,14 @@
 
 - include: experiment_configmap.yml
   when:  configMap_available != '' or  secret_available != ''
-  
+
+- name: Fetching monitoring time from chaos experiment job
+  shell: >
+    kubectl get job {{ job_name }} -n {{c_app_ns}} -ojsonpath="{range .spec.template.spec.containers[*]}{.env[?(@.name=='TOTAL_CHAOS_DURATION')].value}"
+  args:
+    executable: /bin/bash
+  register: chaos_monitoring_time
+
 - name: Monitoring the litmus chaos job for completion
   shell: >
     kubectl get job {{ job_name }} -n {{ c_app_ns}} 
@@ -163,8 +170,8 @@
    executable: /bin/bash
   register: c_job_status
   until: c_job_status.stdout == "Complete"
-  delay: 1
-  retries: 300
+  delay: 2
+  retries: "{{ (chaos_monitoring_time.stdout)|int + 300}}"
 
 - name: Fetching verdict from the chaos result CR
   shell: >
