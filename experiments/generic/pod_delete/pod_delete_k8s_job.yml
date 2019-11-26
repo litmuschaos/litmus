@@ -34,27 +34,27 @@ spec:
             value: ''
 
           - name: TOTAL_CHAOS_DURATION
-            value: '15'
+            value: ''
 
           - name: CHAOS_INTERVAL
-            value: '5'
+            value: ''
 
           - name: FORCE
             value: 'true'
 
           ## env var that describes the library used to execute the chaos
-          ## default: litmus. Supported values: litmus, powerfulseal, chaoskube
+          ## default: litmus. Supported values: litmus, powerfulseal
           - name: LIB
             value: ''
 
           - name: CHAOSENGINE
             value: ''
 
-          - name: CHAOS_SERVICE_ACCOUNT
-            valueFrom:
-              fieldRef:
-                fieldPath: spec.serviceAccountName
+          #- name: CHAOS_SERVICE_ACCOUNT
+          #  valueFrom:
+          #    fieldRef:
+          #      fieldPath: spec.serviceAccountName
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./experiments/generic/pod_delete/pod_delete_ansible_logic.yml -i /etc/ansible/hosts; exit 0"]
+        args: ["-c", "ansible-playbook ./experiments/generic/pod_delete/pod_delete_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
 
