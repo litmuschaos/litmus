@@ -32,7 +32,7 @@ spec:
 
           # set to 'enabled' if you have auth set up
           - name: KAFKA_SASL_AUTH
-            value: ''
+            value: 'disabled'
 
           # in milliseconds
           - name: KAFKA_CONSUMER_TIMEOUT

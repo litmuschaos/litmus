@@ -22,19 +22,10 @@ spec:
         value: "{{ zk_port }}"
       - name: REPLICATION_FACTOR
         value: "{{ kafka_replication_factor  }}"
-      - name: KAFKA_OPTS
-        value: "-Djava.security.auth.login.config=/opt/jaas.conf"
     command: 
       - sh
       - -c
       - "./topic.sh"
-    volumeMounts:
-      - name: jaas-properties
-        mountPath: /etc
-      - name: client-properties
-        mountPath: /opt
-      - name: jaas-conf
-        mountPath: /opt
   containers:
   - name: kafka-producer
     image: {{ kafka_liveness_image }}

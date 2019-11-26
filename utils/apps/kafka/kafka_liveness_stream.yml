@@ -12,7 +12,7 @@
   template: 
     src: /utils/apps/kafka/kafka_liveness_non_auth.j2
     dest: kafka_liveness.yml
-  when: kafka_sasl_auth is not defined or kafka_sasl_auth == ''
+  when: kafka_sasl_auth is not defined or kafka_sasl_auth == '' or kafka_sasl_auth == 'disabled'
 
 - name: Generate the kafka liveness spec from template
   template: 
