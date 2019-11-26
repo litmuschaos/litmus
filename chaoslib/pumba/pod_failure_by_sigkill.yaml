@@ -120,7 +120,7 @@
       register: restartCnt
       until: "restartCnt.stdout|int > restartCnt_prev.stdout|int"
       delay: 2
-      retries: 30
+      retries: 60
 
   when: action == "killapp"
 

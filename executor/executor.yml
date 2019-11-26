@@ -170,8 +170,8 @@
    executable: /bin/bash
   register: c_job_status
   until: c_job_status.stdout == "Complete"
-  delay: 10
-  retries: "{{ (chaos_monitoring_time.stdout)|int + 500}}"
+  delay: 2
+  retries: "{{ (chaos_monitoring_time.stdout)|int + 300}}"
 
 - name: Fetching verdict from the chaos result CR
   shell: >
