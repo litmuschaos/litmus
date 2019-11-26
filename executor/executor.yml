@@ -220,7 +220,7 @@
 - name: Patch the chaosengine status
   template:
     src:  chaos-engine.j2
-    dest: chaos-engine.yaml
+    dest: chaos-engine.yml
   vars:
     experiment_name: "{{ c_experiment_name}}"
     job_name: "{{ c_experiment_name }}-{{random_string.stdout}}"
@@ -228,7 +228,7 @@
     verdict: "{{ c_verdict.stdout  }}"
 
 - name: Apply the chaos engine CR
-  shell: kubectl apply -f chaos-engine.yaml -n {{ c_app_ns }}
+  shell: kubectl apply -f chaos-engine.yml -n {{ c_app_ns }}
   args:
     executable: /bin/bash
 
