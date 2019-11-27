@@ -1,24 +1,7 @@
 - block:
   - name: Fetching data for the configmap
-    shell: >
-      kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.configmaps[0].data.parameters\.yml}' > parameters.yml
-    args:
-      executable: /bin/bash
-  
-  - name: Fetching name of configmap
-    shell: >
-      kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.configmaps[0].name}'
-    args:
-      executable: /bin/bash
-    register: c_map_name
 
-  - name: Creating configmap
-    shell:
-      kubectl create configmap {{c_map_name.stdout}} --from-file=parameters.yml -n {{c_app_ns}}
-    args:
-      executable: /bin/bash
-
-  when: configMap_available != ''
+  when: configMap_defined != ''
   
 - block:
 
@@ -36,7 +19,7 @@
       executable: /bin/bash
     register: c_mount_path
   
-  when: secret_available != ''
+  when: secret_defined != ''
 
 - name: Get the job yaml
   shell:
@@ -71,7 +54,7 @@
     -   "- name: parameters"
     - "volumes:"
 
-  when: configMap_available != '' and secret_available == ''
+  when: configMap_defined != '' and secret_defined == ''
 
 - block:
 
@@ -98,7 +81,7 @@
     -   "- name: cloud-config"
     - "volumes:"
 
-  when: configMap_available == '' and secret_available != ''
+  when: configMap_defined == '' and secret_defined != ''
 
 - block:
 
@@ -130,7 +113,7 @@
     -   "- name: parameters"
     - "volumes:"
 
-  when: configMap_available != '' and secret_available != ''
+  when: configMap_defined != '' and secret_defined != ''
 
 - name: create job
   shell:
