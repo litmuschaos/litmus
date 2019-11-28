@@ -1,5 +1,18 @@
 - block:
-  - name: Fetching data for the configmap
+
+  - name: Fetching name of configmap
+    shell: >
+      kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.configmaps[0].name}'
+    args:
+      executable: /bin/bash
+    register: c_map_name
+
+  - name: Fetching mount path for configmap
+    shell: >
+      kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.configmaps[0].mountPath}'
+    args:
+      executable: /bin/bash
+    register: c_mount_path_configmap
 
   when: configMap_defined != ''
   
@@ -38,8 +51,8 @@
       state: present
       line: '        {{item}}'
     with_items:
-    - "  mountPath: /mnt/"
-    - "- name: parameters"
+    - "  mountPath: {{c_mount_path_configmap.stdout}}"
+    - "- name: {{c_map_name.stdout}}"
     - "volumeMounts:"
 
   - name: Include the volumes in jobYml  - configmap only
@@ -51,7 +64,7 @@
     with_items:
     - "    name: {{c_map_name.stdout}}"
     - "  configMap:"
-    -   "- name: parameters"
+    -   "- name: {{c_map_name.stdout}}"
     - "volumes:"
 
   when: configMap_defined != '' and secret_defined == ''
@@ -66,7 +79,7 @@
       line: '        {{item}}'
     with_items:
     - "  mountPath: {{ c_mount_path.stdout }}"
-    - "- name: cloud-config"
+    - "- name: {{c_secret_name.stdout}}"
     - "volumeMounts:"
 
   - name: Include the volumes in jobYml
@@ -78,7 +91,7 @@
     with_items:
     - "    secretName: {{  c_secret_name.stdout }}"
     - "  secret:"
-    -   "- name: cloud-config"
+    -   "- name: {{c_secret_name.stdout}}"
     - "volumes:"
 
   when: configMap_defined == '' and secret_defined != ''
@@ -93,9 +106,9 @@
       line: '        {{item}}'
     with_items:
     - "  mountPath: {{ c_mount_path.stdout }}"
-    - "- name: cloud-config"
-    - "  mountPath: /mnt/"
-    - "- name: parameters"
+    - "- name: {{c_secret_name.stdout}}"
+    - "  mountPath: {{c_mount_path_configmap.stdout}}"
+    - "- name: {{c_map_name.stdout}}"
     - "volumeMounts:"
 
   - name: Include the volumes in jobYml
@@ -107,10 +120,10 @@
     with_items:
     - "    secretName: {{  c_secret_name.stdout }}"
     - "  secret:"
-    -   "- name: cloud-config"
+    -   "- name: {{c_secret_name.stdout}}"
     - "    name: {{c_map_name.stdout}}"
     - "  configMap:"
-    -   "- name: parameters"
+    -   "- name: {{c_map_name.stdout}}"
     - "volumes:"
 
   when: configMap_defined != '' and secret_defined != ''
