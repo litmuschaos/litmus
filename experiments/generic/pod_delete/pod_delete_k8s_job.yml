@@ -34,10 +34,10 @@ spec:
             value: ''
 
           - name: TOTAL_CHAOS_DURATION
-            value: ''
+            value: '15'
 
           - name: CHAOS_INTERVAL
-            value: ''
+            value: '5'
 
           - name: FORCE
             value: 'true'
@@ -50,10 +50,10 @@ spec:
           - name: CHAOSENGINE
             value: ''
 
-          #- name: CHAOS_SERVICE_ACCOUNT
-          #  valueFrom:
-          #    fieldRef:
-          #      fieldPath: spec.serviceAccountName
+          - name: CHAOS_SERVICE_ACCOUNT
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.serviceAccountName
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/generic/pod_delete/pod_delete_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
