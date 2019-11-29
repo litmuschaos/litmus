@@ -1,0 +1,24 @@
+- block:
+
+  - name: Include the volumeMounts in jobYml - configmap only
+    blockinfile:
+      dest: cjob.yml
+      insertafter: "volumeMounts:"
+      state: present
+      block: |
+        ' - name:      {{ cfgName }}'
+        '  mountPath:      {{ mntPath }}'
+      marker: "# {{ cfgName }} Filling VolumeMounts {{ mntPath }}"
+
+  - name: Include the volumes in jobYml - configmap only   
+    blockinfile:
+      dest: cjob.yml
+      insertafter: "volumes:"
+      state: present
+      block: |
+        '       name: {{ cfgName }}'
+        '      configMap:{{ cfgName }}'
+        ' - name: {{ cfgName }}'
+      marker: "# {{ cfgName }} Filling VolumeMounts{{ mntPath }}"
+  
+  when: configMap_defined != '' and secret_defined == ''
