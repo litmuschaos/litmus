@@ -6,8 +6,8 @@
       insertafter: "volumeMounts:"
       state: present
       block: |
-        ' - name:      {{ cfgName }}'
-        '  mountPath:      {{ mntPath }}'
+        '          - name: {{ cfgName }}'
+        '            mountPath: {{ mntPath }}'
       marker: "# {{ cfgName }} Filling VolumeMounts {{ mntPath }}"
 
   - name: Include the volumes in jobYml - configmap only   
@@ -15,10 +15,35 @@
       dest: cjob.yml
       insertafter: "volumes:"
       state: present
-      block: |
-        '       name: {{ cfgName }}'
-        '      configMap:{{ cfgName }}'
-        ' - name: {{ cfgName }}'
-      marker: "# {{ cfgName }} Filling VolumeMounts{{ mntPath }}"
+      block: |2
+                - name: {{ cfgName }}
+                  configMap: 
+                  name: {{ cfgName }}
+      marker: "# {{ cfgName }} Filling VolumeMounts"
   
   when: configMap_defined != '' and secret_defined == ''
+
+- block:
+
+  - name: Include the volumeMounts in jobYml  - secret only
+    blockinfile:
+      dest: cjob.yml
+      insertafter: "volumeMounts:"
+      state: present
+      block: |
+        '          - name: {{ secretName }}'
+        '            mountPath: {{ mountPath }}'
+      marker: "# {{ secretName }} Filling VolumeMounts {{ mountPath }}"
+
+  - name: Include the volumes in jobYml - secret only   
+    blockinfile:
+      dest: cjob.yml
+      insertafter: "volumes:"
+      state: present
+      block: |
+        '          - name: {{ secretName }}'
+        '            secret:              '
+        '            secretName: {{ secretName }} '
+      marker: "# {{ secretName }} Filling VolumeMounts"  
+
+  when: configMap_defined == '' and secret_defined != ''
