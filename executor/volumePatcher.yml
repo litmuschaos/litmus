@@ -5,10 +5,10 @@
       dest: cjob.yml
       insertafter: "volumeMounts:"
       state: present
-      block: |
-        '          - name: {{ cfgName }}'
-        '            mountPath: {{ mntPath }}'
-      marker: "# {{ cfgName }} Filling VolumeMounts {{ mntPath }}"
+      block: |2
+                - name: {{ configName }}
+                  mountPath: {{ mountPathConfigMap }}
+      marker: "# {{ configName }}-{{ mountPathConfigMap }}Filling VolumeMounts - configmap "
 
   - name: Include the volumes in jobYml - configmap only   
     blockinfile:
@@ -16,12 +16,12 @@
       insertafter: "volumes:"
       state: present
       block: |2
-                - name: {{ cfgName }}
-                  configMap: 
-                  name: {{ cfgName }}
-      marker: "# {{ cfgName }} Filling VolumeMounts"
+              - name: {{ configName }}
+                configMap: 
+                  name: {{ configName }}
+      marker: "# {{ configName }} Filling VolumeMounts - configmap"
   
-  when: configMap_defined != '' and secret_defined == ''
+  when: executeBlock == "config_map"
 
 - block:
 
@@ -30,20 +30,20 @@
       dest: cjob.yml
       insertafter: "volumeMounts:"
       state: present
-      block: |
-        '          - name: {{ secretName }}'
-        '            mountPath: {{ mountPath }}'
-      marker: "# {{ secretName }} Filling VolumeMounts {{ mountPath }}"
+      block: |2
+                - name: {{ secretName }}
+                  mountPath: {{ mountPathSecret }}
+      marker: "# {{ secretName }}-{{ mountPathSecret }}Filling VolumeMounts - secret "
 
   - name: Include the volumes in jobYml - secret only   
     blockinfile:
       dest: cjob.yml
       insertafter: "volumes:"
       state: present
-      block: |
-        '          - name: {{ secretName }}'
-        '            secret:              '
-        '            secretName: {{ secretName }} '
-      marker: "# {{ secretName }} Filling VolumeMounts"  
+      block: |2
+              - name: {{ secretName }}
+                secret:              
+                  secretName: {{ secretName }} 
+      marker: "# {{ secretName }} Filling VolumeMounts - secret "  
 
-  when: configMap_defined == '' and secret_defined != ''
+  when: executeBlock == "secret"

@@ -2,14 +2,14 @@
 
   - name: Fetching name of configmap
     shell: >
-      kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.configmaps[0].name}'
+      kubectl get chaosexperiment {{c_experiment_name}} -n {{c_app_ns}} -o jsonpath='{range .spec.definition.configmaps[*]}{.name}{"\n"}'
     args:
       executable: /bin/bash
     register: c_map_name
 
   - name: Fetching mount path for configmap
     shell: >
-      kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.configmaps[0].mountPath}'
+      kubectl get chaosexperiment {{c_experiment_name}} -n {{c_app_ns}} -o jsonpath='{range .spec.definition.configmaps[*]}{.mountPath}{"\n"}'
     args:
       executable: /bin/bash
     register: c_mount_path_configmap
@@ -20,14 +20,14 @@
 
   - name: Fetching name of secret
     shell: >
-      kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.secrets[0].name}'
+      kubectl get chaosexperiment {{c_experiment_name}} -n {{c_app_ns}} -o jsonpath='{range .spec.definition.secrets[*]}{.name}{"\n"}'
     args:
       executable: /bin/bash
     register: c_secret_name
 
   - name: Fetching mount path for secret
     shell: >
-      kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.secrets[0].mountPath}'
+      kubectl get chaosexperiment {{c_experiment_name}} -n {{c_app_ns}} -o jsonpath='{range .spec.definition.secrets[*]}{.mountPath}{"\n"}'
     args:
       executable: /bin/bash
     register: c_mount_path
@@ -44,89 +44,57 @@
 
 - block:
 
-  - name: Include the volumeMounts in jobYml - configmap only
+  - name: Include the volumeMounts in jobYml - configmap 
     lineinfile:
       dest: cjob.yml
       insertafter: "resources: {}"
       state: present
-      line: '        {{item}}'
-    with_items:
-    - "  mountPath: {{c_mount_path_configmap.stdout}}"
-    - "- name: {{c_map_name.stdout}}"
-    - "volumeMounts:"
+      line: '        volumeMounts:'
 
-  - name: Include the volumes in jobYml  - configmap only
+  - name: Include the volumes in jobYml  - configmap 
     lineinfile:
       dest: cjob.yml
-      insertafter: "serviceAccountName"
+      insertafter: "restartPolicy:"
       state: present
-      line: '      {{item}}'
-    with_items:
-    - "    name: {{c_map_name.stdout}}"
-    - "  configMap:"
-    -   "- name: {{c_map_name.stdout}}"
-    - "volumes:"
+      line: '      volumes:'
 
-  when: configMap_defined != '' and secret_defined == ''
+  - include: volumePatcher.yml
+    vars:
+      configName: "{{ item.0 }}"
+      mountPathConfigMap: "{{ item.1 }}"
+      executeBlock: "config_map"
+    with_together:
+      - "{{ c_map_name.stdout_lines }}"
+      - "{{ c_mount_path_configmap.stdout_lines }}"
+
+  when: configMap_defined != ''
 
 - block:
 
-  - name: Include the volumeMounts in jobYml  - secret only
+  - name: Include the volumeMounts in jobYml  - secret
     lineinfile:
       dest: cjob.yml
       insertafter: "resources: {}"
       state: present
-      line: '        {{item}}'
-    with_items:
-    - "  mountPath: {{ c_mount_path.stdout }}"
-    - "- name: {{c_secret_name.stdout}}"
-    - "volumeMounts:"
+      line: '        volumeMounts:'
 
-  - name: Include the volumes in jobYml
+  - name: Include the volumes in jobYml   - secret
     lineinfile:
       dest: cjob.yml
-      insertafter: "serviceAccountName"
+      insertafter: "restartPolicy:"
       state: present
-      line: '      {{item}}'
-    with_items:
-    - "    secretName: {{  c_secret_name.stdout }}"
-    - "  secret:"
-    -   "- name: {{c_secret_name.stdout}}"
-    - "volumes:"
+      line: '      volumes:'
+    
+  - include: volumePatcher.yml
+    vars: 
+      secretName: "{{ item.0}}"
+      mountPathSecret: "{{ item.1}}"
+      executeBlock: "secret"
+    with_together:
+      - "{{ c_secret_name.stdout_lines }}"
+      - "{{ c_mount_path.stdout_lines }}"
 
-  when: configMap_defined == '' and secret_defined != ''
-
-- block:
-
-  - name: Include the volumeMounts in jobYml  - secret and configmap both
-    lineinfile:
-      dest: cjob.yml
-      insertafter: "resources: {}"
-      state: present
-      line: '        {{item}}'
-    with_items:
-    - "  mountPath: {{ c_mount_path.stdout }}"
-    - "- name: {{c_secret_name.stdout}}"
-    - "  mountPath: {{c_mount_path_configmap.stdout}}"
-    - "- name: {{c_map_name.stdout}}"
-    - "volumeMounts:"
-
-  - name: Include the volumes in jobYml
-    lineinfile:
-      dest: cjob.yml
-      insertafter: "serviceAccountName"
-      state: present
-      line: '      {{item}}'
-    with_items:
-    - "    secretName: {{  c_secret_name.stdout }}"
-    - "  secret:"
-    -   "- name: {{c_secret_name.stdout}}"
-    - "    name: {{c_map_name.stdout}}"
-    - "  configMap:"
-    -   "- name: {{c_map_name.stdout}}"
-    - "volumes:"
-
-  when: configMap_defined != '' and secret_defined != ''
+  when: secret_defined != ''
 
 - name: create job
   shell:
