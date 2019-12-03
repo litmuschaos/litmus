@@ -152,7 +152,7 @@
     executable: /bin/bash
   when:  configMap_defined == '' and secret_defined == ''
 
-- include: experiment_configmap.yml
+- include: experiment_volumes.yml
   when:  configMap_defined != '' or  secret_defined != ''
 
 - name: Fetching monitoring time from chaos experiment job
