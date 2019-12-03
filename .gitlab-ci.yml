@@ -1,0 +1,21 @@
+---
+stages:
+  - litmusImageBuild
+  - litmusImageTest
+  - litmusImagePush
+
+Build Litmus Image:
+  stage: litmusImageBuild
+  script:
+    - sudo docker build . -f build/ansible-runner/Dockerfile -t litmuschaos/ansible-runner:ci
+
+Test Litmus Playbook Syntax: 
+  stage: litmusImageTest
+  script:
+    - sudo docker run ksatchit/ansible-runner:ci ./syntax-check 
+
+Push Litmus Image:
+  stage: litmusImagePush
+  script:
+    - REPONAME="litmuschaos" IMGNAME="ansible-runner" IMGTAG="ci" ./hack/push
+
