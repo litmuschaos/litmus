@@ -11,6 +11,7 @@
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_label: "{{ lookup('env','APP_LABEL') }}"
     a_kind: "{{ lookup('env','APP_KIND') }}"
+    kill_count: "{{ lookup('env','KILL_COUNT') }}"
   
 
   tasks:
