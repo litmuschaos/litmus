@@ -1,0 +1,103 @@
+- block:
+
+  - name: Fetching name of configmap
+    shell: >
+      kubectl get chaosexperiment {{c_experiment_name}} -n {{c_app_ns}} -o jsonpath='{range .spec.definition.configmaps[*]}{.name}{"\n"}'
+    args:
+      executable: /bin/bash
+    register: c_map_name
+
+  - name: Fetching mount path for configmap
+    shell: >
+      kubectl get chaosexperiment {{c_experiment_name}} -n {{c_app_ns}} -o jsonpath='{range .spec.definition.configmaps[*]}{.mountPath}{"\n"}'
+    args:
+      executable: /bin/bash
+    register: c_mount_path_configmap
+
+  when: configMap_defined != ''
+  
+- block:
+
+  - name: Fetching name of secret
+    shell: >
+      kubectl get chaosexperiment {{c_experiment_name}} -n {{c_app_ns}} -o jsonpath='{range .spec.definition.secrets[*]}{.name}{"\n"}'
+    args:
+      executable: /bin/bash
+    register: c_secret_name
+
+  - name: Fetching mount path for secret
+    shell: >
+      kubectl get chaosexperiment {{c_experiment_name}} -n {{c_app_ns}} -o jsonpath='{range .spec.definition.secrets[*]}{.mountPath}{"\n"}'
+    args:
+      executable: /bin/bash
+    register: c_mount_path
+  
+  when: secret_defined != ''
+
+- name: Get the job yaml
+  shell:
+    kubectl run {{ c_experiment_name }}-{{random_string.stdout}} --restart=OnFailure --image={{c_image.stdout}}
+    --namespace={{c_app_ns}} --serviceaccount={{ c_svc_acc }} --image-pull-policy=Always 
+    --labels={{c_job_labels.stdout}} {{c_env_list}} --dry-run -oyaml --command -- /bin/bash {{c_job_args.stdout}} > cjob.yml
+  args:
+    executable: /bin/bash
+
+- block:
+
+  - name: Include the volumeMounts in jobYml - configmap 
+    lineinfile:
+      dest: cjob.yml
+      insertafter: "resources: {}"
+      state: present
+      line: '        volumeMounts:'
+
+  - name: Include the volumes in jobYml  - configmap 
+    lineinfile:
+      dest: cjob.yml
+      insertafter: "restartPolicy:"
+      state: present
+      line: '      volumes:'
+
+  - include: volumePatcher.yml
+    vars:
+      configName: "{{ item.0 }}"
+      mountPathConfigMap: "{{ item.1 }}"
+      executeBlock: "config_map"
+    with_together:
+      - "{{ c_map_name.stdout_lines }}"
+      - "{{ c_mount_path_configmap.stdout_lines }}"
+
+  when: configMap_defined != ''
+
+- block:
+
+  - name: Include the volumeMounts in jobYml  - secret
+    lineinfile:
+      dest: cjob.yml
+      insertafter: "resources: {}"
+      state: present
+      line: '        volumeMounts:'
+
+  - name: Include the volumes in jobYml   - secret
+    lineinfile:
+      dest: cjob.yml
+      insertafter: "restartPolicy:"
+      state: present
+      line: '      volumes:'
+    
+  - include: volumePatcher.yml
+    vars: 
+      secretName: "{{ item.0}}"
+      mountPathSecret: "{{ item.1}}"
+      executeBlock: "secret"
+    with_together:
+      - "{{ c_secret_name.stdout_lines }}"
+      - "{{ c_mount_path.stdout_lines }}"
+
+  when: secret_defined != ''
+
+- name: create job
+  shell:
+    kubectl create -f cjob.yml -n {{c_app_ns}} 
+  args:
+    executable: /bin/bash
