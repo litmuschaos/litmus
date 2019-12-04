@@ -31,7 +31,7 @@ RUN mkdir /etc/ansible/ /ansible && \
 
 #Copying Necessary Files
 COPY ./chaoslib ./chaoslib/
-COPY ./hack/*.j2 ./
+COPY ./hack/syntax-check ./hack/*.j2 ./
 COPY ./utils ./utils/
 COPY ./build/plugins /usr/local/lib/python2.7/dist-packages/ansible/plugins/callback/
 COPY experiments ./experiments
