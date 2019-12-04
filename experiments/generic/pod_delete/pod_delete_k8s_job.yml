@@ -43,7 +43,7 @@ spec:
             value: 'true'
 
           ## env var that describes the library used to execute the chaos
-          ## default: litmus. Supported values: litmus, powerfulseal, chaoskube
+          ## default: litmus. Supported values: litmus, powerfulseal
           - name: LIB
             value: ''
 
@@ -56,5 +56,5 @@ spec:
                 fieldPath: spec.serviceAccountName
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./experiments/generic/pod_delete/pod_delete_ansible_logic.yml -i /etc/ansible/hosts; exit 0"]
+        args: ["-c", "ansible-playbook ./experiments/generic/pod_delete/pod_delete_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
 
