@@ -156,7 +156,7 @@
   
 - include: experiment_volumes.yml
   when: 
-    - configMap_defined != '' and  configMap_defined != "[map[]]" or secret_defined != '' and  secret_defined != "[map[]]"
+    - (configMap_defined != '' and  configMap_defined != "[map[]]") or (secret_defined != '' and  secret_defined != "[map[]]")
 
 - name: Fetching monitoring time from chaos experiment job
   shell: >
