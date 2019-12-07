@@ -31,6 +31,19 @@
     args:
       executable: /bin/bash
     register: c_mount_path
+
+  - name: validate secrets present inside cluster or not.
+    shell: >
+      kubectl get secrets -n {{c_app_ns}} --no-headers -o=custom-columns=NAME:".metadata.name"
+    args:
+      executable: /bin/bash
+    register: secret_present
+
+  - name: Check existence of secrets
+    fail:
+      msg: "secret {{ item }} doesn't exist in cluster"
+    when: item not in secret_present.stdout_lines
+    with_items: "{{ c_secret_name.stdout_lines }}"
   
   when: secret_defined != ''
 
