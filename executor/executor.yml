@@ -65,24 +65,24 @@
     executable: /bin/bash
   register: c_job_args
 
-- name: Check Availability of configmaps
+- name: Check configmaps defined or not.
   shell: >
-    kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.configmaps[0].data.parameters\.yml}'
+    kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.configmaps}'
   args:
     executable: /bin/bash
-  register: configMap_available
+  register: configMap_defined
 
-- name: Check Availability of secrets
+- name: Check secrets defined or not.
   shell: >
-    kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.secrets[0].name}'
+    kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.secrets}'
   args:
     executable: /bin/bash
-  register: secret_available
+  register: secret_defined
 
-- name: Record availability of configmaps and secrets
+- name: Record configmaps and secrets are defined or not.
   set_fact:
-    configMap_available: "{{ configMap_available.stdout }}"
-    secret_available: "{{ secret_available.stdout }}"
+    configMap_defined: "{{ configMap_defined.stdout }}"
+    secret_defined: "{{ secret_defined.stdout }}"
 
 - include: experiment_env_getter.yml
   with_sequence: start=0 count="{{c_env_length.stdout | int}}"
@@ -150,10 +150,13 @@
     --labels={{c_job_labels.stdout}} {{c_env_list}}  --command -- /bin/bash {{c_job_args.stdout}}  
   args:
     executable: /bin/bash
-  when:  configMap_available == '' and secret_available == ''
-
-- include: experiment_configmap.yml
-  when:  configMap_available != '' or  secret_available != ''
+  when:  
+    - configMap_defined == "[map[]]" or  configMap_defined == ''
+    - secret_defined == "[map[]]"  or  secret_defined == ''
+  
+- include: experiment_volumes.yml
+  when: 
+    - (configMap_defined != '' and  configMap_defined != "[map[]]") or (secret_defined != '' and  secret_defined != "[map[]]")
 
 - name: Fetching monitoring time from chaos experiment job
   shell: >

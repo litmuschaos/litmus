@@ -12,7 +12,7 @@ Build Litmus Image:
 Test Litmus Playbook Syntax: 
   stage: litmusImageTest
   script:
-    - sudo docker run ksatchit/ansible-runner:ci ./syntax-check 
+    - sudo docker run litmuschaos/ansible-runner:ci ./syntax-check 
 
 Push Litmus Image:
   stage: litmusImagePush
