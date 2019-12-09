@@ -150,10 +150,13 @@
     --labels={{c_job_labels.stdout}} {{c_env_list}}  --command -- /bin/bash {{c_job_args.stdout}}  
   args:
     executable: /bin/bash
-  when:  configMap_defined == '' and secret_defined == ''
-
+  when:  
+    - configMap_defined == "[map[]]" or  configMap_defined == ''
+    - secret_defined == "[map[]]"  or  secret_defined == ''
+  
 - include: experiment_volumes.yml
-  when:  configMap_defined != '' or  secret_defined != ''
+  when: 
+    - (configMap_defined != '' and  configMap_defined != "[map[]]") or (secret_defined != '' and  secret_defined != "[map[]]")
 
 - name: Fetching monitoring time from chaos experiment job
   shell: >
