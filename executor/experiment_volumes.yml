@@ -14,6 +14,19 @@
       executable: /bin/bash
     register: c_mount_path_configmap
 
+  - name: validate configmap present inside cluster or not.
+    shell: >
+      kubectl get configmaps -n {{c_app_ns}} --no-headers -o=custom-columns=NAME:".metadata.name"
+    args:
+      executable: /bin/bash
+    register: config_present
+
+  - name: Check existence of config map
+    fail:
+      msg: "config map {{ item }} doesn't exist in cluster"
+    when: item not in config_present.stdout_lines
+    with_items: "{{ c_map_name.stdout_lines }}"
+
   when: configMap_defined != ''
   
 - block:
