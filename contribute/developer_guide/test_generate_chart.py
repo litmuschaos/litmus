@@ -11,7 +11,7 @@ def jinja_template_dir():
 @pytest.fixture
 def config_content():
     c_path = 'attributes.yaml.sample'
-    config = yaml.load(open(c_path))
+    config = yaml.safe_load(open(c_path))
     return config
 
 @pytest.fixture
@@ -48,7 +48,6 @@ def test_generate_package(jinja_template_dir, config_content, expected_file_dir)
     assert result
 
 def test_generate_litmusbook(jinja_template_dir, config_content, expected_file_dir):
-     
     litmusbook_dict = {
             "experiment_cr": ['experiment_custom_resource.tmpl', 'experiment_cr.expected'],
             "experiment_logic": ['experiment_ansible_logic.tmpl', 'experiment_logic.expected']
@@ -57,8 +56,6 @@ def test_generate_litmusbook(jinja_template_dir, config_content, expected_file_d
     for every_value in litmusbook_dict.values():
         artifact_tmpl = jinja_template_dir + every_value[0]
         artifact_actual = expected_file_dir + every_value[1]
-        print(artifact_tmpl)
-        print(artifact_actual)
         text_banner(artifact_tmpl, artifact_actual)
         result = verify_generated_artifact(artifact_tmpl, config_content, artifact_actual)
         assert result
