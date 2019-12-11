@@ -132,6 +132,7 @@
           vars:
             status: 'VERIFY'
             ns: "{{ a_ns }}"
+            label: "{{ a_label }}"
             pod_name: "{{ rescheduled_app_pod.stdout }}"                 
           when: data_persistence != ''
 
