@@ -1,0 +1,22 @@
+apiVersion: litmuchaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  name: kill-hello-replicas 
+  version: 0.1.0
+  annotations:
+    categories: hello-world
+    repository: https://github.com/litmuschaos/demo-app/tree/master/sample_apps/hellonode
+    support: https://kubernetes.slack.com/messages/CNXNB0ZTN
+spec:
+  displayName: kill-hello-replicas 
+  description: >
+    kills hello-world pods in a random manner 
+  keywords: ['pods', 'kubernetes', 'hello-world', 'nodejs'] 
+  maturity: alpha 
+  minKubeVersion: 1.12.0 
+  maintainers: ['ksatchit@mayadata.io'] 
+  contributors: ['ksatchit@mayadata.io'] 
+  links: ['https://docs.litmuschaos.io/docs/getstarted/'] 
+  icon:
+    - url: 
+      mediatype: ""
