@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pumba-netem-{{ run_id }}
+spec:
+  template:
+    metadata:
+      labels:
+        app: pumba
+        com.gaiaadm.pumba: "true"
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: {{ app_node }}  
+      restartPolicy: Never
+      containers:
+      - image: {{ pumba_image }}
+        imagePullPolicy: Always
+        name: pumba
+        args:
+          - netem
+          - --tc-image
+          - 'gaiadocker/iproute2'
+          - --interface
+          - {{ n_interface }}
+          - --duration
+          - {{ c_duration }}ms
+{% if n_latency is defined and n_latency != '' %}
+          - delay
+          - --time
+          - "{{ n_latency }}"
+{% elif n_packet_loss is defined and n_packet_loss != '' %}
+          - loss
+          - --percent
+          - "{{ n_packet_loss }}"
+{% endif %}
+          - re2:k8s_{{ c_container }}_{{ app_pod }}
+        resources:
+          requests:
+            cpu: 10m
+            memory: 5M
+          limits:
+            cpu: 100m
+            memory: 20M
+        volumeMounts:
+          - name: dockersocket
+            mountPath: /var/run/docker.sock
+      volumes:
+        - hostPath:
+            path: /var/run/docker.sock
+          name: dockersocket
