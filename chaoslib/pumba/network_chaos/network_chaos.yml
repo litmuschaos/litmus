@@ -39,7 +39,7 @@
 
         - set_fact:
             run_id: "{{ rand_string.stdout | lower }}"
-      when: "run_id is not defined or run__id == ''"
+      when: "run_id is not defined or run_id == ''"
     
     - name: Patch the chaoslib image
       template:
@@ -53,7 +53,7 @@
         kubectl create -f /chaoslib/pumba/network_chaos/pumba_kube.yml -n {{ a_ns }}
       args: 
         executable: /bin/bash
-      register: pumb_deploy_result
+      register: pumba_deploy_result
 
     - name: Wait until the pumba netem job is completed
       shell: >
@@ -104,4 +104,4 @@
           delay: 5
           retries: 60
 
-      when: "pumb_deploy_result.rc is defined and pumb_deploy_result.rc == 0"
+      when: "pumba_deploy_result.rc is defined and pumba_deploy_result.rc == 0"
