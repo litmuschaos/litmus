@@ -1,7 +1,8 @@
 ---
 stages:
   - litmusImageBuild
-  - litmusImageTest
+  - litmusPythonTest
+  - litmusAnsibleTest
   - litmusImagePush
 
 Build Litmus Image:
@@ -9,8 +10,13 @@ Build Litmus Image:
   script:
     - sudo docker build . -f build/ansible-runner/Dockerfile -t litmuschaos/ansible-runner:ci
 
+Test Litmus PyTest Suite: 
+  stage: litmusPythonTest
+  script:
+    - ./hack/pytest-suite
+
 Test Litmus Playbook Syntax: 
-  stage: litmusImageTest
+  stage: litmusAnsibleTest
   script:
     - sudo docker run litmuschaos/ansible-runner:ci ./syntax-check 
 
