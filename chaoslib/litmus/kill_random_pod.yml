@@ -7,18 +7,47 @@
         - "{{ app_label }}"
     register: pod_list
 
-  - name: Select a random pod to kill
+  - name: Initialize deletion list
     set_fact:
-      app_pod: "{{ pod_list.resources | random | json_query('metadata.name') }}"
+      target_pod_list: []
 
-  when: app_pod_name is undefined or app_pod_name == ''
+  - block: 
+
+      - name: Select a random pod to kill
+        set_fact:
+          app_pod_random: "{{ pod_list.resources | random | json_query('metadata.name') }}"
+
+      - name: Construct the deletion list with single random pod 
+        set_fact: 
+          target_pod_list: "{{ target_pod_list + [app_pod_random] }}"
+  
+      - set_fact:
+          app_pod: "{{ target_pod_list | join(' ') }}" 
+
+    when: "kill_count is not defined or kill_count == ''"
+
+  - block: 
+
+      - name: Add elements into target pod group list 
+        set_fact:
+          target_pod_list: "{{ target_pod_list + [resource | json_query('metadata.name')] }}"
+        loop: "{{ pod_list.resources }}"
+        loop_control: 
+          loop_var: resource 
+
+      - set_fact:
+          app_pod: "{{ target_pod_list[0:(kill_count|int)] | join(' ') }}" 
+
+    when: "kill_count is defined and kill_count != ''"
+
+  when: "app_pod_name is not defined or app_pod_name == ''"
 
 - block:
   - name: Record app pod 
     set_fact:
       app_pod: "{{ app_pod_name }}"
 
-  when: app_pod_name is defined and app_pod_name != ''
+  when: "app_pod_name is defined and app_pod_name != ''"
 
 - debug:
     msg: "Killing pod {{ app_pod }}"
@@ -29,7 +58,7 @@
   args:
     executable: /bin/bash
   register: result
-  when: "c_force == 'true'"
+  when: "c_force is defined and c_force == 'true'"
 
 - name: Kill application pod
   shell: |
@@ -37,7 +66,7 @@
   args:
     executable: /bin/bash
   register: result
-  when: "c_force == 'false' or c_force == ''" 
+  when: "c_force is not defined or c_force == 'false' or c_force == ''" 
 
 - name: Wait for the interval timer
   pause:

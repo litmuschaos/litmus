@@ -6,7 +6,7 @@
     a_label: "{{ lookup('env','APP_LABEL') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_pvc: "{{ lookup('env','APP_PVC') }}"
-    c_duration: "{{ lookup('env','CHAOS_DURATION') }}"
+    c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
     c_experiment: "openebs-target-network-loss"
     c_force: "{{ lookup('env','FORCE') }}"
     c_interval: "5"
@@ -88,14 +88,14 @@
             -o=custom-columns=NAME:".metadata.name"
           args:
             executable: /bin/bash
-          register: app_pod
+          register: old_app_pod
 
         - name: Create some test data
           include: "{{ data_consistency_util_path }}"
           vars:
             status: 'LOAD'
             ns: "{{ a_ns }}"
-            pod_name: "{{ app_pod.stdout }}"
+            pod_name: "{{ old_app_pod.stdout }}"
           when: data_persistence != ''
 
         ## STORAGE FAULT INJECTION
@@ -109,7 +109,7 @@
           include_tasks: /chaoslib/litmus/kill_random_pod.yml
           vars:
             app_ns: "{{ a_ns }}"
-            app_pod_name: "{{ app_pod.stdout }}"
+            app_pod_name: "{{ old_app_pod.stdout }}"
 
         - name: Verify if the application pod is deleted
           shell: >
@@ -117,7 +117,7 @@
           args:
             executable: /bin/bash
           register: podstatus
-          until: '"{{ app_pod.stdout }}" not in podstatus.stdout'
+          until: '"{{ old_app_pod.stdout }}" not in podstatus.stdout'
           retries: 2
           delay: 150
 
