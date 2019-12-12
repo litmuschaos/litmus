@@ -1,0 +1,25 @@
+apiVersion: litmuschaos.io/v1alpha1
+description:
+  message: |
+    kills hello-world pods in a random manner
+kind: ChaosExperiment
+metadata:
+  name: kill-hello-replicas
+  version: 0.1.0 
+spec:
+  definition:
+    image: "litmuschaos/ansible-runner:ci"
+    args:
+    - -c
+    - ansible-playbook ./experiments//kill-hello-replicas/kill-hello-replicas-ansible-logic.yml -i /etc/ansible/hosts -vv; exit 0
+    command:
+    - /bin/bash
+    env:
+    - name: ANSIBLE_STDOUT_CALLBACK
+      value: default
+    - name: TOTAL_CHAOS_DURATION
+      value: "" 
+    - name: LIB
+      value: ""
+    labels:
+      experiment: kill-hello-replicas 
