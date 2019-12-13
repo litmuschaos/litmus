@@ -20,7 +20,7 @@
     dest: kafka_liveness.yml
   when: kafka_sasl_auth is defined and kafka_sasl_auth == 'enabled' 
 
-- name: Apply the pub-sub kafka liveness applicaton
+- name: Apply the pub-sub kafka liveness application
   shell: 
     kubectl apply -f kafka_liveness.yml -n {{ kafka_ns }}
   args:
