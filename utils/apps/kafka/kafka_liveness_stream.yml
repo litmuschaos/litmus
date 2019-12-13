@@ -10,8 +10,15 @@
 
 - name: Generate the kafka liveness spec from template
   template: 
-    src: /utils/apps/kafka/kafka_liveness.j2
+    src: /utils/apps/kafka/kafka_liveness_non_auth.j2
     dest: kafka_liveness.yml
+  when: kafka_sasl_auth is not defined or kafka_sasl_auth == '' or kafka_sasl_auth == 'disabled'
+
+- name: Generate the kafka liveness spec from template
+  template: 
+    src: /utils/apps/kafka/kafka_liveness_sasl_auth.j2
+    dest: kafka_liveness.yml
+  when: kafka_sasl_auth is defined and kafka_sasl_auth == 'enabled' 
 
 - name: Apply the pub-sub kafka liveness applicaton
   shell: 
