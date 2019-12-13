@@ -119,6 +119,7 @@
           vars:
             status: 'VERIFY'
             ns: "{{ a_ns }}"
+            label: "{{ a_label }}"
             pod_name: "{{ app_pod_name.stdout }}"
           when: data_persistence != '' 
 
@@ -135,6 +136,7 @@
           vars:
             status: 'DELETE'
             ns: "{{ a_ns }}"
+            label: "{{ a_label }}"
             pod_name: "{{ new_app_pod.stdout }}"
           when: data_persistence != '' 
 
