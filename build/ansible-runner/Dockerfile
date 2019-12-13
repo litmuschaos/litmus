@@ -8,14 +8,9 @@ RUN apt-get clean && \
     apt-get install -y --no-install-recommends python-minimal python-pip netcat iproute2 jq sshpass \
     curl openssh-client python-setuptools && rm -rf /var/lib/apt/lists/* 
 
-<<<<<<< HEAD
-#Installing ansible and dependencies for k8s module
-RUN pip install ansible==2.7.3 openshift jmespath
-=======
 RUN pip install --upgrade pip
 #Installing ansible and dependencies for k8s module
 RUN pip install ansible==2.7.3 openshift jmespath boto boto3
->>>>>>> 7d6ac8eeca6019806bb5f447f22eb0f4626aaa88
 
 RUN touch /mnt/parameters.yml /mnt/cloud_config.yml
 

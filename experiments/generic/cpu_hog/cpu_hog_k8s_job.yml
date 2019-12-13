@@ -32,14 +32,15 @@ spec:
           ## WORKING FOR 'deployment' TYPE OF APPLICATION
           - name: APP_KIND
             value: ''
-
-          - name: PLATFORM
-            value: 'ANY'
           
-          ## THE TOTAL_CHAOS_DURATION SHOULD NOT BE MORE THAN 180
+          ## PLATFORM SUPPORTED 
+          - name: PLATFORM
+            value: 'GKE'
+          
+          ## THE TOTAL_CHAOS_DURATION SHOULD NOT BE MORE THAN 180 DEFAULT VALUE IS 60
           - name: TOTAL_CHAOS_DURATION
             value: '60'
-            
+  
           - name: LIB
             value: ''
  
