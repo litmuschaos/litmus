@@ -2,12 +2,12 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: kafka-broker-pod-failure-
+  generateName: kafka-broker-network-latency-
 spec:
   template:
     metadata:
       labels:
-        experiment: kafka-broker-pod-failure
+        experiment: kafka-broker-network-latency
     spec:
       # Placeholder that is updated by the executor for automated runs
       # Provide appropriate SA (with desired permissions) if executed manually
@@ -30,22 +30,23 @@ spec:
           - name: KAFKA_LIVENESS_IMAGE
             value: 'litmuschaos/kafka-client:ci'
 
-          # set to 'enabled' if you have auth set up
-          - name: KAFKA_SASL_AUTH
-            value: 'disabled'
-
           # in milliseconds
           - name: KAFKA_CONSUMER_TIMEOUT
             value: '30000'
 
+          # in milliseconds  
           - name: TOTAL_CHAOS_DURATION
-            value: '15'
+            value: '60000'
 
-          - name: CHAOS_INTERVAL
-            value: '5'
+          - name: TARGET_CONTAINER
+            value: 'k8skafka'
 
-          - name: FORCE
-            value: 'true'
+          # in milliseconds   
+          - name: NETWORK_LATENCY
+            value: '60000'
+
+          - name: NETWORK_INTERFACE
+            value: 'eth0'
 
           - name: KAFKA_INSTANCE_NAME
             value: ''
@@ -81,9 +82,12 @@ spec:
             value: ''
 
           ## env var that describes the library used to execute the chaos
-          ## default: litmus. Supported values: litmus, powerfulseal
+          ## supported values: pumba 
           - name: LIB
-            value: ''
+            value: 'pumba'
+
+          - name: LIB_IMAGE
+            value: 'gaiaadm/pumba:0.6.5'
 
           - name: CHAOSENGINE
             value: ''
@@ -94,5 +98,5 @@ spec:
                 fieldPath: spec.serviceAccountName
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./experiments/kafka/kafka-broker-pod-failure/kafka-broker-pod-failure-ansible-logic.yml -vv -i /etc/ansible/hosts; exit 0"]
+        args: ["-c", "ansible-playbook ./experiments/kafka/kafka-broker-network-latency/kafka-broker-network-latency-ansible-logic.yml -vv -i /etc/ansible/hosts; exit 0"]
 

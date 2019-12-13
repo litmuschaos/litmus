@@ -3,18 +3,19 @@
   connection: local
 
   vars:
-    c_experiment: "kafka-broker-disk-failure"
+    c_experiment: "kafka-broker-network-loss"
     c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
-    cloud_platform: "{{ lookup('env','CLOUD_PLATFORM') }}"
-    disk_name: "{{ lookup('env','DISK_NAME') }}"
-    project_id: "{{ lookup('env','PROJECT_ID') }}"
-    zone_name: "{{ lookup('env','ZONE_NAME') }}"
+    c_container: "{{ lookup('env','TARGET_CONTAINER') }}"
+    n_packet_loss: "{{ lookup('env','NETWORK_PACKET_LOSS_PERCENTAGE') }}"
+    n_interface: "{{ lookup('env','NETWORK_INTERFACE') }}"
+    c_lib: "{{ lookup('env','LIB') }}"
+    lib_image: "{{ lookup('env','LIB_IMAGE') }}"
+    kafka_instance: "{{ lookup('env','KAFKA_INSTANCE_NAME') }}"
     kafka_ns: "{{ lookup('env','KAFKA_NAMESPACE') }}"
     kafka_label: "{{ lookup('env','KAFKA_LABEL') }}"
     kafka_kind: "{{ lookup('env','KAFKA_KIND') }}"
-    kafka_instance: "{{ lookup('env','KAFKA_INSTANCE_NAME') }}"
     kafka_broker: "{{ lookup('env','KAFKA_BROKER') }}"
-    kafka_stream: "{{ lookup('env','KAFKA_LIVENESS_STREAM') }}"
+    kafka_stream: "{{ lookup('env','KAFKA_LIVENESS_STREAM') }}" 
     kafka_liveness_image: "{{ lookup('env','KAFKA_LIVENESS_IMAGE') }}" 
     kafka_consumer_timeout: "{{ lookup('env','KAFKA_CONSUMER_TIMEOUT') }}" 
     kafka_service: "{{ lookup('env','KAFKA_SERVICE') }}"
@@ -28,7 +29,7 @@
   tasks:
     - block:
 
-        - include: kafka-broker-disk-failure-ansible-prerequisites.yml 
+        - include: kafka-broker-network-loss-ansible-prerequisites.yml 
       
         - include_vars:
             file: chaosutil.yml
@@ -48,17 +49,6 @@
             status: 'SOT'
             namespace: "{{ kafka_ns }}"
 
-        - name: Verify mandatory Kafka broker and disk information
-          debug:
-            msg: "kafka-broker-pod: {{ kafka_broker }}; kafka-broker-disk: {{ disk_name }}" 
-          failed_when: (kafka_broker is not defined or not kafka_broker) or (disk_name is not defined or not disk_name)  
-
-        ## PERFORM GCLOUD PLATFORM CONFIGURATION STEPS
-
-        - name: Perform gcloud authentication
-          include_tasks: "/utils/cloud/gcp/gcloud_configure.yml"
-          when: "cloud_platform == 'GCP'"
-
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
 
         - name: Verify that the Kafka cluster is healthy
@@ -67,47 +57,28 @@
             delay: 1
             retries: 60
 
-        - name: Derive the kafka-broker node name
-          shell: 
-            kubectl get pod {{ kafka_broker }} -n {{ kafka_ns }} --no-headers -o custom-columns=:spec.nodeName
-          args:
-            executable: /bin/bash
-          register: node
-
-        - set_fact:
-            node_name: "{{ node.stdout }}"
-
-        - name: Verify that the specified disk is connected to node 
-          include_tasks: "/utils/cloud/gcp/status_disk.yml"
-          when: "cloud_platform == 'GCP'"
-
-        - debug: 
-            msg: "specified disk is attached to node"   
-          when: "inuse == true"
-
-        - fail:
-            msg: "specified disk not attached to node"
-          when: "inuse == false"   
- 
-        ## SETUP KAFKA CHAOS INFRA (LIVENESS CLIENT)
+        ## SETUP KAFKA CHAOS INFRA AND DERIVE BROKERS UNDER TEST
        
-        - include_tasks: "/utils/apps/kafka/kafka_liveness_stream.yml"
-          when: kafka_stream is defined and kafka_stream != '' 
+        - include_tasks: "{{ kafka_broker_util }}" 
 
         ## FAULT INJECTION 
 
         - include_tasks: "{{ c_util }}"
+          vars:
+            a_ns: "{{ kafka_ns }}"
+            a_label: "{{ kafka_label }}"
+            app_ns: "{{ kafka_ns }}"
+            
+            # derived from the 'kafka_broker_util' task
+            app_pod: "{{ kafka_broker }}" 
           
         ## POST-CHAOS APPLICATION LIVENESS CHECK
-
-        ## NOTE: This is disabled at present as the recovery post re-attach (in case of mounted disks) 
-        ## is still manual
         
-        #- name: Verify that the Kafka cluster is healthy
-        #  include_tasks: "/utils/apps/kafka/kafka_cluster_health.yml"
-        #  vars:     
-        #    delay: 1
-        #    retries: 60
+        - name: Verify that the Kafka cluster is healthy
+          include_tasks: "/utils/apps/kafka/kafka_cluster_health.yml"
+          vars:     
+            delay: 1
+            retries: 60
 
         ## CHECK FOR KAFKA LIVENESS & CLEANUP
 
@@ -123,24 +94,11 @@
 
             - include_tasks: "/utils/apps/kafka/kafka_liveness_cleanup.yml"
 
-          when: kafka_stream is defined and kafka_stream != ''
-
-        ## POST-CHAOS DISK LIVENESS CHECK
-
-        - name: Verify that the disk is connected to node (post)
-          include_tasks: "/utils/cloud/gcp/status_disk.yml"
-          when: "cloud_platform == 'GCP'" 
-
-        - debug: 
-            msg: "specified disk is attached to node"   
-          when: "inuse == true"
-
-        - fail:
-            msg: "specified disk not re-attached to kafka-broker node"
-          when: "inuse == false"   
+          when: kafka_stream is defined and kafka_stream == 'enabled'
 
         - set_fact:
             flag: "pass"
+
 
       rescue: 
         - set_fact: 

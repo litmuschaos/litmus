@@ -1,33 +1,8 @@
 ---
-- name: Patch the chaoslib image
-  template:
-    src:  /chaoslib/pumba/pumba.j2
-    dest: /chaoslib/pumba/pumba_kube.yml
-  vars:
-    pumba_image: "{{ lib_image }}"
-
 - block: 
-    - name: Setup pumba chaos infrastructure
-      shell: >
-        kubectl apply -f /chaoslib/pumba/pumba_kube.yml -n {{ a_ns }}
-      args: 
-        executable: /bin/bash
-      register: pumb_deploy_result
 
-    - name: Confirm that the pumba ds is running on all nodes
-      shell: >
-        kubectl get pod -l app=pumba
-        --no-headers -o custom-columns=:status.phase
-        -n {{ a_ns }} | sort | uniq
-      args:
-        executable: /bin/bash
-      register: result
-      until: "result.stdout == 'Running'"
-      delay: 1
-      retries: 60
-      ignore_errors: true
+    - block: 
 
-    - block:  
       - name: Select the app pod
         shell: >
           kubectl get pod -l {{ a_label }} -n {{ a_ns }}
@@ -41,7 +16,7 @@
         set_fact:
           app_pod: "{{ app_pod_name.stdout }}"
 
-      when: "app_pod is undefined"
+      when: "app_pod is not defined"
 
     # here app_ns is the namespace of pod on which we are performing network loss/delay
     # in genric experiments app_ns is same as a_ns
@@ -54,35 +29,60 @@
         executable: /bin/bash
       register: app_node
 
-    - name: Identify the pumba pod that co-exists with app pod
+    - set_fact: 
+        app_node: "{{ app_node.stdout }}"
+
+    - block: 
+        - name: Generate a run id if not passed from the engine/experiment
+          shell: echo $(mktemp) | cut -d '.' -f 2 
+          register: rand_string   
+
+        - set_fact:
+            run_id: "{{ rand_string.stdout | lower }}"
+      when: "run_id is not defined or run_id == ''"
+    
+    - name: Patch the chaoslib image
+      template:
+        src:  /chaoslib/pumba/network_chaos/pumba_netem_job.j2
+        dest: /chaoslib/pumba/network_chaos/pumba_kube.yml
+      vars:
+        pumba_image: "{{ lib_image }}"
+
+    - name: Setup pumba chaos infrastructure
       shell: >
-        kubectl get pods -l app=pumba -n {{ a_ns }} 
-        -o jsonpath='{.items[?(@.spec.nodeName==''"{{ app_node.stdout }}"'')].metadata.name}'
-      args:
+        kubectl create -f /chaoslib/pumba/network_chaos/pumba_kube.yml -n {{ a_ns }}
+      args: 
         executable: /bin/bash
-      register: pumba_pod 
+      register: pumba_deploy_result
 
-    - include_tasks: /chaoslib/pumba/network_chaos/induce_latency.yml
-      when: "n_latency is defined"
+    - name: Wait until the pumba netem job is completed
+      shell: >
+        kubectl get pods -l job-name=pumba-netem-{{ run_id }} --no-headers -n {{ a_ns }}
+        --no-headers -o custom-columns=:status.phase
+      args: 
+        executable: /bin/bash
+      register: result
+      until: "result.stdout == 'Succeeded'"
+      delay: 1
+      ## considering duration in milliseconds from spec
+      ## with a grace period of 1 min before pumba terminate
+      retries: "{{ ((c_duration|int)/1000 + 60)| int }}"
 
-    - include_tasks: /chaoslib/pumba/network_chaos/induce_packet_loss.yml
-      when: "n_packet_loss is defined"
-     
     - name: Tear down pumba infrastructure
       shell: >
-        kubectl delete -f /chaoslib/pumba/pumba_kube.yml -n {{ a_ns }} 
+        kubectl delete -f /chaoslib/pumba/network_chaos/pumba_kube.yml -n {{ a_ns }} 
       args:
         executable: /bin/bash
 
-    - name: Confirm that the pumba ds is deleted successfully
+    - name: Confirm that the pumba job is deleted successfully
       shell: >
-        kubectl get pods -l app=pumba --no-headers -n {{ a_ns }}
+        kubectl get pods -l job-name=pumba-netem-{{ run_id }} --no-headers -n {{ a_ns }}
       args:
         executable: /bin/bash
       register: result
-      until: "'Running' not in result.stdout"
-      delay: 20
-      retries: 15
+      until: "'No resources found' in result.stderr"
+      delay: 5
+      retries: 60
 
   rescue: 
 
@@ -90,18 +90,18 @@
 
         - name: Tear down pumba infrastructure, if setup
           shell: >
-            kubectl delete -f /chaoslib/pumba/pumba_kube.yml -n {{ a_ns }} 
+            kubectl delete -f /chaoslib/pumba/network_chaos/pumba_kube.yml -n {{ a_ns }} 
           args:
             executable: /bin/bash
+          when: pumba_deploy_result.rc == 0
         
-        - name: Confirm that the pumba ds is deleted successfully
+        - name: Confirm that the pumba job is not present
           shell: >
-            kubectl get pods -l app=pumba --no-headers -n {{ a_ns }}
+            kubectl get pods -l job-name=pumba-netem-{{ run_id }} --no-headers -n {{ a_ns }}
           args:
             executable: /bin/bash
           register: result
-          until: "'Running' not in result.stdout"
-          delay: 20
-          retries: 15
-
-      when: "pumb_deploy_result.rc == 0"
+          until: "'No resources found' in result.stderr"
+          delay: 5
+          retries: 60
+      when: "pumba_deploy_result is defined"
