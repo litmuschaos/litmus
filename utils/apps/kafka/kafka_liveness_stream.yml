@@ -13,7 +13,7 @@
     src: /utils/apps/kafka/kafka_liveness.j2
     dest: kafka_liveness.yml
 
-- name: Apply the pub-sub kafka liveness applicaton
+- name: Apply the pub-sub kafka liveness application
   shell: 
     kubectl apply -f kafka_liveness.yml -n {{ kafka_ns }}
   args:

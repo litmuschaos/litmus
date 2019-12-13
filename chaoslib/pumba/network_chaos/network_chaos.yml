@@ -93,8 +93,9 @@
             kubectl delete -f /chaoslib/pumba/network_chaos/pumba_kube.yml -n {{ a_ns }} 
           args:
             executable: /bin/bash
+          when: pumba_deploy_result.rc == 0
         
-        - name: Confirm that the pumba job is deleted successfully
+        - name: Confirm that the pumba job is not present
           shell: >
             kubectl get pods -l job-name=pumba-netem-{{ run_id }} --no-headers -n {{ a_ns }}
           args:
@@ -103,4 +104,4 @@
           until: "'No resources found' in result.stderr"
           delay: 5
           retries: 60
-      when: "pumba_deploy_result.rc is defined and pumba_deploy_result.rc == 0"
+      when: "pumba_deploy_result is defined"
