@@ -13,6 +13,7 @@
     kafka_ns: "{{ lookup('env','KAFKA_NAMESPACE') }}"
     kafka_label: "{{ lookup('env','KAFKA_LABEL') }}"
     kafka_kind: "{{ lookup('env','KAFKA_KIND') }}"
+    kafka_sasl_auth: "{{ lookup('env','KAFKA_SASL_AUTH') }}"
     kafka_broker: "{{ lookup('env','KAFKA_BROKER') }}"
     kafka_stream: "{{ lookup('env','KAFKA_LIVENESS_STREAM') }}" 
     kafka_liveness_image: "{{ lookup('env','KAFKA_LIVENESS_IMAGE') }}" 

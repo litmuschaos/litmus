@@ -30,6 +30,10 @@ spec:
           - name: KAFKA_LIVENESS_IMAGE
             value: 'litmuschaos/kafka-client:ci'
 
+          # set to 'enabled' if you have auth set up
+          - name: KAFKA_SASL_AUTH
+            value: 'disabled'
+
           # in milliseconds
           - name: KAFKA_CONSUMER_TIMEOUT
             value: '30000'
