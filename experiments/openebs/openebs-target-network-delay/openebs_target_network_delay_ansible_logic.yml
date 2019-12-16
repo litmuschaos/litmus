@@ -6,7 +6,7 @@
     a_label: "{{ lookup('env','APP_LABEL') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_pvc: "{{ lookup('env','APP_PVC') }}"
-    c_duration: "{{ lookup('env','CHAOS_DURATION') }}"
+    c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
     c_experiment: openebs-target-network-delay
     lib_image: "{{ lookup('env','LIB_IMAGE') }}"
     data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
@@ -87,14 +87,14 @@
             -o=custom-columns=NAME:".metadata.name"
           args:
             executable: /bin/bash
-          register: app_pod_name    
+          register: pod_app_name    
 
         - name: Create some test data
           include: "{{ data_consistency_util_path }}"
           vars:
             status: 'LOAD'
             ns: "{{ a_ns }}"
-            pod_name: "{{ app_pod_name.stdout }}"  
+            pod_name: "{{ pod_app_name.stdout }}"  
           when: data_persistence != ''    
 
         ## STORAGE FAULT INJECTION 
@@ -117,7 +117,8 @@
           vars:
             status: 'VERIFY'
             ns: "{{ a_ns }}"
-            pod_name: "{{ app_pod_name.stdout }}"
+            label: "{{ a_label }}"
+            pod_name: "{{ pod_app_name.stdout }}"
           when: data_persistence != ''      
           
         - set_fact:

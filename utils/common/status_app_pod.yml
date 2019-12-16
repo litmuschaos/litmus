@@ -1,5 +1,5 @@
 ---
-- name: Checking {{ application_name }} pod is in running state
+- name: Checking whether application pods are in running state
   shell: kubectl get pods -n {{ a_ns }} -l {{ a_label }} -o custom-columns=:.status.phase --no-headers
   register: result
   until: "((result.stdout.split()|unique)|length) == 1 and 'Running' in result.stdout"
@@ -8,14 +8,14 @@
 
 - name: Get the container status of application.
   shell: >
-     kubectl get pod -n {{ a_ns }} -l {{ a_label }}
-     -o custom-columns=:..containerStatuses[].state --no-headers | grep -w "running"
+     kubectl get pod -n {{ a_ns }} -l {{ a_label }} --no-headers
+     -o jsonpath='{.items[*].status.containerStatuses[*].ready}' | tr ' ' '\n' | uniq
   args:
     executable: /bin/bash
   register: containerStatus
-  until: "'running' in containerStatus.stdout"
-  delay: 2
-  retries: 150
+  until: "containerStatus.stdout == 'true'"
+  delay: '{{ delay }}'
+  retries: '{{ retries }}'
 
 
 

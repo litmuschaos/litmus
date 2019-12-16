@@ -6,9 +6,12 @@
     a_label: "{{ lookup('env','APP_LABEL') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     c_experiment: "node-drain"
-    data_persistance: "{{ lookup('env','DATA_PERSISTENCY') }}"
+    data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
     liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
-    liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
+    liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"  
+
+  vars_files:
+    - /mnt/parameters.yml
 
   tasks:
     - block:
@@ -17,9 +20,35 @@
         - include_tasks: /utils/common/application_liveness_check.yml
           when: liveness_label != ''
 
-        ## RECORD START-OF-TEST IN CHAOS RESULT CR
-        
+        # Create test name append with run_id 
         - include_tasks: /utils/runtime/create_testname.yml
+
+        - include_tasks: /utils/common/application_liveness_check.yml
+          when: liveness_label != ''
+
+        - name: Identify the data consistency util to be invoked
+          template:
+            src: data_persistence.j2
+            dest: data_persistence.yml
+
+        - include_vars:
+            file: data_persistence.yml
+
+        - name: Record the data consistency util path
+          set_fact:
+            data_consistency_util_path: "{{ consistencyutil }}"
+          when: data_persistence != ''
+
+        ## GENERATE EXP RESULT NAME
+        - block:
+
+           - name: Construct chaos result name (experiment_name)
+             set_fact:
+               c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
+
+          when: lookup('env','CHAOSENGINE') 
+
+         ## RECORD START-OF-TEST IN CHAOS RESULT CR
 
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
@@ -41,7 +70,7 @@
             delay: 5
             retries: 60
 
-        - name: Get application pod name
+        - name: Get the application pod name
           shell: >
             kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers
             -o=custom-columns=NAME:".metadata.name"
@@ -49,22 +78,14 @@
             executable: /bin/bash
           register: app_pod_name
 
-        - name: Generate unique string for use in dbname
-          shell: echo $(mktemp) | cut -d '.' -f 2
-          args:
-            executable: /bin/bash
-          register: uniqstr
-
-        - name: Create some test data in the mysql database
-          include_tasks: "/utils/apps/mysql/mysql_data_persistence.yml"
+        - name: Create some test data 
+          include:  "{{ data_consistency_util_path }}"
           vars:
             status: 'LOAD'
             ns: "{{ a_ns }}"
+            label: "{{ a_label }}"
             pod_name: "{{ app_pod_name.stdout }}"
-            dbuser: 'root'
-            dbpassword: 'k8sDem0'
-            dbname: "tdb{{ uniqstr.stdout }}"
-          when: data_persistance != ''
+          when: data_persistence != ''
 
         ## STORAGE FAULT INJECTION 
 
@@ -85,7 +106,7 @@
         - include_tasks: /utils/common/application_liveness_check.yml
           when: liveness_label != ''
         
-        - name: Get application pod name
+        - name: Get the application pod name
           shell: >
             kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers
             -o=custom-columns=NAME:".metadata.name"
@@ -93,16 +114,14 @@
             executable: /bin/bash
           register: rescheduled_app_pod  
 
-        - name: Verify mysql data persistence
-          include_tasks: "/utils/apps/mysql/mysql_data_persistence.yml"
+        - name: Verify application data persistence  
+          include: "{{ data_consistency_util_path }}"
           vars:
             status: 'VERIFY'
             ns: "{{ a_ns }}"
+            label: "{{ a_label }}"
             pod_name: "{{ rescheduled_app_pod.stdout }}"
-            dbuser: 'root'
-            dbpassword: 'k8sDem0'
-            dbname: "tdb{{ uniqstr.stdout }}"
-          when: data_persistance != ''
+          when: data_persistence != ''
 
         - set_fact:
             flag: "Pass"
@@ -117,9 +136,7 @@
           include_tasks: "/chaoslib/litmus/cordon_drain_node.yaml"
           vars:
             action: "uncordon"      
-            app_ns: "{{ a_ns }}"
-            app_pod: "{{ rescheduled_app_pod.stdout }}"
-
+          
          ## RECORD END-OF-TEST IN CHAOS RESULT CR    
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:

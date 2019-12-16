@@ -65,8 +65,12 @@
 
         # Checking disk is attached to node
         - debug: 
-            msg: "disk attached"   
+            msg: "specified disk is attached to node"   
           when: "inuse == true"
+
+        - fail:
+            msg: "specified disk not attached to node"
+          when: "inuse == false"
 
          ## INJECTING CHAOS 
         - name: Injecting the chaos
@@ -91,8 +95,12 @@
           
         # Checking disk is attached to node
         - debug: 
-            msg: "disk attached"   
+            msg: "specified disk is attached to node"   
           when: "inuse == true"
+
+        - fail:
+            msg: "specified disk not re-attached to node"
+          when: "inuse == false"
 
         - set_fact:
             flag: "Pass"

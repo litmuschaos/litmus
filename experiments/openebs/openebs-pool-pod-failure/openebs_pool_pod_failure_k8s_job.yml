@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: pool-pod-delete
+  name: openebs-pool-pod-failure
 data:
   parameters.yml: |
 
@@ -68,4 +68,4 @@ spec:
       volumes:
         - name: parameters
           configMap:
-            name: pool-pod-delete
+            name: openebs-pool-pod-failure

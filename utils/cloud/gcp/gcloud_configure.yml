@@ -1,5 +1,5 @@
 - name: authenticate gcloud service account
-  shell: gcloud auth activate-service-account --key-file=/mnt/cloud_config.yml
+  shell: gcloud auth activate-service-account --key-file=/tmp/cloud_config.yml
 
 - name: Gcloud project setting
   shell: gcloud config set project {{ project_id }}

@@ -7,10 +7,7 @@
 
 -   Repositories use release version according to the [Semantic Versioning](https://semver.org/)
 
--   Docker images with release tags are pushed upon creation of a github release. The CI configuration to enable this can be found on the following repositories:
-    -   [Litmus](https://github.com/litmuschaos/litmus/blob/master/.travis.yml)
-    -   [Chaos-Operator](https://github.com/litmuschaos/chaos-operator/blob/master/.circleci/config.yml)
-    -   [Chaos-Exporter](https://github.com/litmuschaos/chaos-exporter/blob/master/.travis.yml)
+-   Docker images with release tags are pushed upon creation of a github release (commits to master push images with `ci` tags) 
 
 -   Following are the docker images:
     -   [litmuschaos/ansible-runner](https://cloud.docker.com/u/litmuschaos/repository/docker/litmuschaos/ansible-runner)
@@ -19,14 +16,16 @@
 
 -   Tracking of releases is done on Github [project board](https://github.com/litmuschaos/litmus/projects)
 
--   The flow of the release is done by the following steps:
-    -   Sprint Planning with feature request from the community
-    -   Development of feature
-    -   RC1 build
-    -   More RC build will be done on a need basis
-    -   Testing is done after the RC1 build
-    -   Cherry picking the commits to the release branch post RC build
-    -   Release is done
+-   The release flow consists of the following steps:
+
+    -   Sprint Planning based on backlogs & feature requests from the community
+    -   Feature Development with unit-tests & integration/bdd (behaviour driven development) tests 
+    -   Code/Enhancement freeze with release branch & RC1 (Release Candidate) creation 
+    -   User & Dev Documentation 
+    -   Execution of (end-to-end) tests against chaos charts, followed by fixes to issues identified 
+    -   Cherry pick of commits from master (fixes) to release branch 
+    -   Doc sanity tests  
+    -   Litmus release with change log 
 
 -   Releases
     -   Pre Release Version (Development)

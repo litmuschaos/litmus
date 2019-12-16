@@ -1,4 +1,11 @@
 ---
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: drain-node
+  data:
+    parameters.yml: |
+---
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -19,9 +26,11 @@ spec:
           - name: ANSIBLE_STDOUT_CALLBACK
             value: 'default'
 
+          # provide application namespace
           - name: APP_NAMESPACE
             value: ''
 
+          # provide application label
           - name: APP_LABEL
             value: ''
 
@@ -31,8 +40,18 @@ spec:
           - name: LIVENESS_APP_NAMESPACE
             value: ''
 
-          - name: DATA_PERSISTENCY
+          # It is used for Data accessibility & integrity verification 
+          # it can be mysql or busybox 
+          - name: DATA_PERSISTENCE
             value: ''
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/generic/drain_node/drain_node_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
+
+        volumeMounts:
+          - name: parameters
+            mountPath: /mnt/
+      volumes:
+        - name: parameters
+          configMap:
+            name: drain-node

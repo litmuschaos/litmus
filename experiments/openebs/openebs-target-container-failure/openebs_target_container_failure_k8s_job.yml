@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: target-failure
+  name: openebs-target-container-failure
 data:
   parameters.yml: |
 
@@ -10,12 +10,12 @@ data:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: openebs-target-failure-
+  generateName: openebs-target-container-failure-
 spec:
   template:
     metadata:
       labels:
-        name: openebs-target-failure
+        name: openebs-target-container-failure
     spec:
       serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
       restartPolicy: Never
@@ -61,20 +61,17 @@ spec:
 
           - name: DATA_PERSISTENCE
             value: ''
+
+          - name: CHAOS_INTERVAL
+            value: '5'
+
+          - name: CHAOS_DURATION
+            value: '120'
             
           # Specify the container runtime used , to pick the relevant chaos util  
           - name: CONTAINER_RUNTIME
             value: 'docker' 
-
-            # CHAOS_TYPE values :  target-zrepl-kill , target-kill , target-delete , jiva-ctrl-kill
-            # For cstor-volume-istgt container kill Use : target-kill
-            # For Volume-mgmt-kill container Use  : target-zrepl-kill
-            # For cstor-target-failure Use    : target-delete
-            # For Jiva-Controller-container-kill Use : jiva-ctrl-kill
-
-          - name: CHAOS_TYPE
-            value: 'jiva-ctrl-kill'
-            
+ 
             # TARGET_CONTAINER values: cstor-volume-mgmt , cstor-istgt
             # For cstor-volume-istgt container kill use : cstor-istgt
             # For volume-mgmt-kill container use : cstor-volume-mgmt
@@ -87,7 +84,7 @@ spec:
             value: 'deployment'
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./experiments/openebs/openebs-target-failure/openebs_target_failure_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
+        args: ["-c", "ansible-playbook ./experiments/openebs/openebs-target-container-failure/openebs_target_container_failure_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
 
         volumeMounts:
         - name: parameters
@@ -95,4 +92,4 @@ spec:
       volumes:
         - name: parameters
           configMap:
-            name: target-failure
+            name: openebs-target-container-failure

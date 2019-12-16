@@ -1,7 +1,0 @@
-- name: Inject {{n_packet_loss}}% packet loss on app pod for {{ c_duration }}ms 
-  shell: > 
-    kubectl exec {{ pumba_pod.stdout }} -n {{ a_ns }} 
-    -- pumba netem --interface {{ n_interface }} --duration {{ c_duration }}ms  
-    loss --percent {{ n_packet_loss }} re2:k8s_{{ c_container }}_{{ app_pod }}
-  args:
-    executable: /bin/bash

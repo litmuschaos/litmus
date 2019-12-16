@@ -65,12 +65,24 @@
     executable: /bin/bash
   register: c_job_args
 
-- name: Fetching data for the configmap
+- name: Check configmaps defined or not.
   shell: >
-    kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.configmaps[0].data.parameters\.yml}'
+    kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.configmaps}'
   args:
     executable: /bin/bash
-  register: configMap_available
+  register: configMap_defined
+
+- name: Check secrets defined or not.
+  shell: >
+    kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.secrets}'
+  args:
+    executable: /bin/bash
+  register: secret_defined
+
+- name: Record configmaps and secrets are defined or not.
+  set_fact:
+    configMap_defined: "{{ configMap_defined.stdout }}"
+    secret_defined: "{{ secret_defined.stdout }}"
 
 - include: experiment_env_getter.yml
   with_sequence: start=0 count="{{c_env_length.stdout | int}}"
@@ -138,11 +150,21 @@
     --labels={{c_job_labels.stdout}} {{c_env_list}}  --command -- /bin/bash {{c_job_args.stdout}}  
   args:
     executable: /bin/bash
-  when:  configMap_available.stdout == ''
-
-- include: experiment_configmap.yml
-  when:  configMap_available.stdout != ''
+  when:  
+    - configMap_defined == "[map[]]" or  configMap_defined == ''
+    - secret_defined == "[map[]]"  or  secret_defined == ''
   
+- include: experiment_volumes.yml
+  when: 
+    - (configMap_defined != '' and  configMap_defined != "[map[]]") or (secret_defined != '' and  secret_defined != "[map[]]")
+
+- name: Fetching monitoring time from chaos experiment job
+  shell: >
+    kubectl get job {{ job_name }} -n {{c_app_ns}} -ojsonpath="{range .spec.template.spec.containers[*]}{.env[?(@.name=='TOTAL_CHAOS_DURATION')].value}"
+  args:
+    executable: /bin/bash
+  register: chaos_monitoring_time
+
 - name: Monitoring the litmus chaos job for completion
   shell: >
     kubectl get job {{ job_name }} -n {{ c_app_ns}} 
@@ -151,8 +173,8 @@
    executable: /bin/bash
   register: c_job_status
   until: c_job_status.stdout == "Complete"
-  delay: 1
-  retries: 300
+  delay: 2
+  retries: "{{ (chaos_monitoring_time.stdout)|int + 300}}"
 
 - name: Fetching verdict from the chaos result CR
   shell: >
@@ -201,7 +223,7 @@
 - name: Patch the chaosengine status
   template:
     src:  chaos-engine.j2
-    dest: chaos-engine.yaml
+    dest: chaos-engine.yml
   vars:
     experiment_name: "{{ c_experiment_name}}"
     job_name: "{{ c_experiment_name }}-{{random_string.stdout}}"
@@ -209,7 +231,7 @@
     verdict: "{{ c_verdict.stdout  }}"
 
 - name: Apply the chaos engine CR
-  shell: kubectl apply -f chaos-engine.yaml -n {{ c_app_ns }}
+  shell: kubectl apply -f chaos-engine.yml -n {{ c_app_ns }}
   args:
     executable: /bin/bash
 
