@@ -14,7 +14,6 @@
 
 ## Pre-Requisites
 
-- Application subjected to chaos must have `tc` network traffic shaping tool installed
 - Cluster should use docker container runtime	
 
 ## Details
@@ -25,7 +24,7 @@
 ## Associated Chaos Utils
 
 - [pumba/network_chaos/network_chaos.yml](/chaoslib/pumba/network_chaos/network_chaos.yml) 
-- [pumba/network_chaos/induce_packet_loss.yml](/chaoslib/pumba/network_chaos/induce_packet_loss.yml)
+- [pumba/network_chaos/pumba_netem_job.yml](/chaoslib/pumba/network_chaos/pumba_netem_job.yml)
 
 ## Litmusbook Environment Variables
 
