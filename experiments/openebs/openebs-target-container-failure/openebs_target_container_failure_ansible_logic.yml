@@ -6,7 +6,7 @@
     a_label: "{{ lookup('env','APP_LABEL') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_pvc: "{{ lookup('env','APP_PVC') }}"
-    c_experiment: openebs-target-failure
+    c_experiment: openebs-target-container-failure
     c_force: "{{ lookup('env','FORCE') }}"
     c_interval: "{{ lookup('env','CHAOS_INTERVAL') }}"
     chaos_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
