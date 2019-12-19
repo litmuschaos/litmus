@@ -14,18 +14,17 @@
 
 ## Pre-Requisites
 
-- Application subjected to chaos must have `tc` network traffic shaping tool installed
 - Cluster should use docker container runtime
 
 ## Details
 
 - Causes flaky access to application replica by injecting network delay using pumba.
-- The application pod should be healthy once chaos is stopped. Service-requests should be served despite chaos
+- The application pod should be healthy once chaos is stopped. Service-requests should be served (say, via alternate replicas) despite chaos.
 
 ## Associated Chaos Utils
 
 - [pumba/network_chaos/network_chaos.yml](/chaoslib/pumba/network_chaos/network_chaos.yml) 
-- [pumba/network_chaos/induce_latency.yml](/chaoslib/pumba/network_chaos/induce_latency.yml)
+- [pumba/network_chaos/pumba_netem_job.yml](/chaoslib/pumba/network_chaos/pumba_netem_job.yml)
 
 ## Litmusbook Environment Variables
 
