@@ -1,17 +1,5 @@
 - block:
 
-  - name: Identify the application node
-    shell: >
-      kubectl get pod {{ app_pod }} -n {{ app_ns }} 
-      --no-headers -o custom-columns=:spec.nodeName
-    args: 
-      executable: /bin/bash
-    register: result 
-             
-  - name: Record the application node name 
-    set_fact:
-      app_node: "{{ result.stdout }}"
-  
   - name: Drain the application node
     shell: >
       kubectl drain {{ app_node }}
@@ -26,16 +14,15 @@
    # Get the rescheduled application pod name
   - name: Get the rescheduled application pod name
     shell: >
-      kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers
-      -o=custom-columns=NAME:".metadata.name"
+      kubectl get pods -l {{ a_label }} -n {{ a_ns }} --no-headers 
+      -o custom-columns=:metadata.name | shuf -n 1
     args:
       executable: /bin/bash
-    register: pod_after_rescheduled
+    register: rescheduled_pod
 
-    # Do not untaint until evict occurs
   - name: Wait for application pod reschedule (evict)
     shell: >
-      kubectl get pod {{ pod_after_rescheduled.stdout }} -n {{ app_ns }} 
+      kubectl get pod {{ rescheduled_pod.stdout }} -n {{ app_ns }} 
       --no-headers -o custom-columns=:spec.nodeName
     args: 
       executable: /bin/bash

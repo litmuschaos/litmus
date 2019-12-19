@@ -5,13 +5,10 @@
   vars:
     a_label: "{{ lookup('env','APP_LABEL') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+    a_node: "{{ lookup('env','APP_NODE') }}"
     c_experiment: "node-drain"
-    data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
     liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
     liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"  
-
-  vars_files:
-    - /mnt/parameters.yml
 
   tasks:
     - block:
@@ -25,19 +22,6 @@
 
         - include_tasks: /utils/common/application_liveness_check.yml
           when: liveness_label != ''
-
-        - name: Identify the data consistency util to be invoked
-          template:
-            src: data_persistence.j2
-            dest: data_persistence.yml
-
-        - include_vars:
-            file: data_persistence.yml
-
-        - name: Record the data consistency util path
-          set_fact:
-            data_consistency_util_path: "{{ consistencyutil }}"
-          when: data_persistence != ''
 
         ## GENERATE EXP RESULT NAME
         - block:
@@ -63,37 +47,21 @@
               - "The application info is as follows:"
               - "Namespace    : {{ a_ns }}"
               - "Label        : {{ a_label }}"
+              - "Node name    : {{ a_node }}"
 
         - name: Verify that the AUT (Application Under Test) is running
           include_tasks: "/utils/common/status_app_pod.yml"
           vars:       
             delay: 5
             retries: 60
-
-        - name: Get the application pod name
-          shell: >
-            kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers
-            -o=custom-columns=NAME:".metadata.name"
-          args:
-            executable: /bin/bash
-          register: app_pod_name
-
-        - name: Create some test data 
-          include:  "{{ data_consistency_util_path }}"
-          vars:
-            status: 'LOAD'
-            ns: "{{ a_ns }}"
-            label: "{{ a_label }}"
-            pod_name: "{{ app_pod_name.stdout }}"
-          when: data_persistence != ''
-
+ 
         ## STORAGE FAULT INJECTION 
 
         - include_tasks: /chaoslib/litmus/cordon_drain_node.yaml
           vars:
             action: "drain"      
             app_ns: "{{ a_ns }}"
-            app_pod: "{{ app_pod_name.stdout }}"
+            app_node: "{{ a_node }}"
 
         - name: Verify AUT liveness post fault-injection
           include_tasks: "/utils/common/status_app_pod.yml"
@@ -106,23 +74,6 @@
         - include_tasks: /utils/common/application_liveness_check.yml
           when: liveness_label != ''
         
-        - name: Get the application pod name
-          shell: >
-            kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers
-            -o=custom-columns=NAME:".metadata.name"
-          args:
-            executable: /bin/bash
-          register: rescheduled_app_pod  
-
-        - name: Verify application data persistence  
-          include: "{{ data_consistency_util_path }}"
-          vars:
-            status: 'VERIFY'
-            ns: "{{ a_ns }}"
-            label: "{{ a_label }}"
-            pod_name: "{{ rescheduled_app_pod.stdout }}"
-          when: data_persistence != ''
-
         - set_fact:
             flag: "Pass"
 
@@ -135,7 +86,8 @@
         - name: Uncordon the application node
           include_tasks: "/chaoslib/litmus/cordon_drain_node.yaml"
           vars:
-            action: "uncordon"      
+            action: "uncordon"    
+            app_node: "{{ a_node }}"  
           
          ## RECORD END-OF-TEST IN CHAOS RESULT CR    
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
