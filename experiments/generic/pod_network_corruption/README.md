@@ -2,7 +2,7 @@
 
 | Type  | Description                                                  | K8s Platform |
 | ----- | ------------------------------------------------------------ | ------------ |
-| Chaos | Inject network latency into application pod                  | Any          |
+| Chaos | Inject network packet corruption into application pod                  | Any          |
 
 ## Entry-Criteria
 
@@ -14,18 +14,17 @@
 
 ## Pre-Requisites
 
-- Application subjected to chaos must have `tc` network traffic shaping tool installed
-- Cluster should use docker container runtime
+- Cluster must use docker container runtime
 
 ## Details
 
-- Causes flaky access to application replica by injecting network delay using pumba.
-- The application pod should be healthy once chaos is stopped. Service-requests should be served despite chaos
+- Causes the specified percentage of network packets to be corrupt by injecting network corruption using pumba.
+- Pumba uses the tc netem command to inject package corruption.
 
 ## Associated Chaos Utils
 
 - [pumba/network_chaos/network_chaos.yml](/chaoslib/pumba/network_chaos/network_chaos.yml) 
-- [pumba/network_chaos/induce_latency.yml](/chaoslib/pumba/network_chaos/induce_latency.yml)
+- [pumba/network_chaos/pumba_netem_job.yml](/chaoslib/pumba/network_chaos/pumba_netem_job.yml)
 
 ## Litmusbook Environment Variables
 
@@ -42,7 +41,7 @@
 
 | Parameter      | Description                           |Type|
 | -------------- | ------------------------------------- |----
-| NETWORK_LATENCY  | The latency/delay in milliseconds   |Mandatory
+| NETWORK_PACKET_CORRUPTION_PERCENTAGE  | The percentage of packets to be corrupted |Mandatory
 | TOTAL_CHAOS_DURATION | The time duration for chaos insertion |Mandatory
 | LIB            | The chaos tool used to inject the chaos | Mandatory
 | CHAOSENGINE    | ChaosEngine CR name associated with the experiment instance |Optional
