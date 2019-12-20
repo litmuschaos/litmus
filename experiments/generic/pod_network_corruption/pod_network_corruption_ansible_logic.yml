@@ -11,7 +11,7 @@
     c_lib: "{{ lookup('env','LIB') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_label: "{{ lookup('env','APP_LABEL') }}"
-    a_kind: "{{ lookup('env','APP_KIND') }}"
+    a_kind: "{{ lookup('env','APP_KIND') }}" # will be used in the future
     lib_image: "{{ lookup('env','LIB_IMAGE') }}"
 
   tasks:

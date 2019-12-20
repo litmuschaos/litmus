@@ -29,7 +29,7 @@ spec:
           - name: APP_LABEL
             value: ''
 
-           # provide application kind
+           # provide application kind, will be used in the future
           - name: APP_KIND
             value: ''
 
