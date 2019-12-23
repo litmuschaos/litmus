@@ -49,7 +49,6 @@ spec:
           - name: FORCE
             value: 'true'
 
-
             ## default: litmus. Supported values: litmus, powerfulseal
           - name: LIB
             value: ''
