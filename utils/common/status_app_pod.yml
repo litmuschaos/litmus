@@ -16,7 +16,3 @@
     until: "containerStatus.stdout == 'true'"
     delay: '{{ delay }}'
     retries: '{{ retries }}'
-  
-  
-  
-  
