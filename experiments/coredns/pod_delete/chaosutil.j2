@@ -1,0 +1,5 @@
+{% if c_lib is defined and c_lib == 'powerfulseal' %}
+   c_util: /chaoslib/powerfulseal/pod_failure_by_powerfulseal.yml
+{% else %}
+   c_util: /chaoslib/litmus/pod_failure_by_litmus.yml
+{% endif %}

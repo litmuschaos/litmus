@@ -1,0 +1,67 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: pod-delete-
+  namespace: %CHAOS_NAMESPACE%
+spec:
+  template:
+    metadata:
+      labels:
+        experiment: pod-delete
+    spec:
+      # Placeholder that is updated by the executor for automated runs
+      # Provide appropriate SA (with desired permissions) if executed manually
+      serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: imrajdas/ansible-runner:ci
+        imagePullPolicy: Always
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: 'default'
+
+          # provide application namespace
+          - name: APP_NAMESPACE
+            value: 'kube-system'
+
+          # provide application labels
+          - name: APP_LABEL
+            value: 'k8s-app=kube-dns'
+
+           # provide application kind
+          - name: APP_KIND
+            value: 'deployment'
+
+          # This is a chaos namespace which will create all infra chaos resources in that namespace
+          - name: CHAOS_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+
+          - name: TOTAL_CHAOS_DURATION
+            value: '15'
+
+          - name: CHAOS_INTERVAL
+            value: '5'
+
+          - name: FORCE
+            value: 'true'
+
+
+            ## default: litmus. Supported values: litmus, powerfulseal
+          - name: LIB
+            value: ''
+
+          - name: CHAOSENGINE
+            value: ''
+
+          - name: CHAOS_SERVICE_ACCOUNT
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.serviceAccountName
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./experiments/coredns/pod_delete/pod_delete_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
+
