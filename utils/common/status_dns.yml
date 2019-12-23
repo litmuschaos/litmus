@@ -1,0 +1,41 @@
+- name: Pre chaos checks
+  block:
+    - name: Creating an nginx pod
+      shell: kubectl run nginx --image=nginx --generator=run-pod/v1 -n {{ namespace }}
+
+    - name: Checking whether application pods are in running state
+      shell: kubectl get pod nginx -n default -o custom-columns=:.status.phase --no-headers -n {{ namespace }}
+      register: result
+      until: "((result.stdout.split()|unique)|length) == 1 and 'Running' in result.stdout"
+      retries: 10
+
+    - name: Exposing the nginx pod to port 80
+      shell: kubectl expose pod nginx --port 80 -n {{ namespace }}
+
+    - name: Creating a curl-pod to curl the nginx servicce
+      shell: kubectl run curl-pod --image radial/busyboxplus:curl --generator run-pod/v1 -- sleep 1000
+  when: check == "pre"
+
+- name: Checking whether application pods are in running state
+  shell: kubectl get pod curl-pod -n default -o custom-columns=:.status.phase --no-headers -n {{ namespace }}
+  register: result
+  until: "((result.stdout.split()|unique)|length) == 1 and 'Running' in result.stdout"
+  retries: 10
+
+- name: Check the nginx pod status code
+  shell: kubectl exec -t -i curl-pod -n {{ namespace }} -- curl -s -o /dev/null -w "%{http_code}" nginx
+  register: statusCode
+
+# checks the statuscode nginx service after the curl
+- debug:
+    msg: "response from the nginx service is 200 OK"
+  when: "statusCode.stdout == \"200\""
+
+- name: De-provisioning the pods and services
+  block:
+    - name: deleting the nginx service
+      shell: kubectl delete svc nginx
+  
+    - name: deleting the nginx and curl-pod pods
+      shell: kubectl delete pod nginx curl-pod
+  when: check == "post"
