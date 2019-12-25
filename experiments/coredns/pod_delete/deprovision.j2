@@ -1,0 +1,7 @@
+{% if l_c_p is defined and l_c_p == 'liveness-checking-pod' %}
+- name: deleting the nginx service
+  shell: kubectl delete svc nginx -n {{ c_ns }}
+
+- name: deleting the nginx and {{ l_c_p }} pod
+  shell: kubectl delete pod nginx {{ l_c_p }} -n {{ c_ns }}
+{% endif %}

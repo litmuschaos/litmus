@@ -4,6 +4,7 @@
 
   vars:
     c_experiment: "pod-delete"
+    l_c_p: "liveness-checking-pod"
     c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
     c_interval: "{{ lookup('env','CHAOS_INTERVAL') }}"
     c_force: "{{ lookup('env','FORCE') }}"
@@ -13,7 +14,7 @@
     a_label: "{{ lookup('env','APP_LABEL') }}"
     a_kind: "{{ lookup('env','APP_KIND') }}"
     kill_count: "{{ lookup('env','KILL_COUNT') }}"
-  
+
   tasks:
     - block:
 
@@ -24,7 +25,6 @@
 
         ## GENERATE EXP RESULT NAME
         - block:
-
             - name: Construct chaos result name (experiment_name)
               set_fact:
                 c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
@@ -35,34 +35,41 @@
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'SOT'
-            namespace: "litmus"
-
-        ## PRE-CHAOS APPLICATION LIVENESS CHECK
-
-        - name: Verify that the AUT (Application Under Test) is running 
-          include_tasks: "/utils/common/status_dns.yml"
-          vars:     
-            delay: 1
-            retries: 60
-            check: pre
             namespace: "{{ c_ns }}"
 
-        ## FAULT INJECTION 
+        ## PRE-CHAOS APPLICATION LIVENESS CHECK
+        - name: Pre-chaos application liveness check
+          block:
+            - template:
+                src: pre-check.j2
+                dest: pre-check.yml
 
+            - name: Verify that the AUT (Application Under Test) is running 
+              include_tasks: 
+                file: "pre-check.yml"
+
+        ## FAULT INJECTION 
         - include_tasks: "{{ c_util }}"
           vars:
             app_ns: "{{ a_ns }}"
             app_label: "{{ a_label }}"
           
         ## POST-CHAOS APPLICATION LIVENESS CHECK
-
         - name: Verify AUT liveness post fault-injection
-          include_tasks: "/utils/common/status_dns.yml"
+          include_tasks: "/utils/common/service_liveness_check.yml"
           vars:    
-            delay: 1
-            retries: 60        
-            check: post
+            liveness_checking_pod: "{{ l_c_p }}"
             namespace: "{{ c_ns }}"
+
+        ## DEPROVISIONING TASK
+        - name: Cleaning up chaos pods and services
+          block: 
+            - template:
+                src: deprovision.j2
+                dest: deprovision.yml
+
+            - include_tasks:
+                file: "deprovision.yml"
 
         - set_fact:
             flag: "pass"
@@ -77,4 +84,4 @@
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'
-            namespace: "litmus"
+            namespace: "{{ c_ns }}"

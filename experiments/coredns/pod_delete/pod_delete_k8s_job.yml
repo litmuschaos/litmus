@@ -3,7 +3,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   generateName: pod-delete-
-  namespace: %CHAOS_NAMESPACE%
+  namespace: litmus
 spec:
   template:
     metadata:
@@ -12,7 +12,7 @@ spec:
     spec:
       # Placeholder that is updated by the executor for automated runs
       # Provide appropriate SA (with desired permissions) if executed manually
-      serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
+      serviceAccountName: litmus
       restartPolicy: Never
       containers:
       - name: ansibletest
