@@ -25,6 +25,6 @@ spec:
       - name: PORT
         value: '80'
       - name: NAMESPACE
-        value: 'default'
+        value: {{ c_ns }}
   dnsPolicy: ClusterFirst
   restartPolicy: Always

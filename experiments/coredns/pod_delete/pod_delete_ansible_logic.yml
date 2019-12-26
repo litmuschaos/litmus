@@ -3,8 +3,7 @@
   connection: local
 
   vars:
-    c_experiment: "pod-delete"
-    l_c_p: "liveness-checking-pod"
+    c_experiment: "coredns-pod-delete"
     c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
     c_interval: "{{ lookup('env','CHAOS_INTERVAL') }}"
     c_force: "{{ lookup('env','FORCE') }}"
@@ -50,9 +49,11 @@
               
             - name: Deploying and exposing nginx pod
               shell: kubectl apply -f nginx.yml
-            
+              register: nginx_deploy
+
             - name: Deploying liveness pod 
               shell: kubectl apply -f liveness-app.yml
+              register: liveness_app_deploy
 
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
         - name: Pre-chaos application liveness check
@@ -78,7 +79,7 @@
             app_label: "{{ a_label }}"
           
         ## POST-CHAOS APPLICATION LIVENESS CHECK
-        - name: Pre-chaos application liveness check
+        - name: Post-chaos application liveness check
           block:
             - name: Verify that the AUT (Application Under Test- coredns app) is running 
               include_tasks: "/utils/common/status_app_pod.yml"
@@ -110,6 +111,15 @@
         - set_fact: 
             flag: "fail"
 
+        - block:
+            - name: deleting service and pod of nginx
+              shell: kubectl delete -f nginx.yml
+              when: "nginx_deploy.rc == 0"
+            
+            - name: deleting liveness pod 
+              shell: kubectl delete -f liveness-app.yml
+              when: "liveness_app_deploy.rc == 0"
+          when: "nginx_deploy is defined and liveness_app_deploy is defined"
       always:
  
         ## RECORD END-OF-TEST IN LITMUSCHAOS RESULT CR
