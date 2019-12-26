@@ -36,18 +36,41 @@
           vars:
             status: 'SOT'
             namespace: "{{ c_ns }}"
+        
+        ## Provision services and pods for the chaos injection
+        - name: Provision nginx pod and liveness pod
+          block:
+            - template:
+                src: nginx.j2
+                dest: nginx.yml
+            
+            - template:
+                src: liveness-app.j2
+                dest: liveness-app.yml
+              
+            - name: Deploying and exposing nginx pod
+              shell: kubectl apply -f nginx.yml
+            
+            - name: Deploying liveness pod 
+              shell: kubectl apply -f liveness-app.yml
 
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
         - name: Pre-chaos application liveness check
           block:
-            - template:
-                src: pre-check.j2
-                dest: pre-check.yml
+            - name: Verify that the AUT (Application Under Test- coredns app) is running 
+              include_tasks: "/utils/common/status_app_pod.yml"
+              vars:     
+                delay: 1
+                retries: 60
 
-            - name: Verify that the AUT (Application Under Test) is running 
-              include_tasks: 
-                file: "pre-check.yml"
-
+            - name: Verify that the AUT (Application Under Test- liveness app) is running 
+              include_tasks: "/utils/common/status_app_pod.yml"
+              vars:     
+                delay: 1
+                retries: 60
+                a_ns: "{{ c_ns }}"
+                a_label: "run=liveness-app"
+  
         ## FAULT INJECTION 
         - include_tasks: "{{ c_util }}"
           vars:
@@ -55,21 +78,30 @@
             app_label: "{{ a_label }}"
           
         ## POST-CHAOS APPLICATION LIVENESS CHECK
-        - name: Verify AUT liveness post fault-injection
-          include_tasks: "/utils/common/service_liveness_check.yml"
-          vars:    
-            liveness_checking_pod: "{{ l_c_p }}"
-            namespace: "{{ c_ns }}"
+        - name: Pre-chaos application liveness check
+          block:
+            - name: Verify that the AUT (Application Under Test- coredns app) is running 
+              include_tasks: "/utils/common/status_app_pod.yml"
+              vars:     
+                delay: 1
+                retries: 60
+
+            - name: Verify that the AUT (Application Under Test- liveness app) is running 
+              include_tasks: "/utils/common/status_app_pod.yml"
+              vars:     
+                delay: 1
+                retries: 60
+                a_ns: "{{ c_ns }}"
+                a_label: "run=liveness-app"
 
         ## DEPROVISIONING TASK
         - name: Cleaning up chaos pods and services
           block: 
-            - template:
-                src: deprovision.j2
-                dest: deprovision.yml
-
-            - include_tasks:
-                file: "deprovision.yml"
+            - name: deleting service and pod of nginx
+              shell: kubectl delete -f nginx.yml
+            
+            - name: deleting liveness pod 
+              shell: kubectl delete -f liveness-app.yml
 
         - set_fact:
             flag: "pass"

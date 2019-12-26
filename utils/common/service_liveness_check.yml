@@ -1,8 +1,0 @@
-#  This will be execute on both pre/post checks
-- name: Checking whether application pods are in running state
-  shell: kubectl get pod {{ liveness_checking_pod }} -n {{ namespace }} -o custom-columns=:.status.phase --no-headers
-  register: result
-
-- debug:
-    msg: "{{ liveness_checking_pod }}"
-  when: result.stdout == "Running"
