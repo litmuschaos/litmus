@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: pod-delete-
+  generateName: coredns-pod-delete-
   namespace: %CHAOS_NAMESPACE%
 spec:
   template:
