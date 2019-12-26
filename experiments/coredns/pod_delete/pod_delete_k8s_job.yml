@@ -3,20 +3,20 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   generateName: pod-delete-
-  namespace: litmus
+  namespace: %CHAOS_NAMESPACE%
 spec:
   template:
     metadata:
       labels:
-        experiment: pod-delete
+        experiment: coredns-pod-delete
     spec:
       # Placeholder that is updated by the executor for automated runs
       # Provide appropriate SA (with desired permissions) if executed manually
-      serviceAccountName: litmus
+      serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: imrajdas/ansible-runner:ci
+        image: litmuschaos/ansible-runner:ci
         imagePullPolicy: Always
         env:
           - name: ANSIBLE_STDOUT_CALLBACK
