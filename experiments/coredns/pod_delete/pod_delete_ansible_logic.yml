@@ -115,11 +115,14 @@
             - name: deleting service and pod of nginx
               shell: kubectl delete -f nginx.yml
               when: "nginx_deploy.rc == 0"
-            
+          when: "nginx_deploy is defined"  
+        
+        - block:
             - name: deleting liveness pod 
               shell: kubectl delete -f liveness-app.yml
               when: "liveness_app_deploy.rc == 0"
-              
+          when: "liveness_app_deploy is defined"
+
       always:
  
         ## RECORD END-OF-TEST IN LITMUSCHAOS RESULT CR
