@@ -29,7 +29,11 @@ spec:
 
            # provide lib image
           - name: LIB_IMAGE  
-            value: 'gaiaadm/pumba:0.4.8' 
+            value: 'gaiaadm/pumba:0.4.8'
+            
+          # provide lib - It is only supports pumba
+          - name: LIB 
+            value: 'pumba'
 
            # provide target container name
           - name: TARGET_CONTAINER
