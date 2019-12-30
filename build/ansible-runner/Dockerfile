@@ -27,12 +27,15 @@ RUN curl -L https://storage.googleapis.com/kubernetes-release/release/${KUBE_LAT
 #Adding hosts entries and making ansible folders
 RUN mkdir /etc/ansible/ /ansible && \
     echo "[local]" >> /etc/ansible/hosts && \
-    echo "127.0.0.1" >> /etc/ansible/hosts
+    echo "127.0.0.1" >> /etc/ansible/hosts && \
+    echo "[defaults]" >> /etc/ansible/ansible.cfg && \
+    echo "display_skipped_hosts = False" >> /etc/ansible/ansible.cfg 
 
 #Copying Necessary Files
 COPY ./chaoslib ./chaoslib/
 COPY ./hack/syntax-check ./hack/*.j2 ./
 COPY ./utils ./utils/
 COPY ./build/plugins /usr/local/lib/python2.7/dist-packages/ansible/plugins/callback/
+COPY ./build/utils/display.py /usr/local/lib/python2.7/dist-packages/ansible/utils/display.py
 COPY experiments ./experiments
 COPY executor ./executor

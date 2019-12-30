@@ -32,6 +32,10 @@ spec:
           - loss
           - --percent
           - "{{ n_packet_loss }}"
+{% elif n_corruption is defined and n_corruption != '' %}
+          - corrupt
+          - --percent
+          - "{{ n_corruption }}"
 {% endif %}
           - re2:k8s_{{ c_container }}_{{ app_pod }}
         resources:
