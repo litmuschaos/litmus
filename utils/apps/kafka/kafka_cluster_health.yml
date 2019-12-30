@@ -34,27 +34,36 @@
     executable: /bin/bash
   register: kafka_sts_replicas
 
-- name: Derive the available kafka brokers from zookeeper
-  shell: >
-    kubectl exec {{ zk_pod_name }} -n {{ zk_ns }} bash 
-    -- zkCli.sh -server {{ zk_service }}:{{ zk_port }}/{{ kafka_instance }}
-    ls /brokers/ids | tail -n 1 | tr -d '[],' | tr ' ' '\n'  | wc -l
-  args: 
-    executable: /bin/bash
-  register: kafka_available_brokers
+- block: 
+    - name: Derive the available kafka brokers from zookeeper
+      shell: >
+        kubectl exec {{ zk_pod_name }} -n {{ zk_ns }} bash 
+        -- zkCli.sh -server {{ zk_service }}:{{ zk_port }}/{{ kafka_instance }}
+        ls /brokers/ids | tail -n 1 | tr -d '[],' | tr ' ' '\n'  | wc -l
+      args: 
+        executable: /bin/bash
+      register: kafka_available_brokers
+
+    - name: Check whether all kafka brokers are alive
+      debug: 
+        msg: "All Kafka brokers are alive"
+      failed_when: "kafka_sts_replicas.stdout != kafka_available_brokers.stdout"
+
   when: "kafka_instance is defined and kafka_instance != ''"
 
-- name: Derive the available kafka brokers from zookeeper
-  shell: >
-    kubectl exec {{ zk_pod_name }} -n {{ zk_ns }} bash 
-    -- zkCli.sh -server {{ zk_service }}:{{ zk_port }} 
-    ls /brokers/ids | tail -n 1 | tr -d '[],' | tr ' ' '\n'  | wc -l
-  args: 
-    executable: /bin/bash
-  register: kafka_available_brokers
-  when: "kafka_instance is not defined or kafka_instance == ''"
+- block: 
+    - name: Derive the available kafka brokers from zookeeper
+      shell: >
+        kubectl exec {{ zk_pod_name }} -n {{ zk_ns }} bash 
+        -- zkCli.sh -server {{ zk_service }}:{{ zk_port }} 
+        ls /brokers/ids | tail -n 1 | tr -d '[],' | tr ' ' '\n'  | wc -l
+      args: 
+        executable: /bin/bash
+      register: kafka_available_brokers
 
-- name: Check whether all kafka brokers are alive
-  debug: 
-    msg: "All Kafka brokers are alive"
-  failed_when: "kafka_sts_replicas.stdout != kafka_available_brokers.stdout"
+    - name: Check whether all kafka brokers are alive
+      debug: 
+        msg: "All Kafka brokers are alive"
+      failed_when: "kafka_sts_replicas.stdout != kafka_available_brokers.stdout"
+
+  when: "kafka_instance is not defined or kafka_instance == ''"
