@@ -100,7 +100,7 @@
 
 - name: merging appinfo from chaosengine
   set_fact: 
-    envdict: "{{envdict | combine({\"APP_NAMESPACE\" : c_app_ns},{\"APP_LABEL\" : c_app_label},{\"APP_KIND\" : c_app_kind},{\"CHAOSENGINE\" : c_engine})}}"
+    envdict: "{{envdict | combine({\"APP_NAMESPACE\" : c_app_ns},{\"APP_LABEL\" : c_app_label},{\"APP_KIND\" : c_app_kind},{\"CHAOSENGINE\" : c_engine},{\"CHAOS_SERVICE_ACCOUNT\" : c_svc_acc})}}"
 
 - name: Fetching env from dictionary
   set_fact:
