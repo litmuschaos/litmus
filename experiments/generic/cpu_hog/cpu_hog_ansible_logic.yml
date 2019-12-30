@@ -9,7 +9,7 @@
     a_label: "{{ lookup('env','APP_LABEL') }}"
     a_kind: "{{ lookup('env','APP_KIND') }}"
     a_platform: "{{ lookup('env', 'PLATFORM') }}"
-    auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO').split(',') }}"
+    auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"
 
   tasks:
 
@@ -42,6 +42,10 @@
 
         # Auxiliary application health check status
         - block:
+           
+          - name: Record auxiliary appinfo 
+            set_fact:
+              auxiliary_appinfo_list: "{{ auxiliary_appinfo.split(',') }}"
 
           - include: /utils/common/status_app_pod.yml
             vars:
@@ -50,7 +54,7 @@
               delay: 5
               retries: 60
             with_items:
-              - "{{ auxiliary_appinfo }}" 
+              - "{{ auxiliary_appinfo_list }}" 
 
           when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
@@ -78,7 +82,7 @@
                 delay: 5
                 retries: 60
               with_items:
-                - "{{ auxiliary_appinfo }}"
+                - "{{ auxiliary_appinfo_list }}"
              
             when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
@@ -103,7 +107,7 @@
                 delay: 5
                 retries: 60
               with_items:
-                - "{{ auxiliary_appinfo }}"
+                - "{{ auxiliary_appinfo_list }}"
               ignore_errors: yes
 
             when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
