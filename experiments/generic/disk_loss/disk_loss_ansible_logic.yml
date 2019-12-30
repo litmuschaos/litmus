@@ -14,7 +14,7 @@
     node_name: "{{ lookup('env','NODE_NAME') }}"
     project_id: "{{ lookup('env','PROJECT_ID') }}"
     zone_name: "{{ lookup('env','ZONE_NAME') }}"
-    auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO').split(',') }}"
+    auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"
 
   tasks:
 
@@ -48,6 +48,10 @@
         # Auxiliary application health check status
         - block:
 
+          - name: Record auxiliary appinfo 
+            set_fact:
+              auxiliary_appinfo_list: "{{ auxiliary_appinfo.split(',') }}"
+
           - include: /utils/common/status_app_pod.yml
             vars:
               a_ns: "{{ item.split(':')[0] }}"
@@ -55,7 +59,7 @@
               delay: 5
               retries: 60
             with_items:
-              - "{{ auxiliary_appinfo }}" 
+              - "{{ auxiliary_appinfo_list }}" 
 
           when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
@@ -109,7 +113,7 @@
               delay: 5
               retries: 60
             with_items:
-              - "{{ auxiliary_appinfo }}" 
+              - "{{ auxiliary_appinfo_list }}" 
 
           when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
