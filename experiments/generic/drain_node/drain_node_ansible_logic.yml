@@ -8,7 +8,8 @@
     a_node: "{{ lookup('env','APP_NODE') }}"
     c_experiment: "node-drain"
     liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
-    liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"  
+    liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
+    auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"  
 
   tasks:
     - block:
@@ -54,7 +55,25 @@
           vars:       
             delay: 5
             retries: 60
- 
+        
+        # Auxiliary application health check status
+        - block:
+           
+            - name: Record auxiliary appinfo 
+              set_fact:
+                auxiliary_appinfo_list: "{{ auxiliary_appinfo.split(',') }}"
+    
+            - include: /utils/common/status_app_pod.yml
+              vars:
+                a_ns: "{{ item.split(':')[0] }}"
+                a_label: "{{ item.split(':')[1] }}"
+                delay: 5
+                retries: 60
+              with_items:
+                - "{{ auxiliary_appinfo_list }}" 
+                
+          when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
+
         ## STORAGE FAULT INJECTION 
 
         - include_tasks: /chaoslib/litmus/cordon_drain_node.yaml
@@ -68,6 +87,20 @@
           vars:
             delay: 5
             retries: 60
+
+        # Auxiliary application health check status
+        - block:
+    
+          - include: /utils/common/status_app_pod.yml
+            vars:
+              a_ns: "{{ item.split(':')[0] }}"
+              a_label: "{{ item.split(':')[1] }}"
+              delay: 5
+              retries: 60
+            with_items:
+              - "{{ auxiliary_appinfo_list }}" 
+              
+          when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
