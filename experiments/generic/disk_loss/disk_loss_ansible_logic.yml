@@ -14,6 +14,7 @@
     node_name: "{{ lookup('env','NODE_NAME') }}"
     project_id: "{{ lookup('env','PROJECT_ID') }}"
     zone_name: "{{ lookup('env','ZONE_NAME') }}"
+    auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"
 
   tasks:
 
@@ -43,6 +44,24 @@
             delay: 5
             retries: 60
           when: "a_check == 'true'"
+
+        # Auxiliary application health check status
+        - block:
+
+          - name: Record auxiliary appinfo 
+            set_fact:
+              auxiliary_appinfo_list: "{{ auxiliary_appinfo.split(',') }}"
+
+          - include: /utils/common/status_app_pod.yml
+            vars:
+              a_ns: "{{ item.split(':')[0] }}"
+              a_label: "{{ item.split(':')[1] }}"
+              delay: 5
+              retries: 60
+            with_items:
+              - "{{ auxiliary_appinfo_list }}" 
+
+          when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
         # Gcloud authentication
         - name: Gcloud authentication
@@ -83,6 +102,20 @@
             delay: 1
             retries: 60   
           when: "a_check == 'true'"
+
+        # Auxiliary application health check status
+        - block:
+
+          - include: /utils/common/status_app_pod.yml
+            vars:
+              a_ns: "{{ item.split(':')[0] }}"
+              a_label: "{{ item.split(':')[1] }}"
+              delay: 5
+              retries: 60
+            with_items:
+              - "{{ auxiliary_appinfo_list }}" 
+
+          when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
         ## POST-CHAOS DISK LIVENESS CHECK
         - name: Verify that the disk is connected to node (post)
