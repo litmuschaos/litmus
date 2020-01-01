@@ -102,6 +102,14 @@
         executable: /bin/bash
       register: restartCnt_prev
 
+    - name: Confirm that pumba container is in running state 
+      include_tasks: "/utils/common/status_app_pod.yml"
+      vars:
+        app_label: "app=pumba"
+        app_ns: "{{ namespace }}"  
+        delay: 1
+        retries: 60
+
     - name: Force kill the application pod using pumba
       shell: >
         kubectl exec {{ pumba_pod.stdout}} -n {{ namespace }}
