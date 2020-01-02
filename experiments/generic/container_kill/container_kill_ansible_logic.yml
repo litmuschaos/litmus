@@ -5,7 +5,7 @@
   vars:
     c_experiment: "container-kill"
     c_container: "{{ lookup('env','TARGET_CONTAINER') }}"
-    c_util: "/chaoslib/pumba/pod_failure_by_sigkill.yaml"
+    c_lib: "{{ lookup('env','LIB') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_label: "{{ lookup('env','APP_LABEL') }}"
     lib_image: "{{ lookup('env','LIB_IMAGE') }}"
@@ -13,6 +13,11 @@
   tasks:
     - block:
 
+        - include: container_kill_ansible_prerequisites.yml
+      
+        - include_vars:
+            file: chaosutil.yml
+            
         ## GENERATE EXP RESULT NAME
         - block:
 
