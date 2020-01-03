@@ -28,6 +28,9 @@ kind: Deployment
 metadata:
   name: powerfulseal
 spec:
+  selector:
+    matchLabels:
+      name: powerfulseal
   replicas: 1
   template:
     metadata:
