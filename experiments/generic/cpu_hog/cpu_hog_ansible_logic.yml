@@ -86,7 +86,7 @@
              
             when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
-          when: node_status.stdout == 'Ready'
+          when: node_status is defined and node_status.stdout == 'Ready'
           
         - block:
 
@@ -112,7 +112,7 @@
 
             when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
-          when: node_status.stdout != 'Ready'
+          when: node_status is defined and node_status.stdout != 'Ready'
 
         - set_fact:
             flag: "Pass"
