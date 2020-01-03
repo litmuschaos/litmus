@@ -29,6 +29,7 @@ import subprocess
 import sys
 import textwrap
 import time
+import datetime
 
 from struct import unpack, pack
 from termios import TIOCGWINSZ
@@ -258,7 +259,7 @@ class Display:
         msg = msg.strip()
         ## refactored for litmuschaos: remove '*' character from task banner
         stars = "" 
-        self.display(u"%s %s" % (msg, stars), color=color)
+        self.display(u"\n%s %s %s" % (datetime.datetime.now() , msg, stars), color=color)
 
     def banner_cowsay(self, msg, color=None):
         if u": [" in msg:
