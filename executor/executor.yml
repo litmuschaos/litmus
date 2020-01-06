@@ -1,7 +1,7 @@
 ---
 - name: Verify if ChaosExperiment CR is available 
   shell: >
-    kubectl get chaosexperiment {{ c_experiment_name }} 
+    kubectl get chaosexperiment {{ c_experiment_name }} -n {{ c_app_ns }}
     --no-headers -o custom-columns=:metadata.name
   args:
     executable: /bin/bash
@@ -31,7 +31,7 @@
 
 - name: Obtain the env param list length from spec of experiment
   shell: >
-    kubectl get chaosexperiment {{ c_experiment_name }} -o json
+    kubectl get chaosexperiment {{ c_experiment_name }} -n {{ c_app_ns }} -o json
     | jq '.spec.definition.env | length'
   args:
     executable: /bin/bash
@@ -85,7 +85,7 @@
     secret_defined: "{{ secret_defined.stdout }}"
 
 - include: experiment_env_getter.yml
-  with_sequence: start=0 count="{{c_env_length.stdout | int}}"
+  with_sequence: start=0 count="{{ c_env_length.stdout | int }}"
 
 - name: Obtain the env param list length from spec of Engine
   shell: >
@@ -145,8 +145,8 @@
 
 - name: Run the chaos experiment job
   shell:
-    kubectl run {{ job_name }} --restart=OnFailure --image={{c_image.stdout}}
-    --namespace={{c_app_ns}} --serviceaccount={{ c_svc_acc }} --image-pull-policy=Always 
+    kubectl run {{ job_name }} --restart=OnFailure --image={{ c_image.stdout }}
+    --namespace={{ c_app_ns }} --serviceaccount={{ c_svc_acc }} --image-pull-policy=Always 
     --labels={{c_job_labels.stdout}} {{c_env_list}}  --command -- /bin/bash {{c_job_args.stdout}}  
   args:
     executable: /bin/bash
@@ -160,14 +160,14 @@
 
 - name: Fetching monitoring time from chaos experiment job
   shell: >
-    kubectl get job {{ job_name }} -n {{c_app_ns}} -ojsonpath="{range .spec.template.spec.containers[*]}{.env[?(@.name=='TOTAL_CHAOS_DURATION')].value}"
+    kubectl get job {{ job_name }} -n {{ c_app_ns }} -ojsonpath="{range .spec.template.spec.containers[*]}{.env[?(@.name=='TOTAL_CHAOS_DURATION')].value}"
   args:
     executable: /bin/bash
   register: chaos_monitoring_time
 
 - name: Monitoring the litmus chaos job for completion
   shell: >
-    kubectl get job {{ job_name }} -n {{ c_app_ns}} 
+    kubectl get job {{ job_name }} -n {{ c_app_ns }} 
     --no-headers -o custom-columns=:status.conditions[].type | sort | uniq
   args:
    executable: /bin/bash
