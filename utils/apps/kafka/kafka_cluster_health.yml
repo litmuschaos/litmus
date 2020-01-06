@@ -4,8 +4,8 @@
   vars:
     delay: 1
     retries: 60
-    a_ns: "{{ kafka_ns }}"
-    a_label: "{{ kafka_label }}"
+    app_ns: "{{ kafka_ns }}"
+    app_label: "{{ kafka_label }}"
 
 - name: Verify that all zookeeper pods are running
   include_tasks: "/utils/common/status_app_pod.yml"

@@ -116,8 +116,8 @@
             - name: Verify that the Kafka liveness pod (pub-sub) is uninterrupted
               include_tasks: "/utils/common/status_app_pod.yml"
               vars: 
-                a_ns: "{{ kafka_ns }}"
-                a_label: "name=kafka-liveness" 
+                app_ns: "{{ kafka_ns }}"
+                app_label: "name=kafka-liveness" 
                 delay: 1
                 retries: 60
 
