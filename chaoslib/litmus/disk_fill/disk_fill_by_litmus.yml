@@ -135,4 +135,4 @@
 
 - name: Delete DaemonSet disk-fill
   shell: >
-    kubectl delete ds disk-fill
+    kubectl delete -f /chaoslib/litmus/disk_fill/disk_fill_ds.yaml -n {{ a_ns }} 
