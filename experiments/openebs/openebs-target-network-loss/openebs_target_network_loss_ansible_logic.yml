@@ -78,7 +78,9 @@
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
         - name: Verify that the AUT (Application Under Test) is running
           include_tasks: "/utils/common/status_app_pod.yml"
-          vars:     
+          vars:
+            app_ns: "{{ a_ns }}"
+            app_label: "{{ a_label }}"      
             delay: 5
             retries: 60
 

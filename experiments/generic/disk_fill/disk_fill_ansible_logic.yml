@@ -11,6 +11,7 @@
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_label: "{{ lookup('env','APP_LABEL') }}"
     fill_percentage: "{{ lookup('env','FILL_PERCENTAGE') }}"
+    auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"  
     
   tasks:
     - block:
@@ -34,9 +35,29 @@
 
         - name: Verify that the AUT (Application Under Test) is running 
           include_tasks: /utils/common/status_app_pod.yml
-          vars:     
+          vars: 
+            app_ns: "{{ a_ns }}"
+            app_label: "{{ a_label }}"     
             delay: 1
             retries: 60
+
+       # Auxiliary application health check status
+        - block:
+
+          - name: Record auxiliary appinfo 
+            set_fact:
+              auxiliary_appinfo_list: "{{ auxiliary_appinfo.split(',') }}"
+
+          - include: /utils/common/status_app_pod.yml
+            vars:
+              app_ns: "{{ item.split(':')[0] }}"
+              app_label: "{{ item.split(':')[1] }}"
+              delay: 5
+              retries: 60
+            with_items:
+              - "{{ auxiliary_appinfo_list }}" 
+
+          when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
         ## FAULT INJECTION 
 
@@ -48,9 +69,25 @@
 
         - name: Verify AUT liveness post fault-injection
           include_tasks: /utils/common/status_app_pod.yml
-          vars:     
+          vars:
+            app_ns: "{{ a_ns }}"
+            app_label: "{{ a_label }}"      
             delay: 1
-            retries: 60        
+            retries: 60    
+            
+         # Auxiliary application health check status
+        - block:
+
+          - include: /utils/common/status_app_pod.yml
+            vars:
+              app_ns: "{{ item.split(':')[0] }}"
+              app_label: "{{ item.split(':')[1] }}"
+              delay: 5
+              retries: 60
+            with_items:
+              - "{{ auxiliary_appinfo_list }}" 
+
+          when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
         - set_fact:
             flag: "pass"

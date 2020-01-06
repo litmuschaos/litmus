@@ -40,6 +40,21 @@
         - set_fact:
             run_id: "{{ rand_string.stdout | lower }}"
       when: "run_id is not defined or run_id == ''"
+
+    - block:
+
+        - name: Record the application container
+          shell: >
+            kubectl get pods -n {{ app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ app_pod }}")].spec.containers[0].name}'
+          args:
+            executable: /bin/bash
+          register: container
+  
+        - name: Record the app_container
+          set_fact:
+            c_container: "{{ container.stdout }}"
+  
+      when: c_container is not defined or c_container == ''
     
     - name: Patch the chaoslib image
       template:
@@ -105,3 +120,8 @@
           delay: 5
           retries: 60
       when: "pumba_deploy_result is defined"
+
+    - fail:
+        msg: "network_chaos lib failed"
+      when: true
+        

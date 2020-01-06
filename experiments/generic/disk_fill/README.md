@@ -34,8 +34,8 @@
 ## Associated Chaos Utils 
 
 -   litmuslib
--   [litmus/disk_fill_by_litmus.yml](/chaoslib/litmus/disk_fill_by_litmus.yml)
--   [experiments/generic/disk_fill/disk_fill_ds.yml](/experiments/generic/disk_fill/disk_fill_ds.yml)
+-   [litmus/disk_fill_by_litmus.yml](/chaoslib/litmus/disk_fill/disk_fill_by_litmus.yml)
+-   [experiments/generic/disk_fill/disk_fill_ds.yml](/chaoslib/litmus/disk_fill/disk_fill_ds.yml)
 
 ## Litmusbook Environment Variables
 

@@ -51,7 +51,7 @@ spec:
           
            # provide lib image
           - name: LIB_IMAGE
-            value: 'gaiaadm/pumba:0.4.8' 
+            value: 'gaiaadm/pumba:0.6.5' 
 
            # provide chaosengine name
           - name: CHAOSENGINE

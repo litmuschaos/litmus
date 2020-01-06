@@ -1,8 +1,11 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: disk-fill
 spec:
+  selector:
+    matchLabels:
+      app: disk-fill
   template:
     metadata:
       labels:

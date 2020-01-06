@@ -40,9 +40,15 @@ spec:
           ## THE TOTAL_CHAOS_DURATION SHOULD NOT BE MORE THAN 180 DEFAULT VALUE IS 60
           - name: TOTAL_CHAOS_DURATION
             value: '60'
-  
-          - name: LIB
+
+          # provide auxiliary application details - namespace and labels of the applications
+          # sample input is  "ns1:app=percona,ns2:name=nginx"
+          - name: AUXILIARY_APPINFO
             value: ''
+
+          # only supports litmus
+          - name: LIB
+            value: 'litmus'
  
           - name: CHAOSENGINE
             value: ''
