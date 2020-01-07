@@ -5,7 +5,7 @@
 
       - name: Select the app pod
         shell: >
-          kubectl get pod -l {{ a_label }} -n {{ a_ns }}
+          kubectl get pod -l {{ app_label }} -n {{ app_ns }}
           -o=custom-columns=:metadata.name --no-headers
           | shuf | head -1 
         args:
@@ -16,10 +16,10 @@
         set_fact:
           app_pod: "{{ app_pod_name.stdout }}"
 
-      when: "app_pod is not defined"
+      when: "app_pod is not defined or app_pod = ''"
 
     # here app_ns is the namespace of pod on which we are performing cpu chaos 
-    # in genric experiments app_ns is same as a_ns
+    # in genric experiments app_ns is same as app_ns
     # in openebs experiments app_ns is the namespace where openebs is installed i.e, openebs
     - name: Identify the application node
       shell: >
@@ -82,14 +82,14 @@
 
     - name: Setup cpu chaos infrastructure
       shell: >
-        kubectl create -f /chaoslib/litmus/cpu_hog/app_cpu_stress.yml -n {{ a_ns }}
+        kubectl create -f /chaoslib/litmus/cpu_hog/app_cpu_stress.yml -n {{ app_ns }}
       args: 
         executable: /bin/bash
       register: cpu_app_deploy_result
 
     - name: Wait until the cpu stress job is completed
       shell: >
-        kubectl get pods -l job-name=app-cpu-stress-{{ run_id }} --no-headers -n {{ a_ns }}
+        kubectl get pods -l job-name=app-cpu-stress-{{ run_id }} --no-headers -n {{ app_ns }}
         --no-headers -o custom-columns=:status.phase
       args: 
         executable: /bin/bash
@@ -102,13 +102,13 @@
 
     - name: Tear down cpu chaos infrastructure
       shell: >
-        kubectl delete -f /chaoslib/litmus/cpu_hog/app_cpu_stress.yml -n {{ a_ns }} 
+        kubectl delete -f /chaoslib/litmus/cpu_hog/app_cpu_stress.yml -n {{ app_ns }} 
       args:
         executable: /bin/bash
 
     - name: Confirm that the cpu stress job is deleted successfully
       shell: >
-        kubectl get pods -l job-name=app-cpu-stress-{{ run_id }} --no-headers -n {{ a_ns }}
+        kubectl get pods -l job-name=app-cpu-stress-{{ run_id }} --no-headers -n {{ app_ns }}
       args:
         executable: /bin/bash
       register: result
@@ -122,14 +122,14 @@
 
         - name: Tear down cpu chaos infrastructure, if setup
           shell: >
-            kubectl delete -f /chaoslib/litmus/cpu_hog/app_cpu_stress.yml -n {{ a_ns }} 
+            kubectl delete -f /chaoslib/litmus/cpu_hog/app_cpu_stress.yml -n {{ app_ns }} 
           args:
             executable: /bin/bash
           when: cpu_app_deploy_result.rc == 0
         
         - name: Confirm that the cpu stress job is not present
           shell: >
-            kubectl get pods -l job-name=app-cpu-stress-{{ run_id }} --no-headers -n {{ a_ns }}
+            kubectl get pods -l job-name=app-cpu-stress-{{ run_id }} --no-headers -n {{ app_ns }}
           args:
             executable: /bin/bash
           register: result

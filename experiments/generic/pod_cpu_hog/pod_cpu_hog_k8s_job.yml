@@ -11,11 +11,11 @@ spec:
     spec:
       # Placeholder that is updated by the executor for automated runs
       # Provide appropriate SA (with desired permissions) if executed manually
-      serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
+      serviceAccountName: %CHAOS_SERVICE_ACCOUNT% 
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: litmuschaos/ansible-runner:ci
+        image: litmuschaos/ansible-runner:ci  
         imagePullPolicy: Always
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
@@ -25,23 +25,27 @@ spec:
           - name: APP_NAMESPACE
             value: ''
 
-           # provide application labels
+          # provide application labels
           - name: APP_LABEL
             value: ''
 
-           # provide application kind
+          # provide application kind
           - name: APP_KIND
             value: ''
 
+          # provide name of container subjected to cpu chaos
           - name: TARGET_CONTAINER
             value: ''
 
+          # number of cpu cores to utilize as part of cpu chaos 
+          # depends on the resources provided to the container at the time of deployment
           - name: CPU_CORES
             value: '1'
 
           - name: TOTAL_CHAOS_DURATION
-            value: '60' # in sec
+            value: '60000' # in ms
 
+          # currently supported lib: litmus
           - name: LIB
             value: 'litmus'
 
