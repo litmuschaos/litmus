@@ -46,9 +46,9 @@ spec:
           - name: AUXILIARY_APPINFO
             value: ''
 
-  
+          # only supports litmus
           - name: LIB
-            value: ''
+            value: 'litmus'
  
           - name: CHAOSENGINE
             value: ''

@@ -35,6 +35,9 @@ spec:
           # sample input is - "ns1:app=percona,ns2:name=nginx"
           - name: AUXILIARY_APPINFO
             value: ''
+          
+          - name: TOTAL_CHAOS_DURATION
+            value: '60'
 
           - name: LIVENESS_APP_LABEL
             value: ''

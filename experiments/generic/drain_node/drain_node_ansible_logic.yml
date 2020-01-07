@@ -6,6 +6,7 @@
     a_label: "{{ lookup('env','APP_LABEL') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_node: "{{ lookup('env','APP_NODE') }}"
+    c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
     c_experiment: "node-drain"
     liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
     liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
@@ -52,7 +53,9 @@
 
         - name: Verify that the AUT (Application Under Test) is running
           include_tasks: "/utils/common/status_app_pod.yml"
-          vars:       
+          vars:
+            app_ns: "{{ a_ns }}"
+            app_label: "{{ a_label }}"        
             delay: 5
             retries: 60
         
@@ -65,8 +68,8 @@
     
             - include: /utils/common/status_app_pod.yml
               vars:
-                a_ns: "{{ item.split(':')[0] }}"
-                a_label: "{{ item.split(':')[1] }}"
+                app_ns: "{{ item.split(':')[0] }}"
+                app_label: "{{ item.split(':')[1] }}"
                 delay: 5
                 retries: 60
               with_items:
@@ -85,6 +88,8 @@
         - name: Verify AUT liveness post fault-injection
           include_tasks: "/utils/common/status_app_pod.yml"
           vars:
+            app_ns: "{{ a_ns }}"
+            app_label: "{{ a_label }}" 
             delay: 5
             retries: 60
 
@@ -93,8 +98,8 @@
     
           - include: /utils/common/status_app_pod.yml
             vars:
-              a_ns: "{{ item.split(':')[0] }}"
-              a_label: "{{ item.split(':')[1] }}"
+              app_ns: "{{ item.split(':')[0] }}"
+              app_label: "{{ item.split(':')[1] }}"
               delay: 5
               retries: 60
             with_items:

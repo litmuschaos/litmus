@@ -1,9 +1,14 @@
 ## Experiment Metadata
 
-| Type  | Description                                                  | K8s Platform |
-| ----- | ------------------------------------------------------------ | ------------ |
-| Chaos | Inject network latency into application pod                  | Any          |
-
-## Experiment documentation
-
-The corresponding documentation can be found [here](https://docs.litmuschaos.io/docs/pod-network-latency/).
+<table>
+<tr>
+<th> Name </th>
+<th> Description </th>
+<th> Documentation Link </th>
+</tr>
+<tr>
+ <td> Pod Network Latency </td>
+ <td> This experiment causes flaky access to application replica by injecting network delay using pumba. It injects latency on the specified container by starting a traffic control (tc) process with netem rules to add egress delays. It Can test the application's resilience to lossy/flaky network </td>
+ <td>  <a href="https://docs.litmuschaos.io/docs/pod-network-latency/"> Here </a> </td>
+ </tr>
+ </table>
