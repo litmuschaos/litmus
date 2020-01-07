@@ -30,6 +30,10 @@
     until: "node_after_rescheduled.stdout  != app_node"
     delay: 20
     retries: 12
+
+  - name: Wait for chaos duration {{ c_duration }}s 
+    wait_for:
+      timeout: "{{ c_duration|int }}"
    
   when: action == "drain"
 

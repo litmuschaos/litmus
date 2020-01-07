@@ -9,10 +9,11 @@ RUN apt-get clean && \
     curl openssh-client python-setuptools && rm -rf /var/lib/apt/lists/* 
 
 RUN pip install --upgrade pip
+
+RUN touch /mnt/parameters.yml
+
 #Installing ansible and dependencies for k8s module
 RUN pip install ansible==2.7.3 openshift jmespath boto boto3
-
-RUN touch /mnt/parameters.yml /mnt/cloud_config.yml
 
 #Installing gcloud 
 RUN curl -sSL https://sdk.cloud.google.com | bash

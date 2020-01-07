@@ -60,7 +60,9 @@
           block:
             - name: Verify that the AUT (Application Under Test- coredns app) is running 
               include_tasks: "/utils/common/status_app_pod.yml"
-              vars:     
+              vars:
+                app_ns: "{{ a_ns }}"
+                app_label: "{{ a_label }}"      
                 delay: 1
                 retries: 60
 
@@ -69,8 +71,8 @@
               vars:     
                 delay: 1
                 retries: 60
-                a_ns: "{{ c_ns }}"
-                a_label: "run=liveness-app"
+                app_ns: "{{ c_ns }}"
+                app_label: "run=liveness-app"
   
         ## FAULT INJECTION 
         - include_tasks: "{{ c_util }}"
@@ -83,7 +85,9 @@
           block:
             - name: Verify that the AUT (Application Under Test- coredns app) is running 
               include_tasks: "/utils/common/status_app_pod.yml"
-              vars:     
+              vars: 
+                app_ns: "{{ a_ns }}"
+                app_label: "{{ a_label }}"     
                 delay: 1
                 retries: 60
 
@@ -92,8 +96,8 @@
               vars:     
                 delay: 1
                 retries: 60
-                a_ns: "{{ c_ns }}"
-                a_label: "run=liveness-app"
+                app_ns: "{{ c_ns }}"
+                app_label: "run=liveness-app"
 
         ## DEPROVISIONING TASK
         - name: Cleaning up chaos pods and services
