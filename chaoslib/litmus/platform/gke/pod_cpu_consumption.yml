@@ -86,12 +86,12 @@
         executable: /bin/bash
 
     - name: Confirm that the Cpu Hog DaemonSet is deleted successfully
-      shell: >
-        kubectl get ds -l app=cpu-hog --no-headers 
-      args:
-        executable: /bin/bash
-      register: result
-      until: "'No resources found' in result.stderr"
+      k8s_facts:
+        kind: DaemonSet
+        label_selectors:
+          - app=cpu-hog
+      register: resource_daemonset
+      until: "resource_daemonset.resources | length < 1"
       delay: 5
       retries: 60
 
@@ -107,12 +107,12 @@
           when: "cpu_hog_ds_result is succeeded"
         
         - name: Confirm that the Cpu Hog DaemonSet is deleted successfully
-          shell: >
-            kubectl get ds -l app=cpu-hog --no-headers 
-          args:
-            executable: /bin/bash
-          register: result
-          until: "'No resources found' in result.stderr"
+          k8s_facts:
+            kind: DaemonSet
+            label_selectors:
+              - app=cpu-hog
+          register: resource_daemonset
+          until: "resource_daemonset.resources | length < 1"
           delay: 5
           retries: 60
       when: "cpu_hog_ds_result is defined"
