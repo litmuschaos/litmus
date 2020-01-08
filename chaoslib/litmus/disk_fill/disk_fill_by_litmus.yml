@@ -164,7 +164,7 @@
 
     - block: 
     
-        - name: Deleting the Cpu Hog DaemonSet
+        - name: Deleting the Disk-fill DaemonSet
           shell: >
             kubectl delete -f /chaoslib/litmus/disk_fill/disk_fill_ds.yaml -n {{ a_ns }}
           args:
