@@ -81,7 +81,7 @@
 
     ## DELETING THE DAEMONSET
     - name: Deleting the Cpu Hog DaemonSet
-      shell: kubectl delete ds -l app=cpu-hog
+      shell: kubectl delete -f /chaoslib/litmus/platform/gke/cpu-hog-daemonset.yml -n {{ a_ns }}
       args:
         executable: /bin/bash
 
@@ -101,7 +101,7 @@
 
         - name: Deleting the Cpu Hog DaemonSet
           shell: >
-            kubectl delete ds -l app=cpu-hog
+            kubectl delete -f /chaoslib/litmus/platform/gke/cpu-hog-daemonset.yml -n {{ a_ns }}
           args:
             executable: /bin/bash
           when: "cpu_hog_ds_result is succeeded"

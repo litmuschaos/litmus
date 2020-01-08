@@ -105,11 +105,14 @@ class CallbackModule(CallbackBase):
             if self._last_task_banner != result._task._uuid:
                 self._print_task_banner(result._task)
 
+            ## refactored for litmuschaos
+            '''
             if delegated_vars:
                 msg = "changed: [%s -> %s]" % (result._host.get_name(), delegated_vars['ansible_host'])
             else:
                 msg = "changed: [%s]" % result._host.get_name()
             color = C.COLOR_CHANGED
+            '''
         else:
             if not self.display_ok_hosts:
                 return
@@ -117,12 +120,14 @@ class CallbackModule(CallbackBase):
             if self._last_task_banner != result._task._uuid:
                 self._print_task_banner(result._task)
 
+            ## refactored for litmuschaos
+            '''
             if delegated_vars:
                 msg = "ok: [%s -> %s]" % (result._host.get_name(), delegated_vars['ansible_host'])
             else:
                 msg = "ok: [%s]" % result._host.get_name()
             color = C.COLOR_OK
-
+            '''
         self._handle_warnings(result._result)
 
         if result._task.loop and 'results' in result._result:
@@ -131,8 +136,9 @@ class CallbackModule(CallbackBase):
             self._clean_results(result._result, result._task.action)
 
             if (self._display.verbosity > 0 or '_ansible_verbose_always' in result._result) and '_ansible_verbose_override' not in result._result:
-                msg += " => %s" % (self._dump_results(result._result),)
-                ## refactored for litmuschaos: print host info for 'OK' tasks only upon verbose enabled
+                ## refactored for litmuschaos
+                color = C.COLOR_OK
+                msg = "details => %s" % (self._dump_results(result._result),)
                 self._display.display(msg, color=color)
 
     def v2_runner_on_skipped(self, result):
@@ -171,7 +177,7 @@ class CallbackModule(CallbackBase):
         self._display.banner("NO MORE HOSTS LEFT")
 
     def v2_playbook_on_task_start(self, task, is_conditional):
-        self._task_start(task, prefix='TASK')
+        self._task_start(task, prefix='Step:')
 
     def _task_start(self, task, prefix=None):
         # Cache output prefix for task if provided
@@ -207,15 +213,15 @@ class CallbackModule(CallbackBase):
             args = u', '.join(u'%s=%s' % a for a in task.args.items())
             args = u' %s' % args
 
-        # refactored for litmuschaos: rename banner prefix to 'STEP' instead of 'TASK'
-        prefix = self._task_type_cache.get(task._uuid, 'STEP')
+        # refactored for litmuschaos
+        prefix = self._task_type_cache.get(task._uuid, 'Step:')
 
         # Use cached task name
         task_name = self._last_task_name
         if task_name is None:
             task_name = task.get_name().strip()
 
-        self._display.banner(u"%s [%s%s]" % (prefix, task_name, args))
+        self._display.banner(u"%s %s%s" % (prefix, task_name, args))
         if self._display.verbosity >= 2:
             path = task.get_path()
             if path:
@@ -231,11 +237,15 @@ class CallbackModule(CallbackBase):
 
     def v2_playbook_on_play_start(self, play):
         name = play.get_name().strip()
+
+        ## refactored for litmuschaos 
+        '''
         if not name:
             msg = u"PLAY"
         else:
             msg = u"PLAY [%s]" % name
-
+        '''
+        msg = u"************ BRACE YOURSELF, EXPERIMENT BEGINS! ************"
         self._play = play
 
         self._display.banner(msg)
@@ -286,7 +296,7 @@ class CallbackModule(CallbackBase):
 
         if (self._display.verbosity > 0 or '_ansible_verbose_always' in result._result) and '_ansible_verbose_override' not in result._result:
             msg += " => %s" % self._dump_results(result._result)
-            ## refactored for litmuschaos: print items info for 'OK' tasks only upon verbose enabled
+            ## refactored for litmuschaos
             self._display.display(msg, color=color)
 
     def v2_runner_item_on_failed(self, result):
@@ -315,7 +325,8 @@ class CallbackModule(CallbackBase):
             msg = "skipping: [%s] => (item=%s) " % (result._host.get_name(), self._get_item_label(result._result))
             if (self._display.verbosity > 0 or '_ansible_verbose_always' in result._result) and '_ansible_verbose_override' not in result._result:
                 msg += " => %s" % self._dump_results(result._result)
-            self._display.display(msg, color=C.COLOR_SKIP)
+                ## refactored for litmuschaos
+                self._display.display(msg, color=C.COLOR_SKIP)
 
     def v2_playbook_on_include(self, included_file):
         msg = 'included: %s for %s' % (included_file._filename, ", ".join([h.name for h in included_file._hosts]))
@@ -324,8 +335,10 @@ class CallbackModule(CallbackBase):
         self._display.display(msg, color=C.COLOR_SKIP)
 
     def v2_playbook_on_stats(self, stats):
+        '''
         self._display.banner("PLAY RECAP")
-
+        '''
+        self._display.banner("************ RELAX, EXPERIMENT ENDS! ************")
         hosts = sorted(stats.processed.keys())
         for h in hosts:
             t = stats.summarize(h)
