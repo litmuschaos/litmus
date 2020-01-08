@@ -151,12 +151,12 @@
         executable: /bin/bash
 
     - name: Confirm that the Disk Fill DaemonSet is deleted successfully
-      shell: >
-        kubectl get ds -l app=disk-fill --no-headers 
-      args:
-        executable: /bin/bash
-      register: result
-      until: "'No resources found' in result.stderr"
+      k8s_facts:
+        kind: DaemonSet
+        label_selectors:
+          - app=disk-fill
+      register: resource_daemonset
+      until: "resource_daemonset.resources | length < 1"
       delay: 5
       retries: 60
 
@@ -172,14 +172,14 @@
           when: "disk_fill_ds_result.rc == 0 "
     
         - name: Confirm that the Disk Fill DaemonSet is deleted successfully
-          shell: >
-            kubectl get ds -l app=disk-fill --no-headers 
-          args:
-            executable: /bin/bash
-          register: result
-          until: "'No resources found' in result.stderr"
+          k8s_facts:
+            kind: DaemonSet
+            label_selectors:
+              - app=disk-fill
+          register: resource_daemonset
+          until: "resource_daemonset.resources | length < 1"
           delay: 5
-          retries: 60
+          retries: 60   
       when: "disk_fill_ds_result is defined"
     
     - fail:
