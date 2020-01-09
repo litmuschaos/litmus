@@ -9,10 +9,11 @@ RUN apt-get clean && \
     curl openssh-client python-setuptools && rm -rf /var/lib/apt/lists/* 
 
 RUN pip install --upgrade pip
+
+RUN touch /mnt/parameters.yml
+
 #Installing ansible and dependencies for k8s module
 RUN pip install ansible==2.7.3 openshift jmespath boto boto3
-
-RUN touch /mnt/parameters.yml /mnt/cloud_config.yml
 
 #Installing gcloud 
 RUN curl -sSL https://sdk.cloud.google.com | bash
@@ -35,7 +36,7 @@ RUN mkdir /etc/ansible/ /ansible && \
 COPY ./chaoslib ./chaoslib/
 COPY ./hack/syntax-check ./hack/*.j2 ./
 COPY ./utils ./utils/
-COPY ./build/plugins /usr/local/lib/python2.7/dist-packages/ansible/plugins/callback/
+COPY ./build/plugins/default.py /usr/local/lib/python2.7/dist-packages/ansible/plugins/callback/default.py
 COPY ./build/utils/display.py /usr/local/lib/python2.7/dist-packages/ansible/utils/display.py
 COPY experiments ./experiments
 COPY executor ./executor

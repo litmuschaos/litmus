@@ -1,0 +1,144 @@
+---
+- block: 
+
+    - block: 
+
+      - name: Select the app pod
+        shell: >
+          kubectl get pod -l {{ app_label }} -n {{ app_ns }}
+          -o=custom-columns=:metadata.name --no-headers
+          | shuf | head -1 
+        args:
+          executable: /bin/bash
+        register: app_pod_name
+
+      - name: Record app pod name
+        set_fact:
+          app_pod: "{{ app_pod_name.stdout }}"
+
+      when: "app_pod is not defined or app_pod == ''"
+
+    # here app_ns is the namespace of pod on which we are performing cpu chaos 
+    # in genric experiments app_ns is same as app_ns
+    # in openebs experiments app_ns is the namespace where openebs is installed i.e, openebs
+    - name: Identify the application node
+      shell: >
+        kubectl get pod {{ app_pod }} -n {{ app_ns }}
+        --no-headers -o custom-columns=:spec.nodeName
+      args:
+        executable: /bin/bash
+      register: app_node
+
+    - set_fact: 
+        app_node: "{{ app_node.stdout }}"
+
+    - block: 
+        - name: Generate a run id if not passed from the engine/experiment
+          shell: echo $(mktemp) | cut -d '.' -f 2 
+          register: rand_string   
+
+        - set_fact:
+            run_id: "{{ rand_string.stdout | lower }}"
+      when: "run_id is not defined or run_id == ''"
+
+    - block:
+
+        - name: Record the application container
+          shell: >
+            kubectl get pods -n {{ app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ app_pod }}")].spec.containers[0].name}'
+          args:
+            executable: /bin/bash
+          register: container
+  
+        - name: Record the app_container
+          set_fact:
+            c_container: "{{ container.stdout }}"
+  
+      when: c_container is not defined or c_container == ''
+
+    - name: Obtain Container ID of the target container
+      shell: >
+        kubectl get pods {{ app_pod }} -n {{ app_ns }} 
+        -o jsonpath='{.status.containerStatuses[?(@.name=="{{ c_container }}")].containerID}'
+        | awk -F 'docker://' '{print $2}' 
+      args:
+        executable: /bin/bash
+      register: container_id
+
+    - name: Record the app_container_id
+      set_fact:
+        c_container_id: "{{ container_id.stdout }}"
+
+    - name: Derive chaos duration in seconds (from ms)
+      set_fact:
+        c_duration_sec: "{{ ((c_duration|int)/1000)| int }}"
+    
+    - name: Patch the chaos params to cpu stress job template
+      template:
+        src:  /chaoslib/litmus/cpu_hog/app_cpu_stress.j2
+        dest: /chaoslib/litmus/cpu_hog/app_cpu_stress.yml
+      vars:
+        cpu_stress_image: "{{ lib_image }}"
+
+    - name: Setup cpu chaos infrastructure
+      shell: >
+        kubectl create -f /chaoslib/litmus/cpu_hog/app_cpu_stress.yml -n {{ app_ns }}
+      args: 
+        executable: /bin/bash
+      register: cpu_app_deploy_result
+
+    - name: Wait until the cpu stress job is completed
+      shell: >
+        kubectl get pods -l job-name=app-cpu-stress-{{ run_id }} --no-headers -n {{ app_ns }}
+        --no-headers -o custom-columns=:status.phase
+      args: 
+        executable: /bin/bash
+      register: result
+      until: "result.stdout == 'Succeeded'"
+      delay: 1
+      ## considering duration in milliseconds from spec
+      ## with a grace period of 1 min before cpu stress job terminate
+      retries: "{{ ((c_duration|int)/1000 + 120)| int }}"
+
+    - name: Tear down cpu chaos infrastructure
+      shell: >
+        kubectl delete -f /chaoslib/litmus/cpu_hog/app_cpu_stress.yml -n {{ app_ns }} 
+      args:
+        executable: /bin/bash
+
+    - name: Confirm that the cpu stress job is deleted successfully
+      shell: >
+        kubectl get pods -l job-name=app-cpu-stress-{{ run_id }} --no-headers -n {{ app_ns }}
+      args:
+        executable: /bin/bash
+      register: result
+      until: "'No resources found' in result.stderr"
+      delay: 5
+      retries: 60
+
+  rescue: 
+
+    - block: 
+
+        - name: Tear down cpu chaos infrastructure, if setup
+          shell: >
+            kubectl delete -f /chaoslib/litmus/cpu_hog/app_cpu_stress.yml -n {{ app_ns }} 
+          args:
+            executable: /bin/bash
+          when: cpu_app_deploy_result.rc == 0
+        
+        - name: Confirm that the cpu stress job is not present
+          shell: >
+            kubectl get pods -l job-name=app-cpu-stress-{{ run_id }} --no-headers -n {{ app_ns }}
+          args:
+            executable: /bin/bash
+          register: result
+          until: "'No resources found' in result.stderr"
+          delay: 5
+          retries: 60
+      when: "cpu_app_deploy_result is defined"
+
+    - fail:
+        msg: "cpu_hog_chaos lib failed"
+      when: true
+        
