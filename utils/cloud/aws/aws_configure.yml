@@ -11,4 +11,4 @@
 - name: Copying aws credentials from cloud_config
   copy: 
     src: /tmp/cloud_config.yml
-    dest:   /root/.aws/credentials
+    dest: /root/.aws/credentials
