@@ -43,6 +43,7 @@ See <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" target="_bla
 See <a href="https://github.com/litmuschaos/community-charts/blob/master/CONTRIBUTING.md" target="_blank">Contributing to chaos hub</a>
 
 ## Adopters
+See <a href="https://github.com/litmuschaos/litmus/blob/master/ADOPTERS.md" target="_blank">Adopters of LitmusChaos</a>
 
 
 (*Send a PR to the above page if you are using Litmus in your chaos engineering practice*)
