@@ -1,0 +1,9 @@
+component_depth: 2
+languages:
+- go
+exclude:
+- /build/plugins/.*
+- /build/utils/.*
+test:
+    include:
+      - /contribute/developer_guide/test_*\.py
