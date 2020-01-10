@@ -7,7 +7,7 @@
 
     - name: Setup powerfulseal to initiate random pod chaos 
       shell:
-        kubectl apply -f powerfulseal.yml -n {{ a_ns }}
+        kubectl apply -f powerfulseal.yml -n {{ app_ns }}
       args:
         executable: /bin/bash
       register: deployment_result
@@ -15,7 +15,7 @@
 
     - name: Confirm that powerfulseal pod is running
       shell: >
-        kubectl get pod -l name=powerfulseal --no-headers -n {{ a_ns }}
+        kubectl get pod -l name=powerfulseal --no-headers -n {{ app_ns }}
       args:
         executable: /bin/bash
       register: result
@@ -28,7 +28,7 @@
 
     - name: Tear down the powerfulseal deployment
       shell: 
-        kubectl delete -f powerfulseal.yml -n {{ a_ns }}
+        kubectl delete -f powerfulseal.yml -n {{ app_ns }}
       args:
         executable: /bin/bash
       register: result
@@ -50,7 +50,7 @@
 
         - name: Tear down the powerfulseal deployment
           shell: >
-            kubectl delete -f powerfulseal.yml -n {{ a_ns }}
+            kubectl delete -f powerfulseal.yml -n {{ app_ns }}
           args:
             executable: /bin/bash
           when: deployment_result.rc == 0
