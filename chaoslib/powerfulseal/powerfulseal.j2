@@ -13,8 +13,8 @@ data:
       - name: "delete random pods in default namespace"
         match:
           - labels:
-              namespace: {{ a_ns }}
-              selector: {{ a_label }}
+              namespace: {{ app_ns }}
+              selector: {{ app_label }}
         filters:
           - randomSample:
               size: 1
