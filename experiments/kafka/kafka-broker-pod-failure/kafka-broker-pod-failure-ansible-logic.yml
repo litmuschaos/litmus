@@ -8,6 +8,7 @@
     c_interval: "{{ lookup('env','CHAOS_INTERVAL') }}"
     c_force: "{{ lookup('env','FORCE') }}"
     c_lib: "{{ lookup('env','LIB') }}"
+    c_svc_acc: "{{ lookup('env','CHAOS_SERVICE_ACCOUNT') }}"
     kill_count: "{{ lookup('env','KILL_COUNT') }}"
     kafka_instance: "{{ lookup('env','KAFKA_INSTANCE_NAME') }}"
     kafka_ns: "{{ lookup('env','KAFKA_NAMESPACE') }}"
@@ -67,7 +68,6 @@
           vars:
             app_ns: "{{ kafka_ns }}"
             app_label: "{{ kafka_label }}"
-
             # derived from the 'kafka_broker_util' task
             app_pod_name: "{{ kafka_broker }}" 
           
