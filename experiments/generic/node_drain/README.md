@@ -7,8 +7,8 @@
 <th> Documentation Link </th>
 </tr>
 <tr>
- <td> Drain Node </td>
+ <td> Node Drain </td>
  <td> This experiment drains the node where application pod is running and verifies if it is scheduled on another available node. </td>
- <td>  <a href="https://docs.litmuschaos.io/docs/drain-node/"> Here </a> </td>
+ <td>  <a href="https://docs.litmuschaos.io/docs/node-drain/"> Here </a> </td>
  </tr>
  </table>
