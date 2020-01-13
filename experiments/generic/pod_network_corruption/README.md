@@ -1,9 +1,15 @@
 ## Experiment Metadata
 
-| Type  | Description                                                  | K8s Platform |
-| ----- | ------------------------------------------------------------ | ------------ |
-| Chaos | Inject network packet corruption into application pod        | Any          |
-
-## Experient documentation
-
-The corresponding documentation can be found [here](https://docs.litmuschaos.io/docs/pod-network-corruption/)
+<table>
+<tr>
+<th> Name </th>
+<th> Description </th>
+<th> Documentation Link </th>
+</tr>
+<tr>
+ <td> Pod Network Corruption </td>
+ <td> Inject network packet corruption into application pod
+ </td>
+ <td>  <a href="https://docs.litmuschaos.io/docs/pod-network-corruption/"> Here </a> </td>
+ </tr>
+ </table
