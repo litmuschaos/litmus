@@ -8,7 +8,7 @@
 </tr>
 <tr>
  <td> OpenEBS Pool Container Failure  </td>
- <td> Kill the pool container and check if gets scheduled again. This scenario validates the behaviour of application and OpenEBS persistent volumes in the amidst of chaos induced on storage pool. The litmus experiment fails the specified pool and thereby losing the access to volumes being created on it.
+ <td> Kill the pool container and check if it gets scheduled again. This scenario validates the behaviour of application and OpenEBS persistent volumes when chaos is induced on the storage pool. The litmus experiment fails the specified pool thereby losing the access to volume replicas created on it.
  </td>
  <td>  <a href="https://docs.litmuschaos.io/docs/openebs-pool-container-failure/"> Here </a> </td>
  </tr>
