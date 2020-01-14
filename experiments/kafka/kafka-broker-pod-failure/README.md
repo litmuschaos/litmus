@@ -1,55 +1,14 @@
-### Sample ChaosEngine manifest to execute kafka broker kill experiment
+## Experiment Metadata
 
--   To override experiment defaults, add the ENV variables in `spec.components` of the experiment. 
-
-    ```yml
-    apiVersion: litmuschaos.io/v1alpha1
-    kind: ChaosEngine
-    metadata:
-      name: kafka-chaos
-      namespace: default
-    spec:
-      appinfo: 
-        appns: default
-        applabel: 'app=cp-kafka'
-        appkind: statefulset
-      chaosServiceAccount: kafka-sa
-      monitoring: false
-      experiments:
-        - name: kafka-broker-pod-failure
-          spec:
-            components:  
-              # choose based on available kafka broker replicas           
-              - name: KAFKA_REPLICATION_FACTOR
-                value: '3'
-
-              # get via "kubectl get pods --show-labels -n <kafka-namespace>"
-              - name: KAFKA_LABEL
-                value: 'app=cp-kafka'
-
-              - name: KAFKA_NAMESPACE
-                value: 'default'
-     
-              # get via "kubectl get svc -n <kafka-namespace>" 
-              - name: KAFKA_SERVICE
-                value: 'kafka-cp-kafka-headless'
-
-              # get via "kubectl get svc -n <kafka-namespace>  
-              - name: KAFKA_PORT
-                value: '9092'
-
-              - name: ZOOKEEPER_NAMESPACE
-                value: 'default'
-
-              # get via "kubectl get pods --show-labels -n <zk-namespace>"
-              - name: ZOOKEEPER_LABEL
-                value: 'app=cp-zookeeper'
-
-              # get via "kubectl get svc -n <zk-namespace>  
-              - name: ZOOKEEPER_SERVICE
-                value: 'kafka-cp-zookeeper-headless'
-
-              # get via "kubectl get svc -n <zk-namespace>  
-              - name: ZOOKEEPER_PORT
-                value: '2181'
-    ```
+<table>
+<tr>
+<th> Name </th>
+<th> Description </th>
+<th> Documentation Link </th>
+</tr>
+<tr>
+ <td> Kafka Broker Pod Failure </td>
+ <td> Fail kafka leader-broker pods. This experiment causes (forced/graceful) pod failure of specific/random Kafka broker pods</td>
+ <td>  <a href="https://docs.litmuschaos.io/docs/kafka-broker-pod-failure/"> Here </a> </td>
+ </tr>
+ </table>
