@@ -8,7 +8,7 @@
 </tr>
 <tr>
  <td> OpenEBS Target Pod Failure </td>
- <td> Kill the cstor/jiva target/controller pod and check if gets created again . This scenario validates the behaviour of application and OpenEBS persistent volumes in the amidst of chaos induced on OpenEBS data plane and control plane components.
+ <td> Kill the cstor/jiva target/controller pod and check if gets created again . This scenario validates the behaviour of application and OpenEBS persistent volumes when chaos is induced on the OpenEBS data plane controller.
  </td>
  <td>  <a href="https://docs.litmuschaos.io/docs/openebs-target-pod-failure/"> Here </a> </td>
  </tr>
