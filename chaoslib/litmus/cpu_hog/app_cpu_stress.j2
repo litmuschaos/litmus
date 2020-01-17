@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: app-cpu-stress-{{ run_id }}
+spec:
+  template:
+    metadata:
+      labels:
+        app: app-cpu-stress
+    spec:
+      nodeSelector:
+        ## mandatory: provide name of host where target container resides
+        kubernetes.io/hostname: {{ app_node }}
+      restartPolicy: Never
+      containers:
+      - image: {{ cpu_stress_image }} 
+        imagePullPolicy: Always
+        name: app-cpu-stress
+        command: 
+        - /bin/sh
+        args:
+        - ./cpu-hog.sh 
+        env:
+            ## mandatory: provide id of docker container
+          - name: CONTAINER_ID
+            value: "{{ c_container_id }}"
+            ## optional: provide duration of cpu chaos 
+            ## default: 60 (in sec)
+          - name: DURATION
+            value: "{{ c_duration_sec }}"
+            ## optional: provide number of cpu cores to be consumed in container
+            ## default: 1
+          - name: CORES
+            value: "{{ c_cores }}"
+        volumeMounts:
+          - name: dockersocket
+            mountPath: /var/run/docker.sock
+      volumes:
+        - hostPath:
+            path: /var/run/docker.sock
+          name: dockersocket

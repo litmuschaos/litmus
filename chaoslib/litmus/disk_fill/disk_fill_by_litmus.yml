@@ -1,138 +1,189 @@
-- name: Get a Random Pod name
-  shell: >
-    kubectl get pods -l {{ a_label }} -n {{ a_ns }} --no-headers -o custom-columns=:metadata.name | shuf -n 1 
-  args:
-    executable: /bin/bash
-  register: pod_name
-
-- name: Get ephemeral-storage Limit Value
-  shell: >
-    kubectl get pods {{ pod_name.stdout }} -n {{ a_ns }} -o jsonpath='{.spec.containers[?(@.name=="{{ c_container }}")].resources.limits.ephemeral-storage}' | grep -Eo '+|[0-9]+'
-  args:
-    executable: /bin/bash
-  register: limit_value
-
-- name: Get ephemeral-storage Limit storage unit
-  shell: >
-    kubectl get pods {{ pod_name.stdout }} -n {{ a_ns }} -o jsonpath='{.spec.containers[?(@.name=="{{ c_container }}")].resources.limits.ephemeral-storage}' | grep -Eo '[[:alpha:]]+'
-  args:
-    executable: /bin/bash
-  register: limit_value_storage
-
-- name: Get ephemeral-storage Request Value
-  shell: >
-    kubectl get pods {{ pod_name.stdout }} -n {{ a_ns }} -o jsonpath='{.spec.containers[?(@.name=="{{ c_container }}")].resources.requests.ephemeral-storage}' | grep -Eo '+|[0-9]+'
-  args:
-    executable: /bin/bash
-  register: req_value
-
-- name: Get ephemeral-storage Request storage unit
-  shell: >
-    kubectl get pods {{ pod_name.stdout }} -n {{ a_ns }} -o jsonpath='{.spec.containers[?(@.name=="{{ c_container }}")].resources.requests.ephemeral-storage}' | grep -Eo '[[:alpha:]]+'
-  args:
-    executable: /bin/bash
-  register: req_value_storage
-
-- name: Fetch the value of Request ephemeral-storage Unit in KB
-  set_fact:
-    req_storage_KB: "{{ lookup('vars', req_value_storage.stdout) }}"
-
-- name: Fetch the value of Limit ephemeral-storage Unit in KB
-  set_fact:
-    limit_storage_KB: "{{ lookup('vars', limit_value_storage.stdout) }}"
-
-- include_tasks: /chaoslib/litmus/disk_fill/convert_fill_percentage.yml
-
-- name: Get the Container ID
-  shell: >
-    kubectl get pods {{ pod_name.stdout }} -n {{ a_ns }} -o jsonpath='{.status.containerStatuses[?(@.name=="{{ c_container }}")].containerID}' | awk -F'//' '{print $2}'
-  args:
-    executable: /bin/bash
-  register: containerID
-
-- name: Identify the application node
-  shell: >
-    kubectl get pods {{ pod_name.stdout }} -n {{ a_ns }} --no-headers -o custom-columns=:spec.nodeName
-  args:
-    executable: /bin/bash
-  register: app_node
-
-- name: Create the DaemonSet for Disk-Fill
-  shell: >
-    kubectl apply -f /chaoslib/litmus/disk_fill/disk_fill_ds.yaml -n {{ a_ns }}
-  args:
-    executable: /bin/bash
+- block:
   
-- name: Confirm that the disk-fill daemonSet is running on all nodes
-  shell: >
-    kubectl get pods -l app=disk-fill --no-headers --template "{{range .items}}{{if eq .spec.nodeName $(kubectl get nodes --no-headers --field-selector spec.unschedulable=false | grep Ready | awk '{printf "\"%s\" ", $1}')}}{{.status.phase}}{{\"\n\"}}{{end}}{{end}}" -n {{ a_ns }} | sort | uniq
-  args:
-    executable: /bin/bash
-  register: result
-  until: "result.stdout == 'Running'"
-  delay: 1
-  retries: 60
-  ignore_errors: true
+    - name: Get a Random Pod name
+      shell: >
+        kubectl get pods -l {{ a_label }} -n {{ a_ns }} --no-headers -o custom-columns=:metadata.name | shuf -n 1 
+      args:
+        executable: /bin/bash
+      register: pod_name
+
+    - name: Get ephemeral-storage Limit Value
+      shell: >
+        kubectl get pods {{ pod_name.stdout }} -n {{ a_ns }} -o jsonpath='{.spec.containers[?(@.name=="{{ c_container }}")].resources.limits.ephemeral-storage}' | grep -Eo '+|[0-9]+'
+      args:
+        executable: /bin/bash
+      register: limit_value
+
+    - name: Get ephemeral-storage Limit storage unit
+      shell: >
+        kubectl get pods {{ pod_name.stdout }} -n {{ a_ns }} -o jsonpath='{.spec.containers[?(@.name=="{{ c_container }}")].resources.limits.ephemeral-storage}' | grep -Eo '[[:alpha:]]+'
+      args:
+        executable: /bin/bash
+      register: limit_value_storage
+
+    - name: Get ephemeral-storage Request Value
+      shell: >
+        kubectl get pods {{ pod_name.stdout }} -n {{ a_ns }} -o jsonpath='{.spec.containers[?(@.name=="{{ c_container }}")].resources.requests.ephemeral-storage}' | grep -Eo '+|[0-9]+'
+      args:
+        executable: /bin/bash
+      register: req_value
+
+    - name: Get ephemeral-storage Request storage unit
+      shell: >
+        kubectl get pods {{ pod_name.stdout }} -n {{ a_ns }} -o jsonpath='{.spec.containers[?(@.name=="{{ c_container }}")].resources.requests.ephemeral-storage}' | grep -Eo '[[:alpha:]]+'
+      args:
+        executable: /bin/bash
+      register: req_value_storage
+
+    - name: Fetch the value of Request ephemeral-storage Unit in KB
+      set_fact:
+        req_storage_KB: "{{ lookup('vars', req_value_storage.stdout) }}"
+
+    - name: Fetch the value of Limit ephemeral-storage Unit in KB
+      set_fact:
+        limit_storage_KB: "{{ lookup('vars', limit_value_storage.stdout) }}"
+
+    - include_tasks: /chaoslib/litmus/disk_fill/convert_fill_percentage.yml
+
+    - name: Get the Container ID
+      shell: >
+        kubectl get pods {{ pod_name.stdout }} -n {{ a_ns }} -o jsonpath='{.status.containerStatuses[?(@.name=="{{ c_container }}")].containerID}' | awk -F'//' '{print $2}'
+      args:
+        executable: /bin/bash
+      register: containerID
+
+    - name: Identify the application node
+      shell: >
+        kubectl get pods {{ pod_name.stdout }} -n {{ a_ns }} --no-headers -o custom-columns=:spec.nodeName
+      args:
+        executable: /bin/bash
+      register: app_node
+
+    - name: Create the DaemonSet for Disk-Fill
+      shell: >
+        kubectl apply -f /chaoslib/litmus/disk_fill/disk_fill_ds.yaml -n {{ a_ns }}
+      args:
+        executable: /bin/bash
+      register: disk_fill_ds_result
   
-- name: Record the disk-fill pod on app node
-  shell: >
-    kubectl get pods -l app=disk-fill -o jsonpath='{.items[?(@.spec.nodeName=="{{app_node.stdout}}")].metadata.name}'
-  args:
-    executable: /bin/bash
-  register: disk_fill_pod
+    - name: Confirm that the disk-fill daemonSet is running on all nodes
+      shell: >
+        kubectl get pods -l app=disk-fill --no-headers --template "{{range .items}}{{if eq .spec.nodeName $(kubectl get nodes --no-headers --field-selector spec.unschedulable=false | grep Ready | awk '{printf "\"%s\" ", $1}')}}{{.status.phase}}{{\"\n\"}}{{end}}{{end}}" -n {{ a_ns }} | sort | uniq
+      args:
+        executable: /bin/bash
+      register: result
+      until: "result.stdout == 'Running'"
+      delay: 1
+      retries: 60
+      ignore_errors: true
 
-- name: Exec into the pod to get ephemeral-storage size
-  shell: >
-    kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ a_ns }} -- sh -c "cd /diskfill && cd {{ containerID.stdout }} && du -k |tail -n1 | awk '{print $1}'"
-  args:
-    executable: /bin/bash
-  register: pod_current_size_full
-
-- name: Echo the filled storage in KB to get the integer part for multiplication
-  shell: >
-    echo {{ pod_current_size_full.stdout }} | grep -Eo '+|[0-9]+'
-  args:
-    executable: /bin/bash
-  register: pod_current_size
-
-- name: Total Used Ephemeral Storage in KB
-  set_fact:
-    used_storage: "{{ pod_current_size.stdout }}"
+    - name: Confirm that disk fill container is in running state 
+      include_tasks: "/utils/common/status_app_pod.yml"
+      vars:
+        app_label: "app=disk-fill"
+        app_ns: "{{ a_ns }}"  
+        delay: 1
+        retries: 60
   
-- name: Subtract to get the file allocation size
-  set_fact:
-    fill_storage: "{{ to_fill|int - used_storage|int }}"
+    - name: Record the disk-fill pod on app node
+      shell: >
+        kubectl get pods -l app=disk-fill -o jsonpath='{.items[?(@.spec.nodeName=="{{app_node.stdout}}")].metadata.name}'
+      args:
+        executable: /bin/bash
+      register: disk_fill_pod
 
-- include_tasks: /chaoslib/litmus/disk_fill/file_creation.yml
+    - name: Exec into the pod to get ephemeral-storage size
+      shell: >
+        kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ a_ns }} -- sh -c "cd /diskfill && cd {{ containerID.stdout }} && du -k |tail -n1 | awk '{print $1}'"
+      args:
+        executable: /bin/bash
+      register: pod_current_size_full
 
-- name: Waiting for Chaos Duration
-  wait_for:
-    timeout: "{{ c_duration }}"
+    - name: Echo the filled storage in KB to get the integer part for multiplication
+      shell: >
+        echo {{ pod_current_size_full.stdout }} | grep -Eo '+|[0-9]+'
+      args:
+        executable: /bin/bash
+      register: pod_current_size
 
-- name: Get the Pod Status 
-  shell: >
-    kubectl get pod {{ pod_name.stdout }} -n {{ a_ns }} -o jsonpath='{.status.phase}'
-  args:
-    executable: /bin/bash
-  register: pod_status
+    - name: Total Used Ephemeral Storage in KB
+      set_fact:
+        used_storage: "{{ pod_current_size.stdout }}"
+  
+    - name: Subtract to get the file allocation size
+      set_fact:
+        fill_storage: "{{ to_fill|int - used_storage|int }}"
 
-- name: Check if the pod is Evicted
-  shell: >
-    kubectl get pod {{ pod_name.stdout }} -n {{ a_ns }} -o jsonpath='{.status.reason}'
-  args:
-    executable: /bin/bash
-  register: eviction_status
+    - include_tasks: /chaoslib/litmus/disk_fill/file_creation.yml
 
-- name: Delete Pod if evicted
-  shell: >
-    kubectl delete pod {{ pod_name.stdout }} -n {{ a_ns }}
-  when: eviction_status.stdout == "Evicted"
+    - name: Waiting for Chaos Duration
+      wait_for:
+        timeout: "{{ c_duration }}"
 
-- name: If Pod is not evicted / running
-  shell: >
-    kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ a_ns }} -- sh -c "rm -rf /diskfill/{{ containerID.stdout }}/diskfill"
-  when: pod_status.stdout == "Running"
+    - name: Get the Pod Status 
+      shell: >
+        kubectl get pod {{ pod_name.stdout }} -n {{ a_ns }} -o jsonpath='{.status.phase}'
+      args:
+        executable: /bin/bash
+      register: pod_status
 
-- name: Delete DaemonSet disk-fill
-  shell: >
-    kubectl delete ds disk-fill
+    - name: Check if the pod is Evicted
+      shell: >
+        kubectl get pod {{ pod_name.stdout }} -n {{ a_ns }} -o jsonpath='{.status.reason}'
+      args:
+        executable: /bin/bash
+      register: eviction_status
+
+    - name: Delete Pod if evicted
+      shell: >
+        kubectl delete pod {{ pod_name.stdout }} -n {{ a_ns }}
+      when: eviction_status.stdout == "Evicted"
+
+    - name: If Pod is not evicted / running
+      shell: >
+        kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ a_ns }} -- sh -c "rm -rf /diskfill/{{ containerID.stdout }}/diskfill"
+      when: pod_status.stdout == "Running"
+
+    ## DELETING THE DAEMONSET
+    - name: Deleting the Disk Fill DaemonSet
+      shell: kubectl delete -f /chaoslib/litmus/disk_fill/disk_fill_ds.yaml -n {{ a_ns }}
+      args:
+        executable: /bin/bash
+
+    - name: Confirm that the Disk Fill DaemonSet is deleted successfully
+      k8s_facts:
+        kind: DaemonSet
+        label_selectors:
+          - app=disk-fill
+      register: resource_daemonset
+      until: "resource_daemonset.resources | length < 1"
+      delay: 5
+      retries: 60
+
+  rescue: 
+
+    - block: 
+    
+        - name: Deleting the Disk-fill DaemonSet
+          shell: >
+            kubectl delete -f /chaoslib/litmus/disk_fill/disk_fill_ds.yaml -n {{ a_ns }}
+          args:
+            executable: /bin/bash
+          when: "disk_fill_ds_result.rc == 0 "
+    
+        - name: Confirm that the Disk Fill DaemonSet is deleted successfully
+          k8s_facts:
+            kind: DaemonSet
+            label_selectors:
+              - app=disk-fill
+          register: resource_daemonset
+          until: "resource_daemonset.resources | length < 1"
+          delay: 5
+          retries: 60   
+      when: "disk_fill_ds_result is defined"
+    
+    - fail:
+        msg: "disk_fill_by_litmus lib failed"
+      when: true
+
+

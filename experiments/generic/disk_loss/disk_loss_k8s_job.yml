@@ -65,6 +65,11 @@ spec:
           # Enter the zone name
           - name: ZONE_NAME
             value: '' 
+
+          # provide auxiliary application details - namespace and labels of the applications
+          # sample input is - "ns1:app=percona,ns2:name=nginx"
+          - name: AUXILIARY_APPINFO
+            value: ''
           
           # Enter the chaosengine name
           - name: CHAOSENGINE

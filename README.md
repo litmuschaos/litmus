@@ -9,6 +9,7 @@
 [![Twitter Follow](https://img.shields.io/twitter/follow/litmuschaos?style=social)](https://twitter.com/LitmusChaos)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3202/badge)](https://bestpractices.coreinfrastructure.org/projects/3202)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=litmuschaos_litmus&metric=alert_status)](https://sonarcloud.io/dashboard?id=litmuschaos_litmus)
+[![BCH compliance](https://bettercodehub.com/edge/badge/litmuschaos/litmus?branch=master)](https://bettercodehub.com/)
 <br><br><br><br>
 
 
@@ -42,6 +43,7 @@ See <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" target="_bla
 See <a href="https://github.com/litmuschaos/community-charts/blob/master/CONTRIBUTING.md" target="_blank">Contributing to chaos hub</a>
 
 ## Adopters
+See <a href="https://github.com/litmuschaos/litmus/blob/master/ADOPTERS.md" target="_blank">Adopters of LitmusChaos</a>
 
 
 (*Send a PR to the above page if you are using Litmus in your chaos engineering practice*)
@@ -49,6 +51,9 @@ See <a href="https://github.com/litmuschaos/community-charts/blob/master/CONTRIB
 
 ## License
 Litmus is licensed under the Apache License, Version 2.0. See [LICENSE](./LICENSE) for the full license text. Some of the projects used by the Litmus project may be governed by a different license, please refer to its specific license.
+
+## Community notes
+https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q
 
 
 ## Important Links

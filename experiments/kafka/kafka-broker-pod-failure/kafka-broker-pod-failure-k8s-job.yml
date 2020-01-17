@@ -27,6 +27,17 @@ spec:
           - name: KAFKA_LIVENESS_STREAM
             value: 'enabled'
 
+          - name: KAFKA_LIVENESS_IMAGE
+            value: 'litmuschaos/kafka-client:ci'
+
+          # set to 'enabled' if you have auth set up
+          - name: KAFKA_SASL_AUTH
+            value: 'disabled'
+
+          # in milliseconds
+          - name: KAFKA_CONSUMER_TIMEOUT
+            value: '30000'
+
           - name: TOTAL_CHAOS_DURATION
             value: '15'
 
@@ -35,6 +46,9 @@ spec:
 
           - name: FORCE
             value: 'true'
+
+          - name: KAFKA_INSTANCE_NAME
+            value: ''
 
           - name: KAFKA_NAMESPACE
             value: ''
@@ -67,7 +81,7 @@ spec:
             value: ''
 
           ## env var that describes the library used to execute the chaos
-          ## default: litmus. Supported values: litmus, powerfulseal, chaoskube
+          ## default: litmus. Supported values: litmus, powerfulseal
           - name: LIB
             value: ''
 

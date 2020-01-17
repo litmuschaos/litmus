@@ -28,6 +28,13 @@ spec:
           - name: KAFKA_LIVENESS_STREAM
             value: 'enabled'
 
+          - name: KAFKA_LIVENESS_IMAGE
+            value: 'litmuschaos/kafka-client:ci'
+
+          # in milliseconds
+          - name: KAFKA_CONSUMER_TIMEOUT
+            value: '30000'
+
           - name: TOTAL_CHAOS_DURATION
             value: '30'
 
@@ -50,6 +57,9 @@ spec:
             value: ''
 
           - name: KAFKA_BROKER
+            value: ''
+
+          - name: KAFKA_INSTANCE_NAME
             value: ''
 
           - name: KAFKA_REPLICATION_FACTOR

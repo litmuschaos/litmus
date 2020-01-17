@@ -11,6 +11,7 @@
     c_svc_acc: "{{ lookup('env','CHAOS_SVC_ACC') }}"
     c_rand: "{{ lookup('env','RANDOM') }}"
     c_max: "{{ lookup('env','MAX_DURATION') }}"
+    c_auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"
    
   tasks:
     - debug:

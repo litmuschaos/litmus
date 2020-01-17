@@ -12,8 +12,11 @@
     kafka_ns: "{{ lookup('env','KAFKA_NAMESPACE') }}"
     kafka_label: "{{ lookup('env','KAFKA_LABEL') }}"
     kafka_kind: "{{ lookup('env','KAFKA_KIND') }}"
+    kafka_instance: "{{ lookup('env','KAFKA_INSTANCE_NAME') }}"
     kafka_broker: "{{ lookup('env','KAFKA_BROKER') }}"
-    kafka_stream: "{{ lookup('env','KAFKA_LIVENESS_STREAM') }}" 
+    kafka_stream: "{{ lookup('env','KAFKA_LIVENESS_STREAM') }}"
+    kafka_liveness_image: "{{ lookup('env','KAFKA_LIVENESS_IMAGE') }}" 
+    kafka_consumer_timeout: "{{ lookup('env','KAFKA_CONSUMER_TIMEOUT') }}" 
     kafka_service: "{{ lookup('env','KAFKA_SERVICE') }}"
     kafka_port: "{{ lookup('env','KAFKA_PORT') }}" 
     kafka_replication_factor: "{{ lookup('env','KAFKA_REPLICATION_FACTOR') }}" 
@@ -113,8 +116,8 @@
             - name: Verify that the Kafka liveness pod (pub-sub) is uninterrupted
               include_tasks: "/utils/common/status_app_pod.yml"
               vars: 
-                a_ns: "{{ kafka_ns }}"
-                a_label: "name=kafka-liveness" 
+                app_ns: "{{ kafka_ns }}"
+                app_label: "name=kafka-liveness" 
                 delay: 1
                 retries: 60
 

@@ -13,11 +13,12 @@ RUN apt-get clean && \
 RUN pip install ansible==2.7.3 openshift jmespath
 =======
 RUN pip install --upgrade pip
+
+RUN touch /mnt/parameters.yml
+
 #Installing ansible and dependencies for k8s module
 RUN pip install ansible==2.7.3 openshift jmespath boto boto3
 >>>>>>> 7d6ac8eeca6019806bb5f447f22eb0f4626aaa88
-
-RUN touch /mnt/parameters.yml /mnt/cloud_config.yml
 
 #Installing gcloud 
 RUN curl -sSL https://sdk.cloud.google.com | bash
@@ -32,12 +33,15 @@ RUN curl -L https://storage.googleapis.com/kubernetes-release/release/${KUBE_LAT
 #Adding hosts entries and making ansible folders
 RUN mkdir /etc/ansible/ /ansible && \
     echo "[local]" >> /etc/ansible/hosts && \
-    echo "127.0.0.1" >> /etc/ansible/hosts
+    echo "127.0.0.1" >> /etc/ansible/hosts && \
+    echo "[defaults]" >> /etc/ansible/ansible.cfg && \
+    echo "display_skipped_hosts = False" >> /etc/ansible/ansible.cfg 
 
 #Copying Necessary Files
 COPY ./chaoslib ./chaoslib/
-COPY ./hack/*.j2 ./
+COPY ./hack/syntax-check ./hack/*.j2 ./
 COPY ./utils ./utils/
-COPY ./build/plugins /usr/local/lib/python2.7/dist-packages/ansible/plugins/callback/
+COPY ./build/plugins/default.py /usr/local/lib/python2.7/dist-packages/ansible/plugins/callback/default.py
+COPY ./build/utils/display.py /usr/local/lib/python2.7/dist-packages/ansible/utils/display.py
 COPY experiments ./experiments
 COPY executor ./executor

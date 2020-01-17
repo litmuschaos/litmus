@@ -48,7 +48,7 @@
         - name: Record application pod name
           set_fact:
             app_pod_ut: "{{ pod_name.stdout }}"     
-      when: app_pod is undefined
+      when: app_pod is not defined or app_pod == ''
 
     - block: 
 
@@ -56,7 +56,7 @@
           set_fact: 
             app_pod_ut: "{{ app_pod }}"
 
-      when: app_pod is defined 
+      when: app_pod is defined and app_pod != ''
 
     - name: Identify the application node
       shell: >
@@ -81,9 +81,17 @@
 
       - name: Record the app_container
         set_fact:
-          app_container: "{{ container.stdout }}"
+          a_container: "{{ container.stdout }}"
 
-      when: app_container is undefined
+      when: app_container is not defined or app_container == ''
+
+    - block:
+
+      - name: Record the app_container
+        set_fact:
+          a_container: "{{ app_container }}"
+        
+      when: app_container is defined and app_container != ''
 
     - name: Record the pumba pod on app node
       shell: >
@@ -97,15 +105,23 @@
     - name: Record restartCount
       shell: >
         kubectl get pod {{ app_pod_ut }} -n {{ namespace }}
-        -o=jsonpath='{.status.containerStatuses[?(@.name=="{{ app_container }}")].restartCount}'
+        -o=jsonpath='{.status.containerStatuses[?(@.name=="{{ a_container }}")].restartCount}'
       args:
         executable: /bin/bash
       register: restartCnt_prev
 
+    - name: Confirm that pumba container is in running state 
+      include_tasks: "/utils/common/status_app_pod.yml"
+      vars:
+        app_label: "app=pumba"
+        app_ns: "{{ namespace }}"  
+        delay: 1
+        retries: 60
+
     - name: Force kill the application pod using pumba
       shell: >
         kubectl exec {{ pumba_pod.stdout}} -n {{ namespace }}
-        -- pumba kill --signal SIGKILL re2:k8s_{{ app_container }}_{{ app_pod_ut }};
+        -- pumba kill --signal SIGKILL re2:k8s_{{ a_container }}_{{ app_pod_ut }};
       args:
         executable: /bin/bash
       ignore_errors: true
@@ -114,13 +130,13 @@
     - name: Verify restartCount
       shell: >
         kubectl get pod {{ app_pod_ut }} -n {{ namespace }}
-        -o=jsonpath='{.status.containerStatuses[?(@.name=="{{ app_container }}")].restartCount}'
+        -o=jsonpath='{.status.containerStatuses[?(@.name=="{{ a_container }}")].restartCount}'
       args:
         executable: /bin/bash
       register: restartCnt
       until: "restartCnt.stdout|int > restartCnt_prev.stdout|int"
       delay: 2
-      retries: 30
+      retries: 60
 
   when: action == "killapp"
 
