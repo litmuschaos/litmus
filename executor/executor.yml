@@ -65,24 +65,40 @@
     executable: /bin/bash
   register: c_job_args
 
-- name: Check configmaps defined or not.
+- name: Check configmaps defined or not in chaos experiment.
   shell: >
     kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.configmaps}'
   args:
     executable: /bin/bash
-  register: configMap_defined
+  register: configMap_defined_experiment
 
-- name: Check secrets defined or not.
+- name: Check configmaps defined or not in chaos engine.
+  shell: >
+    kubectl get chaosengine {{ c_engine }} -n {{ c_app_ns }} -o jsonpath='{range .spec.experiments[?(@.name=="{{ c_experiment_name }}")]}{.spec.components.configMaps}'
+  args:
+    executable: /bin/bash
+  register: configMap_defined_engine
+
+- name: Check secrets defined or not in chaos experiment.
   shell: >
     kubectl get chaosexperiment -n {{ c_app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ c_experiment_name }}")].spec.definition.secrets}'
   args:
     executable: /bin/bash
-  register: secret_defined
+  register: secret_defined_experiment
+
+- name: Check secrets defined or not in chaos engine.
+  shell: >
+    kubectl get chaosengine {{ c_engine }} -n {{ c_app_ns }} -o jsonpath='{range .spec.experiments[?(@.name=="{{ c_experiment_name }}")]}{.spec.components.secrets}'
+  args:
+    executable: /bin/bash
+  register: secret_defined_engine
 
 - name: Record configmaps and secrets are defined or not.
   set_fact:
-    configMap_defined: "{{ configMap_defined.stdout }}"
-    secret_defined: "{{ secret_defined.stdout }}"
+    configMap_defined_experiment: "{{ configMap_defined_experiment.stdout }}"
+    configMap_defined_engine: "{{ configMap_defined_engine.stdout }}"
+    secret_defined_experiment: "{{ secret_defined_experiment.stdout }}"
+    secret_defined_engine: "{{ secret_defined_engine.stdout }}"
 
 - include: experiment_env_getter.yml
   with_sequence: start=0 count="{{ c_env_length.stdout | int }}"
@@ -90,7 +106,7 @@
 - name: Obtain the env param list length from spec of Engine
   shell: >
     kubectl get chaosengine {{ c_engine }} -o json 
-    | jq '.spec.experiments[] | select(.name == "{{ c_experiment_name }}") | .spec.components | length'
+    | jq '.spec.experiments[] | select(.name == "{{ c_experiment_name }}") | .spec.components.env | length'
   args:
     executable: /bin/bash
   register: c_engine_envlen
@@ -151,12 +167,12 @@
   args:
     executable: /bin/bash
   when:  
-    - configMap_defined == "[map[]]" or  configMap_defined == ''
-    - secret_defined == "[map[]]"  or  secret_defined == ''
+    - configMap_defined_experiment == "[map[]]" or  configMap_defined_experiment == '' or configMap_defined_engine == "[map[]]" or  configMap_defined_engine == ''
+    - secret_defined_experiment == "[map[]]"  or  secret_defined_experiment == '' or secret_defined_engine == "[map[]]"  or  secret_defined_engine == ''
   
 - include: experiment_volumes.yml
   when: 
-    - (configMap_defined != '' and  configMap_defined != "[map[]]") or (secret_defined != '' and  secret_defined != "[map[]]")
+    - (configMap_defined_experiment != '' and  configMap_defined_experiment != "[map[]]" and configMap_defined_engine != '' and  configMap_defined_engine != "[map[]]") or (secret_defined_experiment != '' and  secret_defined_experiment != "[map[]]" and secret_defined_engine != '' and  secret_defined_engine != "[map[]]")
 
 - name: Fetching monitoring time from chaos experiment job
   shell: >
