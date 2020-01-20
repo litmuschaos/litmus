@@ -20,8 +20,33 @@ Test Litmus Playbook Syntax:
   script:
     - sudo docker run litmuschaos/ansible-runner:ci ./syntax-check 
 
+baseline-image:
+
+  when: always
+  stage: baseline
+  tags:
+    - test
+  only:
+    refs:
+      - /^(v[0-9][.][0-9][.]x|master)?$/
+  script:
+     - pwd
+     - export BRANCH=${CI_COMMIT_REF_NAME}
+     - echo $BRANCH
+     - export COMMIT=${CI_COMMIT_SHORT_SHA}
+     - echo $COMMIT
+     - git clone https://github.com/litmuschaos/litmus-e2e.git
+     - cd litmus-e2e
+     - git checkout ${BASELINE_BRANCH}
+     - cd baseline
+     - ansible-playbook commit-writer.yml --extra-vars "branch=$BRANCH repo=$CI_PROJECT_NAME commit=$COMMIT"
+     - git status
+     - git add baseline
+     - git status
+     - git commit -m "updated $CI_PROJECT_NAME commit:$COMMIT"
+     - git push http://${YOUR_USERNAME}:${PERSONAL_ACCESS_TOKEN}@github.com/litmuschaos/litmus-e2e.git --all
+
 Push Litmus Image:
   stage: litmusImagePush
   script:
     - REPONAME="litmuschaos" IMGNAME="ansible-runner" IMGTAG="ci" ./hack/push
-
