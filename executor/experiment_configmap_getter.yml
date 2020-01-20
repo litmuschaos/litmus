@@ -14,6 +14,6 @@
     executable: /bin/bash
   register: experiment_cmap_mountPath
 
-- name: append experiment configMap
+- name: Append experiment configMap
   set_fact:
     c_map_details: "{{c_map_details | combine({experiment_cmap_name.stdout : experiment_cmap_mountPath.stdout})}}"

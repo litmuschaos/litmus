@@ -12,6 +12,6 @@
     executable: /bin/bash
   register: engine_cmap_mountPath
 
-- name: append engine configmap
+- name: Append engine configmap
   set_fact:
     c_map_details: "{{c_map_details | combine({engine_cmap_name.stdout : engine_cmap_mountPath.stdout})}}"
