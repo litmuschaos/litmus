@@ -13,7 +13,6 @@
 # including pumba chaoslib -> pod-failure-by-sigkill
 - include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yaml
   vars:
-    action: "killapp"
     namespace: "{{ openebs_ns }}"
     app_pod: "{{ cstor_target_pod.stdout }}"
     app_container: "{{ target_container }}"
@@ -21,7 +20,6 @@
 
 - include_tasks: /chaoslib/litmus/container_kill/containerd_chaos/crictl-chaos.yml
   vars:
-    action: "killapp"
     namespace: "{{ openebs_ns }}"
     app_pod: "{{ cstor_target_pod.stdout }}"
     app_container: "{{ target_container }}"
@@ -53,7 +51,7 @@
 - name: Get the restartCount of cstor-istgt container
   shell: >
     kubectl get pod {{ cstor_target_pod.stdout }} -n {{ openebs_ns }}
-    -o=jsonpath='{.status.containerStatuses[?(@.name==''"{{target_container}}"'')].restartCount}'
+    -o=jsonpath='{.status.containerStatuses[?(@.name==''"{{ target_container }}"'')].restartCount}'
   args:
     executable: /bin/bash
   register: restartCount_after
