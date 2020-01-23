@@ -1,8 +1,11 @@
-apiVersion: extensions/apps/v1
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: containerd-chaos
 spec:
+  selector:
+    matchLabels:
+      app: crictl
   template:
     metadata:
       labels:
