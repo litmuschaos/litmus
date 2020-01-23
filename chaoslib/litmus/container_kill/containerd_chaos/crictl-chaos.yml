@@ -1,12 +1,12 @@
 ---
-- name: Patch the chaoslib image
-  template:
-    src:  /chaoslib/litmus/container_kill/containerd_chaos/containerd.j2
-    dest: /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-ds.yml
-  vars:
-    containerd_image: "{{ lib_image }}"
-
 - block:
+
+    - name: Patch the chaoslib image
+      template:
+        src:  /chaoslib/litmus/container_kill/containerd_chaos/containerd.j2
+        dest: /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-ds.yml
+      vars:
+        containerd_image: "{{ lib_image }}"
 
     - name: Setup containerd chaos infrastructure.
       shell: >
@@ -14,7 +14,7 @@
         -n {{ namespace }}
       args:
         executable: /bin/bash
-      register: result
+      register: crictl_ds_result
 
     - name: Confirm that the containerd-chaos ds is running on all nodes.
       shell: >
@@ -131,27 +131,45 @@
       delay: 3
       retries: 30
 
-  when: action == "killapp"
-
-- block:
-
     - name: Delete the crictl-chaos daemonset
       shell: >
-        kubectl delete -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-ds.yml
-        -n {{ namespace }}
+        kubectl delete -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-ds.yml -n {{ namespace }} 
       args:
         executable: /bin/bash
-      register: result
-
+    
     - name: Confirm that the containerd-chaos pod is deleted successfully
       shell: >
-        kubectl get pod -l app=crictl
-        --no-headers -n {{ namespace }}
+        kubectl get pods -l app=crictl --no-headers -n {{ namespace }}
       args:
         executable: /bin/bash
       register: result
-      until: "result.stdout == ''"
-      delay: 3
-      retries: 50
+      until: "'No resources found' in result.stderr"
+      delay: 5
+      retries: 60
 
-  when: action == "delete-containerd"
+
+  rescue: 
+
+    - block: 
+    
+        - name: Delete the crictl-chaos daemonset
+          shell: >
+            kubectl delete -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-ds.yml -n {{ namespace }}
+          args:
+            executable: /bin/bash
+          when: crictl_ds_result.rc == 0
+            
+        - name: Confirm that the containerd-chaos pod is deleted successfully
+          shell: >
+            kubectl get pods -l app=crictl --no-headers -n {{ namespace }}
+          args:
+            executable: /bin/bash
+          register: result
+          until: "'No resources found' in result.stderr"
+          delay: 5
+          retries: 60
+      when: " crictl_ds_result is defined"
+    
+    - fail:
+        msg: "crictl-chaos lib failed"
+      when: true
