@@ -1,6 +1,6 @@
 {% if stg_prov is defined and stg_prov == 'openebs.io/provisioner-iscsi' %}
   {% if stg_engine is defined and stg_engine == 'cstor' %}
-      chaosutil: /experiments/openebs/openebs-target-pod-failure/cstor_target_failure.yaml
+      chaosutil: /experiments/openebs/openebs-target-pod-failure/cstor_target_pod_failure.yaml
     {% else %}
       chaosutil: /experiments/openebs/openebs-target-pod-failure/jiva_controller_pod_failure.yaml
   {% endif %}
