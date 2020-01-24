@@ -8,6 +8,7 @@
     c_container: "{{ lookup('env','TARGET_CONTAINER') }}"
     c_cores: "{{ lookup('env','CPU_CORES') }}"
     c_lib: "{{ lookup('env','LIB') }}"
+    ramp_time: "{{ lookup('env','RAMP_TIME') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_label: "{{ lookup('env','APP_LABEL') }}"
     a_kind: "{{ lookup('env','APP_KIND') }}"

@@ -87,6 +87,20 @@
         executable: /bin/bash
       register: cpu_app_deploy_result
 
+    - name: Calculate the total wait time for cpu stress job
+      ## considering duration in milliseconds from spec
+      ## with a grace period of 2 min before cpu stress job terminate
+      set_fact:
+        job_wait_time: "{{ ((c_duration|int)/1000 + 120)| int }}"
+      when: "ramp_time is not defined or ramp_time == ''"
+
+    - name: Calculate the total wait time for cpu stress job
+      ## considering duration in milliseconds from spec
+      ## with a grace period of 2 min before cpu stress job terminate
+      set_fact:
+        job_wait_time: "{{ ((c_duration|int)/1000 + (ramp_time|int) + 120)| int }}"
+      when: "ramp_time is defined and ramp_time != ''"
+
     - name: Wait until the cpu stress job is completed
       shell: >
         kubectl get pods -l job-name=app-cpu-stress-{{ run_id }} --no-headers -n {{ app_ns }}
@@ -96,9 +110,7 @@
       register: result
       until: "result.stdout == 'Succeeded'"
       delay: 1
-      ## considering duration in milliseconds from spec
-      ## with a grace period of 1 min before cpu stress job terminate
-      retries: "{{ ((c_duration|int)/1000 + 120)| int }}"
+      retries: "{{ job_wait_time }}"
 
     - name: Tear down cpu chaos infrastructure
       shell: >
