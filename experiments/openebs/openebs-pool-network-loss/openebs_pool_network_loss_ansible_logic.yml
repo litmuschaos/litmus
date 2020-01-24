@@ -132,6 +132,9 @@
             pod_name: "{{ app_pod.stdout }}"
           when: data_persistence != ''
 
+        - set_fact:
+          flag: "Pass"
+          
       rescue:
         - set_fact:
             flag: "Fail"
