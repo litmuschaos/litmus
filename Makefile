@@ -55,3 +55,10 @@ ansible-syntax-check:
 		rc_sum=$$((rc_sum+$$?)); \
 	done; \
 	exit $${rc_sum}
+
+.PHONY: ansible-lint-check
+ansible-lint-check:
+	@echo "------------------"
+	@echo "--> Check playbook ansible lint"
+	@echo "------------------"
+	bash ansible-lint-check.bash

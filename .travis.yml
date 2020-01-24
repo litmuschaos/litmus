@@ -16,8 +16,8 @@ before_install:
   - sleep 15
   - sudo apt-get install -y
   - sudo apt-get install -y curl
+  - sudo apt-get install -y --no-install-recommends python-minimal python-pip
 script:
   - make
 after_success:
   - if [[ $TRAVIS_PULL_REQUEST == 'false' ]]; then sonar-scanner; fi
-
