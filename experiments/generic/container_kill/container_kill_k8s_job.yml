@@ -35,8 +35,12 @@ spec:
           - name: LIB 
             value: 'pumba'
 
-           # provide target container name
+          # provide target container name
           - name: TARGET_CONTAINER
+            value: ''
+
+          # Period to wait before injection of chaos in sec 
+          - name: RAMP_TIME
             value: ''
 
           # provide chaosengine name
