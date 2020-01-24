@@ -1,5 +1,9 @@
 - block:
 
+  - name: Wait for the specified ramp time before injecting chaos
+    wait_for: timeout="{{ ramp_time }}"
+    when: "ramp_time is defined and ramp_time != ''"
+
   - name: Drain the application node
     shell: >
       kubectl drain {{ app_node }}
