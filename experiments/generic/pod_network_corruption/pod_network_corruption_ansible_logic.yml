@@ -6,6 +6,7 @@
     c_experiment: "pod-network-corruption"
     c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
     c_container: "{{ lookup('env','TARGET_CONTAINER') }}"
+    ramp_time: "{{ lookup('env','RAMP_TIME') }}"
     n_corruption: "{{ lookup('env','NETWORK_PACKET_CORRUPTION_PERCENTAGE') }}"
     n_interface: "{{ lookup('env','NETWORK_INTERFACE') }}"
     c_lib: "{{ lookup('env','LIB') }}"
