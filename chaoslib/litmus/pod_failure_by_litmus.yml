@@ -11,7 +11,11 @@
 - name: Set min chaos count to 1 if interval > duration
   set_fact: 
     c_iterations: 1
-  when: "c_iterations == '0'" 
+  when: "c_iterations == '0'"
+
+- name: Wait for the specified ramp time before injecting chaos
+  wait_for: timeout="{{ ramp_time }}"
+  when: "ramp_time is defined and ramp_time != ''" 
 
 - name: Kill random pod
   include: kill_random_pod.yml
