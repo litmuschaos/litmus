@@ -55,6 +55,13 @@
             c_container: "{{ container.stdout }}"
   
       when: c_container is not defined or c_container == ''
+
+    - name: Wait for the specified ramp time before injecting chaos
+      ## the ramp_time is spent before launching the pumba job instead 
+      ## of in the pumba job, as with the new scratch-based pumba images
+      ## there is no shell available by default
+      wait_for: timeout="{{ ramp_time }}"
+      when: "ramp_time is defined and ramp_time != ''"
     
     - name: Patch the chaoslib image
       template:
