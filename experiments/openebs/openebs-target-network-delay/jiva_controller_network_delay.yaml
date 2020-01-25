@@ -2,7 +2,7 @@
   - name: Identify the jiva controller pod belonging to the PV
     shell: >
       set -o pipefail &&
-      kubectl get pods -l {{ jiva_controller_pod_label }} \
+      kubectl get pods -l {{ jiva_controller_pod_label }}
       -n {{ a_ns }} -o jsonpath='{.items[?(@.metadata.labels.openebs\.io/persistent-volume=="{{ pv_name }}")].metadata.name}'
     args:
       executable: /bin/bash
@@ -16,7 +16,7 @@
   - name: Get controller svc
     shell: >
       set -o pipefail &&
-      kubectl get svc -l {{ jiva_controller_svc_label }} \
+      kubectl get svc -l {{ jiva_controller_svc_label }}
       -n {{ a_ns }} -o=jsonpath='{.items[0].spec.clusterIP}'
     args:
       executable: /bin/bash
@@ -34,7 +34,7 @@
   - name: Getting the ReplicaCount before injecting delay
     shell: >
       set -o pipefail &&
-      kubectl exec -it {{ jiva_controller_pod.stdout }} -n {{ a_ns }} \
+      kubectl exec -it {{ jiva_controller_pod.stdout }} -n {{ a_ns }}
       -c {{ jiva_controller_container_name }} curl http://"{{ controller_svc.stdout }}":9501/v1/volumes | jq -r '.data[].replicaCount'
     args:
       executable: /bin/bash
@@ -53,7 +53,7 @@
   - name: Verifying the Replica getting disconnected
     shell: >
       set -o pipefail &&
-      kubectl exec -it {{ jiva_controller_pod.stdout }} -n {{ a_ns }} \
+      kubectl exec -it {{ jiva_controller_pod.stdout }} -n {{ a_ns }}
       -c {{ jiva_controller_container_name }} curl http://"{{ controller_svc.stdout }}":9501/v1/volumes | jq -r '.data[].replicaCount'
     args:
       executable: /bin/bash
@@ -65,7 +65,7 @@
   - name: Verifying the replicas post network recovery
     shell: >
       set -o pipefail &&
-      kubectl exec -it {{ jiva_controller_pod.stdout }} -n {{ a_ns }} \
+      kubectl exec -it {{ jiva_controller_pod.stdout }} -n {{ a_ns }}
       -c {{ jiva_controller_container_name }} curl http://"{{ controller_svc.stdout }}":9501/v1/volumes | jq -r '.data[].replicaCount'
     args:
       executable: /bin/bash

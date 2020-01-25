@@ -82,7 +82,7 @@
         - name: Get application pod name
           shell: >
             set -o pipefail &&
-            kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers \
+            kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers
             -o=custom-columns=NAME:".metadata.name"
           args:
             executable: /bin/bash
