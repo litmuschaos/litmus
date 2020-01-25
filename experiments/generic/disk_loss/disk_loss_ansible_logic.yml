@@ -6,6 +6,7 @@
     a_label: "{{ lookup('env','APP_LABEL') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
+    ramp_time: "{{ lookup('env','RAMP_TIME') }}"
     c_experiment: disk-loss
     cloud_platform: "{{ lookup('env','CLOUD_PLATFORM') }}"
     c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
