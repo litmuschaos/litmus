@@ -6,7 +6,6 @@
     a_label: "{{ lookup('env','APP_LABEL') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_pvc: "{{ lookup('env','APP_PVC') }}"
-    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     c_experiment: openebs-pool-container-failure
     chaos_duration: 600
     chaos_iterations: "{{ lookup('env','CHAOS_ITERATIONS') }}"
@@ -51,9 +50,9 @@
 
             - name: Construct chaos result name (experiment_name)
               set_fact:
-                c_result: "{{ c_engine }}-{{ c_experiment }}"
+                c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
 
-          when: c_engine != ''
+          when: lookup('env','CHAOSENGINE') 
 
         ## RECORD START-OF-EXPERIMENT IN CHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml

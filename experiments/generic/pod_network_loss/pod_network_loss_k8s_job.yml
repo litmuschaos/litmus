@@ -21,15 +21,15 @@ spec:
           - name: ANSIBLE_STDOUT_CALLBACK
             value: 'default'
 
-           # provide application namespace
+          # provide application namespace
           - name: APP_NAMESPACE
             value: ''
 
-           # provide application labels
+          # provide application labels
           - name: APP_LABEL
             value: ''
 
-           # provide application kind
+          # provide application kind
           - name: APP_KIND
             value: ''
  
@@ -45,15 +45,19 @@ spec:
 
           - name: TOTAL_CHAOS_DURATION
             value: '60000' # in ms
+
+          # Period to wait before injection of chaos in sec
+          - name: RAMP_TIME
+            value: ''
             
           - name: LIB
             value: 'pumba'
           
-           # provide lib image
+          # provide lib image
           - name: LIB_IMAGE
             value: 'gaiaadm/pumba:0.6.5' 
 
-           # provide chaosengine name
+          # provide chaosengine name
           - name: CHAOSENGINE
             value: ''
 

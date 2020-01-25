@@ -32,6 +32,10 @@ spec:
             ## default: 1
           - name: CORES
             value: "{{ c_cores }}"
+{% if ramp_time is defined and ramp_time != '' %}
+          - name: RAMP_TIME
+            value: "{{ ramp_time }}"
+{% endif %}
         volumeMounts:
           - name: dockersocket
             mountPath: /var/run/docker.sock
