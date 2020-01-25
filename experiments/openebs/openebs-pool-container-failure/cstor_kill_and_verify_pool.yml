@@ -27,7 +27,6 @@
 # including pumba chaoslib pod_failure_by_sigkill - container kill
 - include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yaml
   vars:
-    action: "killapp"
     namespace: "{{ openebs_ns }}"
     label: "app=cstor-pool"
     app_pod: "{{ cstor_pool_pod }}"
