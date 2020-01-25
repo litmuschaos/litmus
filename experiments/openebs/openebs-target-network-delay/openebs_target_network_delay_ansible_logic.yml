@@ -29,7 +29,7 @@
           # Create test name append with run_id 
         - include_tasks: /utils/runtime/create_testname.yml  
 
-        - include: test_prerequisites.yml
+        - include: openebs_target_network_delay_ansible_prerequisites.yml
 
         - include_vars:
             file: data_persistence.yml
