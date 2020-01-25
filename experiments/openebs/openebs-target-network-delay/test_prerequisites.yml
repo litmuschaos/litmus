@@ -11,7 +11,7 @@
         executable: /bin/bash
       register: pv
 
-    - name: Record pv name 
+    - name: Record pv name
       set_fact:
         pv_name: "{{ pv.stdout }}"
 
@@ -28,7 +28,7 @@
         stg_engine: "{{ openebs_stg_engine.stdout }}"
   when: stg_prov == "openebs.io/provisioner-iscsi"
 
-- name: Identify the chaos util to be invoked 
+- name: Identify the chaos util to be invoked
   template:
     src: chaosutil.j2
     dest: chaosutil.yml

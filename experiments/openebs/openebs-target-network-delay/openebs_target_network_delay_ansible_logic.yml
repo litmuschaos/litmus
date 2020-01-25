@@ -1,4 +1,3 @@
----
 - hosts: localhost
   connection: local
 
@@ -12,7 +11,7 @@
     data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
     liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
     liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
-    n_delay: "{{ lookup('env','NETWORK_DELAY') }}" 
+    n_delay: "{{ lookup('env','NETWORK_DELAY') }}"
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
 
   vars_files:
@@ -21,121 +20,119 @@
 
   tasks:
     - block:
-            
           ## PRE-CHAOS APPLICATION LIVENESS CHECK
-        - include_tasks: /utils/common/application_liveness_check.yml
-          when: liveness_label != ''
+        - name: Including pre chaos liveness check
+          include_tasks: /utils/common/application_liveness_check.yml
+          when: liveness_label | length > 0
 
           # Create test name append with run_id 
-        - include_tasks: /utils/runtime/create_testname.yml  
+        - include_tasks: /utils/runtime/create_testname.yml
 
         - include: test_prerequisites.yml
 
-        - include_vars:
+        - name: Including data persistence util
+          include_vars:
             file: data_persistence.yml
-  
-        - include_vars:
+
+        - name: Including chaos util
+          include_vars:
             file: chaosutil.yml
 
         - name: Record the chaos util path
-          set_fact: 
+          set_fact:
             chaos_util_path: "{{ chaosutil }}"
 
         - name: Record the data consistency util path
           set_fact:
             data_consistency_util_path: "{{ consistencyutil }}"
-          when: data_persistence != ''    
+          when: data_persistence | length > 0
 
          ## GENERATE EXP RESULT NAME
         - block:
-
             - name: Construct chaos result name (experiment_name)
               set_fact:
                 c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
-
-          when: lookup('env','CHAOSENGINE') 
+          when: lookup('env','CHAOSENGINE')
 
         ## RECORD START-OF-TEST IN CHAOS RESULT CR
-
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'SOT'
             namespace: "{{ a_ns }}"
 
-        ## DISPLAY APP INFORMATION 
- 
+        ## DISPLAY APP INFORMATION
         - name: Display the app information passed via the test job
-          debug: 
-            msg: 
+          debug:
+            msg:
               - "The application info is as follows:"
               - "Namespace    : {{ a_ns }}"
               - "Label        : {{ a_label }}"
-              - "PVC          : {{ a_pvc }}"  
+              - "PVC          : {{ a_pvc }}"
               - "StorageClass : {{ sc }}"
 
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
-
         - name: Verify that the AUT (Application Under Test) is running
           include_tasks: "/utils/common/status_app_pod.yml"
           vars:
             app_ns: "{{ a_ns }}"
-            app_label: "{{ a_label }}" 
+            app_label: "{{ a_label }}"
             delay: 5
-            retries: 60 
+            retries: 60
 
-        - name: Get application pod name 
+        - name: Get application pod name
           shell: >
-            kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers
+            set -o pipefail &&
+            kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers \
             -o=custom-columns=NAME:".metadata.name"
           args:
             executable: /bin/bash
-          register: pod_app_name    
+          register: pod_app_name
 
         - name: Create some test data
           include: "{{ data_consistency_util_path }}"
           vars:
             status: 'LOAD'
             ns: "{{ a_ns }}"
-            pod_name: "{{ pod_app_name.stdout }}"  
-          when: data_persistence != ''    
+            pod_name: "{{ pod_app_name.stdout }}"
+          when: data_persistence | length > 0
 
         ## STORAGE FAULT INJECTION 
-
         - include: "{{ chaos_util_path }}"
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
-
         - name: Verify AUT liveness post fault-injection
           include_tasks: "/utils/common/status_app_pod.yml"
           vars:
             app_ns: "{{ a_ns }}"
-            app_label: "{{ a_label }}" 
+            app_label: "{{ a_label }}"
             delay: 5
-            retries: 60 
-            
-        - include_tasks: /utils/common/application_liveness_check.yml
-          when: liveness_label != ''
-    
-        - name: Verify application data persistence  
+            retries: 60
+
+        - name: Including post chaos liveness check
+          include_tasks: /utils/common/application_liveness_check.yml
+          when: liveness_label | length > 0
+
+        - name: Verify application data persistence
           include: "{{ data_consistency_util_path }}"
           vars:
             status: 'VERIFY'
             ns: "{{ a_ns }}"
             label: "{{ a_label }}"
             pod_name: "{{ pod_app_name.stdout }}"
-          when: data_persistence != ''      
-          
-        - set_fact:
+          when: data_persistence | length > 0
+
+        - name: Setting the flag pass if all tasks are successfully exit
+          set_fact:
             flag: "Pass"
 
-      rescue: 
-        - set_fact: 
+      rescue:
+        - name: Setting the flag fail if any task failed
+          set_fact:
             flag: "Fail"
 
-      always: 
+      always:
 
         ## RECORD END-OF-TEST IN CHAOS RESULT CR
- 
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'

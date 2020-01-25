@@ -72,5 +72,4 @@ spec:
       volumes:
         - name: parameters
           configMap:
-            name: openebs-target-network-delay
-            
+            name: openebs-target-network-delay            
