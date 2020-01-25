@@ -5,6 +5,7 @@
   vars:
     c_experiment: "container-kill"
     c_container: "{{ lookup('env','TARGET_CONTAINER') }}"
+    ramp_time: "{{ lookup('env','RAMP_TIME') }}"
     c_lib: "{{ lookup('env','LIB') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_label: "{{ lookup('env','APP_LABEL') }}"
