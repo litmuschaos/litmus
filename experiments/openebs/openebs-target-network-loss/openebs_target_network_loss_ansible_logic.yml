@@ -152,4 +152,3 @@
           vars:
             status: 'EOT'
             namespace: "{{ a_ns }}"
-            
