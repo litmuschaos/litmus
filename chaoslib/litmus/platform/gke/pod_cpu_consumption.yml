@@ -45,6 +45,10 @@
     - set_fact:
         pod_ds_app: "{{ po_ds_app | json_query('resources[0].metadata.name') }}"
 
+    - name: Wait for the specified ramp time before injecting chaos
+      wait_for: timeout="{{ ramp_time }}"
+      when: "ramp_time is defined and ramp_time != ''"
+
     ## GETTING THE NODE CPU CAPACITY
     - name: Getting the node cpu capacity
       k8s_facts:
