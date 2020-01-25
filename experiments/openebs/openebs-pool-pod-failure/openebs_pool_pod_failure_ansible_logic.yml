@@ -8,7 +8,6 @@
     a_pvc: "{{ lookup('env','APP_PVC') }}"
     c_duration: 600
     c_interval: 5
-    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     c_experiment: openebs-pool-pod-failure
     c_force: "{{ lookup('env','FORCE') }}"
     c_iterations: "{{ lookup('env','CHAOS_ITERATIONS') }}"
@@ -52,9 +51,9 @@
 
             - name: Construct chaos result name (experiment_name)
               set_fact:
-                c_result: "{{ c_engine }}-{{ c_experiment }}"
+                c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
 
-          when: c_engine != ''
+          when: lookup('env','CHAOSENGINE') 
 
         ## RECORD START-OF-TEST IN LITMUS RESULT CR
 
