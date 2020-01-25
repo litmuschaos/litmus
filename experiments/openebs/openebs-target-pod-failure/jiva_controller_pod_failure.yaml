@@ -9,7 +9,7 @@
 
 - name: Get the resourceVersion of the target deploy before fault injection
   shell: >
-    kubectl get deploy {{ jiva_controller_deploy }} -n {{ a_ns }} 
+    kubectl get deployment {{ jiva_controller_deploy }} -n {{ a_ns }} 
     -o=custom-columns=NAME:".metadata.resourceVersion" --no-headers
   args:
     executable: /bin/bash
@@ -74,7 +74,7 @@
 
 - name: Get the resourceVersion of the target deploy after fault injection
   shell: >
-    kubectl get deploy {{ jiva_controller_deploy }} -n {{ a_ns }}
+    kubectl get deployment {{ jiva_controller_deploy }} -n {{ a_ns }}
     -o=custom-columns=NAME:".metadata.resourceVersion" --no-headers 
   args:
     executable: /bin/bash

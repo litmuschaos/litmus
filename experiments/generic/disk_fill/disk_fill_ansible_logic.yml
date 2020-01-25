@@ -8,6 +8,7 @@
     c_container: "{{ lookup('env','TARGET_CONTAINER') }}"
     c_experiment: "disk-fill"
     c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
+    ramp_time: "{{ lookup('env','RAMP_TIME') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_label: "{{ lookup('env','APP_LABEL') }}"
     fill_percentage: "{{ lookup('env','FILL_PERCENTAGE') }}"

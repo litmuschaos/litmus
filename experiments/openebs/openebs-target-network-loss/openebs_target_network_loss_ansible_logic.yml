@@ -29,7 +29,7 @@
 
         ## DERIVE THE APP STORAGE CLASS AND CHAOS UTIL TO USE
 
-        - include: test_prerequisites.yml
+        - include: openebs_target_network_loss_ansible_prerequisites.yml
 
         - include_vars:
             file: data_persistence.yml
@@ -90,14 +90,14 @@
             -o=custom-columns=NAME:".metadata.name"
           args:
             executable: /bin/bash
-          register: old_app_pod
+          register: pod_app_name
 
         - name: Create some test data
           include: "{{ data_consistency_util_path }}"
           vars:
             status: 'LOAD'
             ns: "{{ a_ns }}"
-            pod_name: "{{ old_app_pod.stdout }}"
+            pod_name: "{{ pod_app_name.stdout }}"
           when: data_persistence != ''
 
         ## STORAGE FAULT INJECTION
@@ -106,37 +106,26 @@
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
-        # including chaoslib kill-random-pod
-        - name: Kill the application pod
-          include_tasks: /chaoslib/litmus/kill_random_pod.yml
+        - name: Verify AUT liveness post fault-injection
+          include_tasks: "/utils/common/status_app_pod.yml"
           vars:
             app_ns: "{{ a_ns }}"
-            app_pod_name: "{{ old_app_pod.stdout }}"
-
-        - name: Verify if the application pod is deleted
-          shell: >
-            kubectl get pods -n {{ a_ns }}
-          args:
-            executable: /bin/bash
-          register: podstatus
-          until: '"{{ old_app_pod.stdout }}" not in podstatus.stdout'
-          retries: 2
-          delay: 150
-
-        - name: Obtain the newly created pod name for application
-          shell: >
-            kubectl get pods -n {{ a_ns }} -l {{ a_label }} -o jsonpath='{.items[].metadata.name}'
-          args:
-            executable: /bin/bash
-          register: newpod_name
-
-        - name: Checking application pod is not in running state
-          shell: kubectl get pods -n {{ a_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ newpod_name.stdout }}")].status.containerStatuses[*].state.waiting.reason}'
-          register: result
-          until: "((result.stdout.split()|unique)|length) == 1 and 'Running' not in result.stdout"
-          delay: 2
-          retries: 150
-
+            app_label: "{{ a_label }}" 
+            delay: 5
+            retries: 60 
+            
+        - include_tasks: /utils/common/application_liveness_check.yml
+          when: liveness_label != ''
+    
+        - name: Verify application data persistence  
+          include: "{{ data_consistency_util_path }}"
+          vars:
+            status: 'VERIFY'
+            ns: "{{ a_ns }}"
+            label: "{{ a_label }}"
+            pod_name: "{{ pod_app_name.stdout }}"
+          when: data_persistence != ''      
+          
         - set_fact:
             flag: "Pass"
 
@@ -152,4 +141,3 @@
           vars:
             status: 'EOT'
             namespace: "{{ a_ns }}"
-            

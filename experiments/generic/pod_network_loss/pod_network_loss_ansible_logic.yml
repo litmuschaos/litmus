@@ -5,6 +5,7 @@
   vars:
     c_experiment: "pod-network-loss"
     c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
+    ramp_time: "{{ lookup('env','RAMP_TIME') }}"
     c_container: "{{ lookup('env','TARGET_CONTAINER') }}"
     n_packet_loss: "{{ lookup('env','NETWORK_PACKET_LOSS_PERCENTAGE') }}"
     n_interface: "{{ lookup('env','NETWORK_INTERFACE') }}"

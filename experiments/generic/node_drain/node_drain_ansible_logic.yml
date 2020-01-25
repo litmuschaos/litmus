@@ -7,6 +7,7 @@
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_node: "{{ lookup('env','APP_NODE') }}"
     c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
+    ramp_time: "{{ lookup('env','RAMP_TIME') }}"
     c_experiment: "node-drain"
     liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
     liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"

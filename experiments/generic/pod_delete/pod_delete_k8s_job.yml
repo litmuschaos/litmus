@@ -39,6 +39,10 @@ spec:
           - name: CHAOS_INTERVAL
             value: '5'
 
+            ## Period to wait before injection of chaos  
+          - name: RAMP_TIME
+            value: ''
+
           - name: FORCE
             value: 'true'
 
