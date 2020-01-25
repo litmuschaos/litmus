@@ -84,6 +84,10 @@
         app_ns: "{{ a_ns }}"  
         delay: 1
         retries: 60
+
+    - name: Wait for the specified ramp time before injecting chaos
+      wait_for: timeout="{{ ramp_time }}"
+      when: "ramp_time is defined and ramp_time != ''"
   
     - name: Record the disk-fill pod on app node
       shell: >
