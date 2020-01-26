@@ -5,23 +5,26 @@ metadata:
   name: openebs-pool-network-loss
 data:
   parameters.yml: |
-
+      blocksize: 4k
+      blockcount: 1024
+      testfile: difiletest5
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
   generateName: openebs-pool-network-loss- 
+  namespace: litmus
 spec:
   template:
     metadata:
       labels:
         name: openebs-target-network-loss
     spec:
-      serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
+      serviceAccountName: litmus
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: litmuschaos/ansible-runner:ci
+        image: imrajdas/ansible-runner:test
         imagePullPolicy: Always
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
@@ -32,19 +35,16 @@ spec:
             value: 'openebs'
  
           # # provide application namespace
-          # - name: APP_NAMESPACE
-          #   value: ''
+          - name: APP_NAMESPACE
+            value: 'default'
 
-          #  # provide application label
-          # - name: APP_LABEL
-          #   value: ''
-
-          # - name: FORCE
-          #   value: 'true'
+           # provide application label
+          - name: APP_LABEL
+            value: 'app=busybox'
 
            # provide application pvc
           - name: APP_PVC
-            value: ''
+            value: 'demo-vol1-claim'
 
            # only pumba supported
            # For pumba image use : gaiaadm/pumba:0.6.5
@@ -54,7 +54,7 @@ spec:
           - name: NETWORK_PACKET_LOSS_PERCENTAGE
             value: '100' # in percentage
 
-          - name: CHAOS_DURATION
+          - name: TOTAL_CHAOS_DURATION
             value: '240000' # in milliseconds
 
           - name: LIVENESS_APP_LABEL
@@ -63,8 +63,8 @@ spec:
           - name: LIVENESS_APP_NAMESPACE
             value: ''
 
-          # - name: DATA_PERSISTENCE
-          #   value: ''
+          - name: DATA_PERSISTENCE
+            value: 'busybox'
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/openebs/openebs-pool-network-loss/openebs_pool_network_loss_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
@@ -75,5 +75,5 @@ spec:
       volumes:
         - name: parameters
           configMap:
-            name: openebs-target-network-loss
+            name: openebs-pool-network-loss
             

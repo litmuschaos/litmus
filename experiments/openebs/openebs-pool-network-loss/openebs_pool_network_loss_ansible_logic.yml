@@ -7,7 +7,6 @@
     a_pvc: "{{ lookup('env','APP_PVC') }}"
     c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
     c_experiment: "openebs-pool-network-loss"
-    # c_force: "{{ lookup('env','FORCE') }}"
     c_interval: "5"
     data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
     lib_image: "{{ lookup('env','LIB_IMAGE') }}"
@@ -17,11 +16,13 @@
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
 
   vars_files:
-    - /tmp/parameters.yml
+    - /mnt/parameters.yml
     - /experiments/openebs/openebs_components.yml
   
   tasks:
     - block:
+      - include_tasks: /utils/runtime/create_testname.yml  
+
       - name: Identify the chaos util to be invoked 
         template:
           src: chaosutil.j2
@@ -38,7 +39,7 @@
       
       - name: Including data persistence util to check data persistency
         include_vars:
-          file: chaosutil.yml
+          file: data_persistence.yml
       
       # GENERATE EXPERIMENT RESULT NAME AND CREATE CHAOS RESULT RESOURCE
       - block:
@@ -60,15 +61,41 @@
             - "Namespace    : {{ a_ns }}"
             - "Label        : {{ a_label }}"
             - "PVC          : {{ a_pvc }}"
-            - "StorageClass : {{ sc }}"
+            # - "StorageClass : {{ sc }}"
+            
+      # Pre req
+      - block:
+        - name: Derive PV name from PVC to query storage engine type (openebs)
+          shell: >
+            kubectl get pvc {{ a_pvc }} -n {{ a_ns }}
+            --no-headers -o custom-columns=:spec.volumeName
+          args:
+            executable: /bin/bash
+          register: pv
     
-      # PRE_CHAOS CHECKS
+        - name: Record pv name 
+          set_fact:
+            pv_name: "{{ pv.stdout }}"
+    
+        - name: Check for presence & value of cas type annotation
+          shell: >
+            kubectl get pv {{ pv_name }} --no-headers
+            -o jsonpath="{.metadata.annotations.openebs\\.io/cas-type}"
+          args:
+            executable: /bin/bash
+          register: openebs_stg_engine
+    
+        - name: Record the storage engine name
+          set_fact:
+            stg_engine: "{{ openebs_stg_engine.stdout }}"
+    
+      # # PRE_CHAOS CHECKS
       - block:
         - name: Verify that Cstor pool is healthy
           shell: >
             kubectl get csp -n {{ openebs_ns }} -o jsonpath='{.items[*].status.phase}'
           register: csp_status
-          until: "((csp_status.stdout_lines | unique) | length) == 1 and 'Healthy' in csp_status.stdout)"
+          until: "((csp_status.stdout_lines | unique) | length) == 1 and 'Healthy' in csp_status.stdout"
           delay: 5
           retries: 60
 
@@ -88,12 +115,12 @@
           register: app_pod
 
         - name: Create some test data
-          include: "{{ data_consistency_util_path }}"
+          include: "{{ consistencyutil }}"
           vars:
             status: 'LOAD'
             ns: "{{ a_ns }}"
             pod_name: "{{ app_pod.stdout }}"
-          when: data_persistence != ''
+          when: data_persistence | length > 0
 
       # INJECTING CHAOS 
       - name: Injecting the chaos
@@ -105,7 +132,7 @@
           shell: >
             kubectl get csp -n {{ openebs_ns }} -o jsonpath='{.items[*].status.phase}'
           register: csp_status
-          until: "((csp_status.stdout_lines | unique) | length) == 1 and 'Healthy' in csp_status.stdout)"
+          until: "((csp_status.stdout_lines | unique) | length) == 1 and 'Healthy' in csp_status.stdout"
           delay: 5
           retries: 60
 
@@ -125,15 +152,15 @@
           register: app_pod
 
         - name: Create some test data
-          include: "{{ data_consistency_util_path }}"
+          include: "{{ consistencyutil }}"
           vars:
             status: 'LOAD'
             ns: "{{ a_ns }}"
             pod_name: "{{ app_pod.stdout }}"
-          when: data_persistence != ''
+          when: data_persistence | length > 0
 
         - set_fact:
-          flag: "Pass"
+            flag: "Pass"
           
       rescue:
         - set_fact:
