@@ -1,0 +1,174 @@
+- hosts: localhost
+  connection: local
+
+  vars:
+    a_label: "{{ lookup('env','APP_LABEL') }}"
+    a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+    a_pvc: "{{ lookup('env','APP_PVC') }}"
+    c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
+    c_experiment: "openebs-pool-network-delay"
+    c_interval: "5"
+    data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
+    lib_image: "{{ lookup('env','LIB_IMAGE') }}"
+    liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
+    liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
+    n_delay: "{{ lookup('env','NETWORK_DELAY') }}" 
+    openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
+
+  vars_files:
+    - /mnt/parameters.yml
+    - /experiments/openebs/openebs_components.yml
+  
+  tasks:
+    - block:
+      - include_tasks: /utils/runtime/create_testname.yml  
+
+      - name: Identify the chaos util to be invoked 
+        template:
+          src: chaosutil.j2
+          dest: chaosutil.yml
+
+      - name: Identify the data consistency util to be invoked
+        template:
+          src: data_persistence.j2
+          dest: data_persistence.yml  
+
+      - name: Including chaos util for running the experiment
+        include_vars:
+          file: chaosutil.yml
+      
+      - name: Including data persistence util to check data persistency
+        include_vars:
+          file: data_persistence.yml
+      
+      # GENERATE EXPERIMENT RESULT NAME AND CREATE CHAOS RESULT RESOURCE
+      - block:
+          - name: Construct chaos result name (experiment_name)
+            set_fact:
+              c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
+            when: lookup('env','CHAOSENGINE')
+
+          - include_tasks: /utils/runtime/update_chaos_result_resource.yml
+            vars:
+              status: 'SOT'
+              namespace: "{{ a_ns }}"
+
+      # DISPLAY APP INFORMATION
+      - name: Display the app information passed via the test job
+        debug:
+          msg:
+            - "The application info is as follows:"
+            - "Namespace    : {{ a_ns }}"
+            - "Label        : {{ a_label }}"
+            - "PVC          : {{ a_pvc }}"
+            # - "StorageClass : {{ sc }}"
+            
+      # Pre req
+      - block:
+        - name: Derive PV name from PVC to query storage engine type (openebs)
+          shell: >
+            kubectl get pvc {{ a_pvc }} -n {{ a_ns }}
+            --no-headers -o custom-columns=:spec.volumeName
+          args:
+            executable: /bin/bash
+          register: pv
+    
+        - name: Record pv name 
+          set_fact:
+            pv_name: "{{ pv.stdout }}"
+    
+        - name: Check for presence & value of cas type annotation
+          shell: >
+            kubectl get pv {{ pv_name }} --no-headers
+            -o jsonpath="{.metadata.annotations.openebs\\.io/cas-type}"
+          args:
+            executable: /bin/bash
+          register: openebs_stg_engine
+    
+        - name: Record the storage engine name
+          set_fact:
+            stg_engine: "{{ openebs_stg_engine.stdout }}"
+    
+      # # PRE_CHAOS CHECKS
+      - block:
+        - name: Verify that Cstor pool is healthy
+          shell: >
+            kubectl get csp -n {{ openebs_ns }} -o jsonpath='{.items[*].status.phase}'
+          register: csp_status
+          until: "((csp_status.stdout_lines | unique) | length) == 1 and 'Healthy' in csp_status.stdout"
+          delay: 5
+          retries: 60
+
+        - name: Verify that the AUT (Application Under Test) is running
+          include_tasks: "/utils/common/status_app_pod.yml"
+          vars:
+            app_ns: "{{ a_ns }}"
+            app_label: "{{ a_label }}"      
+            delay: 5
+            retries: 60
+
+        - name: Get application pod name
+          shell: >
+            kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers -o=custom-columns=NAME:".metadata.name"
+          args:
+            executable: /bin/bash
+          register: app_pod
+
+        - name: Create some test data
+          include: "{{ consistencyutil }}"
+          vars:
+            status: 'LOAD'
+            ns: "{{ a_ns }}"
+            pod_name: "{{ app_pod.stdout }}"
+          when: data_persistence | length > 0
+
+      # INJECTING CHAOS 
+      - name: Injecting the chaos
+        include_tasks: "{{ c_util }}"
+
+      # POST CHAOS CHECKS
+      - block:
+        - name: Verify that Cstor pool is healthy
+          shell: >
+            kubectl get csp -n {{ openebs_ns }} -o jsonpath='{.items[*].status.phase}'
+          register: csp_status
+          until: "((csp_status.stdout_lines | unique) | length) == 1 and 'Healthy' in csp_status.stdout"
+          delay: 5
+          retries: 60
+
+        - name: Verify that the AUT (Application Under Test) is running
+          include_tasks: "/utils/common/status_app_pod.yml"
+          vars:
+            app_ns: "{{ a_ns }}"
+            app_label: "{{ a_label }}"      
+            delay: 5
+            retries: 60
+
+        - name: Get application pod name
+          shell: >
+            kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers -o=custom-columns=NAME:".metadata.name"
+          args:
+            executable: /bin/bash
+          register: app_pod
+
+        - name: Create some test data
+          include: "{{ consistencyutil }}"
+          vars:
+            status: 'LOAD'
+            ns: "{{ a_ns }}"
+            pod_name: "{{ app_pod.stdout }}"
+          when: data_persistence | length > 0
+
+        - set_fact:
+            flag: "Pass"
+          
+      rescue:
+        - set_fact:
+            flag: "Fail"
+
+      always:
+        ## RECORD END-OF-TEST IN CHAOS RESULT CR
+        - include_tasks: /utils/runtime/update_chaos_result_resource.yml
+          vars:
+            status: 'EOT'
+            namespace: "{{ a_ns }}"
