@@ -5,4 +5,3 @@
   until: initcheck.stdout == "2"
   delay: 5
   retries: 180
-

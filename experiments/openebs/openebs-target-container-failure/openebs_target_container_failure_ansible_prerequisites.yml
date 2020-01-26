@@ -33,4 +33,3 @@
   template:
     src: data_persistence.j2
     dest: data_persistence.yml
-    

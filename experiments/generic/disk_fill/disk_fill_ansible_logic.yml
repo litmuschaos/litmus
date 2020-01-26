@@ -91,11 +91,11 @@
           when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
         - set_fact:
-            flag: "pass"
+            flag: "Pass"
 
       rescue: 
         - set_fact: 
-            flag: "fail"
+            flag: "Fail"
 
       always: 
 

@@ -89,4 +89,3 @@
 - name: Set the kafka broker to be subjected to chaos
   set_fact: 
     liveness_topic_leader: "{{ leader_broker.stdout }}"
-

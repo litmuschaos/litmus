@@ -80,7 +80,7 @@
 
         ## STORAGE FAULT INJECTION 
 
-        - include_tasks: /chaoslib/litmus/cordon_drain_node.yaml
+        - include_tasks: /chaoslib/litmus/cordon_drain_node.yml
           vars:
             action: "drain"      
             app_ns: "{{ a_ns }}"
@@ -123,7 +123,7 @@
       always: 
 
         - name: Uncordon the application node
-          include_tasks: "/chaoslib/litmus/cordon_drain_node.yaml"
+          include_tasks: "/chaoslib/litmus/cordon_drain_node.yml"
           vars:
             action: "uncordon"    
             app_node: "{{ a_node }}"  
@@ -133,4 +133,3 @@
           vars:
             status: 'EOT'
             namespace: "{{ a_ns }}"
-      

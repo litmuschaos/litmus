@@ -100,4 +100,3 @@ spec:
         - name: parameters 
           secret:
             secretName: %SECRET_NAME%
-

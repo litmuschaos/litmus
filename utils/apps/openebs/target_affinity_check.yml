@@ -10,7 +10,6 @@
 - debug:
     msg: "{{ app_node | json_query('resources[*].spec.nodeName')}}"
 
-
 - name: Derive PV from application PVC
   k8s_facts:
     kind: PersistentVolumeClaim 

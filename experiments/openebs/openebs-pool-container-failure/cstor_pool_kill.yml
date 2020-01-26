@@ -1,3 +1,2 @@
 - include: cstor_kill_and_verify_pool.yml
-  loop: "{{ range(0, chaos_iterations|int, 1)|list }}"  
-
+  loop: "{{ range(0, chaos_iterations|int, 1)|list }}"

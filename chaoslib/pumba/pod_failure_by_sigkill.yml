@@ -183,4 +183,3 @@
     - fail:
         msg: "pod_failure_by_sigkill lib failed"
       when: true
-        

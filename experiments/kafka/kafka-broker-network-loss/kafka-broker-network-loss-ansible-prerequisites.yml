@@ -25,7 +25,4 @@
         kafka_broker_util: "/utils/apps/kafka/kafka_select_broker.yml"
       when: kafka_stream is not defined or kafka_stream == '' or kafka_stream == 'disabled'
 
-  when: kafka_broker is not defined or kafka_broker == ''  
-
-    
-
+  when: kafka_broker is not defined or kafka_broker == ''

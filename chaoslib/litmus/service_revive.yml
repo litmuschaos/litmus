@@ -1,16 +1,16 @@
 - name: Get ConfigMap data
   shell: |
-    kubectl get configmap -n "{{ a_ns }}" "{{s_name}}" -o jsonpath='{.data.service\.yaml}'
+    kubectl get configmap -n "{{ a_ns }}" "{{s_name}}" -o jsonpath='{.data.service\.yml}'
   args:
     executable: /bin/bash
-  register: service_yaml
+  register: service_yml
 
 - name: Copy service yaml to file
-  local_action: copy content="{{ service_yaml.stdout }}" dest="/tmp/service.yaml"
+  local_action: copy content="{{ service_yml.stdout }}" dest="/tmp/service.yml"
 
 - name: Recreate the Service object
   shell: |
-    kubectl apply -f /tmp/service.yaml
+    kubectl apply -f /tmp/service.yml
   args:
     executable: /bin/bash
 

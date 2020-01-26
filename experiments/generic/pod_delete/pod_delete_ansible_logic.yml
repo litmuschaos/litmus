@@ -67,11 +67,11 @@
             retries: 60        
 
         - set_fact:
-            flag: "pass"
+            flag: "Pass"
 
       rescue: 
         - set_fact: 
-            flag: "fail"
+            flag: "Fail"
 
       always: 
  
@@ -80,4 +80,3 @@
           vars:
             status: 'EOT'
             namespace: "{{ a_ns }}"
-

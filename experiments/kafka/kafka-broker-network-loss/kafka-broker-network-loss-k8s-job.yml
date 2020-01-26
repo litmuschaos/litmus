@@ -99,4 +99,3 @@ spec:
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/kafka/kafka-broker-network-loss/kafka-broker-network-loss-ansible-logic.yml -vv -i /etc/ansible/hosts; exit 0"]
-
