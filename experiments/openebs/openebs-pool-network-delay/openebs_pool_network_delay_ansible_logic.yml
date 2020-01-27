@@ -21,26 +21,11 @@
   
   tasks:
     - block:
+
       - include_tasks: /utils/runtime/create_testname.yml  
 
-      - name: Identify the chaos util to be invoked 
-        template:
-          src: chaosutil.j2
-          dest: chaosutil.yml
+      - include_tasks: openebs_pool_network_delay_ansible_prerequisites.yml
 
-      - name: Identify the data consistency util to be invoked
-        template:
-          src: data_persistence.j2
-          dest: data_persistence.yml  
-
-      - name: Including chaos util for running the experiment
-        include_vars:
-          file: chaosutil.yml
-      
-      - name: Including data persistence util to check data persistency
-        include_vars:
-          file: data_persistence.yml
-      
       # GENERATE EXPERIMENT RESULT NAME AND CREATE CHAOS RESULT RESOURCE
       - block:
           - name: Construct chaos result name (experiment_name)
@@ -61,7 +46,6 @@
             - "Namespace    : {{ a_ns }}"
             - "Label        : {{ a_label }}"
             - "PVC          : {{ a_pvc }}"
-            # - "StorageClass : {{ sc }}"
             
       # Pre req
       - block:
@@ -144,27 +128,21 @@
             delay: 5
             retries: 60
 
-        - name: Get application pod name
-          shell: >
-            kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers -o=custom-columns=NAME:".metadata.name"
-          args:
-            executable: /bin/bash
-          register: app_pod
-
-        - name: Create some test data
-          include: "{{ consistencyutil }}"
+        - name: Verify application data persistence  
+          include: "{{ data_consistency_util_path }}"
           vars:
-            status: 'LOAD'
+            status: 'VERIFY'
             ns: "{{ a_ns }}"
+            label: "{{ a_label }}"
             pod_name: "{{ app_pod.stdout }}"
-          when: data_persistence | length > 0
+          when: data_persistence | length > 0   
 
         - set_fact:
-            flag: "Pass"
+            flag: "pass"
           
       rescue:
         - set_fact:
-            flag: "Fail"
+            flag: "fail"
 
       always:
         ## RECORD END-OF-TEST IN CHAOS RESULT CR
