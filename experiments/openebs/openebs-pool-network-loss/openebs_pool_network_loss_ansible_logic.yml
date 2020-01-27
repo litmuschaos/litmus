@@ -23,24 +23,8 @@
     - block:
       - include_tasks: /utils/runtime/create_testname.yml  
 
-      - name: Identify the chaos util to be invoked 
-        template:
-          src: chaosutil.j2
-          dest: chaosutil.yml
+      - include: openebs_pool_network_loss_ansible_prerequisites.yml
 
-      - name: Identify the data consistency util to be invoked
-        template:
-          src: data_persistence.j2
-          dest: data_persistence.yml  
-
-      - name: Including chaos util for running the experiment
-        include_vars:
-          file: chaosutil.yml
-      
-      - name: Including data persistence util to check data persistency
-        include_vars:
-          file: data_persistence.yml
-      
       # GENERATE EXPERIMENT RESULT NAME AND CREATE CHAOS RESULT RESOURCE
       - block:
           - name: Construct chaos result name (experiment_name)
@@ -154,7 +138,7 @@
 
         - set_fact:
             flag: "pass"
-          
+
       rescue:
         - set_fact:
             flag: "fail"

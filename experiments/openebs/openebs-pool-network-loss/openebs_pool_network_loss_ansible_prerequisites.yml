@@ -1,0 +1,17 @@
+- name: Identify the chaos util to be invoked 
+  template:
+    src: chaosutil.j2
+    dest: chaosutil.yml
+
+- name: Identify the data consistency util to be invoked
+  template:
+    src: data_persistence.j2
+    dest: data_persistence.yml  
+
+- name: Including chaos util for running the experiment
+  include_vars:
+    file: chaosutil.yml
+
+- name: Including data persistence util to check data persistency
+  include_vars:
+    file: data_persistence.yml
