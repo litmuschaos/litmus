@@ -53,10 +53,10 @@ spec:
             value: 'gaiaadm/pumba:0.6.5' 
 
           - name: NETWORK_DELAY
-            value: '60000' # in milliseconds
+            value: '6000' # in milliseconds
 
           - name: TOTAL_CHAOS_DURATION
-            value: '240000' # in milliseconds
+            value: '2400' # in milliseconds
 
           - name: LIVENESS_APP_LABEL
             value: ''

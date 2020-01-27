@@ -129,7 +129,7 @@
             retries: 60
 
         - name: Verify application data persistence  
-          include: "{{ data_consistency_util_path }}"
+          include: "{{ consistencyutil }}"
           vars:
             status: 'VERIFY'
             ns: "{{ a_ns }}"
