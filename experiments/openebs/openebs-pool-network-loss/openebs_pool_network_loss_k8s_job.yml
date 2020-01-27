@@ -18,7 +18,7 @@ spec:
   template:
     metadata:
       labels:
-        name: openebs-target-network-loss
+        name: openebs-pool-network-loss
     spec:
       serviceAccountName: litmus
       restartPolicy: Never

@@ -61,7 +61,6 @@
             - "Namespace    : {{ a_ns }}"
             - "Label        : {{ a_label }}"
             - "PVC          : {{ a_pvc }}"
-            # - "StorageClass : {{ sc }}"
             
       # Pre req
       - block:
@@ -144,27 +143,21 @@
             delay: 5
             retries: 60
 
-        - name: Get application pod name
-          shell: >
-            kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers -o=custom-columns=NAME:".metadata.name"
-          args:
-            executable: /bin/bash
-          register: app_pod
-
-        - name: Create some test data
+        - name: Verify application data persistence  
           include: "{{ consistencyutil }}"
           vars:
-            status: 'LOAD'
+            status: 'VERIFY'
             ns: "{{ a_ns }}"
+            label: "{{ a_label }}"
             pod_name: "{{ app_pod.stdout }}"
-          when: data_persistence | length > 0
+          when: data_persistence != ''      
 
         - set_fact:
-            flag: "Pass"
+            flag: "pass"
           
       rescue:
         - set_fact:
-            flag: "Fail"
+            flag: "fail"
 
       always:
         ## RECORD END-OF-TEST IN CHAOS RESULT CR
