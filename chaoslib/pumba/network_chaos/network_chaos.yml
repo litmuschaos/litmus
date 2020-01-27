@@ -63,9 +63,6 @@
       vars:
         pumba_image: "{{ lib_image }}"
 
-    - name: cat 
-      shell: cat /chaoslib/pumba/network_chaos/pumba_kube.yml
-
     - name: Setup pumba chaos infrastructure
       shell: >
         kubectl create -f /chaoslib/pumba/network_chaos/pumba_kube.yml -n {{ a_ns }}
