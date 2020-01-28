@@ -1,0 +1,92 @@
+- block:
+
+    - name: Wait for the specified ramp time before injecting chaos
+      wait_for: timeout="{{ ramp_time }}"
+      when: "ramp_time is defined and ramp_time != ''"
+
+    - name: Drain the application node
+      shell: >
+        kubectl drain {{ app_node }}
+        --ignore-daemonsets --delete-local-data  --force
+      args:
+        executable: /bin/bash
+      register: drain_result
+      until: "'cordoned' in drain_result.stdout"
+      delay: 20
+      retries: 12
+
+     # Get the rescheduled application pod name
+    - name: Get the rescheduled application pod name
+      shell: >
+        kubectl get pods -l {{ a_label }} -n {{ a_ns }} --no-headers 
+        -o custom-columns=:metadata.name | shuf -n 1
+      args:
+        executable: /bin/bash
+      register: rescheduled_pod
+
+    - name: Wait for application pod reschedule (evict)
+      shell: >
+        kubectl get pod {{ rescheduled_pod.stdout }} -n {{ app_ns }} 
+        --no-headers -o custom-columns=:spec.nodeName
+      args: 
+        executable: /bin/bash
+      register: node_after_rescheduled
+      until: "node_after_rescheduled.stdout != app_node"
+      delay: 20
+      retries: 12
+
+    - name: Wait for chaos duration {{ c_duration }}s 
+      wait_for:
+        timeout: "{{ c_duration|int }}"
+
+    - name: Verify AUT liveness post fault-injection
+      include_tasks: "/utils/common/status_app_pod.yml"
+      vars:
+        app_ns: "{{ a_ns }}"
+        app_label: "{{ a_label }}" 
+        delay: 5
+        retries: 60
+
+    # Auxiliary application health check status
+    - block:
+  
+      - include: /utils/common/status_app_pod.yml
+        vars:
+          app_ns: "{{ item.split(':')[0] }}"
+          app_label: "{{ item.split(':')[1] }}"
+          delay: 5
+          retries: 60
+        with_items:
+          - "{{ auxiliary_appinfo_list }}" 
+            
+      when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
+  
+    - name: Uncordon the application node
+      shell: >
+        kubectl uncordon {{ app_node }}
+      args:
+        executable: /bin/bash
+      register: result
+      until: "'uncordoned' in result.stdout"
+      delay: 20
+      retries: 12
+
+  rescue: 
+
+    - block: 
+    
+        - name: Uncordon the application node
+          shell: >
+            kubectl uncordon {{ app_node }}
+          args:
+            executable: /bin/bash
+          register: result
+          until: "'uncordoned' in result.stdout"
+          delay: 20
+          retries: 12
+
+      when: "drain_result is defined"
+    
+    - fail:
+        msg: "cordon_drain_node lib failed"
+      when: true
