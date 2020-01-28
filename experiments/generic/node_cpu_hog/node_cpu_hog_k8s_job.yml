@@ -2,13 +2,12 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: cpu-hog-
+  generateName: node-cpu-hog-
 spec:
   template:
     metadata:
       labels:
-        experiment: cpu-hog
-
+        experiment: node-cpu-hog
     spec:
       serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
       restartPolicy: Never
@@ -63,4 +62,4 @@ spec:
                 fieldPath: spec.serviceAccountName
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./experiments/generic/cpu_hog/cpu_hog_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
+        args: ["-c", "ansible-playbook ./experiments/generic/node_cpu_hog/node_cpu_hog_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]

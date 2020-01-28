@@ -3,7 +3,7 @@
   connection: local  
 
   vars:
-    c_experiment: "cpu-hog"
+    c_experiment: "node-cpu-hog"
     c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
     ramp_time: "{{ lookup('env','RAMP_TIME') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
@@ -16,7 +16,7 @@
 
     - block:
       
-        - include: cpu_hog_ansible_prerequisites.yml
+        - include: node_cpu_hog_ansible_prerequisites.yml
 
         - include_vars:
             file: chaosutil.yml
