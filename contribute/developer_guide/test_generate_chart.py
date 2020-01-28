@@ -59,4 +59,3 @@ def test_generate_litmusbook(jinja_template_dir, config_content, expected_file_d
         text_banner(artifact_tmpl, artifact_actual)
         result = verify_generated_artifact(artifact_tmpl, config_content, artifact_actual)
         assert result
-
