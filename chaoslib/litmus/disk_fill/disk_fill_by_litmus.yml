@@ -59,9 +59,16 @@
         executable: /bin/bash
       register: app_node
 
+    - name: Patch the engine UID
+      template:
+        src:  /chaoslib/litmus/disk_fill/disk_fill_ds.j2
+        dest: /chaoslib/litmus/disk_fill/disk_fill_ds.yml
+      vars:
+        engineUid: "{{ engine_uid }}"
+
     - name: Create the DaemonSet for Disk-Fill
       shell: >
-        kubectl apply -f /chaoslib/litmus/disk_fill/disk_fill_ds.yaml -n {{ a_ns }}
+        kubectl apply -f /chaoslib/litmus/disk_fill/disk_fill_ds.yml -n {{ a_ns }}
       args:
         executable: /bin/bash
       register: disk_fill_ds_result
@@ -150,7 +157,7 @@
 
     ## DELETING THE DAEMONSET
     - name: Deleting the Disk Fill DaemonSet
-      shell: kubectl delete -f /chaoslib/litmus/disk_fill/disk_fill_ds.yaml -n {{ a_ns }}
+      shell: kubectl delete -f /chaoslib/litmus/disk_fill/disk_fill_ds.yml -n {{ a_ns }}
       args:
         executable: /bin/bash
 
@@ -170,7 +177,7 @@
     
         - name: Deleting the Disk-fill DaemonSet
           shell: >
-            kubectl delete -f /chaoslib/litmus/disk_fill/disk_fill_ds.yaml -n {{ a_ns }}
+            kubectl delete -f /chaoslib/litmus/disk_fill/disk_fill_ds.yml -n {{ a_ns }}
           args:
             executable: /bin/bash
           when: "disk_fill_ds_result.rc == 0 "
@@ -189,5 +196,3 @@
     - fail:
         msg: "disk_fill_by_litmus lib failed"
       when: true
-
-

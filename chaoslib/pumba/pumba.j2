@@ -7,10 +7,12 @@ spec:
   selector:
     matchLabels:
       app: pumba
+      engineUID: {{ engineUid }}
   template:
     metadata:
       labels:
         app: pumba
+        engineUID: {{ engineUid }}
         com.gaiaadm.pumba: "true" # prevent pumba from killing itself
       name: pumba
     spec:

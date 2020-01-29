@@ -69,6 +69,7 @@
         dest: /chaoslib/pumba/network_chaos/pumba_kube.yml
       vars:
         pumba_image: "{{ lib_image }}"
+        engineUid: "{{ engine_uid }}"
 
     - name: Setup pumba chaos infrastructure
       shell: >
@@ -131,4 +132,3 @@
     - fail:
         msg: "network_chaos lib failed"
       when: true
-        

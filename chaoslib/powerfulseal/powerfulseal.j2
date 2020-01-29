@@ -31,11 +31,13 @@ spec:
   selector:
     matchLabels:
       name: powerfulseal
+      engineUID: {{ engineUid }}
   replicas: 1
   template:
     metadata:
       labels:
         name: powerfulseal
+        engineUID: {{ engineUid }}
     spec:
       serviceAccountName: {{ c_svc_acc }}
       terminationGracePeriodSeconds: 0

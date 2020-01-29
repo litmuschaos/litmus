@@ -6,10 +6,12 @@ spec:
   selector:
     matchLabels:
       app: disk-fill
+      engineUID: {{ engineUid }}
   template:
     metadata:
       labels:
         app: disk-fill
+        engineUID: {{ engineUid }}
       name: disk-fill
     spec:
       containers:

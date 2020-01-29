@@ -10,6 +10,7 @@
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_label: "{{ lookup('env','APP_LABEL') }}"
     lib_image: "{{ lookup('env','LIB_IMAGE') }}"
+    engine_uid: "{{ lookup('env','ENGINE_UID') }}"
 
   tasks:
     - block:
@@ -63,11 +64,11 @@
             retries: 60        
 
         - set_fact:
-            flag: "pass"
+            flag: "Pass"
 
       rescue: 
         - set_fact: 
-            flag: "fail"
+            flag: "Fail"
 
       always: 
 

@@ -3,6 +3,7 @@ kind: Pod
 metadata:
   labels:
     run: nginx
+    engineUID: {{ engineUid }}
   name: nginx
   namespace: {{ c_ns }}
 spec:

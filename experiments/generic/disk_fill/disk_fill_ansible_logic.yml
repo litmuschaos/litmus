@@ -12,7 +12,8 @@
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_label: "{{ lookup('env','APP_LABEL') }}"
     fill_percentage: "{{ lookup('env','FILL_PERCENTAGE') }}"
-    auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"  
+    auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"
+    engine_uid: "{{ lookup('env','ENGINE_UID') }}"
     
   tasks:
     - block:
