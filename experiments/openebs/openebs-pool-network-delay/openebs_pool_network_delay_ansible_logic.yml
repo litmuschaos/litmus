@@ -7,7 +7,7 @@
     a_pvc: "{{ lookup('env','APP_PVC') }}"
     c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
     c_experiment: "openebs-pool-network-delay"
-    c_interval: "5"
+    c_interval: "{{ lookup('env','CHAOS_INTERVAL') }}"
     data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
     lib_image: "{{ lookup('env','LIB_IMAGE') }}"
     liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"

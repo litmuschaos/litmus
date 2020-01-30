@@ -6,26 +6,23 @@ metadata:
   namespace: litmus
 data:
   parameters.yml: |
-      blocksize: 4k
-      blockcount: 1024
-      testfile: difiletest5
+    Refer, docs for this data
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
   generateName: openebs-pool-network-delay- 
-  namespace: litmus
 spec:
   template:
     metadata:
       labels:
         name: openebs-target-network-delay
     spec:
-      serviceAccountName: litmus
+      serviceAccountName:  %CHAOS_SERVICE_ACCOUNT%
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: imrajdas/ansible-runner:test
+        image: litmuschaos/ansible-runner:ci
         imagePullPolicy: Always
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
@@ -37,15 +34,15 @@ spec:
  
           # # provide application namespace
           - name: APP_NAMESPACE
-            value: 'default'
+            value: ''
 
            # provide application label
           - name: APP_LABEL
-            value: 'app=busybox'
+            value: ''
 
            # provide application pvc
           - name: APP_PVC
-            value: 'demo-vol1-claim'
+            value: ''
 
            # only pumba supported
            # For pumba image use : gaiaadm/pumba:0.6.5
@@ -53,10 +50,13 @@ spec:
             value: 'gaiaadm/pumba:0.6.5' 
 
           - name: NETWORK_DELAY
-            value: '6000' # in milliseconds
+            value: '60000' # in milliseconds
 
           - name: TOTAL_CHAOS_DURATION
-            value: '2400' # in milliseconds
+            value: '60000' # in milliseconds
+
+          - name: CHAOS_INTERVAL
+            value: '1000'
 
           - name: LIVENESS_APP_LABEL
             value: ''
@@ -77,4 +77,3 @@ spec:
         - name: parameters
           configMap:
             name: openebs-pool-network-delay
-            
