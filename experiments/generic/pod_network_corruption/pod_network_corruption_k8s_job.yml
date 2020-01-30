@@ -25,11 +25,11 @@ spec:
           - name: APP_NAMESPACE
             value: ''
 
-           # provide application labels
+          # provide application labels
           - name: APP_LABEL
             value: ''
 
-           # provide application kind, will be used in the future
+          # provide application kind, will be used in the future
           - name: APP_KIND
             value: ''
 
@@ -39,7 +39,7 @@ spec:
           - name: NETWORK_INTERFACE
             value: 'eth0'
 
-           # provide lib image
+          # provide lib image
           - name: LIB_IMAGE
             value: 'gaiaadm/pumba:0.6.5' 
 
@@ -48,6 +48,10 @@ spec:
 
           - name: TOTAL_CHAOS_DURATION
             value: '60000' # in ms
+
+          # Period to wait before injection of chaos in sec
+          - name: RAMP_TIME
+            value: ''
             
           - name: LIB
             value: 'pumba'

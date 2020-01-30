@@ -27,16 +27,22 @@ spec:
           - name: APP_LABEL
             value: ''
 
-           # provide lib image
+          # LIB_IMAGE can be - gaiaadm/pumba:0.4.8, gprasath/crictl:ci
+          # For pumba image use : gaiaadm/pumba:0.4.8
+          # For containerd image use : gprasath/crictl:ci
           - name: LIB_IMAGE  
             value: 'gaiaadm/pumba:0.4.8'
             
-          # provide lib - It is only supports pumba
+          # provide lib - It supports pumba and containerd
           - name: LIB 
             value: 'pumba'
 
-           # provide target container name
+          # provide target container name
           - name: TARGET_CONTAINER
+            value: ''
+
+          # Period to wait before injection of chaos in sec 
+          - name: RAMP_TIME
             value: ''
 
           # provide chaosengine name
