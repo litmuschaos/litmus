@@ -49,7 +49,7 @@
                 
       # PRE_CHAOS CHECKS
       - block:
-        - name: Verify that Cstor pool is healthy
+        - name: Verify that cStor pool is healthy
           shell: >
             kubectl get csp -n {{ openebs_ns }} -o jsonpath='{.items[*].status.phase}'
           register: csp_status
@@ -86,7 +86,7 @@
 
       # POST CHAOS CHECKS
       - block:
-        - name: Verify that Cstor pool is healthy
+        - name: Verify that cStor pool is healthy
           shell: >
             kubectl get csp -n {{ openebs_ns }} -o jsonpath='{.items[*].status.phase}'
           register: csp_status
