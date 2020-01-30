@@ -46,34 +46,8 @@
             - "Namespace    : {{ a_ns }}"
             - "Label        : {{ a_label }}"
             - "PVC          : {{ a_pvc }}"
-            
-      # Pre req
-      - block:
-        - name: Derive PV name from PVC to query storage engine type (openebs)
-          shell: >
-            kubectl get pvc {{ a_pvc }} -n {{ a_ns }}
-            --no-headers -o custom-columns=:spec.volumeName
-          args:
-            executable: /bin/bash
-          register: pv
-    
-        - name: Record pv name 
-          set_fact:
-            pv_name: "{{ pv.stdout }}"
-    
-        - name: Check for presence & value of cas type annotation
-          shell: >
-            kubectl get pv {{ pv_name }} --no-headers
-            -o jsonpath="{.metadata.annotations.openebs\\.io/cas-type}"
-          args:
-            executable: /bin/bash
-          register: openebs_stg_engine
-    
-        - name: Record the storage engine name
-          set_fact:
-            stg_engine: "{{ openebs_stg_engine.stdout }}"
-    
-      # # PRE_CHAOS CHECKS
+                
+      # PRE_CHAOS CHECKS
       - block:
         - name: Verify that Cstor pool is healthy
           shell: >
@@ -138,11 +112,11 @@
           when: data_persistence | length > 0   
 
         - set_fact:
-            flag: "pass"
+            flag: "Pass"
           
       rescue:
         - set_fact:
-            flag: "fail"
+            flag: "Fail"
 
       always:
         ## RECORD END-OF-TEST IN CHAOS RESULT CR
