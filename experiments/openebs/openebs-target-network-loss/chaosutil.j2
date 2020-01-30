@@ -1,7 +1,7 @@
 {% if stg_prov is defined and stg_prov == 'openebs.io/provisioner-iscsi' %}
   {% if stg_engine is defined and stg_engine == 'cstor' %}
-    chaosutil: /experiments/openebs/openebs-target-network-loss/cstor_target_network_delay.yaml
+    chaosutil: /experiments/openebs/openebs-target-network-loss/cstor_target_network_loss.yaml
   {% else %}
-    chaosutil: /experiments/openebs/openebs-target-network-loss/jiva_controller_network_delay.yaml
+    chaosutil: /experiments/openebs/openebs-target-network-loss/jiva_controller_network_loss.yaml
   {% endif %}
 {% endif %}

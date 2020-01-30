@@ -1,3 +1,7 @@
+- name: Wait for the specified ramp time before injecting chaos
+  wait_for: timeout="{{ ramp_time }}"
+  when: "ramp_time is defined and ramp_time != ''"
+
 - name: Detaching the disk
   shell: gcloud compute instances detach-disk {{ node_name }} --disk {{ disk_name }} --zone {{ zone_name }}
 

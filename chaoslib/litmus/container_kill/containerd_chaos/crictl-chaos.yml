@@ -41,8 +41,9 @@
 
         - name: Record application pod name
           set_fact:
-            app_pod: "{{ pod_name.stdout }}"     
-      when: app_pod is undefined
+            app_pod: "{{ pod_name.stdout }}"
+
+      when: "app_pod is not defined or app_pod == ''"
 
     - name: Identify the node where application is running
       shell: >
@@ -80,7 +81,7 @@
         set_fact:
           app_container: "{{ container.stdout }}"
 
-      when: app_container is undefined
+      when: "app_container is not defined or app_container == ''"
 
     - name: Obtain the pod ID through Pod name
       shell: >

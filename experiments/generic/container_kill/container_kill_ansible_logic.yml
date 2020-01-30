@@ -5,6 +5,7 @@
   vars:
     c_experiment: "container-kill"
     c_container: "{{ lookup('env','TARGET_CONTAINER') }}"
+    ramp_time: "{{ lookup('env','RAMP_TIME') }}"
     c_lib: "{{ lookup('env','LIB') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_label: "{{ lookup('env','APP_LABEL') }}"
@@ -50,7 +51,6 @@
             namespace: "{{ a_ns }}"
             label: "{{ a_label }}"
             app_container: "{{ c_container }}"
-            action: "killapp"
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
@@ -70,13 +70,6 @@
             flag: "fail"
 
       always: 
-
-        - include_tasks: "{{ c_util }}"
-          vars:
-            namespace: "{{ a_ns }}"
-            label: "{{ a_label }}"
-            app_container: ""
-            action: "deletepumba"
 
         ## RECORD END-OF-TEST IN LITMUSCHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
