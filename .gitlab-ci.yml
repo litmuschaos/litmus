@@ -3,6 +3,7 @@ stages:
   - litmusImageBuild
   - litmusPythonTest
   - litmusAnsibleTest
+  - baseline
   - litmusImagePush
 
 Build Litmus Image:
