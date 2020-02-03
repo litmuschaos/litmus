@@ -8,6 +8,8 @@ metadata:
   version: {{ version }} 
 spec:
   definition:
+    scope: {{ scope }}
+    permissions: {{ permissions }}
     image: "litmuschaos/ansible-runner:ci"
     args:
     - -c
@@ -16,10 +18,12 @@ spec:
     - /bin/bash
     env:
     - name: ANSIBLE_STDOUT_CALLBACK
-      value: default
+      value: 'default'
     - name: TOTAL_CHAOS_DURATION
-      value: "" 
+      value: '' 
     - name: LIB
-      value: ""
+      value: ''
+    - name: RAMP_TIME
+      value: ''
     labels:
       experiment: {{ name }} 
