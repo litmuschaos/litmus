@@ -80,9 +80,8 @@
 
         ## STORAGE FAULT INJECTION 
 
-        - include_tasks: /chaoslib/litmus/cordon_drain_node.yaml
-          vars:
-            action: "drain"      
+        - include_tasks: /chaoslib/litmus/cordon_drain_node.yml
+          vars: 
             app_ns: "{{ a_ns }}"
             app_node: "{{ a_node }}"
 
@@ -122,15 +121,8 @@
 
       always: 
 
-        - name: Uncordon the application node
-          include_tasks: "/chaoslib/litmus/cordon_drain_node.yaml"
-          vars:
-            action: "uncordon"    
-            app_node: "{{ a_node }}"  
-          
          ## RECORD END-OF-TEST IN CHAOS RESULT CR    
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'
             namespace: "{{ a_ns }}"
-      
