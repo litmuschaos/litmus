@@ -30,7 +30,7 @@
         - include_tasks: /utils/common/application_liveness_check.yml
           when: liveness_label != ''
 
-        - include: test_prerequisites.yml
+        - include: openebs_target_container_failure_ansible_prerequisites.yml
 
         - include_vars:
             file: data_persistence.yml

@@ -15,4 +15,4 @@
 - block:
   - name: If disk is not attached, it will attach manually
     shell: gcloud compute instances attach-disk {{ node_name }} --device-name {{ disk_name }} --disk {{ disk_name }} --zone {{ zone_name }}
-  when: "inuse == false"
+  when: "inuse is defined and inuse == false"

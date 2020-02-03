@@ -104,4 +104,3 @@
      failed_when: "testfile in result.stdout"   
 
   when: status == "DELETE"
-

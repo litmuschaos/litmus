@@ -36,4 +36,4 @@
 - name: Compare resourceVersions of target deployment
   debug:
     msg: "Verified target pods were restarted by fault injection"
-  failed_when: "rv_bef.stdout | int == rv_aft.stdout | int"    
+  failed_when: "rv_bef.stdout | int == rv_aft.stdout | int"

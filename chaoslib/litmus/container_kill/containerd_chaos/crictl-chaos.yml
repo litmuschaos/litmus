@@ -148,7 +148,6 @@
       delay: 5
       retries: 60
 
-
   rescue: 
 
     - block: 

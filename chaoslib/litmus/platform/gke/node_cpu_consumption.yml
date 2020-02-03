@@ -124,4 +124,3 @@
     - fail:
         msg: "pod_cpu_consumption lib failed"
       when: true
-

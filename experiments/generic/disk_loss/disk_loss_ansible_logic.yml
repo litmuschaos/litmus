@@ -88,11 +88,11 @@
         # Checking disk is attached to node
         - debug: 
             msg: "specified disk is attached to node"   
-          when: "inuse == true"
+          when: "inuse is defined and inuse == true"
 
         - fail:
             msg: "specified disk not attached to node"
-          when: "inuse == false"
+          when: "inuse is defined and inuse == false"
 
          ## INJECTING CHAOS 
         - name: Injecting the chaos
@@ -134,11 +134,11 @@
         # Checking disk is attached to node
         - debug: 
             msg: "specified disk is attached to node"   
-          when: "inuse == true"
+          when: "inuse is defined and inuse == true"
 
         - fail:
             msg: "specified disk not re-attached to node"
-          when: "inuse == false"
+          when: "inuse is defined and inuse == false"
 
         - set_fact:
             flag: "Pass"

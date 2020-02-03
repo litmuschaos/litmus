@@ -8,19 +8,19 @@
 - debug:
     msg: "Deleting service {{service_obj}}"
 
-- name: Saving service yaml for recreation of service after deletion
+- name: Saving service yml for recreation of service after deletion
   shell: |
     kubectl get svc -n "{{ a_ns }}" mongodb-deployment -o yaml
   args:
     executable: /bin/bash
-  register: service_yaml
+  register: service_yml
 
 - name: Copy service yaml to file
-  local_action: copy content="{{ service_yaml.stdout }}" dest="/tmp/service.yaml"
+  local_action: copy content="{{ service_yml.stdout }}" dest="/tmp/service.yml"
 
 - name: Create ConfigMap to save the yaml file
   shell: |
-    kubectl create configmap -n "{{ a_ns }}" "{{s_name}}" --from-file=/tmp/service.yaml
+    kubectl create configmap -n "{{ a_ns }}" "{{s_name}}" --from-file=/tmp/service.yml
 
 - name: Delete service
   k8s:

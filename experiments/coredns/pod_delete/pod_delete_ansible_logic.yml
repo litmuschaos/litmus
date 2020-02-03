@@ -109,11 +109,11 @@
               shell: kubectl delete -f liveness-app.yml
 
         - set_fact:
-            flag: "pass"
+            flag: "Pass"
 
       rescue:
         - set_fact: 
-            flag: "fail"
+            flag: "Fail"
 
         - block:
             - name: deleting service and pod of nginx

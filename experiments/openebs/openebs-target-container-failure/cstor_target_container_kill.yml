@@ -11,7 +11,7 @@
   register: restartCount_before
 
 # including pumba chaoslib -> pod-failure-by-sigkill
-- include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yaml
+- include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yml
   vars:
     namespace: "{{ openebs_ns }}"
     app_pod: "{{ cstor_target_pod.stdout }}"

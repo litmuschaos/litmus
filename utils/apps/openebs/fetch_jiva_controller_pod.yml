@@ -15,4 +15,3 @@
   args:
     executable: /bin/bash
   register: jiva_controller_pod
-  

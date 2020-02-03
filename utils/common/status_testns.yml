@@ -7,4 +7,3 @@
   until: "'Active' in npstatus.stdout"
   delay: 30
   retries: 10
-

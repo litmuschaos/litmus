@@ -1,6 +1,6 @@
 ---
 - name: Fetch the pool pod name from cvr
-  include_tasks: "/utils/apps/openebs/fetch_podname_from_cvr.yaml"
+  include_tasks: "/utils/apps/openebs/fetch_podname_from_cvr.yml"
 
 - name: Get the pod of pool deployment
   set_fact: 
@@ -25,7 +25,7 @@
   retries: 150
 
 # including pumba chaoslib pod_failure_by_sigkill - container kill
-- include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yaml
+- include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yml
   vars:
     namespace: "{{ openebs_ns }}"
     label: "app=cstor-pool"
@@ -54,4 +54,3 @@
   until: "runningStatusCount.stdout == \"3\""
   delay: 2
   retries: 150
-

@@ -68,4 +68,3 @@ spec:
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/generic/pod_network_loss/pod_network_loss_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
-        

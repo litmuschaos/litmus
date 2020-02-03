@@ -15,7 +15,7 @@
       delay: 20
       retries: 12
 
-     # Get the rescheduled application pod name
+    # Get the rescheduled application pod name
     - name: Get the rescheduled application pod name
       shell: >
         kubectl get pods -l {{ a_label }} -n {{ a_ns }} --no-headers 
@@ -49,7 +49,7 @@
 
     # Auxiliary application health check status
     - block:
-  
+
       - include: /utils/common/status_app_pod.yml
         vars:
           app_ns: "{{ item.split(':')[0] }}"
@@ -58,9 +58,9 @@
           retries: 60
         with_items:
           - "{{ auxiliary_appinfo_list }}" 
-            
+          
       when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
-  
+
     - name: Uncordon the application node
       shell: >
         kubectl uncordon {{ app_node }}
@@ -74,7 +74,7 @@
   rescue: 
 
     - block: 
-    
+  
         - name: Uncordon the application node
           shell: >
             kubectl uncordon {{ app_node }}
@@ -86,7 +86,7 @@
           retries: 12
 
       when: "drain_result is defined"
-    
+  
     - fail:
         msg: "cordon_drain_node lib failed"
       when: true

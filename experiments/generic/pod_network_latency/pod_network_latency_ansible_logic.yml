@@ -62,12 +62,12 @@
 
 
         - set_fact:
-            flag: "pass"
+            flag: "Pass"
 
     
       rescue: 
         - set_fact: 
-            flag: "fail"
+            flag: "Fail"
       
       always: 
 
@@ -75,4 +75,4 @@
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'
-            namespace: "{{ a_ns }}"  
+            namespace: "{{ a_ns }}"

@@ -23,4 +23,3 @@ spec:
       configMap:
         name: chaosec2instance
   restartPolicy: Never
----

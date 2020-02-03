@@ -26,6 +26,3 @@
       when: kafka_stream is not defined or kafka_stream == '' or kafka_stream == 'disabled'
 
   when: kafka_broker is not defined or kafka_broker == ''  
-
-    
-
