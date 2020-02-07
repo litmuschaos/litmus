@@ -211,7 +211,7 @@
 
 - name: Create jinja template from chaosengine yaml
   shell: >
-    kubectl get chaosengine {{c_engine}} -n {{ c_app_ns }} -oyaml > chaos-engine.j2
+    kubectl get chaosengine {{c_engine}} -n {{ c_app_ns }} -o yaml > chaos-engine.j2
   args:
     executable: /bin/bash
 
@@ -253,7 +253,7 @@
 
 - name: Display chaos-engine yaml 
   shell: >
-    kubectl get chaosengine {{ c_engine }} -n {{ c_app_ns }} -oyaml
+    kubectl get chaosengine {{ c_engine }} -n {{ c_app_ns }} -o yaml
   args:
     executable: /bin/bash
   register: c_engine_yaml

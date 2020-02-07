@@ -13,19 +13,19 @@
 
     - name: Replace CHAOSKUBE_SVC_ACC (placeholder) 
       replace: 
-        path: /chaoslib/chaoskube/chaoskube.yaml
+        path: /chaoslib/chaoskube/chaoskube.yml
         regexp: 'CHAOS_SERVICE_ACCOUNT'
         replace: "{{ lookup('env','CHAOSKUBE_SVC_ACC') }}"
 
     - name: Replace CHAOS_NS (placeholder) 
       replace: 
-        path: /chaoslib/chaoskube/chaoskube.yaml
+        path: /chaoslib/chaoskube/chaoskube.yml
         regexp: 'CHAOS_NAMESPACE'
         replace: "{{ namespace }}"
 
     - name: Setup chaoskube infrastructure
       shell: |
-        kubectl apply -f /chaoslib/chaoskube/chaoskube.yaml -n {{ namespace }}
+        kubectl apply -f /chaoslib/chaoskube/chaoskube.yml -n {{ namespace }}
       args:
         executable: /bin/bash
 
@@ -99,7 +99,7 @@
 
     - name: Tear down chaoskube infrastructure
       shell: |
-        kubectl delete -f /chaoslib/chaoskube/chaoskube.yaml -n {{ namespace }}
+        kubectl delete -f /chaoslib/chaoskube/chaoskube.yml -n {{ namespace }}
       args:
         executable: /bin/bash
       register: result
