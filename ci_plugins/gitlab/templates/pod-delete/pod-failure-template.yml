@@ -9,10 +9,10 @@ variables:
   image: litmuschaos/gitlab-runner:demo
   script:
     # pre-condition the chaosengine as per app specifics 
-    - sed -i "s|%APP_NS|$app_ns|g; s|%APP_LABEL|$app_label|g; s|%APP_KIND|$app_kind|g; s|%APP_SVC_ACC|$app_svc_account|g" /gitlab/pod-templates/chaosengine.yaml 
+    - sed -i "s|%APP_NS|$app_ns|g; s|%APP_LABEL|$app_label|g; s|%APP_KIND|$app_kind|g; s|%APP_SVC_ACC|$app_svc_account|g" /gitlab/pod-templates/chaosengine.yml 
 
     # create the chaosengine to trigger chaos
-    - kubectl apply -f /gitlab/pod-templates/chaosengine.yaml
+    - kubectl apply -f /gitlab/pod-templates/chaosengine.yml
 
     # wait for chaos job instantiation 
     - sleep 60
