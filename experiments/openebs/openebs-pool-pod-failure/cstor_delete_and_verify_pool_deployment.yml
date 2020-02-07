@@ -58,4 +58,3 @@
       - "Before: {{ pool_deployment_revisionSource_before.stdout }}"
       - "After: {{ pool_deployment_revisionSource_after.stdout }}"
   failed_when: "pool_deployment_revisionSource_before.stdout|int == pool_deployment_revisionSource_after.stdout|int"
-

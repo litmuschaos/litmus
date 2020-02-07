@@ -2,6 +2,3 @@
   template:
     src: chaosutil.j2
     dest: chaosutil.yml
-
-    
-

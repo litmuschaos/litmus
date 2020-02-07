@@ -98,4 +98,3 @@
      failed_when: "dbname in result.stdout"   
 
   when: status == "DELETE"
-

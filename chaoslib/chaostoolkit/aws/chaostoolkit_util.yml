@@ -37,4 +37,3 @@
   args:
     executable: /bin/bash
   until: "'status: completed' in action_node.stdout"
-

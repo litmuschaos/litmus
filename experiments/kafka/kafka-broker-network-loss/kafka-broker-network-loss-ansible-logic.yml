@@ -25,7 +25,7 @@
     zk_label: "{{ lookup('env','ZOOKEEPER_LABEL') }}"
     zk_service: "{{ lookup('env','ZOOKEEPER_SERVICE') }}"
     zk_port: "{{ lookup('env','ZOOKEEPER_PORT') }}" 
-    engine_uid: "{{ lookup('env','ENGINE_UID') }}"
+    chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
 
   tasks:
     - block:
@@ -98,12 +98,12 @@
           when: kafka_stream is defined and kafka_stream == 'enabled'
 
         - set_fact:
-            flag: "pass"
+            flag: "Pass"
 
 
       rescue: 
         - set_fact: 
-            flag: "fail"
+            flag: "Fail"
 
         - name: Cleanup kafka liveness pods if present
           include_tasks: "/utils/apps/kafka/kafka_liveness_cleanup.yml"
@@ -116,4 +116,3 @@
           vars:
             status: 'EOT'
             namespace: "{{ kafka_ns }}"
-

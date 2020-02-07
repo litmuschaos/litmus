@@ -9,7 +9,7 @@
         src: /chaoslib/powerfulseal/powerfulseal.j2
         dest: powerfulseal.yml
       vars:
-        engineUid: "{{ engine_uid }}"
+        chaosUID: "{{ chaos_uid }}"
 
     - name: Setup powerfulseal to initiate random pod chaos 
       shell:

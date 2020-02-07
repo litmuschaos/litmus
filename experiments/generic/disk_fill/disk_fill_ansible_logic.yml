@@ -13,7 +13,7 @@
     a_label: "{{ lookup('env','APP_LABEL') }}"
     fill_percentage: "{{ lookup('env','FILL_PERCENTAGE') }}"
     auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"
-    engine_uid: "{{ lookup('env','ENGINE_UID') }}"
+    chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
     
   tasks:
     - block:
@@ -92,11 +92,11 @@
           when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
         - set_fact:
-            flag: "pass"
+            flag: "Pass"
 
       rescue: 
         - set_fact: 
-            flag: "fail"
+            flag: "Fail"
 
       always: 
 

@@ -16,7 +16,7 @@
         src:  /chaoslib/litmus/platform/gke/node-cpu-hog-daemonset.j2
         dest: /chaoslib/litmus/platform/gke/node-cpu-hog-daemonset.yml
       vars:
-        engineUid: "{{ engine_uid }}"
+        chaosUID: "{{ chaos_uid }}"
 
     ## CREATING  A DAEMONSET  FOR CPU-HOG
     - name: Creating a DaemonSet for cpu-hog

@@ -79,7 +79,7 @@
         dest: /chaoslib/litmus/cpu_hog/app_cpu_stress.yml
       vars:
         cpu_stress_image: "{{ lib_image }}"
-        engineUid: "{{ engine_uid }}"
+        chaosUID: "{{ chaos_uid }}"
 
     - name: Setup cpu chaos infrastructure
       shell: >
@@ -154,4 +154,3 @@
     - fail:
         msg: "cpu_hog_chaos lib failed"
       when: true
-        

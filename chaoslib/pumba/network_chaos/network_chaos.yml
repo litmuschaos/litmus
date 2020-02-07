@@ -16,7 +16,7 @@
         set_fact:
           app_pod: "{{ app_pod_name.stdout }}"
 
-      when: "app_pod is not defined"
+      when: "app_pod is not defined or app_pod == ''"
 
     # here app_ns is the namespace of pod on which we are performing network loss/delay
     # in genric experiments app_ns is same as a_ns
@@ -69,7 +69,7 @@
         dest: /chaoslib/pumba/network_chaos/pumba_kube.yml
       vars:
         pumba_image: "{{ lib_image }}"
-        engineUid: "{{ engine_uid }}"
+        chaosUID: "{{ chaos_uid }}"
 
     - name: Setup pumba chaos infrastructure
       shell: >

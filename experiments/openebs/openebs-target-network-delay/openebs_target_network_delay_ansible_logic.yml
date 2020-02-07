@@ -14,7 +14,7 @@
     liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
     n_delay: "{{ lookup('env','NETWORK_DELAY') }}" 
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
-    engine_uid: "{{ lookup('env','ENGINE_UID') }}"
+    chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
 
   vars_files:
     - /mnt/parameters.yml

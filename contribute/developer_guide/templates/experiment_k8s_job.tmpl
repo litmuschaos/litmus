@@ -19,27 +19,36 @@ spec:
         imagePullPolicy: Always
         env:
           - name: ANSIBLE_STDOUT_CALLBACK
-            value: default
+            value: 'default'
 
           - name: APP_NAMESPACE
-            value: ""
+            value: ''
 
           - name: APP_LABEL
-            value: ""
+            value: ''
 
           - name: APP_KIND
-            value: "" 
+            value: '' 
 
           - name: TOTAL_CHAOS_DURATION
-            value: ""
+            value: ''
+          
+          # provide auxiliary application details - namespace and labels of the applications
+          # sample input is - "ns1:app=percona,ns2:name=nginx"
+          - name: AUXILIARY_APPINFO
+            value: ''
+
+          ## Period to wait before injection of chaos in sec
+          - name: RAMP_TIME
+            value: ''
 
           ## env var that describes the library used to execute the chaos
           ## default: litmus. Supported values: litmus, powerfulseal, chaoskube
           - name: LIB
-            value: ""
+            value: ''
 
           - name: CHAOSENGINE
-            value: ""
+            value: ''
 
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:
@@ -48,4 +57,3 @@ spec:
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/{{ chart }}/{{ name }}/{{ name }}-ansible-logic.yml -i /etc/ansible/hosts; exit 0"]
-

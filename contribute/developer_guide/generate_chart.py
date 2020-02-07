@@ -23,7 +23,7 @@ NOTES:
 '''
 
 
-""" generate_csv creates the chartserviceversion manifest  """
+# generate_csv creates the chartserviceversion manifest
 def generate_csv(csv_parent_path, csv_name, csv_config, litmus_env):
     csv_filename = csv_parent_path + '/' + csv_name + '.' + 'chartserviceversion.yaml'
 
@@ -33,42 +33,52 @@ def generate_csv(csv_parent_path, csv_name, csv_config, litmus_env):
     with open(csv_filename, "w+") as f:
         f.write(output_from_parsed_template)
 
-""" generate_package creates the package manifest """ 
+# generate_chart creates the experiment-custom-resource manifest
+def generate_chart(chart_parent_path, chart_config, litmus_env):
+    chart_filename = chart_parent_path + '/' + 'experiment.yaml'
+
+    # Load Jinja2 template
+    template = litmus_env.get_template('./templates/experiment_custom_resource.tmpl')
+    output_from_parsed_template = template.render(chart_config)
+    with open(chart_filename, "w+") as f:
+        f.write(output_from_parsed_template)
+
+# generate_job creates the experiment job manifest
+def generate_job(job_parent_path, job_name, job_config, litmus_env):
+    job_filename = job_parent_path + '/' + job_name + '.' + 'k8s_job.yml'
+
+    # Load Jinja2 template
+    template = litmus_env.get_template('./templates/experiment_k8s_job.tmpl')
+    output_from_parsed_template = template.render(job_config)
+    with open(job_filename, "w+") as f:
+        f.write(output_from_parsed_template)
+
+# generate_ansible_logic creates the ansible_logic manifest
+def generate_ansible_logic(ansible_logic_parent_path, ansible_logic_name, ansible_logic_config, litmus_env):
+    ansible_logic_filename = ansible_logic_parent_path + '/' + ansible_logic_name + '.' + 'ansible_logic.yml'
+
+    # Load Jinja2 template
+    template = litmus_env.get_template('./templates/experiment_ansible_logic.tmpl')
+    output_from_parsed_template = template.render(ansible_logic_config)
+    with open(ansible_logic_filename, "w+") as f:
+        f.write(output_from_parsed_template)
+
+# generate_chaos_prerequisites creates the chaos_prerequisites manifest
+def generate_chaos_prerequisites(chaos_prerequisites_parent_path, chaos_prerequisites_name, chaos_prerequisites_config, litmus_env):
+    chaos_prerequisites_filename = chaos_prerequisites_parent_path + '/' + chaos_prerequisites_name + '.' + 'ansible_prerequisites.yml'
+
+    # Load Jinja2 template
+    template = litmus_env.get_template('./templates/experiment_ansible_prerequisites.tmpl')
+    output_from_parsed_template = template.render(chaos_prerequisites_config)
+    with open(chaos_prerequisites_filename, "w+") as f:
+        f.write(output_from_parsed_template)
+
+# generate_package creates the package manifest
 def generate_package(package_parent_path, package_name):
     package_filename = package_parent_path + '/' + package_name + '.' + 'package.yaml'
     print(package_filename)
     with open(package_filename, "w+") as f:
         f.write('packageName: ' + package_name + '\n' + 'experiments:')
-
-""" generate_litmusbook creates the experiment business logic, kubernetes job & custom resource manifests  """
-def generate_litmusbook(litmusbook_parent_path, litmusbook_name, litmus_env):
-    
-    k8s_job_filename = litmusbook_parent_path + '/' + litmusbook_name + '-' + 'k8s-job.yml'
-    chaos_logic_filename = litmusbook_parent_path + '/' + litmusbook_name + '-' + 'ansible-logic.yml'
-    chaos_prerequisites_filename = litmusbook_parent_path + '/' + litmusbook_name + '-' + 'ansible-prerequisites.yml'
-    chaos_experiment_cr_filename = litmusbook_parent_path + '/' + litmusbook_name + '-' + 'experiment-cr.yml'
-   
-    k8s_job_template = litmus_env.get_template('./templates/experiment_k8s_job.tmpl')
-    chaos_logic_template = litmus_env.get_template('./templates/experiment_ansible_logic.tmpl')
-    chaos_prerequisites_template = litmus_env.get_template('./templates/experiment_ansible_prerequisites.tmpl')
-    chaos_experiment_cr_template = litmus_env.get_template('./templates/experiment_custom_resource.tmpl')
-
-    # create a dictionary with artifact as key & list of rendered jinja template & filepath as value
-    litmusbook_dict = {
-            "job": [k8s_job_template, k8s_job_filename],
-            "chaos_logic": [chaos_logic_template, chaos_logic_filename],
-            "chaos_prerequisites": [chaos_prerequisites_template, chaos_prerequisites_filename],
-            "chaos_experiment_cr": [chaos_experiment_cr_template, chaos_experiment_cr_filename]
-    }
-    
-    # derive the chart directory in order to use in the generated k8s job spec
-    chart_dir = litmusbook_parent_path.split("/")[-2]
-    print(litmusbook_parent_path,chart_dir)
-
-    for artifact in litmusbook_dict.values():
-        output_from_parsed_template = artifact[0].render(name=litmusbook_name, chart=chart_dir)
-        with open(artifact[1], "w+") as f:
-            f.write(output_from_parsed_template)
 
 def main():
     # Required Arguments 
@@ -92,7 +102,7 @@ def main():
     entity_name = config['name']
 
     # Store the litmus root from bootstrap folder
-    litmus_root = path = os.path.abspath(os.path.join("..", os.pardir))
+    litmus_root = os.path.abspath(os.path.join("..", os.pardir))
     #env = Environment(loader = FileSystemLoader('./'), trim_blocks=True, lstrip_blocks=True, autoescape=True)
     env = Environment(loader = FileSystemLoader('./'), trim_blocks=True, lstrip_blocks=True, autoescape=select_autoescape(['yaml']))
 
@@ -115,8 +125,10 @@ def main():
         # if a folder with specified/derived chart name is not present, create it
         if os.path.isdir(chart_dir) != True:
             os.makedirs(chart_dir)
-            # generate chart csv & package for the freshly created chart folder
+            # generate csv for the freshly created chart folder
             generate_csv(chart_dir, experiment_category, config, env)
+
+            # generate package for the freshly created chart folder
             generate_package(chart_dir, experiment_category)
 
         # create experiment folder inside the chart folder
@@ -124,10 +136,20 @@ def main():
         if os.path.isdir(experiment_dir) != True:
             os.makedirs(experiment_dir)
 
-        # generate experiment csv 
+        # generate experiment csv
         generate_csv(experiment_dir, entity_name, config, env)
-        # generate job, playbook and cr spec from templates
-        generate_litmusbook(experiment_dir, entity_name, env)
+
+        # generate experiment-custom-resource
+        generate_chart(experiment_dir, config, env)
+
+        # generate experiment job
+        generate_job(experiment_dir, entity_name, config, env)
+
+        # generate chaos-ansible-logic
+        generate_ansible_logic(experiment_dir, entity_name, config, env)
+
+        # generate chaos-prerequisites
+        generate_chaos_prerequisites(experiment_dir, entity_name, config, env)
 
 
 if __name__=="__main__":

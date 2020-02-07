@@ -6,6 +6,4 @@
 - name: allow random pod selection by chaosutil 
   set_fact: 
     kafka_broker: ''
-  when: kafka_stream is undefined or kafka_stream == ''
-
-
+  when: kafka_stream is not defined or kafka_stream == ''

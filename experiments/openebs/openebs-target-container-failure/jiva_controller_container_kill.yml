@@ -15,7 +15,7 @@
   register: restartCount_before
 
 # including pumba chaoslib - pod-failure-by-sigkill
-- include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yaml
+- include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yml
   vars:
     app_pod: "{{ jiva_controller_pod.stdout }}"
     namespace: "{{ a_ns }}"

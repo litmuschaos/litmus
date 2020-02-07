@@ -137,6 +137,3 @@ The experiment created using the above steps, can be tested in the following man
 - Send a PR to the [litmus](https://github.com/litmuschaos/litmus) repo with the modified litmusbook files
 - Send a PR to the [chaos-charts](https://github.com/litmuschaos/chaos-charts) repo with the modified experiment CR, 
   experiment chartserviceversion, chaos chart (category-level) chartserviceversion & package (if applicable) YAMLs
-
-
-

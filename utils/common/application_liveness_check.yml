@@ -10,4 +10,3 @@
   until: "'Running' in result.stdout"
   delay: 10
   retries: 10
-

@@ -83,11 +83,11 @@
 
         - debug: 
             msg: "specified disk is attached to node"   
-          when: "inuse == true"
+          when: "inuse is defined and inuse == true"
 
         - fail:
             msg: "specified disk not attached to node"
-          when: "inuse == false"   
+          when: "inuse is defined and inuse == false"   
  
         ## SETUP KAFKA CHAOS INFRA (LIVENESS CLIENT)
        
@@ -133,18 +133,18 @@
 
         - debug: 
             msg: "specified disk is attached to node"   
-          when: "inuse == true"
+          when: "inuse is defined and inuse == true"
 
         - fail:
             msg: "specified disk not re-attached to kafka-broker node"
-          when: "inuse == false"   
+          when: "inuse is defined and inuse == false"   
 
         - set_fact:
-            flag: "pass"
+            flag: "Pass"
 
       rescue: 
         - set_fact: 
-            flag: "fail"
+            flag: "Fail"
 
         - name: Cleanup kafka liveness pods if present
           include_tasks: "/utils/apps/kafka/kafka_liveness_cleanup.yml"
@@ -157,4 +157,3 @@
           vars:
             status: 'EOT'
             namespace: "{{ kafka_ns }}"
-

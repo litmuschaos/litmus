@@ -6,12 +6,12 @@ spec:
   selector:
     matchLabels:
       app: crictl
-      engineUID: {{ engineUid }}
+      engineUID: {{ chaosUID }}
   template:
     metadata:
       labels:
         app: crictl
-        engineUID: {{ engineUid }}
+        chaosUID: {{ chaosUID }}
       name: containerd-chaos
     spec:
       containers:

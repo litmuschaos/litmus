@@ -64,7 +64,7 @@
         src:  /chaoslib/litmus/disk_fill/disk_fill_ds.j2
         dest: /chaoslib/litmus/disk_fill/disk_fill_ds.yml
       vars:
-        engineUid: "{{ engine_uid }}"
+        chaosUID: "{{ chaos_uid }}"
 
     - name: Create the DaemonSet for Disk-Fill
       shell: >

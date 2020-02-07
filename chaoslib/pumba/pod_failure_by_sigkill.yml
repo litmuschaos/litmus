@@ -7,7 +7,7 @@
         dest: /chaoslib/pumba/pumba_kube.yml
       vars:
         pumba_image: "{{ lib_image }}"
-        engineUid: "{{ engine_uid }}"
+        chaosUID: "{{ chaos_uid }}"
 
     - name: Setup pumba chaos infrastructure
       shell: >
@@ -184,4 +184,3 @@
     - fail:
         msg: "pod_failure_by_sigkill lib failed"
       when: true
-        

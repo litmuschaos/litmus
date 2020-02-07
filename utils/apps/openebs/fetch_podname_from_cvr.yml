@@ -45,4 +45,3 @@
   loop: "{{ pool_pod_list.results }}"
   loop_control:
     loop_var: pool_pod
-

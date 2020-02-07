@@ -22,4 +22,4 @@
         id: "{{ disk_name }}"
         device_name: "{{ device_name }}"
         region: "{{ zone_name }}"
-  when: "inuse == false"
+  when: "inuse is defined and inuse == false"
