@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: crictl
-      engineUID: {{ chaosUID }}
+      chaosUID: {{ chaosUID }}
   template:
     metadata:
       labels:
@@ -23,11 +23,11 @@ spec:
           - name: cri-socket
             mountPath: /run/containerd/containerd.sock
           - name: cri-config
-            mountPath: /etc/crictl.yaml
+            mountPath: /etc/crictl.yml
       volumes:
         - hostPath:
             path: /run/containerd/containerd.sock
           name: cri-socket
         - hostPath:
-            path: /etc/crictl.yaml 
+            path: /etc/crictl.yml 
           name: cri-config
