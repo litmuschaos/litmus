@@ -1,0 +1,112 @@
+#############
+###### Note:
+#### Please ingore this file during the code review, will remove the dummy variables after the final review
+
+###########
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: disk-loss-
+  namespace: openebs
+spec:
+  template:
+    metadata:
+      labels:
+        name: disk-loss
+    spec:
+      serviceAccountName: nginx-sa
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: imrajdas/ansible-runner:ci
+        imagePullPolicy: Always
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: 'default'
+
+          # Enter the App_label, if you set APP_CHECK to true
+          - name: APP_LABEL
+            value: 'app=busybox'
+
+          # Enter the APP_NAMESPACE, if you set APP_CHECK to true
+          - name: APP_NAMESPACE
+            value: 'openebs'
+            
+          - name: APP_PVC
+            value: ''
+
+          # This is a chaos namespace which will create all infra chaos resources in that namespace
+          - name: CHAOS_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+
+          # Only GCP is supported
+          - name: CLOUD_PLATFORM
+            value: 'GCP'
+
+          # Enter the time duration after the disk is dettached
+          - name: TOTAL_CHAOS_DURATION
+            value: '10'
+
+          # Period to wait before injection of chaos in sec
+          - name: RAMP_TIME
+            value: '5'
+
+          # Enter the project id for gcp only
+          - name: PROJECT_ID 
+            value: 'mayadata-demo-247709'
+
+          # Enter the node name
+          - name: NODE_NAME
+            value: 'gke-raj-cluster-default-pool-70c25730-bd3b' 
+
+          # Enter the disk name
+          - name: DISK_NAME
+            value: 'k8s-disk-1'  
+          
+          # Enter the device name
+          - name: DEVICE_NAME
+            value: ''
+
+          # Enter the zone name
+          - name: ZONE_NAME
+            value: 'us-central1-a' 
+
+          # provide auxiliary application details - namespace and labels of the applications
+          # sample input is - "ns1:app=percona,ns2:name=nginx"
+          - name: AUXILIARY_APPINFO
+            value: 'openebs:run=nginx'
+          
+          # Enter the chaosengine name
+          - name: CHAOSENGINE
+            value: '' 
+
+          - name: LIVENESS_APP_LABEL
+            value: ''
+
+          - name: LIVENESS_APP_NAMESPACE
+            value: ''
+
+          - name: DATA_PERSISTENCE
+            value: 'busybox'
+
+          - name: OPENEBS_NAMESPACE
+            value: 'openebs'
+            
+        command: ['/bin/bash']
+        args: ['-c', 'ansible-playbook ./experiments/openebs/openebs-pool-disk-loss/openebs_pool_disk_loss_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0']
+        volumeMounts:
+        - name: cloud-secret
+          mountPath: /tmp/
+        - name: test-data
+          mountPath: /mnt/
+      volumes:
+        - name: cloud-secret 
+        # Enter the secret name of the service account, you want to mount
+          secret:
+            secretName: cloud-secret
+        - name: test-data
+          configMap:
+            name: openebs-pool-network-loss
