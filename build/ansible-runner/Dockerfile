@@ -10,8 +10,6 @@ RUN apt-get clean && \
 
 RUN pip install --upgrade pip
 
-RUN touch /mnt/parameters.yml
-
 #Installing ansible and dependencies for k8s module
 RUN pip install ansible==2.7.3 openshift jmespath boto boto3
 
