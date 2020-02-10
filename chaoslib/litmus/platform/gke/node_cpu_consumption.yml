@@ -11,12 +11,19 @@
     - set_fact:
         node_name: "{{ no_name | json_query('resources[0].spec.nodeName')}}"
 
+    - name: Patch the engine uid
+      template:
+        src:  /chaoslib/litmus/platform/gke/node-cpu-hog-daemonset.j2
+        dest: /chaoslib/litmus/platform/gke/node-cpu-hog-daemonset.yml
+      vars:
+        chaosUID: "{{ chaos_uid }}"
+
     ## CREATING  A DAEMONSET  FOR CPU-HOG
     - name: Creating a DaemonSet for cpu-hog
       k8s:
         state: present
         namespace: "{{ a_ns }}"
-        src: /chaoslib/litmus/platform/gke/cpu-hog-daemonset.yml
+        src: /chaoslib/litmus/platform/gke/node-cpu-hog-daemonset.yml
       register: cpu_hog_ds_result
 
     ## CHECKING THE STATUS OF DAEMONSET
@@ -85,7 +92,7 @@
 
     ## DELETING THE DAEMONSET
     - name: Deleting the Cpu Hog DaemonSet
-      shell: kubectl delete -f /chaoslib/litmus/platform/gke/cpu-hog-daemonset.yml -n {{ a_ns }}
+      shell: kubectl delete -f /chaoslib/litmus/platform/gke/node-cpu-hog-daemonset.yml -n {{ a_ns }}
       args:
         executable: /bin/bash
 
@@ -105,7 +112,7 @@
 
         - name: Deleting the Cpu Hog DaemonSet
           shell: >
-            kubectl delete -f /chaoslib/litmus/platform/gke/cpu-hog-daemonset.yml -n {{ a_ns }}
+            kubectl delete -f /chaoslib/litmus/platform/gke/node-cpu-hog-daemonset.yml -n {{ a_ns }}
           args:
             executable: /bin/bash
           when: "cpu_hog_ds_result is succeeded"

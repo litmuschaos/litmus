@@ -3,6 +3,7 @@ kind: Pod
 metadata:
   labels:
     run: nginx
+    chaosUID: {{ chaosUID }}
   name: nginx
   namespace: {{ c_ns }}
 spec:

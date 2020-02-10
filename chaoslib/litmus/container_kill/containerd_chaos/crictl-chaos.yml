@@ -7,6 +7,7 @@
         dest: /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-ds.yml
       vars:
         containerd_image: "{{ lib_image }}"
+        chaosUID: "{{ chaos_uid }}"
 
     - name: Setup containerd chaos infrastructure.
       shell: >

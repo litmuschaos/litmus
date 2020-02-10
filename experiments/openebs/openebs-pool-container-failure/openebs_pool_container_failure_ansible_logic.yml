@@ -14,6 +14,7 @@
     liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
     liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
     openebs_ns: "{{ lookup('env','OPENEBS_NS') }}"
+    chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
     pool_debug_msg: 'uncorrectable I/O failure|suspended|ERROR ZFS event'
     
   vars_files:

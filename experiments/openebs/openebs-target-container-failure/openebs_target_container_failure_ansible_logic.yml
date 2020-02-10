@@ -18,6 +18,7 @@
     liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
     target_container: "{{ lookup('env','TARGET_CONTAINER') }}"
+    chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
 
   vars_files:
     - /mnt/parameters.yml

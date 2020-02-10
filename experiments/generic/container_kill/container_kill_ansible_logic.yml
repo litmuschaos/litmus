@@ -10,6 +10,7 @@
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_label: "{{ lookup('env','APP_LABEL') }}"
     lib_image: "{{ lookup('env','LIB_IMAGE') }}"
+    chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
 
   tasks:
     - block:

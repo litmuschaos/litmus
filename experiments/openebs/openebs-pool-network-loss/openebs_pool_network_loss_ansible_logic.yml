@@ -14,6 +14,7 @@
     liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
     packet_loss_perc: "{{ lookup('env','NETWORK_PACKET_LOSS_PERCENTAGE') }}"  
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
+    chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
 
   vars_files:
     - /mnt/parameters.yml

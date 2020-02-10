@@ -69,6 +69,7 @@
         dest: /chaoslib/pumba/network_chaos/pumba_kube.yml
       vars:
         pumba_image: "{{ lib_image }}"
+        chaosUID: "{{ chaos_uid }}"
 
     - name: Setup pumba chaos infrastructure
       shell: >

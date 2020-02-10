@@ -6,10 +6,12 @@ spec:
   selector:
     matchLabels:
       app: disk-fill
+      chaosUID: {{ chaosUID }}
   template:
     metadata:
       labels:
         app: disk-fill
+        chaosUID: {{ chaosUID }}
       name: disk-fill
     spec:
       containers:
