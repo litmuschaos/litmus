@@ -1,8 +1,7 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: cpu-hog
-  chaosUID: {{ chaosUID }}
+  name: node-cpu-hog
 spec:
   selector:
     matchLabels:
@@ -12,7 +11,8 @@ spec:
     metadata:
       labels:
         app: cpu-hog
-      name: cpu-hog
+        chaosUID: {{ chaosUID }}
+      name: node-cpu-hog
     spec:
       containers:
       - image: litmuschaos/cpu:latest
