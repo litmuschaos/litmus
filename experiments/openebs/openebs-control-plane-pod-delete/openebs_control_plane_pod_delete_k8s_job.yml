@@ -1,0 +1,49 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: openebs-control-plane-pod-delete-
+spec:
+  template:
+    metadata:
+      labels:
+        experiment: openebs-control-plane-pod-delete
+    spec:
+      # Placeholder that is updated by the executor for automated runs
+      # Provide appropriate SA (with desired permissions) if executed manually
+      serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: litmuschaos/ansible-runner:ci
+        imagePullPolicy: Always
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: 'default'
+
+          # provide openebs namespace
+          - name: OPENEBS_NAMESPACE
+            value: 'openebs'
+
+          ## Period to wait before injection of chaos  
+          - name: RAMP_TIME
+            value: '6'
+
+          - name: FORCE
+            value: ''
+
+          ## env var that describes the library used to execute the chaos
+          ## default: litmus. Supported values: litmus, powerfulseal
+          - name: LIB
+            value: ''
+
+          - name: CHAOSENGINE
+            value: ''
+
+          - name: CHAOS_SERVICE_ACCOUNT
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.serviceAccountName
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./experiments/openebs/openebs-control-plane-pod-delete/openebs_control_plane_pod_delete_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]

@@ -1,4 +1,5 @@
 - block:
+
   - name: Get a list of all pods from given namespace
     k8s_facts:
       kind: Pod
