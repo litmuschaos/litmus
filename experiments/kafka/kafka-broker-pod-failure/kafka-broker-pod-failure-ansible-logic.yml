@@ -25,7 +25,8 @@
     zk_ns: "{{ lookup('env','ZOOKEEPER_NAMESPACE') }}"
     zk_label: "{{ lookup('env','ZOOKEEPER_LABEL') }}"
     zk_service: "{{ lookup('env','ZOOKEEPER_SERVICE') }}"
-    zk_port: "{{ lookup('env','ZOOKEEPER_PORT') }}" 
+    zk_port: "{{ lookup('env','ZOOKEEPER_PORT') }}"
+    chaos_uid: "{{ lookup('env','CHAOS_UID') }}" 
 
   tasks:
     - block:

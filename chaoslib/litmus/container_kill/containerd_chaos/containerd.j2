@@ -6,10 +6,12 @@ spec:
   selector:
     matchLabels:
       app: crictl
+      chaosUID: {{ chaosUID }}
   template:
     metadata:
       labels:
         app: crictl
+        chaosUID: {{ chaosUID }}
       name: containerd-chaos
     spec:
       containers:

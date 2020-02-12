@@ -14,7 +14,8 @@
     a_label: "{{ lookup('env','APP_LABEL') }}"
     a_kind: "{{ lookup('env','APP_KIND') }}"
     lib_image: "{{ lookup('env','LIB_IMAGE') }}"
-
+    chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
+    
   tasks:
     - block:
 

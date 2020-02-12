@@ -14,6 +14,7 @@
     liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
     n_delay: "{{ lookup('env','NETWORK_DELAY') }}" 
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
+    chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
 
   vars_files:
     - /mnt/parameters.yml
@@ -22,33 +23,33 @@
   tasks:
     - block:
 
-      - include_tasks: /utils/runtime/create_testname.yml  
+        - include_tasks: /utils/runtime/create_testname.yml  
 
-      - include_tasks: openebs_pool_network_delay_ansible_prerequisites.yml
+        - include_tasks: openebs_pool_network_delay_ansible_prerequisites.yml
 
-      # GENERATE EXPERIMENT RESULT NAME AND CREATE CHAOS RESULT RESOURCE
-      - block:
-          - name: Construct chaos result name (experiment_name)
-            set_fact:
-              c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
-            when: lookup('env','CHAOSENGINE')
+        # GENERATE EXPERIMENT RESULT NAME
+        - block:
+            - name: Construct chaos result name (experiment_name)
+              set_fact:
+                c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
+          when: lookup('env','CHAOSENGINE')
 
-          - include_tasks: /utils/runtime/update_chaos_result_resource.yml
-            vars:
-              status: 'SOT'
-              namespace: "{{ a_ns }}"
+        # CREATE CHAOS RESULT RESOURCE
+        - include_tasks: /utils/runtime/update_chaos_result_resource.yml
+          vars:
+            status: 'SOT'
+            namespace: "{{ a_ns }}"
 
-      # DISPLAY APP INFORMATION
-      - name: Display the app information passed via the test job
-        debug:
-          msg:
-            - "The application info is as follows:"
-            - "Namespace    : {{ a_ns }}"
-            - "Label        : {{ a_label }}"
-            - "PVC          : {{ a_pvc }}"
+        # DISPLAY APP INFORMATION
+        - name: Display the app information passed via the test job
+          debug:
+            msg:
+              - "The application info is as follows:"
+              - "Namespace    : {{ a_ns }}"
+              - "Label        : {{ a_label }}"
+              - "PVC          : {{ a_pvc }}"
                 
-      # PRE_CHAOS CHECKS
-      - block:
+        # PRE_CHAOS CHECKS
         - name: Verify that cStor pool is healthy
           shell: >
             kubectl get csp -n {{ openebs_ns }} -o jsonpath='{.items[*].status.phase}'
@@ -80,12 +81,11 @@
             pod_name: "{{ app_pod.stdout }}"
           when: data_persistence | length > 0
 
-      # INJECTING CHAOS 
-      - name: Injecting the chaos
-        include_tasks: "{{ c_util }}"
+        # INJECTING CHAOS 
+        - name: Injecting the chaos
+          include_tasks: "{{ c_util }}"
 
-      # POST CHAOS CHECKS
-      - block:
+        # POST CHAOS CHECKS
         - name: Verify that cStor pool is healthy
           shell: >
             kubectl get csp -n {{ openebs_ns }} -o jsonpath='{.items[*].status.phase}'

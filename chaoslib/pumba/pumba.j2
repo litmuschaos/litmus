@@ -7,10 +7,12 @@ spec:
   selector:
     matchLabels:
       app: pumba
+      chaosUID: {{ chaosUID }}
   template:
     metadata:
       labels:
         app: pumba
+        chaosUID: {{ chaosUID }}
         com.gaiaadm.pumba: "true" # prevent pumba from killing itself
       name: pumba
     spec:
