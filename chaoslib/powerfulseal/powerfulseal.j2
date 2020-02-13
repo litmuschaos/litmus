@@ -27,6 +27,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: powerfulseal
+  labels:
+    chaosUID: {{ chaosUID }}
 spec:
   selector:
     matchLabels:
