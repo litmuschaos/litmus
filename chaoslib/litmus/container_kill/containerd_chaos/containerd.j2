@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: containerd-chaos
+  labels:
+    chaosUID: {{ chaosUID }}
 spec:
   selector:
     matchLabels:
