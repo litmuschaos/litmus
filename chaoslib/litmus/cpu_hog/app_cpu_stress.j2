@@ -2,6 +2,8 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: app-cpu-stress-{{ run_id }}
+  labels: 
+    chaosUID: {{ chaosUID }}
 spec:
   template:
     metadata:
