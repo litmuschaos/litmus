@@ -3,6 +3,8 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: pumba
+  labels: 
+    chaosUID: {{ chaosUID }}
 spec:
   selector:
     matchLabels:

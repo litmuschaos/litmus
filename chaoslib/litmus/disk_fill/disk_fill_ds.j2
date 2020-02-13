@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: disk-fill
+  labels:
+    chaosUID: {{ chaosUID }}
 spec:
   selector:
     matchLabels:
