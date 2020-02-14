@@ -2,7 +2,7 @@
   connection: local
 
   vars:
-    c_experiment: "openebs-control-plane-pod-delete"
+    c_experiment: "openebs-control-plane-validation"
     c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
     c_interval: "{{ lookup('env','CHAOS_INTERVAL') }}"
     ramp_time: "{{ lookup('env','RAMP_TIME') }}"
@@ -14,7 +14,7 @@
     
   tasks:
     - block:
-        - include: openebs_control_plane_pod_delete_ansible_prerequisites.yml
+        - include: openebs_control_plane_validation_ansible_prerequisites.yml
     
         - include_vars:
             file: chaosutil.yml
@@ -41,7 +41,7 @@
 
         ## INJECT CHAOS ON CONTROL PLANE COMPONENTS
         - name: Including main components
-          include_tasks: openebs_control_plane_pod_delete_internal_tasks.yml
+          include_tasks: openebs_control_plane_validation_internal_tasks.yml
           loop: "{{ openebs.components }}"
 
         - set_fact:
