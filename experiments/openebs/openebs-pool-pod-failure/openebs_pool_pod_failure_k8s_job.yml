@@ -40,7 +40,8 @@ spec:
           - name: APP_LABEL
             value: ''
 
-           #provide application pvc
+          #provide application pvc
+          # NOTE: Leave it blank for pool-validation
           - name: APP_PVC
             value: ''
 
