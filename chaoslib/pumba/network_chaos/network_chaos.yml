@@ -3,18 +3,18 @@
 
     - block: 
 
-      - name: Select the app pod
-        shell: >
-          kubectl get pod -l {{ a_label }} -n {{ a_ns }}
-          -o=custom-columns=:metadata.name --no-headers
-          | shuf | head -1 
-        args:
-          executable: /bin/bash
-        register: app_pod_name
+        - name: Select the app pod
+          shell: >
+            kubectl get pod -l {{ a_label }} -n {{ a_ns }}
+            -o=custom-columns=:metadata.name --no-headers
+            | shuf | head -1 
+          args:
+            executable: /bin/bash
+          register: app_pod_name
 
-      - name: Record app pod name
-        set_fact:
-          app_pod: "{{ app_pod_name.stdout }}"
+        - name: Record app pod name
+          set_fact:
+            app_pod: "{{ app_pod_name.stdout }}"
 
       when: "app_pod is not defined or app_pod == ''"
 

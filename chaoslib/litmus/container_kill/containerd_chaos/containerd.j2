@@ -1,26 +1,26 @@
-apiVersion: apps/v1
-kind: DaemonSet
+apiVersion: batch/v1
+kind: Job
 metadata:
   name: containerd-chaos
   labels:
     chaosUID: {{ chaosUID }}
 spec:
-  selector:
-    matchLabels:
-      app: crictl
-      chaosUID: {{ chaosUID }}
   template:
     metadata:
       labels:
         app: crictl
         chaosUID: {{ chaosUID }}
-      name: containerd-chaos
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: {{ node_name }}
+      restartPolicy: Never
       containers:
       - image: {{ containerd_image }}
         imagePullPolicy: Always
         name: containerd-chaos
         command: ['sh', '-c', 'echo Hello! && sleep 1800']
+        securityContext:
+          privileged: true
         volumeMounts:
           - name: cri-socket
             mountPath: /run/containerd/containerd.sock

@@ -1,5 +1,32 @@
 ---
 - block:
+    - block: 
+
+      - name: Select the app pod
+        shell: >
+          kubectl get pod -l {{ a_label }} -n {{ a_ns }}
+          -o=custom-columns=:metadata.name --no-headers
+          | shuf | head -1 
+        args:
+          executable: /bin/bash
+        register: app_pod_name
+
+      - name: Record app pod name
+        set_fact:
+          app_pod: "{{ app_pod_name.stdout }}"
+
+      when: "app_pod is not defined or app_pod == ''"
+
+    - name: Identify the application node
+      shell: >
+        kubectl get pod {{ app_pod }} -n {{ a_ns }}
+        --no-headers -o custom-columns=:spec.nodeName
+      args:
+        executable: /bin/bash
+      register: node_name
+
+    - set_fact: 
+        node_name: "{{ node_name.stdout }}"
 
     - name: Patch the chaoslib image
       template:
@@ -8,7 +35,8 @@
       vars:
         containerd_image: "{{ lib_image }}"
         chaosUID: "{{ chaos_uid }}"
-
+        node_name: "{{ node_name}}"
+        
     - name: Setup containerd chaos infrastructure.
       shell: >
         kubectl apply -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-ds.yml
