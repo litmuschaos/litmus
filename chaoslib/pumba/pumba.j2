@@ -1,23 +1,22 @@
 
-apiVersion: apps/v1
-kind: DaemonSet
+apiVersion: batch/v1
+kind: Job
 metadata:
   name: pumba
   labels: 
     chaosUID: {{ chaosUID }}
 spec:
-  selector:
-    matchLabels:
-      app: pumba
-      chaosUID: {{ chaosUID }}
   template:
     metadata:
       labels:
         app: pumba
         chaosUID: {{ chaosUID }}
-        com.gaiaadm.pumba: "true" # prevent pumba from killing itself
-      name: pumba
+        # prevent pumba from killing itself
+        com.gaiaadm.pumba: "true"
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: {{ node_name }}
+      restartPolicy: Never
       containers:
       - image: {{ pumba_image }}
         imagePullPolicy: Always
