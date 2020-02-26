@@ -1,4 +1,3 @@
-
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -15,12 +14,18 @@ spec:
         com.gaiaadm.pumba: "true"
     spec:
       nodeSelector:
-        kubernetes.io/hostname: {{ node_name }}
+        kubernetes.io/hostname: {{ app_node }}
       restartPolicy: Never
       containers:
       - image: {{ pumba_image }}
         imagePullPolicy: Always
         name: pumba
+        args:
+          - pumba
+          - kill 
+          - --signal
+          - SIGKILL
+          - re2:k8s_{{ app_container }}_{{ app_pod }} 
         # Pumba command: modify it to suite your needs
         # Dry run: Randomly try to kill some container every 3 minutes
         command: ["pumba", "--dry", "--random", "--interval", "3m", "kill", "--signal", "SIGTERM"]

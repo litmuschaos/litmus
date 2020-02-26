@@ -4,7 +4,7 @@
 
         - name: Select the app pod
           shell: >
-            kubectl get pod -l {{ a_label }} -n {{ a_ns }}
+            kubectl get pod -l {{ a_label }} -n {{ namespace }}
             -o=custom-columns=:metadata.name --no-headers
             | shuf | head -1 
           args:
@@ -19,14 +19,14 @@
 
     - name: Identify the application node
       shell: >
-        kubectl get pod {{ app_pod }} -n {{ a_ns }}
+        kubectl get pod {{ app_pod }} -n {{ namespace }}
         --no-headers -o custom-columns=:spec.nodeName
       args:
         executable: /bin/bash
-      register: node_name
+      register: app_node
 
     - set_fact: 
-        node_name: "{{ node_name.stdout }}"
+        app_node: "{{ app_node.stdout }}"
 
     - name: Patch the chaoslib image
       template:
@@ -35,26 +35,22 @@
       vars:
         pumba_image: "{{ lib_image }}"
         chaosUID: "{{ chaos_uid }}"
-        node_name: "{{ node_name }}"
-
+        app_node: "{{ app_node }}"
+        app_pod: "{{ app_pod }}"
+        app_container: "{{ a_container }}"
+        
     - name: Setup pumba chaos infrastructure
       shell: >
         kubectl apply -f /chaoslib/pumba/pumba_kube.yml
         -n {{ namespace }}
       args:
         executable: /bin/bash
-      register: pumba_ds_result
+      register: pumba_job_result
 
-      # Verifies pumba ds pods status against Ready Nodes
-      # The nested kubectl command returns (via command substitution) a list of Ready nodes: 
-      # Its field selector removes unschedulable nodes that might return "Ready,SchedulingDisabled", 
-      # the grep filters the output to just "Ready" nodes, and the awk returns just the node names in the single-line format: "node01" "node02" "node03" "node04"
-      # This list is then passed into the Go-template output formatter, so that the main 'kubectl get pod...' 
-      # command only returns the status of the pods on the Ready nodes (e.g. {{if eq .spec.nodeName "node01" "node02" "node03" "node04"}}{{.status.phase}})
-    - name: Confirm that the pumba ds is running on all nodes
+    - name: Confirm that the pumba job is running on {{ app_node }} nodes
       shell: >
         kubectl get pod -l app=pumba
-        --no-headers --template "{{range .items}}{{if eq .spec.nodeName $(kubectl get nodes --no-headers --field-selector spec.unschedulable=false | grep Ready | awk '{printf "\"%s\" ", $1}')}}{{.status.phase}}{{\"\n\"}}{{end}}{{end}}"
+        --no-headers -o custom-columns=:status.phase
         -n {{ namespace }} | sort | uniq
       args:
         executable: /bin/bash
@@ -62,42 +58,6 @@
       until: "result.stdout == 'Running'"
       delay: 2
       retries: 60
-      ignore_errors: true
-
-    - block:
-        - name: Select the app pod
-          shell: >
-            kubectl get pod -l {{ label }} -n {{ namespace }}
-            -o=custom-columns=NAME:".metadata.name" --no-headers
-            | shuf | head -1 
-          args:
-            executable: /bin/bash
-          register: pod_name
-
-        - name: Record application pod name
-          set_fact:
-            app_pod_ut: "{{ pod_name.stdout }}"     
-      when: app_pod is not defined or app_pod == ''
-
-    - block: 
-
-        - name: Record application pod name
-          set_fact: 
-            app_pod_ut: "{{ app_pod }}"
-
-      when: app_pod is defined and app_pod != ''
-
-    - name: Identify the application node
-      shell: >
-        kubectl get pod {{ app_pod_ut }} -n {{ namespace }}
-        --no-headers -o custom-columns=:spec.nodeName
-      args:
-        executable: /bin/bash
-      register: result
-
-    - name: Record the application node name
-      set_fact:
-        app_node: "{{ result.stdout }}"
 
     - block:
 
@@ -133,7 +93,7 @@
 
     - name: Record restartCount
       shell: >
-        kubectl get pod {{ app_pod_ut }} -n {{ namespace }}
+        kubectl get pod {{ app_pod }} -n {{ namespace }}
         -o=jsonpath='{.status.containerStatuses[?(@.name=="{{ a_container }}")].restartCount}'
       args:
         executable: /bin/bash
@@ -151,18 +111,18 @@
       wait_for: timeout="{{ ramp_time }}"
       when: "ramp_time is defined and ramp_time != ''"
 
-    - name: Force kill the application pod using pumba
-      shell: >
-        kubectl exec {{ pumba_pod.stdout}} -n {{ namespace }}
-        -- pumba kill --signal SIGKILL re2:k8s_{{ a_container }}_{{ app_pod_ut }};
-      args:
-        executable: /bin/bash
-      ignore_errors: true
-      register: result
+    # - name: Force kill the application pod using pumba
+    #   shell: >
+    #     kubectl exec {{ pumba_pod.stdout}} -n {{ namespace }}
+    #     -- pumba kill --signal SIGKILL re2:k8s_{{ a_container }}_{{ app_pod }};
+    #   args:
+    #     executable: /bin/bash
+    #   ignore_errors: true
+    #   register: result
 
     - name: Verify restartCount
       shell: >
-        kubectl get pod {{ app_pod_ut }} -n {{ namespace }}
+        kubectl get pod {{ app_pod }} -n {{ namespace }}
         -o=jsonpath='{.status.containerStatuses[?(@.name=="{{ a_container }}")].restartCount}'
       args:
         executable: /bin/bash
@@ -196,7 +156,7 @@
             kubectl delete -f /chaoslib/pumba/pumba_kube.yml -n {{ namespace }}
           args:
             executable: /bin/bash
-          when: pumba_ds_result.rc == 0
+          when: pumba_job_result.rc == 0
         
         - name: Confirm that the pumba job is not present
           shell: >
@@ -207,7 +167,7 @@
           until: "'No resources found' in result.stderr"
           delay: 2
           retries: 60
-      when: "pumba_ds_result is defined"
+      when: "pumba_job_result is defined"
 
     - fail:
         msg: "pod_failure_by_sigkill lib failed"
