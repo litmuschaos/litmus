@@ -71,7 +71,7 @@
       shell: kubectl exec -it {{ pod_ds_app }} -n {{ a_ns }} -- bash -c "stress --cpu {{ cpu_limit }} --timeout {{ c_duration }}; exit"
       args:
         executable: /bin/bash
-      async: 180
+      async: "{{ c_duration | int  + 30 }}"
       poll: 5
 
     ## GETTING THE NODE STATUS
