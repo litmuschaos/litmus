@@ -4,7 +4,7 @@
 
 - name: Disk status check
   template:
-    src: disk_status_check.j2
+    src: /utils/common/disk_status_check.j2
     dest: disk_status_check.yml
 
 - include_vars:

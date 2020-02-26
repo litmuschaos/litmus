@@ -7,7 +7,7 @@
     id: "{{ disk_name }}"
     instance: None
     region: "{{ zone_name }}"
-
+    
 - name: chaos injection for {{ c_duration }}s
   wait_for:
     timeout: "{{ c_duration }}"
