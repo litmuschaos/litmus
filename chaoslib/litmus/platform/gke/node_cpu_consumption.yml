@@ -35,8 +35,8 @@
           - app=cpu-hog
       register: pod_ds
       until: "{{pod_ds | json_query('resources[*].status.phase') | unique | length==1}} and {{pod_ds | json_query('resources[0].status.phase') == 'Running'}}"
-      delay: 5
-      retries: 60
+      delay: 2
+      retries: 90
 
     ## GETTING THE POD NAME OF DS FROM APPLICATION NODE
     - name: Getting the pod name of DS from application node
@@ -74,6 +74,10 @@
       async: "{{ c_duration | int  + 30 }}"
       poll: 5
 
+    - name: Wait for the specified ramp time after injecting chaos
+      wait_for: timeout="{{ ramp_time }}"
+      when: "ramp_time is defined and ramp_time != ''" 
+
     ## GETTING THE NODE STATUS
     - name: Getting the node status
       shell: kubectl get no {{ node_name }} | awk '{print $2}' | tail -n1
@@ -103,8 +107,8 @@
           - app=cpu-hog
       register: resource_daemonset
       until: "resource_daemonset.resources | length < 1"
-      delay: 5
-      retries: 60
+      delay: 2
+      retries: 90
 
   rescue: 
 
@@ -124,8 +128,8 @@
               - app=cpu-hog
           register: resource_daemonset
           until: "resource_daemonset.resources | length < 1"
-          delay: 5
-          retries: 60
+          delay: 2
+          retries: 90
       when: "cpu_hog_ds_result is defined"
 
     - fail:

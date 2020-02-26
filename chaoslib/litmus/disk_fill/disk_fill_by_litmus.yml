@@ -80,8 +80,8 @@
         executable: /bin/bash
       register: result
       until: "result.stdout == 'Running'"
-      delay: 1
-      retries: 60
+      delay: 2
+      retries: 90
       ignore_errors: true
 
     - name: Confirm that disk fill container is in running state 
@@ -89,8 +89,8 @@
       vars:
         app_label: "app=disk-fill"
         app_ns: "{{ a_ns }}"  
-        delay: 1
-        retries: 60
+        delay: 2
+        retries: 90
 
     - name: Wait for the specified ramp time before injecting chaos
       wait_for: timeout="{{ ramp_time }}"
@@ -155,6 +155,10 @@
         kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ a_ns }} -- sh -c "rm -rf /diskfill/{{ containerID.stdout }}/diskfill"
       when: pod_status.stdout == "Running"
 
+    - name: Wait for the specified ramp time after injecting chaos
+      wait_for: timeout="{{ ramp_time }}"
+      when: "ramp_time is defined and ramp_time != ''" 
+
     ## DELETING THE DAEMONSET
     - name: Deleting the Disk Fill DaemonSet
       shell: kubectl delete -f /chaoslib/litmus/disk_fill/disk_fill_ds.yml -n {{ a_ns }}
@@ -168,8 +172,8 @@
           - app=disk-fill
       register: resource_daemonset
       until: "resource_daemonset.resources | length < 1"
-      delay: 5
-      retries: 60
+      delay: 2
+      retries: 90
 
   rescue: 
 
@@ -189,8 +193,8 @@
               - app=disk-fill
           register: resource_daemonset
           until: "resource_daemonset.resources | length < 1"
-          delay: 5
-          retries: 60   
+          delay: 2
+          retries: 90   
       when: "disk_fill_ds_result is defined"
     
     - fail:

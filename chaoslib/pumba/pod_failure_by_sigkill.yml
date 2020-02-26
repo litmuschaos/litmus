@@ -33,7 +33,7 @@
       register: result
       until: "result.stdout == 'Running'"
       delay: 2
-      retries: 60
+      retries: 90
       ignore_errors: true
 
     - block:
@@ -117,7 +117,7 @@
         app_label: "app=pumba"
         app_ns: "{{ namespace }}"  
         delay: 2
-        retries: 60
+        retries: 90
 
     - name: Wait for the specified ramp time before injecting chaos
       wait_for: timeout="{{ ramp_time }}"
@@ -132,6 +132,10 @@
       ignore_errors: true
       register: result
 
+    - name: Wait for the specified ramp time after injecting chaos
+      wait_for: timeout="{{ ramp_time }}"
+      when: "ramp_time is defined and ramp_time != ''"
+
     - name: Verify restartCount
       shell: >
         kubectl get pod {{ app_pod_ut }} -n {{ namespace }}
@@ -141,7 +145,7 @@
       register: restartCnt
       until: "restartCnt.stdout|int > restartCnt_prev.stdout|int"
       delay: 2
-      retries: 60
+      retries: 90
 
     - name: Tear down pumba infrastructure
       shell: >
@@ -157,7 +161,7 @@
       register: result
       until: "'No resources found' in result.stderr"
       delay: 2
-      retries: 60
+      retries: 90
 
   rescue: 
 
@@ -178,7 +182,7 @@
           register: result
           until: "'No resources found' in result.stderr"
           delay: 2
-          retries: 60
+          retries: 90
       when: "pumba_ds_result is defined"
 
     - fail:

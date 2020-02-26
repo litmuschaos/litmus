@@ -2,16 +2,16 @@
 - name: Verify that all kafka pods are running
   include_tasks: "/utils/common/status_app_pod.yml"
   vars:
-    delay: 1
-    retries: 60
+    delay: 2
+    retries: 90
     app_ns: "{{ kafka_ns }}"
     app_label: "{{ kafka_label }}"
 
 - name: Verify that all zookeeper pods are running
   include_tasks: "/utils/common/status_app_pod.yml"
   vars:
-    delay: 1
-    retries: 60
+    delay: 2
+    retries: 90
     app_ns: "{{ zk_ns }}"
     app_label: "{{ zk_label }}"
 

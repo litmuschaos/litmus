@@ -64,8 +64,8 @@
         - name: Verify that the Kafka cluster is healthy
           include_tasks: "/utils/apps/kafka/kafka_cluster_health.yml"
           vars:     
-            delay: 1
-            retries: 60
+            delay: 2
+            retries: 90
 
         - name: Derive the kafka-broker node name
           shell: 
@@ -118,8 +118,8 @@
               vars: 
                 app_ns: "{{ kafka_ns }}"
                 app_label: "name=kafka-liveness" 
-                delay: 1
-                retries: 60
+                delay: 2
+                retries: 90
 
             - include_tasks: "/utils/apps/kafka/kafka_liveness_cleanup.yml"
 
