@@ -6,8 +6,7 @@
     a_label: "{{ lookup('env','APP_LABEL') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_pvc: "{{ lookup('env','APP_PVC') }}"
-    c_experiment: openebs-pool-container-failure
-    chaos_duration: 600
+    c_experiment: "openebs-pool-container-failure"
     chaos_iterations: "{{ lookup('env','CHAOS_ITERATIONS') }}"
     data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
     lib_image: "{{ lookup('env','LIB_IMAGE') }}"
@@ -86,8 +85,8 @@
           vars:
             app_ns: "{{ a_ns }}"
             app_label: "{{ a_label }}" 
-            delay: 5
-            retries: 60
+            delay: 2
+            retries: 90
 
         - name: Create some test data 
           include: "{{ data_consistency_util_path }}"
@@ -109,8 +108,8 @@
           vars:
             app_ns: "{{ a_ns }}"
             app_label: "{{ a_label }}" 
-            delay: 5
-            retries: 60
+            delay: 2
+            retries: 90
  
         - name: Verify application data persistence  
           include: "{{ data_consistency_util_path }}"

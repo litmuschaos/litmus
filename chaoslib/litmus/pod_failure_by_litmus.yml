@@ -20,3 +20,7 @@
 - name: Kill random pod
   include: kill_random_pod.yml
   with_sequence: start=1 end={{ c_iterations }}
+
+- name: Wait for the specified ramp time after injecting chaos
+  wait_for: timeout="{{ ramp_time }}"
+  when: "ramp_time is defined and ramp_time != ''" 
