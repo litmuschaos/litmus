@@ -13,8 +13,8 @@
         executable: /bin/bash
       register: result
       until: "'Running' in result.stdout"
-      delay: 30
-      retries: 15
+      delay: 2
+      retries: 90
       
   when: lookup('env','DEPLOY_TYPE') == 'deployment'
 
@@ -23,14 +23,14 @@
       shell: kubectl get statefulset -n {{ app_ns }} -l {{ app_label }} -o custom-columns=:spec.replicas
       register: rep_count 
       until: "rep_count.rc ==0"
-      delay: 60
-      retries: 15
+      delay: 2
+      retries: 90
 
     - name: Obtain the ready replica count and compare with the replica count.
       shell: kubectl get statefulset -n {{ app_ns }} -l {{ app_label }} -o custom-columns=:..readyReplicas
       register: ready_rep
       until: "ready_rep.rc == 0 and ready_rep.stdout|int == rep_count.stdout|int"
-      delay: 60
-      retries: 30
+      delay: 2
+      retries: 90
 
   when: lookup('env','DEPLOY_TYPE') == 'statefulset'

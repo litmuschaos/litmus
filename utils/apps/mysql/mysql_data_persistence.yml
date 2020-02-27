@@ -32,7 +32,7 @@
      register: podstatus
      until: '"{{ pod_name }}" not in podstatus.stdout'
      retries: 2
-     delay: 150
+     delay: 90
 
    - name: Obtain the newly created pod name for applicaion
      shell: >
@@ -46,7 +46,7 @@
      register: result
      until: "((result.stdout.split()|unique)|length) == 1 and 'Running' in result.stdout"
      delay: 2
-     retries: 150
+     retries: 90
 
    - name: Get the container status of application.
      shell: >
@@ -56,7 +56,7 @@
      register: containerStatus
      until: "'running' in containerStatus.stdout"
      delay: 2
-     retries: 150
+     retries: 90
 
    - name: Checking for the Corrupted tables
      shell: >

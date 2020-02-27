@@ -62,7 +62,7 @@ spec:
 
           - name: CHAOSENGINE
             value: ''
-
+          
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/openebs/openebs-pool-container-failure/openebs_pool_kill_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
 
