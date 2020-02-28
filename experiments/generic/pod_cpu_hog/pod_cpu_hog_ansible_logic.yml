@@ -43,8 +43,8 @@
           vars:
             app_ns: "{{ a_ns }}"
             app_label: "{{ a_label }}"       
-            delay: 1
-            retries: 60
+            delay: 2
+            retries: 90
 
         ## FAULT INJECTION 
         - include_tasks: "{{ c_util }}"
@@ -58,8 +58,8 @@
           vars:
             app_ns: "{{ a_ns }}"
             app_label: "{{ a_label }}"     
-            delay: 1
-            retries: 60        
+            delay: 2
+            retries: 90        
 
 
         - set_fact:

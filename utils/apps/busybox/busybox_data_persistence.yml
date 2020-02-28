@@ -45,7 +45,7 @@
      register: result
      until: "((result.stdout.split()|unique)|length) == 1 and 'Running' in result.stdout"
      delay: 2
-     retries: 150
+     retries: 90
 
    - name: Get the container status of application.
      shell: >
@@ -55,7 +55,7 @@
      register: containerStatus
      until: "'running' in containerStatus.stdout"
      delay: 2
-     retries: 150
+     retries: 90
 
    - name: Check the md5sum of stored data file
      shell: >

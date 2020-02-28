@@ -69,8 +69,8 @@
     executable: /bin/bash
   register: rstatus_after
   until: "rstatus_after.stdout_lines == rstatus_before.stdout_lines and 'RW' in rstatus_after.stdout"
-  retries: 30
-  delay: 10
+  retries: 2
+  delay: 90
 
 - name: Get the resourceVersion of the target deploy after fault injection
   shell: >

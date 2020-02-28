@@ -8,5 +8,5 @@
   register: result
   with_items: "{{ liveness_pods.stdout_lines }}"
   until: "'Running' in result.stdout"
-  delay: 10
-  retries: 10
+  delay: 2
+  retries: 90

@@ -91,6 +91,10 @@
       ## with a grace period of 1 min before pumba terminate
       retries: "{{ ((c_duration|int)/1000 + 60)| int }}"
 
+    - name: Wait for the specified ramp time after injecting chaos
+      wait_for: timeout="{{ ramp_time }}"
+      when: "ramp_time is defined and ramp_time != ''" 
+
     - name: Tear down pumba infrastructure
       shell: >
         kubectl delete -f /chaoslib/pumba/network_chaos/pumba_kube.yml -n {{ a_ns }} 
@@ -104,8 +108,8 @@
         executable: /bin/bash
       register: result
       until: "'No resources found' in result.stderr"
-      delay: 5
-      retries: 60
+      delay: 2
+      retries: 90
 
   rescue: 
 
@@ -125,8 +129,8 @@
             executable: /bin/bash
           register: result
           until: "'No resources found' in result.stderr"
-          delay: 5
-          retries: 60
+          delay: 2
+          retries: 90
       when: "pumba_deploy_result is defined"
 
     - fail:

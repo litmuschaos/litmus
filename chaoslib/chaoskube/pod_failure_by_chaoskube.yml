@@ -37,7 +37,7 @@
         executable: /bin/bash
       register: chaoskube
       until: "'Running' in chaoskube.stdout"
-      delay: 1
+      delay: 2
       retries: 90
 
     - name: Set the chaoskube pod name to variable
@@ -112,7 +112,7 @@
         executable: /bin/bash
       register: result
       until: "'Running' not in result.stdout"
-      delay: 1
-      retries: 150
+      delay: 2
+      retries: 90
 
   when: action == "cleanup"

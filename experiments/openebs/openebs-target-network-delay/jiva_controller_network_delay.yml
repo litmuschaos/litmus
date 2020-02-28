@@ -54,8 +54,8 @@
     executable: /bin/bash
   register: resp
   until: resp.stdout != rcount_before.stdout
-  retries: 10
-  delay: 15
+  retries: 2
+  delay: 90
   
 - name: Verifying the replicas post network recovery
   shell: >
@@ -65,5 +65,5 @@
     executable: /bin/bash
   register: replica
   until: replica.stdout == rcount_before.stdout
-  retries: 10
-  delay: 15
+  retries: 2
+  delay: 90
