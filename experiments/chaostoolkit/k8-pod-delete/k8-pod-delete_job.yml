@@ -19,14 +19,14 @@ spec:
         imagePullPolicy: Always
         env:
           - name: FILE
-            value: 'experiment.json'
+            value: 'pod-app-kill-count.json'
 
           - name: LABEL_NAME
-            value: 'nginx'
+            value: ''
 
           # provide application namespace
           - name: NAME_SPACE
-            value: 'default'
+            value: ''
 
           # provide application labels
           - name: APP_ENDPOINT
@@ -34,7 +34,10 @@ spec:
 
           # provide application labels
           - name: PERCENTAGE
-            value: '50'            
+            value: '50'           
+
+          - name: CHAOSTOOLKIT_IN_POD
+            value: "true" 
 
           ## env var that describes the library used to execute the chaos
           ## default: litmus. Supported values: litmus, powerfulseal, chaostoolkit
@@ -50,4 +53,4 @@ spec:
                 fieldPath: spec.serviceAccountName
 
         command: ["/bin/bash"]
-        args: ["-c", "python /app/data/k8_wrapper.py ; exit 0"]
+        args: ["-c", "python /app/data/k8_wrapper.py; exit 0"]
