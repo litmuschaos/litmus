@@ -9,11 +9,11 @@ spec:
       labels:
         experiment: node-memory-hog
     spec:
-      serviceAccountName: litmus
+      serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: uditgaurav/node-memory-hog:ci
+        image: litmuschaos/ansible-runner:ci
         imagePullPolicy: Always
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
@@ -21,32 +21,39 @@ spec:
 
           ## ENTER THE NAMESPACE WHERE THE APPLICATION IS RUNNING
           - name: APP_NAMESPACE
-            value: 'litmus'
+            value: ''
 
           ## ENTER THE LABEL OF THE APPLICATION
           - name: APP_LABEL
-            value: 'run=nginx'
+            value: ''
           
           ## ENTER THE KIND OF APPLICATION 
           ## WORKING FOR 'deployment' TYPE OF APPLICATION
           - name: APP_KIND
-            value: 'deployment'
+            value: ''
           
           ## PLATFORM SUPPORTED 
           - name: PLATFORM
             value: 'GKE'
           
           ## ENTER TOTAL_CHAOS_DURATION(IN sec)
-          ## DEFAULT VALUE IS 90
+          ## THIS MAY CHANGES (LESS THAN GIVEN VALUE) DUE TO NO RESOURCE LEFT IN THE SYSTEM
+          ## DEFAULT VALUE IS 60
           - name: TOTAL_CHAOS_DURATION
-            value: '90'
+            value: '60'
 
-          ## Period to wait before and after injection of chaos in sec
+          ## ENTER THE MEMORY YOU WANT TO HOG ON NODE (In Gigabytes G)
+          ## IT IS OPTIONAL FOR EMPTY VALUE IT WILL CONSUME THE NODE ALLOCATABLE MEMORY
+          ## EXAMPLE VALUE 2.2
+          - name: TOTAL_MEMORY
+            value: ''
+
+          ## PERIOD TO WAIT BEFORE AND AFTER INJECTION OF CHAOS IN SEC
           - name: RAMP_TIME
             value: ''
 
-          # provide auxiliary application details - namespace and labels of the applications
-          # sample input is  "ns1:app=percona,ns2:name=nginx"
+          # PROVIDE AUXILIARY APPLICATION DETAILS - NAMESPACE AND LABELS OF THE APPLICATIONS
+          # SAMPLE INPUT IS  "ns1:app=percona,ns2:name=nginx"
           - name: AUXILIARY_APPINFO
             value: ''
 

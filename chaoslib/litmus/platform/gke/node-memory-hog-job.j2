@@ -1,24 +1,22 @@
-apiVersion: apps/v1
-kind: DaemonSet
+apiVersion: batch/v1
+kind: Job
 metadata:
   name: node-memory-hog
   labels: 
     chaosUID: {{ chaosUID }}
 spec:
-  selector:
-    matchLabels:
-      app: memory-hog
-      chaosUID: {{ chaosUID }}
   template:
     metadata:
       labels:
         app: memory-hog
         chaosUID: {{ chaosUID }}
-      name: node-memory-hog
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: {{ node_name }}
+      restartPolicy: Never
       containers:
       - image: litmuschaos/cpu:latest
         imagePullPolicy: Always
         name: memory-hog
-        command: ["/bin/bash"]
-        args: ["-c", "sleep 10000"]
+        command: ["stress"]
+        args: ["--vm", "1", "--vm-bytes", {{ total_memory_limit }}, "-t", "{{ stress_time }}" ]

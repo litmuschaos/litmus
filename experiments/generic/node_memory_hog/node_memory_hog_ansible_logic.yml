@@ -10,6 +10,7 @@
     a_label: "{{ lookup('env','APP_LABEL') }}"
     a_kind: "{{ lookup('env','APP_KIND') }}"
     a_platform: "{{ lookup('env', 'PLATFORM') }}"
+    total_memory: "{{ lookup('env', 'TOTAL_MEMORY') }}"
     auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
 
@@ -46,7 +47,7 @@
             delay: 2
             retries: 90
 
-        # Auxiliary application health check status
+        # AUXILIARY APPLICATION HEALTH CHECK STATUS
         - block: 
 
             - name: Record auxiliary appinfo 
@@ -80,7 +81,7 @@
                 delay: 2
                 retries: 90
 
-            ## Auxiliary application health check status
+            ## AUXILIARY APPLICATION HEALTH CHECK STATUS
             - block:
 
                 - include: /utils/common/status_app_pod.yml
@@ -107,7 +108,7 @@
                 retries: 90
               ignore_errors: yes
 
-            ## Auxiliary application health check status
+            ## AUXILIARY APPLICATION HEALTH CHECK STATUS
             - block:
 
                 - include: /utils/common/status_app_pod.yml

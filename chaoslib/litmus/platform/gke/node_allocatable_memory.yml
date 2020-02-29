@@ -1,0 +1,22 @@
+---    
+## GETTING THE NODE MEMORY ALLOCATABLE
+- name: Getting the node memory allocatable
+  k8s_facts:
+    kind: Node
+    name: "{{ node_name }}"
+  register: m_limit
+
+## EXTRACTING THE INTEGER VALUE
+- name: Extracting the integer value from allocatable memory
+  set_fact:
+    memory_limit: "{{ (m_limit | json_query('resources[0].status.allocatable.memory')).split('K')[0] | int }}"
+      
+## Getting The Value in Gigabyte(G)
+- name: Converting the value in Gigabyte
+  set_fact:
+    memory_converted: "{{ (memory_limit | float) * (10 | pow(-6)) }}"
+
+## TOTAL MEMORY LIMIT IN Gigabyte(G)
+- name: Getting the total memory limit
+  set_fact:
+    total_memory: "{{ memory_converted | float | round(0,'floor') | int }}"
