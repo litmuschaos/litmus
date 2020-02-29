@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-memory-hog
+  labels: 
+    chaosUID: {{ chaosUID }}
+spec:
+  selector:
+    matchLabels:
+      app: memory-hog
+      chaosUID: {{ chaosUID }}
+  template:
+    metadata:
+      labels:
+        app: memory-hog
+        chaosUID: {{ chaosUID }}
+      name: node-memory-hog
+    spec:
+      containers:
+      - image: litmuschaos/cpu:latest
+        imagePullPolicy: Always
+        name: memory-hog
+        command: ["/bin/bash"]
+        args: ["-c", "sleep 10000"]

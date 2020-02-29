@@ -1,0 +1,149 @@
+ ## GETTING THE PRE CHAOS NODE NAME OF APPLICATION 
+- block:
+  
+    - name: Getting the pre-chaos pod name of application 
+      k8s_facts:
+        kind: Pod
+        label_selectors:
+          - "{{ a_label }}"
+      register: app_pod_name
+    
+    ## RECORDING THE NODE NAME ON WHICH APPLICATION IS RUNNING
+    - name: Recording the node name of application pod
+      set_fact:
+        node_name: "{{ app_pod_name | json_query('resources[0].spec.nodeName')}}"
+    
+    ## PATCH THE ENGINE UID
+    - name: Patch the engine uid
+      template:
+        src:  /chaoslib/litmus/platform/gke/node-memory-hog-daemonset.j2
+        dest: /chaoslib/litmus/platform/gke/node-memory-hog-daemonset.yml
+      vars:
+        chaosUID: "{{ chaos_uid }}"
+
+    ## CREATING A DAEMONSET FOR MEMORY-HOG
+    - name: Creating a DaemonSet for memory-hog
+      k8s:
+        state: present
+        namespace: "{{ a_ns }}"
+        src: /chaoslib/litmus/platform/gke/node-memory-hog-daemonset.yml
+      register: memory_hog_ds_result
+
+    ## CHECKING THE STATUS OF DAEMONSET
+    - name: Checking the status of DaemonSet
+      k8s_facts:
+        kind: Pod
+        namespace: "{{ a_ns }}"
+        label_selectors:
+          - app=memory-hog
+      register: pod_ds
+      until: "{{pod_ds | json_query('resources[*].status.phase') | unique | length==1}} and {{pod_ds | json_query('resources[0].status.phase') == 'Running'}}"
+      delay: 2
+      retries: 90
+
+    ## GETTING THE POD NAME OF DS FROM APPLICATION NODE
+    - name: Getting the pod name of DS from application node
+      k8s_facts:
+        kind: Pod
+        namespace: "{{ a_ns }}"
+        field_selectors:
+          - spec.nodeName={{node_name}}
+        label_selectors:
+          - app=memory-hog
+      register: ds_app
+
+    ## GETTING THE DAEMONSET POD NAME ON THE APPLICATION NODE
+    - name: Getting the DaemonSet pod name on application node
+      set_fact:
+        pod_ds_app: "{{ ds_app | json_query('resources[0].metadata.name') }}"
+
+    ## WAIT FOR THE SPECIFIED RAMP TIME
+    - name: Wait for the specified ramp time before injecting chaos
+      wait_for: timeout="{{ ramp_time }}"
+      when: "ramp_time is defined and ramp_time != ''"
+
+    ## GETTING THE NODE MEMORY ALLOCATABLE
+    - name: Getting the node memory allocatable
+      k8s_facts:
+        kind: Node
+        name: "{{ node_name }}"
+      register: m_limit
+
+    ## EXTRACTING THE INTEGER VALUE
+    - name: Extracting the integer value from allocatable memory
+      set_fact:
+        memory_limit: "{{ (m_limit | json_query('resources[0].status.allocatable.memory')).split('K')[0] | int }}"
+        
+    ## Getting The Value in Gigabyte(G)
+    - name: Converting the value in Gigabyte
+      set_fact:
+        memory_converted: "{{ (memory_limit | float) * (10 | pow(-6)) }}"
+
+    ## TOTAL MEMORY LIMIT IN Gigabyte(G)
+    - name: Getting the total memory limit
+      set_fact:
+        total_memory_limit: "{{ memory_converted | float | round(1,'floor') }}G"
+
+    ## GIVING MEMORY SPIKE
+    - name: Giving memory spike ...
+      shell: kubectl exec -it {{ pod_ds_app }} -n {{ a_ns }} -- bash -c "stress --vm 1 --vm-bytes {{ total_memory_limit }} --timeout {{ c_duration }}s; exit"
+      args:
+        executable: /bin/bash
+      async: "{{ c_duration | int  + 30 }}"
+      poll: 5
+
+    ## WAIT FOR RAMP TIME AFTER CHAOS
+    - name: Wait for the specified ramp time after injecting chaos
+      wait_for: timeout="{{ ramp_time }}"
+      when: "ramp_time is defined and ramp_time != ''" 
+
+    ## GETTING THE NODE STATUS
+    - name: Getting the node status
+      shell: kubectl get no {{ node_name }} | awk '{print $2}' | tail -n1
+      register: node_status
+
+    ## DELETING THE DAEMONSET
+    - name: Deleting the Memory Hog DaemonSet
+      shell: kubectl delete -f /chaoslib/litmus/platform/gke/node-memory-hog-daemonset.yml -n {{ a_ns }}
+      args:
+        executable: /bin/bash
+    
+    ## CHECKING WHETHER MEMORY HOG DAEMONSET IS DELETED SUCCESSFULLY
+    - name: Confirm that the Memory Hog DaemonSet is deleted successfully
+      k8s_facts:
+        kind: DaemonSet
+        label_selectors:
+          - app=memory-hog
+      register: resource_daemonset
+      until: "resource_daemonset.resources | length < 1"
+      delay: 2
+      retries: 90
+
+  rescue: 
+
+    - block: 
+
+        ## REMOVING THE MEMORY HOG DAEMONSET
+        - name: Deleting the Memory Hog DaemonSet
+          shell: >
+            kubectl delete -f /chaoslib/litmus/platform/gke/node-memory-hog-daemonset.yml -n {{ a_ns }}
+          args:
+            executable: /bin/bash
+          when: "memory_hog_ds_result is succeeded"
+        
+        ## CHECKING WHETHER MEMORY HOG DAEMONSET IS DELETED SUCCESSFULLY
+        - name: Confirm that the memory Hog DaemonSet is deleted successfully
+          k8s_facts:
+            kind: DaemonSet
+            label_selectors:
+              - app=memory-hog
+          register: resource_daemonset
+          until: "resource_daemonset.resources | length < 1"
+          delay: 2
+          retries: 90
+      when: "memory_hog_ds_result is defined"
+
+    ## FAIL WHEN ENTERS IN RESCUE BLOCK
+    - fail:
+        msg: "node_memory_consumption lib failed"
+      when: true

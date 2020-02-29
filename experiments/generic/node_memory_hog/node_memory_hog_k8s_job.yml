@@ -1,0 +1,66 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: node-memory-hog-
+spec:
+  template:
+    metadata:
+      labels:
+        experiment: node-memory-hog
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: uditgaurav/node-memory-hog:ci
+        imagePullPolicy: Always
+        env: 
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: 'default'
+
+          ## ENTER THE NAMESPACE WHERE THE APPLICATION IS RUNNING
+          - name: APP_NAMESPACE
+            value: 'litmus'
+
+          ## ENTER THE LABEL OF THE APPLICATION
+          - name: APP_LABEL
+            value: 'run=nginx'
+          
+          ## ENTER THE KIND OF APPLICATION 
+          ## WORKING FOR 'deployment' TYPE OF APPLICATION
+          - name: APP_KIND
+            value: 'deployment'
+          
+          ## PLATFORM SUPPORTED 
+          - name: PLATFORM
+            value: 'GKE'
+          
+          ## ENTER TOTAL_CHAOS_DURATION(IN sec)
+          ## DEFAULT VALUE IS 90
+          - name: TOTAL_CHAOS_DURATION
+            value: '90'
+
+          ## Period to wait before and after injection of chaos in sec
+          - name: RAMP_TIME
+            value: ''
+
+          # provide auxiliary application details - namespace and labels of the applications
+          # sample input is  "ns1:app=percona,ns2:name=nginx"
+          - name: AUXILIARY_APPINFO
+            value: ''
+
+          # only supports litmus
+          - name: LIB
+            value: 'litmus'
+ 
+          - name: CHAOSENGINE
+            value: ''
+          
+          - name: CHAOS_SERVICE_ACCOUNT
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.serviceAccountName
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./experiments/generic/node_memory_hog/node_memory_hog_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
