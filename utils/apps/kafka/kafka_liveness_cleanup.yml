@@ -12,5 +12,5 @@
     executable: /bin/bash
   register: result
   until: "'Running' not in result.stdout"
-  delay: 1
-  retries: 120
+  delay: 2
+  retries: 90

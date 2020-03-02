@@ -9,7 +9,6 @@
     c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
     c_experiment: "openebs-target-network-loss"
     c_force: "{{ lookup('env','FORCE') }}"
-    c_interval: "5"
     data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
     lib_image: "{{ lookup('env','LIB_IMAGE') }}"
     liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
@@ -82,8 +81,8 @@
           vars:
             app_ns: "{{ a_ns }}"
             app_label: "{{ a_label }}"      
-            delay: 5
-            retries: 60
+            delay: 2
+            retries: 90
 
         - name: Get application pod name
           shell: >
@@ -112,8 +111,8 @@
           vars:
             app_ns: "{{ a_ns }}"
             app_label: "{{ a_label }}" 
-            delay: 5
-            retries: 60 
+            delay: 2
+            retries: 90 
             
         - include_tasks: /utils/common/application_liveness_check.yml
           when: liveness_label != ''

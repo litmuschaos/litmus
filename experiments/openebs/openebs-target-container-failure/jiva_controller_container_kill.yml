@@ -37,8 +37,8 @@
     executable: /bin/bash
   register: result
   until: "result.stdout == 'Running'"
-  delay: 5
-  retries: 45
+  delay: 2
+  retries: 90
 
 - name: Check for controller container status
   shell: >
@@ -49,8 +49,8 @@
     executable: /bin/bash
   register: runningStatusCount
   until: "runningStatusCount.stdout == \"2\""
-  delay: 30
-  retries: 10
+  delay: 2
+  retries: 90
 
 - name: Get the restartCount of ctrl-con container
   shell: >

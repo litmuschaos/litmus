@@ -33,8 +33,8 @@
     executable: /bin/bash
   register: cstor_target_pod_cnt
   until: "cstor_target_pod_cnt.stdout == \"1\""
-  delay: 30
-  retries: 10
+  delay: 2
+  retries: 90
 
 - name: Get the runningStatus of target pod
   shell: >
@@ -45,8 +45,8 @@
     executable: /bin/bash
   register: runningStatusCount
   until: "runningStatusCount.stdout == \"3\""
-  delay: 30
-  retries: 10
+  delay: 2
+  retries: 90
 
 - name: Get the restartCount of cstor-istgt container
   shell: >
