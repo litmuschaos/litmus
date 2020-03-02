@@ -3,7 +3,7 @@ from ansiblelint import AnsibleLintRule
 class RestrictCommandsCheck(AnsibleLintRule):
   id = '702'
   shortdesc = 'Warn against usage of bash utilities like awk/sed/cut/grep'
-  description = 'Certain commands like awk/sed/cut/grep should not be use'
+  description = 'It is recommended to use ansible/python native commands against bash utils like awk/sed/cut/grep'
   tags = ['productivity']
 
   # pylint: disable=R0201
