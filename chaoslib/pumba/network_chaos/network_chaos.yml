@@ -1,134 +1,138 @@
 ---
-- block: 
-
-    - block: 
-
-        - name: Select the app pod
-          shell: >
-            kubectl get pod -l {{ a_label }} -n {{ a_ns }}
-            -o=custom-columns=:metadata.name --no-headers
-            | shuf | head -1 
-          args:
-            executable: /bin/bash
-          register: app_pod_name
-
-        - name: Record app pod name
-          set_fact:
-            app_pod: "{{ app_pod_name.stdout }}"
-
-      when: "app_pod is not defined or app_pod == ''"
-
-    # here app_ns is the namespace of pod on which we are performing network loss/delay
-    # in genric experiments app_ns is same as a_ns
-    # in openebs experiments app_ns is the namespace where openebs is installed i.e, openebs
-    - name: Identify the application node
-      shell: >
-        kubectl get pod {{ app_pod }} -n {{ app_ns }}
-        --no-headers -o custom-columns=:spec.nodeName
-      args:
-        executable: /bin/bash
-      register: app_node
-
-    - set_fact: 
-        app_node: "{{ app_node.stdout }}"
-
-    - block: 
-        - name: Generate a run id if not passed from the engine/experiment
-          shell: echo $(mktemp) | cut -d '.' -f 2 
-          register: rand_string   
-
-        - set_fact:
-            run_id: "{{ rand_string.stdout | lower }}"
-      when: "run_id is not defined or run_id == ''"
-
-    - block:
-
-        - name: Record the application container
-          shell: >
-            kubectl get pods -n {{ app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ app_pod }}")].spec.containers[0].name}'
-          args:
-            executable: /bin/bash
-          register: container
+  - block: 
   
-        - name: Record the app_container
-          set_fact:
-            c_container: "{{ container.stdout }}"
+      - block: 
   
-      when: c_container is not defined or c_container == ''
-
-    - name: Wait for the specified ramp time before injecting chaos
-      ## the ramp_time is spent before launching the pumba job instead 
-      ## of in the pumba job, as with the new scratch-based pumba images
-      ## there is no shell available by default
-      wait_for: timeout="{{ ramp_time }}"
-      when: "ramp_time is defined and ramp_time != ''"
+          - name: Select the app pod
+            shell: >
+              kubectl get pod -l {{ a_label }} -n {{ a_ns }}
+              -o=custom-columns=:metadata.name --no-headers
+              | shuf | head -1 
+            args:
+              executable: /bin/bash
+            register: app_pod_name
     
-    - name: Patch the chaoslib image
-      template:
-        src:  /chaoslib/pumba/network_chaos/pumba_netem_job.j2
-        dest: /chaoslib/pumba/network_chaos/pumba_kube.yml
-      vars:
-        pumba_image: "{{ lib_image }}"
-        chaosUID: "{{ chaos_uid }}"
-
-    - name: Setup pumba chaos infrastructure
-      shell: >
-        kubectl create -f /chaoslib/pumba/network_chaos/pumba_kube.yml -n {{ a_ns }}
-      args: 
-        executable: /bin/bash
-      register: pumba_deploy_result
-
-    - name: Wait until the pumba netem job is completed
-      shell: >
-        kubectl get pods -l job-name=pumba-netem-{{ run_id }} --no-headers -n {{ a_ns }}
-        --no-headers -o custom-columns=:status.phase
-      args: 
-        executable: /bin/bash
-      register: result
-      until: "result.stdout == 'Succeeded'"
-      delay: 1
-      ## considering duration in milliseconds from spec
-      ## with a grace period of 1 min before pumba terminate
-      retries: "{{ ((c_duration|int)/1000 + 60)| int }}"
-
-    - name: Tear down pumba infrastructure
-      shell: >
-        kubectl delete -f /chaoslib/pumba/network_chaos/pumba_kube.yml -n {{ a_ns }} 
-      args:
-        executable: /bin/bash
-
-    - name: Confirm that the pumba job is deleted successfully
-      shell: >
-        kubectl get pods -l job-name=pumba-netem-{{ run_id }} --no-headers -n {{ a_ns }}
-      args:
-        executable: /bin/bash
-      register: result
-      until: "'No resources found' in result.stderr"
-      delay: 5
-      retries: 60
-
-  rescue: 
-
-    - block: 
-
-        - name: Tear down pumba infrastructure, if setup
-          shell: >
-            kubectl delete -f /chaoslib/pumba/network_chaos/pumba_kube.yml -n {{ a_ns }} 
-          args:
-            executable: /bin/bash
-          when: pumba_deploy_result.rc == 0
-        
-        - name: Confirm that the pumba job is not present
-          shell: >
-            kubectl get pods -l job-name=pumba-netem-{{ run_id }} --no-headers -n {{ a_ns }}
-          args:
-            executable: /bin/bash
-          register: result
-          until: "'No resources found' in result.stderr"
-          delay: 5
-          retries: 60
-      when: "pumba_deploy_result is defined"
-
-    - fail:
-        msg: "network_chaos lib failed"
-      when: true
+          - name: Record app pod name
+            set_fact:
+              app_pod: "{{ app_pod_name.stdout }}"
+    
+        when: "app_pod is not defined or app_pod == ''"
+  
+      # here app_ns is the namespace of pod on which we are performing network loss/delay
+      # in genric experiments app_ns is same as a_ns
+      # in openebs experiments app_ns is the namespace where openebs is installed i.e, openebs
+      - name: Identify the application node
+        shell: >
+          kubectl get pod {{ app_pod }} -n {{ app_ns }}
+          --no-headers -o custom-columns=:spec.nodeName
+        args:
+          executable: /bin/bash
+        register: app_node
+  
+      - set_fact: 
+          app_node: "{{ app_node.stdout }}"
+  
+      - block: 
+          - name: Generate a run id if not passed from the engine/experiment
+            shell: echo $(mktemp) | cut -d '.' -f 2 
+            register: rand_string   
+  
+          - set_fact:
+              run_id: "{{ rand_string.stdout | lower }}"
+        when: "run_id is not defined or run_id == ''"
+  
+      - block:
+  
+          - name: Record the application container
+            shell: >
+              kubectl get pods -n {{ app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ app_pod }}")].spec.containers[0].name}'
+            args:
+              executable: /bin/bash
+            register: container
+    
+          - name: Record the app_container
+            set_fact:
+              c_container: "{{ container.stdout }}"
+    
+        when: c_container is not defined or c_container == ''
+  
+      - name: Wait for the specified ramp time before injecting chaos
+        ## the ramp_time is spent before launching the pumba job instead 
+        ## of in the pumba job, as with the new scratch-based pumba images
+        ## there is no shell available by default
+        wait_for: timeout="{{ ramp_time }}"
+        when: "ramp_time is defined and ramp_time != ''"
+      
+      - name: Patch the chaoslib image
+        template:
+          src:  /chaoslib/pumba/network_chaos/pumba_netem_job.j2
+          dest: /chaoslib/pumba/network_chaos/pumba_kube.yml
+        vars:
+          pumba_image: "{{ lib_image }}"
+          chaosUID: "{{ chaos_uid }}"
+  
+      - name: Setup pumba chaos infrastructure
+        shell: >
+          kubectl create -f /chaoslib/pumba/network_chaos/pumba_kube.yml -n {{ a_ns }}
+        args: 
+          executable: /bin/bash
+        register: pumba_deploy_result
+  
+      - name: Wait until the pumba netem job is completed
+        shell: >
+          kubectl get pods -l job-name=pumba-netem-{{ run_id }} --no-headers -n {{ a_ns }}
+          --no-headers -o custom-columns=:status.phase
+        args: 
+          executable: /bin/bash
+        register: result
+        until: "result.stdout == 'Succeeded'"
+        delay: 1
+        ## considering duration in milliseconds from spec
+        ## with a grace period of 1 min before pumba terminate
+        retries: "{{ ((c_duration|int)/1000 + 60)| int }}"
+  
+      - name: Wait for the specified ramp time after injecting chaos
+        wait_for: timeout="{{ ramp_time }}"
+        when: "ramp_time is defined and ramp_time != ''" 
+  
+      - name: Tear down pumba infrastructure
+        shell: >
+          kubectl delete -f /chaoslib/pumba/network_chaos/pumba_kube.yml -n {{ a_ns }} 
+        args:
+          executable: /bin/bash
+  
+      - name: Confirm that the pumba job is deleted successfully
+        shell: >
+          kubectl get pods -l job-name=pumba-netem-{{ run_id }} --no-headers -n {{ a_ns }}
+        args:
+          executable: /bin/bash
+        register: result
+        until: "'No resources found' in result.stderr"
+        delay: 2
+        retries: 90
+  
+    rescue: 
+  
+      - block: 
+  
+          - name: Tear down pumba infrastructure, if setup
+            shell: >
+              kubectl delete -f /chaoslib/pumba/network_chaos/pumba_kube.yml -n {{ a_ns }} 
+            args:
+              executable: /bin/bash
+            when: pumba_deploy_result.rc == 0
+          
+          - name: Confirm that the pumba job is not present
+            shell: >
+              kubectl get pods -l job-name=pumba-netem-{{ run_id }} --no-headers -n {{ a_ns }}
+            args:
+              executable: /bin/bash
+            register: result
+            until: "'No resources found' in result.stderr"
+            delay: 2
+            retries: 90
+        when: "pumba_deploy_result is defined"
+  
+      - fail:
+          msg: "network_chaos lib failed"
+        when: true

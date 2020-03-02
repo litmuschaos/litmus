@@ -1,7 +1,6 @@
 ---
 - block:
-    - block: 
-
+    - block:
         - name: Select the app pod
           shell: >
             kubectl get pod -l {{ a_label }} -n {{ namespace }}
@@ -14,7 +13,6 @@
         - name: Record app pod name
           set_fact:
             app_pod: "{{ app_pod_name.stdout }}"
-
       when: "app_pod is not defined or app_pod == ''"
 
     - name: Identify the application node
@@ -28,10 +26,14 @@
     - set_fact: 
         app_node: "{{ app_node.stdout }}"
 
+    - name: Wait for the specified ramp time before injecting chaos
+      wait_for: timeout="{{ ramp_time }}"
+      when: "ramp_time is defined and ramp_time != ''"
+
     - name: Patch the chaoslib image
       template:
         src:  /chaoslib/litmus/container_kill/containerd_chaos/containerd.j2
-        dest: /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-ds.yml
+        dest: /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-job.yml
       vars:
         containerd_image: "{{ lib_image }}"
         chaosUID: "{{ chaos_uid }}"
@@ -39,11 +41,11 @@
         
     - name: Setup containerd chaos infrastructure.
       shell: >
-        kubectl apply -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-ds.yml
+        kubectl apply -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-job.yml
         -n {{ namespace }}
       args:
         executable: /bin/bash
-      register: crictl_ds_result
+      register: crictl_job_result
 
     - name: Confirm that the containerd-chaos job is running on {{ app_node }} node.
       shell: >
@@ -54,8 +56,37 @@
         executable: /bin/bash
       register: result
       until: "result.stdout == 'Running'"
-      delay: 3
-      retries: 60
+      delay: 2
+      retries: 90
+      ignore_errors: true
+
+    - block:
+        - name: Select the app pod
+          shell: >
+            kubectl get pod -l {{ label }} -n {{ namespace }}
+            -o=custom-columns=NAME:".metadata.name" --no-headers
+            | shuf | head -1 
+          args:
+            executable: /bin/bash
+          register: pod_name
+
+        - name: Record application pod name
+          set_fact:
+            app_pod: "{{ pod_name.stdout }}"
+      when: "app_pod is not defined or app_pod == ''"
+
+    - name: Identify the node where application is running
+      shell: >
+        kubectl get pod {{ app_pod }} -n {{ namespace }}
+        --no-headers -o custom-columns=:spec.nodeName
+      args:
+        executable: /bin/bash
+      register: result
+      failed_when: result is failed
+
+    - name: Record the application node name
+      set_fact:
+        app_node: "{{ result.stdout }}"
 
     - name: Record the containerd-chaos pod on app node
       shell: >
@@ -68,7 +99,6 @@
       failed_when: chaos_pod is failed
 
     - block:
-
       - name: Record the application container
         shell: >
           kubectl get pods -l {{ label }} -n {{ namespace }} -o jsonpath='{.items[0].spec.containers[0].name}'
@@ -79,7 +109,6 @@
       - name: Record the app_container
         set_fact:
           app_container: "{{ container.stdout }}"
-
       when: "app_container is not defined or app_container == ''"
 
     - name: Obtain the pod ID through Pod name
@@ -109,6 +138,10 @@
       register: result
       failed_when: result is failed
 
+    - name: Wait for the specified ramp time after injecting chaos
+      wait_for: timeout="{{ ramp_time }}"
+      when: "ramp_time is defined and ramp_time != ''"
+
     - name: Obtain the container ID using pod name and container name
       shell: >
         kubectl exec {{ chaos_pod.stdout}} -n {{ namespace }} -- 
@@ -117,8 +150,8 @@
         executable: /bin/bash
       register: new_container_id
       until: "new_container_id.stdout != ''"
-      delay: 5
-      retries: 20
+      delay: 2
+      retries: 90
 
     - name: Check if the new container is running.
       shell: >
@@ -128,12 +161,12 @@
         executable: /bin/bash
       register: status
       until: "'Running' in status.stdout"
-      delay: 3
-      retries: 30
+      delay: 2
+      retries: 90
 
-    - name: Delete the crictl-chaos daemonset
+    - name: Delete the crictl-chaos job
       shell: >
-        kubectl delete -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-ds.yml -n {{ namespace }} 
+        kubectl delete -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-job.yml -n {{ namespace }} 
       args:
         executable: /bin/bash
     
@@ -144,19 +177,18 @@
         executable: /bin/bash
       register: result
       until: "'No resources found' in result.stderr"
-      delay: 5
-      retries: 60
+      delay: 2
+      retries: 90
 
   rescue: 
 
     - block: 
-    
-        - name: Delete the crictl-chaos daemonset
+        - name: Delete the crictl-chaos job
           shell: >
-            kubectl delete -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-ds.yml -n {{ namespace }}
+            kubectl delete -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-job.yml -n {{ namespace }}
           args:
             executable: /bin/bash
-          when: crictl_ds_result.rc == 0
+          when: crictl_job_result.rc == 0
             
         - name: Confirm that the containerd-chaos pod is deleted successfully
           shell: >
@@ -165,9 +197,9 @@
             executable: /bin/bash
           register: result
           until: "'No resources found' in result.stderr"
-          delay: 5
-          retries: 60
-      when: " crictl_ds_result is defined"
+          delay: 2
+          retries: 90
+      when: " crictl_job_result is defined"
     
     - fail:
         msg: "crictl-chaos lib failed"

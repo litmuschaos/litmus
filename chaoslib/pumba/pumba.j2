@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: pumba
+  name: pumba-sig-kill-{{ chaosUID }}
   labels: 
     chaosUID: {{ chaosUID }}
 spec:
@@ -26,9 +26,6 @@ spec:
           - --signal
           - SIGKILL
           - re2:k8s_{{ app_container }}_{{ app_pod }} 
-        # Pumba command: modify it to suite your needs
-        # Dry run: Randomly try to kill some container every 3 minutes
-        command: ["pumba", "--dry", "--random", "--interval", "3m", "kill", "--signal", "SIGTERM"]
         resources:
           requests:
             cpu: 10m

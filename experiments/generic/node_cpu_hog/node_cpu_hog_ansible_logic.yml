@@ -41,8 +41,8 @@
           vars:
             app_ns: "{{ a_ns }}"
             app_label: "{{ a_label }}" 
-            delay: 5
-            retries: 60
+            delay: 2
+            retries: 90
 
         # Auxiliary application health check status
         - block:
@@ -55,8 +55,8 @@
             vars:
               app_ns: "{{ item.split(':')[0] }}"
               app_label: "{{ item.split(':')[1] }}"
-              delay: 5
-              retries: 60
+              delay: 2
+              retries: 90
             with_items:
               - "{{ auxiliary_appinfo_list }}" 
 
@@ -76,7 +76,7 @@
               app_ns: "{{ a_ns }}"
               app_label: "{{ a_label }}" 
               delay: 2
-              retries: 150
+              retries: 90
 
             # Auxiliary application health check status
           - block:
@@ -85,8 +85,8 @@
               vars:
                 app_ns: "{{ item.split(':')[0] }}"
                 app_label: "{{ item.split(':')[1] }}"
-                delay: 5
-                retries: 60
+                delay: 2
+                retries: 90
               with_items:
                 - "{{ auxiliary_appinfo_list }}"
              
@@ -102,7 +102,7 @@
               app_ns: "{{ a_ns }}"
               app_label: "{{ a_label }}" 
               delay: 2
-              retries: 150
+              retries: 90
             ignore_errors: yes
 
             # Auxiliary application health check status
@@ -112,8 +112,8 @@
               vars:
                 app_ns: "{{ item.split(':')[0] }}"
                 app_label: "{{ item.split(':')[1] }}"
-                delay: 5
-                retries: 60
+                delay: 2
+                retries: 90
               with_items:
                 - "{{ auxiliary_appinfo_list }}"
               ignore_errors: yes

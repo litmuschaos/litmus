@@ -3,5 +3,5 @@
   shell: kubectl logs {{ pod_name.stdout }} -n {{ app_ns }} | grep 'ready for connections' | wc -l
   register: initcheck
   until: initcheck.stdout == "2"
-  delay: 5
-  retries: 180
+  delay: 2
+  retries: 90
