@@ -5,7 +5,7 @@
   ## need to be passed or defined before populating json.
 - name: Get the chaos util to perfom chaos test
   template:
-    src: "/choslib/chaostoolkit/k8/{{ chaos_file }}"
+    src: "/choslib/chaostoolkit/kubernetes/{{ chaos_file }}"
     dest: pod-app-kill-count.json
 
 - name: Fetch the content of json file to start chaos on node
