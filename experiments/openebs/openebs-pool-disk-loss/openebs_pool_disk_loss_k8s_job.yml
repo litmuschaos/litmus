@@ -1,9 +1,3 @@
-#############
-###### Note:
-#### Please ingore this file during the code review, will remove the dummy variables after the final review
-
-###########
-
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -19,7 +13,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: imrajdas/ansible-runner:ci
+        image: litmuschaos/ansible-runner:ci
         imagePullPolicy: Always
         env:
           - name: ANSIBLE_STDOUT_CALLBACK
@@ -27,14 +21,14 @@ spec:
 
           # Enter the App_label, if you set APP_CHECK to true
           - name: APP_LABEL
-            value: 'app=busybox'
+            value: 'app=mysql'
 
           # Enter the APP_NAMESPACE, if you set APP_CHECK to true
           - name: APP_NAMESPACE
             value: 'default'
             
           - name: APP_PVC
-            value: 'demo-vol1-claim'
+            value: ''
 
           # This is a chaos namespace which will create all infra chaos resources in that namespace
           - name: CHAOS_NAMESPACE
@@ -42,7 +36,7 @@ spec:
               fieldRef:
                 fieldPath: metadata.namespace
 
-          # Only GCP is supported
+          # Only GCP and AWS is supported
           - name: CLOUD_PLATFORM
             value: 'GCP'
 
@@ -56,15 +50,15 @@ spec:
 
           # Enter the project id for gcp only
           - name: PROJECT_ID 
-            value: 'strong-eon-153112'
+            value: ''
 
           # Enter the node name
           - name: NODE_NAME
-            value: 'gke-raj-cluster-pool-1-c27c0e44-2ll8' 
+            value: '' 
 
           # Enter the disk name
           - name: DISK_NAME
-            value: 'disk-1'  
+            value: ''  
           
           # Enter the device name
           - name: DEVICE_NAME
@@ -72,12 +66,12 @@ spec:
 
           # Enter the zone name
           - name: ZONE_NAME
-            value: 'us-central1-a' 
+            value: '' 
 
           # provide auxiliary application details - namespace and labels of the applications
           # sample input is - "ns1:app=percona,ns2:name=nginx"
           - name: AUXILIARY_APPINFO
-            value: 'openebs:run=nginx'
+            value: ''
           
           # Enter the chaosengine name
           - name: CHAOSENGINE
@@ -90,7 +84,7 @@ spec:
             value: ''
 
           - name: DATA_PERSISTENCE
-            value: 'busybox'
+            value: 'mysql'
 
           - name: OPENEBS_NAMESPACE
             value: 'openebs'
@@ -109,4 +103,4 @@ spec:
             secretName: cloud-secret
         - name: test-data
           configMap:
-            name: openebs-pool-network-loss
+            name: openebs-pool-disk-loss

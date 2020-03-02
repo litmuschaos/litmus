@@ -1,29 +1,10 @@
 - hosts: localhost
   connection: local
 
-  vars:
-    a_label: "{{ lookup('env','APP_LABEL') }}"
-    a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
-    a_pvc: "{{ lookup('env','APP_PVC') }}"
-    c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
-    c_experiment: "openebs-pool-disk-loss"
-    ramp_time: "{{ lookup('env','RAMP_TIME') }}"
-    data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
-    liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
-    liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
-    openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
-    cloud_platform: "{{ lookup('env','CLOUD_PLATFORM') }}"
-    c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
-    disk_name: "{{ lookup('env','DISK_NAME') }}"
-    device_name: "{{ lookup('env', 'DEVICE_NAME') }}"
-    node_name: "{{ lookup('env','NODE_NAME') }}"
-    project_id: "{{ lookup('env','PROJECT_ID') }}"
-    zone_name: "{{ lookup('env','ZONE_NAME') }}"
-    auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"
-
   vars_files:
     - /mnt/parameters.yml
     - /experiments/openebs/openebs_components.yml
+    - vars.yml
   
   tasks:
     - block:
@@ -52,35 +33,33 @@
             - "Label        : {{ a_label }}"
             - "PVC        : {{ a_pvc }}"
 
-      - block: 
-          # Gcloud authentication
-          - name: Gcloud authentication
-            include_tasks: "/utils/cloud/gcp/gcloud_configure.yml"
-            when: "cloud_platform == 'GCP'"
-          
-          # AWS authentication
-          - name: AWS authentication
-            include_tasks: "/utils/cloud/aws/aws_configure.yml"
-            when: "cloud_platform == 'AWS'"
+      # Gcloud authentication
+      - name: Gcloud authentication
+        include_tasks: "/utils/cloud/gcp/gcloud_configure.yml"
+        when: "cloud_platform == 'GCP'"
+
+      # AWS authentication
+      - name: AWS authentication
+        include_tasks: "/utils/cloud/aws/aws_configure.yml"
+        when: "cloud_platform == 'AWS'"
 
       ## PRE-CHAOS DISK LIVENESS CHECK
-      - block:
-        - name: Verify that the disk is connected to node (pre)
-          include_tasks: "/utils/cloud/gcp/status_disk.yml"
-          when: "cloud_platform == 'GCP'"
+      - name: Verify that the disk is connected to node (pre)
+        include_tasks: "/utils/cloud/gcp/status_disk.yml"
+        when: "cloud_platform == 'GCP'"
 
-        - name: Verify that the disk is connected to node (pre)
-          include_tasks: "/utils/cloud/aws/status_disk.yml"
-          when: "cloud_platform == 'AWS'"
+      - name: Verify that the disk is connected to node (pre)
+        include_tasks: "/utils/cloud/aws/status_disk.yml"
+        when: "cloud_platform == 'AWS'"
 
-        # Checking disk is attached to node
-        - debug: 
-            msg: "specified disk is attached to node"   
-          when: "inuse is defined and inuse == true"
+      # Checking disk is attached to node
+      - debug: 
+          msg: "specified disk is attached to node"   
+        when: "inuse is defined and inuse == true"
 
-        - fail:
-            msg: "specified disk not attached to node"
-          when: "inuse is defined and inuse == false"
+      - fail:
+          msg: "specified disk is not attached to node"
+        when: "inuse is defined and inuse == false"
         
       - name: Verify that the AUT (Application Under Test) is running
         include_tasks: "/utils/common/status_app_pod.yml"
@@ -108,50 +87,50 @@
 
         when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
-      - block:
+      - include: /utils/common/cstor_pool_health_status.yml
+        vars:
+          delay: 2
+          retries: 90
 
-        - include: /utils/common/cstor_pool_health_status.yml
-          vars:
-            delay: 2
-            retries: 90
+      - name: Get application pod name
+        shell: >
+          kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers -o=custom-columns=NAME:".metadata.name"
+        args:
+          executable: /bin/bash
+        register: app_pod
 
-        - name: Get application pod name
-          shell: >
-            kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers -o=custom-columns=NAME:".metadata.name"
-          args:
-            executable: /bin/bash
-          register: app_pod
+      - name: Create some test data
+        include: "{{ consistencyutil }}"
+        vars:
+          status: 'LOAD'
+          ns: "{{ a_ns }}"
+          pod_name: "{{ app_pod.stdout }}"
+        when: data_persistence | length > 0
 
-        - name: Create some test data
-          include: "{{ consistencyutil }}"
-          vars:
-            status: 'LOAD'
-            ns: "{{ a_ns }}"
-            pod_name: "{{ app_pod.stdout }}"
-          when: data_persistence | length > 0
-
+      # - debug:
+      #     msg: "{{ c_util }}"
+          
       # INJECTING CHAOS 
       - name: Injecting the chaos
         include_tasks: "{{ c_util }}"
 
       # POST CHAOS CHECKS
-      - block:
-        - name: Verify that the disk is connected to node (post)
-          include_tasks: "/utils/cloud/gcp/status_disk.yml"
-          when: "cloud_platform == 'GCP'"
+      - name: Verify that the disk is connected to node (post)
+        include_tasks: "/utils/cloud/gcp/status_disk.yml"
+        when: "cloud_platform == 'GCP'"
+      
+      - name: Verify that the disk is connected to node (post)
+        include_tasks: "/utils/cloud/aws/status_disk.yml"
+        when: "cloud_platform == 'AWS'"
         
-        - name: Verify that the disk is connected to node (post)
-          include_tasks: "/utils/cloud/aws/status_disk.yml"
-          when: "cloud_platform == 'AWS'"
-          
-        # Checking disk is attached to node
-        - debug: 
-            msg: "specified disk is attached to node"   
-          when: "inuse is defined and inuse == true"
+      # Checking disk is attached to node
+      - debug: 
+          msg: "specified disk is attached to node"   
+        when: "inuse is defined and inuse == true"
 
-        - fail:
-            msg: "specified disk not re-attached to node"
-          when: "inuse is defined and inuse == false"
+      - fail:
+          msg: "specified disk not re-attached to node"
+        when: "inuse is defined and inuse == false"
       
       - name: Verify that the AUT (Application Under Test) is running
         include_tasks: "/utils/common/status_app_pod.yml"
@@ -163,41 +142,42 @@
 
       - block:
 
-        - name: Record auxiliary appinfo 
-          set_fact:
-            auxiliary_appinfo_list: "{{ auxiliary_appinfo.split(',') }}"
+          - name: Record auxiliary appinfo 
+            set_fact:
+              auxiliary_appinfo_list: "{{ auxiliary_appinfo.split(',') }}"
 
-        - include: /utils/common/status_app_pod.yml
-          vars:
-            app_ns: "{{ item.split(':')[0] }}"
-            app_label: "{{ item.split(':')[1] }}"
-            delay: 2
-            retries: 90
-          with_items:
-            - "{{ auxiliary_appinfo_list }}" 
+          - include: /utils/common/status_app_pod.yml
+            vars:
+              app_ns: "{{ item.split(':')[0] }}"
+              app_label: "{{ item.split(':')[1] }}"
+              delay: 2
+              retries: 90
+            with_items:
+              - "{{ auxiliary_appinfo_list }}" 
 
         when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
-  
-      - block:
-        - include: /utils/common/cstor_pool_health_status.yml
-          vars:
-            delay: 2
-            retries: 90
-            
-        - name: Verify application data persistence  
-          include: "{{ consistencyutil }}"
-          vars:
-            status: 'VERIFY'
-            ns: "{{ a_ns }}"
-            label: "{{ a_label }}"
-            pod_name: "{{ app_pod.stdout }}"
-          when: data_persistence | length > 0   
 
-        - set_fact:
-            flag: "Pass"
-          
+      - include: /utils/common/cstor_pool_health_status.yml
+        vars:
+          delay: 2
+          retries: 90
+
+      - name: Verify application data persistence  
+        include: "{{ consistencyutil }}"
+        vars:
+          status: 'VERIFY'
+          ns: "{{ a_ns }}"
+          label: "{{ a_label }}"
+          pod_name: "{{ app_pod.stdout }}"
+        when: data_persistence | length > 0   
+
+      - name: Setting the flag to true on successful execution of the task
+        set_fact:
+          flag: "Pass"
+
       rescue:
-        - set_fact:
+        - name: Setting the flag to fail on failed execution of the task
+          set_fact:
             flag: "Fail"
 
       always:
