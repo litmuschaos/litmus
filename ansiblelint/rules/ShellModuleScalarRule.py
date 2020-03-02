@@ -3,7 +3,7 @@ from ansiblelint import AnsibleLintRule
 class ShellModuleScalarRule(AnsibleLintRule):
   id = '700'
   shortdesc = 'Use scalar(">") for shell commands with multiple args'
-  description = 'Required scalar if shell commands are greater than three'
+  description = 'Requires scalar if shell command consist of args greater than three'
   tags = ['productivity']
 
   # pylint: disable=R0201
