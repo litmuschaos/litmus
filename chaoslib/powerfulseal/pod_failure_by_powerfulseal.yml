@@ -26,11 +26,15 @@
         executable: /bin/bash
       register: result
       until: "'Running' in result.stdout"
-      delay: 1
+      delay: 2
       retries: 90
     
     - name: Wait for chaos duration
       wait_for: timeout="{{ c_duration }}"
+
+    - name: Wait for the specified ramp time after injecting chaos
+      wait_for: timeout="{{ ramp_time }}"
+      when: "ramp_time is defined and ramp_time != ''"
 
     - name: Tear down the powerfulseal deployment
       shell: 
@@ -47,8 +51,8 @@
           - name=powerfulseal
       register: resource_deployment
       until: "resource_deployment.resources | length < 1"
-      delay: 1
-      retries: 120
+      delay: 2
+      retries: 90
 
   rescue:
 
@@ -68,8 +72,8 @@
               - name=powerfulseal
           register: resource_deployment
           until: "resource_deployment.resources | length < 1"
-          delay: 1
-          retries: 120
+          delay: 2
+          retries: 90
 
       when: "deployment_result is defined"
 

@@ -6,6 +6,7 @@ class ShellModuleScalarRule(AnsibleLintRule):
   description = 'Required scalar if shell commands are greater than three'
   tags = ['productivity']
 
+  # pylint: disable=R0201
   def match(self, file, line):
     commands = line.strip().split()
     if(len(commands) > 0):

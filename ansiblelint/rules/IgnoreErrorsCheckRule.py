@@ -6,6 +6,7 @@ class IgnoreErrorsCheckRule(AnsibleLintRule):
   description = 'Litmus Playbook does not recommend the use of ignore_errors'
   tags = ['productivity']
 
+  # pylint: disable=R0201
   def match(self, file, line):
     commands = line.strip().split()
     if((len(commands) > 0) and ('ignore_errors:' in  commands)):

@@ -16,3 +16,7 @@
   - name: If disk is not attached, it will attach manually
     shell: gcloud compute instances attach-disk {{ node_name }} --device-name {{ disk_name }} --disk {{ disk_name }} --zone {{ zone_name }}
   when: "inuse is defined and inuse == false"
+
+- name: Wait for the specified ramp time after injecting chaos
+  wait_for: timeout="{{ ramp_time }}"
+  when: "ramp_time is defined and ramp_time != ''" 

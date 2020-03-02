@@ -22,7 +22,7 @@
   register: runningStatusCount
   until: "runningStatusCount.stdout == \"3\""
   delay: 2
-  retries: 150
+  retries: 90
 
 # including pumba chaoslib pod_failure_by_sigkill - container kill
 - include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yml
@@ -41,7 +41,7 @@
   register: cstor_pool_pod_cnt
   until: "cstor_pool_pod_cnt.stdout == \"1\""
   delay: 2
-  retries: 150
+  retries: 90
 
 - name: Get the runningStatus of pool pod
   shell: >
@@ -53,4 +53,4 @@
   register: runningStatusCount
   until: "runningStatusCount.stdout == \"3\""
   delay: 2
-  retries: 150
+  retries: 90
