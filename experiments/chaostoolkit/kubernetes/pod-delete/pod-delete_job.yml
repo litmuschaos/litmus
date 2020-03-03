@@ -44,13 +44,10 @@ spec:
           - name: LIB
             value: ''
 
-          - name: CHAOSENGINE
-            value: ''
-
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:
               fieldRef:
                 fieldPath: spec.serviceAccountName
 
         command: ["/bin/bash"]
-        args: ["-c", "python /app/data/k8_wrapper.py; exit 0"]
+        args: ["-c", "sleep 10000; exit 0"]

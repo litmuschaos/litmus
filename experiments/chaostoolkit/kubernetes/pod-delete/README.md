@@ -9,6 +9,6 @@
 <tr>
  <td> K8 Pod Delete </td>
  <td> This experiment causes pod failure of random replicas of an application deployment. It tests deployment sanity (replica availability & uninterrupted service) and recovery workflows of the application pod </td>
- <td>  <a href="https://docs.litmuschaos.io/docs/K8-pod-delete/"> Here </a> </td>
+ <td>  <a href="https://docs.litmuschaos.io/docs/kubernetes/pod-delete/"> Here </a> </td>
  </tr>
  </table>
