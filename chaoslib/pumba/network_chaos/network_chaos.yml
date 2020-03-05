@@ -87,9 +87,8 @@
         register: result
         until: "result.stdout == 'Succeeded'"
         delay: 1
-        ## considering duration in milliseconds from spec
         ## with a grace period of 1 min before pumba terminate
-        retries: "{{ ((c_duration|int)/1000 + 60)| int }}"
+        retries: "{{ ((c_duration|int) + 60)| int }}"
   
       - name: Wait for the specified ramp time after injecting chaos
         wait_for: timeout="{{ ramp_time }}"
