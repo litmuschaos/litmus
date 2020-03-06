@@ -56,7 +56,6 @@
         dest: /chaoslib/pumba/pumba_kube.yml
       vars:
         pumba_image: "{{ lib_image }}"
-        chaosUID: "{{ chaos_uid }}"
         app_node: "{{ app_node }}"
         app_pod: "{{ app_pod }}"
         app_container: "{{ a_container }}"

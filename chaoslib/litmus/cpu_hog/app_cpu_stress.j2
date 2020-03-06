@@ -3,13 +3,13 @@ kind: Job
 metadata:
   name: app-cpu-stress-{{ run_id }}
   labels: 
-    chaosUID: {{ chaosUID }}
+    chaosUID: {{ chaos_uid }}
 spec:
   template:
     metadata:
       labels:
         app: app-cpu-stress
-        chaosUID: {{ chaosUID }}
+        chaosUID: {{ chaos_uid }}
     spec:
       nodeSelector:
         ## mandatory: provide name of host where target container resides

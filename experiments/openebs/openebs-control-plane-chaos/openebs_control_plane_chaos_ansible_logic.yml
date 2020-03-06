@@ -11,6 +11,7 @@
     c_svc_acc: "{{ lookup('env','CHAOS_SERVICE_ACCOUNT') }}"
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
     kill_count: "{{ lookup('env','KILL_COUNT') }}"
+    c_engine: "{{ lookup('env','CHAOS_ENGINE') }}"
     
   tasks:
     - block:
@@ -25,13 +26,10 @@
             name: openebs
 
         ## GENERATE EXP RESULT NAME
-        - block:
-
-          - name: Construct chaos result name (experiment_name)
-            set_fact:
-              c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
-
-          when: lookup('env','CHAOSENGINE')    
+        - name: Construct chaos result name
+          set_fact:
+            c_result: "{{ c_engine }}-{{ c_experiment }}"
+          when: "c_engine is defined and c_engine != ''"
 
         ## RECORD START-OF-EXPERIMENT IN LITMUSCHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
