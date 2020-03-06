@@ -17,10 +17,10 @@ This document captures only a high level backlogs. For detailed list of backlogs
 
 ### In-Progress (Near-term) 
 
-- Support for scheduled (continuous/background chaos) with halt/resume
+- Support for scheduled (continuous/background) chaos with halt/resume 
 - Support for Kubernetes events for chaos experiments
 - Support for hard chaos abort via pre-stop hooks
-- Support for admin mode (separate namespace for chaos resources, with opt-in/out options specific experiments for applications)
+- Support for admin mode (separate namespace for chaos resources, with opt-in/out option for specific experiments in applications)
 - Helm3 charts for Litmus Chaos (operator, chaos charts)
 - Scaffold tools to generate experiment templates in python, golang
 - Support for user defined chaos experiment result definition (ex:json blob as chaos result)
