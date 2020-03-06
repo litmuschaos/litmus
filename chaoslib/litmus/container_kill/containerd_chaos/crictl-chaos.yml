@@ -36,7 +36,6 @@
         dest: /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-job.yml
       vars:
         containerd_image: "{{ lib_image }}"
-        chaosUID: "{{ chaos_uid }}"
         app_node: "{{ app_node }}"
         
     - name: Setup containerd chaos infrastructure.

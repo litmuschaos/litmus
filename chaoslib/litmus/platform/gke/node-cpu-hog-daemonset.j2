@@ -3,17 +3,17 @@ kind: DaemonSet
 metadata:
   name: node-cpu-hog
   labels: 
-    chaosUID: {{ chaosUID }}
+    chaosUID: {{ chaos_uid }}
 spec:
   selector:
     matchLabels:
       app: cpu-hog
-      chaosUID: {{ chaosUID }}
+      chaosUID: {{ chaos_uid }}
   template:
     metadata:
       labels:
         app: cpu-hog
-        chaosUID: {{ chaosUID }}
+        chaosUID: {{ chaos_uid }}
       name: node-cpu-hog
     spec:
       containers:

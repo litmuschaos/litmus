@@ -3,17 +3,17 @@ kind: DaemonSet
 metadata:
   name: disk-fill
   labels:
-    chaosUID: {{ chaosUID }}
+    chaosUID: {{ chaos_uid }}
 spec:
   selector:
     matchLabels:
       app: disk-fill
-      chaosUID: {{ chaosUID }}
+      chaosUID: {{ chaos_uid }}
   template:
     metadata:
       labels:
         app: disk-fill
-        chaosUID: {{ chaosUID }}
+        chaosUID: {{ chaos_uid }}
       name: disk-fill
     spec:
       containers:
