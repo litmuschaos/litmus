@@ -15,7 +15,8 @@
     n_delay: "{{ lookup('env','NETWORK_DELAY') }}" 
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
-    c_engine: "{{ lookup('env','CHAOS_ENGINE') }}"
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
+    chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
 
   vars_files:
     - /mnt/parameters.yml
@@ -70,9 +71,10 @@
         - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
           vars:
             stage: "PreChaosCheck"
-            exp_pod_name: "openebs-pool-network-delay"
+            exp_pod_name: "{{ chaos_pod_name }}"
             engine_ns: "{{ a_ns }}"
-            message: "AUT is Running successfully"
+            message: "OpenEBS components and AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
 
         - name: Get application pod name
           shell: >
@@ -114,9 +116,10 @@
         - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
           vars:
             stage: "PostChaosCheck"
-            exp_pod_name: "openebs-pool-container-delay"
+            exp_pod_name: "{{ chaos_pod_name }}"
             engine_ns: "{{ a_ns }}"
-            message: "AUT is Running successfully"
+            message: "OpenEBS components and AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
 
         - name: Verify application data persistence  
           include: "{{ consistencyutil }}"
@@ -135,6 +138,16 @@
             flag: "Fail"
 
       always:
+
+        ## RECORD Summary event
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "Summary"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ a_ns }}"
+            message: "{{ c_experiment }} Experiment Failed!"
+          when: "c_engine is defined and c_engine != '' and flag is defined and flag == 'Fail'"
+          
         ## RECORD END-OF-TEST IN CHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:

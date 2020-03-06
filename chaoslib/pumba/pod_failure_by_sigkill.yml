@@ -64,9 +64,10 @@
     - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
       vars:
         stage: "ChaosInject"
-        exp_pod_name: "container-kill"
+        exp_pod_name: "{{ chaos_pod_name }}"
         engine_ns: "{{ a_ns }}"
-        message: "Injecting {{ c_experiment }} chaos on {{ app_pod }}"
+        message: "Injecting {{ c_experiment }} chaos on {{ a_container }} container of {{ app_pod }} pod"
+      when: "c_engine is defined and c_engine != ''"
 
     - name: Setup pumba chaos infrastructure
       shell: >

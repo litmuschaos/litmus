@@ -68,9 +68,10 @@
     - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
       vars:
         stage: "ChaosInject"
-        exp_pod_name: "disk-fill"
+        exp_pod_name: "{{ chaos_pod_name }}"
         engine_ns: "{{ a_ns }}"
         message: "Injecting {{ c_experiment }} chaos on {{ pod_name.stdout }}"
+      when: "c_engine is defined and c_engine != ''"
 
     - name: Create the DaemonSet for Disk-Fill
       shell: >

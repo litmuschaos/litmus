@@ -12,7 +12,8 @@
     liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
     liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
     auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}" 
-    c_engine: "{{ lookup('env','CHAOS_ENGINE') }}"
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
+    chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
 
   tasks:
     - block:
@@ -80,9 +81,10 @@
         - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
           vars:
             stage: "PreChaosCheck"
-            exp_pod_name: "node-drain"
+            exp_pod_name: "{{ chaos_pod_name }}"
             engine_ns: "{{ a_ns }}"
             message: "AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
             
         ## STORAGE FAULT INJECTION 
 
@@ -119,9 +121,10 @@
         - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
           vars:
             stage: "PostChaosCheck"
-            exp_pod_name: "node-drain"
+            exp_pod_name: "{{ chaos_pod_name }}"
             engine_ns: "{{ a_ns }}"
-            message: "AUT is Running successfully"
+            message: "Node has been uncordoned and AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
 
         - include_tasks: /utils/common/application_liveness_check.yml
           when: liveness_label != ''
@@ -134,6 +137,15 @@
             flag: "Fail"
 
       always: 
+
+        ## RECORD Summary event
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "Summary"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ a_ns }}"
+            message: "{{ c_experiment }} Experiment Failed!"
+          when: "c_engine is defined and c_engine != '' and flag is defined and flag == 'Fail'"
 
          ## RECORD END-OF-TEST IN CHAOS RESULT CR    
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml

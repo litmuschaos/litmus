@@ -16,7 +16,8 @@
     packet_loss_perc: "{{ lookup('env','NETWORK_PACKET_LOSS_PERCENTAGE') }}"  
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
-    c_engine: "{{ lookup('env','CHAOS_ENGINE') }}"
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
+    chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
 
   vars_files:
     - /mnt/parameters.yml
@@ -86,9 +87,10 @@
         - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
           vars:
             stage: "PreChaosCheck"
-            exp_pod_name: "openebs-target-network-loss"
+            exp_pod_name: "{{ chaos_pod_name }}"
             engine_ns: "{{ a_ns }}"
-            message: "AUT is Running successfully"
+            message: "OpenEBS components and AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
 
         - name: Get application pod name
           shell: >
@@ -124,9 +126,10 @@
         - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
           vars:
             stage: "PostChaosCheck"
-            exp_pod_name: "openebs-target-network-loss"
+            exp_pod_name: "{{ chaos_pod_name }}"
             engine_ns: "{{ a_ns }}"
-            message: "AUT is Running successfully"
+            message: "OpenEBS components and AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
             
         - include_tasks: /utils/common/application_liveness_check.yml
           when: liveness_label != ''
@@ -149,8 +152,16 @@
 
       always:
 
-        ## RECORD END-OF-TEST IN CHAOS RESULT CR
+        ## RECORD Summary event
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "Summary"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ a_ns }}"
+            message: "{{ c_experiment }} Experiment Failed!"
+          when: "c_engine is defined and c_engine != '' and flag is defined and flag == 'Fail'"
 
+        ## RECORD END-OF-TEST IN CHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'

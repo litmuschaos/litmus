@@ -24,7 +24,8 @@
     zk_label: "{{ lookup('env','ZOOKEEPER_LABEL') }}"
     zk_service: "{{ lookup('env','ZOOKEEPER_SERVICE') }}"
     zk_port: "{{ lookup('env','ZOOKEEPER_PORT') }}" 
-    c_engine: "{{ lookup('env','CHAOS_ENGINE') }}"
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
+    chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
 
   tasks:
     - block:
@@ -69,9 +70,10 @@
         - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
         vars:
           stage: "PreChaosCheck"
-          exp_pod_name: "kafka-broker-disk-failure"
+          exp_pod_name: "{{ chaos_pod_name }}"
           engine_ns: "{{ a_ns }}"
           message: "AUT is Running successfully"
+        when: "c_engine is defined and c_engine != ''"
 
         - name: Derive the kafka-broker node name
           shell: 
@@ -131,9 +133,10 @@
             - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
               vars:
                 stage: "PostChaosCheck"
-                exp_pod_name: "kafka-broker-disk-failure"
+                exp_pod_name: "{{ chaos_pod_name }}"
                 engine_ns: "{{ a_ns }}"
-                message: "AUT is Running successfully"
+                message: "Disk has been reattached and AUT is Running successfully"
+              when: "c_engine is defined and c_engine != ''"
 
             - include_tasks: "/utils/apps/kafka/kafka_liveness_cleanup.yml"
 
@@ -165,6 +168,15 @@
           ignore_errors: true
 
       always: 
+
+        ## RECORD Summary event
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "Summary"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ a_ns }}"
+            message: "{{ c_experiment }} Experiment Failed!"
+          when: "c_engine is defined and c_engine != '' and flag is defined and flag == 'Fail'"
  
         ## RECORD END-OF-TEST IN LITMUSCHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml

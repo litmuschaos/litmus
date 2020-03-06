@@ -16,7 +16,8 @@
     project_id: "{{ lookup('env','PROJECT_ID') }}"
     zone_name: "{{ lookup('env','ZONE_NAME') }}"
     auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"
-    c_engine: "{{ lookup('env','CHAOS_ENGINE') }}"
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
+    chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
 
   tasks:
 
@@ -70,9 +71,10 @@
         - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
         vars:
           stage: "PreChaosCheck"
-          exp_pod_name: "disk-loss"
+          exp_pod_name: "{{ chaos_pod_name }}"
           engine_ns: "{{ a_ns }}"
           message: "AUT is Running successfully"
+        when: "c_engine is defined and c_engine != ''"
 
         # Gcloud authentication
         - name: Gcloud authentication
@@ -134,9 +136,10 @@
         - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
         vars:
           stage: "PostChaosCheck"
-          exp_pod_name: "disk-loss"
+          exp_pod_name: "{{ chaos_pod_name }}"
           engine_ns: "{{ a_ns }}"
-          message: "AUT is Running successfully"
+          message: "Disk has been reattached and AUT is Running successfully"
+        when: "c_engine is defined and c_engine != ''"
 
         ## POST-CHAOS DISK LIVENESS CHECK
         - name: Verify that the disk is connected to node (post)
@@ -165,6 +168,15 @@
             flag: "Fail"
 
       always:
+
+        ## RECORD Summary event
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "Summary"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ a_ns }}"
+            message: "{{ c_experiment }} Experiment Failed!"
+          when: "c_engine is defined and c_engine != '' and flag is defined and flag == 'Fail'"
 
         ## RECORD END-OF-TEST IN LITMUSCHAOS RESULT CR
         - include_tasks: "/utils/runtime/update_chaos_result_resource.yml"

@@ -16,7 +16,8 @@
     liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
     openebs_ns: openebs
     pool_debug_msg: 'uncorrectable I/O failure|suspended|ERROR ZFS event'
-    c_engine: "{{ lookup('env','CHAOS_ENGINE') }}"
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
+    chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
    
   vars_files:
     - /mnt/parameters.yml
@@ -93,9 +94,10 @@
         - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
           vars:
             stage: "PreChaosCheck"
-            exp_pod_name: "openebs-pool-pod-failure"
+            exp_pod_name: "{{ chaos_pod_name }}"
             engine_ns: "{{ a_ns }}"
-            message: "AUT is Running successfully"
+            message: "OpenEBS components and AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
 
         - block:
 
@@ -140,9 +142,10 @@
         - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
           vars:
             stage: "PostChaosCheck"
-            exp_pod_name: "openebs-pool-pod-failure"
+            exp_pod_name: "{{ chaos_pod_name }}"
             engine_ns: "{{ a_ns }}"
-            message: "AUT is Running successfully"
+            message: "OpenEBS components and AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
 
         - block:
           
@@ -186,6 +189,16 @@
             flag: "Fail"
 
       always: 
+
+        ## RECORD Summary event
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "Summary"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ a_ns }}"
+            message: "{{ c_experiment }} Experiment Failed!"
+          when: "c_engine is defined and c_engine != '' and flag is defined and flag == 'Fail'"
+          
          ## RECORD END-OF-TEST IN LITMUS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
