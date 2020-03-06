@@ -11,7 +11,7 @@
     c_svc_acc: "{{ lookup('env','CHAOS_SERVICE_ACCOUNT') }}"
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
     kill_count: "{{ lookup('env','KILL_COUNT') }}"
-    c_engine: "{{ lookup('env','CHAOS_ENGINE') }}"
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     
   tasks:
     - block:

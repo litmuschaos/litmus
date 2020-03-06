@@ -24,7 +24,7 @@
     zk_label: "{{ lookup('env','ZOOKEEPER_LABEL') }}"
     zk_service: "{{ lookup('env','ZOOKEEPER_SERVICE') }}"
     zk_port: "{{ lookup('env','ZOOKEEPER_PORT') }}" 
-    c_engine: "{{ lookup('env','CHAOS_ENGINE') }}"
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
 
   tasks:
     - block:

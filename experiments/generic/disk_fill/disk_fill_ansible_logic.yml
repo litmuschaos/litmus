@@ -14,7 +14,7 @@
     fill_percentage: "{{ lookup('env','FILL_PERCENTAGE') }}"
     auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
-    c_engine: "{{ lookup('env','CHAOS_ENGINE') }}"
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     
   tasks:
     - block:

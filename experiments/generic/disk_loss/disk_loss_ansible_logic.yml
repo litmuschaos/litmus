@@ -16,7 +16,7 @@
     project_id: "{{ lookup('env','PROJECT_ID') }}"
     zone_name: "{{ lookup('env','ZONE_NAME') }}"
     auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"
-    c_engine: "{{ lookup('env','CHAOS_ENGINE') }}"
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
 
   tasks:
 

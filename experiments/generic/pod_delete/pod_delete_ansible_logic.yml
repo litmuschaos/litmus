@@ -15,7 +15,7 @@
     a_kind: "{{ lookup('env','APP_KIND') }}"
     kill_count: "{{ lookup('env','KILL_COUNT') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
-    c_engine: "{{ lookup('env','CHAOS_ENGINE') }}"
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
   
   tasks:
     - block:
