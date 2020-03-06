@@ -65,6 +65,7 @@
         dest: /chaoslib/litmus/disk_fill/disk_fill_job.yml
       vars:
         chaosUID: "{{ chaos_uid }}"
+        app_node: "{{ app_node }}"
 
     - name: Create the Job for Disk-Fill
       shell: >
