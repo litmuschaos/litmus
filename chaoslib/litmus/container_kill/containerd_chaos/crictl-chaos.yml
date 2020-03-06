@@ -129,6 +129,14 @@
       register: container_id
       failed_when: container_id is failed
 
+     ## RECORD EVENT FOR CHAOS INJECTION
+    - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+      vars:
+        stage: "ChaosInject"
+        exp_pod_name: "container-kill"
+        engine_ns: "{{ a_ns }}"
+        message: "Injecting {{ c_experiment }} chaos on {{ app_pod }}"
+
     - name: Kill the container
       shell: >
         kubectl exec {{ chaos_pod.stdout}} -n {{ namespace }} -- 

@@ -15,6 +15,7 @@
     a_kind: "{{ lookup('env','APP_KIND') }}"
     lib_image: "{{ lookup('env','LIB_IMAGE') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
+    engine_name: "{{ lookup('env','CHAOSENGINE') }}"
 
   tasks:
     - block:
@@ -47,6 +48,14 @@
             delay: 2
             retries: 90
 
+        ## RECORD EVENT FOR PRE-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PreChaosCheck"
+            exp_pod_name: "pod-network-loss"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
+
         ## FAULT INJECTION 
         - include_tasks: "{{ c_util }}"
           vars:
@@ -59,7 +68,15 @@
             app_ns: "{{ a_ns }}"
             app_label: "{{ a_label }}"    
             delay: 2
-            retries: 90        
+            retries: 90
+            
+        ## RECORD EVENT FOR POST-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PostChaosCheck"
+            exp_pod_name: "pod-network-loss"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
 
         - set_fact:
             flag: "Pass"

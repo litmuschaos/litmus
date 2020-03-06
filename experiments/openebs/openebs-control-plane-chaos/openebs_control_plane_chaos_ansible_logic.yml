@@ -11,6 +11,7 @@
     c_svc_acc: "{{ lookup('env','CHAOS_SERVICE_ACCOUNT') }}"
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
     kill_count: "{{ lookup('env','KILL_COUNT') }}"
+    engine_name: "{{ lookup('env','CHAOSENGINE') }}"
     
   tasks:
     - block:
@@ -39,10 +40,26 @@
             status: 'SOT'
             namespace: "{{ openebs_ns }}"
 
+        ## RECORD EVENT FOR PRE-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PreChaosCheck"
+            exp_pod_name: "openebs-control-plane-chaos"
+            engine_ns: "{{ openebs_ns }}"
+            message: "AUT is Running successfully"
+
         ## INJECT CHAOS ON CONTROL PLANE COMPONENTS
         - name: Including main components
           include_tasks: openebs_control_plane_chaos_internal_tasks.yml
           loop: "{{ openebs.components }}"
+
+        ## RECORD EVENT FOR POST-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PostChaosCheck"
+            exp_pod_name: "openebs-control-plane-chaos"
+            engine_ns: "{{ openebs_ns }}"
+            message: "AUT is Running successfully"
 
         - set_fact:
             flag: "Pass"

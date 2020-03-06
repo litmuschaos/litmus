@@ -12,6 +12,7 @@
     a_platform: "{{ lookup('env', 'PLATFORM') }}"
     auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
+    engine_name: "{{ lookup('env','CHAOSENGINE') }}"
 
   tasks:
 
@@ -61,6 +62,14 @@
               - "{{ auxiliary_appinfo_list }}" 
 
           when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
+
+        ## RECORD EVENT FOR PRE-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PreChaosCheck"
+            exp_pod_name: "node-cpu-hog"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
 
          ## READY TO HOG THE NODE CPU
         - name: Ready to hog the node cpu
@@ -121,6 +130,14 @@
             when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
           when: node_status is defined and node_status.stdout != 'Ready'
+
+        ## RECORD EVENT FOR POST-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PostChaosCheck"
+            exp_pod_name: "node-cpu-hog"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
 
         - set_fact:
             flag: "Pass"

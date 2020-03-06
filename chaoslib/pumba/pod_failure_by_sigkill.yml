@@ -61,6 +61,14 @@
         app_pod: "{{ app_pod }}"
         app_container: "{{ a_container }}"
 
+    ## RECORD EVENT FOR CHAOS INJECTION
+    - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+      vars:
+        stage: "ChaosInject"
+        exp_pod_name: "container-kill"
+        engine_ns: "{{ a_ns }}"
+        message: "Injecting {{ c_experiment }} chaos on {{ app_pod }}"
+
     - name: Setup pumba chaos infrastructure
       shell: >
         kubectl apply -f /chaoslib/pumba/pumba_kube.yml
@@ -68,7 +76,7 @@
       args:
         executable: /bin/bash
       register: pumba_job_result
-
+      
     - name: Wait until the pumba sig-kill job is completed
       shell: >
         kubectl get pods -l job-name=pumba-sig-kill-{{ chaos_uid }} --no-headers -n {{ namespace }}

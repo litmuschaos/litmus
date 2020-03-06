@@ -14,6 +14,7 @@
     packet_loss_perc: "{{ lookup('env','NETWORK_PACKET_LOSS_PERCENTAGE') }}"  
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
+    engine_name: "{{ lookup('env','CHAOSENGINE') }}"
 
   vars_files:
     - /mnt/parameters.yml
@@ -65,6 +66,14 @@
             delay: 2
             retries: 90
 
+        ## RECORD EVENT FOR PRE-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PreChaosCheck"
+            exp_pod_name: "openebs-pool-network-loss"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
+
         - name: Get application pod name
           shell: >
             kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers -o=custom-columns=NAME:".metadata.name"
@@ -100,6 +109,14 @@
             app_label: "{{ a_label }}"      
             delay: 2
             retries: 90
+
+        ## RECORD EVENT FOR POST-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PostChaosCheck"
+            exp_pod_name: "openebs-pool-network-loss"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
 
         - name: Verify application data persistence  
           include: "{{ consistencyutil }}"

@@ -15,6 +15,7 @@
     openebs_ns: "{{ lookup('env','OPENEBS_NS') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
     pool_debug_msg: 'uncorrectable I/O failure|suspended|ERROR ZFS event'
+    engine_name: "{{ lookup('env','CHAOSENGINE') }}"
     
   vars_files:
     - /mnt/parameters.yml
@@ -88,6 +89,14 @@
             delay: 2
             retries: 90
 
+        ## RECORD EVENT FOR PRE-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PreChaosCheck"
+            exp_pod_name: "openebs-pool-container-failure"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
+
         - name: Create some test data 
           include: "{{ data_consistency_util_path }}"
           vars:
@@ -110,6 +119,14 @@
             app_label: "{{ a_label }}" 
             delay: 2
             retries: 90
+
+        ## RECORD EVENT FOR POST-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PostChaosCheck"
+            exp_pod_name: "openebs-pool-container-failure"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
  
         - name: Verify application data persistence  
           include: "{{ data_consistency_util_path }}"

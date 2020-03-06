@@ -19,6 +19,7 @@
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
     target_container: "{{ lookup('env','TARGET_CONTAINER') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
+    engine_name: "{{ lookup('env','CHAOSENGINE') }}"
 
   vars_files:
     - /mnt/parameters.yml
@@ -87,6 +88,14 @@
             delay: 2
             retries: 90
 
+        ## RECORD EVENT FOR PRE-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PreChaosCheck"
+            exp_pod_name: "openebs-target-container-failure"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
+
         - name: Get application pod name
           shell: >
             kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers
@@ -119,7 +128,15 @@
             app_ns: "{{ a_ns }}"
             app_label: "{{ a_label }}"     
             delay: 2
-            retries: 90        
+            retries: 90   
+            
+        ## RECORD EVENT FOR POST-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PostChaosCheck"
+            exp_pod_name: "openebs-target-container-failure"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
 
         ## POST-CHAOS APPLICATION LIVENESS CHECK
         - include_tasks: /utils/common/application_liveness_check.yml

@@ -14,6 +14,7 @@
     fill_percentage: "{{ lookup('env','FILL_PERCENTAGE') }}"
     auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
+    engine_name: "{{ lookup('env','CHAOSENGINE') }}"
     
   tasks:
     - block:
@@ -61,6 +62,14 @@
 
           when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
+        ## RECORD EVENT FOR PRE-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PreChaosCheck"
+            exp_pod_name: "disk-fill"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
+
         ## FAULT INJECTION 
 
         - include_tasks: "{{ c_util }}"
@@ -75,8 +84,8 @@
             app_ns: "{{ a_ns }}"
             app_label: "{{ a_label }}"      
             delay: 2
-            retries: 90    
-            
+            retries: 90  
+              
          # Auxiliary application health check status
         - block:
 
@@ -90,6 +99,14 @@
               - "{{ auxiliary_appinfo_list }}" 
 
           when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
+
+        ## RECORD EVENT FOR POST-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PostChaosCheck"
+            exp_pod_name: "disk-fill"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
 
         - set_fact:
             flag: "Pass"

@@ -11,7 +11,8 @@
     c_experiment: "node-drain"
     liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
     liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
-    auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"  
+    auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"
+    engine_name: "{{ lookup('env','CHAOSENGINE') }}"  
 
   tasks:
     - block:
@@ -78,12 +79,22 @@
                 
           when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
+        ## RECORD EVENT FOR PRE-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PreChaosCheck"
+            exp_pod_name: "node-drain"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
+            
         ## STORAGE FAULT INJECTION 
 
         - include_tasks: /chaoslib/litmus/cordon_drain_node.yml
           vars: 
             app_ns: "{{ a_ns }}"
             app_node: "{{ a_node }}"
+
+        ## POST-CHAOS APPLICATION LIVENESS CHECK
 
         - name: Verify AUT liveness post fault-injection
           include_tasks: "/utils/common/status_app_pod.yml"
@@ -107,7 +118,13 @@
               
           when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
-        ## POST-CHAOS APPLICATION LIVENESS CHECK
+        ## RECORD EVENT FOR POST-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PostChaosCheck"
+            exp_pod_name: "node-drain"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
 
         - include_tasks: /utils/common/application_liveness_check.yml
           when: liveness_label != ''

@@ -15,6 +15,7 @@
     a_kind: "{{ lookup('env','APP_KIND') }}"
     kill_count: "{{ lookup('env','KILL_COUNT') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
+    engine_name: "{{ lookup('env','CHAOSENGINE') }}" 
   
   tasks:
     - block:
@@ -38,7 +39,7 @@
           vars:
             status: 'SOT'
             namespace: "{{ a_ns }}"
-
+     
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
 
         - name: Verify that the AUT (Application Under Test) is running 
@@ -49,13 +50,21 @@
             delay: 2
             retries: 90
 
+        ## RECORD EVENT FOR PRE-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PreChaosCheck"
+            exp_pod_name: "pod-delete"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
+            
         ## FAULT INJECTION 
 
         - include_tasks: "{{ c_util }}"
           vars:
             app_ns: "{{ a_ns }}"
             app_label: "{{ a_label }}"
-          
+   
         ## POST-CHAOS APPLICATION LIVENESS CHECK
 
         - name: Verify AUT liveness post fault-injection
@@ -64,7 +73,15 @@
             app_ns: "{{ a_ns }}"
             app_label: "{{ a_label }}"     
             delay: 2
-            retries: 90        
+            retries: 90   
+            
+        ## RECORD EVENT FOR POST CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PostChaosCheck"
+            exp_pod_name: "pod-delete"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
 
         - set_fact:
             flag: "Pass"

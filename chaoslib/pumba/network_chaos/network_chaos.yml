@@ -70,6 +70,14 @@
         vars:
           pumba_image: "{{ lib_image }}"
           chaosUID: "{{ chaos_uid }}"
+
+      ## RECORD EVENT FOR CHAOS INJECTION
+      - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+        vars:
+          stage: "ChaosInject"
+          exp_pod_name: "network-lib"
+          engine_ns: "{{ a_ns }}"
+          message: "Injecting {{ c_experiment }} chaos on {{ app_pod }}"
   
       - name: Setup pumba chaos infrastructure
         shell: >
