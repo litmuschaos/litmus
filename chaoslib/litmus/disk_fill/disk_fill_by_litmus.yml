@@ -63,9 +63,6 @@
       template:
         src:  /chaoslib/litmus/disk_fill/disk_fill_job.j2
         dest: /chaoslib/litmus/disk_fill/disk_fill_job.yml
-      vars:
-        chaosUID: "{{ chaos_uid }}"
-        app_node: "{{ app_node }}"
 
     - name: Create the Job for Disk-Fill
       shell: >
@@ -74,16 +71,17 @@
         executable: /bin/bash
       register: disk_fill_job_result
   
-    - name: Confirm that the disk-fill job is running on all nodes
+    - name: Confirm that the disk-fill job is running on {{ app_node }} node
       shell: >
-        kubectl get pods -l app=disk-fill --no-headers --template "{{range .items}}{{if eq .spec.nodeName $(kubectl get nodes --no-headers --field-selector spec.unschedulable=false | grep Ready | awk '{printf "\"%s\" ", $1}')}}{{.status.phase}}{{\"\n\"}}{{end}}{{end}}" -n {{ a_ns }} | sort | uniq
+        kubectl get pods -l app=disk-fill
+        --no-headers -o custom-columns=:status.phase
+        -n {{ a_ns }} | sort | uniq
       args:
         executable: /bin/bash
       register: result
       until: "result.stdout == 'Running'"
       delay: 2
       retries: 90
-      ignore_errors: true
 
     - name: Confirm that disk fill container is in running state 
       include_tasks: "/utils/common/status_app_pod.yml"

@@ -3,13 +3,13 @@ kind: Job
 metadata:
   name: disk-fill
   labels:
-    chaosUID: {{ chaosUID }}
+    chaosUID: {{ chaos_uid }}
 spec:
   template:
     metadata:
       labels:
         app: disk-fill
-        chaosUID: {{ chaosUID }}
+        chaosUID: {{ chaos_uid }}
     spec:
       nodeSelector:
         kubernetes.io/hostname: {{ app_node }}
