@@ -26,8 +26,8 @@
     zk_label: "{{ lookup('env','ZOOKEEPER_LABEL') }}"
     zk_service: "{{ lookup('env','ZOOKEEPER_SERVICE') }}"
     zk_port: "{{ lookup('env','ZOOKEEPER_PORT') }}"
-    chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
-    engine_name: "{{ lookup('env','CHAOSENGINE') }}" 
+    chaos_uid: "{{ lookup('env','CHAOS_UID') }}" 
+    c_engine: "{{ lookup('env','CHAOS_ENGINE') }}"
 
   tasks:
     - block:
@@ -38,13 +38,10 @@
             file: chaosutil.yml
 
         ## GENERATE EXP RESULT NAME
-        - block:
-
-            - name: Construct chaos result name (experiment_name)
-              set_fact:
-                c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
-
-          when: lookup('env','CHAOSENGINE')    
+        - name: Construct chaos result name
+          set_fact:
+            c_result: "{{ c_engine }}-{{ c_experiment }}"
+          when: "c_engine is defined and c_engine != ''"
 
         ## RECORD START-OF-EXPERIMENT IN LITMUSCHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml

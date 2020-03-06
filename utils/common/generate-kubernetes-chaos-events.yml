@@ -28,7 +28,7 @@
      apiVersion: litmuschaos.io/v1alpha1
      kind: ChaosEngine
      # this needs to be replaced by actual chaosengine name
-     name: "{{ engine_name }}"
+     name: "{{ c_engine }}"
      # this needs to be replaced by actual resource ns
      namespace: "{{ engine_ns }}"
      ## uid is passed as env from chaos-runner

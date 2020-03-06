@@ -1,15 +1,15 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: pumba-sig-kill-{{ chaosUID }}
+  name: pumba-sig-kill-{{ chaos_uid }}
   labels: 
-    chaosUID: {{ chaosUID }}
+    chaosUID: {{ chaos_uid }}
 spec:
   template:
     metadata:
       labels:
         app: pumba
-        chaosUID: {{ chaosUID }}
+        chaosUID: {{ chaos_uid }}
         # prevent pumba from killing itself
         com.gaiaadm.pumba: "true"
     spec:

@@ -11,8 +11,8 @@
     c_experiment: "node-drain"
     liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
     liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
-    auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"
-    engine_name: "{{ lookup('env','CHAOSENGINE') }}"  
+    auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}" 
+    c_engine: "{{ lookup('env','CHAOS_ENGINE') }}"
 
   tasks:
     - block:
@@ -28,13 +28,10 @@
           when: liveness_label != ''
 
         ## GENERATE EXP RESULT NAME
-        - block:
-
-           - name: Construct chaos result name (experiment_name)
-             set_fact:
-               c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
-
-          when: lookup('env','CHAOSENGINE') 
+        - name: Construct chaos result name
+          set_fact:
+            c_result: "{{ c_engine }}-{{ c_experiment }}"
+          when: "c_engine is defined and c_engine != ''"
 
          ## RECORD START-OF-TEST IN CHAOS RESULT CR
 

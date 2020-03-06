@@ -3,13 +3,13 @@ kind: Job
 metadata:
   name: containerd-chaos
   labels:
-    chaosUID: {{ chaosUID }}
+    chaosUID: {{ chaos_uid }}
 spec:
   template:
     metadata:
       labels:
         app: crictl
-        chaosUID: {{ chaosUID }}
+        chaosUID: {{ chaos_uid }}
     spec:
       nodeSelector:
         kubernetes.io/hostname: {{ app_node }}
