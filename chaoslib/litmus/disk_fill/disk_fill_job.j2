@@ -1,21 +1,19 @@
-apiVersion: apps/v1
-kind: DaemonSet
+apiVersion: batch/v1
+kind: Job
 metadata:
   name: disk-fill
   labels:
     chaosUID: {{ chaosUID }}
 spec:
-  selector:
-    matchLabels:
-      app: disk-fill
-      chaosUID: {{ chaosUID }}
   template:
     metadata:
       labels:
         app: disk-fill
         chaosUID: {{ chaosUID }}
-      name: disk-fill
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: {{ app_node }}
+      restartPolicy: Never
       containers:
       - image: alpine
         args:
