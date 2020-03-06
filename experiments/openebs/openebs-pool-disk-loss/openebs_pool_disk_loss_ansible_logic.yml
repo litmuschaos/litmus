@@ -13,11 +13,11 @@
 
       - include_tasks: openebs_pool_disk_loss_ansible_prerequisites.yml
 
-      # GENERATE EXPERIMENT RESULT NAME AND CREATE CHAOS RESULT RESOURCE
-      - name: Construct chaos result name (experiment_name)
+      # GENERATE EXPERIMENT RESULT NAME
+      - name: Construct chaos result name
         set_fact:
-          c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
-        when: lookup('env','CHAOSENGINE')
+          c_result: "{{ c_engine }}-{{ c_experiment }}"
+        when: "c_engine is defined and c_engine != ''"
 
       - include_tasks: /utils/runtime/update_chaos_result_resource.yml
         vars:
@@ -87,7 +87,7 @@
 
         when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
-      - include: /utils/common/cstor_pool_health_status.yml
+      - include: /utils/apps/openebs/cstor_pool_health_status.yml
         vars:
           delay: 2
           retries: 90
@@ -106,9 +106,6 @@
           ns: "{{ a_ns }}"
           pod_name: "{{ app_pod.stdout }}"
         when: data_persistence | length > 0
-
-      # - debug:
-      #     msg: "{{ c_util }}"
           
       # INJECTING CHAOS 
       - name: Injecting the chaos
@@ -129,7 +126,7 @@
         when: "inuse is defined and inuse == true"
 
       - fail:
-          msg: "specified disk not re-attached to node"
+          msg: "specified disk is not re-attached to node"
         when: "inuse is defined and inuse == false"
       
       - name: Verify that the AUT (Application Under Test) is running
@@ -157,7 +154,7 @@
 
         when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
-      - include: /utils/common/cstor_pool_health_status.yml
+      - include: /utils/apps/openebs/cstor_pool_health_status.yml
         vars:
           delay: 2
           retries: 90

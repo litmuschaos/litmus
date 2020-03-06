@@ -1,6 +1,6 @@
 - name: Verify that cStor pool is healthy
   shell: >
-    kubectl get csp -n {{ openebs_ns }} -o jsonpath='{.items[*].status.phase}'
+    kubectl get csp -o jsonpath='{.items[*].status.phase}'
   register: csp_status
   until: "((csp_status.stdout_lines | unique) | length) == 1 and 'Healthy' in csp_status.stdout"
   delay: '{{ delay }}'

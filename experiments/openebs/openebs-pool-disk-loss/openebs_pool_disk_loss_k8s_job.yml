@@ -2,14 +2,13 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   generateName: disk-loss-
-  namespace: default
 spec:
   template:
     metadata:
       labels:
         name: disk-loss
     spec:
-      serviceAccountName: nginx-sa
+      serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
       restartPolicy: Never
       containers:
       - name: ansibletest
