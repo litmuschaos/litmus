@@ -1,12 +1,12 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: disk-loss-
+  generateName: openebs-pool-disk-loss-
 spec:
   template:
     metadata:
       labels:
-        name: disk-loss
+        name: openebs-pool-disk-loss
     spec:
       serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
       restartPolicy: Never
@@ -24,7 +24,7 @@ spec:
 
           # Enter the APP_NAMESPACE, if you set APP_CHECK to true
           - name: APP_NAMESPACE
-            value: 'default'
+            value: ''
             
           - name: APP_PVC
             value: ''
@@ -39,7 +39,7 @@ spec:
           - name: CLOUD_PLATFORM
             value: 'GCP'
 
-          # Enter the time duration after the disk is dettached
+          # Enter the time duration in sec after the disk is dettached
           - name: TOTAL_CHAOS_DURATION
             value: '10'
 
@@ -83,7 +83,7 @@ spec:
             value: ''
 
           - name: DATA_PERSISTENCE
-            value: 'mysql'
+            value: ''
 
           - name: OPENEBS_NAMESPACE
             value: 'openebs'
