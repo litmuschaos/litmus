@@ -17,6 +17,7 @@
     zone_name: "{{ lookup('env','ZONE_NAME') }}"
     auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
+    chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
 
   tasks:
 
@@ -149,6 +150,9 @@
             flag: "Fail"
 
       always:
+
+        ## Getting failure step from experiment-pod
+        - include_tasks: /utils/runtime/getting_failure_step.yml  
 
         ## RECORD END-OF-TEST IN LITMUSCHAOS RESULT CR
         - include_tasks: "/utils/runtime/update_chaos_result_resource.yml"

@@ -16,6 +16,7 @@
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
+    chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
 
   vars_files:
     - /mnt/parameters.yml
@@ -133,8 +134,10 @@
 
       always: 
 
+        ## Getting failure step from experiment-pod
+        - include_tasks: /utils/runtime/getting_failure_step.yml  
+
         ## RECORD END-OF-TEST IN CHAOS RESULT CR
- 
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'
