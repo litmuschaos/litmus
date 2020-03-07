@@ -2,7 +2,7 @@
   connection: local
 
   vars:
-    c_experiment: "openebs-control-plane-validation"
+    c_experiment: "openebs-control-plane-chaos"
     c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
     c_interval: "{{ lookup('env','CHAOS_INTERVAL') }}"
     ramp_time: "{{ lookup('env','RAMP_TIME') }}"
@@ -11,10 +11,11 @@
     c_svc_acc: "{{ lookup('env','CHAOS_SERVICE_ACCOUNT') }}"
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
     kill_count: "{{ lookup('env','KILL_COUNT') }}"
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     
   tasks:
     - block:
-        - include: openebs_control_plane_validation_ansible_prerequisites.yml
+        - include: openebs_control_plane_chaos_ansible_prerequisites.yml
     
         - include_vars:
             file: chaosutil.yml
@@ -25,13 +26,10 @@
             name: openebs
 
         ## GENERATE EXP RESULT NAME
-        - block:
-
-          - name: Construct chaos result name (experiment_name)
-            set_fact:
-              c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
-
-          when: lookup('env','CHAOSENGINE')    
+        - name: Construct chaos result name
+          set_fact:
+            c_result: "{{ c_engine }}-{{ c_experiment }}"
+          when: "c_engine is defined and c_engine != ''"
 
         ## RECORD START-OF-EXPERIMENT IN LITMUSCHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
@@ -41,7 +39,7 @@
 
         ## INJECT CHAOS ON CONTROL PLANE COMPONENTS
         - name: Including main components
-          include_tasks: openebs_control_plane_validation_internal_tasks.yml
+          include_tasks: openebs_control_plane_chaos_internal_tasks.yml
           loop: "{{ openebs.components }}"
 
         - set_fact:

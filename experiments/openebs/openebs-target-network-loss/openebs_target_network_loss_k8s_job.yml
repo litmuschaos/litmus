@@ -55,7 +55,7 @@ spec:
             value: '100' # in percentage
 
           - name: CHAOS_DURATION
-            value: '120000' # in milliseconds
+            value: '120' # in seconds
 
           - name: LIVENESS_APP_LABEL
             value: ''

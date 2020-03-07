@@ -3,7 +3,7 @@ kind: Pod
 metadata:
   labels:
     run: liveness-app
-    chaosUID: {{ chaosUID }}
+    chaosUID: {{ chaos_uid }}
   name: liveness-app
   namespace: {{ c_ns }}
 spec:

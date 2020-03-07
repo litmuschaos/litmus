@@ -1,10 +1,23 @@
 - hosts: localhost
   connection: local
 
+  vars:
+    a_label: "{{ lookup('env','APP_LABEL') }}"
+    a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+    a_pvc: "{{ lookup('env','APP_PVC') }}"
+    c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
+    c_experiment: "openebs-pool-disk-loss"
+    ramp_time: "{{ lookup('env','RAMP_TIME') }}"
+    data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
+    liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
+    liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
+    auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
+    
   vars_files:
     - /mnt/parameters.yml
     - /experiments/openebs/openebs_components.yml
-    - vars.yml
+    - platform_vars.yml
   
   tasks:
     - block:

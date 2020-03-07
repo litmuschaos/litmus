@@ -63,9 +63,7 @@
       template:
         src:  /chaoslib/litmus/disk_fill/disk_fill_ds.j2
         dest: /chaoslib/litmus/disk_fill/disk_fill_ds.yml
-      vars:
-        chaosUID: "{{ chaos_uid }}"
-
+      
     - name: Create the DaemonSet for Disk-Fill
       shell: >
         kubectl apply -f /chaoslib/litmus/disk_fill/disk_fill_ds.yml -n {{ a_ns }}

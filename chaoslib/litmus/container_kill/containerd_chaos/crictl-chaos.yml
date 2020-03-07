@@ -1,5 +1,30 @@
 ---
 - block:
+    - block:
+        - name: Select the app pod
+          shell: >
+            kubectl get pod -l {{ a_label }} -n {{ namespace }}
+            -o=custom-columns=:metadata.name --no-headers
+            | shuf | head -1 
+          args:
+            executable: /bin/bash
+          register: app_pod_name
+
+        - name: Record app pod name
+          set_fact:
+            app_pod: "{{ app_pod_name.stdout }}"
+      when: "app_pod is not defined or app_pod == ''"
+
+    - name: Identify the application node
+      shell: >
+        kubectl get pod {{ app_pod }} -n {{ namespace }}
+        --no-headers -o custom-columns=:spec.nodeName
+      args:
+        executable: /bin/bash
+      register: app_node
+
+    - set_fact: 
+        app_node: "{{ app_node.stdout }}"
 
     - name: Wait for the specified ramp time before injecting chaos
       wait_for: timeout="{{ ramp_time }}"
@@ -8,20 +33,20 @@
     - name: Patch the chaoslib image
       template:
         src:  /chaoslib/litmus/container_kill/containerd_chaos/containerd.j2
-        dest: /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-ds.yml
+        dest: /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-job.yml
       vars:
         containerd_image: "{{ lib_image }}"
-        chaosUID: "{{ chaos_uid }}"
-
+        app_node: "{{ app_node }}"
+        
     - name: Setup containerd chaos infrastructure.
       shell: >
-        kubectl apply -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-ds.yml
+        kubectl apply -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-job.yml
         -n {{ namespace }}
       args:
         executable: /bin/bash
-      register: crictl_ds_result
+      register: crictl_job_result
 
-    - name: Confirm that the containerd-chaos ds is running on all nodes.
+    - name: Confirm that the containerd-chaos job is running on {{ app_node }} node.
       shell: >
         kubectl get pod -l app=crictl
         --no-headers -o custom-columns=:status.phase
@@ -47,7 +72,6 @@
         - name: Record application pod name
           set_fact:
             app_pod: "{{ pod_name.stdout }}"
-
       when: "app_pod is not defined or app_pod == ''"
 
     - name: Identify the node where application is running
@@ -74,7 +98,6 @@
       failed_when: chaos_pod is failed
 
     - block:
-
       - name: Record the application container
         shell: >
           kubectl get pods -l {{ label }} -n {{ namespace }} -o jsonpath='{.items[0].spec.containers[0].name}'
@@ -85,7 +108,6 @@
       - name: Record the app_container
         set_fact:
           app_container: "{{ container.stdout }}"
-
       when: "app_container is not defined or app_container == ''"
 
     - name: Obtain the pod ID through Pod name
@@ -141,9 +163,9 @@
       delay: 2
       retries: 90
 
-    - name: Delete the crictl-chaos daemonset
+    - name: Delete the crictl-chaos job
       shell: >
-        kubectl delete -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-ds.yml -n {{ namespace }} 
+        kubectl delete -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-job.yml -n {{ namespace }} 
       args:
         executable: /bin/bash
     
@@ -160,13 +182,12 @@
   rescue: 
 
     - block: 
-    
-        - name: Delete the crictl-chaos daemonset
+        - name: Delete the crictl-chaos job
           shell: >
-            kubectl delete -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-ds.yml -n {{ namespace }}
+            kubectl delete -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-job.yml -n {{ namespace }}
           args:
             executable: /bin/bash
-          when: crictl_ds_result.rc == 0
+          when: crictl_job_result.rc == 0
             
         - name: Confirm that the containerd-chaos pod is deleted successfully
           shell: >
@@ -177,7 +198,7 @@
           until: "'No resources found' in result.stderr"
           delay: 2
           retries: 90
-      when: " crictl_ds_result is defined"
+      when: " crictl_job_result is defined"
     
     - fail:
         msg: "crictl-chaos lib failed"

@@ -53,7 +53,7 @@ spec:
             value: '60000' # in milliseconds
 
           - name: TOTAL_CHAOS_DURATION
-            value: '60000' # in milliseconds
+            value: '60'  # in seconds
 
           - name: CHAOS_INTERVAL
             value: '1000'

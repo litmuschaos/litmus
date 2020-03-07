@@ -15,6 +15,7 @@
     openebs_ns: "{{ lookup('env','OPENEBS_NS') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
     pool_debug_msg: 'uncorrectable I/O failure|suspended|ERROR ZFS event'
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     
   vars_files:
     - /mnt/parameters.yml
@@ -46,13 +47,10 @@
           when: data_persistence != ''
 
          ## GENERATE EXP RESULT NAME
-        - block:
-
-            - name: Construct chaos result name (experiment_name)
-              set_fact:
-                c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
-
-          when: lookup('env','CHAOSENGINE') 
+        - name: Construct chaos result name
+          set_fact:
+            c_result: "{{ c_engine }}-{{ c_experiment }}"
+          when: "c_engine is defined and c_engine != ''"
 
         ## RECORD START-OF-EXPERIMENT IN CHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml

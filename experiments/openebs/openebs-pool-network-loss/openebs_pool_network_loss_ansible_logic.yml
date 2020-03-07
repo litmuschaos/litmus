@@ -7,7 +7,6 @@
     a_pvc: "{{ lookup('env','APP_PVC') }}"
     c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
     c_experiment: "openebs-pool-network-loss"
-    c_interval: "{{ lookup('env','CHAOS_INTERVAL') }}"
     data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
     lib_image: "{{ lookup('env','LIB_IMAGE') }}"
     liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
@@ -15,7 +14,8 @@
     packet_loss_perc: "{{ lookup('env','NETWORK_PACKET_LOSS_PERCENTAGE') }}"  
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
-
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
+    
   vars_files:
     - /mnt/parameters.yml
     - /experiments/openebs/openebs_components.yml
@@ -27,12 +27,11 @@
 
         - include: openebs_pool_network_loss_ansible_prerequisites.yml
 
-        # GENERATE EXPERIMENT RESULT NAME
-        - block:
-            - name: Construct chaos result name (experiment_name)
-              set_fact:
-                c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
-          when: lookup('env','CHAOSENGINE')
+        ## GENERATE EXP RESULT NAME
+        - name: Construct chaos result name
+          set_fact:
+            c_result: "{{ c_engine }}-{{ c_experiment }}"
+          when: "c_engine is defined and c_engine != ''"
 
          # GENERATE EXPERIMENT RESULT NAME AND CREATE CHAOS RESULT RESOURCE
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml

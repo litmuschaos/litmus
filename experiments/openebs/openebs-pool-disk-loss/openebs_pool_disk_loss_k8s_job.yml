@@ -20,7 +20,7 @@ spec:
 
           # Enter the App_label, if you set APP_CHECK to true
           - name: APP_LABEL
-            value: 'app=mysql'
+            value: ''
 
           # Enter the APP_NAMESPACE, if you set APP_CHECK to true
           - name: APP_NAMESPACE
@@ -45,7 +45,7 @@ spec:
 
           # Period to wait before injection of chaos in sec
           - name: RAMP_TIME
-            value: '5'
+            value: ''
 
           # Enter the project id for gcp only
           - name: PROJECT_ID 

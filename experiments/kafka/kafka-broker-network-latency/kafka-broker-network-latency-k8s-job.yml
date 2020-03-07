@@ -34,9 +34,8 @@ spec:
           - name: KAFKA_CONSUMER_TIMEOUT
             value: '30000'
 
-          # in milliseconds  
           - name: TOTAL_CHAOS_DURATION
-            value: '60000'
+            value: '60'  # in seconds
 
           - name: TARGET_CONTAINER
             value: 'k8skafka'

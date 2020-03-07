@@ -3,14 +3,20 @@ apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosResult
 metadata:
   {% if instance_id is defined %}
-  name: {{ c_experiment }}-{{ instance_id }}
+  name: {{ c_result }}-{{ instance_id }}
   {% else %}
-  name: {{ c_experiment }}
+  name: {{ c_result }}
   {% endif %} 
+  labels:
+    chaosUID: {{ chaos_uid }}
 spec:
-  # holds the state of testcase,  manually updated by json merge patch
-  # verdict is the useful value today, but anticipate phase use in future 
+  engine: {{ c_engine }}
+  experiment: {{ c_experiment }}
+  {% if instance_id is defined %}
+  instance: {{ instance_id }}
+  {% endif %}
+status:
   experimentstatus: 
     phase: {{ phase }}  
-    verdict: {{ verdict }} 
-
+    verdict: {{ verdict }}
+    
