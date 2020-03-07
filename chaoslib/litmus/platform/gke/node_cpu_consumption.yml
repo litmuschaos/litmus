@@ -13,19 +13,19 @@
 
     - name: Patch the engine uid
       template:
-        src:  /chaoslib/litmus/platform/gke/node-cpu-hog-daemonset.j2
-        dest: /chaoslib/litmus/platform/gke/node-cpu-hog-daemonset.yml
+        src:  /chaoslib/litmus/platform/gke/node-cpu-hog-job.j2
+        dest: /chaoslib/litmus/platform/gke/node-cpu-hog-job.yml
       
-    ## CREATING  A DAEMONSET  FOR CPU-HOG
-    - name: Creating a DaemonSet for cpu-hog
+    ## CREATING  A Job  FOR CPU-HOG
+    - name: Creating a Job for cpu-hog
       k8s:
         state: present
         namespace: "{{ a_ns }}"
-        src: /chaoslib/litmus/platform/gke/node-cpu-hog-daemonset.yml
+        src: /chaoslib/litmus/platform/gke/node-cpu-hog-job.yml
       register: cpu_hog_ds_result
 
-    ## CHECKING THE STATUS OF DAEMONSET
-    - name: Checking the status of DaemonSet
+    ## CHECKING THE STATUS OF Jon
+    - name: Checking the status of Job
       k8s_facts:
         kind: Pod
         namespace: "{{ a_ns }}"
@@ -42,7 +42,7 @@
         kind: Pod
         namespace: "{{ a_ns }}"
         field_selectors:
-          - spec.nodeName={{node_name}}
+          - spec.nodeName={{ node_name }}
         label_selectors:
           - app=cpu-hog
       register: po_ds_app
@@ -81,30 +81,30 @@
       shell: kubectl get no {{ node_name }} | awk '{print $2}' | tail -n1
       register: node_status
 
-    ## GETTING DAEMONSET NAME
-    - name: Getting daemonset name  
+    ## GETTING Job NAME
+    - name: Getting job name  
       k8s_facts:
-        kind: DaemonSet
+        kind: Job
         label_selectors:
           - app=cpu-hog
       register: d_name
 
     - set_fact:
-        ds_name: "{{ d_name | json_query('resources[0].metadata.name')}}"
+        ds_name: "{{ d_name | json_query('resources[0].metadata.name') }}"
 
-    ## DELETING THE DAEMONSET
-    - name: Deleting the Cpu Hog DaemonSet
-      shell: kubectl delete -f /chaoslib/litmus/platform/gke/node-cpu-hog-daemonset.yml -n {{ a_ns }}
+    ## DELETING THE Job
+    - name: Deleting the Cpu Hog Job
+      shell: kubectl delete -f /chaoslib/litmus/platform/gke/node-cpu-hog-job.yml -n {{ a_ns }}
       args:
         executable: /bin/bash
 
-    - name: Confirm that the Cpu Hog DaemonSet is deleted successfully
+    - name: Confirm that the Cpu Hog Job is deleted successfully
       k8s_facts:
-        kind: DaemonSet
+        kind: Job
         label_selectors:
           - app=cpu-hog
-      register: resource_daemonset
-      until: "resource_daemonset.resources | length < 1"
+      register: resource_job
+      until: "resource_job.resources | length < 1"
       delay: 2
       retries: 90
 
@@ -112,20 +112,20 @@
 
     - block: 
 
-        - name: Deleting the Cpu Hog DaemonSet
+        - name: Deleting the Cpu Hog Job
           shell: >
-            kubectl delete -f /chaoslib/litmus/platform/gke/node-cpu-hog-daemonset.yml -n {{ a_ns }}
+            kubectl delete -f /chaoslib/litmus/platform/gke/node-cpu-hog-job.yml -n {{ a_ns }}
           args:
             executable: /bin/bash
           when: "cpu_hog_ds_result is succeeded"
-        
-        - name: Confirm that the Cpu Hog DaemonSet is deleted successfully
+
+        - name: Confirm that the Cpu Hog Job is deleted successfully
           k8s_facts:
-            kind: DaemonSet
+            kind: Job
             label_selectors:
               - app=cpu-hog
-          register: resource_daemonset
-          until: "resource_daemonset.resources | length < 1"
+          register: resource_job
+          until: "resource_job.resources | length < 1"
           delay: 2
           retries: 90
       when: "cpu_hog_ds_result is defined"
