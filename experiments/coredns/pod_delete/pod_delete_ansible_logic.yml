@@ -15,6 +15,7 @@
     kill_count: "{{ lookup('env','KILL_COUNT') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
+    chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
 
   tasks:
     - block:
@@ -129,7 +130,10 @@
           when: "liveness_app_deploy is defined and liveness_app_deploy != '' "
 
       always:
- 
+
+        ## Getting failure step from experiment-pod
+        - include_tasks: /utils/runtime/getting_failure_step.yml  
+        
         ## RECORD END-OF-TEST IN LITMUSCHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:

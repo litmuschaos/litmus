@@ -17,6 +17,7 @@
     openebs_ns: openebs
     pool_debug_msg: 'uncorrectable I/O failure|suspended|ERROR ZFS event'
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
+    chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
    
   vars_files:
     - /mnt/parameters.yml
@@ -170,6 +171,10 @@
             flag: "Fail"
 
       always: 
+
+        ## Getting failure step from experiment-pod
+        - include_tasks: /utils/runtime/getting_failure_step.yml  
+
          ## RECORD END-OF-TEST IN LITMUS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
