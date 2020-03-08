@@ -38,10 +38,28 @@
             status: 'SOT'
             namespace: "{{ openebs_ns }}"
 
+        ## RECORD EVENT FOR PRE-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PreChaosCheck"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ openebs_ns }}"
+            message: "OpenEBS control plane components are Running successfully"
+          when: "c_engine is defined and c_engine != ''"
+
         ## INJECT CHAOS ON CONTROL PLANE COMPONENTS
         - name: Including main components
           include_tasks: openebs_control_plane_chaos_internal_tasks.yml
           loop: "{{ openebs.components }}"
+
+        ## RECORD EVENT FOR POST-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PostChaosCheck"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ openebs_ns }}"
+            message: "OpenEBS control plane components are Running successfully"
+          when: "c_engine is defined and c_engine != ''"
 
         - set_fact:
             flag: "Pass"

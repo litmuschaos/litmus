@@ -16,12 +16,31 @@
       debug:
         msg: "failStep: {{ failStep }}"
 
+    ## RECORD Summary event
+    - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+      vars:
+        stage: "Summary"
+        exp_pod_name: "{{ chaos_pod_name }}"
+        engine_ns: "{{ a_ns }}"
+        message: "{{ c_experiment }} Experiment Failed!"
+      when: "c_engine is defined and c_engine != ''"
+
   when: "flag is defined and flag == 'Fail'"
 
-- block: 
-  
+
+- block:
+
     - name: Record the name of failed step
       set_fact:
         failStep: "N/A"
+
+    ## RECORD Summary event
+    - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+      vars:
+        stage: "Summary"
+        exp_pod_name: "{{ chaos_pod_name }}"
+        engine_ns: "{{ a_ns }}"
+        message: "{{ c_experiment }} Experiment Passed!"
+      when: "c_engine is defined and c_engine != ''"
 
   when: "flag is defined and flag == 'Pass'"

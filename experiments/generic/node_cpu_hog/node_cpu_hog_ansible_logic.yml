@@ -64,6 +64,15 @@
 
           when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
+        ## RECORD EVENT FOR PRE-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PreChaosCheck"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
+
          ## READY TO HOG THE NODE CPU
         - name: Ready to hog the node cpu
           include_tasks: "{{ c_util }}"
@@ -123,6 +132,15 @@
             when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
           when: node_status is defined and node_status.stdout != 'Ready'
+
+        ## RECORD EVENT FOR POST-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PostChaosCheck"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
 
         - set_fact:
             flag: "Pass"

@@ -66,6 +66,15 @@
             delay: 2
             retries: 90
 
+        ## RECORD EVENT FOR PRE-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+        vars:
+          stage: "PreChaosCheck"
+          exp_pod_name: "{{ chaos_pod_name }}"
+          engine_ns: "{{ a_ns }}"
+          message: "AUT is Running successfully"
+        when: "c_engine is defined and c_engine != ''"
+
         - name: Derive the kafka-broker node name
           shell: 
             kubectl get pod {{ kafka_broker }} -n {{ kafka_ns }} --no-headers -o custom-columns=:spec.nodeName
@@ -119,6 +128,15 @@
                 app_label: "name=kafka-liveness" 
                 delay: 2
                 retries: 90
+
+            ## RECORD EVENT FOR POST-CHAOS CHECK
+            - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+              vars:
+                stage: "PostChaosCheck"
+                exp_pod_name: "{{ chaos_pod_name }}"
+                engine_ns: "{{ a_ns }}"
+                message: "Disk has been reattached and AUT is Running successfully"
+              when: "c_engine is defined and c_engine != ''"
 
             - include_tasks: "/utils/apps/kafka/kafka_liveness_cleanup.yml"
 

@@ -73,6 +73,15 @@
             retries: 90
             app_ns: "{{ c_ns }}"
             app_label: "run=liveness-app"
+
+        ## RECORD EVENT FOR PRE-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PreChaosCheck"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
   
         ## FAULT INJECTION 
         - include_tasks: "{{ c_util }}"
@@ -97,6 +106,15 @@
             retries: 90
             app_ns: "{{ c_ns }}"
             app_label: "run=liveness-app"
+          
+        ## RECORD EVENT FOR POST-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PostChaosCheck"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
 
         ## DEPROVISIONING TASK
     
