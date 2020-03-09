@@ -80,7 +80,7 @@
         executable: /bin/bash
       register: disk_fill_job_result
   
-    - name: Confirm that disk fill pod running on {{ app_node.stdout }} node
+    - name: Confirm that disk fill pod is running on {{ app_node.stdout }} node
       include_tasks: "/utils/common/status_app_pod.yml"
       vars:
         app_label: "app=disk-fill"
