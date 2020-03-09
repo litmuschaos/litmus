@@ -1,6 +1,6 @@
  ## GETTING THE PRE CHAOS NODE NAME OF APPLICATION 
 - block:
-  
+
     - name: Getting the pre-chaos node name of application 
       k8s_facts:
         kind: Pod
@@ -9,50 +9,7 @@
       register: no_name
 
     - set_fact:
-        node_name: "{{ no_name | json_query('resources[0].spec.nodeName')}}"
-
-    - name: Patch the engine uid
-      template:
-        src:  /chaoslib/litmus/platform/gke/node-cpu-hog-job.j2
-        dest: /chaoslib/litmus/platform/gke/node-cpu-hog-job.yml
-      
-    ## CREATING  A Job  FOR CPU-HOG
-    - name: Creating a Job for cpu-hog
-      k8s:
-        state: present
-        namespace: "{{ a_ns }}"
-        src: /chaoslib/litmus/platform/gke/node-cpu-hog-job.yml
-      register: cpu_hog_ds_result
-
-    ## CHECKING THE STATUS OF Jon
-    - name: Checking the status of Job
-      k8s_facts:
-        kind: Pod
-        namespace: "{{ a_ns }}"
-        label_selectors:
-          - app=cpu-hog
-      register: pod_ds
-      until: "{{pod_ds | json_query('resources[*].status.phase') | unique | length==1}} and {{pod_ds | json_query('resources[0].status.phase') == 'Running'}}"
-      delay: 2
-      retries: 90
-
-    ## GETTING THE POD NAME OF DS FROM APPLICATION NODE
-    - name: Getting the pod name of DS from application node
-      k8s_facts:
-        kind: Pod
-        namespace: "{{ a_ns }}"
-        field_selectors:
-          - spec.nodeName={{ node_name }}
-        label_selectors:
-          - app=cpu-hog
-      register: po_ds_app
-
-    - set_fact:
-        pod_ds_app: "{{ po_ds_app | json_query('resources[0].metadata.name') }}"
-
-    - name: Wait for the specified ramp time before injecting chaos
-      wait_for: timeout="{{ ramp_time }}"
-      when: "ramp_time is defined and ramp_time != ''"
+        node_name: "{{ no_name | json_query('resources[0].spec.nodeName') }}"
 
     ## GETTING THE NODE CPU CAPACITY
     - name: Getting the node cpu capacity
@@ -64,13 +21,44 @@
     - set_fact:
         cpu_limit: "{{ c_limit | json_query('resources[0].status.capacity.cpu') }}"
 
-    ## GIVING CPU SPIKE
-    - name: Giving CPU spike ...
-      shell: kubectl exec -it {{ pod_ds_app }} -n {{ a_ns }} -- bash -c "stress --cpu {{ cpu_limit }} --timeout {{ c_duration }}; exit"
-      args:
+    - name: Patch the engine uid
+      template:
+        src:  /chaoslib/litmus/platform/gke/node-cpu-hog-job.j2
+        dest: /chaoslib/litmus/platform/gke/node-cpu-hog-job.yml
+
+    ## RECORD EVENT FOR CHAOS INJECTION
+    - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+      vars:
+        stage: "ChaosInject"
+        exp_pod_name: "{{ chaos_pod_name }}"
+        engine_ns: "{{ a_ns }}"
+        message: "Injecting {{ c_experiment }} chaos on {{ node_name }} node"
+      when: "c_engine is defined and c_engine != ''"
+      
+    - name: Wait for the specified ramp time before injecting chaos
+      wait_for: timeout="{{ ramp_time }}"
+      when: "ramp_time is defined and ramp_time != ''"
+
+    ## CREATING A JOB FOR CPU-HOG
+    - name: Creating a Job for cpu-hog
+      k8s:
+        state: present
+        namespace: "{{ a_ns }}"
+        src: /chaoslib/litmus/platform/gke/node-cpu-hog-job.yml
+      register: node_cpu_hog_job_result
+
+    ## WAIT UNTIL THE JOB IS COMPLETED
+    - name: Wait until the node cpu hog job is completed
+      shell: >
+        kubectl get pods -l app=node-cpu-hog --no-headers -n {{ a_ns }}
+        --no-headers -o custom-columns=:status.phase
+      args: 
         executable: /bin/bash
-      async: "{{ c_duration | int  + 30 }}"
-      poll: 5
+      register: result
+      until: "result.stdout == 'Succeeded'"
+      delay: 1
+      ## with a grace period of 1 min before pumba terminate
+      retries: "{{ ((c_duration|int) + 60)| int }}"
 
     - name: Wait for the specified ramp time after injecting chaos
       wait_for: timeout="{{ ramp_time }}"
@@ -80,29 +68,21 @@
     - name: Getting the node status
       shell: kubectl get no {{ node_name }} | awk '{print $2}' | tail -n1
       register: node_status
-
-    ## GETTING Job NAME
-    - name: Getting job name  
-      k8s_facts:
-        kind: Job
-        label_selectors:
-          - app=cpu-hog
-      register: d_name
-
-    - set_fact:
-        ds_name: "{{ d_name | json_query('resources[0].metadata.name') }}"
-
+      until: "node_status.stdout == 'Ready'"
+      delay: 2
+      retries: 90
+      
     ## DELETING THE Job
-    - name: Deleting the Cpu Hog Job
+    - name: Deleting the node cpu hog job
       shell: kubectl delete -f /chaoslib/litmus/platform/gke/node-cpu-hog-job.yml -n {{ a_ns }}
       args:
         executable: /bin/bash
 
-    - name: Confirm that the Cpu Hog Job is deleted successfully
+    - name: Confirm that the cpu hog job is deleted successfully
       k8s_facts:
         kind: Job
         label_selectors:
-          - app=cpu-hog
+          - app=node-cpu-hog
       register: resource_job
       until: "resource_job.resources | length < 1"
       delay: 2
@@ -111,25 +91,24 @@
   rescue: 
 
     - block: 
-
-        - name: Deleting the Cpu Hog Job
+        - name: Deleting the node cpu hog job
           shell: >
             kubectl delete -f /chaoslib/litmus/platform/gke/node-cpu-hog-job.yml -n {{ a_ns }}
           args:
             executable: /bin/bash
-          when: "cpu_hog_ds_result is succeeded"
+          when: "node_cpu_hog_job_result is succeeded"
 
-        - name: Confirm that the Cpu Hog Job is deleted successfully
+        - name: Confirm that the node cpu hog job is deleted successfully
           k8s_facts:
             kind: Job
             label_selectors:
-              - app=cpu-hog
+              - app=node-cpu-hog
           register: resource_job
           until: "resource_job.resources | length < 1"
           delay: 2
           retries: 90
-      when: "cpu_hog_ds_result is defined"
+      when: "node_cpu_hog_job_result is defined"
 
     - fail:
-        msg: "pod_cpu_consumption lib failed"
+        msg: "node_cpu_consumption lib failed"
       when: true

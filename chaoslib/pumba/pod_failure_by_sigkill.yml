@@ -60,6 +60,23 @@
         app_pod: "{{ app_pod }}"
         app_container: "{{ a_container }}"
 
+    ## RECORD EVENT FOR CHAOS INJECTION
+    - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+      vars:
+        stage: "ChaosInject"
+        exp_pod_name: "{{ chaos_pod_name }}"
+        engine_ns: "{{ a_ns }}"
+        message: "Injecting {{ c_experiment }} chaos on {{ a_container }} container of {{ app_pod }} pod"
+      when: "c_engine is defined and c_engine != ''"
+
+    - name: Record restartCount
+      shell: >
+        kubectl get pod {{ app_pod }} -n {{ namespace }}
+        -o=jsonpath='{.status.containerStatuses[?(@.name=="{{ a_container }}")].restartCount}'
+      args:
+        executable: /bin/bash
+      register: restartCnt_prev
+
     - name: Setup pumba chaos infrastructure
       shell: >
         kubectl apply -f /chaoslib/pumba/pumba_kube.yml
@@ -67,7 +84,7 @@
       args:
         executable: /bin/bash
       register: pumba_job_result
-
+      
     - name: Wait until the pumba sig-kill job is completed
       shell: >
         kubectl get pods -l job-name=pumba-sig-kill-{{ chaos_uid }} --no-headers -n {{ namespace }}
@@ -78,14 +95,6 @@
       until: "result.stdout == 'Succeeded'"
       delay: 2
       retries: 90
-
-    - name: Record restartCount
-      shell: >
-        kubectl get pod {{ app_pod }} -n {{ namespace }}
-        -o=jsonpath='{.status.containerStatuses[?(@.name=="{{ a_container }}")].restartCount}'
-      args:
-        executable: /bin/bash
-      register: restartCnt_prev
 
     - name: Wait for the specified ramp time after injecting chaos
       wait_for: timeout="{{ ramp_time }}"

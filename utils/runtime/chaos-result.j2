@@ -19,4 +19,7 @@ status:
   experimentstatus: 
     phase: {{ phase }}  
     verdict: {{ verdict }}
+    {% if failStep is defined %}
+    failStep: {{ failStep }}
+    {% endif %}
     

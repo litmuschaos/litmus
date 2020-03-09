@@ -28,6 +28,7 @@
     zk_port: "{{ lookup('env','ZOOKEEPER_PORT') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}" 
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
+    chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
 
   tasks:
     - block:
@@ -57,6 +58,15 @@
             delay: 2
             retries: 90
 
+         ## RECORD EVENT FOR PRE-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PreChaosCheck"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
+
         ## SETUP KAFKA CHAOS INFRA AND DERIVE BROKERS UNDER TEST
        
         - include_tasks: "{{ kafka_broker_util }}" 
@@ -77,6 +87,15 @@
           vars:     
             delay: 2
             retries: 90
+
+        ## RECORD EVENT FOR POST-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PostChaosCheck"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
 
         ## CHECK FOR KAFKA LIVENESS & CLEANUP
 
@@ -107,6 +126,9 @@
           ignore_errors: true
 
       always: 
+
+        ## Getting failure step from experiment-pod
+        - include_tasks: /utils/runtime/getting_failure_step.yml  
  
         ## RECORD END-OF-TEST IN LITMUSCHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
