@@ -13,19 +13,23 @@
       set_fact:
         node_name: "{{ app_pod_name | json_query('resources[0].spec.nodeName')}}"
 
-    ## GETTING THE ALLOCATABLE NODE MEMORY
-    - include_tasks: node_allocatable_memory.yml
-      when: " total_memory is defined and total_memory ==''"
-
+    ## RECORD EVENT FOR CHAOS INJECTION
+    - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+      vars:
+        stage: "ChaosInject"
+        exp_pod_name: "{{ chaos_pod_name }}"
+        engine_ns: "{{ a_ns }}"
+        message: "Injecting {{ c_experiment }} chaos on {{ node_name }} node"
+      when: "c_engine is defined and c_engine != ''"
+        
     ## PATCH THE ENGINE UID
     - name: Patch the engine uid
       template:
         src:  /chaoslib/litmus/platform/gke/node-memory-hog-job.j2
         dest: /chaoslib/litmus/platform/gke/node-memory-hog-job.yml
       vars:
-        chaosUID: "{{ chaos_uid }}"
-        stress_time: "{{ c_duration }}"
-        total_memory_limit: "{{ total_memory }}G"
+        stress_time: "{{ c_duration }}s"
+        total_memory_percentage: "{{ memory_percentage }}%"
 
     ## WAIT FOR THE SPECIFIED RAMP TIME
     - name: Wait for the specified ramp time before injecting chaos
@@ -65,7 +69,7 @@
 
     ## GETTING THE NODE STATUS
     - name: Getting the node status
-      shell: kubectl get no {{ node_name }} | awk '{print $2}' | tail -n1
+      shell: kubectl get nodes {{ node_name }} | awk '{print $2}' | tail -n1
       register: node_status
 
     ## DELETING THE JOB
@@ -114,3 +118,4 @@
       fail:
         msg: "node_memory_consumption lib failed"
       when: true
+      

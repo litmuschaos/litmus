@@ -3,20 +3,19 @@ kind: Job
 metadata:
   name: node-memory-hog
   labels: 
-    chaosUID: {{ chaosUID }}
+    chaosUID: {{ chaos_uid }}
 spec:
   template:
     metadata:
       labels:
         app: memory-hog
-        chaosUID: {{ chaosUID }}
+        chaosUID: {{ chaos_uid }}
     spec:
       nodeSelector:
         kubernetes.io/hostname: {{ node_name }}
       restartPolicy: Never
       containers:
-      - image: litmuschaos/cpu:latest
+      - image: alexeiled/stress-ng:latest
         imagePullPolicy: Always
         name: memory-hog
-        command: ["stress"]
-        args: ["--vm", "1", "--vm-bytes", {{ total_memory_limit }}, "-t", "{{ stress_time }}" ]
+        args: ["--vm", "1", "--vm-bytes", "{{ total_memory_percentage }}", "-t", "{{ stress_time }}"]

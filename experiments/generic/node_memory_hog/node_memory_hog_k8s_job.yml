@@ -36,17 +36,15 @@ spec:
           - name: PLATFORM
             value: 'GKE'
           
-          ## ENTER TOTAL_CHAOS_DURATION(IN sec)
-          ## THIS MAY CHANGES (LESS THAN GIVEN VALUE) DUE TO NO RESOURCE LEFT IN THE SYSTEM
+          ## ENTER TOTAL_CHAOS_DURATION(In seconds)
           ## DEFAULT VALUE IS 60
           - name: TOTAL_CHAOS_DURATION
             value: '60'
 
-          ## ENTER THE MEMORY YOU WANT TO HOG ON NODE (In Gigabytes G)
-          ## IT IS OPTIONAL FOR EMPTY VALUE IT WILL CONSUME THE NODE ALLOCATABLE MEMORY
-          ## EXAMPLE VALUE 2.2
-          - name: TOTAL_MEMORY
-            value: ''
+          ## SPECIFY THE SIZE AS PERCENT OF TOTAL AVAILABLE MEMORY (In Percentage %)
+          ## DEFAULT VALUE 90%
+          - name: MEMORY_PERCENTAGE
+            value: '90'
 
           ## PERIOD TO WAIT BEFORE AND AFTER INJECTION OF CHAOS IN SEC
           - name: RAMP_TIME
