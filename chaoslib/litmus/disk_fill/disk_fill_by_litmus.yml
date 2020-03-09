@@ -59,11 +59,14 @@
         executable: /bin/bash
       register: app_node
 
-    - name: Patch the engine UID
+    - set_fact: 
+        app_node: "{{ app_node.stdout }}"
+
+    - name: Patch the engine UID and node name 
       template:
-        src:  /chaoslib/litmus/disk_fill/disk_fill_ds.j2
-        dest: /chaoslib/litmus/disk_fill/disk_fill_ds.yml
-      
+        src:  /chaoslib/litmus/disk_fill/disk_fill_job.j2
+        dest: /chaoslib/litmus/disk_fill/disk_fill_job.yml
+        
     ## RECORD EVENT FOR CHAOS INJECTION
     - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
       vars:
@@ -73,25 +76,14 @@
         message: "Injecting {{ c_experiment }} chaos on {{ pod_name.stdout }}"
       when: "c_engine is defined and c_engine != ''"
 
-    - name: Create the DaemonSet for Disk-Fill
+    - name: Create the Job for Disk-Fill
       shell: >
-        kubectl apply -f /chaoslib/litmus/disk_fill/disk_fill_ds.yml -n {{ a_ns }}
+        kubectl apply -f /chaoslib/litmus/disk_fill/disk_fill_job.yml -n {{ a_ns }}
       args:
         executable: /bin/bash
-      register: disk_fill_ds_result
+      register: disk_fill_job_result
   
-    - name: Confirm that the disk-fill daemonSet is running on all nodes
-      shell: >
-        kubectl get pods -l app=disk-fill --no-headers --template "{{range .items}}{{if eq .spec.nodeName $(kubectl get nodes --no-headers --field-selector spec.unschedulable=false | grep Ready | awk '{printf "\"%s\" ", $1}')}}{{.status.phase}}{{\"\n\"}}{{end}}{{end}}" -n {{ a_ns }} | sort | uniq
-      args:
-        executable: /bin/bash
-      register: result
-      until: "result.stdout == 'Running'"
-      delay: 2
-      retries: 90
-      ignore_errors: true
-
-    - name: Confirm that disk fill container is in running state 
+    - name: Confirm that disk fill pod is running on {{ app_node }} node
       include_tasks: "/utils/common/status_app_pod.yml"
       vars:
         app_label: "app=disk-fill"
@@ -105,7 +97,7 @@
   
     - name: Record the disk-fill pod on app node
       shell: >
-        kubectl get pods -l app=disk-fill -o jsonpath='{.items[?(@.spec.nodeName=="{{app_node.stdout}}")].metadata.name}'
+        kubectl get pods -l app=disk-fill -o jsonpath='{.items[?(@.spec.nodeName=="{{app_node}}")].metadata.name}'
       args:
         executable: /bin/bash
       register: disk_fill_pod
@@ -166,19 +158,19 @@
       wait_for: timeout="{{ ramp_time }}"
       when: "ramp_time is defined and ramp_time != ''" 
 
-    ## DELETING THE DAEMONSET
-    - name: Deleting the Disk Fill DaemonSet
-      shell: kubectl delete -f /chaoslib/litmus/disk_fill/disk_fill_ds.yml -n {{ a_ns }}
+    ## DELETING THE JOB
+    - name: Deleting the Disk Fill Job
+      shell: kubectl delete -f /chaoslib/litmus/disk_fill/disk_fill_job.yml -n {{ a_ns }}
       args:
         executable: /bin/bash
 
-    - name: Confirm that the Disk Fill DaemonSet is deleted successfully
+    - name: Confirm that the Disk Fill Job is deleted successfully
       k8s_facts:
-        kind: DaemonSet
+        kind: Job
         label_selectors:
           - app=disk-fill
-      register: resource_daemonset
-      until: "resource_daemonset.resources | length < 1"
+      register: resource_job
+      until: "resource_job.resources | length < 1"
       delay: 2
       retries: 90
 
@@ -186,23 +178,23 @@
 
     - block: 
     
-        - name: Deleting the Disk-fill DaemonSet
+        - name: Deleting the Disk-fill Job
           shell: >
-            kubectl delete -f /chaoslib/litmus/disk_fill/disk_fill_ds.yml -n {{ a_ns }}
+            kubectl delete -f /chaoslib/litmus/disk_fill/disk_fill_job.yml -n {{ a_ns }}
           args:
             executable: /bin/bash
-          when: "disk_fill_ds_result.rc == 0 "
+          when: "disk_fill_job_result.rc == 0 "
     
-        - name: Confirm that the Disk Fill DaemonSet is deleted successfully
+        - name: Confirm that the Disk Fill Job is deleted successfully
           k8s_facts:
-            kind: DaemonSet
+            kind: Job
             label_selectors:
               - app=disk-fill
-          register: resource_daemonset
-          until: "resource_daemonset.resources | length < 1"
+          register: resource_job
+          until: "resource_job.resources | length < 1"
           delay: 2
           retries: 90   
-      when: "disk_fill_ds_result is defined"
+      when: "disk_fill_job_result is defined"
     
     - fail:
         msg: "disk_fill_by_litmus lib failed"

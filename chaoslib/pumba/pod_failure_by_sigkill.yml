@@ -69,6 +69,14 @@
         message: "Injecting {{ c_experiment }} chaos on {{ a_container }} container of {{ app_pod }} pod"
       when: "c_engine is defined and c_engine != ''"
 
+    - name: Record restartCount
+      shell: >
+        kubectl get pod {{ app_pod }} -n {{ namespace }}
+        -o=jsonpath='{.status.containerStatuses[?(@.name=="{{ a_container }}")].restartCount}'
+      args:
+        executable: /bin/bash
+      register: restartCnt_prev
+
     - name: Setup pumba chaos infrastructure
       shell: >
         kubectl apply -f /chaoslib/pumba/pumba_kube.yml
@@ -87,14 +95,6 @@
       until: "result.stdout == 'Succeeded'"
       delay: 2
       retries: 90
-
-    - name: Record restartCount
-      shell: >
-        kubectl get pod {{ app_pod }} -n {{ namespace }}
-        -o=jsonpath='{.status.containerStatuses[?(@.name=="{{ a_container }}")].restartCount}'
-      args:
-        executable: /bin/bash
-      register: restartCnt_prev
 
     - name: Wait for the specified ramp time after injecting chaos
       wait_for: timeout="{{ ramp_time }}"
