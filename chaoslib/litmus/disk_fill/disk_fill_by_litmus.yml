@@ -59,6 +59,9 @@
         executable: /bin/bash
       register: app_node
 
+    - set_fact: 
+        app_node: "{{ app_node.stdout }}"
+
     - name: Patch the engine UID and node name 
       template:
         src:  /chaoslib/litmus/disk_fill/disk_fill_job.j2
@@ -80,7 +83,7 @@
         executable: /bin/bash
       register: disk_fill_job_result
   
-    - name: Confirm that disk fill pod is running on {{ app_node.stdout }} node
+    - name: Confirm that disk fill pod is running on {{ app_node }} node
       include_tasks: "/utils/common/status_app_pod.yml"
       vars:
         app_label: "app=disk-fill"
@@ -94,7 +97,7 @@
   
     - name: Record the disk-fill pod on app node
       shell: >
-        kubectl get pods -l app=disk-fill -o jsonpath='{.items[?(@.spec.nodeName=="{{app_node.stdout}}")].metadata.name}'
+        kubectl get pods -l app=disk-fill -o jsonpath='{.items[?(@.spec.nodeName=="{{app_node}}")].metadata.name}'
       args:
         executable: /bin/bash
       register: disk_fill_pod
