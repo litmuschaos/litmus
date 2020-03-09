@@ -26,6 +26,8 @@
     zk_service: "{{ lookup('env','ZOOKEEPER_SERVICE') }}"
     zk_port: "{{ lookup('env','ZOOKEEPER_PORT') }}" 
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
+    chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
 
   tasks:
     - block:
@@ -36,13 +38,10 @@
             file: chaosutil.yml
 
         ## GENERATE EXP RESULT NAME
-        - block:
-
-            - name: Construct chaos result name (experiment_name)
-              set_fact:
-                c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
-
-          when: lookup('env','CHAOSENGINE')    
+        - name: Construct chaos result name
+          set_fact:
+            c_result: "{{ c_engine }}-{{ c_experiment }}"
+          when: "c_engine is defined and c_engine != ''"  
 
         ## RECORD START-OF-EXPERIMENT IN LITMUSCHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
@@ -57,6 +56,15 @@
           vars:     
             delay: 2
             retries: 90
+
+         ## RECORD EVENT FOR PRE-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PreChaosCheck"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
 
         ## SETUP KAFKA CHAOS INFRA AND DERIVE BROKERS UNDER TEST
        
@@ -80,6 +88,15 @@
           vars:     
             delay: 2
             retries: 90
+
+         ## RECORD EVENT FOR POST-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PostChaosCheck"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
 
         ## CHECK FOR KAFKA LIVENESS & CLEANUP
 
@@ -110,6 +127,9 @@
           ignore_errors: true
 
       always: 
+
+        ## Getting failure step from experiment-pod
+        - include_tasks: /utils/runtime/getting_failure_step.yml  
  
         ## RECORD END-OF-TEST IN LITMUSCHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml

@@ -54,11 +54,11 @@
       register: job_pod
       until: "{{ job_pod | json_query('resources[0].status.phase') == 'Succeeded' }}"
       delay: 1
-      retries: "{{ c_duration | int  + 20 }}"
+      retries: "{{ c_duration | int  + 60 }}"
     
     ## GETTING THE JOB POD LOGS UNDER STRESS
     - name: Getting the pod logs
-      shell: kubectl logs -f {{ job_pod.resources[0].metadata.name }} -n {{ a_ns }}
+      shell: kubectl logs {{ job_pod.resources[0].metadata.name }} -n {{ a_ns }}
       args:
         executable: /bin/bash
 

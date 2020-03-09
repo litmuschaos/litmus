@@ -3,13 +3,13 @@ kind: Job
 metadata:
   name: pumba-netem-{{ run_id }}
   labels: 
-    chaosUID: {{ chaosUID }}
+    chaosUID: {{ chaos_uid }}
 spec:
   template:
     metadata:
       labels:
         app: pumba
-        chaosUID: {{ chaosUID }}
+        chaosUID: {{ chaos_uid }}
         com.gaiaadm.pumba: "true"
     spec:
       nodeSelector:
@@ -26,7 +26,7 @@ spec:
           - --interface
           - {{ n_interface }}
           - --duration
-          - {{ c_duration }}ms
+          - {{ c_duration }}s
 {% if n_latency is defined and n_latency != '' %}
           - delay
           - --time

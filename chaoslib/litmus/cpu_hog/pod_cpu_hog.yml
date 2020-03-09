@@ -69,17 +69,25 @@
       set_fact:
         c_container_id: "{{ container_id.stdout }}"
 
-    - name: Derive chaos duration in seconds (from ms)
-      set_fact:
-        c_duration_sec: "{{ ((c_duration|int)/1000)| int }}"
-    
+    - name: Wait for the specified ramp time before injecting chaos
+      wait_for: timeout="{{ ramp_time }}"
+      when: "ramp_time is defined and ramp_time != ''" 
+ 
     - name: Patch the chaos params to cpu stress job template
       template:
         src:  /chaoslib/litmus/cpu_hog/app_cpu_stress.j2
         dest: /chaoslib/litmus/cpu_hog/app_cpu_stress.yml
       vars:
         cpu_stress_image: "{{ lib_image }}"
-        chaosUID: "{{ chaos_uid }}"
+
+    ## RECORD EVENT FOR CHAOS INJECTION
+    - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+      vars:
+        stage: "ChaosInject"
+        exp_pod_name: "{{ chaos_pod_name }}"
+        engine_ns: "{{ a_ns }}"
+        message: "Injecting {{ c_experiment }} chaos on {{ app_pod }} pod"
+      when: "c_engine is defined and c_engine != ''"
 
     - name: Setup cpu chaos infrastructure
       shell: >
@@ -89,18 +97,9 @@
       register: cpu_app_deploy_result
 
     - name: Calculate the total wait time for cpu stress job
-      ## considering duration in milliseconds from spec
       ## with a grace period of 2 min before cpu stress job terminate
       set_fact:
-        job_wait_time: "{{ ((c_duration|int)/1000 + 120)| int }}"
-      when: "ramp_time is not defined or ramp_time == ''"
-
-    - name: Calculate the total wait time for cpu stress job
-      ## considering duration in milliseconds from spec
-      ## with a grace period of 2 min before cpu stress job terminate
-      set_fact:
-        job_wait_time: "{{ ((c_duration|int)/1000 + (ramp_time|int) + 120)| int }}"
-      when: "ramp_time is defined and ramp_time != ''"
+        job_wait_time: "{{ ((c_duration|int) + 120)| int }}"
 
     - name: Wait until the cpu stress job is completed
       shell: >

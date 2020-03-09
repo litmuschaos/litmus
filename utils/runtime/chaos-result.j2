@@ -1,0 +1,25 @@
+---
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosResult
+metadata:
+  {% if instance_id is defined %}
+  name: {{ c_result }}-{{ instance_id }}
+  {% else %}
+  name: {{ c_result }}
+  {% endif %} 
+  labels:
+    chaosUID: {{ chaos_uid }}
+spec:
+  engine: {{ c_engine }}
+  experiment: {{ c_experiment }}
+  {% if instance_id is defined %}
+  instance: {{ instance_id }}
+  {% endif %}
+status:
+  experimentstatus: 
+    phase: {{ phase }}  
+    verdict: {{ verdict }}
+    {% if failStep is defined %}
+    failStep: {{ failStep }}
+    {% endif %}
+    

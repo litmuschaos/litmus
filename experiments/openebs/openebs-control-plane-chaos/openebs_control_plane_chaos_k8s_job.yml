@@ -2,12 +2,12 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: openebs-control-plane-validation-
+  generateName: openebs-control-plane-chaos-
 spec:
   template:
     metadata:
       labels:
-        experiment: openebs-control-plane-validation
+        experiment: openebs-control-plane-chaos
     spec:
       # Placeholder that is updated by the executor for automated runs
       # Provide appropriate SA (with desired permissions) if executed manually
@@ -46,4 +46,4 @@ spec:
                 fieldPath: spec.serviceAccountName
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./experiments/openebs/openebs-control-plane-validation/openebs_control_plane_validation_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
+        args: ["-c", "ansible-playbook ./experiments/openebs/openebs-control-plane-chaos/openebs_control_plane_chaos_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]

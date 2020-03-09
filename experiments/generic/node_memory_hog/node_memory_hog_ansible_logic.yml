@@ -12,6 +12,7 @@
     a_platform: "{{ lookup('env', 'PLATFORM') }}"
     memory_percentage: "{{ lookup('env', 'MEMORY_PERCENTAGE') }}"
     auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
 
@@ -25,11 +26,10 @@
             file: chaosutil.yml
             
         ## GENERATE EXP RESULT NAME
-
         - name: Construct chaos result name (experiment_name)
           set_fact:
-            c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
-          when: lookup('env','CHAOSENGINE')
+            c_result: "{{ c_engine }}-{{ c_experiment }}"
+          when: "c_engine is defined and c_engine != ''"
 
         ## RECORD START-OF-EXPERIMENT IN LITMUSCHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
