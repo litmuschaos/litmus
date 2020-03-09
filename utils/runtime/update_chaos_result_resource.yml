@@ -2,16 +2,16 @@
 - block:
    - name: Generate the chaos result CR to reflect SOT (Start of Test)
      template:
-       src: /chaos-result.j2
-       dest: chaos-result.yml
+       src: /utils/runtime/chaos-result.j2
+       dest: /utils/runtime/chaos-result.yml
        lstrip_blocks: yes
      vars:
        test: "{{ c_experiment }}"
        phase: "Running"
        verdict: "Awaited"
-
+       
    - name: Apply the chaos result CR
-     shell: kubectl apply -f chaos-result.yml -n {{ namespace }}
+     shell: kubectl apply -f /utils/runtime/chaos-result.yml -n {{ namespace }}
      args:
        executable: /bin/bash
      register: cr_status
@@ -22,8 +22,8 @@
 - block:
    - name: Update the chaos result CR to reflect EOT (End of Test)
      template:
-       src: /chaos-result.j2
-       dest: chaos-result.yml
+       src: /utils/runtime/chaos-result.j2
+       dest: /utils/runtime/chaos-result.yml
        lstrip_blocks: yes
      vars:
        test: "{{ c_experiment }}"
@@ -31,7 +31,7 @@
        verdict: "{{ flag }}"
 
    - name: Apply the chaos result CR
-     shell: kubectl apply -f chaos-result.yml -n {{ namespace }}
+     shell: kubectl apply -f /utils/runtime/chaos-result.yml -n {{ namespace }}
      args:
        executable: /bin/bash
      register: cr_status
