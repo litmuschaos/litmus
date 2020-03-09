@@ -59,7 +59,7 @@
         executable: /bin/bash
       register: app_node
 
-    - name: Patch the engine UID and node mame 
+    - name: Patch the engine UID and node name 
       template:
         src:  /chaoslib/litmus/disk_fill/disk_fill_job.j2
         dest: /chaoslib/litmus/disk_fill/disk_fill_job.yml
