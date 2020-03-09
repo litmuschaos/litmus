@@ -12,7 +12,8 @@
     liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
     liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
     auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}" 
-    c_engine: "{{ lookup('env','CHAOS_ENGINE') }}"
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
+    chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
 
   tasks:
     - block:
@@ -76,12 +77,23 @@
                 
           when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
+        ## RECORD EVENT FOR PRE-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PreChaosCheck"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
+            
         ## STORAGE FAULT INJECTION 
 
         - include_tasks: /chaoslib/litmus/cordon_drain_node.yml
           vars: 
             app_ns: "{{ a_ns }}"
             app_node: "{{ a_node }}"
+
+        ## POST-CHAOS APPLICATION LIVENESS CHECK
 
         - name: Verify AUT liveness post fault-injection
           include_tasks: "/utils/common/status_app_pod.yml"
@@ -105,7 +117,14 @@
               
           when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
-        ## POST-CHAOS APPLICATION LIVENESS CHECK
+        ## RECORD EVENT FOR POST-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PostChaosCheck"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ a_ns }}"
+            message: "Node has been uncordoned and AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
 
         - include_tasks: /utils/common/application_liveness_check.yml
           when: liveness_label != ''
@@ -118,6 +137,9 @@
             flag: "Fail"
 
       always: 
+
+        ## Getting failure step from experiment-pod
+        - include_tasks: /utils/runtime/getting_failure_step.yml  
 
          ## RECORD END-OF-TEST IN CHAOS RESULT CR    
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml

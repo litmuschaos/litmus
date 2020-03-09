@@ -12,7 +12,7 @@ spec:
         chaosUID: {{ chaos_uid }}
     spec:
       nodeSelector:
-        kubernetes.io/hostname: {{ app_node }}
+        kubernetes.io/hostname: {{ app_node.stdout }}
       restartPolicy: Never
       containers:
       - image: alpine

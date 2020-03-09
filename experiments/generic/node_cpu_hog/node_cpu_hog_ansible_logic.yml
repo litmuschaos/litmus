@@ -12,7 +12,8 @@
     a_platform: "{{ lookup('env', 'PLATFORM') }}"
     auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
-    c_engine: "{{ lookup('env','CHAOS_ENGINE') }}"
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
+    chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
 
   tasks:
 
@@ -62,6 +63,15 @@
               - "{{ auxiliary_appinfo_list }}" 
 
           when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
+
+        ## RECORD EVENT FOR PRE-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PreChaosCheck"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
 
          ## READY TO HOG THE NODE CPU
         - name: Ready to hog the node cpu
@@ -123,6 +133,15 @@
 
           when: node_status is defined and node_status.stdout != 'Ready'
 
+        ## RECORD EVENT FOR POST-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PostChaosCheck"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ a_ns }}"
+            message: "AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
+
         - set_fact:
             flag: "Pass"
 
@@ -132,6 +151,9 @@
             flag: "Fail"
     
       always:
+
+        ## Getting failure step from experiment-pod
+        - include_tasks: /utils/runtime/getting_failure_step.yml  
 
         ## RECORD END-OF-TEST IN LITMUSCHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml

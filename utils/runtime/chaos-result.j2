@@ -12,9 +12,14 @@ metadata:
 spec:
   engine: {{ c_engine }}
   experiment: {{ c_experiment }}
+  {% if instance_id is defined %}
   instance: {{ instance_id }}
+  {% endif %}
 status:
   experimentstatus: 
     phase: {{ phase }}  
     verdict: {{ verdict }}
+    {% if failStep is defined %}
+    failStep: {{ failStep }}
+    {% endif %}
     
