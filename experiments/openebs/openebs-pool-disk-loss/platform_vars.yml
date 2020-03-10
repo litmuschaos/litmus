@@ -1,6 +1,4 @@
-openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
 cloud_platform: "{{ lookup('env','CLOUD_PLATFORM') }}"
-c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
 disk_name: "{{ lookup('env','DISK_NAME') }}"
 device_name: "{{ lookup('env', 'DEVICE_NAME') }}"
 node_name: "{{ lookup('env','NODE_NAME') }}"
