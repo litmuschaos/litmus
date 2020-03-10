@@ -72,10 +72,6 @@ spec:
           - name: AUXILIARY_APPINFO
             value: ''
           
-          # Enter the chaosengine name
-          - name: CHAOSENGINE
-            value: '' 
-
           - name: LIVENESS_APP_LABEL
             value: ''
 

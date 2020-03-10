@@ -57,10 +57,6 @@ spec:
           - name: LIB_IMAGE
             value: 'litmuschaos/app-cpu-stress:latest' 
 
-           # provide chaosengine name
-          - name: CHAOSENGINE
-            value: ''
-
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:
               fieldRef:

@@ -37,9 +37,6 @@ spec:
           - name: LIB
             value: ''
 
-          - name: CHAOSENGINE
-            value: ''
-
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:
               fieldRef:
