@@ -15,6 +15,8 @@
     n_delay: "{{ lookup('env','NETWORK_DELAY') }}" 
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
+    chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
 
   vars_files:
     - /mnt/parameters.yml
@@ -48,13 +50,10 @@
           when: data_persistence != ''    
 
          ## GENERATE EXP RESULT NAME
-        - block:
-
-            - name: Construct chaos result name (experiment_name)
-              set_fact:
-                c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
-
-          when: lookup('env','CHAOSENGINE') 
+        - name: Construct chaos result name
+          set_fact:
+            c_result: "{{ c_engine }}-{{ c_experiment }}"
+          when: "c_engine is defined and c_engine != ''"
 
         ## RECORD START-OF-TEST IN CHAOS RESULT CR
 
@@ -83,6 +82,15 @@
             app_label: "{{ a_label }}" 
             delay: 2
             retries: 90 
+
+        ## RECORD EVENT FOR PRE-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PreChaosCheck"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ a_ns }}"
+            message: "OpenEBS components and AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
 
         - name: Get application pod name 
           shell: >
@@ -113,6 +121,15 @@
             app_label: "{{ a_label }}" 
             delay: 2
             retries: 90 
+
+        ## RECORD EVENT FOR POST-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PostChaosCheck"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ a_ns }}"
+            message: "OpenEBS components and AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
             
         - include_tasks: /utils/common/application_liveness_check.yml
           when: liveness_label != ''
@@ -135,8 +152,10 @@
 
       always: 
 
+        ## Getting failure step from experiment-pod
+        - include_tasks: /utils/runtime/getting_failure_step.yml  
+
         ## RECORD END-OF-TEST IN CHAOS RESULT CR
- 
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'

@@ -28,18 +28,18 @@ kind: Deployment
 metadata:
   name: powerfulseal
   labels:
-    chaosUID: {{ chaosUID }}
+    chaosUID: {{ chaos_uid }}
 spec:
   selector:
     matchLabels:
       name: powerfulseal
-      chaosUID: {{ chaosUID }}
+      chaosUID: {{ chaos_uid }}
   replicas: 1
   template:
     metadata:
       labels:
         name: powerfulseal
-        chaosUID: {{ chaosUID }}
+        chaosUID: {{ chaos_uid }}
     spec:
       serviceAccountName: {{ c_svc_acc }}
       terminationGracePeriodSeconds: 0
