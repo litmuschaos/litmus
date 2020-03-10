@@ -17,6 +17,7 @@ This document captures only a high level backlogs. For detailed list of backlogs
 
 ### In-Progress (Near-term) 
 
+- Off the shelf chaos-integrated grafana dashboards for OpenEBS, Kafka, Cassandra - [#1280](https://github.com/litmuschaos/litmus/issues/1280)
 - Support for scheduled (continuous/background) chaos with halt/resume 
 - Support for Kubernetes events for chaos experiments
 - Support for hard chaos abort via pre-stop hooks
@@ -39,7 +40,6 @@ This document captures only a high level backlogs. For detailed list of backlogs
 - Kubectl plugin for CLI based execution of chaos experiments
 - Integration with Argo project for Chaos workflows, support for scenario creation with experiments
 - Increased chaos metrics via prometheus chaos exporter
-- Off the shelf chaos-integrated grafana dashboards for OpenEBS, Kafka, Cassandra
 - CI (Gitlab) chaos templates
 - Migration to native Kubernetes ansible modules for ansible-based experiments
 - Improved application Chaos Suites (OpenEBS, Kafka, Cassandra) 
