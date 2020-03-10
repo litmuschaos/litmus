@@ -1,30 +1,30 @@
 ---
 - block:
     - block:
-      - name: Generate a c_result if not passed from the engine/experiment
-        set_fact:
-          c_result: "{{ c_experiment }}"
-      
-      - name: Generate a chaos uid if not passed from the engine/experiment
-        shell: cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1
-        register: rand_string   
+        - name: Generate a c_result if not passed from the engine/experiment
+          set_fact:
+            c_result: "{{ c_experiment }}"
+        
+        - name: Generate a chaos uid if not passed from the engine/experiment
+          shell: cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1
+          register: rand_string   
 
-      - set_fact:
-          chaos_uid: "{{ rand_string.stdout | lower }}"
-    when: "c_engine | length == 0"
+        - set_fact:
+            chaos_uid: "{{ rand_string.stdout | lower }}"
+      when: "c_engine | length == 0"
 
     - name: Generate the chaos result CR to reflect SOT (Start of Test)
       template:
-        src: /chaos-result.j2
-        dest: chaos-result.yml
+        src: /utils/runtime/chaos-result.j2
+        dest: /utils/runtime/chaos-result.yml
         lstrip_blocks: yes
       vars:
         test: "{{ c_experiment }}"
         phase: "Running"
         verdict: "Awaited"
-
+        
     - name: Apply the chaos result CR
-      shell: kubectl apply -f chaos-result.yml -n {{ namespace }}
+      shell: kubectl apply -f /utils/runtime/chaos-result.yml -n {{ namespace }}
       args:
         executable: /bin/bash
       register: cr_status
@@ -35,8 +35,8 @@
 - block:
    - name: Update the chaos result CR to reflect EOT (End of Test)
      template:
-       src: /chaos-result.j2
-       dest: chaos-result.yml
+       src: /utils/runtime/chaos-result.j2
+       dest: /utils/runtime/chaos-result.yml
        lstrip_blocks: yes
      vars:
        test: "{{ c_experiment }}"
@@ -44,7 +44,7 @@
        verdict: "{{ flag }}"
 
    - name: Apply the chaos result CR
-     shell: kubectl apply -f chaos-result.yml -n {{ namespace }}
+     shell: kubectl apply -f /utils/runtime/chaos-result.yml -n {{ namespace }}
      args:
        executable: /bin/bash
      register: cr_status

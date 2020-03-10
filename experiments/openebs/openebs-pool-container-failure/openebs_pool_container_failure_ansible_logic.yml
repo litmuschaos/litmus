@@ -16,6 +16,7 @@
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
     pool_debug_msg: 'uncorrectable I/O failure|suspended|ERROR ZFS event'
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
+    chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
     
   vars_files:
     - /mnt/parameters.yml
@@ -86,6 +87,15 @@
             delay: 2
             retries: 90
 
+        ## RECORD EVENT FOR PRE-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PreChaosCheck"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ a_ns }}"
+            message: "OpenEBS components and AUT are Running successfully"
+          when: "c_engine is defined and c_engine != ''"
+
         - name: Create some test data 
           include: "{{ data_consistency_util_path }}"
           vars:
@@ -108,6 +118,15 @@
             app_label: "{{ a_label }}" 
             delay: 2
             retries: 90
+
+        ## RECORD EVENT FOR POST-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PostChaosCheck"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ a_ns }}"
+            message: "OpenEBS components and AUT are Running successfully"
+          when: "c_engine is defined and c_engine != ''"
  
         - name: Verify application data persistence  
           include: "{{ data_consistency_util_path }}"
@@ -147,6 +166,10 @@
             flag: "Fail"
 
       always: 
+
+        ## Getting failure step from experiment-pod
+        - include_tasks: /utils/runtime/getting_failure_step.yml  
+          
          ## RECORD END-OF-TEST IN CHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:

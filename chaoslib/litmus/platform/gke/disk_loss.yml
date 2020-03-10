@@ -2,6 +2,15 @@
   wait_for: timeout="{{ ramp_time }}"
   when: "ramp_time is defined and ramp_time != ''"
 
+## RECORD EVENT FOR CHAOS INJECTION
+- include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+  vars:
+    stage: "ChaosInject"
+    exp_pod_name: "{{ chaos_pod_name }}"
+    engine_ns: "{{ a_ns }}"
+    message: "Injecting {{ c_experiment }} chaos on {{ disk_name }} disk"
+  when: "c_engine is defined and c_engine != ''"
+
 - name: Detaching the disk
   shell: gcloud compute instances detach-disk {{ node_name }} --disk {{ disk_name }} --zone {{ zone_name }}
 
