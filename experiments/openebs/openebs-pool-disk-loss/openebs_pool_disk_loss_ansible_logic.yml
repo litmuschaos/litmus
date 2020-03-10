@@ -13,7 +13,9 @@
     liveness_namespace: "{{ lookup('env','LIVENESS_APP_NAMESPACE') }}"
     auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
-    
+    openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
+    c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
+
   vars_files:
     - /mnt/parameters.yml
     - /experiments/openebs/openebs_components.yml
