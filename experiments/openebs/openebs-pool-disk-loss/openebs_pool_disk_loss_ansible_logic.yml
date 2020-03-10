@@ -114,7 +114,7 @@
           executable: /bin/bash
         register: app_pod
 
-      - name: Create some test data
+      - name: Create some load data to check the persistency
         include: "{{ consistencyutil }}"
         vars:
           status: 'LOAD'
