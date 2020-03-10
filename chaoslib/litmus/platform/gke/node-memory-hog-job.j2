@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: node-memory-hog
+  labels: 
+    chaosUID: {{ chaos_uid }}
+spec:
+  template:
+    metadata:
+      labels:
+        app: memory-hog
+        chaosUID: {{ chaos_uid }}
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: {{ node_name }}
+      restartPolicy: Never
+      containers:
+      - image: alexeiled/stress-ng:latest
+        imagePullPolicy: Always
+        name: memory-hog
+        args: ["--vm", "1", "--vm-bytes", "{{ total_memory_percentage }}", "-t", "{{ stress_time }}"]
