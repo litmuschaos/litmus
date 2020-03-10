@@ -75,10 +75,6 @@ spec:
           - name: AUXILIARY_APPINFO
             value: ''
           
-          # Enter the chaosengine name
-          - name: CHAOSENGINE
-            value: '' 
-
         command: ['/bin/bash']
         args: ['-c', 'ansible-playbook ./experiments/generic/disk_loss/disk_loss_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0']
         volumeMounts:

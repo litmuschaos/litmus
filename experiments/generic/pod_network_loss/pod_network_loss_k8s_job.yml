@@ -57,10 +57,6 @@ spec:
           - name: LIB_IMAGE
             value: 'gaiaadm/pumba:0.6.5' 
 
-          # provide chaosengine name
-          - name: CHAOSENGINE
-            value: ''
-
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:
               fieldRef:
