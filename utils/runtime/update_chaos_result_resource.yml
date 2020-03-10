@@ -1,21 +1,34 @@
 ---
 - block:
-   - name: Generate the chaos result CR to reflect SOT (Start of Test)
-     template:
-       src: /chaos-result.j2
-       dest: chaos-result.yml
-       lstrip_blocks: yes
-     vars:
-       test: "{{ c_experiment }}"
-       phase: "Running"
-       verdict: "Awaited"
+    - block:
+      - name: Generate a c_result if not passed from the engine/experiment
+        set_fact:
+          c_result: "{{ c_experiment }}"
+      
+      - name: Generate a chaos uid if not passed from the engine/experiment
+        shell: cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1
+        register: rand_string   
 
-   - name: Apply the chaos result CR
-     shell: kubectl apply -f chaos-result.yml -n {{ namespace }}
-     args:
-       executable: /bin/bash
-     register: cr_status
-     failed_when: "cr_status.rc != 0"
+      - set_fact:
+          chaos_uid: "{{ rand_string.stdout | lower }}"
+    when: "c_engine | length == 0"
+
+    - name: Generate the chaos result CR to reflect SOT (Start of Test)
+      template:
+        src: /chaos-result.j2
+        dest: chaos-result.yml
+        lstrip_blocks: yes
+      vars:
+        test: "{{ c_experiment }}"
+        phase: "Running"
+        verdict: "Awaited"
+
+    - name: Apply the chaos result CR
+      shell: kubectl apply -f chaos-result.yml -n {{ namespace }}
+      args:
+        executable: /bin/bash
+      register: cr_status
+      failed_when: "cr_status.rc != 0"
 
   when: status == "SOT"
 
