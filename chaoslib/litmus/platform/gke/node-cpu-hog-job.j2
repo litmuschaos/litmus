@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: node-cpu-hog-{{ chaos_uid }}
+  labels: 
+    chaosUID: {{ chaos_uid }}
+spec:
+  template:
+    metadata:
+      labels:
+        app: node-cpu-hog
+        chaosUID: {{ chaos_uid }}
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: {{ node_name }}
+      restartPolicy: Never
+      containers:
+      - image: litmuschaos/cpu:latest
+        imagePullPolicy: Always
+        name: node-cpu-hog
+        command: ["stress"]
+        args: ["--cpu", "{{ cpu_limit }}", "--timeout", "{{ c_duration }}"]
