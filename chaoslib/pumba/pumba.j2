@@ -1,15 +1,23 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
+{% if c_engine is defined and c_engine != '' %}
   name: pumba-sig-kill-{{ chaos_uid }}
+{% else %}
+  name: pumba-sig-kill
+{% endif %}
   labels: 
+{% if c_engine is defined and c_engine != '' %}  
     chaosUID: {{ chaos_uid }}
+{% endif %}
 spec:
   template:
     metadata:
       labels:
         app: pumba
+{% if c_engine is defined and c_engine != '' %}
         chaosUID: {{ chaos_uid }}
+{% endif %}
         # prevent pumba from killing itself
         com.gaiaadm.pumba: "true"
     spec:

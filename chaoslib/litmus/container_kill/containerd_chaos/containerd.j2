@@ -3,13 +3,18 @@ kind: Job
 metadata:
   name: containerd-chaos
   labels:
+    app: crictl
+{% if c_engine is defined and c_engine != '' %}        
     chaosUID: {{ chaos_uid }}
+{% endif %}        
 spec:
   template:
     metadata:
       labels:
         app: crictl
+{% if c_engine is defined and c_engine != '' %}        
         chaosUID: {{ chaos_uid }}
+{% endif %}        
     spec:
       nodeSelector:
         kubernetes.io/hostname: {{ app_node }}

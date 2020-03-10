@@ -2,8 +2,10 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: node-memory-hog
-  labels: 
+  labels:
+{% if c_engine is defined and c_engine != '' %}
     chaosUID: {{ chaos_uid }}
+{% endif %}
 spec:
   template:
     metadata:

@@ -3,7 +3,9 @@ kind: Pod
 metadata:
   labels:
     run: nginx
+{% if c_engine is defined and c_engine != '' %}
     chaosUID: {{ chaos_uid }}
+{% endif %}
   name: nginx
   namespace: {{ c_ns }}
 spec:

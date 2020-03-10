@@ -1,7 +1,11 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
+{% if c_engine is defined and c_engine != '' %}
   name: app-cpu-stress-{{ run_id }}
+{% else %}
+  name: app-cpu-stress
+{% endif %}
   labels: 
     chaosUID: {{ chaos_uid }}
 spec:
@@ -9,7 +13,9 @@ spec:
     metadata:
       labels:
         app: app-cpu-stress
+{% if c_engine is defined and c_engine != '' %}        
         chaosUID: {{ chaos_uid }}
+{% endif %}        
     spec:
       nodeSelector:
         ## mandatory: provide name of host where target container resides

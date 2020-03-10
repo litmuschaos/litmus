@@ -1,15 +1,24 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
+{% if c_engine is defined and c_engine != '' %}
   name: node-cpu-hog-{{ chaos_uid }}
+{% else %}
+  name: node-cpu-hog
+{% endif %}
   labels: 
+    app: node-cpu-hog
+{% if c_engine is defined and c_engine != '' %}
     chaosUID: {{ chaos_uid }}
+{% endif %}
 spec:
   template:
     metadata:
       labels:
         app: node-cpu-hog
+{% if c_engine is defined and c_engine != '' %}
         chaosUID: {{ chaos_uid }}
+{% endif %}
     spec:
       nodeSelector:
         kubernetes.io/hostname: {{ node_name }}
