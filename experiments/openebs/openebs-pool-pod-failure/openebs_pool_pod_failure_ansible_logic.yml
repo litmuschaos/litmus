@@ -18,6 +18,7 @@
     pool_debug_msg: 'uncorrectable I/O failure|suspended|ERROR ZFS event'
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
+    chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
    
   vars_files:
     - /mnt/parameters.yml
