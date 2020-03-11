@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: pumba-sig-kill-{{ chaos_uid }}
+  name: pumba-sig-kill-{{ run_id }}
   labels: 
     chaosUID: {{ chaos_uid }}
 spec:
