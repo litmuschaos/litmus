@@ -1,0 +1,32 @@
+---
+- block:
+    - name: Deriving the PVC Name of the application pod
+      shell: >
+        kubectl get pods -n {{ a_ns }} -l {{ a_label }}
+        -o jsonpath="{.items[0].spec.volumes[0].persistentVolumeClaim.claimName}"
+      register: pvc
+
+    - name: Getting the application volume
+      shell: kubectl get pvc {{ pvc.stdout }} -n {{ a_ns }} -o jsonpath='{.spec.volumeName}'
+      register: volume
+
+    - name: Getting the NFS Provisioner service IP
+      shell: kubectl get svc {{ nfs_svc }} -n {{ nfs_provisioner_ns }} -o jsonpath={.spec.clusterIP}
+      register: nfs_svc_ip
+
+    - name: Patch volume and nfs_svc_ip
+      template:
+        src: /utils/apps/openebs/nfs-mount-liveness-check.j2
+        dest: /utils/apps/openebs/nfs-mount-liveness-check.yaml
+
+    - name: Creatinf nfs mount liveness check application
+      shell: kubectl apply -f nfs-mount-liveness-check.yaml -n {{ a_ns }}
+  when: "status == 'start'"
+
+  - name: Waiting util the nfs mount liveness check application is in runing state
+    include_tasks: "/utils/common/status_app_pod.yml"
+    vars:
+      app_ns: "{{ a_ns }}"
+      app_label: "name=nfs-mount-liveness-check"      
+      delay: 2
+      retries: 90

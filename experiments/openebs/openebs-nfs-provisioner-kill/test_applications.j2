@@ -1,0 +1,75 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: write-pod
+  namespace: {{ c_ns }}
+  labels:
+    app: write-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: write-pod
+  template:
+    metadata:
+      labels:
+        app: write-pod
+    spec:
+      containers:
+      - name: write-pod
+        image: gcr.io/google_containers/busybox:1.24
+        command:
+        - "sleep"
+        - "1000"
+        volumeMounts:
+        - name: nfs-pvc
+          mountPath: "/busybox"
+      volumes:
+      - name: nfs-pvc
+        persistentVolumeClaim:
+          claimName: testclaim
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: read-pod
+  namespace: {{ c_ns }}
+  labels:
+    app: read-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: read-pod
+  template:
+    metadata:
+      labels:
+        app: read-pod
+    spec:
+      containers:
+      - name: read-pod
+        image: gcr.io/google_containers/busybox:1.24
+        command:
+        - "sleep"
+        - "1000"
+        volumeMounts:
+        - name: nfs-pvc
+          mountPath: "/busybox"
+      volumes:
+      - name: nfs-pvc
+        persistentVolumeClaim:
+          claimName: testclaim
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: testclaim
+  namespace: {{ c_ns }}
+spec:
+  storageClassName: openebs-nfs 
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Mi

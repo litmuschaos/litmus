@@ -1,0 +1,199 @@
+- hosts: localhost
+  connection: local
+
+  vars:
+    c_experiment: "openebs-nfs-provisioner-kill"
+    nfs_provisioner_ns: "{{ lookup('env', 'NFS_PROVISIONER_NAMESPACE')}}"
+    nfs_provisioner_label: "{{ lookup('env', 'NFS_PROVISIONER_LABEL')}}"
+    nfs_pvc: "{{ lookup('env', 'NFS_PVC') }}"
+    nfs_svc: "{{ lookup('env', 'NFS_SVC') }}"
+    a_label: "{{ lookup('env','APP_LABEL') }}"
+    a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
+    c_ns: "{{ lookup('env', 'CHAOS_NAMESPACE') }}"
+    c_lib: "{{ lookup('env', 'LIB') }}"
+    c_container: "{{ lookup('env','TARGET_CONTAINER') }}"
+    lib_image: "{{ lookup('env','LIB_IMAGE') }}"
+    chaos_uid: "op"
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
+
+  vars_files:
+    - /mnt/parameters.yml
+
+  tasks:
+    - block:
+      - include: openebs_nfs_provisioner_kill_prerequisites.yml
+
+      - include_vars:
+          file: chaosutil.yml
+      
+      - name: Converting j2 to yaml
+        template:
+          src: test_applications.j2
+          dest: test_applications.yml
+
+      - name: Deploying the test application with RWM accessmode
+        shell: kubectl apply -f test_applications.yml
+        
+      - name: Derive the pod name with label "app=write-pod"
+        shell: kubectl get pods --selector app=write-pod -o jsonpath='{.items[0].metadata.name}' -n {{ c_ns }}
+        register: write_pod_name
+        retries: 90
+        delay: 2
+
+      - name: Derive the pod name with label "app=read-pod"
+        shell: kubectl get pods --selector app=read-pod -o jsonpath='{.items[0].metadata.name}' -n {{ c_ns }}
+        register: read_pod_name
+        retries: 90
+        delay: 2
+      
+      ## GENERATE EXP RESULT NAME
+      - block:
+          - name: Construct chaos result name (experiment_name)
+            set_fact:
+              c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
+        when: lookup('env','CHAOSENGINE') 
+
+      ## RECORD START-OF-EXPERIMENT IN CHAOS RESULT CR
+      - include_tasks: /utils/runtime/update_chaos_result_resource.yml
+        vars:
+          status: 'SOT'
+          namespace: "{{ a_ns }}"
+
+      ## DISPLAY APP INFORMATION 
+      - name: Display the app information passed via the test job
+        debug: 
+          msg: 
+            - "The application info is as follows:"
+            - "NFS Provisioner Namespace : {{ nfs_provisioner_ns }}"
+            - "NFS Provisioner LABEL       : {{ nfs_provisioner_label }}"
+            - "NFS Provisioner PVC       : {{ nfs_pvc }}"  
+          
+      ## PRE-CHAOS APPLICATION LIVENESS CHECK
+      - name: (Pre) Checking the read-pod and write-pod pod's volume is using NFS 
+        include_tasks: "/utils/apps/openebs/nfs_mount_check.yml"
+        vars:
+          status: "start"
+          a_ns: "{{ c_ns }}"
+          # Here, can be pass read-pod/write-pod, because both are using same volume
+          a_label: "read-pod" 
+          
+      - name: (Pre) Verify that the AUT (Application Under Test) is running 
+        include_tasks: "/utils/common/status_app_pod.yml"
+        vars:
+          app_ns: "{{ a_ns }}"
+          app_label: "{{ a_label }}"      
+          delay: 2
+          retries: 90
+      
+      - name: (Pre) Verify that the write pod is running 
+        include_tasks: "/utils/common/status_app_pod.yml"
+        vars:
+          app_ns: "{{ c_ns }}"
+          app_label: "app=write-pod"      
+          delay: 2
+          retries: 90
+  
+      - name: (Pre) Verify that the read pod is running
+        include_tasks: "/utils/common/status_app_pod.yml"
+        vars:
+          app_ns: "{{ c_ns }}"
+          app_label: "app=read-pod"
+          delay: 2
+          retries: 90
+
+      - name: (Pre) Create some test data to the "write-pod" pod 
+        include: "/utils/apps/busybox/busybox_data_persistence.yml"
+        vars:
+          status: "LOAD"
+          ns: "{{ c_ns }}"
+          pod_name: "{{ write_pod_name.stdout }}"
+
+      - name: (Pre) Read the test data from the "read-pod" pod
+        include: "/utils/apps/busybox/busybox_data_persistence.yml"
+        vars:
+          status: 'VERIFY'
+          ns: "{{ c_ns }}"
+          label: "app=read-pod"
+          pod_name: "{{ read_pod_name.stdout }}"
+
+      ## Injecting the chaos
+      - name: Injecting the NFS provisioner container with {{ c_lib }} chaos c_lib
+        include_tasks: "{{ c_util }}"
+        vars:
+          namespace: "{{ nfs_provisioner_ns }}"
+          app_container: "{{ c_container }}"
+          a_label: "app=nfs"
+
+      ## POST-CHAOS APPLICATION LIVENESS CHECK
+      - name: (Post) Checking the read-pod and write-pod pod's volume is using NFS 
+        include_tasks: "/utils/apps/openebs/nfs_mount_check.yml"
+        vars:
+          a_ns: "{{ c_ns }}"
+
+      - name: (Post) Verify that the AUT (Application Under Test) is running 
+        include_tasks: "/utils/common/status_app_pod.yml"
+        vars:
+          app_ns: "{{ a_ns }}"
+          app_label: "{{ a_label }}"      
+          delay: 2
+          retries: 90
+
+      - name: (Post) Verify that the write pod is running 
+        include_tasks: "/utils/common/status_app_pod.yml"
+        vars:
+          app_ns: "{{ c_ns }}"
+          app_label: "app=write-pod"      
+          delay: 2
+          retries: 90
+      
+      - name: (Post) Verify that the read pod is running 
+        include_tasks: "/utils/common/status_app_pod.yml"
+        vars:
+          app_ns: "{{ c_ns }}"
+          app_label: "app=read-pod"      
+          delay: 2
+          retries: 90
+      
+      - name: Verify successful database delete
+        include: "/utils/apps/busybox/busybox_data_persistence.yml"
+        vars:
+          status: 'DELETE'
+          ns: "{{ c_ns }}"
+          label: "app=write-pod"
+          pod_name: "{{ write_pod_name.stdout }}"
+
+      - name: (Post) Create some test data to the "write-pod" pod 
+        include: "/utils/apps/busybox/busybox_data_persistence.yml"
+        vars:
+          status: "LOAD"
+          ns: "{{ c_ns }}"
+          pod_name: "{{ write_pod_name.stdout }}"
+
+      - name: (Post) Read the test data from the "read-pod" pod
+        include: "/utils/apps/busybox/busybox_data_persistence.yml"
+        vars:
+          status: "{{ c_ns }}"
+          ns: "default"
+          label: "app=read-pod"
+          pod_name: "{{ read_pod_name.stdout }}"
+
+      - set_fact:
+          flag: "Pass"
+
+      ## Deprovisioning 
+      - name: Deleting the test test_applications
+        shell: kubectl delete -f test_applications.yml
+
+      - name: Deleting the nfs-alpine Application
+        shell: kubectl delete -f /utils/apps/openebs/nfs-mount-liveness-check.yaml
+
+      rescue: 
+        - set_fact: 
+            flag: "Fail"
+
+      always: 
+         ## RECORD END-OF-TEST IN CHAOS RESULT CR
+        - include_tasks: /utils/runtime/update_chaos_result_resource.yml
+          vars:
+            status: "EOT"
+            namespace: "{{ a_ns }}"
