@@ -1,26 +1,37 @@
-- name: Derive chaos iterations
+- name: "[Prepare]: Deriving the chaos iterations"
   set_fact:
     c_iterations: "{{ (c_duration|int / c_interval|int)|int }}"
   when: c_iterations is not defined
 
-- name: Derive chaos interval
+- name: "[Prepare]: Deriving the chaos interval"
   set_fact:
     c_interval: "{{ (c_duration|int / c_iterations|int)|int }}"
   when: c_interval is not defined
 
-- name: Set min chaos count to 1 if interval > duration
+- name: "[Prepare]: Set the min chaos count to 1 if interval > duration"
   set_fact: 
     c_iterations: 1
   when: "c_iterations == '0'"
 
-- name: Wait for the specified ramp time before injecting chaos
-  wait_for: timeout="{{ ramp_time }}"
+- block:
+
+    - debug:
+        msg: "***** Waiting for the ramp interval of {{ ramp_time }}s *****"
+
+    - name: "[Ramp]: Wait for the specified ramp time before injecting chaos"
+      wait_for: timeout="{{ ramp_time }}"
+
   when: "ramp_time is defined and ramp_time != ''" 
 
-- name: Kill random pod
+- name: "[Prepare]: Including the litmus LIB for random pod deletion"
   include: kill_random_pod.yml
   with_sequence: start=1 end={{ c_iterations }}
 
-- name: Wait for the specified ramp time after injecting chaos
-  wait_for: timeout="{{ ramp_time }}"
+- block:
+    - debug:
+        msg: "***** Waiting for the ramp interval of {{ ramp_time }}s *****"
+
+    - name: "[Ramp]: Wait for the specified ramp time after injecting chaos"
+      wait_for: timeout="{{ ramp_time }}"
+
   when: "ramp_time is defined and ramp_time != ''" 

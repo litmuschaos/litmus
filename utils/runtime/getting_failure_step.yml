@@ -1,23 +1,24 @@
 - block:
 
     ## Getting failure step from experiment-pod
-    - name: Getting failure step from experiment pod
+    - name: "[Failure-Detection]: Getting the failure step from experiment pod"
       shell: >
         kubectl logs {{ chaos_pod_name }} -n {{ a_ns }} | grep "FAILED!" -B 1 | head -1 | awk -F "Step:" '{print $2}'
       register: fail_step
       args: 
         executable: /bin/bash
 
-    - name: Record the name of failed step
+    - name: "[Failure-Detection]: Recording the failed step name"
       set_fact:
         failStep: "{{ fail_step.stdout }}"
 
-    - name: Print the name of failed step
+    - name: "[Failure-Detection]: Printing the failed step name"
       debug:
         msg: "failStep: {{ failStep }}"
 
     ## RECORD Summary event
-    - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+    - name: "[Event]: Generating an Event for Summary"
+      include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
       vars:
         stage: "Summary"
         exp_pod_name: "{{ chaos_pod_name }}"
@@ -30,12 +31,13 @@
 
 - block:
 
-    - name: Record the name of failed step
+    - name: "[Failure-Detection]: Recording the failed step name"
       set_fact:
         failStep: "N/A"
 
     ## RECORD Summary event
-    - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+    - name: "[Event]: Generating an Event for Summary"
+      include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
       vars:
         stage: "Summary"
         exp_pod_name: "{{ chaos_pod_name }}"

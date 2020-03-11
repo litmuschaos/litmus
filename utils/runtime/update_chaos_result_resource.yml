@@ -1,6 +1,6 @@
 ---
 - block:
-   - name: Generate the chaos result CR to reflect SOT (Start of Test)
+   - name: "[PreReq]: Generate the chaos result CR to reflect SOT (Start of Test)"
      template:
        src: /utils/runtime/chaos-result.j2
        dest: /utils/runtime/chaos-result.yml
@@ -10,7 +10,7 @@
        phase: "Running"
        verdict: "Awaited"
        
-   - name: Apply the chaos result CR
+   - name: "PreReq]: Apply the chaos result CR for {{ c_experiment }} experiment"
      shell: kubectl apply -f /utils/runtime/chaos-result.yml -n {{ namespace }}
      args:
        executable: /bin/bash
@@ -20,7 +20,7 @@
   when: status == "SOT"
 
 - block:
-   - name: Update the chaos result CR to reflect EOT (End of Test)
+   - name: "[The END]: Update the chaos result CR to reflect EOT (End of Test)"
      template:
        src: /utils/runtime/chaos-result.j2
        dest: /utils/runtime/chaos-result.yml
@@ -30,7 +30,7 @@
        phase: "Completed" 
        verdict: "{{ flag }}"
 
-   - name: Apply the chaos result CR
+   - name: "[The END]: Apply the chaos result CR for {{ c_experiment }} experiment"
      shell: kubectl apply -f /utils/runtime/chaos-result.yml -n {{ namespace }}
      args:
        executable: /bin/bash
