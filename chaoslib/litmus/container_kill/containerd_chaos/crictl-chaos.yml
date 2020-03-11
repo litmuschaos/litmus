@@ -26,6 +26,15 @@
     - set_fact: 
         app_node: "{{ app_node.stdout }}"
 
+    - block:
+        - name: Generate a run id if not passed from the engine/experiment
+          shell: echo $(mktemp) | cut -d '.' -f 2 
+          register: rand_string   
+
+        - set_fact:
+            run_id: "{{ rand_string.stdout | lower }}"
+      when: "run_id is not defined or run_id == ''"
+
     - name: Wait for the specified ramp time before injecting chaos
       wait_for: timeout="{{ ramp_time }}"
       when: "ramp_time is defined and ramp_time != ''"
@@ -48,7 +57,7 @@
 
     - name: Confirm that the containerd-chaos job is running on {{ app_node }} node.
       shell: >
-        kubectl get pod -l app=crictl
+        kubectl get pod -l job-name=containerd-chaos-{{ run_id }}
         --no-headers -o custom-columns=:status.phase
         -n {{ namespace }} | sort | uniq
       args:
@@ -172,7 +181,7 @@
             
         - name: Confirm that the containerd-chaos pod is deleted successfully
           shell: >
-            kubectl get pods -l app=crictl --no-headers -n {{ namespace }}
+            kubectl get pods -l job-name=containerd-chaos-{{ run_id }} --no-headers -n {{ namespace }}
           args:
             executable: /bin/bash
           register: result
