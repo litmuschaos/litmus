@@ -26,6 +26,7 @@
     zk_port: "{{ lookup('env','ZOOKEEPER_PORT') }}" 
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
+    chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
 
   tasks:
     - block:
