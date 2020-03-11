@@ -167,7 +167,7 @@
           stage: "PostChaosCheck"
           exp_pod_name: "{{ chaos_pod_name }}"
           engine_ns: "{{ a_ns }}"
-          message: "AUT is Running successfully"
+          message: "Disk has been reattached and AUT is Running successfully"
         when: "c_engine is defined and c_engine != ''"
     
 
