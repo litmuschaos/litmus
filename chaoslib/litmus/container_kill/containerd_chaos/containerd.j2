@@ -1,10 +1,10 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: containerd-chaos
+  name: containerd-chaos-{{ run_id }}
   labels:
-    app: crictl
-{% if c_engine is defined and c_engine != '' %}        
+    name: containerd-chaos
+{% if chaos_uid is defined and chaos_uid != '' %}        
     chaosUID: {{ chaos_uid }}
 {% endif %}        
 spec:
@@ -12,7 +12,7 @@ spec:
     metadata:
       labels:
         app: crictl
-{% if c_engine is defined and c_engine != '' %}        
+{% if chaos_uid is defined and chaos_uid != '' %}        
         chaosUID: {{ chaos_uid }}
 {% endif %}        
     spec:

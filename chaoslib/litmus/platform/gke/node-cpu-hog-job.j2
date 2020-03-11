@@ -1,14 +1,10 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-{% if c_engine is defined and c_engine != '' %}
-  name: node-cpu-hog-{{ chaos_uid }}
-{% else %}
-  name: node-cpu-hog
-{% endif %}
+  name: node-cpu-hog-{{ run_id }}
   labels: 
     app: node-cpu-hog
-{% if c_engine is defined and c_engine != '' %}
+{% if chaos_uid is defined and chaos_uid != '' %}
     chaosUID: {{ chaos_uid }}
 {% endif %}
 spec:
@@ -16,7 +12,7 @@ spec:
     metadata:
       labels:
         app: node-cpu-hog
-{% if c_engine is defined and c_engine != '' %}
+{% if chaos_uid is defined and chaos_uid != '' %}
         chaosUID: {{ chaos_uid }}
 {% endif %}
     spec:

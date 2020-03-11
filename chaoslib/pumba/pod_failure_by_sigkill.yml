@@ -25,6 +25,15 @@
     - set_fact: 
         app_node: "{{ app_node.stdout }}"
 
+      - block: 
+        - name: Generate a run id if not passed from the engine/experiment
+          shell: echo $(mktemp) | cut -d '.' -f 2 
+          register: rand_string   
+
+        - set_fact:
+            run_id: "{{ rand_string.stdout | lower }}"
+        when: "run_id is not defined or run_id == ''"        
+
     - block:
         - name: Record the application container
           shell: >
@@ -87,7 +96,7 @@
       
     - name: Wait until the pumba sig-kill job is completed
       shell: >
-        kubectl get pods -l job-name=pumba-sig-kill-{{ chaos_uid }} --no-headers -n {{ namespace }}
+        kubectl get pods -l job-name=pumba-sig-kill-{{ run_id }} --no-headers -n {{ namespace }}
         --no-headers -o custom-columns=:status.phase
       args: 
         executable: /bin/bash
@@ -119,7 +128,7 @@
 
     - name: Confirm that the pumba job is deleted successfully
       shell: >
-        kubectl get pods -l app=pumba --no-headers -n {{ namespace }}
+        kubectl get pods -l job-name=pumba-sig-kill-{{ run_id }} --no-headers -n {{ namespace }}
       args:
         executable: /bin/bash
       register: result
@@ -140,7 +149,7 @@
         
         - name: Confirm that the pumba job is not present
           shell: >
-            kubectl get pods -l app=pumba --no-headers -n {{ namespace }}
+            kubectl get pods -l job-name=pumba-sig-kill-{{ run_id }} --no-headers -n {{ namespace }}
           args:
             executable: /bin/bash
           register: result

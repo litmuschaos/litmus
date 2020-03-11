@@ -1,19 +1,18 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-{% if c_engine is defined and c_engine != '' %}
   name: app-cpu-stress-{{ run_id }}
-{% else %}
-  name: app-cpu-stress
-{% endif %}
-  labels: 
+  labels:
+    app: app-cpu-stress  
+{% if chaos_uid is defined and chaos_uid != '' %}        
     chaosUID: {{ chaos_uid }}
+{% endif %}   
 spec:
   template:
     metadata:
       labels:
         app: app-cpu-stress
-{% if c_engine is defined and c_engine != '' %}        
+{% if chaos_uid is defined and chaos_uid != '' %}        
         chaosUID: {{ chaos_uid }}
 {% endif %}        
     spec:

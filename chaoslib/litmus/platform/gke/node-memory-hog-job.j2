@@ -1,9 +1,10 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: node-memory-hog
+  name: node-memory-hog-{{ run_id }}
   labels:
-{% if c_engine is defined and c_engine != '' %}
+    app: memory-hog
+{% if chaos_uid is defined and chaos_uid != '' %}
     chaosUID: {{ chaos_uid }}
 {% endif %}
 spec:
@@ -11,7 +12,9 @@ spec:
     metadata:
       labels:
         app: memory-hog
+{% if chaos_uid is defined and chaos_uid != '' %}
         chaosUID: {{ chaos_uid }}
+{% endif %}
     spec:
       nodeSelector:
         kubernetes.io/hostname: {{ node_name }}

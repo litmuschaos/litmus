@@ -1,13 +1,10 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-{% if c_engine is defined and c_engine != '' %}
-  name: pumba-sig-kill-{{ chaos_uid }}
-{% else %}
-  name: pumba-sig-kill
-{% endif %}
+  name: pumba-sig-kill-{{ run_id }}
   labels: 
-{% if c_engine is defined and c_engine != '' %}  
+    app: pumba
+{% if chaos_uid is defined and chaos_uid != '' %}  
     chaosUID: {{ chaos_uid }}
 {% endif %}
 spec:
@@ -15,7 +12,7 @@ spec:
     metadata:
       labels:
         app: pumba
-{% if c_engine is defined and c_engine != '' %}
+{% if chaos_uid is defined and chaos_uid != '' %}
         chaosUID: {{ chaos_uid }}
 {% endif %}
         # prevent pumba from killing itself

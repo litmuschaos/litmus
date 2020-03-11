@@ -26,25 +26,26 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: powerfulseal
+  name: powerfulseal-{{ run_id }}
   labels:
-    name: powerfulseal
-{% if c_engine is defined and c_engine != '' %}
+    name: powerfulseal--{{ run_id }}
+{% if chaos_uid is defined and chaos_uid != '' %}
     chaosUID: {{ chaos_uid }}
 {% endif %}
 spec:
   selector:
     matchLabels:
-      name: powerfulseal
-{% if c_engine is defined and c_engine != '' %}
-    chaosUID: {{ chaos_uid }}
-{% endif %}  replicas: 1
+      name: powerfulseal-{{ run_id }}
+{% if chaos_uid is defined and chaos_uid != '' %}
+      chaosUID: {{ chaos_uid }}
+{% endif %}
+  replicas: 1
   template:
     metadata:
       labels:
         name: powerfulseal
-{% if c_engine is defined and c_engine != '' %}
-    chaosUID: {{ chaos_uid }}
+{% if chaos_uid is defined and chaos_uid != '' %}
+        chaosUID: {{ chaos_uid }}
 {% endif %}
     spec:
       serviceAccountName: {{ c_svc_acc }}

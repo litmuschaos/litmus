@@ -1,9 +1,10 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: disk-fill
+  name: disk-fill-{{ run_id }}
   labels:
-{% if c_engine is defined and c_engine != '' %}
+    app: disk-fill
+{% if chaos_uid is defined and chaos_uid != '' %}
     chaosUID: {{ chaos_uid }}
 {% endif %}
 spec:
@@ -11,7 +12,7 @@ spec:
     metadata:
       labels:
         app: disk-fill
-{% if c_engine is defined and c_engine != '' %}
+{% if chaos_uid is defined and chaos_uid != '' %}
         chaosUID: {{ chaos_uid }}
 {% endif %}
     spec:

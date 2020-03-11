@@ -3,7 +3,8 @@ kind: Job
 metadata:
   name: pumba-netem-{{ run_id }}
   labels:
-{% if c_engine is defined and c_engine != '' %}  
+    app: pumba
+{% if chaos_uid is defined and chaos_uid != '' %}  
     chaosUID: {{ chaos_uid }}
 {% endif %}
 spec:
@@ -12,7 +13,7 @@ spec:
       labels:
         app: pumba
         com.gaiaadm.pumba: "true"
-{% if c_engine is defined and c_engine != '' %}
+{% if chaos_uid is defined and chaos_uid != '' %}
         chaosUID: {{ chaos_uid }}
 {% endif %}
     spec:
