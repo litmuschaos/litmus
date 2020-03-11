@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: containerd-chaos
+  name: containerd-chaos-{{ run_id }}
   labels:
     chaosUID: {{ chaos_uid }}
 spec:
