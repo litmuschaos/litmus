@@ -15,6 +15,7 @@
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
     c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
+    chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
 
   vars_files:
     - /mnt/parameters.yml
@@ -57,7 +58,7 @@
       - name: AWS authentication
         include_tasks: "/utils/cloud/aws/aws_configure.yml"
         when: "cloud_platform == 'AWS'"
-
+        
       ## PRE-CHAOS DISK LIVENESS CHECK
       - name: Verify that the disk is connected to node (pre)
         include_tasks: "/utils/cloud/gcp/status_disk.yml"
@@ -83,6 +84,15 @@
           app_label: "{{ a_label }}"      
           delay: 2
           retries: 90
+
+      ## RECORD EVENT FOR PRE-CHAOS CHECK
+      - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+        vars:
+          stage: "PreChaosCheck"
+          exp_pod_name: "{{ chaos_pod_name }}"
+          engine_ns: "{{ a_ns }}"
+          message: "AUT is Running successfully"
+        when: "c_engine is defined and c_engine != ''"
 
       # Auxiliary application health check status
       - block:
@@ -151,6 +161,16 @@
           app_label: "{{ a_label }}"      
           delay: 2
           retries: 90
+      
+      ## RECORD EVENT FOR POST-CHAOS CHECK
+      - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+        vars:
+          stage: "PostChaosCheck"
+          exp_pod_name: "{{ chaos_pod_name }}"
+          engine_ns: "{{ a_ns }}"
+          message: "Disk has been reattached and AUT is Running successfully"
+        when: "c_engine is defined and c_engine != ''"
+    
 
       - block:
 
@@ -193,6 +213,9 @@
             flag: "Fail"
 
       always:
+        ## Getting failure step from experiment-pod
+        - include_tasks: /utils/runtime/getting_failure_step.yml  
+
         ## RECORD END-OF-TEST IN CHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
