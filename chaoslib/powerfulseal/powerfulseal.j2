@@ -43,7 +43,7 @@ spec:
   template:
     metadata:
       labels:
-        name: powerfulseal
+        name: powerfulseal-{{ run_id }}
 {% if chaos_uid is defined and chaos_uid != '' %}
         chaosUID: {{ chaos_uid }}
 {% endif %}
