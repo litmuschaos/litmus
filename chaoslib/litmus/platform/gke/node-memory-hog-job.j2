@@ -4,6 +4,7 @@ metadata:
   name: node-memory-hog-{{ run_id }}
   labels:
     app: memory-hog
+{% if chaos_uid is defined and chaos_uid != '' %}
     chaosUID: {{ chaos_uid }}
 {% endif %}
 spec:
