@@ -28,7 +28,7 @@ kind: Deployment
 metadata:
   name: powerfulseal-{{ run_id }}
   labels:
-    name: powerfulseal--{{ run_id }}
+    name: powerfulseal-{{ run_id }}
 {% if chaos_uid is defined and chaos_uid != '' %}
     chaosUID: {{ chaos_uid }}
 {% endif %}
