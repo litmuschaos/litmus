@@ -2,14 +2,19 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: node-memory-hog-{{ run_id }}
-  labels: 
+  labels:
+    app: memory-hog
+{% if chaos_uid is defined and chaos_uid != '' %}
     chaosUID: {{ chaos_uid }}
+{% endif %}
 spec:
   template:
     metadata:
       labels:
         app: memory-hog
+{% if chaos_uid is defined and chaos_uid != '' %}
         chaosUID: {{ chaos_uid }}
+{% endif %}
     spec:
       nodeSelector:
         kubernetes.io/hostname: {{ node_name }}
