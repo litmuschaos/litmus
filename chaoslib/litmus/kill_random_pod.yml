@@ -90,3 +90,4 @@
   vars:
     delay: 2
     retries: 90   
+  when: "c_iterations is defined and c_iterations != ''"
