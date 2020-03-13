@@ -44,4 +44,4 @@ spec:
             value: ''
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./experiments/generic/disk_fill/disk_fill_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
+        args: ["-c", "ansible-playbook ./experiments/kubernetes/disk_fill/disk_fill_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]

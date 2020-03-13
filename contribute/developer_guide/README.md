@@ -7,14 +7,14 @@ The artefacts associated with a chaos-experiment are summarized below:
   - Experiment business logic (either as ansible playbook, or other). May involve creation of new or reuse of existing chaoslib
   - Experiment Kubernetes job (executes the business logic, also called litmusbook)
 
-  Example: [pod delete experiment in litmus](/experiments/generic/pod_delete)
+  Example: [pod delete experiment in litmus](/experiments/kubernetes/pod_delete)
 
 - Submitted in litmuschaos/chaos-charts repository, under the *chaos category* folder
 
   - Experiment custom resource (CR) (holds experiment-specific chaos parameters & playbook entrypoint)
   - Experiment ChartServiceVersion (holds experiment metadata that will be rendered on [charthub](hub.litmuschaos.io))
 
-  Example: [pod delete experiment in chaos-charts](https://github.com/litmuschaos/chaos-charts/tree/master/charts/generic/pod-delete)
+  Example: [pod delete experiment in chaos-charts](https://github.com/litmuschaos/chaos-charts/tree/master/charts/kubernetes/pod-delete)
 
 The *generate_charts.py* script is a simple way to bootstrap your experiment, and helps create the aforementioned artefacts in the 
 appropriate directory (i.e., as per the chaos-category) based on an attributes file provided as input by the chart-developer. The 
@@ -77,7 +77,7 @@ scaffolded files consist of placeholders which can then be filled as desired.
 
   total 12
   drwxr-xr-x 2 ksatchit ksatchit 4096 Oct 17 12:54 mysql
-  drwxr-xr-x 6 ksatchit ksatchit 4096 Oct 21 09:28 generic
+  drwxr-xr-x 6 ksatchit ksatchit 4096 Oct 21 09:28 kubernetes
   drwxr-xr-x 3 ksatchit ksatchit 4096 Oct 21 10:54 hello-world
 
   $ ls -ltr hello-world/
@@ -111,7 +111,7 @@ scaffolded files consist of placeholders which can then be filled as desired.
 - Update the `kill-hello-replicas-experiment-cr.yml` with the right chaos params in the `spec.definition.env` with their
   default values
 
-- Create an experiment README (example: [pod delete readme](experiments/generic/pod_delete/README.md)) explaining, briefly, 
+- Create an experiment README (example: [pod delete readme](experiments/kubernetes/pod_delete/README.md)) explaining, briefly, 
   the *what*, *why* & *how* of the experiment to aid users of this experiment. 
 
 ### Steps to Test Experiment 
