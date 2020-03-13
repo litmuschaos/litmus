@@ -51,6 +51,8 @@
         ## INJECT CHAOS ON CONTROL PLANE COMPONENTS
         - name: Including main components
           include_tasks: openebs_control_plane_chaos_internal_tasks.yml
+          vars:
+            app_ns: "{{ openebs_ns }}"
           loop: "{{ openebs.components }}"
 
         ## RECORD EVENT FOR POST-CHAOS CHECK
