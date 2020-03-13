@@ -5,6 +5,9 @@ Please send PRs to add or remove organizations/users.
 | :---         | :---               | :---
 |[Zebrium](https://www.zebrium.com?utm_source=github&utm_campaign=litmuschaos_repo)|[Zebrium K8s Demo](https://github.com/zebrium/zebrium-kubernetes-demo)|Coming soon!|
 
+| Organization | Applications/Workloads | Success Story |
+| :---         | :---               | :---
+|[MayaData](https://mayadata.io)|[Director Online](https://director.mayadata.io/)|Coming soon!|
 
 | User | Applications/Workloads | Success Story |
 | :--- | :--- | :--- |
