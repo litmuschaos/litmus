@@ -16,6 +16,7 @@
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
     c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
+    chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
 
   vars_files:
     - /mnt/parameters.yml
