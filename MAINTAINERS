@@ -1,0 +1,24 @@
+# Official list of LitmusChaos Maintainers.
+#
+# Names added to this file should be in the following format:
+#     Individual's name,@githubhandle, Company Name
+#
+# Each of the LitmusChaos sub project may have one or more of the 
+# following maintainers and list of reviewers who are 
+# in the process of becoming maintainers. 
+#
+# Please keep the below list sorted in ascending order.
+#
+#Maintainers
+
+"Chandan Kumar",@chandankumar4,MayaData
+"Jayesh Kumar",@k8s-dev,Self
+"Karthik Satchitanand",@ksatchit,MayaData
+"Sumit Nagal",@sumitnagal,Intuit
+"Uma Mukkara",@umamukkara,MayaData
+
+#Reviewers
+"Rahul M Chheda",@rahulchheda,MayaData
+"Raj Das",@rajdas98,MayaData
+"Shubham Chaudhary",@ispeakc0de,MayaData
+"Udit Gaurav",@uditgaurav,MayaData
