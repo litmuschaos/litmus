@@ -2,12 +2,12 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: node-cpu-hog-
+  generateName: node-memory-hog-
 spec:
   template:
     metadata:
       labels:
-        experiment: node-cpu-hog
+        experiment: node-memory-hog
     spec:
       serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
       restartPolicy: Never
@@ -36,27 +36,36 @@ spec:
           - name: PLATFORM
             value: 'GKE'
           
-          ## THE TOTAL_CHAOS_DURATION SHOULD NOT BE MORE THAN 180 DEFAULT VALUE IS 60
+          ## ENTER TOTAL_CHAOS_DURATION(In seconds)
+          ## DEFAULT VALUE IS 60
           - name: TOTAL_CHAOS_DURATION
             value: '60'
 
-          ## Period to wait before injection of chaos in sec
+          ## SPECIFY THE SIZE AS PERCENT OF TOTAL AVAILABLE MEMORY (In Percentage %)
+          ## DEFAULT VALUE 90%
+          - name: MEMORY_PERCENTAGE
+            value: '90'
+
+          ## PERIOD TO WAIT BEFORE AND AFTER INJECTION OF CHAOS IN SEC
           - name: RAMP_TIME
             value: ''
 
-          # provide auxiliary application details - namespace and labels of the applications
-          # sample input is  "ns1:app=percona,ns2:name=nginx"
+          # PROVIDE AUXILIARY APPLICATION DETAILS - NAMESPACE AND LABELS OF THE APPLICATIONS
+          # SAMPLE INPUT IS  "ns1:app=percona,ns2:name=nginx"
           - name: AUXILIARY_APPINFO
             value: ''
 
           # only supports litmus
           - name: LIB
             value: 'litmus'
-         
+ 
+          - name: CHAOSENGINE
+            value: ''
+          
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:
               fieldRef:
                 fieldPath: spec.serviceAccountName
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./experiments/generic/node_cpu_hog/node_cpu_hog_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
+        args: ["-c", "ansible-playbook ./experiments/generic/node_memory_hog/node_memory_hog_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]

@@ -9,6 +9,7 @@
     c_force: "{{ lookup('env','FORCE') }}"
     c_lib: "{{ lookup('env','LIB') }}"
     c_svc_acc: "{{ lookup('env','CHAOS_SERVICE_ACCOUNT') }}"
+    chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
     kill_count: "{{ lookup('env','KILL_COUNT') }}"
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"

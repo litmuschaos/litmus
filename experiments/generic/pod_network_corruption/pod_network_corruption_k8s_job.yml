@@ -56,10 +56,6 @@ spec:
           - name: LIB
             value: 'pumba'
 
-           # provide chaosengine name
-          - name: CHAOSENGINE
-            value: ''
-
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:
               fieldRef:

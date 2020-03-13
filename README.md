@@ -10,6 +10,7 @@
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3202/badge)](https://bestpractices.coreinfrastructure.org/projects/3202)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=litmuschaos_litmus&metric=alert_status)](https://sonarcloud.io/dashboard?id=litmuschaos_litmus)
 [![BCH compliance](https://bettercodehub.com/edge/badge/litmuschaos/litmus?branch=master)](https://bettercodehub.com/)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_shield)
 <br><br><br><br>
 
 
@@ -52,6 +53,9 @@ See <a href="https://github.com/litmuschaos/litmus/blob/master/ADOPTERS.md" targ
 ## License
 Litmus is licensed under the Apache License, Version 2.0. See [LICENSE](./LICENSE) for the full license text. Some of the projects used by the Litmus project may be governed by a different license, please refer to its specific license.
 
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_large)
+
 ## Community notes
 https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q
 
@@ -64,4 +68,3 @@ https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q
 <a href="https://landscape.cncf.io/selected=litmus">
   CNCF Landscape <img src="https://landscape.cncf.io/images/left-logo.svg" alt="Litmus on CNCF Landscape" height="15">
 </a>
-
