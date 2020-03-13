@@ -2,10 +2,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: write-pod
-  namespace: {{ c_ns }}
-  labels:
-    app: write-pod
+  name: write-pod-{{ run_id }}
+  namespace: {{ a_ns }}
 spec:
   replicas: 1
   selector:
@@ -28,15 +26,13 @@ spec:
       volumes:
       - name: nfs-pvc
         persistentVolumeClaim:
-          claimName: testclaim
+          claimName: testclaim--{{ run_id }}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: read-pod
-  namespace: {{ c_ns }}
-  labels:
-    app: read-pod
+  name: read-pod-{{ run_id }}
+  namespace: {{ a_ns }}
 spec:
   replicas: 1
   selector:
@@ -59,13 +55,13 @@ spec:
       volumes:
       - name: nfs-pvc
         persistentVolumeClaim:
-          claimName: testclaim
+          claimName: testclaim-{{ run_id }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: testclaim
-  namespace: {{ c_ns }}
+  name: testclaim-{{ run_id }}
+  namespace: {{ a_ns }}
 spec:
   storageClassName: openebs-nfs 
   accessModes:

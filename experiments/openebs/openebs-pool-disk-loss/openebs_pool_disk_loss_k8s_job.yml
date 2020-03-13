@@ -71,16 +71,6 @@ spec:
           # sample input is - "ns1:app=percona,ns2:name=nginx"
           - name: AUXILIARY_APPINFO
             value: ''
-          
-          - name: LIVENESS_APP_LABEL
-            value: ''
-
-          - name: LIVENESS_APP_NAMESPACE
-            value: ''
-
-          - name: DATA_PERSISTENCE
-            value: ''
-
           - name: OPENEBS_NAMESPACE
             value: 'openebs'
             

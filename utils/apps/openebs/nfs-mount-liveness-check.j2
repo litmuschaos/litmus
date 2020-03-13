@@ -2,9 +2,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: nfs-mount-liveness-check
-  labels:
-    name: nfs-mount-liveness-check
+  name: nfs-mount-liveness-check-{{ run_id }}
 spec:
   restartPolicy: Never    
   containers:

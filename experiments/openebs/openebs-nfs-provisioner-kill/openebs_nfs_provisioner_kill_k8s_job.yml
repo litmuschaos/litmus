@@ -41,9 +41,6 @@ spec:
           - name: APP_NAMESPACE
             value: 'minio'
 
-          - name: CHAOS_NAMESPACE
-            value: 'default'
-
           - name: NFS_SVC
             value: 'nfs-provisioner'
 
@@ -59,6 +56,9 @@ spec:
 
           - name: TARGET_CONTAINER
             value: 'nfs-provisioner'
+          # EXTERNAL_APP_CHECK can be true/false
+          - name: EXTERNAL_APP_CHECK
+            value: 'true'
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/openebs/openebs-nfs-provisioner-kill/openebs_nfs_provisioner_kill_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
         volumeMounts:
