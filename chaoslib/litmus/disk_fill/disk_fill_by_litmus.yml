@@ -44,6 +44,15 @@
         limit_storage_KB: "{{ lookup('vars', limit_value_storage.stdout) }}"
 
     - include_tasks: /chaoslib/litmus/disk_fill/convert_fill_percentage.yml
+    
+    - block:
+        - name: Generate a run id if not passed from the engine/experiment
+          shell: echo $(mktemp) | cut -d '.' -f 2 | cut -c -6
+          register: rand_string   
+
+        - set_fact:
+            run_id: "{{ rand_string.stdout | lower }}"
+      when: "run_id is not defined or run_id == ''"
 
     - name: Get the Container ID
       shell: >
@@ -86,7 +95,7 @@
     - name: Confirm that disk fill pod is running on {{ app_node }} node
       include_tasks: "/utils/common/status_app_pod.yml"
       vars:
-        app_label: "app=disk-fill"
+        app_label: "job-name=disk-fill-{{ run_id }}"
         app_ns: "{{ a_ns }}"  
         delay: 2
         retries: 90
@@ -97,7 +106,7 @@
   
     - name: Record the disk-fill pod on app node
       shell: >
-        kubectl get pods -l app=disk-fill -o jsonpath='{.items[?(@.spec.nodeName=="{{app_node}}")].metadata.name}'
+        kubectl get pods -l job-name=disk-fill-{{ run_id }} -o jsonpath='{.items[?(@.spec.nodeName=="{{app_node}}")].metadata.name}'
       args:
         executable: /bin/bash
       register: disk_fill_pod
@@ -168,7 +177,7 @@
       k8s_facts:
         kind: Job
         label_selectors:
-          - app=disk-fill
+          - job-name=disk-fill-{{ run_id }}
       register: resource_job
       until: "resource_job.resources | length < 1"
       delay: 2
@@ -189,11 +198,12 @@
           k8s_facts:
             kind: Job
             label_selectors:
-              - app=disk-fill
+              - job-name=disk-fill-{{ run_id }}
           register: resource_job
           until: "resource_job.resources | length < 1"
           delay: 2
           retries: 90   
+
       when: "disk_fill_job_result is defined"
     
     - fail:

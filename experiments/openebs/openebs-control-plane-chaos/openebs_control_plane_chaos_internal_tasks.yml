@@ -12,6 +12,7 @@
   vars:
     app_ns: "{{ item.namespace }}"
     app_label: "{{ item.labels[0] }}"
+    a_ns: "{{ app_ns }}"
     c_interval: 5
 
 ## POST-CHAOS APPLICATION LIVENESS CHECK

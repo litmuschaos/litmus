@@ -9,6 +9,7 @@
     c_force: "{{ lookup('env','FORCE') }}"
     c_lib: "{{ lookup('env','LIB') }}"
     c_svc_acc: "{{ lookup('env','CHAOS_SERVICE_ACCOUNT') }}"
+    chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
     kill_count: "{{ lookup('env','KILL_COUNT') }}"
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
@@ -50,6 +51,8 @@
         ## INJECT CHAOS ON CONTROL PLANE COMPONENTS
         - name: Including main components
           include_tasks: openebs_control_plane_chaos_internal_tasks.yml
+          vars:
+            app_ns: "{{ openebs_ns }}"
           loop: "{{ openebs.components }}"
 
         ## RECORD EVENT FOR POST-CHAOS CHECK
@@ -71,7 +74,9 @@
       always: 
 
         ## Getting failure step from experiment-pod
-        - include_tasks: /utils/runtime/getting_failure_step.yml  
+        - include_tasks: /utils/runtime/getting_failure_step.yml
+          vars:
+            a_ns: "{{ openebs_ns }}"
           
         ## RECORD END-OF-TEST IN LITMUSCHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
