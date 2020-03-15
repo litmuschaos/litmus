@@ -24,6 +24,7 @@
     type: Normal
     count: 1
     firstTimestamp: "{{ ts }}"
+    lastTimestamp: "{{ ts }}"
     involvedObject:
      apiVersion: litmuschaos.io/v1alpha1
      kind: ChaosEngine
