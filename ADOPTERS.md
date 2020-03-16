@@ -11,3 +11,4 @@ Please send PRs to add or remove organizations/users.
 | User | Applications/Workloads | Success Story |
 | :--- | :--- | :--- |
 | [Laura Henning](https://github.com/LaumiH) | reasearch on how to do chaos engineering in minikube demo clusters like [these](https://github.com/LaumiH/k8sstuff) | [my story](https://github.com/litmuschaos/litmus/tree/master/adopters/Laura_Henning_Research_Project.md) |
+| [Johnny Jacob](https://github.com/johnnyjacob) | Testing deployment designs for resiliency | Coming Soon! |
