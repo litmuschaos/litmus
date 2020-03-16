@@ -31,28 +31,18 @@
     -   Pre Release Version (Development)
          <table>
           <tr>
-            <td>0.8.0-RC-1</td>
-            <td><a href="https://docs.litmuschaos.io/docs/getstarted">Documentation</a></td>
-            <td><a href="https://github.com/litmuschaos/litmus/releases/tag/0.8.0-RC1">Release Notes</a></td>
+            <td>1.2.1</td>
+            <td>TBD</td>
+            <td>TBD</td>
           </tr>
         </table>
 
     -   Current version (Stable)
         <table>
           <tr>
-            <td>0.7.0</td>
+            <td>1.2.0</td>
             <td><a href="https://docs.litmuschaos.io/docs/getstarted">Documentation</a></td>
-            <td><a href="https://github.com/litmuschaos/litmus/releases/tag/0.7.0">Release Notes</a></td>
-          </tr>
-        </table>
-
-    -   Past Versions
-        Here you can find previous versions of the documentation.
-        <table>
-          <tr>
-            <td>0.6.0</td>
-            <td><a href="https://docs.litmuschaos.io/docs/0.6.0/overview">Documentation</a></td>
-            <td><a href="https://github.com/litmuschaos/litmus/releases/tag/0.6.0">Release Notes</a></td>
+            <td><a href="https://github.com/litmuschaos/litmus/releases/tag/1.2.0">Release Notes</a></td>
           </tr>
         </table>
 

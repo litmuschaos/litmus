@@ -38,8 +38,9 @@ spec:
           - name: TOTAL_CHAOS_DURATION
             value: '30'
 
+          # GKE and AWS supported
           - name: CLOUD_PLATFORM
-            value: 'GCP'
+            value: 'GKE'
 
           - name: PROJECT_ID
             value: ''
