@@ -1,6 +1,4 @@
-I am Bhaumik Shah, DevOps Engineer working in one of the TOP banks in Australia. We are setting up Kafka Platform 
-for our bank and was looking for a Fault Tolerance tool which can provide chaos experiments. We have explored 
-many tools which are available in the industry like: GremlinFree, PowerfulSeal, Pumba and finally Litmus.
+I am Bhaumik Shah, DevOps Engineer. We are setting up Kafka Platform for our bank and was looking for a Fault Tolerance tool which can provide chaos experiments. We have explored many tools which are available in the industry like: GremlinFree, PowerfulSeal, Pumba and finally Litmus.
 
 Litmus is far better which provides all the chaos feature for free which are available in other tools with license 
 cost. I closely worked with Karthik to acheive below funcationalty for Kafka fault tolerance:
