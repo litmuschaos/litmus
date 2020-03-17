@@ -13,4 +13,3 @@ Please send PRs to add or remove organizations/users.
 | [Laura Henning](https://github.com/LaumiH) | reasearch on how to do chaos engineering in minikube demo clusters like [these](https://github.com/LaumiH/k8sstuff) | [my story](https://github.com/litmuschaos/litmus/tree/master/adopters/Laura_Henning_Research_Project.md) |
 | [Johnny Jacob](https://github.com/johnnyjacob) | Testing deployment designs for resiliency | Coming Soon! |
 | [Jayesh Kumar Tank](https://github.com/k8s-dev) | Create Cloud Native Validation Suite on [Demo Application](https://github.com/k8s-dev/microservices-demo)| [my story](https://github.com/litmuschaos/litmus/tree/master/adopters/Jayesh_Kumar_CloudNative_Validation.md)
-| [Bhaumik Shah](https://github.com/Bhaumik1802) | Use LitmusChaos for Kafka Resiliency on Dev/Staging| [my story](https://github.com/litmuschaos/litmus/tree/master/adopters/Bhaumik_Shah_Kafka_Chaos.md)
