@@ -14,7 +14,6 @@
     auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
-    c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
 
@@ -30,6 +29,10 @@
 
       - include_tasks: openebs_pool_disk_loss_ansible_prerequisites.yml
 
+      - name: Getting the chaos namespace
+        set_fact:
+          c_ns: "{{ a_ns }}"
+
       # GENERATE EXPERIMENT RESULT NAME
       - name: Construct chaos result name
         set_fact:
@@ -39,7 +42,7 @@
       - include_tasks: /utils/runtime/update_chaos_result_resource.yml
         vars:
           status: 'SOT'
-          namespace: "{{ a_ns }}"
+          namespace: "{{ c_ns }}"
 
       # DISPLAY APP INFORMATION
       - name: Display the app information passed via the test job
@@ -48,7 +51,7 @@
             - "The application info is as follows:"
             - "Namespace    : {{ a_ns }}"
             - "Label        : {{ a_label }}"
-            - "PVC        : {{ a_pvc }}"
+            - "PVC          : {{ a_pvc }}"
 
       # Gcloud authentication
       - name: Gcloud authentication
@@ -91,7 +94,7 @@
         vars:
           stage: "PreChaosCheck"
           exp_pod_name: "{{ chaos_pod_name }}"
-          engine_ns: "{{ a_ns }}"
+          engine_ns: "{{ c_ns }}"
           message: "AUT is Running successfully"
         when: "c_engine is defined and c_engine != ''"
 
@@ -168,7 +171,7 @@
         vars:
           stage: "PostChaosCheck"
           exp_pod_name: "{{ chaos_pod_name }}"
-          engine_ns: "{{ a_ns }}"
+          engine_ns: "{{ c_ns }}"
           message: "Disk has been reattached and AUT is Running successfully"
         when: "c_engine is defined and c_engine != ''"
     
@@ -221,4 +224,4 @@
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'
-            namespace: "{{ a_ns }}"
+            namespace: "{{ c_ns }}"

@@ -35,7 +35,7 @@
       vars:
         stage: "ChaosInject"
         exp_pod_name: "{{ chaos_pod_name }}"
-        engine_ns: "{{ a_ns }}"
+        engine_ns: "{{ c_ns }}"
         message: "Injecting {{ c_experiment }} chaos on {{ node_name }} node"
       when: "c_engine is defined and c_engine != ''"        
 
