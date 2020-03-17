@@ -1,10 +1,10 @@
 ## OpenEBS
 
-OpenEBS is the most active Container Attached Storage project in Kubernetes world. OpenEBS enables the  DevOps teams to have their dedicated storage policies for each workload and it is completely Kubernetes native. It provides different storage engines such as [Jiva](https://docs.openebs.io/docs/next/jiva.html), [cStor](https://docs.openebs.io/docs/next/cstor.html), [LocalPV](https://docs.openebs.io/docs/next/localpv.html) which could be chosen according to the user's storage requirements.
+OpenEBS is the most active Container Attached Storage project in Kubernetes world. OpenEBS enables the DevOps teams to have their dedicated storage policies for each workload and it is completely Kubernetes native. It provides different storage engines such as [Jiva](https://docs.openebs.io/docs/next/jiva.html), [cStor](https://docs.openebs.io/docs/next/cstor.html), [LocalPV](https://docs.openebs.io/docs/next/localpv.html) which could be chosen according to the user's storage requirements.
 
 ### **Why do we use litmus**
 
-In OpenEBS E2E testing, We realised that functional testing alone is not sufficient to ensure the resiliency of the system. So, We planned to practice chaos engineering in our E2E test suite in order to validate the system's  resiliency. We wanted to induce chaos not only specific to OpenEBS components but also on the underlying Kubernetes components which forms the skeleton of Containers infrastructure. Litmus eases our vision by providing chaos charts on the above said components. Litmus has a chaos category for OpenEBS charts which is evolving continuously.
+In OpenEBS E2E testing, We realised that functional testing alone is not sufficient to ensure the resiliency of the system. So, We planned to practice chaos engineering in our E2E test suite in order to validate the system's  resiliency. We wanted to induce chaos not only specific to OpenEBS components but also on the underlying Kubernetes components which forms the skeleton for Containers infrastructure. Litmus eases our vision by providing chaos charts for the above said components. Litmus has a separate chaos category for OpenEBS charts which is evolving continuously.
 
 ### How do we use litmus
 
@@ -14,4 +14,4 @@ Apart from E2E pipelines, we use litmus chaos charts in our soak testing suite w
 
 ### Benefits in using litmus
 
-After incorporating the chaos charts into our E2E test pipelines and soak testing environment, the resiliency issues which were hidden were detected. When we execute the charts at random intervals along with functional test scenarios, the corner cases are also getting covered which yields resiliency issues.
+After incorporating the chaos charts into our E2E test pipelines and soak testing environment, the hidden resiliency issues were detected. When we execute the charts at random intervals along with functional test scenarios, the corner cases are getting covered which brings out the resiliency issues.
