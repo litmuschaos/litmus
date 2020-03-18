@@ -1,6 +1,6 @@
 ## **MayaData**
 
-[Director Online](https://director.mayadata.io/) is a  tool to manage and visualize the cluster more efficiently and even data migration across cloud. To manage your cluster you can connect it to the saas platform [director.mayadata.io](https://director.mayadata.io/) or you can have your own on-prem installation using dop.
+[Director Online](https://director.mayadata.io/) is a  tool to manage and visualize the cluster more efficiently and even data migration across cloud. To manage your cluster you can connect it to the saas platform [director.mayadata.io](https://director.mayadata.io/) or you can have your own on-prem installation using DOP.
 Director reduces the risk and increases the agility of running stateful applications on Kubernetes. Your workloads can have storage provisioned, backed-up, monitored, logged, managed, tested, and even migrated across clusters and clouds
  
 ### **Why do we use litmus**
