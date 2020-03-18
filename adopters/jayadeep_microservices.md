@@ -2,4 +2,4 @@ I'm [Jayadeep](kmjayadeep/kmjayadeep), full stack developer and an open source e
 
 The project I was working on had 4 microservices talking to each other. I wanted to make sure that the application can take care of error conditions such as Network delay, deletion of pods, unavailability of dependent services etc. and provide meaningful error messages instead of crashing. Based on manual testing all seemed fine, but chaos testing with Litmus revealed that some of the APIs didn't have the mechanism to deal with timeouts when trying to connect to other services.
 
-These valuable insights from Litmus helped me understand the flows in my design and forced to redesign the system using a different architecture. You can find the latest one here : [Watermark Microservices](git@github.com:kmjayadeep/watermark-microservices.git).
+These valuable insights from Litmus helped me understand the flows in my design and forced to redesign the system using a different architecture. You can find the latest one here : [Watermark Microservices](https://github.com/kmjayadeep/watermark-microservices).
