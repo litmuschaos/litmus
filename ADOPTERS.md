@@ -3,9 +3,9 @@ Please send PRs to add or remove organizations/users.
 
 | Organization | Applications/Workloads | Success Story |
 | :---         | :---               | :---|
-|[Zebrium](https://www.zebrium.com?utm_source=github&utm_campaign=litmuschaos_repo)|[Zebrium K8s Demo](https://github.com/zebrium/zebrium-kubernetes-demo)|Coming soon!|
+|[Zebrium](https://www.zebrium.com?utm_source=github&utm_campaign=litmuschaos_repo)|[Zebrium K8s Demo](https://github.com/zebrium/zebrium-kubernetes-demo)|[our story](https://github.com/litmuschaos/litmus/blob/master/adopters/zebrium.md)|
 |[MayaData](https://mayadata.io)|[Director Online](https://director.mayadata.io/)|Coming soon!|
-|[OpenEBS](https://openebs.io/)|[openebs-ci](https://openebs.ci/)|[English](https://github.com/litmuschaos/litmus/tree/master/adopters/openebs.md)|
+|[OpenEBS](https://openebs.io/)|[openebs-ci](https://openebs.ci/)|[our story](https://github.com/litmuschaos/litmus/tree/master/adopters/openebs.md)|
 |[Wipro](https://www.wipro.com/en-IN/infrastructure/wipros-appanywhere/?utm_source=github&utm_campaign=litmuschaos_repo)|[Wipro AppAnywhere](https://www.wipro.com/en-IN/infrastructure/wipros-appanywhere/?utm_source=github&utm_campaign=litmuschaos_repo)|Coming soon!|
 
 | User | Applications/Workloads | Success Story |
