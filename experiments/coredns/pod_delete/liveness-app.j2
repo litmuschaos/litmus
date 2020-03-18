@@ -3,7 +3,9 @@ kind: Pod
 metadata:
   labels:
     run: liveness-app
+{% if chaos_uid is defined and chaos_uid != '' %}
     chaosUID: {{ chaos_uid }}
+{% endif %}    
   name: liveness-app
   namespace: {{ c_ns }}
 spec:

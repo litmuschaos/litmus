@@ -1,61 +1,47 @@
 ---
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Pod
 metadata:
   name: write-pod-{{ run_id }}
   namespace: {{ a_ns }}
+  labels:
+    run: write-pod-{{ run_id }}
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: write-pod
-  template:
-    metadata:
-      labels:
-        app: write-pod
-    spec:
-      containers:
-      - name: write-pod
-        image: gcr.io/google_containers/busybox:1.24
-        command:
-        - "sleep"
-        - "1000"
-        volumeMounts:
-        - name: nfs-pvc
-          mountPath: "/busybox"
-      volumes:
-      - name: nfs-pvc
-        persistentVolumeClaim:
-          claimName: testclaim--{{ run_id }}
+  containers:
+  - name: write-pod
+    image: gcr.io/google_containers/busybox:1.24
+    command:
+    - "sleep"
+    - "1000"
+    volumeMounts:
+    - name: nfs-pvc
+      mountPath: "/busybox"
+  volumes:
+  - name: nfs-pvc
+    persistentVolumeClaim:
+      claimName: testclaim-{{ run_id }}
 ---
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Pod
 metadata:
   name: read-pod-{{ run_id }}
   namespace: {{ a_ns }}
+  labels:
+    run: read-pod-{{ run_id }}
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: read-pod
-  template:
-    metadata:
-      labels:
-        app: read-pod
-    spec:
-      containers:
-      - name: read-pod
-        image: gcr.io/google_containers/busybox:1.24
-        command:
-        - "sleep"
-        - "1000"
-        volumeMounts:
-        - name: nfs-pvc
-          mountPath: "/busybox"
-      volumes:
-      - name: nfs-pvc
-        persistentVolumeClaim:
-          claimName: testclaim-{{ run_id }}
+  containers:
+  - name: read-pod
+    image: gcr.io/google_containers/busybox:1.24
+    command:
+    - "sleep"
+    - "1000"
+    volumeMounts:
+    - name: nfs-pvc
+      mountPath: "/busybox"
+  volumes:
+  - name: nfs-pvc
+    persistentVolumeClaim:
+      claimName: testclaim-{{ run_id }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

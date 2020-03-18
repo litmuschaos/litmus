@@ -12,6 +12,15 @@
         engine_ns: "{{ a_ns }}"
         message: "Injecting {{ c_experiment }} chaos on application pod"
       when: "c_engine is defined and c_engine != ''"
+
+    - block:
+        - name: Generate a run id if not passed from the engine/experiment
+          shell: echo $(mktemp) | cut -d '.' -f 2 | cut -c -6
+          register: rand_string   
+
+        - set_fact:
+            run_id: "{{ rand_string.stdout | lower }}"
+      when: "run_id is not defined or run_id == ''"
     
     - name: Generate the powerfulseal deployment spec from template
       template:
@@ -28,7 +37,7 @@
 
     - name: Confirm that powerfulseal pod is running
       shell: >
-        kubectl get pod -l name=powerfulseal --no-headers -n {{ app_ns }}
+        kubectl get pod -l name=powerfulseal-{{ run_id }} --no-headers -n {{ app_ns }}
       args:
         executable: /bin/bash
       register: result
@@ -55,7 +64,7 @@
       k8s_facts:
         kind: Deployment
         label_selectors:
-          - name=powerfulseal
+          - name=powerfulseal-{{ run_id }}
       register: resource_deployment
       until: "resource_deployment.resources | length < 1"
       delay: 2
@@ -76,7 +85,7 @@
           k8s_facts:
             kind: Deployment
             label_selectors:
-              - name=powerfulseal
+              - name=powerfulseal-{{ run_id }}
           register: resource_deployment
           until: "resource_deployment.resources | length < 1"
           delay: 2

@@ -27,6 +27,7 @@
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
+    a_ns: "{{ lookup('env','KAFKA_NAMESPACE') }}"
 
   tasks:
     - block:

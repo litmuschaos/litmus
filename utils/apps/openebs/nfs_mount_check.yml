@@ -1,4 +1,4 @@
----
+---  
 - name: Deriving the PVC Name of the application pod
   shell: >
     kubectl get pods -n {{ a_ns }} -l {{ a_label }}
@@ -18,8 +18,14 @@
     src: /utils/apps/openebs/nfs-mount-liveness-check.j2
     dest: /utils/apps/openebs/nfs-mount-liveness-check.yaml
 
+- debug: msg="{{ lookup('file', '/utils/apps/openebs/nfs-mount-liveness-check.yaml') }}"
+
 - name: Creating nfs mount liveness check application
-  shell: kubectl apply -f nfs-mount-liveness-check.yaml -n {{ a_ns }}
+  shell: kubectl apply -f /utils/apps/openebs/nfs-mount-liveness-check.yaml -n {{ a_ns }}
+
+# Reinitializing, because of scope is limited to the a_ns var
+- set_fact:
+    a_ns : "{{ a_ns }}"
 
 - name: Waiting util the nfs mount liveness check application is in runing state
   include_tasks: "/utils/common/status_app_pod.yml"

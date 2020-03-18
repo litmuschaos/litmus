@@ -1,3 +1,3 @@
-{% if a_platform is defined and a_platform  == 'GKE' %}
+{% if a_platform is defined and a_platform  == 'GKE' or a_platform  == 'EKS' %}
 c_util: /chaoslib/litmus/platform/gke/node_memory_consumption.yml
 {% endif %}

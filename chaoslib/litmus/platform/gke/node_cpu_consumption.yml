@@ -21,14 +21,9 @@
     - set_fact:
         cpu_limit: "{{ c_limit | json_query('resources[0].status.capacity.cpu') }}"
 
-    - name: Patch the engine uid
-      template:
-        src:  /chaoslib/litmus/platform/gke/node-cpu-hog-job.j2
-        dest: /chaoslib/litmus/platform/gke/node-cpu-hog-job.yml
-
     - block:
         - name: Generate a run id if not passed from the engine/experiment
-          shell: echo $(mktemp) | cut -d '.' -f 2 
+          shell: echo $(mktemp) | cut -d '.' -f 2 | cut -c -6
           register: rand_string   
 
         - set_fact:
@@ -42,7 +37,12 @@
         exp_pod_name: "{{ chaos_pod_name }}"
         engine_ns: "{{ a_ns }}"
         message: "Injecting {{ c_experiment }} chaos on {{ node_name }} node"
-      when: "c_engine is defined and c_engine != ''"
+      when: "c_engine is defined and c_engine != ''"        
+
+    - name: Patch the engine uid
+      template:
+        src:  /chaoslib/litmus/platform/gke/node-cpu-hog-job.j2
+        dest: /chaoslib/litmus/platform/gke/node-cpu-hog-job.yml
       
     - name: Wait for the specified ramp time before injecting chaos
       wait_for: timeout="{{ ramp_time }}"

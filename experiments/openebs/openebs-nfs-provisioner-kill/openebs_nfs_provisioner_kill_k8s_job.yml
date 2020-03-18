@@ -59,6 +59,7 @@ spec:
           # EXTERNAL_APP_CHECK can be true/false
           - name: EXTERNAL_APP_CHECK
             value: 'true'
+
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/openebs/openebs-nfs-provisioner-kill/openebs_nfs_provisioner_kill_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
         volumeMounts:
@@ -67,4 +68,4 @@ spec:
       volumes:
         - name: parameters
           configMap:
-            name: openebs-nfs-provisioner-kill
+            name: openebs-pool-disk-loss

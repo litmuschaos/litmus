@@ -12,9 +12,9 @@
     c_lib: "{{ lookup('env', 'LIB') }}"
     c_container: "{{ lookup('env','TARGET_CONTAINER') }}"
     lib_image: "{{ lookup('env','LIB_IMAGE') }}"
-    chaos_uid: "op"
+    chaos_uid: "op" ### ignore it will remove it
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
-    external_app_check: "{{ localhost('env', 'EXTERNAL_APP_CHECK') }}"
+    external_app_check: "{{ lookup('env', 'EXTERNAL_APP_CHECK') }}"
 
   vars_files:
     - /mnt/parameters.yml
@@ -46,7 +46,8 @@
             - "The application info is as follows:"
             - "NFS Provisioner Namespace : {{ nfs_provisioner_ns }}"
             - "NFS Provisioner LABEL     : {{ nfs_provisioner_label }}"
-            - "NFS Provisioner PVC       : {{ nfs_pvc }}"  
+            - "NFS Provisioner PVC       : {{ nfs_pvc }}"
+            - "NFS Service Account       : {{ nfs_svc }}"
 
       - block:
 
@@ -61,11 +62,11 @@
             template:
               src: test_applications.j2
               dest: test_applications.yml
-
-          - name: Deploying the test application with RWM accessmode
-            shell: kubectl apply -f test_applications.yml
             vars:
               run_id: "{{ external_app_run_id }}"
+  
+          - name: Deploying the test application with RWM accessmode
+            shell: kubectl apply -f test_applications.yml
 
           - name: Derive the pod name with label "app=write-pod"
             shell: kubectl get pods --selector run=write-pod-{{ external_app_run_id }} -o jsonpath='{.items[0].metadata.name}' -n {{ a_ns }}
@@ -78,12 +79,16 @@
             register: read_pod_name
             retries: 90
             delay: 2
-    
+
+          # Reinitializing, because of scope is limited to the a_ns var
+          - set_fact:
+              app_ns : "{{ a_ns }}"
+
           ## PRE-CHAOS APPLICATION LIVENESS CHECK
           - name: (Pre) Checking the read-pod and write-pod pod's volume is using NFS 
             include_tasks: "/utils/apps/openebs/nfs_mount_check.yml"
             vars:
-              a_ns: "{{ a_ns }}"
+              a_ns: "{{ app_ns }}"
               # Here, can be pass read-pod/write-pod, because both are using same volume
               a_label: "run=read-pod-{{ external_app_run_id }}"
               run_id: "{{ external_app_run_id }}"
@@ -91,7 +96,7 @@
           - name: (Pre) Verify that the write pod is running 
             include_tasks: "/utils/common/status_app_pod.yml"
             vars:
-              app_ns: "{{ a_ns }}"
+              app_ns: "{{ app_ns }}"
               app_label: "run=write-pod-{{ external_app_run_id }}"
               delay: 2
               retries: 90
@@ -99,7 +104,7 @@
           - name: (Pre) Verify that the read pod is running
             include_tasks: "/utils/common/status_app_pod.yml"
             vars:
-              app_ns: "{{ a_ns }}"
+              app_ns: "{{ app_ns }}"
               app_label: "app=read-pod-{{ external_app_run_id }}"
               delay: 2
               retries: 90
@@ -108,14 +113,14 @@
             include: "/utils/apps/busybox/busybox_data_persistence.yml"
             vars:
               status: "LOAD"
-              ns: "{{ a_ns }}"
-              pod_name: "{{ write_pod_name.stdout }}"
+              ns: "{{ app_ns }}"
+              pod_name: "{{ write_pod_name.stdout  }}"
     
           - name: (Pre) Read the test data from the "read-pod" pod
             include: "/utils/apps/busybox/busybox_data_persistence.yml"
             vars:
               status: 'VERIFY'
-              ns: "{{ a_ns }}"
+              ns: "{{ app_ns }}"
               label: "run=read-pod-{{ external_app_run_id }}"
               pod_name: "{{ read_pod_name.stdout }}"
 
@@ -166,7 +171,7 @@
         vars:
           a_ns: "{{ a_ns }}"
           a_label: "{{ a_label }}"
-          run_id: "{{ external_app_run_id }}"
+          run_id: "{{ user_app_run_id }}"
 
       - block:
           - name: (Post) Checking the read-pod and write-pod pod's volume is using NFS 
@@ -174,7 +179,7 @@
             vars:
               a_ns: "{{ a_ns }}"
               a_label: "run=write-pod-{{ run_id }}"
-              run_id: "{{ }}"
+              run_id: "{{ external_app_run_id }}"
 
           - name: (Post) Verify that the write pod is running 
             include_tasks: "/utils/common/status_app_pod.yml"
@@ -223,6 +228,7 @@
       ## Deprovisioning 
       - name: Deleting the test test_applications
         shell: kubectl delete -f test_applications.yml
+        when: "external_app_check == 'true'"
 
       rescue: 
         - set_fact: 

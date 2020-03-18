@@ -35,9 +35,9 @@ spec:
               fieldRef:
                 fieldPath: metadata.namespace
 
-          # Only GCP and AWS is supported
+          # GKE and AWS supported
           - name: CLOUD_PLATFORM
-            value: 'GCP'
+            value: 'GKE'
 
           # Enter the time duration in sec after the disk is dettached
           - name: TOTAL_CHAOS_DURATION
@@ -71,6 +71,16 @@ spec:
           # sample input is - "ns1:app=percona,ns2:name=nginx"
           - name: AUXILIARY_APPINFO
             value: ''
+          
+          - name: LIVENESS_APP_LABEL
+            value: ''
+
+          - name: LIVENESS_APP_NAMESPACE
+            value: ''
+
+          - name: DATA_PERSISTENCE
+            value: ''
+
           - name: OPENEBS_NAMESPACE
             value: 'openebs'
             
