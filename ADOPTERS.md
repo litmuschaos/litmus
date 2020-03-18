@@ -14,3 +14,4 @@ Please send PRs to add or remove organizations/users.
 | [Johnny Jacob](https://github.com/johnnyjacob) | Testing deployment designs for resiliency | Coming Soon! |
 | [Jayesh Kumar Tank](https://github.com/k8s-dev) | Create Cloud Native Validation Suite on [Demo Application](https://github.com/k8s-dev/microservices-demo)| [my story](https://github.com/litmuschaos/litmus/tree/master/adopters/Jayesh_Kumar_CloudNative_Validation.md)
 | [Bhaumik Shah](https://github.com/Bhaumik1802) | Use LitmusChaos for Kafka Resiliency on Dev/Staging| [my story](https://github.com/litmuschaos/litmus/tree/master/adopters/Bhaumik_Shah_Kafka_Chaos.md)
+| [Jayadeep KM](https://github.com/kmjayadeep) | Ensure reliability of microservices| [my story](https://github.com/litmuschaos/litmus/tree/master/adopters/jayadeep_microservices.md)
