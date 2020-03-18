@@ -3,7 +3,6 @@ Please send PRs to add or remove organizations/users.
 
 | Organization | Applications/Workloads | Success Story |
 | :---         | :---               | :---|
-
 |[Zebrium](https://www.zebrium.com?utm_source=github&utm_campaign=litmuschaos_repo)|[Zebrium K8s Demo](https://github.com/zebrium/zebrium-kubernetes-demo)|[our story](https://github.com/litmuschaos/litmus/blob/master/adopters/zebrium.md)|
 |[MayaData](https://mayadata.io)|[Director Online](https://director.mayadata.io/)|[our story](https://github.com/litmuschaos/litmus/tree/master/adopters/MayaData_DirectorOnline.md)|
 |[OpenEBS](https://openebs.io/)|[openebs-ci](https://openebs.ci/)|[our story](https://github.com/litmuschaos/litmus/tree/master/adopters/openebs.md)|
@@ -15,4 +14,4 @@ Please send PRs to add or remove organizations/users.
 | [Johnny Jacob](https://github.com/johnnyjacob) | Testing deployment designs for resiliency | Coming Soon! |
 | [Jayesh Kumar Tank](https://github.com/k8s-dev) | Create Cloud Native Validation Suite on [Demo Application](https://github.com/k8s-dev/microservices-demo)| [my story](https://github.com/litmuschaos/litmus/tree/master/adopters/Jayesh_Kumar_CloudNative_Validation.md)
 | [Bhaumik Shah](https://github.com/Bhaumik1802) | Use LitmusChaos for Kafka Resiliency on Dev/Staging| [my story](https://github.com/litmuschaos/litmus/tree/master/adopters/Bhaumik_Shah_Kafka_Chaos.md)
-| [Jayadeep KM](https://github.com/kmjayadeep) | Ensure reliability of microservices| [my story](https://github.com/litmuschaos/litmus/tree/master/adopters/jayadeep_microservices.md)
+| [Jayadeep KM](https://github.com/kmjayadeep) | Ensure reliability of microservices| [my story](https://github.com/litmuschaos/litmus/tree/master/adopters/jayadeep_microservices.md)(https://github.com/litmuschaos/litmus/tree/master/adopters/jayadeep_microservices.md)
