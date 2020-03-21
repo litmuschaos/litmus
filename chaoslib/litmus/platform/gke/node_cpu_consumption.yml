@@ -11,15 +11,19 @@
     - set_fact:
         node_name: "{{ no_name | json_query('resources[0].spec.nodeName') }}"
 
+    ## WHEN NUMBER OF CORES OF CPU FOR HOGGING IS NOT DEFINED 
+    ## IT WILL TAKE IT FROM NODE CAPACITY
+    - block:
     ## GETTING THE NODE CPU CAPACITY
-    - name: Getting the node cpu capacity
-      k8s_facts:
-        kind: Node
-        name: "{{ node_name }}"
-      register: c_limit
+        - name: Getting the node cpu capacity
+          k8s_facts:
+            kind: Node
+            name: "{{ node_name }}" 
+          register: c_limit
 
-    - set_fact:
-        cpu_limit: "{{ c_limit | json_query('resources[0].status.capacity.cpu') }}"
+        - set_fact:
+            cpu_limit: "{{ c_limit | json_query('resources[0].status.capacity.cpu') }}"
+      when: "node_cpu_core is not defined or node_cpu_core == ''"
 
     - block:
         - name: Generate a run id if not passed from the engine/experiment
@@ -43,6 +47,8 @@
       template:
         src:  /chaoslib/litmus/platform/gke/node-cpu-hog-job.j2
         dest: /chaoslib/litmus/platform/gke/node-cpu-hog-job.yml
+      vars:
+        cpu_limit: "{{ node_cpu_core }}"
       
     - name: Wait for the specified ramp time before injecting chaos
       wait_for: timeout="{{ ramp_time }}"
