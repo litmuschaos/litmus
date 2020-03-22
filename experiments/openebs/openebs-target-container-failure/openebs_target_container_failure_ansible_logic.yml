@@ -9,7 +9,8 @@
     c_experiment: openebs-target-container-failure
     c_force: "{{ lookup('env','FORCE') }}"
     c_interval: "{{ lookup('env','CHAOS_INTERVAL') }}"
-    chaos_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
+    c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
+    soak_time: "{{ lookup('env','SOAK_TIME') }}"
     cri: "{{ lookup('env','CONTAINER_RUNTIME') }}"
     data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
     deploy_type: "{{ lookup('env','DEPLOY_TYPE') }}"
@@ -41,6 +42,10 @@
         - include_vars:
             file: chaosutil.yml
 
+        - name: Getting the chaos namespace
+          set_fact:
+            c_ns: "{{ a_ns }}"
+
         - name: Record the chaos util path
           set_fact: 
             chaos_util_path: "{{ chaosutil }}"
@@ -62,7 +67,7 @@
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'SOT'
-            namespace: "{{ a_ns }}"
+            namespace: "{{ c_ns }}"
 
         ## DISPLAY APP INFORMATION 
  
@@ -91,7 +96,7 @@
           vars:
             stage: "PreChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
-            engine_ns: "{{ a_ns }}"
+            engine_ns: "{{ c_ns }}"
             message: "OpenEBS components and AUT is Running successfully"
           when: "c_engine is defined and c_engine != ''"
 
@@ -119,7 +124,7 @@
 
         - name: Wait (soak) for I/O on pools 
           wait_for:
-            timeout: "{{ chaos_duration }}"
+            timeout: "{{ soak_time }}"
 
         - name: Verify AUT liveness post fault-injection
           include_tasks: "/utils/common/status_app_pod.yml"
@@ -134,7 +139,7 @@
           vars:
             stage: "PostChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
-            engine_ns: "{{ a_ns }}"
+            engine_ns: "{{ c_ns }}"
             message: "OpenEBS components and AUT is Running successfully"
           when: "c_engine is defined and c_engine != ''"
 
@@ -183,4 +188,4 @@
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'
-            namespace: "{{ a_ns }}"
+            namespace: "{{ c_ns }}"

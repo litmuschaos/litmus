@@ -71,17 +71,26 @@
     - set_fact: 
         app_node: "{{ app_node.stdout }}"
 
+    - name: Getting host name from the node
+      shell: >
+        kubectl get node {{ app_node }} -o jsonpath='{.metadata.labels.kubernetes\.io/hostname}'
+      args:
+        executable: /bin/bash
+      register: hostname
+
     - name: Patch the engine UID and node name 
       template:
         src:  /chaoslib/litmus/disk_fill/disk_fill_job.j2
         dest: /chaoslib/litmus/disk_fill/disk_fill_job.yml
+      vars:
+        host_name: "{{ hostname.stdout }}"
         
     ## RECORD EVENT FOR CHAOS INJECTION
     - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
       vars:
         stage: "ChaosInject"
         exp_pod_name: "{{ chaos_pod_name }}"
-        engine_ns: "{{ a_ns }}"
+        engine_ns: "{{ c_ns }}"
         message: "Injecting {{ c_experiment }} chaos on {{ pod_name.stdout }}"
       when: "c_engine is defined and c_engine != ''"
 
