@@ -14,10 +14,12 @@ addons:
 
 before_install:
   - sleep 15
-  - sudo apt-get install -y
-  - sudo apt-get install -y curl
+  - sudo apt-get install wget curl apt-transport-https gnupg lsb-release
+  - wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+  - echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+  - sudo apt-get update
+  - sudo apt-get install trivy
 script:
   - make
 after_success:
   - if [[ $TRAVIS_PULL_REQUEST == 'false' ]]; then sonar-scanner; fi
-

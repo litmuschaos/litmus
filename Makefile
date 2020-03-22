@@ -12,7 +12,7 @@ IS_DOCKER_INSTALLED = $(shell which docker >> /dev/null 2>&1; echo $$?)
 PLAYBOOKS = $(shell find ./ -iname *.yml -printf '%P\n' | grep 'ansible_logic.yml')
 
 .PHONY: all
-all: all-tools ansible-syntax-check
+all: all-tools ansible-syntax-check trivy-security-check
 
 .PHONY: help
 help:
@@ -55,3 +55,11 @@ ansible-syntax-check:
 		rc_sum=$$((rc_sum+$$?)); \
 	done; \
 	exit $${rc_sum}
+
+.PHONY: trivy-security-check
+trivy-security-check:
+	@echo "------------------"
+	@echo "--> Trivy Security Check"
+	@echo "------------------"
+	trivy --exit-code 0 --severity HIGH --no-progress litmuschaos/ansible-runner:ci
+	trivy --exit-code 1 --severity CRITICAL --no-progress litmuschaos/ansible-runner:ci
