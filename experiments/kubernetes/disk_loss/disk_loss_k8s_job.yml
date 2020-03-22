@@ -38,9 +38,9 @@ spec:
               fieldRef:
                 fieldPath: metadata.namespace
 
-          # Only GCP is supported
+          # GKE and AWS supported
           - name: CLOUD_PLATFORM
-            value: ''
+            value: 'GKE'
 
           # Enter the time duration after the disk is dettached
           - name: TOTAL_CHAOS_DURATION

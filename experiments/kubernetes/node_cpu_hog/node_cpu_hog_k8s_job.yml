@@ -32,7 +32,8 @@ spec:
           - name: APP_KIND
             value: ''
           
-          ## PLATFORM SUPPORTED 
+          ## It supports GKE and EKS platform
+          ## GKE is the default Platform
           - name: PLATFORM
             value: 'GKE'
           
