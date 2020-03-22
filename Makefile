@@ -12,7 +12,7 @@ IS_DOCKER_INSTALLED = $(shell which docker >> /dev/null 2>&1; echo $$?)
 PLAYBOOKS = $(shell find ./ -iname *.yml -printf '%P\n' | grep 'ansible_logic.yml')
 
 .PHONY: all
-all: all-tools ansible-syntax-check
+all: all-tools ansible-syntax-check ansible-lint-check
 
 .PHONY: help
 help:
@@ -55,3 +55,12 @@ ansible-syntax-check:
 		rc_sum=$$((rc_sum+$$?)); \
 	done; \
 	exit $${rc_sum}
+
+.PHONY: ansible-lint-check
+ansible-lint-check:
+	@echo "------------------"
+	@echo "--> Check ansible lint"
+	@echo "------------------"
+	for playbook in $(PLAYBOOKS); do \
+		ansible-lint $${playbook} -R ansiblelint/rules -vv \
+    done
