@@ -23,6 +23,12 @@
 
   when: "ramp_time is defined and ramp_time != ''" 
 
+# This type variable is used to decide whether to check application status after each iteration 
+# kill_random_pod will only check the application status if type is set to generic else skip
+- name: "[Prepare]: Setting type to generic"
+  set_fact:
+    type: "generic" 
+
 - name: "[Prepare]: Including the litmus LIB for random pod deletion"
   include: kill_random_pod.yml
   with_sequence: start=1 end={{ c_iterations }}

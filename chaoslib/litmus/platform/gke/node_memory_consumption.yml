@@ -15,7 +15,7 @@
         
     - block:
         - name: Generate a run id if not passed from the engine/experiment
-          shell: echo $(mktemp) | cut -d '.' -f 2 
+          shell: echo $(mktemp) | cut -d '.' -f 2 | cut -c -6
           register: rand_string   
 
         - set_fact:

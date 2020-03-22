@@ -91,3 +91,4 @@
   vars:
     delay: 2
     retries: 90   
+  when: "type is defined and type != ''"

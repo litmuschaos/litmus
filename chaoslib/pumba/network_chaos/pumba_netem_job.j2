@@ -2,15 +2,20 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: pumba-netem-{{ run_id }}
-  labels: 
+  labels:
+    app: pumba
+{% if chaos_uid is defined and chaos_uid != '' %}  
     chaosUID: {{ chaos_uid }}
+{% endif %}
 spec:
   template:
     metadata:
       labels:
         app: pumba
-        chaosUID: {{ chaos_uid }}
         com.gaiaadm.pumba: "true"
+{% if chaos_uid is defined and chaos_uid != '' %}
+        chaosUID: {{ chaos_uid }}
+{% endif %}
     spec:
       nodeSelector:
         kubernetes.io/hostname: {{ app_node }}  
