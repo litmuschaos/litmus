@@ -27,6 +27,9 @@ spec:
         name: pumba
         args:
           - pumba
+          - --random
+          - --interval
+          - {{ c_interval }}s
           - kill 
           - --signal
           - SIGKILL
