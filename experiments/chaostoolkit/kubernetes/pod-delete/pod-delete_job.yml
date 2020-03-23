@@ -43,6 +43,14 @@ spec:
           ## default: litmus. Supported values: litmus, powerfulseal, chaostoolkit
           - name: LIB
             value: ''
+          
+          - name: REPORT
+            value: 'false'
+
+          # Variable to set for report upload endpoint
+          - name: REPORT_ENDPOINT
+            value: 'none'
+
 
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:
