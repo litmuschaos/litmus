@@ -1,0 +1,22 @@
+## CHECKING FOR THE DISTRIBUTION OF THE LOAD ON THE RING
+- name: checking for the distribution of the load on the ring
+  shell: >
+    kubectl exec -it --namespace {{ app_ns }} $(kubectl get pods --namespace {{ app_ns }} -l {{ app_label }} -o jsonpath='{.items[0].metadata.name}') nodetool status | awk '{print $6}'
+  args:
+    executable: /bin/bash
+  register: node_tool_status
+
+- name: Converting nodetool status to a list
+  set_fact:
+    node_tool_status_list:  "{{ node_tool_status.stdout_lines|list }}"
+
+- name: Getting the replica count of the application
+  shell: >
+    kubectl get statefulset -l {{ app_label }} -n {{ app_ns }} --no-headers -o custom-columns=:status.replicas
+  args:
+    executable: /bin/bash
+  register: replica_count
+
+- name: Check for the distribution of load on all replicas
+  include: check_load_distribution.yml
+  with_sequence: start=1 end={{ replica_count.stdout }}

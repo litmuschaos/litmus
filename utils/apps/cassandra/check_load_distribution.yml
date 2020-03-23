@@ -1,0 +1,16 @@
+- name: Getting the index of the application replica
+  set_fact:
+    replica_index: "{{ 4 + item|int }}"
+
+## Checking for the load distribution
+- name: "Getting the load distribution value from on the replica"
+  set_fact: 
+    replica_load: "{{ node_tool_status_list[replica_index|int] }}"
+  
+- name: Checking for the load distribution on the replica
+  debug:
+    msg: "Load distribution: {{ replica_load }}"
+
+- fail:
+    msg: "Load is not properly distributed"
+  when: "replica_load == '' or replica_load == '0%'"
