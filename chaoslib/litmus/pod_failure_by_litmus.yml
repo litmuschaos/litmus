@@ -8,7 +8,7 @@
     c_interval: "{{ (c_duration|int / c_iterations|int)|int }}"
   when: c_interval is not defined
 
-- name: "[Prepare]: Set the min chaos count to 1 if interval > duration"
+- name: "[Prepare]: Setting the min chaos count to one"
   set_fact: 
     c_iterations: 1
   when: "c_iterations == '0'"
@@ -18,7 +18,7 @@
     - debug:
         msg: "***** Waiting for the ramp interval of {{ ramp_time }}s *****"
 
-    - name: "[Ramp]: Wait for the specified ramp time before injecting chaos"
+    - name: "[Ramp]: Waiting for the specified ramp time before injecting chaos"
       wait_for: timeout="{{ ramp_time }}"
 
   when: "ramp_time is defined and ramp_time != ''" 
@@ -37,7 +37,7 @@
     - debug:
         msg: "***** Waiting for the ramp interval of {{ ramp_time }}s *****"
 
-    - name: "[Ramp]: Wait for the specified ramp time after injecting chaos"
+    - name: "[Ramp]: Waiting for the specified ramp time after injecting chaos"
       wait_for: timeout="{{ ramp_time }}"
 
   when: "ramp_time is defined and ramp_time != ''" 

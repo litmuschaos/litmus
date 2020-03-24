@@ -1,6 +1,6 @@
 - block:
 
-    - name: "[Prepare]: Fetching list of all pods with {{ app_label }} label from {{ app_ns }} namespace"
+    - name: "[Prepare]: Getting list of all pods with {{ app_label }} label from {{ app_ns }} namespace"
       k8s_facts:
         kind: Pod
         namespace: "{{ app_ns }}"
@@ -10,7 +10,7 @@
           - status.phase=Running
       register: pod_list
 
-    - name: "[Prepare]: Creating a empty list to storing pod for deletion"
+    - name: "[Prepare]: Trying to the target application pod.."
       set_fact:
         target_pod_list: []
 
@@ -20,7 +20,7 @@
           set_fact:
             app_pod_random: "{{ pod_list.resources | random | json_query('metadata.name') }}"
 
-        - name: "[Prepare]: Adding {{ app_pod_random }} pod in list for deletion"
+        - name: "[Prepare]: Adding {{ app_pod_random }} pod as a chaos candidate"
           set_fact: 
             target_pod_list: "{{ target_pod_list + [app_pod_random] }}"
   
@@ -31,7 +31,7 @@
 
     - block: 
 
-        - name: "[Prepare]: Adding mutiple pods in list for deletion"
+        - name: "[Prepare]: Adding mutiple pods as chaos candidates"
           set_fact:
             target_pod_list: "{{ target_pod_list + [resource | json_query('metadata.name')] }}"
           loop: "{{ pod_list.resources }}"
@@ -66,7 +66,7 @@
 - debug:
     msg: "Killing {{ app_pod }} pod"
 
-- name: "[Inject]: Forcefully killing the application pod"
+- name: "[Inject]: Killing the application pod forcefullly"
   shell: |
     kubectl delete pod -n {{ app_ns }} --force --grace-period=0 --wait=false {{ app_pod }}
   args:
@@ -86,7 +86,7 @@
   pause:
     seconds: "{{ c_interval }}"
 
-- name: "[Status]: Verify that the application replica has been recreated"
+- name: "[Status]: Verification for the recreation of application pod"
   include_tasks: "/utils/common/status_app_pod.yml"
   vars:
     delay: 2

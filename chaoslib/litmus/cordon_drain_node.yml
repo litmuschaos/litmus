@@ -28,6 +28,28 @@
       wait_for: timeout="{{ ramp_time }}"
       when: "ramp_time is defined and ramp_time != ''" 
 
+    - name: Verify AUT liveness after reschedule
+      include_tasks: "/utils/common/status_app_pod.yml"
+      vars:
+        app_ns: "{{ a_ns }}"
+        app_label: "{{ a_label }}" 
+        delay: 2
+        retries: 90
+
+    # Auxiliary application health check status
+    - block:
+
+      - include: /utils/common/status_app_pod.yml
+        vars:
+          app_ns: "{{ item.split(':')[0] }}"
+          app_label: "{{ item.split(':')[1] }}"
+          delay: 2
+          retries: 90
+        with_items:
+          - "{{ auxiliary_appinfo_list }}" 
+          
+      when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
+
     # Get the rescheduled application pod name
     - name: Get the rescheduled application pod name
       shell: >
@@ -51,28 +73,6 @@
     - name: Wait for chaos duration {{ c_duration }}s 
       wait_for:
         timeout: "{{ c_duration|int }}"
-
-    - name: Verify AUT liveness post fault-injection
-      include_tasks: "/utils/common/status_app_pod.yml"
-      vars:
-        app_ns: "{{ a_ns }}"
-        app_label: "{{ a_label }}" 
-        delay: 2
-        retries: 90
-
-    # Auxiliary application health check status
-    - block:
-
-      - include: /utils/common/status_app_pod.yml
-        vars:
-          app_ns: "{{ item.split(':')[0] }}"
-          app_label: "{{ item.split(':')[1] }}"
-          delay: 2
-          retries: 90
-        with_items:
-          - "{{ auxiliary_appinfo_list }}" 
-          
-      when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
     - name: Uncordon the application node
       shell: >

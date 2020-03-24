@@ -23,7 +23,7 @@
 
         - include: pod_delete_ansible_prerequisites.yml
       
-        - name: "[PreReq]: Including the chaos util for {{ c_experiment }} experiment"
+        - name: "[PreReq]: Including the chaos util for the {{ c_experiment }} experiment"
           include_vars:
             file: chaosutil.yml
 
@@ -34,14 +34,14 @@
           when: "c_engine is defined and c_engine != ''"
 
         ## RECORD START-OF-EXPERIMENT IN LITMUSCHAOS RESULT CR
-        - name: "[PreReq]: Updating the chaos result of {{ c_experiment }} experiment"
+        - name: "[PreReq]: Updating the chaos result of {{ c_experiment }} experiment (SOT)"
           include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'SOT'
             namespace: "{{ a_ns }}"
 
         ## DISPLAY APP INFORMATION 
-        - name: Display the app information passed via the test job
+        - name: "[Info]: Display the application information passed via the test job"
           debug: 
             msg: 
               - "The application info is as follows:"
@@ -115,7 +115,7 @@
         - include_tasks: /utils/runtime/getting_failure_step.yml  
 
         ## RECORD END-OF-TEST IN LITMUSCHAOS RESULT CR
-        - name: "[The End]: Updating the chaos result of {{ c_experiment }} experiment"
+        - name: "[The End]: Updating the chaos result of {{ c_experiment }} experiment (EOT)"
           include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'
