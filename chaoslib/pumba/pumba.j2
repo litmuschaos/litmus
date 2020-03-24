@@ -19,7 +19,7 @@ spec:
         com.gaiaadm.pumba: "true"
     spec:
       nodeSelector:
-        kubernetes.io/hostname: {{ app_node }}
+        kubernetes.io/hostname: {{ host_name }}
       restartPolicy: Never
       containers:
       - image: {{ pumba_image }}

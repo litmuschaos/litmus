@@ -39,14 +39,21 @@
       wait_for: timeout="{{ ramp_time }}"
       when: "ramp_time is defined and ramp_time != ''"
 
+    - name: Getting host name from the node
+      shell: >
+        kubectl get node {{ app_node }} -o jsonpath='{.metadata.labels.kubernetes\.io/hostname}'
+      args:
+        executable: /bin/bash
+      register: hostname
+
     - name: Patch the chaoslib image
       template:
         src:  /chaoslib/litmus/container_kill/containerd_chaos/containerd.j2
         dest: /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-job.yml
       vars:
         containerd_image: "{{ lib_image }}"
-        app_node: "{{ app_node }}"
-        
+        host_name: "{{ hostname.stdout }}"
+    
     - name: Setup containerd chaos infrastructure.
       shell: >
         kubectl apply -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-job.yml
