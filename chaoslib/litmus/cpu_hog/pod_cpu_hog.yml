@@ -32,6 +32,13 @@
     - set_fact: 
         app_node: "{{ app_node.stdout }}"
 
+    - name: Getting host name from the node
+      shell: >
+        kubectl get node {{ app_node }} -o jsonpath='{.metadata.labels.kubernetes\.io/hostname}'
+      args:
+        executable: /bin/bash
+      register: hostname
+
     - block: 
         - name: Generate a run id if not passed from the engine/experiment
           shell: echo $(mktemp) | cut -d '.' -f 2 | cut -c -6
@@ -79,6 +86,7 @@
         dest: /chaoslib/litmus/cpu_hog/app_cpu_stress.yml
       vars:
         cpu_stress_image: "{{ lib_image }}"
+        host_name: "{{ hostname.stdout }}"
 
     ## RECORD EVENT FOR CHAOS INJECTION
     - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
