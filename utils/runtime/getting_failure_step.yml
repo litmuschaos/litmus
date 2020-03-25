@@ -13,7 +13,7 @@
     ## Getting failure step from experiment-pod
     - name: Getting failure step from experiment pod
       shell: >
-        kubectl logs {{ chaos_pod_name }} -n {{ a_ns }} | grep "FAILED!" -B {{ offset }} | head -1 | awk -F "Step:" '{print $2}'
+        kubectl logs {{ chaos_pod_name }} -n {{ c_ns }} | grep "FAILED!" -B {{ offset }} | head -1 | awk -F "Step:" '{print $2}'
       register: fail_step
       args: 
         executable: /bin/bash
@@ -31,7 +31,7 @@
       vars:
         stage: "Summary"
         exp_pod_name: "{{ chaos_pod_name }}"
-        engine_ns: "{{ a_ns }}"
+        engine_ns: "{{ c_ns }}"
         message: "{{ c_experiment }} Experiment Failed!"
       when: "c_engine is defined and c_engine != ''"
 
@@ -49,7 +49,7 @@
       vars:
         stage: "Summary"
         exp_pod_name: "{{ chaos_pod_name }}"
-        engine_ns: "{{ a_ns }}"
+        engine_ns: "{{ c_ns }}"
         message: "{{ c_experiment }} Experiment Passed!"
       when: "c_engine is defined and c_engine != ''"
 

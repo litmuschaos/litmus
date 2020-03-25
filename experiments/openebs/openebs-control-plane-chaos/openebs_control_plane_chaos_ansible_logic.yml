@@ -22,6 +22,10 @@
         - include_vars:
             file: chaosutil.yml
 
+        - name: Getting the chaos namespace
+          set_fact:
+            c_ns: "{{ openebs_ns }}"
+
         - name: Include openebs control plane components
           include_vars:
             file: /experiments/openebs/openebs_control_plane_components.yml
@@ -37,22 +41,20 @@
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'SOT'
-            namespace: "{{ openebs_ns }}"
+            namespace: "{{ c_ns }}"
 
         ## RECORD EVENT FOR PRE-CHAOS CHECK
         - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
           vars:
             stage: "PreChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
-            engine_ns: "{{ openebs_ns }}"
+            engine_ns: "{{ c_ns }}"
             message: "OpenEBS control plane components are Running successfully"
           when: "c_engine is defined and c_engine != ''"
 
         ## INJECT CHAOS ON CONTROL PLANE COMPONENTS
         - name: Including main components
           include_tasks: openebs_control_plane_chaos_internal_tasks.yml
-          vars:
-            app_ns: "{{ openebs_ns }}"
           loop: "{{ openebs.components }}"
 
         ## RECORD EVENT FOR POST-CHAOS CHECK
@@ -60,7 +62,7 @@
           vars:
             stage: "PostChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
-            engine_ns: "{{ openebs_ns }}"
+            engine_ns: "{{ c_ns }}"
             message: "OpenEBS control plane components are Running successfully"
           when: "c_engine is defined and c_engine != ''"
 
@@ -75,11 +77,9 @@
 
         ## Getting failure step from experiment-pod
         - include_tasks: /utils/runtime/getting_failure_step.yml
-          vars:
-            a_ns: "{{ openebs_ns }}"
           
         ## RECORD END-OF-TEST IN LITMUSCHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'
-            namespace: "{{ openebs_ns }}"
+            namespace: "{{ c_ns }}"

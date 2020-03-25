@@ -43,9 +43,29 @@ def generate_chart(chart_parent_path, chart_config, litmus_env):
     with open(chart_filename, "w+") as f:
         f.write(output_from_parsed_template)
 
+# generate_rbac creates the rbac for the experiment
+def generate_rbac(chart_parent_path, chart_config, litmus_env):
+    rbac_filename = chart_parent_path + '/' + 'rbac.yaml'
+
+    # Load Jinja2 template
+    template = litmus_env.get_template('./templates/experiment_rbac.tmpl')
+    output_from_parsed_template = template.render(chart_config)
+    with open(rbac_filename, "w+") as f:
+        f.write(output_from_parsed_template)
+
+# generate_engine creates the chaos engine for the experiment
+def generate_engine(chart_parent_path, chart_config, litmus_env):
+    engine_filename = chart_parent_path + '/' + 'engine.yaml'
+
+    # Load Jinja2 template
+    template = litmus_env.get_template('./templates/experiment_engine.tmpl')
+    output_from_parsed_template = template.render(chart_config)
+    with open(engine_filename, "w+") as f:
+        f.write(output_from_parsed_template)
+
 # generate_job creates the experiment job manifest
 def generate_job(job_parent_path, job_name, job_config, litmus_env):
-    job_filename = job_parent_path + '/' + job_name + '.' + 'k8s_job.yml'
+    job_filename = job_parent_path + '/' + job_name + '_' + 'k8s_job.yml'
 
     # Load Jinja2 template
     template = litmus_env.get_template('./templates/experiment_k8s_job.tmpl')
@@ -55,7 +75,7 @@ def generate_job(job_parent_path, job_name, job_config, litmus_env):
 
 # generate_ansible_logic creates the ansible_logic manifest
 def generate_ansible_logic(ansible_logic_parent_path, ansible_logic_name, ansible_logic_config, litmus_env):
-    ansible_logic_filename = ansible_logic_parent_path + '/' + ansible_logic_name + '.' + 'ansible_logic.yml'
+    ansible_logic_filename = ansible_logic_parent_path + '/' + ansible_logic_name + '_' + 'ansible_logic.yml'
 
     # Load Jinja2 template
     template = litmus_env.get_template('./templates/experiment_ansible_logic.tmpl')
@@ -65,7 +85,7 @@ def generate_ansible_logic(ansible_logic_parent_path, ansible_logic_name, ansibl
 
 # generate_chaos_prerequisites creates the chaos_prerequisites manifest
 def generate_chaos_prerequisites(chaos_prerequisites_parent_path, chaos_prerequisites_name, chaos_prerequisites_config, litmus_env):
-    chaos_prerequisites_filename = chaos_prerequisites_parent_path + '/' + chaos_prerequisites_name + '.' + 'ansible_prerequisites.yml'
+    chaos_prerequisites_filename = chaos_prerequisites_parent_path + '/' + chaos_prerequisites_name + '_' + 'ansible_prerequisites.yml'
 
     # Load Jinja2 template
     template = litmus_env.get_template('./templates/experiment_ansible_prerequisites.tmpl')
@@ -141,6 +161,12 @@ def main():
 
         # generate experiment-custom-resource
         generate_chart(experiment_dir, config, env)
+
+        # generate experiment specific rbac
+        generate_rbac(experiment_dir, config, env)
+
+        # generate experiment specific chaos engine
+        generate_engine(experiment_dir, config, env)
 
         # generate experiment job
         generate_job(experiment_dir, entity_name, config, env)
