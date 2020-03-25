@@ -20,6 +20,10 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install trivy
 script:
-  - make
+  - make deps
+  - make build
+  - make syntax-checks
+  - make security-checks
+  - make push
 after_success:
   - if [[ $TRAVIS_PULL_REQUEST == 'false' ]]; then sonar-scanner; fi
