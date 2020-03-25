@@ -27,9 +27,16 @@
       vars:
         stage: "ChaosInject"
         exp_pod_name: "{{ chaos_pod_name }}"
-        engine_ns: "{{ a_ns }}"
+        engine_ns: "{{ c_ns }}"
         message: "Injecting {{ c_experiment }} chaos on {{ node_name }} node"
       when: "c_engine is defined and c_engine != ''"
+
+    - name: Getting host name from the node
+      shell: >
+        kubectl get node {{ app_node }} -o jsonpath='{.metadata.labels.kubernetes\.io/hostname}'
+      args:
+        executable: /bin/bash
+      register: hostname
         
     ## PATCH THE ENGINE UID
     - name: Patch the engine uid
@@ -39,6 +46,7 @@
       vars:
         stress_time: "{{ c_duration }}s"
         total_memory_percentage: "{{ memory_percentage }}%"
+        host_name: "{{ hostname.stdout }}"
 
     ## WAIT FOR THE SPECIFIED RAMP TIME
     - name: Wait for the specified ramp time before injecting chaos

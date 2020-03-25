@@ -32,6 +32,10 @@
         - include_tasks: /utils/common/application_liveness_check.yml
           when: liveness_label != ''
 
+        - name: Getting the chaos namespace
+          set_fact:
+            c_ns: "{{ a_ns }}"
+
         - name: Identify the data consistency util to be invoked
           template:
             src: data_persistence.j2
@@ -59,7 +63,7 @@
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'SOT'
-            namespace: "{{ a_ns }}"
+            namespace: "{{ c_ns }}"
 
         ## DISPLAY APP INFORMATION 
  
@@ -94,7 +98,7 @@
           vars:
             stage: "PreChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
-            engine_ns: "{{ a_ns }}"
+            engine_ns: "{{ c_ns }}"
             message: "OpenEBS components and AUT are Running successfully"
           when: "c_engine is defined and c_engine != ''"
 
@@ -126,7 +130,7 @@
           vars:
             stage: "PostChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
-            engine_ns: "{{ a_ns }}"
+            engine_ns: "{{ c_ns }}"
             message: "OpenEBS components and AUT are Running successfully"
           when: "c_engine is defined and c_engine != ''"
  
@@ -176,4 +180,4 @@
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'
-            namespace: "{{ a_ns }}"
+            namespace: "{{ c_ns }}"

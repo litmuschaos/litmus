@@ -62,6 +62,13 @@
         ## there is no shell available by default
         wait_for: timeout="{{ ramp_time }}"
         when: "ramp_time is defined and ramp_time != ''"
+
+      - name: Getting host name from the node
+        shell: >
+          kubectl get node {{ app_node }} -o jsonpath='{.metadata.labels.kubernetes\.io/hostname}'
+        args:
+          executable: /bin/bash
+        register: hostname
       
       - name: Patch the chaoslib image
         template:
@@ -69,13 +76,14 @@
           dest: /chaoslib/pumba/network_chaos/pumba_kube.yml
         vars:
           pumba_image: "{{ lib_image }}"
+          host_name: "{{ hostname.stdout }}"
 
       ## RECORD EVENT FOR CHAOS INJECTION
       - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
         vars:
           stage: "ChaosInject"
           exp_pod_name: "{{ chaos_pod_name }}"
-          engine_ns: "{{ a_ns }}"
+          engine_ns: "{{ c_ns }}"
           message: "Injecting {{ c_experiment }} chaos on {{ app_pod }} pod"
         when: "c_engine is defined and c_engine != ''"
   

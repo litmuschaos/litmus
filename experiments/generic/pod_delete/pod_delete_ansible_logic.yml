@@ -27,6 +27,10 @@
           include_vars:
             file: chaosutil.yml
 
+        - name: Getting the chaos namespace
+          set_fact:
+            c_ns: "{{ a_ns }}"
+
         ## GENERATE EXP RESULT NAME
         - name: "[PreReq]: Constructing the chaos result name"
           set_fact:
@@ -38,7 +42,7 @@
           include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'SOT'
-            namespace: "{{ a_ns }}"
+            namespace: "{{ c_ns }}"
 
         ## DISPLAY APP INFORMATION 
         - name: "[Info]: Display the application information passed via the test job"
@@ -48,7 +52,6 @@
               - "Namespace    : {{ a_ns }}"
               - "Label        : {{ a_label }}"
               - "Ramp Time    : {{ ramp_time }}"  
-
      
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
         - name: "[Status]: Verify that the AUT (Application Under Test) is running (pre-chaos)"
@@ -65,7 +68,7 @@
           vars:
             stage: "PreChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
-            engine_ns: "{{ a_ns }}"
+            engine_ns: "{{ c_ns }}"
             message: "AUT is Running successfully"
           when: "c_engine is defined and c_engine != ''"
             
@@ -90,7 +93,7 @@
           vars:
             stage: "PostChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
-            engine_ns: "{{ a_ns }}"
+            engine_ns: "{{ c_ns }}"
             message: "AUT is Running successfully"
           when: "c_engine is defined and c_engine != ''"
 
@@ -119,4 +122,4 @@
           include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'
-            namespace: "{{ a_ns }}"
+            namespace: "{{ c_ns }}"

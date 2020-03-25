@@ -39,15 +39,23 @@
       vars:
         stage: "ChaosInject"
         exp_pod_name: "{{ chaos_pod_name }}"
-        engine_ns: "{{ a_ns }}"
+        engine_ns: "{{ c_ns }}"
         message: "Injecting {{ c_experiment }} chaos on {{ node_name }} node"
-      when: "c_engine is defined and c_engine != ''"        
+      when: "c_engine is defined and c_engine != ''"
+      
+    - name: Getting host name from the node
+      shell: >
+        kubectl get node {{ app_node }} -o jsonpath='{.metadata.labels.kubernetes\.io/hostname}'
+      args:
+        executable: /bin/bash
+      register: hostname
 
     - name: Patch the engine uid
       template:
         src:  /chaoslib/litmus/platform/gke/node-cpu-hog-job.j2
         dest: /chaoslib/litmus/platform/gke/node-cpu-hog-job.yml
       vars:
+        host_name: "{{ hostname.stdout }}"
         cpu_limit: "{{ node_cpu_core }}"
       
     - name: Wait for the specified ramp time before injecting chaos
