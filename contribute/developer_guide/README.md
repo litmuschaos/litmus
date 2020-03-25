@@ -155,7 +155,7 @@ The experiment created using the above steps, can be tested in the following man
   business logic.
 
 - (Optional) Once the experiment has been validated using the above step, it can also be tested against the standard chaos 
-  workflow using the `experimnet.yaml`. This involves: 
+  workflow using the `experiment.yaml`. This involves: 
 
   - Launching the Chaos-Operator
   - Creating the ChaosExperiment CR on the cluster (use the same custom dev image used in the above step) 
