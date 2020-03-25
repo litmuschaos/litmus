@@ -59,13 +59,20 @@
       wait_for: timeout="{{ ramp_time }}"
       when: "ramp_time is defined and ramp_time != ''"
 
+    - name: Getting host name from the node
+      shell: >
+        kubectl get node {{ app_node }} -o jsonpath='{.metadata.labels.kubernetes\.io/hostname}'
+      args:
+        executable: /bin/bash
+      register: hostname
+
     - name: Patch the chaoslib image
       template:
         src:  /chaoslib/pumba/pumba.j2
         dest: /chaoslib/pumba/pumba_kube.yml
       vars:
         pumba_image: "{{ lib_image }}"
-        app_node: "{{ app_node }}"
+        host_name: "{{ hostname.stdout }}"
         app_pod: "{{ app_pod }}"
         app_container: "{{ a_container }}"
 
@@ -93,32 +100,10 @@
       args:
         executable: /bin/bash
       register: pumba_job_result
-      
-    - name: Wait until the pumba sig-kill job is completed
-      shell: >
-        kubectl get pods -l job-name=pumba-sig-kill-{{ run_id }} --no-headers -n {{ namespace }}
-        --no-headers -o custom-columns=:status.phase
-      args: 
-        executable: /bin/bash
-      register: result
-      until: "result.stdout == 'Succeeded'"
-      delay: 2
-      retries: 90
 
-    - name: Wait for the specified ramp time after injecting chaos
-      wait_for: timeout="{{ ramp_time }}"
-      when: "ramp_time is defined and ramp_time != ''"
-
-    - name: Verify restartCount
-      shell: >
-        kubectl get pod {{ app_pod }} -n {{ namespace }}
-        -o=jsonpath='{.status.containerStatuses[?(@.name=="{{ a_container }}")].restartCount}'
-      args:
-        executable: /bin/bash
-      register: restartCnt
-      until: "restartCnt.stdout|int > restartCnt_prev.stdout|int"
-      delay: 2
-      retries: 90
+    - name: Wait till the total chaos duration
+      wait_for: timeout="{{ c_duration }}"
+      when: "c_duration is defined and c_duration != ''"
 
     - name: Tear down pumba infrastructure
       shell: >
@@ -133,6 +118,21 @@
         executable: /bin/bash
       register: result
       until: "'No resources found' in result.stderr"
+      delay: 2
+      retries: 90
+      
+    - name: Wait for the specified ramp time after injecting chaos
+      wait_for: timeout="{{ ramp_time }}"
+      when: "ramp_time is defined and ramp_time != ''"
+
+    - name: Verify restartCount
+      shell: >
+        kubectl get pod {{ app_pod }} -n {{ namespace }}
+        -o=jsonpath='{.status.containerStatuses[?(@.name=="{{ a_container }}")].restartCount}'
+      args:
+        executable: /bin/bash
+      register: restartCnt
+      until: "restartCnt.stdout|int > restartCnt_prev.stdout|int"
       delay: 2
       retries: 90
 
