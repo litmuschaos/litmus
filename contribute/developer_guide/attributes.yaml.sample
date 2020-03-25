@@ -1,15 +1,15 @@
 ---
-name: kill-hello-replicas
+name: pod-delete
 version: 0.1.0
-category: hello-world
-repository: https://github.com/litmuschaos/demo-app/tree/master/sample_apps/hellonode
+category: sample-category
+repository: https://github.com/litmuschaos/litmus/tree/master/sample-category/pod-delete
 community: https://kubernetes.slack.com/messages/CNXNB0ZTN
-description: "kills hello-world pods in a random manner"
+description: "kills nginx pods in a random manner"
 keywords:
   - pods
   - kubernetes
-  - hello-world
-  - nodejs
+  - sample-category
+  - nginx
 scope: "Namespaced"
 permissions:
   - apiGroups:
