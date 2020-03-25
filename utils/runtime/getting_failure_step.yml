@@ -1,33 +1,34 @@
 - block:
 
-    - name: Getting offset if the ansible verbosity is less than or equals to one
+    - name: "[Failure-Detection]: Recording the offset, on the basis of verbosity"
       set_fact: 
         offset: 1
       when: ansible_verbosity <= 1
 
-    - name: Getting offset if the ansible verbosity is greater than one
+    - name: "[Failure-Detection]: Recording the offset, on the basis of verbosity"
       set_fact:
         offset: 2
       when: ansible_verbosity > 1
 
     ## Getting failure step from experiment-pod
-    - name: Getting failure step from experiment pod
+    - name: "[Failure-Detection]: Getting name of failure step from experiment pod"
       shell: >
         kubectl logs {{ chaos_pod_name }} -n {{ c_ns }} | grep "FAILED!" -B {{ offset }} | head -1 | awk -F "Step:" '{print $2}'
       register: fail_step
       args: 
         executable: /bin/bash
 
-    - name: Record the name of failed step
+    - name: "[Failure-Detection]: Recording the name of failed step"
       set_fact:
         failStep: "{{ fail_step.stdout }}"
 
-    - name: Print the name of failed step
+    - name: "[Failure-Detection]: Printing the name of failed step"
       debug:
         msg: "failStep: {{ failStep }}"
 
     ## RECORD Summary event
-    - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+    - name: "[Event]: Generating an Event for Summary"
+      include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
       vars:
         stage: "Summary"
         exp_pod_name: "{{ chaos_pod_name }}"
@@ -40,12 +41,13 @@
 
 - block:
 
-    - name: Record the name of failed step
+    - name: "[Failure-Detection]: Recording the name of failed step"
       set_fact:
         failStep: "N/A"
 
     ## RECORD Summary event
-    - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+    - name: "[Event]: Generating an Event for Summary"
+      include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
       vars:
         stage: "Summary"
         exp_pod_name: "{{ chaos_pod_name }}"
