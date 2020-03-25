@@ -32,12 +32,6 @@ spec:
           - name: APP_NAMESPACE
             value: ''
 
-          # This is a chaos namespace which will create all infra chaos resources in that namespace
-          - name: CHAOS_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
-
           # GKE and AWS supported
           - name: CLOUD_PLATFORM
             value: 'GKE'
