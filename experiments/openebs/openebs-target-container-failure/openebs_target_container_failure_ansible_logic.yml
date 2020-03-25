@@ -9,7 +9,8 @@
     c_experiment: openebs-target-container-failure
     c_force: "{{ lookup('env','FORCE') }}"
     c_interval: "{{ lookup('env','CHAOS_INTERVAL') }}"
-    chaos_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
+    c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
+    soak_time: "{{ lookup('env','SOAK_TIME') }}"
     cri: "{{ lookup('env','CONTAINER_RUNTIME') }}"
     data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
     deploy_type: "{{ lookup('env','DEPLOY_TYPE') }}"
@@ -123,7 +124,7 @@
 
         - name: Wait (soak) for I/O on pools 
           wait_for:
-            timeout: "{{ chaos_duration }}"
+            timeout: "{{ soak_time }}"
 
         - name: Verify AUT liveness post fault-injection
           include_tasks: "/utils/common/status_app_pod.yml"

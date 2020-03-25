@@ -17,7 +17,7 @@ spec:
 {% endif %}
     spec:
       nodeSelector:
-        kubernetes.io/hostname: {{ app_node }}
+        kubernetes.io/hostname: {{ host_name }}
       restartPolicy: Never
       containers:
       - image: alpine

@@ -17,8 +17,7 @@ spec:
 {% endif %}        
     spec:
       nodeSelector:
-        ## mandatory: provide name of host where target container resides
-        kubernetes.io/hostname: {{ app_node }}
+        kubernetes.io/hostname: {{ host_name }}
       restartPolicy: Never
       containers:
       - image: {{ cpu_stress_image }} 
