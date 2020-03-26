@@ -73,7 +73,7 @@ security-checks: trivy-security-check
 
 trivy-security-check:
 	@echo "------------------"
-	@echo "--> Trivy Security Check"
+	@echo "--> Trivy Security Check "
 	@echo "------------------"
 	GITHUB_TOKEN=${GITHUB_TOKEN} trivy --exit-code 0 --severity HIGH --no-progress litmuschaos/ansible-runner:ci
 	GITHUB_TOKEN=${GITHUB_TOKEN} trivy --exit-code 1 --severity CRITICAL --no-progress litmuschaos/ansible-runner:ci
