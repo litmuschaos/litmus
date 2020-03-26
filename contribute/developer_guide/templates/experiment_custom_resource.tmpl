@@ -13,7 +13,7 @@ spec:
     image: "litmuschaos/ansible-runner:ci"
     args:
     - -c
-    - ansible-playbook ./experiments/{{ chart }}/{{ name }}/{{ name }}-ansible-logic.yml -i /etc/ansible/hosts -vv; exit 0
+    - ansible-playbook ./experiments/{{ category }}/{{ name }}/{{ name }}-ansible-logic.yml -i /etc/ansible/hosts -vv; exit 0
     command:
     - /bin/bash
     env:

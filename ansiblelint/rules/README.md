@@ -17,7 +17,7 @@ These are custom ansible playbook lints to check to the litmus playbook
   <tr>
     <td>702</td>
     <td>Restricted commands Rule</td>
-    <td>Certain commands like awk/cut/set should not be use</td>
+    <td>Certain commands like awk/cut/sed should not be use</td>
   </tr>
    <tr>
     <td>703</td>
