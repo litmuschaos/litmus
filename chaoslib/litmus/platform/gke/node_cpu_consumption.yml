@@ -45,7 +45,7 @@
       
     - name: Getting host name from the node
       shell: >
-        kubectl get node {{ app_node }} -o jsonpath='{.metadata.labels.kubernetes\.io/hostname}'
+        kubectl get node {{ node_name }} -o jsonpath='{.metadata.labels.kubernetes\.io/hostname}'
       args:
         executable: /bin/bash
       register: hostname
