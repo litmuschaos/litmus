@@ -42,6 +42,10 @@
           set_fact: 
             chaos_util_path: "{{ chaosutil }}"
 
+        - name: Getting the chaos namespace
+          set_fact:
+            c_ns: "{{ a_ns }}"
+
         - name: Record the data consistency util path
           set_fact:
             data_consistency_util_path: "{{ consistencyutil }}"
@@ -59,7 +63,7 @@
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'SOT'
-            namespace: "{{ a_ns }}"
+            namespace: "{{ c_ns }}"
 
         ## DISPLAY APP INFORMATION 
  
@@ -88,7 +92,7 @@
           vars:
             stage: "PreChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
-            engine_ns: "{{ a_ns }}"
+            engine_ns: "{{ c_ns }}"
             message: "OpenEBS components and AUT is Running successfully"
           when: "c_engine is defined and c_engine != ''"
 
@@ -131,7 +135,7 @@
           vars:
             stage: "PostChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
-            engine_ns: "{{ a_ns }}"
+            engine_ns: "{{ c_ns }}"
             message: "OpenEBS components and AUT is Running successfully"
           when: "c_engine is defined and c_engine != ''"
 
@@ -180,4 +184,4 @@
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'
-            namespace: "{{ a_ns }}"
+            namespace: "{{ c_ns }}"

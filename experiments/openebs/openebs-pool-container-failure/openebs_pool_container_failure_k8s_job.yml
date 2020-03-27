@@ -57,6 +57,14 @@ spec:
           - name: DATA_PERSISTENCE
             value: ''
 
+          # provide the chaos interval
+          - name: CHAOS_INTERVAL
+            value: ''
+
+          # provide the total chaos duration
+          - name: TOTAL_CHAOS_DURATION
+            value: ''
+
           - name: CHAOS_ITERATIONS
             value: '2'
          

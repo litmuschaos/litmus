@@ -13,7 +13,7 @@ RUN pip install --upgrade pip
 RUN touch /mnt/parameters.yml
 
 #Installing ansible and dependencies for k8s module
-RUN pip install ansible==2.7.3 openshift jmespath boto boto3 ansible-lint
+RUN pip install ansible==2.7.3 openshift jmespath boto boto3
 
 #Installing gcloud 
 RUN curl -sSL https://sdk.cloud.google.com | bash
@@ -40,4 +40,3 @@ COPY ./build/plugins/default.py /usr/local/lib/python2.7/dist-packages/ansible/p
 COPY ./build/utils/display.py /usr/local/lib/python2.7/dist-packages/ansible/utils/display.py
 COPY experiments ./experiments
 COPY executor ./executor
-COPY ansiblelint ./ansiblelint
