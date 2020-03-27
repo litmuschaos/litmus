@@ -1,0 +1,57 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: write-pod-{{ run_id }}
+  namespace: {{ a_ns }}
+  labels:
+    run: write-pod-{{ run_id }}
+spec:
+  containers:
+  - name: write-pod
+    image: gcr.io/google_containers/busybox:1.24
+    command:
+    - "sleep"
+    - "1000"
+    volumeMounts:
+    - name: nfs-pvc
+      mountPath: "/busybox"
+  volumes:
+  - name: nfs-pvc
+    persistentVolumeClaim:
+      claimName: testclaim-{{ run_id }}
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: read-pod-{{ run_id }}
+  namespace: {{ a_ns }}
+  labels:
+    run: read-pod-{{ run_id }}
+spec:
+  containers:
+  - name: read-pod
+    image: gcr.io/google_containers/busybox:1.24
+    command:
+    - "sleep"
+    - "1000"
+    volumeMounts:
+    - name: nfs-pvc
+      mountPath: "/busybox"
+  volumes:
+  - name: nfs-pvc
+    persistentVolumeClaim:
+      claimName: testclaim-{{ run_id }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: testclaim-{{ run_id }}
+  namespace: {{ a_ns }}
+spec:
+  storageClassName: openebs-nfs 
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Mi

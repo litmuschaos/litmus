@@ -1,0 +1,71 @@
+################### IGNORE THIS FILE ##################
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: openebs-nfs-provisioner-kill-
+spec:
+  template:
+    metadata:
+      labels:
+        experiment: openebs-nfs-provisioner-kill
+    spec:
+      serviceAccountName: litmus
+      restartPolicy: Never
+      containers:
+      - name: ansibletest
+        image: imrajdas/ansible-runner:ci
+        imagePullPolicy: Always
+        env:
+          - name: ANSIBLE_STDOUT_CALLBACK
+            value: 'default'
+           
+          #provide openebs namespace
+          - name: NFS_PROVISIONER_NAMESPACE
+            value: 'app-nfs-ns'
+
+          # provide application namespace
+          - name: NFS_PROVISIONER_LABEL
+            value: 'app=nfs'
+
+          # provide application labels
+          - name: NFS_PVC
+            value: 'nfs-pvc-claim'
+
+          - name: NFC_PVC_NS
+            value: 'app-nfs-ns'
+
+          # provide application pvc
+          - name: APP_LABEL
+            value: 'app=minio'
+
+          - name: APP_NAMESPACE
+            value: 'minio'
+
+          - name: NFS_SVC
+            value: 'nfs-provisioner'
+
+          # provide lib - It supports pumba and containerd
+          - name: LIB 
+            value: 'pumba'
+        
+          # LIB_IMAGE can be - gaiaadm/pumba:0.4.8, gprasath/crictl:ci
+          # For pumba image use : gaiaadm/pumba:0.4.8
+          # For containerd image use : gprasath/crictl:ci
+          - name: LIB_IMAGE  
+            value: 'gaiaadm/pumba:0.4.8'
+
+          - name: TARGET_CONTAINER
+            value: 'nfs-provisioner'
+          # EXTERNAL_APP_CHECK can be true/false
+          - name: EXTERNAL_APP_CHECK
+            value: 'true'
+
+        command: ["/bin/bash"]
+        args: ["-c", "ansible-playbook ./experiments/openebs/openebs-nfs-provisioner-kill/openebs_nfs_provisioner_kill_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
+        volumeMounts:
+          - name: parameters
+            mountPath: /mnt/
+      volumes:
+        - name: parameters
+          configMap:
+            name: openebs-pool-disk-loss

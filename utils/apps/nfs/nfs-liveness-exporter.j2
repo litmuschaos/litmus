@@ -1,0 +1,41 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nfs-mount-liveness-check-{{ run_id }}
+  labels:
+    name: nfs-mount-liveness-check-{{ run_id }}
+spec:
+  restartPolicy: Never    
+  containers:
+  - name: nfs-mount-liveness-check
+    image: litmuschaos/nfs-client:latest
+    env:
+      # Time period (in sec) b/w retries for DB init check
+      - name: INIT_WAIT_DELAY
+        value: "30"
+
+      # Time period (in sec) b/w liveness checks
+      - name: LIVENESS_PERIOD_SECONDS
+        value: "10"
+
+      # Time period (in sec) b/w retries for db_connect failure
+      - name: LIVENESS_TIMEOUT_SECONDS
+        value: "10"
+
+      # No of retries after a db_connect failure before declaring liveness fail
+      - name: LIVENESS_RETRY_COUNT
+        value: "10"
+
+      - name: COMMAND_TIMEOUT
+        value: "10"
+        
+      # NFS PROVISIONER SERVICE IP
+      - name: NFS_SVC_IP 
+        value: {{ nfs_svc_ip.stdout }}
+
+      # PERSISTENT VOLUME MOUNT USING NFS
+      - name: VOLUME
+        value: {{ volume.stdout }}
+
+    command: ["python", "nfs-mount-liveness-check.py"]    
