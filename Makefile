@@ -12,7 +12,7 @@ IS_DOCKER_INSTALLED = $(shell which docker >> /dev/null 2>&1; echo $$?)
 PLAYBOOKS = $(shell find ./ -iname *.yml -printf '%P\n' | grep 'ansible_logic.yml')
 
 .PHONY: all
-all: deps build syntax-checks security-checks push
+all: deps build syntax-checks lint-checks security-checks push
 
 .PHONY: help
 help:
@@ -77,3 +77,12 @@ trivy-security-check:
 	@echo "------------------"
 	trivy --exit-code 0 --severity HIGH --no-progress litmuschaos/ansible-runner:ci
 	trivy --exit-code 1 --severity CRITICAL --no-progress litmuschaos/ansible-runner:ci
+
+.PHONY: lint-checks
+lint-checks: ansible-lint-check
+
+ansible-lint-check:
+	@echo "------------------"
+	@echo "--> Check ansible lint"
+	@echo "------------------"
+	docker run -ti litmuschaos/ansible-runner:ci bash -c "bash ansiblelint/lint-check.sh"
