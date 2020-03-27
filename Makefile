@@ -75,8 +75,8 @@ trivy-security-check:
 	@echo "------------------"
 	@echo "--> Trivy Security Check"
 	@echo "------------------"
-	trivy --exit-code 0 --severity HIGH --no-progress litmuschaos/ansible-runner:ci
-	trivy --exit-code 1 --severity CRITICAL --no-progress litmuschaos/ansible-runner:ci
+	./trivy --exit-code 0 --severity HIGH --no-progress litmuschaos/ansible-runner:ci
+	./trivy --exit-code 1 --severity CRITICAL --no-progress litmuschaos/ansible-runner:ci
 
 .PHONY: lint-checks
 lint-checks: ansible-lint-check
