@@ -26,7 +26,8 @@ script:
   - make deps
   - make build
   - make syntax-checks
+  - make lint-checks
   - make security-checks
-  - make push
 after_success:
+  - make push
   - if [[ $TRAVIS_PULL_REQUEST == 'false' ]]; then sonar-scanner; fi
