@@ -83,7 +83,7 @@
             -o=custom-columns=NAME:".metadata.name"
           args:
             executable: /bin/bash
-          register: app_pod_name 
+          register: pod_app_name
 
         - name: Verify that the AUT (Application Under Test) is running
           include_tasks: "/utils/common/status_app_pod.yml"
@@ -107,7 +107,7 @@
           vars:
             status: 'LOAD'
             ns: "{{ a_ns }}"
-            pod_name: "{{ app_pod_name.stdout }}"
+            pod_name: "{{ pod_app_name.stdout }}"
           when: data_persistence != ''  
 
         ## STORAGE FAULT INJECTION 
@@ -140,7 +140,7 @@
             status: 'VERIFY'
             ns: "{{ a_ns }}"
             label: "{{ a_label }}"
-            pod_name: "{{ app_pod_name.stdout }}"
+            pod_name: "{{ pod_app_name.stdout }}"
           when: data_persistence != '' 
 
         - name: Get application pod name

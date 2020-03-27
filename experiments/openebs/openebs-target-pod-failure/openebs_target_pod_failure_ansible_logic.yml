@@ -102,14 +102,14 @@
             -o=custom-columns=NAME:".metadata.name"
           args:
             executable: /bin/bash
-          register: app_pod_name    
+          register: pod_app_name   
 
         - name: Create some test data
           include: "{{ data_consistency_util_path }}"
           vars:
             status: 'LOAD'
             ns: "{{ a_ns }}"
-            pod_name: "{{ app_pod_name.stdout }}"
+            pod_name: "{{ pod_app_name.stdout }}"
           when: data_persistence != ''
 
         ## STORAGE FAULT INJECTION 

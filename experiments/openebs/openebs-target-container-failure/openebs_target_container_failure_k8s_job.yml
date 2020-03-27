@@ -63,10 +63,10 @@ spec:
             value: ''
 
           - name: CHAOS_INTERVAL
-            value: ''
+            value: '10'
 
           - name: TOTAL_CHAOS_DURATION
-            value: ''
+            value: '20'
 
           - name: SOAK_TIME
             value: '120'
