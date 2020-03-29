@@ -1,50 +1,33 @@
-apiVersion: batch/v1
-kind: Job
+apiVersion: v1
+kind: Pod
 metadata:
   name: pumba-sig-kill-{{ run_id }}
   labels: 
     app: pumba
+    name: pumba-sig-kill-{{ run_id }}
 {% if chaos_uid is defined and chaos_uid != '' %}  
     chaosUID: {{ chaos_uid }}
 {% endif %}
 spec:
-  template:
-    metadata:
-      labels:
-        app: pumba
-{% if chaos_uid is defined and chaos_uid != '' %}
-        chaosUID: {{ chaos_uid }}
-{% endif %}
-        # prevent pumba from killing itself
-        com.gaiaadm.pumba: "true"
-    spec:
-      nodeSelector:
-        kubernetes.io/hostname: {{ host_name }}
-      restartPolicy: Never
-      containers:
-      - image: {{ pumba_image }}
-        imagePullPolicy: Always
-        name: pumba
-        args:
-          - pumba
-          - --random
-          - --interval
-          - {{ c_interval }}s
-          - kill 
-          - --signal
-          - SIGKILL
-          - re2:k8s_{{ app_container }}_{{ app_pod }} 
-        resources:
-          requests:
-            cpu: 10m
-            memory: 5M
-          limits:
-            cpu: 100m
-            memory: 20M
-        volumeMounts:
-          - name: dockersocket
-            mountPath: /var/run/docker.sock
-      volumes:
-        - hostPath:
-            path: /var/run/docker.sock
-          name: dockersocket
+  nodeName: {{ app_node }}
+  restartPolicy: Never
+  containers:
+  - image: {{ pumba_image }}
+    imagePullPolicy: Always
+    name: pumba
+    args:
+      - pumba
+      - --random
+      - --interval
+      - {{ c_interval }}s
+      - kill 
+      - --signal
+      - SIGKILL
+      - re2:k8s_{{ app_container }}_{{ app_pod }} 
+    volumeMounts:
+      - name: dockersocket
+        mountPath: /var/run/docker.sock
+  volumes:
+    - hostPath:
+        path: /var/run/docker.sock
+      name: dockersocket
