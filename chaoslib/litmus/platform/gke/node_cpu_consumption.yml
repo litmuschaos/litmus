@@ -73,7 +73,7 @@
     ## WAIT UNTIL THE JOB IS COMPLETED
     - name: Wait until the node cpu hog job is completed
       shell: >
-        kubectl get pods -l job-name=node-cpu-hog-{{ run_id }} --no-headers -n {{ a_ns }}
+        kubectl get pods -l job-name=node-cpu-hog-{{ run_id }} --no-headers -n {{ c_ns }}
         --no-headers -o custom-columns=:status.phase
       args: 
         executable: /bin/bash
@@ -89,7 +89,7 @@
 
     ## GETTING THE NODE STATUS
     - name: Getting the node status
-      shell: kubectl get no {{ node_name }} | awk '{print $2}' | tail -n1
+      shell: kubectl get node {{ node_name }} | awk '{print $2}' | tail -n1
       register: node_status
       until: "node_status.stdout == 'Ready'"
       delay: 2
@@ -97,13 +97,14 @@
       
     ## DELETING THE Job
     - name: Deleting the node cpu hog job
-      shell: kubectl delete -f /chaoslib/litmus/platform/gke/node-cpu-hog-job.yml -n {{ a_ns }}
+      shell: kubectl delete -f /chaoslib/litmus/platform/gke/node-cpu-hog-job.yml -n {{ c_ns }}
       args:
         executable: /bin/bash
 
     - name: Confirm that the cpu hog job is deleted successfully
       k8s_facts:
         kind: Job
+        namespace: "{{ c_ns }}"
         label_selectors:
           - job-name=node-cpu-hog-{{ run_id }}
       register: resource_job
@@ -116,7 +117,7 @@
     - block: 
         - name: Deleting the node cpu hog job
           shell: >
-            kubectl delete -f /chaoslib/litmus/platform/gke/node-cpu-hog-job.yml -n {{ a_ns }}
+            kubectl delete -f /chaoslib/litmus/platform/gke/node-cpu-hog-job.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
           when: "node_cpu_hog_job_result is succeeded"
@@ -124,6 +125,7 @@
         - name: Confirm that the node cpu hog job is deleted successfully
           k8s_facts:
             kind: Job
+            namespace: "{{ c_ns }}"
             label_selectors:
               - job-name=node-cpu-hog-{{ run_id }}
           register: resource_job

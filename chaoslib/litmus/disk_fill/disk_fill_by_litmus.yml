@@ -122,7 +122,7 @@
 
     - name: Exec into the pod to get ephemeral-storage size
       shell: >
-        kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ a_ns }} -- sh -c "cd /diskfill && cd {{ containerID.stdout }} && du -k |tail -n1 | awk '{print $1}'"
+        kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ c_ns }} -- sh -c "cd /diskfill && cd {{ containerID.stdout }} && du -k |tail -n1 | awk '{print $1}'"
       args:
         executable: /bin/bash
       register: pod_current_size_full
@@ -169,7 +169,7 @@
 
     - name: If Pod is not evicted / running
       shell: >
-        kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ a_ns }} -- sh -c "rm -rf /diskfill/{{ containerID.stdout }}/diskfill"
+        kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ c_ns }} -- sh -c "rm -rf /diskfill/{{ containerID.stdout }}/diskfill"
       when: pod_status.stdout == "Running"
 
     - name: Wait for the specified ramp time after injecting chaos
@@ -178,13 +178,14 @@
 
     ## DELETING THE JOB
     - name: Deleting the Disk Fill Job
-      shell: kubectl delete -f /chaoslib/litmus/disk_fill/disk_fill_job.yml -n {{ a_ns }}
+      shell: kubectl delete -f /chaoslib/litmus/disk_fill/disk_fill_job.yml -n {{ c_ns }}
       args:
         executable: /bin/bash
 
     - name: Confirm that the Disk Fill Job is deleted successfully
       k8s_facts:
         kind: Job
+        namespace: "{{ c_ns }}"
         label_selectors:
           - job-name=disk-fill-{{ run_id }}
       register: resource_job
@@ -198,7 +199,7 @@
     
         - name: Deleting the Disk-fill Job
           shell: >
-            kubectl delete -f /chaoslib/litmus/disk_fill/disk_fill_job.yml -n {{ a_ns }}
+            kubectl delete -f /chaoslib/litmus/disk_fill/disk_fill_job.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
           when: "disk_fill_job_result.rc == 0 "
@@ -206,6 +207,7 @@
         - name: Confirm that the Disk Fill Job is deleted successfully
           k8s_facts:
             kind: Job
+            namespace: "{{ c_ns }}"
             label_selectors:
               - job-name=disk-fill-{{ run_id }}
           register: resource_job

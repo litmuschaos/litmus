@@ -65,7 +65,7 @@
     - name: Checking the status of Job
       k8s_facts:
         kind: Pod
-        namespace: "{{ a_ns }}"
+        namespace: "{{ c_ns }}"
         label_selectors:
           - job-name=node-memory-hog-{{ run_id }}
       register: job_pod
@@ -75,7 +75,7 @@
     
     ## GETTING THE JOB POD LOGS UNDER STRESS
     - name: Getting the pod logs
-      shell: kubectl logs {{ job_pod.resources[0].metadata.name }} -n {{ a_ns }}
+      shell: kubectl logs {{ job_pod.resources[0].metadata.name }} -n {{ c_ns }}
       args:
         executable: /bin/bash
 
@@ -91,7 +91,7 @@
 
     ## DELETING THE JOB
     - name: Deleting the Memory Hog Job
-      shell: kubectl delete -f /chaoslib/litmus/platform/gke/node-memory-hog-job.yml -n {{ a_ns }}
+      shell: kubectl delete -f /chaoslib/litmus/platform/gke/node-memory-hog-job.yml -n {{ c_ns }}
       args:
         executable: /bin/bash
     
@@ -99,6 +99,7 @@
     - name: Confirm that the Memory Hog Job is deleted successfully
       k8s_facts:
         kind: Job
+        namespace: "{{ c_ns }}"
         label_selectors:
           - job-name=node-memory-hog-{{ run_id }}
       register: resource_job
@@ -113,7 +114,7 @@
         ## REMOVING THE MEMORY HOG Job
         - name: Deleting the Memory Hog Job
           shell: >
-            kubectl delete -f /chaoslib/litmus/platform/gke/node-memory-hog-job.yml -n {{ a_ns }}
+            kubectl delete -f /chaoslib/litmus/platform/gke/node-memory-hog-job.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
           when: "memory_hog_job_result is succeeded"
@@ -122,6 +123,7 @@
         - name: Confirm that the memory Hog Job is deleted successfully
           k8s_facts:
             kind: Job
+            namespace: "{{ c_ns }}"
             label_selectors:
               - job-name=node-memory-hog-{{ run_id }}
           register: resource_job
