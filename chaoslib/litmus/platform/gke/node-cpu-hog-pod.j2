@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Pod
+metadata:
+  name: node-cpu-hog-{{ run_id }}
+  labels: 
+    app: node-cpu-hog
+    name: node-cpu-hog-{{ run_id }}
+{% if chaos_uid is defined and chaos_uid != '' %}
+    chaosUID: {{ chaos_uid }}
+{% endif %}
+spec:
+  nodeName: {{ node_name }}
+  restartPolicy: Never
+  containers:
+  - image: litmuschaos/cpu:latest
+    imagePullPolicy: Always
+    name: node-cpu-hog
+    command: ["stress"]
+    args: ["--cpu", "{{ cpu_limit }}", "--timeout", "{{ c_duration }}"]
