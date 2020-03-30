@@ -86,16 +86,17 @@
       when: "c_engine is defined and c_engine != ''"
 
      # Disk Fill pods creation is attempted for a total of 3 times, if it is not immediately schedulable due to transient node conditions
-     # If the disk fill pod is not schedulable across these 3 tries, the experiment is failed with message indicating improper cluster state.
+     # If the disk-fill pod is not schedulable across these 3 tries, the experiment is failed with message indicating improper cluster state.
     - include_tasks: /utils/common/create_chaos_pod.yml
       vars:
         pod_ns: "{{ a_ns }}"
         c_path: "/chaoslib/litmus/disk_fill/disk_fill_pod.yml"
+        pod_label: "name=disk-fill-{{ run_id }}"
       with_sequence: start=1 end=3
 
-    # Failing the execution, If disk fill pod won't come to running state after three retries.
+    # Failing the execution, If disk-fill pod won't come to running state after three retries.
     - fail:
-        msg: "disk_fill_by_litmus lib failed, Unable to create as disk fill pod couldn't be scheduled on the {{ app_node }} node"
+        msg: "disk_fill_by_litmus lib failed, Unable to create as disk-fill pod couldn't be scheduled on the {{ app_node }} node"
       when: "pod_running_status is not defined or pod_running_status != 'Running'"
 
     - name: Wait for the specified ramp time before injecting chaos
@@ -104,7 +105,7 @@
   
     - name: Record the disk-fill pod on app node
       shell: >
-        kubectl get pods -l name=disk-fill-{{ run_id }} -n {{ a_ns }} -o jsonpath='{.items[?(@.spec.nodeName=="{{app_node}}")].metadata.name}'
+        kubectl get pods -l name=disk-fill-{{ run_id }} -n {{ a_ns }} -o jsonpath='{.items[?(@.spec.nodeName=="{{ app_node }}")].metadata.name}'
       args:
         executable: /bin/bash
       register: disk_fill_pod
