@@ -18,6 +18,7 @@
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
+    c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
 
   vars_files:
     - /mnt/parameters.yml
@@ -41,10 +42,6 @@
         - name: Record the chaos util path
           set_fact: 
             chaos_util_path: "{{ chaosutil }}"
-
-        - name: Getting the chaos namespace
-          set_fact:
-            c_ns: "{{ a_ns }}"
 
         - name: Record the data consistency util path
           set_fact:
