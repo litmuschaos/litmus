@@ -30,36 +30,33 @@
         engine_ns: "{{ c_ns }}"
         message: "Injecting {{ c_experiment }} chaos on {{ node_name }} node"
       when: "c_engine is defined and c_engine != ''"
-
-    - name: Getting host name from the node
-      shell: >
-        kubectl get node {{ node_name }} -o jsonpath='{.metadata.labels.kubernetes\.io/hostname}'
-      args:
-        executable: /bin/bash
-      register: hostname
-        
+    
     ## PATCH THE ENGINE UID
     - name: Patch the engine uid
       template:
-        src:  /chaoslib/litmus/platform/gke/node-memory-hog-job.j2
-        dest: /chaoslib/litmus/platform/gke/node-memory-hog-job.yml
+        src:  /chaoslib/litmus/platform/gke/node-memory-hog-pod.j2
+        dest: /chaoslib/litmus/platform/gke/node-memory-hog-pod.yml
       vars:
         stress_time: "{{ c_duration }}s"
         total_memory_percentage: "{{ memory_percentage }}%"
-        host_name: "{{ hostname.stdout }}"
 
     ## WAIT FOR THE SPECIFIED RAMP TIME
     - name: Wait for the specified ramp time before injecting chaos
       wait_for: timeout="{{ ramp_time }}"
       when: "ramp_time is defined and ramp_time != ''"
 
-    ## CREATING JOB FOR MEMORY-HOG
-    - name: Creating Job for memory-hog
-      k8s:
-        state: present
-        namespace: "{{ a_ns }}"
-        src: /chaoslib/litmus/platform/gke/node-memory-hog-job.yml
-      register: memory_hog_job_result
+     # Node Memory Hog pods creation is attempted for a total of 3 times, if it is not immediately schedulable due to transient node conditions
+     # If the node-memory-hog pod is not schedulable across these 3 tries, the experiment is failed with message indicating improper cluster state.
+    - include_tasks: /utils/common/create_chaos_pod.yml
+      vars:
+        pod_ns: "{{ a_ns }}"
+        c_path: "/chaoslib/litmus/platform/gke/node-memory-hog-pod.yml"
+      with_sequence: start=1 end=3
+
+    # Failing the execution, If node-memory-hog pod won't come to running state after three retries.
+    - fail:
+        msg: "node_memory_consumption lib failed, Unable to create as node-memory-hog pod couldn't be scheduled on the {{ node_name }} node"
+      when: "pod_running_status is not defined or pod_running_status != 'Running'"
 
     ## CHECKING THE STATUS OF JOB
     - name: Checking the status of Job
@@ -67,7 +64,7 @@
         kind: Pod
         namespace: "{{ a_ns }}"
         label_selectors:
-          - job-name=node-memory-hog-{{ run_id }}
+          - name=node-memory-hog-{{ run_id }}
       register: job_pod
       until: "{{ job_pod | json_query('resources[0].status.phase') == 'Succeeded' }}"
       delay: 1
@@ -89,46 +86,50 @@
       shell: kubectl get nodes {{ node_name }} | awk '{print $2}' | tail -n1
       register: node_status
 
-    ## DELETING THE JOB
-    - name: Deleting the Memory Hog Job
-      shell: kubectl delete -f /chaoslib/litmus/platform/gke/node-memory-hog-job.yml -n {{ a_ns }}
-      args:
-        executable: /bin/bash
+    - block:
+
+        ## DELETING THE POD
+        - name: Deleting the Memory Hog Pod
+          shell: kubectl delete -f /chaoslib/litmus/platform/gke/node-memory-hog-pod.yml -n {{ a_ns }}
+          args:
+            executable: /bin/bash
     
-    ## CHECKING WHETHER MEMORY HOG Job IS DELETED SUCCESSFULLY
-    - name: Confirm that the Memory Hog Job is deleted successfully
-      k8s_facts:
-        kind: Job
-        label_selectors:
-          - job-name=node-memory-hog-{{ run_id }}
-      register: resource_job
-      until: "resource_job.resources | length < 1"
-      delay: 2
-      retries: 90
+        ## CHECKING WHETHER MEMORY HOG POD IS DELETED SUCCESSFULLY
+        - name: Confirm that the Memory Hog Pod is deleted successfully
+          k8s_facts:
+            kind: Pod
+            label_selectors:
+              - name=node-memory-hog-{{ run_id }}
+          register: resource_pod
+          until: "resource_pod.resources | length < 1"
+          delay: 2
+          retries: 90
+
+      when: "pod_running_status is defined and pod_running_status == 'Running'"
 
   rescue: 
 
     - block: 
 
-        ## REMOVING THE MEMORY HOG Job
-        - name: Deleting the Memory Hog Job
+        ## REMOVING THE MEMORY HOG Pod
+        - name: Deleting the Memory Hog Pod
           shell: >
-            kubectl delete -f /chaoslib/litmus/platform/gke/node-memory-hog-job.yml -n {{ a_ns }}
+            kubectl delete -f /chaoslib/litmus/platform/gke/node-memory-hog-pod.yml -n {{ a_ns }}
           args:
             executable: /bin/bash
-          when: "memory_hog_job_result is succeeded"
+          when: "chaos_pod_result.rc == 0 "
         
-        ## CHECKING WHETHER MEMORY HOG JOB IS DELETED SUCCESSFULLY
-        - name: Confirm that the memory Hog Job is deleted successfully
+        ## CHECKING WHETHER MEMORY HOG POD IS DELETED SUCCESSFULLY
+        - name: Confirm that the memory Hog Pod is deleted successfully
           k8s_facts:
-            kind: Job
+            kind: Pod
             label_selectors:
-              - job-name=node-memory-hog-{{ run_id }}
-          register: resource_job
-          until: "resource_job.resources | length < 1"
+              - name=node-memory-hog-{{ run_id }}
+          register: resource_pod
+          until: "resource_pod.resources | length < 1"
           delay: 2
           retries: 90
-      when: "memory_hog_job_result is defined"
+      when: "(pod_running_status is defined and pod_running_status == 'Running') and chaos_pod_result is defined"
 
     ## FAIL WHEN ENTERS IN RESCUE BLOCK
     - name: Fail the task if it enters in the rescue block
