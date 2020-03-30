@@ -19,6 +19,7 @@
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
+    c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
    
   vars_files:
     - /mnt/parameters.yml
@@ -47,10 +48,6 @@
               when: data_persistence != ''
 
           when: "a_pvc is defined and a_pvc != ''"
-
-        - name: Getting the chaos namespace
-          set_fact:
-            c_ns: "{{ a_ns }}"
 
         - name: Identify the chaos util to be invoked 
           template:
