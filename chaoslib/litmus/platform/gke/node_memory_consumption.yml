@@ -51,6 +51,7 @@
       vars:
         pod_ns: "{{ a_ns }}"
         c_path: "/chaoslib/litmus/platform/gke/node-memory-hog-pod.yml"
+        pod_label: "name=node-memory-hog-{{ run_id }}"
       with_sequence: start=1 end=3
 
     # Failing the execution, If node-memory-hog pod won't come to running state after three retries.
