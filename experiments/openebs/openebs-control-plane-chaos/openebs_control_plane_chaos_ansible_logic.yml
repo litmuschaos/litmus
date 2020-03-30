@@ -14,6 +14,7 @@
     kill_count: "{{ lookup('env','KILL_COUNT') }}"
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
+    c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
     
   tasks:
     - block:
@@ -21,10 +22,6 @@
     
         - include_vars:
             file: chaosutil.yml
-
-        - name: Getting the chaos namespace
-          set_fact:
-            c_ns: "{{ openebs_ns }}"
 
         - name: Include openebs control plane components
           include_vars:
