@@ -14,7 +14,8 @@
     ## WHEN NUMBER OF CORES OF CPU FOR HOGGING IS NOT DEFINED 
     ## IT WILL TAKE IT FROM NODE CAPACITY
     - block:
-    ## GETTING THE NODE CPU CAPACITY
+
+        ## GETTING THE NODE CPU CAPACITY
         - name: Getting the node cpu capacity
           k8s_facts:
             kind: Node
@@ -60,6 +61,7 @@
       vars:
         pod_ns: "{{ a_ns }}"
         c_path: "/chaoslib/litmus/platform/gke/node-cpu-hog-pod.yml"
+        pod_label: "name=node-cpu-hog-{{ run_id }}"
       with_sequence: start=1 end=3
 
     # Failing the execution, If node-cpu-hog pod won't come to running state after three retries.
@@ -100,7 +102,7 @@
           args:
             executable: /bin/bash
 
-        - name: Confirm that the cpu hog pod is deleted successfully
+        - name: Confirm that the node cpu hog pod is deleted successfully
           k8s_facts:
             kind: Pod
             label_selectors:
@@ -110,7 +112,7 @@
           delay: 2
           retries: 90
 
-      when: "pod_running_status is not defined or pod_running_status != 'Running'"
+      when: "pod_running_status is defined and pod_running_status == 'Running'"
 
   rescue: 
 
