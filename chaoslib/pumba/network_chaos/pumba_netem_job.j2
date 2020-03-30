@@ -1,62 +1,46 @@
-apiVersion: batch/v1
-kind: Job
+apiVersion: v1
+kind: Pod
 metadata:
   name: pumba-netem-{{ run_id }}
   labels:
     app: pumba
+    name: pumba-netem-{{ run_id }}
 {% if chaos_uid is defined and chaos_uid != '' %}  
     chaosUID: {{ chaos_uid }}
 {% endif %}
 spec:
-  template:
-    metadata:
-      labels:
-        app: pumba
-        com.gaiaadm.pumba: "true"
-{% if chaos_uid is defined and chaos_uid != '' %}
-        chaosUID: {{ chaos_uid }}
-{% endif %}
-    spec:
-      nodeSelector:
-        kubernetes.io/hostname: {{ host_name }}
-      restartPolicy: Never
-      containers:
-      - image: {{ pumba_image }}
-        imagePullPolicy: Always
-        name: pumba
-        args:
-          - netem
-          - --tc-image
-          - 'gaiadocker/iproute2'
-          - --interface
-          - {{ n_interface }}
-          - --duration
-          - {{ c_duration }}s
+  nodeName: {{ app_node }}
+  restartPolicy: Never
+  containers:
+  - image: {{ pumba_image }}
+    imagePullPolicy: Always
+    name: pumba
+    args:
+      - netem
+      - --tc-image
+      - 'gaiadocker/iproute2'
+      - --interface
+      - {{ n_interface }}
+      - --duration
+      - {{ c_duration }}s
 {% if n_latency is defined and n_latency != '' %}
-          - delay
-          - --time
-          - "{{ n_latency }}"
+      - delay
+      - --time
+      - "{{ n_latency }}"
 {% elif n_packet_loss is defined and n_packet_loss != '' %}
-          - loss
-          - --percent
-          - "{{ n_packet_loss }}"
+      - loss
+      - --percent
+      - "{{ n_packet_loss }}"
 {% elif n_corruption is defined and n_corruption != '' %}
-          - corrupt
-          - --percent
-          - "{{ n_corruption }}"
+      - corrupt
+      - --percent
+      - "{{ n_corruption }}"
 {% endif %}
-          - re2:k8s_{{ c_container }}_{{ app_pod }}
-        resources:
-          requests:
-            cpu: 10m
-            memory: 5M
-          limits:
-            cpu: 100m
-            memory: 20M
-        volumeMounts:
-          - name: dockersocket
-            mountPath: /var/run/docker.sock
-      volumes:
-        - hostPath:
-            path: /var/run/docker.sock
-          name: dockersocket
+      - re2:k8s_{{ c_container }}_{{ app_pod }}
+    volumeMounts:
+      - name: dockersocket
+        mountPath: /var/run/docker.sock
+  volumes:
+    - hostPath:
+        path: /var/run/docker.sock
+      name: dockersocket
