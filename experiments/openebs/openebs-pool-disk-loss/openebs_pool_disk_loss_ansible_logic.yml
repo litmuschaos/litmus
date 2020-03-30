@@ -16,6 +16,7 @@
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
+    c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
 
   vars_files:
     - /mnt/parameters.yml
@@ -28,10 +29,6 @@
       - include_tasks: /utils/runtime/create_testname.yml  
 
       - include_tasks: openebs_pool_disk_loss_ansible_prerequisites.yml
-
-      - name: Getting the chaos namespace
-        set_fact:
-          c_ns: "{{ a_ns }}"
 
       # GENERATE EXPERIMENT RESULT NAME
       - name: Construct chaos result name
