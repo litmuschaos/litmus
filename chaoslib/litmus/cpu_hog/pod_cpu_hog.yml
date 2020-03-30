@@ -32,13 +32,6 @@
     - set_fact: 
         app_node: "{{ app_node.stdout }}"
 
-    - name: Getting host name from the node
-      shell: >
-        kubectl get node {{ app_node }} -o jsonpath='{.metadata.labels.kubernetes\.io/hostname}'
-      args:
-        executable: /bin/bash
-      register: hostname
-
     - block: 
         - name: Generate a run id if not passed from the engine/experiment
           shell: echo $(mktemp) | cut -d '.' -f 2 | cut -c -6
@@ -86,7 +79,6 @@
         dest: /chaoslib/litmus/cpu_hog/app_cpu_stress.yml
       vars:
         cpu_stress_image: "{{ lib_image }}"
-        host_name: "{{ hostname.stdout }}"
 
     ## RECORD EVENT FOR CHAOS INJECTION
     - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
@@ -97,13 +89,20 @@
         message: "Injecting {{ c_experiment }} chaos on {{ app_pod }} pod"
       when: "c_engine is defined and c_engine != ''"
 
-    - name: Setup cpu chaos infrastructure
-      shell: >
-        kubectl create -f /chaoslib/litmus/cpu_hog/app_cpu_stress.yml -n {{ app_ns }}
-      args: 
-        executable: /bin/bash
-      register: cpu_app_deploy_result
+      # Pod Cpu Hog pods creation is attempted for a total of 3 times, if it is not immediately schedulable due to transient node conditions
+      # If the pod-cpu-hog pod is not schedulable across these 3 tries, the experiment is failed with message indicating improper cluster state.
+    - include_tasks: /utils/common/create_chaos_pod.yml
+      vars:
+        pod_ns: "{{ app_ns }}"
+        c_path: "/chaoslib/litmus/cpu_hog/app_cpu_stress.yml"
+        pod_label: "name=app-cpu-stress-{{ run_id }}"
+      with_sequence: start=1 end=3
 
+    # Failing the execution, If pod-cpu-hog pod won't come to running state after three retries.
+    - fail:
+        msg: "pod_cpu_hog lib failed, Unable to create as pod-cpu-hog pod couldn't be scheduled on the {{ app_node }} node"
+      when: "pod_running_status is not defined or pod_running_status != 'Running'"
+ 
     - name: Calculate the total wait time for cpu stress job
       ## with a grace period of 2 min before cpu stress job terminate
       set_fact:
@@ -111,7 +110,7 @@
 
     - name: Wait until the cpu stress job is completed
       shell: >
-        kubectl get pods -l job-name=app-cpu-stress-{{ run_id }} --no-headers -n {{ app_ns }}
+        kubectl get pods -l name=app-cpu-stress-{{ run_id }} --no-headers -n {{ app_ns }}
         --no-headers -o custom-columns=:status.phase
       args: 
         executable: /bin/bash
@@ -124,21 +123,25 @@
       wait_for: timeout="{{ ramp_time }}"
       when: "ramp_time is defined and ramp_time != ''" 
 
-    - name: Tear down cpu chaos infrastructure
-      shell: >
-        kubectl delete -f /chaoslib/litmus/cpu_hog/app_cpu_stress.yml -n {{ app_ns }} 
-      args:
-        executable: /bin/bash
+    - block:
 
-    - name: Confirm that the cpu stress job is deleted successfully
-      shell: >
-        kubectl get pods -l job-name=app-cpu-stress-{{ run_id }} --no-headers -n {{ app_ns }}
-      args:
-        executable: /bin/bash
-      register: result
-      until: "'No resources found' in result.stderr"
-      delay: 2
-      retries: 90
+        - name: Tear down cpu chaos infrastructure
+          shell: >
+            kubectl delete -f /chaoslib/litmus/cpu_hog/app_cpu_stress.yml -n {{ app_ns }} 
+          args:
+            executable: /bin/bash
+
+        - name: Confirm that the cpu stress pod is deleted successfully
+          shell: >
+            kubectl get pods -l name=app-cpu-stress-{{ run_id }} --no-headers -n {{ app_ns }}
+          args:
+            executable: /bin/bash
+          register: result
+          until: "'No resources found' in result.stderr"
+          delay: 2
+          retries: 90
+
+      when: "pod_running_status is defined and pod_running_status == 'Running'"
 
   rescue: 
 
@@ -149,19 +152,19 @@
             kubectl delete -f /chaoslib/litmus/cpu_hog/app_cpu_stress.yml -n {{ app_ns }} 
           args:
             executable: /bin/bash
-          when: cpu_app_deploy_result.rc == 0
+          when: "chaos_pod_result.rc == 0 "
         
-        - name: Confirm that the cpu stress job is not present
+        - name: Confirm that the cpu stress pod is not present
           shell: >
-            kubectl get pods -l job-name=app-cpu-stress-{{ run_id }} --no-headers -n {{ app_ns }}
+            kubectl get pods -l name=app-cpu-stress-{{ run_id }} --no-headers -n {{ app_ns }}
           args:
             executable: /bin/bash
           register: result
           until: "'No resources found' in result.stderr"
           delay: 2
           retries: 90
-      when: "cpu_app_deploy_result is defined"
+      when: "(pod_running_status is defined and pod_running_status == 'Running') and chaos_pod_result is defined"
 
     - fail:
-        msg: "cpu_hog_chaos lib failed"
+        msg: "pod_cpu_hog lib failed"
       when: true
