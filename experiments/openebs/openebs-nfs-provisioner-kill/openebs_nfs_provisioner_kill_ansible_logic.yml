@@ -46,7 +46,7 @@
             - "NFS Provisioner Namespace : {{ nfs_provisioner_ns }}"
             - "NFS Provisioner LABEL     : {{ nfs_provisioner_label }}"
             - "NFS Provisioner PVC       : {{ nfs_pvc }}"
-            - "NFS Service Account       : {{ nfs_svc }}"
+            - "NFS Service               : {{ nfs_svc }}"
 
       ## RECORD EVENT FOR PRE-CHAOS CHECK
       - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
@@ -68,7 +68,7 @@
           - name: Deploying and checking liveness of external application using NFS
             include_tasks: "/utils/apps/nfs/external_liveness_check.yml"
             vars:
-              state: "END"
+              state: "START"
               run_id: "{{ external_app_run_id }}"
         when: "external_app_check == 'true'"
 
@@ -102,7 +102,7 @@
         vars:
           namespace: "{{ nfs_provisioner_ns }}"
           app_container: "{{ c_container }}"
-          a_label: "app=nfs"
+          a_label: "{{ nfs_provisioner_label }}"
 
       ## POST-CHAOS APPLICATION LIVENESS CHECK
       - name: (Post) Verify that the AUT (Application Under Test) is running 

@@ -18,6 +18,7 @@
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
+    c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
 
   vars_files:
     - /mnt/parameters.yml
@@ -41,10 +42,6 @@
         - name: Record the chaos util path
           set_fact: 
             chaos_util_path: "{{ chaosutil }}"
-
-        - name: Getting the chaos namespace
-          set_fact:
-            c_ns: "{{ a_ns }}"
 
         - name: Record the data consistency util path
           set_fact:
@@ -102,14 +99,14 @@
             -o=custom-columns=NAME:".metadata.name"
           args:
             executable: /bin/bash
-          register: app_pod_name    
+          register: pod_app_name   
 
         - name: Create some test data
           include: "{{ data_consistency_util_path }}"
           vars:
             status: 'LOAD'
             ns: "{{ a_ns }}"
-            pod_name: "{{ app_pod_name.stdout }}"
+            pod_name: "{{ pod_app_name.stdout }}"
           when: data_persistence != ''
 
         ## STORAGE FAULT INJECTION 

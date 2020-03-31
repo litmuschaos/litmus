@@ -15,6 +15,7 @@
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
     c_interval: "{{ lookup('env','CHAOS_INTERVAL') }}"
     c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
+    c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
 
   tasks:
     - block:
@@ -24,10 +25,6 @@
         - include_vars:
             file: chaosutil.yml
 
-        - name: Getting the chaos namespace
-          set_fact:
-            c_ns: "{{ a_ns }}"
-            
         ## GENERATE EXP RESULT NAME
         - name: Construct chaos result name
           set_fact:

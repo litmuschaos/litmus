@@ -28,6 +28,7 @@
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}" 
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
+    c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
 
   tasks:
     - block:
@@ -36,10 +37,6 @@
       
         - include_vars:
             file: chaosutil.yml
-
-        - name: Getting the chaos namespace
-          set_fact:
-            c_ns: "{{ kafka_ns }}"
 
         ## GENERATE EXP RESULT NAME
         - name: Construct chaos result name

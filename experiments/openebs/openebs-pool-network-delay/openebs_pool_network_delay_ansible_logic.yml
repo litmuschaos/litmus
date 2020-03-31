@@ -17,6 +17,7 @@
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
+    c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
 
   vars_files:
     - /mnt/parameters.yml
@@ -28,10 +29,6 @@
         - include_tasks: /utils/runtime/create_testname.yml  
 
         - include_tasks: openebs_pool_network_delay_ansible_prerequisites.yml
-
-        - name: Getting the chaos namespace
-          set_fact:
-            c_ns: "{{ a_ns }}"
 
         ## GENERATE EXP RESULT NAME
         - name: Construct chaos result name
@@ -85,14 +82,14 @@
             kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers -o=custom-columns=NAME:".metadata.name"
           args:
             executable: /bin/bash
-          register: app_pod
+          register: pod_app_name
 
         - name: Create some test data
           include: "{{ consistencyutil }}"
           vars:
             status: 'LOAD'
             ns: "{{ a_ns }}"
-            pod_name: "{{ app_pod.stdout }}"
+            pod_name: "{{ pod_app_name.stdout }}"
           when: data_persistence | length > 0
 
         # INJECTING CHAOS 
@@ -131,7 +128,7 @@
             status: 'VERIFY'
             ns: "{{ a_ns }}"
             label: "{{ a_label }}"
-            pod_name: "{{ app_pod.stdout }}"
+            pod_name: "{{ pod_app_name.stdout }}"
           when: data_persistence | length > 0   
 
         - set_fact:

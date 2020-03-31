@@ -1,0 +1,44 @@
+- block:
+
+    - name: Creating the chaos pod in {{ pod_ns }} namespace
+      shell: >
+        kubectl apply -f {{ c_path }} -n {{ pod_ns }}
+      args:
+        executable: /bin/bash
+      register: chaos_pod_result
+
+    - name: Check for running status of the chaos pod
+      shell: >
+        kubectl get pods -l {{ pod_label }} -n {{ pod_ns }} -o custom-columns=:.status.phase --no-headers
+      register: pod_result
+      until: "((pod_result.stdout.split()|unique)|length) == 1 and 'Running' in pod_result.stdout"
+      delay: 2
+      retries: 90
+      ignore_errors: true
+
+    - block:
+
+        - name: Delete the chaos pod, if it isn't scheduled successfully
+          shell: >
+            kubectl delete -f {{ c_path }} -n {{ pod_ns }}
+          args:
+            executable: /bin/bash
+
+        - name: Confirm the deletion of chaos pod
+          shell: >
+            kubectl get pods -l {{ pod_label }} -n {{ pod_ns }} --no-headers
+          args:
+            executable: /bin/bash
+          register: result
+          until: "'No resources found' in result.stderr"
+          delay: 2
+          retries: 90
+
+      when: "pod_result.stdout != 'Running'"
+  
+  when: "pod_running_status is not defined or pod_running_status != 'Running'"
+
+- name: Set pod_running_status to Running
+  set_fact:
+    pod_running_status: "Running"
+  when: "(pod_running_status is not defined or pod_running_status != 'Running') and pod_result.stdout == 'Running'"
