@@ -75,10 +75,6 @@ trivy-security-check:
 	@echo "------------------"
 	@echo "--> Trivy Security Check"
 	@echo "------------------"
-<<<<<<< HEAD
-	trivy --exit-code 0 --severity HIGH --no-progress litmuschaos/ansible-runner:ci
-	trivy --exit-code 1 --severity CRITICAL --no-progress litmuschaos/ansible-runner:ci
-=======
 	./trivy --exit-code 0 --severity HIGH --no-progress litmuschaos/ansible-runner:ci
 	./trivy --exit-code 1 --severity CRITICAL --no-progress litmuschaos/ansible-runner:ci
 
@@ -90,4 +86,3 @@ ansible-lint-check:
 	@echo "--> Check ansible lint"
 	@echo "------------------"
 	docker run -ti litmuschaos/ansible-runner:ci bash -c "bash ansiblelint/lint-check.sh"
->>>>>>> upstream/master

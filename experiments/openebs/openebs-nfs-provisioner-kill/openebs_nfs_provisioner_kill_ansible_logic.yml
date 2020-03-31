@@ -14,11 +14,15 @@
     lib_image: "{{ lookup('env','LIB_IMAGE') }}"
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     external_app_check: "{{ lookup('env', 'EXTERNAL_APP_CHECK') }}"
+    chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
+    c_interval: "{{ lookup('env', 'CHAOS_INTERVAL')}}"
+    c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
 
   vars_files:
     - /mnt/parameters.yml
 
   tasks:
+
     - block:
       - include: openebs_nfs_provisioner_kill_prerequisites.yml
 
@@ -53,8 +57,8 @@
         vars:
           stage: "PreChaosCheck"
           exp_pod_name: "{{ chaos_pod_name }}"
-          engine_ns: "{{ openebs_ns }}"
-          message: "OpenEBS control plane components are Running successfully"
+          engine_ns: "{{ c_ns }}"
+          message: "OpenEBS NFS are Running successfully"
         when: "c_engine is defined and c_engine != ''"
 
       - block:
@@ -68,10 +72,13 @@
           - name: Deploying and checking liveness of external application using NFS
             include_tasks: "/utils/apps/nfs/external_liveness_check.yml"
             vars:
+              app_ns: "{{ a_ns }}"
+              app_label: "{{ a_label }}"
               state: "START"
               run_id: "{{ external_app_run_id }}"
-        when: "external_app_check == 'true'"
 
+        when: "external_app_check == 'true'"
+  
       ## PRE-CHAOS APPLICATION LIVENESS CHECK
       - name: Generate a nfs exporter liveness check run id
         shell: echo $(mktemp) | cut -d '.' -f 2 
@@ -91,10 +98,10 @@
       - name: (Pre) Checking the user's pod volume is using NFS 
         include_tasks: "/utils/apps/nfs/nfs_mount_check.yml"
         vars:
-          a_ns: "{{ a_ns }}"
-          a_label: "{{ a_label }}"
+          app_ns: "{{ a_ns }}"
+          app_label: "{{ a_label }}"
           run_id: "{{ user_app_run_id }}"
-          state: 'START'
+          state: "START"
 
       ## Injecting the NFS kill chaos
       - name: Injecting the NFS provisioner container with {{ c_lib }} chaos c_lib
@@ -116,15 +123,17 @@
       - name: (Post) Re-Checking the user's pod volume is using NFS 
         include_tasks: "/utils/apps/nfs/nfs_mount_check.yml"
         vars:
-          a_ns: "{{ a_ns }}"
-          a_label: "{{ a_label }}"
+          app_ns: "{{ a_ns }}"
+          app_label: "{{ a_label }}"
           run_id: "{{ user_app_run_id }}"
-          state: 'END'
+          state: "END"
 
       - block:
         - name: Deploying and checking liveness of external application using NFS
           include_tasks: "/utils/apps/nfs/external_liveness_check.yml"
           vars:
+            app_ns: "{{ a_ns }}"
+            app_label: "{{ a_label }}"
             state: "END"
             run_id: "{{ external_app_run_id }}"
         when: "external_app_check == 'true'"
@@ -134,8 +143,8 @@
         vars:
           stage: "PostChaosCheck"
           exp_pod_name: "{{ chaos_pod_name }}"
-          engine_ns: "{{ openebs_ns }}"
-          message: "OpenEBS control plane components are Running successfully"
+          engine_ns: "{{ c_ns }}"
+          message: "OpenEBS NFS are Running successfully"
         when: "c_engine is defined and c_engine != ''"
       
       - set_fact:
