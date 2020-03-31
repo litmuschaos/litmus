@@ -89,7 +89,7 @@
     # If the pumba pod is not schedulable across these 3 tries, the experiment is failed with message indicating improper cluster state.
     - include_tasks: /utils/common/create_chaos_pod.yml
       vars:
-        pod_ns: "{{ namespace }}"
+        pod_ns: "{{ c_ns }}"
         c_path: "/chaoslib/pumba/pumba_kube.yml"
         pod_label: "name=pumba-sig-kill-{{ run_id }}"
       with_sequence: start=1 end=3
@@ -107,13 +107,13 @@
 
         - name: Tear down pumba infrastructure
           shell: >
-            kubectl delete -f /chaoslib/pumba/pumba_kube.yml -n {{ namespace }}
+            kubectl delete -f /chaoslib/pumba/pumba_kube.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
 
         - name: Confirm that the pumba pod is deleted successfully
           shell: >
-            kubectl get pods -l name=pumba-sig-kill-{{ run_id }} --no-headers -n {{ namespace }}
+            kubectl get pods -l name=pumba-sig-kill-{{ run_id }} --no-headers -n {{ c_ns }}
           args:
             executable: /bin/bash
           register: result
@@ -144,14 +144,14 @@
 
         - name: Tear down pumba infrastructure, if setup
           shell: >
-            kubectl delete -f /chaoslib/pumba/pumba_kube.yml -n {{ namespace }}
+            kubectl delete -f /chaoslib/pumba/pumba_kube.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
           when: chaos_pod_result.rc == 0
         
         - name: Confirm that the pumba pod is not present
           shell: >
-            kubectl get pods -l name=pumba-sig-kill-{{ run_id }} --no-headers -n {{ namespace }}
+            kubectl get pods -l name=pumba-sig-kill-{{ run_id }} --no-headers -n {{ c_ns }}
           args:
             executable: /bin/bash
           register: result

@@ -4,6 +4,7 @@
     - name: Getting the pre-chaos node name of application 
       k8s_facts:
         kind: Pod
+        namespace: "{{ a_ns }}"
         label_selectors:
           - "{{ a_label }}"
       register: no_name
@@ -59,7 +60,7 @@
      # If the node-cpu-hog pod is not schedulable across these 3 tries, the experiment is failed with message indicating improper cluster state.
     - include_tasks: /utils/common/create_chaos_pod.yml
       vars:
-        pod_ns: "{{ a_ns }}"
+        pod_ns: "{{ c_ns }}"
         c_path: "/chaoslib/litmus/platform/gke/node-cpu-hog-pod.yml"
         pod_label: "name=node-cpu-hog-{{ run_id }}"
       with_sequence: start=1 end=3
@@ -72,7 +73,7 @@
     ## WAIT UNTIL THE JOB IS COMPLETED
     - name: Wait until the node cpu hog job is completed
       shell: >
-        kubectl get pods -l name=node-cpu-hog-{{ run_id }} --no-headers -n {{ a_ns }}
+        kubectl get pods -l name=node-cpu-hog-{{ run_id }} --no-headers -n {{ c_ns }}
         --no-headers -o custom-columns=:status.phase
       args: 
         executable: /bin/bash
@@ -88,7 +89,7 @@
 
     ## GETTING THE NODE STATUS
     - name: Getting the node status
-      shell: kubectl get no {{ node_name }} | awk '{print $2}' | tail -n1
+      shell: kubectl get node {{ node_name }} | awk '{print $2}' | tail -n1
       register: node_status
       until: "node_status.stdout == 'Ready'"
       delay: 2
@@ -98,13 +99,14 @@
 
         ## DELETING THE POD
         - name: Deleting the node cpu hog pod
-          shell: kubectl delete -f /chaoslib/litmus/platform/gke/node-cpu-hog-pod.yml -n {{ a_ns }}
+          shell: kubectl delete -f /chaoslib/litmus/platform/gke/node-cpu-hog-pod.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
 
         - name: Confirm that the node cpu hog pod is deleted successfully
           k8s_facts:
             kind: Pod
+            namespace: "{{ c_ns }}"
             label_selectors:
               - name=node-cpu-hog-{{ run_id }}
           register: resource_pod
@@ -119,7 +121,7 @@
     - block: 
         - name: Deleting the node cpu hog pod
           shell: >
-            kubectl delete -f /chaoslib/litmus/platform/gke/node-cpu-hog-pod.yml -n {{ a_ns }}
+            kubectl delete -f /chaoslib/litmus/platform/gke/node-cpu-hog-pod.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
           when: "chaos_pod_result.rc == 0 "
@@ -127,6 +129,7 @@
         - name: Confirm that the node cpu hog pod is deleted successfully
           k8s_facts:
             kind: Pod
+            namespace: "{{ c_ns }}"
             label_selectors:
               - name=node-cpu-hog-{{ run_id }}
           register: resource_pod
