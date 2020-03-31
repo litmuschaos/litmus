@@ -91,6 +91,7 @@
       vars:
         pod_ns: "{{ namespace }}"
         c_path: "/chaoslib/pumba/pumba_kube.yml"
+        pod_label: "name=pumba-sig-kill-{{ run_id }}"
       with_sequence: start=1 end=3
     
     # Failing the execution, If pumba pod won't come to running state after three retries.

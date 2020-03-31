@@ -103,8 +103,8 @@
         msg: "pod_cpu_hog lib failed, Unable to create as pod-cpu-hog pod couldn't be scheduled on the {{ app_node }} node"
       when: "pod_running_status is not defined or pod_running_status != 'Running'"
  
+    ## with a grace period of 2 min before cpu stress job terminate
     - name: Calculate the total wait time for cpu stress job
-      ## with a grace period of 2 min before cpu stress job terminate
       set_fact:
         job_wait_time: "{{ ((c_duration|int) + 120)| int }}"
 
@@ -152,7 +152,7 @@
             kubectl delete -f /chaoslib/litmus/cpu_hog/app_cpu_stress.yml -n {{ app_ns }} 
           args:
             executable: /bin/bash
-          when: "chaos_pod_result.rc == 0 "
+          when: "chaos_pod_result.rc == 0"
         
         - name: Confirm that the cpu stress pod is not present
           shell: >
