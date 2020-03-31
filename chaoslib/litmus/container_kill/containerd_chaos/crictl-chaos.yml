@@ -39,45 +39,30 @@
       wait_for: timeout="{{ ramp_time }}"
       when: "ramp_time is defined and ramp_time != ''"
 
-    - name: Getting host name from the node
-      shell: >
-        kubectl get node {{ app_node }} -o jsonpath='{.metadata.labels.kubernetes\.io/hostname}'
-      args:
-        executable: /bin/bash
-      register: hostname
-
     - name: Patch the chaoslib image
       template:
         src:  /chaoslib/litmus/container_kill/containerd_chaos/containerd.j2
-        dest: /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-job.yml
+        dest: /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-pod.yml
       vars:
         containerd_image: "{{ lib_image }}"
-        host_name: "{{ hostname.stdout }}"
     
-    - name: Setup containerd chaos infrastructure.
-      shell: >
-        kubectl apply -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-job.yml
-        -n {{ namespace }}
-      args:
-        executable: /bin/bash
-      register: crictl_job_result
+     # Containerd chaos pods creation is attempted for a total of 3 times, if it is not immediately schedulable due to transient node conditions
+     # If the containerd-chaos pod is not schedulable across these 3 tries, the experiment is failed with message indicating improper cluster state.
+    - include_tasks: /utils/common/create_chaos_pod.yml
+      vars:
+        pod_ns: "{{ namespace }}"
+        c_path: "/chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-pod.yml"
+        pod_label: "name=containerd-chaos-{{ run_id }}"
+      with_sequence: start=1 end=3
 
-    - name: Confirm that the containerd-chaos job is running on {{ app_node }} node.
-      shell: >
-        kubectl get pod -l job-name=containerd-chaos-{{ run_id }}
-        --no-headers -o custom-columns=:status.phase
-        -n {{ namespace }} | sort | uniq
-      args:
-        executable: /bin/bash
-      register: result
-      until: "result.stdout == 'Running'"
-      delay: 2
-      retries: 90
-      ignore_errors: true
+    # Failing the execution, If containerd-chaos pod won't come to running state after three retries.
+    - fail:
+        msg: "crictl-chaos lib failed, Unable to create as containerd-chaos pod couldn't be scheduled on the {{ app_node }} node"
+      when: "pod_running_status is not defined or pod_running_status != 'Running'"
 
     - name: Record the containerd-chaos pod on app node
       shell: >
-        kubectl get pod -l app=crictl -o wide
+        kubectl get pod -l name=containerd-chaos-{{ run_id }} -o wide
         -n {{ namespace }} | grep {{ app_node }}
         | awk '{print $1}'
       args:
@@ -160,42 +145,46 @@
       delay: 2
       retries: 90
 
-    - name: Delete the crictl-chaos job
-      shell: >
-        kubectl delete -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-job.yml -n {{ namespace }} 
-      args:
-        executable: /bin/bash
-    
-    - name: Confirm that the containerd-chaos pod is deleted successfully
-      shell: >
-        kubectl get pods -l app=crictl --no-headers -n {{ namespace }}
-      args:
-        executable: /bin/bash
-      register: result
-      until: "'No resources found' in result.stderr"
-      delay: 2
-      retries: 90
+    - block:
 
-  rescue: 
-
-    - block: 
-        - name: Delete the crictl-chaos job
+        - name: Delete the crictl-chaos pod
           shell: >
-            kubectl delete -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-job.yml -n {{ namespace }}
+            kubectl delete -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-pod.yml -n {{ namespace }} 
           args:
             executable: /bin/bash
-          when: crictl_job_result.rc == 0
-            
+    
         - name: Confirm that the containerd-chaos pod is deleted successfully
           shell: >
-            kubectl get pods -l job-name=containerd-chaos-{{ run_id }} --no-headers -n {{ namespace }}
+            kubectl get pods -l name=containerd-chaos-{{ run_id }} --no-headers -n {{ namespace }}
           args:
             executable: /bin/bash
           register: result
           until: "'No resources found' in result.stderr"
           delay: 2
           retries: 90
-      when: " crictl_job_result is defined"
+
+      when: "pod_running_status is defined and pod_running_status == 'Running'"
+
+  rescue: 
+
+    - block: 
+        - name: Delete the crictl-chaos pod
+          shell: >
+            kubectl delete -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-pod.yml -n {{ namespace }}
+          args:
+            executable: /bin/bash
+          when: "chaos_pod_result.rc == 0 "
+          
+        - name: Confirm that the containerd-chaos pod is deleted successfully
+          shell: >
+            kubectl get pods -l name=containerd-chaos-{{ run_id }} --no-headers -n {{ namespace }}
+          args:
+            executable: /bin/bash
+          register: result
+          until: "'No resources found' in result.stderr"
+          delay: 2
+          retries: 90
+      when: "(pod_running_status is defined and pod_running_status == 'Running') and chaos_pod_result is defined"
     
     - fail:
         msg: "crictl-chaos lib failed"
