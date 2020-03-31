@@ -83,7 +83,7 @@
        # If the pumba pod is not schedulable across these 3 tries, the experiment is failed with message indicating improper cluster state.
       - include_tasks: /utils/common/create_chaos_pod.yml
         vars:
-          pod_ns: "{{ a_ns }}"
+          pod_ns: "{{ c_ns }}"
           c_path: "/chaoslib/pumba/network_chaos/pumba_kube.yml"
           pod_label: "name=pumba-netem-{{ run_id }}"
         with_sequence: start=1 end=3
@@ -95,7 +95,7 @@
   
       - name: Wait until the pumba netem pod is completed
         shell: >
-          kubectl get pods -l name=pumba-netem-{{ run_id }} --no-headers -n {{ a_ns }}
+          kubectl get pods -l name=pumba-netem-{{ run_id }} --no-headers -n {{ c_ns }}
           --no-headers -o custom-columns=:status.phase
         args: 
           executable: /bin/bash
@@ -113,13 +113,13 @@
   
           - name: Tear down pumba infrastructure
             shell: >
-              kubectl delete -f /chaoslib/pumba/network_chaos/pumba_kube.yml -n {{ a_ns }} 
+              kubectl delete -f /chaoslib/pumba/network_chaos/pumba_kube.yml -n {{ c_ns }} 
             args:
               executable: /bin/bash
   
           - name: Confirm that the pumba pod is deleted successfully
             shell: >
-              kubectl get pods -l name=pumba-netem-{{ run_id }} --no-headers -n {{ a_ns }}
+              kubectl get pods -l name=pumba-netem-{{ run_id }} --no-headers -n {{ c_ns }}
             args:
               executable: /bin/bash
             register: result
@@ -135,14 +135,14 @@
   
           - name: Tear down pumba infrastructure, if setup
             shell: >
-              kubectl delete -f /chaoslib/pumba/network_chaos/pumba_kube.yml -n {{ a_ns }} 
+              kubectl delete -f /chaoslib/pumba/network_chaos/pumba_kube.yml -n {{ c_ns }} 
             args:
               executable: /bin/bash
             when: chaos_pod_result.rc == 0
           
           - name: Confirm that the pumba pod is not present
             shell: >
-              kubectl get pods -l name=pumba-netem-{{ run_id }} --no-headers -n {{ a_ns }}
+              kubectl get pods -l name=pumba-netem-{{ run_id }} --no-headers -n {{ c_ns }}
             args:
               executable: /bin/bash
             register: result

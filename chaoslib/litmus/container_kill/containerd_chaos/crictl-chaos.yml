@@ -50,7 +50,7 @@
      # If the containerd-chaos pod is not schedulable across these 3 tries, the experiment is failed with message indicating improper cluster state.
     - include_tasks: /utils/common/create_chaos_pod.yml
       vars:
-        pod_ns: "{{ namespace }}"
+        pod_ns: "{{ c_ns }}"
         c_path: "/chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-pod.yml"
         pod_label: "name=containerd-chaos-{{ run_id }}"
       with_sequence: start=1 end=3
@@ -63,7 +63,7 @@
     - name: Record the containerd-chaos pod on app node
       shell: >
         kubectl get pod -l name=containerd-chaos-{{ run_id }} -o wide
-        -n {{ namespace }} | grep {{ app_node }}
+        -n {{ c_ns }} | grep {{ app_node }}
         | awk '{print $1}'
       args:
         executable: /bin/bash
@@ -85,7 +85,7 @@
 
     - name: Obtain the pod ID through Pod name
       shell: >
-        kubectl exec {{ chaos_pod.stdout}} -n {{ namespace }} -- 
+        kubectl exec {{ chaos_pod.stdout}} -n {{ c_ns }} -- 
         crictl pods | grep "{{ app_pod }}" | awk '{print $1}'
       args:
         executable: /bin/bash
@@ -94,7 +94,7 @@
 
     - name: Obtain the container ID using pod name and container name
       shell: >
-        kubectl exec {{ chaos_pod.stdout}} -n {{ namespace }} -- 
+        kubectl exec {{ chaos_pod.stdout}} -n {{ c_ns }} -- 
         crictl ps | grep {{ pod_id.stdout }} | grep {{ app_container }} | awk '{print $1}'
       args:
         executable: /bin/bash
@@ -112,7 +112,7 @@
 
     - name: Kill the container
       shell: >
-        kubectl exec {{ chaos_pod.stdout}} -n {{ namespace }} -- 
+        kubectl exec {{ chaos_pod.stdout}} -n {{ c_ns }} -- 
         crictl stop "{{ container_id.stdout }}"
       args:
         executable: /bin/bash
@@ -125,7 +125,7 @@
 
     - name: Obtain the container ID using pod name and container name
       shell: >
-        kubectl exec {{ chaos_pod.stdout}} -n {{ namespace }} -- 
+        kubectl exec {{ chaos_pod.stdout}} -n {{ c_ns }} -- 
         crictl ps | grep {{ pod_id.stdout }} | grep {{ app_container }} | awk '{print $1}'
       args:
         executable: /bin/bash
@@ -136,7 +136,7 @@
 
     - name: Check if the new container is running.
       shell: >
-        kubectl exec {{ chaos_pod.stdout}} -n {{ namespace }} -- 
+        kubectl exec {{ chaos_pod.stdout}} -n {{ c_ns }} -- 
         crictl ps | grep {{ new_container_id.stdout }}
       args:
         executable: /bin/bash
@@ -149,13 +149,13 @@
 
         - name: Delete the crictl-chaos pod
           shell: >
-            kubectl delete -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-pod.yml -n {{ namespace }} 
+            kubectl delete -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-pod.yml -n {{ c_ns }} 
           args:
             executable: /bin/bash
     
         - name: Confirm that the containerd-chaos pod is deleted successfully
           shell: >
-            kubectl get pods -l name=containerd-chaos-{{ run_id }} --no-headers -n {{ namespace }}
+            kubectl get pods -l name=containerd-chaos-{{ run_id }} --no-headers -n {{ c_ns }}
           args:
             executable: /bin/bash
           register: result
@@ -170,14 +170,14 @@
     - block: 
         - name: Delete the crictl-chaos pod
           shell: >
-            kubectl delete -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-pod.yml -n {{ namespace }}
+            kubectl delete -f /chaoslib/litmus/container_kill/containerd_chaos/containerd-chaos-pod.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
           when: "chaos_pod_result.rc == 0 "
           
         - name: Confirm that the containerd-chaos pod is deleted successfully
           shell: >
-            kubectl get pods -l name=containerd-chaos-{{ run_id }} --no-headers -n {{ namespace }}
+            kubectl get pods -l name=containerd-chaos-{{ run_id }} --no-headers -n {{ c_ns }}
           args:
             executable: /bin/bash
           register: result

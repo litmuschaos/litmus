@@ -4,6 +4,7 @@
     - name: Getting the pre-chaos application pod name 
       k8s_facts:
         kind: Pod
+        namespace: "{{ a_ns }}"
         label_selectors:
           - "{{ a_label }}"
       register: app_pod_name
@@ -49,7 +50,7 @@
      # If the node-memory-hog pod is not schedulable across these 3 tries, the experiment is failed with message indicating improper cluster state.
     - include_tasks: /utils/common/create_chaos_pod.yml
       vars:
-        pod_ns: "{{ a_ns }}"
+        pod_ns: "{{ c_ns }}"
         c_path: "/chaoslib/litmus/platform/gke/node-memory-hog-pod.yml"
         pod_label: "name=node-memory-hog-{{ run_id }}"
       with_sequence: start=1 end=3
@@ -63,7 +64,7 @@
     - name: Checking the status of Job
       k8s_facts:
         kind: Pod
-        namespace: "{{ a_ns }}"
+        namespace: "{{ c_ns }}"
         label_selectors:
           - name=node-memory-hog-{{ run_id }}
       register: job_pod
@@ -73,7 +74,7 @@
     
     ## GETTING THE JOB POD LOGS UNDER STRESS
     - name: Getting the pod logs
-      shell: kubectl logs {{ job_pod.resources[0].metadata.name }} -n {{ a_ns }}
+      shell: kubectl logs {{ job_pod.resources[0].metadata.name }} -n {{ c_ns }}
       args:
         executable: /bin/bash
 
@@ -91,7 +92,7 @@
 
         ## DELETING THE POD
         - name: Deleting the Memory Hog Pod
-          shell: kubectl delete -f /chaoslib/litmus/platform/gke/node-memory-hog-pod.yml -n {{ a_ns }}
+          shell: kubectl delete -f /chaoslib/litmus/platform/gke/node-memory-hog-pod.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
     
@@ -99,6 +100,7 @@
         - name: Confirm that the Memory Hog Pod is deleted successfully
           k8s_facts:
             kind: Pod
+            namespace: "{{ c_ns }}"
             label_selectors:
               - name=node-memory-hog-{{ run_id }}
           register: resource_pod
@@ -115,7 +117,7 @@
         ## REMOVING THE MEMORY HOG Pod
         - name: Deleting the Memory Hog Pod
           shell: >
-            kubectl delete -f /chaoslib/litmus/platform/gke/node-memory-hog-pod.yml -n {{ a_ns }}
+            kubectl delete -f /chaoslib/litmus/platform/gke/node-memory-hog-pod.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
           when: "chaos_pod_result.rc == 0 "
@@ -124,6 +126,7 @@
         - name: Confirm that the memory Hog Pod is deleted successfully
           k8s_facts:
             kind: Pod
+            namespace: "{{ c_ns }}"
             label_selectors:
               - name=node-memory-hog-{{ run_id }}
           register: resource_pod
