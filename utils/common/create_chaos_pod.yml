@@ -9,7 +9,7 @@
 
     - name: Check for running status of the chaos pod
       shell: >
-        kubectl get pods -l name=pumba-sig-kill-{{ run_id }} -n {{ pod_ns }} -o custom-columns=:.status.phase --no-headers
+        kubectl get pods -l {{ pod_label }} -n {{ pod_ns }} -o custom-columns=:.status.phase --no-headers
       register: pod_result
       until: "((pod_result.stdout.split()|unique)|length) == 1 and 'Running' in pod_result.stdout"
       delay: 2
@@ -26,7 +26,7 @@
 
         - name: Confirm the deletion of chaos pod
           shell: >
-            kubectl get pods -l name=pumba-sig-kill-{{ run_id }} -n {{ pod_ns }} --no-headers
+            kubectl get pods -l {{ pod_label }} -n {{ pod_ns }} --no-headers
           args:
             executable: /bin/bash
           register: result
