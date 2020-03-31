@@ -85,6 +85,7 @@
         vars:
           pod_ns: "{{ a_ns }}"
           c_path: "/chaoslib/pumba/network_chaos/pumba_kube.yml"
+          pod_label: "name=pumba-netem-{{ run_id }}"
         with_sequence: start=1 end=3
 
       # Failing the execution, If pumba pod won't come to running state after three retries.
@@ -92,9 +93,9 @@
           msg: "pod_failure_by_sigkill lib failed, Unable to create as pumba couldn't be scheduled on the {{ app_node }} node"
         when: "pod_running_status is not defined or pod_running_status != 'Running'"
   
-      - name: Wait until the pumba netem job is completed
+      - name: Wait until the pumba netem pod is completed
         shell: >
-          kubectl get pods -l job-name=pumba-netem-{{ run_id }} --no-headers -n {{ a_ns }}
+          kubectl get pods -l name=pumba-netem-{{ run_id }} --no-headers -n {{ a_ns }}
           --no-headers -o custom-columns=:status.phase
         args: 
           executable: /bin/bash
