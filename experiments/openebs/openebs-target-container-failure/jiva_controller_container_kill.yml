@@ -66,4 +66,4 @@
       - "Verified containers restartcounts after fault injection"
       - "Before: {{ restartCount_before.stdout }}"
       - "After: {{ restartCount_after.stdout }}"
-  failed_when: "{{ restartCount_after.stdout|int }} != {{ restartCount_before.stdout|int + 1 }}"
+  failed_when: "{{ restartCount_after.stdout|int }} <= {{ restartCount_before.stdout|int }}"
