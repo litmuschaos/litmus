@@ -26,14 +26,11 @@ spec:
           - name: NFS_PROVISIONER_LABEL
             value: ''
 
-          # provide application labels
+          # provide application pvc
           - name: NFS_PVC
             value: ''
-
-          - name: NFC_PVC_NS
-            value: ''
-
-          # provide application pvc
+            
+          # provide application label
           - name: APP_LABEL
             value: ''
 
@@ -46,7 +43,7 @@ spec:
           # provide lib - It supports pumba and containerd
           - name: LIB 
             value: 'pumba'
-        
+          
           # LIB_IMAGE can be - gaiaadm/pumba:0.4.8, gprasath/crictl:ci
           # For pumba image use : gaiaadm/pumba:0.4.8
           # For containerd image use : gprasath/crictl:ci
@@ -62,6 +59,9 @@ spec:
           
           - name: CHAOS_INTERVAL
             value: '10'
+
+          - name: TOTAL_CHAOS_DURATION
+            value: '20'
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/openebs/openebs-nfs-provisioner-kill/openebs_nfs_provisioner_kill_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]

@@ -17,6 +17,7 @@
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
     c_interval: "{{ lookup('env', 'CHAOS_INTERVAL')}}"
     c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
+    c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
 
   vars_files:
     - /mnt/parameters.yml
@@ -30,17 +31,16 @@
           file: chaosutil.yml
 
       ## GENERATE EXP RESULT NAME
-      - block:
-          - name: Construct chaos result name (experiment_name)
-            set_fact:
-              c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
+      - name: Construct chaos result name (experiment_name)
+          set_fact:
+            c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
         when: lookup('env','CHAOSENGINE') 
 
       ## RECORD START-OF-EXPERIMENT IN CHAOS RESULT CR
       - include_tasks: /utils/runtime/update_chaos_result_resource.yml
         vars:
           status: 'SOT'
-          namespace: "{{ a_ns }}"
+          namespace: "{{ c_ns }}"
 
       ## DISPLAY APP INFORMATION 
       - name: Display the app information passed via the test job
@@ -51,15 +51,6 @@
             - "NFS Provisioner LABEL     : {{ nfs_provisioner_label }}"
             - "NFS Provisioner PVC       : {{ nfs_pvc }}"
             - "NFS Service               : {{ nfs_svc }}"
-
-      ## RECORD EVENT FOR PRE-CHAOS CHECK
-      - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
-        vars:
-          stage: "PreChaosCheck"
-          exp_pod_name: "{{ chaos_pod_name }}"
-          engine_ns: "{{ c_ns }}"
-          message: "OpenEBS NFS are Running successfully"
-        when: "c_engine is defined and c_engine != ''"
 
       - block:
           - name: Generate a external app run id
@@ -103,8 +94,17 @@
           run_id: "{{ user_app_run_id }}"
           state: "START"
 
+      ## RECORD EVENT FOR PRE-CHAOS CHECK
+      - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+        vars:
+          stage: "PreChaosCheck"
+          exp_pod_name: "{{ chaos_pod_name }}"
+          engine_ns: "{{ c_ns }}"
+          message: "OpenEBS NFS are Running successfully"
+        when: "c_engine is defined and c_engine != ''"
+
       ## Injecting the NFS kill chaos
-      - name: Injecting the NFS provisioner container with {{ c_lib }} chaos c_lib
+      - name: Injecting the NFS provisioner container with {{ c_lib }} chaos LIB
         include_tasks: "{{ c_util }}"
         vars:
           namespace: "{{ nfs_provisioner_ns }}"
@@ -155,8 +155,12 @@
             flag: "Fail"
 
       always: 
+        
+        ## Getting failure step from experiment-pod 
+        - include_tasks: /utils/runtime/getting_failure_step.yml
+
          ## RECORD END-OF-TEST IN CHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: "EOT"
-            namespace: "{{ a_ns }}"
+            namespace: "{{ c_ns }}"
