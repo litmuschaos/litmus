@@ -4,6 +4,7 @@
     - name: Getting the pre-chaos node name of application 
       k8s_facts:
         kind: Pod
+        namespace: "{{ a_ns }}"
         label_selectors:
           - "{{ a_label }}"
       register: no_name
@@ -11,15 +12,20 @@
     - set_fact:
         node_name: "{{ no_name | json_query('resources[0].spec.nodeName') }}"
 
-    ## GETTING THE NODE CPU CAPACITY
-    - name: Getting the node cpu capacity
-      k8s_facts:
-        kind: Node
-        name: "{{ node_name }}"
-      register: c_limit
+    ## WHEN NUMBER OF CORES OF CPU FOR HOGGING IS NOT DEFINED 
+    ## IT WILL TAKE IT FROM NODE CAPACITY
+    - block:
 
-    - set_fact:
-        cpu_limit: "{{ c_limit | json_query('resources[0].status.capacity.cpu') }}"
+        ## GETTING THE NODE CPU CAPACITY
+        - name: Getting the node cpu capacity
+          k8s_facts:
+            kind: Node
+            name: "{{ node_name }}" 
+          register: c_limit
+
+        - set_fact:
+            cpu_limit: "{{ c_limit | json_query('resources[0].status.capacity.cpu') }}"
+      when: "node_cpu_core is not defined or node_cpu_core == ''"
 
     - block:
         - name: Generate a run id if not passed from the engine/experiment
@@ -35,31 +41,43 @@
       vars:
         stage: "ChaosInject"
         exp_pod_name: "{{ chaos_pod_name }}"
-        engine_ns: "{{ a_ns }}"
+        engine_ns: "{{ c_ns }}"
         message: "Injecting {{ c_experiment }} chaos on {{ node_name }} node"
-      when: "c_engine is defined and c_engine != ''"        
-
+      when: "c_engine is defined and c_engine != ''"
+      
     - name: Patch the engine uid
       template:
-        src:  /chaoslib/litmus/platform/gke/node-cpu-hog-job.j2
-        dest: /chaoslib/litmus/platform/gke/node-cpu-hog-job.yml
+        src:  /chaoslib/litmus/platform/gke/node-cpu-hog-pod.j2
+        dest: /chaoslib/litmus/platform/gke/node-cpu-hog-pod.yml
+      vars:
+        cpu_limit: "{{ node_cpu_core }}"
       
     - name: Wait for the specified ramp time before injecting chaos
       wait_for: timeout="{{ ramp_time }}"
       when: "ramp_time is defined and ramp_time != ''"
 
-    ## CREATING A JOB FOR CPU-HOG
-    - name: Creating a Job for cpu-hog
-      k8s:
-        state: present
-        namespace: "{{ a_ns }}"
-        src: /chaoslib/litmus/platform/gke/node-cpu-hog-job.yml
-      register: node_cpu_hog_job_result
+    # Setting pod_running_status to nil
+    - set_fact: 
+        pod_running_status: ""
+
+     # Node Cpu Hog pods creation is attempted for a total of 3 times, if it is not immediately schedulable due to transient node conditions
+     # If the node-cpu-hog pod is not schedulable across these 3 tries, the experiment is failed with message indicating improper cluster state.
+    - include_tasks: /utils/common/create_chaos_pod.yml
+      vars:
+        pod_ns: "{{ c_ns }}"
+        c_path: "/chaoslib/litmus/platform/gke/node-cpu-hog-pod.yml"
+        pod_label: "name=node-cpu-hog-{{ run_id }}"
+      with_sequence: start=1 end=3
+
+    # Failing the execution, If node-cpu-hog pod won't come to running state after three retries.
+    - fail:
+        msg: "node_cpu_consumption lib failed, Unable to create as node-cpu-hog pod couldn't be scheduled on the {{ node_name }} node"
+      when: "pod_running_status is not defined or pod_running_status != 'Running'"
 
     ## WAIT UNTIL THE JOB IS COMPLETED
     - name: Wait until the node cpu hog job is completed
       shell: >
-        kubectl get pods -l job-name=node-cpu-hog-{{ run_id }} --no-headers -n {{ a_ns }}
+        kubectl get pods -l name=node-cpu-hog-{{ run_id }} --no-headers -n {{ c_ns }}
         --no-headers -o custom-columns=:status.phase
       args: 
         executable: /bin/bash
@@ -75,48 +93,54 @@
 
     ## GETTING THE NODE STATUS
     - name: Getting the node status
-      shell: kubectl get no {{ node_name }} | awk '{print $2}' | tail -n1
+      shell: kubectl get node {{ node_name }} | awk '{print $2}' | tail -n1
       register: node_status
       until: "node_status.stdout == 'Ready'"
       delay: 2
       retries: 90
-      
-    ## DELETING THE Job
-    - name: Deleting the node cpu hog job
-      shell: kubectl delete -f /chaoslib/litmus/platform/gke/node-cpu-hog-job.yml -n {{ a_ns }}
-      args:
-        executable: /bin/bash
+    
+    - block:
 
-    - name: Confirm that the cpu hog job is deleted successfully
-      k8s_facts:
-        kind: Job
-        label_selectors:
-          - job-name=node-cpu-hog-{{ run_id }}
-      register: resource_job
-      until: "resource_job.resources | length < 1"
-      delay: 2
-      retries: 90
+        ## DELETING THE POD
+        - name: Deleting the node cpu hog pod
+          shell: kubectl delete -f /chaoslib/litmus/platform/gke/node-cpu-hog-pod.yml -n {{ c_ns }}
+          args:
+            executable: /bin/bash
+
+        - name: Confirm that the node cpu hog pod is deleted successfully
+          k8s_facts:
+            kind: Pod
+            namespace: "{{ c_ns }}"
+            label_selectors:
+              - name=node-cpu-hog-{{ run_id }}
+          register: resource_pod
+          until: "resource_pod.resources | length < 1"
+          delay: 2
+          retries: 90
+
+      when: "pod_running_status is defined and pod_running_status == 'Running'"
 
   rescue: 
 
     - block: 
-        - name: Deleting the node cpu hog job
+        - name: Deleting the node cpu hog pod
           shell: >
-            kubectl delete -f /chaoslib/litmus/platform/gke/node-cpu-hog-job.yml -n {{ a_ns }}
+            kubectl delete -f /chaoslib/litmus/platform/gke/node-cpu-hog-pod.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
-          when: "node_cpu_hog_job_result is succeeded"
+          when: "chaos_pod_result.rc == 0 "
 
-        - name: Confirm that the node cpu hog job is deleted successfully
+        - name: Confirm that the node cpu hog pod is deleted successfully
           k8s_facts:
-            kind: Job
+            kind: Pod
+            namespace: "{{ c_ns }}"
             label_selectors:
-              - job-name=node-cpu-hog-{{ run_id }}
-          register: resource_job
-          until: "resource_job.resources | length < 1"
+              - name=node-cpu-hog-{{ run_id }}
+          register: resource_pod
+          until: "resource_pod.resources | length < 1"
           delay: 2
           retries: 90
-      when: "node_cpu_hog_job_result is defined"
+      when: "(pod_running_status is defined and pod_running_status == 'Running') and chaos_pod_result is defined"
 
     - fail:
         msg: "node_cpu_consumption lib failed"

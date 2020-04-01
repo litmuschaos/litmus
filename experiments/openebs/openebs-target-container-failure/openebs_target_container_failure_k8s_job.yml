@@ -63,9 +63,12 @@ spec:
             value: ''
 
           - name: CHAOS_INTERVAL
-            value: '5'
+            value: '10'
 
-          - name: CHAOS_DURATION
+          - name: TOTAL_CHAOS_DURATION
+            value: '20'
+
+          - name: SOAK_TIME
             value: '120'
             
           # Specify the container runtime used , to pick the relevant chaos util  

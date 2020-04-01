@@ -41,6 +41,14 @@ spec:
           - name: TARGET_CONTAINER
             value: ''
 
+          # provide the chaos interval
+          - name: CHAOS_INTERVAL
+            value: '10'
+
+          # provide the total chaos duration
+          - name: TOTAL_CHAOS_DURATION
+            value: '20'
+
           # Period to wait before injection of chaos in sec 
           - name: RAMP_TIME
             value: ''

@@ -8,7 +8,6 @@
     c_interval: "{{ lookup('env','CHAOS_INTERVAL') }}"
     c_force: "{{ lookup('env','FORCE') }}"
     c_lib: "{{ lookup('env','LIB') }}"
-    c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_label: "{{ lookup('env','APP_LABEL') }}"
     a_kind: "{{ lookup('env','APP_KIND') }}"
@@ -16,6 +15,7 @@
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
+    c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
 
   tasks:
     - block:
@@ -79,7 +79,7 @@
           vars:
             stage: "PreChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
-            engine_ns: "{{ a_ns }}"
+            engine_ns: "{{ c_ns }}"
             message: "AUT is Running successfully"
           when: "c_engine is defined and c_engine != ''"
   
@@ -112,7 +112,7 @@
           vars:
             stage: "PostChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
-            engine_ns: "{{ a_ns }}"
+            engine_ns: "{{ c_ns }}"
             message: "AUT is Running successfully"
           when: "c_engine is defined and c_engine != ''"
 

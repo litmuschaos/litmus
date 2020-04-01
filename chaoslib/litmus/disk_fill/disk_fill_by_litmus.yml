@@ -73,32 +73,35 @@
 
     - name: Patch the engine UID and node name 
       template:
-        src:  /chaoslib/litmus/disk_fill/disk_fill_job.j2
-        dest: /chaoslib/litmus/disk_fill/disk_fill_job.yml
+        src:  /chaoslib/litmus/disk_fill/disk_fill_pod.j2
+        dest: /chaoslib/litmus/disk_fill/disk_fill_pod.yml
         
     ## RECORD EVENT FOR CHAOS INJECTION
     - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
       vars:
         stage: "ChaosInject"
         exp_pod_name: "{{ chaos_pod_name }}"
-        engine_ns: "{{ a_ns }}"
+        engine_ns: "{{ c_ns }}"
         message: "Injecting {{ c_experiment }} chaos on {{ pod_name.stdout }}"
       when: "c_engine is defined and c_engine != ''"
 
-    - name: Create the Job for Disk-Fill
-      shell: >
-        kubectl apply -f /chaoslib/litmus/disk_fill/disk_fill_job.yml -n {{ a_ns }}
-      args:
-        executable: /bin/bash
-      register: disk_fill_job_result
-  
-    - name: Confirm that disk fill pod is running on {{ app_node }} node
-      include_tasks: "/utils/common/status_app_pod.yml"
+    # Setting pod_running_status to nil
+    - set_fact: 
+        pod_running_status: ""
+        
+     # Disk Fill pods creation is attempted for a total of 3 times, if it is not immediately schedulable due to transient node conditions
+     # If the disk-fill pod is not schedulable across these 3 tries, the experiment is failed with message indicating improper cluster state.
+    - include_tasks: /utils/common/create_chaos_pod.yml
       vars:
-        app_label: "job-name=disk-fill-{{ run_id }}"
-        app_ns: "{{ a_ns }}"  
-        delay: 2
-        retries: 90
+        pod_ns: "{{ a_ns }}"
+        c_path: "/chaoslib/litmus/disk_fill/disk_fill_pod.yml"
+        pod_label: "name=disk-fill-{{ run_id }}"
+      with_sequence: start=1 end=3
+
+    # Failing the execution, If disk-fill pod won't come to running state after three retries.
+    - fail:
+        msg: "disk_fill_by_litmus lib failed, Unable to create as disk-fill pod couldn't be scheduled on the {{ app_node }} node"
+      when: "pod_running_status is not defined or pod_running_status != 'Running'"
 
     - name: Wait for the specified ramp time before injecting chaos
       wait_for: timeout="{{ ramp_time }}"
@@ -106,14 +109,14 @@
   
     - name: Record the disk-fill pod on app node
       shell: >
-        kubectl get pods -l job-name=disk-fill-{{ run_id }} -o jsonpath='{.items[?(@.spec.nodeName=="{{app_node}}")].metadata.name}'
+        kubectl get pods -l name=disk-fill-{{ run_id }} -n {{ a_ns }} -o jsonpath='{.items[?(@.spec.nodeName=="{{ app_node }}")].metadata.name}'
       args:
         executable: /bin/bash
       register: disk_fill_pod
 
     - name: Exec into the pod to get ephemeral-storage size
       shell: >
-        kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ a_ns }} -- sh -c "cd /diskfill && cd {{ containerID.stdout }} && du -k |tail -n1 | awk '{print $1}'"
+        kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ c_ns }} -- sh -c "cd /diskfill && cd {{ containerID.stdout }} && du -k |tail -n1 | awk '{print $1}'"
       args:
         executable: /bin/bash
       register: pod_current_size_full
@@ -160,51 +163,57 @@
 
     - name: If Pod is not evicted / running
       shell: >
-        kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ a_ns }} -- sh -c "rm -rf /diskfill/{{ containerID.stdout }}/diskfill"
+        kubectl exec -it {{ disk_fill_pod.stdout }} -n {{ c_ns }} -- sh -c "rm -rf /diskfill/{{ containerID.stdout }}/diskfill"
       when: pod_status.stdout == "Running"
 
     - name: Wait for the specified ramp time after injecting chaos
       wait_for: timeout="{{ ramp_time }}"
       when: "ramp_time is defined and ramp_time != ''" 
 
-    ## DELETING THE JOB
-    - name: Deleting the Disk Fill Job
-      shell: kubectl delete -f /chaoslib/litmus/disk_fill/disk_fill_job.yml -n {{ a_ns }}
-      args:
-        executable: /bin/bash
+    - block:
 
-    - name: Confirm that the Disk Fill Job is deleted successfully
-      k8s_facts:
-        kind: Job
-        label_selectors:
-          - job-name=disk-fill-{{ run_id }}
-      register: resource_job
-      until: "resource_job.resources | length < 1"
-      delay: 2
-      retries: 90
+        ## DELETING THE DISK FILL POD
+        - name: Deleting the Disk Fill Pod
+          shell: kubectl delete -f /chaoslib/litmus/disk_fill/disk_fill_pod.yml -n {{ c_ns }}
+          args:
+            executable: /bin/bash
+
+        - name: Confirm that the Disk Fill Pod is deleted successfully
+          k8s_facts:
+            kind: Pod
+            namespace: "{{ c_ns }}"
+            label_selectors:
+              - name=disk-fill-{{ run_id }}
+          register: resource_pod
+          until: "resource_pod.resources | length < 1"
+          delay: 2
+          retries: 90
+
+      when: "pod_running_status is defined and pod_running_status == 'Running'"
 
   rescue: 
 
     - block: 
     
-        - name: Deleting the Disk-fill Job
+        - name: Deleting the Disk-fill Pod
           shell: >
-            kubectl delete -f /chaoslib/litmus/disk_fill/disk_fill_job.yml -n {{ a_ns }}
+            kubectl delete -f /chaoslib/litmus/disk_fill/disk_fill_pod.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
-          when: "disk_fill_job_result.rc == 0 "
+          when: "chaos_pod_result.rc == 0 "
     
-        - name: Confirm that the Disk Fill Job is deleted successfully
+        - name: Confirm that the Disk Fill Pod is deleted successfully
           k8s_facts:
-            kind: Job
+            kind: Pod
+            namespace: "{{ c_ns }}"
             label_selectors:
-              - job-name=disk-fill-{{ run_id }}
-          register: resource_job
-          until: "resource_job.resources | length < 1"
+              - name=disk-fill-{{ run_id }}
+          register: resource_pod
+          until: "resource_pod.resources | length < 1"
           delay: 2
           retries: 90   
 
-      when: "disk_fill_job_result is defined"
+      when: "(pod_running_status is defined and pod_running_status == 'Running') and chaos_pod_result is defined"
     
     - fail:
         msg: "disk_fill_by_litmus lib failed"

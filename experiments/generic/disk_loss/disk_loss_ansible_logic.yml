@@ -9,7 +9,6 @@
     ramp_time: "{{ lookup('env','RAMP_TIME') }}"
     c_experiment: disk-loss
     cloud_platform: "{{ lookup('env','CLOUD_PLATFORM') }}"
-    c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
     disk_name: "{{ lookup('env','DISK_NAME') }}"
     device_name: "{{ lookup('env', 'DEVICE_NAME') }}"
     node_name: "{{ lookup('env','NODE_NAME') }}"
@@ -19,6 +18,7 @@
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
+    c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
 
   tasks:
 
@@ -73,7 +73,7 @@
           vars:
             stage: "PreChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
-            engine_ns: "{{ a_ns }}"
+            engine_ns: "{{ c_ns }}"
             message: "AUT is Running successfully"
           when: "c_engine is defined and c_engine != ''"
 
@@ -138,7 +138,7 @@
           vars:
             stage: "PostChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
-            engine_ns: "{{ a_ns }}"
+            engine_ns: "{{ c_ns }}"
             message: "Disk has been reattached and AUT is Running successfully"
           when: "c_engine is defined and c_engine != ''"
 

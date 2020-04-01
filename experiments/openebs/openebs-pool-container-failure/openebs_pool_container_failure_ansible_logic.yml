@@ -17,6 +17,9 @@
     pool_debug_msg: 'uncorrectable I/O failure|suspended|ERROR ZFS event'
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
+    c_interval: "{{ lookup('env','CHAOS_INTERVAL') }}"
+    c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
+    c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
     
   vars_files:
     - /mnt/parameters.yml
@@ -29,7 +32,7 @@
 
         - include_tasks: /utils/common/application_liveness_check.yml
           when: liveness_label != ''
-
+          
         - name: Identify the data consistency util to be invoked
           template:
             src: data_persistence.j2
@@ -57,7 +60,7 @@
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'SOT'
-            namespace: "{{ a_ns }}"
+            namespace: "{{ c_ns }}"
 
         ## DISPLAY APP INFORMATION 
  
@@ -77,7 +80,7 @@
             -o=custom-columns=NAME:".metadata.name"
           args:
             executable: /bin/bash
-          register: app_pod_name 
+          register: pod_app_name
 
         - name: Verify that the AUT (Application Under Test) is running
           include_tasks: "/utils/common/status_app_pod.yml"
@@ -92,7 +95,7 @@
           vars:
             stage: "PreChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
-            engine_ns: "{{ a_ns }}"
+            engine_ns: "{{ c_ns }}"
             message: "OpenEBS components and AUT are Running successfully"
           when: "c_engine is defined and c_engine != ''"
 
@@ -101,7 +104,7 @@
           vars:
             status: 'LOAD'
             ns: "{{ a_ns }}"
-            pod_name: "{{ app_pod_name.stdout }}"
+            pod_name: "{{ pod_app_name.stdout }}"
           when: data_persistence != ''  
 
         ## STORAGE FAULT INJECTION 
@@ -124,7 +127,7 @@
           vars:
             stage: "PostChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
-            engine_ns: "{{ a_ns }}"
+            engine_ns: "{{ c_ns }}"
             message: "OpenEBS components and AUT are Running successfully"
           when: "c_engine is defined and c_engine != ''"
  
@@ -134,7 +137,7 @@
             status: 'VERIFY'
             ns: "{{ a_ns }}"
             label: "{{ a_label }}"
-            pod_name: "{{ app_pod_name.stdout }}"
+            pod_name: "{{ pod_app_name.stdout }}"
           when: data_persistence != '' 
 
         - name: Get application pod name
@@ -174,4 +177,4 @@
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'
-            namespace: "{{ a_ns }}"
+            namespace: "{{ c_ns }}"

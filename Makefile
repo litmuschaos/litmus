@@ -12,7 +12,7 @@ IS_DOCKER_INSTALLED = $(shell which docker >> /dev/null 2>&1; echo $$?)
 PLAYBOOKS = $(shell find ./ -iname *.yml -printf '%P\n' | grep 'ansible_logic.yml')
 
 .PHONY: all
-all: all-tools ansible-syntax-check
+all: deps build syntax-checks lint-checks security-checks push
 
 .PHONY: help
 help:
@@ -21,7 +21,13 @@ help:
 	@echo "\tmake all   -- [default] builds the litmus containers"
 	@echo ""
 
+.PHONY: deps
+deps: _build_check_docker
+
 _build_check_docker:
+	@echo "------------------"
+	@echo "--> Check the Docker deps" 
+	@echo "------------------"
 	@if [ $(IS_DOCKER_INSTALLED) -eq 1 ]; \
 		then echo "" \
 		&& echo "ERROR:\tdocker is not installed. Please install it before build." \
@@ -29,21 +35,27 @@ _build_check_docker:
 		&& exit 1; \
 		fi;
 
-.PHONY: deps
-deps: _build_check_docker
+.PHONY: build
+build: ansible-runner-build
 
-.PHONY: all-tools
-all-tools: ansible-runner-image
-
-.PHONY: ansible-runner-image
-ansible-runner-image:
+ansible-runner-build:
 	@echo "------------------"
 	@echo "--> Build ansible-runner image" 
 	@echo "------------------"
 	sudo docker build . -f build/ansible-runner/Dockerfile -t litmuschaos/ansible-runner:ci
+
+.PHONY: push
+push: ansible-runner-push
+
+ansible-runner-push:
+	@echo "------------------"
+	@echo "--> Push ansible-runner image" 
+	@echo "------------------"
 	REPONAME="litmuschaos" IMGNAME="ansible-runner" IMGTAG="ci" ./hack/push
 
-.PHONY: ansible-syntax-check
+.PHONY: syntax-checks
+syntax-checks: ansible-syntax-check
+
 ansible-syntax-check:
 	@echo "------------------"
 	@echo "--> Check playbook syntax"
@@ -55,3 +67,22 @@ ansible-syntax-check:
 		rc_sum=$$((rc_sum+$$?)); \
 	done; \
 	exit $${rc_sum}
+
+.PHONY: security-checks
+security-checks: trivy-security-check
+
+trivy-security-check:
+	@echo "------------------"
+	@echo "--> Trivy Security Check"
+	@echo "------------------"
+	./trivy --exit-code 0 --severity HIGH --no-progress litmuschaos/ansible-runner:ci
+	./trivy --exit-code 1 --severity CRITICAL --no-progress litmuschaos/ansible-runner:ci
+
+.PHONY: lint-checks
+lint-checks: ansible-lint-check
+
+ansible-lint-check:
+	@echo "------------------"
+	@echo "--> Check ansible lint"
+	@echo "------------------"
+	docker run -ti litmuschaos/ansible-runner:ci bash -c "bash ansiblelint/lint-check.sh"
