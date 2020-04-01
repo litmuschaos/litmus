@@ -32,8 +32,8 @@
 
       ## GENERATE EXP RESULT NAME
       - name: Construct chaos result name (experiment_name)
-          set_fact:
-            c_result: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
+        set_fact:
+          c_result: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
         when: "c_engine is defined and c_engine != ''"
 
       ## RECORD START-OF-EXPERIMENT IN CHAOS RESULT CR
