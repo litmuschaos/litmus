@@ -40,50 +40,50 @@ scaffolded files consist of placeholders which can then be filled as desired.
 
   As an example, let us consider an experiment to kill one of the replicas of a nginx deployment. The attributes.yaml can be constructed like this: 
   
-  ```
+  ```yaml
   $ cat attributes.yaml 
   
   ---
-name: pod-delete
-version: 0.1.0
-category: sample-category
-repository: https://github.com/litmuschaos/litmus/tree/master/experiments/sample-category/pod-delete
-community: https://kubernetes.slack.com/messages/CNXNB0ZTN
-description: "kills nginx pods in a random manner"
-keywords:
-  - pods
-  - kubernetes
-  - sample-category
-  - nginx
-scope: "Namespaced"
-permissions:
-  - apiGroups:
-      - ""
-      - "batch"
-      - "litmuschaos.io"
-    resources:
-      - "jobs"
-      - "pods"
-      - "chaosengines"
-      - "chaosexperiments"
-      - "chaosresults"
-    verbs:
-      - "create"
-      - "list"
-      - "get"
-      - "update"
-      - "patch"
-      - "delete"
-maturity: alpha
-maintainers:
-  - ksatchit@mayadata.io
-contributors:
-  - ksatchit@mayadata.io
-provider:
-  name: Mayadata
-min_kubernetes_version: 1.12.0
-references:
-  - https://docs.litmuschaos.io/docs/getstarted/
+  name: pod-delete
+  version: 0.1.0
+  category: sample-category
+  repository: https://github.com/litmuschaos/litmus/tree/master/experiments/sample-category/pod-delete
+  community: https://kubernetes.slack.com/messages/CNXNB0ZTN
+  description: "kills nginx pods in a random manner"
+  keywords:
+    - pods
+    - kubernetes
+    - sample-category
+    - nginx
+  scope: "Namespaced"
+  permissions:
+    - apiGroups:
+        - ""
+        - "batch"
+        - "litmuschaos.io"
+      resources:
+        - "jobs"
+        - "pods"
+        - "chaosengines"
+        - "chaosexperiments"
+        - "chaosresults"
+      verbs:
+        - "create"
+        - "list"
+        - "get"
+        - "update"
+        - "patch"
+        - "delete"
+  maturity: alpha
+  maintainers:
+    - ksatchit@mayadata.io
+  contributors:
+    - ksatchit@mayadata.io
+  provider:
+    name: Mayadata
+  min_kubernetes_version: 1.12.0
+  references:
+    - https://docs.litmuschaos.io/docs/getstarted/
 
   ```
 
@@ -93,7 +93,8 @@ references:
   ```
   $ python3 generate_chart.py --attributes_file=attributes.yaml --generate_type=experiment
   ```
-   **Note**: In the `--generate_type` attribute, select the appropriate type of manifests to be generated, where, 
+
+  **Note**: In the `--generate_type` attribute, select the appropriate type of manifests to be generated, where, 
   - `chart`: Just the chaos-chart metadata, i.e., chartserviceversion yaml 
   - `experiment`: Chaos experiment artefacts belonging to a an existing OR new chart. 
 
