@@ -60,7 +60,7 @@ as mentioned in the [ROADMAP](./ROADMAP.md). For details or limitations around s
   for other modes of secret management with Litmus is yet to be tested/implemented. 
 - Some chaos experiments make use of the docker api from within the experiment pods, and thereby require the docker socket to be mounted. User discretion is 
   advised when allowing developers/devops admins/SREs access for running these experiments.
-- In (rare) cases where chaos experiments make use of privileged containers, the recommended security policies will be shared with users. 
+- In (rare) cases where chaos experiments make use of privileged containers, the recommended security policies will be documented.
 
 ## License
 Litmus is licensed under the Apache License, Version 2.0. See [LICENSE](./LICENSE) for the full license text. Some of the projects used by the Litmus project may be governed by a different license, please refer to its specific license.
