@@ -1,6 +1,6 @@
 - block:
 
-    - name: Get a list of all pods from given namespace
+    - name: "[Prepare]: Getting list of all pods with {{ app_label }} label from {{ app_ns }} namespace"
       k8s_facts:
         kind: Pod
         namespace: "{{ app_ns }}"
@@ -10,17 +10,17 @@
           - status.phase=Running
       register: pod_list
 
-    - name: Initialize deletion list
+    - name: "[Prepare]: Trying to the target application pod.."
       set_fact:
         target_pod_list: []
 
     - block: 
 
-        - name: Select a random pod to kill
+        - name: "[Prepare]: Select a random pod to kill"
           set_fact:
             app_pod_random: "{{ pod_list.resources | random | json_query('metadata.name') }}"
 
-        - name: Construct the deletion list with single random pod 
+        - name: "[Prepare]: Adding {{ app_pod_random }} pod as a chaos candidate"
           set_fact: 
             target_pod_list: "{{ target_pod_list + [app_pod_random] }}"
   
@@ -31,7 +31,7 @@
 
     - block: 
 
-        - name: Add elements into target pod group list 
+        - name: "[Prepare]: Adding mutiple pods as chaos candidates"
           set_fact:
             target_pod_list: "{{ target_pod_list + [resource | json_query('metadata.name')] }}"
           loop: "{{ pod_list.resources }}"
@@ -47,25 +47,26 @@
 
 - block:
 
-    - name: Record app pod 
+    - name: "[Prepare]: Recording the application pod name"
       set_fact:
         app_pod: "{{ app_pod_name }}"
 
   when: "app_pod_name is defined and app_pod_name != ''"
 
 ## RECORD EVENT FOR CHAOS INJECTION
-- include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+- name: "[Event]: Generating an Event for ChaosInjection"
+  include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
   vars:
     stage: "ChaosInject"
     exp_pod_name: "{{ chaos_pod_name }}"
-    engine_ns: "{{ a_ns }}"
+    engine_ns: "{{ c_ns }}"
     message: "Injecting {{ c_experiment }} chaos on {{ app_pod }} pod"
   when: "c_engine is defined and c_engine != ''"
 
 - debug:
-    msg: "Killing pod {{ app_pod }}"
+    msg: "Killing {{ app_pod }} pod"
 
-- name: Force Kill application pod
+- name: "[Inject]: Killing the application pod forcefullly"
   shell: |
     kubectl delete pod -n {{ app_ns }} --force --grace-period=0 --wait=false {{ app_pod }}
   args:
@@ -73,7 +74,7 @@
   register: result
   when: "c_force is defined and c_force == 'true'"
 
-- name: Kill application pod
+- name: "[Inject]: Killing the application pod"
   shell: |
     kubectl delete pod -n {{ app_ns }} --grace-period=0 --wait=false {{ app_pod }}
   args:
@@ -81,11 +82,11 @@
   register: result
   when: "c_force is not defined or c_force == 'false' or c_force == ''" 
 
-- name: Wait for the interval timer
+- name: "[Wait]: Wait for the chaos interval {{ c_interval }}s"
   pause:
     seconds: "{{ c_interval }}"
 
-- name: Verify that the application replica is recreated
+- name: "[Status]: Verification for the recreation of application pod"
   include_tasks: "/utils/common/status_app_pod.yml"
   vars:
     delay: 2

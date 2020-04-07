@@ -49,6 +49,18 @@ See <a href="https://github.com/litmuschaos/litmus/blob/master/ADOPTERS.md" targ
 
 (*Send a PR to the above page if you are using Litmus in your chaos engineering practice*)
 
+## Things to Consider
+Some of the considerations that need to be made with Litmus (as a chaos framework), are broadly listed here. Many of these are already being worked on 
+as mentioned in the [ROADMAP](./ROADMAP.md). For details or limitations around specific experiments, refer to the respective [experiments docs](https://docs.litmuschaos.io/docs/pod-delete/).
+
+- Network chaos for container runtimes other than Docker, such as containerd, CRIO is not supported yet
+- Litmus chaos operator and the chaos experiments run as kubernetes resources in the cluster. In case of airgapped environments, the chaos custom resources 
+  and images need to be hosted on premise.
+- When attempting to execute platform specific chaos experiments (like those on AWS, GCP cloud) the access details are passed via kubernetes secrets. Support
+  for other modes of secret management with Litmus is yet to be tested/implemented. 
+- Some chaos experiments make use of the docker api from within the experiment pods, and thereby require the docker socket to be mounted. User discretion is 
+  advised when allowing developers/devops admins/SREs access for running these experiments.
+- In (rare) cases where chaos experiments make use of privileged containers, the recommended security policies will be documented.
 
 ## License
 Litmus is licensed under the Apache License, Version 2.0. See [LICENSE](./LICENSE) for the full license text. Some of the projects used by the Litmus project may be governed by a different license, please refer to its specific license.

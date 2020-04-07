@@ -16,6 +16,7 @@
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
+    c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
     
   tasks:
     - block:
@@ -30,7 +31,7 @@
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'SOT'
-            namespace: "{{ a_ns }}"
+            namespace: "{{ c_ns }}"
 
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
 
@@ -65,7 +66,7 @@
           vars:
             stage: "PreChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
-            engine_ns: "{{ a_ns }}"
+            engine_ns: "{{ c_ns }}"
             message: "AUT is Running successfully"
           when: "c_engine is defined and c_engine != ''"
 
@@ -104,7 +105,7 @@
           vars:
             stage: "PostChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
-            engine_ns: "{{ a_ns }}"
+            engine_ns: "{{ c_ns }}"
             message: "AUT is Running successfully"
           when: "c_engine is defined and c_engine != ''"
 
@@ -124,4 +125,4 @@
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'
-            namespace: "{{ a_ns }}"
+            namespace: "{{ c_ns }}"

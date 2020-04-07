@@ -16,6 +16,7 @@
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
+    c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
     
   vars_files:
     - /mnt/parameters.yml
@@ -38,7 +39,7 @@
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'SOT'
-            namespace: "{{ a_ns }}"
+            namespace: "{{ c_ns }}"
 
         # DISPLAY APP INFORMATION
         - name: Display the app information passed via the test job
@@ -71,7 +72,7 @@
           vars:
             stage: "PreChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
-            engine_ns: "{{ a_ns }}"
+            engine_ns: "{{ c_ns }}"
             message: "OpenEBS components and AUT is Running successfully"
           when: "c_engine is defined and c_engine != ''"
 
@@ -80,14 +81,14 @@
             kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers -o=custom-columns=NAME:".metadata.name"
           args:
             executable: /bin/bash
-          register: app_pod
+          register: pod_app_name
 
         - name: Create some test data
           include: "{{ consistencyutil }}"
           vars:
             status: 'LOAD'
             ns: "{{ a_ns }}"
-            pod_name: "{{ app_pod.stdout }}"
+            pod_name: "{{ pod_app_name.stdout }}"
           when: data_persistence | length > 0
 
         # INJECTING CHAOS 
@@ -116,7 +117,7 @@
           vars:
             stage: "PostChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
-            engine_ns: "{{ a_ns }}"
+            engine_ns: "{{ c_ns }}"
             message: "OpenEBS components and AUT is Running successfully"
           when: "c_engine is defined and c_engine != ''"
 
@@ -126,7 +127,7 @@
             status: 'VERIFY'
             ns: "{{ a_ns }}"
             label: "{{ a_label }}"
-            pod_name: "{{ app_pod.stdout }}"
+            pod_name: "{{ pod_app_name.stdout }}"
           when: data_persistence | length > 0      
 
         - set_fact:
@@ -145,4 +146,4 @@
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'
-            namespace: "{{ a_ns }}"
+            namespace: "{{ c_ns }}"

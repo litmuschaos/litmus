@@ -10,6 +10,9 @@
     c_duration: "{{ '{{' }} lookup('env','TOTAL_CHAOS_DURATION') {{ '}}' }}"
     c_experiment: {{ name }} 
     ramp_time: "{{ '{{' }} lookup('env','RAMP_TIME') {{ '}}' }}"
+    chaos_pod_name: "{{ '{{' }} lookup('env','POD_NAME') {{ '}}' }}"
+    chaos_uid: "{{ '{{' }} lookup('env','CHAOS_UID') {{ '}}' }}"
+    c_engine: "{{ '{{' }} lookup('env','CHAOSENGINE') {{ '}}' }}"
     c_util: ""
 
   tasks:
@@ -17,14 +20,11 @@
 
         - include: {{ name }}-ansible-prerequisites.yml
       
-        ## GENERATE EXP RESULT NAME
-        - block:
-
-            - name: Construct chaos result name (experiment_name)
-              set_fact:
-                c_experiment: "{{ '{{' }} lookup('env','CHAOSENGINE') {{ '}}' }}-{{ '{{' }} c_experiment {{ '}}' }}"
-
-          when: lookup('env','CHAOSENGINE')    
+         ## GENERATE EXP RESULT NAME
+        - name: Construct chaos result name
+          set_fact:
+            c_result: "{{ '{{' }} c_engine {{ '}}' }}-{{ '{{' }} c_experiment {{ '}}' }}"
+          when: "c_engine is defined and c_engine != ''
 
         ## RECORD START-OF-EXPERIMENT IN LITMUSCHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
@@ -60,6 +60,15 @@
                 
           when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
+        ## RECORD EVENT FOR PRE-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PreChaosCheck"
+            exp_pod_name: "{{ '{{' }} chaos_pod_name {{ '}}' }}"
+            engine_ns: "{{ '{{' }} a_ns {{ '}}' }}"
+            message: "AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
+
         ## FAULT INJECTION 
 
         - include_tasks: "{{ '{{' }} c_util {{ '}}' }}"
@@ -93,6 +102,15 @@
                 - "{{ '{{' }} auxiliary_appinfo.split(',') {{ '}}' }}"
                 
           when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
+
+        ## RECORD EVENT FOR POST-CHAOS CHECK
+        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PostChaosCheck"
+            exp_pod_name: "{{ '{{' }} chaos_pod_name {{ '}}' }}"
+            engine_ns: "{{ '{{' }} a_ns {{ '}}' }}"
+            message: "AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
         
         - set_fact:
             flag: "Pass"
@@ -102,6 +120,9 @@
             flag: "Fail"
 
       always: 
+
+        ## Getting failure step from experiment-pod
+        - include_tasks: /utils/runtime/getting_failure_step.yml  
  
         ## RECORD END-OF-TEST IN LITMUSCHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml

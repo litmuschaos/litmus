@@ -1,6 +1,6 @@
 ## LITMUS ROADMAP
 
-This document captures only a high level backlogs. For detailed list of backlogs, see [issues list](https://github.com/litmuschaos/litmus/issues) and [current milestones](https://github.com/litmuschaos/litmus/milestones). 
+This document captures only the high level roadmap items. For the detailed backlog, see [issues list](https://github.com/litmuschaos/litmus/issues) and [current milestones](https://github.com/litmuschaos/litmus/milestones). 
 
 ### Completed
 
@@ -8,6 +8,9 @@ This document captures only a high level backlogs. For detailed list of backlogs
 -   Chaos Operator to orchestrate chaos experiments
 -   Off the shelf / ready chaos experiments for general Kubernetes chaos
 -   Per-experiment minimal RBAC permissions definition
+-   Helm3 charts for Litmus Chaos (operator, chaos charts)
+-   Support for Kubernetes events for chaos experiments
+-   Support for admin mode (centralized chaos management) 
 -   Centralized Hub for chaos experiments
 -   Documentation (user & developer guides)
 -   Gitlab e2e pipeline for chaos experiments
@@ -19,10 +22,7 @@ This document captures only a high level backlogs. For detailed list of backlogs
 
 -   Off the shelf chaos-integrated grafana dashboards for OpenEBS, Kafka, Cassandra [#1280](https://github.com/litmuschaos/litmus/issues/1280)
 -   Support for scheduled (continuous/background) chaos with halt/resume [#1223](https://github.com/litmuschaos/litmus/issues/1223)
--   Support for Kubernetes events for chaos experiments [#1264](https://github.com/litmuschaos/litmus/issues/1244) [#1243](https://github.com/litmuschaos/litmus/issues/1243)
--   Support for hard chaos abort via pre-stop hooks [#1284](https://github.com/litmuschaos/litmus/issues/1284)
--   Support for admin mode (separate namespace for chaos resources, with opt-in/out option for specific experiments in applications) [#1219](https://github.com/litmuschaos/litmus/issues/1219)
--   Helm3 charts for Litmus Chaos (operator, chaos charts)[#1221](https://github.com/litmuschaos/litmus/issues/1221)
+-   Support for complete chaos abort via pre-stop hooks [#1284](https://github.com/litmuschaos/litmus/issues/1284)
 -   Scaffold tools to generate experiment templates in python, golang [#1259](https://github.com/litmuschaos/litmus/issues/1259)
 -   Support for user defined chaos experiment result definition (ex:json blob as chaos result) [#1254](https://github.com/litmuschaos/litmus/issues/1254)
 -   Pod level resource chaos libraries (memory, disk stress) [#877](https://github.com/litmuschaos/litmus/issues/877)
