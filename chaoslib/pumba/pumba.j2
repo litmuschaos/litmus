@@ -16,11 +16,10 @@ spec:
     imagePullPolicy: Always
     name: pumba
     args:
-      - pumba
       - --random
       - --interval
       - {{ c_interval }}s
-      - kill 
+      - kill
       - --signal
       - SIGKILL
       - re2:k8s_{{ app_container }}_{{ app_pod }} 
