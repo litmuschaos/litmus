@@ -10,7 +10,7 @@ data:
       maxSecondsBetweenRuns: {{ c_interval }}
     nodeScenarios: []
     podScenarios:
-      - name: "delete random pods in default namespace"
+      - name: "delete random pods in application namespace"
         match:
           - labels:
               namespace: {{ app_ns }}
