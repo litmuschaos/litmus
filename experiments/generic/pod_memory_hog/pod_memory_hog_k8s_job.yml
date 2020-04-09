@@ -15,7 +15,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: litmuschaos/pod-memory-hog:latest 
+        image: litmuschaos/ansible-runner:latest 
         imagePullPolicy: Always
         env: 
           - name: ANSIBLE_STDOUT_CALLBACK
@@ -38,7 +38,7 @@ spec:
             value: ''
 
           # Enter the amount of memory in megabytes to be consumed by the application pod
-          # default: 500M (Megabytes) 
+          # default: 500 (Megabytes) 
           - name: MEMORY_CONSUMPTION
             value: ''
 
