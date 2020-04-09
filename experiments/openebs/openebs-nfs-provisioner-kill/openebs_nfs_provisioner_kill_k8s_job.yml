@@ -44,11 +44,11 @@ spec:
           - name: LIB 
             value: 'pumba'
           
-          # LIB_IMAGE can be - gaiaadm/pumba:0.4.8, gprasath/crictl:ci
-          # For pumba image use : gaiaadm/pumba:0.4.8
+          # LIB_IMAGE can be - gaiaadm/pumba:0.6.5, gprasath/crictl:ci
+          # For pumba image use : gaiaadm/pumba:0.6.5
           # For containerd image use : gprasath/crictl:ci
           - name: LIB_IMAGE  
-            value: 'gaiaadm/pumba:0.4.8'
+            value: 'gaiaadm/pumba:0.6.5'
 
           - name: TARGET_CONTAINER
             value: 'nfs-provisioner'
