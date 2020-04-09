@@ -31,12 +31,7 @@ spec:
           ## WORKING FOR 'deployment' TYPE OF APPLICATION
           - name: APP_KIND
             value: ''
-          
-          ## It supports GKE and EKS platform
-          ## GKE is the default Platform
-          - name: PLATFORM
-            value: 'GKE'
-          
+           
           ## ENTER TOTAL_CHAOS_DURATION(In seconds)
           ## DEFAULT VALUE IS 60
           - name: TOTAL_CHAOS_DURATION
@@ -47,22 +42,24 @@ spec:
           - name: MEMORY_PERCENTAGE
             value: '90'
 
+           # provide lib image
+          - name: LIB_IMAGE
+            value: 'alexeiled/stress-ng:latest' 
+
           ## PERIOD TO WAIT BEFORE AND AFTER INJECTION OF CHAOS IN SEC
           - name: RAMP_TIME
             value: ''
+
+          ## PROVIDE THE LIB
+          ## ONLY LITMUS SUPPORTED
+          - name: LIB
+            value: 'litmus' 
 
           # PROVIDE AUXILIARY APPLICATION DETAILS - NAMESPACE AND LABELS OF THE APPLICATIONS
           # SAMPLE INPUT IS  "ns1:app=percona,ns2:name=nginx"
           - name: AUXILIARY_APPINFO
             value: ''
-
-          # only supports litmus
-          - name: LIB
-            value: 'litmus'
  
-          - name: CHAOSENGINE
-            value: ''
-          
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:
               fieldRef:

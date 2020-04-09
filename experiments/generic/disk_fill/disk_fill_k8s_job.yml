@@ -39,6 +39,11 @@ spec:
           - name: TOTAL_CHAOS_DURATION
             value: ''
 
+          # provide the LIB here
+          # only supporting litmus
+          - name: LIB
+            value: 'litmus'
+
           ## Period to wait before injection of chaos in sec
           - name: RAMP_TIME
             value: ''

@@ -16,7 +16,7 @@
 
 # including litmus chaoslib -> kill-random-pod
 - name: Kill the cstor target pod 
-  include_tasks: /chaoslib/litmus/kill_random_pod.yml
+  include_tasks: /chaoslib/litmus/pod_delete/kill_random_pod.yml
   vars:
     app_ns: "{{ openebs_ns }}"
     app_pod_name: "{{ cstor_target_pod.stdout }}"

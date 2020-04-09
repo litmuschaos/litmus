@@ -47,10 +47,11 @@
       
     - name: Patch the engine uid
       template:
-        src:  /chaoslib/litmus/platform/gke/node-cpu-hog-pod.j2
-        dest: /chaoslib/litmus/platform/gke/node-cpu-hog-pod.yml
+        src:  /chaoslib/litmus/node_cpu_hog/node-cpu-hog-pod.j2
+        dest: /chaoslib/litmus/node_cpu_hog/node-cpu-hog-pod.yml
       vars:
         cpu_limit: "{{ node_cpu_core }}"
+        cpu_stress_image: "{{ lib_image }}"
       
     - name: Wait for the specified ramp time before injecting chaos
       wait_for: timeout="{{ ramp_time }}"
@@ -65,7 +66,7 @@
     - include_tasks: /utils/common/create_chaos_pod.yml
       vars:
         pod_ns: "{{ c_ns }}"
-        c_path: "/chaoslib/litmus/platform/gke/node-cpu-hog-pod.yml"
+        c_path: "/chaoslib/litmus/node_cpu_hog/node-cpu-hog-pod.yml"
         pod_label: "name=node-cpu-hog-{{ run_id }}"
       with_sequence: start=1 end=3
 
@@ -103,7 +104,7 @@
 
         ## DELETING THE POD
         - name: Deleting the node cpu hog pod
-          shell: kubectl delete -f /chaoslib/litmus/platform/gke/node-cpu-hog-pod.yml -n {{ c_ns }}
+          shell: kubectl delete -f /chaoslib/litmus/node_cpu_hog/node-cpu-hog-pod.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
 
@@ -125,7 +126,7 @@
     - block: 
         - name: Deleting the node cpu hog pod
           shell: >
-            kubectl delete -f /chaoslib/litmus/platform/gke/node-cpu-hog-pod.yml -n {{ c_ns }}
+            kubectl delete -f /chaoslib/litmus/node_cpu_hog/node-cpu-hog-pod.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
           when: "chaos_pod_result.rc == 0 "
