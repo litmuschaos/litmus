@@ -70,10 +70,6 @@
     - name: Record the app_container_id
       set_fact:
         c_container_id: "{{ container_id.stdout }}"
-
-    - name: Wait for the specified ramp time before injecting chaos
-      wait_for: timeout="{{ ramp_time }}"
-      when: "ramp_time is defined and ramp_time != ''" 
  
     - name: Patch the chaos params to memory stress job template
       template:
@@ -125,10 +121,6 @@
       until: "result.stdout == 'Succeeded'"
       delay: 1
       retries: "{{ job_wait_time }}"
-
-    - name: Wait for the specified ramp time after injecting chaos
-      wait_for: timeout="{{ ramp_time }}"
-      when: "ramp_time is defined and ramp_time != ''" 
 
     - block:
 
