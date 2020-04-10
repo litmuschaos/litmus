@@ -12,7 +12,7 @@ spec:
   nodeName: {{ node_name }}
   restartPolicy: Never
   containers:
-  - image: litmuschaos/cpu:latest
+  - image: {{ cpu_stress_image }}
     imagePullPolicy: Always
     name: node-cpu-hog
     command: ["stress"]

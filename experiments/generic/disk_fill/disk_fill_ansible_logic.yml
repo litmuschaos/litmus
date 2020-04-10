@@ -4,7 +4,6 @@
   vars_files: 
     - /chaoslib/litmus/disk_fill/test_vars_diskfill.yml
   vars:
-    c_util: "/chaoslib/litmus/disk_fill/disk_fill_by_litmus.yml"
     c_container: "{{ lookup('env','TARGET_CONTAINER') }}"
     c_experiment: "disk-fill"
     c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
@@ -17,9 +16,16 @@
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
     c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
+    c_lib: "{{ lookup('env','LIB') }}"
     
   tasks:
     - block:
+
+        ## DETERMINE THE CHAOSLIB TASKFILES TO BE USED
+        - include: disk_fill_ansible_prerequisites.yml
+
+        - include_vars:
+            file: chaosutil.yml
 
         ## GENERATE EXP RESULT NAME
         - name: Construct chaos result name

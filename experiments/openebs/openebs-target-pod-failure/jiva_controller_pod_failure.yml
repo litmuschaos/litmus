@@ -41,7 +41,7 @@
 
 # including litmus chaoslib -> kill-random-pod
 - name: Kill the jiva controller pod 
-  include_tasks: /chaoslib/litmus/kill_random_pod.yml
+  include_tasks: /chaoslib/litmus/pod_delete/kill_random_pod.yml
   vars:
     app_ns: "{{ a_ns }}"
     app_pod_name: "{{ jiva_controller_pod.stdout }}"

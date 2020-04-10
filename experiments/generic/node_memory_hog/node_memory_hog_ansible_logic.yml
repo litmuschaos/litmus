@@ -9,23 +9,25 @@
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_label: "{{ lookup('env','APP_LABEL') }}"
     a_kind: "{{ lookup('env','APP_KIND') }}"
-    a_platform: "{{ lookup('env', 'PLATFORM') }}"
     memory_percentage: "{{ lookup('env', 'MEMORY_PERCENTAGE') }}"
     auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"
+    lib_image: "{{ lookup('env','LIB_IMAGE') }}"
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
     c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
-
+    c_lib: "{{ lookup('env','LIB') }}"
+    
   tasks:
 
     - block:
-      
+
+        ## DETERMINE THE CHAOSLIB TASKFILES TO BE USED
         - include: node_memory_hog_ansible_prerequisites.yml
 
         - include_vars:
             file: chaosutil.yml
-            
+      
         ## GENERATE EXP RESULT NAME
         - name: Construct chaos result name (experiment_name)
           set_fact:

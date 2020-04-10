@@ -32,11 +32,6 @@ spec:
           - name: APP_KIND
             value: ''
           
-          ## IT SUPPORTS GKE AND EKS PLATFORM
-          ## GKE IS THE DEFAULT PLATFORM
-          - name: PLATFORM
-            value: 'GKE'
-
           ## ENTER THE NUMBER OF CORES OF CPU FOR CPU HOGGING
           ## OPTIONAL VALUE IN CASE OF EMPTY VALUE IT WILL TAKE NODE CPU CAPACITY 
           - name: NODE_CPU_CORE
@@ -47,6 +42,10 @@ spec:
           - name: TOTAL_CHAOS_DURATION
             value: '60'
 
+          # provide lib image
+          - name: LIB_IMAGE
+            value: 'litmuschaos/cpu:latest' 
+
           ## PERIOD TO WAIT BEFORE INJECTION OF CHAOS IN SEC
           - name: RAMP_TIME
             value: ''
@@ -56,10 +55,11 @@ spec:
           - name: AUXILIARY_APPINFO
             value: ''
 
-          ## ONLY SUPPORTS LITMUS
+          ## PROVIDE THE LIB
+          ## ONLY LITMUS SUPPORTED
           - name: LIB
-            value: 'litmus'
-         
+            value: 'litmus' 
+ 
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:
               fieldRef:
