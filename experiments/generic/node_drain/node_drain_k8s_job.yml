@@ -54,5 +54,9 @@ spec:
           - name: LIVENESS_APP_NAMESPACE
             value: ''
 
+          # provide the chaos namespace
+          - name: CHAOS_NAMESPACE
+            value: ''
+
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/generic/node_drain/node_drain_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]

@@ -49,10 +49,6 @@ spec:
           - name: RAMP_TIME
             value: ''
            
-          # Namespace of chaos 
-          - name: CHAOS_NAMESPACE
-            value: 'litmus'
-
           # currently supported lib: litmus
           - name: LIB
             value: 'litmus'
@@ -60,6 +56,10 @@ spec:
           # provide lib image
           - name: LIB_IMAGE
             value: 'litmuschaos/app-memory-stress:latest' 
+
+          # Provide the chaos namespace
+          - name: CHAOS_NAMESPACE
+            value: ''
             
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:

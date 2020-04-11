@@ -37,6 +37,10 @@ spec:
           - name: LIB
             value: ''
 
+          # Provide the chaos namespace
+          - name: CHAOS_NAMESPACE
+            value: ''
+
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:
               fieldRef:

@@ -88,6 +88,10 @@ spec:
           - name: LIB_IMAGE
             value: 'gaiaadm/pumba:0.6.5'
 
+          # Provide the chaos namespace
+          - name: CHAOS_NAMESPACE
+            value: ''
+
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:
               fieldRef:

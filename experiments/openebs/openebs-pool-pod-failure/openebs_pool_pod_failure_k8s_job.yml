@@ -60,6 +60,10 @@ spec:
           - name: CHAOS_ITERATIONS
             value: '2'
 
+          # Provide the chaos namespace
+          - name: CHAOS_NAMESPACE
+            value: ''
+
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/openebs/openebs-pool-pod-failure/openebs_pool_pod_failure_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
 

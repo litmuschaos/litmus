@@ -77,6 +77,10 @@ spec:
 
           - name: OPENEBS_NAMESPACE
             value: 'openebs'
+          
+          # Provide the chaos namespace
+          - name: CHAOS_NAMESPACE
+            value: ''
             
         command: ['/bin/bash']
         args: ['-c', 'ansible-playbook ./experiments/openebs/openebs-pool-disk-loss/openebs_pool_disk_loss_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0']
