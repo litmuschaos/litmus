@@ -9,7 +9,6 @@
     ramp_time: "{{ lookup('env','RAMP_TIME') }}"
     c_force: "{{ lookup('env','FORCE') }}"
     c_lib: "{{ lookup('env','LIB') }}"
-    c_svc_acc: "{{ lookup('env','CHAOS_SERVICE_ACCOUNT') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_label: "{{ lookup('env','APP_LABEL') }}"
     a_kind: "{{ lookup('env','APP_KIND') }}"
@@ -17,7 +16,14 @@
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
-  
+    c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
+    liveness_check: "{{ lookup('env','CASSANDRA_LIVENESS_CHECK') }}"
+    cassandra_svc_name: "{{ lookup('env','CASSANDRA_SVC_NAME') }}"
+    cassandra_port: "{{ lookup('env','CASSANDRA_PORT') }}"
+    liveness_svc_port: "{{ lookup('env','LIVENESS_SVC_PORT') }}"
+    cassandra_liveness_image: "{{ lookup('env','CASSANDRA_LIVENESS_IMAGE') }}"
+    replication_factor: "{{ lookup('env','KEYSPACE_REPLICATION_FACTOR') }}"
+    
   tasks:
     - block:
 
@@ -36,10 +42,9 @@
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'SOT'
-            namespace: "{{ a_ns }}"
+            namespace: "{{ c_ns }}"
      
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
-
         - name: Verify that the AUT (Application Under Test) is running 
           include_tasks: "/utils/common/status_app_pod.yml"
           vars:
@@ -53,7 +58,7 @@
           vars:
             stage: "PreChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
-            engine_ns: "{{ a_ns }}"
+            engine_ns: "{{ c_ns }}"
             message: "AUT is Running successfully"
           when: "c_engine is defined and c_engine != ''"
 
@@ -62,16 +67,21 @@
           vars:
             app_ns: "{{ a_ns }}"
             app_label: "{{ a_label }}"
+
+        ## SETUP THE LIVENESS POD FOR CASSANDRA STATEFULSET
+        - name: Creating the liveness pod for cassandra statefulset
+          include_tasks: "/utils/apps/cassandra/cassandra_liveness_check.yml" 
+          vars:
+            liveness_ns: "{{ a_ns }}"
+          when: "liveness_check is defined and liveness_check == 'enabled'"
               
         ## FAULT INJECTION 
-
         - include_tasks: "{{ c_util }}"
           vars:
             app_ns: "{{ a_ns }}"
             app_label: "{{ a_label }}"
    
         ## POST-CHAOS APPLICATION LIVENESS CHECK
-
         - name: Verify AUT liveness post fault-injection
           include_tasks: "/utils/common/status_app_pod.yml"
           vars:
@@ -85,7 +95,7 @@
           vars:
             stage: "PostChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
-            engine_ns: "{{ a_ns }}"
+            engine_ns: "{{ c_ns }}"
             message: "AUT is Running successfully"
           when: "c_engine is defined and c_engine != ''"
 
@@ -95,12 +105,34 @@
             app_ns: "{{ a_ns }}"
             app_label: "{{ a_label }}"
 
+        - block:
+
+            - name: Confirm that the cassandra liveness pod is running
+              include_tasks: "/utils/common/status_app_pod.yml"
+              vars:
+                app_ns: "{{ a_ns }}"
+                app_label: "name=cassandra-liveness-deploy"      
+                delay: 2
+                retries: 90
+
+             ## CLEANING THE LIVENESS POD FOR CASSANDRA STATEFULSET
+            - include_tasks: "/utils/apps/cassandra/cassandra_liveness_cleanup.yml"
+              vars:
+                liveness_ns: "{{ a_ns }}" 
+
+          when: "liveness_check is defined and liveness_check == 'enabled'"
+
         - set_fact:
             flag: "Pass"
 
       rescue: 
         - set_fact: 
             flag: "Fail"
+
+        - include_tasks: "/utils/apps/cassandra/cassandra_liveness_cleanup.yml"
+          vars:
+            liveness_ns: "{{ a_ns }}" 
+          when: "liveness_check is defined and liveness_check == 'enabled' and liveness_pod_result.rc == 0"
 
       always: 
 
@@ -111,4 +143,4 @@
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'
-            namespace: "{{ a_ns }}"
+            namespace: "{{ c_ns }}"

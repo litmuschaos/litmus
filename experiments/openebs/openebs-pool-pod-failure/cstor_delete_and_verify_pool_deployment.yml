@@ -26,7 +26,7 @@
 
 # including chaoslib kill-random-pod
 - name: Delete the cstor pool pod for reschedule
-  include_tasks: /chaoslib/litmus/kill_random_pod.yml
+  include_tasks: /chaoslib/litmus/pod_delete/kill_random_pod.yml
   vars:
     app_ns: "{{ openebs_ns }}"
     app_pod_name: "{{ cstor_pool_pod.stdout }}"

@@ -11,11 +11,11 @@ spec:
     spec:
       # Placeholder that is updated by the executor for automated runs
       # Provide appropriate SA (with desired permissions) if executed manually
-      serviceAccountName: litmus
+      serviceAccountName: %CHAOS_SERVICE_ACCOUNT%
       restartPolicy: Never
       containers:
       - name: ansibletest
-        image: shubh214/ansible-runner:ci
+        image: litmuschaos/ansible-runner:ci
         imagePullPolicy: Always
         env:
           - name: ANSIBLE_STDOUT_CALLBACK
@@ -23,15 +23,38 @@ spec:
 
           # provide application namespace
           - name: APP_NAMESPACE
-            value: 'cassandra'
+            value: ''
 
-          # provide application labels
+          # provide application label
           - name: APP_LABEL
-            value: 'app=cassandra'
+            value: ''
 
            # provide application kind
           - name: APP_KIND
             value: ''
+
+          # provide cassandra service name
+          # default service: cassandra
+          - name: CASSANDRA_SVC_NAME
+            value: 'cassandra'
+
+          # provide the keyspace replication factor
+          - name: KEYSPACE_REPLICATION_FACTOR
+            value: ''
+
+          # provide cassandra port 
+          # default port: 9042
+          - name: CASSANDRA_PORT
+            value: '9042'
+
+          # provide liveness deployement port
+          # default port: 8088, It only supports 8088 port
+          - name: LIVENESS_SVC_PORT
+            value: '8088'
+
+          # provide cassandra liveness image
+          - name: CASSANDRA_LIVENESS_IMAGE
+            value: 'litmuschaos/cassandra-client:latest'
 
           - name: TOTAL_CHAOS_DURATION
             value: '15'
@@ -39,9 +62,14 @@ spec:
           - name: CHAOS_INTERVAL
             value: '15'
 
-            ## Period to wait before injection of chaos  
+          # SET THE CASSANDRA_LIVENESS_CHECK
+          # IT CAN BE `enabled` OR `disabled`
+          - name: CASSANDRA_LIVENESS_CHECK
+            value: ''
+
+          ## Period to wait before injection of chaos  
           - name: RAMP_TIME
-            value: '10'
+            value: ''
 
           - name: FORCE
             value: 'true'
@@ -49,7 +77,15 @@ spec:
           ## env var that describes the library used to execute the chaos
           ## default: litmus. Supported values: litmus, powerfulseal
           - name: LIB
+            value: 'litmus'
+
+          - name: CHAOS_NAMESPACE
             value: ''
+
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
 
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:

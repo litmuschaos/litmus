@@ -9,29 +9,30 @@
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_label: "{{ lookup('env','APP_LABEL') }}"
     a_kind: "{{ lookup('env','APP_KIND') }}"
-    a_platform: "{{ lookup('env', 'PLATFORM') }}"
+    lib_image: "{{ lookup('env','LIB_IMAGE') }}"
     auxiliary_appinfo: "{{ lookup('env','AUXILIARY_APPINFO') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
     node_cpu_core: "{{ lookup('env','NODE_CPU_CORE') }}"
     c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
+    c_lib: "{{ lookup('env','LIB') }}"
 
   tasks:
 
     - block:
-      
+
+        ## DETERMINE THE CHAOSLIB TASKFILES TO BE USED
         - include: node_cpu_hog_ansible_prerequisites.yml
 
         - include_vars:
             file: chaosutil.yml
-            
+      
         ## GENERATE EXP RESULT NAME
         - name: Construct chaos result name
           set_fact:
             c_result: "{{ c_engine }}-{{ c_experiment }}"
           when: "c_engine is defined and c_engine != ''"
-
 
         ## RECORD START-OF-EXPERIMENT IN LITMUSCHAOS RESULT CR
         - include_tasks: /utils/runtime/update_chaos_result_resource.yml

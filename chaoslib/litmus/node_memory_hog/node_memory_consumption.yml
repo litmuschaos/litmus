@@ -35,11 +35,12 @@
     ## PATCH THE ENGINE UID
     - name: Patch the engine uid
       template:
-        src:  /chaoslib/litmus/platform/gke/node-memory-hog-pod.j2
-        dest: /chaoslib/litmus/platform/gke/node-memory-hog-pod.yml
+        src:  /chaoslib/litmus/node_memory_hog/node-memory-hog-pod.j2
+        dest: /chaoslib/litmus/node_memory_hog/node-memory-hog-pod.yml
       vars:
         stress_time: "{{ c_duration }}s"
         total_memory_percentage: "{{ memory_percentage }}%"
+        memory_stress_image: "{{ lib_image }}"
 
     ## WAIT FOR THE SPECIFIED RAMP TIME
     - name: Wait for the specified ramp time before injecting chaos
@@ -55,7 +56,7 @@
     - include_tasks: /utils/common/create_chaos_pod.yml
       vars:
         pod_ns: "{{ c_ns }}"
-        c_path: "/chaoslib/litmus/platform/gke/node-memory-hog-pod.yml"
+        c_path: "/chaoslib/litmus/node_memory_hog/node-memory-hog-pod.yml"
         pod_label: "name=node-memory-hog-{{ run_id }}"
       with_sequence: start=1 end=3
 
@@ -96,7 +97,7 @@
 
         ## DELETING THE POD
         - name: Deleting the Memory Hog Pod
-          shell: kubectl delete -f /chaoslib/litmus/platform/gke/node-memory-hog-pod.yml -n {{ c_ns }}
+          shell: kubectl delete -f /chaoslib/litmus/node_memory_hog/node-memory-hog-pod.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
     
@@ -121,7 +122,7 @@
         ## REMOVING THE MEMORY HOG Pod
         - name: Deleting the Memory Hog Pod
           shell: >
-            kubectl delete -f /chaoslib/litmus/platform/gke/node-memory-hog-pod.yml -n {{ c_ns }}
+            kubectl delete -f /chaoslib/litmus/node_memory_hog/node-memory-hog-pod.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
           when: "chaos_pod_result.rc == 0 "

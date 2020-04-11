@@ -43,6 +43,11 @@ spec:
           - name: RAMP_TIME
             value: ''
 
+          ## Provide the lib
+          ## Only litmus supported
+          - name: LIB
+            value: 'litmus'
+
           - name: LIVENESS_APP_LABEL
             value: ''
 

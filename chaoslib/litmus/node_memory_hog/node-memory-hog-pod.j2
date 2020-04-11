@@ -12,7 +12,7 @@ spec:
   nodeName: {{ node_name }}
   restartPolicy: Never
   containers:
-  - image: alexeiled/stress-ng:latest
+  - image: {{ memory_stress_image }}
     imagePullPolicy: Always
     name: memory-hog
     args: ["--vm", "1", "--vm-bytes", "{{ total_memory_percentage }}", "-t", "{{ stress_time }}"]
