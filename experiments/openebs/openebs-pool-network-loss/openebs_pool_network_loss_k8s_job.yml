@@ -62,6 +62,10 @@ spec:
 
           - name: DATA_PERSISTENCE
             value: ''
+  
+          # Provide the chaos namespace
+          - name: CHAOS_NAMESPACE
+            value: ''
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/openebs/openebs-pool-network-loss/openebs_pool_network_loss_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
