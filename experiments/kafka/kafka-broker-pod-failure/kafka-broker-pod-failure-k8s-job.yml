@@ -84,6 +84,15 @@ spec:
           ## default: litmus. Supported values: litmus, powerfulseal
           - name: LIB
             value: ''
+          
+          # Provide the chaos namespace
+          - name: CHAOS_NAMESPACE
+            value: ''
+
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
 
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:

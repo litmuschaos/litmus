@@ -59,6 +59,10 @@ spec:
           ## ONLY LITMUS SUPPORTED
           - name: LIB
             value: 'litmus' 
+
+          # provide the chaos namespace
+          - name: CHAOS_NAMESPACE
+            value: ''
  
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:

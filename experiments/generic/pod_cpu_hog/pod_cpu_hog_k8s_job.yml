@@ -57,6 +57,10 @@ spec:
           - name: LIB_IMAGE
             value: 'litmuschaos/app-cpu-stress:latest' 
 
+          # provide the chaos namespace
+          - name: CHAOS_NAMESPACE
+            value: ''
+
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:
               fieldRef:
