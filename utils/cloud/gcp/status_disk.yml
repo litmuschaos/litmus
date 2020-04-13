@@ -1,8 +1,8 @@
-- name: Getting disk users
+- name: "[Status]: Getting the disk users"
   shell: gcloud compute disks describe {{ disk_name }} --zone {{ zone_name }} --format="csv(users)"
   register: disk_users
 
-- name: Disk status check
+- name: "[Status]: Disk status check"
   template:
     src: /utils/common/disk_status_check.j2
     dest: disk_status_check.yml
