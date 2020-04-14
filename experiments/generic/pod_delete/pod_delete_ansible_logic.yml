@@ -50,7 +50,7 @@
               - "Label        : {{ a_label }}"
               - "Ramp Time    : {{ ramp_time }}"  
      
-        ## PRE-CHAOS APPLICATION LIVENESS CHECK
+        ## PRE-CHAOS APPLICATION STATUS CHECK
         - name: "[Status]: Verify that the AUT (Application Under Test) is running (pre-chaos)"
           include_tasks: "/utils/common/status_app_pod.yml"
           vars:
@@ -75,7 +75,7 @@
             app_ns: "{{ a_ns }}"
             app_label: "{{ a_label }}"
    
-        ## POST-CHAOS APPLICATION LIVENESS CHECK
+        ## POST-CHAOS APPLICATION STATUS CHECK
         - name: "[Status]: Verify that the AUT (Application Under Test) is running (post-chaos)"
           include_tasks: "/utils/common/status_app_pod.yml"
           vars:
