@@ -1,18 +1,18 @@
 ---
-- name: Fetch the pool pod name from cvr
+- name: "[Prepare]: Fetch the pool pod name from cvr"
   include_tasks: "/utils/apps/openebs/fetch_podname_from_cvr.yml"
 
-- name: Get the pod of pool deployment
+- name: "[Prepare]: Getting the name of pool pod"
   set_fact: 
     cstor_pool_pod: "{{ pool_pod_named_list | random }}"
 
-- name: Display pool pod name
+- name: "[Info]: Displaying the pool pod name"
   debug: 
     msg: 
       - "The application info is as follows:"
       - " pod-name  : {{ cstor_pool_pod }}"
               
-- name: Get the runningStatus of pool pod
+- name: "[Status]: Getting the runningStatus of pool pod"
   shell: >
     kubectl get pod {{ cstor_pool_pod }} -n {{ openebs_ns }}
     -o=jsonpath='{range .status.containerStatuses[*]}{.state}{"\n"}{end}' |
@@ -24,15 +24,16 @@
   delay: 2
   retries: 90
 
-# including pumba chaoslib pod_failure_by_sigkill - container kill
-- include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yml
+# including pumba chaoslib pod_failure_by_sigkill (container kill)
+- name: "[Include]: Including the pumba chaoslib for container kill"
+  include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yml
   vars:
     namespace: "{{ openebs_ns }}"
     label: "app=cstor-pool"
     app_pod: "{{ cstor_pool_pod }}"
     app_container: "cstor-pool"
 
-- name: Check for pool pod in running state
+- name: "[Status]: Checking the running status of pool pod"
   shell: >
     kubectl get pod {{ cstor_pool_pod }} -n {{ openebs_ns }} |
     grep -w "Running" | wc -l
@@ -43,7 +44,7 @@
   delay: 2
   retries: 90
 
-- name: Get the runningStatus of pool pod
+- name: "[Status]: Checking the running status of pool container"
   shell: >
     kubectl get pod {{ cstor_pool_pod }} -n {{ openebs_ns }}
     -o=jsonpath='{range .status.containerStatuses[*]}{.state}{"\n"}{end}' |
