@@ -62,6 +62,10 @@ spec:
           - name: CHAOS_INTERVAL
             value: '15'
 
+          # provide the kill count
+          - name: KILL_COUNT
+            value: ''
+
           # SET THE CASSANDRA_LIVENESS_CHECK
           # IT CAN BE `enabled` OR `disabled`
           - name: CASSANDRA_LIVENESS_CHECK
