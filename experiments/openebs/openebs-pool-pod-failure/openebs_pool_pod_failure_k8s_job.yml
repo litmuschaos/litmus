@@ -40,6 +40,10 @@ spec:
           - name: APP_LABEL
             value: ''
 
+          # provide the kill count
+          - name: KILL_COUNT
+            value: ''
+
           #provide application pvc
           # NOTE: Leave it blank for pool-validation
           - name: APP_PVC

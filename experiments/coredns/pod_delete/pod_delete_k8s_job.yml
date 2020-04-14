@@ -34,6 +34,10 @@ spec:
           - name: CHAOS_NAMESPACE
             value: ''
 
+          # provide the kill count
+          - name: KILL_COUNT
+            value: ''
+
            # provide application kind
           - name: APP_KIND
             value: 'deployment'

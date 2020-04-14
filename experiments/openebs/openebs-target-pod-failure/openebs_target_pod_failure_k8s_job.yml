@@ -43,6 +43,10 @@ spec:
           - name: APP_PVC
             value: ''
 
+          # provide the kill count
+          - name: KILL_COUNT
+            value: ''
+
         #  it can be true or false, depending upon scenario - allowed force deletion or not
           - name: FORCE
             value: 'true'
