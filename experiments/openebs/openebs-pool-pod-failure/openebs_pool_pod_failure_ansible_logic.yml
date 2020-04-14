@@ -8,6 +8,7 @@
     a_pvc: "{{ lookup('env','APP_PVC') }}"
     c_duration: 600
     c_interval: 5
+    kill_count: "{{ lookup('env','KILL_COUNT') }}"
     c_experiment: openebs-pool-pod-failure
     c_force: "{{ lookup('env','FORCE') }}"
     c_iterations: "{{ lookup('env','CHAOS_ITERATIONS') }}"
