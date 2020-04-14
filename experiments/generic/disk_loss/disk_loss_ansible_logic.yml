@@ -25,23 +25,34 @@
     - block:
         - include: disk_loss_ansible_prerequisites.yml
 
-        - include_vars:
+        - name: "[PreReq]: Including the chaos util for the {{ c_experiment }} experiment"
+          include_vars:
             file: chaosutil.yml 
 
         ## GENERATE EXP RESULT NAME
-        - name: Construct chaos result name
+        - name: "[PreReq]: Constructing the chaos result name"
           set_fact:
             c_result: "{{ c_engine }}-{{ c_experiment }}"
           when: "c_engine is defined and c_engine != ''"
 
         # RECORD START-OF-EXPERIMENT IN LITMUSCHAOS RESULT CR
-        - include_tasks: "/utils/runtime/update_chaos_result_resource.yml"
+        - name: "[PreReq]: Updating the chaos result of {{ c_experiment }} experiment (SOT)"
+          include_tasks: "/utils/runtime/update_chaos_result_resource.yml"
           vars:
             status: 'SOT'
             namespace: "{{ c_ns }}"
 
-        ## PRE-CHAOS APPLICATION LIVENESS CHECK
-        - name: Verify that the AUT (Application Under Test) is running
+        ## DISPLAY APP INFORMATION 
+        - name: "[Info]: Display the application information passed via the test job"
+          debug: 
+            msg: 
+              - "The application info is as follows:"
+              - "Namespace    : {{ a_ns }}"
+              - "Label        : {{ a_label }}"
+              - "Ramp Time    : {{ ramp_time }}"  
+
+        ## PRE-CHAOS APPLICATION STATUS CHECK
+        - name: "[Status]: Verify that the AUT (Application Under Test) is running (pre-chaos)"
           include_tasks: "/utils/common/status_app_pod.yml"
           vars:
             app_ns: "{{ a_ns }}"
@@ -57,7 +68,8 @@
             set_fact:
               auxiliary_appinfo_list: "{{ auxiliary_appinfo.split(',') }}"
 
-          - include: /utils/common/status_app_pod.yml
+          - name: "[Status]: Verify that the Auxiliary Applications are running (pre-chaos)"
+            include: /utils/common/status_app_pod.yml
             vars:
               app_ns: "{{ item.split(':')[0] }}"
               app_label: "{{ item.split(':')[1] }}"
@@ -69,7 +81,8 @@
           when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
         ## RECORD EVENT FOR PRE-CHAOS CHECK
-        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+        - name: "[Event]: Generating an Event for PreChaosCheck"
+          include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
           vars:
             stage: "PreChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
@@ -78,21 +91,21 @@
           when: "c_engine is defined and c_engine != ''"
 
         # Gcloud authentication
-        - name: Gcloud authentication
+        - name: "[Authentication]: Gcloud authentication"
           include_tasks: "/utils/cloud/gcp/gcloud_configure.yml"
-          when: "cloud_platform == 'GCP'"
+          when: "cloud_platform == 'GKE'"
         
         # AWS authentication
-        - name: AWS authentication
+        - name: "[Authentication]: AWS authentication"
           include_tasks: "/utils/cloud/aws/aws_configure.yml"
           when: "cloud_platform == 'AWS'"
 
-        ## PRE-CHAOS DISK LIVENESS CHECK
-        - name: Verify that the disk is connected to node (pre)
+        ## PRE-CHAOS DISK STATUS CHECK
+        - name: "[Status]: Verify that the disk is connected to node (pre-chaos)"
           include_tasks: "/utils/cloud/gcp/status_disk.yml"
-          when: "cloud_platform == 'GCP'"
+          when: "cloud_platform == 'GKE'"
 
-        - name: Verify that the disk is connected to node (pre)
+        - name: "[Status]: Verify that the disk is connected to node (pre-chaos)"
           include_tasks: "/utils/cloud/aws/status_disk.yml"
           when: "cloud_platform == 'AWS'"
 
@@ -106,11 +119,11 @@
           when: "inuse is defined and inuse == false"
 
          ## INJECTING CHAOS 
-        - name: Injecting the chaos
+        - name: "[Prepare]: Including the disk-loss chaoslib"
           include_tasks: "{{ c_util }}"
             
-        # POST-CHAOS APPLICATION LIVENESS CHECK
-        - name: Verify AUT liveness post fault-injection
+        # POST-CHAOS APPLICATION STATUS CHECK
+        - name: "[Status]: Verify that the AUT (Application Under Test) is running (post-chaos)"
           include_tasks: "/utils/common/status_app_pod.yml"
           vars:
             app_ns: "{{ a_ns }}"
@@ -122,7 +135,8 @@
         # Auxiliary application health check status
         - block:
 
-          - include: /utils/common/status_app_pod.yml
+          - name: "[Status]: Verify that the Auxiliary Applications are running (post-chaos)"
+            include: /utils/common/status_app_pod.yml
             vars:
               app_ns: "{{ item.split(':')[0] }}"
               app_label: "{{ item.split(':')[1] }}"
@@ -134,7 +148,8 @@
           when: auxiliary_appinfo is defined and auxiliary_appinfo != ''
 
         ## RECORD EVENT FOR POST-CHAOS CHECK
-        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+        - name: "[Event]: Generating an Event for PostChaosCheck"
+          include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
           vars:
             stage: "PostChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
@@ -143,11 +158,11 @@
           when: "c_engine is defined and c_engine != ''"
 
         ## POST-CHAOS DISK LIVENESS CHECK
-        - name: Verify that the disk is connected to node (post)
+        - name: "[Status]: Verify that the disk is connected to node (post-chaos)"
           include_tasks: "/utils/cloud/gcp/status_disk.yml"
-          when: "cloud_platform == 'GCP'"
+          when: "cloud_platform == 'GKE'"
         
-        - name: Verify that the disk is connected to node (post)
+        - name: "[Status]: Verify that the disk is connected to node (post-chaos)"
           include_tasks: "/utils/cloud/aws/status_disk.yml"
           when: "cloud_platform == 'AWS'"
           
@@ -163,10 +178,18 @@
         - set_fact:
             flag: "Pass"
 
+        - name: "[Result]: Getting the final result of {{ c_experiment }} experiment"
+          debug:
+            msg: "{{ c_experiment }} experiment has been {{ flag }}ed"
+
       rescue:
 
         - set_fact:
             flag: "Fail"
+
+        - name: "[Result]: Getting the final result of {{ c_experiment }} experiment"
+          debug:
+            msg: "{{ c_experiment }} experiment has been {{ flag }}ed"
 
       always:
 
@@ -174,7 +197,8 @@
         - include_tasks: /utils/runtime/getting_failure_step.yml  
 
         ## RECORD END-OF-TEST IN LITMUSCHAOS RESULT CR
-        - include_tasks: "/utils/runtime/update_chaos_result_resource.yml"
+        - name: "[The End]: Updating the chaos result of {{ c_experiment }} experiment (EOT)"
+          include_tasks: "/utils/runtime/update_chaos_result_resource.yml"
           vars:
             status: 'EOT'
             namespace: "{{ c_ns }}"

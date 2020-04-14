@@ -58,7 +58,7 @@
 
         - name: Perform gcloud authentication
           include_tasks: "/utils/cloud/gcp/gcloud_configure.yml"
-          when: "cloud_platform == 'GCP'"
+          when: "cloud_platform == 'GKE'"
 
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
 
@@ -89,7 +89,7 @@
 
         - name: Verify that the specified disk is connected to node 
           include_tasks: "/utils/cloud/gcp/status_disk.yml"
-          when: "cloud_platform == 'GCP'"
+          when: "cloud_platform == 'GKE'"
 
         - debug: 
             msg: "specified disk is attached to node"   
@@ -148,7 +148,7 @@
 
         - name: Verify that the disk is connected to node (post)
           include_tasks: "/utils/cloud/gcp/status_disk.yml"
-          when: "cloud_platform == 'GCP'" 
+          when: "cloud_platform == 'GKE'" 
 
         - debug: 
             msg: "specified disk is attached to node"   
