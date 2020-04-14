@@ -53,7 +53,7 @@
       # Gcloud authentication
       - name: Gcloud authentication
         include_tasks: "/utils/cloud/gcp/gcloud_configure.yml"
-        when: "cloud_platform == 'GCP'"
+        when: "cloud_platform == 'GKE'"
 
       # AWS authentication
       - name: AWS authentication
@@ -63,7 +63,7 @@
       ## PRE-CHAOS DISK LIVENESS CHECK
       - name: Verify that the disk is connected to node (pre)
         include_tasks: "/utils/cloud/gcp/status_disk.yml"
-        when: "cloud_platform == 'GCP'"
+        when: "cloud_platform == 'GKE'"
 
       - name: Verify that the disk is connected to node (pre)
         include_tasks: "/utils/cloud/aws/status_disk.yml"
@@ -140,7 +140,7 @@
       # POST CHAOS CHECKS
       - name: Verify that the disk is connected to node (post)
         include_tasks: "/utils/cloud/gcp/status_disk.yml"
-        when: "cloud_platform == 'GCP'"
+        when: "cloud_platform == 'GKE'"
       
       - name: Verify that the disk is connected to node (post)
         include_tasks: "/utils/cloud/aws/status_disk.yml"
