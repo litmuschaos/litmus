@@ -52,13 +52,17 @@
     pod_name: "{{ write_pod_name.stdout  }}"
   when: "state == 'START'"
 
+- name: Getting latest pod name of label run=read-pod-{{ run_id }}
+  shell: kubectl get pod -l run=read-pod-{{ run_id }} -o jsonpath="{.items[0].metadata.name}" -n {{ app_ns }}
+  register: latest_pod_name
+
 - name: Read the test data from the "read-pod" pod
   include: "/utils/apps/busybox/busybox_data_persistence.yml"
   vars:
     status: 'VERIFY'
     ns: "{{ app_ns }}"
     label: "run=read-pod-{{ run_id }}"
-    pod_name: "{{ read_pod_name.stdout }}"
+    pod_name: "{{ latest_pod_name.stdout }}"
 
 - block:
   - name: Re-Checking the read-pod and write-pod pod's volume is using NFS 
@@ -82,13 +86,17 @@
       ns: "{{ app_ns }}"
       pod_name: "{{ write_pod_name.stdout }}"
 
+  - name: Getting latest pod name of label run=read-pod-{{ run_id }}
+    shell: kubectl get pod -l run=read-pod-{{ run_id }} -o jsonpath="{.items[0].metadata.name}" -n {{ app_ns }}
+    register: latest_pod_name
+
   - name: Read the test data from the "read-pod" pod
     include: "/utils/apps/busybox/busybox_data_persistence.yml"
     vars:
       status: "VERIFY"
       ns: "{{ app_ns }}"
       label: "run=read-pod-{{ run_id }}"
-      pod_name: "{{ read_pod_name.stdout }}"
+      pod_name: "{{ latest_pod_name.stdout }}"
 
   - name: Deleting external external_applications
     shell: kubectl delete -f /utils/apps/nfs/external_applications.yml
