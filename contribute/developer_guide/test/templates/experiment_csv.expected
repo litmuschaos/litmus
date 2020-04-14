@@ -1,19 +1,20 @@
 apiVersion: litmuchaos.io/v1alpha1
 kind: ChartServiceVersion
 metadata:
-  name: kill-hello-replicas 
+  name: pod-delete 
   version: 0.1.0
   annotations:
-    categories: hello-world
-    repository: https://github.com/litmuschaos/demo-app/tree/master/sample_apps/hellonode
+    categories: sample-category
+    repository: https://github.com/litmuschaos/litmus/tree/master/sample-category/pod-delete
     support: https://kubernetes.slack.com/messages/CNXNB0ZTN
 spec:
-  displayName: kill-hello-replicas 
-  description: >
-    kills hello-world pods in a random manner 
-  keywords: ['pods', 'kubernetes', 'hello-world', 'nodejs'] 
+  displayName: pod-delete 
+  categoryDescription: >
+    kills nginx pods in a random manner 
+  keywords: ['pods', 'kubernetes', 'sample-category', 'nginx'] 
   maturity: alpha 
   minKubeVersion: 1.12.0 
+  provider: {'name': 'Mayadata'}
   maintainers: ['ksatchit@mayadata.io'] 
   contributors: ['ksatchit@mayadata.io'] 
   links: ['https://docs.litmuschaos.io/docs/getstarted/'] 
