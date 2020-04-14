@@ -1,13 +1,13 @@
 ---
-- name: Pick the jiva controller pod
+- name: "[Prepare]: Pick the jiva controller pod"
   include_tasks: /utils/apps/openebs/fetch_jiva_controller_pod.yml
 
-- name: Record the jiva controller deployment and container name
+- name: "[Prepare]: Record the jiva controller deployment and container name"
   set_fact:  
     jiva_controller_deploy: "{{ pv.stdout }}-{{ jiva_controller_pod_suffix }}"
     jiva_controller_name: "{{ pv.stdout }}-{{ jiva_controller_pod_suffix }}-{{ jiva_controller_container_suffix }}"
 
-- name: Get the resourceVersion of the target deploy before fault injection
+- name: "[Prepare]: Get the resourceVersion of the target deploy before fault injection"
   shell: >
     kubectl get deployment {{ jiva_controller_deploy }} -n {{ a_ns }} 
     -o=custom-columns=NAME:".metadata.resourceVersion" --no-headers
@@ -15,7 +15,7 @@
     executable: /bin/bash
   register: rv_bef
 
-- name: Get controller svc
+- name: "[Prepare]: Getting the name of controller svc"
   shell: >
     kubectl get svc -l {{ jiva_controller_svc_label }}
     -n {{ a_ns }} -o=jsonpath='{.items[0].spec.clusterIP}'
@@ -24,14 +24,14 @@
   register: controller_svc
   failed_when: controller_svc.stdout == ""
 
-- name: Install jq package inside a controller container
+- name: "[Install]: Install jq package inside a controller container"
   shell: >
     kubectl exec -it {{ jiva_controller_pod.stdout }} -n {{ a_ns }} -c {{ jiva_controller_name }} 
     -- bash -c "apt-get update && apt-get install -y jq"
   args:
     executable: /bin/bash
 
-- name: Getting the Replicastatus before killing controller
+- name: "[Prepare]: Getting the Replicastatus before killing controller"
   shell: >
    kubectl exec -it {{ jiva_controller_pod.stdout }} -n {{ a_ns }} 
    -c {{ jiva_controller_name }} curl http://"{{controller_svc.stdout}}":9501/v1/replicas | jq -r '.data[].mode'
@@ -40,13 +40,13 @@
   register: rstatus_before 
 
 # including litmus chaoslib -> kill-random-pod
-- name: Kill the jiva controller pod 
+- name: "[Inject]: Including the random pod delete chaoslib"
   include_tasks: /chaoslib/litmus/pod_delete/kill_random_pod.yml
   vars:
     app_ns: "{{ a_ns }}"
     app_pod_name: "{{ jiva_controller_pod.stdout }}"
 
-- name: Get jiva controller pod belonging to the PV
+- name: "[Verification]: Get jiva controller pod belonging to the PV"
   shell: >
     kubectl get pods --no-headers -l {{ jiva_controller_pod_label }} -n {{ a_ns }}
     -o jsonpath="{.items[?(@.metadata.labels.openebs\\.io/persistent-volume==\"{{pv.stdout}}\")].metadata.name}"
@@ -54,14 +54,14 @@
     executable: /bin/bash
   register: jctrl_pod_after
 
-- name: Install jq package inside a controller container
+- name: "[Install]: Install jq package inside a controller container"
   shell: >
     kubectl exec -it {{ jctrl_pod_after.stdout }} -n {{ a_ns }} -c {{ jiva_controller_name }}
     -- bash -c "apt-get update && apt-get install -y jq"
   args:
     executable: /bin/bash
 
-- name: Getting the Replicastatus after killing the controller
+- name: "[Verification]: Getting the Replicastatus after killing the controller"
   shell: >
    kubectl exec -it {{ jctrl_pod_after.stdout }} -n {{ a_ns }}
    -c {{ jiva_controller_name }} curl http://"{{controller_svc.stdout}}":9501/v1/replicas | jq -r '.data[].mode'
@@ -72,7 +72,7 @@
   retries: 2
   delay: 90
 
-- name: Get the resourceVersion of the target deploy after fault injection
+- name: "[Verification]: Get the resourceVersion of the controller deploy after fault injection"
   shell: >
     kubectl get deployment {{ jiva_controller_deploy }} -n {{ a_ns }}
     -o=custom-columns=NAME:".metadata.resourceVersion" --no-headers 
@@ -80,7 +80,7 @@
     executable: /bin/bash
   register: rv_aft
 
-- name: Compare resourceVersions of target deployment
+- name: "[Verification]: Compare resourceVersions of controller deployment before/after"
   debug:
     msg: "Verified target pods were restarted by fault injection"
   failed_when: "rv_bef.stdout | int == rv_aft.stdout | int"
