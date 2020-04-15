@@ -21,6 +21,6 @@
    - openebs-snapshot-operator
    - openebs-ndm
  </td>
- <td>https://docs.litmuschaos.io/docs/openebs-control-plane-chaos</a> </td>
+ <td><a>https://docs.litmuschaos.io/docs/openebs-control-plane-chaos</a> </td>
  </tr>
  </table>
