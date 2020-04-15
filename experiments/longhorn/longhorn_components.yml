@@ -1,0 +1,3 @@
+engine_instance_manager_label: "longhorn.io/instance-manager-type=engine"
+replica_instance_manager_label: "longhorn.io/instance-manager-type=replica"
+
