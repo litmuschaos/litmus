@@ -1,26 +1,26 @@
-- name: Generate a random strint as suffix to topic name 
+- name: "[Liveness]: Generate a random strint as suffix to topic name"
   shell: echo $(mktemp) | cut -d '.' -f 2
   args: 
     executable: /bin/bash
   register: uniqstr
 
-- name: Set the kafka topic name to a variable
+- name: "[Liveness]: Set the kafka topic name to a variable"
   set_fact:
     kafka_topic: "topic-{{ uniqstr.stdout }}"
 
-- name: Generate the kafka liveness spec from template
+- name: "[Liveness]: Generate the kafka liveness spec from template"
   template: 
     src: /utils/apps/kafka/kafka_liveness_non_auth.j2
     dest: kafka_liveness.yml
   when: kafka_sasl_auth is not defined or kafka_sasl_auth == '' or kafka_sasl_auth == 'disabled'
 
-- name: Generate the kafka liveness spec from template
+- name: "[Liveness]: Generate the kafka liveness spec from template"
   template: 
     src: /utils/apps/kafka/kafka_liveness_sasl_auth.j2
     dest: kafka_liveness.yml
   when: kafka_sasl_auth is defined and kafka_sasl_auth == 'enabled' 
 
-- name: Apply the pub-sub kafka liveness application
+- name: "[Liveness]: Apply the pub-sub kafka liveness application"
   shell: 
     kubectl apply -f kafka_liveness.yml -n {{ kafka_ns }}
   args:
@@ -28,7 +28,7 @@
   register: result
   failed_when: "result.rc != 0"
 
-- name: Confirm that the kafka liveness pod is running
+- name: "[Liveness]: Confirm that the kafka liveness pod is running"
   shell: 
     kubectl get pod -l name=kafka-liveness --no-headers -n {{ kafka_ns }}
   args:
@@ -38,14 +38,14 @@
   delay: 2
   retries: 90
 
-- name: Fetch the kafka-liveness pod name
+- name: "[Liveness]: Fetch the kafka-liveness pod name"
   shell: 
     kubectl get pods -n {{ kafka_ns }} -l name=kafka-liveness -o jsonpath='{.items[0].metadata.name}' 
   register: kafka_liveness_pod
 
 - block: 
 
-    - name: Obtain the leader broker ordinality for the topic (partition) created by kafka-liveness
+    - name: "[Liveness]: Obtain the leader broker ordinality for the topic (partition) created by kafka-liveness"
       shell: > 
         kubectl exec {{ kafka_liveness_pod.stdout }} -n {{ kafka_ns }} -c kafka-consumer 
         -- kafka-topics --topic {{ kafka_topic }} --describe --zookeeper {{ zk_service }}:{{ zk_port }}
@@ -62,7 +62,7 @@
 
 - block: 
 
-    - name: Obtain the leader broker ordinality for the topic (partition) created by kafka-liveness
+    - name: "[Liveness]: Obtain the leader broker ordinality for the topic (partition) created by kafka-liveness"
       shell: > 
         kubectl exec {{ kafka_liveness_pod.stdout }} -n {{ kafka_ns }} -c kafka-consumer 
         -- kafka-topics --topic {{ kafka_topic }} --describe --zookeeper {{ zk_service }}:{{ zk_port }}/{{ kafka_instance }}
@@ -78,7 +78,7 @@
   when: kafka_instance is defined and kafka_instance != ''
 
 
-- name: Determine the leader broker pod name
+- name: "[Liveness]: Determine the leader broker pod name"
   shell: 
     kubectl get pods -l {{ kafka_label }} --no-headers -o custom-columns=:metadata.name | grep '^.*-{{ ordinality }}$'
   args:
@@ -86,6 +86,6 @@
   register: leader_broker
   failed_when: "leader_broker.rc != 0"
 
-- name: Set the kafka broker to be subjected to chaos
+- name: "[Liveness]: Set the kafka broker to be subjected to chaos"
   set_fact: 
     liveness_topic_leader: "{{ leader_broker.stdout }}"
