@@ -1,8 +1,8 @@
-- name: authenticate gcloud service account
+- name: "[Authentication]: authenticate gcloud service account"
   shell: gcloud auth activate-service-account --key-file=/tmp/cloud_config.yml
 
-- name: Gcloud project setting
+- name: "[Authentication]: Setting the project ID in the gcloud"
   shell: gcloud config set project {{ project_id }}
 
-- name: Checking gcloud config list
+- name: "[Authentication]: Checking gcloud config list"
   shell: gcloud config list

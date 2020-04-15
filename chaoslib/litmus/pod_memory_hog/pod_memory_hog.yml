@@ -3,7 +3,7 @@
 
     - block: 
 
-      - name: Select the app pod
+      - name: "[Prepare]: Select the application pod"
         shell: >
           kubectl get pod -l {{ app_label }} -n {{ app_ns }}
           -o=custom-columns=:metadata.name --no-headers
@@ -12,7 +12,7 @@
           executable: /bin/bash
         register: app_pod_name
 
-      - name: Record app pod name
+      - name: "[Prepare]: Recording the application pod name"
         set_fact:
           app_pod: "{{ app_pod_name.stdout }}"
 
@@ -21,7 +21,7 @@
     # here app_ns is the namespace of pod on which we are performing memory chaos 
     # in genric experiments app_ns is same as app_ns
     # in openebs experiments app_ns is the namespace where openebs is installed i.e, openebs
-    - name: Identify the application node
+    - name: "[Prepare]: Identify the application node name"
       shell: >
         kubectl get pod {{ app_pod }} -n {{ app_ns }}
         --no-headers -o custom-columns=:spec.nodeName
@@ -29,36 +29,35 @@
         executable: /bin/bash
       register: app_node
 
-    - name: Record app pod's node name
+    - name: "[Prepare]: Record the application node name"
       set_fact: 
         app_node: "{{ app_node.stdout }}"
 
     - block: 
-        - name: Generate a run id if not passed from the engine/experiment
+        - name: "[Prepare:] Generate a run id if not passed from the engine/experiment"
           shell: echo $(mktemp) | cut -d '.' -f 2 | cut -c -6
           register: rand_string   
 
-        - name: Record the run id
-          set_fact:
+        - set_fact:
             run_id: "{{ rand_string.stdout | lower }}"
       when: "run_id is not defined or run_id == ''"
 
     - block:
 
-        - name: Record the application container
+        - name: "[Prepare]: Derive the application container name"
           shell: >
             kubectl get pods -n {{ app_ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ app_pod }}")].spec.containers[0].name}'
           args:
             executable: /bin/bash
           register: container
   
-        - name: Record the app_container
+        - name: "[Prepare]: Record the application container name"
           set_fact:
             c_container: "{{ container.stdout }}"
   
       when: c_container is not defined or c_container == ''
 
-    - name: Obtain Container ID of the target container
+    - name: "[Prepare]: Obtain the Container ID of the target container"
       shell: >
         kubectl get pods {{ app_pod }} -n {{ app_ns }} 
         -o jsonpath='{.status.containerStatuses[?(@.name=="{{ c_container }}")].containerID}'
@@ -67,11 +66,11 @@
         executable: /bin/bash
       register: container_id
 
-    - name: Record the app_container_id
+    - name: "[Prepare]: Record the Container ID of the target container"
       set_fact:
         c_container_id: "{{ container_id.stdout }}"
  
-    - name: Patch the chaos params to memory stress job template
+    - name: "[Prepare]: Patch the lib image to memory stress job template"
       template:
         src:  /chaoslib/litmus/pod_memory_hog/app_memory_stress.j2
         dest: /chaoslib/litmus/pod_memory_hog/app_memory_stress.yml
@@ -79,7 +78,8 @@
         memory_stress_image: "{{ lib_image }}"
 
     ## RECORD EVENT FOR CHAOS INJECTION
-    - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+    - name: "[Event]: Generating an Event for ChaosInjection"
+      include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
       vars:
         stage: "ChaosInject"
         exp_pod_name: "{{ chaos_pod_name }}"
@@ -94,7 +94,8 @@
         
       # Pod Memory Hog pods creation is attempted for a total of 3 times, if it is not immediately schedulable due to transient node conditions
       # If the pod-memory-hog pod is not schedulable across these 3 tries, the experiment is failed with message indicating improper cluster state.
-    - include_tasks: /utils/common/create_chaos_pod.yml
+    - name: "[Prepare]: Including the util to create the chaos pod"
+      include_tasks: /utils/common/create_chaos_pod.yml
       vars:
         pod_ns: "{{ c_ns }}"
         c_path: "/chaoslib/litmus/pod_memory_hog/app_memory_stress.yml"
@@ -107,11 +108,11 @@
       when: "pod_running_status is not defined or pod_running_status != 'Running'"
  
     ## with a grace period of 2 min before memory stress job terminate
-    - name: Calculate the total wait time for memory stress job
+    - name: "[Wait]: Calculate the total wait time for memory stress job"
       set_fact:
         job_wait_time: "{{ ((c_duration|int) + 120)| int }}"
 
-    - name: Wait until the memory stress job is completed
+    - name: "[Wait]: Wait until the memory stress job is completed"
       shell: >
         kubectl get pods -l name=app-memory-stress-{{ run_id }} --no-headers -n {{ c_ns }}
         --no-headers -o custom-columns=:status.phase
@@ -124,13 +125,13 @@
 
     - block:
 
-        - name: Tear down memory chaos infrastructure
+        - name: "[CleanUP]: Tear down memory chaos infrastructure"
           shell: >
             kubectl delete -f /chaoslib/litmus/pod_memory_hog/app_memory_stress.yml -n {{ c_ns }} 
           args:
             executable: /bin/bash
 
-        - name: Confirm that the memory stress pod is deleted successfully
+        - name: "[CleanUP]: Confirm that the memory stress pod is deleted successfully"
           shell: >
             kubectl get pods -l name=app-memory-stress-{{ run_id }} --no-headers -n {{ c_ns }}
           args:
@@ -146,14 +147,14 @@
 
     - block: 
 
-        - name: Tear down memory chaos infrastructure, if setup
+        - name: "[CleanUP]: Tear down memory chaos infrastructure, if setup"
           shell: >
             kubectl delete -f /chaoslib/litmus/pod_memory_hog/app_memory_stress.yml -n {{ c_ns }} 
           args:
             executable: /bin/bash
           when: "chaos_pod_result.rc == 0"
         
-        - name: Confirm that the memory stress pod is not present
+        - name: "[CleanUP]: Confirm that the memory stress pod is not present"
           shell: >
             kubectl get pods -l name=app-memory-stress-{{ run_id }} --no-headers -n {{ c_ns }}
           args:

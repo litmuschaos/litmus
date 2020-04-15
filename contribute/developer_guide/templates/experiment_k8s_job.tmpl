@@ -47,8 +47,14 @@ spec:
           - name: LIB
             value: ''
 
-          - name: CHAOSENGINE
+          # provide the chaos namespace
+          - name: CHAOS_NAMESPACE
             value: ''
+        
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
 
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:

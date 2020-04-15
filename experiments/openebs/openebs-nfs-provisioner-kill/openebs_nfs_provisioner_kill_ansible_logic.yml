@@ -18,7 +18,8 @@
     c_interval: "{{ lookup('env', 'CHAOS_INTERVAL')}}"
     c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
     c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
-
+    chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
+    
   vars_files:
     - /mnt/parameters.yml
 

@@ -1,7 +1,7 @@
  ## GETTING THE PRE CHAOS NODE NAME OF APPLICATION 
 - block:
   
-    - name: Getting the pre-chaos application pod name 
+    - name: "[Prepare]: Getting the application pod name (pre-chaos)"
       k8s_facts:
         kind: Pod
         namespace: "{{ a_ns }}"
@@ -10,12 +10,12 @@
       register: app_pod_name
     
     ## RECORDING THE NODE NAME ON WHICH APPLICATION IS RUNNING
-    - name: Recording the node name of application pod
+    - name: "[Prepare]: Recording the application node name"
       set_fact:
         node_name: "{{ app_pod_name | json_query('resources[0].spec.nodeName')}}"
         
     - block:
-        - name: Generate a run id if not passed from the engine/experiment
+        - name: "[Prepare]: Generate a run id if not passed from the engine/experiment"
           shell: echo $(mktemp) | cut -d '.' -f 2 | cut -c -6
           register: rand_string   
 
@@ -24,7 +24,8 @@
       when: "run_id is not defined or run_id == ''"
   
     ## RECORD EVENT FOR CHAOS INJECTION
-    - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+    - name: "[Event]: Generating an Event for ChaosInjection"
+      include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
       vars:
         stage: "ChaosInject"
         exp_pod_name: "{{ chaos_pod_name }}"
@@ -33,7 +34,7 @@
       when: "c_engine is defined and c_engine != ''"
     
     ## PATCH THE ENGINE UID
-    - name: Patch the engine uid
+    - name: "[Prepare]: Patch the chaoslib image to chaos pod"
       template:
         src:  /chaoslib/litmus/node_memory_hog/node-memory-hog-pod.j2
         dest: /chaoslib/litmus/node_memory_hog/node-memory-hog-pod.yml
@@ -42,10 +43,15 @@
         total_memory_percentage: "{{ memory_percentage }}%"
         memory_stress_image: "{{ lib_image }}"
 
-    ## WAIT FOR THE SPECIFIED RAMP TIME
-    - name: Wait for the specified ramp time before injecting chaos
-      wait_for: timeout="{{ ramp_time }}"
-      when: "ramp_time is defined and ramp_time != ''"
+    - block:
+
+        - debug:
+            msg: "***** Waiting for the ramp interval of {{ ramp_time }}s *****"
+
+        - name: "[Ramp]: Waiting for the specified ramp time before injecting chaos"
+          wait_for: timeout="{{ ramp_time }}"
+
+      when: "ramp_time is defined and ramp_time != ''" 
 
     # Setting pod_running_status to nil
     - set_fact: 
@@ -53,7 +59,8 @@
         
      # Node Memory Hog pods creation is attempted for a total of 3 times, if it is not immediately schedulable due to transient node conditions
      # If the node-memory-hog pod is not schedulable across these 3 tries, the experiment is failed with message indicating improper cluster state.
-    - include_tasks: /utils/common/create_chaos_pod.yml
+    - name: "[Prepare]: Including the util to create the chaos pod"
+      include_tasks: /utils/common/create_chaos_pod.yml
       vars:
         pod_ns: "{{ c_ns }}"
         c_path: "/chaoslib/litmus/node_memory_hog/node-memory-hog-pod.yml"
@@ -66,7 +73,7 @@
       when: "pod_running_status is not defined or pod_running_status != 'Running'"
 
     ## CHECKING THE STATUS OF JOB
-    - name: Checking the status of Job
+    - name: "[Wait]: Wait until the node memory hog job is completed"
       k8s_facts:
         kind: Pod
         namespace: "{{ c_ns }}"
@@ -78,31 +85,35 @@
       retries: "{{ c_duration | int  + 60 }}"
     
     ## GETTING THE JOB POD LOGS UNDER STRESS
-    - name: Getting the pod logs
+    - name: "[Logs]: Print the logs of chaos pod"
       shell: kubectl logs {{ job_pod.resources[0].metadata.name }} -n {{ c_ns }}
       args:
         executable: /bin/bash
 
-    ## WAIT FOR RAMP TIME AFTER CHAOS
-    - name: Wait for the specified ramp time after injecting chaos
-      wait_for: timeout="{{ ramp_time }}"
+    - block:
+        - debug:
+            msg: "***** Waiting for the ramp interval of {{ ramp_time }}s *****"
+
+        - name: "[Ramp]: Waiting for the specified ramp time after injecting chaos"
+          wait_for: timeout="{{ ramp_time }}"
+
       when: "ramp_time is defined and ramp_time != ''" 
 
     ## GETTING THE NODE STATUS
-    - name: Getting the node status
+    - name: "[Status]: Getting the status of application node"
       shell: kubectl get nodes {{ node_name }} | awk '{print $2}' | tail -n1
       register: node_status
 
     - block:
 
-        ## DELETING THE POD
-        - name: Deleting the Memory Hog Pod
+        ## DELETING THE NODE MEMORY HOG POD
+        - name: "[CleanUP]: Deleting the Node Memory Hog Pod"
           shell: kubectl delete -f /chaoslib/litmus/node_memory_hog/node-memory-hog-pod.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
     
-        ## CHECKING WHETHER MEMORY HOG POD IS DELETED SUCCESSFULLY
-        - name: Confirm that the Memory Hog Pod is deleted successfully
+        ## CHECKING WHETHER NODE MEMORY HOG POD IS DELETED SUCCESSFULLY
+        - name: "[CleanUP]: Confirm that the Node Memory Hog Pod is deleted successfully"
           k8s_facts:
             kind: Pod
             namespace: "{{ c_ns }}"
@@ -119,16 +130,16 @@
 
     - block: 
 
-        ## REMOVING THE MEMORY HOG Pod
-        - name: Deleting the Memory Hog Pod
+        ## REMOVING THE NODE MEMORY HOG Pod
+        - name: "[CleanUP]: Deleting the Node Memory Hog Pod"
           shell: >
             kubectl delete -f /chaoslib/litmus/node_memory_hog/node-memory-hog-pod.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
           when: "chaos_pod_result.rc == 0 "
         
-        ## CHECKING WHETHER MEMORY HOG POD IS DELETED SUCCESSFULLY
-        - name: Confirm that the memory Hog Pod is deleted successfully
+        ## CHECKING WHETHER NODE MEMORY HOG POD IS DELETED SUCCESSFULLY
+        - name: "[CleanUP]: Confirm that the node memory Hog Pod is deleted successfully"
           k8s_facts:
             kind: Pod
             namespace: "{{ c_ns }}"
@@ -141,7 +152,7 @@
       when: "(pod_running_status is defined and pod_running_status == 'Running') and chaos_pod_result is defined"
 
     ## FAIL WHEN ENTERS IN RESCUE BLOCK
-    - name: Fail the task if it enters in the rescue block
+    - name: "[Fail]: Fail the task if it enters in the rescue block"
       fail:
         msg: "node_memory_consumption lib failed"
       when: true

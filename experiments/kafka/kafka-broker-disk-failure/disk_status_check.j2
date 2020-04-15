@@ -1,8 +1,8 @@
 # All code here is not indented because j2 is space sensitive
 # Initially, it "inuse" set to false
 {% set disk = namespace(inuse=false) %}
-# For GCP
-{% if cloud_platform is defined and cloud_platform == 'GCP' %}
+# For GKE
+{% if cloud_platform is defined and cloud_platform == 'GKE' %}
 {% set expect_user = 'https://www.googleapis.com/compute/v1/projects/' + project_id + '/zones/' + zone_name + '/instances/' + node_name %}
 # loop through all the disk users and checks if current_user is equal to expect_user
 {% for current_user in disk_users.stdout_lines  %}
