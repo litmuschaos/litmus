@@ -6,11 +6,31 @@ while providing the links to release details. Meant to be a helpful chronicler o
 <table>
 
  <tr>
+   <td>1.3.0</td>
+   <td>15th April, 2020</td>
+   <td>No Schema changes</td>
+   <td><a href="https://github.com/litmuschaos/litmus/releases/tag/1.3.0">Release Notes</a></td>
+   <td><a href="https://docs.litmuschaos.io/docs/getstarted">Documentation</a></td>
+   <td>Coming Up!</td>
+   <td><a href="https://github.com/litmuschaos/chaos-charts/releases/tag/1.3.0">Chaos Charts Bundle</a></td>
+ </tr>
+
+ <tr>
+   <td>1.2.2</td>
+   <td>1st April, 2020</td>
+   <td>No Schema changes</td>
+   <td><a href="https://github.com/litmuschaos/litmus/releases/tag/1.2.2">Release Notes</a></td>
+   <td><a href="https://docs.litmuschaos.io/docs/1.2.0/getstarted">Documentation</a></td>
+   <td>N/A</td>
+   <td><a href="https://github.com/litmuschaos/chaos-charts/releases/tag/1.2.2">Chaos Charts Bundle</a></td>
+ </tr>
+
+ <tr>
    <td>1.2.1</td>
    <td>16th March, 2020</td>
    <td>No Schema changes</td>
    <td><a href="https://github.com/litmuschaos/litmus/releases/tag/1.2.1">Release Notes</a></td>
-   <td><a href="https://docs.litmuschaos.io/docs/getstarted">Documentation</a></td>
+   <td><a href="https://docs.litmuschaos.io/docs/1.2.0/getstarted">Documentation</a></td>
    <td>N/A</td>
    <td><a href="https://github.com/litmuschaos/chaos-charts/releases/tag/1.2.1">Chaos Charts Bundle</a></td>
  </tr>
