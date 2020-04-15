@@ -30,6 +30,14 @@ spec:
           - name: APP_LABEL
             value: 'k8s-app=kube-dns'
 
+          # provide the chaos namespace
+          - name: CHAOS_NAMESPACE
+            value: ''
+
+          # provide the kill count
+          - name: KILL_COUNT
+            value: ''
+
            # provide application kind
           - name: APP_KIND
             value: 'deployment'
@@ -46,6 +54,11 @@ spec:
             ## default: litmus. Supported values: litmus, powerfulseal
           - name: LIB
             value: ''
+
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
 
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:

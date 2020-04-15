@@ -1,5 +1,5 @@
 ---
-- name: Derive SC from application PVC 
+- name: "[Prepare]: Derive SC from application PVC" 
   shell: >
     kubectl get pvc {{ a_pvc }}
     -o custom-columns=:spec.storageClassName -n {{ a_ns }}
@@ -8,7 +8,7 @@
     executable: /bin/bash
   register: sc
 
-- name: Derive ReplicaCount from SC
+- name: "[Prepare]: Derive ReplicaCount from SC"
   shell: >
     kubectl get sc {{ sc.stdout }} -n {{ openebs_ns }} --no-headers 
     -o jsonpath="{.metadata.annotations.cas\\.openebs\\.io\/config}" 
@@ -17,12 +17,12 @@
     executable: /bin/bash
   register: replicacount
 
-- name: Set default value for replicacount if it is empty
+- name: "[Prepare]: Set default value for replicacount if it is empty"
   set_fact:
     replicacnt: "3"
   when: "replicacount.stdout == \"\""
 
-- name: Set default value for replicacount if it is non-empty
+- name: "[Prepare]: Set default value for replicacount if it is non-empty"
   set_fact:
     replicacnt: "{{ replicacount.stdout }}"
   when: "replicacount.stdout != \"\""

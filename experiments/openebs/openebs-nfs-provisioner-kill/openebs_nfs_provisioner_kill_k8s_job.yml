@@ -63,6 +63,10 @@ spec:
           - name: TOTAL_CHAOS_DURATION
             value: '20'
 
+          # Provide the chaos namespace
+          - name: CHAOS_NAMESPACE
+            value: ''
+
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/openebs/openebs-nfs-provisioner-kill/openebs_nfs_provisioner_kill_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
         volumeMounts:

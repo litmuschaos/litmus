@@ -19,11 +19,15 @@ spec:
     env:
     - name: ANSIBLE_STDOUT_CALLBACK
       value: 'default'
+
     - name: TOTAL_CHAOS_DURATION
       value: '' 
+
     - name: LIB
       value: ''
+
     - name: RAMP_TIME
       value: ''
+      
     labels:
       experiment: {{ name }} 

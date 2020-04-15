@@ -48,10 +48,8 @@ spec:
           - name: LIB
             value: 'litmus'
 
-          - name: LIVENESS_APP_LABEL
-            value: ''
-
-          - name: LIVENESS_APP_NAMESPACE
+          # provide the chaos namespace
+          - name: CHAOS_NAMESPACE
             value: ''
 
         command: ["/bin/bash"]

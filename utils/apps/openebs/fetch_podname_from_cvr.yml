@@ -1,5 +1,5 @@
 ---
-- name: Derive PV from application PVC
+- name: "[Prepare]: Derive PV from application PVC"
   shell: >
     kubectl get pvc {{ a_pvc }}
     -o custom-columns=:spec.volumeName -n {{ a_ns }}
@@ -8,7 +8,7 @@
     executable: /bin/bash
   register: pv
 
-- name: Get list of pool deployments from cvr
+- name: "[Prepare]: Get list of pool deployments from cvr"
   shell: >
     kubectl get cvr -n {{ openebs_ns }}
     -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers
@@ -18,7 +18,7 @@
     executable: /bin/bash
   register: pool_deployment_list
 
-- name: Obtaining the replicasets corresponding to pool deployments.
+- name: "[Prepare]: Obtaining the replicasets corresponding to pool deployments"
   shell: >
     kubectl get rs -l {{ pool_label }} -n {{ openebs_ns }} --no-headers
     -o=jsonpath='{.items[?(@.metadata.ownerReferences[0].name=="{{deployment}}")].metadata.name}'
@@ -27,7 +27,7 @@
   loop_control:
     loop_var: deployment
   
-- name: Obtaining the pool pods
+- name: "[Prepare]: Obtaining the all pool pods"
   shell: >
     kubectl get pod -l {{ pool_label }} -n {{ openebs_ns }} --no-headers
     -o=jsonpath='{.items[?(@.metadata.ownerReferences[0].name=="{{rs.stdout}}")].metadata.name}'
@@ -39,7 +39,7 @@
 - set_fact:
     pool_pod_named_list: "{{ pool_pod_named_list|default([])}}"
 
-- name: Build a list of replica pods
+- name: "[Prepare]: Build a list of replica pods"
   set_fact:
     pool_pod_named_list : "{{ pool_pod_named_list  }} + [ '{{ pool_pod.stdout }}' ]"
   loop: "{{ pool_pod_list.results }}"

@@ -1,4 +1,4 @@
-- name: Verify that cStor pool is healthy
+- name: "[Status]: Verify that cStor pool is healthy"
   shell: >
     kubectl get csp -o jsonpath='{.items[*].status.phase}'
   register: csp_status

@@ -43,6 +43,10 @@ spec:
           - name: APP_PVC
             value: ''
 
+          # provide the kill count
+          - name: KILL_COUNT
+            value: ''
+
         #  it can be true or false, depending upon scenario - allowed force deletion or not
           - name: FORCE
             value: 'true'
@@ -65,6 +69,10 @@ spec:
            # DEPLOY_TYPE values: deployment, statefulset
           - name: DEPLOY_TYPE
             value: 'deployment'
+
+          # Provide the chaos namespace
+          - name: CHAOS_NAMESPACE
+            value: ''
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/openebs/openebs-target-pod-failure/openebs_target_pod_failure_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]

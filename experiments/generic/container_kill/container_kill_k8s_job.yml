@@ -53,5 +53,9 @@ spec:
           - name: RAMP_TIME
             value: ''
 
+          # provide the chaos namespace
+          - name: CHAOS_NAMESPACE
+            value: ''
+
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/generic/container_kill/container_kill_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
