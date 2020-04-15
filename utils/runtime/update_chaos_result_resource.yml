@@ -6,7 +6,6 @@
        dest: /utils/runtime/chaos-result.yml
        lstrip_blocks: yes
      vars:
-       c_experiment: "{{ c_experiment }}"
        phase: "Running"
        verdict: "Awaited"
        
@@ -26,7 +25,6 @@
        dest: /utils/runtime/chaos-result.yml
        lstrip_blocks: yes
      vars:
-       c_experiment: "{{ c_experiment }}"
        phase: "Completed" 
        verdict: "{{ flag }}"
 
