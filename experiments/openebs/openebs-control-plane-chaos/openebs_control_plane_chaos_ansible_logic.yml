@@ -61,7 +61,7 @@
           when: "c_engine is defined and c_engine != ''"
 
         ## INJECT CHAOS ON CONTROL PLANE COMPONENTS
-        - name: "[Injcet]: Including the main components to inject chaos"
+        - name: "[Inject]: Including the main components to inject chaos"
           include_tasks: openebs_control_plane_chaos_internal_tasks.yml
           loop: "{{ openebs.components }}"
 
