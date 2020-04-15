@@ -1,12 +1,12 @@
 ---
-- name: Pick the jiva controller pod
+- name: "[Prepare]: Pick the jiva controller pod"
   include_tasks: /utils/apps/openebs/fetch_jiva_controller_pod.yml
 
-- name: Record jiva controller container name
+- name: "[Prepare]: Record jiva controller container name"
   set_fact:
     ctrl_container: "{{ pv.stdout }}-{{ jiva_controller_pod_suffix }}-{{ jiva_controller_container_suffix }}"
 
-- name: Get the restartCount of ctrl-con container
+- name: "[Prepare]: Getting the restartCount of {{ ctrl_container }} container"
   shell: >
     kubectl get pods {{ jiva_controller_pod.stdout }} -n {{ a_ns }}
     -o=jsonpath='{.status.containerStatuses[?(@.name==''"{{ctrl_container}}"'')].restartCount}'
@@ -15,21 +15,24 @@
   register: restartCount_before
 
 # including pumba chaoslib - pod-failure-by-sigkill
-- include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yml
+- name: "[Include]: Including the pumba chaoslib for container kill"
+  include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yml
   vars:
     app_pod: "{{ jiva_controller_pod.stdout }}"
     namespace: "{{ a_ns }}"
     app_container: "{{ ctrl_container }}"
   when: cri == 'docker'
 
-- include_tasks: /chaoslib/litmus/container_kill/containerd_chaos/crictl-chaos.yml
+# including containerd chaoslib -> crictl-chaos
+- name: "[Include]: Including the containerd chaoslib for container kill"
+  include_tasks: /chaoslib/litmus/container_kill/containerd_chaos/crictl-chaos.yml
   vars:
     app_pod: "{{ jiva_controller_pod.stdout }}"
     namespace: "{{ a_ns }}"
     app_container: "{{ ctrl_container }}"
   when: cri == 'containerd'
 
-- name: Check if the controller pod is running
+- name: "[Status]: Check the running status of {{ jiva_controller_pod.stdout }} pod"
   shell: >
     kubectl get pod {{ jiva_controller_pod.stdout }} -n {{ a_ns }} --no-headers
     -o custom-columns=:.status.phase    
@@ -40,7 +43,7 @@
   delay: 2
   retries: 90
 
-- name: Check for controller container status
+- name: "[Status]: Check the container status of controller pod"
   shell: >
     kubectl get pod {{ jiva_controller_pod.stdout }} -n {{ a_ns }}
     -o=jsonpath='{range .status.containerStatuses[*]}{.state}{"\n"}{end}' |
@@ -52,7 +55,7 @@
   delay: 2
   retries: 90
 
-- name: Get the restartCount of ctrl-con container
+- name: "[Verification]: Getting the restartCount of {{ ctrl_container }} container"
   shell: >
     kubectl get pods {{ jiva_controller_pod.stdout }} -n {{ a_ns }}
     -o=jsonpath='{.status.containerStatuses[?(@.name==''"{{ctrl_container}}"'')].restartCount}'
@@ -60,7 +63,7 @@
     executable: /bin/bash
   register: restartCount_after
 
-- name: Compare restartCounts
+- name: "[Verification]: Compare the restartCounts of {{ ctrl_container }} container Before/After"
   debug:
     msg:
       - "Verified containers restartcounts after fault injection"
