@@ -1,7 +1,7 @@
 ---
 - block:
 
-   - name: Create some test data in the mysql database
+   - name: "[Data-Persistence]: Create some test data in the mysql database"
      shell: >
        kubectl exec {{ pod_name }} -n {{ ns }} 
        -- {{ item }}
@@ -18,13 +18,13 @@
 
 - block:
 
-   - name: Kill the application pod
+   - name: "[Data-Persistence]: Kill the application pod"
      shell: >
        kubectl delete pod {{ pod_name }} -n {{ ns }}
      args:
        executable: /bin/bash
 
-   - name: Verify if the applicaion pod is deleted
+   - name: "[Data-Persistence]: Verify if the applicaion pod is deleted"
      shell: >
        kubectl get pods -n {{ ns }}
      args:
@@ -34,21 +34,21 @@
      retries: 2
      delay: 90
 
-   - name: Obtain the newly created pod name for applicaion
+   - name: "[Data-Persistence]: Obtain the newly created pod name for applicaion"
      shell: >
        kubectl get pods -n {{ ns }} -l {{ label }} -o jsonpath='{.items[].metadata.name}'
      args:
        executable: /bin/bash
      register: newpod_name
 
-   - name: Checking application pod is in running state
+   - name: "[Data-Persistence]: Checking application pod is in running state"
      shell: kubectl get pods -n {{ ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ newpod_name.stdout }}")].status.phase}'
      register: result
      until: "((result.stdout.split()|unique)|length) == 1 and 'Running' in result.stdout"
      delay: 2
      retries: 90
 
-   - name: Get the container status of application.
+   - name: "[Data-Persistence]: Checking application pod is in running state"
      shell: >
         kubectl get pods -n {{ ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ newpod_name.stdout }}")].status.containerStatuses[].state}' | grep running
      args:
@@ -58,7 +58,7 @@
      delay: 2
      retries: 90
 
-   - name: Checking for the Corrupted tables
+   - name: "[Data-Persistence]: Checking for the Corrupted tables"
      shell: >
        kubectl exec {{ newpod_name.stdout }} -n {{ ns }}
        -- mysqlcheck -c {{ dbname }} -u{{ dbuser }} -p{{ dbpassword }}
@@ -67,10 +67,10 @@
      register: status 
      failed_when: "'OK' not in status.stdout"
 
-   - name: Verify mysql data persistence 
+   - name: "[Data-Persistence]: Verify the data persistence of mysql"
      shell: >
-           kubectl exec {{ newpod_name.stdout }} -n {{ ns }}
-           -- mysql -u{{ dbuser }} -p{{ dbpassword }} -e 'select * from ttbl' {{ dbname }};
+       kubectl exec {{ newpod_name.stdout }} -n {{ ns }}
+       -- mysql -u{{ dbuser }} -p{{ dbpassword }} -e 'select * from ttbl' {{ dbname }};
      args:
        executable: /bin/bash
      register: result 
@@ -80,7 +80,7 @@
 
 - block:
 
-   - name: Delete/drop MySQL database 
+   - name: "[Data-Persistence]: Delete/drop MySQL database" 
      shell: > 
        kubectl exec {{ pod_name }} -n {{ ns }}
        -- mysql -u{{ dbuser }} -p{{ dbpassword }} -e 'drop database {{ dbname }}'; 
@@ -88,10 +88,10 @@
        executable: /bin/bash
      register: status 
 
-   - name: Verify successful db delete 
+   - name: "[Data-Persistence]: Verify successful db delete"
      shell: > 
-           kubectl exec {{ pod_name }} -n {{ ns }}
-           -- mysql -u{{ dbuser }} -p{{ dbpassword }} -e 'show databases';
+       kubectl exec {{ pod_name }} -n {{ ns }}
+       -- mysql -u{{ dbuser }} -p{{ dbpassword }} -e 'show databases';
      args:
        executable: /bin/bash
      register: result 

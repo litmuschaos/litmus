@@ -1,5 +1,5 @@
-## PRE-CHAOS APPLICATION LIVENESS CHECK 
-- name: Verify that the AUT (Application Under Test) is running 
+## PRE-CHAOS APPLICATION STATUS CHECK 
+- name: "[Status]: Verify that the Auxiliary Applications are running (pre-chaos)"
   include_tasks: "/utils/common/status_app_pod.yml"
   vars:
     app_ns: "{{ item.namespace }}"
@@ -15,7 +15,7 @@
     c_interval: 5
 
 ## POST-CHAOS APPLICATION LIVENESS CHECK
-- name: Verify AUT liveness post fault-injection
+- name: "[Status]: Verify that the Auxiliary Applications are running (post-chaos)"
   include_tasks: "/utils/common/status_app_pod.yml"
   vars:
     app_ns: "{{ item.namespace }}"
