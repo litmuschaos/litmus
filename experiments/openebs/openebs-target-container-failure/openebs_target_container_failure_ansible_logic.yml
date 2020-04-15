@@ -37,17 +37,19 @@
 
         - include: openebs_target_container_failure_ansible_prerequisites.yml
 
-        - include_vars:
+        - name: "[PreReq]: Including the data-consistency util for the {{ c_experiment }} experiment"
+          include_vars:
             file: data_persistence.yml
 
-        - include_vars:
+        - name: "[PreReq]: Including the chaos util for the {{ c_experiment }} experiment"
+          include_vars:
             file: chaosutil.yml
 
-        - name: Record the chaos util path
+        - name: "[PreReq]: Record the chaos util path"
           set_fact: 
             chaos_util_path: "{{ chaosutil }}"
 
-        - name: Record the data consistency util path
+        - name: "[PreReq]: Record the data consistency util path"
           set_fact:
             data_consistency_util_path: "{{ consistencyutil }}"
           when: data_persistence != ''
@@ -55,19 +57,19 @@
         - include_tasks: /utils/runtime/create_testname.yml
 
          ## GENERATE EXP RESULT NAME
-        - name: Construct chaos result name
+        - name: "[PreReq]: Constructing the chaos result name"
           set_fact:
             c_result: "{{ c_engine }}-{{ c_experiment }}"
           when: "c_engine is defined and c_engine != ''"
 
          ## RECORD START-OF-TEST IN CHAOS RESULT CR
-        - include_tasks: /utils/runtime/update_chaos_result_resource.yml
+        - name: "[PreReq]: Updating the chaos result of {{ c_experiment }} experiment (SOT)"
+          include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'SOT'
             namespace: "{{ c_ns }}"
 
         ## DISPLAY APP INFORMATION 
- 
         - name: Display the app information passed via the test job
           debug: 
             msg: 
@@ -78,9 +80,8 @@
               - "PVC                 : {{ a_pvc }}"  
               - "StorageClass        : {{ sc }}"
 
-        ## PRE-CHAOS APPLICATION LIVENESS CHECK
-
-        - name: Verify that the AUT (Application Under Test) is running 
+        ## PRE-CHAOS APPLICATION STATUS CHECK
+        - name: "[Status]: Verify that the AUT (Application Under Test) is running (pre-chaos)" 
           include_tasks: "/utils/common/status_app_pod.yml"
           vars:   
             app_ns: "{{ a_ns }}"
@@ -89,7 +90,8 @@
             retries: 90
 
         ## RECORD EVENT FOR PRE-CHAOS CHECK
-        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+        - name: "[Event]: Generating an Event for PreChaosCheck"
+          include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
           vars:
             stage: "PreChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
@@ -97,7 +99,7 @@
             message: "OpenEBS components and AUT is Running successfully"
           when: "c_engine is defined and c_engine != ''"
 
-        - name: Get application pod name
+        - name: "[Data-Persistence]: Get application pod name"
           shell: >
             kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers
             -o=custom-columns=NAME:".metadata.name"
@@ -105,7 +107,7 @@
             executable: /bin/bash
           register: pod_app_name  
 
-        - name: Create some test data
+        - name: "[Data-Persistence]: Create some test data"
           include: "{{ data_consistency_util_path }}"
           vars:
             status: 'LOAD'
@@ -114,16 +116,14 @@
           when: data_persistence != ''
 
         ## STORAGE FAULT INJECTION 
-
         - include: "{{ chaos_util_path }}"
   
-        ## POST-CHAOS APPLICATION LIVENESS CHECK
-
-        - name: Wait (soak) for I/O on pools 
+        ## POST-CHAOS APPLICATION STATUS CHECK
+        - name: "[Wait]: Wait (soak) for I/O on pools"
           wait_for:
             timeout: "{{ soak_time }}"
 
-        - name: Verify AUT liveness post fault-injection
+        - name: "[Status]: Verify that the AUT (Application Under Test) is running (post-chaos)"
           include_tasks: "/utils/common/status_app_pod.yml"
           vars:
             app_ns: "{{ a_ns }}"
@@ -132,7 +132,8 @@
             retries: 90   
             
         ## RECORD EVENT FOR POST-CHAOS CHECK
-        - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+        - name: "[Event]: Generating an Event for PostChaosCheck"
+          include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
           vars:
             stage: "PostChaosCheck"
             exp_pod_name: "{{ chaos_pod_name }}"
@@ -144,7 +145,7 @@
         - include_tasks: /utils/common/application_liveness_check.yml
           when: liveness_label != ''
 
-        - name: Get application pod name
+        - name: "[Data-Persistence]: Get re-created application pod name"
           shell: >
             kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers
             -o=custom-columns=NAME:".metadata.name"
@@ -152,7 +153,7 @@
             executable: /bin/bash
           register: rescheduled_app_pod  
 
-        - name: Verify application data persistence
+        - name: "[Data-Persistence]: Verify application data persistence"
           include: "{{ data_consistency_util_path }}"
           vars:
             status: 'VERIFY'
@@ -172,9 +173,19 @@
         - set_fact:
             flag: "Pass"
 
+        - name: "[Result]: Getting the final result of {{ c_experiment }} experiment"
+          debug:
+            msg: "{{ c_experiment }} experiment has been {{ flag }}ed"
+
+
       rescue: 
         - set_fact: 
             flag: "Fail"
+
+        - name: "[Result]: Getting the final result of {{ c_experiment }} experiment"
+          debug:
+            msg: "{{ c_experiment }} experiment has been {{ flag }}ed"
+
 
       always: 
 
@@ -182,7 +193,8 @@
         - include_tasks: /utils/runtime/getting_failure_step.yml  
 
         ## RECORD END-OF-TEST IN CHAOS RESULT CR
-        - include_tasks: /utils/runtime/update_chaos_result_resource.yml
+        - name: "[The End]: Updating the chaos result of {{ c_experiment }} experiment (EOT)"
+          include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'
             namespace: "{{ c_ns }}"

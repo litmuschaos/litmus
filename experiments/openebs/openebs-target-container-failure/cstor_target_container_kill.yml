@@ -1,8 +1,8 @@
 ---
-- name: Pick the cstor target pod
+- name: "[Prepare]: Pick the cstor target pod"
   include_tasks: /utils/apps/openebs/fetch_cstor_target_pod.yml
 
-- name: Get the restartCount of cstor-istgt container
+- name: "[Prepare]: Getting the restartCount of {{ target_container }} container"
   shell: >
     kubectl get pod {{ cstor_target_pod.stdout }} -n {{ openebs_ns }}
     -o=jsonpath='{.status.containerStatuses[?(@.name==''"{{ target_container }}"'')].restartCount}'
@@ -11,21 +11,24 @@
   register: restartCount_before
 
 # including pumba chaoslib -> pod-failure-by-sigkill
-- include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yml
+- name: "[Include]: Including the pumba chaoslib for container kill"
+  include_tasks: /chaoslib/pumba/pod_failure_by_sigkill.yml
   vars:
     namespace: "{{ openebs_ns }}"
     app_pod: "{{ cstor_target_pod.stdout }}"
     app_container: "{{ target_container }}"
   when: cri == 'docker'
 
-- include_tasks: /chaoslib/litmus/container_kill/containerd_chaos/crictl-chaos.yml
+# including containerd chaoslib -> crictl-chaos
+- name: "[Include]: Including the containerd chaoslib for container kill"
+  include_tasks: /chaoslib/litmus/container_kill/containerd_chaos/crictl-chaos.yml
   vars:
     namespace: "{{ openebs_ns }}"
     app_pod: "{{ cstor_target_pod.stdout }}"
     app_container: "{{ target_container }}"
   when: cri == 'containerd'
 
-- name: Check for target pod in running state
+- name: "[Status]: Check the running status of {{ cstor_target_pod.stdout }} pod"
   shell: >
     kubectl get pod {{ cstor_target_pod.stdout }} -n {{ openebs_ns }} |
     grep -w "Running" | wc -l
@@ -36,7 +39,7 @@
   delay: 2
   retries: 90
 
-- name: Get the runningStatus of target pod
+- name: "[Status]: Check the container status of target pod"
   shell: >
     kubectl get pod {{ cstor_target_pod.stdout }} -n {{ openebs_ns }}
     -o=jsonpath='{range .status.containerStatuses[*]}{.state}{"\n"}{end}' |
@@ -48,7 +51,7 @@
   delay: 2
   retries: 90
 
-- name: Get the restartCount of cstor-istgt container
+- name: "[Verification]: Getting the restartCount of {{ target_container }} container"
   shell: >
     kubectl get pod {{ cstor_target_pod.stdout }} -n {{ openebs_ns }}
     -o=jsonpath='{.status.containerStatuses[?(@.name==''"{{ target_container }}"'')].restartCount}'
@@ -56,7 +59,7 @@
     executable: /bin/bash
   register: restartCount_after
 
-- name: Compare restartCounts
+- name: "[Verification]: Compare the restartCounts of {{ target_container }} container Before/After"
   debug:
     msg:
       - "Verified pool pods were restarted by fault injection"
