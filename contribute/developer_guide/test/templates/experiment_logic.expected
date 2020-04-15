@@ -26,10 +26,10 @@
         - name: "[PreReq]: Constructing the chaos result name"
           set_fact:
             c_result: "{{ c_engine }}-{{ c_experiment }}"
-          when: "c_engine is defined and c_engine != ''
+          when: "c_engine is defined and c_engine != ''"
 
         ## RECORD START-OF-EXPERIMENT IN LITMUSCHAOS RESULT CR
-        - name: "[PreReq]: Updating the chaos result of  experiment (SOT)"
+        - name: "[PreReq]: Updating the chaos result of {{ c_experiment }} experiment (SOT)"
           include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'SOT'
@@ -40,9 +40,9 @@
           debug: 
             msg: 
               - "The application info is as follows:"
-              - "Namespace    : "
-              - "Label        : "
-              - "Ramp Time    : "  
+              - "Namespace    : {{ a_ns }}"
+              - "Label        : {{ a_label }}"
+              - "Ramp Time    : {{ ramp_time }}"  
 
         ## PRE-CHAOS APPLICATION STATUS CHECK
         - name: "[Status]: Verify that the AUT (Application Under Test) is running (pre-chaos)"
@@ -128,17 +128,17 @@
         - set_fact:
             flag: "Pass"
 
-        - name: "[Result]: Getting the final result of  experiment"
+        - name: "[Result]: Getting the final result of "{{ c_experiment "}} experiment"
           debug:
-            msg: " experiment has been ed"
+            msg: " experiment has been "{{ flag "}}ed"
 
       rescue: 
         - set_fact: 
             flag: "Fail"
 
-        - name: "[Result]: Getting the final result of  experiment"
+        - name: "[Result]: Getting the final result of "{{ c_experiment "}} experiment"
           debug:
-            msg: " experiment has been ed"
+            msg: " experiment has been "{{ flag "}}ed"
 
       always: 
 
@@ -146,7 +146,7 @@
         - include_tasks: /utils/runtime/getting_failure_step.yml  
  
         ## RECORD END-OF-TEST IN LITMUSCHAOS RESULT CR
-        - name: "[The End]: Updating the chaos result of  experiment (EOT)"
+        - name: "[The End]: Updating the chaos result of {{ c_experiment }} experiment (EOT)"
           include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'
