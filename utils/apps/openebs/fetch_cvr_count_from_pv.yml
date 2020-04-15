@@ -1,5 +1,5 @@
 ---
-- name: Derive PV from application PVC 
+- name: "[Prepare]: Derive PV from application PVC"
   shell: >
     kubectl get pvc {{ a_pvc }}
     -o custom-columns=:spec.volumeName -n {{ a_ns }}
@@ -8,7 +8,7 @@
     executable: /bin/bash
   register: pv
 
-- name: Get CVR count from pv
+- name: "[Prepare]: Get CVR count from pv"
   shell: >
     kubectl get cvr -n {{ openebs_ns }}
     -l openebs.io/persistent-volume={{ pv.stdout }} --no-headers | wc -l
