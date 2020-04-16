@@ -68,6 +68,11 @@ spec:
           - name: CHAOS_NAMESPACE
             value: ''
 
+          # provide the LIB
+          # only litmus supported
+          - name: LIB
+            value: 'litmus'
+
           # provide auxiliary application details - namespace and labels of the applications
           # sample input is - "ns1:app=percona,ns2:name=nginx"
           - name: AUXILIARY_APPINFO

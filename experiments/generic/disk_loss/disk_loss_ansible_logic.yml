@@ -18,6 +18,7 @@
     c_engine: "{{ lookup('env','CHAOSENGINE') }}"
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
+    c_lib: "{{ lookup('env','LIB') }}"
     c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
 
   tasks:
