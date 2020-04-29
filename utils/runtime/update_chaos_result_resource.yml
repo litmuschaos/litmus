@@ -8,6 +8,7 @@
      vars:
        phase: "Running"
        verdict: "Awaited"
+       instance_id: "{{ lookup('env','INSTANCE_ID') }}"
        
    - name: "[PreReq]: Apply the chaos result CR for {{ c_experiment }} experiment"
      shell: kubectl apply -f /utils/runtime/chaos-result.yml -n {{ namespace }}
@@ -27,6 +28,7 @@
      vars:
        phase: "Completed" 
        verdict: "{{ flag }}"
+       instance_id: "{{ lookup('env','INSTANCE_ID') }}"
 
    - name: "[The END]: Apply the chaos result CR for {{ c_experiment }} experiment"
      shell: kubectl apply -f /utils/runtime/chaos-result.yml -n {{ namespace }}
