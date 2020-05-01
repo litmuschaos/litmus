@@ -7,6 +7,7 @@ Please send PRs to add or remove organizations/users.
 |[MayaData](https://mayadata.io)|[Director Online](https://director.mayadata.io/)|[our story](https://github.com/litmuschaos/litmus/tree/master/adopters/MayaData_DirectorOnline.md)|
 |[OpenEBS](https://openebs.io/)|[openebs-ci](https://openebs.ci/)|[our story](https://github.com/litmuschaos/litmus/tree/master/adopters/openebs.md)|
 |[Wipro](https://www.wipro.com/en-IN/infrastructure/wipros-appanywhere/?utm_source=github&utm_campaign=litmuschaos_repo)|[Wipro AppAnywhere](https://www.wipro.com/en-IN/infrastructure/wipros-appanywhere/?utm_source=github&utm_campaign=litmuschaos_repo)|[our story](https://github.com/litmuschaos/litmus/tree/master/adopters/AppAnywhere.md)|
+|[Intuit](https://www.intuit.com?utm_source=github&utm_campaign=litmuschaos_repo)|[Argo-Litmus Demo](https://youtu.be/Uwqop-s99LA?t=720)|Coming soon!|
 
 | User | Applications/Workloads | Success Story |
 | :--- | :--- | :--- |
