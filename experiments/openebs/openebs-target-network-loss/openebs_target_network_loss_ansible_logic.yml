@@ -36,11 +36,11 @@
 
         - name: "[PreReq]: Including the data-consistency util for the {{ c_experiment }} experiment"
           include_vars:
-            file: data_persistence.yml
+            file: /tmp/data_persistence.yml
 
         - name: "[PreReq]: Including the chaos util for the {{ c_experiment }} experiment"
           include_vars:
-            file: chaosutil.yml
+            file: /tmp/chaosutil.yml
 
         - name: "[PreReq]: Record the chaos util path"
           set_fact:

@@ -31,9 +31,9 @@
 - name: "[PreReq]: Identify the chaos util to be invoked"
   template:
     src: chaosutil.j2
-    dest: chaosutil.yml
+    dest: /tmp/chaosutil.yml
 
 - name: "[PreReq]: Identify the data consistency util to be invoked"
   template:
     src: data_persistence.j2
-    dest: data_persistence.yml
+    dest: /tmp/data_persistence.yml

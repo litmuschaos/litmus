@@ -82,7 +82,7 @@
     - name: "[Prepare]: Patch the lib image to pod-cpu-hog template"
       template:
         src:  /chaoslib/litmus/pod_cpu_hog/app_cpu_stress.j2
-        dest: /chaoslib/litmus/pod_cpu_hog/app_cpu_stress.yml
+        dest: /tmp/app_cpu_stress.yml
       vars:
         cpu_stress_image: "{{ lib_image }}"
 
@@ -106,7 +106,7 @@
       include_tasks: /utils/common/create_chaos_pod.yml
       vars:
         pod_ns: "{{ c_ns }}"
-        c_path: "/chaoslib/litmus/pod_cpu_hog/app_cpu_stress.yml"
+        c_path: "/tmp/app_cpu_stress.yml"
         pod_label: "name=app-cpu-stress-{{ run_id }}"
       with_sequence: start=1 end=3
 
@@ -144,7 +144,7 @@
 
         - name: "[CleanUP]: Tear down cpu chaos infrastructure"
           shell: >
-            kubectl delete -f /chaoslib/litmus/pod_cpu_hog/app_cpu_stress.yml -n {{ c_ns }} 
+            kubectl delete -f /tmp/app_cpu_stress.yml -n {{ c_ns }} 
           args:
             executable: /bin/bash
 
@@ -166,7 +166,7 @@
 
         - name:  "[CleanUP]: Tear down cpu chaos infrastructure, if setup"
           shell: >
-            kubectl delete -f /chaoslib/litmus/pod_cpu_hog/app_cpu_stress.yml -n {{ c_ns }} 
+            kubectl delete -f /tmp/app_cpu_stress.yml -n {{ c_ns }} 
           args:
             executable: /bin/bash
           when: "chaos_pod_result.rc == 0"

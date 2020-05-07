@@ -68,7 +68,7 @@
     - name: "[Prepare]: Patch the chaoslib image to pumba pod"
       template:
         src:  /chaoslib/pumba/pumba.j2
-        dest: /chaoslib/pumba/pumba_kube.yml
+        dest: /tmp/pumba_kube.yml
       vars:
         pumba_image: "{{ lib_image }}"
         app_pod: "{{ app_pod }}"
@@ -102,7 +102,7 @@
       include_tasks: /utils/common/create_chaos_pod.yml
       vars:
         pod_ns: "{{ c_ns }}"
-        c_path: "/chaoslib/pumba/pumba_kube.yml"
+        c_path: "/tmp/pumba_kube.yml"
         pod_label: "name=pumba-sig-kill-{{ run_id }}"
       with_sequence: start=1 end=3
     
@@ -119,7 +119,7 @@
 
         - name: "[CleanUP]: Tear down the pumba infrastructure"
           shell: >
-            kubectl delete -f /chaoslib/pumba/pumba_kube.yml -n {{ c_ns }}
+            kubectl delete -f /tmp/pumba_kube.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
 
@@ -161,7 +161,7 @@
 
         - name: "[CleanUP]: Tear down the pumba infrastructure"
           shell: >
-            kubectl delete -f /chaoslib/pumba/pumba_kube.yml -n {{ c_ns }}
+            kubectl delete -f /tmp/pumba_kube.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
           when: chaos_pod_result.rc == 0

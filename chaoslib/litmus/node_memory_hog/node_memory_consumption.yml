@@ -37,7 +37,7 @@
     - name: "[Prepare]: Patch the chaoslib image to chaos pod"
       template:
         src:  /chaoslib/litmus/node_memory_hog/node-memory-hog-pod.j2
-        dest: /chaoslib/litmus/node_memory_hog/node-memory-hog-pod.yml
+        dest: /tmp/node-memory-hog-pod.yml
       vars:
         stress_time: "{{ c_duration }}s"
         total_memory_percentage: "{{ memory_percentage }}%"
@@ -63,7 +63,7 @@
       include_tasks: /utils/common/create_chaos_pod.yml
       vars:
         pod_ns: "{{ c_ns }}"
-        c_path: "/chaoslib/litmus/node_memory_hog/node-memory-hog-pod.yml"
+        c_path: "/tmp/node-memory-hog-pod.yml"
         pod_label: "name=node-memory-hog-{{ run_id }}"
       with_sequence: start=1 end=3
 
@@ -108,7 +108,7 @@
 
         ## DELETING THE NODE MEMORY HOG POD
         - name: "[CleanUP]: Deleting the Node Memory Hog Pod"
-          shell: kubectl delete -f /chaoslib/litmus/node_memory_hog/node-memory-hog-pod.yml -n {{ c_ns }}
+          shell: kubectl delete -f /tmp/node-memory-hog-pod.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
     
@@ -133,7 +133,7 @@
         ## REMOVING THE NODE MEMORY HOG Pod
         - name: "[CleanUP]: Deleting the Node Memory Hog Pod"
           shell: >
-            kubectl delete -f /chaoslib/litmus/node_memory_hog/node-memory-hog-pod.yml -n {{ c_ns }}
+            kubectl delete -f /tmp/node-memory-hog-pod.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
           when: "chaos_pod_result.rc == 0 "

@@ -23,7 +23,7 @@
         - include: pod_delete_ansible_prerequisites.yml
       
         - include_vars:
-            file: chaosutil.yml
+            file: /tmp/chaosutil.yml
 
         ## GENERATE EXP RESULT NAME
         - name: Construct chaos result name
@@ -41,19 +41,19 @@
         - name: Provision nginx pod
           template:
             src: nginx.j2
-            dest: nginx.yml
+            dest: /tmp/nginx.yml
           
         - name: Provision liveness pod
           template:
             src: liveness-app.j2
-            dest: liveness-app.yml
+            dest: /tmp/liveness-app.yml
               
         - name: Deploying and exposing nginx pod
-          shell: kubectl apply -f nginx.yml
+          shell: kubectl apply -f /tmp/nginx.yml
           register: nginx_deploy
 
         - name: Deploying liveness pod 
-          shell: kubectl apply -f liveness-app.yml
+          shell: kubectl apply -f /tmp/liveness-app.yml
           register: liveness_app_deploy
 
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
@@ -119,10 +119,10 @@
         ## DEPROVISIONING TASK
     
         - name: deleting service and pod of nginx
-          shell: kubectl delete -f nginx.yml
+          shell: kubectl delete -f /tmp/nginx.yml
             
         - name: deleting liveness pod 
-          shell: kubectl delete -f liveness-app.yml
+          shell: kubectl delete -f /tmp/liveness-app.yml
 
         - set_fact:
             flag: "Pass"
@@ -134,7 +134,7 @@
         - block:
 
             - name: deleting service and pod of nginx
-              shell: kubectl delete -f nginx.yml
+              shell: kubectl delete -f /tmp/nginx.yml
               when: "nginx_deploy.rc == 0"
 
           when: "nginx_deploy is defined and nginx_deploy != ''"  
@@ -142,7 +142,7 @@
         - block:
 
             - name: deleting liveness pod 
-              shell: kubectl delete -f liveness-app.yml
+              shell: kubectl delete -f /tmp/liveness-app.yml
               when: "liveness_app_deploy.rc == 0"
 
           when: "liveness_app_deploy is defined and liveness_app_deploy != '' "

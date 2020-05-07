@@ -17,10 +17,10 @@
     - name: Patch volume and nfs_svc_ip
       template:
         src: /utils/apps/nfs/nfs-liveness-exporter.j2
-        dest: /utils/apps/nfs/nfs-liveness-exporter.yaml
+        dest: /tmp/nfs-liveness-exporter.yaml
 
     - name: Creating nfs mount liveness check application
-      shell: kubectl apply -f /utils/apps/nfs/nfs-liveness-exporter.yaml -n {{ app_ns }}
+      shell: kubectl apply -f /tmp/nfs-liveness-exporter.yaml -n {{ app_ns }}
   when: "state == 'START'"
 
 - name: Waiting util the nfs mount liveness check application is in runing state
@@ -33,5 +33,5 @@
 
 - block:
     - name: Deleting the nfs-alpine Application
-      shell: kubectl delete -f /utils/apps/nfs/nfs-liveness-exporter.yaml -n {{ app_ns }}
+      shell: kubectl delete -f /tmp/nfs-liveness-exporter.yaml -n {{ app_ns }}
   when: "state == 'END'"

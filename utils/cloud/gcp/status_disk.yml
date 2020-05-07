@@ -5,7 +5,7 @@
 - name: "[Status]: Disk status check"
   template:
     src: /utils/common/disk_status_check.j2
-    dest: disk_status_check.yml
+    dest: /tmp/disk_status_check.yml
 
 - include_vars:
-    file: disk_status_check.yml
+    file: /tmp/disk_status_check.yml

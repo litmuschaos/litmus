@@ -1,14 +1,14 @@
 - name: "[Authentication]: Creates directory for aws configuration"
   file:
-    path: /root/.aws
+    path: /tmp/.aws
     state: directory
 
 - name: "[Authentication]: Creating credential file in aws directory"
   file: 
-    path: /root/.aws/credentials
+    path: /tmp/.aws/credentials
     state: touch 
 
 - name: "[Authentication]: Copying aws credentials from cloud_config"
   copy: 
     src: /tmp/cloud_config.yml
-    dest: /root/.aws/credentials
+    dest: /tmp/.aws/credentials
