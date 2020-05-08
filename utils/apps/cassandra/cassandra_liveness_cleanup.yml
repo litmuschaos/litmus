@@ -29,7 +29,7 @@
 
 - name: "[CleanUP]: Remove the cassandra liveness pod"
   shell: 
-    kubectl delete -f /utils/apps/cassandra/cassandra_liveness_deploy.yml -n {{ liveness_ns }}
+    kubectl delete -f /tmp/cassandra_liveness_deploy.yml -n {{ liveness_ns }}
   args:
     executable: /bin/bash
   register: result

@@ -1,11 +1,11 @@
 - name: "[Liveness]: Generate the cassandra liveness spec from template"
   template: 
     src: /utils/apps/cassandra/cassandra_liveness_deploy.j2
-    dest: /utils/apps/cassandra/cassandra_liveness_deploy.yml
+    dest: /tmp/cassandra_liveness_deploy.yml
 
 - name: "[Liveness]: Apply the cassandra liveness application"
   shell: 
-    kubectl apply -f /utils/apps/cassandra/cassandra_liveness_deploy.yml -n {{ liveness_ns }}
+    kubectl apply -f /tmp/cassandra_liveness_deploy.yml -n {{ liveness_ns }}
   args:
     executable: /bin/bash
   register: liveness_pod_result

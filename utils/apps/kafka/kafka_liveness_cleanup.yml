@@ -1,6 +1,6 @@
 - name: "[CleanUP]: Remove the Kafka liveness pod"
   shell: 
-    kubectl delete -f kafka_liveness.yml -n {{ kafka_ns }}
+    kubectl delete -f /tmp/kafka_liveness.yml -n {{ kafka_ns }}
   args:
     executable: /bin/bash
   register: result

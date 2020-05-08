@@ -73,7 +73,7 @@
     - name: "[Prepare]: Patch the lib image to memory stress job template"
       template:
         src:  /chaoslib/litmus/pod_memory_hog/app_memory_stress.j2
-        dest: /chaoslib/litmus/pod_memory_hog/app_memory_stress.yml
+        dest: /tmp/app_memory_stress.yml
       vars:
         memory_stress_image: "{{ lib_image }}"
 
@@ -98,7 +98,7 @@
       include_tasks: /utils/common/create_chaos_pod.yml
       vars:
         pod_ns: "{{ c_ns }}"
-        c_path: "/chaoslib/litmus/pod_memory_hog/app_memory_stress.yml"
+        c_path: "/tmp/app_memory_stress.yml"
         pod_label: "name=app-memory-stress-{{ run_id }}"
       with_sequence: start=1 end=3
 
@@ -127,7 +127,7 @@
 
         - name: "[CleanUP]: Tear down memory chaos infrastructure"
           shell: >
-            kubectl delete -f /chaoslib/litmus/pod_memory_hog/app_memory_stress.yml -n {{ c_ns }} 
+            kubectl delete -f /tmp/app_memory_stress.yml -n {{ c_ns }} 
           args:
             executable: /bin/bash
 
@@ -149,7 +149,7 @@
 
         - name: "[CleanUP]: Tear down memory chaos infrastructure, if setup"
           shell: >
-            kubectl delete -f /chaoslib/litmus/pod_memory_hog/app_memory_stress.yml -n {{ c_ns }} 
+            kubectl delete -f /tmp/app_memory_stress.yml -n {{ c_ns }} 
           args:
             executable: /bin/bash
           when: "chaos_pod_result.rc == 0"

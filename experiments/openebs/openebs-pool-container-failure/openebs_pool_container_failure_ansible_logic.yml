@@ -35,11 +35,11 @@
         - name: "[PreReq]: Identify the data consistency util to be invoked"
           template:
             src: data_persistence.j2
-            dest: data_persistence.yml
+            dest: /tmp/data_persistence.yml
 
         - name: "[PreReq]: Including the data-consistency util for the {{ c_experiment }} experiment"
           include_vars:
-            file: data_persistence.yml
+            file: /tmp/data_persistence.yml
 
         - name: "[PreReq]: Record the chaos util path"
           set_fact:

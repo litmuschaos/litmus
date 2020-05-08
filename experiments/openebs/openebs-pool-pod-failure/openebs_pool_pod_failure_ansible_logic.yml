@@ -38,11 +38,11 @@
             - name: "[PreReq]: Identify the data consistency util to be invoked"
               template:
                 src: data_persistence.j2
-                dest: data_persistence.yml
+                dest: /tmp/data_persistence.yml
 
             - name: "[PreReq]: Including the data-consistency util for the {{ c_experiment }} experiment"
               include_vars:
-                file: data_persistence.yml
+                file: /tmp/data_persistence.yml
 
             - name: "[PreReq]: Record the data consistency util path"
               set_fact:
@@ -54,11 +54,11 @@
         - name: "[PreReq]: Identify the chaos util to be invoked"
           template:
             src: chaosutil.j2
-            dest: chaosutil.yml
+            dest: /tmp/chaosutil.yml
 
         - name: "[PreReq]: Including the chaos util for the {{ c_experiment }} experiment"
           include_vars:
-            file: chaosutil.yml
+            file: /tmp/chaosutil.yml
 
         ## GENERATE EXP RESULT NAME
         - name: "[PreReq]: Constructing the chaos result name"

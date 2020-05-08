@@ -3,7 +3,7 @@
    - name: "[PreReq]: Generate the chaos result CR to reflect SOT (Start of Test)"
      template:
        src: /utils/runtime/chaos-result.j2
-       dest: /utils/runtime/chaos-result.yml
+       dest: /tmp/chaos-result.yml
        lstrip_blocks: yes
      vars:
        phase: "Running"
@@ -11,7 +11,7 @@
        instance_id: "{{ lookup('env','INSTANCE_ID') }}"
        
    - name: "[PreReq]: Apply the chaos result CR for {{ c_experiment }} experiment"
-     shell: kubectl apply -f /utils/runtime/chaos-result.yml -n {{ namespace }}
+     shell: kubectl apply -f /tmp/chaos-result.yml -n {{ namespace }}
      args:
        executable: /bin/bash
      register: cr_status
@@ -23,7 +23,7 @@
    - name: "[Result]: Update the chaos result CR to reflect EOT (End of Test)"
      template:
        src: /utils/runtime/chaos-result.j2
-       dest: /utils/runtime/chaos-result.yml
+       dest: /tmp/chaos-result.yml
        lstrip_blocks: yes
      vars:
        phase: "Completed" 
@@ -31,7 +31,7 @@
        instance_id: "{{ lookup('env','INSTANCE_ID') }}"
 
    - name: "[The END]: Apply the chaos result CR for {{ c_experiment }} experiment"
-     shell: kubectl apply -f /utils/runtime/chaos-result.yml -n {{ namespace }}
+     shell: kubectl apply -f /tmp/chaos-result.yml -n {{ namespace }}
      args:
        executable: /bin/bash
      register: cr_status

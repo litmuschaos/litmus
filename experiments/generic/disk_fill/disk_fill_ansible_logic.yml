@@ -26,7 +26,7 @@
 
         - name: "[PreReq]: Including the chaos util for the {{ c_experiment }} experiment"
           include_vars:
-            file: chaosutil.yml
+            file: /tmp/chaosutil.yml
 
         ## GENERATE EXP RESULT NAME
         - name: "[PreReq]: Constructing the chaos result name"

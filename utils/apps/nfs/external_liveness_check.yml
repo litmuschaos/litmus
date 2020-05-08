@@ -3,12 +3,12 @@
     - name: Patching external_app_run_id and app_ns
       template:
         src: /utils/apps/nfs/external_applications.j2
-        dest: /utils/apps/nfs/external_applications.yml
+        dest: /tmp/external_applications.yml
       vars:
         run_id: "{{ run_id }}"
 
     - name: Deploying the test application with RWM accessmode
-      shell: kubectl apply -f /utils/apps/nfs/external_applications.yml
+      shell: kubectl apply -f /tmp/external_applications.yml
     
     - name: Deploying NFS liveness exporter and checking the read-pod and write-pod pod's volume is using NFS 
       include_tasks: "/utils/apps/nfs/nfs_mount_check.yml"
@@ -99,5 +99,5 @@
       pod_name: "{{ latest_pod_name.stdout }}"
 
   - name: Deleting external external_applications
-    shell: kubectl delete -f /utils/apps/nfs/external_applications.yml
+    shell: kubectl delete -f /tmp/external_applications.yml
   when: "state == 'END'"

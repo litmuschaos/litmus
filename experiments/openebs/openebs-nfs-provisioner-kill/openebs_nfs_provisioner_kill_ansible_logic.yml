@@ -29,7 +29,7 @@
       - include: openebs_nfs_provisioner_kill_prerequisites.yml
 
       - include_vars:
-          file: chaosutil.yml
+          file: /tmp/chaosutil.yml
 
       ## GENERATE EXP RESULT NAME
       - name: Construct chaos result name (experiment_name)

@@ -74,7 +74,7 @@
     - name: "[Prepare]: Patch the engine UID and node name"
       template:
         src:  /chaoslib/litmus/disk_fill/disk_fill_pod.j2
-        dest: /chaoslib/litmus/disk_fill/disk_fill_pod.yml
+        dest: /tmp/disk_fill_pod.yml
         
     ## RECORD EVENT FOR CHAOS INJECTION
     - name: "[Event]: Generating an Event for ChaosInjection"
@@ -105,7 +105,7 @@
       include_tasks: /utils/common/create_chaos_pod.yml
       vars:
         pod_ns: "{{ a_ns }}"
-        c_path: "/chaoslib/litmus/disk_fill/disk_fill_pod.yml"
+        c_path: "/tmp/disk_fill_pod.yml"
         pod_label: "name=disk-fill-{{ run_id }}"
       with_sequence: start=1 end=3
 
@@ -186,7 +186,7 @@
 
         ## DELETING THE DISK FILL POD
         - name: "[CleanUP]: Deleting the Disk Fill Pod"
-          shell: kubectl delete -f /chaoslib/litmus/disk_fill/disk_fill_pod.yml -n {{ c_ns }}
+          shell: kubectl delete -f /tmp/disk_fill_pod.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
 
@@ -209,7 +209,7 @@
     
         - name: "[CleanUP]: Deleting the Disk-fill Pod"
           shell: >
-            kubectl delete -f /chaoslib/litmus/disk_fill/disk_fill_pod.yml -n {{ c_ns }}
+            kubectl delete -f /tmp/disk_fill_pod.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
           when: "chaos_pod_result.rc == 0 "
