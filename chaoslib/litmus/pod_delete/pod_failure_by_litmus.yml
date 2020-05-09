@@ -29,6 +29,16 @@
   set_fact:
     type: "generic" 
 
+# chaos_status tracking the status of chaos, If it is active means chaos is in progress
+# If it is terminate means chaos is ended.
+- name: "[Prepare]: Setting the chaos_status to active"
+  set_fact:
+    chaos_status: "active"
+
+# chaosStartTimeStamp contains the start timestamp, when the chaos injection begin
+- name: "[Prepare]: Getting the chaos start timestamp"
+  set_fact: chaosStartTimeStamp="{{lookup('pipe','date \"+%Y-%m-%d %H:%M:%S\"')}}" 
+
 - name: "[Prepare]: Including the litmus LIB for random pod deletion"
   include: kill_random_pod.yml
   with_sequence: start=1 end={{ c_iterations }}
