@@ -107,13 +107,13 @@
         retries: 90   
       when: "type is defined and type != ''"
 
-    when: "chaosDiffTimeStamp is not defined or (chaosDiffTimeStamp is defined and chaosDiffTimeStamp < c_duration)"
+    when: "chaosDiffTimeStamp is not defined or (chaosDiffTimeStamp is defined and chaosDiffTimeStamp|int < c_duration|int)"
 
   # chaos_status tracking the status of chaos, If it is active means chaos is in progress
   # If it is terminate means chaos is ended.
   - name: "[Mark]: Setting chaos_status to terminate"
     set_fact:
       chaos_status: "terminate"
-    when: "chaosDiffTimeStamp is defined and chaosDiffTimeStamp >= c_duration"
+    when: "chaosDiffTimeStamp is defined and chaosDiffTimeStamp|int >= c_duration|int"
 
   when: "chaos_status is not defined or (chaos_status is defined and chaos_status == 'active')"
