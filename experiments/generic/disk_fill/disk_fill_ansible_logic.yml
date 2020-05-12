@@ -17,6 +17,7 @@
     chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
     c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
     c_lib: "{{ lookup('env','LIB') }}"
+    container_path: "{{ lookup('env','CONTAINER_PATH') }}"
     
   tasks:
     - block:
