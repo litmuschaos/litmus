@@ -90,7 +90,7 @@
 
     - name: "[Inject]: Killing the application pod"
       shell: |
-        kubectl delete pod -n {{ app_ns }} --grace-period=0 --wait=false {{ app_pod }}
+        kubectl delete pod -n {{ app_ns }} {{ app_pod }}
       args:
         executable: /bin/bash
       register: result
