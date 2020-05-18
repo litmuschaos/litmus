@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-delete-{{ run_id }}
+  labels:
+    app: pod-delete
+    name: pod-delete-{{ run_id }}
+{% if chaos_uid is defined and chaos_uid != '' %}
+    chaosUID: {{ chaos_uid }}
+{% endif %}
+spec:
+  restartPolicy: Never
+  containers:
+  - image: alpine
+    args:
+    - sleep
+    - "{{ total_chaos_duration }}"
+    imagePullPolicy: Always
+    name: pod-delete

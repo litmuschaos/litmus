@@ -23,6 +23,15 @@
 
   when: "ramp_time is defined and ramp_time != ''" 
 
+- block:
+    - name: "[Prepare]: Generate a run id if not passed from the engine/experiment"
+      shell: echo $(mktemp) | cut -d '.' -f 2 | cut -c -6
+      register: rand_string   
+
+    - set_fact:
+        run_id: "{{ rand_string.stdout | lower }}"
+  when: "run_id is not defined or run_id == ''"
+
 # This type variable is used to decide whether to check application status after each iteration 
 # kill_random_pod will only check the application status if type is set to generic else skip
 - name: "[Prepare]: Setting type to generic"
@@ -35,13 +44,42 @@
   set_fact:
     chaos_status: "active"
 
-# chaosStartTimeStamp contains the start timestamp, when the chaos injection begin
-- name: "[Prepare]: Getting the chaos start timestamp"
-  set_fact: chaosStartTimeStamp="{{lookup('pipe','date \"+%Y-%m-%d %H:%M:%S\"')}}" 
+- name: "[Prepare]: Deriving the total duration of chaos interval"
+  set_fact:
+    total_chaos_interval: "{{ (c_interval|int * c_iterations|int)|int }}"
+
+- name: "[Prepare]: Patch the pod delete timestamp pod"
+  template:
+    src:  /chaoslib/litmus/pod_delete/pod-delete.j2
+    dest: /tmp/pod-delete.yml
+  vars:
+    total_chaos_duration: "{{ (c_duration |int + total_chaos_interval |int)|int }}"
+
+- name: "[Prepare]: Creating timestamp pod for pod delete chaos"
+  shell: kubectl create -f /tmp/pod-delete.yml -n {{ c_ns }}
+  args:
+    executable: /bin/bash
+
+- name: "[Status]: Verify that the pod delete timestamp pod is running (pre-chaos)"
+  k8s_facts:
+    kind: Pod
+    namespace: "{{ c_ns }}"
+    label_selectors:
+      - name=pod-delete-{{ run_id }}
+  register: timestamp_pod
+  until: "{{ timestamp_pod | json_query('resources[0].status.phase') == 'Running' }}"
+  delay: 1
+  retries: 60
 
 - name: "[Prepare]: Including the litmus LIB for random pod deletion"
   include: kill_random_pod.yml
   with_sequence: start=1 end={{ c_iterations }}
+
+- name: "[CleanUP]: Delete Pod delete timestamp pod"
+  shell: kubectl delete -f /tmp/pod-delete.yml -n {{ c_ns }}
+  args:
+    executable: /bin/bash
+  when: "chaos_status == 'terminate'"
 
 - block:
     - debug:

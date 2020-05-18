@@ -1,15 +1,5 @@
 - block: 
 
-  # chaosCurrentTimeStamp contains the current timestamp
-  - name: "[Prepare]: Getting the chaos current timestamp"
-    set_fact: chaosCurrentTimeStamp="{{lookup('pipe','date \"+%Y-%m-%d %H:%M:%S\"')}}"
-
-  # chaosDiffTimeStamp contains the difference of current timestamp and start timestamp
-  # it will helpful to track the total chaos duration
-  - set_fact:
-      chaosDiffTimeStamp: "{{ ((chaosCurrentTimeStamp | to_datetime) - (chaosStartTimeStamp | to_datetime)).total_seconds()  }}"
-    when: "chaosStartTimeStamp is defined and chaosStartTimeStamp != ''"
-
   - block:
 
     - block:
@@ -107,13 +97,29 @@
         retries: 90   
       when: "type is defined and type != ''"
 
-    when: "chaosDiffTimeStamp is not defined or (chaosDiffTimeStamp is defined and chaosDiffTimeStamp|int < c_duration|int)"
+    - name: "[Status]: Verify that the pod delete timestamp pod is running"
+      k8s_facts:
+        kind: Pod
+        namespace: "{{ c_ns }}"
+        label_selectors:
+          - name=pod-delete-{{ run_id }}
+      register: timestamp_pod  
+
+    when: "timestamp_pod | json_query('resources[0].status.phase') == 'Running'"
 
   # chaos_status tracking the status of chaos, If it is active means chaos is in progress
   # If it is terminate means chaos is ended.
+  - name: "[Status]: Verify that the pod delete timestamp pod is Succeeded (after chaos)"
+    k8s_facts:
+      kind: Pod
+      namespace: "{{ c_ns }}"
+      label_selectors:
+        - name=pod-delete-{{ run_id }}
+    register: timestamp_pod  
+
   - name: "[Mark]: Setting chaos_status to terminate"
     set_fact:
       chaos_status: "terminate"
-    when: "chaosDiffTimeStamp is defined and chaosDiffTimeStamp|int >= c_duration|int"
+    when: "timestamp_pod | json_query('resources[0].status.phase') == 'Succeeded'"
 
   when: "chaos_status is not defined or (chaos_status is defined and chaos_status == 'active')"
