@@ -16,6 +16,7 @@
     c_interval: "{{ lookup('env','CHAOS_INTERVAL') }}"
     c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
     c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
+    container_path: "{{ lookup('env','CONTAINER_PATH') }}"
 
   tasks:
     - block:

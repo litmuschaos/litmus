@@ -13,16 +13,31 @@ spec:
   containers:
   - image: {{ containerd_image }}
     imagePullPolicy: Always
+    env:
+      # Name of the application pod
+      - name: APP_POD
+        value: "{{ app_pod }}"
+      - name: APP_CONTAINER
+        value: "{{ app_container }}"
+      - name: TOTAL_CHAOS_DURATION
+        value: "{{ c_duration }}"
+      - name: CHAOS_INTERVAL
+        value: "{{ c_interval }}"
+      - name: RETRY 
+        value: '90'
+      - name: DELAY
+        value: '2'
     name: containerd-chaos
-    command: ['sh', '-c', 'echo Hello! && sleep 1800']
+    command: ["/bin/bash"]
+    args: ["-c", "bash crictl-kill.sh"]
     volumeMounts:
       - name: cri-socket
-        mountPath: /run/containerd/containerd.sock
+        mountPath: "{{ container_path }}"
       - name: cri-config
         mountPath: /etc/crictl.yaml
   volumes:
     - hostPath:
-        path: /run/containerd/containerd.sock
+        path: "{{ container_path }}"
       name: cri-socket
     - hostPath:
         path: /etc/crictl.yaml 
