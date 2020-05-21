@@ -10,10 +10,48 @@ metadata:
 {% endif %}
 spec:
   restartPolicy: Never
+  serviceAccountName: pod-delete-sa
   containers:
-  - image: alpine
-    args:
-    - sleep
-    - "{{ total_chaos_duration }}"
+  - image: litmuschaos/pod-delete-chaos:latest
     imagePullPolicy: Always
-    name: pod-delete
+    name: pod-delete  
+    command: 
+    - /bin/sh
+    args:
+    - ./pod-delete.sh
+    env:
+      ## optional: provide the value of force
+      ## Default set to false
+      - name: FORCE
+        value: "{{ c_force }}"
+      ## application namespace under pod-delete chaos
+      - name: APP_NS
+        value: "{{ c_ns }}"
+      ## application label
+      - name: APP_LABEL
+        value: "{{ app_label }}"        
+      ## number of kill counts
+      - name: KILL_COUNT
+        value: "{{ kill_count }}"                        
+      ## optional: provide duration for pod-delete chaos
+      ## defalut: 15 seconds
+      - name: DURATION
+        value: "{{ c_duration }}"
+      ## optional: provide interval between pod-delete chaos
+      ## defalut: 5 seconds
+      - name: INTERVAL
+        value: "{{ c_interval }}"
+      ## number of iterations
+      - name: ITERATIONS
+        value: "{{ c_iterations }}"        
+{% if ramp_time is defined and ramp_time != '' %}
+      - name: RAMP_TIME
+        value: "{{ ramp_time }}"
+{% endif %}
+    volumeMounts:
+      - name: dockersocket
+        mountPath: /var/run/docker.sock
+  volumes:
+    - hostPath:
+        path: /var/run/docker.sock
+      name: dockersocket

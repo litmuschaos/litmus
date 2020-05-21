@@ -42,44 +42,56 @@
 # If it is terminate means chaos is ended.
 - name: "[Prepare]: Setting the chaos_status to active"
   set_fact:
-    chaos_status: "active"
+    chaos_status: "active" 
 
-- name: "[Prepare]: Deriving the total duration of chaos interval"
-  set_fact:
-    total_chaos_interval: "{{ (c_interval|int * c_iterations|int)|int }}"
+- block: 
 
-- name: "[Prepare]: Patch the pod delete timestamp pod"
-  template:
-    src:  /chaoslib/litmus/pod_delete/pod-delete.j2
-    dest: /tmp/pod-delete.yml
-  vars:
-    total_chaos_duration: "{{ (c_duration |int + total_chaos_interval |int)|int }}"
+  - name: "[Prepare]: Including the litmus LIB for random pod deletion"
+    template:
+      src:  /chaoslib/litmus/pod_delete/pod-delete.j2
+      dest: /tmp/pod-delete-chaos.yml
 
-- name: "[Prepare]: Creating timestamp pod for pod delete chaos"
-  shell: kubectl create -f /tmp/pod-delete.yml -n {{ c_ns }}
-  args:
-    executable: /bin/bash
+  - name: "[Prepare]: Create helper pod for pod delete chaos"
+    shell: kubectl create -f /tmp/pod-delete-chaos.yml -n {{ c_ns }}
+    args:
+      executable: /bin/bash
+    register: helper_pod
 
-- name: "[Status]: Verify that the pod delete timestamp pod is running (pre-chaos)"
-  k8s_facts:
-    kind: Pod
-    namespace: "{{ c_ns }}"
-    label_selectors:
-      - name=pod-delete-{{ run_id }}
-  register: timestamp_pod
-  until: "{{ timestamp_pod | json_query('resources[0].status.phase') == 'Running' }}"
-  delay: 1
-  retries: 60
+  - name: "[Status]: Waiting for pod to come in Running state"
+    shell: kubectl get pods -n {{ c_ns }} -l name=pod-delete-{{ run_id }} -o custom-columns=:.status.phase --no-headers
+    register: status_result
+    until: "'Running' in result.stdout"
+    delay: 2
+    retries: 90
 
-- name: "[Prepare]: Including the litmus LIB for random pod deletion"
-  include: kill_random_pod.yml
-  with_sequence: start=1 end={{ c_iterations }}
+  - name: "[Status]: Checking whether application pods are in completed state"
+    shell: kubectl get pods -n {{ c_ns }} -l name=pod-delete-{{ run_id }} -o custom-columns=:.status.phase --no-headers
+    register: result
+    until: "'Running' not in result.stdout"
+    delay: 1
+    retries: "{{ c_duration }}"
 
-- name: "[CleanUP]: Delete Pod delete timestamp pod"
-  shell: kubectl delete -f /tmp/pod-delete.yml -n {{ c_ns }}
-  args:
-    executable: /bin/bash
-  when: "chaos_status == 'terminate'"
+  # chaosDiffTimeStamp contains the difference of current timestamp and start timestamp
+  # it will helpful to track the run duration of healper pod
+  - set_fact:
+      chaosDiffTimeStamp: "{{ ((chaosCurrentTimeStamp | to_datetime) - (chaosStartTimeStamp | to_datetime)).total_seconds()  }}"
+
+  - fail:
+      msg: "pod-delete-chaos pod failed"
+    when: "chaosDiffTimeStamp|int < c_duration|int"
+
+  - name: "[CleanUP]: Delete Pod delete timestamp pod"
+    shell: kubectl delete -f /tmp/pod-delete.yml -n {{ c_ns }}
+    args:
+      executable: /bin/bash
+
+  # chaos_status tracking the status of chaos, If it is active means chaos is in progress
+  # If it is terminate means chaos is ended.
+  - name: "[Mark]: Setting chaos_status to terminate"
+    set_fact:
+      chaos_status: "terminate"
+
+  when: "chaos_status is not defined or (chaos_status is defined and chaos_status == 'active')"
 
 - block:
     - debug:
@@ -88,4 +100,4 @@
     - name: "[Ramp]: Waiting for the specified ramp time after injecting chaos"
       wait_for: timeout="{{ ramp_time }}"
 
-  when: "ramp_time is defined and ramp_time != ''" 
+  when: "ramp_time is defined and ramp_time != ''"
