@@ -41,6 +41,11 @@ spec:
           - name: TARGET_CONTAINER
             value: ''
 
+          # provide the container runtime path for containerd
+          # applicable only for containerd runtime
+          - name: CONTAINER_PATH
+            value: '/run/containerd/containerd.sock'
+
           # provide the chaos interval
           - name: CHAOS_INTERVAL
             value: '10'
