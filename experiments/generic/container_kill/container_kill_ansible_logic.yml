@@ -17,6 +17,7 @@
     c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
     c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
     container_path: "{{ lookup('env','CONTAINER_PATH') }}"
+    c_svc_acc: "{{ lookup('env','CHAOS_SERVICE_ACCOUNT') }}"
 
   tasks:
     - block:
