@@ -12,7 +12,7 @@ spec:
   restartPolicy: Never
   serviceAccountName: {{ c_svc_acc }}
   containers:
-  - image: uditgaurav/pod-delete-chaos:v1
+  - image: {{ pod_delete_image }}
     imagePullPolicy: Always
     name: pod-delete  
     command: 
@@ -26,7 +26,7 @@ spec:
         value: "{{ c_force }}"
       ## application namespace under pod-delete chaos
       - name: APP_NS
-        value: "{{ c_ns }}"
+        value: "{{ app_ns }}"
       ## application label
       - name: APP_LABEL
         value: "{{ app_label }}"        
