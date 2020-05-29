@@ -27,6 +27,19 @@
         app_node: "{{ app_node.stdout }}"
 
     - block:
+      - name: Record the application container
+        shell: >
+          kubectl get pods -l {{ label }} -n {{ namespace }} -o jsonpath='{.items[0].spec.containers[0].name}'
+        args:
+          executable: /bin/bash
+        register: container
+
+      - name: Record the app_container
+        set_fact:
+          app_container: "{{ container.stdout }}"
+      when: "app_container is not defined or app_container == ''"
+
+    - block:
         - name: Generate a run id if not passed from the engine/experiment
           shell: echo $(mktemp) | cut -d '.' -f 2 | cut -c -6
           register: rand_string   
@@ -35,9 +48,27 @@
             run_id: "{{ rand_string.stdout | lower }}"
       when: "run_id is not defined or run_id == ''"
 
+    - name: "[Prepare]: Deriving the chaos iterations"
+      set_fact:
+        c_iterations: "{{ (c_duration|int / c_interval|int)|int }}"
+      when: c_iterations is not defined and (c_interval is defined and c_interval|int !=0)
+
+    - name: "[Prepare]: Setting the min chaos count to one"
+      set_fact: 
+        c_iterations: 1
+      when: "c_iterations is not defined or c_iterations == '0'"
+
     - name: Wait for the specified ramp time before injecting chaos
       wait_for: timeout="{{ ramp_time }}"
       when: "ramp_time is defined and ramp_time != ''"
+
+    - name: Getting the serviceAccountName
+      shell: >
+        kubectl get pod {{ chaos_pod_name }} -n {{ c_ns }} -o 
+        custom-columns=:.spec.serviceAccountName --no-headers
+      args:
+        executable: /bin/bash
+      register: chaos_service_account
 
     - name: Patch the chaoslib image
       template:
@@ -45,6 +76,7 @@
         dest: /tmp/containerd-chaos-pod.yml
       vars:
         containerd_image: "{{ lib_image }}"
+        c_svc_acc: "{{ chaos_service_account.stdout }}"
     
     # Setting pod_running_status to nil
     - set_fact: 
@@ -64,91 +96,34 @@
         msg: "crictl-chaos lib failed, Unable to create as containerd-chaos pod couldn't be scheduled on the {{ app_node }} node"
       when: "pod_running_status is not defined or pod_running_status != 'Running'"
 
-    - name: Record the containerd-chaos pod on app node
+    # chaosStartTimeStamp contains the start timestamp
+    - name: "[Prepare]: Getting the chaos start timestamp"
+      set_fact: chaosStartTimeStamp="{{lookup('pipe','date \"+%Y-%m-%d %H:%M:%S\"')}}"
+
+    - name: "[Wait]: Wait until the containerd-chaos pod is completed"
       shell: >
-        kubectl get pod -l name=containerd-chaos-{{ run_id }} -o wide
-        -n {{ c_ns }} | grep {{ app_node }}
-        | awk '{print $1}'
-      args:
-        executable: /bin/bash
-      register: chaos_pod
-      failed_when: chaos_pod is failed
-
-    - block:
-      - name: Record the application container
-        shell: >
-          kubectl get pods -l {{ label }} -n {{ namespace }} -o jsonpath='{.items[0].spec.containers[0].name}'
-        args:
-          executable: /bin/bash
-        register: container
-
-      - name: Record the app_container
-        set_fact:
-          app_container: "{{ container.stdout }}"
-      when: "app_container is not defined or app_container == ''"
-
-    - name: Obtain the pod ID through Pod name
-      shell: >
-        kubectl exec {{ chaos_pod.stdout}} -n {{ c_ns }} -- 
-        crictl pods | grep "{{ app_pod }}" | awk '{print $1}'
-      args:
-        executable: /bin/bash
-      register: pod_id
-      failed_when: pod_id is failed
-
-    - name: Obtain the container ID using pod name and container name
-      shell: >
-        kubectl exec {{ chaos_pod.stdout}} -n {{ c_ns }} -- 
-        crictl ps | grep {{ pod_id.stdout }} | grep {{ app_container }} | awk '{print $1}'
-      args:
-        executable: /bin/bash
-      register: container_id
-      failed_when: container_id is failed
-
-     ## RECORD EVENT FOR CHAOS INJECTION
-    - include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
-      vars:
-        stage: "ChaosInject"
-        exp_pod_name: "{{ chaos_pod_name }}"
-        engine_ns: "{{ c_ns }}"
-        message: "Injecting {{ c_experiment }} chaos on {{ app_container }} container of {{ app_pod }} pod"
-      when: "c_engine is defined and c_engine != ''"
-
-    - name: Kill the container
-      shell: >
-        kubectl exec {{ chaos_pod.stdout}} -n {{ c_ns }} -- 
-        crictl stop "{{ container_id.stdout }}"
-      args:
+        kubectl get pods -l name=containerd-chaos-{{ run_id }} --no-headers -n {{ c_ns }}
+        --no-headers -o custom-columns=:status.phase
+      args: 
         executable: /bin/bash
       register: result
-      failed_when: result is failed
+      until: "result.stdout == 'Succeeded' or result.stdout == 'Failed'"
+      delay: 1
+      retries: "{{ c_duration }}"
 
-    - name: Wait for the specified ramp time after injecting chaos
-      wait_for: timeout="{{ ramp_time }}"
-      when: "ramp_time is defined and ramp_time != ''"
+      # chaosCurrentTimeStamp contains the current timestamp
+    - name: "[Prepare]: Getting the chaos current timestamp"
+      set_fact: chaosCurrentTimeStamp="{{lookup('pipe','date \"+%Y-%m-%d %H:%M:%S\"')}}"
 
-    - name: Obtain the container ID using pod name and container name
-      shell: >
-        kubectl exec {{ chaos_pod.stdout}} -n {{ c_ns }} -- 
-        crictl ps | grep {{ pod_id.stdout }} | grep {{ app_container }} | awk '{print $1}'
-      args:
-        executable: /bin/bash
-      register: new_container_id
-      until: "new_container_id.stdout != ''"
-      delay: 2
-      retries: 90
+    # chaosDiffTimeStamp contains the difference of current timestamp and start timestamp
+    # it will helpful to track the run duration of healper pod
+    - set_fact:
+        chaosDiffTimeStamp: "{{ ((chaosCurrentTimeStamp | to_datetime) - (chaosStartTimeStamp | to_datetime)).total_seconds()  }}"
 
-    - name: Check if the new container is running.
-      shell: >
-        kubectl exec {{ chaos_pod.stdout}} -n {{ c_ns }} -- 
-        crictl ps | grep {{ new_container_id.stdout }}
-      args:
-        executable: /bin/bash
-      register: status
-      until: "'Running' in status.stdout"
-      delay: 2
-      retries: 90
-
+    - fail:
+        msg: "containerd-chaos pod failed"
+      when: "chaosDiffTimeStamp|int < c_duration|int"
+      
     - block:
 
         - name: Delete the crictl-chaos pod
@@ -169,6 +144,10 @@
 
       when: "pod_running_status is defined and pod_running_status == 'Running'"
 
+    - name: Wait for the specified ramp time after injecting chaos
+      wait_for: timeout="{{ ramp_time }}"
+      when: "ramp_time is defined and ramp_time != ''"
+
   rescue: 
 
     - block: 
@@ -177,7 +156,6 @@
             kubectl delete -f /tmp/containerd-chaos-pod.yml -n {{ c_ns }}
           args:
             executable: /bin/bash
-          when: "chaos_pod_result.rc == 0 "
           
         - name: Confirm that the containerd-chaos pod is deleted successfully
           shell: >
@@ -188,7 +166,7 @@
           until: "'No resources found' in result.stderr"
           delay: 2
           retries: 90
-      when: "(pod_running_status is defined and pod_running_status == 'Running') and chaos_pod_result is defined"
+      when: "(pod_running_status is defined and pod_running_status == 'Running')"
     
     - fail:
         msg: "crictl-chaos lib failed"
