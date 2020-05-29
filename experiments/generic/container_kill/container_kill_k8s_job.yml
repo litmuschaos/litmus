@@ -27,9 +27,9 @@ spec:
           - name: APP_LABEL
             value: ''
 
-          # LIB_IMAGE can be - gaiaadm/pumba:0.6.5, gprasath/crictl:ci
+          # LIB_IMAGE can be - gaiaadm/pumba:0.6.5, litmuschaos/container-killer:latest
           # For pumba image use : gaiaadm/pumba:0.6.5
-          # For containerd image use : gprasath/crictl:ci
+          # For containerd image use : litmuschaos/container-killer:latest
           - name: LIB_IMAGE  
             value: 'gaiaadm/pumba:0.6.5'
             

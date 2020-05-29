@@ -8,6 +8,7 @@ metadata:
     chaosUID: {{ chaos_uid }}
 {% endif %}        
 spec:
+  serviceAccountName: {{ c_svc_acc }}
   nodeName: {{ app_node }}
   restartPolicy: Never
   containers:
@@ -23,10 +24,22 @@ spec:
         value: "{{ c_duration }}"
       - name: CHAOS_INTERVAL
         value: "{{ c_interval }}"
+      - name: CHAOS_ITERATION
+        value: "{{ c_iterations }}"
       - name: RETRY 
         value: '90'
       - name: DELAY
         value: '2'
+      - name: CHAOS_NS
+        value: "{{ c_ns }}"
+      - name: ENGINE_NAME
+        value: "{{ c_engine }}"
+      - name: ENGINE_UID
+        value: "{{ chaos_uid }}"
+      - name: CHAOS_POD
+        valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
     name: containerd-chaos
     command: ["/bin/bash"]
     args: ["-c", "bash crictl-kill.sh"]
