@@ -9,6 +9,7 @@
     ramp_time: "{{ lookup('env','RAMP_TIME') }}"
     c_force: "{{ lookup('env','FORCE') }}"
     c_lib: "{{ lookup('env','LIB') }}"
+    lib_image: "{{ lookup('env','LIB_IMAGE') }}"
     c_svc_acc: "{{ lookup('env','CHAOS_SERVICE_ACCOUNT') }}"
     a_ns: "{{ lookup('env','APP_NAMESPACE') }}"
     a_label: "{{ lookup('env','APP_LABEL') }}"
