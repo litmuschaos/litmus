@@ -60,6 +60,14 @@
         executable: /bin/bash
       register: helper_pod
 
+    - name: "[Status]: Checking the running status of the helper pod"
+      shell: >
+        kubectl get pods -l name=pod-delete-{{ run_id }} -n {{ c_ns }} -o custom-columns=:.status.phase --no-headers
+      register: pod_result
+      until: "((pod_result.stdout.split()|unique)|length) == 1 and 'Running' in pod_result.stdout"
+      delay: 2
+      retries: 90
+
     - name: "[Status]: Checking whether helper pods is in completed state"
       shell: kubectl get pods -n {{ c_ns }} -l name=pod-delete-{{ run_id }} -o custom-columns=:.status.phase --no-headers
       register: result
@@ -72,7 +80,7 @@
       set_fact: chaosCurrentTimeStamp="{{lookup('pipe','date \"+%Y-%m-%d %H:%M:%S\"')}}"
 
     # chaosDiffTimeStamp contains the difference of current timestamp and start timestamp
-    # it will helpful to track the run duration of healper pod
+    # it will helpful to track the run duration of helper pod
     - set_fact:
         chaosDiffTimeStamp: "{{ ((chaosCurrentTimeStamp | to_datetime) - (chaosStartTimeStamp | to_datetime)).total_seconds()  }}"
     
