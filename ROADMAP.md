@@ -15,13 +15,15 @@ This document captures only the high level roadmap items. For the detailed backl
 -   Documentation (user & developer guides, integration with other chaos tools)
 -   Gitlab e2e pipeline for chaos experiments
 -   Define community sync up schedule 
+-   Integration with Argo project for Chaos workflows, support for scenario creation with experiments
+-   Support for scheduled (continuous/background) chaos  
 
 ------
 
 ### In-Progress (Near-term) 
 
 -   Off the shelf chaos-integrated grafana dashboards for OpenEBS, Kafka, Cassandra [#1280](https://github.com/litmuschaos/litmus/issues/1280)
--   Support for scheduled (continuous/background) chaos with halt/resume [#1223](https://github.com/litmuschaos/litmus/issues/1223)
+-   Support for halt/resume capabilities with ChaosSchedule 
 -   Support for OpenShift platform/resources [1406](https://github.com/litmuschaos/litmus/issues/1406)
 -   Support for complete chaos abort via pre-stop hooks [#1284](https://github.com/litmuschaos/litmus/issues/1284)
 -   Go, Python SDK for Litmus Experiments [1466](https://github.com/litmuschaos/litmus/issues/1466) [#1259](https://github.com/litmuschaos/litmus/issues/1259)

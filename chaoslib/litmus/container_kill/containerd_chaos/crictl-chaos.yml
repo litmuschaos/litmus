@@ -116,7 +116,7 @@
       set_fact: chaosCurrentTimeStamp="{{lookup('pipe','date \"+%Y-%m-%d %H:%M:%S\"')}}"
 
     # chaosDiffTimeStamp contains the difference of current timestamp and start timestamp
-    # it will helpful to track the run duration of healper pod
+    # it will helpful to track the run duration of helper pod
     - set_fact:
         chaosDiffTimeStamp: "{{ ((chaosCurrentTimeStamp | to_datetime) - (chaosStartTimeStamp | to_datetime)).total_seconds()  }}"
 
