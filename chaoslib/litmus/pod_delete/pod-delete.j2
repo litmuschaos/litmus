@@ -16,9 +16,10 @@ spec:
     imagePullPolicy: Always
     name: pod-delete  
     command: 
-    - /bin/sh
+    - /bin/bash
     args:
-    - ./pod-delete.sh
+    - -c
+    - ./experiments/pod-delete
     env:
       ## optional: provide the value of force
       ## Default set to false
@@ -35,7 +36,7 @@ spec:
         value: "{{ kill_count }}"                        
       ## optional: provide duration for pod-delete chaos
       ## defalut: 15 seconds
-      - name: DURATION
+      - name: TOTAL_CHAOS_DURATION
         value: "{{ c_duration }}"
       ## chaos namespace
       - name: CHAOS_NAMESPACE
@@ -47,7 +48,7 @@ spec:
         value: "{{ chaos_uid }}"
       ## optional: provide interval between pod-delete chaos
       ## defalut: 5 seconds
-      - name: INTERVAL
+      - name: CHAOS_INTERVAL
         value: "{{ c_interval }}"
       ## number of iterations
       - name: ITERATIONS
