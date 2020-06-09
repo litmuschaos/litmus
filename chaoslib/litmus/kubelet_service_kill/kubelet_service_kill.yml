@@ -1,0 +1,148 @@
+---
+- block: 
+
+    - block: 
+
+      - name: "[Prepare]: Select the application pod name"
+        shell: >
+          kubectl get pod -l {{ a_label }} -n {{ a_ns }}
+          -o=custom-columns=:metadata.name --no-headers
+          | shuf | head -1
+        args:
+          executable: /bin/bash
+        register: app_pod_name
+
+      - name: "[Prepare]: Recording the application pod name"
+        set_fact:
+          app_pod: "{{ app_pod_name.stdout }}"
+
+      when: "app_pod is not defined or app_pod == ''"
+
+    - name: "[Prepare]: Identify the application node name"
+      shell: >
+        kubectl get pod {{ app_pod }} -n {{ a_ns }}
+        --no-headers -o custom-columns=:spec.nodeName
+      args:
+        executable: /bin/bash
+      register: app_node
+
+    - name: "[Prepare]: Record the application node name"
+      set_fact: 
+        app_node: "{{ app_node.stdout }}"
+
+    - block: 
+        - name: "[Prepare:] Generate a run id if not passed from the engine/experiment"
+          shell: echo $(mktemp) | cut -d '.' -f 2 | cut -c -6
+          register: rand_string   
+
+        - set_fact:
+            run_id: "{{ rand_string.stdout | lower }}"
+      when: "run_id is not defined or run_id == ''"
+
+    - name: "[Event]: Generating an Event for ChaosInjection"
+      include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+      vars:
+        stage: "ChaosInject"
+        exp_pod_name: "{{ chaos_pod_name }}"
+        engine_ns: "{{ c_ns }}"
+        message: "Injecting {{ c_experiment }} chaos on {{ app_node }} node"
+      when: "c_engine is defined and c_engine != ''"
+
+    - name: "[Prepare]: Patch the run_id to kubelet service kill helper pod template"
+      template:
+        src:  /chaoslib/litmus/kubelet_service_kill/kubelet-service-kill.j2
+        dest: /tmp/kubelet-service-kill.yml
+      vars:
+        node_name: "{{ app_node }}"
+
+    - name: "[Prepare]: Create kubelet service kill helper pod"
+      shell: >
+        kubectl create -f /tmp/kubelet-service-kill.yml -n {{ c_ns }}
+      args:
+        executable: /bin/bash
+      register: helper_pod_creation
+
+    - name: "[Prepare]: Confirm that the helper pod is in running state"
+      shell: >
+        kubectl get pod -l name=service-kill-{{ run_id }} --no-headers -o custom-columns=:status.phase
+        -n {{ c_ns }} | sort | uniq
+      args: 
+        executable: /bin/bash
+      register: result
+      until: "result.stdout == 'Running'"
+      delay: 2
+      retries: 90
+      
+    - name: "[Status]: Waiting for node to get in NotReady state"
+      shell: |
+        kubectl get nodes {{ app_node }} --no-headers | awk '{print$2}'
+      args:
+        executable: /bin/bash
+      register: node_state
+      until: node_state.stdout == 'NotReady'
+      delay: 2
+      retries: 90
+
+    - name: "[Wait]: Wait for the chaos duration of {{ c_duration }}s"
+      wait_for:
+        timeout: "{{ c_duration }}"
+
+    - name: "[Status]: Checking the node status after chaos"
+      shell: |
+        kubectl get nodes {{ app_node }} --no-headers | awk '{print$2}'
+      args:
+        executable: /bin/bash
+      register: node_state
+      until: node_state.stdout == 'Ready'
+      delay: 2
+      retries: 90
+
+    - block:
+ 
+        - name: "[CleanUP]: Tear down service kill infra"
+          shell: >
+            kubectl delete pod -n {{ a_ns }} -l name=service-kill-{{ run_id }}
+          args:
+            executable: /bin/bash
+          register: result
+
+        - name: "[Status]: Confirm that the svc chaos helper pod is teminated successfully"
+          shell: >
+            kubectl get pod -l name=service-kill-{{ run_id }} --no-headers -o custom-columns=:status.phase -n {{ a_ns }} | sort | uniq
+          args: 
+            executable: /bin/bash
+          register: result_status
+          until: result_status.stdout ==''
+          delay: 2
+          retries: 90
+
+      when: 'helper_pod_creation.rc == 0'
+
+
+  rescue: 
+
+    - block:
+      
+        - name: "[CleanUP]: Tear down service kill infra"
+          shell: >
+            kubectl delete pod -n {{ a_ns }} -l name=service-kill-{{ run_id }}
+          args:
+            executable: /bin/bash
+          register: result
+
+        - name: "[Status]: Confirm that the svc chaos helper pod is teminated successfully"
+          shell: >
+            kubectl get pod -l name=service-kill-{{ run_id }} --no-headers -o custom-columns=:status.phase -n {{ a_ns }} | sort | uniq
+          args: 
+            executable: /bin/bash
+          register: result_status
+          until: result_status.stdout ==''
+          delay: 2
+          retries: 90
+
+      when: 'helper_pod_creation.rc == 0'
+
+    - fail:
+        msg: "kubelet_service_kill lib failed"
+      when: true
+      

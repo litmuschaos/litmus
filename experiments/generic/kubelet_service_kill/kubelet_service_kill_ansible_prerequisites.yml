@@ -1,0 +1,4 @@
+- name: "[PreReq] Identify the chaos util for {{ c_experiment }} experiment"
+  template:
+    src: chaosutil.j2
+    dest: /tmp/chaosutil.yml
