@@ -109,7 +109,7 @@
       register: result
       until: "result.stdout == 'Succeeded' or result.stdout == 'Failed'"
       delay: 1
-      retries: "{{ c_duration }}"
+      retries: "{{ c_duration|int + 10 }}"
 
       # chaosCurrentTimeStamp contains the current timestamp
     - name: "[Prepare]: Getting the chaos current timestamp"
