@@ -44,12 +44,14 @@ spec:
                 fieldPath: metadata.name
     name: containerd-chaos
     command: ["/bin/bash"]
-    args: ["-c", "./experiments/container-kill"]
+    args: ["-c", "bash crictl-kill.sh"]
     volumeMounts:
       - name: cri-socket
         mountPath: "{{ container_path }}"
       - name: cri-config
         mountPath: /etc/crictl.yaml
+    securityContext:
+      privileged: true
   volumes:
     - hostPath:
         path: "{{ container_path }}"
