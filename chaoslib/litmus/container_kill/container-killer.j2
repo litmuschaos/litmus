@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: containerd-chaos-{{ run_id }}
+  name: container-killer-{{ run_id }}
   labels:
-    name: containerd-chaos-{{ run_id }}
+    name: container-killer-{{ run_id }}
 {% if chaos_uid is defined and chaos_uid != '' %}        
     chaosUID: {{ chaos_uid }}
 {% endif %}        
@@ -12,7 +12,7 @@ spec:
   nodeName: {{ app_node }}
   restartPolicy: Never
   containers:
-  - image: {{ containerd_image }}
+  - image: {{ container_killer_image }}
     imagePullPolicy: Always
     env:
       # Name of the application pod
@@ -42,9 +42,9 @@ spec:
         valueFrom:
               fieldRef:
                 fieldPath: metadata.name
-    name: containerd-chaos
+    name: container-killer
     command: ["/bin/bash"]
-    args: ["-c", "bash crictl-kill.sh"]
+    args: ["-c", "./experiments/container-kill"]
     volumeMounts:
       - name: cri-socket
         mountPath: "{{ container_path }}"

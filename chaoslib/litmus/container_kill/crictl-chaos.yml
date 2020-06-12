@@ -1,6 +1,6 @@
 ---
 - block:
-  - name: Select the app pod
+  - name: "[Prepare]: Select the app pod"
     shell: >
       kubectl get pod -l {{ a_label }} -n {{ namespace }}
       -o=custom-columns=:metadata.name --no-headers
@@ -9,12 +9,12 @@
       executable: /bin/bash
     register: app_pod_name
 
-  - name: Record app pod name
+  - name: "[Prepare]: Record app pod name"
     set_fact:
       app_pod: "{{ app_pod_name.stdout }}"
   when: "app_pod is not defined or app_pod == ''"
 
-- name: Identify the application node
+- name: "[Prepare]: Identify the application node"
   shell: >
     kubectl get pod {{ app_pod }} -n {{ namespace }}
     --no-headers -o custom-columns=:spec.nodeName
@@ -26,20 +26,20 @@
     app_node: "{{ app_node.stdout }}"
 
 - block:
-  - name: Record the application container
+  - name: "[Prepare]: Record the application container"
     shell: >
       kubectl get pods -l {{ label }} -n {{ namespace }} -o jsonpath='{.items[0].spec.containers[0].name}'
     args:
        executable: /bin/bash
     register: container
 
-  - name: Record the app_container
+  - name: "[Prepare]: Record the app_container"
     set_fact:
        app_container: "{{ container.stdout }}"
   when: "app_container is not defined or app_container == ''"
 
 - block:
-  - name: Generate a run id if not passed from the engine/experiment
+  - name: "[Prepare]: Generate a run id if not passed from the engine/experiment"
     shell: echo $(mktemp) | cut -d '.' -f 2 | cut -c -6
     register: rand_string   
 
@@ -57,11 +57,17 @@
      c_iterations: 1
   when: "c_iterations is not defined or c_iterations == '0'"
 
-- name: Wait for the specified ramp time before injecting chaos
-  wait_for: timeout="{{ ramp_time }}"
-  when: "ramp_time is defined and ramp_time != ''"
+- block:
 
-- name: Getting the serviceAccountName
+  - debug:
+      msg: "***** Waiting for the ramp interval of {{ ramp_time }}s *****"
+
+  - name: "[Ramp]: Waiting for the specified ramp time before injecting chaos"
+    wait_for: timeout="{{ ramp_time }}"
+
+  when: "ramp_time is defined and ramp_time != ''" 
+
+- name: "[Prepare]: Getting the serviceAccountName"
   shell: >
     kubectl get pod {{ chaos_pod_name }} -n {{ c_ns }} -o 
     custom-columns=:.spec.serviceAccountName --no-headers
@@ -69,39 +75,39 @@
     executable: /bin/bash
   register: chaos_service_account
 
-- name: Patch the chaoslib image
+- name: "[Prepare]: Patch the chaoslib image"
   template:
-    src:  /chaoslib/litmus/container_kill/containerd_chaos/containerd.j2
-    dest: /tmp/containerd-chaos-pod.yml
+    src:  /chaoslib/litmus/container_kill/container-killer.j2
+    dest: /tmp/container-killer.yml
   vars:
-    containerd_image: "{{ lib_image }}"
+    container_killer_image: "{{ lib_image }}"
     c_svc_acc: "{{ chaos_service_account.stdout }}"
     
 # Setting pod_running_status to nil
 - set_fact: 
     pod_running_status: ""
         
-# Containerd chaos pods creation is attempted for a total of 3 times, if it is not immediately schedulable due to transient node conditions
-# If the containerd-chaos pod is not schedulable across these 3 tries, the experiment is failed with message indicating improper cluster state.
+# container-killer chaos pods creation is attempted for a total of 3 times, if it is not immediately schedulable due to transient node conditions
+# If the container-killer chaos pod is not schedulable across these 3 tries, the experiment is failed with message indicating improper cluster state.
 - include_tasks: /utils/common/create_chaos_pod.yml
   vars:
     pod_ns: "{{ c_ns }}"
-    c_path: "/tmp/containerd-chaos-pod.yml"
-    pod_label: "name=containerd-chaos-{{ run_id }}"
+    c_path: "/tmp/container-killer.yml"
+    pod_label: "name=container-killer-{{ run_id }}"
   with_sequence: start=1 end=3
 
-# Failing the execution, If containerd-chaos pod won't come to running state after three retries.
+# Failing the execution, If container-killer chaos pod won't come to running state after three retries.
 - fail:
-    msg: "crictl-chaos lib failed, Unable to create as containerd-chaos pod couldn't be scheduled on the {{ app_node }} node"
+    msg: "crictl-chaos lib failed, Unable to create as container-killer chaos pod couldn't be scheduled on the {{ app_node }} node"
   when: "pod_running_status is not defined or pod_running_status != 'Running'"
 
 # chaosStartTimeStamp contains the start timestamp
 - name: "[Prepare]: Getting the chaos start timestamp"
   set_fact: chaosStartTimeStamp="{{lookup('pipe','date \"+%Y-%m-%d %H:%M:%S\"')}}"
 
-- name: "[Wait]: Wait until the containerd-chaos pod is completed"
+- name: "[Wait]: Wait until the container-killer chaos pod is completed"
   shell: >
-    kubectl get pods -l name=containerd-chaos-{{ run_id }} --no-headers -n {{ c_ns }}
+    kubectl get pods -l name=container-killer-{{ run_id }} --no-headers -n {{ c_ns }}
     --no-headers -o custom-columns=:status.phase
   args: 
     executable: /bin/bash
@@ -120,20 +126,20 @@
     chaosDiffTimeStamp: "{{ ((chaosCurrentTimeStamp | to_datetime) - (chaosStartTimeStamp | to_datetime)).total_seconds()  }}"
 
 - fail:
-    msg: "containerd-chaos pod failed"
+    msg: "container-killer chaos pod failed"
   when: "chaosDiffTimeStamp|int < c_duration|int"
       
 - block:
 
-  - name: Delete the crictl-chaos pod
+  - name: "[CleanUP]: Delete the crictl-chaos pod"
     shell: >
-      kubectl delete -f /tmp/containerd-chaos-pod.yml -n {{ c_ns }} 
+      kubectl delete -f /tmp/container-killer.yml -n {{ c_ns }} 
     args:
       executable: /bin/bash
     
-  - name: Confirm that the containerd-chaos pod is deleted successfully
+  - name: "[CleanUP]: Confirm that the container-killer chaos pod is deleted successfully"
     shell: >
-      kubectl get pods -l name=containerd-chaos-{{ run_id }} --no-headers -n {{ c_ns }}
+      kubectl get pods -l name=container-killer-{{ run_id }} --no-headers -n {{ c_ns }}
     args:
       executable: /bin/bash
     register: result
@@ -143,6 +149,11 @@
 
   when: "chaosDiffTimeStamp|int >= c_duration|int"
 
-- name: Wait for the specified ramp time after injecting chaos
-  wait_for: timeout="{{ ramp_time }}"
-  when: "ramp_time is defined and ramp_time != ''"
+- block:
+  - debug:
+      msg: "***** Waiting for the ramp interval of {{ ramp_time }}s *****"
+
+  - name: "[Ramp]: Waiting for the specified ramp time after injecting chaos"
+    wait_for: timeout="{{ ramp_time }}"
+
+  when: "ramp_time is defined and ramp_time != ''" 
