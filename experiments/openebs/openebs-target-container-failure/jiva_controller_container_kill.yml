@@ -25,7 +25,7 @@
 
 # including containerd chaoslib -> crictl-chaos
 - name: "[Include]: Including the containerd chaoslib for container kill"
-  include_tasks: /chaoslib/litmus/container_kill/containerd_chaos/crictl-chaos.yml
+  include_tasks: /chaoslib/litmus/container_kill/crictl-chaos.yml
   vars:
     app_pod: "{{ jiva_controller_pod.stdout }}"
     namespace: "{{ a_ns }}"
