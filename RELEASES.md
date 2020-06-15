@@ -6,12 +6,54 @@ while providing the links to release details. Meant to be a helpful chronicler o
 <table>
 
  <tr>
+   <td>1.5.0</td>
+   <td>15th June, 2020</td>
+   <td> 
+     <ul>
+       <li><b>Deprecated</b> (chaosschedule): <code>.spec.schedule.type</code></li>
+       <li><b>New</b> (chaosschedule): <code>.spec.schedule.once.exectionTime</code> replaces: <code>.spec.schedule.exectionTime</code></li>
+       <li><b>New</b> (chaosschedule): <code>.spec.schedule.repeat.startTime/endTime</code> replaces: <code>.spec.schedule.startTime/endTime</code></li>
+       <li><b>New</b> (chaosexperiment): <code>.spec.definition.imagePullPolicy</code></li>
+     </ul>
+   </td>
+   <td><a href="https://github.com/litmuschaos/litmus/releases/tag/1.5.0">Release Notes</a></td>
+   <td><a href="https://docs.litmuschaos.io/docs/getstarted">Documentation</a></td>
+   <td>N/A</td>
+   <td><a href="https://github.com/litmuschaos/chaos-charts/releases/tag/1.5.0">Chaos Charts Bundle</a></td>
+ </tr>
+
+
+ <tr>
+   <td>1.4.1</td>
+   <td>3rd June, 2020</td>
+   <td>No Schema changes</td>
+   <td><a href="https://github.com/litmuschaos/litmus/releases/tag/1.4.1">Release Notes</a></td>
+   <td><a href="https://docs.litmuschaos.io/docs/1.4.0/getstarted/">Documentation</a></td>
+   <td>N/A</td>
+   <td><a href="https://github.com/litmuschaos/chaos-charts/releases/tag/1.4.1">Chaos Charts Bundle</a></td>
+ </tr>
+
+ <tr>
+   <td>1.4.0</td>
+   <td>15th May, 2020</td>
+   <td> 
+     <ul>
+       <li><b>New</b> (chaosschedule): Introduce custom resource to schedule chaos on targets</li>
+     </ul>
+   </td>
+   <td><a href="https://github.com/litmuschaos/litmus/releases/tag/1.4.0">Release Notes</a></td>
+   <td><a href="https://docs.litmuschaos.io/docs/1.4.0/getstarted/">Documentation</a></td>
+   <td>N/A</td>
+   <td><a href="https://github.com/litmuschaos/chaos-charts/releases/tag/1.4.0">Chaos Charts Bundle</a></td>
+ </tr>
+
+ <tr>
    <td>1.3.0</td>
    <td>15th April, 2020</td>
    <td>No Schema changes</td>
    <td><a href="https://github.com/litmuschaos/litmus/releases/tag/1.3.0">Release Notes</a></td>
    <td><a href="https://docs.litmuschaos.io/docs/getstarted">Documentation</a></td>
-   <td>Coming Up!</td>
+   <td>N/A</td>
    <td><a href="https://github.com/litmuschaos/chaos-charts/releases/tag/1.3.0">Chaos Charts Bundle</a></td>
  </tr>
 
