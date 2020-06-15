@@ -15,7 +15,7 @@ jobs:
           comment-id: "${{ github.event.comment.id }}"
           body: |
             ****
-            **Test Status:** The e2e test has been started please wait for the test result ...      
+            **Test Status:** The e2e test has been started please wait for the results ...      
 
       #Using the last commit id of pull request
       - uses: octokit/request-action@v2.x
@@ -26,6 +26,7 @@ jobs:
           pull_number: ${{ github.event.issue.number }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: set commit to output
         id: getcommit
         run: | 
@@ -38,25 +39,24 @@ jobs:
         with:
           ref: ${{steps.getcommit.outputs.sha}}      
 
-      - name: Publish to Docker Repository
-        uses: elgohr/Publish-Docker-Github-Action@master
-        with:
-          name: litmuschaos/ansible-runner
-          username: ${{ secrets.DUSER }}
-          password: ${{ secrets.DPASS }}
-          dockerfile: build/ansible-runner/Dockerfile
-          tags: "ci"
+      - name: Build docker image
+        run: |
+          sudo docker build -f build/ansible-runner/Dockerfile -t litmuschaos/ansible-runner:ci .
 
       #Install and configure a kind cluster
-      - name: Installing Prerequisites
+      - name: Installing Prerequisites (KinD Cluster)
+        uses: engineerd/setup-kind@v0.4.0
+        with:
+            version: "v0.7.0"
+
+      - name: Configuring and testing the Installation
         run: |
-          kind create cluster --loglevel debug --wait=5m
           kubectl cluster-info --context kind-kind
           kind get kubeconfig --internal >$HOME/.kube/config
+          kubectl get nodes            
 
       - name: Load image on the nodes of the cluster
         run: |
-          kubectl get nodes   
           kind load docker-image --name=kind litmuschaos/ansible-runner:ci
 
       - name: Deploy a sample application for chaos injection
@@ -68,109 +68,53 @@ jobs:
         run: echo ::set-env name=KUBE_CONFIG_DATA::$(base64 -w 0 ~/.kube/config)
 
       - name: Running Litmus pod delete chaos experiment
-        if: startsWith(github.event.comment.body, '/run-e2e-pod-delete')
-        uses: mayadata-io/github-chaos-actions@v0.1.0
+        if: startsWith(github.event.comment.body, '/run-e2e-pod-delete') || startsWith(github.event.comment.body, '/run-e2e-all')
+        uses: mayadata-io/github-chaos-actions@v0.1.1
         env:
           INSTALL_LITMUS: true
           EXPERIMENT_NAME: pod-delete
-          EXPERIMENT_IMAGE: litmuschaos/ansible-runner:ci
+          EXPERIMENT_IMAGE: litmuschaos/ansible-runner
+          EXPERIMENT_IMAGE_TAG: ci
+          IMAGE_PULL_POLICY: IfNotPresent
           LITMUS_CLEANUP: true
 
       - name: Running container kill chaos experiment
-        if: startsWith(github.event.comment.body, '/run-e2e-container-kill')
-        uses: mayadata-io/github-chaos-actions@v0.1.0
+        if: startsWith(github.event.comment.body, '/run-e2e-container-kill') || startsWith(github.event.comment.body, '/run-e2e-all')
+        uses: mayadata-io/github-chaos-actions@v0.1.1
         env:
           INSTALL_LITMUS: true
           EXPERIMENT_NAME: container-kill
-          EXPERIMENT_IMAGE: litmuschaos/ansible-runner:ci
+          EXPERIMENT_IMAGE: litmuschaos/ansible-runner
+          EXPERIMENT_IMAGE_TAG: ci
+          IMAGE_PULL_POLICY: IfNotPresent
           LITMUS_CLEANUP: true
 
       - name: Running node-cpu-hog chaos experiment
-        if: startsWith(github.event.comment.body, '/run-e2e-node-cpu-hog')
-        uses: mayadata-io/github-chaos-actions@v0.1.0
+        if: startsWith(github.event.comment.body, '/run-e2e-node-cpu-hog') || startsWith(github.event.comment.body, '/run-e2e-all')
+        uses: mayadata-io/github-chaos-actions@v0.1.1
         env:
           INSTALL_LITMUS: true
           EXPERIMENT_NAME: node-cpu-hog
-          EXPERIMENT_IMAGE: litmuschaos/ansible-runner:ci     
+          EXPERIMENT_IMAGE: litmuschaos/ansible-runner
+          EXPERIMENT_IMAGE_TAG: ci
+          IMAGE_PULL_POLICY: IfNotPresent
           LITMUS_CLEANUP: true
 
       - name: Running node-memory-hog chaos experiment
-        if: startsWith(github.event.comment.body, '/run-e2e-node-memory-hog')
-        uses: mayadata-io/github-chaos-actions@v0.1.0
+        if: startsWith(github.event.comment.body, '/run-e2e-node-memory-hog') || startsWith(github.event.comment.body, '/run-e2e-all')
+        uses: mayadata-io/github-chaos-actions@v0.1.1
         env:
           INSTALL_LITMUS: true
           EXPERIMENT_NAME: node-memory-hog
-          EXPERIMENT_IMAGE: litmuschaos/ansible-runner:ci     
-          LITMUS_CLEANUP: true
-
-      - name: Running pod-cpu-hog chaos experiment
-        if: startsWith(github.event.comment.body, '/run-e2e-pod-cpu-hog')
-        uses: mayadata-io/github-chaos-actions@v0.1.0
-        env:
-          INSTALL_LITMUS: true
-          EXPERIMENT_NAME: pod-cpu-hog
-          EXPERIMENT_IMAGE: litmuschaos/ansible-runner:ci     
-          LITMUS_CLEANUP: true              
-
-      - name: Running pod-memory-hog chaos experiment
-        if: startsWith(github.event.comment.body, '/run-e2e-pod-memory-hog')
-        uses: mayadata-io/github-chaos-actions@v0.1.0
-        env:
-          INSTALL_LITMUS: true
-          EXPERIMENT_NAME: pod-cpu-hog
-          EXPERIMENT_IMAGE: litmuschaos/ansible-runner:ci     
-          LITMUS_CLEANUP: true
-      
-      - name: Running disk-fill chaos experiment
-        if: startsWith(github.event.comment.body, '/run-e2e-disk-fill')
-        uses: mayadata-io/github-chaos-actions@v0.1.0
-        env:
-          INSTALL_LITMUS: true
-          EXPERIMENT_NAME: disk-fill
-          EXPERIMENT_IMAGE: litmuschaos/ansible-runner:ci
-          LITMUS_CLEANUP: true
-
-      - name: Running pod network corruption chaos experiment
-        if: startsWith(github.event.comment.body, '/run-e2e-disk-fill')
-        uses: mayadata-io/github-chaos-actions@v0.1.0
-        env:
-          INSTALL_LITMUS: true
-          EXPERIMENT_NAME: pod-network-corruption
-          EXPERIMENT_IMAGE: litmuschaos/ansible-runner:ci
-          LITMUS_CLEANUP: true
-
-      - name: Running pod-network-latency chaos experiment
-        if: startsWith(github.event.comment.body, '/run-e2e-pod-network-latency')
-        uses: mayadata-io/github-chaos-actions@v0.1.0
-        env:
-          INSTALL_LITMUS: true
-          EXPERIMENT_NAME: pod-network-latency
-          EXPERIMENT_IMAGE: litmuschaos/ansible-runner:ci
-          LITMUS_CLEANUP: true 
-
-      - name: Running pod-network-loss chaos experiment
-        if: startsWith(github.event.comment.body, '/run-e2e-pod-network-loss')
-        uses: mayadata-io/github-chaos-actions@v0.1.0
-        env:
-          INSTALL_LITMUS: true
-          EXPERIMENT_NAME: pod-network-loss
-          EXPERIMENT_IMAGE: litmuschaos/ansible-runner:ci
-          LITMUS_CLEANUP: true
-
-      ## This is dependent on some PR in chaos-ci-lib
-      - name: Running all tests
-        if: startsWith(github.event.comment.body, '/run-e2e-all')
-        run: |
-          echo "Hello all"          
+          EXPERIMENT_IMAGE: litmuschaos/ansible-runner
+          EXPERIMENT_IMAGE_TAG: ci
+          IMAGE_PULL_POLICY: IfNotPresent
+          LITMUS_CLEANUP: true      
                       
       - name: Check the test run
         if: |
          startsWith(github.event.comment.body, '/run-e2e-pod-delete') || startsWith(github.event.comment.body, '/run-e2e-container-kill') ||
-         startsWith(github.event.comment.body, '/run-e2e-disk-fill') || startsWith(github.event.comment.body, '/run-e2e-node-cpu-hog') ||
-         startsWith(github.event.comment.body, '/run-e2e-node-memory-hog') || startsWith(github.event.comment.body, '/run-e2e-pod-cpu-hog') ||
-         startsWith(github.event.comment.body, '/run-e2e-pod-memory-hog') || startsWith(github.event.comment.body, '/run-e2e-pod-network-corruption') ||
-         startsWith(github.event.comment.body, '/run-e2e-pod-network-latency') || startsWith(github.event.comment.body, '/run-e2e-pod-network-loss') ||
-         startsWith(github.event.comment.body, '/run-e2e-all')       
+         startsWith(github.event.comment.body, '/run-e2e-node-cpu-hog') || startsWith(github.event.comment.body, '/run-e2e-node-memory-hog')
         run: |
           echo ::set-env name=TEST_RUN::true
 
@@ -191,6 +135,10 @@ jobs:
           body: |
             **Test Failed:** Some tests are failed please check
           reactions: confused
+
+      - name: Deleting KinD cluster
+        if: ${{ always() }}
+        run: kind delete cluster
 
       - name: Check if any test ran or not
         if: env.TEST_RUN != 'true'
