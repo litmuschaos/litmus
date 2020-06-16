@@ -11,27 +11,28 @@ This document captures only the high level roadmap items. For the detailed backl
 -   Helm3 charts for Litmus Chaos (operator, kubernetes/generic chaos charts)
 -   Support for Kubernetes events for chaos experiments
 -   Support for admin mode (centralized chaos management) 
--   Centralized Hub for chaos experiments
+-   Self sufficient, Centralized Hub for chaos experiments
 -   Documentation (user & developer guides, integration with other chaos tools)
 -   Gitlab e2e pipeline for chaos experiments
 -   Define community sync up schedule 
 -   Integration with Argo project for Chaos workflows, support for scenario creation with experiments
 -   Support for scheduled (continuous/background) chaos  
--   Support for halt/resume capabilities with ChaosSchedule 
+-   Support for halt/resume capabilities with ChaosSchedule
+-   Basic support for OpenShift platform (non-network chaos) & Openshift resources (deploymentconfig)  
 
 ------
 
 ### In-Progress (Near-term) 
 
+-   A UI portal for LitmusChaos to trigger and schedule chaos experiments & workflows. Ongoing development [here](https://github.com/litmuschaos/litmus-portal)
 -   Off the shelf chaos-integrated grafana dashboards for OpenEBS, Kafka, Cassandra [#1280](https://github.com/litmuschaos/litmus/issues/1280)
--   Support for OpenShift platform/resources [1406](https://github.com/litmuschaos/litmus/issues/1406)
+-   Support for network chaos on OpenShift platform
 -   Support for complete chaos abort via pre-stop hooks [#1284](https://github.com/litmuschaos/litmus/issues/1284)
 -   Go, Python SDK for Litmus Experiments [1466](https://github.com/litmuschaos/litmus/issues/1466) [#1259](https://github.com/litmuschaos/litmus/issues/1259)
 -   Support for user defined chaos experiment result definition (ex:json blob as chaos result) [#1254](https://github.com/litmuschaos/litmus/issues/1254)
 -   Pod level resource chaos libraries (disk stress)
 -   HTTP proxy Chaos libraries [#1179](https://github.com/litmuschaos/litmus/issues/1179)
 -   Support for chaos on containerd, CRIO runtimes [#1245](https://github.com/litmuschaos/litmus/issues/1245)
--   Self-sufficient ChaosHub with downloadable sample chaosengine, experiment-level RBAC manifests & versioned chaos charts [#1228](https://github.com/litmuschaos/litmus/issues/1228)
 -   Support for custom override of chaos-operator, chaos-runner and chaos-experiment attributes [#1253](https://github.com/litmuschaos/litmus/issues/1253) [#1252](https://github.com/litmuschaos/litmus/issues/1252) [#1227](https://github.com/litmuschaos/litmus/issues/1227)
 -   Detailed design [#1282](https://github.com/litmuschaos/litmus/issues/1282)
 
