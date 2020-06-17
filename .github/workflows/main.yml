@@ -87,6 +87,9 @@ jobs:
           EXPERIMENT_IMAGE: litmuschaos/ansible-runner
           EXPERIMENT_IMAGE_TAG: ci
           IMAGE_PULL_POLICY: IfNotPresent
+          CONTAINER_KILL_HELPER_IMAGE: litmuschaos/container-kill-helper
+          CONTAINER_KILL_HELPER_TAG: latest
+          LIB: containerd
           LITMUS_CLEANUP: true
 
       - name: Running node-cpu-hog chaos experiment
@@ -114,7 +117,8 @@ jobs:
       - name: Check the test run
         if: |
          startsWith(github.event.comment.body, '/run-e2e-pod-delete') || startsWith(github.event.comment.body, '/run-e2e-container-kill') ||
-         startsWith(github.event.comment.body, '/run-e2e-node-cpu-hog') || startsWith(github.event.comment.body, '/run-e2e-node-memory-hog')
+         startsWith(github.event.comment.body, '/run-e2e-node-cpu-hog') || startsWith(github.event.comment.body, '/run-e2e-node-memory-hog') ||
+         startsWith(github.event.comment.body, '/run-e2e-all')
         run: |
           echo ::set-env name=TEST_RUN::true
 
@@ -125,7 +129,7 @@ jobs:
           comment-id: "${{ github.event.comment.id }}"
           body: |  
             **Test Result:** All tests are passed
-          reactions: hooray
+          reactions: hooray         
 
       - name: Check for any job failed
         if: ${{ failure() }}
@@ -148,3 +152,13 @@ jobs:
           body: |
             **Test Result:** No test found
           reactions: eyes 
+
+  merge:
+    if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/merge')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add a merge label when all jobs are passed
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          labels: merge
