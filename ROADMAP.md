@@ -12,6 +12,7 @@ This document captures only the high level roadmap items. For the detailed backl
 -   Support for Kubernetes events for chaos experiments
 -   Support for admin mode (centralized chaos management) 
 -   Self sufficient, Centralized Hub for chaos experiments
+-   Scaffolding scripts to help bootstrap a new chaos experiment in Go, Ansible
 -   Documentation (user & developer guides, integration with other chaos tools)
 -   Gitlab e2e pipeline for chaos experiments
 -   Define community sync up schedule 
