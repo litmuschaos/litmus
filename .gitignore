@@ -1,2 +1,13 @@
 .idea
+.vscode
 __pycache__/
+**/node_modules/
+
+main
+out/
+vendor/
+_vendor-*
+tmp/
+.env
+litmus-portal-service
+litmus-portal-app
