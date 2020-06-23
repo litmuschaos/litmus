@@ -35,8 +35,7 @@ Chaos experiments are hosted on <a href="https://hub.litmuschaos.io" target="_bl
 
 
 ## Demo 
-[![asciicast](https://asciinema.org/a/MOPQfmzA5NxgBs8DkMGROXpQw.svg)](https://asciinema.org/a/MOPQfmzA5NxgBs8DkMGROXpQw)
-
+[![asciicast](https://asciinema.org/a/mq3rxRd8q9ZIrgMgPHZOeaLfi.svg)](https://asciinema.org/a/mq3rxRd8q9ZIrgMgPHZOeaLfi)
 
 ## Getting Started with Litmus
 See <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" target="_blank">Litmus Docs</a>.
