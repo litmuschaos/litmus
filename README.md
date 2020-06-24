@@ -15,6 +15,7 @@
 
 
 ## Overview
+
 Litmus is a toolset to do cloud-native chaos engineering. Litmus provides tools to orchestrate chaos on Kubernetes to help SREs find weaknesses in their deployments. SREs use Litmus to run chaos experiments initially in the staging environment and eventually in production to find bugs, vulnerabilities. Fixing the weaknesses leads to increased resilience of the system. 
 
 Litmus takes a cloud-native approach to create, manage and monitor chaos. Chaos is orchestrated using the following Kubernetes Custom Resource Definitions (**CRDs**):
@@ -24,6 +25,7 @@ Litmus takes a cloud-native approach to create, manage and monitor chaos. Chaos 
 
 Chaos experiments are hosted on <a href="https://hub.litmuschaos.io" target="_blank">hub.litmuschaos.io</a>. It is a central hub where the application developers or vendors share their chaos experiments so that their users can use them to increase the resilience of the applications in production.
 
+![Litmus Schematic](./images/litmus-schematic.png)
 
 ## Use cases
 
@@ -33,8 +35,7 @@ Chaos experiments are hosted on <a href="https://hub.litmuschaos.io" target="_bl
 
 
 ## Demo 
-[![asciicast](https://asciinema.org/a/MOPQfmzA5NxgBs8DkMGROXpQw.svg)](https://asciinema.org/a/MOPQfmzA5NxgBs8DkMGROXpQw)
-
+[![asciicast](https://asciinema.org/a/mq3rxRd8q9ZIrgMgPHZOeaLfi.svg)](https://asciinema.org/a/mq3rxRd8q9ZIrgMgPHZOeaLfi)
 
 ## Getting Started with Litmus
 See <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" target="_blank">Litmus Docs</a>.
@@ -68,8 +69,17 @@ Litmus is licensed under the Apache License, Version 2.0. See [LICENSE](./LICENS
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_large)
 
-## Community notes
-https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q
+## Community 
+
+The Litmus community meets on the third wednesday of every month at 10:00PM IST/9.30 AM PST. 
+
+Community Resources: 
+
+- [Community Slack](https://app.slack.com/client/T09NY5SBT/CNXNB0ZTN)
+- [Sync Up Meeting Link](https://zoom.us/j/91358162694)
+- [Sync Up Agenda & Meeting Notes](https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q)
+- [Youtube Channel (demos, meeting recordings, virtual meetups](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
+- [Release Tracker](https://github.com/litmuschaos/litmus/milestones)
 
 
 ## Important Links
