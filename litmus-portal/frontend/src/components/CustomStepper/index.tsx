@@ -7,6 +7,7 @@ import React from "react";
 import { Center } from "../../containers/layouts/Center";
 import { Loader } from "../Loader";
 import { useStyles } from "./styles";
+import ReliablityScore from "../../pages/ReliabilityScore";
 
 function getSteps(): string[] {
 	return [
@@ -26,6 +27,8 @@ function getStepContent(stepIndex: number): React.ReactNode {
 			return <Loader />;
 		case 2:
 			return "Show something random";
+		case 3:
+			return <ReliablityScore />;
 		default:
 			return (
 				<Center>
