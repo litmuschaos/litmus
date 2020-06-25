@@ -7,7 +7,7 @@ export const useStyles = makeStyles((theme: Theme) => ({
 	},
 	drawerPaper: {
 		//TODO: remove padding top
-		paddingTop: theme.spacing(8),
+	
 
 		width: "100%",
 		position: "relative",
@@ -15,12 +15,13 @@ export const useStyles = makeStyles((theme: Theme) => ({
 	litmusDiv: {
 		display: "flex",
 		flexDirection: "row",
+		marginTop: theme.spacing(3.5),
+		marginLeft: theme.spacing(4)
 	},
 	logo: {
 		left: 35,
-		padding: 0,
-		position: "absolute",
-		top:20
+		
+		
 	},
 	litmusHome: {
 	
@@ -32,15 +33,16 @@ export const useStyles = makeStyles((theme: Theme) => ({
 		fontSize: 26,
 		left: 81,
 		top: 24,
-		position: "absolute",
+		marginLeft: theme.spacing(1.75),
 		color: "#000000"	
 	
 	},
 	drawerListItem: {
 		display: "flex",
 		height: 51,
-		
+		width: "100%",
 		flexDirection: "row",
+		justifyContent: "center",
 		"&:hover": {
 			backgroundColor: "#858CDD",
 			color: theme.palette.getContrastText(
@@ -49,17 +51,15 @@ export const useStyles = makeStyles((theme: Theme) => ({
 	},
 
 	listIcon: {
-		position: "absolute",
-		left: "15.35%",
-		right:"78.07%",
+		
+		paddingLeft: theme.spacing(2),
 		alignSelf: "center"
 	},
 	listText: {
-		position: "absolute",
-		left: "30.7%",
-		right: "28.95%",
+	
+		marginLeft: theme.spacing(0),
 		fontSize: 16,
-		paddingBottom: 5,
+		
 		fontFamily: "Ubuntu",
 		fontWeight: "normal",
 		fontStyle: "normal"
@@ -67,8 +67,9 @@ export const useStyles = makeStyles((theme: Theme) => ({
 	},
 	drawerList: {
 		
-		top: 123,
+		marginTop: theme.spacing(8),
 		height: 267,
+		
 	},
 		
 }));
