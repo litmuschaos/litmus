@@ -11,6 +11,8 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
 )
 
+var clusterPublish map[string]chan *model.ClusterResponse
+
 func (r *mutationResolver) CreateCluster(ctx context.Context, input model.ClusterInput) (*model.ClusterResponse, error) {
 	newCluster := &model.ClusterResponse{
 		Data: input.Data,
