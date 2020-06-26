@@ -164,6 +164,7 @@ function ReliablityScore() {
 					>
 						<div>
 							<ButtonOutline
+								isActive={true}
 								handleClick={handleOpen}
 								value={"Run Test"}
 								data-cy="testRunButton"
@@ -324,32 +325,6 @@ function ReliablityScore() {
 					</div>
 				</div>
 			</form>
-			<div
-				style={{
-					display: "flex",
-					flexDirection: "row",
-					marginLeft: 140,
-					marginTop: 50,
-					marginBottom: 100,
-				}}
-			>
-				<div style={{ marginRight: 30 }}>
-					<ButtonOutline
-						handleClick={() => {
-							console.log("Next");
-						}}
-						value={"Back"}
-						data-cy="backButton"
-					/>
-				</div>
-				<ButtonFilled
-					handleClick={() => {
-						console.log("Next");
-					}}
-					value={"Next"}
-					data-cy="nextButton"
-				/>
-			</div>
 		</div>
 	);
 }

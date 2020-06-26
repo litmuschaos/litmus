@@ -8,7 +8,8 @@ import { Center } from "../../containers/layouts/Center";
 import { Loader } from "../Loader";
 import { useStyles } from "./styles";
 import ReliablityScore from "../../pages/ReliabilityScore";
-
+import ButtonOutline from "../ButtonOutline";
+import ButtonFilled from "../ButtonFilled";
 function getSteps(): string[] {
 	return [
 		"Target Cluster",
@@ -80,23 +81,20 @@ export default function CustomStepper() {
 						</div>
 
 						{/* Control Buttons */}
-						<div>
-							<Button
-								disabled={activeStep === 0}
-								onClick={handleBack}
-								className={classes.backButton}
-							>
-								Back
-							</Button>
-							<Button
-								variant="contained"
-								color="primary"
-								onClick={handleNext}
-							>
-								{activeStep === steps.length - 1
-									? "Finish"
-									: "Next"}
-							</Button>
+						<div className={classes.buttonGroup}>
+							<ButtonOutline
+								isActive={activeStep === 0}
+								handleClick={handleBack}
+								value="Back"
+							/>
+							<ButtonFilled
+								handleClick={handleNext}
+								value={
+									activeStep === steps.length - 1
+										? "Finish"
+										: "Next"
+								}
+							/>
 						</div>
 					</div>
 				)}

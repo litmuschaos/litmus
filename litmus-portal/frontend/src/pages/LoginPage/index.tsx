@@ -74,6 +74,7 @@ function LoginPage() {
 									data-cy="loginButton"
 								/>
 								<ButtonOutline
+									isActive={true}
 									handleClick={() => {
 										console.log("Signup Button Clicked");
 									}}
