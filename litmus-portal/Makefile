@@ -39,8 +39,8 @@ litmus-portal-build:
 	@echo "------------------"
 	@echo "--> Build frontend and backend images" 
 	@echo "------------------"
-	docker build ./frontend -f frontend/Dockerfile -t gdsoumya/litmusportal-frontend:ci
-	docker build ./backend/graphql-server -f backend/graphql-server/build/Dockerfile -t gdsoumya/litmusportal-backend:ci
+	docker build ./frontend -f frontend/Dockerfile -t litmuschaos/litmusportal-frontend:ci
+	docker build ./backend/graphql-server -f backend/graphql-server/build/Dockerfile -t litmuschaos/litmusportal-backend:ci
 
 .PHONY: push
 push: litmus-portal-push
