@@ -9,7 +9,7 @@ IS_DOCKER_INSTALLED = $(shell which docker >> /dev/null 2>&1; echo $$?)
 
 
 .PHONY: all
-all: deps lint-checks build push
+all: deps litmus-portal-check build push
 
 .PHONY: help
 help:
@@ -49,13 +49,13 @@ litmus-portal-push:
 	@echo "------------------"
 	@echo "--> Push frontend and backend images" 
 	@echo "------------------"
-	docker push gdsoumya/litmusportal-frontend:ci
-	docker push gdsoumya/litmusportal-backend:ci
+	docker push litmuschaos/litmusportal-frontend:ci
+	docker push litmuschaos/litmusportal-backend:ci
 
-.PHONY: lint-checks
-lint-checks: litmus-portal-check
+.PHONY: litmus-portal-check
+ litmus-portal-check : lint-checks unused-package-check
 
-litmus-portal-check:
+lint-checks:
 	@echo "------------------"
 	@echo "--> Check litmus-portal frontend lint"
 	@echo "------------------"
@@ -69,6 +69,8 @@ litmus-portal-check:
 		echo "Please ensure you are using $$($(GO) version) for formatting code."; \
 		exit 0; \
 	fi
+
+unused-package-check:
 	@echo "------------------"
 	@echo "--> Check litmus-portal backend [go mod tidy]"
 	@echo "------------------"
