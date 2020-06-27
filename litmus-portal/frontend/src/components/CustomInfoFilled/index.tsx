@@ -15,11 +15,12 @@ export default function CustomInfoFilled(props: CustomInfoProps) {
 		<div
 			style={{
 				backgroundColor: `${colorVal}`,
-				minWidth: 170,
+				width: 170,
 				height: 195,
 				marginRight: 40,
 				borderRadius: 3,
-			}}>
+			}}
+		>
 			<Typography className={classes.value}>{value}</Typography>
 			<hr style={{ width: 120, opacity: 0.5 }} />
 			<Typography className={classes.statType}>{statType}</Typography>

@@ -100,10 +100,15 @@ const CustomSlider = (props: customSliderProps) => {
 						display: "flex",
 						flexDirection: "row",
 						marginTop: 50,
-					}}>
-					<Typography className={classes.testType}>{props.testName}</Typography>
+					}}
+				>
+					<Typography className={classes.testType}>
+						{props.testName}
+					</Typography>
 					<Typography>-</Typography>
-					<Typography className={classes.testResult}>{value} points</Typography>
+					<Typography className={classes.testResult}>
+						{value} points
+					</Typography>
 				</div>
 				<div style={{ width: 900, marginBottom: 30 }}>
 					<PrettoSlider

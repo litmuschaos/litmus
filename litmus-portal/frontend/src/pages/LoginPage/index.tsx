@@ -42,12 +42,7 @@ function LoginPage() {
 								/>
 							</Paper>
 
-							<Typography
-								style={{
-									marginTop: 25,
-									marginBottom: 30,
-								}}
-							>
+							<Typography className={classes.forgotPasssword}>
 								<Link
 									to="/reset"
 									style={{
@@ -59,27 +54,13 @@ function LoginPage() {
 									Don’t remember your password?
 								</Link>
 							</Typography>
-							<div
-								style={{
-									display: "flex",
-									flexDirection: "row",
-									marginTop: 40,
-								}}
-							>
+							<div className={classes.loginDiv}>
 								<ButtonFilled
 									handleClick={() => {
 										console.log("Login Button Clicked");
 									}}
 									value={"Login"}
 									data-cy="loginButton"
-								/>
-								<ButtonOutline
-									isActive={true}
-									handleClick={() => {
-										console.log("Signup Button Clicked");
-									}}
-									value={"Sign up"}
-									data-cy="signupButton"
 								/>
 							</div>
 						</div>

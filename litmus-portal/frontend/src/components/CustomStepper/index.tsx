@@ -83,7 +83,7 @@ export default function CustomStepper() {
 						{/* Control Buttons */}
 						<div className={classes.buttonGroup}>
 							<ButtonOutline
-								isActive={activeStep === 0}
+								isDisabled={activeStep === 0}
 								handleClick={handleBack}
 								value="Back"
 							/>

@@ -16,9 +16,9 @@ function Routes() {
 	return (
 		<div className={classes.content}>
 			<Switch>
-				<Route exact={true} path="/" component={Workflows} />
+				<Route exact={true} path="/" component={HomePage} />
 				<Route exact={true} path="/login" component={LoginPage} />
-				<Route exact={true} path="/home" component={HomePage} />
+				<Route exact={true} path="/workflow" component={Workflows} />
 				<Route exact={true} path="/404" component={ErrorPage} />
 				<Redirect to="/404" />
 			</Switch>

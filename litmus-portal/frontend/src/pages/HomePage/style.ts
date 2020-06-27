@@ -8,60 +8,75 @@ export const useStyles = makeStyles((theme) => ({
 		flexDirection: "column",
 		justifyContent: "space-between",
 	},
+	root: {
+		marginTop: theme.spacing(3),
+		marginLeft: theme.spacing(10),
+	},
+	mainDiv: {
+		marginLeft: theme.spacing(3.75),
+		width: 600,
+	},
 	userName: {
 		fontFamily: "Ubuntu",
 		fontSize: 40,
-		marginBottom: 30,
+		marginBottom: theme.spacing(3.75),
 	},
 	createWorkflowCard: {
 		width: 230,
-		height: 240,
 		border: "1px solid #5B44BA",
 		borderRadius: 3,
+		marginLeft: theme.spacing(10),
 		boxShadow: "2px 1px 9px rgba(91, 68, 186, 0.25)",
 	},
 	createWorkflowHeading: {
 		fontFamily: "Ubuntu",
 		fontSize: 15,
-		marginLeft: 30,
-		paddingTop: 40,
+		marginLeft: theme.spacing(3.75),
+		paddingTop: theme.spacing(5),
 	},
 	createWorkflowTitle: {
 		fontFamily: "Ubuntu",
 		fontSize: 25,
 		color: "#5B44BA",
 		fontWeight: "bold",
-		marginLeft: 30,
-		marginTop: 20,
+		marginLeft: theme.spacing(3.75),
+		marginTop: theme.spacing(2.5),
 	},
-	quickActionCard: {
-		fontFamily: "Ubuntu",
-		fontSize: 18,
-	},
-	listItem: {
-		color: "#000",
-		paddingLeft: 20,
-		paddingBottom: 2,
-		textDecoration: "none",
-	},
-	listItems: {
-		marginTop: 20,
+	arrowForwardIcon: {
+		color: "#5B44BA",
+		marginLeft: theme.spacing(22.5),
+		marginTop: theme.spacing(4.375),
+		marginBottom: theme.spacing(2.5),
 	},
 	mainHeading: {
 		color: "#109B67",
 		fontFamily: "Ubuntu",
 		fontSize: 25,
-		marginBottom: 5,
+		marginBottom: theme.spacing(0.625),
 	},
 	mainResult: {
 		color: "#000",
 		fontFamily: "Ubuntu",
 		fontSize: 25,
-		marginBottom: 25,
+		marginBottom: theme.spacing(3.125),
 	},
 	mainDesc: {
 		color: "#000",
 		fontFamily: "Ubuntu",
 		fontSize: 18,
+	},
+
+	statsDiv: {
+		display: "flex",
+		flexDirection: "row",
+		marginTop: theme.spacing(3.75),
+	},
+	statsHeading: {
+		fontFamily: "Ubuntu",
+		fontSize: 25,
+		marginBottom: theme.spacing(3.75),
+	},
+	quickActionDiv: {
+		marginLeft: theme.spacing(10),
 	},
 }));

@@ -3,7 +3,7 @@ import { Button } from "@material-ui/core";
 import { useStyles } from "./styles";
 
 interface CustomButtonProps {
-	isActive: boolean;
+	isDisabled: boolean;
 	handleClick: (
 		event: React.MouseEvent<HTMLButtonElement, MouseEvent>
 	) => void;
@@ -11,12 +11,12 @@ interface CustomButtonProps {
 }
 export default function ButtonFilled(props: CustomButtonProps) {
 	const classes = useStyles();
-	const { isActive, handleClick, value } = props;
+	const { isDisabled, handleClick, value } = props;
 	return (
 		<Button
 			variant="outlined"
 			size="medium"
-			disabled={isActive}
+			disabled={isDisabled}
 			onClick={handleClick}
 			className={classes.buttonOutline}
 		>
