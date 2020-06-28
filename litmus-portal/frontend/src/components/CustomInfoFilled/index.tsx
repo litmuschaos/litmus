@@ -17,6 +17,7 @@ export default function CustomInfoFilled(props: CustomInfoProps) {
 				backgroundColor: `${colorVal}`,
 				width: 170,
 				height: 195,
+				marginBottom: 40,
 				marginRight: 40,
 				borderRadius: 3,
 			}}

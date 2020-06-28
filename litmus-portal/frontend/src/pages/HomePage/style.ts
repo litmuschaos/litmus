@@ -42,6 +42,20 @@ export const useStyles = makeStyles((theme) => ({
 		marginLeft: theme.spacing(3.75),
 		marginTop: theme.spacing(2.5),
 	},
+	headingDiv: {
+		display: "flex",
+		flexDirection: "row",
+	},
+	createWorkflow: {
+		[theme.breakpoints.down("md")]: {
+			marginTop: theme.spacing(30),
+			marginLeft: theme.spacing(-30),
+		},
+		[theme.breakpoints.down("sm")]: {
+			marginTop: theme.spacing(30),
+			marginLeft: theme.spacing(-30),
+		},
+	},
 	arrowForwardIcon: {
 		color: "#5B44BA",
 		marginLeft: theme.spacing(22.5),
@@ -66,17 +80,46 @@ export const useStyles = makeStyles((theme) => ({
 		fontSize: 18,
 	},
 
-	statsDiv: {
+	contentDiv: {
 		display: "flex",
 		flexDirection: "row",
 		marginTop: theme.spacing(3.75),
+	},
+	statDiv: {
+		width: "65%",
+		backgroundColor: "rgba(255, 255, 255, 0.6)",
+		border: "border: 1px solid rgba(0, 0, 0, 0.05)",
+		borderRadius: 3,
 	},
 	statsHeading: {
 		fontFamily: "Ubuntu",
 		fontSize: 25,
 		marginBottom: theme.spacing(3.75),
+		paddingTop: theme.spacing(5),
+		paddingLeft: theme.spacing(5),
 	},
 	quickActionDiv: {
-		marginLeft: theme.spacing(10),
+		borderLeft: "1px solid rgba(0, 0, 0, 0.05)",
+		paddingLeft: theme.spacing(5),
+		marginLeft: theme.spacing(3),
+		[theme.breakpoints.down("md")]: {
+			marginTop: theme.spacing(40),
+			marginLeft: theme.spacing(-20),
+		},
+		[theme.breakpoints.down("sm")]: {
+			marginTop: theme.spacing(140),
+			marginLeft: theme.spacing(-20),
+		},
+	},
+	cardDiv: {
+		display: "flex",
+		flexDirection: "row",
+		paddingLeft: theme.spacing(5),
+		[theme.breakpoints.down("sm")]: {
+			display: "flex",
+			flexDirection: "column",
+			marginTop: theme.spacing(5),
+			marginLeft: theme.spacing(5),
+		},
 	},
 }));

@@ -28,7 +28,7 @@ const CreateWorkflowCard = () => {
 					Let's Start
 				</Typography>
 				<Typography className={classes.createWorkflowTitle}>
-					Create your workflow
+					Schedule your first workflow
 				</Typography>
 				<ArrowForwardIcon className={classes.arrowForwardIcon} />
 			</CardActionArea>
@@ -46,12 +46,7 @@ export default function HomePage() {
 					<Typography className={classes.userName}>
 						Welcome, <strong>{userName}</strong>
 					</Typography>
-					<div
-						style={{
-							display: "flex",
-							flexDirection: "row",
-						}}
-					>
+					<div className={classes.headingDiv}>
 						<div style={{ width: "65%" }}>
 							<div className={classes.mainDiv}>
 								<Typography className={classes.mainHeading}>
@@ -59,34 +54,28 @@ export default function HomePage() {
 								</Typography>
 								<Typography className={classes.mainResult}>
 									<strong>
-										Litmus portal is successfully running on
-										your Kubernetes cluster{" "}
+										You have established your own first
+										project on Litmus portal.{" "}
 									</strong>
 								</Typography>
 								<Typography className={classes.mainDesc}>
-									No reliabilirt information to display. Once
-									you schedule chaos workflows, reliability
-									analytics are displayed here.
+									Now this is successfully running on your
+									Kubernetes cluster. Once you schedule chaos
+									workflows, reliability analytics are
+									displayed here.
 								</Typography>
 							</div>
 						</div>
-						<div>
+						<div className={classes.createWorkflow}>
 							<CreateWorkflowCard />
 						</div>
 					</div>
-					<div className={classes.statsDiv}>
-						<div style={{ width: "65%" }}>
+					<div className={classes.contentDiv}>
+						<div className={classes.statDiv}>
 							<Typography className={classes.statsHeading}>
-								<strong>
-									A quick peek about how busy Litmus is
-								</strong>
+								<strong>How busy Litmus Project is?</strong>
 							</Typography>
-							<div
-								style={{
-									display: "flex",
-									flexDirection: "row",
-								}}
-							>
+							<div className={classes.cardDiv}>
 								<CustomInfoFilled
 									color="#109B67"
 									value={"11.2K"}
