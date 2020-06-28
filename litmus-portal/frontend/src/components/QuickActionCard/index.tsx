@@ -25,7 +25,7 @@ const QuickActionCard = () => {
 			<List>
 				<QuickActionItems>
 					<Fragment>
-						<img src="icons/Cluster.png" />
+						<img src="icons/cluster.png" />
 						<Link to="#" className={classes.listItem}>
 							Connect a new cluster
 						</Link>
@@ -33,7 +33,7 @@ const QuickActionCard = () => {
 				</QuickActionItems>
 				<QuickActionItems>
 					<Fragment>
-						<img src="icons/Cloud.png" />
+						<img src="icons/team.png" />
 						<Link to="#" className={classes.listItem}>
 							Invite a team member
 						</Link>
@@ -41,7 +41,7 @@ const QuickActionCard = () => {
 				</QuickActionItems>
 				<QuickActionItems>
 					<Fragment>
-						<img src="icons/Folder.png" />
+						<img src="icons/survey.png" />
 						<Link to="#" className={classes.listItem}>
 							Take a quick survey
 						</Link>
@@ -49,9 +49,9 @@ const QuickActionCard = () => {
 				</QuickActionItems>
 				<QuickActionItems>
 					<Fragment>
-						<img src="icons/Server.png" />
+						<img src="icons/docs.png" />
 						<Link to="#" className={classes.listItem}>
-							Terms & Condition
+							Read Litmus docs
 						</Link>
 					</Fragment>
 				</QuickActionItems>
