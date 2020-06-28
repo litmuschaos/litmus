@@ -28,10 +28,11 @@ export const useStyles = makeStyles((theme) => ({
 		backgroundColor: theme.palette.background.paper,
 		border: "2px solid #000",
 		boxShadow: theme.shadows[5],
-		paddingLeft: theme.spacing(12.5),
+		paddingLeft: theme.spacing(6),
+		paddingRight: theme.spacing(6),
 	},
 	table: {
-		marginTop: 50,
+		marginTop: theme.spacing(6.25),
 		width: 950,
 		alignItems: "center",
 	},
@@ -82,6 +83,6 @@ export const useStyles = makeStyles((theme) => ({
 	buttonDiv: {
 		width: 600,
 		marginTop: theme.spacing(5),
-		marginLeft: theme.spacing(56),
+		marginLeft: theme.spacing(55),
 	},
 }));

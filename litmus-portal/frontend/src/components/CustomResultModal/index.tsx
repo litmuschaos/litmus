@@ -12,6 +12,8 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import CheckIcon from "@material-ui/icons/Check";
+import ToggleComponent from "../ToggleComponent";
+import LinearProgressBar from "../LinearProgressBar";
 
 function createData(
 	name: string,
@@ -23,8 +25,8 @@ function createData(
 }
 const result = 9;
 const result1 = 6;
-const result2 = 7;
-const result3 = 8;
+const result2 = 3;
+const result3 = 2;
 
 interface customModalProps {
 	isOpen: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
@@ -39,8 +41,7 @@ export default function CustomResultModal(props: customModalProps) {
 		createData(
 			"Node add test",
 			<div>
-				<CheckIcon style={{ color: "#109B67" }} />{" "}
-				<Typography>Pass</Typography>
+				<ToggleComponent />
 			</div>,
 			testValue[0],
 			result
@@ -48,8 +49,7 @@ export default function CustomResultModal(props: customModalProps) {
 		createData(
 			"Config map multi volume test",
 			<div>
-				<CheckIcon style={{ color: "#109B67" }} />{" "}
-				<Typography>Pass</Typography>
+				<ToggleComponent />
 			</div>,
 			testValue[1],
 			result1
@@ -57,8 +57,7 @@ export default function CustomResultModal(props: customModalProps) {
 		createData(
 			"Networking pod test",
 			<div>
-				<CheckIcon style={{ color: "#109B67" }} />{" "}
-				<Typography>Pass</Typography>
+				<ToggleComponent />
 			</div>,
 			testValue[2],
 			result2
@@ -66,8 +65,7 @@ export default function CustomResultModal(props: customModalProps) {
 		createData(
 			"Proxy-service-test",
 			<div>
-				<CheckIcon style={{ color: "#109B67" }} />{" "}
-				<Typography>Pass</Typography>
+				<ToggleComponent />
 			</div>,
 			testValue[3],
 			result3
@@ -158,6 +156,10 @@ export default function CustomResultModal(props: customModalProps) {
 											>
 												{row.weight}
 												&nbsp; points
+												<br />
+												<LinearProgressBar
+													value={row.weight}
+												/>
 											</TableCell>
 											<TableCell
 												align="center"
@@ -165,6 +167,10 @@ export default function CustomResultModal(props: customModalProps) {
 											>
 												{row.points}
 												&nbsp; points
+												<br />
+												<LinearProgressBar
+													value={row.points}
+												/>
 											</TableCell>
 										</TableRow>
 									))}
