@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core";
 export const useStyles = makeStyles((theme) => ({
 	root: {
 		backgroundColor: "rgba(255, 255, 255, 0.6)",
-		maxWidth: 980,
+		maxWidth: "61.25rem",
 		marginTop: theme.spacing(8.75),
 		marginLeft: theme.spacing(17.5),
 		border: 1,
@@ -17,24 +17,31 @@ export const useStyles = makeStyles((theme) => ({
 	},
 	headerText: {
 		marginTop: theme.spacing(1.25),
-		fontFamily: "Ubuntu",
-		fontSize: 25,
+		fontSize: "1.5625rem",
 	},
 	description: {
-		width: 800,
+		width: "50rem",
 		marginTop: theme.spacing(3.25),
-		fontFamily: "Ubuntu",
-		fontSize: 17,
+		fontSize: "1.0625rem",
 	},
 	testHeading: {
 		marginTop: theme.spacing(6.25),
-		fontFamily: "Ubuntu",
-		fontSize: 25,
+		fontSize: "1.5625rem",
 	},
 	testInfo: {
-		fontFamily: "Ubuntu",
-		fontSize: 15,
+		fontSize: "0.9375rem",
 		opacity: 0.4,
-		width: 480,
+		width: "30rem",
+		marginLeft: theme.spacing(8),
+	},
+	horizontalLine: {
+		marginTop: theme.spacing(7.5),
+		marginBottom: theme.spacing(1.25),
+	},
+	modalDiv: {
+		display: "flex",
+		flexDirection: "row",
+		marginTop: theme.spacing(5),
+		paddingBottom: theme.spacing(5),
 	},
 }));

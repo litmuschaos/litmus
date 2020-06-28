@@ -10,11 +10,10 @@ interface CustomInfoProps {
 export default function CustomInfoFilled(props: CustomInfoProps) {
 	const classes = useStyles();
 	const { color, value, statType } = props;
-	const colorVal = color;
 	return (
 		<div
 			style={{
-				backgroundColor: `${colorVal}`,
+				backgroundColor: `${color}`,
 				width: 170,
 				height: 195,
 				marginBottom: 40,

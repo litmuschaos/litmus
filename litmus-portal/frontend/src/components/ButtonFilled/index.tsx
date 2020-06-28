@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@material-ui/core";
+import { Button, Typography } from "@material-ui/core";
 import { useStyles } from "./styles";
 
 interface CustomButtonProps {
@@ -18,7 +18,7 @@ export default function ButtonFilled(props: CustomButtonProps) {
 			onClick={handleClick}
 			className={classes.buttonFilled}
 		>
-			{value}
+			<Typography className={classes.valueField}>{value}</Typography>
 		</Button>
 	);
 }

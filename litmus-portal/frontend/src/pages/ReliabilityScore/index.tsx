@@ -49,7 +49,7 @@ function ReliablityScore() {
 						relative to each other.
 					</Typography>
 				</div>
-				<hr style={{ marginTop: 60, marginBottom: 10 }} />
+				<hr className={classes.horizontalLine} />
 				<div style={{ display: "flex", flexDirection: "row" }}>
 					<Typography className={classes.testHeading}>
 						<strong>Kubernetes conformance test</strong>
@@ -86,14 +86,7 @@ function ReliablityScore() {
 					</div>
 				</div>
 				<hr />
-				<div
-					style={{
-						display: "flex",
-						flexDirection: "row",
-						marginTop: 40,
-						marginBottom: 30,
-					}}
-				>
+				<div className={classes.modalDiv}>
 					<div>
 						<ButtonOutline
 							isDisabled={false}
@@ -110,11 +103,11 @@ function ReliablityScore() {
 							<></>
 						)}
 					</div>
-					<div style={{ margin: "auto" }}>
+					<div>
 						<Typography className={classes.testInfo}>
-							Adjust the relative weight of each test. If you want
-							to know the suggested reliability score, play with
-							the checkboxes on the right.
+							Compare the importance of the items above and launch
+							a demo version of Kubernetes conformance test to see
+							how it works.
 						</Typography>
 					</div>
 				</div>

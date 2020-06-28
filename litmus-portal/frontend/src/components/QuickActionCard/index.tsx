@@ -17,15 +17,13 @@ const QuickActionCard = () => {
 	const classes = useStyles();
 	return (
 		<div className={classes.quickActionCard}>
-			<Typography
-				style={{ fontSize: 17, fontFamily: "Ubuntu", color: "#000000" }}
-			>
+			<Typography className={classes.mainHeader}>
 				Quick Actions
 			</Typography>
 			<List>
 				<QuickActionItems>
 					<Fragment>
-						<img src="icons/cluster.png" />
+						<img src="icons/cluster.png" alt="cluster image" />
 						<Link to="#" className={classes.listItem}>
 							Connect a new cluster
 						</Link>
@@ -33,7 +31,7 @@ const QuickActionCard = () => {
 				</QuickActionItems>
 				<QuickActionItems>
 					<Fragment>
-						<img src="icons/team.png" />
+						<img src="icons/team.png" alt="team image" />
 						<Link to="#" className={classes.listItem}>
 							Invite a team member
 						</Link>
@@ -41,7 +39,7 @@ const QuickActionCard = () => {
 				</QuickActionItems>
 				<QuickActionItems>
 					<Fragment>
-						<img src="icons/survey.png" />
+						<img src="icons/survey.png" alt="survey image" />
 						<Link to="#" className={classes.listItem}>
 							Take a quick survey
 						</Link>
@@ -49,7 +47,7 @@ const QuickActionCard = () => {
 				</QuickActionItems>
 				<QuickActionItems>
 					<Fragment>
-						<img src="icons/docs.png" />
+						<img src="icons/docs.png" alt="docs image" />
 						<Link to="#" className={classes.listItem}>
 							Read Litmus docs
 						</Link>

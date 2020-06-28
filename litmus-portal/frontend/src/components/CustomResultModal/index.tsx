@@ -219,7 +219,7 @@ export default function CustomResultModal(props: customModalProps) {
 						<div className={classes.buttonDiv}>
 							<ButtonFilled
 								handleClick={() => {
-									console.log("Next");
+									console.log("Got it");
 								}}
 								value={"Got it"}
 								data-cy="nextButton"

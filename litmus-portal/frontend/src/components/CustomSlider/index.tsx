@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import Slider from "@material-ui/core/Slider";
 import { useStyles } from "./styles";
-import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
-import Image from "../../icons/arrow.png";
+
 const PrettoSlider = withStyles({
 	root: {
 		backgroundColor: "null",
@@ -64,24 +63,6 @@ const marks = [
 	},
 ];
 
-const theme = createMuiTheme({
-	overrides: {
-		MuiSlider: {
-			thumb: {
-				opacity: 0,
-			},
-			mark: {
-				backgroundImage: `url(${Image})`,
-				backgroundColor: "none",
-			},
-			markActive: {
-				backgroundImage: `url(${Image})`,
-				backgroundColor: "none",
-			},
-		},
-	},
-});
-
 interface customSliderProps {
 	testName: string;
 	value: number;
@@ -93,37 +74,29 @@ const CustomSlider = (props: customSliderProps) => {
 	const onChangeCommitted = props.onChangeCommitted;
 	const classes = useStyles();
 	return (
-		<ThemeProvider theme={theme}>
-			<div className="App">
-				<div
-					style={{
-						display: "flex",
-						flexDirection: "row",
-						marginTop: 50,
-					}}
-				>
-					<Typography className={classes.testType}>
-						{props.testName}
-					</Typography>
-					<Typography>-</Typography>
-					<Typography className={classes.testResult}>
-						{value} points
-					</Typography>
-				</div>
-				<div style={{ width: 900, marginBottom: 30 }}>
-					<PrettoSlider
-						defaultValue={value}
-						aria-labelledby="discrete-slider-small-steps"
-						step={1}
-						aria-label="pretto slider"
-						max={10}
-						valueLabelDisplay="auto"
-						marks={marks}
-						onChange={onChangeCommitted}
-					/>
-				</div>
+		<div className="App">
+			<div className={classes.mainDiv}>
+				<Typography className={classes.testType}>
+					{props.testName}
+				</Typography>
+				<Typography>-</Typography>
+				<Typography className={classes.testResult}>
+					{value} points
+				</Typography>
 			</div>
-		</ThemeProvider>
+			<div className={classes.sliderDiv}>
+				<PrettoSlider
+					defaultValue={value}
+					aria-labelledby="discrete-slider-small-steps"
+					step={1}
+					aria-label="pretto slider"
+					max={10}
+					valueLabelDisplay="auto"
+					marks={marks}
+					onChange={onChangeCommitted}
+				/>
+			</div>
+		</div>
 	);
 };
 

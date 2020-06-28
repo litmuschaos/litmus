@@ -2,7 +2,6 @@ import React from "react";
 import { useStyles } from "./styles";
 import { Typography, Paper, TextField, Hidden } from "@material-ui/core";
 import ButtonFilled from "../../components/ButtonFilled/index";
-import ButtonOutline from "../../components/ButtonOutline/index";
 import { Link } from "react-router-dom";
 
 function LoginPage() {
@@ -22,7 +21,7 @@ function LoginPage() {
 							elit, sed do eiusmod tempor incididunt ut labore et
 							dolore magna aliqua
 						</Typography>
-						<div style={{ marginTop: 50 }}>
+						<div className={classes.inputDiv}>
 							<Paper className={classes.inputArea}>
 								<TextField
 									id="filled-email-input"
@@ -45,10 +44,7 @@ function LoginPage() {
 							<Typography className={classes.forgotPasssword}>
 								<Link
 									to="/reset"
-									style={{
-										color: "#000",
-										fontFamily: "Ubuntu",
-									}}
+									className={classes.linkForgotPass}
 									data-cy="forgotPassword"
 								>
 									Don’t remember your password?
@@ -67,7 +63,7 @@ function LoginPage() {
 					</div>
 				</div>
 				<Hidden mdDown>
-					<div style={{ width: "50%" }}>
+					<div className={classes.imageDiv}>
 						<img
 							src="/icons/LoginScreen.png"
 							alt="Login screen image"
