@@ -1,0 +1,10 @@
+version: 2
+jobs:
+    build:
+        machine: true
+        steps:
+            - checkout
+
+            # build the application image
+            - run: |
+                  cd litmus-portal && make build push
