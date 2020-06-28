@@ -49,8 +49,8 @@ litmus-portal-push:
 	@echo "------------------"
 	@echo "--> Push frontend and backend images" 
 	@echo "------------------"
-	docker push litmuschaos/litmusportal-frontend:ci
-	docker push litmuschaos/litmusportal-backend:ci
+	REPONAME="litmuschaos" IMGNAME="litmusportal-frontend" IMGTAG="ci" ../hack/push
+	REPONAME="litmuschaos" IMGNAME="litmusportal-backend" IMGTAG="ci" ../hack/push
 
 .PHONY: litmus-portal-check
  litmus-portal-check : lint-checks unused-package-check
