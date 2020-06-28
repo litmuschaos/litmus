@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useStyles } from "./styles";
-import { Typography } from "@material-ui/core";
+import { Typography, createMuiTheme } from "@material-ui/core";
 import ButtonFilled from "../../components/ButtonFilled/index";
 import Modal from "@material-ui/core/Modal";
 import Backdrop from "@material-ui/core/Backdrop";
@@ -177,6 +177,45 @@ export default function CustomResultModal(props: customModalProps) {
 								</TableBody>
 							</Table>
 						</TableContainer>
+						<div
+							style={{
+								display: "flex",
+								flexDirection: "row",
+								marginTop: 40,
+							}}
+						>
+							<div className={classes.resultDiv}>
+								<Typography className={classes.resultText}>
+									Total Score
+								</Typography>
+								<Typography className={classes.totalScore}>
+									<strong>4/32</strong>
+								</Typography>
+							</div>
+							<div className={classes.resultDiv}>
+								<Typography className={classes.resultText}>
+									Reliability score
+								</Typography>
+								<Typography
+									className={classes.reliabilityScore}
+								>
+									<strong>70%</strong>
+								</Typography>
+							</div>
+							<div className={classes.resultDiv}>
+								<Typography className={classes.resultTextInfo}>
+									Tips from Litmus Portal:
+								</Typography>
+								<Typography className={classes.testTips}>
+									{" "}
+									When you set the test result, then pay
+									attention to the total values of the total
+									score. This will help you in setting up your
+									tests, getting the maximum result and the
+									correct operation of the test in the future.
+								</Typography>
+							</div>
+						</div>
 						<div className={classes.buttonDiv}>
 							<ButtonFilled
 								handleClick={() => {
