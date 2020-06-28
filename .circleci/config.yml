@@ -7,5 +7,4 @@ jobs:
 
             # build the application image
             - run: |
-                  echo "$DPASS" | docker login --username $DUNAME --password-stdin
                   cd litmus-portal && make build push
