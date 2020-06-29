@@ -71,7 +71,7 @@ Litmus is licensed under the Apache License, Version 2.0. See [LICENSE](./LICENS
 
 Litmus Chaos is part of the CNCF Projects.
 
-[![CNCF Sandbox Project](https://raw.githubusercontent.com/cncf/artwork/master/other/cncf-sandbox/horizontal/color/cncf-sandbox-horizontal-color.png)](https://landscape.cncf.io/selected=litmus)
+[![CNCF](https://github.com/cncf/artwork/blob/master/other/cncf/horizontal/color/cncf-color.png)
 
 ## Community 
 
