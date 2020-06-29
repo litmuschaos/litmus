@@ -10,6 +10,7 @@ import { useStyles } from "./styles";
 import ReliablityScore from "../../pages/ReliabilityScore";
 import ButtonOutline from "../ButtonOutline";
 import ButtonFilled from "../ButtonFilled";
+import ScheduleWorkflow from "../../pages/ScheduleWorkflow";
 function getSteps(): string[] {
 	return [
 		"Target Cluster",
@@ -30,6 +31,8 @@ function getStepContent(stepIndex: number): React.ReactNode {
 			return "Show something random";
 		case 3:
 			return <ReliablityScore />;
+		case 4:
+			return <ScheduleWorkflow />;
 		default:
 			return (
 				<Center>
