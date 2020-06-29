@@ -7,6 +7,8 @@ import React from "react";
 import { Center } from "../../containers/layouts/Center";
 import { Loader } from "../Loader";
 import { useStyles } from "./styles";
+import FinishModal from '../FinishModal';
+import { WorkflowCluster } from "../../pages/WorkflowCluster";
 import ReliablityScore from "../../pages/ReliabilityScore";
 import ButtonOutline from "../ButtonOutline";
 import ButtonFilled from "../ButtonFilled";
@@ -23,7 +25,7 @@ function getSteps(): string[] {
 function getStepContent(stepIndex: number): React.ReactNode {
 	switch (stepIndex) {
 		case 0:
-			return "Select campaign settings...";
+			return <WorkflowCluster />;
 		case 1:
 			return <Loader />;
 		case 2:
@@ -68,6 +70,7 @@ export default function CustomStepper() {
 			<div>
 				{activeStep === steps.length ? (
 					<div>
+						<FinishModal />
 						<Typography className={classes.content}>
 							All steps completed (display workflow completed
 							modal here)
