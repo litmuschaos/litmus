@@ -52,7 +52,7 @@ litmus-portal-push:
 	@echo "------------------"
 	REPONAME="litmuschaos" IMGNAME="litmusportal-frontend" IMGTAG="ci" ../hack/push
 	REPONAME="litmuschaos" IMGNAME="litmusportal-server" IMGTAG="ci" ../hack/push
-	REPONAME="litmuschaos" IMGNAME="litmusportal-gql" IMGTAG="ci" ../../hack/push
+	REPONAME="litmuschaos" IMGNAME="litmusportal-gql" IMGTAG="ci" ../hack/push
 
 
 .PHONY: litmus-portal-check
