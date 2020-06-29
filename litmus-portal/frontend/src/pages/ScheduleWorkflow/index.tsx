@@ -299,28 +299,15 @@ function ScheduleWorkflow(this: any) {
 																	disableUnderline: true,
 																}}
 																value={clicks}
-																onChange={(
-																	e
-																) => {
+																onChange={(e) => {
 																	if (
-																		isNaN(
-																			parseInt(
-																				e
-																					.target
-																					.value
-																			)
-																		)
+																		isNaN(parseInt(e.target.value)																		)
 																	) {
-																		setClicks(
-																			0
-																		);
+																
+																		setClicks(0);
 																	} else {
 																		setClicks(
-																			parseInt(
-																				e
-																					.target
-																					.value
-																			)
+																			parseInt(e.target.value)
 																		);
 																	}
 																}}
