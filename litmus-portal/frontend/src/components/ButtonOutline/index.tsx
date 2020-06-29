@@ -1,22 +1,26 @@
 import React from "react";
-import { Button } from "@material-ui/core";
+import { Button, Typography } from "@material-ui/core";
 import { useStyles } from "./styles";
 
 interface CustomButtonProps {
-	handleClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+	isDisabled: boolean;
+	handleClick: (
+		event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+	) => void;
 	value: string;
 }
 export default function ButtonFilled(props: CustomButtonProps) {
 	const classes = useStyles();
-	const { handleClick, value } = props;
+	const { isDisabled, handleClick, value } = props;
 	return (
 		<Button
 			variant="outlined"
 			size="medium"
-			color="primary"
+			disabled={isDisabled}
 			onClick={handleClick}
-			className={classes.buttonOutline}>
-			{value}
+			className={classes.buttonOutline}
+		>
+			<Typography className={classes.valueField}>{value}</Typography>
 		</Button>
 	);
 }
