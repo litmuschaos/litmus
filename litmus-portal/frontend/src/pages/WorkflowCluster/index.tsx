@@ -87,5 +87,3 @@ export function WorkflowCluster() {
      	</div>
 	);
 }
-
-//export default WorkflowCluster;
