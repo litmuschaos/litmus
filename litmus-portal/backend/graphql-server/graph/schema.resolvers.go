@@ -13,6 +13,10 @@ import (
 
 var clusterPublish map[string]chan *model.ClusterResponse
 
+func init() {
+	clusterPublish = map[string]chan *model.ClusterResponse{}
+}
+
 func (r *mutationResolver) CreateCluster(ctx context.Context, input model.ClusterInput) (*model.ClusterResponse, error) {
 	newCluster := &model.ClusterResponse{
 		Data: input.Data,
