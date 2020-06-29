@@ -301,13 +301,13 @@ function ScheduleWorkflow(this: any) {
 																value={clicks}
 																onChange={(e) => {
 																	if (
-																		isNaN(parseInt(e.target.value)																		)
+																		isNaN(parseInt(e.target.value,10)																		)
 																	) {
 																
 																		setClicks(0);
 																	} else {
 																		setClicks(
-																			parseInt(e.target.value)
+																			parseInt(e.target.value,10)
 																		);
 																	}
 																}}
