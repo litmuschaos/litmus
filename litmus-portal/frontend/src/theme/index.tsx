@@ -2,7 +2,7 @@ import { CssBaseline } from "@material-ui/core";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { ThemeOptions } from "@material-ui/core/styles/createMuiTheme";
 import * as React from "react";
-
+import Image from "../icons/arrow.png";
 // Agument the Theme interface
 declare module "@material-ui/core/styles/createMuiTheme" {
 	interface Theme {
@@ -60,6 +60,22 @@ function customTheme(options: ThemeOptions) {
 		},
 		typography: {
 			fontSize: 12,
+			fontFamily: "Ubuntu",
+		},
+		overrides: {
+			MuiSlider: {
+				thumb: {
+					opacity: 0,
+				},
+				mark: {
+					backgroundImage: `url(${Image})`,
+					backgroundColor: "none",
+				},
+				markActive: {
+					backgroundImage: `url(${Image})`,
+					backgroundColor: "none",
+				},
+			},
 		},
 		...options,
 	});

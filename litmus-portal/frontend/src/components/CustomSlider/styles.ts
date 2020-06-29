@@ -2,19 +2,25 @@ import { makeStyles } from "@material-ui/core";
 
 export const useStyles = makeStyles((theme) => ({
 	testHeading: {
-		marginTop: 50,
-		fontFamily: "Ubuntu",
-		fontSize: 25,
+		marginTop: theme.spacing(6.25),
+		fontSize: "1.5625rem",
 	},
 	testType: {
-		fontSize: 17,
-		fontFamily: "Ubuntu",
-		paddingRight: 10,
+		fontSize: "1.0625rem",
+		paddingRight: theme.spacing(1.25),
 	},
 	testResult: {
-		color: "#109B67",
-		fontSize: 17,
-		fontFamily: "Ubuntu",
-		paddingLeft: 10,
+		color: theme.palette.primary.dark,
+		fontSize: "1.0625rem",
+		paddingLeft: theme.spacing(1.25),
+	},
+	mainDiv: {
+		display: "flex",
+		flexDirection: "row",
+		marginTop: theme.spacing(6.25),
+	},
+	sliderDiv: {
+		width: "56.25rem",
+		marginBottom: theme.spacing(3.75),
 	},
 }));

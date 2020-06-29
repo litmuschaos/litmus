@@ -3,16 +3,15 @@ import { makeStyles } from "@material-ui/core";
 export const useStyles = makeStyles((theme) => ({
 	value: {
 		textAlign: "center",
-		paddingTop: 40,
+		paddingTop: theme.spacing(5),
 		fontFamily: "Ubuntu",
-		fontSize: 40,
-		color: "#FFFFFF",
+		fontSize: "2.5rem",
+		color: theme.palette.common.white,
 		fontWeight: 500,
 	},
 	statType: {
 		textAlign: "center",
-		fontFamily: "Ubuntu",
-		fontSize: 18,
-		color: "#FFFFFF",
+		fontSize: "1.125rem",
+		color: theme.palette.common.white,
 	},
 }));
