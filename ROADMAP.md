@@ -41,6 +41,7 @@ This document captures only the high level roadmap items. For the detailed backl
 
 ### Backlog
 
+-   Pre-defined chaos workflows to inject chaos during application benchmark runs 
 -   Support for Kubernetes pod scheduling policies (affinity rules for chaos resources)
 -   Support for cloudevents compliant chaos events
 -   Kubectl plugin for CLI based execution of chaos experiments
