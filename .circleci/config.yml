@@ -5,3 +5,5 @@ jobs:
             ignore:   
                 - master
         machine: true
+        steps:
+            - run: echo "hello"
