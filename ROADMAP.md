@@ -49,3 +49,4 @@ This document captures only the high level roadmap items. For the detailed backl
 -   Migration to native Kubernetes ansible modules for ansible-based experiments
 -   Improved application Chaos Suites (OpenEBS, Kafka, Cassandra) 
 -   Support for platform (AWS, GKE, vSphere) Chaos  
+-   Support for IO-Chaos [#1623](https://github.com/litmuschaos/litmus/issues/1623)
