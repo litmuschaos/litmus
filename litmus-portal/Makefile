@@ -40,7 +40,8 @@ litmus-portal-build:
 	@echo "--> Build frontend and backend images" 
 	@echo "------------------"
 	docker build ./frontend -f frontend/Dockerfile -t litmuschaos/litmusportal-frontend:ci
-	docker build ./backend/graphql-server -f backend/graphql-server/build/Dockerfile -t litmuschaos/litmusportal-backend:ci
+	docker build ./backend/graphql-server -f backend/graphql-server/build/Dockerfile -t litmuschaos/litmusportal-server:ci
+	docker build ./backend/subscriber/igc -f backend/subscriber/igc/build/Dockerfile -t litmuschaos/litmusportal-igc:ci
 
 .PHONY: push
 push: litmus-portal-push
@@ -50,7 +51,9 @@ litmus-portal-push:
 	@echo "--> Push frontend and backend images" 
 	@echo "------------------"
 	REPONAME="litmuschaos" IMGNAME="litmusportal-frontend" IMGTAG="ci" ../hack/push
-	REPONAME="litmuschaos" IMGNAME="litmusportal-backend" IMGTAG="ci" ../hack/push
+	REPONAME="litmuschaos" IMGNAME="litmusportal-server" IMGTAG="ci" ../hack/push
+	REPONAME="litmuschaos" IMGNAME="litmusportal-igc" IMGTAG="ci" ../hack/push
+
 
 .PHONY: litmus-portal-check
  litmus-portal-check : lint-checks unused-package-check
