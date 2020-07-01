@@ -2,33 +2,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: litmus-portal-frontend-deployment
+  name: litmus-portal-frontend-deployment
 spec:
-    replicas: 1
-    selector:
-        matchLabels:
-            component: litmus-portal-frontend
-    template:
-        metadata:
-            labels:
-                component: litmus-portal-frontend
-        spec:
-            containers:
-                - name: litmus-portal-frontend
-                  image: litmus-portal-frontend
-                  imagePullPolicy: IfNotPresent
-                  ports:
-                      - containerPort: 80
+  replicas: 1
+  selector:
+    matchLabels:
+      component: litmus-portal-frontend
+  template:
+    metadata:
+      labels:
+        component: litmus-portal-frontend
+    spec:
+      containers:
+        - name: litmus-portal-frontend
+          image: litmus-portal-frontend
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
 ---
 apiVersion: v1
 kind: Service # Type of kubernetes resource
 metadata:
-    name: litmus-portal-front-service # Name of the resource
+  name: litmus-portal-front-service # Name of the resource
 spec:
-    type: NodePort # If you're deploying on cloud, you can use `type: LoadBalancer`. It will automatically provision a load balancer with the cloud provider that will route traffic to your application.
-    ports: # Take incoming HTTP requests on port 9090 and forward them to the targetPort of 8080
-        - name: http
-          port: 9091
-          targetPort: 80
-    selector:
-        app: litmus-portal-frontend # Map any pod with name litmus-portal-app to this service
+  type: NodePort # If you're deploying on cloud, you can use `type: LoadBalancer`. It will automatically provision a load balancer with the cloud provider that will route traffic to your application.
+  ports: # Take incoming HTTP requests on port 9090 and forward them to the targetPort of 8080
+    - name: http
+      port: 9091
+      targetPort: 80
+  selector:
+    app: litmus-portal-frontend # Map any pod with name litmus-portal-app to this service

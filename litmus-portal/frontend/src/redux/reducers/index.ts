@@ -1,13 +1,15 @@
-import { History } from "history";
-import { combineReducers } from "redux";
-import { ChartData } from "../../models";
-import * as chartReducer from "./charts";
+import { History } from 'history'; // eslint-disable-line import/no-extraneous-dependencies
+import { combineReducers } from 'redux';
+import { ChartData } from '../../models';
+import * as chartReducer from './charts';
 
 export interface RootState {
-	chartData: ChartData;
+  chartData: ChartData;
 }
 
-export default (history: History) =>
-	combineReducers({
-		...chartReducer,
-	});
+export default (
+  history: History // eslint-disable-line @typescript-eslint/no-unused-vars
+) =>
+  combineReducers({
+    ...chartReducer,
+  });
