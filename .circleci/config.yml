@@ -1,0 +1,9 @@
+version: 2
+jobs:
+    build:
+        branches:  
+            ignore:   
+                - master
+        machine: true
+        steps:
+            - run: echo "hello"
