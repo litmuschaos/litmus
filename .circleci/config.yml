@@ -4,5 +4,6 @@ jobs:
         branches:  
             ignore:   
                 - master
+        machine: true
         steps:
             - run: echo "hello"
