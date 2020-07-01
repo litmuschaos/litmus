@@ -9,6 +9,7 @@ const ErrorPage = lazy(() => import('../../pages/ErrorPage'));
 const Workflows = lazy(() => import('../../pages/Workflows'));
 const LoginPage = lazy(() => import('../../pages/LoginPage'));
 const HomePage = lazy(() => import('../../pages/HomePage'));
+const Commmunity = lazy(() => import('../../pages/Community'));
 
 function Routes() {
   const classes = useStyles();
@@ -19,6 +20,7 @@ function Routes() {
         <Route exact path="/" component={HomePage} />
         <Route exact path="/login" component={LoginPage} />
         <Route exact path="/workflow" component={Workflows} />
+        <Route exact path="/community" component={Commmunity} />
         <Route exact path="/404" component={ErrorPage} />
         <Redirect to="/404" />
       </Switch>
