@@ -7,14 +7,14 @@ import Image from '../icons/arrow.png';
 declare module '@material-ui/core/styles/createMuiTheme' {
   interface Theme {
     // newProperty: {
-    // 	key: value;
-    // }
+    //   key: value;
+    // };
   }
   // allow configuration using `createMuiTheme`
   interface ThemeOptions {
     // newProperty?: {
-    // 	key?: value;
-    // }
+    //   key?: value;
+    // };
   }
 }
 
@@ -22,14 +22,14 @@ declare module '@material-ui/core/styles/createMuiTheme' {
 declare module '@material-ui/core/styles/createPalette' {
   interface Palette {
     // newProperty: {
-    // 	key: value;
-    // }
+    //   key: value;
+    // };
   }
   // allow configuration using `createMuiTheme`
   interface PaletteOptions {
     // newProperty?: {
-    // 	key?: value;
-    // }
+    //   key?: value;
+    // };
   }
 }
 function customTheme(options: ThemeOptions) {

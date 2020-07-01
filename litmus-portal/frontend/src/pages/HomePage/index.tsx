@@ -24,9 +24,7 @@ function CreateWorkflowCard() {
       }}
     >
       <CardActionArea>
-        <Typography className={classes.createWorkflowHeading}>
-          Let&#39;s Start
-        </Typography>
+        <Typography className={classes.createWorkflowHeading}>Let&#39;s Start</Typography>
         <Typography className={classes.createWorkflowTitle}>
           Schedule your first workflow
         </Typography>
@@ -53,15 +51,11 @@ const HomePage = () => {
                   <strong>Congratulations!</strong>
                 </Typography>
                 <Typography className={classes.mainResult}>
-                  <strong>
-                    You have established your own first project on Litmus
-                    portal.{' '}
-                  </strong>
+                  <strong>You have established your own first project on Litmus portal. </strong>
                 </Typography>
                 <Typography className={classes.mainDesc}>
-                  Now this is successfully running on your Kubernetes cluster.
-                  Once you schedule chaos workflows, reliability analytics are
-                  displayed here.
+                  Now this is successfully running on your Kubernetes cluster. Once you schedule
+                  chaos workflows, reliability analytics are displayed here.
                 </Typography>
               </div>
             </div>
@@ -75,26 +69,10 @@ const HomePage = () => {
                 <strong>How busy Litmus Project is?</strong>
               </Typography>
               <div className={classes.cardDiv}>
-                <CustomInfoFilled
-                  color="#109B67"
-                  value="11.2K"
-                  statType="Operator Installed"
-                />
-                <CustomInfoFilled
-                  color="#858CDD"
-                  value="29+"
-                  statType="Total Experiments"
-                />
-                <CustomInfoFilled
-                  color="#F6B92B"
-                  value="60K+"
-                  statType="Total Runs Experiments"
-                />
-                <CustomInfoFilled
-                  color="#BA3B34"
-                  value="800+"
-                  statType="Github Stars"
-                />
+                <CustomInfoFilled color="#109B67" value="11.2K" statType="Operator Installed" />
+                <CustomInfoFilled color="#858CDD" value="29+" statType="Total Experiments" />
+                <CustomInfoFilled color="#F6B92B" value="60K+" statType="Total Runs Experiments" />
+                <CustomInfoFilled color="#BA3B34" value="800+" statType="Github Stars" />
               </div>
             </div>
             <div className={classes.quickActionDiv}>

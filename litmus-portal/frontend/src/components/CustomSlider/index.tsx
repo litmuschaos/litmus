@@ -10,8 +10,7 @@ const PrettoSlider = withStyles({
     height: 8,
   },
   track: {
-    background:
-      'linear-gradient(90deg, #5B44BA 0%, #858CDD 49.48%, #109B67 100%)',
+    background: 'linear-gradient(90deg, #5B44BA 0%, #858CDD 49.48%, #109B67 100%)',
     height: 38,
     borderRadius: 4,
     borderTopRightRadius: 20,
@@ -69,11 +68,7 @@ interface CustomSliderProps {
   onChangeCommitted: (event: object, value: number | number[]) => void;
 }
 
-const CustomSlider: React.FC<CustomSliderProps> = ({
-  testName,
-  value,
-  onChangeCommitted,
-}) => {
+const CustomSlider: React.FC<CustomSliderProps> = ({ testName, value, onChangeCommitted }) => {
   const classes = useStyles();
   return (
     <div className="App">

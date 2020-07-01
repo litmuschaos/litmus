@@ -20,12 +20,7 @@ const LinearProgressBar: React.FC<LinearProgressBarProps> = ({ value }) => {
   }, []);
   return (
     <div style={{ width: 150 }}>
-      <Line
-        percent={resultValue}
-        strokeWidth={width}
-        trailWidth={width}
-        strokeColor={color}
-      />
+      <Line percent={resultValue} strokeWidth={width} trailWidth={width} strokeColor={color} />
     </div>
   );
 };

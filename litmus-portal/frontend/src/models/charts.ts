@@ -65,12 +65,6 @@ interface ChartActionType<T, P> {
 export type ChartAction =
   | ChartActionType<typeof ChartActions.LOAD_ALL_CHARTS, ExperimentGroup[]>
   // | ChartActionType<typeof ChartActions.LOAD_CHART, Experiment>
-  | ChartActionType<
-      typeof ChartActions.FILTER_CHARTS_ON_SEARCH,
-      ExperimentGroup[]
-    >
-  | ChartActionType<
-      typeof ChartActions.FILTER_CHARTS_BY_FILTERS,
-      ExperimentGroup[]
-    >
+  | ChartActionType<typeof ChartActions.FILTER_CHARTS_ON_SEARCH, ExperimentGroup[]>
+  | ChartActionType<typeof ChartActions.FILTER_CHARTS_BY_FILTERS, ExperimentGroup[]>
   | ChartActionType<typeof ChartActions.SORT_CHARTS, ExperimentGroup[]>;

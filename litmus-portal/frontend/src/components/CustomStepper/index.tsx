@@ -14,13 +14,7 @@ import WorkflowCluster from '../WorkflowCluster';
 import useStyles from './styles';
 
 function getSteps(): string[] {
-  return [
-    'Target Cluster',
-    'Choose a workflow',
-    'Tune workflow',
-    'Reliability score',
-    'Schedule',
-  ];
+  return ['Target Cluster', 'Choose a workflow', 'Tune workflow', 'Reliability score', 'Schedule'];
 }
 
 function getStepContent(stepIndex: number): React.ReactNode {
@@ -83,11 +77,7 @@ const CustomStepper = () => {
 
             {/* Control Buttons */}
             <div className={classes.buttonGroup}>
-              <ButtonOutline
-                isDisabled={activeStep === 0}
-                handleClick={handleBack}
-                value="Back"
-              />
+              <ButtonOutline isDisabled={activeStep === 0} handleClick={handleBack} value="Back" />
               <ButtonFilled
                 handleClick={handleNext}
                 value={activeStep === steps.length - 1 ? 'Finish' : 'Next'}

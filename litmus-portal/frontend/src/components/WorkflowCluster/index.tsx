@@ -69,11 +69,7 @@ const WorkflowCluster = () => {
             textAlign: 'left',
           }}
         >
-          <Button
-            variant="contained"
-            color="inherit"
-            data-cy="selectLitmusKubernetes"
-          >
+          <Button variant="contained" color="inherit" data-cy="selectLitmusKubernetes">
             Install Litmus agents to other Kubernetes cluster
           </Button>
         </div>

@@ -46,16 +46,17 @@
     "max-len": [
       "warn",
       {
-        "code": 80,
+        "code": 100,
         "tabWidth": 2,
-        "comments": 80,
+        "comments": 100,
         "ignoreComments": false,
         "ignoreTrailingComments": true,
-        "ignoreUrls": true,
-        "ignoreStrings": true,
-        "ignoreTemplateLiterals": true,
-        "ignoreRegExpLiterals": true
+        "ignoreUrls": false,
+        "ignoreStrings": false,
+        "ignoreTemplateLiterals": false,
+        "ignoreRegExpLiterals": false
       }
-    ]
+    ],
+    "no-tabs": "error"
   }
 }

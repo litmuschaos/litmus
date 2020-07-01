@@ -14,12 +14,7 @@ import LinearProgressBar from '../LinearProgressBar';
 import ToggleComponent from '../ToggleComponent';
 import useStyles from './styles';
 
-function createData(
-  name: string,
-  result: JSX.Element,
-  weight: number | number[],
-  points: number
-) {
+function createData(name: string, result: JSX.Element, weight: number | number[], points: number) {
   return { name, result, weight, points };
 }
 const result = 9;
@@ -88,24 +83,17 @@ const ResultModal: React.FC<ResultModalProps> = ({ isOpen, testValue }) => {
           <div className={classes.paper}>
             <div className={classes.tableHeader}>
               <Typography className={classes.headingModal}>
-                <strong>
-                  Simulate the workflow run and see the suggested reliability
-                  score
-                </strong>
+                <strong>Simulate the workflow run and see the suggested reliability score</strong>
               </Typography>
               <Typography className={classes.headingModal}>
-                <strong>
-                  (worflow1 (K8S conformance test on Ignite cluster)
-                </strong>
+                <strong>(worflow1 (K8S conformance test on Ignite cluster)</strong>
               </Typography>
             </div>
             <TableContainer>
               <Table className={classes.table} aria-label="simple table">
                 <TableHead>
                   <TableRow>
-                    <TableCell className={classes.tableHeading}>
-                      Test Name
-                    </TableCell>
+                    <TableCell className={classes.tableHeading}>Test Name</TableCell>
                     <TableCell align="center" className={classes.tableHeading}>
                       Test Result
                     </TableCell>
@@ -120,11 +108,7 @@ const ResultModal: React.FC<ResultModalProps> = ({ isOpen, testValue }) => {
                 <TableBody>
                   {rows.map((row) => (
                     <TableRow key={row.name}>
-                      <TableCell
-                        component="th"
-                        scope="row"
-                        className={classes.tableData}
-                      >
+                      <TableCell component="th" scope="row" className={classes.tableData}>
                         {row.name}
                       </TableCell>
                       <TableCell align="center" className={classes.testResult}>
@@ -155,31 +139,24 @@ const ResultModal: React.FC<ResultModalProps> = ({ isOpen, testValue }) => {
               }}
             >
               <div className={classes.resultDiv}>
-                <Typography className={classes.resultText}>
-                  Total Score
-                </Typography>
+                <Typography className={classes.resultText}>Total Score</Typography>
                 <Typography className={classes.totalScore}>
                   <strong>4/32</strong>
                 </Typography>
               </div>
               <div className={classes.resultDiv}>
-                <Typography className={classes.resultText}>
-                  Reliability score
-                </Typography>
+                <Typography className={classes.resultText}>Reliability score</Typography>
                 <Typography className={classes.reliabilityScore}>
                   <strong>70%</strong>
                 </Typography>
               </div>
               <div className={classes.resultDiv}>
-                <Typography className={classes.resultTextInfo}>
-                  Tips from Litmus Portal:
-                </Typography>
+                <Typography className={classes.resultTextInfo}>Tips from Litmus Portal:</Typography>
                 <Typography className={classes.testTips}>
                   {' '}
-                  When you set the test result, then pay attention to the total
-                  values of the total score. This will help you in setting up
-                  your tests, getting the maximum result and the correct
-                  operation of the test in the future.
+                  When you set the test result, then pay attention to the total values of the total
+                  score. This will help you in setting up your tests, getting the maximum result and
+                  the correct operation of the test in the future.
                 </Typography>
               </div>
             </div>

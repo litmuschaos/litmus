@@ -33,8 +33,8 @@ const FinishModal = () => {
         <strong>was succusssfully created!</strong>
       </div>
       <div className={classes.text2}>
-        Congratulations on creating your first workflow! Now information about{' '}
-        <br /> it will be displayed on the main screen of the application.
+        Congratulations on creating your first workflow! Now information about <br /> it will be
+        displayed on the main screen of the application.
       </div>
       <div className={classes.button}>
         <Button
@@ -51,12 +51,7 @@ const FinishModal = () => {
 
   return (
     <div>
-      <Button
-        variant="contained"
-        color="primary"
-        data-cy="selectModal"
-        onClick={handleOpen}
-      >
+      <Button variant="contained" color="primary" data-cy="selectModal" onClick={handleOpen}>
         Completed
       </Button>
 

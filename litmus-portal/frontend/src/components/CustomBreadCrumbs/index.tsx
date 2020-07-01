@@ -13,10 +13,7 @@ const CustomBreadcrumbs: React.FC<CustomBreadcrumbsProps> = ({ location }) => {
   let intermediatRoutes: string = '/';
   const classes = useStyles();
   return (
-    <Breadcrumbs
-      separator={<NavigateNextIcon fontSize="small" />}
-      aria-label="breadcrumb"
-    >
+    <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
       <Link to="/" className={classes.breadCrumb}>
         Home
       </Link>

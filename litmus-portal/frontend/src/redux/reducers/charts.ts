@@ -1,10 +1,4 @@
-import {
-  ChartAction,
-  ChartActions,
-  ChartData,
-  Experiment,
-  ExperimentGroup,
-} from '../../models';
+import { ChartAction, ChartActions, ChartData, Experiment, ExperimentGroup } from '../../models';
 import createReducer from './createReducer';
 
 const initialState: ChartData = {
@@ -95,10 +89,7 @@ export const chartData = createReducer<ChartData>(initialState, {
       contributorFilter: Array.from(contributorFilter),
     };
   },
-  [ChartActions.FILTER_CHARTS_BY_FILTERS](
-    state: ChartData,
-    action: ChartAction
-  ) {
+  [ChartActions.FILTER_CHARTS_BY_FILTERS](state: ChartData, action: ChartAction) {
     return {
       ...state,
       displayExperimentGroups: action.payload,
@@ -110,10 +101,7 @@ export const chartData = createReducer<ChartData>(initialState, {
       displayExperimentGroups: action.payload,
     };
   },
-  [ChartActions.FILTER_CHARTS_ON_SEARCH](
-    state: ChartData,
-    action: ChartAction
-  ) {
+  [ChartActions.FILTER_CHARTS_ON_SEARCH](state: ChartData, action: ChartAction) {
     return {
       ...state,
       displayExperimentGroups: action.payload,

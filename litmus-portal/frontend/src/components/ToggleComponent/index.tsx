@@ -6,10 +6,7 @@ import React from 'react';
 const ToggleComponent = () => {
   const [alignment, setAlignment] = React.useState<string | null>('pass');
 
-  const handleAlignment = (
-    event: React.MouseEvent<HTMLElement>,
-    newAlignment: string | null
-  ) => {
+  const handleAlignment = (event: React.MouseEvent<HTMLElement>, newAlignment: string | null) => {
     setAlignment(newAlignment);
   };
   return (
@@ -27,8 +24,7 @@ const ToggleComponent = () => {
           height: 38,
           borderRadius: 3,
           border: 'rgba(0, 0, 0, 0.0)',
-          backgroundColor:
-            alignment === 'pass' ? '#109B67' : 'rgba(0, 0, 0, 0.1)',
+          backgroundColor: alignment === 'pass' ? '#109B67' : 'rgba(0, 0, 0, 0.1)',
           color: alignment === 'pass' ? '#FFFFFF' : 'rgba(0, 0, 0, 0.4)',
         }}
       >
@@ -37,9 +33,7 @@ const ToggleComponent = () => {
         ) : (
           <img src="icons/NotPass.png" alt="NotPass" />
         )}
-        <Typography style={{ paddingLeft: 10, fontFamily: 'Ubuntu' }}>
-          Pass
-        </Typography>
+        <Typography style={{ paddingLeft: 10, fontFamily: 'Ubuntu' }}>Pass</Typography>
       </ToggleButton>
       <ToggleButton
         value="fail"
@@ -49,8 +43,7 @@ const ToggleComponent = () => {
           height: 38,
           borderRadius: 3,
           border: 'rgba(0, 0, 0, 0.0)',
-          backgroundColor:
-            alignment === 'fail' ? '#CA2C2C' : 'rgba(0, 0, 0, 0.1)',
+          backgroundColor: alignment === 'fail' ? '#CA2C2C' : 'rgba(0, 0, 0, 0.1)',
           color: alignment === 'fail' ? '#FFFFFF' : 'rgba(0, 0, 0, 0.4)',
         }}
       >
@@ -59,9 +52,7 @@ const ToggleComponent = () => {
         ) : (
           <img src="icons/NotFail.png" alt="NotFail" />
         )}
-        <Typography style={{ paddingLeft: 10, fontFamily: 'Ubuntu' }}>
-          Fail
-        </Typography>
+        <Typography style={{ paddingLeft: 10, fontFamily: 'Ubuntu' }}>Fail</Typography>
       </ToggleButton>
     </ToggleButtonGroup>
   );

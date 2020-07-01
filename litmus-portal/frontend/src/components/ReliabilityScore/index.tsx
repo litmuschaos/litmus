@@ -35,16 +35,13 @@ const ReliablityScore = () => {
       <div className={classes.mainDiv}>
         <div>
           <Typography className={classes.headerText}>
-            <strong>
-              Adjust the weights of the experiments in the workflow
-            </strong>
+            <strong>Adjust the weights of the experiments in the workflow</strong>
           </Typography>
           <Typography className={classes.description}>
-            You have selected 12 tests in the “Kubernetes conformance test”
-            workflow. Successful outcome of each test carries a certain weight.
-            We have pre-selected weights for each test for you. However, you may
-            review and modify the weigtage against. The weights are relative to
-            each other.
+            You have selected 12 tests in the “Kubernetes conformance test” workflow. Successful
+            outcome of each test carries a certain weight. We have pre-selected weights for each
+            test for you. However, you may review and modify the weigtage against. The weights are
+            relative to each other.
           </Typography>
         </div>
         <hr className={classes.horizontalLine} />
@@ -93,18 +90,15 @@ const ReliablityScore = () => {
               data-cy="testRunButton"
             />
             {open === true ? (
-              <CustomResultModal
-                isOpen={() => setOpen(false)}
-                testValue={testValue}
-              />
+              <CustomResultModal isOpen={() => setOpen(false)} testValue={testValue} />
             ) : (
               <></>
             )}
           </div>
           <div>
             <Typography className={classes.testInfo}>
-              Compare the importance of the items above and launch a demo
-              version of Kubernetes conformance test to see how it works.
+              Compare the importance of the items above and launch a demo version of Kubernetes
+              conformance test to see how it works.
             </Typography>
           </div>
         </div>

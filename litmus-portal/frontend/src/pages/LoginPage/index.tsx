@@ -17,8 +17,8 @@ const LoginPage = () => {
             </Typography>
             <Typography className={classes.description}>
               {' '}
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+              incididunt ut labore et dolore magna aliqua
             </Typography>
             <div className={classes.inputDiv}>
               <Paper className={classes.inputArea}>
@@ -41,11 +41,7 @@ const LoginPage = () => {
               </Paper>
 
               <Typography className={classes.forgotPasssword}>
-                <Link
-                  to="/reset"
-                  className={classes.linkForgotPass}
-                  data-cy="forgotPassword"
-                >
+                <Link to="/reset" className={classes.linkForgotPass} data-cy="forgotPassword">
                   Don’t remember your password?
                 </Link>
               </Typography>

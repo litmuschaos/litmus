@@ -1,10 +1,7 @@
 import { ChartActions, Experiment, ExperimentGroup } from '../../models';
 
 let baseURL: string = '';
-if (
-  process.env.NODE_ENV.trim() === 'development' ||
-  process.env.NODE_ENV.trim() === 'test'
-) {
+if (process.env.NODE_ENV.trim() === 'development' || process.env.NODE_ENV.trim() === 'test') {
   baseURL = `${window.location.protocol}//${window.location.hostname}:8080`;
 } else baseURL = '/api';
 
@@ -39,9 +36,7 @@ export const filterCharts = (chaos: string, contributor: string) => (
     );
   }
   if (contributor !== 'All') {
-    payload = payload.filter(
-      (expg: ExperimentGroup) => expg.provider === contributor
-    );
+    payload = payload.filter((expg: ExperimentGroup) => expg.provider === contributor);
   }
   dispatch({
     type: ChartActions.FILTER_CHARTS_BY_FILTERS,
@@ -51,17 +46,12 @@ export const filterCharts = (chaos: string, contributor: string) => (
 export const sortCharts = () => (dispatch: Function, getState: Function) => {
   const { chartData } = getState();
   let payload: ExperimentGroup[] = [...chartData.displayExperimentGroups].sort(
-    (c1: ExperimentGroup, c2: ExperimentGroup) =>
-      c1.experiments.length - c2.experiments.length
+    (c1: ExperimentGroup, c2: ExperimentGroup) => c1.experiments.length - c2.experiments.length
   );
   try {
-    if (
-      JSON.stringify(payload) ===
-      JSON.stringify(chartData.displayExperimentGroups)
-    )
+    if (JSON.stringify(payload) === JSON.stringify(chartData.displayExperimentGroups))
       payload = [...chartData.displayExperimentGroups].sort(
-        (c1: ExperimentGroup, c2: ExperimentGroup) =>
-          c2.experiments.length - c1.experiments.length
+        (c1: ExperimentGroup, c2: ExperimentGroup) => c2.experiments.length - c1.experiments.length
       );
   } catch {
     // console.error('Error Sorting Charts');
@@ -72,10 +62,7 @@ export const sortCharts = () => (dispatch: Function, getState: Function) => {
   });
 };
 
-export const searchCharts = (searchToken: string) => (
-  dispatch: Function,
-  getState: Function
-) => {
+export const searchCharts = (searchToken: string) => (dispatch: Function, getState: Function) => {
   const { chartData } = getState();
   const tokens = searchToken
     .toLowerCase()

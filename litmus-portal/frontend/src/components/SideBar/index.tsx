@@ -40,11 +40,7 @@ const SideBar = () => {
       anchor="left"
     >
       <div className={classes.litmusDiv}>
-        <img
-          src="./icons/litmusPurple.svg"
-          alt="litmus logo"
-          className={classes.logo}
-        />
+        <img src="./icons/litmusPurple.svg" alt="litmus logo" className={classes.logo} />
         <Typography className={classes.litmusHome} variant="body1">
           Litmus
         </Typography>
@@ -54,11 +50,7 @@ const SideBar = () => {
         <CustomisedListItem key="home" handleClick={() => {}} label="Workflows">
           <img src="./icons/workflows.png" alt="homeIcon" />
         </CustomisedListItem>
-        <CustomisedListItem
-          key="Settings"
-          handleClick={() => {}}
-          label="My Hub"
-        >
+        <CustomisedListItem key="Settings" handleClick={() => {}} label="My Hub">
           <img src="./icons/hub.png" alt="homeIcon" />
         </CustomisedListItem>
         <CustomisedListItem key="home" handleClick={() => {}} label="Settings">
