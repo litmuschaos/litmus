@@ -69,6 +69,10 @@ Litmus is licensed under the Apache License, Version 2.0. See [LICENSE](./LICENS
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_large)
 
+Litmus Chaos is part of the CNCF Projects.
+
+[![CNCF](https://github.com/cncf/artwork/blob/master/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/selected=litmus)
+
 ## Community 
 
 The Litmus community meets on the third wednesday of every month at 10:00PM IST/9.30 AM PST. 
