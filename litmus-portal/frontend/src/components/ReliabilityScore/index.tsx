@@ -1,9 +1,9 @@
 import { Typography } from '@material-ui/core';
 import React, { useState } from 'react';
-import ButtonOutline from '../ButtonOutline/index';
 import CustomSlider from '../CustomSlider';
 import CustomResultModal from '../ResultModal';
 import useStyles from './styles';
+import ButtonOutlineIcon from '../ButtonOutlineIcon';
 
 const ReliablityScore = () => {
   const [value, setValue] = useState<number | Array<number>>([0]);
@@ -27,6 +27,7 @@ const ReliablityScore = () => {
 
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
+  const [totalTest] = React.useState(12);
   const handleModal = () => {
     setOpen(true);
   };
@@ -40,11 +41,11 @@ const ReliablityScore = () => {
             </strong>
           </Typography>
           <Typography className={classes.description}>
-            You have selected 12 tests in the “Kubernetes conformance test”
-            workflow. Successful outcome of each test carries a certain weight.
-            We have pre-selected weights for each test for you. However, you may
-            review and modify the weigtage against. The weights are relative to
-            each other.
+            You have selected {totalTest} tests in the “Kubernetes conformance
+            test” workflow. Successful outcome of each test carries a certain
+            weight. We have pre-selected weights for each test for you. However,
+            you may review and modify the weigtage against.{' '}
+            <strong>The weights are relative to each other.</strong>
           </Typography>
         </div>
         <hr className={classes.horizontalLine} />
@@ -83,15 +84,21 @@ const ReliablityScore = () => {
             />
           </div>
         </div>
-        <hr />
+        <hr className={classes.horizontalLine} />
         <div className={classes.modalDiv}>
           <div>
-            <ButtonOutline
+            <ButtonOutlineIcon
               isDisabled={false}
               handleClick={handleModal}
-              value="Run Test"
               data-cy="testRunButton"
-            />
+            >
+              <div className={classes.buttonOutlineDiv}>
+                <img src="icons/video.png" alt="Play icon" />
+                <Typography className={classes.buttonOutlineText}>
+                  Demo Launch
+                </Typography>
+              </div>
+            </ButtonOutlineIcon>
             {open === true ? (
               <CustomResultModal
                 isOpen={() => setOpen(false)}

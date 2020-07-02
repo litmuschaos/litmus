@@ -106,7 +106,10 @@ const ResultModal: React.FC<ResultModalProps> = ({ isOpen, testValue }) => {
                     <TableCell className={classes.tableHeading}>
                       Test Name
                     </TableCell>
-                    <TableCell align="center" className={classes.tableHeading}>
+                    <TableCell
+                      align="center"
+                      className={classes.tableHeadingLine}
+                    >
                       Test Result
                     </TableCell>
                     <TableCell align="center" className={classes.tableHeading}>
@@ -127,33 +130,31 @@ const ResultModal: React.FC<ResultModalProps> = ({ isOpen, testValue }) => {
                       >
                         {row.name}
                       </TableCell>
-                      <TableCell align="center" className={classes.testResult}>
+                      <TableCell align="left" className={classes.testResult}>
                         {row.result}
                       </TableCell>
-                      <TableCell align="center" className={classes.tableWeight}>
+                      <TableCell align="left" className={classes.tableWeight}>
                         {row.weight}
                         &nbsp; points
                         <br />
-                        <LinearProgressBar value={row.weight} />
+                        <div className={classes.progressBar}>
+                          <LinearProgressBar value={row.weight} />
+                        </div>
                       </TableCell>
-                      <TableCell align="center" className={classes.tablePoints}>
+                      <TableCell align="left" className={classes.tablePoints}>
                         {row.points}
                         &nbsp; points
                         <br />
-                        <LinearProgressBar value={row.points} />
+                        <div className={classes.progressBar}>
+                          <LinearProgressBar value={row.points} />
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </TableContainer>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                marginTop: 40,
-              }}
-            >
+            <div className={classes.mainResultDiv}>
               <div className={classes.resultDiv}>
                 <Typography className={classes.resultText}>
                   Total Score
@@ -183,6 +184,7 @@ const ResultModal: React.FC<ResultModalProps> = ({ isOpen, testValue }) => {
                 </Typography>
               </div>
             </div>
+            <hr className={classes.horizontalLine} />
             <div className={classes.buttonDiv}>
               <ButtonFilled
                 handleClick={() => {

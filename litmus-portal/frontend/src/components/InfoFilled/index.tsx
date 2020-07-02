@@ -8,20 +8,11 @@ interface InfoFilledProps {
   statType: string;
 }
 const InfoFilled: React.FC<InfoFilledProps> = ({ color, value, statType }) => {
-  const classes = useStyles();
+  const classes = useStyles({ color });
   return (
-    <div
-      style={{
-        backgroundColor: `${color}`,
-        width: 170,
-        height: 195,
-        marginBottom: 40,
-        marginRight: 40,
-        borderRadius: 3,
-      }}
-    >
+    <div className={classes.mainDiv}>
       <Typography className={classes.value}>{value}</Typography>
-      <hr style={{ width: 120, opacity: 0.5 }} />
+      <hr className={classes.horizontalLine} />
       <Typography className={classes.statType}>{statType}</Typography>
     </div>
   );
