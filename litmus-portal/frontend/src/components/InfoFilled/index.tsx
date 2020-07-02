@@ -3,19 +3,19 @@ import Typography from '@material-ui/core/Typography';
 import useStyles from './styles';
 import formatCount from '../../utils/formatCount';
 
-interface CustomInfoProps {
+interface InfoFilledProps {
   color: string;
-  value: number;
   statType: string;
+  value?: number;
   plus?: boolean | undefined;
 }
 
 /*  
   Reusable Custom Information Card
-  Required Params: color, value, statType
-  Optional Params: plus
+  Required Params: color, statType
+  Optional Params: plus, value
 */
-const InfoFilled: React.FC<CustomInfoProps> = ({
+const InfoFilled: React.FC<InfoFilledProps> = ({
   color,
   value,
   statType,
