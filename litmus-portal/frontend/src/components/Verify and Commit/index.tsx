@@ -70,12 +70,7 @@ function VerifyCommit() {
                 }}
               >
                 <CustomText
-                  value="Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-									Curabitur bibendum quis nisi nec interdum. Vestibulum fringilla 
-									bibendum mollis. Sed eget metus enim. Etiam vitae purus in est 
-									finibus facilisis.Donec sed est lacus. Pellentesque accumsan dolor 
-									sollicitudin lobortis viverra. Donec ullamcorper urna vitae maximus 
-									gravida. Nam posuere quis enim in."
+                  value="Lorem ipsum dolor sit amet, consectetur adipiscing elit.Curabitur bibendum quis nisi nec interdum. Vestibulum fringilla bibendum mollis. Sed eget metus enim. Etiam vitae purus in est finibus facilisis.Donec sed est lacus. Pellentesque accumsan dolor sollicitudin lobortis viverra. Donec ullamcorper urna vitae maximus gravida. Nam posuere quis enim in."
                   id="desc"
                   width={width2}
                 />
