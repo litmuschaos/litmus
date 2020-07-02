@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginBottom: '8rem',
     paddingBottom: '6rem',
     background: theme.palette.common.white,
-    borderradius: 3,
+    borderRadius: 3,
     textAlign: 'center',
     outline: 'none',
   },

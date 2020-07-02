@@ -165,17 +165,10 @@ function VerifyCommit() {
           <Divider className={classes.divider} />
         </div>
 
-        <div className={classes.config}>
-          <Typography
-            align="center"
-            style={{
-              fontSize: '0.875rem',
-              color: 'rgba(0, 0, 0, 0.4)',
-            }}
-          >
+        <div>
+          <Typography className={classes.config}>
             The configuration details of this workflow will be committed to:{' '}
             <span>
-              {' '}
               <Link
                 href="https://github.com/abcorn-org/reputeops/sandbox-repute.yaml"
                 onClick={preventDefault}

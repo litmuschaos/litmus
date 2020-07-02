@@ -93,7 +93,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   editButton2: {
     marginTop: theme.spacing(3.75),
 
-    marginLeft: theme.spacing(6.875),
+    marginLeft: theme.spacing(4.875),
   },
   yamlButton: {
     marginTop: theme.spacing(5),
@@ -119,8 +119,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   config: {
     height: '3rem',
-    width: '15.75',
-
+    fontSize: '0.9375rem',
+    color: theme.palette.text.disabled,
+    width: '30rem',
     marginTop: theme.spacing(3.75),
     marginLeft: theme.spacing(30),
   },
