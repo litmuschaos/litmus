@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 // Community Component Styling
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: '100vh',
     flexGrow: 1,
     display: 'flex',
     fontFamily: 'Ubuntu',
@@ -16,7 +15,17 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(6),
   },
   LitmusAnalyticsBlock: {
-    margin: '2em 0',
+    margin: '1rem 0',
+  },
+  LitmusAnalyticsDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: '0.2rem 0',
+    [theme.breakpoints.down('sm')]: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
   },
   header2: {
     fontSize: '1.5rem',
@@ -25,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
   cardDiv: {
     display: 'flex',
     flexDirection: 'row',
-    padding: '3em 0',
+    padding: '2rem 0',
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
       flexDirection: 'column',
@@ -34,14 +43,28 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: theme.spacing(20),
+    width: theme.spacing(80),
+    height: theme.spacing(42.5),
     textAlign: 'center',
     color: theme.palette.text.secondary,
+    [theme.breakpoints.down('sm')]: {
+      display: 'flex',
+      width: theme.spacing(50),
+      flexDirection: 'column',
+    },
   },
   card: {
     backgroundColor: theme.palette.secondary.dark,
-    height: '28em',
+    height: theme.spacing(42.5),
+    width: theme.spacing(35),
     textAlign: 'center',
-    color: 'white',
+    color: '#FFFFFF',
+    [theme.breakpoints.down('sm')]: {
+      display: 'flex',
+      marginTop: theme.spacing(2),
+      width: theme.spacing(50),
+      flexDirection: 'column',
+    },
   },
   cardContent: {
     marginTop: theme.spacing(4),
@@ -49,16 +72,14 @@ const useStyles = makeStyles((theme) => ({
   LitmusOnDev: {
     marginTop: theme.spacing(2),
     fontWeight: 'bold',
-    fontSize: '3em',
+    fontSize: '2rem',
   },
   LitmusOnDevSpan: {
-    fontSize: '0.7em',
-    fontWeight: 'normal',
-  },
-  LitmusOnDevOnSpan: {
     position: 'relative',
-    fontWeight: 'bold',
+    fontWeight: 'normal',
+    fontSize: '2rem',
     bottom: theme.spacing(2),
+    left: theme.spacing(3),
   },
   devToLogo: {
     fill: 'white',
@@ -66,19 +87,47 @@ const useStyles = makeStyles((theme) => ({
       'invert(98%) sepia(100%) saturate(0%) hue-rotate(86deg) brightness(118%) contrast(119%)',
     marginLeft: theme.spacing(2),
     marginTop: theme.spacing(1),
-    width: '2em',
-    height: '2em',
+    width: theme.spacing(10),
+    height: theme.spacing(6),
   },
   followBtn: {
-    width: '13em',
-    height: '4em',
+    width: theme.spacing(20),
+    height: theme.spacing(6),
     backgroundColor: '#FFFFFF',
-    fontSize: '1em',
+    fontSize: '0.8rem',
     color: theme.palette.text.primary,
     textTransform: 'none',
+    [theme.breakpoints.down('sm')]: {
+      marginLeft: theme.spacing(15),
+    },
   },
   LitmusUsedBlock: {
-    margin: '3em 0',
+    margin: '2rem 0',
+  },
+  LitmusUsedDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: '0.2rem 0',
+    [theme.breakpoints.down('sm')]: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
+  },
+  quickActionCard: {
+    height: theme.spacing(42.5),
+    width: theme.spacing(40),
+    [theme.breakpoints.down('md')]: {
+      display: 'flex',
+      width: theme.spacing(30),
+      flexDirection: 'column',
+    },
+    [theme.breakpoints.down('sm')]: {
+      display: 'flex',
+      marginTop: theme.spacing(5),
+      width: theme.spacing(50),
+      flexDirection: 'column',
+    },
   },
 }));
 

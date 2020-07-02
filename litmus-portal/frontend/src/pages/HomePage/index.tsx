@@ -2,7 +2,7 @@ import { Card, CardActionArea, Typography } from '@material-ui/core';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import CustomInfoFilled from '../../components/CustomInfoFilled/index';
+import InfoFilled from '../../components/InfoFilled/index';
 import QuickActionCard from '../../components/QuickActionCard';
 import Scaffold from '../../containers/layouts/Scaffold';
 import useStyles from './style';
@@ -75,25 +75,25 @@ const HomePage = () => {
                 <strong>How busy Litmus Project is?</strong>
               </Typography>
               <div className={classes.cardDiv}>
-                <CustomInfoFilled
+                <InfoFilled
                   color="#109B67"
                   value={11200}
                   plus
                   statType="Operator Installed"
                 />
-                <CustomInfoFilled
+                <InfoFilled
                   color="#858CDD"
                   value={29}
                   plus
                   statType="Total Experiments"
                 />
-                <CustomInfoFilled
+                <InfoFilled
                   color="#F6B92B"
                   value={60000}
                   plus
                   statType="Total Runs Experiments"
                 />
-                <CustomInfoFilled
+                <InfoFilled
                   color="#BA3B34"
                   value={800}
                   plus

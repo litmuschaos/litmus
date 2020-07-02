@@ -4,8 +4,7 @@ import Paper from '@material-ui/core/Paper'; // Temporary -> Should be replaced 
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import CustomInfoFilled from '../../components/CustomInfoFilled/index';
+import InfoFilled from '../../components/InfoFilled/index';
 import Scaffold from '../../containers/layouts/Scaffold/index';
 import useStyles from './styles';
 import QuickActionCard from '../../components/QuickActionCard';
@@ -38,27 +37,27 @@ const Community: React.FC = () => {
             Stats for the Litmus community in the last 24 hours
           </Typography>
           <div className={classes.cardDiv}>
-            <CustomInfoFilled
+            <InfoFilled
               color="#109B67"
-              value={12300}
+              value={357800000}
               plus
               statType="Total chaos Operator Installed"
             />
-            <CustomInfoFilled
+            <InfoFilled
               color="#858CDD"
-              value={12300}
+              value={12786}
               plus
               statType="Total Experiments today"
             />
-            <CustomInfoFilled
+            <InfoFilled
               color="#F6B92B"
               value={2500}
               plus
               statType="Total Runs experiments today"
             />
-            <CustomInfoFilled
+            <InfoFilled
               color="#BA3B34"
-              value={30000}
+              value={39900}
               plus
               statType="Total chaos experiments today"
             />
@@ -69,39 +68,34 @@ const Community: React.FC = () => {
         <section className="Litmus Analytics Dashboard">
           <div className={classes.LitmusAnalyticsBlock}>
             <Header2>Periodic growth of Litmus</Header2>
-            <Grid container spacing={3}>
-              <Grid item xs={12} sm={12} md={8}>
-                <Paper className={classes.paper}>Dummy Graph Analytics</Paper>
-              </Grid>
-              <Grid item xs={12} sm={12} md={4}>
-                <>
-                  <Card className={classes.card}>
-                    <CardContent className={classes.cardContent}>
-                      <img src="./icons/litmusPurple.svg" alt="litmus logo" />
-                      <Typography
-                        variant="body1"
-                        component="p"
-                        className={classes.LitmusOnDev}
-                      >
-                        Litmuschaos
-                        <br />
-                        <span className={classes.LitmusOnDevSpan}>
-                          <span className={classes.LitmusOnDevOnSpan}>on </span>
-                          <img
-                            className={classes.devToLogo}
-                            src="./icons/devto.svg"
-                            alt="DevTo logo"
-                          />
-                        </span>
-                      </Typography>
-                    </CardContent>
-                    <Button variant="contained" className={classes.followBtn}>
-                      Follow
-                    </Button>
-                  </Card>
-                </>
-              </Grid>
-            </Grid>
+            <div className={classes.LitmusAnalyticsDiv}>
+              {/* This Paper should be replaced by Analytics Graph Component */}
+              <Paper className={classes.paper}>Dummy Graph Analytics</Paper>
+              <div>
+                <Card className={classes.card}>
+                  <CardContent className={classes.cardContent}>
+                    <img src="./icons/litmusPurple.svg" alt="litmus logo" />
+                    <Typography
+                      variant="body1"
+                      component="p"
+                      className={classes.LitmusOnDev}
+                    >
+                      Litmuschaos
+                      <br />
+                      <span className={classes.LitmusOnDevSpan}>on </span>
+                      <img
+                        className={classes.devToLogo}
+                        src="./icons/devto.svg"
+                        alt="DevTo logo"
+                      />
+                    </Typography>
+                  </CardContent>
+                  <Button variant="contained" className={classes.followBtn}>
+                    Follow
+                  </Button>
+                </Card>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -109,14 +103,14 @@ const Community: React.FC = () => {
         <section className="Litmus Used Stats">
           <div className={classes.LitmusUsedBlock}>
             <Header2>Where Litmus users are situated</Header2>
-            <Grid container spacing={3}>
-              <Grid item xs={12} sm={12} md={8}>
-                <Paper className={classes.paper}>Dummy World Analytics</Paper>
-              </Grid>
-              <Grid item xs={12} sm={12} md={4}>
+            <div className={classes.LitmusUsedDiv}>
+              {/* This Paper should be replaced by World Map 
+              Component where Litmus is used */}
+              <Paper className={classes.paper}>Dummy World Analytics</Paper>
+              <div className={classes.quickActionCard}>
                 <QuickActionCard />
-              </Grid>
-            </Grid>
+              </div>
+            </div>
           </div>
         </section>
       </div>
