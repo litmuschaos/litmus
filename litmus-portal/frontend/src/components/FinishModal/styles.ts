@@ -10,6 +10,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     background: theme.palette.common.white,
     borderradius: 3,
     textAlign: 'center',
+    outline: 'none',
   },
   mark: {
     marginLeft: 362,

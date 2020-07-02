@@ -1,0 +1,137 @@
+import { makeStyles, Theme } from '@material-ui/core/styles';
+
+const useStyles = makeStyles((theme: Theme) => ({
+  root: {
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    maxWidth: '61.3125rem',
+    marginTop: theme.spacing(8.75),
+    marginLeft: theme.spacing(17.5),
+    border: 1,
+    borderColor: theme.palette.text.disabled,
+    borderRadius: 3,
+  },
+
+  suHeader: {
+    paddingLeft: theme.spacing(3.75),
+    paddingRight: theme.spacing(3.75),
+    paddingTop: theme.spacing(3.75),
+    paddingBottom: theme.spacing(3.75),
+  },
+
+  suSegments: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-even',
+  },
+  headerText: {
+    marginTop: theme.spacing(1.25),
+    fontSize: '1.5625rem',
+  },
+  description: {
+    width: '32.18rem',
+    marginTop: theme.spacing(3.25),
+    marginBottom: theme.spacing(7.5),
+    fontSize: '1.0625rem',
+  },
+  suBody: {
+    width: '32.18rem',
+    height: '3.375',
+  },
+  bfinIcon: {
+    width: '7rem',
+    height: '6.31rem',
+    marginTop: theme.spacing(5),
+    marginLeft: theme.spacing(25),
+  },
+  innerDiv2: {
+    marginTop: theme.spacing(5),
+    width: '58.81rem',
+  },
+  outerSum: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  summaryDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'flex-start',
+    alignItems: 'stretch',
+  },
+  innerSumDiv: {
+    width: '7.625rem',
+    marginTop: theme.spacing(7.5),
+  },
+  sumText: {
+    marginTop: theme.spacing(7.5),
+    fontSize: '1.5rem',
+  },
+  col1: {
+    fontSize: '1rem',
+    color: theme.palette.secondary.dark,
+  },
+  col2: {
+    marginLeft: theme.spacing(5),
+    marginTop: theme.spacing(7.5),
+  },
+  schCol2: {
+    width: '45.25rem',
+    marginLeft: theme.spacing(5),
+    marginTop: theme.spacing(3.75),
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  yamlCol2: {
+    width: '45.25rem',
+    marginLeft: theme.spacing(8.125),
+    marginTop: theme.spacing(7.5),
+  },
+  editButton1: {
+    marginTop: theme.spacing(1.25),
+    marginLeft: theme.spacing(43.75),
+  },
+  editButton2: {
+    marginTop: theme.spacing(3.75),
+
+    marginLeft: theme.spacing(6.875),
+  },
+  yamlButton: {
+    marginTop: theme.spacing(5),
+    marginRight: theme.spacing(2.5),
+    marginBottom: theme.spacing(5),
+  },
+  margin: {
+    margin: theme.spacing(1),
+  },
+  link: {
+    fontSize: '0.875rem',
+    color: theme.palette.secondary.dark,
+  },
+  adjWeights: {
+    display: 'flex',
+    flexDirection: 'column',
+
+    marginTop: theme.spacing(3.75),
+  },
+  progress: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  config: {
+    height: '3rem',
+    width: '15.75',
+
+    marginTop: theme.spacing(3.75),
+    marginLeft: theme.spacing(30),
+  },
+  typoCol2: {
+    fontSize: '1rem',
+  },
+  divider: {
+    width: '56.31rem',
+  },
+  textEdit: {
+    marginTop: theme.spacing(7.5),
+  },
+}));
+export default useStyles;

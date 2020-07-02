@@ -134,13 +134,17 @@ const ResultModal: React.FC<ResultModalProps> = ({ isOpen, testValue }) => {
                         {row.weight}
                         &nbsp; points
                         <br />
-                        <LinearProgressBar value={row.weight} />
+                        <div style={{ width: 150 }}>
+                          <LinearProgressBar value={row.weight} />
+                        </div>
                       </TableCell>
                       <TableCell align="center" className={classes.tablePoints}>
                         {row.points}
                         &nbsp; points
                         <br />
-                        <LinearProgressBar value={row.points} />
+                        <div style={{ width: 150 }}>
+                          <LinearProgressBar value={row.points} />
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}

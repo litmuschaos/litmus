@@ -11,6 +11,8 @@ import FinishModal from '../FinishModal';
 import Loader from '../Loader';
 import ReliablityScore from '../ReliabilityScore';
 import WorkflowCluster from '../WorkflowCluster';
+import ScheduleWorkflow from '../ScheduleWorkflow';
+import VerifyCommit from '../Verify and Commit';
 import useStyles from './styles';
 
 function getSteps(): string[] {
@@ -20,6 +22,7 @@ function getSteps(): string[] {
     'Tune workflow',
     'Reliability score',
     'Schedule',
+    'Verify and Commit',
   ];
 }
 
@@ -33,6 +36,10 @@ function getStepContent(stepIndex: number): React.ReactNode {
       return 'Show something random';
     case 3:
       return <ReliablityScore />;
+    case 4:
+      return <ScheduleWorkflow />;
+    case 5:
+      return <VerifyCommit />;
     default:
       return (
         <Center>
