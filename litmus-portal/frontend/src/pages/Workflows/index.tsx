@@ -1,11 +1,13 @@
-import React from "react";
-import CustomStepper from "../../components/CustomStepper";
-import { Scaffold } from "../../containers/layouts";
+import React from 'react';
+import CustomStepper from '../../components/CustomStepper';
+import Scaffold from '../../containers/layouts/Scaffold';
 
-export default function Workflows() {
-	return (
-		<Scaffold>
-			<CustomStepper />
-		</Scaffold>
-	);
-}
+const Workflows = () => {
+  return (
+    <Scaffold>
+      <CustomStepper />
+    </Scaffold>
+  );
+};
+
+export default Workflows;
