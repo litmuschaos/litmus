@@ -77,22 +77,25 @@ const HomePage = () => {
               <div className={classes.cardDiv}>
                 <CustomInfoFilled
                   color="#109B67"
-                  value="11.2K"
+                  value={11.2}
                   statType="Operator Installed"
                 />
                 <CustomInfoFilled
                   color="#858CDD"
-                  value="29+"
+                  value={29}
+                  plus
                   statType="Total Experiments"
                 />
                 <CustomInfoFilled
                   color="#F6B92B"
-                  value="60K+"
+                  value={60}
+                  plus
                   statType="Total Runs Experiments"
                 />
                 <CustomInfoFilled
                   color="#BA3B34"
-                  value="800+"
+                  value={800}
+                  plus
                   statType="Github Stars"
                 />
               </div>
