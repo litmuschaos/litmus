@@ -191,7 +191,7 @@ const ResultModal: React.FC<ResultModalProps> = ({ isOpen, testValue }) => {
                   // console.log('Got it');
                 }}
                 value="Got it"
-                data-cy="nextButton"
+                data-cy="gotItButton"
               />
             </div>
           </div>

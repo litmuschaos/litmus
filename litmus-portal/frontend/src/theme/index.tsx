@@ -75,6 +75,18 @@ function customTheme(options: ThemeOptions) {
           backgroundImage: `url(${Image})`,
           backgroundColor: 'none',
         },
+        markLabel: {
+          fontFamily: 'Ubuntu',
+          fontSize: 15,
+          marginTop: -5,
+          marginLeft: -45,
+          color: 'rgba(0, 0, 0, 0.4)',
+        },
+        markLabelActive: {
+          fontFamily: 'Ubuntu',
+          fontSize: 15,
+          color: '#FFFFFF',
+        },
       },
     },
     ...options,

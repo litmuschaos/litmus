@@ -22,6 +22,7 @@ const CreateWorkflowCard = () => {
       onClick={() => {
         routeChange();
       }}
+      data-cy="createWorkflow"
     >
       <CardActionArea>
         <Typography className={classes.createWorkflowHeading}>

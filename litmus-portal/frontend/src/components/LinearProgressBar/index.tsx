@@ -17,7 +17,7 @@ const LinearProgressBar: React.FC<LinearProgressBarProps> = ({ value }) => {
       return setColor('#F6B92B');
     }
     return setColor('#109B67');
-  }, []);
+  }, [resultValue]);
   return (
     <Line
       percent={resultValue}
