@@ -10,7 +10,7 @@ interface InfoFilledProps {
   plus?: boolean | undefined;
 }
 
-/*  
+/*
   Reusable Custom Information Card
   Required Params: color, statType
   Optional Params: plus, value
@@ -27,8 +27,8 @@ const InfoFilled: React.FC<InfoFilledProps> = ({
       style={{ backgroundColor: `${color}` }}
       className={classes.infoFilledDiv}
     >
-      {/* 
-        If value of plus is provided then render a different 
+      {/*
+        If value of plus is provided then render a different
         plus icon else dont
         
         formatCount -> utility is used to convert large value to
