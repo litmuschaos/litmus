@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   suBody: {
     width: '32.18rem',
-    height: '3.375',
+    height: '3.375rem',
   },
   bfinIcon: {
     width: '7rem',
@@ -92,7 +92,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   editButton2: {
     marginTop: theme.spacing(3.75),
-
     marginLeft: theme.spacing(4.875),
   },
   yamlButton: {

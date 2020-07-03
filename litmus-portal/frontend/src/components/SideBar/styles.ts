@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   litmusHome: {
     width: '4.0625rem',
-    height: '1.875',
+    height: '1.875rem',
     fontSize: '1.625rem',
     left: theme.spacing(2.25),
     top: theme.spacing(3),

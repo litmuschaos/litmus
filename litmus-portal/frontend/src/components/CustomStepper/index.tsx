@@ -12,7 +12,7 @@ import Loader from '../Loader';
 import ReliablityScore from '../ReliabilityScore';
 import WorkflowCluster from '../WorkflowCluster';
 import ScheduleWorkflow from '../ScheduleWorkflow';
-import VerifyCommit from '../Verify and Commit';
+import VerifyCommit from '../VerifyCommit';
 import useStyles from './styles';
 
 function getSteps(): string[] {

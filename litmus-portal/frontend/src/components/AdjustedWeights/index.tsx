@@ -1,6 +1,7 @@
 import React from 'react';
 import { Typography } from '@material-ui/core';
 import LinearProgressBar from '../LinearProgressBar';
+import useStyles from './styles';
 
 interface AdjustedWeightsProps {
   testName: string;
@@ -12,27 +13,16 @@ const AdjustedWeights: React.FC<AdjustedWeightsProps> = ({
   testName,
   testValue,
 }) => {
+  const classes = useStyles();
   return (
-    <div
-      style={{
-        marginLeft: 30,
-        marginTop: 30,
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          width: '17.5625rem',
-          marginBottom: 21,
-        }}
-      >
-        <Typography style={{ fontSize: '0.875rem' }}>
+    <div className={classes.outerDiv}>
+      <div className={classes.innerDiv}>
+        <Typography className={classes.typo}>
           {testName} - {testValue} points
         </Typography>
       </div>
 
-      <div style={{ width: '17.5625rem' }}>
+      <div>
         <LinearProgressBar value={testValue} />
       </div>
     </div>

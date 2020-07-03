@@ -4,6 +4,7 @@ import {
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import React from 'react';
+import useStyles from './styles';
 
 interface CustomDateProps {
   disabled: boolean;
@@ -11,6 +12,7 @@ interface CustomDateProps {
 
 // Used to set and display the date, month and year
 const CustomDate: React.FC<CustomDateProps> = ({ disabled }) => {
+  const classes = useStyles();
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(
     new Date(Date.now())
   );
@@ -22,6 +24,7 @@ const CustomDate: React.FC<CustomDateProps> = ({ disabled }) => {
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <KeyboardDatePicker
+        className={classes.datePicker}
         autoOk
         variant="inline"
         format="dd/MM/yyyy"
@@ -29,11 +32,6 @@ const CustomDate: React.FC<CustomDateProps> = ({ disabled }) => {
         inputVariant="outlined"
         disabled={disabled}
         value={selectedDate}
-        style={{
-          width: '9.875rem',
-          height: '2.75rem',
-          margin: 10,
-        }}
         inputProps={{
           style: {
             fontSize: '0.8125rem',

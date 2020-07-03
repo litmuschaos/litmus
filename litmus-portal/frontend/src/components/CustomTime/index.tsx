@@ -1,6 +1,7 @@
 import React from 'react';
 import { MuiPickersUtilsProvider, TimePicker } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
+import useStyles from './styles';
 
 interface CustomTimeProps {
   ampm: boolean;
@@ -9,6 +10,7 @@ interface CustomTimeProps {
 
 // Used to set and display time in hours and minutes
 const CustomTime: React.FC<CustomTimeProps> = ({ ampm, disabled }) => {
+  const classes = useStyles();
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(
     new Date(Date.now())
   );
@@ -20,13 +22,9 @@ const CustomTime: React.FC<CustomTimeProps> = ({ ampm, disabled }) => {
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <TimePicker
+        className={classes.timePicker}
         ampm={ampm}
         disabled={disabled}
-        style={{
-          width: '5.375rem',
-          height: '2.75rem',
-          margin: 10,
-        }}
         inputVariant="outlined"
         inputProps={{
           style: {

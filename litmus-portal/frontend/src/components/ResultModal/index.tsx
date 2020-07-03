@@ -134,7 +134,7 @@ const ResultModal: React.FC<ResultModalProps> = ({ isOpen, testValue }) => {
                         {row.weight}
                         &nbsp; points
                         <br />
-                        <div style={{ width: 150 }}>
+                        <div style={{ width: '9.375rem' }}>
                           <LinearProgressBar value={row.weight} />
                         </div>
                       </TableCell>
@@ -142,7 +142,7 @@ const ResultModal: React.FC<ResultModalProps> = ({ isOpen, testValue }) => {
                         {row.points}
                         &nbsp; points
                         <br />
-                        <div style={{ width: 150 }}>
+                        <div style={{ width: '9.375rem' }}>
                           <LinearProgressBar value={row.points} />
                         </div>
                       </TableCell>
@@ -151,13 +151,7 @@ const ResultModal: React.FC<ResultModalProps> = ({ isOpen, testValue }) => {
                 </TableBody>
               </Table>
             </TableContainer>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                marginTop: 40,
-              }}
-            >
+            <div className={classes.outerResultDiv}>
               <div className={classes.resultDiv}>
                 <Typography className={classes.resultText}>
                   Total Score

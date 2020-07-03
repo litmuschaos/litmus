@@ -1,6 +1,6 @@
 import React from 'react';
 import { Divider, Link, Typography } from '@material-ui/core';
-import bfinance from '../../icons/b-finance.png';
+import bfinance from '../../assets/icons/b-finance.png';
 import useStyles from './styles';
 import ButtonOutline from '../ButtonOutline/index';
 import CustomDate from '../CustomDate';

@@ -12,7 +12,7 @@ import {
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup/ToggleButtonGroup';
 import TextField from '@material-ui/core/TextField/TextField';
 import useStyles from './styles';
-import calendar from '../../icons/calendar.png';
+import calendar from '../../assets/icons/calendar.png';
 import CustomDate from '../CustomDate/index';
 import CustomTime from '../CustomTime/index';
 import CustomSchToggle from '../CustomSchToggle/index';

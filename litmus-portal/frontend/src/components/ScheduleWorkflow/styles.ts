@@ -27,12 +27,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   schBody: {
     width: '32.18rem',
-    height: '3.375',
+    height: '3.375rem',
   },
   captionText: {
     marginLeft: theme.spacing(3.75),
     fontSize: '0.75rem',
-
     color: theme.palette.text.disabled,
   },
   schLater: {
@@ -137,7 +136,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '2.75rem',
     border: '1px solid #D1D2D7',
     borderRadius: 3,
-
     fontSize: '0.75rem',
   },
   sub1: {

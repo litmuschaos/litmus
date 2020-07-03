@@ -107,6 +107,11 @@ const useStyles = makeStyles((theme) => ({
     height: '4.0625',
     fontSize: '0.875',
   },
+  outerResultDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop: theme.spacing(5),
+  },
 }));
 
 export default useStyles;

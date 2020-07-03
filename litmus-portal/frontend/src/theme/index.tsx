@@ -2,7 +2,7 @@ import { CssBaseline } from '@material-ui/core';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { ThemeOptions } from '@material-ui/core/styles/createMuiTheme';
 import * as React from 'react';
-import Image from '../icons/arrow.png';
+import Image from '../assets/icons/arrow.png';
 // Agument the Theme interface
 declare module '@material-ui/core/styles/createMuiTheme' {
   interface Theme {
