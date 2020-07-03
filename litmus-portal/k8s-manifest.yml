@@ -3,6 +3,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: litmusportal-frontend
+  labels:
+    component: litmusportal-frontend
 spec:
   replicas: 1
   selector:
@@ -31,37 +33,14 @@ spec:
       port: 9091
       targetPort: 80
   selector:
-    app: litmusportal-frontend
----
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: mongodb-standalone
-spec:
-  serviceName: database
-  replicas: 1
-  selector:
-    matchLabels:
-      app: database
-  template:
-    metadata:
-      labels:
-        app: database
-        selector: mongodb-standalone
-    spec:
-      containers:
-      - name: mongodb-standalone
-        image: mongo:4.2.8
-        env:
-          - name: MONGO_INITDB_ROOT_USERNAME
-            value: admin
-          - name: MONGO_INITDB_ROOT_PASSWORD
-            value: password
+    component: litmusportal-frontend
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: litmusportal-server
+  labels:
+    component: litmusportal-server
 spec:
   replicas: 1
   selector:
@@ -90,4 +69,4 @@ spec:
       port: 9002
       targetPort: 8080
   selector:
-    app: litmusportal-server
+    component: litmusportal-server
