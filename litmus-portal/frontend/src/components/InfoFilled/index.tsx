@@ -15,6 +15,7 @@ interface InfoFilledProps {
   Required Params: color, statType
   Optional Params: plus, value
 */
+
 const InfoFilled: React.FC<InfoFilledProps> = ({
   color,
   value,
