@@ -35,7 +35,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   suBody: {
     width: '32.18rem',
-    height: '3.375rem',
   },
   bfinIcon: {
     width: '7rem',
