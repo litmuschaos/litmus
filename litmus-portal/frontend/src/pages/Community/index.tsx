@@ -104,7 +104,7 @@ const Community: React.FC = () => {
           <div className={classes.LitmusUsedBlock}>
             <Header2>Where Litmus users are situated</Header2>
             <div className={classes.LitmusUsedDiv}>
-              {/* This Paper should be replaced by World Map 
+              {/* This Paper should be replaced by World Map
               Component where Litmus is used */}
               <Paper className={classes.paper}>Dummy World Analytics</Paper>
               <div className={classes.quickActionCard}>
