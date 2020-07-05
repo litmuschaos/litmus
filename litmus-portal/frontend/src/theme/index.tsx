@@ -68,8 +68,12 @@ function customTheme(options: ThemeOptions) {
           opacity: 0,
         },
         mark: {
+          marginLeft: -6.8,
           backgroundImage: `url(${Image})`,
           backgroundColor: 'none',
+          '&[data-index="9"]': {
+            backgroundImage: 'none',
+          },
         },
         markActive: {
           backgroundImage: `url(${Image})`,

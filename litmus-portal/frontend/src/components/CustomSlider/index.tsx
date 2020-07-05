@@ -14,8 +14,12 @@ const PrettoSlider = withStyles({
       'linear-gradient(90deg, #5B44BA 0%, #858CDD 49.48%, #109B67 100%)',
     height: 38,
     borderRadius: 4,
-    borderTopRightRadius: 20,
-    borderBottomRightRadius: 20,
+    borderTopRightRadius: 13,
+    borderBottomRightRadius: 13,
+    '&[style="left: 0%; width: 100%;"]': {
+      borderTopRightRadius: 4,
+      borderBottomRightRadius: 4,
+    },
   },
   rail: {
     height: 38,
