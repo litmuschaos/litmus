@@ -137,16 +137,16 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
   },
   toolTip1: {
-    marginTop: 80,
-    marginLeft: 130,
+    marginTop: theme.spacing(10),
+    marginLeft: theme.spacing(16.25),
   },
   toolTip2: {
-    marginLeft: -40,
-    marginTop: 3,
+    marginLeft: theme.spacing(-5),
+    marginTop: theme.spacing(0.375),
   },
   toolTip3: {
-    marginLeft: -5,
-    marginTop: 3,
+    marginLeft: theme.spacing(-0.625),
+    marginTop: theme.spacing(0.375),
   },
 }));
 
