@@ -7,7 +7,7 @@ interface CustomButtonProps {
   handleClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   value: string;
 }
-const ButtonFilled: React.FC<CustomButtonProps> = ({
+const ButtonOutline: React.FC<CustomButtonProps> = ({
   isDisabled,
   handleClick,
   value,
@@ -26,4 +26,4 @@ const ButtonFilled: React.FC<CustomButtonProps> = ({
   );
 };
 
-export default ButtonFilled;
+export default ButtonOutline;
