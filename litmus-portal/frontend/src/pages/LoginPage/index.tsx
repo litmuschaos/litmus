@@ -1,6 +1,6 @@
-import { Hidden, Paper, TextField, Typography } from '@material-ui/core';
-import React from 'react';
+import { Typography, Paper, TextField, Hidden } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import React from 'react';
 import ButtonFilled from '../../components/ButtonFilled/index';
 import useStyles from './styles';
 
@@ -8,9 +8,9 @@ const LoginPage = () => {
   const classes = useStyles();
   return (
     <div className={classes.rootContainer}>
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <div style={{ width: '50%' }}>
-          <div className={classes.root}>
+      <div className={classes.root}>
+        <div className={classes.rootDiv}>
+          <div className={classes.mainDiv}>
             <img src="icons/LitmusLogo.png" alt="litmus logo" />
             <Typography variant="h2" className={classes.heading}>
               Welcome to <strong>Litmus</strong>
@@ -51,9 +51,7 @@ const LoginPage = () => {
               </Typography>
               <div className={classes.loginDiv}>
                 <ButtonFilled
-                  handleClick={() => {
-                    // console.log('Login Button Clicked');
-                  }}
+                  handleClick={() => {}}
                   value="Login"
                   data-cy="loginButton"
                 />

@@ -37,12 +37,20 @@ const useStyles = makeStyles((theme) => ({
   horizontalLine: {
     marginTop: theme.spacing(7.5),
     marginBottom: theme.spacing(1.25),
+    borderColor: 'rgba(0, 0, 0, 0.1);',
   },
   modalDiv: {
     display: 'flex',
     flexDirection: 'row',
     marginTop: theme.spacing(5),
     paddingBottom: theme.spacing(5),
+  },
+  buttonOutlineDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  buttonOutlineText: {
+    paddingLeft: theme.spacing(1.5),
   },
 }));
 

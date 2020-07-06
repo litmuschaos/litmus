@@ -12,7 +12,6 @@ const useStyles = makeStyles((theme) => ({
   testResult: {
     color: theme.palette.primary.dark,
     fontSize: '1.0625rem',
-    paddingLeft: theme.spacing(1.25),
   },
   modal: {
     display: 'flex',
@@ -21,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     width: '65.625rem',
-    maxHeight: '50rem',
+    maxHeight: '55rem',
     backgroundColor: theme.palette.background.paper,
     paddingLeft: theme.spacing(6),
     paddingRight: theme.spacing(6),
@@ -32,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(4),
     width: '59.375rem',
     alignItems: 'center',
-    border: '0.0625 solid ',
+    border: '0.0625rem solid',
     borderColor: '#E5E5E5',
   },
   tableHeader: {
@@ -44,9 +43,22 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1.5625rem',
   },
   tableHeading: {
-    fontSize: '1.125rem',
-    color: theme.palette.common.black,
+    fontSize: '0.875rem',
+    color: theme.palette.text.disabled,
     opacity: 0.6,
+    textAlign: 'left',
+    paddingTop: theme.spacing(3),
+    paddingBottom: theme.spacing(3),
+  },
+  tableHeadingLine: {
+    fontSize: '0.875rem',
+    color: theme.palette.text.disabled,
+    opacity: 0.6,
+    textAlign: 'left',
+    paddingTop: theme.spacing(3),
+    paddingBottom: theme.spacing(3),
+    borderLeft: '0.0625 solid',
+    borderLeftColor: theme.palette.common.black,
   },
   tableData: {
     fontSize: '1.125rem',
@@ -55,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
   },
   tableWeight: {
     fontSize: '1.125rem',
-    color: theme.palette.primary.dark,
+    color: theme.palette.common.black,
     fontWeight: 'bold',
   },
   tablePoints: {
@@ -103,9 +115,38 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.secondary.dark,
   },
   testTips: {
-    width: '28.125',
-    height: '4.0625',
-    fontSize: '0.875',
+    width: '28.125rem',
+    height: '4.0625rem',
+    fontSize: '0.875rem',
+  },
+  progressBar: {
+    width: '6.5625rem',
+  },
+  mainResultDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop: 40,
+  },
+  horizontalLine: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(1.25),
+    borderColor: 'rgba(0, 0, 0, 0.1);',
+  },
+  toolTipGroup: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  toolTip1: {
+    marginTop: theme.spacing(10),
+    marginLeft: theme.spacing(16.25),
+  },
+  toolTip2: {
+    marginLeft: theme.spacing(-5),
+    marginTop: theme.spacing(0.375),
+  },
+  toolTip3: {
+    marginLeft: theme.spacing(-0.625),
+    marginTop: theme.spacing(0.375),
   },
   outerResultDiv: {
     display: 'flex',
