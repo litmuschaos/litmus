@@ -2,9 +2,8 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   rootContainer: {
-    height: '100vh',
+    height: '100%',
     display: 'flex',
-    fontFamily: 'Ubuntu',
     flexDirection: 'column',
     justifyContent: 'space-between',
   },
@@ -14,7 +13,10 @@ const useStyles = makeStyles((theme) => ({
   },
   mainDiv: {
     marginLeft: theme.spacing(3.75),
-    width: '37.5rem',
+    maxWidth: '50rem',
+    minHeight: '16rem',
+    display: 'flex',
+    flexDirection: 'row',
   },
   userName: {
     fontSize: '2.5rem',
@@ -25,8 +27,11 @@ const useStyles = makeStyles((theme) => ({
     border: '1px solid ',
     borderColor: theme.palette.secondary.dark,
     borderRadius: 3,
-    marginLeft: theme.spacing(10),
+    marginLeft: theme.spacing(5),
     boxShadow: '2px 1px 9px rgba(91, 68, 186, 0.25)',
+    [theme.breakpoints.down('sm')]: {
+      marginTop: theme.spacing(5),
+    },
   },
   createWorkflowHeading: {
     fontSize: '0.9375rem',
@@ -43,15 +48,9 @@ const useStyles = makeStyles((theme) => ({
   headingDiv: {
     display: 'flex',
     flexDirection: 'row',
-  },
-  createWorkflow: {
-    [theme.breakpoints.down('md')]: {
-      marginTop: theme.spacing(30),
-      marginLeft: theme.spacing(-30),
-    },
     [theme.breakpoints.down('sm')]: {
-      marginTop: theme.spacing(30),
-      marginLeft: theme.spacing(-30),
+      display: 'flex',
+      flexDirection: 'column',
     },
   },
   arrowForwardIcon: {
@@ -68,23 +67,36 @@ const useStyles = makeStyles((theme) => ({
   mainResult: {
     color: theme.palette.common.black,
     fontSize: '1.5625rem',
+    maxWidth: '27.5rem',
     marginBottom: theme.spacing(3.125),
   },
   mainDesc: {
     color: theme.palette.common.black,
     fontSize: '1.125rem',
+    maxWidth: '36rem',
   },
-
+  imageDiv: {
+    marginLeft: theme.spacing(10),
+    marginTop: theme.spacing(10),
+  },
   contentDiv: {
     display: 'flex',
     flexDirection: 'row',
     marginTop: theme.spacing(3.75),
+    [theme.breakpoints.down('sm')]: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
   },
   statDiv: {
-    width: '65%',
+    maxWidth: '50rem',
+    minHeight: '16rem',
     backgroundColor: 'rgba(255, 255, 255, 0.6)',
-    border: 'border: 1px solid rgba(0, 0, 0, 0.05)',
     borderRadius: 3,
+    [theme.breakpoints.down('sm')]: {
+      width: '18rem',
+      minHeight: '50rem',
+    },
   },
   statsHeading: {
     fontSize: '1.5625rem',
@@ -93,17 +105,10 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(5),
   },
   quickActionDiv: {
+    marginTop: theme.spacing(2),
     borderLeft: '1px solid rgba(0, 0, 0, 0.05)',
-    paddingLeft: theme.spacing(5),
+    paddingLeft: theme.spacing(2),
     marginLeft: theme.spacing(3),
-    [theme.breakpoints.down('md')]: {
-      marginTop: theme.spacing(40),
-      marginLeft: theme.spacing(-20),
-    },
-    [theme.breakpoints.down('sm')]: {
-      marginTop: theme.spacing(140),
-      marginLeft: theme.spacing(-20),
-    },
   },
   cardDiv: {
     display: 'flex',
@@ -112,8 +117,7 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
       flexDirection: 'column',
-      marginTop: theme.spacing(5),
-      marginLeft: theme.spacing(5),
+      alignItems: 'center',
     },
   },
 }));
