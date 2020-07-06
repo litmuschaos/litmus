@@ -68,12 +68,28 @@ function customTheme(options: ThemeOptions) {
           opacity: 0,
         },
         mark: {
+          marginLeft: -6.8,
           backgroundImage: `url(${Image})`,
           backgroundColor: 'none',
+          '&[data-index="9"]': {
+            backgroundImage: 'none',
+          },
         },
         markActive: {
           backgroundImage: `url(${Image})`,
           backgroundColor: 'none',
+        },
+        markLabel: {
+          fontFamily: 'Ubuntu',
+          fontSize: 15,
+          marginTop: -5,
+          marginLeft: -45,
+          color: 'rgba(0, 0, 0, 0.4)',
+        },
+        markLabelActive: {
+          fontFamily: 'Ubuntu',
+          fontSize: 15,
+          color: '#FFFFFF',
         },
       },
     },

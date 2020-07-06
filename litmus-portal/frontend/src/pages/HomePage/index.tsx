@@ -1,13 +1,13 @@
 import { Card, CardActionArea, Typography } from '@material-ui/core';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import InfoFilled from '../../components/InfoFilled/index';
 import QuickActionCard from '../../components/QuickActionCard';
 import Scaffold from '../../containers/layouts/Scaffold';
 import useStyles from './style';
 
-function CreateWorkflowCard() {
+const CreateWorkflowCard = () => {
   const classes = useStyles();
   const history = useHistory();
 
@@ -22,6 +22,7 @@ function CreateWorkflowCard() {
       onClick={() => {
         routeChange();
       }}
+      data-cy="createWorkflow"
     >
       <CardActionArea>
         <Typography className={classes.createWorkflowHeading}>
@@ -34,10 +35,22 @@ function CreateWorkflowCard() {
       </CardActionArea>
     </Card>
   );
+};
+
+interface CardValueData {
+  color: string;
+  value: string;
+  statType: string;
 }
 
 const HomePage = () => {
-  const userName = 'Richard Hill';
+  const cardData: CardValueData[] = [
+    { color: '#109B67', value: 11200, statType: 'Operator Installed' },
+    { color: '#858CDD', value: 29, statType: 'Total Experiments' },
+    { color: '#F6B92B', value: 6000, statType: 'Total Runs Experiments' },
+    { color: '#BA3B34', value: 800, statType: 'Github Stars' },
+  ];
+  const [userName] = useState('Richard Hill');
   const classes = useStyles();
   return (
     <Scaffold>
@@ -47,8 +60,8 @@ const HomePage = () => {
             Welcome, <strong>{userName}</strong>
           </Typography>
           <div className={classes.headingDiv}>
-            <div style={{ width: '65%' }}>
-              <div className={classes.mainDiv}>
+            <div className={classes.mainDiv}>
+              <div>
                 <Typography className={classes.mainHeading}>
                   <strong>Congratulations!</strong>
                 </Typography>
@@ -64,9 +77,12 @@ const HomePage = () => {
                   displayed here.
                 </Typography>
               </div>
+              <div className={classes.imageDiv}>
+                <img src="icons/applause.png" alt="Applause icon" />
+              </div>
             </div>
-            <div className={classes.createWorkflow}>
-              <CreateWorkflowCard />
+            <div>
+              <CreateWorkflowCard data-cy="CreateWorkflowCard" />
             </div>
           </div>
           <div className={classes.contentDiv}>
@@ -75,30 +91,14 @@ const HomePage = () => {
                 <strong>How busy Litmus Project is?</strong>
               </Typography>
               <div className={classes.cardDiv}>
-                <InfoFilled
-                  color="#109B67"
-                  value={11.2}
-                  plus
-                  statType="Operator Installed"
-                />
-                <InfoFilled
-                  color="#858CDD"
-                  value={29}
-                  plus
-                  statType="Total Experiments"
-                />
-                <InfoFilled
-                  color="#F6B92B"
-                  value={60}
-                  plus
-                  statType="Total Runs Experiments"
-                />
-                <InfoFilled
-                  color="#BA3B34"
-                  value={800}
-                  plus
-                  statType="Github Stars"
-                />
+                {cardData.map((data) => (
+                  <InfoFilled
+                    color={data.color}
+                    value={data.value}
+                    plus
+                    statType={data.statType}
+                  />
+                ))}
               </div>
             </div>
             <div className={classes.quickActionDiv}>

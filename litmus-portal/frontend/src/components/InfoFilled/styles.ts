@@ -28,6 +28,12 @@ const useStyles = makeStyles((theme) => ({
     padding: '1rem 2rem',
     fontSize: '1rem',
     color: theme.palette.common.white,
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+  },
+  horizontalLine: {
+    width: 120,
+    opacity: 0.5,
   },
 }));
 
