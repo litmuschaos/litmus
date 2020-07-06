@@ -25,14 +25,8 @@ const (
 	bitSize      = 64
 )
 
-// GAResponseJSON is the global entity which defines the structure for holding the GA data
-type GAResponseJSON struct {
-	Label string
-	Count string
-}
-
 // GAResponseJSONObject is the array of GAResponse struct
-var GAResponseJSONObject []GAResponseJSON
+var GAResponseJSONObject map[string]string
 
 // Handler is responsible for the looping the UpdateAnalyticsData()
 func Handler() {
@@ -94,18 +88,10 @@ func UpdateAnalyticsData() error {
 				totalCount = totalCount + count
 			}
 			if GAResponse[i][0] == "Chaos-Operator" {
-				object := GAResponseJSON{
-					Label: GAResponse[i][0],
-					Count: GAResponse[i][1],
-				}
-				GAResponseJSONObject = append(GAResponseJSONObject, object)
+				GAResponseJSONObject["operator-installs"] = GAResponse[i][1]
 			}
 		}
 	}
-	object := GAResponseJSON{
-		Label: "Total-Count",
-		Count: strconv.FormatInt(totalCount, base),
-	}
-	GAResponseJSONObject = append(GAResponseJSONObject, object)
+	GAResponseJSONObject["total-count"] = strconv.FormatInt(totalCount, base)
 	return nil
 }
