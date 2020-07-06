@@ -13,6 +13,7 @@ import ButtonFilled from '../ButtonFilled/index';
 import LinearProgressBar from '../LinearProgressBar';
 import ToggleComponent from '../ToggleComponent';
 import useStyles from './styles';
+import InfoTooltip from '../InfoTooltip';
 
 function createData(
   name: string,
@@ -86,18 +87,23 @@ const ResultModal: React.FC<ResultModalProps> = ({ isOpen, testValue }) => {
       >
         <Fade in>
           <div className={classes.paper}>
-            <div className={classes.tableHeader}>
-              <Typography className={classes.headingModal}>
-                <strong>
-                  Simulate the workflow run and see the suggested reliability
-                  score
-                </strong>
-              </Typography>
-              <Typography className={classes.headingModal}>
-                <strong>
-                  (worflow1 (K8S conformance test on Ignite cluster)
-                </strong>
-              </Typography>
+            <div className={classes.toolTipGroup}>
+              <div className={classes.tableHeader}>
+                <Typography className={classes.headingModal}>
+                  <strong>
+                    Simulate the workflow run and see the suggested reliability
+                    score
+                  </strong>
+                </Typography>
+                <Typography className={classes.headingModal}>
+                  <strong>
+                    (workflow1 K8S conformance test on Ignite cluster)
+                  </strong>
+                </Typography>
+              </div>
+              <div className={classes.toolTip1}>
+                <InfoTooltip value="Text Default" />
+              </div>
             </div>
             <TableContainer>
               <Table className={classes.table} aria-label="simple table">
@@ -156,17 +162,27 @@ const ResultModal: React.FC<ResultModalProps> = ({ isOpen, testValue }) => {
             </TableContainer>
             <div className={classes.mainResultDiv}>
               <div className={classes.resultDiv}>
-                <Typography className={classes.resultText}>
-                  Total Score
-                </Typography>
+                <div className={classes.toolTipGroup}>
+                  <Typography className={classes.resultText}>
+                    Total Score
+                  </Typography>
+                  <div className={classes.toolTip2}>
+                    <InfoTooltip value="Text Default" />
+                  </div>
+                </div>
                 <Typography className={classes.totalScore}>
-                  <strong>4/32</strong>
+                  <strong>14/32</strong>
                 </Typography>
               </div>
               <div className={classes.resultDiv}>
-                <Typography className={classes.resultText}>
-                  Reliability score
-                </Typography>
+                <div className={classes.toolTipGroup}>
+                  <Typography className={classes.resultText}>
+                    Reliability score
+                  </Typography>
+                  <div className={classes.toolTip3}>
+                    <InfoTooltip value="Text Default" />
+                  </div>
+                </div>
                 <Typography className={classes.reliabilityScore}>
                   <strong>70%</strong>
                 </Typography>

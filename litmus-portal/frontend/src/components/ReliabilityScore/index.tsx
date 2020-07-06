@@ -4,6 +4,7 @@ import CustomSlider from '../CustomSlider';
 import CustomResultModal from '../ResultModal';
 import useStyles from './styles';
 import ButtonOutlineIcon from '../ButtonOutlineIcon';
+import InfoTooltip from '../InfoTooltip';
 
 const ReliablityScore = () => {
   const [value, setValue] = useState<number | Array<number>>([0]);
@@ -86,7 +87,7 @@ const ReliablityScore = () => {
         </div>
         <hr className={classes.horizontalLine} />
         <div className={classes.modalDiv}>
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
             <ButtonOutlineIcon
               isDisabled={false}
               handleClick={handleModal}
@@ -99,6 +100,9 @@ const ReliablityScore = () => {
                 </Typography>
               </div>
             </ButtonOutlineIcon>
+            <div style={{ marginLeft: 10 }}>
+              <InfoTooltip value="Text Default" />
+            </div>
             {open === true ? (
               <CustomResultModal
                 isOpen={() => setOpen(false)}

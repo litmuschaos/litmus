@@ -132,6 +132,22 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1.25),
     borderColor: 'rgba(0, 0, 0, 0.1);',
   },
+  toolTipGroup: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  toolTip1: {
+    marginTop: 80,
+    marginLeft: 130,
+  },
+  toolTip2: {
+    marginLeft: -40,
+    marginTop: 3,
+  },
+  toolTip3: {
+    marginLeft: -5,
+    marginTop: 3,
+  },
 }));
 
 export default useStyles;
