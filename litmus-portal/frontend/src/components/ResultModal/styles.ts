@@ -148,6 +148,11 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(-0.625),
     marginTop: theme.spacing(0.375),
   },
+  outerResultDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop: theme.spacing(5),
+  },
 }));
 
 export default useStyles;

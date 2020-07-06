@@ -1,4 +1,9 @@
-import { Typography } from '@material-ui/core';
+import {
+  Typography,
+  FormControl,
+  RadioGroup,
+  FormControlLabel,
+} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Radio from '@material-ui/core/Radio';
 import * as React from 'react';
@@ -14,6 +19,12 @@ function Check() {
 /* This screen is starting page of workflow */
 const WorkflowCluster = () => {
   const classes = useStyles();
+  const [value, setValue] = React.useState('female');
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValue((event.target as HTMLInputElement).value);
+  };
+
   return (
     <div className={classes.rootContainer}>
       {/* Arrow mark */}
@@ -32,19 +43,27 @@ const WorkflowCluster = () => {
         </Typography>
 
         <div className={classes.radiobutton}>
-          <Radio
-            // checked={selectedValue === 'd'}
-            // onChange={handleChange}
-            data-cy="selectRadio"
-            value="d"
-            color="default"
-            name="radio-button-demo"
-            inputProps={{ 'aria-label': 'D' }}
-          />
+          <FormControl component="fieldset">
+            <RadioGroup
+              data-cy="selectRadio"
+              aria-label="D"
+              name="radio-button-demo"
+              value={value}
+              onChange={handleChange}
+            >
+              <FormControlLabel
+                value="d"
+                control={<Radio />}
+                label={
+                  <Typography>
+                    Ignite-cluster(where this Litmus portal is install and
+                    running)
+                  </Typography>
+                }
+              />
+            </RadioGroup>
+          </FormControl>
         </div>
-        <Typography className={classes.head4}>
-          Ignite-cluster(where this Litmus portal is install and running)
-        </Typography>
       </div>
 
       {/* Division is used for Ignite-cluster(where this Litmus portal is install and running) 

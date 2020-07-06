@@ -6,8 +6,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '100%',
   },
   drawerPaper: {
-    // TODO: remove padding top
-
     width: '100%',
     position: 'relative',
   },
@@ -18,28 +16,25 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: theme.spacing(4),
   },
   logo: {
-    left: 35,
+    left: theme.spacing(4.375),
   },
   litmusHome: {
-    width: 65,
-    height: 30,
-    fontWeight: 'normal',
-    fontFamily: 'Ubuntu Condensed',
-    fontStyle: 'normal',
-    fontSize: 26,
-    left: 81,
-    top: 24,
+    width: '4.0625rem',
+    height: '1.875rem',
+    fontSize: '1.625rem',
+    left: theme.spacing(2.25),
+    top: theme.spacing(3),
     marginLeft: theme.spacing(1.75),
-    color: '#000000',
+    color: theme.palette.primary.contrastText,
   },
   drawerListItem: {
     display: 'flex',
-    height: 51,
+    height: '3.187rem',
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'center',
     '&:hover': {
-      backgroundColor: '#858CDD',
+      backgroundColor: theme.palette.secondary.light,
       color: theme.palette.getContrastText(theme.palette.primary.contrastText),
     },
   },
@@ -50,15 +45,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   listText: {
     marginLeft: theme.spacing(0),
-    fontSize: 16,
-
-    fontFamily: 'Ubuntu',
-    fontWeight: 'normal',
-    fontStyle: 'normal',
+    fontSize: '1rem',
   },
   drawerList: {
     marginTop: theme.spacing(8),
-    height: 267,
+    height: '16.68rem',
   },
 }));
 
