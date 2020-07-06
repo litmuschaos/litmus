@@ -13,6 +13,7 @@ import ButtonFilled from '../ButtonFilled/index';
 import LinearProgressBar from '../LinearProgressBar';
 import ToggleComponent from '../ToggleComponent';
 import useStyles from './styles';
+import InfoTooltip from '../InfoTooltip';
 
 function createData(
   name: string,
@@ -86,18 +87,23 @@ const ResultModal: React.FC<ResultModalProps> = ({ isOpen, testValue }) => {
       >
         <Fade in>
           <div className={classes.paper}>
-            <div className={classes.tableHeader}>
-              <Typography className={classes.headingModal}>
-                <strong>
-                  Simulate the workflow run and see the suggested reliability
-                  score
-                </strong>
-              </Typography>
-              <Typography className={classes.headingModal}>
-                <strong>
-                  (worflow1 (K8S conformance test on Ignite cluster)
-                </strong>
-              </Typography>
+            <div className={classes.toolTipGroup}>
+              <div className={classes.tableHeader}>
+                <Typography className={classes.headingModal}>
+                  <strong>
+                    Simulate the workflow run and see the suggested reliability
+                    score
+                  </strong>
+                </Typography>
+                <Typography className={classes.headingModal}>
+                  <strong>
+                    (workflow1 K8S conformance test on Ignite cluster)
+                  </strong>
+                </Typography>
+              </div>
+              <div className={classes.toolTip1}>
+                <InfoTooltip value="Text Default" />
+              </div>
             </div>
             <TableContainer>
               <Table className={classes.table} aria-label="simple table">
@@ -106,7 +112,10 @@ const ResultModal: React.FC<ResultModalProps> = ({ isOpen, testValue }) => {
                     <TableCell className={classes.tableHeading}>
                       Test Name
                     </TableCell>
-                    <TableCell align="center" className={classes.tableHeading}>
+                    <TableCell
+                      align="center"
+                      className={classes.tableHeadingLine}
+                    >
                       Test Result
                     </TableCell>
                     <TableCell align="center" className={classes.tableHeading}>
@@ -127,45 +136,53 @@ const ResultModal: React.FC<ResultModalProps> = ({ isOpen, testValue }) => {
                       >
                         {row.name}
                       </TableCell>
-                      <TableCell align="center" className={classes.testResult}>
+                      <TableCell align="left" className={classes.testResult}>
                         {row.result}
                       </TableCell>
-                      <TableCell align="center" className={classes.tableWeight}>
+                      <TableCell align="left" className={classes.tableWeight}>
                         {row.weight}
                         &nbsp; points
                         <br />
-                        <LinearProgressBar value={row.weight} />
+                        <div className={classes.progressBar}>
+                          <LinearProgressBar value={row.weight} />
+                        </div>
                       </TableCell>
-                      <TableCell align="center" className={classes.tablePoints}>
+                      <TableCell align="left" className={classes.tablePoints}>
                         {row.points}
                         &nbsp; points
                         <br />
-                        <LinearProgressBar value={row.points} />
+                        <div className={classes.progressBar}>
+                          <LinearProgressBar value={row.points} />
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </TableContainer>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                marginTop: 40,
-              }}
-            >
+            <div className={classes.mainResultDiv}>
               <div className={classes.resultDiv}>
-                <Typography className={classes.resultText}>
-                  Total Score
-                </Typography>
+                <div className={classes.toolTipGroup}>
+                  <Typography className={classes.resultText}>
+                    Total Score
+                  </Typography>
+                  <div className={classes.toolTip2}>
+                    <InfoTooltip value="Text Default" />
+                  </div>
+                </div>
                 <Typography className={classes.totalScore}>
-                  <strong>4/32</strong>
+                  <strong>14/32</strong>
                 </Typography>
               </div>
               <div className={classes.resultDiv}>
-                <Typography className={classes.resultText}>
-                  Reliability score
-                </Typography>
+                <div className={classes.toolTipGroup}>
+                  <Typography className={classes.resultText}>
+                    Reliability score
+                  </Typography>
+                  <div className={classes.toolTip3}>
+                    <InfoTooltip value="Text Default" />
+                  </div>
+                </div>
                 <Typography className={classes.reliabilityScore}>
                   <strong>70%</strong>
                 </Typography>
@@ -183,13 +200,14 @@ const ResultModal: React.FC<ResultModalProps> = ({ isOpen, testValue }) => {
                 </Typography>
               </div>
             </div>
+            <hr className={classes.horizontalLine} />
             <div className={classes.buttonDiv}>
               <ButtonFilled
                 handleClick={() => {
                   // console.log('Got it');
                 }}
                 value="Got it"
-                data-cy="nextButton"
+                data-cy="gotItButton"
               />
             </div>
           </div>
