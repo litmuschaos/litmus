@@ -11,5 +11,5 @@
 "context":"litmus-portal/backend/graphql-server",
 "push":true
 }],
-"k8s-manifest":"litmus-portal/ci-k8s-manifest.yml"
+"k8s-manifest":".betterci/ci-k8s-manifest.yml"
 }
