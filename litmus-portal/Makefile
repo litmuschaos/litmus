@@ -7,6 +7,13 @@
 #
 IS_DOCKER_INSTALLED = $(shell which docker >> /dev/null 2>&1; echo $$?)
 
+#docker info
+REPONAME ?= litmuschaos
+GRAPHQL_SERVER_IMAGE ?= litmusportal-server
+AUTHENTICATION_SERVER_IMAGE ?= litmusportal-auth-server
+FRONTEND_IMAGE ?= litmusportal-frontend
+IGC_IMAGE ?= litmusportal-igc
+IMGTAG ?= ci
 
 .PHONY: all
 all: deps litmus-portal-check build push
@@ -39,9 +46,10 @@ litmus-portal-build:
 	@echo "------------------"
 	@echo "--> Build frontend and backend images" 
 	@echo "------------------"
-	docker build ./frontend -f frontend/Dockerfile -t litmuschaos/litmusportal-frontend:ci
-	docker build ./backend/graphql-server -f backend/graphql-server/build/Dockerfile -t litmuschaos/litmusportal-server:ci
-	docker build ./backend/subscriber/igc -f backend/subscriber/igc/build/Dockerfile -t litmuschaos/litmusportal-igc:ci
+	docker build ./frontend -f frontend/Dockerfile -t $(REPONAME)/$(FRONTEND_IMAGE):$(IMGTAG)
+	docker build ./backend/graphql-server -f backend/graphql-server/build/Dockerfile -t $(REPONAME)/$(GRAPHQL_SERVER_IMAGE):$(IMGTAG)
+	docker build ./backend/auth -f backend/auth/Dockerfile -t $(REPONAME)/$(AUTHENTICATION_SERVER_IMAGE):$(IMGTAG)
+	docker build ./backend/subscriber/igc -f backend/subscriber/igc/build/Dockerfile -t $(REPONAME)/$(IGC_IMAGE):$(IMGTAG)
 
 .PHONY: push
 push: litmus-portal-push
@@ -50,9 +58,10 @@ litmus-portal-push:
 	@echo "------------------"
 	@echo "--> Push frontend and backend images" 
 	@echo "------------------"
-	REPONAME="litmuschaos" IMGNAME="litmusportal-frontend" IMGTAG="ci" ../hack/push
-	REPONAME="litmuschaos" IMGNAME="litmusportal-server" IMGTAG="ci" ../hack/push
-	REPONAME="litmuschaos" IMGNAME="litmusportal-igc" IMGTAG="ci" ../hack/push
+	REPONAME=$(REPONAME) IMGNAME=$(FRONTEND_IMAGE) IMGTAG=$(IMGTAG) ../hack/push
+	REPONAME=$(REPONAME) IMGNAME=$(GRAPHQL_SERVER_IMAGE) IMGTAG=$(IMGTAG) ../hack/push
+	REPONAME=$(REPONAME) IMGNAME=$(IGC_IMAGE) IMGTAG=$(IMGTAG) ../hack/push
+	REPONAME=$(REPONAME) IMGNAME=$(AUTHENTICATION_SERVER_IMAGE) IMGTAG=$(IMGTAG) ../hack/push
 
 
 .PHONY: litmus-portal-check
@@ -72,6 +81,16 @@ lint-checks:
 		echo "Please ensure you are using $$($(GO) version) for formatting code."; \
 		exit 0; \
 	fi
+	@echo "------------------"
+	@echo "--> Check litmus-portal auth [gofmt]"
+	@echo "------------------"
+	@fmtRes=$$(gofmt -d backend/auth/*); \
+	if [ -n "$${fmtRes}" ]; then \
+		echo "gofmt checking failed!"; echo "$${fmtRes}"; echo; \
+		echo "Please ensure you are using $$($(GO) version) for formatting code."; \
+		exit 0; \
+	fi
+
 
 unused-package-check:
 	@echo "------------------"
@@ -83,3 +102,13 @@ unused-package-check:
 		echo "Please ensure you are using $$($(GO) version) for formatting code."; \
 		exit 0; \
 	fi
+	@echo "------------------"
+	@echo "--> Check litmus-portal auth [go mod tidy]"
+	@echo "------------------"
+	@tidyRes=$$(cd backend/auth && go mod tidy); \
+	if [ -n "$${tidyRes}" ]; then \
+		echo "go mod tidy checking failed!"; echo "$${tidyRes}"; echo; \
+		echo "Please ensure you are using $$($(GO) version) for formatting code."; \
+		exit 0; \
+	fi
+
