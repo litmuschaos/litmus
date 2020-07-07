@@ -39,16 +39,27 @@ const CreateWorkflowCard = () => {
 
 interface CardValueData {
   color: string;
-  value: string;
+  value: number;
   statType: string;
+  plus?: boolean | undefined;
 }
 
 const HomePage = () => {
   const cardData: CardValueData[] = [
-    { color: '#109B67', value: '11.2K', statType: 'Operator Installed' },
-    { color: '#858CDD', value: '29+', statType: 'Total Experiments' },
-    { color: '#F6B92B', value: '60K+', statType: 'Total Runs Experiments' },
-    { color: '#BA3B34', value: '800+', statType: 'Github Stars' },
+    {
+      color: '#109B67',
+      value: 11200,
+      statType: 'Operator Installed',
+      plus: false,
+    },
+    { color: '#858CDD', value: 29, statType: 'Total Experiments', plus: true },
+    {
+      color: '#F6B92B',
+      value: 6000,
+      statType: 'Total Runs Experiments',
+      plus: true,
+    },
+    { color: '#BA3B34', value: 800, statType: 'Github Stars', plus: true },
   ];
   const [userName] = useState('Richard Hill');
   const classes = useStyles();
@@ -96,6 +107,7 @@ const HomePage = () => {
                     color={data.color}
                     value={data.value}
                     statType={data.statType}
+                    plus={data.plus}
                   />
                 ))}
               </div>

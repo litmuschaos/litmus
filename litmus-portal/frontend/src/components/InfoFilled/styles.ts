@@ -1,25 +1,32 @@
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
-  mainDiv: {
-    backgroundColor: (props: { color: string }) => props.color,
-    width: '10.625rem',
-    height: '12.1875rem',
-    marginBottom: theme.spacing(5),
-    marginRight: theme.spacing(5),
+  infoFilledDiv: {
+    width: theme.spacing(30),
+    height: theme.spacing(25),
+    marginRight: theme.spacing(2),
     borderRadius: 3,
+  },
+  horizontalRule: {
+    width: theme.spacing(14),
+    opacity: 0.5,
   },
   value: {
     textAlign: 'center',
-    paddingTop: theme.spacing(5),
+    paddingTop: theme.spacing(4),
     fontFamily: 'Ubuntu',
-    fontSize: '2.5rem',
+    fontSize: '2rem',
     color: theme.palette.common.white,
     fontWeight: 500,
   },
+  plusBtn: {
+    fontSize: '1.5rem',
+    fontWeight: 'bold',
+  },
   statType: {
     textAlign: 'center',
-    fontSize: '1.125rem',
+    padding: '1rem 2rem',
+    fontSize: '1rem',
     color: theme.palette.common.white,
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(1),
