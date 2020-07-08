@@ -52,11 +52,16 @@ spec:
         component: litmusportal-server
     spec:
       containers:
-      - name: litmusportal-server
+      - name: graphql-server
         image: #{portal-server}
         ports:
         - containerPort: 8080
         imagePullPolicy: Always
+      - name: auth-server
+        image: #{auth-server}
+        ports:
+        - containerPort: 3000
+        imagePullPolicy: Always 
 ---
 apiVersion: v1
 kind: Service
@@ -65,9 +70,12 @@ metadata:
 spec:
   type: NodePort
   ports:
-    - name: http
+    - name: graphql-server
       port: 9002
       targetPort: 8080
+    - name: auth-server
+      port: 9003
+      targetPort: 3000
   selector:
     component: litmusportal-server
 ---
@@ -109,7 +117,7 @@ metadata:
     app: mongo
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 20Gi
@@ -125,5 +133,5 @@ spec:
     - port: 27017
       targetPort: 27017
   selector:
-    app: mongo
+    component: database
 ---
