@@ -62,7 +62,7 @@ lint-checks:
 	@echo "------------------"
 	@echo "--> Check litmus-portal frontend lint"
 	@echo "------------------"
-	cd frontend && npm run lint
+	cd frontend && npm i && npm run lint
 	@echo "------------------"
 	@echo "--> Check litmus-portal backend [gofmt]"
 	@echo "------------------"

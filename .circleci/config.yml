@@ -1,10 +1,27 @@
-version: 2
+version: 2.1
 jobs:
-    build:
-        machine: true
-        steps:
-            - checkout
-
-            # build the application image
-            - run: |
-                  cd litmus-portal && make build push
+  build:
+    machine:
+      image: circleci/classic:201808-01
+    working_directory: ~/go/src/github.com/litmuschaos/litmus
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+          # Install dependencies for litmus-portal frontend
+            sudo apt-get update
+            sudo apt-get install curl -y
+            curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+            sudo apt install nodejs -y
+      - run:
+          name: Setup ENV
+          command: |
+            echo 'export GOPATH="$HOME/go"' >> workspace/env-vars
+            echo 'export PATH="$GOPATH/bin:$PATH"' >> workspace/env-vars
+            echo 'export IMGTAG="ci"' >> workspace/env-vars
+            cat workspace/env-vars >> $BASH_ENV
+            source $BASH_ENV
+      # build and push the application image
+      - run: |
+          cd litmus-portal && make all
