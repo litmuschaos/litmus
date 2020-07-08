@@ -76,6 +76,16 @@ lint-checks:
 		echo "gofmt checking failed!"; echo "$${fmtRes}"; echo; \
 		echo "Please ensure you are using $$($(GO) version) for formatting code."; \
 	fi
+	@echo "------------------"
+	@echo "--> Check litmus-portal auth [gofmt]"
+	@echo "------------------"
+	@fmtRes=$$(gofmt -d backend/auth/*); \
+	if [ -n "$${fmtRes}" ]; then \
+		echo "gofmt checking failed!"; echo "$${fmtRes}"; echo; \
+		echo "Please ensure you are using $$($(GO) version) for formatting code."; \
+		exit 0; \
+	fi
+
 
 unused-package-check:
 	@echo "------------------"
