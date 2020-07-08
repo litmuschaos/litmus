@@ -69,28 +69,13 @@ litmus-portal-push:
 
 lint-checks:
 	@echo "------------------"
-	@echo "--> Check litmus-portal frontend lint"
+	@echo "--> checking code style"
 	@echo "------------------"
-	cd frontend && npm i && npm run lint
-	@echo "------------------"
-	@echo "--> Check litmus-portal backend [gofmt]"
-	@echo "------------------"
-	@fmtRes=$$(gofmt -d backend/graphql-server/*); \
+	@fmtRes=$$(gofmt -d $$(find . -path ./vendor -prune -o -name '*.go' -print)); \
 	if [ -n "$${fmtRes}" ]; then \
 		echo "gofmt checking failed!"; echo "$${fmtRes}"; echo; \
 		echo "Please ensure you are using $$($(GO) version) for formatting code."; \
-		exit 0; \
 	fi
-	@echo "------------------"
-	@echo "--> Check litmus-portal auth [gofmt]"
-	@echo "------------------"
-	@fmtRes=$$(gofmt -d backend/auth/*); \
-	if [ -n "$${fmtRes}" ]; then \
-		echo "gofmt checking failed!"; echo "$${fmtRes}"; echo; \
-		echo "Please ensure you are using $$($(GO) version) for formatting code."; \
-		exit 0; \
-	fi
-
 
 unused-package-check:
 	@echo "------------------"
@@ -100,7 +85,6 @@ unused-package-check:
 	if [ -n "$${tidyRes}" ]; then \
 		echo "go mod tidy checking failed!"; echo "$${tidyRes}"; echo; \
 		echo "Please ensure you are using $$($(GO) version) for formatting code."; \
-		exit 0; \
 	fi
 	@echo "------------------"
 	@echo "--> Check litmus-portal auth [go mod tidy]"
@@ -109,6 +93,5 @@ unused-package-check:
 	if [ -n "$${tidyRes}" ]; then \
 		echo "go mod tidy checking failed!"; echo "$${tidyRes}"; echo; \
 		echo "Please ensure you are using $$($(GO) version) for formatting code."; \
-		exit 0; \
 	fi
 
