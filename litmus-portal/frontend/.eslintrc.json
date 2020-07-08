@@ -35,6 +35,10 @@
     "react/prop-types": 0,
     "import/extensions": [
       "error",
+      {
+        "commonjs": true,
+        "caseSensitive": true
+      }
       "ignorePackages",
       {
         "js": "never",
