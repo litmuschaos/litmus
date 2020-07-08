@@ -61,7 +61,7 @@ spec:
         image: #{auth-server}
         ports:
         - containerPort: 3000
-        imagePullPolicy: Always 
+        imagePullPolicy: Always
 ---
 apiVersion: v1
 kind: Service
