@@ -38,7 +38,7 @@
       {
         "commonjs": true,
         "caseSensitive": true
-      }
+      },
       "ignorePackages",
       {
         "js": "never",
