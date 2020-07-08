@@ -49,12 +49,8 @@ const LoginPage = () => {
                   Don’t remember your password?
                 </Link>
               </Typography>
-              <div className={classes.loginDiv}>
-                <ButtonFilled
-                  handleClick={() => {}}
-                  value="Login"
-                  data-cy="loginButton"
-                />
+              <div className={classes.loginDiv} data-cy="loginButton">
+                <ButtonFilled handleClick={() => {}} value="Login" />
               </div>
             </div>
           </div>
