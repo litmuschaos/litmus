@@ -58,14 +58,13 @@ spec:
             - name: CHAOS_MONITOR_IMAGE
               value: "litmuschaos/chaos-exporter:latest"
             - name: WATCH_NAMESPACE
-              value: 
+              value: ""
             - name: POD_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
             - name: OPERATOR_NAME
               value: "chaos-operator"
----
 ---
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -122,7 +121,7 @@ spec:
                   type: string
             auxiliaryAppInfo:
               type: string
-            engineState: 
+            engineState:
               type: string
               pattern: ^(active|stop|initialized|stopped)$
             chaosServiceAccount:
@@ -153,7 +152,7 @@ spec:
                   spec:
                     type: object
                     properties:
-                      components: 
+                      components:
                         type: object
                         properties:
                           env:
@@ -179,7 +178,7 @@ spec:
                             items:
                               type: object
                               properties:
-                                name: 
+                                name:
                                   type: string
                                 mountPath:
                                   type: string

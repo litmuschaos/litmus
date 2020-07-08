@@ -65,7 +65,7 @@ spec:
             - name: CHAOS_RUNNER_IMAGE
               value: "litmuschaos/chaos-runner:latest"
             - name: WATCH_NAMESPACE
-              value: 
+              value:
             - name: POD_NAME
               valueFrom:
                 fieldRef:
@@ -129,7 +129,7 @@ spec:
                   type: string
             auxiliaryAppInfo:
               type: string
-            engineState: 
+            engineState:
               type: string
               pattern: ^(active|stop|initialized|stopped)$
             chaosServiceAccount:
@@ -155,7 +155,7 @@ spec:
                   spec:
                     type: object
                     properties:
-                      components: 
+                      components:
                         type: object
                         properties:
                           env:
@@ -181,12 +181,10 @@ spec:
                             items:
                               type: object
                               properties:
-                                name: 
+                                name:
                                   type: string
                                 mountPath:
                                   type: string
-
-
         status:
           type: object
   version: v1alpha1
