@@ -39,14 +39,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   button: {
-    width: '10rem',
-    paddingTop: '1rem',
-    paddingBottom: '1rem',
     color: 'white',
     textAlign: 'center',
     marginTop: '2rem',
-    marginLeft: '43%',
-    marginRight: '50%',
   },
 }));
 
