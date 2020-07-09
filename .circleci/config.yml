@@ -12,3 +12,4 @@ jobs:
             # build and push the application image
             - run: |
                   cd litmus-portal && make all
+

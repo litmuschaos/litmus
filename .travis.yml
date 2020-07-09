@@ -29,5 +29,5 @@ script:
   - make lint-checks
   - make security-checks
 after_success:
-  - make push
+  #- make push
   - if [[ $TRAVIS_PULL_REQUEST == 'false' ]]; then sonar-scanner; fi

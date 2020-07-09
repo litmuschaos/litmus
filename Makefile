@@ -12,7 +12,7 @@ IS_DOCKER_INSTALLED = $(shell which docker >> /dev/null 2>&1; echo $$?)
 PLAYBOOKS = $(shell find ./ -iname *.yml -printf '%P\n' | grep 'ansible_logic.yml')
 
 .PHONY: all
-all: deps build syntax-checks lint-checks security-checks push
+all: deps build syntax-checks lint-checks security-checks 
 
 .PHONY: help
 help:
@@ -44,14 +44,14 @@ ansible-runner-build:
 	@echo "------------------"
 	sudo docker build . -f build/ansible-runner/Dockerfile -t litmuschaos/ansible-runner:ci
 
-.PHONY: push
-push: ansible-runner-push
+#.PHONY: push
+#push: ansible-runner-push
 
-ansible-runner-push:
-	@echo "------------------"
-	@echo "--> Push ansible-runner image" 
-	@echo "------------------"
-	REPONAME="litmuschaos" IMGNAME="ansible-runner" IMGTAG="ci" ./hack/push
+#ansible-runner-push:
+#	@echo "------------------"
+#	@echo "--> Push ansible-runner image" 
+#	@echo "------------------"
+#	REPONAME="litmuschaos" IMGNAME="ansible-runner" IMGTAG="ci" ./hack/push
 
 .PHONY: syntax-checks
 syntax-checks: ansible-syntax-check
