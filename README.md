@@ -79,7 +79,7 @@ The Litmus community meets on the third wednesday of every month at 10:00PM IST/
 
 Community Resources: 
 
-- [Community Slack](https://app.slack.com/client/T09NY5SBT/CNXNB0ZTN)
+- [Community Slack](https://slack.litmuschaos.io)
 - [Sync Up Meeting Link](https://zoom.us/j/91358162694)
 - [Sync Up Agenda & Meeting Notes](https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q)
 - [Youtube Channel (demos, meeting recordings, virtual meetups](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
