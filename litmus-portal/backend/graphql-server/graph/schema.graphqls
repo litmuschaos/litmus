@@ -1,0 +1,21 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+input clusterInput{
+  id: Int!
+  data: String!
+}
+
+type clusterResponse{
+  id: Int!
+  data: String!
+}
+
+type Mutation {
+  createCluster(input: clusterInput!): clusterResponse!
+}
+
+type Subscription {
+  clusterSubscription: clusterResponse!
+}

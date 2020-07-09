@@ -1,0 +1,125 @@
+import { makeStyles } from '@material-ui/core';
+
+const useStyles = makeStyles((theme) => ({
+  rootContainer: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
+  root: {
+    marginTop: theme.spacing(3),
+    marginLeft: theme.spacing(10),
+  },
+  mainDiv: {
+    marginLeft: theme.spacing(3.75),
+    maxWidth: '50rem',
+    minHeight: '16rem',
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  userName: {
+    fontSize: '2.5rem',
+    marginBottom: theme.spacing(3.75),
+  },
+  createWorkflowCard: {
+    width: '14.375rem',
+    border: '1px solid ',
+    borderColor: theme.palette.secondary.dark,
+    borderRadius: 3,
+    marginLeft: theme.spacing(5),
+    boxShadow: '2px 1px 9px rgba(91, 68, 186, 0.25)',
+    [theme.breakpoints.down('sm')]: {
+      marginTop: theme.spacing(5),
+    },
+  },
+  createWorkflowHeading: {
+    fontSize: '0.9375rem',
+    marginLeft: theme.spacing(3.75),
+    paddingTop: theme.spacing(5),
+  },
+  createWorkflowTitle: {
+    fontSize: 25,
+    color: theme.palette.secondary.dark,
+    fontWeight: 'bold',
+    marginLeft: theme.spacing(3.75),
+    marginTop: theme.spacing(2.5),
+  },
+  headingDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    [theme.breakpoints.down('sm')]: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
+  },
+  arrowForwardIcon: {
+    color: '#5B44BA',
+    marginLeft: theme.spacing(22.5),
+    marginTop: theme.spacing(4.375),
+    marginBottom: theme.spacing(2.5),
+  },
+  mainHeading: {
+    color: theme.palette.primary.dark,
+    fontSize: '1.5625rem',
+    marginBottom: theme.spacing(0.625),
+  },
+  mainResult: {
+    color: theme.palette.common.black,
+    fontSize: '1.5625rem',
+    maxWidth: '27.5rem',
+    marginBottom: theme.spacing(3.125),
+  },
+  mainDesc: {
+    color: theme.palette.common.black,
+    fontSize: '1.125rem',
+    maxWidth: '36rem',
+  },
+  imageDiv: {
+    marginLeft: theme.spacing(10),
+    marginTop: theme.spacing(10),
+  },
+  contentDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop: theme.spacing(3.75),
+    [theme.breakpoints.down('sm')]: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
+  },
+  statDiv: {
+    maxWidth: '50rem',
+    minHeight: '16rem',
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    borderRadius: 3,
+    [theme.breakpoints.down('sm')]: {
+      width: '18rem',
+      minHeight: '50rem',
+    },
+  },
+  statsHeading: {
+    fontSize: '1.5625rem',
+    marginBottom: theme.spacing(3.75),
+    paddingTop: theme.spacing(5),
+    paddingLeft: theme.spacing(5),
+  },
+  quickActionDiv: {
+    marginTop: theme.spacing(2),
+    borderLeft: '1px solid rgba(0, 0, 0, 0.05)',
+    paddingLeft: theme.spacing(2),
+    marginLeft: theme.spacing(3),
+  },
+  cardDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    paddingLeft: theme.spacing(5),
+    [theme.breakpoints.down('sm')]: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+    },
+  },
+}));
+
+export default useStyles;

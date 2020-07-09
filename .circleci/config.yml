@@ -1,0 +1,14 @@
+version: 2.1
+jobs:
+    build:
+        machine:
+            image: circleci/classic:latest
+        working_directory: ~/go/src/github.com/litmuschaos/litmus
+        environment:
+            HOME: /home/circleci
+            GO111MODULE: "on"
+        steps:
+            - checkout
+            # build and push the application image
+            - run: |
+                  cd litmus-portal && make all
