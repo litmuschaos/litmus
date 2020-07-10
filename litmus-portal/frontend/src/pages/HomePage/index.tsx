@@ -2,15 +2,16 @@ import { Card, CardActionArea, Typography } from '@material-ui/core';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import InfoFilled from '../../components/InfoFilled/index';
 import QuickActionCard from '../../components/QuickActionCard';
 import Scaffold from '../../containers/layouts/Scaffold';
 import useStyles from './style';
+import { RootState } from '../../redux/reducers';
 
 const CreateWorkflowCard = () => {
   const classes = useStyles();
   const history = useHistory();
-
   const routeChange = () => {
     const path = `/workflow`;
     history.push(path);
@@ -45,21 +46,32 @@ interface CardValueData {
 }
 
 const HomePage = () => {
+  const communityData = useSelector((state: RootState) => state.communityData);
   const cardData: CardValueData[] = [
     {
       color: '#109B67',
-      value: 11200,
+      value: parseInt(communityData.google.operatorInstalls, 10),
       statType: 'Operator Installed',
       plus: false,
     },
-    { color: '#858CDD', value: 29, statType: 'Total Experiments', plus: true },
     {
-      color: '#F6B92B',
-      value: 6000,
-      statType: 'Total Runs Experiments',
+      color: '#858CDD',
+      value: parseInt(communityData.google.totalRuns, 10),
+      statType: 'Total Experiment Runs',
       plus: true,
     },
-    { color: '#BA3B34', value: 800, statType: 'Github Stars', plus: true },
+    {
+      color: '#F6B92B',
+      value: parseInt(communityData.github.experimentsCount, 10),
+      statType: 'Total Experiments',
+      plus: true,
+    },
+    {
+      color: '#BA3B34',
+      value: parseInt(communityData.github.stars, 10),
+      statType: 'Github Stars',
+      plus: true,
+    },
   ];
   const [userName] = useState('Richard Hill');
   const classes = useStyles();
