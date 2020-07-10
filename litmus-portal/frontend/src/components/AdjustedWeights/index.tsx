@@ -8,7 +8,9 @@ interface AdjustedWeightsProps {
   testValue: number;
 }
 
-// Displays the details of adjusted weights including test name,points and a progress bar for points.
+/* Displays the details of adjusted weights including test name,
+points and a progress bar for points. */
+
 const AdjustedWeights: React.FC<AdjustedWeightsProps> = ({
   testName,
   testValue,

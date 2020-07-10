@@ -94,7 +94,7 @@ function VerifyCommit() {
                   <ButtonOutline
                     isDisabled={false}
                     handleClick={() => {
-                      console.log('Edit');
+                      // console.log('Edit');
                     }}
                     value="Edit"
                   />
@@ -126,7 +126,7 @@ function VerifyCommit() {
                     <ButtonOutline
                       isDisabled={false}
                       handleClick={() => {
-                        console.log('View YAML');
+                        // console.log('View YAML');
                       }}
                       value="Edit"
                     />
@@ -154,7 +154,7 @@ function VerifyCommit() {
               <div className={classes.yamlButton}>
                 <ButtonFilled
                   handleClick={() => {
-                    console.log('View YAML');
+                    // console.log('View YAML');
                   }}
                   value="View YAML"
                 />
