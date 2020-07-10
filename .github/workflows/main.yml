@@ -15,7 +15,7 @@ jobs:
           comment-id: "${{ github.event.comment.id }}"
           body: |
             ****
-            **Test Status:** The e2e test has been started please wait for the results ...      
+            **Test Status:** The e2e test has been started please wait for the results ...
 
       #Using the last commit id of pull request
       - uses: octokit/request-action@v2.x
@@ -29,31 +29,29 @@ jobs:
 
       - name: set commit to output
         id: getcommit
-        run: | 
+        run: |
            prsha=$(echo $response | jq '.[-1].sha'  | tr -d '"')
-           echo "::set-output name=sha::$prsha" 
-        env: 
+           echo "::set-output name=sha::$prsha"
+        env:
           response:  ${{ steps.get_PR_commits.outputs.data }}
-          
+
       - uses: actions/checkout@v2
         with:
-          ref: ${{steps.getcommit.outputs.sha}}      
-      
+          ref: ${{steps.getcommit.outputs.sha}}
+
       - name: Starting the Cypress Testing
-        if: startsWith(github.event.comment.body, '/run-e2e-login') || startsWith(github.event.comment.body, '/run-e2e-workflow') || 
-            startsWith(github.event.comment.body, '/run-e2e-all')
+        if: startsWith(github.event.comment.body, '/run-e2e-login') || startsWith(github.event.comment.body, '/run-e2e-workflow') || startsWith(github.event.comment.body, '/run-e2e-all')
         uses: bahmutov/npm-install@645c62e
         with:
           working-directory: litmus-portal/frontend
-    
+
       - name: Starting the server
-        if: startsWith(github.event.comment.body, '/run-e2e-login') || startsWith(github.event.comment.body, '/run-e2e-workflow') || 
-            startsWith(github.event.comment.body, '/run-e2e-all')
+        if: startsWith(github.event.comment.body, '/run-e2e-login') || startsWith(github.event.comment.body, '/run-e2e-workflow') || startsWith(github.event.comment.body, '/run-e2e-all')
         run: npm start &
         working-directory: litmus-portal/frontend
-    
+
       - name: Install Cypress and run tests for login page
-        if: startsWith(github.event.comment.body, '/run-e2e-login') 
+        if: startsWith(github.event.comment.body, '/run-e2e-login')
         uses: cypress-io/github-action@v2
         continue-on-error: false
         with:
@@ -64,9 +62,9 @@ jobs:
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.RECORDING_KEY }}
-          
+
       - name: Install Cypress and run tests for Workflow page
-        if: startsWith(github.event.comment.body, '/run-e2e-workflow') 
+        if: startsWith(github.event.comment.body, '/run-e2e-workflow')
         uses: cypress-io/github-action@v2
         continue-on-error: false
         with:
@@ -77,7 +75,7 @@ jobs:
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.RECORDING_KEY }}
-      
+
       - name: Install Cypress and run all tests
         if: startsWith(github.event.comment.body, '/run-e2e-all')
         uses: cypress-io/github-action@v2
@@ -90,11 +88,10 @@ jobs:
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.RECORDING_KEY }}
-        
+
       - name: Check the test run
         if: |
-         startsWith(github.event.comment.body, '/run-e2e-login') || startsWith(github.event.comment.body, '/run-e2e-workflow') || 
-         startsWith(github.event.comment.body, '/run-e2e-all')
+         startsWith(github.event.comment.body, '/run-e2e-login') || startsWith(github.event.comment.body, '/run-e2e-workflow') || startsWith(github.event.comment.body, '/run-e2e-all')
         run: |
           echo ::set-env name=TEST_RUN::true
 
@@ -103,9 +100,9 @@ jobs:
         uses: peter-evans/create-or-update-comment@v1
         with:
           comment-id: "${{ github.event.comment.id }}"
-          body: |  
+          body: |
             **Test Result:** All tests are passed
-          reactions: hooray         
+          reactions: hooray
 
       - name: Check for any job failed
         if: ${{ failure() }}
@@ -123,7 +120,7 @@ jobs:
           comment-id: "${{ github.event.comment.id }}"
           body: |
             **Test Result:** No test found
-          reactions: eyes 
+          reactions: eyes
 
   merge:
     if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/merge')
