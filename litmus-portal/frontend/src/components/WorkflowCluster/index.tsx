@@ -26,7 +26,7 @@ const WorkflowCluster = () => {
   };
 
   return (
-    <div className={classes.rootContainer}>
+    <div className={classes.rootcontainer}>
       {/* Arrow mark */}
       <div>
         <Check />
@@ -35,10 +35,10 @@ const WorkflowCluster = () => {
         <Typography className={classes.heading}>
           <strong> Choose the target Kubernetes cluster</strong>
         </Typography>
-        <Typography className={classes.head2}>
+        <Typography className={classes.headchaos}>
           You are creating a <strong> new chaos workflow.</strong>
         </Typography>
-        <Typography className={classes.head3}>
+        <Typography className={classes.headcluster}>
           Select a target Kubernetes cluster to run this workflow.
         </Typography>
 

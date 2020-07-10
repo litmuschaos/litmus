@@ -27,12 +27,12 @@ const FinishModal = () => {
   const body = (
     <div className={classes.rootContainer}>
       <Icon />
-      <div className={classes.newc}>
+      <div className={classes.heading}>
         A new chaos workflow,
         <br />
         <strong>was succusssfully created!</strong>
       </div>
-      <div className={classes.text2}>
+      <div className={classes.headWorkflow}>
         Congratulations on creating your first workflow! Now information about{' '}
         <br /> it will be displayed on the main screen of the application.
       </div>
