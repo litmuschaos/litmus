@@ -2,9 +2,8 @@ package server
 
 import (
 	"context"
-	"fmt"
+	"encoding/json"
 	"net/http"
-	"net/url"
 	"strings"
 	"time"
 
@@ -14,7 +13,6 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/errors"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/manage"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/models"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/types"
 )
 
 // NewDefaultServer create a default authorization server
@@ -40,41 +38,18 @@ type Server struct {
 
 func (s *Server) redirectError(w http.ResponseWriter, err error) error {
 	data, _, _ := s.getErrorData(err)
+	w.WriteHeader(http.StatusUnauthorized)
 	return s.redirect(w, data)
 }
 
 func (s *Server) redirect(w http.ResponseWriter, data map[string]interface{}) error {
-	uri, err := s.getRedirectURI(data)
+
+	response, err := json.Marshal(data)
 	if err != nil {
 		return err
 	}
-
-	w.Header().Set("Location", uri)
-	w.WriteHeader(302)
-	return nil
-}
-
-// GetRedirectURI get redirect uri
-func (s *Server) getRedirectURI(data map[string]interface{}) (string, error) {
-	u, err := url.Parse(types.RedirectURI)
-	if err != nil {
-		return "", err
-	}
-
-	q := u.Query()
-
-	for k, v := range data {
-		q.Set(k, fmt.Sprint(v))
-	}
-
-	u.RawQuery = ""
-	fragment, err := url.QueryUnescape(q.Encode())
-	if err != nil {
-		return "", err
-	}
-	u.Fragment = fragment
-
-	return u.String(), nil
+	_, err = w.Write(response)
+	return err
 }
 
 // ValidationAuthenticateRequest the authenticate request validation
