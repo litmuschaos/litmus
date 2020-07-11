@@ -29,15 +29,17 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1rem',
   },
   inputArea: {
-    marginTop: theme.spacing(3.75),
+    width: '20rem',
+    marginTop: theme.spacing(3.5),
     display: 'flex',
     textDecoration: 'none',
     flexDirection: 'column',
     paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
     paddingBottom: theme.spacing(2.2),
     borderRadius: 3,
-    border: '0.0625rem solid #5B44BA',
-    borderLeft: '0.1875rem solid #5B44BA',
+    border: '0.0625rem solid',
+    borderColor: theme.palette.secondary.dark,
   },
   loginDiv: {
     marginTop: theme.spacing(5),
@@ -55,6 +57,20 @@ const useStyles = makeStyles((theme) => ({
   },
   linkForgotPass: {
     color: theme.palette.common.black,
+    opacity: 0.5,
+  },
+  submitButton: {
+    display: 'inline',
+    backgroundColor: theme.palette.secondary.dark,
+    width: '6.875rem',
+    height: '2.8125rem',
+    color: theme.palette.common.white,
+    '&:hover': {
+      backgroundColor: theme.palette.secondary.dark,
+    },
+    marginRight: theme.spacing(2),
+    marginLeft: theme.spacing(2),
+    textTransform: 'none',
   },
 }));
 
