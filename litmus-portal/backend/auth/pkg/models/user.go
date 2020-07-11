@@ -27,6 +27,13 @@ var DefaultUser *User = &User{
 	Password: types.DefaultUserPassword,
 }
 
+//PublicUserInfo displays the information of the user that is publicly available
+type PublicUserInfo struct {
+	Name     string `json:"name,omitempty"`
+	Email    string `json:"email,omitempty"`
+	UserName string `json:"username,omitempty"`
+}
+
 //SocialAuth contains the oauth types and related information opted by the user
 type SocialAuth struct {
 	Type         string     `bson:"type"`
@@ -108,6 +115,30 @@ func (u *User) GetUser() *User {
 // GetState user password
 func (u *User) GetState() State {
 	return u.State
+}
+
+// GetPublicInfo fetches the pubicUserInfo from User
+func (u *User) GetPublicInfo() *PublicUserInfo {
+	return &PublicUserInfo{
+		Name:     u.GetName(),
+		UserName: u.GetUserName(),
+		Email:    u.GetEmail(),
+	}
+}
+
+// GetUserName user username
+func (uinfo *PublicUserInfo) GetUserName() string {
+	return uinfo.UserName
+}
+
+// GetName user username
+func (uinfo *PublicUserInfo) GetName() string {
+	return uinfo.Name
+}
+
+// GetEmail user email
+func (uinfo *PublicUserInfo) GetEmail() string {
+	return uinfo.Email
 }
 
 // GetType returns auth type

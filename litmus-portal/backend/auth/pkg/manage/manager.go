@@ -64,6 +64,17 @@ func (m *Manager) CheckUserExists(ctx context.Context, userName string) (bool, e
 	return true, nil
 }
 
+// VerifyUserPassword verifies user password
+func (m *Manager) VerifyUserPassword(username, password string) (*models.PublicUserInfo, error) {
+
+	user, err := m.GetUser(context.TODO(), username)
+	if err != nil {
+		return nil, err
+	}
+	err = bcrypt.CompareHashAndPassword([]byte(user.GetPassword()), []byte(password))
+	return user.GetPublicInfo(), err
+}
+
 // CreateUser get the user information
 func (m *Manager) CreateUser(ctx context.Context, user *models.User) (err error) {
 
@@ -84,11 +95,11 @@ func (m *Manager) CreateUser(ctx context.Context, user *models.User) (err error)
 func (m *Manager) GenerateAuthToken(ctx context.Context, tgr *TokenGenerateRequest) (*models.Token, error) {
 
 	ti := models.NewToken()
-	ti.SetUserID(tgr.UserID)
+	ti.SetUserID(tgr.UserInfo.GetUserName())
 
 	createAt := time.Now()
 	td := &generates.GenerateBasic{
-		UserID:    tgr.UserID,
+		UserInfo:  tgr.UserInfo,
 		CreateAt:  &createAt,
 		TokenInfo: ti,
 		Request:   tgr.Request,
@@ -117,35 +128,33 @@ func (m *Manager) ValidateToken(ctx context.Context, tokenString string) (valid 
 }
 
 // ParseToken validates the token
-func (m *Manager) ParseToken(ctx context.Context, tokenString string) (username string, err error) {
-	username, err = m.accessGenerate.Parse(ctx, tokenString)
+func (m *Manager) ParseToken(ctx context.Context, tokenString string) (userInfo *models.PublicUserInfo, err error) {
+	userInfo, err = m.accessGenerate.Parse(ctx, tokenString)
 	return
 }
 
 // UpdateUserDetails get the user information
-func (m *Manager) UpdateUserDetails(r *http.Request, username string) (user *models.User, err error) {
+func (m *Manager) UpdateUserDetails(r *http.Request, username string) (*models.PublicUserInfo, error) {
 
 	password, email, name := r.FormValue("password"), r.FormValue("email"), r.FormValue("name")
-	if password == "" || email == "" || name == "" {
+	if password == "" {
 		return nil, errors.ErrInvalidRequest
 	}
 
-	user, err = m.GetUser(r.Context(), username)
+	user, err := m.GetUser(r.Context(), username)
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	hasehdPassword, err := bcrypt.GenerateFromPassword([]byte(password), types.PasswordEncryptionCost)
 	if err != nil {
-		return
+		return nil, err
 	}
+
 	user.Password = string(hasehdPassword)
 	user.Email = email
 	user.Name = name
 
 	err = m.userStore.UpdateUser(user)
-	if err != nil {
-		return
-	}
-	return
+	return user.GetPublicInfo(), err
 }
