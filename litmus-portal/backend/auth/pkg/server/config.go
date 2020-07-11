@@ -1,10 +1,5 @@
 package server
 
-import (
-	"net/http"
-	"time"
-)
-
 // Config configuration parameters
 type Config struct {
 	TokenType             string // token type
@@ -16,11 +11,4 @@ func NewConfig() *Config {
 	return &Config{
 		TokenType: "Bearer",
 	}
-}
-
-// AuthenticateRequest authorization request
-type AuthenticateRequest struct {
-	UserID         string
-	AccessTokenExp time.Duration
-	Request        *http.Request
 }

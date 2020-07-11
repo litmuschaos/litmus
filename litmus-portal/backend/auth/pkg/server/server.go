@@ -1,14 +1,12 @@
 package server
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 	"strings"
 	"time"
 
 	log "github.com/golang/glog"
-	"golang.org/x/crypto/bcrypt"
 
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/errors"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/manage"
@@ -42,7 +40,7 @@ func (s *Server) redirectError(w http.ResponseWriter, err error) error {
 	return s.redirect(w, data)
 }
 
-func (s *Server) redirect(w http.ResponseWriter, data map[string]interface{}) error {
+func (s *Server) redirect(w http.ResponseWriter, data interface{}) error {
 
 	response, err := json.Marshal(data)
 	if err != nil {
@@ -53,7 +51,7 @@ func (s *Server) redirect(w http.ResponseWriter, data map[string]interface{}) er
 }
 
 // ValidationAuthenticateRequest the authenticate request validation
-func (s *Server) validationAuthenticateRequest(r *http.Request) (*AuthenticateRequest, error) {
+func (s *Server) validationAuthenticateRequest(r *http.Request) (*manage.TokenGenerateRequest, error) {
 	if !(r.Method == "GET" || r.Method == "POST") {
 		return nil, errors.ErrInvalidRequest
 	}
@@ -63,41 +61,28 @@ func (s *Server) validationAuthenticateRequest(r *http.Request) (*AuthenticateRe
 		return nil, errors.ErrInvalidRequest
 	}
 
-	userID, err := s.passwordAuthenticationHandler(userID, password)
+	userInfo, err := s.Manager.VerifyUserPassword(userID, password)
 	if err != nil {
 		return nil, err
-	} else if userID == "" {
-		return nil, errors.ErrInvalidUser
 	}
 
-	req := &AuthenticateRequest{
-		UserID:  userID,
-		Request: r,
+	req := &manage.TokenGenerateRequest{
+		UserInfo: userInfo,
+		Request:  r,
 	}
 	return req, nil
-}
-
-// getAuthenticationToken get authentication token(code)
-func (s *Server) getAuthenticationToken(ctx context.Context, req *AuthenticateRequest) (*models.Token, error) {
-
-	tgr := &manage.TokenGenerateRequest{
-		UserID:         req.UserID,
-		AccessTokenExp: req.AccessTokenExp,
-		Request:        req.Request,
-	}
-	return s.Manager.GenerateAuthToken(ctx, tgr)
 }
 
 // HandleAuthenticateRequest the authorization request handling
 func (s *Server) HandleAuthenticateRequest(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 
-	req, err := s.validationAuthenticateRequest(r)
+	tgr, err := s.validationAuthenticateRequest(r)
 	if err != nil {
 		return s.redirectError(w, err)
 	}
 
-	ti, err := s.getAuthenticationToken(ctx, req)
+	ti, err := s.Manager.GenerateAuthToken(ctx, tgr)
 	if err != nil {
 		return s.redirectError(w, err)
 	}
@@ -165,18 +150,6 @@ func (s *Server) getErrorData(err error) (map[string]interface{}, int, http.Head
 	return data, statusCode, re.Header
 }
 
-func (s *Server) passwordAuthenticationHandler(username, password string) (string, error) {
-	var err error
-
-	user, err := s.Manager.GetUser(context.TODO(), username)
-	if err != nil {
-		return "", err
-	}
-
-	err = bcrypt.CompareHashAndPassword([]byte(user.GetPassword()), []byte(password))
-	return username, err
-}
-
 func (s *Server) internalErrorHandler(err error) (re *errors.Response) {
 	log.Infoln("Internal Error:", err.Error())
 	return
@@ -215,7 +188,7 @@ func (s *Server) SignupRequest(w http.ResponseWriter, r *http.Request) (err erro
 	if err = s.Manager.CreateUser(r.Context(), user); err != nil {
 		return s.redirectError(w, err)
 	}
-	return s.redirect(w, s.getUserData(user))
+	return s.redirect(w, user.GetPublicInfo())
 }
 
 // UpdateRequest validates the request
@@ -226,23 +199,14 @@ func (s *Server) UpdateRequest(w http.ResponseWriter, r *http.Request) (err erro
 		return s.redirectError(w, err)
 	}
 
-	username, err := s.Manager.ParseToken(r.Context(), tokenString)
+	userInfo, err := s.Manager.ParseToken(r.Context(), tokenString)
 	if err != nil {
 		return s.redirectError(w, err)
 	}
 
-	user, err := s.Manager.UpdateUserDetails(r, username)
+	updatedUserInfo, err := s.Manager.UpdateUserDetails(r, userInfo.UserName)
 	if err != nil {
 		s.redirectError(w, err)
 	}
-	return s.redirect(w, s.getUserData(user))
-}
-
-func (s *Server) getUserData(user *models.User) map[string]interface{} {
-	data := map[string]interface{}{
-		"username": user.GetUserName(),
-		"email":    user.GetEmail(),
-		"name":     user.GetName(),
-	}
-	return data
+	return s.redirect(w, updatedUserInfo)
 }
