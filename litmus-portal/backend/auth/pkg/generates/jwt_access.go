@@ -17,6 +17,7 @@ import (
 
 // JWTAccessClaims jwt claims
 type JWTAccessClaims struct {
+	*models.PublicUserInfo
 	jwt.StandardClaims
 }
 
@@ -30,8 +31,7 @@ func NewJWTAccessGenerate(key []byte, method jwt.SigningMethod) *JWTAccessGenera
 
 // GenerateBasic provide the basis of the generated token data
 type GenerateBasic struct {
-	User      *models.User
-	UserID    string
+	UserInfo  *models.PublicUserInfo
 	CreateAt  *time.Time
 	TokenInfo *models.Token
 	Request   *http.Request
@@ -44,11 +44,11 @@ type JWTAccessGenerate struct {
 }
 
 // Token based on the UUID generated token
-// func (a *JWTAccessGenerate) Token(ctx context.Context, data *types.GenerateBasic, isGenRefresh bool) (string, string, error) {
 func (a *JWTAccessGenerate) Token(ctx context.Context, data *GenerateBasic) (string, error) {
 	claims := &JWTAccessClaims{
+		PublicUserInfo: data.UserInfo,
 		StandardClaims: jwt.StandardClaims{
-			Subject:   data.UserID,
+			IssuedAt:  time.Now().Unix(),
 			ExpiresAt: data.TokenInfo.GetAccessCreateAt().Add(data.TokenInfo.GetAccessExpiresIn()).Unix(),
 		},
 	}
@@ -105,17 +105,17 @@ func (a *JWTAccessGenerate) Validate(ctx context.Context, tokenString string) (b
 }
 
 // Parse parses a UserName from a token
-func (a *JWTAccessGenerate) Parse(ctx context.Context, tokenString string) (string, error) {
+func (a *JWTAccessGenerate) Parse(ctx context.Context, tokenString string) (*models.PublicUserInfo, error) {
 
 	token, err := a.parseToken(tokenString)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	if claims, ok := token.Claims.(*JWTAccessClaims); ok && token.Valid {
-		return claims.Subject, nil
+		return claims.PublicUserInfo, nil
 	}
-	return "", errors.ErrInvalidAccessToken
+	return nil, errors.ErrInvalidAccessToken
 }
 
 func (a *JWTAccessGenerate) parseToken(tokenString string) (*jwt.Token, error) {

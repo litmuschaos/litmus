@@ -3,6 +3,8 @@ package manage
 import (
 	"net/http"
 	"time"
+
+	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/models"
 )
 
 // Config authorization configuration parameters
@@ -18,7 +20,7 @@ var (
 
 // TokenGenerateRequest provide to generate the token request parameters
 type TokenGenerateRequest struct {
-	UserID         string
+	UserInfo       *models.PublicUserInfo
 	AccessTokenExp time.Duration
 	Request        *http.Request
 }
