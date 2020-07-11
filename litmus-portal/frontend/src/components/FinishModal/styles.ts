@@ -13,12 +13,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     outline: 'none',
   },
   mark: {
-    marginLeft: 362,
-    marginRight: 371.34,
     marginTop: 80,
     textAlign: 'center',
   },
-  newc: {
+  heading: {
     fontfamily: 'Ubuntu',
     fontstyle: 'normal',
     fontweight: 'normal',
@@ -27,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: '2rem',
     color: theme.palette.common.black,
   },
-  text2: {
+  headWorkflow: {
     fontfamily: 'Ubuntu',
     fontstyle: 'normal',
     fontweight: 'normal',
@@ -39,14 +37,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   button: {
-    width: '10rem',
-    paddingTop: '1rem',
-    paddingBottom: '1rem',
     color: 'white',
     textAlign: 'center',
     marginTop: '2rem',
-    marginLeft: '43%',
-    marginRight: '50%',
   },
 }));
 
