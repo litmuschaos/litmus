@@ -8,26 +8,32 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     justifyContent: 'space-between',
   },
+
   root: {
     display: 'flex',
     flexDirection: 'row',
   },
+
   rootDiv: {
     width: '50rem',
   },
+
   mainDiv: {
     marginTop: theme.spacing(8.75),
     marginLeft: theme.spacing(17.5),
     width: '25rem',
   },
+
   heading: {
     marginTop: theme.spacing(6.2),
     fontSize: theme.spacing(5),
   },
+
   description: {
     marginTop: theme.spacing(3.75),
     fontSize: '1rem',
   },
+
   inputArea: {
     width: '20rem',
     marginTop: theme.spacing(3.5),
@@ -39,24 +45,30 @@ const useStyles = makeStyles((theme) => ({
     border: '0.0625rem solid',
     borderColor: theme.palette.secondary.dark,
   },
+
   loginDiv: {
     marginTop: theme.spacing(5),
     marginLeft: theme.spacing(-2),
   },
+
   imageDiv: {
     width: '50rem',
   },
+
   forgotPasssword: {
     marginTop: theme.spacing(3.125),
     marginBottom: theme.spacing(3.75),
   },
+
   inputDiv: {
     marginTop: theme.spacing(6.25),
   },
+
   linkForgotPass: {
     color: theme.palette.common.black,
     opacity: 0.5,
   },
+
   submitButton: {
     display: 'inline',
     backgroundColor: theme.palette.secondary.dark,
