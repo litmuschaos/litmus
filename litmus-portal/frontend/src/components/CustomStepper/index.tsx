@@ -2,8 +2,10 @@ import Button from '@material-ui/core/Button';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
+import clsx from 'clsx';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
+import { StepIconProps } from '@material-ui/core/StepIcon';
 import Center from '../../containers/layouts/Center';
 import ButtonFilled from '../ButtonFilled';
 import ButtonOutline from '../ButtonOutline';
@@ -13,6 +15,8 @@ import ReliablityScore from '../ReliabilityScore';
 import WorkflowCluster from '../WorkflowCluster';
 import ScheduleWorkflow from '../ScheduleWorkflow';
 import VerifyCommit from '../VerifyCommit';
+import useQontoStepIconStyles from './useQontoStepIconStyles';
+import QontoConnector from './quontoConnector';
 import useStyles from './styles';
 
 function getSteps(): string[] {
@@ -24,6 +28,49 @@ function getSteps(): string[] {
     'Schedule',
     'Verify and Commit',
   ];
+}
+
+function QontoStepIcon(props: StepIconProps) {
+  const classes = useQontoStepIconStyles();
+  const { active, completed } = props;
+
+  if (completed) {
+    return (
+      <div
+        className={clsx(classes.root, {
+          [classes.active]: active,
+          [classes.completed]: completed,
+        })}
+      >
+        <img src="./icons/NotPass.png" alt="Not Completed Icon" />
+      </div>
+    );
+  }
+  if (active) {
+    return (
+      <div
+        className={clsx(classes.root, {
+          [classes.active]: active,
+          [classes.completed]: completed,
+        })}
+      >
+        <div className={classes.circle} />
+      </div>
+    );
+  }
+  return (
+    <div
+      className={clsx(classes.root, {
+        [classes.active]: active,
+        [classes.completed]: completed,
+      })}
+    >
+      {/* <img src="./icons/workflowNotActive.svg" /> */}
+      <div className={classes.outerCircle}>
+        <div className={classes.innerCircle} />
+      </div>
+    </div>
+  );
 }
 
 function getStepContent(stepIndex: number): React.ReactNode {
@@ -68,10 +115,27 @@ const CustomStepper = () => {
 
   return (
     <div className={classes.root}>
-      <Stepper activeStep={activeStep} alternativeLabel>
-        {steps.map((label) => (
+      <Stepper
+        activeStep={activeStep}
+        connector={<QontoConnector />}
+        className={classes.stepper}
+        alternativeLabel
+      >
+        {steps.map((label, i) => (
           <Step key={label}>
-            <StepLabel>{label}</StepLabel>
+            {activeStep === i ? (
+              <StepLabel StepIconComponent={QontoStepIcon}>
+                <div className={classes.activeLabel} data-cy="labelText">
+                  {label}
+                </div>
+              </StepLabel>
+            ) : (
+              <StepLabel StepIconComponent={QontoStepIcon}>
+                <div className={classes.normalLabel} data-cy="labelText">
+                  {label}
+                </div>
+              </StepLabel>
+            )}
           </Step>
         ))}
       </Stepper>

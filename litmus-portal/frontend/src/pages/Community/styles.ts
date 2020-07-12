@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
   },
   mainHeader: {
     color: theme.palette.text.primary,
-    fontSize: '2rem',
+    fontSize: theme.spacing(5),
     marginBottom: theme.spacing(6),
   },
   LitmusAnalyticsBlock: {
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   header2: {
-    fontSize: '1.5rem',
+    fontSize: theme.spacing(3),
     padding: '1rem 0',
   },
   cardDiv: {
@@ -43,26 +43,27 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: theme.spacing(20),
-    width: theme.spacing(80),
+    flexGrow: 1,
     height: theme.spacing(42.5),
+    marginRight: theme.spacing(2),
     textAlign: 'center',
     color: theme.palette.text.secondary,
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
-      width: theme.spacing(50),
+      width: '100%',
       flexDirection: 'column',
     },
   },
   card: {
     backgroundColor: theme.palette.secondary.dark,
     height: theme.spacing(42.5),
-    width: theme.spacing(35),
+    width: theme.spacing(40),
     textAlign: 'center',
     color: '#FFFFFF',
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
       marginTop: theme.spacing(2),
-      width: theme.spacing(50),
+      width: '100%',
       flexDirection: 'column',
     },
   },
@@ -72,12 +73,12 @@ const useStyles = makeStyles((theme) => ({
   LitmusOnDev: {
     marginTop: theme.spacing(2),
     fontWeight: 'bold',
-    fontSize: '2rem',
+    fontSize: theme.spacing(3),
   },
   LitmusOnDevSpan: {
     position: 'relative',
     fontWeight: 'normal',
-    fontSize: '2rem',
+    fontSize: theme.spacing(3),
     bottom: theme.spacing(2),
     left: theme.spacing(3),
   },
@@ -94,7 +95,7 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(20),
     height: theme.spacing(6),
     backgroundColor: '#FFFFFF',
-    fontSize: '0.8rem',
+    fontSize: theme.spacing(1.6),
     color: theme.palette.text.primary,
     textTransform: 'none',
     [theme.breakpoints.down('sm')]: {

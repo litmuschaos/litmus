@@ -1,7 +1,10 @@
 .idea
 .vscode
+.nyc_output
 __pycache__/
 **/node_modules/
+**/.nyc_output/
+**/coverage/
 
 main
 out/
