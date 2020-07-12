@@ -21,6 +21,7 @@
     "@material-ui/lab": "^4.0.0-alpha.56",
     "@material-ui/pickers": "^3.2.10",
     "apollo-boost": "^0.4.9",
+    "clsx": "^1.1.1",
     "date-fns": "^2.14.0",
     "graphql": "^15.1.0",
     "graphql-tag": "^2.10.3",
