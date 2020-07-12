@@ -93,6 +93,9 @@ function customTheme(options: ThemeOptions) {
         },
       },
       MuiFormLabel: {
+        root: {
+          paddingLeft: 20,
+        },
         asterisk: {
           color: 'transparent',
         },

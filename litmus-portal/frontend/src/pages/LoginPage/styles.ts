@@ -31,9 +31,7 @@ const useStyles = makeStyles((theme) => ({
   inputArea: {
     width: '20rem',
     marginTop: theme.spacing(3.5),
-    display: 'flex',
     textDecoration: 'none',
-    flexDirection: 'column',
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
     paddingBottom: theme.spacing(2.2),

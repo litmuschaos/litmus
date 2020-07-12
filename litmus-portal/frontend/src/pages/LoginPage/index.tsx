@@ -1,10 +1,4 @@
-import {
-  Typography,
-  Paper,
-  TextField,
-  Hidden,
-  Button,
-} from '@material-ui/core';
+import { Typography, TextField, Hidden, Button } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
 import useStyles from './styles';
@@ -20,6 +14,7 @@ const LoginPage = () => {
     username: '',
     password: '',
   });
+
   const handleForm = () => {
     const formData: HTMLFormElement | null = document.querySelector(
       '#login-form'
@@ -36,6 +31,7 @@ const LoginPage = () => {
       response.text();
     });
   };
+
   return (
     <div className={classes.rootContainer}>
       <div className={classes.root}>
@@ -60,43 +56,40 @@ const LoginPage = () => {
               }}
             >
               <div className={classes.inputDiv}>
-                <Paper className={classes.inputArea}>
-                  <TextField
-                    id="filled-email-input"
-                    label="Username"
-                    name="username"
-                    value={authData.username}
-                    InputProps={{ disableUnderline: true }}
-                    data-cy="inputEmail"
-                    required
-                    onChange={(e) =>
-                      setAuthData({
-                        username: e.target.value,
-                        password: authData.password,
-                      })
-                    }
-                  />
-                </Paper>
-                <Paper className={classes.inputArea}>
-                  <TextField
-                    id="filled-password-input"
-                    label="Password"
-                    type="password"
-                    name="password"
-                    required
-                    value={authData.password}
-                    autoComplete="current-password"
-                    InputProps={{ disableUnderline: true }}
-                    data-cy="inputPassword"
-                    onChange={(e) =>
-                      setAuthData({
-                        username: authData.username,
-                        password: e.target.value,
-                      })
-                    }
-                  />
-                </Paper>
-
+                <TextField
+                  id="filled-email-input"
+                  label="Username"
+                  name="username"
+                  value={authData.username}
+                  InputProps={{ disableUnderline: true }}
+                  data-cy="inputEmail"
+                  required
+                  className={classes.inputArea}
+                  onChange={(e) =>
+                    setAuthData({
+                      username: e.target.value,
+                      password: authData.password,
+                    })
+                  }
+                />
+                <TextField
+                  id="filled-password-input"
+                  label="Password"
+                  type="password"
+                  name="password"
+                  required
+                  className={classes.inputArea}
+                  value={authData.password}
+                  autoComplete="current-password"
+                  InputProps={{ disableUnderline: true }}
+                  data-cy="inputPassword"
+                  onChange={(e) =>
+                    setAuthData({
+                      username: authData.username,
+                      password: e.target.value,
+                    })
+                  }
+                />
                 <Typography className={classes.forgotPasssword}>
                   <Link
                     to="/reset"
