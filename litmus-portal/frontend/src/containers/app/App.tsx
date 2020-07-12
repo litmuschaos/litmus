@@ -1,9 +1,11 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useEffect } from 'react';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import Loader from '../../components/Loader';
 import { history } from '../../redux/configureStore';
 import withTheme from '../../theme';
 import useStyles from './App-styles';
+import useActions from '../../redux/actions';
+import * as AnalyticsActions from '../../redux/actions/analytics';
 
 const ErrorPage = lazy(() => import('../../pages/ErrorPage'));
 const Workflows = lazy(() => import('../../pages/Workflows'));
@@ -30,7 +32,10 @@ function Routes() {
 
 function App() {
   const classes = useStyles();
-
+  const analyticsAction = useActions(AnalyticsActions);
+  useEffect(() => {
+    analyticsAction.loadCommunityAnalytics();
+  }, []);
   return (
     <Suspense fallback={<Loader />}>
       <Router history={history}>
