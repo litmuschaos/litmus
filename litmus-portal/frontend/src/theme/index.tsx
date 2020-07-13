@@ -92,6 +92,14 @@ function customTheme(options: ThemeOptions) {
           color: '#FFFFFF',
         },
       },
+      MuiFormLabel: {
+        root: {
+          paddingLeft: 20,
+        },
+        asterisk: {
+          color: 'transparent',
+        },
+      },
     },
     ...options,
   });
