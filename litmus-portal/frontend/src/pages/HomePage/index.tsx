@@ -1,4 +1,4 @@
-import { Card, CardActionArea, Typography } from '@material-ui/core';
+import { Card, CardActionArea, Typography, Button } from '@material-ui/core';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -97,6 +97,12 @@ const HomePage = () => {
                   Once you schedule chaos workflows, reliability analytics are
                   displayed here.
                 </Typography>
+
+                <Button variant="contained" className={classes.predefinedBtn}>
+                  <Typography variant="subtitle1">
+                    See pre-defined workflows
+                  </Typography>
+                </Button>
               </div>
               <div className={classes.imageDiv}>
                 <img src="icons/applause.png" alt="Applause icon" />
@@ -108,9 +114,19 @@ const HomePage = () => {
           </div>
           <div className={classes.contentDiv}>
             <div className={classes.statDiv}>
-              <Typography className={classes.statsHeading}>
-                <strong>How busy Litmus Project is?</strong>
-              </Typography>
+              <div className={classes.btnHeaderDiv}>
+                <Typography className={classes.statsHeading}>
+                  <strong>How busy Litmus Project is?</strong>
+                </Typography>
+                <Button className={classes.seeAllBtn}>
+                  <div className={classes.btnSpan}>
+                    <Typography className={classes.btnText}>
+                      See more
+                    </Typography>
+                    <img src="icons/next.png" alt="next" />
+                  </div>
+                </Button>
+              </div>
               <div className={classes.cardDiv}>
                 {cardData.map((data) => (
                   <InfoFilled
