@@ -7,13 +7,10 @@ import ProfileInfoDropdownItems from '../ProfileDropdownItems';
 import useStyles from './styles';
 
 const ProfileDropdown = ({ callbackFromParent }: any) => {
-  localStorage.setItem('User', 'Richard Hill');
-
-  localStorage.setItem('Email', 'richardrichard@gmail.com');
-
-  const user = localStorage.getItem('User');
-
-  const mail = localStorage.getItem('Email');
+  
+  const [user, setUser] = useState('Richard Hill');
+  
+  const [mail, setMail] = useState('richardrichard@gmail.com');
 
   const classes = useStyles();
 
