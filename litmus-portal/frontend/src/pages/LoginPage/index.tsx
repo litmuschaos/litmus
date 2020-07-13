@@ -43,8 +43,15 @@ const LoginPage = () => {
             </Typography>
             <Typography className={classes.description}>
               {' '}
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua
+              Your one-stop-shop for Chaos Engineering on{' '}
+              <img
+                src="icons/kubernetes.png"
+                alt="Kubernetes"
+                className={classes.descImg}
+              />{' '}
+              . Browse, create, manage monitor and analyze your chaos workflows.
+              With your own private ChaosHub, you can create your new chaos
+              experiments and share them with your team.
             </Typography>
             <form
               id="login-form"
@@ -57,7 +64,6 @@ const LoginPage = () => {
             >
               <div className={classes.inputDiv}>
                 <TextField
-                  id="filled-email-input"
                   label="Username"
                   name="username"
                   value={authData.username}
@@ -73,7 +79,6 @@ const LoginPage = () => {
                   }
                 />
                 <TextField
-                  id="filled-password-input"
                   label="Password"
                   type="password"
                   name="password"

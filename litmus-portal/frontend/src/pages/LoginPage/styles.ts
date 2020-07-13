@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   inputDiv: {
-    marginTop: theme.spacing(6.25),
+    marginTop: theme.spacing(1),
   },
 
   linkForgotPass: {
@@ -81,6 +81,10 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(2),
     marginLeft: theme.spacing(2),
     textTransform: 'none',
+  },
+
+  descImg: {
+    verticalAlign: 'middle',
   },
 }));
 
