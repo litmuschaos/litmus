@@ -37,7 +37,7 @@ export const communityData = createReducer<CommunityData>(initialState, {
       });
     });
 
-    const geoCountry: string[][] = data.google.geoCountry;
+    const { geoCountry } = data.google;
 
     const dailyExperimentData: SeriesData[] = [];
     data.google.dailyExperimentData.forEach((c: any) => {

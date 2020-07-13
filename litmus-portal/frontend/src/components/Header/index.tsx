@@ -128,7 +128,9 @@ const Header = () => {
                     </Grid>
 
                     <Grid item xs={9} sm={9}>
-                      <ProfileDropdown callbackFromParent={callBackForProfileDropdown} />
+                      <ProfileDropdown
+                        callbackFromParent={callBackForProfileDropdown}
+                      />
                     </Grid>
                   </Grid>
                 </Grid>

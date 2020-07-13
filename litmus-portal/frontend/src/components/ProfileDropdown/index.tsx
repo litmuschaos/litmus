@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { IconButton, Grid } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
@@ -7,9 +8,8 @@ import ProfileInfoDropdownItems from '../ProfileDropdownItems';
 import useStyles from './styles';
 
 const ProfileDropdown = ({ callbackFromParent }: any) => {
-  
   const [user, setUser] = useState('Richard Hill');
-  
+
   const [mail, setMail] = useState('richardrichard@gmail.com');
 
   const classes = useStyles();
