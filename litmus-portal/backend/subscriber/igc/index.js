@@ -21,7 +21,6 @@ const agentHandler = (ws) => {
     ws.on('message', (data) => {
         console.log(data)
     });
-
 };
 
 server('0.0.0.0', '8000', agentHandler);
