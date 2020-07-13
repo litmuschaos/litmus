@@ -14,11 +14,6 @@ export interface GeoCity {
   count: string;
 }
 
-export interface GeoCountry {
-  name: string;
-  count: string;
-}
-
 export interface SeriesData {
   date: string;
   count: string;
@@ -28,7 +23,7 @@ export interface Google {
   totalRuns: string;
   operatorInstalls: string;
   geoCity: GeoCity[];
-  geoCountry: GeoCountry[];
+  geoCountry: string[][];
   dailyOperatorData: SeriesData[];
   dailyExperimentData: SeriesData[];
 }
