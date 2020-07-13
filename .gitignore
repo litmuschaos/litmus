@@ -5,6 +5,7 @@
 __pycache__/
 **/node_modules/
 **/cypress/videos/
+**/cypress/screenshots/
 **/.nyc_output/
 **/coverage/
 
