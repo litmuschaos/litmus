@@ -55,7 +55,6 @@ const Community: React.FC = () => {
       color: '#BA3B34',
       value: parseInt(communityData.github.stars, 10),
       statType: 'Github Stars',
-      plus: true,
     },
   ];
 
