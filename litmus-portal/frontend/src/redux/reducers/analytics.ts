@@ -37,7 +37,11 @@ export const communityData = createReducer<CommunityData>(initialState, {
       });
     });
 
+<<<<<<< HEAD
     const { geoCountry } = data.google;
+=======
+    const geoCountry: string[][] = data.google.geoCountry;
+>>>>>>> Updated redux for GeoCountry Data (#1712)
 
     const dailyExperimentData: SeriesData[] = [];
     data.google.dailyExperimentData.forEach((c: any) => {
