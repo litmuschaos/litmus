@@ -1,23 +1,13 @@
-/* eslint-disable no-lone-blocks */
-/* eslint-disable max-len */
 import { Typography } from '@material-ui/core';
 import * as React from 'react';
 import Radio from '@material-ui/core/Radio';
 import Button from '@material-ui/core/Button';
 import useStyles from './styles';
 
-{
-  /* Check is image which is used as a sign on cluster page */
-}
-
 function Check() {
   const classes = useStyles();
 
   return <img src="icons/check.png" className={classes.check} alt="Check" />;
-}
-
-{
-  /* This screen is starting page of workflow */
 }
 
 function WorkflowCluster() {
