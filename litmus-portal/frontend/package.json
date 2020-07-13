@@ -45,6 +45,7 @@
   "lint-staged": {
     "src/**/*.+(js|jsx|ts|tsx)": [
       "npm run format",
+      "npx cypress run",
       "git add"
     ],
     "src/**/*.+(json|md)": [

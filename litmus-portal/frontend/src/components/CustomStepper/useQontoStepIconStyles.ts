@@ -39,7 +39,7 @@ const useQontoStepIconStyles = makeStyles((theme: Theme) => ({
     width: theme.spacing(1),
     height: theme.spacing(1),
     borderRadius: '50%',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.palette.common.white,
   },
 }));
 

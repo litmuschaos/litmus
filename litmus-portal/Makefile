@@ -94,4 +94,3 @@ unused-package-check:
 		echo "go mod tidy checking failed!"; echo "$${tidyRes}"; echo; \
 		echo "Please ensure you are using $$($(GO) version) for formatting code."; \
 	fi
-

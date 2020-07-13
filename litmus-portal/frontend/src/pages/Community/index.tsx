@@ -38,7 +38,7 @@ const Community: React.FC = () => {
       color: '#109B67',
       value: parseInt(communityData.google.operatorInstalls, 10),
       statType: 'Operator Installed',
-      plus: false,
+      plus: true,
     },
     {
       color: '#858CDD',
@@ -50,7 +50,6 @@ const Community: React.FC = () => {
       color: '#F6B92B',
       value: parseInt(communityData.github.experimentsCount, 10),
       statType: 'Total Experiments',
-      plus: true,
     },
     {
       color: '#BA3B34',
