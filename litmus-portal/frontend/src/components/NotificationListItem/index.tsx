@@ -11,8 +11,6 @@ import ErrorIcon from '@material-ui/icons/Error';
 import formatDistance from 'date-fns/formatDistance';
 import DeleteOutlineTwoToneIcon from '@material-ui/icons/DeleteOutlineTwoTone';
 
-import useStyles from './styles';
-
 interface NotificationListItemProps {
   message: any;
   divider: boolean;
@@ -20,7 +18,7 @@ interface NotificationListItemProps {
 }
 
 function NotificationListItem(props: NotificationListItemProps) {
-  const classes = useStyles();
+  
   const { message, divider, total } = props;
   const [hasErrorOccurred, setHasErrorOccurred] = useState(false);
 
@@ -35,7 +33,7 @@ function NotificationListItem(props: NotificationListItemProps) {
   useEffect(() => {}, [messageActive]);
 
   if (messageActive === false) {
-    return <div className={classes.empty} />;
+    return <div />;
   }
 
   if (messageActive === true) {
