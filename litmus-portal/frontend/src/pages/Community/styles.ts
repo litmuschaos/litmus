@@ -53,6 +53,16 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: 'column',
     },
   },
+  paperTimeSeries: {
+    width: theme.spacing(80),
+    height: theme.spacing(57.45),
+    color: '#FFFFFF',
+    [theme.breakpoints.down('sm')]: {
+      display: 'flex',
+      width: theme.spacing(50),
+      flexDirection: 'column',
+    },
+  },
   card: {
     backgroundColor: theme.palette.secondary.dark,
     height: theme.spacing(42.5),
@@ -80,6 +90,11 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '2rem',
     bottom: theme.spacing(2),
     left: theme.spacing(3),
+  },
+  formControl: {
+    margin: theme.spacing(0.5),
+    height: theme.spacing(6.5),
+    width: theme.spacing(38.75),
   },
   devToLogo: {
     fill: 'white',

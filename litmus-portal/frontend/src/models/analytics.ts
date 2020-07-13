@@ -31,6 +31,8 @@ export interface Google {
   geoCountry: GeoCountry[];
   dailyOperatorData: SeriesData[];
   dailyExperimentData: SeriesData[];
+  monthlyOperatorData: SeriesData[];
+  monthlyExperimentData: SeriesData[];
 }
 
 export interface CommunityData {
