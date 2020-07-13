@@ -4,7 +4,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   appBar: {
     width: '100%',
     height: '100%',
-    backgroundColor: '#FAFBFD',
+    backgroundColor: theme.palatte.background.default,
   },
   breadCrumbsGrid: {
     marginTop: theme.spacing(2),
