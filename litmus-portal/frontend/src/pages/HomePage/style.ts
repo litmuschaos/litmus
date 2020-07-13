@@ -7,10 +7,12 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     justifyContent: 'space-between',
   },
+
   root: {
     marginTop: theme.spacing(3),
     marginLeft: theme.spacing(10),
   },
+
   mainDiv: {
     marginLeft: theme.spacing(3.75),
     maxWidth: '50rem',
@@ -18,10 +20,12 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
   },
+
   userName: {
     fontSize: '2.5rem',
     marginBottom: theme.spacing(3.75),
   },
+
   createWorkflowCard: {
     width: '14.375rem',
     border: '1px solid ',
@@ -33,11 +37,13 @@ const useStyles = makeStyles((theme) => ({
       marginTop: theme.spacing(5),
     },
   },
+
   createWorkflowHeading: {
     fontSize: '0.9375rem',
     marginLeft: theme.spacing(3.75),
     paddingTop: theme.spacing(5),
   },
+
   createWorkflowTitle: {
     fontSize: 25,
     color: theme.palette.secondary.dark,
@@ -45,6 +51,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(3.75),
     marginTop: theme.spacing(2.5),
   },
+
   headingDiv: {
     display: 'flex',
     flexDirection: 'row',
@@ -53,41 +60,49 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: 'column',
     },
   },
+
   arrowForwardIcon: {
     color: '#5B44BA',
     marginLeft: theme.spacing(22.5),
     marginTop: theme.spacing(4.375),
     marginBottom: theme.spacing(2.5),
   },
+
   mainHeading: {
     color: theme.palette.primary.dark,
     fontSize: '1.5625rem',
     marginBottom: theme.spacing(0.625),
   },
+
   mainResult: {
     color: theme.palette.common.black,
     fontSize: '1.5625rem',
     maxWidth: '27.5rem',
     marginBottom: theme.spacing(3.125),
   },
+
   mainDesc: {
     color: theme.palette.common.black,
     fontSize: '1.125rem',
     maxWidth: '36rem',
   },
+
   imageDiv: {
     marginLeft: theme.spacing(10),
     marginTop: theme.spacing(10),
   },
+
   contentDiv: {
     display: 'flex',
     flexDirection: 'row',
     marginTop: theme.spacing(3.75),
-    [theme.breakpoints.down('sm')]: {
+    marginBottom: theme.spacing(2),
+    [theme.breakpoints.down('md')]: {
       display: 'flex',
       flexDirection: 'column',
     },
   },
+
   statDiv: {
     maxWidth: '50rem',
     minHeight: '16rem',
@@ -98,18 +113,21 @@ const useStyles = makeStyles((theme) => ({
       minHeight: '50rem',
     },
   },
+
   statsHeading: {
     fontSize: '1.5625rem',
     marginBottom: theme.spacing(3.75),
     paddingTop: theme.spacing(5),
     paddingLeft: theme.spacing(5),
   },
+
   quickActionDiv: {
     marginTop: theme.spacing(2),
     borderLeft: '1px solid rgba(0, 0, 0, 0.05)',
     paddingLeft: theme.spacing(2),
     marginLeft: theme.spacing(3),
   },
+
   cardDiv: {
     display: 'flex',
     flexDirection: 'row',
@@ -119,6 +137,51 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: 'column',
       alignItems: 'center',
     },
+  },
+
+  predefinedBtn: {
+    height: '2.8125rem',
+    backgroundColor: theme.palette.primary.dark,
+    color: theme.palette.common.white,
+    paddingLeft: theme.spacing(2.5),
+    paddingRight: theme.spacing(2.5),
+    textTransform: 'none',
+    marginTop: theme.spacing(3.75),
+    '&:hover': {
+      backgroundColor: theme.palette.primary.dark,
+    },
+  },
+
+  btnHeaderDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    [theme.breakpoints.down('sm')]: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
+  },
+
+  seeAllBtn: {
+    width: '7.5rem',
+    height: theme.spacing(5),
+    marginTop: theme.spacing(5),
+    marginLeft: 'auto',
+    [theme.breakpoints.down('sm')]: {
+      marginTop: theme.spacing(0.2),
+      marginBottom: theme.spacing(1),
+      marginLeft: theme.spacing(3.8),
+    },
+  },
+
+  btnSpan: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+
+  btnText: {
+    paddingRight: theme.spacing(1.25),
+    textDecoration: 'none',
+    color: theme.palette.secondary.dark,
   },
 }));
 
