@@ -4,7 +4,6 @@ import {
   AnalyticsAction,
   AnalyticsActions,
   GeoCity,
-  GeoCountry,
   SeriesData,
 } from '../../models';
 
@@ -38,13 +37,7 @@ export const communityData = createReducer<CommunityData>(initialState, {
       });
     });
 
-    const geoCountry: GeoCountry[] = [];
-    data.google.geoCountry.forEach((c: any) => {
-      geoCountry.push({
-        name: c[0],
-        count: c[1],
-      });
-    });
+    const geoCountry: string[][] = data.google.geoCountry;
 
     const dailyExperimentData: SeriesData[] = [];
     data.google.dailyExperimentData.forEach((c: any) => {
