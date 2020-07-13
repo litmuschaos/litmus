@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
   paperTimeSeries: {
     width: theme.spacing(80),
     height: theme.spacing(57.45),
-    color: theme.palatte.common.white,
+    color: theme.palette.common.white,
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
       width: theme.spacing(50),
