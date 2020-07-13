@@ -4,7 +4,6 @@ export default {
     url:
       process.env.ANALYTICS_API ||
       'https://staging-hub.litmuschaos.io/api/community',
-    // 'http://localhost:8080/community',
   },
   cookies: {
     token: 'token',
