@@ -55,9 +55,7 @@ class CommunityAnalyticsPlotNormal extends Component<
       y.push(datum.operatorInstalls);
       y2.push(datum.experimentRuns);
     });
-    this.setState({ x });
-    this.setState({ y });
-    this.setState({ y2 });
+    this.setState({ x, y, y2 });
   }
 
   render() {
@@ -106,11 +104,7 @@ class CommunityAnalyticsPlotNormal extends Component<
       ],
     };
 
-    const { x } = this.state;
-
-    const { y } = this.state;
-
-    const { y2 } = this.state;
+    const { x, y, y2 } = this.state;
 
     return (
       <Plot
