@@ -40,7 +40,7 @@ const Header = () => {
     </Menu>
   );
 
-  const myCallback = () => {};
+  const callBackForProfileDropdown = () => {};
 
   const fetchRandomMessages = useCallback(() => {
     const messages = [];
@@ -128,7 +128,7 @@ const Header = () => {
                     </Grid>
 
                     <Grid item xs={9} sm={9}>
-                      <ProfileDropdown callbackFromParent={myCallback} />
+                      <ProfileDropdown callbackFromParent={callBackForProfileDropdown} />
                     </Grid>
                   </Grid>
                 </Grid>
