@@ -8,7 +8,7 @@ import InfoFilled from '../../components/InfoFilled/index';
 import Scaffold from '../../containers/layouts/Scaffold/index';
 import useStyles from './styles';
 import QuickActionCard from '../../components/QuickActionCard';
-
+import GeoMap from '../../components/GeoMap/index';
 // Reusable Header Component
 const Header2: React.FC = ({ children }) => {
   const classes = useStyles();
@@ -106,8 +106,8 @@ const Community: React.FC = () => {
             <div className={classes.LitmusUsedDiv}>
               {/* This Paper should be replaced by World Map
               Component where Litmus is used */}
-              <Paper className={classes.paper}>Dummy World Analytics</Paper>
-              <div className={classes.quickActionCard}>
+              <GeoMap/>
+             <div className={classes.quickActionCard}>
                 <QuickActionCard />
               </div>
             </div>
