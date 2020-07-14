@@ -46,6 +46,8 @@ func (s *Server) redirect(w http.ResponseWriter, data interface{}) error {
 	if err != nil {
 		return err
 	}
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	_, err = w.Write(response)
 	return err
 }
