@@ -10,7 +10,6 @@ const GeoChart=()=> {
     const { communityData } = useSelector((state) => state);
     const data = communityData.google.geoCountry;
     
-    
     const stale = [["Country", "Count"]];
     const datac = stale.concat(data);
    
