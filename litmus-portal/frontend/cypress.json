@@ -1,0 +1,5 @@
+{
+  "experimentalComponentTesting": true,
+  "componentFolder": "cypress/component",
+  "specFiles": "*spec.*"
+}

@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/reducers';
 import {
   ComposableMap,
   Geographies,
@@ -38,23 +37,22 @@ const MapChart = () => {
   return (
     <div>
       <ComposableMap
-      style={{
-        width: 640,
-        height: 340,
-      }}
+        style={{
+          width: 640,
+          height: 340,
+        }}
       >
         <ZoomableGroup zoom={1.3}>
           <Geographies geography={geoUrl}>
             {({ geographies }) =>
-              geographies
-                .map((geo) => (
-                  <Geography
-                    key={geo.rsmKey}
-                    geography={geo}
-                    fill="#CFCFCF"
-                    stroke="#CFCFCF"
-                  />
-                ))
+              geographies.map((geo) => (
+                <Geography
+                  key={geo.rsmKey}
+                  geography={geo}
+                  fill="#CFCFCF"
+                  stroke="#CFCFCF"
+                />
+              ))
             }
           </Geographies>
           {cityData.map(({ name, coordinates, markerOffset }) => (
@@ -69,7 +67,6 @@ const MapChart = () => {
               >
                 <circle cx="12" cy="10" r="4" />
               </g>
-              
             </Marker>
           ))}
         </ZoomableGroup>

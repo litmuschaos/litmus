@@ -48,6 +48,7 @@
   "lint-staged": {
     "src/**/*.+(js|jsx|ts|tsx)": [
       "npm run format",
+      "npx cypress run",
       "git add"
     ],
     "src/**/*.+(json|md)": [
@@ -81,6 +82,8 @@
     "autoprefixer": "^9.3.1",
     "babel-eslint": "^10.1.0",
     "cross-env": "^5.2.0",
+    "cypress": "^4.10.0",
+    "cypress-react-unit-test": "^4.9.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-prettier": "^6.11.0",
