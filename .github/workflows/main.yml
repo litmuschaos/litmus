@@ -41,18 +41,15 @@ jobs:
           ref: ${{steps.getcommit.outputs.sha}}
 
       - name: Cloning the litmus-e2e Repo
-        if: startsWith(github.event.comment.body, '/run-e2e-login') || startsWith(github.event.comment.body, '/run-e2e-workflow') || startsWith(github.event.comment.body, '/run-e2e-all')
         run: |
            git clone https://github.com/litmuschaos/litmus-e2e.git -b litmus-portal-staging
   
       - name: Installing Dependencies
-        if: startsWith(github.event.comment.body, '/run-e2e-login') || startsWith(github.event.comment.body, '/run-e2e-workflow') || startsWith(github.event.comment.body, '/run-e2e-all')
         uses: bahmutov/npm-install@645c62e
         with:
           working-directory: litmus-portal/frontend
 
       - name: Starting the server
-        if: startsWith(github.event.comment.body, '/run-e2e-login') || startsWith(github.event.comment.body, '/run-e2e-workflow') || startsWith(github.event.comment.body, '/run-e2e-all')
         run: npm start &
         working-directory: litmus-portal/frontend
 
@@ -100,6 +97,7 @@ jobs:
          startsWith(github.event.comment.body, '/run-e2e-login') || startsWith(github.event.comment.body, '/run-e2e-workflow') || startsWith(github.event.comment.body, '/run-e2e-all')
         run: |
           echo ::set-env name=TEST_RUN::true
+  
       - name: Check for all the jobs are succeeded
         if: ${{ success() && env.TEST_RUN == 'true' }}
         uses: peter-evans/create-or-update-comment@v1
