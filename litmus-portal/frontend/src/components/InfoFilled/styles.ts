@@ -2,9 +2,12 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   infoFilledDiv: {
+    display: 'flex',
+    flexDirection: 'column',
+    flexGrow: 1,
     width: theme.spacing(30),
-    height: theme.spacing(25),
-    marginRight: theme.spacing(2),
+    height: theme.spacing(22),
+    marginRight: theme.spacing(3),
     borderRadius: 3,
   },
   horizontalRule: {
@@ -15,21 +18,21 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     paddingTop: theme.spacing(4),
     fontFamily: 'Ubuntu',
-    fontSize: '2rem',
+    letterSpacing: theme.spacing(0.3),
+    fontWeight: 'bold',
+    fontSize: theme.spacing(3),
     color: theme.palette.common.white,
-    fontWeight: 500,
   },
   plusBtn: {
-    fontSize: '1.5rem',
+    fontSize: theme.spacing(2.5),
     fontWeight: 'bold',
   },
   statType: {
     textAlign: 'center',
-    padding: '1rem 2rem',
-    fontSize: '1rem',
+    fontSize: theme.spacing(2),
     color: theme.palette.common.white,
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(1),
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
   },
   horizontalLine: {
     width: 120,

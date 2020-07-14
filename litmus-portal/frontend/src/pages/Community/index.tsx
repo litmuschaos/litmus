@@ -4,11 +4,21 @@ import Paper from '@material-ui/core/Paper'; // Temporary -> Should be replaced 
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
+import { useSelector } from 'react-redux';
 import InfoFilled from '../../components/InfoFilled/index';
 import Scaffold from '../../containers/layouts/Scaffold/index';
 import useStyles from './styles';
 import QuickActionCard from '../../components/QuickActionCard';
+import { RootState } from '../../redux/reducers';
 import GeoMap from '../../components/GeoMap/index';
+
+interface CardValueData {
+  color: string;
+  value: number;
+  statType: string;
+  plus?: boolean | undefined;
+}
+
 // Reusable Header Component
 const Header2: React.FC = ({ children }) => {
   const classes = useStyles();
@@ -23,6 +33,32 @@ const Header2: React.FC = ({ children }) => {
 
 const Community: React.FC = () => {
   const classes = useStyles();
+  const communityData = useSelector((state: RootState) => state.communityData);
+  const cardData: CardValueData[] = [
+    {
+      color: '#109B67',
+      value: parseInt(communityData.google.operatorInstalls, 10),
+      statType: 'Operator Installed',
+      plus: true,
+    },
+    {
+      color: '#858CDD',
+      value: parseInt(communityData.google.totalRuns, 10),
+      statType: 'Total Experiment Runs',
+      plus: true,
+    },
+    {
+      color: '#F6B92B',
+      value: parseInt(communityData.github.experimentsCount, 10),
+      statType: 'Total Experiments',
+    },
+    {
+      color: '#BA3B34',
+      value: parseInt(communityData.github.stars, 10),
+      statType: 'Github Stars',
+    },
+  ];
+
   return (
     <Scaffold>
       <div>
@@ -37,30 +73,14 @@ const Community: React.FC = () => {
             Stats for the Litmus community in the last 24 hours
           </Typography>
           <div className={classes.cardDiv}>
-            <InfoFilled
-              color="#109B67"
-              value={357800000}
-              plus
-              statType="Total chaos Operator Installed"
-            />
-            <InfoFilled
-              color="#858CDD"
-              value={12786}
-              plus
-              statType="Total Experiments today"
-            />
-            <InfoFilled
-              color="#F6B92B"
-              value={2500}
-              plus
-              statType="Total Runs experiments today"
-            />
-            <InfoFilled
-              color="#BA3B34"
-              value={39900}
-              plus
-              statType="Total chaos experiments today"
-            />
+            {cardData.map((data) => (
+              <InfoFilled
+                color={data.color}
+                value={data.value}
+                statType={data.statType}
+                plus={data.plus}
+              />
+            ))}
           </div>
         </section>
 
@@ -106,8 +126,10 @@ const Community: React.FC = () => {
             <div className={classes.LitmusUsedDiv}>
               {/* This Paper should be replaced by World Map
               Component where Litmus is used */}
-              <GeoMap/>
-             <div className={classes.quickActionCard}>
+              <Paper className={classes.paper}>
+                <GeoMap />
+              </Paper>
+              <div className={classes.quickActionCard}>
                 <QuickActionCard />
               </div>
             </div>
