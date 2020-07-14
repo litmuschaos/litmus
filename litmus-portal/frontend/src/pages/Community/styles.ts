@@ -42,9 +42,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   paper: {
-    padding: theme.spacing(20),
     flexGrow: 1,
-    height: theme.spacing(42.5),
     marginRight: theme.spacing(2),
     textAlign: 'center',
     color: theme.palette.text.secondary,

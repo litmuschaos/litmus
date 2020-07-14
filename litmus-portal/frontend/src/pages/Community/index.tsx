@@ -10,6 +10,7 @@ import Scaffold from '../../containers/layouts/Scaffold/index';
 import useStyles from './styles';
 import QuickActionCard from '../../components/QuickActionCard';
 import { RootState } from '../../redux/reducers';
+import GeoMap from '../../components/GeoMap/index';
 
 interface CardValueData {
   color: string;
@@ -125,7 +126,9 @@ const Community: React.FC = () => {
             <div className={classes.LitmusUsedDiv}>
               {/* This Paper should be replaced by World Map
               Component where Litmus is used */}
-              <Paper className={classes.paper}>Dummy World Analytics</Paper>
+              <Paper className={classes.paper}>
+                <GeoMap />
+              </Paper>
               <div className={classes.quickActionCard}>
                 <QuickActionCard />
               </div>
