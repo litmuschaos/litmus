@@ -182,8 +182,6 @@ spec:
                                   type: string
                                 mountPath:
                                   type: string
-
-
         status:
           type: object
   version: v1alpha1
