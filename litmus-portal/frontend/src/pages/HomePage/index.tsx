@@ -1,6 +1,6 @@
 import { Card, CardActionArea, Typography, Button } from '@material-ui/core';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import React, { useState } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import InfoFilled from '../../components/InfoFilled/index';
@@ -8,6 +8,7 @@ import QuickActionCard from '../../components/QuickActionCard';
 import Scaffold from '../../containers/layouts/Scaffold';
 import useStyles from './style';
 import { RootState } from '../../redux/reducers';
+import WelcomeModal from '../../components/WelcomeModal';
 
 const CreateWorkflowCard = () => {
   const classes = useStyles();
@@ -46,7 +47,7 @@ interface CardValueData {
 }
 
 const HomePage = () => {
-  const communityData = useSelector((state: RootState) => state.communityData);
+  const { communityData, userData } = useSelector((state: RootState) => state);
   const cardData: CardValueData[] = [
     {
       color: '#109B67',
@@ -71,14 +72,15 @@ const HomePage = () => {
       statType: 'Github Stars',
     },
   ];
-  const [userName] = useState('Richard Hill');
+  const { name } = userData;
   const classes = useStyles();
+  if (userData.email === '') return <WelcomeModal />;
   return (
     <Scaffold>
       <div className={classes.rootContainer}>
         <div className={classes.root}>
           <Typography className={classes.userName}>
-            Welcome, <strong>{userName}</strong>
+            Welcome, <strong>{name}</strong>
           </Typography>
           <div className={classes.headingDiv}>
             <div className={classes.mainDiv}>

@@ -1,6 +1,8 @@
-import jwt_decode from 'jsonwebtoken';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import jwtDecode from 'jsonwebtoken';
 import createReducer from './createReducer';
 import { UserData, UserActions, UserAction } from '../../models/user';
+import { setCookie } from '../../utils/cookies';
 
 const initialState: UserData = {
   name: '',
@@ -13,10 +15,13 @@ const initialState: UserData = {
 export const userData = createReducer<UserData>(initialState, {
   [UserActions.LOAD_USER_DETAILS](state: UserData, action: UserAction) {
     try {
-      let data: any = jwt_decode.decode(action.payload);
+      const jwt = action.payload as string;
+      const data: any = jwtDecode.decode(jwt);
+      setCookie('token', jwt, 1);
       return {
         ...state,
         ...data,
+        token: jwt,
       };
     } catch (err) {
       console.log('ERROR: ', err);
@@ -24,6 +29,17 @@ export const userData = createReducer<UserData>(initialState, {
         ...state,
       };
     }
+  },
+  [UserActions.UPDATE_USER_DETAILS](state: UserData, action: UserAction) {
+    return {
+      ...state,
+      ...(action.payload as Object),
+    };
+  },
+  [UserActions.LOGOUT_USER](state: UserData, action: UserAction) {
+    return {
+      ...initialState,
+    };
   },
 });
 
