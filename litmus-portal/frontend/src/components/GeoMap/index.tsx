@@ -1,6 +1,6 @@
 import React from 'react';
 import Stepper from '@material-ui/core/Stepper';
-import { StepIconProps } from '@material-ui/core/StepIcon';
+import Step from '@material-ui/core/Step';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import GeoChart from './countryMap';
@@ -79,7 +79,9 @@ const GeoMap = () => {
           alternativeLabel
           activeStep={activeStep}
           data-cy="Welcome-stepper"
-        ></Stepper>
+        >
+          <Step>Switch</Step>
+        </Stepper>
       </div>
     </div>
   );
