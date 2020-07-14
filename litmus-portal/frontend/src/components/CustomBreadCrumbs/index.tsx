@@ -11,30 +11,38 @@ interface CustomBreadcrumbsProps {
 
 const CustomBreadcrumbs: React.FC<CustomBreadcrumbsProps> = ({ location }) => {
   const path: string[] = location.split('/');
+
   let intermediatRoutes: string = '/';
+
   const classes = useStyles();
+
   useEffect(() => {}, [path]);
 
   return (
     <Breadcrumbs aria-label="breadcrumb">
       <Link to="/" className={classes.breadCrumb} />
-      {path.map((p: string) => {
-        if (p) {
-          intermediatRoutes += p;
+
+      {path.map((path: string) => {
+        if (path) {
+          intermediatRoutes += path;
+
           const link = (
             <Link
               to={intermediatRoutes}
               className={classes.breadCrumb}
               onClick={() => {
-                history.push(`/${p}`);
+                history.push(`/${path}`);
               }}
             >
-              {p.charAt(0).toUpperCase() + p.slice(1)}
+              {path.charAt(0).toUpperCase() + path.slice(1)}
             </Link>
           );
+
           intermediatRoutes += '/';
+
           return link;
         }
+
         return '';
       })}
     </Breadcrumbs>

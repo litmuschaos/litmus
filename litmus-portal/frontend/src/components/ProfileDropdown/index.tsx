@@ -52,6 +52,7 @@ const ProfileDropdown = ({ callbackFromParent }: any) => {
   const [isProfilePopoverOpen, setProfilePopoverOpen] = useState(false);
 
   const profileMenuRef = useRef();
+
   const node = useRef();
 
   const handleClick = (e: any) => {

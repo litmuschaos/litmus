@@ -71,9 +71,11 @@ const Header = () => {
     localStorage.setItem('#ActiveMessages', `${notificationsList.length}`);
 
     const oneDaySeconds = 60 * 60 * 24;
+
     let curUnix = Math.round(
       new Date().getTime() / 1000 - iterations * oneDaySeconds
     );
+
     for (let i = 0; i < iterations; i += 1) {
       const notificationItem = notificationsList[i];
       const message = {

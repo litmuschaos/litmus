@@ -28,6 +28,7 @@ function NotificationsPopperButton(props: NotifierProps) {
   const { messages, count } = props;
 
   const anchorEl = useRef();
+
   const [isOpen, setIsOpen] = useState(false);
 
   const handleClick = useCallback(() => {
@@ -39,6 +40,7 @@ function NotificationsPopperButton(props: NotifierProps) {
   }, [setIsOpen]);
 
   const id = isOpen ? 'scroll-playground' : null;
+
   return (
     <div>
       <IconButton
@@ -61,6 +63,7 @@ function NotificationsPopperButton(props: NotifierProps) {
           <NotificationsOutlinedIcon />
         </Badge>
       </IconButton>
+
       <Popover
         disableScrollLock
         id={id as string}
@@ -81,8 +84,10 @@ function NotificationsPopperButton(props: NotifierProps) {
           <Box pt={1} pl={2} pb={1} pr={1}>
             <Typography variant="subtitle1">Notifications</Typography>
           </Box>
+
           <Divider className={classes.divider} />
         </AppBar>
+
         <List dense className={classes.tabContainer}>
           {messages.length === 0 ? (
             <ListItem>

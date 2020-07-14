@@ -19,6 +19,7 @@ interface NotificationListItemProps {
 
 function NotificationListItem(props: NotificationListItemProps) {
   const { message, divider, total } = props;
+
   const [hasErrorOccurred, setHasErrorOccurred] = useState(false);
 
   const currentCount = total as number;
