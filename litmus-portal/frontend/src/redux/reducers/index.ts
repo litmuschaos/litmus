@@ -2,9 +2,12 @@ import { History } from 'history'; // eslint-disable-line import/no-extraneous-d
 import { combineReducers } from 'redux';
 import { CommunityData } from '../../models';
 import * as analyticsReducer from './analytics';
+import * as userReducer from './user';
+import { UserData } from '../../models/user';
 
 export interface RootState {
   communityData: CommunityData;
+  userData: UserData;
 }
 
 export default (
@@ -12,4 +15,5 @@ export default (
 ) =>
   combineReducers({
     ...analyticsReducer,
+    ...userReducer,
   });
