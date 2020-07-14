@@ -1,5 +1,6 @@
 import React from 'react';
 import Stepper from '@material-ui/core/Stepper';
+import { StepIconProps } from '@material-ui/core/StepIcon';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import GeoChart from './countryMap';
