@@ -1,27 +1,11 @@
 import React from 'react';
-import clsx from 'clsx';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { StepIconProps } from '@material-ui/core/StepIcon';
 import GeoChart from './countryMap';
 import CityMap from './cityMap';
 import Center from '../../containers/layouts/Center';
-function QontoStepIcon(props: StepIconProps) {
-  const { active, completed } = props;
-
-  return (
-    <div>
-      {completed ? (
-        <div />
-      ) : (
-        <div />
-      )}
-    </div>
-  );
-}
 
 function getSteps() {
   return ['', ''];
@@ -30,7 +14,7 @@ function getSteps() {
 function getStepContent(step: number) {
   switch (step) {
     case 0:
-      return <CityMap />; 
+      return <CityMap />;
     case 1:
       return <GeoChart />;
     default:
@@ -42,7 +26,7 @@ function getStepContent(step: number) {
   }
 }
 
-const GeoMap=()=> {
+const GeoMap = () => {
   const [activeStep, setActiveStep] = React.useState(0);
   const steps = getSteps();
 
@@ -82,21 +66,24 @@ const GeoMap=()=> {
                 onClick={handleNext}
                 data-cy="Welcome-continue"
               >
-                {activeStep === steps.length ? "City Wise Users" : 'Country Wise Users'}
+                {activeStep === steps.length
+                  ? 'City Wise Users'
+                  : 'Country Wise Users'}
               </Button>
             </div>
           </div>
         )}
       </div>
-      <div >
+      <div>
         <Stepper
           alternativeLabel
           activeStep={activeStep}
           data-cy="Welcome-stepper"
         >
+          <Step>Switch</Step>
         </Stepper>
       </div>
     </div>
   );
-}
+};
 export default GeoMap;

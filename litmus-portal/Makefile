@@ -16,7 +16,7 @@ IGC_IMAGE ?= litmusportal-igc
 IMGTAG ?= ci
 
 .PHONY: all
-all: deps litmus-portal-check build push
+all: deps litmus-portal-check litmus-portal-test build push
 
 .PHONY: help
 help:
@@ -65,7 +65,7 @@ litmus-portal-push:
 
 
 .PHONY: litmus-portal-check
- litmus-portal-check : lint-checks unused-package-check
+litmus-portal-check : lint-checks unused-package-check
 
 lint-checks:
 	@echo "------------------"
@@ -94,4 +94,12 @@ unused-package-check:
 		echo "go mod tidy checking failed!"; echo "$${tidyRes}"; echo; \
 		echo "Please ensure you are using $$($(GO) version) for formatting code."; \
 	fi
+	
+.PHONY: litmus-portal-test
+litmus-portal-test : frontend-unit-test
 
+frontend-unit-test:
+	@echo "------------------"
+	@echo "--> Frontend Unit Test"
+	@echo "------------------"
+	cd ./frontend && npm i && npx cypress run
