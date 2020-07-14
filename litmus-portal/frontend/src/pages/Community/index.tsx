@@ -135,7 +135,7 @@ const Community: React.FC = () => {
           <div className={classes.LitmusAnalyticsBlock}>
             <Header2>Periodic growth of Litmus</Header2>
             <div className={classes.LitmusAnalyticsDiv}>
-              <Paper className={classes.paperTimeSeries}>
+              <Paper className={classes.paper}>
                 <FormControl variant="outlined" className={classes.formControl}>
                   <InputLabel htmlFor="outlined-selection">
                     Plot Style
@@ -173,7 +173,6 @@ const Community: React.FC = () => {
                     <option value="Monthly">Monthly</option>
                   </Select>
                 </FormControl>
-
                 {currentPlotType.name === 'Growth' &&
                 currentGranularityType.name === 'Daily' ? (
                   <CommunityAnalyticsPlotCumulative

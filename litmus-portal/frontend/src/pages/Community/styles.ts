@@ -52,16 +52,6 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: 'column',
     },
   },
-  paperTimeSeries: {
-    width: theme.spacing(80),
-    height: theme.spacing(57.45),
-    color: theme.palette.common.white,
-    [theme.breakpoints.down('sm')]: {
-      display: 'flex',
-      width: theme.spacing(50),
-      flexDirection: 'column',
-    },
-  },
   formControl: {
     margin: theme.spacing(0.5),
     height: theme.spacing(6.5),

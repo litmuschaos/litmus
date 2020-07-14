@@ -129,21 +129,21 @@ class CommunityAnalyticsPlotNormal extends Component<
         ]}
         layout={{
           autosize: true,
-          width: 640,
-          height: 400,
+          width: 720,
+          height: 500,
           title: 'Trend',
           xaxis: {
             rangeselector: selectorOptions as any,
             rangeslider: { visible: true },
           },
           yaxis: {
-            tickcolor: 'white',
-            tickfont: {
-              color: 'white',
-            },
+            title: 'Operators',
+            side: 'left',
             showgrid: false,
           },
           yaxis2: {
+            title: 'Experiments',
+            side: 'right',
             overlaying: 'y',
           },
         }}
