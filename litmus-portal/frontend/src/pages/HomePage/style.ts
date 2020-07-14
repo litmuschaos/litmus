@@ -2,6 +2,7 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   rootContainer: {
+    flexGrow: 1,
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
@@ -15,10 +16,10 @@ const useStyles = makeStyles((theme) => ({
 
   mainDiv: {
     marginLeft: theme.spacing(3.75),
-    maxWidth: '50rem',
-    minHeight: '16rem',
+    width: '50rem',
     display: 'flex',
     flexDirection: 'row',
+    flexGrow: 1,
   },
 
   userName: {
@@ -31,10 +32,11 @@ const useStyles = makeStyles((theme) => ({
     border: '1px solid ',
     borderColor: theme.palette.secondary.dark,
     borderRadius: 3,
-    marginLeft: theme.spacing(5),
+    marginRight: theme.spacing(3.5),
     boxShadow: '2px 1px 9px rgba(91, 68, 186, 0.25)',
     [theme.breakpoints.down('sm')]: {
       marginTop: theme.spacing(5),
+      marginLeft: theme.spacing(4),
     },
   },
 
@@ -104,8 +106,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   statDiv: {
-    maxWidth: '50rem',
-    minHeight: '16rem',
+    width: '50rem',
+    flexGrow: 1,
     backgroundColor: 'rgba(255, 255, 255, 0.6)',
     borderRadius: 3,
     [theme.breakpoints.down('sm')]: {
@@ -131,6 +133,7 @@ const useStyles = makeStyles((theme) => ({
   cardDiv: {
     display: 'flex',
     flexDirection: 'row',
+    flexGrow: 1,
     paddingLeft: theme.spacing(5),
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
