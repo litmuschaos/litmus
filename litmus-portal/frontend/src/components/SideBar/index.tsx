@@ -6,6 +6,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import React from 'react';
 import useStyles from './styles';
+import { history } from '../../redux/configureStore';
 
 interface CustomisedListItemProps {
   handleClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
@@ -51,20 +52,40 @@ const SideBar = () => {
       </div>
 
       <List className={classes.drawerList}>
-        <CustomisedListItem key="home" handleClick={() => {}} label="Workflows">
+        <CustomisedListItem
+          key="home"
+          handleClick={() => {
+            history.push('/workflow');
+          }}
+          label="Workflows"
+        >
           <img src="./icons/workflows.png" alt="homeIcon" />
         </CustomisedListItem>
         <CustomisedListItem
           key="Settings"
-          handleClick={() => {}}
+          handleClick={() => {
+            history.push('/404');
+          }}
           label="My Hub"
         >
           <img src="./icons/hub.png" alt="homeIcon" />
         </CustomisedListItem>
-        <CustomisedListItem key="home" handleClick={() => {}} label="Settings">
+        <CustomisedListItem
+          key="home"
+          handleClick={() => {
+            history.push('/404');
+          }}
+          label="Settings"
+        >
           <img src="./icons/setting.png" alt="homeIcon" />
         </CustomisedListItem>
-        <CustomisedListItem key="home" handleClick={() => {}} label="Community">
+        <CustomisedListItem
+          key="home"
+          handleClick={() => {
+            history.push('/community');
+          }}
+          label="Community"
+        >
           <img src="./icons/community.png" alt="homeIcon" />
         </CustomisedListItem>
       </List>
