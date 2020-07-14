@@ -102,4 +102,4 @@ frontend-unit-test:
 	@echo "------------------"
 	@echo "--> Frontend Unit Test"
 	@echo "------------------"
-	cd ./frontend && npx cypress run
+	cd ./frontend && npm i && npx cypress run
