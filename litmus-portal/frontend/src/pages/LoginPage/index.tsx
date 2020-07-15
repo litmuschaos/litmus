@@ -56,14 +56,14 @@ const LoginPage = () => {
               Welcome to <strong>Litmus!</strong>
             </Typography>
             <Typography className={classes.description} gutterBottom>
-              {' '}
-              Your one-stop-shop for Chaos Engineering on{' '}
+              Your one-stop-shop for Chaos Engineering on
               <img
                 src="icons/kubernetes.png"
                 alt="Kubernetes"
                 className={classes.descImg}
-              />{' '}
+              />
               . Browse, create, manage monitor and analyze your chaos workflows.
+              <br />
             </Typography>
             <Typography className={classes.description}>
               With your own private ChaosHub, you can create your new chaos

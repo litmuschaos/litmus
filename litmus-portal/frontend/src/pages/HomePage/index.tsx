@@ -60,7 +60,7 @@ const HomePage = () => {
                 <Typography className={classes.mainResult}>
                   <strong>
                     You have established your own first project on Litmus
-                    portal.{' '}
+                    portal.
                   </strong>
                 </Typography>
                 <Typography className={classes.mainDesc}>
@@ -68,7 +68,6 @@ const HomePage = () => {
                   Once you schedule chaos workflows, reliability analytics are
                   displayed here.
                 </Typography>
-
                 <Button variant="contained" className={classes.predefinedBtn}>
                   <Typography variant="subtitle1">
                     See pre-defined workflows

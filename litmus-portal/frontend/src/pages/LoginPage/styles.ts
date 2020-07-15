@@ -33,6 +33,10 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3.75),
     fontSize: '1rem',
   },
+  description2: {
+    marginTop: theme.spacing(1),
+    fontSize: '1rem',
+  },
 
   inputArea: {
     width: '20rem',
@@ -85,6 +89,7 @@ const useStyles = makeStyles((theme) => ({
 
   descImg: {
     verticalAlign: 'middle',
+    paddingLeft: theme.spacing(0.625),
   },
 }));
 
