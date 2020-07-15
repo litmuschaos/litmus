@@ -43,7 +43,8 @@ function WorkflowCluster() {
         </div>
       </div>
 
-      {/* Division is used for Ignite-cluster(where this Litmus portal is install and running) or alternative Install Litmus Agent to other Kubernetes cluster */}
+      {/* Division is used for Ignite-cluster(where this Litmus portal is install and running)
+       or alternative Install Litmus Agent to other Kubernetes cluster */}
       <div>
         <div
           style={{
