@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
 import React, { useState } from 'react';
 import CustomSlider from '../CustomSlider';
 import CustomResultModal from '../ResultModal';
@@ -7,34 +7,71 @@ import ButtonOutline from '../Button/ButtonOutline';
 import InfoTooltip from '../InfoTooltip';
 
 const ReliablityScore = () => {
-  const [value, setValue] = useState<number | Array<number>>([0]);
-  const [value1, setValue1] = useState<number | Array<number>>([0]);
-  const [value2, setValue2] = useState<number | Array<number>>([0]);
-  const [value3, setValue3] = useState<number | Array<number>>([0]);
-  const handleChange = (event: any, newValue: number | number[]) => {
-    setValue(newValue);
+  // Setting default value of Node Add Test to 0
+  const [nodeAddTestValue, setnodeAddTestValue] = useState<
+    number | Array<number>
+  >([0]);
+
+  // Setting default value of Config Map Multi Volume Test to 0
+  const [
+    configMapMultiVolumeTestValue,
+    setconfigMapMultiVolumeTestValue,
+  ] = useState<number | Array<number>>([0]);
+
+  // Setting default value of Networking Pod Test to 0
+  const [networkingPodTestValue, setnetworkingPodTestValue] = useState<
+    number | Array<number>
+  >([0]);
+
+  // Setting default value of Proxy Server Test to 0
+  const [proxyServerTestValue, setproxyServerTestValue] = useState<
+    number | Array<number>
+  >([0]);
+
+  // Handlers to set pervious Test Value to new values
+  const handleChange = (
+    event: React.ChangeEvent<{}>,
+    newValue: number | number[]
+  ) => {
+    setnodeAddTestValue(newValue);
   };
-  const handleChange1 = (event: any, newValue: number | number[]) => {
-    setValue1(newValue);
+  const handleChange1 = (
+    event: React.ChangeEvent<{}>,
+    newValue: number | number[]
+  ) => {
+    setconfigMapMultiVolumeTestValue(newValue);
   };
-  const handleChange2 = (event: any, newValue: number | number[]) => {
-    setValue2(newValue);
+  const handleChange2 = (
+    event: React.ChangeEvent<{}>,
+    newValue: number | number[]
+  ) => {
+    setnetworkingPodTestValue(newValue);
   };
-  const handleChange3 = (event: any, newValue: number | number[]) => {
-    setValue3(newValue);
+  const handleChange3 = (
+    event: React.ChangeEvent<{}>,
+    newValue: number | number[]
+  ) => {
+    setproxyServerTestValue(newValue);
   };
 
-  const testValue = [value, value1, value2, value3];
+  // Storing Test Values to Compare
+  const testValue = [
+    nodeAddTestValue,
+    configMapMultiVolumeTestValue,
+    networkingPodTestValue,
+    proxyServerTestValue,
+  ];
 
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
-  const [totalTest] = React.useState(12);
+  const [open, setOpen] = React.useState<boolean>(false);
+  const totalTest = React.useState<number>(12);
   const handleModal = () => {
     setOpen(true);
   };
   return (
     <form className={classes.root}>
       <div className={classes.mainDiv}>
+        {/* Header and Description */}
         <div>
           <Typography className={classes.headerText}>
             <strong>
@@ -50,7 +87,8 @@ const ReliablityScore = () => {
           </Typography>
         </div>
         <hr className={classes.horizontalLine} />
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
+        {/* Kubernetes Conformation Test */}
+        <div className={classes.flexRowDisplay}>
           <Typography className={classes.testHeading}>
             <strong>Kubernetes conformance test</strong>
           </Typography>
@@ -58,42 +96,57 @@ const ReliablityScore = () => {
         <div>
           <div>
             <CustomSlider
-              value={typeof value === 'number' ? value : 0}
+              value={
+                typeof nodeAddTestValue === 'number' ? nodeAddTestValue : 0
+              }
               testName="Node add test"
               onChangeCommitted={handleChange}
             />
           </div>
           <div>
             <CustomSlider
-              value={typeof value1 === 'number' ? value1 : 0}
+              value={
+                typeof configMapMultiVolumeTestValue === 'number'
+                  ? configMapMultiVolumeTestValue
+                  : 0
+              }
               testName="Config map multi volume test"
               onChangeCommitted={handleChange1}
             />
           </div>
           <div>
             <CustomSlider
-              value={typeof value2 === 'number' ? value2 : 0}
+              value={
+                typeof networkingPodTestValue === 'number'
+                  ? networkingPodTestValue
+                  : 0
+              }
               testName="Networking pod test"
               onChangeCommitted={handleChange2}
             />
           </div>
           <div>
             <CustomSlider
-              value={typeof value3 === 'number' ? value3 : 0}
+              value={
+                typeof proxyServerTestValue === 'number'
+                  ? proxyServerTestValue
+                  : 0
+              }
               testName="Proxy-service-test"
               onChangeCommitted={handleChange3}
             />
           </div>
         </div>
         <hr className={classes.horizontalLine} />
+        {/* Demo Launch Modal */}
         <div className={classes.modalDiv}>
-          <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <div className={classes.flexRowDisplay}>
             <ButtonOutline
               isDisabled={false}
               handleClick={handleModal}
               data-cy="testRunButton"
             >
-              <div className={classes.buttonOutlineDiv}>
+              <div className={classes.flexRowDisplay}>
                 <img src="icons/video.png" alt="Play icon" />
                 <Typography className={classes.buttonOutlineText}>
                   Demo Launch
@@ -109,7 +162,7 @@ const ReliablityScore = () => {
                 testValue={testValue}
               />
             ) : (
-              <></>
+              <div />
             )}
           </div>
           <div>

@@ -1,48 +1,7 @@
-import Slider from '@material-ui/core/Slider';
-import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import useStyles from './styles';
-
-const PrettoSlider = withStyles({
-  root: {
-    backgroundColor: 'null',
-    height: 8,
-  },
-  track: {
-    background:
-      'linear-gradient(90deg, #5B44BA 0%, #858CDD 49.48%, #109B67 100%)',
-    height: 38,
-    borderRadius: 4,
-    borderTopRightRadius: 13,
-    borderBottomRightRadius: 13,
-    '&[style="left: 0%; width: 100%;"]': {
-      borderTopRightRadius: 4,
-      borderBottomRightRadius: 4,
-    },
-  },
-  rail: {
-    height: 38,
-    background: '#C9C9CA',
-    borderRadius: 4,
-  },
-  mark: {
-    backgroundSize: 'cover',
-    height: 40,
-    width: 10,
-    marginTop: -2,
-  },
-  markActive: {
-    opacity: 1,
-  },
-  valueLabel: {
-    top: -22,
-    '& *': {
-      background: 'transparent',
-      color: '#000',
-    },
-  },
-})(Slider);
+import PrettoSlider from './prettoSlider';
 
 const marks = [
   {
@@ -90,7 +49,10 @@ const marks = [
 interface CustomSliderProps {
   testName: string;
   value: number;
-  onChangeCommitted: (event: object, value: number | number[]) => void;
+  onChangeCommitted: (
+    event: React.ChangeEvent<{}>,
+    value: number | number[]
+  ) => void | undefined;
 }
 
 const CustomSlider: React.FC<CustomSliderProps> = ({
@@ -101,11 +63,14 @@ const CustomSlider: React.FC<CustomSliderProps> = ({
   const classes = useStyles();
   return (
     <div className="App">
+      {/* Slider Header -> Test Name and Result Value */}
       <div className={classes.mainDiv}>
         <Typography className={classes.testType}>{testName}</Typography>
-        <Typography>-</Typography>
+        <hr className={classes.horizontalRule} />
         <Typography className={classes.testResult}>{value} points</Typography>
       </div>
+
+      {/* Slider Div -> Range 1 to 10 */}
       <div className={classes.sliderDiv}>
         <PrettoSlider
           defaultValue={value}

@@ -24,6 +24,10 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3.25),
     fontSize: '1.0625rem',
   },
+  flexRowDisplay: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
   testHeading: {
     marginTop: theme.spacing(6.25),
     fontSize: '1.5625rem',
@@ -44,10 +48,6 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     marginTop: theme.spacing(5),
     paddingBottom: theme.spacing(5),
-  },
-  buttonOutlineDiv: {
-    display: 'flex',
-    flexDirection: 'row',
   },
   buttonOutlineText: {
     paddingLeft: theme.spacing(1.5),
