@@ -5,7 +5,7 @@ export default {
       process.env.ANALYTICS_API || 'https://hub.litmuschaos.io/api/community',
   },
   auth: {
-    url: process.env.AUTH_API || 'http://3.136.2.227:31374',
+    url: process.env.AUTH_API || '/auth',
   },
   cookies: {
     token: 'token',

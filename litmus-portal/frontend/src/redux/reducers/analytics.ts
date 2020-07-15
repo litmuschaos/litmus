@@ -1,11 +1,11 @@
-import createReducer from './createReducer';
 import {
-  CommunityData,
   AnalyticsAction,
   AnalyticsActions,
+  CommunityData,
   GeoCity,
   SeriesData,
-} from '../../models';
+} from '../../models/analytics';
+import createReducer from './createReducer';
 
 const initialState: CommunityData = {
   github: { stars: '', experimentsCount: '' },
