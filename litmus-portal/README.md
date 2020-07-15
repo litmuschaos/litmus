@@ -19,11 +19,10 @@ kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/litmus-por
 Retrieving external url to access the litmus portal
 ```bash
 export NODE_NAME=$(kubectl get pod -n litmus -l "component=litmusportal-frontend" -o=jsonpath='{.items[*].spec.nodeName}')
-export EXTERNALIP=$(kubectl get nodes $NODE_NAME -o jsonpath='{.status.addresses[?(@.type=="ExternalIP")].address}')
+export EXTERNAL_IP=$(kubectl get nodes $NODE_NAME -o jsonpath='{.status.addresses[?(@.type=="ExternalIP")].address}')
 export NODE_PORT=$(kubectl get -o jsonpath="{.spec.ports[0].nodePort}" services litmusportal-frontend-service -n litmus)
 echo "URL: http://$EXTERNAL_IP:$NODE_PORT"
 ```
-
 
 ### Unistallation
 ```bash
