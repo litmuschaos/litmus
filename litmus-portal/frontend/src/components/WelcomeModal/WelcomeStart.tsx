@@ -8,10 +8,11 @@ function Icon() {
     <img src="icons/LitmusLogo.png" className={classes.mark} alt="markLitmus" />
   );
 }
-
+interface ModalData {
+  setData: Function;
+}
 /* This is main page to take input for Project */
-
-function WelcomeStart() {
+const WelcomeStart: React.FC<ModalData> = ({ setData }) => {
   const classes = useStyles();
   return (
     <div>
@@ -29,13 +30,16 @@ function WelcomeStart() {
         <Paper className={classes.inputArea}>
           <TextField
             id="filled-email-input"
-            label="Email Address"
+            label="Full Name"
             InputProps={{ disableUnderline: true }}
             data-cy="inputProjectEmail"
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setData('name', event.target.value);
+            }}
           />
         </Paper>
       </div>
     </div>
   );
-}
+};
 export default WelcomeStart;
