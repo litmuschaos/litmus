@@ -1,18 +1,17 @@
 const SECOND = 1000;
 const MINUTE = SECOND * 60;
 const HOUR = MINUTE * 60;
-const DAY = HOUR * 24;
 
-export function setCookie(name: string, value: number, exdays: number) {
+export function setCookie(name: string, value: string, exhours: number) {
   const now = new Date();
-  now.setTime(now.getTime() + exdays * DAY);
+  now.setTime(now.getTime() + exhours * HOUR);
 
   const expires = `expires=${now.toUTCString()}`;
 
   document.cookie = `${name}=${value};${expires};path=/`;
 }
 
-export function getCookie(cname: string) {
+export function getCookie(cname: string): string {
   const name = `${cname}=`;
   const decodedCookie = decodeURIComponent(document.cookie);
   const ca = decodedCookie.split(';');

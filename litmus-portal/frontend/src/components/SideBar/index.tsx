@@ -5,6 +5,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import useStyles from './styles';
 import { history } from '../../redux/configureStore';
 
@@ -40,16 +41,18 @@ const SideBar = () => {
       }}
       anchor="left"
     >
-      <div className={classes.litmusDiv}>
-        <img
-          src="./icons/litmusPurple.svg"
-          alt="litmus logo"
-          className={classes.logo}
-        />
-        <Typography className={classes.litmusHome} variant="body1">
-          Litmus
-        </Typography>
-      </div>
+      <Link to="/" className={classes.homeLink}>
+        <div className={classes.litmusDiv}>
+          <img
+            src="./icons/litmusPurple.svg"
+            alt="litmus logo"
+            className={classes.logo}
+          />
+          <Typography className={classes.litmusHome} variant="body1">
+            Litmus
+          </Typography>
+        </div>
+      </Link>
 
       <List className={classes.drawerList}>
         <CustomisedListItem

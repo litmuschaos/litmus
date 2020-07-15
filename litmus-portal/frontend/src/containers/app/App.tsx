@@ -1,11 +1,14 @@
 import React, { lazy, Suspense, useEffect } from 'react';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import Loader from '../../components/Loader';
 import { history } from '../../redux/configureStore';
 import withTheme from '../../theme';
 import useStyles from './App-styles';
 import useActions from '../../redux/actions';
 import * as AnalyticsActions from '../../redux/actions/analytics';
+import { RootState } from '../../redux/reducers';
+import { UserData } from '../../models/user';
 
 const ErrorPage = lazy(() => import('../../pages/ErrorPage'));
 const Workflows = lazy(() => import('../../pages/Workflows'));
@@ -13,9 +16,21 @@ const LoginPage = lazy(() => import('../../pages/LoginPage'));
 const HomePage = lazy(() => import('../../pages/HomePage'));
 const Community = lazy(() => import('../../pages/Community'));
 
-function Routes() {
-  const classes = useStyles();
+interface RoutesProps {
+  userData: string;
+}
 
+const Routes: React.FC<RoutesProps> = ({ userData }) => {
+  const classes = useStyles();
+  if (userData === '')
+    return (
+      <div className={classes.content}>
+        <Switch>
+          <Route exact path="/login" component={LoginPage} />
+          <Route path="/" render={() => <Redirect to="/login" />} />
+        </Switch>
+      </div>
+    );
   return (
     <div className={classes.content}>
       <Switch>
@@ -28,21 +43,22 @@ function Routes() {
       </Switch>
     </div>
   );
-}
+};
 
 function App() {
   const classes = useStyles();
   const analyticsAction = useActions(AnalyticsActions);
+  const userData: UserData = useSelector((state: RootState) => state.userData);
   useEffect(() => {
-    analyticsAction.loadCommunityAnalytics();
-  }, []);
+    if (userData.token !== '') analyticsAction.loadCommunityAnalytics();
+  }, [userData.token]);
   return (
     <Suspense fallback={<Loader />}>
       <Router history={history}>
         <div className={classes.root}>
           <div className={classes.appFrame}>
             {/* <Routes /> */}
-            <Routes />
+            <Routes userData={userData.token} />
           </div>
         </div>
       </Router>

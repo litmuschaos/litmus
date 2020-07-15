@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import CustomSlider from '../CustomSlider';
 import CustomResultModal from '../ResultModal';
 import useStyles from './styles';
-import ButtonOutlineIcon from '../ButtonOutlineIcon';
+import ButtonOutline from '../Button/ButtonOutline';
 import InfoTooltip from '../InfoTooltip';
 
 const ReliablityScore = () => {
@@ -141,7 +141,7 @@ const ReliablityScore = () => {
         {/* Demo Launch Modal */}
         <div className={classes.modalDiv}>
           <div className={classes.flexRowDisplay}>
-            <ButtonOutlineIcon
+            <ButtonOutline
               isDisabled={false}
               handleClick={handleModal}
               data-cy="testRunButton"
@@ -152,7 +152,7 @@ const ReliablityScore = () => {
                   Demo Launch
                 </Typography>
               </div>
-            </ButtonOutlineIcon>
+            </ButtonOutline>
             <div style={{ marginLeft: 10 }}>
               <InfoTooltip value="Text Default" />
             </div>

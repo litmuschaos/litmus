@@ -15,6 +15,9 @@ import {
 import CameraAltOutlinedIcon from '@material-ui/icons/CameraAltOutlined';
 import ProjectListItem from '../ProjectListItem';
 import useStyles from './styles';
+import * as UserActions from '../../redux/actions/user';
+import { history } from '../../redux/configureStore';
+import useActions from '../../redux/actions';
 
 const SmallAvatar = withStyles((theme: Theme) =>
   createStyles({
@@ -36,6 +39,7 @@ interface ProfileInfoDropdownProps {
 }
 
 function ProfileInfoDropdownItems(props: ProfileInfoDropdownProps) {
+  const user = useActions(UserActions);
   const { anchorEl, isOpen, onClose, name, email, projects } = props;
 
   const classes = useStyles();
@@ -48,6 +52,8 @@ function ProfileInfoDropdownItems(props: ProfileInfoDropdownProps) {
 
   const logOut = () => {
     doLogout(true);
+    user.userLogout();
+    history.push('/');
   };
 
   const editProfile = () => {};

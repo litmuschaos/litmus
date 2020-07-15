@@ -7,8 +7,8 @@ import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import { StepIconProps } from '@material-ui/core/StepIcon';
 import Center from '../../containers/layouts/Center';
-import ButtonFilled from '../ButtonFilled';
-import ButtonOutline from '../ButtonOutline';
+import ButtonFilled from '../Button/ButtonFilled';
+import ButtonOutline from '../Button/ButtonOutline';
 import FinishModal from '../FinishModal';
 import Loader from '../Loader';
 import ReliablityScore from '../ReliabilityScore';
@@ -157,8 +157,9 @@ const CustomStepper = () => {
               <ButtonOutline
                 isDisabled={activeStep === 0}
                 handleClick={handleBack}
-                value="Back"
-              />
+              >
+                <Typography>Back</Typography>
+              </ButtonOutline>
               <ButtonFilled
                 handleClick={handleNext}
                 value={activeStep === steps.length - 1 ? 'Finish' : 'Next'}

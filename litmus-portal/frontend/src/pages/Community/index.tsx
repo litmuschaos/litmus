@@ -4,20 +4,13 @@ import Paper from '@material-ui/core/Paper'; // Temporary -> Should be replaced 
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
-import { useSelector } from 'react-redux';
-import InfoFilled from '../../components/InfoFilled/index';
+import { Link } from 'react-router-dom';
+import InfoFilledWrap from '../../components/InfoFilled/index';
 import Scaffold from '../../containers/layouts/Scaffold/index';
 import useStyles from './styles';
 import QuickActionCard from '../../components/QuickActionCard';
-import { RootState } from '../../redux/reducers';
-import GeoMap from '../../components/GeoMap/index';
 
-interface CardValueData {
-  color: string;
-  value: number;
-  statType: string;
-  plus?: boolean | undefined;
-}
+import GeoMap from '../../components/GeoMap/index';
 
 // Reusable Header Component
 const Header2: React.FC = ({ children }) => {
@@ -33,31 +26,6 @@ const Header2: React.FC = ({ children }) => {
 
 const Community: React.FC = () => {
   const classes = useStyles();
-  const communityData = useSelector((state: RootState) => state.communityData);
-  const cardData: CardValueData[] = [
-    {
-      color: '#109B67',
-      value: parseInt(communityData.google.operatorInstalls, 10),
-      statType: 'Operator Installed',
-      plus: true,
-    },
-    {
-      color: '#858CDD',
-      value: parseInt(communityData.google.totalRuns, 10),
-      statType: 'Total Experiment Runs',
-      plus: true,
-    },
-    {
-      color: '#F6B92B',
-      value: parseInt(communityData.github.experimentsCount, 10),
-      statType: 'Total Experiments',
-    },
-    {
-      color: '#BA3B34',
-      value: parseInt(communityData.github.stars, 10),
-      statType: 'Github Stars',
-    },
-  ];
 
   return (
     <Scaffold>
@@ -73,14 +41,7 @@ const Community: React.FC = () => {
             Stats for the Litmus community in the last 24 hours
           </Typography>
           <div className={classes.cardDiv}>
-            {cardData.map((data) => (
-              <InfoFilled
-                color={data.color}
-                value={data.value}
-                statType={data.statType}
-                plus={data.plus}
-              />
-            ))}
+            <InfoFilledWrap />
           </div>
         </section>
 
@@ -110,9 +71,19 @@ const Community: React.FC = () => {
                       />
                     </Typography>
                   </CardContent>
-                  <Button variant="contained" className={classes.followBtn}>
-                    Follow
-                  </Button>
+                  <Link
+                    to="https://blog.mayadata.io/"
+                    target="_blank"
+                    className={classes.devToLink}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      window.open('https://blog.mayadata.io/');
+                    }}
+                  >
+                    <Button variant="contained" className={classes.followBtn}>
+                      Follow
+                    </Button>
+                  </Link>
                 </Card>
               </div>
             </div>

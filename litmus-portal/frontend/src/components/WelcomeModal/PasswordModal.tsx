@@ -8,8 +8,11 @@ function Icon() {
     <img src="icons/LitmusLogo.png" className={classes.mark} alt="markLitmus" />
   );
 }
-
-function PasswordModal() {
+interface ModalData {
+  setData: Function;
+}
+/* This is main page to take input for Project */
+const PasswordModal: React.FC<ModalData> = ({ setData }) => {
   const classes = useStyles();
   return (
     <div>
@@ -30,10 +33,13 @@ function PasswordModal() {
             autoComplete="current-password"
             InputProps={{ disableUnderline: true }}
             data-cy="inputProjectPassword"
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setData('password', event.target.value);
+            }}
           />
         </Paper>
       </div>
     </div>
   );
-}
+};
 export default PasswordModal;

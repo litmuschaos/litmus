@@ -2,6 +2,10 @@ import { Typography, TextField, Hidden, Button } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
 import useStyles from './styles';
+import config from '../../config';
+import useActions from '../../redux/actions';
+import * as UserActions from '../../redux/actions/user';
+import { history } from '../../redux/configureStore';
 
 interface authData {
   username: string;
@@ -9,6 +13,7 @@ interface authData {
 }
 
 const LoginPage = () => {
+  const user = useActions(UserActions);
   const classes = useStyles();
   const [authData, setAuthData] = useState<authData>({
     username: '',
@@ -22,14 +27,23 @@ const LoginPage = () => {
     const data = new FormData(formData as HTMLFormElement);
     const username = data.get('username') as string;
     const password = data.get('password') as string;
-    data.append('username', username);
-    data.append('password', password);
-    fetch('/login', {
+    const searchParams = new URLSearchParams();
+    searchParams.append('username', username);
+    searchParams.append('password', password);
+    fetch(`${config.auth.url}/login`, {
       method: 'POST',
-      body: data,
-    }).then((response) => {
-      response.text();
-    });
+      body: searchParams,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          // TODO: HANDLE LOGIN ERROR IN UI
+          alert('LOGIN ERROR');
+        } else {
+          user.setUserDetails(data.access_token);
+          history.push('/');
+        }
+      });
   };
 
   return (
@@ -41,15 +55,17 @@ const LoginPage = () => {
             <Typography variant="h2" className={classes.heading}>
               Welcome to <strong>Litmus!</strong>
             </Typography>
-            <Typography className={classes.description}>
-              {' '}
-              Your one-stop-shop for Chaos Engineering on{' '}
+            <Typography className={classes.description} gutterBottom>
+              Your one-stop-shop for Chaos Engineering on
               <img
                 src="icons/kubernetes.png"
                 alt="Kubernetes"
                 className={classes.descImg}
-              />{' '}
+              />
               . Browse, create, manage monitor and analyze your chaos workflows.
+              <br />
+            </Typography>
+            <Typography className={classes.description}>
               With your own private ChaosHub, you can create your new chaos
               experiments and share them with your team.
             </Typography>

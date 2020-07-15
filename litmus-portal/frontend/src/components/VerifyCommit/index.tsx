@@ -2,11 +2,11 @@ import React from 'react';
 import { Divider, Link, Typography } from '@material-ui/core';
 import bfinance from '../../assets/icons/b-finance.png';
 import useStyles from './styles';
-import ButtonOutline from '../ButtonOutline/index';
+import ButtonOutline from '../Button/ButtonOutline/index';
 import CustomDate from '../CustomDate';
 import CustomTime from '../CustomTime';
 import AdjustedWeights from '../AdjustedWeights';
-import ButtonFilled from '../ButtonFilled';
+import ButtonFilled from '../Button/ButtonFilled';
 import CustomText from '../CustomText';
 
 function VerifyCommit() {
@@ -96,8 +96,9 @@ function VerifyCommit() {
                     handleClick={() => {
                       // console.log('Edit');
                     }}
-                    value="Edit"
-                  />
+                  >
+                    <Typography>Edit</Typography>
+                  </ButtonOutline>
                 </div>
               </div>
             </div>
@@ -128,8 +129,9 @@ function VerifyCommit() {
                       handleClick={() => {
                         // console.log('View YAML');
                       }}
-                      value="Edit"
-                    />
+                    >
+                      <Typography>Edit</Typography>
+                    </ButtonOutline>
                   </div>
                 </div>
                 <div className={classes.progress}>
