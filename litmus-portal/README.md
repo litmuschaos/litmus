@@ -1,46 +1,52 @@
-# Litmus Portal
+## Litmus Portal 
+Litmus-Portal provides console and UI experience for managing, monitoring, and events around chaos workflows. Chaos workflows consist of a sequence of experiments run together to achieve the objective of introducing some kind of fault into an application or the Kubernetes platform.
 
-## Local development
-## Set up backend environments
+## Platforms Support
+- Minikube
+- GKE
+- KIND
 
-1) Install dependencies
-Go to the backend folder and install modules defined in go.mod
+## Pre-requisites
+- Kubernetes 1.11 or later.
+
+## Installation
+
+Applying k8s manifest
 ```bash
-go mod download
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/litmus-portal/litmus-portal/k8s-manifest.yml
 ```
 
-2) Create database
+Retrieving external url to access the litmus portal
 ```bash
-go run scripts/gqlgen.go init
+export NODE_NAME=$(kubectl get pod -n litmus -l "component=litmusportal-frontend" -o=jsonpath='{.items[*].spec.nodeName}')
+export EXTERNALIP=$(kubectl get nodes $NODE_NAME -o jsonpath='{.status.addresses[?(@.type=="ExternalIP")].address}')
+export NODE_PORT=$(kubectl get -o jsonpath="{.spec.ports[0].nodePort}" services litmusportal-frontend-service -n litmus)
+echo "URL: http://$EXTERNAL_IP:$NODE_PORT"
 ```
 
-3) Install air if you want hot reloading
-you can use hot reoloading with [air](https://github.com/cosmtrek/air).
+
+### Unistallation
 ```bash
-air
+kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/litmus-portal/litmus-portal/k8s-manifest.yml
 ```
 
-## Set up frontend environments
-Go to the fronend folder and run the following commands.
-```bash
-npm install
-npm run start
-```
 
-## Production deployment
-First, go to the project root directory and enable bash files
-```bash
-sudo chmod 777 start_k8s.sh
-sudo chmod 777 remove_k8s.sh
-sudo chmod 777 deploy_production.sh
-```
+### Tech Stack
 
-1) Deploy
-```bash
-start_k8s.sh
-```
-
-2) Remove pods/services/deployments
-```bash
-remove_k8s.sh
-```
+- Frontend
+  - TypeScript
+  - JavaScript
+  - ReactJS
+  - Apollo GraphQL client
+  - MaterialUI
+- Backend
+  - GoLang
+  - JavaScript
+  - GQLGEN GraphQL Server
+- Database
+  - MongoDB
+  - Prometheus
+  
+##### Additional information
+- <a href="https://github.com/litmuschaos/litmus/wiki/portal-design-spec" target="_blank">Litmus Portal Design Specification</a><br>
+- <a href="https://github.com/litmuschaos/litmus/wiki/Litmus-Portal-Development-Guide" target="_blank">Litmus Portal Development Guide</a>
