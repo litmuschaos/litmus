@@ -41,5 +41,5 @@ const PasswordModal: React.FC<ModalData> = ({ setData }) => {
       </div>
     </div>
   );
-};
+}
 export default PasswordModal;
