@@ -12,16 +12,10 @@ import Scaffold from '../../containers/layouts/Scaffold/index';
 import useStyles from './styles';
 import QuickActionCard from '../../components/QuickActionCard';
 import { RootState } from '../../redux/reducers';
+import { Link } from 'react-router-dom';
 import GeoMap from '../../components/GeoMap/index';
 import CommunityAnalyticsPlotNormal from '../../components/CommunityTimeSeriesTrendPlot';
 import CommunityAnalyticsPlotCumulative from '../../components/CommunityTimeSeriesGrowthPlot';
-
-interface CardValueData {
-  color: string;
-  value: number;
-  statType: string;
-  plus?: boolean | undefined;
-}
 
 // Reusable Header Component
 const Header2: React.FC = ({ children }) => {
@@ -37,7 +31,7 @@ const Header2: React.FC = ({ children }) => {
 
 const Community: React.FC = () => {
   const classes = useStyles();
-
+  
   const communityData = useSelector((state: RootState) => state.communityData);
 
   const cardData: CardValueData[] = [
@@ -119,14 +113,7 @@ const Community: React.FC = () => {
             Stats for the Litmus community in the last 24 hours
           </Typography>
           <div className={classes.cardDiv}>
-            {cardData.map((data) => (
-              <InfoFilled
-                color={data.color}
-                value={data.value}
-                statType={data.statType}
-                plus={data.plus}
-              />
-            ))}
+            <InfoFilledWrap />
           </div>
         </section>
 
@@ -220,9 +207,19 @@ const Community: React.FC = () => {
                       />
                     </Typography>
                   </CardContent>
-                  <Button variant="contained" className={classes.followBtn}>
-                    Follow
-                  </Button>
+                  <Link
+                    to="https://blog.mayadata.io/"
+                    target="_blank"
+                    className={classes.devToLink}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      window.open('https://blog.mayadata.io/');
+                    }}
+                  >
+                    <Button variant="contained" className={classes.followBtn}>
+                      Follow
+                    </Button>
+                  </Link>
                 </Card>
               </div>
             </div>

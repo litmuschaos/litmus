@@ -36,6 +36,8 @@ type Server struct {
 
 func (s *Server) redirectError(w http.ResponseWriter, err error) error {
 	data, _, _ := s.getErrorData(err)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusUnauthorized)
 	return s.redirect(w, data)
 }

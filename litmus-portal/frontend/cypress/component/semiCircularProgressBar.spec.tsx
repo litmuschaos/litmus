@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { mount } from 'cypress-react-unit-test';
-import SemiCircularProgressBar from '../../src/components/SemiCircularProgressBar';
+import SemiCircularProgressBar from '../../src/components/ProgressBar/SemiCircularProgressBar';
 
 // Test Suite -
 // Progress Bar props -> value = 50, 10, 100

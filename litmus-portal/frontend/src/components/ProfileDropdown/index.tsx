@@ -4,13 +4,17 @@ import { IconButton, Grid } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import Typography from '@material-ui/core/Typography';
+import { useSelector } from 'react-redux';
 import ProfileInfoDropdownItems from '../ProfileDropdownItems';
 import useStyles from './styles';
+import { UserData } from '../../models/user';
+import { RootState } from '../../redux/reducers';
 
 const ProfileDropdown = ({ callbackFromParent }: any) => {
-  const [user, setUser] = useState('Richard Hill');
-
-  const [mail, setMail] = useState('richardrichard@gmail.com');
+  const userData: UserData = useSelector((state: RootState) => state.userData);
+  const user = userData.name;
+  const mail = userData.email;
+  const { username } = userData;
 
   const classes = useStyles();
 
@@ -92,7 +96,7 @@ const ProfileDropdown = ({ callbackFromParent }: any) => {
         <Grid item xs={3} sm={3}>
           <Grid container>
             <Grid item xs={12} sm={12}>
-              <Typography>Richard Hill</Typography>
+              <Typography>{user}</Typography>
             </Grid>
             <Grid item xs={12} sm={12}>
               <Typography
@@ -101,7 +105,7 @@ const ProfileDropdown = ({ callbackFromParent }: any) => {
                   color: 'grey',
                 }}
               >
-                User
+                {username}
               </Typography>
             </Grid>
           </Grid>

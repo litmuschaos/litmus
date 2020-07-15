@@ -10,15 +10,18 @@ const useStyles = makeStyles((theme) => ({
 
   root: {
     marginTop: theme.spacing(3),
-    marginLeft: theme.spacing(10),
+    marginLeft: theme.spacing(6),
   },
 
   mainDiv: {
     marginLeft: theme.spacing(3.75),
-    maxWidth: '50rem',
-    minHeight: '16rem',
+    width: '50rem',
     display: 'flex',
     flexDirection: 'row',
+    flexGrow: 1,
+    [theme.breakpoints.down('sm')]: {
+      width: '20rem',
+    },
   },
 
   userName: {
@@ -62,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   arrowForwardIcon: {
-    color: '#5B44BA',
+    color: theme.palette.secondary.dark,
     marginLeft: theme.spacing(22.5),
     marginTop: theme.spacing(4.375),
     marginBottom: theme.spacing(2.5),
@@ -104,13 +107,12 @@ const useStyles = makeStyles((theme) => ({
   },
 
   statDiv: {
-    maxWidth: '50rem',
-    minHeight: '16rem',
+    width: '50rem',
+    flexGrow: 1,
     backgroundColor: 'rgba(255, 255, 255, 0.6)',
     borderRadius: 3,
     [theme.breakpoints.down('sm')]: {
       width: '18rem',
-      minHeight: '50rem',
     },
   },
 
@@ -131,6 +133,7 @@ const useStyles = makeStyles((theme) => ({
   cardDiv: {
     display: 'flex',
     flexDirection: 'row',
+    flexGrow: 1,
     paddingLeft: theme.spacing(5),
     [theme.breakpoints.down('sm')]: {
       display: 'flex',

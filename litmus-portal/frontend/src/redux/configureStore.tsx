@@ -11,7 +11,7 @@ const persistConfig: PersistConfig<any> = {
   key: 'root',
   version: 1,
   storage: localforage,
-  blacklist: [],
+  blacklist: ['userReducer'],
 };
 
 const logger = (createLogger as any)();
