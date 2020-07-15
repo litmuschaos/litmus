@@ -1,11 +1,11 @@
-import { Typography, TextField, Hidden, Button } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import { Button, Hidden, TextField, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
-import useStyles from './styles';
+import { Link } from 'react-router-dom';
 import config from '../../config';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
 import { history } from '../../redux/configureStore';
+import useStyles from './styles';
 
 interface authData {
   username: string;
@@ -38,7 +38,6 @@ const LoginPage = () => {
       .then((data) => {
         if ('error' in data) {
           // TODO: HANDLE LOGIN ERROR IN UI
-          alert('LOGIN ERROR');
         } else {
           user.setUserDetails(data.access_token);
           history.push('/');

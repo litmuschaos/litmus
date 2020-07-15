@@ -1,9 +1,9 @@
 import { History } from 'history'; // eslint-disable-line import/no-extraneous-dependencies
 import { combineReducers } from 'redux';
-import { CommunityData } from '../../models';
+import { CommunityData } from '../../models/analytics';
+import { UserData } from '../../models/user';
 import * as analyticsReducer from './analytics';
 import * as userReducer from './user';
-import { UserData } from '../../models/user';
 
 export interface RootState {
   communityData: CommunityData;

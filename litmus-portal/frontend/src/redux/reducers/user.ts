@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import jwtDecode from 'jsonwebtoken';
-import createReducer from './createReducer';
-import { UserData, UserActions, UserAction } from '../../models/user';
+import { UserAction, UserActions, UserData } from '../../models/user';
 import { setCookie } from '../../utils/cookies';
+import createReducer from './createReducer';
 
 const initialState: UserData = {
   name: '',
@@ -24,7 +24,7 @@ export const userData = createReducer<UserData>(initialState, {
         token: jwt,
       };
     } catch (err) {
-      console.log('ERROR: ', err);
+      console.error('ERROR: ', err);
       return {
         ...state,
       };
