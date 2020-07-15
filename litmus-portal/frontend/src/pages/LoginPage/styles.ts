@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   mainDiv: {
     marginTop: theme.spacing(8.75),
     marginLeft: theme.spacing(17.5),
-    width: '25rem',
+    width: '26rem',
   },
 
   heading: {
@@ -31,6 +31,10 @@ const useStyles = makeStyles((theme) => ({
 
   description: {
     marginTop: theme.spacing(3.75),
+    fontSize: '1rem',
+  },
+  description2: {
+    marginTop: theme.spacing(1),
     fontSize: '1rem',
   },
 
@@ -85,6 +89,7 @@ const useStyles = makeStyles((theme) => ({
 
   descImg: {
     verticalAlign: 'middle',
+    paddingLeft: theme.spacing(0.625),
   },
 }));
 

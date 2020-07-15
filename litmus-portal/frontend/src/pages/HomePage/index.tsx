@@ -3,7 +3,7 @@ import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import InfoFilled from '../../components/InfoFilled/index';
+import InfoFilledWrap from '../../components/InfoFilled';
 import QuickActionCard from '../../components/QuickActionCard';
 import Scaffold from '../../containers/layouts/Scaffold';
 import useStyles from './style';
@@ -39,42 +39,14 @@ const CreateWorkflowCard = () => {
   );
 };
 
-interface CardValueData {
-  color: string;
-  value: number;
-  statType: string;
-  plus?: boolean | undefined;
-}
-
 const HomePage = () => {
-  const { communityData, userData } = useSelector((state: RootState) => state);
-  const cardData: CardValueData[] = [
-    {
-      color: '#109B67',
-      value: parseInt(communityData.google.operatorInstalls, 10),
-      statType: 'Operator Installed',
-      plus: true,
-    },
-    {
-      color: '#858CDD',
-      value: parseInt(communityData.google.totalRuns, 10),
-      statType: 'Total Experiment Runs',
-      plus: true,
-    },
-    {
-      color: '#F6B92B',
-      value: parseInt(communityData.github.experimentsCount, 10),
-      statType: 'Total Experiments',
-    },
-    {
-      color: '#BA3B34',
-      value: parseInt(communityData.github.stars, 10),
-      statType: 'Github Stars',
-    },
-  ];
+  const { userData } = useSelector((state: RootState) => state);
   const { name } = userData;
   const classes = useStyles();
-  if (userData.email === '') return <WelcomeModal />;
+  if (userData.email === '') {
+    return <WelcomeModal isOpen />;
+  }
+
   return (
     <Scaffold>
       <div className={classes.rootContainer}>
@@ -91,7 +63,7 @@ const HomePage = () => {
                 <Typography className={classes.mainResult}>
                   <strong>
                     You have established your own first project on Litmus
-                    portal.{' '}
+                    portal.
                   </strong>
                 </Typography>
                 <Typography className={classes.mainDesc}>
@@ -99,7 +71,6 @@ const HomePage = () => {
                   Once you schedule chaos workflows, reliability analytics are
                   displayed here.
                 </Typography>
-
                 <Button variant="contained" className={classes.predefinedBtn}>
                   <Typography variant="subtitle1">
                     See pre-defined workflows
@@ -130,14 +101,7 @@ const HomePage = () => {
                 </Button>
               </div>
               <div className={classes.cardDiv}>
-                {cardData.map((data) => (
-                  <InfoFilled
-                    color={data.color}
-                    value={data.value}
-                    statType={data.statType}
-                    plus={data.plus}
-                  />
-                ))}
+                <InfoFilledWrap />
               </div>
             </div>
             <div className={classes.quickActionDiv}>

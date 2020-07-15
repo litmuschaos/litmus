@@ -1,16 +1,16 @@
-import { Button, Typography } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import React from 'react';
 import useStyles from './styles';
 
 interface CustomButtonProps {
   isDisabled: boolean;
   handleClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  value: string;
+  children?: JSX.Element;
 }
 const ButtonOutline: React.FC<CustomButtonProps> = ({
   isDisabled,
   handleClick,
-  value,
+  children,
 }) => {
   const classes = useStyles();
   return (
@@ -21,7 +21,7 @@ const ButtonOutline: React.FC<CustomButtonProps> = ({
       onClick={handleClick}
       className={classes.buttonOutline}
     >
-      <Typography className={classes.valueField}>{value}</Typography>
+      <div className={classes.valueField}>{children}</div>
     </Button>
   );
 };
