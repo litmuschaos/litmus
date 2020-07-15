@@ -10,6 +10,13 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(3),
     borderRadius: 3,
   },
+  infoFilledWrap: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: theme.spacing(30),
+    height: theme.spacing(22),
+    flexGrow: 1,
+  },
   horizontalRule: {
     width: theme.spacing(14),
     opacity: 0.5,

@@ -5,12 +5,12 @@ import useStyles from './styles';
 interface CustomButtonProps {
   isDisabled: boolean;
   handleClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  value: string;
+  children?: JSX.Element;
 }
 const ButtonOutline: React.FC<CustomButtonProps> = ({
   isDisabled,
   handleClick,
-  value,
+  children,
 }) => {
   const classes = useStyles();
   return (
@@ -21,7 +21,7 @@ const ButtonOutline: React.FC<CustomButtonProps> = ({
       onClick={handleClick}
       className={classes.buttonOutline}
     >
-      <Typography className={classes.valueField}>{value}</Typography>
+      <Typography className={classes.valueField}>{children}</Typography>
     </Button>
   );
 };
