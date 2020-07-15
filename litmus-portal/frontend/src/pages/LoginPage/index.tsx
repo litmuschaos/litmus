@@ -19,6 +19,7 @@ const LoginPage = () => {
     username: '',
     password: '',
   });
+  const [formError, setFormError] = useState<boolean>(false);
 
   const handleForm = () => {
     const formData: HTMLFormElement | null = document.querySelector(
@@ -37,11 +38,16 @@ const LoginPage = () => {
       .then((response) => response.json())
       .then((data) => {
         if ('error' in data) {
-          // TODO: HANDLE LOGIN ERROR IN UI
+          setFormError(true);
         } else {
           user.setUserDetails(data.access_token);
+          setFormError(false);
           history.push('/');
         }
+      })
+      .catch((err) => {
+        setFormError(true);
+        console.error(err);
       });
   };
 
@@ -83,7 +89,9 @@ const LoginPage = () => {
                   InputProps={{ disableUnderline: true }}
                   data-cy="inputEmail"
                   required
-                  className={classes.inputArea}
+                  className={`${classes.inputArea} ${
+                    formError ? classes.error : classes.success
+                  }`}
                   onChange={(e) =>
                     setAuthData({
                       username: e.target.value,
@@ -96,7 +104,9 @@ const LoginPage = () => {
                   type="password"
                   name="password"
                   required
-                  className={classes.inputArea}
+                  className={`${classes.inputArea} ${
+                    formError ? classes.error : classes.success
+                  }`}
                   value={authData.password}
                   autoComplete="current-password"
                   InputProps={{ disableUnderline: true }}

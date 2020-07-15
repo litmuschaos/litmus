@@ -34,6 +34,16 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1rem',
   },
 
+  success: {
+    border: '0.0625rem solid',
+    borderColor: theme.palette.secondary.dark,
+  },
+
+  error: {
+    border: '0.0625rem solid',
+    borderColor: theme.palette.error.main,
+  },
+
   inputArea: {
     width: '20rem',
     marginTop: theme.spacing(3.5),
@@ -42,8 +52,6 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: theme.spacing(2),
     paddingBottom: theme.spacing(2.2),
     borderRadius: 3,
-    border: '0.0625rem solid',
-    borderColor: theme.palette.secondary.dark,
   },
 
   loginDiv: {

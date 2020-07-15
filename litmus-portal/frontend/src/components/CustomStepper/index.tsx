@@ -1,23 +1,22 @@
 import Button from '@material-ui/core/Button';
 import Step from '@material-ui/core/Step';
+import { StepIconProps } from '@material-ui/core/StepIcon';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
-import clsx from 'clsx';
 import Typography from '@material-ui/core/Typography';
+import clsx from 'clsx';
 import React from 'react';
-import { StepIconProps } from '@material-ui/core/StepIcon';
-import Center from '../../containers/layouts/Center';
 import ButtonFilled from '../ButtonFilled';
 import ButtonOutline from '../ButtonOutline';
 import FinishModal from '../FinishModal';
 import Loader from '../Loader';
 import ReliablityScore from '../ReliabilityScore';
-import WorkflowCluster from '../WorkflowCluster';
 import ScheduleWorkflow from '../ScheduleWorkflow';
 import VerifyCommit from '../VerifyCommit';
-import useQontoStepIconStyles from './useQontoStepIconStyles';
+import WorkflowCluster from '../WorkflowCluster';
 import QontoConnector from './quontoConnector';
 import useStyles from './styles';
+import useQontoStepIconStyles from './useQontoStepIconStyles';
 
 function getSteps(): string[] {
   return [
@@ -88,11 +87,7 @@ function getStepContent(stepIndex: number): React.ReactNode {
     case 5:
       return <VerifyCommit />;
     default:
-      return (
-        <Center>
-          <span style={{ height: '100px' }}>hello I&#39;m centered</span>
-        </Center>
-      );
+      return <WorkflowCluster />;
   }
 }
 

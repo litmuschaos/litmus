@@ -76,7 +76,6 @@ function CStepper() {
         })
         .then((data) => {
           if ('error' in data) {
-            // TODO: HANDLE UPDATE ERROR IN UI
             console.error("Couldn't login :(");
           } else {
             user.updateUserDetails({ name: data.name, email: data.email });
