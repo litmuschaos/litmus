@@ -9,7 +9,6 @@ import InfoFilledWrap from '../../components/InfoFilled/index';
 import Scaffold from '../../containers/layouts/Scaffold/index';
 import useStyles from './styles';
 import QuickActionCard from '../../components/QuickActionCard';
-
 import GeoMap from '../../components/GeoMap/index';
 
 // Reusable Header Component
@@ -26,6 +25,8 @@ const Header2: React.FC = ({ children }) => {
 
 const Community: React.FC = () => {
   const classes = useStyles();
+  const LitmuschaosOnDevTo =
+    'https://dev.to/search?q=Mayadata&filters=class_name:Article';
 
   return (
     <Scaffold>
@@ -72,12 +73,12 @@ const Community: React.FC = () => {
                     </Typography>
                   </CardContent>
                   <Link
-                    to="https://blog.mayadata.io/"
+                    to={LitmuschaosOnDevTo}
                     target="_blank"
                     className={classes.devToLink}
                     onClick={(event) => {
                       event.preventDefault();
-                      window.open('https://blog.mayadata.io/');
+                      window.open(LitmuschaosOnDevTo);
                     }}
                   >
                     <Button variant="contained" className={classes.followBtn}>
