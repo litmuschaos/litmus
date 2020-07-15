@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   mainDiv: {
     marginTop: theme.spacing(8.75),
     marginLeft: theme.spacing(17.5),
-    width: '25rem',
+    width: '26rem',
   },
 
   heading: {

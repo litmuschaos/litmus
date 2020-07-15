@@ -9,6 +9,9 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(22),
     marginRight: theme.spacing(3),
     borderRadius: 3,
+    [theme.breakpoints.down('sm')]: {
+      width: theme.spacing(40),
+    },
   },
   infoFilledWrap: {
     display: 'flex',
@@ -16,6 +19,11 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(30),
     height: theme.spacing(22),
     flexGrow: 1,
+    [theme.breakpoints.down('sm')]: {
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100%',
+    },
   },
   horizontalRule: {
     width: theme.spacing(14),
@@ -27,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: 'Ubuntu',
     letterSpacing: theme.spacing(0.3),
     fontWeight: 'bold',
-    fontSize: theme.spacing(3),
+    fontSize: theme.spacing(4),
     color: theme.palette.common.white,
   },
   plusBtn: {

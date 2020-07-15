@@ -96,9 +96,6 @@ const useStyles = makeStyles((theme) => ({
     fontSize: theme.spacing(1.6),
     color: theme.palette.text.primary,
     textTransform: 'none',
-    [theme.breakpoints.down('sm')]: {
-      marginLeft: theme.spacing(15),
-    },
   },
   devToLink: {
     textDecoration: 'none',
