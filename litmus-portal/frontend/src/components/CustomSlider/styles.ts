@@ -3,24 +3,28 @@ import { makeStyles } from '@material-ui/core';
 const useStyles = makeStyles((theme) => ({
   testHeading: {
     marginTop: theme.spacing(6.25),
-    fontSize: '1.5625rem',
+    fontSize: theme.spacing(2),
   },
   testType: {
-    fontSize: '1.0625rem',
-    paddingRight: theme.spacing(1.25),
+    fontSize: theme.spacing(2),
   },
   testResult: {
     color: theme.palette.primary.dark,
-    fontSize: '1.0625rem',
-    paddingLeft: theme.spacing(1.25),
+    fontSize: theme.spacing(2),
+    fontWeight: 'bold',
   },
   mainDiv: {
     display: 'flex',
     flexDirection: 'row',
     marginTop: theme.spacing(6.25),
   },
+  horizontalRule: {
+    margin: '0 2rem',
+    padding: 0,
+    transform: 'rotate(90deg)',
+  },
   sliderDiv: {
-    width: '56.25rem',
+    width: theme.spacing(100),
     marginBottom: theme.spacing(3.75),
   },
 }));
