@@ -2,13 +2,13 @@ import { Card, CardActionArea, Typography, Button } from '@material-ui/core';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import InfoFilledWrap from '../../components/InfoFilled';
 import QuickActionCard from '../../components/QuickActionCard';
 import Scaffold from '../../containers/layouts/Scaffold';
 import useStyles from './style';
 import { RootState } from '../../redux/reducers';
 import WelcomeModal from '../../components/WelcomeModal';
-import { useSelector } from 'react-redux';
 
 const CreateWorkflowCard = () => {
   const classes = useStyles();
@@ -43,7 +43,10 @@ const HomePage = () => {
   const { userData } = useSelector((state: RootState) => state);
   const { name } = userData;
   const classes = useStyles();
-  if (userData.email === '') return <WelcomeModal />;
+  if (userData.email === '') {
+    return <WelcomeModal isOpen />;
+  }
+
   return (
     <Scaffold>
       <div className={classes.rootContainer}>
