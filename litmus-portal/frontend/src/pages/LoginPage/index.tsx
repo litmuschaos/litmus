@@ -1,11 +1,11 @@
-import { Typography, TextField, Hidden, Button } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import { Button, Hidden, TextField, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
-import useStyles from './styles';
+import { Link } from 'react-router-dom';
 import config from '../../config';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
 import { history } from '../../redux/configureStore';
+import useStyles from './styles';
 
 interface authData {
   username: string;
@@ -19,6 +19,7 @@ const LoginPage = () => {
     username: '',
     password: '',
   });
+  const [formError, setFormError] = useState<boolean>(false);
 
   const handleForm = () => {
     const formData: HTMLFormElement | null = document.querySelector(
@@ -37,12 +38,16 @@ const LoginPage = () => {
       .then((response) => response.json())
       .then((data) => {
         if ('error' in data) {
-          // TODO: HANDLE LOGIN ERROR IN UI
-          alert('LOGIN ERROR');
+          setFormError(true);
         } else {
           user.setUserDetails(data.access_token);
+          setFormError(false);
           history.push('/');
         }
+      })
+      .catch((err) => {
+        setFormError(true);
+        console.error(err);
       });
   };
 
@@ -86,7 +91,9 @@ const LoginPage = () => {
                   InputProps={{ disableUnderline: true }}
                   data-cy="inputEmail"
                   required
-                  className={classes.inputArea}
+                  className={`${classes.inputArea} ${
+                    formError ? classes.error : classes.success
+                  }`}
                   onChange={(e) =>
                     setAuthData({
                       username: e.target.value,
@@ -99,7 +106,9 @@ const LoginPage = () => {
                   type="password"
                   name="password"
                   required
-                  className={classes.inputArea}
+                  className={`${classes.inputArea} ${
+                    formError ? classes.error : classes.success
+                  }`}
                   value={authData.password}
                   autoComplete="current-password"
                   InputProps={{ disableUnderline: true }}

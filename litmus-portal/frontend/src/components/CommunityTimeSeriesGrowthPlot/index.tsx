@@ -1,7 +1,7 @@
 /* eslint-disable no-return-assign */
 /* eslint-disable no-param-reassign */
-import React, { Component } from 'react';
 import Plotly from 'plotly.js';
+import React, { Component } from 'react';
 import createPlotlyComponent from 'react-plotly.js/factory';
 
 const Plot = createPlotlyComponent(Plotly);
@@ -165,8 +165,8 @@ class CommunityAnalyticsPlotCumulative extends Component<
         }}
         useResizeHandler
         style={{
-          width: '100%',
-          height: '100%',
+          width: 'fit-content',
+          margin: 'auto',
         }}
         config={{
           displaylogo: false,

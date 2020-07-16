@@ -1,14 +1,14 @@
 import React, { lazy, Suspense, useEffect } from 'react';
-import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import Loader from '../../components/Loader';
-import { history } from '../../redux/configureStore';
-import withTheme from '../../theme';
-import useStyles from './App-styles';
+import { UserData } from '../../models/user';
 import useActions from '../../redux/actions';
 import * as AnalyticsActions from '../../redux/actions/analytics';
+import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
-import { UserData } from '../../models/user';
+import withTheme from '../../theme';
+import useStyles from './App-styles';
 
 const ErrorPage = lazy(() => import('../../pages/ErrorPage'));
 const Workflows = lazy(() => import('../../pages/Workflows'));
@@ -22,7 +22,7 @@ interface RoutesProps {
 
 const Routes: React.FC<RoutesProps> = ({ userData }) => {
   const classes = useStyles();
-  if (userData === '')
+  if (userData === '') {
     return (
       <div className={classes.content}>
         <Switch>
@@ -31,6 +31,8 @@ const Routes: React.FC<RoutesProps> = ({ userData }) => {
         </Switch>
       </div>
     );
+  }
+
   return (
     <div className={classes.content}>
       <Switch>
