@@ -24,6 +24,8 @@ export NODE_PORT=$(kubectl get -o jsonpath="{.spec.ports[0].nodePort}" services 
 echo "URL: http://$EXTERNAL_IP:$NODE_PORT"
 ```
 
+Note: Default `username: admin` and  `password: litmus` 
+
 ### Unistallation
 ```bash
 kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/litmus-portal/litmus-portal/k8s-manifest.yml
