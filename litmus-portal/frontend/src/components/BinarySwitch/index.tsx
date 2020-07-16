@@ -5,13 +5,13 @@ import React from 'react';
 const AntSwitch = withStyles((theme: Theme) =>
   createStyles({
     root: {
-      width: 28,
-      height: 16,
+      width: '1.75rem',
+      height: '1rem',
       padding: 0,
       display: 'flex',
     },
     switchBase: {
-      padding: 2,
+      padding: '0.125rem',
       color: theme.palette.grey[500],
       '&$checked': {
         transform: 'translateX(12px)',
@@ -24,13 +24,13 @@ const AntSwitch = withStyles((theme: Theme) =>
       },
     },
     thumb: {
-      width: 12,
-      height: 12,
+      width: '0.75rem',
+      height: '0.75rem',
       boxShadow: 'none',
     },
     track: {
       border: `1px solid ${theme.palette.grey[500]}`,
-      borderRadius: 16 / 2,
+      borderRadius: 'calc(1rem / 0.125rem)',
       opacity: 1,
       backgroundColor: theme.palette.common.white,
     },
