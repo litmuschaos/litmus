@@ -100,6 +100,9 @@ const theme = customTheme({
     MuiFormLabel: {
       root: {
         paddingLeft: 20,
+        '&[data-shrink="true"]': {
+          color: '#5B44BA',
+        },
       },
       asterisk: {
         color: 'transparent',
