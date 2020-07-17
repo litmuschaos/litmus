@@ -20,15 +20,10 @@ function createData(
 ) {
   return { name, result, weight, points };
 }
-const result = 9;
-const result1 = 6;
-const result2 = 3;
-const result3 = 2;
 
 interface ResultModalProps {
   testValue: (number | number[])[];
 }
-
 const ResultTable: React.FC<ResultModalProps> = ({ testValue }) => {
   const classes = useStyles();
   const rows = [
@@ -38,7 +33,7 @@ const ResultTable: React.FC<ResultModalProps> = ({ testValue }) => {
         <ToggleComponent />
       </div>,
       testValue[0],
-      result
+      9
     ),
     createData(
       'Config map multi volume test',
@@ -46,7 +41,7 @@ const ResultTable: React.FC<ResultModalProps> = ({ testValue }) => {
         <ToggleComponent />
       </div>,
       testValue[1],
-      result1
+      4
     ),
     createData(
       'Networking pod test',
@@ -54,7 +49,7 @@ const ResultTable: React.FC<ResultModalProps> = ({ testValue }) => {
         <ToggleComponent />
       </div>,
       testValue[2],
-      result2
+      2
     ),
     createData(
       'Proxy-service-test',
@@ -62,7 +57,7 @@ const ResultTable: React.FC<ResultModalProps> = ({ testValue }) => {
         <ToggleComponent />
       </div>,
       testValue[3],
-      result3
+      8
     ),
   ];
 
@@ -154,7 +149,10 @@ const ResultTable: React.FC<ResultModalProps> = ({ testValue }) => {
               </div>
             </div>
             <Typography className={classes.totalScore}>
-              <strong>14/32</strong>
+              <strong>
+                {rows.map((e) => e.points).reduce((prev, curr) => prev + curr)}
+                /32
+              </strong>
             </Typography>
           </div>
           <div className={classes.resultDiv}>

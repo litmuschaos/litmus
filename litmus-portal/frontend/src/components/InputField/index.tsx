@@ -23,20 +23,18 @@ const InputField: React.FC<InputFieldProps> = ({
 }) => {
   const classes = useStyles();
   return (
-    <>
-      <TextField
-        label={label}
-        name={name}
-        value={value}
-        type={type}
-        required={required}
-        InputProps={{ disableUnderline: true }}
-        onChange={handleChange}
-        className={`${classes.inputArea} ${
-          formError ? classes.error : classes.success
-        }`}
-      />
-    </>
+    <TextField
+      label={label}
+      name={name}
+      value={value}
+      type={type}
+      required={required}
+      InputProps={{ disableUnderline: true }}
+      onChange={handleChange}
+      className={`${classes.inputArea} ${
+        formError ? classes.error : classes.success
+      }`}
+    />
   );
 };
 

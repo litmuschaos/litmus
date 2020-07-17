@@ -2,8 +2,8 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: theme.spacing(40),
-    height: theme.spacing(22),
+    width: '20rem',
+    height: '11rem',
     marginRight: theme.spacing(3),
     borderRadius: 3,
   },
@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
   },
   headerMain: {
     fontWeight: 'bold',
-    fontSize: theme.spacing(2),
+    fontSize: '1rem',
     padding: theme.spacing(2),
     marginLeft: theme.spacing(3),
   },
@@ -26,12 +26,13 @@ const useStyles = makeStyles((theme) => ({
   },
   passedBox: {
     background: '#109B67',
-    height: theme.spacing(5),
+    height: '2.5rem',
     marginRight: theme.spacing(0.25),
     borderRadius: theme.spacing(0.3),
   },
   failedBox: {
     background: '#CA2C2C',
+    height: '2.5rem',
     borderRadius: theme.spacing(0.3),
   },
   passedIcon: {
