@@ -14,8 +14,8 @@ import useStyles from './styles';
 import QuickActionCard from '../../components/QuickActionCard';
 import CommunityAnalyticsPlotNormal from '../../components/CommunityTimeSeriesTrendPlot';
 import CommunityAnalyticsPlotCumulative from '../../components/CommunityTimeSeriesGrowthPlot';
-import GeoMap from '../../components/GeoMap/index';
 import { RootState } from '../../redux/reducers';
+import GeoMap from '../../components/GeoMap/index';
 
 // Reusable Header Component
 const Header2: React.FC = ({ children }) => {
@@ -31,6 +31,7 @@ const Header2: React.FC = ({ children }) => {
 
 const Community: React.FC = () => {
   const classes = useStyles();
+  const LitmusOnDev = 'https://dev.to/t/litmuschaos';
 
   const communityData = useSelector((state: RootState) => state.communityData);
 
@@ -184,12 +185,12 @@ const Community: React.FC = () => {
                     </Typography>
                   </CardContent>
                   <Link
-                    to="https://blog.mayadata.io/"
+                    to={LitmusOnDev}
                     target="_blank"
                     className={classes.devToLink}
                     onClick={(event) => {
                       event.preventDefault();
-                      window.open('https://blog.mayadata.io/');
+                      window.open(LitmusOnDev);
                     }}
                   >
                     <Button variant="contained" className={classes.followBtn}>
