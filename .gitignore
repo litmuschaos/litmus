@@ -1,7 +1,13 @@
+.DS_Store
 .idea
 .vscode
+.nyc_output
 __pycache__/
 **/node_modules/
+**/cypress/videos/
+**/cypress/screenshots/
+**/.nyc_output/
+**/coverage/
 
 main
 out/

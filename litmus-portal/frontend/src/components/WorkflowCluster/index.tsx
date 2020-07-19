@@ -9,14 +9,19 @@ import Radio from '@material-ui/core/Radio';
 import * as React from 'react';
 import useStyles from './styles';
 
-/* Check is image which is used as a sign on cluster page */
+/*
+  Check is image which is used as
+  a sign on cluster page
+*/
 function Check() {
   const classes = useStyles();
 
   return <img src="icons/check.png" className={classes.check} alt="Check" />;
 }
 
-/* This screen is starting page of workflow */
+/*
+  This screen is starting page of workflow
+*/
 const WorkflowCluster = () => {
   const classes = useStyles();
   const [value, setValue] = React.useState('female');
@@ -26,7 +31,7 @@ const WorkflowCluster = () => {
   };
 
   return (
-    <div className={classes.rootContainer}>
+    <div className={classes.rootcontainer}>
       {/* Arrow mark */}
       <div>
         <Check />
@@ -35,10 +40,10 @@ const WorkflowCluster = () => {
         <Typography className={classes.heading}>
           <strong> Choose the target Kubernetes cluster</strong>
         </Typography>
-        <Typography className={classes.head2}>
+        <Typography className={classes.headchaos}>
           You are creating a <strong> new chaos workflow.</strong>
         </Typography>
-        <Typography className={classes.head3}>
+        <Typography className={classes.headcluster}>
           Select a target Kubernetes cluster to run this workflow.
         </Typography>
 
@@ -66,8 +71,11 @@ const WorkflowCluster = () => {
         </div>
       </div>
 
-      {/* Division is used for Ignite-cluster(where this Litmus portal is install and running)
-      or alternative Install Litmus Agent to other Kubernetes cluster */}
+      {/* 
+        Division is used for Ignite-cluster(where this Litmus portal
+        is install and running) or alternative Install Litmus Agent to 
+        other Kubernetes cluster 
+      */}
       <div>
         <div
           style={{

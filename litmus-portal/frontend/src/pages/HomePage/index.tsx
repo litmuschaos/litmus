@@ -1,13 +1,14 @@
-import { Card, CardActionArea, Typography } from '@material-ui/core';
+import { Card, CardActionArea, Typography, Button } from '@material-ui/core';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import React, { useState } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import InfoFilled from '../../components/InfoFilled/index';
+import InfoFilledWrap from '../../components/InfoFilled';
 import QuickActionCard from '../../components/QuickActionCard';
 import Scaffold from '../../containers/layouts/Scaffold';
 import useStyles from './style';
 import { RootState } from '../../redux/reducers';
+import WelcomeModal from '../../components/WelcomeModal';
 
 const CreateWorkflowCard = () => {
   const classes = useStyles();
@@ -38,49 +39,20 @@ const CreateWorkflowCard = () => {
   );
 };
 
-interface CardValueData {
-  color: string;
-  value: number;
-  statType: string;
-  plus?: boolean | undefined;
-}
-
 const HomePage = () => {
-  const communityData = useSelector((state: RootState) => state.communityData);
-  const cardData: CardValueData[] = [
-    {
-      color: '#109B67',
-      value: parseInt(communityData.google.operatorInstalls, 10),
-      statType: 'Operator Installed',
-      plus: false,
-    },
-    {
-      color: '#858CDD',
-      value: parseInt(communityData.google.totalRuns, 10),
-      statType: 'Total Experiment Runs',
-      plus: true,
-    },
-    {
-      color: '#F6B92B',
-      value: parseInt(communityData.github.experimentsCount, 10),
-      statType: 'Total Experiments',
-      plus: true,
-    },
-    {
-      color: '#BA3B34',
-      value: parseInt(communityData.github.stars, 10),
-      statType: 'Github Stars',
-      plus: true,
-    },
-  ];
-  const [userName] = useState('Richard Hill');
+  const { userData } = useSelector((state: RootState) => state);
+  const { name } = userData;
   const classes = useStyles();
+  if (userData.email === '') {
+    return <WelcomeModal isOpen />;
+  }
+
   return (
     <Scaffold>
       <div className={classes.rootContainer}>
         <div className={classes.root}>
           <Typography className={classes.userName}>
-            Welcome, <strong>{userName}</strong>
+            Welcome, <strong>{name}</strong>
           </Typography>
           <div className={classes.headingDiv}>
             <div className={classes.mainDiv}>
@@ -91,7 +63,7 @@ const HomePage = () => {
                 <Typography className={classes.mainResult}>
                   <strong>
                     You have established your own first project on Litmus
-                    portal.{' '}
+                    portal.
                   </strong>
                 </Typography>
                 <Typography className={classes.mainDesc}>
@@ -99,6 +71,11 @@ const HomePage = () => {
                   Once you schedule chaos workflows, reliability analytics are
                   displayed here.
                 </Typography>
+                <Button variant="contained" className={classes.predefinedBtn}>
+                  <Typography variant="subtitle1">
+                    See pre-defined workflows
+                  </Typography>
+                </Button>
               </div>
               <div className={classes.imageDiv}>
                 <img src="icons/applause.png" alt="Applause icon" />
@@ -110,18 +87,21 @@ const HomePage = () => {
           </div>
           <div className={classes.contentDiv}>
             <div className={classes.statDiv}>
-              <Typography className={classes.statsHeading}>
-                <strong>How busy Litmus Project is?</strong>
-              </Typography>
+              <div className={classes.btnHeaderDiv}>
+                <Typography className={classes.statsHeading}>
+                  <strong>How busy Litmus Project is?</strong>
+                </Typography>
+                <Button className={classes.seeAllBtn}>
+                  <div className={classes.btnSpan}>
+                    <Typography className={classes.btnText}>
+                      See more
+                    </Typography>
+                    <img src="icons/next.png" alt="next" />
+                  </div>
+                </Button>
+              </div>
               <div className={classes.cardDiv}>
-                {cardData.map((data) => (
-                  <InfoFilled
-                    color={data.color}
-                    value={data.value}
-                    statType={data.statType}
-                    plus={data.plus}
-                  />
-                ))}
+                <InfoFilledWrap />
               </div>
             </div>
             <div className={classes.quickActionDiv}>

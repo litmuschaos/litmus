@@ -15,6 +15,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(3.5),
     marginLeft: theme.spacing(4),
   },
+  homeLink: {
+    textDecoration: 'none',
+  },
   logo: {
     left: theme.spacing(4.375),
   },

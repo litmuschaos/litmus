@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import CustomSlider from '../CustomSlider';
 import CustomResultModal from '../ResultModal';
 import useStyles from './styles';
-import ButtonOutlineIcon from '../ButtonOutlineIcon';
+import ButtonOutline from '../Button/ButtonOutline';
 import InfoTooltip from '../InfoTooltip';
 
 const ReliablityScore = () => {
@@ -88,7 +88,7 @@ const ReliablityScore = () => {
         <hr className={classes.horizontalLine} />
         <div className={classes.modalDiv}>
           <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <ButtonOutlineIcon
+            <ButtonOutline
               isDisabled={false}
               handleClick={handleModal}
               data-cy="testRunButton"
@@ -99,7 +99,7 @@ const ReliablityScore = () => {
                   Demo Launch
                 </Typography>
               </div>
-            </ButtonOutlineIcon>
+            </ButtonOutline>
             <div style={{ marginLeft: 10 }}>
               <InfoTooltip value="Text Default" />
             </div>

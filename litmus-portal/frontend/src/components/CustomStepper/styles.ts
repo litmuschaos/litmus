@@ -4,6 +4,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   root: {
     width: '100%',
   },
+  stepper: {
+    marginTop: theme.spacing(5),
+  },
   backButton: {
     marginRight: theme.spacing(1),
   },
@@ -14,6 +17,23 @@ const useStyles = makeStyles((theme: Theme) => ({
   buttonGroup: {
     display: 'flex',
     flexDirection: 'row',
+  },
+  activeLabel: {
+    color: theme.palette.primary.light,
+    marginTop: theme.spacing(-9),
+    fontWeight: 'bold',
+    fontSize: theme.spacing(1.5),
+    [theme.breakpoints.down('sm')]: {
+      fontSize: theme.spacing(1),
+    },
+  },
+  normalLabel: {
+    color: theme.palette.grey[600],
+    fontSize: theme.spacing(1.5),
+    marginTop: theme.spacing(-9),
+    [theme.breakpoints.down('sm')]: {
+      fontSize: theme.spacing(1),
+    },
   },
 }));
 

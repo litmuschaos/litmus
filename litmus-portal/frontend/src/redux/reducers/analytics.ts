@@ -1,12 +1,11 @@
-import createReducer from './createReducer';
 import {
-  CommunityData,
   AnalyticsAction,
   AnalyticsActions,
+  CommunityData,
   GeoCity,
-  GeoCountry,
   SeriesData,
-} from '../../models';
+} from '../../models/analytics';
+import createReducer from './createReducer';
 
 const initialState: CommunityData = {
   github: { stars: '', experimentsCount: '' },
@@ -17,6 +16,8 @@ const initialState: CommunityData = {
     geoCountry: [],
     dailyExperimentData: [],
     dailyOperatorData: [],
+    monthlyExperimentData: [],
+    monthlyOperatorData: [],
   },
 };
 
@@ -36,13 +37,7 @@ export const communityData = createReducer<CommunityData>(initialState, {
       });
     });
 
-    const geoCountry: GeoCountry[] = [];
-    data.google.geoCountry.forEach((c: any) => {
-      geoCountry.push({
-        name: c[0],
-        count: c[1],
-      });
-    });
+    const { geoCountry } = data.google;
 
     const dailyExperimentData: SeriesData[] = [];
     data.google.dailyExperimentData.forEach((c: any) => {
@@ -60,6 +55,22 @@ export const communityData = createReducer<CommunityData>(initialState, {
       });
     });
 
+    const monthlyExperimentData: SeriesData[] = [];
+    data.google.monthlyExperimentData.forEach((c: any) => {
+      monthlyExperimentData.push({
+        date: c[0],
+        count: c[1],
+      });
+    });
+
+    const monthlyOperatorData: SeriesData[] = [];
+    data.google.monthlyOperatorData.forEach((c: any) => {
+      monthlyOperatorData.push({
+        date: c[0],
+        count: c[1],
+      });
+    });
+
     return {
       ...state,
       github: data.github,
@@ -70,6 +81,8 @@ export const communityData = createReducer<CommunityData>(initialState, {
         geoCity,
         dailyExperimentData,
         dailyOperatorData,
+        monthlyExperimentData,
+        monthlyOperatorData,
       },
     };
   },
