@@ -3,12 +3,12 @@ import Toolbar from '@material-ui/core/Toolbar';
 import React, { useEffect, useState, useCallback } from 'react';
 import { Divider, Box } from '@material-ui/core';
 import { useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import useStyles from './styles';
 import CustomBreadCrumbs from '../CustomBreadCrumbs';
 import NotificationsDropdown from './NotificationDropdown';
 import ProfileDropdownSection from './ProfileDropdownSection';
 import { UserData } from '../../models/user';
-import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/reducers';
 
 const Header = () => {
@@ -22,13 +22,13 @@ const Header = () => {
 
   const { name, email, username } = userData;
 
-  //set selectedProject from backend via redux using #setSelectedProject depending on user's last active project or use cookie.
+  // set selectedProject from backend via redux using #setSelectedProject depending on user's last active project or use cookie.
   const [selectedProject, setSelectedProject] = useState('1');
 
   const setSelectedProjectID = (selectedProjectID: any) => {
     setSelectedProject(selectedProjectID);
-    //send POST request with #selectedProjectID to update active project on db or persist it in redux or cookie.
-    //window.location.reload(false);
+    // send POST request with #selectedProjectID to update active project on db or persist it in redux or cookie.
+    // window.location.reload(false);
   };
 
   const [projects, setProjects] = useState([]);
@@ -135,7 +135,7 @@ const Header = () => {
         }
       }
     }
-    //send POST request with #notificationIDs.id to update db with notification id marked as disissed from active or persist it in redux or cookie.
+    // send POST request with #notificationIDs.id to update db with notification id marked as disissed from active or persist it in redux or cookie.
     setMessages(messages);
     setCountOfMessages(messages.length);
   };

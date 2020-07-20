@@ -61,7 +61,7 @@ const ProfileDropdownSection = (props: ProfileInfoDropdownSectionProps) => {
             </Avatar>
           ) : (
             <Avatar
-              alt={'User'}
+              alt="User"
               className={classes.avatarBackground}
               style={{ alignContent: 'right' }}
             />

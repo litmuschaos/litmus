@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import {
   ListItem,
   ListItemAvatar,
@@ -24,9 +24,9 @@ function NotificationListItem(props: NotificationListItemProps) {
 
   const [messageActive, setMessageActive] = useState(true);
 
-  const handleError = useCallback(() => {
+  function handleError() {
     setHasErrorOccurred(true);
-  }, [setHasErrorOccurred]);
+  }
 
   if (messageActive === false) {
     return <div />;
@@ -55,7 +55,7 @@ function NotificationListItem(props: NotificationListItemProps) {
             aria-label="delete"
             onClick={() => {
               setMessageActive(false);
-              let idsForDeletingNotifications = {
+              const idsForDeletingNotifications = {
                 id: message.id,
                 sequenceID: message.sequenceID,
               };

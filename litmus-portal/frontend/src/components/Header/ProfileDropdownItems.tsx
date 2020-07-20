@@ -99,7 +99,7 @@ function ProfileInfoDropdownItems(props: ProfileInfoDropdownItemProps) {
             </Avatar>
           ) : (
             <Avatar
-              alt={'User'}
+              alt="User"
               className={classes.avatarBackground}
               style={{ alignContent: 'right', marginBottom: 8 }}
             />
