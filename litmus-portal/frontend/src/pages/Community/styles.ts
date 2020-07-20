@@ -2,26 +2,17 @@ import { makeStyles } from '@material-ui/core/styles';
 
 // Community Component Styling
 const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    display: 'flex',
-    fontFamily: 'Ubuntu',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-  },
   mainHeader: {
     color: theme.palette.text.primary,
     fontSize: theme.spacing(5),
+    marginTop: theme.spacing(5),
     marginBottom: theme.spacing(6),
   },
-  formControl: {
-    margin: theme.spacing(0.5),
-    height: theme.spacing(6.5),
-    width: theme.spacing(38.75),
-  },
+
   LitmusAnalyticsBlock: {
     margin: '1rem 0',
   },
+
   LitmusAnalyticsDiv: {
     display: 'flex',
     flexDirection: 'row',
@@ -32,10 +23,12 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: 'column',
     },
   },
+
   header2: {
     fontSize: theme.spacing(3),
     padding: '1rem 0',
   },
+
   cardDiv: {
     display: 'flex',
     flexDirection: 'row',
@@ -46,17 +39,20 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: theme.spacing(8),
     },
   },
+
   paper: {
     flexGrow: 1,
     marginRight: theme.spacing(2),
     textAlign: 'center',
     color: theme.palette.text.secondary,
+    backgroundColor: '#FFF',
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
       width: '100%',
       flexDirection: 'column',
     },
   },
+
   card: {
     backgroundColor: theme.palette.secondary.dark,
     height: theme.spacing(42.5),
@@ -70,14 +66,17 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: 'column',
     },
   },
+
   cardContent: {
     marginTop: theme.spacing(4),
   },
+
   LitmusOnDev: {
     marginTop: theme.spacing(2),
     fontWeight: 'bold',
     fontSize: theme.spacing(3),
   },
+
   LitmusOnDevSpan: {
     position: 'relative',
     fontWeight: 'normal',
@@ -85,6 +84,7 @@ const useStyles = makeStyles((theme) => ({
     bottom: theme.spacing(2),
     left: theme.spacing(3),
   },
+
   devToLogo: {
     fill: 'white',
     filter:
@@ -94,6 +94,7 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(10),
     height: theme.spacing(6),
   },
+
   followBtn: {
     width: theme.spacing(20),
     height: theme.spacing(6),
@@ -102,12 +103,15 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
     textTransform: 'none',
   },
+
   devToLink: {
     textDecoration: 'none',
   },
+
   LitmusUsedBlock: {
     margin: '2rem 0',
   },
+
   LitmusUsedDiv: {
     display: 'flex',
     flexDirection: 'row',
@@ -118,6 +122,7 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: 'column',
     },
   },
+
   quickActionCard: {
     height: theme.spacing(42.5),
     width: theme.spacing(40),
