@@ -1,6 +1,7 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
+  // Styles for Header
   appBar: {
     width: '100%',
     height: '100%',
@@ -53,11 +54,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingBottom: theme.spacing(0),
   },
 
+  // Style for ProfileDropdownSection and ProfileDropdownItems.
   avatarBackground: {
     color: '#FFF',
     backgroundColor: theme.palette.secondary.main,
   },
 
+  // Styles for ProfileDropdownItems.
   popover: {
     background: '#FFF',
     borderRadius: theme.shape.borderRadius,
@@ -143,6 +146,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginBottom: theme.spacing(1),
   },
 
+  // Style for ProjectListItem.
   listItemStyle: {
     height: theme.spacing(7),
     marginTop: 0,
@@ -151,6 +155,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingBottom: 0,
   },
 
+  // Styles for NotificationDropdown.
   tabContainer: {
     overflowY: 'auto',
     maxHeight: 350,
@@ -159,6 +164,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   popoverPaper: {
     width: '100%',
     maxWidth: 350,
+    marginTop: '1.0625rem',
     marginLeft: theme.spacing(2),
     marginRight: theme.spacing(1),
     [theme.breakpoints.down('sm')]: {

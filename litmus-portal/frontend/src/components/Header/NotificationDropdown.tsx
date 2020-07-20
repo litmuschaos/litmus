@@ -77,7 +77,6 @@ function NotificationsDropdown(props: NotifierProps) {
           horizontal: 'right',
         }}
         classes={{ paper: classes.popoverPaper }}
-        style={{ marginTop: 17 }}
         onClose={handleClickAway}
       >
         <AppBar position="static" color="inherit" className={classes.noShadow}>
