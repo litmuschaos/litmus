@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import {
   Popover,
@@ -32,13 +32,13 @@ function NotificationsDropdown(props: NotifierProps) {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleClick = useCallback(() => {
+  function handleClick() {
     setIsOpen(!isOpen);
-  }, [isOpen, setIsOpen]);
+  }
 
-  const handleClickAway = useCallback(() => {
+  function handleClickAway() {
     setIsOpen(false);
-  }, [setIsOpen]);
+  }
 
   const id = isOpen ? 'scroll-playground' : null;
 
