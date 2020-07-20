@@ -1,8 +1,4 @@
-import { ThemeAction } from './theme';
 import { AnalyticsAction } from './analytics';
+import { UserAction } from './user';
 
-export * from './charts';
-export * from './theme';
-export * from './analytics';
-
-export type Action = ThemeAction | AnalyticsAction;
+export type Action = UserAction | AnalyticsAction;

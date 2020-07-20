@@ -14,6 +14,11 @@ const useStyles = makeStyles((theme) => ({
     fontSize: theme.spacing(5),
     marginBottom: theme.spacing(6),
   },
+  formControl: {
+    margin: theme.spacing(0.5),
+    height: theme.spacing(6.5),
+    width: theme.spacing(38.75),
+  },
   LitmusAnalyticsBlock: {
     margin: '1rem 0',
   },
@@ -96,9 +101,9 @@ const useStyles = makeStyles((theme) => ({
     fontSize: theme.spacing(1.6),
     color: theme.palette.text.primary,
     textTransform: 'none',
-    [theme.breakpoints.down('sm')]: {
-      marginLeft: theme.spacing(15),
-    },
+  },
+  devToLink: {
+    textDecoration: 'none',
   },
   LitmusUsedBlock: {
     margin: '2rem 0',

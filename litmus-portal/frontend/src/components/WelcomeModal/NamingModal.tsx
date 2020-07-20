@@ -9,8 +9,11 @@ function Icon() {
     <img src="icons/LitmusLogo.png" className={classes.mark} alt="markLitmus" />
   );
 }
-
-function NamingModal() {
+interface ModalData {
+  setData: Function;
+}
+/* This is main page to take input for Project */
+const NamingModal: React.FC<ModalData> = ({ setData }) => {
   const classes = useStyles();
   return (
     <div>
@@ -26,13 +29,16 @@ function NamingModal() {
         <Paper className={classes.inputArea}>
           <TextField
             id="filled-name-input"
-            label="Full Name"
+            label="Email Address"
             InputProps={{ disableUnderline: true }}
             data-cy="inputProjectName"
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setData('email', event.target.value);
+            }}
           />
         </Paper>
       </div>
     </div>
   );
-}
+};
 export default NamingModal;

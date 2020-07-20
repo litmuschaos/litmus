@@ -1,16 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { IconButton, Grid } from '@material-ui/core';
+import { Grid, IconButton } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
-import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import Typography from '@material-ui/core/Typography';
+import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { UserData } from '../../models/user';
+import { RootState } from '../../redux/reducers';
 import ProfileInfoDropdownItems from '../ProfileDropdownItems';
 import useStyles from './styles';
 
 const ProfileDropdown = ({ callbackFromParent }: any) => {
-  const [user, setUser] = useState('Richard Hill');
-
-  const [mail, setMail] = useState('richardrichard@gmail.com');
+  const userData: UserData = useSelector((state: RootState) => state.userData);
+  const { name, email, username } = userData;
 
   const classes = useStyles();
 
@@ -24,11 +26,6 @@ const ProfileDropdown = ({ callbackFromParent }: any) => {
         projectName: 'FlashProjectCL1',
         statusActive: 'false',
         id: '0',
-      },
-      {
-        projectName: 'Eneghyproject',
-        statusActive: 'true',
-        id: '1',
       },
     ];
 
@@ -81,7 +78,7 @@ const ProfileDropdown = ({ callbackFromParent }: any) => {
         <Grid item xs={2} style={{ alignItems: 'right' }} sm={2}>
           <div>
             <Avatar
-              alt={user || 'User'}
+              alt={name || 'User'}
               src="temp/RichardHill.jpg"
               className={classes.profilePicture}
               style={{ alignContent: 'right' }}
@@ -92,7 +89,7 @@ const ProfileDropdown = ({ callbackFromParent }: any) => {
         <Grid item xs={3} sm={3}>
           <Grid container>
             <Grid item xs={12} sm={12}>
-              <Typography>Richard Hill</Typography>
+              <Typography>{name}</Typography>
             </Grid>
             <Grid item xs={12} sm={12}>
               <Typography
@@ -101,7 +98,7 @@ const ProfileDropdown = ({ callbackFromParent }: any) => {
                   color: 'grey',
                 }}
               >
-                User
+                {username}
               </Typography>
             </Grid>
           </Grid>
@@ -127,8 +124,8 @@ const ProfileDropdown = ({ callbackFromParent }: any) => {
         anchorEl={profileMenuRef.current}
         isOpen={isProfilePopoverOpen}
         onClose={() => setProfilePopoverOpen(false)}
-        name={user}
-        email={mail}
+        name={name}
+        email={email}
         projects={projects}
       />
     </div>

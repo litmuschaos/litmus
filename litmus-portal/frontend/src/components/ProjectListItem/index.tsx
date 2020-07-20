@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
 import {
+  Avatar,
+  IconButton,
   ListItem,
   ListItemAvatar,
-  ListItemText,
-  Avatar,
   ListItemSecondaryAction,
-  IconButton,
+  ListItemText,
 } from '@material-ui/core';
 import CheckCircleSharpIcon from '@material-ui/icons/CheckCircleSharp';
 import InsertDriveFileOutlinedIcon from '@material-ui/icons/InsertDriveFileOutlined';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+import React, { useState } from 'react';
 import useStyles from './styles';
 
 interface ProjectListItemProps {
@@ -30,14 +30,14 @@ function ProjectListItem(props: ProjectListItemProps) {
     project.id === localStorage.getItem('ActiveProjectId')
   );
 
-  const [currentState, changeState] = useState(false);
+  const [currentState, changeState] = useState(true);
 
   const selectProject = () => {
     localStorage.setItem('ActiveProjectId', `${project.id}`);
     setbgColor('#109B67');
     setselectedProj(true);
     changeState(true);
-    window.location.reload(false);
+    // window.location.reload(false);
   };
 
   const extraOptions = () => {};

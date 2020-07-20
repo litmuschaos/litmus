@@ -5,8 +5,9 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import React from 'react';
-import useStyles from './styles';
+import { Link } from 'react-router-dom';
 import { history } from '../../redux/configureStore';
+import useStyles from './styles';
 
 interface CustomisedListItemProps {
   handleClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
@@ -40,53 +41,64 @@ const SideBar = () => {
       }}
       anchor="left"
     >
-      <div className={classes.litmusDiv}>
-        <img
-          src="./icons/litmusPurple.svg"
-          alt="litmus logo"
-          className={classes.logo}
-        />
-        <Typography className={classes.litmusHome} variant="body1">
-          Litmus
-        </Typography>
-      </div>
+      <Link to="/" className={classes.homeLink}>
+        <div className={classes.litmusDiv}>
+          <img
+            src="./icons/litmusPurple.svg"
+            alt="litmus logo"
+            className={classes.logo}
+          />
+          <Typography className={classes.litmusHome} variant="body1">
+            Litmus
+          </Typography>
+        </div>
+      </Link>
 
       <List className={classes.drawerList}>
         <CustomisedListItem
           key="home"
           handleClick={() => {
+            history.push('/');
+          }}
+          label="Home"
+        >
+          <img src="./icons/workflows.png" alt="home" />
+        </CustomisedListItem>
+        <CustomisedListItem
+          key="workflow"
+          handleClick={() => {
             history.push('/workflow');
           }}
           label="Workflows"
         >
-          <img src="./icons/workflows.png" alt="homeIcon" />
+          <img src="./icons/workflows.png" alt="workflow" />
         </CustomisedListItem>
         <CustomisedListItem
-          key="Settings"
+          key="hub"
           handleClick={() => {
             history.push('/404');
           }}
           label="My Hub"
         >
-          <img src="./icons/hub.png" alt="homeIcon" />
+          <img src="./icons/hub.png" alt="hub" />
         </CustomisedListItem>
         <CustomisedListItem
-          key="home"
+          key="settings"
           handleClick={() => {
             history.push('/404');
           }}
           label="Settings"
         >
-          <img src="./icons/setting.png" alt="homeIcon" />
+          <img src="./icons/setting.png" alt="settings" />
         </CustomisedListItem>
         <CustomisedListItem
-          key="home"
+          key="community"
           handleClick={() => {
             history.push('/community');
           }}
           label="Community"
         >
-          <img src="./icons/community.png" alt="homeIcon" />
+          <img src="./icons/community.png" alt="community" />
         </CustomisedListItem>
       </List>
     </Drawer>
