@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   ListItem,
   ListItemAvatar,
@@ -14,23 +14,19 @@ import DeleteOutlineTwoToneIcon from '@material-ui/icons/DeleteOutlineTwoTone';
 interface NotificationListItemProps {
   message: any;
   divider: boolean;
-  total: number;
+  CallbackOnDeleteNotification: any;
 }
 
 function NotificationListItem(props: NotificationListItemProps) {
-  const { message, divider, total } = props;
+  const { message, divider, CallbackOnDeleteNotification } = props;
 
   const [hasErrorOccurred, setHasErrorOccurred] = useState(false);
-
-  const currentCount = total as number;
 
   const [messageActive, setMessageActive] = useState(true);
 
   const handleError = useCallback(() => {
     setHasErrorOccurred(true);
   }, [setHasErrorOccurred]);
-
-  useEffect(() => {}, [messageActive]);
 
   if (messageActive === false) {
     return <div />;
@@ -59,14 +55,11 @@ function NotificationListItem(props: NotificationListItemProps) {
             aria-label="delete"
             onClick={() => {
               setMessageActive(false);
-              localStorage.setItem(
-                '#ActiveMessages',
-                `${
-                  ((localStorage.getItem('#ActiveMessages')
-                    ? localStorage.getItem('#ActiveMessages')
-                    : currentCount) as number) - 1
-                }`
-              );
+              let idsForDeletingNotifications = {
+                id: message.id,
+                sequenceID: message.sequenceID,
+              };
+              CallbackOnDeleteNotification(idsForDeletingNotifications);
             }}
           >
             <DeleteOutlineTwoToneIcon />

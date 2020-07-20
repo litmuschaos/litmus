@@ -15,29 +15,27 @@ import useStyles from './styles';
 interface ProjectListItemProps {
   project: any;
   divider: any;
+  selectedProjectID: any;
+  callbackToSetActiveProjectID: any;
 }
 
 function ProjectListItem(props: ProjectListItemProps) {
   const classes = useStyles();
 
-  const { project, divider } = props;
+  const {
+    project,
+    divider,
+    selectedProjectID,
+    callbackToSetActiveProjectID,
+  } = props;
 
-  const [bgColor, setbgColor] = useState(
-    project.id === localStorage.getItem('ActiveProjectId') ? '#109B67' : 'white'
+  const [projSelected, setProjSelected] = useState(
+    project.id === selectedProjectID
   );
-
-  const [selectedProj, setselectedProj] = useState(
-    project.id === localStorage.getItem('ActiveProjectId')
-  );
-
-  const [currentState, changeState] = useState(true);
 
   const selectProject = () => {
-    localStorage.setItem('ActiveProjectId', `${project.id}`);
-    setbgColor('#109B67');
-    setselectedProj(true);
-    changeState(true);
-    // window.location.reload(false);
+    callbackToSetActiveProjectID(`${project.id}`);
+    setProjSelected(true);
   };
 
   const extraOptions = () => {};
@@ -46,11 +44,11 @@ function ProjectListItem(props: ProjectListItemProps) {
     <ListItem
       divider={divider}
       onClick={selectProject}
-      style={{ backgroundColor: bgColor }}
+      style={{ backgroundColor: projSelected ? '#109B67' : 'white' }}
       className={classes.listItemStyle}
     >
       <ListItemAvatar>
-        {currentState || selectedProj ? (
+        {projSelected ? (
           <Avatar
             style={{
               backgroundColor: '#109B67',
@@ -82,7 +80,7 @@ function ProjectListItem(props: ProjectListItemProps) {
       <ListItemText primary={project.projectName} style={{ fontSize: 14 }} />
       <ListItemSecondaryAction>
         <IconButton edge="end" aria-label="more" onClick={extraOptions}>
-          {currentState || selectedProj ? (
+          {projSelected ? (
             <MoreHorizIcon style={{ color: 'white' }} />
           ) : (
             <MoreHorizIcon />

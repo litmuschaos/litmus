@@ -14,18 +14,19 @@ import {
   Badge,
 } from '@material-ui/core';
 import NotificationsOutlinedIcon from '@material-ui/icons/NotificationsOutlined';
-import NotificationListItem from '../NotificationListItem';
+import NotificationListItem from './NotificationListItem';
 import useStyles from './styles';
 
 interface NotifierProps {
   messages: any;
   count: any;
+  CallbackToHeaderOnDeleteNotification: any;
 }
 
-function NotificationsPopperButton(props: NotifierProps) {
+function NotificationsDropdown(props: NotifierProps) {
   const classes = useStyles();
 
-  const { messages, count } = props;
+  const { messages, count, CallbackToHeaderOnDeleteNotification } = props;
 
   const anchorEl = useRef();
 
@@ -41,6 +42,10 @@ function NotificationsPopperButton(props: NotifierProps) {
 
   const id = isOpen ? 'scroll-playground' : null;
 
+  const CallbackToDropdownOnDeleteNotification = (notificationIDs: any) => {
+    CallbackToHeaderOnDeleteNotification(notificationIDs);
+  };
+
   return (
     <div>
       <IconButton
@@ -51,13 +56,7 @@ function NotificationsPopperButton(props: NotifierProps) {
         color="inherit"
       >
         <Badge
-          badgeContent={
-            (localStorage.getItem('#ActiveMessages') as any)
-              ? (localStorage.getItem('#ActiveMessages') as any)[0] === '-'
-                ? ''
-                : localStorage.getItem('#ActiveMessages')
-              : ''
-          }
+          badgeContent={count === '0' ? messages.length : count}
           color="secondary"
         >
           <NotificationsOutlinedIcon />
@@ -78,6 +77,7 @@ function NotificationsPopperButton(props: NotifierProps) {
           horizontal: 'right',
         }}
         classes={{ paper: classes.popoverPaper }}
+        style={{ marginTop: 17 }}
         onClose={handleClickAway}
       >
         <AppBar position="static" color="inherit" className={classes.noShadow}>
@@ -92,16 +92,18 @@ function NotificationsPopperButton(props: NotifierProps) {
           {messages.length === 0 ? (
             <ListItem>
               <ListItemText>
-                You haven&apos;t received any messages yet.
+                You don&apos;t have any new notification.
               </ListItemText>
             </ListItem>
           ) : (
             messages.map((element: any, index: any) => (
               <NotificationListItem
-                key={element} // index
+                key={element.sequenceID} // index
                 message={element}
                 divider={index !== messages.length - 1}
-                total={count}
+                CallbackOnDeleteNotification={
+                  CallbackToDropdownOnDeleteNotification
+                }
               />
             ))
           )}
@@ -111,8 +113,8 @@ function NotificationsPopperButton(props: NotifierProps) {
   );
 }
 
-NotificationsPopperButton.propTypes = {
+NotificationsDropdown.propTypes = {
   messages: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-export default NotificationsPopperButton;
+export default NotificationsDropdown;
