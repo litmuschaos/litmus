@@ -4,13 +4,13 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(0.5),
-    height: '35px',
+    height: theme.spacing(5),
     width: theme.spacing(38.75),
   },
 
   root: {
-    height: '35px',
-    padding: '5px 5px',
+    height: theme.spacing(5),
+    padding: theme.spacing(0.5),
   },
 
   plot: {

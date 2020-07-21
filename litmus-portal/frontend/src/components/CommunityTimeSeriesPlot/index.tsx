@@ -1,9 +1,13 @@
+/* eslint-disable no-empty-pattern */
+/* eslint-disable no-return-assign */
+/* eslint-disable no-param-reassign */
 import React, { useEffect } from 'react';
 import Plotly from 'plotly.js';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/reducers';
 import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
+import { string } from 'prop-types';
+import { RootState } from '../../redux/reducers';
 import useStyles from './styles';
 
 const Plot = createPlotlyComponent(Plotly);
@@ -21,11 +25,7 @@ const CommunityAnalyticsPlot: React.FC = () => {
 
   const monthlyExperiments = communityData.google.monthlyExperimentData;
 
-  const [x, setX] = React.useState([]);
-
-  const [y, setY] = React.useState([]);
-
-  const [y2, setY2] = React.useState([]);
+  const [data, setData] = React.useState({ x: [], y: [], y2: [] });
 
   const [currentPlotType, setPlotType] = React.useState<{ name: string }>({
     name: 'Growth',
@@ -62,9 +62,9 @@ const CommunityAnalyticsPlot: React.FC = () => {
   };
 
   const cumulativeSum = (timeSeriesCounts: any) => {
-    let countSum = ((sum: any) => (value: any) =>
+    const countSum = ((sum: any) => (value: any) =>
       (sum = parseInt(sum, 10) + parseInt(value, 10)))(0);
-    let MappedCumulativeSum = timeSeriesCounts.map(countSum);
+    const MappedCumulativeSum = timeSeriesCounts.map(countSum);
     return MappedCumulativeSum;
   };
 
@@ -107,21 +107,22 @@ const CommunityAnalyticsPlot: React.FC = () => {
       });
     }
 
-    const x: Date[] = [];
-    const y: string[] = [];
-    const y2: string[] = [];
+    const dataObject = { x: [] = [Date], y: [] = [string], y2: [] = [string] };
+
     rawData.forEach(function dateSplit(datum: any) {
       const splits = datum.date.split('-');
-      x.push(
-        new Date(splits[0] as any, (splits[1] as any) - 1, splits[2] as any)
+      dataObject.x.push(
+        new Date(
+          splits[0] as any,
+          (splits[1] as any) - 1,
+          splits[2] as any
+        ) as any
       );
-      y.push(datum.operatorInstalls);
-      y2.push(datum.experimentRuns);
+      dataObject.y.push(datum.operatorInstalls as any);
+      dataObject.y2.push(datum.experimentRuns as any);
     });
 
-    setX(x as any);
-    setY(y as any);
-    setY2(y2 as any);
+    setData(dataObject as any);
   };
 
   const selectorOptions = {
@@ -179,7 +180,7 @@ const CommunityAnalyticsPlot: React.FC = () => {
         variant="outlined"
         className={classes.formControl}
         color="secondary"
-        focused={true}
+        focused
       >
         <InputLabel htmlFor="outlined-selection" className={classes.root}>
           Plot Style
@@ -194,8 +195,8 @@ const CommunityAnalyticsPlot: React.FC = () => {
           }}
           className={classes.root}
         >
-          <MenuItem value={'Growth'}>Growth</MenuItem>
-          <MenuItem value={'Trend'}>Trend</MenuItem>
+          <MenuItem value="Growth">Growth</MenuItem>
+          <MenuItem value="Trend">Trend</MenuItem>
         </Select>
       </FormControl>
 
@@ -203,7 +204,7 @@ const CommunityAnalyticsPlot: React.FC = () => {
         variant="outlined"
         className={classes.formControl}
         color="secondary"
-        focused={true}
+        focused
       >
         <InputLabel
           htmlFor="outlined-selection-granularity"
@@ -221,8 +222,8 @@ const CommunityAnalyticsPlot: React.FC = () => {
           }}
           className={classes.root}
         >
-          <MenuItem value={'Daily'}>Daily</MenuItem>
-          <MenuItem value={'Monthly'}>Monthly</MenuItem>
+          <MenuItem value="Daily">Daily</MenuItem>
+          <MenuItem value="Monthly">Monthly</MenuItem>
         </Select>
       </FormControl>
 
@@ -231,16 +232,16 @@ const CommunityAnalyticsPlot: React.FC = () => {
           data={[
             {
               type: 'scatter',
-              x,
-              y,
+              x: data.x,
+              y: data.y,
               mode: 'lines',
               name: 'Operator Installs',
               line: { color: '#109B67' },
             },
             {
               type: 'scatter',
-              x,
-              y: y2,
+              x: data.x,
+              y: data.y2,
               mode: 'lines',
               name: 'Experiment Runs',
               yaxis: 'y2',
