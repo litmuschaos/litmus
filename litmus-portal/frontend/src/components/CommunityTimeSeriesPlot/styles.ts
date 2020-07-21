@@ -4,12 +4,12 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(0.5),
-    height: theme.spacing(5),
-    width: theme.spacing(38.75),
+    height: '2.5rem',
+    width: '19.375rem',
   },
 
   root: {
-    height: theme.spacing(5),
+    height: '2.5rem',
     padding: theme.spacing(0.5),
   },
 
