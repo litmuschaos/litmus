@@ -12,11 +12,20 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import React, { useState } from 'react';
 import useStyles from './styles';
 
+interface Project {
+  projectName: string;
+  statusActive: string;
+  id: string;
+}
+
+interface CallBackType {
+  (selectedProjectID: string): void;
+}
 interface ProjectListItemProps {
-  project: any;
-  divider: any;
-  selectedProjectID: any;
-  callbackToSetActiveProjectID: any;
+  project: Project;
+  divider: boolean;
+  selectedProjectID: string;
+  callbackToSetActiveProjectID: CallBackType;
 }
 
 function ProjectListItem(props: ProjectListItemProps) {

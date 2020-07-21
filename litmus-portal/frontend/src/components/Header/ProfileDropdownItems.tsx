@@ -16,15 +16,29 @@ import * as UserActions from '../../redux/actions/user';
 import { history } from '../../redux/configureStore';
 import useActions from '../../redux/actions';
 
+interface Project {
+  projectName: string;
+  statusActive: string;
+  id: string;
+}
+
+interface CallBackType {
+  (selectedProjectID: string): void;
+}
+
+interface OnCloseType {
+  (): void;
+}
+
 interface ProfileInfoDropdownItemProps {
-  anchorEl: any;
-  isOpen: any;
-  onClose: any;
-  name: any;
-  email: any;
-  projects: any;
-  selectedProjectID: any;
-  CallbackToSetSelectedProjectIDOnProfileDropdown: any;
+  anchorEl: HTMLElement;
+  isOpen: boolean;
+  onClose: OnCloseType;
+  name: string;
+  email: string;
+  projects: Project[];
+  selectedProjectID: string;
+  CallbackToSetSelectedProjectIDOnProfileDropdown: CallBackType;
 }
 
 function ProfileInfoDropdownItems(props: ProfileInfoDropdownItemProps) {

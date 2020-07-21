@@ -17,10 +17,28 @@ import NotificationsOutlinedIcon from '@material-ui/icons/NotificationsOutlined'
 import NotificationListItem from './NotificationListItem';
 import useStyles from './styles';
 
+interface Message {
+  sequenceID: string;
+  id: string;
+  workflowName: string;
+  date: number;
+  text: string;
+  picUrl: string;
+}
+
+interface NotificationIds {
+  id: string;
+  sequenceID: string;
+}
+
+interface CallBackType {
+  (notificationIDs: NotificationIds): void;
+}
+
 interface NotifierProps {
-  messages: any;
-  count: any;
-  CallbackToHeaderOnDeleteNotification: any;
+  messages: Message[];
+  count: string;
+  CallbackToHeaderOnDeleteNotification: CallBackType;
 }
 
 function NotificationsDropdown(props: NotifierProps) {

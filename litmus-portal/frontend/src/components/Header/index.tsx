@@ -11,27 +11,44 @@ import ProfileDropdownSection from './ProfileDropdownSection';
 import { UserData } from '../../models/user';
 import { RootState } from '../../redux/reducers';
 
+interface NotificationIds {
+  id: string;
+  sequenceID: string;
+}
+
+interface Project {
+  projectName: string;
+  statusActive: string;
+  id: string;
+}
+interface Message {
+  sequenceID: string;
+  id: string;
+  workflowName: string;
+  date: number;
+  text: string;
+  picUrl: string;
+}
+
 const Header = () => {
   const classes = useStyles();
-
-  const [messages, setMessages] = useState([]);
-
-  const [countOfMessages, setCountOfMessages] = useState(0);
 
   const userData: UserData = useSelector((state: RootState) => state.userData);
 
   const { name, email, username } = userData;
 
+  // Fetch and Set Projects from backend.
+
+  const [projects, setProjects] = useState<Project[]>([]);
+
   // set selectedProject from backend via redux using #setSelectedProject depending on user's last active project or use cookie.
   const [selectedProject, setSelectedProject] = useState('1');
 
-  const setSelectedProjectID = (selectedProjectID: any) => {
+  const setSelectedProjectID = (selectedProjectID: string) => {
     setSelectedProject(selectedProjectID);
     // send POST request with #selectedProjectID to update active project on db or persist it in redux or cookie.
     // window.location.reload(false);
   };
-
-  const [projects, setProjects] = useState([]);
 
   const fetchRandomProjects = useCallback(() => {
     const projects = [];
@@ -61,8 +78,14 @@ const Header = () => {
       projects.push(project);
     }
     projects.reverse();
-    setProjects(projects as any);
+    setProjects(projects);
   }, [setProjects]);
+
+  // Fetch and Set Notifications from backend.
+
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  const [countOfMessages, setCountOfMessages] = useState(0);
 
   const fetchRandomMessages = useCallback(() => {
     const messages = [];
@@ -92,14 +115,6 @@ const Header = () => {
           'https://res.cloudinary.com/practicaldev/image/fetch/s--jZgtY8cn--/c_imagga_scale,f_auto,fl_progressive,h_1080,q_auto,w_1080/https://res.cloudinary.com/practicaldev/image/fetch/s--x3KZoo7u--/c_imagga_scale%2Cf_auto%2Cfl_progressive%2Ch_420%2Cq_auto%2Cw_1000/https://dev-to-uploads.s3.amazonaws.com/i/0v6zstfufm96e09isqo6.png',
         generatedTime: '',
       },
-      {
-        id: '4',
-        workflowName: 'Argo Chaos 1',
-        status: 'started running',
-        workflowPic:
-          'https://pbs.twimg.com/profile_images/1272548541827649536/P4-0iQen_400x400.jpg',
-        generatedTime: '',
-      },
     ];
 
     const iterations = notificationsList.length;
@@ -113,7 +128,7 @@ const Header = () => {
     for (let i = 0; i < iterations; i += 1) {
       const notificationItem = notificationsList[i];
       const message = {
-        sequenceID: i,
+        sequenceID: (i as unknown) as string,
         id: notificationItem.id,
         workflowName: notificationItem.workflowName,
         date: curUnix,
@@ -124,12 +139,12 @@ const Header = () => {
       messages.push(message);
     }
     messages.reverse();
-    setMessages(messages as any);
+    setMessages(messages);
   }, [setMessages]);
 
-  const deleteNotification = (notificationIDs: any) => {
+  const deleteNotification = (notificationIDs: NotificationIds) => {
     for (let i = 0; i < messages.length; i += 1) {
-      if ((messages[i] as any).sequenceID === notificationIDs.sequenceID) {
+      if (messages[i].sequenceID === notificationIDs.sequenceID) {
         if (i > -1) {
           messages.splice(i, 1);
         }
@@ -174,7 +189,6 @@ const Header = () => {
             </Box>
           </div>
         </Toolbar>
-
         <Divider />
       </AppBar>
     </div>

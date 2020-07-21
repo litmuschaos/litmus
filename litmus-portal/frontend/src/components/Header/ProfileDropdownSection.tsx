@@ -7,13 +7,23 @@ import React, { useRef, useState } from 'react';
 import ProfileInfoDropdownItems from './ProfileDropdownItems';
 import useStyles from './styles';
 
+interface Project {
+  projectName: string;
+  statusActive: string;
+  id: string;
+}
+
+interface CallBackType {
+  (selectedProjectID: string): void;
+}
+
 interface ProfileInfoDropdownSectionProps {
-  name: any;
-  email: any;
-  username: any;
-  projects: any;
-  selectedProjectID: any;
-  CallbackToSetSelectedProjectID: any;
+  name: string;
+  email: string;
+  username: string;
+  projects: Project[];
+  selectedProjectID: string;
+  CallbackToSetSelectedProjectID: CallBackType;
 }
 
 const ProfileDropdownSection = (props: ProfileInfoDropdownSectionProps) => {
@@ -95,7 +105,7 @@ const ProfileDropdownSection = (props: ProfileInfoDropdownSectionProps) => {
         </Box>
       </Box>
       <ProfileInfoDropdownItems
-        anchorEl={profileMenuRef.current}
+        anchorEl={profileMenuRef.current as any}
         isOpen={isProfilePopoverOpen}
         onClose={() => setProfilePopoverOpen(false)}
         name={name}

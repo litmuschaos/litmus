@@ -11,10 +11,28 @@ import ErrorIcon from '@material-ui/icons/Error';
 import formatDistance from 'date-fns/formatDistance';
 import DeleteOutlineTwoToneIcon from '@material-ui/icons/DeleteOutlineTwoTone';
 
+interface Message {
+  sequenceID: string;
+  id: string;
+  workflowName: string;
+  date: number;
+  text: string;
+  picUrl: string;
+}
+
+interface NotificationIds {
+  id: string;
+  sequenceID: string;
+}
+
+interface CallBackType {
+  (notificationIDs: NotificationIds): void;
+}
+
 interface NotificationListItemProps {
-  message: any;
+  message: Message;
   divider: boolean;
-  CallbackOnDeleteNotification: any;
+  CallbackOnDeleteNotification: CallBackType;
 }
 
 function NotificationListItem(props: NotificationListItemProps) {
@@ -40,7 +58,7 @@ function NotificationListItem(props: NotificationListItemProps) {
             <ErrorIcon color="secondary" />
           ) : (
             <Avatar
-              src={hasErrorOccurred ? null : message.picUrl}
+              src={hasErrorOccurred ? null : (message.picUrl as any)}
               onError={handleError}
             />
           )}
