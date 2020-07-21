@@ -11,7 +11,6 @@ metadata:
   labels:
     name: litmus
 ---
-# Source: openebs/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
@@ -19,9 +18,12 @@ metadata:
   labels:
     name: litmus
 rules:
-- apiGroups: ["","apps","batch","litmuschaos.io"]
-  resources: ["pods","jobs","deployments","daemonsets","statefulsets","events","configmaps","services","chaosengines","chaosexperiments","chaosresults"]
-  verbs: ["get","create","update","patch","delete","list","watch","deletecollection"]
+  - apiGroups: ["","apps","batch","litmuschaos.io","apps.openshift.io"]
+    resources: ["pods","jobs","deployments","replicationcontrollers","daemonsets","replicasets","deploymentconfigs","statefulsets","events","configmaps","services","secrets","chaosengines","chaosexperiments","chaosresults"]
+    verbs: ["get","create","update","patch","delete","list","watch","deletecollection"]
+  - apiGroups: ["admissionregistration.k8s.io"]
+    resources: ["validatingwebhookconfigurations"]
+    verbs: ["get","create","list","delete","update"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
@@ -34,9 +36,9 @@ roleRef:
   kind: ClusterRole
   name: litmus
 subjects:
-- kind: ServiceAccount
-  name: litmus
-  namespace: litmus
+  - kind: ServiceAccount
+    name: litmus
+    namespace: litmus
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -56,16 +58,15 @@ spec:
       serviceAccountName: litmus
       containers:
         - name: chaos-operator
-          # built off the 1.3.x branch
-          image: litmuschaos/chaos-operator:1.3.0
+          image: litmuschaos/chaos-operator:1.6.0
           command:
-          - chaos-operator
+            - chaos-operator
           imagePullPolicy: Always
           env:
             - name: CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:1.3.0"
+              value: "litmuschaos/chaos-runner:1.6.0"
             - name: WATCH_NAMESPACE
-              value: ""
+              value:
             - name: POD_NAME
               valueFrom:
                 fieldRef:
@@ -85,7 +86,6 @@ spec:
     plural: chaosengines
     singular: chaosengine
   scope: Namespaced
-  subresources:
   validation:
     openAPIV3Schema:
       properties:
@@ -121,7 +121,7 @@ spec:
               properties:
                 appkind:
                   type: string
-                  pattern: ^(deployment|statefulset|daemonset)$
+                  pattern: ^(deployment|statefulset|daemonset|deploymentconfig)$
                 applabel:
                   type: string
                 appns:
@@ -144,6 +144,19 @@ spec:
                     type:
                       type: string
                       pattern: ^(go|ansible)$
+                    runnerannotation:
+                      type: object
+                      additionalProperties:
+                        type: string
+                        properties:
+                          key:
+                            type: string
+                            minLength: 1
+                            allowEmptyValue: false
+                          value:
+                            type: string
+                            minLength: 1
+                            allowEmptyValue: false
             experiments:
               type: array
               items:
@@ -157,6 +170,8 @@ spec:
                       components:
                         type: object
                         properties:
+                          experimentImage:
+                            type: string
                           env:
                             type: array
                             items:
@@ -184,13 +199,26 @@ spec:
                                   type: string
                                 mountPath:
                                   type: string
+                          experimentannotation:
+                            type: object
+                            additionalProperties:
+                              type: string
+                              properties:
+                                key:
+                                  type: string
+                                  minLength: 1
+                                  allowEmptyValue: false
+                                value:
+                                  type: string
+                                  minLength: 1
+                                  allowEmptyValue: false
         status:
           type: object
   version: v1alpha1
   versions:
-  - name: v1alpha1
-    served: true
-    storage: true
+    - name: v1alpha1
+      served: true
+      storage: true
 ---
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -260,9 +288,9 @@ spec:
                     type: object
                     minProperties: 3
                     required:
-                    - apiGroups
-                    - resources
-                    - verbs
+                      - apiGroups
+                      - resources
+                      - verbs
                     properties:
                       apiGroups:
                         type: array
@@ -310,13 +338,17 @@ spec:
                         type: string
                         allowEmptyValue: false
                         minLength: 1
+                securityContext:
+                  type: object
+                hostPID:
+                  type: bool
         status:
           type: object
   version: v1alpha1
   versions:
-  - name: v1alpha1
-    served: true
-    storage: true
+    - name: v1alpha1
+      served: true
+      storage: true
 ---
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -351,6 +383,6 @@ spec:
           type: object
   version: v1alpha1
   versions:
-  - name: v1alpha1
-    served: true
-    storage: true
+    - name: v1alpha1
+      served: true
+      storage: true

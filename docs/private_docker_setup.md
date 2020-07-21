@@ -1,37 +1,36 @@
-# Steps to push images to GCR & procedure to use these
+## Steps to push images to GCR & procedure to use these
 
-## STEP-1: RETAG AND PUSH LITMUSCHAOS IMAGES TO RESPECTIVE GCR
+#### STEP-1: RETAG AND PUSH LITMUSCHAOS IMAGES TO RESPECTIVE GCR
 
-### Pull the following images
+###### Pull the following images:
 
-```bash
+```
 litmuschaos/ansible-runner:ci
 litmuschaos/chaos-operator:ci
 litmuschaos/chaos-exporter:ci
 gaiaadm/pumba:0.4.8
 ```
+###### Re-tag the images:
 
-### Re-tag the images
-
-```bash
+```
 docker tag litmuschaos/ansible-runner:ci gcr.io/<project-id>/ansible-runner:ci
 docker tag litmuschaos/chaos-operator:latest gcr.io/<project-id>/chaos-operator:ci
 docker tag litmuschaos/chaos-exporter:ci gcr.io/<project-id>/chaos-exporter:ci
 docker tag gaiaadm/pumba:0.4.8 gcr.io/<project-id>/pumba:0.4.8
 ```
 
-## STEP-2: PUSH THE RETAGGED IMAGES TO GCR
+#### STEP-2: PUSH THE RETAGGED IMAGES TO GCR
 
 Ensure sufficient privileges on the gcloud iam/user/serviceaccount
 
-```bash
+```
 gcloud docker -- push gcr.io/<project-id>/ansible-runner:ci
 gcloud docker -- push gcr.io/<project-id>/chaos-operator:ci
 gcloud docker -- push gcr.io/<project-id>/chaos-exporter:ci
 gcloud docker -- push gcr.io/<project-id>/pumba:0.4.8
 ```
 
-## STEP-3: DOWNLOAD, MODIFY AND APPLY LITMUS OPERATOR YAML
+#### STEP-3: DOWNLOAD, MODIFY AND APPLY LITMUS OPERATOR YAML
 
 Download the latest version of the litmus operator (install) yaml
 
@@ -47,7 +46,7 @@ Install the litmus operator and other dependencies
 
 `kubectl apply -f litmus-operator-ci.yaml`
 
-## STEP-4: PULL EXPERIMENTS FROM HUB INTO THE DESIRED APP NAMESPACE
+#### STEP-4: PULL EXPERIMENTS FROM HUB INTO THE DESIRED APP NAMESPACE
 
 Browse the hub to pull the latest experiment charts
 
