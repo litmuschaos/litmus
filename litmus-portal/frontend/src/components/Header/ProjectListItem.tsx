@@ -11,7 +11,7 @@ import InsertDriveFileOutlinedIcon from '@material-ui/icons/InsertDriveFileOutli
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import React, { useState } from 'react';
 import useStyles from './styles';
-import { Project, ProjectsCallBackType } from './types';
+import { Project, ProjectsCallBackType } from '../../models/header';
 
 interface ProjectListItemProps {
   project: Project;

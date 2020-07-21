@@ -6,7 +6,7 @@ import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import React, { useRef, useState } from 'react';
 import ProfileInfoDropdownItems from './ProfileDropdownItems';
 import useStyles from './styles';
-import { Project, ProjectsCallBackType } from './types';
+import { Project, ProjectsCallBackType } from '../../models/header';
 
 interface ProfileInfoDropdownSectionProps {
   name: string;

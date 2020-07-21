@@ -15,7 +15,7 @@ import useStyles from './styles';
 import * as UserActions from '../../redux/actions/user';
 import { history } from '../../redux/configureStore';
 import useActions from '../../redux/actions';
-import { Project, ProjectsCallBackType } from './types';
+import { Project, ProjectsCallBackType } from '../../models/header';
 
 interface OnCloseType {
   (): void;

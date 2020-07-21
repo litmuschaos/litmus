@@ -10,7 +10,7 @@ import NotificationsDropdown from './NotificationDropdown';
 import ProfileDropdownSection from './ProfileDropdownSection';
 import { UserData } from '../../models/user';
 import { RootState } from '../../redux/reducers';
-import { NotificationIds, Project, Message } from './types';
+import { NotificationIds, Project, Message } from '../../models/header';
 
 const Header = () => {
   const classes = useStyles();

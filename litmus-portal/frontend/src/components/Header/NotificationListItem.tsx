@@ -10,7 +10,7 @@ import {
 import ErrorIcon from '@material-ui/icons/Error';
 import formatDistance from 'date-fns/formatDistance';
 import DeleteOutlineTwoToneIcon from '@material-ui/icons/DeleteOutlineTwoTone';
-import { Message, NotificationsCallBackType } from './types';
+import { Message, NotificationsCallBackType } from '../../models/header';
 
 interface NotificationListItemProps {
   message: Message;

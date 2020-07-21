@@ -16,7 +16,7 @@ import {
 import NotificationsOutlinedIcon from '@material-ui/icons/NotificationsOutlined';
 import NotificationListItem from './NotificationListItem';
 import useStyles from './styles';
-import { Message, NotificationsCallBackType } from './types';
+import { Message, NotificationsCallBackType } from '../../models/header';
 
 interface NotificationDropdownProps {
   messages: Message[];
