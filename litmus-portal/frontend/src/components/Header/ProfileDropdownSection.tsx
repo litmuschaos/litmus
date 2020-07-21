@@ -6,16 +6,7 @@ import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import React, { useRef, useState } from 'react';
 import ProfileInfoDropdownItems from './ProfileDropdownItems';
 import useStyles from './styles';
-
-interface Project {
-  projectName: string;
-  statusActive: string;
-  id: string;
-}
-
-interface CallBackType {
-  (selectedProjectID: string): void;
-}
+import { Project, ProjectsCallBackType } from './types';
 
 interface ProfileInfoDropdownSectionProps {
   name: string;
@@ -23,7 +14,7 @@ interface ProfileInfoDropdownSectionProps {
   username: string;
   projects: Project[];
   selectedProjectID: string;
-  CallbackToSetSelectedProjectID: CallBackType;
+  CallbackToSetSelectedProjectID: ProjectsCallBackType;
 }
 
 const ProfileDropdownSection = (props: ProfileInfoDropdownSectionProps) => {

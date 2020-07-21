@@ -10,25 +10,7 @@ import NotificationsDropdown from './NotificationDropdown';
 import ProfileDropdownSection from './ProfileDropdownSection';
 import { UserData } from '../../models/user';
 import { RootState } from '../../redux/reducers';
-
-interface NotificationIds {
-  id: string;
-  sequenceID: string;
-}
-
-interface Project {
-  projectName: string;
-  statusActive: string;
-  id: string;
-}
-interface Message {
-  sequenceID: string;
-  id: string;
-  workflowName: string;
-  date: number;
-  text: string;
-  picUrl: string;
-}
+import { NotificationIds, Project, Message } from './types';
 
 const Header = () => {
   const classes = useStyles();

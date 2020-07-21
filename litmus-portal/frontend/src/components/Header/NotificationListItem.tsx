@@ -10,29 +10,12 @@ import {
 import ErrorIcon from '@material-ui/icons/Error';
 import formatDistance from 'date-fns/formatDistance';
 import DeleteOutlineTwoToneIcon from '@material-ui/icons/DeleteOutlineTwoTone';
-
-interface Message {
-  sequenceID: string;
-  id: string;
-  workflowName: string;
-  date: number;
-  text: string;
-  picUrl: string;
-}
-
-interface NotificationIds {
-  id: string;
-  sequenceID: string;
-}
-
-interface CallBackType {
-  (notificationIDs: NotificationIds): void;
-}
+import { Message, NotificationsCallBackType } from './types';
 
 interface NotificationListItemProps {
   message: Message;
   divider: boolean;
-  CallbackOnDeleteNotification: CallBackType;
+  CallbackOnDeleteNotification: NotificationsCallBackType;
 }
 
 function NotificationListItem(props: NotificationListItemProps) {

@@ -15,16 +15,7 @@ import useStyles from './styles';
 import * as UserActions from '../../redux/actions/user';
 import { history } from '../../redux/configureStore';
 import useActions from '../../redux/actions';
-
-interface Project {
-  projectName: string;
-  statusActive: string;
-  id: string;
-}
-
-interface CallBackType {
-  (selectedProjectID: string): void;
-}
+import { Project, ProjectsCallBackType } from './types';
 
 interface OnCloseType {
   (): void;
@@ -38,7 +29,7 @@ interface ProfileInfoDropdownItemProps {
   email: string;
   projects: Project[];
   selectedProjectID: string;
-  CallbackToSetSelectedProjectIDOnProfileDropdown: CallBackType;
+  CallbackToSetSelectedProjectIDOnProfileDropdown: ProjectsCallBackType;
 }
 
 function ProfileInfoDropdownItems(props: ProfileInfoDropdownItemProps) {

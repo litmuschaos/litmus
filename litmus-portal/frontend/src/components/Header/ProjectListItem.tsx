@@ -11,21 +11,13 @@ import InsertDriveFileOutlinedIcon from '@material-ui/icons/InsertDriveFileOutli
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import React, { useState } from 'react';
 import useStyles from './styles';
+import { Project, ProjectsCallBackType } from './types';
 
-interface Project {
-  projectName: string;
-  statusActive: string;
-  id: string;
-}
-
-interface CallBackType {
-  (selectedProjectID: string): void;
-}
 interface ProjectListItemProps {
   project: Project;
   divider: boolean;
   selectedProjectID: string;
-  callbackToSetActiveProjectID: CallBackType;
+  callbackToSetActiveProjectID: ProjectsCallBackType;
 }
 
 function ProjectListItem(props: ProjectListItemProps) {
