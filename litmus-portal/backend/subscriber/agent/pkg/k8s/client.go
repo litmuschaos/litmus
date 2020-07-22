@@ -8,7 +8,7 @@ import (
 )
 
 //This function returns dynamic client and discovery client
-func GetDynamicAndDiscoveryClient() (discovery.DiscoveryClient, dynamic.Interface, error) {
+func GetDynamicAndDiscoveryClient() (discovery.DiscoveryInterface, dynamic.Interface, error) {
 	// returns a config object which uses the service account kubernetes gives to pods
 	config, err := rest.InClusterConfig()
 	if err != nil {

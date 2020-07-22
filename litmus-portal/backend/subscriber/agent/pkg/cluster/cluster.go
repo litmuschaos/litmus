@@ -4,15 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	y "github.com/ghodss/yaml"
+	yaml_converter "github.com/ghodss/yaml"
+	k8s_client "github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/agent/pkg/k8s"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
-	"k8s.io/client-go/discovery"
 	memory "k8s.io/client-go/discovery/cached"
 	"k8s.io/client-go/dynamic"
-	"k8s.io/client-go/rest"
 	"k8s.io/client-go/restmapper"
 	"log"
 )
@@ -60,10 +59,10 @@ func applyRequest(obj *unstructured.Unstructured, requestType interface{}, dr dy
 	} else {
 		log.Println("Invalid Request")
 
-		return &unstructured.Unstructured{}, fmt.Errorf("Invalid request")
+		return nil, fmt.Errorf("err: %v\n", "Invalid Request")
 	}
 
-	return &unstructured.Unstructured{}, fmt.Errorf("Invalid request")
+	return nil, fmt.Errorf("Invalid request")
 }
 
 func ClusterOperations(clientData map[string]interface{}) (*unstructured.Unstructured, error) {
@@ -75,49 +74,42 @@ func ClusterOperations(clientData map[string]interface{}) (*unstructured.Unstruc
 
 	requestType := clientData["requesttype"]
 
-	y, err := y.JSONToYAML([]byte(manifestByte))
+	// Converting JSON to YAML and store it in yamlStr variable
+	yamlStr, err := yaml_converter.JSONToYAML([]byte(manifestByte))
 	if err != nil {
 		return nil, fmt.Errorf("err: %v\n", err)
 	}
 
-	cfg, err := rest.InClusterConfig()
+	// Getting dynamic and discovery client
+	discoveryClient, dynamicClient, err := k8s_client.GetDynamicAndDiscoveryClient()
 	if err != nil {
 		return nil, fmt.Errorf("err: %v\n", err)
 	}
 
-	dc, err := discovery.NewDiscoveryClientForConfig(cfg)
-	if err != nil {
-		return nil, fmt.Errorf("err: %v\n", err)
-	}
-	mapper := restmapper.NewDeferredDiscoveryRESTMapper(memory.NewMemCacheClient(dc))
-
-	// Prepare the dynamic client
-	dyn, err := dynamic.NewForConfig(cfg)
-	if err != nil {
-		log.Printf("err: %v\n", err)
-	}
+	// Create a mapper using dynamic client
+	mapper := restmapper.NewDeferredDiscoveryRESTMapper(memory.NewMemCacheClient(discoveryClient))
 
 	// Decode YAML manifest into unstructured.Unstructured
 	obj := &unstructured.Unstructured{}
-	_, gvk, err := decUnstructured.Decode([]byte(y), nil, obj)
+	_, gvk, err := decUnstructured.Decode([]byte(yamlStr), nil, obj)
 	if err != nil {
-		log.Printf("err: %v\n", err)
+		return nil, fmt.Errorf("err: %v\n", err)
 	}
 
 	// Find GVR
 	mapping, err := mapper.RESTMapping(gvk.GroupKind(), gvk.Version)
 	if err != nil {
-		log.Printf("err: %v\n", err)
+		return nil, fmt.Errorf("err: %v\n", err)
 	}
 
 	// Obtain REST interface for the GVR
 	var dr dynamic.ResourceInterface
 	if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
 		// namespaced resources should specify the namespace
-		dr = dyn.Resource(mapping.Resource).Namespace(obj.GetNamespace())
+		dr = dynamicClient.Resource(mapping.Resource).Namespace(obj.GetNamespace())
 	} else {
 		// for cluster-wide resources
-		dr = dyn.Resource(mapping.Resource)
+		dr = dynamicClient.Resource(mapping.Resource)
 	}
 
 	return applyRequest(obj, requestType, dr)
