@@ -21,19 +21,14 @@ const LoginPage = () => {
     password: '',
   });
   const [formError, setFormError] = useState<boolean>(false);
-  const handleForm = () => {
-    const formData: HTMLFormElement | null = document.querySelector(
-      '#login-form'
-    );
-    const data = new FormData(formData as HTMLFormElement);
-    const username = data.get('username') as string;
-    const password = data.get('password') as string;
-    const searchParams = new URLSearchParams();
-    searchParams.append('username', username);
-    searchParams.append('password', password);
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
     fetch(`${config.auth.url}/login`, {
       method: 'POST',
-      body: searchParams,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(authData),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -79,10 +74,7 @@ const LoginPage = () => {
               id="login-form"
               className={classes.root}
               autoComplete="on"
-              onSubmit={(event) => {
-                event.preventDefault();
-                handleForm();
-              }}
+              onSubmit={handleSubmit}
             >
               <div className={classes.inputDiv}>
                 <InputField
