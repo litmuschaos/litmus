@@ -1,25 +1,21 @@
-FROM golang:1.14.4-alpine
+# BUILD STAGE
+FROM golang:1.14 AS builder
 
-# Add Maintainer Info
+ADD . /gql-server
+WORKDIR /gql-server
+RUN CGO_ENABLED=0 go build -o /output/server -v
+
+
+# DEPLOY STAGE
+FROM alpine:latest
+
 LABEL maintainer="LitmusChaos"
 
-# All these steps will be cached
-RUN mkdir /graphql-server
-WORKDIR /graphql-server
+RUN apk update && apk add curl bash
+RUN apk add --no-cache libc6-compat
 
-# <- COPY go.mod and go.sum files to the workspace
-COPY go.mod .
-COPY go.sum .
+COPY --from=builder /output/server /
+COPY --from=builder /gql-server/template/template.yml /template/template.yml
+CMD ["./server"]
 
-# Get dependancies - will also be cached if we won't change mod/sum
-RUN go mod download
-
-# COPY the source code as the last step
-COPY . .
-
-# Expose to port 8080
 EXPOSE 8080
-
-# Go build
-RUN go build -o server .
-ENTRYPOINT ["./server"]

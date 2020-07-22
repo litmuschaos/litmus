@@ -1,0 +1,24 @@
+package cluster
+
+import (
+	"errors"
+	"log"
+
+	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/data-store"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database"
+)
+
+func NewEvent(clusterEvent model.ClusterEventInput, r store.StateData) (string, error) {
+	cluster, err := database.GetCluster(clusterEvent.ClusterID)
+	if err != nil {
+		log.Print("ERROR", err)
+		return "", err
+	}
+	if len(cluster) == 1 && cluster[0].AccessKey == clusterEvent.AccessKey && cluster[0].IsRegistered {
+		log.Print("CLUSTER EVENT : ID-", cluster[0].ClusterID," PID-",cluster[0].ProjectID)
+		SendSubscription("cluster-event", clusterEvent.EventName, clusterEvent.Description, cluster[0], r)
+		return "Event Published", nil
+	}
+	return "", errors.New("ERROR WITH CLUSTER EVENT")
+}
