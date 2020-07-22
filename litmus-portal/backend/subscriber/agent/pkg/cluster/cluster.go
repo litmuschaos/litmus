@@ -9,12 +9,11 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
-	"k8s.io/client-go/discovery"
 	memory "k8s.io/client-go/discovery/cached"
 	"k8s.io/client-go/dynamic"
-	"k8s.io/client-go/rest"
 	"k8s.io/client-go/restmapper"
 	"log"
+	k8s_client "github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/agent/pkg/k8s"
 )
 
 var decUnstructured = yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
@@ -26,24 +25,28 @@ func applyRequest(obj *unstructured.Unstructured, requestType interface{}, dr dy
 		if err != nil {
 			log.Printf("err: %v\n", err)
 		}
+
 		return response, nil
 	} else if requestType == "update" {
 		response, err := dr.Update(context.TODO(), obj, metav1.UpdateOptions{})
 		if err != nil {
 			log.Printf("err: %v\n", err)
 		}
+
 		return response, nil
 	} else if requestType == "delete" {
 		err := dr.Delete(context.TODO(), obj.GetName(), metav1.DeleteOptions{})
 		if err != nil {
 			log.Printf("err: %v\n", err)
 		}
+
 		return &unstructured.Unstructured{}, nil
 	} else if requestType == "get" {
 		response, err := dr.Get(context.TODO(), obj.GetName(), metav1.GetOptions{})
 		if err != nil {
 			log.Printf("err: %v\n", err)
 		}
+
 		return response, nil
 	} else {
 		log.Println("Invalid Request")
@@ -67,22 +70,13 @@ func ClusterOperations(clientData map[string]interface{}) (*unstructured.Unstruc
 		log.Printf("err: %v\n", err)
 	}
 
-	cfg, err := rest.InClusterConfig()
-	if err != nil {
-		log.Printf("err: %v\n", err)
-	}
-
-	dc, err := discovery.NewDiscoveryClientForConfig(cfg)
-	if err != nil {
-		log.Printf("err: %v\n", err)
-	}
-	mapper := restmapper.NewDeferredDiscoveryRESTMapper(memory.NewMemCacheClient(dc))
-
 	// Prepare the dynamic client
-	dyn, err := dynamic.NewForConfig(cfg)
+	discoveryClient, dynamicClient, err := k8s_client.GetDynamicAndDiscoveryClient()
 	if err != nil {
 		log.Printf("err: %v\n", err)
 	}
+
+	mapper := restmapper.NewDeferredDiscoveryRESTMapper(memory.NewMemCacheClient(discoveryClient))
 
 	// Decode YAML manifest into unstructured.Unstructured
 	obj := &unstructured.Unstructured{}
@@ -101,10 +95,10 @@ func ClusterOperations(clientData map[string]interface{}) (*unstructured.Unstruc
 	var dr dynamic.ResourceInterface
 	if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
 		// namespaced resources should specify the namespace
-		dr = dyn.Resource(mapping.Resource).Namespace(obj.GetNamespace())
+		dr = dynamicClient.Resource(mapping.Resource).Namespace(obj.GetNamespace())
 	} else {
 		// for cluster-wide resources
-		dr = dyn.Resource(mapping.Resource)
+		dr = dynamicClient.Resource(mapping.Resource)
 	}
 
 	return applyRequest(obj, requestType, dr)
