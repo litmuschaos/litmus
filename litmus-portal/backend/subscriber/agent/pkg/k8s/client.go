@@ -29,4 +29,3 @@ func GetDynamicAndDiscoveryClient() (discovery.DiscoveryClient, dynamic.Interfac
 
 	return discoveryClient, dynamicClient, nil
 }
-

@@ -147,3 +147,32 @@ spec:
   selector:
     component: database
 ---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subscriber
+  namespace: litmus
+  labels:
+    app: subscriber
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: subscriber
+  template:
+    metadata:
+      labels:
+        app: subscriber
+    spec:
+      serviceAccountName: litmus-portal
+      containers:
+        - name: igc
+          image: 'imrajdas/igc:latest'
+          imagePullPolicy: Always
+          env:
+            - name: GQL_SERVER
+              value: 'litmusportal-server-service:9002/query'
+        - name: go-agent
+          imagePullPolicy: Always
+          image: 'imrajdas/portal-agent:latest'

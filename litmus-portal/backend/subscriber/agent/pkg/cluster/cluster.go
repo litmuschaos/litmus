@@ -24,29 +24,42 @@ func applyRequest(obj *unstructured.Unstructured, requestType interface{}, dr dy
 	if requestType == "create" {
 		response, err := dr.Create(context.TODO(), obj, metav1.CreateOptions{})
 		if err != nil {
-			log.Printf("err: %v\n", err)
+			return nil, fmt.Errorf("err: %v\n", err)
 		}
+
+		log.Println("Resource successfully applied")
+
 		return response, nil
 	} else if requestType == "update" {
 		response, err := dr.Update(context.TODO(), obj, metav1.UpdateOptions{})
 		if err != nil {
-			log.Printf("err: %v\n", err)
+			return nil, fmt.Errorf("err: %v\n", err)
 		}
+
+		log.Println("Resource successfully applied")
+
 		return response, nil
 	} else if requestType == "delete" {
 		err := dr.Delete(context.TODO(), obj.GetName(), metav1.DeleteOptions{})
 		if err != nil {
-			log.Printf("err: %v\n", err)
+			return nil, fmt.Errorf("err: %v\n", err)
 		}
+
+		log.Println("Resource successfully applied")
+
 		return &unstructured.Unstructured{}, nil
 	} else if requestType == "get" {
 		response, err := dr.Get(context.TODO(), obj.GetName(), metav1.GetOptions{})
 		if err != nil {
-			log.Printf("err: %v\n", err)
+			return nil, fmt.Errorf("err: %v\n", err)
 		}
+
+		log.Println("Resource successfully applied")
+
 		return response, nil
 	} else {
 		log.Println("Invalid Request")
+
 		return &unstructured.Unstructured{}, fmt.Errorf("Invalid request")
 	}
 
@@ -57,24 +70,24 @@ func ClusterOperations(clientData map[string]interface{}) (*unstructured.Unstruc
 
 	manifestByte, err := json.Marshal(clientData["manifest"])
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("err: %v\n", err)
 	}
 
 	requestType := clientData["requesttype"]
 
 	y, err := y.JSONToYAML([]byte(manifestByte))
 	if err != nil {
-		log.Printf("err: %v\n", err)
+		return nil, fmt.Errorf("err: %v\n", err)
 	}
 
 	cfg, err := rest.InClusterConfig()
 	if err != nil {
-		log.Printf("err: %v\n", err)
+		return nil, fmt.Errorf("err: %v\n", err)
 	}
 
 	dc, err := discovery.NewDiscoveryClientForConfig(cfg)
 	if err != nil {
-		log.Printf("err: %v\n", err)
+		return nil, fmt.Errorf("err: %v\n", err)
 	}
 	mapper := restmapper.NewDeferredDiscoveryRESTMapper(memory.NewMemCacheClient(dc))
 
