@@ -62,6 +62,9 @@ spec:
       containers:
       - name: graphql-server
         image: litmuschaos/litmusportal-server:ci
+        env:
+          - name: DB_SERVER
+            value: mongo-service:27017
         ports:
         - containerPort: 8080
         imagePullPolicy: Always
@@ -82,6 +85,7 @@ spec:
     - name: graphql-server
       port: 9002
       targetPort: 8080
+      nodePort: 31000
     - name: auth-server
       port: 9003
       targetPort: 3000
