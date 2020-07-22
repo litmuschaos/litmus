@@ -50,20 +50,15 @@ const useStyles = makeStyles((theme: Theme) => ({
   passwordArea: {
     width: '60%',
     margin: '0 auto',
-    marginTop: '-1rem',
-    marginBottom: '1rem',
-  },
-  inputDiv: {
-    marginTop: theme.spacing(6.26),
-    textAlign: 'center',
-    marginLeft: 30,
+    marginTop: theme.spacing(-3),
+    marginBottom: theme.spacing(2),
   },
 
   /* CSS for Password Div in Stepper Component */
   passwordSetterDiv: {
     display: 'flex',
     flexDirection: 'column',
-    marginTop: theme.spacing(-3),
+    marginTop: theme.spacing(-2),
   },
 
   /* CSS for stepper */

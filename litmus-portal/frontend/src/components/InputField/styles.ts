@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   inputArea: {
-    width: '20rem',
+    width: theme.spacing(45),
     marginTop: theme.spacing(2),
     textDecoration: 'none',
     paddingLeft: theme.spacing(2),

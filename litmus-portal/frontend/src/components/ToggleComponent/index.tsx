@@ -23,7 +23,7 @@ const ToggleComponent = () => {
   };
 
   return (
-    <div>
+    <div className={classes.root}>
       {/* Pass Button */}
       <Button
         onClick={passToggler}
