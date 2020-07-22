@@ -1,69 +1,80 @@
-import { Typography } from '@material-ui/core';
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import React from 'react';
+import { Typography } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import useStyles from './styles';
 
 const ToggleComponent = () => {
-  const [alignment, setAlignment] = React.useState<string | null>('pass');
+  const classes = useStyles();
 
-  const handleAlignment = (
-    event: React.MouseEvent<HTMLElement>,
-    newAlignment: string | null
-  ) => {
-    setAlignment(newAlignment);
+  // Default Props are false
+  const [currentPassState, setCurrentPassState] = React.useState<
+    boolean | undefined
+  >(true);
+  const [currentFailState, setCurrentFailState] = React.useState<
+    boolean | undefined
+  >(false);
+
+  // Toggle Handlers
+  const passToggler = () => {
+    if (currentFailState) {
+      setCurrentPassState(true);
+      setCurrentFailState(false);
+    } else {
+      setCurrentPassState(true);
+    }
   };
+
+  const failToggler = () => {
+    if (currentPassState) {
+      setCurrentFailState(true);
+      setCurrentPassState(false);
+    } else {
+      setCurrentFailState(true);
+    }
+  };
+
   return (
-    <ToggleButtonGroup
-      value={alignment}
-      exclusive
-      onChange={handleAlignment}
-      aria-label="text alignment"
-    >
-      <ToggleButton
-        value="pass"
+    <div>
+      {/* Pass Button */}
+      <Button
+        onClick={passToggler}
         aria-label="left aligned"
+        className={classes.passBtn}
         style={{
-          width: 93,
-          height: 38,
-          borderRadius: 3,
-          border: 'rgba(0, 0, 0, 0.0)',
-          backgroundColor:
-            alignment === 'pass' ? '#109B67' : 'rgba(0, 0, 0, 0.1)',
-          color: alignment === 'pass' ? '#FFFFFF' : 'rgba(0, 0, 0, 0.4)',
+          backgroundColor: currentPassState ? '#109B67' : 'rgba(0, 0, 0, 0.1)',
+          color: currentPassState ? '#FFFFFF' : 'rgba(0, 0, 0, 0.4)',
         }}
       >
-        {alignment === 'pass' ? (
+        {currentPassState ? (
           <img src="icons/Pass.png" alt="Pass" />
         ) : (
-          <img src="icons/NotPass.png" alt="NotPass" />
+          <img src="icons/NotPass.png" alt="Not Pass" />
         )}
         <Typography style={{ paddingLeft: 10, fontFamily: 'Ubuntu' }}>
           Pass
         </Typography>
-      </ToggleButton>
-      <ToggleButton
-        value="fail"
-        aria-label="centered"
+      </Button>
+
+      {/* Failed Button */}
+      <Button
+        onClick={failToggler}
+        aria-label="left aligned"
+        className={classes.failBtn}
         style={{
-          width: 93,
-          height: 38,
-          borderRadius: 3,
-          border: 'rgba(0, 0, 0, 0.0)',
-          backgroundColor:
-            alignment === 'fail' ? '#CA2C2C' : 'rgba(0, 0, 0, 0.1)',
-          color: alignment === 'fail' ? '#FFFFFF' : 'rgba(0, 0, 0, 0.4)',
+          backgroundColor: currentFailState ? '#CA2C2C' : 'rgba(0, 0, 0, 0.1)',
+          color: currentFailState ? '#FFFFFF' : 'rgba(0, 0, 0, 0.4)',
         }}
       >
-        {alignment === 'fail' ? (
+        {currentFailState ? (
           <img src="icons/Fail.png" alt="Fail" />
         ) : (
-          <img src="icons/NotFail.png" alt="NotFail" />
+          <img src="icons/NotFail.png" alt="Not Fail" />
         )}
         <Typography style={{ paddingLeft: 10, fontFamily: 'Ubuntu' }}>
           Fail
         </Typography>
-      </ToggleButton>
-    </ToggleButtonGroup>
+      </Button>
+    </div>
   );
 };
 
