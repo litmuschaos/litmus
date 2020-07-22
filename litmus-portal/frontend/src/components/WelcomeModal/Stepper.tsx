@@ -22,7 +22,7 @@ function CStepper() {
 
   // const { userData } = useSelector((state: RootState) => state);
   const [activeStep, setActiveStep] = React.useState<number>(0);
-  const [formError] = React.useState<boolean>(false);
+  const [formError, setFormError] = React.useState<boolean>(false);
 
   const [info, setInfo] = React.useState({
     email: '',
@@ -56,7 +56,7 @@ function CStepper() {
       .then((response) => response.json())
       .then((data) => {
         if ('error' in data) {
-          console.error("Couldn't login : ");
+          setFormError(true);
         } else {
           user.updateUserDetails({
             name: data.name,
@@ -68,6 +68,7 @@ function CStepper() {
         }
       })
       .catch((err) => {
+        setFormError(true);
         console.error(err);
       });
   };
