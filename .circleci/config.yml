@@ -1,14 +1,80 @@
 version: 2.1
 jobs:
-    build:
-        machine:
-            image: circleci/classic:latest
-        working_directory: ~/go/src/github.com/litmuschaos/litmus
-        environment:
-            HOME: /home/circleci
-            GO111MODULE: "on"
-        steps:
-            - checkout
-            # build and push the application image
-            - run: |
-                  cd litmus-portal && make all
+  build:
+    machine: true
+    working_directory: ~/go/src/github.com/litmuschaos/litmus
+    environment:
+      HOME: /home/circleci
+      GO111MODULE: "on"
+      GOVERSION: 1.14.5
+      OS: linux
+      ARCH: amd64
+    steps:
+      - checkout
+      # build and push the application image
+      - run:
+          name: Install Litmus Portal deps
+          command: |
+            set +e
+            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.5/install.sh | bash
+            export NVM_DIR="/opt/circleci/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm install v12.0.0
+            nvm alias default v12.0.0
+            wget https://golang.org/dl/go${GOVERSION}.${OS}-${ARCH}.tar.gz
+            sudo tar -C /usr/local -xzf go${GOVERSION}.${OS}-${ARCH}.tar.gz
+            export PATH=$PATH:/usr/local/go/bin
+
+      - run:
+          name: Litmus portal code checks
+          command: |
+            export NVM_DIR="/opt/circleci/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            node --version
+            npm --version
+            cd litmus-portal && make litmus-portal-check
+      - run:
+          name: Litmus portal Build
+          command: |
+            export NVM_DIR="/opt/circleci/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            node --version
+            npm --version
+            cd litmus-portal && make build
+      - persist_to_workspace:
+          root: workspace
+          paths:
+            - image.tar
+
+  push:
+    machine: true
+    working_directory: ~/go/src/github.com/litmuschaos/litmus
+    environment:
+      HOME: /home/circleci
+      GO111MODULE: "on"
+      GOVERSION: 1.14.5
+      OS: linux
+      ARCH: amd64
+    steps:
+      - checkout
+      - run:
+          name: Litmus portal Push
+          command: |
+            cd litmus-portal && make push
+
+workflows:
+  version: 2
+  litmus_portal_build_deploy:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /.*/
+      - push:
+          requires:
+            - build
+          filters:
+            ## push jobs needs to be run for branch commits as well as tagged releases
+            ## docker images push won't be performed for PRs due to ENV not being applied
+            tags:
+              only: /.*/

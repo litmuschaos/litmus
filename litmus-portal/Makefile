@@ -58,10 +58,10 @@ litmus-portal-push:
 	@echo "------------------"
 	@echo "--> Push frontend and backend images" 
 	@echo "------------------"
-	REPONAME=$(REPONAME) IMGNAME=$(FRONTEND_IMAGE) IMGTAG=$(IMGTAG) ../hack/push
-	REPONAME=$(REPONAME) IMGNAME=$(GRAPHQL_SERVER_IMAGE) IMGTAG=$(IMGTAG) ../hack/push
-	REPONAME=$(REPONAME) IMGNAME=$(IGC_IMAGE) IMGTAG=$(IMGTAG) ../hack/push
-	REPONAME=$(REPONAME) IMGNAME=$(AUTHENTICATION_SERVER_IMAGE) IMGTAG=$(IMGTAG) ../hack/push
+	docker load -i /tmp/workspace/image.tar && REPONAME=$(REPONAME) IMGNAME=$(FRONTEND_IMAGE) IMGTAG=$(IMGTAG) ~/go/src/github.com/litmuschaos/litmus/hack/push
+	docker load -i /tmp/workspace/image.tar && REPONAME=$(REPONAME) IMGNAME=$(GRAPHQL_SERVER_IMAGE) IMGTAG=$(IMGTAG) ~/go/src/github.com/litmuschaos/litmus/hack/push
+	docker load -i /tmp/workspace/image.tar && REPONAME=$(REPONAME) IMGNAME=$(IGC_IMAGE) IMGTAG=$(IMGTAG) ~/go/src/github.com/litmuschaos/litmus/hack/push
+	docker load -i /tmp/workspace/image.tar && REPONAME=$(REPONAME) IMGNAME=$(AUTHENTICATION_SERVER_IMAGE) IMGTAG=$(IMGTAG) ~/go/src/github.com/litmuschaos/litmus/hack/push
 
 
 .PHONY: litmus-portal-check
@@ -71,11 +71,19 @@ lint-checks:
 	@echo "------------------"
 	@echo "--> checking code style"
 	@echo "------------------"
+	@echo "--> frontend [npm run lint]"
+	@echo "------------------"
+	@cd frontend && npm i --quiet && npm run lint
+	@echo "------------------"
+	@echo "--> backend [gofmt ]"
+	@echo "------------------"
 	@fmtRes=$$(gofmt -d $$(find . -path ./vendor -prune -o -name '*.go' -print)); \
 	if [ -n "$${fmtRes}" ]; then \
 		echo "gofmt checking failed!"; echo "$${fmtRes}"; echo; \
 		echo "Please ensure you are using $$($(GO) version) for formatting code."; \
+		exit 1; \
 	fi
+
 
 unused-package-check:
 	@echo "------------------"
@@ -85,6 +93,7 @@ unused-package-check:
 	if [ -n "$${tidyRes}" ]; then \
 		echo "go mod tidy checking failed!"; echo "$${tidyRes}"; echo; \
 		echo "Please ensure you are using $$($(GO) version) for formatting code."; \
+		exit 1; \
 	fi
 	@echo "------------------"
 	@echo "--> Check litmus-portal auth [go mod tidy]"
@@ -93,6 +102,7 @@ unused-package-check:
 	if [ -n "$${tidyRes}" ]; then \
 		echo "go mod tidy checking failed!"; echo "$${tidyRes}"; echo; \
 		echo "Please ensure you are using $$($(GO) version) for formatting code."; \
+		exit 1; \
 	fi
 	
 .PHONY: litmus-portal-test
@@ -102,4 +112,4 @@ frontend-unit-test:
 	@echo "------------------"
 	@echo "--> Frontend Unit Test"
 	@echo "------------------"
-	cd ./frontend && npm i && npx cypress run
+	cd ./frontend && npm i --quite && npx cypress run
