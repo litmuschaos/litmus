@@ -15,13 +15,18 @@ const useStyles = makeStyles((theme) => ({
   },
 
   rootDiv: {
-    width: '50rem',
+    flexGrow: 1,
   },
 
   mainDiv: {
     marginTop: theme.spacing(8.75),
-    marginLeft: theme.spacing(17.5),
-    width: '26rem',
+    marginLeft: theme.spacing(23),
+    maxWidth: '26rem',
+    [theme.breakpoints.down('sm')]: {
+      marginLeft: theme.spacing(2),
+      marginRight: theme.spacing(2),
+      marginBottom: theme.spacing(5),
+    },
   },
 
   heading: {
@@ -38,33 +43,13 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1rem',
   },
 
-  success: {
-    border: '0.0625rem solid',
-    borderColor: theme.palette.secondary.dark,
-  },
-
-  error: {
-    border: '0.0625rem solid',
-    borderColor: theme.palette.error.main,
-  },
-
-  inputArea: {
-    width: '20rem',
-    marginTop: theme.spacing(3.5),
-    textDecoration: 'none',
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
-    paddingBottom: theme.spacing(2.2),
-    borderRadius: 3,
-  },
-
   loginDiv: {
     marginTop: theme.spacing(5),
     marginLeft: theme.spacing(-2),
   },
 
   imageDiv: {
-    width: '50rem',
+    marginLeft: 'auto',
   },
 
   forgotPasssword: {
