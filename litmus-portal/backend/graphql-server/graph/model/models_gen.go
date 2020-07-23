@@ -21,6 +21,11 @@ type ClusterAction struct {
 	Action    string `json:"action"`
 }
 
+type ClusterActionInput struct {
+	ClusterID string `json:"cluster_id"`
+	Action    string `json:"action"`
+}
+
 type ClusterEvent struct {
 	EventID     string   `json:"event_id"`
 	EventType   string   `json:"event_type"`
@@ -46,4 +51,5 @@ type ClusterInput struct {
 	Description  string `json:"description"`
 	PlatformName string `json:"platform_name"`
 	ProjectID    string `json:"project_id"`
+	ClusterType  string `json:"cluster_type"`
 }

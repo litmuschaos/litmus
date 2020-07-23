@@ -1,8 +1,9 @@
-package util
+package cluster
 
 import (
 	"errors"
 	"fmt"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/util"
 	"os"
 	"time"
 
@@ -11,7 +12,7 @@ import (
 
 var secret = ""
 
-func CreateJWT(id string) (string, error) {
+func ClusterCreateJWT(id string) (string, error) {
 	initSecret()
 	expirationTime := time.Now().Add(12 * time.Hour)
 	claims := jwt.MapClaims{}
@@ -26,7 +27,7 @@ func CreateJWT(id string) (string, error) {
 	return tokenString, nil
 }
 
-func ValidateJWT(token string) (string, error) {
+func ClusterValidateJWT(token string) (string, error) {
 	initSecret()
 	tkn, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -51,7 +52,7 @@ func initSecret() {
 	if secret == "" {
 		sc := os.Getenv("SECRET")
 		if sc == "" {
-			secret = RandomString(16)
+			secret = util.RandomString(16)
 		} else {
 			secret = sc
 		}

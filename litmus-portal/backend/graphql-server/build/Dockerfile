@@ -15,7 +15,7 @@ RUN apk update && apk add curl bash
 RUN apk add --no-cache libc6-compat
 
 COPY --from=builder /output/server /
-COPY --from=builder /gql-server/template/template.yml /template/template.yml
+COPY --from=builder /gql-server/template/. /template
 CMD ["./server"]
 
 EXPOSE 8080

@@ -56,7 +56,11 @@ spec:
         image: #{portal-server}
         env:
           - name: DB_SERVER
-            value: mongo-service:27017
+              value: mongo-service:27017
+          - name: EXTERNAL_ADDRESS
+            value: ""
+          - name: SERVICE_ADDRESS
+            value: litmusportal-server-service:8080
         ports:
         - containerPort: 8080
         imagePullPolicy: Always
@@ -76,7 +80,6 @@ spec:
     - name: graphql-server
       port: 9002
       targetPort: 8080
-      nodePort: 31000
     - name: auth-server
       port: 9003
       targetPort: 3000

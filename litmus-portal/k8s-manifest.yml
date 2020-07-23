@@ -65,6 +65,10 @@ spec:
         env:
           - name: DB_SERVER
             value: mongo-service:27017
+          - name: EXTERNAL_ADDRESS
+            value: ""
+          - name: SERVICE_ADDRESS
+            value: litmusportal-server-service:8080
         ports:
         - containerPort: 8080
         imagePullPolicy: Always

@@ -6,10 +6,10 @@ import (
 	"strconv"
 	"time"
 
-	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/data-store"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
+	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/data-store"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/util"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/util"
 )
 
 func ConfirmClusterRegistration(identity model.ClusterIdentity, r store.StateData) (string, error) {
@@ -28,8 +28,8 @@ func ConfirmClusterRegistration(identity model.ClusterIdentity, r store.StateDat
 			log.Print("ERROR", err)
 			return "", err
 		}
-		log.Print("CLUSTER Confirmed : ID-", cluster[0].ClusterID," PID-",cluster[0].ProjectID)
-		SendSubscription("cluster-registration", "New Cluster", "New Cluster registration", cluster[0], r)
+		log.Print("CLUSTER Confirmed : ID-", cluster[0].ClusterID, " PID-", cluster[0].ProjectID)
+		SendClusterEvent("cluster-registration", "New Cluster", "New Cluster registration", cluster[0], r)
 		return newKey, nil
 	}
 	return "", errors.New("error finding cluster")

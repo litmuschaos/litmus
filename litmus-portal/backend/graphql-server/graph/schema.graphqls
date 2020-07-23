@@ -21,6 +21,7 @@ input ClusterInput{
   description: String!
   platform_name: String!
   project_id: ID!
+  cluster_type: String!
 }
 
 type ClusterEvent {
@@ -33,6 +34,11 @@ type ClusterEvent {
 
 type ClusterAction {
     project_id: ID!
+    action:String!
+}
+
+input ClusterActionInput {
+    cluster_id: ID!
     action:String!
 }
 
@@ -52,10 +58,7 @@ type Mutation{
     userClusterReg(clusterInput:ClusterInput!):String!
     clusterConfirm(identity:ClusterIdentity!):String!
     newClusterEvent(clusterEvent:ClusterEventInput!):String!
-}
-
-type Query{
-    clusters(project_id:String!):[Cluster!]!
+    newClusterAction(action:ClusterActionInput!):String!
 }
 
 type Subscription{

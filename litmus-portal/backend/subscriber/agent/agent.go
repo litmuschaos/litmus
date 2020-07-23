@@ -17,6 +17,7 @@ import (
 var addr = flag.String("addr", "0.0.0.0:8000", "http service address")
 
 func main() {
+	time.Sleep(5 * time.Second)
 	flag.Parse()
 	log.SetFlags(0)
 

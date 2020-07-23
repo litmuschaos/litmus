@@ -8,10 +8,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/util"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/util"
 )
 
-func ClusterRegister(input model.ClusterInput, clusterType string) (string, error) {
+func ClusterRegister(input model.ClusterInput) (string, error) {
 	cid := uuid.New()
 	newCluster := model.Cluster{
 		ClusterID:    cid.String(),
@@ -19,7 +19,7 @@ func ClusterRegister(input model.ClusterInput, clusterType string) (string, erro
 		Description:  input.Description,
 		ProjectID:    input.ProjectID,
 		AccessKey:    util.RandomString(32),
-		ClusterType:  clusterType,
+		ClusterType:  input.ClusterType,
 		PlatformName: input.PlatformName,
 		CreatedAt:    strconv.FormatInt(time.Now().Unix(), 10),
 		UpdatedAt:    strconv.FormatInt(time.Now().Unix(), 10),
@@ -29,8 +29,8 @@ func ClusterRegister(input model.ClusterInput, clusterType string) (string, erro
 		log.Print("ERROR", err)
 		return "", err
 	}
-	log.Print("NEW CLUSTER REGISTERED : ID-", newCluster.ClusterID," PID-",newCluster.ProjectID)
-	token, err := util.CreateJWT(newCluster.ClusterID)
+	log.Print("NEW CLUSTER REGISTERED : ID-", newCluster.ClusterID, " PID-", newCluster.ProjectID)
+	token, err := ClusterCreateJWT(newCluster.ClusterID)
 	if err != nil {
 		log.Print("ERROR", err)
 		return "", err

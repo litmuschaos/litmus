@@ -1,4 +1,4 @@
-package util
+package cluster
 
 import (
 	"bufio"
@@ -6,8 +6,8 @@ import (
 	"strings"
 )
 
-func ManifestParser(id, key, server string) ([]string, error) {
-	file, err := os.Open("template/template.yml")
+func ManifestParser(id, key, server, template string) ([]string, error) {
+	file, err := os.Open(template)
 	if err != nil {
 		return []string{}, err
 	}

@@ -1,10 +1,13 @@
 const { clusterSubscription } = require('./graphql/subscriptions');
+const { clusterConfirm,clusterEvent } = require('./graphql/mutations');
 const ws = require('ws');
 const { WebSocketLink } = require('apollo-link-ws');
 const { SubscriptionClient } = require('subscriptions-transport-ws');
 const server = require('./agentServer');
 
 const gqlServer = `ws://${process.env.GQL_SERVER}`;
+const cid = process.env.CID
+let key = process.env.KEY
 console.log(gqlServer);
 
 const client = new SubscriptionClient(
@@ -14,24 +17,27 @@ const client = new SubscriptionClient(
     },
     ws
 );
-const link = new WebSocketLink(client);
-
 const agentHandler = (ws) => {
-    clusterSubscription(link, ws);
+    const link = new WebSocketLink(client);
+    clusterConfirm(link,ws,{data:{cluster_id: cid, access_key:key}}).then(newKey=>{
+        key=newKey
+        console.log(key)
+        clusterSubscription(link, ws,{data:{cluster_id: cid, access_key:key}});
+        // message received from the client
+        ws.on('message', (data) => {
+            console.log(JSON.parse(data))
+            clusterEvent(link,ws,{data:{name: "EVENT FROM AGENT", description: data, cluster_id: cid, access_key:key}})
+        });
 
-    // message received from the client
-    ws.on('message', (data) => {
-        console.log(JSON.parse(data))
-    });
+        // websocket error event
+        ws.on('error', (err) => {
+            console.log('Error : '+ err)
+        })
 
-    // websocket error event
-    ws.on('error', (err) => {
-        console.log('Error : '+ err)
-    })
-
-    // websocket close event
-    ws.on('close', () => {
-        console.log('Agent disconnected')
+        // websocket close event
+        ws.on('close', () => {
+            console.log('Agent disconnected')
+        })
     })
 };
 

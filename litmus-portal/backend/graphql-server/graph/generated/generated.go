@@ -9,7 +9,6 @@ import (
 	"io"
 	"strconv"
 	"sync"
-	"sync/atomic"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -37,7 +36,6 @@ type Config struct {
 
 type ResolverRoot interface {
 	Mutation() MutationResolver
-	Query() QueryResolver
 	Subscription() SubscriptionResolver
 }
 
@@ -73,13 +71,13 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		ClusterConfirm  func(childComplexity int, identity model.ClusterIdentity) int
-		NewClusterEvent func(childComplexity int, clusterEvent model.ClusterEventInput) int
-		UserClusterReg  func(childComplexity int, clusterInput model.ClusterInput) int
+		ClusterConfirm   func(childComplexity int, identity model.ClusterIdentity) int
+		NewClusterAction func(childComplexity int, action model.ClusterActionInput) int
+		NewClusterEvent  func(childComplexity int, clusterEvent model.ClusterEventInput) int
+		UserClusterReg   func(childComplexity int, clusterInput model.ClusterInput) int
 	}
 
 	Query struct {
-		Clusters func(childComplexity int, projectID string) int
 	}
 
 	Subscription struct {
@@ -92,9 +90,7 @@ type MutationResolver interface {
 	UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (string, error)
 	ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (string, error)
 	NewClusterEvent(ctx context.Context, clusterEvent model.ClusterEventInput) (string, error)
-}
-type QueryResolver interface {
-	Clusters(ctx context.Context, projectID string) ([]*model.Cluster, error)
+	NewClusterAction(ctx context.Context, action model.ClusterActionInput) (string, error)
 }
 type SubscriptionResolver interface {
 	ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error)
@@ -254,6 +250,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.ClusterConfirm(childComplexity, args["identity"].(model.ClusterIdentity)), true
 
+	case "Mutation.newClusterAction":
+		if e.complexity.Mutation.NewClusterAction == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_newClusterAction_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.NewClusterAction(childComplexity, args["action"].(model.ClusterActionInput)), true
+
 	case "Mutation.newClusterEvent":
 		if e.complexity.Mutation.NewClusterEvent == nil {
 			break
@@ -277,18 +285,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UserClusterReg(childComplexity, args["clusterInput"].(model.ClusterInput)), true
-
-	case "Query.clusters":
-		if e.complexity.Query.Clusters == nil {
-			break
-		}
-
-		args, err := ec.field_Query_clusters_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.Clusters(childComplexity, args["project_id"].(string)), true
 
 	case "Subscription.clusterConnect":
 		if e.complexity.Subscription.ClusterConnect == nil {
@@ -418,6 +414,7 @@ input ClusterInput{
   description: String!
   platform_name: String!
   project_id: ID!
+  cluster_type: String!
 }
 
 type ClusterEvent {
@@ -430,6 +427,11 @@ type ClusterEvent {
 
 type ClusterAction {
     project_id: ID!
+    action:String!
+}
+
+input ClusterActionInput {
+    cluster_id: ID!
     action:String!
 }
 
@@ -449,10 +451,7 @@ type Mutation{
     userClusterReg(clusterInput:ClusterInput!):String!
     clusterConfirm(identity:ClusterIdentity!):String!
     newClusterEvent(clusterEvent:ClusterEventInput!):String!
-}
-
-type Query{
-    clusters(project_id:String!):[Cluster!]!
+    newClusterAction(action:ClusterActionInput!):String!
 }
 
 type Subscription{
@@ -477,6 +476,20 @@ func (ec *executionContext) field_Mutation_clusterConfirm_args(ctx context.Conte
 		}
 	}
 	args["identity"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_newClusterAction_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.ClusterActionInput
+	if tmp, ok := rawArgs["action"]; ok {
+		arg0, err = ec.unmarshalNClusterActionInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterActionInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["action"] = arg0
 	return args, nil
 }
 
@@ -519,20 +532,6 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_clusters_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["project_id"]; ok {
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["project_id"] = arg0
 	return args, nil
 }
 
@@ -1335,7 +1334,7 @@ func (ec *executionContext) _Mutation_newClusterEvent(ctx context.Context, field
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_clusters(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_newClusterAction(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1343,7 +1342,7 @@ func (ec *executionContext) _Query_clusters(ctx context.Context, field graphql.C
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "Query",
+		Object:   "Mutation",
 		Field:    field,
 		Args:     nil,
 		IsMethod: true,
@@ -1351,7 +1350,7 @@ func (ec *executionContext) _Query_clusters(ctx context.Context, field graphql.C
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_clusters_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_newClusterAction_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -1359,7 +1358,7 @@ func (ec *executionContext) _Query_clusters(ctx context.Context, field graphql.C
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Clusters(rctx, args["project_id"].(string))
+		return ec.resolvers.Mutation().NewClusterAction(rctx, args["action"].(model.ClusterActionInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1371,9 +1370,9 @@ func (ec *executionContext) _Query_clusters(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Cluster)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNCluster2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2602,6 +2601,30 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputClusterActionInput(ctx context.Context, obj interface{}) (model.ClusterActionInput, error) {
+	var it model.ClusterActionInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "cluster_id":
+			var err error
+			it.ClusterID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "action":
+			var err error
+			it.Action, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputClusterEventInput(ctx context.Context, obj interface{}) (model.ClusterEventInput, error) {
 	var it model.ClusterEventInput
 	var asMap = obj.(map[string]interface{})
@@ -2689,6 +2712,12 @@ func (ec *executionContext) unmarshalInputClusterInput(ctx context.Context, obj 
 		case "project_id":
 			var err error
 			it.ProjectID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "cluster_type":
+			var err error
+			it.ClusterType, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2892,6 +2921,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "newClusterAction":
+			out.Values[i] = ec._Mutation_newClusterAction(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2918,20 +2952,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "clusters":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_clusters(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -3232,43 +3252,6 @@ func (ec *executionContext) marshalNCluster2githubᚗcomᚋlitmuschaosᚋlitmus�
 	return ec._Cluster(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNCluster2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Cluster) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNCluster2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐCluster(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
 func (ec *executionContext) marshalNCluster2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐCluster(ctx context.Context, sel ast.SelectionSet, v *model.Cluster) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -3291,6 +3274,10 @@ func (ec *executionContext) marshalNClusterAction2ᚖgithubᚗcomᚋlitmuschaos�
 		return graphql.Null
 	}
 	return ec._ClusterAction(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNClusterActionInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterActionInput(ctx context.Context, v interface{}) (model.ClusterActionInput, error) {
+	return ec.unmarshalInputClusterActionInput(ctx, v)
 }
 
 func (ec *executionContext) marshalNClusterEvent2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterEvent(ctx context.Context, sel ast.SelectionSet, v model.ClusterEvent) graphql.Marshaler {

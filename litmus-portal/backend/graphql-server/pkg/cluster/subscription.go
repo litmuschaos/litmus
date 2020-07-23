@@ -2,11 +2,11 @@ package cluster
 
 import (
 	"github.com/google/uuid"
-	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/data-store"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
+	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/data-store"
 )
 
-func SendSubscription(eventType, eventName, description string, cluster model.Cluster, r store.StateData) {
+func SendClusterEvent(eventType, eventName, description string, cluster model.Cluster, r store.StateData) {
 	guid := uuid.New()
 	newEvent := model.ClusterEvent{
 		EventID:     guid.String(),
@@ -20,6 +20,14 @@ func SendSubscription(eventType, eventName, description string, cluster model.Cl
 		for _, observer := range r.ClusterEventPublish[cluster.ProjectID] {
 			observer <- &newEvent
 		}
+	}
+	r.Mutex.Unlock()
+}
+
+func SendClusterAction(cid string, action model.ClusterAction, r store.StateData) {
+	r.Mutex.Lock()
+	if r.ConnectedCluster != nil {
+		r.ConnectedCluster[cid] <- &action
 	}
 	r.Mutex.Unlock()
 }

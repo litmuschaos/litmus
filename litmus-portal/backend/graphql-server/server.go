@@ -1,17 +1,18 @@
 package main
 
 import (
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/cluster"
 	"log"
 	"net/http"
 	"os"
 	"strings"
 
 	"github.com/gorilla/mux"
-	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/data-store"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/generated"
+	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/data-store"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/util"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/util"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -19,47 +20,47 @@ import (
 
 const defaultPort = "8080"
 
-var HOST string
+var addr string
+var serviceAddr string
 
 func main() {
 	port := defaultPort
-	HOST = os.Getenv("HOST")
-	if HOST == "" {
-		ip, err := util.GetPublicIP()
-		if err != nil {
-			log.Panic(err.Error())
-		}
-		HOST = ip + ":31000"
-	}
+	addr = os.Getenv("EXTERNAL_ADDRESS")
+	serviceAddr = os.Getenv("SERVICE_ADDRESS")
 	database.DBInit()
 	store.StoreInit()
-	log.Print("SERVER STARTING ON : ", HOST)
+	log.Print("SERVER STARTING ON : ", addr)
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
 	router := mux.NewRouter()
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", srv)
 	router.HandleFunc("/file/{key}", fileHandler)
-	log.Printf("connect to %s for GraphQL playground", HOST)
+	log.Printf("connect to %s for GraphQL playground", addr)
 	log.Fatal(http.ListenAndServe(":"+port, router))
 }
 
 func fileHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	token := vars["key"]
-	id, err := util.ValidateJWT(token)
+	id, err := cluster.ClusterValidateJWT(token)
 	if err != nil {
 		log.Print("ERROR", err)
 		util.WriteHeaders(&w, 404)
 		return
 	}
-	cluster, err := database.GetCluster(id)
+	reqCluster, err := database.GetCluster(id)
 	if err != nil {
 		log.Print("ERROR", err)
 		util.WriteHeaders(&w, 500)
 		return
 	}
-	if len(cluster) == 1 && !cluster[0].IsRegistered {
-		respData, err := util.ManifestParser(cluster[0].ClusterID, cluster[0].AccessKey, HOST+"/query")
+	if len(reqCluster) == 1 && !reqCluster[0].IsRegistered {
+		var respData []string
+		if strings.ToLower(reqCluster[0].ClusterType) == "internal" {
+			respData, err = cluster.ManifestParser(reqCluster[0].ClusterID, reqCluster[0].AccessKey, serviceAddr+"/query", "template/self-template.yml")
+		} else {
+			respData, err = cluster.ManifestParser(reqCluster[0].ClusterID, reqCluster[0].AccessKey, addr+"/query", "template/template.yml")
+		}
 		if err != nil {
 			log.Print("ERROR", err)
 			util.WriteHeaders(&w, 500)

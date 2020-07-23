@@ -6,11 +6,11 @@ package graph
 import (
 	"context"
 	"errors"
+	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/data-store"
 	"log"
 	"strconv"
 	"time"
 
-	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/data-store"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/cluster"
@@ -18,7 +18,7 @@ import (
 )
 
 func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (string, error) {
-	return cluster.ClusterRegister(clusterInput, "EXTERNAL")
+	return cluster.ClusterRegister(clusterInput)
 }
 
 func (r *mutationResolver) ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (string, error) {
@@ -29,8 +29,21 @@ func (r *mutationResolver) NewClusterEvent(ctx context.Context, clusterEvent mod
 	return cluster.NewEvent(clusterEvent, store.State)
 }
 
-func (r *queryResolver) Clusters(ctx context.Context, projectID string) ([]*model.Cluster, error) {
-	return cluster.GetProjectClusters(projectID)
+func (r *mutationResolver) NewClusterAction(ctx context.Context, action model.ClusterActionInput) (string, error) {
+	log.Print("NEW CLUSTER ACTION ", action.ClusterID)
+	reqCluster, err := database.GetCluster(action.ClusterID)
+	if err != nil {
+		return "", err
+	}
+	if len(reqCluster) != 1 {
+		return "", errors.New("SERVER ERROR")
+	}
+	clusterAction := model.ClusterAction{
+		ProjectID: reqCluster[0].ProjectID,
+		Action:    action.Action,
+	}
+	cluster.SendClusterAction(reqCluster[0].ClusterID, clusterAction, store.State)
+	return "ACTION FORWARDED TO CLUSTER", nil
 }
 
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {
@@ -61,7 +74,7 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 	go func() {
 		<-ctx.Done()
 		verifiedCluster.IsActive = false
-		cluster.SendSubscription("cluster-status", "Cluster Offline", "Cluster Disconnect", *verifiedCluster, store.State)
+		cluster.SendClusterEvent("cluster-status", "Cluster Offline", "Cluster Disconnect", *verifiedCluster, store.State)
 		store.State.Mutex.Lock()
 		delete(store.State.ConnectedCluster, clusterInfo.ClusterID)
 		store.State.Mutex.Unlock()
@@ -76,19 +89,15 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 		return clusterAction, err
 	}
 	verifiedCluster.IsActive = true
-	cluster.SendSubscription("cluster-status", "Cluster Live", "Cluster is Live and Connected", *verifiedCluster, store.State)
+	cluster.SendClusterEvent("cluster-status", "Cluster Live", "Cluster is Live and Connected", *verifiedCluster, store.State)
 	return clusterAction, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
-// Query returns generated.QueryResolver implementation.
-func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
-
 // Subscription returns generated.SubscriptionResolver implementation.
 func (r *Resolver) Subscription() generated.SubscriptionResolver { return &subscriptionResolver{r} }
 
 type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
 type subscriptionResolver struct{ *Resolver }
