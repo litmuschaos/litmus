@@ -14,6 +14,7 @@ AUTHENTICATION_SERVER_IMAGE ?= litmusportal-auth-server
 FRONTEND_IMAGE ?= litmusportal-frontend
 IGC_IMAGE ?= litmusportal-igc
 AGENT_IMAGE ?= litmusportal-agent
+SELF_DEPLOYER_IMAGE ?= litmusportal-self-deployer
 IMGTAG ?= ci
 
 .PHONY: all
@@ -52,6 +53,7 @@ litmus-portal-build:
 	docker build ./backend/auth -f backend/auth/Dockerfile -t $(REPONAME)/$(AUTHENTICATION_SERVER_IMAGE):$(IMGTAG)
 	docker build ./backend/subscriber/igc -f backend/subscriber/igc/build/Dockerfile -t $(REPONAME)/$(IGC_IMAGE):$(IMGTAG)
 	docker build ./backend/subscriber/agent -f backend/subscriber/agent/build/Dockerfile -t $(REPONAME)/$(AGENT_IMAGE):$(IMGTAG)
+	docker build ./backend/self-deployer -f backend/self-deployer/build/Dockerfile -t $(REPONAME)/$(SELF_DEPLOYER_IMAGE):$(IMGTAG)
 
 .PHONY: push
 push: litmus-portal-push
@@ -65,6 +67,7 @@ litmus-portal-push:
 	REPONAME=$(REPONAME) IMGNAME=$(IGC_IMAGE) IMGTAG=$(IMGTAG) ../hack/push
 	REPONAME=$(REPONAME) IMGNAME=$(AGENT_IMAGE) IMGTAG=$(IMGTAG) ../hack/push
 	REPONAME=$(REPONAME) IMGNAME=$(AUTHENTICATION_SERVER_IMAGE) IMGTAG=$(IMGTAG) ../hack/push
+	REPONAME=$(REPONAME) IMGNAME=$(SELF_DEPLOYER_IMAGE) IMGTAG=$(IMGTAG) ../hack/push
 
 
 .PHONY: litmus-portal-check
