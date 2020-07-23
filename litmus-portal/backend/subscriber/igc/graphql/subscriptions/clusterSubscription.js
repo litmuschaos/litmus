@@ -14,8 +14,9 @@ const operation = () => ({
 
 const nextHandler = (ws, response) => {
     console.log(JSON.parse(response.data.clusterSubscription.data));
-    ws.send(JSON.stringify(response.data.clusterSubscription));
+    ws.send(response.data.clusterSubscription.data);
 };
+
 const errHandler = (ws, err) => {
     console.log(err);
     ws.send(JSON.stringify({ type: 'error', data: 'Error' }));
