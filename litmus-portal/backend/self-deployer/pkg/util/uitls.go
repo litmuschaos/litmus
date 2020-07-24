@@ -2,8 +2,12 @@ package util
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io/ioutil"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 	"log"
 	"net/http"
 	"regexp"
@@ -44,7 +48,7 @@ func WaitForServer(server string) {
 
 //RegSelfCluster registers the Cluster automatically with the Litmus-Portal and get the Manifest Data
 func RegSelfCluster(server, pid string) (string, error) {
-	query:=`{ cluster_name: \"Self-Cluster\", description:"Self-Cluster", project_id:"` + pid + `", platform_name:"others", cluster_type:"INTERNAL"}`
+	query:=`{ cluster_name: \"Self-Cluster\", description:\"Self-Cluster\", project_id:\"` + pid + `\", platform_name:\"others\", cluster_type:\"INTERNAL\"}`
 	var jsonStr = []byte(`{"query":"mutation { userClusterReg(clusterInput:`+query+` )}"}`)
 	req, err := http.NewRequest("POST", server, bytes.NewBuffer(jsonStr))
 	if err != nil {
@@ -98,21 +102,17 @@ func Deploy(file string) error {
 }
 
 //Cleanup is responsible for deleting the self-deployer deployment after it has finished execution
-func CleanUp(path string) error {
-	body, err := ioutil.ReadFile(path)
+func CleanUp(ns,deplotment string) error {
+	config, err := rest.InClusterConfig()
 	if err != nil {
 		log.Print(err.Error())
 		return err
 	}
-	response, err := k8s.ClusterOperations(body, "delete")
-	if err != nil {
-		log.Println(err.Error())
+	client, err := kubernetes.NewForConfig(config)
+	err=client.AppsV1().Deployments(ns).Delete(context.TODO(),deplotment,metav1.DeleteOptions{})
+	if err!=nil{
+		log.Print("ERROR : ",err.Error())
 		return err
 	}
-	responseData, err := json.Marshal(response)
-	if err != nil {
-		log.Println("err:", err)
-	}
-	log.Print("CLEANUP RESPONSE : ", string(responseData))
 	return nil
 }

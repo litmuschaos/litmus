@@ -28,7 +28,7 @@ func main() {
 		log.Print("SUBSCRIBER DEPLOYED")
 	}
 	log.Print("PERFORMING CLEANUP")
-	err := util.CleanUp("template/self-deployer.yml")
+	err := util.CleanUp("litmus","self-deployer")
 	if err != nil {
 		log.Panic(err.Error())
 	}

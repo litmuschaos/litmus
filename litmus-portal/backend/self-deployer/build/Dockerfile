@@ -12,13 +12,8 @@ FROM alpine:latest
 
 LABEL maintainer="LitmusChaos"
 
-#Install required packages
-RUN apk update && apk add curl bash
-RUN apk add --no-cache libc6-compat
-
 #Copy binaries from build stage
 COPY --from=builder /output/deployer /
-COPY --from=builder /self-deployer/template/self-deployer.yml /template/self-deployer.yml
 CMD ["./deployer"]
 
 EXPOSE 8080
