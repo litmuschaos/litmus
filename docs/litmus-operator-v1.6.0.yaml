@@ -66,7 +66,7 @@ spec:
             - name: CHAOS_RUNNER_IMAGE
               value: "litmuschaos/chaos-runner:1.6.0"
             - name: WATCH_NAMESPACE
-              value:
+              value: ""
             - name: POD_NAME
               valueFrom:
                 fieldRef:
@@ -185,6 +185,7 @@ spec:
                             type: array
                             items:
                               type: object
+                              minProperties: 2
                               properties:
                                 name:
                                   type: string
@@ -194,6 +195,7 @@ spec:
                             type: array
                             items:
                               type: object
+                              minProperties: 2
                               properties:
                                 name:
                                   type: string
@@ -212,6 +214,8 @@ spec:
                                   type: string
                                   minLength: 1
                                   allowEmptyValue: false
+
+
         status:
           type: object
   version: v1alpha1
@@ -316,6 +320,7 @@ spec:
                   type: array
                   items:
                     type: object
+                    minProperties: 2
                     properties:
                       name:
                         type: string
@@ -329,6 +334,7 @@ spec:
                   type: array
                   items:
                     type: object
+                    minProperties: 2
                     properties:
                       name:
                         type: string
@@ -341,7 +347,7 @@ spec:
                 securityContext:
                   type: object
                 hostPID:
-                  type: bool
+                  type: boolean
         status:
           type: object
   version: v1alpha1
