@@ -13,25 +13,39 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/backend/self-deployer/pkg/k8s"
 )
 
-//WaitForServer makes the self-deployer sleep until the GQL Server is up and running
+//WaitForServer makes the self-deployer sleep until the GQL Server is up and running, timeout after 5min
 func WaitForServer(server string) {
-	log.Print("Checking if Server Up ", server)
-	for true {
-		req, err := http.NewRequest("GET", server, bytes.NewBuffer([]byte("")))
-		req.Header.Set("Content-Type", "application/json")
-		client := &http.Client{}
-		res, err := client.Do(req)
-		if err != nil || res.StatusCode != 200 {
-			time.Sleep(30 * time.Second)
-		} else {
-			break
+	timeout := time.After(5 * time.Minute)
+	done := make(chan struct{})
+	go func(d chan struct{}) {
+		for {
+			log.Print("Checking if Server Up ", server)
+			req, err := http.NewRequest("GET", server, bytes.NewBuffer([]byte("")))
+			req.Header.Set("Content-Type", "application/json")
+			client := &http.Client{}
+			res, err := client.Do(req)
+			if err != nil || res.StatusCode != 200 {
+				time.Sleep(30 * time.Second)
+			} else {
+				d<-struct{}{}
+				return
+			}
 		}
+	}(done)
+	select {
+	case <-timeout:
+		log.Panic("ERROR[TIMEOUT] : SERVER NOT UP AFTER 5 MIN")
+		return
+	case <-done:
+		log.Print("SERVER UP")
+		return
 	}
 }
 
 //RegSelfCluster registers the Cluster automatically with the Litmus-Portal and get the Manifest Data
 func RegSelfCluster(server, pid string) (string, error) {
-	var jsonStr = []byte(`{"query":"mutation { userClusterReg(clusterInput: { cluster_name: \"Self-Cluster\", description:\"Self-Cluster\", project_id:\"` + pid + `\", platform_name:\"others\", cluster_type:\"INTERNAL\"})}"}`)
+	query:=`{ cluster_name: \"Self-Cluster\", description:"Self-Cluster", project_id:"` + pid + `", platform_name:"others", cluster_type:"INTERNAL"}`
+	var jsonStr = []byte(`{"query":"mutation { userClusterReg(clusterInput:`+query+` )}"}`)
 	req, err := http.NewRequest("POST", server, bytes.NewBuffer(jsonStr))
 	if err != nil {
 		log.Print(err.Error())
