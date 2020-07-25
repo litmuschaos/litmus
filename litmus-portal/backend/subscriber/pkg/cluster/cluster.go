@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	yaml_converter "github.com/ghodss/yaml"
-	k8s_client "github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/agent/pkg/k8s"
+	k8s_client "github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/k8s"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -65,7 +65,7 @@ func applyRequest(obj *unstructured.Unstructured, requestType interface{}, dr dy
 	return nil, fmt.Errorf("Invalid request")
 }
 
-func ClusterOperations(clientData map[string]interface{}) (*unstructured.Unstructured, error) {
+func ClusterOperations(clientData map[string]interface{}, kubeconfig *string) (*unstructured.Unstructured, error) {
 
 	manifestByte, err := json.Marshal(clientData["manifest"])
 	if err != nil {
@@ -81,7 +81,7 @@ func ClusterOperations(clientData map[string]interface{}) (*unstructured.Unstruc
 	}
 
 	// Getting dynamic and discovery client
-	discoveryClient, dynamicClient, err := k8s_client.GetDynamicAndDiscoveryClient()
+	discoveryClient, dynamicClient, err := k8s_client.GetDynamicAndDiscoveryClient(kubeconfig)
 	if err != nil {
 		return nil, fmt.Errorf("err: %v\n", err)
 	}
@@ -92,7 +92,7 @@ func ClusterOperations(clientData map[string]interface{}) (*unstructured.Unstruc
 	// Decode YAML manifest into unstructured.Unstructured
 	obj := &unstructured.Unstructured{}
 	_, gvk, err := decUnstructured.Decode([]byte(yamlStr), nil, obj)
-	if err != nil {
+		if err != nil {
 		return nil, fmt.Errorf("err: %v\n", err)
 	}
 
