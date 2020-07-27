@@ -2,65 +2,65 @@ import { makeStyles } from '@material-ui/core/styles';
 
 // Community Component Styling
 const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    display: 'flex',
-    fontFamily: 'Ubuntu',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-  },
   mainHeader: {
     color: theme.palette.text.primary,
-    fontSize: theme.spacing(5),
+    fontSize: '2.5rem',
+    marginTop: theme.spacing(5),
     marginBottom: theme.spacing(6),
   },
-  formControl: {
-    margin: theme.spacing(0.5),
-    height: theme.spacing(6.5),
-    width: theme.spacing(38.75),
-  },
+
   LitmusAnalyticsBlock: {
-    margin: '1rem 0',
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
   },
+
   LitmusAnalyticsDiv: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: '0.2rem 0',
+    paddingTop: theme.spacing(0.4),
+    paddingBottom: theme.spacing(0.4),
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
       flexDirection: 'column',
     },
   },
+
   header2: {
-    fontSize: theme.spacing(3),
-    padding: '1rem 0',
+    fontSize: '1.5rem',
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
   },
+
   cardDiv: {
     display: 'flex',
     flexDirection: 'row',
-    padding: '2rem 0',
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(4),
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
       flexDirection: 'column',
       marginLeft: theme.spacing(8),
     },
   },
+
   paper: {
     flexGrow: 1,
     marginRight: theme.spacing(2),
     textAlign: 'center',
     color: theme.palette.text.secondary,
+    backgroundColor: '#FFF',
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
       width: '100%',
       flexDirection: 'column',
     },
   },
+
   card: {
     backgroundColor: theme.palette.secondary.dark,
-    height: theme.spacing(42.5),
-    width: theme.spacing(40),
+    height: '21.25rem',
+    width: '20rem',
     textAlign: 'center',
     color: '#FFFFFF',
     [theme.breakpoints.down('sm')]: {
@@ -70,66 +70,77 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: 'column',
     },
   },
+
   cardContent: {
     marginTop: theme.spacing(4),
   },
+
   LitmusOnDev: {
     marginTop: theme.spacing(2),
     fontWeight: 'bold',
-    fontSize: theme.spacing(3),
+    fontSize: '1.5rem',
   },
+
   LitmusOnDevSpan: {
     position: 'relative',
     fontWeight: 'normal',
-    fontSize: theme.spacing(3),
+    fontSize: '1.5rem',
     bottom: theme.spacing(2),
     left: theme.spacing(3),
   },
+
   devToLogo: {
     fill: 'white',
     filter:
       'invert(98%) sepia(100%) saturate(0%) hue-rotate(86deg) brightness(118%) contrast(119%)',
     marginLeft: theme.spacing(2),
     marginTop: theme.spacing(1),
-    width: theme.spacing(10),
-    height: theme.spacing(6),
+    width: '5rem',
+    height: '3rem',
   },
+
   followBtn: {
-    width: theme.spacing(20),
-    height: theme.spacing(6),
+    width: '10rem',
+    height: '3rem',
     backgroundColor: '#FFFFFF',
-    fontSize: theme.spacing(1.6),
+    fontSize: '0.8rem',
     color: theme.palette.text.primary,
     textTransform: 'none',
   },
+
   devToLink: {
     textDecoration: 'none',
   },
+
   LitmusUsedBlock: {
-    margin: '2rem 0',
+    marginTop: theme.spacing(4),
+    marginBottom: theme.spacing(4),
   },
+
   LitmusUsedDiv: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: '0.2rem 0',
+    paddingTop: theme.spacing(0.4),
+    paddingBottom: theme.spacing(0.4),
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
       flexDirection: 'column',
     },
   },
+
   quickActionCard: {
-    height: theme.spacing(42.5),
-    width: theme.spacing(40),
+    height: '21.25rem',
+    width: '20rem',
     [theme.breakpoints.down('md')]: {
       display: 'flex',
-      width: theme.spacing(30),
+      width: '15rem',
       flexDirection: 'column',
     },
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
       marginTop: theme.spacing(5),
-      width: theme.spacing(50),
+      width: '25rem',
       flexDirection: 'column',
     },
   },
