@@ -18,10 +18,21 @@ const link = new WebSocketLink(client);
 
 const agentHandler = (ws) => {
     clusterSubscription(link, ws);
+
+    // message received from the client
     ws.on('message', (data) => {
-        console.log(data)
+        console.log(JSON.parse(data))
     });
 
+    // websocket error event
+    ws.on('error', (err) => {
+        console.log('Error : '+ err)
+    })
+
+    // websocket close event
+    ws.on('close', () => {
+        console.log('Agent disconnected')
+    })
 };
 
 server('0.0.0.0', '8000', agentHandler);
