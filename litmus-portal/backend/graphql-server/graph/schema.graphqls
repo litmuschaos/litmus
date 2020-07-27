@@ -12,10 +12,40 @@ type clusterResponse{
   data: String!
 }
 
+input chaosWorkFlowInput {
+  workflow_yaml: String!
+  cronSyntax: String!
+  Workflow_name: String!
+  Workflow_description: String!
+  Weightages: [weightagesInput]!
+  isCustomWorkflow: Boolean!
+}
+
+input weightagesInput {
+  experiment_name: String!
+  weightage: Int!
+}
+
+type weightages {
+  experiment_name: String!
+  weightage: Int!
+}
+
+type chaosWorkFlowResponse {
+  workflow_id: String!
+  cronSyntax: String!
+  Workflow_name: String!
+  Workflow_description: String!
+  Weightages: [weightages]!
+  isCustomWorkflow: Boolean!
+}
+
 type Mutation {
   createCluster(input: clusterInput!): clusterResponse!
+  createChaosWorkFlow(input: chaosWorkFlowInput): chaosWorkFlowResponse!
 }
 
 type Subscription {
   clusterSubscription: clusterResponse!
 }
+
