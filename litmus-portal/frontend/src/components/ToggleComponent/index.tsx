@@ -7,72 +7,58 @@ const ToggleComponent = () => {
   const classes = useStyles();
 
   // Default Props are false
-  const [currentPassState, setCurrentPassState] = React.useState<
-    boolean | undefined
-  >(true);
-  const [currentFailState, setCurrentFailState] = React.useState<
-    boolean | undefined
-  >(false);
+  const [currentState, setCurrentState] = React.useState<boolean>(true);
 
   // Toggle Handlers
   const passToggler = () => {
-    if (currentFailState) {
-      setCurrentPassState(true);
-      setCurrentFailState(false);
-    } else {
-      setCurrentPassState(true);
+    if (currentState === false) {
+      setCurrentState(true);
     }
   };
 
   const failToggler = () => {
-    if (currentPassState) {
-      setCurrentFailState(true);
-      setCurrentPassState(false);
-    } else {
-      setCurrentFailState(true);
+    if (currentState === true) {
+      setCurrentState(false);
     }
   };
 
   return (
-    <div>
+    <div className={classes.root}>
       {/* Pass Button */}
       <Button
         onClick={passToggler}
         aria-label="left aligned"
-        className={classes.passBtn}
+        className={classes.toggleBtn}
         style={{
-          backgroundColor: currentPassState ? '#109B67' : 'rgba(0, 0, 0, 0.1)',
-          color: currentPassState ? '#FFFFFF' : 'rgba(0, 0, 0, 0.4)',
+          backgroundColor: currentState ? '#109B67' : 'rgba(0, 0, 0, 0.1)',
+          color: currentState ? '#FFFFFF' : 'rgba(0, 0, 0, 0.4)',
         }}
       >
-        {currentPassState ? (
+        {currentState ? (
           <img src="icons/Pass.png" alt="Pass" />
         ) : (
           <img src="icons/NotPass.png" alt="Not Pass" />
         )}
-        <Typography style={{ paddingLeft: 10, fontFamily: 'Ubuntu' }}>
-          Pass
-        </Typography>
+        <Typography className={classes.typography}>Pass</Typography>
       </Button>
 
       {/* Failed Button */}
       <Button
         onClick={failToggler}
         aria-label="left aligned"
-        className={classes.failBtn}
+        className={classes.toggleBtn}
         style={{
-          backgroundColor: currentFailState ? '#CA2C2C' : 'rgba(0, 0, 0, 0.1)',
-          color: currentFailState ? '#FFFFFF' : 'rgba(0, 0, 0, 0.4)',
+          backgroundColor:
+            currentState !== true ? '#CA2C2C' : 'rgba(0, 0, 0, 0.1)',
+          color: currentState !== true ? '#FFFFFF' : 'rgba(0, 0, 0, 0.4)',
         }}
       >
-        {currentFailState ? (
+        {currentState !== true ? (
           <img src="icons/Fail.png" alt="Fail" />
         ) : (
           <img src="icons/NotFail.png" alt="Not Fail" />
         )}
-        <Typography style={{ paddingLeft: 10, fontFamily: 'Ubuntu' }}>
-          Fail
-        </Typography>
+        <Typography className={classes.typography}>Fail</Typography>
       </Button>
     </div>
   );

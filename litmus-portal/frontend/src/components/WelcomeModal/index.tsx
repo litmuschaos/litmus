@@ -1,13 +1,13 @@
 import React from 'react';
 import Modal from '@material-ui/core/Modal';
 import useStyles from './styles';
-import CStepper from './step';
+import ModalStepper from './Stepper';
 
-interface ModalProps {
+interface WelcomemodalProps {
   isOpen: boolean;
 }
 
-const WelcomeModal: React.FC<ModalProps> = ({ isOpen }) => {
+const Welcomemodal: React.FC<WelcomemodalProps> = ({ isOpen }) => {
   const classes = useStyles();
   // getModalStyle is not a pure function,
   // we roll the style only on the first render
@@ -17,9 +17,10 @@ const WelcomeModal: React.FC<ModalProps> = ({ isOpen }) => {
   const handleClose = () => {
     setOpen(false);
   };
+
   const body = (
     <div className={classes.rootContainer}>
-      <CStepper />
+      <ModalStepper />
     </div>
   );
 
@@ -28,8 +29,6 @@ const WelcomeModal: React.FC<ModalProps> = ({ isOpen }) => {
       <Modal
         open={open}
         onClose={handleClose}
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
         disableBackdropClick
         disableEscapeKeyDown
       >
@@ -39,4 +38,4 @@ const WelcomeModal: React.FC<ModalProps> = ({ isOpen }) => {
   );
 };
 
-export default WelcomeModal;
+export default Welcomemodal;
