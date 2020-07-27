@@ -1,6 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React, { useState, useRef, useCallback } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useRef } from 'react';
 import {
   Popover,
   IconButton,
@@ -14,32 +13,40 @@ import {
   Badge,
 } from '@material-ui/core';
 import NotificationsOutlinedIcon from '@material-ui/icons/NotificationsOutlined';
-import NotificationListItem from '../NotificationListItem';
+import NotificationListItem from './NotificationListItem';
 import useStyles from './styles';
+import { Message, NotificationsCallBackType } from '../../models/header';
 
-interface NotifierProps {
-  messages: any;
-  count: any;
+interface NotificationDropdownProps {
+  messages: Message[];
+  count: string;
+  CallbackToHeaderOnDeleteNotification: NotificationsCallBackType;
 }
 
-function NotificationsPopperButton(props: NotifierProps) {
+const NotificationsDropdown: React.FC<NotificationDropdownProps> = ({
+  messages,
+  count,
+  CallbackToHeaderOnDeleteNotification,
+}) => {
   const classes = useStyles();
-
-  const { messages, count } = props;
 
   const anchorEl = useRef();
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleClick = useCallback(() => {
+  function handleClick() {
     setIsOpen(!isOpen);
-  }, [isOpen, setIsOpen]);
+  }
 
-  const handleClickAway = useCallback(() => {
+  function handleClickAway() {
     setIsOpen(false);
-  }, [setIsOpen]);
+  }
 
   const id = isOpen ? 'scroll-playground' : null;
+
+  const CallbackToDropdownOnDeleteNotification = (notificationIDs: any) => {
+    CallbackToHeaderOnDeleteNotification(notificationIDs);
+  };
 
   return (
     <div>
@@ -51,13 +58,7 @@ function NotificationsPopperButton(props: NotifierProps) {
         color="inherit"
       >
         <Badge
-          badgeContent={
-            (localStorage.getItem('#ActiveMessages') as any)
-              ? (localStorage.getItem('#ActiveMessages') as any)[0] === '-'
-                ? ''
-                : localStorage.getItem('#ActiveMessages')
-              : ''
-          }
+          badgeContent={count === '0' ? messages.length : count}
           color="secondary"
         >
           <NotificationsOutlinedIcon />
@@ -92,16 +93,18 @@ function NotificationsPopperButton(props: NotifierProps) {
           {messages.length === 0 ? (
             <ListItem>
               <ListItemText>
-                You haven&apos;t received any messages yet.
+                You don&apos;t have any new notification.
               </ListItemText>
             </ListItem>
           ) : (
             messages.map((element: any, index: any) => (
               <NotificationListItem
-                key={element} // index
+                key={element.sequenceID} // index
                 message={element}
                 divider={index !== messages.length - 1}
-                total={count}
+                CallbackOnDeleteNotification={
+                  CallbackToDropdownOnDeleteNotification
+                }
               />
             ))
           )}
@@ -109,10 +112,6 @@ function NotificationsPopperButton(props: NotifierProps) {
       </Popover>
     </div>
   );
-}
-
-NotificationsPopperButton.propTypes = {
-  messages: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-export default NotificationsPopperButton;
+export default NotificationsDropdown;

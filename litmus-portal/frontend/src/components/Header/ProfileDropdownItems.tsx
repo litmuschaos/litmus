@@ -1,54 +1,61 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useState } from 'react';
-import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import {
   Popover,
   Typography,
   Avatar,
   Divider,
   Button,
-  Badge,
   List,
   ListItem,
   ListItemText,
 } from '@material-ui/core';
-import CameraAltOutlinedIcon from '@material-ui/icons/CameraAltOutlined';
-import ProjectListItem from '../ProjectListItem';
+import ProjectListItem from './ProjectListItem';
 import useStyles from './styles';
 import * as UserActions from '../../redux/actions/user';
 import { history } from '../../redux/configureStore';
 import useActions from '../../redux/actions';
+import { Project, ProjectsCallBackType } from '../../models/header';
 
-const SmallAvatar = withStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      width: 24,
-      height: 24,
-      border: `3px solid ${theme.palette.background.paper}`,
-    },
-  })
-)(Avatar);
-
-interface ProfileInfoDropdownProps {
-  anchorEl: any;
-  isOpen: any;
-  onClose: any;
-  name: any;
-  email: any;
-  projects: any;
+interface ProfileInfoDropdownItemProps {
+  anchorEl: HTMLElement;
+  isOpen: boolean;
+  onClose: () => void;
+  name: string;
+  email: string;
+  projects: Project[];
+  selectedProjectID: string;
+  CallbackToSetSelectedProjectIDOnProfileDropdown: ProjectsCallBackType;
 }
 
-function ProfileInfoDropdownItems(props: ProfileInfoDropdownProps) {
+function ProfileInfoDropdownItems(props: ProfileInfoDropdownItemProps) {
   const user = useActions(UserActions);
-  const { anchorEl, isOpen, onClose, name, email, projects } = props;
+  const {
+    anchorEl,
+    isOpen,
+    onClose,
+    name,
+    email,
+    projects,
+    selectedProjectID,
+    CallbackToSetSelectedProjectIDOnProfileDropdown,
+  } = props;
 
   const classes = useStyles();
 
   const id = isOpen ? 'profile-popover' : undefined;
 
-  const [userName, userEmail] = [name, email];
+  let initials = ' ';
 
-  const [loading, doLogout] = useState(false);
+  if (name) {
+    const nameArray = name.split(' ');
+
+    initials =
+      nameArray[0][0].toUpperCase() +
+      nameArray[nameArray.length - 1][0].toUpperCase();
+  }
+
+  const [loggedOut, doLogout] = useState(false);
 
   const logOut = () => {
     doLogout(true);
@@ -57,6 +64,10 @@ function ProfileInfoDropdownItems(props: ProfileInfoDropdownProps) {
   };
 
   const editProfile = () => {};
+
+  const CallbackFromProjectListItem = (selectedProjectIDFromList: any) => {
+    CallbackToSetSelectedProjectIDOnProfileDropdown(selectedProjectIDFromList);
+  };
 
   return (
     <div>
@@ -76,32 +87,24 @@ function ProfileInfoDropdownItems(props: ProfileInfoDropdownProps) {
         classes={{
           paper: classes.popover,
         }}
+        style={{ marginTop: 17 }}
       >
         <div className={classes.container}>
-          <Badge
-            overlap="circle"
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right',
-            }}
-            className={classes.badgeStyle}
-            badgeContent={
-              <SmallAvatar>
-                <CameraAltOutlinedIcon
-                  style={{
-                    backgroundColor: '#FFF',
-                    color: 'grey',
-                  }}
-                />
-              </SmallAvatar>
-            }
-          >
+          {name ? (
             <Avatar
-              className={classes.avatar}
-              alt={name}
-              src="temp/RichardHill.jpg"
+              alt={initials}
+              className={classes.avatarBackground}
+              style={{ alignContent: 'right', marginBottom: 8 }}
+            >
+              {initials}
+            </Avatar>
+          ) : (
+            <Avatar
+              alt="User"
+              className={classes.avatarBackground}
+              style={{ alignContent: 'right', marginBottom: 8 }}
             />
-          </Badge>
+          )}
 
           <div className={classes.userInfo}>
             <Typography
@@ -109,7 +112,7 @@ function ProfileInfoDropdownItems(props: ProfileInfoDropdownProps) {
               component="span"
               color="textPrimary"
             >
-              {userName}
+              {name}
             </Typography>
             <Typography
               className={classes.userEmail}
@@ -117,7 +120,7 @@ function ProfileInfoDropdownItems(props: ProfileInfoDropdownProps) {
               component="span"
               color="textSecondary"
             >
-              {userEmail}
+              {email}
             </Typography>
 
             <Button
@@ -131,7 +134,7 @@ function ProfileInfoDropdownItems(props: ProfileInfoDropdownProps) {
           </div>
         </div>
         <Divider className={classes.dividerTop} />
-        <List dense className={classes.tabContainer}>
+        <List dense className={classes.tabContainerProfileDropdownItem}>
           {projects.length === 0 ? (
             <ListItem>
               <ListItemText>
@@ -144,6 +147,8 @@ function ProfileInfoDropdownItems(props: ProfileInfoDropdownProps) {
                 key={index}
                 project={element}
                 divider={index !== projects.length - 1}
+                selectedProjectID={selectedProjectID}
+                callbackToSetActiveProjectID={CallbackFromProjectListItem}
               />
             ))
           )}
@@ -151,7 +156,7 @@ function ProfileInfoDropdownItems(props: ProfileInfoDropdownProps) {
         <Divider className={classes.dividerBottom} />
         <div className={classes.bar}>
           <Button
-            disabled={loading}
+            disabled={loggedOut}
             variant="outlined"
             size="small"
             onClick={logOut}

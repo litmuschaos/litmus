@@ -20,8 +20,6 @@ const CustomBreadcrumbs: React.FC<CustomBreadcrumbsProps> = ({ location }) => {
 
   return (
     <Breadcrumbs aria-label="breadcrumb">
-      <Link to="/" className={classes.breadCrumb} />
-
       {path.map((path: string) => {
         if (path) {
           intermediatRoutes += path;

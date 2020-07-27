@@ -11,33 +11,30 @@ import InsertDriveFileOutlinedIcon from '@material-ui/icons/InsertDriveFileOutli
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import React, { useState } from 'react';
 import useStyles from './styles';
+import { Project, ProjectsCallBackType } from '../../models/header';
 
 interface ProjectListItemProps {
-  project: any;
-  divider: any;
+  project: Project;
+  divider: boolean;
+  selectedProjectID: string;
+  callbackToSetActiveProjectID: ProjectsCallBackType;
 }
 
-function ProjectListItem(props: ProjectListItemProps) {
+const ProjectListItem: React.FC<ProjectListItemProps> = ({
+  project,
+  divider,
+  selectedProjectID,
+  callbackToSetActiveProjectID,
+}) => {
   const classes = useStyles();
 
-  const { project, divider } = props;
-
-  const [bgColor, setbgColor] = useState(
-    project.id === localStorage.getItem('ActiveProjectId') ? '#109B67' : 'white'
+  const [projSelected, setProjSelected] = useState(
+    project.id === selectedProjectID
   );
-
-  const [selectedProj, setselectedProj] = useState(
-    project.id === localStorage.getItem('ActiveProjectId')
-  );
-
-  const [currentState, changeState] = useState(true);
 
   const selectProject = () => {
-    localStorage.setItem('ActiveProjectId', `${project.id}`);
-    setbgColor('#109B67');
-    setselectedProj(true);
-    changeState(true);
-    // window.location.reload(false);
+    callbackToSetActiveProjectID(`${project.id}`);
+    setProjSelected(true);
   };
 
   const extraOptions = () => {};
@@ -46,11 +43,11 @@ function ProjectListItem(props: ProjectListItemProps) {
     <ListItem
       divider={divider}
       onClick={selectProject}
-      style={{ backgroundColor: bgColor }}
+      style={{ backgroundColor: projSelected ? '#109B67' : 'white' }}
       className={classes.listItemStyle}
     >
       <ListItemAvatar>
-        {currentState || selectedProj ? (
+        {projSelected ? (
           <Avatar
             style={{
               backgroundColor: '#109B67',
@@ -82,7 +79,7 @@ function ProjectListItem(props: ProjectListItemProps) {
       <ListItemText primary={project.projectName} style={{ fontSize: 14 }} />
       <ListItemSecondaryAction>
         <IconButton edge="end" aria-label="more" onClick={extraOptions}>
-          {currentState || selectedProj ? (
+          {projSelected ? (
             <MoreHorizIcon style={{ color: 'white' }} />
           ) : (
             <MoreHorizIcon />
@@ -91,6 +88,6 @@ function ProjectListItem(props: ProjectListItemProps) {
       </ListItemSecondaryAction>
     </ListItem>
   );
-}
+};
 
 export default ProjectListItem;

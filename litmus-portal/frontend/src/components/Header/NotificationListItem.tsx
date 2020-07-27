@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   ListItem,
   ListItemAvatar,
@@ -10,27 +10,26 @@ import {
 import ErrorIcon from '@material-ui/icons/Error';
 import formatDistance from 'date-fns/formatDistance';
 import DeleteOutlineTwoToneIcon from '@material-ui/icons/DeleteOutlineTwoTone';
+import { Message, NotificationsCallBackType } from '../../models/header';
 
 interface NotificationListItemProps {
-  message: any;
+  message: Message;
   divider: boolean;
-  total: number;
+  CallbackOnDeleteNotification: NotificationsCallBackType;
 }
 
-function NotificationListItem(props: NotificationListItemProps) {
-  const { message, divider, total } = props;
-
+const NotificationListItem: React.FC<NotificationListItemProps> = ({
+  message,
+  divider,
+  CallbackOnDeleteNotification,
+}) => {
   const [hasErrorOccurred, setHasErrorOccurred] = useState(false);
-
-  const currentCount = total as number;
 
   const [messageActive, setMessageActive] = useState(true);
 
-  const handleError = useCallback(() => {
+  function handleError() {
     setHasErrorOccurred(true);
-  }, [setHasErrorOccurred]);
-
-  useEffect(() => {}, [messageActive]);
+  }
 
   if (messageActive === false) {
     return <div />;
@@ -44,7 +43,7 @@ function NotificationListItem(props: NotificationListItemProps) {
             <ErrorIcon color="secondary" />
           ) : (
             <Avatar
-              src={hasErrorOccurred ? null : message.picUrl}
+              src={hasErrorOccurred ? null : (message.picUrl as any)}
               onError={handleError}
             />
           )}
@@ -59,14 +58,11 @@ function NotificationListItem(props: NotificationListItemProps) {
             aria-label="delete"
             onClick={() => {
               setMessageActive(false);
-              localStorage.setItem(
-                '#ActiveMessages',
-                `${
-                  ((localStorage.getItem('#ActiveMessages')
-                    ? localStorage.getItem('#ActiveMessages')
-                    : currentCount) as number) - 1
-                }`
-              );
+              const idsForDeletingNotifications = {
+                id: message.id,
+                sequenceID: message.sequenceID,
+              };
+              CallbackOnDeleteNotification(idsForDeletingNotifications);
             }}
           >
             <DeleteOutlineTwoToneIcon />
@@ -77,6 +73,6 @@ function NotificationListItem(props: NotificationListItemProps) {
   }
 
   return <div />;
-}
+};
 
 export default NotificationListItem;
