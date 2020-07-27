@@ -8,7 +8,7 @@ import Button from '@material-ui/core/Button';
 import Radio from '@material-ui/core/Radio';
 import * as React from 'react';
 import useStyles from './styles';
-
+import ButtonOutLine from '../Button/ButtonOutline';
 /*
   Check is image which is used as
   a sign on cluster page
@@ -24,12 +24,12 @@ function Check() {
 */
 const WorkflowCluster = () => {
   const classes = useStyles();
-  const [value, setValue] = React.useState('female');
+  const [value, setValue] = React.useState('Experiment');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue((event.target as HTMLInputElement).value);
   };
-
+  const handleClick=()=>{}
   return (
     <div className={classes.rootcontainer}>
       {/* Arrow mark */}
@@ -76,35 +76,27 @@ const WorkflowCluster = () => {
         is install and running) or alternative Install Litmus Agent to 
         other Kubernetes cluster 
       */}
-      <div>
-        <div
-          style={{
-            marginLeft: 167,
-            textAlign: 'left',
-            marginTop: 67,
-          }}
-        >
+      <div className={classes.buttonDiv}>
+        <div className={classes.button}>
           <Button variant="contained" color="secondary" data-cy="selectButton">
             Select and continue
           </Button>
-        </div>
+        </div>    
+        
         <div className={classes.or}>or</div>
-        <div
-          style={{
-            marginLeft: 372,
-            marginTop: -25,
-            textAlign: 'left',
-          }}
-        >
-          <Button
-            variant="contained"
-            color="inherit"
+        <div >
+          <ButtonOutLine
+            isDisabled={false}
             data-cy="selectLitmusKubernetes"
+            handleClick={handleClick}
           >
-            Install Litmus agents to other Kubernetes cluster
-          </Button>
+              <Typography>Install Litmus agents to other Kubernetes cluster</Typography>
+          </ButtonOutLine>
+          
         </div>
-      </div>
+      
+    </div>
+
     </div>
   );
 };

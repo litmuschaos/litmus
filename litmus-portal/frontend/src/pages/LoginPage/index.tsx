@@ -1,4 +1,4 @@
-import { Button, Hidden, TextField, Typography } from '@material-ui/core';
+import { Button, Hidden, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import config from '../../config';
@@ -6,6 +6,7 @@ import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
 import { history } from '../../redux/configureStore';
 import useStyles from './styles';
+import InputField from '../../components/InputField';
 
 interface authData {
   username: string;
@@ -21,19 +22,13 @@ const LoginPage = () => {
   });
   const [formError, setFormError] = useState<boolean>(false);
 
-  const handleForm = () => {
-    const formData: HTMLFormElement | null = document.querySelector(
-      '#login-form'
-    );
-    const data = new FormData(formData as HTMLFormElement);
-    const username = data.get('username') as string;
-    const password = data.get('password') as string;
-    const searchParams = new URLSearchParams();
-    searchParams.append('username', username);
-    searchParams.append('password', password);
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
     fetch(`${config.auth.url}/login`, {
       method: 'POST',
-      body: searchParams,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(authData),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -67,7 +62,8 @@ const LoginPage = () => {
                 alt="Kubernetes"
                 className={classes.descImg}
               />
-              . Browse, create, manage monitor and analyze your chaos workflows.
+              . Browse, create, manage, monitor and analyze your chaos
+              workflows.
               <br />
             </Typography>
             <Typography className={classes.description}>
@@ -78,42 +74,32 @@ const LoginPage = () => {
               id="login-form"
               className={classes.root}
               autoComplete="on"
-              onSubmit={(event) => {
-                event.preventDefault();
-                handleForm();
-              }}
+              onSubmit={handleSubmit}
             >
               <div className={classes.inputDiv}>
-                <TextField
+                <InputField
                   label="Username"
                   name="username"
                   value={authData.username}
-                  InputProps={{ disableUnderline: true }}
                   data-cy="inputEmail"
                   required
-                  className={`${classes.inputArea} ${
-                    formError ? classes.error : classes.success
-                  }`}
-                  onChange={(e) =>
+                  formError={formError}
+                  handleChange={(e) =>
                     setAuthData({
                       username: e.target.value,
                       password: authData.password,
                     })
                   }
                 />
-                <TextField
+                <InputField
                   label="Password"
                   type="password"
                   name="password"
                   required
-                  className={`${classes.inputArea} ${
-                    formError ? classes.error : classes.success
-                  }`}
+                  formError={formError}
                   value={authData.password}
-                  autoComplete="current-password"
-                  InputProps={{ disableUnderline: true }}
                   data-cy="inputPassword"
-                  onChange={(e) =>
+                  handleChange={(e) =>
                     setAuthData({
                       username: authData.username,
                       password: e.target.value,

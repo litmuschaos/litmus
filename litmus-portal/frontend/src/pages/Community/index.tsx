@@ -1,21 +1,16 @@
-/* eslint-disable no-nested-ternary */
-import React, { useEffect } from 'react';
+import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper'; // Temporary -> Should be replaced with Chart
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
-import { FormControl, InputLabel, Select } from '@material-ui/core';
-import { useSelector } from 'react-redux';
 import InfoFilledWrap from '../../components/InfoFilled/index';
 import Scaffold from '../../containers/layouts/Scaffold/index';
 import useStyles from './styles';
 import QuickActionCard from '../../components/QuickActionCard';
-import CommunityAnalyticsPlotNormal from '../../components/CommunityTimeSeriesTrendPlot';
-import CommunityAnalyticsPlotCumulative from '../../components/CommunityTimeSeriesGrowthPlot';
 import GeoMap from '../../components/GeoMap/index';
-import { RootState } from '../../redux/reducers';
+import CommunityAnalyticsPlot from '../../components/CommunityTimeSeriesPlot';
 
 // Reusable Header Component
 const Header2: React.FC = ({ children }) => {
@@ -31,48 +26,6 @@ const Header2: React.FC = ({ children }) => {
 
 const Community: React.FC = () => {
   const classes = useStyles();
-
-  const communityData = useSelector((state: RootState) => state.communityData);
-
-  const dailyOperators = communityData.google.dailyOperatorData;
-
-  const dailyExperiments = communityData.google.dailyExperimentData;
-
-  const monthlyOperators = communityData.google.monthlyOperatorData;
-
-  const monthlyExperiments = communityData.google.monthlyExperimentData;
-
-  const [currentPlotType, setPlotType] = React.useState<{ name: string }>({
-    name: 'Growth',
-  });
-
-  const handleChange = (
-    event: React.ChangeEvent<{ name?: string; value: unknown }>
-  ) => {
-    const name = event.target.name as keyof typeof currentPlotType;
-    setPlotType({
-      ...currentPlotType,
-      [name]: event.target.value as string,
-    });
-  };
-
-  const [currentGranularityType, setGranularityType] = React.useState<{
-    name: string;
-  }>({
-    name: 'Monthly',
-  });
-
-  const handleChangeInGranularity = (
-    event: React.ChangeEvent<{ name?: string; value: unknown }>
-  ) => {
-    const name = event.target.name as keyof typeof currentGranularityType;
-    setGranularityType({
-      ...currentGranularityType,
-      [name]: event.target.value as string,
-    });
-  };
-
-  useEffect(() => {}, [currentPlotType, currentGranularityType]);
 
   return (
     <Scaffold>
@@ -98,70 +51,7 @@ const Community: React.FC = () => {
             <Header2>Periodic growth of Litmus</Header2>
             <div className={classes.LitmusAnalyticsDiv}>
               <Paper className={classes.paper}>
-                <FormControl variant="outlined" className={classes.formControl}>
-                  <InputLabel htmlFor="outlined-selection">
-                    Plot Style
-                  </InputLabel>
-                  <Select
-                    native
-                    value={currentPlotType.name}
-                    onChange={handleChange}
-                    label="Plot Type"
-                    inputProps={{
-                      name: 'name',
-                      id: 'outlined-selection',
-                    }}
-                  >
-                    <option value="Growth">Growth</option>
-                    <option value="Trend">Trend</option>
-                  </Select>
-                </FormControl>
-
-                <FormControl variant="outlined" className={classes.formControl}>
-                  <InputLabel htmlFor="outlined-selection-granularity">
-                    Granularity
-                  </InputLabel>
-                  <Select
-                    native
-                    value={currentGranularityType.name}
-                    onChange={handleChangeInGranularity}
-                    label="Granularity"
-                    inputProps={{
-                      name: 'name',
-                      id: 'outlined-selection-granularity',
-                    }}
-                  >
-                    <option value="Daily">Daily</option>
-                    <option value="Monthly">Monthly</option>
-                  </Select>
-                </FormControl>
-                {currentPlotType.name === 'Growth' &&
-                currentGranularityType.name === 'Daily' ? (
-                  <CommunityAnalyticsPlotCumulative
-                    OperatorData={dailyOperators}
-                    ExperimentData={dailyExperiments}
-                  />
-                ) : currentPlotType.name === 'Trend' &&
-                  currentGranularityType.name === 'Daily' ? (
-                  <CommunityAnalyticsPlotNormal
-                    OperatorData={dailyOperators}
-                    ExperimentData={dailyExperiments}
-                  />
-                ) : currentPlotType.name === 'Growth' &&
-                  currentGranularityType.name === 'Monthly' ? (
-                  <CommunityAnalyticsPlotCumulative
-                    OperatorData={monthlyOperators}
-                    ExperimentData={monthlyExperiments}
-                  />
-                ) : currentPlotType.name === 'Trend' &&
-                  currentGranularityType.name === 'Monthly' ? (
-                  <CommunityAnalyticsPlotNormal
-                    OperatorData={monthlyOperators}
-                    ExperimentData={monthlyExperiments}
-                  />
-                ) : (
-                  <div />
-                )}
+                <CommunityAnalyticsPlot />
               </Paper>
 
               <div>
@@ -207,8 +97,6 @@ const Community: React.FC = () => {
           <div className={classes.LitmusUsedBlock}>
             <Header2>Where Litmus users are situated</Header2>
             <div className={classes.LitmusUsedDiv}>
-              {/* This Paper should be replaced by World Map
-              Component where Litmus is used */}
               <Paper className={classes.paper}>
                 <GeoMap />
               </Paper>
