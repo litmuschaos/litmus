@@ -8,6 +8,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
 )
 
+//VerifyCluster util function used to verify cluster identity
 func VerifyCluster(identity model.ClusterIdentity) (*model.Cluster, error) {
 	cluster, err := database.GetCluster(identity.ClusterID)
 	if err != nil {

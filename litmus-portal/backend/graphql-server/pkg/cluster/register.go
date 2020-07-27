@@ -11,6 +11,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/util"
 )
 
+//ClusterRegister creates an entry for a new cluster in DB and generates the url used to apply manifest
 func ClusterRegister(input model.ClusterInput) (string, error) {
 	cid := uuid.New()
 	newCluster := model.Cluster{

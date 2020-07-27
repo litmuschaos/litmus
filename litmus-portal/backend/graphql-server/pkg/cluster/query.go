@@ -7,6 +7,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database"
 )
 
+//GetProjectClusters returns the list of clusters connected to a project
 func GetProjectClusters(pid string) ([]*model.Cluster, error) {
 	clusters, err := database.GetClusters(pid)
 	if err != nil {

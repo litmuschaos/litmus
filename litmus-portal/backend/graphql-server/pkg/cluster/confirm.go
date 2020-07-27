@@ -12,6 +12,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/util"
 )
 
+//ConfirmClusterRegistration takes the cluster_id and access_key from the subscriber and validates it, if validated generates and sends new access_key
 func ConfirmClusterRegistration(identity model.ClusterIdentity, r store.StateData) (string, error) {
 	cluster, err := database.GetCluster(identity.ClusterID)
 	if err != nil {

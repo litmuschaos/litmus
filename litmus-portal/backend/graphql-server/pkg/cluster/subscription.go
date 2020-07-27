@@ -6,6 +6,7 @@ import (
 	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/data-store"
 )
 
+//SendClusterEvent sends events from the clusters to the appropriate users listening for the events
 func SendClusterEvent(eventType, eventName, description string, cluster model.Cluster, r store.StateData) {
 	guid := uuid.New()
 	newEvent := model.ClusterEvent{
@@ -24,6 +25,7 @@ func SendClusterEvent(eventType, eventName, description string, cluster model.Cl
 	r.Mutex.Unlock()
 }
 
+//SendClusterAction sends the actions requested by the users to the specific cluster
 func SendClusterAction(cid string, action model.ClusterAction, r store.StateData) {
 	r.Mutex.Lock()
 	if r.ConnectedCluster != nil {

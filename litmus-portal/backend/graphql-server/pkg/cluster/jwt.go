@@ -12,6 +12,7 @@ import (
 
 var secret = ""
 
+//ClusterCreateJWT generates jwt used in cluster registration
 func ClusterCreateJWT(id string) (string, error) {
 	initSecret()
 	expirationTime := time.Now().Add(12 * time.Hour)
@@ -27,6 +28,7 @@ func ClusterCreateJWT(id string) (string, error) {
 	return tokenString, nil
 }
 
+//ClusterValidateJWT validates the cluster jwt
 func ClusterValidateJWT(token string) (string, error) {
 	initSecret()
 	tkn, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
@@ -48,6 +50,7 @@ func ClusterValidateJWT(token string) (string, error) {
 	return "", errors.New("Invalid Token")
 }
 
+//Generates a random secret at startup or uses env var, needed for jwt ops
 func initSecret() {
 	if secret == "" {
 		sc := os.Getenv("SECRET")

@@ -9,6 +9,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database"
 )
 
+//NewEvent takes a event from a subscriber, validates identity and broadcasts the event to the users
 func NewEvent(clusterEvent model.ClusterEventInput, r store.StateData) (string, error) {
 	cluster, err := database.GetCluster(clusterEvent.ClusterID)
 	if err != nil {

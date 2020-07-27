@@ -65,6 +65,10 @@ spec:
         env:
           - name: DB_SERVER
             value: mongo-service:27017
+          - name: DB_NAME
+            value: litmus
+          - name: COLLECTION_NAME
+            value: cluster-collection
           - name: EXTERNAL_ADDRESS
             value: ""
           - name: SERVICE_ADDRESS

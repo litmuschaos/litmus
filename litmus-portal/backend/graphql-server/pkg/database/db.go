@@ -13,16 +13,21 @@ import (
 )
 
 var clusterCollection *mongo.Collection
+var backgroundContext context.Context
 
+//DBInit initializes database connection
 func DBInit() {
 	dbServer := os.Getenv("DB_SERVER")
+	dbName := os.Getenv("DB_NAME")
+	collectionName := os.Getenv("COLLECTION_NAME")
 	clientOptions := options.Client().ApplyURI("mongodb://" + dbServer)
 	client, err := mongo.Connect(context.TODO(), clientOptions)
 
 	if err != nil {
 		log.Fatal(err)
 	}
-	ctx, _ := context.WithTimeout(context.Background(), 20*time.Second)
+	backgroundContext = context.Background()
+	ctx, _ := context.WithTimeout(backgroundContext, 20*time.Second)
 	// Check the connection
 	err = client.Ping(ctx, nil)
 
@@ -30,11 +35,11 @@ func DBInit() {
 		log.Fatal(err)
 	}
 	log.Print("Connected To DB")
-	clusterCollection = client.Database("litmus").Collection("cluster-collection")
+	clusterCollection = client.Database(dbName).Collection(collectionName)
 }
 
 func InsertCluster(cluster model.Cluster) error {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	_, err := clusterCollection.InsertOne(ctx, cluster)
 	if err != nil {
 		log.Print("ERROR INSERT CLUSTER : ", err)
@@ -45,7 +50,7 @@ func InsertCluster(cluster model.Cluster) error {
 
 func GetClusters(_pid string) ([]model.Cluster, error) {
 	query := bson.D{{"project_id", _pid}}
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	cursor, err := clusterCollection.Find(ctx, query)
 	if err != nil {
 		log.Print("ERROR GET CLUSTERS : ", err)
@@ -61,7 +66,7 @@ func GetClusters(_pid string) ([]model.Cluster, error) {
 }
 
 func GetCluster(_id string) ([]model.Cluster, error) {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	query := bson.D{{"cluster_id", _id}}
 	cursor, err := clusterCollection.Find(ctx, query)
 	if err != nil {
@@ -78,7 +83,7 @@ func GetCluster(_id string) ([]model.Cluster, error) {
 }
 
 func UpdateCluster(_id, accessKey string, isRegistered bool, utime string) error {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	query := bson.D{{"cluster_id", _id}}
 	update := bson.D{{"$set", bson.D{{"access_key", accessKey}, {"is_registered", isRegistered}, {"updated_at", utime}}}}
 	_, err := clusterCollection.UpdateOne(ctx, query, update)
@@ -90,7 +95,7 @@ func UpdateCluster(_id, accessKey string, isRegistered bool, utime string) error
 }
 
 func UpdateClusterData(_id, key string, state bool, utime string) error {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	query := bson.D{{"cluster_id", _id}}
 	update := bson.D{{"$set", bson.D{{key, state}, {"updated_at", utime}}}}
 	_, err := clusterCollection.UpdateOne(ctx, query, update)
