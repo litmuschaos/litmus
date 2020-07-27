@@ -14,7 +14,7 @@ FROM alpine:latest
 LABEL maintainer="LitmusChaos"
 
 COPY --from=builder /output/server /
-COPY --from=builder /gql-server/template/. /template
+COPY --from=builder /gql-server/manifests/. /manifests
 CMD ["./server"]
 
 EXPOSE 8080
