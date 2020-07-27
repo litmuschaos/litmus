@@ -1,17 +1,18 @@
 import { makeStyles } from '@material-ui/core';
 
-const useStyles = makeStyles(() => ({
-  passBtn: {
-    width: '5.8125rem',
-    height: '2.25rem',
-    borderRadius: 3,
-    border: 'rgba(0, 0, 0, 0.0)',
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    flexDirection: 'row',
   },
-  failBtn: {
-    width: '5.8125rem',
+  toggleBtn: {
+    width: theme.spacing(10),
     height: '2.25rem',
     borderRadius: 3,
-    border: 'rgba(0, 0, 0, 0.0)',
+    border: theme.palette.common.white,
+  },
+  typography: {
+    paddingLeft: theme.spacing(1),
   },
 }));
 

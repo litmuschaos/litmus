@@ -1,6 +1,7 @@
 export interface UserData {
   name: string;
   email: string;
+  projectName: string;
   username: string;
   exp: number;
   token: string;
@@ -21,5 +22,5 @@ export type UserAction =
   | UserActionType<typeof UserActions.LOGOUT_USER, string>
   | UserActionType<
       typeof UserActions.UPDATE_USER_DETAILS,
-      { name: string; email: string }
+      { name: string; email: string; projectName: string }
     >;

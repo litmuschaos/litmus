@@ -12,13 +12,17 @@ const useStyles = makeStyles((theme) => ({
   },
 
   inputArea: {
-    width: '20rem',
-    marginTop: theme.spacing(3.5),
+    width: theme.spacing(45),
+    marginTop: theme.spacing(2),
     textDecoration: 'none',
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
     paddingBottom: theme.spacing(2.2),
     borderRadius: 3,
+  },
+  passwordDiv: {
+    margin: 0,
+    padding: 0,
   },
 }));
 
