@@ -150,17 +150,17 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: deployer-account
+  name: litmus-svc-account
   namespace: litmus
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: modify-deployments-to-sa
+  name:litmus-rb
   namespace: litmus
 subjects:
   - kind: ServiceAccount
-    name: deployer-account
+    name: litmus-svc-account
 roleRef:
   kind: ClusterRole
   name: cluster-admin
@@ -192,4 +192,4 @@ spec:
               value: http://litmusportal-server-service:8080
             - name: SELF_CLUSTER
               value: "true"
-      serviceAccountName: deployer-account
+      serviceAccountName: litmus-svc-account

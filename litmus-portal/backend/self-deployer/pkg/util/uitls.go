@@ -31,7 +31,7 @@ func WaitForServer(server string) {
 			if err != nil || res.StatusCode != 200 {
 				time.Sleep(30 * time.Second)
 			} else {
-				d<-struct{}{}
+				d <- struct{}{}
 				return
 			}
 		}
@@ -48,8 +48,8 @@ func WaitForServer(server string) {
 
 //RegSelfCluster registers the Cluster automatically with the Litmus-Portal and get the Manifest Data
 func RegSelfCluster(server, pid string) (string, error) {
-	query:=`{ cluster_name: \"Self-Cluster\", description:\"Self-Cluster\", project_id:\"` + pid + `\", platform_name:\"others\", cluster_type:\"INTERNAL\"}`
-	var jsonStr = []byte(`{"query":"mutation { userClusterReg(clusterInput:`+query+` )}"}`)
+	query := `{ cluster_name: \"Self-Cluster\", description:\"Self-Cluster\", project_id:\"` + pid + `\", platform_name:\"others\", cluster_type:\"INTERNAL\"}`
+	var jsonStr = []byte(`{"query":"mutation { userClusterReg(clusterInput:` + query + ` )}"}`)
 	req, err := http.NewRequest("POST", server, bytes.NewBuffer(jsonStr))
 	if err != nil {
 		log.Print(err.Error())
@@ -75,7 +75,7 @@ func RegSelfCluster(server, pid string) (string, error) {
 }
 
 //Deploy function deploys the Manifest received by the RegSelfCluster function
-func Deploy(file string) error {
+func Deploy(file string, kubeconfig *string) error {
 	resp, err := http.Get(file)
 	if err != nil {
 		log.Print(err.Error())
@@ -88,7 +88,7 @@ func Deploy(file string) error {
 		return err
 	}
 	log.Print(string(body))
-	response, err := k8s.ClusterOperations(body, "create")
+	response, err := k8s.CreateDeployment(body, kubeconfig)
 	if err != nil {
 		log.Println(err.Error())
 		return err
@@ -102,16 +102,16 @@ func Deploy(file string) error {
 }
 
 //Cleanup is responsible for deleting the self-deployer deployment after it has finished execution
-func CleanUp(ns,deplotment string) error {
+func CleanUp(ns, deplotment string) error {
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		log.Print(err.Error())
 		return err
 	}
 	client, err := kubernetes.NewForConfig(config)
-	err=client.AppsV1().Deployments(ns).Delete(context.TODO(),deplotment,metav1.DeleteOptions{})
-	if err!=nil{
-		log.Print("ERROR : ",err.Error())
+	err = client.AppsV1().Deployments(ns).Delete(context.TODO(), deplotment, metav1.DeleteOptions{})
+	if err != nil {
+		log.Print("ERROR : ", err.Error())
 		return err
 	}
 	return nil

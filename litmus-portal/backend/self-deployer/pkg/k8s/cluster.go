@@ -2,7 +2,8 @@ package k8s
 
 import (
 	"context"
-	"fmt"
+	"flag"
+	"k8s.io/client-go/tools/clientcmd"
 	"log"
 
 	"k8s.io/apimachinery/pkg/api/meta"
@@ -18,40 +19,8 @@ import (
 
 var decUnstructured = yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
 
-func applyRequest(obj *unstructured.Unstructured, requestType interface{}, dr dynamic.ResourceInterface) (*unstructured.Unstructured, error) {
-
-	if requestType == "create" {
-		response, err := dr.Create(context.TODO(), obj, metav1.CreateOptions{})
-		if err != nil {
-			log.Printf("err: %v\n", err)
-		}
-		return response, nil
-	} else if requestType == "update" {
-		response, err := dr.Update(context.TODO(), obj, metav1.UpdateOptions{})
-		if err != nil {
-			log.Printf("err: %v\n", err)
-		}
-		return response, nil
-	} else if requestType == "delete" {
-		err := dr.Delete(context.TODO(), obj.GetName(), metav1.DeleteOptions{})
-		if err != nil {
-			log.Printf("err: %v\n", err)
-		}
-		return &unstructured.Unstructured{}, nil
-	} else if requestType == "get" {
-		response, err := dr.Get(context.TODO(), obj.GetName(), metav1.GetOptions{})
-		if err != nil {
-			log.Printf("err: %v\n", err)
-		}
-		return response, nil
-	} else {
-		log.Println("Invalid Request")
-		return &unstructured.Unstructured{}, fmt.Errorf("Invalid request")
-	}
-}
-
-func ClusterOperations(manifest []byte, requestType string) (*unstructured.Unstructured, error) {
-	cfg, err := rest.InClusterConfig()
+func CreateDeployment(manifest []byte, kubeconfig *string) (*unstructured.Unstructured, error) {
+	cfg, err := GetKubeConfig(kubeconfig)
 	if err != nil {
 		log.Printf("err: %v\n", err)
 	}
@@ -91,5 +60,25 @@ func ClusterOperations(manifest []byte, requestType string) (*unstructured.Unstr
 		dr = dyn.Resource(mapping.Resource)
 	}
 
-	return applyRequest(obj, requestType, dr)
+	response, err := dr.Create(context.TODO(), obj, metav1.CreateOptions{})
+	if err != nil {
+		log.Printf("err: %v\n", err)
+	}
+	return response, nil
+}
+
+func GetKubeConfig(kubeconfig *string) (*rest.Config, error) {
+	flag.Parse()
+	// Use in-cluster config if kubeconfig path is specified
+	if *kubeconfig == "" {
+		config, err := rest.InClusterConfig()
+		if err != nil {
+			return config, err
+		}
+	}
+	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+	if err != nil {
+		return config, err
+	}
+	return config, err
 }

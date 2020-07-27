@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"os"
 	"strings"
@@ -11,6 +12,7 @@ import (
 
 func main() {
 	active := os.Getenv("SELF_CLUSTER")
+	kubeconfig := flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
 	if strings.ToLower(active) == "true" {
 		server := os.Getenv("SERVER")
 		log.Print("Starting Self Deployer")
@@ -21,14 +23,14 @@ func main() {
 			log.Panic(err.Error())
 		}
 		time.Sleep(30 * time.Second)
-		err = util.Deploy(server + "/file/" + tk)
+		err = util.Deploy(server+"/file/"+tk, kubeconfig)
 		if err != nil {
 			log.Panic(err.Error())
 		}
 		log.Print("SUBSCRIBER DEPLOYED")
 	}
 	log.Print("PERFORMING CLEANUP")
-	err := util.CleanUp("litmus","self-deployer")
+	err := util.CleanUp("litmus", "self-deployer")
 	if err != nil {
 		log.Panic(err.Error())
 	}
