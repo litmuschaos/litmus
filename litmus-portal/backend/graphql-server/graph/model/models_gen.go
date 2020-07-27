@@ -3,17 +3,17 @@
 package model
 
 type Cluster struct {
-	ClusterID    string  `json:"cluster_id"`
-	ProjectID    string  `json:"project_id"`
-	ClusterName  string  `json:"cluster_name"`
-	Description  *string `json:"description"`
-	PlatformName string  `json:"platform_name"`
-	AccessKey    string  `json:"access_key"`
-	IsRegistered bool    `json:"is_registered"`
-	IsActive     bool    `json:"is_active"`
-	UpdatedAt    string  `json:"updated_at"`
-	CreatedAt    string  `json:"created_at"`
-	ClusterType  string  `json:"cluster_type"`
+	ClusterID    string  `json:"cluster_id" bson:"cluster_id"`
+	ProjectID    string  `json:"project_id" bson:"project_id"`
+	ClusterName  string  `json:"cluster_name" bson:"cluster_name"`
+	Description  *string `json:"description" bson:"description"`
+	PlatformName string  `json:"platform_name" bson:"platform_name"`
+	AccessKey    string  `json:"access_key" bson:"access_key"`
+	IsRegistered bool    `json:"is_registered" bson:"is_registered"`
+	IsActive     bool    `json:"is_active" bson:"is_active"`
+	UpdatedAt    string  `json:"updated_at" bson:"updated_at"`
+	CreatedAt    string  `json:"created_at" bson:"created_at"`
+	ClusterType  string  `json:"cluster_type" bson:"cluster_type"`
 }
 
 type ClusterAction struct {
