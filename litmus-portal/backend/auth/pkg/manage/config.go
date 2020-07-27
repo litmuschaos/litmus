@@ -1,7 +1,6 @@
 package manage
 
 import (
-	"net/http"
 	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/models"
@@ -22,5 +21,4 @@ var (
 type TokenGenerateRequest struct {
 	UserInfo       *models.PublicUserInfo
 	AccessTokenExp time.Duration
-	Request        *http.Request
 }

@@ -46,7 +46,6 @@ const HomePage = () => {
   if (userData.email === '') {
     return <WelcomeModal isOpen />;
   }
-
   return (
     <Scaffold>
       <div className={classes.rootContainer}>

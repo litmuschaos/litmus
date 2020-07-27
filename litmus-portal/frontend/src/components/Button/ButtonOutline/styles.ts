@@ -5,7 +5,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     minWidth: '4.375rem',
-    height: '2.8125rem',
+    height: '2.3rem',
     border: '0.0625rem solid',
     borderColor: theme.palette.secondary.dark,
     marginRight: theme.spacing(2),
