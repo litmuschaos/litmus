@@ -43,10 +43,13 @@ spec:
           - name: RAMP_TIME
             value: ''
 
-          - name: LIVENESS_APP_LABEL
-            value: ''
+          ## Provide the lib
+          ## Only litmus supported
+          - name: LIB
+            value: 'litmus'
 
-          - name: LIVENESS_APP_NAMESPACE
+          # provide the chaos namespace
+          - name: CHAOS_NAMESPACE
             value: ''
 
         command: ["/bin/bash"]

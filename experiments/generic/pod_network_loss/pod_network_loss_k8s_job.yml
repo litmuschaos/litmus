@@ -44,7 +44,7 @@ spec:
             value: '70' # in percentage
 
           - name: TOTAL_CHAOS_DURATION
-            value: '60000' # in ms
+            value: '60'  # in seconds
 
           # Period to wait before injection of chaos in sec
           - name: RAMP_TIME
@@ -56,9 +56,9 @@ spec:
           # provide lib image
           - name: LIB_IMAGE
             value: 'gaiaadm/pumba:0.6.5' 
-
-          # provide chaosengine name
-          - name: CHAOSENGINE
+  
+          # Provide the chaos namespace
+          - name: CHAOS_NAMESPACE
             value: ''
 
           - name: CHAOS_SERVICE_ACCOUNT

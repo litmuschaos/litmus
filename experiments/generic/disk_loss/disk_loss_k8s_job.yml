@@ -32,15 +32,9 @@ spec:
           - name: APP_NAMESPACE
             value: ''
 
-          # This is a chaos namespace which will create all infra chaos resources in that namespace
-          - name: CHAOS_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
-
-          # Only GCP is supported
+          # GKE and AWS supported
           - name: CLOUD_PLATFORM
-            value: ''
+            value: 'GKE'
 
           # Enter the time duration after the disk is dettached
           - name: TOTAL_CHAOS_DURATION
@@ -70,15 +64,20 @@ spec:
           - name: ZONE_NAME
             value: '' 
 
+          # provide the chaos namespace
+          - name: CHAOS_NAMESPACE
+            value: ''
+
+          # provide the LIB
+          # only litmus supported
+          - name: LIB
+            value: 'litmus'
+
           # provide auxiliary application details - namespace and labels of the applications
           # sample input is - "ns1:app=percona,ns2:name=nginx"
           - name: AUXILIARY_APPINFO
             value: ''
           
-          # Enter the chaosengine name
-          - name: CHAOSENGINE
-            value: '' 
-
         command: ['/bin/bash']
         args: ['-c', 'ansible-playbook ./experiments/generic/disk_loss/disk_loss_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0']
         volumeMounts:

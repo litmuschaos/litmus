@@ -43,7 +43,7 @@ spec:
             value: '1'
 
           - name: TOTAL_CHAOS_DURATION
-            value: '60000' # in ms
+            value: '60' # in seconds
 
           # Period to wait before injection of chaos in sec
           - name: RAMP_TIME
@@ -57,8 +57,8 @@ spec:
           - name: LIB_IMAGE
             value: 'litmuschaos/app-cpu-stress:latest' 
 
-           # provide chaosengine name
-          - name: CHAOSENGINE
+          # provide the chaos namespace
+          - name: CHAOS_NAMESPACE
             value: ''
 
           - name: CHAOS_SERVICE_ACCOUNT

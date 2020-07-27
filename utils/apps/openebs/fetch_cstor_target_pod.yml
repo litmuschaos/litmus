@@ -1,5 +1,5 @@
 ---
-- name: Derive PV from application PVC 
+- name: "[Prepare]: Derive PV from application PVC"
   shell: >
     kubectl get pvc {{ a_pvc }}
     -o custom-columns=:spec.volumeName -n {{ a_ns }}
@@ -8,7 +8,7 @@
     executable: /bin/bash
   register: pv
 
-- name: Pick a cStor target pod belonging to the PV
+- name: "[Prepare]: Pick a cStor target pod belonging to the PV"
   shell: > 
     kubectl get pods -l {{ cstor_target_pod_label }}
     -n {{ openebs_ns }} --no-headers | grep {{ pv.stdout }} 

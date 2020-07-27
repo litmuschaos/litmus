@@ -1,5 +1,5 @@
 --- 
-- name: Identify the jiva controller pod belonging to the PV
+- name: "[Prepare]: Identify the jiva controller pod belonging to the PV"
   shell: > 
     kubectl get pods -l {{ jiva_controller_pod_label }}
     -n {{ a_ns }} -o jsonpath='{.items[?(@.metadata.labels.openebs\.io/persistent-volume=="{{ pv_name }}")].metadata.name}'
@@ -7,12 +7,12 @@
     executable: /bin/bash
   register: jiva_controller_pod
 
-- name: Record the jiva controller pod and container name
+- name: "[Prepare]: Record the jiva controller pod and container name"
   set_fact:
     jiva_controller_container_name: "{{ pv.stdout }}-{{ jiva_controller_pod_suffix }}-{{ jiva_controller_container_suffix }}"
     jiva_controller_pod_name: "{{ jiva_controller_pod.stdout }}"
 
-- name: Get controller svc
+- name: "[Prepare]: Getting the name of controller svc"
   shell: >
     kubectl get svc -l {{ jiva_controller_svc_label }}
     -n {{ a_ns }} -o=jsonpath='{.items[0].spec.clusterIP}'
@@ -21,14 +21,14 @@
   register: controller_svc
   failed_when: controller_svc.stdout == ""
 
-- name: Install jq package inside a controller container
+- name: "[Install]: Install jq package inside a controller container"
   shell: >
     kubectl exec -it {{ jiva_controller_pod.stdout }} -n {{ a_ns }} -c {{ jiva_controller_container_name }} 
     -- bash -c "apt-get update && apt-get install -y jq && apt-get install -y iproute2"
   args:
     executable: /bin/bash
 
-- name: Getting the ReplicaCount before injecting delay
+- name: "[Prepare]: Getting the ReplicaCount before injecting delay"
   shell: >
    kubectl exec -it {{ jiva_controller_pod.stdout }} -n {{ a_ns }} 
    -c {{ jiva_controller_container_name }} curl http://"{{controller_svc.stdout}}":9501/v1/volumes | jq -r '.data[].replicaCount'
@@ -37,7 +37,7 @@
   register: rcount_before
 
 # including pumba lib  -> network_chaos
-- name: Inject egress delay of {{ n_delay }}ms on jiva controller for {{ c_duration }}ms
+- name: "[include]: including the pumba network chaoslib for network delay"
   include_tasks: /chaoslib/pumba/network_chaos/network_chaos.yml
   vars:
     n_interface: "eth0"
@@ -46,7 +46,7 @@
     app_pod:  "{{ jiva_controller_pod_name }}"
     app_ns: "{{ a_ns }}"
 
-- name: Verifying the Replica getting disconnected
+- name: "[Verification]: Verifying the Replica getting disconnected"
   shell: >
    kubectl exec -it {{ jiva_controller_pod.stdout }} -n {{ a_ns }} 
    -c {{ jiva_controller_container_name }} curl http://"{{controller_svc.stdout}}":9501/v1/volumes | jq -r '.data[].replicaCount'
@@ -54,10 +54,10 @@
     executable: /bin/bash
   register: resp
   until: resp.stdout != rcount_before.stdout
-  retries: 10
-  delay: 15
+  retries: 2
+  delay: 90
   
-- name: Verifying the replicas post network recovery
+- name: "[Verification]: Verifying the replicas post network recovery"
   shell: >
    kubectl exec -it {{ jiva_controller_pod.stdout }} -n {{ a_ns }} 
    -c {{ jiva_controller_container_name }} curl http://"{{controller_svc.stdout}}":9501/v1/volumes | jq -r '.data[].replicaCount'
@@ -65,5 +65,5 @@
     executable: /bin/bash
   register: replica
   until: replica.stdout == rcount_before.stdout
-  retries: 10
-  delay: 15
+  retries: 2
+  delay: 90

@@ -39,6 +39,10 @@ spec:
           - name: CHAOS_INTERVAL
             value: '5'
 
+          # provide the kill count
+          - name: KILL_COUNT
+            value: ''
+
             ## Period to wait before injection of chaos  
           - name: RAMP_TIME
             value: ''
@@ -51,8 +55,14 @@ spec:
           - name: LIB
             value: ''
 
-          - name: CHAOSENGINE
+          # provide the chaos namespace
+          - name: CHAOS_NAMESPACE
             value: ''
+
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
 
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:

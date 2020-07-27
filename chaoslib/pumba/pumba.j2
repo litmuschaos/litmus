@@ -1,41 +1,32 @@
-
-apiVersion: apps/v1
-kind: DaemonSet
+apiVersion: v1
+kind: Pod
 metadata:
-  name: pumba
+  name: pumba-sig-kill-{{ run_id }}
   labels: 
-    chaosUID: {{ chaosUID }}
+    app: pumba
+    name: pumba-sig-kill-{{ run_id }}
+{% if chaos_uid is defined and chaos_uid != '' %}  
+    chaosUID: {{ chaos_uid }}
+{% endif %}
 spec:
-  selector:
-    matchLabels:
-      app: pumba
-      chaosUID: {{ chaosUID }}
-  template:
-    metadata:
-      labels:
-        app: pumba
-        chaosUID: {{ chaosUID }}
-        com.gaiaadm.pumba: "true" # prevent pumba from killing itself
-      name: pumba
-    spec:
-      containers:
-      - image: {{ pumba_image }}
-        imagePullPolicy: Always
-        name: pumba
-        # Pumba command: modify it to suite your needs
-        # Dry run: Randomly try to kill some container every 3 minutes
-        command: ["pumba", "--dry", "--random", "--interval", "3m", "kill", "--signal", "SIGTERM"]
-        resources:
-          requests:
-            cpu: 10m
-            memory: 5M
-          limits:
-            cpu: 100m
-            memory: 20M
-        volumeMounts:
-          - name: dockersocket
-            mountPath: /var/run/docker.sock
-      volumes:
-        - hostPath:
-            path: /var/run/docker.sock
-          name: dockersocket
+  nodeName: {{ app_node }}
+  restartPolicy: Never
+  containers:
+  - image: {{ pumba_image }}
+    imagePullPolicy: Always
+    name: pumba
+    args:
+      - --random
+      - --interval
+      - {{ c_interval }}s
+      - kill
+      - --signal
+      - SIGKILL
+      - re2:k8s_{{ app_container }}_{{ app_pod }} 
+    volumeMounts:
+      - name: dockersocket
+        mountPath: /var/run/docker.sock
+  volumes:
+    - hostPath:
+        path: /var/run/docker.sock
+      name: dockersocket

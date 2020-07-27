@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    litmuschaos.io/chaos: "true"
+  labels:
+    app: sock-shop
+    name: rabbitmq
+  name: rabbitmq
+  namespace: sock-shop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sock-shop
+      name: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: sock-shop
+        name: rabbitmq
+    spec:
+      containers:
+      - image: rabbitmq:3.6.8
+        imagePullPolicy: IfNotPresent
+        name: rabbitmq
+        ports:
+        - containerPort: 5672
+          protocol: TCP
+        resources: {}
+        securityContext:
+          capabilities:
+            add:
+            - CHOWN
+            - SETGID
+            - SETUID
+            - DAC_OVERRIDE
+            drop:
+            - all
+          readOnlyRootFilesystem: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq
+  labels:
+    name: rabbitmq
+  namespace: sock-shop
+spec:
+  ports:
+    # the port that this service should serve on
+  - port: 5672
+    name: rabbitmq
+    targetPort: 5672
+  - port: 9090
+    name: exporter
+    targetPort: exporter
+    protocol: TCP
+  selector:
+    name: rabbitmq
+

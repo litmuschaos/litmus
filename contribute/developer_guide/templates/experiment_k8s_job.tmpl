@@ -47,8 +47,14 @@ spec:
           - name: LIB
             value: ''
 
-          - name: CHAOSENGINE
+          # provide the chaos namespace
+          - name: CHAOS_NAMESPACE
             value: ''
+        
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
 
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:
@@ -56,4 +62,4 @@ spec:
                 fieldPath: spec.serviceAccountName
 
         command: ["/bin/bash"]
-        args: ["-c", "ansible-playbook ./experiments/{{ chart }}/{{ name }}/{{ name }}-ansible-logic.yml -i /etc/ansible/hosts; exit 0"]
+        args: ["-c", "ansible-playbook ./experiments/{{ category }}/{{ name }}/{{ name }}-ansible-logic.yml -i /etc/ansible/hosts; exit 0"]

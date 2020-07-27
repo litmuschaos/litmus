@@ -52,7 +52,7 @@ spec:
             value: '60000' # in milliseconds
 
           - name: CHAOS_DURATION
-            value: '60000' # in milliseconds
+            value: '60' # in seconds
             
           - name: LIVENESS_APP_LABEL
             value: ''
@@ -61,7 +61,11 @@ spec:
             value: ''
 
           - name: DATA_PERSISTENCE
-            value: ''  
+            value: ''
+              
+          # Provide the chaos namespace
+          - name: CHAOS_NAMESPACE
+            value: ''
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/openebs/openebs-target-network-delay/openebs_target_network_delay_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]

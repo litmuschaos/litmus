@@ -1,7 +1,7 @@
 ---
 - block:
 
-   - name: Create some test data in the busybox app
+   - name: "[Data-Persistence]: Create some test data in the busybox app"
      shell: >
        kubectl exec {{ pod_name }} -n {{ ns }} 
        -- sh -c "{{ item }}"
@@ -17,13 +17,13 @@
 
 - block:
 
-   - name: Kill the application pod
+   - name: "[Data-Persistence]: Kill the application pod"
      shell: >
        kubectl delete pod {{ pod_name }} -n {{ ns }}
      args:
        executable: /bin/bash
 
-   - name: Verify if the applicaion pod is deleted
+   - name: "[Data-Persistence]: Verify if the applicaion pod is deleted"
      shell: >
        kubectl get pods -n {{ ns }}
      args:
@@ -33,21 +33,21 @@
      retries: 2
      delay: 150
 
-   - name: Obtain the newly created pod name for applicaion
+   - name: "[Data-Persistence]: Obtain the newly created pod name for applicaion"
      shell: >
        kubectl get pods -n {{ ns }} -l {{ label }} -o jsonpath='{.items[].metadata.name}'
      args:
        executable: /bin/bash
      register: newpod_name
 
-   - name: Checking application pod is in running state
+   - name: "[Data-Persistence]: Checking application pod is in running state"
      shell: kubectl get pods -n {{ ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ newpod_name.stdout }}")].status.phase}'
      register: result
      until: "((result.stdout.split()|unique)|length) == 1 and 'Running' in result.stdout"
      delay: 2
-     retries: 150
+     retries: 90
 
-   - name: Get the container status of application.
+   - name: "[Data-Persistence]: Checking application conatiner is in running state"
      shell: >
         kubectl get pods -n {{ ns }} -o jsonpath='{.items[?(@.metadata.name=="{{ newpod_name.stdout }}")].status.containerStatuses[].state}' | grep running
      args:
@@ -55,9 +55,9 @@
      register: containerStatus
      until: "'running' in containerStatus.stdout"
      delay: 2
-     retries: 150
+     retries: 90
 
-   - name: Check the md5sum of stored data file
+   - name: "[Data-Persistence]: Check the md5sum of stored data file"
      shell: >
        kubectl exec {{ newpod_name.stdout }} -n {{ ns }}
        -- sh -c "md5sum /busybox/{{ testfile }} > /busybox/{{ testfile }}-post-chaos-md5"
@@ -66,7 +66,7 @@
      register: status 
      failed_when: "status.rc != 0"
 
-   - name: Verify whether data is consistent
+   - name: "[Data-Persistence]: Verify whether data is consistent"
      shell: >
            kubectl exec {{ newpod_name.stdout }} -n {{ ns }}
            -- sh -c "diff /busybox/{{ testfile }}-pre-chaos-md5 /busybox/{{ testfile }}-post-chaos-md5"
@@ -79,14 +79,14 @@
 
 - block:
 
-   - name: Obtain the current pod name for applicaion
+   - name: "[Data-Persistence]: Obtain the current applicaion pod name"
      shell: >
        kubectl get pods -n {{ ns }} -l {{ label }} -o jsonpath='{.items[].metadata.name}'
      args:
        executable: /bin/bash
      register: newpod_name
 
-   - name: Delete/drop the files 
+   - name: "[Data-Persistence]: Delete/drop the files"
      shell: > 
        kubectl exec {{ newpod_name.stdout }} -n {{ ns }}
        -- sh -c "rm -f /busybox/{{ testfile }}*"
@@ -94,7 +94,7 @@
        executable: /bin/bash
      register: status 
 
-   - name: Verify successful file delete 
+   - name: "[Data-Persistence]: Verify the successful file deletion"
      shell: > 
            kubectl exec {{ newpod_name.stdout }} -n {{ ns }}
            -- ls /busybox/

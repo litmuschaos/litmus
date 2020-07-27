@@ -1,18 +1,18 @@
-- name: Fetch the pool pod name from cvr
+- name: "[Prepare]: Fetch the pool pod name from cvr"
   include_tasks: "/utils/apps/openebs/fetch_podname_from_cvr.yml"
 
-- name: Get the pod of pool deployment
+- name: "[Prepare]: Getting the pool pod name"
   set_fact: 
     cstor_pool_pod: "{{ pool_pod_named_list | random }}"
 
-- name: Display pool pod name
+- name: "[Info]: Display the pool pod name"
   debug: 
     msg: 
       - "The application info is as follows:"
       - " pod-name  : {{ cstor_pool_pod }}"
 
-# including pumba lib  -> network_chaos
-- name: Inject egress network loss on cstor-pool container for {{ chaos_duration }}ms
+# including pumba network lib  -> network_chaos
+- name: "[include]: including the pumba network chaoslib for network delay"
   include_tasks: /chaoslib/pumba/network_chaos/network_chaos.yml
   vars:
     n_interface: "eth0"

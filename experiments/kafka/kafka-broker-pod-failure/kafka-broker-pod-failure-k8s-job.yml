@@ -34,9 +34,9 @@ spec:
           - name: KAFKA_SASL_AUTH
             value: 'disabled'
 
-          # in milliseconds
+          # Recommended timeout for EKS platform: 60000 ms
           - name: KAFKA_CONSUMER_TIMEOUT
-            value: '30000'
+            value: '30000'  # in milliseconds
 
           - name: TOTAL_CHAOS_DURATION
             value: '15'
@@ -84,9 +84,15 @@ spec:
           ## default: litmus. Supported values: litmus, powerfulseal
           - name: LIB
             value: ''
-
-          - name: CHAOSENGINE
+          
+          # Provide the chaos namespace
+          - name: CHAOS_NAMESPACE
             value: ''
+
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
 
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:

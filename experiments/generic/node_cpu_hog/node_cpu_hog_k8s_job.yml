@@ -32,30 +32,38 @@ spec:
           - name: APP_KIND
             value: ''
           
-          ## PLATFORM SUPPORTED 
-          - name: PLATFORM
-            value: 'GKE'
-          
-          ## THE TOTAL_CHAOS_DURATION SHOULD NOT BE MORE THAN 180 DEFAULT VALUE IS 60
+          ## ENTER THE NUMBER OF CORES OF CPU FOR CPU HOGGING
+          ## OPTIONAL VALUE IN CASE OF EMPTY VALUE IT WILL TAKE NODE CPU CAPACITY 
+          - name: NODE_CPU_CORE
+            value: ''
+
+          ## THE TOTAL_CHAOS_DURATION FOR CPU HOG
+          ## DEFAULT VALUE IS 60sec
           - name: TOTAL_CHAOS_DURATION
             value: '60'
 
-          ## Period to wait before injection of chaos in sec
+          # provide lib image
+          - name: LIB_IMAGE
+            value: 'litmuschaos/stress-ng:latest' 
+
+          ## PERIOD TO WAIT BEFORE INJECTION OF CHAOS IN SEC
           - name: RAMP_TIME
             value: ''
 
-          # provide auxiliary application details - namespace and labels of the applications
-          # sample input is  "ns1:app=percona,ns2:name=nginx"
+          ## PROVIDE AUXILIARY APPLICATION DETAILS - NAMESPACE AND LABELS OF THE APPLICATIONS
+          ## Sample input is  "ns1:app=percona,ns2:name=nginx"
           - name: AUXILIARY_APPINFO
             value: ''
 
-          # only supports litmus
+          ## PROVIDE THE LIB
+          ## ONLY LITMUS SUPPORTED
           - name: LIB
-            value: 'litmus'
- 
-          - name: CHAOSENGINE
+            value: 'litmus' 
+
+          # provide the chaos namespace
+          - name: CHAOS_NAMESPACE
             value: ''
-          
+ 
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:
               fieldRef:

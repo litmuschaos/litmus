@@ -50,11 +50,11 @@ spec:
           - name: LIVENESS_APP_LABEL
             value: ''
 
-         # LIB_IMAGE can be - gaiaadm/pumba:0.4.8, gprasath/crictl:ci
-         # For pumba image use : gaiaadm/pumba:0.4.8
+         # LIB_IMAGE can be - gaiaadm/pumba:0.6.5, gprasath/crictl:ci
+         # For pumba image use : gaiaadm/pumba:0.6.5
          # For containerd image use : gprasath/crictl:ci
           - name: LIB_IMAGE
-            value: 'gaiaadm/pumba:0.4.8'
+            value: 'gaiaadm/pumba:0.6.5'
 
           - name: LIVENESS_APP_NAMESPACE
             value: ''
@@ -63,9 +63,12 @@ spec:
             value: ''
 
           - name: CHAOS_INTERVAL
-            value: '5'
+            value: '10'
 
-          - name: CHAOS_DURATION
+          - name: TOTAL_CHAOS_DURATION
+            value: '20'
+
+          - name: SOAK_TIME
             value: '120'
             
           # Specify the container runtime used , to pick the relevant chaos util  
@@ -82,6 +85,10 @@ spec:
            # DEPLOY_TYPE values: deployment, statefulset
           - name: DEPLOY_TYPE
             value: 'deployment'
+
+          # Provide the chaos namespace
+          - name: CHAOS_NAMESPACE
+            value: ''
 
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/openebs/openebs-target-container-failure/openebs_target_container_failure_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]

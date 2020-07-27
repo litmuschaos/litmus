@@ -38,8 +38,9 @@ spec:
           - name: TOTAL_CHAOS_DURATION
             value: '30'
 
+          # GKE and AWS supported
           - name: CLOUD_PLATFORM
-            value: 'GCP'
+            value: 'GKE'
 
           - name: PROJECT_ID
             value: ''
@@ -82,10 +83,11 @@ spec:
 
           - name: ZOOKEEPER_PORT
             value: ''
-
-          - name: CHAOSENGINE
+          
+          # Provide the chaos namespace
+          - name: CHAOS_NAMESPACE
             value: ''
-
+       
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:
               fieldRef:

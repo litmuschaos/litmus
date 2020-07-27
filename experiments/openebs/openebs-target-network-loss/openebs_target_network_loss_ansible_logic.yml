@@ -9,7 +9,6 @@
     c_duration: "{{ lookup('env','TOTAL_CHAOS_DURATION') }}"
     c_experiment: "openebs-target-network-loss"
     c_force: "{{ lookup('env','FORCE') }}"
-    c_interval: "5"
     data_persistence: "{{ lookup('env','DATA_PERSISTENCE') }}"
     lib_image: "{{ lookup('env','LIB_IMAGE') }}"
     liveness_label: "{{ lookup('env','LIVENESS_APP_LABEL') }}"
@@ -17,6 +16,9 @@
     packet_loss_perc: "{{ lookup('env','NETWORK_PACKET_LOSS_PERCENTAGE') }}"  
     openebs_ns: "{{ lookup('env','OPENEBS_NAMESPACE') }}"
     chaos_uid: "{{ lookup('env','CHAOS_UID') }}"
+    c_engine: "{{ lookup('env','CHAOSENGINE') }}"
+    chaos_pod_name: "{{ lookup('env','POD_NAME') }}"
+    c_ns: "{{ lookup('env','CHAOS_NAMESPACE') }}"
 
   vars_files:
     - /mnt/parameters.yml
@@ -32,41 +34,39 @@
 
         - include: openebs_target_network_loss_ansible_prerequisites.yml
 
-        - include_vars:
-            file: data_persistence.yml
+        - name: "[PreReq]: Including the data-consistency util for the {{ c_experiment }} experiment"
+          include_vars:
+            file: /tmp/data_persistence.yml
 
-        - include_vars:
-            file: chaosutil.yml
+        - name: "[PreReq]: Including the chaos util for the {{ c_experiment }} experiment"
+          include_vars:
+            file: /tmp/chaosutil.yml
 
-        - name: Record the chaos util path
+        - name: "[PreReq]: Record the chaos util path"
           set_fact:
             chaos_util_path: "{{ chaosutil }}"
 
-        - name: Record the data consistency util path
+        - name: "[PreReq]: Record the data consistency util path"
           set_fact:
             data_consistency_util_path: "{{ consistencyutil }}"
           when: data_persistence != ''
 
         ## RECORD START-OF-TEST IN CHAOS RESULT CR
-        
         - include_tasks: /utils/runtime/create_testname.yml
 
         ## GENERATE EXP RESULT NAME
-        - block:
+        - name: "[PreReq]: Constructing the chaos result name"
+          set_fact:
+            c_result: "{{ c_engine }}-{{ c_experiment }}"
+          when: "c_engine is defined and c_engine != ''"
 
-            - name: Construct chaos result name (experiment_name)
-              set_fact:
-                c_experiment: "{{ lookup('env','CHAOSENGINE') }}-{{ c_experiment }}"
-
-          when: lookup('env','CHAOSENGINE') 
-
-        - include_tasks: /utils/runtime/update_chaos_result_resource.yml
+        - name: "[PreReq]: Updating the chaos result of {{ c_experiment }} experiment (SOT)"
+          include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'SOT'
-            namespace: "{{ a_ns }}"
+            namespace: "{{ c_ns }}"
 
         ## DISPLAY APP INFORMATION
-
         - name: Display the app information passed via the test job
           debug:
             msg:
@@ -77,15 +77,25 @@
               - "StorageClass : {{ sc }}"
 
         ## PRE-CHAOS APPLICATION LIVENESS CHECK
-        - name: Verify that the AUT (Application Under Test) is running
+        - name: "[Status]: Verify that the AUT (Application Under Test) is running (pre-chaos)"
           include_tasks: "/utils/common/status_app_pod.yml"
           vars:
             app_ns: "{{ a_ns }}"
             app_label: "{{ a_label }}"      
-            delay: 5
-            retries: 60
+            delay: 2
+            retries: 90
 
-        - name: Get application pod name
+        ## RECORD EVENT FOR PRE-CHAOS CHECK
+        - name: "[Event]: Generating an Event for PreChaosCheck"
+          include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PreChaosCheck"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ c_ns }}"
+            message: "OpenEBS components and AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
+
+        - name: "[Data-Persistence]: Get application pod name"
           shell: >
             kubectl get pods -n {{ a_ns }} -l {{ a_label }} --no-headers
             -o=custom-columns=NAME:".metadata.name"
@@ -93,7 +103,7 @@
             executable: /bin/bash
           register: pod_app_name
 
-        - name: Create some test data
+        - name: "[Data-Persistence]: Create some test data"
           include: "{{ data_consistency_util_path }}"
           vars:
             status: 'LOAD'
@@ -105,20 +115,29 @@
 
         - include: "{{ chaos_util_path }}"  
 
-        ## POST-CHAOS APPLICATION LIVENESS CHECK
-
-        - name: Verify AUT liveness post fault-injection
+        ## POST-CHAOS APPLICATION STATUS CHECK
+        - name: "[Status]: Verify that the AUT (Application Under Test) is running (post-chaos)"
           include_tasks: "/utils/common/status_app_pod.yml"
           vars:
             app_ns: "{{ a_ns }}"
             app_label: "{{ a_label }}" 
-            delay: 5
-            retries: 60 
+            delay: 2
+            retries: 90 
+
+        ## RECORD EVENT FOR POST-CHAOS CHECK
+        - name: "[Event]: Generating an Event for PostChaosCheck"
+          include_tasks: /utils/common/generate-kubernetes-chaos-events.yml
+          vars:
+            stage: "PostChaosCheck"
+            exp_pod_name: "{{ chaos_pod_name }}"
+            engine_ns: "{{ c_ns }}"
+            message: "OpenEBS components and AUT is Running successfully"
+          when: "c_engine is defined and c_engine != ''"
             
         - include_tasks: /utils/common/application_liveness_check.yml
           when: liveness_label != ''
     
-        - name: Verify application data persistence  
+        - name: "[Data-Persistence]: Verify application data persistence"
           include: "{{ data_consistency_util_path }}"
           vars:
             status: 'VERIFY'
@@ -130,15 +149,26 @@
         - set_fact:
             flag: "Pass"
 
+        - name: "[Result]: Getting the final result of {{ c_experiment }} experiment"
+          debug:
+            msg: "{{ c_experiment }} experiment has been {{ flag }}ed"
+
       rescue:
         - set_fact:
             flag: "Fail"
 
+        - name: "[Result]: Getting the final result of {{ c_experiment }} experiment"
+          debug:
+            msg: "{{ c_experiment }} experiment has been {{ flag }}ed"
+
       always:
 
-        ## RECORD END-OF-TEST IN CHAOS RESULT CR
+        ## Getting failure step from experiment-pod
+        - include_tasks: /utils/runtime/getting_failure_step.yml  
 
-        - include_tasks: /utils/runtime/update_chaos_result_resource.yml
+        ## RECORD END-OF-TEST IN CHAOS RESULT CR
+        - name: "[The End]: Updating the chaos result of {{ c_experiment }} experiment (EOT)"
+          include_tasks: /utils/runtime/update_chaos_result_resource.yml
           vars:
             status: 'EOT'
-            namespace: "{{ a_ns }}"
+            namespace: "{{ c_ns }}"

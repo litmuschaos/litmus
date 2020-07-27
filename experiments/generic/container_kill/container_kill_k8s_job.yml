@@ -27,11 +27,11 @@ spec:
           - name: APP_LABEL
             value: ''
 
-          # LIB_IMAGE can be - gaiaadm/pumba:0.4.8, gprasath/crictl:ci
-          # For pumba image use : gaiaadm/pumba:0.4.8
-          # For containerd image use : gprasath/crictl:ci
+          # LIB_IMAGE can be - gaiaadm/pumba:0.6.5, litmuschaos/container-killer:latest
+          # For pumba image use : gaiaadm/pumba:0.6.5
+          # For containerd image use : litmuschaos/container-killer:latest
           - name: LIB_IMAGE  
-            value: 'gaiaadm/pumba:0.4.8'
+            value: 'gaiaadm/pumba:0.6.5'
             
           # provide lib - It supports pumba and containerd
           - name: LIB 
@@ -41,12 +41,25 @@ spec:
           - name: TARGET_CONTAINER
             value: ''
 
+          # provide the container runtime path for containerd
+          # applicable only for containerd runtime
+          - name: CONTAINER_PATH
+            value: '/run/containerd/containerd.sock'
+
+          # provide the chaos interval
+          - name: CHAOS_INTERVAL
+            value: '10'
+
+          # provide the total chaos duration
+          - name: TOTAL_CHAOS_DURATION
+            value: '20'
+
           # Period to wait before injection of chaos in sec 
           - name: RAMP_TIME
             value: ''
 
-          # provide chaosengine name
-          - name: CHAOSENGINE 
+          # provide the chaos namespace
+          - name: CHAOS_NAMESPACE
             value: ''
 
         command: ["/bin/bash"]

@@ -47,7 +47,7 @@ spec:
             value: '60000' # in ms
 
           - name: TOTAL_CHAOS_DURATION
-            value: '60000' # in ms
+            value: '60'  # in seconds
             
           # Period to wait before injection of chaos in sec
           - name: RAMP_TIME
@@ -56,8 +56,8 @@ spec:
           - name: LIB
             value: 'pumba'
 
-          # provide chaosengine name
-          - name: CHAOSENGINE
+          # Provide the chaos namespace
+          - name: CHAOS_NAMESPACE
             value: ''
 
           - name: CHAOS_SERVICE_ACCOUNT

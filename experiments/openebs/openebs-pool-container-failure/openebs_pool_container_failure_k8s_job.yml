@@ -44,9 +44,9 @@ spec:
             value: ''
 
          # only pumba supported
-         # For pumba image use : gaiaadm/pumba:0.4.8
+         # For pumba image use : gaiaadm/pumba:0.6.5
           - name: LIB_IMAGE
-            value: 'gaiaadm/pumba:0.4.8' 
+            value: 'gaiaadm/pumba:0.6.5' 
 
           - name: LIVENESS_APP_LABEL
             value: ''
@@ -57,12 +57,21 @@ spec:
           - name: DATA_PERSISTENCE
             value: ''
 
+          # provide the chaos interval
+          - name: CHAOS_INTERVAL
+            value: '10'
+
+          # provide the total chaos duration
+          - name: TOTAL_CHAOS_DURATION
+            value: '20'
+
           - name: CHAOS_ITERATIONS
             value: '2'
-
-          - name: CHAOSENGINE
+          
+          # Provide the chaos namespace
+          - name: CHAOS_NAMESPACE
             value: ''
-
+         
         command: ["/bin/bash"]
         args: ["-c", "ansible-playbook ./experiments/openebs/openebs-pool-container-failure/openebs_pool_kill_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0"]
 
