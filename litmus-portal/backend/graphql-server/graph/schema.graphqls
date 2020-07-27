@@ -54,6 +54,34 @@ input ClusterIdentity{
   access_key: String!
 }
 
+input chaosWorkFlowInput {
+  workflow_yaml: String!
+  cronSyntax: String!
+  Workflow_name: String!
+  Workflow_description: String!
+  Weightages: [weightagesInput]!
+  isCustomWorkflow: Boolean!
+}
+
+input weightagesInput {
+  experiment_name: String!
+  weightage: Int!
+}
+
+type weightages {
+  experiment_name: String!
+  weightage: Int!
+}
+
+type chaosWorkFlowResponse {
+  workflow_id: String!
+  cronSyntax: String!
+  Workflow_name: String!
+  Workflow_description: String!
+  Weightages: [weightages]!
+  isCustomWorkflow: Boolean!
+}
+
 type Mutation{
     #It is used to create external cluster.
     userClusterReg(clusterInput: ClusterInput!): String!
@@ -63,6 +91,8 @@ type Mutation{
     
     #It is used to send cluster related events from the subscriber
     newClusterEvent(clusterEvent: ClusterEventInput!): String!
+    
+    createChaosWorkFlow(input: chaosWorkFlowInput): chaosWorkFlowResponse!
 }
 
 type Subscription{

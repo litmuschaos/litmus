@@ -13,6 +13,7 @@ GRAPHQL_SERVER_IMAGE ?= litmusportal-server
 AUTHENTICATION_SERVER_IMAGE ?= litmusportal-auth-server
 FRONTEND_IMAGE ?= litmusportal-frontend
 SUBSCRIBER_IMAGE ?= litmusportal-subscriber
+SELF_DEPLOYER_IMAGE ?= litmusportal-self-deployer
 IMGTAG ?= ci
 
 .PHONY: all
@@ -50,6 +51,7 @@ litmus-portal-build:
 	docker build ./backend/graphql-server -f backend/graphql-server/build/Dockerfile -t $(REPONAME)/$(GRAPHQL_SERVER_IMAGE):$(IMGTAG)
 	docker build ./backend/auth -f backend/auth/Dockerfile -t $(REPONAME)/$(AUTHENTICATION_SERVER_IMAGE):$(IMGTAG)
 	docker build ./backend/subscriber/agent -f backend/subscriber/agent/build/Dockerfile -t $(REPONAME)/$(SUBSCRIBER_IMAGE):$(IMGTAG)
+	docker build ./backend/self-deployer -f backend/self-deployer/build/Dockerfile -t $(REPONAME)/$(SELF_DEPLOYER_IMAGE):$(IMGTAG)
 
 .PHONY: push
 push: litmus-portal-push
@@ -62,6 +64,7 @@ litmus-portal-push:
 	REPONAME=$(REPONAME) IMGNAME=$(GRAPHQL_SERVER_IMAGE) IMGTAG=$(IMGTAG) ../hack/push
 	REPONAME=$(REPONAME) IMGNAME=$(SUBSCRIBER_IMAGE) IMGTAG=$(IMGTAG) ../hack/push
 	REPONAME=$(REPONAME) IMGNAME=$(AUTHENTICATION_SERVER_IMAGE) IMGTAG=$(IMGTAG) ../hack/push
+	REPONAME=$(REPONAME) IMGNAME=$(SELF_DEPLOYER_IMAGE) IMGTAG=$(IMGTAG) ../hack/push
 
 
 .PHONY: litmus-portal-check
