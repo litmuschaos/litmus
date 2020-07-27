@@ -2,12 +2,54 @@
 
 package model
 
-type ClusterInput struct {
-	ID   int    `json:"id"`
-	Data string `json:"data"`
+type Cluster struct {
+	ClusterID    string  `json:"cluster_id" bson:"cluster_id"`
+	ProjectID    string  `json:"project_id" bson:"project_id"`
+	ClusterName  string  `json:"cluster_name" bson:"cluster_name"`
+	Description  *string `json:"description" bson:"description"`
+	PlatformName string  `json:"platform_name" bson:"platform_name"`
+	AccessKey    string  `json:"access_key" bson:"access_key"`
+	IsRegistered bool    `json:"is_registered" bson:"is_registered"`
+	IsActive     bool    `json:"is_active" bson:"is_active"`
+	UpdatedAt    string  `json:"updated_at" bson:"updated_at"`
+	CreatedAt    string  `json:"created_at" bson:"created_at"`
+	ClusterType  string  `json:"cluster_type" bson:"cluster_type"`
 }
 
-type ClusterResponse struct {
-	ID   int    `json:"id"`
-	Data string `json:"data"`
+type ClusterAction struct {
+	ProjectID string `json:"project_id"`
+	Action    string `json:"action"`
+}
+
+type ClusterActionInput struct {
+	ClusterID string `json:"cluster_id"`
+	Action    string `json:"action"`
+}
+
+type ClusterEvent struct {
+	EventID     string   `json:"event_id"`
+	EventType   string   `json:"event_type"`
+	EventName   string   `json:"event_name"`
+	Description string   `json:"description"`
+	Cluster     *Cluster `json:"cluster"`
+}
+
+type ClusterEventInput struct {
+	EventName   string `json:"event_name"`
+	Description string `json:"description"`
+	ClusterID   string `json:"cluster_id"`
+	AccessKey   string `json:"access_key"`
+}
+
+type ClusterIdentity struct {
+	ClusterID string `json:"cluster_id"`
+	AccessKey string `json:"access_key"`
+}
+
+type ClusterInput struct {
+	ClusterName  string  `json:"cluster_name"`
+	Description  *string `json:"description"`
+	PlatformName string  `json:"platform_name"`
+	ProjectID    string  `json:"project_id"`
+	ClusterType  string  `json:"cluster_type"`
 }
