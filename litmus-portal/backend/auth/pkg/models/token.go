@@ -11,20 +11,9 @@ func NewToken() *Token {
 
 // Token token model
 type Token struct {
-	UserID          string        `bson:"UserID"`
 	Access          string        `bson:"Access"`
 	AccessCreateAt  time.Time     `bson:"AccessCreateAt"`
 	AccessExpiresIn time.Duration `bson:"AccessExpiresIn"`
-}
-
-// GetUserID the user id
-func (t *Token) GetUserID() string {
-	return t.UserID
-}
-
-// SetUserID the user id
-func (t *Token) SetUserID(userID string) {
-	t.UserID = userID
 }
 
 // GetAccess access Token

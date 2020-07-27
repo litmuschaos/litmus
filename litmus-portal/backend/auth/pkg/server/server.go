@@ -1,25 +1,33 @@
 package server
 
 import (
-	"encoding/json"
 	"net/http"
 	"strings"
 	"time"
 
+	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
 	log "github.com/golang/glog"
 
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/errors"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/generates"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/manage"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/models"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/store"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/types"
 )
 
-// NewDefaultServer create a default authorization server
-func NewDefaultServer(manager *manage.Manager) *Server {
-	return NewServer(NewConfig(), manager)
-}
-
 // NewServer create authorization server
-func NewServer(cfg *Config, manager *manage.Manager) *Server {
+func NewServer(cfg *Config) *Server {
+
+	manager := manage.NewManager()
+
+	userStoreCfg := store.NewConfig(types.DefaultDBServerURL, types.DefaultAuthDB)
+
+	manager.MustUserStorage(store.NewUserStore(userStoreCfg, store.NewDefaultUserConfig()))
+
+	manager.MapAccessGenerate(generates.NewJWTAccessGenerate([]byte(types.DefaultAPISecret), jwt.SigningMethodHS512))
+
 	srv := &Server{
 		Config:  cfg,
 		Manager: manager,
@@ -34,64 +42,51 @@ type Server struct {
 	Manager *manage.Manager
 }
 
-func (s *Server) redirectError(w http.ResponseWriter, err error) error {
+func (s *Server) redirectError(c *gin.Context, err error) {
 	data, _, _ := s.getErrorData(err)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.WriteHeader(http.StatusUnauthorized)
-	return s.redirect(w, data)
+	c.JSON(http.StatusUnauthorized, data)
 }
 
-func (s *Server) redirect(w http.ResponseWriter, data interface{}) error {
-
-	response, err := json.Marshal(data)
-	if err != nil {
-		return err
-	}
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	_, err = w.Write(response)
-	return err
+func (s *Server) redirect(c *gin.Context, data interface{}) {
+	c.JSON(http.StatusOK, data)
 }
 
 // ValidationAuthenticateRequest the authenticate request validation
-func (s *Server) validationAuthenticateRequest(r *http.Request) (*manage.TokenGenerateRequest, error) {
-	if !(r.Method == "GET" || r.Method == "POST") {
+func (s *Server) validationAuthenticateRequest(user *models.User) (*manage.TokenGenerateRequest, error) {
+	username := user.GetUserName()
+	password := user.GetPassword()
+	if username == "" || password == "" {
 		return nil, errors.ErrInvalidRequest
 	}
 
-	userID, password := r.FormValue("username"), r.FormValue("password")
-	if userID == "" || password == "" {
-		return nil, errors.ErrInvalidRequest
-	}
-
-	userInfo, err := s.Manager.VerifyUserPassword(userID, password)
+	userInfo, err := s.Manager.VerifyUserPassword(username, password)
 	if err != nil {
 		return nil, err
 	}
 
 	req := &manage.TokenGenerateRequest{
 		UserInfo: userInfo,
-		Request:  r,
 	}
 	return req, nil
 }
 
 // HandleAuthenticateRequest the authorization request handling
-func (s *Server) HandleAuthenticateRequest(w http.ResponseWriter, r *http.Request) error {
-	ctx := r.Context()
+func (s *Server) HandleAuthenticateRequest(c *gin.Context, user *models.User) {
 
-	tgr, err := s.validationAuthenticateRequest(r)
+	tgr, err := s.validationAuthenticateRequest(user)
 	if err != nil {
-		return s.redirectError(w, err)
+		s.redirectError(c, err)
+		return
 	}
 
-	ti, err := s.Manager.GenerateAuthToken(ctx, tgr)
+	ti, err := s.Manager.GenerateAuthToken(tgr)
 	if err != nil {
-		return s.redirectError(w, err)
+		s.redirectError(c, err)
+		return
 	}
 
-	return s.redirect(w, s.getTokenData(ti))
+	s.redirect(c, s.getTokenData(ti))
+	return
 }
 
 // GetTokenData token data
@@ -179,38 +174,27 @@ func (s *Server) getTokenFromHeader(r *http.Request) (string, error) {
 	return token, nil
 }
 
-//SignupRequest creates a user
-func (s *Server) SignupRequest(w http.ResponseWriter, r *http.Request) (err error) {
-	password, username := r.FormValue("password"), r.FormValue("username")
-	if username == "" || password == "" {
-		return s.redirectError(w, errors.ErrInvalidRequest)
-	}
-	user := &models.User{
-		UserName: username,
-		Password: password,
-	}
-	if err = s.Manager.CreateUser(r.Context(), user); err != nil {
-		return s.redirectError(w, err)
-	}
-	return s.redirect(w, user.GetPublicInfo())
-}
-
 // UpdateRequest validates the request
-func (s *Server) UpdateRequest(w http.ResponseWriter, r *http.Request) (err error) {
+func (s *Server) UpdateRequest(c *gin.Context, user *models.User) {
 
-	tokenString, err := s.getTokenFromHeader(r)
+	tokenString, err := s.getTokenFromHeader(c.Request)
 	if err != nil {
-		return s.redirectError(w, err)
+		s.redirectError(c, err)
+		return
 	}
 
-	userInfo, err := s.Manager.ParseToken(r.Context(), tokenString)
+	userInfo, err := s.Manager.ParseToken(tokenString)
 	if err != nil {
-		return s.redirectError(w, err)
+		s.redirectError(c, err)
+		return
 	}
 
-	updatedUserInfo, err := s.Manager.UpdateUserDetails(r, userInfo.UserName)
+	user.UserName = userInfo.GetUserName()
+	updatedUserInfo, err := s.Manager.UpdateUserDetails(user)
 	if err != nil {
-		s.redirectError(w, err)
+		s.redirectError(c, err)
+		return
 	}
-	return s.redirect(w, updatedUserInfo)
+	s.redirect(c, updatedUserInfo)
+	return
 }
