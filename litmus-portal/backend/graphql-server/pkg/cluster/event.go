@@ -16,6 +16,7 @@ func NewEvent(clusterEvent model.ClusterEventInput, r store.StateData) (string, 
 		log.Print("ERROR", err)
 		return "", err
 	}
+
 	if len(cluster) == 1 && cluster[0].AccessKey == clusterEvent.AccessKey && cluster[0].IsRegistered {
 		log.Print("CLUSTER EVENT : ID-", cluster[0].ClusterID, " PID-", cluster[0].ProjectID)
 		SendClusterEvent("cluster-event", clusterEvent.EventName, clusterEvent.Description, cluster[0], r)

@@ -3,18 +3,20 @@ package cluster
 import (
 	"errors"
 	"fmt"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/util"
 	"os"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
-var secret = ""
+var secret = os.Getenv("SECRET")
 
 //ClusterCreateJWT generates jwt used in cluster registration
 func ClusterCreateJWT(id string) (string, error) {
-	initSecret()
+	if secret == "" {
+		panic("JWT SECRET NOT FOUND")
+	}
+
 	expirationTime := time.Now().Add(12 * time.Hour)
 	claims := jwt.MapClaims{}
 	claims["cluster_id"] = id
@@ -25,12 +27,17 @@ func ClusterCreateJWT(id string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return tokenString, nil
 }
 
 //ClusterValidateJWT validates the cluster jwt
 func ClusterValidateJWT(token string) (string, error) {
-	initSecret()
+
+	if secret == "" {
+		panic("JWT SECRET NOT FOUND")
+	}
+
 	tkn, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -40,6 +47,7 @@ func ClusterValidateJWT(token string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	if !tkn.Valid {
 		return "", errors.New("Invalid Token")
 	}
@@ -48,16 +56,4 @@ func ClusterValidateJWT(token string) (string, error) {
 		return claims["cluster_id"].(string), nil
 	}
 	return "", errors.New("Invalid Token")
-}
-
-//Generates a random secret at startup or uses env var, needed for jwt ops
-func initSecret() {
-	if secret == "" {
-		sc := os.Getenv("SECRET")
-		if sc == "" {
-			secret = util.RandomString(16)
-		} else {
-			secret = sc
-		}
-	}
 }

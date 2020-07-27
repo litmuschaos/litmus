@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-//ManifestParser parses template yaml and generates dynamic manifest with specified keys
+//ManifestParser parses manifests yaml and generates dynamic manifest with specified keys
 func ManifestParser(id, key, server, template string) ([]string, error) {
 	file, err := os.Open(template)
 	if err != nil {

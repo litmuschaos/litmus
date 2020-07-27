@@ -6,7 +6,6 @@ package graph
 import (
 	"context"
 	"errors"
-	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/data-store"
 	"log"
 	"strconv"
 	"time"
@@ -14,6 +13,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/cluster"
+	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/data-store"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database"
 )
 
@@ -27,23 +27,6 @@ func (r *mutationResolver) ClusterConfirm(ctx context.Context, identity model.Cl
 
 func (r *mutationResolver) NewClusterEvent(ctx context.Context, clusterEvent model.ClusterEventInput) (string, error) {
 	return cluster.NewEvent(clusterEvent, store.State)
-}
-
-func (r *mutationResolver) NewClusterAction(ctx context.Context, action model.ClusterActionInput) (string, error) {
-	log.Print("NEW CLUSTER ACTION ", action.ClusterID)
-	reqCluster, err := database.GetCluster(action.ClusterID)
-	if err != nil {
-		return "", err
-	}
-	if len(reqCluster) != 1 {
-		return "", errors.New("SERVER ERROR")
-	}
-	clusterAction := model.ClusterAction{
-		ProjectID: reqCluster[0].ProjectID,
-		Action:    action.Action,
-	}
-	cluster.SendClusterAction(reqCluster[0].ClusterID, clusterAction, store.State)
-	return "ACTION FORWARDED TO CLUSTER", nil
 }
 
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {

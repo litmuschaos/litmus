@@ -24,12 +24,3 @@ func SendClusterEvent(eventType, eventName, description string, cluster model.Cl
 	}
 	r.Mutex.Unlock()
 }
-
-//SendClusterAction sends the actions requested by the users to the specific cluster
-func SendClusterAction(cid string, action model.ClusterAction, r store.StateData) {
-	r.Mutex.Lock()
-	if r.ConnectedCluster != nil {
-		r.ConnectedCluster[cid] <- &action
-	}
-	r.Mutex.Unlock()
-}

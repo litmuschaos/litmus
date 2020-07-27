@@ -71,10 +71,9 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		ClusterConfirm   func(childComplexity int, identity model.ClusterIdentity) int
-		NewClusterAction func(childComplexity int, action model.ClusterActionInput) int
-		NewClusterEvent  func(childComplexity int, clusterEvent model.ClusterEventInput) int
-		UserClusterReg   func(childComplexity int, clusterInput model.ClusterInput) int
+		ClusterConfirm  func(childComplexity int, identity model.ClusterIdentity) int
+		NewClusterEvent func(childComplexity int, clusterEvent model.ClusterEventInput) int
+		UserClusterReg  func(childComplexity int, clusterInput model.ClusterInput) int
 	}
 
 	Query struct {
@@ -90,7 +89,6 @@ type MutationResolver interface {
 	UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (string, error)
 	ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (string, error)
 	NewClusterEvent(ctx context.Context, clusterEvent model.ClusterEventInput) (string, error)
-	NewClusterAction(ctx context.Context, action model.ClusterActionInput) (string, error)
 }
 type SubscriptionResolver interface {
 	ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error)
@@ -250,18 +248,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.ClusterConfirm(childComplexity, args["identity"].(model.ClusterIdentity)), true
 
-	case "Mutation.newClusterAction":
-		if e.complexity.Mutation.NewClusterAction == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_newClusterAction_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.NewClusterAction(childComplexity, args["action"].(model.ClusterActionInput)), true
-
 	case "Mutation.newClusterEvent":
 		if e.complexity.Mutation.NewClusterEvent == nil {
 			break
@@ -399,7 +385,7 @@ type Cluster {
   cluster_id: ID!
   project_id: ID!
   cluster_name: String!
-  description: String!
+  description: String
   platform_name: String!
   access_key: String!
   is_registered: Boolean!
@@ -411,7 +397,7 @@ type Cluster {
 
 input ClusterInput{
   cluster_name: String!
-  description: String!
+  description: String
   platform_name: String!
   project_id: ID!
   cluster_type: String!
@@ -427,7 +413,7 @@ type ClusterEvent {
 
 type ClusterAction {
     project_id: ID!
-    action:String!
+    action: String!
 }
 
 input ClusterActionInput {
@@ -439,7 +425,7 @@ input ClusterEventInput{
   event_name: String!
   description: String!
   cluster_id: String!
-  access_key:String!
+  access_key: String!
 }
 
 input ClusterIdentity{
@@ -448,16 +434,24 @@ input ClusterIdentity{
 }
 
 type Mutation{
-    userClusterReg(clusterInput:ClusterInput!):String!
-    clusterConfirm(identity:ClusterIdentity!):String!
-    newClusterEvent(clusterEvent:ClusterEventInput!):String!
-    newClusterAction(action:ClusterActionInput!):String!
+    #It is used to create external cluster.
+    userClusterReg(clusterInput: ClusterInput!): String!
+    
+    #It is used to confirm the subscriber registration
+    clusterConfirm(identity: ClusterIdentity!): String!
+    
+    #It is used to send cluster related events from the subscriber
+    newClusterEvent(clusterEvent: ClusterEventInput!): String!
 }
 
 type Subscription{
-    clusterEventListener(project_id:String!):ClusterEvent!
-    clusterConnect(clusterInfo:ClusterIdentity!):ClusterAction!
-}`, BuiltIn: false},
+    #It is used to listen cluster events from the graphql server
+    clusterEventListener(project_id: String!): ClusterEvent!
+    
+    #It is used to listen cluster operation request from the graphql server
+    clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
+}
+`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
@@ -476,20 +470,6 @@ func (ec *executionContext) field_Mutation_clusterConfirm_args(ctx context.Conte
 		}
 	}
 	args["identity"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_newClusterAction_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 model.ClusterActionInput
-	if tmp, ok := rawArgs["action"]; ok {
-		arg0, err = ec.unmarshalNClusterActionInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterActionInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["action"] = arg0
 	return args, nil
 }
 
@@ -725,14 +705,11 @@ func (ec *executionContext) _Cluster_description(ctx context.Context, field grap
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Cluster_platform_name(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
@@ -1318,47 +1295,6 @@ func (ec *executionContext) _Mutation_newClusterEvent(ctx context.Context, field
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().NewClusterEvent(rctx, args["clusterEvent"].(model.ClusterEventInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_newClusterAction(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Mutation",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_newClusterAction_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().NewClusterAction(rctx, args["action"].(model.ClusterActionInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2699,7 +2635,7 @@ func (ec *executionContext) unmarshalInputClusterInput(ctx context.Context, obj 
 			}
 		case "description":
 			var err error
-			it.Description, err = ec.unmarshalNString2string(ctx, v)
+			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2763,9 +2699,6 @@ func (ec *executionContext) _Cluster(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "description":
 			out.Values[i] = ec._Cluster_description(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "platform_name":
 			out.Values[i] = ec._Cluster_platform_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -2918,11 +2851,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "newClusterEvent":
 			out.Values[i] = ec._Mutation_newClusterEvent(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "newClusterAction":
-			out.Values[i] = ec._Mutation_newClusterAction(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -3274,10 +3202,6 @@ func (ec *executionContext) marshalNClusterAction2ᚖgithubᚗcomᚋlitmuschaos�
 		return graphql.Null
 	}
 	return ec._ClusterAction(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNClusterActionInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterActionInput(ctx context.Context, v interface{}) (model.ClusterActionInput, error) {
-	return ec.unmarshalInputClusterActionInput(ctx, v)
 }
 
 func (ec *executionContext) marshalNClusterEvent2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterEvent(ctx context.Context, sel ast.SelectionSet, v model.ClusterEvent) graphql.Marshaler {

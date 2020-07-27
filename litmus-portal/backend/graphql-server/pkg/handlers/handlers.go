@@ -33,9 +33,9 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 	if len(reqCluster) == 1 && !reqCluster[0].IsRegistered {
 		var respData []string
 		if strings.ToLower(reqCluster[0].ClusterType) == "internal" {
-			respData, err = cluster.ManifestParser(reqCluster[0].ClusterID, reqCluster[0].AccessKey, serviceAddr+"/query", "template/self-template.yml")
+			respData, err = cluster.ManifestParser(reqCluster[0].ClusterID, reqCluster[0].AccessKey, serviceAddr+"/query", "manifests/subscriber.yml")
 		} else {
-			respData, err = cluster.ManifestParser(reqCluster[0].ClusterID, reqCluster[0].AccessKey, addr+"/query", "template/template.yml")
+			respData, err = cluster.ManifestParser(reqCluster[0].ClusterID, reqCluster[0].AccessKey, addr+"/query", "manifests/subscriber.yml")
 		}
 		if err != nil {
 			log.Print("ERROR", err)
