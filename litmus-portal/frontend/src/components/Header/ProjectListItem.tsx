@@ -20,15 +20,13 @@ interface ProjectListItemProps {
   callbackToSetActiveProjectID: ProjectsCallBackType;
 }
 
-function ProjectListItem(props: ProjectListItemProps) {
+const ProjectListItem: React.FC<ProjectListItemProps> = ({
+  project,
+  divider,
+  selectedProjectID,
+  callbackToSetActiveProjectID,
+}) => {
   const classes = useStyles();
-
-  const {
-    project,
-    divider,
-    selectedProjectID,
-    callbackToSetActiveProjectID,
-  } = props;
 
   const [projSelected, setProjSelected] = useState(
     project.id === selectedProjectID
@@ -90,6 +88,6 @@ function ProjectListItem(props: ProjectListItemProps) {
       </ListItemSecondaryAction>
     </ListItem>
   );
-}
+};
 
 export default ProjectListItem;

@@ -12,7 +12,7 @@ import { UserData } from '../../models/user';
 import { RootState } from '../../redux/reducers';
 import { NotificationIds, Project, Message } from '../../models/header';
 
-const Header = () => {
+const Header: React.FC = () => {
   const classes = useStyles();
 
   const userData: UserData = useSelector((state: RootState) => state.userData);

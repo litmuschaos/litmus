@@ -17,16 +17,14 @@ interface ProfileInfoDropdownSectionProps {
   CallbackToSetSelectedProjectID: ProjectsCallBackType;
 }
 
-const ProfileDropdownSection = (props: ProfileInfoDropdownSectionProps) => {
-  const {
-    name,
-    email,
-    username,
-    projects,
-    selectedProjectID,
-    CallbackToSetSelectedProjectID,
-  } = props;
-
+const ProfileDropdownSection: React.FC<ProfileInfoDropdownSectionProps> = ({
+  name,
+  email,
+  username,
+  projects,
+  selectedProjectID,
+  CallbackToSetSelectedProjectID,
+}) => {
   const classes = useStyles();
 
   const [isProfilePopoverOpen, setProfilePopoverOpen] = useState(false);

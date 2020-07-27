@@ -1,6 +1,5 @@
 /* eslint-disable no-nested-ternary */
 import React, { useState, useRef } from 'react';
-import PropTypes from 'prop-types';
 import {
   Popover,
   IconButton,
@@ -24,10 +23,12 @@ interface NotificationDropdownProps {
   CallbackToHeaderOnDeleteNotification: NotificationsCallBackType;
 }
 
-function NotificationsDropdown(props: NotificationDropdownProps) {
+const NotificationsDropdown: React.FC<NotificationDropdownProps> = ({
+  messages,
+  count,
+  CallbackToHeaderOnDeleteNotification,
+}) => {
   const classes = useStyles();
-
-  const { messages, count, CallbackToHeaderOnDeleteNotification } = props;
 
   const anchorEl = useRef();
 
@@ -111,10 +112,6 @@ function NotificationsDropdown(props: NotificationDropdownProps) {
       </Popover>
     </div>
   );
-}
-
-NotificationsDropdown.propTypes = {
-  messages: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default NotificationsDropdown;

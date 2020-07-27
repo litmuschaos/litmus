@@ -17,14 +17,10 @@ import { history } from '../../redux/configureStore';
 import useActions from '../../redux/actions';
 import { Project, ProjectsCallBackType } from '../../models/header';
 
-interface OnCloseType {
-  (): void;
-}
-
 interface ProfileInfoDropdownItemProps {
   anchorEl: HTMLElement;
   isOpen: boolean;
-  onClose: OnCloseType;
+  onClose: () => void;
   name: string;
   email: string;
   projects: Project[];

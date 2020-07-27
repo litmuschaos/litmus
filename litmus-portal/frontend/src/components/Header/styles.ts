@@ -84,7 +84,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   tabContainerProfileDropdownItem: {
     overflowY: 'auto',
-    maxHeight: 350,
+    maxHeight: '21.875rem',
     marginTop: 0,
     marginBottom: 0,
     paddingTop: 0,
@@ -99,11 +99,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   userName: {
-    fontSize: 14,
+    fontSize: '0.875rem',
   },
 
   userEmail: {
-    fontSize: 12,
+    fontSize: '0.75rem',
     color: 'grey',
     paddingBottom: theme.spacing(2),
   },
@@ -130,7 +130,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   buttonEditProfile: {
     borderRadius: theme.spacing(0.3),
     padding: theme.spacing(0.5, 2),
-    fontSize: 12,
+    fontSize: '0.75rem',
     textTransform: 'none',
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(1),
@@ -158,22 +158,22 @@ const useStyles = makeStyles((theme: Theme) => ({
   // Styles for NotificationDropdown.
   tabContainer: {
     overflowY: 'auto',
-    maxHeight: 350,
+    maxHeight: '21.875rem',
   },
 
   popoverPaper: {
     width: '100%',
-    maxWidth: 350,
+    maxWidth: '21.875rem',
     marginTop: '1.0625rem',
     marginLeft: theme.spacing(2),
     marginRight: theme.spacing(1),
     [theme.breakpoints.down('sm')]: {
-      maxWidth: 270,
+      maxWidth: '16.875rem',
     },
   },
 
   divider: {
-    marginTop: -2,
+    marginTop: theme.spacing(-0.25),
   },
 
   noShadow: {

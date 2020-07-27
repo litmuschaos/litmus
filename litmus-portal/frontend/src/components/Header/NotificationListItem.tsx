@@ -18,9 +18,11 @@ interface NotificationListItemProps {
   CallbackOnDeleteNotification: NotificationsCallBackType;
 }
 
-function NotificationListItem(props: NotificationListItemProps) {
-  const { message, divider, CallbackOnDeleteNotification } = props;
-
+const NotificationListItem: React.FC<NotificationListItemProps> = ({
+  message,
+  divider,
+  CallbackOnDeleteNotification,
+}) => {
   const [hasErrorOccurred, setHasErrorOccurred] = useState(false);
 
   const [messageActive, setMessageActive] = useState(true);
@@ -71,6 +73,6 @@ function NotificationListItem(props: NotificationListItemProps) {
   }
 
   return <div />;
-}
+};
 
 export default NotificationListItem;
