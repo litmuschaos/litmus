@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subscriber
+  namespace: litmus
+  labels:
+    app: subscriber
+spec:
+  selector:
+    matchLabels:
+      app: subscriber
+  template:
+    metadata:
+      labels:
+        app: subscriber
+    spec:
+      containers:
+        - name: subscriber
+          image: 'litmuschaos/litmusportal-subscriber:ci'
+          env:
+            - name: GQL_SERVER
+              value: #{SERVER}
+            - name: CID
+              value: #{CID}
+            - name: KEY
+              value: #{KEY}

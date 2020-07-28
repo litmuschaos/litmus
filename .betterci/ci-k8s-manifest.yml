@@ -54,6 +54,17 @@ spec:
       containers:
       - name: graphql-server
         image: #{portal-server}
+        env:
+          - name: DB_SERVER
+            value: mongo-service:27017
+          - name: DB_NAME
+            value: litmus
+          - name: COLLECTION_NAME
+            value: cluster-collection
+          - name: EXTERNAL_ADDRESS
+            value: ""
+          - name: SERVICE_ADDRESS
+            value: litmusportal-server-service:8080
         ports:
         - containerPort: 8080
         imagePullPolicy: Always

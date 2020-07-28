@@ -62,6 +62,19 @@ spec:
       containers:
       - name: graphql-server
         image: litmuschaos/litmusportal-server:ci
+        env:
+          - name: DB_SERVER
+            value: mongo-service:27017
+          - name: DB_NAME
+            value: litmus
+          - name: COLLECTION_NAME
+            value: cluster-collection
+          - name: SECRET
+            value: "12345678"
+          - name: EXTERNAL_ADDRESS
+            value: ""
+          - name: SERVICE_ADDRESS
+            value: litmusportal-server-service:8080
         ports:
         - containerPort: 8080
         imagePullPolicy: Always
@@ -82,6 +95,7 @@ spec:
     - name: graphql-server
       port: 9002
       targetPort: 8080
+      nodePort: 31000
     - name: auth-server
       port: 9003
       targetPort: 3000
@@ -146,3 +160,50 @@ spec:
       targetPort: 27017
   selector:
     component: database
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: litmus-svc-account
+  namespace: litmus
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name:litmus-rb
+  namespace: litmus
+subjects:
+  - kind: ServiceAccount
+    name: litmus-svc-account
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: self-deployer
+  namespace: litmus
+  labels:
+    component: self-deployer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: self-deployer
+  template:
+    metadata:
+      labels:
+        component: self-deployer
+    spec:
+      containers:
+        - name: deployer
+          image: litmuschaos/litmusportal-self-deployer:ci
+          imagePullPolicy: Always
+          env:
+            - name: SERVER
+              value: http://litmusportal-server-service:8080
+            - name: SELF_CLUSTER
+              value: "true"
+      serviceAccountName: litmus-svc-account
