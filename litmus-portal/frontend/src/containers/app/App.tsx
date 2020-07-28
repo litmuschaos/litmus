@@ -22,7 +22,7 @@ interface RoutesProps {
 
 const Routes: React.FC<RoutesProps> = ({ userData }) => {
   const classes = useStyles();
-  
+
   if (userData === '') {
     return (
       <div className={classes.content}>
@@ -33,7 +33,7 @@ const Routes: React.FC<RoutesProps> = ({ userData }) => {
       </div>
     );
   }
-  
+
   return (
     <div className={classes.content}>
       <Switch>

@@ -4,8 +4,8 @@ FROM golang:1.14.4-alpine
 LABEL maintainer="LitmusChaos"
 
 # All these steps will be cached
-RUN mkdir /agent
-WORKDIR /agent
+RUN mkdir /subscriber
+WORKDIR /subscriber
 
 # <- COPY go.mod and go.sum files to the workspace
 COPY go.mod .
@@ -18,5 +18,5 @@ RUN go mod download
 COPY . .
 
 # Go build
-RUN go build -o agent .
-ENTRYPOINT ["./agent"]
+RUN go build -o subscriber .
+ENTRYPOINT ["./subscriber"]

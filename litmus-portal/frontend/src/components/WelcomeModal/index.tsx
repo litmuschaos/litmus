@@ -31,7 +31,6 @@ const Welcomemodal: React.FC<WelcomemodalProps> = ({ isOpen }) => {
         onClose={handleClose}
         disableBackdropClick
         disableEscapeKeyDown
-        
       >
         {body}
       </Modal>

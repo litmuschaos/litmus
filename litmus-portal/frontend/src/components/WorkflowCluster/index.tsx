@@ -29,7 +29,7 @@ const WorkflowCluster = () => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue((event.target as HTMLInputElement).value);
   };
-  const handleClick=()=>{}
+  const handleClick = () => {};
   return (
     <div className={classes.rootcontainer}>
       {/* Arrow mark */}
@@ -81,22 +81,21 @@ const WorkflowCluster = () => {
           <Button variant="contained" color="secondary" data-cy="selectButton">
             Select and continue
           </Button>
-        </div>    
-        
+        </div>
+
         <div className={classes.or}>or</div>
-        <div >
+        <div>
           <ButtonOutLine
             isDisabled={false}
             data-cy="selectLitmusKubernetes"
             handleClick={handleClick}
           >
-              <Typography>Install Litmus agents to other Kubernetes cluster</Typography>
+            <Typography>
+              Install Litmus agents to other Kubernetes cluster
+            </Typography>
           </ButtonOutLine>
-          
         </div>
-      
-    </div>
-
+      </div>
     </div>
   );
 };
