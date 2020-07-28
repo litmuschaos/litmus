@@ -12,6 +12,7 @@ const Workflows = () => {
         Schedule a new <strong>chaos workflow</strong>
       </Typography>
       <CustomStepper />
+      {/* <WorkflowTabs /> */}
     </Scaffold>
   );
 };
