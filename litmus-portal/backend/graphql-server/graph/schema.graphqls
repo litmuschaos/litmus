@@ -2,20 +2,103 @@
 #
 # https://gqlgen.com/getting-started/
 
-input clusterInput{
-  id: Int!
-  data: String!
+type Cluster {
+  cluster_id: ID!
+  project_id: ID!
+  cluster_name: String!
+  description: String
+  platform_name: String!
+  access_key: String!
+  is_registered: Boolean!
+  is_active: Boolean!
+  updated_at: String!
+  created_at: String!
+  cluster_type: String!
 }
 
-type clusterResponse{
-  id: Int!
-  data: String!
+input ClusterInput{
+  cluster_name: String!
+  description: String
+  platform_name: String!
+  project_id: ID!
+  cluster_type: String!
 }
 
-type Mutation {
-  createCluster(input: clusterInput!): clusterResponse!
+type ClusterEvent {
+  event_id: ID!
+  event_type: String!
+  event_name: String!
+  description: String!
+  cluster: Cluster!
 }
 
-type Subscription {
-  clusterSubscription: clusterResponse!
+type ClusterAction {
+    project_id: ID!
+    action: String!
+}
+
+input ClusterActionInput {
+    cluster_id: ID!
+    action:String!
+}
+
+input ClusterEventInput{
+  event_name: String!
+  description: String!
+  cluster_id: String!
+  access_key: String!
+}
+
+input ClusterIdentity{
+  cluster_id: String!
+  access_key: String!
+}
+
+input chaosWorkFlowInput {
+  workflow_yaml: String!
+  cronSyntax: String!
+  Workflow_name: String!
+  Workflow_description: String!
+  Weightages: [weightagesInput]!
+  isCustomWorkflow: Boolean!
+}
+
+input weightagesInput {
+  experiment_name: String!
+  weightage: Int!
+}
+
+type weightages {
+  experiment_name: String!
+  weightage: Int!
+}
+
+type chaosWorkFlowResponse {
+  workflow_id: String!
+  cronSyntax: String!
+  Workflow_name: String!
+  Workflow_description: String!
+  Weightages: [weightages]!
+  isCustomWorkflow: Boolean!
+}
+
+type Mutation{
+    #It is used to create external cluster.
+    userClusterReg(clusterInput: ClusterInput!): String!
+    
+    #It is used to confirm the subscriber registration
+    clusterConfirm(identity: ClusterIdentity!): String!
+    
+    #It is used to send cluster related events from the subscriber
+    newClusterEvent(clusterEvent: ClusterEventInput!): String!
+    
+    createChaosWorkFlow(input: chaosWorkFlowInput): chaosWorkFlowResponse!
+}
+
+type Subscription{
+    #It is used to listen cluster events from the graphql server
+    clusterEventListener(project_id: String!): ClusterEvent!
+    
+    #It is used to listen cluster operation request from the graphql server
+    clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
 }

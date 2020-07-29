@@ -1,10 +1,12 @@
-import { Typography } from '@material-ui/core';
+import { Modal, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
+import Center from '../../containers/layouts/Center';
+import ButtonFilled from '../Button/ButtonFilled';
+import ButtonOutline from '../Button/ButtonOutline';
 import CustomSlider from '../CustomSlider';
-import CustomResultModal from '../ResultModal';
-import useStyles from './styles';
-import ButtonOutlineIcon from '../ButtonOutlineIcon';
 import InfoTooltip from '../InfoTooltip';
+import ResultTable from './ResultTable';
+import useStyles from './styles';
 
 const ReliablityScore = () => {
   const [value, setValue] = useState<number | Array<number>>([0]);
@@ -29,8 +31,11 @@ const ReliablityScore = () => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [totalTest] = React.useState(12);
-  const handleModal = () => {
+  const handleOpen = () => {
     setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
   };
   return (
     <form className={classes.root}>
@@ -50,7 +55,7 @@ const ReliablityScore = () => {
           </Typography>
         </div>
         <hr className={classes.horizontalLine} />
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <div className={classes.divRow}>
           <Typography className={classes.testHeading}>
             <strong>Kubernetes conformance test</strong>
           </Typography>
@@ -87,10 +92,10 @@ const ReliablityScore = () => {
         </div>
         <hr className={classes.horizontalLine} />
         <div className={classes.modalDiv}>
-          <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <ButtonOutlineIcon
+          <div className={classes.divRow}>
+            <ButtonOutline
               isDisabled={false}
-              handleClick={handleModal}
+              handleClick={handleOpen}
               data-cy="testRunButton"
             >
               <div className={classes.buttonOutlineDiv}>
@@ -99,18 +104,29 @@ const ReliablityScore = () => {
                   Demo Launch
                 </Typography>
               </div>
-            </ButtonOutlineIcon>
-            <div style={{ marginLeft: 10 }}>
+            </ButtonOutline>
+            <div className={classes.toolTipDiv}>
               <InfoTooltip value="Text Default" />
             </div>
-            {open === true ? (
-              <CustomResultModal
-                isOpen={() => setOpen(false)}
-                testValue={testValue}
-              />
-            ) : (
-              <></>
-            )}
+            <Modal open={open}>
+              <div className={classes.modalContainer}>
+                <div>
+                  <ResultTable testValue={testValue} />
+                </div>
+                <hr className={classes.horizontalLineResult} />
+                <div className={classes.gotItBtn}>
+                  <Center>
+                    <ButtonFilled
+                      handleClick={handleClose}
+                      data-cy="gotItButton"
+                      isPrimary
+                    >
+                      <div>Got it</div>
+                    </ButtonFilled>
+                  </Center>
+                </div>
+              </div>
+            </Modal>
           </div>
           <div>
             <Typography className={classes.testInfo}>

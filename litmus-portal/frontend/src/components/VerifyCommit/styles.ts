@@ -132,5 +132,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   textEdit: {
     marginTop: theme.spacing(7.5),
   },
+  buttonOutlineText: {
+    padding: theme.spacing(1.5),
+  },
 }));
 export default useStyles;

@@ -35,6 +35,9 @@ const useStyles = makeStyles((theme: Theme) => ({
       fontSize: theme.spacing(1),
     },
   },
+  nextArrow: {
+    marginLeft: theme.spacing(2.5),
+  },
 }));
 
 export default useStyles;

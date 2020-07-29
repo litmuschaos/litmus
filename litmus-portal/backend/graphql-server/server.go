@@ -1,29 +1,30 @@
 package main
 
 import (
+	"github.com/gorilla/mux"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/generated"
+	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/data-store"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/handlers"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/generated"
 )
 
 const defaultPort = "8080"
 
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = defaultPort
-	}
-
+	port := defaultPort
+	database.DBInit()
+	store.StoreInit()
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
-
-	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
-
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	router := mux.NewRouter()
+	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	router.Handle("/query", srv)
+	router.HandleFunc("/file/{key}", handlers.FileHandler)
+	log.Println("Server is running")
+	log.Fatal(http.ListenAndServe(":"+port, router))
 }

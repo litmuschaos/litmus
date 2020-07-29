@@ -1,9 +1,7 @@
 package generates
 
 import (
-	"context"
 	"fmt"
-	"net/http"
 	"strings"
 	"time"
 
@@ -34,7 +32,6 @@ type GenerateBasic struct {
 	UserInfo  *models.PublicUserInfo
 	CreateAt  *time.Time
 	TokenInfo *models.Token
-	Request   *http.Request
 }
 
 // JWTAccessGenerate generate the jwt access token
@@ -44,7 +41,7 @@ type JWTAccessGenerate struct {
 }
 
 // Token based on the UUID generated token
-func (a *JWTAccessGenerate) Token(ctx context.Context, data *GenerateBasic) (string, error) {
+func (a *JWTAccessGenerate) Token(data *GenerateBasic) (string, error) {
 	claims := &JWTAccessClaims{
 		PublicUserInfo: data.UserInfo,
 		StandardClaims: jwt.StandardClaims{
@@ -94,7 +91,7 @@ func (a *JWTAccessGenerate) isHs() bool {
 }
 
 // Validate validates  the token
-func (a *JWTAccessGenerate) Validate(ctx context.Context, tokenString string) (bool, error) {
+func (a *JWTAccessGenerate) Validate(tokenString string) (bool, error) {
 
 	token, err := a.parseToken(tokenString)
 	if err != nil {
@@ -105,7 +102,7 @@ func (a *JWTAccessGenerate) Validate(ctx context.Context, tokenString string) (b
 }
 
 // Parse parses a UserName from a token
-func (a *JWTAccessGenerate) Parse(ctx context.Context, tokenString string) (*models.PublicUserInfo, error) {
+func (a *JWTAccessGenerate) Parse(tokenString string) (*models.PublicUserInfo, error) {
 
 	token, err := a.parseToken(tokenString)
 	if err != nil {

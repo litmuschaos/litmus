@@ -1,8 +1,9 @@
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
-import NavigateNextIcon from '@material-ui/icons/NavigateNextTwoTone';
 import * as React from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import useStyles from './styles';
+import { history } from '../../redux/configureStore';
 
 interface CustomBreadcrumbsProps {
   location: string;
@@ -10,27 +11,36 @@ interface CustomBreadcrumbsProps {
 
 const CustomBreadcrumbs: React.FC<CustomBreadcrumbsProps> = ({ location }) => {
   const path: string[] = location.split('/');
+
   let intermediatRoutes: string = '/';
+
   const classes = useStyles();
+
+  useEffect(() => {}, [path]);
+
   return (
-    <Breadcrumbs
-      separator={<NavigateNextIcon fontSize="small" />}
-      aria-label="breadcrumb"
-    >
-      <Link to="/" className={classes.breadCrumb}>
-        Home
-      </Link>
-      {path.map((p: string) => {
-        if (p) {
-          intermediatRoutes += p;
+    <Breadcrumbs aria-label="breadcrumb">
+      {path.map((path: string) => {
+        if (path) {
+          intermediatRoutes += path;
+
           const link = (
-            <Link to={intermediatRoutes} className={classes.breadCrumb}>
-              {p.charAt(0).toUpperCase() + p.slice(1)}
+            <Link
+              to={intermediatRoutes}
+              className={classes.breadCrumb}
+              onClick={() => {
+                history.push(`/${path}`);
+              }}
+            >
+              {path.charAt(0).toUpperCase() + path.slice(1)}
             </Link>
           );
+
           intermediatRoutes += '/';
+
           return link;
         }
+
         return '';
       })}
     </Breadcrumbs>

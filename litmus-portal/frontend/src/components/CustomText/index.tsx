@@ -1,7 +1,7 @@
-import React from 'react';
 import { TextField } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import SaveIcon from '@material-ui/icons/Save';
+import React from 'react';
 
 interface CustomTextProps {
   value: string;
@@ -22,6 +22,7 @@ const CustomText: React.FC<CustomTextProps> = ({ value, id, width }) => {
   return (
     <div>
       <TextField
+        data-cy="text"
         disabled={isDisabled}
         id={id}
         defaultValue={value}
@@ -38,9 +39,9 @@ const CustomText: React.FC<CustomTextProps> = ({ value, id, width }) => {
         }}
       />
       {isDisabled ? (
-        <EditIcon onClick={handleEdit} />
+        <EditIcon onClick={handleEdit} data-cy="edit" />
       ) : (
-        <SaveIcon onClick={handleSave} />
+        <SaveIcon onClick={handleSave} data-cy="save" />
       )}
     </div>
   );

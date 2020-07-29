@@ -27,6 +27,13 @@
       "warn",
       { "extensions": [".js", ".jsx", ".ts", ".tsx"] }
     ],
+    "no-console": [
+      "error",
+      {
+        "allow": ["warn", "error"]
+      }
+    ],
+    "multiline-ternary": 0,
     "no-unused-vars": "off",
     "no-shadow": 0,
     "@typescript-eslint/no-unused-vars": "error",

@@ -62,50 +62,54 @@ function customTheme(options: ThemeOptions) {
       fontSize: 12,
       fontFamily: 'Ubuntu',
     },
-    overrides: {
-      MuiSlider: {
-        thumb: {
-          opacity: 0,
-        },
-        mark: {
-          marginLeft: -6.8,
-          backgroundImage: `url(${Image})`,
-          backgroundColor: 'none',
-          '&[data-index="9"]': {
-            backgroundImage: 'none',
-          },
-        },
-        markActive: {
-          backgroundImage: `url(${Image})`,
-          backgroundColor: 'none',
-        },
-        markLabel: {
-          fontFamily: 'Ubuntu',
-          fontSize: 15,
-          marginTop: -5,
-          marginLeft: -45,
-          color: 'rgba(0, 0, 0, 0.4)',
-        },
-        markLabelActive: {
-          fontFamily: 'Ubuntu',
-          fontSize: 15,
-          color: '#FFFFFF',
-        },
-      },
-      MuiFormLabel: {
-        root: {
-          paddingLeft: 20,
-        },
-        asterisk: {
-          color: 'transparent',
-        },
-      },
-    },
     ...options,
   });
 }
 
-const theme = customTheme({});
+const theme = customTheme({
+  overrides: {
+    MuiSlider: {
+      thumb: {
+        opacity: 0,
+      },
+      mark: {
+        marginLeft: -6.8,
+        backgroundImage: `url(${Image})`,
+        backgroundColor: 'none',
+        '&[data-index="9"]': {
+          backgroundImage: 'none',
+        },
+      },
+      markActive: {
+        backgroundImage: `url(${Image})`,
+        backgroundColor: 'none',
+      },
+      markLabel: {
+        fontFamily: 'Ubuntu',
+        fontSize: 15,
+        marginTop: -5,
+        marginLeft: -45,
+        color: 'rgba(0, 0, 0, 0.4)',
+      },
+      markLabelActive: {
+        fontFamily: 'Ubuntu',
+        fontSize: 15,
+        color: '#FFFFFF',
+      },
+    },
+    MuiFormLabel: {
+      root: {
+        paddingLeft: 20,
+        '&[data-shrink="true"]': {
+          color: '#5B44BA',
+        },
+      },
+      asterisk: {
+        color: 'transparent',
+      },
+    },
+  },
+});
 
 const withTheme = (Component: any) => {
   function WithTheme(props: object) {
