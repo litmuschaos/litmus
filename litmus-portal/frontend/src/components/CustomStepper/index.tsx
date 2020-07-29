@@ -155,10 +155,20 @@ const CustomStepper = () => {
               >
                 <Typography>Back</Typography>
               </ButtonOutline>
-              <ButtonFilled
-                handleClick={handleNext}
-                value={activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-              />
+              <ButtonFilled handleClick={handleNext} isPrimary>
+                {activeStep === steps.length - 1 ? (
+                  <div>Finish</div>
+                ) : (
+                  <div>
+                    Next{' '}
+                    <img
+                      alt="next"
+                      src="icons/nextArrow.svg"
+                      className={classes.nextArrow}
+                    />
+                  </div>
+                )}
+              </ButtonFilled>
             </div>
           </div>
         )}

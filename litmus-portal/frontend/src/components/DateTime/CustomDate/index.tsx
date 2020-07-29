@@ -1,8 +1,8 @@
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
+import {
+  KeyboardDatePicker,
+  MuiPickersUtilsProvider,
+} from '@material-ui/pickers';
 import React from 'react';
 import useStyles from './styles';
 
@@ -26,17 +26,20 @@ const CustomDate: React.FC<CustomDateProps> = ({ disabled }) => {
       <KeyboardDatePicker
         className={classes.datePicker}
         autoOk
-        variant="inline"
         format="dd/MM/yyyy"
         id="date-picker-inline"
         inputVariant="outlined"
         disabled={disabled}
+        cancelLabel="Cancel"
+        okLabel="Save"
+        variant="dialog"
         value={selectedDate}
         inputProps={{
           style: {
-            fontSize: '0.8125rem',
+            fontSize: '0.75rem',
             color: '#000000',
             lineHeight: '0.875rem',
+            height: '0.425rem',
           },
         }}
         InputAdornmentProps={{ position: 'end' }}
