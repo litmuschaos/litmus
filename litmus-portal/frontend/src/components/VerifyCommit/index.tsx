@@ -1,13 +1,13 @@
-import React from 'react';
 import { Divider, Link, Typography } from '@material-ui/core';
+import React from 'react';
 import bfinance from '../../assets/icons/b-finance.png';
-import useStyles from './styles';
-import ButtonOutline from '../Button/ButtonOutline/index';
-import CustomDate from '../CustomDate';
-import CustomTime from '../CustomTime';
 import AdjustedWeights from '../AdjustedWeights';
 import ButtonFilled from '../Button/ButtonFilled';
+import ButtonOutline from '../Button/ButtonOutline/index';
 import CustomText from '../CustomText';
+import CustomDate from '../DateTime/CustomDate';
+import CustomTime from '../DateTime/CustomTime';
+import useStyles from './styles';
 
 function VerifyCommit() {
   const classes = useStyles();
@@ -79,7 +79,7 @@ function VerifyCommit() {
             <div className={classes.summaryDiv}>
               <div
                 style={{
-                  width: '9.375',
+                  width: '9.375rem',
                 }}
               >
                 <div className={classes.innerSumDiv}>
@@ -93,11 +93,12 @@ function VerifyCommit() {
                 <div className={classes.editButton1}>
                   <ButtonOutline
                     isDisabled={false}
-                    handleClick={() => {
-                      // console.log('Edit');
-                    }}
+                    handleClick={() => {}}
+                    data-cy="testRunButton"
                   >
-                    <Typography>Edit</Typography>
+                    <Typography className={classes.buttonOutlineText}>
+                      Edit
+                    </Typography>
                   </ButtonOutline>
                 </div>
               </div>
@@ -126,11 +127,12 @@ function VerifyCommit() {
                   <div className={classes.editButton2}>
                     <ButtonOutline
                       isDisabled={false}
-                      handleClick={() => {
-                        // console.log('View YAML');
-                      }}
+                      handleClick={() => {}}
+                      data-cy="testRunButton"
                     >
-                      <Typography>Edit</Typography>
+                      <Typography className={classes.buttonOutlineText}>
+                        Edit
+                      </Typography>
                     </ButtonOutline>
                   </div>
                 </div>
@@ -154,12 +156,9 @@ function VerifyCommit() {
                 <Typography>Your code is fine. You can move on!</Typography>
               </div>
               <div className={classes.yamlButton}>
-                <ButtonFilled
-                  handleClick={() => {
-                    // console.log('View YAML');
-                  }}
-                  value="View YAML"
-                />
+                <ButtonFilled handleClick={() => {}} isPrimary>
+                  <div>View YAML</div>
+                </ButtonFilled>
               </div>
             </div>
           </div>

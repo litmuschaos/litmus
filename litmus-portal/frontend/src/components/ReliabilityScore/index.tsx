@@ -1,12 +1,12 @@
-import { Typography, Modal } from '@material-ui/core';
+import { Modal, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
-import CustomSlider from '../CustomSlider';
-import useStyles from './styles';
+import Center from '../../containers/layouts/Center';
+import ButtonFilled from '../Button/ButtonFilled';
 import ButtonOutline from '../Button/ButtonOutline';
+import CustomSlider from '../CustomSlider';
 import InfoTooltip from '../InfoTooltip';
 import ResultTable from './ResultTable';
-import ButtonFilled from '../Button/ButtonFilled';
-import Center from '../../containers/layouts/Center';
+import useStyles from './styles';
 
 const ReliablityScore = () => {
   const [value, setValue] = useState<number | Array<number>>([0]);
@@ -118,9 +118,11 @@ const ReliablityScore = () => {
                   <Center>
                     <ButtonFilled
                       handleClick={handleClose}
-                      value="Got it"
                       data-cy="gotItButton"
-                    />
+                      isPrimary
+                    >
+                      <div>Got it</div>
+                    </ButtonFilled>
                   </Center>
                 </div>
               </div>

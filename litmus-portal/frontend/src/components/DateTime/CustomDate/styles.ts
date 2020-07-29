@@ -4,7 +4,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   datePicker: {
     width: '9.875rem',
     height: '2.75rem',
-    margin: theme.spacing(1.25),
+
+    marginRight: theme.spacing(1.875),
+  },
+  MuiDialogActionsRoot: {
+    display: 'flex',
+    padding: 8,
+    justifyContent: 'flexStart',
   },
 }));
 

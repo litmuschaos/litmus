@@ -1,22 +1,34 @@
 import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import useStyles from './styles';
 
 interface CustomButtonProps {
-  handleClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  value: string;
+  handleClick?: (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => void;
+  children: JSX.Element;
+  isPrimary: boolean;
+  isDisabled?: boolean;
+  type?: any;
 }
-const ButtonFilled: React.FC<CustomButtonProps> = ({ handleClick, value }) => {
+const ButtonFilled: React.FC<CustomButtonProps> = ({
+  handleClick,
+  children,
+  isPrimary,
+  isDisabled,
+  type,
+}) => {
   const classes = useStyles();
   return (
     <Button
       variant="contained"
       size="medium"
+      disabled={isDisabled}
+      type={type}
       onClick={handleClick}
-      className={classes.buttonFilled}
+      className={isPrimary ? classes.buttonPrimary : classes.buttonSecondary}
     >
-      <Typography className={classes.valueField}>{value}</Typography>
+      {children}
     </Button>
   );
 };

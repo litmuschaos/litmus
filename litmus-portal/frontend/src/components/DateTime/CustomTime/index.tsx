@@ -1,6 +1,6 @@
-import React from 'react';
-import { MuiPickersUtilsProvider, TimePicker } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
+import { MuiPickersUtilsProvider, TimePicker } from '@material-ui/pickers';
+import React from 'react';
 import useStyles from './styles';
 
 interface CustomTimeProps {
@@ -30,11 +30,15 @@ const CustomTime: React.FC<CustomTimeProps> = ({ ampm, disabled }) => {
           style: {
             fontSize: '0.75rem',
             color: '#000000',
-            lineHeight: '0.875rem',
+            paddingLeft: '1.8125rem',
+            height: '0.425rem',
           },
+          'aria-label': 'change-time',
         }}
         id="time-picker"
-        variant="inline"
+        variant="dialog"
+        cancelLabel="Cancel"
+        okLabel="Save"
         value={selectedDate}
         onChange={handleDateChange}
       />

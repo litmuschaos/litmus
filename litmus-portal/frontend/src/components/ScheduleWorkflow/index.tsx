@@ -1,59 +1,63 @@
-import React, { useState } from 'react';
 import {
-  FormControl,
   Divider,
-  Typography,
-  Button,
-  RadioGroup,
+  FormControl,
   FormControlLabel,
   Radio,
+  RadioGroup,
+  Select,
+  Typography,
 } from '@material-ui/core';
-
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup/ToggleButtonGroup';
-import TextField from '@material-ui/core/TextField/TextField';
-import useStyles from './styles';
+import React from 'react';
 import calendar from '../../assets/icons/calendar.png';
-import CustomDate from '../CustomDate/index';
-import CustomTime from '../CustomTime/index';
-import CustomSchToggle from '../CustomSchToggle/index';
+import CustomDate from '../DateTime/CustomDate/index';
+import CustomTime from '../DateTime/CustomTime/index';
+import SetTime from '../SetTime/index';
+import useStyles from './styles';
 
-function ScheduleWorkflow(this: any) {
-  // controls radio buttons
+const ScheduleWorkflow: React.FC = () => {
+  const start = 0;
+  const end = 10;
+  const interval = 2;
+
   const classes = useStyles();
+  // controls radio buttons
   const [value, setValue] = React.useState('now');
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
   };
 
+  // controls inner radio buttons of recurring schedule
   const [valueDef, setValueDef] = React.useState('');
   const handleChangeInstance = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValueDef(event.target.value);
   };
 
-  const [clicks, setClicks] = useState<number>(0);
+  // sets weekdays
+  const [days, setDays] = React.useState('Monday');
 
-  const handleDecrement = () => {
-    if (typeof clicks !== 'number' || clicks <= 0) setClicks(0);
-    else setClicks(clicks - 1);
-  };
+  // sets dates
+  const [dates, setDates] = React.useState(1);
 
-  const handleIncrement = () => {
-    if (typeof clicks !== 'number') setClicks(0);
-    setClicks(clicks + 1);
-  };
+  // stores dates in an array
+  const names: number[] = [1];
+  for (let i = 1; i <= 30; i += 1) {
+    names[i] = i + 1;
+  }
 
-  const [formats, setFormats] = React.useState(() => ['']);
-
-  const handleFormat = (
-    event: React.MouseEvent<HTMLElement>,
-    newFormats: string[]
-  ) => {
-    setFormats(newFormats);
-  };
+  const weekdays: string[] = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+  ];
 
   return (
     <div className={classes.root}>
       <div className={classes.scHeader}>
+        {/* Upper segment */}
         <div className={classes.scSegments}>
           <div>
             <Typography className={classes.headerText}>
@@ -70,7 +74,9 @@ function ScheduleWorkflow(this: any) {
           </div>
           <img src={calendar} alt="calendar" className={classes.calIcon} />
         </div>
-        <Divider style={{ width: '56.31rem' }} />
+        <Divider className={classes.divider} />
+
+        {/* Lower segment */}
         <div className={classes.scFormControl}>
           <FormControl component="fieldset" className={classes.formControl}>
             <RadioGroup
@@ -79,6 +85,7 @@ function ScheduleWorkflow(this: any) {
               value={value}
               onChange={handleChange}
             >
+              {/* options to choose schedule */}
               <FormControlLabel
                 value="now"
                 control={<Radio />}
@@ -88,134 +95,80 @@ function ScheduleWorkflow(this: any) {
                   </Typography>
                 }
               />
-              <FormControlLabel
-                value="laterOnce"
-                control={<Radio />}
-                label={
-                  <Typography className={classes.radioText}>
-                    Schedule later once
-                  </Typography>
-                }
-              />
-              <Typography align="left" className={classes.captionText}>
-                Select date and time
-              </Typography>
-              {value === 'laterOnce' ? (
-                <div className={classes.schLater}>
-                  <CustomDate disabled={false} />
-                  <CustomTime ampm disabled={false} />
-                </div>
-              ) : (
-                <></>
-              )}
-              <FormControlLabel
-                value="laterWithinTime"
-                control={<Radio />}
-                label={
-                  <Typography className={classes.radioText}>
-                    Schedule later within a time frame
-                  </Typography>
-                }
-              />
-              {value === 'laterWithinTime' ? (
-                <div className={classes.wt}>
-                  <div className={classes.scInnerSegments}>
-                    <div className={classes.schWithinTime}>
-                      <div className={classes.wtDateTime}>
-                        <div className={classes.timeDate}>
-                          <Typography
-                            variant="body2"
-                            className={classes.wtCaptionText}
-                          >
-                            Start Date
-                          </Typography>
-                        </div>
-                        <CustomDate disabled={false} />
-                      </div>
-                      <div className={classes.wtDateTime}>
-                        <div className={classes.timeDate}>
-                          <Typography
-                            variant="body2"
-                            className={classes.wtCaptionText}
-                          >
-                            End Date
-                          </Typography>
-                        </div>
-                        <CustomDate disabled={false} />
-                      </div>
-                    </div>
-                  </div>
-                  <div className={classes.scInnerSegments}>
-                    <div className={classes.schWithinTime}>
-                      <div className={classes.wtDateTime}>
-                        <div className={classes.timeDate}>
-                          <Typography
-                            variant="body2"
-                            className={classes.wtCaptionText}
-                          >
-                            From time
-                          </Typography>
-                        </div>
-                        <CustomTime ampm disabled={false} />
-                      </div>
-                      <div className={classes.wtDateTime}>
-                        <div className={classes.timeDate}>
-                          <Typography
-                            variant="body2"
-                            className={classes.wtCaptionText}
-                          >
-                            To time
-                          </Typography>
-                        </div>
-                        <CustomTime ampm disabled={false} />
-                      </div>
-                    </div>
-                    <div className={classes.wtDays}>
-                      <div className={classes.timeDate}>
-                        <Typography
-                          variant="body2"
-                          className={classes.wtCaptionText}
-                        >
-                          Repeat on
-                        </Typography>
-                      </div>
 
-                      <ToggleButtonGroup
-                        value={formats}
-                        onChange={handleFormat}
-                      >
-                        <CustomSchToggle label="SUN" />
-                        <CustomSchToggle label="MON" />
-                        <CustomSchToggle label="TUE" />
-                        <CustomSchToggle label="WED" />
-                        <CustomSchToggle label="THUR" />
-                        <CustomSchToggle label="FRI" />
-                        <CustomSchToggle label="SAT" />
-                      </ToggleButtonGroup>
-                    </div>
+              <FormControlLabel
+                value="afterSometime"
+                control={<Radio />}
+                label={
+                  <Typography className={classes.radioText}>
+                    Schedule after some time
+                  </Typography>
+                }
+              />
+              {value === 'afterSometime' ? (
+                <div className={classes.schLater}>
+                  <Typography className={classes.captionText}>
+                    Choose the minutes, hours, or days when you want to start
+                    workflow
+                  </Typography>
+                  <div className={classes.wtDateTime}>
+                    <Typography variant="body2" className={classes.captionText}>
+                      After
+                    </Typography>
+
+                    <SetTime
+                      start={start}
+                      end={end}
+                      interval={interval}
+                      label="Days"
+                      type="days"
+                    />
+                    <CustomTime ampm disabled={false} />
                   </div>
                 </div>
               ) : (
                 <></>
               )}
               <FormControlLabel
-                value="randomSelection"
+                value="specificTime"
                 control={<Radio />}
                 label={
                   <Typography className={classes.radioText}>
-                    Randomly Scheduled within minimum interval period or
-                    specified instances
+                    Schedule at a specific time
                   </Typography>
                 }
               />
-              {value === 'randomSelection' ? (
-                <div>
-                  <div className={classes.defInstance}>
-                    <Typography variant="subtitle1">
-                      <strong>Define Instances</strong>
-                    </Typography>
+
+              {value === 'specificTime' ? (
+                <div className={classes.schLater}>
+                  <Typography className={classes.captionText}>
+                    Select date and time to start workflow in future
+                  </Typography>
+                  <div className={classes.innerSpecific}>
+                    <CustomDate disabled={false} />
+                    <CustomTime ampm disabled={false} />
                   </div>
-                  <div>
+                </div>
+              ) : (
+                <></>
+              )}
+              <FormControlLabel
+                value="recurringScedule"
+                control={<Radio />}
+                label={
+                  <Typography className={classes.radioText}>
+                    Recurring Schedule
+                  </Typography>
+                }
+              />
+              {value === 'recurringScedule' ? (
+                <div className={classes.schLater}>
+                  <Typography className={classes.captionText}>
+                    Choose the right recurring time to start your workflow
+                  </Typography>
+
+                  {/* options to select time of recurring schedule */}
+                  <div className={classes.innerRecurring}>
                     <FormControl component="fieldset">
                       <RadioGroup
                         aria-label="instanceDef"
@@ -224,74 +177,138 @@ function ScheduleWorkflow(this: any) {
                         onChange={handleChangeInstance}
                       >
                         <FormControlLabel
-                          value="iCount"
+                          value="everyHr"
                           control={<Radio />}
-                          label="By Instances count"
+                          label="Every Hour"
                         />
-                        {valueDef === 'iCount' ? (
+                        {valueDef === 'everyHr' ? (
                           <div>
                             <div className={classes.scRandom}>
-                              <Typography
-                                variant="subtitle1"
-                                className={classes.scRandsub1}
-                              >
-                                Instances
+                              <Typography className={classes.scRandsub1}>
+                                At
                               </Typography>
-                              <Button
-                                onClick={handleDecrement}
-                                className={classes.instButton}
-                              >
-                                -
-                              </Button>
-                              <TextField
-                                className={classes.counterText}
-                                InputProps={{
-                                  disableUnderline: true,
-                                }}
-                                value={clicks}
-                                onChange={(e) => {
-                                  if (Number.isNaN(Number('e.target.value'))) {
-                                    setClicks(0);
-                                  } else {
-                                    setClicks(parseInt(e.target.value, 10));
-                                  }
-                                }}
+                              <SetTime
+                                start={start}
+                                end={end}
+                                interval={interval}
+                                label="th"
+                                type=""
                               />
-                              <Button
-                                onClick={handleIncrement}
-                                className={classes.instButton}
-                              >
-                                +
-                              </Button>
                             </div>
                           </div>
                         ) : (
                           <></>
                         )}
                         <FormControlLabel
-                          value="minInterval"
+                          value="everyDay"
                           control={<Radio />}
-                          label="By minimum interval"
+                          label="Every Day "
                         />
-                        {valueDef === 'minInterval' ? (
+                        {valueDef === 'everyDay' ? (
                           <div>
                             <div className={classes.scRandom}>
-                              <Typography
-                                variant="subtitle2"
-                                className={classes.sub1}
-                                style={{
-                                  color: 'rgba(0, 0, 0, 0.4)',
-                                }}
-                              >
-                                Interval
+                              <Typography className={classes.scRandsub1}>
+                                At
                               </Typography>
-                              <CustomTime ampm={false} disabled={false} />
-                              <Typography
-                                variant="subtitle2"
-                                className={classes.sub1}
-                              >
-                                Hours
+                              <CustomTime ampm disabled={false} />
+                            </div>
+                          </div>
+                        ) : (
+                          <></>
+                        )}
+                        <FormControlLabel
+                          value="everyWeek"
+                          control={<Radio />}
+                          label="Every Week "
+                        />
+                        {valueDef === 'everyWeek' ? (
+                          <div>
+                            <div className={classes.scRandom}>
+                              <Typography className={classes.scRandsub1}>
+                                On
                               </Typography>
+                              <FormControl className={classes.formControlDT}>
+                                <Select
+                                  className={classes.select}
+                                  disableUnderline
+                                  value={days}
+                                  onChange={(e) => {
+                                    setDays(
+                                      (e.target.value as unknown) as string
+                                    );
+                                  }}
+                                  label="days"
+                                  inputProps={{
+                                    name: 'days',
+
+                                    id: 'outlined-age-native-simple',
+                                    style: {
+                                      fontSize: '0.75rem',
+                                      height: 7,
+                                    },
+                                  }}
+                                >
+                                  {weekdays.map((day) => (
+                                    <option className={classes.opt} value={day}>
+                                      {day}
+                                    </option>
+                                  ))}
+                                </Select>
+                              </FormControl>
+                              <Typography className={classes.scRandsub1}>
+                                at
+                              </Typography>
+                              <CustomTime ampm disabled={false} />
+                            </div>
+                          </div>
+                        ) : (
+                          <></>
+                        )}
+                        <FormControlLabel
+                          value="everyMonth"
+                          control={<Radio />}
+                          label="Every Month"
+                        />
+                        {valueDef === 'everyMonth' ? (
+                          <div>
+                            <div className={classes.scRandom}>
+                              <Typography className={classes.scRandsub1}>
+                                On
+                              </Typography>
+                              <FormControl className={classes.formControlMonth}>
+                                <Select
+                                  className={classes.select}
+                                  disableUnderline
+                                  value={dates}
+                                  onChange={(e) => {
+                                    setDates(
+                                      (e.target.value as unknown) as number
+                                    );
+                                  }}
+                                  label="dates"
+                                  inputProps={{
+                                    name: 'dates',
+                                    id: 'outlined-age-native-simple',
+                                    style: {
+                                      fontSize: '0.75rem',
+                                      height: 7,
+                                    },
+                                  }}
+                                >
+                                  {names.map((date) => (
+                                    <option
+                                      className={classes.opt}
+                                      value={date}
+                                    >
+                                      {date}
+                                    </option>
+                                  ))}
+                                </Select>
+                              </FormControl>
+                              <Typography className={classes.scRandsub1}>
+                                at
+                              </Typography>
+                              <CustomTime ampm disabled={false} />
                             </div>
                           </div>
                         ) : (
@@ -310,6 +327,6 @@ function ScheduleWorkflow(this: any) {
       </div>
     </div>
   );
-}
+};
 
 export default ScheduleWorkflow;

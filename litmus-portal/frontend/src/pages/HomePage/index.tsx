@@ -1,14 +1,14 @@
-import { Card, CardActionArea, Typography, Button } from '@material-ui/core';
+import { Button, Card, CardActionArea, Typography } from '@material-ui/core';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import InfoFilledWrap from '../../components/InfoFilled';
 import QuickActionCard from '../../components/QuickActionCard';
-import Scaffold from '../../containers/layouts/Scaffold';
-import useStyles from './style';
-import { RootState } from '../../redux/reducers';
 import WelcomeModal from '../../components/WelcomeModal';
+import Scaffold from '../../containers/layouts/Scaffold';
+import { RootState } from '../../redux/reducers';
+import useStyles from './style';
 
 const CreateWorkflowCard = () => {
   const classes = useStyles();
