@@ -6,6 +6,8 @@ package graph
 import (
 	"context"
 	"errors"
+	"fmt"
+	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/data-store"
 	"log"
 	"strconv"
 	"time"
@@ -13,8 +15,8 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/cluster"
-	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/data-store"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/workflow"
 )
 
 func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (string, error) {
@@ -29,8 +31,20 @@ func (r *mutationResolver) NewClusterEvent(ctx context.Context, clusterEvent mod
 	return cluster.NewEvent(clusterEvent, store.State)
 }
 
+func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error) {
+	return workflow.UpsterWorkFlowRun(workflowData, store.State)
+}
+
+func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {
+	return workflow.QueryWorkflowRuns(projectID)
+}
+
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {
-	log.Print("NEW EVENT ", projectID)
+	log.Print("NEW EVENT LISTENER ", projectID)
 	clusterEvent := make(chan *model.ClusterEvent, 1)
 	store.State.Mutex.Lock()
 	store.State.ClusterEventPublish[projectID] = append(store.State.ClusterEventPublish[projectID], clusterEvent)
@@ -76,11 +90,27 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 	return clusterAction, nil
 }
 
+func (r *subscriptionResolver) WorkflowEventListener(ctx context.Context, projectID string) (<-chan *model.WorkflowRun, error) {
+	log.Print("NEW WORKFLOW EVENT LISTENER", projectID)
+	workflowEvent := make(chan *model.WorkflowRun, 1)
+	store.State.Mutex.Lock()
+	store.State.WorkflowEventPublish[projectID] = append(store.State.WorkflowEventPublish[projectID], workflowEvent)
+	store.State.Mutex.Unlock()
+	go func() {
+		<-ctx.Done()
+	}()
+	return workflowEvent, nil
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
+
+// Query returns generated.QueryResolver implementation.
+func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 // Subscription returns generated.SubscriptionResolver implementation.
 func (r *Resolver) Subscription() generated.SubscriptionResolver { return &subscriptionResolver{r} }
 
 type mutationResolver struct{ *Resolver }
+type queryResolver struct{ *Resolver }
 type subscriptionResolver struct{ *Resolver }

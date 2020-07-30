@@ -74,7 +74,7 @@ func workflowEventHandler(obj interface{}, eventType string, stream chan types.W
 		if nodeStatus.Type == "Pod" && nodeStatus.Inputs != nil && len(nodeStatus.Inputs.Artifacts) == 1 {
 			nodeType, cd, err = CheckChaosData(nodeStatus, chaosClient)
 			if err != nil {
-				logrus.WithError(err).Fatal("FAILED PARSING CHAOS ENGINE CRD")
+				logrus.WithError(err).Print("FAILED PARSING CHAOS ENGINE CRD")
 			}
 		}
 		details := types.Node{

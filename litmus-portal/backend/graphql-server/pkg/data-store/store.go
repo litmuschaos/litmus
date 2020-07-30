@@ -11,6 +11,7 @@ type StateData struct {
 	ClusterEventPublish map[string][]chan *model.ClusterEvent
 	ConnectedCluster    map[string]chan *model.ClusterAction
 	Mutex               *sync.Mutex
+	WorkflowEventPublish map[string][]chan *model.WorkflowRun
 }
 
 var State StateData
@@ -18,6 +19,7 @@ var State StateData
 //StoreInit initializes Application State
 func StoreInit() {
 	State.ClusterEventPublish = make(map[string][]chan *model.ClusterEvent)
+	State.WorkflowEventPublish = make(map[string][]chan *model.WorkflowRun)
 	State.ConnectedCluster = make(map[string]chan *model.ClusterAction)
 	State.Mutex = &sync.Mutex{}
 }

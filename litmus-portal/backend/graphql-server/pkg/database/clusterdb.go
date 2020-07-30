@@ -3,13 +3,10 @@ package database
 import (
 	"context"
 	"log"
-	"os"
 	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 
