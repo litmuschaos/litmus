@@ -12,31 +12,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var clusterCollection *mongo.Collection
-var backgroundContext context.Context
-
-//DBInit initializes database connection
-func DBInit() {
-	dbServer := os.Getenv("DB_SERVER")
-	dbName := os.Getenv("DB_NAME")
-	collectionName := os.Getenv("COLLECTION_NAME")
-	clientOptions := options.Client().ApplyURI("mongodb://" + dbServer)
-	client, err := mongo.Connect(context.TODO(), clientOptions)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	backgroundContext = context.Background()
-	ctx, _ := context.WithTimeout(backgroundContext, 20*time.Second)
-	// Check the connection
-	err = client.Ping(ctx, nil)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Print("Connected To DB")
-	clusterCollection = client.Database(dbName).Collection(collectionName)
-}
 
 func InsertCluster(cluster model.Cluster) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
