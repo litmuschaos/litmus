@@ -1,11 +1,12 @@
-import React from 'react';
-import { withStyles, createStyles } from '@material-ui/core/styles';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 import { AppBar, Box, Typography } from '@material-ui/core';
+import { createStyles, withStyles } from '@material-ui/core/styles';
+import Tab from '@material-ui/core/Tab';
+import Tabs from '@material-ui/core/Tabs';
+import React from 'react';
+import { history } from '../../../redux/configureStore';
+import ButtonFilled from '../../Button/ButtonFilled';
 import Loader from '../../Loader';
 import BrowseWorkflow from '../BrowseWorkflow';
-import ButtonFilled from '../../Button/ButtonFilled';
 import useStyles from './styles';
 
 interface TabPanelProps {
@@ -57,7 +58,10 @@ export default function CenteredTabs() {
         <div className={classes.header}>
           <Typography variant="h4">Chaos Workflows</Typography>
           <div className={classes.scheduleBtn}>
-            <ButtonFilled isPrimary={false}>
+            <ButtonFilled
+              isPrimary={false}
+              handleClick={() => history.push('/create-workflow')}
+            >
               <>Schedule a workflow</>
             </ButtonFilled>
           </div>
