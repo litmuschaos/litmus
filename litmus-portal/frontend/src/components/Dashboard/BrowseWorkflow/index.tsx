@@ -1,19 +1,21 @@
-import React from 'react';
-import {
-  Typography,
-  InputAdornment,
-  InputBase,
-  FormControl,
-  InputLabel,
-  Select,
-  TableHead,
-  TableRow,
-  TableContainer,
-  Table,
-  TableCell,
-  TableBody,
-} from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
+import React from 'react';
+import InputBase from '@material-ui/core/InputBase';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
+import Typography from '@material-ui/core/Typography';
+import MenuItem from '@material-ui/core/MenuItem';
+import TableContainer from '@material-ui/core/TableContainer';
+import Table from '@material-ui/core/Table';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TableCell from '@material-ui/core/TableCell';
+import TableBody from '@material-ui/core/TableBody';
+import useStyles from './styles';
+import CustomStatus from '../CustomStatus/Status';
+import timeDifferenceForDate from '../../../utils/datesModifier';
 import LinearProgressBar from '../../ProgressBar/LinearProgressBar';
 
 interface Data {
@@ -42,7 +44,7 @@ const rows = [
     'Kubernetes Cluster',
     0,
     5,
-    'Today'
+    '2020-07-30T09:01:58.306Z'
   ),
   createData(
     'Completed',
@@ -50,27 +52,35 @@ const rows = [
     'Cluset pre-defined',
     100,
     3,
-    '2 days ago'
+    '2020-07-28T12:36:21Z'
   ),
-  createData('Running', 'Battery Flow', 'Kubernetes Cluster', 0, 5, 'Today'),
+  createData(
+    'Running',
+    'Battery Flow',
+    'Kubernetes Cluster',
+    0,
+    5,
+    '2019-07-23T20:04:12.479Z'
+  ),
   createData(
     'Running',
     'Workflow Underground',
     'Kubernetes Cluster',
     0,
     2,
-    'Today'
+    '2020-06-21T20:04:12.479Z'
   ),
   createData(
-    'Completed',
+    'Failed',
     'Workflow Underground',
     'Cluset pre-defined',
     100,
     3,
-    'Week Ago'
+    '2020-07-10T20:04:12.479Z'
   ),
 ];
 const BrowseWorkflow = () => {
+  const classes = useStyles();
   const [status, setStatus] = React.useState<String>('');
   const handleStatusChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setStatus(event.target.value as String);
@@ -84,103 +94,91 @@ const BrowseWorkflow = () => {
   return (
     <div>
       <section className="Heading section">
-        <div
-          style={{
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'row',
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: '1px solid rgba(0,0,0,0.1)',
-            backgroundColor: '#FFFFFF',
-          }}
-        >
+        <div className={classes.headerSection}>
           <InputBase
             id="input-with-icon-adornment"
             placeholder="Search"
-            style={{
-              marginRight: 'auto',
-              marginLeft: 50,
-            }}
+            className={classes.search}
             startAdornment={
               <InputAdornment position="start">
                 <SearchIcon />
               </InputAdornment>
             }
           />
-          <FormControl
-            style={{
-              width: 150,
-              marginLeft: 30,
-              paddingBottom: 20,
-            }}
-          >
-            <InputLabel htmlFor="workflow-status">Workflow Status</InputLabel>
+          <FormControl className={classes.select}>
+            <InputLabel id="demo-simple-select-outlined-label">
+              Workflow Status
+            </InputLabel>
             <Select
-              native
+              labelId="demo-simple-select-outlined-label"
+              id="demo-simple-select-outlined"
               value={status}
-              disableUnderline
               onChange={handleStatusChange}
-              inputProps={{
-                name: 'Workflow Status',
-              }}
-            >
-              <option aria-label="None" value="" />
-              <option value="Running">Running</option>
-              <option value="Completed">Completed</option>
-            </Select>
-          </FormControl>
-          <FormControl
-            style={{ width: 150, marginLeft: 30, paddingBottom: 20 }}
-          >
-            <InputLabel htmlFor="target-cluster">Target Cluster</InputLabel>
-            <Select
-              native
-              value={cluster}
               disableUnderline
-              onChange={handleClusterChange}
-              inputProps={{
-                name: 'Target Cluster',
-              }}
             >
-              <option aria-label="None" value="" />
-              <option value="predefined">Cluset Predefined</option>
-              <option value="kubernetes">Kubernetes cluster</option>
+              <MenuItem value="">
+                <Typography className={classes.menuItem}>None</Typography>
+              </MenuItem>
+              <MenuItem value="Running">
+                <Typography className={classes.menuItem}>Running</Typography>
+              </MenuItem>
+              <MenuItem value="Completed">
+                <Typography className={classes.menuItem}>Completed</Typography>
+              </MenuItem>
             </Select>
           </FormControl>
-          <Typography
-            variant="subtitle1"
-            style={{ marginLeft: 30, color: 'rgba(0,0,0,0.4)' }}
-          >
+
+          <FormControl className={classes.select1}>
+            <InputLabel id="demo-simple-select-outlined-label">
+              Target Cluster
+            </InputLabel>
+            <Select
+              labelId="demo-simple-select-outlined-label"
+              id="demo-simple-select-outlined"
+              value={cluster}
+              onChange={handleClusterChange}
+              disableUnderline
+            >
+              <MenuItem value="">
+                <Typography className={classes.menuItem}>None</Typography>
+              </MenuItem>
+              <MenuItem value="Predefined">
+                <Typography className={classes.menuItem}>
+                  Cluset pre-defined
+                </Typography>
+              </MenuItem>
+              <MenuItem value="Kubernetes">
+                <Typography className={classes.menuItem}>
+                  Kubernetes Cluster
+                </Typography>
+              </MenuItem>
+            </Select>
+          </FormControl>
+          <Typography variant="subtitle1" className={classes.headerText}>
             for the period
           </Typography>
-          <FormControl
-            style={{ width: 150, marginLeft: 30, paddingBottom: 20 }}
-          >
-            <InputLabel htmlFor="target-cluster">Date</InputLabel>
+          <FormControl className={classes.select}>
+            <InputLabel id="demo-simple-select-outlined-label">Date</InputLabel>
             <Select
-              native
-              value={cluster}
+              labelId="demo-simple-select-outlined-label"
+              id="demo-simple-select-outlined"
+              value=""
               disableUnderline
-              onChange={handleClusterChange}
-              inputProps={{
-                name: 'Target Cluster',
-              }}
+              onChange={() => {}}
             >
-              <option aria-label="None" value="" />
+              {/* <option aria-label="None" value="" />
               <option value="predefined">Cluset Predefined</option>
-              <option value="kubernetes">Kubernetes cluster</option>
+              <option value="kubernetes">Kubernetes cluster</option> */}
             </Select>
           </FormControl>
         </div>
       </section>
       <section className="table section">
-        <TableContainer>
+        <TableContainer className={classes.tableMain}>
           <Table aria-label="simple table">
             <TableHead>
-              <TableRow>
-                <TableCell>Status</TableCell>
+              <TableRow className={classes.tableHead}>
+                <TableCell className={classes.headerStatus}>Status</TableCell>
                 <TableCell>Workflow Name</TableCell>
                 <TableCell>Target Cluster</TableCell>
                 <TableCell>Reliability Details</TableCell>
@@ -190,27 +188,15 @@ const BrowseWorkflow = () => {
             </TableHead>
             <TableBody>
               {rows.map((data) => (
-                <TableRow>
+                <TableRow key={data.workflowName}>
                   <TableCell>
-                    <Typography
-                      style={{
-                        width: 100,
-                        textAlign: 'center',
-                        borderRadius: 3,
-                        paddingTop: 3,
-                        paddingBottom: 3,
-                        color:
-                          data.status === 'Completed' ? 'green' : '#858CDD',
-                        backgroundColor:
-                          data.targetCluster === 'Completed'
-                            ? 'rgba(16, 155, 103, 0.1)'
-                            : 'rgba(133, 140, 221, 0.1)',
-                      }}
-                    >
-                      {data.status}
+                    <CustomStatus status={data.status} />
+                  </TableCell>
+                  <TableCell>
+                    <Typography>
+                      <strong>{data.workflowName}</strong>
                     </Typography>
                   </TableCell>
-                  <TableCell>{data.workflowName}</TableCell>
                   <TableCell>
                     <Typography
                       style={{
@@ -225,12 +211,20 @@ const BrowseWorkflow = () => {
                   </TableCell>
                   <TableCell>
                     {data.reliability}
-                    <div style={{ width: 100 }}>
+                    <div className={classes.progressBar}>
                       <LinearProgressBar value={data.reliability} />
                     </div>
                   </TableCell>
-                  <TableCell>{data.steps}</TableCell>
-                  <TableCell>{data.lastRun}</TableCell>
+                  <TableCell>
+                    <Typography className={classes.steps}>
+                      {data.steps}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography>
+                      {timeDifferenceForDate(data.lastRun)}
+                    </Typography>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

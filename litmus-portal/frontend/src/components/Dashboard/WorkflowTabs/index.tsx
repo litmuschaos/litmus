@@ -2,9 +2,11 @@ import React from 'react';
 import { withStyles, createStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import { AppBar, Box, Typography, Button } from '@material-ui/core';
+import { AppBar, Box, Typography } from '@material-ui/core';
 import Loader from '../../Loader';
 import BrowseWorkflow from '../BrowseWorkflow';
+import ButtonFilled from '../../Button/ButtonFilled';
+import useStyles from './styles';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -13,12 +15,7 @@ interface TabPanelProps {
 }
 const TabPanel: React.FC<TabPanelProps> = ({ children, index, value }) => {
   return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`scrollable-auto-tabpanel-${index}`}
-      aria-labelledby={`scrollable-auto-tab-${index}`}
-    >
+    <div role="tabpanel" hidden={value !== index}>
       {value === index && (
         <Box p={3}>
           <Typography>{children}</Typography>
@@ -47,6 +44,7 @@ const StyledTab = withStyles((theme) =>
 )((props: StyledTabProps) => <Tab {...props} />);
 
 export default function CenteredTabs() {
+  const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
@@ -56,36 +54,16 @@ export default function CenteredTabs() {
   return (
     <>
       <section className="Header section">
-        <div
-          style={{
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'row',
-            marginTop: 20,
-            marginBottom: 20,
-          }}
-        >
+        <div className={classes.header}>
           <Typography variant="h4">Chaos Workflows</Typography>
-          <Button
-            variant="contained"
-            style={{
-              backgroundColor: '#109B67',
-              color: '#FFFFFF',
-              marginLeft: 'auto',
-            }}
-          >
-            <Typography variant="subtitle1">Schedule a workflow</Typography>
-          </Button>
+          <div className={classes.scheduleBtn}>
+            <ButtonFilled isPrimary={false}>
+              <>Schedule a workflow</>
+            </ButtonFilled>
+          </div>
         </div>
       </section>
-      <AppBar
-        position="static"
-        color="default"
-        style={{
-          background: 'transparent',
-          boxShadow: 'none',
-        }}
-      >
+      <AppBar position="static" color="default" className={classes.appBar}>
         <Tabs
           value={value}
           onChange={handleChange}

@@ -3,6 +3,7 @@ import React from 'react';
 import CustomStepper from '../../components/CustomStepper';
 import Scaffold from '../../containers/layouts/Scaffold';
 import useStyles from './styles';
+import WorkflowTabs from '../../components/Dashboard/WorkflowTabs';
 
 const Workflows = () => {
   const classes = useStyles();
@@ -12,7 +13,7 @@ const Workflows = () => {
         Schedule a new <strong>chaos workflow</strong>
       </Typography>
       <CustomStepper />
-      {/* <WorkflowTabs /> */}
+      <WorkflowTabs />
     </Scaffold>
   );
 };
