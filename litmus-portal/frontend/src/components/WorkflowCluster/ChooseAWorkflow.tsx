@@ -22,7 +22,7 @@ function Check() {
 /*
   This screen is starting page of workflow
 */
-const WorkflowCluster = () => {
+const ChooseAWorkflowCluster: React.FC = () => {
   const classes = useStyles();
   const [value, setValue] = React.useState('Experiment');
 
@@ -100,4 +100,4 @@ const WorkflowCluster = () => {
   );
 };
 
-export default WorkflowCluster;
+export default ChooseAWorkflowCluster;

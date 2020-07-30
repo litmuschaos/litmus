@@ -74,7 +74,7 @@ const ScheduleWorkflow: React.FC = () => {
           </div>
           <img src={calendar} alt="calendar" className={classes.calIcon} />
         </div>
-        <Divider className={classes.divider} />
+        <Divider />
 
         {/* Lower segment */}
         <div className={classes.scFormControl}>

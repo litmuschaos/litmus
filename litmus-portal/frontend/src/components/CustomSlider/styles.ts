@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(6.25),
   },
   sliderDiv: {
-    width: '56.25rem',
+    width: '100%',
     marginBottom: theme.spacing(3.75),
   },
 }));
