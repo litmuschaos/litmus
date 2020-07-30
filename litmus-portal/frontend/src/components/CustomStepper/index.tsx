@@ -1,19 +1,19 @@
+import React from 'react';
 import Button from '@material-ui/core/Button';
 import Step from '@material-ui/core/Step';
 import { StepIconProps } from '@material-ui/core/StepIcon';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
-import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
-import React from 'react';
+import Typography from '@material-ui/core/Typography';
 import ButtonFilled from '../Button/ButtonFilled';
 import ButtonOutline from '../Button/ButtonOutline';
 import FinishModal from '../FinishModal';
-import Loader from '../Loader';
 import ReliablityScore from '../ReliabilityScore';
 import ScheduleWorkflow from '../ScheduleWorkflow';
 import VerifyCommit from '../VerifyCommit';
-import WorkflowCluster from '../WorkflowCluster';
+import ChooseAWorkflowCluster from '../WorkflowCluster/ChooseAWorkflow';
+import WorkflowChart from '../WorkflowCluster/WorkflowChart';
 import QontoConnector from './quontoConnector';
 import useStyles from './styles';
 import useQontoStepIconStyles from './useQontoStepIconStyles';
@@ -75,9 +75,9 @@ function QontoStepIcon(props: StepIconProps) {
 function getStepContent(stepIndex: number): React.ReactNode {
   switch (stepIndex) {
     case 0:
-      return <WorkflowCluster />;
+      return <ChooseAWorkflowCluster />;
     case 1:
-      return <Loader />;
+      return <WorkflowChart />;
     case 2:
       return 'Show something random';
     case 3:
@@ -87,7 +87,7 @@ function getStepContent(stepIndex: number): React.ReactNode {
     case 5:
       return <VerifyCommit />;
     default:
-      return <WorkflowCluster />;
+      return <ChooseAWorkflowCluster />;
   }
 }
 
@@ -110,6 +110,9 @@ const CustomStepper = () => {
 
   return (
     <div className={classes.root}>
+      <Typography className={classes.workflowHeader}>
+        Schedule a new <strong>chaos workflow</strong>
+      </Typography>
       <Stepper
         activeStep={activeStep}
         connector={<QontoConnector />}
