@@ -4,6 +4,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   root: {
     width: '100%',
   },
+  workflowHeader: {
+    margin: '2.5rem 0',
+    marginLeft: '7%',
+    fontSize: '2rem',
+  },
   stepper: {
     marginTop: theme.spacing(5),
   },
@@ -17,6 +22,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   buttonGroup: {
     display: 'flex',
     flexDirection: 'row',
+    marginLeft: '9%',
   },
   activeLabel: {
     color: theme.palette.primary.light,

@@ -1,8 +1,10 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
+  // Choose A Workflow Component Styles
   rootcontainer: {
-    width: '100%',
+    margin: '0 auto',
+    width: '80%',
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
@@ -11,7 +13,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   check: {
     marginLeft: theme.spacing(20),
-    marginTop: theme.spacing(12),
+    marginTop: theme.spacing(3),
     '&:hover': {
       shadow: theme.palette.secondary.dark,
     },

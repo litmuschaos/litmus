@@ -2,7 +2,7 @@ import React from 'react';
 import CustomStepper from '../../components/CustomStepper';
 import Scaffold from '../../containers/layouts/Scaffold';
 
-const Workflows = () => {
+const Workflows: React.FC = () => {
   return (
     <Scaffold>
       <CustomStepper />

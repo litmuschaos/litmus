@@ -39,7 +39,7 @@ function VerifyCommit() {
           </div>
           <img src={bfinance} alt="bfinance" className={classes.bfinIcon} />
         </div>
-        <Divider className={classes.divider} />
+        <Divider />
 
         <div className={classes.innerDiv2}>
           <Typography align="left" className={classes.sumText}>
@@ -163,7 +163,7 @@ function VerifyCommit() {
             </div>
           </div>
 
-          <Divider className={classes.divider} />
+          <Divider />
         </div>
 
         <div>
