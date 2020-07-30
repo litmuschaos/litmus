@@ -8,7 +8,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint . --ext .js,.tsx,.ts",
-    "format": "prettier --write \"src/**/*.+(ts|tsx|js|jsx|json)\" && eslint --fix . --ext .js,.tsx,.ts"
+    "format": "prettier --write \"src/**/*.+(ts|tsx|js|jsx|json)\" && eslint --fix . --ext .js,.tsx,.ts",
+    "unit:ci": "cypress run --config video=false"
   },
   "dependencies": {
     "@apollo/client": "^3.0.0-rc.2",
@@ -51,7 +52,7 @@
   "lint-staged": {
     "src/**/*.+(js|jsx|ts|tsx)": [
       "npm run format",
-      "npx cypress run",
+      "npm run unit:ci",
       "git add"
     ],
     "src/**/*.+(json|md)": [
