@@ -2,16 +2,20 @@ package github
 
 import (
 	"context"
+	"fmt"
+	"log"
 	"net/http"
 
+	"github.com/gin-gonic/gin"
+	"github.com/google/go-github/v32/github"
 	"golang.org/x/oauth2"
 	githubAuth "golang.org/x/oauth2/github"
 )
 
 var (
 	config = oauth2.Config{
-		ClientID:     "3a6b324047494810c849",
-		ClientSecret: "6671f33aa589f324a2491ae418ff2706f997b991",
+		ClientID:     "ef1f3bef5f901dec6c9d",
+		ClientSecret: "2723a84e77bae8602e45259cc07c6af85a9dc3ca",
 		Scopes:       []string{"read:user", "user:email"},
 		RedirectURL:  "http://localhost:3000/oauth/github",
 		Endpoint:     githubAuth.Endpoint,
@@ -20,15 +24,20 @@ var (
 )
 
 //Middleware redirects to a github endpoint to get the temp code for oauth
-func Middleware(w http.ResponseWriter, r *http.Request) {
+func Middleware(c *gin.Context) {
+	var w http.ResponseWriter = c.Writer
+	var r *http.Request = c.Request
 	u := config.AuthCodeURL("xyz")
 	http.Redirect(w, r, u, http.StatusFound)
 }
 
 //GitHub gets the temp code for oauth and exchanges this code with github in order to get auth token
-func GitHub(w http.ResponseWriter, r *http.Request) {
+func GitHub(c *gin.Context) {
+	var w http.ResponseWriter = c.Writer
+	var r *http.Request = c.Request
 	r.ParseForm()
 	state := r.Form.Get("state")
+	fmt.Println(state)
 	if state != "xyz" {
 		http.Error(w, "State invalid", http.StatusBadRequest)
 		return
@@ -43,5 +52,29 @@ func GitHub(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	globalToken = token
+	fmt.Println(globalToken)
+	githubData := getGithubData()
+
+	log.Println(githubData)
+
+}
+
+func getGithubData() string {
+	ctx := context.Background()
+	ts := oauth2.StaticTokenSource(globalToken)
+	tc := oauth2.NewClient(ctx, ts)
+
+	client := github.NewClient(tc)
+
+	user, _, err := client.Users.Get(ctx, "")
+
+	if err != nil {
+		fmt.Printf("\nerror: %v\n", err)
+
+	}
+
+	fmt.Printf("\n%v\n", github.Stringify(user))
+	return github.Stringify(user)
 }
