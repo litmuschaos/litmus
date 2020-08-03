@@ -4,7 +4,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: 'rgba(255, 255, 255, 0.6)',
     height: '100%',
-    width: '61.25rem',
+    width: '80%',
     marginLeft: theme.spacing(17.5),
     border: 1,
     borderColor: 'rgba(0, 0, 0, 0.05)',
