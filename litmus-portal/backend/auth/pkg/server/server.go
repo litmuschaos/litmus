@@ -49,31 +49,31 @@ type Server struct {
 	config      oauth2.Config
 }
 
-var sGit *Server
+//var sGit *Server
 
 //Middleware redirects to a github endpoint to get the temp code for oauth
-func Middleware(c *gin.Context) {
-	sGit.config = oauth2.Config{
+func (s *Server) Middleware(c *gin.Context) {
+	s.config = oauth2.Config{
 		ClientID:     "ef1f3bef5f901dec6c9d",
 		ClientSecret: "2723a84e77bae8602e45259cc07c6af85a9dc3ca",
 		Scopes:       []string{"read:user", "user:email"},
 		RedirectURL:  "http://localhost:3000/oauth/github",
 		Endpoint:     githubAuth.Endpoint,
 	}
-	log.Println(sGit.config.ClientID)
+	//log.Println(s.config.ClientID)
 	var w http.ResponseWriter = c.Writer
 	var r *http.Request = c.Request
-	u := sGit.config.AuthCodeURL("xyz")
+	u := s.config.AuthCodeURL("xyz")
 	http.Redirect(w, r, u, http.StatusFound)
 }
 
 //GitHub gets the temp code for oauth and exchanges this code with github in order to get auth token
-func GitHub(c *gin.Context) {
+func (s *Server) GitHub(c *gin.Context) {
 	var w http.ResponseWriter = c.Writer
 	var r *http.Request = c.Request
 	r.ParseForm()
 	state := r.Form.Get("state")
-	fmt.Println(state)
+	log.Println(state)
 	if state != "xyz" {
 		http.Error(w, "State invalid", http.StatusBadRequest)
 		return
@@ -83,23 +83,23 @@ func GitHub(c *gin.Context) {
 		http.Error(w, "Code not found", http.StatusBadRequest)
 		return
 	}
-	token, err := sGit.config.Exchange(context.Background(), code)
+	token, err := s.config.Exchange(context.Background(), code)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	sGit.globalToken = token
-	fmt.Println(sGit.globalToken)
-	githubData := getGithubData()
+	s.globalToken = token
+	fmt.Println(s.globalToken)
+	githubData := s.getGithubData()
 
 	log.Println(githubData)
 
 }
 
-func getGithubData() string {
+func (s *Server) getGithubData() string {
 	ctx := context.Background()
-	ts := oauth2.StaticTokenSource(sGit.globalToken)
+	ts := oauth2.StaticTokenSource(s.globalToken)
 	tc := oauth2.NewClient(ctx, ts)
 
 	client := github.NewClient(tc)

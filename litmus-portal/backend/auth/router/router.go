@@ -5,8 +5,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/controller"
+	github "github.com/litmuschaos/litmus/litmus-portal/backend/auth/controller/GithubUser"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/controller/user"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/server"
 )
 
 const (
@@ -17,7 +17,8 @@ const (
 )
 
 var (
-	userController controller.UserController = user.New()
+	userController   controller.UserController   = user.New()
+	GithubController controller.GithubController = github.New()
 )
 
 // New will create a new routes
@@ -33,8 +34,7 @@ func New() *gin.Engine {
 	// Handle the request for chaos-schedule
 	router.POST(loginRoute, userController.Login)
 	router.POST(updateRoute, userController.Update)
-	router.GET(githubMidRoute, server.Middleware)
-	router.GET(oauthRoute, server.GitHub)
-
+	router.GET(githubMidRoute, GithubController.Login)
+	router.GET(oauthRoute, GithubController.OAuth)
 	return router
 }

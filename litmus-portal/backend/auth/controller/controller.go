@@ -14,7 +14,8 @@ type UserController interface {
 	Update(c *gin.Context)
 }
 
-// UpdateController will do update operation
-type UpdateController interface {
-	Update(c *gin.Context)
+// GithubController will do login operation
+type GithubController interface {
+	Login(c *gin.Context)
+	OAuth(c *gin.Context)
 }
