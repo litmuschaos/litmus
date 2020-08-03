@@ -1,20 +1,25 @@
 package server
 
 import (
+	"context"
+	"fmt"
+	"log"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	log "github.com/golang/glog"
-
+	glog "github.com/golang/glog"
+	"github.com/google/go-github/github"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/errors"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/generates"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/manage"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/models"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/store"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/types"
+	"golang.org/x/oauth2"
+	githubAuth "golang.org/x/oauth2/github"
 )
 
 // NewServer create authorization server
@@ -38,8 +43,76 @@ func NewServer(cfg *Config) *Server {
 
 // Server Provide authorization server
 type Server struct {
-	Config  *Config
-	Manager *manage.Manager
+	Config      *Config
+	Manager     *manage.Manager
+	globalToken *oauth2.Token
+	config      oauth2.Config
+}
+
+var sGit *Server
+
+//Middleware redirects to a github endpoint to get the temp code for oauth
+func Middleware(c *gin.Context) {
+	sGit.config = oauth2.Config{
+		ClientID:     "ef1f3bef5f901dec6c9d",
+		ClientSecret: "2723a84e77bae8602e45259cc07c6af85a9dc3ca",
+		Scopes:       []string{"read:user", "user:email"},
+		RedirectURL:  "http://localhost:3000/oauth/github",
+		Endpoint:     githubAuth.Endpoint,
+	}
+	log.Println(sGit.config.ClientID)
+	var w http.ResponseWriter = c.Writer
+	var r *http.Request = c.Request
+	u := sGit.config.AuthCodeURL("xyz")
+	http.Redirect(w, r, u, http.StatusFound)
+}
+
+//GitHub gets the temp code for oauth and exchanges this code with github in order to get auth token
+func GitHub(c *gin.Context) {
+	var w http.ResponseWriter = c.Writer
+	var r *http.Request = c.Request
+	r.ParseForm()
+	state := r.Form.Get("state")
+	fmt.Println(state)
+	if state != "xyz" {
+		http.Error(w, "State invalid", http.StatusBadRequest)
+		return
+	}
+	code := r.Form.Get("code")
+	if code == "" {
+		http.Error(w, "Code not found", http.StatusBadRequest)
+		return
+	}
+	token, err := sGit.config.Exchange(context.Background(), code)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	sGit.globalToken = token
+	fmt.Println(sGit.globalToken)
+	githubData := getGithubData()
+
+	log.Println(githubData)
+
+}
+
+func getGithubData() string {
+	ctx := context.Background()
+	ts := oauth2.StaticTokenSource(sGit.globalToken)
+	tc := oauth2.NewClient(ctx, ts)
+
+	client := github.NewClient(tc)
+
+	user, _, err := client.Users.Get(ctx, "")
+
+	if err != nil {
+		fmt.Printf("\nerror: %v\n", err)
+
+	}
+
+	fmt.Printf("\n%v\n", github.Stringify(user))
+	return github.Stringify(user)
 }
 
 func (s *Server) redirectError(c *gin.Context, err error) {
@@ -150,12 +223,12 @@ func (s *Server) getErrorData(err error) (map[string]interface{}, int, http.Head
 }
 
 func (s *Server) internalErrorHandler(err error) (re *errors.Response) {
-	log.Infoln("Internal Error:", err.Error())
+	glog.Infoln("Internal Error:", err.Error())
 	return
 }
 
 func (s *Server) responseErrorHandler(re *errors.Response) {
-	log.Infoln("Response Error:", re.Error.Error())
+	glog.Infoln("Response Error:", re.Error.Error())
 }
 
 func (s *Server) getTokenFromHeader(r *http.Request) (string, error) {
