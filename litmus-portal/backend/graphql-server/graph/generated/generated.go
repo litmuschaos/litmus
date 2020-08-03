@@ -44,22 +44,29 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Cluster struct {
-		AccessKey    func(childComplexity int) int
-		ClusterID    func(childComplexity int) int
-		ClusterName  func(childComplexity int) int
-		ClusterType  func(childComplexity int) int
-		CreatedAt    func(childComplexity int) int
-		Description  func(childComplexity int) int
-		IsActive     func(childComplexity int) int
-		IsRegistered func(childComplexity int) int
-		PlatformName func(childComplexity int) int
-		ProjectID    func(childComplexity int) int
-		UpdatedAt    func(childComplexity int) int
+		AccessKey          func(childComplexity int) int
+		ClusterID          func(childComplexity int) int
+		ClusterName        func(childComplexity int) int
+		ClusterType        func(childComplexity int) int
+		CreatedAt          func(childComplexity int) int
+		Description        func(childComplexity int) int
+		IsActive           func(childComplexity int) int
+		IsClusterConfirmed func(childComplexity int) int
+		IsRegistered       func(childComplexity int) int
+		PlatformName       func(childComplexity int) int
+		ProjectID          func(childComplexity int) int
+		UpdatedAt          func(childComplexity int) int
 	}
 
 	ClusterAction struct {
 		Action    func(childComplexity int) int
 		ProjectID func(childComplexity int) int
+	}
+
+	ClusterConfirmResponse struct {
+		ClusterID          func(childComplexity int) int
+		IsClusterConfirmed func(childComplexity int) int
+		NewClusterKey      func(childComplexity int) int
 	}
 
 	ClusterEvent struct {
@@ -71,9 +78,10 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		ClusterConfirm  func(childComplexity int, identity model.ClusterIdentity) int
-		NewClusterEvent func(childComplexity int, clusterEvent model.ClusterEventInput) int
-		UserClusterReg  func(childComplexity int, clusterInput model.ClusterInput) int
+		ClusterConfirm      func(childComplexity int, identity model.ClusterIdentity) int
+		CreateChaosWorkFlow func(childComplexity int, input *model.ChaosWorkFlowInput) int
+		NewClusterEvent     func(childComplexity int, clusterEvent model.ClusterEventInput) int
+		UserClusterReg      func(childComplexity int, clusterInput model.ClusterInput) int
 	}
 
 	Query struct {
@@ -83,12 +91,27 @@ type ComplexityRoot struct {
 		ClusterConnect       func(childComplexity int, clusterInfo model.ClusterIdentity) int
 		ClusterEventListener func(childComplexity int, projectID string) int
 	}
+
+	ChaosWorkFlowResponse struct {
+		CronSyntax          func(childComplexity int) int
+		IsCustomWorkflow    func(childComplexity int) int
+		Weightages          func(childComplexity int) int
+		WorkflowDescription func(childComplexity int) int
+		WorkflowID          func(childComplexity int) int
+		WorkflowName        func(childComplexity int) int
+	}
+
+	Weightages struct {
+		ExperimentName func(childComplexity int) int
+		Weightage      func(childComplexity int) int
+	}
 }
 
 type MutationResolver interface {
 	UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (string, error)
-	ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (string, error)
+	ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error)
 	NewClusterEvent(ctx context.Context, clusterEvent model.ClusterEventInput) (string, error)
+	CreateChaosWorkFlow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error)
 }
 type SubscriptionResolver interface {
 	ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error)
@@ -159,6 +182,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Cluster.IsActive(childComplexity), true
 
+	case "Cluster.is_cluster_confirmed":
+		if e.complexity.Cluster.IsClusterConfirmed == nil {
+			break
+		}
+
+		return e.complexity.Cluster.IsClusterConfirmed(childComplexity), true
+
 	case "Cluster.is_registered":
 		if e.complexity.Cluster.IsRegistered == nil {
 			break
@@ -200,6 +230,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ClusterAction.ProjectID(childComplexity), true
+
+	case "ClusterConfirmResponse.cluster_id":
+		if e.complexity.ClusterConfirmResponse.ClusterID == nil {
+			break
+		}
+
+		return e.complexity.ClusterConfirmResponse.ClusterID(childComplexity), true
+
+	case "ClusterConfirmResponse.isClusterConfirmed":
+		if e.complexity.ClusterConfirmResponse.IsClusterConfirmed == nil {
+			break
+		}
+
+		return e.complexity.ClusterConfirmResponse.IsClusterConfirmed(childComplexity), true
+
+	case "ClusterConfirmResponse.newClusterKey":
+		if e.complexity.ClusterConfirmResponse.NewClusterKey == nil {
+			break
+		}
+
+		return e.complexity.ClusterConfirmResponse.NewClusterKey(childComplexity), true
 
 	case "ClusterEvent.cluster":
 		if e.complexity.ClusterEvent.Cluster == nil {
@@ -248,6 +299,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.ClusterConfirm(childComplexity, args["identity"].(model.ClusterIdentity)), true
 
+	case "Mutation.createChaosWorkFlow":
+		if e.complexity.Mutation.CreateChaosWorkFlow == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createChaosWorkFlow_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateChaosWorkFlow(childComplexity, args["input"].(*model.ChaosWorkFlowInput)), true
+
 	case "Mutation.newClusterEvent":
 		if e.complexity.Mutation.NewClusterEvent == nil {
 			break
@@ -295,6 +358,62 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Subscription.ClusterEventListener(childComplexity, args["project_id"].(string)), true
+
+	case "chaosWorkFlowResponse.cronSyntax":
+		if e.complexity.ChaosWorkFlowResponse.CronSyntax == nil {
+			break
+		}
+
+		return e.complexity.ChaosWorkFlowResponse.CronSyntax(childComplexity), true
+
+	case "chaosWorkFlowResponse.isCustomWorkflow":
+		if e.complexity.ChaosWorkFlowResponse.IsCustomWorkflow == nil {
+			break
+		}
+
+		return e.complexity.ChaosWorkFlowResponse.IsCustomWorkflow(childComplexity), true
+
+	case "chaosWorkFlowResponse.Weightages":
+		if e.complexity.ChaosWorkFlowResponse.Weightages == nil {
+			break
+		}
+
+		return e.complexity.ChaosWorkFlowResponse.Weightages(childComplexity), true
+
+	case "chaosWorkFlowResponse.Workflow_description":
+		if e.complexity.ChaosWorkFlowResponse.WorkflowDescription == nil {
+			break
+		}
+
+		return e.complexity.ChaosWorkFlowResponse.WorkflowDescription(childComplexity), true
+
+	case "chaosWorkFlowResponse.workflow_id":
+		if e.complexity.ChaosWorkFlowResponse.WorkflowID == nil {
+			break
+		}
+
+		return e.complexity.ChaosWorkFlowResponse.WorkflowID(childComplexity), true
+
+	case "chaosWorkFlowResponse.Workflow_name":
+		if e.complexity.ChaosWorkFlowResponse.WorkflowName == nil {
+			break
+		}
+
+		return e.complexity.ChaosWorkFlowResponse.WorkflowName(childComplexity), true
+
+	case "weightages.experiment_name":
+		if e.complexity.Weightages.ExperimentName == nil {
+			break
+		}
+
+		return e.complexity.Weightages.ExperimentName(childComplexity), true
+
+	case "weightages.weightage":
+		if e.complexity.Weightages.Weightage == nil {
+			break
+		}
+
+		return e.complexity.Weightages.Weightage(childComplexity), true
 
 	}
 	return 0, false
@@ -389,6 +508,7 @@ type Cluster {
   platform_name: String!
   access_key: String!
   is_registered: Boolean!
+  is_cluster_confirmed: Boolean!
   is_active: Boolean!
   updated_at: String!
   created_at: String!
@@ -433,15 +553,51 @@ input ClusterIdentity{
   access_key: String!
 }
 
+type ClusterConfirmResponse {
+    isClusterConfirmed: Boolean!
+    newClusterKey: String
+    cluster_id: String
+}
+
+input chaosWorkFlowInput {
+  workflow_yaml: String!
+  cronSyntax: String!
+  Workflow_name: String!
+  Workflow_description: String!
+  Weightages: [weightagesInput]!
+  isCustomWorkflow: Boolean!
+}
+
+input weightagesInput {
+  experiment_name: String!
+  weightage: Int!
+}
+
+type weightages {
+  experiment_name: String!
+  weightage: Int!
+}
+
+type chaosWorkFlowResponse {
+  workflow_id: String!
+  cronSyntax: String!
+  Workflow_name: String!
+  Workflow_description: String!
+  Weightages: [weightages]!
+  isCustomWorkflow: Boolean!
+}
 type Mutation{
     #It is used to create external cluster.
     userClusterReg(clusterInput: ClusterInput!): String!
     
     #It is used to confirm the subscriber registration
-    clusterConfirm(identity: ClusterIdentity!): String!
+    clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
     
     #It is used to send cluster related events from the subscriber
     newClusterEvent(clusterEvent: ClusterEventInput!): String!
+
+    #It is used to create chaosworkflow
+    createChaosWorkFlow(input: chaosWorkFlowInput): chaosWorkFlowResponse!
 }
 
 type Subscription{
@@ -470,6 +626,20 @@ func (ec *executionContext) field_Mutation_clusterConfirm_args(ctx context.Conte
 		}
 	}
 	args["identity"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createChaosWorkFlow_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.ChaosWorkFlowInput
+	if tmp, ok := rawArgs["input"]; ok {
+		arg0, err = ec.unmarshalOchaosWorkFlowInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -814,6 +984,40 @@ func (ec *executionContext) _Cluster_is_registered(ctx context.Context, field gr
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Cluster_is_cluster_confirmed(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Cluster",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsClusterConfirmed, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Cluster_is_active(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1016,6 +1220,102 @@ func (ec *executionContext) _ClusterAction_action(ctx context.Context, field gra
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ClusterConfirmResponse_isClusterConfirmed(ctx context.Context, field graphql.CollectedField, obj *model.ClusterConfirmResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ClusterConfirmResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsClusterConfirmed, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ClusterConfirmResponse_newClusterKey(ctx context.Context, field graphql.CollectedField, obj *model.ClusterConfirmResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ClusterConfirmResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NewClusterKey, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ClusterConfirmResponse_cluster_id(ctx context.Context, field graphql.CollectedField, obj *model.ClusterConfirmResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ClusterConfirmResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ClusterID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ClusterEvent_event_id(ctx context.Context, field graphql.CollectedField, obj *model.ClusterEvent) (ret graphql.Marshaler) {
@@ -1265,9 +1565,9 @@ func (ec *executionContext) _Mutation_clusterConfirm(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*model.ClusterConfirmResponse)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNClusterConfirmResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterConfirmResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_newClusterEvent(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -1309,6 +1609,47 @@ func (ec *executionContext) _Mutation_newClusterEvent(ctx context.Context, field
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_createChaosWorkFlow(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createChaosWorkFlow_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateChaosWorkFlow(rctx, args["input"].(*model.ChaosWorkFlowInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.ChaosWorkFlowResponse)
+	fc.Result = res
+	return ec.marshalNchaosWorkFlowResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2533,6 +2874,278 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 	return ec.marshalO__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _chaosWorkFlowResponse_workflow_id(ctx context.Context, field graphql.CollectedField, obj *model.ChaosWorkFlowResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "chaosWorkFlowResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkflowID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _chaosWorkFlowResponse_cronSyntax(ctx context.Context, field graphql.CollectedField, obj *model.ChaosWorkFlowResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "chaosWorkFlowResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CronSyntax, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _chaosWorkFlowResponse_Workflow_name(ctx context.Context, field graphql.CollectedField, obj *model.ChaosWorkFlowResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "chaosWorkFlowResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkflowName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _chaosWorkFlowResponse_Workflow_description(ctx context.Context, field graphql.CollectedField, obj *model.ChaosWorkFlowResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "chaosWorkFlowResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkflowDescription, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _chaosWorkFlowResponse_Weightages(ctx context.Context, field graphql.CollectedField, obj *model.ChaosWorkFlowResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "chaosWorkFlowResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Weightages, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Weightages)
+	fc.Result = res
+	return ec.marshalNweightages2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightages(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _chaosWorkFlowResponse_isCustomWorkflow(ctx context.Context, field graphql.CollectedField, obj *model.ChaosWorkFlowResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "chaosWorkFlowResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsCustomWorkflow, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _weightages_experiment_name(ctx context.Context, field graphql.CollectedField, obj *model.Weightages) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "weightages",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExperimentName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _weightages_weightage(ctx context.Context, field graphql.CollectedField, obj *model.Weightages) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "weightages",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Weightage, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
 // endregion **************************** field.gotpl *****************************
 
 // region    **************************** input.gotpl *****************************
@@ -2663,6 +3276,78 @@ func (ec *executionContext) unmarshalInputClusterInput(ctx context.Context, obj 
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputchaosWorkFlowInput(ctx context.Context, obj interface{}) (model.ChaosWorkFlowInput, error) {
+	var it model.ChaosWorkFlowInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "workflow_yaml":
+			var err error
+			it.WorkflowYaml, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "cronSyntax":
+			var err error
+			it.CronSyntax, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "Workflow_name":
+			var err error
+			it.WorkflowName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "Workflow_description":
+			var err error
+			it.WorkflowDescription, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "Weightages":
+			var err error
+			it.Weightages, err = ec.unmarshalNweightagesInput2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isCustomWorkflow":
+			var err error
+			it.IsCustomWorkflow, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputweightagesInput(ctx context.Context, obj interface{}) (model.WeightagesInput, error) {
+	var it model.WeightagesInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "experiment_name":
+			var err error
+			it.ExperimentName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "weightage":
+			var err error
+			it.Weightage, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -2711,6 +3396,11 @@ func (ec *executionContext) _Cluster(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "is_registered":
 			out.Values[i] = ec._Cluster_is_registered(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "is_cluster_confirmed":
+			out.Values[i] = ec._Cluster_is_cluster_confirmed(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -2766,6 +3456,37 @@ func (ec *executionContext) _ClusterAction(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var clusterConfirmResponseImplementors = []string{"ClusterConfirmResponse"}
+
+func (ec *executionContext) _ClusterConfirmResponse(ctx context.Context, sel ast.SelectionSet, obj *model.ClusterConfirmResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, clusterConfirmResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ClusterConfirmResponse")
+		case "isClusterConfirmed":
+			out.Values[i] = ec._ClusterConfirmResponse_isClusterConfirmed(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "newClusterKey":
+			out.Values[i] = ec._ClusterConfirmResponse_newClusterKey(ctx, field, obj)
+		case "cluster_id":
+			out.Values[i] = ec._ClusterConfirmResponse_cluster_id(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2851,6 +3572,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "newClusterEvent":
 			out.Values[i] = ec._Mutation_newClusterEvent(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createChaosWorkFlow":
+			out.Values[i] = ec._Mutation_createChaosWorkFlow(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -3158,6 +3884,90 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 	return out
 }
 
+var chaosWorkFlowResponseImplementors = []string{"chaosWorkFlowResponse"}
+
+func (ec *executionContext) _chaosWorkFlowResponse(ctx context.Context, sel ast.SelectionSet, obj *model.ChaosWorkFlowResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, chaosWorkFlowResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("chaosWorkFlowResponse")
+		case "workflow_id":
+			out.Values[i] = ec._chaosWorkFlowResponse_workflow_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "cronSyntax":
+			out.Values[i] = ec._chaosWorkFlowResponse_cronSyntax(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Workflow_name":
+			out.Values[i] = ec._chaosWorkFlowResponse_Workflow_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Workflow_description":
+			out.Values[i] = ec._chaosWorkFlowResponse_Workflow_description(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Weightages":
+			out.Values[i] = ec._chaosWorkFlowResponse_Weightages(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "isCustomWorkflow":
+			out.Values[i] = ec._chaosWorkFlowResponse_isCustomWorkflow(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var weightagesImplementors = []string{"weightages"}
+
+func (ec *executionContext) _weightages(ctx context.Context, sel ast.SelectionSet, obj *model.Weightages) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, weightagesImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("weightages")
+		case "experiment_name":
+			out.Values[i] = ec._weightages_experiment_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "weightage":
+			out.Values[i] = ec._weightages_weightage(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 // endregion **************************** object.gotpl ****************************
 
 // region    ***************************** type.gotpl *****************************
@@ -3204,6 +4014,20 @@ func (ec *executionContext) marshalNClusterAction2ᚖgithubᚗcomᚋlitmuschaos�
 	return ec._ClusterAction(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNClusterConfirmResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterConfirmResponse(ctx context.Context, sel ast.SelectionSet, v model.ClusterConfirmResponse) graphql.Marshaler {
+	return ec._ClusterConfirmResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNClusterConfirmResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterConfirmResponse(ctx context.Context, sel ast.SelectionSet, v *model.ClusterConfirmResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ClusterConfirmResponse(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNClusterEvent2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterEvent(ctx context.Context, sel ast.SelectionSet, v model.ClusterEvent) graphql.Marshaler {
 	return ec._ClusterEvent(ctx, sel, &v)
 }
@@ -3236,6 +4060,20 @@ func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface
 
 func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
 	res := graphql.MarshalID(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
+}
+
+func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
+	return graphql.UnmarshalInt(v)
+}
+
+func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
+	res := graphql.MarshalInt(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -3484,6 +4322,77 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
+func (ec *executionContext) marshalNchaosWorkFlowResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowResponse(ctx context.Context, sel ast.SelectionSet, v model.ChaosWorkFlowResponse) graphql.Marshaler {
+	return ec._chaosWorkFlowResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNchaosWorkFlowResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowResponse(ctx context.Context, sel ast.SelectionSet, v *model.ChaosWorkFlowResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._chaosWorkFlowResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNweightages2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightages(ctx context.Context, sel ast.SelectionSet, v []*model.Weightages) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOweightages2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightages(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) unmarshalNweightagesInput2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesInput(ctx context.Context, v interface{}) ([]*model.WeightagesInput, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.WeightagesInput, len(vSlice))
+	for i := range vSlice {
+		res[i], err = ec.unmarshalOweightagesInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	return graphql.UnmarshalBoolean(v)
 }
@@ -3710,6 +4619,41 @@ func (ec *executionContext) marshalO__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgen�
 		return graphql.Null
 	}
 	return ec.___Type(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOchaosWorkFlowInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx context.Context, v interface{}) (model.ChaosWorkFlowInput, error) {
+	return ec.unmarshalInputchaosWorkFlowInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOchaosWorkFlowInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx context.Context, v interface{}) (*model.ChaosWorkFlowInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOchaosWorkFlowInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOweightages2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightages(ctx context.Context, sel ast.SelectionSet, v model.Weightages) graphql.Marshaler {
+	return ec._weightages(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOweightages2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightages(ctx context.Context, sel ast.SelectionSet, v *model.Weightages) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._weightages(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOweightagesInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesInput(ctx context.Context, v interface{}) (model.WeightagesInput, error) {
+	return ec.unmarshalInputweightagesInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOweightagesInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesInput(ctx context.Context, v interface{}) (*model.WeightagesInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOweightagesInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesInput(ctx, v)
+	return &res, err
 }
 
 // endregion ***************************** type.gotpl *****************************

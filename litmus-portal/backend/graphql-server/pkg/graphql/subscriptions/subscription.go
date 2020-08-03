@@ -1,4 +1,4 @@
-package cluster
+package subscriptions
 
 import (
 	"github.com/google/uuid"
@@ -8,9 +8,8 @@ import (
 
 //SendClusterEvent sends events from the clusters to the appropriate users listening for the events
 func SendClusterEvent(eventType, eventName, description string, cluster model.Cluster, r store.StateData) {
-	guid := uuid.New()
 	newEvent := model.ClusterEvent{
-		EventID:     guid.String(),
+		EventID:     uuid.New().String(),
 		EventType:   eventType,
 		EventName:   eventName,
 		Description: description,
