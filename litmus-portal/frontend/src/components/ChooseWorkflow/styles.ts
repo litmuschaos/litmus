@@ -1,4 +1,8 @@
 import { makeStyles } from '@material-ui/core';
+import { TextField } from '@material-ui/core';
+import { withStyles, Theme } from '@material-ui/core/styles';
+import { purple } from '@material-ui/core/colors';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -199,5 +203,25 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(4.375),
   },
 }));
+
+export const CssTextField = withStyles({
+  root: {
+    '& label.MuiInputLabel-root': {
+      color: 'rgba(0, 0, 0, 0.6)',
+      fontSize: 16,
+    },
+  },
+})(TextField);
+
+export const ColorButton = withStyles((theme: Theme) => ({
+  root: {
+    color: theme.palette.getContrastText(purple[500]),
+    backgroundColor: theme.palette.primary.dark,
+  },
+  '&:hover': {
+    color: theme.palette.getContrastText(purple[500]),
+    backgroundColor: theme.palette.primary.dark,
+  },
+}))(Button);
 
 export default useStyles;

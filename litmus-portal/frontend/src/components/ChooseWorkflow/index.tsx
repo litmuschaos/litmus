@@ -1,10 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Typography, TextField, Modal } from '@material-ui/core';
+import { Typography, Modal } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
-import { withStyles, Theme } from '@material-ui/core/styles';
-import { purple } from '@material-ui/core/colors';
-import useStyles from './styles';
+import useStyles, { CssTextField, ColorButton } from './styles';
 import useActions from '../../redux/actions';
 import * as WorkflowActions from '../../redux/actions/workflow';
 import PredifinedWorkflows from '../PredifinedWorkflows';
@@ -13,26 +11,6 @@ import {
   workflowDetails,
 } from '../../models/predefinedWorkflow';
 // import { getWkfRunCount } from "../../utils";
-
-const CssTextField = withStyles({
-  root: {
-    '& label.MuiInputLabel-root': {
-      color: 'rgba(0, 0, 0, 0.6)',
-      fontSize: 16,
-    },
-  },
-})(TextField);
-
-const ColorButton = withStyles((theme: Theme) => ({
-  root: {
-    color: theme.palette.getContrastText(purple[500]),
-    backgroundColor: '#109B67',
-  },
-  '&:hover': {
-    color: theme.palette.getContrastText(purple[500]),
-    backgroundColor: '#109B67',
-  },
-}))(Button);
 
 const ChooseWorkflow: React.FC = () => {
   const classes = useStyles();
