@@ -11,6 +11,7 @@ import (
 	"strconv"
 )
 
+// util function, extracts the chaos data using the litmus go-client
 func getChaosData(engineName, engineNS string, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (*types.ChaosData, error) {
 	cd := &types.ChaosData{}
 	crd := &v1alpha1.ChaosEngine{}
@@ -30,6 +31,8 @@ func getChaosData(engineName, engineNS string, chaosClient *v1alpha12.Litmuschao
 	}
 	// considering chaos engine has only 1 experiment
 	if len(crd.Status.Experiments) == 1 {
+		cd.ExperimentPod = crd.Status.Experiments[0].ExpPod
+		cd.RunnerPod = crd.Status.Experiments[0].Runner
 		cd.EngineUID = string(crd.ObjectMeta.UID)
 		cd.ExperimentStatus = string(crd.Status.Experiments[0].Status)
 		cd.ExperimentName = crd.Status.Experiments[0].Name
@@ -41,6 +44,7 @@ func getChaosData(engineName, engineNS string, chaosClient *v1alpha12.Litmuschao
 	return cd, nil
 }
 
+// util function, checks if event is a chaos-exp event, if so -  extract the chaos data
 func CheckChaosData(nodeStatus v1alpha13.NodeStatus, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (string, *types.ChaosData, error) {
 	nodeType := string(nodeStatus.Type)
 	var cd *types.ChaosData = nil
@@ -62,6 +66,7 @@ func CheckChaosData(nodeStatus v1alpha13.NodeStatus, chaosClient *v1alpha12.Litm
 	return nodeType, nil, nil
 }
 
+// converts unix timestamp to string
 func StrConvTime(time int64) string {
 	if time < 0 {
 		return ""

@@ -4,7 +4,7 @@ import (
 	"github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
 	"github.com/argoproj/argo/pkg/client/clientset/versioned"
 	"github.com/argoproj/argo/pkg/client/informers/externalversions"
-	"github.com/gdsoumya/workflow_manager/pkg/cluster"
+	"github.com/gdsoumya/workflow_manager/pkg/cluster/config"
 	"github.com/gdsoumya/workflow_manager/pkg/types"
 	litmusV1alpha1 "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
 	"github.com/sirupsen/logrus"
@@ -12,12 +12,14 @@ import (
 	"time"
 )
 
+// 0 means no resync
 const (
 	resyncPeriod time.Duration = 0
 )
 
+// initializes the Argo Workflow event watcher
 func WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent) {
-	cfg, err := cluster.GetKubeConfig()
+	cfg, err := config.GetKubeConfig()
 	if err != nil {
 		logrus.WithError(err).Fatal("could not get config")
 	}
@@ -34,6 +36,7 @@ func WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent)
 	go startWatch(stopCh, informer, stream)
 }
 
+// handles the different workflow events - add, update and delete
 func startWatch(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan types.WorkflowEvent) {
 	startTime := time.Now().Unix()
 	handlers := cache.ResourceEventHandlerFuncs{
@@ -51,12 +54,13 @@ func startWatch(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan
 	s.Run(stopCh)
 }
 
+// responsible for extracting the required data from the event and streaming
 func workflowEventHandler(obj interface{}, eventType string, stream chan types.WorkflowEvent, startTime int64) {
 	workflowObj := obj.(*v1alpha1.Workflow)
 	if workflowObj.ObjectMeta.CreationTimestamp.Unix() < startTime {
 		return
 	}
-	cfg, err := cluster.GetKubeConfig()
+	cfg, err := config.GetKubeConfig()
 	if err != nil {
 		logrus.WithError(err).Fatal("could not get config")
 	}
@@ -72,6 +76,7 @@ func workflowEventHandler(obj interface{}, eventType string, stream chan types.W
 		var cd *types.ChaosData = nil
 		// considering chaos workflow has only 1 artifact with manifest as raw data
 		if nodeStatus.Type == "Pod" && nodeStatus.Inputs != nil && len(nodeStatus.Inputs.Artifacts) == 1 {
+			//extracts chaos data
 			nodeType, cd, err = CheckChaosData(nodeStatus, chaosClient)
 			if err != nil {
 				logrus.WithError(err).Print("FAILED PARSING CHAOS ENGINE CRD")
@@ -99,8 +104,6 @@ func workflowEventHandler(obj interface{}, eventType string, stream chan types.W
 		FinishedAt:        StrConvTime(workflowObj.Status.FinishedAt.Unix()),
 		Nodes:             mp,
 	}
+	//stream
 	stream <- workflow
-	if err != nil {
-		logrus.WithError(err).Print("ERROR STREAMING EVENT DATA")
-	}
 }

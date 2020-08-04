@@ -1,4 +1,4 @@
-package cluster
+package config
 
 import (
 	"k8s.io/client-go/rest"
@@ -6,13 +6,11 @@ import (
 	"os"
 )
 
+// get k8s config for creating clientsets
 func GetKubeConfig() (*rest.Config, error) {
-	kubeCfg, err := rest.InClusterConfig()
 	if kubeconfig := os.Getenv("KUBECONFIG"); kubeconfig != "" {
-		kubeCfg, err = clientcmd.BuildConfigFromFlags("", kubeconfig)
+		return clientcmd.BuildConfigFromFlags("", kubeconfig)
+	} else {
+		return rest.InClusterConfig()
 	}
-	if err != nil {
-		return nil, err
-	}
-	return kubeCfg, nil
 }

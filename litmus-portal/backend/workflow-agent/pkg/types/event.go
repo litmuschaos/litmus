@@ -1,5 +1,6 @@
 package types
 
+// workflow data
 type WorkflowEvent struct {
 	EventType         string          `json:"event_type"`
 	UID               string          `json:"uid"`
@@ -12,6 +13,7 @@ type WorkflowEvent struct {
 	Nodes             map[string]Node `json:"nodes"`
 }
 
+// each node/step data
 type Node struct {
 	Name       string     `json:"name"`
 	Phase      string     `json:"phase"`
@@ -22,6 +24,7 @@ type Node struct {
 	ChaosExp   *ChaosData `json:"chaosData,omitempty"`
 }
 
+// chaos data
 type ChaosData struct {
 	EngineUID         string `json:"engineUID"`
 	EngineName        string `json:"engineName"`
@@ -30,4 +33,6 @@ type ChaosData struct {
 	ExperimentStatus  string `json:"experimentStatus"`
 	LastUpdatedAt     string `json:"lastUpdatedAt"`
 	ExperimentVerdict string `json:"experimentVerdict"`
+	ExperimentPod     string `json:"experimentPod"`
+	RunnerPod         string `json:"runnerPod"`
 }
