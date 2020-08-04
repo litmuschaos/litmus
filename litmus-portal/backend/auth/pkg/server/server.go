@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -53,8 +54,8 @@ type Server struct {
 //Middleware redirects to a github endpoint to get the temp code for oauth
 func (s *Server) Middleware(c *gin.Context) {
 	s.config = oauth2.Config{
-		ClientID:     "ef1f3bef5f901dec6c9d",
-		ClientSecret: "2723a84e77bae8602e45259cc07c6af85a9dc3ca",
+		ClientID:     os.Getenv("ClientID"),
+		ClientSecret: os.Getenv("ClientSecret"),
 		Scopes:       []string{"read:user", "user:email"},
 		RedirectURL:  "http://localhost:3000/oauth/github",
 		Endpoint:     githubAuth.Endpoint,

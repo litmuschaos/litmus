@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-github/v32/github"
@@ -14,8 +15,8 @@ import (
 
 var (
 	config = oauth2.Config{
-		ClientID:     "ef1f3bef5f901dec6c9d",
-		ClientSecret: "2723a84e77bae8602e45259cc07c6af85a9dc3ca",
+		ClientID:     os.Getenv("ClientID"),
+		ClientSecret: os.Getenv("ClientSecret"),
 		Scopes:       []string{"read:user", "user:email"},
 		RedirectURL:  "http://localhost:3000/oauth/github",
 		Endpoint:     githubAuth.Endpoint,

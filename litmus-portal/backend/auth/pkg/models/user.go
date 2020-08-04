@@ -35,15 +35,6 @@ type PublicUserInfo struct {
 	UserName string `json:"username,omitempty"`
 }
 
-/* //SocialAuth contains the oauth types and related information opted by the user
-type SocialAuth struct {
-	Type         string     `bson:"type"`
-	AccessToken  string     `bson:"access_token"`
-	RefreshToken string     `bson:"refresh_token"`
-	Expiry       *time.Time `bson:"expiry"`
-	TokenType    string     `bson:"token_type"`
-} */
-
 //State is the current state of the database entry of the user
 type State string
 
@@ -141,29 +132,3 @@ func (uinfo *PublicUserInfo) GetName() string {
 func (uinfo *PublicUserInfo) GetEmail() string {
 	return uinfo.Email
 }
-
-/* // GetType returns auth type
-func (s *oauth2) GetType() string {
-	return s.Type
-}
-
-// GetAccessToken returns auth token
-func (s *SocialAuth) GetAccessToken() string {
-	return s.AccessToken
-}
-
-// GetRefreshToken returns refresh token
-func (s *SocialAuth) GetRefreshToken() string {
-	return s.RefreshToken
-}
-
-// GetTokenType returns token type
-func (s *SocialAuth) GetTokenType() string {
-	return s.TokenType
-}
-
-// GetExpiry returns auth type
-func (s *SocialAuth) GetExpiry() *time.Time {
-	return s.Expiry
-}
-*/
