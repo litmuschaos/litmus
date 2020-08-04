@@ -12,11 +12,11 @@ import FinishModal from '../FinishModal';
 import ReliablityScore from '../ReliabilityScore';
 import ScheduleWorkflow from '../ScheduleWorkflow';
 import VerifyCommit from '../VerifyCommit';
-import ChooseAWorkflowCluster from '../WorkflowCluster/ChooseAWorkflow';
-import WorkflowChart from '../WorkflowCluster/WorkflowChart';
+import ChooseAWorkflowCluster from '../WorkflowCluster';
 import QontoConnector from './quontoConnector';
 import useStyles from './styles';
 import useQontoStepIconStyles from './useQontoStepIconStyles';
+import ChooseWorkflow from '../ChooseWorkflow/index';
 
 function getSteps(): string[] {
   return [
@@ -77,7 +77,7 @@ function getStepContent(stepIndex: number): React.ReactNode {
     case 0:
       return <ChooseAWorkflowCluster />;
     case 1:
-      return <WorkflowChart />;
+      return <ChooseWorkflow />;
     case 2:
       return 'Show something random';
     case 3:
