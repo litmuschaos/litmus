@@ -1,6 +1,7 @@
 package manage
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -85,6 +86,17 @@ func (m *Manager) CreateUser(user *models.User) (err error) {
 	}
 	user.Password = string(hashedPassword)
 	err = m.userStore.Set(user)
+	return
+}
+
+//CreateGithubUser stores the user information
+func (m *Manager) CreateGithubUser(user *models.User) (err error) {
+	err = m.userStore.Set(user)
+	if err != nil {
+		fmt.Printf("\nerror: %v\n", err)
+
+	}
+
 	return
 }
 

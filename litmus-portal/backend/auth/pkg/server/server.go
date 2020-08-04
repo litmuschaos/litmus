@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -21,6 +20,8 @@ import (
 	"golang.org/x/oauth2"
 	githubAuth "golang.org/x/oauth2/github"
 )
+
+var userGDetails models.User
 
 // NewServer create authorization server
 func NewServer(cfg *Config) *Server {
@@ -49,8 +50,6 @@ type Server struct {
 	config      oauth2.Config
 }
 
-//var sGit *Server
-
 //Middleware redirects to a github endpoint to get the temp code for oauth
 func (s *Server) Middleware(c *gin.Context) {
 	s.config = oauth2.Config{
@@ -73,7 +72,7 @@ func (s *Server) GitHub(c *gin.Context) {
 	var r *http.Request = c.Request
 	r.ParseForm()
 	state := r.Form.Get("state")
-	log.Println(state)
+
 	if state != "xyz" {
 		http.Error(w, "State invalid", http.StatusBadRequest)
 		return
@@ -90,14 +89,14 @@ func (s *Server) GitHub(c *gin.Context) {
 	}
 
 	s.globalToken = token
-	fmt.Println(s.globalToken)
-	githubData := s.getGithubData()
+	userGDetails.SocialAuths = *token
 
-	log.Println(githubData)
+	s.getGithubData()
 
 }
 
-func (s *Server) getGithubData() string {
+//getGithubData fetches User details
+func (s *Server) getGithubData() {
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(s.globalToken)
 	tc := oauth2.NewClient(ctx, ts)
@@ -110,9 +109,14 @@ func (s *Server) getGithubData() string {
 		fmt.Printf("\nerror: %v\n", err)
 
 	}
+	userGDetails.Name = *user.Name
+	userGDetails.Email = *user.Email
+	er := s.Manager.CreateGithubUser(&userGDetails)
+	if er != nil {
+		fmt.Printf("\nerror: %v\n", er)
 
-	fmt.Printf("\n%v\n", github.Stringify(user))
-	return github.Stringify(user)
+	}
+
 }
 
 func (s *Server) redirectError(c *gin.Context, err error) {

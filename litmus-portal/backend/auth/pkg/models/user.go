@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/types"
+	"golang.org/x/oauth2"
 )
 
 //User contains the user information
@@ -14,7 +15,7 @@ type User struct {
 	Email           string       `bson:"email"`
 	isEmailVerified bool         `bson:"verified"`
 	Name            string       `bson:"name"`
-	SocialAuths     []SocialAuth `bson:"social_auths"`
+	SocialAuths     oauth2.Token `bson:"social_auths"`
 	CreatedAt       *time.Time   `bson:"created_at"`
 	UpdatedAt       *time.Time   `bson:"updated_at"`
 	RemovedAt       *time.Time   `bson:"removed_at"`
@@ -34,14 +35,14 @@ type PublicUserInfo struct {
 	UserName string `json:"username,omitempty"`
 }
 
-//SocialAuth contains the oauth types and related information opted by the user
+/* //SocialAuth contains the oauth types and related information opted by the user
 type SocialAuth struct {
 	Type         string     `bson:"type"`
 	AccessToken  string     `bson:"access_token"`
 	RefreshToken string     `bson:"refresh_token"`
 	Expiry       *time.Time `bson:"expiry"`
 	TokenType    string     `bson:"token_type"`
-}
+} */
 
 //State is the current state of the database entry of the user
 type State string
@@ -88,7 +89,7 @@ func (u *User) GetName() string {
 }
 
 // GetSocialAuths returns all the social authentications of the user
-func (u *User) GetSocialAuths() []SocialAuth {
+func (u *User) GetSocialAuths() oauth2.Token {
 	return u.SocialAuths
 }
 
@@ -141,8 +142,8 @@ func (uinfo *PublicUserInfo) GetEmail() string {
 	return uinfo.Email
 }
 
-// GetType returns auth type
-func (s *SocialAuth) GetType() string {
+/* // GetType returns auth type
+func (s *oauth2) GetType() string {
 	return s.Type
 }
 
@@ -165,3 +166,4 @@ func (s *SocialAuth) GetTokenType() string {
 func (s *SocialAuth) GetExpiry() *time.Time {
 	return s.Expiry
 }
+*/
