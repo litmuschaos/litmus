@@ -6,23 +6,23 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/types"
 )
 
-//User contains the user information
-type User struct {
-	ID              string       `bson:"_id"`
-	UserName        string       `bson:"username"`
-	Password        string       `bson:"password"`
-	Email           string       `bson:"email"`
-	isEmailVerified bool         `bson:"verified"`
-	Name            string       `bson:"name"`
-	SocialAuths     []SocialAuth `bson:"social_auths"`
-	CreatedAt       *time.Time   `bson:"created_at"`
-	UpdatedAt       *time.Time   `bson:"updated_at"`
-	RemovedAt       *time.Time   `bson:"removed_at"`
-	State           State        `bson:"state"`
+//UserCredentials contains the user information
+type UserCredentials struct {
+	ID          string       `bson:"_id"`
+	UserName    string       `bson:"username"`
+	Password    string       `bson:"password"`
+	Email       string       `bson:"email"`
+	Name        string       `bson:"name"`
+	UserId      string       `bson:"user_id"`
+	SocialAuths []SocialAuth `bson:"social_auths"`
+	CreatedAt   *time.Time   `bson:"created_at"`
+	UpdatedAt   *time.Time   `bson:"updated_at"`
+	RemovedAt   *time.Time   `bson:"removed_at"`
+	State       State        `bson:"state"`
 }
 
 //DefaultUser is the admin user created by default
-var DefaultUser *User = &User{
+var DefaultUser *UserCredentials = &UserCredentials{
 	UserName: types.DefaultUserName,
 	Password: types.DefaultUserPassword,
 }
