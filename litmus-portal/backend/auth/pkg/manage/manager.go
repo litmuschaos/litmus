@@ -1,18 +1,16 @@
 package manage
 
 import (
-	"fmt"
 	"log"
 	"time"
 
 	"github.com/globalsign/mgo"
-	"golang.org/x/crypto/bcrypt"
-
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/errors"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/generates"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/models"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/store"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/types"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // NewManager create to authorization management instance
@@ -93,7 +91,7 @@ func (m *Manager) CreateUser(user *models.User) (err error) {
 func (m *Manager) CreateGithubUser(user *models.User) (err error) {
 	err = m.userStore.Set(user)
 	if err != nil {
-		fmt.Printf("\nerror: %v\n", err)
+		log.Printf("\nerror: %v\n", err)
 
 	}
 

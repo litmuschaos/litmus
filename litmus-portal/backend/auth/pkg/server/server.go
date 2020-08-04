@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -24,6 +24,13 @@ import (
 
 var userGDetails models.User
 
+// Server Provide authorization server
+type Server struct {
+	Config       *Config
+	Manager      *manage.Manager
+	GithubConfig oauth2.Config
+}
+
 // NewServer create authorization server
 func NewServer(cfg *Config) *Server {
 
@@ -38,32 +45,24 @@ func NewServer(cfg *Config) *Server {
 	srv := &Server{
 		Config:  cfg,
 		Manager: manager,
-	}
+		GithubConfig: oauth2.Config{
+			ClientID:     os.Getenv("ClientID"),
+			ClientSecret: os.Getenv("ClientSecret"),
+			Scopes:       []string{"read:user", "user:email"},
+			RedirectURL:  "http://localhost:3000/oauth/github",
+			Endpoint:     githubAuth.Endpoint,
+		}}
 
 	return srv
 }
 
-// Server Provide authorization server
-type Server struct {
-	Config      *Config
-	Manager     *manage.Manager
-	globalToken *oauth2.Token
-	config      oauth2.Config
-}
-
 //Middleware redirects to a github endpoint to get the temp code for oauth
 func (s *Server) Middleware(c *gin.Context) {
-	s.config = oauth2.Config{
-		ClientID:     os.Getenv("ClientID"),
-		ClientSecret: os.Getenv("ClientSecret"),
-		Scopes:       []string{"read:user", "user:email"},
-		RedirectURL:  "http://localhost:3000/oauth/github",
-		Endpoint:     githubAuth.Endpoint,
-	}
+
 	//log.Println(s.config.ClientID)
 	var w http.ResponseWriter = c.Writer
 	var r *http.Request = c.Request
-	u := s.config.AuthCodeURL("xyz")
+	u := s.GithubConfig.AuthCodeURL("xyz")
 	http.Redirect(w, r, u, http.StatusFound)
 }
 
@@ -83,14 +82,13 @@ func (s *Server) GitHub(c *gin.Context) {
 		http.Error(w, "Code not found", http.StatusBadRequest)
 		return
 	}
-	token, err := s.config.Exchange(context.Background(), code)
+	token, err := s.GithubConfig.Exchange(context.Background(), code)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	s.globalToken = token
-	userGDetails.SocialAuths = *token
+	userGDetails.OAuthToken = *token
 
 	s.getGithubData()
 
@@ -99,7 +97,7 @@ func (s *Server) GitHub(c *gin.Context) {
 //getGithubData fetches User details
 func (s *Server) getGithubData() {
 	ctx := context.Background()
-	ts := oauth2.StaticTokenSource(s.globalToken)
+	ts := oauth2.StaticTokenSource(&userGDetails.OAuthToken)
 	tc := oauth2.NewClient(ctx, ts)
 
 	client := github.NewClient(tc)
@@ -107,14 +105,14 @@ func (s *Server) getGithubData() {
 	user, _, err := client.Users.Get(ctx, "")
 
 	if err != nil {
-		fmt.Printf("\nerror: %v\n", err)
+		log.Printf("\nerror: %v\n", err)
 
 	}
 	userGDetails.Name = *user.Name
 	userGDetails.Email = *user.Email
 	er := s.Manager.CreateGithubUser(&userGDetails)
 	if er != nil {
-		fmt.Printf("\nerror: %v\n", er)
+		log.Printf("\nerror: %v\n", er)
 
 	}
 

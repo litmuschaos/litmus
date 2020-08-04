@@ -15,7 +15,7 @@ type User struct {
 	Email           string       `bson:"email"`
 	isEmailVerified bool         `bson:"verified"`
 	Name            string       `bson:"name"`
-	SocialAuths     oauth2.Token `bson:"social_auths"`
+	OAuthToken      oauth2.Token `bson:"social_auths"`
 	CreatedAt       *time.Time   `bson:"created_at"`
 	UpdatedAt       *time.Time   `bson:"updated_at"`
 	RemovedAt       *time.Time   `bson:"removed_at"`
@@ -81,7 +81,7 @@ func (u *User) GetName() string {
 
 // GetSocialAuths returns all the social authentications of the user
 func (u *User) GetSocialAuths() oauth2.Token {
-	return u.SocialAuths
+	return u.OAuthToken
 }
 
 // GetCreatedAt defines the time at which this user was created
