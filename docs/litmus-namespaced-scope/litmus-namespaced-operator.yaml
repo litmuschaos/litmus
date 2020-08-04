@@ -52,16 +52,13 @@ spec:
       serviceAccountName: litmus
       containers:
         - name: chaos-operator
-          # built off the latest released
-          image: litmuschaos/chaos-operator:latest
+          image: litmuschaos/chaos-operator:1.6.2
           command:
           - chaos-operator
           imagePullPolicy: Always
           env:
             - name: CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:1.6.1"
-            - name: CHAOS_MONITOR_IMAGE
-              value: "litmuschaos/chaos-exporter:1.6.1"
+              value: "litmuschaos/chaos-runner:1.6.2"
             - name: WATCH_NAMESPACE
               value: "default"
             - name: POD_NAME
