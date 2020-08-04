@@ -49,6 +49,7 @@ spec:
                   pattern: ^(deployment|statefulset|daemonset|deploymentconfig)$
                 applabel:
                   type: string
+                  pattern: ([a-z0-9A-Z_\.-/]+)=([a-z0-9A-Z_\.-/_]+)
                 appns:
                   type: string
             auxiliaryAppInfo:
@@ -120,6 +121,7 @@ spec:
                             type: array
                             items:
                               type: object
+                              minProperties: 2
                               properties:
                                 name:
                                   type: string
@@ -129,6 +131,7 @@ spec:
                             type: array
                             items:
                               type: object
+                              minProperties: 2
                               properties:
                                 name:
                                   type: string

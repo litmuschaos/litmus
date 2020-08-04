@@ -11,7 +11,6 @@ metadata:
   labels:
     name: litmus
 ---
-# Source: openebs/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
@@ -19,9 +18,12 @@ metadata:
   labels:
     name: litmus
 rules:
-- apiGroups: ["","apps","batch","litmuschaos.io"]
-  resources: ["pods","jobs","deployments","daemonsets","statefulsets","events","configmaps","services","chaosengines","chaosexperiments","chaosresults"]
+- apiGroups: ["","apps","batch","litmuschaos.io","apps.openshift.io"]
+  resources: ["pods","jobs","deployments","replicationcontrollers","daemonsets","replicasets","statefulsets","deploymentconfigs","events","configmaps","services","secrets","chaosengines","chaosexperiments","chaosresults"]
   verbs: ["get","create","update","patch","delete","list","watch","deletecollection"]
+- apiGroups: ["admissionregistration.k8s.io"]
+  resources: ["validatingwebhookconfigurations"]
+  verbs: ["get","create","list","delete","update"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
@@ -56,7 +58,6 @@ spec:
       serviceAccountName: litmus
       containers:
         - name: chaos-operator
-          # 'latest' tag corresponds to the latest released image
           image: litmuschaos/chaos-operator:latest
           command:
           - chaos-operator
@@ -123,6 +124,7 @@ spec:
                   pattern: ^(deployment|statefulset|daemonset|deploymentconfig)$
                 applabel:
                   type: string
+                  pattern: ([a-z0-9A-Z_\.-/]+)=([a-z0-9A-Z_\.-/_]+)
                 appns:
                   type: string
             auxiliaryAppInfo:
@@ -194,6 +196,7 @@ spec:
                             type: array
                             items:
                               type: object
+                              minProperties: 2
                               properties:
                                 name:
                                   type: string
@@ -203,6 +206,7 @@ spec:
                             type: array
                             items:
                               type: object
+                              minProperties: 2
                               properties:
                                 name:
                                   type: string
