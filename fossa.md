@@ -11,5 +11,4 @@
 |[Litmus-Docs](https://github.com/litmuschaos/litmus-docs) | No issues reported | 
 |[Community](https://github.com/litmuschaos/community) | No issues reported |
 |[Test-Tools](https://github.com/litmuschaos/test-tools) | https://app.fossa.com/attribution/5b329bbb-831d-48ec-9ff3-b6f75dab1d4e |
-|[Pages](https://github.com/litmuschaos/pages) | No issues reported |
 |[Website-LitmusChaos](https://github.com/litmuschaos/website-litmuschaos) | No issues reported |
