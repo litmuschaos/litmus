@@ -28,7 +28,7 @@ interface ResultModalProps {
 const ResultTable: React.FC<ResultModalProps> = ({ testValue, testNames }) => {
   const classes = useStyles();
 
-  let rows: {
+  const rows: {
     name: string;
     result: JSX.Element;
     weight: number | number[];
@@ -37,12 +37,12 @@ const ResultTable: React.FC<ResultModalProps> = ({ testValue, testNames }) => {
   testNames.map((element: any, index: any) =>
     rows.push(
       createData(
-        testNames[index] + ' test',
+        `${testNames[index]} test`,
         <div>
           <ToggleComponent />
         </div>,
         testValue[index],
-        9 //dummy result value
+        9 // dummy result value
       )
     )
   );

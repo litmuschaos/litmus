@@ -30,7 +30,7 @@ import 'ace-builds/src-min-noconflict/ext-modelist';
 import 'ace-builds/src-min-noconflict/ext-options';
 import 'ace-builds/src-min-noconflict/ext-prompt';
 import 'ace-builds/src-min-noconflict/ext-rtl';
-import 'ace-builds/src-min-noconflict/ext-searchbox';
+
 import 'ace-builds/src-min-noconflict/ext-spellcheck';
 import 'ace-builds/src-min-noconflict/ext-split';
 import 'ace-builds/src-min-noconflict/ext-static_highlight';
@@ -74,7 +74,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
   const [editorState, setEditorState] = React.useState({
     markers: [],
     annotations: [],
-    content: content,
+    content,
   });
 
   const [modifiedYaml, setModifiedYaml] = useState(content);
@@ -114,8 +114,8 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
       name: filename,
       link: yamlLink,
       yaml: value,
-      id: id,
-      description: description,
+      id,
+      description,
     });
   };
 
@@ -125,7 +125,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
       type: 'text/yaml',
     });
     element.href = URL.createObjectURL(file);
-    element.download = filename + '.yaml';
+    element.download = `${filename}.yaml`;
     document.body.appendChild(element);
     element.click();
   };
@@ -141,40 +141,40 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
   };
 
   const startfinder = () => {
-    (YamlAce.current!['editor'] as any).execCommand('find');
+    (YamlAce.current!.editor as any).execCommand('find');
   };
 
   const startreplace = () => {
-    (YamlAce.current!['editor'] as any).execCommand('replace');
+    (YamlAce.current!.editor as any).execCommand('replace');
   };
 
   const startundo = () => {
-    (YamlAce.current!['editor'] as any).execCommand('undo');
+    (YamlAce.current!.editor as any).execCommand('undo');
   };
 
   const startredo = () => {
-    (YamlAce.current!['editor'] as any).execCommand('redo');
+    (YamlAce.current!.editor as any).execCommand('redo');
   };
 
   const startfoldall = () => {
-    (YamlAce.current!['editor'] as any).execCommand('foldall');
+    (YamlAce.current!.editor as any).execCommand('foldall');
   };
 
   const startunfoldall = () => {
-    (YamlAce.current!['editor'] as any).execCommand('unfoldall');
+    (YamlAce.current!.editor as any).execCommand('unfoldall');
   };
 
   const startselectall = () => {
-    (YamlAce.current!['editor'] as any).execCommand('selectall');
+    (YamlAce.current!.editor as any).execCommand('selectall');
   };
 
   const startgotonexterror = () => {
-    (YamlAce.current!['editor'] as any).execCommand('goToNextError');
+    (YamlAce.current!.editor as any).execCommand('goToNextError');
   };
 
   const fullscreentrigger = () => {
-    let i: any = document.getElementById('resize-editor');
-    (YamlAce.current!['editor'] as any).setOption(
+    const i: any = document.getElementById('resize-editor');
+    (YamlAce.current!.editor as any).setOption(
       'maxLines',
       document.body.clientHeight
     );
@@ -251,16 +251,8 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
       <Typography className={classes.statusDescription}>
         {isValid
           ? ' '
-          : 'Pay attention to Line ' +
-            errors.errorLine +
-            "'s " +
-            ' character ' +
-            errors.errorPosition +
-            '. Type: ' +
-            errors.errorType +
-            ' -> ' +
-            errors.errorInfo +
-            '.'}
+          : `Pay attention to Line ${errors.errorLine}'s ` +
+            ` character ${errors.errorPosition}. Type: ${errors.errorType} -> ${errors.errorInfo}.`}
         &nbsp;
         {isValid
           ? 'Your code is fine. You can move on!'
@@ -443,15 +435,15 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
               highlightActiveLine={false}
               readOnly={false}
               tabSize={2}
-              wrapEnabled={true}
+              wrapEnabled
               ref={YamlAce}
               fontSize={14}
-              showGutter={true}
+              showGutter
               onChange={onEditorChange}
               showPrintMargin={false}
-              enableBasicAutocompletion={true}
-              enableSnippets={true}
-              enableLiveAutocompletion={true}
+              enableBasicAutocompletion
+              enableSnippets
+              enableLiveAutocompletion
               value={editorState.content}
               editorProps={{
                 $blockScrolling: Infinity,

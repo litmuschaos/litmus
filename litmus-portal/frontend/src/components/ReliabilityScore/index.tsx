@@ -1,5 +1,6 @@
 import { Modal, Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import Center from '../../containers/layouts/Center';
 import ButtonFilled from '../Button/ButtonFilled';
 import ButtonOutline from '../Button/ButtonOutline';
@@ -7,12 +8,11 @@ import CustomSlider from '../CustomSlider';
 import InfoTooltip from '../InfoTooltip';
 import ResultTable from './ResultTable';
 import useStyles from './styles';
-import { useSelector } from 'react-redux';
 import { WorkflowData } from '../../models/workflow';
 import { RootState } from '../../redux/reducers';
 import parsed from '../../utils/yamlUtils';
 
-//refractor needed
+// refractor needed
 
 const ReliablityScore = () => {
   const [WorkflowTestNames, setData] = useState(['']);
@@ -50,7 +50,7 @@ const ReliablityScore = () => {
   };
 
   useEffect(() => {
-    let tests = parsed(yaml);
+    const tests = parsed(yaml);
     setData(tests);
   }, []);
 
@@ -95,7 +95,7 @@ const ReliablityScore = () => {
               <div>
                 <CustomSlider
                   value={typeof value === 'number' ? value : 0}
-                  testName={WorkflowTestNames[0] + ' test'}
+                  testName={`${WorkflowTestNames[0]} test`}
                   onChangeCommitted={handleChange}
                 />
               </div>

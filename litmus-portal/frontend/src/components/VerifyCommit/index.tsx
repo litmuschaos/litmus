@@ -1,5 +1,6 @@
 import { Button, Divider, Link, Modal, Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import bfinance from '../../assets/icons/b-finance.png';
 import AdjustedWeights from '../AdjustedWeights';
 import ButtonFilled from '../Button/ButtonFilled';
@@ -9,7 +10,6 @@ import CustomDate from '../DateTime/CustomDate';
 import CustomTime from '../DateTime/CustomTime';
 import useStyles from './styles';
 import YamlEditor from '../YamlEditor/Editor';
-import { useSelector } from 'react-redux';
 import { WorkflowData } from '../../models/workflow';
 import { RootState } from '../../redux/reducers';
 import {
@@ -18,7 +18,7 @@ import {
 } from '../YamlEditor/Validations';
 import parsed from '../../utils/yamlUtils';
 
-//refractor needed
+// refractor needed
 
 function VerifyCommit() {
   const classes = useStyles();
@@ -56,7 +56,7 @@ function VerifyCommit() {
   const [WorkflowTestNames, setData] = useState(['']);
 
   useEffect(() => {
-    let tests = parsed(yaml);
+    const tests = parsed(yaml);
     setData(tests);
     let editorValidations: AceValidations = {
       markers: [],
@@ -181,7 +181,7 @@ function VerifyCommit() {
                   <div className={classes.adjWeights}>
                     <div className={classes.progress}>
                       <AdjustedWeights
-                        testName={WorkflowTestNames[0] + ' test'}
+                        testName={`${WorkflowTestNames[0]} test`}
                         testValue={testVal1}
                       />
                       <AdjustedWeights

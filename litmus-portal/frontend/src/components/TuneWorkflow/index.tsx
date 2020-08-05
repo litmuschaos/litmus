@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import useStyles from './styles';
+import React, { useState, useEffect } from 'react';
 import { Typography } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
-import { useEffect } from 'react';
+
 import { useSelector } from 'react-redux';
+import useStyles from './styles';
 import { WorkflowData } from '../../models/workflow';
 import { RootState } from '../../redux/reducers';
 import useActions from '../../redux/actions';
@@ -32,17 +32,17 @@ const TuneWorkflow: React.FC = () => {
         data.text().then((yamlText) => {
           setYamlFile(yamlText);
           workflow.setWorkflowDetails({
-            name: name,
-            link: link,
+            name,
+            link,
             yaml: yamlText,
-            id: id,
-            description: description,
+            id,
+            description,
           });
           loadStateChanger(false);
         });
       })
       .catch((err) => {
-        console.error('Unable to fetch the yaml text' + err);
+        console.error(`Unable to fetch the yaml text${err}`);
       });
   }
 

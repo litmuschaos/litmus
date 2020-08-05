@@ -29,7 +29,7 @@ export const parseYamlValidations = (
       type: 'fullLine',
     });
     parsedValidations.annotations.push({
-      row: row,
+      row,
       column: col,
       type: 'error',
       text: message,
