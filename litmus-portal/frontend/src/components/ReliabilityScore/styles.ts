@@ -19,6 +19,13 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1.25),
     fontSize: '1.5625rem',
   },
+  errorText: {
+    marginTop: theme.spacing(10),
+    marginLeft: theme.spacing(15),
+    marginBottom: theme.spacing(10),
+    fontSize: '1.6rem',
+    color: 'red',
+  },
   description: {
     width: '50rem',
     marginTop: theme.spacing(3.25),
