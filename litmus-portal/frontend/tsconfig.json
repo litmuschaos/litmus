@@ -17,5 +17,5 @@
     "noEmit": true,
     "jsx": "preserve"
   },
-  "include": ["src"]
+  "include": ["src","cypress/component/*.tsx"]
 }
