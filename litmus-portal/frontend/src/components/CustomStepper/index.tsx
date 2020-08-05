@@ -9,7 +9,6 @@ import React from 'react';
 import ButtonFilled from '../Button/ButtonFilled';
 import ButtonOutline from '../Button/ButtonOutline';
 import FinishModal from '../FinishModal';
-import Loader from '../Loader';
 import ReliablityScore from '../ReliabilityScore';
 import ScheduleWorkflow from '../ScheduleWorkflow';
 import VerifyCommit from '../VerifyCommit';
@@ -17,6 +16,7 @@ import WorkflowCluster from '../WorkflowCluster';
 import QontoConnector from './quontoConnector';
 import useStyles from './styles';
 import useQontoStepIconStyles from './useQontoStepIconStyles';
+import ChooseWorkflow from '../ChooseWorkflow/index';
 
 function getSteps(): string[] {
   return [
@@ -77,7 +77,7 @@ function getStepContent(stepIndex: number): React.ReactNode {
     case 0:
       return <WorkflowCluster />;
     case 1:
-      return <Loader />;
+      return <ChooseWorkflow />;
     case 2:
       return 'Show something random';
     case 3:
