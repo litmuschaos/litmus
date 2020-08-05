@@ -92,9 +92,7 @@ func (m *Manager) CreateGithubUser(user *models.User) (err error) {
 	err = m.userStore.Set(user)
 	if err != nil {
 		log.Printf("\nerror: %v\n", err)
-
 	}
-
 	return
 }
 
