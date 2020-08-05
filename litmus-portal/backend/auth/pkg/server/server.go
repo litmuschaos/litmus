@@ -58,8 +58,6 @@ func NewServer(cfg *Config) *Server {
 
 //Middleware redirects to a github endpoint to get the temp code for oauth
 func (s *Server) Middleware(c *gin.Context) {
-
-	//log.Println(s.config.ClientID)
 	var w http.ResponseWriter = c.Writer
 	var r *http.Request = c.Request
 	u := s.GithubConfig.AuthCodeURL("xyz")
@@ -72,7 +70,6 @@ func (s *Server) GitHub(c *gin.Context) {
 	var r *http.Request = c.Request
 	r.ParseForm()
 	state := r.Form.Get("state")
-
 	if state != "xyz" {
 		http.Error(w, "State invalid", http.StatusBadRequest)
 		return
@@ -87,11 +84,8 @@ func (s *Server) GitHub(c *gin.Context) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 	userGDetails.OAuthToken = *token
-
 	s.getGithubData()
-
 }
 
 //getGithubData fetches User details
@@ -99,23 +93,17 @@ func (s *Server) getGithubData() {
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(&userGDetails.OAuthToken)
 	tc := oauth2.NewClient(ctx, ts)
-
 	client := github.NewClient(tc)
-
 	user, _, err := client.Users.Get(ctx, "")
-
 	if err != nil {
 		log.Printf("\nerror: %v\n", err)
-
 	}
 	userGDetails.Name = *user.Name
 	userGDetails.Email = *user.Email
 	er := s.Manager.CreateGithubUser(&userGDetails)
 	if er != nil {
 		log.Printf("\nerror: %v\n", er)
-
 	}
-
 }
 
 func (s *Server) redirectError(c *gin.Context, err error) {

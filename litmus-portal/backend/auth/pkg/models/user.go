@@ -15,7 +15,7 @@ type User struct {
 	Email           string       `bson:"email"`
 	isEmailVerified bool         `bson:"verified"`
 	Name            string       `bson:"name"`
-	OAuthToken      oauth2.Token `bson:"social_auths"`
+	OAuthToken      oauth2.Token `bson:"oauth_token"`
 	CreatedAt       *time.Time   `bson:"created_at"`
 	UpdatedAt       *time.Time   `bson:"updated_at"`
 	RemovedAt       *time.Time   `bson:"removed_at"`

@@ -31,5 +31,4 @@ func main() {
 
 	route := router.New()
 	log.Fatal(route.Run(Port))
-
 }

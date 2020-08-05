@@ -2,7 +2,6 @@ package github
 
 import (
 	"github.com/gin-gonic/gin"
-
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/controller"
 )
 
