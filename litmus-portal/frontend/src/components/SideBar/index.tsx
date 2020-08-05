@@ -85,7 +85,7 @@ const SideBar = () => {
         <CustomisedListItem
           key="settings"
           handleClick={() => {
-            history.push('/404');
+            history.push('/settings');
           }}
           label="Settings"
         >
