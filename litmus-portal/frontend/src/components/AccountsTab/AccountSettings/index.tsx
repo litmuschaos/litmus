@@ -15,26 +15,30 @@ import PasswordModal from '../PasswordModal';
 import PersonalDetails from '../PersonalDetails';
 import useStyles from './styles';
 
+// used for password field
 interface State {
   password: string;
   err: boolean;
   showPassword: boolean;
 }
 
+// AccountSettins displays the starting page of "Accounts" tab
 const AccountSettings: React.FC = () => {
   const classes = useStyles();
 
+  // use for password validation
   const regularExpression = /^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&_*])[a-zA-Z0-9!@#$%^&_*]{8,16}$/;
 
+  // states for the three password fields
+  const [values1, setValues1] = React.useState<State>({
+    password: 'Helloworld@123',
+    showPassword: false,
+    err: false,
+  });
   const [values2, setValues2] = React.useState<State>({
     password: '',
     showPassword: false,
     err: true,
-  });
-  const [values1, setValues1] = React.useState<State>({
-    password: '123456789',
-    showPassword: false,
-    err: false,
   });
   const [values3, setValues3] = React.useState<State>({
     password: '',
@@ -42,9 +46,11 @@ const AccountSettings: React.FC = () => {
     err: true,
   });
 
+  // used for password validation
   const [formError2, setFormError2] = React.useState<boolean>(false);
   const [formError3, setFormError3] = React.useState<boolean>(false);
 
+  // handleChange2 handles password validation for second password field
   const handleChange2 = (prop: keyof State) => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -65,6 +71,7 @@ const AccountSettings: React.FC = () => {
     }
   };
 
+  // handleChange3 handles password validation for third password field
   const handleChange3 = (prop: keyof State) => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -80,6 +87,7 @@ const AccountSettings: React.FC = () => {
     }
   };
 
+  // implements the logic for visibility of password
   const handleClickShowPassword1 = () => {
     setValues1({ ...values1, showPassword: !values1.showPassword });
   };
@@ -100,13 +108,17 @@ const AccountSettings: React.FC = () => {
     <div className={classes.container}>
       <div>
         <div className={classes.suSegments}>
+          {/* Below component renders the upper section of the page, displays personal details */}
           <PersonalDetails />
           <Divider className={classes.divider} />
+
+          {/* Displays the lower segment containing the password details */}
           <Typography className={classes.headerText}>
             <strong>Password</strong>
           </Typography>
           <div className={classes.outerPass}>
             <form className={classes.innerPass}>
+              {/* Current Password */}
               <FormControl>
                 <Input
                   className={classes.pass}
@@ -134,6 +146,7 @@ const AccountSettings: React.FC = () => {
                   Current Password
                 </InputLabel>
               </FormControl>
+              {/* New Password */}
               <FormControl>
                 <Input
                   data-cy="changePassword"
@@ -166,6 +179,7 @@ const AccountSettings: React.FC = () => {
                   New Password
                 </InputLabel>
               </FormControl>
+              {/* Confirm new password */}
               <FormControl>
                 <Input
                   data-cy="confirmPassword"

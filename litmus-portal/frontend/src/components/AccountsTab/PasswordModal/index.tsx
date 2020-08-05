@@ -10,6 +10,7 @@ interface PasswordModalProps {
   er3: boolean;
 }
 
+// Displays the modal after the password is changed
 const PasswordModal: React.FC<PasswordModalProps> = ({ er2, er3 }) => {
   const classes = useStyles();
 

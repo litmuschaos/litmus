@@ -1,6 +1,7 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
+  // Personal details
   headerText: {
     marginTop: theme.spacing(7.5),
     fontSize: '1.5625rem',
@@ -66,6 +67,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingLeft: theme.spacing(3.75),
     marginBottom: theme.spacing(2.5),
   },
+
+  // button styles for saving the changes of personal details
   saveButton: {
     marginLeft: theme.spacing(12.7),
     width: '7.0625rem',
@@ -84,6 +87,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: theme.spacing(2),
     textTransform: 'none',
   },
+  // for closing the modal button
   button: {
     textTransform: 'none',
     width: '8.5rem',
@@ -97,6 +101,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
 
+  // styles for modal and its components
   modal: {
     display: 'flex',
     alignItems: 'center',

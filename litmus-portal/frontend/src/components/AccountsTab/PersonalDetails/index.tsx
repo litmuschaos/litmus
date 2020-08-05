@@ -7,9 +7,11 @@ import avatar from '../../../assets/icons/avatar.png';
 import User from '../../../assets/icons/userLarge.svg';
 import useStyles from './styles';
 
+// Displays the personals details on the "accounts" tab
 const PersonalDetails: React.FC = () => {
   const classes = useStyles();
 
+  // For closing and opening of the modal
   const [open, setOpen] = React.useState(false);
 
   const handleClose = () => {
@@ -47,6 +49,7 @@ const PersonalDetails: React.FC = () => {
               </label>
             </div>
           </div>
+          {/* Fields for details including Full name, email, username */}
           <div className={classes.details1}>
             <TextField
               required
@@ -76,7 +79,7 @@ const PersonalDetails: React.FC = () => {
               }}
               data-cy="inputEmail"
             />
-
+            {/* Username is not editable normal user */}
             <TextField
               className={classes.user}
               id="filled-username-input"
@@ -102,6 +105,8 @@ const PersonalDetails: React.FC = () => {
           >
             Save Changes
           </Button>
+
+          {/* Displays the modal after details are successfully edited */}
           <Modal
             data-cy="modal"
             open={open}

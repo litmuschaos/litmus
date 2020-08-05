@@ -10,6 +10,7 @@ interface TabPanelProps {
   value: any;
 }
 
+// TabPanel ise used to implement the functioning of tabs
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 

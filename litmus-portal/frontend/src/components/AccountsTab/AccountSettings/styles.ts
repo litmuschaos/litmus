@@ -6,9 +6,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     maxWidth: '63.75rem',
     marginTop: theme.spacing(3.75),
     marginLeft: theme.spacing(7.5),
-    border: 1,
+    border: '0.0625rem',
     borderColor: theme.palette.primary.dark,
-    borderRadius: 3,
+    borderRadius: '0.1875rem',
     paddingBottom: theme.spacing(5),
   },
   suSegments: {
@@ -17,26 +17,20 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'space-even',
     marginLeft: theme.spacing(5),
   },
+
+  // Upper segment
   headerText: {
     marginTop: theme.spacing(7.5),
     fontSize: '1.5625rem',
     marginBottom: theme.spacing(5),
   },
-  details: {
-    maxWidth: '63.75rem',
-    display: 'flex',
-    flexDirection: 'row',
-    alignContent: 'flex-start',
-    marginTop: theme.spacing(7.5),
-    [theme.breakpoints.down('sm')]: {
-      display: 'flex',
-      flexDirection: 'column',
-    },
-  },
+
   divider: {
     marginTop: theme.spacing(3.75),
     maxWidth: '58.75rem',
   },
+
+  // Lower segment
   outerPass: {
     display: 'flex',
     flexDirection: 'row',
