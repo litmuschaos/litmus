@@ -10,10 +10,10 @@ const CustomStatus: React.FC<StatusProps> = ({ status }) => {
   const classes = useStyles();
   const [label, setLabel] = React.useState(' ');
   useEffect(() => {
-    if (status === 'Completed') {
+    if (status === 'Completed' || status === 'Succeeded') {
       return setLabel(classes.completed);
     }
-    if (status === 'Running') {
+    if (status === 'Running' || status === 'Pending') {
       return setLabel(classes.running);
     }
     return setLabel(classes.failed);

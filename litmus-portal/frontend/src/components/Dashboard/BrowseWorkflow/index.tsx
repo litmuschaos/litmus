@@ -13,73 +13,19 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import TableBody from '@material-ui/core/TableBody';
+import IconButton from '@material-ui/core/IconButton';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Menu from '@material-ui/core/Menu';
+import { useSubscription } from '@apollo/client';
 import useStyles from './styles';
 import CustomStatus from '../CustomStatus/Status';
 import timeDifferenceForDate from '../../../utils/datesModifier';
 import LinearProgressBar from '../../ProgressBar/LinearProgressBar';
+import { WORKFLOW_DETAILS } from '../../../schemas';
 
-interface Data {
-  status: string;
-  workflowName: string;
-  targetCluster: string;
-  reliability: number;
-  steps: number;
-  lastRun: string;
-}
-function createData(
-  status: string,
-  workflowName: string,
-  targetCluster: string,
-  reliability: number,
-  steps: number,
-  lastRun: string
-): Data {
-  return { status, workflowName, targetCluster, reliability, steps, lastRun };
-}
-
-const rows = [
-  createData(
-    'Running',
-    'Workflow Underground',
-    'Kubernetes Cluster',
-    0,
-    5,
-    '2020-07-30T09:01:58.306Z'
-  ),
-  createData(
-    'Completed',
-    'Basic K8S Conformance',
-    'Cluset pre-defined',
-    100,
-    3,
-    '2020-07-28T12:36:21Z'
-  ),
-  createData(
-    'Running',
-    'Battery Flow',
-    'Kubernetes Cluster',
-    0,
-    5,
-    '2019-07-23T20:04:12.479Z'
-  ),
-  createData(
-    'Running',
-    'Workflow Underground',
-    'Kubernetes Cluster',
-    0,
-    2,
-    '2020-06-21T20:04:12.479Z'
-  ),
-  createData(
-    'Failed',
-    'Workflow Underground',
-    'Cluset pre-defined',
-    100,
-    3,
-    '2020-07-10T20:04:12.479Z'
-  ),
-];
 const BrowseWorkflow = () => {
+  const { data } = useSubscription(WORKFLOW_DETAILS);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const classes = useStyles();
   const [status, setStatus] = React.useState<String>('');
   const handleStatusChange = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -91,6 +37,16 @@ const BrowseWorkflow = () => {
   ) => {
     setCluster(event.target.value as String);
   };
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleMenu = () => {};
   return (
     <div>
       <section className="Heading section">
@@ -184,49 +140,90 @@ const BrowseWorkflow = () => {
                 <TableCell>Reliability Details</TableCell>
                 <TableCell># of experiments</TableCell>
                 <TableCell>Last Run</TableCell>
+                <TableCell />
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((data) => (
-                <TableRow key={data.workflowName}>
-                  <TableCell>
-                    <CustomStatus status={data.status} />
-                  </TableCell>
-                  <TableCell>
-                    <Typography>
-                      <strong>{data.workflowName}</strong>
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography
-                      style={{
-                        color:
-                          data.targetCluster === 'Cluset pre-defined'
-                            ? 'green'
-                            : 'red',
-                      }}
-                    >
-                      {data.targetCluster}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    {data.reliability}
-                    <div className={classes.progressBar}>
-                      <LinearProgressBar value={data.reliability} />
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Typography className={classes.steps}>
-                      {data.steps}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography>
-                      {timeDifferenceForDate(data.lastRun)}
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {data &&
+                data.getWorkFlowRuns.map((data: any) => (
+                  <TableRow key={data.workflow_run_id}>
+                    <TableCell className={classes.headerStatus1}>
+                      <CustomStatus
+                        status={JSON.parse(data.execution_data).phase}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Typography>
+                        <strong>{data.workflow_name}</strong>
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography>{data.cluster_name}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <div style={{ width: 130 }}>
+                        {JSON.parse(data.execution_data).phase === 'Failed' ? (
+                          <>
+                            <Typography>Overall RR: 0</Typography>
+                            <div className={classes.progressBar}>
+                              <LinearProgressBar value={0} />
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <Typography>Overall RR: 100</Typography>
+                            <div className={classes.progressBar}>
+                              <LinearProgressBar value={100} />
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Typography>
+                        {
+                          Object.keys(JSON.parse(data.execution_data).nodes)
+                            .length
+                        }
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <div style={{ display: 'flex', flexDirection: 'row' }}>
+                        <Typography style={{ paddingTop: 10 }}>
+                          {timeDifferenceForDate(data.last_updated)}
+                        </Typography>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton
+                        aria-label="more"
+                        aria-controls="long-menu"
+                        aria-haspopup="true"
+                        onClick={handleClick}
+                        style={{ marginLeft: 'auto' }}
+                      >
+                        <MoreVertIcon />
+                      </IconButton>
+                      <Menu
+                        id="long-menu"
+                        anchorEl={anchorEl}
+                        keepMounted
+                        open={open}
+                        onClose={handleClose}
+                      >
+                        <MenuItem value="Workflow" onClick={handleMenu}>
+                          Show the workflow
+                        </MenuItem>
+                        <MenuItem value="Analysis" onClick={handleMenu}>
+                          Show the analysis
+                        </MenuItem>
+                        <MenuItem value="Scheduler" onClick={handleMenu}>
+                          Show the scheduler
+                        </MenuItem>
+                      </Menu>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>

@@ -27,7 +27,6 @@ const wsLink = new WebSocketLink({
     lazy: true,
   },
 });
-
 const link = split(
   ({ query }) => {
     const definition = getMainDefinition(query);
@@ -39,12 +38,10 @@ const link = split(
   wsLink,
   httpLink
 );
-
 export const client = new ApolloClient({
   link,
   cache: new InMemoryCache(),
 });
-
 const ReduxRoot = () => {
   return (
     <ApolloProvider client={client}>
@@ -56,5 +53,4 @@ const ReduxRoot = () => {
     </ApolloProvider>
   );
 };
-
 export default ReduxRoot;

@@ -40,10 +40,13 @@ const useStyles = makeStyles((theme) => ({
     opacity: 0.5,
   },
   headerStatus: {
-    paddingLeft: theme.spacing(3.75),
+    paddingLeft: theme.spacing(10),
+  },
+  headerStatus1: {
+    paddingLeft: theme.spacing(8),
   },
   progressBar: {
-    width: '6.25rem',
+    width: '6.5rem',
   },
   steps: {
     marginLeft: theme.spacing(5.625),
