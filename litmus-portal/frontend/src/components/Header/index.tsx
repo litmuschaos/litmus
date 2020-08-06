@@ -23,12 +23,14 @@ const Header: React.FC = () => {
 
   const [projects, setProjects] = useState<Project[]>([]);
 
-  // set selectedProject from backend via redux using #setSelectedProject depending on user's last active project or use cookie.
+  // set selectedProject from backend via redux using #setSelectedProject
+  // depending on user's last active project or use cookie.
   const [selectedProject, setSelectedProject] = useState('1');
 
   const setSelectedProjectID = (selectedProjectID: string) => {
     setSelectedProject(selectedProjectID);
-    // send POST request with #selectedProjectID to update active project on db or persist it in redux or cookie.
+    // send POST request with #selectedProjectID to update active
+    // project on db or persist it in redux or cookie.
     // window.location.reload(false);
   };
 
@@ -132,7 +134,8 @@ const Header: React.FC = () => {
         }
       }
     }
-    // send POST request with #notificationIDs.id to update db with notification id marked as disissed from active or persist it in redux or cookie.
+    // send POST request with #notificationIDs.id to update db with notification
+    // id marked as disissed from active or persist it in redux or cookie.
     setMessages(messages);
     setCountOfMessages(messages.length);
   };

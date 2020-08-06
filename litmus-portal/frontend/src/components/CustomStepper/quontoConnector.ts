@@ -9,7 +9,6 @@ const QontoConnector = withStyles((theme: Theme) => ({
   },
   active: {
     '& $line': {
-      borderBottom: '0.02rem solid transparent',
       borderImage: `linear-gradient(to right, ${theme.palette.grey[800]} , ${theme.palette.primary.light})`,
       borderImageSlice: 1,
     },

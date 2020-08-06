@@ -1,14 +1,18 @@
-import { makeStyles, TextField } from '@material-ui/core';
-import { withStyles, Theme } from '@material-ui/core/styles';
+import {
+  makeStyles,
+  TextField,
+  withStyles,
+  Theme,
+  Button,
+} from '@material-ui/core';
 import { purple } from '@material-ui/core/colors';
-import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: 'rgba(255, 255, 255, 0.6)',
     height: '100%',
-    width: '61.25rem',
-    marginLeft: theme.spacing(17.5),
+    width: '80%',
+    margin: '0 auto',
     border: 1,
     borderColor: 'rgba(0, 0, 0, 0.05)',
     borderRadius: 3,
@@ -37,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   description: {
-    width: '50rem',
+    width: '90%',
     marginTop: theme.spacing(3.25),
     fontFamily: 'Ubuntu',
     fontSize: '1rem',
@@ -123,12 +127,9 @@ const useStyles = makeStyles((theme) => ({
   },
 
   modalContainer: {
-    height: '43.75rem',
-    width: '43.75rem',
-    marginLeft: theme.spacing(46.5),
-    marginRight: theme.spacing(30),
-    marginBottom: theme.spacing(20),
-    marginTop: theme.spacing(19),
+    height: '85%',
+    width: '70%',
+    margin: '2rem auto',
     background: theme.palette.common.white,
     borderRadius: 3,
     textAlign: 'center',
@@ -146,6 +147,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   modalContainerBody: {
+    position: 'relative',
+    height: '70%',
     paddingLeft: theme.spacing(18),
     paddingRight: theme.spacing(14),
     paddingBottom: theme.spacing(0.625),
@@ -172,15 +175,13 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1rem',
     fontWeight: 1000,
     display: 'inline-block',
-    paddingTop: theme.spacing(0.375),
-    paddingBottom: theme.spacing(0.375),
-    paddingLeft: theme.spacing(1.5),
-    paddingRight: theme.spacing(1.5),
+    padding: `${theme.spacing(0.375)} ${theme.spacing(1.5)}`,
     minHeight: 0,
     minWidth: 0,
     borderRadius: 3,
     color: 'rgba(0, 0, 0, 0.4)',
     border: '1px solid rgba(0, 0, 0, 0.4)',
+    marginLeft: '60%',
     marginTop: theme.spacing(5),
   },
 
