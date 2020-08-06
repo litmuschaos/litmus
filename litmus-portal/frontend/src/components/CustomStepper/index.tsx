@@ -16,6 +16,7 @@ import ChooseAWorkflowCluster from '../WorkflowCluster';
 import QontoConnector from './quontoConnector';
 import useStyles from './styles';
 import useQontoStepIconStyles from './useQontoStepIconStyles';
+import TuneWorkflow from '../TuneWorkflow/index';
 import ChooseWorkflow from '../ChooseWorkflow/index';
 
 function getSteps(): string[] {
@@ -79,7 +80,7 @@ function getStepContent(stepIndex: number): React.ReactNode {
     case 1:
       return <ChooseWorkflow />;
     case 2:
-      return 'Show something random';
+      return <TuneWorkflow />;
     case 3:
       return <ReliablityScore />;
     case 4:

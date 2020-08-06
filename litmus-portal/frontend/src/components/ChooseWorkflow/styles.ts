@@ -1,8 +1,11 @@
-import { makeStyles, TextField } from '@material-ui/core';
-
-import { withStyles, Theme } from '@material-ui/core/styles';
+import {
+  makeStyles,
+  TextField,
+  withStyles,
+  Theme,
+  Button,
+} from '@material-ui/core';
 import { purple } from '@material-ui/core/colors';
-import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) => ({
   root: {
