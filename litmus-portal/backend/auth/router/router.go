@@ -9,8 +9,10 @@ import (
 )
 
 const (
-	loginRoute  = "/login"
-	updateRoute = "/update"
+	loginRoute          = "/login"
+	updatePasswordRoute = "/update/password"
+	createRoute         = "/create"
+	updateUserIDRoute   = "/update/userID"
 )
 
 var (
@@ -29,7 +31,9 @@ func New() *gin.Engine {
 
 	// Handle the request for chaos-schedule
 	router.POST(loginRoute, userController.Login)
-	router.POST(updateRoute, userController.Update)
+	router.POST(updatePasswordRoute, userController.UpdatePassword)
+	router.POST(updateUserIDRoute, userController.UpdateUserID)
+	router.POST(createRoute, userController.Create)
 
 	return router
 }

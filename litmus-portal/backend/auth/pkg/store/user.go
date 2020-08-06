@@ -72,7 +72,7 @@ func (us *UserStore) cHandler(name string, handler func(c *mgo.Collection)) {
 }
 
 // Set set user information
-func (us *UserStore) Set(user *models.User) (err error) {
+func (us *UserStore) Set(user *models.UserCredentials) (err error) {
 	us.cHandler(us.ucfg.UsersCName, func(c *mgo.Collection) {
 		user.ID = uuid.Must(uuid.NewRandom()).String()
 		currentTime := time.Now()
@@ -87,9 +87,9 @@ func (us *UserStore) Set(user *models.User) (err error) {
 }
 
 // GetByUserName according to the ID for the user information
-func (us *UserStore) GetByUserName(username string) (user *models.User, err error) {
+func (us *UserStore) GetByUserName(username string) (user *models.UserCredentials, err error) {
 	us.cHandler(us.ucfg.UsersCName, func(c *mgo.Collection) {
-		user = new(models.User)
+		user = new(models.UserCredentials)
 		if cerr := c.Find(bson.M{"username": username}).One(user); cerr != nil {
 			err = cerr
 			return
@@ -100,9 +100,9 @@ func (us *UserStore) GetByUserName(username string) (user *models.User, err erro
 }
 
 // GetByEmail according to the ID for the user information
-func (us *UserStore) GetByEmail(email string) (user *models.User, err error) {
+func (us *UserStore) GetByEmail(email string) (user *models.UserCredentials, err error) {
 	us.cHandler(us.ucfg.UsersCName, func(c *mgo.Collection) {
-		user = new(models.User)
+		user = new(models.UserCredentials)
 		if cerr := c.Find(bson.M{"email": email}).One(user); cerr != nil {
 			err = cerr
 			return
@@ -113,7 +113,7 @@ func (us *UserStore) GetByEmail(email string) (user *models.User, err error) {
 }
 
 //UpdateUser updates the user
-func (us *UserStore) UpdateUser(user *models.User) (err error) {
+func (us *UserStore) UpdateUser(user *models.UserCredentials) (err error) {
 	us.cHandler(us.ucfg.UsersCName, func(c *mgo.Collection) {
 		currentTime := time.Now()
 		user.UpdatedAt = &currentTime

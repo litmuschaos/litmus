@@ -1,6 +1,7 @@
 package manage
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -36,14 +37,14 @@ func (m *Manager) MustUserStorage(stor *store.UserStore, err error) {
 		panic(err)
 	}
 	m.userStore = stor
-	err = m.CreateUser(models.DefaultUser)
+	_, err = m.CreateUser(models.DefaultUser)
 	if err != nil {
 		log.Fatal("Unable to create default user with error:", err)
 	}
 }
 
 // GetUser get the user information
-func (m *Manager) GetUser(userName string) (user *models.User, err error) {
+func (m *Manager) GetUser(userName string) (user *models.UserCredentials, err error) {
 	user, err = m.userStore.GetByUserName(userName)
 	if err != nil && err == mgo.ErrNotFound {
 		err = errors.ErrInvalidUser
@@ -73,19 +74,19 @@ func (m *Manager) VerifyUserPassword(username, password string) (*models.PublicU
 }
 
 // CreateUser get the user information
-func (m *Manager) CreateUser(user *models.User) (err error) {
+func (m *Manager) CreateUser(user *models.UserCredentials) (*models.PublicUserInfo, error) {
 
 	exists, err := m.CheckUserExists(user.UserName)
 	if err != nil || exists {
-		return
+		return nil, err
 	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), types.PasswordEncryptionCost)
 	if err != nil {
-		return
+		return nil, err
 	}
 	user.Password = string(hashedPassword)
 	err = m.userStore.Set(user)
-	return
+	return user.GetPublicInfo(), err
 }
 
 // GenerateAuthToken generate the authorization token(code)
@@ -129,7 +130,7 @@ func (m *Manager) ParseToken(tokenString string) (userInfo *models.PublicUserInf
 }
 
 // UpdateUserDetails get the user information
-func (m *Manager) UpdateUserDetails(user *models.User) (*models.PublicUserInfo, error) {
+func (m *Manager) UpdateUserDetails(user *models.UserCredentials) (*models.PublicUserInfo, error) {
 
 	if user.GetPassword() == "" {
 		return nil, errors.ErrInvalidRequest
@@ -150,4 +151,45 @@ func (m *Manager) UpdateUserDetails(user *models.User) (*models.PublicUserInfo, 
 
 	err = m.userStore.UpdateUser(storedUser)
 	return user.GetPublicInfo(), err
+}
+
+// UpdatePassword get the user information
+func (m *Manager) UpdatePassword(user *models.UserCredentials) (*models.PublicUserInfo, error) {
+
+	fmt.Println("password for update is", user.GetPassword())
+	if user.GetPassword() == "" {
+		return nil, errors.ErrInvalidRequest
+	}
+
+	storedUser, err := m.GetUser(user.UserName)
+	if err != nil {
+		return nil, errors.ErrInvalidUser
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.GetPassword()), types.PasswordEncryptionCost)
+	if err != nil {
+		return nil, err
+	}
+	storedUser.Password = string(hashedPassword)
+
+	err = m.userStore.UpdateUser(storedUser)
+	return storedUser.GetPublicInfo(), err
+}
+
+// UpdateUserID get the user information
+func (m *Manager) UpdateUserID(user *models.UserCredentials) (*models.PublicUserInfo, error) {
+
+	if user.UserId == "" {
+		return nil, errors.ErrInvalidRequest
+	}
+
+	storedUser, err := m.GetUser(user.UserName)
+	if err != nil {
+		return nil, errors.ErrInvalidUser
+	}
+
+	storedUser.UserId = user.GetID()
+
+	err = m.userStore.UpdateUser(storedUser)
+	return storedUser.GetPublicInfo(), err
 }

@@ -52,7 +52,7 @@ func (s *Server) redirect(c *gin.Context, data interface{}) {
 }
 
 // ValidationAuthenticateRequest the authenticate request validation
-func (s *Server) validationAuthenticateRequest(user *models.User) (*manage.TokenGenerateRequest, error) {
+func (s *Server) validationAuthenticateRequest(user *models.UserCredentials) (*manage.TokenGenerateRequest, error) {
 	username := user.GetUserName()
 	password := user.GetPassword()
 	if username == "" || password == "" {
@@ -71,7 +71,7 @@ func (s *Server) validationAuthenticateRequest(user *models.User) (*manage.Token
 }
 
 // HandleAuthenticateRequest the authorization request handling
-func (s *Server) HandleAuthenticateRequest(c *gin.Context, user *models.User) {
+func (s *Server) HandleAuthenticateRequest(c *gin.Context, user *models.UserCredentials) {
 
 	tgr, err := s.validationAuthenticateRequest(user)
 	if err != nil {
@@ -174,8 +174,56 @@ func (s *Server) getTokenFromHeader(r *http.Request) (string, error) {
 	return token, nil
 }
 
-// UpdateRequest validates the request
-func (s *Server) UpdateRequest(c *gin.Context, user *models.User) {
+func (s *Server) getUserFromToken(r *http.Request) (*models.PublicUserInfo, error) {
+	tokenString, err := s.getTokenFromHeader(r)
+	if err != nil {
+		return nil, err
+	}
+
+	userInfo, err := s.Manager.ParseToken(tokenString)
+	return userInfo, err
+}
+
+// UpdatePasswordRequest validates the request
+func (s *Server) UpdatePasswordRequest(c *gin.Context, user *models.UserCredentials) {
+
+	userInfo, err := s.getUserFromToken(c.Request)
+	if err != nil {
+		s.redirectError(c, err)
+		return
+	}
+
+	user.UserName = userInfo.GetUserName()
+	updatedUserInfo, err := s.Manager.UpdatePassword(user)
+	if err != nil {
+		s.redirectError(c, err)
+		return
+	}
+	s.redirect(c, updatedUserInfo)
+	return
+}
+
+// UpdateUserIDRequest validates the request
+func (s *Server) UpdateUserIDRequest(c *gin.Context, user *models.UserCredentials) {
+
+	userInfo, err := s.getUserFromToken(c.Request)
+	if err != nil {
+		s.redirectError(c, err)
+		return
+	}
+
+	user.UserName = userInfo.GetUserName()
+	updatedUserInfo, err := s.Manager.UpdateUserID(user)
+	if err != nil {
+		s.redirectError(c, err)
+		return
+	}
+	s.redirect(c, updatedUserInfo)
+	return
+}
+
+// CreateRequest validates the request
+func (s *Server) CreateRequest(c *gin.Context, user *models.UserCredentials) {
 
 	tokenString, err := s.getTokenFromHeader(c.Request)
 	if err != nil {
@@ -189,12 +237,14 @@ func (s *Server) UpdateRequest(c *gin.Context, user *models.User) {
 		return
 	}
 
-	user.UserName = userInfo.GetUserName()
-	updatedUserInfo, err := s.Manager.UpdateUserDetails(user)
-	if err != nil {
-		s.redirectError(c, err)
-		return
+	var createdUserInfo *models.PublicUserInfo
+	if userInfo.UserName == types.DefaultUserName {
+		createdUserInfo, err = s.Manager.CreateUser(user)
+		if err != nil {
+			s.redirectError(c, err)
+			return
+		}
 	}
-	s.redirect(c, updatedUserInfo)
+	s.redirect(c, createdUserInfo)
 	return
 }

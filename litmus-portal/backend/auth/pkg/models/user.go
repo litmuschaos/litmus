@@ -58,67 +58,57 @@ const (
 )
 
 // GetID user id
-func (u *User) GetID() string {
+func (u *UserCredentials) GetID() string {
 	return u.ID
 }
 
 // GetUserName user username
-func (u *User) GetUserName() string {
+func (u *UserCredentials) GetUserName() string {
 	return u.UserName
 }
 
 // GetPassword user password
-func (u *User) GetPassword() string {
+func (u *UserCredentials) GetPassword() string {
 	return u.Password
 }
 
 // GetEmail user email
-func (u *User) GetEmail() string {
+func (u *UserCredentials) GetEmail() string {
 	return u.Email
 }
 
-// GetIsEmailVerified returns if user email is verified or not
-func (u *User) GetIsEmailVerified() bool {
-	return u.isEmailVerified
-}
-
 // GetName returns user name
-func (u *User) GetName() string {
+func (u *UserCredentials) GetName() string {
 	return u.Name
 }
 
 // GetSocialAuths returns all the social authentications of the user
-func (u *User) GetSocialAuths() []SocialAuth {
+func (u *UserCredentials) GetSocialAuths() []SocialAuth {
 	return u.SocialAuths
 }
 
 // GetCreatedAt defines the time at which this user was created
-func (u *User) GetCreatedAt() *time.Time {
+func (u *UserCredentials) GetCreatedAt() *time.Time {
 	return u.CreatedAt
 }
 
 // GetUpdatedAt defines the time at which user was last updated
-func (u *User) GetUpdatedAt() *time.Time {
+func (u *UserCredentials) GetUpdatedAt() *time.Time {
 	return u.UpdatedAt
 }
 
 // GetRemovedAt defines the time at which this user was removed
-func (u *User) GetRemovedAt() *time.Time {
+func (u *UserCredentials) GetRemovedAt() *time.Time {
 	return u.RemovedAt
 }
 
-// GetUser defines the time at which this user was removed
-func (u *User) GetUser() *User {
-	return u
-}
-
 // GetState user password
-func (u *User) GetState() State {
+func (u *UserCredentials) GetState() State {
 	return u.State
 }
 
 // GetPublicInfo fetches the pubicUserInfo from User
-func (u *User) GetPublicInfo() *PublicUserInfo {
+func (u *UserCredentials) GetPublicInfo() *PublicUserInfo {
 	return &PublicUserInfo{
 		Name:     u.GetName(),
 		UserName: u.GetUserName(),

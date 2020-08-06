@@ -11,7 +11,7 @@ import (
 )
 
 // User is a type to be accepted as input
-type User models.User
+type User models.UserCredentials
 
 // New creates a new User
 func New() *User {
@@ -29,13 +29,13 @@ func (user *User) Login(c *gin.Context) {
 		return
 	}
 
-	userModel := models.User(*user)
+	userModel := models.UserCredentials(*user)
 	controller.Server.HandleAuthenticateRequest(c, &userModel)
 	return
 }
 
-// Update updates a user details
-func (user *User) Update(c *gin.Context) {
+// UpdatePassword updates a user details
+func (user *User) UpdatePassword(c *gin.Context) {
 	err := c.BindJSON(user)
 	if err != nil {
 		log.Error(err)
@@ -45,7 +45,39 @@ func (user *User) Update(c *gin.Context) {
 		return
 	}
 
-	userModel := models.User(*user)
-	controller.Server.UpdateRequest(c, &userModel)
+	userModel := models.UserCredentials(*user)
+	controller.Server.UpdatePasswordRequest(c, &userModel)
+	return
+}
+
+// UpdateUserID updates a user details
+func (user *User) UpdateUserID(c *gin.Context) {
+	err := c.BindJSON(user)
+	if err != nil {
+		log.Error(err)
+		c.JSON(http.StatusNotAcceptable, gin.H{
+			"message": "Unable to parse JSON",
+		})
+		return
+	}
+
+	userModel := models.UserCredentials(*user)
+	controller.Server.UpdateUserIDRequest(c, &userModel)
+	return
+}
+
+//Create ...
+func (user *User) Create(c *gin.Context) {
+	err := c.BindJSON(user)
+	if err != nil {
+		log.Error(err)
+		c.JSON(http.StatusNotAcceptable, gin.H{
+			"message": "Unable to parse JSON",
+		})
+		return
+	}
+
+	userModel := models.UserCredentials(*user)
+	controller.Server.CreateRequest(c, &userModel)
 	return
 }
