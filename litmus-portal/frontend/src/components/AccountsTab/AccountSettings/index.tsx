@@ -16,7 +16,7 @@ import PersonalDetails from '../PersonalDetails';
 import useStyles from './styles';
 
 // used for password field
-interface State {
+interface Password {
   password: string;
   err: boolean;
   showPassword: boolean;
@@ -32,24 +32,24 @@ const AccountSettings: React.FC = () => {
   );
 
   // states for the three password fields
-  const [currPassword, setCurrPassword] = React.useState<State>({
+  const [currPassword, setCurrPassword] = React.useState<Password>({
     password: '',
     showPassword: false,
     err: false,
   });
-  const [newPassword, setNewPassword] = React.useState<State>({
+  const [newPassword, setNewPassword] = React.useState<Password>({
     password: '',
     showPassword: false,
     err: false,
   });
-  const [confNewPassword, setConfNewPassword] = React.useState<State>({
+  const [confNewPassword, setConfNewPassword] = React.useState<Password>({
     password: '',
     showPassword: false,
     err: false,
   });
 
   // handleChange2 handles password validation for second password field
-  const handleChange2 = (prop: keyof State) => (
+  const handleNewPassword = (prop: keyof Password) => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     if (
@@ -71,7 +71,7 @@ const AccountSettings: React.FC = () => {
   };
 
   // handleChange3 handles password validation for third password field
-  const handleChange3 = (prop: keyof State) => (
+  const handleConfPassword = (prop: keyof Password) => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     if (
@@ -168,7 +168,7 @@ const AccountSettings: React.FC = () => {
                   }`}
                   id="outlined-adornment-password"
                   type={newPassword.showPassword ? 'text' : 'password'}
-                  onChange={handleChange2('password')}
+                  onChange={handleNewPassword('password')}
                   disableUnderline
                   endAdornment={
                     <InputAdornment position="end">
@@ -201,7 +201,7 @@ const AccountSettings: React.FC = () => {
                   }`}
                   id="outlined-adornment-password"
                   type={confNewPassword.showPassword ? 'text' : 'password'}
-                  onChange={handleChange3('password')}
+                  onChange={handleConfPassword('password')}
                   disableUnderline
                   endAdornment={
                     <InputAdornment position="end">
