@@ -10,6 +10,7 @@ type Cluster {
   platform_name: String!
   access_key: String!
   is_registered: Boolean!
+  is_cluster_confirmed: Boolean!
   is_active: Boolean!
   updated_at: String!
   created_at: String!
@@ -54,6 +55,12 @@ input ClusterIdentity{
   access_key: String!
 }
 
+type ClusterConfirmResponse {
+    isClusterConfirmed: Boolean!
+    newClusterKey: String
+    cluster_id: String
+}
+
 input chaosWorkFlowInput {
   workflow_yaml: String!
   cronSyntax: String!
@@ -81,17 +88,17 @@ type chaosWorkFlowResponse {
   Weightages: [weightages]!
   isCustomWorkflow: Boolean!
 }
-
 type Mutation{
     #It is used to create external cluster.
     userClusterReg(clusterInput: ClusterInput!): String!
     
     #It is used to confirm the subscriber registration
-    clusterConfirm(identity: ClusterIdentity!): String!
+    clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
     
     #It is used to send cluster related events from the subscriber
     newClusterEvent(clusterEvent: ClusterEventInput!): String!
-    
+
+    #It is used to create chaosworkflow
     createChaosWorkFlow(input: chaosWorkFlowInput): chaosWorkFlowResponse!
 }
 
