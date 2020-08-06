@@ -22,7 +22,7 @@ interface Password {
   showPassword: boolean;
 }
 
-// AccountSettins displays the starting page of "Accounts" tab
+// AccountSettings displays the starting page of "Accounts" tab
 const AccountSettings: React.FC = () => {
   const classes = useStyles();
 
@@ -48,7 +48,7 @@ const AccountSettings: React.FC = () => {
     err: false,
   });
 
-  // handleChange2 handles password validation for second password field
+  // handleNewPassword handles password validation for second password field
   const handleNewPassword = (prop: keyof Password) => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -70,7 +70,7 @@ const AccountSettings: React.FC = () => {
     }
   };
 
-  // handleChange3 handles password validation for third password field
+  // handleConfPassword handles password validation for third password field
   const handleConfPassword = (prop: keyof Password) => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
