@@ -50,7 +50,7 @@ func DBInit() error {
 	err = client.Ping(ctx, nil)
 	if err != nil {
 		return err
-	}  else {
+	} else {
 		log.Print("Connected To MONGODB")
 	}
 

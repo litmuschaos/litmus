@@ -6,6 +6,6 @@ import data_store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-s
 //
 // It serves as dependency injection for your app, add any dependencies you require here.
 
-type Resolver struct {}
+type Resolver struct{}
 
 var store = data_store.New()

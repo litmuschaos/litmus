@@ -16,7 +16,7 @@ type StateData struct {
 func New() *StateData {
 	return &StateData{
 		ClusterEventPublish: make(map[string][]chan *model.ClusterEvent),
-		ConnectedCluster: make(map[string]chan *model.ClusterAction),
-		Mutex: &sync.Mutex{},
+		ConnectedCluster:    make(map[string]chan *model.ClusterAction),
+		Mutex:               &sync.Mutex{},
 	}
 }

@@ -23,43 +23,29 @@ function createData(
 
 interface ResultModalProps {
   testValue: (number | number[])[];
+  testNames: (string | string[])[];
 }
-const ResultTable: React.FC<ResultModalProps> = ({ testValue }) => {
+const ResultTable: React.FC<ResultModalProps> = ({ testValue, testNames }) => {
   const classes = useStyles();
-  const rows = [
-    createData(
-      'Node add test',
-      <div>
-        <ToggleComponent />
-      </div>,
-      testValue[0],
-      9
-    ),
-    createData(
-      'Config map multi volume test',
-      <div>
-        <ToggleComponent />
-      </div>,
-      testValue[1],
-      4
-    ),
-    createData(
-      'Networking pod test',
-      <div>
-        <ToggleComponent />
-      </div>,
-      testValue[2],
-      2
-    ),
-    createData(
-      'Proxy-service-test',
-      <div>
-        <ToggleComponent />
-      </div>,
-      testValue[3],
-      8
-    ),
-  ];
+
+  const rows: {
+    name: string;
+    result: JSX.Element;
+    weight: number | number[];
+    points: number;
+  }[] = [];
+  testNames.map((element: any, index: any) =>
+    rows.push(
+      createData(
+        `${testNames[index]} test`,
+        <div>
+          <ToggleComponent />
+        </div>,
+        testValue[index],
+        9 // dummy result value
+      )
+    )
+  );
 
   return (
     <div>

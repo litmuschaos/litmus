@@ -1,18 +1,29 @@
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client';
 
-export const CREATE_TODO_MUTATION = gql`
-  mutation createMutation($tt: NewTodo!) {
-    createTodo(input: $tt) {
-      text
+export const WORKFLOW_DETAILS = gql`
+  query {
+    getWorkFlowRuns(project_id: "00000") {
+      workflow_id
+      workflow_name
+      workflow_run_id
+      execution_data
+      project_id
+      cluster_name
+      last_updated
     }
   }
 `;
 
-export const TODO_LIST = gql`
-  query getTodoList {
-    todos {
-      id
-      text
+export const WORKFLOW_EVENTS = gql`
+  subscription {
+    workflowEventListener(project_id: "00000") {
+      workflow_id
+      workflow_name
+      workflow_run_id
+      execution_data
+      project_id
+      cluster_name
+      last_updated
     }
   }
 `;
