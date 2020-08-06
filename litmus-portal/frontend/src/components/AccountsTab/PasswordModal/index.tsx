@@ -6,12 +6,12 @@ import Lock from '../../../assets/icons/lock.svg';
 import useStyles from './styles';
 
 interface PasswordModalProps {
-  er2: boolean;
-  er3: boolean;
+  formErr: boolean;
+  isEmpty: boolean;
 }
 
 // Displays the modal after the password is changed
-const PasswordModal: React.FC<PasswordModalProps> = ({ er2, er3 }) => {
+const PasswordModal: React.FC<PasswordModalProps> = ({ formErr, isEmpty }) => {
   const classes = useStyles();
 
   const [open, setOpen] = React.useState(false);
@@ -27,7 +27,7 @@ const PasswordModal: React.FC<PasswordModalProps> = ({ er2, er3 }) => {
         variant="contained"
         className={classes.button}
         onClick={() => {
-          if (!er2 && !er3) {
+          if (!formErr && !isEmpty) {
             setOpen(true);
           }
         }}

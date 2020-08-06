@@ -18,8 +18,8 @@ const PersonalDetails: React.FC = () => {
     setOpen(false);
   };
 
-  const [values2, setValues2] = React.useState<string>('');
-  const [values1, setValues1] = React.useState<string>('');
+  const [email, setEmail] = React.useState<string>('');
+  const [fullName, setFullName] = React.useState<string>('');
   return (
     <div>
       <Typography className={classes.headerText}>
@@ -53,9 +53,9 @@ const PersonalDetails: React.FC = () => {
           <div className={classes.details1}>
             <TextField
               required
-              value={values1}
+              value={fullName}
               onChange={(e) => {
-                setValues1(e.target.value);
+                setFullName(e.target.value);
               }}
               className={classes.user}
               id="filled-user-input"
@@ -66,9 +66,10 @@ const PersonalDetails: React.FC = () => {
 
             <TextField
               required
-              value={values2}
+              type="email"
+              value={email}
               onChange={(e) => {
-                setValues2(e.target.value);
+                setEmail(e.target.value);
               }}
               className={classes.user}
               id="filled-email-input"
@@ -98,7 +99,7 @@ const PersonalDetails: React.FC = () => {
             className={classes.submitButton}
             data-cy="loginButton"
             onClick={() => {
-              if (values1.length > 0 && values2.length > 0) {
+              if (fullName.length > 0 && email.length > 0) {
                 setOpen(true);
               }
             }}

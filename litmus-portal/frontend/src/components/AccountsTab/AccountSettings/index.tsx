@@ -26,48 +26,47 @@ interface State {
 const AccountSettings: React.FC = () => {
   const classes = useStyles();
 
-  // use for password validation
-  const regularExpression = /^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&_*])[a-zA-Z0-9!@#$%^&_*]{8,16}$/;
+  // used for password validation
+  const regularExpression = new RegExp(
+    '^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})'
+  );
 
   // states for the three password fields
-  const [values1, setValues1] = React.useState<State>({
-    password: 'Helloworld@123',
+  const [currPassword, setCurrPassword] = React.useState<State>({
+    password: '',
     showPassword: false,
     err: false,
   });
-  const [values2, setValues2] = React.useState<State>({
+  const [newPassword, setNewPassword] = React.useState<State>({
     password: '',
     showPassword: false,
-    err: true,
+    err: false,
   });
-  const [values3, setValues3] = React.useState<State>({
+  const [confNewPassword, setConfNewPassword] = React.useState<State>({
     password: '',
     showPassword: false,
-    err: true,
+    err: false,
   });
-
-  // used for password validation
-  const [formError2, setFormError2] = React.useState<boolean>(false);
-  const [formError3, setFormError3] = React.useState<boolean>(false);
 
   // handleChange2 handles password validation for second password field
   const handleChange2 = (prop: keyof State) => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     if (
-      event.target.value.length >= 8 &&
-      event.target.value !== values1.password &&
+      event.target.value !== currPassword.password &&
       regularExpression.test(event.target.value) &&
-      (values3.password.length === 0 || event.target.value === values3.password)
+      (confNewPassword.password.length === 0 ||
+        event.target.value === confNewPassword.password)
     ) {
-      setValues2({ ...values2, err: false, [prop]: event.target.value });
-      setValues3({ ...values3, err: false });
-      setFormError2(false);
-      setFormError3(false);
+      setNewPassword({
+        ...newPassword,
+        err: false,
+        [prop]: event.target.value,
+      });
+      setConfNewPassword({ ...confNewPassword, err: false });
     } else {
-      setValues2({ ...values2, err: true, [prop]: event.target.value });
-      setValues3({ ...values3, err: true });
-      setFormError2(true);
+      setNewPassword({ ...newPassword, err: true, [prop]: event.target.value });
+      setConfNewPassword({ ...confNewPassword });
     }
   };
 
@@ -75,27 +74,41 @@ const AccountSettings: React.FC = () => {
   const handleChange3 = (prop: keyof State) => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if (event.target.value === values2.password) {
-      setValues3({ ...values3, err: false, [prop]: event.target.value });
-      setValues2({ ...values2, err: false });
-      setFormError3(false);
-      setFormError2(false);
+    if (
+      event.target.value === newPassword.password &&
+      regularExpression.test(event.target.value)
+    ) {
+      setConfNewPassword({
+        ...confNewPassword,
+        err: false,
+        [prop]: event.target.value,
+      });
+      setNewPassword({ ...newPassword, err: false });
     } else {
-      setValues3({ ...values3, err: true, [prop]: event.target.value });
-      setValues2({ ...values2, err: true });
-      setFormError3(true);
+      setConfNewPassword({
+        ...confNewPassword,
+        err: true,
+        [prop]: event.target.value,
+      });
+      setNewPassword({ ...newPassword });
     }
   };
 
   // implements the logic for visibility of password
   const handleClickShowPassword1 = () => {
-    setValues1({ ...values1, showPassword: !values1.showPassword });
+    setCurrPassword({
+      ...currPassword,
+      showPassword: !currPassword.showPassword,
+    });
   };
   const handleClickShowPassword2 = () => {
-    setValues2({ ...values2, showPassword: !values2.showPassword });
+    setNewPassword({ ...newPassword, showPassword: !newPassword.showPassword });
   };
   const handleClickShowPassword3 = () => {
-    setValues3({ ...values3, showPassword: !values3.showPassword });
+    setConfNewPassword({
+      ...confNewPassword,
+      showPassword: !confNewPassword.showPassword,
+    });
   };
 
   const handleMouseDownPassword = (
@@ -122,9 +135,9 @@ const AccountSettings: React.FC = () => {
               <FormControl>
                 <Input
                   className={classes.pass}
-                  defaultValue={values1.password}
+                  defaultValue={currPassword.password}
                   id="outlined-adornment-password"
-                  type={values1.showPassword ? 'text' : 'password'}
+                  type={currPassword.showPassword ? 'text' : 'password'}
                   disableUnderline
                   endAdornment={
                     <InputAdornment position="end">
@@ -133,7 +146,7 @@ const AccountSettings: React.FC = () => {
                         onClick={handleClickShowPassword1}
                         edge="end"
                       >
-                        {values1.showPassword ? (
+                        {currPassword.showPassword ? (
                           <Visibility />
                         ) : (
                           <VisibilityOff />
@@ -151,10 +164,10 @@ const AccountSettings: React.FC = () => {
                 <Input
                   data-cy="changePassword"
                   className={`${classes.pass} ${
-                    formError2 ? classes.error : classes.success
+                    newPassword.err ? classes.error : classes.success
                   }`}
                   id="outlined-adornment-password"
-                  type={values2.showPassword ? 'text' : 'password'}
+                  type={newPassword.showPassword ? 'text' : 'password'}
                   onChange={handleChange2('password')}
                   disableUnderline
                   endAdornment={
@@ -166,7 +179,7 @@ const AccountSettings: React.FC = () => {
                         onMouseDown={handleMouseDownPassword}
                         edge="end"
                       >
-                        {values2.showPassword ? (
+                        {newPassword.showPassword ? (
                           <Visibility data-cy="visIcon" />
                         ) : (
                           <VisibilityOff data-cy="invisIcon" />
@@ -184,10 +197,10 @@ const AccountSettings: React.FC = () => {
                 <Input
                   data-cy="confirmPassword"
                   className={`${classes.pass} ${
-                    formError3 ? classes.error : classes.success
+                    confNewPassword.err ? classes.error : classes.success
                   }`}
                   id="outlined-adornment-password"
-                  type={values3.showPassword ? 'text' : 'password'}
+                  type={confNewPassword.showPassword ? 'text' : 'password'}
                   onChange={handleChange3('password')}
                   disableUnderline
                   endAdornment={
@@ -199,7 +212,7 @@ const AccountSettings: React.FC = () => {
                         onMouseDown={handleMouseDownPassword}
                         edge="end"
                       >
-                        {values3.showPassword ? (
+                        {confNewPassword.showPassword ? (
                           <Visibility data-cy="visIcon" />
                         ) : (
                           <VisibilityOff data-cy="invisIcon" />
@@ -212,7 +225,15 @@ const AccountSettings: React.FC = () => {
                   Confirm new password
                 </InputLabel>
               </FormControl>
-              <PasswordModal er2={values2.err} er3={values3.err} />
+              <PasswordModal
+                formErr={newPassword.err && confNewPassword.err}
+                isEmpty={
+                  !(
+                    newPassword.password.length > 0 &&
+                    confNewPassword.password.length > 0
+                  )
+                }
+              />
             </form>
 
             <div className={classes.col2}>

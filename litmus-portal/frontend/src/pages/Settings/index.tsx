@@ -27,7 +27,8 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-function a11yProps(index: any) {
+// tabProps returns 'id' and 'aria-control' props of Tab
+function tabProps(index: any) {
   return {
     id: `simple-tab-${index}`,
     'aria-controls': `simple-tabpanel-${index}`,
@@ -35,10 +36,10 @@ function a11yProps(index: any) {
 }
 
 const Settings: React.FC = () => {
-  const [value, setValue] = React.useState(0);
+  const [activeTab, setActiveTab] = React.useState(0);
   const classes = useStyles();
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setValue(newValue);
+  const handleChange = (event: React.ChangeEvent<{}>, actTab: number) => {
+    setActiveTab(actTab);
   };
   return (
     <Scaffold>
@@ -47,17 +48,17 @@ const Settings: React.FC = () => {
         <Paper className={classes.root} elevation={0}>
           <Tabs
             className={classes.tab}
-            value={value}
+            value={activeTab}
             onChange={handleChange}
             indicatorColor="secondary"
             textColor="secondary"
           >
-            <Tab label="Account" {...a11yProps(0)} />
-            <Tab label="Team" {...a11yProps(1)} />
-            <Tab label="USer Management" {...a11yProps(2)} />
+            <Tab label="Account" {...tabProps(0)} />
+            <Tab label="Team" {...tabProps(1)} />
+            <Tab label="USer Management" {...tabProps(2)} />
           </Tabs>
         </Paper>
-        <TabPanel value={value} index={0}>
+        <TabPanel value={activeTab} index={0}>
           <AccountSettings />
         </TabPanel>
       </div>
