@@ -17,7 +17,7 @@ SELF_DEPLOYER_IMAGE ?= litmusportal-self-deployer
 IMGTAG ?= ci
 
 .PHONY: all
-all: deps litmus-portal-check litmus-portal-test build push
+all: deps litmus-portal-check build push
 
 .PHONY: help
 help:
