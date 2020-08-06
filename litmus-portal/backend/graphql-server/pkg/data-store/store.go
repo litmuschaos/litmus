@@ -13,11 +13,10 @@ type StateData struct {
 	Mutex               *sync.Mutex
 }
 
-var State StateData
-
-//StoreInit initializes Application State
-func StoreInit() {
-	State.ClusterEventPublish = make(map[string][]chan *model.ClusterEvent)
-	State.ConnectedCluster = make(map[string]chan *model.ClusterAction)
-	State.Mutex = &sync.Mutex{}
+func New() *StateData {
+	return &StateData{
+		ClusterEventPublish: make(map[string][]chan *model.ClusterEvent),
+		ConnectedCluster:    make(map[string]chan *model.ClusterAction),
+		Mutex:               &sync.Mutex{},
+	}
 }

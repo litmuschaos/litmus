@@ -3,17 +3,18 @@
 package model
 
 type Cluster struct {
-	ClusterID    string  `json:"cluster_id" bson:"cluster_id"`
-	ProjectID    string  `json:"project_id" bson:"project_id"`
-	ClusterName  string  `json:"cluster_name" bson:"cluster_name"`
-	Description  *string `json:"description" bson:"description"`
-	PlatformName string  `json:"platform_name" bson:"platform_name"`
-	AccessKey    string  `json:"access_key" bson:"access_key"`
-	IsRegistered bool    `json:"is_registered" bson:"is_registered"`
-	IsActive     bool    `json:"is_active" bson:"is_active"`
-	UpdatedAt    string  `json:"updated_at" bson:"updated_at"`
-	CreatedAt    string  `json:"created_at" bson:"created_at"`
-	ClusterType  string  `json:"cluster_type" bson:"cluster_type"`
+	ClusterID          string  `json:"cluster_id"`
+	ProjectID          string  `json:"project_id"`
+	ClusterName        string  `json:"cluster_name"`
+	Description        *string `json:"description"`
+	PlatformName       string  `json:"platform_name"`
+	AccessKey          string  `json:"access_key"`
+	IsRegistered       bool    `json:"is_registered"`
+	IsClusterConfirmed bool    `json:"is_cluster_confirmed"`
+	IsActive           bool    `json:"is_active"`
+	UpdatedAt          string  `json:"updated_at"`
+	CreatedAt          string  `json:"created_at"`
+	ClusterType        string  `json:"cluster_type"`
 }
 
 type ClusterAction struct {
@@ -24,6 +25,12 @@ type ClusterAction struct {
 type ClusterActionInput struct {
 	ClusterID string `json:"cluster_id"`
 	Action    string `json:"action"`
+}
+
+type ClusterConfirmResponse struct {
+	IsClusterConfirmed bool    `json:"isClusterConfirmed"`
+	NewClusterKey      *string `json:"newClusterKey"`
+	ClusterID          *string `json:"cluster_id"`
 }
 
 type ClusterEvent struct {
@@ -52,4 +59,32 @@ type ClusterInput struct {
 	PlatformName string  `json:"platform_name"`
 	ProjectID    string  `json:"project_id"`
 	ClusterType  string  `json:"cluster_type"`
+}
+
+type ChaosWorkFlowInput struct {
+	WorkflowYaml        string             `json:"workflow_yaml"`
+	CronSyntax          string             `json:"cronSyntax"`
+	WorkflowName        string             `json:"Workflow_name"`
+	WorkflowDescription string             `json:"Workflow_description"`
+	Weightages          []*WeightagesInput `json:"Weightages"`
+	IsCustomWorkflow    bool               `json:"isCustomWorkflow"`
+}
+
+type ChaosWorkFlowResponse struct {
+	WorkflowID          string        `json:"workflow_id"`
+	CronSyntax          string        `json:"cronSyntax"`
+	WorkflowName        string        `json:"Workflow_name"`
+	WorkflowDescription string        `json:"Workflow_description"`
+	Weightages          []*Weightages `json:"Weightages"`
+	IsCustomWorkflow    bool          `json:"isCustomWorkflow"`
+}
+
+type Weightages struct {
+	ExperimentName string `json:"experiment_name"`
+	Weightage      int    `json:"weightage"`
+}
+
+type WeightagesInput struct {
+	ExperimentName string `json:"experiment_name"`
+	Weightage      int    `json:"weightage"`
 }
