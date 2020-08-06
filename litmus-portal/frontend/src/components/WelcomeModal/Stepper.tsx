@@ -1,13 +1,13 @@
 import Button from '@material-ui/core/Button';
 import React from 'react';
-// import { useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import MobileStepper from '@material-ui/core/MobileStepper';
 import config from '../../config';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
 import { history } from '../../redux/configureStore';
-// import { RootState } from '../../redux/reducers';
+import { RootState } from '../../redux/reducers';
 import useStyles from './styles';
 import ModalPage from './Modalpage';
 import InputField from '../InputField';
@@ -17,10 +17,7 @@ function CStepper() {
 
   const user = useActions(UserActions);
 
-  // UserData consists of data fetched from the Redux Store
-  // Uncomment if required
-
-  // const { userData } = useSelector((state: RootState) => state);
+  const { userData } = useSelector((state: RootState) => state);
   const [activeStep, setActiveStep] = React.useState<number>(0);
   const [formError, setFormError] = React.useState<boolean>(false);
 
@@ -29,10 +26,6 @@ function CStepper() {
     name: '',
     projectName: '',
   });
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
@@ -43,6 +36,15 @@ function CStepper() {
     confirmPassword: '',
   });
 
+  const handleNext = () => {
+    if (activeStep === 2 && values.confirmPassword !== values.password) {
+      setFormError(true);
+    } else {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
+  };
+
+  // Submit entered data to /update endpoint
   const handleSubmit = () => {
     Object.assign(info, { password: values.password });
 
@@ -50,6 +52,7 @@ function CStepper() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${userData.token}`,
       },
       body: JSON.stringify(info),
     })
@@ -61,7 +64,6 @@ function CStepper() {
           user.updateUserDetails({
             name: data.name,
             email: data.email,
-            projectName: data.projectName,
           });
 
           history.push('/');
@@ -82,6 +84,7 @@ function CStepper() {
     setInfo(data);
   };
 
+  // Render buttons based on active step
   const selectiveButtons = () => {
     if (activeStep === 0) {
       return (
@@ -116,6 +119,7 @@ function CStepper() {
     );
   };
 
+  // Content of the steps based on active step count
   const getStepContent = (step: number) => {
     switch (step) {
       case 0:
@@ -192,7 +196,7 @@ function CStepper() {
                     label="Confirm Password"
                     name="confirmPassword"
                     password
-                    formError={formError}
+                    formError={values.confirmPassword !== values.password}
                     required
                     value={values.confirmPassword}
                     handleChange={(event) =>
@@ -240,8 +244,10 @@ function CStepper() {
     }
   };
 
-  /* Reset is used to reset the steps and further can be used */
-  /* to route but keep handlereset */
+  /*
+    The Stepper which can modify modal content
+    based on active step
+  */
   return (
     <div>
       <div>
