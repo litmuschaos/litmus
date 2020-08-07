@@ -1,10 +1,8 @@
 import { Button, Modal } from '@material-ui/core';
-import Avatar from '@material-ui/core/Avatar';
-import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
-import avatar from '../../../assets/icons/avatar.png';
 import User from '../../../assets/icons/userLarge.svg';
+import UserDetails from '../../UserManagementTab/CreateUser/UserDetails';
 import useStyles from './styles';
 
 // Displays the personals details on the "accounts" tab
@@ -17,89 +15,35 @@ const PersonalDetails: React.FC = () => {
   const handleClose = () => {
     setOpen(false);
   };
-
   const [email, setEmail] = React.useState<string>('');
+  const [userName, setUserName] = React.useState<string>('');
   const [fullName, setFullName] = React.useState<string>('');
   return (
     <div>
-      <Typography className={classes.headerText}>
-        <strong> Personal Details</strong>
-      </Typography>
       <form>
-        <div className={classes.details}>
-          <div className={classes.dp}>
-            <Avatar
-              data-cy="avatar"
-              alt="Richard Hill"
-              src={avatar}
-              className={classes.orange}
-            >
-              R
-            </Avatar>
-            <div>
-              <label htmlFor="contained-button-file" id="editPic">
-                <input
-                  name="contained-button-file"
-                  accept="image/*"
-                  className={classes.input}
-                  id="contained-button-file"
-                  type="file"
-                />
-                <Typography className={classes.edit}>Edit Photo</Typography>
-              </label>
-            </div>
-          </div>
-          {/* Fields for details including Full name, email, username */}
-          <div className={classes.details1}>
-            <TextField
-              required
-              value={fullName}
-              onChange={(e) => {
-                setFullName(e.target.value);
-              }}
-              className={classes.user}
-              id="filled-user-input"
-              label="Full Name"
-              InputProps={{ disableUnderline: true }}
-              data-cy="fullName"
-            />
+        <UserDetails
+          nameValue={fullName}
+          usernameIsDisabled
+          handleNameChange={(e) => {
+            setFullName(e.target.value);
+          }}
+          emailValue={email}
+          handleEmailChange={(e) => {
+            setEmail(e.target.value);
+          }}
+          userValue={userName}
+          handleUserChange={(e) => {
+            setUserName(e.target.value);
+          }}
+        />
 
-            <TextField
-              required
-              type="email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-              className={classes.user}
-              id="filled-email-input"
-              label="Email Address"
-              name="email"
-              InputProps={{
-                disableUnderline: true,
-              }}
-              data-cy="inputEmail"
-            />
-            {/* Username is not editable normal user */}
-            <TextField
-              className={classes.user}
-              id="filled-username-input"
-              label="Username"
-              defaultValue="RichardHill"
-              disabled
-              InputProps={{
-                disableUnderline: true,
-              }}
-              data-cy="username"
-            />
-          </div>
-        </div>
         <div className={classes.saveButton}>
           <Button
             className={classes.submitButton}
             data-cy="loginButton"
             onClick={() => {
-              if (fullName.length > 0 && email.length > 0) {
+              // checks if Full name field is empty
+              if (fullName.length > 0) {
                 setOpen(true);
               }
             }}

@@ -1,6 +1,7 @@
 import { Box, Paper, Tab, Tabs, Typography } from '@material-ui/core';
 import React from 'react';
 import AccountSettings from '../../components/AccountsTab/AccountSettings';
+import UserManagement from '../../components/UserManagementTab/UserManagement';
 import Scaffold from '../../containers/layouts/Scaffold';
 import useStyles from './styles';
 
@@ -60,6 +61,9 @@ const Settings: React.FC = () => {
         </Paper>
         <TabPanel value={activeTab} index={0}>
           <AccountSettings />
+        </TabPanel>
+        <TabPanel value={activeTab} index={2}>
+          <UserManagement />
         </TabPanel>
       </div>
     </Scaffold>
