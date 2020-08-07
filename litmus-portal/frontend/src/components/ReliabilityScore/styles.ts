@@ -2,10 +2,9 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    margin: '0 auto',
     backgroundColor: 'rgba(255, 255, 255, 0.6)',
-    maxWidth: '61.25rem',
-    marginTop: theme.spacing(8.75),
-    marginLeft: theme.spacing(17.5),
+    maxWidth: '80%',
     border: 1,
     borderColor: 'rgba(0, 0, 0, 0.05)',
     borderRadius: 3,
@@ -18,6 +17,13 @@ const useStyles = makeStyles((theme) => ({
   headerText: {
     marginTop: theme.spacing(1.25),
     fontSize: '1.5625rem',
+  },
+  errorText: {
+    marginTop: theme.spacing(10),
+    marginLeft: theme.spacing(15),
+    marginBottom: theme.spacing(10),
+    fontSize: '1.6rem',
+    color: 'red',
   },
   description: {
     width: '50rem',
