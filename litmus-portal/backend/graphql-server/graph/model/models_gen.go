@@ -17,6 +17,17 @@ type Cluster struct {
 	ClusterType        string  `json:"cluster_type"`
 }
 
+type WorkflowRun struct {
+	WorkflowRunID string `json:"workflow_run_id" bson:"workflow_run_id"`
+	WorkflowID    string `json:"workflow_id" bson:"workflow_id"`
+	ClusterName   string `json:"cluster_name" bson:"cluster_name"`
+	LastUpdated   string `json:"last_updated" bson:"last_updated"`
+	ProjectID     string `json:"project_id" bson:"project_id"`
+	ClusterID     string `json:"cluster_id" bson:"cluster_id"`
+	WorkflowName  string `json:"workflow_name" bson:"workflow_name"`
+	ExecutionData string `json:"execution_data" bson:"execution_data"`
+}
+
 type ClusterAction struct {
 	ProjectID string `json:"project_id"`
 	Action    string `json:"action"`
@@ -59,6 +70,40 @@ type ClusterInput struct {
 	PlatformName string  `json:"platform_name"`
 	ProjectID    string  `json:"project_id"`
 	ClusterType  string  `json:"cluster_type"`
+}
+
+type PodLog struct {
+	ClusterID     *ClusterIdentity `json:"cluster_id"`
+	RequestID     string           `json:"request_id"`
+	WorkflowRunID string           `json:"workflow_run_id"`
+	PodName       string           `json:"pod_name"`
+	PodType       string           `json:"pod_type"`
+	Log           string           `json:"log"`
+}
+
+type PodLogRequest struct {
+	ClusterID      string  `json:"cluster_id"`
+	WorkflowRunID  string  `json:"workflow_run_id"`
+	PodName        string  `json:"pod_name"`
+	PodNamespace   string  `json:"pod_namespace"`
+	PodType        string  `json:"pod_type"`
+	ExpPod         *string `json:"exp_pod"`
+	RunnerPod      *string `json:"runner_pod"`
+	ChaosNamespace *string `json:"chaos_namespace"`
+}
+
+type PodLogResponse struct {
+	WorkflowRunID string `json:"workflow_run_id"`
+	PodName       string `json:"pod_name"`
+	PodType       string `json:"pod_type"`
+	Log           string `json:"log"`
+}
+
+type WorkflowRunInput struct {
+	WorkflowRunID string           `json:"workflow_run_id"`
+	WorkflowName  string           `json:"workflow_name"`
+	ExecutionData string           `json:"execution_data"`
+	ClusterID     *ClusterIdentity `json:"cluster_id"`
 }
 
 type ChaosWorkFlowInput struct {
