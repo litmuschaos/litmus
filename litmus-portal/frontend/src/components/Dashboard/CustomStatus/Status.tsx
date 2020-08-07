@@ -17,7 +17,7 @@ const CustomStatus: React.FC<StatusProps> = ({ status }) => {
       return setLabel(classes.running);
     }
     return setLabel(classes.failed);
-  });
+  }, [status, classes.failed, classes.completed, classes.running]);
   return (
     <>
       <div className={label}>

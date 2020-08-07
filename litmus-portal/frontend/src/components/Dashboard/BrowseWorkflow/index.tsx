@@ -1,5 +1,5 @@
 import SearchIcon from '@material-ui/icons/Search';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import InputBase from '@material-ui/core/InputBase';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
@@ -13,19 +13,34 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import TableBody from '@material-ui/core/TableBody';
-import IconButton from '@material-ui/core/IconButton';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import Menu from '@material-ui/core/Menu';
-import { useSubscription } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import useStyles from './styles';
-import CustomStatus from '../CustomStatus/Status';
-import timeDifferenceForDate from '../../../utils/datesModifier';
-import LinearProgressBar from '../../ProgressBar/LinearProgressBar';
-import { WORKFLOW_DETAILS } from '../../../schemas';
+import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../../schemas';
+import TableData from './TableData';
 
 const BrowseWorkflow = () => {
-  const { data } = useSubscription(WORKFLOW_DETAILS);
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  // Apollo query with subscribeToMore
+  const { subscribeToMore, ...result } = useQuery(WORKFLOW_DETAILS);
+
+  // Default table data
+  const [mainData, setMainData] = useState<any>();
+
+  useEffect(() => {
+    // Get the inital table data
+    setMainData(result.data);
+    // Once Subscription is made, this is called
+    subscribeToMore({
+      document: WORKFLOW_EVENTS,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev;
+        const newData = subscriptionData.data.workflowEventListener;
+        return setMainData({
+          ...prev,
+          getWorkFlowRuns: [...prev.getWorkFlowRuns, newData],
+        });
+      },
+    });
+  }, [result.data, subscribeToMore]);
   const classes = useStyles();
   const [status, setStatus] = React.useState<String>('');
   const handleStatusChange = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -37,16 +52,6 @@ const BrowseWorkflow = () => {
   ) => {
     setCluster(event.target.value as String);
   };
-  const open = Boolean(anchorEl);
-
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  const handleMenu = () => {};
   return (
     <div>
       <section className="Heading section">
@@ -144,84 +149,10 @@ const BrowseWorkflow = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data &&
-                data.getWorkFlowRuns.map((data: any) => (
-                  <TableRow key={data.workflow_run_id}>
-                    <TableCell className={classes.headerStatus1}>
-                      <CustomStatus
-                        status={JSON.parse(data.execution_data).phase}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Typography>
-                        <strong>{data.workflow_name}</strong>
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography>{data.cluster_name}</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <div style={{ width: 130 }}>
-                        {JSON.parse(data.execution_data).phase === 'Failed' ? (
-                          <>
-                            <Typography>Overall RR: 0</Typography>
-                            <div className={classes.progressBar}>
-                              <LinearProgressBar value={0} />
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <Typography>Overall RR: 100</Typography>
-                            <div className={classes.progressBar}>
-                              <LinearProgressBar value={100} />
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Typography>
-                        {
-                          Object.keys(JSON.parse(data.execution_data).nodes)
-                            .length
-                        }
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <div style={{ display: 'flex', flexDirection: 'row' }}>
-                        <Typography style={{ paddingTop: 10 }}>
-                          {timeDifferenceForDate(data.last_updated)}
-                        </Typography>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <IconButton
-                        aria-label="more"
-                        aria-controls="long-menu"
-                        aria-haspopup="true"
-                        onClick={handleClick}
-                        style={{ marginLeft: 'auto' }}
-                      >
-                        <MoreVertIcon />
-                      </IconButton>
-                      <Menu
-                        id="long-menu"
-                        anchorEl={anchorEl}
-                        keepMounted
-                        open={open}
-                        onClose={handleClose}
-                      >
-                        <MenuItem value="Workflow" onClick={handleMenu}>
-                          Show the workflow
-                        </MenuItem>
-                        <MenuItem value="Analysis" onClick={handleMenu}>
-                          Show the analysis
-                        </MenuItem>
-                        <MenuItem value="Scheduler" onClick={handleMenu}>
-                          Show the scheduler
-                        </MenuItem>
-                      </Menu>
-                    </TableCell>
+              {mainData &&
+                mainData.getWorkFlowRuns.map((data: any) => (
+                  <TableRow>
+                    <TableData data={data} />
                   </TableRow>
                 ))}
             </TableBody>
