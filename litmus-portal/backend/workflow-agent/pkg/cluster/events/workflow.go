@@ -4,9 +4,9 @@ import (
 	"github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
 	"github.com/argoproj/argo/pkg/client/clientset/versioned"
 	"github.com/argoproj/argo/pkg/client/informers/externalversions"
-	"github.com/gdsoumya/workflow_manager/pkg/cluster/config"
-	"github.com/gdsoumya/workflow_manager/pkg/types"
 	litmusV1alpha1 "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/k8s"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/types"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/tools/cache"
 	"time"
@@ -19,7 +19,7 @@ const (
 
 // initializes the Argo Workflow event watcher
 func WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent) {
-	cfg, err := config.GetKubeConfig()
+	cfg, err := k8s.GetKubeConfig()
 	if err != nil {
 		logrus.WithError(err).Fatal("could not get config")
 	}
@@ -60,7 +60,7 @@ func workflowEventHandler(obj interface{}, eventType string, stream chan types.W
 	if workflowObj.ObjectMeta.CreationTimestamp.Unix() < startTime {
 		return
 	}
-	cfg, err := config.GetKubeConfig()
+	cfg, err := k8s.GetKubeConfig()
 	if err != nil {
 		logrus.WithError(err).Fatal("could not get config")
 	}

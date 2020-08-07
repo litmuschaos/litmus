@@ -2,7 +2,7 @@ package gql
 
 import (
 	"bytes"
-	"github.com/gdsoumya/workflow_manager/pkg/types"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/types"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"

@@ -1,4 +1,4 @@
-module github.com/gdsoumya/workflow_manager
+module github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent
 
 go 1.14
 

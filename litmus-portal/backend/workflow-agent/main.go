@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/gdsoumya/workflow_manager/pkg/cluster/events"
-	"github.com/gdsoumya/workflow_manager/pkg/gql"
-	"github.com/gdsoumya/workflow_manager/pkg/types"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/cluster/events"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/gql"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/types"
 	"os"
 	"os/signal"
 )

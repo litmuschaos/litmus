@@ -1,10 +1,11 @@
 package events
 
 import (
+	"errors"
 	v1alpha13 "github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
-	"github.com/gdsoumya/workflow_manager/pkg/types"
 	"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	v1alpha12 "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/types"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
@@ -17,7 +18,7 @@ func getChaosData(engineName, engineNS string, chaosClient *v1alpha12.Litmuschao
 	crd := &v1alpha1.ChaosEngine{}
 	cd.EngineName = engineName
 	cd.Namespace = engineNS
-	var err error
+	err:= errors.New("")
 	if cd.Namespace != "" {
 		crd, err = chaosClient.ChaosEngines(cd.Namespace).Get(cd.EngineName, v1.GetOptions{})
 		if err != nil {

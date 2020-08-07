@@ -2,7 +2,7 @@ package gql
 
 import (
 	"encoding/json"
-	"github.com/gdsoumya/workflow_manager/pkg/types"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/types"
 	"strconv"
 	"strings"
 )
