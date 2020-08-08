@@ -3,9 +3,8 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     backgroundColor: 'rgba(255, 255, 255, 0.6)',
-    maxWidth: '61.3125rem',
-    marginTop: theme.spacing(8.75),
-    marginLeft: theme.spacing(17.5),
+    width: '80%',
+    margin: '0 auto',
     border: 1,
     borderColor: theme.palette.text.disabled,
     borderRadius: 3,
@@ -44,7 +43,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   innerDiv2: {
     marginTop: theme.spacing(5),
-    width: '58.81rem',
   },
   outerSum: {
     display: 'flex',
@@ -125,9 +123,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   typoCol2: {
     fontSize: '1rem',
-  },
-  divider: {
-    width: '56.31rem',
   },
   textEdit: {
     marginTop: theme.spacing(7.5),

@@ -3,9 +3,8 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     backgroundColor: 'rgba(255, 255, 255, 0.6)',
-    maxWidth: '61.25rem',
-    marginTop: theme.spacing(8.75),
-    marginLeft: theme.spacing(17.5),
+    width: '80%',
+    margin: '0 auto',
     border: 1,
     borderColor: theme.palette.text.disabled,
     borderRadius: '0.1875rem',
@@ -56,12 +55,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: theme.spacing(25),
   },
 
-  divider: {
-    width: '56.31rem',
-  },
   scFormControl: {
     marginTop: theme.spacing(5),
-    width: '58.81rem',
   },
 
   /* For recurring schedule options */
