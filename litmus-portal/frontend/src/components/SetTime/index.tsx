@@ -1,9 +1,11 @@
-import Button from '@material-ui/core/Button';
-import Fade from '@material-ui/core/Fade';
-import FormControl from '@material-ui/core/FormControl';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import TextField from '@material-ui/core/TextField';
+import {
+  Button,
+  Fade,
+  FormControl,
+  Menu,
+  MenuItem,
+  TextField,
+} from '@material-ui/core';
 import React from 'react';
 import useStyles from './styles';
 

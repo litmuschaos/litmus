@@ -1,5 +1,4 @@
-import { Button, Modal } from '@material-ui/core';
-import Typography from '@material-ui/core/Typography';
+import { Button, Modal, Typography } from '@material-ui/core';
 import React from 'react';
 import UserDetails from '../../UserManagementTab/CreateUser/UserDetails';
 import useStyles from './styles';
