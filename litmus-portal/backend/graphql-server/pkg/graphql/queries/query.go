@@ -16,7 +16,8 @@ func QueryWorkflowRuns(pid string) ([]*model.WorkflowRun, error) {
 	}
 	result := []*model.WorkflowRun{}
 	for i := 0; i < len(wfRuns); i++ {
-		result = append(result, &wfRuns[i])
+		wfRun := model.WorkflowRun(wfRuns[i])
+		result = append(result, &wfRun)
 	}
 	return result, nil
 }

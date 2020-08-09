@@ -39,7 +39,7 @@ func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input *model
 }
 
 func (r *mutationResolver) ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error) {
-	return mutations.UpsterWorkFlowRun(workflowData, *store)
+	return mutations.WorkFlowRunHandler(workflowData, *store)
 }
 
 func (r *mutationResolver) PodLog(ctx context.Context, log model.PodLog) (string, error) {

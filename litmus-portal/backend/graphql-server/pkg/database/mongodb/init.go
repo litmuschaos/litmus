@@ -15,7 +15,7 @@ var workflowRunCollection *mongo.Collection
 var backgroundContext = context.Background()
 var err error
 
-var collection = map[string]string{
+var collections = map[string]string{
 	"Cluster":     "cluster-collection",
 	"WorkflowRun": "workflow-run",
 }
@@ -37,6 +37,17 @@ type Cluster struct {
 	ClusterType        string  `bson:"cluster_type"`
 }
 
+type WorkflowRun struct {
+	WorkflowRunID string `bson:"workflow_run_id"`
+	WorkflowID    string `bson:"workflow_id"`
+	ClusterName   string `bson:"cluster_name"`
+	LastUpdated   string `bson:"last_updated"`
+	ProjectID     string `bson:"project_id"`
+	ClusterID     string `bson:"cluster_id"`
+	WorkflowName  string `bson:"workflow_name"`
+	ExecutionData string `bson:"execution_data"`
+}
+
 //DBInit initializes database connection
 func DBInit() error {
 	dbServer := os.Getenv("DB_SERVER")
@@ -55,7 +66,7 @@ func DBInit() error {
 		log.Print("Connected To MONGODB")
 	}
 
-	clusterCollection = client.Database(dbName).Collection(collection["Cluster"])
-	workflowRunCollection = client.Database(dbName).Collection(collection["WorkflowRun"])
+	clusterCollection = client.Database(dbName).Collection(collections["Cluster"])
+	workflowRunCollection = client.Database(dbName).Collection(collections["WorkflowRun"])
 	return nil
 }

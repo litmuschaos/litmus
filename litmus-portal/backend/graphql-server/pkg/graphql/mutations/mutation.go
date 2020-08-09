@@ -89,8 +89,8 @@ func NewEvent(clusterEvent model.ClusterEventInput, r store.StateData) (string, 
 	return "", errors.New("ERROR WITH CLUSTER EVENT")
 }
 
-// UpsterWorkFlowRun Updates or Inserts a new Workflow Run into the DB
-func UpsterWorkFlowRun(input model.WorkflowRunInput, r store.StateData) (string, error) {
+// WorkFlowRunHandler Updates or Inserts a new Workflow Run into the DB
+func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string, error) {
 	cluster, err := cluster.VerifyCluster(*input.ClusterID)
 	if err != nil {
 		log.Print("ERROR", err)
@@ -107,7 +107,7 @@ func UpsterWorkFlowRun(input model.WorkflowRunInput, r store.StateData) (string,
 		WorkflowID:    "000000000000",
 	}
 	subscriptions.SendWorkflowEvent(newWorkflowRun, r)
-	err = database.UpsertWorkflowRun(newWorkflowRun)
+	err = database.UpsertWorkflowRun(database.WorkflowRun(newWorkflowRun))
 	if err != nil {
 		log.Print("ERROR", err)
 		return "", err

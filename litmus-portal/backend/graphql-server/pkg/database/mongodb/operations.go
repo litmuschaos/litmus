@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
 	"log"
 	"time"
 
@@ -44,7 +43,7 @@ func UpdateCluster(query bson.D, update bson.D) error {
 	return nil
 }
 
-func UpsertWorkflowRun(wfRun model.WorkflowRun) error {
+func UpsertWorkflowRun(wfRun WorkflowRun) error {
 	opts := options.Update().SetUpsert(true)
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	query := bson.M{"workflow_run_id": wfRun.WorkflowRunID}
@@ -64,7 +63,7 @@ func UpsertWorkflowRun(wfRun model.WorkflowRun) error {
 	return nil
 }
 
-func GetWorkflowRuns(_pid string) ([]model.WorkflowRun, error) {
+func GetWorkflowRuns(_pid string) ([]WorkflowRun, error) {
 	query := bson.D{{"project_id", _pid}}
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	cursor, err := workflowRunCollection.Find(ctx, query)
@@ -72,7 +71,7 @@ func GetWorkflowRuns(_pid string) ([]model.WorkflowRun, error) {
 		log.Print("ERROR GET CLUSTERS : ", err)
 		return nil, err
 	}
-	var wfRuns []model.WorkflowRun
+	var wfRuns []WorkflowRun
 	err = cursor.All(ctx, &wfRuns)
 	if err != nil {
 		log.Print("ERROR GET CLUSTERS : ", err)
