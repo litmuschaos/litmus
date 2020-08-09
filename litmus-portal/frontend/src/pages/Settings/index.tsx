@@ -1,7 +1,7 @@
 import { Box, Paper, Tab, Tabs, Typography } from '@material-ui/core';
 import React from 'react';
-import AccountSettings from '../../components/AccountsTab/AccountSettings';
-import UserManagement from '../../components/UserManagementTab/UserManagement';
+import AccountSettings from '../../components/SettingsComponents/AccountsTab/AccountSettings';
+import UserManagement from '../../components/SettingsComponents/UserManagementTab/UserManagement';
 import Scaffold from '../../containers/layouts/Scaffold';
 import useStyles from './styles';
 

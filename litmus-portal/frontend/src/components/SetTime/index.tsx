@@ -5,7 +5,6 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import React from 'react';
-import Arrow from '../../assets/icons/down-arrow.svg';
 import useStyles from './styles';
 
 interface SetTimeProps {
@@ -69,7 +68,7 @@ const SetTime: React.FC<SetTimeProps> = ({
         onClick={(event) => {
           setAnchorEl(event.currentTarget);
         }}
-        endIcon={<img src={Arrow} alt="arrow" />}
+        endIcon={<img src="./icons/down-arrow.svg" alt="arrow" />}
         disableRipple
         disableFocusRipple
       >

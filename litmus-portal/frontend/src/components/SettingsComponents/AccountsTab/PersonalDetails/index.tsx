@@ -1,13 +1,24 @@
 import { Button, Modal } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
-import User from '../../../assets/icons/userLarge.svg';
 import UserDetails from '../../UserManagementTab/CreateUser/UserDetails';
 import useStyles from './styles';
+
+interface personaData {
+  email: string;
+  userName: string;
+  fullName: string;
+}
 
 // Displays the personals details on the "accounts" tab
 const PersonalDetails: React.FC = () => {
   const classes = useStyles();
+
+  const [personaData, setPersonaData] = React.useState<personaData>({
+    email: '',
+    userName: '',
+    fullName: '',
+  });
 
   // For closing and opening of the modal
   const [open, setOpen] = React.useState(false);
@@ -15,25 +26,35 @@ const PersonalDetails: React.FC = () => {
   const handleClose = () => {
     setOpen(false);
   };
-  const [email, setEmail] = React.useState<string>('');
-  const [userName, setUserName] = React.useState<string>('');
-  const [fullName, setFullName] = React.useState<string>('');
+
   return (
     <div>
       <form>
         <UserDetails
-          nameValue={fullName}
+          nameValue={personaData.fullName}
           usernameIsDisabled
           handleNameChange={(e) => {
-            setFullName(e.target.value);
+            setPersonaData({
+              fullName: e.target.value,
+              userName: personaData.userName,
+              email: personaData.email,
+            });
           }}
-          emailValue={email}
+          emailValue={personaData.email}
           handleEmailChange={(e) => {
-            setEmail(e.target.value);
+            setPersonaData({
+              fullName: personaData.fullName,
+              userName: personaData.userName,
+              email: e.target.value,
+            });
           }}
-          userValue={userName}
+          userValue={personaData.userName}
           handleUserChange={(e) => {
-            setUserName(e.target.value);
+            setPersonaData({
+              fullName: personaData.fullName,
+              userName: e.target.value,
+              email: personaData.email,
+            });
           }}
         />
 
@@ -43,7 +64,7 @@ const PersonalDetails: React.FC = () => {
             data-cy="loginButton"
             onClick={() => {
               // checks if Full name field is empty
-              if (fullName.length > 0) {
+              if (personaData.fullName.length > 0) {
                 setOpen(true);
               }
             }}
@@ -61,7 +82,7 @@ const PersonalDetails: React.FC = () => {
           >
             <div className={classes.paper}>
               <div className={classes.body}>
-                <img src={User} alt="user" />
+                <img src="./icons/userLarge.svg" alt="user" />
                 <div className={classes.text}>
                   <Typography className={classes.typo} align="center">
                     Your personal information <strong>has been changed!</strong>

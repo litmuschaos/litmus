@@ -8,7 +8,6 @@ import {
   Typography,
 } from '@material-ui/core';
 import React from 'react';
-import calendar from '../../assets/icons/calendar.png';
 import CustomDate from '../DateTime/CustomDate/index';
 import CustomTime from '../DateTime/CustomTime/index';
 import SetTime from '../SetTime/index';
@@ -72,7 +71,11 @@ const ScheduleWorkflow: React.FC = () => {
               </Typography>
             </div>
           </div>
-          <img src={calendar} alt="calendar" className={classes.calIcon} />
+          <img
+            src="./icons/calendar.png"
+            alt="calendar"
+            className={classes.calIcon}
+          />
         </div>
         <Divider />
 

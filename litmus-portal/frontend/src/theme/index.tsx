@@ -2,7 +2,7 @@ import { CssBaseline } from '@material-ui/core';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { ThemeOptions } from '@material-ui/core/styles/createMuiTheme';
 import * as React from 'react';
-import Image from '../assets/icons/arrow.png';
+
 // Agument the Theme interface
 declare module '@material-ui/core/styles/createMuiTheme' {
   interface Theme {
@@ -98,14 +98,14 @@ const theme = customTheme({
       },
       mark: {
         marginLeft: -6.8,
-        backgroundImage: `url(${Image})`,
+        backgroundImage: `url(${'./icons/arrow.png'})`,
         backgroundColor: 'none',
         '&[data-index="9"]': {
           backgroundImage: 'none',
         },
       },
       markActive: {
-        backgroundImage: `url(${Image})`,
+        backgroundImage: `url(${'./icons/arrow.png'})`,
         backgroundColor: 'none',
       },
       markLabel: {

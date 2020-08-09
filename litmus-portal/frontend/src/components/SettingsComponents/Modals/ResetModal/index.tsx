@@ -2,9 +2,6 @@ import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import React from 'react';
-import checkmark from '../../../../assets/icons/checkmark.svg';
-import copy from '../../../../assets/icons/copy.svg';
-import Lock from '../../../../assets/icons/lock.svg';
 import useStyles from './styles';
 
 // props for ResetModal component
@@ -55,7 +52,7 @@ const ResetModal: React.FC<ResetModalProps> = ({ resetPossible }) => {
             // Second div
             <div className={classes.paper}>
               <div className={classes.body}>
-                <img src={checkmark} alt="checkmark" />
+                <img src="./icons/checkmark.svg" alt="checkmark" />
                 <div className={classes.textSucess}>
                   <Typography className={classes.typo} align="center">
                     The user’s password was <strong>successfully reset </strong>
@@ -68,7 +65,7 @@ const ResetModal: React.FC<ResetModalProps> = ({ resetPossible }) => {
                   </Typography>
                 </div>
                 <div className={classes.copyDiv}>
-                  <img src={copy} alt="copy" />
+                  <img src="./icons/copy.svg" alt="copy" />
                   <Typography>Copy the credentials </Typography>
                 </div>
                 <Button
@@ -85,7 +82,7 @@ const ResetModal: React.FC<ResetModalProps> = ({ resetPossible }) => {
             // first div
             <div className={classes.paper}>
               <div className={classes.body}>
-                <img src={Lock} alt="lock" />
+                <img src="./icons/lock.svg" alt="lock" />
                 <div className={classes.text}>
                   <Typography className={classes.typo} align="center">
                     Are you sure to reset the

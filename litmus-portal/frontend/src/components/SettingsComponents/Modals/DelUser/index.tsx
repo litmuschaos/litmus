@@ -1,9 +1,8 @@
 import { Typography } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import React from 'react';
-import bin from '../../../../assets/icons/bin.svg';
-import userDel from '../../../../assets/icons/userDel.svg';
+import ButtonFilled from '../../../Button/ButtonFilled';
+import ButtonOutline from '../../../Button/ButtonOutline';
 import useStyles from './styles';
 
 // props for DelUser component
@@ -34,7 +33,7 @@ const DelUser: React.FC<DelUserProps> = ({ handleModal }) => {
           setOpen(true);
         }}
       >
-        <img src={bin} alt="delete" className={classes.bin} />
+        <img src="./icons/bin.svg" alt="delete" className={classes.bin} />
         <Typography>Delete the user </Typography>
       </div>
 
@@ -47,7 +46,7 @@ const DelUser: React.FC<DelUserProps> = ({ handleModal }) => {
       >
         <div className={classes.paper}>
           <div className={classes.body}>
-            <img src={userDel} alt="lock" />
+            <img src="./icons/userDel.svg" alt="lock" />
             <div className={classes.text}>
               <Typography className={classes.typo} align="center">
                 Are you sure
@@ -60,23 +59,16 @@ const DelUser: React.FC<DelUserProps> = ({ handleModal }) => {
               </Typography>
             </div>
             <div className={classes.buttonGroup}>
-              <Button
-                data-cy="closeButton"
-                variant="outlined"
-                className={classes.buttonOutline}
-                onClick={handleClose}
+              <ButtonOutline isDisabled={false} handleClick={handleClose}>
+                <> No</>
+              </ButtonOutline>
+              <ButtonFilled
+                isDisabled={false}
+                isPrimary
+                handleClick={handleModal}
               >
-                No
-              </Button>
-              <Button
-                data-cy="closeButton"
-                variant="contained"
-                className={classes.buttonFilled}
-                onClick={handleModal}
-                disableElevation
-              >
-                Yes
-              </Button>
+                <>Yes</>
+              </ButtonFilled>
             </div>
           </div>
         </div>

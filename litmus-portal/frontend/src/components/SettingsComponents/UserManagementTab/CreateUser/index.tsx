@@ -1,21 +1,21 @@
 import {
   Button,
+  Divider,
   FormControl,
   IconButton,
   Input,
   InputAdornment,
   InputLabel,
+  TextField,
+  Typography,
 } from '@material-ui/core';
-import Divider from '@material-ui/core/Divider';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import React from 'react';
-import copy from '../../../assets/icons/copy.svg';
-import DelUser from '../Modals/DelUser';
-import NewUserModal from '../Modals/NewUserModal';
-import ResetModal from '../Modals/ResetModal';
+import ButtonFilled from '../../../Button/ButtonFilled';
+import DelUser from '../../Modals/DelUser';
+import NewUserModal from '../../Modals/NewUserModal';
+import ResetModal from '../../Modals/ResetModal';
 import useStyles from './styles';
 import UserDetails from './UserDetails';
 
@@ -23,6 +23,12 @@ interface Password {
   password: string;
   err: boolean;
   showPassword: boolean;
+}
+
+interface personalData {
+  email: string;
+  userName: string;
+  fullName: string;
 }
 
 // Props for CreateUser component
@@ -81,9 +87,11 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
   };
 
   // for personal details fields
-  const [email, setEmail] = React.useState<string>('');
-  const [userName, setUserName] = React.useState<string>('');
-  const [fullName, setFullName] = React.useState<string>('');
+  const [personalData, setPersonalData] = React.useState<personalData>({
+    email: '',
+    userName: '',
+    fullName: '',
+  });
 
   return (
     <div>
@@ -92,18 +100,30 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
           <div className={classes.suSegments}>
             {/* Personal Details */}
             <UserDetails
-              nameValue={fullName}
+              nameValue={personalData.fullName}
               usernameIsDisabled={false}
               handleNameChange={(e) => {
-                setFullName(e.target.value);
+                setPersonalData({
+                  fullName: e.target.value,
+                  userName: personalData.userName,
+                  email: personalData.email,
+                });
               }}
-              emailValue={email}
+              emailValue={personalData.email}
               handleEmailChange={(e) => {
-                setEmail(e.target.value);
+                setPersonalData({
+                  fullName: personalData.fullName,
+                  userName: personalData.userName,
+                  email: e.target.value,
+                });
               }}
-              userValue={userName}
+              userValue={personalData.userName}
               handleUserChange={(e) => {
-                setUserName(e.target.value);
+                setPersonalData({
+                  fullName: personalData.fullName,
+                  userName: e.target.value,
+                  email: personalData.email,
+                });
               }}
             />
 
@@ -117,10 +137,13 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
                   <strong> Reset Password</strong>
                 </Typography>
                 <ResetModal
-                  resetPossible={fullName.length > 0 && userName.length > 0}
+                  resetPossible={
+                    personalData.fullName.length > 0 &&
+                    personalData.userName.length > 0
+                  }
                 />
                 <div className={classes.copyDiv}>
-                  <img src={copy} alt="copy" />
+                  <img src="./icons/copy.svg" alt="copy" />
                   <Typography>Copy the credentials </Typography>
                 </div>
                 <DelUser handleModal={handleDiv} />
@@ -139,7 +162,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
                         id="filled-username-input"
                         label="Username"
                         defaultValue="RichardHill"
-                        value={userName}
+                        value={personalData.userName}
                         disabled
                         InputProps={{
                           disableUnderline: true,
@@ -187,22 +210,21 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
                       by own
                     </Typography>
 
-                    <Button
-                      variant="contained"
-                      className={classes.createRandomButton}
-                      disableElevation
-                      onClick={() => {
+                    <ButtonFilled
+                      isPrimary
+                      isDisabled={false}
+                      handleClick={() => {
                         if (
                           !createPAssword.err &&
                           createPAssword.password.length > 0 &&
-                          userName.length > 0 &&
-                          fullName.length > 0
+                          personalData.userName.length > 0 &&
+                          personalData.fullName.length > 0
                         )
                           setShowDiv(true);
                       }}
                     >
-                      Create new password
-                    </Button>
+                      <> Create new password</>
+                    </ButtonFilled>
                   </form>
                 </div>
               </div>
@@ -221,9 +243,9 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
         </Button>
         <NewUserModal
           showModal={
-            fullName.length > 0 &&
+            personalData.fullName.length > 0 &&
             !createPAssword.err &&
-            userName.length > 0 &&
+            personalData.userName.length > 0 &&
             createPAssword.password.length > 0
           }
         />

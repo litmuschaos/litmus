@@ -19,9 +19,7 @@ import {
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import React from 'react';
-import bin from '../../../assets/icons/bin.svg';
-import user from '../../../assets/icons/user.svg';
-import ButtonFilled from '../../Button/ButtonFilled';
+import ButtonFilled from '../../../Button/ButtonFilled';
 import CreateUser from '../CreateUser';
 import useStyles from './styles';
 
@@ -33,7 +31,7 @@ const StyledTableCell = withStyles((theme: Theme) =>
       color: theme.palette.common.black,
     },
     body: {
-      fontSize: 14,
+      fontSize: '0.875rem',
     },
   })
 )(TableCell);
@@ -58,8 +56,7 @@ const UserManagement: React.FC = () => {
   const [showDiv, setShowDiv] = React.useState<boolean>(false);
 
   // dummy data for now
-  let selRow = [];
-  selRow = [
+  const selRow = [
     {
       Name: { status: false, name: 'Denver' },
       username: 'abcd',
@@ -87,7 +84,7 @@ const UserManagement: React.FC = () => {
   const [selectRow, setSelectRows] = React.useState<Row[]>(selRow);
 
   // for displaying user in signed in/out or all kinds of users
-  const [state, setState] = React.useState('All');
+  const [state, setState] = React.useState<string>('All');
 
   // for checking signed in status
   function checkStatusActive(ele: Row) {
@@ -112,7 +109,7 @@ const UserManagement: React.FC = () => {
             <strong>User Management</strong>
           </Typography>
           <div className={classes.members}>
-            <img src={user} alt="members" />
+            <img src="./icons/user.svg" alt="members" />
             <Typography className={classes.memTypo}>
               Members (<span>10</span>)
             </Typography>
@@ -258,7 +255,7 @@ const UserManagement: React.FC = () => {
                             );
                           }}
                         >
-                          <img alt="delete" src={bin} />
+                          <img alt="delete" src="./icons/bin.svg" />
                         </IconButton>
                       </TableCell>
                     </TableRow>

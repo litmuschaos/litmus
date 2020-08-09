@@ -2,17 +2,15 @@ import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import React from 'react';
-import checkmark from '../../../../assets/icons/checkmark.svg';
-import copy from '../../../../assets/icons/copy.svg';
 import useStyles from './styles';
 
-// Props for NewUserModal component
-interface NewUserModalProps {
-  showModal: boolean;
+interface PasswordModalProps {
+  formErr: boolean;
+  isEmpty: boolean;
 }
 
-// NewUserModal displays a modal on creating a new user
-const NewUserModal: React.FC<NewUserModalProps> = ({ showModal }) => {
+// Displays the modal after the password is changed
+const PasswordModal: React.FC<PasswordModalProps> = ({ formErr, isEmpty }) => {
   const classes = useStyles();
 
   const [open, setOpen] = React.useState(false);
@@ -28,10 +26,12 @@ const NewUserModal: React.FC<NewUserModalProps> = ({ showModal }) => {
         variant="contained"
         className={classes.button}
         onClick={() => {
-          if (showModal) setOpen(true);
+          if (!formErr && !isEmpty) {
+            setOpen(true);
+          }
         }}
       >
-        Save
+        Change password
       </Button>
       <Modal
         data-cy="modal"
@@ -42,28 +42,21 @@ const NewUserModal: React.FC<NewUserModalProps> = ({ showModal }) => {
       >
         <div className={classes.paper}>
           <div className={classes.body}>
-            <img src={checkmark} alt="checkmark" />
+            <img src="./icons/lock.svg" alt="lock" />
             <div className={classes.text}>
               <Typography className={classes.typo} align="center">
-                A new user was <strong>successfully created </strong>
+                Your password <strong>has been changed!</strong>
               </Typography>
             </div>
-            <div className={classes.textSecond}>
-              <Typography className={classes.typoSub}>
-                A new user was successfully created.Now information about it
-                will be displayed on the user management screen of the
-                application. You can copy the credentials and share it with the
-                respective user.
+            <div className={classes.text1}>
+              <Typography className={classes.typo1}>
+                You can now use your new password to login to your account
               </Typography>
-            </div>
-            <div className={classes.copyDiv}>
-              <img src={copy} alt="copy" />
-              <Typography>Copy the credentials </Typography>
             </div>
             <Button
               data-cy="closeButton"
               variant="contained"
-              className={classes.buttonModal}
+              className={classes.button}
               onClick={handleClose}
             >
               Done
@@ -74,4 +67,4 @@ const NewUserModal: React.FC<NewUserModalProps> = ({ showModal }) => {
     </div>
   );
 };
-export default NewUserModal;
+export default PasswordModal;

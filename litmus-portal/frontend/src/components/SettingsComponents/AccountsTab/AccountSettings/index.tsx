@@ -10,8 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import React from 'react';
-import pass from '../../../assets/icons/pass.svg';
-import PasswordModal from '../PasswordModal';
+import PasswordModal from '../../Modals/PasswordModal';
 import PersonalDetails from '../PersonalDetails';
 import useStyles from './styles';
 
@@ -237,7 +236,7 @@ const AccountSettings: React.FC = () => {
             </form>
 
             <div className={classes.col2}>
-              <img src={pass} data-cy="lock" alt="lockIcon" />
+              <img src="./icons/pass.svg" data-cy="lock" alt="lockIcon" />
               <Typography className={classes.txt1}>
                 Your new password <strong>must</strong> be:
               </Typography>

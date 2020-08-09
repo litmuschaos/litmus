@@ -55,17 +55,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   buttonModal: {
-    textTransform: 'none',
-    width: '9.56rem',
-    height: '2.75rem',
-    borderRadius: 3,
-    fontSize: '0.75rem',
     marginTop: theme.spacing(3.75),
-    backgroundColor: theme.palette.primary.light,
-    color: theme.palette.common.white,
-    '&:hover': {
-      backgroundColor: theme.palette.primary.light,
-    },
   },
   copyDiv: {
     marginTop: theme.spacing(6),

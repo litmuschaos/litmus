@@ -1,8 +1,5 @@
-import Avatar from '@material-ui/core/Avatar';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
+import { Avatar, TextField, Typography } from '@material-ui/core';
 import React from 'react';
-import avatar from '../../../../assets/icons/avatar.png';
 import useStyles from './styles';
 
 interface PersonalDetailsProps {
@@ -38,7 +35,7 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
             <Avatar
               data-cy="avatar"
               alt="Richard Hill"
-              src={avatar}
+              src="./icons/avatar.png"
               className={classes.orange}
             >
               R
