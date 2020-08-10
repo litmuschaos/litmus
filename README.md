@@ -38,7 +38,7 @@ Chaos experiments are hosted on <a href="https://hub.litmuschaos.io" target="_bl
 
 ## Getting Started with Litmus
 
-[![IMAGE ALT TEXT](https://i9.ytimg.com/vi_webp/W5hmNbaYPfM/mqdefault.webp?sqp=CPSTxvkF&rs=AOn4CLDTP550UexeN1oDoYAPWL8hX4MafA)](https://youtu.be/W5hmNbaYPfM)
+[![IMAGE ALT TEXT](images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
 
 Check out the <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" target="_blank">Litmus Docs</a> to get started.
 
