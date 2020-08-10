@@ -35,16 +35,18 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       <TableCell className={classes.headerStatus1}>
         <CustomStatus status={JSON.parse(data.execution_data).phase} />
       </TableCell>
-      <TableCell>
+      <TableCell className={classes.workflowName}>
         <Typography>
           <strong>{data.workflow_name}</strong>
         </Typography>
       </TableCell>
       <TableCell>
-        <Typography>{data.cluster_name}</Typography>
+        <Typography className={classes.clusterName}>
+          {data.cluster_name}
+        </Typography>
       </TableCell>
       <TableCell>
-        <div style={{ width: 130 }}>
+        <div className={classes.reliabiltyData}>
           {JSON.parse(data.execution_data).phase === 'Failed' ? (
             <>
               <Typography>Overall RR: 0</Typography>
@@ -63,13 +65,13 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
         </div>
       </TableCell>
       <TableCell>
-        <Typography>
+        <Typography className={classes.stepsData}>
           {Object.keys(JSON.parse(data.execution_data).nodes).length}
         </Typography>
       </TableCell>
       <TableCell>
         <div style={{ display: 'flex', flexDirection: 'row' }}>
-          <Typography style={{ paddingTop: 10 }}>
+          <Typography className={classes.timeData}>
             {timeDifferenceForDate(data.last_updated)}
           </Typography>
         </div>
@@ -80,7 +82,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           aria-controls="long-menu"
           aria-haspopup="true"
           onClick={handleClick}
-          style={{ marginLeft: 'auto' }}
+          className={classes.optionBtn}
         >
           <MoreVertIcon />
         </IconButton>

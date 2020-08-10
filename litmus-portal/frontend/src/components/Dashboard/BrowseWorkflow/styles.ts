@@ -54,6 +54,27 @@ const useStyles = makeStyles((theme) => ({
   menuItem: {
     paddingLeft: theme.spacing(1.75),
   },
+  workflowName: {
+    borderRight: '1px solid rgba(0,0,0,0.1)',
+  },
+  targetCluster: {
+    paddingLeft: theme.spacing(3.75),
+  },
+  clusterName: {
+    marginLeft: theme.spacing(3.75),
+  },
+  reliabiltyData: {
+    width: '8.125rem',
+  },
+  stepsData: {
+    paddingLeft: theme.spacing(3.75),
+  },
+  timeData: {
+    paddingTop: theme.spacing(1.25),
+  },
+  optionBtn: {
+    marginLeft: 'auto',
+  },
 }));
 
 export default useStyles;

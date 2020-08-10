@@ -1,19 +1,21 @@
-import SearchIcon from '@material-ui/icons/Search';
 import React, { useEffect, useState } from 'react';
-import InputBase from '@material-ui/core/InputBase';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import Typography from '@material-ui/core/Typography';
-import MenuItem from '@material-ui/core/MenuItem';
-import TableContainer from '@material-ui/core/TableContainer';
-import Table from '@material-ui/core/Table';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TableCell from '@material-ui/core/TableCell';
-import TableBody from '@material-ui/core/TableBody';
 import { useQuery } from '@apollo/client';
+import SearchIcon from '@material-ui/icons/Search';
+import {
+  InputBase,
+  InputAdornment,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Typography,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+} from '@material-ui/core';
 import useStyles from './styles';
 import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../../schemas';
 import TableData from './TableData';
@@ -32,7 +34,7 @@ const BrowseWorkflow = () => {
     subscribeToMore({
       document: WORKFLOW_EVENTS,
       updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev;
+        if (!subscriptionData.data) return setMainData(prev);
         const newData = subscriptionData.data.workflowEventListener;
         return setMainData({
           ...prev,
@@ -40,13 +42,19 @@ const BrowseWorkflow = () => {
         });
       },
     });
-  }, [result.data, subscribeToMore]);
+  }, [result.data]);
   const classes = useStyles();
+
+  const [search, setSearch] = React.useState<String>('');
+
   const [status, setStatus] = React.useState<String>('');
+
   const handleStatusChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setStatus(event.target.value as String);
   };
+
   const [cluster, setCluster] = React.useState<String>('');
+
   const handleClusterChange = (
     event: React.ChangeEvent<{ value: unknown }>
   ) => {
@@ -60,6 +68,8 @@ const BrowseWorkflow = () => {
             id="input-with-icon-adornment"
             placeholder="Search"
             className={classes.search}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             startAdornment={
               <InputAdornment position="start">
                 <SearchIcon />
@@ -126,11 +136,7 @@ const BrowseWorkflow = () => {
               value=""
               disableUnderline
               onChange={() => {}}
-            >
-              {/* <option aria-label="None" value="" />
-              <option value="predefined">Cluset Predefined</option>
-              <option value="kubernetes">Kubernetes cluster</option> */}
-            </Select>
+            />
           </FormControl>
         </div>
       </section>
@@ -140,8 +146,14 @@ const BrowseWorkflow = () => {
             <TableHead>
               <TableRow className={classes.tableHead}>
                 <TableCell className={classes.headerStatus}>Status</TableCell>
-                <TableCell>Workflow Name</TableCell>
-                <TableCell>Target Cluster</TableCell>
+                <TableCell className={classes.workflowName}>
+                  Workflow Name
+                </TableCell>
+                <TableCell>
+                  <Typography className={classes.targetCluster}>
+                    Target Cluster
+                  </Typography>
+                </TableCell>
                 <TableCell>Reliability Details</TableCell>
                 <TableCell># of experiments</TableCell>
                 <TableCell>Last Run</TableCell>
@@ -150,11 +162,14 @@ const BrowseWorkflow = () => {
             </TableHead>
             <TableBody>
               {mainData &&
-                mainData.getWorkFlowRuns.map((data: any) => (
-                  <TableRow>
-                    <TableData data={data} />
-                  </TableRow>
-                ))}
+                mainData.getWorkFlowRuns
+                  .slice(0)
+                  .reverse()
+                  .map((data: any) => (
+                    <TableRow>
+                      <TableData data={data} />
+                    </TableRow>
+                  ))}
             </TableBody>
           </Table>
         </TableContainer>

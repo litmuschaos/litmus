@@ -11,8 +11,8 @@ import useStyles from './styles';
 
 interface TabPanelProps {
   children?: React.ReactNode;
-  index: any;
-  value: any;
+  index: number;
+  value: number;
 }
 const TabPanel: React.FC<TabPanelProps> = ({ children, index, value }) => {
   return (
@@ -33,10 +33,10 @@ const StyledTab = withStyles((theme) =>
     root: {
       textTransform: 'none',
       color: 'rgba(0,0,0,0.5)',
-      fontSize: theme.typography.pxToRem(15),
-      paddingTop: 15,
-      paddingBottom: 15,
-      width: 255,
+      fontSize: '0.95rem',
+      paddingTop: theme.spacing(1.875),
+      paddingBottom: theme.spacing(1.875),
+      width: '15.9375rem',
       '&:focus': {
         opacity: 1,
       },
@@ -44,7 +44,7 @@ const StyledTab = withStyles((theme) =>
   })
 )((props: StyledTabProps) => <Tab {...props} />);
 
-export default function CenteredTabs() {
+const CenteredTabs = () => {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
@@ -95,4 +95,5 @@ export default function CenteredTabs() {
       </TabPanel>
     </>
   );
-}
+};
+export default CenteredTabs;
