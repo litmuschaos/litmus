@@ -88,24 +88,82 @@ type chaosWorkFlowResponse {
   Weightages: [weightages]!
   isCustomWorkflow: Boolean!
 }
+
+type WorkflowRun{
+   workflow_run_id: ID!
+   workflow_id: ID!
+   cluster_name: String!
+   last_updated: String!
+   project_id: ID!
+   cluster_id: ID!
+   workflow_name: String!
+   execution_data: String!
+}
+
+input WorkflowRunInput{
+   workflow_run_id: ID!
+   workflow_name: String!
+   execution_data: String!
+   cluster_id: ClusterIdentity!
+}
+
+type PodLogResponse{
+   workflow_run_id: ID!
+   pod_name: String!
+   pod_type: String!
+   log: String!
+}
+
+input PodLog{
+   cluster_id: ClusterIdentity!
+   request_id: ID!
+   workflow_run_id: ID!
+   pod_name: String!
+   pod_type: String!
+   log: String!
+}
+
+input PodLogRequest{
+   cluster_id: ID!
+   workflow_run_id: ID!
+   pod_name: String!
+   pod_namespace: String!
+   pod_type: String!
+   exp_pod: String
+   runner_pod: String
+   chaos_namespace: String
+}
+
+type Query{
+    getWorkFlowRuns(project_id: String!): [WorkflowRun!]!
+}
+
 type Mutation{
     #It is used to create external cluster.
     userClusterReg(clusterInput: ClusterInput!): String!
-    
+
     #It is used to confirm the subscriber registration
     clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
-    
+
     #It is used to send cluster related events from the subscriber
     newClusterEvent(clusterEvent: ClusterEventInput!): String!
 
     #It is used to create chaosworkflow
     createChaosWorkFlow(input: chaosWorkFlowInput): chaosWorkFlowResponse!
+
+    chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
+
+    podLog(log: PodLog!): String!
 }
 
 type Subscription{
     #It is used to listen cluster events from the graphql server
     clusterEventListener(project_id: String!): ClusterEvent!
-    
+
     #It is used to listen cluster operation request from the graphql server
     clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
+
+    workflowEventListener(project_id: String!): WorkflowRun!
+
+    getPodLog(podDetails: PodLogRequest!): PodLogResponse!
 }
