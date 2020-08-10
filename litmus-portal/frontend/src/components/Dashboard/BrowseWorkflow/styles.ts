@@ -75,6 +75,10 @@ const useStyles = makeStyles((theme) => ({
   optionBtn: {
     marginLeft: 'auto',
   },
+  timeDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
 }));
 
 export default useStyles;

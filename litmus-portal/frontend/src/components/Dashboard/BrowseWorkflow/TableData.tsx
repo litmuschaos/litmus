@@ -70,7 +70,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
         </Typography>
       </TableCell>
       <TableCell>
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <div className={classes.timeDiv}>
           <Typography className={classes.timeData}>
             {timeDifferenceForDate(data.last_updated)}
           </Typography>
