@@ -27,3 +27,15 @@ export const WORKFLOW_EVENTS = gql`
     }
   }
 `;
+
+export const CREATE_USER = gql`
+  mutation CreateUser($user: UserInput!) {
+    createUser(user: $user) {
+      id
+      user_name
+      created_at
+      update_at
+      removed_at
+    }
+  }
+`;
