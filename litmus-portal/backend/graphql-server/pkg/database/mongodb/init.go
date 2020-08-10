@@ -6,18 +6,18 @@ import (
 	"os"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var clusterCollection *mongo.Collection
+var workflowRunCollection *mongo.Collection
 var backgroundContext = context.Background()
 var err error
 
 var collections = map[string]string{
-	"Cluster": "cluster-collection",
-	"Workflows": "workflows-collection",
+	"Cluster":     "cluster-collection",
+	"WorkflowRun": "workflow-run",
 }
 
 var dbName = "litmus"
@@ -37,10 +37,20 @@ type Cluster struct {
 	ClusterType        string  `bson:"cluster_type"`
 }
 
+type WorkflowRun struct {
+	WorkflowRunID string `bson:"workflow_run_id"`
+	WorkflowID    string `bson:"workflow_id"`
+	ClusterName   string `bson:"cluster_name"`
+	LastUpdated   string `bson:"last_updated"`
+	ProjectID     string `bson:"project_id"`
+	ClusterID     string `bson:"cluster_id"`
+	WorkflowName  string `bson:"workflow_name"`
+	ExecutionData string `bson:"execution_data"`
+}
 
 //DBInit initializes database connection
 func DBInit() error {
-	dbServer := os.Getenv("MONGODB_SERVER")
+	dbServer := os.Getenv("DB_SERVER")
 	clientOptions := options.Client().ApplyURI("mongodb://" + dbServer)
 	client, err := mongo.Connect(backgroundContext, clientOptions)
 	if err != nil {
@@ -57,41 +67,6 @@ func DBInit() error {
 	}
 
 	clusterCollection = client.Database(dbName).Collection(collections["Cluster"])
-	clusterCollection = client.Database(dbName).Collection(collections["Workflows"])
-
-	return nil
-}
-
-func InsertCluster(cluster Cluster) error {
-	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	_, err := clusterCollection.InsertOne(ctx, cluster)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func GetCluster(cluster_id string) (Cluster, error) {
-	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	query := bson.M{"cluster_id": cluster_id}
-
-	var cluster Cluster
-	err = clusterCollection.FindOne(ctx, query).Decode(&cluster)
-	if err != nil {
-		return Cluster{}, err
-	}
-
-	return cluster, nil
-}
-
-func UpdateCluster(query bson.D, update bson.D) error {
-	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-
-	_, err := clusterCollection.UpdateOne(ctx, query, update)
-	if err != nil {
-		return err
-	}
-
+	workflowRunCollection = client.Database(dbName).Collection(collections["WorkflowRun"])
 	return nil
 }

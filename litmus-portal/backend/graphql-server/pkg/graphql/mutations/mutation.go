@@ -90,29 +90,49 @@ func NewEvent(clusterEvent model.ClusterEventInput, r store.StateData) (string, 
 	return "", errors.New("ERROR WITH CLUSTER EVENT")
 }
 
-func CreateChaosWorkflow(input model.ChaosWorkFlowInput) (string, error) {
-	newChaosWorkflow := &database.ChaosWorkFlowInput{
-		WorkflowName: input.WorkflowName,
-		WorkflowDescription: input.WorkflowDescription,
-		WorkflowManifest: input.WorkflowManifest,
-		CronSyntax: input.CronSyntax,
-		IsCustomWorkflow: input.IsCustomWorkflow,
-		CreatedAt:    strconv.FormatInt(time.Now().Unix(), 10),
-		UpdatedAt:    strconv.FormatInt(time.Now().Unix(), 10),
-	}
-
-	err := database.InsertChaosWorkflow(newChaosWorkflow)
+// WorkFlowRunHandler Updates or Inserts a new Workflow Run into the DB
+func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string, error) {
+	cluster, err := cluster.VerifyCluster(*input.ClusterID)
 	if err != nil {
+		log.Print("ERROR", err)
 		return "", err
 	}
-
-	var newModel model.ChaosWorkFlowInput = newChaosWorkflow
-
-	for _, observer := range graph.Store.WorkflowPublish["123"] {
-		observer <- newModel
+	newWorkflowRun := model.WorkflowRun{
+		ClusterID:     cluster.ClusterID,
+		ClusterName:   cluster.ClusterName,
+		ProjectID:     cluster.ProjectID,
+		LastUpdated:   strconv.FormatInt(time.Now().Unix(), 10),
+		WorkflowRunID: input.WorkflowRunID,
+		WorkflowName:  input.WorkflowName,
+		ExecutionData: input.ExecutionData,
+		WorkflowID:    "000000000000",
 	}
+	subscriptions.SendWorkflowEvent(newWorkflowRun, r)
+	err = database.UpsertWorkflowRun(database.WorkflowRun(newWorkflowRun))
+	if err != nil {
+		log.Print("ERROR", err)
+		return "", err
+	}
+	return "Workflow Run Accepted", nil
+}
 
-
-
-	return "", nil
+// LogsHandler receives logs from the workflow-agent and publishes to frontend clients
+func LogsHandler(podLog model.PodLog, r store.StateData) (string, error) {
+	_, err := cluster.VerifyCluster(*podLog.ClusterID)
+	if err != nil {
+		log.Print("ERROR", err)
+		return "", err
+	}
+	if reqChan, ok := r.WorkflowLog[podLog.RequestID]; ok {
+		resp := model.PodLogResponse{
+			PodName:       podLog.PodName,
+			WorkflowRunID: podLog.WorkflowRunID,
+			PodType:       podLog.PodType,
+			Log:           podLog.Log,
+		}
+		reqChan <- &resp
+		close(reqChan)
+		return "LOGS SENT SUCCESSFULLY", nil
+	}
+	return "LOG REQUEST CANCELLED", nil
 }
