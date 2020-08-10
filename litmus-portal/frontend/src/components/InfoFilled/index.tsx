@@ -1,6 +1,7 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { useSelector } from 'react-redux';
+import { useTheme } from '@material-ui/core/styles';
 import useStyles from './styles';
 import { RootState } from '../../redux/reducers';
 import formatCount from '../../utils/formatCount';
@@ -19,28 +20,29 @@ interface CardValueData {
 
 const InfoFilledWrap: React.FC = () => {
   const classes = useStyles();
+  const theme = useTheme();
   // Card Value Data fetched from Redux
   const communityData = useSelector((state: RootState) => state.communityData);
   const cardData: CardValueData[] = [
     {
-      color: '#109B67',
+      color: theme.palette.primary.dark,
       value: parseInt(communityData.google.operatorInstalls, 10),
       statType: 'Operator Installed',
       plus: true,
     },
     {
-      color: '#858CDD',
+      color: theme.palette.secondary.main,
       value: parseInt(communityData.google.totalRuns, 10),
       statType: 'Total Experiment Runs',
       plus: true,
     },
     {
-      color: '#F6B92B',
+      color: theme.palette.warning.main,
       value: parseInt(communityData.github.experimentsCount, 10),
       statType: 'Total Experiments',
     },
     {
-      color: '#BA3B34',
+      color: theme.palette.error.main,
       value: parseInt(communityData.github.stars, 10),
       statType: 'Github Stars',
     },

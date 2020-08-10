@@ -1,5 +1,6 @@
 import { Line } from 'rc-progress';
 import React, { useEffect, useState } from 'react';
+import { useTheme } from '@material-ui/core/styles';
 
 interface LinearProgressBarProps {
   value: number | number[];
@@ -13,14 +14,15 @@ const LinearProgressBar: React.FC<LinearProgressBarProps> = ({
   const [color, setColor] = useState(' ');
   const width: number = 2;
   const resultValue = (value as number) * 10;
+  const theme = useTheme();
   const changeColor = () => {
     if (resultValue <= 30) {
-      return setColor('#CA2C2C');
+      return setColor(theme.palette.error.dark);
     }
     if (resultValue <= 60) {
-      return setColor('#F6B92B');
+      return setColor(theme.palette.warning.main);
     }
-    return setColor('#109B67');
+    return setColor(theme.palette.primary.dark);
   };
   useEffect(() => {
     if (isDefault === true) {

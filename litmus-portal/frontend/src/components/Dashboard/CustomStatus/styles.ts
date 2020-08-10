@@ -25,8 +25,8 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 3,
     paddingTop: theme.spacing(0.375),
     paddingBottom: theme.spacing(0.375),
-    color: '#CA2C2C',
-    backgroundColor: 'rgba(255, 0, 0, 0.1)',
+    color: theme.palette.error.dark,
+    backgroundColor: theme.palette.error.light,
   },
   statusFont: {
     fontSize: '0.725rem',
