@@ -15,8 +15,9 @@ var clusterCollection *mongo.Collection
 var backgroundContext = context.Background()
 var err error
 
-var collection = map[string]string{
+var collections = map[string]string{
 	"Cluster": "cluster-collection",
+	"Workflows": "workflows-collection",
 }
 
 var dbName = "litmus"
@@ -36,6 +37,7 @@ type Cluster struct {
 	ClusterType        string  `bson:"cluster_type"`
 }
 
+
 //DBInit initializes database connection
 func DBInit() error {
 	dbServer := os.Getenv("MONGODB_SERVER")
@@ -54,7 +56,9 @@ func DBInit() error {
 		log.Print("Connected To MONGODB")
 	}
 
-	clusterCollection = client.Database(dbName).Collection(collection["Cluster"])
+	clusterCollection = client.Database(dbName).Collection(collections["Cluster"])
+	clusterCollection = client.Database(dbName).Collection(collections["Workflows"])
+
 	return nil
 }
 

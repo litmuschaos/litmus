@@ -62,32 +62,36 @@ type ClusterConfirmResponse {
 }
 
 input chaosWorkFlowInput {
-  workflow_yaml: String!
+  workflow_manifest: String!
   cronSyntax: String!
   Workflow_name: String!
   Workflow_description: String!
   Weightages: [weightagesInput]!
   isCustomWorkflow: Boolean!
+  updated_at: String!
+  created_at: String!
+
 }
 
 input weightagesInput {
-  experiment_name: String!
-  weightage: Int!
+    experiment_name: String!
+    weightage: Int!
 }
 
 type weightages {
-  experiment_name: String!
-  weightage: Int!
+    experiment_name: String!
+    weightage: Int!
 }
 
 type chaosWorkFlowResponse {
-  workflow_id: String!
-  cronSyntax: String!
-  Workflow_name: String!
-  Workflow_description: String!
-  Weightages: [weightages]!
-  isCustomWorkflow: Boolean!
+    workflow_id: String!
+    cronSyntax: String!
+    Workflow_name: String!
+    Workflow_description: String!
+    Weightages: [weightages]!
+    isCustomWorkflow: Boolean!
 }
+
 type Mutation{
     #It is used to create external cluster.
     userClusterReg(clusterInput: ClusterInput!): String!

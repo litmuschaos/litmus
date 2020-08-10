@@ -62,12 +62,14 @@ type ClusterInput struct {
 }
 
 type ChaosWorkFlowInput struct {
-	WorkflowYaml        string             `json:"workflow_yaml"`
+	WorkflowManifest    string             `json:"workflow_manifest"`
 	CronSyntax          string             `json:"cronSyntax"`
 	WorkflowName        string             `json:"Workflow_name"`
 	WorkflowDescription string             `json:"Workflow_description"`
 	Weightages          []*WeightagesInput `json:"Weightages"`
 	IsCustomWorkflow    bool               `json:"isCustomWorkflow"`
+	UpdatedAt           string             `json:"updated_at"`
+	CreatedAt           string             `json:"created_at"`
 }
 
 type ChaosWorkFlowResponse struct {

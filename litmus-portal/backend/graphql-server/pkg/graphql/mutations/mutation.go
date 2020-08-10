@@ -1,6 +1,7 @@
 package mutations
 
 import (
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph"
 	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/data-store"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/subscriptions"
 	"github.com/pkg/errors"
@@ -87,4 +88,31 @@ func NewEvent(clusterEvent model.ClusterEventInput, r store.StateData) (string, 
 	}
 
 	return "", errors.New("ERROR WITH CLUSTER EVENT")
+}
+
+func CreateChaosWorkflow(input model.ChaosWorkFlowInput) (string, error) {
+	newChaosWorkflow := &database.ChaosWorkFlowInput{
+		WorkflowName: input.WorkflowName,
+		WorkflowDescription: input.WorkflowDescription,
+		WorkflowManifest: input.WorkflowManifest,
+		CronSyntax: input.CronSyntax,
+		IsCustomWorkflow: input.IsCustomWorkflow,
+		CreatedAt:    strconv.FormatInt(time.Now().Unix(), 10),
+		UpdatedAt:    strconv.FormatInt(time.Now().Unix(), 10),
+	}
+
+	err := database.InsertChaosWorkflow(newChaosWorkflow)
+	if err != nil {
+		return "", err
+	}
+
+	var newModel model.ChaosWorkFlowInput = newChaosWorkflow
+
+	for _, observer := range graph.Store.WorkflowPublish["123"] {
+		observer <- newModel
+	}
+
+
+
+	return "", nil
 }

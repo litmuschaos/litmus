@@ -560,12 +560,15 @@ type ClusterConfirmResponse {
 }
 
 input chaosWorkFlowInput {
-  workflow_yaml: String!
+  workflow_manifest: String!
   cronSyntax: String!
   Workflow_name: String!
   Workflow_description: String!
   Weightages: [weightagesInput]!
   isCustomWorkflow: Boolean!
+  updated_at: String!
+  created_at: String!
+
 }
 
 input weightagesInput {
@@ -586,6 +589,7 @@ type chaosWorkFlowResponse {
   Weightages: [weightages]!
   isCustomWorkflow: Boolean!
 }
+
 type Mutation{
     #It is used to create external cluster.
     userClusterReg(clusterInput: ClusterInput!): String!
@@ -3282,9 +3286,9 @@ func (ec *executionContext) unmarshalInputchaosWorkFlowInput(ctx context.Context
 
 	for k, v := range asMap {
 		switch k {
-		case "workflow_yaml":
+		case "workflow_manifest":
 			var err error
-			it.WorkflowYaml, err = ec.unmarshalNString2string(ctx, v)
+			it.WorkflowManifest, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3315,6 +3319,18 @@ func (ec *executionContext) unmarshalInputchaosWorkFlowInput(ctx context.Context
 		case "isCustomWorkflow":
 			var err error
 			it.IsCustomWorkflow, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "updated_at":
+			var err error
+			it.UpdatedAt, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "created_at":
+			var err error
+			it.CreatedAt, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}

@@ -25,11 +25,11 @@ func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput mode
 }
 
 func (r *mutationResolver) ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error) {
-	return mutations.ConfirmClusterRegistration(identity, *store)
+	return mutations.ConfirmClusterRegistration(identity, *Store)
 }
 
 func (r *mutationResolver) NewClusterEvent(ctx context.Context, clusterEvent model.ClusterEventInput) (string, error) {
-	return mutations.NewEvent(clusterEvent, *store)
+	return mutations.NewEvent(clusterEvent, *Store)
 }
 
 func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
@@ -40,9 +40,9 @@ func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, project
 	log.Print("NEW EVENT ", projectID)
 	clusterEvent := make(chan *model.ClusterEvent, 1)
 
-	store.Mutex.Lock()
-	store.ClusterEventPublish[projectID] = append(store.ClusterEventPublish[projectID], clusterEvent)
-	store.Mutex.Unlock()
+	Store.Mutex.Lock()
+	Store.ClusterEventPublish[projectID] = append(Store.ClusterEventPublish[projectID], clusterEvent)
+	Store.Mutex.Unlock()
 
 	go func() {
 		<-ctx.Done()
@@ -58,22 +58,22 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 		return clusterAction, err
 	}
 
-	store.Mutex.Lock()
-	if _, ok := store.ConnectedCluster[clusterInfo.ClusterID]; ok {
-		store.Mutex.Unlock()
+	Store.Mutex.Lock()
+	if _, ok := Store.ConnectedCluster[clusterInfo.ClusterID]; ok {
+		Store.Mutex.Unlock()
 		return clusterAction, errors.New("CLUSTER ALREADY CONNECTED")
 	}
-	store.ConnectedCluster[clusterInfo.ClusterID] = clusterAction
-	store.Mutex.Unlock()
+	Store.ConnectedCluster[clusterInfo.ClusterID] = clusterAction
+	Store.Mutex.Unlock()
 
 	go func() {
 		<-ctx.Done()
 		verifiedCluster.IsActive = false
 
-		subscriptions.SendClusterEvent("cluster-status", "Cluster Offline", "Cluster Disconnect", model.Cluster(*verifiedCluster), *store)
-		store.Mutex.Lock()
-		delete(store.ConnectedCluster, clusterInfo.ClusterID)
-		store.Mutex.Unlock()
+		subscriptions.SendClusterEvent("cluster-status", "Cluster Offline", "Cluster Disconnect", model.Cluster(*verifiedCluster), *Store)
+		Store.Mutex.Lock()
+		delete(Store.ConnectedCluster, clusterInfo.ClusterID)
+		Store.Mutex.Unlock()
 		query := bson.D{{"cluster_id", clusterInfo.ClusterID}}
 		update := bson.D{{"$set", bson.D{{"is_active", false}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
@@ -92,7 +92,7 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 	}
 
 	verifiedCluster.IsActive = true
-	subscriptions.SendClusterEvent("cluster-status", "Cluster Live", "Cluster is Live and Connected", model.Cluster(*verifiedCluster), *store)
+	subscriptions.SendClusterEvent("cluster-status", "Cluster Live", "Cluster is Live and Connected", model.Cluster(*verifiedCluster), *Store)
 
 	return clusterAction, nil
 }
