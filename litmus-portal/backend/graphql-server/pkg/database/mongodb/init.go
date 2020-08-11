@@ -49,17 +49,17 @@ type WorkflowRun struct {
 }
 
 type ChaosWorkFlowInput struct {
-	WorkflowID 			string			   `bson:"workflow_id"`
+	WorkflowID          string             `bson:"workflow_id"`
 	WorkflowManifest    string             `bson:"workflow_manifest"`
 	CronSyntax          string             `bson:"cronSyntax"`
 	WorkflowName        string             `bson:"Workflow_name"`
 	WorkflowDescription string             `bson:"Workflow_description"`
 	Weightages          []*WeightagesInput `bson:"Weightages"`
 	IsCustomWorkflow    bool               `bson:"isCustomWorkflow"`
-	UpdatedAt           string             `json:"updated_at"`
-	CreatedAt           string             `json:"created_at"`
-	ProjectID           string             `json:"project_id"`
-	ClusterID           string             `json:"cluster_id"`
+	UpdatedAt           string             `bson:"updated_at"`
+	CreatedAt           string             `bson:"created_at"`
+	ProjectID           string             `bson:"project_id"`
+	ClusterID           string             `bson:"cluster_id"`
 }
 
 type WeightagesInput struct {

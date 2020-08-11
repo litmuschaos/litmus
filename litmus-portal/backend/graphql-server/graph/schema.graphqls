@@ -34,11 +34,10 @@ type ClusterEvent {
 }
 
 type ActionPayload {
-  request_id: Int!,
-  request_type: String!
-  k8s_manifest: String!
-  namespace: String!
-  external_data: String!
+  request_type: String
+  k8s_manifest: String
+  namespace: String
+  external_data: String
 }
 
 type ClusterAction {

@@ -5,7 +5,6 @@ import (
 	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/data-store"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/subscriptions"
 	"github.com/pkg/errors"
-	//"github.com/ulule/deepcopier"
 	"go.mongodb.org/mongo-driver/bson"
 	"log"
 	"strconv"
@@ -139,28 +138,28 @@ func LogsHandler(podLog model.PodLog, r store.StateData) (string, error) {
 	return "LOG REQUEST CANCELLED", nil
 }
 
-func CreateChaosWorkflow(input model.ChaosWorkFlowInput, r store.StateData) (*model.ChaosWorkFlowResponse, error) {
+func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*model.ChaosWorkFlowResponse, error) {
 	marshalData, err := json.Marshal(input.Weightages)
 	if err != nil {
 		return &model.ChaosWorkFlowResponse{}, err
 	}
 
-    var Weightages []*database.WeightagesInput
-    if err := json.Unmarshal(marshalData, &Weightages); err != nil {
+	var Weightages []*database.WeightagesInput
+	if err := json.Unmarshal(marshalData, &Weightages); err != nil {
 		return &model.ChaosWorkFlowResponse{}, err
-    }
+	}
 
-	workflow_id :=utils.RandomString(32)
+	workflow_id := utils.RandomString(32)
 	newChaosWorkflow := database.ChaosWorkFlowInput{
-		WorkflowID: workflow_id,
-		WorkflowManifest: input.WorkflowManifest,
-		CronSyntax: input.CronSyntax,
-		WorkflowName: input.WorkflowName,
+		WorkflowID:          workflow_id,
+		WorkflowManifest:    input.WorkflowManifest,
+		CronSyntax:          input.CronSyntax,
+		WorkflowName:        input.WorkflowName,
 		WorkflowDescription: input.WorkflowDescription,
-		IsCustomWorkflow: input.IsCustomWorkflow,
-		ProjectID: input.ProjectID,
-		ClusterID: input.ClusterID,
-		Weightages: Weightages,
+		IsCustomWorkflow:    input.IsCustomWorkflow,
+		ProjectID:           input.ProjectID,
+		ClusterID:           input.ClusterID,
+		Weightages:          Weightages,
 	}
 
 	err = database.InsertChaosWorkflow(newChaosWorkflow)
@@ -168,13 +167,13 @@ func CreateChaosWorkflow(input model.ChaosWorkFlowInput, r store.StateData) (*mo
 		return nil, err
 	}
 
-	subscriptions.SendWorkflowRequest(newChaosWorkflow, r)
+	subscriptions.SendWorkflowRequest(&newChaosWorkflow, r)
 
 	return &model.ChaosWorkFlowResponse{
-		WorkflowID: workflow_id,
-		CronSyntax: input.CronSyntax,
-		WorkflowName: input.WorkflowName,
+		WorkflowID:          workflow_id,
+		CronSyntax:          input.CronSyntax,
+		WorkflowName:        input.WorkflowName,
 		WorkflowDescription: input.WorkflowDescription,
-		IsCustomWorkflow: input.IsCustomWorkflow,
+		IsCustomWorkflow:    input.IsCustomWorkflow,
 	}, nil
 }

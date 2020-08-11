@@ -26,23 +26,23 @@ func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput mode
 }
 
 func (r *mutationResolver) ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error) {
-	return mutations.ConfirmClusterRegistration(identity, *Store)
+	return mutations.ConfirmClusterRegistration(identity, *store)
 }
 
 func (r *mutationResolver) NewClusterEvent(ctx context.Context, clusterEvent model.ClusterEventInput) (string, error) {
-	return mutations.NewEvent(clusterEvent, *Store)
+	return mutations.NewEvent(clusterEvent, *store)
 }
 
 func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
-	return mutations.CreateChaosWorkflow(input, *Store)
+	return mutations.CreateChaosWorkflow(&input, *store)
 }
 
 func (r *mutationResolver) ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error) {
-	return mutations.WorkFlowRunHandler(workflowData, *Store)
+	return mutations.WorkFlowRunHandler(workflowData, *store)
 }
 
 func (r *mutationResolver) PodLog(ctx context.Context, log model.PodLog) (string, error) {
-	return mutations.LogsHandler(log, *Store)
+	return mutations.LogsHandler(log, *store)
 }
 
 func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {
@@ -53,9 +53,9 @@ func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, project
 	log.Print("NEW EVENT ", projectID)
 	clusterEvent := make(chan *model.ClusterEvent, 1)
 
-	Store.Mutex.Lock()
-	Store.ClusterEventPublish[projectID] = append(Store.ClusterEventPublish[projectID], clusterEvent)
-	Store.Mutex.Unlock()
+	store.Mutex.Lock()
+	store.ClusterEventPublish[projectID] = append(store.ClusterEventPublish[projectID], clusterEvent)
+	store.Mutex.Unlock()
 
 	go func() {
 		<-ctx.Done()
@@ -71,22 +71,22 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 		return clusterAction, err
 	}
 
-	Store.Mutex.Lock()
-	if _, ok := Store.ConnectedCluster[clusterInfo.ClusterID]; ok {
-		Store.Mutex.Unlock()
+	store.Mutex.Lock()
+	if _, ok := store.ConnectedCluster[clusterInfo.ClusterID]; ok {
+		store.Mutex.Unlock()
 		return clusterAction, errors.New("CLUSTER ALREADY CONNECTED")
 	}
-	Store.ConnectedCluster[clusterInfo.ClusterID] = clusterAction
-	Store.Mutex.Unlock()
+	store.ConnectedCluster[clusterInfo.ClusterID] = clusterAction
+	store.Mutex.Unlock()
 
 	go func() {
 		<-ctx.Done()
 		verifiedCluster.IsActive = false
 
-		subscriptions.SendClusterEvent("cluster-status", "Cluster Offline", "Cluster Disconnect", model.Cluster(*verifiedCluster), *Store)
-		Store.Mutex.Lock()
-		delete(Store.ConnectedCluster, clusterInfo.ClusterID)
-		Store.Mutex.Unlock()
+		subscriptions.SendClusterEvent("cluster-status", "Cluster Offline", "Cluster Disconnect", model.Cluster(*verifiedCluster), *store)
+		store.Mutex.Lock()
+		delete(store.ConnectedCluster, clusterInfo.ClusterID)
+		store.Mutex.Unlock()
 		query := bson.D{{"cluster_id", clusterInfo.ClusterID}}
 		update := bson.D{{"$set", bson.D{{"is_active", false}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
@@ -105,7 +105,7 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 	}
 
 	verifiedCluster.IsActive = true
-	subscriptions.SendClusterEvent("cluster-status", "Cluster Live", "Cluster is Live and Connected", model.Cluster(*verifiedCluster), *Store)
+	subscriptions.SendClusterEvent("cluster-status", "Cluster Live", "Cluster is Live and Connected", model.Cluster(*verifiedCluster), *store)
 
 	return clusterAction, nil
 }
@@ -113,9 +113,9 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 func (r *subscriptionResolver) WorkflowEventListener(ctx context.Context, projectID string) (<-chan *model.WorkflowRun, error) {
 	log.Print("NEW WORKFLOW EVENT LISTENER", projectID)
 	workflowEvent := make(chan *model.WorkflowRun, 1)
-	Store.Mutex.Lock()
-	Store.WorkflowEventPublish[projectID] = append(Store.WorkflowEventPublish[projectID], workflowEvent)
-	Store.Mutex.Unlock()
+	store.Mutex.Lock()
+	store.WorkflowEventPublish[projectID] = append(store.WorkflowEventPublish[projectID], workflowEvent)
+	store.Mutex.Unlock()
 	go func() {
 		<-ctx.Done()
 		log.Print("CLOSED WORKFLOW LISTENER", projectID)
@@ -127,16 +127,15 @@ func (r *subscriptionResolver) GetPodLog(ctx context.Context, podDetails model.P
 	log.Print("NEW LOG REQUEST", podDetails.ClusterID, podDetails.PodName)
 	workflowLog := make(chan *model.PodLogResponse, 1)
 	cid := uuid.New()
-	Store.Mutex.Lock()
-	Store.WorkflowLog[cid.String()] = workflowLog
-	Store.Mutex.Unlock()
+	store.Mutex.Lock()
+	store.WorkflowLog[cid.String()] = workflowLog
+	store.Mutex.Unlock()
 	go func() {
 		<-ctx.Done()
 		log.Print("CLOSED LOG LISTENER", podDetails.ClusterID, podDetails.PodName)
-		delete(Store.WorkflowLog, cid.String())
+		delete(store.WorkflowLog, cid.String())
 	}()
-	go queries.GetLogs(cid.String(), podDetails, *Store)
-	go queries.GetLogs(cid.String(), podDetails, *Store)
+	go queries.GetLogs(cid.String(), podDetails, *store)
 	return workflowLog, nil
 }
 

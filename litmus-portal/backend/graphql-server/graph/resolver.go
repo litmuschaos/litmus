@@ -8,4 +8,4 @@ import data_store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-s
 
 type Resolver struct{}
 
-var Store = data_store.New()
+var store = data_store.New()
