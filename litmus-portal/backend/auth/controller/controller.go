@@ -12,6 +12,8 @@ var Server = server.NewServer(server.NewConfig())
 type UserController interface {
 	Login(c *gin.Context)
 	UpdatePassword(c *gin.Context)
+	ResetPassword(c *gin.Context)
+	UpdateUserDetails(c *gin.Context)
 	UpdateUserID(c *gin.Context)
 	Create(c *gin.Context)
 }

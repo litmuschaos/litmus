@@ -193,8 +193,59 @@ func (s *Server) UpdatePasswordRequest(c *gin.Context, user *models.UserCredenti
 		return
 	}
 
+	// fmt.Println("password for update is", user.GetPassword())
+	if user.GetPassword() == "" {
+		s.redirectError(c, errors.ErrInvalidRequest)
+		return
+	}
+
 	user.UserName = userInfo.GetUserName()
 	updatedUserInfo, err := s.Manager.UpdatePassword(user)
+	if err != nil {
+		s.redirectError(c, err)
+		return
+	}
+	s.redirect(c, updatedUserInfo)
+	return
+}
+
+// ResetPasswordRequest validates the request
+func (s *Server) ResetPasswordRequest(c *gin.Context, user *models.UserCredentials) {
+
+	userInfo, err := s.getUserFromToken(c.Request)
+	if err != nil {
+		s.redirectError(c, err)
+		return
+	}
+
+	if user.GetUserName() == "" || user.GetPassword() == "" {
+		s.redirectError(c, errors.ErrInvalidRequest)
+		return
+	}
+
+	var updatedUserInfo *models.PublicUserInfo
+	if userInfo.UserName == types.DefaultUserName {
+		updatedUserInfo, err = s.Manager.UpdatePassword(user)
+		if err != nil {
+			s.redirectError(c, err)
+			return
+		}
+	}
+	s.redirect(c, updatedUserInfo)
+	return
+}
+
+// UpdateUserDetailsRequest validates the request
+func (s *Server) UpdateUserDetailsRequest(c *gin.Context, user *models.UserCredentials) {
+
+	userInfo, err := s.getUserFromToken(c.Request)
+	if err != nil {
+		s.redirectError(c, err)
+		return
+	}
+
+	user.UserName = userInfo.GetUserName()
+	updatedUserInfo, err := s.Manager.UpdateUserDetails(user)
 	if err != nil {
 		s.redirectError(c, err)
 		return
@@ -225,15 +276,14 @@ func (s *Server) UpdateUserIDRequest(c *gin.Context, user *models.UserCredential
 // CreateRequest validates the request
 func (s *Server) CreateRequest(c *gin.Context, user *models.UserCredentials) {
 
-	tokenString, err := s.getTokenFromHeader(c.Request)
+	userInfo, err := s.getUserFromToken(c.Request)
 	if err != nil {
 		s.redirectError(c, err)
 		return
 	}
 
-	userInfo, err := s.Manager.ParseToken(tokenString)
-	if err != nil {
-		s.redirectError(c, err)
+	if user.GetUserName() == "" || user.GetPassword() == "" {
+		s.redirectError(c, errors.ErrInvalidRequest)
 		return
 	}
 

@@ -11,8 +11,10 @@ import (
 const (
 	loginRoute          = "/login"
 	updatePasswordRoute = "/update/password"
+	resetPasswordRoute  = "/reset/password"
 	createRoute         = "/create"
 	updateUserIDRoute   = "/update/userID"
+	updateDetailsRoute  = "/update/details"
 )
 
 var (
@@ -34,6 +36,7 @@ func New() *gin.Engine {
 	router.POST(updatePasswordRoute, userController.UpdatePassword)
 	router.POST(updateUserIDRoute, userController.UpdateUserID)
 	router.POST(createRoute, userController.Create)
-
+	router.POST(updateDetailsRoute, userController.UpdateUserDetails)
+	router.POST(resetPasswordRoute, userController.ResetPassword)
 	return router
 }

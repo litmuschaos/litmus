@@ -50,6 +50,38 @@ func (user *User) UpdatePassword(c *gin.Context) {
 	return
 }
 
+// UpdatePassword updates a user details
+func (user *User) ResetPassword(c *gin.Context) {
+	err := c.BindJSON(user)
+	if err != nil {
+		log.Error(err)
+		c.JSON(http.StatusNotAcceptable, gin.H{
+			"message": "Unable to parse JSON",
+		})
+		return
+	}
+
+	userModel := models.UserCredentials(*user)
+	controller.Server.ResetPasswordRequest(c, &userModel)
+	return
+}
+
+// UpdateUserDetails updates a user details
+func (user *User) UpdateUserDetails(c *gin.Context) {
+	err := c.BindJSON(user)
+	if err != nil {
+		log.Error(err)
+		c.JSON(http.StatusNotAcceptable, gin.H{
+			"message": "Unable to parse JSON",
+		})
+		return
+	}
+
+	userModel := models.UserCredentials(*user)
+	controller.Server.UpdateUserDetailsRequest(c, &userModel)
+	return
+}
+
 // UpdateUserID updates a user details
 func (user *User) UpdateUserID(c *gin.Context) {
 	err := c.BindJSON(user)

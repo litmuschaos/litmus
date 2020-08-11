@@ -13,7 +13,7 @@ type UserCredentials struct {
 	Password    string       `bson:"password"`
 	Email       string       `bson:"email"`
 	Name        string       `bson:"name"`
-	UserId      string       `bson:"user_id"`
+	UserId     string       `bson:"user_id"`
 	SocialAuths []SocialAuth `bson:"social_auths"`
 	CreatedAt   *time.Time   `bson:"created_at"`
 	UpdatedAt   *time.Time   `bson:"updated_at"`

@@ -1,7 +1,6 @@
 package manage
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -156,11 +155,6 @@ func (m *Manager) UpdateUserDetails(user *models.UserCredentials) (*models.Publi
 // UpdatePassword get the user information
 func (m *Manager) UpdatePassword(user *models.UserCredentials) (*models.PublicUserInfo, error) {
 
-	fmt.Println("password for update is", user.GetPassword())
-	if user.GetPassword() == "" {
-		return nil, errors.ErrInvalidRequest
-	}
-
 	storedUser, err := m.GetUser(user.UserName)
 	if err != nil {
 		return nil, errors.ErrInvalidUser
@@ -175,6 +169,49 @@ func (m *Manager) UpdatePassword(user *models.UserCredentials) (*models.PublicUs
 	err = m.userStore.UpdateUser(storedUser)
 	return storedUser.GetPublicInfo(), err
 }
+
+// // ResetPassword get the user information
+// func (m *Manager) ResetPassword() (*models.PublicUserInfo, error) {
+
+// 	storedUser, err := m.GetUser(user.UserName)
+// 	if err != nil {
+// 		return nil, errors.ErrInvalidUser
+// 	}
+
+// 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.GetPassword()), types.PasswordEncryptionCost)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	storedUser.Password = string(hashedPassword)
+
+// 	err = m.userStore.UpdateUser(storedUser)
+// 	return storedUser.GetPublicInfo(), err
+// }
+
+// // UpdateDetails get the user information
+// func (m *Manager) UpdateDetails(user *models.UserCredentials) (*models.PublicUserInfo, error) {
+
+// 	fmt.Println("password for update is", user.GetPassword())
+// 	if user.GetPassword() == "" {
+// 		return nil, errors.ErrInvalidRequest
+// 	}
+
+// 	storedUser, err := m.GetUser(user.UserName)
+// 	if err != nil {
+// 		return nil, errors.ErrInvalidUser
+// 	}
+
+// 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.GetPassword()), types.PasswordEncryptionCost)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	storedUser.Password = string(hashedPassword)
+// 	storedUser.Email = user.Email
+// 	storedUser.Name = user.Name
+
+// 	err = m.userStore.UpdateUser(storedUser)
+// 	return storedUser.GetPublicInfo(), err
+// }
 
 // UpdateUserID get the user information
 func (m *Manager) UpdateUserID(user *models.UserCredentials) (*models.PublicUserInfo, error) {
