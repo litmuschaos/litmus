@@ -7,17 +7,28 @@ interface CustomTextProps {
   value: string;
   id: string;
   width: number;
+  onchange: (val: string) => void;
 }
 
 // Editable text field used to edit and save the input in the text box
-const CustomText: React.FC<CustomTextProps> = ({ value, id, width }) => {
+const CustomText: React.FC<CustomTextProps> = ({
+  value,
+  id,
+  width,
+  onchange,
+}) => {
   const [isDisabled, setIsDisabled] = React.useState(true);
+  const [newValue, setNewValue] = React.useState<string>(value);
 
   const handleEdit = () => {
     setIsDisabled(false);
   };
   const handleSave = () => {
+    onchange(newValue);
     setIsDisabled(true);
+  };
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNewValue(event.target.value);
   };
   return (
     <div>
@@ -25,7 +36,7 @@ const CustomText: React.FC<CustomTextProps> = ({ value, id, width }) => {
         data-cy="text"
         disabled={isDisabled}
         id={id}
-        defaultValue={value}
+        defaultValue={newValue}
         multiline
         rowsMax={6}
         InputProps={{
@@ -33,10 +44,11 @@ const CustomText: React.FC<CustomTextProps> = ({ value, id, width }) => {
           style: {
             width,
             color: 'rgba(0,0,0)',
-            lineHeight: '1.5rem',
+            lineHeight: '1rem',
             fontSize: '1rem',
           },
         }}
+        onChange={handleChange}
       />
       {isDisabled ? (
         <EditIcon onClick={handleEdit} data-cy="edit" />

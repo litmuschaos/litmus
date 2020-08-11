@@ -98,7 +98,7 @@ const ScheduleWorkflow: React.FC = () => {
 
               <FormControlLabel
                 value="afterSometime"
-                control={<Radio />}
+                control={<Radio disabled />}
                 label={
                   <Typography className={classes.radioText}>
                     Schedule after some time
@@ -131,7 +131,7 @@ const ScheduleWorkflow: React.FC = () => {
               )}
               <FormControlLabel
                 value="specificTime"
-                control={<Radio />}
+                control={<Radio disabled />}
                 label={
                   <Typography className={classes.radioText}>
                     Schedule at a specific time
@@ -154,7 +154,7 @@ const ScheduleWorkflow: React.FC = () => {
               )}
               <FormControlLabel
                 value="recurringScedule"
-                control={<Radio />}
+                control={<Radio disabled />}
                 label={
                   <Typography className={classes.radioText}>
                     Recurring Schedule

@@ -1,7 +1,7 @@
 import Slider from '@material-ui/core/Slider';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import React from 'react';
+import React, { useState } from 'react';
 import useStyles from './styles';
 
 const PrettoSlider = withStyles({
@@ -89,16 +89,20 @@ const marks = [
 
 interface CustomSliderProps {
   testName: string;
-  value: number;
-  onChangeCommitted: (event: object, value: number | number[]) => void;
+  weight: number;
+  index: number;
+  handleChange: (newValue: number, index: number) => void;
 }
 
 const CustomSlider: React.FC<CustomSliderProps> = ({
   testName,
-  value,
-  onChangeCommitted,
+  weight,
+  index,
+  handleChange,
 }) => {
   const classes = useStyles();
+  const [value, setValue] = useState<number>(weight);
+
   return (
     <div className="App">
       <div className={classes.mainDiv}>
@@ -115,7 +119,10 @@ const CustomSlider: React.FC<CustomSliderProps> = ({
           max={10}
           valueLabelDisplay="auto"
           marks={marks}
-          onChange={onChangeCommitted}
+          onChange={(event, value) => {
+            handleChange(value as any, index);
+            setValue(value as any);
+          }}
         />
       </div>
     </div>
