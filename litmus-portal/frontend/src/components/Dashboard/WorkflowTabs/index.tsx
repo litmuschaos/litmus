@@ -17,11 +17,7 @@ interface TabPanelProps {
 const TabPanel: React.FC<TabPanelProps> = ({ children, index, value }) => {
   return (
     <div role="tabpanel" hidden={value !== index}>
-      {value === index && (
-        <Box p={3}>
-          <>{children}</>
-        </Box>
-      )}
+      {value === index && <Box p={3}>{children}</Box>}
     </div>
   );
 };
@@ -32,7 +28,7 @@ const StyledTab = withStyles((theme) =>
   createStyles({
     root: {
       textTransform: 'none',
-      color: 'rgba(0,0,0,0.5)',
+      color: theme.palette.customColors.black(0.5),
       fontSize: '0.95rem',
       paddingTop: theme.spacing(1.875),
       paddingBottom: theme.spacing(1.875),

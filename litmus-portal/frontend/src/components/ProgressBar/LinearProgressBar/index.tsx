@@ -26,7 +26,7 @@ const LinearProgressBar: React.FC<LinearProgressBarProps> = ({
   };
   useEffect(() => {
     if (isDefault === true) {
-      return setColor('#5B44BA');
+      return setColor(theme.palette.secondary.dark);
     }
     return changeColor();
   }, [resultValue]);
