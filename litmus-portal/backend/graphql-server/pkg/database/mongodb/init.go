@@ -48,6 +48,25 @@ type WorkflowRun struct {
 	ExecutionData string `bson:"execution_data"`
 }
 
+type ChaosWorkFlowInput struct {
+	WorkflowID 			string			   `bson:"workflow_id"`
+	WorkflowManifest    string             `bson:"workflow_manifest"`
+	CronSyntax          string             `bson:"cronSyntax"`
+	WorkflowName        string             `bson:"Workflow_name"`
+	WorkflowDescription string             `bson:"Workflow_description"`
+	Weightages          []*WeightagesInput `bson:"Weightages"`
+	IsCustomWorkflow    bool               `bson:"isCustomWorkflow"`
+	UpdatedAt           string             `json:"updated_at"`
+	CreatedAt           string             `json:"created_at"`
+	ProjectID           string             `json:"project_id"`
+	ClusterID           string             `json:"cluster_id"`
+}
+
+type WeightagesInput struct {
+	ExperimentName string `bson:"experiment_name"`
+	Weightage      int    `bson:"weightage"`
+}
+
 //DBInit initializes database connection
 func DBInit() error {
 	dbServer := os.Getenv("DB_SERVER")
@@ -58,6 +77,7 @@ func DBInit() error {
 	}
 
 	ctx, _ := context.WithTimeout(backgroundContext, 20*time.Second)
+
 	// Check the connection
 	err = client.Ping(ctx, nil)
 	if err != nil {

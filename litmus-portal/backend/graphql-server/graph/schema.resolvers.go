@@ -6,18 +6,17 @@ package graph
 import (
 	"context"
 	"errors"
-	"fmt"
-	"github.com/google/uuid"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/queries"
 	"log"
 	"strconv"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/cluster"
 	database "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/mutations"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/queries"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/subscriptions"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -34,16 +33,16 @@ func (r *mutationResolver) NewClusterEvent(ctx context.Context, clusterEvent mod
 	return mutations.NewEvent(clusterEvent, *Store)
 }
 
-func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
+	return mutations.CreateChaosWorkflow(input, *Store)
 }
 
 func (r *mutationResolver) ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error) {
-	return mutations.WorkFlowRunHandler(workflowData, *store)
+	return mutations.WorkFlowRunHandler(workflowData, *Store)
 }
 
 func (r *mutationResolver) PodLog(ctx context.Context, log model.PodLog) (string, error) {
-	return mutations.LogsHandler(log, *store)
+	return mutations.LogsHandler(log, *Store)
 }
 
 func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {
@@ -114,9 +113,9 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 func (r *subscriptionResolver) WorkflowEventListener(ctx context.Context, projectID string) (<-chan *model.WorkflowRun, error) {
 	log.Print("NEW WORKFLOW EVENT LISTENER", projectID)
 	workflowEvent := make(chan *model.WorkflowRun, 1)
-	store.Mutex.Lock()
-	store.WorkflowEventPublish[projectID] = append(store.WorkflowEventPublish[projectID], workflowEvent)
-	store.Mutex.Unlock()
+	Store.Mutex.Lock()
+	Store.WorkflowEventPublish[projectID] = append(Store.WorkflowEventPublish[projectID], workflowEvent)
+	Store.Mutex.Unlock()
 	go func() {
 		<-ctx.Done()
 		log.Print("CLOSED WORKFLOW LISTENER", projectID)
@@ -128,15 +127,16 @@ func (r *subscriptionResolver) GetPodLog(ctx context.Context, podDetails model.P
 	log.Print("NEW LOG REQUEST", podDetails.ClusterID, podDetails.PodName)
 	workflowLog := make(chan *model.PodLogResponse, 1)
 	cid := uuid.New()
-	store.Mutex.Lock()
-	store.WorkflowLog[cid.String()] = workflowLog
-	store.Mutex.Unlock()
+	Store.Mutex.Lock()
+	Store.WorkflowLog[cid.String()] = workflowLog
+	Store.Mutex.Unlock()
 	go func() {
 		<-ctx.Done()
 		log.Print("CLOSED LOG LISTENER", podDetails.ClusterID, podDetails.PodName)
-		delete(store.WorkflowLog, cid.String())
+		delete(Store.WorkflowLog, cid.String())
 	}()
-	go queries.GetLogs(cid.String(), podDetails, *store)
+	go queries.GetLogs(cid.String(), podDetails, *Store)
+	go queries.GetLogs(cid.String(), podDetails, *Store)
 	return workflowLog, nil
 }
 

@@ -6,6 +6,7 @@ import (
 	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/data-store"
 	database "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb"
 	"log"
+	"math/rand"
 )
 
 //GetWorkflowRuns sends all the workflow runs for a project from the DB
@@ -28,9 +29,13 @@ func GetLogs(reqID string, pod model.PodLogRequest, r store.StateData) {
 	if err != nil {
 		log.Print("ERROR WHILE MARSHALLING POD DETAILS")
 	}
+
 	payload := model.ClusterAction{
 		ProjectID: reqID,
-		Action:    string(data),
+		Action:    &model.ActionPayload{
+			RequestID: rand.Int(),
+			ExternalData: string(data),
+		},
 	}
 	if clusterChan, ok := r.ConnectedCluster[pod.ClusterID]; ok {
 		clusterChan <- &payload
