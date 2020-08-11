@@ -6,31 +6,17 @@ import SemiCircularProgressBar from '../../src/components/ProgressBar/SemiCircul
 
 // Test Suite -
 // Progress Bar props -> value = 50, 10, 100
-describe('Semi Circular Progress Bar has appropriate values', () => {
-  it('Value is equal to 50', () => {
-    const wrapper = <SemiCircularProgressBar value={50} />;
-    mount(wrapper);
-    cy.get('[data-cy=progressValue]').then((value) => {
-      expect(value[0].innerText).to.equal('50%');
+describe('Semi Circular Progress Bar has appropriate values',()=>{
+  [50,10,100].map(i=>{
+    it('Value is equal to '+i, () => {
+      const wrapper = <SemiCircularProgressBar value={i} />;
+      mount(wrapper);
+      cy.get('[data-cy=progressValue]').then((value) => {
+        expect(value[0].innerText).to.equal(i+'%');
+      });
     });
-  });
-
-  it('Value is equal to 10', () => {
-    const wrapper = <SemiCircularProgressBar value={10} />;
-    mount(wrapper);
-    cy.get('[data-cy=progressValue]').then((value) => {
-      expect(value[0].innerText).to.equal('10%');
-    });
-  });
-
-  it('Value is equal to 100', () => {
-    const wrapper = <SemiCircularProgressBar value={100} />;
-    mount(wrapper);
-    cy.get('[data-cy=progressValue]').then((value) => {
-      expect(value[0].innerText).to.equal('100%');
-    });
-  });
-});
+  })
+})
 
 // Test Suite - Icon has the correct src
 describe('Icons have a correct path', () => {

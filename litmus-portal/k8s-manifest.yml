@@ -65,7 +65,7 @@ spec:
         env:
           - name: DB_SERVER
             value: mongo-service:27017
-          - name: CLUSTER_JWT_SECRET
+          - name: JWT_SECRET
             value: "12345678"
           - name: EXTERNAL_ADDRESS
             value: ""
