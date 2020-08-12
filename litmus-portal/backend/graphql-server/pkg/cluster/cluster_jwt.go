@@ -9,7 +9,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-var secret = os.Getenv("CLUSTER_JWT_SECRET")
+var secret = os.Getenv("JWT_SECRET")
 
 //ClusterCreateJWT generates jwt used in cluster registration
 func ClusterCreateJWT(id string) (string, error) {
