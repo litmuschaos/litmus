@@ -118,13 +118,15 @@ const CustomStepper = () => {
     if (activeStep === 2) {
       const tests = parsed(yaml);
       const arr: experimentMap[] = [];
+      const hashMap = new Map();
+      weights.forEach((weight) => {
+        hashMap.set(weight.experimentName, weight.weight);
+      });
       tests.forEach((test) => {
         let value = 0;
-        weights.forEach((testData) => {
-          if ((testData as any).experimentName === test) {
-            value = (testData as any).weight;
-          }
-        });
+        if (hashMap.has(test)) {
+          value = hashMap.get(test);
+        }
         arr.push({ experimentName: test, weight: value });
       });
       workflow.setWorkflowDetails({

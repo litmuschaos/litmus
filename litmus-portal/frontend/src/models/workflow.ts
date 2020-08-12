@@ -23,11 +23,5 @@ interface WorkflowActionType<T, P> {
 
 export type WorkflowAction = WorkflowActionType<
   typeof WorkflowActions.SET_WORKFLOW_DETAILS,
-  {
-    name: string;
-    link: string;
-    context: string;
-    weights: experimentMap[];
-    isCustomWorkflow: boolean;
-  }
+  WorkflowData
 >;

@@ -6,44 +6,39 @@ import useStyles, { CssTextField, ColorButton } from './styles';
 import useActions from '../../redux/actions';
 import * as WorkflowActions from '../../redux/actions/workflow';
 import PredifinedWorkflows from '../PredifinedWorkflows';
-import { workflowDetails } from '../../models/predefinedWorkflow';
 // import { getWkfRunCount } from "../../utils";
 
 const ChooseWorkflow: React.FC = () => {
   const classes = useStyles();
   const workflow = useActions(WorkflowActions);
   const [open, setOpen] = React.useState(false);
-
-  const [selectedWorkflowName, setSelectedWorkflowName] = useState(
-    'Personal Workflow 1'
-  );
-
-  const [selectedWorkflowDesc, setSelectedWorkflowDesc] = useState(
-    'Personal Workflow 1 Description'
-  );
-
-  const [WorkflowName, setName] = useState(' ');
-
-  const [WorkflowDescriptionforTF, setDescriptionTF] = useState(' ');
+  const [workflowDetails, setWorkflowData] = useState({
+    workflowName: 'Personal Workflow Name',
+    workflowDesc: 'Personal Description',
+  });
 
   const WorkflowNameChangeHandler = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setName((event.target as HTMLInputElement).value);
+    setWorkflowData({
+      workflowName: (event.target as HTMLInputElement).value,
+      workflowDesc: workflowDetails.workflowDesc,
+    });
   };
 
   const WorkflowDescriptionChangeHandler = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setDescriptionTF((event.target as HTMLInputElement).value);
+    setWorkflowData({
+      workflowName: workflowDetails.workflowName,
+      workflowDesc: (event.target as HTMLInputElement).value,
+    });
   };
 
   const handleSave = () => {
-    setSelectedWorkflowName(WorkflowName);
-    setSelectedWorkflowDesc(WorkflowDescriptionforTF);
     workflow.setWorkflowDetails({
-      name: WorkflowName,
-      description: WorkflowDescriptionforTF,
+      name: workflowDetails.workflowName,
+      description: workflowDetails.workflowDesc,
     });
     setOpen(false);
   };
@@ -56,8 +51,8 @@ const ChooseWorkflow: React.FC = () => {
 
   useEffect(() => {
     workflow.setWorkflowDetails({
-      name: selectedWorkflowName,
-      description: selectedWorkflowDesc,
+      name: 'Personal Workflow Name',
+      description: 'Personal Workflow Description',
       yaml: '#You can start creating your own workflow from here.',
       weights: [],
       link: '',
@@ -100,19 +95,19 @@ const ChooseWorkflow: React.FC = () => {
     },
   ];
 
-  const selectWorkflow = (selectedWorkflow: workflowDetails) => {
+  const selectWorkflow = (index: number) => {
     workflow.setWorkflowDetails({
-      name: selectedWorkflow.name,
-      link: selectedWorkflow.link,
-      id: selectedWorkflow.id,
+      name: workflowsList[index].title,
+      link: workflowsList[index].chaosWkfCRDLink,
+      id: workflowsList[index].workflowID,
       yaml: 'none',
-      description: selectedWorkflow.description,
+      description: workflowsList[index].description,
       isCustomWorkflow: false,
     });
-    setName(selectedWorkflow.name);
-    setDescriptionTF(selectedWorkflow.description);
-    setSelectedWorkflowName(selectedWorkflow.name);
-    setSelectedWorkflowDesc(selectedWorkflow.description);
+    setWorkflowData({
+      workflowName: workflowsList[index].title,
+      workflowDesc: workflowsList[index].description,
+    });
   };
 
   return (
@@ -131,7 +126,9 @@ const ChooseWorkflow: React.FC = () => {
             {workflowsList.length} pre-defined workflows
           </Typography>
           <PredifinedWorkflows
-            CallbackOnSelectWorkflow={selectWorkflow}
+            CallbackOnSelectWorkflow={(index: number) => {
+              selectWorkflow(index);
+            }}
             workflows={workflowsList}
           />
           <div className={classes.paddedTop}>
@@ -151,7 +148,7 @@ const ChooseWorkflow: React.FC = () => {
                   className={classes.selectionName}
                   display="inline"
                 >
-                  <strong>{selectedWorkflowName}</strong>
+                  <strong>{workflowDetails.workflowName}</strong>
                 </Typography>
                 &quot;
               </strong>
@@ -192,7 +189,7 @@ const ChooseWorkflow: React.FC = () => {
                   data-cy="inputWorkflow"
                   className={classes.textfieldworkflowname}
                   onChange={WorkflowNameChangeHandler}
-                  value={WorkflowName}
+                  value={workflowDetails.workflowName}
                   autoFocus
                 />
               </div>
@@ -208,7 +205,7 @@ const ChooseWorkflow: React.FC = () => {
                   }}
                   data-cy="inputWorkflowDescription"
                   className={classes.textfieldworkflowdescription}
-                  value={WorkflowDescriptionforTF}
+                  value={workflowDetails.workflowDesc}
                   onChange={WorkflowDescriptionChangeHandler}
                   multiline
                   rows={12}
