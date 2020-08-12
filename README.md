@@ -28,7 +28,7 @@ Litmus takes a cloud-native approach to create, manage and monitor chaos. Chaos 
 
 Chaos experiments are hosted on <a href="https://hub.litmuschaos.io" target="_blank">hub.litmuschaos.io</a>. It is a central hub where the application developers or vendors share their chaos experiments so that their users can use them to increase the resilience of the applications in production.
 
-![Litmus Schematic](./images/litmus-schematic.png)
+![Litmus workflow](/images/litmus-arch_1.png)
 
 ## Use cases
 
@@ -36,11 +36,9 @@ Chaos experiments are hosted on <a href="https://hub.litmuschaos.io" target="_bl
 - **For CI pipeline builders**: To run chaos as a pipeline stage to find bugs when the application is subjected to fail paths in a pipeline.
 - **For SREs**: To plan and schedule chaos experiments into the application and/or surrounding infrastructure. This practice identifies the weaknesses in the system and increases resilience.
 
-## Demo
-
-[![asciicast](https://asciinema.org/a/mq3rxRd8q9ZIrgMgPHZOeaLfi.svg)](https://asciinema.org/a/mq3rxRd8q9ZIrgMgPHZOeaLfi)
-
 ## Getting Started with Litmus
+
+[![IMAGE ALT TEXT](images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
 
 Check out the <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" target="_blank">Litmus Docs</a> to get started.
 
