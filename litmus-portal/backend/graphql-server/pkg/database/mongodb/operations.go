@@ -79,3 +79,13 @@ func GetWorkflowRuns(_pid string) ([]WorkflowRun, error) {
 	}
 	return wfRuns, nil
 }
+
+func InsertChaosWorkflow(chaosWorkflow ChaosWorkFlowInput) error {
+	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
+	_, err := workflowRunCollection.InsertOne(ctx, chaosWorkflow)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
