@@ -85,7 +85,34 @@ func (s *Server) HandleAuthenticateRequest(c *gin.Context, user *models.UserCred
 		return
 	}
 
+	err = s.Manager.LoginUser(user.GetUserName())
+	if err != nil {
+		s.redirectError(c, err)
+		return
+	}
+
 	s.redirect(c, s.getTokenData(ti))
+	return
+}
+
+// LogoutRequest the authorization request handling
+func (s *Server) LogoutRequest(c *gin.Context) {
+
+	userInfo, err := s.getUserFromToken(c.Request)
+	if err != nil {
+		s.redirectError(c, err)
+		return
+	}
+
+	err = s.Manager.LogoutUser(userInfo.GetUserName())
+	if err != nil {
+		s.redirectError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "LoggedOut successfully",
+	})
 	return
 }
 
@@ -254,25 +281,6 @@ func (s *Server) UpdateUserDetailsRequest(c *gin.Context, user *models.UserCrede
 	return
 }
 
-// UpdateUserIDRequest validates the request
-func (s *Server) UpdateUserIDRequest(c *gin.Context, user *models.UserCredentials) {
-
-	userInfo, err := s.getUserFromToken(c.Request)
-	if err != nil {
-		s.redirectError(c, err)
-		return
-	}
-
-	user.UserName = userInfo.GetUserName()
-	updatedUserInfo, err := s.Manager.UpdateUserID(user)
-	if err != nil {
-		s.redirectError(c, err)
-		return
-	}
-	s.redirect(c, updatedUserInfo)
-	return
-}
-
 // CreateRequest validates the request
 func (s *Server) CreateRequest(c *gin.Context, user *models.UserCredentials) {
 
@@ -296,5 +304,26 @@ func (s *Server) CreateRequest(c *gin.Context, user *models.UserCredentials) {
 		}
 	}
 	s.redirect(c, createdUserInfo)
+	return
+}
+
+// GetUsersRequest validates the request
+func (s *Server) GetUsersRequest(c *gin.Context) {
+
+	userInfo, err := s.getUserFromToken(c.Request)
+	if err != nil {
+		s.redirectError(c, err)
+		return
+	}
+
+	var users []*models.PublicUserInfo
+	if userInfo.UserName == types.DefaultUserName {
+		users, err = s.Manager.GetAllUsers()
+		if err != nil {
+			s.redirectError(c, err)
+			return
+		}
+	}
+	s.redirect(c, users)
 	return
 }

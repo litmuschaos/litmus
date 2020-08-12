@@ -11,10 +11,11 @@ var Server = server.NewServer(server.NewConfig())
 // UserController will do login operation
 type UserController interface {
 	Login(c *gin.Context)
+	Logout(c *gin.Context)
 	UpdatePassword(c *gin.Context)
 	ResetPassword(c *gin.Context)
 	UpdateUserDetails(c *gin.Context)
-	UpdateUserID(c *gin.Context)
+	GetAllUsers(c *gin.Context)
 	Create(c *gin.Context)
 }
 

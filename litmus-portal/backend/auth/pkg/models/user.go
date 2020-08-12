@@ -8,12 +8,13 @@ import (
 
 //UserCredentials contains the user information
 type UserCredentials struct {
-	ID          string       `bson:"_id"`
-	UserName    string       `bson:"username"`
-	Password    string       `bson:"password"`
-	Email       string       `bson:"email"`
-	Name        string       `bson:"name"`
-	UserId     string       `bson:"user_id"`
+	ID       string `bson:"_id"`
+	UserName string `bson:"username"`
+	Password string `bson:"password"`
+	Email    string `bson:"email"`
+	Name     string `bson:"name"`
+	// UserID		string       `bson:"user_id"`
+	LoggedIn    bool         `bson:"logged_in"`
 	SocialAuths []SocialAuth `bson:"social_auths"`
 	CreatedAt   *time.Time   `bson:"created_at"`
 	UpdatedAt   *time.Time   `bson:"updated_at"`
@@ -29,9 +30,15 @@ var DefaultUser *UserCredentials = &UserCredentials{
 
 //PublicUserInfo displays the information of the user that is publicly available
 type PublicUserInfo struct {
-	Name     string `json:"name,omitempty"`
-	Email    string `json:"email,omitempty"`
-	UserName string `json:"username,omitempty"`
+	ID        string     `json:"_id"`
+	UserName  string     `json:"username"`
+	Email     string     `json:"email"`
+	Name      string     `json:"name"`
+	LoggedIn  bool       `json:"logged_in"`
+	CreatedAt *time.Time `json:"created_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
+	RemovedAt *time.Time `json:"removed_at"`
+	State     State      `json:"state"`
 }
 
 //SocialAuth contains the oauth types and related information opted by the user
@@ -107,12 +114,23 @@ func (u *UserCredentials) GetState() State {
 	return u.State
 }
 
+// GetLoggedIn user password
+func (u *UserCredentials) GetLoggedIn() bool {
+	return u.LoggedIn
+}
+
 // GetPublicInfo fetches the pubicUserInfo from User
 func (u *UserCredentials) GetPublicInfo() *PublicUserInfo {
 	return &PublicUserInfo{
-		Name:     u.GetName(),
-		UserName: u.GetUserName(),
-		Email:    u.GetEmail(),
+		Name:      u.GetName(),
+		UserName:  u.GetUserName(),
+		Email:     u.GetEmail(),
+		ID:        u.GetID(),
+		LoggedIn:  u.GetLoggedIn(),
+		CreatedAt: u.GetCreatedAt(),
+		UpdatedAt: u.GetUpdatedAt(),
+		RemovedAt: u.GetRemovedAt(),
+		State:     u.GetState(),
 	}
 }
 
@@ -129,6 +147,36 @@ func (uinfo *PublicUserInfo) GetName() string {
 // GetEmail user email
 func (uinfo *PublicUserInfo) GetEmail() string {
 	return uinfo.Email
+}
+
+// GetCreatedAt user createdAt
+func (uinfo *PublicUserInfo) GetCreatedAt() *time.Time {
+	return uinfo.CreatedAt
+}
+
+// GetID user ID
+func (uinfo *PublicUserInfo) GetID() string {
+	return uinfo.ID
+}
+
+// GetLoggedIn user loggedIn
+func (uinfo *PublicUserInfo) GetLoggedIn() bool {
+	return uinfo.LoggedIn
+}
+
+// GetUpdatedAt user updatedAt
+func (uinfo *PublicUserInfo) GetUpdatedAt() *time.Time {
+	return uinfo.UpdatedAt
+}
+
+// GetRemovedAt user removedAt
+func (uinfo *PublicUserInfo) GetRemovedAt() *time.Time {
+	return uinfo.RemovedAt
+}
+
+// GetState user state
+func (uinfo *PublicUserInfo) GetState() State {
+	return uinfo.State
 }
 
 // GetType returns auth type

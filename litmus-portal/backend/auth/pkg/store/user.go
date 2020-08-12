@@ -99,6 +99,18 @@ func (us *UserStore) GetByUserName(username string) (user *models.UserCredential
 	return
 }
 
+// GetAllUsers according to the ID for the user information
+func (us *UserStore) GetAllUsers() (users []*models.UserCredentials, err error) {
+	us.cHandler(us.ucfg.UsersCName, func(c *mgo.Collection) {
+		if cerr := c.Find(bson.M{}).All(&users); cerr != nil {
+			err = cerr
+			return
+		}
+	})
+
+	return
+}
+
 // GetByEmail according to the ID for the user information
 func (us *UserStore) GetByEmail(email string) (user *models.UserCredentials, err error) {
 	us.cHandler(us.ucfg.UsersCName, func(c *mgo.Collection) {

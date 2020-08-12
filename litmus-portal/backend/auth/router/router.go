@@ -13,8 +13,9 @@ const (
 	updatePasswordRoute = "/update/password"
 	resetPasswordRoute  = "/reset/password"
 	createRoute         = "/create"
-	updateUserIDRoute   = "/update/userID"
 	updateDetailsRoute  = "/update/details"
+	getUsersRoute       = "/users"
+	logoutRoute         = "/logout"
 )
 
 var (
@@ -32,9 +33,10 @@ func New() *gin.Engine {
 	router.Use(cors.New(config))
 
 	// Handle the request for chaos-schedule
+	router.GET(getUsersRoute, userController.GetAllUsers)
+	router.POST(logoutRoute, userController.Logout)
 	router.POST(loginRoute, userController.Login)
 	router.POST(updatePasswordRoute, userController.UpdatePassword)
-	router.POST(updateUserIDRoute, userController.UpdateUserID)
 	router.POST(createRoute, userController.Create)
 	router.POST(updateDetailsRoute, userController.UpdateUserDetails)
 	router.POST(resetPasswordRoute, userController.ResetPassword)

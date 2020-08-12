@@ -51,6 +51,20 @@ func (m *Manager) GetUser(userName string) (user *models.UserCredentials, err er
 	return
 }
 
+// GetAllUsers get the user information
+func (m *Manager) GetAllUsers() ([]*models.PublicUserInfo, error) {
+	users, err := m.userStore.GetAllUsers()
+	if err != nil {
+		return nil, err
+	}
+
+	var allUsers []*models.PublicUserInfo
+	for _, user := range users {
+		allUsers = append(allUsers, user.GetPublicInfo())
+	}
+	return allUsers, nil
+}
+
 // CheckUserExists get the user information
 func (m *Manager) CheckUserExists(userName string) (bool, error) {
 	_, err := m.GetUser(userName)
@@ -70,6 +84,26 @@ func (m *Manager) VerifyUserPassword(username, password string) (*models.PublicU
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(user.GetPassword()), []byte(password))
 	return user.GetPublicInfo(), err
+}
+
+// LoginUser verifies user password
+func (m *Manager) LoginUser(username string) error {
+	storedUser, err := m.GetUser(username)
+	if err != nil {
+		return err
+	}
+	storedUser.LoggedIn = true
+	return m.userStore.UpdateUser(storedUser)
+}
+
+// LogoutUser verifies user password
+func (m *Manager) LogoutUser(username string) error {
+	storedUser, err := m.GetUser(username)
+	if err != nil {
+		return err
+	}
+	storedUser.LoggedIn = false
+	return m.userStore.UpdateUser(storedUser)
 }
 
 // CreateUser get the user information
@@ -149,7 +183,7 @@ func (m *Manager) UpdateUserDetails(user *models.UserCredentials) (*models.Publi
 	storedUser.Name = user.GetName()
 
 	err = m.userStore.UpdateUser(storedUser)
-	return user.GetPublicInfo(), err
+	return storedUser.GetPublicInfo(), err
 }
 
 // UpdatePassword get the user information
@@ -165,67 +199,6 @@ func (m *Manager) UpdatePassword(user *models.UserCredentials) (*models.PublicUs
 		return nil, err
 	}
 	storedUser.Password = string(hashedPassword)
-
-	err = m.userStore.UpdateUser(storedUser)
-	return storedUser.GetPublicInfo(), err
-}
-
-// // ResetPassword get the user information
-// func (m *Manager) ResetPassword() (*models.PublicUserInfo, error) {
-
-// 	storedUser, err := m.GetUser(user.UserName)
-// 	if err != nil {
-// 		return nil, errors.ErrInvalidUser
-// 	}
-
-// 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.GetPassword()), types.PasswordEncryptionCost)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	storedUser.Password = string(hashedPassword)
-
-// 	err = m.userStore.UpdateUser(storedUser)
-// 	return storedUser.GetPublicInfo(), err
-// }
-
-// // UpdateDetails get the user information
-// func (m *Manager) UpdateDetails(user *models.UserCredentials) (*models.PublicUserInfo, error) {
-
-// 	fmt.Println("password for update is", user.GetPassword())
-// 	if user.GetPassword() == "" {
-// 		return nil, errors.ErrInvalidRequest
-// 	}
-
-// 	storedUser, err := m.GetUser(user.UserName)
-// 	if err != nil {
-// 		return nil, errors.ErrInvalidUser
-// 	}
-
-// 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.GetPassword()), types.PasswordEncryptionCost)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	storedUser.Password = string(hashedPassword)
-// 	storedUser.Email = user.Email
-// 	storedUser.Name = user.Name
-
-// 	err = m.userStore.UpdateUser(storedUser)
-// 	return storedUser.GetPublicInfo(), err
-// }
-
-// UpdateUserID get the user information
-func (m *Manager) UpdateUserID(user *models.UserCredentials) (*models.PublicUserInfo, error) {
-
-	if user.UserId == "" {
-		return nil, errors.ErrInvalidRequest
-	}
-
-	storedUser, err := m.GetUser(user.UserName)
-	if err != nil {
-		return nil, errors.ErrInvalidUser
-	}
-
-	storedUser.UserId = user.GetID()
 
 	err = m.userStore.UpdateUser(storedUser)
 	return storedUser.GetPublicInfo(), err

@@ -34,6 +34,12 @@ func (user *User) Login(c *gin.Context) {
 	return
 }
 
+// Logout lets a user login into the litmus-portal
+func (user *User) Logout(c *gin.Context) {
+	controller.Server.LogoutRequest(c)
+	return
+}
+
 // UpdatePassword updates a user details
 func (user *User) UpdatePassword(c *gin.Context) {
 	err := c.BindJSON(user)
@@ -50,7 +56,7 @@ func (user *User) UpdatePassword(c *gin.Context) {
 	return
 }
 
-// UpdatePassword updates a user details
+// ResetPassword updates a user details
 func (user *User) ResetPassword(c *gin.Context) {
 	err := c.BindJSON(user)
 	if err != nil {
@@ -82,22 +88,6 @@ func (user *User) UpdateUserDetails(c *gin.Context) {
 	return
 }
 
-// UpdateUserID updates a user details
-func (user *User) UpdateUserID(c *gin.Context) {
-	err := c.BindJSON(user)
-	if err != nil {
-		log.Error(err)
-		c.JSON(http.StatusNotAcceptable, gin.H{
-			"message": "Unable to parse JSON",
-		})
-		return
-	}
-
-	userModel := models.UserCredentials(*user)
-	controller.Server.UpdateUserIDRequest(c, &userModel)
-	return
-}
-
 //Create ...
 func (user *User) Create(c *gin.Context) {
 	err := c.BindJSON(user)
@@ -111,5 +101,11 @@ func (user *User) Create(c *gin.Context) {
 
 	userModel := models.UserCredentials(*user)
 	controller.Server.CreateRequest(c, &userModel)
+	return
+}
+
+//GetAllUsers ...
+func (user *User) GetAllUsers(c *gin.Context) {
+	controller.Server.GetUsersRequest(c)
 	return
 }
