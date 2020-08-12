@@ -4,10 +4,7 @@
   "extends": ["airbnb", "plugin:prettier/recommended", "prettier/react"],
   "env": {
     "browser": true,
-    "commonjs": true,
-    "es6": true,
-    "jest": true,
-    "node": true
+    "es6": true
   },
   "settings": {
     "import/extensions": [".js", ".jsx", ".ts", ".tsx"],
@@ -53,9 +50,9 @@
     "max-len": [
       "warn",
       {
-        "code": 80,
+        "code": 100,
         "tabWidth": 2,
-        "comments": 80,
+        "comments": 100,
         "ignoreComments": false,
         "ignoreTrailingComments": true,
         "ignoreUrls": true,
