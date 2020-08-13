@@ -6,18 +6,17 @@ package graph
 import (
 	"context"
 	"errors"
-	"fmt"
-	"github.com/google/uuid"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/queries"
 	"log"
 	"strconv"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/cluster"
 	database "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/mutations"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/queries"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/subscriptions"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -34,8 +33,8 @@ func (r *mutationResolver) NewClusterEvent(ctx context.Context, clusterEvent mod
 	return mutations.NewEvent(clusterEvent, *store)
 }
 
-func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
+	return mutations.CreateChaosWorkflow(&input, *store)
 }
 
 func (r *mutationResolver) ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error) {
