@@ -6,6 +6,7 @@ import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
 import clsx from 'clsx';
 import Typography from '@material-ui/core/Typography';
+import { useSelector } from 'react-redux';
 import ButtonFilled from '../Button/ButtonFilled';
 import ButtonOutline from '../Button/ButtonOutline';
 import FinishModal from '../FinishModal';
@@ -18,6 +19,11 @@ import useStyles from './styles';
 import useQontoStepIconStyles from './useQontoStepIconStyles';
 import TuneWorkflow from '../TuneWorkflow/index';
 import ChooseWorkflow from '../ChooseWorkflow/index';
+import { WorkflowData, experimentMap } from '../../models/workflow';
+import { RootState } from '../../redux/reducers';
+import useActions from '../../redux/actions';
+import * as WorkflowActions from '../../redux/actions/workflow';
+import parsed from '../../utils/yamlUtils';
 
 function getSteps(): string[] {
   return [
@@ -73,7 +79,10 @@ function QontoStepIcon(props: StepIconProps) {
   );
 }
 
-function getStepContent(stepIndex: number): React.ReactNode {
+function getStepContent(
+  stepIndex: number,
+  gotoTuneWorkflow: () => void
+): React.ReactNode {
   switch (stepIndex) {
     case 0:
       return <ChooseAWorkflowCluster />;
@@ -86,7 +95,7 @@ function getStepContent(stepIndex: number): React.ReactNode {
     case 4:
       return <ScheduleWorkflow />;
     case 5:
-      return <VerifyCommit />;
+      return <VerifyCommit goto={gotoTuneWorkflow} />;
     default:
       return <ChooseAWorkflowCluster />;
   }
@@ -95,10 +104,35 @@ function getStepContent(stepIndex: number): React.ReactNode {
 const CustomStepper = () => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
+
+  const workflowData: WorkflowData = useSelector(
+    (state: RootState) => state.workflowData
+  );
+  const { yaml, weights } = workflowData;
+  const workflow = useActions(WorkflowActions);
+
   const steps = getSteps();
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    if (activeStep === 2) {
+      const tests = parsed(yaml);
+      const arr: experimentMap[] = [];
+      const hashMap = new Map();
+      weights.forEach((weight) => {
+        hashMap.set(weight.experimentName, weight.weight);
+      });
+      tests.forEach((test) => {
+        let value = 0;
+        if (hashMap.has(test)) {
+          value = hashMap.get(test);
+        }
+        arr.push({ experimentName: test, weight: value });
+      });
+      workflow.setWorkflowDetails({
+        weights: arr,
+      });
+    }
   };
 
   const handleBack = () => {
@@ -109,11 +143,12 @@ const CustomStepper = () => {
     setActiveStep(0);
   };
 
+  const gotoTuneWorkflow = () => {
+    setActiveStep(3);
+  };
+
   return (
     <div className={classes.root}>
-      <Typography className={classes.workflowHeader}>
-        Schedule a new <strong>chaos workflow</strong>
-      </Typography>
       <Stepper
         activeStep={activeStep}
         connector={<QontoConnector />}
@@ -149,7 +184,9 @@ const CustomStepper = () => {
           </div>
         ) : (
           <div>
-            <div className={classes.content}>{getStepContent(activeStep)}</div>
+            <div className={classes.content}>
+              {getStepContent(activeStep, gotoTuneWorkflow)}
+            </div>
 
             {/* Control Buttons */}
             <div className={classes.buttonGroup}>

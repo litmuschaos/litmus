@@ -8,16 +8,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     border: 1,
     borderColor: theme.palette.text.disabled,
     borderRadius: 3,
+    padding: theme.spacing(2),
   },
-
   suHeader: {
-    paddingLeft: theme.spacing(3.75),
-    paddingRight: theme.spacing(3.75),
-    paddingTop: theme.spacing(3.75),
-    paddingBottom: theme.spacing(3.75),
-  },
-
-  suSegments: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-even',
@@ -27,13 +20,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '1.5625rem',
   },
   description: {
-    width: '32.18rem',
     marginTop: theme.spacing(3.25),
     marginBottom: theme.spacing(7.5),
     fontSize: '1.0625rem',
   },
   suBody: {
-    width: '32.18rem',
+    width: '40%',
   },
   bfinIcon: {
     width: '7rem',
@@ -41,10 +33,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(5),
     marginLeft: theme.spacing(25),
   },
-  innerDiv2: {
-    marginTop: theme.spacing(5),
-  },
   outerSum: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(3),
     display: 'flex',
     flexDirection: 'column',
   },
@@ -54,13 +45,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '100%',
     justifyContent: 'flex-start',
     alignItems: 'stretch',
+    marginTop: theme.spacing(3),
   },
   innerSumDiv: {
     width: '7.625rem',
-    marginTop: theme.spacing(7.5),
   },
   sumText: {
     marginTop: theme.spacing(7.5),
+    marginBottom: theme.spacing(3),
     fontSize: '1.5rem',
   },
   col1: {
@@ -69,47 +61,20 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   col2: {
     marginLeft: theme.spacing(5),
-    marginTop: theme.spacing(7.5),
   },
   schCol2: {
-    width: '45.25rem',
     marginLeft: theme.spacing(5),
-    marginTop: theme.spacing(3.75),
     display: 'flex',
     flexDirection: 'row',
   },
-  yamlCol2: {
-    width: '45.25rem',
-    marginLeft: theme.spacing(8.125),
-    marginTop: theme.spacing(7.5),
-  },
   editButton1: {
-    marginTop: theme.spacing(1.25),
     marginLeft: theme.spacing(43.75),
-  },
-  editButton2: {
-    marginTop: theme.spacing(3.75),
-    marginLeft: theme.spacing(4.875),
-  },
-  yamlButton: {
-    marginTop: theme.spacing(5),
-    marginRight: theme.spacing(2.5),
-    marginBottom: theme.spacing(5),
-  },
-  margin: {
-    margin: theme.spacing(1),
   },
   link: {
     fontSize: '0.875rem',
     color: theme.palette.secondary.dark,
   },
   adjWeights: {
-    display: 'flex',
-    flexDirection: 'column',
-
-    marginTop: theme.spacing(3.75),
-  },
-  progress: {
     display: 'flex',
     flexDirection: 'row',
   },
@@ -130,7 +95,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   buttonOutlineText: {
     padding: theme.spacing(1.5),
   },
-
   modalContainer: {
     width: '61.25rem',
     height: '29rem',
@@ -139,17 +103,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     background: '#161616',
     outline: 'none',
   },
-
   modalContainerClose: {
     paddingLeft: theme.spacing(115),
   },
-
   errorText: {
-    marginTop: theme.spacing(7.5),
     fontSize: '1rem',
     color: 'red',
+    marginLeft: theme.spacing(5),
   },
-
   closeButtonStyle: {
     fontSize: '1rem',
     fontWeight: 1000,
@@ -164,6 +125,23 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: 'rgba(255, 255, 255, 0.4)',
     border: '1px solid rgba(255, 255, 255, 0.4)',
     marginTop: theme.spacing(2.5),
+  },
+  yamlFlex: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginLeft: theme.spacing(5),
+  },
+  yamlButton: {
+    width: theme.spacing(1.5),
+    marginTop: theme.spacing(1),
+    marginLeft: theme.spacing(-2),
+  },
+  progress: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginLeft: theme.spacing(5),
+    width: theme.spacing(79.5),
   },
 }));
 export default useStyles;
