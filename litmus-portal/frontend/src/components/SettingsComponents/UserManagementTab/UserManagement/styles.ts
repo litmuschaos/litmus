@@ -28,6 +28,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   table: {
     maxWidth: '63.75rem',
+    maxHeight: '31.25rem',
     border: '1px solid rgba(0,0,0,0.05)',
   },
   Signed: {
@@ -54,7 +55,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: '#CA2C2C',
   },
   toolbar: {
-    width: '63.75rem',
+    maxWidth: '63.75rem',
     height: '6.125rem',
     border: '1px solid rgba(0,0,0,0.05)',
     marginBottom: theme.spacing(1.25),
@@ -68,7 +69,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: theme.spacing(1.25),
     border: '1px solid rgba(0,0,0,0.05)',
     borderRadius: '0.1875rem',
-    minWidth: '11.375rem',
+
+    maxWidth: '11.375rem',
     height: '2.375rem',
     paddingLeft: theme.spacing(2.5),
     paddingRight: theme.spacing(2.5),
@@ -92,6 +94,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   otherTC: {
     maxWidth: '15.375rem',
   },
+  lastTC: {
+    borderLeft: '1px solid rgba(0,0,0,0.1)',
+  },
   styledTC: {
     borderRight: '1px solid rgba(0,0,0,0.1)',
   },
@@ -103,8 +108,20 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.text.disabled,
   },
   buttonDiv: {
-    marginLeft: theme.spacing(28.875),
+    marginLeft: theme.spacing(35.68),
+    [theme.breakpoints.down('sm')]: {
+      marginLeft: theme.spacing(2),
+    },
+    [theme.breakpoints.down('md')]: {
+      marginLeft: theme.spacing(20),
+    },
+    [theme.breakpoints.down('xs')]: {
+      marginLeft: theme.spacing(1),
+    },
   },
   buttonTxt: {},
+  optionBtn: {
+    marginLeft: 'auto',
+  },
 }));
 export default useStyles;

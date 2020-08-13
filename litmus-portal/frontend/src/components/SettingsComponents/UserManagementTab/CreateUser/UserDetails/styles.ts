@@ -27,16 +27,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignContent: 'flex-start',
     flexWrap: 'wrap',
   },
-  orange: {
-    width: '4.81rem',
-    height: '4.81rem',
-    color: theme.palette.primary.contrastText,
-    backgroundColor: theme.palette.primary.main,
-    marginBottom: theme.spacing(1.625),
-    [theme.breakpoints.down('sm')]: {
-      marginLeft: theme.spacing(2.5),
-    },
-  },
+
   edit: {
     fontSize: '0.75rem',
     color: theme.palette.secondary.dark,
@@ -66,6 +57,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginRight: theme.spacing(2.5),
     paddingLeft: theme.spacing(3.75),
     marginBottom: theme.spacing(2.5),
+  },
+  // Style for ProfileDropdownSection and ProfileDropdownItems.
+  avatarBackground: {
+    backgroundColor: theme.palette.secondary.main,
+    width: '4.81rem',
+    height: '4.81rem',
+    color: '#FFF',
+    marginBottom: theme.spacing(1.625),
+    [theme.breakpoints.down('sm')]: {
+      marginLeft: theme.spacing(2.5),
+    },
   },
 }));
 export default useStyles;

@@ -1,16 +1,16 @@
 import Button from '@material-ui/core/Button';
+import MobileStepper from '@material-ui/core/MobileStepper';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import MobileStepper from '@material-ui/core/MobileStepper';
 import config from '../../config';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
-import useStyles from './styles';
-import ModalPage from './Modalpage';
 import InputField from '../InputField';
+import ModalPage from './Modalpage';
+import useStyles from './styles';
 
 function CStepper() {
   const classes = useStyles();
@@ -48,7 +48,7 @@ function CStepper() {
   const handleSubmit = () => {
     Object.assign(info, { password: values.password });
 
-    fetch(`${config.auth.url}/update`, {
+    fetch(`${config.auth.url}/update/details`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -1,15 +1,18 @@
 import { Avatar, TextField, Typography } from '@material-ui/core';
 import React from 'react';
+import userAvatar from '../../../../../utils/user';
 import useStyles from './styles';
 
 interface PersonalDetailsProps {
-  handleNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleNameChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   nameValue: string;
-  handleUserChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleUserChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   userValue: string;
-  handleEmailChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleEmailChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   emailValue: string;
   usernameIsDisabled: boolean;
+  nameIsDisabled: boolean;
+  emailIsDisabled: boolean;
 }
 
 // Displays the personals details on the "accounts" tab
@@ -21,8 +24,15 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
   handleEmailChange,
   emailValue,
   usernameIsDisabled,
+  nameIsDisabled,
+  emailIsDisabled,
 }) => {
   const classes = useStyles();
+
+  const nameSplit = nameValue.split(' ');
+  const initials = nameSplit[1]
+    ? userAvatar(nameValue, false)
+    : userAvatar(nameValue, true);
 
   return (
     <div>
@@ -34,30 +44,19 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
           <div className={classes.dp}>
             <Avatar
               data-cy="avatar"
-              alt="Richard Hill"
-              src="./icons/avatar.png"
-              className={classes.orange}
+              alt="User"
+              className={classes.avatarBackground}
+              style={{ alignContent: 'right' }}
             >
-              R
+              {initials}
             </Avatar>
-            <div>
-              <label htmlFor="contained-button-file" id="editPic">
-                <input
-                  name="contained-button-file"
-                  accept="image/*"
-                  className={classes.input}
-                  id="contained-button-file"
-                  type="file"
-                />
-                <Typography className={classes.edit}>Edit Photo</Typography>
-              </label>
-            </div>
           </div>
           {/* Fields for details including Full name, email, username */}
           <div className={classes.details1}>
             <TextField
               required
               value={nameValue}
+              disabled={nameIsDisabled}
               onChange={handleNameChange}
               className={classes.user}
               id="filled-user-input"
@@ -70,6 +69,7 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
               required
               type="email"
               value={emailValue}
+              disabled={emailIsDisabled}
               onChange={handleEmailChange}
               className={classes.user}
               id="filled-email-input"

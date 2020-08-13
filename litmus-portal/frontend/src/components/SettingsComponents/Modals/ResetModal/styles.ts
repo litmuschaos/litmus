@@ -62,16 +62,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   buttonFilled: {
-    textTransform: 'none',
-    width: '6.68rem',
-    height: '2.75rem',
-    borderRadius: '0.1875rem',
-
-    backgroundColor: theme.palette.secondary.dark,
-    color: theme.palette.common.white,
-    '&:hover': {
-      backgroundColor: theme.palette.secondary.dark,
-    },
+    marginRight: theme.spacing(-2),
   },
   buttonOutline: {
     borderColor: theme.palette.secondary.dark,

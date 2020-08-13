@@ -1,12 +1,11 @@
 import { Button, Hidden, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import config from '../../config';
+import InputField from '../../components/InputField';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
 import { history } from '../../redux/configureStore';
 import useStyles from './styles';
-import InputField from '../../components/InputField';
 
 interface authData {
   username: string;
@@ -25,7 +24,7 @@ const LoginPage = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    fetch(`${config.auth.url}/login`, {
+    fetch(`http://3.9.117.22:30375/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(authData),

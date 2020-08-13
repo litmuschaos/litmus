@@ -126,7 +126,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'row-reverse',
     marginTop: theme.spacing(3.75),
-    marginRight: theme.spacing(-2),
+    marginRight: theme.spacing(-4),
   },
 }));
 export default useStyles;

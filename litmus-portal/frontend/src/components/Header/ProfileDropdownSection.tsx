@@ -4,9 +4,10 @@ import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import React, { useRef, useState } from 'react';
+import { Project, ProjectsCallBackType } from '../../models/header';
+import userAvatar from '../../utils/user';
 import ProfileInfoDropdownItems from './ProfileDropdownItems';
 import useStyles from './styles';
-import { Project, ProjectsCallBackType } from '../../models/header';
 
 interface ProfileInfoDropdownSectionProps {
   name: string;
@@ -30,17 +31,7 @@ const ProfileDropdownSection: React.FC<ProfileInfoDropdownSectionProps> = ({
   const [isProfilePopoverOpen, setProfilePopoverOpen] = useState(false);
 
   const profileMenuRef = useRef();
-
-  let initials = ' ';
-
-  if (name) {
-    const nameArray = name.split(' ');
-
-    initials =
-      nameArray[0][0].toUpperCase() +
-      nameArray[nameArray.length - 1][0].toUpperCase();
-  }
-
+  const initials = userAvatar(name, false);
   const sendSelectedProjectIDToHeader = (selectedProjectID: any) => {
     CallbackToSetSelectedProjectID(selectedProjectID);
     setProfilePopoverOpen(false);

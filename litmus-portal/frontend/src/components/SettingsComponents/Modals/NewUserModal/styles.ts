@@ -43,16 +43,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // styles for buttons
   button: {
-    textTransform: 'none',
-    width: '6.68rem',
-    height: '2.75rem',
-    borderRadius: '0.1875rem',
-    fontSize: '0.75rem',
-    backgroundColor: theme.palette.primary.light,
-    color: theme.palette.common.white,
-    '&:hover': {
-      backgroundColor: theme.palette.primary.light,
-    },
+    marginRight: theme.spacing(-2),
   },
   buttonModal: {
     marginTop: theme.spacing(3.75),

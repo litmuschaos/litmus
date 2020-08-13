@@ -1,4 +1,4 @@
-import { Modal, Typography } from '@material-ui/core';
+import { IconButton, MenuItem, Modal, Typography } from '@material-ui/core';
 import React from 'react';
 import ButtonFilled from '../../../Button/ButtonFilled';
 import ButtonOutline from '../../../Button/ButtonOutline';
@@ -6,11 +6,13 @@ import useStyles from './styles';
 
 // props for DelUser component
 interface DelUserProps {
-  handleModal: () => void;
+  handleModal?: () => void;
+  tableDelete: boolean;
+  handleTable?: () => void;
 }
 
 // DelUser displays the modal for deteing a user
-const DelUser: React.FC<DelUserProps> = ({ handleModal }) => {
+const DelUser: React.FC<DelUserProps> = ({ handleModal, tableDelete }) => {
   const classes = useStyles();
 
   const [open, setOpen] = React.useState(false);
@@ -21,21 +23,36 @@ const DelUser: React.FC<DelUserProps> = ({ handleModal }) => {
 
   return (
     <div>
-      <div
-        role="button"
-        tabIndex={0}
-        onKeyDown={() => {
-          setOpen(true);
-        }}
-        className={classes.delDiv}
-        onClick={() => {
-          setOpen(true);
-        }}
-      >
-        <img src="./icons/bin.svg" alt="delete" className={classes.bin} />
-        <Typography>Delete the user </Typography>
-      </div>
-
+      {tableDelete ? (
+        <>
+          <MenuItem
+            value="delete"
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            <IconButton disabled>
+              <img alt="delete" src="./icons/bin.svg" />
+            </IconButton>
+            <Typography>Delete User</Typography>
+          </MenuItem>
+        </>
+      ) : (
+        <div
+          role="button"
+          tabIndex={0}
+          onKeyDown={() => {
+            setOpen(true);
+          }}
+          className={classes.delDiv}
+          onClick={() => {
+            setOpen(true);
+          }}
+        >
+          <img src="./icons/bin.svg" alt="delete" className={classes.bin} />
+          <Typography>Delete user </Typography>
+        </div>
+      )}
       <Modal
         data-cy="modal"
         open={open}
@@ -61,10 +78,11 @@ const DelUser: React.FC<DelUserProps> = ({ handleModal }) => {
               <ButtonOutline isDisabled={false} handleClick={handleClose}>
                 <> No</>
               </ButtonOutline>
+
               <ButtonFilled
                 isDisabled={false}
                 isPrimary
-                handleClick={handleModal}
+                handleClick={tableDelete ? handleModal : handleModal}
               >
                 <>Yes</>
               </ButtonFilled>

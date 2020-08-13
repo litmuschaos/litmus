@@ -56,7 +56,7 @@ const Settings: React.FC = () => {
           >
             <Tab label="Account" {...tabProps(0)} />
             <Tab label="Team" {...tabProps(1)} />
-            <Tab label="USer Management" {...tabProps(2)} />
+            <Tab label="User Management" {...tabProps(2)} />
           </Tabs>
         </Paper>
         <TabPanel value={activeTab} index={0}>

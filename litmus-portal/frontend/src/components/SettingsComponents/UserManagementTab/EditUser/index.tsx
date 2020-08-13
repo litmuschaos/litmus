@@ -5,14 +5,14 @@ import {
   Input,
   InputAdornment,
   InputLabel,
-  TextField,
   Typography,
 } from '@material-ui/core';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import React from 'react';
-import NewUserModal from '../../Modals/NewUserModal';
-import UserDetails from './UserDetails';
+import DelUser from '../../Modals/DelUser';
+import ResetModal from '../../Modals/ResetModal';
+import UserDetails from '../CreateUser/UserDetails';
 import useStyles from './styles';
 
 interface Password {
@@ -21,19 +21,21 @@ interface Password {
   showPassword: boolean;
 }
 
-interface personalData {
+// Props for CreateUser component
+interface EditUserProps {
+  handleDiv: () => void;
   email: string;
   userName: string;
   fullName: string;
 }
 
-// Props for CreateUser component
-interface CreateUserProps {
-  handleDiv: () => void;
-}
-
 // CreateUser displays the UI screen for creating a new user by admin
-const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
+const EditUser: React.FC<EditUserProps> = ({
+  handleDiv,
+  email,
+  userName,
+  fullName,
+}) => {
   const classes = useStyles();
 
   // for password validation
@@ -81,13 +83,6 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
     event.preventDefault();
   };
 
-  // for personal details fields
-  const [personalData, setPersonalData] = React.useState<personalData>({
-    email: '',
-    userName: '',
-    fullName: '',
-  });
-
   return (
     <div>
       <div className={classes.headDiv}>
@@ -103,39 +98,17 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
         <Typography className={classes.descText}>
           Enter the user&apos;s personal and login details
         </Typography>
-
         <div className={classes.container}>
           <div>
             <div className={classes.suSegments}>
               {/* Personal Details */}
               <UserDetails
-                nameValue={personalData.fullName}
-                usernameIsDisabled={false}
-                emailIsDisabled={false}
-                nameIsDisabled={false}
-                handleNameChange={(e) => {
-                  setPersonalData({
-                    fullName: e.target.value,
-                    userName: personalData.userName,
-                    email: personalData.email,
-                  });
-                }}
-                emailValue={personalData.email}
-                handleEmailChange={(e) => {
-                  setPersonalData({
-                    fullName: personalData.fullName,
-                    userName: personalData.userName,
-                    email: e.target.value,
-                  });
-                }}
-                userValue={personalData.userName}
-                handleUserChange={(e) => {
-                  setPersonalData({
-                    fullName: personalData.fullName,
-                    userName: e.target.value,
-                    email: personalData.email,
-                  });
-                }}
+                nameIsDisabled
+                emailIsDisabled
+                nameValue={fullName}
+                usernameIsDisabled
+                emailValue={email}
+                userValue={userName}
               />
 
               <Divider className={classes.divider} />
@@ -149,18 +122,6 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
                 <div>
                   <form>
                     <div className={classes.details1}>
-                      <TextField
-                        className={classes.userDetail}
-                        id="filled-username-input"
-                        label="Username"
-                        defaultValue="RichardHill"
-                        value={personalData.userName}
-                        disabled
-                        InputProps={{
-                          disableUnderline: true,
-                        }}
-                        data-cy="username"
-                      />
                       <FormControl>
                         <Input
                           required
@@ -197,6 +158,8 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
                         </InputLabel>
                       </FormControl>
                     </div>
+                    <Divider className={classes.divider} />
+                    <DelUser handleModal={handleDiv} tableDelete={false} />
                   </form>
                 </div>
               </div>
@@ -204,21 +167,15 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
           </div>
         </div>
         <div className={classes.buttonGroup}>
-          <NewUserModal
-            showModal={
-              personalData.fullName.length > 0 &&
-              !createPAssword.err &&
-              personalData.userName.length > 0 &&
-              createPAssword.password.length > 0
-            }
-            name={personalData.fullName}
-            email={personalData.email}
-            username={personalData.userName}
+          <ResetModal
+            resetPossible={createPAssword.password.length > 0}
             password={createPAssword.password}
+            username={userName}
+            handleModal={handleDiv}
           />
         </div>
       </div>
     </div>
   );
 };
-export default CreateUser;
+export default EditUser;

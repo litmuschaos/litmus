@@ -1,14 +1,27 @@
-import { Button, Modal, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import Modal from '@material-ui/core/Modal';
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../redux/reducers';
+import ButtonFilled from '../../../Button/ButtonFilled';
 import useStyles from './styles';
 
 // props for ResetModal component
 interface ResetModalProps {
   resetPossible: boolean;
+  password: string;
+  username: string;
+  handleModal: () => void;
 }
 
 // ResetModal displays modal for resetting the password
-const ResetModal: React.FC<ResetModalProps> = ({ resetPossible }) => {
+const ResetModal: React.FC<ResetModalProps> = ({
+  resetPossible,
+  username,
+  password,
+  handleModal,
+}) => {
   const classes = useStyles();
 
   const [open, setOpen] = React.useState(false);
@@ -19,25 +32,41 @@ const ResetModal: React.FC<ResetModalProps> = ({ resetPossible }) => {
     setOpen(false);
     setShowDiv(false);
   };
+
+  const { userData } = useSelector((state: RootState) => state);
   const handleClick = () => {
-    setOpen(true);
+    if (resetPossible) setOpen(true);
+
+    fetch(`http://3.9.117.22:30375/reset/password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userData.token}`,
+      },
+      body: JSON.stringify({ username, password }),
+    })
+      .then((response) => {
+        response.json();
+        // console.log(response.status);
+      })
+
+      .catch((err) => {
+        console.error(err);
+      });
   };
 
   return (
     <div>
       <div>
-        <Typography className={classes.resetText}>
-          By resetting the password the user needs to re-login into the portal.
-          <span
-            role="button"
-            onClick={handleClick}
-            className={classes.resetPass}
-            onKeyDown={handleClick}
-            tabIndex={0}
+        <div className={classes.buttonFilled}>
+          <ButtonFilled
+            isPrimary={false}
+            isDisabled={false}
+            handleClick={handleClick}
           >
-            Reset Password of the user
-          </span>
-        </Typography>
+            <Typography>Save</Typography>
+          </ButtonFilled>
+        </div>
 
         <Modal
           data-cy="modal"
@@ -62,15 +91,12 @@ const ResetModal: React.FC<ResetModalProps> = ({ resetPossible }) => {
                     credentials and share it with the respective user.
                   </Typography>
                 </div>
-                <div className={classes.copyDiv}>
-                  <img src="./icons/copy.svg" alt="copy" />
-                  <Typography>Copy the credentials </Typography>
-                </div>
+
                 <Button
                   data-cy="closeButton"
                   variant="contained"
                   className={classes.buttonModalSucess}
-                  onClick={handleClose}
+                  onClick={handleModal}
                 >
                   Done
                 </Button>

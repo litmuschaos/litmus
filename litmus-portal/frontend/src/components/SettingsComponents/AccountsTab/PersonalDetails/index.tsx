@@ -1,5 +1,8 @@
 import { Button, Modal, Typography } from '@material-ui/core';
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { UserData } from '../../../../models/user';
+import { RootState } from '../../../../redux/reducers';
 import UserDetails from '../../UserManagementTab/CreateUser/UserDetails';
 import useStyles from './styles';
 
@@ -13,10 +16,14 @@ interface personaData {
 const PersonalDetails: React.FC = () => {
   const classes = useStyles();
 
+  const userData: UserData = useSelector((state: RootState) => state.userData);
+
+  const { name, email, username } = userData;
+  // console.log("user-"+ username);
   const [personaData, setPersonaData] = React.useState<personaData>({
-    email: '',
-    userName: '',
-    fullName: '',
+    email,
+    userName: username,
+    fullName: name,
   });
 
   // For closing and opening of the modal
@@ -30,6 +37,8 @@ const PersonalDetails: React.FC = () => {
     <div>
       <form>
         <UserDetails
+          emailIsDisabled={false}
+          nameIsDisabled={false}
           nameValue={personaData.fullName}
           usernameIsDisabled
           handleNameChange={(e) => {
