@@ -39,3 +39,24 @@ export const CREATE_USER = gql`
     }
   }
 `;
+
+export const GET_USER = gql`
+  query GetUser($user: UserInput!) {
+    getUser(user: $user) {
+      user_name
+    }
+  }
+`;
+
+// query {
+//   getUser(
+//     user: {
+//       user_name: "abc"
+//       email: "abc@gmail.com"
+//       company_name: "Mayadata"
+//       name: "ABC"
+//     }
+//   ) {
+//     user_name
+//   }
+// }
