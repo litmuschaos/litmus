@@ -45,9 +45,6 @@
     "subscriptions-transport-ws": "^0.9.17",
     "yaml": "^1.10.0"
   },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
   "lint-staged": {
     "src/**/*.+(js|jsx|ts|tsx)": [
       "npm run format",
@@ -84,7 +81,6 @@
     "@types/redux-logger": "^3.0.7",
     "@typescript-eslint/eslint-plugin": "^3.5.0",
     "@typescript-eslint/parser": "^3.5.0",
-    "babel-eslint": "^10.1.0",
     "cross-env": "^5.2.0",
     "cypress": "^4.11.0",
     "cypress-react-unit-test": "^4.11.2",

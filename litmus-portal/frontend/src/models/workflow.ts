@@ -1,9 +1,15 @@
+export interface experimentMap {
+  experimentName: string;
+  weight: number;
+}
 export interface WorkflowData {
   name: string;
   link: string;
   yaml: string;
   id: string;
   description: string;
+  weights: experimentMap[];
+  isCustomWorkflow: boolean;
 }
 
 export enum WorkflowActions {
@@ -17,5 +23,5 @@ interface WorkflowActionType<T, P> {
 
 export type WorkflowAction = WorkflowActionType<
   typeof WorkflowActions.SET_WORKFLOW_DETAILS,
-  { name: string; link: string; context: string }
+  WorkflowData
 >;
