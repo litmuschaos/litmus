@@ -2,6 +2,32 @@
 
 package model
 
+type ActionPayload struct {
+	RequestType  *string `json:"request_type"`
+	K8sManifest  *string `json:"k8s_manifest"`
+	Namespace    *string `json:"namespace"`
+	ExternalData *string `json:"external_data"`
+}
+
+type ChaosWorkFlowInput struct {
+	WorkflowManifest    string             `json:"workflow_manifest"`
+	CronSyntax          string             `json:"cronSyntax"`
+	WorkflowName        string             `json:"workflow_name"`
+	WorkflowDescription string             `json:"workflow_description"`
+	Weightages          []*WeightagesInput `json:"weightages"`
+	IsCustomWorkflow    bool               `json:"isCustomWorkflow"`
+	ProjectID           string             `json:"project_id"`
+	ClusterID           string             `json:"cluster_id"`
+}
+
+type ChaosWorkFlowResponse struct {
+	WorkflowID          string `json:"workflow_id"`
+	CronSyntax          string `json:"cronSyntax"`
+	WorkflowName        string `json:"workflow_name"`
+	WorkflowDescription string `json:"workflow_description"`
+	IsCustomWorkflow    bool   `json:"isCustomWorkflow"`
+}
+
 type Cluster struct {
 	ClusterID          string  `json:"cluster_id"`
 	ProjectID          string  `json:"project_id"`
@@ -18,8 +44,8 @@ type Cluster struct {
 }
 
 type ClusterAction struct {
-	ProjectID string `json:"project_id"`
-	Action    string `json:"action"`
+	ProjectID string         `json:"project_id"`
+	Action    *ActionPayload `json:"action"`
 }
 
 type ClusterActionInput struct {
@@ -88,6 +114,11 @@ type PodLogResponse struct {
 	Log           string `json:"log"`
 }
 
+type WeightagesInput struct {
+	ExperimentName string `json:"experiment_name"`
+	Weightage      int    `json:"weightage"`
+}
+
 type WorkflowRun struct {
 	WorkflowRunID string `json:"workflow_run_id"`
 	WorkflowID    string `json:"workflow_id"`
@@ -106,30 +137,7 @@ type WorkflowRunInput struct {
 	ClusterID     *ClusterIdentity `json:"cluster_id"`
 }
 
-type ChaosWorkFlowInput struct {
-	WorkflowYaml        string             `json:"workflow_yaml"`
-	CronSyntax          string             `json:"cronSyntax"`
-	WorkflowName        string             `json:"Workflow_name"`
-	WorkflowDescription string             `json:"Workflow_description"`
-	Weightages          []*WeightagesInput `json:"Weightages"`
-	IsCustomWorkflow    bool               `json:"isCustomWorkflow"`
-}
-
-type ChaosWorkFlowResponse struct {
-	WorkflowID          string        `json:"workflow_id"`
-	CronSyntax          string        `json:"cronSyntax"`
-	WorkflowName        string        `json:"Workflow_name"`
-	WorkflowDescription string        `json:"Workflow_description"`
-	Weightages          []*Weightages `json:"Weightages"`
-	IsCustomWorkflow    bool          `json:"isCustomWorkflow"`
-}
-
 type Weightages struct {
-	ExperimentName string `json:"experiment_name"`
-	Weightage      int    `json:"weightage"`
-}
-
-type WeightagesInput struct {
 	ExperimentName string `json:"experiment_name"`
 	Weightage      int    `json:"weightage"`
 }

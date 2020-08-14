@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Typography } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
-
 import { useSelector } from 'react-redux';
 import useStyles from './styles';
 import { WorkflowData } from '../../models/workflow';
@@ -84,6 +83,8 @@ const TuneWorkflow: React.FC = () => {
           yamlLink={link}
           id={id}
           description={description}
+          readOnly={false}
+          optionsDisplay
         />
       </div>
     </div>

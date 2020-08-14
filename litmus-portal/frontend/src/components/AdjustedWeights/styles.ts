@@ -2,8 +2,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   outerDiv: {
-    marginLeft: theme.spacing(3.75),
-    marginTop: theme.spacing(3.75),
+    marginBottom: theme.spacing(2),
   },
   innerDiv: {
     display: 'flex',

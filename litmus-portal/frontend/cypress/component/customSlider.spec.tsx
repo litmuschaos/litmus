@@ -9,10 +9,10 @@ describe("Testing Custom Slider with different values",()=> {
     context('Custom Slider with value '+i, () => {
       it('is visible', () => {
         const wrapper = (
-          <CustomSlider testName="Test" value={i} onChangeCommitted={() => {}} />
+          <CustomSlider testName="Test" weight={i} index={1} handleChange={() => {}} />
         );
         mount(wrapper);
-        expect(wrapper.props.value).to.equal(i);
+        expect(wrapper.props.weight).to.equal(i);
       });
     
       it('The slider is enabled', () => {

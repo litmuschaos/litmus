@@ -6,7 +6,6 @@ package graph
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log"
 	"strconv"
 	"time"
@@ -35,8 +34,8 @@ func (r *mutationResolver) NewClusterEvent(ctx context.Context, clusterEvent mod
 	return mutations.NewEvent(clusterEvent, *store)
 }
 
-func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
+	return mutations.CreateChaosWorkflow(&input, *store)
 }
 
 func (r *mutationResolver) ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error) {
@@ -51,7 +50,7 @@ func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) (
 	return queries.QueryWorkflowRuns(projectID)
 }
 
-func (r *queryResolver) GetCluster(ctx context.Context, projectID string, clusterType string) ([]*model.Cluster, error) {
+func (r *queryResolver) GetCluster(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error) {
 	cluster, err := database.GetClusterWithProjectID(projectID, clusterType)
 	if err != nil {
 		return nil, err

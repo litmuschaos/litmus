@@ -11,6 +11,7 @@ require (
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/pkg/errors v0.8.1
 	github.com/rs/cors v1.6.0
+	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/vektah/gqlparser/v2 v2.0.1
 	go.mongodb.org/mongo-driver v1.3.5
 )
