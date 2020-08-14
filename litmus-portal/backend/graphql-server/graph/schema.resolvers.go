@@ -7,17 +7,18 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/google/uuid"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/queries"
 	"log"
 	"strconv"
 	"time"
 
+	"github.com/google/uuid"
+	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/cluster"
 	database "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/mutations"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/queries"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/subscriptions"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -48,6 +49,18 @@ func (r *mutationResolver) PodLog(ctx context.Context, log model.PodLog) (string
 
 func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {
 	return queries.QueryWorkflowRuns(projectID)
+}
+
+func (r *queryResolver) GetCluster(ctx context.Context, projectID string, clusterType string) ([]*model.Cluster, error) {
+	cluster, err := database.GetClusterWithProjectID(projectID, clusterType)
+	if err != nil {
+		return nil, err
+	}
+
+	newClusters := []*model.Cluster{}
+	copier.Copy(&newClusters, &cluster)
+
+	return newClusters, nil
 }
 
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {

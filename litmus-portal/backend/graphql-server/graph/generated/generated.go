@@ -96,6 +96,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		GetCluster      func(childComplexity int, projectID string, clusterType string) int
 		GetWorkFlowRuns func(childComplexity int, projectID string) int
 	}
 
@@ -142,6 +143,7 @@ type MutationResolver interface {
 }
 type QueryResolver interface {
 	GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error)
+	GetCluster(ctx context.Context, projectID string, clusterType string) ([]*model.Cluster, error)
 }
 type SubscriptionResolver interface {
 	ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error)
@@ -418,6 +420,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PodLogResponse.WorkflowRunID(childComplexity), true
+
+	case "Query.getCluster":
+		if e.complexity.Query.GetCluster == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getCluster_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetCluster(childComplexity, args["project_id"].(string), args["cluster_type"].(string)), true
 
 	case "Query.getWorkFlowRuns":
 		if e.complexity.Query.GetWorkFlowRuns == nil {
@@ -708,13 +722,13 @@ type ClusterEvent {
 }
 
 type ClusterAction {
-    project_id: ID!
-    action: String!
+  project_id: ID!
+  action: String!
 }
 
 input ClusterActionInput {
-    cluster_id: ID!
-    action:String!
+  cluster_id: ID!
+  action:String!
 }
 
 input ClusterEventInput{
@@ -730,9 +744,9 @@ input ClusterIdentity{
 }
 
 type ClusterConfirmResponse {
-    isClusterConfirmed: Boolean!
-    newClusterKey: String
-    cluster_id: String
+  isClusterConfirmed: Boolean!
+  newClusterKey: String
+  cluster_id: String
 }
 
 input chaosWorkFlowInput {
@@ -782,64 +796,66 @@ input WorkflowRunInput{
 }
 
 type PodLogResponse{
-   workflow_run_id: ID!
-   pod_name: String!
-   pod_type: String!
-   log: String!
+  workflow_run_id: ID!
+  pod_name: String!
+  pod_type: String!
+  log: String!
 }
 
 input PodLog{
-   cluster_id: ClusterIdentity!
-   request_id: ID!
-   workflow_run_id: ID!
-   pod_name: String!
-   pod_type: String!
-   log: String!
+  cluster_id: ClusterIdentity!
+  request_id: ID!
+  workflow_run_id: ID!
+  pod_name: String!
+  pod_type: String!
+  log: String!
 }
 
 input PodLogRequest{
-   cluster_id: ID!
-   workflow_run_id: ID!
-   pod_name: String!
-   pod_namespace: String!
-   pod_type: String!
-   exp_pod: String
-   runner_pod: String
-   chaos_namespace: String
+  cluster_id: ID!
+  workflow_run_id: ID!
+  pod_name: String!
+  pod_namespace: String!
+  pod_type: String!
+  exp_pod: String
+  runner_pod: String
+  chaos_namespace: String
 }
 
 type Query{
-    getWorkFlowRuns(project_id: String!): [WorkflowRun!]!
+  getWorkFlowRuns(project_id: String!): [WorkflowRun!]!
+
+  getCluster(project_id: String!, cluster_type: String!): [Cluster!]!
 }
 
 type Mutation{
-    #It is used to create external cluster.
-    userClusterReg(clusterInput: ClusterInput!): String!
+  #It is used to create external cluster.
+  userClusterReg(clusterInput: ClusterInput!): String!
 
-    #It is used to confirm the subscriber registration
-    clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
+  #It is used to confirm the subscriber registration
+  clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
 
-    #It is used to send cluster related events from the subscriber
-    newClusterEvent(clusterEvent: ClusterEventInput!): String!
+  #It is used to send cluster related events from the subscriber
+  newClusterEvent(clusterEvent: ClusterEventInput!): String!
 
-    #It is used to create chaosworkflow
-    createChaosWorkFlow(input: chaosWorkFlowInput): chaosWorkFlowResponse!
+  #It is used to create chaosworkflow
+  createChaosWorkFlow(input: chaosWorkFlowInput): chaosWorkFlowResponse!
 
-    chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
+  chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
 
-    podLog(log: PodLog!): String!
+  podLog(log: PodLog!): String!
 }
 
 type Subscription{
-    #It is used to listen cluster events from the graphql server
-    clusterEventListener(project_id: String!): ClusterEvent!
+  #It is used to listen cluster events from the graphql server
+  clusterEventListener(project_id: String!): ClusterEvent!
 
-    #It is used to listen cluster operation request from the graphql server
-    clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
+  #It is used to listen cluster operation request from the graphql server
+  clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
 
-    workflowEventListener(project_id: String!): WorkflowRun!
+  workflowEventListener(project_id: String!): WorkflowRun!
 
-    getPodLog(podDetails: PodLogRequest!): PodLogResponse!
+  getPodLog(podDetails: PodLogRequest!): PodLogResponse!
 }
 `, BuiltIn: false},
 }
@@ -944,6 +960,28 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getCluster_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["project_id"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["project_id"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["cluster_type"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["cluster_type"] = arg1
 	return args, nil
 }
 
@@ -2213,6 +2251,47 @@ func (ec *executionContext) _Query_getWorkFlowRuns(ctx context.Context, field gr
 	res := resTmp.([]*model.WorkflowRun)
 	fc.Result = res
 	return ec.marshalNWorkflowRun2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getCluster(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getCluster_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetCluster(rctx, args["project_id"].(string), args["cluster_type"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Cluster)
+	fc.Result = res
+	return ec.marshalNCluster2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4753,6 +4832,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "getCluster":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getCluster(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -5201,6 +5294,43 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 
 func (ec *executionContext) marshalNCluster2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐCluster(ctx context.Context, sel ast.SelectionSet, v model.Cluster) graphql.Marshaler {
 	return ec._Cluster(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNCluster2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Cluster) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNCluster2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐCluster(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
 }
 
 func (ec *executionContext) marshalNCluster2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐCluster(ctx context.Context, sel ast.SelectionSet, v *model.Cluster) graphql.Marshaler {

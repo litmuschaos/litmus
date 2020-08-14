@@ -8,6 +8,7 @@ require (
 	github.com/google/uuid v1.1.1
 	github.com/gorilla/mux v1.7.4
 	github.com/gorilla/websocket v1.2.0
+	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/pkg/errors v0.8.1
 	github.com/rs/cors v1.6.0
 	github.com/vektah/gqlparser/v2 v2.0.1

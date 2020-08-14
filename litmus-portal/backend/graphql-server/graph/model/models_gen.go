@@ -17,17 +17,6 @@ type Cluster struct {
 	ClusterType        string  `json:"cluster_type"`
 }
 
-type WorkflowRun struct {
-	WorkflowRunID string `json:"workflow_run_id"`
-	WorkflowID    string `json:"workflow_id"`
-	ClusterName   string `json:"cluster_name"`
-	LastUpdated   string `json:"last_updated"`
-	ProjectID     string `json:"project_id"`
-	ClusterID     string `json:"cluster_id"`
-	WorkflowName  string `json:"workflow_name"`
-	ExecutionData string `json:"execution_data"`
-}
-
 type ClusterAction struct {
 	ProjectID string `json:"project_id"`
 	Action    string `json:"action"`
@@ -97,6 +86,17 @@ type PodLogResponse struct {
 	PodName       string `json:"pod_name"`
 	PodType       string `json:"pod_type"`
 	Log           string `json:"log"`
+}
+
+type WorkflowRun struct {
+	WorkflowRunID string `json:"workflow_run_id"`
+	WorkflowID    string `json:"workflow_id"`
+	ClusterName   string `json:"cluster_name"`
+	LastUpdated   string `json:"last_updated"`
+	ProjectID     string `json:"project_id"`
+	ClusterID     string `json:"cluster_id"`
+	WorkflowName  string `json:"workflow_name"`
+	ExecutionData string `json:"execution_data"`
 }
 
 type WorkflowRunInput struct {
