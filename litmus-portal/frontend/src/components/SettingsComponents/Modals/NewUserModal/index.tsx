@@ -1,6 +1,7 @@
-import { IconButton, Modal, Typography } from '@material-ui/core';
+import { Modal, Typography } from '@material-ui/core';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import config from '../../../../config';
 import { RootState } from '../../../../redux/reducers';
 import ButtonFilled from '../../../Button/ButtonFilled';
 import useStyles from './styles';
@@ -24,18 +25,17 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
 }) => {
   const classes = useStyles();
 
-  // const user = useActions(UserActions);
-
   const [open, setOpen] = React.useState(false);
 
   const { userData } = useSelector((state: RootState) => state);
 
   const handleClose = () => {
     setOpen(false);
+    window.location.reload();
   };
   const handleOpen = () => {
     if (showModal) setOpen(true);
-    fetch(`http://3.9.117.22:30375/create`, {
+    fetch(`${config.auth.url}/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -45,23 +45,12 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
     })
       .then((response) => {
         response.json();
-        // console.log(response.status);
       })
 
       .catch((err) => {
         console.error(err);
       });
   };
-
-  function copyTextToClipboard(text: string) {
-    if (!navigator.clipboard) {
-      console.error('Oops Could not copy text: ');
-      return;
-    }
-    navigator.clipboard
-      .writeText(text)
-      .catch((err) => console.error('Async: Could not copy text: ', err));
-  }
 
   return (
     <div>
@@ -96,17 +85,6 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
                 will be displayed on the user management screen of the
                 application.
               </Typography>
-            </div>
-            <div className={classes.copyDiv}>
-              <IconButton
-                onClick={() => {
-                  copyTextToClipboard(`Username: ${username}  ${password}`);
-                }}
-              >
-                <img src="./icons/copy.svg" alt="copy" />
-              </IconButton>
-
-              <Typography>Copy the credentials </Typography>
             </div>
             <div className={classes.buttonModal}>
               <ButtonFilled

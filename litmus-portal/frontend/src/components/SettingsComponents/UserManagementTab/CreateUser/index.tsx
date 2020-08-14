@@ -12,8 +12,8 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import React from 'react';
 import NewUserModal from '../../Modals/NewUserModal';
-import UserDetails from './UserDetails';
 import useStyles from './styles';
+import UserDetails from './UserDetails';
 
 interface Password {
   password: string;
@@ -206,7 +206,6 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
         <div className={classes.buttonGroup}>
           <NewUserModal
             showModal={
-              personalData.fullName.length > 0 &&
               !createPAssword.err &&
               personalData.userName.length > 0 &&
               createPAssword.password.length > 0

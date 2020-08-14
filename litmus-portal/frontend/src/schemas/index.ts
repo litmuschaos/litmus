@@ -50,3 +50,12 @@ export const GET_USER = gql`
     }
   }
 `;
+
+export const GET_PROJECT = gql`
+  query getProject($projectID: String!) {
+    getProject(projectID: $projectID) {
+      name
+      id
+    }
+  }
+`;

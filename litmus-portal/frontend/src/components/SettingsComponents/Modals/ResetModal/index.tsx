@@ -3,6 +3,7 @@ import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import config from '../../../../config';
 import { RootState } from '../../../../redux/reducers';
 import ButtonFilled from '../../../Button/ButtonFilled';
 import useStyles from './styles';
@@ -37,7 +38,7 @@ const ResetModal: React.FC<ResetModalProps> = ({
   const handleClick = () => {
     if (resetPossible) setOpen(true);
 
-    fetch(`http://3.9.117.22:30375/reset/password`, {
+    fetch(`${config.auth.url}/reset/password`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -47,7 +48,6 @@ const ResetModal: React.FC<ResetModalProps> = ({
     })
       .then((response) => {
         response.json();
-        // console.log(response.status);
       })
 
       .catch((err) => {
@@ -128,16 +128,15 @@ const ResetModal: React.FC<ResetModalProps> = ({
                   >
                     No
                   </Button>
-                  <Button
-                    data-cy="closeButton"
-                    variant="contained"
-                    className={classes.buttonFilled}
-                    onClick={() => {
+                  <ButtonFilled
+                    isPrimary
+                    isDisabled={false}
+                    handleClick={() => {
                       if (resetPossible) setShowDiv(true);
                     }}
                   >
-                    Yes
-                  </Button>
+                    <Typography>Yes</Typography>
+                  </ButtonFilled>
                 </div>
               </div>
             </div>

@@ -1,33 +1,31 @@
-import React from 'react';
 import Modal from '@material-ui/core/Modal';
-import useStyles from './styles';
+import React from 'react';
 import ModalStepper from './Stepper';
+import useStyles from './styles';
 
 interface WelcomemodalProps {
-  isOpen: boolean;
+  handleIsOpen: () => void;
 }
 
-const Welcomemodal: React.FC<WelcomemodalProps> = ({ isOpen }) => {
+const Welcomemodal: React.FC<WelcomemodalProps> = ({ handleIsOpen }) => {
   const classes = useStyles();
   // getModalStyle is not a pure function,
   // we roll the style only on the first render
 
-  const [open, setOpen] = React.useState(isOpen);
-
   const handleClose = () => {
-    setOpen(false);
+    handleIsOpen();
   };
 
   const body = (
     <div className={classes.rootContainer}>
-      <ModalStepper />
+      <ModalStepper handleModal={handleClose} />
     </div>
   );
 
   return (
     <div>
       <Modal
-        open={open}
+        open
         onClose={handleClose}
         disableBackdropClick
         disableEscapeKeyDown

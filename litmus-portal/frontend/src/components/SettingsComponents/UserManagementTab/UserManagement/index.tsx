@@ -135,12 +135,12 @@ const UserManagement: React.FC = () => {
               <Typography className={classes.headerText}>
                 <strong>User Management</strong>
               </Typography>
-              {/* <div className={classes.members}>
+              <div className={classes.members}>
                 <img src="./icons/user.svg" alt="members" />
                 <Typography className={classes.memTypo}>
-                  Members (<span>{rows.length}</span>)
+                  Members (<span>{rows ? rows.length : 0}</span>)
                 </Typography>
-              </div> */}
+              </div>
               <Typography className={classes.descText}>
                 Create users , manage them and reset their password and username
                 when required
