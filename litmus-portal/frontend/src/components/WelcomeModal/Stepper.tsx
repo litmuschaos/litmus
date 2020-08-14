@@ -1,13 +1,14 @@
+import { useMutation } from '@apollo/client/react/hooks';
 import Button from '@material-ui/core/Button';
 import MobileStepper from '@material-ui/core/MobileStepper';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import config from '../../config';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
+import { CREATE_USER } from '../../schemas';
 import InputField from '../InputField';
 import ModalPage from './Modalpage';
 import useStyles from './styles';
@@ -27,6 +28,7 @@ function CStepper() {
     projectName: '',
   });
 
+  // console.log(userData);
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
@@ -44,11 +46,14 @@ function CStepper() {
     }
   };
 
+  const [CreateUser] = useMutation(CREATE_USER);
+  // console.log('mutation resp---->' + data);
+
   // Submit entered data to /update endpoint
   const handleSubmit = () => {
     Object.assign(info, { password: values.password });
 
-    fetch(`${config.auth.url}/update/details`, {
+    fetch(`http://3.9.117.22:30375/update/details`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -62,10 +67,20 @@ function CStepper() {
           setFormError(true);
         } else {
           user.updateUserDetails({
-            name: data.name,
-            email: data.email,
+            name: info.name,
+            email: info.email,
+            projectName: info.projectName,
           });
-
+          CreateUser({
+            variables: {
+              user: {
+                username: userData.username,
+                email: info.email,
+                name: info.name,
+                project_name: info.projectName,
+              },
+            },
+          });
           history.push('/');
         }
       })

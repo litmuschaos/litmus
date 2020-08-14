@@ -10,18 +10,17 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import config from './config';
 import App from './containers/app/App';
 import configureStore from './redux/configureStore';
 
 const { persistor, store } = configureStore();
 
 const httpLink = new HttpLink({
-  uri: `http://${config.grahqlEndpoint}`,
+  uri: `http://3.9.117.22:32591/query`,
 });
 
 const wsLink = new WebSocketLink({
-  uri: `ws://${config.grahqlEndpoint}`,
+  uri: `ws://3.9.117.22:32591/query`,
   options: {
     reconnect: true,
     lazy: true,

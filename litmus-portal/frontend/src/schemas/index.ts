@@ -32,31 +32,21 @@ export const CREATE_USER = gql`
   mutation CreateUser($user: UserInput!) {
     createUser(user: $user) {
       id
-      user_name
+      username
       created_at
-      update_at
+      updated_at
       removed_at
     }
   }
 `;
 
 export const GET_USER = gql`
-  query GetUser($user: UserInput!) {
-    getUser(user: $user) {
-      user_name
+  query getUser($username: String!) {
+    getUser(username: $username) {
+      username
+      email
+      name
+      project_id
     }
   }
 `;
-
-// query {
-//   getUser(
-//     user: {
-//       user_name: "abc"
-//       email: "abc@gmail.com"
-//       company_name: "Mayadata"
-//       name: "ABC"
-//     }
-//   ) {
-//     user_name
-//   }
-// }

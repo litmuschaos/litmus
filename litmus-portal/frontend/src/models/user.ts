@@ -5,6 +5,7 @@ export interface UserData {
   username: string;
   exp: number;
   token: string;
+  projectID: string;
 }
 export enum UserActions {
   LOAD_USER_DETAILS = 'LOAD_USER_DETAILS',

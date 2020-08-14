@@ -1,9 +1,9 @@
+import { useQuery } from '@apollo/client';
 import { Button, Card, CardActionArea, Typography } from '@material-ui/core';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { useQuery } from '@apollo/client';
 import InfoFilledWrap from '../../components/InfoFilled';
 import QuickActionCard from '../../components/QuickActionCard';
 import WelcomeModal from '../../components/WelcomeModal';
@@ -47,18 +47,19 @@ const HomePage = () => {
 
   const result = useQuery(GET_USER, {
     variables: {
-      user: {
-        user_name: userData.username,
-        email: userData.email,
-        name: userData.name,
-      },
+      username: userData.username,
     },
   });
 
+  // const [resultFetched, setResultFetched] = useState<boolean>(false);
+  /* 
+  useEffect(() => {
+    console.log('page loaded');
+  }); */
+  // console.log('result--->' + result.data);
   if (result.loading === false && result.data === undefined) {
     return <WelcomeModal isOpen />;
   }
-
   return (
     <Scaffold>
       <div className={classes.rootContainer}>

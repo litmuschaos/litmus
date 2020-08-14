@@ -55,7 +55,7 @@ const Settings: React.FC = () => {
             textColor="secondary"
           >
             <Tab label="Account" {...tabProps(0)} />
-            <Tab label="Team" {...tabProps(1)} />
+            <Tab disabled label="Team" {...tabProps(1)} />
             <Tab label="User Management" {...tabProps(2)} />
           </Tabs>
         </Paper>
