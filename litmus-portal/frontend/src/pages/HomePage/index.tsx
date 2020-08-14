@@ -43,6 +43,7 @@ const CreateWorkflowCard = () => {
 const HomePage = () => {
   const { userData } = useSelector((state: RootState) => state);
   const { name } = userData;
+  const [resutFetched, setResultFetched] = React.useState<Boolean>(false);
   const classes = useStyles();
 
   const result = useQuery(GET_USER, {
@@ -51,15 +52,17 @@ const HomePage = () => {
     },
   });
 
-  // const [resultFetched, setResultFetched] = useState<boolean>(false);
-  /* 
-  useEffect(() => {
+  React.useEffect(() => {
+    if (result.loading === false && result.data === undefined) {
+      setResultFetched(true);
+    }
     console.log('page loaded');
-  }); */
-  // console.log('result--->' + result.data);
-  if (result.loading === false && result.data === undefined) {
+  }, [result]);
+
+  if (resutFetched) {
     return <WelcomeModal isOpen />;
   }
+
   return (
     <Scaffold>
       <div className={classes.rootContainer}>
