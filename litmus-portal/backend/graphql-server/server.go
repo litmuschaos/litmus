@@ -1,21 +1,23 @@
 package main
 
 import (
+	"log"
+	"net/http"
+	"os"
+	"time"
+
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
+	"github.com/rs/cors"
+
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/generated"
 	database "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/file_handlers"
-	"github.com/rs/cors"
-	"log"
-	"net/http"
-	"os"
-	"time"
 )
 
 const defaultPort = "8080"

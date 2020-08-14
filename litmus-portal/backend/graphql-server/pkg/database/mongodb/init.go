@@ -18,8 +18,11 @@ var err error
 var collections = map[string]string{
 	"Cluster":     "cluster-collection",
 	"WorkflowRun": "workflow-run",
+	"User":        "user",
+	"Project":     "project",
 }
 
+var database *mongo.Database
 var dbName = "litmus"
 
 type Cluster struct {
@@ -86,7 +89,17 @@ func DBInit() error {
 		log.Print("Connected To MONGODB")
 	}
 
-	clusterCollection = client.Database(dbName).Collection(collections["Cluster"])
-	workflowRunCollection = client.Database(dbName).Collection(collections["WorkflowRun"])
+	database = client.Database(dbName)
+	initAllCollections()
+
+	// clusterCollection = client.Database(dbName).Collection(collections["Cluster"])
+	// workflowRunCollection = client.Database(dbName).Collection(collections["WorkflowRun"])
 	return nil
+}
+
+func initAllCollections() {
+	clusterCollection = database.Collection(collections["Cluster"])
+	workflowRunCollection = database.Collection(collections["WorkflowRun"])
+	userCollection = database.Collection(collections["User"])
+	projectCollection = database.Collection(collections["Project"])
 }

@@ -146,6 +146,10 @@ type Query{
   getWorkFlowRuns(project_id: String!): [WorkflowRun!]!
 
   getCluster(project_id: String!, cluster_type: String): [Cluster!]!
+
+  getUser(username: String!): User!
+
+  getProject(projectID: String!): Project!
 }
 
 type Mutation{
@@ -164,6 +168,9 @@ type Mutation{
   chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
 
   podLog(log: PodLog!): String!
+
+  createUser(user: UserInput!): User!
+
 }
 
 type Subscription{
