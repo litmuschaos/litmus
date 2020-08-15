@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    litmuschaos.io/chaos: "true"
+  labels:
+    app: sock-shop
+    name: carts-db
+  name: carts-db
+  namespace: sock-shop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sock-shop
+      name: carts-db
+  template:
+    metadata:
+      labels:
+        app: sock-shop
+        name: carts-db
+    spec:
+      containers:
+      - image: mongo
+        imagePullPolicy: Always
+        name: carts-db
+        ports:
+        - containerPort: 27017
+          name: mongo
+          protocol: TCP
+        resources:
+          limits:
+            ephemeral-storage: 2Gi
+          requests:
+            ephemeral-storage: 1Gi
+        securityContext:
+          capabilities:
+            add:
+            - CHOWN
+            - SETGID
+            - SETUID
+            drop:
+            - all
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+      volumes:
+      - emptyDir:
+          medium: Memory
+        name: tmp-volume
+--- 
+apiVersion: v1
+kind: Service
+metadata:
+  name: carts-db
+  labels:
+    name: carts-db
+  namespace: sock-shop
+spec:
+  ports:
+    # the port that this service should serve on
+  - port: 27017
+    targetPort: 27017
+  selector:
+    name: carts-db
+

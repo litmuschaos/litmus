@@ -1,7 +1,0 @@
-{% if stg_prov is defined and stg_prov == 'openebs.io/provisioner-iscsi' %}
-  {% if stg_engine is defined and stg_engine == 'cstor' %}
-    chaosutil: /experiments/openebs/openebs-target-network-delay/cstor_target_network_delay.yml
-  {% else %}
-    chaosutil: /experiments/openebs/openebs-target-network-delay/jiva_controller_network_delay.yml
-  {% endif %}
-{% endif %}
