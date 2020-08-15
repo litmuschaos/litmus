@@ -1,9 +1,0 @@
-# All code here is not indented because j2 is space sensitive
-# checks if cloud_platform is set or not
-{% if c_lib is defined and c_lib == 'litmus' %}
-{% if cloud_platform is defined and cloud_platform == 'GKE' %}
-c_util: /chaoslib/litmus/platform/gke/disk_loss.yml
-{% elif cloud_platform is defined and cloud_platform == 'AWS' %}
-c_util: /chaoslib/litmus/platform/aws/disk_loss.yml
-{% endif %}
-{% endif %}
