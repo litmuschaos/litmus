@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+  name: prometheus-deployment
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+      name: prometheus
+    spec:
+      containers:
+      - args:
+        - -storage.local.retention=360h
+        - -storage.local.memory-chunks=1048576
+        - -config.file=/etc/prometheus/prometheus.yml
+        - -alertmanager.url=http://alertmanager:9093
+        image: prom/prometheus:v1.5.2
+        imagePullPolicy: IfNotPresent
+        name: prometheus
+        ports:
+        - containerPort: 9090
+          name: web
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /etc/prometheus
+          name: config-volume
+        - mountPath: /etc/prometheus-rules
+          name: alertrules-volume
+      serviceAccount: prometheus
+      serviceAccountName: prometheus
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: prometheus-configmap
+        name: config-volume
+      - configMap:
+          defaultMode: 420
+          name: prometheus-alertrules
+        name: alertrules-volume
