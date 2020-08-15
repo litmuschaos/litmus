@@ -14,8 +14,7 @@ const CreateWorkflowCard = () => {
   const classes = useStyles();
   const history = useHistory();
   const routeChange = () => {
-    const path = `/workflow`;
-    history.push(path);
+    history.push('/create-workflow');
   };
   return (
     <Card

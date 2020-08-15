@@ -25,13 +25,13 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
   },
   passedBox: {
-    background: '#109B67',
+    background: theme.palette.primary.dark,
     height: theme.spacing(5),
     marginRight: theme.spacing(0.25),
     borderRadius: theme.spacing(0.3),
   },
   failedBox: {
-    background: '#CA2C2C',
+    background: theme.palette.error.dark,
     borderRadius: theme.spacing(0.3),
   },
   passedIcon: {
@@ -47,13 +47,13 @@ const useStyles = makeStyles((theme) => ({
     marginRight: 'auto',
   },
   passedLabel: {
-    color: '#109B67',
+    color: theme.palette.primary.dark,
     fontSize: theme.spacing(2.5),
     fontWeight: 'bold',
     width: '80%',
   },
   failedLabel: {
-    color: '#CA2C2C',
+    color: theme.palette.error.dark,
     fontSize: theme.spacing(2.5),
     fontWeight: 'bold',
     width: '20%',
