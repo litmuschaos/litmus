@@ -1,8 +1,5 @@
-import { Typography } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import Modal from '@material-ui/core/Modal';
+import { Button, Modal, Typography } from '@material-ui/core';
 import React from 'react';
-import Lock from '../../../assets/icons/lock.svg';
 import useStyles from './styles';
 
 interface PasswordModalProps {
@@ -43,7 +40,7 @@ const PasswordModal: React.FC<PasswordModalProps> = ({ formErr, isEmpty }) => {
       >
         <div className={classes.paper}>
           <div className={classes.body}>
-            <img src={Lock} alt="lock" />
+            <img src="./icons/lock.svg" alt="lock" />
             <div className={classes.text}>
               <Typography className={classes.typo} align="center">
                 Your password <strong>has been changed!</strong>

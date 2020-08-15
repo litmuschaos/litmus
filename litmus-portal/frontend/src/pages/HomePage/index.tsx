@@ -1,13 +1,17 @@
+import { useQuery } from '@apollo/client';
 import { Button, Card, CardActionArea, Typography } from '@material-ui/core';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import InfoFilledWrap from '../../components/InfoFilled';
 import QuickActionCard from '../../components/QuickActionCard';
 import WelcomeModal from '../../components/WelcomeModal';
 import Scaffold from '../../containers/layouts/Scaffold';
+import useActions from '../../redux/actions';
+import * as UserActions from '../../redux/actions/user';
 import { RootState } from '../../redux/reducers';
+import { GET_PROJECT, GET_USER } from '../../schemas';
 import useStyles from './style';
 
 const CreateWorkflowCard = () => {
@@ -39,18 +43,53 @@ const CreateWorkflowCard = () => {
 };
 
 const HomePage = () => {
+  const [isOpen, setIsOpen] = useState<boolean>(true);
   const { userData } = useSelector((state: RootState) => state);
   const { name } = userData;
   const classes = useStyles();
-  if (userData.email === '') {
-    return <WelcomeModal isOpen />;
-  }
+
+  const user = useActions(UserActions);
+
+  useQuery(GET_USER, {
+    variables: {
+      username: userData.username,
+    },
+    onCompleted: (data) => {
+      if (data.getUser.username === userData.username) {
+        setIsOpen(false);
+        user.updateUserDetails({
+          projectID: data.getUser.project_id,
+          name: data.getUser.name,
+          username: data.getUser.username,
+          email: data.getUser.email,
+        });
+      }
+    },
+  });
+  useQuery(GET_PROJECT, {
+    variables: {
+      projectID: userData.projectID,
+    },
+    skip: userData.projectID === '',
+    onCompleted: (data) => {
+      user.updateUserDetails({
+        projectName: data.getProject.name,
+      });
+    },
+  });
+
+  const handleModal = () => {
+    setIsOpen(false);
+  };
+
   return (
     <Scaffold>
+      {isOpen ? <WelcomeModal handleIsOpen={handleModal} /> : <></>}
       <div className={classes.rootContainer}>
         <div className={classes.root}>
           <Typography className={classes.userName}>
-            Welcome, <strong>{name}</strong>
+            Welcome,
+            <strong>{name}</strong>
           </Typography>
           <div className={classes.headingDiv}>
             <div className={classes.mainDiv}>

@@ -1,21 +1,21 @@
+import { useMutation } from '@apollo/client/react/hooks';
 import Button from '@material-ui/core/Button';
+import MobileStepper from '@material-ui/core/MobileStepper';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import MobileStepper from '@material-ui/core/MobileStepper';
 import config from '../../config';
-import useActions from '../../redux/actions';
-import * as UserActions from '../../redux/actions/user';
-import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
-import useStyles from './styles';
-import ModalPage from './Modalpage';
+import { CREATE_USER } from '../../schemas';
 import InputField from '../InputField';
+import ModalPage from './Modalpage';
+import useStyles from './styles';
 
-function CStepper() {
+interface CStepperProps {
+  handleModal: () => void;
+}
+const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   const classes = useStyles();
-
-  const user = useActions(UserActions);
 
   const { userData } = useSelector((state: RootState) => state);
   const [activeStep, setActiveStep] = React.useState<number>(0);
@@ -43,12 +43,21 @@ function CStepper() {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
   };
+  const rerender = () => {
+    window.location.reload();
+  };
+
+  const [CreateUser] = useMutation(CREATE_USER, {
+    onCompleted: () => {
+      rerender();
+    },
+  });
 
   // Submit entered data to /update endpoint
   const handleSubmit = () => {
     Object.assign(info, { password: values.password });
 
-    fetch(`${config.auth.url}/update`, {
+    fetch(`${config.auth.url}/update/details`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -61,18 +70,24 @@ function CStepper() {
         if ('error' in data) {
           setFormError(true);
         } else {
-          user.updateUserDetails({
-            name: data.name,
-            email: data.email,
+          CreateUser({
+            variables: {
+              user: {
+                username: userData.username,
+                email: info.email,
+                name: info.name,
+                project_name: info.projectName,
+              },
+            },
           });
-
-          history.push('/');
         }
       })
       .catch((err) => {
         setFormError(true);
         console.error(err);
       });
+
+    handleModal();
   };
 
   const setData = (key: string, value: string) => {
@@ -142,7 +157,7 @@ function CStepper() {
                 {selectiveButtons()}
               </div>
             }
-            setName="Administrator"
+            setName={userData.name}
             setText="Do you want to name your project?"
           />
         );
@@ -166,7 +181,7 @@ function CStepper() {
                 {selectiveButtons()}
               </div>
             }
-            setName="Administrator"
+            setName={info.name}
             setText="How do i call you?"
           />
         );
@@ -210,8 +225,8 @@ function CStepper() {
                 {selectiveButtons()}
               </div>
             }
-            setName="Name"
-            setText="Set your new personal Password"
+            setName={info.name}
+            setText="Set your new  Password"
           />
         );
       case 3:
@@ -235,7 +250,7 @@ function CStepper() {
               </div>
             }
             // pass here corresponding name of user
-            setName="Name"
+            setName={info.name}
             setText="You can change your current mail (optional)"
           />
         );
@@ -269,6 +284,6 @@ function CStepper() {
       </div>
     </div>
   );
-}
+};
 
 export default CStepper;

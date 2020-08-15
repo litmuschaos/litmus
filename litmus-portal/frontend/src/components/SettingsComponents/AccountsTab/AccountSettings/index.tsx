@@ -10,8 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import React from 'react';
-import pass from '../../../assets/icons/pass.svg';
-import PasswordModal from '../PasswordModal';
+import PasswordModal from '../../Modals/PasswordModal';
 import PersonalDetails from '../PersonalDetails';
 import useStyles from './styles';
 
@@ -22,7 +21,7 @@ interface Password {
   showPassword: boolean;
 }
 
-// AccountSettins displays the starting page of "Accounts" tab
+// AccountSettings displays the starting page of "Accounts" tab
 const AccountSettings: React.FC = () => {
   const classes = useStyles();
 
@@ -48,7 +47,7 @@ const AccountSettings: React.FC = () => {
     err: false,
   });
 
-  // handleChange2 handles password validation for second password field
+  // handleNewPassword handles password validation for second password field
   const handleNewPassword = (prop: keyof Password) => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -70,7 +69,7 @@ const AccountSettings: React.FC = () => {
     }
   };
 
-  // handleChange3 handles password validation for third password field
+  // handleConfPassword handles password validation for third password field
   const handleConfPassword = (prop: keyof Password) => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -237,7 +236,7 @@ const AccountSettings: React.FC = () => {
             </form>
 
             <div className={classes.col2}>
-              <img src={pass} data-cy="lock" alt="lockIcon" />
+              <img src="./icons/pass.svg" data-cy="lock" alt="lockIcon" />
               <Typography className={classes.txt1}>
                 Your new password <strong>must</strong> be:
               </Typography>
