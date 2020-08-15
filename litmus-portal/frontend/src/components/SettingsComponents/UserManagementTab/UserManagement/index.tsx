@@ -78,7 +78,6 @@ const UserManagement: React.FC = () => {
         return response.json();
       })
       .then((res) => {
-        // console.log(res);
         setRows(res);
         setSelectRows(res);
       })
