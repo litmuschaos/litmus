@@ -6,17 +6,17 @@ import SemiCircularProgressBar from '../../src/components/ProgressBar/SemiCircul
 
 // Test Suite -
 // Progress Bar props -> value = 50, 10, 100
-describe('Semi Circular Progress Bar has appropriate values',()=>{
-  [50,10,100].map(i=>{
-    it('Value is equal to '+i, () => {
+describe('Semi Circular Progress Bar has appropriate values', () => {
+  [50, 10, 100].map((i) => {
+    it(`Value is equal to ${i}`, () => {
       const wrapper = <SemiCircularProgressBar value={i} />;
       mount(wrapper);
       cy.get('[data-cy=progressValue]').then((value) => {
-        expect(value[0].innerText).to.equal(i+'%');
+        expect(value[0].innerText).to.equal(`${i}%`);
       });
     });
-  })
-})
+  });
+});
 
 // Test Suite - Icon has the correct src
 describe('Icons have a correct path', () => {
