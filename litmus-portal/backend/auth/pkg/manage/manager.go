@@ -36,19 +36,33 @@ func (m *Manager) MustUserStorage(stor *store.UserStore, err error) {
 		panic(err)
 	}
 	m.userStore = stor
-	err = m.CreateUser(models.DefaultUser)
+	_, err = m.CreateUser(models.DefaultUser)
 	if err != nil {
 		log.Fatal("Unable to create default user with error:", err)
 	}
 }
 
 // GetUser get the user information
-func (m *Manager) GetUser(userName string) (user *models.User, err error) {
+func (m *Manager) GetUser(userName string) (user *models.UserCredentials, err error) {
 	user, err = m.userStore.GetByUserName(userName)
 	if err != nil && err == mgo.ErrNotFound {
 		err = errors.ErrInvalidUser
 	}
 	return
+}
+
+// GetAllUsers get the user information
+func (m *Manager) GetAllUsers() ([]*models.PublicUserInfo, error) {
+	users, err := m.userStore.GetAllUsers()
+	if err != nil {
+		return nil, err
+	}
+
+	var allUsers []*models.PublicUserInfo
+	for _, user := range users {
+		allUsers = append(allUsers, user.GetPublicInfo())
+	}
+	return allUsers, nil
 }
 
 // CheckUserExists get the user information
@@ -72,20 +86,40 @@ func (m *Manager) VerifyUserPassword(username, password string) (*models.PublicU
 	return user.GetPublicInfo(), err
 }
 
+// LoginUser verifies user password
+func (m *Manager) LoginUser(username string) error {
+	storedUser, err := m.GetUser(username)
+	if err != nil {
+		return err
+	}
+	storedUser.LoggedIn = true
+	return m.userStore.UpdateUser(storedUser)
+}
+
+// LogoutUser verifies user password
+func (m *Manager) LogoutUser(username string) error {
+	storedUser, err := m.GetUser(username)
+	if err != nil {
+		return err
+	}
+	storedUser.LoggedIn = false
+	return m.userStore.UpdateUser(storedUser)
+}
+
 // CreateUser get the user information
-func (m *Manager) CreateUser(user *models.User) (err error) {
+func (m *Manager) CreateUser(user *models.UserCredentials) (*models.PublicUserInfo, error) {
 
 	exists, err := m.CheckUserExists(user.UserName)
 	if err != nil || exists {
-		return
+		return nil, err
 	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), types.PasswordEncryptionCost)
 	if err != nil {
-		return
+		return nil, err
 	}
 	user.Password = string(hashedPassword)
 	err = m.userStore.Set(user)
-	return
+	return user.GetPublicInfo(), err
 }
 
 // GenerateAuthToken generate the authorization token(code)
@@ -129,7 +163,7 @@ func (m *Manager) ParseToken(tokenString string) (userInfo *models.PublicUserInf
 }
 
 // UpdateUserDetails get the user information
-func (m *Manager) UpdateUserDetails(user *models.User) (*models.PublicUserInfo, error) {
+func (m *Manager) UpdateUserDetails(user *models.UserCredentials) (*models.PublicUserInfo, error) {
 
 	if user.GetPassword() == "" {
 		return nil, errors.ErrInvalidRequest
@@ -149,5 +183,23 @@ func (m *Manager) UpdateUserDetails(user *models.User) (*models.PublicUserInfo, 
 	storedUser.Name = user.GetName()
 
 	err = m.userStore.UpdateUser(storedUser)
-	return user.GetPublicInfo(), err
+	return storedUser.GetPublicInfo(), err
+}
+
+// UpdatePassword get the user information
+func (m *Manager) UpdatePassword(user *models.UserCredentials) (*models.PublicUserInfo, error) {
+
+	storedUser, err := m.GetUser(user.UserName)
+	if err != nil {
+		return nil, errors.ErrInvalidUser
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.GetPassword()), types.PasswordEncryptionCost)
+	if err != nil {
+		return nil, err
+	}
+	storedUser.Password = string(hashedPassword)
+
+	err = m.userStore.UpdateUser(storedUser)
+	return storedUser.GetPublicInfo(), err
 }
