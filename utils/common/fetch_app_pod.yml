@@ -1,5 +1,0 @@
----
-#Fetching the details of the application pod
-- name: Getting the {{ application_name }} POD name
-  shell: kubectl get po -n {{ app_ns }} -l {{ app_label }} -o jsonpath='{.items[0].metadata.name}'
-  register: pod_name

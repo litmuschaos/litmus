@@ -12,6 +12,7 @@ import useStyles from './App-styles';
 
 const ErrorPage = lazy(() => import('../../pages/ErrorPage'));
 const Workflows = lazy(() => import('../../pages/Workflows'));
+const CreateWorkflow = lazy(() => import('../../pages/CreateWorkflow'));
 const LoginPage = lazy(() => import('../../pages/LoginPage'));
 const HomePage = lazy(() => import('../../pages/HomePage'));
 const Community = lazy(() => import('../../pages/Community'));
@@ -40,7 +41,8 @@ const Routes: React.FC<RoutesProps> = ({ userData }) => {
       <Switch>
         <Route exact path="/" component={HomePage} />
         <Route exact path="/login" component={LoginPage} />
-        <Route exact path="/workflow" component={Workflows} />
+        <Route exact path="/workflows" component={Workflows} />
+        <Route exact path="/create-workflow" component={CreateWorkflow} />
         <Route exact path="/community" component={Community} />
         <Route exact path="/settings" component={Settings} />
         <Route exact path="/404" component={ErrorPage} />

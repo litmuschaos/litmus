@@ -1,7 +1,7 @@
 # Official list of LitmusChaos Maintainers.
 #
 # Names added to this file should be in the following format:
-#     Individual's name,@githubhandle, Company Name
+#     Individual's Name,@githubhandle, Email Address, Company Name
 #
 # Each of the LitmusChaos sub project may have one or more of the 
 # following maintainers and list of reviewers who are 
@@ -11,17 +11,17 @@
 #
 #Maintainers
 
-"Chandan Kumar",@chandankumar4,MayaData
-"Jayesh Kumar",@k8s-dev,Self
-"Karthik Satchitanand",@ksatchit,MayaData
-"Maria Kotlyarevskaya",@Jasstkn,Dino Systems
-"Sumit Nagal",@sumitnagal,Intuit
-"Uma Mukkara",@umamukkara,MayaData
+"Chandan Kumar",@chandankumar4,chandan.kumar@mayadata.io,MayaData
+"Jayesh Kumar",@k8s-dev,jayeshece08@gmail.com,Self
+"Karthik Satchitanand",@ksatchit,karthik.s@mayadata.io,MayaData
+"Maria Kotlyarevskaya",@Jasstkn,jasssstkn@yahoo.com,Wrike
+"Sumit Nagal",@sumitnagal,sumit_nagal@intuit.com,Intuit
+"Uma Mukkara",@umamukkara,uma@mayadata.io,MayaData
 
 
 #Reviewers
-"Amit Bhatt",@amitbhatt818,MayaData
-"Rahul M Chheda",@rahulchheda,MayaData
-"Raj Das",@rajdas98,MayaData
-"Shubham Chaudhary",@ispeakc0de,MayaData
-"Udit Gaurav",@uditgaurav,MayaData
+"Amit Bhatt",@amitbhatt818,amit.bhatt@mayadata.io,MayaData
+"Rahul M Chheda",@rahulchheda,rahul.chheda1997@gmail.com,InfraCloud Technologies
+"Raj Das",@rajdas98,raj.das@mayadata.io,MayaData
+"Shubham Chaudhary",@ispeakc0de,shubham.chaudhary@mayadata.io,MayaData
+"Udit Gaurav",@uditgaurav,udit.gaurav@mayadata.io,MayaData

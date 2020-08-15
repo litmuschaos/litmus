@@ -4,7 +4,32 @@ This doc consists of a revision table that highlights the important changes in t
 while providing the links to release details. Meant to be a helpful chronicler of the Litmus journey! 
 
 <table>
+ <tr>
+   <td>1.6.0</td>
+   <td>15th July, 2020</td>
+   <td>No Schema changes</td>
+   <td><a href="https://github.com/litmuschaos/litmus/releases/tag/1.6.0">Release Notes</a></td>
+   <td><a href="https://docs.litmuschaos.io/docs/getstarted">Documentation</a></td>
+   <td>N/A</td>
+   <td><a href="https://github.com/litmuschaos/chaos-charts/releases/tag/1.6.0">Chaos Charts Bundle</a></td>
+ </tr>
 
+ <tr>
+   <td>1.5.1</td>
+   <td>6th July, 2020</td>
+   <td> 
+     <ul>
+       <li><b>New</b> (chaosexperiment): <code>.spec.definition.securityContext</code></li>
+       <li><b>New</b> (chaosexperiment): <code>.spec.definition.hostPID</code></li>
+       <li><b>New</b> (chaosengine): <code>spec.experiments.spec[].spec.components.nodeSelector</code></li>
+     </ul>
+   </td>
+   <td><a href="https://github.com/litmuschaos/litmus/releases/tag/1.5.1">Release Notes</a></td>
+   <td><a href="https://docs.litmuschaos.io/docs/getstarted">Documentation</a></td>
+   <td>N/A</td>
+   <td><a href="https://github.com/litmuschaos/chaos-charts/releases/tag/1.5.0">Chaos Charts Bundle</a></td>
+ </tr>
+ 
  <tr>
    <td>1.5.0</td>
    <td>15th June, 2020</td>
