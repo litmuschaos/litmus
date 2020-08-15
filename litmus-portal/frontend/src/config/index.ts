@@ -10,5 +10,5 @@ export default {
   cookies: {
     token: 'token',
   },
-  grahqlEndpoint: process.env.GQL_API || 'localhost:8080/query',
+  grahqlEndpoint: process.env.GQL_API || '/api',
 };
