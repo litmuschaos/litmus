@@ -29,7 +29,7 @@ describe('Linear Progressbar Testing', () => {
     );
   });
   it('Progressbar stroke if default', () => {
-    mount(<LinearProgressBar value={8} isDefault={true} />);
+    mount(<LinearProgressBar value={8} isDefault />);
     cy.get('.rc-progress-line-path').should(
       'have.css',
       'stroke-dasharray',
