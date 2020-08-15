@@ -6,32 +6,39 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/types"
 )
 
-//User contains the user information
-type User struct {
-	ID              string       `bson:"_id"`
-	UserName        string       `bson:"username"`
-	Password        string       `bson:"password"`
-	Email           string       `bson:"email"`
-	isEmailVerified bool         `bson:"verified"`
-	Name            string       `bson:"name"`
-	SocialAuths     []SocialAuth `bson:"social_auths"`
-	CreatedAt       *time.Time   `bson:"created_at"`
-	UpdatedAt       *time.Time   `bson:"updated_at"`
-	RemovedAt       *time.Time   `bson:"removed_at"`
-	State           State        `bson:"state"`
+//UserCredentials contains the user information
+type UserCredentials struct {
+	ID       string `bson:"_id"`
+	UserName string `bson:"username"`
+	Password string `bson:"password"`
+	Email    string `bson:"email"`
+	Name     string `bson:"name"`
+	// UserID		string       `bson:"user_id"`
+	LoggedIn    bool         `bson:"logged_in"`
+	SocialAuths []SocialAuth `bson:"social_auths"`
+	CreatedAt   *time.Time   `bson:"created_at"`
+	UpdatedAt   *time.Time   `bson:"updated_at"`
+	RemovedAt   *time.Time   `bson:"removed_at"`
+	State       State        `bson:"state"`
 }
 
 //DefaultUser is the admin user created by default
-var DefaultUser *User = &User{
+var DefaultUser *UserCredentials = &UserCredentials{
 	UserName: types.DefaultUserName,
 	Password: types.DefaultUserPassword,
 }
 
 //PublicUserInfo displays the information of the user that is publicly available
 type PublicUserInfo struct {
-	Name     string `json:"name,omitempty"`
-	Email    string `json:"email,omitempty"`
-	UserName string `json:"username,omitempty"`
+	ID        string     `json:"_id"`
+	UserName  string     `json:"username"`
+	Email     string     `json:"email"`
+	Name      string     `json:"name"`
+	LoggedIn  bool       `json:"logged_in"`
+	CreatedAt *time.Time `json:"created_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
+	RemovedAt *time.Time `json:"removed_at"`
+	State     State      `json:"state"`
 }
 
 //SocialAuth contains the oauth types and related information opted by the user
@@ -58,71 +65,72 @@ const (
 )
 
 // GetID user id
-func (u *User) GetID() string {
+func (u *UserCredentials) GetID() string {
 	return u.ID
 }
 
 // GetUserName user username
-func (u *User) GetUserName() string {
+func (u *UserCredentials) GetUserName() string {
 	return u.UserName
 }
 
 // GetPassword user password
-func (u *User) GetPassword() string {
+func (u *UserCredentials) GetPassword() string {
 	return u.Password
 }
 
 // GetEmail user email
-func (u *User) GetEmail() string {
+func (u *UserCredentials) GetEmail() string {
 	return u.Email
 }
 
-// GetIsEmailVerified returns if user email is verified or not
-func (u *User) GetIsEmailVerified() bool {
-	return u.isEmailVerified
-}
-
 // GetName returns user name
-func (u *User) GetName() string {
+func (u *UserCredentials) GetName() string {
 	return u.Name
 }
 
 // GetSocialAuths returns all the social authentications of the user
-func (u *User) GetSocialAuths() []SocialAuth {
+func (u *UserCredentials) GetSocialAuths() []SocialAuth {
 	return u.SocialAuths
 }
 
 // GetCreatedAt defines the time at which this user was created
-func (u *User) GetCreatedAt() *time.Time {
+func (u *UserCredentials) GetCreatedAt() *time.Time {
 	return u.CreatedAt
 }
 
 // GetUpdatedAt defines the time at which user was last updated
-func (u *User) GetUpdatedAt() *time.Time {
+func (u *UserCredentials) GetUpdatedAt() *time.Time {
 	return u.UpdatedAt
 }
 
 // GetRemovedAt defines the time at which this user was removed
-func (u *User) GetRemovedAt() *time.Time {
+func (u *UserCredentials) GetRemovedAt() *time.Time {
 	return u.RemovedAt
 }
 
-// GetUser defines the time at which this user was removed
-func (u *User) GetUser() *User {
-	return u
-}
-
 // GetState user password
-func (u *User) GetState() State {
+func (u *UserCredentials) GetState() State {
 	return u.State
 }
 
+// GetLoggedIn user password
+func (u *UserCredentials) GetLoggedIn() bool {
+	return u.LoggedIn
+}
+
 // GetPublicInfo fetches the pubicUserInfo from User
-func (u *User) GetPublicInfo() *PublicUserInfo {
+func (u *UserCredentials) GetPublicInfo() *PublicUserInfo {
 	return &PublicUserInfo{
-		Name:     u.GetName(),
-		UserName: u.GetUserName(),
-		Email:    u.GetEmail(),
+		Name:      u.GetName(),
+		UserName:  u.GetUserName(),
+		Email:     u.GetEmail(),
+		ID:        u.GetID(),
+		LoggedIn:  u.GetLoggedIn(),
+		CreatedAt: u.GetCreatedAt(),
+		UpdatedAt: u.GetUpdatedAt(),
+		RemovedAt: u.GetRemovedAt(),
+		State:     u.GetState(),
 	}
 }
 
@@ -139,6 +147,36 @@ func (uinfo *PublicUserInfo) GetName() string {
 // GetEmail user email
 func (uinfo *PublicUserInfo) GetEmail() string {
 	return uinfo.Email
+}
+
+// GetCreatedAt user createdAt
+func (uinfo *PublicUserInfo) GetCreatedAt() *time.Time {
+	return uinfo.CreatedAt
+}
+
+// GetID user ID
+func (uinfo *PublicUserInfo) GetID() string {
+	return uinfo.ID
+}
+
+// GetLoggedIn user loggedIn
+func (uinfo *PublicUserInfo) GetLoggedIn() bool {
+	return uinfo.LoggedIn
+}
+
+// GetUpdatedAt user updatedAt
+func (uinfo *PublicUserInfo) GetUpdatedAt() *time.Time {
+	return uinfo.UpdatedAt
+}
+
+// GetRemovedAt user removedAt
+func (uinfo *PublicUserInfo) GetRemovedAt() *time.Time {
+	return uinfo.RemovedAt
+}
+
+// GetState user state
+func (uinfo *PublicUserInfo) GetState() State {
+	return uinfo.State
 }
 
 // GetType returns auth type
