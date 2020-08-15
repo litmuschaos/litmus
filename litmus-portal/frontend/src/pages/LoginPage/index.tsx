@@ -45,7 +45,6 @@ const LoginPage = () => {
         console.error(err);
       });
   };
-
   return (
     <div className={classes.rootContainer}>
       <div className={classes.root}>

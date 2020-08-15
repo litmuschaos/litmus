@@ -21,7 +21,7 @@ const httpLink = new HttpLink({
 });
 
 const wsLink = new WebSocketLink({
-  uri: `ws://${config.grahqlEndpoint}`,
+  uri: `${config.grahqlEndpointSubscription}/query`,
   options: {
     reconnect: true,
     lazy: true,
