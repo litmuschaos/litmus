@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    litmuschaos.io/chaos: "true"
+  labels:
+    app: sock-shop
+    name: orders
+  name: orders
+  namespace: sock-shop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sock-shop
+      name: orders
+  template:
+    metadata:
+      labels:
+        app: sock-shop
+        name: orders
+    spec:
+      containers:
+      - env:
+        - name: ZIPKIN
+          value: zipkin.jaeger.svc.cluster.local
+        - name: JAVA_OPTS
+          value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
+            -Djava.security.egd=file:/dev/urandom
+        image: weaveworksdemos/orders:0.4.7
+        imagePullPolicy: IfNotPresent
+        name: orders
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources: {}
+        securityContext:
+          capabilities:
+            add:
+            - NET_BIND_SERVICE
+            drop:
+            - all
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 10001
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 300
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 180
+          periodSeconds: 3
+      volumes:
+      - emptyDir:
+          medium: Memory
+        name: tmp-volume
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders
+  labels:
+    name: orders
+  namespace: sock-shop
+spec:
+  ports:
+    # the port that this service should serve on
+  - port: 80
+    targetPort: 80
+  selector:
+    name: orders
+
