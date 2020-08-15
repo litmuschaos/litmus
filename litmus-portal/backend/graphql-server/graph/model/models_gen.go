@@ -114,6 +114,38 @@ type PodLogResponse struct {
 	Log           string `json:"log"`
 }
 
+type Project struct {
+	ID        string  `json:"id"`
+	Name      string  `json:"name"`
+	State     *string `json:"state"`
+	CreatedAt string  `json:"created_at"`
+	UpdatedAt string  `json:"updated_at"`
+	RemovedAt string  `json:"removed_at"`
+}
+
+type User struct {
+	ID              string  `json:"id"`
+	Username        string  `json:"username"`
+	Email           *string `json:"email"`
+	IsEmailVerified *bool   `json:"is_email_verified"`
+	CompanyName     *string `json:"company_name"`
+	ProjectID       string  `json:"project_id"`
+	Name            *string `json:"name"`
+	Role            *string `json:"role"`
+	State           *string `json:"state"`
+	CreatedAt       string  `json:"created_at"`
+	UpdatedAt       string  `json:"updated_at"`
+	RemovedAt       string  `json:"removed_at"`
+}
+
+type UserInput struct {
+	Username    string  `json:"username"`
+	Email       *string `json:"email"`
+	CompanyName *string `json:"company_name"`
+	Name        *string `json:"name"`
+	ProjectName string  `json:"project_name"`
+}
+
 type WeightagesInput struct {
 	ExperimentName string `json:"experiment_name"`
 	Weightage      int    `json:"weightage"`
