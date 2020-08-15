@@ -166,7 +166,7 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name:litmus-rb
+  name: litmus-rb
   namespace: litmus
 subjects:
   - kind: ServiceAccount
