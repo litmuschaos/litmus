@@ -123,10 +123,6 @@ type Project struct {
 	RemovedAt string  `json:"removed_at"`
 }
 
-type ProjectInput struct {
-	ID string `json:"id"`
-}
-
 type User struct {
 	ID              string  `json:"id"`
 	Username        string  `json:"username"`

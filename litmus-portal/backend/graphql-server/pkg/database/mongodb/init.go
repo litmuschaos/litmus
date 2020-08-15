@@ -92,8 +92,6 @@ func DBInit() error {
 	database = client.Database(dbName)
 	initAllCollections()
 
-	// clusterCollection = client.Database(dbName).Collection(collections["Cluster"])
-	// workflowRunCollection = client.Database(dbName).Collection(collections["WorkflowRun"])
 	return nil
 }
 

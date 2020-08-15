@@ -6,7 +6,3 @@ type Project{
     updated_at: String!
     removed_at: String!
 }
-
-input ProjectInput {
-    id: ID!
-}

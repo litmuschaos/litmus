@@ -913,10 +913,7 @@ var sources = []*ast.Source{
     updated_at: String!
     removed_at: String!
 }
-
-input ProjectInput {
-    id: ID!
-}`, BuiltIn: false},
+`, BuiltIn: false},
 	&ast.Source{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
@@ -5567,24 +5564,6 @@ func (ec *executionContext) unmarshalInputPodLogRequest(ctx context.Context, obj
 		case "chaos_namespace":
 			var err error
 			it.ChaosNamespace, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputProjectInput(ctx context.Context, obj interface{}) (model.ProjectInput, error) {
-	var it model.ProjectInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "id":
-			var err error
-			it.ID, err = ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
