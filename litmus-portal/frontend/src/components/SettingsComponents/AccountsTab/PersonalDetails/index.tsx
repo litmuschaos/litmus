@@ -19,7 +19,7 @@ const PersonalDetails: React.FC = () => {
   const userData: UserData = useSelector((state: RootState) => state.userData);
 
   const { name, email, username } = userData;
-  // console.log("user-"+ username);
+
   const [personaData, setPersonaData] = React.useState<personaData>({
     email,
     userName: username,
@@ -33,6 +33,30 @@ const PersonalDetails: React.FC = () => {
     setOpen(false);
   };
 
+  const handleUserChange = (e: any) => {
+    setPersonaData({
+      fullName: personaData.fullName,
+      userName: e.target.value,
+      email: personaData.email,
+    });
+  };
+
+  const handleNameChange = (e: any) => {
+    setPersonaData({
+      fullName: e.target.value,
+      userName: personaData.userName,
+      email: personaData.email,
+    });
+  };
+
+  const handleEmailChange = (e: any) => {
+    setPersonaData({
+      fullName: personaData.fullName,
+      userName: personaData.userName,
+      email: e.target.value,
+    });
+  };
+
   return (
     <div>
       <form>
@@ -41,29 +65,11 @@ const PersonalDetails: React.FC = () => {
           nameIsDisabled={false}
           nameValue={personaData.fullName}
           usernameIsDisabled
-          handleNameChange={(e) => {
-            setPersonaData({
-              fullName: e.target.value,
-              userName: personaData.userName,
-              email: personaData.email,
-            });
-          }}
+          handleNameChange={handleNameChange}
           emailValue={personaData.email}
-          handleEmailChange={(e) => {
-            setPersonaData({
-              fullName: personaData.fullName,
-              userName: personaData.userName,
-              email: e.target.value,
-            });
-          }}
+          handleEmailChange={handleEmailChange}
           userValue={personaData.userName}
-          handleUserChange={(e) => {
-            setPersonaData({
-              fullName: personaData.fullName,
-              userName: e.target.value,
-              email: personaData.email,
-            });
-          }}
+          handleUserChange={handleUserChange}
         />
 
         <div className={classes.saveButton}>

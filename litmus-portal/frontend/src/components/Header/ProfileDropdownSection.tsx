@@ -32,7 +32,7 @@ const ProfileDropdownSection: React.FC<ProfileInfoDropdownSectionProps> = ({
 
   const profileMenuRef = useRef();
   const initials = userAvatar(name, false);
-  const sendSelectedProjectIDToHeader = (selectedProjectID: any) => {
+  const sendSelectedProjectIDToHeader = (selectedProjectID: string) => {
     CallbackToSetSelectedProjectID(selectedProjectID);
     setProfilePopoverOpen(false);
   };

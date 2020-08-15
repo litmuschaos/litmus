@@ -24,6 +24,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import SearchIcon from '@material-ui/icons/Search';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import config from '../../../../config';
 import { RootState } from '../../../../redux/reducers';
 import ButtonFilled from '../../../Button/ButtonFilled';
 import CreateUser from '../CreateUser';
@@ -67,7 +68,7 @@ const UserManagement: React.FC = () => {
   const [selectRow, setSelectRows] = React.useState<UserData[]>(rows);
 
   useEffect(() => {
-    fetch('http://3.9.117.22:30375/users', {
+    fetch(`${config.auth.url}/users`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${userData.token}`,
@@ -85,7 +86,7 @@ const UserManagement: React.FC = () => {
       .catch((err) => {
         console.error(err);
       });
-  }, [1]);
+  }, []);
 
   // for displaying user in signed in/out or all kinds of users
   const [state, setState] = React.useState<string>('All');

@@ -11,6 +11,7 @@ import {
 } from '@material-ui/core';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import config from '../../config';
 import { Project, ProjectsCallBackType } from '../../models/header';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
@@ -62,7 +63,7 @@ function ProfileInfoDropdownItems(props: ProfileInfoDropdownItemProps) {
     doLogout(true);
     user.userLogout();
 
-    fetch(`http://3.9.117.22:30375/logout`, {
+    fetch(`${config.auth.url}/logout`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
