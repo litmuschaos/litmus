@@ -1,9 +1,0 @@
-- name: "[Prepare]: select leader broker as per the liveness topic (partition)"
-  set_fact: 
-    kafka_broker: "{{ liveness_topic_leader }}"
-  when: kafka_stream is defined and kafka_stream == 'enabled'
-
-- name: "[Prepare]: allow random pod selection by chaosutil" 
-  set_fact: 
-    kafka_broker: ''
-  when: kafka_stream is not defined or kafka_stream == ''
