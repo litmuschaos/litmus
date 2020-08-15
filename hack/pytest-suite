@@ -1,6 +1,0 @@
-#!/bin/bash
-
-pytest contribute/developer_guide/test_generate_chart.py --verbose -s
-rc_counter=$(echo $?)
-
-exit ${rc_counter}
