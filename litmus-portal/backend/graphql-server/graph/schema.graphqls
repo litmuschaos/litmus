@@ -144,6 +144,8 @@ input PodLogRequest{
 
 type Query{
   getWorkFlowRuns(project_id: String!): [WorkflowRun!]!
+
+  getCluster(project_id: String!, cluster_type: String): [Cluster!]!
 }
 
 type Mutation{

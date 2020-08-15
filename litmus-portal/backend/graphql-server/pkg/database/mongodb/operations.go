@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -78,6 +79,32 @@ func GetWorkflowRuns(_pid string) ([]WorkflowRun, error) {
 		return nil, err
 	}
 	return wfRuns, nil
+}
+
+func GetClusterWithProjectID(project_id string, cluster_type *string) ([]*Cluster, error) {
+
+	var query bson.M
+	if cluster_type == nil {
+		query = bson.M{"project_id": project_id}
+	} else {
+		query = bson.M{"project_id": project_id, "cluster_type": cluster_type}
+	}
+
+	fmt.Print(query)
+	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
+	var clusters []*Cluster
+
+	cursor, err := clusterCollection.Find(ctx, query)
+	if err != nil {
+		return []*Cluster{}, err
+	}
+
+	err = cursor.All(ctx, &clusters)
+	if err != nil {
+		return []*Cluster{}, err
+	}
+
+	return clusters, nil
 }
 
 func InsertChaosWorkflow(chaosWorkflow ChaosWorkFlowInput) error {

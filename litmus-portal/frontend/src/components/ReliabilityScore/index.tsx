@@ -1,5 +1,5 @@
 import { Modal, Typography } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import Center from '../../containers/layouts/Center';
 import ButtonFilled from '../Button/ButtonFilled';
@@ -8,56 +8,47 @@ import CustomSlider from '../CustomSlider';
 import InfoTooltip from '../InfoTooltip';
 import ResultTable from './ResultTable';
 import useStyles from './styles';
-import { WorkflowData } from '../../models/workflow';
+import { WorkflowData, experimentMap } from '../../models/workflow';
 import { RootState } from '../../redux/reducers';
-import parsed from '../../utils/yamlUtils';
-
-// refractor needed
+import useActions from '../../redux/actions';
+import * as WorkflowActions from '../../redux/actions/workflow';
 
 const ReliablityScore = () => {
-  const [WorkflowTestNames, setData] = useState(['']);
+  const classes = useStyles();
+
   const workflowData: WorkflowData = useSelector(
     (state: RootState) => state.workflowData
   );
-  const { yaml } = workflowData;
-  const [value, setValue] = useState<number | Array<number>>([0]);
-  const [value1, setValue1] = useState<number | Array<number>>([0]);
-  const [value2, setValue2] = useState<number | Array<number>>([0]);
-  const [value3, setValue3] = useState<number | Array<number>>([0]);
-  const handleChange = (event: any, newValue: number | number[]) => {
-    setValue(newValue);
-  };
-  const handleChange1 = (event: any, newValue: number | number[]) => {
-    setValue1(newValue);
-  };
-  const handleChange2 = (event: any, newValue: number | number[]) => {
-    setValue2(newValue);
-  };
-  const handleChange3 = (event: any, newValue: number | number[]) => {
-    setValue3(newValue);
-  };
+  const workflow = useActions(WorkflowActions);
 
-  const testValue = [value, value1, value2, value3];
+  const { weights } = workflowData;
 
-  const classes = useStyles();
   const [open, setOpen] = React.useState(false);
-  const [totalTest] = React.useState(12);
-  const handleOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
 
-  useEffect(() => {
-    const tests = parsed(yaml);
-    setData(tests);
-  }, []);
+  const testNames: string[] = [];
+  const testWeights: number[] = [];
+  weights.forEach((weight) => {
+    testNames.push(weight.experimentName);
+    testWeights.push(weight.weight);
+  });
+
+  function handleChange({
+    newValue,
+    index,
+  }: {
+    newValue: number;
+    index: number;
+  }) {
+    (weights as any)[index].weight = newValue;
+    workflow.setWorkflowDetails({
+      weights,
+    });
+  }
 
   return (
     <div>
-      {WorkflowTestNames[0] === 'Invalid CRD' ||
-      WorkflowTestNames[0] === 'Yaml Error' ? (
+      {(weights as any)[0].experimentName === 'Invalid CRD' ||
+      (weights as any)[0].experimentName === 'Yaml Error' ? (
         <div>
           {' '}
           <Typography className={classes.errorText}>
@@ -77,7 +68,7 @@ const ReliablityScore = () => {
                 </strong>
               </Typography>
               <Typography className={classes.description}>
-                You have selected {totalTest} tests in the “Kubernetes
+                You have selected {weights?.length} tests in the “Kubernetes
                 conformance test” workflow. Successful outcome of each test
                 carries a certain weight. We have pre-selected weights for each
                 test for you. However, you may review and modify the weigtage
@@ -91,42 +82,26 @@ const ReliablityScore = () => {
                 <strong>Kubernetes conformance test</strong>
               </Typography>
             </div>
-            <div>
+            {(weights as any).map((Data: experimentMap, index: number) => (
               <div>
-                <CustomSlider
-                  value={typeof value === 'number' ? value : 0}
-                  testName={`${WorkflowTestNames[0]} test`}
-                  onChangeCommitted={handleChange}
-                />
+                <div>
+                  <CustomSlider
+                    index={index}
+                    testName={Data.experimentName}
+                    weight={Data.weight}
+                    handleChange={(newValue, index) =>
+                      handleChange({ newValue, index })
+                    }
+                  />
+                </div>
               </div>
-              <div>
-                <CustomSlider
-                  value={typeof value1 === 'number' ? value1 : 0}
-                  testName="Config map multi volume test"
-                  onChangeCommitted={handleChange1}
-                />
-              </div>
-              <div>
-                <CustomSlider
-                  value={typeof value2 === 'number' ? value2 : 0}
-                  testName="Networking pod test"
-                  onChangeCommitted={handleChange2}
-                />
-              </div>
-              <div>
-                <CustomSlider
-                  value={typeof value3 === 'number' ? value3 : 0}
-                  testName="Proxy-service-test"
-                  onChangeCommitted={handleChange3}
-                />
-              </div>
-            </div>
+            ))}
             <hr className={classes.horizontalLine} />
             <div className={classes.modalDiv}>
               <div className={classes.divRow}>
                 <ButtonOutline
                   isDisabled={false}
-                  handleClick={handleOpen}
+                  handleClick={() => setOpen(true)}
                   data-cy="testRunButton"
                 >
                   <div className={classes.buttonOutlineDiv}>
@@ -143,15 +118,15 @@ const ReliablityScore = () => {
                   <div className={classes.modalContainer}>
                     <div>
                       <ResultTable
-                        testValue={testValue}
-                        testNames={WorkflowTestNames}
+                        testValue={testWeights}
+                        testNames={testNames}
                       />
                     </div>
                     <hr className={classes.horizontalLineResult} />
                     <div className={classes.gotItBtn}>
                       <Center>
                         <ButtonFilled
-                          handleClick={handleClose}
+                          handleClick={() => setOpen(false)}
                           data-cy="gotItButton"
                           isPrimary
                         >
