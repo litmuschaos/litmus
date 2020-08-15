@@ -1,12 +1,12 @@
 import { Button, Hidden, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import InputField from '../../components/InputField';
 import config from '../../config';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
 import { history } from '../../redux/configureStore';
 import useStyles from './styles';
-import InputField from '../../components/InputField';
 
 interface authData {
   username: string;
@@ -45,7 +45,6 @@ const LoginPage = () => {
         console.error(err);
       });
   };
-
   return (
     <div className={classes.rootContainer}>
       <div className={classes.root}>

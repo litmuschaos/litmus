@@ -89,14 +89,16 @@ const marks = [
 
 interface CustomSliderProps {
   testName: string;
-  value: number;
-  onChangeCommitted: (event: object, value: number | number[]) => void;
+  weight: number;
+  index: number;
+  handleChange: (newValue: number, index: number) => void;
 }
 
 const CustomSlider: React.FC<CustomSliderProps> = ({
   testName,
-  value,
-  onChangeCommitted,
+  weight,
+  index,
+  handleChange,
 }) => {
   const classes = useStyles();
   return (
@@ -104,18 +106,20 @@ const CustomSlider: React.FC<CustomSliderProps> = ({
       <div className={classes.mainDiv}>
         <Typography className={classes.testType}>{testName}</Typography>
         <Typography>-</Typography>
-        <Typography className={classes.testResult}>{value} points</Typography>
+        <Typography className={classes.testResult}>{weight} points</Typography>
       </div>
       <div className={classes.sliderDiv}>
         <PrettoSlider
-          defaultValue={value}
+          defaultValue={weight}
           aria-labelledby="discrete-slider-small-steps"
           step={1}
           aria-label="pretto slider"
           max={10}
           valueLabelDisplay="auto"
           marks={marks}
-          onChange={onChangeCommitted}
+          onChange={(event, value) => {
+            handleChange(value as any, index);
+          }}
         />
       </div>
     </div>

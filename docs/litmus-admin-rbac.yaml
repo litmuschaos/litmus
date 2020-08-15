@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: litmus-admin
+  namespace: litmus
+  labels:
+    name: litmus-admin
+---
+# Source: openebs/templates/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: litmus-admin
+  labels:
+    name: litmus-admin
+rules:
+- apiGroups: ["","apps","batch","extensions","litmuschaos.io","openebs.io","storage.k8s.io"]
+  resources: ["chaosengines","chaosexperiments","chaosresults","cstorpools","cstorvolumereplicas","configmaps","secrets","pods","pods/exec","pods/log","pods/eviction","jobs","replicasets","deployments","daemonsets","statefulsets","persistentvolumeclaims","persistentvolumes","storageclasses","services","events"]
+  verbs: ["create","delete","get","list","patch","update"]
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["get","list","patch","update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: litmus-admin
+  labels:
+    name: litmus-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: litmus-admin
+subjects:
+- kind: ServiceAccount
+  name: litmus-admin
+  namespace: litmus

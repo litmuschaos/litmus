@@ -1,6 +1,0 @@
-- include: cstor_verify_pool_provisioning.yml
-
-- include: cstor_delete_and_verify_pool_deployment.yml
-  loop: "{{ range(0, c_iterations|int, 1)|list }}"
-
-- include: cstor_pool_health_check.yml

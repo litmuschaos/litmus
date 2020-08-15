@@ -17,11 +17,11 @@ import configureStore from './redux/configureStore';
 const { persistor, store } = configureStore();
 
 const httpLink = new HttpLink({
-  uri: `http://${config.grahqlEndpoint}`,
+  uri: `${config.grahqlEndpoint}/query`,
 });
 
 const wsLink = new WebSocketLink({
-  uri: `ws://${config.grahqlEndpoint}`,
+  uri: `${config.grahqlEndpointSubscription}/query`,
   options: {
     reconnect: true,
     lazy: true,

@@ -1,30 +1,27 @@
-<!--  Thanks for sending a pull request!  Here are some tips for you -->
+<!--  Thanks for sending a pull request!  -->
 
-**What this PR does / why we need it**:
+## Proposed changes
 
-**Which issue this PR fixes** *(optional, in `fixes #<issue number>(, fixes #<issue_number>, ...)` format, will close that issue when PR gets merged)*: fixes #
+Summarize your changes here to communicate with the maintainers and make sure to put the link of that issue
 
-**Checklist**
+## Types of changes
 
-* [ ] Does this PR have a corresponding GitHub issue?
-* [ ] Have you included relevant README for the chaoslib/experiment with details?
-* [ ] Have you added debug messages where necessary? 
-* [ ] Have you added task comments where necessary? 
-* [ ] Have you tested the changes for possible failure conditions?
-* [ ] Have you provided the positive & negative test logs for the litmusbook execution?
-* [ ] Does the litmusbook ensure idempotency of cluster state?, i.e., is cluster restored to original state?
-* [ ] Have you used non-shell/command modules for Kubernetes tasks?
-* [ ] Have you (jinja) templatized custom scripts that is run by the litmusbook, if any? 
-* [ ] Have you (jinja) templatized Kubernetes deployment manifests used by the litmusbook, if any?
-* [ ] Have you reused/created util functions instead of repeating tasks in the litmusbook?
-* [ ] Do the artifacts follow the appropriate directory structure? 
-* [ ] Have you isolated storage (eg: OpenEBS) specific implementations, checks? 
-* [ ] Have you isolated platform (eg: baremetal kubeadm/openshift/aws/gcloud) specific implementations, checks?  
-* [ ] Are the ansible facts well defined? Is the scope explicitly set for playbook & included utils?
-* [ ] Have you ensured minimum/careful usage of shell utilities (awk, grep, sed, cut, xargs etc.,)?
-* [ ] Can the limtusbook be executed both from within & outside a container (configurable paths, no hardcode)?
-* [ ] Can you suggest the minimal resource requirements for the litmusbook execution?
-* [ ] Does the litmusbook job artifact carry comments/default options/range for the ENV tunables?
-* [ ] Has the litmusbooks been linted? 
+What types of changes does your code introduce to Litmus? Put an `x` in the boxes that apply
+- [ ] New feature (non-breaking change which adds functionality)
+- [ ] Bugfix (non-breaking change which fixes an issue)
+- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
+- [ ] Documentation Update (if none of the other choices applies)
 
-**Special notes for your reviewer**:
+## Checklist
+
+Put an `x` in the boxes that apply. You can also fill these out after creating the PR. If you're unsure about any of them, don't hesitate to ask. We're here to help! This is simply a reminder of what we are going to look for before merging your code.
+- [ ] I have read the [CONTRIBUTING](https://github.com/litmuschaos/litmus/blob/master/CONTRIBUTING.md) doc
+- [ ] I have signed the commit for DCO to be passed.
+- [ ] Lint and unit tests pass locally with my changes
+- [ ] I have added tests that prove my fix is effective or that my feature works (if appropriate)
+- [ ] I have added necessary documentation (if appropriate)
+
+## Dependency
+- Please add the links to the dependent PR need to be merged before this (if any).
+
+## Special notes for your reviewer:

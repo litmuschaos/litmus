@@ -7,7 +7,7 @@ const (
 	RedirectURI                string = "http://localhost:3000/"
 	DefaultDBServerURL         string = "mongodb://mongo-service:27017"
 	DefaultAuthDB              string = "auth"
-	DefaultLocalAuthCollection string = "user"
+	DefaultLocalAuthCollection string = "usercredentials"
 	DefaultAPISecret           string = "litmus-portal@123"
 	DefaultUserName            string = "admin"
 	DefaultUserPassword        string = "litmus"

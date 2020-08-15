@@ -1,6 +1,7 @@
 package mutations
 
 import (
+	"encoding/json"
 	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/data-store"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/subscriptions"
 	"github.com/pkg/errors"
@@ -87,4 +88,92 @@ func NewEvent(clusterEvent model.ClusterEventInput, r store.StateData) (string, 
 	}
 
 	return "", errors.New("ERROR WITH CLUSTER EVENT")
+}
+
+// WorkFlowRunHandler Updates or Inserts a new Workflow Run into the DB
+func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string, error) {
+	cluster, err := cluster.VerifyCluster(*input.ClusterID)
+	if err != nil {
+		log.Print("ERROR", err)
+		return "", err
+	}
+	newWorkflowRun := model.WorkflowRun{
+		ClusterID:     cluster.ClusterID,
+		ClusterName:   cluster.ClusterName,
+		ProjectID:     cluster.ProjectID,
+		LastUpdated:   strconv.FormatInt(time.Now().Unix(), 10),
+		WorkflowRunID: input.WorkflowRunID,
+		WorkflowName:  input.WorkflowName,
+		ExecutionData: input.ExecutionData,
+		WorkflowID:    "000000000000",
+	}
+
+	subscriptions.SendWorkflowEvent(newWorkflowRun, r)
+	err = database.UpsertWorkflowRun(database.WorkflowRun(newWorkflowRun))
+	if err != nil {
+		log.Print("ERROR", err)
+		return "", err
+	}
+	return "Workflow Run Accepted", nil
+}
+
+// LogsHandler receives logs from the workflow-agent and publishes to frontend clients
+func LogsHandler(podLog model.PodLog, r store.StateData) (string, error) {
+	_, err := cluster.VerifyCluster(*podLog.ClusterID)
+	if err != nil {
+		log.Print("ERROR", err)
+		return "", err
+	}
+	if reqChan, ok := r.WorkflowLog[podLog.RequestID]; ok {
+		resp := model.PodLogResponse{
+			PodName:       podLog.PodName,
+			WorkflowRunID: podLog.WorkflowRunID,
+			PodType:       podLog.PodType,
+			Log:           podLog.Log,
+		}
+		reqChan <- &resp
+		close(reqChan)
+		return "LOGS SENT SUCCESSFULLY", nil
+	}
+	return "LOG REQUEST CANCELLED", nil
+}
+
+func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*model.ChaosWorkFlowResponse, error) {
+	marshalData, err := json.Marshal(input.Weightages)
+	if err != nil {
+		return &model.ChaosWorkFlowResponse{}, err
+	}
+
+	var Weightages []*database.WeightagesInput
+	if err := json.Unmarshal(marshalData, &Weightages); err != nil {
+		return &model.ChaosWorkFlowResponse{}, err
+	}
+
+	workflow_id := utils.RandomString(32)
+	newChaosWorkflow := database.ChaosWorkFlowInput{
+		WorkflowID:          workflow_id,
+		WorkflowManifest:    input.WorkflowManifest,
+		CronSyntax:          input.CronSyntax,
+		WorkflowName:        input.WorkflowName,
+		WorkflowDescription: input.WorkflowDescription,
+		IsCustomWorkflow:    input.IsCustomWorkflow,
+		ProjectID:           input.ProjectID,
+		ClusterID:           input.ClusterID,
+		Weightages:          Weightages,
+	}
+
+	err = database.InsertChaosWorkflow(newChaosWorkflow)
+	if err != nil {
+		return nil, err
+	}
+
+	subscriptions.SendWorkflowRequest(&newChaosWorkflow, r)
+
+	return &model.ChaosWorkFlowResponse{
+		WorkflowID:          workflow_id,
+		CronSyntax:          input.CronSyntax,
+		WorkflowName:        input.WorkflowName,
+		WorkflowDescription: input.WorkflowDescription,
+		IsCustomWorkflow:    input.IsCustomWorkflow,
+	}, nil
 }
