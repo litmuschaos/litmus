@@ -13,7 +13,7 @@ Litmus-Portal provides console and UI experience for managing, monitoring, and e
 
 Applying k8s manifest
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/litmus-portal/litmus-portal/k8s-manifest.yml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/k8s-manifest.yml
 ```
 
 Retrieving external url to access the litmus portal
@@ -28,7 +28,7 @@ Note: Default `username: admin` and  `password: litmus`
 
 ### Unistallation
 ```bash
-kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/litmus-portal/litmus-portal/k8s-manifest.yml
+kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/k8s-manifest.yml
 ```
 
 
