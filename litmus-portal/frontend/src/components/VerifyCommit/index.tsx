@@ -1,4 +1,4 @@
-import { Button, Divider, Link, Modal, Typography } from '@material-ui/core';
+import { Divider, Link, Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { experimentMap, WorkflowData } from '../../models/workflow';
@@ -17,6 +17,7 @@ import {
   parseYamlValidations,
 } from '../YamlEditor/Validations';
 import useStyles from './styles';
+import Unimodal from '../Unimodal';
 
 interface VerifyCommitProps {
   goto: () => void;
@@ -245,29 +246,17 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ goto }) => {
         </div>
       </div>
 
-      <Modal open={open} onClose={handleClose}>
-        <div className={classes.modalContainer}>
-          <div className={classes.modalContainerClose}>
-            <Button
-              variant="outlined"
-              color="secondary"
-              className={classes.closeButtonStyle}
-              onClick={handleClose}
-            >
-              &#x2715;
-            </Button>
-          </div>
-          <YamlEditor
-            content={yaml}
-            filename={name}
-            yamlLink={link}
-            id={id}
-            description={description}
-            readOnly
-            optionsDisplay={false}
-          />
-        </div>
-      </Modal>
+      <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn isDark>
+        <YamlEditor
+          content={yaml}
+          filename={name}
+          yamlLink={link}
+          id={id}
+          description={description}
+          readOnly
+          optionsDisplay={false}
+        />
+      </Unimodal>
     </div>
   );
 };

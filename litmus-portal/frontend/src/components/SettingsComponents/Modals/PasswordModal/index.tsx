@@ -1,6 +1,7 @@
-import { Button, Modal, Typography } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import React from 'react';
 import useStyles from './styles';
+import Unimodal from '../../../Unimodal';
 
 interface PasswordModalProps {
   formErr: boolean;
@@ -31,37 +32,29 @@ const PasswordModal: React.FC<PasswordModalProps> = ({ formErr, isEmpty }) => {
       >
         Change password
       </Button>
-      <Modal
-        data-cy="modal"
-        open={open}
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
-        className={classes.modal}
-      >
-        <div className={classes.paper}>
-          <div className={classes.body}>
-            <img src="./icons/lock.svg" alt="lock" />
-            <div className={classes.text}>
-              <Typography className={classes.typo} align="center">
-                Your password <strong>has been changed!</strong>
-              </Typography>
-            </div>
-            <div className={classes.text1}>
-              <Typography className={classes.typo1}>
-                You can now use your new password to login to your account
-              </Typography>
-            </div>
-            <Button
-              data-cy="closeButton"
-              variant="contained"
-              className={classes.button}
-              onClick={handleClose}
-            >
-              Done
-            </Button>
+      <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn={false}>
+        <div className={classes.body}>
+          <img src="./icons/lock.svg" alt="lock" />
+          <div className={classes.text}>
+            <Typography className={classes.typo} align="center">
+              Your password <strong>has been changed!</strong>
+            </Typography>
           </div>
+          <div className={classes.text1}>
+            <Typography className={classes.typo1}>
+              You can now use your new password to login to your account
+            </Typography>
+          </div>
+          <Button
+            data-cy="closeButton"
+            variant="contained"
+            className={classes.button}
+            onClick={handleClose}
+          >
+            Done
+          </Button>
         </div>
-      </Modal>
+      </Unimodal>
     </div>
   );
 };

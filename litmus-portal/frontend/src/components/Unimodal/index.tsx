@@ -3,13 +3,14 @@ import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
 import useStyles from './styles';
 
-/* WelcomeModal, PasswordModal, FinishModal, PersonalDetails, ChooseWorkflow, ReliabiltyScore, VerifyCommit */
+/* DelUser, NewUserModal, ResetModal need to be shifted */
 
 interface UnimodalProps {
   children?: any;
   isOpen: boolean;
   handleClose: any;
   hasCloseBtn: boolean;
+  isDark?: boolean;
 }
 
 const Unimodal: React.FC<UnimodalProps> = ({
@@ -17,6 +18,7 @@ const Unimodal: React.FC<UnimodalProps> = ({
   isOpen,
   handleClose,
   hasCloseBtn,
+  isDark,
 }) => {
   const classes = useStyles();
 
@@ -26,14 +28,19 @@ const Unimodal: React.FC<UnimodalProps> = ({
       onClose={handleClose}
       disableBackdropClick
       disableEscapeKeyDown
+      data-cy="modal"
+      aria-labelledby="simple-modal-title"
+      aria-describedby="simple-modal-description"
     >
-      <div className={classes.modalContainer}>
+      <div
+        className={isDark ? classes.darkModalContainer : classes.modalContainer}
+      >
         {hasCloseBtn && (
           <div className={classes.modalContainerClose}>
             <Button
               variant="outlined"
               color="secondary"
-              className={classes.closeButton}
+              className={isDark ? classes.darkCloseButton : classes.closeButton}
               onClick={handleClose}
             >
               &#x2715;

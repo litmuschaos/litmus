@@ -1,7 +1,7 @@
 import Button from '@material-ui/core/Button';
-import Modal from '@material-ui/core/Modal';
 import React from 'react';
 import useStyles from './styles';
+import Unimodal from '../Unimodal';
 
 /* Icon function is used for finish modal to show mark */
 function Icon() {
@@ -41,7 +41,7 @@ const FinishModal = () => {
           variant="contained"
           color="secondary"
           data-cy="selectFinish"
-          // onClick = {}
+          onClick={handleClose}
         >
           Back to workflow
         </Button>
@@ -61,15 +61,9 @@ const FinishModal = () => {
       </Button>
 
       {/* Finish Modal is added */}
-
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
-      >
+      <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn={false}>
         {body}
-      </Modal>
+      </Unimodal>
     </div>
   );
 };

@@ -3,13 +3,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme: Theme) => ({
   /* CSS for Index */
   rootContainer: {
-    margin: '3rem auto',
-    width: '60%',
-    height: '85%',
-    background: theme.palette.common.white,
-    borderRadius: 3,
-    textAlign: 'center',
-    outline: 'none',
+    paddingBottom: '8.5rem',
   },
 
   /* CSS for Modal Page Component */

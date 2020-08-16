@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Modal } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import useStyles, { CssTextField, ColorButton } from './styles';
 import useActions from '../../redux/actions';
 import * as WorkflowActions from '../../redux/actions/workflow';
 import PredifinedWorkflows from '../PredifinedWorkflows';
+import Unimodal from '../Unimodal';
 // import { getWkfRunCount } from "../../utils";
 
 const ChooseWorkflow: React.FC = () => {
@@ -157,83 +158,71 @@ const ChooseWorkflow: React.FC = () => {
         </div>
       </div>
 
-      <Modal open={open} onClose={() => setOpen(false)}>
-        <div className={classes.modalContainer}>
-          <div className={classes.modalContainerClose}>
+      <Unimodal isOpen={open} handleClose={() => setOpen(false)} hasCloseBtn>
+        <div className={classes.modalContainerName}>
+          <Typography className={classes.modalHeading} display="inline">
+            Create your <strong>workflow name</strong>
+          </Typography>
+        </div>
+        <div className={classes.modalContainerBody}>
+          <div className={classes.inputDiv}>
+            <div className={classes.inputArea}>
+              <CssTextField
+                id="filled-workflowname-input"
+                label="Workflow name"
+                InputProps={{
+                  disableUnderline: true,
+                  classes: {
+                    input: classes.resizeName,
+                  },
+                }}
+                data-cy="inputWorkflow"
+                className={classes.textfieldworkflowname}
+                onChange={WorkflowNameChangeHandler}
+                value={workflowDetails.workflowName}
+                autoFocus
+              />
+            </div>
+            <div className={classes.inputAreaDescription}>
+              <CssTextField
+                id="filled-workflowdescription-input"
+                label="Description"
+                InputProps={{
+                  disableUnderline: true,
+                  classes: {
+                    input: classes.resize,
+                  },
+                }}
+                data-cy="inputWorkflowDescription"
+                className={classes.textfieldworkflowdescription}
+                value={workflowDetails.workflowDesc}
+                onChange={WorkflowDescriptionChangeHandler}
+                multiline
+                rows={12}
+              />
+            </div>
+          </div>
+          <div className={classes.buttons}>
             <Button
               variant="outlined"
               color="secondary"
-              className={classes.closeButton}
+              className={classes.buttonCancel}
               onClick={() => setOpen(false)}
             >
-              &#x2715;
+              Cancel
             </Button>
-          </div>
-          <div className={classes.modalContainerName}>
-            <Typography className={classes.modalHeading} display="inline">
-              Create your <strong>workflow name</strong>
-            </Typography>
-          </div>
-          <div className={classes.modalContainerBody}>
-            <div className={classes.inputDiv}>
-              <div className={classes.inputArea}>
-                <CssTextField
-                  id="filled-workflowname-input"
-                  label="Workflow name"
-                  InputProps={{
-                    disableUnderline: true,
-                    classes: {
-                      input: classes.resizeName,
-                    },
-                  }}
-                  data-cy="inputWorkflow"
-                  className={classes.textfieldworkflowname}
-                  onChange={WorkflowNameChangeHandler}
-                  value={workflowDetails.workflowName}
-                  autoFocus
-                />
-              </div>
-              <div className={classes.inputAreaDescription}>
-                <CssTextField
-                  id="filled-workflowdescription-input"
-                  label="Description"
-                  InputProps={{
-                    disableUnderline: true,
-                    classes: {
-                      input: classes.resize,
-                    },
-                  }}
-                  data-cy="inputWorkflowDescription"
-                  className={classes.textfieldworkflowdescription}
-                  value={workflowDetails.workflowDesc}
-                  onChange={WorkflowDescriptionChangeHandler}
-                  multiline
-                  rows={12}
-                />
-              </div>
-            </div>
-            <div className={classes.buttons}>
-              <Button
-                variant="outlined"
-                color="secondary"
-                className={classes.buttonCancel}
-                onClick={() => setOpen(false)}
-              >
-                Cancel
-              </Button>
 
-              <ColorButton
-                variant="contained"
-                color="primary"
-                className={classes.buttonSave}
-                onClick={() => handleSave()}
-              >
-                Save
-              </ColorButton>
-            </div>
+            <ColorButton
+              variant="contained"
+              color="primary"
+              className={classes.buttonSave}
+              onClick={() => handleSave()}
+            >
+              Save
+            </ColorButton>
           </div>
         </div>
-      </Modal>
+      </Unimodal>
     </div>
   );
 };
