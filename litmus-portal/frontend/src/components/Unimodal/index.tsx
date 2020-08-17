@@ -6,11 +6,12 @@ import useStyles from './styles';
 /* DelUser, NewUserModal, ResetModal need to be shifted */
 
 interface UnimodalProps {
-  children?: any;
+  children?: React.ReactNode;
   isOpen: boolean;
-  handleClose: any;
+  handleClose: () => void;
   hasCloseBtn: boolean;
   isDark?: boolean;
+  textAlign?: string;
 }
 
 const Unimodal: React.FC<UnimodalProps> = ({
@@ -19,8 +20,10 @@ const Unimodal: React.FC<UnimodalProps> = ({
   handleClose,
   hasCloseBtn,
   isDark,
+  textAlign,
 }) => {
-  const classes = useStyles();
+  const styleProps = { textAlign, isDark };
+  const classes = useStyles(styleProps);
 
   return (
     <Modal
@@ -32,15 +35,13 @@ const Unimodal: React.FC<UnimodalProps> = ({
       aria-labelledby="simple-modal-title"
       aria-describedby="simple-modal-description"
     >
-      <div
-        className={isDark ? classes.darkModalContainer : classes.modalContainer}
-      >
+      <div className={classes.modalContainer}>
         {hasCloseBtn && (
           <div className={classes.modalContainerClose}>
             <Button
               variant="outlined"
               color="secondary"
-              className={isDark ? classes.darkCloseButton : classes.closeButton}
+              className={classes.closeButton}
               onClick={handleClose}
             >
               &#x2715;

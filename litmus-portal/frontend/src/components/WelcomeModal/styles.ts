@@ -3,7 +3,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme: Theme) => ({
   /* CSS for Index */
   rootContainer: {
-    paddingBottom: '8.5rem',
+    paddingBottom: theme.spacing(2),
   },
 
   /* CSS for Modal Page Component */
