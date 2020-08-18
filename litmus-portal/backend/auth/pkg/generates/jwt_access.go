@@ -15,7 +15,9 @@ import (
 
 // JWTAccessClaims jwt claims
 type JWTAccessClaims struct {
-	*models.PublicUserInfo
+	UserName string `json:"username,omitempty"`
+	Email    string `json:"email,omitempty"`
+	Name     string `json:"name,omitempty"`
 	jwt.StandardClaims
 }
 
@@ -43,7 +45,9 @@ type JWTAccessGenerate struct {
 // Token based on the UUID generated token
 func (a *JWTAccessGenerate) Token(data *GenerateBasic) (string, error) {
 	claims := &JWTAccessClaims{
-		PublicUserInfo: data.UserInfo,
+		UserName: data.UserInfo.GetUserName(),
+		Email:    data.UserInfo.GetEmail(),
+		Name:     data.UserInfo.GetName(),
 		StandardClaims: jwt.StandardClaims{
 			IssuedAt:  time.Now().Unix(),
 			ExpiresAt: data.TokenInfo.GetAccessCreateAt().Add(data.TokenInfo.GetAccessExpiresIn()).Unix(),
@@ -109,8 +113,13 @@ func (a *JWTAccessGenerate) Parse(tokenString string) (*models.PublicUserInfo, e
 		return nil, err
 	}
 
+	var userInfo *models.PublicUserInfo = new(models.PublicUserInfo)
+
 	if claims, ok := token.Claims.(*JWTAccessClaims); ok && token.Valid {
-		return claims.PublicUserInfo, nil
+		userInfo.Email = claims.Email
+		userInfo.Name = claims.Name
+		userInfo.UserName = claims.UserName
+		return userInfo, nil
 	}
 	return nil, errors.ErrInvalidAccessToken
 }

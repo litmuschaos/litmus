@@ -1,16 +1,16 @@
+import { Box, Divider } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import React, { useEffect, useState, useCallback } from 'react';
-import { Divider, Box } from '@material-ui/core';
-import { useLocation } from 'react-router-dom';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import useStyles from './styles';
+import { useLocation } from 'react-router-dom';
+import { Message, NotificationIds, Project } from '../../models/header';
+import { UserData } from '../../models/user';
+import { RootState } from '../../redux/reducers';
 import CustomBreadCrumbs from '../CustomBreadCrumbs';
 import NotificationsDropdown from './NotificationDropdown';
 import ProfileDropdownSection from './ProfileDropdownSection';
-import { UserData } from '../../models/user';
-import { RootState } from '../../redux/reducers';
-import { NotificationIds, Project, Message } from '../../models/header';
+import useStyles from './styles';
 
 const Header: React.FC = () => {
   const classes = useStyles();

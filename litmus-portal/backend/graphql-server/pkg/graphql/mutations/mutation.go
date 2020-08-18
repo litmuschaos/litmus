@@ -1,6 +1,7 @@
 package mutations
 
 import (
+	"encoding/json"
 	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/data-store"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/subscriptions"
 	"github.com/pkg/errors"
@@ -106,6 +107,7 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		ExecutionData: input.ExecutionData,
 		WorkflowID:    "000000000000",
 	}
+
 	subscriptions.SendWorkflowEvent(newWorkflowRun, r)
 	err = database.UpsertWorkflowRun(database.WorkflowRun(newWorkflowRun))
 	if err != nil {
@@ -134,4 +136,44 @@ func LogsHandler(podLog model.PodLog, r store.StateData) (string, error) {
 		return "LOGS SENT SUCCESSFULLY", nil
 	}
 	return "LOG REQUEST CANCELLED", nil
+}
+
+func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*model.ChaosWorkFlowResponse, error) {
+	marshalData, err := json.Marshal(input.Weightages)
+	if err != nil {
+		return &model.ChaosWorkFlowResponse{}, err
+	}
+
+	var Weightages []*database.WeightagesInput
+	if err := json.Unmarshal(marshalData, &Weightages); err != nil {
+		return &model.ChaosWorkFlowResponse{}, err
+	}
+
+	workflow_id := utils.RandomString(32)
+	newChaosWorkflow := database.ChaosWorkFlowInput{
+		WorkflowID:          workflow_id,
+		WorkflowManifest:    input.WorkflowManifest,
+		CronSyntax:          input.CronSyntax,
+		WorkflowName:        input.WorkflowName,
+		WorkflowDescription: input.WorkflowDescription,
+		IsCustomWorkflow:    input.IsCustomWorkflow,
+		ProjectID:           input.ProjectID,
+		ClusterID:           input.ClusterID,
+		Weightages:          Weightages,
+	}
+
+	err = database.InsertChaosWorkflow(newChaosWorkflow)
+	if err != nil {
+		return nil, err
+	}
+
+	subscriptions.SendWorkflowRequest(&newChaosWorkflow, r)
+
+	return &model.ChaosWorkFlowResponse{
+		WorkflowID:          workflow_id,
+		CronSyntax:          input.CronSyntax,
+		WorkflowName:        input.WorkflowName,
+		WorkflowDescription: input.WorkflowDescription,
+		IsCustomWorkflow:    input.IsCustomWorkflow,
+	}, nil
 }

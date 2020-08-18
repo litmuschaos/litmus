@@ -1,7 +1,10 @@
 import { Box, Paper, Tab, Tabs, Typography } from '@material-ui/core';
 import React from 'react';
-import AccountSettings from '../../components/AccountsTab/AccountSettings';
+import { useSelector } from 'react-redux';
+import AccountSettings from '../../components/SettingsComponents/AccountsTab/AccountSettings';
+import UserManagement from '../../components/SettingsComponents/UserManagementTab/UserManagement';
 import Scaffold from '../../containers/layouts/Scaffold';
+import { RootState } from '../../redux/reducers';
 import useStyles from './styles';
 
 interface TabPanelProps {
@@ -41,6 +44,8 @@ const Settings: React.FC = () => {
   const handleChange = (event: React.ChangeEvent<{}>, actTab: number) => {
     setActiveTab(actTab);
   };
+
+  const { userData } = useSelector((state: RootState) => state);
   return (
     <Scaffold>
       <div>
@@ -54,13 +59,24 @@ const Settings: React.FC = () => {
             textColor="secondary"
           >
             <Tab label="Account" {...tabProps(0)} />
-            <Tab label="Team" {...tabProps(1)} />
-            <Tab label="USer Management" {...tabProps(2)} />
+            <Tab disabled label="Team" {...tabProps(1)} />
+            {userData.username === 'admin' ? (
+              <Tab label="User Management" {...tabProps(2)} />
+            ) : (
+              <></>
+            )}
           </Tabs>
         </Paper>
         <TabPanel value={activeTab} index={0}>
           <AccountSettings />
         </TabPanel>
+        {userData.username === 'admin' ? (
+          <TabPanel value={activeTab} index={2}>
+            <UserManagement />
+          </TabPanel>
+        ) : (
+          <></>
+        )}
       </div>
     </Scaffold>
   );

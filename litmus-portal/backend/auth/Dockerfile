@@ -1,22 +1,18 @@
-FROM golang:1.14.4-alpine
+# BUILD STAGE
+FROM golang:1.14 AS builder
 
-# Add Maintainer Info
+ADD . /auth-server
+WORKDIR /auth-server
+RUN CGO_ENABLED=0 go build -o /output/server -v ./src/
+
+
+# DEPLOY STAGE
+FROM alpine:latest
+
 LABEL maintainer="LitmusChaos"
 
-# All these steps will be cached
-RUN mkdir /auth-server
-WORKDIR /auth-server
+COPY --from=builder /output/server /
+CMD ["./server"]
 
-# COPY the source code as the last step
-COPY . .
-
-# Get dependancies - will also be cached if we won't change mod/sum
-RUN go mod download
-
-# Expose to port 3000
 EXPOSE 3000
-
-# Go build
-RUN go build -o server ./src/
-ENTRYPOINT ["./server"]
 

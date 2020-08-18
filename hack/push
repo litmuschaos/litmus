@@ -2,36 +2,36 @@
 set -e
 
 if [ -z "${REPONAME}" ]
-then 
+then
   REPONAME="litmuschaos"
 fi
 
-if [ -z "${IMGNAME}" ] || [ -z "${IMGTAG}" ]; 
+if [ -z "${IMGNAME}" ] || [ -z "${IMGTAG}" ];
 then
-  echo "Image details are missing. Nothing to push."; 
+  echo "Image details are missing. Nothing to push.";
   exit 1
 fi
 
 IMAGEID=$( sudo docker images -q ${REPONAME}/${IMGNAME}:${IMGTAG} )
 
-if [ ! -z "${DNAME}" ] && [ ! -z "${DPASS}" ]; 
-then 
+if [ ! -z "${DNAME}" ] && [ ! -z "${DPASS}" ];
+then
   sudo docker login -u "${DNAME}" -p "${DPASS}";
   # Push image to docker hub
-  echo "Pushing ${REPONAME}/${IMGNAME}:${IMGTAG} ..."; 
+  echo "Pushing ${REPONAME}/${IMGNAME}:${IMGTAG} ...";
   sudo docker push ${REPONAME}/${IMGNAME}:${IMGTAG} ;
-  if [ ! -z "${TRAVIS_TAG}" ] ; 
+  if [ ! -z "${TRAVIS_TAG}" ] ;
   then
     # Push with different tags if tagged as a release
-    # When github is tagged with a release, then Travis will 
+    # When github is tagged with a release, then Travis will
     # set the release tag in env TRAVIS_TAG
-    echo "Pushing ${REPONAME}/${IMGNAME}:${TRAVIS_TAG} ..."; 
+    echo "Pushing ${REPONAME}/${IMGNAME}:${TRAVIS_TAG} ...";
     sudo docker tag ${IMAGEID} ${REPONAME}/${IMGNAME}:${TRAVIS_TAG}
-    sudo docker push ${REPONAME}/${IMGNAME}:${TRAVIS_TAG}; 
-    echo "Pushing ${REPONAME}/${IMGNAME}:latest ..."; 
+    sudo docker push ${REPONAME}/${IMGNAME}:${TRAVIS_TAG};
+    echo "Pushing ${REPONAME}/${IMGNAME}:latest ...";
     sudo docker tag ${IMAGEID} ${REPONAME}/${IMGNAME}:latest
-    sudo docker push ${REPONAME}/${IMGNAME}:latest; 
+    sudo docker push ${REPONAME}/${IMGNAME}:latest;
   fi;
 else
-  echo "No docker credentials provided. Skip uploading ${REPONAME}/${IMGNAME}:${IMGTAG} to docker hub"; 
+  echo "No docker credentials provided. Skip uploading ${REPONAME}/${IMGNAME}:${IMGTAG} to docker hub";
 fi;

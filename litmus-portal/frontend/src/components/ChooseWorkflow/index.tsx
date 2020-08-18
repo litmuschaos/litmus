@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Typography, Modal } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
@@ -6,58 +6,41 @@ import useStyles, { CssTextField, ColorButton } from './styles';
 import useActions from '../../redux/actions';
 import * as WorkflowActions from '../../redux/actions/workflow';
 import PredifinedWorkflows from '../PredifinedWorkflows';
-import {
-  preDefinedWorkflowData,
-  workflowDetails,
-} from '../../models/predefinedWorkflow';
 // import { getWkfRunCount } from "../../utils";
 
 const ChooseWorkflow: React.FC = () => {
   const classes = useStyles();
-
   const workflow = useActions(WorkflowActions);
-
   const [open, setOpen] = React.useState(false);
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const [selectedWorkflowName, setSelectedWorkflowName] = useState(
-    'Personal Workflow 1'
-  );
-
-  const [selectedWorkflowDesc, setSelectedWorkflowDesc] = useState(
-    'Personal Workflow 1 Description'
-  );
-
-  const [WorkflowName, setName] = useState(' ');
-
-  const [WorkflowDescriptionforTF, setDescriptionTF] = useState(' ');
+  const [workflowDetails, setWorkflowData] = useState({
+    workflowName: 'Personal Workflow Name',
+    workflowDesc: 'Personal Description',
+  });
 
   const WorkflowNameChangeHandler = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setName((event.target as HTMLInputElement).value);
+    setWorkflowData({
+      workflowName: (event.target as HTMLInputElement).value,
+      workflowDesc: workflowDetails.workflowDesc,
+    });
   };
 
   const WorkflowDescriptionChangeHandler = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setDescriptionTF((event.target as HTMLInputElement).value);
+    setWorkflowData({
+      workflowName: workflowDetails.workflowName,
+      workflowDesc: (event.target as HTMLInputElement).value,
+    });
   };
 
   const handleSave = () => {
-    setSelectedWorkflowName(WorkflowName);
-    setSelectedWorkflowDesc(WorkflowDescriptionforTF);
     workflow.setWorkflowDetails({
-      name: WorkflowName,
-      description: WorkflowDescriptionforTF,
+      name: workflowDetails.workflowName,
+      description: workflowDetails.workflowDesc,
     });
+    setOpen(false);
   };
 
   /*
@@ -66,93 +49,66 @@ const ChooseWorkflow: React.FC = () => {
 	);
   */
 
+  useEffect(() => {
+    workflow.setWorkflowDetails({
+      name: 'Personal Workflow Name',
+      description: 'Personal Workflow Description',
+      yaml: '#You can start creating your own workflow from here.',
+      weights: [],
+      link: '',
+      id: '',
+      isCustomWorkflow: true,
+    });
+  }, []);
+
   // Fetch and Set preDefWorkflows from backend via GQL.
 
-  const [preDefWorkflows, setPreDefWorkflows] = useState<
-    preDefinedWorkflowData[]
-  >([]);
+  const workflowsList = [
+    {
+      workflowID: '1',
+      title: 'node-cpu-hog',
+      urlToIcon: 'https://hub.litmuschaos.io/api/icon/generic/pod-delete.png',
+      chaosWkfCRDLink:
+        'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/node-cpu-hog/workflow.yaml',
 
-  const [totalWorkflows, setTotalWorkflows] = useState(0);
+      gitLink:
+        'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/node-cpu-hog/workflow.yaml',
+      provider: 'MayaData',
+      description: 'Sample Description',
+      totalRuns: 5300,
+      isCustom: false,
+    },
+    {
+      workflowID: '2',
+      title: 'node-memory-hog',
+      urlToIcon:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Kubernetes_logo_without_workmark.svg/1200px-Kubernetes_logo_without_workmark.svg.png',
+      chaosWkfCRDLink:
+        'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/node-memory-hog/workflow.yaml',
 
-  const fetchWorkflows = useCallback(() => {
+      gitLink:
+        'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/node-memory-hog/workflow.yaml',
+      provider: 'MayaData',
+      description: 'Sample Description',
+      totalRuns: 5300,
+      isCustom: false,
+    },
+  ];
+
+  const selectWorkflow = (index: number) => {
     workflow.setWorkflowDetails({
-      name: selectedWorkflowName,
-      yaml: '# Argo workflow CRD for chaos injection using LitmusChaos',
-      description: selectedWorkflowDesc,
-    });
-
-    const workflows = [];
-
-    const workflowsList = [
-      {
-        workflowID: '1',
-        title: 'Native Pod Delete',
-        urlToIcon: 'https://hub.litmuschaos.io/api/icon/generic/pod-delete.png',
-        chaosWkfCRDLink:
-          'https://raw.githubusercontent.com/litmuschaos/chaos-workflows/master/Argo/argowf-native-pod-delete.yaml',
-
-        gitLink:
-          'https://github.com/litmuschaos/chaos-workflows/blob/master/Argo/argowf-native-pod-delete.yaml',
-        provider: 'MayaData',
-        description: 'Injects native chaos on pods',
-      },
-      {
-        workflowID: '2',
-        title: 'Chaos Admin',
-        urlToIcon:
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Kubernetes_logo_without_workmark.svg/1200px-Kubernetes_logo_without_workmark.svg.png',
-        chaosWkfCRDLink:
-          'https://raw.githubusercontent.com/litmuschaos/chaos-workflows/master/Argo/argowf-chaos-admin.yaml',
-
-        gitLink:
-          'https://github.com/litmuschaos/chaos-workflows/blob/master/Argo/argowf-chaos-admin.yaml',
-        provider: 'MayaData',
-        description: 'Injects native chaos on k8s pods',
-      },
-    ];
-
-    const iterations = workflowsList.length;
-
-    for (let i = 0; i < iterations; i += 1) {
-      const workflowItem = workflowsList[i];
-      const workflow = {
-        workflowID: workflowItem.workflowID,
-        title: workflowItem.title,
-        urlToIcon: workflowItem.urlToIcon,
-        chaosWkfCRDLink: workflowItem.chaosWkfCRDLink,
-        gitLink: workflowItem.gitLink,
-        provider: workflowItem.provider,
-        description: workflowItem.description,
-        // totalRuns=(getWkfRunCount(w.name, analyticsData.wkfAnalytics)) or mongoDB
-        totalRuns: 5300,
-      };
-      workflows.push(workflow);
-    }
-    workflows.push({
-      workflowID: 'Custom',
-      customWorkflow: true,
-    });
-    setPreDefWorkflows(workflows);
-    setTotalWorkflows(workflows.length - 1);
-  }, [setPreDefWorkflows, setTotalWorkflows]);
-
-  const selectWorkflow = (selectedWorkflow: workflowDetails) => {
-    workflow.setWorkflowDetails({
-      name: selectedWorkflow.name,
-      link: selectedWorkflow.link,
-      id: selectedWorkflow.id,
+      name: workflowsList[index].title,
+      link: workflowsList[index].chaosWkfCRDLink,
+      id: workflowsList[index].workflowID,
       yaml: 'none',
-      description: selectedWorkflow.description,
+      description: workflowsList[index].description,
+      isCustomWorkflow: false,
     });
-    setName(selectedWorkflow.name);
-    setDescriptionTF(selectedWorkflow.description);
-    setSelectedWorkflowName(selectedWorkflow.name);
-    setSelectedWorkflowDesc(selectedWorkflow.description);
+    setWorkflowData({
+      workflowName: workflowsList[index].title,
+      workflowDesc: workflowsList[index].description,
+    });
   };
-
-  useEffect(() => {
-    fetchWorkflows();
-  }, [fetchWorkflows]);
 
   return (
     <div>
@@ -167,18 +123,20 @@ const ChooseWorkflow: React.FC = () => {
         <Divider variant="middle" className={classes.horizontalLine} />
         <div className={classes.cards}>
           <Typography className={classes.totalWorkflows}>
-            {totalWorkflows} pre-defined workflows
+            {workflowsList.length} pre-defined workflows
           </Typography>
           <PredifinedWorkflows
-            CallbackOnSelectWorkflow={selectWorkflow}
-            workflows={preDefWorkflows}
+            CallbackOnSelectWorkflow={(index: number) => {
+              selectWorkflow(index);
+            }}
+            workflows={workflowsList}
           />
           <div className={classes.paddedTop}>
             <ColorButton
               variant="contained"
               color="primary"
               className={classes.colorButton}
-              onClick={handleOpen}
+              onClick={() => setOpen(true)}
             >
               Create workflow name
             </ColorButton>
@@ -190,7 +148,7 @@ const ChooseWorkflow: React.FC = () => {
                   className={classes.selectionName}
                   display="inline"
                 >
-                  <strong>{selectedWorkflowName}</strong>
+                  <strong>{workflowDetails.workflowName}</strong>
                 </Typography>
                 &quot;
               </strong>
@@ -199,14 +157,14 @@ const ChooseWorkflow: React.FC = () => {
         </div>
       </div>
 
-      <Modal open={open} onClose={handleClose}>
+      <Modal open={open} onClose={() => setOpen(false)}>
         <div className={classes.modalContainer}>
           <div className={classes.modalContainerClose}>
             <Button
               variant="outlined"
               color="secondary"
               className={classes.closeButton}
-              onClick={handleClose}
+              onClick={() => setOpen(false)}
             >
               &#x2715;
             </Button>
@@ -231,7 +189,7 @@ const ChooseWorkflow: React.FC = () => {
                   data-cy="inputWorkflow"
                   className={classes.textfieldworkflowname}
                   onChange={WorkflowNameChangeHandler}
-                  value={WorkflowName}
+                  value={workflowDetails.workflowName}
                   autoFocus
                 />
               </div>
@@ -247,7 +205,7 @@ const ChooseWorkflow: React.FC = () => {
                   }}
                   data-cy="inputWorkflowDescription"
                   className={classes.textfieldworkflowdescription}
-                  value={WorkflowDescriptionforTF}
+                  value={workflowDetails.workflowDesc}
                   onChange={WorkflowDescriptionChangeHandler}
                   multiline
                   rows={12}
@@ -259,7 +217,7 @@ const ChooseWorkflow: React.FC = () => {
                 variant="outlined"
                 color="secondary"
                 className={classes.buttonCancel}
-                onClick={handleClose}
+                onClick={() => setOpen(false)}
               >
                 Cancel
               </Button>
@@ -268,7 +226,7 @@ const ChooseWorkflow: React.FC = () => {
                 variant="contained"
                 color="primary"
                 className={classes.buttonSave}
-                onClick={handleSave}
+                onClick={() => handleSave()}
               >
                 Save
               </ColorButton>
