@@ -1,65 +1,71 @@
-/*
-	----------------------Subscriber Logic---------------------------------
-	Step1: Check if cluster is already registered or not from the configmap.
-	Step2: Register the subscriber with the admin cluster.
-	Step3: Waiting for request from the graphql server using subscription.
-	NOTE: format:
-	{
-		"requestid": Int!, // Randomly Generated id from the server.
-		"requesttype": String!, // request type can be GET, UPDATE, CREATE and DELETE.
-		"manifest": Object, // K8s manifest, Not needed when it is a GET or DELETE request.
-		"resourcetype": String!, // It can be pre defined or custom k8s resource.
-		"namespace": "default" // namespace of the k8s resource.
-	}
-	! stands for required fields.
-	Step4: Call the the clusterOperation function using the above format.
-	Step5: Response back to the graphql Server.
-*/
-
 package main
 
 import (
 	"encoding/json"
 	"flag"
-	"fmt"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/cluster"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
 	"strings"
 )
 
-var GRAPHQL_SERVER_ADDRESS = os.Getenv("SERVER_ADDRESS") // Format: http://IP:PORT
-var kubeconfig *string
-
-func IsValidUrl(str string) bool {
-	u, err := url.Parse(str)
-
-	if u.Path != "" {
-		return false
-	}
-
-	return err == nil && u.Scheme != "" && u.Host != ""
-}
+var GRAPHQL_SERVER_ADDRESS = os.Getenv("GQL_SERVER") // Format: http://IP:PORT/query
+var newSubscriber = cluster.New()
 
 func init() {
-	if IsValidUrl(GRAPHQL_SERVER_ADDRESS) == false {
-		log.Fatal("GRAPHQL SERVER ADDRESS NOT FOUND OR NOT CORRECT")
+	newSubscriber.ClusterKey = os.Getenv("KEY")
+	newSubscriber.ClusterID = os.Getenv("CID")
+	newSubscriber.KubeConfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
+	
+	bool, err := newSubscriber.IsClusterConfirmed()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if bool == false {
+		payload := `{"query":"mutation clusterConfirm{\n clusterConfirm(identity: {cluster_id: \"` + newSubscriber.ClusterID + `\", access_key: \"` + newSubscriber.ClusterKey + `\"}){\n \tisClusterConfirmed\n newClusterKey\n \tcluster_id\n }\n}"}`
+		req, err := http.NewRequest("POST", GRAPHQL_SERVER_ADDRESS, strings.NewReader(payload))
+		if err != nil {
+			log.Println(err)
+		}
+
+		req.Header.Set("Accept-Encoding", "gzip, deflate, br")
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Accept", "application/json")
+		req.Header.Set("Connection", "keep-alive")
+		req.Header.Set("Dnt", "1")
+
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		bodyText, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		var responseInterface map[string]map[string]map[string]interface{}
+		json.Unmarshal([]byte(bodyText), &responseInterface)
+
+		if responseInterface["data"]["clusterConfirm"]["isClusterConfirmed"] == true {
+			log.Println("cluster confirmed")
+
+			newSubscriber.ClusterKey = strings.TrimSpace(responseInterface["data"]["clusterConfirm"]["newClusterKey"].(string))
+			newSubscriber.ClusterRegister(newSubscriber.ClusterKey, newSubscriber.ClusterID)
+		} else {
+			log.Fatal("Cluster not confirmed")
+		}
 	}
 }
 
 func main() {
-
-	kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
-
 	client := &http.Client{}
-	query := `{
-			"query": "subscription { clusterSubscription { id data }  }"
-		}`
 
-	req, err := http.NewRequest("POST", GRAPHQL_SERVER_ADDRESS+"/query", strings.NewReader(query))
+	query := `{"query":"subscription {\n    clusterConnect(clusterInfo: {cluster_id: \"` + newSubscriber.ClusterID + `\", access_key: \"` + newSubscriber.ClusterKey + `\"}) {\n   \t project_id,\n     action{\n      k8s_manifest,\n      external_data,\n      request_type\n     }\n  }\n}\n"}`
+	req, err := http.NewRequest("POST", GRAPHQL_SERVER_ADDRESS, strings.NewReader(query))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -72,8 +78,9 @@ func main() {
 	req.Header.Set("DNT", "1")
 
 	for {
+		log.Println("Waiting for the subscription...")
 		resp, err := client.Do(req)
-		if err != nil || resp.StatusCode != 200 {
+		if err != nil {
 			log.Fatal(err)
 		}
 
@@ -82,36 +89,12 @@ func main() {
 			log.Fatal(err)
 		}
 
-		/*
-			The format of response is data ---map--> clusterSubsription --map--> data(string)
-			- Unmarshal the byte response and store it in a interface
-		*/
-		var responseInterface map[string]map[string]map[string]interface{}
-		err = json.Unmarshal([]byte(bodyText), &responseInterface)
-		if err != nil || len(responseInterface) == 0 {
-			log.Fatal(err)
-		}
-		/*
-			We need to unmarshal it again because in the last map reponseInterface i.e., data is in string type
-		*/
-		var dataInterface map[string]interface{}
-		err = json.Unmarshal([]byte(fmt.Sprint(responseInterface["data"]["clusterSubscription"]["data"])), &dataInterface)
-		if err != nil || len(dataInterface) == 0 {
-			log.Fatal(err)
-		}
+		var r cluster.Response
 
-		// Calling clusterOperations Function to apply the manifest in the k8s cluster
-		responseFromCluster, err := cluster.ClusterOperations(dataInterface, kubeconfig)
+		json.Unmarshal(bodyText, &r)
+		_, err = newSubscriber.ClusterOperations(r.Data.ClusterConnect.Action.K8SManifest, r.Data.ClusterConnect.Action.RequestType)
 		if err != nil {
 			log.Fatal(err)
 		}
-
-		log.Println(responseFromCluster)
-
-		/*
-			Send response of subscriber to the graphql server as a mutation
-		*/
-
 	}
-
 }
