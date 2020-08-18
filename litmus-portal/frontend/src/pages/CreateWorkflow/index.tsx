@@ -1,11 +1,11 @@
 import React from 'react';
-import CustomStepper from '../../components/CustomStepper';
+import WorkflowStepper from '../../components/WorkflowStepper';
 import Scaffold from '../../containers/layouts/Scaffold';
 
 const CreateWorkflow = () => {
   return (
     <Scaffold>
-      <CustomStepper />
+      <WorkflowStepper />
     </Scaffold>
   );
 };

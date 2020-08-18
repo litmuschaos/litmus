@@ -1,7 +1,7 @@
 /// <reference types="Cypress" />
 import React from 'react';
 import { mount } from 'cypress-react-unit-test';
-import LinearProgressBar from '../../src/components/ProgressBar/LinearProgressBar';
+import LinearProgressBar from '../../src/components/Sections/ReturningHome/ProgressBar/LinearProgressBar';
 
 describe('Linear Progressbar Testing', () => {
   it('Progressbar stroke for value 3', () => {
@@ -29,7 +29,7 @@ describe('Linear Progressbar Testing', () => {
     );
   });
   it('Progressbar stroke if default', () => {
-    mount(<LinearProgressBar value={8} isDefault />);
+    mount(<LinearProgressBar value={8} isDefault={true} />);
     cy.get('.rc-progress-line-path').should(
       'have.css',
       'stroke-dasharray',

@@ -8,7 +8,7 @@ describe('ToolTip testing', () => {
     mount(
       <div>
         <InfoTooltip value="Demo text" />
-        <div data-cy="divBody" />
+        <div data-cy="divBody"></div>
       </div>
     );
   });

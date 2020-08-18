@@ -3,7 +3,7 @@
 import React from 'react';
 import { mount } from 'cypress-react-unit-test';
 
-import PassedVsFailed from '../../src/components/PassedVsFailed/index';
+import PassedVsFailed from '../../src/components/Sections/ReturningHome/PassedVsFailed/index';
 
 // Test Suite - Passing props -> passed: 75, failed: 25
 describe('Passed Vs Failed: props -> passed: 75, failed: 25', () => {
