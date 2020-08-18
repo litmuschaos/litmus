@@ -1,5 +1,5 @@
 import React from 'react';
-import WorkflowTabs from '../../components/Dashboard/WorkflowTabs';
+import WorkflowTabs from '../../components/Sections/ChaosWorkflows/WorkflowTabs';
 import Scaffold from '../../containers/layouts/Scaffold';
 
 const Workflows = () => {

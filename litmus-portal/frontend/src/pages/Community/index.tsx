@@ -9,8 +9,8 @@ import InfoFilledWrap from '../../components/InfoFilled/index';
 import Scaffold from '../../containers/layouts/Scaffold/index';
 import useStyles from './styles';
 import QuickActionCard from '../../components/QuickActionCard';
-import GeoMap from '../../components/GeoMap/index';
-import CommunityAnalyticsPlot from '../../components/CommunityTimeSeriesPlot';
+import GeoMap from '../../components/Sections/Community/GeoMap/index';
+import CommunityAnalyticsPlot from '../../components/Sections/Community/CommunityTimeSeriesPlot';
 
 // Reusable Header Component
 const Header2: React.FC = ({ children }) => {
