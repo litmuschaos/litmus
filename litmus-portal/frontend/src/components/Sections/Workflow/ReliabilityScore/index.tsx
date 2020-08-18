@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import Center from '../../../../containers/layouts/Center';
 import ButtonFilled from '../../../Button/ButtonFilled';
 import ButtonOutline from '../../../Button/ButtonOutline';
-import WeightSlider from '../CustomSlider';
+import WeightSlider from '../WeightSlider';
 import InfoTooltip from '../../../InfoTooltip';
 import ResultTable from './ResultTable';
 import useStyles from './styles';
