@@ -1,8 +1,8 @@
 import { Box, Paper, Tab, Tabs, Typography } from '@material-ui/core';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import AccountSettings from '../../components/SettingsComponents/AccountsTab/AccountSettings';
-import UserManagement from '../../components/SettingsComponents/UserManagementTab/UserManagement';
+import AccountSettings from '../../components/Sections/Settings/AccountsTab/AccountSettings';
+import UserManagement from '../../components/Sections/Settings/UserManagementTab/UserManagement';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { RootState } from '../../redux/reducers';
 import useStyles from './styles';

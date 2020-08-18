@@ -2,14 +2,19 @@
 
 import React from 'react';
 import { mount } from 'cypress-react-unit-test';
-import CustomStepper from '../../src/components/CustomStepper';
 import { Provider } from 'react-redux';
+import WorkflowStepper from '../../src/components/WorkflowStepper';
 import configureStore from '../../src/redux/configureStore';
-const {store} = configureStore();
+
+const { store } = configureStore();
 
 // Test Suite - Stepper Labels are present
 describe('Input Data is present', () => {
-  const wrapper = (<Provider store={store}><CustomStepper /></Provider>);
+  const wrapper = (
+    <Provider store={store}>
+      <WorkflowStepper />
+    </Provider>
+  );
   const expectedOutput = [
     'Target Cluster',
     'Choose a workflow',
@@ -33,7 +38,11 @@ describe('Input Data is present', () => {
 
 // Test Suite - Active label has a color of rgb(121, 134, 203)
 describe('Active Label is colored theme.palette.primary.light', () => {
-  const wrapper = (<Provider store={store}><CustomStepper /></Provider>);
+  const wrapper = (
+    <Provider store={store}>
+      <WorkflowStepper />
+    </Provider>
+  );
   it('Active theme color is correct', () => {
     mount(wrapper);
     cy.get('[data-cy=labelText]').then((item) => {
