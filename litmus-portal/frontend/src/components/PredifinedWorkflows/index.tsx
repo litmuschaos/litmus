@@ -1,7 +1,7 @@
 import React from 'react';
 import { preDefinedWorkflowData } from '../../models/predefinedWorkflow';
-import CustomCard from '../CustomCard';
-import CustomWorkflowCard from '../CustomCard/CustomWorkflow';
+import CustomCard from '../WorkflowCard';
+import CustomWorkflowCard from '../WorkflowCard/CustomWorkflow';
 import useStyles from './styles';
 
 interface PredifinedWorkflowsProps {

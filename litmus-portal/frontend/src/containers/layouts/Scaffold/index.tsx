@@ -1,7 +1,7 @@
 import CssBaseline from '@material-ui/core/CssBaseline';
 import React from 'react';
-import Header from '../../../components/Header';
-import SideBar from '../../../components/SideBar';
+import Header from '../Header';
+import SideBar from '../SideBar';
 import useStyles from './styles';
 
 interface ScaffoldProps {
