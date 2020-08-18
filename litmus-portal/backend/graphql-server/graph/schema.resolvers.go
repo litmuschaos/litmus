@@ -6,19 +6,21 @@ package graph
 import (
 	"context"
 	"errors"
-	"fmt"
-	"github.com/google/uuid"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/queries"
 	"log"
 	"strconv"
 	"time"
 
+	"github.com/google/uuid"
+	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/cluster"
 	database "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/mutations"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/queries"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/subscriptions"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/project"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/usermanagement"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -34,8 +36,8 @@ func (r *mutationResolver) NewClusterEvent(ctx context.Context, clusterEvent mod
 	return mutations.NewEvent(clusterEvent, *store)
 }
 
-func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
+	return mutations.CreateChaosWorkflow(&input, *store)
 }
 
 func (r *mutationResolver) ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error) {
@@ -46,8 +48,32 @@ func (r *mutationResolver) PodLog(ctx context.Context, log model.PodLog) (string
 	return mutations.LogsHandler(log, *store)
 }
 
+func (r *mutationResolver) CreateUser(ctx context.Context, user model.UserInput) (*model.User, error) {
+	return usermanagement.CreateUser(ctx, user)
+}
+
 func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {
 	return queries.QueryWorkflowRuns(projectID)
+}
+
+func (r *queryResolver) GetCluster(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error) {
+	cluster, err := database.GetClusterWithProjectID(projectID, clusterType)
+	if err != nil {
+		return nil, err
+	}
+
+	newClusters := []*model.Cluster{}
+	copier.Copy(&newClusters, &cluster)
+
+	return newClusters, nil
+}
+
+func (r *queryResolver) GetUser(ctx context.Context, username string) (*model.User, error) {
+	return usermanagement.GetUser(ctx, username)
+}
+
+func (r *queryResolver) GetProject(ctx context.Context, projectID string) (*model.Project, error) {
+	return project.GetProject(ctx, projectID)
 }
 
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {

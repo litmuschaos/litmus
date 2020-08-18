@@ -1,0 +1,23 @@
+type User {
+    id: ID!
+    username: String!
+    email: String
+    is_email_verified: Boolean
+    company_name: String
+    project_id: String!
+    name: String
+    role: String
+    state: String
+    created_at: String!
+    updated_at: String!
+    removed_at: String!
+}
+
+input UserInput {
+    username: String!
+    email: String
+    company_name: String
+    name: String
+    project_name: String!
+}
+

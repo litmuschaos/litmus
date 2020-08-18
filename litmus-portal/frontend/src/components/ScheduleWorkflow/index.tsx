@@ -8,7 +8,6 @@ import {
   Typography,
 } from '@material-ui/core';
 import React from 'react';
-import calendar from '../../assets/icons/calendar.png';
 import CustomDate from '../DateTime/CustomDate/index';
 import CustomTime from '../DateTime/CustomTime/index';
 import SetTime from '../SetTime/index';
@@ -72,7 +71,11 @@ const ScheduleWorkflow: React.FC = () => {
               </Typography>
             </div>
           </div>
-          <img src={calendar} alt="calendar" className={classes.calIcon} />
+          <img
+            src="./icons/calendar.svg"
+            alt="calendar"
+            className={classes.calIcon}
+          />
         </div>
         <Divider />
 
@@ -98,7 +101,7 @@ const ScheduleWorkflow: React.FC = () => {
 
               <FormControlLabel
                 value="afterSometime"
-                control={<Radio />}
+                control={<Radio disabled />}
                 label={
                   <Typography className={classes.radioText}>
                     Schedule after some time
@@ -131,7 +134,7 @@ const ScheduleWorkflow: React.FC = () => {
               )}
               <FormControlLabel
                 value="specificTime"
-                control={<Radio />}
+                control={<Radio disabled />}
                 label={
                   <Typography className={classes.radioText}>
                     Schedule at a specific time
@@ -154,7 +157,7 @@ const ScheduleWorkflow: React.FC = () => {
               )}
               <FormControlLabel
                 value="recurringScedule"
-                control={<Radio />}
+                control={<Radio disabled />}
                 label={
                   <Typography className={classes.radioText}>
                     Recurring Schedule

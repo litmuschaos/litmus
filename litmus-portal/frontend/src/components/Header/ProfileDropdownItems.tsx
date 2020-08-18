@@ -1,21 +1,23 @@
 /* eslint-disable react/no-array-index-key */
-import React, { useState } from 'react';
 import {
-  Popover,
-  Typography,
   Avatar,
-  Divider,
   Button,
+  Divider,
   List,
   ListItem,
   ListItemText,
+  Popover,
+  Typography,
 } from '@material-ui/core';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import config from '../../config';
+import { Project, ProjectsCallBackType } from '../../models/header';
+import useActions from '../../redux/actions';
+import * as UserActions from '../../redux/actions/user';
+import { RootState } from '../../redux/reducers';
 import ProjectListItem from './ProjectListItem';
 import useStyles from './styles';
-import * as UserActions from '../../redux/actions/user';
-import { history } from '../../redux/configureStore';
-import useActions from '../../redux/actions';
-import { Project, ProjectsCallBackType } from '../../models/header';
 
 interface ProfileInfoDropdownItemProps {
   anchorEl: HTMLElement;
@@ -56,11 +58,25 @@ function ProfileInfoDropdownItems(props: ProfileInfoDropdownItemProps) {
   }
 
   const [loggedOut, doLogout] = useState(false);
-
+  const { userData } = useSelector((state: RootState) => state);
   const logOut = () => {
     doLogout(true);
     user.userLogout();
-    history.push('/');
+
+    fetch(`${config.auth.url}/logout`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userData.token}`,
+      },
+    })
+      .then((response) => {
+        response.json();
+      })
+
+      .catch((err) => {
+        console.error(err);
+      });
   };
 
   const editProfile = () => {};

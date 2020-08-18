@@ -67,7 +67,7 @@ const SideBar = () => {
         <CustomisedListItem
           key="workflow"
           handleClick={() => {
-            history.push('/workflow');
+            history.push('/workflows');
           }}
           label="Workflows"
         >

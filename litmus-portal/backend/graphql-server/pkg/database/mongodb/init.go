@@ -18,8 +18,11 @@ var err error
 var collections = map[string]string{
 	"Cluster":     "cluster-collection",
 	"WorkflowRun": "workflow-run",
+	"User":        "user",
+	"Project":     "project",
 }
 
+var database *mongo.Database
 var dbName = "litmus"
 
 type Cluster struct {
@@ -48,6 +51,25 @@ type WorkflowRun struct {
 	ExecutionData string `bson:"execution_data"`
 }
 
+type ChaosWorkFlowInput struct {
+	WorkflowID          string             `bson:"workflow_id"`
+	WorkflowManifest    string             `bson:"workflow_manifest"`
+	CronSyntax          string             `bson:"cronSyntax"`
+	WorkflowName        string             `bson:"Workflow_name"`
+	WorkflowDescription string             `bson:"Workflow_description"`
+	Weightages          []*WeightagesInput `bson:"Weightages"`
+	IsCustomWorkflow    bool               `bson:"isCustomWorkflow"`
+	UpdatedAt           string             `bson:"updated_at"`
+	CreatedAt           string             `bson:"created_at"`
+	ProjectID           string             `bson:"project_id"`
+	ClusterID           string             `bson:"cluster_id"`
+}
+
+type WeightagesInput struct {
+	ExperimentName string `bson:"experiment_name"`
+	Weightage      int    `bson:"weightage"`
+}
+
 //DBInit initializes database connection
 func DBInit() error {
 	dbServer := os.Getenv("DB_SERVER")
@@ -58,6 +80,7 @@ func DBInit() error {
 	}
 
 	ctx, _ := context.WithTimeout(backgroundContext, 20*time.Second)
+
 	// Check the connection
 	err = client.Ping(ctx, nil)
 	if err != nil {
@@ -66,7 +89,15 @@ func DBInit() error {
 		log.Print("Connected To MONGODB")
 	}
 
-	clusterCollection = client.Database(dbName).Collection(collections["Cluster"])
-	workflowRunCollection = client.Database(dbName).Collection(collections["WorkflowRun"])
+	database = client.Database(dbName)
+	initAllCollections()
+
 	return nil
+}
+
+func initAllCollections() {
+	clusterCollection = database.Collection(collections["Cluster"])
+	workflowRunCollection = database.Collection(collections["WorkflowRun"])
+	userCollection = database.Collection(collections["User"])
+	projectCollection = database.Collection(collections["Project"])
 }

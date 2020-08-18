@@ -12,6 +12,8 @@ const initialState: WorkflowData = {
   yaml: '',
   id: '',
   description: '',
+  weights: [],
+  isCustomWorkflow: false,
 };
 
 export const workflowData = createReducer<WorkflowData>(initialState, {

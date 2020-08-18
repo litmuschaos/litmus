@@ -27,3 +27,35 @@ export const WORKFLOW_EVENTS = gql`
     }
   }
 `;
+
+export const CREATE_USER = gql`
+  mutation CreateUser($user: UserInput!) {
+    createUser(user: $user) {
+      id
+      username
+      created_at
+      updated_at
+      removed_at
+    }
+  }
+`;
+
+export const GET_USER = gql`
+  query getUser($username: String!) {
+    getUser(username: $username) {
+      username
+      email
+      name
+      project_id
+    }
+  }
+`;
+
+export const GET_PROJECT = gql`
+  query getProject($projectID: String!) {
+    getProject(projectID: $projectID) {
+      name
+      id
+    }
+  }
+`;

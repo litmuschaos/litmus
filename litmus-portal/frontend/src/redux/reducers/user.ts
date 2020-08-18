@@ -11,6 +11,7 @@ const initialState: UserData = {
   token: '',
   username: '',
   exp: 0,
+  projectID: '',
 };
 
 export const userData = createReducer<UserData>(initialState, {

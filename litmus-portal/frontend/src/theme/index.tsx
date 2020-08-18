@@ -2,7 +2,7 @@ import { CssBaseline } from '@material-ui/core';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { ThemeOptions } from '@material-ui/core/styles/createMuiTheme';
 import * as React from 'react';
-import Image from '../assets/icons/arrow.png';
+
 // Agument the Theme interface
 declare module '@material-ui/core/styles/createMuiTheme' {
   interface Theme {
@@ -21,15 +21,17 @@ declare module '@material-ui/core/styles/createMuiTheme' {
 // Augument the Palette interface
 declare module '@material-ui/core/styles/createPalette' {
   interface Palette {
-    // newProperty: {
-    // 	key: value;
-    // }
+    customColors: {
+      white: (opacity: number) => string;
+      black: (opacity: number) => string;
+    };
   }
   // allow configuration using `createMuiTheme`
   interface PaletteOptions {
-    // newProperty?: {
-    // 	key?: value;
-    // }
+    customColors?: {
+      white?: (opacity: number) => string;
+      black?: (opacity: number) => string;
+    };
   }
 }
 function customTheme(options: ThemeOptions) {
@@ -47,6 +49,14 @@ function customTheme(options: ThemeOptions) {
         dark: '#5B44BA',
         contrastText: '#FFFFFF',
       },
+      error: {
+        light: 'rgba(255, 0, 0, 0.1)',
+        main: '#BA3B34',
+        dark: '#CA2C2C',
+      },
+      warning: {
+        main: '#F6B92B',
+      },
       background: {
         paper: '#FBFCFD',
         default: '#FAFBFD',
@@ -56,6 +66,20 @@ function customTheme(options: ThemeOptions) {
         secondary: 'rgba(0, 0, 0, 0.88)',
         disabled: 'rgba(0, 0, 0, 0.4)',
         hint: 'rgba(0, 0, 0, 0.2)',
+      },
+      customColors: {
+        white: (opacity: number): string => {
+          let op = opacity;
+          if (op < 0) op = 0;
+          if (op < 100) op = 100;
+          return `rgba(255, 255, 255, ${op})`;
+        },
+        black: (opacity: number): string => {
+          let op = opacity;
+          if (op < 0) op = 0;
+          if (op < 100) op = 100;
+          return `rgba(0, 0, 0, ${op})`;
+        },
       },
     },
     typography: {
@@ -74,14 +98,14 @@ const theme = customTheme({
       },
       mark: {
         marginLeft: -6.8,
-        backgroundImage: `url(${Image})`,
+        backgroundImage: `url(${'./icons/arrow.svg'})`,
         backgroundColor: 'none',
         '&[data-index="9"]': {
           backgroundImage: 'none',
         },
       },
       markActive: {
-        backgroundImage: `url(${Image})`,
+        backgroundImage: `url(${'./icons/arrow.svg'})`,
         backgroundColor: 'none',
       },
       markLabel: {

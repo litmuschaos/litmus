@@ -1,0 +1,30 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: orders-memory-hog
+  namespace: litmus
+spec:
+  annotationCheck: 'false'
+  engineState: 'active'
+  auxiliaryAppInfo: ''
+  appinfo:
+    appns: 'sock-shop'
+    applabel: 'name=orders'
+    appkind: 'deployment'
+  chaosServiceAccount: litmus-admin
+  monitoring: true
+  jobCleanUpPolicy: 'retain'
+  experiments:
+    - name: pod-memory-hog
+      spec:
+        components:
+          env:
+            - name: TARGET_CONTAINER
+              value: 'orders'
+
+            - name: MEMORY_CONSUMPTION
+              value: '500'
+
+            - name: TOTAL_CHAOS_DURATION
+              value: '240' # in seconds
+            
