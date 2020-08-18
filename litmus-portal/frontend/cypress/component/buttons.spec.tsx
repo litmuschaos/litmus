@@ -8,10 +8,7 @@ import ButtonOutline from '../../src/components/Button/ButtonOutline';
 describe('Button Filled', () => {
   it('The button is clickable', () => {
     mount(
-      <ButtonFilled
-        isPrimary = {true}
-        handleClick={() => console.log('Handle Click')}
-      >
+      <ButtonFilled isPrimary handleClick={() => console.log('Handle Click')}>
         <Typography>Test</Typography>
       </ButtonFilled>
     );
@@ -26,10 +23,7 @@ describe('Button Filled', () => {
 describe('Button Outline', () => {
   it('The button is disabled', () => {
     mount(
-      <ButtonOutline
-        isDisabled={true}
-        handleClick={() => console.log('Handle Click')}
-      >
+      <ButtonOutline isDisabled handleClick={() => console.log('Handle Click')}>
         <Typography>Test</Typography>
       </ButtonOutline>
     );

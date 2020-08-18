@@ -2,9 +2,10 @@
 
 import React from 'react';
 import { mount } from 'cypress-react-unit-test';
-import CustomStepper from '../../src/components/WorkflowStepper';
 import { Provider } from 'react-redux';
+import CustomStepper from '../../src/components/WorkflowStepper';
 import configureStore from '../../src/redux/configureStore';
+
 const { store } = configureStore();
 
 // Test Suite - Stepper Labels are present
