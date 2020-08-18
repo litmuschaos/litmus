@@ -6,7 +6,7 @@ import CustomSlider from '../../src/components/Sections/Workflow/WeightSlider';
 
 describe('Testing Custom Slider with different values', () => {
   [10, 5, 2].map((i) => {
-    context('Custom Slider with value ' + i, () => {
+    context(`Custom Slider with value ${i}`, () => {
       it('is visible', () => {
         const wrapper = (
           <CustomSlider
@@ -23,11 +23,11 @@ describe('Testing Custom Slider with different values', () => {
       it('The slider is enabled', () => {
         cy.get('.MuiSlider-root').first().log('Slider Enabled');
       });
-      it('The selected value is ' + i, () => {
+      it(`The selected value is ${i}`, () => {
         cy.get('.MuiSlider-markLabel').contains(i).click();
       });
-      it('Value displayed is ' + i + ' points', () => {
-        cy.get('.makeStyles-testResult-3').should('have.text', i + ' points');
+      it(`Value displayed is ${i} points`, () => {
+        cy.get('.makeStyles-testResult-3').should('have.text', `${i} points`);
       });
     });
   });
