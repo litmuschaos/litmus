@@ -14,6 +14,26 @@ func init() {
 	eventMap = make(map[string]types.WorkflowEvent)
 }
 
+func sendMutation(server string, payload []byte)(string, error){
+	req, err := http.NewRequest("POST", server, bytes.NewBuffer(payload))
+	if err != nil {
+		logrus.Print(err.Error())
+	}
+	req.Header.Set("Content-Type", "application/json")
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "",err
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+	if err != nil {
+		return "",err
+	}
+	return string(body),nil
+}
+
 //SendWorkflowUpdates generates gql mutation to send workflow updates to gql server
 func SendWorkflowUpdates(server, cid, accessKey string, event chan types.WorkflowEvent) {
 	// listen on the channel for streaming event updates
@@ -35,23 +55,12 @@ func SendWorkflowUpdates(server, cid, accessKey string, event chan types.Workflo
 			logrus.WithError(err).Print("ERROR PARSING WORKFLOW EVENT")
 		}
 
-		req, err := http.NewRequest("POST", server, bytes.NewBuffer(payload))
+		body, err := sendMutation(server, payload)
 		if err != nil {
 			logrus.Print(err.Error())
 		}
-		req.Header.Set("Content-Type", "application/json")
-		client := &http.Client{}
-		resp, err := client.Do(req)
-		if err != nil {
-			logrus.Print(err.Error())
-		}
+		logrus.Print("RESPONSE ", body)
 
-		body, err := ioutil.ReadAll(resp.Body)
-		resp.Body.Close()
-		if err != nil {
-			logrus.Print(err.Error())
-		}
-		logrus.Print("RESPONSE ", string(body))
 		if eventData.FinishedAt != "" {
 			delete(eventMap, eventData.UID)
 		}
@@ -65,21 +74,9 @@ func SendPodLogs(server, cid, accessKey string, podLog types.PodLogRequest) {
 	if err != nil {
 		logrus.WithError(err).Print("ERROR GETTING WORKFLOW LOG")
 	}
-	req, err := http.NewRequest("POST", server, bytes.NewBuffer(payload))
+	body, err := sendMutation(server, payload)
 	if err != nil {
 		logrus.Print(err.Error())
 	}
-	req.Header.Set("Content-Type", "application/json")
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		logrus.Print(err.Error())
-	}
-
-	body, err := ioutil.ReadAll(resp.Body)
-	resp.Body.Close()
-	if err != nil {
-		logrus.Print(err.Error())
-	}
-	logrus.Print("RESPONSE ", string(body))
+	logrus.Print("RESPONSE ", body)
 }
