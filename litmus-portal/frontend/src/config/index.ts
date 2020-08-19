@@ -1,12 +1,24 @@
 const loc = window.location;
-let newUri;
+let sockURL;
+let authURL;
+let apiURL;
 if (loc.protocol === 'https:') {
-  newUri = 'wss:';
+  sockURL = 'wss:';
 } else {
-  newUri = 'ws:';
+  sockURL = 'ws:';
 }
-newUri += `//${loc.host}/api`;
-
+if (
+  process.env.NODE_ENV.trim() === 'development' ||
+  process.env.NODE_ENV.trim() === 'test'
+) {
+  authURL = `${window.location.protocol}//${window.location.hostname}:3000`;
+  apiURL = `${window.location.protocol}//${window.location.hostname}:8080`;
+  sockURL += `//${window.location.hostname}:8080`;
+} else {
+  authURL = '/auth';
+  apiURL = '/api';
+  sockURL += `//${loc.host}/api`;
+}
 export default {
   environment: process.env.NODE_ENV,
   analytics: {
@@ -14,12 +26,11 @@ export default {
       process.env.ANALYTICS_API || 'https://hub.litmuschaos.io/api/community',
   },
   auth: {
-    url: process.env.AUTH_API || '/auth',
+    url: process.env.AUTH_API || authURL,
   },
   cookies: {
     token: 'token',
   },
-  grahqlEndpoint: process.env.GQL_API || '/api',
-
-  grahqlEndpointSubscription: process.env.GQL_API || newUri,
+  grahqlEndpoint: process.env.GQL_API || apiURL,
+  grahqlEndpointSubscription: process.env.GQL_API || sockURL,
 };

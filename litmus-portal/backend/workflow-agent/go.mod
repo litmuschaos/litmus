@@ -5,7 +5,7 @@ go 1.14
 require (
 	github.com/argoproj/argo v2.5.2+incompatible
 	github.com/imdario/mergo v0.3.10 // indirect
-	github.com/litmuschaos/chaos-operator v0.0.0-20200731145727-ec8922e9b9e8
+	github.com/litmuschaos/chaos-operator v0.0.0-20200815164629-86987255efd0
 	github.com/sirupsen/logrus v1.6.0
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d // indirect
 	golang.org/x/time v0.0.0-20200630173020-3af7569d3a1e // indirect
