@@ -26,13 +26,15 @@ type Node struct {
 
 // chaos data
 type ChaosData struct {
-	EngineUID         string `json:"engineUID"`
-	EngineName        string `json:"engineName"`
-	Namespace         string `json:"namespace"`
-	ExperimentName    string `json:"experimentName"`
-	ExperimentStatus  string `json:"experimentStatus"`
-	LastUpdatedAt     string `json:"lastUpdatedAt"`
-	ExperimentVerdict string `json:"experimentVerdict"`
-	ExperimentPod     string `json:"experimentPod"`
-	RunnerPod         string `json:"runnerPod"`
+	EngineUID              string `json:"engineUID"`
+	EngineName             string `json:"engineName"`
+	Namespace              string `json:"namespace"`
+	ExperimentName         string `json:"experimentName"`
+	ExperimentStatus       string `json:"experimentStatus"`
+	LastUpdatedAt          string `json:"lastUpdatedAt"`
+	ExperimentVerdict      string `json:"experimentVerdict"`
+	ExperimentPod          string `json:"experimentPod"`
+	RunnerPod              string `json:"runnerPod"`
+	ProbeSuccessPercentage string `json:"probeSuccessPercentage"`
+	FailStep               string `json:"failStep"`
 }
