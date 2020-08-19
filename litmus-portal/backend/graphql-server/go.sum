@@ -77,6 +77,7 @@ github.com/kr/text v0.1.0 h1:45sCR5RtlFHMR4UwH9sdQ5TC8v0qDQCHnXt+kaKSTVE=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
 github.com/litmuschaos/litmus v0.0.0-20200812150524-3b68066d755a h1:Vie7SS45Jp0CIUtzHdjSflqst0CnW1tIBeygajG8l84=
 github.com/litmuschaos/litmus v0.0.0-20200815070810-d321a5e68b75 h1:Ue6E+QIGkPECjiJnrx5oSOOkohsFQi7hcV4WVCRzGqs=
+github.com/litmuschaos/litmus v0.0.0-20200819095226-7e321a7481cd h1:Ai2qzNpd8wD9D7LtK3mfDVH5a+HhXQNk+H5T8Rq96Is=
 github.com/logrusorgru/aurora v0.0.0-20200102142835-e9ef32dff381/go.mod h1:7rIyQOR62GCctdiQpZ/zOJlFyk6y+94wXzv6RNZgaR4=
 github.com/markbates/oncer v0.0.0-20181203154359-bf2de49a0be2/go.mod h1:Ld9puTsIW75CHf65OeIOkyKbteujpZVXDpWK6YGZbxE=
 github.com/markbates/safe v1.0.1/go.mod h1:nAqgmRi7cY2nqMc92/bSEeQA+R4OheNU2T1kNSCBdG0=

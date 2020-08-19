@@ -28,12 +28,13 @@ func GetLogs(reqID string, pod model.PodLogRequest, r store.StateData) {
 	if err != nil {
 		log.Print("ERROR WHILE MARSHALLING POD DETAILS")
 	}
-
-	external_data := string(data)
+	reqType := "logs"
+	externalData := string(data)
 	payload := model.ClusterAction{
 		ProjectID: reqID,
 		Action: &model.ActionPayload{
-			ExternalData: &external_data,
+			RequestType:  &reqType,
+			ExternalData: &externalData,
 		},
 	}
 	if clusterChan, ok := r.ConnectedCluster[pod.ClusterID]; ok {

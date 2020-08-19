@@ -24,6 +24,9 @@ func main() {
 	//streams the event data to gql server
 	go gql.SendWorkflowUpdates(server, cid, key, stream)
 
+	// listen for cluster actions
+	go gql.Subscription(server, cid, key)
+
 	signal.Notify(sigCh, os.Kill, os.Interrupt)
 	<-sigCh
 	close(stopCh)
