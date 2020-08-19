@@ -1,10 +1,11 @@
-import { Modal, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import config from '../../../config';
 import { RootState } from '../../../redux/reducers';
 import ButtonFilled from '../../Button/ButtonFilled';
 import useStyles from './styles';
+import Unimodal from '../Unimodal';
 
 // Props for NewUserModal component
 interface NewUserModalProps {
@@ -64,40 +65,31 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
         </ButtonFilled>
       </div>
 
-      <Modal
-        data-cy="modal"
-        open={open}
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
-        className={classes.modal}
-      >
-        <div className={classes.paper}>
-          <div className={classes.body}>
-            <img src="./icons/checkmark.svg" alt="checkmark" />
-            <div className={classes.text}>
-              <Typography className={classes.typo} align="center">
-                A new user was <strong>successfully created </strong>
-              </Typography>
-            </div>
-            <div className={classes.textSecond}>
-              <Typography className={classes.typoSub}>
-                A new user was successfully created.Now information about it
-                will be displayed on the user management screen of the
-                application.
-              </Typography>
-            </div>
-            <div className={classes.buttonModal}>
-              <ButtonFilled
-                isPrimary
-                isDisabled={false}
-                handleClick={handleClose}
-              >
-                <>Done</>
-              </ButtonFilled>
-            </div>
+      <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn={false}>
+        <div className={classes.body}>
+          <img src="./icons/checkmark.svg" alt="checkmark" />
+          <div className={classes.text}>
+            <Typography className={classes.typo} align="center">
+              A new user was <strong>successfully created </strong>
+            </Typography>
+          </div>
+          <div className={classes.textSecond}>
+            <Typography className={classes.typoSub}>
+              A new user was successfully created.Now information about it will
+              be displayed on the user management screen of the application.
+            </Typography>
+          </div>
+          <div className={classes.buttonModal}>
+            <ButtonFilled
+              isPrimary
+              isDisabled={false}
+              handleClick={handleClose}
+            >
+              <>Done</>
+            </ButtonFilled>
           </div>
         </div>
-      </Modal>
+      </Unimodal>
     </div>
   );
 };

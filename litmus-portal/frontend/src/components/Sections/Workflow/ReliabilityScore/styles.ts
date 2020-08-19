@@ -58,19 +58,6 @@ const useStyles = makeStyles((theme) => ({
   buttonOutlineText: {
     paddingLeft: theme.spacing(1.5),
   },
-  modalContainer: {
-    marginLeft: theme.spacing(30),
-    marginRight: theme.spacing(30),
-    marginBottom: theme.spacing(10),
-    marginTop: theme.spacing(4),
-    paddingLeft: theme.spacing(3.75),
-    paddingRight: theme.spacing(3.75),
-    paddingBottom: theme.spacing(0.625),
-    background: theme.palette.common.white,
-    borderRadius: 3,
-    textAlign: 'center',
-    outline: 'none',
-  },
   testType: {
     fontSize: '1.0625rem',
     paddingRight: theme.spacing(1.25),
@@ -78,11 +65,6 @@ const useStyles = makeStyles((theme) => ({
   testResult: {
     color: theme.palette.primary.dark,
     fontSize: '1.0625rem',
-  },
-  modal: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   table: {
     marginTop: theme.spacing(2),

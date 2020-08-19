@@ -1,25 +1,13 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
-  modal: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  paper: {
-    width: '50.75rem',
-    height: '39.1875rem',
-    backgroundColor: theme.palette.background.paper,
-
-    outline: 'none',
-    borderRadius: '0.1875rem',
-  },
   body: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: theme.spacing(15),
+    paddingBottom: '7rem',
   },
   text: {
     width: '23.5rem',

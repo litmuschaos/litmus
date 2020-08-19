@@ -2,15 +2,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   rootContainer: {
-    marginLeft: '20rem',
-    marginRight: '20rem',
-    marginTop: '8rem',
-    marginBottom: '8rem',
-    paddingBottom: '6rem',
-    background: theme.palette.common.white,
-    borderRadius: 3,
-    textAlign: 'center',
-    outline: 'none',
+    marginBottom: '5rem',
   },
   mark: {
     marginTop: 80,

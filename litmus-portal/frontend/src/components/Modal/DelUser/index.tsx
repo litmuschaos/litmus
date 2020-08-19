@@ -1,8 +1,9 @@
-import { IconButton, MenuItem, Modal, Typography } from '@material-ui/core';
+import { IconButton, MenuItem, Typography } from '@material-ui/core';
 import React from 'react';
 import ButtonFilled from '../../Button/ButtonFilled';
 import ButtonOutline from '../../Button/ButtonOutline';
 import useStyles from './styles';
+import Unimodal from '../Unimodal';
 
 // props for DelUser component
 interface DelUserProps {
@@ -53,43 +54,35 @@ const DelUser: React.FC<DelUserProps> = ({ handleModal, tableDelete }) => {
           <Typography>Delete user </Typography>
         </div>
       )}
-      <Modal
-        data-cy="modal"
-        open={open}
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
-        className={classes.modal}
-      >
-        <div className={classes.paper}>
-          <div className={classes.body}>
-            <img src="./icons/userDel.svg" alt="lock" />
-            <div className={classes.text}>
-              <Typography className={classes.typo} align="center">
-                Are you sure
-                <strong> to remove the current user?</strong>
-              </Typography>
-            </div>
-            <div className={classes.textSecond}>
-              <Typography className={classes.typoSub} align="center">
-                The user will lose access to the portal
-              </Typography>
-            </div>
-            <div className={classes.buttonGroup}>
-              <ButtonOutline isDisabled={false} handleClick={handleClose}>
-                <> No</>
-              </ButtonOutline>
+      <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn={false}>
+        <div className={classes.body}>
+          <img src="./icons/userDel.svg" alt="lock" />
+          <div className={classes.text}>
+            <Typography className={classes.typo} align="center">
+              Are you sure
+              <strong> to remove the current user?</strong>
+            </Typography>
+          </div>
+          <div className={classes.textSecond}>
+            <Typography className={classes.typoSub} align="center">
+              The user will lose access to the portal
+            </Typography>
+          </div>
+          <div className={classes.buttonGroup}>
+            <ButtonOutline isDisabled={false} handleClick={handleClose}>
+              <> No</>
+            </ButtonOutline>
 
-              <ButtonFilled
-                isDisabled={false}
-                isPrimary
-                handleClick={tableDelete ? handleModal : handleModal}
-              >
-                <>Yes</>
-              </ButtonFilled>
-            </div>
+            <ButtonFilled
+              isDisabled={false}
+              isPrimary
+              handleClick={tableDelete ? handleModal : handleModal}
+            >
+              <>Yes</>
+            </ButtonFilled>
           </div>
         </div>
-      </Modal>
+      </Unimodal>
     </div>
   );
 };
