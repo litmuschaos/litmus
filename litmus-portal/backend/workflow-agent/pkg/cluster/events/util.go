@@ -1,9 +1,7 @@
 package events
 
 import (
-	"errors"
 	v1alpha13 "github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
-	"github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	v1alpha12 "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/types"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -15,23 +13,20 @@ import (
 // util function, extracts the chaos data using the litmus go-client
 func getChaosData(engineName, engineNS string, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (*types.ChaosData, error) {
 	cd := &types.ChaosData{}
-	crd := &v1alpha1.ChaosEngine{}
 	cd.EngineName = engineName
 	cd.Namespace = engineNS
-	err:= errors.New("")
-	if cd.Namespace != "" {
-		crd, err = chaosClient.ChaosEngines(cd.Namespace).Get(cd.EngineName, v1.GetOptions{})
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		crd, err = chaosClient.ChaosEngines("").Get(cd.EngineName, v1.GetOptions{})
-		if err != nil {
-			return nil, err
-		}
+	crd, err := chaosClient.ChaosEngines(cd.Namespace).Get(cd.EngineName, v1.GetOptions{})
+	if err != nil {
+		return nil, err
 	}
 	// considering chaos engine has only 1 experiment
 	if len(crd.Status.Experiments) == 1 {
+		expRes, err := chaosClient.ChaosResults(cd.Namespace).Get(crd.Name+"-"+crd.Status.Experiments[0].Name, v1.GetOptions{})
+		if err != nil {
+			return nil, err
+		}
+		cd.ProbeSuccessPercentage = expRes.Status.ExperimentStatus.ProbeSuccessPercentage
+		cd.FailStep = expRes.Status.ExperimentStatus.FailStep
 		cd.ExperimentPod = crd.Status.Experiments[0].ExpPod
 		cd.RunnerPod = crd.Status.Experiments[0].Runner
 		cd.EngineUID = string(crd.ObjectMeta.UID)

@@ -92,7 +92,7 @@ func ClusterOperations(clientData map[string]interface{}, kubeconfig *string) (*
 	// Decode YAML manifest into unstructured.Unstructured
 	obj := &unstructured.Unstructured{}
 	_, gvk, err := decUnstructured.Decode([]byte(yamlStr), nil, obj)
-		if err != nil {
+	if err != nil {
 		return nil, fmt.Errorf("err: %v\n", err)
 	}
 
