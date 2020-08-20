@@ -1,8 +1,4 @@
-package cluster
-
-import (
-	"context"
-)
+package types
 
 type Response struct {
 	Data Data `json:"data"`
@@ -21,11 +17,4 @@ type Action struct {
 	K8SManifest  string      `json:"k8s_manifest"`
 	ExternalData interface{} `json:"external_data"`
 	RequestType  string      `json:"request_type"`
-}
-
-type Subscriber struct {
-	ClusterKey string
-	ClusterID  string
-	Ctx        context.Context
-	KubeConfig *string
 }

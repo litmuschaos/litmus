@@ -4,97 +4,72 @@ import (
 	"encoding/json"
 	"flag"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/cluster"
-	"io/ioutil"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/gql"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/k8s"
 	"log"
-	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
-var GRAPHQL_SERVER_ADDRESS = os.Getenv("GQL_SERVER") // Format: http://IP:PORT/query
-var newSubscriber = cluster.New()
+var (
+	clusterData = map[string]string{
+		"KEY":        os.Getenv("KEY"),
+		"CID":        os.Getenv("CID"),
+		"GQL_SERVER": os.Getenv("GQL_SERVER"),
+	}
+	err    error
+	newKey string
+)
 
 func init() {
-	newSubscriber.ClusterKey = os.Getenv("KEY")
-	newSubscriber.ClusterID = os.Getenv("CID")
-	newSubscriber.KubeConfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
-	
-	bool, err := newSubscriber.IsClusterConfirmed()
+	if home := homeDir(); home != "" {
+		k8s.KubeConfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
+	} else {
+		k8s.KubeConfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
+	}
+	flag.Parse()
+
+	var isConfirmed bool
+	isConfirmed, newKey, err = cluster.IsClusterConfirmed(clusterData)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if bool == false {
-		payload := `{"query":"mutation clusterConfirm{\n clusterConfirm(identity: {cluster_id: \"` + newSubscriber.ClusterID + `\", access_key: \"` + newSubscriber.ClusterKey + `\"}){\n \tisClusterConfirmed\n newClusterKey\n \tcluster_id\n }\n}"}`
-		req, err := http.NewRequest("POST", GRAPHQL_SERVER_ADDRESS, strings.NewReader(payload))
-		if err != nil {
-			log.Println(err)
-		}
+	if isConfirmed == true {
+		clusterData["KEY"] = newKey
+	} else if isConfirmed == false {
 
-		req.Header.Set("Accept-Encoding", "gzip, deflate, br")
-		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("Accept", "application/json")
-		req.Header.Set("Connection", "keep-alive")
-		req.Header.Set("Dnt", "1")
-
-		resp, err := http.DefaultClient.Do(req)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		bodyText, err := ioutil.ReadAll(resp.Body)
+		bodyText, err := gql.ClusterConfirm(clusterData)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		var responseInterface map[string]map[string]map[string]interface{}
-		json.Unmarshal([]byte(bodyText), &responseInterface)
+		err = json.Unmarshal(bodyText, &responseInterface)
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		if responseInterface["data"]["clusterConfirm"]["isClusterConfirmed"] == true {
 			log.Println("cluster confirmed")
-
-			newSubscriber.ClusterKey = strings.TrimSpace(responseInterface["data"]["clusterConfirm"]["newClusterKey"].(string))
-			newSubscriber.ClusterRegister(newSubscriber.ClusterKey, newSubscriber.ClusterID)
+			clusterData["KEY"] = strings.TrimSpace(responseInterface["data"]["clusterConfirm"]["newClusterKey"].(string))
+			cluster.ClusterRegister(clusterData)
 		} else {
 			log.Fatal("Cluster not confirmed")
 		}
 	}
 }
 
+func homeDir() string {
+	if h := os.Getenv("HOME"); h != "" {
+		return h
+	}
+	return os.Getenv("USERPROFILE") // windows
+}
+
 func main() {
-	client := &http.Client{}
-
-	query := `{"query":"subscription {\n    clusterConnect(clusterInfo: {cluster_id: \"` + newSubscriber.ClusterID + `\", access_key: \"` + newSubscriber.ClusterKey + `\"}) {\n   \t project_id,\n     action{\n      k8s_manifest,\n      external_data,\n      request_type\n     }\n  }\n}\n"}`
-	req, err := http.NewRequest("POST", GRAPHQL_SERVER_ADDRESS, strings.NewReader(query))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Headers for the calling the server endpoint
-	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Connection", "keep-alive")
-	req.Header.Set("DNT", "1")
-
-	for {
-		log.Println("Waiting for the subscription...")
-		resp, err := client.Do(req)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		bodyText, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		var r cluster.Response
-
-		json.Unmarshal(bodyText, &r)
-		_, err = newSubscriber.ClusterOperations(r.Data.ClusterConnect.Action.K8SManifest, r.Data.ClusterConnect.Action.RequestType)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
+	sigCh := make(chan os.Signal)
+	go gql.ClusterConnect(clusterData)
+	<-sigCh
 }

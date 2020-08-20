@@ -15,5 +15,3 @@ LABEL maintainer="LitmusChaos"
 
 COPY --from=builder /output/subscriber /
 CMD ["./subscriber"]
-
-EXPOSE 8080

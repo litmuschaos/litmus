@@ -2,82 +2,63 @@ package cluster
 
 import (
 	"context"
-	"k8s.io/apimachinery/pkg/api/meta"
-	"k8s.io/client-go/dynamic"
-	"k8s.io/client-go/restmapper"
-
 	"fmt"
 	yaml_converter "github.com/ghodss/yaml"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/k8s"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
+	"k8s.io/client-go/dynamic"
+	"k8s.io/client-go/restmapper"
 	"log"
 
 	memory "k8s.io/client-go/discovery/cached"
 )
 
-// New is the Subscriber's Constructor
-func New() *Subscriber {
-	return &Subscriber{
-		Ctx: context.Background(),
-	}
-}
+const (
+	PortalConfigName = "litmus-portal-config"
+	DefaultNamespace = "litmus"
+)
 
-var PortalConfigName = "litmus-portal-config"
-var DefaultNamespace = "litmus"
+var (
+	Ctx             = context.Background()
+	decUnstructured = yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
+	dr              dynamic.ResourceInterface
+)
 
 // IsClusterConfirmed checks if the config map with "is_cluster_confirmed" is true or not.
-func (s *Subscriber) IsClusterConfirmed() (bool, error) {
-	//s.GetGenericK8sClient()
-	clientset, err := s.GetGenericK8sClient()
+func IsClusterConfirmed(clusterData map[string]string) (bool, string, error) {
+	clientset, err := k8s.GetGenericK8sClient()
 	if err != nil {
-		return false, err
+		return false, "", err
 	}
 
-	configMapData := map[string]string{
-		"is_cluster_confirmed": "false",
-	}
-
-	configMap := corev1.ConfigMap{
-		TypeMeta: metav1.TypeMeta{
-			Kind:       "ConfigMap",
-			APIVersion: "v1",
-		},
-		ObjectMeta: metav1.ObjectMeta{
-			Name: PortalConfigName,
-		},
-		Data: configMapData,
-	}
-
-	getCM, err := clientset.CoreV1().ConfigMaps(DefaultNamespace).Get(s.Ctx, PortalConfigName, metav1.GetOptions{})
+	getCM, err := clientset.CoreV1().ConfigMaps(DefaultNamespace).Get(Ctx, PortalConfigName, metav1.GetOptions{})
 	if errors.IsNotFound(err) {
-		_, err := clientset.CoreV1().ConfigMaps(DefaultNamespace).Create(s.Ctx, &configMap, metav1.CreateOptions{})
-		if err != nil {
-			return false, err
-		}
-	} else {
-		if getCM.Data["is_cluster_confirmed"] == "true" {
-			s.ClusterKey = getCM.Data["cluster_key"]
-			return true, nil
-		}
+		return false, "", nil
+	} else if getCM.Data["is_cluster_confirmed"] == "true" {
+		return true, getCM.Data["cluster_key"], nil
+	} else if err != nil {
+		return false, "", err
 	}
 
-	return false, nil
+	return false, "", nil
 }
 
 // ClusterRegister function creates litmus-portal config map in the litmus namespace
-func (s *Subscriber) ClusterRegister(clusterkey string, clusterid string) (bool, error) {
-	clientset, err := s.GetGenericK8sClient()
+func ClusterRegister(clusterData map[string]string) (bool, error) {
+	clientset, err := k8s.GetGenericK8sClient()
 	if err != nil {
 		return false, err
 	}
 
 	configMapData := map[string]string{
 		"is_cluster_confirmed": "true",
-		"cluster_key":          clusterkey,
-		"cluster_id":           clusterid,
+		"cluster_key":          clusterData["KEY"],
+		"cluster_id":           clusterData["CID"],
 	}
 
 	newConfigMap := corev1.ConfigMap{
@@ -91,19 +72,73 @@ func (s *Subscriber) ClusterRegister(clusterkey string, clusterid string) (bool,
 		Data: configMapData,
 	}
 
-	_, err = clientset.CoreV1().ConfigMaps(DefaultNamespace).Update(s.Ctx, &newConfigMap, metav1.UpdateOptions{})
+	_, err = clientset.CoreV1().ConfigMaps(DefaultNamespace).Create(Ctx, &newConfigMap, metav1.CreateOptions{})
 	if err != nil {
 		return false, nil
 	}
 
-	log.Println("Configmap Updated")
+	log.Println("Configmap created")
 	return true, nil
 }
 
-var decUnstructured = yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
+func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstructured.Unstructured, error) {
+	if requestType == "create" {
+		response, err := dr.Create(Ctx, obj, metav1.CreateOptions{})
+		if errors.IsAlreadyExists(err) {
+			// This doesnt ever happen even if it does already exist
+			log.Printf("Already exists")
+			return nil, nil
+		}
+
+		if err != nil {
+			return nil, err
+		}
+
+		log.Println("Resource successfully created")
+		return response, nil
+	} else if requestType == "update" {
+		response, err := dr.Update(Ctx, obj, metav1.UpdateOptions{})
+		if err != nil {
+			return nil, err
+		}
+
+		log.Println("Resource successfully updated")
+		return response, nil
+	} else if requestType == "delete" {
+		err := dr.Delete(Ctx, obj.GetName(), metav1.DeleteOptions{})
+		if errors.IsNotFound(err) {
+			// This doesnt ever happen even if it is already deleted or not found
+			log.Printf("%v not found", obj.GetName())
+			return nil, nil
+		}
+
+		if err != nil {
+			return nil, err
+		}
+
+		log.Println("Resource successfully deleted")
+		return &unstructured.Unstructured{}, nil
+	} else if requestType == "get" {
+		response, err := dr.Get(Ctx, obj.GetName(), metav1.GetOptions{})
+		if errors.IsNotFound(err) {
+			// This doesnt ever happen even if it is already deleted or not found
+			log.Printf("%v not found", obj.GetName())
+			return nil, nil
+		}
+
+		if err != nil {
+			return nil, err
+		}
+
+		log.Println("Resource successfully retrieved")
+		return response, nil
+	}
+
+	return nil, fmt.Errorf("err: %v\n", "Invalid Request")
+}
 
 // This function handles cluster operations
-func (s *Subscriber) ClusterOperations(manifest string, requestType string) (*unstructured.Unstructured, error) {
+func ClusterOperations(manifest string, requestType string) (*unstructured.Unstructured, error) {
 
 	// Converting JSON to YAML and store it in yamlStr variable
 	yamlStr, err := yaml_converter.JSONToYAML([]byte(manifest))
@@ -112,7 +147,7 @@ func (s *Subscriber) ClusterOperations(manifest string, requestType string) (*un
 	}
 
 	// Getting dynamic and discovery client
-	discoveryClient, dynamicClient, err := s.GetDynamicAndDiscoveryClient()
+	discoveryClient, dynamicClient, err := k8s.GetDynamicAndDiscoveryClient()
 	if err != nil {
 		return nil, err
 	}
@@ -134,51 +169,13 @@ func (s *Subscriber) ClusterOperations(manifest string, requestType string) (*un
 	}
 
 	// Obtain REST interface for the GVR
-	var dr dynamic.ResourceInterface
 	if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
 		// namespaced resources should specify the namespace
-		//dr = dynamicClient.Resource(mapping.Resource).Namespace(
 		dr = dynamicClient.Resource(mapping.Resource).Namespace("litmus")
 	} else {
 		// for cluster-wide resources
 		dr = dynamicClient.Resource(mapping.Resource)
 	}
 
-	if requestType == "create" {
-		response, err := dr.Create(s.Ctx, obj, metav1.CreateOptions{})
-		if err != nil {
-			return nil, err
-		}
-
-		log.Println("Resource successfully applied")
-		return response, nil
-	} else if requestType == "update" {
-		response, err := dr.Update(s.Ctx, obj, metav1.UpdateOptions{})
-		if err != nil {
-			return nil, err
-		}
-
-		log.Println("Resource successfully applied")
-		return response, nil
-	} else if requestType == "delete" {
-		err := dr.Delete(s.Ctx, obj.GetName(), metav1.DeleteOptions{})
-		if err != nil {
-			return nil, err
-		}
-
-		log.Println("Resource successfully applied")
-		return &unstructured.Unstructured{}, nil
-	} else if requestType == "get" {
-		response, err := dr.Get(s.Ctx, obj.GetName(), metav1.GetOptions{})
-		if err != nil {
-			return nil, err
-		}
-
-		log.Println("Resource successfully applied")
-		return response, nil
-	} else {
-		return nil, fmt.Errorf("err: %v\n", "Invalid Request")
-	}
-
-	return nil, fmt.Errorf("Invalid request")
+	return applyRequest(requestType, obj)
 }

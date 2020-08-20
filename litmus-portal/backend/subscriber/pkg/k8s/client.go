@@ -1,4 +1,4 @@
-package cluster
+package k8s
 
 import (
 	"k8s.io/client-go/discovery"
@@ -8,18 +8,19 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-//getKubeConfig setup the config for access cluster resource
-func (s *Subscriber) getKubeConfig() (*rest.Config, error) {
+var KubeConfig *string
 
+//getKubeConfig setup the config for access cluster resource
+func getKubeConfig() (*rest.Config, error) {
 	// Use in-cluster config if kubeconfig path is specified
-	if *s.KubeConfig == "" {
+	if *KubeConfig == "" {
 		config, err := rest.InClusterConfig()
 		if err != nil {
 			return config, err
 		}
 	}
 
-	config, err := clientcmd.BuildConfigFromFlags("", *s.KubeConfig)
+	config, err := clientcmd.BuildConfigFromFlags("", *KubeConfig)
 	if err != nil {
 		return config, err
 	}
@@ -27,8 +28,8 @@ func (s *Subscriber) getKubeConfig() (*rest.Config, error) {
 	return config, err
 }
 
-func (s *Subscriber) GetGenericK8sClient() (*kubernetes.Clientset, error) {
-	config, err := s.getKubeConfig()
+func GetGenericK8sClient() (*kubernetes.Clientset, error) {
+	config, err := getKubeConfig()
 	if err != nil {
 		return nil, err
 	}
@@ -42,9 +43,9 @@ func (s *Subscriber) GetGenericK8sClient() (*kubernetes.Clientset, error) {
 }
 
 //This function returns dynamic client and discovery client
-func (s *Subscriber) GetDynamicAndDiscoveryClient() (discovery.DiscoveryInterface, dynamic.Interface, error) {
+func GetDynamicAndDiscoveryClient() (discovery.DiscoveryInterface, dynamic.Interface, error) {
 	// returns a config object which uses the service account kubernetes gives to pods
-	config, err := s.getKubeConfig()
+	config, err := getKubeConfig()
 	if err != nil {
 		return nil, nil, err
 	}
