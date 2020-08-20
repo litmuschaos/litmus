@@ -92,6 +92,7 @@ func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, project
 }
 
 func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo model.ClusterIdentity) (<-chan *model.ClusterAction, error) {
+	log.Print("NEW CLUSTER CONNECT ", clusterInfo.ClusterID)
 	clusterAction := make(chan *model.ClusterAction, 1)
 	verifiedCluster, err := cluster.VerifyCluster(clusterInfo)
 	if err != nil {
@@ -133,7 +134,6 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 
 	verifiedCluster.IsActive = true
 	subscriptions.SendClusterEvent("cluster-status", "Cluster Live", "Cluster is Live and Connected", model.Cluster(*verifiedCluster), *store)
-
 	return clusterAction, nil
 }
 
@@ -153,16 +153,16 @@ func (r *subscriptionResolver) WorkflowEventListener(ctx context.Context, projec
 func (r *subscriptionResolver) GetPodLog(ctx context.Context, podDetails model.PodLogRequest) (<-chan *model.PodLogResponse, error) {
 	log.Print("NEW LOG REQUEST", podDetails.ClusterID, podDetails.PodName)
 	workflowLog := make(chan *model.PodLogResponse, 1)
-	cid := uuid.New()
+	reqID := uuid.New()
 	store.Mutex.Lock()
-	store.WorkflowLog[cid.String()] = workflowLog
+	store.WorkflowLog[reqID.String()] = workflowLog
 	store.Mutex.Unlock()
 	go func() {
 		<-ctx.Done()
 		log.Print("CLOSED LOG LISTENER", podDetails.ClusterID, podDetails.PodName)
-		delete(store.WorkflowLog, cid.String())
+		delete(store.WorkflowLog, reqID.String())
 	}()
-	go queries.GetLogs(cid.String(), podDetails, *store)
+	go queries.GetLogs(reqID.String(), podDetails, *store)
 	return workflowLog, nil
 }
 
