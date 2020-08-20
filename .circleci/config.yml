@@ -1,8 +1,8 @@
 version: 2.1
 jobs:
     build:
-        machine:
-            image: circleci/classic:latest
+        docker:
+            - image: gdsoumya/portal-ci:latest
         working_directory: ~/go/src/github.com/litmuschaos/litmus
         environment:
             HOME: /home/circleci
