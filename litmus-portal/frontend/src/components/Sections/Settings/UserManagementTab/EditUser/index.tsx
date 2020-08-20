@@ -91,12 +91,12 @@ const EditUser: React.FC<EditUserProps> = ({
             <img src="./icons/BackArrow.svg" alt="back" />
           </IconButton>
           <Typography className={classes.divHeaderText}>
-            <strong>Create a new user</strong>
+            <strong>Edit user profile</strong>
           </Typography>
         </div>
 
         <Typography className={classes.descText}>
-          Enter the user&apos;s personal and login details
+          Edit the user&apos;s personal and login details
         </Typography>
         <div className={classes.container}>
           <div>
