@@ -17,7 +17,7 @@ SELF_DEPLOYER_IMAGE ?= litmusportal-self-deployer
 IMGTAG ?= ci
 
 .PHONY: all
-all: deps litmus-portal-check build push
+all: deps litmus-portal-check litmus-portal-test build push
 
 .PHONY: help
 help:
@@ -68,7 +68,7 @@ litmus-portal-push:
 
 
 .PHONY: litmus-portal-check
-litmus-portal-check : npm-install lint-checks unused-package-check
+litmus-portal-check : lint-checks unused-package-check
 
 npm-install:
 	@echo "------------------"
@@ -80,7 +80,7 @@ lint-checks:
 	@echo "------------------"
 	@echo "--> checking code style [frontend]"
 	@echo "------------------"
-	cd frontend && npm run lint
+	cd frontend && npm i eslint --no-save && npm run lint
 
 	@echo "------------------"
 	@echo "--> checking code style [backend]"
