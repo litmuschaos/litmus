@@ -102,7 +102,7 @@ func (s *Subscriber) ClusterRegister(clusterkey string, clusterid string) (bool,
 
 var decUnstructured = yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
 
-//
+// This function handles cluster operations
 func (s *Subscriber) ClusterOperations(manifest string, requestType string) (*unstructured.Unstructured, error) {
 
 	// Converting JSON to YAML and store it in yamlStr variable
