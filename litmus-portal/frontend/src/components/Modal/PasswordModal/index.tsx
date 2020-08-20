@@ -1,7 +1,7 @@
 import { Button, Typography } from '@material-ui/core';
 import React from 'react';
 import useStyles from './styles';
-import Unimodal from '../Unimodal';
+import Unimodal from '../../../containers/layouts/Unimodal';
 
 interface PasswordModalProps {
   formErr: boolean;

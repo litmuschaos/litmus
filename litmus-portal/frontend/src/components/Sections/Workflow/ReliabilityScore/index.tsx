@@ -12,7 +12,7 @@ import { WorkflowData, experimentMap } from '../../../../models/workflow';
 import { RootState } from '../../../../redux/reducers';
 import useActions from '../../../../redux/actions';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
-import Unimodal from '../../../Modal/Unimodal';
+import Unimodal from '../../../../containers/layouts/Unimodal';
 
 const ReliablityScore = () => {
   const classes = useStyles();

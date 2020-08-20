@@ -6,7 +6,7 @@ import useStyles, { CssTextField, ColorButton } from './styles';
 import useActions from '../../../../redux/actions';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
 import PredifinedWorkflows from '../../../PredifinedWorkflows';
-import Unimodal from '../../../Modal/Unimodal';
+import Unimodal from '../../../../containers/layouts/Unimodal';
 // import { getWkfRunCount } from "../../utils";
 
 const ChooseWorkflow: React.FC = () => {

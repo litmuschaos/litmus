@@ -5,7 +5,7 @@ import { UserData } from '../../../../../models/user';
 import { RootState } from '../../../../../redux/reducers';
 import UserDetails from '../../UserManagementTab/CreateUser/UserDetails';
 import useStyles from './styles';
-import Unimodal from '../../../../Modal/Unimodal';
+import Unimodal from '../../../../../containers/layouts/Unimodal';
 
 interface personaData {
   email: string;

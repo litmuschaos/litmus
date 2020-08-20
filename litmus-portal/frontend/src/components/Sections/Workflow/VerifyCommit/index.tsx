@@ -17,7 +17,7 @@ import {
   parseYamlValidations,
 } from '../../../YamlEditor/Validations';
 import useStyles from './styles';
-import Unimodal from '../../../Modal/Unimodal';
+import Unimodal from '../../../../containers/layouts/Unimodal';
 
 interface VerifyCommitProps {
   goto: () => void;

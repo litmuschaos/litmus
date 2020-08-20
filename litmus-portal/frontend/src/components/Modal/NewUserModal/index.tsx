@@ -5,7 +5,7 @@ import config from '../../../config';
 import { RootState } from '../../../redux/reducers';
 import ButtonFilled from '../../Button/ButtonFilled';
 import useStyles from './styles';
-import Unimodal from '../Unimodal';
+import Unimodal from '../../../containers/layouts/Unimodal';
 
 // Props for NewUserModal component
 interface NewUserModalProps {

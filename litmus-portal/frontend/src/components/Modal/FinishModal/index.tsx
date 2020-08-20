@@ -1,7 +1,7 @@
 import Button from '@material-ui/core/Button';
 import React from 'react';
 import useStyles from './styles';
-import Unimodal from '../Unimodal';
+import Unimodal from '../../../containers/layouts/Unimodal';
 
 /* Icon function is used for finish modal to show mark */
 function Icon() {
