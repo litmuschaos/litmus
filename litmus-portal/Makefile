@@ -17,7 +17,7 @@ SELF_DEPLOYER_IMAGE ?= litmusportal-self-deployer
 IMGTAG ?= ci
 
 .PHONY: all
-all: deps litmus-portal-check litmus-portal-test build push
+all: deps litmus-portal-check build push
 
 .PHONY: help
 help:
@@ -60,21 +60,15 @@ litmus-portal-push:
 	@echo "------------------"
 	@echo "--> Push frontend and backend images" 
 	@echo "------------------"
-	REPONAME=$(REPONAME) IMGNAME=$(FRONTEND_IMAGE) IMGTAG=$(IMGTAG) ../hack/push
-	REPONAME=$(REPONAME) IMGNAME=$(GRAPHQL_SERVER_IMAGE) IMGTAG=$(IMGTAG) ../hack/push
-	REPONAME=$(REPONAME) IMGNAME=$(SUBSCRIBER_IMAGE) IMGTAG=$(IMGTAG) ../hack/push
-	REPONAME=$(REPONAME) IMGNAME=$(AUTHENTICATION_SERVER_IMAGE) IMGTAG=$(IMGTAG) ../hack/push
-	REPONAME=$(REPONAME) IMGNAME=$(SELF_DEPLOYER_IMAGE) IMGTAG=$(IMGTAG) ../hack/push
+	REPONAME=$(REPONAME) IMGNAME=$(FRONTEND_IMAGE) IMGTAG=$(IMGTAG) bash  ../hack/push
+	REPONAME=$(REPONAME) IMGNAME=$(GRAPHQL_SERVER_IMAGE) IMGTAG=$(IMGTAG) bash  ../hack/push
+	REPONAME=$(REPONAME) IMGNAME=$(SUBSCRIBER_IMAGE) IMGTAG=$(IMGTAG) bash  ../hack/push
+	REPONAME=$(REPONAME) IMGNAME=$(AUTHENTICATION_SERVER_IMAGE) IMGTAG=$(IMGTAG) bash  ../hack/push
+	REPONAME=$(REPONAME) IMGNAME=$(SELF_DEPLOYER_IMAGE) IMGTAG=$(IMGTAG) bash  ../hack/push
 
 
 .PHONY: litmus-portal-check
 litmus-portal-check : lint-checks unused-package-check
-
-npm-install:
-	@echo "------------------"
-	@echo "--> checking code style [frontend]"
-	@echo "------------------"
-	cd frontend && npm i
 
 lint-checks:
 	@echo "------------------"
@@ -116,12 +110,3 @@ unused-package-check:
 		&& echo "Please ensure you are using $$($(GO) version) for formatting code." \
 		&& exit 1; \
 	fi
-
-.PHONY: litmus-portal-test
-litmus-portal-test : npm-install frontend-unit-test
-
-frontend-unit-test:
-	@echo "------------------"
-	@echo "--> Frontend Unit Test"
-	@echo "------------------"
-	cd ./frontend && npx cypress run
