@@ -8,8 +8,6 @@ jobs:
       GO111MODULE: "on"
     steps:
       - run : |
-          go version
-      - run : |
           cd && source /opt/circleci/.nvm/nvm.sh && nvm install v10 && nvm alias default 10 && wget https://dl.google.com/go/go1.14.6.linux-amd64.tar.gz && sudo tar -xvf go1.14.6.linux-amd64.tar.gz && sudo rm -rf /usr/local/go && sudo mv go /usr/local && export GOROOT=/usr/local/go
       - checkout
       - run: |
