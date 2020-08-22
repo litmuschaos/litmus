@@ -1,9 +1,9 @@
 import { IconButton, MenuItem, Typography } from '@material-ui/core';
 import React from 'react';
-import ButtonFilled from '../../Button/ButtonFilled';
-import ButtonOutline from '../../Button/ButtonOutline';
+import ButtonFilled from '../../../../../Button/ButtonFilled';
+import ButtonOutline from '../../../../../Button/ButtonOutline';
 import useStyles from './styles';
-import Unimodal from '../../../containers/layouts/Unimodal';
+import Unimodal from '../../../../../../containers/layouts/Unimodal';
 
 // props for DelUser component
 interface DelUserProps {

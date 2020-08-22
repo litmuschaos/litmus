@@ -2,11 +2,11 @@ import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import config from '../../../config';
-import { RootState } from '../../../redux/reducers';
-import ButtonFilled from '../../Button/ButtonFilled';
+import config from '../../../../../../config';
+import { RootState } from '../../../../../../redux/reducers';
+import ButtonFilled from '../../../../../Button/ButtonFilled';
 import useStyles from './styles';
-import Unimodal from '../../../containers/layouts/Unimodal';
+import Unimodal from '../../../../../../containers/layouts/Unimodal';
 
 // props for ResetModal component
 interface ResetModalProps {
