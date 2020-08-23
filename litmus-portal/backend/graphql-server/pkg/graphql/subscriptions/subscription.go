@@ -51,7 +51,7 @@ func SendWorkflowRequest(wfRequest *database.ChaosWorkFlowInput, r store.StateDa
 
 	r.Mutex.Lock()
 
-	if observer, ok := r.ConnectedCluster[wfRequest.ClusterID]; ok{
+	if observer, ok := r.ConnectedCluster[wfRequest.ClusterID]; ok {
 		observer <- newAction
 	}
 
