@@ -8,7 +8,6 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/k8s"
 	"log"
 	"os"
-	"path/filepath"
 	"strings"
 )
 
@@ -23,12 +22,7 @@ var (
 )
 
 func init() {
-	if home := homeDir(); home != "" {
-		k8s.KubeConfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
-	} else {
-		k8s.KubeConfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
-	}
-	flag.Parse()
+	k8s.KubeConfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
 
 	var isConfirmed bool
 	isConfirmed, newKey, err = cluster.IsClusterConfirmed(clusterData)
@@ -59,13 +53,6 @@ func init() {
 			log.Fatal("Cluster not confirmed")
 		}
 	}
-}
-
-func homeDir() string {
-	if h := os.Getenv("HOME"); h != "" {
-		return h
-	}
-	return os.Getenv("USERPROFILE") // windows
 }
 
 func main() {
