@@ -4,15 +4,16 @@ import {
   Input,
   InputAdornment,
   InputLabel,
+  Button,
+  Typography,
+  Divider,
 } from '@material-ui/core';
-import Divider from '@material-ui/core/Divider';
-import Typography from '@material-ui/core/Typography';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import React from 'react';
-import PasswordModal from '../../../../Modal/PasswordModal';
 import PersonalDetails from '../PersonalDetails';
 import useStyles from './styles';
+import Unimodal from '../../../../../containers/layouts/Unimodal';
 
 // used for password field
 interface Password {
@@ -24,6 +25,13 @@ interface Password {
 // AccountSettings displays the starting page of "Accounts" tab
 const AccountSettings: React.FC = () => {
   const classes = useStyles();
+
+  // used for modal
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   // used for password validation
   const regularExpression = new RegExp(
@@ -224,15 +232,49 @@ const AccountSettings: React.FC = () => {
                   Confirm new password
                 </InputLabel>
               </FormControl>
-              <PasswordModal
-                formErr={newPassword.err && confNewPassword.err}
-                isEmpty={
-                  !(
+              <Button
+                data-cy="button"
+                variant="contained"
+                className={classes.button}
+                onClick={() => {
+                  if (
+                    !(newPassword.err && confNewPassword.err) &&
                     newPassword.password.length > 0 &&
                     confNewPassword.password.length > 0
-                  )
-                }
-              />
+                  ) {
+                    setOpen(true);
+                  }
+                }}
+              >
+                Change password
+              </Button>
+              <Unimodal
+                isOpen={open}
+                handleClose={handleClose}
+                hasCloseBtn={false}
+              >
+                <div className={classes.body}>
+                  <img src="./icons/lock.svg" alt="lock" />
+                  <div className={classes.text}>
+                    <Typography className={classes.typo} align="center">
+                      Your password <strong>has been changed!</strong>
+                    </Typography>
+                  </div>
+                  <div className={classes.text1}>
+                    <Typography className={classes.typo1}>
+                      You can now use your new password to login to your account
+                    </Typography>
+                  </div>
+                  <Button
+                    data-cy="closeButton"
+                    variant="contained"
+                    className={classes.button}
+                    onClick={handleClose}
+                  >
+                    Done
+                  </Button>
+                </div>
+              </Unimodal>
             </form>
 
             <div className={classes.col2}>
