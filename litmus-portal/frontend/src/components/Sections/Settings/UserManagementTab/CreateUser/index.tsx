@@ -11,7 +11,7 @@ import {
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import React from 'react';
-import NewUserModal from '../../../../Modal/NewUserModal';
+import NewUserModal from './NewUserModal';
 import useStyles from './styles';
 import UserDetails from './UserDetails';
 
