@@ -50,10 +50,10 @@ func SendWorkflowRequest(wfRequest *database.ChaosWorkFlowInput, r store.StateDa
 	}
 
 	r.Mutex.Lock()
-	if r.ClusterEventPublish != nil {
-		for _, observer := range r.ConnectedCluster {
-			observer <- newAction
-		}
+
+	if observer, ok := r.ConnectedCluster[wfRequest.ClusterID]; ok {
+		observer <- newAction
 	}
+
 	r.Mutex.Unlock()
 }
