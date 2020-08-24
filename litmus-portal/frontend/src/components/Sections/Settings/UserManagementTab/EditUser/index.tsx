@@ -10,8 +10,8 @@ import {
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import React from 'react';
-import DelUser from '../../../../Modal/DelUser';
-import ResetModal from '../../../../Modal/ResetModal';
+import DelUser from './DelUser';
+import ResetModal from './ResetModal';
 import UserDetails from '../CreateUser/UserDetails';
 import useStyles from './styles';
 

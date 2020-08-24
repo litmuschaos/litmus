@@ -1,26 +1,14 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
-  modal: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  paper: {
-    width: '50.75rem',
-    height: '39.1875rem',
-    backgroundColor: theme.palette.background.paper,
-
-    outline: 'none',
-    borderRadius: '0.1875rem',
-  },
   body: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: theme.spacing(15),
+    marginTop: theme.spacing(14),
   },
+  // styles for text
   text: {
     width: '23.5rem',
     height: '5.875rem',
@@ -30,25 +18,29 @@ const useStyles = makeStyles((theme: Theme) => ({
   typo: {
     fontSize: '2.25rem',
   },
-  text1: {
+  textSecond: {
     width: '27.5rem',
     height: '1.6875rem',
     marginBottom: theme.spacing(3.75),
   },
-  typo1: {
+  typoSub: {
     fontSize: '1rem',
   },
+
+  // styles for buttons
   button: {
-    textTransform: 'none',
-    width: '9.25rem',
-    height: '2.75rem',
-    borderRadius: '0.1875rem',
+    marginRight: theme.spacing(-2),
+  },
+  buttonModal: {
     marginTop: theme.spacing(3.75),
-    backgroundColor: theme.palette.secondary.dark,
-    color: theme.palette.common.white,
-    '&:hover': {
-      backgroundColor: theme.palette.secondary.dark,
-    },
+  },
+  copyDiv: {
+    marginTop: theme.spacing(6),
+    flexDirection: 'row',
+    width: '10.0625rem',
+    display: 'flex',
+    justifyContent: 'space-between',
+    color: theme.palette.secondary.dark,
   },
 }));
 export default useStyles;
