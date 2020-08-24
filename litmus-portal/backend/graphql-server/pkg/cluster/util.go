@@ -2,7 +2,8 @@ package cluster
 
 import (
 	"errors"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb"
+
+	database "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb"
 
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
 )

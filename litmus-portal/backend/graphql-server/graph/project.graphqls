@@ -1,8 +1,16 @@
 type Project{
     id: ID!
     name: String!
+    members: [Member!]!
     state: String
     created_at: String!
     updated_at: String!
     removed_at: String!
+}
+
+type Member {
+    user_id: ID!
+    user_name: String!
+    role: String!
+    invitation: String!
 }

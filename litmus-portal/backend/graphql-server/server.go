@@ -16,7 +16,6 @@ import (
 
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/generated"
-	database "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/file_handlers"
 )
 
@@ -25,12 +24,8 @@ const defaultPort = "8080"
 var err error
 
 func init() {
-	if os.Getenv("DB_SERVER") == "" || os.Getenv("JWT_SECRET") == "" || os.Getenv("SERVICE_ADDRESS") == "" {
+	if os.Getenv("JWT_SECRET") == "" || os.Getenv("SERVICE_ADDRESS") == "" {
 		log.Fatal("Some environment variable are not setup")
-	}
-
-	if err = database.DBInit(); err != nil {
-		log.Fatal(err)
 	}
 }
 
