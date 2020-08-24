@@ -5,9 +5,9 @@ import Tabs from '@material-ui/core/Tabs';
 import React from 'react';
 import { history } from '../../../../redux/configureStore';
 import ButtonFilled from '../../../Button/ButtonFilled';
-import Loader from '../../../Loader';
 import BrowseWorkflow from '../BrowseWorkflow';
 import useStyles from './styles';
+import ScheduleWorkflow from '../ScheduleWorkflow';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -85,7 +85,7 @@ const CenteredTabs = () => {
         <BrowseWorkflow />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <Loader />
+        <ScheduleWorkflow />
       </TabPanel>
       <TabPanel value={value} index={2}>
         Something here!

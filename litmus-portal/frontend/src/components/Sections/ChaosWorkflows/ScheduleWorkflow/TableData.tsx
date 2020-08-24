@@ -7,10 +7,7 @@ import {
   Menu,
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import CustomStatus from '../CustomStatus/Status';
-import LinearProgressBar from '../../ReturningHome/ProgressBar/LinearProgressBar';
 import useStyles from './styles';
-import timeDifferenceForDate from '../../../../utils/datesModifier';
 
 interface TableDataProps {
   data: any;
@@ -30,15 +27,32 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
     setAnchorEl(null);
   };
   const handleMenu = () => {};
+
+  const formatDate = (date: any) => {
+    const updated = new Date(date * 1000).toString();
+    const day = updated.slice(8, 10);
+    const month = updated.slice(4, 7);
+    const year = updated.slice(11, 15);
+    const resDate = `${day}  ${month}  ${year}`;
+    return resDate;
+  };
+
   return (
     <>
-      <TableCell className={classes.headerStatus1}>
-        <CustomStatus status={JSON.parse(data.execution_data).phase} />
-      </TableCell>
-      <TableCell className={classes.workflowNameData}>
+      <TableCell className={classes.workflowName}>
         <Typography>
           <strong>{data.workflow_name}</strong>
         </Typography>
+      </TableCell>
+      <TableCell>
+        <Typography className={classes.clusterName}>
+          {formatDate(JSON.parse(data.execution_data).startedAt)}
+        </Typography>
+      </TableCell>
+      <TableCell>
+        <div className={classes.reliabiltyData}>
+          <Typography>Every Monday</Typography>
+        </div>
       </TableCell>
       <TableCell>
         <Typography className={classes.clusterName}>
@@ -46,33 +60,9 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
         </Typography>
       </TableCell>
       <TableCell>
-        <div className={classes.reliabiltyData}>
-          {JSON.parse(data.execution_data).phase === 'Failed' ? (
-            <>
-              <Typography>Overall RR: 0</Typography>
-              <div className={classes.progressBar}>
-                <LinearProgressBar value={0} />
-              </div>
-            </>
-          ) : (
-            <>
-              <Typography>Overall RR: 100</Typography>
-              <div className={classes.progressBar}>
-                <LinearProgressBar value={100} />
-              </div>
-            </>
-          )}
-        </div>
-      </TableCell>
-      <TableCell>
-        <Typography className={classes.stepsData}>
-          {Object.keys(JSON.parse(data.execution_data).nodes).length}
-        </Typography>
-      </TableCell>
-      <TableCell>
         <div className={classes.timeDiv}>
           <Typography className={classes.timeData}>
-            {timeDifferenceForDate(data.last_updated)}
+            {data.cluster_name}
           </Typography>
         </div>
       </TableCell>

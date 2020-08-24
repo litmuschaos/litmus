@@ -42,7 +42,6 @@ const useStyles = makeStyles((theme) => ({
   },
   headerStatus: {
     paddingLeft: theme.spacing(10),
-    color: 'rgba(0, 0, 0, 0.4)',
   },
   headerStatus1: {
     paddingLeft: theme.spacing(8),
@@ -58,17 +57,9 @@ const useStyles = makeStyles((theme) => ({
   },
   workflowName: {
     borderRight: '1px solid rgba(0,0,0,0.1)',
-    color: 'rgba(0, 0, 0, 0.4)',
-  },
-  workflowNameData: {
-    borderRight: '1px solid rgba(0,0,0,0.1)',
   },
   targetCluster: {
     paddingLeft: theme.spacing(3.75),
-    color: 'rgba(0, 0, 0, 0.4)',
-  },
-  headData: {
-    color: 'rgba(0, 0, 0, 0.4)',
   },
   clusterName: {
     marginLeft: theme.spacing(3.75),
