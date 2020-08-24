@@ -1,7 +1,7 @@
-import Modal from '@material-ui/core/Modal';
 import React from 'react';
 import ModalStepper from './Stepper';
 import useStyles from './styles';
+import Unimodal from '../../containers/layouts/Unimodal';
 
 interface WelcomemodalProps {
   handleIsOpen: () => void;
@@ -24,14 +24,9 @@ const Welcomemodal: React.FC<WelcomemodalProps> = ({ handleIsOpen }) => {
 
   return (
     <div>
-      <Modal
-        open
-        onClose={handleClose}
-        disableBackdropClick
-        disableEscapeKeyDown
-      >
+      <Unimodal isOpen handleClose={handleClose} hasCloseBtn={false}>
         {body}
-      </Modal>
+      </Unimodal>
     </div>
   );
 };

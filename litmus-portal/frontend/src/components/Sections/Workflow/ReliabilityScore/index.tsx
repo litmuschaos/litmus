@@ -1,4 +1,4 @@
-import { Modal, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import Center from '../../../../containers/layouts/Center';
@@ -12,6 +12,7 @@ import { WorkflowData, experimentMap } from '../../../../models/workflow';
 import { RootState } from '../../../../redux/reducers';
 import useActions from '../../../../redux/actions';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
+import Unimodal from '../../../../containers/layouts/Unimodal';
 
 const ReliablityScore = () => {
   const classes = useStyles();
@@ -114,28 +115,30 @@ const ReliablityScore = () => {
                 <div className={classes.toolTipDiv}>
                   <InfoTooltip value="Text Default" />
                 </div>
-                <Modal open={open}>
-                  <div className={classes.modalContainer}>
-                    <div>
-                      <ResultTable
-                        testValue={testWeights}
-                        testNames={testNames}
-                      />
-                    </div>
-                    <hr className={classes.horizontalLineResult} />
-                    <div className={classes.gotItBtn}>
-                      <Center>
-                        <ButtonFilled
-                          handleClick={() => setOpen(false)}
-                          data-cy="gotItButton"
-                          isPrimary
-                        >
-                          <div>Got it</div>
-                        </ButtonFilled>
-                      </Center>
-                    </div>
+                <Unimodal
+                  isOpen={open}
+                  handleClose={() => setOpen(false)}
+                  hasCloseBtn={false}
+                >
+                  <div>
+                    <ResultTable
+                      testValue={testWeights}
+                      testNames={testNames}
+                    />
                   </div>
-                </Modal>
+                  <hr className={classes.horizontalLineResult} />
+                  <div className={classes.gotItBtn}>
+                    <Center>
+                      <ButtonFilled
+                        handleClick={() => setOpen(false)}
+                        data-cy="gotItButton"
+                        isPrimary
+                      >
+                        <div>Got it</div>
+                      </ButtonFilled>
+                    </Center>
+                  </div>
+                </Unimodal>
               </div>
               <div>
                 <Typography className={classes.testInfo}>

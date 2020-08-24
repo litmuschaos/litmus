@@ -4,10 +4,10 @@ import MobileStepper from '@material-ui/core/MobileStepper';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import config from '../../../config';
-import { RootState } from '../../../redux/reducers';
-import { CREATE_USER } from '../../../schemas';
-import InputField from '../../InputField';
+import config from '../../config';
+import { RootState } from '../../redux/reducers';
+import { CREATE_USER } from '../../schemas';
+import InputField from '../InputField';
 import ModalPage from './Modalpage';
 import useStyles from './styles';
 
