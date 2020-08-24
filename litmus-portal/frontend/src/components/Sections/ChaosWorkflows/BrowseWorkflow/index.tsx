@@ -1,74 +1,76 @@
-import React, { useEffect, useState } from 'react';
-import { useQuery, useSubscription } from '@apollo/client';
-import SearchIcon from '@material-ui/icons/Search';
+/* eslint-disable */
+// TODO: Remove the above line...only for debugging temporary fix
+import { useQuery } from '@apollo/client';
+import {
+  FormControl,
+  IconButton,
+  InputAdornment,
+  InputBase,
+  InputLabel,
+  MenuItem,
+  Select,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  Typography,
+} from '@material-ui/core';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import {
-  InputBase,
-  InputAdornment,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Typography,
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  TablePagination,
-  IconButton,
-} from '@material-ui/core';
-import useStyles from './styles';
+import SearchIcon from '@material-ui/icons/Search';
+import React, { useEffect } from 'react';
 import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../../../schemas';
+import Loader from '../../../Loader';
+import useStyles from './styles';
 import TableData from './TableData';
 
 const BrowseWorkflow = () => {
-  // Apollo query with subscribeToMore
-  const { data } = useQuery(WORKFLOW_DETAILS);
-  const subsData = useSubscription(WORKFLOW_EVENTS);
-  // Default table data
-  const [mainData, setMainData] = useState<any>();
-
   const classes = useStyles();
 
-  const [search, setSearch] = React.useState<string>('');
+  // Query to get workflows
+  const { subscribeToMore, data, loading, error } = useQuery(WORKFLOW_DETAILS);
 
-  const [status, setStatus] = React.useState<string>('');
+  // Using subscription to get realtime data
+  useEffect(() => {
+    subscribeToMore({
+      document: WORKFLOW_EVENTS,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev;
+        const modifiedWorkflows = prev.getWorkFlowRuns.slice();
+        const newWorkflow = subscriptionData.data.workflowEventListener;
 
-  const [page, setPage] = React.useState(0);
+        // Updating the query data
+        let i = 0;
+        for (; i < modifiedWorkflows.length; i++) {
+          if (
+            modifiedWorkflows[i]['workflow_run_id'] ===
+            newWorkflow['workflow_run_id']
+          ) {
+            modifiedWorkflows[i] = newWorkflow;
+            break;
+          }
+        }
+        if (i === modifiedWorkflows.length)
+          modifiedWorkflows.unshift(newWorkflow);
 
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+        return { ...prev, getWorkFlowRuns: modifiedWorkflows };
+      },
+    });
+  }, [data]);
 
+  // States for filters
   const [searchedData, setSearchedData] = React.useState<any>();
-
-  useEffect(() => {
-    if (mainData === undefined) return;
-    const wfData = JSON.parse(JSON.stringify(mainData));
-    let i = 0;
-    for (; i < wfData.getWorkFlowRuns.length; i++) {
-      if (
-        wfData.getWorkFlowRuns[i]['workflow_run_id'] ===
-        subsData.data.workflowEventListener['workflow_run_id']
-      ) {
-        wfData.getWorkFlowRuns[i] = subsData.data.workflowEventListener;
-        break;
-      }
-    }
-    if (i === wfData.getWorkFlowRuns.length)
-      wfData.getWorkFlowRuns.push(subsData.data.workflowEventListener);
-    setSearchedData(wfData);
-  }, [subsData.data]);
-
-  useEffect(() => {
-    setMainData(data);
-    setSearchedData(mainData);
-  }, [data, mainData]);
+  const [search, setSearch] = React.useState<string>('');
+  const [status, setStatus] = React.useState<string>('');
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
-    const searchData = mainData.getWorkFlowRuns?.filter(
+    const searchData = data.getWorkFlowRuns?.filter(
       (data: { workflow_name: string; execution_data: string }) =>
         data.workflow_name.toLowerCase().includes(event.target.value) &&
         JSON.parse(data.execution_data).phase.includes(status)
@@ -79,7 +81,7 @@ const BrowseWorkflow = () => {
 
   const handleStatusChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setStatus(event.target.value as string);
-    const statusData = mainData.getWorkFlowRuns.filter((data: any) =>
+    const statusData = data.getWorkFlowRuns.filter((data: any) =>
       JSON.parse(data.execution_data).phase.includes(
         event.target.value as string
       )
@@ -109,19 +111,21 @@ const BrowseWorkflow = () => {
 
   // const ascWorkflowName = () => {
   //   var data =
-  //     mainData &&
-  //     mainData.getWorkFlowRuns.slice().sort((a: any, b: any) => {
+  //     data &&
+  //     data.getWorkFlowRuns.slice().sort((a: any, b: any) => {
   //       return a.workflow_name - b.workflow_name;
   //     });
   //   console.log(data);
   // };
-  // console.log(mainData);
+  // console.log(data);
+
   const emptyRows =
     rowsPerPage -
     Math.min(
       rowsPerPage,
-      mainData && mainData.getWorkFlowRuns.length - page * rowsPerPage
+      data && data.getWorkFlowRuns.length - page * rowsPerPage
     );
+
   return (
     <div>
       <section className="Heading section">
@@ -252,13 +256,18 @@ const BrowseWorkflow = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {searchedData && searchedData.getWorkFlowRuns.length ? (
-                searchedData &&
-                searchedData.getWorkFlowRuns
+              {loading ? (
+                <Loader />
+              ) : error ? (
+                <Typography style={{ padding: 20 }}>
+                  Unable to fetch data
+                </Typography>
+              ) : data && data.getWorkFlowRuns.length ? (
+                data.getWorkFlowRuns
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((data: any) => (
+                  .map((dataRow: any) => (
                     <TableRow>
-                      <TableData data={data} />
+                      <TableData data={dataRow} />
                     </TableRow>
                   ))
               ) : (
@@ -277,7 +286,7 @@ const BrowseWorkflow = () => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={searchedData && searchedData.getWorkFlowRuns.length}
+          count={data && data.getWorkFlowRuns.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onChangePage={handleChangePage}

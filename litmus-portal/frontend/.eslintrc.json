@@ -18,6 +18,7 @@
     }
   },
   "rules": {
+    "no-nested-ternary": 0,
     "no-plusplus": 0,
     "dot-notation": 0,
     "camelcase": 0,
