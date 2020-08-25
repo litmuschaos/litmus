@@ -95,36 +95,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   buttonOutlineText: {
     padding: theme.spacing(1.5),
   },
-  modalContainer: {
-    width: '61.25rem',
-    height: '29rem',
-    marginLeft: '20%',
-    marginTop: '5.5%',
-    background: '#161616',
-    outline: 'none',
-  },
-  modalContainerClose: {
-    paddingLeft: theme.spacing(115),
-  },
   errorText: {
     fontSize: '1rem',
     color: 'red',
     marginLeft: theme.spacing(5),
-  },
-  closeButtonStyle: {
-    fontSize: '1rem',
-    fontWeight: 1000,
-    display: 'inline-block',
-    paddingTop: theme.spacing(0.375),
-    paddingBottom: theme.spacing(0.375),
-    paddingLeft: theme.spacing(1.5),
-    paddingRight: theme.spacing(1.5),
-    minHeight: 0,
-    minWidth: 0,
-    borderRadius: 3,
-    color: 'rgba(255, 255, 255, 0.4)',
-    border: '1px solid rgba(255, 255, 255, 0.4)',
-    marginTop: theme.spacing(2.5),
   },
   yamlFlex: {
     display: 'flex',

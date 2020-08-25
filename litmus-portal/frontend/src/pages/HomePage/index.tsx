@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import InfoFilledWrap from '../../components/InfoFilled';
 import QuickActionCard from '../../components/QuickActionCard';
-import WelcomeModal from '../../components/Modal/WelcomeModal';
+import WelcomeModal from '../../components/WelcomeModal';
 import Scaffold from '../../containers/layouts/Scaffold';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';

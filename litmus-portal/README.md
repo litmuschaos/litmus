@@ -42,7 +42,6 @@ kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/li
   - MaterialUI
 - Backend
   - GoLang
-  - JavaScript
   - GQLGEN GraphQL Server
 - Database
   - MongoDB
