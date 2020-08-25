@@ -17,6 +17,9 @@ const LoginPage = lazy(() => import('../../pages/LoginPage'));
 const WorkflowUnderground = lazy(() =>
   import('../../pages/WorkflowUnderground')
 );
+const BrowseTemplate = lazy(() =>
+  import('../../components/Sections/ChaosWorkflows/BrowseTemplate')
+);
 const HomePage = lazy(() => import('../../pages/HomePage'));
 const Community = lazy(() => import('../../pages/Community'));
 const Settings = lazy(() => import('../../pages/Settings'));
@@ -52,6 +55,11 @@ const Routes: React.FC<RoutesProps> = ({ userData }) => {
           component={WorkflowUnderground}
         />
         <Route exact path="/community" component={Community} />
+        <Route
+          exact
+          path="/workflows/:workflowName"
+          component={BrowseTemplate}
+        />
         <Route exact path="/settings" component={Settings} />
         <Route exact path="/404" component={ErrorPage} />
         <Redirect to="/404" />

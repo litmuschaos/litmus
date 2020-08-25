@@ -193,6 +193,8 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ goto }) => {
                     <AdjustedWeights
                       testName={`${Test.experimentName} test`}
                       testValue={Test.weight}
+                      spacing={false}
+                      icon={false}
                     />
                   ))}
                 </div>
