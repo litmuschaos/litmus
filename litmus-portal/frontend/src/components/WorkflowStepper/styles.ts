@@ -11,8 +11,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginRight: theme.spacing(1),
   },
   content: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
+    marginLeft: theme.spacing(-8),
+    marginRight: theme.spacing(-8),
   },
   buttonGroup: {
     display: 'flex',
@@ -41,36 +41,27 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   /* Finish modal content style */
-  rootContainer: {
-    marginBottom: '5rem',
-  },
   mark: {
-    marginTop: 80,
+    marginTop: theme.spacing(14),
     textAlign: 'center',
   },
   heading: {
-    fontfamily: 'Ubuntu',
-    fontstyle: 'normal',
-    fontweight: 'normal',
-    fontSize: '40px',
+    fontSize: '2rem',
     textalign: 'center',
-    marginTop: '2rem',
+    marginTop: theme.spacing(5),
     color: theme.palette.common.black,
   },
   headWorkflow: {
-    fontfamily: 'Ubuntu',
-    fontstyle: 'normal',
-    fontweight: 'normal',
-    fontsize: '16px',
+    fontsize: '2rem',
     lineheight: '170%',
     textalign: 'center',
     color: theme.palette.common.black,
-    marginTop: '2.5rem',
+    marginTop: theme.spacing(6),
   },
   button: {
-    color: 'white',
+    color: theme.palette.common.white,
     textAlign: 'center',
-    marginTop: '2rem',
+    marginTop: theme.spacing(6),
   },
 }));
 

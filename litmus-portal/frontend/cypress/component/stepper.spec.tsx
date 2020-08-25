@@ -1,5 +1,6 @@
 /// <reference types="Cypress" />
 
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import React from 'react';
 import { mount } from 'cypress-react-unit-test';
 import { Provider } from 'react-redux';
@@ -8,13 +9,20 @@ import configureStore from '../../src/redux/configureStore';
 
 const { store } = configureStore();
 
-// Test Suite - Stepper Labels are present
-describe('Input Data is present', () => {
-  const wrapper = (
+const client = new ApolloClient({
+  cache: new InMemoryCache(),
+});
+
+const wrapper = (
+  <ApolloProvider client={client}>
     <Provider store={store}>
       <CustomStepper />
     </Provider>
-  );
+  </ApolloProvider>
+);
+
+// Test Suite - Stepper Labels are present
+describe('Input Data is present', () => {
   const expectedOutput = [
     'Target Cluster',
     'Choose a workflow',
@@ -38,11 +46,6 @@ describe('Input Data is present', () => {
 
 // Test Suite - Active label has a color of rgb(121, 134, 203)
 describe('Active Label is colored theme.palette.primary.light', () => {
-  const wrapper = (
-    <Provider store={store}>
-      <CustomStepper />
-    </Provider>
-  );
   it('Active theme color is correct', () => {
     mount(wrapper);
     cy.get('[data-cy=labelText]').then((item) => {
