@@ -21,17 +21,24 @@ import {
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import SearchIcon from '@material-ui/icons/Search';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../../../schemas';
 import Loader from '../../../Loader';
 import useStyles from './styles';
 import TableData from './TableData';
+
+interface FilterOptions {
+  search: string;
+  status: string;
+  cluster: string;
+}
 
 const BrowseWorkflow = () => {
   const classes = useStyles();
 
   // Query to get workflows
   const { subscribeToMore, data, loading, error } = useQuery(WORKFLOW_DETAILS);
+  console.log(data);
 
   // Using subscription to get realtime data
   useEffect(() => {
@@ -46,8 +53,7 @@ const BrowseWorkflow = () => {
         let i = 0;
         for (; i < modifiedWorkflows.length; i++) {
           if (
-            modifiedWorkflows[i]['workflow_run_id'] ===
-            newWorkflow['workflow_run_id']
+            modifiedWorkflows[i].workflow_run_id === newWorkflow.workflow_run_id
           ) {
             modifiedWorkflows[i] = newWorkflow;
             break;
@@ -62,62 +68,61 @@ const BrowseWorkflow = () => {
   }, [data]);
 
   // States for filters
-  const [searchedData, setSearchedData] = React.useState<any>();
-  const [search, setSearch] = React.useState<string>('');
-  const [status, setStatus] = React.useState<string>('');
+  const [filters, setFilters] = useState<FilterOptions>({
+    search: '',
+    status: 'All',
+    cluster: 'All',
+  });
+
+  // const [searchedData, setSearchedData] = React.useState<any>();
+  // const [search, setSearch] = React.useState<string>('');
+  // const [status, setStatus] = React.useState<string>('');
+
+  // State for pagination
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(event.target.value);
-    const searchData = data.getWorkFlowRuns?.filter(
-      (data: { workflow_name: string; execution_data: string }) =>
-        data.workflow_name.toLowerCase().includes(event.target.value) &&
-        JSON.parse(data.execution_data).phase.includes(status)
-    );
-    setPage(0);
-    setSearchedData({ getWorkFlowRuns: searchData });
+  const applySearch = (data: any) => {
+    console.log(data);
+
+    // return data.filter(
+    //   (dataRow) => dataRow.workflow_name.toLowerCase().includes(filters.search)
+    //   // JSON.parse(data.execution_data).phase.includes(status)
+    // );
+    return data;
   };
 
-  const handleStatusChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setStatus(event.target.value as string);
-    const statusData = data.getWorkFlowRuns.filter((data: any) =>
-      JSON.parse(data.execution_data).phase.includes(
-        event.target.value as string
-      )
-    );
-    setSearch('');
-    setSearchedData({ getWorkFlowRuns: statusData });
-  };
+  // const handleStatusChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+  //   setStatus(event.target.value as string);
+  //   const statusData = data.getWorkFlowRuns.filter((data: any) =>
+  //     JSON.parse(data.execution_data).phase.includes(
+  //       event.target.value as string
+  //     )
+  //   );
+  //   setSearch('');
+  //   setSearchedData({ getWorkFlowRuns: statusData });
+  // };
 
-  const [cluster, setCluster] = React.useState<string>('');
+  // const [cluster, setCluster] = React.useState<string>('');
 
-  const handleClusterChange = (
-    event: React.ChangeEvent<{ value: unknown }>
+  // const handleClusterChange = (
+  //   event: React.ChangeEvent<{ value: unknown }>
+  // ) => {
+  //   setCluster(event.target.value as string);
+  // };
+
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null,
+    newPage: number
   ) => {
-    setCluster(event.target.value as string);
-  };
-
-  const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
   };
-
-  // const ascWorkflowName = () => {
-  //   var data =
-  //     data &&
-  //     data.getWorkFlowRuns.slice().sort((a: any, b: any) => {
-  //       return a.workflow_name - b.workflow_name;
-  //     });
-  //   console.log(data);
-  // };
-  // console.log(data);
 
   const emptyRows =
     rowsPerPage -
@@ -134,8 +139,11 @@ const BrowseWorkflow = () => {
             id="input-with-icon-adornment"
             placeholder="Search"
             className={classes.search}
-            value={search}
-            onChange={handleSearch}
+            value={filters.search}
+            onChange={(e) => {
+              setFilters({ ...filters, search: e.target.value as string });
+              setPage(0);
+            }}
             startAdornment={
               <InputAdornment position="start">
                 <SearchIcon />
@@ -149,12 +157,15 @@ const BrowseWorkflow = () => {
             <Select
               labelId="demo-simple-select-outlined-label"
               id="demo-simple-select-outlined"
-              value={status}
-              onChange={handleStatusChange}
+              value={filters.status}
+              onChange={(e) => {
+                setFilters({ ...filters, status: e.target.value as string });
+                setPage(0);
+              }}
               disableUnderline
             >
-              <MenuItem value="">
-                <Typography className={classes.menuItem}>None</Typography>
+              <MenuItem value="All">
+                <Typography className={classes.menuItem}>All</Typography>
               </MenuItem>
               <MenuItem value="Failed">
                 <Typography className={classes.menuItem}>Failed</Typography>
@@ -175,12 +186,15 @@ const BrowseWorkflow = () => {
             <Select
               labelId="demo-simple-select-outlined-label"
               id="demo-simple-select-outlined"
-              value={cluster}
-              onChange={handleClusterChange}
+              value={filters.cluster}
+              onChange={(e) => {
+                setFilters({ ...filters, cluster: e.target.value as string });
+                setPage(0);
+              }}
               disableUnderline
             >
-              <MenuItem value="">
-                <Typography className={classes.menuItem}>None</Typography>
+              <MenuItem value="All">
+                <Typography className={classes.menuItem}>All</Typography>
               </MenuItem>
               <MenuItem value="Predefined">
                 <Typography className={classes.menuItem}>
@@ -194,9 +208,6 @@ const BrowseWorkflow = () => {
               </MenuItem>
             </Select>
           </FormControl>
-          <Typography variant="subtitle1" className={classes.headerText}>
-            for the period
-          </Typography>
           <FormControl className={classes.select}>
             <InputLabel id="demo-simple-select-outlined-label">Date</InputLabel>
             <Select
@@ -264,6 +275,7 @@ const BrowseWorkflow = () => {
                 </Typography>
               ) : data && data.getWorkFlowRuns.length ? (
                 data.getWorkFlowRuns
+                  // .filter(applySearch(data))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((dataRow: any) => (
                     <TableRow>
