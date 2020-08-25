@@ -14,6 +14,7 @@ const initialState: WorkflowData = {
   description: '',
   weights: [],
   isCustomWorkflow: false,
+  clusterid: '',
 };
 
 export const workflowData = createReducer<WorkflowData>(initialState, {

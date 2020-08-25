@@ -1,19 +1,29 @@
 import React from 'react';
-import { Tooltip, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import useStyles from './styles';
 
-const CustomWorkflowCard: React.FC = () => {
+interface CustomWorkflowCardProps {
+  handleClick: () => void;
+}
+
+const CustomWorkflowCard: React.FC<CustomWorkflowCardProps> = ({
+  handleClick,
+}) => {
   const classes = useStyles();
 
   return (
-    <Tooltip title="Coming Soon !">
-      <div className={classes.customCard}>
-        <img src="./icons/custom_workflow.svg" alt="Custom Workflow Icon" />
-        <Typography className={classes.customWorkflowContent}>
-          Create your own workflow
-        </Typography>
-      </div>
-    </Tooltip>
+    <div
+      role="button"
+      className={classes.customCard}
+      onClick={handleClick}
+      onKeyPress={() => {}}
+      tabIndex={0}
+    >
+      <img src="./icons/custom_workflow.svg" alt="Custom Workflow Icon" />
+      <Typography className={classes.customWorkflowContent}>
+        Create your own workflow
+      </Typography>
+    </div>
   );
 };
 export default CustomWorkflowCard;

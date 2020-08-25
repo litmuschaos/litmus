@@ -35,12 +35,12 @@ const parsed = (yaml: string) => {
         parsedYaml.spec.workflowSpec.templates[1].inputs.artifacts[0].raw.data;
       testNames = nameextractor(embeddedYaml);
     } catch (err) {
-      testNames = ['Invalid CRD'];
+      testNames = [];
     } finally {
       return testNames;
     }
   } catch (err) {
-    testNames = ['Yaml Error'];
+    testNames = [];
     return testNames;
   }
 };

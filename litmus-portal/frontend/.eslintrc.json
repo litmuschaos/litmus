@@ -18,6 +18,7 @@
     }
   },
   "rules": {
+    "camelcase": 0,
     "jsx-a11y/href-no-hash": ["off"],
     "react/jsx-props-no-spreading": ["off"],
     "react/jsx-filename-extension": [
