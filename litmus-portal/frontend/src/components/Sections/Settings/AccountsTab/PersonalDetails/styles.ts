@@ -102,25 +102,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   // styles for modal and its components
-  modal: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  paper: {
-    width: '50.75rem',
-    height: '39.1875rem',
-    backgroundColor: theme.palette.background.paper,
-
-    outline: 'none',
-    borderRadius: '0.1875rem',
-  },
   body: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: theme.spacing(15),
+    paddingBottom: '7rem',
   },
   text: {
     width: '31rem',

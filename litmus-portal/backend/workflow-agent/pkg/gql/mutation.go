@@ -14,7 +14,7 @@ func init() {
 	eventMap = make(map[string]types.WorkflowEvent)
 }
 
-func sendMutation(server string, payload []byte)(string, error){
+func sendMutation(server string, payload []byte) (string, error) {
 	req, err := http.NewRequest("POST", server, bytes.NewBuffer(payload))
 	if err != nil {
 		logrus.Print(err.Error())
@@ -23,15 +23,15 @@ func sendMutation(server string, payload []byte)(string, error){
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return "",err
+		return "", err
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 	if err != nil {
-		return "",err
+		return "", err
 	}
-	return string(body),nil
+	return string(body), nil
 }
 
 //SendWorkflowUpdates generates gql mutation to send workflow updates to gql server

@@ -14,6 +14,7 @@ spec:
       labels:
         app: subscriber
     spec:
+      serviceAccountName: litmus-svc-account
       containers:
         - name: subscriber
           image: 'litmuschaos/litmusportal-subscriber:ci'

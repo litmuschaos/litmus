@@ -1,10 +1,11 @@
-import { Button, Modal, Typography } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { UserData } from '../../../../../models/user';
 import { RootState } from '../../../../../redux/reducers';
 import UserDetails from '../../UserManagementTab/CreateUser/UserDetails';
 import useStyles from './styles';
+import Unimodal from '../../../../../containers/layouts/Unimodal';
 
 interface personaData {
   email: string;
@@ -87,37 +88,29 @@ const PersonalDetails: React.FC = () => {
           </Button>
 
           {/* Displays the modal after details are successfully edited */}
-          <Modal
-            data-cy="modal"
-            open={open}
-            aria-labelledby="simple-modal-title"
-            aria-describedby="simple-modal-description"
-            className={classes.modal}
-          >
-            <div className={classes.paper}>
-              <div className={classes.body}>
-                <img src="./icons/userLarge.svg" alt="user" />
-                <div className={classes.text}>
-                  <Typography className={classes.typo} align="center">
-                    Your personal information <strong>has been changed!</strong>
-                  </Typography>
-                </div>
-                <div className={classes.text1}>
-                  <Typography align="center" className={classes.typo1}>
-                    Changes took effect
-                  </Typography>
-                </div>
-                <Button
-                  data-cy="closeButton"
-                  variant="contained"
-                  className={classes.button}
-                  onClick={handleClose}
-                >
-                  Done
-                </Button>
+          <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn={false}>
+            <div className={classes.body}>
+              <img src="./icons/userLarge.svg" alt="user" />
+              <div className={classes.text}>
+                <Typography className={classes.typo} align="center">
+                  Your personal information <strong>has been changed!</strong>
+                </Typography>
               </div>
+              <div className={classes.text1}>
+                <Typography align="center" className={classes.typo1}>
+                  Changes took effect
+                </Typography>
+              </div>
+              <Button
+                data-cy="closeButton"
+                variant="contained"
+                className={classes.button}
+                onClick={handleClose}
+              >
+                Done
+              </Button>
             </div>
-          </Modal>
+          </Unimodal>
         </div>
       </form>
     </div>

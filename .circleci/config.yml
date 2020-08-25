@@ -1,14 +1,14 @@
 version: 2.1
 jobs:
-    build:
-        machine:
-            image: circleci/classic:latest
-        working_directory: ~/go/src/github.com/litmuschaos/litmus
-        environment:
-            HOME: /home/circleci
-            GO111MODULE: "on"
-        steps:
-            - checkout
-            # build and push the application image
-            - run: |
-                  cd litmus-portal && make all
+  build:
+    machine:
+      image: ubuntu-1604:201903-01
+    working_directory: ~/go/src/github.com/litmuschaos/litmus
+    environment:
+      GO111MODULE: "on"
+    steps:
+      - run : |
+          cd && source /opt/circleci/.nvm/nvm.sh && nvm install v10 && nvm alias default 10 && wget https://dl.google.com/go/go1.14.6.linux-amd64.tar.gz && sudo tar -xvf go1.14.6.linux-amd64.tar.gz && sudo rm -rf /usr/local/go && sudo mv go /usr/local && export GOROOT=/usr/local/go
+      - checkout
+      - run: |
+          source /opt/circleci/.nvm/nvm.sh && nvm alias default 10 && cd litmus-portal && make all
