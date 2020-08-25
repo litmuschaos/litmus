@@ -1,6 +1,5 @@
 import React from 'react';
 import { Typography } from '@material-ui/core';
-import clsx from 'clsx';
 import LinearProgressBar from '../Sections/ReturningHome/ProgressBar/LinearProgressBar';
 import useStyles from './styles';
 import capitalize from '../../utils/capitalize';
@@ -43,7 +42,7 @@ const AdjustedWeights: React.FC<AdjustedWeightsProps> = ({
                 {testName.split('-').map((text) => `${capitalize(text)} `)}
               </Typography>
             )}
-            <Typography className={clsx(classes.typo, classes.points)}>
+            <Typography className={`${classes.typo} ${classes.points}`}>
               {testValue} points
             </Typography>
           </div>

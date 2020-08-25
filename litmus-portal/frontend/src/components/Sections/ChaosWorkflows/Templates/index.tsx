@@ -43,9 +43,9 @@ const Templates = () => {
       {/* Sort div with the sort icon (To be used in later updates) */}
       {/* <div className={classes.sort} onClick={() => {}}>
           <div className={classes.sortIcon}>
-            <div className={clsx(classes.line, classes.first)} />
-            <div className={clsx(classes.line, classes.second)} />
-            <div className={clsx(classes.line, classes.third)} />
+            <div className={`${classes.line} ${classes.first}`} />
+            <div className={`${classes.line} ${classes.second}`} />
+            <div className={`${classes.line} ${classes.third}`} />
           </div>
           <Typography className={classes.headerSize}>Sort</Typography>
         </div> */}
