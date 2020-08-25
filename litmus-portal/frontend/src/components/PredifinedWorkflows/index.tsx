@@ -6,20 +6,22 @@ import useStyles from './styles';
 
 interface PredifinedWorkflowsProps {
   workflows: preDefinedWorkflowData[];
-  CallbackOnSelectWorkflow: (index: number) => void;
+  callbackOnSelectWorkflow: (index: number) => void;
 }
 
 const PredifinedWorkflows: React.FC<PredifinedWorkflowsProps> = ({
   workflows,
-  CallbackOnSelectWorkflow,
+  callbackOnSelectWorkflow,
 }) => {
   const classes = useStyles();
   return (
     <div className={classes.root}>
       {workflows &&
         workflows.map((w: preDefinedWorkflowData, index: number) =>
-          w.customWorkflow ? (
-            <CustomWorkflowCard />
+          w.isCustom ? (
+            <CustomWorkflowCard
+              handleClick={() => callbackOnSelectWorkflow(index)}
+            />
           ) : (
             <CustomCard
               key={w.workflowID}
@@ -27,8 +29,8 @@ const PredifinedWorkflows: React.FC<PredifinedWorkflowsProps> = ({
               urlToIcon={w.urlToIcon}
               provider={w.provider}
               chaosWkfCRDLink={w.chaosWkfCRDLink}
-              selectedID={w.selectedID}
-              handleClick={() => CallbackOnSelectWorkflow(index)}
+              selectedID={w.workflowID}
+              handleClick={() => callbackOnSelectWorkflow(index)}
               description={w.description}
               totalRuns={w.totalRuns}
               gitLink={w.gitLink}
