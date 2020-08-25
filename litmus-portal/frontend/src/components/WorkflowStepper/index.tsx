@@ -178,8 +178,8 @@ const CustomStepper = () => {
         });
       });
 
-      // JSON.stringify takes 3 parameters [object to be converted,
-      // a function to alter the conversion, spaces to be shown in final result for indentation ]
+      /* JSON.stringify takes 3 parameters [object to be converted,
+      a function to alter the conversion, spaces to be shown in final result for indentation ] */
       const yamlJson = JSON.stringify(yaml, null, 2);
 
       const chaosWorkFlowInputs = {
