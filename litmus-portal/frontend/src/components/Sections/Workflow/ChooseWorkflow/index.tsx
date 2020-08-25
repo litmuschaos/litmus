@@ -6,6 +6,7 @@ import useStyles, { CssTextField, ColorButton } from './styles';
 import useActions from '../../../../redux/actions';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
 import PredifinedWorkflows from '../../../PredifinedWorkflows';
+import workflowsList from '../../../../models/data';
 import Unimodal from '../../../../containers/layouts/Unimodal';
 // import { getWkfRunCount } from "../../utils";
 
@@ -62,40 +63,6 @@ const ChooseWorkflow: React.FC = () => {
     });
   }, []);
 
-  // Fetch and Set preDefWorkflows from backend via GQL.
-
-  const workflowsList = [
-    {
-      workflowID: '1',
-      title: 'node-cpu-hog',
-      urlToIcon: 'https://hub.litmuschaos.io/api/icon/generic/pod-delete.png',
-      chaosWkfCRDLink:
-        'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/node-cpu-hog/workflow.yaml',
-
-      gitLink:
-        'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/node-cpu-hog/workflow.yaml',
-      provider: 'MayaData',
-      description: 'Sample Description',
-      totalRuns: 5300,
-      isCustom: false,
-    },
-    {
-      workflowID: '2',
-      title: 'node-memory-hog',
-      urlToIcon:
-        'https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Kubernetes_logo_without_workmark.svg/1200px-Kubernetes_logo_without_workmark.svg.png',
-      chaosWkfCRDLink:
-        'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/node-memory-hog/workflow.yaml',
-
-      gitLink:
-        'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/node-memory-hog/workflow.yaml',
-      provider: 'MayaData',
-      description: 'Sample Description',
-      totalRuns: 5300,
-      isCustom: false,
-    },
-  ];
-
   const selectWorkflow = (index: number) => {
     workflow.setWorkflowDetails({
       name: workflowsList[index].title,
@@ -103,12 +70,17 @@ const ChooseWorkflow: React.FC = () => {
       id: workflowsList[index].workflowID,
       yaml: 'none',
       description: workflowsList[index].description,
-      isCustomWorkflow: false,
+      isCustomWorkflow: workflowsList[index].isCustom,
     });
+
     setWorkflowData({
       workflowName: workflowsList[index].title,
       workflowDesc: workflowsList[index].description,
     });
+
+    if (workflowsList[index].isCustom === true) {
+      setOpen(true);
+    }
   };
 
   return (
@@ -127,7 +99,7 @@ const ChooseWorkflow: React.FC = () => {
             {workflowsList.length} pre-defined workflows
           </Typography>
           <PredifinedWorkflows
-            CallbackOnSelectWorkflow={(index: number) => {
+            callbackOnSelectWorkflow={(index: number) => {
               selectWorkflow(index);
             }}
             workflows={workflowsList}

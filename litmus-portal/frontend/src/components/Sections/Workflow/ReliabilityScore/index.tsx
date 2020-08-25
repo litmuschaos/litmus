@@ -48,8 +48,7 @@ const ReliablityScore = () => {
 
   return (
     <div>
-      {(weights as any)[0].experimentName === 'Invalid CRD' ||
-      (weights as any)[0].experimentName === 'Yaml Error' ? (
+      {weights.length === 0 ? (
         <div>
           {' '}
           <Typography className={classes.errorText}>

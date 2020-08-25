@@ -1,5 +1,4 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
 import Step from '@material-ui/core/Step';
 import { StepIconProps } from '@material-ui/core/StepIcon';
 import StepLabel from '@material-ui/core/StepLabel';
@@ -7,6 +6,7 @@ import Stepper from '@material-ui/core/Stepper';
 import clsx from 'clsx';
 import Typography from '@material-ui/core/Typography';
 import { useSelector } from 'react-redux';
+import { useMutation } from '@apollo/client';
 import ButtonFilled from '../Button/ButtonFilled';
 import ButtonOutline from '../Button/ButtonOutline';
 import ReliablityScore from '../Sections/Workflow/ReliabilityScore';
@@ -19,11 +19,14 @@ import useQontoStepIconStyles from './useQontoStepIconStyles';
 import TuneWorkflow from '../Sections/Workflow/TuneWorkflow/index';
 import ChooseWorkflow from '../Sections/Workflow/ChooseWorkflow/index';
 import { WorkflowData, experimentMap } from '../../models/workflow';
+import { UserData } from '../../models/user';
 import { RootState } from '../../redux/reducers';
 import useActions from '../../redux/actions';
 import * as WorkflowActions from '../../redux/actions/workflow';
 import parsed from '../../utils/yamlUtils';
+import { CREATE_WORKFLOW } from '../../schemas';
 import Unimodal from '../../containers/layouts/Unimodal';
+import { history } from '../../redux/configureStore';
 
 function getSteps(): string[] {
   return [
@@ -34,6 +37,11 @@ function getSteps(): string[] {
     'Schedule',
     'Verify and Commit',
   ];
+}
+
+interface WeightMap {
+  experiment_name: string;
+  weightage: number;
 }
 
 function QontoStepIcon(props: StepIconProps) {
@@ -81,11 +89,13 @@ function QontoStepIcon(props: StepIconProps) {
 
 function getStepContent(
   stepIndex: number,
-  gotoTuneWorkflow: () => void
+  gotoStep: (page: number) => void
 ): React.ReactNode {
   switch (stepIndex) {
     case 0:
-      return <ChooseAWorkflowCluster />;
+      return (
+        <ChooseAWorkflowCluster gotoStep={(page: number) => gotoStep(page)} />
+      );
     case 1:
       return <ChooseWorkflow />;
     case 2:
@@ -95,30 +105,34 @@ function getStepContent(
     case 4:
       return <ScheduleWorkflow />;
     case 5:
-      return <VerifyCommit goto={gotoTuneWorkflow} />;
+      return <VerifyCommit gotoStep={(page: number) => gotoStep(page)} />;
     default:
-      return <ChooseAWorkflowCluster />;
+      return (
+        <ChooseAWorkflowCluster gotoStep={(page: number) => gotoStep(page)} />
+      );
   }
 }
 
-const WorkflowStepper = () => {
+const CustomStepper = () => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
-  // modal state and handlers
-  const [open, setOpen] = React.useState(false);
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   const workflowData: WorkflowData = useSelector(
     (state: RootState) => state.workflowData
   );
-  const { yaml, weights } = workflowData;
+  const {
+    yaml,
+    weights,
+    description,
+    isCustomWorkflow,
+    name,
+    clusterid,
+  } = workflowData;
+
+  const userData: UserData = useSelector((state: RootState) => state.userData);
+
+  const { projectID } = userData;
+
   const workflow = useActions(WorkflowActions);
 
   const steps = getSteps();
@@ -145,17 +159,58 @@ const WorkflowStepper = () => {
     }
   };
 
+  const [open, setOpen] = React.useState(false);
+
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleReset = () => {
-    setActiveStep(0);
+  const [createChaosWorkFlow] = useMutation(CREATE_WORKFLOW);
+
+  const handleMutation = () => {
+    if (name.length !== 0 && description.length !== 0 && weights.length !== 0) {
+      const weightData: WeightMap[] = [];
+
+      weights.forEach((data) => {
+        weightData.push({
+          experiment_name: data.experimentName,
+          weightage: data.weight,
+        });
+      });
+
+      // JSON.stringify takes 3 parameters [object to be converted, 
+      //a function to alter the conversion, spaces to be shown in final result for indentation ]
+      const yamlJson = JSON.stringify(yaml, null, 2);
+
+      const chaosWorkFlowInputs = {
+        workflow_manifest: yamlJson,
+        cronSyntax: '',
+        workflow_name: name,
+        workflow_description: description,
+        isCustomWorkflow,
+        weightages: weightData,
+        project_id: projectID,
+        cluster_id: clusterid,
+      };
+      createChaosWorkFlow({
+        variables: { ChaosWorkFlowInput: chaosWorkFlowInputs },
+      });
+    }
   };
 
-  const gotoTuneWorkflow = () => {
-    setActiveStep(3);
+  const handleOpen = () => {
+    handleMutation();
+    setOpen(true);
   };
+
+  const handleClose = () => {
+      history.push('/workflows');
+      setOpen(false);
+  };
+
+  function gotoStep({ page }: { page: number }) {
+    setActiveStep(page);
+  }
 
   return (
     <div className={classes.root}>
@@ -184,26 +239,18 @@ const WorkflowStepper = () => {
         ))}
       </Stepper>
       <div>
-        {activeStep === steps.length ? (
+        <div>
           <div>
-            <div>
-              <Button
-                variant="contained"
-                color="primary"
-                data-cy="selectModal"
-                onClick={handleOpen}
-              >
-                Completed
-              </Button>
-              {/* FinishModal added */}
               <Unimodal
                 isOpen={open}
                 handleClose={handleClose}
+                aria-labelledby="simple-modal-title"
+                aria-describedby="simple-modal-description"
                 hasCloseBtn={false}
               >
-                <div className={classes.rootContainer}>
+                <div className={classes.content}>
                   <img
-                    src="icons/finish.png"
+                    src="icons/finish.svg"
                     className={classes.mark}
                     alt="mark"
                   />
@@ -218,57 +265,53 @@ const WorkflowStepper = () => {
                     screen of the application.
                   </div>
                   <div className={classes.button}>
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      data-cy="selectFinish"
-                      onClick={handleClose}
-                    >
-                      Back to workflow
-                    </Button>
+                  <ButtonFilled
+                    isPrimary
+                    data-cy="selectFinish"
+                    handleClick={() => {
+                    history.push('/workflows');
+                    setOpen(false);
+                    }}
+                  >
+                    <div>Back to workflow</div>
+                  </ButtonFilled>
                   </div>
                 </div>
               </Unimodal>
-            </div>
-            <Typography className={classes.content}>
-              All steps completed (display workflow completed modal here)
-            </Typography>
-            <Button onClick={handleReset}>Reset</Button>
+            {getStepContent(activeStep, (page: number) => gotoStep({ page }))}
           </div>
-        ) : (
-          <div>
-            <div className={classes.content}>
-              {getStepContent(activeStep, gotoTuneWorkflow)}
-            </div>
 
-            {/* Control Buttons */}
+          {/* Control Buttons */}
+          {activeStep !== 0 ? (
             <div className={classes.buttonGroup}>
-              <ButtonOutline
-                isDisabled={activeStep === 0}
-                handleClick={handleBack}
-              >
+              <ButtonOutline isDisabled={false} handleClick={handleBack}>
                 <Typography>Back</Typography>
               </ButtonOutline>
-              <ButtonFilled handleClick={handleNext} isPrimary>
-                {activeStep === steps.length - 1 ? (
+              {activeStep === steps.length - 1 ? (
+                <ButtonFilled
+                  handleClick={handleOpen}
+                  isPrimary
+                >
                   <div>Finish</div>
-                ) : (
+                </ButtonFilled>
+              ) : (
+                <ButtonFilled handleClick={() => handleNext()} isPrimary>
                   <div>
-                    Next{' '}
+                    Next
                     <img
                       alt="next"
                       src="icons/nextArrow.svg"
                       className={classes.nextArrow}
                     />
                   </div>
-                )}
-              </ButtonFilled>
+                </ButtonFilled>
+              )}
             </div>
-          </div>
-        )}
+          ) : null}
+        </div>
       </div>
     </div>
   );
 };
 
-export default WorkflowStepper;
+export default CustomStepper;

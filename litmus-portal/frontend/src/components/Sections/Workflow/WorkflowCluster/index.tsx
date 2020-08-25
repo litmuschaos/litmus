@@ -6,9 +6,17 @@ import {
 } from '@material-ui/core';
 import Radio from '@material-ui/core/Radio';
 import * as React from 'react';
+import { useLazyQuery } from '@apollo/client';
+import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../Button/ButtonFilled';
 import ButtonOutLine from '../../../Button/ButtonOutline';
 import useStyles from './styles';
+import { GET_CLUSTER } from '../../../../schemas';
+import { RootState } from '../../../../redux/reducers';
+import { UserData } from '../../../../models/user';
+import useActions from '../../../../redux/actions';
+import * as WorkflowActions from '../../../../redux/actions/workflow';
+
 /*
   Check is image which is used as
   a sign on cluster page
@@ -22,14 +30,42 @@ function Check() {
 /*
   This screen is starting page of workflow
 */
-const WorkflowCluster = () => {
+
+interface WorkflowClusterProps {
+  gotoStep: (page: number) => void;
+}
+
+const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
   const classes = useStyles();
   const [value, setValue] = React.useState('Experiment');
-
+  const workflow = useActions(WorkflowActions);
+  const [isTragetSelected, setTarget] = React.useState(true);
+  const [isRegistered, setRegistration] = React.useState(true);
+  const userData: UserData = useSelector((state: RootState) => state.userData);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue((event.target as HTMLInputElement).value);
   };
-  const handleClick = () => {};
+
+  const [getCluster] = useLazyQuery(GET_CLUSTER, {
+    onCompleted: (data) => {
+      if (data && data.getCluster.length !== 0) {
+        workflow.setWorkflowDetails({
+          clusterid: data.getCluster[0].cluster_id,
+          project_id: userData.projectID,
+        });
+        gotoStep(1);
+      } else {
+        setRegistration(false);
+      }
+    },
+  });
+
+  const handleClick = () => {
+    getCluster({
+      variables: { project_id: userData.projectID, cluster_type: 'internal' },
+    });
+  };
+
   return (
     <div className={classes.rootcontainer}>
       {/* Arrow mark */}
@@ -51,6 +87,7 @@ const WorkflowCluster = () => {
           <FormControl component="fieldset">
             <RadioGroup
               data-cy="selectRadio"
+              onClick={() => setTarget(false)}
               aria-label="D"
               name="radio-button-demo"
               value={value}
@@ -77,18 +114,23 @@ const WorkflowCluster = () => {
         other Kubernetes cluster 
       */}
       <div className={classes.buttonDiv}>
-        <div className={classes.button}>
-          <ButtonFilled data-cy="gotItButton" isPrimary>
+        <div className={classes.button} data-cy="Internal">
+          <ButtonFilled
+            data-cy="gotItButton"
+            isPrimary
+            isDisabled={isTragetSelected}
+            handleClick={() => handleClick()}
+          >
             <div>Select and Continue</div>
           </ButtonFilled>
         </div>
 
         <div className={classes.or}>or</div>
-        <div>
+        <div data-cy="External">
           <ButtonOutLine
-            isDisabled={false}
+            isDisabled
             data-cy="selectLitmusKubernetes"
-            handleClick={handleClick}
+            handleClick={() => handleClick()}
           >
             <Typography>
               Install Litmus agents to other Kubernetes cluster
@@ -96,6 +138,13 @@ const WorkflowCluster = () => {
           </ButtonOutLine>
         </div>
       </div>
+      {isRegistered ? null : (
+        <div className={classes.marginTemporary}>
+          <Typography className={classes.headcluster}>
+            <strong>***No cluster registered with your Project ID***</strong>
+          </Typography>
+        </div>
+      )}
     </div>
   );
 };
