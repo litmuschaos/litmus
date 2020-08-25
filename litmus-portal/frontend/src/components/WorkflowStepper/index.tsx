@@ -178,8 +178,8 @@ const CustomStepper = () => {
         });
       });
 
-      // JSON.stringify takes 3 parameters [object to be converted, 
-      //a function to alter the conversion, spaces to be shown in final result for indentation ]
+      // JSON.stringify takes 3 parameters [object to be converted,
+      // a function to alter the conversion, spaces to be shown in final result for indentation ]
       const yamlJson = JSON.stringify(yaml, null, 2);
 
       const chaosWorkFlowInputs = {
@@ -204,8 +204,8 @@ const CustomStepper = () => {
   };
 
   const handleClose = () => {
-      history.push('/workflows');
-      setOpen(false);
+    history.push('/workflows');
+    setOpen(false);
   };
 
   function gotoStep({ page }: { page: number }) {
@@ -241,43 +241,43 @@ const CustomStepper = () => {
       <div>
         <div>
           <div>
-              <Unimodal
-                isOpen={open}
-                handleClose={handleClose}
-                aria-labelledby="simple-modal-title"
-                aria-describedby="simple-modal-description"
-                hasCloseBtn={false}
-              >
-                <div className={classes.content}>
-                  <img
-                    src="icons/finish.svg"
-                    className={classes.mark}
-                    alt="mark"
-                  />
-                  <div className={classes.heading}>
-                    A new chaos workflow,
-                    <br />
-                    <strong>was successfully created!</strong>
-                  </div>
-                  <div className={classes.headWorkflow}>
-                    Congratulations on creating your first workflow! Now
-                    information about <br /> it will be displayed on the main
-                    screen of the application.
-                  </div>
-                  <div className={classes.button}>
+            <Unimodal
+              isOpen={open}
+              handleClose={handleClose}
+              aria-labelledby="simple-modal-title"
+              aria-describedby="simple-modal-description"
+              hasCloseBtn={false}
+            >
+              <div className={classes.content}>
+                <img
+                  src="icons/finish.svg"
+                  className={classes.mark}
+                  alt="mark"
+                />
+                <div className={classes.heading}>
+                  A new chaos workflow,
+                  <br />
+                  <strong>was successfully created!</strong>
+                </div>
+                <div className={classes.headWorkflow}>
+                  Congratulations on creating your first workflow! Now
+                  information about <br /> it will be displayed on the main
+                  screen of the application.
+                </div>
+                <div className={classes.button}>
                   <ButtonFilled
                     isPrimary
                     data-cy="selectFinish"
                     handleClick={() => {
-                    history.push('/workflows');
-                    setOpen(false);
+                      history.push('/workflows');
+                      setOpen(false);
                     }}
                   >
                     <div>Back to workflow</div>
                   </ButtonFilled>
-                  </div>
                 </div>
-              </Unimodal>
+              </div>
+            </Unimodal>
             {getStepContent(activeStep, (page: number) => gotoStep({ page }))}
           </div>
 
@@ -288,10 +288,7 @@ const CustomStepper = () => {
                 <Typography>Back</Typography>
               </ButtonOutline>
               {activeStep === steps.length - 1 ? (
-                <ButtonFilled
-                  handleClick={handleOpen}
-                  isPrimary
-                >
+                <ButtonFilled handleClick={handleOpen} isPrimary>
                   <div>Finish</div>
                 </ButtonFilled>
               ) : (

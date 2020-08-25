@@ -11,8 +11,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginRight: theme.spacing(1),
   },
   content: {
-    marginLeft : theme.spacing(-8),
-    marginRight : theme.spacing(-8),
+    marginLeft: theme.spacing(-8),
+    marginRight: theme.spacing(-8),
   },
   buttonGroup: {
     display: 'flex',
