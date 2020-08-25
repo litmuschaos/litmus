@@ -23,6 +23,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import SearchIcon from '@material-ui/icons/Search';
 import React, { useEffect, useState } from 'react';
 import {
+  ExecutionData,
   Workflow,
   WorkflowSubscription,
 } from '../../../../models/workflowData';
@@ -35,6 +36,11 @@ interface FilterOptions {
   search: string;
   status: string;
   cluster: string;
+}
+
+interface PaginationData {
+  pageNo: number;
+  rowsPerPage: number;
 }
 
 const BrowseWorkflow = () => {
@@ -79,61 +85,35 @@ const BrowseWorkflow = () => {
     cluster: 'All',
   });
 
-  // const [searchedData, setSearchedData] = React.useState<any>();
-  // const [search, setSearch] = React.useState<string>('');
-  // const [status, setStatus] = React.useState<string>('');
-
   // State for pagination
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [paginationData, setPaginationData] = useState<PaginationData>({
+    pageNo: 0,
+    rowsPerPage: 5,
+  });
 
-  const applySearch = (data: any) => {
-    console.log(data);
-
-    // return data.filter(
-    //   (dataRow) => dataRow.workflow_name.toLowerCase().includes(filters.search)
-    //   // JSON.parse(data.execution_data).phase.includes(status)
-    // );
-    return data;
-  };
-
-  // const handleStatusChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-  //   setStatus(event.target.value as string);
-  //   const statusData = data.getWorkFlowRuns.filter((data: any) =>
-  //     JSON.parse(data.execution_data).phase.includes(
-  //       event.target.value as string
-  //     )
-  //   );
-  //   setSearch('');
-  //   setSearchedData({ getWorkFlowRuns: statusData });
-  // };
-
-  // const [cluster, setCluster] = React.useState<string>('');
-
-  // const handleClusterChange = (
-  //   event: React.ChangeEvent<{ value: unknown }>
-  // ) => {
-  //   setCluster(event.target.value as string);
-  // };
-
-  const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null,
-    newPage: number
-  ) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-  };
+  const filteredData = data?.getWorkFlowRuns
+    .filter((dataRow) =>
+      dataRow.workflow_name.toLowerCase().includes(filters.search)
+    )
+    .filter((dataRow) =>
+      filters.status === 'All'
+        ? true
+        : (JSON.parse(dataRow.execution_data) as ExecutionData).phase.includes(
+            filters.status
+          )
+    )
+    .filter((dataRow) =>
+      filters.cluster === 'All'
+        ? true
+        : dataRow.cluster_name.toLowerCase().includes(filters.cluster)
+    );
 
   const emptyRows =
-    rowsPerPage -
+    paginationData.rowsPerPage -
     Math.min(
-      rowsPerPage,
-      (data?.getWorkFlowRuns?.length ?? 0) - page * rowsPerPage
+      paginationData.rowsPerPage,
+      (filteredData?.length ?? 0) -
+        paginationData.pageNo * paginationData.rowsPerPage
     );
 
   return (
@@ -147,7 +127,7 @@ const BrowseWorkflow = () => {
             value={filters.search}
             onChange={(e) => {
               setFilters({ ...filters, search: e.target.value as string });
-              setPage(0);
+              setPaginationData({ ...paginationData, pageNo: 0 });
             }}
             startAdornment={
               <InputAdornment position="start">
@@ -165,7 +145,7 @@ const BrowseWorkflow = () => {
               value={filters.status}
               onChange={(e) => {
                 setFilters({ ...filters, status: e.target.value as string });
-                setPage(0);
+                setPaginationData({ ...paginationData, pageNo: 0 });
               }}
               disableUnderline
             >
@@ -194,7 +174,7 @@ const BrowseWorkflow = () => {
               value={filters.cluster}
               onChange={(e) => {
                 setFilters({ ...filters, cluster: e.target.value as string });
-                setPage(0);
+                setPaginationData({ ...paginationData, pageNo: 0 });
               }}
               disableUnderline
             >
@@ -273,28 +253,39 @@ const BrowseWorkflow = () => {
             </TableHead>
             <TableBody>
               {loading ? (
-                <Loader />
+                <TableRow>
+                  <TableCell colSpan={7}>
+                    <Loader />
+                  </TableCell>
+                </TableRow>
               ) : error ? (
-                <Typography style={{ padding: 20 }}>
-                  Unable to fetch data
-                </Typography>
-              ) : data && data.getWorkFlowRuns.length ? (
-                data.getWorkFlowRuns
-                  // .filter(applySearch(data))
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((dataRow: any) => (
+                <TableRow>
+                  <TableCell colSpan={7}>
+                    <Typography align="center">Unable to fetch data</Typography>
+                  </TableCell>
+                </TableRow>
+              ) : filteredData && filteredData.length ? (
+                filteredData
+                  .slice(
+                    paginationData.pageNo * paginationData.rowsPerPage,
+                    paginationData.pageNo * paginationData.rowsPerPage +
+                      paginationData.rowsPerPage
+                  )
+                  .map((dataRow) => (
                     <TableRow>
                       <TableData data={dataRow} />
                     </TableRow>
                   ))
               ) : (
-                <Typography style={{ padding: 20 }}>
-                  No records available
-                </Typography>
+                <TableRow>
+                  <TableCell colSpan={7}>
+                    <Typography align="center">No records available</Typography>
+                  </TableCell>
+                </TableRow>
               )}
               {emptyRows > 0 && (
                 <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={6} />
+                  <TableCell colSpan={7} />
                 </TableRow>
               )}
             </TableBody>
@@ -303,11 +294,19 @@ const BrowseWorkflow = () => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={data?.getWorkFlowRuns.length ?? 0}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
+          count={filteredData?.length ?? 0}
+          rowsPerPage={paginationData.rowsPerPage}
+          page={paginationData.pageNo}
+          onChangePage={(_, page) =>
+            setPaginationData({ ...paginationData, pageNo: page })
+          }
+          onChangeRowsPerPage={(event) =>
+            setPaginationData({
+              ...paginationData,
+              pageNo: 0,
+              rowsPerPage: parseInt(event.target.value, 10),
+            })
+          }
         />
       </section>
     </div>
