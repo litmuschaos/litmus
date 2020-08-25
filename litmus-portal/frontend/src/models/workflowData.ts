@@ -34,5 +34,5 @@ export interface Workflow {
 }
 
 export interface WorkflowSubscription {
-  workflowEventListener: Workflow;
+  workflowEventListener: WorkflowRun;
 }

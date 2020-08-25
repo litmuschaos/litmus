@@ -22,6 +22,10 @@ import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import SearchIcon from '@material-ui/icons/Search';
 import React, { useEffect, useState } from 'react';
+import {
+  Workflow,
+  WorkflowSubscription,
+} from '../../../../models/workflowData';
 import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../../../schemas';
 import Loader from '../../../Loader';
 import useStyles from './styles';
@@ -37,12 +41,13 @@ const BrowseWorkflow = () => {
   const classes = useStyles();
 
   // Query to get workflows
-  const { subscribeToMore, data, loading, error } = useQuery(WORKFLOW_DETAILS);
-  console.log(data);
+  const { subscribeToMore, data, loading, error } = useQuery<Workflow>(
+    WORKFLOW_DETAILS
+  );
 
   // Using subscription to get realtime data
   useEffect(() => {
-    subscribeToMore({
+    subscribeToMore<WorkflowSubscription>({
       document: WORKFLOW_EVENTS,
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev;
@@ -128,7 +133,7 @@ const BrowseWorkflow = () => {
     rowsPerPage -
     Math.min(
       rowsPerPage,
-      data && data.getWorkFlowRuns.length - page * rowsPerPage
+      (data?.getWorkFlowRuns?.length ?? 0) - page * rowsPerPage
     );
 
   return (
@@ -298,7 +303,7 @@ const BrowseWorkflow = () => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={data && data.getWorkFlowRuns.length}
+          count={data?.getWorkFlowRuns.length ?? 0}
           rowsPerPage={rowsPerPage}
           page={page}
           onChangePage={handleChangePage}
