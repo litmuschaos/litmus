@@ -36,3 +36,7 @@ export interface Workflow {
 export interface WorkflowSubscription {
   workflowEventListener: WorkflowRun;
 }
+
+export interface WorkflowDataVars {
+  projectID: string;
+}

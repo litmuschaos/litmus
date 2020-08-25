@@ -22,12 +22,13 @@ import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import SearchIcon from '@material-ui/icons/Search';
 import React, { useEffect, useState } from 'react';
+import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../../../graphql';
 import {
   ExecutionData,
   Workflow,
+  WorkflowDataVars,
   WorkflowSubscription,
 } from '../../../../models/workflowData';
-import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../../../schemas';
 import Loader from '../../../Loader';
 import useStyles from './styles';
 import TableData from './TableData';
@@ -47,14 +48,16 @@ const BrowseWorkflow = () => {
   const classes = useStyles();
 
   // Query to get workflows
-  const { subscribeToMore, data, loading, error } = useQuery<Workflow>(
-    WORKFLOW_DETAILS
-  );
+  const { subscribeToMore, data, loading, error } = useQuery<
+    Workflow,
+    WorkflowDataVars
+  >(WORKFLOW_DETAILS, { variables: { projectID: '00000' } });
 
   // Using subscription to get realtime data
   useEffect(() => {
     subscribeToMore<WorkflowSubscription>({
       document: WORKFLOW_EVENTS,
+      variables: { projectID: '00000' },
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev;
         const modifiedWorkflows = prev.getWorkFlowRuns.slice();
@@ -300,13 +303,17 @@ const BrowseWorkflow = () => {
           onChangePage={(_, page) =>
             setPaginationData({ ...paginationData, pageNo: page })
           }
-          onChangeRowsPerPage={(event) =>
+          onChangeRowsPerPage={(event) => {
+            const newRowsPerPage = parseInt(event.target.value, 10);
+            const rowsPerPage =
+              newRowsPerPage < (filteredData?.length ?? 0) ? newRowsPerPage : 5;
+
             setPaginationData({
               ...paginationData,
               pageNo: 0,
-              rowsPerPage: parseInt(event.target.value, 10),
-            })
-          }
+              rowsPerPage: rowsPerPage,
+            });
+          }}
         />
       </section>
     </div>

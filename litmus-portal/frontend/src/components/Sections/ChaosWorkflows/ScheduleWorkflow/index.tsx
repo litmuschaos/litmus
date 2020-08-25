@@ -1,24 +1,24 @@
-import React, { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
-import SearchIcon from '@material-ui/icons/Search';
 import {
-  InputBase,
-  InputAdornment,
   FormControl,
+  InputAdornment,
+  InputBase,
   InputLabel,
-  Select,
   MenuItem,
-  Typography,
-  TableContainer,
+  Select,
   Table,
-  TableHead,
-  TableRow,
-  TableCell,
   TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
   TablePagination,
+  TableRow,
+  Typography,
 } from '@material-ui/core';
+import SearchIcon from '@material-ui/icons/Search';
+import React, { useEffect, useState } from 'react';
+import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../../../graphql';
 import useStyles from './styles';
-import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../../../schemas';
 import TableData from './TableData';
 
 const ScheduleWorkflow = () => {
