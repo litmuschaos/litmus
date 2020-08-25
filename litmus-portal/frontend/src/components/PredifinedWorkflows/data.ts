@@ -10,9 +10,9 @@ export default [
     gitLink:
       'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/node-cpu-hog/workflow.yaml',
     provider: 'MayaData',
-    description: 'Inject a CPU spike on a node',
+    description: 'Injects a CPU spike on a node',
     totalRuns: 5300,
-    customWorkflow: false,
+    isCustom: false,
   },
   {
     workflowID: '2',
@@ -25,8 +25,8 @@ export default [
     gitLink:
       'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/node-memory-hog/workflow.yaml',
     provider: 'MayaData',
-    description: 'Inject a memory spike on a node',
+    description: 'Injects a memory spike on a node',
     totalRuns: 5300,
-    customWorkflow: false,
+    isCustom: false,
   },
 ];

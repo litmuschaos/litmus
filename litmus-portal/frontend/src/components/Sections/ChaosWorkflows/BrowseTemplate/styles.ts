@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     padding: '0 1rem',
   },
   headerTitle: {
-    fontSize: theme.spacing(4),
+    fontSize: '2rem',
   },
   bodytext: {
     marginTop: theme.spacing(3.25),

@@ -8,7 +8,8 @@
     "test": "cypress run",
     "eject": "react-scripts eject",
     "lint": "eslint . --ext .js,.tsx,.ts",
-    "format": "prettier --write \"src/**/*.+(ts|tsx|js|jsx|json)\" && eslint --fix . --ext .js,.tsx,.ts"
+    "format": "prettier --write \"src/**/*.+(ts|tsx|js|jsx|json)\" && eslint --fix . --ext .js,.tsx,.ts",
+    "unit:ci": "cypress run --config video=false"
   },
   "dependencies": {
     "@apollo/client": "^3.1.2",

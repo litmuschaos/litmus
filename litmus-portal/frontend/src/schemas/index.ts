@@ -28,6 +28,17 @@ export const WORKFLOW_EVENTS = gql`
   }
 `;
 
+export const CREATE_WORKFLOW = gql`
+  mutation createChaosWorkFlow($ChaosWorkFlowInput: ChaosWorkFlowInput!) {
+    createChaosWorkFlow(input: $ChaosWorkFlowInput) {
+      workflow_id
+      cronSyntax
+      workflow_name
+      workflow_description
+      isCustomWorkflow
+    }
+  }
+`;
 export const CREATE_USER = gql`
   mutation CreateUser($user: UserInput!) {
     createUser(user: $user) {
@@ -56,6 +67,14 @@ export const GET_PROJECT = gql`
     getProject(projectID: $projectID) {
       name
       id
+    }
+  }
+`;
+
+export const GET_CLUSTER = gql`
+  query getCluster($project_id: String!, $cluster_type: String) {
+    getCluster(project_id: $project_id, cluster_type: $cluster_type) {
+      cluster_id
     }
   }
 `;

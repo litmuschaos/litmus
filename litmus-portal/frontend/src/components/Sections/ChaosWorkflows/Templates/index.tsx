@@ -51,7 +51,7 @@ const Templates = () => {
         </div> */}
       <div className={classes.predefinedCards}>
         <PredifinedWorkflows
-          CallbackOnSelectWorkflow={(index: number) => {
+          callbackOnSelectWorkflow={(index: number) => {
             selectWorkflow(index);
           }}
           workflows={workflowData}

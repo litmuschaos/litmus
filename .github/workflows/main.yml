@@ -2,20 +2,22 @@ name: Litmus-CI
 on:
   issue_comment:
     types: [created]
+    branches:
+      - master
 
 jobs:
   tests:
-    if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/run-e2e')
+    if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/run')
     runs-on: ubuntu-latest
     steps:
 
-      - name: Notification for e2e Start
+      - name: Notification for Starting Testing.
         uses: peter-evans/create-or-update-comment@v1
         with:
           comment-id: "${{ github.event.comment.id }}"
           body: |
             ****
-            **Test Status:** The e2e test has been started please wait for the results ...      
+            **Test Status:** The testing has been started please wait for the results ...
 
       #Using the last commit id of pull request
       - uses: octokit/request-action@v2.x
@@ -29,95 +31,71 @@ jobs:
 
       - name: set commit to output
         id: getcommit
-        run: | 
+        run: |
            prsha=$(echo $response | jq '.[-1].sha'  | tr -d '"')
-           echo "::set-output name=sha::$prsha" 
-        env: 
+           echo "::set-output name=sha::$prsha"
+        env:
           response:  ${{ steps.get_PR_commits.outputs.data }}
-          
+
       - uses: actions/checkout@v2
         with:
-          ref: ${{steps.getcommit.outputs.sha}}      
+          ref: ${{steps.getcommit.outputs.sha}}
 
-      - name: Build docker image
-        run: |
-          sudo docker build -f build/ansible-runner/Dockerfile -t litmuschaos/ansible-runner:ci .
-
-      #Install and configure a kind cluster
-      - name: Installing Prerequisites (KinD Cluster)
-        uses: engineerd/setup-kind@v0.4.0
+      - name: Setting Dependencies
+        uses: actions/setup-node@v1
         with:
-            version: "v0.7.0"
+          working-directory: litmus-portal/frontend
 
-      - name: Configuring and testing the Installation
+      - name: Installing Dependencies for frontend.
         run: |
-          kubectl cluster-info --context kind-kind
-          kind get kubeconfig --internal >$HOME/.kube/config
-          kubectl get nodes            
+          HUSKY_SKIP_INSTALL=1 npm i
+        working-directory: litmus-portal/frontend
 
-      - name: Load image on the nodes of the cluster
+      # Step for running all frontend Cypress unit tests.
+      - name: Starting cypress unit tests
+        if: startsWith(github.event.comment.body, '/run-unit') || startsWith(github.event.comment.body, '/run-all')
+        uses: cypress-io/github-action@v2
+        continue-on-error: false
+        with:
+          command: npm run unit:ci
+          install: false
+          working-directory: litmus-portal/frontend
+
+      # Cloning the litmus-e2e repo for E2E tests.
+      - name: Cloning the litmus-e2e Repo
+        if: startsWith(github.event.comment.body, '/run-e2e') || startsWith(github.event.comment.body, '/run-all')
         run: |
-          kind load docker-image --name=kind litmuschaos/ansible-runner:ci
+           git clone https://github.com/litmuschaos/litmus-e2e.git -b litmus-portal
 
-      - name: Deploy a sample application for chaos injection
+      # Starting the React-Server for E2E tests.
+      - name: Starting the server
+        if: startsWith(github.event.comment.body, '/run-e2e') || startsWith(github.event.comment.body, '/run-all')
         run: |
-          kubectl apply -f https://raw.githubusercontent.com/mayadata-io/chaos-ci-lib/master/app/nginx.yml
-          sleep 30
-          
-      - name: Setting up kubeconfig ENV for Github Chaos Action
-        run: echo ::set-env name=KUBE_CONFIG_DATA::$(base64 -w 0 ~/.kube/config)
+          CHOKIDAR_USEPOLLING=1 npm start &
+        working-directory: litmus-portal/frontend
 
-      - name: Running Litmus pod delete chaos experiment
-        if: startsWith(github.event.comment.body, '/run-e2e-pod-delete') || startsWith(github.event.comment.body, '/run-e2e-all')
-        uses: mayadata-io/github-chaos-actions@v0.1.1
-        env:
-          INSTALL_LITMUS: true
-          EXPERIMENT_NAME: pod-delete
-          EXPERIMENT_IMAGE: litmuschaos/ansible-runner
-          EXPERIMENT_IMAGE_TAG: ci
-          IMAGE_PULL_POLICY: IfNotPresent
-          LITMUS_CLEANUP: true
+      - name: Installing Cypress and running tests for login page
+        if: startsWith(github.event.comment.body, '/run-e2e-login')
+        uses: cypress-io/github-action@v2
+        continue-on-error: false
+        with:
+          wait-on: http://localhost:3000
+          spec: cypress/integration/Login/*
+          working-directory: litmus-e2e/CypressE2E/
 
-      - name: Running container kill chaos experiment
-        if: startsWith(github.event.comment.body, '/run-e2e-container-kill') || startsWith(github.event.comment.body, '/run-e2e-all')
-        uses: mayadata-io/github-chaos-actions@v0.1.1
-        env:
-          INSTALL_LITMUS: true
-          EXPERIMENT_NAME: container-kill
-          EXPERIMENT_IMAGE: litmuschaos/ansible-runner
-          EXPERIMENT_IMAGE_TAG: ci
-          IMAGE_PULL_POLICY: IfNotPresent
-          CONTAINER_KILL_HELPER_IMAGE: litmuschaos/container-kill-helper
-          CONTAINER_KILL_HELPER_TAG: latest
-          LIB: containerd
-          LITMUS_CLEANUP: true
+      - name: Install Cypress and run all tests
+        if: startsWith(github.event.comment.body, '/run-e2e-all') || startsWith(github.event.comment.body, '/run-all')
+        uses: cypress-io/github-action@v2
+        continue-on-error: false
+        with:
+          wait-on: http://localhost:3000
+          spec: cypress/integration/**/*
+          working-directory: litmus-e2e/CypressE2E
 
-      - name: Running node-cpu-hog chaos experiment
-        if: startsWith(github.event.comment.body, '/run-e2e-node-cpu-hog') || startsWith(github.event.comment.body, '/run-e2e-all')
-        uses: mayadata-io/github-chaos-actions@v0.1.1
-        env:
-          INSTALL_LITMUS: true
-          EXPERIMENT_NAME: node-cpu-hog
-          EXPERIMENT_IMAGE: litmuschaos/ansible-runner
-          EXPERIMENT_IMAGE_TAG: ci
-          IMAGE_PULL_POLICY: IfNotPresent
-          LITMUS_CLEANUP: true
-
-      - name: Running node-memory-hog chaos experiment
-        if: startsWith(github.event.comment.body, '/run-e2e-node-memory-hog') || startsWith(github.event.comment.body, '/run-e2e-all')
-        uses: mayadata-io/github-chaos-actions@v0.1.1
-        env:
-          INSTALL_LITMUS: true
-          EXPERIMENT_NAME: node-memory-hog
-          EXPERIMENT_IMAGE: litmuschaos/ansible-runner
-          EXPERIMENT_IMAGE_TAG: ci
-          IMAGE_PULL_POLICY: IfNotPresent
-          LITMUS_CLEANUP: true      
-                      
       - name: Check the test run
         if: |
-         startsWith(github.event.comment.body, '/run-e2e-pod-delete') || startsWith(github.event.comment.body, '/run-e2e-container-kill') ||
-         startsWith(github.event.comment.body, '/run-e2e-node-cpu-hog') || startsWith(github.event.comment.body, '/run-e2e-node-memory-hog') ||
+         startsWith(github.event.comment.body, '/run-unit') || startsWith(github.event.comment.body, '/run-all') ||
+         startsWith(github.event.comment.body, '/run-e2e-login') || startsWith(github.event.comment.body, '/run-e2e-workflow') ||
          startsWith(github.event.comment.body, '/run-e2e-all')
         run: |
           echo ::set-env name=TEST_RUN::true
@@ -127,9 +105,12 @@ jobs:
         uses: peter-evans/create-or-update-comment@v1
         with:
           comment-id: "${{ github.event.comment.id }}"
-          body: |  
+          body: |
             **Test Result:** All tests are passed
-          reactions: hooray         
+            **Run ID:** [${{ env.RUN_ID }}](https://github.com/litmuschaos/litmus/actions/runs/${{ env.RUN_ID }})
+          reactions: hooray
+        env:
+          RUN_ID: ${{ github.run_id }}
 
       - name: Check for any job failed
         if: ${{ failure() }}
@@ -138,11 +119,10 @@ jobs:
           comment-id: "${{ github.event.comment.id }}"
           body: |
             **Test Failed:** Some tests are failed please check
+            **Run ID:** [${{ env.RUN_ID }}](https://github.com/litmuschaos/litmus/actions/runs/${{ env.RUN_ID }})
           reactions: confused
-
-      - name: Deleting KinD cluster
-        if: ${{ always() }}
-        run: kind delete cluster
+        env:
+          RUN_ID: ${{ github.run_id }}
 
       - name: Check if any test ran or not
         if: env.TEST_RUN != 'true'
@@ -151,7 +131,10 @@ jobs:
           comment-id: "${{ github.event.comment.id }}"
           body: |
             **Test Result:** No test found
-          reactions: eyes 
+            **Run ID:** [${{ env.RUN_ID }}](https://github.com/litmuschaos/litmus/actions/runs/${{ env.RUN_ID }})
+          reactions: eyes
+        env:
+          RUN_ID: ${{ github.run_id }}
 
   merge:
     if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/merge')
