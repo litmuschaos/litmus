@@ -9,6 +9,7 @@ import Scaffold from '../../../../containers/layouts/Scaffold';
 import ButtonOutlined from '../../../Button/ButtonOutline';
 import { history } from '../../../../redux/configureStore';
 import ButtonFilled from '../../../Button/ButtonFilled';
+import { LocationState } from '../../../../models/routerModel';
 
 interface LocationObjectProps {
   workflowData: preDefinedWorkflowData;
@@ -16,16 +17,8 @@ interface LocationObjectProps {
   testWeights: number[];
 }
 
-interface LocationProps {
-  hash: string;
-  key: string;
-  pathname: string;
-  search: string;
-  state: LocationObjectProps;
-}
-
 interface BrowseTemplateProps {
-  location: LocationProps;
+  location: LocationState<LocationObjectProps>;
 }
 
 const BrowseAWorkflow: React.FC<BrowseTemplateProps> = ({ location }) => {
