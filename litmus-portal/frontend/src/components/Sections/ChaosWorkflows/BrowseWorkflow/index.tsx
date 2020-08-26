@@ -1,5 +1,3 @@
-/* eslint-disable */
-// TODO: Remove the above line...only for debugging temporary fix
 import { useQuery } from '@apollo/client';
 import {
   FormControl,

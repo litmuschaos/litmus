@@ -39,6 +39,7 @@ const useStyles = makeStyles((theme) => ({
   },
   tableHead: {
     opacity: 1,
+    height: 75,
   },
   headerStatus: {
     paddingLeft: theme.spacing(10),
@@ -60,21 +61,23 @@ const useStyles = makeStyles((theme) => ({
   },
   targetCluster: {
     paddingLeft: theme.spacing(3.75),
+    width: 200,
   },
-  clusterName: {
-    marginLeft: theme.spacing(3.75),
+  clusterStartDate: {
+    paddingLeft: theme.spacing(8),
   },
   reliabiltyData: {
-    width: '8.125rem',
+    maxWidth: 200,
+    paddingLeft: theme.spacing(4),
   },
   stepsData: {
     paddingLeft: theme.spacing(3.75),
   },
-  timeData: {
+  clusterData: {
     paddingTop: theme.spacing(1.25),
   },
   optionBtn: {
-    marginLeft: 'auto',
+    marginLeft: -50,
   },
   timeDiv: {
     display: 'flex',

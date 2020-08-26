@@ -1,88 +1,65 @@
+import React, { useState } from 'react';
 import { useQuery } from '@apollo/client';
-import {
-  FormControl,
-  InputAdornment,
-  InputBase,
-  InputLabel,
-  MenuItem,
-  Select,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TablePagination,
-  TableRow,
-  Typography,
-} from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
-import React, { useEffect, useState } from 'react';
-import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../../../graphql';
+import {
+  InputBase,
+  InputAdornment,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Typography,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  TablePagination,
+} from '@material-ui/core';
 import useStyles from './styles';
+import { WORKFLOW_DETAILS } from '../../../../graphql';
 import TableData from './TableData';
+import { Workflow, WorkflowDataVars } from '../../../../models/workflowData';
+import Loader from '../../../Loader';
+
+interface FilterOption {
+  search: string;
+  cluster: string;
+}
+
+interface PaginationData {
+  pageNo: number;
+  rowsPerPage: number;
+}
 
 const ScheduleWorkflow = () => {
-  // Apollo query with subscribeToMore
-  const { subscribeToMore, ...result } = useQuery(WORKFLOW_DETAILS);
-
-  // Default table data
-  const [mainData, setMainData] = useState<any>();
-
-  useEffect(() => {
-    // Get the inital table data
-    setMainData(result.data);
-    // Once Subscription is made, this is called
-    subscribeToMore({
-      document: WORKFLOW_EVENTS,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return setMainData(prev);
-        const newData = subscriptionData.data.workflowEventListener;
-        return setMainData({
-          ...prev,
-          getWorkFlowRuns: [...prev.getWorkFlowRuns, newData],
-        });
-      },
-    });
-  }, [result.data]);
   const classes = useStyles();
 
-  const [page, setPage] = React.useState(0);
+  // Apollo query to get the scheduled data
+  const { data, loading, error } = useQuery<Workflow, WorkflowDataVars>(
+    WORKFLOW_DETAILS,
+    { variables: { projectID: '00000' } }
+  );
 
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  // State for search and filtering
+  const [filter, setFilter] = React.useState<FilterOption>({
+    search: '',
+    cluster: 'All',
+  });
 
-  const [search, setSearch] = React.useState<String>('');
+  // State for pagination
+  const [paginationData, setPaginationData] = useState<PaginationData>({
+    pageNo: 0,
+    rowsPerPage: 5,
+  });
 
-  // const [status, setStatus] = React.useState<String>('');
+  const filteredData = data?.getWorkFlowRuns.filter((dataRow) =>
+    filter.cluster === 'All'
+      ? true
+      : dataRow.cluster_name.toLowerCase().includes(filter.cluster)
+  );
 
-  // const handleStatusChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-  //   setStatus(event.target.value as String);
-  // };
-
-  const [cluster, setCluster] = React.useState<String>('');
-
-  const handleClusterChange = (
-    event: React.ChangeEvent<{ value: unknown }>
-  ) => {
-    setCluster(event.target.value as String);
-  };
-
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const emptyRows =
-    rowsPerPage -
-    Math.min(
-      rowsPerPage,
-      mainData && mainData.getWorkFlowRuns.length - page * rowsPerPage
-    );
   return (
     <div>
       <section className="Heading section">
@@ -91,8 +68,10 @@ const ScheduleWorkflow = () => {
             id="input-with-icon-adornment"
             placeholder="Search"
             className={classes.search}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={filter.search}
+            onChange={(event) =>
+              setFilter({ ...filter, search: event.target.value as string })
+            }
             startAdornment={
               <InputAdornment position="start">
                 <SearchIcon />
@@ -106,12 +85,14 @@ const ScheduleWorkflow = () => {
             <Select
               labelId="demo-simple-select-outlined-label"
               id="demo-simple-select-outlined"
-              value={cluster}
-              onChange={handleClusterChange}
+              value={filter.cluster}
+              onChange={(event) =>
+                setFilter({ ...filter, cluster: event.target.value as string })
+              }
               disableUnderline
             >
-              <MenuItem value="">
-                <Typography className={classes.menuItem}>None</Typography>
+              <MenuItem value="All">
+                <Typography className={classes.menuItem}>All</Typography>
               </MenuItem>
               <MenuItem value="Predefined">
                 <Typography className={classes.menuItem}>
@@ -133,7 +114,9 @@ const ScheduleWorkflow = () => {
             <TableHead>
               <TableRow className={classes.tableHead}>
                 <TableCell className={classes.workflowName}>
-                  Workflow Name
+                  <Typography style={{ paddingLeft: 25 }}>
+                    Workflow Name
+                  </Typography>
                 </TableCell>
                 <TableCell className={classes.headerStatus}>
                   Starting Date
@@ -143,24 +126,41 @@ const ScheduleWorkflow = () => {
                     Regularity
                   </Typography>
                 </TableCell>
-                <TableCell>Cluster</TableCell>
+                <TableCell style={{ width: 200 }}>Cluster</TableCell>
                 <TableCell>Show Experiments</TableCell>
                 <TableCell />
               </TableRow>
             </TableHead>
             <TableBody>
-              {mainData &&
-                mainData.getWorkFlowRuns
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .reverse()
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={7}>
+                    <Loader />
+                  </TableCell>
+                </TableRow>
+              ) : error ? (
+                <TableRow>
+                  <TableCell colSpan={7}>
+                    <Typography align="center">Unable to fetch data</Typography>
+                  </TableCell>
+                </TableRow>
+              ) : filteredData && filteredData.length ? (
+                filteredData
+                  .slice(
+                    paginationData.pageNo * paginationData.rowsPerPage,
+                    paginationData.pageNo * paginationData.rowsPerPage +
+                      paginationData.rowsPerPage
+                  )
                   .map((data: any) => (
                     <TableRow>
                       <TableData data={data} />
                     </TableRow>
-                  ))}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={6} />
+                  ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={7}>
+                    <Typography align="center">No records available</Typography>
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>
@@ -169,11 +169,25 @@ const ScheduleWorkflow = () => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={mainData && mainData.getWorkFlowRuns.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
+          count={data?.getWorkFlowRuns.length ?? 0}
+          rowsPerPage={paginationData.rowsPerPage}
+          page={paginationData.pageNo}
+          onChangePage={(_, page) =>
+            setPaginationData({ ...paginationData, pageNo: page })
+          }
+          onChangeRowsPerPage={(event) => {
+            const newRowsPerPage = parseInt(event.target.value, 10);
+            const rowsPerPage =
+              newRowsPerPage < (data?.getWorkFlowRuns.length ?? 0)
+                ? newRowsPerPage
+                : 5;
+
+            setPaginationData({
+              ...paginationData,
+              pageNo: 0,
+              rowsPerPage,
+            });
+          }}
         />
       </section>
     </div>
