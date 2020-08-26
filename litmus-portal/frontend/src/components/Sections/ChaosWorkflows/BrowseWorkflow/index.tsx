@@ -28,6 +28,7 @@ import {
   WorkflowRun,
   WorkflowSubscription,
 } from '../../../../models/workflowData';
+import { history } from '../../../../redux/configureStore';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
@@ -36,7 +37,6 @@ import {
 } from '../../../../utils/sort';
 import Loader from '../../../Loader';
 import useStyles from './styles';
-import { history } from '../../../../redux/configureStore';
 import TableData from './TableData';
 
 interface FilterOptions {
@@ -145,8 +145,8 @@ const BrowseWorkflow = () => {
         const y = parseInt(b.last_updated, 10);
 
         return sortData.lastRun.ascending
-          ? sortNumAsc(x, y)
-          : sortNumDesc(x, y);
+          ? sortNumAsc(y, x)
+          : sortNumDesc(y, x);
       }
 
       return 0;
@@ -168,8 +168,7 @@ const BrowseWorkflow = () => {
       }
 
       return 0;
-    })
-    .reverse();
+    });
 
   return (
     <div>
@@ -325,7 +324,7 @@ const BrowseWorkflow = () => {
                     </Typography>
                     <div className={classes.sortDiv}>
                       <IconButton
-                        aria-label="sort no of experiments ascending"
+                        aria-label="sort no of steps ascending"
                         size="small"
                         onClick={() =>
                           setSortData({
@@ -337,7 +336,7 @@ const BrowseWorkflow = () => {
                         <ExpandLessIcon fontSize="inherit" />
                       </IconButton>
                       <IconButton
-                        aria-label="sort no of experiments descending"
+                        aria-label="sort no of steps descending"
                         size="small"
                         onClick={() =>
                           setSortData({
@@ -415,6 +414,7 @@ const BrowseWorkflow = () => {
                   )
                   .map((dataRow) => (
                     <TableRow
+                      key={dataRow.workflow_run_id}
                       onClick={() =>
                         history.push({
                           pathname: '/workflow-underground',
