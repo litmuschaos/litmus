@@ -1,15 +1,16 @@
 import { useMutation } from '@apollo/client/react/hooks';
-import Button from '@material-ui/core/Button';
 import MobileStepper from '@material-ui/core/MobileStepper';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import ButtonFilled from '../Button/ButtonFilled';
 import config from '../../config';
 import { CREATE_USER } from '../../graphql';
 import { RootState } from '../../redux/reducers';
 import InputField from '../InputField';
 import ModalPage from './Modalpage';
 import useStyles from './styles';
+import ButtonOutline from '../Button/ButtonOutline';
 
 interface CStepperProps {
   handleModal: () => void;
@@ -103,33 +104,41 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   const selectiveButtons = () => {
     if (activeStep === 0) {
       return (
-        <div className={classes.buttonDiv}>
-          <Button variant="contained" color="secondary" onClick={handleNext}>
-            Continue
-          </Button>
+        <div className={classes.buttonDiv} data-cy="Continue">
+          <ButtonFilled isPrimary handleClick={handleNext}>
+            <div>Continue</div>
+          </ButtonFilled>
         </div>
       );
     }
     if (activeStep === 3) {
       return (
         <div className={classes.buttonDiv}>
-          <Button className={classes.buttonOutline} onClick={handleBack}>
-            Skip
-          </Button>
-          <Button variant="contained" color="secondary" onClick={handleSubmit}>
-            Let&#39;s Start
-          </Button>
+          <ButtonOutline
+            isDisabled={false}
+            handleClick={handleBack}
+            data-cy="Skip"
+          >
+            <>Skip</>
+          </ButtonOutline>
+          <ButtonFilled isPrimary handleClick={handleSubmit} data-cy="Start">
+            <div>Let&#39;s Start</div>
+          </ButtonFilled>
         </div>
       );
     }
     return (
       <div className={classes.buttonDiv}>
-        <Button className={classes.buttonOutline} onClick={handleBack}>
-          Back
-        </Button>
-        <Button variant="contained" color="secondary" onClick={handleNext}>
-          Continue
-        </Button>
+        <ButtonOutline
+          isDisabled={false}
+          handleClick={handleBack}
+          data-cy="Back"
+        >
+          <>Back</>
+        </ButtonOutline>
+        <ButtonFilled isPrimary handleClick={handleNext} data-cy="Continue">
+          <div>Continue</div>
+        </ButtonFilled>
       </div>
     );
   };
@@ -142,7 +151,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
           <ModalPage
             renderMenu={
               <div>
-                <div className={classes.inputArea}>
+                <div className={classes.inputArea} data-cy="InputProjectName">
                   <InputField
                     label="Project Name"
                     name="projectName"
@@ -166,7 +175,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
           <ModalPage
             renderMenu={
               <div>
-                <div className={classes.inputArea}>
+                <div className={classes.inputArea} data-cy="InputName">
                   <InputField
                     label="Full Name"
                     name="fullName"
@@ -189,7 +198,10 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
         return (
           <ModalPage
             renderMenu={
-              <div className={classes.passwordSetterDiv}>
+              <div
+                className={classes.passwordSetterDiv}
+                data-cy="InputPassword"
+              >
                 <div className={classes.passwordArea}>
                   <InputField
                     label="Password"
@@ -234,7 +246,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
           <ModalPage
             renderMenu={
               <div>
-                <div className={classes.inputArea}>
+                <div className={classes.inputArea} data-cy="InputEmail">
                   <InputField
                     label="Email Address"
                     name="emailAddress"

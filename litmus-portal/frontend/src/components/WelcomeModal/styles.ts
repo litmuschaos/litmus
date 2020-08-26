@@ -7,13 +7,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   /* CSS for Modal Page Component */
-  buttonOutline: {
-    minWidth: theme.spacing(6),
-    height: '2.2rem',
-    border: '0.0625rem solid',
-    borderColor: theme.palette.secondary.dark,
-    marginRight: theme.spacing(2),
-  },
   heading: {
     fontSize: '2rem',
     textalign: 'center',
@@ -63,7 +56,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     bottom: '13%',
   },
   buttonDiv: {
-    position: 'relative',
+    display: 'flex',
+    justifyContent: 'center',
     marginBottom: theme.spacing(1),
   },
 }));

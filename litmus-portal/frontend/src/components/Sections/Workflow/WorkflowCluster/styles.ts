@@ -54,6 +54,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   or: {
     marginTop: theme.spacing(1.5),
   },
+  marginTemporary: {
+    marginTop: theme.spacing(1.5),
+  },
 }));
 
 export default useStyles;

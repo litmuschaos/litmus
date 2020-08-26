@@ -8,7 +8,8 @@
     "test": "cypress run",
     "eject": "react-scripts eject",
     "lint": "eslint . --ext .js,.tsx,.ts",
-    "format": "prettier --write \"src/**/*.+(ts|tsx|js|jsx|json)\" && eslint --fix . --ext .js,.tsx,.ts"
+    "format": "prettier --write \"src/**/*.+(ts|tsx|js|jsx|json)\" && eslint --fix . --ext .js,.tsx,.ts",
+    "unit:ci": "cypress run --config video=false"
   },
   "dependencies": {
     "@apollo/client": "^3.1.2",
@@ -18,7 +19,6 @@
     "@material-ui/pickers": "^3.2.10",
     "ace-builds": "^1.4.12",
     "brace": "^0.11.1",
-    "clsx": "^1.1.1",
     "date-fns": "^2.14.0",
     "graphql": "^15.3.0",
     "js-yaml": "^3.14.0",

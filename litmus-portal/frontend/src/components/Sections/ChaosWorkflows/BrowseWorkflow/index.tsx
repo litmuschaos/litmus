@@ -36,6 +36,7 @@ import {
 } from '../../../../utils/sort';
 import Loader from '../../../Loader';
 import useStyles from './styles';
+import { history } from '../../../../redux/configureStore';
 import TableData from './TableData';
 
 interface FilterOptions {
@@ -413,7 +414,14 @@ const BrowseWorkflow = () => {
                       paginationData.rowsPerPage
                   )
                   .map((dataRow) => (
-                    <TableRow>
+                    <TableRow
+                      onClick={() =>
+                        history.push({
+                          pathname: '/workflow-underground',
+                          state: data,
+                        })
+                      }
+                    >
                       <TableData data={dataRow} />
                     </TableRow>
                   ))
