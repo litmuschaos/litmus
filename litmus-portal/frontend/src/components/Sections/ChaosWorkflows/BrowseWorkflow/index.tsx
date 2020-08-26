@@ -1,5 +1,3 @@
-/* eslint-disable */
-// TODO: Remove the above line...only for debugging temporary fix
 import { useQuery } from '@apollo/client';
 import {
   FormControl,
@@ -27,9 +25,15 @@ import {
   ExecutionData,
   Workflow,
   WorkflowDataVars,
-  WorkflowSubscription,
   WorkflowRun,
+  WorkflowSubscription,
 } from '../../../../models/workflowData';
+import {
+  sortAlphaAsc,
+  sortAlphaDesc,
+  sortNumAsc,
+  sortNumDesc,
+} from '../../../../utils/sort';
 import Loader from '../../../Loader';
 import useStyles from './styles';
 import TableData from './TableData';
@@ -46,10 +50,9 @@ interface PaginationData {
 }
 
 interface SortData {
-  ascName: boolean;
-  dscName: boolean;
-  ascExp: boolean;
-  dscExp: boolean;
+  lastRun: { sort: boolean; ascending: boolean };
+  name: { sort: boolean; ascending: boolean };
+  noOfSteps: { sort: boolean; ascending: boolean };
 }
 
 const BrowseWorkflow = () => {
@@ -98,10 +101,9 @@ const BrowseWorkflow = () => {
 
   // State for sorting
   const [sortData, setSortData] = useState<SortData>({
-    ascName: false,
-    dscName: false,
-    ascExp: false,
-    dscExp: false,
+    lastRun: { sort: true, ascending: true },
+    name: { sort: false, ascending: true },
+    noOfSteps: { sort: false, ascending: false },
   });
 
   // State for pagination
@@ -126,51 +128,47 @@ const BrowseWorkflow = () => {
         ? true
         : dataRow.cluster_name.toLowerCase().includes(filters.cluster)
     )
+    .sort((a: WorkflowRun, b: WorkflowRun) => {
+      // Sorting based on unique fields
+      if (sortData.name.sort) {
+        const x = a.workflow_name;
+        const y = b.workflow_name;
+
+        return sortData.name.ascending
+          ? sortAlphaAsc(x, y)
+          : sortAlphaDesc(x, y);
+      }
+
+      if (sortData.lastRun.sort) {
+        const x = parseInt(a.last_updated, 10);
+        const y = parseInt(b.last_updated, 10);
+
+        return sortData.lastRun.ascending
+          ? sortNumAsc(x, y)
+          : sortNumDesc(x, y);
+      }
+
+      return 0;
+    })
+    .sort((a: WorkflowRun, b: WorkflowRun) => {
+      // Sorting based on non-unique fields
+      if (sortData.noOfSteps.sort) {
+        const x = Object.keys(
+          (JSON.parse(a.execution_data) as ExecutionData).nodes
+        ).length;
+
+        const y = Object.keys(
+          (JSON.parse(b.execution_data) as ExecutionData).nodes
+        ).length;
+
+        return sortData.noOfSteps.ascending
+          ? sortNumAsc(x, y)
+          : sortNumDesc(x, y);
+      }
+
+      return 0;
+    })
     .reverse();
-
-  // Sorting the Workflow Name
-  if (sortData.ascName === true) {
-    filteredData?.sort((a: WorkflowRun, b: WorkflowRun) => {
-      return a.workflow_name === b.workflow_name
-        ? 0
-        : a.workflow_name < b.workflow_name
-        ? -1
-        : 1;
-    });
-  }
-  if (sortData.dscName === true) {
-    filteredData?.sort((a: WorkflowRun, b: WorkflowRun) => {
-      return a.workflow_name === b.workflow_name
-        ? 0
-        : a.workflow_name > b.workflow_name
-        ? -1
-        : 1;
-    });
-  }
-
-  //Sorting the Number of Experiments
-  if (sortData.ascExp === true) {
-    filteredData?.sort((a: WorkflowRun, b: WorkflowRun) => {
-      return JSON.stringify(a.execution_data).length ===
-        JSON.stringify(b.execution_data).length
-        ? 0
-        : JSON.stringify(a.execution_data).length <
-          JSON.stringify(b.execution_data).length
-        ? -1
-        : 1;
-    });
-  }
-  if (sortData.dscExp === true) {
-    filteredData?.sort((a: WorkflowRun, b: WorkflowRun) => {
-      return JSON.stringify(a.execution_data).length ===
-        JSON.stringify(b.execution_data).length
-        ? 0
-        : JSON.stringify(a.execution_data).length >
-          JSON.stringify(b.execution_data).length
-        ? -1
-        : 1;
-    });
-  }
 
   return (
     <div>
@@ -266,7 +264,10 @@ const BrowseWorkflow = () => {
           <Table stickyHeader aria-label="simple table">
             <TableHead className={classes.tableHead}>
               <TableRow>
+                {/* Status */}
                 <TableCell className={classes.headerStatus}>Status</TableCell>
+
+                {/* Workflow Name */}
                 <TableCell className={classes.workflowName}>
                   <div style={{ display: 'flex', flexDirection: 'row' }}>
                     <Typography style={{ paddingTop: 10 }}>
@@ -274,28 +275,26 @@ const BrowseWorkflow = () => {
                     </Typography>
                     <div className={classes.sortDiv}>
                       <IconButton
-                        aria-label="sort name"
+                        aria-label="sort name ascending"
                         size="small"
                         onClick={() =>
                           setSortData({
-                            ascName: true,
-                            dscName: false,
-                            ascExp: false,
-                            dscExp: false,
+                            ...sortData,
+                            name: { sort: true, ascending: true },
+                            lastRun: { sort: false, ascending: true },
                           })
                         }
                       >
                         <ExpandLessIcon fontSize="inherit" />
                       </IconButton>
                       <IconButton
-                        aria-label="sort name"
+                        aria-label="sort name descending"
                         size="small"
                         onClick={() =>
                           setSortData({
-                            ascName: false,
-                            dscName: true,
-                            ascExp: false,
-                            dscExp: false,
+                            ...sortData,
+                            name: { sort: true, ascending: false },
+                            lastRun: { sort: false, ascending: false },
                           })
                         }
                       >
@@ -304,43 +303,45 @@ const BrowseWorkflow = () => {
                     </div>
                   </div>
                 </TableCell>
+
+                {/* Target Cluster */}
                 <TableCell>
                   <Typography className={classes.targetCluster}>
                     Target Cluster
                   </Typography>
                 </TableCell>
+
+                {/* Reliability */}
                 <TableCell className={classes.headData}>
                   Reliability Details
                 </TableCell>
+
+                {/* No of Experiments */}
                 <TableCell className={classes.headData}>
                   <div style={{ display: 'flex', flexDirection: 'row' }}>
                     <Typography style={{ paddingTop: 10 }}>
-                      # of experiments
+                      # of Steps
                     </Typography>
                     <div className={classes.sortDiv}>
                       <IconButton
-                        aria-label="sort name"
+                        aria-label="sort no of experiments ascending"
                         size="small"
                         onClick={() =>
                           setSortData({
-                            ascName: true,
-                            dscName: false,
-                            ascExp: true,
-                            dscExp: false,
+                            ...sortData,
+                            noOfSteps: { sort: true, ascending: true },
                           })
                         }
                       >
                         <ExpandLessIcon fontSize="inherit" />
                       </IconButton>
                       <IconButton
-                        aria-label="sort name"
+                        aria-label="sort no of experiments descending"
                         size="small"
                         onClick={() =>
                           setSortData({
-                            ascName: false,
-                            dscName: true,
-                            ascExp: false,
-                            dscExp: true,
+                            ...sortData,
+                            noOfSteps: { sort: true, ascending: false },
                           })
                         }
                       >
@@ -349,10 +350,48 @@ const BrowseWorkflow = () => {
                     </div>
                   </div>
                 </TableCell>
-                <TableCell className={classes.headData}>Last Run</TableCell>
+
+                {/* Last Run */}
+                <TableCell className={classes.headData}>
+                  <div style={{ display: 'flex', flexDirection: 'row' }}>
+                    <Typography style={{ paddingTop: 10 }}>Last Run</Typography>
+                    <div className={classes.sortDiv}>
+                      <IconButton
+                        aria-label="sort last run ascending"
+                        size="small"
+                        onClick={() =>
+                          setSortData({
+                            ...sortData,
+                            lastRun: { sort: true, ascending: true },
+                            name: { sort: false, ascending: true },
+                          })
+                        }
+                      >
+                        <ExpandLessIcon fontSize="inherit" />
+                      </IconButton>
+                      <IconButton
+                        aria-label="sort last run descending"
+                        size="small"
+                        onClick={() =>
+                          setSortData({
+                            ...sortData,
+                            lastRun: { sort: true, ascending: false },
+                            name: { sort: false, ascending: true },
+                          })
+                        }
+                      >
+                        <ExpandMoreIcon fontSize="inherit" />
+                      </IconButton>
+                    </div>
+                  </div>
+                </TableCell>
+
+                {/* Menu */}
                 <TableCell />
               </TableRow>
             </TableHead>
+
+            {/* Body */}
             <TableBody>
               {loading ? (
                 <TableRow>
@@ -388,6 +427,8 @@ const BrowseWorkflow = () => {
             </TableBody>
           </Table>
         </TableContainer>
+
+        {/* Pagination */}
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"

@@ -16,7 +16,7 @@ export interface ExecutionData {
   phase: string;
   startedAt: string;
   finishedAt: string;
-  node: object;
+  nodes: object;
 }
 
 export interface WorkflowRun {
