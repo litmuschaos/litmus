@@ -58,17 +58,17 @@ const useStyles = makeStyles((theme) => ({
   },
   workflowName: {
     borderRight: '1px solid rgba(0,0,0,0.1)',
-    color: 'rgba(0, 0, 0, 0.4)',
+    color: theme.palette.customColors.black(0.4),
   },
   workflowNameData: {
     borderRight: '1px solid rgba(0,0,0,0.1)',
   },
   targetCluster: {
     paddingLeft: theme.spacing(3.75),
-    color: 'rgba(0, 0, 0, 0.4)',
+    color: theme.palette.customColors.black(0.4),
   },
   headData: {
-    color: 'rgba(0, 0, 0, 0.4)',
+    color: theme.palette.customColors.black(0.4),
   },
   clusterName: {
     marginLeft: theme.spacing(3.75),
@@ -88,6 +88,11 @@ const useStyles = makeStyles((theme) => ({
   timeDiv: {
     display: 'flex',
     flexDirection: 'row',
+  },
+  sortDiv: {
+    display: 'flex',
+    flexDirection: 'column',
+    paddingLeft: theme.spacing(1.25),
   },
 }));
 

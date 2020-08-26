@@ -43,6 +43,8 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
   };
   const handleMenu = () => {};
 
+  const EditSchedule = () => {};
+
   const formatDate = (date: any) => {
     const updated = new Date(date * 1000).toString();
     const day = updated.slice(8, 10);
@@ -71,7 +73,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
   ];
   return (
     <>
-      <TableCell align="center" className={classes.workflowName}>
+      <TableCell align="center" className={classes.workflowNameData}>
         <Typography>
           <strong>{data.workflow_name}</strong>
         </Typography>
@@ -82,8 +84,11 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
         </Typography>
       </TableCell>
       <TableCell>
-        <div className={classes.reliabiltyData}>
-          <Typography>Every Monday at 03:00 AM</Typography>
+        <div className={classes.regularityData}>
+          <div className={classes.expDiv}>
+            <img src="/icons/calender.svg" alt="Calender" />
+            <Typography style={{ paddingLeft: 10 }}>Once </Typography>
+          </div>
         </div>
       </TableCell>
       <TableCell>
@@ -92,25 +97,14 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       <TableCell>
         <Button onClick={handlePopOverClick} style={{ textTransform: 'none' }}>
           {isOpen ? (
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-              }}
-            >
-              <Typography style={{ color: '#109B67' }}>
+            <div className={classes.expDiv}>
+              <Typography className={classes.expInfo}>
                 <strong>Show Experiment</strong>
               </Typography>
-              <KeyboardArrowDownIcon style={{ color: '#109B67' }} />
+              <KeyboardArrowDownIcon className={classes.expInfo} />
             </div>
           ) : (
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                cursor: 'pointer',
-              }}
-            >
+            <div className={classes.expDiv1}>
               <Typography>
                 <strong>Show Experiment</strong>
               </Typography>
@@ -135,23 +129,11 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
             marginTop: 10,
           }}
         >
-          <div
-            style={{
-              height: 243,
-              width: 243,
-              padding: '25px 20px',
-            }}
-          >
+          <div className={classes.weightDiv}>
             {exWeight.map((expData) => {
               return (
                 <div style={{ marginBottom: 10 }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      paddingBottom: 5,
-                    }}
-                  >
+                  <div className={classes.weightInfo}>
                     <Typography>{expData.name}</Typography>
                     <Typography style={{ marginLeft: 'auto' }}>
                       {expData.value} points
@@ -164,7 +146,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           </div>
         </Popover>
       </TableCell>
-      <TableCell style={{ width: 50 }}>
+      <TableCell className={classes.menuCell}>
         <IconButton
           aria-label="more"
           aria-controls="long-menu"
@@ -181,11 +163,27 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           open={open}
           onClose={handleClose}
         >
-          <MenuItem value="Workflow" onClick={handleMenu}>
-            Edit schedule
+          <MenuItem value="Workflow" onClick={() => EditSchedule()}>
+            <div className={classes.expDiv}>
+              <img
+                src="/icons/editSchedule.svg"
+                alt="Edit Schedule"
+                className={classes.btnImg}
+              />
+              <Typography className={classes.btnText}>Edit Schedule</Typography>
+            </div>
           </MenuItem>
           <MenuItem value="Analysis" onClick={handleMenu}>
-            Delete schedule
+            <div className={classes.expDiv}>
+              <img
+                src="/icons/deleteSchedule.svg"
+                alt="Delete Schedule"
+                className={classes.btnImg}
+              />
+              <Typography className={classes.btnText}>
+                Delete Schedule
+              </Typography>
+            </div>
           </MenuItem>
         </Menu>
       </TableCell>

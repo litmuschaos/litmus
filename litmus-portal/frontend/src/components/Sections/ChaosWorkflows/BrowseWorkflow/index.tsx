@@ -1,3 +1,5 @@
+/* eslint-disable */
+// TODO: Remove the above line...only for debugging temporary fix
 import { useQuery } from '@apollo/client';
 import {
   FormControl,
@@ -26,6 +28,7 @@ import {
   Workflow,
   WorkflowDataVars,
   WorkflowSubscription,
+  WorkflowRun,
 } from '../../../../models/workflowData';
 import Loader from '../../../Loader';
 import useStyles from './styles';
@@ -40,6 +43,13 @@ interface FilterOptions {
 interface PaginationData {
   pageNo: number;
   rowsPerPage: number;
+}
+
+interface SortData {
+  ascName: boolean;
+  dscName: boolean;
+  ascExp: boolean;
+  dscExp: boolean;
 }
 
 const BrowseWorkflow = () => {
@@ -86,6 +96,14 @@ const BrowseWorkflow = () => {
     cluster: 'All',
   });
 
+  // State for sorting
+  const [sortData, setSortData] = useState<SortData>({
+    ascName: false,
+    dscName: false,
+    ascExp: false,
+    dscExp: false,
+  });
+
   // State for pagination
   const [paginationData, setPaginationData] = useState<PaginationData>({
     pageNo: 0,
@@ -107,7 +125,52 @@ const BrowseWorkflow = () => {
       filters.cluster === 'All'
         ? true
         : dataRow.cluster_name.toLowerCase().includes(filters.cluster)
-    );
+    )
+    .reverse();
+
+  // Sorting the Workflow Name
+  if (sortData.ascName === true) {
+    filteredData?.sort((a: WorkflowRun, b: WorkflowRun) => {
+      return a.workflow_name === b.workflow_name
+        ? 0
+        : a.workflow_name < b.workflow_name
+        ? -1
+        : 1;
+    });
+  }
+  if (sortData.dscName === true) {
+    filteredData?.sort((a: WorkflowRun, b: WorkflowRun) => {
+      return a.workflow_name === b.workflow_name
+        ? 0
+        : a.workflow_name > b.workflow_name
+        ? -1
+        : 1;
+    });
+  }
+
+  //Sorting the Number of Experiments
+  if (sortData.ascExp === true) {
+    filteredData?.sort((a: WorkflowRun, b: WorkflowRun) => {
+      return JSON.stringify(a.execution_data).length ===
+        JSON.stringify(b.execution_data).length
+        ? 0
+        : JSON.stringify(a.execution_data).length <
+          JSON.stringify(b.execution_data).length
+        ? -1
+        : 1;
+    });
+  }
+  if (sortData.dscExp === true) {
+    filteredData?.sort((a: WorkflowRun, b: WorkflowRun) => {
+      return JSON.stringify(a.execution_data).length ===
+        JSON.stringify(b.execution_data).length
+        ? 0
+        : JSON.stringify(a.execution_data).length >
+          JSON.stringify(b.execution_data).length
+        ? -1
+        : 1;
+    });
+  }
 
   return (
     <div>
@@ -209,21 +272,33 @@ const BrowseWorkflow = () => {
                     <Typography style={{ paddingTop: 10 }}>
                       Workflow Name
                     </Typography>
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        paddingLeft: 10,
-                      }}
-                    >
+                    <div className={classes.sortDiv}>
                       <IconButton
                         aria-label="sort name"
                         size="small"
-                        // onClick={ascWorkflowName}
+                        onClick={() =>
+                          setSortData({
+                            ascName: true,
+                            dscName: false,
+                            ascExp: false,
+                            dscExp: false,
+                          })
+                        }
                       >
                         <ExpandLessIcon fontSize="inherit" />
                       </IconButton>
-                      <IconButton aria-label="sort name" size="small">
+                      <IconButton
+                        aria-label="sort name"
+                        size="small"
+                        onClick={() =>
+                          setSortData({
+                            ascName: false,
+                            dscName: true,
+                            ascExp: false,
+                            dscExp: false,
+                          })
+                        }
+                      >
                         <ExpandMoreIcon fontSize="inherit" />
                       </IconButton>
                     </div>
@@ -238,7 +313,41 @@ const BrowseWorkflow = () => {
                   Reliability Details
                 </TableCell>
                 <TableCell className={classes.headData}>
-                  # of experiments
+                  <div style={{ display: 'flex', flexDirection: 'row' }}>
+                    <Typography style={{ paddingTop: 10 }}>
+                      # of experiments
+                    </Typography>
+                    <div className={classes.sortDiv}>
+                      <IconButton
+                        aria-label="sort name"
+                        size="small"
+                        onClick={() =>
+                          setSortData({
+                            ascName: true,
+                            dscName: false,
+                            ascExp: true,
+                            dscExp: false,
+                          })
+                        }
+                      >
+                        <ExpandLessIcon fontSize="inherit" />
+                      </IconButton>
+                      <IconButton
+                        aria-label="sort name"
+                        size="small"
+                        onClick={() =>
+                          setSortData({
+                            ascName: false,
+                            dscName: true,
+                            ascExp: false,
+                            dscExp: true,
+                          })
+                        }
+                      >
+                        <ExpandMoreIcon fontSize="inherit" />
+                      </IconButton>
+                    </div>
+                  </div>
                 </TableCell>
                 <TableCell className={classes.headData}>Last Run</TableCell>
                 <TableCell />

@@ -54,11 +54,16 @@ const ScheduleWorkflow = () => {
     rowsPerPage: 5,
   });
 
-  const filteredData = data?.getWorkFlowRuns.filter((dataRow) =>
-    filter.cluster === 'All'
-      ? true
-      : dataRow.cluster_name.toLowerCase().includes(filter.cluster)
-  );
+  const filteredData = data?.getWorkFlowRuns
+    .filter((dataRow) =>
+      dataRow.workflow_name.toLowerCase().includes(filter.search)
+    )
+    .filter((dataRow) =>
+      filter.cluster === 'All'
+        ? true
+        : dataRow.cluster_name.toLowerCase().includes(filter.cluster)
+    )
+    .reverse();
 
   return (
     <div>
@@ -78,7 +83,7 @@ const ScheduleWorkflow = () => {
               </InputAdornment>
             }
           />
-          <FormControl className={classes.select1}>
+          <FormControl className={classes.select}>
             <InputLabel id="demo-simple-select-outlined-label">
               Target Cluster
             </InputLabel>
@@ -114,7 +119,7 @@ const ScheduleWorkflow = () => {
             <TableHead>
               <TableRow className={classes.tableHead}>
                 <TableCell className={classes.workflowName}>
-                  <Typography style={{ paddingLeft: 25 }}>
+                  <Typography style={{ paddingLeft: 65 }}>
                     Workflow Name
                   </Typography>
                 </TableCell>
@@ -122,12 +127,20 @@ const ScheduleWorkflow = () => {
                   Starting Date
                 </TableCell>
                 <TableCell>
-                  <Typography className={classes.targetCluster}>
+                  <Typography className={classes.regularity}>
                     Regularity
                   </Typography>
                 </TableCell>
-                <TableCell style={{ width: 200 }}>Cluster</TableCell>
-                <TableCell>Show Experiments</TableCell>
+                <TableCell>
+                  <Typography className={classes.targetCluster}>
+                    Cluster
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography className={classes.showExp}>
+                    Show Experiments
+                  </Typography>
+                </TableCell>
                 <TableCell />
               </TableRow>
             </TableHead>
@@ -169,23 +182,17 @@ const ScheduleWorkflow = () => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={data?.getWorkFlowRuns.length ?? 0}
+          count={filteredData?.length ?? 0}
           rowsPerPage={paginationData.rowsPerPage}
           page={paginationData.pageNo}
           onChangePage={(_, page) =>
             setPaginationData({ ...paginationData, pageNo: page })
           }
           onChangeRowsPerPage={(event) => {
-            const newRowsPerPage = parseInt(event.target.value, 10);
-            const rowsPerPage =
-              newRowsPerPage < (data?.getWorkFlowRuns.length ?? 0)
-                ? newRowsPerPage
-                : 5;
-
             setPaginationData({
               ...paginationData,
               pageNo: 0,
-              rowsPerPage,
+              rowsPerPage: parseInt(event.target.value, 10),
             });
           }}
         />
