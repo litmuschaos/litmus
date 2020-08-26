@@ -111,14 +111,6 @@ const BrowseWorkflow = () => {
         : dataRow.cluster_name.toLowerCase().includes(filters.cluster)
     );
 
-  const emptyRows =
-    paginationData.rowsPerPage -
-    Math.min(
-      paginationData.rowsPerPage,
-      (filteredData?.length ?? 0) -
-        paginationData.pageNo * paginationData.rowsPerPage
-    );
-
   return (
     <div>
       <section className="Heading section">
@@ -286,11 +278,6 @@ const BrowseWorkflow = () => {
                   </TableCell>
                 </TableRow>
               )}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={7} />
-                </TableRow>
-              )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -303,17 +290,13 @@ const BrowseWorkflow = () => {
           onChangePage={(_, page) =>
             setPaginationData({ ...paginationData, pageNo: page })
           }
-          onChangeRowsPerPage={(event) => {
-            const newRowsPerPage = parseInt(event.target.value, 10);
-            const rowsPerPage =
-              newRowsPerPage < (filteredData?.length ?? 0) ? newRowsPerPage : 5;
-
+          onChangeRowsPerPage={(event) =>
             setPaginationData({
               ...paginationData,
               pageNo: 0,
-              rowsPerPage: rowsPerPage,
-            });
-          }}
+              rowsPerPage: parseInt(event.target.value, 10),
+            })
+          }
         />
       </section>
     </div>

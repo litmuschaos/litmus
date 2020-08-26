@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(6.25),
     border: '1px solid rgba(0,0,0,0.1)',
     backgroundColor: theme.palette.common.white,
-    maxHeight: 500,
+    height: '29.219rem',
   },
   tableHead: {
     opacity: 1,
