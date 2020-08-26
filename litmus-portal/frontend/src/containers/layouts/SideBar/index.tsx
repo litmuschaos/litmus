@@ -44,7 +44,7 @@ const SideBar = () => {
       <Link to="/" className={classes.homeLink}>
         <div className={classes.litmusDiv}>
           <img
-            src="./icons/litmusPurple.svg"
+            src="/icons/litmusPurple.svg"
             alt="litmus logo"
             className={classes.logo}
           />
@@ -62,7 +62,7 @@ const SideBar = () => {
           }}
           label="Home"
         >
-          <img src="./icons/workflows.png" alt="home" />
+          <img src="/icons/workflows.png" alt="home" />
         </CustomisedListItem>
         <CustomisedListItem
           key="workflow"
@@ -71,7 +71,7 @@ const SideBar = () => {
           }}
           label="Workflows"
         >
-          <img src="./icons/workflows.png" alt="workflow" />
+          <img src="/icons/workflows.png" alt="workflow" />
         </CustomisedListItem>
         <CustomisedListItem
           key="hub"
@@ -80,7 +80,7 @@ const SideBar = () => {
           }}
           label="My Hub"
         >
-          <img src="./icons/hub.png" alt="hub" />
+          <img src="/icons/hub.png" alt="hub" />
         </CustomisedListItem>
         <CustomisedListItem
           key="settings"
@@ -89,7 +89,7 @@ const SideBar = () => {
           }}
           label="Settings"
         >
-          <img src="./icons/setting.png" alt="settings" />
+          <img src="/icons/setting.png" alt="settings" />
         </CustomisedListItem>
         <CustomisedListItem
           key="community"
@@ -98,7 +98,7 @@ const SideBar = () => {
           }}
           label="Community"
         >
-          <img src="./icons/community.png" alt="community" />
+          <img src="/icons/community.png" alt="community" />
         </CustomisedListItem>
       </List>
     </Drawer>

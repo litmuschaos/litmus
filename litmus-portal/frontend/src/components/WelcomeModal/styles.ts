@@ -56,7 +56,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     bottom: '13%',
   },
   buttonDiv: {
-    position: 'relative',
+    display: 'flex',
+    justifyContent: 'center',
     marginBottom: theme.spacing(1),
   },
 }));

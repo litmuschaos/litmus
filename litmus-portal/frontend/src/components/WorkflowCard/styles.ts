@@ -4,25 +4,13 @@ const useStyles = makeStyles((theme) => ({
   // CustomWorkflow
 
   customCard: {
-    width: '100%',
-    height: '100%',
     background: theme.palette.grey[200],
     borderRadius: 3,
     overflow: 'hidden',
     fontSize: '0.875rem',
     margin: '0 auto',
-    justifyContent: 'center',
-    display: 'flex',
-    flexDirection: 'column',
-    flexWrap: 'wrap',
     textAlign: 'center',
     cursor: 'pointer',
-    // Above tablet size
-    [theme.breakpoints.up('md')]: {
-      width: '10.75rem',
-      height: '17.25rem',
-      margin: theme.spacing(2),
-    },
     border: '1px solid rgba(0, 0, 0, 0.2)',
     boxSizing: 'border-box',
   },
@@ -37,48 +25,27 @@ const useStyles = makeStyles((theme) => ({
   // CardContent
 
   card: {
-    width: '100%',
-    height: '100%',
+    width: theme.spacing(23),
     background: theme.palette.background.paper,
     borderRadius: 3,
     overflow: 'hidden',
     fontSize: 14,
-    margin: '0 auto',
-    display: 'flex',
-    flexDirection: 'column',
-    flexWrap: 'wrap',
+    margin: theme.spacing(1),
     textAlign: 'center',
     cursor: 'pointer',
-    // Above tablet size
-    [theme.breakpoints.up('md')]: {
-      width: '10.75rem',
-      height: '17.25rem',
-      margin: theme.spacing(2),
-    },
     border: '1px solid rgba(0, 0, 0, 0.2)',
     boxSizing: 'border-box',
   },
 
   cardSelected: {
-    width: '100%',
-    height: '100%',
     background: theme.palette.background.paper,
     boxShadow: '0px 4px 4px rgba(91, 68, 186, 0.25)',
     borderRadius: 3,
     overflow: 'hidden',
     fontSize: '0.875rem',
     margin: '0 auto',
-    display: 'flex',
-    flexDirection: 'column',
-    flexWrap: 'wrap',
     textAlign: 'center',
     cursor: 'pointer',
-    // Above tablet size
-    [theme.breakpoints.up('md')]: {
-      width: '10.75rem',
-      height: '17.25rem',
-      margin: theme.spacing(2),
-    },
     border: '1px solid #5B44BA',
     boxSizing: 'border-box',
   },
@@ -102,51 +69,23 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
   },
 
-  cardBody: {
-    // Below mobile size
-    [theme.breakpoints.down('sm')]: {
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'start',
-      padding: theme.spacing(1),
-    },
-  },
-
-  cardInfo: {
-    [theme.breakpoints.down('sm')]: {
-      paddingRight: theme.spacing(1.5),
-      paddingLeft: theme.spacing(1.5),
-    },
-  },
-
   title: {
     fontWeight: 500,
     fontSize: '1rem',
     lineHeight: '130%',
     color: theme.palette.primary.contrastText,
-    [theme.breakpoints.down('sm')]: {
-      margin: 0,
-    },
   },
 
   description: {
     textAlign: 'center',
-    marginBottom: theme.spacing(1.5),
-    marginLeft: theme.spacing(1.8),
-    marginRight: theme.spacing(1.8),
-    [theme.breakpoints.down('sm')]: {
-      width: '100%',
-    },
+    margin: '1.5rem auto',
+    width: '60%',
   },
 
   noImage: {
     width: '100%',
     height: '5rem',
     backgroundColor: theme.palette.background.paper,
-    // Below mobile size
-    [theme.breakpoints.down('sm')]: {
-      width: '15.625rem',
-    },
   },
 
   provider: {
@@ -159,7 +98,7 @@ const useStyles = makeStyles((theme) => ({
 
   cardAnalytics: {
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
     marginLeft: theme.spacing(1.5),
@@ -211,9 +150,6 @@ const useStyles = makeStyles((theme) => ({
   details: {
     textAlign: 'center',
     marginBottom: theme.spacing(1.5),
-    [theme.breakpoints.down('sm')]: {
-      width: '100%',
-    },
   },
 
   moreDetails: {

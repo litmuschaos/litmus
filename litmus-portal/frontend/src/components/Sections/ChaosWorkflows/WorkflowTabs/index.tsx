@@ -8,6 +8,7 @@ import ButtonFilled from '../../../Button/ButtonFilled';
 import Loader from '../../../Loader';
 import BrowseWorkflow from '../BrowseWorkflow';
 import useStyles from './styles';
+import Templates from '../Templates';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -88,7 +89,7 @@ const CenteredTabs = () => {
         <Loader />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        Something here!
+        <Templates />
       </TabPanel>
       <TabPanel value={value} index={3}>
         Item Four

@@ -17,6 +17,7 @@ import {
   TableBody,
 } from '@material-ui/core';
 import useStyles from './styles';
+import { history } from '../../../../redux/configureStore';
 import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../../../schemas';
 import TableData from './TableData';
 
@@ -166,7 +167,14 @@ const BrowseWorkflow = () => {
                   .slice(0)
                   .reverse()
                   .map((data: any) => (
-                    <TableRow>
+                    <TableRow
+                      onClick={() =>
+                        history.push({
+                          pathname: '/workflow-underground',
+                          state: data,
+                        })
+                      }
+                    >
                       <TableData data={data} />
                     </TableRow>
                   ))}

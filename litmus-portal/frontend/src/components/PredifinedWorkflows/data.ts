@@ -1,8 +1,9 @@
-const workflowsList = [
+export default [
   {
     workflowID: '1',
     title: 'node-cpu-hog',
-    urlToIcon: 'temp/node-cpu-hog.svg',
+    urlToIcon:
+      'https://hub.litmuschaos.io/api/icon/1.7.0/generic/node-cpu-hog.png',
     chaosWkfCRDLink:
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/node-cpu-hog/workflow.yaml',
 
@@ -16,7 +17,8 @@ const workflowsList = [
   {
     workflowID: '2',
     title: 'node-memory-hog',
-    urlToIcon: 'temp/node-memory-hog.svg',
+    urlToIcon:
+      'https://hub.litmuschaos.io/api/icon/1.7.0/generic/node-memory-hog.png',
     chaosWkfCRDLink:
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/node-memory-hog/workflow.yaml',
 
@@ -28,5 +30,3 @@ const workflowsList = [
     isCustom: false,
   },
 ];
-
-export default workflowsList;

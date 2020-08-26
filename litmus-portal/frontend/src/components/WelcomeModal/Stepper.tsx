@@ -119,7 +119,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
             handleClick={handleBack}
             data-cy="Skip"
           >
-            <div>Skip</div>
+            <>Skip</>
           </ButtonOutline>
           <ButtonFilled isPrimary handleClick={handleSubmit} data-cy="Start">
             <div>Let&#39;s Start</div>
@@ -134,7 +134,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
           handleClick={handleBack}
           data-cy="Back"
         >
-          <div>Back</div>
+          <>Back</>
         </ButtonOutline>
         <ButtonFilled isPrimary handleClick={handleNext} data-cy="Continue">
           <div>Continue</div>

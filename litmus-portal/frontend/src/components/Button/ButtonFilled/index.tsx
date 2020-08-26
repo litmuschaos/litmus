@@ -2,7 +2,7 @@ import Button from '@material-ui/core/Button';
 import React from 'react';
 import useStyles from './styles';
 
-interface CustomButtonProps {
+interface ButtonFilledProps {
   handleClick?: (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
@@ -11,7 +11,7 @@ interface CustomButtonProps {
   isDisabled?: boolean;
   type?: any;
 }
-const ButtonFilled: React.FC<CustomButtonProps> = ({
+const ButtonFilled: React.FC<ButtonFilledProps> = ({
   handleClick,
   children,
   isPrimary,

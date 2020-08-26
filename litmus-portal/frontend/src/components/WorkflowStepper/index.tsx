@@ -3,7 +3,6 @@ import Step from '@material-ui/core/Step';
 import { StepIconProps } from '@material-ui/core/StepIcon';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
-import clsx from 'clsx';
 import Typography from '@material-ui/core/Typography';
 import { useSelector } from 'react-redux';
 import { useMutation } from '@apollo/client';
@@ -51,10 +50,9 @@ function QontoStepIcon(props: StepIconProps) {
   if (completed) {
     return (
       <div
-        className={clsx(classes.root, {
-          [classes.active]: active,
-          [classes.completed]: completed,
-        })}
+        className={`${classes.root} ${
+          active ? classes.active : classes.completed
+        }`}
       >
         <img src="./icons/NotPass.png" alt="Not Completed Icon" />
       </div>
@@ -63,10 +61,9 @@ function QontoStepIcon(props: StepIconProps) {
   if (active) {
     return (
       <div
-        className={clsx(classes.root, {
-          [classes.active]: active,
-          [classes.completed]: completed,
-        })}
+        className={`${classes.root} ${
+          active ? classes.active : classes.completed
+        }`}
       >
         <div className={classes.circle} />
       </div>
@@ -74,10 +71,9 @@ function QontoStepIcon(props: StepIconProps) {
   }
   return (
     <div
-      className={clsx(classes.root, {
-        [classes.active]: active,
-        [classes.completed]: completed,
-      })}
+      className={`${classes.root} ${
+        active ? classes.active : classes.completed
+      }`}
     >
       {/* <img src="./icons/workflowNotActive.svg" /> */}
       <div className={classes.outerCircle}>

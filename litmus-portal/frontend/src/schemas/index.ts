@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 
 export const WORKFLOW_DETAILS = gql`
   query {
-    getWorkFlowRuns(project_id: "00000") {
+    getWorkFlowRuns(project_id: "00002") {
       workflow_id
       workflow_name
       workflow_run_id
@@ -16,7 +16,7 @@ export const WORKFLOW_DETAILS = gql`
 
 export const WORKFLOW_EVENTS = gql`
   subscription {
-    workflowEventListener(project_id: "00000") {
+    workflowEventListener(project_id: "00002") {
       workflow_id
       workflow_name
       workflow_run_id

@@ -191,6 +191,8 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                       key={Test.weight}
                       testName={`${Test.experimentName} test`}
                       testValue={Test.weight}
+                      spacing={false}
+                      icon={false}
                     />
                   ))}
                 </div>
