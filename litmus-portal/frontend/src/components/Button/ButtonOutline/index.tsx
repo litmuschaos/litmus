@@ -2,12 +2,12 @@ import { Button } from '@material-ui/core';
 import React from 'react';
 import useStyles from './styles';
 
-interface CustomButtonProps {
+interface ButtonOutlineProps {
   isDisabled: boolean;
   handleClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   children?: JSX.Element;
 }
-const ButtonOutline: React.FC<CustomButtonProps> = ({
+const ButtonOutline: React.FC<ButtonOutlineProps> = ({
   isDisabled,
   handleClick,
   children,

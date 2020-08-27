@@ -1,8 +1,6 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import { Divider, Link } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import formatCount from '../../utils/formatCount';
 import { preDefinedWorkflowData } from '../../models/predefinedWorkflow';
 import useStyles from './styles';
 import parsed from '../../utils/yamlUtils';
@@ -13,35 +11,34 @@ const CardContent: React.FC<preDefinedWorkflowData> = ({
   provider,
   handleClick,
   description,
-  totalRuns,
-  gitLink,
-  selectedID,
-  workflowID,
   chaosWkfCRDLink,
 }) => {
   const classes = useStyles();
 
-  const [retText, setRetText] = useState('');
+  const [yamlText, setYamlText] = useState<string>('');
+  const [exptCount, setExptCount] = useState<number>(0);
 
-  const [exptCount, setExptCount] = useState(0);
+  // Function to fetch yaml and convert them to text
+  // to set the experiment count based on the parsed text
 
   const fetchYaml = (link: string) => {
     fetch(link)
       .then((data) => {
         data.text().then((yamlText) => {
-          setRetText(yamlText);
+          setYamlText(yamlText);
         });
       })
-      .then()
       .catch((err) => {
-        console.error(`Unable to fetch the yaml text${err}`);
-        setRetText('error');
+        console.error(err);
       });
   };
 
+  // Fetch the YAML through the CRD Link from data.ts
+  // and get the experiment count by passing the parsed text
+  // into parsed() yaml function
   useEffect(() => {
     fetchYaml(chaosWkfCRDLink as string);
-    const tests = parsed(retText);
+    const tests = parsed(yamlText);
     if (
       tests[0] === 'none' ||
       tests[0] === 'Invalid CRD' ||
@@ -52,17 +49,13 @@ const CardContent: React.FC<preDefinedWorkflowData> = ({
       setExptCount(tests.length);
     }
     // Fetch and Set exptCount from backend via GQL if workflow CRDs are categorized in types.
-  }, [retText, exptCount]);
+  }, [yamlText, exptCount]);
 
   return (
-    <div
-      className={
-        selectedID === workflowID ? classes.cardSelected : classes.card
-      }
-    >
+    <div className={classes.card}>
       <div className={classes.cardContent} onClick={handleClick}>
         <div className={classes.cardAnalytics}>
-          {totalRuns ? (
+          {/* {totalRuns ? (
             <span
               className={
                 selectedID === workflowID
@@ -74,28 +67,10 @@ const CardContent: React.FC<preDefinedWorkflowData> = ({
             </span>
           ) : (
             <span />
-          )}
-
-          {(exptCount as number) === 0 ? (
-            <div />
-          ) : (
-            <span
-              className={
-                selectedID === workflowID
-                  ? classes.expCountSelected
-                  : classes.expCount
-              }
-            >
-              {exptCount}{' '}
-              {(exptCount as number) > 1 ? (
-                <span>Experiments</span>
-              ) : (
-                <span>Experiment</span>
-              )}
-            </span>
-          )}
+          )} */}
+          <span className={classes.expCount}>{exptCount} Experiment</span>
         </div>
-        <div className={classes.cardBody}>
+        <div>
           {urlToIcon ? (
             <div className={classes.cardMedia}>
               <img src={urlToIcon} alt="chart provider logo" />
@@ -103,7 +78,7 @@ const CardContent: React.FC<preDefinedWorkflowData> = ({
           ) : (
             <div className={classes.noImage}>Image</div>
           )}
-          <div className={classes.cardInfo}>
+          <div>
             <div className={classes.title}>{title}</div>
             <div className={classes.provider}>Contributed by {provider}</div>
           </div>
@@ -113,12 +88,12 @@ const CardContent: React.FC<preDefinedWorkflowData> = ({
             <span />
           )}
         </div>
-        <Divider variant="fullWidth" className={classes.horizontalLine} />
+        {/* <Divider variant="fullWidth" className={classes.horizontalLine} />
         <div className={classes.details}>
           <Link href={gitLink} underline="none" className={classes.moreDetails}>
             <div className={classes.detailsText}> See details </div>
           </Link>
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -7,11 +7,22 @@ const useStyles = makeStyles((theme: Theme) => ({
   innerDiv: {
     display: 'flex',
     flexDirection: 'row',
-    width: '17.5625rem',
+    width: '17rem',
     marginBottom: theme.spacing(2.625),
   },
   typo: {
     fontSize: '0.875rem',
+  },
+  points: {
+    color: theme.palette.primary.dark,
+  },
+  experimentIcon: {
+    marginRight: theme.spacing(0.5),
+  },
+  typoSpaced: {
+    width: '17rem',
+    display: 'flex',
+    justifyContent: 'space-between',
   },
 }));
 
