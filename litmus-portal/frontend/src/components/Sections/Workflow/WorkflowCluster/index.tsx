@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../Button/ButtonFilled';
 import ButtonOutLine from '../../../Button/ButtonOutline';
 import useStyles from './styles';
-import { GET_CLUSTER } from '../../../../schemas';
+import { GET_CLUSTER } from '../../../../graphql';
 import { RootState } from '../../../../redux/reducers';
 import { UserData } from '../../../../models/user';
 import useActions from '../../../../redux/actions';

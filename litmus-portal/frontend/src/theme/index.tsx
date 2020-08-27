@@ -71,13 +71,13 @@ function customTheme(options: ThemeOptions) {
         white: (opacity: number): string => {
           let op = opacity;
           if (op < 0) op = 0;
-          if (op < 100) op = 100;
+          if (op > 100) op = 100;
           return `rgba(255, 255, 255, ${op})`;
         },
         black: (opacity: number): string => {
           let op = opacity;
           if (op < 0) op = 0;
-          if (op < 100) op = 100;
+          if (op > 100) op = 100;
           return `rgba(0, 0, 0, ${op})`;
         },
       },

@@ -1,13 +1,11 @@
-/* eslint-disable camelcase */
-
 import React, { useState, useEffect } from 'react';
 import { useSubscription } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import Scaffold from '../../containers/layouts/Scaffold';
-import { WORKFLOW_EVENTS } from '../../schemas';
 import SideBar from '../../components/Sections/WorkflowUnderground/WorkflowRepresentation';
 import useStyles from './styles';
 import Loader from '../../components/Loader';
+import { WORKFLOW_EVENTS } from '../../graphql';
 
 interface WorkflowUndergroundProps {
   location: any;

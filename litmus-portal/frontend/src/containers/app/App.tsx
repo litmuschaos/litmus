@@ -23,7 +23,7 @@ const BrowseTemplate = lazy(() =>
 const HomePage = lazy(() => import('../../pages/HomePage'));
 const Community = lazy(() => import('../../pages/Community'));
 const Settings = lazy(() => import('../../pages/Settings'));
-
+const SchedulePage = lazy(() => import('../../pages/SchedulePage'));
 interface RoutesProps {
   userData: string;
 }
@@ -49,6 +49,7 @@ const Routes: React.FC<RoutesProps> = ({ userData }) => {
         <Route exact path="/login" component={LoginPage} />
         <Route exact path="/workflows" component={Workflows} />
         <Route exact path="/create-workflow" component={CreateWorkflow} />
+        <Route exact path="/schedule" component={SchedulePage} />
         <Route
           exact
           path="/workflow-underground"

@@ -23,7 +23,7 @@ import { RootState } from '../../redux/reducers';
 import useActions from '../../redux/actions';
 import * as WorkflowActions from '../../redux/actions/workflow';
 import parsed from '../../utils/yamlUtils';
-import { CREATE_WORKFLOW } from '../../schemas';
+import { CREATE_WORKFLOW } from '../../graphql';
 import Unimodal from '../../containers/layouts/Unimodal';
 import { history } from '../../redux/configureStore';
 
