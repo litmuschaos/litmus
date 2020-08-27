@@ -47,20 +47,17 @@ func RegSelfCluster(server, pid string) (string, error) {
 	var jsonStr = []byte(`{"query":"mutation { userClusterReg(clusterInput:` + query + ` )}"}`)
 	req, err := http.NewRequest("POST", server, bytes.NewBuffer(jsonStr))
 	if err != nil {
-		log.Print(err.Error())
 		return "", err
 	}
 	req.Header.Set("Content-Type", "application/json")
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Print(err.Error())
 		return "", err
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Print(err.Error())
 		return "", err
 	}
 	regex := regexp.MustCompile(`"ey.*"`)
@@ -74,7 +71,6 @@ func Deploy(file string) error {
 	cmd := exec.Command("kubectl", "apply", "-f", file)
 	if output, err := cmd.Output(); err != nil {
 		log.Print("XX FAILED TO DEPLOY SUBSCRIBER COMPONENTS")
-		log.Print("ERROR : ", err.Error())
 		return err
 	} else {
 		log.Printf("\n%s", output)
@@ -108,7 +104,6 @@ func main() {
 		if err != nil {
 			log.Panic(err.Error())
 		}
-		time.Sleep(10 * time.Second)
 		log.Print(server + "/file/" + tk + ".yaml")
 		err = Deploy(server + "/file/" + tk + ".yaml")
 		if err != nil {
