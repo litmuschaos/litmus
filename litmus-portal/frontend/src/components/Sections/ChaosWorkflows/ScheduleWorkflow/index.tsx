@@ -165,7 +165,7 @@ const ScheduleWorkflow = () => {
                       paginationData.rowsPerPage
                   )
                   .map((data: any) => (
-                    <TableRow>
+                    <TableRow key={data.workflow_run_id}>
                       <TableData data={data} />
                     </TableRow>
                   ))

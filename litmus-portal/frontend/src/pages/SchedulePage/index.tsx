@@ -16,7 +16,12 @@ import Scaffold from '../../containers/layouts/Scaffold';
 import ButtonFilled from '../../components/Button/ButtonFilled';
 import ButtonOutline from '../../components/Button/ButtonOutline';
 
-const SchedulePage: React.FC = () => {
+// To be changed to a Location Generic
+interface WorkflowScheduleProps {
+  location: any;
+}
+
+const SchedulePage: React.FC<WorkflowScheduleProps> = () => {
   const start = 0;
   const end = 10;
   const interval = 2;

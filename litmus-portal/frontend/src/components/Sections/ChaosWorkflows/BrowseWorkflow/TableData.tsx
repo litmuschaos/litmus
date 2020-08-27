@@ -11,6 +11,7 @@ import CustomStatus from '../CustomStatus/Status';
 import LinearProgressBar from '../../ReturningHome/ProgressBar/LinearProgressBar';
 import useStyles from './styles';
 import timeDifferenceForDate from '../../../../utils/datesModifier';
+import { history } from '../../../../redux/configureStore';
 
 interface TableDataProps {
   data: any;
@@ -70,11 +71,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
         </Typography>
       </TableCell>
       <TableCell>
-        <div className={classes.timeDiv}>
-          <Typography className={classes.timeData}>
-            {timeDifferenceForDate(data.last_updated)}
-          </Typography>
-        </div>
+        <Typography>{timeDifferenceForDate(data.last_updated)}</Typography>
       </TableCell>
       <TableCell>
         <IconButton
@@ -93,7 +90,15 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           open={open}
           onClose={handleClose}
         >
-          <MenuItem value="Workflow" onClick={handleMenu}>
+          <MenuItem
+            value="Workflow"
+            onClick={() =>
+              history.push({
+                pathname: '/workflow-underground',
+                state: data,
+              })
+            }
+          >
             Show the workflow
           </MenuItem>
           <MenuItem value="Analysis" onClick={handleMenu}>

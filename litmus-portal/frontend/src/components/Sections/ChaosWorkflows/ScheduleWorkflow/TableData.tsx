@@ -13,6 +13,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import useStyles from './styles';
 import LinearProgressBar from '../../ReturningHome/ProgressBar/LinearProgressBar';
+import { history } from '../../../../redux/configureStore';
 
 interface TableDataProps {
   data: any;
@@ -42,8 +43,6 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
     setAnchorEl(null);
   };
   const handleMenu = () => {};
-
-  const EditSchedule = () => {};
 
   const formatDate = (date: any) => {
     const updated = new Date(date * 1000).toString();
@@ -163,7 +162,15 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           open={open}
           onClose={handleClose}
         >
-          <MenuItem value="Workflow" onClick={() => EditSchedule()}>
+          <MenuItem
+            value="Workflow"
+            onClick={() =>
+              history.push({
+                pathname: '/schedule',
+                state: data,
+              })
+            }
+          >
             <div className={classes.expDiv}>
               <img
                 src="/icons/editSchedule.svg"

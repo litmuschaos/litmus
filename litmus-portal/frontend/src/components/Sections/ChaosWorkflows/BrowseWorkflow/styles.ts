@@ -79,9 +79,6 @@ const useStyles = makeStyles((theme) => ({
   stepsData: {
     paddingLeft: theme.spacing(3.75),
   },
-  timeData: {
-    paddingTop: theme.spacing(1.25),
-  },
   optionBtn: {
     marginLeft: 'auto',
   },

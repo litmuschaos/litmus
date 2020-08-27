@@ -28,7 +28,7 @@ import {
   WorkflowRun,
   WorkflowSubscription,
 } from '../../../../models/workflowData';
-import { history } from '../../../../redux/configureStore';
+
 import {
   sortAlphaAsc,
   sortAlphaDesc,
@@ -413,15 +413,7 @@ const BrowseWorkflow = () => {
                       paginationData.rowsPerPage
                   )
                   .map((dataRow) => (
-                    <TableRow
-                      key={dataRow.workflow_run_id}
-                      onClick={() =>
-                        history.push({
-                          pathname: '/workflow-underground',
-                          state: data,
-                        })
-                      }
-                    >
+                    <TableRow key={dataRow.workflow_run_id}>
                       <TableData data={dataRow} />
                     </TableRow>
                   ))
