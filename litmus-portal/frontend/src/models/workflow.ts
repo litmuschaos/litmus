@@ -10,6 +10,7 @@ export interface WorkflowData {
   description: string;
   weights: experimentMap[];
   isCustomWorkflow: boolean;
+  clusterid: string;
 }
 
 export enum WorkflowActions {

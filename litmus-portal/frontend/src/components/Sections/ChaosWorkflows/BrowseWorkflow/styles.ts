@@ -35,12 +35,14 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(6.25),
     border: '1px solid rgba(0,0,0,0.1)',
     backgroundColor: theme.palette.common.white,
+    height: '29.219rem',
   },
   tableHead: {
-    opacity: 0.5,
+    opacity: 1,
   },
   headerStatus: {
     paddingLeft: theme.spacing(10),
+    color: 'rgba(0, 0, 0, 0.4)',
   },
   headerStatus1: {
     paddingLeft: theme.spacing(8),
@@ -56,9 +58,17 @@ const useStyles = makeStyles((theme) => ({
   },
   workflowName: {
     borderRight: '1px solid rgba(0,0,0,0.1)',
+    color: theme.palette.customColors.black(0.4),
+  },
+  workflowNameData: {
+    borderRight: '1px solid rgba(0,0,0,0.1)',
   },
   targetCluster: {
     paddingLeft: theme.spacing(3.75),
+    color: theme.palette.customColors.black(0.4),
+  },
+  headData: {
+    color: theme.palette.customColors.black(0.4),
   },
   clusterName: {
     marginLeft: theme.spacing(3.75),
@@ -69,15 +79,17 @@ const useStyles = makeStyles((theme) => ({
   stepsData: {
     paddingLeft: theme.spacing(3.75),
   },
-  timeData: {
-    paddingTop: theme.spacing(1.25),
-  },
   optionBtn: {
     marginLeft: 'auto',
   },
   timeDiv: {
     display: 'flex',
     flexDirection: 'row',
+  },
+  sortDiv: {
+    display: 'flex',
+    flexDirection: 'column',
+    paddingLeft: theme.spacing(1.25),
   },
 }));
 

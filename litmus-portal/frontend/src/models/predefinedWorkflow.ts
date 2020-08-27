@@ -13,7 +13,7 @@ export interface preDefinedWorkflowData {
   workflowID?: string;
   CallbackOnSelectWorkflow?: SelectWorkflowCallBackType;
   selectedID?: string;
-  customWorkflow?: boolean;
+  isCustom?: boolean;
 }
 
 export interface workflowDetails {
