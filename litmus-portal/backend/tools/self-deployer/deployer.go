@@ -1,20 +1,15 @@
-package util
+package main
 
 import (
 	"bytes"
-	"context"
-	"encoding/json"
 	"io/ioutil"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
 	"log"
 	"net/http"
+	"os"
+	"os/exec"
 	"regexp"
 	"strings"
 	"time"
-
-	"github.com/litmuschaos/litmus/litmus-portal/backend/self-deployer/pkg/k8s"
 )
 
 //WaitForServer makes the self-deployer sleep until the GQL Server is up and running, timeout after 5min
@@ -52,20 +47,17 @@ func RegSelfCluster(server, pid string) (string, error) {
 	var jsonStr = []byte(`{"query":"mutation { userClusterReg(clusterInput:` + query + ` )}"}`)
 	req, err := http.NewRequest("POST", server, bytes.NewBuffer(jsonStr))
 	if err != nil {
-		log.Print(err.Error())
 		return "", err
 	}
 	req.Header.Set("Content-Type", "application/json")
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Print(err.Error())
 		return "", err
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Print(err.Error())
 		return "", err
 	}
 	regex := regexp.MustCompile(`"ey.*"`)
@@ -75,44 +67,53 @@ func RegSelfCluster(server, pid string) (string, error) {
 }
 
 //Deploy function deploys the Manifest received by the RegSelfCluster function
-func Deploy(file string, kubeconfig *string) error {
-	resp, err := http.Get(file)
-	if err != nil {
-		log.Print(err.Error())
+func Deploy(file string) error {
+	cmd := exec.Command("kubectl", "apply", "-f", file)
+	if output, err := cmd.Output(); err != nil {
+		log.Print("XX FAILED TO DEPLOY SUBSCRIBER COMPONENTS")
 		return err
+	} else {
+		log.Printf("\n%s", output)
+		log.Print("SUCCESSFULLY DEPLOYED SUBSCRIBER COMPONENTS")
 	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Print(err.Error())
-		return err
-	}
-	log.Print(string(body))
-	response, err := k8s.CreateDeployment(body, kubeconfig)
-	if err != nil {
-		log.Println(err.Error())
-		return err
-	}
-	responseData, err := json.Marshal(response)
-	if err != nil {
-		log.Println("err:", err)
-	}
-	log.Print("SUBSCRIBER DEPLOYMENT RESPONSE : ", string(responseData))
 	return nil
 }
 
 //Cleanup is responsible for deleting the self-deployer deployment after it has finished execution
-func CleanUp(ns, deplotment string) error {
-	config, err := rest.InClusterConfig()
-	if err != nil {
-		log.Print(err.Error())
-		return err
-	}
-	client, err := kubernetes.NewForConfig(config)
-	err = client.AppsV1().Deployments(ns).Delete(context.TODO(), deplotment, metav1.DeleteOptions{})
-	if err != nil {
+func CleanUp(ns, deployment string) error {
+	cmd := exec.Command("kubectl", "delete", "deployment", deployment, "-n", ns)
+	if output, err := cmd.Output(); err != nil {
+		log.Print("XX FAILED TO CLEANUP SELF-DEPLOYER")
 		log.Print("ERROR : ", err.Error())
 		return err
+	} else {
+		log.Printf("\n%s", output)
+		log.Print("SUCCESSFUL CLEANUP OF SELF-DEPLOYER")
 	}
 	return nil
+}
+
+func main() {
+	active := os.Getenv("SELF_CLUSTER")
+	if strings.ToLower(active) == "true" {
+		server := os.Getenv("SERVER")
+		log.Print("Starting Self Deployer")
+		WaitForServer(server + "/query")
+		log.Print("Cluster Registration Initiated")
+		tk, err := RegSelfCluster(server+"/query", "00000")
+		if err != nil {
+			log.Panic(err.Error())
+		}
+		log.Print(server + "/file/" + tk + ".yaml")
+		err = Deploy(server + "/file/" + tk + ".yaml")
+		if err != nil {
+			log.Panic(err.Error())
+		}
+		log.Print("SUBSCRIBER DEPLOYED")
+	}
+	log.Print("PERFORMING CLEANUP")
+	err := CleanUp("litmus", "self-deployer")
+	if err != nil {
+		log.Panic(err.Error())
+	}
 }
