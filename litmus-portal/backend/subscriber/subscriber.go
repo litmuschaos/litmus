@@ -48,7 +48,7 @@ func init() {
 
 		if responseInterface.Data.ClusterConfirm.IsClusterConfirmed == true {
 			log.Println("cluster confirmed")
-			clusterData["KEY"] =  responseInterface.Data.ClusterConfirm.NewClusterKey
+			clusterData["KEY"] = responseInterface.Data.ClusterConfirm.NewClusterKey
 			cluster.ClusterRegister(clusterData)
 		} else {
 			log.Fatal("Cluster not confirmed")

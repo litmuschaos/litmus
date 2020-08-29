@@ -23,9 +23,9 @@ type Data struct {
 }
 
 type ClusterConfirm struct {
-	IsClusterConfirmed bool `json:isClusterConfirmed`
-	NewClusterKey string `json:newClusterKey`
-	ClusterID string `json:cluster_id`
+	IsClusterConfirmed bool   `json:isClusterConfirmed`
+	NewClusterKey      string `json:newClusterKey`
+	ClusterID          string `json:cluster_id`
 }
 
 type ClusterConnect struct {
