@@ -6,9 +6,9 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/gql"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/k8s"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/types"
 	"log"
 	"os"
-	"strings"
 )
 
 var (
@@ -23,6 +23,7 @@ var (
 
 func init() {
 	k8s.KubeConfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
+	flag.Parse()
 
 	var isConfirmed bool
 	isConfirmed, newKey, err = cluster.IsClusterConfirmed(clusterData)
@@ -39,15 +40,15 @@ func init() {
 			log.Fatal(err)
 		}
 
-		var responseInterface map[string]map[string]map[string]interface{}
+		var responseInterface types.Payload
 		err = json.Unmarshal(bodyText, &responseInterface)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		if responseInterface["data"]["clusterConfirm"]["isClusterConfirmed"] == true {
+		if responseInterface.Data.ClusterConfirm.IsClusterConfirmed == true {
 			log.Println("cluster confirmed")
-			clusterData["KEY"] = strings.TrimSpace(responseInterface["data"]["clusterConfirm"]["newClusterKey"].(string))
+			clusterData["KEY"] =  responseInterface.Data.ClusterConfirm.NewClusterKey
 			cluster.ClusterRegister(clusterData)
 		} else {
 			log.Fatal("Cluster not confirmed")
