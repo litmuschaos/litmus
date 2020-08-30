@@ -68,7 +68,6 @@ const SideBar: React.FC<WorkflowRepresentationProps> = ({
         if (val.type !== 'StepGroup' && val.phase === 'Running') {
           currentlyRunningNodes.push(val.name);
         }
-        console.log(currentlyRunningNodes);
         setData({
           ...data,
           current_running_node: [
@@ -77,8 +76,6 @@ const SideBar: React.FC<WorkflowRepresentationProps> = ({
           ],
         });
       });
-
-      console.log('CurrentEN => ', currentlyRunningNodes);
     } else {
       // If the Workflow has Succeeded or Failed
       // Store all the executed nodes in an array
@@ -99,7 +96,6 @@ const SideBar: React.FC<WorkflowRepresentationProps> = ({
     }
   }, [data.nodes]);
 
-  console.log(data.current_running_node);
   return (
     <div className={classes.root}>
       {/* Workflow Information */}
