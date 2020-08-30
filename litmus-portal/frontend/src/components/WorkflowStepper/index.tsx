@@ -179,7 +179,7 @@ const CustomStepper = () => {
       /* JSON.stringify takes 3 parameters [object to be converted,
       a function to alter the conversion, spaces to be shown in final result for indentation ] */
       const yml = YAML.parse(yaml);
-      const yamlJson = JSON.stringify(JSON.stringify(yml, null, 2), null, 2);
+      const yamlJson = JSON.stringify(yml, null, 2); // Converted to Stringified JSON
 
       const chaosWorkFlowInputs = {
         workflow_manifest: yamlJson,
