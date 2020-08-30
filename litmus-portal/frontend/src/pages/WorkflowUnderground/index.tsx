@@ -25,7 +25,9 @@ const WorkflowUnderground: React.FC<WorkflowUndergroundProps> = ({
   const classes = useStyles();
   const [data, setData] = useState<WorkflowRun>(location.state);
 
-  const dataSub = useSubscription<WorkflowSubscription>(WORKFLOW_EVENTS);
+  const dataSub = useSubscription<WorkflowSubscription>(WORKFLOW_EVENTS, {
+    variables: { projectID: '00002' },
+  });
 
   useEffect(() => {
     const workflowCompleted: boolean =
