@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: self-deployer
+  namespace: litmus
+  labels:
+    component: self-deployer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: self-deployer
+  template:
+    metadata:
+      labels:
+        component: self-deployer
+    spec:
+      containers:
+        - name: deployer
+          image: litmuschaos/litmusportal-self-deployer:ci
+          imagePullPolicy: Always
+          env:
+            - name: SERVER
+              value: http://litmusportal-server-service:9002
+            - name: TOKEN
+              value: #{KEY}
+      serviceAccountName: litmus-svc-account
