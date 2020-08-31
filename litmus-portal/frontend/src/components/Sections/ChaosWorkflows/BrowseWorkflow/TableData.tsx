@@ -94,7 +94,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
             value="Workflow"
             onClick={() =>
               history.push({
-                pathname: '/workflow-underground',
+                pathname: '/workflows/workflow-underground',
                 state: data,
               })
             }

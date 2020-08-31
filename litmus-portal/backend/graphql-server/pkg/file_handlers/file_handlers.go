@@ -2,15 +2,16 @@ package file_handlers
 
 import (
 	"bufio"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/utils"
 	"log"
 	"net/http"
 	"os"
 	"strings"
 
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/utils"
+
 	"github.com/gorilla/mux"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/cluster"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb"
+	database "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb"
 )
 
 //ManifestParser parses manifests yaml and generates dynamic manifest with specified keys
