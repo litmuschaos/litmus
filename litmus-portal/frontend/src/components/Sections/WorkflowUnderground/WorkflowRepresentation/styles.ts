@@ -9,6 +9,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   header: {
     color: theme.palette.secondary.dark,
   },
+  bold: {
+    fontWeight: 500,
+  },
   workflowSpacing: {
     margin: '1rem 0',
   },

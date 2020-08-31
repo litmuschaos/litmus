@@ -52,7 +52,7 @@ const Routes: React.FC<RoutesProps> = ({ userData }) => {
         <Route exact path="/schedule" component={SchedulePage} />
         <Route
           exact
-          path="/workflow-underground"
+          path="/workflows/workflow-underground"
           component={WorkflowUnderground}
         />
         <Route exact path="/community" component={Community} />

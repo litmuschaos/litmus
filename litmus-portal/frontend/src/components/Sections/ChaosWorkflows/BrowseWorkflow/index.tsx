@@ -63,13 +63,16 @@ const BrowseWorkflow = () => {
   const { subscribeToMore, data, loading, error } = useQuery<
     Workflow,
     WorkflowDataVars
-  >(WORKFLOW_DETAILS, { variables: { projectID: '00000' } });
+  >(WORKFLOW_DETAILS, {
+    variables: { projectID: '00002' },
+    fetchPolicy: 'cache-and-network',
+  });
 
   // Using subscription to get realtime data
   useEffect(() => {
     subscribeToMore<WorkflowSubscription>({
       document: WORKFLOW_EVENTS,
-      variables: { projectID: '00000' },
+      variables: { projectID: '00002' },
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev;
         const modifiedWorkflows = prev.getWorkFlowRuns.slice();
