@@ -93,6 +93,7 @@ func workflowEventHandler(obj interface{}, eventType string, stream chan types.W
 		nodes[nodeStatus.ID] = details
 	}
 	workflow := types.WorkflowEvent{
+		WorkflowID:        workflowObj.Labels["wfid"],
 		EventType:         eventType,
 		UID:               string(workflowObj.ObjectMeta.UID),
 		Namespace:         workflowObj.ObjectMeta.Namespace,

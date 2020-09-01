@@ -109,6 +109,7 @@ type WorkflowRun{
 }
 
 input WorkflowRunInput{
+  workflow_id: ID!
   workflow_run_id: ID!
   workflow_name: String!
   execution_data: String!

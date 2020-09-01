@@ -2,8 +2,9 @@ package types
 
 // workflow data
 type WorkflowEvent struct {
+	WorkflowID        string          `json:"-"`
 	EventType         string          `json:"event_type"`
-	UID               string          `json:"uid"`
+	UID               string          `json:"-"`
 	Namespace         string          `json:"namespace"`
 	Name              string          `json:"name"`
 	CreationTimestamp string          `json:"creationTimestamp"`

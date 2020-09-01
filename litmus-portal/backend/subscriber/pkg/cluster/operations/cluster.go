@@ -105,7 +105,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 		log.Println("Resource successfully updated")
 		return response, nil
 	} else if requestType == "delete" {
-		err := dr.Delete( obj.GetName(), &metav1.DeleteOptions{})
+		err := dr.Delete(obj.GetName(), &metav1.DeleteOptions{})
 		if errors.IsNotFound(err) {
 			// This doesnt ever happen even if it is already deleted or not found
 			log.Printf("%v not found", obj.GetName())
