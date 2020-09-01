@@ -1,16 +1,17 @@
 import { useSubscription } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
+import ArgoWorkflow from '../../components/Sections/WorkflowUnderground/ArgoWorkflow';
 import SideBar from '../../components/Sections/WorkflowUnderground/WorkflowRepresentation';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { WORKFLOW_EVENTS } from '../../graphql';
 import { LocationState } from '../../models/routerModel';
 import {
   ExecutionData,
+  WorkflowDataVars,
   WorkflowRun,
   WorkflowSubscription,
 } from '../../models/workflowData';
-import capitalize from '../../utils/capitalize';
 import useStyles from './styles';
 
 interface WorkflowUndergroundProps {
@@ -23,9 +24,12 @@ const WorkflowUnderground: React.FC<WorkflowUndergroundProps> = ({
   const classes = useStyles();
   const [data, setData] = useState<WorkflowRun>(location.state);
 
-  const dataSub = useSubscription<WorkflowSubscription>(WORKFLOW_EVENTS, {
-    variables: { projectID: '00002' },
-  });
+  const dataSub = useSubscription<WorkflowSubscription, WorkflowDataVars>(
+    WORKFLOW_EVENTS,
+    {
+      variables: { projectID: '00000' },
+    }
+  );
 
   useEffect(() => {
     const workflowCompleted: boolean =
@@ -42,13 +46,16 @@ const WorkflowUnderground: React.FC<WorkflowUndergroundProps> = ({
       <div className={classes.root}>
         <div className={classes.workflowGraph}>
           <Typography className={classes.heading}>
-            {data.workflow_name
-              .split('-')
-              .map((text) => `${capitalize(text)} `)}
+            {data.workflow_name}
           </Typography>
           <Typography>
             Click on test to see detailed log of your workflow
           </Typography>
+
+          {/* Argo Workflow DAG Graph */}
+          <ArgoWorkflow
+            {...(JSON.parse(data.execution_data) as ExecutionData)}
+          />
         </div>
         <SideBar
           workflow_name={data.workflow_name}

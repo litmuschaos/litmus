@@ -18,6 +18,7 @@
     }
   },
   "rules": {
+    "no-restricted-syntax": 0,
     "no-nested-ternary": 0,
     "no-plusplus": 0,
     "dot-notation": 0,

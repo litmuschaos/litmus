@@ -1,8 +1,6 @@
-/* eslint-disable */
-
 import { Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { ExecutionData, Node } from '../../../../models/workflowData';
+import { ExecutionData } from '../../../../models/workflowData';
 import timeDifference from '../../../../utils/datesModifier';
 import useStyles from './styles';
 
@@ -12,7 +10,7 @@ interface WorkflowRepresentationProps {
   cluster_name: string;
 }
 
-interface SidebarProps extends ExecutionData {
+interface SidebarState extends ExecutionData {
   current_running_node: string[];
   executed_nodes: string[];
 }
@@ -25,7 +23,7 @@ const SideBar: React.FC<WorkflowRepresentationProps> = ({
   const classes = useStyles();
 
   const [duration, setDuration] = useState<number>(0);
-  const [data, setData] = useState<SidebarProps>({
+  const [data, setData] = useState<SidebarState>({
     creationTimestamp: '',
     event_type: '',
     finishedAt: '',
@@ -58,13 +56,10 @@ const SideBar: React.FC<WorkflowRepresentationProps> = ({
 
     // If the Workflow is Running [Data is being received through Subscription]
     // Set the currently executed node in a local state
-
     if (data.phase === 'Running' && data.nodes !== undefined) {
-      const dataObj: Node[] = Object.values(data.nodes as Node);
-
       const currentlyRunningNodes: string[] = [];
 
-      dataObj.map((val) => {
+      for (const val of Object.values(data.nodes)) {
         if (val.type !== 'StepGroup' && val.phase === 'Running') {
           currentlyRunningNodes.push(val.name);
         }
@@ -75,24 +70,23 @@ const SideBar: React.FC<WorkflowRepresentationProps> = ({
             ...currentlyRunningNodes,
           ],
         });
-      });
+      }
     } else {
       // If the Workflow has Succeeded or Failed
       // Store all the executed nodes in an array
-
-      const dataObj: Node[] = Object.values(data.nodes as Node);
-
       const executedNodes: string[] = [];
-      dataObj.map((val) => {
+
+      for (const val of Object.values(data.nodes)) {
+        let { name } = val;
         if (val.name.charAt(0) === '[') {
-          val.name = 'Step Group ' + val.name.substring(1, val.name.length - 1);
+          name = `Step Group ${val.name.substring(1, val.name.length - 1)}`;
         }
-        executedNodes.push(val.name);
+        executedNodes.push(name);
         setData({
           ...data,
           executed_nodes: [...data.executed_nodes, ...executedNodes],
         });
-      });
+      }
     }
   }, [data.nodes]);
 
@@ -158,24 +152,20 @@ const SideBar: React.FC<WorkflowRepresentationProps> = ({
           {data.phase === 'Running' ? (
             <Typography>
               <span className={classes.bold}>Currently Running Nodes:</span>{' '}
-              {
-                <ul>
-                  {data.current_running_node.map((node) => {
-                    return <li>{node}</li>;
-                  })}
-                </ul>
-              }
+              <ul>
+                {data.current_running_node.map((node) => {
+                  return <li key={node}>{node}</li>;
+                })}
+              </ul>
             </Typography>
           ) : (
             <Typography>
               <span className={classes.bold}>Executed Nodes:</span>{' '}
-              {
-                <ul>
-                  {data.executed_nodes.map((node) => {
-                    return <li>{node}</li>;
-                  })}
-                </ul>
-              }
+              <ul>
+                {data.executed_nodes.map((node) => {
+                  return <li key={node}>{node}</li>;
+                })}
+              </ul>
             </Typography>
           )}
         </div>
