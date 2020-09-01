@@ -18,7 +18,14 @@ type Payload struct {
 }
 
 type Data struct {
+	ClusterConfirm ClusterConfirm `json:"clusterConfirm"`
 	ClusterConnect ClusterConnect `json:"clusterConnect"`
+}
+
+type ClusterConfirm struct {
+	IsClusterConfirmed bool   `json:isClusterConfirmed`
+	NewClusterKey      string `json:newClusterKey`
+	ClusterID          string `json:cluster_id`
 }
 
 type ClusterConnect struct {
