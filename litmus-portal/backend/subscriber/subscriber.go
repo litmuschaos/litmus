@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/types"
 	"log"
 	"os"
 

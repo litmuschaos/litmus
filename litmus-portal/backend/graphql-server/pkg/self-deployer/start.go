@@ -7,7 +7,6 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/mutations"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/k8s"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/utils"
 )
 
 // StartDeployer registers a new internal self-cluster and starts the deployer
@@ -23,11 +22,7 @@ func StartDeployer(projectId string) {
 	if err != nil {
 		log.Print("SELF CLUSTER REG FAILED[DB-REG] : ", err)
 	}
-	data, err := utils.ManifestParser("", key, "", "manifests/self-deployer.yml")
-	if err != nil {
-		log.Print("SELF CLUSTER REG FAILED[PARSE] : ", err)
-	}
-	response, err := k8s.CreateDeployment(data)
+	response, err := k8s.CreateDeployment("litmus", key)
 	if err != nil {
 		log.Print("SELF CLUSTER REG FAILED[DEPLOY-CREATION] : ", err)
 	}

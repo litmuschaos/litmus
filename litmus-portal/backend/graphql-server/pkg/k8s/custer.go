@@ -5,67 +5,74 @@ import (
 	"log"
 	"os"
 
+	"k8s.io/client-go/kubernetes"
+
 	"k8s.io/client-go/tools/clientcmd"
 
-	"k8s.io/apimachinery/pkg/api/meta"
+	appsv1 "k8s.io/api/apps/v1"
+	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
-	"k8s.io/client-go/discovery"
-	memory "k8s.io/client-go/discovery/cached"
-	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/rest"
-	"k8s.io/client-go/restmapper"
 )
 
-var decUnstructured = yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
-
-func CreateDeployment(manifest []byte) (*unstructured.Unstructured, error) {
+func CreateDeployment(namespace, token string) (*appsv1.Deployment, error) {
 	cfg, err := GetKubeConfig()
+	clientset, err := kubernetes.NewForConfig(cfg)
 	if err != nil {
-		log.Printf("err: %v\n", err)
+		panic(err)
+	}
+	deploymentsClient := clientset.AppsV1().Deployments(namespace)
+
+	deployment := &appsv1.Deployment{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "self-deployer",
+			Labels:    map[string]string{"component": "self-deployer"},
+			Namespace: namespace,
+		},
+		Spec: appsv1.DeploymentSpec{
+			Replicas: int32Ptr(1),
+			Selector: &metav1.LabelSelector{
+				MatchLabels: map[string]string{
+					"component": "self-deployer",
+				},
+			},
+			Template: apiv1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels: map[string]string{
+						"component": "self-deployer",
+					},
+				},
+				Spec: apiv1.PodSpec{
+					Containers: []apiv1.Container{
+						{
+							Name:            "deployer",
+							Image:           "litmuschaos/litmusportal-self-deployer:ci",
+							ImagePullPolicy: "Always",
+							Env: []apiv1.EnvVar{
+								{
+									Name:  "SERVER",
+									Value: "http://litmusportal-server-service:9002",
+								},
+								{
+									Name:  "TOKEN",
+									Value: token,
+								},
+							},
+						},
+					},
+					ServiceAccountName: "litmus-svc-account",
+				},
+			},
+		},
 	}
 
-	dc, err := discovery.NewDiscoveryClientForConfig(cfg)
+	// Create Deployment
+	log.Println("Creating deployment...")
+	result, err := deploymentsClient.Create(context.TODO(), deployment, metav1.CreateOptions{})
 	if err != nil {
-		log.Printf("err: %v\n", err)
+		return nil, err
 	}
-	mapper := restmapper.NewDeferredDiscoveryRESTMapper(memory.NewMemCacheClient(dc))
-
-	// Prepare the dynamic client
-	dyn, err := dynamic.NewForConfig(cfg)
-	if err != nil {
-		log.Printf("err: %v\n", err)
-	}
-
-	// Decode YAML manifest into unstructured.Unstructured
-	obj := &unstructured.Unstructured{}
-	_, gvk, err := decUnstructured.Decode([]byte(manifest), nil, obj)
-	if err != nil {
-		log.Printf("err: %v\n", err)
-	}
-
-	// Find GVR
-	mapping, err := mapper.RESTMapping(gvk.GroupKind(), gvk.Version)
-	if err != nil {
-		log.Printf("err: %v\n", err)
-	}
-
-	// Obtain REST interface for the GVR
-	var dr dynamic.ResourceInterface
-	if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
-		// namespaced resources should specify the namespace
-		dr = dyn.Resource(mapping.Resource).Namespace(obj.GetNamespace())
-	} else {
-		// for cluster-wide resources
-		dr = dyn.Resource(mapping.Resource)
-	}
-
-	response, err := dr.Create(context.TODO(), obj, metav1.CreateOptions{})
-	if err != nil {
-		log.Printf("err: %v\n", err)
-	}
-	return response, nil
+	return result, nil
 }
 
 func GetKubeConfig() (*rest.Config, error) {
@@ -75,3 +82,4 @@ func GetKubeConfig() (*rest.Config, error) {
 		return rest.InClusterConfig()
 	}
 }
+func int32Ptr(i int32) *int32 { return &i }
