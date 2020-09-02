@@ -163,7 +163,11 @@ const CustomStepper = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const [createChaosWorkFlow] = useMutation(CREATE_WORKFLOW);
+  const [createChaosWorkFlow] = useMutation(CREATE_WORKFLOW, {
+    onCompleted: () => {
+      setOpen(true);
+    },
+  });
 
   const handleMutation = () => {
     if (name.length !== 0 && description.length !== 0 && weights.length !== 0) {
@@ -199,7 +203,6 @@ const CustomStepper = () => {
 
   const handleOpen = () => {
     handleMutation();
-    setOpen(true);
   };
 
   const handleClose = () => {
@@ -245,7 +248,7 @@ const CustomStepper = () => {
               handleClose={handleClose}
               aria-labelledby="simple-modal-title"
               aria-describedby="simple-modal-description"
-              hasCloseBtn={true}
+              hasCloseBtn
             >
               <div>
                 <img
