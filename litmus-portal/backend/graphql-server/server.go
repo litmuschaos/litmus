@@ -34,9 +34,11 @@ func main() {
 	if port == "" {
 		port = defaultPort
 	}
+
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},
 	})
+
 	srv := handler.New(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
 	srv.AddTransport(transport.POST{})
 	srv.AddTransport(transport.GET{})
@@ -48,6 +50,7 @@ func main() {
 			},
 		},
 	})
+
 	// to be removed in production
 	srv.Use(extension.Introspection{})
 
@@ -55,7 +58,6 @@ func main() {
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", c.Handler(srv))
 	router.HandleFunc("/file/{key}{path:.yaml}", file_handlers.FileHandler)
-
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
 }

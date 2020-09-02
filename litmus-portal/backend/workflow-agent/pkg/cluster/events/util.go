@@ -1,13 +1,15 @@
 package events
 
 import (
+	"strconv"
+
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
 	v1alpha13 "github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
 	v1alpha12 "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/types"
-	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
-	"strconv"
 )
 
 // util function, extracts the chaos data using the litmus go-client
