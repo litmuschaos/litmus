@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ExecutionData } from '../../../../models/workflowData';
 import DagreGraph, { d3Link, d3Node } from '../../../DagreGraph';
+import useStyles from './styles';
 
 interface GraphData {
   nodes: d3Node[];
@@ -8,6 +9,7 @@ interface GraphData {
 }
 
 const ArgoWorkflow: React.FC<ExecutionData> = ({ nodes, phase }) => {
+  const classes = useStyles();
   const [graphData, setGraphData] = useState<GraphData>({
     nodes: [],
     links: [],
@@ -21,10 +23,11 @@ const ArgoWorkflow: React.FC<ExecutionData> = ({ nodes, phase }) => {
 
     for (const key of Object.keys(nodes)) {
       const node = nodes[key];
+
       data.nodes.push({
         id: key,
-        class: node.phase,
-        label: node.name,
+        class: `${node.phase} ${node.type}`,
+        label: node.type !== 'StepGroup' ? node.name : '',
         labelType: 'html',
       });
 
@@ -33,11 +36,8 @@ const ArgoWorkflow: React.FC<ExecutionData> = ({ nodes, phase }) => {
           data.links.push({
             source: key,
             target: child,
-            class: 'edge',
-            label: 'edge',
             config: {
               arrowheadStyle: 'display: arrowhead',
-              style: 'fill:#000',
             },
           })
         );
@@ -52,17 +52,14 @@ const ArgoWorkflow: React.FC<ExecutionData> = ({ nodes, phase }) => {
 
   return graphData.nodes.length ? (
     <DagreGraph
+      className={classes.dagreGraph}
       nodes={graphData.nodes}
       links={graphData.links}
       config={{
-        rankdir: 'TB',
-        align: 'UL',
         ranker: 'tight-tree',
       }}
-      width="700"
-      height="500"
       animate={1000}
-      shape="circle"
+      shape="rect"
       fitBoundaries
       zoomable
     />

@@ -24,6 +24,7 @@ declare module '@material-ui/core/styles/createPalette' {
     customColors: {
       white: (opacity: number) => string;
       black: (opacity: number) => string;
+      gray: string;
     };
   }
   // allow configuration using `createMuiTheme`
@@ -31,6 +32,7 @@ declare module '@material-ui/core/styles/createPalette' {
     customColors?: {
       white?: (opacity: number) => string;
       black?: (opacity: number) => string;
+      gray?: string;
     };
   }
 }
@@ -71,15 +73,16 @@ function customTheme(options: ThemeOptions) {
         white: (opacity: number): string => {
           let op = opacity;
           if (op < 0) op = 0;
-          if (op > 100) op = 100;
+          if (op > 1) op = 1;
           return `rgba(255, 255, 255, ${op})`;
         },
         black: (opacity: number): string => {
           let op = opacity;
           if (op < 0) op = 0;
-          if (op > 100) op = 100;
+          if (op > 1) op = 1;
           return `rgba(0, 0, 0, ${op})`;
         },
+        gray: '#5D6173',
       },
     },
     typography: {
