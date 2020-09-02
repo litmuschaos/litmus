@@ -12,7 +12,6 @@ import ModalPage from './Modalpage';
 import useStyles from './styles';
 import {
   validateStartEmptySpacing,
-  validatePassword,
   validateConfirmPassword,
   validateEmail,
 } from '../../utils/validate';
@@ -150,7 +149,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
     if (
       values.password.length > 0 &&
       values.confirmPassword.length > 0 &&
-      validatePassword(values.password) === false &&
+      // validatePassword(values.password) === false &&
       validateConfirmPassword(values.password, values.confirmPassword) === false
     ) {
       isError.current = false;
@@ -304,12 +303,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                     label="Password"
                     type="password"
                     required
-                    helperText={
-                      validatePassword(values.password)
-                        ? 'Should be >= 6 & contain 1 alphanumeric character and a number'
-                        : ''
-                    }
-                    validationError={validatePassword(values.password)}
+                    validationError={false}
                     value={values.password}
                     success={isSuccess.current}
                     handleChange={(event) =>
@@ -336,7 +330,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                     }
                     success={isSuccess.current}
                     validationError={
-                      validatePassword(values.confirmPassword) &&
+                      // validatePassword(values.confirmPassword) &&
                       validateConfirmPassword(
                         values.password,
                         values.confirmPassword
