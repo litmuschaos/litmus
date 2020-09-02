@@ -1075,6 +1075,7 @@ type WorkflowRun{
 }
 
 input WorkflowRunInput{
+  workflow_id: ID!
   workflow_run_id: ID!
   workflow_name: String!
   execution_data: String!
@@ -5865,6 +5866,12 @@ func (ec *executionContext) unmarshalInputWorkflowRunInput(ctx context.Context, 
 
 	for k, v := range asMap {
 		switch k {
+		case "workflow_id":
+			var err error
+			it.WorkflowID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "workflow_run_id":
 			var err error
 			it.WorkflowRunID, err = ec.unmarshalNID2string(ctx, v)

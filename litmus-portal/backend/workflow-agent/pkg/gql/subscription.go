@@ -2,12 +2,11 @@ package gql
 
 import (
 	"encoding/json"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/types"
+	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"strings"
-
-	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/types"
-	"github.com/sirupsen/logrus"
 )
 
 // Subscription performs cluster-connect operation and listens for requests from server

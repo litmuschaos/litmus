@@ -1,15 +1,16 @@
 package events
 
 import (
+	"time"
+
 	"github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
 	"github.com/argoproj/argo/pkg/client/clientset/versioned"
 	"github.com/argoproj/argo/pkg/client/informers/externalversions"
 	litmusV1alpha1 "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/k8s"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/types"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/k8s"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/types"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/tools/cache"
-	"time"
 )
 
 // 0 means no resync
@@ -93,6 +94,7 @@ func workflowEventHandler(obj interface{}, eventType string, stream chan types.W
 		nodes[nodeStatus.ID] = details
 	}
 	workflow := types.WorkflowEvent{
+		WorkflowID:        workflowObj.Labels["wfid"],
 		EventType:         eventType,
 		UID:               string(workflowObj.ObjectMeta.UID),
 		Namespace:         workflowObj.ObjectMeta.Namespace,
