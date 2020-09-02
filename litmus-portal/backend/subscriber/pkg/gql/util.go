@@ -2,10 +2,11 @@ package gql
 
 import (
 	"encoding/json"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/cluster/logs"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/types"
 	"strconv"
 	"strings"
+
+	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/cluster/logs"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/types"
 )
 
 // process event data into proper format acceptable by gql

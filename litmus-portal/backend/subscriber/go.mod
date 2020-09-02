@@ -5,6 +5,7 @@ go 1.14
 require (
 	github.com/argoproj/argo v2.5.2+incompatible
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
+	github.com/gorilla/websocket v1.4.0
 	github.com/imdario/mergo v0.3.10 // indirect
 	github.com/litmuschaos/chaos-operator v0.0.0-20200815164629-86987255efd0
 	github.com/sirupsen/logrus v1.6.0

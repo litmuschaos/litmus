@@ -2,8 +2,9 @@ package logs
 
 import (
 	"bytes"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/k8s"
 	"io"
+
+	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/k8s"
 
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"

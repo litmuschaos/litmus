@@ -3,6 +3,8 @@ package operations
 import (
 	"context"
 	"fmt"
+	"log"
+
 	yaml_converter "github.com/ghodss/yaml"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/k8s"
 	corev1 "k8s.io/api/core/v1"
@@ -13,7 +15,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/restmapper"
-	"log"
 
 	memory "k8s.io/client-go/discovery/cached"
 )

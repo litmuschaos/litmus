@@ -2,10 +2,12 @@ package gql
 
 import (
 	"encoding/json"
+
 	"github.com/gorilla/websocket"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/cluster/operations"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/types"
 	"github.com/sirupsen/logrus"
+
 	"log"
 	"net/url"
 	"strings"

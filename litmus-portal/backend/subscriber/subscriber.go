@@ -3,14 +3,18 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"os/signal"
+
 	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/cluster/events"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/cluster/operations"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/gql"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/k8s"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/types"
+
 	"log"
 	"os"
-	"os/signal"
+
+	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/types"
+
+	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/gql"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/k8s"
 )
 
 var (
