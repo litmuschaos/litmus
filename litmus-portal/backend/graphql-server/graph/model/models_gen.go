@@ -138,7 +138,7 @@ type User struct {
 	IsEmailVerified *bool      `json:"is_email_verified"`
 	CompanyName     *string    `json:"company_name"`
 	Name            *string    `json:"name"`
-	Project         []*Project `json:"project"`
+	Projects        []*Project `json:"projects"`
 	Role            *string    `json:"role"`
 	State           *string    `json:"state"`
 	CreatedAt       string     `json:"created_at"`
