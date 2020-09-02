@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/client/react/hooks';
 import MobileStepper from '@material-ui/core/MobileStepper';
-import React from 'react';
+import React, { useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import ButtonFilled from '../Button/ButtonFilled';
@@ -10,14 +10,13 @@ import { RootState } from '../../redux/reducers';
 import InputField from '../InputField';
 import ModalPage from './Modalpage';
 import useStyles from './styles';
+import ModalContext from '../../context/modalContext';
 import ButtonOutline from '../Button/ButtonOutline';
 
-interface CStepperProps {
-  handleModal: () => void;
-}
-const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
+const CStepper: React.FC = () => {
   const classes = useStyles();
 
+  const { handleModal } = useContext(ModalContext);
   const { userData } = useSelector((state: RootState) => state);
   const [activeStep, setActiveStep] = React.useState<number>(0);
   const [formError, setFormError] = React.useState<boolean>(false);
@@ -83,12 +82,11 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
           });
         }
       })
+      .then(handleModal)
       .catch((err) => {
         setFormError(true);
         console.error(err);
       });
-
-    handleModal();
   };
 
   const setData = (key: string, value: string) => {

@@ -12,6 +12,7 @@ import { GET_PROJECT, GET_USER } from '../../graphql';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
 import { RootState } from '../../redux/reducers';
+import ModalContext from '../../context/modalContext';
 import useStyles from './style';
 
 const CreateWorkflowCard = () => {
@@ -84,7 +85,13 @@ const HomePage = () => {
 
   return (
     <Scaffold>
-      {isOpen ? <WelcomeModal handleIsOpen={handleModal} /> : <></>}
+      {isOpen ? (
+        <ModalContext.Provider value={{ handleModal }}>
+          <WelcomeModal />
+        </ModalContext.Provider>
+      ) : (
+        <></>
+      )}
       <div className={classes.rootContainer}>
         <div className={classes.root}>
           <Typography className={classes.userName}>
