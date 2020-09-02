@@ -10,7 +10,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-
 var (
 	collections = map[string]string{
 		"Cluster":     "cluster-collection",
@@ -21,17 +20,15 @@ var (
 	}
 	//Database ...
 	Database *mongo.Database
-	dbName = "litmus"
+	dbName   = "litmus"
 
 	//Collections ...
-	clusterCollection *mongo.Collection
+	clusterCollection     *mongo.Collection
 	workflowRunCollection *mongo.Collection
-	workflowCollection *mongo.Collection
-	backgroundContext = context.Background()
-	err error
+	workflowCollection    *mongo.Collection
+	backgroundContext     = context.Background()
+	err                   error
 )
-
-
 
 type Cluster struct {
 	ClusterID          string  `bson:"cluster_id"`

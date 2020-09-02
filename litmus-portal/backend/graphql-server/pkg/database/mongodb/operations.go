@@ -118,7 +118,7 @@ func InsertChaosWorkflow(chaosWorkflow ChaosWorkFlowInput) error {
 	return nil
 }
 
-func DeleteChaosWorkflow(workflowid string) (bool, error){
+func DeleteChaosWorkflow(workflowid string) (bool, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	res, err := workflowCollection.DeleteOne(ctx, bson.M{"workflow_id": workflowid})
 	fmt.Println("DeleteOne Result TYPE:", reflect.TypeOf(res))
