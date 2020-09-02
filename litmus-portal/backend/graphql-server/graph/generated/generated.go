@@ -150,7 +150,7 @@ type ComplexityRoot struct {
 		ID              func(childComplexity int) int
 		IsEmailVerified func(childComplexity int) int
 		Name            func(childComplexity int) int
-		Project         func(childComplexity int) int
+		Projects        func(childComplexity int) int
 		RemovedAt       func(childComplexity int) int
 		Role            func(childComplexity int) int
 		State           func(childComplexity int) int
@@ -769,12 +769,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Name(childComplexity), true
 
-	case "User.project":
-		if e.complexity.User.Project == nil {
+	case "User.projects":
+		if e.complexity.User.Projects == nil {
 			break
 		}
 
-		return e.complexity.User.Project(childComplexity), true
+		return e.complexity.User.Projects(childComplexity), true
 
 	case "User.removed_at":
 		if e.complexity.User.RemovedAt == nil {
@@ -1174,7 +1174,7 @@ type Subscription{
     is_email_verified: Boolean
     company_name: String
     name: String
-    project: [Project!]!
+    projects: [Project!]!
     role: String
     state: String
     created_at: String!
@@ -3977,7 +3977,7 @@ func (ec *executionContext) _User_name(ctx context.Context, field graphql.Collec
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_project(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_projects(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3994,7 +3994,7 @@ func (ec *executionContext) _User_project(ctx context.Context, field graphql.Col
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Project, nil
+		return obj.Projects, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6591,8 +6591,8 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = ec._User_company_name(ctx, field, obj)
 		case "name":
 			out.Values[i] = ec._User_name(ctx, field, obj)
-		case "project":
-			out.Values[i] = ec._User_project(ctx, field, obj)
+		case "projects":
+			out.Values[i] = ec._User_projects(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
