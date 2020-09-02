@@ -52,6 +52,10 @@ func (r *mutationResolver) CreateUser(ctx context.Context, user model.UserInput)
 	return usermanagement.CreateUser(ctx, user)
 }
 
+func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid string) (bool, error) {
+	return database.DeleteChaosWorkflow(workflowid)
+}
+
 func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {
 	return queries.QueryWorkflowRuns(projectID)
 }
@@ -178,3 +182,13 @@ func (r *Resolver) Subscription() generated.SubscriptionResolver { return &subsc
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type subscriptionResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *mutationResolver) WorkflowDelete(ctx context.Context, workflowid string) (bool, error) {
+	return database.DeleteChaosWorkflow(workflowid)
+}

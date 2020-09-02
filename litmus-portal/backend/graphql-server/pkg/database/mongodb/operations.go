@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"reflect"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -109,10 +110,22 @@ func GetClusterWithProjectID(project_id string, cluster_type *string) ([]*Cluste
 
 func InsertChaosWorkflow(chaosWorkflow ChaosWorkFlowInput) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	_, err := workflowRunCollection.InsertOne(ctx, chaosWorkflow)
+	_, err := workflowCollection.InsertOne(ctx, chaosWorkflow)
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func DeleteChaosWorkflow(workflowid string) (bool, error){
+	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
+	res, err := workflowCollection.DeleteOne(ctx, bson.M{"workflow_id": workflowid})
+	fmt.Println("DeleteOne Result TYPE:", reflect.TypeOf(res))
+
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
