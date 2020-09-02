@@ -245,9 +245,9 @@ const CustomStepper = () => {
               handleClose={handleClose}
               aria-labelledby="simple-modal-title"
               aria-describedby="simple-modal-description"
-              hasCloseBtn={false}
+              hasCloseBtn={true}
             >
-              <div className={classes.content}>
+              <div>
                 <img
                   src="icons/finish.svg"
                   className={classes.mark}
