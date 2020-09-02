@@ -2,10 +2,11 @@ package gql
 
 import (
 	"bytes"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/types"
-	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/types"
+	"github.com/sirupsen/logrus"
 )
 
 var eventMap map[string]types.WorkflowEvent

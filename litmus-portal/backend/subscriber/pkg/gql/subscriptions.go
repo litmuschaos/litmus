@@ -2,12 +2,13 @@ package gql
 
 import (
 	"encoding/json"
-	"github.com/gorilla/websocket"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/cluster"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/types"
 	"log"
 	"net/url"
 	"time"
+
+	"github.com/gorilla/websocket"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/cluster"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/types"
 )
 
 func ClusterConnect(clusterData map[string]string) {
