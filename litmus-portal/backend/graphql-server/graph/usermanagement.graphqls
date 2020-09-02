@@ -4,8 +4,8 @@ type User {
     email: String
     is_email_verified: Boolean
     company_name: String
-    project_id: String!
     name: String
+    project: [Project!]!
     role: String
     state: String
     created_at: String!

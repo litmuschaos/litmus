@@ -87,6 +87,13 @@ type ClusterInput struct {
 	ClusterType  string  `json:"cluster_type"`
 }
 
+type Member struct {
+	UserID     string `json:"user_id"`
+	UserName   string `json:"user_name"`
+	Role       string `json:"role"`
+	Invitation string `json:"invitation"`
+}
+
 type PodLog struct {
 	ClusterID     *ClusterIdentity `json:"cluster_id"`
 	RequestID     string           `json:"request_id"`
@@ -115,27 +122,28 @@ type PodLogResponse struct {
 }
 
 type Project struct {
-	ID        string  `json:"id"`
-	Name      string  `json:"name"`
-	State     *string `json:"state"`
-	CreatedAt string  `json:"created_at"`
-	UpdatedAt string  `json:"updated_at"`
-	RemovedAt string  `json:"removed_at"`
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	Members   []*Member `json:"members"`
+	State     *string   `json:"state"`
+	CreatedAt string    `json:"created_at"`
+	UpdatedAt string    `json:"updated_at"`
+	RemovedAt string    `json:"removed_at"`
 }
 
 type User struct {
-	ID              string  `json:"id"`
-	Username        string  `json:"username"`
-	Email           *string `json:"email"`
-	IsEmailVerified *bool   `json:"is_email_verified"`
-	CompanyName     *string `json:"company_name"`
-	ProjectID       string  `json:"project_id"`
-	Name            *string `json:"name"`
-	Role            *string `json:"role"`
-	State           *string `json:"state"`
-	CreatedAt       string  `json:"created_at"`
-	UpdatedAt       string  `json:"updated_at"`
-	RemovedAt       string  `json:"removed_at"`
+	ID              string     `json:"id"`
+	Username        string     `json:"username"`
+	Email           *string    `json:"email"`
+	IsEmailVerified *bool      `json:"is_email_verified"`
+	CompanyName     *string    `json:"company_name"`
+	Name            *string    `json:"name"`
+	Project         []*Project `json:"project"`
+	Role            *string    `json:"role"`
+	State           *string    `json:"state"`
+	CreatedAt       string     `json:"created_at"`
+	UpdatedAt       string     `json:"updated_at"`
+	RemovedAt       string     `json:"removed_at"`
 }
 
 type UserInput struct {

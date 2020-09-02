@@ -1,4 +1,4 @@
-package database
+package mongodb
 
 import (
 	"context"
@@ -22,7 +22,8 @@ var collections = map[string]string{
 	"Project":     "project",
 }
 
-var database *mongo.Database
+//Database ...
+var Database *mongo.Database
 var dbName = "litmus"
 
 type Cluster struct {
@@ -70,13 +71,17 @@ type WeightagesInput struct {
 	Weightage      int    `bson:"weightage"`
 }
 
-//DBInit initializes database connection
-func DBInit() error {
+//init initializes database connection
+func init() {
+
 	dbServer := os.Getenv("DB_SERVER")
+	if dbServer == "" {
+		log.Fatal("Environment Variable DB_SERVER is not present")
+	}
 	clientOptions := options.Client().ApplyURI("mongodb://" + dbServer)
 	client, err := mongo.Connect(backgroundContext, clientOptions)
 	if err != nil {
-		return err
+		log.Fatal(err)
 	}
 
 	ctx, _ := context.WithTimeout(backgroundContext, 20*time.Second)
@@ -84,20 +89,17 @@ func DBInit() error {
 	// Check the connection
 	err = client.Ping(ctx, nil)
 	if err != nil {
-		return err
+		log.Fatal(err)
 	} else {
 		log.Print("Connected To MONGODB")
 	}
 
-	database = client.Database(dbName)
+	Database = client.Database(dbName)
 	initAllCollections()
 
-	return nil
 }
 
 func initAllCollections() {
-	clusterCollection = database.Collection(collections["Cluster"])
-	workflowRunCollection = database.Collection(collections["WorkflowRun"])
-	userCollection = database.Collection(collections["User"])
-	projectCollection = database.Collection(collections["Project"])
+	clusterCollection = Database.Collection(collections["Cluster"])
+	workflowRunCollection = Database.Collection(collections["WorkflowRun"])
 }
