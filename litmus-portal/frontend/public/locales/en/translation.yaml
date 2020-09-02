@@ -1,0 +1,65 @@
+welcomeModel:
+  title: Welcome to Litmus Portal,
+  info: Do you want to name your project?
+  button:
+    continue: Continue
+    skip: Skip
+    back: Back
+    letsStart: Let's Start
+  case-0:
+    name: projectName
+    label: Project Name
+    info: Do you want to name your project?
+  case-1:
+    name: fullName
+    label: Full Name
+    info: How do i call you?
+  case-2:
+    name: password
+    label: Password
+    cnfLabel: Confirm Password
+    cnfName: confirmPassword
+    info: Set your new  Password
+  case-3:
+    name: emailAddress
+    label: Email Address
+    info: You can change your current mail (optional)
+
+######################################
+############     Pages    ############
+######################################
+home:
+  workflow:
+    heading: Let's Start
+    info: Schedule your first workflow
+  heading: Welcome,
+  subHeading1: Congratulations!
+  subHeading2: You have established your own first project on Litmus portal.
+  subHeading3: Now this is successfully running on your Kubernetes cluster. Once you schedule chaos workflows, reliability analytics are displayed here.
+  button1: See pre-defined workflows
+  analytics:
+    heading: How busy Litmus Project is?
+    moreInfo: See more
+
+login:
+  heading: Welcome to
+  subHeading1: Your one-stop-shop for Chaos Engineering on
+  subHeading2: . Browse, create, manage, monitor and analyze your chaos workflows.
+  subHeading3: With your own private ChaosHub, you can create your new chaos experiments and share them with your team.
+  passwordForgot: Don’t remember your password?
+
+schedule:
+  heading: 'Schedule a workflow'
+  headingDesc: 'Click on test to see detailed log of your workflow'
+  headingText: 'Schedule details:'
+  description: 'Choose the right time to first workflow. Below you can find any option convenient for you.'
+  save: 'Save Changes'
+
+workflowUnderground:
+  heading: 'Click on test to see detailed log of your workflow'
+
+community:
+  heading: 'Daily Insights'
+  headingDesc: 'Stats for the Litmus community in the last 24 hours'
+  analyticDesc: 'Periodic growth of Litmus'
+  statsHeading: 'Where Litmus users are situated'

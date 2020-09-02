@@ -1,6 +1,7 @@
 import { Button, Hidden, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import InputField from '../../components/InputField';
 import config from '../../config';
 import useActions from '../../redux/actions';
@@ -14,6 +15,7 @@ interface authData {
 }
 
 const LoginPage = () => {
+  const { t } = useTranslation();
   const user = useActions(UserActions);
   const classes = useStyles();
   const [authData, setAuthData] = useState<authData>({
@@ -52,22 +54,20 @@ const LoginPage = () => {
           <div className={classes.mainDiv}>
             <img src="icons/LitmusLogo.png" alt="litmus logo" />
             <Typography variant="h2" className={classes.heading}>
-              Welcome to <strong>Litmus!</strong>
+              {t('login.heading')} <strong>Litmus!</strong>
             </Typography>
             <Typography className={classes.description} gutterBottom>
-              Your one-stop-shop for Chaos Engineering on
+              {t('login.subHeading1')}
               <img
                 src="icons/kubernetes.png"
                 alt="Kubernetes"
                 className={classes.descImg}
               />
-              . Browse, create, manage, monitor and analyze your chaos
-              workflows.
+              {t('login.subHeading2')}
               <br />
             </Typography>
             <Typography className={classes.description}>
-              With your own private ChaosHub, you can create your new chaos
-              experiments and share them with your team.
+              {t('login.subHeading3')}
             </Typography>
             <form
               id="login-form"
@@ -111,7 +111,7 @@ const LoginPage = () => {
                     className={classes.linkForgotPass}
                     data-cy="forgotPassword"
                   >
-                    Don’t remember your password?
+                    {t('login.passwordForgot')}
                   </Link>
                 </Typography>
                 <div className={classes.loginDiv}>
