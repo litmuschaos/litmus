@@ -1,12 +1,11 @@
 package main
 
 import (
-	"os"
-	"os/signal"
-
 	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/cluster/events"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/gql"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/types"
+	"os"
+	"os/signal"
 )
 
 func main() {

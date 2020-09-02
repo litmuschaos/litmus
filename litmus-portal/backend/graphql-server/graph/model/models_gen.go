@@ -171,6 +171,7 @@ type WorkflowRun struct {
 }
 
 type WorkflowRunInput struct {
+	WorkflowID    string           `json:"workflow_id"`
 	WorkflowRunID string           `json:"workflow_run_id"`
 	WorkflowName  string           `json:"workflow_name"`
 	ExecutionData string           `json:"execution_data"`
