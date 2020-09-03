@@ -12,9 +12,10 @@ import LinearProgressBar from '../../ReturningHome/ProgressBar/LinearProgressBar
 import useStyles from './styles';
 import timeDifferenceForDate from '../../../../utils/datesModifier';
 import { history } from '../../../../redux/configureStore';
+import { WorkflowRun } from '../../../../models/workflowData';
 
 interface TableDataProps {
-  data: any;
+  data: WorkflowRun;
 }
 
 const TableData: React.FC<TableDataProps> = ({ data }) => {
@@ -33,7 +34,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
   const handleMenu = () => {};
   return (
     <>
-      <TableCell className={classes.headerStatus1}>
+      <TableCell className={classes.tableDataStatus}>
         <CustomStatus status={JSON.parse(data.execution_data).phase} />
       </TableCell>
       <TableCell className={classes.workflowNameData}>

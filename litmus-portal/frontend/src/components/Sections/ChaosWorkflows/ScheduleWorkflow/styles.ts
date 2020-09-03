@@ -1,27 +1,39 @@
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
+  // Header Section Properties
   headerSection: {
     width: '100%',
+    height: '5.625rem',
     display: 'flex',
     flexDirection: 'row',
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'center',
     border: '1px solid ',
-    borderColor: theme.palette.text.hint,
+    borderColor: theme.palette.customColors.black(0.07),
     backgroundColor: theme.palette.common.white,
   },
   search: {
+    fontSize: 14,
     marginRight: 'auto',
+    borderBottom: `1px solid ${theme.palette.customColors.black(0.1)}`,
     marginLeft: theme.spacing(6.25),
   },
-  select: {
-    width: '10.375rem',
-    marginLeft: theme.spacing(1.25),
-    paddingBottom: theme.spacing(2.5),
-    marginRight: theme.spacing(3.75),
+
+  // Form Select Properties
+  formControl: {
+    margin: theme.spacing(0.5),
+    marginRight: 50,
+    height: '2.5rem',
+    minWidth: '9rem',
   },
+  selectText: {
+    height: '2.5rem',
+    padding: theme.spacing(0.5),
+  },
+
+  // Table and Table Data Properties
   headerText: {
     marginLeft: theme.spacing(3.75),
     color: theme.palette.text.disabled,
@@ -29,9 +41,9 @@ const useStyles = makeStyles((theme) => ({
   },
   tableMain: {
     marginTop: theme.spacing(6.25),
-    border: '1px solid rgba(0,0,0,0.1)',
+    border: `1px solid ${theme.palette.customColors.black(0.07)}`,
     backgroundColor: theme.palette.common.white,
-    height: '29.180rem',
+    height: '29.220rem',
   },
   tableHead: {
     opacity: 1,
@@ -54,11 +66,16 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(1.75),
   },
   workflowName: {
-    borderRight: '1px solid rgba(0,0,0,0.1)',
+    borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
     color: theme.palette.customColors.black(0.4),
   },
+  sortDiv: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginLeft: theme.spacing(1.25),
+  },
   workflowNameData: {
-    borderRight: '1px solid rgba(0,0,0,0.1)',
+    borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
   },
   regularity: {
     paddingLeft: theme.spacing(3.75),
@@ -84,24 +101,6 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(1),
     color: theme.palette.customColors.black(0.4),
   },
-  expDiv: {
-    display: 'flex',
-    flexDirection: 'row',
-  },
-  expDiv1: {
-    display: 'flex',
-    flexDirection: 'row',
-    cursor: 'pointer',
-  },
-  weightDiv: {
-    width: 243,
-    padding: '25px 20px',
-  },
-  weightInfo: {
-    display: 'flex',
-    flexDirection: 'row',
-    paddingBottom: theme.spacing(0.625),
-  },
   clusterData: {
     paddingTop: theme.spacing(1.25),
   },
@@ -122,6 +121,22 @@ const useStyles = makeStyles((theme) => ({
   },
   btnText: {
     paddingLeft: theme.spacing(1.625),
+  },
+
+  // Experiment Weights PopOver Property
+  weightDiv: {
+    width: '15.1875rem',
+    padding: '25px 20px',
+  },
+  weightInfo: {
+    display: 'flex',
+    flexDirection: 'row',
+    paddingBottom: theme.spacing(0.625),
+  },
+  expDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    cursor: 'pointer',
   },
 }));
 

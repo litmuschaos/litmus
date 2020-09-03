@@ -16,12 +16,26 @@ import {
   TableCell,
   TableBody,
   TablePagination,
+  IconButton,
 } from '@material-ui/core';
+import ExpandLessIcon from '@material-ui/icons/ExpandLess';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import useStyles from './styles';
 import { WORKFLOW_DETAILS } from '../../../../graphql';
 import TableData from './TableData';
-import { Workflow, WorkflowDataVars } from '../../../../models/workflowData';
+import {
+  Workflow,
+  WorkflowDataVars,
+  WorkflowRun,
+  ExecutionData,
+} from '../../../../models/workflowData';
 import Loader from '../../../Loader';
+import {
+  sortAlphaAsc,
+  sortAlphaDesc,
+  sortNumAsc,
+  sortNumDesc,
+} from '../../../../utils/sort';
 
 interface FilterOption {
   search: string;
@@ -31,6 +45,11 @@ interface FilterOption {
 interface PaginationData {
   pageNo: number;
   rowsPerPage: number;
+}
+
+interface SortData {
+  startDate: { sort: boolean; ascending: boolean };
+  name: { sort: boolean; ascending: boolean };
 }
 
 const ScheduleWorkflow = () => {
@@ -54,6 +73,12 @@ const ScheduleWorkflow = () => {
     rowsPerPage: 5,
   });
 
+  // State for sorting
+  const [sortData, setSortData] = useState<SortData>({
+    name: { sort: false, ascending: true },
+    startDate: { sort: true, ascending: true },
+  });
+
   const filteredData = data?.getWorkFlowRuns
     .filter((dataRow) =>
       dataRow.workflow_name.toLowerCase().includes(filter.search)
@@ -63,12 +88,41 @@ const ScheduleWorkflow = () => {
         ? true
         : dataRow.cluster_name.toLowerCase().includes(filter.cluster)
     )
-    .reverse();
+    .sort((a: WorkflowRun, b: WorkflowRun) => {
+      // Sorting based on unique fields
+      if (sortData.name.sort) {
+        const x = a.workflow_name;
+        const y = b.workflow_name;
 
+        return sortData.name.ascending
+          ? sortAlphaAsc(x, y)
+          : sortAlphaDesc(x, y);
+      }
+      if (sortData.startDate.sort) {
+        const x = parseInt(
+          (JSON.parse(a.execution_data) as ExecutionData).startedAt,
+          10
+        );
+
+        const y = parseInt(
+          (JSON.parse(b.execution_data) as ExecutionData).startedAt,
+          10
+        );
+
+        return sortData.startDate.ascending
+          ? sortNumAsc(y, x)
+          : sortNumDesc(y, x);
+      }
+      return 0;
+    });
+  const deleteRow = () => {
+    // Delete Mutation Here
+  };
   return (
     <div>
       <section className="Heading section">
         <div className={classes.headerSection}>
+          {/* Search Field */}
           <InputBase
             id="input-with-icon-adornment"
             placeholder="Search"
@@ -83,59 +137,126 @@ const ScheduleWorkflow = () => {
               </InputAdornment>
             }
           />
-          <FormControl className={classes.select}>
-            <InputLabel id="demo-simple-select-outlined-label">
+          {/* Select Cluster */}
+          <FormControl
+            variant="outlined"
+            className={classes.formControl}
+            color="secondary"
+            focused
+          >
+            <InputLabel className={classes.selectText}>
               Target Cluster
             </InputLabel>
             <Select
-              labelId="demo-simple-select-outlined-label"
-              id="demo-simple-select-outlined"
               value={filter.cluster}
               onChange={(event) =>
                 setFilter({ ...filter, cluster: event.target.value as string })
               }
-              disableUnderline
+              label="Target Cluster"
+              className={classes.selectText}
             >
-              <MenuItem value="All">
-                <Typography className={classes.menuItem}>All</Typography>
-              </MenuItem>
-              <MenuItem value="Predefined">
-                <Typography className={classes.menuItem}>
-                  Cluset pre-defined
-                </Typography>
-              </MenuItem>
-              <MenuItem value="Kubernetes">
-                <Typography className={classes.menuItem}>
-                  Kubernetes Cluster
-                </Typography>
-              </MenuItem>
+              <MenuItem value="All">All</MenuItem>
+              <MenuItem value="Predefined">Cluset pre-defined</MenuItem>
+              <MenuItem value="Kubernetes">Kubernetes Cluster</MenuItem>
             </Select>
           </FormControl>
         </div>
       </section>
       <section className="table section">
+        {/* Table Header */}
         <TableContainer className={classes.tableMain}>
           <Table stickyHeader aria-label="simple table">
             <TableHead>
               <TableRow className={classes.tableHead}>
+                {/* WorkFlow Name */}
                 <TableCell className={classes.workflowName}>
-                  <Typography style={{ paddingLeft: 65 }}>
-                    Workflow Name
-                  </Typography>
+                  <div style={{ display: 'flex', flexDirection: 'row' }}>
+                    <Typography style={{ paddingLeft: 65, paddingTop: 10 }}>
+                      Workflow Name
+                    </Typography>
+                    <div className={classes.sortDiv}>
+                      <IconButton
+                        aria-label="sort name ascending"
+                        size="small"
+                        onClick={() =>
+                          setSortData({
+                            ...sortData,
+                            name: { sort: true, ascending: true },
+                            startDate: { sort: false, ascending: true },
+                          })
+                        }
+                      >
+                        <ExpandLessIcon fontSize="inherit" />
+                      </IconButton>
+                      <IconButton
+                        aria-label="sort name descending"
+                        size="small"
+                        onClick={() =>
+                          setSortData({
+                            ...sortData,
+                            name: { sort: true, ascending: false },
+                            startDate: { sort: false, ascending: false },
+                          })
+                        }
+                      >
+                        <ExpandMoreIcon fontSize="inherit" />
+                      </IconButton>
+                    </div>
+                  </div>
                 </TableCell>
+
+                {/* Starting Date */}
                 <TableCell className={classes.headerStatus}>
-                  Starting Date
+                  <div style={{ display: 'flex', flexDirection: 'row' }}>
+                    <Typography style={{ paddingTop: 10 }}>
+                      Starting Date
+                    </Typography>
+                    <div className={classes.sortDiv}>
+                      <IconButton
+                        aria-label="sort last run ascending"
+                        size="small"
+                        onClick={() =>
+                          setSortData({
+                            ...sortData,
+                            startDate: { sort: true, ascending: true },
+                            name: { sort: false, ascending: true },
+                          })
+                        }
+                      >
+                        <ExpandLessIcon fontSize="inherit" />
+                      </IconButton>
+                      <IconButton
+                        aria-label="sort last run descending"
+                        size="small"
+                        onClick={() =>
+                          setSortData({
+                            ...sortData,
+                            startDate: { sort: true, ascending: false },
+                            name: { sort: false, ascending: true },
+                          })
+                        }
+                      >
+                        <ExpandMoreIcon fontSize="inherit" />
+                      </IconButton>
+                    </div>
+                  </div>
                 </TableCell>
+
+                {/* Regularity */}
                 <TableCell>
                   <Typography className={classes.regularity}>
                     Regularity
                   </Typography>
                 </TableCell>
+
+                {/* Cluster */}
                 <TableCell>
                   <Typography className={classes.targetCluster}>
                     Cluster
                   </Typography>
                 </TableCell>
+
+                {/* Show Experiments */}
                 <TableCell>
                   <Typography className={classes.showExp}>
                     Show Experiments
@@ -164,9 +285,9 @@ const ScheduleWorkflow = () => {
                     paginationData.pageNo * paginationData.rowsPerPage +
                       paginationData.rowsPerPage
                   )
-                  .map((data: any) => (
+                  .map((data) => (
                     <TableRow key={data.workflow_run_id}>
-                      <TableData data={data} />
+                      <TableData data={data} deleteRow={deleteRow} />
                     </TableRow>
                   ))
               ) : (
@@ -179,6 +300,8 @@ const ScheduleWorkflow = () => {
             </TableBody>
           </Table>
         </TableContainer>
+
+        {/* Pagination Section */}
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
