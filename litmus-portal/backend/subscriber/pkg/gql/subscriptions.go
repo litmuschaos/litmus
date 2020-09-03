@@ -83,7 +83,7 @@ func ClusterConnect(clusterData map[string]string) {
 			// send pod logs
 			logrus.Print("LOG REQUEST ", podRequest)
 			SendPodLogs(clusterData, podRequest)
-		} else if strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType) == "create" {
+		} else if strings.Index("create update delete get", strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType)) >= 0 {
 			logrus.Print("WORKFLOW REQUEST ", r.Payload.Data.ClusterConnect.Action)
 			_, err = operations.ClusterOperations(r.Payload.Data.ClusterConnect.Action.K8SManifest, r.Payload.Data.ClusterConnect.Action.RequestType)
 			if err != nil {
