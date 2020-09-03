@@ -55,8 +55,7 @@ func ClusterConnect(clusterData map[string]string) {
 	for {
 		_, message, err := c.ReadMessage()
 		if err != nil {
-			log.Println("read:", err)
-			return
+			log.Fatal("SUBSCRIPTION ERROR : ", err)
 		}
 		var r types.RawData
 		err = json.Unmarshal(message, &r)
@@ -69,6 +68,10 @@ func ClusterConnect(clusterData map[string]string) {
 		if r.Type != "data" {
 			continue
 		}
+		if r.Payload.Errors != nil {
+			log.Fatal("ERROR: ", string(message))
+		}
+
 		if strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType) == "logs" {
 			podRequest := types.PodLogRequest{
 				RequestID: r.Payload.Data.ClusterConnect.ProjectID,
@@ -80,7 +83,7 @@ func ClusterConnect(clusterData map[string]string) {
 			// send pod logs
 			logrus.Print("LOG REQUEST ", podRequest)
 			SendPodLogs(clusterData, podRequest)
-		} else {
+		} else if strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType) == "create" {
 			logrus.Print("WORKFLOW REQUEST ", r.Payload.Data.ClusterConnect.Action)
 			_, err = operations.ClusterOperations(r.Payload.Data.ClusterConnect.Action.K8SManifest, r.Payload.Data.ClusterConnect.Action.RequestType)
 			if err != nil {
