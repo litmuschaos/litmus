@@ -4,6 +4,7 @@ import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import InfoFilledWrap from '../../components/InfoFilled';
 import QuickActionCard from '../../components/QuickActionCard';
 import WelcomeModal from '../../components/WelcomeModal';
@@ -15,6 +16,7 @@ import { RootState } from '../../redux/reducers';
 import useStyles from './style';
 
 const CreateWorkflowCard = () => {
+  const { t } = useTranslation();
   const classes = useStyles();
   const history = useHistory();
   const routeChange = () => {
@@ -31,10 +33,10 @@ const CreateWorkflowCard = () => {
     >
       <CardActionArea>
         <Typography className={classes.createWorkflowHeading}>
-          Let&#39;s Start
+          {t('home.workflow.heading')}
         </Typography>
         <Typography className={classes.createWorkflowTitle}>
-          Schedule your first workflow
+          {t('home.workflow.info')}
         </Typography>
         <ArrowForwardIcon className={classes.arrowForwardIcon} />
       </CardActionArea>
@@ -47,6 +49,7 @@ const HomePage = () => {
   const { userData } = useSelector((state: RootState) => state);
   const { name } = userData;
   const classes = useStyles();
+  const { t } = useTranslation();
 
   const user = useActions(UserActions);
 
@@ -88,29 +91,24 @@ const HomePage = () => {
       <div className={classes.rootContainer}>
         <div className={classes.root}>
           <Typography className={classes.userName}>
-            Welcome,
+            {t('home.heading')}
             <strong>{name}</strong>
           </Typography>
           <div className={classes.headingDiv}>
             <div className={classes.mainDiv}>
               <div>
                 <Typography className={classes.mainHeading}>
-                  <strong>Congratulations!</strong>
+                  <strong>{t('home.subHeading1')}</strong>
                 </Typography>
                 <Typography className={classes.mainResult}>
-                  <strong>
-                    You have established your own first project on Litmus
-                    portal.
-                  </strong>
+                  <strong>{t('home.subHeading2')}</strong>
                 </Typography>
                 <Typography className={classes.mainDesc}>
-                  Now this is successfully running on your Kubernetes cluster.
-                  Once you schedule chaos workflows, reliability analytics are
-                  displayed here.
+                  {t('home.subHeading3')}
                 </Typography>
                 <Button variant="contained" className={classes.predefinedBtn}>
                   <Typography variant="subtitle1">
-                    See pre-defined workflows
+                    {t('home.button1')}
                   </Typography>
                 </Button>
               </div>
@@ -126,12 +124,12 @@ const HomePage = () => {
             <div className={classes.statDiv}>
               <div className={classes.btnHeaderDiv}>
                 <Typography className={classes.statsHeading}>
-                  <strong>How busy Litmus Project is?</strong>
+                  <strong>{t('home.analytics.heading')}</strong>
                 </Typography>
                 <Button className={classes.seeAllBtn}>
                   <div className={classes.btnSpan}>
                     <Typography className={classes.btnText}>
-                      See more
+                      {t('home.analytics.moreInfo')}
                     </Typography>
                     <img src="icons/next.png" alt="next" />
                   </div>

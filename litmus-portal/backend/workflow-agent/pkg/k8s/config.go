@@ -1,10 +1,9 @@
 package k8s
 
 import (
-	"os"
-
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
+	"os"
 )
 
 // get k8s config for creating clientsets
