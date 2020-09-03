@@ -2,6 +2,8 @@
 #
 # https://gqlgen.com/getting-started/
 
+directive @authorized on FIELD_DEFINITION
+
 type Cluster {
   cluster_id: ID!
   project_id: ID!
@@ -144,18 +146,18 @@ input PodLogRequest{
 }
 
 type Query{
-  getWorkFlowRuns(project_id: String!): [WorkflowRun!]!
+  getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
 
-  getCluster(project_id: String!, cluster_type: String): [Cluster!]!
+  getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
 
-  getUser(username: String!): User!
+  getUser(username: String!): User! @authorized
 
-  getProject(projectID: String!): Project!
+  getProject(projectID: String!): Project! @authorized
 }
 
 type Mutation{
   #It is used to create external cluster.
-  userClusterReg(clusterInput: ClusterInput!): String!
+  userClusterReg(clusterInput: ClusterInput!): String! @authorized
 
   #It is used to confirm the subscriber registration
   clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
@@ -164,25 +166,25 @@ type Mutation{
   newClusterEvent(clusterEvent: ClusterEventInput!): String!
 
   #It is used to create chaosworkflow
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
 
   chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
 
   podLog(log: PodLog!): String!
 
-  createUser(user: UserInput!): User!
+  createUser(user: UserInput!): User! @authorized
 
-  deleteChaosWorkflow(workflowid: String!): Boolean!
+  deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
 }
 
 type Subscription{
   #It is used to listen cluster events from the graphql server
-  clusterEventListener(project_id: String!): ClusterEvent!
+  clusterEventListener(project_id: String!): ClusterEvent! @authorized
 
   #It is used to listen cluster operation request from the graphql server
   clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
 
-  workflowEventListener(project_id: String!): WorkflowRun!
+  workflowEventListener(project_id: String!): WorkflowRun! @authorized
 
-  getPodLog(podDetails: PodLogRequest!): PodLogResponse!
+  getPodLog(podDetails: PodLogRequest!): PodLogResponse! @authorized
 }
