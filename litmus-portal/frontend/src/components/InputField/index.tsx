@@ -1,35 +1,40 @@
-import { TextField } from '@material-ui/core';
-import React from 'react';
+import { TextField, OutlinedInputProps } from '@material-ui/core';
+import React, { useState } from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import useStyles from './styles';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import { useStyles, useStylesLitmus } from './styles';
 
 interface InputFieldProps {
   label: string;
-  name: string;
   type?: string;
-  password?: boolean;
+  helperText?: string;
+  validationError: boolean;
+  success?: boolean;
   value: string;
   required: boolean;
-  formError: boolean;
+  iconType?: string | undefined;
   handleChange: (event: React.ChangeEvent<{ value: string }>) => void;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
   type,
   label,
-  name,
   value,
-  password,
+  helperText,
+  validationError,
+  success,
   required,
-  formError,
+  iconType,
   handleChange,
 }) => {
-  const classes = useStyles();
+  const LitmusTextFieldStylesExternal = useStyles();
 
-  const [showPassword, setShowPassword] = React.useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  const classes = useStylesLitmus(success);
 
   const handleClickShowPassword = () => {
     setShowPassword(true);
@@ -42,15 +47,20 @@ const InputField: React.FC<InputFieldProps> = ({
     setShowPassword(false);
   };
 
-  if (password) {
+  if (type === 'password' && validationError === false) {
     return (
-      <div className={classes.passwordDiv}>
-        <TextField
-          label={label}
-          type={showPassword ? 'text' : 'password'}
-          value={value}
-          onChange={handleChange}
-          InputProps={{
+      <TextField
+        className={LitmusTextFieldStylesExternal.inputArea}
+        label={label}
+        helperText={helperText}
+        value={value}
+        type={showPassword ? 'text' : 'password'}
+        required={required}
+        onChange={handleChange}
+        variant="filled"
+        InputProps={
+          {
+            classes,
             disableUnderline: true,
             endAdornment: (
               <InputAdornment position="end">
@@ -63,26 +73,256 @@ const InputField: React.FC<InputFieldProps> = ({
                 </IconButton>
               </InputAdornment>
             ),
-          }}
-          className={`${classes.inputArea} ${
-            formError ? classes.error : classes.success
-          }`}
-        />
-      </div>
+          } as Partial<OutlinedInputProps>
+        }
+      />
     );
   }
+  if (type === 'password' && validationError === true) {
+    return (
+      <TextField
+        className={LitmusTextFieldStylesExternal.inputArea}
+        error
+        label={label}
+        helperText={helperText}
+        value={value}
+        type={showPassword ? 'text' : 'password'}
+        required={required}
+        onChange={handleChange}
+        variant="filled"
+        InputProps={
+          {
+            classes,
+            disableUnderline: true,
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                >
+                  {showPassword ? <Visibility /> : <VisibilityOff />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          } as Partial<OutlinedInputProps>
+        }
+      />
+    );
+  }
+
+  if (iconType) {
+    if (iconType === 'iconLeft' && validationError === false) {
+      return (
+        <TextField
+          className={LitmusTextFieldStylesExternal.inputArea}
+          label={label}
+          helperText={helperText}
+          value={value}
+          type={type}
+          required={required}
+          onChange={handleChange}
+          variant="filled"
+          InputProps={
+            {
+              classes,
+              disableUnderline: true,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <AccountCircle />
+                </InputAdornment>
+              ),
+            } as Partial<OutlinedInputProps>
+          }
+        />
+      );
+    }
+    if (iconType === 'iconLeft' && validationError === true) {
+      return (
+        <TextField
+          className={LitmusTextFieldStylesExternal.inputArea}
+          error
+          label={label}
+          helperText={helperText}
+          value={value}
+          type={type}
+          required={required}
+          onChange={handleChange}
+          variant="filled"
+          InputProps={
+            {
+              classes,
+              disableUnderline: true,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <AccountCircle />
+                </InputAdornment>
+              ),
+            } as Partial<OutlinedInputProps>
+          }
+        />
+      );
+    }
+    if (iconType === 'iconRight' && validationError === false) {
+      return (
+        <TextField
+          className={LitmusTextFieldStylesExternal.inputArea}
+          label={label}
+          helperText={helperText}
+          value={value}
+          type={type}
+          required={required}
+          onChange={handleChange}
+          variant="filled"
+          InputProps={
+            {
+              classes,
+              disableUnderline: true,
+              endAdornment: (
+                <InputAdornment position="end">
+                  <AccountCircle />
+                </InputAdornment>
+              ),
+            } as Partial<OutlinedInputProps>
+          }
+        />
+      );
+    }
+    if (
+      iconType === 'iconRight' &&
+      validationError === false &&
+      success === true
+    ) {
+      return (
+        <TextField
+          className={LitmusTextFieldStylesExternal.inputArea}
+          label={label}
+          helperText={helperText}
+          value={value}
+          type={type}
+          required={required}
+          onChange={handleChange}
+          variant="filled"
+          InputProps={
+            {
+              classes,
+              disableUnderline: true,
+              endAdornment: (
+                <InputAdornment position="end">
+                  <AccountCircle />
+                </InputAdornment>
+              ),
+            } as Partial<OutlinedInputProps>
+          }
+        />
+      );
+    }
+    if (iconType === 'iconRight' && validationError === true) {
+      return (
+        <TextField
+          className={LitmusTextFieldStylesExternal.inputArea}
+          error
+          label={label}
+          helperText={helperText}
+          value={value}
+          type={type}
+          required={required}
+          onChange={handleChange}
+          variant="filled"
+          InputProps={
+            {
+              classes,
+              disableUnderline: true,
+              endAdornment: (
+                <InputAdornment position="end">
+                  <img src="/icons/closeFilled.svg" alt="Error" />
+                </InputAdornment>
+              ),
+            } as Partial<OutlinedInputProps>
+          }
+        />
+      );
+    }
+    if (iconType === 'iconLeftRight' && validationError === false) {
+      return (
+        <TextField
+          className={LitmusTextFieldStylesExternal.inputArea}
+          label={label}
+          helperText={helperText}
+          value={value}
+          type={type}
+          required={required}
+          onChange={handleChange}
+          variant="filled"
+          InputProps={
+            {
+              classes,
+              disableUnderline: true,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <AccountCircle />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <AccountCircle />
+                </InputAdornment>
+              ),
+            } as Partial<OutlinedInputProps>
+          }
+        />
+      );
+    }
+    if (iconType === 'iconLeftRight' && validationError === true) {
+      return (
+        <TextField
+          className={LitmusTextFieldStylesExternal.inputArea}
+          error
+          label={label}
+          helperText={helperText}
+          value={value}
+          type={type}
+          required={required}
+          onChange={handleChange}
+          variant="filled"
+          InputProps={
+            {
+              classes,
+              disableUnderline: true,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <AccountCircle />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <img src="/icons/closeFilled.svg" alt="Error" />
+                </InputAdornment>
+              ),
+            } as Partial<OutlinedInputProps>
+          }
+        />
+      );
+    }
+  }
+
   return (
     <TextField
+      className={LitmusTextFieldStylesExternal.inputArea}
+      error={validationError}
       label={label}
-      name={name}
+      helperText={helperText}
       value={value}
       type={type}
       required={required}
-      InputProps={{ disableUnderline: true }}
       onChange={handleChange}
-      className={`${classes.inputArea} ${
-        formError ? classes.error : classes.success
-      }`}
+      variant="filled"
+      InputProps={
+        {
+          classes,
+          disableUnderline: true,
+        } as Partial<OutlinedInputProps>
+      }
     />
   );
 };

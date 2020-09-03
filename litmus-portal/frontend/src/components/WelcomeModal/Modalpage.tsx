@@ -29,7 +29,6 @@ const ModalPage: React.FC<ModalDataProps> = ({
       <div className={classes.heading}>
         {t('welcomeModel.title')}
         <br />
-        {/* Pass here corrosponding name of user */}
         <strong> {setName} </strong>
       </div>
       <div className={classes.infoHeading}>
