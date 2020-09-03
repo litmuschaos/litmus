@@ -159,32 +159,33 @@ type Mutation{
   #It is used to create external cluster.
   userClusterReg(clusterInput: ClusterInput!): String! @authorized
 
+  #It is used to create chaosworkflow
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
+
+  createUser(user: UserInput!): User! @authorized
+
+  deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
+
   #It is used to confirm the subscriber registration
   clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
 
   #It is used to send cluster related events from the subscriber
   newClusterEvent(clusterEvent: ClusterEventInput!): String!
 
-  #It is used to create chaosworkflow
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
-
   chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
 
   podLog(log: PodLog!): String!
 
-  createUser(user: UserInput!): User! @authorized
-
-  deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
 }
 
 type Subscription{
   #It is used to listen cluster events from the graphql server
   clusterEventListener(project_id: String!): ClusterEvent! @authorized
 
-  #It is used to listen cluster operation request from the graphql server
-  clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
-
   workflowEventListener(project_id: String!): WorkflowRun! @authorized
 
   getPodLog(podDetails: PodLogRequest!): PodLogResponse! @authorized
+
+  #It is used to listen cluster operation request from the graphql server
+  clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
 }

@@ -28,24 +28,8 @@ func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput mode
 	return mutations.ClusterRegister(clusterInput)
 }
 
-func (r *mutationResolver) ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error) {
-	return mutations.ConfirmClusterRegistration(identity, *store)
-}
-
-func (r *mutationResolver) NewClusterEvent(ctx context.Context, clusterEvent model.ClusterEventInput) (string, error) {
-	return mutations.NewEvent(clusterEvent, *store)
-}
-
 func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
 	return mutations.CreateChaosWorkflow(&input, *store)
-}
-
-func (r *mutationResolver) ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error) {
-	return mutations.WorkFlowRunHandler(workflowData, *store)
-}
-
-func (r *mutationResolver) PodLog(ctx context.Context, log model.PodLog) (string, error) {
-	return mutations.LogsHandler(log, *store)
 }
 
 func (r *mutationResolver) CreateUser(ctx context.Context, user model.UserInput) (*model.User, error) {
@@ -54,6 +38,22 @@ func (r *mutationResolver) CreateUser(ctx context.Context, user model.UserInput)
 
 func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid string) (bool, error) {
 	return database.DeleteChaosWorkflow(workflowid)
+}
+
+func (r *mutationResolver) ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error) {
+	return mutations.ConfirmClusterRegistration(identity, *store)
+}
+
+func (r *mutationResolver) NewClusterEvent(ctx context.Context, clusterEvent model.ClusterEventInput) (string, error) {
+	return mutations.NewEvent(clusterEvent, *store)
+}
+
+func (r *mutationResolver) ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error) {
+	return mutations.WorkFlowRunHandler(workflowData, *store)
+}
+
+func (r *mutationResolver) PodLog(ctx context.Context, log model.PodLog) (string, error) {
+	return mutations.LogsHandler(log, *store)
 }
 
 func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {
@@ -93,6 +93,35 @@ func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, project
 	}()
 
 	return clusterEvent, nil
+}
+
+func (r *subscriptionResolver) WorkflowEventListener(ctx context.Context, projectID string) (<-chan *model.WorkflowRun, error) {
+	log.Print("NEW WORKFLOW EVENT LISTENER", projectID)
+	workflowEvent := make(chan *model.WorkflowRun, 1)
+	store.Mutex.Lock()
+	store.WorkflowEventPublish[projectID] = append(store.WorkflowEventPublish[projectID], workflowEvent)
+	store.Mutex.Unlock()
+	go func() {
+		<-ctx.Done()
+		log.Print("CLOSED WORKFLOW LISTENER", projectID)
+	}()
+	return workflowEvent, nil
+}
+
+func (r *subscriptionResolver) GetPodLog(ctx context.Context, podDetails model.PodLogRequest) (<-chan *model.PodLogResponse, error) {
+	log.Print("NEW LOG REQUEST", podDetails.ClusterID, podDetails.PodName)
+	workflowLog := make(chan *model.PodLogResponse, 1)
+	reqID := uuid.New()
+	store.Mutex.Lock()
+	store.WorkflowLog[reqID.String()] = workflowLog
+	store.Mutex.Unlock()
+	go func() {
+		<-ctx.Done()
+		log.Print("CLOSED LOG LISTENER", podDetails.ClusterID, podDetails.PodName)
+		delete(store.WorkflowLog, reqID.String())
+	}()
+	go queries.GetLogs(reqID.String(), podDetails, *store)
+	return workflowLog, nil
 }
 
 func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo model.ClusterIdentity) (<-chan *model.ClusterAction, error) {
@@ -139,35 +168,6 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 	verifiedCluster.IsActive = true
 	subscriptions.SendClusterEvent("cluster-status", "Cluster Live", "Cluster is Live and Connected", model.Cluster(*verifiedCluster), *store)
 	return clusterAction, nil
-}
-
-func (r *subscriptionResolver) WorkflowEventListener(ctx context.Context, projectID string) (<-chan *model.WorkflowRun, error) {
-	log.Print("NEW WORKFLOW EVENT LISTENER", projectID)
-	workflowEvent := make(chan *model.WorkflowRun, 1)
-	store.Mutex.Lock()
-	store.WorkflowEventPublish[projectID] = append(store.WorkflowEventPublish[projectID], workflowEvent)
-	store.Mutex.Unlock()
-	go func() {
-		<-ctx.Done()
-		log.Print("CLOSED WORKFLOW LISTENER", projectID)
-	}()
-	return workflowEvent, nil
-}
-
-func (r *subscriptionResolver) GetPodLog(ctx context.Context, podDetails model.PodLogRequest) (<-chan *model.PodLogResponse, error) {
-	log.Print("NEW LOG REQUEST", podDetails.ClusterID, podDetails.PodName)
-	workflowLog := make(chan *model.PodLogResponse, 1)
-	reqID := uuid.New()
-	store.Mutex.Lock()
-	store.WorkflowLog[reqID.String()] = workflowLog
-	store.Mutex.Unlock()
-	go func() {
-		<-ctx.Done()
-		log.Print("CLOSED LOG LISTENER", podDetails.ClusterID, podDetails.PodName)
-		delete(store.WorkflowLog, reqID.String())
-	}()
-	go queries.GetLogs(reqID.String(), podDetails, *store)
-	return workflowLog, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.
