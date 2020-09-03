@@ -1,27 +1,27 @@
-import React, { useState } from 'react';
 import { useQuery } from '@apollo/client';
-import SearchIcon from '@material-ui/icons/Search';
 import {
-  InputBase,
-  InputAdornment,
   FormControl,
+  InputAdornment,
+  InputBase,
   InputLabel,
-  Select,
   MenuItem,
-  Typography,
-  TableContainer,
+  Select,
   Table,
-  TableHead,
-  TableRow,
-  TableCell,
   TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
   TablePagination,
+  TableRow,
+  Typography,
 } from '@material-ui/core';
-import useStyles from './styles';
+import SearchIcon from '@material-ui/icons/Search';
+import React, { useState } from 'react';
 import { WORKFLOW_DETAILS } from '../../../../graphql';
-import TableData from './TableData';
 import { Workflow, WorkflowDataVars } from '../../../../models/workflowData';
 import Loader from '../../../Loader';
+import useStyles from './styles';
+import TableData from './TableData';
 
 interface FilterOption {
   search: string;
@@ -33,7 +33,7 @@ interface PaginationData {
   rowsPerPage: number;
 }
 
-const ScheduleWorkflow = () => {
+const BrowseSchedule = () => {
   const classes = useStyles();
 
   // Apollo query to get the scheduled data
@@ -164,7 +164,7 @@ const ScheduleWorkflow = () => {
                     paginationData.pageNo * paginationData.rowsPerPage +
                       paginationData.rowsPerPage
                   )
-                  .map((data: any) => (
+                  .map((data) => (
                     <TableRow key={data.workflow_run_id}>
                       <TableData data={data} />
                     </TableRow>
@@ -201,4 +201,4 @@ const ScheduleWorkflow = () => {
   );
 };
 
-export default ScheduleWorkflow;
+export default BrowseSchedule;

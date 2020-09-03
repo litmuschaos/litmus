@@ -1,22 +1,23 @@
-import React from 'react';
 import {
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  Popover,
   TableCell,
   Typography,
-  IconButton,
-  MenuItem,
-  Menu,
-  Popover,
-  Button,
 } from '@material-ui/core';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import useStyles from './styles';
-import LinearProgressBar from '../../ReturningHome/ProgressBar/LinearProgressBar';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import React from 'react';
+import { WorkflowRun } from '../../../../models/workflowData';
 import { history } from '../../../../redux/configureStore';
+import LinearProgressBar from '../../ReturningHome/ProgressBar/LinearProgressBar';
+import useStyles from './styles';
 
 interface TableDataProps {
-  data: any;
+  data: WorkflowRun;
 }
 
 const TableData: React.FC<TableDataProps> = ({ data }) => {
@@ -165,10 +166,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           <MenuItem
             value="Workflow"
             onClick={() =>
-              history.push({
-                pathname: '/schedule',
-                state: data,
-              })
+              history.push(`/workflows/${data.workflow_name}/schedule`)
             }
           >
             <div className={classes.expDiv}>

@@ -14,9 +14,7 @@ const ErrorPage = lazy(() => import('../../pages/ErrorPage'));
 const Workflows = lazy(() => import('../../pages/Workflows'));
 const CreateWorkflow = lazy(() => import('../../pages/CreateWorkflow'));
 const LoginPage = lazy(() => import('../../pages/LoginPage'));
-const WorkflowUnderground = lazy(() =>
-  import('../../pages/WorkflowUnderground')
-);
+const WorkflowDetails = lazy(() => import('../../pages/WorkflowDetails'));
 const BrowseTemplate = lazy(() =>
   import('../../components/Sections/ChaosWorkflows/BrowseTemplate')
 );
@@ -49,18 +47,27 @@ const Routes: React.FC<RoutesProps> = ({ userData }) => {
         <Route exact path="/login" component={LoginPage} />
         <Route exact path="/workflows" component={Workflows} />
         <Route exact path="/create-workflow" component={CreateWorkflow} />
-        <Route exact path="/schedule" component={SchedulePage} />
-        <Route
-          exact
-          path="/workflows/workflow-underground"
-          component={WorkflowUnderground}
-        />
-        <Route exact path="/community" component={Community} />
         <Route
           exact
           path="/workflows/:workflowName"
+          component={WorkflowDetails}
+        />
+        <Route
+          exact
+          path="/workflows/:workflowName/details"
+          component={WorkflowDetails}
+        />
+        <Route
+          exact
+          path="/workflows/:scheduleId/schedule"
+          component={SchedulePage}
+        />
+        <Route
+          exact
+          path="/workflows/:templateName/template"
           component={BrowseTemplate}
         />
+        <Route exact path="/community" component={Community} />
         <Route exact path="/settings" component={Settings} />
         <Route exact path="/404" component={ErrorPage} />
         <Redirect to="/404" />

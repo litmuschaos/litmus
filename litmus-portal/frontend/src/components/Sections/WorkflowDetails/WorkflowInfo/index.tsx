@@ -4,7 +4,7 @@ import { ExecutionData } from '../../../../models/workflowData';
 import timeDifference from '../../../../utils/datesModifier';
 import useStyles from './styles';
 
-interface WorkflowDetailsProps {
+interface WorkflowInfoProps {
   workflow_name: string;
   execution_data: ExecutionData;
   cluster_name: string;
@@ -15,7 +15,7 @@ interface SidebarState {
   executedNodes: string[];
 }
 
-const WorkflowDetails: React.FC<WorkflowDetailsProps> = ({
+const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
   workflow_name,
   execution_data,
   cluster_name,
@@ -155,4 +155,4 @@ const WorkflowDetails: React.FC<WorkflowDetailsProps> = ({
   );
 };
 
-export default WorkflowDetails;
+export default WorkflowInfo;
