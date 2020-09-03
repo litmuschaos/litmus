@@ -3,6 +3,7 @@ import MobileStepper from '@material-ui/core/MobileStepper';
 import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../Button/ButtonFilled';
 import config from '../../config';
 import { CREATE_USER } from '../../graphql';
@@ -22,6 +23,7 @@ interface CStepperProps {
 }
 const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   const { userData } = useSelector((state: RootState) => state);
   const [activeStep, setActiveStep] = React.useState<number>(0);
@@ -181,7 +183,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
             isDisabled={isError.current}
             handleClick={handleNext}
           >
-            <div>Continue</div>
+            <div>{t('welcomeModel.button.continue')}</div>
           </ButtonFilled>
         </div>
       );
@@ -194,7 +196,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
             handleClick={handleBack}
             data-cy="Skip"
           >
-            <>Skip</>
+            <>{t('welcomeModel.button.skip')}</>
           </ButtonOutline>
           <ButtonFilled
             isPrimary
@@ -202,7 +204,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
             handleClick={handleSubmit}
             data-cy="Start"
           >
-            <div>Let&#39;s Start</div>
+            <div>{t('welcomeModel.button.letsStart')}</div>
           </ButtonFilled>
         </div>
       );
@@ -214,7 +216,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
           handleClick={handleBack}
           data-cy="Back"
         >
-          <>Back</>
+          <>{t('welcomeModel.button.back')}</>
         </ButtonOutline>
         <ButtonFilled
           isPrimary
@@ -222,7 +224,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
           handleClick={handleNext}
           data-cy="Continue"
         >
-          <div>Continue</div>
+          <div>{t('welcomeModel.button.continue')}</div>
         </ButtonFilled>
       </div>
     );
@@ -238,7 +240,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
               <div>
                 <div className={classes.inputArea} data-cy="InputProjectName">
                   <InputField
-                    label="Project Name"
+                    label={t('welcomeModel.case-0.label')}
                     value={info.projectName}
                     required
                     helperText={
@@ -259,7 +261,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
               </div>
             }
             setName={userData.name}
-            setText="Do you want to name your project?"
+            setText={t('welcomeModel.case-0.info')}
           />
         );
       case 1:
@@ -269,7 +271,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
               <div>
                 <div className={classes.inputArea} data-cy="InputName">
                   <InputField
-                    label="Full Name"
+                    label={t('welcomeModel.case-1.label')}
                     value={info.name}
                     required
                     helperText={
@@ -287,7 +289,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
               </div>
             }
             setName={info.name}
-            setText="How do i call you?"
+            setText={t('welcomeModel.case-1.info')}
           />
         );
       case 2:
@@ -300,7 +302,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
               >
                 <div className={classes.passwordArea}>
                   <InputField
-                    label="Password"
+                    label={t('welcomeModel.case-2.label')}
                     type="password"
                     required
                     validationError={false}
@@ -316,7 +318,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                 </div>
                 <div className={classes.passwordArea}>
                   <InputField
-                    label="Confirm Password"
+                    label={t('welcomeModel.case-2.cnfLabel')}
                     type="password"
                     required
                     value={values.confirmPassword}
@@ -348,7 +350,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
               </div>
             }
             setName={info.name}
-            setText="Set your new Password"
+            setText={t('welcomeModel.case-2.info')}
           />
         );
       case 3:
@@ -358,7 +360,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
               <div>
                 <div className={classes.inputArea} data-cy="InputEmail">
                   <InputField
-                    label="Email Address"
+                    label={t('welcomeModel.case-3.label')}
                     required
                     value={info.email}
                     helperText={
@@ -375,7 +377,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
             }
             // pass here corresponding name of user
             setName={info.name}
-            setText="You can change your current mail (optional)"
+            setText={t('welcomeModel.case-3.info')}
           />
         );
       default:

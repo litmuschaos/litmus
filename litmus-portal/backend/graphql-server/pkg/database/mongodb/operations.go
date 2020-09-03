@@ -109,10 +109,24 @@ func GetClusterWithProjectID(project_id string, cluster_type *string) ([]*Cluste
 
 func InsertChaosWorkflow(chaosWorkflow ChaosWorkFlowInput) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	_, err := workflowRunCollection.InsertOne(ctx, chaosWorkflow)
+	_, err := workflowCollection.InsertOne(ctx, chaosWorkflow)
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func DeleteChaosWorkflow(workflowid string) (bool, error) {
+	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
+	res, err := workflowCollection.DeleteOne(ctx, bson.M{"workflow_id": workflowid})
+
+	if err != nil {
+		return false, err
+	} else if res.DeletedCount == 0 {
+		return false, nil
+	}
+
+	log.Println("Successfully delete %v", workflowid)
+	return true, nil
 }

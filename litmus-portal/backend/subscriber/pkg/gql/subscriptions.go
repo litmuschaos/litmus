@@ -2,13 +2,16 @@ package gql
 
 import (
 	"encoding/json"
-	"log"
-	"net/url"
-	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/cluster"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/cluster/operations"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/types"
+	"github.com/sirupsen/logrus"
+
+	"log"
+	"net/url"
+	"strings"
+	"time"
 )
 
 func ClusterConnect(clusterData map[string]string) {
@@ -66,9 +69,23 @@ func ClusterConnect(clusterData map[string]string) {
 		if r.Type != "data" {
 			continue
 		}
-		_, err = cluster.ClusterOperations(r.Payload.Data.ClusterConnect.Action.K8SManifest, r.Payload.Data.ClusterConnect.Action.RequestType)
-		if err != nil {
-			log.Fatal(err)
+		if strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType) == "logs" {
+			podRequest := types.PodLogRequest{
+				RequestID: r.Payload.Data.ClusterConnect.ProjectID,
+			}
+			err = json.Unmarshal([]byte(r.Payload.Data.ClusterConnect.Action.ExternalData.(string)), &podRequest)
+			if err != nil {
+				logrus.WithError(err).Fatal("error reading cluster-action request [external-data]")
+			}
+			// send pod logs
+			logrus.Print("LOG REQUEST ", podRequest)
+			SendPodLogs(clusterData, podRequest)
+		} else {
+			logrus.Print("WORKFLOW REQUEST ", r.Payload.Data.ClusterConnect.Action)
+			_, err = operations.ClusterOperations(r.Payload.Data.ClusterConnect.Action.K8SManifest, r.Payload.Data.ClusterConnect.Action.RequestType)
+			if err != nil {
+				logrus.WithError(err).Fatal("error performing cluster operation")
+			}
 		}
 	}
 }

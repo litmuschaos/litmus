@@ -106,7 +106,7 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		WorkflowRunID: input.WorkflowRunID,
 		WorkflowName:  input.WorkflowName,
 		ExecutionData: input.ExecutionData,
-		WorkflowID:    "000000000000",
+		WorkflowID:    input.WorkflowID,
 	}
 
 	subscriptions.SendWorkflowEvent(newWorkflowRun, r)

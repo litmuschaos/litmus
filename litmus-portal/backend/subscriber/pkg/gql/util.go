@@ -2,10 +2,11 @@ package gql
 
 import (
 	"encoding/json"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/cluster/logs"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/types"
 	"strconv"
 	"strings"
+
+	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/cluster/logs"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/types"
 )
 
 // process event data into proper format acceptable by gql
@@ -28,7 +29,7 @@ func GenerateWorkflowPayload(cid, accessKey string, wfEvent types.WorkflowEvent)
 	if err != nil {
 		return nil, err
 	}
-	mutation := `{ workflow_run_id: \"` + wfEvent.UID + `\", workflow_name:\"` + wfEvent.Name + `\", cluster_id: ` + clusterID + `, execution_data:\"` + processed[1:len(processed)-1] + `\"}`
+	mutation := `{ workflow_id: \"` + wfEvent.WorkflowID + `\", workflow_run_id: \"` + wfEvent.UID + `\", workflow_name:\"` + wfEvent.Name + `\", cluster_id: ` + clusterID + `, execution_data:\"` + processed[1:len(processed)-1] + `\"}`
 	var payload = []byte(`{"query":"mutation { chaosWorkflowRun(workflowData:` + mutation + ` )}"}`)
 	return payload, nil
 }
