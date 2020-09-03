@@ -75,7 +75,7 @@ func (r *queryResolver) GetCluster(ctx context.Context, projectID string, cluste
 
 func (r *queryResolver) GetUser(ctx context.Context, username string) (*model.User, error) {
 	// Use function as a middleware Validation()
-	file_handlers.UserHandler.GetCtx(ctx, username)
+	file_handlers.GetCtx(ctx, username)
 	return usermanagement.GetUser(ctx, username)
 }
 

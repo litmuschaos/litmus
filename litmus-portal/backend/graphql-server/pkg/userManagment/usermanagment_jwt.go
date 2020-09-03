@@ -14,8 +14,7 @@ var (
 
 //Validation ...
 func Validation(ctx context.Context, token string) bool {
-
-	// Parsing the token
+    // Parsing the token
 	tkn, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
