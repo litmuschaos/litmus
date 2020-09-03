@@ -1,11 +1,13 @@
 import { Button, Typography } from '@material-ui/core';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { UserData } from '../../../../../models/user';
+import { useQuery } from '@apollo/client';
+import { UserData, CurrentUserDetails } from '../../../../../models/user';
 import { RootState } from '../../../../../redux/reducers';
 import UserDetails from '../../UserManagementTab/CreateUser/UserDetails';
 import useStyles from './styles';
 import Unimodal from '../../../../../containers/layouts/Unimodal';
+import { GET_USER } from '../../../../../graphql';
 
 interface personaData {
   email: string;
@@ -16,10 +18,16 @@ interface personaData {
 // Displays the personals details on the "accounts" tab
 const PersonalDetails: React.FC = () => {
   const classes = useStyles();
-
   const userData: UserData = useSelector((state: RootState) => state.userData);
+  const { username } = userData;
 
-  const { name, email, username } = userData;
+  // Query to get user details
+  const { data } = useQuery<CurrentUserDetails>(GET_USER, {
+    variables: { username },
+  });
+
+  const name: string = data?.getUser.name as string;
+  const email: string = data?.getUser.email as string;
 
   const [personaData, setPersonaData] = React.useState<personaData>({
     email,

@@ -57,16 +57,23 @@ export const GET_USER = gql`
       username
       email
       name
-      project_id
-    }
-  }
-`;
-
-export const GET_PROJECT = gql`
-  query getProject($projectID: String!) {
-    getProject(projectID: $projectID) {
-      name
-      id
+      projects {
+        members {
+          user_id
+          user_name
+          role
+          invitation
+        }
+        name
+        id
+      }
+      company_name
+      updated_at
+      created_at
+      removed_at
+      is_email_verified
+      state
+      role
     }
   }
 `;

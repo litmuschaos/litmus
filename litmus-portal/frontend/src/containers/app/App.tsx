@@ -82,7 +82,7 @@ function App() {
         <div className={classes.root}>
           <div className={classes.appFrame}>
             {/* <Routes /> */}
-            <Routes userData={userData.token} />
+            <Routes userData={userData.token as string} />
           </div>
         </div>
       </Router>

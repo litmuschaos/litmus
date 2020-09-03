@@ -4,20 +4,28 @@ import Toolbar from '@material-ui/core/Toolbar';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import { useQuery } from '@apollo/client';
 import { Message, NotificationIds, Project } from '../../../models/header';
-import { UserData } from '../../../models/user';
+import { UserData, CurrentUserDetails } from '../../../models/user';
 import { RootState } from '../../../redux/reducers';
 import CustomBreadCrumbs from '../../../components/BreadCrumbs';
 import NotificationsDropdown from './NotificationDropdown';
 import ProfileDropdownSection from './ProfileDropdownSection';
 import useStyles from './styles';
+import { GET_USER } from '../../../graphql';
 
 const Header: React.FC = () => {
   const classes = useStyles();
-
   const userData: UserData = useSelector((state: RootState) => state.userData);
+  const { username } = userData;
 
-  const { name, email, username } = userData;
+  // Query to get user details
+  const { data } = useQuery<CurrentUserDetails>(GET_USER, {
+    variables: { username },
+  });
+
+  const name: string = data?.getUser.name as string;
+  const email: string = data?.getUser.email as string;
 
   // Fetch and Set Projects from backend.
 

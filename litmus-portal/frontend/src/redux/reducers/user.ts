@@ -5,13 +5,10 @@ import { setCookie } from '../../utils/cookies';
 import createReducer from './createReducer';
 
 const initialState: UserData = {
-  name: '',
-  email: '',
-  projectName: '',
+  selectedProjectID: '',
   token: '',
-  username: '',
+  username: 'admin',
   exp: 0,
-  projectID: '',
 };
 
 export const userData = createReducer<UserData>(initialState, {
