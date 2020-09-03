@@ -5,6 +5,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import InfoFilledWrap from '../../components/InfoFilled/index';
 import Scaffold from '../../containers/layouts/Scaffold/index';
 import useStyles from './styles';
@@ -25,6 +26,7 @@ const Header2: React.FC = ({ children }) => {
 };
 
 const Community: React.FC = () => {
+  const { t } = useTranslation();
   const classes = useStyles();
 
   return (
@@ -36,10 +38,8 @@ const Community: React.FC = () => {
 
         {/* Litmus Daily Insights */}
         <section className="Daily Insights">
-          <Header2>Daily Insights</Header2>
-          <Typography>
-            Stats for the Litmus community in the last 24 hours
-          </Typography>
+          <Header2>{t('community.heading')}</Header2>
+          <Typography>{t('community.headingDesc')}</Typography>
           <div className={classes.cardDiv}>
             <InfoFilledWrap />
           </div>
@@ -48,7 +48,7 @@ const Community: React.FC = () => {
         {/* Litmus Analytics Dashboard */}
         <section className="Litmus Analytics Dashboard">
           <div className={classes.LitmusAnalyticsBlock}>
-            <Header2>Periodic growth of Litmus</Header2>
+            <Header2>{t('community.analyticDesc')}</Header2>
             <div className={classes.LitmusAnalyticsDiv}>
               <Paper className={classes.paper}>
                 <CommunityAnalyticsPlot />
@@ -95,7 +95,7 @@ const Community: React.FC = () => {
         {/* Litmus Used Statistics all over the World */}
         <section className="Litmus Used Stats">
           <div className={classes.LitmusUsedBlock}>
-            <Header2>Where Litmus users are situated</Header2>
+            <Header2>{t('community.statsHeading')}</Header2>
             <div className={classes.LitmusUsedDiv}>
               <Paper className={classes.paper}>
                 <GeoMap />

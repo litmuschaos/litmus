@@ -52,6 +52,10 @@ func (r *mutationResolver) CreateUser(ctx context.Context, user model.UserInput)
 	return usermanagement.CreateUser(ctx, user)
 }
 
+func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid string) (bool, error) {
+	return database.DeleteChaosWorkflow(workflowid)
+}
+
 func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {
 	return queries.QueryWorkflowRuns(projectID)
 }

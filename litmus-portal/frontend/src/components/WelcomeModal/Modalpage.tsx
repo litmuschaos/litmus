@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
 
 const Icon = () => {
@@ -20,12 +21,13 @@ const ModalPage: React.FC<ModalDataProps> = ({
   setText,
   setName,
 }) => {
+  const { t } = useTranslation();
   const classes = useStyles();
   return (
     <div className={classes.insideModal}>
       <Icon />
       <div className={classes.heading}>
-        Welcome to Litmus Portal,
+        {t('welcomeModel.title')}
         <br />
         {/* Pass here corrosponding name of user */}
         <strong> {setName} </strong>

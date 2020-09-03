@@ -1,6 +1,7 @@
 import { useSubscription } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import SideBar from '../../components/Sections/WorkflowUnderground/WorkflowRepresentation';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { WORKFLOW_EVENTS } from '../../graphql';
@@ -20,6 +21,7 @@ interface WorkflowUndergroundProps {
 const WorkflowUnderground: React.FC<WorkflowUndergroundProps> = ({
   location,
 }) => {
+  const { t } = useTranslation();
   const classes = useStyles();
   const [data, setData] = useState<WorkflowRun>(location.state);
 
@@ -46,9 +48,7 @@ const WorkflowUnderground: React.FC<WorkflowUndergroundProps> = ({
               .split('-')
               .map((text) => `${capitalize(text)} `)}
           </Typography>
-          <Typography>
-            Click on test to see detailed log of your workflow
-          </Typography>
+          <Typography>{t('workflowUnderground.heading')}</Typography>
         </div>
         <SideBar
           workflow_name={data.workflow_name}

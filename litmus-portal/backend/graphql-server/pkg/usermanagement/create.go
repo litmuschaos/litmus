@@ -40,7 +40,7 @@ func CreateUser(ctx context.Context, user model.UserInput) (*model.User, error) 
 	}
 
 	outputUser := newUser.GetOutputUser()
-	outputUser.Project = append(outputUser.Project, project)
+	outputUser.Projects = append(outputUser.Projects, project)
 
 	active := os.Getenv("SELF_CLUSTER")
 	if strings.ToLower(active) == "true" && strings.ToLower(outputUser.Username) == "admin" {
@@ -64,6 +64,6 @@ func GetUser(ctx context.Context, username string) (*model.User, error) {
 		return nil, err
 	}
 
-	outputUser.Project = projects
+	outputUser.Projects = projects
 	return outputUser, nil
 }
