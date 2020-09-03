@@ -2,7 +2,7 @@ import { useSubscription } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import ArgoWorkflow from '../../components/Sections/WorkflowUnderground/ArgoWorkflow';
-import SideBar from '../../components/Sections/WorkflowUnderground/WorkflowRepresentation';
+import WorkflowDetails from '../../components/Sections/WorkflowUnderground/WorkflowRepresentation';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { WORKFLOW_EVENTS } from '../../graphql';
 import { LocationState } from '../../models/routerModel';
@@ -57,9 +57,9 @@ const WorkflowUnderground: React.FC<WorkflowUndergroundProps> = ({
             {...(JSON.parse(data.execution_data) as ExecutionData)}
           />
         </div>
-        <SideBar
+        <WorkflowDetails
           workflow_name={data.workflow_name}
-          execution_data={data.execution_data}
+          execution_data={JSON.parse(data.execution_data) as ExecutionData}
           cluster_name={data.cluster_name}
         />
       </div>

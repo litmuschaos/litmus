@@ -4,18 +4,18 @@ import { ExecutionData } from '../../../../models/workflowData';
 import timeDifference from '../../../../utils/datesModifier';
 import useStyles from './styles';
 
-interface WorkflowRepresentationProps {
+interface WorkflowDetailsProps {
   workflow_name: string;
-  execution_data: string;
+  execution_data: ExecutionData;
   cluster_name: string;
 }
 
-interface SidebarState extends ExecutionData {
-  current_running_node: string[];
-  executed_nodes: string[];
+interface SidebarState {
+  currentRunningNodes: string[];
+  executedNodes: string[];
 }
 
-const SideBar: React.FC<WorkflowRepresentationProps> = ({
+const WorkflowDetails: React.FC<WorkflowDetailsProps> = ({
   workflow_name,
   execution_data,
   cluster_name,
@@ -24,71 +24,34 @@ const SideBar: React.FC<WorkflowRepresentationProps> = ({
 
   const [duration, setDuration] = useState<number>(0);
   const [data, setData] = useState<SidebarState>({
-    creationTimestamp: '',
-    event_type: '',
-    finishedAt: '',
-    name: '',
-    namespace: '',
-    nodes: {},
-    current_running_node: [],
-    executed_nodes: [],
-    phase: '',
-    startedAt: '',
-    uid: '',
+    currentRunningNodes: [],
+    executedNodes: [],
   });
 
   useEffect(() => {
-    if (execution_data !== undefined) {
-      const execData = JSON.parse(execution_data) as ExecutionData;
-
-      // Setting initial data to the data received from query/subscription
-      setData({
-        ...data,
-        ...execData,
-      });
-    }
-  }, [(JSON.parse(execution_data) as ExecutionData).phase]);
-
-  useEffect(() => {
     setDuration(
-      (parseInt(data.finishedAt, 10) - parseInt(data.startedAt, 10)) / 60
+      (parseInt(execution_data.finishedAt, 10) -
+        parseInt(execution_data.startedAt, 10)) /
+        60
     );
 
     // If the Workflow is Running [Data is being received through Subscription]
     // Set the currently executed node in a local state
-    if (data.phase === 'Running' && data.nodes !== undefined) {
-      const currentlyRunningNodes: string[] = [];
+    const executedNodes: string[] = [];
+    const currentRunningNodes: string[] = [];
 
-      for (const val of Object.values(data.nodes)) {
-        if (val.type !== 'StepGroup' && val.phase === 'Running') {
-          currentlyRunningNodes.push(val.name);
-        }
-        setData({
-          ...data,
-          current_running_node: [
-            ...data.executed_nodes,
-            ...currentlyRunningNodes,
-          ],
-        });
-      }
-    } else {
-      // If the Workflow has Succeeded or Failed
-      // Store all the executed nodes in an array
-      const executedNodes: string[] = [];
+    for (const val of Object.values(execution_data.nodes))
+      if (val.type !== 'StepGroup' && val.phase === 'Running')
+        currentRunningNodes.push(val.name);
+      else if (val.type !== 'StepGroup' && val.phase === 'Succeeded')
+        executedNodes.push(val.name);
 
-      for (const val of Object.values(data.nodes)) {
-        let { name } = val;
-        if (val.name.charAt(0) === '[') {
-          name = `Step Group ${val.name.substring(1, val.name.length - 1)}`;
-        }
-        executedNodes.push(name);
-        setData({
-          ...data,
-          executed_nodes: [...data.executed_nodes, ...executedNodes],
-        });
-      }
-    }
-  }, [data.nodes]);
+    setData({
+      ...data,
+      currentRunningNodes,
+      executedNodes,
+    });
+  }, [execution_data.nodes, execution_data.phase]);
 
   return (
     <div className={classes.root}>
@@ -116,17 +79,17 @@ const SideBar: React.FC<WorkflowRepresentationProps> = ({
       <div className={classes.workflowSpacing}>
         <div className={classes.heightMaintainer}>
           <Typography>
-            <span className={classes.bold}>State:</span> {data.phase}
+            <span className={classes.bold}>State:</span> {execution_data.phase}
           </Typography>
           <Typography>
             <span className={classes.bold}>Start time:</span>{' '}
-            {timeDifference(data.startedAt)}
+            {timeDifference(execution_data.startedAt)}
           </Typography>
-          {data.phase !== 'Running' ? (
+          {execution_data.phase !== 'Running' ? (
             <>
               <Typography>
                 <span className={classes.bold}>End time:</span>{' '}
-                {timeDifference(data.finishedAt)}
+                {timeDifference(execution_data.finishedAt)}
               </Typography>
               <Typography>
                 <span className={classes.bold}>Duration:</span>{' '}
@@ -137,7 +100,8 @@ const SideBar: React.FC<WorkflowRepresentationProps> = ({
             <></>
           )}
           <Typography>
-            <span className={classes.bold}>Namespace:</span> {data.namespace}
+            <span className={classes.bold}>Namespace:</span>{' '}
+            {execution_data.namespace}
           </Typography>
         </div>
       </div>
@@ -149,25 +113,30 @@ const SideBar: React.FC<WorkflowRepresentationProps> = ({
 
       <div className={classes.workflowSpacing}>
         <div className={classes.heightMaintainer}>
-          {data.phase === 'Running' ? (
+          {execution_data.phase === 'Running' ? (
             <Typography>
               <span className={classes.bold}>Currently Running Nodes:</span>{' '}
               <ul>
-                {data.current_running_node.map((node) => {
-                  return <li key={node}>{node}</li>;
-                })}
+                {data.currentRunningNodes.map((node) => (
+                  <li key={node}>{node}</li>
+                ))}
               </ul>
             </Typography>
           ) : (
-            <Typography>
-              <span className={classes.bold}>Executed Nodes:</span>{' '}
-              <ul>
-                {data.executed_nodes.map((node) => {
-                  return <li key={node}>{node}</li>;
-                })}
-              </ul>
-            </Typography>
+            <></>
           )}
+          <Typography>
+            <span className={classes.bold}>Executed Nodes:</span>{' '}
+            {data.executedNodes.length ? (
+              <ul>
+                {data.executedNodes.map((node) => (
+                  <li key={node}>{node}</li>
+                ))}
+              </ul>
+            ) : (
+              <Typography>No executed nodes</Typography>
+            )}
+          </Typography>
         </div>
       </div>
       <hr />
@@ -186,4 +155,4 @@ const SideBar: React.FC<WorkflowRepresentationProps> = ({
   );
 };
 
-export default SideBar;
+export default WorkflowDetails;

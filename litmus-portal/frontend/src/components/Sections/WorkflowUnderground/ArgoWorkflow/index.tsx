@@ -8,7 +8,7 @@ interface GraphData {
   links: d3Link[];
 }
 
-const ArgoWorkflow: React.FC<ExecutionData> = ({ nodes, phase }) => {
+const ArgoWorkflow: React.FC<ExecutionData> = ({ nodes }) => {
   const classes = useStyles();
   const [graphData, setGraphData] = useState<GraphData>({
     nodes: [],
@@ -48,7 +48,7 @@ const ArgoWorkflow: React.FC<ExecutionData> = ({ nodes, phase }) => {
       nodes: [...data.nodes],
       links: [...data.links],
     });
-  }, [phase]);
+  }, [nodes]);
 
   return graphData.nodes.length ? (
     <DagreGraph

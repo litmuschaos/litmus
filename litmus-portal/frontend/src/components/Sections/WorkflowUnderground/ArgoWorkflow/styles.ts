@@ -10,6 +10,10 @@ const useStyles = makeStyles((theme: Theme) => ({
       '& g.node': {
         cursor: 'pointer',
         color: theme.palette.common.white,
+        '& rect': {
+          rx: '0.2rem',
+          ry: '0.2rem',
+        },
       },
       '& g.Succeeded': {
         fill: theme.palette.primary.dark,
@@ -25,9 +29,10 @@ const useStyles = makeStyles((theme: Theme) => ({
       },
       '& g.StepGroup': {
         fill: theme.palette.customColors.gray,
+        cursor: 'default',
         '& rect': {
-          rx: '0.625rem',
-          ry: '0.625rem',
+          rx: '0.625rem !important',
+          ry: '0.625rem !important',
           transform: 'scale(0.5)',
         },
       },
