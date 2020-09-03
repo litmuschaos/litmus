@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
   // Form Select Properties
   formControl: {
     margin: theme.spacing(0.5),
-    marginRight: 50,
+    marginRight: theme.spacing(6.25),
     height: '2.5rem',
     minWidth: '9rem',
   },
@@ -126,7 +126,7 @@ const useStyles = makeStyles((theme) => ({
   // Experiment Weights PopOver Property
   weightDiv: {
     width: '15.1875rem',
-    padding: '25px 20px',
+    padding: theme.spacing(3.125, 2.6),
   },
   weightInfo: {
     display: 'flex',
