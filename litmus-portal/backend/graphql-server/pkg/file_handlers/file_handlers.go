@@ -9,6 +9,8 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/cluster"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/userManagment"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/"
 	database "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb"
 )
 
@@ -47,4 +49,21 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.WriteHeaders(&w, 404)
+}
+
+// Middleware for user managment
+func UserHandler(w http.ResponseWriter, r *http.Request) {
+	serviceAddr := os.Getenv("SERVICE_ADDRESS")
+	vars := mux.Vars(r)
+	token := vars["key"]
+	func GetCtx(ctx context.Context, username string) {
+		Ctx := ctx
+	}
+	value := userManagment.Validation(Ctx,token)
+	if err != true {
+		log.Print("ERROR", err)
+		utils.WriteHeaders(&w, 404)
+		return
+	}
+    utils.WriteHeaders(&w, 404)
 }

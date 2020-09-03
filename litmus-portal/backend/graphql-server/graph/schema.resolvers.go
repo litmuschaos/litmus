@@ -16,6 +16,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/cluster"
 	database "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/file_handlers"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/mutations"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/queries"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/subscriptions"
@@ -73,6 +74,8 @@ func (r *queryResolver) GetCluster(ctx context.Context, projectID string, cluste
 }
 
 func (r *queryResolver) GetUser(ctx context.Context, username string) (*model.User, error) {
+	// Use function as a middleware Validation()
+	file_handlers.UserHandler.GetCtx(ctx, username)
 	return usermanagement.GetUser(ctx, username)
 }
 
