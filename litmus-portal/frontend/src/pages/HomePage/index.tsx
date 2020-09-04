@@ -55,7 +55,7 @@ const HomePage = () => {
   const user = useActions(UserActions);
 
   // Query to get user details
-  const { data, loading, error } = useQuery<
+  const { data, loading } = useQuery<
     CurrentUserDetails,
     CurrentUserDedtailsVars
   >(GET_USER, {
@@ -94,8 +94,6 @@ const HomePage = () => {
     <div>
       {loading ? (
         <Loader />
-      ) : error ? (
-        <Typography align="center">{t('home.error')}</Typography>
       ) : (
         <Scaffold>
           {isOpen ? <WelcomeModal handleIsOpen={handleModal} /> : <></>}

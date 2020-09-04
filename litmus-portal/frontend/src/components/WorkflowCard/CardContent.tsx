@@ -87,7 +87,6 @@ const CardContent: React.FC<preDefinedWorkflowData> = ({
           ) : (
             <span />
           )}
-          {description ? description.length < 28 ? <br /> : <div /> : <span />}
         </div>
         {/* <Divider variant="fullWidth" className={classes.horizontalLine} />
         <div className={classes.details}>

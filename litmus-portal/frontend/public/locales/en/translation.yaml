@@ -40,7 +40,6 @@ home:
   analytics:
     heading: How busy Litmus Project is?
     moreInfo: See more
-  error: Unable to fetch data !
 
 login:
   heading: Welcome to
