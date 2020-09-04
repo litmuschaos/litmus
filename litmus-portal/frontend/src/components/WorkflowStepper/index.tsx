@@ -129,7 +129,7 @@ const CustomStepper = () => {
 
   const userData: UserData = useSelector((state: RootState) => state.userData);
 
-  const { projectID } = userData;
+  const { selectedProjectID } = userData;
 
   const workflow = useActions(WorkflowActions);
 
@@ -192,7 +192,7 @@ const CustomStepper = () => {
         workflow_description: description,
         isCustomWorkflow,
         weightages: weightData,
-        project_id: projectID,
+        project_id: selectedProjectID,
         cluster_id: clusterid,
       };
       createChaosWorkFlow({

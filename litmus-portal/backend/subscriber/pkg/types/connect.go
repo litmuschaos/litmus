@@ -14,7 +14,8 @@ type RawData struct {
 }
 
 type Payload struct {
-	Data Data `json:"data"`
+	Errors interface{} `json:"errors"`
+	Data   Data        `json:"data"`
 }
 
 type Data struct {
