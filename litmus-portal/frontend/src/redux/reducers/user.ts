@@ -7,7 +7,7 @@ import createReducer from './createReducer';
 const initialState: UserData = {
   selectedProjectID: '',
   token: '',
-  username: 'admin',
+  username: '',
   exp: 0,
 };
 
