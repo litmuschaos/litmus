@@ -62,7 +62,7 @@ const HomePage = () => {
     variables: { username: userData.username },
   });
 
-  const name: string = data ? data?.getUser.name : '';
+  const name: string = data?.getUser.name ?? '';
 
   const handleModal = () => {
     setIsOpen(false);

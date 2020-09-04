@@ -26,13 +26,11 @@ const Header: React.FC = () => {
   // Query to get user details
   const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
-    {
-      variables: { username },
-    }
+    { variables: { username } }
   );
 
-  const name: string = data ? data?.getUser.name : '';
-  const email: string = data ? data?.getUser.email : '';
+  const name: string = data?.getUser.name ?? '';
+  const email: string = data?.getUser.email ?? '';
 
   // Fetch and Set Projects from backend.
 
