@@ -17,11 +17,14 @@ import {
   TableBody,
   TablePagination,
 } from '@material-ui/core';
+import { useSelector } from 'react-redux';
 import useStyles from './styles';
 import { WORKFLOW_DETAILS } from '../../../../graphql';
 import TableData from './TableData';
 import { Workflow, WorkflowDataVars } from '../../../../models/workflowData';
 import Loader from '../../../Loader';
+import { UserData } from '../../../../models/user';
+import { RootState } from '../../../../redux/reducers';
 
 interface FilterOption {
   search: string;
@@ -35,11 +38,13 @@ interface PaginationData {
 
 const ScheduleWorkflow = () => {
   const classes = useStyles();
+  const userData: UserData = useSelector((state: RootState) => state.userData);
+  const { selectedProjectID } = userData;
 
   // Apollo query to get the scheduled data
   const { data, loading, error } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
-    { variables: { projectID: '00000' } }
+    { variables: { projectID: selectedProjectID } }
   );
 
   // State for search and filtering
