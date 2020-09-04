@@ -2,6 +2,7 @@ import { useSubscription } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import SideBar from '../../components/Sections/WorkflowUnderground/WorkflowRepresentation';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { WORKFLOW_EVENTS } from '../../graphql';
@@ -13,6 +14,8 @@ import {
 } from '../../models/workflowData';
 import capitalize from '../../utils/capitalize';
 import useStyles from './styles';
+import { UserData } from '../../models/user';
+import { RootState } from '../../redux/reducers';
 
 interface WorkflowUndergroundProps {
   location: LocationState<WorkflowRun>;
@@ -23,10 +26,11 @@ const WorkflowUnderground: React.FC<WorkflowUndergroundProps> = ({
 }) => {
   const { t } = useTranslation();
   const classes = useStyles();
+  const userData: UserData = useSelector((state: RootState) => state.userData);
+  const { selectedProjectID } = userData;
   const [data, setData] = useState<WorkflowRun>(location.state);
-
   const dataSub = useSubscription<WorkflowSubscription>(WORKFLOW_EVENTS, {
-    variables: { projectID: '00002' },
+    variables: { projectID: selectedProjectID },
   });
 
   useEffect(() => {
