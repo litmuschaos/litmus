@@ -64,13 +64,13 @@ spec:
           image: litmuschaos/litmusportal-server:ci
           env:
             - name: DB_SERVER
-              value: mongo-service:27017
+              value: "mongo-service:27017"
             - name: JWT_SECRET
               value: "12345678"
             - name: EXTERNAL_ADDRESS
               value: ""
             - name: SERVICE_ADDRESS
-              value: http://litmusportal-server-service:9002
+              value: "http://litmusportal-server-service:9002"
             - name: SELF_CLUSTER
               value: "true"
           ports:
@@ -78,6 +78,15 @@ spec:
           imagePullPolicy: Always
         - name: auth-server
           image: litmuschaos/litmusportal-auth-server:ci
+          env:
+            - name: DB_SERVER
+              value: "mongodb://mongo-service:27017"
+            - name: JWT_SECRET
+              value: "litmus-portal@123"
+            - name: ADMIN_USERNAME
+              value: "admin"
+            - name: ADMIN_PASSWORD
+              value: "litmus"
           ports:
           - containerPort: 3000
           imagePullPolicy: Always
