@@ -15,7 +15,7 @@ import * as UserActions from '../../redux/actions/user';
 import { RootState } from '../../redux/reducers';
 import useStyles from './style';
 import { Project, Member } from '../../models/project';
-import { CurrentUserDetails } from '../../models/user';
+import { CurrentUserDedtailsVars, CurrentUserDetails } from '../../models/user';
 import Loader from '../../components/Loader';
 
 const CreateWorkflowCard = () => {
@@ -55,11 +55,14 @@ const HomePage = () => {
   const user = useActions(UserActions);
 
   // Query to get user details
-  const { data, loading, error } = useQuery<CurrentUserDetails>(GET_USER, {
+  const { data, loading, error } = useQuery<
+    CurrentUserDetails,
+    CurrentUserDedtailsVars
+  >(GET_USER, {
     variables: { username: userData.username },
   });
 
-  const name: string = data?.getUser.name as string;
+  const name: string = data ? data?.getUser.name : '';
 
   const handleModal = () => {
     setIsOpen(false);

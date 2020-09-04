@@ -2,7 +2,11 @@ import { Button, Typography } from '@material-ui/core';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useQuery } from '@apollo/client';
-import { UserData, CurrentUserDetails } from '../../../../../models/user';
+import {
+  UserData,
+  CurrentUserDetails,
+  CurrentUserDedtailsVars,
+} from '../../../../../models/user';
 import { RootState } from '../../../../../redux/reducers';
 import UserDetails from '../../UserManagementTab/CreateUser/UserDetails';
 import useStyles from './styles';
@@ -22,12 +26,15 @@ const PersonalDetails: React.FC = () => {
   const { username } = userData;
 
   // Query to get user details
-  const { data } = useQuery<CurrentUserDetails>(GET_USER, {
-    variables: { username },
-  });
+  const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
+    GET_USER,
+    {
+      variables: { username },
+    }
+  );
 
-  const name: string = data?.getUser.name as string;
-  const email: string = data?.getUser.email as string;
+  const name: string = data ? data?.getUser.name : '';
+  const email: string = data ? data?.getUser.email : '';
 
   const [personaData, setPersonaData] = React.useState<personaData>({
     email,

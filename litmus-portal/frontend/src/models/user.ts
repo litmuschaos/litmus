@@ -1,7 +1,7 @@
 import { Project } from './project';
 
 export interface UserData {
-  selectedProjectID?: string;
+  selectedProjectID: string;
   username: string;
   exp: number;
   token: string;
@@ -25,6 +25,10 @@ export interface CurrentUserDetails {
   getUser: UserDetails;
 }
 
+export interface CurrentUserDedtailsVars {
+  username: string;
+}
+
 export enum UserActions {
   LOAD_USER_DETAILS = 'LOAD_USER_DETAILS',
   UPDATE_USER_DETAILS = 'UPDATE_USER_DETAILS',
@@ -39,9 +43,4 @@ interface UserActionType<T, P> {
 export type UserAction =
   | UserActionType<typeof UserActions.LOAD_USER_DETAILS, string>
   | UserActionType<typeof UserActions.LOGOUT_USER, string>
-  | UserActionType<
-      typeof UserActions.UPDATE_USER_DETAILS,
-      {
-        selectedProjectID: string;
-      }
-    >;
+  | UserActionType<typeof UserActions.UPDATE_USER_DETAILS, string>;

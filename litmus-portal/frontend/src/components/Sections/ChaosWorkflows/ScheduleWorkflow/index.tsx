@@ -38,14 +38,13 @@ interface PaginationData {
 
 const ScheduleWorkflow = () => {
   const classes = useStyles();
-
   const userData: UserData = useSelector((state: RootState) => state.userData);
-
   const { selectedProjectID } = userData;
+
   // Apollo query to get the scheduled data
   const { data, loading, error } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
-    { variables: { projectID: selectedProjectID as string } }
+    { variables: { projectID: selectedProjectID } }
   );
 
   // State for search and filtering

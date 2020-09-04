@@ -6,7 +6,11 @@ import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { Message, NotificationIds, Project } from '../../../models/header';
-import { UserData, CurrentUserDetails } from '../../../models/user';
+import {
+  UserData,
+  CurrentUserDetails,
+  CurrentUserDedtailsVars,
+} from '../../../models/user';
 import { RootState } from '../../../redux/reducers';
 import CustomBreadCrumbs from '../../../components/BreadCrumbs';
 import NotificationsDropdown from './NotificationDropdown';
@@ -20,12 +24,15 @@ const Header: React.FC = () => {
   const { username } = userData;
 
   // Query to get user details
-  const { data } = useQuery<CurrentUserDetails>(GET_USER, {
-    variables: { username },
-  });
+  const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
+    GET_USER,
+    {
+      variables: { username },
+    }
+  );
 
-  const name: string = data?.getUser.name as string;
-  const email: string = data?.getUser.email as string;
+  const name: string = data ? data?.getUser.name : '';
+  const email: string = data ? data?.getUser.email : '';
 
   // Fetch and Set Projects from backend.
 

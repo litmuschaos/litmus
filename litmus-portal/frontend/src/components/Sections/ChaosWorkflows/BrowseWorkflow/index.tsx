@@ -69,7 +69,7 @@ const BrowseWorkflow = () => {
     Workflow,
     WorkflowDataVars
   >(WORKFLOW_DETAILS, {
-    variables: { projectID: selectedProjectID as string },
+    variables: { projectID: selectedProjectID },
     fetchPolicy: 'cache-and-network',
   });
 
@@ -77,7 +77,7 @@ const BrowseWorkflow = () => {
   useEffect(() => {
     subscribeToMore<WorkflowSubscription>({
       document: WORKFLOW_EVENTS,
-      variables: { projectID: selectedProjectID as string },
+      variables: { projectID: selectedProjectID },
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev;
         const modifiedWorkflows = prev.getWorkFlowRuns.slice();
