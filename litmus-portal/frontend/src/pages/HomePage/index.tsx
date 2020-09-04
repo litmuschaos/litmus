@@ -50,7 +50,6 @@ const CreateWorkflowCard = () => {
 const HomePage = () => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const { userData } = useSelector((state: RootState) => state);
-  // let name = ''; //data.getUser.name
   const classes = useStyles();
   const { t } = useTranslation();
   const user = useActions(UserActions);
@@ -93,7 +92,7 @@ const HomePage = () => {
       {loading ? (
         <Loader />
       ) : error ? (
-        <Typography align="center">Unable to fetch data</Typography>
+        <Typography align="center">{t('home.error')}</Typography>
       ) : (
         <Scaffold>
           {isOpen ? <WelcomeModal handleIsOpen={handleModal} /> : <></>}
