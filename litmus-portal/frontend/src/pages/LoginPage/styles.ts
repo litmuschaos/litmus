@@ -5,28 +5,20 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     width: '100%',
     display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-  },
-
-  root: {
-    display: 'flex',
-    flexDirection: 'row',
-  },
-
-  rootDiv: {
-    flexGrow: 1,
+    justifyContent: 'space-evenly',
   },
 
   mainDiv: {
-    marginTop: theme.spacing(8.75),
-    marginLeft: theme.spacing(23),
-    maxWidth: '26rem',
-    [theme.breakpoints.down('sm')]: {
-      marginLeft: theme.spacing(2),
-      marginRight: theme.spacing(2),
-      marginBottom: theme.spacing(5),
-    },
+    background: theme.palette.action.hover,
+    width: '100%',
+    height: '100vh',
+  },
+
+  box: {
+    padding: '5% 5%',
+    paddingLeft: theme.spacing(10),
+    height: '100vh',
+    overflowY: 'auto',
   },
 
   heading: {
@@ -35,11 +27,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   description: {
-    marginTop: theme.spacing(3.75),
-    fontSize: '1rem',
-  },
-  description2: {
-    marginTop: theme.spacing(1),
+    width: '80%',
+    margin: '1.5rem 0',
     fontSize: '1rem',
   },
 
@@ -49,7 +38,14 @@ const useStyles = makeStyles((theme) => ({
   },
 
   imageDiv: {
-    marginLeft: 'auto',
+    width: '100%',
+    height: '100vh',
+  },
+
+  loginImage: {
+    objectFit: 'cover',
+    width: '100%',
+    height: '100vh',
   },
 
   forgotPasssword: {
@@ -58,7 +54,10 @@ const useStyles = makeStyles((theme) => ({
   },
 
   inputDiv: {
+    display: 'flex',
+    flexDirection: 'column',
     marginTop: theme.spacing(1),
+    marginLeft: theme.spacing(-2),
   },
 
   linkForgotPass: {

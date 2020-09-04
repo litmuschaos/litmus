@@ -20,6 +20,7 @@ import {
 } from '@material-ui/core';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { useSelector } from 'react-redux';
 import useStyles from './styles';
 import { WORKFLOW_DETAILS } from '../../../../graphql';
 import TableData from './TableData';
@@ -36,6 +37,8 @@ import {
   sortNumAsc,
   sortNumDesc,
 } from '../../../../utils/sort';
+import { UserData } from '../../../../models/user';
+import { RootState } from '../../../../redux/reducers';
 
 interface FilterOption {
   search: string;
@@ -54,11 +57,13 @@ interface SortData {
 
 const ScheduleWorkflow = () => {
   const classes = useStyles();
+  const userData: UserData = useSelector((state: RootState) => state.userData);
+  const { selectedProjectID } = userData;
 
   // Apollo query to get the scheduled data
   const { data, loading, error } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
-    { variables: { projectID: '00000' } }
+    { variables: { projectID: selectedProjectID } }
   );
 
   // State for search and filtering

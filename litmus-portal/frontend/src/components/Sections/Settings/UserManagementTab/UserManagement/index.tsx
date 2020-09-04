@@ -82,7 +82,6 @@ const UserManagement: React.FC = () => {
         setRows(res);
         setSelectRows(res);
       })
-
       .catch((err) => {
         console.error(err);
       });
@@ -237,7 +236,7 @@ const UserManagement: React.FC = () => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {rows ? (
+                      {rows.length ? (
                         rows.map((row, index) => (
                           <TableRow key={row.name} className={classes.TR}>
                             <TableCell

@@ -14,7 +14,9 @@ import moment from 'moment';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../../../graphql';
+import { UserData } from '../../../../models/user';
 import {
   ExecutionData,
   Workflow,
@@ -22,6 +24,7 @@ import {
   WorkflowRun,
   WorkflowSubscription,
 } from '../../../../models/workflowData';
+import { RootState } from '../../../../redux/reducers';
 
 import {
   sortAlphaAsc,
@@ -59,20 +62,22 @@ interface DateData {
 
 const BrowseWorkflow = () => {
   const classes = useStyles();
+  const userData: UserData = useSelector((state: RootState) => state.userData);
+  const { selectedProjectID } = userData;
 
   // Query to get workflows
   const { subscribeToMore, data, loading, error } = useQuery<
     Workflow,
     WorkflowDataVars
   >(WORKFLOW_DETAILS, {
-    variables: { projectID: '00000' },
+    variables: { projectID: selectedProjectID },
     fetchPolicy: 'cache-and-network',
   });
   // Using subscription to get realtime data
   useEffect(() => {
     subscribeToMore<WorkflowSubscription>({
       document: WORKFLOW_EVENTS,
-      variables: { projectID: '00000' },
+      variables: { projectID: selectedProjectID },
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev;
         const modifiedWorkflows = prev.getWorkFlowRuns.slice();
