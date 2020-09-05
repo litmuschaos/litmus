@@ -260,7 +260,11 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                 {selectiveButtons()}
               </div>
             }
-            setName={userData.name}
+            setName={
+              userData.username === 'admin'
+                ? 'Administrator'
+                : userData.username
+            }
             setText={t('welcomeModel.case-0.info')}
           />
         );

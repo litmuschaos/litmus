@@ -49,17 +49,17 @@ login:
   passwordForgot: Don’t remember your password?
 
 schedule:
-  heading: 'Schedule a workflow'
-  headingDesc: 'Click on test to see detailed log of your workflow'
-  headingText: 'Schedule details:'
-  description: 'Choose the right time to first workflow. Below you can find any option convenient for you.'
-  save: 'Save Changes'
+  heading: "Schedule a workflow"
+  headingDesc: "Click on test to see detailed log of your workflow"
+  headingText: "Schedule details:"
+  description: "Choose the right time to first workflow. Below you can find any option convenient for you."
+  save: "Save Changes"
 
 workflowUnderground:
-  heading: 'Click on test to see detailed log of your workflow'
+  heading: "Click on test to see detailed log of your workflow"
 
 community:
-  heading: 'Daily Insights'
-  headingDesc: 'Stats for the Litmus community in the last 24 hours'
-  analyticDesc: 'Periodic growth of Litmus'
-  statsHeading: 'Where Litmus users are situated'
+  heading: "Daily Insights"
+  headingDesc: "Stats for the Litmus community in the last 24 hours"
+  analyticDesc: "Periodic growth of Litmus"
+  statsHeading: "Where Litmus users are situated"

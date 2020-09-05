@@ -11,47 +11,52 @@ import {
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import moment from 'moment';
 import useStyles from './styles';
 import LinearProgressBar from '../../ReturningHome/ProgressBar/LinearProgressBar';
 import { history } from '../../../../redux/configureStore';
+import { WorkflowRun } from '../../../../models/workflowData';
 
 interface TableDataProps {
-  data: any;
+  data: WorkflowRun;
+  deleteRow: (workflowId: string) => void;
 }
 
-const TableData: React.FC<TableDataProps> = ({ data }) => {
+const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   const classes = useStyles();
 
+  // States for PopOver to display Experiment Weights
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [popAnchorEl, setPopAnchorEl] = React.useState<null | HTMLElement>(
     null
   );
   const open = Boolean(anchorEl);
-
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
   const isOpen = Boolean(popAnchorEl);
   const id = isOpen ? 'simple-popover' : undefined;
   const handlePopOverClose = () => {
     setPopAnchorEl(null);
   };
+
   const handlePopOverClick = (event: React.MouseEvent<HTMLElement>) => {
     setPopAnchorEl(event.currentTarget);
   };
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const handleMenu = () => {};
 
+  // Function to convert UNIX time in format of DD MMM YYY
   const formatDate = (date: any) => {
     const updated = new Date(date * 1000).toString();
-    const day = updated.slice(8, 10);
-    const month = updated.slice(4, 7);
-    const year = updated.slice(11, 15);
-    const resDate = `${day} ${month} ${year}`;
+    const resDate = moment(updated).format('DD MMM YYYY');
     return resDate;
   };
+
+  // Dummy Experiment Weights
   const exWeight = [
     {
       name: 'Node add test',
@@ -103,7 +108,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
               <KeyboardArrowDownIcon className={classes.expInfo} />
             </div>
           ) : (
-            <div className={classes.expDiv1}>
+            <div className={classes.expDiv}>
               <Typography>
                 <strong>Show Experiment</strong>
               </Typography>
@@ -180,7 +185,10 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
               <Typography className={classes.btnText}>Edit Schedule</Typography>
             </div>
           </MenuItem>
-          <MenuItem value="Analysis" onClick={handleMenu}>
+          <MenuItem
+            value="Analysis"
+            onClick={() => deleteRow(data.workflow_id)}
+          >
             <div className={classes.expDiv}>
               <img
                 src="/icons/deleteSchedule.svg"
