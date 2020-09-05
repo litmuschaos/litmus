@@ -1,6 +1,5 @@
-/* eslint-disable */
 import * as d3 from 'd3';
-import dagreD3, { GraphLabel } from 'dagre-d3';
+import dagreD3, { GraphLabel, Node } from 'dagre-d3';
 import React, { Component, createRef } from 'react';
 
 interface GraphProps {
@@ -14,20 +13,32 @@ interface GraphProps {
   animate?: number;
   className?: string;
   shape?: shapes;
-  onNodeClick?: Function;
-  onRelationshipClick?: Function;
+  onNodeClick?: nodeClick;
+  onRelationshipClick?: relationshipClick;
 }
 type shapes = 'rect' | 'circle' | 'ellipse';
 type labelType = 'html' | 'svg' | 'string';
 
-type d3Node = {
+type nodeClick = (nodeData: {
+  d3node: Node;
+  original: d3Node | undefined;
+}) => void;
+
+type relationshipClick = (nodeData: {
+  d3source: Node;
+  source: d3Node | undefined;
+  d3target: Node;
+  target: d3Node | undefined;
+}) => void;
+
+export type d3Node = {
   id: any;
   label: string;
   class?: string;
   labelType?: labelType;
   config?: object;
 };
-type d3Link = {
+export type d3Link = {
   source: string;
   target: string;
   class?: string;
@@ -55,10 +66,6 @@ class DagreGraph extends Component<GraphProps> {
     this._drawChart();
   }
 
-  _getNodeData(id: any) {
-    return this.props.nodes.find((node) => node.id === id);
-  }
-
   _drawChart = () => {
     const {
       nodes,
@@ -71,7 +78,7 @@ class DagreGraph extends Component<GraphProps> {
       onNodeClick,
       onRelationshipClick,
     } = this.props;
-    let g = new dagreD3.graphlib.Graph().setGraph(config || {});
+    const g = new dagreD3.graphlib.Graph().setGraph(config || {});
 
     nodes.forEach((node) =>
       g.setNode(node.id, {
@@ -83,22 +90,24 @@ class DagreGraph extends Component<GraphProps> {
     );
 
     if (shape) {
-      g.nodes().forEach((v) => (g.node(v).shape = shape));
+      g.nodes().forEach((v) => {
+        g.node(v).shape = shape;
+      });
     }
 
-    links.forEach((link) =>
+    links.forEach((link) => {
       g.setEdge(link.source, link.target, {
         label: link.label || '',
         class: link.class || '',
         ...link.config,
-      })
-    );
+      });
+    });
 
-    let render = new dagreD3.render();
-    let svg: any = d3.select(this.svg.current);
-    let inner: any = d3.select(this.innerG.current);
+    const render = new dagreD3.render();
+    const svg: any = d3.select(this.svg.current);
+    const inner: any = d3.select(this.innerG.current);
 
-    let zoom = d3
+    const zoom = d3
       .zoom()
       .on('zoom', () => inner.attr('transform', d3.event.transform));
 
@@ -114,22 +123,21 @@ class DagreGraph extends Component<GraphProps> {
     render(inner, g);
 
     if (fitBoundaries) {
-      //@BertCh recommendation for fitting boundaries
-      const bounds = inner.node().getBBox();
+      // @BertCh recommendation for fitting boundaries
+      const { width, height, x, y } = inner.node().getBBox();
       const parent = inner.node().parentElement || inner.node().parentNode;
       const fullWidth = parent.clientWidth || parent.parentNode.clientWidth;
       const fullHeight = parent.clientHeight || parent.parentNode.clientHeight;
-      const width = bounds.width;
-      const height = bounds.height;
-      const midX = bounds.x + width / 2;
-      const midY = bounds.y + height / 2;
+      const midX = x + width / 2;
+      const midY = y + height / 2;
+
       if (width === 0 || height === 0) return; // nothing to fit
-      var scale = 0.9 / Math.max(width / fullWidth, height / fullHeight);
-      var translate = [
+      const scale = 0.9 / Math.max(width / fullWidth, height / fullHeight);
+      const translate = [
         fullWidth / 2 - scale * midX,
         fullHeight / 2 - scale * midY,
       ];
-      var transform = d3.zoomIdentity
+      const transform = d3.zoomIdentity
         .translate(translate[0], translate[1])
         .scale(scale);
 
@@ -141,8 +149,8 @@ class DagreGraph extends Component<GraphProps> {
 
     if (onNodeClick) {
       svg.selectAll('g.node').on('click', (id: any) => {
-        let _node = g.node(id);
-        let _original = this._getNodeData(id);
+        const _node: Node = g.node(id);
+        const _original = this._getNodeData(id);
         onNodeClick({ d3node: _node, original: _original });
       });
     }
@@ -150,11 +158,11 @@ class DagreGraph extends Component<GraphProps> {
       svg
         .selectAll('g.edgeLabel, g.edgePath')
         .on('click', (id: Relationship) => {
-          let _source = g.node(id.v);
-          let _original_source = this._getNodeData(id.v);
+          const _source = g.node(id.v);
+          const _original_source = this._getNodeData(id.v);
 
-          let _target = g.node(id.w);
-          let _original_target = this._getNodeData(id.w);
+          const _target = g.node(id.w);
+          const _original_target = this._getNodeData(id.w);
           onRelationshipClick({
             d3source: _source,
             source: _original_source,
@@ -165,13 +173,19 @@ class DagreGraph extends Component<GraphProps> {
     }
   };
 
+  _getNodeData(id: any) {
+    const { nodes } = this.props;
+    return nodes.find((node) => node.id === id);
+  }
+
   render() {
+    const { width, height, className } = this.props;
     return (
       <svg
-        width={this.props.width}
-        height={this.props.height}
+        width={width}
+        height={height}
         ref={this.svg}
-        className={this.props.className || ''}
+        className={className || ''}
       >
         <g ref={this.innerG} />
       </svg>
@@ -180,4 +194,3 @@ class DagreGraph extends Component<GraphProps> {
 }
 
 export default DagreGraph;
-export type { d3Node, d3Link };

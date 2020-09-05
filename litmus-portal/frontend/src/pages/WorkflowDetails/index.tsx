@@ -18,14 +18,13 @@ import useStyles from './styles';
 const WorkflowDetails: React.FC = () => {
   const classes = useStyles();
   const { pathname } = useLocation();
+  // Getting the workflow nome from the pathname
   const workflowName = pathname.split('/')[2];
 
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
-    {
-      variables: { projectID: '00000' },
-    }
+    { variables: { projectID: '00000' } }
   );
 
   const workflow = data?.getWorkFlowRuns.filter(
@@ -81,7 +80,9 @@ const WorkflowDetails: React.FC = () => {
 
             {/* Argo Workflow DAG Graph */}
             <ArgoWorkflow
-              {...(JSON.parse(workflow.execution_data) as ExecutionData)}
+              nodes={
+                (JSON.parse(workflow.execution_data) as ExecutionData).nodes
+              }
             />
           </div>
           <WorkflowInfo
