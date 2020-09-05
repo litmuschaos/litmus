@@ -11,8 +11,15 @@ const AuthKey = contextKey("authorization")
 
 func Middleware(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		auth := r.Header.Get("Authorization")
-		ctx := context.WithValue(r.Context(), AuthKey, auth)
+		jwt := ""
+		auth, err := r.Cookie("token")
+		if err == nil {
+			jwt = auth.Value
+		} else if r.Header.Get("Authorization") != "" {
+			jwt = r.Header.Get("Authorization")
+		}
+
+		ctx := context.WithValue(r.Context(), AuthKey, jwt)
 		r = r.WithContext(ctx)
 		handler.ServeHTTP(w, r)
 	})
