@@ -2,9 +2,11 @@ package utils
 
 import (
 	"bufio"
+	"errors"
 	"math/rand"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 )
 
@@ -52,4 +54,25 @@ func ManifestParser(id, key, server, template string) ([]byte, error) {
 	}
 
 	return []byte(strings.Join(lines, "\n")), nil
+}
+
+//EmbedWorkflowIDIntoManifest embeds workflow schedule ids into workflow manifests and returns the updated manifest
+func EmbedWorkflowIDIntoManifest(workflowID string, workflowManifest string) (string, error) {
+
+	metadataStringPattern := regexp.MustCompile(`"metadata": {\n.*\n  },`)
+
+	metaDataLoc := metadataStringPattern.FindIndex([]byte(workflowManifest))
+
+	if len(metaDataLoc) == 2 {
+
+		preMetaDetails := workflowManifest[0 : metaDataLoc[1]-5]
+
+		postMetaDetails := workflowManifest[metaDataLoc[1]-5 : len(workflowManifest)]
+
+		manifestMappedToWorkflowScheduleID := preMetaDetails + ",\n    " + `"labels": {` + "\n      " + `"wfid": "` + workflowID + `"` + "\n    }" + postMetaDetails
+
+		return manifestMappedToWorkflowScheduleID, nil
+	}
+	return " ", errors.New("workflow meta-data not found")
+
 }

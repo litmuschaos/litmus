@@ -6,16 +6,15 @@ import (
 	"strconv"
 	"time"
 
-	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/data-store"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/subscriptions"
-	"github.com/pkg/errors"
-	"go.mongodb.org/mongo-driver/bson"
-
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/cluster"
+	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/data-store"
 	database "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/subscriptions"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/utils"
+	"github.com/pkg/errors"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 //ClusterRegister creates an entry for a new cluster in DB and generates the url used to apply manifest
@@ -151,9 +150,15 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 	}
 
 	workflow_id := utils.RandomString(32)
+
+	updatedWorkflowManifest, err := utils.EmbedWorkflowIDIntoManifest(workflow_id, input.WorkflowManifest)
+	if err != nil {
+		return nil, err
+	}
+
 	newChaosWorkflow := database.ChaosWorkFlowInput{
 		WorkflowID:          workflow_id,
-		WorkflowManifest:    input.WorkflowManifest,
+		WorkflowManifest:    updatedWorkflowManifest,
 		CronSyntax:          input.CronSyntax,
 		WorkflowName:        input.WorkflowName,
 		WorkflowDescription: input.WorkflowDescription,
