@@ -34,7 +34,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
   const handleMenu = () => {};
   return (
     <>
-      <TableCell className={classes.headerStatus1}>
+      <TableCell className={classes.tableDataStatus}>
         <CustomStatus status={JSON.parse(data.execution_data).phase} />
       </TableCell>
       <TableCell className={classes.workflowNameData}>

@@ -10,21 +10,25 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var clusterCollection *mongo.Collection
-var workflowRunCollection *mongo.Collection
-var backgroundContext = context.Background()
-var err error
+var (
+	collections = map[string]string{
+		"Cluster":     "cluster-collection",
+		"WorkflowRun": "workflow-run",
+		"User":        "user",
+		"Project":     "project",
+		"Workflow":    "workflow-collection",
+	}
+	//Database ...
+	Database *mongo.Database
+	dbName   = "litmus"
 
-var collections = map[string]string{
-	"Cluster":     "cluster-collection",
-	"WorkflowRun": "workflow-run",
-	"User":        "user",
-	"Project":     "project",
-}
-
-//Database ...
-var Database *mongo.Database
-var dbName = "litmus"
+	//Collections ...
+	clusterCollection     *mongo.Collection
+	workflowRunCollection *mongo.Collection
+	workflowCollection    *mongo.Collection
+	backgroundContext     = context.Background()
+	err                   error
+)
 
 type Cluster struct {
 	ClusterID          string  `bson:"cluster_id"`
@@ -102,4 +106,5 @@ func init() {
 func initAllCollections() {
 	clusterCollection = Database.Collection(collections["Cluster"])
 	workflowRunCollection = Database.Collection(collections["WorkflowRun"])
+	workflowCollection = Database.Collection(collections["Workflow"])
 }

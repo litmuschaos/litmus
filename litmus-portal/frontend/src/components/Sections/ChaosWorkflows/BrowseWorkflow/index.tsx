@@ -1,12 +1,6 @@
 import { useQuery } from '@apollo/client';
 import {
-  FormControl,
   IconButton,
-  InputAdornment,
-  InputBase,
-  InputLabel,
-  MenuItem,
-  Select,
   Table,
   TableBody,
   TableCell,
@@ -18,8 +12,9 @@ import {
 } from '@material-ui/core';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import SearchIcon from '@material-ui/icons/Search';
+import moment from 'moment';
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../../../graphql';
 import {
   ExecutionData,
@@ -28,6 +23,7 @@ import {
   WorkflowRun,
   WorkflowSubscription,
 } from '../../../../models/workflowData';
+import { RootState } from '../../../../redux/reducers';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
@@ -35,6 +31,7 @@ import {
   sortNumDesc,
 } from '../../../../utils/sort';
 import Loader from '../../../Loader';
+import HeaderSection from './HeaderSection';
 import useStyles from './styles';
 import TableData from './TableData';
 
@@ -55,23 +52,31 @@ interface SortData {
   noOfSteps: { sort: boolean; ascending: boolean };
 }
 
+interface DateData {
+  dateValue: string;
+  fromDate: Date | undefined;
+  toDate: Date | undefined;
+}
+
 const BrowseWorkflow = () => {
   const classes = useStyles();
+  const selectedProjectID = useSelector(
+    (state: RootState) => state.userData.selectedProjectID
+  );
 
   // Query to get workflows
   const { subscribeToMore, data, loading, error } = useQuery<
     Workflow,
     WorkflowDataVars
   >(WORKFLOW_DETAILS, {
-    variables: { projectID: '00000' },
+    variables: { projectID: selectedProjectID },
     fetchPolicy: 'cache-and-network',
   });
-
   // Using subscription to get realtime data
   useEffect(() => {
     subscribeToMore<WorkflowSubscription>({
       document: WORKFLOW_EVENTS,
-      variables: { projectID: '00000' },
+      variables: { projectID: selectedProjectID },
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev;
         const modifiedWorkflows = prev.getWorkFlowRuns.slice();
@@ -115,6 +120,29 @@ const BrowseWorkflow = () => {
     rowsPerPage: 5,
   });
 
+  const [popAnchorEl, setPopAnchorEl] = React.useState<null | HTMLElement>(
+    null
+  );
+  const isOpen = Boolean(popAnchorEl);
+
+  const [open, setOpen] = React.useState<boolean>(false);
+
+  const handlePopOverClose = () => {
+    setPopAnchorEl(null);
+    setOpen(false);
+  };
+  const handlePopOverClick = (event: React.MouseEvent<HTMLElement>) => {
+    setPopAnchorEl(event.currentTarget);
+    setOpen(true);
+  };
+
+  // State for start date and end date
+  const [dateRange, setDateRange] = React.useState<DateData>({
+    dateValue: 'Select a period',
+    fromDate: new Date(0),
+    toDate: new Date(new Date().valueOf() + 1000 * 3600 * 24),
+  });
+
   const filteredData = data?.getWorkFlowRuns
     .filter((dataRow) =>
       dataRow.workflow_name.toLowerCase().includes(filters.search)
@@ -131,6 +159,14 @@ const BrowseWorkflow = () => {
         ? true
         : dataRow.cluster_name.toLowerCase().includes(filters.cluster)
     )
+    .filter((dataRow) => {
+      return dateRange.fromDate && dateRange.toDate === undefined
+        ? true
+        : parseInt(dataRow.last_updated, 10) * 1000 >=
+            new Date(moment(dateRange.fromDate).format()).getTime() &&
+            parseInt(dataRow.last_updated, 10) * 1000 <=
+              new Date(moment(dateRange.toDate).format()).getTime();
+    })
     .sort((a: WorkflowRun, b: WorkflowRun) => {
       // Sorting based on unique fields
       if (sortData.name.sort) {
@@ -172,94 +208,73 @@ const BrowseWorkflow = () => {
       return 0;
     });
 
+  // Functions passed as props in the headerSeaction
+  const changeSearch = (
+    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    setFilters({ ...filters, search: event.target.value as string });
+    setPaginationData({ ...paginationData, pageNo: 0 });
+  };
+
+  const changeStatus = (
+    event: React.ChangeEvent<{
+      name?: string | undefined;
+      value: unknown;
+    }>
+  ) => {
+    setFilters({ ...filters, status: event.target.value as string });
+    setPaginationData({ ...paginationData, pageNo: 0 });
+  };
+
+  const changeCluster = (
+    event: React.ChangeEvent<{
+      name?: string | undefined;
+      value: unknown;
+    }>
+  ) => {
+    setFilters({ ...filters, cluster: event.target.value as string });
+    setPaginationData({ ...paginationData, pageNo: 0 });
+  };
+
+  // Function to set the date range for filtering
+  const dateChange = (range: any) => {
+    setDateRange({
+      dateValue: `${moment(range?.startDate)
+        .format('DD.MM.YYYY')
+        .toString()}-${moment(range?.endDate).format('DD.MM.YYYY').toString()}`,
+      fromDate:
+        moment(range?.startDate).format('DD-MM-YYYY') ===
+        moment(new Date()).format('DD-MM-YYYY')
+          ? new Date(new Date().setHours(0, 0, 0))
+          : new Date(range?.startDate.setHours(0, 0, 0)),
+      toDate:
+        moment(range?.endDate).format('DD-MM-YYYY') ===
+        moment(new Date()).format('DD-MM-YYYY')
+          ? new Date(new Date().setHours(23, 59, 59))
+          : new Date(range?.endDate.setHours(23, 59, 59)),
+    });
+  };
+
   return (
     <div>
       <section className="Heading section">
-        <div className={classes.headerSection}>
-          <InputBase
-            id="input-with-icon-adornment"
-            placeholder="Search"
-            className={classes.search}
-            value={filters.search}
-            onChange={(e) => {
-              setFilters({ ...filters, search: e.target.value as string });
-              setPaginationData({ ...paginationData, pageNo: 0 });
-            }}
-            startAdornment={
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            }
-          />
-          <FormControl className={classes.select}>
-            <InputLabel id="demo-simple-select-outlined-label">
-              Workflow Status
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-outlined-label"
-              id="demo-simple-select-outlined"
-              value={filters.status}
-              onChange={(e) => {
-                setFilters({ ...filters, status: e.target.value as string });
-                setPaginationData({ ...paginationData, pageNo: 0 });
-              }}
-              disableUnderline
-            >
-              <MenuItem value="All">
-                <Typography className={classes.menuItem}>All</Typography>
-              </MenuItem>
-              <MenuItem value="Failed">
-                <Typography className={classes.menuItem}>Failed</Typography>
-              </MenuItem>
-              <MenuItem value="Running">
-                <Typography className={classes.menuItem}>Running</Typography>
-              </MenuItem>
-              <MenuItem value="Succeeded">
-                <Typography className={classes.menuItem}>Succeeded</Typography>
-              </MenuItem>
-            </Select>
-          </FormControl>
-
-          <FormControl className={classes.select1}>
-            <InputLabel id="demo-simple-select-outlined-label">
-              Target Cluster
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-outlined-label"
-              id="demo-simple-select-outlined"
-              value={filters.cluster}
-              onChange={(e) => {
-                setFilters({ ...filters, cluster: e.target.value as string });
-                setPaginationData({ ...paginationData, pageNo: 0 });
-              }}
-              disableUnderline
-            >
-              <MenuItem value="All">
-                <Typography className={classes.menuItem}>All</Typography>
-              </MenuItem>
-              <MenuItem value="Predefined">
-                <Typography className={classes.menuItem}>
-                  Cluset pre-defined
-                </Typography>
-              </MenuItem>
-              <MenuItem value="Kubernetes">
-                <Typography className={classes.menuItem}>
-                  Kubernetes Cluster
-                </Typography>
-              </MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl className={classes.select}>
-            <InputLabel id="demo-simple-select-outlined-label">Date</InputLabel>
-            <Select
-              labelId="demo-simple-select-outlined-label"
-              id="demo-simple-select-outlined"
-              value=""
-              disableUnderline
-              onChange={() => {}}
-            />
-          </FormControl>
-        </div>
+        {/* Header Section */}
+        <HeaderSection
+          searchValue={filters.search}
+          changeSearch={changeSearch}
+          statusValue={filters.status}
+          changeStatus={changeStatus}
+          clusterValue={filters.cluster}
+          changeCluster={changeCluster}
+          popOverClick={handlePopOverClick}
+          popOverClose={handlePopOverClose}
+          isOpen={isOpen}
+          popAnchorEl={popAnchorEl}
+          isDateOpen={open}
+          toggle={handlePopOverClose}
+          displayDate={dateRange.dateValue}
+          selectDate={dateChange}
+        />
       </section>
       <section className="table section">
         <TableContainer className={classes.tableMain}>
@@ -388,7 +403,7 @@ const BrowseWorkflow = () => {
                   </div>
                 </TableCell>
 
-                {/* Menu */}
+                {/* Menu Cell */}
                 <TableCell />
               </TableRow>
             </TableHead>

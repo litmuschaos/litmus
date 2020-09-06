@@ -109,6 +109,7 @@ type WorkflowRun{
 }
 
 input WorkflowRunInput{
+  workflow_id: ID!
   workflow_run_id: ID!
   workflow_name: String!
   execution_data: String!
@@ -171,6 +172,7 @@ type Mutation{
 
   createUser(user: UserInput!): User!
 
+  deleteChaosWorkflow(workflowid: String!): Boolean!
 }
 
 type Subscription{

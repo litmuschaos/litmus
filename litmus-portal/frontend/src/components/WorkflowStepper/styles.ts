@@ -10,10 +10,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   backButton: {
     marginRight: theme.spacing(1),
   },
-  content: {
-    marginLeft: theme.spacing(-8),
-    marginRight: theme.spacing(-8),
-  },
   buttonGroup: {
     display: 'flex',
     flexDirection: 'row',

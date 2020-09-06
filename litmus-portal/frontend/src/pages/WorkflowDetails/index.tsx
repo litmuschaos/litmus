@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import Loader from '../../components/Loader';
 import ArgoWorkflow from '../../components/Sections/WorkflowDetails/ArgoWorkflow';
@@ -13,6 +14,7 @@ import {
   WorkflowDataVars,
   WorkflowSubscription,
 } from '../../models/workflowData';
+import { RootState } from '../../redux/reducers';
 import useStyles from './styles';
 
 const WorkflowDetails: React.FC = () => {
@@ -21,10 +23,15 @@ const WorkflowDetails: React.FC = () => {
   // Getting the workflow nome from the pathname
   const workflowName = pathname.split('/')[2];
 
+  // get ProjectID
+  const selectedProjectID = useSelector(
+    (state: RootState) => state.userData.selectedProjectID
+  );
+
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
-    { variables: { projectID: '00000' } }
+    { variables: { projectID: selectedProjectID } }
   );
 
   const workflow = data?.getWorkFlowRuns.filter(
@@ -40,7 +47,7 @@ const WorkflowDetails: React.FC = () => {
     ) {
       subscribeToMore<WorkflowSubscription>({
         document: WORKFLOW_EVENTS,
-        variables: { projectID: '00000' },
+        variables: { projectID: selectedProjectID },
         updateQuery: (prev, { subscriptionData }) => {
           if (!subscriptionData.data) return prev;
           const modifiedWorkflows = prev.getWorkFlowRuns.slice();

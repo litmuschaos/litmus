@@ -2,10 +2,11 @@ package queries
 
 import (
 	"encoding/json"
+	"log"
+
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
 	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/data-store"
 	database "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb"
-	"log"
 )
 
 //GetWorkflowRuns sends all the workflow runs for a project from the DB

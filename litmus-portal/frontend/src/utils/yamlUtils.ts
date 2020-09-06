@@ -3,11 +3,8 @@ import YAML from 'yaml';
 
 const nameextractor = (val: any) => {
   const embeddedworkflowyamlstring = val;
-
   const parsedEmbeddedYaml = YAML.parse(embeddedworkflowyamlstring as string);
-
   const experimentNames = [''];
-
   const experimentList = parsedEmbeddedYaml.spec.experiments;
 
   (experimentList as any).forEach((element: any) => {

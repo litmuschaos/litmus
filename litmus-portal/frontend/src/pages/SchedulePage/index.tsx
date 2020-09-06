@@ -8,6 +8,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../components/Button/ButtonFilled';
 import ButtonOutline from '../../components/Button/ButtonOutline';
 import CustomDate from '../../components/DateTime/CustomDate/index';
@@ -17,6 +18,7 @@ import SetTime from './SetTime/index';
 import useStyles from './styles';
 
 const SchedulePage: React.FC = () => {
+  const { t } = useTranslation();
   const start = 0;
   const end = 10;
   const interval = 2;
@@ -60,10 +62,10 @@ const SchedulePage: React.FC = () => {
     <Scaffold>
       <div className={classes.rootContainer}>
         <Typography className={classes.mainHeader}>
-          Schedule a workflow
+          {t('schedule.heading')}
         </Typography>
         <Typography className={classes.headerDesc}>
-          Click on test to see detailed log of your workflow
+          {t('schedule.headingDesc')}
         </Typography>
         <div className={classes.root}>
           <div className={classes.scHeader}>
@@ -71,13 +73,12 @@ const SchedulePage: React.FC = () => {
             <div className={classes.scSegments}>
               <div>
                 <Typography className={classes.headerText}>
-                  <strong>Schedule details:</strong>
+                  <strong>{t('schedule.headingText')}</strong>
                 </Typography>
 
                 <div className={classes.schBody}>
                   <Typography align="left" className={classes.description}>
-                    Choose the right time to first workflow. Below you can find
-                    any option convenient for you.
+                    {t('schedule.description')}
                   </Typography>
                 </div>
               </div>
@@ -354,7 +355,7 @@ const SchedulePage: React.FC = () => {
               </ButtonOutline>
               <div style={{ marginLeft: 'auto' }}>
                 <ButtonFilled isPrimary handleClick={() => {}}>
-                  <Typography>Save Changes</Typography>
+                  <Typography>{t('schedule.save')}</Typography>
                 </ButtonFilled>
               </div>
             </div>

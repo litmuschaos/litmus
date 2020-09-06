@@ -26,6 +26,9 @@ declare module '@material-ui/core/styles/createPalette' {
       black: (opacity: number) => string;
       gray: string;
     };
+    input: {
+      disabled: string;
+    };
   }
   // allow configuration using `createMuiTheme`
   interface PaletteOptions {
@@ -33,6 +36,9 @@ declare module '@material-ui/core/styles/createPalette' {
       white?: (opacity: number) => string;
       black?: (opacity: number) => string;
       gray?: string;
+    };
+    input?: {
+      disabled?: string;
     };
   }
 }
@@ -68,6 +74,9 @@ function customTheme(options: ThemeOptions) {
         secondary: 'rgba(0, 0, 0, 0.88)',
         disabled: 'rgba(0, 0, 0, 0.4)',
         hint: 'rgba(0, 0, 0, 0.2)',
+      },
+      input: {
+        disabled: '#e2e2e1',
       },
       customColors: {
         white: (opacity: number): string => {

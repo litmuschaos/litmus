@@ -6,9 +6,9 @@ import Stepper from '@material-ui/core/Stepper';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import YAML from 'yaml';
 import Unimodal from '../../containers/layouts/Unimodal';
 import { CREATE_WORKFLOW } from '../../graphql';
-import { UserData } from '../../models/user';
 import { experimentMap, WorkflowData } from '../../models/workflow';
 import useActions from '../../redux/actions';
 import * as WorkflowActions from '../../redux/actions/workflow';
@@ -117,6 +117,7 @@ const CustomStepper = () => {
     (state: RootState) => state.workflowData
   );
   const {
+    id,
     yaml,
     weights,
     description,
@@ -125,12 +126,10 @@ const CustomStepper = () => {
     clusterid,
   } = workflowData;
 
-  const userData: UserData = useSelector((state: RootState) => state.userData);
-
-  const { projectID } = userData;
-
+  const selectedProjectID = useSelector(
+    (state: RootState) => state.userData.selectedProjectID
+  );
   const workflow = useActions(WorkflowActions);
-
   const steps = getSteps();
 
   const handleNext = () => {
@@ -161,7 +160,11 @@ const CustomStepper = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const [createChaosWorkFlow] = useMutation(CREATE_WORKFLOW);
+  const [createChaosWorkFlow] = useMutation(CREATE_WORKFLOW, {
+    onCompleted: () => {
+      setOpen(true);
+    },
+  });
 
   const handleMutation = () => {
     if (name.length !== 0 && description.length !== 0 && weights.length !== 0) {
@@ -176,7 +179,8 @@ const CustomStepper = () => {
 
       /* JSON.stringify takes 3 parameters [object to be converted,
       a function to alter the conversion, spaces to be shown in final result for indentation ] */
-      const yamlJson = JSON.stringify(yaml, null, 2);
+      const yml = YAML.parse(yaml);
+      const yamlJson = JSON.stringify(yml, null, 2); // Converted to Stringified JSON
 
       const chaosWorkFlowInputs = {
         workflow_manifest: yamlJson,
@@ -185,7 +189,7 @@ const CustomStepper = () => {
         workflow_description: description,
         isCustomWorkflow,
         weightages: weightData,
-        project_id: projectID,
+        project_id: selectedProjectID,
         cluster_id: clusterid,
       };
       createChaosWorkFlow({
@@ -196,7 +200,6 @@ const CustomStepper = () => {
 
   const handleOpen = () => {
     handleMutation();
-    setOpen(true);
   };
 
   const handleClose = () => {
@@ -242,9 +245,9 @@ const CustomStepper = () => {
               handleClose={handleClose}
               aria-labelledby="simple-modal-title"
               aria-describedby="simple-modal-description"
-              hasCloseBtn={false}
+              hasCloseBtn
             >
-              <div className={classes.content}>
+              <div>
                 <img
                   src="icons/finish.svg"
                   className={classes.mark}
@@ -288,7 +291,11 @@ const CustomStepper = () => {
                   <div>Finish</div>
                 </ButtonFilled>
               ) : (
-                <ButtonFilled handleClick={() => handleNext()} isPrimary>
+                <ButtonFilled
+                  isDisabled={id.length === 0}
+                  handleClick={() => handleNext()}
+                  isPrimary
+                >
                   <div>
                     Next
                     <img

@@ -11,7 +11,7 @@ import (
 var KubeConfig *string
 
 //getKubeConfig setup the config for access cluster resource
-func getKubeConfig() (*rest.Config, error) {
+func GetKubeConfig() (*rest.Config, error) {
 	// Use in-cluster config if kubeconfig path is specified
 	if *KubeConfig == "" {
 		config, err := rest.InClusterConfig()
@@ -29,7 +29,7 @@ func getKubeConfig() (*rest.Config, error) {
 }
 
 func GetGenericK8sClient() (*kubernetes.Clientset, error) {
-	config, err := getKubeConfig()
+	config, err := GetKubeConfig()
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func GetGenericK8sClient() (*kubernetes.Clientset, error) {
 //This function returns dynamic client and discovery client
 func GetDynamicAndDiscoveryClient() (discovery.DiscoveryInterface, dynamic.Interface, error) {
 	// returns a config object which uses the service account kubernetes gives to pods
-	config, err := getKubeConfig()
+	config, err := GetKubeConfig()
 	if err != nil {
 		return nil, nil, err
 	}
