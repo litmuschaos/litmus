@@ -152,7 +152,7 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 
 	workflow_id := utils.RandomString(32)
 
-	newWorkflowManifest, _ := sjson.Set(input.WorkflowManifest, "metadata.labels.wfid", workflow_id)
+	newWorkflowManifest, _ := sjson.Set(input.WorkflowManifest, "metadata.labels.workflow_id", workflow_id)
 
 	newChaosWorkflow := database.ChaosWorkFlowInput{
 		WorkflowID:          workflow_id,
