@@ -48,7 +48,11 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
 
   const [getCluster] = useLazyQuery(GET_CLUSTER, {
     onCompleted: (data) => {
-      if (data && data.getCluster.length !== 0) {
+      if (
+        data &&
+        data.getCluster.length !== 0 &&
+        data.getCluster[0].is_active !== false
+      ) {
         workflow.setWorkflowDetails({
           clusterid: data.getCluster[0].cluster_id,
           project_id: userData.selectedProjectID,
@@ -58,6 +62,7 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
         setRegistration(false);
       }
     },
+    fetchPolicy: 'cache-and-network',
   });
 
   const handleClick = () => {
@@ -144,7 +149,9 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
       {isRegistered ? null : (
         <div className={classes.marginTemporary}>
           <Typography className={classes.headcluster}>
-            <strong>***No cluster registered with your Project ID***</strong>
+            <strong>
+              ***No Cluster Registered With Your Project ID, Please Wait....***
+            </strong>
           </Typography>
         </div>
       )}
