@@ -2,6 +2,12 @@
 
 package model
 
+import (
+	"fmt"
+	"io"
+	"strconv"
+)
+
 type ActionPayload struct {
 	RequestType  *string `json:"request_type"`
 	K8sManifest  *string `json:"k8s_manifest"`
@@ -88,10 +94,19 @@ type ClusterInput struct {
 }
 
 type Member struct {
-	UserID     string `json:"user_id"`
-	UserName   string `json:"user_name"`
-	Role       string `json:"role"`
-	Invitation string `json:"invitation"`
+	UserID     string     `json:"user_id"`
+	UserName   string     `json:"user_name"`
+	Name       string     `json:"name"`
+	Email      string     `json:"email"`
+	Role       MemberRole `json:"role"`
+	Invitation string     `json:"invitation"`
+	JoinedAt   string     `json:"joined_at"`
+}
+
+type MemberInput struct {
+	ProjectID string      `json:"project_id"`
+	UserName  string      `json:"user_name"`
+	Role      *MemberRole `json:"role"`
 }
 
 type PodLog struct {
@@ -181,4 +196,47 @@ type WorkflowRunInput struct {
 type Weightages struct {
 	ExperimentName string `json:"experiment_name"`
 	Weightage      int    `json:"weightage"`
+}
+
+type MemberRole string
+
+const (
+	MemberRoleOwner  MemberRole = "Owner"
+	MemberRoleEditor MemberRole = "Editor"
+	MemberRoleViewer MemberRole = "Viewer"
+)
+
+var AllMemberRole = []MemberRole{
+	MemberRoleOwner,
+	MemberRoleEditor,
+	MemberRoleViewer,
+}
+
+func (e MemberRole) IsValid() bool {
+	switch e {
+	case MemberRoleOwner, MemberRoleEditor, MemberRoleViewer:
+		return true
+	}
+	return false
+}
+
+func (e MemberRole) String() string {
+	return string(e)
+}
+
+func (e *MemberRole) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = MemberRole(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid MemberRole", str)
+	}
+	return nil
+}
+
+func (e MemberRole) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }

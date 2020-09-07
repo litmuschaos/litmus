@@ -51,11 +51,11 @@ func GetUsers(ctx context.Context) ([]dbSchema.User, error) {
 		log.Print("ERROR GETTING USERS : ", err)
 		return []dbSchema.User{}, err
 	}
-	var user []dbSchema.User
-	err = cursor.All(ctx, user)
+	var users []dbSchema.User
+	err = cursor.All(ctx, &users)
 	if err != nil {
-		log.Print("ERROR GET CLUSTER : ", err)
+		log.Print("Error deserializing users in the user object : ", err)
 		return []dbSchema.User{}, err
 	}
-	return user, nil
+	return users, nil
 }
