@@ -1,13 +1,19 @@
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
-  heading: {
+  header: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
     marginTop: theme.spacing(2.5),
-    marginLeft: theme.spacing(11),
-    marginBottom: theme.spacing(0),
-    fontFamily: 'Ubuntu',
-    fontSize: '2.25rem',
-    display: 'inline-block',
+    marginBottom: theme.spacing(2.5),
+  },
+  scheduleBtn: {
+    marginLeft: 'auto',
+  },
+  appBar: {
+    background: 'transparent',
+    boxShadow: 'none',
   },
 }));
 

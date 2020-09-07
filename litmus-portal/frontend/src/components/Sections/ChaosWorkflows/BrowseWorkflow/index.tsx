@@ -10,13 +10,12 @@ import {
   TableRow,
   Typography,
 } from '@material-ui/core';
-import moment from 'moment';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../../../graphql';
-import { UserData } from '../../../../models/user';
 import {
   ExecutionData,
   Workflow,
@@ -25,16 +24,15 @@ import {
   WorkflowSubscription,
 } from '../../../../models/workflowData';
 import { RootState } from '../../../../redux/reducers';
-
 import {
   sortAlphaAsc,
   sortAlphaDesc,
   sortNumAsc,
   sortNumDesc,
 } from '../../../../utils/sort';
+import HeaderSection from './HeaderSection';
 import useStyles from './styles';
 import TableData from './TableData';
-import HeaderSection from './headerSection';
 
 interface FilterOptions {
   search: string;
@@ -61,8 +59,9 @@ interface DateData {
 
 const BrowseWorkflow = () => {
   const classes = useStyles();
-  const userData: UserData = useSelector((state: RootState) => state.userData);
-  const { selectedProjectID } = userData;
+  const selectedProjectID = useSelector(
+    (state: RootState) => state.userData.selectedProjectID
+  );
 
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(

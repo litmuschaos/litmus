@@ -1,18 +1,18 @@
-import React from 'react';
 import {
+  IconButton,
+  Menu,
+  MenuItem,
   TableCell,
   Typography,
-  IconButton,
-  MenuItem,
-  Menu,
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import CustomStatus from '../CustomStatus/Status';
-import LinearProgressBar from '../../ReturningHome/ProgressBar/LinearProgressBar';
-import useStyles from './styles';
-import timeDifferenceForDate from '../../../../utils/datesModifier';
+import React from 'react';
+import { ExecutionData, WorkflowRun } from '../../../../models/workflowData';
 import { history } from '../../../../redux/configureStore';
-import { WorkflowRun, ExecutionData } from '../../../../models/workflowData';
+import timeDifferenceForDate from '../../../../utils/datesModifier';
+import LinearProgressBar from '../../ReturningHome/ProgressBar/LinearProgressBar';
+import CustomStatus from '../CustomStatus/Status';
+import useStyles from './styles';
 
 interface TableDataProps {
   data: WorkflowRun;
@@ -99,10 +99,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           <MenuItem
             value="Workflow"
             onClick={() =>
-              history.push({
-                pathname: '/workflows/workflow-underground',
-                state: data,
-              })
+              history.push(`/workflows/${data.workflow_name}/details`)
             }
           >
             Show the workflow
