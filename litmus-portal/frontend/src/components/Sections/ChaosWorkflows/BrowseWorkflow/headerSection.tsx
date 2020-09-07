@@ -9,6 +9,7 @@ import {
   Typography,
   IconButton,
   Popover,
+  Button,
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import { DateRangePicker } from 'materialui-daterange-picker';
@@ -129,17 +130,14 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
           </Select>
         </FormControl>
 
-        <div className={classes.selectDate}>
+        <Button className={classes.selectDate} onClick={popOverClick}>
           <Typography className={classes.displayDate}>
             {displayDate}
-            <IconButton
-              style={{ width: 10, height: 10 }}
-              onClick={popOverClick}
-            >
+            <IconButton style={{ width: 10, height: 10 }}>
               {isOpen ? <KeyboardArrowDownIcon /> : <ChevronRightIcon />}
             </IconButton>
           </Typography>
-        </div>
+        </Button>
         <Popover
           open={isOpen}
           anchorEl={popAnchorEl}
