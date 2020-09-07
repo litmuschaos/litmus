@@ -2,7 +2,7 @@ import { Button, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import InputField from '../../components/InputField';
+import UniField from '../../containers/layouts/UniField';
 import config from '../../config';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
@@ -68,7 +68,7 @@ const LoginPage = () => {
           </Typography>
           <form id="login-form" autoComplete="on" onSubmit={handleSubmit}>
             <div className={classes.inputDiv}>
-              <InputField
+              <UniField
                 label="Username"
                 value={authData.username}
                 helperText={
@@ -86,7 +86,7 @@ const LoginPage = () => {
                   })
                 }
               />
-              <InputField
+              <UniField
                 label="Password"
                 type="password"
                 required

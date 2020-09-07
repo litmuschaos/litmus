@@ -8,7 +8,7 @@ import ButtonFilled from '../Button/ButtonFilled';
 import config from '../../config';
 import { CREATE_USER } from '../../graphql';
 import { RootState } from '../../redux/reducers';
-import InputField from '../InputField';
+import UniField from '../../containers/layouts/UniField';
 import ModalPage from './Modalpage';
 import useStyles from './styles';
 import {
@@ -239,7 +239,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
             renderMenu={
               <div>
                 <div className={classes.inputArea} data-cy="InputProjectName">
-                  <InputField
+                  <UniField
                     label={t('welcomeModel.case-0.label')}
                     value={info.projectName}
                     required
@@ -274,7 +274,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
             renderMenu={
               <div>
                 <div className={classes.inputArea} data-cy="InputName">
-                  <InputField
+                  <UniField
                     label={t('welcomeModel.case-1.label')}
                     value={info.name}
                     required
@@ -305,7 +305,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                 data-cy="InputPassword"
               >
                 <div className={classes.passwordArea}>
-                  <InputField
+                  <UniField
                     label={t('welcomeModel.case-2.label')}
                     type="password"
                     required
@@ -321,7 +321,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                   />
                 </div>
                 <div className={classes.passwordArea}>
-                  <InputField
+                  <UniField
                     label={t('welcomeModel.case-2.cnfLabel')}
                     type="password"
                     required
@@ -363,7 +363,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
             renderMenu={
               <div>
                 <div className={classes.inputArea} data-cy="InputEmail">
-                  <InputField
+                  <UniField
                     label={t('welcomeModel.case-3.label')}
                     required
                     value={info.email}
