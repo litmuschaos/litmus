@@ -43,6 +43,7 @@ const useStyles = makeStyles((theme) => ({
     border: '1.7px solid',
     borderRadius: 4,
     borderColor: theme.palette.secondary.main,
+    marginRight: theme.spacing(3.75),
     textTransform: 'none',
   },
   displayDate: {
