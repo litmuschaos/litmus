@@ -26,17 +26,28 @@ const Settings = lazy(() => import('../../pages/Settings'));
 const SchedulePage = lazy(() => import('../../pages/SchedulePage'));
 interface RoutesProps {
   userData: string;
+  isProjectAvailable: boolean;
 }
 
-const Routes: React.FC<RoutesProps> = ({ userData }) => {
+const Routes: React.FC<RoutesProps> = ({ userData, isProjectAvailable }) => {
   const classes = useStyles();
-
   if (userData === '') {
     return (
       <div className={classes.content}>
         <Switch>
           <Route exact path="/login" component={LoginPage} />
           <Route path="/" render={() => <Redirect to="/login" />} />
+        </Switch>
+      </div>
+    );
+  }
+
+  if (!isProjectAvailable) {
+    return (
+      <div className={classes.content}>
+        <Switch>
+          <Route exact path="/" component={HomePage} />
+          <Route path="/" render={() => <Redirect to="/" />} />
         </Switch>
       </div>
     );
@@ -82,7 +93,10 @@ function App() {
         <div className={classes.root}>
           <div className={classes.appFrame}>
             {/* <Routes /> */}
-            <Routes userData={userData.token} />
+            <Routes
+              userData={userData.token}
+              isProjectAvailable={!!userData.selectedProjectID}
+            />
           </div>
         </div>
       </Router>

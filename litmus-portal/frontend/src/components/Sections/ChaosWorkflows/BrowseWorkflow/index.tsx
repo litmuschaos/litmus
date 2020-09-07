@@ -32,7 +32,6 @@ import {
   sortNumAsc,
   sortNumDesc,
 } from '../../../../utils/sort';
-import Loader from '../../../Loader';
 import useStyles from './styles';
 import TableData from './TableData';
 import HeaderSection from './headerSection';
@@ -66,13 +65,13 @@ const BrowseWorkflow = () => {
   const { selectedProjectID } = userData;
 
   // Query to get workflows
-  const { subscribeToMore, data, loading, error } = useQuery<
-    Workflow,
-    WorkflowDataVars
-  >(WORKFLOW_DETAILS, {
-    variables: { projectID: selectedProjectID },
-    fetchPolicy: 'cache-and-network',
-  });
+  const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
+    WORKFLOW_DETAILS,
+    {
+      variables: { projectID: selectedProjectID },
+      fetchPolicy: 'cache-and-network',
+    }
+  );
   // Using subscription to get realtime data
   useEffect(() => {
     subscribeToMore<WorkflowSubscription>({
@@ -254,6 +253,23 @@ const BrowseWorkflow = () => {
           ? new Date(new Date().setHours(23, 59, 59))
           : new Date(range?.endDate.setHours(23, 59, 59)),
     });
+    setPaginationData({ ...paginationData, pageNo: 0 });
+  };
+
+  // Function to validate execution_data JSON
+  const dataPerRow = (dataRow: WorkflowRun) => {
+    let exe_data;
+    try {
+      exe_data = JSON.parse(dataRow.execution_data);
+    } catch (error) {
+      console.error(error);
+      return <></>;
+    }
+    return (
+      <TableRow key={dataRow.workflow_run_id}>
+        <TableData data={dataRow} exeData={exe_data} />
+      </TableRow>
+    );
   };
 
   return (
@@ -411,13 +427,7 @@ const BrowseWorkflow = () => {
 
             {/* Body */}
             <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell colSpan={7}>
-                    <Loader />
-                  </TableCell>
-                </TableRow>
-              ) : error ? (
+              {error ? (
                 <TableRow>
                   <TableCell colSpan={7}>
                     <Typography align="center">Unable to fetch data</Typography>
@@ -430,11 +440,7 @@ const BrowseWorkflow = () => {
                     paginationData.pageNo * paginationData.rowsPerPage +
                       paginationData.rowsPerPage
                   )
-                  .map((dataRow) => (
-                    <TableRow key={dataRow.workflow_run_id}>
-                      <TableData data={dataRow} />
-                    </TableRow>
-                  ))
+                  .map((dataRow) => dataPerRow(dataRow))
               ) : (
                 <TableRow>
                   <TableCell colSpan={7}>
