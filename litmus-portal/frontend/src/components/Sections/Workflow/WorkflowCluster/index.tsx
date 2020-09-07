@@ -3,6 +3,7 @@ import {
   FormControlLabel,
   RadioGroup,
   Typography,
+  Snackbar,
 } from '@material-ui/core';
 import Radio from '@material-ui/core/Radio';
 import * as React from 'react';
@@ -40,7 +41,7 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
   const [value, setValue] = React.useState('Experiment');
   const workflow = useActions(WorkflowActions);
   const [isTragetSelected, setTarget] = React.useState(true);
-  const [isRegistered, setRegistration] = React.useState(true);
+  const [isOpenSnackBar, setOpenSnackBar] = React.useState(false);
   const userData: UserData = useSelector((state: RootState) => state.userData);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue((event.target as HTMLInputElement).value);
@@ -59,7 +60,7 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
         });
         gotoStep(1);
       } else {
-        setRegistration(false);
+        setOpenSnackBar(true);
       }
     },
     fetchPolicy: 'cache-and-network',
@@ -146,15 +147,22 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
           </ButtonOutLine>
         </div>
       </div>
-      {isRegistered ? null : (
-        <div className={classes.marginTemporary}>
-          <Typography className={classes.headcluster}>
+      <Snackbar
+        open={isOpenSnackBar}
+        action={
+          <Typography>
             <strong>
-              ***No Cluster Registered With Your Project ID, Please Wait....***
+              No Cluster Registered With Your Project ID, Please Wait...
             </strong>
           </Typography>
-        </div>
-      )}
+        }
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackBar(false)}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+      />
     </div>
   );
 };
