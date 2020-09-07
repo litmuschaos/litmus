@@ -2,11 +2,10 @@ package gql
 
 import (
 	"encoding/json"
-	"strconv"
-	"strings"
-
 	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/cluster/logs"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/types"
+	"strconv"
+	"strings"
 )
 
 // process event data into proper format acceptable by gql

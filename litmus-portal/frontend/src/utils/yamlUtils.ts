@@ -3,11 +3,8 @@ import YAML from 'yaml';
 
 const nameextractor = (val: any) => {
   const embeddedworkflowyamlstring = val;
-
   const parsedEmbeddedYaml = YAML.parse(embeddedworkflowyamlstring as string);
-
   const experimentNames = [''];
-
   const experimentList = parsedEmbeddedYaml.spec.experiments;
 
   (experimentList as any).forEach((element: any) => {
@@ -32,7 +29,7 @@ const parsed = (yaml: string) => {
     const parsedYaml = YAML.parse(file as string);
     try {
       const embeddedYaml =
-        parsedYaml.spec.workflowSpec.templates[1].inputs.artifacts[0].raw.data;
+        parsedYaml.spec.templates[1].inputs.artifacts[0].raw.data;
       testNames = nameextractor(embeddedYaml);
     } catch (err) {
       testNames = [];

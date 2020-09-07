@@ -1,4 +1,4 @@
-package cluster
+package operations
 
 import (
 	"context"
@@ -37,7 +37,7 @@ func IsClusterConfirmed(clusterData map[string]string) (bool, string, error) {
 		return false, "", err
 	}
 
-	getCM, err := clientset.CoreV1().ConfigMaps(DefaultNamespace).Get(Ctx, PortalConfigName, metav1.GetOptions{})
+	getCM, err := clientset.CoreV1().ConfigMaps(DefaultNamespace).Get(PortalConfigName, metav1.GetOptions{})
 	if errors.IsNotFound(err) {
 		return false, "", nil
 	} else if getCM.Data["is_cluster_confirmed"] == "true" {
@@ -73,7 +73,7 @@ func ClusterRegister(clusterData map[string]string) (bool, error) {
 		Data: configMapData,
 	}
 
-	_, err = clientset.CoreV1().ConfigMaps(DefaultNamespace).Create(Ctx, &newConfigMap, metav1.CreateOptions{})
+	_, err = clientset.CoreV1().ConfigMaps(DefaultNamespace).Create(&newConfigMap)
 	if err != nil {
 		return false, nil
 	}
@@ -84,7 +84,7 @@ func ClusterRegister(clusterData map[string]string) (bool, error) {
 
 func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstructured.Unstructured, error) {
 	if requestType == "create" {
-		response, err := dr.Create(Ctx, obj, metav1.CreateOptions{})
+		response, err := dr.Create(obj, metav1.CreateOptions{})
 		if errors.IsAlreadyExists(err) {
 			// This doesnt ever happen even if it does already exist
 			log.Printf("Already exists")
@@ -98,7 +98,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 		log.Println("Resource successfully created")
 		return response, nil
 	} else if requestType == "update" {
-		response, err := dr.Update(Ctx, obj, metav1.UpdateOptions{})
+		response, err := dr.Update(obj, metav1.UpdateOptions{})
 		if err != nil {
 			return nil, err
 		}
@@ -106,7 +106,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 		log.Println("Resource successfully updated")
 		return response, nil
 	} else if requestType == "delete" {
-		err := dr.Delete(Ctx, obj.GetName(), metav1.DeleteOptions{})
+		err := dr.Delete(obj.GetName(), &metav1.DeleteOptions{})
 		if errors.IsNotFound(err) {
 			// This doesnt ever happen even if it is already deleted or not found
 			log.Printf("%v not found", obj.GetName())
@@ -120,7 +120,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 		log.Println("Resource successfully deleted")
 		return &unstructured.Unstructured{}, nil
 	} else if requestType == "get" {
-		response, err := dr.Get(Ctx, obj.GetName(), metav1.GetOptions{})
+		response, err := dr.Get(obj.GetName(), metav1.GetOptions{})
 		if errors.IsNotFound(err) {
 			// This doesnt ever happen even if it is already deleted or not found
 			log.Printf("%v not found", obj.GetName())

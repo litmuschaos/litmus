@@ -51,7 +51,7 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
       if (data && data.getCluster.length !== 0) {
         workflow.setWorkflowDetails({
           clusterid: data.getCluster[0].cluster_id,
-          project_id: userData.projectID,
+          project_id: userData.selectedProjectID,
         });
         gotoStep(1);
       } else {
@@ -62,7 +62,10 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
 
   const handleClick = () => {
     getCluster({
-      variables: { project_id: userData.projectID, cluster_type: 'internal' },
+      variables: {
+        project_id: userData.selectedProjectID,
+        cluster_type: 'internal',
+      },
     });
   };
 

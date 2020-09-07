@@ -1,8 +1,6 @@
 package events
 
 import (
-	"time"
-
 	"github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
 	"github.com/argoproj/argo/pkg/client/clientset/versioned"
 	"github.com/argoproj/argo/pkg/client/informers/externalversions"
@@ -11,6 +9,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/types"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/tools/cache"
+	"time"
 )
 
 // 0 means no resync
