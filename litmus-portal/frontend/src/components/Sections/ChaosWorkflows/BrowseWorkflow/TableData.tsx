@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import React from 'react';
-import { WorkflowRun } from '../../../../models/workflowData';
+import { ExecutionData, WorkflowRun } from '../../../../models/workflowData';
 import { history } from '../../../../redux/configureStore';
 import timeDifferenceForDate from '../../../../utils/datesModifier';
 import LinearProgressBar from '../../ReturningHome/ProgressBar/LinearProgressBar';
@@ -16,9 +16,10 @@ import useStyles from './styles';
 
 interface TableDataProps {
   data: WorkflowRun;
+  exeData: ExecutionData;
 }
 
-const TableData: React.FC<TableDataProps> = ({ data }) => {
+const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -35,7 +36,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
   return (
     <>
       <TableCell className={classes.tableDataStatus}>
-        <CustomStatus status={JSON.parse(data.execution_data).phase} />
+        <CustomStatus status={exeData.phase} />
       </TableCell>
       <TableCell className={classes.workflowNameData}>
         <Typography>
@@ -49,16 +50,20 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       </TableCell>
       <TableCell>
         <div className={classes.reliabiltyData}>
-          {JSON.parse(data.execution_data).phase === 'Failed' ? (
+          {exeData.phase === 'Failed' || exeData.phase === '' ? (
             <>
-              <Typography>Overall RR: 0</Typography>
+              <Typography>
+                Overall RR: <span className={classes.failed}>0%</span>
+              </Typography>
               <div className={classes.progressBar}>
                 <LinearProgressBar value={0} />
               </div>
             </>
           ) : (
             <>
-              <Typography>Overall RR: 100</Typography>
+              <Typography>
+                Overall RR: <span className={classes.success}>100%</span>
+              </Typography>
               <div className={classes.progressBar}>
                 <LinearProgressBar value={100} />
               </div>
@@ -68,7 +73,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       </TableCell>
       <TableCell>
         <Typography className={classes.stepsData}>
-          {Object.keys(JSON.parse(data.execution_data).nodes).length}
+          {Object.keys(exeData.nodes).length}
         </Typography>
       </TableCell>
       <TableCell>

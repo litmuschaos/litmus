@@ -2,12 +2,14 @@ package usermanagement
 
 import (
 	"context"
+	"errors"
 	"log"
 	"os"
 	"strings"
 	"time"
 
 	self_deployer "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/self-deployer"
+	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
@@ -18,6 +20,14 @@ import (
 
 //CreateUser ...
 func CreateUser(ctx context.Context, user model.UserInput) (*model.User, error) {
+
+	outputUser, err := GetUser(ctx, user.Username)
+	if err != nil && err != mongo.ErrNoDocuments {
+		return nil, err
+	} else if outputUser != nil {
+		return outputUser, errors.New("User already exists")
+	}
+
 	uuid := uuid.New()
 	newUser := &dbSchema.User{
 		ID:          uuid.String(),
@@ -28,7 +38,7 @@ func CreateUser(ctx context.Context, user model.UserInput) (*model.User, error) 
 		CreatedAt:   time.Now().String(),
 	}
 
-	err := database.InsertUser(ctx, newUser)
+	err = database.InsertUser(ctx, newUser)
 	if err != nil {
 		log.Print("ERROR", err)
 		return nil, err
@@ -39,7 +49,7 @@ func CreateUser(ctx context.Context, user model.UserInput) (*model.User, error) 
 		return nil, err
 	}
 
-	outputUser := newUser.GetOutputUser()
+	outputUser = newUser.GetOutputUser()
 	outputUser.Projects = append(outputUser.Projects, project)
 
 	active := os.Getenv("SELF_CLUSTER")
