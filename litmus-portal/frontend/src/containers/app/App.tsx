@@ -26,12 +26,11 @@ const Settings = lazy(() => import('../../pages/Settings'));
 const SchedulePage = lazy(() => import('../../pages/SchedulePage'));
 interface RoutesProps {
   userData: string;
-  projectAvailable: string;
+  isProjectAvailable: boolean;
 }
 
-const Routes: React.FC<RoutesProps> = ({ userData, projectAvailable }) => {
+const Routes: React.FC<RoutesProps> = ({ userData, isProjectAvailable }) => {
   const classes = useStyles();
-
   if (userData === '') {
     return (
       <div className={classes.content}>
@@ -43,7 +42,7 @@ const Routes: React.FC<RoutesProps> = ({ userData, projectAvailable }) => {
     );
   }
 
-  if (projectAvailable === '') {
+  if (!isProjectAvailable) {
     return (
       <div className={classes.content}>
         <Switch>
@@ -96,7 +95,7 @@ function App() {
             {/* <Routes /> */}
             <Routes
               userData={userData.token}
-              projectAvailable={userData.selectedProjectID}
+              isProjectAvailable={!!userData.selectedProjectID}
             />
           </div>
         </div>
