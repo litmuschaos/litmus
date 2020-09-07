@@ -1,3 +1,4 @@
+import { useLazyQuery } from '@apollo/client';
 import {
   FormControl,
   FormControlLabel,
@@ -7,16 +8,14 @@ import {
 } from '@material-ui/core';
 import Radio from '@material-ui/core/Radio';
 import * as React from 'react';
-import { useLazyQuery } from '@apollo/client';
 import { useSelector } from 'react-redux';
+import { GET_CLUSTER } from '../../../../graphql';
+import useActions from '../../../../redux/actions';
+import * as WorkflowActions from '../../../../redux/actions/workflow';
+import { RootState } from '../../../../redux/reducers';
 import ButtonFilled from '../../../Button/ButtonFilled';
 import ButtonOutLine from '../../../Button/ButtonOutline';
 import useStyles from './styles';
-import { GET_CLUSTER } from '../../../../graphql';
-import { RootState } from '../../../../redux/reducers';
-import { UserData } from '../../../../models/user';
-import useActions from '../../../../redux/actions';
-import * as WorkflowActions from '../../../../redux/actions/workflow';
 
 /*
   Check is image which is used as
@@ -42,7 +41,9 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
   const workflow = useActions(WorkflowActions);
   const [isTragetSelected, setTarget] = React.useState(true);
   const [isOpenSnackBar, setOpenSnackBar] = React.useState(false);
-  const userData: UserData = useSelector((state: RootState) => state.userData);
+  const selectedProjectID = useSelector(
+    (state: RootState) => state.userData.selectedProjectID
+  );
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue((event.target as HTMLInputElement).value);
   };
@@ -56,7 +57,7 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
       ) {
         workflow.setWorkflowDetails({
           clusterid: data.getCluster[0].cluster_id,
-          project_id: userData.selectedProjectID,
+          project_id: selectedProjectID,
         });
         gotoStep(1);
       } else {
@@ -69,7 +70,7 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
   const handleClick = () => {
     getCluster({
       variables: {
-        project_id: userData.selectedProjectID,
+        project_id: selectedProjectID,
         cluster_type: 'internal',
       },
     });

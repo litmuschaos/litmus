@@ -1,24 +1,25 @@
-import React from 'react';
 import {
+  IconButton,
+  Menu,
+  MenuItem,
   TableCell,
   Typography,
-  IconButton,
-  MenuItem,
-  Menu,
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import CustomStatus from '../CustomStatus/Status';
-import LinearProgressBar from '../../ReturningHome/ProgressBar/LinearProgressBar';
-import useStyles from './styles';
-import timeDifferenceForDate from '../../../../utils/datesModifier';
+import React from 'react';
+import { ExecutionData, WorkflowRun } from '../../../../models/workflowData';
 import { history } from '../../../../redux/configureStore';
-import { WorkflowRun } from '../../../../models/workflowData';
+import timeDifferenceForDate from '../../../../utils/datesModifier';
+import LinearProgressBar from '../../ReturningHome/ProgressBar/LinearProgressBar';
+import CustomStatus from '../CustomStatus/Status';
+import useStyles from './styles';
 
 interface TableDataProps {
   data: WorkflowRun;
+  exeData: ExecutionData;
 }
 
-const TableData: React.FC<TableDataProps> = ({ data }) => {
+const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -35,7 +36,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
   return (
     <>
       <TableCell className={classes.tableDataStatus}>
-        <CustomStatus status={JSON.parse(data.execution_data).phase} />
+        <CustomStatus status={exeData.phase} />
       </TableCell>
       <TableCell className={classes.workflowNameData}>
         <Typography>
@@ -49,16 +50,20 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       </TableCell>
       <TableCell>
         <div className={classes.reliabiltyData}>
-          {JSON.parse(data.execution_data).phase === 'Failed' ? (
+          {exeData.phase === 'Failed' || exeData.phase === '' ? (
             <>
-              <Typography>Overall RR: 0</Typography>
+              <Typography>
+                Overall RR: <span className={classes.failed}>0%</span>
+              </Typography>
               <div className={classes.progressBar}>
                 <LinearProgressBar value={0} />
               </div>
             </>
           ) : (
             <>
-              <Typography>Overall RR: 100</Typography>
+              <Typography>
+                Overall RR: <span className={classes.success}>100%</span>
+              </Typography>
               <div className={classes.progressBar}>
                 <LinearProgressBar value={100} />
               </div>
@@ -68,7 +73,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       </TableCell>
       <TableCell>
         <Typography className={classes.stepsData}>
-          {Object.keys(JSON.parse(data.execution_data).nodes).length}
+          {Object.keys(exeData.nodes).length}
         </Typography>
       </TableCell>
       <TableCell>
@@ -94,10 +99,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           <MenuItem
             value="Workflow"
             onClick={() =>
-              history.push({
-                pathname: '/workflows/workflow-underground',
-                state: data,
-              })
+              history.push(`/workflows/${data.workflow_name}/details`)
             }
           >
             Show the workflow
