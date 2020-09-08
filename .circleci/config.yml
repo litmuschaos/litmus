@@ -49,13 +49,13 @@ jobs:
       - run:
           name: Save graphql server docker image
           command: docker save -o workspace/image.tar ${REPONAME}/${GRAPHQL_SERVER_IMAGE}:${IMGTAG}
-      #      - run:
-      #          name: Build auth server docker image
-      #          command: docker images && docker build . -f Dockerfile -t ${REPONAME}/${AUTHENTICATION_SERVER_IMAGE}:${IMGTAG}
-      #          working_directory: ~/project/litmus-portal/backend/auth
-      #      - run:
-      #          name: Save auth server docker image
-      #          command: docker save -o workspace/image.tar ${REPONAME}/${AUTHENTICATION_SERVER_IMAGE}:${IMGTAG}
+      - run:
+          name: Build auth server docker image
+          command: docker images && docker build . -f Dockerfile -t ${REPONAME}/${AUTHENTICATION_SERVER_IMAGE}:${IMGTAG}
+          working_directory: ~/project/litmus-portal/backend/auth
+      - run:
+          name: Save auth server docker image
+          command: docker save -o workspace/image.tar ${REPONAME}/${AUTHENTICATION_SERVER_IMAGE}:${IMGTAG}
       - run:
           name: Build subscriber docker image
           command: docker build . -f build/Dockerfile -t ${REPONAME}/${SUBSCRIBER_IMAGE}:${IMGTAG}
@@ -106,9 +106,9 @@ jobs:
       - run:
           name: Pushing frontend server
           command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${FRONTEND_IMAGE} --IMGTAG=${IMGTAG}/hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${GRAPHQL_SERVER_IMAGE} --IMGTAG=${IMGTAG}
-      #      - run:
-      #          name: Pushing auth server
-      #          command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${AUTHENTICATION_SERVER_IMAGE} --IMGTAG=${IMGTAG}
+      - run:
+          name: Pushing auth server
+          command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${AUTHENTICATION_SERVER_IMAGE} --IMGTAG=${IMGTAG}
       - run:
           name: Pushing subscriber server
           command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${SUBSCRIBER_IMAGE} --IMGTAG=${IMGTAG}
@@ -139,9 +139,9 @@ jobs:
       - run:
           name: Pushing frontend server
           command: bash ./hack/push --TYPE=release --REPONAME=${REPONAME} --IMGNAME=${FRONTEND_IMAGE} --IMGTAG=${IMGTAG}/hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${GRAPHQL_SERVER_IMAGE} --IMGTAG=${IMGTAG}
-      #      - run:
-      #          name: Pushing auth server
-      #          command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${AUTHENTICATION_SERVER_IMAGE} --IMGTAG=${IMGTAG}
+      - run:
+          name: Pushing auth server
+          command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${AUTHENTICATION_SERVER_IMAGE} --IMGTAG=${IMGTAG}
       - run:
           name: Pushing subscriber server
           command: bash ./hack/push --TYPE=release --REPONAME=${REPONAME} --IMGNAME=${SUBSCRIBER_IMAGE} --IMGTAG=${IMGTAG}
