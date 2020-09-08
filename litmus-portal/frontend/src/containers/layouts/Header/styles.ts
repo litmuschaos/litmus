@@ -56,13 +56,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // Style for ProfileDropdownSection and ProfileDropdownItems.
   avatarBackground: {
-    color: '#FFF',
+    color: theme.palette.customColors.white(1),
     backgroundColor: theme.palette.secondary.main,
   },
 
   // Styles for ProfileDropdownItems.
   popover: {
-    background: '#FFF',
+    background: theme.palette.customColors.white(1),
     borderRadius: theme.shape.borderRadius,
     width: '100%',
     maxWidth: theme.spacing(36.5),

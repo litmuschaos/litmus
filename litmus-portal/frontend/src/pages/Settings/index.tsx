@@ -2,6 +2,7 @@ import { Box, Paper, Tab, Tabs, Typography } from '@material-ui/core';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import AccountSettings from '../../components/Sections/Settings/AccountsTab/AccountSettings';
+import TeammingTab from '../../components/Sections/Settings/TeammingTab';
 import UserManagement from '../../components/Sections/Settings/UserManagementTab/UserManagement';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { RootState } from '../../redux/reducers';
@@ -58,8 +59,8 @@ const Settings: React.FC = () => {
             indicatorColor="secondary"
             textColor="secondary"
           >
-            <Tab label="Account" {...tabProps(0)} />
-            <Tab disabled label="Team" {...tabProps(1)} />
+            <Tab label="My Account" {...tabProps(0)} />
+            <Tab label="Team" {...tabProps(1)} />
             {userData.username === 'admin' ? (
               <Tab label="User Management" {...tabProps(2)} />
             ) : (
@@ -69,6 +70,9 @@ const Settings: React.FC = () => {
         </Paper>
         <TabPanel value={activeTab} index={0}>
           <AccountSettings />
+        </TabPanel>
+        <TabPanel value={activeTab} index={1}>
+          <TeammingTab />
         </TabPanel>
         {userData.username === 'admin' ? (
           <TabPanel value={activeTab} index={2}>
