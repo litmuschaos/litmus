@@ -1,13 +1,13 @@
-import { Button, Typography, Divider } from '@material-ui/core';
-import React from 'react';
+import { Button, Divider, Typography } from '@material-ui/core';
+import React, { useRef } from 'react';
+import InputField from '../../../../../containers/layouts/InputField';
+import Unimodal from '../../../../../containers/layouts/Unimodal';
+import {
+  validateConfirmPassword,
+  validateStartEmptySpacing,
+} from '../../../../../utils/validate';
 import PersonalDetails from '../PersonalDetails';
 import useStyles from './styles';
-import Unimodal from '../../../../../containers/layouts/Unimodal';
-import InputField from '../../../../../containers/layouts/InputField';
-import {
-  validateLength,
-  validateConfirmPassword,
-} from '../../../../../utils/validate';
 
 // used for password field
 interface Password {
@@ -21,6 +21,7 @@ const AccountSettings: React.FC = () => {
 
   // used for modal
   const [open, setOpen] = React.useState(false);
+  const isSuccess = useRef<boolean>(false);
 
   const handleClose = () => {
     setOpen(false);
@@ -70,6 +71,13 @@ const AccountSettings: React.FC = () => {
     });
   };
 
+  if (
+    confNewPassword.password.length > 0 &&
+    newPassword.password === confNewPassword.password
+  )
+    isSuccess.current = true;
+  else isSuccess.current = false;
+
   return (
     <div className={classes.container}>
       <div>
@@ -91,27 +99,24 @@ const AccountSettings: React.FC = () => {
                 handleChange={handleCurrPassword('password')}
                 type="password"
                 label="Current Password"
-                validationError={validateLength(currPassword.password)}
+                validationError={false}
               />
 
               {/* New Password */}
               <InputField
                 required
-                helperText={
-                  validateLength(newPassword.password)
-                    ? 'Password is too short'
-                    : ''
-                }
                 type="password"
                 handleChange={handleNewPassword('password')}
-                success={
-                  !validateConfirmPassword(
-                    newPassword.password,
-                    confNewPassword.password
-                  )
+                success={isSuccess.current}
+                helperText={
+                  validateStartEmptySpacing(newPassword.password)
+                    ? 'Should not start with empty space'
+                    : ''
                 }
                 label="New Password"
-                validationError={validateLength(newPassword.password)}
+                validationError={validateStartEmptySpacing(
+                  newPassword.password
+                )}
                 value={newPassword.password}
               />
 
@@ -128,12 +133,7 @@ const AccountSettings: React.FC = () => {
                 required
                 type="password"
                 handleChange={handleConfPassword('password')}
-                success={
-                  !validateConfirmPassword(
-                    newPassword.password,
-                    confNewPassword.password
-                  )
-                }
+                success={isSuccess.current}
                 label="Confirm Password"
                 validationError={validateConfirmPassword(
                   newPassword.password,
