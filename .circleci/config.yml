@@ -33,7 +33,7 @@ jobs:
       - run:
           name: Setup ENV
           command: |
-            echo 'export REPONAME="imrajdas"' >> workspace/env-vars
+            echo 'export REPONAME="litmuschaos"' >> workspace/env-vars
             echo 'export GRAPHQL_SERVER_IMAGE="litmusportal-server"' >> workspace/env-vars
             echo 'export AUTHENTICATION_SERVER_IMAGE="litmusportal-auth-server"' >> workspace/env-vars
             echo 'export FRONTEND_IMAGE="litmusportal-frontend"' >> workspace/env-vars
