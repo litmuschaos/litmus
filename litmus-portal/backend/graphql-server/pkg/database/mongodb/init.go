@@ -12,22 +12,20 @@ import (
 
 var (
 	collections = map[string]string{
-		"Cluster":     "cluster-collection",
-		"WorkflowRun": "workflow-run",
-		"User":        "user",
-		"Project":     "project",
-		"Workflow":    "workflow-collection",
+		"Cluster":  "cluster-collection",
+		"User":     "user",
+		"Project":  "project",
+		"Workflow": "workflow-collection",
 	}
 	//Database ...
 	Database *mongo.Database
 	dbName   = "litmus"
 
 	//Collections ...
-	clusterCollection     *mongo.Collection
-	workflowRunCollection *mongo.Collection
-	workflowCollection    *mongo.Collection
-	backgroundContext     = context.Background()
-	err                   error
+	clusterCollection  *mongo.Collection
+	workflowCollection *mongo.Collection
+	backgroundContext  = context.Background()
+	err                error
 )
 
 type Cluster struct {
@@ -45,17 +43,6 @@ type Cluster struct {
 	ClusterType        string  `bson:"cluster_type"`
 }
 
-type WorkflowRun struct {
-	WorkflowRunID string `bson:"workflow_run_id"`
-	WorkflowID    string `bson:"workflow_id"`
-	ClusterName   string `bson:"cluster_name"`
-	LastUpdated   string `bson:"last_updated"`
-	ProjectID     string `bson:"project_id"`
-	ClusterID     string `bson:"cluster_id"`
-	WorkflowName  string `bson:"workflow_name"`
-	ExecutionData string `bson:"execution_data"`
-}
-
 type ChaosWorkFlowInput struct {
 	WorkflowID          string             `bson:"workflow_id"`
 	WorkflowManifest    string             `bson:"workflow_manifest"`
@@ -68,6 +55,13 @@ type ChaosWorkFlowInput struct {
 	CreatedAt           string             `bson:"created_at"`
 	ProjectID           string             `bson:"project_id"`
 	ClusterID           string             `bson:"cluster_id"`
+	WorkflowRuns        []*WorkflowRun     `bson:"workflow_runs"`
+}
+
+type WorkflowRun struct {
+	WorkflowRunID string `bson:"workflow_run_id"`
+	LastUpdated   string `bson:"last_updated"`
+	ExecutionData string `bson:"execution_data"`
 }
 
 type WeightagesInput struct {
@@ -105,6 +99,5 @@ func init() {
 
 func initAllCollections() {
 	clusterCollection = Database.Collection(collections["Cluster"])
-	workflowRunCollection = Database.Collection(collections["WorkflowRun"])
 	workflowCollection = Database.Collection(collections["Workflow"])
 }
