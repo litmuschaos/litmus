@@ -1,5 +1,6 @@
-import { Avatar, TextField, Typography } from '@material-ui/core';
+import { Avatar, Typography } from '@material-ui/core';
 import React from 'react';
+import InputField from '../../../../../../containers/layouts/InputField';
 import userAvatar from '../../../../../../utils/user';
 import useStyles from './styles';
 
@@ -53,44 +54,34 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
           </div>
           {/* Fields for details including Full name, email, username */}
           <div className={classes.details1}>
-            <TextField
+            <InputField
               required
               value={nameValue}
               disabled={nameIsDisabled}
-              onChange={handleNameChange}
-              className={classes.user}
+              handleChange={handleNameChange}
               id="filled-user-input"
               label="Full Name"
-              InputProps={{ disableUnderline: true }}
               data-cy="fullName"
             />
 
-            <TextField
+            <InputField
               required
               type="email"
               value={emailValue}
               disabled={emailIsDisabled}
-              onChange={handleEmailChange}
-              className={classes.user}
+              handleChange={handleEmailChange}
               id="filled-email-input"
               label="Email Address"
               name="email"
-              InputProps={{
-                disableUnderline: true,
-              }}
               data-cy="inputEmail"
             />
             {/* Username is not editable normal user */}
-            <TextField
+            <InputField
               value={userValue}
-              onChange={handleUserChange}
-              className={classes.user}
+              handleChange={handleUserChange}
               id="filled-username-input"
               label="Username"
               disabled={usernameIsDisabled}
-              InputProps={{
-                disableUnderline: true,
-              }}
               data-cy="username"
             />
           </div>

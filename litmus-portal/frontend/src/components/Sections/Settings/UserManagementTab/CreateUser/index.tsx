@@ -5,13 +5,13 @@ import {
   Input,
   InputAdornment,
   InputLabel,
-  TextField,
   Typography,
 } from '@material-ui/core';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import React from 'react';
 import NewUserModal from './NewUserModal';
+import InputField from '../../../../../containers/layouts/InputField';
 import useStyles from './styles';
 import UserDetails from './UserDetails';
 
@@ -149,16 +149,12 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
                 <div>
                   <form>
                     <div className={classes.details1}>
-                      <TextField
-                        className={classes.userDetail}
+                      <InputField
                         id="filled-username-input"
                         label="Username"
                         defaultValue="RichardHill"
                         value={personalData.userName}
                         disabled
-                        InputProps={{
-                          disableUnderline: true,
-                        }}
                         data-cy="username"
                       />
                       <FormControl>

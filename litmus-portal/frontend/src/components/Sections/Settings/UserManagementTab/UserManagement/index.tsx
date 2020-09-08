@@ -4,7 +4,6 @@ import {
   createStyles,
   FormControl,
   IconButton,
-  InputAdornment,
   Menu,
   MenuItem,
   Paper,
@@ -15,16 +14,15 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Theme,
   Toolbar,
   Typography,
   withStyles,
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import SearchIcon from '@material-ui/icons/Search';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import InputField from '../../../../../containers/layouts/InputField';
 import config from '../../../../../config';
 import { RootState } from '../../../../../redux/reducers';
 import ButtonFilled from '../../../../Button/ButtonFilled';
@@ -148,26 +146,18 @@ const UserManagement: React.FC = () => {
               <div>
                 <Toolbar className={classes.toolbar}>
                   {/* Search user */}
-                  <TextField
+                  <InputField
+                    label="search"
                     id="input-with-icon-textfield"
                     placeholder="Search..."
-                    onChange={(e) => {
+                    handleChange={(e: { target: { value: string } }) => {
                       setRows(
                         selectRow.filter((x) =>
                           x.name.toLowerCase().includes(e.target.value)
                         )
                       );
                     }}
-                    InputProps={{
-                      style: {
-                        maxWidth: '15.75rem',
-                      },
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <SearchIcon />
-                        </InputAdornment>
-                      ),
-                    }}
+                    iconType="searchLeft"
                   />
                   {/* filter menu */}
                   <div className={classes.filter}>

@@ -8,7 +8,7 @@ import ButtonFilled from '../Button/ButtonFilled';
 import config from '../../config';
 import { CREATE_USER } from '../../graphql';
 import { RootState } from '../../redux/reducers';
-import UniField from '../../containers/layouts/UniField';
+import InputField from '../../containers/layouts/InputField';
 import ModalPage from './Modalpage';
 import useStyles from './styles';
 import {
@@ -239,7 +239,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
             renderMenu={
               <div>
                 <div className={classes.inputArea} data-cy="InputProjectName">
-                  <UniField
+                  <InputField
                     label={t('welcomeModel.case-0.label')}
                     value={info.projectName}
                     required
@@ -252,7 +252,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                       info.projectName
                     )}
                     type="text"
-                    handleChange={(event) => {
+                    handleChange={(event: { target: { value: string } }) => {
                       setData('projectName', event.target.value);
                     }}
                   />
@@ -274,7 +274,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
             renderMenu={
               <div>
                 <div className={classes.inputArea} data-cy="InputName">
-                  <UniField
+                  <InputField
                     label={t('welcomeModel.case-1.label')}
                     value={info.name}
                     required
@@ -284,7 +284,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                         : ''
                     }
                     validationError={validateStartEmptySpacing(info.name)}
-                    handleChange={(event) => {
+                    handleChange={(event: { target: { value: string } }) => {
                       setData('name', event.target.value);
                     }}
                   />
@@ -305,14 +305,14 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                 data-cy="InputPassword"
               >
                 <div className={classes.passwordArea}>
-                  <UniField
+                  <InputField
                     label={t('welcomeModel.case-2.label')}
                     type="password"
                     required
                     validationError={false}
                     value={values.password}
                     success={isSuccess.current}
-                    handleChange={(event) =>
+                    handleChange={(event: { target: { value: any } }) =>
                       setValues({
                         password: event.target.value,
                         confirmPassword: values.confirmPassword,
@@ -321,7 +321,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                   />
                 </div>
                 <div className={classes.passwordArea}>
-                  <UniField
+                  <InputField
                     label={t('welcomeModel.case-2.cnfLabel')}
                     type="password"
                     required
@@ -342,7 +342,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                         values.confirmPassword
                       )
                     }
-                    handleChange={(event) =>
+                    handleChange={(event: { target: { value: any } }) =>
                       setValues({
                         password: values.password,
                         confirmPassword: event.target.value,
@@ -363,7 +363,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
             renderMenu={
               <div>
                 <div className={classes.inputArea} data-cy="InputEmail">
-                  <UniField
+                  <InputField
                     label={t('welcomeModel.case-3.label')}
                     required
                     value={info.email}
@@ -371,7 +371,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                       validateEmail(info.email) ? 'Should be a valid email' : ''
                     }
                     validationError={validateEmail(info.email)}
-                    handleChange={(event) => {
+                    handleChange={(event: { target: { value: string } }) => {
                       setData('email', event.target.value);
                     }}
                   />

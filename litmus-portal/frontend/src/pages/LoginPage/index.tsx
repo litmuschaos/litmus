@@ -2,7 +2,7 @@ import { Button, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import UniField from '../../containers/layouts/UniField';
+import InputField from '../../containers/layouts/InputField';
 import config from '../../config';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
@@ -68,7 +68,7 @@ const LoginPage = () => {
           </Typography>
           <form id="login-form" autoComplete="on" onSubmit={handleSubmit}>
             <div className={classes.inputDiv}>
-              <UniField
+              <InputField
                 label="Username"
                 value={authData.username}
                 helperText={
@@ -79,14 +79,14 @@ const LoginPage = () => {
                 validationError={validateStartEmptySpacing(authData.username)}
                 data-cy="inputEmail"
                 required
-                handleChange={(e) =>
+                handleChange={(e: { target: { value: any } }) =>
                   setAuthData({
                     username: e.target.value,
                     password: authData.password,
                   })
                 }
               />
-              <UniField
+              <InputField
                 label="Password"
                 type="password"
                 required
@@ -99,7 +99,7 @@ const LoginPage = () => {
                 // validationError={validatePassword(authData.password)}
                 validationError={false}
                 data-cy="inputPassword"
-                handleChange={(e) =>
+                handleChange={(e: { target: { value: any } }) =>
                   setAuthData({
                     username: authData.username,
                     password: e.target.value,
