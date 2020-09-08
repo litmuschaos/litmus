@@ -1,11 +1,4 @@
-import {
-  makeStyles,
-  TextField,
-  withStyles,
-  Theme,
-  Button,
-} from '@material-ui/core';
-import { purple } from '@material-ui/core/colors';
+import { makeStyles, TextField, withStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -99,7 +92,6 @@ const useStyles = makeStyles((theme) => ({
 
   inputDiv: {
     marginTop: theme.spacing(5),
-    marginRight: theme.spacing(4.5),
   },
 
   saved: {
@@ -126,16 +118,10 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '0.875rem',
   },
 
-  modalContainerName: {
-    paddingBottom: theme.spacing(0.625),
-  },
-
   modalContainerBody: {
     position: 'relative',
-    height: '70%',
-    paddingLeft: theme.spacing(18),
-    paddingRight: theme.spacing(14),
-    paddingBottom: theme.spacing(0.625),
+    width: '70%',
+    margin: 'auto',
   },
 
   buttons: {
@@ -143,34 +129,16 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
   },
 
-  colorButton: {
-    textTransform: 'none',
-    fontSize: '0.75rem',
-    lineHeight: 2.5,
-    borderRadius: 3,
-  },
-
   selectionName: {
     fontFamily: 'Ubuntu',
     fontSize: '1rem',
   },
 
-  buttonCancel: {
-    textTransform: 'none',
-    fontSize: '0.75rem',
-    lineHeight: 2.5,
-    borderRadius: 3,
-    color: 'black',
-    border: '1px solid #5B44BA',
+  cancelButton: {
+    marginLeft: theme.spacing(-2),
   },
-
-  buttonSave: {
-    textTransform: 'none',
-    fontSize: '0.75rem',
-    lineHeight: 2.5,
-    borderRadius: 3,
-    width: '6.6rem',
-    marginRight: theme.spacing(4.375),
+  saveButton: {
+    marginRight: theme.spacing(-2),
   },
 }));
 
@@ -182,16 +150,5 @@ export const CssTextField = withStyles({
     },
   },
 })(TextField);
-
-export const ColorButton = withStyles((theme: Theme) => ({
-  root: {
-    color: theme.palette.getContrastText(purple[500]),
-    backgroundColor: theme.palette.primary.dark,
-  },
-  '&:hover': {
-    color: theme.palette.getContrastText(purple[500]),
-    backgroundColor: theme.palette.primary.dark,
-  },
-}))(Button);
 
 export default useStyles;
