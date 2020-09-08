@@ -48,39 +48,43 @@ jobs:
           working_directory: ~/project/litmus-portal/backend/graphql-server
       - run:
           name: Save graphql server docker image
-          command: docker save -o workspace/image.tar ${REPONAME}/${GRAPHQL_SERVER_IMAGE}:${IMGTAG}
+          command: docker save -o workspace/graphql-server.tar ${REPONAME}/${GRAPHQL_SERVER_IMAGE}:${IMGTAG}
       - run:
           name: Build auth server docker image
           command: docker images && docker build . -f Dockerfile -t ${REPONAME}/${AUTHENTICATION_SERVER_IMAGE}:${IMGTAG}
           working_directory: ~/project/litmus-portal/backend/auth
       - run:
           name: Save auth server docker image
-          command: docker save -o workspace/image.tar ${REPONAME}/${AUTHENTICATION_SERVER_IMAGE}:${IMGTAG}
+          command: docker save -o workspace/auth-server.tar ${REPONAME}/${AUTHENTICATION_SERVER_IMAGE}:${IMGTAG}
       - run:
           name: Build subscriber docker image
           command: docker build . -f build/Dockerfile -t ${REPONAME}/${SUBSCRIBER_IMAGE}:${IMGTAG}
           working_directory: ~/project/litmus-portal/backend/subscriber
       - run:
           name: Save subscriber docker image
-          command: docker save -o workspace/image.tar ${REPONAME}/${SUBSCRIBER_IMAGE}:${IMGTAG}
+          command: docker save -o workspace/subscriber.tar ${REPONAME}/${SUBSCRIBER_IMAGE}:${IMGTAG}
       - run:
           name: Build self-deployer docker image
           command: docker build . -f build/Dockerfile -t ${REPONAME}/${SELF_DEPLOYER_IMAGE}:${IMGTAG}
           working_directory: ~/project/litmus-portal/backend/tools/self-deployer
       - run:
           name: Save self-deployer docker image
-          command: docker save -o workspace/image.tar ${REPONAME}/${SELF_DEPLOYER_IMAGE}:${IMGTAG}
+          command: docker save -o workspace/self-deployer.tar ${REPONAME}/${SELF_DEPLOYER_IMAGE}:${IMGTAG}
       - run:
           name: Build frontend docker image
           command: docker build . -f Dockerfile -t ${REPONAME}/${FRONTEND_IMAGE}:${IMGTAG}
           working_directory: ~/project/litmus-portal/frontend
       - run:
           name: Save frontend docker image
-          command: docker save -o workspace/image.tar ${REPONAME}/${FRONTEND_IMAGE}:${IMGTAG}
+          command: docker save -o workspace/frontend.tar ${REPONAME}/${FRONTEND_IMAGE}:${IMGTAG}
       - persist_to_workspace:
           root: workspace
           paths:
-            - image.tar
+            - graphql-server.tar
+            - auth-server.tar
+            - subscriber.tar
+            - self-deployer.tar
+            - frontend.tar
             - env-vars
 
   docker-push:
@@ -98,8 +102,13 @@ jobs:
           name: Loads all docker images
           command: docker load -i /tmp/workspace/image.tar
       - run:
-          name: Docker images
-          command: docker images
+          name: Loading all docker images
+          command: |
+            docker load -i /tmp/workspace/graphql-server.tar
+            docker load -i /tmp/workspace/subscriber.tar
+            docker load -i /tmp/workspace/self-deployer.tar
+            docker load -i /tmp/workspace/auth-server.tar
+            docker load -i /tmp/workspace/frontend.tar
       - run:
           name: Pushing graphql server
           command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${SELF_DEPLOYER_IMAGE} --IMGTAG=${IMGTAG}
@@ -128,8 +137,13 @@ jobs:
           cat /tmp/workspace/env-vars >> $BASH_ENV
       - checkout
       - run:
-          name: Loads all docker images
-          command: docker load -i /tmp/workspace/image.tar
+          name: Loading all docker images
+          command: |
+            docker load -i /tmp/workspace/graphql-server.tar
+            docker load -i /tmp/workspace/subscriber.tar
+            docker load -i /tmp/workspace/self-deployer.tar
+            docker load -i /tmp/workspace/auth-server.tar
+            docker load -i /tmp/workspace/frontend.tar
       - run:
           name: Docker images
           command: docker images
