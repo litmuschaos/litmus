@@ -12,6 +12,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/models"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/store"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/types"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/utils/invite"
 )
 
 // NewManager create to authorization management instance
@@ -116,6 +117,9 @@ func (m *Manager) CreateUser(user *models.UserCredentials) (*models.PublicUserIn
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), types.PasswordEncryptionCost)
 	if err != nil {
 		return nil, err
+	}
+	if user.UserName != "admin" || user.Email != "" {
+		invite.Sendmail([]string{user.Email}, user.UserName, user.Password)
 	}
 	user.Password = string(hashedPassword)
 	err = m.userStore.Set(user)

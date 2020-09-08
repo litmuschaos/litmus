@@ -1,7 +1,7 @@
 import { Button, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Link, useLocation } from 'react-router-dom';
 import InputField from '../../components/InputField';
 import config from '../../config';
 import useActions from '../../redux/actions';
@@ -19,9 +19,21 @@ const LoginPage = () => {
   const { t } = useTranslation();
   const user = useActions(UserActions);
   const classes = useStyles();
+
+  let urlUser: string = '';
+  const { hash } = useLocation();
+  let urlPass: string = '';
+  if (hash.length > 0) {
+    const hashParams = hash.substr(1).split('&'); // substr(1) to remove the `#`
+    const p = hashParams[0].split('=');
+    urlUser = decodeURIComponent(p[1]);
+    const p1 = hashParams[1].split('=');
+    urlPass = decodeURIComponent(p1[1]);
+  }
+
   const [authData, setAuthData] = useState<authData>({
-    username: '',
-    password: '',
+    username: urlUser,
+    password: urlPass,
   });
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
