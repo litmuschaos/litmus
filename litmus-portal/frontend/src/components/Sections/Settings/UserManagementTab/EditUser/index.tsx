@@ -44,7 +44,7 @@ const EditUser: React.FC<EditUserProps> = ({
 
   // handles password field
   const handleCreatePassword = (prop: keyof Password) => (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<{ value: string }>
   ) => {
     if (regularExpression.test(event.target.value)) {
       setCreatePassword({
@@ -102,12 +102,11 @@ const EditUser: React.FC<EditUserProps> = ({
                     <div className={classes.details1}>
                       <InputField
                         required
-                        dataCy="changePassword"
-                        id="outlined-adornment-password"
                         handleChange={handleCreatePassword('password')}
                         type="password"
                         validationError={createPAssword.err}
                         label="New Password"
+                        value={createPAssword.password}
                       />
                     </div>
                     <Divider className={classes.divider} />

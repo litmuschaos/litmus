@@ -41,7 +41,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
 
   // handles password field
   const handleCreatePassword = (prop: keyof Password) => (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<{ value: string }>
   ) => {
     if (regularExpression.test(event.target.value)) {
       setCreatePassword({
@@ -64,6 +64,13 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
     userName: '',
     fullName: '',
   });
+
+  const handleUsername = (event: React.ChangeEvent<{ value: string }>) => {
+    setPersonalData({
+      ...personalData,
+      userName: event.target.value,
+    });
+  };
 
   return (
     <div>
@@ -127,19 +134,17 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
                   <form>
                     <div className={classes.details1}>
                       <InputField
-                        id="filled-username-input"
                         label="Username"
-                        defaultValue="RichardHill"
                         value={personalData.userName}
+                        handleChange={handleUsername}
+                        validationError={false}
                         disabled
-                        dataCy="username"
                       />
                       <InputField
                         required
-                        dataCy="changePassword"
-                        id="outlined-adornment-password"
                         type="password"
                         handleChange={handleCreatePassword('password')}
+                        value={createPAssword.password}
                         validationError={createPAssword.err}
                         label="New Password"
                       />

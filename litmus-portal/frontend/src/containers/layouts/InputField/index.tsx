@@ -5,44 +5,31 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import SearchIcon from '@material-ui/icons/Search';
 import { useStyles, useStylesLitmus } from './styles';
 
 interface InputFieldProps {
   label: string;
   type?: string;
-  id?: string;
-  name?: string;
-  placeholder?: string;
-  defaultValue?: string;
   helperText?: string;
-  validationError?: boolean;
+  validationError: boolean;
   success?: boolean;
-  value?: string;
-  required?: boolean;
   disabled?: boolean;
-  dataCy?: string;
+  value: string;
+  required?: boolean;
   iconType?: string | undefined;
-  handleChange?:
-    | ((event: React.ChangeEvent<{ value: string }>) => void)
-    | ((event: React.ChangeEvent<HTMLInputElement>) => void);
+  handleChange?: (event: React.ChangeEvent<{ value: string }>) => void;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
   type,
   label,
-  id,
-  name,
-  placeholder,
-  defaultValue,
   value,
+  disabled,
   helperText,
   validationError,
   success,
   required,
-  disabled,
   iconType,
-  dataCy,
   handleChange,
 }) => {
   const LitmusTextFieldStylesExternal = useStyles();
@@ -127,32 +114,6 @@ const InputField: React.FC<InputFieldProps> = ({
   }
 
   if (iconType) {
-    if (iconType === 'searchLeft') {
-      return (
-        <TextField
-          className={LitmusTextFieldStylesExternal.inputArea}
-          label={label}
-          helperText={helperText}
-          placeholder={placeholder}
-          value={value}
-          type={type}
-          required={required}
-          onChange={handleChange}
-          variant="filled"
-          InputProps={
-            {
-              classes,
-              disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            } as Partial<OutlinedInputProps>
-          }
-        />
-      );
-    }
     if (iconType === 'iconLeft' && validationError === false) {
       return (
         <TextField
@@ -351,18 +312,14 @@ const InputField: React.FC<InputFieldProps> = ({
     <TextField
       className={LitmusTextFieldStylesExternal.inputArea}
       error={validationError}
+      disabled={disabled}
       label={label}
-      id={id}
       helperText={helperText}
       value={value}
       type={type}
-      name={name}
       required={required}
-      defaultValue={defaultValue}
       onChange={handleChange}
-      disabled={disabled}
       variant="filled"
-      data-cy={dataCy}
       InputProps={
         {
           classes,

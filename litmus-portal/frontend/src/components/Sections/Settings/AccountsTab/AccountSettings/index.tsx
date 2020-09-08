@@ -29,7 +29,7 @@ const AccountSettings: React.FC = () => {
   );
 
   // states for the three password fields
-  const [currPassword] = React.useState<Password>({
+  const [currPassword, setCurrPassword] = React.useState<Password>({
     password: '',
     showPassword: false,
     err: false,
@@ -45,9 +45,20 @@ const AccountSettings: React.FC = () => {
     err: false,
   });
 
+  // handleCurrPassword handles password validation for first password field
+  const handleCurrPassword = (prop: keyof Password) => (
+    event: React.ChangeEvent<{ value: string }>
+  ) => {
+    setCurrPassword({
+      ...currPassword,
+      err: false,
+      [prop]: event.target.value,
+    });
+  };
+
   // handleNewPassword handles password validation for second password field
   const handleNewPassword = (prop: keyof Password) => (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<{ value: string }>
   ) => {
     if (
       event.target.value !== currPassword.password &&
@@ -69,7 +80,7 @@ const AccountSettings: React.FC = () => {
 
   // handleConfPassword handles password validation for third password field
   const handleConfPassword = (prop: keyof Password) => (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<{ value: string }>
   ) => {
     if (
       event.target.value === newPassword.password &&
@@ -107,8 +118,9 @@ const AccountSettings: React.FC = () => {
             <form className={classes.innerPass}>
               {/* Current Password */}
               <InputField
-                defaultValue={currPassword.password}
-                id="outlined-adornment-password"
+                required
+                value={currPassword.password}
+                handleChange={handleCurrPassword('password')}
                 type="password"
                 label="Current Password"
                 validationError={currPassword.err}
@@ -116,22 +128,22 @@ const AccountSettings: React.FC = () => {
 
               {/* New Password */}
               <InputField
-                dataCy="changePassword"
-                id="outlined-adornment-password"
+                required
                 type="password"
                 handleChange={handleNewPassword('password')}
                 label="New Password"
                 validationError={newPassword.err}
+                value={newPassword.password}
               />
 
               {/* Confirm new password */}
               <InputField
-                dataCy="confirmPassword"
-                id="outlined-adornment-password"
+                required
                 type="password"
                 handleChange={handleConfPassword('password')}
                 label="Confirm Password"
                 validationError={confNewPassword.err}
+                value={confNewPassword.password}
               />
               <Button
                 data-cy="button"

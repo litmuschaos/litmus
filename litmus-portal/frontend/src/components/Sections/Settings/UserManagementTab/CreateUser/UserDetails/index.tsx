@@ -3,13 +3,17 @@ import React from 'react';
 import InputField from '../../../../../../containers/layouts/InputField';
 import userAvatar from '../../../../../../utils/user';
 import useStyles from './styles';
+import {
+  validateOnlyAlphabet,
+  validateEmail,
+} from '../../../../../../utils/validate';
 
 interface PersonalDetailsProps {
-  handleNameChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleNameChange?: (event: React.ChangeEvent<{ value: string }>) => void;
   nameValue: string;
-  handleUserChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleUserChange?: (event: React.ChangeEvent<{ value: string }>) => void;
   userValue: string;
-  handleEmailChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleEmailChange?: (event: React.ChangeEvent<{ value: string }>) => void;
   emailValue: string;
   usernameIsDisabled: boolean;
   nameIsDisabled: boolean;
@@ -59,9 +63,8 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
               value={nameValue}
               disabled={nameIsDisabled}
               handleChange={handleNameChange}
-              id="filled-user-input"
+              validationError={validateOnlyAlphabet(nameValue)}
               label="Full Name"
-              data-cy="fullName"
             />
 
             <InputField
@@ -70,19 +73,16 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
               value={emailValue}
               disabled={emailIsDisabled}
               handleChange={handleEmailChange}
-              id="filled-email-input"
+              validationError={validateEmail(emailValue)}
               label="Email Address"
-              name="email"
-              data-cy="inputEmail"
             />
             {/* Username is not editable normal user */}
             <InputField
               value={userValue}
               handleChange={handleUserChange}
-              id="filled-username-input"
               label="Username"
               disabled={usernameIsDisabled}
-              data-cy="username"
+              validationError={false}
             />
           </div>
         </div>
