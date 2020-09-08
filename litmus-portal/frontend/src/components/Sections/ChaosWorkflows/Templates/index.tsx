@@ -1,8 +1,8 @@
 import React from 'react';
-import PredifinedWorkflows from '../../../PredifinedWorkflows';
-import workflowData from '../../../PredifinedWorkflows/data';
 import { history } from '../../../../redux/configureStore';
 import parsed from '../../../../utils/yamlUtils';
+import PredifinedWorkflows from '../../../PredifinedWorkflows';
+import workflowData from '../../../PredifinedWorkflows/data';
 import useStyles from './styles';
 
 const Templates = () => {
@@ -24,7 +24,7 @@ const Templates = () => {
             testWeights.push(10);
           });
           history.push({
-            pathname: `/workflows/${workflowData[index].title}`,
+            pathname: `/workflows/${workflowData[index].title}/template`,
             state: {
               workflowData: workflowData[index],
               testNames,

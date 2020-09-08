@@ -1,15 +1,15 @@
+import { Divider, Typography } from '@material-ui/core';
 import React from 'react';
-import { Typography, Divider } from '@material-ui/core';
-import useStyles from './styles';
-import { preDefinedWorkflowData } from '../../../../models';
-import Head from './Head';
-import ExperimentDetails from './ExperimentDetails';
-import Recommendation from './Recommendation';
 import Scaffold from '../../../../containers/layouts/Scaffold';
-import ButtonOutlined from '../../../Button/ButtonOutline';
+import { preDefinedWorkflowData } from '../../../../models/predefinedWorkflow';
+import { LocationState } from '../../../../models/routerModel';
 import { history } from '../../../../redux/configureStore';
 import ButtonFilled from '../../../Button/ButtonFilled';
-import { LocationState } from '../../../../models/routerModel';
+import ButtonOutlined from '../../../Button/ButtonOutline';
+import ExperimentDetails from './ExperimentDetails';
+import Head from './Head';
+import Recommendation from './Recommendation';
+import useStyles from './styles';
 
 interface LocationObjectProps {
   workflowData: preDefinedWorkflowData;

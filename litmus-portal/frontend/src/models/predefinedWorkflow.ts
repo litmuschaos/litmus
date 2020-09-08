@@ -23,6 +23,6 @@ export interface workflowDetails {
   description: string;
 }
 
-export interface SelectWorkflowCallBackType {
+interface SelectWorkflowCallBackType {
   (selectedWorkflow: workflowDetails): void;
 }
