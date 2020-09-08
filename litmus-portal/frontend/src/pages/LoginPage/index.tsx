@@ -47,7 +47,6 @@ const LoginPage = () => {
         }
       })
       .catch((err) => {
-        console.error(err.status);
         console.error(err);
       });
   };
