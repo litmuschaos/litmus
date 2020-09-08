@@ -82,6 +82,7 @@ export const GET_CLUSTER = gql`
   query getCluster($project_id: String!, $cluster_type: String) {
     getCluster(project_id: $project_id, cluster_type: $cluster_type) {
       cluster_id
+      is_active
     }
   }
 `;
