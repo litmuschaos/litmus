@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Typography } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
-import Button from '@material-ui/core/Button';
-import useStyles, { CssTextField, ColorButton } from './styles';
+import useStyles, { CssTextField } from './styles';
 import useActions from '../../../../redux/actions';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
 import PredifinedWorkflows from '../../../PredifinedWorkflows';
 import workflowsList from '../../../PredifinedWorkflows/data';
 import Unimodal from '../../../../containers/layouts/Unimodal';
+import ButtonFilled from '../../../Button/ButtonFilled';
+import ButtonOutline from '../../../Button/ButtonOutline';
 // import { getWkfRunCount } from "../../utils";
 
 const ChooseWorkflow: React.FC = () => {
@@ -20,7 +21,7 @@ const ChooseWorkflow: React.FC = () => {
   });
 
   const WorkflowNameChangeHandler = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<{ value: string }>
   ) => {
     setWorkflowData({
       workflowName: (event.target as HTMLInputElement).value,
@@ -29,7 +30,7 @@ const ChooseWorkflow: React.FC = () => {
   };
 
   const WorkflowDescriptionChangeHandler = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<{ value: string }>
   ) => {
     setWorkflowData({
       workflowName: workflowDetails.workflowName,
@@ -105,14 +106,9 @@ const ChooseWorkflow: React.FC = () => {
             workflows={workflowsList}
           />
           <div className={classes.paddedTop}>
-            <ColorButton
-              variant="contained"
-              color="primary"
-              className={classes.colorButton}
-              onClick={() => setOpen(true)}
-            >
-              Create workflow name
-            </ColorButton>
+            <ButtonFilled isPrimary={false} handleClick={() => setOpen(true)}>
+              <div>Create workflow name</div>
+            </ButtonFilled>
             <Typography className={classes.saved} display="inline">
               <strong>
                 <span> &nbsp; &nbsp; &#10003;</span> &nbsp; Name saved as &quot;
@@ -130,11 +126,9 @@ const ChooseWorkflow: React.FC = () => {
         </div>
       </div>
       <Unimodal isOpen={open} handleClose={() => setOpen(false)} hasCloseBtn>
-        <div className={classes.modalContainerName}>
-          <Typography className={classes.modalHeading} display="inline">
-            Create your <strong>workflow name</strong>
-          </Typography>
-        </div>
+        <Typography className={classes.modalHeading} display="inline">
+          Create your <strong>workflow name</strong>
+        </Typography>
         <div className={classes.modalContainerBody}>
           <div className={classes.inputDiv}>
             <div className={classes.inputArea}>
@@ -174,23 +168,23 @@ const ChooseWorkflow: React.FC = () => {
             </div>
           </div>
           <div className={classes.buttons}>
-            <Button
-              variant="outlined"
-              color="secondary"
-              className={classes.buttonCancel}
-              onClick={() => setOpen(false)}
-            >
-              Cancel
-            </Button>
-
-            <ColorButton
-              variant="contained"
-              color="primary"
-              className={classes.buttonSave}
-              onClick={() => handleSave()}
-            >
-              Save
-            </ColorButton>
+            <div className={classes.cancelButton}>
+              <ButtonOutline
+                handleClick={() => setOpen(false)}
+                isDisabled={false}
+              >
+                <div>Cancel</div>
+              </ButtonOutline>
+            </div>
+            <div className={classes.saveButton}>
+              <ButtonFilled
+                isPrimary={false}
+                isDisabled={false}
+                handleClick={() => handleSave()}
+              >
+                <div>Save</div>
+              </ButtonFilled>
+            </div>
           </div>
         </div>
       </Unimodal>

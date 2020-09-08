@@ -35,6 +35,10 @@ const useStyles = makeStyles((theme) => ({
     cursor: 'pointer',
     border: '1px solid rgba(0, 0, 0, 0.2)',
     boxSizing: 'border-box',
+    '&:hover': {
+      border: '1px solid #5B44BA',
+      boxShadow: '0px 4px 4px rgba(91, 68, 186, 0.25)',
+    },
   },
 
   cardSelected: {

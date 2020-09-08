@@ -4,6 +4,7 @@ import {
   FormControlLabel,
   RadioGroup,
   Typography,
+  Snackbar,
 } from '@material-ui/core';
 import Radio from '@material-ui/core/Radio';
 import * as React from 'react';
@@ -39,7 +40,7 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
   const [value, setValue] = React.useState('Experiment');
   const workflow = useActions(WorkflowActions);
   const [isTragetSelected, setTarget] = React.useState(true);
-  const [isRegistered, setRegistration] = React.useState(true);
+  const [isOpenSnackBar, setOpenSnackBar] = React.useState(false);
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
   );
@@ -49,16 +50,21 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
 
   const [getCluster] = useLazyQuery(GET_CLUSTER, {
     onCompleted: (data) => {
-      if (data && data.getCluster.length !== 0) {
+      if (
+        data &&
+        data.getCluster.length !== 0 &&
+        data.getCluster[0].is_active !== false
+      ) {
         workflow.setWorkflowDetails({
           clusterid: data.getCluster[0].cluster_id,
           project_id: selectedProjectID,
         });
         gotoStep(1);
       } else {
-        setRegistration(false);
+        setOpenSnackBar(true);
       }
     },
+    fetchPolicy: 'cache-and-network',
   });
 
   const handleClick = () => {
@@ -142,13 +148,22 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
           </ButtonOutLine>
         </div>
       </div>
-      {isRegistered ? null : (
-        <div className={classes.marginTemporary}>
-          <Typography className={classes.headcluster}>
-            <strong>***No cluster registered with your Project ID***</strong>
+      <Snackbar
+        open={isOpenSnackBar}
+        action={
+          <Typography>
+            <strong>
+              No Cluster Registered With Your Project ID, Please Wait...
+            </strong>
           </Typography>
-        </div>
-      )}
+        }
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackBar(false)}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+      />
     </div>
   );
 };
