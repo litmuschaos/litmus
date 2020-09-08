@@ -88,10 +88,7 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
     projects.forEach((project) => {
       const memberList: Member[] = project.members;
       memberList.forEach((member) => {
-        if (
-          member.user_name === username &&
-          (member.invitation === 'Accepted' || member.invitation === '')
-        ) {
+        if (member.user_name === username && member.invitation === 'Accepted') {
           projectsAvailableForSwitching.push(project);
         }
       });
