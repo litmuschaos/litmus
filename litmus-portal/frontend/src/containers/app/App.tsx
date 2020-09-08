@@ -14,9 +14,7 @@ const ErrorPage = lazy(() => import('../../pages/ErrorPage'));
 const Workflows = lazy(() => import('../../pages/Workflows'));
 const CreateWorkflow = lazy(() => import('../../pages/CreateWorkflow'));
 const LoginPage = lazy(() => import('../../pages/LoginPage'));
-const WorkflowUnderground = lazy(() =>
-  import('../../pages/WorkflowUnderground')
-);
+const WorkflowDetails = lazy(() => import('../../pages/WorkflowDetails'));
 const BrowseTemplate = lazy(() =>
   import('../../components/Sections/ChaosWorkflows/BrowseTemplate')
 );
@@ -26,17 +24,28 @@ const Settings = lazy(() => import('../../pages/Settings'));
 const SchedulePage = lazy(() => import('../../pages/SchedulePage'));
 interface RoutesProps {
   userData: string;
+  isProjectAvailable: boolean;
 }
 
-const Routes: React.FC<RoutesProps> = ({ userData }) => {
+const Routes: React.FC<RoutesProps> = ({ userData, isProjectAvailable }) => {
   const classes = useStyles();
-
   if (userData === '') {
     return (
       <div className={classes.content}>
         <Switch>
           <Route exact path="/login" component={LoginPage} />
           <Route path="/" render={() => <Redirect to="/login" />} />
+        </Switch>
+      </div>
+    );
+  }
+
+  if (!isProjectAvailable) {
+    return (
+      <div className={classes.content}>
+        <Switch>
+          <Route exact path="/" component={HomePage} />
+          <Route path="/" render={() => <Redirect to="/" />} />
         </Switch>
       </div>
     );
@@ -49,18 +58,27 @@ const Routes: React.FC<RoutesProps> = ({ userData }) => {
         <Route exact path="/login" component={LoginPage} />
         <Route exact path="/workflows" component={Workflows} />
         <Route exact path="/create-workflow" component={CreateWorkflow} />
-        <Route exact path="/schedule" component={SchedulePage} />
-        <Route
-          exact
-          path="/workflows/workflow-underground"
-          component={WorkflowUnderground}
-        />
-        <Route exact path="/community" component={Community} />
         <Route
           exact
           path="/workflows/:workflowName"
+          component={WorkflowDetails}
+        />
+        <Route
+          exact
+          path="/workflows/:workflowName/details"
+          component={WorkflowDetails}
+        />
+        <Route
+          exact
+          path="/workflows/:scheduleId/schedule"
+          component={SchedulePage}
+        />
+        <Route
+          exact
+          path="/workflows/:templateName/template"
           component={BrowseTemplate}
         />
+        <Route exact path="/community" component={Community} />
         <Route exact path="/settings" component={Settings} />
         <Route exact path="/404" component={ErrorPage} />
         <Redirect to="/404" />
@@ -82,7 +100,10 @@ function App() {
         <div className={classes.root}>
           <div className={classes.appFrame}>
             {/* <Routes /> */}
-            <Routes userData={userData.token} />
+            <Routes
+              userData={userData.token}
+              isProjectAvailable={!!userData.selectedProjectID}
+            />
           </div>
         </div>
       </Router>

@@ -19,6 +19,8 @@
     "@material-ui/pickers": "^3.2.10",
     "ace-builds": "^1.4.12",
     "brace": "^0.11.1",
+    "d3": "^5.16.0",
+    "dagre-d3": "^0.6.4",
     "date-fns": "^2.14.0",
     "graphql": "^15.3.0",
     "i18next": "^19.7.0",
@@ -74,6 +76,8 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "@types/d3": "^5.7.2",
+    "@types/dagre-d3": "^0.4.39",
     "@types/js-yaml": "^3.12.5",
     "@types/jsonwebtoken": "^8.5.0",
     "@types/plotly.js": "^1.50.15",

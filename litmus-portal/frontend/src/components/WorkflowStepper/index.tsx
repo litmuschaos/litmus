@@ -1,32 +1,31 @@
-import React from 'react';
+import { useMutation } from '@apollo/client';
 import Step from '@material-ui/core/Step';
 import { StepIconProps } from '@material-ui/core/StepIcon';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
 import Typography from '@material-ui/core/Typography';
+import React from 'react';
 import { useSelector } from 'react-redux';
-import { useMutation } from '@apollo/client';
 import YAML from 'yaml';
+import Unimodal from '../../containers/layouts/Unimodal';
+import { CREATE_WORKFLOW } from '../../graphql';
+import { experimentMap, WorkflowData } from '../../models/workflow';
+import useActions from '../../redux/actions';
+import * as WorkflowActions from '../../redux/actions/workflow';
+import { history } from '../../redux/configureStore';
+import { RootState } from '../../redux/reducers';
+import parsed from '../../utils/yamlUtils';
 import ButtonFilled from '../Button/ButtonFilled';
 import ButtonOutline from '../Button/ButtonOutline';
-import ReliablityScore from '../Sections/Workflow/ReliabilityScore';
-import ScheduleWorkflow from '../Sections/Workflow/ScheduleWorkflow';
-import VerifyCommit from '../Sections/Workflow/VerifyCommit';
-import ChooseAWorkflowCluster from '../Sections/Workflow/WorkflowCluster';
+import ChooseWorkflow from '../Sections/CreateWorkflow/ChooseWorkflow/index';
+import ReliablityScore from '../Sections/CreateWorkflow/ReliabilityScore';
+import ScheduleWorkflow from '../Sections/CreateWorkflow/ScheduleWorkflow';
+import TuneWorkflow from '../Sections/CreateWorkflow/TuneWorkflow/index';
+import VerifyCommit from '../Sections/CreateWorkflow/VerifyCommit';
+import ChooseAWorkflowCluster from '../Sections/CreateWorkflow/WorkflowCluster';
 import QontoConnector from './quontoConnector';
 import useStyles from './styles';
 import useQontoStepIconStyles from './useQontoStepIconStyles';
-import TuneWorkflow from '../Sections/Workflow/TuneWorkflow/index';
-import ChooseWorkflow from '../Sections/Workflow/ChooseWorkflow/index';
-import { WorkflowData, experimentMap } from '../../models/workflow';
-import { UserData } from '../../models/user';
-import { RootState } from '../../redux/reducers';
-import useActions from '../../redux/actions';
-import * as WorkflowActions from '../../redux/actions/workflow';
-import parsed from '../../utils/yamlUtils';
-import { CREATE_WORKFLOW } from '../../graphql';
-import Unimodal from '../../containers/layouts/Unimodal';
-import { history } from '../../redux/configureStore';
 
 function getSteps(): string[] {
   return [
@@ -127,12 +126,10 @@ const CustomStepper = () => {
     clusterid,
   } = workflowData;
 
-  const userData: UserData = useSelector((state: RootState) => state.userData);
-
-  const { selectedProjectID } = userData;
-
+  const selectedProjectID = useSelector(
+    (state: RootState) => state.userData.selectedProjectID
+  );
   const workflow = useActions(WorkflowActions);
-
   const steps = getSteps();
 
   const handleNext = () => {

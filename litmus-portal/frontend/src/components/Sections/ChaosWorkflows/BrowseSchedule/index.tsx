@@ -1,64 +1,62 @@
-import React, { useState } from 'react';
 import { useQuery } from '@apollo/client';
-import SearchIcon from '@material-ui/icons/Search';
 import {
-  InputBase,
-  InputAdornment,
   FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Typography,
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  TablePagination,
   IconButton,
+  InputAdornment,
+  InputBase,
+  InputLabel,
+  MenuItem,
+  Select,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@material-ui/core';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import SearchIcon from '@material-ui/icons/Search';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import useStyles from './styles';
 import { WORKFLOW_DETAILS } from '../../../../graphql';
-import TableData from './TableData';
 import {
+  ExecutionData,
   Workflow,
   WorkflowDataVars,
   WorkflowRun,
-  ExecutionData,
 } from '../../../../models/workflowData';
-import Loader from '../../../Loader';
+import { RootState } from '../../../../redux/reducers';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
   sortNumAsc,
   sortNumDesc,
 } from '../../../../utils/sort';
-import { UserData } from '../../../../models/user';
-import { RootState } from '../../../../redux/reducers';
+import Loader from '../../../Loader';
+import useStyles from './styles';
+import TableData from './TableData';
 
 interface FilterOption {
   search: string;
   cluster: string;
 }
-
 interface PaginationData {
   pageNo: number;
   rowsPerPage: number;
 }
-
 interface SortData {
   startDate: { sort: boolean; ascending: boolean };
   name: { sort: boolean; ascending: boolean };
 }
 
-const ScheduleWorkflow = () => {
+const BrowseSchedule = () => {
   const classes = useStyles();
-  const userData: UserData = useSelector((state: RootState) => state.userData);
-  const { selectedProjectID } = userData;
+  const selectedProjectID = useSelector(
+    (state: RootState) => state.userData.selectedProjectID
+  );
 
   // Apollo query to get the scheduled data
   const { data, loading, error } = useQuery<Workflow, WorkflowDataVars>(
@@ -329,4 +327,4 @@ const ScheduleWorkflow = () => {
   );
 };
 
-export default ScheduleWorkflow;
+export default BrowseSchedule;
