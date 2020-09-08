@@ -9,6 +9,7 @@ type WorkflowEvent struct {
 	Name              string          `json:"name"`
 	CreationTimestamp string          `json:"creationTimestamp"`
 	Phase             string          `json:"phase"`
+	Message           string          `json:"message"`
 	StartedAt         string          `json:"startedAt"`
 	FinishedAt        string          `json:"finishedAt"`
 	Nodes             map[string]Node `json:"nodes"`
@@ -18,6 +19,7 @@ type WorkflowEvent struct {
 type Node struct {
 	Name       string     `json:"name"`
 	Phase      string     `json:"phase"`
+	Message    string     `json:"message"`
 	StartedAt  string     `json:"startedAt"`
 	FinishedAt string     `json:"finishedAt"`
 	Children   []string   `json:"children"`

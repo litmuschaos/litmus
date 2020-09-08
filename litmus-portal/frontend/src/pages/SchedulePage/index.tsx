@@ -9,20 +9,15 @@ import {
 } from '@material-ui/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import CustomDate from '../../components/DateTime/CustomDate/index';
-import CustomTime from '../../components/DateTime/CustomTime/index';
-import SetTime from './SetTime/index';
-import useStyles from './styles';
-import Scaffold from '../../containers/layouts/Scaffold';
 import ButtonFilled from '../../components/Button/ButtonFilled';
 import ButtonOutline from '../../components/Button/ButtonOutline';
+import CustomDate from '../../components/DateTime/CustomDate/index';
+import CustomTime from '../../components/DateTime/CustomTime/index';
+import Scaffold from '../../containers/layouts/Scaffold';
+import SetTime from './SetTime/index';
+import useStyles from './styles';
 
-// To be changed to a Location Generic
-interface WorkflowScheduleProps {
-  location: any;
-}
-
-const SchedulePage: React.FC<WorkflowScheduleProps> = () => {
+const SchedulePage: React.FC = () => {
   const { t } = useTranslation();
   const start = 0;
   const end = 10;

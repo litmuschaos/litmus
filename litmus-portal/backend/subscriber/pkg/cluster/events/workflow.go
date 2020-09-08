@@ -90,6 +90,7 @@ func workflowEventHandler(obj interface{}, eventType string, stream chan types.W
 			FinishedAt: StrConvTime(nodeStatus.FinishedAt.Unix()),
 			Children:   nodeStatus.Children,
 			ChaosExp:   cd,
+			Message:    nodeStatus.Message,
 		}
 		nodes[nodeStatus.ID] = details
 	}
@@ -101,6 +102,7 @@ func workflowEventHandler(obj interface{}, eventType string, stream chan types.W
 		Name:              workflowObj.ObjectMeta.Name,
 		CreationTimestamp: StrConvTime(workflowObj.ObjectMeta.CreationTimestamp.Unix()),
 		Phase:             string(workflowObj.Status.Phase),
+		Message:           workflowObj.Status.Message,
 		StartedAt:         StrConvTime(workflowObj.Status.StartedAt.Unix()),
 		FinishedAt:        StrConvTime(workflowObj.Status.FinishedAt.Unix()),
 		Nodes:             nodes,

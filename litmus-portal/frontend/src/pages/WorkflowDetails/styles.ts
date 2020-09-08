@@ -3,8 +3,8 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     display: 'flex',
-    flexDirection: 'row',
     marginTop: theme.spacing(3),
+    height: '75vh',
   },
   heading: {
     fontSize: '2rem',
