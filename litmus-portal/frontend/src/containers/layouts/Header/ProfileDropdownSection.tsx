@@ -3,7 +3,7 @@ import { Box, IconButton } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
-import React, { useRef, useState } from 'react';
+import React, { MutableRefObject, useRef, useState } from 'react';
 import { ProjectsCallBackType } from '../../../models/header';
 import userAvatar from '../../../utils/user';
 import ProfileInfoDropdownItems from './ProfileDropdownItems';
@@ -33,7 +33,7 @@ const ProfileDropdownSection: React.FC<ProfileInfoDropdownSectionProps> = ({
 }) => {
   const classes = useStyles();
   const [isProfilePopoverOpen, setProfilePopoverOpen] = useState(false);
-  const profileMenuRef = useRef();
+  const profileMenuRef = useRef<HTMLButtonElement>(null);
   const nameSplit = name.split(' ');
   const initials = nameSplit[1]
     ? userAvatar(name, false)
@@ -62,7 +62,7 @@ const ProfileDropdownSection: React.FC<ProfileInfoDropdownSectionProps> = ({
             {name}{' '}
             <IconButton
               edge="end"
-              ref={profileMenuRef as any}
+              ref={profileMenuRef}
               aria-label="account of current user"
               aria-haspopup="true"
               onClick={() => setProfilePopoverOpen(true)}
@@ -78,7 +78,7 @@ const ProfileDropdownSection: React.FC<ProfileInfoDropdownSectionProps> = ({
         </Box>
       </Box>
       <ProfileInfoDropdownItems
-        anchorEl={profileMenuRef.current as any}
+        anchorEl={profileMenuRef.current as HTMLElement}
         isOpen={isProfilePopoverOpen}
         onClose={() => setProfilePopoverOpen(false)}
         name={name}

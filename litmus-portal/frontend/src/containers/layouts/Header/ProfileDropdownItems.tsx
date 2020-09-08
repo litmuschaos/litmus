@@ -149,7 +149,7 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
               variant="outlined"
               size="small"
               onClick={editProfile}
-              classes={{ root: classes.buttonEditProfile }}
+              className={classes.buttonEditProfile}
             >
               Edit Profile
             </Button>
@@ -158,7 +158,7 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
               disabled={loggedOut}
               size="small"
               onClick={logOut}
-              classes={{ root: classes.buttonSignout }}
+              className={classes.buttonSignout}
             >
               Log out
             </Button>
@@ -173,7 +173,7 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
               </ListItemText>
             </ListItem>
           ) : (
-            switchableProjects.map((element: any, index: any) => (
+            switchableProjects.map((element: Project, index: number) => (
               <ProjectListItem
                 key={index}
                 project={element}

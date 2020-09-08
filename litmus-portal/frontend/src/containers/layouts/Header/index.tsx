@@ -77,19 +77,19 @@ const Header: React.FC = () => {
     const notificationsList = [
       {
         id: '1',
-        MessageType: 'Pod Delete workflow',
+        messageType: 'Pod Delete workflow',
         Message: 'complete',
         generatedTime: '',
       },
       {
         id: '2',
-        MessageType: 'Argo Chaos workflow',
+        messageType: 'Argo Chaos workflow',
         Message: 'started started',
         generatedTime: '',
       },
       {
         id: '3',
-        MessageType: 'New',
+        messageType: 'New',
         Message: 'crashed',
         generatedTime: '',
       },
@@ -108,9 +108,9 @@ const Header: React.FC = () => {
       const message = {
         sequenceID: (i as unknown) as string,
         id: notificationItem.id,
-        MessageType: notificationItem.MessageType,
+        messageType: notificationItem.messageType,
         date: curUnix,
-        text: `${notificationItem.MessageType}- ${notificationItem.Message}`,
+        text: `${notificationItem.messageType}- ${notificationItem.Message}`,
       };
       curUnix += oneDaySeconds;
       messages.push(message);

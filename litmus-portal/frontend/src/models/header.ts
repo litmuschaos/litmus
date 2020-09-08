@@ -6,7 +6,7 @@ export interface NotificationIds {
 export interface Message {
   sequenceID: string;
   id: string;
-  MessageType: string;
+  messageType: string;
   date: number;
   text: string;
 }
