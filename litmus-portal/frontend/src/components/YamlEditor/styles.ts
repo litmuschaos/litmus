@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   editorBackgroundFull: {
-    backgroundColor: '#161616',
+    backgroundColor: theme.palette.common.black,
     color: theme.palette.secondary.contrastText,
     width: '100%',
   },
@@ -136,10 +136,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'inline-block',
     fontFamily: 'Ubuntu',
     fontSize: '1rem',
-  },
-
-  fullScreenGrid: {
-    width: '8%',
   },
 
   fullWidth: {

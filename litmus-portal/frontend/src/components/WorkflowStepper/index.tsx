@@ -69,6 +69,7 @@ function QontoStepIcon(props: StepIconProps) {
       </div>
     );
   }
+
   return (
     <div
       className={`${classes.root} ${
@@ -130,10 +131,10 @@ const CustomStepper = () => {
     (state: RootState) => state.userData.selectedProjectID
   );
   const workflow = useActions(WorkflowActions);
+  const [validYaml, setValidYaml] = React.useState(false);
   const steps = getSteps();
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
     if (activeStep === 2) {
       const tests = parsed(yaml);
       const arr: experimentMap[] = [];
@@ -142,7 +143,7 @@ const CustomStepper = () => {
         hashMap.set(weight.experimentName, weight.weight);
       });
       tests.forEach((test) => {
-        let value = 0;
+        let value = 10;
         if (hashMap.has(test)) {
           value = hashMap.get(test);
         }
@@ -151,12 +152,23 @@ const CustomStepper = () => {
       workflow.setWorkflowDetails({
         weights: arr,
       });
+      if (arr.length === 0) {
+        setValidYaml(true);
+      } else {
+        setValidYaml(false);
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      }
+    } else {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
   };
 
   const [open, setOpen] = React.useState(false);
 
   const handleBack = () => {
+    if (activeStep === 2) {
+      setValidYaml(false);
+    }
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
@@ -200,6 +212,7 @@ const CustomStepper = () => {
 
   const handleOpen = () => {
     handleMutation();
+    setOpen(true);
   };
 
   const handleClose = () => {
@@ -279,7 +292,6 @@ const CustomStepper = () => {
             </Unimodal>
             {getStepContent(activeStep, (page: number) => gotoStep({ page }))}
           </div>
-
           {/* Control Buttons */}
           {activeStep !== 0 ? (
             <div className={classes.buttonGroup}>
@@ -292,9 +304,9 @@ const CustomStepper = () => {
                 </ButtonFilled>
               ) : (
                 <ButtonFilled
-                  isDisabled={id.length === 0}
                   handleClick={() => handleNext()}
                   isPrimary
+                  isDisabled={id.length === 0}
                 >
                   <div>
                     Next
@@ -306,6 +318,11 @@ const CustomStepper = () => {
                   </div>
                 </ButtonFilled>
               )}
+              {validYaml ? (
+                <Typography className={classes.yamlError}>
+                  <strong>To continue, please check the error in code.</strong>
+                </Typography>
+              ) : null}
             </div>
           ) : null}
         </div>

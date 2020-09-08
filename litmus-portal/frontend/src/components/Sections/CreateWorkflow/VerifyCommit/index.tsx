@@ -1,4 +1,4 @@
-import { Divider, Link, Typography } from '@material-ui/core';
+import { Divider, Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { experimentMap, WorkflowData } from '../../../../models/workflow';
@@ -86,8 +86,8 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     }
   }, [modified]);
 
-  const preventDefault = (event: React.SyntheticEvent) =>
-    event.preventDefault();
+  // const preventDefault = (event: React.SyntheticEvent) =>
+  //  event.preventDefault();
   return (
     <div>
       <div className={classes.root}>
@@ -158,7 +158,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               <CustomTime ampm disabled={edit} />
               <div className={classes.editButton1}>
                 <ButtonOutline
-                  isDisabled={false}
+                  isDisabled
                   handleClick={() => setEdit(!edit)}
                   data-cy="testRunButton"
                 >
@@ -229,6 +229,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
           </div>
         </div>
         <Divider />
+        {/*
         <div>
           <Typography className={classes.config}>
             The configuration details of this workflow will be committed to:{' '}
@@ -243,6 +244,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             </span>
           </Typography>
         </div>
+        */}
       </div>
 
       {/* <Modal open={open} onClose={handleClose}>
@@ -268,7 +270,13 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
           />
         </div>
       </Modal> */}
-      <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn isDark>
+      <Unimodal
+        isOpen={open}
+        handleClose={handleClose}
+        hasCloseBtn
+        isDark
+        textAlign="left"
+      >
         <YamlEditor
           content={yaml}
           filename={name}
