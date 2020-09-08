@@ -27,6 +27,10 @@ function push_release_image(){
 
 }
 
+BUILD_TYPE=$(echo $1 | cut -d "=" -f 2)
+REPONAME=$(echo $2 | cut -d "=" -f 2)
+IMGNAME=$(echo $3 | cut -d "=" -f 2)
+IMGTAG=$(echo $4 | cut -d "=" -f 2)
 
 # Check for Image Details
 if [ -z "${REPONAME}" ] || [ -z "${IMGNAME}" ] || [ -z "${IMGTAG}" ]
@@ -41,10 +45,9 @@ IMAGEID=$( docker images -q ${REPONAME}/${IMGNAME}:${IMGTAG} )
 if [ ! -z "${DNAME}" ] && [ ! -z "${DPASS}" ];
 then
   docker login -u "${DNAME}" -p "${DPASS}";
-  build_type=$(echo $1 | cut -d "=" -f 2)
-  if [ "${build_type}" == "ci" ]; then
+  if [ "${BUILD_TYPE}" == "ci" ]; then
     push_ci_image;
-  elif [ "${build_type}" == "release" ]; then
+  elif [ "${BUILD_TYPE}" == "release" ]; then
     push_release_image;
   else
     echo "Invalid build type"; exit 1
