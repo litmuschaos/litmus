@@ -103,6 +103,7 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 	clusterAction := make(chan *model.ClusterAction, 1)
 	verifiedCluster, err := cluster.VerifyCluster(clusterInfo)
 	if err != nil {
+		log.Print("VALIDATION FAILED : ", clusterInfo.ClusterID)
 		return clusterAction, err
 	}
 
@@ -113,7 +114,6 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 	}
 	store.ConnectedCluster[clusterInfo.ClusterID] = clusterAction
 	store.Mutex.Unlock()
-
 	go func() {
 		<-ctx.Done()
 		verifiedCluster.IsActive = false

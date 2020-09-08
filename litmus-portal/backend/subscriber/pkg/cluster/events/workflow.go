@@ -90,17 +90,19 @@ func workflowEventHandler(obj interface{}, eventType string, stream chan types.W
 			FinishedAt: StrConvTime(nodeStatus.FinishedAt.Unix()),
 			Children:   nodeStatus.Children,
 			ChaosExp:   cd,
+			Message:    nodeStatus.Message,
 		}
 		nodes[nodeStatus.ID] = details
 	}
 	workflow := types.WorkflowEvent{
-		WorkflowID:        workflowObj.Labels["wfid"],
+		WorkflowID:        workflowObj.Labels["workflow_id"],
 		EventType:         eventType,
 		UID:               string(workflowObj.ObjectMeta.UID),
 		Namespace:         workflowObj.ObjectMeta.Namespace,
 		Name:              workflowObj.ObjectMeta.Name,
 		CreationTimestamp: StrConvTime(workflowObj.ObjectMeta.CreationTimestamp.Unix()),
 		Phase:             string(workflowObj.Status.Phase),
+		Message:           workflowObj.Status.Message,
 		StartedAt:         StrConvTime(workflowObj.Status.StartedAt.Unix()),
 		FinishedAt:        StrConvTime(workflowObj.Status.FinishedAt.Unix()),
 		Nodes:             nodes,

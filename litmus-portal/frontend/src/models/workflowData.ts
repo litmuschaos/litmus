@@ -7,6 +7,10 @@ export interface Node {
   type: string;
 }
 
+export interface Nodes {
+  [index: string]: Node;
+}
+
 export interface ExecutionData {
   event_type: string;
   uid: string;
@@ -16,7 +20,7 @@ export interface ExecutionData {
   phase: string;
   startedAt: string;
   finishedAt: string;
-  nodes: object;
+  nodes: Nodes;
 }
 
 export interface WorkflowRun {
