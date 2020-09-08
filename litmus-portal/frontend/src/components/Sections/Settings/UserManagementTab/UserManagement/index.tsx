@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-/* eslint-disable func-names */
 import {
   createStyles,
   FormControl,
@@ -15,6 +13,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
   Theme,
   Toolbar,
@@ -25,6 +24,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import SearchIcon from '@material-ui/icons/Search';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import moment from 'moment';
 import config from '../../../../../config';
 import { RootState } from '../../../../../redux/reducers';
 import ButtonFilled from '../../../../Button/ButtonFilled';
@@ -46,27 +46,45 @@ const StyledTableCell = withStyles((theme: Theme) =>
 )(TableCell);
 
 interface UserData {
-  _id: string; // eslint-disable-line no-eval
+  _id: string;
   username: string;
   email: string;
   name: string;
-  logged_in: boolean; // eslint-disable-line no-eval
-  created_at: string; // eslint-disable-line no-eval
-  updated_at: string; // eslint-disable-line no-eval
-  removed_at: string; // eslint-disable-line no-eval
+  logged_in: boolean;
+  created_at: string;
+  updated_at: string;
+  removed_at: string;
   state: string;
+}
+
+interface FilterOptions {
+  search: string;
+  status: string;
+}
+
+interface PaginationData {
+  pageNo: number;
+  rowsPerPage: number;
 }
 // UserManagement displays users table
 const UserManagement: React.FC = () => {
   const classes = useStyles();
   const [showDiv, setShowDiv] = React.useState<boolean>(false);
-
   const { userData } = useSelector((state: RootState) => state);
   // for response data
   const [rows, setRows] = useState<UserData[]>([]);
-
-  // for filtered row
-  const [selectRow, setSelectRows] = React.useState<UserData[]>(rows);
+  // States for filters
+  const [filters, setFilters] = useState<FilterOptions>({
+    search: '',
+    status: 'all',
+  });
+  // State for pagination
+  const [paginationData, setPaginationData] = useState<PaginationData>({
+    pageNo: 0,
+    rowsPerPage: 5,
+  });
+  const [editDiv, setEditDiv] = React.useState<boolean>(false);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   useEffect(() => {
     fetch(`${config.auth.url}/users`, {
@@ -80,37 +98,32 @@ const UserManagement: React.FC = () => {
       })
       .then((res) => {
         setRows(res);
-        setSelectRows(res);
       })
+
       .catch((err) => {
         console.error(err);
       });
   }, []);
 
-  // for displaying user in signed in/out or all kinds of users
-  const [state, setState] = React.useState<string>('All');
-
-  const [editDiv, setEditDiv] = React.useState<boolean>(false);
-
-  // for checking signed in status
-  function checkStatusActive(ele: UserData) {
-    return ele.logged_in === true;
-  }
-
-  // for checking signed out status
-  function checkStatusPassive(ele: UserData) {
-    return ele.logged_in === false;
-  }
-
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const filteredData = rows
+    ?.filter((dataRow) => dataRow.name.toLowerCase().includes(filters.search))
+    .filter((datarow) => {
+      if (filters.status === 'all') return true;
+      if (filters.status === 'signedin') return datarow.logged_in === true;
+      return datarow.logged_in === false;
+    });
 
   const handleClose = () => {
     setAnchorEl(null);
   };
 
-  const [ind, setInd] = React.useState<number>(-1);
+  const [currRow, setCurrRow] = React.useState<UserData>(rows[0]);
 
-  const [currRow, setCurrRow] = React.useState<UserData>(selectRow[0]);
+  const formatDate = (date: string) => {
+    const day = moment(date).format('Do MMM,YYYY LT');
+    return day;
+  };
+
   return (
     <div>
       {showDiv ? (
@@ -131,32 +144,34 @@ const UserManagement: React.FC = () => {
             </div>
           ) : (
             // for displaying user table
-            <div className={classes.UMDiv}>
-              <Typography className={classes.headerText}>
-                <strong>User Management</strong>
-              </Typography>
-              <div className={classes.members}>
-                <img src="./icons/user.svg" alt="members" />
-                <Typography className={classes.memTypo}>
-                  Members (<span>{rows ? rows.length : 0}</span>)
+            <div>
+              <div className={classes.UMDiv}>
+                <Typography className={classes.headerText}>
+                  <strong>User Management</strong>
                 </Typography>
-              </div>
-              <Typography className={classes.descText}>
-                Create users , manage them and reset their password and username
-                when required
-              </Typography>
-              <div>
+                <div className={classes.members}>
+                  <img src="./icons/user.svg" alt="members" />
+                  <Typography className={classes.memTypo}>
+                    Members (<span>{rows ? rows.length : 0}</span>)
+                  </Typography>
+                </div>
+                <Typography className={classes.descText}>
+                  Create users , manage them and reset their password and
+                  username when required
+                </Typography>
+
                 <Toolbar className={classes.toolbar}>
                   {/* Search user */}
                   <InputBase
                     id="input-with-icon-adornment"
                     placeholder="Search..."
+                    value={filters.search}
                     onChange={(e) => {
-                      setRows(
-                        selectRow.filter((x) =>
-                          x.name.toLowerCase().includes(e.target.value)
-                        )
-                      );
+                      setFilters({
+                        ...filters,
+                        search: e.target.value,
+                      });
+                      setPaginationData({ ...paginationData, pageNo: 0 });
                     }}
                     startAdornment={
                       <InputAdornment position="start">
@@ -174,17 +189,14 @@ const UserManagement: React.FC = () => {
                       <Select
                         native
                         placeholder="User Status"
-                        value={state}
+                        value={filters.status}
                         /* filters on the basis of users' current state */
                         onChange={(e) => {
-                          setState(e.target.value as string);
-                          if (e.target.value === 'signedin') {
-                            setRows(selectRow.filter(checkStatusActive));
-                          } else if (e.target.value === 'signedout') {
-                            setRows(selectRow.filter(checkStatusPassive));
-                          } else if (e.target.value === 'all') {
-                            setRows(selectRow);
-                          }
+                          setFilters({
+                            ...filters,
+                            status: e.target.value as string,
+                          });
+                          setPaginationData({ ...paginationData, pageNo: 0 });
                         }}
                         label="User Status"
                         disableUnderline
@@ -212,131 +224,158 @@ const UserManagement: React.FC = () => {
                   </div>
                 </Toolbar>
                 {/* user table */}
-                <TableContainer
-                  className={classes.table}
-                  elevation={0}
-                  component={Paper}
-                >
-                  <Table stickyHeader aria-label="sticky table">
-                    <TableHead>
-                      <TableRow className={classes.TR}>
-                        <StyledTableCell className={classes.styledTC}>
-                          Name
-                        </StyledTableCell>
-                        <StyledTableCell>Username</StyledTableCell>
-                        <StyledTableCell>Email</StyledTableCell>
-                        <StyledTableCell>User Created</StyledTableCell>
-                        <StyledTableCell />
-                        <TableHead />
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {rows.length ? (
-                        rows.map((row, index) => (
-                          <TableRow key={row.name} className={classes.TR}>
-                            <TableCell
-                              className={classes.firstTC}
-                              component="th"
-                              scope="row"
-                            >
-                              <div className={classes.firstCol}>
-                                {row.logged_in ? (
-                                  <div className={classes.Signed}>
-                                    Signed in
-                                  </div>
-                                ) : (
-                                  <div className={classes.NotSigned}>
-                                    Not Signed
-                                  </div>
-                                )}
-
-                                {row.name}
-                              </div>
-                            </TableCell>
-                            <TableCell className={classes.otherTC}>
-                              {row.username}
-                            </TableCell>
-                            <TableCell className={classes.otherTC}>
-                              {row.email}
-                            </TableCell>
-                            <TableCell className={classes.otherTC}>
-                              {row.created_at}
-                            </TableCell>
-
-                            <TableCell
-                              className={classes.lastTC}
-                              key={row.username}
-                            >
-                              <IconButton
-                                aria-label="more"
-                                aria-controls="long-menu"
-                                aria-haspopup="true"
-                                onClick={(event) => {
-                                  setInd(index);
-                                  setCurrRow(row);
-                                  setAnchorEl(event.currentTarget);
-                                }}
-                                className={classes.optionBtn}
-                              >
-                                <MoreVertIcon />
-                              </IconButton>
-                              <Menu
-                                keepMounted
-                                open={Boolean(anchorEl)}
-                                id="long-menu"
-                                anchorEl={anchorEl}
-                                onClose={handleClose}
-                              >
-                                <MenuItem
-                                  value={index}
-                                  onClick={() => {
-                                    setEditDiv(true);
-                                    setAnchorEl(null);
-                                  }}
+                <Paper className={classes.root}>
+                  <TableContainer className={classes.table}>
+                    <Table stickyHeader aria-label="sticky table">
+                      <TableHead>
+                        <TableRow className={classes.TR}>
+                          <StyledTableCell className={classes.styledTC}>
+                            Name
+                          </StyledTableCell>
+                          <StyledTableCell>Username</StyledTableCell>
+                          <StyledTableCell>Email</StyledTableCell>
+                          <StyledTableCell>User Created</StyledTableCell>
+                          <StyledTableCell />
+                          <TableHead />
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {filteredData && filteredData.length ? (
+                          filteredData
+                            .slice(
+                              paginationData.pageNo *
+                                paginationData.rowsPerPage,
+                              paginationData.pageNo *
+                                paginationData.rowsPerPage +
+                                paginationData.rowsPerPage
+                            )
+                            .map((row, index) => (
+                              <TableRow key={row.name} className={classes.TR}>
+                                <TableCell
+                                  className={classes.firstTC}
+                                  component="th"
+                                  scope="row"
                                 >
-                                  <IconButton disabled>
-                                    <img alt="delete" src="./icons/Edit.svg" />
-                                  </IconButton>
-                                  Edit Profile
-                                </MenuItem>
+                                  <div className={classes.firstCol}>
+                                    {row.logged_in ? (
+                                      <div className={classes.Signed}>
+                                        Signed in
+                                      </div>
+                                    ) : (
+                                      <div className={classes.NotSigned}>
+                                        Not Signed
+                                      </div>
+                                    )}
 
-                                <MenuItem
-                                  value="delete"
-                                  disabled
-                                  onClick={() => {
-                                    // for deleting a row
-                                    setRows(
-                                      rows.filter(function (item, i) {
-                                        return i !== ind;
-                                      })
-                                    );
+                                    {row.name}
+                                  </div>
+                                </TableCell>
+                                <TableCell className={classes.otherTC}>
+                                  {row.username}
+                                </TableCell>
+                                <TableCell className={classes.otherTC}>
+                                  {row.email}
+                                </TableCell>
+                                <TableCell className={classes.otherTC}>
+                                  <div className={classes.dateDiv}>
+                                    <img
+                                      className={classes.calIcon}
+                                      src="./icons/calendarIcon.svg"
+                                      alt="calendar"
+                                    />
+                                    {formatDate(row.created_at)}
+                                  </div>
+                                </TableCell>
 
-                                    setSelectRows(
-                                      selectRow.filter(function (item) {
-                                        return (
-                                          currRow.username !== item.username
-                                        );
-                                      })
-                                    );
-
-                                    setAnchorEl(null);
-                                  }}
+                                <TableCell
+                                  className={classes.lastTC}
+                                  key={row.username}
                                 >
-                                  <IconButton disabled>
-                                    <img alt="delete" src="./icons/bin.svg" />
+                                  <IconButton
+                                    aria-label="more"
+                                    aria-controls="long-menu"
+                                    aria-haspopup="true"
+                                    onClick={(event) => {
+                                      setCurrRow(row);
+                                      setAnchorEl(event.currentTarget);
+                                    }}
+                                    className={classes.optionBtn}
+                                  >
+                                    <MoreVertIcon />
                                   </IconButton>
-                                  <Typography>Delete User</Typography>
-                                </MenuItem>
-                              </Menu>
+                                  <Menu
+                                    keepMounted
+                                    open={Boolean(anchorEl)}
+                                    id="long-menu"
+                                    anchorEl={anchorEl}
+                                    onClose={handleClose}
+                                  >
+                                    <MenuItem
+                                      value={index}
+                                      onClick={() => {
+                                        setEditDiv(true);
+                                        setAnchorEl(null);
+                                      }}
+                                    >
+                                      <IconButton disabled>
+                                        <img
+                                          alt="delete"
+                                          src="./icons/Edit.svg"
+                                        />
+                                      </IconButton>
+                                      Edit Profile
+                                    </MenuItem>
+
+                                    <MenuItem
+                                      value="delete"
+                                      disabled
+                                      onClick={() => {}}
+                                    >
+                                      <IconButton disabled>
+                                        <img
+                                          alt="delete"
+                                          src="./icons/bin.svg"
+                                        />
+                                      </IconButton>
+                                      <Typography>Delete User</Typography>
+                                    </MenuItem>
+                                  </Menu>
+                                </TableCell>
+                              </TableRow>
+                            ))
+                        ) : (
+                          <TableRow>
+                            <TableCell colSpan={5}>
+                              <Typography align="center">
+                                No users available.
+                              </Typography>
                             </TableCell>
                           </TableRow>
-                        ))
-                      ) : (
-                        <></>
-                      )}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                  <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={filteredData?.length ?? 0}
+                    rowsPerPage={paginationData.rowsPerPage}
+                    page={paginationData.pageNo}
+                    onChangePage={(_, page) =>
+                      setPaginationData({
+                        ...paginationData,
+                        pageNo: page,
+                      })
+                    }
+                    onChangeRowsPerPage={(event) =>
+                      setPaginationData({
+                        ...paginationData,
+                        pageNo: 0,
+                        rowsPerPage: parseInt(event.target.value, 10),
+                      })
+                    }
+                  />
+                </Paper>
               </div>
             </div>
           )}

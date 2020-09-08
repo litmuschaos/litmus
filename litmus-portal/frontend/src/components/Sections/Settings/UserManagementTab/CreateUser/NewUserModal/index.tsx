@@ -1,5 +1,5 @@
 import { Typography } from '@material-ui/core';
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import config from '../../../../../../config';
 import { RootState } from '../../../../../../redux/reducers';
@@ -34,8 +34,9 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
     setOpen(false);
     window.location.reload();
   };
+
+  const [error, setError] = useState<string>('');
   const handleOpen = () => {
-    if (showModal) setOpen(true);
     fetch(`${config.auth.url}/create`, {
       method: 'POST',
       headers: {
@@ -46,10 +47,11 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
     })
       .then((response) => {
         response.json();
+        if (showModal) setOpen(true);
       })
-
       .catch((err) => {
-        console.error(err);
+        setError(err.message as string);
+        if (showModal) setOpen(true);
       });
   };
 
@@ -66,29 +68,54 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
       </div>
 
       <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn={false}>
-        <div className={classes.body}>
-          <img src="./icons/checkmark.svg" alt="checkmark" />
-          <div className={classes.text}>
-            <Typography className={classes.typo} align="center">
-              A new user was <strong>successfully created </strong>
-            </Typography>
+        {error.length > 0 ? (
+          <div className={classes.errDiv}>
+            {/* <img src="./icons/checkmark.svg" alt="checkmark" /> */}
+
+            <div className={classes.textError}>
+              <Typography className={classes.typo} align="center">
+                <strong> Error </strong> while creating a new user.
+              </Typography>
+            </div>
+            <div className={classes.textSecondError}>
+              <Typography className={classes.typoSub}>Err: {error}</Typography>
+            </div>
+            <div className={classes.buttonModal}>
+              <ButtonFilled
+                isPrimary
+                isDisabled={false}
+                handleClick={handleClose}
+              >
+                <>Done</>
+              </ButtonFilled>
+            </div>
           </div>
-          <div className={classes.textSecond}>
-            <Typography className={classes.typoSub}>
-              A new user was successfully created.Now information about it will
-              be displayed on the user management screen of the application.
-            </Typography>
+        ) : (
+          <div className={classes.body}>
+            <img src="./icons/checkmark.svg" alt="checkmark" />
+            <div className={classes.text}>
+              <Typography className={classes.typo} align="center">
+                A new user was <strong>successfully created </strong>
+              </Typography>
+            </div>
+            <div className={classes.textSecond}>
+              <Typography className={classes.typoSub}>
+                A new user was successfully created.Now information about it
+                will be displayed on the user management screen of the
+                application.
+              </Typography>
+            </div>
+            <div className={classes.buttonModal}>
+              <ButtonFilled
+                isPrimary
+                isDisabled={false}
+                handleClick={handleClose}
+              >
+                <>Done</>
+              </ButtonFilled>
+            </div>
           </div>
-          <div className={classes.buttonModal}>
-            <ButtonFilled
-              isPrimary
-              isDisabled={false}
-              handleClick={handleClose}
-            >
-              <>Done</>
-            </ButtonFilled>
-          </div>
-        </div>
+        )}
       </Unimodal>
     </div>
   );

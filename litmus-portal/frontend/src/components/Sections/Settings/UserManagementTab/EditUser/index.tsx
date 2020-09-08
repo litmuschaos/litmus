@@ -54,7 +54,7 @@ const EditUser: React.FC<EditUserProps> = ({
             <img src="./icons/BackArrow.svg" alt="back" />
           </IconButton>
           <Typography className={classes.divHeaderText}>
-            <strong>Edit user profile</strong>
+            <strong>Create a new user</strong>
           </Typography>
         </div>
 
@@ -102,7 +102,12 @@ const EditUser: React.FC<EditUserProps> = ({
                       />
                     </div>
                     <Divider className={classes.divider} />
-                    <DelUser handleModal={handleDiv} tableDelete={false} />
+                    <DelUser
+                      handleModal={handleDiv}
+                      handleTable={() => {}}
+                      tableDelete={false}
+                      teammingDel={false}
+                    />
                   </form>
                 </div>
               </div>
