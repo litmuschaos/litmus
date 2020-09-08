@@ -98,7 +98,19 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		log.Print("ERROR", err)
 		return "", err
 	}
-	newWorkflowRun := model.WorkflowRun{
+
+	//err = database.UpsertWorkflowRun(database.WorkflowRun(newWorkflowRun))
+	err = database.UpsertWorkflowRun(input.WorkflowID, database.WorkflowRun{
+		WorkflowRunID: input.WorkflowRunID,
+		LastUpdated:   strconv.FormatInt(time.Now().Unix(), 10),
+		ExecutionData: input.ExecutionData,
+	})
+	if err != nil {
+		log.Print("ERROR", err)
+		return "", err
+	}
+
+	subscriptions.SendWorkflowEvent(model.WorkflowRun{
 		ClusterID:     cluster.ClusterID,
 		ClusterName:   cluster.ClusterName,
 		ProjectID:     cluster.ProjectID,
@@ -107,14 +119,8 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		WorkflowName:  input.WorkflowName,
 		ExecutionData: input.ExecutionData,
 		WorkflowID:    input.WorkflowID,
-	}
+	}, r)
 
-	subscriptions.SendWorkflowEvent(newWorkflowRun, r)
-	err = database.UpsertWorkflowRun(database.WorkflowRun(newWorkflowRun))
-	if err != nil {
-		log.Print("ERROR", err)
-		return "", err
-	}
 	return "Workflow Run Accepted", nil
 }
 
@@ -150,7 +156,7 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		return &model.ChaosWorkFlowResponse{}, err
 	}
 
-	workflow_id := utils.RandomString(32)
+	workflow_id := uuid.New().String()
 
 	newWorkflowManifest, _ := sjson.Set(input.WorkflowManifest, "metadata.labels.workflow_id", workflow_id)
 
@@ -164,6 +170,7 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		ProjectID:           input.ProjectID,
 		ClusterID:           input.ClusterID,
 		Weightages:          Weightages,
+		WorkflowRuns:        []*database.WorkflowRun{},
 	}
 
 	err = database.InsertChaosWorkflow(newChaosWorkflow)
