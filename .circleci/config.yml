@@ -99,9 +99,6 @@ jobs:
           cat /tmp/workspace/env-vars >> $BASH_ENV
       - checkout
       - run:
-          name: Loads all docker images
-          command: docker load -i /tmp/workspace/image.tar
-      - run:
           name: Loading all docker images
           command: |
             docker load -i /tmp/workspace/graphql-server.tar
