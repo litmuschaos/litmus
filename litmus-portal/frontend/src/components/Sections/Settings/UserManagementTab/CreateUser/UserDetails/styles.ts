@@ -48,16 +48,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 
     marginRight: theme.spacing(2.5),
   },
-  user: {
-    border: '1px solid rgba(0, 0, 0, 0.2)',
-    borderRadius: '0.1875rem',
-    width: '24.43rem',
-    height: '4.8125rem',
-    marginLeft: theme.spacing(2.5),
-    marginRight: theme.spacing(2.5),
-    paddingLeft: theme.spacing(3.75),
-    marginBottom: theme.spacing(2.5),
-  },
   // Style for ProfileDropdownSection and ProfileDropdownItems.
   avatarBackground: {
     backgroundColor: theme.palette.secondary.main,

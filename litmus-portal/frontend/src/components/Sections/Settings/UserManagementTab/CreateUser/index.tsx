@@ -1,14 +1,4 @@
-import {
-  Divider,
-  FormControl,
-  IconButton,
-  Input,
-  InputAdornment,
-  InputLabel,
-  Typography,
-} from '@material-ui/core';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import { Divider, IconButton, Typography } from '@material-ui/core';
 import React from 'react';
 import NewUserModal from './NewUserModal';
 import InputField from '../../../../../containers/layouts/InputField';
@@ -66,19 +56,6 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
         [prop]: event.target.value,
       });
     }
-  };
-
-  const handleClickShowPassword = () => {
-    setCreatePassword({
-      ...createPAssword,
-      showPassword: !createPAssword.showPassword,
-    });
-  };
-
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
   };
 
   // for personal details fields
@@ -155,43 +132,17 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
                         defaultValue="RichardHill"
                         value={personalData.userName}
                         disabled
-                        data-cy="username"
+                        dataCy="username"
                       />
-                      <FormControl>
-                        <Input
-                          required
-                          data-cy="changePassword"
-                          className={`${classes.pass} ${
-                            createPAssword.err ? classes.error : classes.success
-                          }`}
-                          id="outlined-adornment-password"
-                          type={
-                            createPAssword.showPassword ? 'text' : 'password'
-                          }
-                          onChange={handleCreatePassword('password')}
-                          disableUnderline
-                          endAdornment={
-                            <InputAdornment position="end">
-                              <IconButton
-                                data-cy="conVisibilty"
-                                aria-label="toggle password visibility"
-                                onClick={handleClickShowPassword}
-                                onMouseDown={handleMouseDownPassword}
-                                edge="end"
-                              >
-                                {createPAssword.showPassword ? (
-                                  <Visibility data-cy="visIcon" />
-                                ) : (
-                                  <VisibilityOff data-cy="invisIcon" />
-                                )}
-                              </IconButton>
-                            </InputAdornment>
-                          }
-                        />
-                        <InputLabel htmlFor="outlined-adornment-password">
-                          New Password
-                        </InputLabel>
-                      </FormControl>
+                      <InputField
+                        required
+                        dataCy="changePassword"
+                        id="outlined-adornment-password"
+                        type="password"
+                        handleChange={handleCreatePassword('password')}
+                        validationError={createPAssword.err}
+                        label="New Password"
+                      />
                     </div>
                   </form>
                 </div>

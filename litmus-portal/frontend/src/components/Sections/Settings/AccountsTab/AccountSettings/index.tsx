@@ -1,19 +1,9 @@
-import {
-  FormControl,
-  IconButton,
-  Input,
-  InputAdornment,
-  InputLabel,
-  Button,
-  Typography,
-  Divider,
-} from '@material-ui/core';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import { Button, Typography, Divider } from '@material-ui/core';
 import React from 'react';
 import PersonalDetails from '../PersonalDetails';
 import useStyles from './styles';
 import Unimodal from '../../../../../containers/layouts/Unimodal';
+import InputField from '../../../../../containers/layouts/InputField';
 
 // used for password field
 interface Password {
@@ -39,7 +29,7 @@ const AccountSettings: React.FC = () => {
   );
 
   // states for the three password fields
-  const [currPassword, setCurrPassword] = React.useState<Password>({
+  const [currPassword] = React.useState<Password>({
     password: '',
     showPassword: false,
     err: false,
@@ -101,29 +91,6 @@ const AccountSettings: React.FC = () => {
     }
   };
 
-  // implements the logic for visibility of password
-  const handleClickShowPassword1 = () => {
-    setCurrPassword({
-      ...currPassword,
-      showPassword: !currPassword.showPassword,
-    });
-  };
-  const handleClickShowPassword2 = () => {
-    setNewPassword({ ...newPassword, showPassword: !newPassword.showPassword });
-  };
-  const handleClickShowPassword3 = () => {
-    setConfNewPassword({
-      ...confNewPassword,
-      showPassword: !confNewPassword.showPassword,
-    });
-  };
-
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-  };
-
   return (
     <div className={classes.container}>
       <div>
@@ -139,99 +106,33 @@ const AccountSettings: React.FC = () => {
           <div className={classes.outerPass}>
             <form className={classes.innerPass}>
               {/* Current Password */}
-              <FormControl>
-                <Input
-                  className={classes.pass}
-                  defaultValue={currPassword.password}
-                  id="outlined-adornment-password"
-                  type={currPassword.showPassword ? 'text' : 'password'}
-                  disableUnderline
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword1}
-                        edge="end"
-                      >
-                        {currPassword.showPassword ? (
-                          <Visibility />
-                        ) : (
-                          <VisibilityOff />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                />
-                <InputLabel htmlFor="outlined-adornment-password">
-                  Current Password
-                </InputLabel>
-              </FormControl>
+              <InputField
+                defaultValue={currPassword.password}
+                id="outlined-adornment-password"
+                type="password"
+                label="Current Password"
+                validationError={currPassword.err}
+              />
+
               {/* New Password */}
-              <FormControl>
-                <Input
-                  data-cy="changePassword"
-                  className={`${classes.pass} ${
-                    newPassword.err ? classes.error : classes.success
-                  }`}
-                  id="outlined-adornment-password"
-                  type={newPassword.showPassword ? 'text' : 'password'}
-                  onChange={handleNewPassword('password')}
-                  disableUnderline
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        data-cy="conVisibilty"
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword2}
-                        onMouseDown={handleMouseDownPassword}
-                        edge="end"
-                      >
-                        {newPassword.showPassword ? (
-                          <Visibility data-cy="visIcon" />
-                        ) : (
-                          <VisibilityOff data-cy="invisIcon" />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                />
-                <InputLabel htmlFor="outlined-adornment-password">
-                  New Password
-                </InputLabel>
-              </FormControl>
+              <InputField
+                dataCy="changePassword"
+                id="outlined-adornment-password"
+                type="password"
+                handleChange={handleNewPassword('password')}
+                label="New Password"
+                validationError={newPassword.err}
+              />
+
               {/* Confirm new password */}
-              <FormControl>
-                <Input
-                  data-cy="confirmPassword"
-                  className={`${classes.pass} ${
-                    confNewPassword.err ? classes.error : classes.success
-                  }`}
-                  id="outlined-adornment-password"
-                  type={confNewPassword.showPassword ? 'text' : 'password'}
-                  onChange={handleConfPassword('password')}
-                  disableUnderline
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        data-cy="conVisibilty"
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword3}
-                        onMouseDown={handleMouseDownPassword}
-                        edge="end"
-                      >
-                        {confNewPassword.showPassword ? (
-                          <Visibility data-cy="visIcon" />
-                        ) : (
-                          <VisibilityOff data-cy="invisIcon" />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                />
-                <InputLabel htmlFor="outlined-adornment-password">
-                  Confirm new password
-                </InputLabel>
-              </FormControl>
+              <InputField
+                dataCy="confirmPassword"
+                id="outlined-adornment-password"
+                type="password"
+                handleChange={handleConfPassword('password')}
+                label="Confirm Password"
+                validationError={confNewPassword.err}
+              />
               <Button
                 data-cy="button"
                 variant="contained"
