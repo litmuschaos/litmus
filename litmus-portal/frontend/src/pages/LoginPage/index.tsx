@@ -2,7 +2,7 @@ import { Button, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import InputField from '../../components/InputField';
+import InputField from '../../containers/layouts/InputField';
 import config from '../../config';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
