@@ -1,18 +1,18 @@
+import { useQuery } from '@apollo/client';
 import { Box, Divider } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { useQuery } from '@apollo/client';
+import CustomBreadCrumbs from '../../../components/BreadCrumbs';
 import { Message, NotificationIds } from '../../../models/header';
 import {
-  UserData,
-  CurrentUserDetails,
   CurrentUserDedtailsVars,
+  CurrentUserDetails,
+  UserData,
 } from '../../../models/user';
 import { RootState } from '../../../redux/reducers';
-import CustomBreadCrumbs from '../../../components/BreadCrumbs';
 import NotificationsDropdown from './NotificationDropdown';
 import ProfileDropdownSection from './ProfileDropdownSection';
 import useStyles from './styles';

@@ -18,6 +18,15 @@
     }
   },
   "rules": {
+    "new-cap": 0,
+    "no-underscore-dangle": 0,
+    "react/static-property-placement": [
+      "warn",
+      "property assignment",
+      { "defaultProps": "static public field" }
+    ],
+    "lines-between-class-members": 0,
+    "no-restricted-syntax": 0,
     "no-nested-ternary": 0,
     "no-plusplus": 0,
     "dot-notation": 0,

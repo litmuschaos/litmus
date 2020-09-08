@@ -10,13 +10,12 @@ import {
   TableRow,
   Typography,
 } from '@material-ui/core';
-import moment from 'moment';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../../../graphql';
-import { UserData } from '../../../../models/user';
 import {
   ExecutionData,
   Workflow,
@@ -25,17 +24,15 @@ import {
   WorkflowSubscription,
 } from '../../../../models/workflowData';
 import { RootState } from '../../../../redux/reducers';
-
 import {
   sortAlphaAsc,
   sortAlphaDesc,
   sortNumAsc,
   sortNumDesc,
 } from '../../../../utils/sort';
-import Loader from '../../../Loader';
+import HeaderSection from './HeaderSection';
 import useStyles from './styles';
 import TableData from './TableData';
-import HeaderSection from './headerSection';
 
 interface FilterOptions {
   search: string;
@@ -62,17 +59,18 @@ interface DateData {
 
 const BrowseWorkflow = () => {
   const classes = useStyles();
-  const userData: UserData = useSelector((state: RootState) => state.userData);
-  const { selectedProjectID } = userData;
+  const selectedProjectID = useSelector(
+    (state: RootState) => state.userData.selectedProjectID
+  );
 
   // Query to get workflows
-  const { subscribeToMore, data, loading, error } = useQuery<
-    Workflow,
-    WorkflowDataVars
-  >(WORKFLOW_DETAILS, {
-    variables: { projectID: selectedProjectID },
-    fetchPolicy: 'cache-and-network',
-  });
+  const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
+    WORKFLOW_DETAILS,
+    {
+      variables: { projectID: selectedProjectID },
+      fetchPolicy: 'cache-and-network',
+    }
+  );
   // Using subscription to get realtime data
   useEffect(() => {
     subscribeToMore<WorkflowSubscription>({
@@ -254,6 +252,23 @@ const BrowseWorkflow = () => {
           ? new Date(new Date().setHours(23, 59, 59))
           : new Date(range?.endDate.setHours(23, 59, 59)),
     });
+    setPaginationData({ ...paginationData, pageNo: 0 });
+  };
+
+  // Function to validate execution_data JSON
+  const dataPerRow = (dataRow: WorkflowRun) => {
+    let exe_data;
+    try {
+      exe_data = JSON.parse(dataRow.execution_data);
+    } catch (error) {
+      console.error(error);
+      return <></>;
+    }
+    return (
+      <TableRow key={dataRow.workflow_run_id}>
+        <TableData data={dataRow} exeData={exe_data} />
+      </TableRow>
+    );
   };
 
   return (
@@ -411,13 +426,7 @@ const BrowseWorkflow = () => {
 
             {/* Body */}
             <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell colSpan={7}>
-                    <Loader />
-                  </TableCell>
-                </TableRow>
-              ) : error ? (
+              {error ? (
                 <TableRow>
                   <TableCell colSpan={7}>
                     <Typography align="center">Unable to fetch data</Typography>
@@ -430,11 +439,7 @@ const BrowseWorkflow = () => {
                     paginationData.pageNo * paginationData.rowsPerPage +
                       paginationData.rowsPerPage
                   )
-                  .map((dataRow) => (
-                    <TableRow key={dataRow.workflow_run_id}>
-                      <TableData data={dataRow} />
-                    </TableRow>
-                  ))
+                  .map((dataRow) => dataPerRow(dataRow))
               ) : (
                 <TableRow>
                   <TableCell colSpan={7}>
