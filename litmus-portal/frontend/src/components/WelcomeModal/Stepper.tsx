@@ -8,7 +8,7 @@ import ButtonFilled from '../Button/ButtonFilled';
 import config from '../../config';
 import { CREATE_USER } from '../../graphql';
 import { RootState } from '../../redux/reducers';
-import InputField from '../InputField';
+import InputField from '../../containers/layouts/InputField';
 import ModalPage from './Modalpage';
 import useStyles from './styles';
 import {
