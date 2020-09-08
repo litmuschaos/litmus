@@ -63,6 +63,9 @@ export const GET_USER = gql`
           user_name
           role
           invitation
+          name
+          email
+          joined_at
         }
         name
         id
@@ -84,5 +87,38 @@ export const GET_CLUSTER = gql`
       cluster_id
       is_active
     }
+  }
+`;
+export const ALL_USERS = gql`
+  query allUsers {
+    users {
+      id
+      name
+      username
+      email
+    }
+  }
+`;
+
+export const SEND_INVITE = gql`
+  mutation sendInvite($member: MemberInput!) {
+    sendInvitation(member: $member) {
+      user_id
+      user_name
+      role
+      invitation
+    }
+  }
+`;
+
+export const ACCEPT_INVITE = gql`
+  mutation accept($member: MemberInput!) {
+    acceptInvitation(member: $member)
+  }
+`;
+
+export const DECLINE_INVITE = gql`
+  mutation decline($member: MemberInput!) {
+    declineInvitation(member: $member)
   }
 `;

@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   Signed: {
     minWidth: '2.625rem',
     minHeight: '0.8125rem',
-    background: theme.palette.menuOption.active,
+    background: theme.palette.customColors.menuOption.active,
     marginRight: theme.spacing(2.5),
     borderRadius: '0.1875rem',
     color: theme.palette.primary.dark,

@@ -1,7 +1,7 @@
 import React from 'react';
+import Unimodal from '../../containers/layouts/Unimodal';
 import ModalStepper from './Stepper';
 import useStyles from './styles';
-import Unimodal from '../../containers/layouts/Unimodal';
 
 interface WelcomemodalProps {
   handleIsOpen: () => void;

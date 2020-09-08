@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   // Style for ProfileDropdownSection and ProfileDropdownItems.
   avatarBackground: {
-    color: theme.palette.secondary.contrastText,
+    color: theme.palette.customColors.white(1),
     backgroundColor: theme.palette.secondary.main,
     alignContent: 'right',
     marginBottom: theme.spacing(1),
@@ -75,7 +75,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // Styles for ProfileDropdownItems.
   popover: {
-    background: theme.palette.secondary.contrastText,
+    background: theme.palette.customColors.white(1),
     borderRadius: theme.shape.borderRadius,
     width: '100%',
     maxWidth: theme.spacing(36.5),

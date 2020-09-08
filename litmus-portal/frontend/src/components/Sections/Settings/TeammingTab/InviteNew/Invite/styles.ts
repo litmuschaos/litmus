@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
   },
   menuOpt: {
     '&:hover': {
-      background: theme.palette.menuOption.active,
+      background: theme.palette.customColors.menuOption.active,
     },
   },
   optionBtn: {

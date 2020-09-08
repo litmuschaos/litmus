@@ -361,8 +361,8 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
         return (
           <ModalPage
             renderMenu={
-              <div>
-                <div className={classes.inputArea} data-cy="InputEmail">
+              <div className={classes.passwordSetterDiv}>
+                <div className={classes.inputArea} data-cy="InputName">
                   <InputField
                     label={t('welcomeModel.case-3.label')}
                     required
@@ -384,6 +384,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
             setText={t('welcomeModel.case-3.info')}
           />
         );
+
       default:
         return <Link to="/404" />;
     }
@@ -396,7 +397,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   return (
     <div>
       <div>
-        {activeStep === 3 ? (
+        {activeStep === 1 ? (
           <div>{getStepContent(activeStep)}</div>
         ) : (
           <div>{getStepContent(activeStep)}</div>
