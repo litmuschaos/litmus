@@ -1,8 +1,7 @@
 /// <reference types="Cypress" />
-import React from 'react';
 import { mount } from 'cypress-react-unit-test';
-
-import CustomSlider from '../../src/components/Sections/Workflow/WeightSlider';
+import React from 'react';
+import CustomSlider from '../../src/components/Sections/CreateWorkflow/WeightSlider';
 
 describe('Testing Custom Slider with different values', () => {
   [10, 5, 2].map((i) => {
