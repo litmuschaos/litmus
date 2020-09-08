@@ -4,16 +4,16 @@ import InputField from '../../../../../../containers/layouts/InputField';
 import userAvatar from '../../../../../../utils/user';
 import useStyles from './styles';
 import {
-  validateOnlyAlphabet,
   validateEmail,
+  validateStartEmptySpacing,
 } from '../../../../../../utils/validate';
 
 interface PersonalDetailsProps {
-  handleNameChange?: (event: React.ChangeEvent<{ value: string }>) => void;
+  handleNameChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   nameValue: string;
-  handleUserChange?: (event: React.ChangeEvent<{ value: string }>) => void;
+  handleUserChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   userValue: string;
-  handleEmailChange?: (event: React.ChangeEvent<{ value: string }>) => void;
+  handleEmailChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   emailValue: string;
   usernameIsDisabled: boolean;
   nameIsDisabled: boolean;
@@ -60,15 +60,23 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
           <div className={classes.details1}>
             <InputField
               required
+              helperText={
+                validateStartEmptySpacing(nameValue)
+                  ? 'Should not start with an empty space'
+                  : ''
+              }
               value={nameValue}
               disabled={nameIsDisabled}
               handleChange={handleNameChange}
-              validationError={validateOnlyAlphabet(nameValue)}
+              validationError={validateStartEmptySpacing(nameValue)}
               label="Full Name"
             />
 
             <InputField
               required
+              helperText={
+                validateEmail(emailValue) ? 'Should be a valid email' : ''
+              }
               type="email"
               value={emailValue}
               disabled={emailIsDisabled}

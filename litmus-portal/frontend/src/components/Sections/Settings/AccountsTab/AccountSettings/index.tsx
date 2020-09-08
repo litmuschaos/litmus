@@ -4,11 +4,14 @@ import PersonalDetails from '../PersonalDetails';
 import useStyles from './styles';
 import Unimodal from '../../../../../containers/layouts/Unimodal';
 import InputField from '../../../../../containers/layouts/InputField';
+import {
+  validateLength,
+  validateConfirmPassword,
+} from '../../../../../utils/validate';
 
 // used for password field
 interface Password {
   password: string;
-  err: boolean;
   showPassword: boolean;
 }
 
@@ -23,83 +26,48 @@ const AccountSettings: React.FC = () => {
     setOpen(false);
   };
 
-  // used for password validation
-  const regularExpression = new RegExp(
-    '^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})'
-  );
-
   // states for the three password fields
   const [currPassword, setCurrPassword] = React.useState<Password>({
     password: '',
     showPassword: false,
-    err: false,
   });
   const [newPassword, setNewPassword] = React.useState<Password>({
     password: '',
     showPassword: false,
-    err: false,
   });
   const [confNewPassword, setConfNewPassword] = React.useState<Password>({
     password: '',
     showPassword: false,
-    err: false,
   });
 
-  // handleCurrPassword handles password validation for first password field
+  // handleCurrPassword handles password for first password field
   const handleCurrPassword = (prop: keyof Password) => (
-    event: React.ChangeEvent<{ value: string }>
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setCurrPassword({
       ...currPassword,
-      err: false,
       [prop]: event.target.value,
     });
   };
 
-  // handleNewPassword handles password validation for second password field
+  // handleNewPassword handles password for second password field
   const handleNewPassword = (prop: keyof Password) => (
-    event: React.ChangeEvent<{ value: string }>
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if (
-      event.target.value !== currPassword.password &&
-      regularExpression.test(event.target.value) &&
-      (confNewPassword.password.length === 0 ||
-        event.target.value === confNewPassword.password)
-    ) {
-      setNewPassword({
-        ...newPassword,
-        err: false,
-        [prop]: event.target.value,
-      });
-      setConfNewPassword({ ...confNewPassword, err: false });
-    } else {
-      setNewPassword({ ...newPassword, err: true, [prop]: event.target.value });
-      setConfNewPassword({ ...confNewPassword });
-    }
+    setNewPassword({
+      ...newPassword,
+      [prop]: event.target.value,
+    });
   };
 
-  // handleConfPassword handles password validation for third password field
+  // handleConfPassword handles password for third password field
   const handleConfPassword = (prop: keyof Password) => (
-    event: React.ChangeEvent<{ value: string }>
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if (
-      event.target.value === newPassword.password &&
-      regularExpression.test(event.target.value)
-    ) {
-      setConfNewPassword({
-        ...confNewPassword,
-        err: false,
-        [prop]: event.target.value,
-      });
-      setNewPassword({ ...newPassword, err: false });
-    } else {
-      setConfNewPassword({
-        ...confNewPassword,
-        err: true,
-        [prop]: event.target.value,
-      });
-      setNewPassword({ ...newPassword });
-    }
+    setConfNewPassword({
+      ...confNewPassword,
+      [prop]: event.target.value,
+    });
   };
 
   return (
@@ -123,26 +91,54 @@ const AccountSettings: React.FC = () => {
                 handleChange={handleCurrPassword('password')}
                 type="password"
                 label="Current Password"
-                validationError={currPassword.err}
+                validationError={validateLength(currPassword.password)}
               />
 
               {/* New Password */}
               <InputField
                 required
+                helperText={
+                  validateLength(newPassword.password)
+                    ? 'Password is too short'
+                    : ''
+                }
                 type="password"
                 handleChange={handleNewPassword('password')}
+                success={
+                  !validateConfirmPassword(
+                    newPassword.password,
+                    confNewPassword.password
+                  )
+                }
                 label="New Password"
-                validationError={newPassword.err}
+                validationError={validateLength(newPassword.password)}
                 value={newPassword.password}
               />
 
               {/* Confirm new password */}
               <InputField
+                helperText={
+                  validateConfirmPassword(
+                    newPassword.password,
+                    confNewPassword.password
+                  )
+                    ? 'Password is not same'
+                    : ''
+                }
                 required
                 type="password"
                 handleChange={handleConfPassword('password')}
+                success={
+                  !validateConfirmPassword(
+                    newPassword.password,
+                    confNewPassword.password
+                  )
+                }
                 label="Confirm Password"
-                validationError={confNewPassword.err}
+                validationError={validateConfirmPassword(
+                  newPassword.password,
+                  confNewPassword.password
+                )}
                 value={confNewPassword.password}
               />
               <Button
@@ -151,7 +147,6 @@ const AccountSettings: React.FC = () => {
                 className={classes.button}
                 onClick={() => {
                   if (
-                    !(newPassword.err && confNewPassword.err) &&
                     newPassword.password.length > 0 &&
                     confNewPassword.password.length > 0
                   ) {

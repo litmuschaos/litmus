@@ -4,10 +4,13 @@ import NewUserModal from './NewUserModal';
 import InputField from '../../../../../containers/layouts/InputField';
 import useStyles from './styles';
 import UserDetails from './UserDetails';
+import {
+  validateStartEmptySpacing,
+  validateLength,
+} from '../../../../../utils/validate';
 
 interface Password {
   password: string;
-  err: boolean;
   showPassword: boolean;
 }
 
@@ -26,36 +29,20 @@ interface CreateUserProps {
 const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
   const classes = useStyles();
 
-  // for password validation
-  const regularExpression = new RegExp(
-    '^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})'
-  );
-
   // for conditional rendering of reset password div
-
   const [createPAssword, setCreatePassword] = React.useState<Password>({
     password: '',
     showPassword: false,
-    err: false,
   });
 
   // handles password field
   const handleCreatePassword = (prop: keyof Password) => (
-    event: React.ChangeEvent<{ value: string }>
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if (regularExpression.test(event.target.value)) {
-      setCreatePassword({
-        ...createPAssword,
-        err: false,
-        [prop]: event.target.value,
-      });
-    } else {
-      setCreatePassword({
-        ...createPAssword,
-        err: true,
-        [prop]: event.target.value,
-      });
-    }
+    setCreatePassword({
+      ...createPAssword,
+      [prop]: event.target.value,
+    });
   };
 
   // for personal details fields
@@ -65,7 +52,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
     fullName: '',
   });
 
-  const handleUsername = (event: React.ChangeEvent<{ value: string }>) => {
+  const handleUsername = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPersonalData({
       ...personalData,
       userName: event.target.value,
@@ -134,18 +121,32 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
                   <form>
                     <div className={classes.details1}>
                       <InputField
+                        helperText={
+                          validateStartEmptySpacing(personalData.userName)
+                            ? 'Should not start with an empty space'
+                            : ''
+                        }
                         label="Username"
                         value={personalData.userName}
                         handleChange={handleUsername}
-                        validationError={false}
+                        validationError={validateStartEmptySpacing(
+                          personalData.userName
+                        )}
                         disabled
                       />
                       <InputField
                         required
                         type="password"
+                        helperText={
+                          validateLength(createPAssword.password)
+                            ? 'Password is too short'
+                            : ''
+                        }
                         handleChange={handleCreatePassword('password')}
                         value={createPAssword.password}
-                        validationError={createPAssword.err}
+                        validationError={validateLength(
+                          createPAssword.password
+                        )}
                         label="New Password"
                       />
                     </div>
@@ -158,7 +159,6 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
         <div className={classes.buttonGroup}>
           <NewUserModal
             showModal={
-              !createPAssword.err &&
               personalData.userName.length > 0 &&
               createPAssword.password.length > 0
             }

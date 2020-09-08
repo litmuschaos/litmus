@@ -252,7 +252,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                       info.projectName
                     )}
                     type="text"
-                    handleChange={(event: { target: { value: string } }) => {
+                    handleChange={(event) => {
                       setData('projectName', event.target.value);
                     }}
                   />
@@ -284,7 +284,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                         : ''
                     }
                     validationError={validateStartEmptySpacing(info.name)}
-                    handleChange={(event: { target: { value: string } }) => {
+                    handleChange={(event) => {
                       setData('name', event.target.value);
                     }}
                   />
@@ -312,7 +312,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                     validationError={false}
                     value={values.password}
                     success={isSuccess.current}
-                    handleChange={(event: { target: { value: any } }) =>
+                    handleChange={(event) =>
                       setValues({
                         password: event.target.value,
                         confirmPassword: values.confirmPassword,
@@ -342,7 +342,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                         values.confirmPassword
                       )
                     }
-                    handleChange={(event: { target: { value: any } }) =>
+                    handleChange={(event) =>
                       setValues({
                         password: values.password,
                         confirmPassword: event.target.value,
@@ -371,7 +371,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                       validateEmail(info.email) ? 'Should be a valid email' : ''
                     }
                     validationError={validateEmail(info.email)}
-                    handleChange={(event: { target: { value: string } }) => {
+                    handleChange={(event) => {
                       setData('email', event.target.value);
                     }}
                   />

@@ -5,10 +5,10 @@ import ResetModal from './ResetModal';
 import UserDetails from '../CreateUser/UserDetails';
 import useStyles from './styles';
 import InputField from '../../../../../containers/layouts/InputField';
+import { validateLength } from '../../../../../utils/validate';
 
 interface Password {
   password: string;
-  err: boolean;
   showPassword: boolean;
 }
 
@@ -29,36 +29,21 @@ const EditUser: React.FC<EditUserProps> = ({
 }) => {
   const classes = useStyles();
 
-  // for password validation
-  const regularExpression = new RegExp(
-    '^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})'
-  );
-
   // for conditional rendering of reset password div
 
   const [createPAssword, setCreatePassword] = React.useState<Password>({
     password: '',
     showPassword: false,
-    err: false,
   });
 
   // handles password field
   const handleCreatePassword = (prop: keyof Password) => (
-    event: React.ChangeEvent<{ value: string }>
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if (regularExpression.test(event.target.value)) {
-      setCreatePassword({
-        ...createPAssword,
-        err: false,
-        [prop]: event.target.value,
-      });
-    } else {
-      setCreatePassword({
-        ...createPAssword,
-        err: true,
-        [prop]: event.target.value,
-      });
-    }
+    setCreatePassword({
+      ...createPAssword,
+      [prop]: event.target.value,
+    });
   };
 
   return (
@@ -102,9 +87,16 @@ const EditUser: React.FC<EditUserProps> = ({
                     <div className={classes.details1}>
                       <InputField
                         required
+                        helperText={
+                          validateLength(createPAssword.password)
+                            ? 'Password is too short'
+                            : ''
+                        }
                         handleChange={handleCreatePassword('password')}
                         type="password"
-                        validationError={createPAssword.err}
+                        validationError={validateLength(
+                          createPAssword.password
+                        )}
                         label="New Password"
                         value={createPAssword.password}
                       />

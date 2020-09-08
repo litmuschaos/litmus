@@ -17,7 +17,7 @@ interface InputFieldProps {
   value: string;
   required?: boolean;
   iconType?: string | undefined;
-  handleChange?: (event: React.ChangeEvent<{ value: string }>) => void;
+  handleChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const InputField: React.FC<InputFieldProps> = ({

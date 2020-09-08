@@ -79,7 +79,7 @@ const LoginPage = () => {
                 validationError={validateStartEmptySpacing(authData.username)}
                 data-cy="inputEmail"
                 required
-                handleChange={(e: { target: { value: any } }) =>
+                handleChange={(e) =>
                   setAuthData({
                     username: e.target.value,
                     password: authData.password,
@@ -99,7 +99,7 @@ const LoginPage = () => {
                 // validationError={validatePassword(authData.password)}
                 validationError={false}
                 data-cy="inputPassword"
-                handleChange={(e: { target: { value: any } }) =>
+                handleChange={(e) =>
                   setAuthData({
                     username: authData.username,
                     password: e.target.value,
