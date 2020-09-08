@@ -111,7 +111,7 @@ jobs:
             docker load -i /tmp/workspace/frontend.tar
       - run:
           name: Pushing graphql server
-          command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${SELF_DEPLOYER_IMAGE} --IMGTAG=${IMGTAG}
+          command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${GRAPHQL_SERVER_IMAGE} --IMGTAG=${IMGTAG}
       - run:
           name: Pushing frontend server
           command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${FRONTEND_IMAGE} --IMGTAG=${IMGTAG}/hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${GRAPHQL_SERVER_IMAGE} --IMGTAG=${IMGTAG}
@@ -149,7 +149,7 @@ jobs:
           command: docker images
       - run:
           name: Pushing graphql server
-          command: bash ./hack/push --TYPE=release --REPONAME=${REPONAME} --IMGNAME=${SELF_DEPLOYER_IMAGE} --IMGTAG=${IMGTAG}
+          command: bash ./hack/push --TYPE=release --REPONAME=${REPONAME} --IMGNAME=${GRAPHQL_SERVER_IMAGE} --IMGTAG=${IMGTAG}
       - run:
           name: Pushing frontend server
           command: bash ./hack/push --TYPE=release --REPONAME=${REPONAME} --IMGNAME=${FRONTEND_IMAGE} --IMGTAG=${IMGTAG}/hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${GRAPHQL_SERVER_IMAGE} --IMGTAG=${IMGTAG}
