@@ -54,23 +54,41 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingBottom: theme.spacing(0),
   },
 
+  // Style for ProfileDropdownSection
+  buttonPositionExpand: {
+    marginTop: theme.spacing(-1.75),
+    alignContent: 'left',
+  },
+
+  projectDisplay: {
+    marginTop: theme.spacing(-1.25),
+    fontSize: 12,
+    color: 'grey',
+  },
   // Style for ProfileDropdownSection and ProfileDropdownItems.
   avatarBackground: {
-    color: '#FFF',
+    color: theme.palette.secondary.contrastText,
     backgroundColor: theme.palette.secondary.main,
+    alignContent: 'right',
+    marginBottom: theme.spacing(1),
   },
 
   // Styles for ProfileDropdownItems.
   popover: {
-    background: '#FFF',
+    background: theme.palette.secondary.contrastText,
     borderRadius: theme.shape.borderRadius,
     width: '100%',
     maxWidth: theme.spacing(36.5),
+    marginTop: theme.spacing(1.25),
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
     [theme.breakpoints.down('sm')]: {
       maxWidth: theme.spacing(36.5),
     },
+  },
+
+  popoverProfileAdjust: {
+    marginTop: theme.spacing(3),
   },
 
   container: {
@@ -125,6 +143,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingBottom: theme.spacing(1),
     paddingLeft: theme.spacing(9),
     paddingRight: theme.spacing(9.5),
+    color: '#EB5757',
   },
 
   buttonEditProfile: {
@@ -156,6 +175,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   // Styles for NotificationDropdown.
+  notifyHeading: {
+    marginTop: theme.spacing(4),
+    color: theme.palette.secondary.dark,
+  },
+
   tabContainer: {
     overflowY: 'auto',
     maxHeight: '21.875rem',
@@ -178,6 +202,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   noShadow: {
     boxShadow: 'none !important',
+  },
+
+  listItemSpacing: {
+    marginTop: theme.spacing(-1.5),
   },
 }));
 

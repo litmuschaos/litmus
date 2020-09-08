@@ -3,19 +3,12 @@ export interface NotificationIds {
   sequenceID: string;
 }
 
-export interface Project {
-  projectName: string;
-  statusActive: string;
-  id: string;
-}
-
 export interface Message {
   sequenceID: string;
   id: string;
-  workflowName: string;
+  MessageType: string;
   date: number;
   text: string;
-  picUrl: string;
 }
 
 export interface NotificationsCallBackType {

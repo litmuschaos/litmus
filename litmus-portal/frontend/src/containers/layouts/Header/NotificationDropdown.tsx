@@ -5,7 +5,6 @@ import {
   IconButton,
   AppBar,
   List,
-  Divider,
   ListItem,
   ListItemText,
   Typography,
@@ -29,13 +28,11 @@ const NotificationsDropdown: React.FC<NotificationDropdownProps> = ({
   CallbackToHeaderOnDeleteNotification,
 }) => {
   const classes = useStyles();
-
   const anchorEl = useRef();
-
   const [isOpen, setIsOpen] = useState(false);
 
   function handleClick() {
-    setIsOpen(!isOpen);
+    // setIsOpen(!isOpen); uncomment to activate notifications.
   }
 
   function handleClickAway() {
@@ -76,17 +73,23 @@ const NotificationsDropdown: React.FC<NotificationDropdownProps> = ({
         }}
         transformOrigin={{
           vertical: 'top',
-          horizontal: 'right',
+          horizontal: 'center',
         }}
         classes={{ paper: classes.popoverPaper }}
         onClose={handleClickAway}
       >
         <AppBar position="static" color="inherit" className={classes.noShadow}>
-          <Box pt={1} pl={2} pb={1} pr={1}>
-            <Typography variant="subtitle1">Notifications</Typography>
-          </Box>
-
-          <Divider className={classes.divider} />
+          {messages.length !== 0 ? (
+            <Box pt={1} pl={2} pb={1} pr={1}>
+              <Typography variant="h6" className={classes.notifyHeading}>
+                <strong>
+                  Updates ({count === '0' ? messages.length : count})
+                </strong>
+              </Typography>
+            </Box>
+          ) : (
+            <div />
+          )}
         </AppBar>
 
         <List dense className={classes.tabContainer}>
@@ -97,11 +100,10 @@ const NotificationsDropdown: React.FC<NotificationDropdownProps> = ({
               </ListItemText>
             </ListItem>
           ) : (
-            messages.map((element: any, index: any) => (
+            messages.map((element: any) => (
               <NotificationListItem
                 key={element.sequenceID} // index
                 message={element}
-                divider={index !== messages.length - 1}
                 CallbackOnDeleteNotification={
                   CallbackToDropdownOnDeleteNotification
                 }

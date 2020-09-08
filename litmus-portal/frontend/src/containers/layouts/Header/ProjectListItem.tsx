@@ -11,7 +11,8 @@ import InsertDriveFileOutlinedIcon from '@material-ui/icons/InsertDriveFileOutli
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import React, { useState } from 'react';
 import useStyles from './styles';
-import { Project, ProjectsCallBackType } from '../../../models/header';
+import { ProjectsCallBackType } from '../../../models/header';
+import { Project } from '../../../models/project';
 
 interface ProjectListItemProps {
   project: Project;
@@ -27,7 +28,6 @@ const ProjectListItem: React.FC<ProjectListItemProps> = ({
   callbackToSetActiveProjectID,
 }) => {
   const classes = useStyles();
-
   const [projSelected, setProjSelected] = useState(
     project.id === selectedProjectID
   );
@@ -76,7 +76,7 @@ const ProjectListItem: React.FC<ProjectListItemProps> = ({
           </Avatar>
         )}
       </ListItemAvatar>
-      <ListItemText primary={project.projectName} style={{ fontSize: 14 }} />
+      <ListItemText primary={project.name} style={{ fontSize: 14 }} />
       <ListItemSecondaryAction>
         <IconButton edge="end" aria-label="more" onClick={extraOptions}>
           {projSelected ? (

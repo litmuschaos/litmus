@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
-import { Message, NotificationIds, Project } from '../../../models/header';
+import { Message, NotificationIds } from '../../../models/header';
 import {
   UserData,
   CurrentUserDetails,
@@ -17,66 +17,53 @@ import NotificationsDropdown from './NotificationDropdown';
 import ProfileDropdownSection from './ProfileDropdownSection';
 import useStyles from './styles';
 import { GET_USER } from '../../../graphql';
+import { Member, Project } from '../../../models/project';
+import useActions from '../../../redux/actions';
+import * as UserActions from '../../../redux/actions/user';
 
 const Header: React.FC = () => {
   const classes = useStyles();
   const userData: UserData = useSelector((state: RootState) => state.userData);
   const { username } = userData;
-
+  const user = useActions(UserActions);
   // Query to get user details
   const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
     { variables: { username } }
   );
-
   const name: string = data?.getUser.name ?? '';
   const email: string = data?.getUser.email ?? '';
-
-  // Fetch and Set Projects from backend.
-
-  const [projects, setProjects] = useState<Project[]>([]);
-
-  // set selectedProject from backend via redux using #setSelectedProject
-  // depending on user's last active project or use cookie.
-  const [selectedProject, setSelectedProject] = useState('1');
+  const projects: Project[] = data?.getUser.projects ?? [];
+  const [userRole, setUserRole] = useState<string>(userData.userRole);
+  const [selectedProjectName, setSelectedProjectName] = useState<string>(
+    userData.selectedProjectName
+  );
+  const [selectedProject, setSelectedProject] = useState(
+    userData.selectedProjectID
+  );
 
   const setSelectedProjectID = (selectedProjectID: string) => {
+    const updatedUserDetails = { role: '', projectName: '' };
     setSelectedProject(selectedProjectID);
-    // send POST request with #selectedProjectID to update active
-    // project on db or persist it in redux or cookie.
-    // window.location.reload(false);
+    projects.forEach((project) => {
+      if (selectedProjectID === project.id) {
+        const memberList: Member[] = project.members;
+        memberList.forEach((member) => {
+          if (member.user_name === data?.getUser.username) {
+            updatedUserDetails.role = member.role;
+            setUserRole(member.role);
+          }
+        });
+        updatedUserDetails.projectName = project.name;
+        setSelectedProjectName(project.name);
+      }
+    });
+    user.updateUserDetails({
+      selectedProjectID,
+      userRole: updatedUserDetails.role,
+      selectedProjectName: updatedUserDetails.projectName,
+    });
   };
-
-  const fetchRandomProjects = useCallback(() => {
-    const projects = [];
-
-    const projectsList = [
-      {
-        projectName: 'FlashProjectCL1',
-        statusActive: 'false',
-        id: '0',
-      },
-      {
-        projectName: 'ProjectExample2',
-        statusActive: 'true',
-        id: '1',
-      },
-    ];
-
-    const iterations = projectsList.length;
-
-    for (let i = 0; i < iterations; i += 1) {
-      const projectItem = projectsList[i];
-      const project = {
-        id: projectItem.id,
-        projectName: projectItem.projectName,
-        statusActive: projectItem.statusActive,
-      };
-      projects.push(project);
-    }
-    projects.reverse();
-    setProjects(projects);
-  }, [setProjects]);
 
   // Fetch and Set Notifications from backend.
 
@@ -90,26 +77,20 @@ const Header: React.FC = () => {
     const notificationsList = [
       {
         id: '1',
-        workflowName: 'Pod Delete',
-        status: 'complete',
-        workflowPic:
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Kubernetes_logo_without_workmark.svg/1200px-Kubernetes_logo_without_workmark.svg.png',
+        MessageType: 'Pod Delete workflow',
+        Message: 'complete',
         generatedTime: '',
       },
       {
         id: '2',
-        workflowName: 'Argo Chaos',
-        status: 'started started',
-        workflowPic:
-          'https://pbs.twimg.com/profile_images/1272548541827649536/P4-0iQen_400x400.jpg',
+        MessageType: 'Argo Chaos workflow',
+        Message: 'started started',
         generatedTime: '',
       },
       {
         id: '3',
-        workflowName: 'New',
-        status: 'crashed',
-        workflowPic:
-          'https://res.cloudinary.com/practicaldev/image/fetch/s--jZgtY8cn--/c_imagga_scale,f_auto,fl_progressive,h_1080,q_auto,w_1080/https://res.cloudinary.com/practicaldev/image/fetch/s--x3KZoo7u--/c_imagga_scale%2Cf_auto%2Cfl_progressive%2Ch_420%2Cq_auto%2Cw_1000/https://dev-to-uploads.s3.amazonaws.com/i/0v6zstfufm96e09isqo6.png',
+        MessageType: 'New',
+        Message: 'crashed',
         generatedTime: '',
       },
     ];
@@ -127,10 +108,9 @@ const Header: React.FC = () => {
       const message = {
         sequenceID: (i as unknown) as string,
         id: notificationItem.id,
-        workflowName: notificationItem.workflowName,
+        MessageType: notificationItem.MessageType,
         date: curUnix,
-        text: `${notificationItem.workflowName} Workflow ${notificationItem.status}`,
-        picUrl: notificationItem.workflowPic,
+        text: `${notificationItem.MessageType}- ${notificationItem.Message}`,
       };
       curUnix += oneDaySeconds;
       messages.push(message);
@@ -155,8 +135,13 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     fetchRandomMessages();
-    fetchRandomProjects();
-  }, [fetchRandomMessages, fetchRandomProjects]);
+  }, [fetchRandomMessages]);
+
+  useEffect(() => {
+    setSelectedProject(userData.selectedProjectID);
+    setUserRole(userData.userRole);
+    setSelectedProjectName(userData.selectedProjectName);
+  }, [userData.selectedProjectID]);
 
   return (
     <div>
@@ -182,6 +167,8 @@ const Header: React.FC = () => {
                   projects={projects}
                   selectedProjectID={selectedProject}
                   CallbackToSetSelectedProjectID={setSelectedProjectID}
+                  selectedProjectName={selectedProjectName}
+                  userRole={userRole}
                 />
               </Box>
             </Box>
