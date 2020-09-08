@@ -1,21 +1,21 @@
+import { useLazyQuery } from '@apollo/client';
 import {
   FormControl,
   FormControlLabel,
   RadioGroup,
   Typography,
+  Snackbar,
 } from '@material-ui/core';
 import Radio from '@material-ui/core/Radio';
 import * as React from 'react';
-import { useLazyQuery } from '@apollo/client';
 import { useSelector } from 'react-redux';
+import { GET_CLUSTER } from '../../../../graphql';
+import useActions from '../../../../redux/actions';
+import * as WorkflowActions from '../../../../redux/actions/workflow';
+import { RootState } from '../../../../redux/reducers';
 import ButtonFilled from '../../../Button/ButtonFilled';
 import ButtonOutLine from '../../../Button/ButtonOutline';
 import useStyles from './styles';
-import { GET_CLUSTER } from '../../../../graphql';
-import { RootState } from '../../../../redux/reducers';
-import { UserData } from '../../../../models/user';
-import useActions from '../../../../redux/actions';
-import * as WorkflowActions from '../../../../redux/actions/workflow';
 
 /*
   Check is image which is used as
@@ -40,30 +40,37 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
   const [value, setValue] = React.useState('Experiment');
   const workflow = useActions(WorkflowActions);
   const [isTragetSelected, setTarget] = React.useState(true);
-  const [isRegistered, setRegistration] = React.useState(true);
-  const userData: UserData = useSelector((state: RootState) => state.userData);
+  const [isOpenSnackBar, setOpenSnackBar] = React.useState(false);
+  const selectedProjectID = useSelector(
+    (state: RootState) => state.userData.selectedProjectID
+  );
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue((event.target as HTMLInputElement).value);
   };
 
   const [getCluster] = useLazyQuery(GET_CLUSTER, {
     onCompleted: (data) => {
-      if (data && data.getCluster.length !== 0) {
+      if (
+        data &&
+        data.getCluster.length !== 0 &&
+        data.getCluster[0].is_active !== false
+      ) {
         workflow.setWorkflowDetails({
           clusterid: data.getCluster[0].cluster_id,
-          project_id: userData.selectedProjectID,
+          project_id: selectedProjectID,
         });
         gotoStep(1);
       } else {
-        setRegistration(false);
+        setOpenSnackBar(true);
       }
     },
+    fetchPolicy: 'cache-and-network',
   });
 
   const handleClick = () => {
     getCluster({
       variables: {
-        project_id: userData.selectedProjectID,
+        project_id: selectedProjectID,
         cluster_type: 'internal',
       },
     });
@@ -141,13 +148,22 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
           </ButtonOutLine>
         </div>
       </div>
-      {isRegistered ? null : (
-        <div className={classes.marginTemporary}>
-          <Typography className={classes.headcluster}>
-            <strong>***No cluster registered with your Project ID***</strong>
+      <Snackbar
+        open={isOpenSnackBar}
+        action={
+          <Typography>
+            <strong>
+              No Cluster Registered With Your Project ID, Please Wait...
+            </strong>
           </Typography>
-        </div>
-      )}
+        }
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackBar(false)}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+      />
     </div>
   );
 };

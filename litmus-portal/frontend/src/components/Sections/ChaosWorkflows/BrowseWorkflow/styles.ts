@@ -44,10 +44,10 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 4,
     borderColor: theme.palette.secondary.main,
     marginRight: theme.spacing(3.75),
+    textTransform: 'none',
   },
   displayDate: {
-    marginLeft: theme.spacing(1.875),
-    paddingTop: theme.spacing(0.75),
+    marginLeft: theme.spacing(1),
     width: '100%',
   },
 
@@ -108,6 +108,12 @@ const useStyles = makeStyles((theme) => ({
   timeDiv: {
     display: 'flex',
     flexDirection: 'row',
+  },
+  failed: {
+    color: theme.palette.error.main,
+  },
+  success: {
+    color: theme.palette.primary.dark,
   },
 }));
 

@@ -14,6 +14,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/subscriptions"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/utils"
 	"github.com/pkg/errors"
+	"github.com/tidwall/sjson"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -155,11 +156,13 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		return &model.ChaosWorkFlowResponse{}, err
 	}
 
-	workflow_id := utils.RandomString(32)
+	workflow_id := uuid.New().String()
+
+	newWorkflowManifest, _ := sjson.Set(input.WorkflowManifest, "metadata.labels.workflow_id", workflow_id)
 
 	newChaosWorkflow := database.ChaosWorkFlowInput{
 		WorkflowID:          workflow_id,
-		WorkflowManifest:    input.WorkflowManifest,
+		WorkflowManifest:    newWorkflowManifest,
 		CronSyntax:          input.CronSyntax,
 		WorkflowName:        input.WorkflowName,
 		WorkflowDescription: input.WorkflowDescription,

@@ -1,7 +1,10 @@
 import { AnalyticsAction } from './analytics';
+import { NodeSelectionAction } from './nodeSelection';
 import { UserAction } from './user';
 import { WorkflowAction } from './workflow';
 
-export * from './predefinedWorkflow';
-
-export type Action = UserAction | AnalyticsAction | WorkflowAction;
+export type Action =
+  | UserAction
+  | AnalyticsAction
+  | WorkflowAction
+  | NodeSelectionAction;
