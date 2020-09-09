@@ -14,6 +14,7 @@ import {
   DECLINE_INVITE,
   GET_USER,
 } from '../../../../../../graphql';
+import { MemberInvitation } from '../../../../../../models/invite';
 import { Project } from '../../../../../../models/project';
 import {
   CurrentUserDedtailsVars,
@@ -44,34 +45,40 @@ const ReceivedInvitations: React.FC = () => {
   const [acceptDecline, setAcceptDecline] = useState<string>('');
 
   // mutation to accept the invitation
-  const [acceptInvite] = useMutation(ACCEPT_INVITE, {
-    onCompleted: () => {
-      setRows(
-        rows.filter(function (row) {
-          return row.username !== acceptDecline;
-        })
-      );
-    },
-    onError: () => {},
-    refetchQueries: [
-      { query: GET_USER, variables: { username: userData.username } },
-    ],
-  });
+  const [acceptInvite] = useMutation<{ member: MemberInvitation }>(
+    ACCEPT_INVITE,
+    {
+      onCompleted: () => {
+        setRows(
+          rows.filter(function (row) {
+            return row.username !== acceptDecline;
+          })
+        );
+      },
+      onError: () => {},
+      refetchQueries: [
+        { query: GET_USER, variables: { username: userData.username } },
+      ],
+    }
+  );
 
   // mutation to decline the invitation
-  const [declineInvite] = useMutation(DECLINE_INVITE, {
-    onCompleted: () => {
-      setRows(
-        rows.filter(function (row) {
-          return row.username !== acceptDecline;
-        })
-      );
-    },
-    onError: () => {},
-    refetchQueries: [
-      { query: GET_USER, variables: { username: userData.username } },
-    ],
-  });
+  const [declineInvite] = useMutation<{ member: MemberInvitation }>(
+    DECLINE_INVITE,
+    {
+      onCompleted: () => {
+        setRows(
+          rows.filter(function (row) {
+            return row.username !== acceptDecline;
+          })
+        );
+      },
+      onError: () => {},
+      refetchQueries: [
+        { query: GET_USER, variables: { username: userData.username } },
+      ],
+    }
+  );
 
   // query for getting all the data for the logged in user
   const { data, loading } = useQuery<

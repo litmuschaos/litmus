@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   filterOpt: {
     '&:hover': {
-      background: theme.palette.menuOption.active,
+      background: theme.palette.customColors.menuOption.active,
     },
   },
   toolbar: {
@@ -125,7 +125,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   menuOpt: {
     '&:hover': {
-      background: theme.palette.menuOption.active,
+      background: theme.palette.customColors.menuOption.active,
     },
   },
   menuDiv: {

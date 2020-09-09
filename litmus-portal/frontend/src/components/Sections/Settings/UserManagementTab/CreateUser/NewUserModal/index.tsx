@@ -2,10 +2,10 @@ import { Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import config from '../../../../../../config';
+import Unimodal from '../../../../../../containers/layouts/Unimodal';
 import { RootState } from '../../../../../../redux/reducers';
 import ButtonFilled from '../../../../../Button/ButtonFilled';
 import useStyles from './styles';
-import Unimodal from '../../../../../../containers/layouts/Unimodal';
 
 // Props for NewUserModal component
 interface NewUserModalProps {
@@ -68,7 +68,7 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
       </div>
 
       <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn={false}>
-        {error.length > 0 ? (
+        {error.length ? (
           <div className={classes.errDiv}>
             {/* <img src="./icons/checkmark.svg" alt="checkmark" /> */}
 
