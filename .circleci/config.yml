@@ -101,11 +101,11 @@ jobs:
       - run:
           name: Loading all docker images
           command: |
-            docker load -i /tmp/workspace/graphql-server.tar
-            docker load -i /tmp/workspace/subscriber.tar
-            docker load -i /tmp/workspace/self-deployer.tar
-            docker load -i /tmp/workspace/auth-server.tar
-            docker load -i /tmp/workspace/frontend.tar
+            docker load -i /tmp/workspace/${GRAPHQL_SERVER_IMAGE}.tar
+            docker load -i /tmp/workspace/${SUBSCRIBER_IMAGE}.tar
+            docker load -i /tmp/workspace/${SELF_DEPLOYER_IMAGE}.tar
+            docker load -i /tmp/workspace/${AUTHENTICATION_SERVER_IMAGE}.tar
+            docker load -i /tmp/workspace/${FRONTEND_IMAGE}.tar
       - run:
           name: Pushing graphql server
           command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${GRAPHQL_SERVER_IMAGE} --IMGTAG=${IMGTAG}
@@ -136,11 +136,11 @@ jobs:
       - run:
           name: Loading all docker images
           command: |
-            docker load -i /tmp/workspace/graphql-server.tar
-            docker load -i /tmp/workspace/subscriber.tar
-            docker load -i /tmp/workspace/self-deployer.tar
-            docker load -i /tmp/workspace/auth-server.tar
-            docker load -i /tmp/workspace/frontend.tar
+            docker load -i /tmp/workspace/${GRAPHQL_SERVER_IMAGE}.tar
+            docker load -i /tmp/workspace/${SUBSCRIBER_IMAGE}.tar
+            docker load -i /tmp/workspace/${SELF_DEPLOYER_IMAGE}.tar
+            docker load -i /tmp/workspace/${AUTHENTICATION_SERVER_IMAGE}.tar
+            docker load -i /tmp/workspace/${FRONTEND_IMAGE}.tar
       - run:
           name: Docker images
           command: docker images
@@ -152,7 +152,7 @@ jobs:
           command: bash ./hack/push --TYPE=release --REPONAME=${REPONAME} --IMGNAME=${FRONTEND_IMAGE} --IMGTAG=${IMGTAG}/hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${GRAPHQL_SERVER_IMAGE} --IMGTAG=${IMGTAG}
       - run:
           name: Pushing auth server
-          command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${AUTHENTICATION_SERVER_IMAGE} --IMGTAG=${IMGTAG}
+          command: bash ./hack/push --TYPE=release --REPONAME=${REPONAME} --IMGNAME=${AUTHENTICATION_SERVER_IMAGE} --IMGTAG=${IMGTAG}
       - run:
           name: Pushing subscriber server
           command: bash ./hack/push --TYPE=release --REPONAME=${REPONAME} --IMGNAME=${SUBSCRIBER_IMAGE} --IMGTAG=${IMGTAG}
