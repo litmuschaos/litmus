@@ -92,7 +92,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   backBtn: {
-    width: '7.375',
+    maxWidth: '7.375rem',
     height: '2.75rem',
     padding: theme.spacing(1.875),
     backgroundColor: theme.palette.secondary.dark,
