@@ -56,26 +56,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignContent: 'flex-start',
     flexWrap: 'wrap',
   },
-  // for username field
-  userDetail: {
-    border: '1px solid rgba(0, 0, 0, 0.2)',
-    borderRadius: 3,
-    width: '24.43rem',
-    height: '4.8125rem',
-    marginRight: theme.spacing(2.5),
-    paddingLeft: theme.spacing(3.75),
-    marginBottom: theme.spacing(2.5),
-  },
-
-  // for password
-  pass: {
-    width: '24.43rem',
-    height: '4.8125rem',
-    marginBottom: theme.spacing(2.5),
-    padding: theme.spacing(1),
-    border: '1px solid rgba(0, 0, 0, 0.2)',
-    borderRadius: 3,
-  },
 
   divider: {
     marginTop: theme.spacing(3.75),
@@ -87,17 +67,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginBottom: theme.spacing(3.75),
     fontSize: '1rem',
     color: theme.palette.text.disabled,
-  },
-
-  // button success and button error
-  success: {
-    border: '0.0625rem solid',
-    borderColor: theme.palette.secondary.dark,
-  },
-
-  error: {
-    border: '0.0625rem solid',
-    borderColor: theme.palette.error.main,
   },
 
   createRandomButton: {
