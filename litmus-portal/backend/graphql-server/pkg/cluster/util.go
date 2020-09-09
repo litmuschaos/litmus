@@ -7,7 +7,6 @@ import (
 	database "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb"
 
 	"flag"
-	"fmt"
 	"path/filepath"
 
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
@@ -34,19 +33,14 @@ func VerifyCluster(identity model.ClusterIdentity) (*database.Cluster, error) {
 
 // GetIP function is to provide Node IP addresses
 func GetIP() string {
-	fmt.Println("GetIP called")
+
 	// Require variables declared
 	var kubeconfig *string
 	//nodeAddresses := []corev1.NodeAddress{}
 
 	// To get In-CLuster config
-	config, err := rest.InClusterConfig()
-	fmt.Println("Incluster called")
-
-	// If In-Cluster is nil then it will go for Out-Cluster config
+	config, err := rest.InClusterConfig() // If In-Cluster is nil then it will go for Out-Cluster config
 	if config == nil {
-
-		fmt.Println("config==nil")
 
 		//To get Out-Cluster config
 		if home := homedir.HomeDir(); home != "" {
@@ -54,15 +48,12 @@ func GetIP() string {
 		} else {
 			kubeconfig = flag.String("kubeconfig", "", "Path to the kubeconfig file")
 		}
-		fmt.Println("kubeconfig :", kubeconfig)
-
 		//panic(err.Error())
 		flag.Parse()
 
 		// uses the current context in kubeconfig
 		config, err = clientcmd.BuildConfigFromFlags("", *kubeconfig)
 		if err != nil {
-			fmt.Println("congig err")
 			panic(err.Error())
 		}
 	}
@@ -81,8 +72,6 @@ func GetIP() string {
 	internalIP := ""
 
 	for _, addr := range address {
-		fmt.Println("--")
-
 		if addr.Type == "ExternalIP" && addr.Address != "" {
 			externalIP = addr.Address
 		} else if addr.Type == "InternalIP" && addr.Address != "" {
