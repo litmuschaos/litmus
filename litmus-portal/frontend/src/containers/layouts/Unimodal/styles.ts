@@ -6,9 +6,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '70%',
     padding: '1rem',
     margin: '2rem auto',
-    background: props.isDark
-      ? theme.palette.common.black
-      : theme.palette.common.white,
+    background: props.isDark ? '#1C1C1C' : theme.palette.common.white,
     borderRadius: 3,
     textAlign: props.textAlign ? props.textAlign : 'center',
     outline: 'none',
@@ -30,11 +28,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     minHeight: 0,
     minWidth: 0,
     borderRadius: 3,
-    color: props.isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)',
+    color: props.isDark
+      ? theme.palette.secondary.contrastText
+      : 'rgba(0, 0, 0, 0.4)',
     border: props.isDark
-      ? '1px solid rgba(255, 255, 255, 0.4)'
+      ? '1px solid rgba(255, 255, 255, 0.2)'
       : '1px solid rgba(0, 0, 0, 0.4)',
-    marginLeft: '60%',
+    marginLeft: props.isDark ? '82.5%' : '60%',
     marginTop: theme.spacing(5),
   }),
 }));

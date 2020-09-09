@@ -247,29 +247,6 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         */}
       </div>
 
-      {/* <Modal open={open} onClose={handleClose}>
-        <div className={classes.modalContainer}>
-          <div className={classes.modalContainerClose}>
-            <Button
-              variant="outlined"
-              color="secondary"
-              className={classes.closeButtonStyle}
-              onClick={handleClose}
-            >
-              &#x2715;
-            </Button>
-          </div>
-          <YamlEditor
-            content={yaml}
-            filename={name}
-            yamlLink={link}
-            id={id}
-            description={description}
-            readOnly
-            optionsDisplay={false}
-          />
-        </div>
-      </Modal> */}
       <Unimodal
         isOpen={open}
         handleClose={handleClose}
@@ -284,7 +261,6 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
           id={id}
           description={description}
           readOnly
-          optionsDisplay={false}
         />
       </Unimodal>
     </div>
