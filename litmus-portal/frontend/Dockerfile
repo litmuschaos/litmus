@@ -20,7 +20,7 @@ RUN CYPRESS_INSTALL_BINARY=0 npm install
 COPY . ./
 
 # Finally runs the application
-RUN npm run build
+RUN npm run build --prod
 
 # Stage 2: the production environment
 FROM nginx:alpine
