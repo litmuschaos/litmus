@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -12,12 +13,11 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
-	"github.com/rs/cors"
-
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/generated"
 	database "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/file_handlers"
+	"github.com/rs/cors"
 )
 
 const defaultPort = "8080"
@@ -56,6 +56,7 @@ func main() {
 	// to be removed in production
 	srv.Use(extension.Introspection{})
 
+	fmt.Println(file_handlers.GetIP())
 	router := mux.NewRouter()
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", c.Handler(srv))

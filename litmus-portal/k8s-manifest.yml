@@ -67,8 +67,10 @@ spec:
             value: mongo-service:27017
           - name: JWT_SECRET
             value: "12345678"
-          - name: EXTERNAL_ADDRESS
-            value: ""
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
           - name: SERVICE_ADDRESS
             value: http://litmusportal-server-service:9002
         ports:
