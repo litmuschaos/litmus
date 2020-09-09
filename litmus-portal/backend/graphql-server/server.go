@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -56,7 +55,6 @@ func main() {
 	// to be removed in production
 	srv.Use(extension.Introspection{})
 
-	fmt.Println(file_handlers.GetIP())
 	router := mux.NewRouter()
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", c.Handler(srv))
