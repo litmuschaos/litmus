@@ -83,7 +83,10 @@ func (m *Manager) VerifyUserPassword(username, password string) (*models.PublicU
 		return nil, err
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(user.GetPassword()), []byte(password))
-	return user.GetPublicInfo(), err
+	if err != nil {
+		return user.GetPublicInfo(), errors.ErrInvalidPassword
+	}
+	return user.GetPublicInfo(), nil
 }
 
 // LoginUser verifies user password
@@ -110,8 +113,10 @@ func (m *Manager) LogoutUser(username string) error {
 func (m *Manager) CreateUser(user *models.UserCredentials) (*models.PublicUserInfo, error) {
 
 	exists, err := m.CheckUserExists(user.UserName)
-	if err != nil || exists {
+	if err != nil {
 		return nil, err
+	} else if exists {
+		return nil, errors.ErrUserExists
 	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), types.PasswordEncryptionCost)
 	if err != nil {
