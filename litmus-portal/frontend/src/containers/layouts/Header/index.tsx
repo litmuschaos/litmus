@@ -21,6 +21,12 @@ import { Member, Project } from '../../../models/project';
 import useActions from '../../../redux/actions';
 import * as UserActions from '../../../redux/actions/user';
 
+interface SelectedProjectDetails {
+  selectedProjectID: string;
+  selectedProjectName: string;
+  selectedUserRole: string;
+}
+
 const Header: React.FC = () => {
   const classes = useStyles();
   const userData: UserData = useSelector((state: RootState) => state.userData);
@@ -34,34 +40,34 @@ const Header: React.FC = () => {
   const name: string = data?.getUser.name ?? '';
   const email: string = data?.getUser.email ?? '';
   const projects: Project[] = data?.getUser.projects ?? [];
-  const [userRole, setUserRole] = useState<string>(userData.userRole);
-  const [selectedProjectName, setSelectedProjectName] = useState<string>(
-    userData.selectedProjectName
-  );
-  const [selectedProject, setSelectedProject] = useState(
-    userData.selectedProjectID
-  );
+
+  const [selectedProjectDetails, setSelectedProjectDetails] = useState<
+    SelectedProjectDetails
+  >({
+    selectedProjectID: userData.selectedProjectID,
+    selectedProjectName: userData.selectedProjectName,
+    selectedUserRole: userData.userRole,
+  });
 
   const setSelectedProjectID = (selectedProjectID: string) => {
-    const updatedUserDetails = { role: '', projectName: '' };
-    setSelectedProject(selectedProjectID);
     projects.forEach((project) => {
       if (selectedProjectID === project.id) {
         const memberList: Member[] = project.members;
         memberList.forEach((member) => {
           if (member.user_name === data?.getUser.username) {
-            updatedUserDetails.role = member.role;
-            setUserRole(member.role);
+            setSelectedProjectDetails({
+              selectedProjectID,
+              selectedProjectName: project.name,
+              selectedUserRole: member.role,
+            });
           }
         });
-        updatedUserDetails.projectName = project.name;
-        setSelectedProjectName(project.name);
       }
     });
     user.updateUserDetails({
-      selectedProjectID,
-      userRole: updatedUserDetails.role,
-      selectedProjectName: updatedUserDetails.projectName,
+      selectedProjectID: selectedProjectDetails.selectedProjectID,
+      userRole: selectedProjectDetails.selectedUserRole,
+      selectedProjectName: selectedProjectDetails.selectedProjectName,
     });
   };
 
@@ -138,9 +144,11 @@ const Header: React.FC = () => {
   }, [fetchRandomMessages]);
 
   useEffect(() => {
-    setSelectedProject(userData.selectedProjectID);
-    setUserRole(userData.userRole);
-    setSelectedProjectName(userData.selectedProjectName);
+    setSelectedProjectDetails({
+      selectedProjectID: userData.selectedProjectID,
+      selectedProjectName: userData.selectedProjectName,
+      selectedUserRole: userData.userRole,
+    });
   }, [userData.selectedProjectID]);
 
   return (
@@ -165,10 +173,12 @@ const Header: React.FC = () => {
                   email={email}
                   username={username}
                   projects={projects}
-                  selectedProjectID={selectedProject}
+                  selectedProjectID={selectedProjectDetails.selectedProjectID}
                   CallbackToSetSelectedProjectID={setSelectedProjectID}
-                  selectedProjectName={selectedProjectName}
-                  userRole={userRole}
+                  selectedProjectName={
+                    selectedProjectDetails.selectedProjectName
+                  }
+                  userRole={selectedProjectDetails.selectedUserRole}
                 />
               </Box>
             </Box>

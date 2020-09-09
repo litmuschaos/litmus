@@ -7,7 +7,11 @@ import {
 } from '@material-ui/core';
 import formatDistance from 'date-fns/formatDistance';
 import ClearIcon from '@material-ui/icons/Clear';
-import { Message, NotificationsCallBackType } from '../../../models/header';
+import {
+  Message,
+  NotificationsCallBackType,
+  NotificationIds,
+} from '../../../models/header';
 import useStyles from './styles';
 
 interface NotificationListItemProps {
@@ -40,7 +44,7 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({
             aria-label="delete"
             onClick={() => {
               setMessageActive(false);
-              const idsForDeletingNotifications = {
+              const idsForDeletingNotifications: NotificationIds = {
                 id: message.id,
                 sequenceID: message.sequenceID,
               };

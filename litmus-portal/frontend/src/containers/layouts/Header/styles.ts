@@ -143,7 +143,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingBottom: theme.spacing(1),
     paddingLeft: theme.spacing(9),
     paddingRight: theme.spacing(9.5),
-    color: '#EB5757',
+    color: theme.palette.warning.dark,
   },
 
   buttonEditProfile: {

@@ -14,7 +14,11 @@ import {
 import NotificationsOutlinedIcon from '@material-ui/icons/NotificationsOutlined';
 import NotificationListItem from './NotificationListItem';
 import useStyles from './styles';
-import { Message, NotificationsCallBackType } from '../../../models/header';
+import {
+  Message,
+  NotificationsCallBackType,
+  NotificationIds,
+} from '../../../models/header';
 
 interface NotificationDropdownProps {
   messages: Message[];
@@ -41,7 +45,9 @@ const NotificationsDropdown: React.FC<NotificationDropdownProps> = ({
 
   const id = isOpen ? 'scroll-playground' : null;
 
-  const CallbackToDropdownOnDeleteNotification = (notificationIDs: any) => {
+  const CallbackToDropdownOnDeleteNotification = (
+    notificationIDs: NotificationIds
+  ) => {
     CallbackToHeaderOnDeleteNotification(notificationIDs);
   };
 
@@ -79,7 +85,7 @@ const NotificationsDropdown: React.FC<NotificationDropdownProps> = ({
         onClose={handleClickAway}
       >
         <AppBar position="static" color="inherit" className={classes.noShadow}>
-          {messages.length !== 0 ? (
+          {messages.length ? (
             <Box pt={1} pl={2} pb={1} pr={1}>
               <Typography variant="h6" className={classes.notifyHeading}>
                 <strong>
@@ -100,7 +106,7 @@ const NotificationsDropdown: React.FC<NotificationDropdownProps> = ({
               </ListItemText>
             </ListItem>
           ) : (
-            messages.map((element: any) => (
+            messages.map((element: Message) => (
               <NotificationListItem
                 key={element.sequenceID} // index
                 message={element}

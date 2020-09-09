@@ -79,7 +79,7 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
 
   const editProfile = () => {};
 
-  const CallbackFromProjectListItem = (selectedProjectIDFromList: any) => {
+  const CallbackFromProjectListItem = (selectedProjectIDFromList: string) => {
     CallbackToSetSelectedProjectIDOnProfileDropdown(selectedProjectIDFromList);
   };
 
