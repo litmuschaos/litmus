@@ -26,6 +26,11 @@ import ChooseAWorkflowCluster from '../Sections/CreateWorkflow/WorkflowCluster';
 import QontoConnector from './quontoConnector';
 import useStyles from './styles';
 import useQontoStepIconStyles from './useQontoStepIconStyles';
+import {
+  CreateWorkFlowInput,
+  CreateWorkflowResponse,
+  WeightMap,
+} from '../../models/CreateWorkflowData';
 
 function getSteps(): string[] {
   return [
@@ -36,11 +41,6 @@ function getSteps(): string[] {
     'Schedule',
     'Verify and Commit',
   ];
-}
-
-interface WeightMap {
-  experiment_name: string;
-  weightage: number;
 }
 
 function QontoStepIcon(props: StepIconProps) {
@@ -172,7 +172,10 @@ const CustomStepper = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const [createChaosWorkFlow] = useMutation(CREATE_WORKFLOW, {
+  const [createChaosWorkFlow] = useMutation<
+    CreateWorkflowResponse,
+    CreateWorkFlowInput
+  >(CREATE_WORKFLOW, {
     onCompleted: () => {
       setOpen(true);
     },
