@@ -151,6 +151,8 @@ type Query{
   getUser(username: String!): User!
 
   getProject(projectID: String!): Project!
+
+  users: [User!]!
 }
 
 type Mutation{
@@ -173,6 +175,13 @@ type Mutation{
   createUser(user: UserInput!): User!
 
   deleteChaosWorkflow(workflowid: String!): Boolean!
+
+  sendInvitation(member: MemberInput!): Member!
+
+  acceptInvitation(member: MemberInput!): String!
+
+  declineInvitation(member: MemberInput!): String!
+
 }
 
 type Subscription{

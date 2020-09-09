@@ -11,6 +11,21 @@ type Project{
 type Member {
     user_id: ID!
     user_name: String!
-    role: String!
+    name:   String!
+    email:  String!
+    role: MemberRole!
     invitation: String!
+    joined_at:  String!
+}
+
+input MemberInput {
+    project_id: ID!
+    user_name: String!
+    role: MemberRole
+}
+
+enum MemberRole {
+    Owner
+    Editor
+    Viewer
 }

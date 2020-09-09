@@ -2,6 +2,7 @@ package project
 
 import (
 	"context"
+	"errors"
 	"log"
 	"time"
 
@@ -20,9 +21,13 @@ func CreateProjectWithUser(ctx context.Context, projectName string, user *dbSche
 		Name: projectName,
 		Members: []*dbSchema.Member{
 			{
-				UserID:   user.ID,
-				UserName: user.Username,
-				Role:     dbSchema.RoleOwner,
+				UserID:     user.ID,
+				UserName:   user.Username,
+				Name:       *user.Name,
+				Email:      *user.Email,
+				Role:       model.MemberRoleOwner,
+				Invitation: dbSchema.AcceptedInvitation,
+				JoinedAt:   time.Now().Format(time.RFC1123Z),
 			},
 		},
 		CreatedAt: time.Now().String(),
@@ -58,4 +63,104 @@ func GetProjectsByUserID(ctx context.Context, userID string) ([]*model.Project, 
 		outputProjects = append(outputProjects, project.GetOutputProject())
 	}
 	return outputProjects, nil
+}
+
+//SendInvitation ...
+func SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error) {
+
+	invitation, err := getInvitation(ctx, member)
+	if err != nil {
+		return nil, err
+	}
+
+	if invitation == dbSchema.AcceptedInvitation {
+		return nil, errors.New("This user is already a member of this project")
+	} else if invitation == dbSchema.PendingInvitation {
+		return nil, errors.New("Invitation already sent")
+	} else if invitation == dbSchema.DeclinedInvitation {
+		err = database.UpdateInvite(ctx, member.ProjectID, member.UserName, dbSchema.PendingInvitation)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	user, err := database.GetUserByUserName(ctx, member.UserName)
+	if err != nil {
+		return nil, err
+	}
+
+	newMember := &dbSchema.Member{
+		UserID:     user.ID,
+		UserName:   user.Username,
+		Name:       *user.Name,
+		Email:      *user.Email,
+		Role:       *member.Role,
+		Invitation: dbSchema.PendingInvitation,
+	}
+
+	err = database.AddMember(ctx, member.ProjectID, newMember)
+	return newMember.GetOutputMember(), err
+}
+
+//AcceptInvitation ...
+func AcceptInvitation(ctx context.Context, member model.MemberInput) (string, error) {
+
+	invitation, err := getInvitation(ctx, member)
+	if err != nil {
+		return "Unsuccessful", err
+	}
+
+	if invitation == dbSchema.AcceptedInvitation {
+		return "Unsuccessful", errors.New("You are already a member of this project")
+	} else if invitation == dbSchema.PendingInvitation {
+		err := database.UpdateInvite(ctx, member.ProjectID, member.UserName, dbSchema.AcceptedInvitation)
+		if err != nil {
+			return "Unsuccessful", err
+		}
+		return "Successfull", nil
+	} else if invitation == dbSchema.DeclinedInvitation {
+		return "Unsuccessful", errors.New("You have already declined the request")
+	}
+
+	return "Unsuccessful", errors.New("No invitation is present to accept")
+}
+
+//DeclineInvitation ...
+func DeclineInvitation(ctx context.Context, member model.MemberInput) (string, error) {
+
+	invitation, err := getInvitation(ctx, member)
+	if err != nil {
+		return "Unsuccessful", err
+	}
+
+	if invitation == dbSchema.AcceptedInvitation {
+		return "Unsuccessful", errors.New("You are already a member of this project")
+	} else if invitation == dbSchema.PendingInvitation {
+		err := database.UpdateInvite(ctx, member.ProjectID, member.UserName, dbSchema.DeclinedInvitation)
+		if err != nil {
+			return "Unsuccessful", err
+		}
+		return "Successfull", nil
+	} else if invitation == dbSchema.DeclinedInvitation {
+		return "Unsuccessful", errors.New("You have already declined the request")
+	}
+
+	return "Unsuccessful", errors.New("No invitation is present to decline")
+}
+
+//getInvitation
+func getInvitation(ctx context.Context, member model.MemberInput) (dbSchema.Invitation, error) {
+
+	project, err := database.GetProject(ctx, member.ProjectID)
+	if err != nil {
+		return "", err
+	}
+
+	for _, projectMember := range project.Members {
+		if projectMember.UserName == member.UserName {
+			return projectMember.Invitation, nil
+		}
+	}
+
+	return "", nil
 }

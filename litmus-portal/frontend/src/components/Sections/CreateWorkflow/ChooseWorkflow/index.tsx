@@ -15,6 +15,7 @@ const ChooseWorkflow: React.FC = () => {
   const classes = useStyles();
   const workflow = useActions(WorkflowActions);
   const [open, setOpen] = React.useState(false);
+  const [visible, setVisible] = React.useState(true);
   const [workflowDetails, setWorkflowData] = useState({
     workflowName: 'Personal Workflow Name',
     workflowDesc: 'Personal Description',
@@ -65,6 +66,7 @@ const ChooseWorkflow: React.FC = () => {
   }, []);
 
   const selectWorkflow = (index: number) => {
+    setVisible(false);
     workflow.setWorkflowDetails({
       name: workflowsList[index].title,
       link: workflowsList[index].chaosWkfCRDLink,
@@ -106,8 +108,14 @@ const ChooseWorkflow: React.FC = () => {
             workflows={workflowsList}
           />
           <div className={classes.paddedTop}>
-            <ButtonFilled isPrimary={false} handleClick={() => setOpen(true)}>
-              <div>Create workflow name</div>
+            <ButtonFilled
+              handleClick={() => {
+                setOpen(true);
+              }}
+              isPrimary={false}
+              isDisabled={visible}
+            >
+              <div>Edit workflow name</div>
             </ButtonFilled>
             <Typography className={classes.saved} display="inline">
               <strong>

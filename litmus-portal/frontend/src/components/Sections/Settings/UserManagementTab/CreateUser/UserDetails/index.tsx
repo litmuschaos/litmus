@@ -1,6 +1,11 @@
-import { Avatar, TextField, Typography } from '@material-ui/core';
+import { Avatar, Typography } from '@material-ui/core';
 import React from 'react';
 import userAvatar from '../../../../../../utils/user';
+import {
+  validateEmail,
+  validateStartEmptySpacing,
+} from '../../../../../../utils/validate';
+import InputField from '../../../../../InputField';
 import useStyles from './styles';
 
 interface PersonalDetailsProps {
@@ -53,45 +58,39 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
           </div>
           {/* Fields for details including Full name, email, username */}
           <div className={classes.details1}>
-            <TextField
+            <InputField
               required
+              helperText={
+                validateStartEmptySpacing(nameValue)
+                  ? 'Should not start with an empty space'
+                  : ''
+              }
               value={nameValue}
               disabled={nameIsDisabled}
-              onChange={handleNameChange}
-              className={classes.user}
-              id="filled-user-input"
+              handleChange={handleNameChange}
+              validationError={validateStartEmptySpacing(nameValue)}
               label="Full Name"
-              InputProps={{ disableUnderline: true }}
-              data-cy="fullName"
             />
 
-            <TextField
+            <InputField
               required
+              helperText={
+                validateEmail(emailValue) ? 'Should be a valid email' : ''
+              }
               type="email"
               value={emailValue}
               disabled={emailIsDisabled}
-              onChange={handleEmailChange}
-              className={classes.user}
-              id="filled-email-input"
+              handleChange={handleEmailChange}
+              validationError={validateEmail(emailValue)}
               label="Email Address"
-              name="email"
-              InputProps={{
-                disableUnderline: true,
-              }}
-              data-cy="inputEmail"
             />
             {/* Username is not editable normal user */}
-            <TextField
+            <InputField
               value={userValue}
-              onChange={handleUserChange}
-              className={classes.user}
-              id="filled-username-input"
+              handleChange={handleUserChange}
               label="Username"
               disabled={usernameIsDisabled}
-              InputProps={{
-                disableUnderline: true,
-              }}
-              data-cy="username"
+              validationError={false}
             />
           </div>
         </div>
