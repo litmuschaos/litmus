@@ -1,11 +1,11 @@
 import { Button, Divider, Typography } from '@material-ui/core';
 import React, { useRef } from 'react';
-import InputField from '../../../../../containers/layouts/InputField';
 import Unimodal from '../../../../../containers/layouts/Unimodal';
 import {
   validateConfirmPassword,
   validateStartEmptySpacing,
 } from '../../../../../utils/validate';
+import InputField from '../../../../InputField';
 import PersonalDetails from '../PersonalDetails';
 import useStyles from './styles';
 

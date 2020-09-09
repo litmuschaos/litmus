@@ -1,12 +1,12 @@
 import { Avatar, Typography } from '@material-ui/core';
 import React from 'react';
-import InputField from '../../../../../../containers/layouts/InputField';
 import userAvatar from '../../../../../../utils/user';
-import useStyles from './styles';
 import {
   validateEmail,
   validateStartEmptySpacing,
 } from '../../../../../../utils/validate';
+import InputField from '../../../../../InputField';
+import useStyles from './styles';
 
 interface PersonalDetailsProps {
   handleNameChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
