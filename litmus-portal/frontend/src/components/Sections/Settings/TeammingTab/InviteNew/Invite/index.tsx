@@ -114,9 +114,9 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   });
 
   // mutation to send invitation to selected users
-  const [SendInvite, { error: errorB, loading: loadingB }] = useMutation<{
-    member: MemberInviteNew;
-  }>(SEND_INVITE);
+  const [SendInvite, { error: errorB, loading: loadingB }] = useMutation<
+    MemberInviteNew
+  >(SEND_INVITE);
 
   // Checks if the user the already selected or not
   const isSelected = (user: UserInvite) => {
