@@ -13,8 +13,8 @@ WORKDIR /frontend
 COPY package.json ./
 COPY package-lock.json ./
 
-# Installs all node packages
-RUN npm install
+# Installs all node packages except Cypress
+RUN CYPRESS_INSTALL_BINARY=0 npm install
 
 # Copies everything over to Docker environment
 COPY . ./
