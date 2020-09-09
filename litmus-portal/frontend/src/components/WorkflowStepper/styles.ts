@@ -15,6 +15,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'row',
     marginLeft: '9%',
   },
+  yamlError: {
+    marginTop: theme.spacing(1.5),
+  },
   activeLabel: {
     color: theme.palette.primary.light,
     marginTop: theme.spacing(-9),
@@ -38,7 +41,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   /* Finish modal content style */
   mark: {
-    marginTop: theme.spacing(14),
+    marginTop: theme.spacing(7),
     textAlign: 'center',
   },
   heading: {
