@@ -1,8 +1,7 @@
 import { Button, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import InputField from '../../containers/layouts/InputField';
+import InputField from '../../components/InputField';
 import config from '../../config';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
@@ -19,6 +18,7 @@ const LoginPage = () => {
   const { t } = useTranslation();
   const user = useActions(UserActions);
   const classes = useStyles();
+  const [isError, setIsError] = useState<boolean>(false);
   const [authData, setAuthData] = useState<authData>({
     username: '',
     password: '',
@@ -32,7 +32,11 @@ const LoginPage = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(authData),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.status !== 200) setIsError(true);
+        else setIsError(false);
+        return response.json();
+      })
       .then((data) => {
         if ('error' in data) {
           console.error(data);
@@ -91,13 +95,12 @@ const LoginPage = () => {
                 type="password"
                 required
                 value={authData.password}
-                // helperText={
-                //   validatePassword(authData.password)
-                //     ? 'Should be >= 6 & contain 1 alphanumeric character and a number'
-                //     : ''
-                // }
-                // validationError={validatePassword(authData.password)}
-                validationError={false}
+                helperText={
+                  isError
+                    ? 'Wrong Credentials - Try again with correct username or password'
+                    : ''
+                }
+                validationError={isError}
                 data-cy="inputPassword"
                 handleChange={(e) =>
                   setAuthData({
@@ -107,15 +110,6 @@ const LoginPage = () => {
                 }
               />
             </div>
-            <Typography className={classes.forgotPasssword}>
-              <Link
-                to="/reset"
-                className={classes.linkForgotPass}
-                data-cy="forgotPassword"
-              >
-                {t('login.passwordForgot')}
-              </Link>
-            </Typography>
             <div className={classes.loginDiv}>
               <Button
                 type="submit"

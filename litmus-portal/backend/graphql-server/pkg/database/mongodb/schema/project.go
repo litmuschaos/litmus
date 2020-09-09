@@ -41,10 +41,13 @@ func (project *Project) GetOutputMembers() []*model.Member {
 
 //Member ...
 type Member struct {
-	UserID     string     `bson:"user_id"`
-	UserName   string     `bson:"username"`
-	Role       MemberRole `bson:"role"`
-	Invitation Invitation `bson:"invitation"`
+	UserID     string           `bson:"user_id"`
+	UserName   string           `bson:"username"`
+	Name       string           `bson:"name"`
+	Email      string           `bson:"email"`
+	Role       model.MemberRole `bson:"role"`
+	Invitation Invitation       `bson:"invitation"`
+	JoinedAt   string           `bson:"joined_at"`
 }
 
 //GetOutputMember ...
@@ -53,24 +56,13 @@ func (member *Member) GetOutputMember() *model.Member {
 	return &model.Member{
 		UserID:     member.UserID,
 		UserName:   member.UserName,
-		Role:       string(member.Role),
+		Name:       member.Name,
+		Email:      member.Email,
+		Role:       member.Role,
 		Invitation: string(member.Invitation),
+		JoinedAt:   member.JoinedAt,
 	}
 }
-
-//MemberRole ...
-type MemberRole string
-
-const (
-	//RoleOwner ...
-	RoleOwner MemberRole = "Owner"
-
-	//RoleEditor ...
-	RoleEditor MemberRole = "Editor"
-
-	//RoleViewer ...
-	RoleViewer MemberRole = "Viewer"
-)
 
 //Invitation ...
 type Invitation string

@@ -1,11 +1,11 @@
 import { Divider, IconButton, Typography } from '@material-ui/core';
 import React from 'react';
+import { validateLength } from '../../../../../utils/validate';
+import InputField from '../../../../InputField';
+import UserDetails from '../CreateUser/UserDetails';
 import DelUser from './DelUser';
 import ResetModal from './ResetModal';
-import UserDetails from '../CreateUser/UserDetails';
 import useStyles from './styles';
-import InputField from '../../../../../containers/layouts/InputField';
-import { validateLength } from '../../../../../utils/validate';
 
 interface Password {
   password: string;

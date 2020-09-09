@@ -26,6 +26,11 @@ import ChooseAWorkflowCluster from '../Sections/CreateWorkflow/WorkflowCluster';
 import QontoConnector from './quontoConnector';
 import useStyles from './styles';
 import useQontoStepIconStyles from './useQontoStepIconStyles';
+import {
+  CreateWorkFlowInput,
+  CreateWorkflowResponse,
+  WeightMap,
+} from '../../models/CreateWorkflowData';
 
 function getSteps(): string[] {
   return [
@@ -36,11 +41,6 @@ function getSteps(): string[] {
     'Schedule',
     'Verify and Commit',
   ];
-}
-
-interface WeightMap {
-  experiment_name: string;
-  weightage: number;
 }
 
 function QontoStepIcon(props: StepIconProps) {
@@ -69,6 +69,7 @@ function QontoStepIcon(props: StepIconProps) {
       </div>
     );
   }
+
   return (
     <div
       className={`${classes.root} ${
@@ -130,10 +131,10 @@ const CustomStepper = () => {
     (state: RootState) => state.userData.selectedProjectID
   );
   const workflow = useActions(WorkflowActions);
+  const [invalidYaml, setinValidYaml] = React.useState(false);
   const steps = getSteps();
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
     if (activeStep === 2) {
       const tests = parsed(yaml);
       const arr: experimentMap[] = [];
@@ -142,7 +143,7 @@ const CustomStepper = () => {
         hashMap.set(weight.experimentName, weight.weight);
       });
       tests.forEach((test) => {
-        let value = 0;
+        let value = 10;
         if (hashMap.has(test)) {
           value = hashMap.get(test);
         }
@@ -151,16 +152,30 @@ const CustomStepper = () => {
       workflow.setWorkflowDetails({
         weights: arr,
       });
+      if (arr.length === 0) {
+        setinValidYaml(true);
+      } else {
+        setinValidYaml(false);
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      }
+    } else {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
   };
 
   const [open, setOpen] = React.useState(false);
 
   const handleBack = () => {
+    if (activeStep === 2) {
+      setinValidYaml(false);
+    }
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const [createChaosWorkFlow] = useMutation(CREATE_WORKFLOW, {
+  const [createChaosWorkFlow] = useMutation<
+    CreateWorkflowResponse,
+    CreateWorkFlowInput
+  >(CREATE_WORKFLOW, {
     onCompleted: () => {
       setOpen(true);
     },
@@ -200,6 +215,7 @@ const CustomStepper = () => {
 
   const handleOpen = () => {
     handleMutation();
+    setOpen(true);
   };
 
   const handleClose = () => {
@@ -279,7 +295,6 @@ const CustomStepper = () => {
             </Unimodal>
             {getStepContent(activeStep, (page: number) => gotoStep({ page }))}
           </div>
-
           {/* Control Buttons */}
           {activeStep !== 0 ? (
             <div className={classes.buttonGroup}>
@@ -292,9 +307,9 @@ const CustomStepper = () => {
                 </ButtonFilled>
               ) : (
                 <ButtonFilled
-                  isDisabled={id.length === 0}
                   handleClick={() => handleNext()}
                   isPrimary
+                  isDisabled={id.length === 0}
                 >
                   <div>
                     Next
@@ -306,6 +321,11 @@ const CustomStepper = () => {
                   </div>
                 </ButtonFilled>
               )}
+              {invalidYaml ? (
+                <Typography className={classes.yamlError}>
+                  <strong>To continue, please check the error in code.</strong>
+                </Typography>
+              ) : null}
             </div>
           ) : null}
         </div>

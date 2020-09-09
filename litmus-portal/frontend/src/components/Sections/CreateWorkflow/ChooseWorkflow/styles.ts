@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   horizontalLine: {
-    marginTop: theme.spacing(7.5),
+    marginTop: theme.spacing(2.5),
     marginBottom: theme.spacing(4.5),
   },
 

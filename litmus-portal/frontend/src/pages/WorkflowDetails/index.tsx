@@ -21,7 +21,7 @@ const WorkflowDetails: React.FC = () => {
   const classes = useStyles();
   const { pathname } = useLocation();
   // Getting the workflow nome from the pathname
-  const workflowName = pathname.split('/')[2];
+  const workflowRunId = pathname.split('/')[2];
 
   // get ProjectID
   const selectedProjectID = useSelector(
@@ -35,7 +35,7 @@ const WorkflowDetails: React.FC = () => {
   );
 
   const workflow = data?.getWorkFlowRuns.filter(
-    (w) => w.workflow_name === workflowName
+    (w) => w.workflow_run_id === workflowRunId
   )[0];
 
   // Using subscription to get realtime data
