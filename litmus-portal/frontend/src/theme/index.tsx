@@ -64,6 +64,7 @@ function customTheme(options: ThemeOptions) {
       },
       warning: {
         main: '#F6B92B',
+        dark: '#EB5757',
       },
       background: {
         paper: '#FBFCFD',

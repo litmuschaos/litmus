@@ -5,6 +5,8 @@ export interface UserData {
   username: string;
   exp: number;
   token: string;
+  selectedProjectName: string;
+  userRole: string;
 }
 
 export interface UserDetails {
