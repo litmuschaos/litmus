@@ -40,6 +40,18 @@ func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid s
 	return database.DeleteChaosWorkflow(workflowid)
 }
 
+func (r *mutationResolver) SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error) {
+	return project.SendInvitation(ctx, member)
+}
+
+func (r *mutationResolver) AcceptInvitation(ctx context.Context, member model.MemberInput) (string, error) {
+	return project.AcceptInvitation(ctx, member)
+}
+
+func (r *mutationResolver) DeclineInvitation(ctx context.Context, member model.MemberInput) (string, error) {
+	return project.DeclineInvitation(ctx, member)
+}
+
 func (r *mutationResolver) ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error) {
 	return mutations.ConfirmClusterRegistration(identity, *store)
 }
@@ -54,26 +66,6 @@ func (r *mutationResolver) ChaosWorkflowRun(ctx context.Context, workflowData mo
 
 func (r *mutationResolver) PodLog(ctx context.Context, log model.PodLog) (string, error) {
 	return mutations.LogsHandler(log, *store)
-}
-
-func (r *mutationResolver) CreateUser(ctx context.Context, user model.UserInput) (*model.User, error) {
-	return usermanagement.CreateUser(ctx, user)
-}
-
-func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid string) (bool, error) {
-	return database.DeleteChaosWorkflow(workflowid)
-}
-
-func (r *mutationResolver) SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error) {
-	return project.SendInvitation(ctx, member)
-}
-
-func (r *mutationResolver) AcceptInvitation(ctx context.Context, member model.MemberInput) (string, error) {
-	return project.AcceptInvitation(ctx, member)
-}
-
-func (r *mutationResolver) DeclineInvitation(ctx context.Context, member model.MemberInput) (string, error) {
-	return project.DeclineInvitation(ctx, member)
 }
 
 func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {
