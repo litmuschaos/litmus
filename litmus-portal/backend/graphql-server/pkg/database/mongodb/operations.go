@@ -68,7 +68,7 @@ func UpsertWorkflowRun(workflow_id string, wfRun WorkflowRun) error {
 			return err
 		}
 	}
-	
+
 	return nil
 }
 
