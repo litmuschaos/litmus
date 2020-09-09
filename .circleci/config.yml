@@ -95,6 +95,7 @@ jobs:
           at: /tmp/workspace
       - run: |
           cat /tmp/workspace/env-vars >> $BASH_ENV
+          source $BASH_ENV
       - checkout
       - run:
           name: Loading all docker images
@@ -128,6 +129,7 @@ jobs:
           at: /tmp/workspace
       - run: |
           cat /tmp/workspace/env-vars >> $BASH_ENV
+          source $BASH_ENV
       - checkout
       - run:
           name: Loading all docker images
