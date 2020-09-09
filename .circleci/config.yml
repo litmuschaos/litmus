@@ -80,12 +80,11 @@ jobs:
       - persist_to_workspace:
           root: workspace
           paths:
-            - graphql-server.tar
-            - auth-server.tar
-            - subscriber.tar
-            - self-deployer.tar
-            - frontend.tar
-            - env-vars
+            - ${GRAPHQL_SERVER_IMAGE}.tar
+            - ${SUBSCRIBER_IMAGE}.tar
+            - ${SELF_DEPLOYER_IMAGE}.tar
+            - ${AUTHENTICATION_SERVER_IMAGE}.tar
+            - ${FRONTEND_IMAGE}.tar
 
   docker-push:
     machine:
