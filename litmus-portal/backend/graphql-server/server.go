@@ -6,6 +6,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/authorization"
+
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
@@ -39,7 +41,7 @@ func main() {
 		AllowedOrigins: []string{"*"},
 	})
 
-	srv := handler.New(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
+	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig()))
 	srv.AddTransport(transport.POST{})
 	srv.AddTransport(transport.GET{})
 	srv.AddTransport(transport.Websocket{
@@ -56,7 +58,7 @@ func main() {
 
 	router := mux.NewRouter()
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	router.Handle("/query", c.Handler(srv))
+	router.Handle("/query", c.Handler(authorization.Middleware(srv)))
 	router.HandleFunc("/file/{key}{path:.yaml}", file_handlers.FileHandler)
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
