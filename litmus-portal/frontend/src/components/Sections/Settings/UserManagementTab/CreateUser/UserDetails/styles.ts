@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.secondary.main,
     width: '4.81rem',
     height: '4.81rem',
-    color: '#FFF',
+    color: theme.palette.customColors.white(1),
     marginBottom: theme.spacing(1.625),
     [theme.breakpoints.down('sm')]: {
       marginLeft: theme.spacing(2.5),

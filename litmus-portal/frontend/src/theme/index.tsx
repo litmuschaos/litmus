@@ -25,6 +25,9 @@ declare module '@material-ui/core/styles/createPalette' {
       white: (opacity: number) => string;
       black: (opacity: number) => string;
       gray: string;
+      menuOption: {
+        active: string;
+      };
     };
     input: {
       disabled: string;
@@ -36,6 +39,9 @@ declare module '@material-ui/core/styles/createPalette' {
       white?: (opacity: number) => string;
       black?: (opacity: number) => string;
       gray?: string;
+      menuOption?: {
+        active?: string;
+      };
     };
     input?: {
       disabled?: string;
@@ -64,6 +70,7 @@ function customTheme(options: ThemeOptions) {
       },
       warning: {
         main: '#F6B92B',
+        dark: '#EB5757',
       },
       background: {
         paper: '#FBFCFD',
@@ -92,6 +99,9 @@ function customTheme(options: ThemeOptions) {
           return `rgba(0, 0, 0, ${op})`;
         },
         gray: '#5D6173',
+        menuOption: {
+          active: 'rgba(16, 155, 103, 0.1)',
+        },
       },
     },
     typography: {

@@ -71,22 +71,26 @@ const HomePage = () => {
   useEffect(() => {
     if (data?.getUser.username === userData.username) {
       setIsOpen(false);
-      let isOwnerOfProjectID: string = '';
-      const projectList: Project[] = data?.getUser.projects;
-      projectList.forEach((project) => {
-        const memberList: Member[] = project.members;
-        memberList.forEach((member) => {
-          if (
-            member.user_name === data?.getUser.username &&
-            member.role === 'Owner'
-          ) {
-            isOwnerOfProjectID = project.id;
-          }
+      if (userData.selectedProjectID === '') {
+        let isOwnerOfProject = { id: '', name: '' };
+        const projectList: Project[] = data?.getUser.projects;
+        projectList.forEach((project) => {
+          const memberList: Member[] = project.members;
+          memberList.forEach((member) => {
+            if (
+              member.user_name === data?.getUser.username &&
+              member.role === 'Owner'
+            ) {
+              isOwnerOfProject = { id: project.id, name: project.name };
+            }
+          });
         });
-      });
-      user.updateUserDetails({
-        selectedProjectID: isOwnerOfProjectID,
-      });
+        user.updateUserDetails({
+          selectedProjectID: isOwnerOfProject.id,
+          userRole: 'Owner',
+          selectedProjectName: isOwnerOfProject.name,
+        });
+      }
     }
   }, [loading]);
 

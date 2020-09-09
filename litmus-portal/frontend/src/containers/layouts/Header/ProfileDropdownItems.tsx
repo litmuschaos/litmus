@@ -9,15 +9,17 @@ import {
   Popover,
   Typography,
 } from '@material-ui/core';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import config from '../../../config';
-import { Project, ProjectsCallBackType } from '../../../models/header';
+import { ProjectsCallBackType } from '../../../models/header';
 import useActions from '../../../redux/actions';
 import * as UserActions from '../../../redux/actions/user';
 import { RootState } from '../../../redux/reducers';
 import ProjectListItem from './ProjectListItem';
 import useStyles from './styles';
+import { Member, Project } from '../../../models/project';
+import userAvatar from '../../../utils/user';
 
 interface ProfileInfoDropdownItemProps {
   anchorEl: HTMLElement;
@@ -25,40 +27,36 @@ interface ProfileInfoDropdownItemProps {
   onClose: () => void;
   name: string;
   email: string;
+  username: string;
   projects: Project[];
   selectedProjectID: string;
   CallbackToSetSelectedProjectIDOnProfileDropdown: ProjectsCallBackType;
 }
 
-function ProfileInfoDropdownItems(props: ProfileInfoDropdownItemProps) {
-  const user = useActions(UserActions);
-  const {
-    anchorEl,
-    isOpen,
-    onClose,
-    name,
-    email,
-    projects,
-    selectedProjectID,
-    CallbackToSetSelectedProjectIDOnProfileDropdown,
-  } = props;
-
+const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
+  anchorEl,
+  isOpen,
+  onClose,
+  name,
+  email,
+  username,
+  projects,
+  selectedProjectID,
+  CallbackToSetSelectedProjectIDOnProfileDropdown,
+}) => {
   const classes = useStyles();
-
+  const user = useActions(UserActions);
   const id = isOpen ? 'profile-popover' : undefined;
-
-  let initials = ' ';
-
-  if (name) {
-    const nameArray = name.split(' ');
-
-    initials =
-      nameArray[0][0].toUpperCase() +
-      nameArray[nameArray.length - 1][0].toUpperCase();
-  }
-
+  const nameSplit = name.split(' ');
+  const initials = nameSplit[1]
+    ? userAvatar(name, false)
+    : userAvatar(name, true);
+  const [switchableProjects, setSwitchableProjects] = useState<Project[]>(
+    projects
+  );
   const [loggedOut, doLogout] = useState(false);
   const { userData } = useSelector((state: RootState) => state);
+
   const logOut = () => {
     doLogout(true);
     user.userLogout();
@@ -81,9 +79,22 @@ function ProfileInfoDropdownItems(props: ProfileInfoDropdownItemProps) {
 
   const editProfile = () => {};
 
-  const CallbackFromProjectListItem = (selectedProjectIDFromList: any) => {
+  const CallbackFromProjectListItem = (selectedProjectIDFromList: string) => {
     CallbackToSetSelectedProjectIDOnProfileDropdown(selectedProjectIDFromList);
   };
+
+  useEffect(() => {
+    const projectsAvailableForSwitching: Project[] = [];
+    projects.forEach((project) => {
+      const memberList: Member[] = project.members;
+      memberList.forEach((member) => {
+        if (member.user_name === username && member.invitation === 'Accepted') {
+          projectsAvailableForSwitching.push(project);
+        }
+      });
+    });
+    setSwitchableProjects(projectsAvailableForSwitching);
+  }, []);
 
   return (
     <div>
@@ -103,23 +114,15 @@ function ProfileInfoDropdownItems(props: ProfileInfoDropdownItemProps) {
         classes={{
           paper: classes.popover,
         }}
-        style={{ marginTop: 17 }}
+        className={classes.popoverProfileAdjust}
       >
         <div className={classes.container}>
           {name ? (
-            <Avatar
-              alt={initials}
-              className={classes.avatarBackground}
-              style={{ alignContent: 'right', marginBottom: 8 }}
-            >
+            <Avatar alt={initials} className={classes.avatarBackground}>
               {initials}
             </Avatar>
           ) : (
-            <Avatar
-              alt="User"
-              className={classes.avatarBackground}
-              style={{ alignContent: 'right', marginBottom: 8 }}
-            />
+            <Avatar alt="User" className={classes.avatarBackground} />
           )}
 
           <div className={classes.userInfo}>
@@ -143,47 +146,44 @@ function ProfileInfoDropdownItems(props: ProfileInfoDropdownItemProps) {
               variant="outlined"
               size="small"
               onClick={editProfile}
-              classes={{ root: classes.buttonEditProfile }}
+              className={classes.buttonEditProfile}
             >
               Edit Profile
+            </Button>
+
+            <Button
+              disabled={loggedOut}
+              size="small"
+              onClick={logOut}
+              className={classes.buttonSignout}
+            >
+              Log out
             </Button>
           </div>
         </div>
         <Divider className={classes.dividerTop} />
         <List dense className={classes.tabContainerProfileDropdownItem}>
-          {projects.length === 0 ? (
+          {switchableProjects.length === 0 ? (
             <ListItem>
               <ListItemText>
                 You haven&apos;t created any projects yet.
               </ListItemText>
             </ListItem>
           ) : (
-            projects.map((element: any, index: any) => (
+            switchableProjects.map((element: Project, index: number) => (
               <ProjectListItem
                 key={index}
                 project={element}
-                divider={index !== projects.length - 1}
+                divider={index !== switchableProjects.length - 1}
                 selectedProjectID={selectedProjectID}
                 callbackToSetActiveProjectID={CallbackFromProjectListItem}
               />
             ))
           )}
         </List>
-        <Divider className={classes.dividerBottom} />
-        <div className={classes.bar}>
-          <Button
-            disabled={loggedOut}
-            variant="outlined"
-            size="small"
-            onClick={logOut}
-            classes={{ root: classes.buttonSignout }}
-          >
-            Log out
-          </Button>
-        </div>
       </Popover>
     </div>
   );
-}
+};
 
 export default ProfileInfoDropdownItems;
