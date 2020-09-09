@@ -1,8 +1,7 @@
-package main
+package cluster
 
 import (
 	"errors"
-	"fmt"
 	"os"
 
 	database "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb"
@@ -33,7 +32,7 @@ func VerifyCluster(identity model.ClusterIdentity) (*database.Cluster, error) {
 }
 
 // GetIP function is to provide Node IP addresses
-func main() {
+func getIP() string {
 
 	// Require variables declared
 	var kubeconfig *string
@@ -65,7 +64,7 @@ func main() {
 		panic(err.Error())
 	}
 	nodeName := os.Getenv("NODE_NAME")
-	fmt.Println(nodeName)
+
 	node, err := clientset.CoreV1().Nodes().Get(nodeName, metav1.GetOptions{})
 	address := node.Status.Addresses
 
@@ -83,5 +82,5 @@ func main() {
 	if externalIP == "" {
 		externalIP = internalIP
 	}
-	fmt.Println(externalIP)
+	return externalIP
 }

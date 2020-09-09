@@ -60,29 +60,41 @@ spec:
         component: litmusportal-server
     spec:
       containers:
-      - name: graphql-server
-        image: litmuschaos/litmusportal-server:ci
-        env:
-          - name: DB_SERVER
-            value: mongo-service:27017
-          - name: JWT_SECRET
-            value: "12345678"
-          - name: EXTERNAL_ADDRESS
-            value: ""  
-          - name: NODE_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: spec.nodeName
-          - name: SERVICE_ADDRESS
-            value: http://litmusportal-server-service:9002
-        ports:
-        - containerPort: 8080
-        imagePullPolicy: Always
-      - name: auth-server
-        image: litmuschaos/litmusportal-auth-server:ci
-        ports:
-        - containerPort: 3000
-        imagePullPolicy: Always
+        - name: graphql-server
+          image: litmuschaos/litmusportal-server:ci
+          env:
+            - name: DB_SERVER
+              value: "mongo-service:27017"
+            - name: JWT_SECRET
+              value: "litmus-portal@123"
+            - name: EXTERNAL_ADDRESS
+              value: ""
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName  
+            - name: SERVICE_ADDRESS
+              value: "http://litmusportal-server-service:9002"
+            - name: SELF_CLUSTER
+              value: "true"
+          ports:
+          - containerPort: 8080
+          imagePullPolicy: Always
+        - name: auth-server
+          image: litmuschaos/litmusportal-auth-server:ci
+          env:
+            - name: DB_SERVER
+              value: "mongodb://mongo-service:27017"
+            - name: JWT_SECRET
+              value: "litmus-portal@123"
+            - name: ADMIN_USERNAME
+              value: "admin"
+            - name: ADMIN_PASSWORD
+              value: "litmus"
+          ports:
+          - containerPort: 3000
+          imagePullPolicy: Always
+      serviceAccountName: litmus-svc-account
 ---
 apiVersion: v1
 kind: Service
