@@ -11,6 +11,7 @@ import {
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useQuery } from '@apollo/client';
 import config from '../../../config';
 import { ProjectsCallBackType } from '../../../models/header';
 import useActions from '../../../redux/actions';
@@ -20,6 +21,11 @@ import ProjectListItem from './ProjectListItem';
 import useStyles from './styles';
 import { Member, Project } from '../../../models/project';
 import userAvatar from '../../../utils/user';
+import {
+  CurrentUserDedtailsVars,
+  CurrentUserDetails,
+} from '../../../models/user';
+import { GET_USER } from '../../../graphql';
 
 interface ProfileInfoDropdownItemProps {
   anchorEl: HTMLElement;
@@ -28,7 +34,6 @@ interface ProfileInfoDropdownItemProps {
   name: string;
   email: string;
   username: string;
-  projects: Project[];
   selectedProjectID: string;
   CallbackToSetSelectedProjectIDOnProfileDropdown: ProjectsCallBackType;
 }
@@ -40,7 +45,6 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
   name,
   email,
   username,
-  projects,
   selectedProjectID,
   CallbackToSetSelectedProjectIDOnProfileDropdown,
 }) => {
@@ -51,6 +55,12 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
   const initials = nameSplit[1]
     ? userAvatar(name, false)
     : userAvatar(name, true);
+  // Query to get user details
+  const { data, loading } = useQuery<
+    CurrentUserDetails,
+    CurrentUserDedtailsVars
+  >(GET_USER, { variables: { username } });
+  const projects: Project[] = data?.getUser.projects ?? [];
   const [switchableProjects, setSwitchableProjects] = useState<Project[]>(
     projects
   );
@@ -95,6 +105,10 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
     });
     setSwitchableProjects(projectsAvailableForSwitching);
   }, []);
+
+  useEffect(() => {
+    setSwitchableProjects(projects);
+  }, [loading]);
 
   return (
     <div>

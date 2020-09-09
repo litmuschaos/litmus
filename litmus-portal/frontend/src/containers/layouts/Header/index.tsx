@@ -55,6 +55,11 @@ const Header: React.FC = () => {
         const memberList: Member[] = project.members;
         memberList.forEach((member) => {
           if (member.user_name === data?.getUser.username) {
+            user.updateUserDetails({
+              selectedProjectID,
+              userRole: project.name,
+              selectedProjectName: member.role,
+            });
             setSelectedProjectDetails({
               selectedProjectID,
               selectedProjectName: project.name,
@@ -63,11 +68,6 @@ const Header: React.FC = () => {
           }
         });
       }
-    });
-    user.updateUserDetails({
-      selectedProjectID: selectedProjectDetails.selectedProjectID,
-      userRole: selectedProjectDetails.selectedUserRole,
-      selectedProjectName: selectedProjectDetails.selectedProjectName,
     });
   };
 
@@ -172,7 +172,6 @@ const Header: React.FC = () => {
                   name={name}
                   email={email}
                   username={username}
-                  projects={projects}
                   selectedProjectID={selectedProjectDetails.selectedProjectID}
                   CallbackToSetSelectedProjectID={setSelectedProjectID}
                   selectedProjectName={
