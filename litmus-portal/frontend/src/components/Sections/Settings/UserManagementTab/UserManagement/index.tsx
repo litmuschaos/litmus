@@ -4,6 +4,7 @@ import {
   createStyles,
   FormControl,
   IconButton,
+  InputBase,
   InputAdornment,
   Menu,
   MenuItem,
@@ -15,7 +16,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Theme,
   Toolbar,
   Typography,
@@ -148,8 +148,8 @@ const UserManagement: React.FC = () => {
               <div>
                 <Toolbar className={classes.toolbar}>
                   {/* Search user */}
-                  <TextField
-                    id="input-with-icon-textfield"
+                  <InputBase
+                    id="input-with-icon-adornment"
                     placeholder="Search..."
                     onChange={(e) => {
                       setRows(
@@ -158,16 +158,11 @@ const UserManagement: React.FC = () => {
                         )
                       );
                     }}
-                    InputProps={{
-                      style: {
-                        maxWidth: '15.75rem',
-                      },
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <SearchIcon />
-                        </InputAdornment>
-                      ),
-                    }}
+                    startAdornment={
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    }
                   />
                   {/* filter menu */}
                   <div className={classes.filter}>
