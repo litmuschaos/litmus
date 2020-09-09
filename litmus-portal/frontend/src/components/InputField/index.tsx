@@ -13,16 +13,18 @@ interface InputFieldProps {
   helperText?: string;
   validationError: boolean;
   success?: boolean;
+  disabled?: boolean;
   value: string;
-  required: boolean;
+  required?: boolean;
   iconType?: string | undefined;
-  handleChange: (event: React.ChangeEvent<{ value: string }>) => void;
+  handleChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
   type,
   label,
   value,
+  disabled,
   helperText,
   validationError,
   success,
@@ -310,6 +312,7 @@ const InputField: React.FC<InputFieldProps> = ({
     <TextField
       className={LitmusTextFieldStylesExternal.inputArea}
       error={validationError}
+      disabled={disabled}
       label={label}
       helperText={helperText}
       value={value}

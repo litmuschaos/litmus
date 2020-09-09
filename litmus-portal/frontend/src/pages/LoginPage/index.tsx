@@ -1,7 +1,6 @@
 import { Button, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import InputField from '../../components/InputField';
 import config from '../../config';
 import useActions from '../../redux/actions';
@@ -111,15 +110,6 @@ const LoginPage = () => {
                 }
               />
             </div>
-            <Typography className={classes.forgotPasssword}>
-              <Link
-                to="/reset"
-                className={classes.linkForgotPass}
-                data-cy="forgotPassword"
-              >
-                {t('login.passwordForgot')}
-              </Link>
-            </Typography>
             <div className={classes.loginDiv}>
               <Button
                 type="submit"
