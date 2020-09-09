@@ -153,6 +153,8 @@ type Query{
   getUser(username: String!): User! @authorized
 
   getProject(projectID: String!): Project! @authorized
+
+  users: [User!]! @authorized
 }
 
 type Mutation{
@@ -165,6 +167,12 @@ type Mutation{
   createUser(user: UserInput!): User! @authorized
 
   deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
+
+  sendInvitation(member: MemberInput!): Member! @authorized
+
+  acceptInvitation(member: MemberInput!): String! @authorized
+
+  declineInvitation(member: MemberInput!): String! @authorized
 
   #It is used to confirm the subscriber registration
   clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!

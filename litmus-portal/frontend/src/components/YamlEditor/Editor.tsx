@@ -467,7 +467,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
               markers={editorState.markers}
             />
           </Box>
-          <Box p={1} className={classes.fullScreenGrid}>
+          <Box p={1}>
             <Tooltip
               title="Full Screen (Press Escape to End)"
               placement="bottom"
