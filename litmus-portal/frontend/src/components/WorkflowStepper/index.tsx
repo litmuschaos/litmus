@@ -131,7 +131,7 @@ const CustomStepper = () => {
     (state: RootState) => state.userData.selectedProjectID
   );
   const workflow = useActions(WorkflowActions);
-  const [validYaml, setValidYaml] = React.useState(false);
+  const [invalidYaml, setinValidYaml] = React.useState(false);
   const steps = getSteps();
 
   const handleNext = () => {
@@ -153,9 +153,9 @@ const CustomStepper = () => {
         weights: arr,
       });
       if (arr.length === 0) {
-        setValidYaml(true);
+        setinValidYaml(true);
       } else {
-        setValidYaml(false);
+        setinValidYaml(false);
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       }
     } else {
@@ -167,7 +167,7 @@ const CustomStepper = () => {
 
   const handleBack = () => {
     if (activeStep === 2) {
-      setValidYaml(false);
+      setinValidYaml(false);
     }
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
@@ -318,7 +318,7 @@ const CustomStepper = () => {
                   </div>
                 </ButtonFilled>
               )}
-              {validYaml ? (
+              {invalidYaml ? (
                 <Typography className={classes.yamlError}>
                   <strong>To continue, please check the error in code.</strong>
                 </Typography>

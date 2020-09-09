@@ -115,7 +115,7 @@ const ChooseWorkflow: React.FC = () => {
               isPrimary={false}
               isDisabled={visible}
             >
-              <div>Workflow name</div>
+              <div>Edit workflow name</div>
             </ButtonFilled>
             <Typography className={classes.saved} display="inline">
               <strong>
