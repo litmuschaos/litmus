@@ -88,5 +88,9 @@ const useStyles = makeStyles((theme) => ({
   buttonModal: {
     marginTop: theme.spacing(3.75),
   },
+  inviteSomeone: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
 }));
 export default useStyles;
