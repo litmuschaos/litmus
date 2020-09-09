@@ -2,10 +2,6 @@ package mutations
 
 import (
 	"encoding/json"
-	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/data-store"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/subscriptions"
-	"github.com/pkg/errors"
-	"go.mongodb.org/mongo-driver/bson"
 	"log"
 	"strconv"
 	"time"
@@ -13,8 +9,13 @@ import (
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/cluster"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb"
+	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/data-store"
+	database "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/graphql/subscriptions"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/utils"
+	"github.com/pkg/errors"
+	"github.com/tidwall/sjson"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 //ClusterRegister creates an entry for a new cluster in DB and generates the url used to apply manifest
@@ -97,7 +98,19 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		log.Print("ERROR", err)
 		return "", err
 	}
-	newWorkflowRun := model.WorkflowRun{
+
+	//err = database.UpsertWorkflowRun(database.WorkflowRun(newWorkflowRun))
+	err = database.UpsertWorkflowRun(input.WorkflowID, database.WorkflowRun{
+		WorkflowRunID: input.WorkflowRunID,
+		LastUpdated:   strconv.FormatInt(time.Now().Unix(), 10),
+		ExecutionData: input.ExecutionData,
+	})
+	if err != nil {
+		log.Print("ERROR", err)
+		return "", err
+	}
+
+	subscriptions.SendWorkflowEvent(model.WorkflowRun{
 		ClusterID:     cluster.ClusterID,
 		ClusterName:   cluster.ClusterName,
 		ProjectID:     cluster.ProjectID,
@@ -105,15 +118,9 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		WorkflowRunID: input.WorkflowRunID,
 		WorkflowName:  input.WorkflowName,
 		ExecutionData: input.ExecutionData,
-		WorkflowID:    "000000000000",
-	}
+		WorkflowID:    input.WorkflowID,
+	}, r)
 
-	subscriptions.SendWorkflowEvent(newWorkflowRun, r)
-	err = database.UpsertWorkflowRun(database.WorkflowRun(newWorkflowRun))
-	if err != nil {
-		log.Print("ERROR", err)
-		return "", err
-	}
 	return "Workflow Run Accepted", nil
 }
 
@@ -149,10 +156,13 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		return &model.ChaosWorkFlowResponse{}, err
 	}
 
-	workflow_id := utils.RandomString(32)
+	workflow_id := uuid.New().String()
+
+	newWorkflowManifest, _ := sjson.Set(input.WorkflowManifest, "metadata.labels.workflow_id", workflow_id)
+
 	newChaosWorkflow := database.ChaosWorkFlowInput{
 		WorkflowID:          workflow_id,
-		WorkflowManifest:    input.WorkflowManifest,
+		WorkflowManifest:    newWorkflowManifest,
 		CronSyntax:          input.CronSyntax,
 		WorkflowName:        input.WorkflowName,
 		WorkflowDescription: input.WorkflowDescription,
@@ -160,6 +170,7 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		ProjectID:           input.ProjectID,
 		ClusterID:           input.ClusterID,
 		Weightages:          Weightages,
+		WorkflowRuns:        []*database.WorkflowRun{},
 	}
 
 	err = database.InsertChaosWorkflow(newChaosWorkflow)

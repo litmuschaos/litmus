@@ -2,22 +2,39 @@ package queries
 
 import (
 	"encoding/json"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
-	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/data-store"
 	database "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb"
 	"log"
+
+	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
+	store "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/data-store"
 )
 
 //GetWorkflowRuns sends all the workflow runs for a project from the DB
-func QueryWorkflowRuns(pid string) ([]*model.WorkflowRun, error) {
-	wfRuns, err := database.GetWorkflowRuns(pid)
+func QueryWorkflowRuns(project_id string) ([]*model.WorkflowRun, error) {
+	workflows, err := database.GetWorkflowsByProjectID(project_id)
 	if err != nil {
 		return nil, err
 	}
 	result := []*model.WorkflowRun{}
-	for i := 0; i < len(wfRuns); i++ {
-		wfRun := model.WorkflowRun(wfRuns[i])
-		result = append(result, &wfRun)
+
+	for _, workflow := range workflows {
+		cluster, err := database.GetCluster(workflow.ClusterID)
+		if err != nil {
+			return nil, err
+		}
+		for _, wfrun := range workflow.WorkflowRuns {
+			newWorkflowRun := model.WorkflowRun{
+				WorkflowName:  workflow.WorkflowName,
+				WorkflowID:    workflow.WorkflowID,
+				WorkflowRunID: wfrun.WorkflowRunID,
+				LastUpdated:   wfrun.LastUpdated,
+				ProjectID:     workflow.ProjectID,
+				ClusterID:     workflow.ClusterID,
+				ExecutionData: wfrun.ExecutionData,
+				ClusterName:   cluster.ClusterName,
+			}
+			result = append(result, &newWorkflowRun)
+		}
 	}
 	return result, nil
 }

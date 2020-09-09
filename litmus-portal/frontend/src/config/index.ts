@@ -17,7 +17,7 @@ if (
 } else {
   authURL = '/auth';
   apiURL = '/api';
-  sockURL += `//${loc.host}/api`;
+  sockURL += `//${loc.host}/ws`;
 }
 export default {
   environment: process.env.NODE_ENV,

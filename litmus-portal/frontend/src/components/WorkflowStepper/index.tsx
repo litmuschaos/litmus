@@ -1,31 +1,36 @@
-import React from 'react';
+import { useMutation } from '@apollo/client';
 import Step from '@material-ui/core/Step';
 import { StepIconProps } from '@material-ui/core/StepIcon';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
 import Typography from '@material-ui/core/Typography';
+import React from 'react';
 import { useSelector } from 'react-redux';
-import { useMutation } from '@apollo/client';
+import YAML from 'yaml';
+import Unimodal from '../../containers/layouts/Unimodal';
+import { CREATE_WORKFLOW } from '../../graphql';
+import { experimentMap, WorkflowData } from '../../models/workflow';
+import useActions from '../../redux/actions';
+import * as WorkflowActions from '../../redux/actions/workflow';
+import { history } from '../../redux/configureStore';
+import { RootState } from '../../redux/reducers';
+import parsed from '../../utils/yamlUtils';
 import ButtonFilled from '../Button/ButtonFilled';
 import ButtonOutline from '../Button/ButtonOutline';
-import ReliablityScore from '../Sections/Workflow/ReliabilityScore';
-import ScheduleWorkflow from '../Sections/Workflow/ScheduleWorkflow';
-import VerifyCommit from '../Sections/Workflow/VerifyCommit';
-import ChooseAWorkflowCluster from '../Sections/Workflow/WorkflowCluster';
+import ChooseWorkflow from '../Sections/CreateWorkflow/ChooseWorkflow/index';
+import ReliablityScore from '../Sections/CreateWorkflow/ReliabilityScore';
+import ScheduleWorkflow from '../Sections/CreateWorkflow/ScheduleWorkflow';
+import TuneWorkflow from '../Sections/CreateWorkflow/TuneWorkflow/index';
+import VerifyCommit from '../Sections/CreateWorkflow/VerifyCommit';
+import ChooseAWorkflowCluster from '../Sections/CreateWorkflow/WorkflowCluster';
 import QontoConnector from './quontoConnector';
 import useStyles from './styles';
 import useQontoStepIconStyles from './useQontoStepIconStyles';
-import TuneWorkflow from '../Sections/Workflow/TuneWorkflow/index';
-import ChooseWorkflow from '../Sections/Workflow/ChooseWorkflow/index';
-import { WorkflowData, experimentMap } from '../../models/workflow';
-import { UserData } from '../../models/user';
-import { RootState } from '../../redux/reducers';
-import useActions from '../../redux/actions';
-import * as WorkflowActions from '../../redux/actions/workflow';
-import parsed from '../../utils/yamlUtils';
-import { CREATE_WORKFLOW } from '../../graphql';
-import Unimodal from '../../containers/layouts/Unimodal';
-import { history } from '../../redux/configureStore';
+import {
+  CreateWorkFlowInput,
+  CreateWorkflowResponse,
+  WeightMap,
+} from '../../models/CreateWorkflowData';
 
 function getSteps(): string[] {
   return [
@@ -36,11 +41,6 @@ function getSteps(): string[] {
     'Schedule',
     'Verify and Commit',
   ];
-}
-
-interface WeightMap {
-  experiment_name: string;
-  weightage: number;
 }
 
 function QontoStepIcon(props: StepIconProps) {
@@ -69,6 +69,7 @@ function QontoStepIcon(props: StepIconProps) {
       </div>
     );
   }
+
   return (
     <div
       className={`${classes.root} ${
@@ -117,6 +118,7 @@ const CustomStepper = () => {
     (state: RootState) => state.workflowData
   );
   const {
+    id,
     yaml,
     weights,
     description,
@@ -125,16 +127,14 @@ const CustomStepper = () => {
     clusterid,
   } = workflowData;
 
-  const userData: UserData = useSelector((state: RootState) => state.userData);
-
-  const { projectID } = userData;
-
+  const selectedProjectID = useSelector(
+    (state: RootState) => state.userData.selectedProjectID
+  );
   const workflow = useActions(WorkflowActions);
-
+  const [invalidYaml, setinValidYaml] = React.useState(false);
   const steps = getSteps();
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
     if (activeStep === 2) {
       const tests = parsed(yaml);
       const arr: experimentMap[] = [];
@@ -143,7 +143,7 @@ const CustomStepper = () => {
         hashMap.set(weight.experimentName, weight.weight);
       });
       tests.forEach((test) => {
-        let value = 0;
+        let value = 10;
         if (hashMap.has(test)) {
           value = hashMap.get(test);
         }
@@ -152,16 +152,34 @@ const CustomStepper = () => {
       workflow.setWorkflowDetails({
         weights: arr,
       });
+      if (arr.length === 0) {
+        setinValidYaml(true);
+      } else {
+        setinValidYaml(false);
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      }
+    } else {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
   };
 
   const [open, setOpen] = React.useState(false);
 
   const handleBack = () => {
+    if (activeStep === 2) {
+      setinValidYaml(false);
+    }
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const [createChaosWorkFlow] = useMutation(CREATE_WORKFLOW);
+  const [createChaosWorkFlow] = useMutation<
+    CreateWorkflowResponse,
+    CreateWorkFlowInput
+  >(CREATE_WORKFLOW, {
+    onCompleted: () => {
+      setOpen(true);
+    },
+  });
 
   const handleMutation = () => {
     if (name.length !== 0 && description.length !== 0 && weights.length !== 0) {
@@ -176,7 +194,8 @@ const CustomStepper = () => {
 
       /* JSON.stringify takes 3 parameters [object to be converted,
       a function to alter the conversion, spaces to be shown in final result for indentation ] */
-      const yamlJson = JSON.stringify(yaml, null, 2);
+      const yml = YAML.parse(yaml);
+      const yamlJson = JSON.stringify(yml, null, 2); // Converted to Stringified JSON
 
       const chaosWorkFlowInputs = {
         workflow_manifest: yamlJson,
@@ -185,7 +204,7 @@ const CustomStepper = () => {
         workflow_description: description,
         isCustomWorkflow,
         weightages: weightData,
-        project_id: projectID,
+        project_id: selectedProjectID,
         cluster_id: clusterid,
       };
       createChaosWorkFlow({
@@ -242,9 +261,9 @@ const CustomStepper = () => {
               handleClose={handleClose}
               aria-labelledby="simple-modal-title"
               aria-describedby="simple-modal-description"
-              hasCloseBtn={false}
+              hasCloseBtn
             >
-              <div className={classes.content}>
+              <div>
                 <img
                   src="icons/finish.svg"
                   className={classes.mark}
@@ -276,7 +295,6 @@ const CustomStepper = () => {
             </Unimodal>
             {getStepContent(activeStep, (page: number) => gotoStep({ page }))}
           </div>
-
           {/* Control Buttons */}
           {activeStep !== 0 ? (
             <div className={classes.buttonGroup}>
@@ -288,7 +306,11 @@ const CustomStepper = () => {
                   <div>Finish</div>
                 </ButtonFilled>
               ) : (
-                <ButtonFilled handleClick={() => handleNext()} isPrimary>
+                <ButtonFilled
+                  handleClick={() => handleNext()}
+                  isPrimary
+                  isDisabled={id.length === 0}
+                >
                   <div>
                     Next
                     <img
@@ -299,6 +321,11 @@ const CustomStepper = () => {
                   </div>
                 </ButtonFilled>
               )}
+              {invalidYaml ? (
+                <Typography className={classes.yamlError}>
+                  <strong>To continue, please check the error in code.</strong>
+                </Typography>
+              ) : null}
             </div>
           ) : null}
         </div>

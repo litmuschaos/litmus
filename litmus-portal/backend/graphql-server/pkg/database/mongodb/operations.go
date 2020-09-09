@@ -1,4 +1,4 @@
-package database
+package mongodb
 
 import (
 	"context"
@@ -44,41 +44,50 @@ func UpdateCluster(query bson.D, update bson.D) error {
 	return nil
 }
 
-func UpsertWorkflowRun(wfRun WorkflowRun) error {
+func UpsertWorkflowRun(workflow_id string, wfRun WorkflowRun) error {
 	opts := options.Update().SetUpsert(true)
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	query := bson.M{"workflow_run_id": wfRun.WorkflowRunID}
-	data, err := bson.Marshal(wfRun)
+
+	count, err := workflowCollection.CountDocuments(ctx, bson.M{"workflow_id": workflow_id, "workflow_runs.workflow_run_id": wfRun.WorkflowRunID})
 	if err != nil {
-		log.Print("ERROR UPDATE CLUSTER : ", err)
 		return err
 	}
-	var doc bson.D
-	err = bson.Unmarshal(data, &doc)
-	update := bson.D{{"$set", doc}}
-	_, err = workflowRunCollection.UpdateOne(ctx, query, update, opts)
-	if err != nil {
-		log.Print("ERROR UPDATE CLUSTER : ", err)
-		return err
+
+	if count == 0 {
+		filter := bson.M{"workflow_id": workflow_id}
+		update := bson.M{"$push": bson.M{"workflow_runs": wfRun}}
+		_, err = workflowCollection.UpdateOne(ctx, filter, update, opts)
+		if err != nil {
+			return err
+		}
+	} else if count == 1 {
+		filter := bson.M{"workflow_id": workflow_id, "workflow_runs.workflow_run_id": wfRun.WorkflowRunID}
+		update := bson.M{"$set": bson.M{"workflow_runs.$.last_updated": wfRun.LastUpdated, "workflow_runs.$.execution_data": wfRun.ExecutionData}}
+		_, err = workflowCollection.UpdateOne(ctx, filter, update, opts)
+		if err != nil {
+			return err
+		}
 	}
+
 	return nil
 }
 
-func GetWorkflowRuns(_pid string) ([]WorkflowRun, error) {
-	query := bson.D{{"project_id", _pid}}
+func GetWorkflowsByProjectID(project_id string) ([]ChaosWorkFlowInput, error) {
+	query := bson.D{{"project_id", project_id}}
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	cursor, err := workflowRunCollection.Find(ctx, query)
+
+	cursor, err := workflowCollection.Find(ctx, query)
 	if err != nil {
-		log.Print("ERROR GET CLUSTERS : ", err)
 		return nil, err
 	}
-	var wfRuns []WorkflowRun
-	err = cursor.All(ctx, &wfRuns)
+
+	var workflows []ChaosWorkFlowInput
+	err = cursor.All(ctx, &workflows)
 	if err != nil {
-		log.Print("ERROR GET CLUSTERS : ", err)
 		return nil, err
 	}
-	return wfRuns, nil
+
+	return workflows, nil
 }
 
 func GetClusterWithProjectID(project_id string, cluster_type *string) ([]*Cluster, error) {
@@ -109,10 +118,24 @@ func GetClusterWithProjectID(project_id string, cluster_type *string) ([]*Cluste
 
 func InsertChaosWorkflow(chaosWorkflow ChaosWorkFlowInput) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	_, err := workflowRunCollection.InsertOne(ctx, chaosWorkflow)
+	_, err := workflowCollection.InsertOne(ctx, chaosWorkflow)
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func DeleteChaosWorkflow(workflowid string) (bool, error) {
+	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
+	res, err := workflowCollection.DeleteOne(ctx, bson.M{"workflow_id": workflowid})
+
+	if err != nil {
+		return false, err
+	} else if res.DeletedCount == 0 {
+		return false, nil
+	}
+
+	log.Println("Successfully delete %v", workflowid)
+	return true, nil
 }

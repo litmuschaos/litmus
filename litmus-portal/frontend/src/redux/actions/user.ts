@@ -8,7 +8,7 @@ export const setUserDetails = (jwt: string) => (dispatch: Function) => {
   });
 };
 
-export const updateUserDetails = (data: { name: string; email: string }) => (
+export const updateUserDetails = (data: { selectedProjectID: string }) => (
   dispatch: Function
 ) => {
   dispatch({

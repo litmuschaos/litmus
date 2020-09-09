@@ -26,7 +26,11 @@ const ButtonFilled: React.FC<ButtonFilledProps> = ({
       disabled={isDisabled}
       type={type}
       onClick={handleClick}
-      className={isPrimary ? classes.buttonPrimary : classes.buttonSecondary}
+      className={
+        isPrimary
+          ? `${classes.button} ${classes.buttonPrimary}`
+          : `${classes.button} ${classes.buttonSecondary}`
+      }
     >
       {children}
     </Button>

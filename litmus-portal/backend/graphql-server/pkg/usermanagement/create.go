@@ -2,46 +2,94 @@ package usermanagement
 
 import (
 	"context"
+	"errors"
 	"log"
+	"os"
+	"strings"
 	"time"
 
+	self_deployer "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/self-deployer"
+	"go.mongodb.org/mongo-driver/mongo"
+
+	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model"
-	database "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb"
+	database "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb/operations"
+	dbSchema "github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/database/mongodb/schema"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/pkg/project"
-	"github.com/pborman/uuid"
 )
 
 //CreateUser ...
 func CreateUser(ctx context.Context, user model.UserInput) (*model.User, error) {
 
-	project, err := project.CreateProject(ctx, user.ProjectName)
-	if err != nil {
+	outputUser, err := GetUser(ctx, user.Username)
+	if err != nil && err != mongo.ErrNoDocuments {
 		return nil, err
+	} else if outputUser != nil {
+		return outputUser, errors.New("User already exists")
 	}
 
 	uuid := uuid.New()
-	newUser := &model.User{
-		ID:          uuid,
+	newUser := &dbSchema.User{
+		ID:          uuid.String(),
 		Username:    user.Username,
 		Email:       user.Email,
 		CompanyName: user.CompanyName,
-		ProjectID:   project.ID,
 		Name:        user.Name,
-		CreatedAt:   time.Now().String(),
+		CreatedAt:   time.Now().Format(time.RFC1123Z),
 	}
 
 	err = database.InsertUser(ctx, newUser)
 	if err != nil {
 		log.Print("ERROR", err)
-		return newUser, err
+		return nil, err
 	}
 
-	return newUser, nil
+	project, err := project.CreateProjectWithUser(ctx, user.ProjectName, newUser)
+	if err != nil {
+		return nil, err
+	}
+
+	outputUser = newUser.GetOutputUser()
+	outputUser.Projects = append(outputUser.Projects, project)
+
+	active := os.Getenv("SELF_CLUSTER")
+	if strings.ToLower(active) == "true" && strings.ToLower(outputUser.Username) == "admin" {
+		go self_deployer.StartDeployer(project.ID)
+	}
+
+	return outputUser, nil
 }
 
 //GetUser ...
 func GetUser(ctx context.Context, username string) (*model.User, error) {
 
 	user, err := database.GetUserByUserName(ctx, username)
-	return user, err
+	if err != nil {
+		return nil, err
+	}
+	outputUser := user.GetOutputUser()
+
+	projects, err := project.GetProjectsByUserID(ctx, outputUser.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	outputUser.Projects = projects
+	return outputUser, nil
+}
+
+//GetUsers ...
+func GetUsers(ctx context.Context) ([]*model.User, error) {
+
+	users, err := database.GetUsers(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var outputUsers []*model.User
+	for _, user := range users {
+		outputUsers = append(outputUsers, user.GetOutputUser())
+	}
+
+	return outputUsers, nil
 }

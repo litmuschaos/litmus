@@ -2,6 +2,12 @@
 
 package model
 
+import (
+	"fmt"
+	"io"
+	"strconv"
+)
+
 type ActionPayload struct {
 	RequestType  *string `json:"request_type"`
 	K8sManifest  *string `json:"k8s_manifest"`
@@ -87,6 +93,22 @@ type ClusterInput struct {
 	ClusterType  string  `json:"cluster_type"`
 }
 
+type Member struct {
+	UserID     string     `json:"user_id"`
+	UserName   string     `json:"user_name"`
+	Name       string     `json:"name"`
+	Email      string     `json:"email"`
+	Role       MemberRole `json:"role"`
+	Invitation string     `json:"invitation"`
+	JoinedAt   string     `json:"joined_at"`
+}
+
+type MemberInput struct {
+	ProjectID string      `json:"project_id"`
+	UserName  string      `json:"user_name"`
+	Role      *MemberRole `json:"role"`
+}
+
 type PodLog struct {
 	ClusterID     *ClusterIdentity `json:"cluster_id"`
 	RequestID     string           `json:"request_id"`
@@ -115,27 +137,28 @@ type PodLogResponse struct {
 }
 
 type Project struct {
-	ID        string  `json:"id"`
-	Name      string  `json:"name"`
-	State     *string `json:"state"`
-	CreatedAt string  `json:"created_at"`
-	UpdatedAt string  `json:"updated_at"`
-	RemovedAt string  `json:"removed_at"`
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	Members   []*Member `json:"members"`
+	State     *string   `json:"state"`
+	CreatedAt string    `json:"created_at"`
+	UpdatedAt string    `json:"updated_at"`
+	RemovedAt string    `json:"removed_at"`
 }
 
 type User struct {
-	ID              string  `json:"id"`
-	Username        string  `json:"username"`
-	Email           *string `json:"email"`
-	IsEmailVerified *bool   `json:"is_email_verified"`
-	CompanyName     *string `json:"company_name"`
-	ProjectID       string  `json:"project_id"`
-	Name            *string `json:"name"`
-	Role            *string `json:"role"`
-	State           *string `json:"state"`
-	CreatedAt       string  `json:"created_at"`
-	UpdatedAt       string  `json:"updated_at"`
-	RemovedAt       string  `json:"removed_at"`
+	ID              string     `json:"id"`
+	Username        string     `json:"username"`
+	Email           *string    `json:"email"`
+	IsEmailVerified *bool      `json:"is_email_verified"`
+	CompanyName     *string    `json:"company_name"`
+	Name            *string    `json:"name"`
+	Projects        []*Project `json:"projects"`
+	Role            *string    `json:"role"`
+	State           *string    `json:"state"`
+	CreatedAt       string     `json:"created_at"`
+	UpdatedAt       string     `json:"updated_at"`
+	RemovedAt       string     `json:"removed_at"`
 }
 
 type UserInput struct {
@@ -163,6 +186,7 @@ type WorkflowRun struct {
 }
 
 type WorkflowRunInput struct {
+	WorkflowID    string           `json:"workflow_id"`
 	WorkflowRunID string           `json:"workflow_run_id"`
 	WorkflowName  string           `json:"workflow_name"`
 	ExecutionData string           `json:"execution_data"`
@@ -172,4 +196,47 @@ type WorkflowRunInput struct {
 type Weightages struct {
 	ExperimentName string `json:"experiment_name"`
 	Weightage      int    `json:"weightage"`
+}
+
+type MemberRole string
+
+const (
+	MemberRoleOwner  MemberRole = "Owner"
+	MemberRoleEditor MemberRole = "Editor"
+	MemberRoleViewer MemberRole = "Viewer"
+)
+
+var AllMemberRole = []MemberRole{
+	MemberRoleOwner,
+	MemberRoleEditor,
+	MemberRoleViewer,
+}
+
+func (e MemberRole) IsValid() bool {
+	switch e {
+	case MemberRoleOwner, MemberRoleEditor, MemberRoleViewer:
+		return true
+	}
+	return false
+}
+
+func (e MemberRole) String() string {
+	return string(e)
+}
+
+func (e *MemberRole) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = MemberRole(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid MemberRole", str)
+	}
+	return nil
+}
+
+func (e MemberRole) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }

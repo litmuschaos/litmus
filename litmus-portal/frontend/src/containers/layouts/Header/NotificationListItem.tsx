@@ -1,35 +1,31 @@
 import React, { useState } from 'react';
 import {
   ListItem,
-  ListItemAvatar,
   ListItemText,
-  Avatar,
   ListItemSecondaryAction,
   IconButton,
 } from '@material-ui/core';
-import ErrorIcon from '@material-ui/icons/Error';
 import formatDistance from 'date-fns/formatDistance';
-import DeleteOutlineTwoToneIcon from '@material-ui/icons/DeleteOutlineTwoTone';
-import { Message, NotificationsCallBackType } from '../../../models/header';
+import ClearIcon from '@material-ui/icons/Clear';
+import {
+  Message,
+  NotificationsCallBackType,
+  NotificationIds,
+} from '../../../models/header';
+import useStyles from './styles';
 
 interface NotificationListItemProps {
   message: Message;
-  divider: boolean;
   CallbackOnDeleteNotification: NotificationsCallBackType;
 }
 
 const NotificationListItem: React.FC<NotificationListItemProps> = ({
   message,
-  divider,
   CallbackOnDeleteNotification,
 }) => {
-  const [hasErrorOccurred, setHasErrorOccurred] = useState(false);
+  const classes = useStyles();
 
   const [messageActive, setMessageActive] = useState(true);
-
-  function handleError() {
-    setHasErrorOccurred(true);
-  }
 
   if (messageActive === false) {
     return <div />;
@@ -37,17 +33,7 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({
 
   if (messageActive === true) {
     return (
-      <ListItem divider={divider}>
-        <ListItemAvatar>
-          {hasErrorOccurred ? (
-            <ErrorIcon color="secondary" />
-          ) : (
-            <Avatar
-              src={hasErrorOccurred ? null : (message.picUrl as any)}
-              onError={handleError}
-            />
-          )}
-        </ListItemAvatar>
+      <ListItem className={classes.listItemSpacing}>
         <ListItemText
           primary={message.text}
           secondary={`${formatDistance(message.date * 1000, new Date())} ago`}
@@ -58,14 +44,14 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({
             aria-label="delete"
             onClick={() => {
               setMessageActive(false);
-              const idsForDeletingNotifications = {
+              const idsForDeletingNotifications: NotificationIds = {
                 id: message.id,
                 sequenceID: message.sequenceID,
               };
               CallbackOnDeleteNotification(idsForDeletingNotifications);
             }}
           >
-            <DeleteOutlineTwoToneIcon />
+            <ClearIcon />
           </IconButton>
         </ListItemSecondaryAction>
       </ListItem>

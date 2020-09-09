@@ -28,6 +28,30 @@ func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput mode
 	return mutations.ClusterRegister(clusterInput)
 }
 
+func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
+	return mutations.CreateChaosWorkflow(&input, *store)
+}
+
+func (r *mutationResolver) CreateUser(ctx context.Context, user model.UserInput) (*model.User, error) {
+	return usermanagement.CreateUser(ctx, user)
+}
+
+func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid string) (bool, error) {
+	return database.DeleteChaosWorkflow(workflowid)
+}
+
+func (r *mutationResolver) SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error) {
+	return project.SendInvitation(ctx, member)
+}
+
+func (r *mutationResolver) AcceptInvitation(ctx context.Context, member model.MemberInput) (string, error) {
+	return project.AcceptInvitation(ctx, member)
+}
+
+func (r *mutationResolver) DeclineInvitation(ctx context.Context, member model.MemberInput) (string, error) {
+	return project.DeclineInvitation(ctx, member)
+}
+
 func (r *mutationResolver) ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error) {
 	return mutations.ConfirmClusterRegistration(identity, *store)
 }
@@ -36,20 +60,12 @@ func (r *mutationResolver) NewClusterEvent(ctx context.Context, clusterEvent mod
 	return mutations.NewEvent(clusterEvent, *store)
 }
 
-func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
-	return mutations.CreateChaosWorkflow(&input, *store)
-}
-
 func (r *mutationResolver) ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error) {
 	return mutations.WorkFlowRunHandler(workflowData, *store)
 }
 
 func (r *mutationResolver) PodLog(ctx context.Context, log model.PodLog) (string, error) {
 	return mutations.LogsHandler(log, *store)
-}
-
-func (r *mutationResolver) CreateUser(ctx context.Context, user model.UserInput) (*model.User, error) {
-	return usermanagement.CreateUser(ctx, user)
 }
 
 func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {
@@ -76,6 +92,10 @@ func (r *queryResolver) GetProject(ctx context.Context, projectID string) (*mode
 	return project.GetProject(ctx, projectID)
 }
 
+func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
+	return usermanagement.GetUsers(ctx)
+}
+
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {
 	log.Print("NEW EVENT ", projectID)
 	clusterEvent := make(chan *model.ClusterEvent, 1)
@@ -89,52 +109,6 @@ func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, project
 	}()
 
 	return clusterEvent, nil
-}
-
-func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo model.ClusterIdentity) (<-chan *model.ClusterAction, error) {
-	log.Print("NEW CLUSTER CONNECT ", clusterInfo.ClusterID)
-	clusterAction := make(chan *model.ClusterAction, 1)
-	verifiedCluster, err := cluster.VerifyCluster(clusterInfo)
-	if err != nil {
-		return clusterAction, err
-	}
-
-	store.Mutex.Lock()
-	if _, ok := store.ConnectedCluster[clusterInfo.ClusterID]; ok {
-		store.Mutex.Unlock()
-		return clusterAction, errors.New("CLUSTER ALREADY CONNECTED")
-	}
-	store.ConnectedCluster[clusterInfo.ClusterID] = clusterAction
-	store.Mutex.Unlock()
-
-	go func() {
-		<-ctx.Done()
-		verifiedCluster.IsActive = false
-
-		subscriptions.SendClusterEvent("cluster-status", "Cluster Offline", "Cluster Disconnect", model.Cluster(*verifiedCluster), *store)
-		store.Mutex.Lock()
-		delete(store.ConnectedCluster, clusterInfo.ClusterID)
-		store.Mutex.Unlock()
-		query := bson.D{{"cluster_id", clusterInfo.ClusterID}}
-		update := bson.D{{"$set", bson.D{{"is_active", false}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
-
-		err = database.UpdateCluster(query, update)
-		if err != nil {
-			log.Print("Error", err)
-		}
-	}()
-
-	query := bson.D{{"cluster_id", clusterInfo.ClusterID}}
-	update := bson.D{{"$set", bson.D{{"is_active", true}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
-
-	err = database.UpdateCluster(query, update)
-	if err != nil {
-		return clusterAction, err
-	}
-
-	verifiedCluster.IsActive = true
-	subscriptions.SendClusterEvent("cluster-status", "Cluster Live", "Cluster is Live and Connected", model.Cluster(*verifiedCluster), *store)
-	return clusterAction, nil
 }
 
 func (r *subscriptionResolver) WorkflowEventListener(ctx context.Context, projectID string) (<-chan *model.WorkflowRun, error) {
@@ -164,6 +138,52 @@ func (r *subscriptionResolver) GetPodLog(ctx context.Context, podDetails model.P
 	}()
 	go queries.GetLogs(reqID.String(), podDetails, *store)
 	return workflowLog, nil
+}
+
+func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo model.ClusterIdentity) (<-chan *model.ClusterAction, error) {
+	log.Print("NEW CLUSTER CONNECT ", clusterInfo.ClusterID)
+	clusterAction := make(chan *model.ClusterAction, 1)
+	verifiedCluster, err := cluster.VerifyCluster(clusterInfo)
+	if err != nil {
+		log.Print("VALIDATION FAILED : ", clusterInfo.ClusterID)
+		return clusterAction, err
+	}
+
+	store.Mutex.Lock()
+	if _, ok := store.ConnectedCluster[clusterInfo.ClusterID]; ok {
+		store.Mutex.Unlock()
+		return clusterAction, errors.New("CLUSTER ALREADY CONNECTED")
+	}
+	store.ConnectedCluster[clusterInfo.ClusterID] = clusterAction
+	store.Mutex.Unlock()
+	go func() {
+		<-ctx.Done()
+		verifiedCluster.IsActive = false
+
+		subscriptions.SendClusterEvent("cluster-status", "Cluster Offline", "Cluster Disconnect", model.Cluster(*verifiedCluster), *store)
+		store.Mutex.Lock()
+		delete(store.ConnectedCluster, clusterInfo.ClusterID)
+		store.Mutex.Unlock()
+		query := bson.D{{"cluster_id", clusterInfo.ClusterID}}
+		update := bson.D{{"$set", bson.D{{"is_active", false}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
+
+		err = database.UpdateCluster(query, update)
+		if err != nil {
+			log.Print("Error", err)
+		}
+	}()
+
+	query := bson.D{{"cluster_id", clusterInfo.ClusterID}}
+	update := bson.D{{"$set", bson.D{{"is_active", true}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
+
+	err = database.UpdateCluster(query, update)
+	if err != nil {
+		return clusterAction, err
+	}
+
+	verifiedCluster.IsActive = true
+	subscriptions.SendClusterEvent("cluster-status", "Cluster Live", "Cluster is Live and Connected", model.Cluster(*verifiedCluster), *store)
+	return clusterAction, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.
