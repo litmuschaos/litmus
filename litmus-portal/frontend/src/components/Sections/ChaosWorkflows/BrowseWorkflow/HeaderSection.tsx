@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   InputBase,
   InputAdornment,
@@ -12,10 +12,12 @@ import {
   Button,
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
-import { DateRangePicker } from 'materialui-daterange-picker';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import { DateRangePicker } from 'react-date-range';
 import useStyles from './styles';
+import 'react-date-range/dist/styles.css'; // main css file
+import 'react-date-range/dist/theme/default.css'; // theme css file
 
 interface HeaderSectionProps {
   searchValue: string;
@@ -48,8 +50,7 @@ interface HeaderSectionProps {
   popOverClose: (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
-  toggle: () => void;
-  selectDate: (range: any) => void;
+  selectDate: (selectFromDate: string, selectToDate: string) => void;
 }
 
 const HeaderSection: React.FC<HeaderSectionProps> = ({
@@ -58,18 +59,22 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
   clusterValue,
   isOpen,
   popAnchorEl,
-  isDateOpen,
   displayDate,
   changeSearch,
   changeStatus,
   changeCluster,
   popOverClick,
   popOverClose,
-  toggle,
   selectDate,
 }) => {
   const classes = useStyles();
-
+  const [state, setState] = useState([
+    {
+      startDate: new Date(),
+      endDate: new Date(),
+      key: 'selection',
+    },
+  ]);
   return (
     <div>
       <div className={classes.headerSection}>
@@ -155,9 +160,21 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
           }}
         >
           <DateRangePicker
-            open={isDateOpen}
-            toggle={toggle}
-            onChange={selectDate}
+            onChange={(item) => {
+              setState([(item as any).selection]);
+              selectDate(
+                `${(item as any).selection.startDate}`,
+                `${(item as any).selection.endDate}`
+              );
+            }}
+            showSelectionPreview
+            moveRangeOnFirstSelection={false}
+            months={1}
+            ranges={state}
+            direction="vertical"
+            editableDateInputs
+            rangeColors={['#5B44BA']}
+            showMonthAndYearPickers
           />
         </Popover>
       </div>
