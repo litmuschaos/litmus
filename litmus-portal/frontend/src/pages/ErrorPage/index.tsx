@@ -1,28 +1,49 @@
-import { Typography } from '@material-ui/core';
+import { Typography, Button } from '@material-ui/core';
 import * as React from 'react';
 import useStyles from './styles';
+import { history } from '../../redux/configureStore';
+import Scaffold from '../../containers/layouts/Scaffold';
 
-function ErrorPage() {
+const ErrorPage = () => {
   const classes = useStyles();
-
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  });
   return (
-    <div className={classes.root}>
-      <Typography variant="h1">404</Typography>
-      <Typography variant="h2">
-        The page you are looking for isn’t here
-      </Typography>
-      <Typography variant="body1">
-        You either tried some shady route or you came here by mistake. Whichever
-        it is, try using the navigation or checkout some fancy links in the
-        footer
-      </Typography>
-      <img
-        alt="Under development"
-        className={classes.image}
-        src="/icons/litmus.svg"
-      />
-    </div>
+    <Scaffold>
+      <div className={classes.mainHeader}>
+        <div className={classes.rootContainer}>
+          <div className={classes.root}>
+            <div className={classes.headerDiv}>
+              <Typography className={classes.mainText}>
+                <strong>
+                  Whoops!
+                  <br />
+                  This page is unavailable
+                </strong>
+              </Typography>
+              <Typography className={classes.descText}>
+                The page does not exist, or please try again later.
+              </Typography>
+              <Button
+                onClick={() => history.push('/')}
+                className={classes.backBtn}
+              >
+                Go back home
+              </Button>
+            </div>
+            <div className={classes.imgDiv}>
+              <img
+                src="/icons/litmus-404.png"
+                className={classes.errImg}
+                alt="404"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </Scaffold>
   );
-}
+};
 
 export default ErrorPage;
