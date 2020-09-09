@@ -47,12 +47,28 @@ func UpdateCluster(query bson.D, update bson.D) error {
 func UpsertWorkflowRun(workflow_id string, wfRun WorkflowRun) error {
 	opts := options.Update().SetUpsert(true)
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	filter := bson.M{"workflow_id": workflow_id}
-	update := bson.M{"$addToSet": bson.M{"workflow_runs": wfRun}}
-	_, err = workflowCollection.UpdateOne(ctx, filter, update, opts)
+
+	count, err := workflowCollection.CountDocuments(ctx, bson.M{"workflow_id": workflow_id, "workflow_runs.workflow_run_id": wfRun.WorkflowRunID})
 	if err != nil {
 		return err
 	}
+
+	if count == 0 {
+		filter := bson.M{"workflow_id": workflow_id}
+		update := bson.M{"$push": bson.M{"workflow_runs": wfRun}}
+		_, err = workflowCollection.UpdateOne(ctx, filter, update, opts)
+		if err != nil {
+			return err
+		}
+	} else if count == 1 {
+		filter := bson.M{"workflow_id": workflow_id, "workflow_runs.workflow_run_id": wfRun.WorkflowRunID}
+		update := bson.M{"$set": bson.M{"workflow_runs.$.last_updated": wfRun.LastUpdated, "workflow_runs.$.execution_data": wfRun.ExecutionData}}
+		_, err = workflowCollection.UpdateOne(ctx, filter, update, opts)
+		if err != nil {
+			return err
+		}
+	}
+	
 	return nil
 }
 
