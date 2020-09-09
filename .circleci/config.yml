@@ -85,12 +85,11 @@ jobs:
             - ${SELF_DEPLOYER_IMAGE}.tar
             - ${AUTHENTICATION_SERVER_IMAGE}.tar
             - ${FRONTEND_IMAGE}.tar
+            - env-vars
 
   docker-push:
     machine:
       image: circleci/classic:201808-01
-    environment:
-      IMGTAG: ci
     steps:
       - attach_workspace:
           at: /tmp/workspace
@@ -124,8 +123,6 @@ jobs:
   release:
     machine:
       image: circleci/classic:201808-01
-    environment:
-      IMGTAG: ci
     steps:
       - attach_workspace:
           at: /tmp/workspace
@@ -158,6 +155,7 @@ jobs:
       - run:
           name: Pushing self deployer
           command: bash ./hack/push --TYPE=release --REPONAME=${REPONAME} --IMGNAME=${SELF_DEPLOYER_IMAGE} --IMGTAG=${IMGTAG}
+
 workflows:
   version: 2
   litmus-portal:
