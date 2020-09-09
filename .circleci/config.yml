@@ -80,11 +80,11 @@ jobs:
       - persist_to_workspace:
           root: workspace
           paths:
-            - ${GRAPHQL_SERVER_IMAGE}.tar
-            - ${SUBSCRIBER_IMAGE}.tar
-            - ${SELF_DEPLOYER_IMAGE}.tar
-            - ${AUTHENTICATION_SERVER_IMAGE}.tar
-            - ${FRONTEND_IMAGE}.tar
+            - litmusportal-server.tar
+            - litmusportal-subscriber.tar
+            - litmusportal-self-deployer.tar
+            - litmusportal-auth-server.tar
+            - litmusportal-frontend.tar
             - env-vars
 
   docker-push:
