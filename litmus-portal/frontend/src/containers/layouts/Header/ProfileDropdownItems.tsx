@@ -56,11 +56,11 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
     ? userAvatar(name, false)
     : userAvatar(name, true);
   // Query to get user details
-  const { data, loading } = useQuery<
-    CurrentUserDetails,
-    CurrentUserDedtailsVars
-  >(GET_USER, { variables: { username } });
-  const projects: Project[] = data?.getUser.projects ?? [];
+  const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
+    GET_USER,
+    { variables: { username } }
+  );
+  const projects = data?.getUser.projects ?? [];
   const [switchableProjects, setSwitchableProjects] = useState<Project[]>(
     projects
   );
@@ -108,7 +108,7 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
 
   useEffect(() => {
     setSwitchableProjects(projects);
-  }, [loading]);
+  }, [data]);
 
   return (
     <div>
