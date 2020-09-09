@@ -35,8 +35,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   editorBackgroundFull: {
-    backgroundColor: '#1C1C1C',
-    color: '#FFFFFF',
+    backgroundColor: theme.palette.editorBackground,
+    color: theme.palette.secondary.contrastText,
     width: '100%',
   },
 
@@ -93,16 +93,16 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   extraSpace: {
-    backgroundColor: '#1C1C1C',
+    backgroundColor: theme.palette.editorBackground,
     height: '2rem',
     width: '100%',
   },
 
   editorButtons: {
     borderRadius: 3,
-    backgroundColor: '#1C1C1C',
+    backgroundColor: theme.palette.editorBackground,
     boxSizing: 'border-box',
-    color: '#FFFFFF',
+    color: theme.palette.secondary.contrastText,
     borderColor: 'rgba(255, 255, 255, 0.2)',
     paddingLeft: theme.spacing(3.125),
     width: '4rem',
@@ -112,9 +112,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   editorButtonGoto: {
     borderRadius: 3,
-    backgroundColor: '#1C1C1C',
+    backgroundColor: theme.palette.editorBackground,
     boxSizing: 'border-box',
-    color: '#FFFFFF',
+    color: theme.palette.secondary.contrastText,
     borderColor: 'rgba(255, 255, 255, 0.2)',
     paddingLeft: theme.spacing(3.125),
     width: '4rem',
@@ -128,9 +128,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   editorButtonCopy: {
     borderRadius: 3,
-    backgroundColor: '#1C1C1C',
+    backgroundColor: theme.palette.editorBackground,
     boxSizing: 'border-box',
-    color: '#FFFFFF',
+    color: theme.palette.secondary.contrastText,
     borderColor: 'rgba(255, 255, 255, 0.2)',
     paddingLeft: theme.spacing(3.125),
     width: '4rem',
@@ -144,9 +144,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   editorButtonFind: {
     borderRadius: 3,
-    backgroundColor: '#1C1C1C',
+    backgroundColor: theme.palette.editorBackground,
     boxSizing: 'border-box',
-    color: '#FFFFFF',
+    color: theme.palette.secondary.contrastText,
     borderColor: 'rgba(255, 255, 255, 0.2)',
     paddingLeft: theme.spacing(3.125),
     width: '4rem',
@@ -163,9 +163,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   editorButtonFold: {
     borderRadius: 3,
-    backgroundColor: '#1C1C1C',
+    backgroundColor: theme.palette.editorBackground,
     boxSizing: 'border-box',
-    color: '#FFFFFF',
+    color: theme.palette.secondary.contrastText,
     borderColor: 'rgba(255, 255, 255, 0.2)',
     paddingLeft: theme.spacing(3.125),
     width: '4rem',
@@ -180,9 +180,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   editorButtonUnfold: {
     borderRadius: 3,
-    backgroundColor: '#1C1C1C',
+    backgroundColor: theme.palette.editorBackground,
     boxSizing: 'border-box',
-    color: '#FFFFFF',
+    color: theme.palette.secondary.contrastText,
     borderColor: 'rgba(255, 255, 255, 0.2)',
     paddingLeft: theme.spacing(3.125),
     width: '4rem',
@@ -197,9 +197,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   editorButtonUndo: {
     borderRadius: 3,
-    backgroundColor: '#1C1C1C',
+    backgroundColor: theme.palette.editorBackground,
     boxSizing: 'border-box',
-    color: '#FFFFFF',
+    color: theme.palette.secondary.contrastText,
     borderColor: 'rgba(255, 255, 255, 0.2)',
     paddingLeft: theme.spacing(3.125),
     width: '4rem',
@@ -215,9 +215,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   editorButtonDownload: {
     borderRadius: 3,
-    backgroundColor: '#1C1C1C',
+    backgroundColor: theme.palette.editorBackground,
     boxSizing: 'border-box',
-    color: '#FFFFFF',
+    color: theme.palette.secondary.contrastText,
     borderColor: 'rgba(255, 255, 255, 0.2)',
     paddingLeft: theme.spacing(3.125),
     width: '4rem',
@@ -233,9 +233,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   editorButtonReplace: {
     borderRadius: 3,
-    backgroundColor: '#1C1C1C',
+    backgroundColor: theme.palette.editorBackground,
     boxSizing: 'border-box',
-    color: '#FFFFFF',
+    color: theme.palette.secondary.contrastText,
     borderColor: 'rgba(255, 255, 255, 0.2)',
     paddingLeft: theme.spacing(3.125),
     width: '4rem',
@@ -258,9 +258,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   editorButtonSelectAll: {
     borderRadius: 3,
-    backgroundColor: '#1C1C1C',
+    backgroundColor: theme.palette.editorBackground,
     boxSizing: 'border-box',
-    color: '#FFFFFF',
+    color: theme.palette.secondary.contrastText,
     borderColor: 'rgba(255, 255, 255, 0.2)',
     paddingLeft: theme.spacing(3.125),
     width: '4rem',
@@ -286,10 +286,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   editorButtonFullScreen: {
     borderRadius: 3,
-    backgroundColor: '#1C1C1C',
+    backgroundColor: theme.palette.editorBackground,
     boxSizing: 'border-box',
     color: 'rgba(255, 255, 255, 0.2)',
-    borderColor: '#1C1C1C',
+    borderColor: theme.palette.editorBackground,
     paddingLeft: theme.spacing(3.75),
     paddingBottom: theme.spacing(1.875),
     marginTop: theme.spacing(-2),
@@ -339,14 +339,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'inline-block',
     fontFamily: 'Ubuntu',
     fontSize: '1rem',
-    color: '#109B67',
+    color: theme.palette.primary.dark,
   },
 
   markStyleWrong: {
     display: 'inline-block',
     fontFamily: 'Ubuntu',
     fontSize: '1rem',
-    color: '#CA2C2C',
+    color: theme.palette.error.dark,
   },
 
   fullScreenGrid: {

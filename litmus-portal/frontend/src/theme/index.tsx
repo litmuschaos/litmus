@@ -32,6 +32,7 @@ declare module '@material-ui/core/styles/createPalette' {
     input: {
       disabled: string;
     };
+    editorBackground: string;
   }
   // allow configuration using `createMuiTheme`
   interface PaletteOptions {
@@ -46,6 +47,7 @@ declare module '@material-ui/core/styles/createPalette' {
     input?: {
       disabled?: string;
     };
+    editorBackground?: string;
   }
 }
 function customTheme(options: ThemeOptions) {
@@ -103,6 +105,7 @@ function customTheme(options: ThemeOptions) {
           active: 'rgba(16, 155, 103, 0.1)',
         },
       },
+      editorBackground: '#1C1C1C',
     },
     typography: {
       fontSize: 12,
