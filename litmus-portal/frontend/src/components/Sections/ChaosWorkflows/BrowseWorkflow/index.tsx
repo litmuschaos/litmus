@@ -53,8 +53,8 @@ interface SortData {
 
 interface DateData {
   dateValue: string;
-  fromDate: Date | undefined;
-  toDate: Date | undefined;
+  fromDate: string;
+  toDate: string;
 }
 
 const BrowseWorkflow = () => {
@@ -138,13 +138,13 @@ const BrowseWorkflow = () => {
   // State for start date and end date
   const [dateRange, setDateRange] = React.useState<DateData>({
     dateValue: 'Select a period',
-    fromDate: new Date(0),
-    toDate: new Date(new Date().valueOf() + 1000 * 3600 * 24),
+    fromDate: new Date(0).toString(),
+    toDate: new Date(new Date().setHours(23, 59, 59)).toString(),
   });
 
   const filteredData = data?.getWorkFlowRuns
     .filter((dataRow) =>
-      dataRow.workflow_name.toLowerCase().includes(filters.search)
+      dataRow.workflow_name.toLowerCase().includes(filters.search.toLowerCase())
     )
     .filter((dataRow) =>
       filters.status === 'All'
@@ -236,25 +236,15 @@ const BrowseWorkflow = () => {
   };
 
   // Function to set the date range for filtering
-  const dateChange = (range: any) => {
+  const dateChange = (selectFromDate: string, selectToDate: string) => {
     setDateRange({
-      dateValue: `${moment(range?.startDate)
+      dateValue: `${moment(selectFromDate)
         .format('DD.MM.YYYY')
-        .toString()}-${moment(range?.endDate).format('DD.MM.YYYY').toString()}`,
-      fromDate:
-        moment(range?.startDate).format('DD-MM-YYYY') ===
-        moment(new Date()).format('DD-MM-YYYY')
-          ? new Date(new Date().setHours(0, 0, 0))
-          : new Date(range?.startDate.setHours(0, 0, 0)),
-      toDate:
-        moment(range?.endDate).format('DD-MM-YYYY') ===
-        moment(new Date()).format('DD-MM-YYYY')
-          ? new Date(new Date().setHours(23, 59, 59))
-          : new Date(range?.endDate.setHours(23, 59, 59)),
+        .toString()}-${moment(selectToDate).format('DD.MM.YYYY').toString()}`,
+      fromDate: new Date(new Date(selectFromDate).setHours(0, 0, 0)).toString(),
+      toDate: new Date(new Date(selectToDate).setHours(23, 59, 59)).toString(),
     });
-    setPaginationData({ ...paginationData, pageNo: 0 });
   };
-
   // Function to validate execution_data JSON
   const dataPerRow = (dataRow: WorkflowRun) => {
     let exe_data;
@@ -287,7 +277,6 @@ const BrowseWorkflow = () => {
           isOpen={isOpen}
           popAnchorEl={popAnchorEl}
           isDateOpen={open}
-          toggle={handlePopOverClose}
           displayDate={dateRange.dateValue}
           selectDate={dateChange}
         />
