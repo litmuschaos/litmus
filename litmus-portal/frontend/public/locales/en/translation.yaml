@@ -42,7 +42,7 @@ home:
     moreInfo: See more
 
 login:
-  heading: Welcome to
+  heading: Welcome to <strong>Litmus!</strong>
   subHeading1: Your one-stop-shop for Chaos Engineering on
   subHeading2: . Browse, create, manage, monitor and analyze your chaos workflows.
   subHeading3: With your own private ChaosHub, you can create your new chaos experiments and share them with your team.

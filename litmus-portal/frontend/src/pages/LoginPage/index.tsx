@@ -55,7 +55,7 @@ const LoginPage = () => {
         <div className={classes.box}>
           <img src="icons/LitmusLogo.png" alt="litmus logo" />
           <Typography variant="h2" className={classes.heading}>
-            {t('login.heading')} <strong>Litmus!</strong>
+            <div dangerouslySetInnerHTML={{ __html: t('login.heading') }} />
           </Typography>
           <Typography className={classes.description} gutterBottom>
             {t('login.subHeading1')}
