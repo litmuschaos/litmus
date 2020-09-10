@@ -102,7 +102,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           <MenuItem
             value="Workflow"
             onClick={() =>
-              history.push(`/workflows/${data.workflow_run_id}/details`)
+              history.push(`/workflows/details/${data.workflow_run_id}`)
             }
           >
             Show the workflow

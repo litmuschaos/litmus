@@ -24,7 +24,7 @@ const Templates = () => {
             testWeights.push(10);
           });
           history.push({
-            pathname: `/workflows/${workflowData[index].title}/template`,
+            pathname: `/workflows/template/${workflowData[index].title}`,
             state: {
               workflowData: workflowData[index],
               testNames,

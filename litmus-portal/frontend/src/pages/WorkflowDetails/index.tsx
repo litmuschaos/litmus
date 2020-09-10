@@ -21,7 +21,7 @@ const WorkflowDetails: React.FC = () => {
   const classes = useStyles();
   const { pathname } = useLocation();
   // Getting the workflow nome from the pathname
-  const workflowRunId = pathname.split('/')[2];
+  const workflowRunId = pathname.split('/')[3];
 
   // get ProjectID
   const selectedProjectID = useSelector(

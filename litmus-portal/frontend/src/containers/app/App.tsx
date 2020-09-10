@@ -58,24 +58,24 @@ const Routes: React.FC<RoutesProps> = ({ userData, isProjectAvailable }) => {
         <Route exact path="/login" component={LoginPage} />
         <Route exact path="/workflows" component={Workflows} />
         <Route exact path="/create-workflow" component={CreateWorkflow} />
+
+        {/* Redirects */}
+        <Redirect exact path="/workflows/details" to="/workflows" />
+        <Redirect exact path="/workflows/schedule" to="/workflows" />
+        <Redirect exact path="/workflows/template" to="/workflows" />
         <Route
           exact
-          path="/workflows/:workflowName"
+          path="/workflows/details/:workflowRunId"
           component={WorkflowDetails}
         />
         <Route
           exact
-          path="/workflows/:workflowName/details"
-          component={WorkflowDetails}
-        />
-        <Route
-          exact
-          path="/workflows/:scheduleId/schedule"
+          path="/workflows/schedule/:scheduleId"
           component={SchedulePage}
         />
         <Route
           exact
-          path="/workflows/:templateName/template"
+          path="/workflows/template/:templateName"
           component={BrowseTemplate}
         />
         <Route exact path="/community" component={Community} />
