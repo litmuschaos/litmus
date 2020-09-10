@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: props.isDark
       ? theme.palette.secondary.contrastText
       : theme.palette.customColors.black(0.4),
-    border: '1px',
+    border: '1px solid',
     borderColor: props.isDark
       ? theme.palette.customColors.white(0.2)
       : theme.palette.customColors.black(0.4),

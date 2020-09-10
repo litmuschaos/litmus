@@ -294,7 +294,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
             >
               <Button
                 variant="outlined"
-                className={classes.editorButtonUndo}
+                className={`${classes.editorButtons} ${classes.editorButtonUndo}`}
                 onClick={startundo}
                 startIcon={<UndoTwoToneIcon />}
               />
@@ -324,7 +324,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
             >
               <Button
                 variant="outlined"
-                className={classes.editorButtonDownload}
+                className={`${classes.editorButtons} ${classes.editorButtonDownload}`}
                 onClick={downloadYamlFile}
                 startIcon={<GetAppTwoToneIcon />}
               />
@@ -339,7 +339,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
             >
               <Button
                 variant="outlined"
-                className={classes.editorButtonCopy}
+                className={`${classes.editorButtons} ${classes.editorButtonGotoCopyUnfold}`}
                 onClick={copycontent}
                 startIcon={<FileCopyTwoToneIcon />}
               />
@@ -354,7 +354,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
             >
               <Button
                 variant="outlined"
-                className={classes.editorButtonGoto}
+                className={`${classes.editorButtons} ${classes.editorButtonGotoCopyUnfold}`}
                 onClick={startgotonexterror}
                 startIcon={<ErrorTwoToneIcon />}
               />
@@ -369,7 +369,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
             >
               <Button
                 variant="outlined"
-                className={classes.editorButtonFind}
+                className={`${classes.editorButtons} ${classes.editorButtonFind}`}
                 onClick={startfinder}
                 startIcon={<FindInPageTwoToneIcon />}
               />
@@ -384,7 +384,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
             >
               <Button
                 variant="outlined"
-                className={classes.editorButtonReplace}
+                className={`${classes.editorButtons} ${classes.editorButtonReplace}`}
                 onClick={startreplace}
                 startIcon={<FindReplaceTwoToneIcon />}
               />
@@ -399,7 +399,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
             >
               <Button
                 variant="outlined"
-                className={classes.editorButtonUnfold}
+                className={`${classes.editorButtons} ${classes.editorButtonGotoCopyUnfold}`}
                 onClick={startunfoldall}
                 startIcon={<UnfoldMoreTwoToneIcon />}
               />
@@ -414,7 +414,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
             >
               <Button
                 variant="outlined"
-                className={classes.editorButtonFold}
+                className={`${classes.editorButtons} ${classes.editorButtonFold}`}
                 onClick={startfoldall}
                 startIcon={<UnfoldLessTwoToneIcon />}
               />
@@ -429,7 +429,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
             >
               <Button
                 variant="outlined"
-                className={classes.editorButtonSelectAll}
+                className={`${classes.editorButtons} ${classes.editorButtonSelectAll}`}
                 onClick={startselectall}
                 startIcon={<SelectAllTwoToneIcon />}
               />

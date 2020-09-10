@@ -64,11 +64,10 @@ const useStyles = makeStyles((theme: Theme) => ({
       width: '0.2em',
     },
     '&::-webkit-scrollbar-track': {
-      webkitBoxShadow: 'inset 0 0 6px rgba(0,0,0,0.00)',
+      webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
     },
     '&::-webkit-scrollbar-thumb': {
       backgroundColor: theme.palette.secondary.dark,
-      outline: '1px solid slategrey',
     },
     [theme.breakpoints.down('xl')]: {
       height: '84vh',
@@ -106,32 +105,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: theme.spacing(1.25),
   },
 
-  editorButtonGoto: {
-    borderRadius: 3,
-    backgroundColor: theme.palette.editorBackground,
-    boxSizing: 'border-box',
-    color: theme.palette.secondary.contrastText,
-    borderColor: theme.palette.customColors.white(0.2),
-    paddingLeft: theme.spacing(3.125),
-    width: '4rem',
-    height: '2.75rem',
-    marginLeft: theme.spacing(1.25),
-    [theme.breakpoints.down('xs')]: {
-      marginLeft: 0,
-      marginTop: theme.spacing(1.5),
-    },
-  },
-
-  editorButtonCopy: {
-    borderRadius: 3,
-    backgroundColor: theme.palette.editorBackground,
-    boxSizing: 'border-box',
-    color: theme.palette.secondary.contrastText,
-    borderColor: theme.palette.customColors.white(0.2),
-    paddingLeft: theme.spacing(3.125),
-    width: '4rem',
-    height: '2.75rem',
-    marginLeft: theme.spacing(1.25),
+  editorButtonGotoCopyUnfold: {
     [theme.breakpoints.down('xs')]: {
       marginLeft: 0,
       marginTop: theme.spacing(1.5),
@@ -139,15 +113,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   editorButtonFind: {
-    borderRadius: 3,
-    backgroundColor: theme.palette.editorBackground,
-    boxSizing: 'border-box',
-    color: theme.palette.secondary.contrastText,
-    borderColor: theme.palette.customColors.white(0.2),
-    paddingLeft: theme.spacing(3.125),
-    width: '4rem',
-    height: '2.75rem',
-    marginLeft: theme.spacing(1.25),
     [theme.breakpoints.down('sm')]: {
       marginLeft: theme.spacing(4.25),
     },
@@ -158,48 +123,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   editorButtonFold: {
-    borderRadius: 3,
-    backgroundColor: theme.palette.editorBackground,
-    boxSizing: 'border-box',
-    color: theme.palette.secondary.contrastText,
-    borderColor: theme.palette.customColors.white(0.2),
-    paddingLeft: theme.spacing(3.125),
-    width: '4rem',
-    height: '2.75rem',
-    marginLeft: theme.spacing(1.25),
-    [theme.breakpoints.down('sm')]: {},
     [theme.breakpoints.down('xs')]: {
       marginLeft: theme.spacing(2.5),
       marginTop: theme.spacing(1.5),
     },
   },
 
-  editorButtonUnfold: {
-    borderRadius: 3,
-    backgroundColor: theme.palette.editorBackground,
-    boxSizing: 'border-box',
-    color: theme.palette.secondary.contrastText,
-    borderColor: theme.palette.customColors.white(0.2),
-    paddingLeft: theme.spacing(3.125),
-    width: '4rem',
-    height: '2.75rem',
-    marginLeft: theme.spacing(1.25),
-    [theme.breakpoints.down('sm')]: {},
-    [theme.breakpoints.down('xs')]: {
-      marginLeft: 0,
-      marginTop: theme.spacing(1.5),
-    },
-  },
-
   editorButtonUndo: {
-    borderRadius: 3,
-    backgroundColor: theme.palette.editorBackground,
-    boxSizing: 'border-box',
-    color: theme.palette.secondary.contrastText,
-    borderColor: theme.palette.customColors.white(0.2),
-    paddingLeft: theme.spacing(3.125),
-    width: '4rem',
-    height: '2.75rem',
     marginLeft: theme.spacing(2.5),
     [theme.breakpoints.down('sm')]: {
       marginLeft: theme.spacing(4.25),
@@ -210,14 +140,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   editorButtonDownload: {
-    borderRadius: 3,
-    backgroundColor: theme.palette.editorBackground,
-    boxSizing: 'border-box',
-    color: theme.palette.secondary.contrastText,
-    borderColor: theme.palette.customColors.white(0.2),
-    paddingLeft: theme.spacing(3.125),
-    width: '4rem',
-    height: '2.75rem',
     marginLeft: theme.spacing(6.25),
     [theme.breakpoints.down('sm')]: {
       marginLeft: theme.spacing(1.5),
@@ -228,14 +150,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   editorButtonReplace: {
-    borderRadius: 3,
-    backgroundColor: theme.palette.editorBackground,
-    boxSizing: 'border-box',
-    color: theme.palette.secondary.contrastText,
-    borderColor: theme.palette.customColors.white(0.2),
-    paddingLeft: theme.spacing(3.125),
-    width: '4rem',
-    height: '2.75rem',
     marginLeft: theme.spacing(15.625),
     [theme.breakpoints.down('xs')]: {
       marginLeft: theme.spacing(-0.5),
@@ -253,14 +167,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   editorButtonSelectAll: {
-    borderRadius: 3,
-    backgroundColor: theme.palette.editorBackground,
-    boxSizing: 'border-box',
-    color: theme.palette.secondary.contrastText,
-    borderColor: theme.palette.customColors.white(0.2),
-    paddingLeft: theme.spacing(3.125),
-    width: '4rem',
-    height: '2.75rem',
     marginLeft: theme.spacing(7.5),
     [theme.breakpoints.down('sm')]: {
       marginLeft: theme.spacing(1.4),
@@ -346,7 +252,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   fullScreenGrid: {
-    width: '0%',
+    width: 0,
   },
 
   fullWidth: {
