@@ -96,7 +96,7 @@ const HomePage = () => {
         });
       }
     }
-  }, [loading]);
+  }, [data]);
 
   return (
     <div>
