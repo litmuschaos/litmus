@@ -32,8 +32,12 @@ func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.
 	return mutations.CreateChaosWorkflow(&input, *store)
 }
 
-func (r *mutationResolver) CreateUser(ctx context.Context, user model.UserInput) (*model.User, error) {
+func (r *mutationResolver) CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error) {
 	return usermanagement.CreateUser(ctx, user)
+}
+
+func (r *mutationResolver) UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error) {
+	return usermanagement.UpdateUser(ctx, user)
 }
 
 func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid string) (bool, error) {
