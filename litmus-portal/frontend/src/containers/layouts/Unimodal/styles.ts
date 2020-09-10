@@ -40,6 +40,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: props.isDark ? '82.5%' : '60%',
     marginTop: theme.spacing(5),
   }),
+
+  uniModalStyle: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: theme.palette.customColors.black(0.8),
+  },
 }));
 
 export default useStyles;

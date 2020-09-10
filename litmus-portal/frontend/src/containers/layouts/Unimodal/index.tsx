@@ -33,6 +33,7 @@ const Unimodal: React.FC<UnimodalProps> = ({
       data-cy="modal"
       aria-labelledby="simple-modal-title"
       aria-describedby="simple-modal-description"
+      className={classes.uniModalStyle}
     >
       <div className={classes.modalContainer}>
         {hasCloseBtn && (
