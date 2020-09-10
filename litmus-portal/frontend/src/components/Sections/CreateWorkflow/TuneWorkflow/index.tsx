@@ -38,7 +38,7 @@ const TuneWorkflow: React.FC = () => {
           workflow.setWorkflowDetails({
             name,
             link,
-            yaml: yamlText,
+            yaml: nameMappedYaml,
             id,
             description,
           });
