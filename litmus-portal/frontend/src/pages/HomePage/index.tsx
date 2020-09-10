@@ -4,7 +4,7 @@ import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import InfoFilledWrap from '../../components/InfoFilled';
 import Loader from '../../components/Loader';
 import QuickActionCard from '../../components/QuickActionCard';
@@ -18,24 +18,21 @@ import {
   Project,
 } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
+import * as TabActions from '../../redux/actions/tabs';
 import * as UserActions from '../../redux/actions/user';
+import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import useStyles from './style';
 
 const CreateWorkflowCard = () => {
   const { t } = useTranslation();
   const classes = useStyles();
-  const history = useHistory();
-  const routeChange = () => {
-    history.push('/create-workflow');
-  };
+
   return (
     <Card
       elevation={3}
       className={classes.createWorkflowCard}
-      onClick={() => {
-        routeChange();
-      }}
+      onClick={() => history.push('/create-workflow')}
       data-cy="createWorkflow"
     >
       <CardActionArea>
@@ -57,6 +54,7 @@ const HomePage = () => {
   const classes = useStyles();
   const { t } = useTranslation();
   const user = useActions(UserActions);
+  const tabs = useActions(TabActions);
 
   // Query to get user details
   const { data, loading } = useQuery<
@@ -109,7 +107,7 @@ const HomePage = () => {
             <div className={classes.root}>
               <Typography className={classes.userName}>
                 {t('home.heading')}
-                <strong>{name}</strong>
+                <strong>{` ${name}`}</strong>
               </Typography>
               <div className={classes.headingDiv}>
                 <div className={classes.mainDiv}>
@@ -126,6 +124,10 @@ const HomePage = () => {
                     <Button
                       variant="contained"
                       className={classes.predefinedBtn}
+                      onClick={() => {
+                        tabs.changeWorkflowsTabs(2);
+                        history.push('/workflows');
+                      }}
                     >
                       <Typography variant="subtitle1">
                         {t('home.button1')}

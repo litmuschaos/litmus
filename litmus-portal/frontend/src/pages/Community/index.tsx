@@ -1,17 +1,17 @@
-import React from 'react';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper'; // Temporary -> Should be replaced with Chart
+import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
-import { Link } from 'react-router-dom';
+import Paper from '@material-ui/core/Paper'; // Temporary -> Should be replaced with Chart
+import Typography from '@material-ui/core/Typography';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import InfoFilledWrap from '../../components/InfoFilled/index';
-import Scaffold from '../../containers/layouts/Scaffold/index';
-import useStyles from './styles';
 import QuickActionCard from '../../components/QuickActionCard';
-import GeoMap from '../../components/Sections/Community/GeoMap/index';
-import CommunityAnalyticsPlot from '../../components/Sections/Community/CommunityTimeSeriesPlot';
+import Scaffold from '../../containers/layouts/Scaffold/index';
+import CommunityAnalyticsPlot from '../../views/Community/CommunityTimeSeriesPlot';
+import GeoMap from '../../views/Community/GeoMap/index';
+import useStyles from './styles';
 
 // Reusable Header Component
 const Header2: React.FC = ({ children }) => {
