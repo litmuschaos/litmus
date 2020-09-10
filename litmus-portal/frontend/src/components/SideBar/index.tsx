@@ -76,7 +76,7 @@ const SideBar = () => {
         >
           <img src="/icons/workflows.png" alt="workflow" />
         </CustomisedListItem>
-        <CustomisedListItem
+        {/* <CustomisedListItem
           key="hub"
           handleClick={() => {
             history.push('/404');
@@ -84,7 +84,7 @@ const SideBar = () => {
           label="My Hub"
         >
           <img src="/icons/hub.png" alt="hub" />
-        </CustomisedListItem>
+        </CustomisedListItem> */}
         <CustomisedListItem
           key="community"
           handleClick={() => {

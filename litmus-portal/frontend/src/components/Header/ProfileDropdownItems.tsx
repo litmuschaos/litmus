@@ -96,6 +96,7 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
     const projectsAvailableForSwitching: Project[] = [];
     projects.forEach((project) => {
       const memberList: Member[] = project.members;
+
       memberList.forEach((member) => {
         if (member.user_name === username && member.invitation === 'Accepted') {
           projectsAvailableForSwitching.push(project);
@@ -103,10 +104,6 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
       });
     });
     setSwitchableProjects(projectsAvailableForSwitching);
-  }, [data]);
-
-  useEffect(() => {
-    setSwitchableProjects(projects);
   }, [data]);
 
   return (
