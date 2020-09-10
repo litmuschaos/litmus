@@ -16,20 +16,20 @@ const CreateWorkflow = lazy(() => import('../../pages/CreateWorkflow'));
 const LoginPage = lazy(() => import('../../pages/LoginPage'));
 const WorkflowDetails = lazy(() => import('../../pages/WorkflowDetails'));
 const BrowseTemplate = lazy(() =>
-  import('../../components/Sections/ChaosWorkflows/BrowseTemplate')
+  import('../../views/ChaosWorkflows/BrowseTemplate')
 );
 const HomePage = lazy(() => import('../../pages/HomePage'));
 const Community = lazy(() => import('../../pages/Community'));
 const Settings = lazy(() => import('../../pages/Settings'));
 const SchedulePage = lazy(() => import('../../pages/SchedulePage'));
 interface RoutesProps {
-  userData: string;
+  userData: UserData;
   isProjectAvailable: boolean;
 }
 
 const Routes: React.FC<RoutesProps> = ({ userData, isProjectAvailable }) => {
   const classes = useStyles();
-  if (userData === '') {
+  if (userData.token === '') {
     return (
       <div className={classes.content}>
         <Switch>
@@ -58,28 +58,32 @@ const Routes: React.FC<RoutesProps> = ({ userData, isProjectAvailable }) => {
         <Route exact path="/login" component={LoginPage} />
         <Route exact path="/workflows" component={Workflows} />
         <Route exact path="/create-workflow" component={CreateWorkflow} />
+
+        {/* Redirects */}
+        <Redirect exact path="/workflows/details" to="/workflows" />
+        <Redirect exact path="/workflows/schedule" to="/workflows" />
+        <Redirect exact path="/workflows/template" to="/workflows" />
         <Route
           exact
-          path="/workflows/:workflowName"
+          path="/workflows/details/:workflowRunId"
           component={WorkflowDetails}
         />
         <Route
           exact
-          path="/workflows/:workflowName/details"
-          component={WorkflowDetails}
-        />
-        <Route
-          exact
-          path="/workflows/:scheduleId/schedule"
+          path="/workflows/schedule/:scheduleId"
           component={SchedulePage}
         />
         <Route
           exact
-          path="/workflows/:templateName/template"
+          path="/workflows/template/:templateName"
           component={BrowseTemplate}
         />
         <Route exact path="/community" component={Community} />
-        <Route exact path="/settings" component={Settings} />
+        {userData.userRole === 'Owner' ? (
+          <Route exact path="/settings" component={Settings} />
+        ) : (
+          <Redirect to="/" />
+        )}
         <Route exact path="/404" component={ErrorPage} />
         <Redirect to="/404" />
       </Switch>
@@ -90,10 +94,11 @@ const Routes: React.FC<RoutesProps> = ({ userData, isProjectAvailable }) => {
 function App() {
   const classes = useStyles();
   const analyticsAction = useActions(AnalyticsActions);
-  const userData: UserData = useSelector((state: RootState) => state.userData);
+  const userData = useSelector((state: RootState) => state.userData);
   useEffect(() => {
     if (userData.token !== '') analyticsAction.loadCommunityAnalytics();
   }, [userData.token]);
+
   return (
     <Suspense fallback={<Loader />}>
       <Router history={history}>
@@ -101,7 +106,7 @@ function App() {
           <div className={classes.appFrame}>
             {/* <Routes /> */}
             <Routes
-              userData={userData.token}
+              userData={userData}
               isProjectAvailable={!!userData.selectedProjectID}
             />
           </div>

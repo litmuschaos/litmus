@@ -1,8 +1,7 @@
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import * as React from 'react';
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { history } from '../../redux/configureStore';
+import capitalize from '../../utils/capitalize';
 import useStyles from './styles';
 
 interface CustomBreadcrumbsProps {
@@ -10,38 +9,32 @@ interface CustomBreadcrumbsProps {
 }
 
 const CustomBreadcrumbs: React.FC<CustomBreadcrumbsProps> = ({ location }) => {
-  const path: string[] = location.split('/');
-
-  let intermediateRoutes: string = '/';
-
+  const pathname: string[] = location.split('/');
+  let intermediateRoutes = '/';
   const classes = useStyles();
-
-  useEffect(() => {}, [path]);
 
   return (
     <Breadcrumbs aria-label="breadcrumb">
-      {path.map((path: string) => {
+      {pathname.map((path) => {
         if (path) {
           intermediateRoutes += path;
-
+          // If Template/Workflow Name is clicked [Workflow / Workflow-name / Template]
+          // it would redirect to /workflows
+          if (pathname[2] === 'template' && path === pathname[3]) {
+            return <span>{path}</span>;
+          }
           const link = (
             <Link
               key={path}
               to={intermediateRoutes}
               className={classes.breadCrumb}
-              onClick={() => {
-                history.push(`/${path}`);
-              }}
             >
-              {path.charAt(0).toUpperCase() + path.slice(1)}
+              {capitalize(path)}
             </Link>
           );
-
           intermediateRoutes += '/';
-
           return link;
         }
-
         return '';
       })}
     </Breadcrumbs>
