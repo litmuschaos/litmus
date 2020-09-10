@@ -1,7 +1,9 @@
 package server
 
 import (
+	"fmt"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -16,6 +18,12 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/store"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/types"
 )
+
+func init() {
+	if os.Getenv("JWT_SECRET") == "" || os.Getenv("DB_SERVER") == "" {
+		log.Fatal("Environment variables JWT_SECRET or DB_SERVER are not set")
+	}
+}
 
 // NewServer create authorization server
 func NewServer(cfg *Config) *Server {
@@ -43,6 +51,7 @@ type Server struct {
 }
 
 func (s *Server) redirectError(c *gin.Context, err error) {
+	fmt.Println(err)
 	data, _, _ := s.getErrorData(err)
 	c.JSON(http.StatusUnauthorized, data)
 }
@@ -212,7 +221,7 @@ func (s *Server) getUserFromToken(r *http.Request) (*models.PublicUserInfo, erro
 }
 
 // UpdatePasswordRequest validates the request
-func (s *Server) UpdatePasswordRequest(c *gin.Context, user *models.UserCredentials) {
+func (s *Server) UpdatePasswordRequest(c *gin.Context, oldPassword, newPassword string) {
 
 	userInfo, err := s.getUserFromToken(c.Request)
 	if err != nil {
@@ -220,14 +229,12 @@ func (s *Server) UpdatePasswordRequest(c *gin.Context, user *models.UserCredenti
 		return
 	}
 
-	// fmt.Println("password for update is", user.GetPassword())
-	if user.GetPassword() == "" {
-		s.redirectError(c, errors.ErrInvalidRequest)
+	if oldPassword == "" || newPassword == "" {
+		c.JSON(http.StatusBadRequest, errors.ErrInvalidRequest)
 		return
 	}
 
-	user.UserName = userInfo.GetUserName()
-	updatedUserInfo, err := s.Manager.UpdatePassword(user)
+	updatedUserInfo, err := s.Manager.UpdatePassword(false, oldPassword, newPassword, userInfo.GetUserName())
 	if err != nil {
 		s.redirectError(c, err)
 		return
@@ -237,7 +244,7 @@ func (s *Server) UpdatePasswordRequest(c *gin.Context, user *models.UserCredenti
 }
 
 // ResetPasswordRequest validates the request
-func (s *Server) ResetPasswordRequest(c *gin.Context, user *models.UserCredentials) {
+func (s *Server) ResetPasswordRequest(c *gin.Context, newPassword, userName string) {
 
 	userInfo, err := s.getUserFromToken(c.Request)
 	if err != nil {
@@ -245,14 +252,15 @@ func (s *Server) ResetPasswordRequest(c *gin.Context, user *models.UserCredentia
 		return
 	}
 
-	if user.GetUserName() == "" || user.GetPassword() == "" {
-		s.redirectError(c, errors.ErrInvalidRequest)
+	if userName == "" || newPassword == "" {
+		c.JSON(http.StatusBadRequest, errors.ErrInvalidRequest)
 		return
 	}
 
 	var updatedUserInfo *models.PublicUserInfo
-	if userInfo.UserName == types.DefaultUserName {
-		updatedUserInfo, err = s.Manager.UpdatePassword(user)
+	if userInfo.GetUserName() == types.DefaultUserName {
+
+		updatedUserInfo, err = s.Manager.UpdatePassword(true, "", newPassword, userName)
 		if err != nil {
 			s.redirectError(c, err)
 			return
@@ -294,15 +302,19 @@ func (s *Server) CreateRequest(c *gin.Context, user *models.UserCredentials) {
 		s.redirectError(c, errors.ErrInvalidRequest)
 		return
 	}
-
+	fmt.Println(user.GetUserName(), "un")
 	var createdUserInfo *models.PublicUserInfo
 	if userInfo.UserName == types.DefaultUserName {
+		fmt.Print("here")
 		createdUserInfo, err = s.Manager.CreateUser(user)
 		if err != nil {
 			s.redirectError(c, err)
 			return
 		}
+	} else {
+		s.redirectError(c, errors.ErrInvalidUser)
 	}
+	fmt.Println(createdUserInfo, userInfo)
 	s.redirect(c, createdUserInfo)
 	return
 }

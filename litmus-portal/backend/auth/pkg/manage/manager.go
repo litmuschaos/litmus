@@ -1,6 +1,7 @@
 package manage
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -38,7 +39,7 @@ func (m *Manager) MustUserStorage(stor *store.UserStore, err error) {
 	m.userStore = stor
 	_, err = m.CreateUser(models.DefaultUser)
 	if err != nil {
-		log.Fatal("Unable to create default user with error:", err)
+		log.Println("Unable to create default user with error:", err)
 	}
 }
 
@@ -118,6 +119,7 @@ func (m *Manager) CreateUser(user *models.UserCredentials) (*models.PublicUserIn
 	} else if exists {
 		return nil, errors.ErrUserExists
 	}
+	fmt.Println("here")
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), types.PasswordEncryptionCost)
 	if err != nil {
 		return nil, err
@@ -192,14 +194,21 @@ func (m *Manager) UpdateUserDetails(user *models.UserCredentials) (*models.Publi
 }
 
 // UpdatePassword get the user information
-func (m *Manager) UpdatePassword(user *models.UserCredentials) (*models.PublicUserInfo, error) {
+func (m *Manager) UpdatePassword(reset bool, oldPassword, newPassword, userName string) (*models.PublicUserInfo, error) {
 
-	storedUser, err := m.GetUser(user.UserName)
+	storedUser, err := m.GetUser(userName)
 	if err != nil {
 		return nil, errors.ErrInvalidUser
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.GetPassword()), types.PasswordEncryptionCost)
+	if reset == false {
+		err = bcrypt.CompareHashAndPassword([]byte(storedUser.GetPassword()), []byte(oldPassword))
+		if err != nil {
+			return storedUser.GetPublicInfo(), errors.ErrInvalidPassword
+		}
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), types.PasswordEncryptionCost)
 	if err != nil {
 		return nil, err
 	}
