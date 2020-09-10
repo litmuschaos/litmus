@@ -3,6 +3,8 @@ import Card from '@material-ui/core/Card';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import useActions from '../../redux/actions';
+import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
 import useStyles from './style';
 
@@ -14,6 +16,7 @@ const QuickActionItems: React.FC = ({ children }) => {
 const QuickActionCard = () => {
   const classes = useStyles();
   const userRole = useSelector((state: RootState) => state.userData.userRole);
+  const tabs = useActions(TabActions);
 
   return (
     <div className={classes.quickActionCard}>
@@ -29,7 +32,11 @@ const QuickActionCard = () => {
           {userRole === 'Owner' && (
             <QuickActionItems>
               <img src="icons/team.png" alt="team" />
-              <Link to="/settings" className={classes.listItem}>
+              <Link
+                to="/settings"
+                className={classes.listItem}
+                onClick={() => tabs.changeSettingsTabs(0)}
+              >
                 Invite a team member
               </Link>
             </QuickActionItems>

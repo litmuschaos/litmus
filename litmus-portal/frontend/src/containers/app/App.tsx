@@ -98,6 +98,7 @@ function App() {
   useEffect(() => {
     if (userData.token !== '') analyticsAction.loadCommunityAnalytics();
   }, [userData.token]);
+
   return (
     <Suspense fallback={<Loader />}>
       <Router history={history}>

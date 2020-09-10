@@ -18,6 +18,7 @@ import {
   Project,
 } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
+import * as TabActions from '../../redux/actions/tabs';
 import * as UserActions from '../../redux/actions/user';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
@@ -53,6 +54,7 @@ const HomePage = () => {
   const classes = useStyles();
   const { t } = useTranslation();
   const user = useActions(UserActions);
+  const tabs = useActions(TabActions);
 
   // Query to get user details
   const { data, loading } = useQuery<
@@ -122,7 +124,10 @@ const HomePage = () => {
                     <Button
                       variant="contained"
                       className={classes.predefinedBtn}
-                      onClick={() => history.push('/workflows')}
+                      onClick={() => {
+                        tabs.changeWorkflowsTabs(2);
+                        history.push('/workflows');
+                      }}
                     >
                       <Typography variant="subtitle1">
                         {t('home.button1')}
