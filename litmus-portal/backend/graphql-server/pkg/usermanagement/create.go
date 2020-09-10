@@ -35,7 +35,7 @@ func CreateUser(ctx context.Context, user model.UserInput) (*model.User, error) 
 		Email:       user.Email,
 		CompanyName: user.CompanyName,
 		Name:        user.Name,
-		CreatedAt:   time.Now().String(),
+		CreatedAt:   time.Now().Format(time.RFC1123Z),
 	}
 
 	err = database.InsertUser(ctx, newUser)
@@ -76,4 +76,20 @@ func GetUser(ctx context.Context, username string) (*model.User, error) {
 
 	outputUser.Projects = projects
 	return outputUser, nil
+}
+
+//GetUsers ...
+func GetUsers(ctx context.Context) ([]*model.User, error) {
+
+	users, err := database.GetUsers(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var outputUsers []*model.User
+	for _, user := range users {
+		outputUsers = append(outputUsers, user.GetOutputUser())
+	}
+
+	return outputUsers, nil
 }

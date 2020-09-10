@@ -1,14 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import jwtDecode from 'jsonwebtoken';
-import { UserAction, UserActions, UserData } from '../../models/user';
+import {
+  UpdateUser,
+  UserAction,
+  UserActions,
+  UserData,
+} from '../../models/redux/user';
 import { setCookie } from '../../utils/cookies';
 import createReducer from './createReducer';
 
 const initialState: UserData = {
   selectedProjectID: '',
   token: '',
-  username: '',
+  username: 'admin',
   exp: 0,
+  selectedProjectName: 'Default',
+  userRole: 'Owner',
 };
 
 export const userData = createReducer<UserData>(initialState, {
@@ -32,7 +39,7 @@ export const userData = createReducer<UserData>(initialState, {
   [UserActions.UPDATE_USER_DETAILS](state: UserData, action: UserAction) {
     return {
       ...state,
-      ...(action.payload as Object),
+      ...(action.payload as UpdateUser),
     };
   },
   [UserActions.LOGOUT_USER](state: UserData, action: UserAction) {

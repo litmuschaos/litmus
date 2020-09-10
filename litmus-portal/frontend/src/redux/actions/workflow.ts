@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import { WorkflowActions, experimentMap } from '../../models/workflow';
+import { experimentMap, WorkflowActions } from '../../models/redux/workflow';
 
 export const setWorkflowDetails = (data: {
   name: string;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Nodes } from '../../../../models/workflowData';
+import { Nodes } from '../../../../models/graphql/workflowData';
 import useActions from '../../../../redux/actions';
 import * as NodeSelectionActions from '../../../../redux/actions/nodeSelection';
 import DagreGraph, { d3Link, d3Node } from '../../../DagreGraph';

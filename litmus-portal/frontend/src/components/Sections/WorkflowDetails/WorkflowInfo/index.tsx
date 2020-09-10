@@ -3,7 +3,7 @@
 import { Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { ExecutionData } from '../../../../models/workflowData';
+import { ExecutionData } from '../../../../models/graphql/workflowData';
 import { RootState } from '../../../../redux/reducers';
 import timeDifference from '../../../../utils/datesModifier';
 import useStyles from './styles';

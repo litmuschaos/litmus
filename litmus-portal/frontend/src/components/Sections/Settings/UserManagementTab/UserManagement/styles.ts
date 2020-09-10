@@ -22,19 +22,15 @@ const useStyles = makeStyles((theme: Theme) => ({
   memTypo: {
     fontSize: '1rem',
   },
-  root: {
-    flexShrink: 0,
-    marginLeft: theme.spacing(2.5),
-  },
   table: {
     maxWidth: '63.75rem',
-    maxHeight: '31.25rem',
-    border: '1px solid rgba(0,0,0,0.05)',
+    height: '30.25rem',
+    border: `1px solid ${theme.palette.customColors.black(0.05)}`,
   },
   Signed: {
     minWidth: '2.625rem',
     minHeight: '0.8125rem',
-    background: 'rgba(16, 155, 103, 0.1)',
+    background: theme.palette.customColors.menuOption.active,
     marginRight: theme.spacing(2.5),
     borderRadius: '0.1875rem',
     color: theme.palette.primary.dark,
@@ -47,17 +43,17 @@ const useStyles = makeStyles((theme: Theme) => ({
   NotSigned: {
     minWidth: '2.625rem',
     minHeight: '0.8125rem',
-    background: 'rgba(202, 44, 44, 0.1)',
+    background: theme.palette.error.light,
     marginRight: theme.spacing(2.5),
     fontSize: '0.625rem',
     padding: theme.spacing(0.834),
     borderRadius: '0.1875rem',
-    color: '#CA2C2C',
+    color: theme.palette.error.dark,
   },
   toolbar: {
     maxWidth: '63.75rem',
     height: '6.125rem',
-    border: '1px solid rgba(0,0,0,0.05)',
+    border: `1px solid ${theme.palette.customColors.black(0.05)}`,
     marginBottom: theme.spacing(1.25),
   },
   filter: {
@@ -67,9 +63,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   filterMenu: {
     marginLeft: theme.spacing(1.25),
-    border: '1px solid rgba(0,0,0,0.05)',
+    border: `1px solid ${theme.palette.customColors.black(0.05)}`,
     borderRadius: '0.1875rem',
-
     maxWidth: '11.375rem',
     height: '2.375rem',
     paddingLeft: theme.spacing(2.5),
@@ -77,12 +72,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingTop: theme.spacing(0.625),
     paddingBottom: theme.spacing(0.625),
   },
-
+  root: {
+    maxWidth: '63.75rem',
+  },
   TR: {
     height: '4.8125rem',
   },
   firstTC: {
-    borderRight: '1px solid rgba(0,0,0,0.1)',
+    borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
     maxWidth: '17.56rem',
   },
   firstCol: {
@@ -95,10 +92,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     maxWidth: '15.375rem',
   },
   lastTC: {
-    borderLeft: '1px solid rgba(0,0,0,0.1)',
+    borderLeft: `1px solid ${theme.palette.customColors.black(0.1)}`,
   },
   styledTC: {
-    borderRight: '1px solid rgba(0,0,0,0.1)',
+    borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
   },
   opt: {
     background: theme.palette.secondary.contrastText,
@@ -122,6 +119,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   buttonTxt: {},
   optionBtn: {
     marginLeft: 'auto',
+  },
+  calIcon: {
+    marginRight: theme.spacing(1.25),
+  },
+  dateDiv: {
+    display: 'flex',
   },
 }));
 export default useStyles;

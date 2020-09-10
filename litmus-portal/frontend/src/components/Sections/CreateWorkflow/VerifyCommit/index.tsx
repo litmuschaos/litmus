@@ -1,7 +1,8 @@
-import { Divider, Link, Typography } from '@material-ui/core';
+import { Divider, Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { experimentMap, WorkflowData } from '../../../../models/workflow';
+import Unimodal from '../../../../containers/layouts/Unimodal';
+import { experimentMap, WorkflowData } from '../../../../models/redux/workflow';
 import useActions from '../../../../redux/actions';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
 import { RootState } from '../../../../redux/reducers';
@@ -17,7 +18,6 @@ import {
   parseYamlValidations,
 } from '../../../YamlEditor/Validations';
 import useStyles from './styles';
-import Unimodal from '../../../../containers/layouts/Unimodal';
 
 interface VerifyCommitProps {
   gotoStep: (page: number) => void;
@@ -86,8 +86,8 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     }
   }, [modified]);
 
-  const preventDefault = (event: React.SyntheticEvent) =>
-    event.preventDefault();
+  // const preventDefault = (event: React.SyntheticEvent) =>
+  //  event.preventDefault();
   return (
     <div>
       <div className={classes.root}>
@@ -158,7 +158,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               <CustomTime ampm disabled={edit} />
               <div className={classes.editButton1}>
                 <ButtonOutline
-                  isDisabled={false}
+                  isDisabled
                   handleClick={() => setEdit(!edit)}
                   data-cy="testRunButton"
                 >
@@ -229,6 +229,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
           </div>
         </div>
         <Divider />
+        {/*
         <div>
           <Typography className={classes.config}>
             The configuration details of this workflow will be committed to:{' '}
@@ -243,32 +244,16 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             </span>
           </Typography>
         </div>
+        */}
       </div>
 
-      {/* <Modal open={open} onClose={handleClose}>
-        <div className={classes.modalContainer}>
-          <div className={classes.modalContainerClose}>
-            <Button
-              variant="outlined"
-              color="secondary"
-              className={classes.closeButtonStyle}
-              onClick={handleClose}
-            >
-              &#x2715;
-            </Button>
-          </div>
-          <YamlEditor
-            content={yaml}
-            filename={name}
-            yamlLink={link}
-            id={id}
-            description={description}
-            readOnly
-            optionsDisplay={false}
-          />
-        </div>
-      </Modal> */}
-      <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn isDark>
+      <Unimodal
+        isOpen={open}
+        handleClose={handleClose}
+        hasCloseBtn
+        isDark
+        textAlign="left"
+      >
         <YamlEditor
           content={yaml}
           filename={name}
@@ -276,7 +261,6 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
           id={id}
           description={description}
           readOnly
-          optionsDisplay={false}
         />
       </Unimodal>
     </div>

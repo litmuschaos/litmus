@@ -7,7 +7,10 @@ import {
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import React from 'react';
-import { ExecutionData, WorkflowRun } from '../../../../models/workflowData';
+import {
+  ExecutionData,
+  WorkflowRun,
+} from '../../../../models/graphql/workflowData';
 import { history } from '../../../../redux/configureStore';
 import timeDifferenceForDate from '../../../../utils/datesModifier';
 import LinearProgressBar from '../../ReturningHome/ProgressBar/LinearProgressBar';
@@ -99,7 +102,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           <MenuItem
             value="Workflow"
             onClick={() =>
-              history.push(`/workflows/${data.workflow_name}/details`)
+              history.push(`/workflows/${data.workflow_run_id}/details`)
             }
           >
             Show the workflow

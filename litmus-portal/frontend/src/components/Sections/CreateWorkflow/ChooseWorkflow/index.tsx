@@ -15,6 +15,7 @@ const ChooseWorkflow: React.FC = () => {
   const classes = useStyles();
   const workflow = useActions(WorkflowActions);
   const [open, setOpen] = React.useState(false);
+  const [visible, setVisible] = React.useState(true);
   const [workflowDetails, setWorkflowData] = useState({
     workflowName: 'Personal Workflow Name',
     workflowDesc: 'Personal Description',
@@ -65,8 +66,12 @@ const ChooseWorkflow: React.FC = () => {
   }, []);
 
   const selectWorkflow = (index: number) => {
+    setVisible(false);
+    const timeStampBasedWorkflowName: string = `argowf-chaos-${
+      workflowsList[index].title
+    }-${Math.round(new Date().getTime() / 1000)}`;
     workflow.setWorkflowDetails({
-      name: workflowsList[index].title,
+      name: timeStampBasedWorkflowName,
       link: workflowsList[index].chaosWkfCRDLink,
       id: workflowsList[index].workflowID,
       yaml: 'none',
@@ -75,7 +80,7 @@ const ChooseWorkflow: React.FC = () => {
     });
 
     setWorkflowData({
-      workflowName: workflowsList[index].title,
+      workflowName: timeStampBasedWorkflowName,
       workflowDesc: workflowsList[index].description,
     });
 
@@ -106,8 +111,14 @@ const ChooseWorkflow: React.FC = () => {
             workflows={workflowsList}
           />
           <div className={classes.paddedTop}>
-            <ButtonFilled isPrimary={false} handleClick={() => setOpen(true)}>
-              <div>Create workflow name</div>
+            <ButtonFilled
+              handleClick={() => {
+                setOpen(true);
+              }}
+              isPrimary={false}
+              isDisabled={visible}
+            >
+              <div>Edit workflow name</div>
             </ButtonFilled>
             <Typography className={classes.saved} display="inline">
               <strong>

@@ -44,3 +44,8 @@ export const validateOnlyAlphabet = (value: string) => {
   if (value.match(onlyAplhaValid)) return false;
   return true;
 };
+
+export const validateLength = (value: string) => {
+  if (value.length > 0) return false;
+  return true;
+};

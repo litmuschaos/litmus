@@ -10,16 +10,26 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
+import { setContext } from '@apollo/client/link/context';
 import config from './config';
 import App from './containers/app/App';
 import configureStore from './redux/configureStore';
+import { getCookie } from './utils/cookies';
 
 const { persistor, store } = configureStore();
 
 const httpLink = new HttpLink({
   uri: `${config.grahqlEndpoint}/query`,
 });
-
+const authLink = setContext((_, { headers }) => {
+  const token = getCookie('token');
+  return {
+    headers: {
+      ...headers,
+      authorization: token,
+    },
+  };
+});
 const wsLink = new WebSocketLink({
   uri: `${config.grahqlEndpointSubscription}/query`,
   options: {
@@ -36,8 +46,8 @@ const link = split(
       definition.operation === 'subscription'
     );
   },
-  wsLink,
-  httpLink
+  authLink.concat(wsLink),
+  authLink.concat(httpLink)
 );
 
 export const client = new ApolloClient({

@@ -1,24 +1,17 @@
+import { Button, Divider, Typography } from '@material-ui/core';
+import React, { useRef } from 'react';
+import Unimodal from '../../../../../containers/layouts/Unimodal';
 import {
-  FormControl,
-  IconButton,
-  Input,
-  InputAdornment,
-  InputLabel,
-  Button,
-  Typography,
-  Divider,
-} from '@material-ui/core';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import React from 'react';
+  validateConfirmPassword,
+  validateStartEmptySpacing,
+} from '../../../../../utils/validate';
+import InputField from '../../../../InputField';
 import PersonalDetails from '../PersonalDetails';
 import useStyles from './styles';
-import Unimodal from '../../../../../containers/layouts/Unimodal';
 
 // used for password field
 interface Password {
   password: string;
-  err: boolean;
   showPassword: boolean;
 }
 
@@ -28,101 +21,62 @@ const AccountSettings: React.FC = () => {
 
   // used for modal
   const [open, setOpen] = React.useState(false);
+  const isSuccess = useRef<boolean>(false);
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  // used for password validation
-  const regularExpression = new RegExp(
-    '^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})'
-  );
-
   // states for the three password fields
   const [currPassword, setCurrPassword] = React.useState<Password>({
     password: '',
     showPassword: false,
-    err: false,
   });
   const [newPassword, setNewPassword] = React.useState<Password>({
     password: '',
     showPassword: false,
-    err: false,
   });
   const [confNewPassword, setConfNewPassword] = React.useState<Password>({
     password: '',
     showPassword: false,
-    err: false,
   });
 
-  // handleNewPassword handles password validation for second password field
+  // handleCurrPassword handles password for first password field
+  const handleCurrPassword = (prop: keyof Password) => (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setCurrPassword({
+      ...currPassword,
+      [prop]: event.target.value,
+    });
+  };
+
+  // handleNewPassword handles password for second password field
   const handleNewPassword = (prop: keyof Password) => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if (
-      event.target.value !== currPassword.password &&
-      regularExpression.test(event.target.value) &&
-      (confNewPassword.password.length === 0 ||
-        event.target.value === confNewPassword.password)
-    ) {
-      setNewPassword({
-        ...newPassword,
-        err: false,
-        [prop]: event.target.value,
-      });
-      setConfNewPassword({ ...confNewPassword, err: false });
-    } else {
-      setNewPassword({ ...newPassword, err: true, [prop]: event.target.value });
-      setConfNewPassword({ ...confNewPassword });
-    }
+    setNewPassword({
+      ...newPassword,
+      [prop]: event.target.value,
+    });
   };
 
-  // handleConfPassword handles password validation for third password field
+  // handleConfPassword handles password for third password field
   const handleConfPassword = (prop: keyof Password) => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if (
-      event.target.value === newPassword.password &&
-      regularExpression.test(event.target.value)
-    ) {
-      setConfNewPassword({
-        ...confNewPassword,
-        err: false,
-        [prop]: event.target.value,
-      });
-      setNewPassword({ ...newPassword, err: false });
-    } else {
-      setConfNewPassword({
-        ...confNewPassword,
-        err: true,
-        [prop]: event.target.value,
-      });
-      setNewPassword({ ...newPassword });
-    }
-  };
-
-  // implements the logic for visibility of password
-  const handleClickShowPassword1 = () => {
-    setCurrPassword({
-      ...currPassword,
-      showPassword: !currPassword.showPassword,
-    });
-  };
-  const handleClickShowPassword2 = () => {
-    setNewPassword({ ...newPassword, showPassword: !newPassword.showPassword });
-  };
-  const handleClickShowPassword3 = () => {
     setConfNewPassword({
       ...confNewPassword,
-      showPassword: !confNewPassword.showPassword,
+      [prop]: event.target.value,
     });
   };
 
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-  };
+  if (
+    confNewPassword.password.length > 0 &&
+    newPassword.password === confNewPassword.password
+  )
+    isSuccess.current = true;
+  else isSuccess.current = false;
 
   return (
     <div className={classes.container}>
@@ -139,106 +93,60 @@ const AccountSettings: React.FC = () => {
           <div className={classes.outerPass}>
             <form className={classes.innerPass}>
               {/* Current Password */}
-              <FormControl>
-                <Input
-                  className={classes.pass}
-                  defaultValue={currPassword.password}
-                  id="outlined-adornment-password"
-                  type={currPassword.showPassword ? 'text' : 'password'}
-                  disableUnderline
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword1}
-                        edge="end"
-                      >
-                        {currPassword.showPassword ? (
-                          <Visibility />
-                        ) : (
-                          <VisibilityOff />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                />
-                <InputLabel htmlFor="outlined-adornment-password">
-                  Current Password
-                </InputLabel>
-              </FormControl>
+              <InputField
+                required
+                value={currPassword.password}
+                handleChange={handleCurrPassword('password')}
+                type="password"
+                label="Current Password"
+                validationError={false}
+              />
+
               {/* New Password */}
-              <FormControl>
-                <Input
-                  data-cy="changePassword"
-                  className={`${classes.pass} ${
-                    newPassword.err ? classes.error : classes.success
-                  }`}
-                  id="outlined-adornment-password"
-                  type={newPassword.showPassword ? 'text' : 'password'}
-                  onChange={handleNewPassword('password')}
-                  disableUnderline
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        data-cy="conVisibilty"
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword2}
-                        onMouseDown={handleMouseDownPassword}
-                        edge="end"
-                      >
-                        {newPassword.showPassword ? (
-                          <Visibility data-cy="visIcon" />
-                        ) : (
-                          <VisibilityOff data-cy="invisIcon" />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                />
-                <InputLabel htmlFor="outlined-adornment-password">
-                  New Password
-                </InputLabel>
-              </FormControl>
+              <InputField
+                required
+                type="password"
+                handleChange={handleNewPassword('password')}
+                success={isSuccess.current}
+                helperText={
+                  validateStartEmptySpacing(newPassword.password)
+                    ? 'Should not start with empty space'
+                    : ''
+                }
+                label="New Password"
+                validationError={validateStartEmptySpacing(
+                  newPassword.password
+                )}
+                value={newPassword.password}
+              />
+
               {/* Confirm new password */}
-              <FormControl>
-                <Input
-                  data-cy="confirmPassword"
-                  className={`${classes.pass} ${
-                    confNewPassword.err ? classes.error : classes.success
-                  }`}
-                  id="outlined-adornment-password"
-                  type={confNewPassword.showPassword ? 'text' : 'password'}
-                  onChange={handleConfPassword('password')}
-                  disableUnderline
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        data-cy="conVisibilty"
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword3}
-                        onMouseDown={handleMouseDownPassword}
-                        edge="end"
-                      >
-                        {confNewPassword.showPassword ? (
-                          <Visibility data-cy="visIcon" />
-                        ) : (
-                          <VisibilityOff data-cy="invisIcon" />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                />
-                <InputLabel htmlFor="outlined-adornment-password">
-                  Confirm new password
-                </InputLabel>
-              </FormControl>
+              <InputField
+                helperText={
+                  validateConfirmPassword(
+                    newPassword.password,
+                    confNewPassword.password
+                  )
+                    ? 'Password is not same'
+                    : ''
+                }
+                required
+                type="password"
+                handleChange={handleConfPassword('password')}
+                success={isSuccess.current}
+                label="Confirm Password"
+                validationError={validateConfirmPassword(
+                  newPassword.password,
+                  confNewPassword.password
+                )}
+                value={confNewPassword.password}
+              />
               <Button
                 data-cy="button"
                 variant="contained"
                 className={classes.button}
                 onClick={() => {
                   if (
-                    !(newPassword.err && confNewPassword.err) &&
                     newPassword.password.length > 0 &&
                     confNewPassword.password.length > 0
                   ) {

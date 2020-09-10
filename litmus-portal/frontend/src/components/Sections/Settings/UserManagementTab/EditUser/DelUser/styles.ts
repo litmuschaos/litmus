@@ -28,39 +28,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   typoSub: {
     fontSize: '1rem',
   },
-  button: {
-    textTransform: 'none',
-    width: '9.25rem',
-    height: '2.75rem',
-    borderRadius: 3,
-    marginTop: theme.spacing(3.75),
-    backgroundColor: theme.palette.secondary.dark,
-    color: theme.palette.common.white,
-    '&:hover': {
-      backgroundColor: theme.palette.secondary.dark,
-    },
-  },
-
   // for yes or no buttons
-  buttonFilled: {
-    textTransform: 'none',
-    width: '6.68rem',
-    height: '2.75rem',
-    borderRadius: '0.1875rem',
-    backgroundColor: theme.palette.secondary.dark,
-    color: theme.palette.common.white,
-    '&:hover': {
-      backgroundColor: theme.palette.secondary.dark,
-    },
-  },
-  buttonOutline: {
-    borderColor: theme.palette.secondary.dark,
-    textTransform: 'none',
-    width: '4.81rem',
-    height: '2.75rem',
-    borderRadius: 3,
-  },
-
   buttonGroup: {
     display: 'flex',
     width: '12.75rem',

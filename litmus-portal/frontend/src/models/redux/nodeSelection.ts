@@ -1,4 +1,4 @@
-import { Node } from './workflowData';
+import { Node } from '../graphql/workflowData';
 
 export enum NodeSelectionActions {
   SELECT_NODE = 'SELECT_NODE',

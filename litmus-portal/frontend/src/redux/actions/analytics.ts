@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import config from '../../config';
-import { AnalyticsActions } from '../../models/analytics';
+import { AnalyticsActions } from '../../models/redux/analytics';
 
 export const loadCommunityAnalytics = () => (dispatch: Function) => {
   fetch(`${config.analytics.url}`)

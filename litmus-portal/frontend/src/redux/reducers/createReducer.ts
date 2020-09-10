@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 import { Reducer } from 'redux';
-import { Action } from '../../models';
+import { Action } from '../../models/redux';
 
 export default function createReducer<S>(
   initialState: S,

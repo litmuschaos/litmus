@@ -12,7 +12,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import moment from 'moment';
 import React from 'react';
-import { WorkflowRun } from '../../../../models/workflowData';
+import { WorkflowRun } from '../../../../models/graphql/workflowData';
 import { history } from '../../../../redux/configureStore';
 import LinearProgressBar from '../../ReturningHome/ProgressBar/LinearProgressBar';
 import useStyles from './styles';
@@ -170,7 +170,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           <MenuItem
             value="Workflow"
             onClick={() =>
-              history.push(`/workflows/${data.workflow_name}/schedule`)
+              history.push(`/workflows/${data.workflow_run_id}/schedule`)
             }
           >
             <div className={classes.expDiv}>

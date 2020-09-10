@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
 import { Typography } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import useStyles from './styles';
-import { WorkflowData } from '../../../../models/workflow';
-import { RootState } from '../../../../redux/reducers';
+import YAML from 'yaml';
+import { WorkflowData } from '../../../../models/redux/workflow';
 import useActions from '../../../../redux/actions';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
+import { RootState } from '../../../../redux/reducers';
 import Loader from '../../../Loader';
 import YamlEditor from '../../../YamlEditor/Editor';
+import useStyles from './styles';
 
 const TuneWorkflow: React.FC = () => {
   const classes = useStyles();
@@ -29,11 +30,15 @@ const TuneWorkflow: React.FC = () => {
     fetch(link)
       .then((data) => {
         data.text().then((yamlText) => {
-          setYamlFile(yamlText);
+          const parsedYaml = YAML.parse(yamlText);
+          delete parsedYaml.metadata.generateName;
+          parsedYaml.metadata.name = workflowData.name;
+          const nameMappedYaml = YAML.stringify(parsedYaml);
+          setYamlFile(nameMappedYaml);
           workflow.setWorkflowDetails({
             name,
             link,
-            yaml: yamlText,
+            yaml: nameMappedYaml,
             id,
             description,
           });
@@ -84,7 +89,6 @@ const TuneWorkflow: React.FC = () => {
           id={id}
           description={description}
           readOnly={false}
-          optionsDisplay
         />
       </div>
     </div>

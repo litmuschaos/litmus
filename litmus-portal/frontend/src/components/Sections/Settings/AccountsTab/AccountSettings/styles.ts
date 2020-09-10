@@ -44,14 +44,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
-  pass: {
-    width: '24.43rem',
-    height: '4.8125rem',
-    marginBottom: theme.spacing(2.5),
-    padding: theme.spacing(1),
-    border: '1px solid rgba(0, 0, 0, 0.2)',
-    borderRadius: 3,
-  },
   col2: {
     display: 'flex',
     flexDirection: 'column',
@@ -73,14 +65,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   txt2: {
     marginBottom: theme.spacing(2.5),
     fontSize: '1rem',
-  },
-  success: {
-    border: '0.0625rem solid',
-    borderColor: theme.palette.secondary.dark,
-  },
-  error: {
-    border: '0.0625rem solid',
-    borderColor: theme.palette.error.main,
   },
 
   // Password Modal content styles
