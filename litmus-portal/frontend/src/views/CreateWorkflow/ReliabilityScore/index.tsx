@@ -3,7 +3,6 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
-import InfoTooltip from '../../../components/InfoTooltip';
 import Center from '../../../containers/layouts/Center';
 import Unimodal from '../../../containers/layouts/Unimodal';
 import { experimentMap, WorkflowData } from '../../../models/redux/workflow';
@@ -13,6 +12,7 @@ import { RootState } from '../../../redux/reducers';
 import WeightSlider from '../WeightSlider';
 import ResultTable from './ResultTable';
 import useStyles from './styles';
+// import InfoTooltip from '../../../components/InfoTooltip';
 
 const ReliablityScore = () => {
   const classes = useStyles();
@@ -99,9 +99,9 @@ const ReliablityScore = () => {
                   </Typography>
                 </div>
               </ButtonOutline>
-              <div className={classes.toolTipDiv}>
+              {/* <div className={classes.toolTipDiv}>
                 <InfoTooltip value="Text Default" />
-              </div>
+                </div> */}
               <Unimodal
                 isOpen={open}
                 handleClose={() => setOpen(false)}
