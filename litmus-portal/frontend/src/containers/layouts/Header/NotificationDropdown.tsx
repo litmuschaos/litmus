@@ -1,24 +1,24 @@
 /* eslint-disable no-nested-ternary */
-import React, { useState, useRef } from 'react';
 import {
-  Popover,
-  IconButton,
   AppBar,
+  Badge,
+  Box,
+  IconButton,
   List,
   ListItem,
   ListItemText,
+  Popover,
   Typography,
-  Box,
-  Badge,
 } from '@material-ui/core';
 import NotificationsOutlinedIcon from '@material-ui/icons/NotificationsOutlined';
-import NotificationListItem from './NotificationListItem';
-import useStyles from './styles';
+import React, { useRef, useState } from 'react';
 import {
   Message,
-  NotificationsCallBackType,
   NotificationIds,
+  NotificationsCallBackType,
 } from '../../../models/header';
+import NotificationListItem from './NotificationListItem';
+import useStyles from './styles';
 
 interface NotificationDropdownProps {
   messages: Message[];
@@ -61,7 +61,8 @@ const NotificationsDropdown: React.FC<NotificationDropdownProps> = ({
         color="inherit"
       >
         <Badge
-          badgeContent={count === '0' ? messages.length : count}
+          // badgeContent={count === '0' ? messages.length : count}
+          badgeContent={0}
           color="secondary"
         >
           <NotificationsOutlinedIcon />

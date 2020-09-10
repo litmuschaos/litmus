@@ -159,8 +159,8 @@ const BrowseSchedule = () => {
               className={classes.selectText}
             >
               <MenuItem value="All">All</MenuItem>
-              <MenuItem value="Predefined">Cluset pre-defined</MenuItem>
-              <MenuItem value="Kubernetes">Kubernetes Cluster</MenuItem>
+              <MenuItem value="Internal">Internal</MenuItem>
+              <MenuItem value="External">External</MenuItem>
             </Select>
           </FormControl>
         </div>

@@ -87,6 +87,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(5.625),
   },
   workflowNameData: {
+    maxWidth: '15.625rem',
     borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
   },
   targetCluster: {

@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
 import {
-  InputBase,
-  InputAdornment,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Typography,
-  IconButton,
-  Popover,
   Button,
+  FormControl,
+  IconButton,
+  InputAdornment,
+  InputBase,
+  InputLabel,
+  MenuItem,
+  Popover,
+  Select,
+  Typography,
 } from '@material-ui/core';
-import SearchIcon from '@material-ui/icons/Search';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import SearchIcon from '@material-ui/icons/Search';
+import React, { useState } from 'react';
 import { DateRangePicker } from 'react-date-range';
-import useStyles from './styles';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
+import useStyles from './styles';
 
 interface HeaderSectionProps {
   searchValue: string;
@@ -130,8 +130,8 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
             className={classes.selectText}
           >
             <MenuItem value="All">All</MenuItem>
-            <MenuItem value="Predefined">Cluset pre-defined</MenuItem>
-            <MenuItem value="Kubernetes">Kubernetes Cluster</MenuItem>
+            <MenuItem value="Internal">Internal</MenuItem>
+            <MenuItem value="External">External</MenuItem>
           </Select>
         </FormControl>
 

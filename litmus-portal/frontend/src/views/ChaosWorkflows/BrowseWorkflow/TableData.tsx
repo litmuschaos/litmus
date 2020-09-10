@@ -108,11 +108,11 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
             Show the workflow
           </MenuItem>
           <MenuItem value="Analysis" onClick={handleMenu}>
-            Show the analysis
+            Show the analytics
           </MenuItem>
-          <MenuItem value="Scheduler" onClick={handleMenu}>
+          {/* <MenuItem value="Scheduler" onClick={handleMenu}>
             Show the scheduler
-          </MenuItem>
+          </MenuItem> */}
         </Menu>
       </TableCell>
     </>

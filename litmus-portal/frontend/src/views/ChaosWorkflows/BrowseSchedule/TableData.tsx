@@ -77,7 +77,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   ];
   return (
     <>
-      <TableCell align="center" className={classes.workflowNameData}>
+      <TableCell className={classes.workflowNameData}>
         <Typography>
           <strong>{data.workflow_name}</strong>
         </Typography>

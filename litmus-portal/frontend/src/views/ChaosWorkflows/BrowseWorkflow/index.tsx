@@ -156,7 +156,7 @@ const BrowseWorkflow = () => {
     .filter((dataRow) =>
       filters.cluster === 'All'
         ? true
-        : dataRow.cluster_name.toLowerCase().includes(filters.cluster)
+        : dataRow.cluster_name.includes(filters.cluster)
     )
     .filter((dataRow) => {
       return dateRange.fromDate && dateRange.toDate === undefined

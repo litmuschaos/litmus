@@ -75,6 +75,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(1.25),
   },
   workflowNameData: {
+    maxWidth: '15.625rem',
     borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
   },
   regularity: {

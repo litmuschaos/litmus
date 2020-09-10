@@ -3,9 +3,9 @@ import Tabs from '@material-ui/core/Tabs';
 import React from 'react';
 import ButtonFilled from '../../components/Button/ButtonFilled';
 import { StyledTab, TabPanel } from '../../components/Tabs';
+import Center from '../../containers/layouts/Center';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { history } from '../../redux/configureStore';
-import BrowseSchedule from '../../views/ChaosWorkflows/BrowseSchedule';
 import BrowseWorkflow from '../../views/ChaosWorkflows/BrowseWorkflow';
 import Templates from '../../views/ChaosWorkflows/Templates';
 import useStyles from './styles';
@@ -51,13 +51,22 @@ const Workflows = () => {
         <BrowseWorkflow />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <BrowseSchedule />
+        {/* <BrowseSchedule /> */}
+        <Center>
+          <Typography variant="h3" align="center">
+            Schedule comming soon
+          </Typography>
+        </Center>
       </TabPanel>
       <TabPanel value={value} index={2}>
         <Templates />
       </TabPanel>
       <TabPanel value={value} index={3}>
-        Analytics comming soon
+        <Center>
+          <Typography variant="h3" align="center">
+            Analytics comming soon
+          </Typography>
+        </Center>
       </TabPanel>
     </Scaffold>
   );
