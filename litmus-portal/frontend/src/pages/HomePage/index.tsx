@@ -11,8 +11,12 @@ import QuickActionCard from '../../components/QuickActionCard';
 import WelcomeModal from '../../components/WelcomeModal';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { GET_USER } from '../../graphql';
-import { Member, Project } from '../../models/project';
-import { CurrentUserDedtailsVars, CurrentUserDetails } from '../../models/user';
+import {
+  CurrentUserDedtailsVars,
+  CurrentUserDetails,
+  Member,
+  Project,
+} from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
 import { RootState } from '../../redux/reducers';
@@ -49,7 +53,7 @@ const CreateWorkflowCard = () => {
 
 const HomePage = () => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
-  const { userData } = useSelector((state: RootState) => state);
+  const userData = useSelector((state: RootState) => state.userData);
   const classes = useStyles();
   const { t } = useTranslation();
   const user = useActions(UserActions);
@@ -92,7 +96,7 @@ const HomePage = () => {
         });
       }
     }
-  }, [loading]);
+  }, [data]);
 
   return (
     <div>

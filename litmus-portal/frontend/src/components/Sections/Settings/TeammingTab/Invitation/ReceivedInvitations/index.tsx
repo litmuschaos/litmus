@@ -14,12 +14,11 @@ import {
   DECLINE_INVITE,
   GET_USER,
 } from '../../../../../../graphql';
-import { MemberInvitation } from '../../../../../../models/invite';
-import { Project } from '../../../../../../models/project';
+import { MemberInvitation } from '../../../../../../models/graphql/invite';
 import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
-} from '../../../../../../models/user';
+} from '../../../../../../models/graphql/user';
 import { RootState } from '../../../../../../redux/reducers';
 import userAvatar from '../../../../../../utils/user';
 import ButtonFilled from '../../../../../Button/ButtonFilled';
@@ -39,7 +38,7 @@ const ReceivedInvitations: React.FC = () => {
   // for response data
   const [rows, setRows] = useState<ReceivedInvitation[]>([]);
 
-  const { userData } = useSelector((state: RootState) => state);
+  const username = useSelector((state: RootState) => state.userData.username);
 
   // stores the user whose invitation is accepted/declined
   const [acceptDecline, setAcceptDecline] = useState<string>('');
@@ -54,9 +53,7 @@ const ReceivedInvitations: React.FC = () => {
       );
     },
     onError: () => {},
-    refetchQueries: [
-      { query: GET_USER, variables: { username: userData.username } },
-    ],
+    refetchQueries: [{ query: GET_USER, variables: { username } }],
   });
 
   // mutation to decline the invitation
@@ -69,22 +66,18 @@ const ReceivedInvitations: React.FC = () => {
       );
     },
     onError: () => {},
-    refetchQueries: [
-      { query: GET_USER, variables: { username: userData.username } },
-    ],
+    refetchQueries: [{ query: GET_USER, variables: { username } }],
   });
 
   // query for getting all the data for the logged in user
-  const { data, loading } = useQuery<
-    CurrentUserDetails,
-    CurrentUserDedtailsVars
-  >(GET_USER, {
-    variables: { username: userData.username },
-  });
+  const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
+    GET_USER,
+    { variables: { username } }
+  );
 
   useEffect(() => {
-    if (data?.getUser.username === userData.username) {
-      const projectList: Project[] = data?.getUser.projects;
+    if (data?.getUser.username === username) {
+      const projectList = data?.getUser.projects;
       let users: ReceivedInvitation[] = [];
 
       let flag = 0;
@@ -92,7 +85,7 @@ const ReceivedInvitations: React.FC = () => {
       projectList.forEach((project) => {
         project.members.forEach((member) => {
           if (
-            member.user_name === userData.username &&
+            member.user_name === username &&
             member.role !== 'Owner' &&
             member.invitation === 'Pending'
           ) {
@@ -101,10 +94,7 @@ const ReceivedInvitations: React.FC = () => {
         });
         if (flag === 1) {
           project.members.forEach((member) => {
-            if (
-              member.user_name !== userData.username &&
-              member.role === 'Owner'
-            ) {
+            if (member.user_name !== username && member.role === 'Owner') {
               users = users.concat(rows, {
                 username: member.user_name,
                 role: member.role,
@@ -119,7 +109,8 @@ const ReceivedInvitations: React.FC = () => {
 
       setRows(users);
     }
-  }, [loading]);
+  }, [data]);
+
   return (
     <div>
       <TableContainer className={classes.table}>
@@ -153,7 +144,7 @@ const ReceivedInvitations: React.FC = () => {
                             variables: {
                               member: {
                                 project_id: row.projectID,
-                                user_name: userData.username,
+                                user_name: username,
                               },
                             },
                           });
@@ -170,7 +161,7 @@ const ReceivedInvitations: React.FC = () => {
                             variables: {
                               member: {
                                 project_id: row.projectID,
-                                user_name: userData.username,
+                                user_name: username,
                               },
                             },
                           });

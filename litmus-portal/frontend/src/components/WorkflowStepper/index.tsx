@@ -9,7 +9,12 @@ import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import Unimodal from '../../containers/layouts/Unimodal';
 import { CREATE_WORKFLOW } from '../../graphql';
-import { experimentMap, WorkflowData } from '../../models/workflow';
+import {
+  CreateWorkFlowInput,
+  CreateWorkflowResponse,
+  WeightMap,
+} from '../../models/graphql/createWorkflowData';
+import { experimentMap, WorkflowData } from '../../models/redux/workflow';
 import useActions from '../../redux/actions';
 import * as WorkflowActions from '../../redux/actions/workflow';
 import { history } from '../../redux/configureStore';
@@ -26,11 +31,6 @@ import ChooseAWorkflowCluster from '../Sections/CreateWorkflow/WorkflowCluster';
 import QontoConnector from './quontoConnector';
 import useStyles from './styles';
 import useQontoStepIconStyles from './useQontoStepIconStyles';
-import {
-  CreateWorkFlowInput,
-  CreateWorkflowResponse,
-  WeightMap,
-} from '../../models/CreateWorkflowData';
 
 function getSteps(): string[] {
   return [

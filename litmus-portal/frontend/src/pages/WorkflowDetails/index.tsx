@@ -13,7 +13,7 @@ import {
   Workflow,
   WorkflowDataVars,
   WorkflowSubscription,
-} from '../../models/workflowData';
+} from '../../models/graphql/workflowData';
 import { RootState } from '../../redux/reducers';
 import useStyles from './styles';
 

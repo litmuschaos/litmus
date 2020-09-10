@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
 import { Typography } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import useStyles from './styles';
-import { WorkflowData } from '../../../../models/workflow';
-import { RootState } from '../../../../redux/reducers';
+import { WorkflowData } from '../../../../models/redux/workflow';
 import useActions from '../../../../redux/actions';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
+import { RootState } from '../../../../redux/reducers';
 import Loader from '../../../Loader';
 import YamlEditor from '../../../YamlEditor/Editor';
+import useStyles from './styles';
 
 const TuneWorkflow: React.FC = () => {
   const classes = useStyles();

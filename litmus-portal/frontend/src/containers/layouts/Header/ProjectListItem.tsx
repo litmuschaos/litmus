@@ -10,9 +10,9 @@ import CheckCircleSharpIcon from '@material-ui/icons/CheckCircleSharp';
 import InsertDriveFileOutlinedIcon from '@material-ui/icons/InsertDriveFileOutlined';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import React, { useState } from 'react';
-import useStyles from './styles';
+import { Project } from '../../../models/graphql/user';
 import { ProjectsCallBackType } from '../../../models/header';
-import { Project } from '../../../models/project';
+import useStyles from './styles';
 
 interface ProjectListItemProps {
   project: Project;

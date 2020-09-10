@@ -1,4 +1,5 @@
 /* eslint-disable react/no-array-index-key */
+import { useQuery } from '@apollo/client';
 import {
   Avatar,
   Button,
@@ -11,21 +12,21 @@ import {
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useQuery } from '@apollo/client';
 import config from '../../../config';
+import { GET_USER } from '../../../graphql';
+import {
+  CurrentUserDedtailsVars,
+  CurrentUserDetails,
+  Member,
+  Project,
+} from '../../../models/graphql/user';
 import { ProjectsCallBackType } from '../../../models/header';
 import useActions from '../../../redux/actions';
 import * as UserActions from '../../../redux/actions/user';
 import { RootState } from '../../../redux/reducers';
+import userAvatar from '../../../utils/user';
 import ProjectListItem from './ProjectListItem';
 import useStyles from './styles';
-import { Member, Project } from '../../../models/project';
-import userAvatar from '../../../utils/user';
-import {
-  CurrentUserDedtailsVars,
-  CurrentUserDetails,
-} from '../../../models/user';
-import { GET_USER } from '../../../graphql';
 
 interface ProfileInfoDropdownItemProps {
   anchorEl: HTMLElement;

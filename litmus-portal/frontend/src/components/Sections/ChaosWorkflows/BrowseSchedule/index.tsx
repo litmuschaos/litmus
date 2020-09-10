@@ -27,7 +27,7 @@ import {
   Workflow,
   WorkflowDataVars,
   WorkflowRun,
-} from '../../../../models/workflowData';
+} from '../../../../models/graphql/workflowData';
 import { RootState } from '../../../../redux/reducers';
 import {
   sortAlphaAsc,

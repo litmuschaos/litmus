@@ -4,7 +4,7 @@ import {
   CommunityData,
   GeoCity,
   SeriesData,
-} from '../../models/analytics';
+} from '../../models/redux/analytics';
 import createReducer from './createReducer';
 
 const initialState: CommunityData = {

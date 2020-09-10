@@ -1,8 +1,8 @@
+import { Node } from '../../models/graphql/workflowData';
 import {
   NodeSelectionAction,
   NodeSelectionActions,
-} from '../../models/nodeSelection';
-import { Node } from '../../models/workflowData';
+} from '../../models/redux/nodeSelection';
 import createReducer from './createReducer';
 
 const initialState: Node = {

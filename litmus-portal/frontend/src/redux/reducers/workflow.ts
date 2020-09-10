@@ -3,7 +3,7 @@ import {
   WorkflowAction,
   WorkflowActions,
   WorkflowData,
-} from '../../models/workflow';
+} from '../../models/redux/workflow';
 import createReducer from './createReducer';
 
 const initialState: WorkflowData = {
