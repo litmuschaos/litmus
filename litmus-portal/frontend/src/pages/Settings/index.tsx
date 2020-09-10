@@ -1,11 +1,11 @@
 import { Box, Paper, Tab, Tabs, Typography } from '@material-ui/core';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import AccountSettings from '../../components/Sections/Settings/AccountsTab/AccountSettings';
-import TeammingTab from '../../components/Sections/Settings/TeammingTab';
-import UserManagement from '../../components/Sections/Settings/UserManagementTab/UserManagement';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { RootState } from '../../redux/reducers';
+import AccountSettings from '../../views/Settings/AccountsTab/AccountSettings';
+import TeammingTab from '../../views/Settings/TeammingTab';
+import UserManagement from '../../views/Settings/UserManagementTab/UserManagement';
 import useStyles from './styles';
 
 interface TabPanelProps {

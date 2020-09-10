@@ -2,12 +2,12 @@ import { AppBar, Typography } from '@material-ui/core';
 import Tabs from '@material-ui/core/Tabs';
 import React from 'react';
 import ButtonFilled from '../../components/Button/ButtonFilled';
-import BrowseSchedule from '../../components/Sections/ChaosWorkflows/BrowseSchedule';
-import BrowseWorkflow from '../../components/Sections/ChaosWorkflows/BrowseWorkflow';
-import Templates from '../../components/Sections/ChaosWorkflows/Templates';
 import { StyledTab, TabPanel } from '../../components/Tabs';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { history } from '../../redux/configureStore';
+import BrowseSchedule from '../../views/ChaosWorkflows/BrowseSchedule';
+import BrowseWorkflow from '../../views/ChaosWorkflows/BrowseWorkflow';
+import Templates from '../../views/ChaosWorkflows/Templates';
 import useStyles from './styles';
 
 const Workflows = () => {

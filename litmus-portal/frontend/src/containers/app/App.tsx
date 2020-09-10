@@ -16,7 +16,7 @@ const CreateWorkflow = lazy(() => import('../../pages/CreateWorkflow'));
 const LoginPage = lazy(() => import('../../pages/LoginPage'));
 const WorkflowDetails = lazy(() => import('../../pages/WorkflowDetails'));
 const BrowseTemplate = lazy(() =>
-  import('../../components/Sections/ChaosWorkflows/BrowseTemplate')
+  import('../../views/ChaosWorkflows/BrowseTemplate')
 );
 const HomePage = lazy(() => import('../../pages/HomePage'));
 const Community = lazy(() => import('../../pages/Community'));

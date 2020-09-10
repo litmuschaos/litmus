@@ -4,8 +4,6 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import Loader from '../../components/Loader';
-import ArgoWorkflow from '../../components/Sections/WorkflowDetails/ArgoWorkflow';
-import WorkflowInfo from '../../components/Sections/WorkflowDetails/WorkflowInfo';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../graphql';
 import {
@@ -15,6 +13,8 @@ import {
   WorkflowSubscription,
 } from '../../models/graphql/workflowData';
 import { RootState } from '../../redux/reducers';
+import ArgoWorkflow from '../../views/WorkflowDetails/ArgoWorkflow';
+import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
 import useStyles from './styles';
 
 const WorkflowDetails: React.FC = () => {
