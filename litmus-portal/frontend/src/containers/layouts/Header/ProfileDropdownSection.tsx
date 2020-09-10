@@ -3,18 +3,16 @@ import { Box, IconButton } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
-import React, { MutableRefObject, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { ProjectsCallBackType } from '../../../models/header';
 import userAvatar from '../../../utils/user';
 import ProfileInfoDropdownItems from './ProfileDropdownItems';
 import useStyles from './styles';
-import { Project } from '../../../models/project';
 
 interface ProfileInfoDropdownSectionProps {
   name: string;
   email: string;
   username: string;
-  projects: Project[];
   selectedProjectID: string;
   CallbackToSetSelectedProjectID: ProjectsCallBackType;
   userRole: string;
@@ -25,7 +23,6 @@ const ProfileDropdownSection: React.FC<ProfileInfoDropdownSectionProps> = ({
   name,
   email,
   username,
-  projects,
   selectedProjectID,
   CallbackToSetSelectedProjectID,
   selectedProjectName,
@@ -84,7 +81,6 @@ const ProfileDropdownSection: React.FC<ProfileInfoDropdownSectionProps> = ({
         name={name}
         username={username}
         email={email}
-        projects={projects}
         selectedProjectID={selectedProjectID}
         CallbackToSetSelectedProjectIDOnProfileDropdown={
           sendSelectedProjectIDToHeader
