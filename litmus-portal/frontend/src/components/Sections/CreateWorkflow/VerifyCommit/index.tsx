@@ -1,7 +1,8 @@
 import { Divider, Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { experimentMap, WorkflowData } from '../../../../models/workflow';
+import Unimodal from '../../../../containers/layouts/Unimodal';
+import { experimentMap, WorkflowData } from '../../../../models/redux/workflow';
 import useActions from '../../../../redux/actions';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
 import { RootState } from '../../../../redux/reducers';
@@ -17,7 +18,6 @@ import {
   parseYamlValidations,
 } from '../../../YamlEditor/Validations';
 import useStyles from './styles';
-import Unimodal from '../../../../containers/layouts/Unimodal';
 
 interface VerifyCommitProps {
   gotoStep: (page: number) => void;

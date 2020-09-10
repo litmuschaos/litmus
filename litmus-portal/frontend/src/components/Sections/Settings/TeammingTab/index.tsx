@@ -27,11 +27,11 @@ import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { GET_USER } from '../../../../graphql';
-import { Member, Project } from '../../../../models/project';
 import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
-} from '../../../../models/user';
+  Member,
+} from '../../../../models/graphql/user';
 import { RootState } from '../../../../redux/reducers';
 import userAvatar from '../../../../utils/user';
 import DelUser from '../UserManagementTab/EditUser/DelUser';
@@ -64,7 +64,7 @@ interface PaginationData {
 // TeammingTab displays team member table
 const TeammingTab: React.FC = () => {
   const classes = useStyles();
-  const { userData } = useSelector((state: RootState) => state);
+  const userData = useSelector((state: RootState) => state.userData);
 
   // for response data
   const [rows, setRows] = useState<Member[]>([]);
@@ -72,9 +72,7 @@ const TeammingTab: React.FC = () => {
   // query for getting all the data for the logged in user
   const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
-    {
-      variables: { username: userData.username },
-    }
+    { variables: { username: userData.username } }
   );
 
   // State for pagination
@@ -96,7 +94,7 @@ const TeammingTab: React.FC = () => {
   let users: Member[] = [];
   useEffect(() => {
     if (data?.getUser.username === userData.username) {
-      const projectList: Project[] = data?.getUser.projects;
+      const projectList = data?.getUser.projects;
 
       projectList.forEach((project) => {
         if (project.id === userData.selectedProjectID) {

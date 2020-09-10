@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import { UserActions } from '../../models/user';
+import { UserActions } from '../../models/redux/user';
 
 export const setUserDetails = (jwt: string) => (dispatch: Function) => {
   dispatch({

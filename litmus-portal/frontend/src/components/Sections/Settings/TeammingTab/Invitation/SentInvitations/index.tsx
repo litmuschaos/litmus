@@ -10,11 +10,11 @@ import {
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { GET_USER } from '../../../../../../graphql';
-import { Member, Project } from '../../../../../../models/project';
 import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
-} from '../../../../../../models/user';
+  Member,
+} from '../../../../../../models/graphql/user';
 import { RootState } from '../../../../../../redux/reducers';
 import userAvatar from '../../../../../../utils/user';
 import ButtonFilled from '../../../../../Button/ButtonFilled';
@@ -25,21 +25,19 @@ const SentInvitations: React.FC = () => {
   // for response data
   const [rows, setRows] = useState<Member[]>([]);
 
-  const { userData } = useSelector((state: RootState) => state);
+  const userData = useSelector((state: RootState) => state.userData);
 
   // query for getting all the data for the logged in user
-  const { data, loading } = useQuery<
-    CurrentUserDetails,
-    CurrentUserDedtailsVars
-  >(GET_USER, {
-    variables: { username: userData.username },
-  });
+  const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
+    GET_USER,
+    { variables: { username: userData.username } }
+  );
 
   let memberList: Member[];
   let users: Member[] = [];
   useEffect(() => {
     if (data?.getUser.username === userData.username) {
-      const projectList: Project[] = data?.getUser.projects;
+      const projectList = data?.getUser.projects;
 
       projectList.forEach((project) => {
         if (project.id === userData.selectedProjectID) {
@@ -54,7 +52,7 @@ const SentInvitations: React.FC = () => {
         setRows(users);
       });
     }
-  }, [loading]);
+  }, [data]);
 
   return (
     <div>

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import jwtDecode from 'jsonwebtoken';
-import { UserAction, UserActions, UserData } from '../../models/user';
+import { UserAction, UserActions, UserData } from '../../models/redux/user';
 import { setCookie } from '../../utils/cookies';
 import createReducer from './createReducer';
 

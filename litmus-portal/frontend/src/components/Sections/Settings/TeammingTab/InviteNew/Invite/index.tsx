@@ -12,12 +12,12 @@ import {
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ALL_USERS, GET_USER, SEND_INVITE } from '../../../../../../graphql';
-import { MemberInviteNew } from '../../../../../../models/invite';
-import { Project } from '../../../../../../models/project';
+import { MemberInviteNew } from '../../../../../../models/graphql/invite';
 import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
-} from '../../../../../../models/user';
+  Project,
+} from '../../../../../../models/graphql/user';
 import { RootState } from '../../../../../../redux/reducers';
 import ButtonFilled from '../../../../../Button/ButtonFilled';
 import Loader from '../../../../../Loader';
@@ -55,7 +55,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   // for response data
   const [rows, setRows] = useState<UserInvite[]>([]);
 
-  const { userData } = useSelector((state: RootState) => state);
+  const userData = useSelector((state: RootState) => state.userData);
 
   // for setting the role of the user while sending invitation
   const [roles, setRoles] = useState<Role[]>([]);
@@ -80,9 +80,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   // query for getting all the data for the logged in user
   const { data: dataB } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
-    {
-      variables: { username: userData.username },
-    }
+    { variables: { username: userData.username } }
   );
 
   // query to list all the users

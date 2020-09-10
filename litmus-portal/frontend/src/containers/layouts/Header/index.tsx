@@ -6,20 +6,20 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import CustomBreadCrumbs from '../../../components/BreadCrumbs';
-import { Message, NotificationIds } from '../../../models/header';
+import { GET_USER } from '../../../graphql';
 import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
-  UserData,
-} from '../../../models/user';
+  Member,
+  Project,
+} from '../../../models/graphql/user';
+import { Message, NotificationIds } from '../../../models/header';
+import useActions from '../../../redux/actions';
+import * as UserActions from '../../../redux/actions/user';
 import { RootState } from '../../../redux/reducers';
 import NotificationsDropdown from './NotificationDropdown';
 import ProfileDropdownSection from './ProfileDropdownSection';
 import useStyles from './styles';
-import { GET_USER } from '../../../graphql';
-import { Member, Project } from '../../../models/project';
-import useActions from '../../../redux/actions';
-import * as UserActions from '../../../redux/actions/user';
 
 interface SelectedProjectDetails {
   selectedProjectID: string;
@@ -29,13 +29,13 @@ interface SelectedProjectDetails {
 
 const Header: React.FC = () => {
   const classes = useStyles();
-  const userData: UserData = useSelector((state: RootState) => state.userData);
-  const { username } = userData;
+  const userData = useSelector((state: RootState) => state.userData);
+
   const user = useActions(UserActions);
   // Query to get user details
   const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
-    { variables: { username } }
+    { variables: { username: userData.username } }
   );
   const name: string = data?.getUser.name ?? '';
   const email: string = data?.getUser.email ?? '';
@@ -171,7 +171,7 @@ const Header: React.FC = () => {
                 <ProfileDropdownSection
                   name={name}
                   email={email}
-                  username={username}
+                  username={userData.username}
                   selectedProjectID={selectedProjectDetails.selectedProjectID}
                   CallbackToSetSelectedProjectID={setSelectedProjectID}
                   selectedProjectName={

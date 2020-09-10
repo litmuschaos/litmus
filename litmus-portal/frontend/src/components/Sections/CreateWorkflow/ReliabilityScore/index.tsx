@@ -2,17 +2,17 @@ import { Typography } from '@material-ui/core';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import Center from '../../../../containers/layouts/Center';
-import ButtonFilled from '../../../Button/ButtonFilled';
-import ButtonOutline from '../../../Button/ButtonOutline';
-import WeightSlider from '../WeightSlider';
-import InfoTooltip from '../../../InfoTooltip';
-import ResultTable from './ResultTable';
-import useStyles from './styles';
-import { WorkflowData, experimentMap } from '../../../../models/workflow';
-import { RootState } from '../../../../redux/reducers';
+import Unimodal from '../../../../containers/layouts/Unimodal';
+import { experimentMap, WorkflowData } from '../../../../models/redux/workflow';
 import useActions from '../../../../redux/actions';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
-import Unimodal from '../../../../containers/layouts/Unimodal';
+import { RootState } from '../../../../redux/reducers';
+import ButtonFilled from '../../../Button/ButtonFilled';
+import ButtonOutline from '../../../Button/ButtonOutline';
+import InfoTooltip from '../../../InfoTooltip';
+import WeightSlider from '../WeightSlider';
+import ResultTable from './ResultTable';
+import useStyles from './styles';
 
 const ReliablityScore = () => {
   const classes = useStyles();
