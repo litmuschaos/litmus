@@ -1,12 +1,14 @@
-export interface UserData {
+export interface UpdateUser {
   selectedProjectID: string;
-  username: string;
-  exp: number;
-  token: string;
   selectedProjectName: string;
   userRole: string;
 }
 
+export interface UserData extends UpdateUser {
+  username: string;
+  token: string;
+  exp: number;
+}
 export enum UserActions {
   LOAD_USER_DETAILS = 'LOAD_USER_DETAILS',
   UPDATE_USER_DETAILS = 'UPDATE_USER_DETAILS',
@@ -21,4 +23,4 @@ interface UserActionType<T, P> {
 export type UserAction =
   | UserActionType<typeof UserActions.LOAD_USER_DETAILS, string>
   | UserActionType<typeof UserActions.LOGOUT_USER, string>
-  | UserActionType<typeof UserActions.UPDATE_USER_DETAILS, string>;
+  | UserActionType<typeof UserActions.UPDATE_USER_DETAILS, UpdateUser>;
