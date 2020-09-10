@@ -34,7 +34,7 @@ const SentInvitations: React.FC = () => {
   );
 
   let memberList: Member[];
-  let users: Member[] = [];
+  const users: Member[] = [];
   useEffect(() => {
     if (data?.getUser.username === userData.username) {
       const projectList = data?.getUser.projects;
@@ -47,12 +47,12 @@ const SentInvitations: React.FC = () => {
 
       memberList.forEach((member) => {
         if (member.invitation === 'Pending') {
-          users = users.concat(rows, member);
+          users.push(member);
         }
         setRows(users);
       });
     }
-  }, [data]);
+  }, [data, userData.selectedProjectID]);
 
   return (
     <div>

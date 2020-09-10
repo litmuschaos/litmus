@@ -91,7 +91,7 @@ const TeammingTab: React.FC = () => {
 
   // logic for displaying the team members of the user
   let memberList: Member[] = [];
-  let users: Member[] = [];
+  const users: Member[] = [];
   useEffect(() => {
     if (data?.getUser.username === userData.username) {
       const projectList = data?.getUser.projects;
@@ -107,13 +107,13 @@ const TeammingTab: React.FC = () => {
           member.invitation === 'Accepted' &&
           member.user_name !== userData.username
         ) {
-          users = users.concat(rows, member);
+          users.push(member);
         }
 
         setRows(users);
       });
     }
-  }, [data]);
+  }, [data, userData.selectedProjectID]);
 
   // for data filtering based on user role
   const filteredData =

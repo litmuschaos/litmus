@@ -78,7 +78,7 @@ const ReceivedInvitations: React.FC = () => {
   useEffect(() => {
     if (data?.getUser.username === username) {
       const projectList = data?.getUser.projects;
-      let users: ReceivedInvitation[] = [];
+      const users: ReceivedInvitation[] = [];
 
       let flag = 0;
 
@@ -95,7 +95,7 @@ const ReceivedInvitations: React.FC = () => {
         if (flag === 1) {
           project.members.forEach((member) => {
             if (member.user_name !== username && member.role === 'Owner') {
-              users = users.concat(rows, {
+              users.push({
                 username: member.user_name,
                 role: member.role,
                 projectName: project.name,

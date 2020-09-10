@@ -3,8 +3,8 @@ import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import React, { useRef, useState } from 'react';
-import { ProjectsCallBackType } from '../../../models/header';
-import userAvatar from '../../../utils/user';
+import { ProjectsCallBackType } from '../../models/header';
+import userAvatar from '../../utils/user';
 import ProfileInfoDropdownItems from './ProfileDropdownItems';
 import useStyles from './styles';
 

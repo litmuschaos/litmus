@@ -16,7 +16,7 @@ import {
   Message,
   NotificationIds,
   NotificationsCallBackType,
-} from '../../../models/header';
+} from '../../models/header';
 import NotificationListItem from './NotificationListItem';
 import useStyles from './styles';
 

@@ -1,17 +1,17 @@
+import {
+  IconButton,
+  ListItem,
+  ListItemSecondaryAction,
+  ListItemText,
+} from '@material-ui/core';
+import ClearIcon from '@material-ui/icons/Clear';
+import formatDistance from 'date-fns/formatDistance';
 import React, { useState } from 'react';
 import {
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  IconButton,
-} from '@material-ui/core';
-import formatDistance from 'date-fns/formatDistance';
-import ClearIcon from '@material-ui/icons/Clear';
-import {
   Message,
-  NotificationsCallBackType,
   NotificationIds,
-} from '../../../models/header';
+  NotificationsCallBackType,
+} from '../../models/header';
 import useStyles from './styles';
 
 interface NotificationListItemProps {

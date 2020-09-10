@@ -5,8 +5,10 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { history } from '../../../redux/configureStore';
+import { history } from '../../redux/configureStore';
+import { RootState } from '../../redux/reducers';
 import useStyles from './styles';
 
 interface CustomisedListItemProps {
@@ -31,6 +33,7 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
 
 const SideBar = () => {
   const classes = useStyles();
+  const userRole = useSelector((state: RootState) => state.userData.userRole);
 
   return (
     <Drawer
@@ -83,15 +86,6 @@ const SideBar = () => {
           <img src="/icons/hub.png" alt="hub" />
         </CustomisedListItem>
         <CustomisedListItem
-          key="settings"
-          handleClick={() => {
-            history.push('/settings');
-          }}
-          label="Settings"
-        >
-          <img src="/icons/setting.png" alt="settings" />
-        </CustomisedListItem>
-        <CustomisedListItem
           key="community"
           handleClick={() => {
             history.push('/community');
@@ -100,6 +94,17 @@ const SideBar = () => {
         >
           <img src="/icons/community.png" alt="community" />
         </CustomisedListItem>
+        {userRole === 'Owner' && (
+          <CustomisedListItem
+            key="settings"
+            handleClick={() => {
+              history.push('/settings');
+            }}
+            label="Settings"
+          >
+            <img src="/icons/setting.png" alt="settings" />
+          </CustomisedListItem>
+        )}
       </List>
     </Drawer>
   );

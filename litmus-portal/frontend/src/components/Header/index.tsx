@@ -5,18 +5,18 @@ import Toolbar from '@material-ui/core/Toolbar';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import CustomBreadCrumbs from '../../../components/BreadCrumbs';
-import { GET_USER } from '../../../graphql';
+import { GET_USER } from '../../graphql';
 import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
   Member,
   Project,
-} from '../../../models/graphql/user';
-import { Message, NotificationIds } from '../../../models/header';
-import useActions from '../../../redux/actions';
-import * as UserActions from '../../../redux/actions/user';
-import { RootState } from '../../../redux/reducers';
+} from '../../models/graphql/user';
+import { Message, NotificationIds } from '../../models/header';
+import useActions from '../../redux/actions';
+import * as UserActions from '../../redux/actions/user';
+import { RootState } from '../../redux/reducers';
+import CustomBreadCrumbs from '../BreadCrumbs';
 import NotificationsDropdown from './NotificationDropdown';
 import ProfileDropdownSection from './ProfileDropdownSection';
 import useStyles from './styles';
@@ -57,12 +57,12 @@ const Header: React.FC = () => {
           if (member.user_name === data?.getUser.username) {
             user.updateUserDetails({
               selectedProjectID,
-              userRole: project.name,
+              userRole: member.role,
               selectedProjectName: member.role,
             });
             setSelectedProjectDetails({
               selectedProjectID,
-              selectedProjectName: project.name,
+              selectedProjectName: member.role,
               selectedUserRole: member.role,
             });
           }

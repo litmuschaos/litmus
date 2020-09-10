@@ -12,19 +12,19 @@ import {
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import config from '../../../config';
-import { GET_USER } from '../../../graphql';
+import config from '../../config';
+import { GET_USER } from '../../graphql';
 import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
   Member,
   Project,
-} from '../../../models/graphql/user';
-import { ProjectsCallBackType } from '../../../models/header';
-import useActions from '../../../redux/actions';
-import * as UserActions from '../../../redux/actions/user';
-import { RootState } from '../../../redux/reducers';
-import userAvatar from '../../../utils/user';
+} from '../../models/graphql/user';
+import { ProjectsCallBackType } from '../../models/header';
+import useActions from '../../redux/actions';
+import * as UserActions from '../../redux/actions/user';
+import { RootState } from '../../redux/reducers';
+import userAvatar from '../../utils/user';
 import ProjectListItem from './ProjectListItem';
 import useStyles from './styles';
 
@@ -62,9 +62,7 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
     { variables: { username } }
   );
   const projects = data?.getUser.projects ?? [];
-  const [switchableProjects, setSwitchableProjects] = useState<Project[]>(
-    projects
-  );
+  const [switchableProjects, setSwitchableProjects] = useState<Project[]>([]);
   const [loggedOut, doLogout] = useState(false);
   const { userData } = useSelector((state: RootState) => state);
 
@@ -105,7 +103,7 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
       });
     });
     setSwitchableProjects(projectsAvailableForSwitching);
-  }, []);
+  }, [data]);
 
   useEffect(() => {
     setSwitchableProjects(projects);
