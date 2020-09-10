@@ -1,4 +1,4 @@
-import { IconButton, MenuItem, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import React from 'react';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../../../components/Button/ButtonOutline';
@@ -19,7 +19,7 @@ const DelUser: React.FC<DelUserProps> = ({
   tableDelete,
   teammingDel,
   handleTable,
-  disabled,
+  // disabled,
 }) => {
   const classes = useStyles();
 
@@ -32,7 +32,7 @@ const DelUser: React.FC<DelUserProps> = ({
 
   return (
     <div>
-      {tableDelete ? (
+      {/* {tableDelete ? (
         <>
           <MenuItem
             value="delete"
@@ -76,7 +76,7 @@ const DelUser: React.FC<DelUserProps> = ({
             </div>
           )}
         </>
-      )}
+      )} */}
       <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn={false}>
         <div className={classes.body}>
           <img src="./icons/userDel.svg" alt="lock" />

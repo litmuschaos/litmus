@@ -53,17 +53,18 @@ const Header: React.FC = () => {
     projects.forEach((project) => {
       if (selectedProjectID === project.id) {
         const memberList: Member[] = project.members;
+
         memberList.forEach((member) => {
           if (member.user_name === data?.getUser.username) {
             user.updateUserDetails({
               selectedProjectID,
               userRole: member.role,
-              selectedProjectName: member.role,
+              selectedProjectName: project.name,
             });
             setSelectedProjectDetails({
               selectedProjectID,
-              selectedProjectName: member.role,
               selectedUserRole: member.role,
+              selectedProjectName: project.name,
             });
           }
         });

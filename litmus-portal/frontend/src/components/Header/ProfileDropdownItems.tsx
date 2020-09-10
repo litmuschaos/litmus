@@ -23,6 +23,7 @@ import {
 import { ProjectsCallBackType } from '../../models/header';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
+import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import userAvatar from '../../utils/user';
 import ProjectListItem from './ProjectListItem';
@@ -64,7 +65,7 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
   const projects = data?.getUser.projects ?? [];
   const [switchableProjects, setSwitchableProjects] = useState<Project[]>([]);
   const [loggedOut, doLogout] = useState(false);
-  const { userData } = useSelector((state: RootState) => state);
+  const userData = useSelector((state: RootState) => state.userData);
 
   const logOut = () => {
     doLogout(true);
@@ -85,8 +86,6 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
         console.error(err);
       });
   };
-
-  const editProfile = () => {};
 
   const CallbackFromProjectListItem = (selectedProjectIDFromList: string) => {
     CallbackToSetSelectedProjectIDOnProfileDropdown(selectedProjectIDFromList);
@@ -152,14 +151,16 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
               {email}
             </Typography>
 
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={editProfile}
-              className={classes.buttonEditProfile}
-            >
-              Edit Profile
-            </Button>
+            {userData.userRole === 'Owner' && (
+              <Button
+                variant="outlined"
+                size="small"
+                className={classes.buttonEditProfile}
+                onClick={() => history.push('/settings')}
+              >
+                Edit Profile
+              </Button>
+            )}
 
             <Button
               disabled={loggedOut}
