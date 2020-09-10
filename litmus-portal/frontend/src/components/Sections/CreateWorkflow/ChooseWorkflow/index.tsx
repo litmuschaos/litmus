@@ -67,8 +67,11 @@ const ChooseWorkflow: React.FC = () => {
 
   const selectWorkflow = (index: number) => {
     setVisible(false);
+    const timeStampBasedWorkflowName: string = `argowf-chaos-${
+      workflowsList[index].title
+    }-${Math.round(new Date().getTime() / 1000)}`;
     workflow.setWorkflowDetails({
-      name: workflowsList[index].title,
+      name: timeStampBasedWorkflowName,
       link: workflowsList[index].chaosWkfCRDLink,
       id: workflowsList[index].workflowID,
       yaml: 'none',
@@ -77,7 +80,7 @@ const ChooseWorkflow: React.FC = () => {
     });
 
     setWorkflowData({
-      workflowName: workflowsList[index].title,
+      workflowName: timeStampBasedWorkflowName,
       workflowDesc: workflowsList[index].description,
     });
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Typography } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import { useSelector } from 'react-redux';
+import YAML from 'yaml';
 import useStyles from './styles';
 import { WorkflowData } from '../../../../models/workflow';
 import { RootState } from '../../../../redux/reducers';
@@ -29,11 +30,15 @@ const TuneWorkflow: React.FC = () => {
     fetch(link)
       .then((data) => {
         data.text().then((yamlText) => {
-          setYamlFile(yamlText);
+          const parsedYaml = YAML.parse(yamlText);
+          delete parsedYaml.metadata.generateName;
+          parsedYaml.metadata.name = workflowData.name;
+          const nameMappedYaml = YAML.stringify(parsedYaml);
+          setYamlFile(nameMappedYaml);
           workflow.setWorkflowDetails({
             name,
             link,
-            yaml: yamlText,
+            yaml: nameMappedYaml,
             id,
             description,
           });
@@ -84,7 +89,6 @@ const TuneWorkflow: React.FC = () => {
           id={id}
           description={description}
           readOnly={false}
-          optionsDisplay
         />
       </div>
     </div>
