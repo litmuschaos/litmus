@@ -14,7 +14,10 @@ import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import Loader from '../../../../../components/Loader';
 import { ALL_USERS, GET_USER, SEND_INVITE } from '../../../../../graphql';
-import { MemberInviteNew } from '../../../../../models/graphql/invite';
+import {
+  MemberInviteNew,
+  UserInvite,
+} from '../../../../../models/graphql/invite';
 import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
@@ -23,13 +26,6 @@ import {
 import { RootState } from '../../../../../redux/reducers';
 import useStyles from './styles';
 import TableData from './TableData';
-
-interface UserInvite {
-  id: string;
-  name: string;
-  username: string;
-  email: string;
-}
 
 interface FilterOptions {
   search: string;

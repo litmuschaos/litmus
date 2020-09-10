@@ -8,13 +8,14 @@ import {
   Typography,
 } from '@material-ui/core';
 import React, { useState } from 'react';
+import { UserInvite } from '../../../../../models/graphql/invite';
 import userAvatar from '../../../../../utils/user';
 import useStyles from './styles';
 
 interface TableDataProps {
-  row: any;
+  row: UserInvite;
   labelId: string;
-  handleCheck: (event: React.MouseEvent<unknown>, name: any) => void;
+  handleCheck: (event: React.MouseEvent<unknown>, row: UserInvite) => void;
   isItemSelected: boolean;
   sendInvite: (username: string, role: string) => void;
 }

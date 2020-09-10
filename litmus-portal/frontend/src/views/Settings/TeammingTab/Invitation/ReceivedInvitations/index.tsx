@@ -46,11 +46,7 @@ const ReceivedInvitations: React.FC = () => {
   // mutation to accept the invitation
   const [acceptInvite] = useMutation<MemberInvitation>(ACCEPT_INVITE, {
     onCompleted: () => {
-      setRows(
-        rows.filter(function (row) {
-          return row.username !== acceptDecline;
-        })
-      );
+      setRows(rows.filter((row) => row.username !== acceptDecline));
     },
     onError: () => {},
     refetchQueries: [{ query: GET_USER, variables: { username } }],
@@ -59,11 +55,7 @@ const ReceivedInvitations: React.FC = () => {
   // mutation to decline the invitation
   const [declineInvite] = useMutation<MemberInvitation>(DECLINE_INVITE, {
     onCompleted: () => {
-      setRows(
-        rows.filter(function (row) {
-          return row.username !== acceptDecline;
-        })
-      );
+      setRows(rows.filter((row) => row.username !== acceptDecline));
     },
     onError: () => {},
     refetchQueries: [{ query: GET_USER, variables: { username } }],

@@ -13,7 +13,6 @@ import useStyles from './styles';
 
 interface CustomisedListItemProps {
   handleClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-  children: JSX.Element;
   label: string;
 }
 
@@ -31,7 +30,7 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
   );
 };
 
-const SideBar = () => {
+const SideBar: React.FC = () => {
   const classes = useStyles();
   const userRole = useSelector((state: RootState) => state.userData.userRole);
 

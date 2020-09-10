@@ -12,3 +12,10 @@ export interface MemberInviteNew {
     role: string;
   };
 }
+
+export interface UserInvite {
+  id: string;
+  name: string;
+  username: string;
+  email: string;
+}
