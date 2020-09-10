@@ -17,7 +17,8 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.customColors.white(1),
   },
   mainDiv: {
-    marginLeft: theme.spacing(3.75),
+    padding: theme.spacing(3.75),
+    backgroundColor: theme.palette.background.default,
     width: '50rem',
     display: 'flex',
     flexDirection: 'row',
