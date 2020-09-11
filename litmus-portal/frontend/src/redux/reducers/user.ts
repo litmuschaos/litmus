@@ -7,13 +7,12 @@ import {
   UserData,
 } from '../../models/redux/user';
 import { setCookie } from '../../utils/cookies';
+import { history } from '../configureStore';
 import createReducer from './createReducer';
 
 const initialState: UserData = {
   selectedProjectID: '',
-  token: '',
   username: 'admin',
-  exp: 0,
   selectedProjectName: 'Default',
   userRole: 'Owner',
 };
@@ -23,11 +22,14 @@ export const userData = createReducer<UserData>(initialState, {
     try {
       const jwt = action.payload as string;
       const data: any = jwtDecode.decode(jwt);
-      setCookie('token', jwt, 1);
+      const expirationTime =
+        new Date(data.exp * 1000).getHours() -
+        new Date(data.iat * 1000).getHours();
+
+      setCookie('token', jwt, expirationTime);
       return {
         ...state,
         ...data,
-        token: jwt,
       };
     } catch (err) {
       console.error('ERROR: ', err);
@@ -43,6 +45,8 @@ export const userData = createReducer<UserData>(initialState, {
     };
   },
   [UserActions.LOGOUT_USER](state: UserData, action: UserAction) {
+    setCookie('token', '', 1);
+    history.push('/login');
     return {
       ...initialState,
     };

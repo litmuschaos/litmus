@@ -25,6 +25,7 @@ import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
+import getToken from '../../utils/getToken';
 import userAvatar from '../../utils/user';
 import ProjectListItem from './ProjectListItem';
 import useStyles from './styles';
@@ -75,7 +76,7 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${userData.token}`,
+        Authorization: `Bearer ${getToken()}`,
       },
     })
       .then((response) => {

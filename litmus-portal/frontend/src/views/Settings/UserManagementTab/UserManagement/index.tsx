@@ -24,10 +24,9 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import SearchIcon from '@material-ui/icons/Search';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import config from '../../../../config';
-import { RootState } from '../../../../redux/reducers';
+import getToken from '../../../../utils/getToken';
 import CreateUser from '../CreateUser';
 import EditUser from '../EditUser';
 import useStyles from './styles';
@@ -70,7 +69,6 @@ interface PaginationData {
 const UserManagement: React.FC = () => {
   const classes = useStyles();
   const [showDiv, setShowDiv] = React.useState<boolean>(false);
-  const { userData } = useSelector((state: RootState) => state);
   // for response data
   const [rows, setRows] = useState<UserData[]>([]);
   // States for filters
@@ -90,7 +88,7 @@ const UserManagement: React.FC = () => {
     fetch(`${config.auth.url}/users`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${userData.token}`,
+        Authorization: `Bearer ${getToken()}`,
       },
     })
       .then((response) => {

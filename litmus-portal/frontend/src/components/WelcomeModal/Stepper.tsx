@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import config from '../../config';
 import { CREATE_USER } from '../../graphql';
 import { RootState } from '../../redux/reducers';
+import getToken from '../../utils/getToken';
 import {
   validateConfirmPassword,
   validateEmail,
@@ -70,7 +71,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${userData.token}`,
+        Authorization: `Bearer ${getToken()}`,
       },
       body: JSON.stringify(info),
     })
