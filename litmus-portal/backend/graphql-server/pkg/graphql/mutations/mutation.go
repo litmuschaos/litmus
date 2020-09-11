@@ -170,6 +170,8 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		ProjectID:           input.ProjectID,
 		ClusterID:           input.ClusterID,
 		Weightages:          Weightages,
+		CreatedAt:    strconv.FormatInt(time.Now().Unix(), 10),
+		UpdatedAt:    strconv.FormatInt(time.Now().Unix(), 10),
 		WorkflowRuns:        []*database.WorkflowRun{},
 	}
 
