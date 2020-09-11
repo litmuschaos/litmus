@@ -35,9 +35,7 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
   const classes = useStyles();
 
   const nameSplit = nameValue.split(' ');
-  const initials = nameSplit[1]
-    ? userAvatar(nameValue, false)
-    : userAvatar(nameValue, true);
+  const initials = nameSplit[1] ? userAvatar(nameValue) : userAvatar(nameValue);
 
   return (
     <div>

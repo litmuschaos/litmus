@@ -26,12 +26,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: theme.spacing(-2),
   },
   container: {
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
     maxWidth: '63.75rem',
     marginTop: theme.spacing(3.75),
-    border: 1,
-    borderColor: theme.palette.primary.dark,
-    borderRadius: 3,
+    border: '1px solid ',
+    borderColor: theme.palette.customColors.black(0.07),
+    backgroundColor: theme.palette.common.white,
     paddingBottom: theme.spacing(5),
   },
 
@@ -56,49 +55,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignContent: 'flex-start',
     flexWrap: 'wrap',
   },
-  // for username field
-  userDetail: {
-    border: '1px solid rgba(0, 0, 0, 0.2)',
-    borderRadius: 3,
-    width: '24.43rem',
-    height: '4.8125rem',
-    marginRight: theme.spacing(2.5),
-    paddingLeft: theme.spacing(3.75),
-    marginBottom: theme.spacing(2.5),
-  },
 
   divider: {
     marginTop: theme.spacing(3.75),
     maxWidth: '58.75rem',
-  },
-
-  txt1: {
-    marginTop: theme.spacing(2.5),
-    marginBottom: theme.spacing(3.75),
-    fontSize: '1rem',
-    color: theme.palette.text.disabled,
-  },
-
-  createRandomButton: {
-    background: theme.palette.secondary.dark,
-    color: theme.palette.secondary.contrastText,
-    height: '2.75rem',
-    '&:hover': {
-      background: theme.palette.secondary.dark,
-    },
-  },
-
-  // for copying the credentials
-  copyDiv: {
-    maxWidth: '11rem',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'stretch',
-    justifyContent: 'space-between',
-    color: theme.palette.secondary.dark,
-  },
-  copyTypo: {
-    marginTop: theme.spacing(1),
   },
   buttonGroup: {
     maxWidth: '63.75rem',

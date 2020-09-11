@@ -1,13 +1,14 @@
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { Button, Typography } from '@material-ui/core';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import Unimodal from '../../../../containers/layouts/Unimodal';
-import { GET_USER } from '../../../../graphql';
+import { GET_USER, UPDATE_DETAILS } from '../../../../graphql';
 import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
 } from '../../../../models/graphql/user';
+import { UpdateUser } from '../../../../models/redux/user';
 import { RootState } from '../../../../redux/reducers';
 import UserDetails from '../../UserManagementTab/CreateUser/UserDetails';
 import useStyles from './styles';
@@ -69,6 +70,13 @@ const PersonalDetails: React.FC = () => {
     });
   };
 
+  const [updateDetails] = useMutation<UpdateUser>(UPDATE_DETAILS, {
+    onCompleted: () => {
+      setOpen(true);
+    },
+    refetchQueries: [{ query: GET_USER, variables: { username } }],
+  });
+
   return (
     <div>
       <form>
@@ -91,7 +99,15 @@ const PersonalDetails: React.FC = () => {
             onClick={() => {
               // checks if Full name field is empty
               if (personaData.fullName.length > 0) {
-                setOpen(true);
+                updateDetails({
+                  variables: {
+                    user: {
+                      id: data?.getUser.id,
+                      name: personaData.fullName,
+                      email: personaData.email,
+                    },
+                  },
+                });
               }
             }}
           >

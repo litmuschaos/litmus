@@ -30,10 +30,7 @@ const ProfileDropdownSection: React.FC<ProfileInfoDropdownSectionProps> = ({
   const classes = useStyles();
   const [isProfilePopoverOpen, setProfilePopoverOpen] = useState(false);
   const profileMenuRef = useRef<HTMLButtonElement>(null);
-  const nameSplit = name.split(' ');
-  const initials = nameSplit[1]
-    ? userAvatar(name, false)
-    : userAvatar(name, true);
+  const initials = name ? userAvatar(name) : userAvatar(name);
 
   const sendSelectedProjectIDToHeader = (selectedProjectID: string) => {
     CallbackToSetSelectedProjectID(selectedProjectID);

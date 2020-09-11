@@ -45,9 +45,15 @@ export const DECLINE_INVITE = gql`
     declineInvitation(member: $member)
   }
 `;
+<<<<<<< HEAD
 
 export const DELETE_SCHEDULE = gql`
   mutation deleteWorkflow($workflow_id: String!) {
     deleteChaosWorkflow(workflowid: $workflow_id)
+=======
+export const UPDATE_DETAILS = gql`
+  mutation updateUser($user: UpdateUserInput!) {
+    updateUser(user: $user)
+>>>>>>> Added functionality to my-accounts tabs, bug fixes for avatar and CSS fixes
   }
 `;

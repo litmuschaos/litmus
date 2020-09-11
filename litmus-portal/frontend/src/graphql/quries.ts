@@ -40,6 +40,7 @@ export const GET_USER = gql`
     getUser(username: $username) {
       username
       email
+      id
       name
       projects {
         members {

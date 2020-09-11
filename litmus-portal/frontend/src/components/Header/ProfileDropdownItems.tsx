@@ -22,6 +22,7 @@ import {
 } from '../../models/graphql/user';
 import { ProjectsCallBackType } from '../../models/header';
 import useActions from '../../redux/actions';
+import * as TabActions from '../../redux/actions/tabs';
 import * as UserActions from '../../redux/actions/user';
 import configureStore, { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
@@ -53,11 +54,10 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
 }) => {
   const classes = useStyles();
   const user = useActions(UserActions);
+  const tabs = useActions(TabActions);
   const id = isOpen ? 'profile-popover' : undefined;
-  const nameSplit = name.split(' ');
-  const initials = nameSplit[1]
-    ? userAvatar(name, false)
-    : userAvatar(name, true);
+  const initials = name ? userAvatar(name) : userAvatar(name);
+
   // Query to get user details
   const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
@@ -71,6 +71,8 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
   const { persistor } = configureStore();
 
   const logOut = () => {
+    tabs.changeWorkflowsTabs(0);
+    tabs.changeSettingsTabs(0);
     doLogout(true);
 
     fetch(`${config.auth.url}/logout`, {
@@ -161,7 +163,10 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
                 variant="outlined"
                 size="small"
                 className={classes.buttonEditProfile}
-                onClick={() => history.push('/settings')}
+                onClick={() => {
+                  tabs.changeSettingsTabs(0);
+                  history.push('/settings');
+                }}
               >
                 Edit Profile
               </Button>

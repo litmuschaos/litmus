@@ -2,12 +2,12 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    marginLeft: theme.spacing(7.5),
     maxWidth: '63.75rem',
     marginTop: theme.spacing(3.75),
-    marginLeft: theme.spacing(7.5),
-    border: '0.0625rem',
-    borderColor: theme.palette.primary.dark,
+    border: '1px solid ',
+    borderColor: theme.palette.customColors.black(0.07),
+    backgroundColor: theme.palette.common.white,
     borderRadius: '0.1875rem',
     paddingBottom: theme.spacing(5),
   },
@@ -93,17 +93,29 @@ const useStyles = makeStyles((theme: Theme) => ({
   typo1: {
     fontSize: '1rem',
   },
-  button: {
-    textTransform: 'none',
-    width: '9.25rem',
-    height: '2.75rem',
-    borderRadius: '0.1875rem',
+
+  buttonModal: {
     marginTop: theme.spacing(3.75),
-    backgroundColor: theme.palette.secondary.dark,
-    color: theme.palette.common.white,
-    '&:hover': {
-      backgroundColor: theme.palette.secondary.dark,
-    },
+  },
+  textSecondError: {
+    width: '27.5rem',
+    height: '1.6875rem',
+    marginTop: theme.spacing(3.75),
+    margin: '0 auto',
+  },
+  errDiv: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    textAlign: 'center',
+  },
+  typoSub: {
+    fontSize: '1rem',
+  },
+  textError: {
+    width: '20.5rem',
+    marginTop: theme.spacing(13.75),
+    margin: '0 auto',
   },
 }));
 export default useStyles;

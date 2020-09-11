@@ -1,7 +1,10 @@
-import { Button, Divider, Typography } from '@material-ui/core';
-import React, { useRef } from 'react';
+import { Divider, Typography } from '@material-ui/core';
+import React, { useRef, useState } from 'react';
+import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import InputField from '../../../../components/InputField';
+import config from '../../../../config';
 import Unimodal from '../../../../containers/layouts/Unimodal';
+import getToken from '../../../../utils/getToken';
 import {
   validateConfirmPassword,
   validateStartEmptySpacing,
@@ -11,8 +14,9 @@ import useStyles from './styles';
 
 // used for password field
 interface Password {
-  password: string;
-  showPassword: boolean;
+  currPassword: string;
+  newPassword: string;
+  confNewPassword: string;
 }
 
 // AccountSettings displays the starting page of "Accounts" tab
@@ -28,25 +32,18 @@ const AccountSettings: React.FC = () => {
   };
 
   // states for the three password fields
-  const [currPassword, setCurrPassword] = React.useState<Password>({
-    password: '',
-    showPassword: false,
-  });
-  const [newPassword, setNewPassword] = React.useState<Password>({
-    password: '',
-    showPassword: false,
-  });
-  const [confNewPassword, setConfNewPassword] = React.useState<Password>({
-    password: '',
-    showPassword: false,
+  const [password, setPassword] = React.useState<Password>({
+    newPassword: '',
+    currPassword: '',
+    confNewPassword: '',
   });
 
   // handleCurrPassword handles password for first password field
   const handleCurrPassword = (prop: keyof Password) => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setCurrPassword({
-      ...currPassword,
+    setPassword({
+      ...password,
       [prop]: event.target.value,
     });
   };
@@ -55,8 +52,8 @@ const AccountSettings: React.FC = () => {
   const handleNewPassword = (prop: keyof Password) => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setNewPassword({
-      ...newPassword,
+    setPassword({
+      ...password,
       [prop]: event.target.value,
     });
   };
@@ -65,18 +62,40 @@ const AccountSettings: React.FC = () => {
   const handleConfPassword = (prop: keyof Password) => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setConfNewPassword({
-      ...confNewPassword,
+    setPassword({
+      ...password,
       [prop]: event.target.value,
     });
   };
 
   if (
-    confNewPassword.password.length > 0 &&
-    newPassword.password === confNewPassword.password
+    password.confNewPassword.length > 0 &&
+    password.newPassword === password.confNewPassword
   )
     isSuccess.current = true;
   else isSuccess.current = false;
+  const [error, setError] = useState<string>('');
+  const handleChangePassword = () => {
+    fetch(`${config.auth.url}/update/password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+      body: JSON.stringify({
+        old_password: password.currPassword,
+        new_password: password.newPassword,
+      }),
+    })
+      .then(() => {
+        setOpen(true);
+      })
+      .catch((err) => {
+        setError(err.message as string);
+        if (isSuccess.current) setOpen(true);
+        console.error(err);
+      });
+  };
 
   return (
     <div className={classes.container}>
@@ -95,8 +114,8 @@ const AccountSettings: React.FC = () => {
               {/* Current Password */}
               <InputField
                 required
-                value={currPassword.password}
-                handleChange={handleCurrPassword('password')}
+                value={password.currPassword}
+                handleChange={handleCurrPassword('currPassword')}
                 type="password"
                 label="Current Password"
                 validationError={false}
@@ -106,88 +125,112 @@ const AccountSettings: React.FC = () => {
               <InputField
                 required
                 type="password"
-                handleChange={handleNewPassword('password')}
+                handleChange={handleNewPassword('newPassword')}
                 success={isSuccess.current}
                 helperText={
-                  validateStartEmptySpacing(newPassword.password)
+                  validateStartEmptySpacing(password.newPassword)
                     ? 'Should not start with empty space'
                     : ''
                 }
                 label="New Password"
                 validationError={validateStartEmptySpacing(
-                  newPassword.password
+                  password.newPassword
                 )}
-                value={newPassword.password}
+                value={password.newPassword}
               />
 
               {/* Confirm new password */}
               <InputField
                 helperText={
                   validateConfirmPassword(
-                    newPassword.password,
-                    confNewPassword.password
+                    password.newPassword,
+                    password.confNewPassword
                   )
                     ? 'Password is not same'
                     : ''
                 }
                 required
                 type="password"
-                handleChange={handleConfPassword('password')}
+                handleChange={handleConfPassword('confNewPassword')}
                 success={isSuccess.current}
                 label="Confirm Password"
                 validationError={validateConfirmPassword(
-                  newPassword.password,
-                  confNewPassword.password
+                  password.newPassword,
+                  password.confNewPassword
                 )}
-                value={confNewPassword.password}
+                value={password.confNewPassword}
               />
-              <Button
-                data-cy="button"
-                variant="contained"
-                className={classes.button}
-                onClick={() => {
-                  if (
-                    newPassword.password.length > 0 &&
-                    confNewPassword.password.length > 0
-                  ) {
-                    setOpen(true);
+              <div className={classes.buttonModal}>
+                <ButtonFilled
+                  data-cy="button"
+                  isPrimary
+                  isDisabled={
+                    !(isSuccess.current && password.currPassword.length > 0)
                   }
-                }}
-              >
-                Change password
-              </Button>
+                  handleClick={handleChangePassword}
+                >
+                  <> Change password</>
+                </ButtonFilled>
+              </div>
+
               <Unimodal
                 isOpen={open}
                 handleClose={handleClose}
                 hasCloseBtn={false}
               >
-                <div className={classes.body}>
-                  <img src="./icons/lock.svg" alt="lock" />
-                  <div className={classes.text}>
-                    <Typography className={classes.typo} align="center">
-                      Your password <strong>has been changed!</strong>
-                    </Typography>
+                {error.length ? (
+                  <div className={classes.errDiv}>
+                    <div className={classes.textError}>
+                      <Typography className={classes.typo} align="center">
+                        <strong> Error </strong> while creating a new user.
+                      </Typography>
+                    </div>
+                    <div className={classes.textSecondError}>
+                      <Typography className={classes.typoSub}>
+                        Err: {error}
+                      </Typography>
+                    </div>
+                    <div className={classes.buttonModal}>
+                      <ButtonFilled
+                        isPrimary
+                        isDisabled={false}
+                        handleClick={handleClose}
+                      >
+                        <>Done</>
+                      </ButtonFilled>
+                    </div>
                   </div>
-                  <div className={classes.text1}>
-                    <Typography className={classes.typo1}>
-                      You can now use your new password to login to your account
-                    </Typography>
+                ) : (
+                  <div className={classes.body}>
+                    <img src="./icons/lock.svg" alt="lock" />
+                    <div className={classes.text}>
+                      <Typography className={classes.typo} align="center">
+                        Your password <strong>has been changed!</strong>
+                      </Typography>
+                    </div>
+                    <div className={classes.text1}>
+                      <Typography className={classes.typo1}>
+                        You can now use your new password to login to your
+                        account
+                      </Typography>
+                    </div>
+                    <div className={classes.buttonModal}>
+                      <ButtonFilled
+                        isPrimary
+                        isDisabled={false}
+                        handleClick={handleClose}
+                      >
+                        <>Done</>
+                      </ButtonFilled>
+                    </div>
                   </div>
-                  <Button
-                    data-cy="closeButton"
-                    variant="contained"
-                    className={classes.button}
-                    onClick={handleClose}
-                  >
-                    Done
-                  </Button>
-                </div>
+                )}
               </Unimodal>
             </form>
 
             <div className={classes.col2}>
               <img src="./icons/pass.svg" data-cy="lock" alt="lockIcon" />
-              <Typography className={classes.txt1}>
+              {/*  <Typography className={classes.txt1}>
                 Your new password <strong>must</strong> be:
               </Typography>
               <Typography className={classes.txt2}>
@@ -198,7 +241,7 @@ const AccountSettings: React.FC = () => {
               </Typography>
               <Typography className={classes.txt2}>
                 3. Be a combination of letters, numbers and special characters
-              </Typography>
+              </Typography> */}
             </div>
           </div>
         </div>
