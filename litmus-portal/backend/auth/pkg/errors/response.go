@@ -44,6 +44,7 @@ var (
 	ErrTemporarilyUnavailable = errors.New("temporarily_unavailable")
 	ErrInvalidUser            = errors.New("invalid_user")
 	ErrInvalidPassword        = errors.New("invalid_password")
+	ErrUserExists             = errors.New("User already exists")
 )
 
 // Descriptions error description
@@ -53,6 +54,7 @@ var Descriptions = map[error]string{
 	ErrTemporarilyUnavailable: "The authorization server is currently unable to handle the request due to a temporary overloading or maintenance of the server",
 	ErrInvalidUser:            "User does not exist",
 	ErrInvalidPassword:        "User authentication failed",
+	ErrUserExists:             "This username is already to assigned to a user",
 }
 
 // StatusCodes response error HTTP status code
@@ -62,4 +64,5 @@ var StatusCodes = map[error]int{
 	ErrTemporarilyUnavailable: 503,
 	ErrInvalidUser:            401,
 	ErrInvalidPassword:        401,
+	ErrUserExists:             401,
 }

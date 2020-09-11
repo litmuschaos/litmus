@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/controller"
+	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/controller/password"
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/controller/user"
 )
 
@@ -19,7 +20,8 @@ const (
 )
 
 var (
-	userController controller.UserController = user.New()
+	userController     controller.UserController     = user.New()
+	passwordController controller.PasswordController = password.New()
 )
 
 // New will create a new routes
@@ -36,9 +38,9 @@ func New() *gin.Engine {
 	router.GET(getUsersRoute, userController.GetAllUsers)
 	router.POST(logoutRoute, userController.Logout)
 	router.POST(loginRoute, userController.Login)
-	router.POST(updatePasswordRoute, userController.UpdatePassword)
+	router.POST(updatePasswordRoute, passwordController.Update)
 	router.POST(createRoute, userController.Create)
 	router.POST(updateDetailsRoute, userController.UpdateUserDetails)
-	router.POST(resetPasswordRoute, userController.ResetPassword)
+	router.POST(resetPasswordRoute, passwordController.Reset)
 	return router
 }

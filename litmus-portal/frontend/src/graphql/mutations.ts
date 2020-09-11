@@ -12,7 +12,7 @@ export const CREATE_WORKFLOW = gql`
   }
 `;
 export const CREATE_USER = gql`
-  mutation CreateUser($user: UserInput!) {
+  mutation CreateUser($user: CreateUserInput!) {
     createUser(user: $user) {
       id
       username
