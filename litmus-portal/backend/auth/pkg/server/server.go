@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -51,7 +50,6 @@ type Server struct {
 }
 
 func (s *Server) redirectError(c *gin.Context, err error) {
-	fmt.Println(err)
 	data, _, _ := s.getErrorData(err)
 	c.JSON(http.StatusUnauthorized, data)
 }
@@ -302,10 +300,9 @@ func (s *Server) CreateRequest(c *gin.Context, user *models.UserCredentials) {
 		s.redirectError(c, errors.ErrInvalidRequest)
 		return
 	}
-	fmt.Println(user.GetUserName(), "un")
+
 	var createdUserInfo *models.PublicUserInfo
 	if userInfo.UserName == types.DefaultUserName {
-		fmt.Print("here")
 		createdUserInfo, err = s.Manager.CreateUser(user)
 		if err != nil {
 			s.redirectError(c, err)
@@ -314,7 +311,6 @@ func (s *Server) CreateRequest(c *gin.Context, user *models.UserCredentials) {
 	} else {
 		s.redirectError(c, errors.ErrInvalidUser)
 	}
-	fmt.Println(createdUserInfo, userInfo)
 	s.redirect(c, createdUserInfo)
 	return
 }
