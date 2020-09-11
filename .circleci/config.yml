@@ -27,6 +27,7 @@ jobs:
   setup-env:
     machine:
       image: circleci/classic:201808-01
+      resource_class: large
     steps:
       - run: mkdir -p workspace
       - run:
@@ -48,6 +49,7 @@ jobs:
   docker-build-backend:
     machine:
       image: circleci/classic:201808-01
+      resource_class: xlarge
     steps:
       - attach_workspace:
           at: /tmp/workspace
@@ -93,6 +95,7 @@ jobs:
   docker-build-frontend:
     machine:
       image: circleci/classic:201808-01
+      resource_class: xlarge
     steps:
       - attach_workspace:
           at: /tmp/workspace
@@ -114,6 +117,7 @@ jobs:
   docker-push:
     machine:
       image: circleci/classic:201808-01
+      resource_class: large
     steps:
       - attach_workspace:
           at: /tmp/workspace
@@ -148,6 +152,7 @@ jobs:
   release:
     machine:
       image: circleci/classic:201808-01
+      resource_class: large
     steps:
       - attach_workspace:
           at: /tmp/workspace
