@@ -1,10 +1,9 @@
 import { Typography } from '@material-ui/core';
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import config from '../../../../../config';
 import Unimodal from '../../../../../containers/layouts/Unimodal';
-import { RootState } from '../../../../../redux/reducers';
+import getToken from '../../../../../utils/getToken';
 import useStyles from './styles';
 
 // Props for NewUserModal component
@@ -25,10 +24,7 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
   email,
 }) => {
   const classes = useStyles();
-
   const [open, setOpen] = React.useState(false);
-
-  const { userData } = useSelector((state: RootState) => state);
 
   const handleClose = () => {
     setOpen(false);
@@ -41,7 +37,7 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${userData.token}`,
+        Authorization: `Bearer ${getToken()}`,
       },
       body: JSON.stringify({ email, username, name, password }),
     })
