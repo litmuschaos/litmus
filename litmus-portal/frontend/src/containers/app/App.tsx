@@ -22,6 +22,7 @@ const HomePage = lazy(() => import('../../pages/HomePage'));
 const Community = lazy(() => import('../../pages/Community'));
 const Settings = lazy(() => import('../../pages/Settings'));
 const SchedulePage = lazy(() => import('../../pages/SchedulePage'));
+const AnalyticsPage = lazy(() => import('../../pages/AnalyticsPage'));
 
 interface RoutesProps {
   isOwner: boolean;
@@ -64,6 +65,7 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
         <Redirect exact path="/workflows/details" to="/workflows" />
         <Redirect exact path="/workflows/schedule" to="/workflows" />
         <Redirect exact path="/workflows/template" to="/workflows" />
+        <Redirect exact path="/workflows/analytics" to="/workflows" />
         <Route
           exact
           path="/workflows/details/:workflowRunId"
@@ -78,6 +80,11 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
           exact
           path="/workflows/template/:templateName"
           component={BrowseTemplate}
+        />
+        <Route
+          exact
+          path="/workflows/analytics/:workflowRunId"
+          component={AnalyticsPage}
         />
         <Route exact path="/community" component={Community} />
         {isOwner ? (
