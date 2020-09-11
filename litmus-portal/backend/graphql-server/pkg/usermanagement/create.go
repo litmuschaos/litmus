@@ -19,7 +19,7 @@ import (
 )
 
 //CreateUser ...
-func CreateUser(ctx context.Context, user model.UserInput) (*model.User, error) {
+func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error) {
 
 	outputUser, err := GetUser(ctx, user.Username)
 	if err != nil && err != mongo.ErrNoDocuments {
@@ -92,4 +92,21 @@ func GetUsers(ctx context.Context) ([]*model.User, error) {
 	}
 
 	return outputUsers, nil
+}
+
+//UpdateUser ...
+func UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error) {
+
+	dbUser := &dbSchema.User{
+		ID:          user.ID,
+		Email:       user.Email,
+		CompanyName: user.CompanyName,
+		Name:        user.Name,
+		UpdatedAt:   time.Now().Format(time.RFC1123Z),
+	}
+	err := database.UpdateUser(ctx, dbUser)
+	if err != nil {
+		return "Updating user aborted", err
+	}
+	return "Update Successful", err
 }

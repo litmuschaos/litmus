@@ -164,7 +164,9 @@ type Mutation{
   #It is used to create chaosworkflow
   createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
 
-  createUser(user: UserInput!): User! @authorized
+  createUser(user: CreateUserInput!): User! @authorized
+
+  updateUser(user: UpdateUserInput!): String! @authorized
 
   deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
 
