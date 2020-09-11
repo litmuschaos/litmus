@@ -4,9 +4,15 @@ executors:
   golang:
     docker:
       - image: circleci/golang:1.14.8-node
+    resource_class: large
   nodejs:
     docker:
       - image: circleci/node:10.0.0
+    resource_class: xlarge
+  cosmic:
+    docker:
+      - image: circleci/buildpack-deps:cosmic
+    resource_class: medium
 jobs:
   backend-services-checks:
     executor: golang
@@ -25,8 +31,7 @@ jobs:
           command: make frontend-services-checks
           working_directory: ~/project/litmus-portal
   setup-env:
-    machine:
-      image: circleci/classic:201808-01
+    executor: cosmic
     steps:
       - run: mkdir -p workspace
       - run:
@@ -48,6 +53,7 @@ jobs:
   docker-build-backend:
     machine:
       image: circleci/classic:201808-01
+      resource_class: xlarge
     steps:
       - attach_workspace:
           at: /tmp/workspace
@@ -93,6 +99,7 @@ jobs:
   docker-build-frontend:
     machine:
       image: circleci/classic:201808-01
+      resource_class: xlarge
     steps:
       - attach_workspace:
           at: /tmp/workspace
@@ -114,6 +121,7 @@ jobs:
   docker-push:
     machine:
       image: circleci/classic:201808-01
+      resource_class: large
     steps:
       - attach_workspace:
           at: /tmp/workspace
@@ -148,6 +156,7 @@ jobs:
   release:
     machine:
       image: circleci/classic:201808-01
+      resource_class: large
     steps:
       - attach_workspace:
           at: /tmp/workspace
