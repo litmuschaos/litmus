@@ -35,7 +35,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const handleMenu = () => {};
+
   return (
     <>
       <TableCell className={classes.tableDataStatus}>
@@ -107,7 +107,12 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           >
             Show the workflow
           </MenuItem>
-          <MenuItem value="Analysis" onClick={handleMenu}>
+          <MenuItem
+            value="Analysis"
+            onClick={() =>
+              history.push(`/workflows/analytics/${data.workflow_run_id}`)
+            }
+          >
             Show the analytics
           </MenuItem>
           {/* <MenuItem value="Scheduler" onClick={handleMenu}>

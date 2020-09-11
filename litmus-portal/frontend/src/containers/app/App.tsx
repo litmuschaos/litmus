@@ -2,12 +2,12 @@ import React, { lazy, Suspense, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import Loader from '../../components/Loader';
-import { UserData } from '../../models/redux/user';
 import useActions from '../../redux/actions';
 import * as AnalyticsActions from '../../redux/actions/analytics';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import withTheme from '../../theme';
+import getToken from '../../utils/getToken';
 import useStyles from './App-styles';
 
 const ErrorPage = lazy(() => import('../../pages/ErrorPage'));
@@ -22,14 +22,16 @@ const HomePage = lazy(() => import('../../pages/HomePage'));
 const Community = lazy(() => import('../../pages/Community'));
 const Settings = lazy(() => import('../../pages/Settings'));
 const SchedulePage = lazy(() => import('../../pages/SchedulePage'));
+const AnalyticsPage = lazy(() => import('../../pages/AnalyticsPage'));
+
 interface RoutesProps {
-  userData: UserData;
+  isOwner: boolean;
   isProjectAvailable: boolean;
 }
 
-const Routes: React.FC<RoutesProps> = ({ userData, isProjectAvailable }) => {
+const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
   const classes = useStyles();
-  if (userData.token === '') {
+  if (getToken() === '') {
     return (
       <div className={classes.content}>
         <Switch>
@@ -63,6 +65,7 @@ const Routes: React.FC<RoutesProps> = ({ userData, isProjectAvailable }) => {
         <Redirect exact path="/workflows/details" to="/workflows" />
         <Redirect exact path="/workflows/schedule" to="/workflows" />
         <Redirect exact path="/workflows/template" to="/workflows" />
+        <Redirect exact path="/workflows/analytics" to="/workflows" />
         <Route
           exact
           path="/workflows/details/:workflowRunId"
@@ -78,8 +81,13 @@ const Routes: React.FC<RoutesProps> = ({ userData, isProjectAvailable }) => {
           path="/workflows/template/:templateName"
           component={BrowseTemplate}
         />
+        <Route
+          exact
+          path="/workflows/analytics/:workflowRunId"
+          component={AnalyticsPage}
+        />
         <Route exact path="/community" component={Community} />
-        {userData.userRole === 'Owner' ? (
+        {isOwner ? (
           <Route exact path="/settings" component={Settings} />
         ) : (
           <Redirect to="/" />
@@ -95,9 +103,10 @@ function App() {
   const classes = useStyles();
   const analyticsAction = useActions(AnalyticsActions);
   const userData = useSelector((state: RootState) => state.userData);
+  const token = getToken();
   useEffect(() => {
-    if (userData.token !== '') analyticsAction.loadCommunityAnalytics();
-  }, [userData.token]);
+    if (token !== '') analyticsAction.loadCommunityAnalytics();
+  }, [token]);
 
   return (
     <Suspense fallback={<Loader />}>
@@ -106,7 +115,7 @@ function App() {
           <div className={classes.appFrame}>
             {/* <Routes /> */}
             <Routes
-              userData={userData}
+              isOwner={userData.userRole === 'Owner'}
               isProjectAvailable={!!userData.selectedProjectID}
             />
           </div>
