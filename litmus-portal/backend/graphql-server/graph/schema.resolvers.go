@@ -100,6 +100,17 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	return usermanagement.GetUsers(ctx)
 }
 
+func (r *queryResolver) GetScheduledWorkflows(ctx context.Context, projectID string) ([]*model.ScheduledWorkflows, error) {
+	chaosWorkflows, err := database.GetWorkflowsByProjectID(projectID)
+	if err != nil {
+		return nil, err
+	}
+	newChaosWorkflows := []*model.ScheduledWorkflows{}
+	copier.Copy(&newChaosWorkflows, &chaosWorkflows)
+
+	return newChaosWorkflows, nil
+}
+
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {
 	log.Print("NEW EVENT ", projectID)
 	clusterEvent := make(chan *model.ClusterEvent, 1)
