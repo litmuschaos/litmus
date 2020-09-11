@@ -1,7 +1,6 @@
 package mutations
 
 import (
-	"fmt"
 	"github.com/jinzhu/copier"
 	"log"
 	"strconv"
@@ -155,7 +154,6 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 
 	newWorkflowManifest, _ := sjson.Set(input.WorkflowManifest, "metadata.labels.workflow_id", workflow_id)
 
-	fmt.Print()
 	newChaosWorkflow := database.ChaosWorkFlowInput{
 		WorkflowID:          workflow_id,
 		WorkflowManifest:    newWorkflowManifest,
