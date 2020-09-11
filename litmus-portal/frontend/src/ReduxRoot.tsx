@@ -5,16 +5,16 @@ import {
   InMemoryCache,
   split,
 } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import { setContext } from '@apollo/client/link/context';
 import config from './config';
 import App from './containers/app/App';
 import configureStore from './redux/configureStore';
-import { getCookie } from './utils/cookies';
+import getToken from './utils/getToken';
 
 const { persistor, store } = configureStore();
 
@@ -22,7 +22,7 @@ const httpLink = new HttpLink({
   uri: `${config.grahqlEndpoint}/query`,
 });
 const authLink = setContext((_, { headers }) => {
-  const token = getCookie('token');
+  const token = getToken();
   return {
     headers: {
       ...headers,
