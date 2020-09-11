@@ -6,11 +6,13 @@ import useStyles from './styles';
 interface ExperimentDetailsProps {
   testNames: string[];
   testWeights: number[];
+  experimentInfo?: string;
 }
 
 const ExperimentDetails: React.FC<ExperimentDetailsProps> = ({
   testNames,
   testWeights,
+  experimentInfo,
 }) => {
   const classes = useStyles();
 
@@ -31,10 +33,7 @@ const ExperimentDetails: React.FC<ExperimentDetailsProps> = ({
                   spacing
                   icon
                 />
-                <Typography>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Curabitur bibendum quis nisi nec interdum.
-                </Typography>
+                <Typography>{experimentInfo}</Typography>
               </div>
             );
           })}

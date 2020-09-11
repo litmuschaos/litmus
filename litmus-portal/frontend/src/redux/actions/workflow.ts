@@ -10,6 +10,9 @@ export const setWorkflowDetails = (data: {
   weights: experimentMap[];
   isCustomWorkflow: boolean;
   clusterid: string;
+  details: string;
+  recommendation: string;
+  experimentInfo: string;
 }) => (dispatch: Function) => {
   dispatch({
     type: WorkflowActions.SET_WORKFLOW_DETAILS,

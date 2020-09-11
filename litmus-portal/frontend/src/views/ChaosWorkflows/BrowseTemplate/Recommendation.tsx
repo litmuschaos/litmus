@@ -2,7 +2,11 @@ import React from 'react';
 import { Typography } from '@material-ui/core';
 import useStyles from './styles';
 
-const Recommendation: React.FC = () => {
+interface RecommendationProps {
+  recommendation?: string;
+}
+
+const Recommendation: React.FC<RecommendationProps> = ({ recommendation }) => {
   const classes = useStyles();
 
   return (
@@ -14,10 +18,7 @@ const Recommendation: React.FC = () => {
 
         <div className={classes.bodytext}>
           <Typography align="left" className={classes.bodytext}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur
-            bibendum quis nisi nec interdum. Vestibulum fringilla bibendum
-            mollis. Sed eget metus enim. Etiam vitae purus in est finibus
-            facilisis. Curabitur bibendum quis nisi nec interdum.
+            {recommendation}
           </Typography>
         </div>
       </div>

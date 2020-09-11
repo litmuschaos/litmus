@@ -15,6 +15,9 @@ const initialState: WorkflowData = {
   weights: [],
   isCustomWorkflow: false,
   clusterid: '',
+  details: '',
+  recommendation: '',
+  experimentInfo: '',
 };
 
 export const workflowData = createReducer<WorkflowData>(initialState, {

@@ -4,14 +4,21 @@ import workflowData from '../../../components/PredifinedWorkflows/data';
 import { history } from '../../../redux/configureStore';
 import parsed from '../../../utils/yamlUtils';
 import useStyles from './styles';
+import * as WorkflowActions from '../../../redux/actions/workflow';
+import useActions from '../../../redux/actions';
 
 const Templates = () => {
   const classes = useStyles();
-
+  const workflow = useActions(WorkflowActions);
   const testNames: string[] = [];
   const testWeights: number[] = [];
 
   const selectWorkflow = (index: number) => {
+    workflow.setWorkflowDetails({
+      details: workflowData[index].details,
+      recommendation: workflowData[index].recommendation,
+      experimentInfo: workflowData[index].experimentInfo,
+    });
     fetch(workflowData[index].chaosWkfCRDLink)
       .then((data) => {
         data.text().then((yamlText) => {

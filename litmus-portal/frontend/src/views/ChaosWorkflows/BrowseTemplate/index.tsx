@@ -37,15 +37,23 @@ const BrowseAWorkflow: React.FC<BrowseTemplateProps> = ({ location }) => {
         </Typography>
         <section className={classes.contentWrapper}>
           {/* Header */}
-          <Head image={workflowData.urlToIcon} title={workflowData.title} />
+          <Head
+            image={workflowData.urlToIcon}
+            title={workflowData.title}
+            details={workflowData.details}
+          />
           <Divider className={classes.m2} />
 
           {/* Experiment Details */}
-          <ExperimentDetails testNames={testNames} testWeights={testWeights} />
+          <ExperimentDetails
+            testNames={testNames}
+            testWeights={testWeights}
+            experimentInfo={workflowData.experimentInfo}
+          />
           <Divider className={classes.m2} />
 
           {/* Recommendation */}
-          <Recommendation />
+          <Recommendation recommendation={workflowData.recommendation} />
           <Divider className={classes.m2} />
 
           {/* Buttons */}

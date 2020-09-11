@@ -136,6 +136,7 @@ const CustomStepper = () => {
 
   const handleNext = () => {
     if (activeStep === 2) {
+      setinValidYaml(false);
       const tests = parsed(yaml);
       const arr: experimentMap[] = [];
       const hashMap = new Map();
@@ -161,6 +162,7 @@ const CustomStepper = () => {
     } else {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
+    setinValidYaml(false);
   };
 
   const [open, setOpen] = React.useState(false);
