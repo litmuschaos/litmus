@@ -1,7 +1,8 @@
 package mutations
 
 import (
-	"encoding/json"
+	"fmt"
+	"github.com/jinzhu/copier"
 	"log"
 	"strconv"
 	"time"
@@ -146,20 +147,15 @@ func LogsHandler(podLog model.PodLog, r store.StateData) (string, error) {
 }
 
 func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*model.ChaosWorkFlowResponse, error) {
-	marshalData, err := json.Marshal(input.Weightages)
-	if err != nil {
-		return &model.ChaosWorkFlowResponse{}, err
-	}
 
 	var Weightages []*database.WeightagesInput
-	if err := json.Unmarshal(marshalData, &Weightages); err != nil {
-		return &model.ChaosWorkFlowResponse{}, err
-	}
+	copier.Copy(&Weightages, &input.Weightages)
 
 	workflow_id := uuid.New().String()
 
 	newWorkflowManifest, _ := sjson.Set(input.WorkflowManifest, "metadata.labels.workflow_id", workflow_id)
 
+	fmt.Print()
 	newChaosWorkflow := database.ChaosWorkFlowInput{
 		WorkflowID:          workflow_id,
 		WorkflowManifest:    newWorkflowManifest,
@@ -175,7 +171,7 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		WorkflowRuns:        []*database.WorkflowRun{},
 	}
 
-	err = database.InsertChaosWorkflow(newChaosWorkflow)
+	err := database.InsertChaosWorkflow(newChaosWorkflow)
 	if err != nil {
 		return nil, err
 	}
