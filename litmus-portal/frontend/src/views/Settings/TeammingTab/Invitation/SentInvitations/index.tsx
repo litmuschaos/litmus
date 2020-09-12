@@ -70,9 +70,9 @@ const SentInvitations: React.FC = () => {
                         className={classes.avatarBackground}
                         style={{ alignContent: 'right' }}
                       >
-                        {row.user_name.split(' ')[1]
-                          ? userAvatar(row.user_name, false)
-                          : userAvatar(row.user_name, true)}
+                        {row.user_name
+                          ? userAvatar(row.user_name)
+                          : userAvatar(row.user_name)}
                       </Avatar>
                       <div className={classes.detail}>
                         <div> {row.user_name}</div>

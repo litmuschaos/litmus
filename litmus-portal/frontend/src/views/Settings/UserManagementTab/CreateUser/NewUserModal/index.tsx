@@ -63,7 +63,7 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
         </ButtonFilled>
       </div>
 
-      <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn={false}>
+      <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn>
         {error.length ? (
           <div className={classes.errDiv}>
             {/* <img src="./icons/checkmark.svg" alt="checkmark" /> */}
@@ -91,14 +91,13 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
             <img src="./icons/checkmark.svg" alt="checkmark" />
             <div className={classes.text}>
               <Typography className={classes.typo} align="center">
-                A new user was <strong>successfully created </strong>
+                A new user <strong>{name}</strong> was uccessfully created
               </Typography>
             </div>
             <div className={classes.textSecond}>
               <Typography className={classes.typoSub}>
-                A new user was successfully created.Now information about it
-                will be displayed on the user management screen of the
-                application.
+                Now information about it will be displayed on the user
+                management screen of the application.
               </Typography>
             </div>
             <div className={classes.buttonModal}>

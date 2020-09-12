@@ -51,3 +51,9 @@ export const DELETE_SCHEDULE = gql`
     deleteChaosWorkflow(workflowid: $workflow_id)
   }
 `;
+
+export const UPDATE_DETAILS = gql`
+  mutation updateUser($user: UpdateUserInput!) {
+    updateUser(user: $user)
+  }
+`;

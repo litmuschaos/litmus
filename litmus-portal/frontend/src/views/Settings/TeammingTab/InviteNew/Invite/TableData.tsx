@@ -51,11 +51,11 @@ const TableData: React.FC<TableDataProps> = ({
             >
               {row.name !== null
                 ? row.name.split(' ')[1]
-                  ? userAvatar(row.name, false)
-                  : userAvatar(row.name, true)
+                  ? userAvatar(row.name)
+                  : userAvatar(row.name)
                 : row.username.split(' ')[1]
-                ? userAvatar(row.username, false)
-                : userAvatar(row.username, true)}
+                ? userAvatar(row.username)
+                : userAvatar(row.username)}
             </Avatar>
             <div className={classes.detail}>
               <div> {row.username}</div>

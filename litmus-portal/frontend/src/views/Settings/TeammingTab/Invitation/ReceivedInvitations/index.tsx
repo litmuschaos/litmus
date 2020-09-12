@@ -119,9 +119,9 @@ const ReceivedInvitations: React.FC = () => {
                         className={classes.avatarBackground}
                         style={{ alignContent: 'right' }}
                       >
-                        {row.username.split(' ')[1]
-                          ? userAvatar(row.username, false)
-                          : userAvatar(row.username, true)}
+                        {row.username
+                          ? userAvatar(row.username)
+                          : userAvatar(row.username)}
                       </Avatar>
                       <div className={classes.detail}>
                         <div> {row.username}</div>

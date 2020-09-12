@@ -23,7 +23,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '1rem',
   },
   table: {
-    maxWidth: '63.75rem',
     height: '30.25rem',
     border: `1px solid ${theme.palette.customColors.black(0.05)}`,
   },
@@ -51,10 +50,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.error.dark,
   },
   toolbar: {
-    maxWidth: '63.75rem',
     height: '6.125rem',
     border: `1px solid ${theme.palette.customColors.black(0.05)}`,
     marginBottom: theme.spacing(1.25),
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  toolbarFirstCol: {
+    display: 'flex',
   },
   filter: {
     display: 'flex',
@@ -65,16 +68,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: theme.spacing(1.25),
     border: `1px solid ${theme.palette.customColors.black(0.05)}`,
     borderRadius: '0.1875rem',
-    maxWidth: '11.375rem',
+    minWidth: '11.375rem',
     height: '2.375rem',
     paddingLeft: theme.spacing(2.5),
     paddingRight: theme.spacing(2.5),
     paddingTop: theme.spacing(0.625),
     paddingBottom: theme.spacing(0.625),
   },
-  root: {
-    maxWidth: '63.75rem',
-  },
+  root: {},
   TR: {
     height: '4.8125rem',
   },
@@ -104,22 +105,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '0.625rem',
     color: theme.palette.text.disabled,
   },
-  buttonDiv: {
-    marginLeft: theme.spacing(35.68),
-    [theme.breakpoints.down('sm')]: {
-      marginLeft: theme.spacing(2),
-    },
-    [theme.breakpoints.down('md')]: {
-      marginLeft: theme.spacing(20),
-    },
-    [theme.breakpoints.down('xs')]: {
-      marginLeft: theme.spacing(1),
-    },
-  },
-  buttonTxt: {},
   optionBtn: {
     marginLeft: 'auto',
   },
+
   calIcon: {
     marginRight: theme.spacing(1.25),
   },
