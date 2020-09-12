@@ -60,6 +60,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     marginTop: theme.spacing(1),
     marginLeft: theme.spacing(-2),
+    width: theme.spacing(45),
   },
 
   linkForgotPass: {

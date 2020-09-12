@@ -79,7 +79,7 @@ const useStyles = makeStyles((theme) => ({
     borderColor: theme.palette.error.main,
   },
   inputArea: {
-    width: theme.spacing(45),
+    width: 'inherit',
     marginTop: theme.spacing(1),
     textDecoration: 'none',
     borderRadius: 3,
