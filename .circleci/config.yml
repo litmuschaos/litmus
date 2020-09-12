@@ -228,8 +228,10 @@ workflows:
             - docker-build-backend
             - docker-build-frontend
           filters:
-            tags:
-              only: /.*/
+            branches:
+              only:
+                - master
+                - /^v.*/
       - release:
           requires:
             - docker-build-backend
