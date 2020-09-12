@@ -26,11 +26,8 @@ const ResetModal: React.FC<ResetModalProps> = ({
 
   const [open, setOpen] = React.useState(false);
 
-  // for conditional rendering of second div
-  const [showDiv, setShowDiv] = React.useState(false);
   const handleClose = () => {
     setOpen(false);
-    setShowDiv(false);
   };
 
   const handleClick = () => {
@@ -67,68 +64,28 @@ const ResetModal: React.FC<ResetModalProps> = ({
         </div>
 
         <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn={false}>
-          {showDiv ? (
-            // Second div
-            <div className={classes.body}>
-              <img src="./icons/checkmark.svg" alt="checkmark" />
-              <div className={classes.textSucess}>
-                <Typography className={classes.typo} align="center">
-                  The user’s password was <strong>successfully reset </strong>
-                </Typography>
-              </div>
-              <div className={classes.text1Sucess}>
-                <Typography className={classes.typoSub} align="center">
-                  The user needs to login with the new credentials. Copy the
-                  credentials and share it with the respective user.
-                </Typography>
-              </div>
+          <div className={classes.body}>
+            <img src="./icons/checkmark.svg" alt="checkmark" />
+            <div className={classes.textSucess}>
+              <Typography className={classes.typo} align="center">
+                The user’s password was <strong>successfully reset </strong>
+              </Typography>
+            </div>
+            <div className={classes.text1Sucess}>
+              <Typography className={classes.typoSub} align="center">
+                The user needs to login with the new credentials.
+              </Typography>
+            </div>
 
-              <Button
-                data-cy="closeButton"
-                variant="contained"
-                className={classes.buttonModalSucess}
-                onClick={handleModal}
-              >
-                Done
-              </Button>
-            </div>
-          ) : (
-            // first div
-            <div className={classes.body}>
-              <img src="./icons/lock.svg" alt="lock" />
-              <div className={classes.text}>
-                <Typography className={classes.typo} align="center">
-                  Are you sure to reset the
-                  <strong> password of the current user?</strong>
-                </Typography>
-              </div>
-              <div className={classes.secondText}>
-                <Typography className={classes.typoSub}>
-                  The user will need to relogin the portal with the new
-                  credentials
-                </Typography>
-              </div>
-              <div className={classes.buttonGroup}>
-                <Button
-                  data-cy="closeButton"
-                  variant="outlined"
-                  className={classes.buttonOutline}
-                  onClick={handleClose}
-                >
-                  No
-                </Button>
-                <ButtonFilled
-                  isPrimary
-                  isDisabled={false}
-                  handleClick={() => {
-                    if (resetPossible) setShowDiv(true);
-                  }}
-                >
-                  <Typography>Yes</Typography>
-                </ButtonFilled>
-              </div>
-            </div>
-          )}
+            <Button
+              data-cy="closeButton"
+              variant="contained"
+              className={classes.buttonModalSucess}
+              onClick={handleModal}
+            >
+              Done
+            </Button>
+          </div>
         </Unimodal>
       </div>
     </div>
