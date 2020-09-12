@@ -197,9 +197,9 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
           <ButtonOutline
             isDisabled={false}
             handleClick={handleBack}
-            data-cy="Skip"
+            data-cy="Back"
           >
-            <>{t('welcomeModel.button.skip')}</>
+            <>{t('welcomeModel.button.back')}</>
           </ButtonOutline>
           <ButtonFilled
             isPrimary

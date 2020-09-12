@@ -42,10 +42,18 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
       body: JSON.stringify({ email, username, name, password }),
     })
       .then((response) => {
-        response.json();
-        if (showModal) setOpen(true);
+        return response.json();
+      })
+      .then((data) => {
+        if ('error' in data) {
+          setError(data.error_description as string);
+          if (showModal) setOpen(true);
+        } else {
+          setOpen(true);
+        }
       })
       .catch((err) => {
+        console.error(err);
         setError(err.message as string);
         if (showModal) setOpen(true);
       });
@@ -74,7 +82,9 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
               </Typography>
             </div>
             <div className={classes.textSecondError}>
-              <Typography className={classes.typoSub}>Err: {error}</Typography>
+              <Typography className={classes.typoSub}>
+                Error: {error}
+              </Typography>
             </div>
             <div className={classes.buttonModal}>
               <ButtonFilled
@@ -91,7 +101,7 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
             <img src="./icons/checkmark.svg" alt="checkmark" />
             <div className={classes.text}>
               <Typography className={classes.typo} align="center">
-                A new user <strong>{name}</strong> was uccessfully created
+                A new user <strong>{name}</strong> was successfully created
               </Typography>
             </div>
             <div className={classes.textSecond}>
