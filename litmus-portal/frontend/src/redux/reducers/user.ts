@@ -22,9 +22,9 @@ export const userData = createReducer<UserData>(initialState, {
     try {
       const jwt = action.payload as string;
       const data: any = jwtDecode.decode(jwt);
-      const expirationTime = 1000;
-      // new Date(data.exp * 1000).getHours() -
-      // new Date(data.iat * 1000).getHours();
+      const expirationTime =
+        new Date(data.exp * 1000).getHours() -
+        new Date(data.iat * 1000).getHours();
 
       setCookie('token', jwt, expirationTime);
       return {

@@ -127,6 +127,7 @@ const HomePage: React.FC = () => {
               {secondLogin ? (
                 <ReturningHome
                   callbackToSetSecondlogin={setSecondLoginAfterCheck}
+                  currentStatus={secondLogin}
                 />
               ) : (
                 <div className={classes.headingDiv}>
