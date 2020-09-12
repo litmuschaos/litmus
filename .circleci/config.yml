@@ -85,7 +85,7 @@ jobs:
       - run:
           name: Build self-deployer docker image
           command: docker build . -f build/Dockerfile -t ${REPONAME}/${SELF_DEPLOYER_IMAGE}:${IMGTAG}
-          working_directory: ~/project/litmus-portal/backend/tools/self-deployer
+          working_directory: ~/project/litmus-portal/tools/self-deployer
       - run:
           name: Save self-deployer docker image
           command: docker save -o /tmp/workspace/${SELF_DEPLOYER_IMAGE}.tar ${REPONAME}/${SELF_DEPLOYER_IMAGE}:${IMGTAG}
