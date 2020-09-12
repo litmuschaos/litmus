@@ -116,6 +116,20 @@ const useStyles = makeStyles((theme) => ({
   success: {
     color: theme.palette.primary.dark,
   },
+  // Menu option with icon
+  expDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    cursor: 'pointer',
+  },
+  btnImg: {
+    width: '0.8125rem',
+    height: '0.8125rem',
+    marginTop: theme.spacing(0.375),
+  },
+  btnText: {
+    paddingLeft: theme.spacing(1.625),
+  },
 }));
 
 export default useStyles;
