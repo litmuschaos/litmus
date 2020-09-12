@@ -1,10 +1,18 @@
 package models
 
 import (
+	"log"
+	"os"
 	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/types"
 )
+
+func init() {
+	if os.Getenv("ADMIN_USERNAME") == "" || os.Getenv("ADMIN_PASSWORD") == "" {
+		log.Fatal("Environment variables ADMIN_USERNAME or ADMIN_PASSWORD are not set")
+	}
+}
 
 //UserCredentials contains the user information
 type UserCredentials struct {

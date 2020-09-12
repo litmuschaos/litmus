@@ -18,6 +18,7 @@
     }
   },
   "rules": {
+    "import/no-cycle": 0,
     "new-cap": 0,
     "no-underscore-dangle": 0,
     "react/static-property-placement": [

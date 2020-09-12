@@ -154,6 +154,20 @@ type Project struct {
 	RemovedAt string    `json:"removed_at"`
 }
 
+type ScheduledWorkflows struct {
+	WorkflowID          string        `json:"workflow_id"`
+	WorkflowManifest    string        `json:"workflow_manifest"`
+	CronSyntax          string        `json:"cronSyntax"`
+	WorkflowName        string        `json:"workflow_name"`
+	WorkflowDescription string        `json:"workflow_description"`
+	Weightages          []*Weightages `json:"weightages"`
+	IsCustomWorkflow    string        `json:"isCustomWorkflow"`
+	UpdatedAt           string        `json:"updated_at"`
+	CreatedAt           string        `json:"created_at"`
+	ProjectID           string        `json:"project_id"`
+	ClusterID           string        `json:"cluster_id"`
+}
+
 type UpdateUserInput struct {
 	ID          string  `json:"id"`
 	Name        *string `json:"name"`

@@ -14,6 +14,27 @@ export const WORKFLOW_DETAILS = gql`
   }
 `;
 
+export const SCHEDULE_DETAILS = gql`
+  query scheduleDetails($projectID: String!) {
+    getScheduledWorkflows(project_id: $projectID) {
+      workflow_id
+      workflow_manifest
+      cronSyntax
+      workflow_name
+      workflow_description
+      weightages {
+        experiment_name
+        weightage
+      }
+      isCustomWorkflow
+      updated_at
+      created_at
+      project_id
+      cluster_id
+    }
+  }
+`;
+
 export const GET_USER = gql`
   query getUser($username: String!) {
     getUser(username: $username) {

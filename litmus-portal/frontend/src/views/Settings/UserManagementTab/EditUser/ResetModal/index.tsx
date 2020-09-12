@@ -1,11 +1,10 @@
 import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import React from 'react';
-import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import config from '../../../../../config';
 import Unimodal from '../../../../../containers/layouts/Unimodal';
-import { RootState } from '../../../../../redux/reducers';
+import getToken from '../../../../../utils/getToken';
 import useStyles from './styles';
 
 // props for ResetModal component
@@ -34,7 +33,6 @@ const ResetModal: React.FC<ResetModalProps> = ({
     setShowDiv(false);
   };
 
-  const { userData } = useSelector((state: RootState) => state);
   const handleClick = () => {
     if (resetPossible) setOpen(true);
 
@@ -42,7 +40,7 @@ const ResetModal: React.FC<ResetModalProps> = ({
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${userData.token}`,
+        Authorization: `Bearer ${getToken()}`,
       },
       body: JSON.stringify({ username, password }),
     })

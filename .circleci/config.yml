@@ -4,9 +4,15 @@ executors:
   golang:
     docker:
       - image: circleci/golang:1.14.8-node
+    resource_class: large
   nodejs:
     docker:
       - image: circleci/node:10.0.0
+    resource_class: xlarge
+  cosmic:
+    docker:
+      - image: circleci/buildpack-deps:cosmic
+    resource_class: medium
 jobs:
   backend-services-checks:
     executor: golang
@@ -24,11 +30,9 @@ jobs:
           name: Run frontend service checks
           command: make frontend-services-checks
           working_directory: ~/project/litmus-portal
-  docker-build:
-    machine:
-      image: circleci/classic:201808-01
+  setup-env:
+    executor: cosmic
     steps:
-      - checkout
       - run: mkdir -p workspace
       - run:
           name: Setup ENV
@@ -42,54 +46,82 @@ jobs:
             echo 'export IMGTAG="ci"' >> workspace/env-vars
             cat workspace/env-vars >> $BASH_ENV
             source $BASH_ENV
+      - persist_to_workspace:
+          root: workspace
+          paths:
+            - env-vars
+  docker-build-backend:
+    machine:
+      image: circleci/classic:201808-01
+      resource_class: xlarge
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - run: |
+          cat /tmp/workspace/env-vars >> $BASH_ENV
+          source $BASH_ENV
+      - checkout
       - run:
           name: Build graphql server docker image
           command: docker build . -f build/Dockerfile -t ${REPONAME}/${GRAPHQL_SERVER_IMAGE}:${IMGTAG}
           working_directory: ~/project/litmus-portal/backend/graphql-server
       - run:
           name: Save graphql server docker image
-          command: docker save -o workspace/${GRAPHQL_SERVER_IMAGE}.tar ${REPONAME}/${GRAPHQL_SERVER_IMAGE}:${IMGTAG}
+          command: docker save -o /tmp/workspace/${GRAPHQL_SERVER_IMAGE}.tar ${REPONAME}/${GRAPHQL_SERVER_IMAGE}:${IMGTAG}
       - run:
           name: Build auth server docker image
           command: docker images && docker build . -f Dockerfile -t ${REPONAME}/${AUTHENTICATION_SERVER_IMAGE}:${IMGTAG}
           working_directory: ~/project/litmus-portal/backend/auth
       - run:
           name: Save auth server docker image
-          command: docker save -o workspace/${AUTHENTICATION_SERVER_IMAGE}.tar ${REPONAME}/${AUTHENTICATION_SERVER_IMAGE}:${IMGTAG}
+          command: docker save -o /tmp/workspace/${AUTHENTICATION_SERVER_IMAGE}.tar ${REPONAME}/${AUTHENTICATION_SERVER_IMAGE}:${IMGTAG}
       - run:
           name: Build subscriber docker image
           command: docker build . -f build/Dockerfile -t ${REPONAME}/${SUBSCRIBER_IMAGE}:${IMGTAG}
           working_directory: ~/project/litmus-portal/backend/subscriber
       - run:
           name: Save subscriber docker image
-          command: docker save -o workspace/${SUBSCRIBER_IMAGE}.tar ${REPONAME}/${SUBSCRIBER_IMAGE}:${IMGTAG}
+          command: docker save -o /tmp/workspace/${SUBSCRIBER_IMAGE}.tar ${REPONAME}/${SUBSCRIBER_IMAGE}:${IMGTAG}
       - run:
           name: Build self-deployer docker image
           command: docker build . -f build/Dockerfile -t ${REPONAME}/${SELF_DEPLOYER_IMAGE}:${IMGTAG}
           working_directory: ~/project/litmus-portal/backend/tools/self-deployer
       - run:
           name: Save self-deployer docker image
-          command: docker save -o workspace/${SELF_DEPLOYER_IMAGE}.tar ${REPONAME}/${SELF_DEPLOYER_IMAGE}:${IMGTAG}
+          command: docker save -o /tmp/workspace/${SELF_DEPLOYER_IMAGE}.tar ${REPONAME}/${SELF_DEPLOYER_IMAGE}:${IMGTAG}
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - litmusportal-server.tar
+            - litmusportal-subscriber.tar
+            - litmusportal-self-deployer.tar
+            - litmusportal-auth-server.tar
+  docker-build-frontend:
+    machine:
+      image: circleci/classic:201808-01
+      resource_class: xlarge
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - run: |
+          cat /tmp/workspace/env-vars >> $BASH_ENV
+          source $BASH_ENV
+      - checkout
       - run:
           name: Build frontend docker image
           command: docker build . -f Dockerfile -t ${REPONAME}/${FRONTEND_IMAGE}:${IMGTAG}
           working_directory: ~/project/litmus-portal/frontend
       - run:
           name: Save frontend docker image
-          command: docker save -o workspace/${FRONTEND_IMAGE}.tar ${REPONAME}/${FRONTEND_IMAGE}:${IMGTAG}
+          command: docker save -o /tmp/workspace/${FRONTEND_IMAGE}.tar ${REPONAME}/${FRONTEND_IMAGE}:${IMGTAG}
       - persist_to_workspace:
-          root: workspace
+          root: /tmp/workspace
           paths:
-            - litmusportal-server.tar
-            - litmusportal-subscriber.tar
-            - litmusportal-self-deployer.tar
-            - litmusportal-auth-server.tar
             - litmusportal-frontend.tar
-            - env-vars
-
   docker-push:
     machine:
       image: circleci/classic:201808-01
+      resource_class: large
     steps:
       - attach_workspace:
           at: /tmp/workspace
@@ -124,6 +156,7 @@ jobs:
   release:
     machine:
       image: circleci/classic:201808-01
+      resource_class: large
     steps:
       - attach_workspace:
           at: /tmp/workspace
@@ -170,22 +203,37 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - docker-build:
+      - setup-env:
+          filters:
+            tags:
+              only: /.*/
+      - docker-build-frontend:
           requires:
+            - setup-env
             - frontend-services-checks
             - backend-services-checks
           filters:
             tags:
               only: /.*/
+      - docker-build-backend:
+          requires:
+            - setup-env
+            - backend-services-checks
+            - frontend-services-checks
+          filters:
+            tags:
+              only: /.*/
       - docker-push:
           requires:
-            - docker-build
+            - docker-build-backend
+            - docker-build-frontend
           filters:
             tags:
               only: /.*/
       - release:
           requires:
-            - docker-build
+            - docker-build-backend
+            - docker-build-frontend
           filters:
             ## release jobs needs to be run for tagged releases alone & not for any branch commits
             branches:

@@ -14,7 +14,7 @@ type Config struct {
 
 // default configs
 var (
-	DefaultTokenCfg = &Config{AccessTokenExp: time.Hour * 1}
+	DefaultTokenCfg = &Config{AccessTokenExp: time.Hour * 24}
 )
 
 // TokenGenerateRequest provide to generate the token request parameters

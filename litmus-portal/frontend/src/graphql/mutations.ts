@@ -12,7 +12,7 @@ export const CREATE_WORKFLOW = gql`
   }
 `;
 export const CREATE_USER = gql`
-  mutation CreateUser($user: UserInput!) {
+  mutation CreateUser($user: CreateUserInput!) {
     createUser(user: $user) {
       id
       username
@@ -43,5 +43,11 @@ export const ACCEPT_INVITE = gql`
 export const DECLINE_INVITE = gql`
   mutation decline($member: MemberInput!) {
     declineInvitation(member: $member)
+  }
+`;
+
+export const DELETE_SCHEDULE = gql`
+  mutation deleteWorkflow($workflow_id: String!) {
+    deleteChaosWorkflow(workflowid: $workflow_id)
   }
 `;

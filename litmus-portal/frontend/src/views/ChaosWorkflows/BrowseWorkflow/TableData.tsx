@@ -35,7 +35,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const handleMenu = () => {};
+
   return (
     <>
       <TableCell className={classes.tableDataStatus}>
@@ -105,10 +105,33 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
               history.push(`/workflows/details/${data.workflow_run_id}`)
             }
           >
-            Show the workflow
+            <div className={classes.expDiv}>
+              <img
+                src="/icons/show-workflow.svg"
+                alt="Display Workflow"
+                className={classes.btnImg}
+              />
+              <Typography className={classes.btnText}>
+                Show the workflow
+              </Typography>
+            </div>
           </MenuItem>
-          <MenuItem value="Analysis" onClick={handleMenu}>
-            Show the analytics
+          <MenuItem
+            value="Analysis"
+            onClick={() =>
+              history.push(`/workflows/analytics/${data.workflow_run_id}`)
+            }
+          >
+            <div className={classes.expDiv}>
+              <img
+                src="/icons/show-analytics.svg"
+                alt="Display Analytics"
+                className={classes.btnImg}
+              />
+              <Typography className={classes.btnText}>
+                Show the analytics
+              </Typography>
+            </div>
           </MenuItem>
           {/* <MenuItem value="Scheduler" onClick={handleMenu}>
             Show the scheduler

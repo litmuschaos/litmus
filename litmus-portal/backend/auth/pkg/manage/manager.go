@@ -1,6 +1,7 @@
 package manage
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -38,7 +39,7 @@ func (m *Manager) MustUserStorage(stor *store.UserStore, err error) {
 	m.userStore = stor
 	_, err = m.CreateUser(models.DefaultUser)
 	if err != nil {
-		log.Fatal("Unable to create default user with error:", err)
+		log.Println("Unable to create default user with error:", err)
 	}
 }
 
@@ -83,7 +84,10 @@ func (m *Manager) VerifyUserPassword(username, password string) (*models.PublicU
 		return nil, err
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(user.GetPassword()), []byte(password))
-	return user.GetPublicInfo(), err
+	if err != nil {
+		return user.GetPublicInfo(), errors.ErrInvalidPassword
+	}
+	return user.GetPublicInfo(), nil
 }
 
 // LoginUser verifies user password
@@ -110,9 +114,12 @@ func (m *Manager) LogoutUser(username string) error {
 func (m *Manager) CreateUser(user *models.UserCredentials) (*models.PublicUserInfo, error) {
 
 	exists, err := m.CheckUserExists(user.UserName)
-	if err != nil || exists {
+	if err != nil {
 		return nil, err
+	} else if exists {
+		return nil, errors.ErrUserExists
 	}
+	fmt.Println("here")
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), types.PasswordEncryptionCost)
 	if err != nil {
 		return nil, err
@@ -187,14 +194,21 @@ func (m *Manager) UpdateUserDetails(user *models.UserCredentials) (*models.Publi
 }
 
 // UpdatePassword get the user information
-func (m *Manager) UpdatePassword(user *models.UserCredentials) (*models.PublicUserInfo, error) {
+func (m *Manager) UpdatePassword(reset bool, oldPassword, newPassword, userName string) (*models.PublicUserInfo, error) {
 
-	storedUser, err := m.GetUser(user.UserName)
+	storedUser, err := m.GetUser(userName)
 	if err != nil {
 		return nil, errors.ErrInvalidUser
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.GetPassword()), types.PasswordEncryptionCost)
+	if reset == false {
+		err = bcrypt.CompareHashAndPassword([]byte(storedUser.GetPassword()), []byte(oldPassword))
+		if err != nil {
+			return storedUser.GetPublicInfo(), errors.ErrInvalidPassword
+		}
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), types.PasswordEncryptionCost)
 	if err != nil {
 		return nil, err
 	}
