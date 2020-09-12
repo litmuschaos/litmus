@@ -14,6 +14,9 @@ export interface preDefinedWorkflowData {
   CallbackOnSelectWorkflow?: SelectWorkflowCallBackType;
   selectedID?: number;
   isCustom?: boolean;
+  details?: string;
+  recommendation?: string;
+  experimentinfo?: string;
 }
 
 export interface workflowDetails {
