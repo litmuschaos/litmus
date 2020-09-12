@@ -13,7 +13,7 @@ welcomeModel:
   case-1:
     name: fullName
     label: Full Name
-    info: How do i call you?
+    info: How do I call you?
   case-2:
     name: password
     label: Password
@@ -23,7 +23,7 @@ welcomeModel:
   case-3:
     name: emailAddress
     label: Email Address
-    info: You can change your current mail (optional)
+    info: You can set your current mail (optional)
 
 ######################################
 ############     Pages    ############
@@ -42,7 +42,7 @@ home:
     moreInfo: See more
 
 login:
-  heading: Welcome to
+  heading: Welcome to <strong>Litmus!</strong>
   subHeading1: Your one-stop-shop for Chaos Engineering on
   subHeading2: . Browse, create, manage, monitor and analyze your chaos workflows.
   subHeading3: With your own private ChaosHub, you can create your new chaos experiments and share them with your team.

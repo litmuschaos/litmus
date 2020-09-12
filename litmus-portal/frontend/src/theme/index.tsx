@@ -25,10 +25,17 @@ declare module '@material-ui/core/styles/createPalette' {
       white: (opacity: number) => string;
       black: (opacity: number) => string;
       gray: string;
+      menuOption: {
+        active: string;
+      };
     };
     input: {
       disabled: string;
     };
+    shadow: {
+      blue: string;
+    };
+    editorBackground: string;
   }
   // allow configuration using `createMuiTheme`
   interface PaletteOptions {
@@ -36,10 +43,17 @@ declare module '@material-ui/core/styles/createPalette' {
       white?: (opacity: number) => string;
       black?: (opacity: number) => string;
       gray?: string;
+      menuOption?: {
+        active?: string;
+      };
     };
     input?: {
       disabled?: string;
     };
+    shadow?: {
+      blue: string;
+    };
+    editorBackground?: string;
   }
 }
 function customTheme(options: ThemeOptions) {
@@ -79,6 +93,9 @@ function customTheme(options: ThemeOptions) {
       input: {
         disabled: '#e2e2e1',
       },
+      shadow: {
+        blue: 'rgba(91, 68, 186, 0.25)',
+      },
       customColors: {
         white: (opacity: number): string => {
           let op = opacity;
@@ -93,7 +110,11 @@ function customTheme(options: ThemeOptions) {
           return `rgba(0, 0, 0, ${op})`;
         },
         gray: '#5D6173',
+        menuOption: {
+          active: 'rgba(16, 155, 103, 0.1)',
+        },
       },
+      editorBackground: '#1C1C1C',
     },
     typography: {
       fontSize: 12,

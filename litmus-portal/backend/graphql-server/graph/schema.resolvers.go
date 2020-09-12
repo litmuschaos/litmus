@@ -32,8 +32,12 @@ func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.
 	return mutations.CreateChaosWorkflow(&input, *store)
 }
 
-func (r *mutationResolver) CreateUser(ctx context.Context, user model.UserInput) (*model.User, error) {
+func (r *mutationResolver) CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error) {
 	return usermanagement.CreateUser(ctx, user)
+}
+
+func (r *mutationResolver) UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error) {
+	return usermanagement.UpdateUser(ctx, user)
 }
 
 func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid string) (bool, error) {
@@ -94,6 +98,17 @@ func (r *queryResolver) GetProject(ctx context.Context, projectID string) (*mode
 
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	return usermanagement.GetUsers(ctx)
+}
+
+func (r *queryResolver) GetScheduledWorkflows(ctx context.Context, projectID string) ([]*model.ScheduledWorkflows, error) {
+	chaosWorkflows, err := database.GetWorkflowsByProjectID(projectID)
+	if err != nil {
+		return nil, err
+	}
+	newChaosWorkflows := []*model.ScheduledWorkflows{}
+	copier.Copy(&newChaosWorkflows, &chaosWorkflows)
+
+	return newChaosWorkflows, nil
 }
 
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {

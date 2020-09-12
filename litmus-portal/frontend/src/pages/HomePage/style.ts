@@ -12,9 +12,13 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
     marginLeft: theme.spacing(6),
   },
-
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: theme.palette.customColors.white(1),
+  },
   mainDiv: {
-    marginLeft: theme.spacing(3.75),
+    padding: theme.spacing(3.75),
+    backgroundColor: theme.palette.background.default,
     width: '50rem',
     display: 'flex',
     flexDirection: 'row',

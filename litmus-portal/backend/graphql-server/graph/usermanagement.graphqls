@@ -13,11 +13,18 @@ type User {
     removed_at: String!
 }
 
-input UserInput {
+input CreateUserInput {
     username: String!
     email: String
     company_name: String
     name: String
     project_name: String!
+}
+
+input UpdateUserInput {
+    id: ID!
+    name: String
+    email: String
+    company_name: String
 }
 

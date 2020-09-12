@@ -145,6 +145,20 @@ input PodLogRequest{
   chaos_namespace: String
 }
 
+type ScheduledWorkflows {
+	workflow_id: String!
+	workflow_manifest: String!
+	cronSyntax: String!
+	workflow_name: String!
+	workflow_description: String!
+	weightages: [weightages!]!
+	isCustomWorkflow: String!
+	updated_at: String!
+	created_at: String!
+	project_id: ID!
+	cluster_id: ID!
+}
+
 type Query{
   getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
 
@@ -155,6 +169,8 @@ type Query{
   getProject(projectID: String!): Project! @authorized
 
   users: [User!]! @authorized
+
+  getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
 }
 
 type Mutation{
@@ -164,7 +180,9 @@ type Mutation{
   #It is used to create chaosworkflow
   createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
 
-  createUser(user: UserInput!): User! @authorized
+  createUser(user: CreateUserInput!): User! @authorized
+
+  updateUser(user: UpdateUserInput!): String! @authorized
 
   deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
 

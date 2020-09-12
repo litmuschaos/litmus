@@ -4,8 +4,6 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import Loader from '../../components/Loader';
-import ArgoWorkflow from '../../components/Sections/WorkflowDetails/ArgoWorkflow';
-import WorkflowInfo from '../../components/Sections/WorkflowDetails/WorkflowInfo';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../graphql';
 import {
@@ -13,15 +11,17 @@ import {
   Workflow,
   WorkflowDataVars,
   WorkflowSubscription,
-} from '../../models/workflowData';
+} from '../../models/graphql/workflowData';
 import { RootState } from '../../redux/reducers';
+import ArgoWorkflow from '../../views/WorkflowDetails/ArgoWorkflow';
+import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
 import useStyles from './styles';
 
 const WorkflowDetails: React.FC = () => {
   const classes = useStyles();
   const { pathname } = useLocation();
   // Getting the workflow nome from the pathname
-  const workflowRunId = pathname.split('/')[2];
+  const workflowRunId = pathname.split('/')[3];
 
   // get ProjectID
   const selectedProjectID = useSelector(

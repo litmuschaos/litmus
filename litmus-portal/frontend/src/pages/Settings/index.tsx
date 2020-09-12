@@ -1,10 +1,13 @@
 import { Box, Paper, Tab, Tabs, Typography } from '@material-ui/core';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import AccountSettings from '../../components/Sections/Settings/AccountsTab/AccountSettings';
-import UserManagement from '../../components/Sections/Settings/UserManagementTab/UserManagement';
 import Scaffold from '../../containers/layouts/Scaffold';
+import useActions from '../../redux/actions';
+import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
+import AccountSettings from '../../views/Settings/AccountsTab/AccountSettings';
+import TeammingTab from '../../views/Settings/TeammingTab';
+import UserManagement from '../../views/Settings/UserManagementTab/UserManagement';
 import useStyles from './styles';
 
 interface TabPanelProps {
@@ -39,45 +42,50 @@ function tabProps(index: any) {
 }
 
 const Settings: React.FC = () => {
-  const [activeTab, setActiveTab] = React.useState(0);
   const classes = useStyles();
-  const handleChange = (event: React.ChangeEvent<{}>, actTab: number) => {
-    setActiveTab(actTab);
+
+  const settingsTabValue = useSelector(
+    (state: RootState) => state.tabNumber.settings
+  );
+  const userData = useSelector((state: RootState) => state.userData);
+  const tabs = useActions(TabActions);
+
+  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    tabs.changeSettingsTabs(newValue);
   };
 
-  const { userData } = useSelector((state: RootState) => state);
   return (
     <Scaffold>
-      <div>
-        <Typography className={classes.Head}>Settings </Typography>
-        <Paper className={classes.root} elevation={0}>
-          <Tabs
-            className={classes.tab}
-            value={activeTab}
-            onChange={handleChange}
-            indicatorColor="secondary"
-            textColor="secondary"
-          >
-            <Tab label="Account" {...tabProps(0)} />
-            <Tab disabled label="Team" {...tabProps(1)} />
-            {userData.username === 'admin' ? (
-              <Tab label="User Management" {...tabProps(2)} />
-            ) : (
-              <></>
-            )}
-          </Tabs>
-        </Paper>
-        <TabPanel value={activeTab} index={0}>
-          <AccountSettings />
+      <Typography className={classes.Head}>Settings </Typography>
+      <Paper className={classes.root} elevation={0}>
+        <Tabs
+          value={settingsTabValue}
+          onChange={handleChange}
+          indicatorColor="secondary"
+          textColor="secondary"
+        >
+          <Tab label="My Account" {...tabProps(0)} />
+          <Tab label="Team" {...tabProps(1)} />
+          {userData.username === 'admin' ? (
+            <Tab label="User Management" {...tabProps(2)} />
+          ) : (
+            <></>
+          )}
+        </Tabs>
+      </Paper>
+      <TabPanel value={settingsTabValue} index={0}>
+        <AccountSettings />
+      </TabPanel>
+      <TabPanel value={settingsTabValue} index={1}>
+        <TeammingTab />
+      </TabPanel>
+      {userData.username === 'admin' ? (
+        <TabPanel value={settingsTabValue} index={2}>
+          <UserManagement />
         </TabPanel>
-        {userData.username === 'admin' ? (
-          <TabPanel value={activeTab} index={2}>
-            <UserManagement />
-          </TabPanel>
-        ) : (
-          <></>
-        )}
-      </div>
+      ) : (
+        <></>
+      )}
     </Scaffold>
   );
 };

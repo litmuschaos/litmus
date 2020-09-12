@@ -93,6 +93,14 @@ type ClusterInput struct {
 	ClusterType  string  `json:"cluster_type"`
 }
 
+type CreateUserInput struct {
+	Username    string  `json:"username"`
+	Email       *string `json:"email"`
+	CompanyName *string `json:"company_name"`
+	Name        *string `json:"name"`
+	ProjectName string  `json:"project_name"`
+}
+
 type Member struct {
 	UserID     string     `json:"user_id"`
 	UserName   string     `json:"user_name"`
@@ -146,6 +154,27 @@ type Project struct {
 	RemovedAt string    `json:"removed_at"`
 }
 
+type ScheduledWorkflows struct {
+	WorkflowID          string        `json:"workflow_id"`
+	WorkflowManifest    string        `json:"workflow_manifest"`
+	CronSyntax          string        `json:"cronSyntax"`
+	WorkflowName        string        `json:"workflow_name"`
+	WorkflowDescription string        `json:"workflow_description"`
+	Weightages          []*Weightages `json:"weightages"`
+	IsCustomWorkflow    string        `json:"isCustomWorkflow"`
+	UpdatedAt           string        `json:"updated_at"`
+	CreatedAt           string        `json:"created_at"`
+	ProjectID           string        `json:"project_id"`
+	ClusterID           string        `json:"cluster_id"`
+}
+
+type UpdateUserInput struct {
+	ID          string  `json:"id"`
+	Name        *string `json:"name"`
+	Email       *string `json:"email"`
+	CompanyName *string `json:"company_name"`
+}
+
 type User struct {
 	ID              string     `json:"id"`
 	Username        string     `json:"username"`
@@ -159,14 +188,6 @@ type User struct {
 	CreatedAt       string     `json:"created_at"`
 	UpdatedAt       string     `json:"updated_at"`
 	RemovedAt       string     `json:"removed_at"`
-}
-
-type UserInput struct {
-	Username    string  `json:"username"`
-	Email       *string `json:"email"`
-	CompanyName *string `json:"company_name"`
-	Name        *string `json:"name"`
-	ProjectName string  `json:"project_name"`
 }
 
 type WeightagesInput struct {

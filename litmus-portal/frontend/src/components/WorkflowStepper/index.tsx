@@ -9,28 +9,28 @@ import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import Unimodal from '../../containers/layouts/Unimodal';
 import { CREATE_WORKFLOW } from '../../graphql';
-import { experimentMap, WorkflowData } from '../../models/workflow';
+import {
+  CreateWorkFlowInput,
+  CreateWorkflowResponse,
+  WeightMap,
+} from '../../models/graphql/createWorkflowData';
+import { experimentMap, WorkflowData } from '../../models/redux/workflow';
 import useActions from '../../redux/actions';
 import * as WorkflowActions from '../../redux/actions/workflow';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import parsed from '../../utils/yamlUtils';
+import ChooseWorkflow from '../../views/CreateWorkflow/ChooseWorkflow/index';
+import ReliablityScore from '../../views/CreateWorkflow/ReliabilityScore';
+import ScheduleWorkflow from '../../views/CreateWorkflow/ScheduleWorkflow';
+import TuneWorkflow from '../../views/CreateWorkflow/TuneWorkflow/index';
+import VerifyCommit from '../../views/CreateWorkflow/VerifyCommit';
+import ChooseAWorkflowCluster from '../../views/CreateWorkflow/WorkflowCluster';
 import ButtonFilled from '../Button/ButtonFilled';
 import ButtonOutline from '../Button/ButtonOutline';
-import ChooseWorkflow from '../Sections/CreateWorkflow/ChooseWorkflow/index';
-import ReliablityScore from '../Sections/CreateWorkflow/ReliabilityScore';
-import ScheduleWorkflow from '../Sections/CreateWorkflow/ScheduleWorkflow';
-import TuneWorkflow from '../Sections/CreateWorkflow/TuneWorkflow/index';
-import VerifyCommit from '../Sections/CreateWorkflow/VerifyCommit';
-import ChooseAWorkflowCluster from '../Sections/CreateWorkflow/WorkflowCluster';
 import QontoConnector from './quontoConnector';
 import useStyles from './styles';
 import useQontoStepIconStyles from './useQontoStepIconStyles';
-import {
-  CreateWorkFlowInput,
-  CreateWorkflowResponse,
-  WeightMap,
-} from '../../models/CreateWorkflowData';
 
 function getSteps(): string[] {
   return [
@@ -118,7 +118,6 @@ const CustomStepper = () => {
     (state: RootState) => state.workflowData
   );
   const {
-    id,
     yaml,
     weights,
     description,
@@ -130,6 +129,10 @@ const CustomStepper = () => {
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
   );
+  const isDisable = useSelector(
+    (state: RootState) => state.selectTemplate.isDisable
+  );
+
   const workflow = useActions(WorkflowActions);
   const [invalidYaml, setinValidYaml] = React.useState(false);
   const steps = getSteps();
@@ -309,7 +312,7 @@ const CustomStepper = () => {
                 <ButtonFilled
                   handleClick={() => handleNext()}
                   isPrimary
-                  isDisabled={id.length === 0}
+                  isDisabled={isDisable}
                 >
                   <div>
                     Next

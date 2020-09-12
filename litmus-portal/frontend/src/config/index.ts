@@ -28,9 +28,6 @@ export default {
   auth: {
     url: process.env.AUTH_API || authURL,
   },
-  cookies: {
-    token: 'token',
-  },
   grahqlEndpoint: process.env.GQL_API || apiURL,
   grahqlEndpointSubscription: process.env.GQL_API || sockURL,
 };
