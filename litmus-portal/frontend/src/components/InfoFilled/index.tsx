@@ -25,6 +25,11 @@ const InfoFilledWrap: React.FC = () => {
   const communityData = useSelector((state: RootState) => state.communityData);
   const cardData: CardValueData[] = [
     {
+      color: theme.palette.warning.main,
+      value: parseInt(communityData.github.experimentsCount, 10),
+      statType: 'Total Experiments',
+    },
+    {
       color: theme.palette.primary.dark,
       value: parseInt(communityData.google.operatorInstalls, 10),
       statType: 'Operator Installed',
@@ -35,11 +40,6 @@ const InfoFilledWrap: React.FC = () => {
       value: parseInt(communityData.google.totalRuns, 10),
       statType: 'Total Experiment Runs',
       plus: true,
-    },
-    {
-      color: theme.palette.warning.main,
-      value: parseInt(communityData.github.experimentsCount, 10),
-      statType: 'Total Experiments',
     },
     {
       color: theme.palette.error.main,
