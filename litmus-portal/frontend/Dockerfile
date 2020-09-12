@@ -14,13 +14,13 @@ COPY package.json ./
 COPY package-lock.json ./
 
 # Installs all node packages except Cypress
-RUN CYPRESS_INSTALL_BINARY=0 npm install
+RUN CYPRESS_INSTALL_BINARY=0 npm install --only=prod
 
 # Copies everything over to Docker environment
 COPY . ./
 
 # Finally runs the application
-RUN npm run build --prod
+RUN npm run build
 
 # Stage 2: the production environment
 FROM nginx:alpine
