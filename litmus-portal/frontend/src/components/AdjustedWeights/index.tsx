@@ -1,7 +1,7 @@
 import { Typography } from '@material-ui/core';
 import React from 'react';
 import capitalize from '../../utils/capitalize';
-import LinearProgressBar from '../../views/ReturningHome/ProgressBar/LinearProgressBar';
+import LinearProgressBar from '../ProgressBar/LinearProgressBar';
 import useStyles from './styles';
 
 interface AdjustedWeightsProps {

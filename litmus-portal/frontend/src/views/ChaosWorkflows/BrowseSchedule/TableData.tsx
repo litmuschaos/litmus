@@ -14,7 +14,7 @@ import moment from 'moment';
 import React from 'react';
 import { WorkflowRun } from '../../../models/graphql/workflowData';
 import { history } from '../../../redux/configureStore';
-import LinearProgressBar from '../../ReturningHome/ProgressBar/LinearProgressBar';
+import LinearProgressBar from '../../../components/ProgressBar/LinearProgressBar';
 import useStyles from './styles';
 
 interface TableDataProps {

@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
+import { Avatar } from '@material-ui/core';
+import CheckCircleSharpIcon from '@material-ui/icons/CheckCircleSharp';
+import CancelSharpIcon from '@material-ui/icons/CancelSharp';
 import useStyles from './styles';
 
 interface PassedVsFailedProps {
@@ -34,7 +37,7 @@ const PassedVsFailed: React.FC<PassedVsFailedProps> = ({ passed, failed }) => {
   }, [passed, failed]);
 
   return (
-    <Paper className={classes.root}>
+    <Paper className={classes.root} variant="outlined">
       <Box width="100%" className={classes.boxMain}>
         <Typography className={classes.headerMain}>Passed Vs Failed</Typography>
         <Box className={classes.boxDisplay}>
@@ -44,12 +47,18 @@ const PassedVsFailed: React.FC<PassedVsFailedProps> = ({ passed, failed }) => {
             {passedValue === 0 ? (
               <div />
             ) : (
-              <img
-                src="./icons/Pass.png"
-                alt="Passed Icon"
+              <Avatar
+                style={{
+                  backgroundColor: '#109B67',
+                  width: 25,
+                  height: 25,
+                }}
                 className={classes.passedIcon}
-                data-cy="passIcon"
-              />
+              >
+                <CheckCircleSharpIcon
+                  style={{ color: 'white', width: 25, height: 25 }}
+                />
+              </Avatar>
             )}
           </Box>
           <Box width={`${failedValue}%`} className={classes.failedBox}>
@@ -58,12 +67,18 @@ const PassedVsFailed: React.FC<PassedVsFailedProps> = ({ passed, failed }) => {
             {failedValue === 0 ? (
               <div />
             ) : (
-              <img
-                src="./icons/Fail.png"
-                alt="Failed Icon"
+              <Avatar
+                style={{
+                  backgroundColor: '#CA2C2C',
+                  width: 25,
+                  height: 25,
+                }}
                 className={classes.failedIcon}
-                data-cy="failedIcon"
-              />
+              >
+                <CancelSharpIcon
+                  style={{ color: 'white', width: 25, height: 25 }}
+                />
+              </Avatar>
             )}
           </Box>
         </Box>
@@ -75,6 +90,9 @@ const PassedVsFailed: React.FC<PassedVsFailedProps> = ({ passed, failed }) => {
             {failedValue}%
           </Box>
         </Box>
+        <Typography variant="body2" className={classes.statsDesc}>
+          Statistics taken from all test results
+        </Typography>
       </Box>
     </Paper>
   );

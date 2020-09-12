@@ -4,10 +4,15 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     width: '20.3125rem',
     height: '14.6875rem',
+    color: theme.palette.text.secondary,
+    backgroundColor: theme.palette.secondary.contrastText,
   },
   heading: {
     textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: '1rem',
     marginTop: theme.spacing(3.75),
+    marginLeft: theme.spacing(-6),
   },
   contentDiv: {
     display: 'flex',
@@ -23,6 +28,9 @@ const useStyles = makeStyles((theme) => ({
   avgCount: {
     color: theme.palette.secondary.dark,
     paddingTop: theme.spacing(0.625),
+  },
+  maxCount: {
+    color: 'rgba(0, 0, 0, 0.2)',
   },
   workflow: {
     marginLeft: theme.spacing(4.375),
