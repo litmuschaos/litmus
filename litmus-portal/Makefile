@@ -46,11 +46,11 @@ backend-services-checks:
 	@echo "--> checking code style [backend]"
 	@echo "------------------"
 	@fmtRes=$$(gofmt -d $$(find . -path ./vendor -prune -o -name '*.go' -print)); \
-    if [ -n "$${fmtRes}" ]; then \
-        echo "gofmt checking failed!" && echo "$${fmtRes}" \
-        && echo "Please ensure you are using $$($(GO) version) for formatting code." \
-        && exit 1;\
-    fi
+	if [ -n "$${fmtRes}" ]; then \
+		echo "gofmt checking failed!" && echo "$${fmtRes}" \
+		&& echo "Please ensure you are using $$($(GO) version) for formatting code." \
+		&& exit 1;\
+	fi
 	@echo "------------------"
 	@echo "--> Check litmus-portal backend [go mod tidy]"
 	@echo "------------------"
@@ -68,22 +68,22 @@ backend-services-checks:
 		echo "go mod tidy checking failed!" && echo "$${tidyRes}" \
 		&& echo "Please ensure you are using $$($(GO) version) for formatting code." \
 		&& exit 1; \
-    fi
+	fi
 	@echo "------------------"
 	@echo "--> Check litmus-portal self-deployer [go mod tidy]"
 	@echo "------------------"
 	@tidyRes=$$(cd tools/self-deployer && go mod tidy); \
-    if [ -n "$${tidyRes}" ]; then \
-        echo "go mod tidy checking failed!" && echo "$${tidyRes}" \
-        && echo "Please ensure you are using $$($(GO) version) for formatting code." \
-        && exit 1; \
-    fi
+	if [ -n "$${tidyRes}" ]; then \
+		echo "go mod tidy checking failed!" && echo "$${tidyRes}" \
+		&& echo "Please ensure you are using $$($(GO) version) for formatting code." \
+		&& exit 1; \
+	fi
 	@echo "------------------"
 	@echo "--> Check litmus-portal workflow-agent [go mod tidy]"
 	@echo "------------------"
 	@tidyRes=$$(cd cluster-agents/workflow-agent && go mod tidy); \
-    if [ -n "$${tidyRes}" ]; then \
-        echo "go mod tidy checking failed!" && echo "$${tidyRes}" \
-        && echo "Please ensure you are using $$($(GO) version) for formatting code." \
-        && exit 1; \
-    fi
+	if [ -n "$${tidyRes}" ]; then \
+		echo "go mod tidy checking failed!" && echo "$${tidyRes}" \
+		&& echo "Please ensure you are using $$($(GO) version) for formatting code" \
+		&& exit 1; \
+	fi
