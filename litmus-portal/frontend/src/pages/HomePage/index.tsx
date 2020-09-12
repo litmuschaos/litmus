@@ -21,7 +21,7 @@ import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import * as TemplateSelectionActions from '../../redux/actions/template';
 import * as UserActions from '../../redux/actions/user';
-import { history } from '../../redux/configureStore';
+import configureStore, { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import useStyles from './style';
 import ReturningHome from '../../views/Home/ReturningHome/index';
@@ -64,6 +64,8 @@ const HomePage: React.FC = () => {
   const { t } = useTranslation();
   const user = useActions(UserActions);
   const tabs = useActions(TabActions);
+  // Use the persistor object
+  const { persistor } = configureStore();
 
   // Query to get user details
   const { data, loading } = useQuery<
@@ -98,7 +100,10 @@ const HomePage: React.FC = () => {
               member.user_name === data?.getUser.username &&
               member.role === 'Owner'
             ) {
-              isOwnerOfProject = { id: project.id, name: project.name };
+              isOwnerOfProject = {
+                id: project.id,
+                name: project.name,
+              };
             }
           });
         });
@@ -107,6 +112,8 @@ const HomePage: React.FC = () => {
           userRole: 'Owner',
           selectedProjectName: isOwnerOfProject.name,
         });
+        // Flush data to persistor immediately
+        persistor.flush();
       }
     }
   }, [data]);

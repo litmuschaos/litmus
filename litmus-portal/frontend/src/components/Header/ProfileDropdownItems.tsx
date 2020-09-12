@@ -22,8 +22,9 @@ import {
 } from '../../models/graphql/user';
 import { ProjectsCallBackType } from '../../models/header';
 import useActions from '../../redux/actions';
+import * as TabActions from '../../redux/actions/tabs';
 import * as UserActions from '../../redux/actions/user';
-import { history } from '../../redux/configureStore';
+import configureStore, { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import getToken from '../../utils/getToken';
 import userAvatar from '../../utils/user';
@@ -53,11 +54,10 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
 }) => {
   const classes = useStyles();
   const user = useActions(UserActions);
+  const tabs = useActions(TabActions);
   const id = isOpen ? 'profile-popover' : undefined;
-  const nameSplit = name.split(' ');
-  const initials = nameSplit[1]
-    ? userAvatar(name, false)
-    : userAvatar(name, true);
+  const initials = name ? userAvatar(name) : userAvatar(name);
+
   // Query to get user details
   const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
@@ -67,10 +67,13 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
   const [switchableProjects, setSwitchableProjects] = useState<Project[]>([]);
   const [loggedOut, doLogout] = useState(false);
   const userData = useSelector((state: RootState) => state.userData);
+  // Use the persistor object
+  const { persistor } = configureStore();
 
   const logOut = () => {
+    tabs.changeWorkflowsTabs(0);
+    tabs.changeSettingsTabs(0);
     doLogout(true);
-    user.userLogout();
 
     fetch(`${config.auth.url}/logout`, {
       method: 'POST',
@@ -86,6 +89,9 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
       .catch((err) => {
         console.error(err);
       });
+    user.userLogout();
+    // Clear data from persistor
+    persistor.purge();
   };
 
   const CallbackFromProjectListItem = (selectedProjectIDFromList: string) => {
@@ -157,7 +163,10 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
                 variant="outlined"
                 size="small"
                 className={classes.buttonEditProfile}
-                onClick={() => history.push('/settings')}
+                onClick={() => {
+                  tabs.changeSettingsTabs(0);
+                  history.push('/settings');
+                }}
               >
                 Edit Profile
               </Button>

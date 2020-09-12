@@ -53,7 +53,7 @@ jobs:
   docker-build-backend:
     machine:
       image: circleci/classic:201808-01
-      resource_class: xlarge
+      resource_class: large
     steps:
       - attach_workspace:
           at: /tmp/workspace
@@ -228,8 +228,10 @@ workflows:
             - docker-build-backend
             - docker-build-frontend
           filters:
-            tags:
-              only: /.*/
+            branches:
+              only:
+                - master
+                - /^v.*/
       - release:
           requires:
             - docker-build-backend

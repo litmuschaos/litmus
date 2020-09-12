@@ -19,6 +19,7 @@ export interface UserDetails {
   projects: Project[];
   name: string;
   email: string;
+  id: string;
   company_name: string;
   updated_at: string;
   created_at: string;
@@ -34,4 +35,19 @@ export interface CurrentUserDetails {
 
 export interface CurrentUserDedtailsVars {
   username: string;
+}
+
+export interface CreateUserData {
+  username: string;
+  email: string;
+  name: string;
+  project_name: string;
+}
+
+export interface UpdateUser {
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
 }

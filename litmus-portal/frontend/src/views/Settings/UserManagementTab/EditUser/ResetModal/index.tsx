@@ -10,7 +10,7 @@ import useStyles from './styles';
 // props for ResetModal component
 interface ResetModalProps {
   resetPossible: boolean;
-  password: string;
+  new_password: string;
   username: string;
   handleModal: () => void;
 }
@@ -19,7 +19,7 @@ interface ResetModalProps {
 const ResetModal: React.FC<ResetModalProps> = ({
   resetPossible,
   username,
-  password,
+  new_password,
   handleModal,
 }) => {
   const classes = useStyles();
@@ -42,7 +42,7 @@ const ResetModal: React.FC<ResetModalProps> = ({
         'Content-Type': 'application/json',
         Authorization: `Bearer ${getToken()}`,
       },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ username, new_password }),
     })
       .then((response) => {
         response.json();

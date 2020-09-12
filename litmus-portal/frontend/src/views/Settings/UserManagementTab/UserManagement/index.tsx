@@ -3,7 +3,6 @@ import {
   FormControl,
   IconButton,
   InputAdornment,
-  InputBase,
   Menu,
   MenuItem,
   Paper,
@@ -15,6 +14,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  TextField,
   Theme,
   Toolbar,
   Typography,
@@ -115,7 +115,7 @@ const UserManagement: React.FC = () => {
     setAnchorEl(null);
   };
 
-  const [currRow, setCurrRow] = React.useState<UserData>(rows[0]);
+  const [currRow, setCurrRow] = React.useState<UserData>();
 
   const formatDate = (date: string) => {
     const day = moment(date).format('Do MMM,YYYY LT');
@@ -135,9 +135,9 @@ const UserManagement: React.FC = () => {
             <div>
               <EditUser
                 handleDiv={() => setEditDiv(false)}
-                email={currRow.email}
-                fullName={currRow.name}
-                userName={currRow.username}
+                email={currRow?.email ?? ''}
+                fullName={currRow?.name ?? ''}
+                userName={currRow?.username ?? ''}
               />
             </div>
           ) : (
@@ -160,65 +160,72 @@ const UserManagement: React.FC = () => {
 
                 <Toolbar className={classes.toolbar}>
                   {/* Search user */}
-                  <InputBase
-                    id="input-with-icon-adornment"
-                    placeholder="Search..."
-                    value={filters.search}
-                    onChange={(e) => {
-                      setFilters({
-                        ...filters,
-                        search: e.target.value,
-                      });
-                      setPaginationData({ ...paginationData, pageNo: 0 });
-                    }}
-                    startAdornment={
-                      <InputAdornment position="start">
-                        <SearchIcon />
-                      </InputAdornment>
-                    }
-                  />
-                  {/* filter menu */}
-                  <div className={classes.filter}>
-                    <Typography className={classes.userStat}>
-                      User Status
-                    </Typography>
+                  <div className={classes.toolbarFirstCol}>
+                    <TextField
+                      id="input-with-icon-adornment"
+                      placeholder="Search..."
+                      value={filters.search}
+                      onChange={(e) => {
+                        setFilters({
+                          ...filters,
+                          search: e.target.value,
+                        });
+                        setPaginationData({ ...paginationData, pageNo: 0 });
+                      }}
+                      InputProps={{
+                        style: {
+                          maxWidth: '15.75rem',
+                        },
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <SearchIcon />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                    {/* filter menu */}
+                    <div className={classes.filter}>
+                      <Typography className={classes.userStat}>
+                        User Status
+                      </Typography>
 
-                    <FormControl className={classes.filterMenu}>
-                      <Select
-                        native
-                        placeholder="User Status"
-                        value={filters.status}
-                        /* filters on the basis of users' current state */
-                        onChange={(e) => {
-                          setFilters({
-                            ...filters,
-                            status: e.target.value as string,
-                          });
-                          setPaginationData({ ...paginationData, pageNo: 0 });
-                        }}
-                        label="User Status"
-                        disableUnderline
-                        inputProps={{
-                          name: 'User Status',
-                          id: 'outlined-age-native-simple',
-                        }}
-                      >
-                        <option value="all">All</option>
-                        <option value="signedout">Not signed</option>
-                        <option value="signedin">Signed in</option>
-                      </Select>
-                    </FormControl>
-                    <div className={classes.buttonDiv}>
-                      <ButtonFilled
-                        handleClick={() => {
-                          setShowDiv(true);
-                        }}
-                        data-cy="gotItButton"
-                        isPrimary
-                      >
-                        <div className={classes.buttonTxt}>Create new user</div>
-                      </ButtonFilled>
+                      <FormControl className={classes.filterMenu}>
+                        <Select
+                          native
+                          placeholder="User Status"
+                          value={filters.status}
+                          /* filters on the basis of users' current state */
+                          onChange={(e) => {
+                            setFilters({
+                              ...filters,
+                              status: e.target.value as string,
+                            });
+                            setPaginationData({ ...paginationData, pageNo: 0 });
+                          }}
+                          label="User Status"
+                          disableUnderline
+                          inputProps={{
+                            name: 'User Status',
+                            id: 'outlined-age-native-simple',
+                          }}
+                        >
+                          <option value="all">All</option>
+                          <option value="signedout">Not signed</option>
+                          <option value="signedin">Signed in</option>
+                        </Select>
+                      </FormControl>
                     </div>
+                  </div>
+                  <div>
+                    <ButtonFilled
+                      handleClick={() => {
+                        setShowDiv(true);
+                      }}
+                      data-cy="gotItButton"
+                      isPrimary
+                    >
+                      <div>Create new user</div>
+                    </ButtonFilled>
                   </div>
                 </Toolbar>
                 {/* user table */}
@@ -323,7 +330,7 @@ const UserManagement: React.FC = () => {
                                       </IconButton>
                                       Edit Profile
                                     </MenuItem>
-
+                                    {/* 
                                     <MenuItem
                                       value="delete"
                                       disabled
@@ -336,7 +343,7 @@ const UserManagement: React.FC = () => {
                                         />
                                       </IconButton>
                                       <Typography>Delete User</Typography>
-                                    </MenuItem>
+                                    </MenuItem> */}
                                   </Menu>
                                 </TableCell>
                               </TableRow>
