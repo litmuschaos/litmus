@@ -179,7 +179,7 @@ const BrowseSchedule = () => {
                 <TableCell className={classes.workflowName}>
                   <div style={{ display: 'flex', flexDirection: 'row' }}>
                     <Typography style={{ paddingLeft: 30, paddingTop: 10 }}>
-                      Workflow Name
+                      Schedule Name
                     </Typography>
                     <div className={classes.sortDiv}>
                       <IconButton

@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   box: {
-    maxWidth: '640px',
+    maxWidth: '40rem',
     padding: '12% 5%',
     paddingLeft: theme.spacing(10),
     height: '100vh',
