@@ -13,6 +13,7 @@ interface NewUserModalProps {
   password: string;
   name: string;
   email: string;
+  handleDiv: () => void;
 }
 
 // NewUserModal displays a modal on creating a new user
@@ -22,12 +23,14 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
   password,
   name,
   email,
+  handleDiv,
 }) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
 
   const handleClose = () => {
     setOpen(false);
+    handleDiv();
   };
 
   const [error, setError] = useState<string>('');

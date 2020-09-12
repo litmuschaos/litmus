@@ -158,6 +158,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
         </div>
         <div className={classes.buttonGroup}>
           <NewUserModal
+            handleDiv={handleDiv}
             showModal={
               personalData.userName.length > 0 &&
               createPAssword.password.length > 0
