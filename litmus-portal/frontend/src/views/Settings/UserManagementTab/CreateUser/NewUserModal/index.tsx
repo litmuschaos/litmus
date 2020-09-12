@@ -28,7 +28,6 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
 
   const handleClose = () => {
     setOpen(false);
-    window.location.reload();
   };
 
   const [error, setError] = useState<string>('');
