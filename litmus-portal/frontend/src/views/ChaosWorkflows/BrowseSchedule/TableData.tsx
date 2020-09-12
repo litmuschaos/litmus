@@ -12,19 +12,17 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import moment from 'moment';
 import React from 'react';
-import { WorkflowRun } from '../../../models/graphql/workflowData';
-import { history } from '../../../redux/configureStore';
-import LinearProgressBar from '../../ReturningHome/ProgressBar/LinearProgressBar';
+import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
 import useStyles from './styles';
+import ExperimentPoints from './ExperimentPoints';
 
 interface TableDataProps {
-  data: WorkflowRun;
-  deleteRow: (workflowId: string) => void;
+  data: ScheduleWorkflow;
+  deleteRow: (wfid: string) => void;
 }
 
 const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   const classes = useStyles();
-
   // States for PopOver to display Experiment Weights
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [popAnchorEl, setPopAnchorEl] = React.useState<null | HTMLElement>(
@@ -53,28 +51,10 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   const formatDate = (date: any) => {
     const updated = new Date(date * 1000).toString();
     const resDate = moment(updated).format('DD MMM YYYY');
-    return resDate;
+    if (date) return resDate;
+    return 'Date not available';
   };
 
-  // Dummy Experiment Weights
-  const exWeight = [
-    {
-      name: 'Node add test',
-      value: 10,
-    },
-    {
-      name: 'Networking pod test',
-      value: 7,
-    },
-    {
-      name: 'Config map test',
-      value: 3,
-    },
-    {
-      name: 'Proxy-service-test',
-      value: 5,
-    },
-  ];
   return (
     <>
       <TableCell className={classes.workflowNameData}>
@@ -84,7 +64,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
       </TableCell>
       <TableCell>
         <Typography className={classes.clusterStartDate}>
-          {formatDate(JSON.parse(data.execution_data).startedAt)}
+          {formatDate(data.created_at)}
         </Typography>
       </TableCell>
       <TableCell>
@@ -96,7 +76,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
         </div>
       </TableCell>
       <TableCell>
-        <Typography>{data.cluster_name}</Typography>
+        <Typography>Internal</Typography>
       </TableCell>
       <TableCell>
         <Button onClick={handlePopOverClick} style={{ textTransform: 'none' }}>
@@ -134,16 +114,13 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           }}
         >
           <div className={classes.weightDiv}>
-            {exWeight.map((expData) => {
+            {data.weightages.map((expData) => {
               return (
-                <div style={{ marginBottom: 10 }}>
-                  <div className={classes.weightInfo}>
-                    <Typography>{expData.name}</Typography>
-                    <Typography style={{ marginLeft: 'auto' }}>
-                      {expData.value} points
-                    </Typography>
-                  </div>
-                  <LinearProgressBar value={expData.value} />
+                <div style={{ marginBottom: 8 }}>
+                  <ExperimentPoints
+                    expName={expData.experiment_name}
+                    weight={expData.weightage}
+                  />
                 </div>
               );
             })}
@@ -167,21 +144,6 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           open={open}
           onClose={handleClose}
         >
-          <MenuItem
-            value="Workflow"
-            onClick={() =>
-              history.push(`/workflows/schedule/${data.workflow_run_id}`)
-            }
-          >
-            <div className={classes.expDiv}>
-              <img
-                src="/icons/editSchedule.svg"
-                alt="Edit Schedule"
-                className={classes.btnImg}
-              />
-              <Typography className={classes.btnText}>Edit Schedule</Typography>
-            </div>
-          </MenuItem>
           <MenuItem
             value="Analysis"
             onClick={() => deleteRow(data.workflow_id)}

@@ -45,3 +45,9 @@ export const DECLINE_INVITE = gql`
     declineInvitation(member: $member)
   }
 `;
+
+export const DELETE_SCHEDULE = gql`
+  mutation deleteWorkflow($workflow_id: String!) {
+    deleteChaosWorkflow(workflowid: $workflow_id)
+  }
+`;

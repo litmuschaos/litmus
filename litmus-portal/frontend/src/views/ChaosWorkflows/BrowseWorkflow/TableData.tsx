@@ -105,7 +105,16 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
               history.push(`/workflows/details/${data.workflow_run_id}`)
             }
           >
-            Show the workflow
+            <div className={classes.expDiv}>
+              <img
+                src="/icons/show-workflow.svg"
+                alt="Display Workflow"
+                className={classes.btnImg}
+              />
+              <Typography className={classes.btnText}>
+                Show the workflow
+              </Typography>
+            </div>
           </MenuItem>
           <MenuItem
             value="Analysis"
@@ -113,7 +122,16 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
               history.push(`/workflows/analytics/${data.workflow_run_id}`)
             }
           >
-            Show the analytics
+            <div className={classes.expDiv}>
+              <img
+                src="/icons/show-analytics.svg"
+                alt="Display Analytics"
+                className={classes.btnImg}
+              />
+              <Typography className={classes.btnText}>
+                Show the analytics
+              </Typography>
+            </div>
           </MenuItem>
           {/* <MenuItem value="Scheduler" onClick={handleMenu}>
             Show the scheduler

@@ -10,6 +10,7 @@ import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
+import BrowseSchedule from '../../views/ChaosWorkflows/BrowseSchedule';
 import BrowseWorkflow from '../../views/ChaosWorkflows/BrowseWorkflow';
 import Templates from '../../views/ChaosWorkflows/Templates';
 import useStyles from './styles';
@@ -58,12 +59,7 @@ const Workflows = () => {
         <BrowseWorkflow />
       </TabPanel>
       <TabPanel value={workflowTabValue} index={1}>
-        {/* <BrowseSchedule /> */}
-        <Center>
-          <Typography variant="h3" align="center">
-            Schedule comming soon
-          </Typography>
-        </Center>
+        <BrowseSchedule />
       </TabPanel>
       <TabPanel value={workflowTabValue} index={2}>
         <Templates />

@@ -15,10 +15,12 @@ const useStyles = makeStyles((theme) => ({
   },
 
   box: {
-    padding: '5% 5%',
+    maxWidth: '40rem',
+    padding: '12% 5%',
     paddingLeft: theme.spacing(10),
     height: '100vh',
     overflowY: 'auto',
+    margin: 'auto',
   },
 
   heading: {
