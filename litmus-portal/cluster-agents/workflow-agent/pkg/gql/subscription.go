@@ -2,7 +2,7 @@ package gql
 
 import (
 	"encoding/json"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent/pkg/types"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/workflow-agent/pkg/types"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
