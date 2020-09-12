@@ -5,14 +5,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 	log "github.com/golang/glog"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/controller"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/controller"
 )
 
 //Password ...
 type Password struct {
-	Username    string `json:"username"`
-	OldPassword string `json:"old_password"`
-	NewPassword string `json:"new_password"`
+	Username    string `json:"username,omitempty"`
+	OldPassword string `json:"old_password,omitempty"`
+	NewPassword string `json:"new_password,omitempty"`
 }
 
 // New creates a new User

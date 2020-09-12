@@ -8,9 +8,9 @@ import (
 	errs "errors"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/errors"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/models"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/types"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/errors"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/models"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/types"
 )
 
 // JWTAccessClaims jwt claims
