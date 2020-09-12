@@ -87,13 +87,17 @@ const AccountSettings: React.FC = () => {
         new_password: password.newPassword,
       }),
     })
-      .then(() => {
+      .then((response) => {
+        if (response.status !== 200) {
+          setError('Current password is wrong');
+          console.error('Current password is wrong');
+        } else {
+          setError('');
+        }
         setOpen(true);
       })
       .catch((err) => {
-        setError(err.message as string);
-        if (isSuccess.current) setOpen(true);
-        console.error(err);
+        console.error('current password is wrong', err);
       });
   };
 
@@ -187,7 +191,7 @@ const AccountSettings: React.FC = () => {
                     </div>
                     <div className={classes.textSecondError}>
                       <Typography className={classes.typoSub}>
-                        Err: {error}
+                        Error: {error}
                       </Typography>
                     </div>
                     <div className={classes.buttonModal}>
