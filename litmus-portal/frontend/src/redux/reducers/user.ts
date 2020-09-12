@@ -7,7 +7,6 @@ import {
   UserData,
 } from '../../models/redux/user';
 import { setCookie } from '../../utils/cookies';
-import { history } from '../configureStore';
 import createReducer from './createReducer';
 
 const initialState: UserData = {
@@ -22,11 +21,9 @@ export const userData = createReducer<UserData>(initialState, {
     try {
       const jwt = action.payload as string;
       const data: any = jwtDecode.decode(jwt);
-      const expirationTime =
-        new Date(data.exp * 1000).getHours() -
-        new Date(data.iat * 1000).getHours();
-
+      const expirationTime = (data.exp - data.iat) / 3600;
       setCookie('token', jwt, expirationTime);
+
       return {
         ...state,
         ...data,
@@ -46,7 +43,6 @@ export const userData = createReducer<UserData>(initialState, {
   },
   [UserActions.LOGOUT_USER](state: UserData, action: UserAction) {
     setCookie('token', '', 1);
-    history.push('/login');
     return {
       ...initialState,
     };

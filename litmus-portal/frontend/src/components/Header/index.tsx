@@ -15,6 +15,7 @@ import {
 import { Message, NotificationIds } from '../../models/header';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
+import configureStore from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import CustomBreadCrumbs from '../BreadCrumbs';
 import NotificationsDropdown from './NotificationDropdown';
@@ -30,8 +31,10 @@ interface SelectedProjectDetails {
 const Header: React.FC = () => {
   const classes = useStyles();
   const userData = useSelector((state: RootState) => state.userData);
-
   const user = useActions(UserActions);
+  // Use the persistor object
+  const { persistor } = configureStore();
+
   // Query to get user details
   const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
@@ -61,6 +64,9 @@ const Header: React.FC = () => {
               userRole: member.role,
               selectedProjectName: project.name,
             });
+            // Flush data to persistor immediately
+            persistor.flush();
+
             setSelectedProjectDetails({
               selectedProjectID,
               selectedUserRole: member.role,
