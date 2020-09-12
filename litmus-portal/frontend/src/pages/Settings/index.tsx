@@ -1,11 +1,11 @@
 import { Box, Paper, Tab, Tabs, Typography } from '@material-ui/core';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import Center from '../../containers/layouts/Center';
 import Scaffold from '../../containers/layouts/Scaffold';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
+import AccountSettings from '../../views/Settings/AccountsTab/AccountSettings';
 import TeammingTab from '../../views/Settings/TeammingTab';
 import UserManagement from '../../views/Settings/UserManagementTab/UserManagement';
 import useStyles from './styles';
@@ -59,40 +59,33 @@ const Settings: React.FC = () => {
       <Typography className={classes.Head}>Settings </Typography>
       <Paper className={classes.root} elevation={0}>
         <Tabs
-          className={classes.tab}
           value={settingsTabValue}
           onChange={handleChange}
           indicatorColor="secondary"
           textColor="secondary"
         >
-          <Tab label="Team" {...tabProps(0)} />
+          <Tab label="My Account" {...tabProps(0)} />
+          <Tab label="Team" {...tabProps(1)} />
           {userData.username === 'admin' ? (
-            <Tab label="User Management" {...tabProps(1)} />
+            <Tab label="User Management" {...tabProps(2)} />
           ) : (
             <></>
           )}
-          <Tab label="My Account" {...tabProps(2)} />
         </Tabs>
       </Paper>
-
       <TabPanel value={settingsTabValue} index={0}>
+        <AccountSettings />
+      </TabPanel>
+      <TabPanel value={settingsTabValue} index={1}>
         <TeammingTab />
       </TabPanel>
       {userData.username === 'admin' ? (
-        <TabPanel value={settingsTabValue} index={1}>
+        <TabPanel value={settingsTabValue} index={2}>
           <UserManagement />
         </TabPanel>
       ) : (
         <></>
       )}
-      <TabPanel value={settingsTabValue} index={2}>
-        {/* <AccountSettings /> */}
-        <Center>
-          <Typography variant="h3" align="center">
-            My Account Page comming soon
-          </Typography>
-        </Center>
-      </TabPanel>
     </Scaffold>
   );
 };

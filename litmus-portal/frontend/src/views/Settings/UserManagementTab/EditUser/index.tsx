@@ -54,7 +54,7 @@ const EditUser: React.FC<EditUserProps> = ({
             <img src="./icons/BackArrow.svg" alt="back" />
           </IconButton>
           <Typography className={classes.divHeaderText}>
-            <strong>Create a new user</strong>
+            <strong>Edit user profile</strong>
           </Typography>
         </div>
 
@@ -117,7 +117,7 @@ const EditUser: React.FC<EditUserProps> = ({
         <div className={classes.buttonGroup}>
           <ResetModal
             resetPossible={createPAssword.password.length > 0}
-            password={createPAssword.password}
+            new_password={createPAssword.password}
             username={userName}
             handleModal={handleDiv}
           />

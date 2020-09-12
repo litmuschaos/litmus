@@ -6,12 +6,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: theme.spacing(14),
   },
   // styles for text
   text: {
     width: '23.5rem',
-    height: '5.875rem',
     marginTop: theme.spacing(3.75),
     marginBottom: theme.spacing(3.75),
   },
@@ -50,14 +48,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   buttonModal: {
     marginTop: theme.spacing(3.75),
-  },
-  copyDiv: {
-    marginTop: theme.spacing(6),
-    flexDirection: 'row',
-    width: '10.0625rem',
-    display: 'flex',
-    justifyContent: 'space-between',
-    color: theme.palette.secondary.dark,
   },
 }));
 export default useStyles;

@@ -34,7 +34,6 @@ import {
 } from '../../../models/graphql/user';
 import { RootState } from '../../../redux/reducers';
 import userAvatar from '../../../utils/user';
-import DelUser from '../UserManagementTab/EditUser/DelUser';
 import Invitation from './Invitation';
 import InviteNew from './InviteNew';
 import useStyles from './styles';
@@ -154,78 +153,77 @@ const TeammingTab: React.FC = () => {
         <div>
           <Toolbar className={classes.toolbar}>
             {/* Search user */}
-            <div className={classes.toolbarDiv}>
-              <div className={classes.toolbarFirstCol}>
-                <TextField
-                  id="input-with-icon-textfield"
-                  placeholder="Search..."
-                  value={filters.search}
-                  onChange={(e) => {
-                    setFilters({
-                      ...filters,
-                      search: e.target.value,
-                    });
-                    setPaginationData({ ...paginationData, pageNo: 0 });
-                  }}
-                  InputProps={{
-                    style: {
-                      maxWidth: '15.75rem',
-                    },
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-                {/* filter menu */}
-                <div className={classes.filter}>
-                  <Typography className={classes.userRole}>Role</Typography>
 
-                  <FormControl className={classes.filterMenu}>
-                    <Select
-                      native
-                      placeholder="User Status"
-                      value={filters.role}
-                      /* filters on the basis of users' current state */
-                      onChange={(e) => {
-                        setFilters({
-                          ...filters,
-                          role: e.target.value as string,
-                        });
-                        setPaginationData({ ...paginationData, pageNo: 0 });
-                      }}
-                      label="Role"
-                      disableUnderline
-                      inputProps={{
-                        name: 'Role',
-                        id: 'outlined-age-native-simple',
-                      }}
-                    >
-                      <option value="all" className={classes.filterOpt}>
-                        All
-                      </option>
-                      <option value="Editor" className={classes.filterOpt}>
-                        Editor
-                      </option>
-                      <option value="Viewer" className={classes.filterOpt}>
-                        Viewer
-                      </option>
-                      <option value="Owner" className={classes.filterOpt}>
-                        Owner
-                      </option>
-                    </Select>
-                  </FormControl>
-                </div>
+            <div className={classes.toolbarFirstCol}>
+              <TextField
+                id="input-with-icon-textfield"
+                placeholder="Search..."
+                value={filters.search}
+                onChange={(e) => {
+                  setFilters({
+                    ...filters,
+                    search: e.target.value,
+                  });
+                  setPaginationData({ ...paginationData, pageNo: 0 });
+                }}
+                InputProps={{
+                  style: {
+                    maxWidth: '15.75rem',
+                  },
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              {/* filter menu */}
+              <div className={classes.filter}>
+                <Typography className={classes.userRole}>Role</Typography>
+
+                <FormControl className={classes.filterMenu}>
+                  <Select
+                    native
+                    placeholder="User Status"
+                    value={filters.role}
+                    /* filters on the basis of users' current state */
+                    onChange={(e) => {
+                      setFilters({
+                        ...filters,
+                        role: e.target.value as string,
+                      });
+                      setPaginationData({ ...paginationData, pageNo: 0 });
+                    }}
+                    label="Role"
+                    disableUnderline
+                    inputProps={{
+                      name: 'Role',
+                      id: 'outlined-age-native-simple',
+                    }}
+                  >
+                    <option value="all" className={classes.filterOpt}>
+                      All
+                    </option>
+                    <option value="Editor" className={classes.filterOpt}>
+                      Editor
+                    </option>
+                    <option value="Viewer" className={classes.filterOpt}>
+                      Viewer
+                    </option>
+                    <option value="Owner" className={classes.filterOpt}>
+                      Owner
+                    </option>
+                  </Select>
+                </FormControl>
               </div>
-              <div className={classes.buttonDiv}>
-                <Invitation />
-                <InviteNew />
-              </div>
+            </div>
+            <div className={classes.buttonDiv}>
+              <Invitation />
+              <InviteNew />
             </div>
           </Toolbar>
           {/* user table */}
-          <Paper className={classes.root}>
+          <Paper>
             <TableContainer
               className={classes.table}
               elevation={0}
@@ -265,9 +263,9 @@ const TeammingTab: React.FC = () => {
                                 alt="User"
                                 className={classes.avatarBackground}
                               >
-                                {row?.name.split(' ')[1]
-                                  ? userAvatar(row.name, false)
-                                  : userAvatar(row.name, true)}
+                                {row?.name
+                                  ? userAvatar(row.name)
+                                  : userAvatar(row.name)}
                               </Avatar>
                               {row.name}
                             </div>
@@ -370,12 +368,15 @@ const TeammingTab: React.FC = () => {
                             className={classes.otherTC}
                             key={row.user_name}
                           >
-                            <DelUser
+                            {/*  <DelUser
                               handleTable={() => {}}
                               tableDelete={false}
                               teammingDel
                               disabled
-                            />
+                            /> */}
+                            <IconButton disabled onClick={() => {}}>
+                              <img alt="delete" src="./icons/bin-grey.svg" />
+                            </IconButton>
                           </TableCell>
                         </TableRow>
                       ))

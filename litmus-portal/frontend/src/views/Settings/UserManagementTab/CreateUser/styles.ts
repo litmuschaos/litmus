@@ -26,12 +26,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: theme.spacing(-2),
   },
   container: {
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
     maxWidth: '63.75rem',
     marginTop: theme.spacing(3.75),
-    border: 1,
-    borderColor: theme.palette.primary.dark,
-    borderRadius: 3,
+    border: '1px solid ',
+    borderColor: theme.palette.customColors.black(0.07),
+    backgroundColor: theme.palette.common.white,
+    borderRadius: '0.1875rem',
     paddingBottom: theme.spacing(5),
   },
 
