@@ -56,9 +56,6 @@ const useStyles = makeStyles((theme) => ({
   headerStatus1: {
     paddingLeft: theme.spacing(8),
   },
-  progressBar: {
-    width: '6.5rem',
-  },
   steps: {
     marginLeft: theme.spacing(5.625),
   },
@@ -76,21 +73,21 @@ const useStyles = makeStyles((theme) => ({
   },
   workflowNameData: {
     maxWidth: '15.625rem',
+    paddingLeft: theme.spacing(6.25),
     borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
   },
   regularity: {
-    paddingLeft: theme.spacing(3.75),
     color: theme.palette.customColors.black(0.4),
   },
   targetCluster: {
     color: theme.palette.customColors.black(0.4),
   },
   clusterStartDate: {
-    paddingLeft: theme.spacing(8),
+    paddingLeft: theme.spacing(10),
   },
   regularityData: {
     maxWidth: '12.5rem',
-    paddingLeft: theme.spacing(4),
+    paddingLeft: theme.spacing(0.2),
   },
   stepsData: {
     paddingLeft: theme.spacing(3.75),
@@ -115,6 +112,13 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
   },
+
+  // Menu option with icon
+  expDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    cursor: 'pointer',
+  },
   btnImg: {
     width: '0.8125rem',
     height: '0.8125rem',
@@ -134,10 +138,15 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     paddingBottom: theme.spacing(0.625),
   },
-  expDiv: {
-    display: 'flex',
-    flexDirection: 'row',
-    cursor: 'pointer',
+  points: {
+    marginLeft: 'auto',
+    color: (props) =>
+      props >= 4 && props <= 6
+        ? theme.palette.warning.main
+        : props >= 7
+        ? theme.palette.primary.dark
+        : theme.palette.error.dark,
+    fontWeight: 500,
   },
 }));
 

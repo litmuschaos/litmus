@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import {
   FormControl,
   IconButton,
@@ -22,13 +22,13 @@ import SearchIcon from '@material-ui/icons/Search';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import Loader from '../../../components/Loader';
-import { WORKFLOW_DETAILS } from '../../../graphql';
+import { SCHEDULE_DETAILS, DELETE_SCHEDULE } from '../../../graphql';
 import {
-  ExecutionData,
-  Workflow,
-  WorkflowDataVars,
-  WorkflowRun,
-} from '../../../models/graphql/workflowData';
+  DeleteSchedule,
+  ScheduleDataVars,
+  Schedules,
+  ScheduleWorkflow,
+} from '../../../models/graphql/scheduleData';
 import { RootState } from '../../../redux/reducers';
 import {
   sortAlphaAsc,
@@ -59,10 +59,20 @@ const BrowseSchedule = () => {
   );
 
   // Apollo query to get the scheduled data
-  const { data, loading, error } = useQuery<Workflow, WorkflowDataVars>(
-    WORKFLOW_DETAILS,
-    { variables: { projectID: selectedProjectID } }
+  const { data, loading, error } = useQuery<Schedules, ScheduleDataVars>(
+    SCHEDULE_DETAILS,
+    {
+      variables: { projectID: selectedProjectID },
+      fetchPolicy: 'cache-and-network',
+    }
   );
+
+  // Apollo mutation to delete the selected schedule
+  const [deleteSchedule] = useMutation<DeleteSchedule>(DELETE_SCHEDULE, {
+    refetchQueries: [
+      { query: SCHEDULE_DETAILS, variables: { projectID: selectedProjectID } },
+    ],
+  });
 
   // State for search and filtering
   const [filter, setFilter] = React.useState<FilterOption>({
@@ -82,44 +92,38 @@ const BrowseSchedule = () => {
     startDate: { sort: true, ascending: true },
   });
 
-  const filteredData = data?.getWorkFlowRuns
+  const filteredData = data?.getScheduledWorkflows
     .filter((dataRow) =>
-      dataRow.workflow_name.toLowerCase().includes(filter.search)
+      dataRow.workflow_name.toLowerCase().includes(filter.search.toLowerCase())
     )
-    .filter((dataRow) =>
-      filter.cluster === 'All'
-        ? true
-        : dataRow.cluster_name.toLowerCase().includes(filter.cluster)
-    )
-    .sort((a: WorkflowRun, b: WorkflowRun) => {
+    // .filter((dataRow) =>
+    //   filter.cluster === 'All'
+    //     ? true
+    //     : dataRow.cluster_name.toLowerCase().includes(filter.cluster)
+    // )
+    .sort((a: ScheduleWorkflow, b: ScheduleWorkflow) => {
       // Sorting based on unique fields
       if (sortData.name.sort) {
         const x = a.workflow_name;
         const y = b.workflow_name;
-
         return sortData.name.ascending
           ? sortAlphaAsc(x, y)
           : sortAlphaDesc(x, y);
       }
       if (sortData.startDate.sort) {
-        const x = parseInt(
-          (JSON.parse(a.execution_data) as ExecutionData).startedAt,
-          10
-        );
-
-        const y = parseInt(
-          (JSON.parse(b.execution_data) as ExecutionData).startedAt,
-          10
-        );
-
+        const x = parseInt(a.updated_at, 10);
+        const y = parseInt(b.updated_at, 10);
         return sortData.startDate.ascending
           ? sortNumAsc(y, x)
           : sortNumDesc(y, x);
       }
       return 0;
     });
-  const deleteRow = () => {
-    // Delete Mutation Here
+
+  const deleteRow = (wfid: string) => {
+    deleteSchedule({
+      variables: { workflow_id: wfid },
+    });
   };
   return (
     <div>
@@ -174,8 +178,8 @@ const BrowseSchedule = () => {
                 {/* WorkFlow Name */}
                 <TableCell className={classes.workflowName}>
                   <div style={{ display: 'flex', flexDirection: 'row' }}>
-                    <Typography style={{ paddingLeft: 65, paddingTop: 10 }}>
-                      Workflow Name
+                    <Typography style={{ paddingLeft: 30, paddingTop: 10 }}>
+                      Schedule Name
                     </Typography>
                     <div className={classes.sortDiv}>
                       <IconButton
@@ -288,8 +292,8 @@ const BrowseSchedule = () => {
                     paginationData.pageNo * paginationData.rowsPerPage +
                       paginationData.rowsPerPage
                   )
-                  .map((data) => (
-                    <TableRow key={data.workflow_run_id}>
+                  .map((data: ScheduleWorkflow) => (
+                    <TableRow key={data.workflow_id}>
                       <TableData data={data} deleteRow={deleteRow} />
                     </TableRow>
                   ))
