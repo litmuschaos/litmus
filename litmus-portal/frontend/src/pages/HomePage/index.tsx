@@ -19,20 +19,27 @@ import {
 } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
+import * as TemplateSelectionActions from '../../redux/actions/template';
 import * as UserActions from '../../redux/actions/user';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import useStyles from './style';
 
-const CreateWorkflowCard = () => {
+const CreateWorkflowCard: React.FC = () => {
   const { t } = useTranslation();
   const classes = useStyles();
+  const template = useActions(TemplateSelectionActions);
+
+  const handleCreateWorkflow = () => {
+    template.selectTemplate({ selectedTemplateID: 0, isDisable: true });
+    history.push('/create-workflow');
+  };
 
   return (
     <Card
       elevation={3}
       className={classes.createWorkflowCard}
-      onClick={() => history.push('/create-workflow')}
+      onClick={handleCreateWorkflow}
       data-cy="createWorkflow"
     >
       <CardActionArea>
@@ -48,8 +55,9 @@ const CreateWorkflowCard = () => {
   );
 };
 
-const HomePage = () => {
+const HomePage: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
+
   const userData = useSelector((state: RootState) => state.userData);
   const classes = useStyles();
   const { t } = useTranslation();

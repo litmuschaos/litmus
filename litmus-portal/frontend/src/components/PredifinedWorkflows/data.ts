@@ -1,6 +1,6 @@
 export default [
   {
-    workflowID: '1',
+    workflowID: 0,
     title: 'node-cpu-hog',
     urlToIcon:
       'https://hub.litmuschaos.io/api/icon/1.7.0/generic/node-cpu-hog.png',
@@ -25,7 +25,7 @@ export default [
       'The desired chaos library can be selected by setting litmus as value for the env variable LIB',
   },
   {
-    workflowID: '2',
+    workflowID: 1,
     title: 'node-memory-hog',
     urlToIcon:
       'https://hub.litmuschaos.io/api/icon/1.7.0/generic/node-memory-hog.png',
@@ -56,7 +56,7 @@ export default [
       'info (ns & labels) in spec.auxiliaryAppInfo',
   },
   {
-    workflowID: '3',
+    workflowID: 2,
     title: 'pod-cpu-hog',
     urlToIcon:
       'https://hub.litmuschaos.io/api/icon/1.7.0/generic/pod-cpu-hog.png',
@@ -84,7 +84,7 @@ export default [
       'This example consists of the minimum necessary role permissions to execute the experiment.',
   },
   {
-    workflowID: '4',
+    workflowID: 3,
     title: 'pod-memory-hog',
     urlToIcon:
       'https://hub.litmuschaos.io/api/icon/1.7.0/generic/pod-memory-hog.png',
@@ -110,7 +110,7 @@ export default [
       'Pod Memory can be effected using the chaos library: litmus',
   },
   {
-    workflowID: '5',
+    workflowID: 4,
     title: 'pod-delete',
     urlToIcon:
       'https://hub.litmuschaos.io/api/icon/1.7.0/generic/pod-delete.png',

@@ -118,7 +118,6 @@ const CustomStepper = () => {
     (state: RootState) => state.workflowData
   );
   const {
-    id,
     yaml,
     weights,
     description,
@@ -130,6 +129,10 @@ const CustomStepper = () => {
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
   );
+  const isDisable = useSelector(
+    (state: RootState) => state.selectTemplate.isDisable
+  );
+
   const workflow = useActions(WorkflowActions);
   const [invalidYaml, setinValidYaml] = React.useState(false);
   const steps = getSteps();
@@ -309,7 +312,7 @@ const CustomStepper = () => {
                 <ButtonFilled
                   handleClick={() => handleNext()}
                   isPrimary
-                  isDisabled={id.length === 0}
+                  isDisabled={isDisable}
                 >
                   <div>
                     Next

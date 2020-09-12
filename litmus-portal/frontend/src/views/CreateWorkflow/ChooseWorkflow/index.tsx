@@ -1,21 +1,33 @@
 import { Typography } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import PredifinedWorkflows from '../../../components/PredifinedWorkflows';
 import workflowsList from '../../../components/PredifinedWorkflows/data';
 import Unimodal from '../../../containers/layouts/Unimodal';
 import useActions from '../../../redux/actions';
+import * as TemplateSelectionActions from '../../../redux/actions/template';
 import * as WorkflowActions from '../../../redux/actions/workflow';
+import { RootState } from '../../../redux/reducers';
 import useStyles, { CssTextField } from './styles';
+
 // import { getWkfRunCount } from "../../utils";
 
 const ChooseWorkflow: React.FC = () => {
   const classes = useStyles();
+
   const workflow = useActions(WorkflowActions);
+  const template = useActions(TemplateSelectionActions);
+  const isDisable = useSelector(
+    (state: RootState) => state.selectTemplate.isDisable
+  );
+  const selectedTemplateID = useSelector(
+    (state: RootState) => state.selectTemplate.selectedTemplateID
+  );
+
   const [open, setOpen] = React.useState(false);
-  const [visible, setVisible] = React.useState(true);
   const [workflowDetails, setWorkflowData] = useState({
     workflowName: 'Personal Workflow Name',
     workflowDesc: 'Personal Description',
@@ -65,8 +77,9 @@ const ChooseWorkflow: React.FC = () => {
     });
   }, []);
 
+  // Sets workflow details based on user clicks
   const selectWorkflow = (index: number) => {
-    setVisible(false);
+    template.selectTemplate({ selectedTemplateID: index, isDisable: false });
     const timeStampBasedWorkflowName: string = `argowf-chaos-${
       workflowsList[index].title
     }-${Math.round(new Date().getTime() / 1000)}`;
@@ -88,6 +101,28 @@ const ChooseWorkflow: React.FC = () => {
       setOpen(true);
     }
   };
+
+  // Set pre-highlighter for initial render based on isDisable field
+  useEffect(() => {
+    const index = selectedTemplateID;
+
+    const timeStampBasedWorkflowName: string = `argowf-chaos-${
+      workflowsList[index].title
+    }-${Math.round(new Date().getTime() / 1000)}`;
+    workflow.setWorkflowDetails({
+      name: timeStampBasedWorkflowName,
+      link: workflowsList[index].chaosWkfCRDLink,
+      id: workflowsList[index].workflowID,
+      yaml: 'none',
+      description: workflowsList[index].description,
+      isCustomWorkflow: workflowsList[index].isCustom,
+    });
+
+    setWorkflowData({
+      workflowName: timeStampBasedWorkflowName,
+      workflowDesc: workflowsList[index].description,
+    });
+  }, [isDisable]);
 
   return (
     <div>
@@ -116,7 +151,7 @@ const ChooseWorkflow: React.FC = () => {
                 setOpen(true);
               }}
               isPrimary={false}
-              isDisabled={visible}
+              isDisabled={isDisable}
             >
               <div>Edit workflow name</div>
             </ButtonFilled>
