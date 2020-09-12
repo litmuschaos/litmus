@@ -46,11 +46,11 @@ backend-services-checks:
 	@echo "--> checking code style [backend]"
 	@echo "------------------"
 	@fmtRes=$$(gofmt -d $$(find . -path ./vendor -prune -o -name '*.go' -print)); \
-	if [ -n "$${fmtRes}" ]; then \
-		echo "gofmt checking failed!" && echo "$${fmtRes}" \
-		&& echo "Please ensure you are using $$($(GO) version) for formatting code." \
-		&& exit 1;\
-	fi
+    if [ -n "$${fmtRes}" ]; then \
+        echo "gofmt checking failed!" && echo "$${fmtRes}" \
+        && echo "Please ensure you are using $$($(GO) version) for formatting code." \
+        && exit 1;\
+    fi
 	@echo "------------------"
 	@echo "--> Check litmus-portal backend [go mod tidy]"
 	@echo "------------------"
