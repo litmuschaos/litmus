@@ -23,7 +23,7 @@ import {
 import { ProjectsCallBackType } from '../../models/header';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
-import { history } from '../../redux/configureStore';
+import configureStore, { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import getToken from '../../utils/getToken';
 import userAvatar from '../../utils/user';
@@ -67,10 +67,11 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
   const [switchableProjects, setSwitchableProjects] = useState<Project[]>([]);
   const [loggedOut, doLogout] = useState(false);
   const userData = useSelector((state: RootState) => state.userData);
+  // Use the persistor object
+  const { persistor } = configureStore();
 
   const logOut = () => {
     doLogout(true);
-    user.userLogout();
 
     fetch(`${config.auth.url}/logout`, {
       method: 'POST',
@@ -86,6 +87,9 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
       .catch((err) => {
         console.error(err);
       });
+    user.userLogout();
+    // Clear data from persistor
+    persistor.purge();
   };
 
   const CallbackFromProjectListItem = (selectedProjectIDFromList: string) => {

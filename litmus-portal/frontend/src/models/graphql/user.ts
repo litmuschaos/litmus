@@ -35,3 +35,10 @@ export interface CurrentUserDetails {
 export interface CurrentUserDedtailsVars {
   username: string;
 }
+
+export interface CreateUserData {
+  username: string;
+  email: string;
+  name: string;
+  project_name: string;
+}

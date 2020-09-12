@@ -115,7 +115,7 @@ const UserManagement: React.FC = () => {
     setAnchorEl(null);
   };
 
-  const [currRow, setCurrRow] = React.useState<UserData>(rows[0]);
+  const [currRow, setCurrRow] = React.useState<UserData>();
 
   const formatDate = (date: string) => {
     const day = moment(date).format('Do MMM,YYYY LT');
@@ -135,9 +135,9 @@ const UserManagement: React.FC = () => {
             <div>
               <EditUser
                 handleDiv={() => setEditDiv(false)}
-                email={currRow.email}
-                fullName={currRow.name}
-                userName={currRow.username}
+                email={currRow?.email ?? ''}
+                fullName={currRow?.name ?? ''}
+                userName={currRow?.username ?? ''}
               />
             </div>
           ) : (
