@@ -149,6 +149,8 @@ type ComplexityRoot struct {
 
 	ScheduledWorkflows struct {
 		ClusterID           func(childComplexity int) int
+		ClusterName         func(childComplexity int) int
+		ClusterType         func(childComplexity int) int
 		CreatedAt           func(childComplexity int) int
 		CronSyntax          func(childComplexity int) int
 		IsCustomWorkflow    func(childComplexity int) int
@@ -806,6 +808,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ScheduledWorkflows.ClusterID(childComplexity), true
 
+	case "ScheduledWorkflows.cluster_name":
+		if e.complexity.ScheduledWorkflows.ClusterName == nil {
+			break
+		}
+
+		return e.complexity.ScheduledWorkflows.ClusterName(childComplexity), true
+
+	case "ScheduledWorkflows.cluster_type":
+		if e.complexity.ScheduledWorkflows.ClusterType == nil {
+			break
+		}
+
+		return e.complexity.ScheduledWorkflows.ClusterType(childComplexity), true
+
 	case "ScheduledWorkflows.created_at":
 		if e.complexity.ScheduledWorkflows.CreatedAt == nil {
 			break
@@ -1349,14 +1365,16 @@ type ScheduledWorkflows {
 	workflow_id: String!
 	workflow_manifest: String!
 	cronSyntax: String!
+	cluster_name: String!
 	workflow_name: String!
 	workflow_description: String!
 	weightages: [weightages!]!
-	isCustomWorkflow: String!
+	isCustomWorkflow: Boolean!
 	updated_at: String!
 	created_at: String!
 	project_id: ID!
 	cluster_id: ID!
+	cluster_type: String!
 }
 
 type Query{
@@ -4630,6 +4648,40 @@ func (ec *executionContext) _ScheduledWorkflows_cronSyntax(ctx context.Context, 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ScheduledWorkflows_cluster_name(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ScheduledWorkflows",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ClusterName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ScheduledWorkflows_workflow_name(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -4761,9 +4813,9 @@ func (ec *executionContext) _ScheduledWorkflows_isCustomWorkflow(ctx context.Con
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ScheduledWorkflows_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
@@ -4900,6 +4952,40 @@ func (ec *executionContext) _ScheduledWorkflows_cluster_id(ctx context.Context, 
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ScheduledWorkflows_cluster_type(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ScheduledWorkflows",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ClusterType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Subscription_clusterEventListener(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
@@ -8103,6 +8189,11 @@ func (ec *executionContext) _ScheduledWorkflows(ctx context.Context, sel ast.Sel
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "cluster_name":
+			out.Values[i] = ec._ScheduledWorkflows_cluster_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "workflow_name":
 			out.Values[i] = ec._ScheduledWorkflows_workflow_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -8140,6 +8231,11 @@ func (ec *executionContext) _ScheduledWorkflows(ctx context.Context, sel ast.Sel
 			}
 		case "cluster_id":
 			out.Values[i] = ec._ScheduledWorkflows_cluster_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "cluster_type":
+			out.Values[i] = ec._ScheduledWorkflows_cluster_type(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
