@@ -17,20 +17,7 @@ import { RootState } from '../../redux/reducers';
 import WorkflowRunsBarChart from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowRunsBarChart';
 import PopOver from '../../views/ChaosWorkflows/BrowseAnalytics/PopOver';
 import useStyles from './styles';
-
-interface ChaosData {
-  engineName: string;
-  engineUID: string;
-  experimentName: string;
-  experimentPod: string;
-  experimentStatus: string;
-  experimentVerdict: string;
-  failStep: string;
-  lastUpdatedAt: string;
-  namespace: string;
-  probeSuccessPercentage: string;
-  runnerPod: string;
-}
+import { ChaosData, Nodes } from '../../models/graphql/workflowData';
 
 interface WorkflowRunData {
   testsPassed: number;
@@ -96,67 +83,26 @@ const AnalyticsPage: React.FC = () => {
 
   useEffect(() => {
     const workflowRuns: WorkflowRunData[] = [];
-
-    let testDate: string = '';
+    const experimentTestResultsArray: number[] = [];
+    const chaosDataArray: ChaosData[] = [];
 
     const selectedWorkflows = data?.getWorkFlowRuns.filter(
       (w) => w.workflow_run_id === workflowRunId
     );
 
-    const workflowRunsExecutionData: ExecutionData[] = [];
     selectedWorkflows?.forEach((data) => {
       try {
         const executionData: ExecutionData = JSON.parse(data.execution_data);
-        workflowRunsExecutionData.push(executionData);
-      } catch (error) {
-        console.error(error);
-      }
-    });
-
-    const chaosDataArray: ChaosData[] = [];
-    const experimentTestNameArray: string[] = [];
-    const experimentTestVerdictArray: string[] = [];
-    const experimentTestResultsArray: number[] = [];
-
-    workflowRunsExecutionData.forEach((data) => {
-      try {
-        const nodeKeys = Object.keys(data.nodes);
-        const { nodes } = data;
-        const chaosNodeKeys: string[] = [];
-        nodeKeys.forEach((node) => {
-          try {
-            const { name } = data.nodes[node];
-            if (name === 'run-chaos') {
-              chaosNodeKeys.push(node);
-            }
-          } catch (error) {
-            console.error(error);
+        const nodes: Nodes = executionData.nodes;
+        for (const key of Object.keys(nodes)) {
+          const node = nodes[key];
+          if (node.chaosData) {
+            const chaosData: ChaosData = node.chaosData;
+            chaosDataArray.push(chaosData);
+            experimentTestResultsArray.push(
+              chaosData.experimentVerdict === 'Pass' ? 1 : 0
+            );
           }
-        });
-
-        chaosNodeKeys.forEach((key) => {
-          try {
-            const chaosNode = nodes[key];
-            const chaosNodeData = JSON.parse(JSON.stringify(chaosNode));
-            chaosDataArray.push(chaosNodeData['chaosData']);
-          } catch (error) {
-            console.error(error);
-          }
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    });
-
-    chaosDataArray.forEach((data) => {
-      try {
-        experimentTestNameArray.push(data['experimentName']);
-        experimentTestVerdictArray.push(data['experimentVerdict']);
-        testDate = data['lastUpdatedAt'];
-        if (data['experimentVerdict'] === 'Pass') {
-          experimentTestResultsArray.push(1);
-        } else if (data['experimentVerdict'] === 'Fail') {
-          experimentTestResultsArray.push(0);
         }
       } catch (error) {
         console.error(error);
@@ -172,46 +118,45 @@ const AnalyticsPage: React.FC = () => {
         (experimentTestResultsArray.reduce((a, b) => a + b, 0) /
           experimentTestResultsArray.length) *
         100,
-      testDate,
+      testDate: chaosDataArray[0]?.lastUpdatedAt ?? '',
       workflowRunID: workflowRunId,
     };
 
-    const updated = new Date(parseInt(testDate, 10) * 1000).toString();
-    const resDate = moment(updated).format('YYYY-MM-DD');
+    const resDate = moment(
+      new Date(
+        parseInt(chaosDataArray[0]?.lastUpdatedAt ?? '', 10) * 1000
+      ).toString()
+    ).format('YYYY-MM-DD');
 
-    const lowEdge = Math.round(
-      parseInt(
-        moment(resDate).subtract(1, 'months').endOf('month').format('x'),
-        10
-      ) / 1000
-    ).toString();
-
-    const highEdge = Math.round(
-      parseInt(
-        moment(resDate).add(1, 'months').endOf('month').format('x'),
-        10
-      ) / 1000
-    ).toString();
-
-    const dummyLow = {
+    const edgeLow = {
       testsPassed: 0,
       testsFailed: 0,
       resilienceScore: 0,
-      testDate: lowEdge,
-      workflowRunID: 'dummy_low',
+      testDate: Math.round(
+        parseInt(
+          moment(resDate).subtract(1, 'months').endOf('month').format('x'),
+          10
+        ) / 1000
+      ).toString(),
+      workflowRunID: 'edge_low',
     };
 
-    const dummyHigh = {
+    const edgeHigh = {
       testsPassed: 0,
       testsFailed: 0,
       resilienceScore: 0,
-      testDate: highEdge,
-      workflowRunID: 'dummy_high',
+      testDate: Math.round(
+        parseInt(
+          moment(resDate).add(1, 'months').endOf('month').format('x'),
+          10
+        ) / 1000
+      ).toString(),
+      workflowRunID: 'edge_high',
     };
 
-    workflowRuns.push(dummyLow);
+    workflowRuns.push(edgeLow);
     workflowRuns.push(workflowRunOnce);
-    workflowRuns.push(dummyHigh);
+    workflowRuns.push(edgeHigh);
 
     setWorkflowRunDataForPlot(workflowRuns);
   }, [data]);

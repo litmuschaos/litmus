@@ -1,4 +1,4 @@
-import { makeStyles, Theme, withStyles, Typography } from '@material-ui/core';
+import { makeStyles, Theme } from '@material-ui/core';
 
 interface PopOverStyleProps {
   xLoc: number;
@@ -23,22 +23,26 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingBottom: theme.spacing(1.5),
     verticalAlign: 'middle',
     display: 'inline-flex',
+    color: theme.palette.secondary.contrastText,
   },
   testsPassed: {
     paddingTop: theme.spacing(0.5),
     paddingBottom: theme.spacing(0.5),
     verticalAlign: 'middle',
     display: 'inline-flex',
+    fontWeight: 500,
   },
   testsFailed: {
     paddingBottom: theme.spacing(1.5),
     verticalAlign: 'middle',
     display: 'inline-flex',
+    fontWeight: 500,
   },
   resilienceScore: {
     paddingTop: theme.spacing(1.5),
     verticalAlign: 'middle',
     display: 'inline-flex',
+    fontWeight: 500,
   },
   miniIcons: {
     marginLeft: theme.spacing(1),
@@ -87,17 +91,5 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: 20,
   },
 }));
-
-export const CustomTypography = withStyles({
-  root: {
-    color: '#FFF',
-  },
-})(Typography);
-
-export const WeightedTypography = withStyles({
-  root: {
-    fontWeight: 500,
-  },
-})(Typography);
 
 export default useStyles;

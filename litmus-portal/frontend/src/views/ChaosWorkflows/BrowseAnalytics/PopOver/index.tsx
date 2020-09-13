@@ -1,11 +1,11 @@
-import { Paper, Avatar } from '@material-ui/core';
+import { Paper, Avatar, Typography } from '@material-ui/core';
 import React from 'react';
 import moment from 'moment';
 import CheckCircleSharpIcon from '@material-ui/icons/CheckCircleSharp';
 import CancelSharpIcon from '@material-ui/icons/CancelSharp';
 import TimelineSharpIcon from '@material-ui/icons/TimelineSharp';
 import DateRangeSharpIcon from '@material-ui/icons/DateRangeSharp';
-import useStyles, { CustomTypography, WeightedTypography } from './styles';
+import useStyles from './styles';
 
 interface PopOverProps {
   testsPassed: number;
@@ -38,33 +38,33 @@ const PopOver: React.FC<PopOverProps> = ({
     <div className={classes.modalContainer}>
       <Paper elevation={3} className={classes.root}>
         <div className={classes.date}>
-          <CustomTypography className={classes.testDate}>
+          <Typography className={classes.testDate}>
             <Avatar className={`${classes.miniIcons} ${classes.dateIcon}`}>
               <DateRangeSharpIcon className={classes.dateRangeIcon} />
             </Avatar>
             Tests date: {formatDate(testDate)}
-          </CustomTypography>
+          </Typography>
         </div>
-        <WeightedTypography className={classes.resilienceScore}>
+        <Typography className={classes.resilienceScore}>
           <Avatar
             className={`${classes.miniIcons} ${classes.resilienceScoreIcon}`}
           >
             <TimelineSharpIcon className={classes.timeLineIcon} />
           </Avatar>
           Resilience score - {resilienceScore}%
-        </WeightedTypography>
-        <WeightedTypography className={classes.testsPassed}>
+        </Typography>
+        <Typography className={classes.testsPassed}>
           <Avatar className={`${classes.miniIcons} ${classes.passedIcon}`}>
             <CheckCircleSharpIcon className={classes.checkMarkIcon} />
           </Avatar>
           Passed tests - {testsPassed}
-        </WeightedTypography>
-        <WeightedTypography className={classes.testsFailed}>
+        </Typography>
+        <Typography className={classes.testsFailed}>
           <Avatar className={`${classes.miniIcons} ${classes.failedIcon}`}>
             <CancelSharpIcon className={classes.cancelMarkIcon} />
           </Avatar>
           Failed tests - {testsFailed}
-        </WeightedTypography>
+        </Typography>
       </Paper>
     </div>
   );
