@@ -41,12 +41,28 @@ const useStyles = makeStyles((theme) => ({
     display: 'block',
     marginLeft: 'auto',
     marginRight: 'auto',
+    backgroundColor: theme.palette.primary.dark,
+    width: 25,
+    height: 25,
+  },
+  passedMark: {
+    color: 'white',
+    width: 25,
+    height: 25,
   },
   failedIcon: {
     marginTop: theme.spacing(1),
     display: 'block',
     marginLeft: 'auto',
     marginRight: 'auto',
+    backgroundColor: theme.palette.error.dark,
+    width: 25,
+    height: 25,
+  },
+  failedMark: {
+    color: 'white',
+    width: 25,
+    height: 25,
   },
   passedLabel: {
     color: theme.palette.primary.dark,

@@ -47,17 +47,8 @@ const PassedVsFailed: React.FC<PassedVsFailedProps> = ({ passed, failed }) => {
             {passedValue === 0 ? (
               <div />
             ) : (
-              <Avatar
-                style={{
-                  backgroundColor: '#109B67',
-                  width: 25,
-                  height: 25,
-                }}
-                className={classes.passedIcon}
-              >
-                <CheckCircleSharpIcon
-                  style={{ color: 'white', width: 25, height: 25 }}
-                />
+              <Avatar className={classes.passedIcon}>
+                <CheckCircleSharpIcon className={classes.passedMark} />
               </Avatar>
             )}
           </Box>
@@ -67,17 +58,8 @@ const PassedVsFailed: React.FC<PassedVsFailedProps> = ({ passed, failed }) => {
             {failedValue === 0 ? (
               <div />
             ) : (
-              <Avatar
-                style={{
-                  backgroundColor: '#CA2C2C',
-                  width: 25,
-                  height: 25,
-                }}
-                className={classes.failedIcon}
-              >
-                <CancelSharpIcon
-                  style={{ color: 'white', width: 25, height: 25 }}
-                />
+              <Avatar className={classes.failedIcon}>
+                <CancelSharpIcon className={classes.failedMark} />
               </Avatar>
             )}
           </Box>

@@ -1,5 +1,6 @@
 import { Line } from 'rc-progress';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useTheme } from '@material-ui/core/styles';
 
 interface LinearProgressBarProps {
   value: number;
@@ -10,18 +11,17 @@ const AnalyticsLinearProgressBar: React.FC<LinearProgressBarProps> = ({
   value,
   maxValue,
 }) => {
-  const [color, setColor] = useState(' ');
   const width: number = 2;
   const resultValue = ((value as number) / (maxValue as number)) * 100;
-  useEffect(() => {
-    return setColor('#5B44BA');
-  }, [resultValue]);
+
+  const { palette } = useTheme();
+
   return (
     <Line
       percent={resultValue}
       strokeWidth={width}
       trailWidth={width}
-      strokeColor={color}
+      strokeColor={palette.secondary.dark}
     />
   );
 };
