@@ -2,23 +2,23 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
+import moment from 'moment';
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import moment from 'moment';
 import Loader from '../../components/Loader';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { WORKFLOW_DETAILS } from '../../graphql';
 import {
+  ChaosData,
   ExecutionData,
   Workflow,
   WorkflowDataVars,
-  ChaosData,
-  Nodes,
 } from '../../models/graphql/workflowData';
 import { RootState } from '../../redux/reducers';
-import WorkflowRunsBarChart from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowRunsBarChart';
 import PopOver from '../../views/ChaosWorkflows/BrowseAnalytics/PopOver';
+import WorkflowRunsBarChart from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowRunsBarChart';
 import useStyles from './styles';
 
 interface WorkflowRunData {
@@ -67,6 +67,7 @@ const AnalyticsPage: React.FC = () => {
   const { pathname } = useLocation();
   // Getting the workflow nome from the pathname
   const workflowRunId = pathname.split('/')[3];
+  const { t } = useTranslation();
 
   // get ProjectID
   const selectedProjectID = useSelector(
@@ -173,7 +174,7 @@ const AnalyticsPage: React.FC = () => {
             </Typography>
             <div className={classes.headerDiv}>
               <Typography variant="h6">
-                Click on test to view the results for the selected period
+                {t('analytics.viewTestResult')}
               </Typography>
             </div>
 
@@ -198,7 +199,7 @@ const AnalyticsPage: React.FC = () => {
           </div>
         </div>
       ) : error ? (
-        <Typography>An error has occurred while fetching the data</Typography>
+        <Typography>{t('analytics.fetchError')}</Typography>
       ) : (
         <Loader />
       )}

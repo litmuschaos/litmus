@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import Loader from '../../components/Loader';
@@ -22,6 +23,7 @@ const WorkflowDetails: React.FC = () => {
   const { pathname } = useLocation();
   // Getting the workflow nome from the pathname
   const workflowRunId = pathname.split('/')[3];
+  const { t } = useTranslation();
 
   // get ProjectID
   const selectedProjectID = useSelector(
@@ -81,9 +83,7 @@ const WorkflowDetails: React.FC = () => {
             <Typography className={classes.heading}>
               {workflow.workflow_name}
             </Typography>
-            <Typography>
-              Click on test to see detailed log of your workflow
-            </Typography>
+            <Typography>{t('workflowDetails.detailedLog')}</Typography>
 
             {/* Argo Workflow DAG Graph */}
             <ArgoWorkflow
@@ -101,7 +101,7 @@ const WorkflowDetails: React.FC = () => {
           />
         </div>
       ) : error ? (
-        <Typography>An error has occurred while fetching the data</Typography>
+        <Typography>{t('workflowDetails.fetchError')}</Typography>
       ) : (
         <Loader />
       )}
