@@ -5,7 +5,7 @@ import useStyles from './styles';
 interface ButtonOutlineProps {
   isDisabled: boolean;
   handleClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  children?: JSX.Element;
+  children?: React.ReactNode;
 }
 const ButtonOutline: React.FC<ButtonOutlineProps> = ({
   isDisabled,
