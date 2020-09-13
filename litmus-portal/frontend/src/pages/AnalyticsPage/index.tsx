@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-expressions */
-/* esline-disbale @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import React, { useEffect } from 'react';
@@ -13,12 +13,13 @@ import {
   ExecutionData,
   Workflow,
   WorkflowDataVars,
+  ChaosData,
+  Nodes,
 } from '../../models/graphql/workflowData';
 import { RootState } from '../../redux/reducers';
 import WorkflowRunsBarChart from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowRunsBarChart';
 import PopOver from '../../views/ChaosWorkflows/BrowseAnalytics/PopOver';
 import useStyles from './styles';
-import { ChaosData, Nodes } from '../../models/graphql/workflowData';
 
 interface WorkflowRunData {
   testsPassed: number;
@@ -94,11 +95,11 @@ const AnalyticsPage: React.FC = () => {
     selectedWorkflows?.forEach((data) => {
       try {
         const executionData: ExecutionData = JSON.parse(data.execution_data);
-        const nodes: Nodes = executionData.nodes;
+        const { nodes } = executionData;
         for (const key of Object.keys(nodes)) {
           const node = nodes[key];
           if (node.chaosData) {
-            const chaosData: ChaosData = node.chaosData;
+            const { chaosData } = node;
             chaosDataArray.push(chaosData);
             experimentTestResultsArray.push(
               chaosData.experimentVerdict === 'Pass' ? 1 : 0
