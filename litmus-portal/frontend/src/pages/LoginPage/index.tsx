@@ -1,3 +1,4 @@
+/* eslint-disable react/no-danger */
 import { Button, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
