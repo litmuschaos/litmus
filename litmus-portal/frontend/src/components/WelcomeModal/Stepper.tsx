@@ -34,8 +34,8 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
 
   const [info, setInfo] = React.useState<CreateUserData>({
     username: userData.username,
-    email: '',
-    name: '',
+    email: userData.email,
+    name: userData.name,
     project_name: '',
   });
 
@@ -197,9 +197,9 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
           <ButtonOutline
             isDisabled={false}
             handleClick={handleBack}
-            data-cy="Skip"
+            data-cy="Back"
           >
-            <>{t('welcomeModel.button.skip')}</>
+            <>{t('welcomeModel.button.back')}</>
           </ButtonOutline>
           <ButtonFilled
             isPrimary

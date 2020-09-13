@@ -67,7 +67,7 @@ const Workflows = () => {
       <TabPanel value={workflowTabValue} index={3}>
         <Center>
           <Typography variant="h3" align="center">
-            Analytics comming soon
+            Analytics coming soon
           </Typography>
         </Center>
       </TabPanel>
