@@ -9,11 +9,6 @@ interface AverageResilienceScoreProps {
   value: number;
 }
 
-/*
-  Reusable Semi Circular Progress Bar
-  Required Params: value
-*/
-
 const AverageResilienceScore: React.FC<AverageResilienceScoreProps> = ({
   value,
 }) => {
