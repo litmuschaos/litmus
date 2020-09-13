@@ -165,7 +165,7 @@ const AnalyticsPage: React.FC = () => {
 
   return (
     <Scaffold>
-      {workflowRunDataForPlot.length > 0 ? (
+      {workflowRunDataForPlot.length ? (
         <div className={classes.rootContainer}>
           <div className={classes.root}>
             <Typography variant="h3">
