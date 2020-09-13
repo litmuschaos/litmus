@@ -158,14 +158,16 @@ type ScheduledWorkflows struct {
 	WorkflowID          string        `json:"workflow_id"`
 	WorkflowManifest    string        `json:"workflow_manifest"`
 	CronSyntax          string        `json:"cronSyntax"`
+	ClusterName         string        `json:"cluster_name"`
 	WorkflowName        string        `json:"workflow_name"`
 	WorkflowDescription string        `json:"workflow_description"`
 	Weightages          []*Weightages `json:"weightages"`
-	IsCustomWorkflow    string        `json:"isCustomWorkflow"`
+	IsCustomWorkflow    bool          `json:"isCustomWorkflow"`
 	UpdatedAt           string        `json:"updated_at"`
 	CreatedAt           string        `json:"created_at"`
 	ProjectID           string        `json:"project_id"`
 	ClusterID           string        `json:"cluster_id"`
+	ClusterType         string        `json:"cluster_type"`
 }
 
 type UpdateUserInput struct {
