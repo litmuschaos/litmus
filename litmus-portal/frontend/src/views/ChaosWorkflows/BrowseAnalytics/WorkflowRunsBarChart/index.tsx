@@ -55,7 +55,7 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
     y: number;
   }>({ x: 0, y: 0 });
 
-  const [visibleIndex, setVisibleIndex] = React.useState<any>(0);
+  const [visibleIndex, setVisibleIndex] = React.useState<number>(0);
 
   const [colorsPassed, setColorsPassed] = React.useState<string[]>([
     palette.primary.dark,
@@ -72,8 +72,8 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
   const [selected, setSelected] = React.useState<boolean>(false);
 
   // Function to convert UNIX time in format of DD MMM YYY
-  const formatDate = (date: any) => {
-    const updated = new Date(date * 1000).toString();
+  const formatDate = (date: string) => {
+    const updated = new Date(parseInt(date, 10) * 1000).toString();
     const resDate = moment(updated).format('YYYY-MM-DD');
     return resDate;
   };
@@ -203,7 +203,7 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
           family: 'Ubuntu, monospace',
           color: palette.customColors.black(0.4),
         },
-        rangeselector: selectorOptions as any,
+        rangeselector: selectorOptions,
         rangeslider: { visible: true },
       },
       yaxis: {
