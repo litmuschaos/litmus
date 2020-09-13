@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-expressions */
+/* esline-disbale @typescript-eslint/no-unused-vars */
 import { useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import React, { useEffect } from 'react';
