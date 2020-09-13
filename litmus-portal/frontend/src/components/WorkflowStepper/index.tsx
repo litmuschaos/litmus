@@ -133,6 +133,7 @@ const CustomStepper = () => {
   const isDisable = useSelector(
     (state: RootState) => state.selectTemplate.isDisable
   );
+  const userRole = useSelector((state: RootState) => state.userData.userRole);
 
   const tabs = useActions(TabActions);
   const workflow = useActions(WorkflowActions);
@@ -231,6 +232,41 @@ const CustomStepper = () => {
   function gotoStep({ page }: { page: number }) {
     setActiveStep(page);
   }
+
+  // Check correct permissions for user
+  if (userRole === 'Viewer')
+    return (
+      <>
+        <Typography
+          variant="h3"
+          align="center"
+          style={{ marginTop: '10rem', marginBottom: '3rem' }}
+        >
+          Missing sufficient permissions :(
+        </Typography>
+        <Typography variant="h6" align="center">
+          Looks like you do not have the required permission to create a new
+          workflow on this project.
+        </Typography>
+        <br />
+        <Typography variant="body1" align="center">
+          Contact portal administrator to upgrade your permission.
+        </Typography>
+
+        {/* Back Button */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginTop: '1rem',
+          }}
+        >
+          <ButtonFilled isPrimary handleClick={() => history.goBack()}>
+            Go Back
+          </ButtonFilled>
+        </div>
+      </>
+    );
 
   return (
     <div className={classes.root}>

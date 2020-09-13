@@ -1,3 +1,17 @@
+export interface ChaosData {
+  engineName: string;
+  engineUID: string;
+  experimentName: string;
+  experimentPod: string;
+  experimentStatus: string;
+  experimentVerdict: string;
+  failStep: string;
+  lastUpdatedAt: string;
+  namespace: string;
+  probeSuccessPercentage: string;
+  runnerPod: string;
+}
+
 export interface Node {
   children: string[] | null;
   finishedAt: string;
@@ -5,6 +19,7 @@ export interface Node {
   phase: string;
   startedAt: string;
   type: string;
+  chaosData?: ChaosData;
 }
 
 export interface Nodes {
