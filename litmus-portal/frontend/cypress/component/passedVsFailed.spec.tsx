@@ -2,7 +2,7 @@
 
 import { mount } from 'cypress-react-unit-test';
 import React from 'react';
-import PassedVsFailed from '../../src/views/ReturningHome/PassedVsFailed/index';
+import PassedVsFailed from '../../src/views/Home/PassedVsFailed';
 
 // Test Suite - Passing props -> passed: 75, failed: 25
 describe('Passed Vs Failed: props -> passed: 75, failed: 25', () => {
@@ -12,20 +12,6 @@ describe('Passed Vs Failed: props -> passed: 75, failed: 25', () => {
     mount(wrapper);
     expect(wrapper.props.passed).to.equal(75);
     expect(wrapper.props.failed).to.equal(25);
-  });
-
-  it('Pass Icon is present', () => {
-    mount(wrapper);
-    cy.get('[data-cy=passIcon]')
-      .should('have.attr', 'src')
-      .should('include', './icons/Pass.png');
-  });
-
-  it('Fail Icon is present', () => {
-    mount(wrapper);
-    cy.get('[data-cy=failedIcon]')
-      .should('have.attr', 'src')
-      .should('include', './icons/Fail.png');
   });
 
   it('Passed Value is 75 or not', () => {
@@ -53,20 +39,6 @@ describe('Passed Vs Failed: props -> passed: 20, failed: 80', () => {
     expect(wrapper.props.failed).to.equal(80);
   });
 
-  it('Pass Icon is present', () => {
-    mount(wrapper);
-    cy.get('[data-cy=passIcon]')
-      .should('have.attr', 'src')
-      .should('include', './icons/Pass.png');
-  });
-
-  it('Fail Icon is present', () => {
-    mount(wrapper);
-    cy.get('[data-cy=failedIcon]')
-      .should('have.attr', 'src')
-      .should('include', './icons/Fail.png');
-  });
-
   it('Passed Value is 20 or not', () => {
     mount(wrapper);
     cy.get('[data-cy=passedValueID]').then((text) => {
@@ -90,16 +62,6 @@ describe('Passed Vs Failed: props -> passed: 0, failed: 0', () => {
     mount(wrapper);
     expect(wrapper.props.passed).to.equal(0);
     expect(wrapper.props.failed).to.equal(0);
-  });
-
-  it('Pass Icon is not present', () => {
-    mount(wrapper);
-    cy.get('[data-cy=passIcon]').should('not.exist');
-  });
-
-  it('Fail Icon is not present', () => {
-    mount(wrapper);
-    cy.get('[data-cy=failedIcon]').should('not.exist');
   });
 
   it('Passed Value is 0 or not', () => {
