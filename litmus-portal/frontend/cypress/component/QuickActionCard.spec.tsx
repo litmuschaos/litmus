@@ -1,27 +1,14 @@
 /// <reference types="Cypress" />
 import React from 'react';
-import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { mount } from 'cypress-react-unit-test';
 import QuickActionCard from '../../src/components/QuickActionCard';
-import configureStore from '../../src/redux/configureStore';
-import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
-const { store } = configureStore();
-const client = new ApolloClient({
-  cache: new InMemoryCache(),
-});
-const wrapper = (
-  <ApolloProvider client={client}>
-    <Provider store={store}>
-      <BrowserRouter>
-        <QuickActionCard />
-      </BrowserRouter>
-    </Provider>
-  </ApolloProvider>
-);
+import ProviderWrapper from '../Helpers/ProviderWrapper';
+
+const Component = (<ProviderWrapper><QuickActionCard /></ProviderWrapper>)
+
 describe('QuickActionCard Testing', () => {
   it('Component is Visible', () => {
-    mount(wrapper);
+    mount(Component);
   });
   it('Invite a team member', () =>
     cy
