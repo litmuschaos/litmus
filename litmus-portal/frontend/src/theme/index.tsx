@@ -36,6 +36,12 @@ declare module '@material-ui/core/styles/createPalette' {
       blue: string;
     };
     editorBackground: string;
+    resilienceScore: string;
+    graphAnnotationsColor: string;
+    graphHoverColors: {
+      passedTests: string;
+      failedTests: string;
+    };
   }
   // allow configuration using `createMuiTheme`
   interface PaletteOptions {
@@ -54,6 +60,12 @@ declare module '@material-ui/core/styles/createPalette' {
       blue: string;
     };
     editorBackground?: string;
+    resilienceScore?: string;
+    graphAnnotationsColor?: string;
+    graphHoverColors?: {
+      passedTests: string;
+      failedTests: string;
+    };
   }
 }
 function customTheme(options: ThemeOptions) {
@@ -115,6 +127,12 @@ function customTheme(options: ThemeOptions) {
         },
       },
       editorBackground: '#1C1C1C',
+      resilienceScore: '#F6B92B',
+      graphAnnotationsColor: 'rgb(204,204,204)',
+      graphHoverColors: {
+        passedTests: 'rgba(16, 155, 103, 0.2)',
+        failedTests: 'rgba(202, 44, 44, 0.2)',
+      },
     },
     typography: {
       fontSize: 12,
