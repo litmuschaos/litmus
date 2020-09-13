@@ -23,33 +23,26 @@ const TotalWorkflows: React.FC<TotalWorkflowProps> = ({
         <strong>Number of total Workflows</strong>
       </Typography>
       <div className={classes.contentDiv}>
-        <Avatar
-          style={{
-            backgroundColor: '#5B44BA',
-            width: 40,
-            height: 40,
-            marginTop: 5,
-          }}
-        >
+        <Avatar className={classes.avatarStyle}>
           <img
             src="/icons/weeklyWorkflows.svg"
             alt="Ellipse Icon"
-            style={{ width: 15, height: 15 }}
+            className={classes.weeklyIcon}
           />
         </Avatar>
         <div className={classes.mainDiv}>
           <Typography variant="subtitle2">
             <strong>AVG amount of workflows:</strong>
           </Typography>
-          <Typography
-            variant="caption"
-            display="block"
-            gutterBottom
-            className={classes.avgCount}
-          >
-            {average} per week &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-            &nbsp; &nbsp; &nbsp; &nbsp;
+          <div className={classes.runsFlex}>
+            <Typography
+              variant="caption"
+              display="block"
+              gutterBottom
+              className={classes.avgCount}
+            >
+              {average} per week
+            </Typography>
             <Typography
               variant="caption"
               display="inline"
@@ -57,9 +50,12 @@ const TotalWorkflows: React.FC<TotalWorkflowProps> = ({
             >
               {max}
             </Typography>
-          </Typography>
-
-          <AnalyticsLinearProgressBar value={average} maxValue={max} />
+          </div>
+          <AnalyticsLinearProgressBar
+            value={average}
+            maxValue={max}
+            isInTable={false}
+          />
         </div>
       </div>
       <Typography variant="h5" gutterBottom className={classes.workflow}>

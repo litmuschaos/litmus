@@ -18,7 +18,6 @@ const AverageResilienceScore: React.FC<AverageResilienceScoreProps> = ({
   value,
 }) => {
   const classes = useStyles();
-
   const [progress, setProgress] = useState<number>(0);
 
   /*

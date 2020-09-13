@@ -27,10 +27,9 @@ const useStyles = makeStyles((theme) => ({
   },
   avgCount: {
     color: theme.palette.secondary.dark,
-    paddingTop: theme.spacing(0.625),
   },
   maxCount: {
-    color: 'rgba(0, 0, 0, 0.2)',
+    color: theme.palette.customColors.black(0.2),
   },
   workflow: {
     marginLeft: theme.spacing(4.375),
@@ -40,6 +39,21 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(4.375),
     marginTop: theme.spacing(1.875),
     opacity: 0.5,
+  },
+  avatarStyle: {
+    backgroundColor: theme.palette.secondary.dark,
+    width: '2.5rem',
+    height: '2.5rem',
+    marginTop: theme.spacing(0.625),
+  },
+  weeklyIcon: {
+    width: '0.9375rem',
+    height: '0.9375rem',
+  },
+  runsFlex: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 }));
 

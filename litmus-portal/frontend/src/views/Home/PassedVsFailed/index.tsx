@@ -19,7 +19,6 @@ interface PassedVsFailedProps {
 
 const PassedVsFailed: React.FC<PassedVsFailedProps> = ({ passed, failed }) => {
   const classes = useStyles();
-
   const [passedValue, setPassedValue] = useState<number>(0);
   const [failedValue, setFailedValue] = useState<number>(0);
 

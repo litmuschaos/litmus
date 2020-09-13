@@ -83,10 +83,6 @@ const HomePage: React.FC = () => {
 
   const [secondLogin, setSecondLogin] = useState<boolean>(true);
 
-  const setSecondLoginAfterCheck = (secondLogin: boolean) => {
-    setSecondLogin(secondLogin);
-  };
-
   useEffect(() => {
     if (data?.getUser.username === userData.username) {
       setIsOpen(false);
@@ -133,7 +129,9 @@ const HomePage: React.FC = () => {
               </Typography>
               {secondLogin ? (
                 <ReturningHome
-                  callbackToSetSecondlogin={setSecondLoginAfterCheck}
+                  callbackToSetSecondlogin={(secondLogin: boolean) => {
+                    setSecondLogin(secondLogin);
+                  }}
                   currentStatus={secondLogin}
                 />
               ) : (

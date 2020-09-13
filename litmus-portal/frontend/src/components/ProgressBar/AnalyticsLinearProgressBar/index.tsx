@@ -5,11 +5,13 @@ import { useTheme } from '@material-ui/core/styles';
 interface LinearProgressBarProps {
   value: number;
   maxValue: number;
+  isInTable: boolean;
 }
 
 const AnalyticsLinearProgressBar: React.FC<LinearProgressBarProps> = ({
   value,
   maxValue,
+  isInTable,
 }) => {
   const width: number = 2;
   const resultValue = ((value as number) / (maxValue as number)) * 100;
@@ -21,7 +23,7 @@ const AnalyticsLinearProgressBar: React.FC<LinearProgressBarProps> = ({
       percent={resultValue}
       strokeWidth={width}
       trailWidth={width}
-      strokeColor={palette.secondary.dark}
+      strokeColor={isInTable ? palette.primary.dark : palette.secondary.dark}
     />
   );
 };
