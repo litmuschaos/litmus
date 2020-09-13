@@ -32,6 +32,7 @@ func QueryWorkflowRuns(project_id string) ([]*model.WorkflowRun, error) {
 				ClusterID:     workflow.ClusterID,
 				ExecutionData: wfrun.ExecutionData,
 				ClusterName:   cluster.ClusterName,
+				ClusterType:   &cluster.ClusterType,
 			}
 			result = append(result, &newWorkflowRun)
 		}
