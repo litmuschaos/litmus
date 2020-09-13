@@ -69,7 +69,7 @@ func QueryWorkflows(project_id string) ([]*model.ScheduledWorkflows, error) {
 			ProjectID:           workflow.ProjectID,
 			ClusterName:         cluster.ClusterName,
 			ClusterID:           cluster.ClusterType,
-			ClusterType: 		 cluster.ClusterType,
+			ClusterType:         cluster.ClusterType,
 		}
 		result = append(result, &newChaosWorkflows)
 	}
