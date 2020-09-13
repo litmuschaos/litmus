@@ -2,7 +2,7 @@
 import React from 'react';
 import { mount } from 'cypress-react-unit-test';
 import QuickActionCard from '../../src/components/QuickActionCard';
-import ProviderWrapper from '../Helpers/ProviderWrapper';
+import ProviderWrapper from '../../src/testHelpers/ProviderWrapper';
 
 const Component = (<ProviderWrapper><QuickActionCard /></ProviderWrapper>)
 

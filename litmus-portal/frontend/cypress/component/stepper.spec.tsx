@@ -3,7 +3,7 @@
 import React from 'react';
 import { mount } from 'cypress-react-unit-test';
 import CustomStepper from '../../src/components/WorkflowStepper';
-import ProviderWrapper from '../Helpers/ProviderWrapper';
+import ProviderWrapper from '../../src/testHelpers/ProviderWrapper';
 
 const component = (<ProviderWrapper><CustomStepper /></ProviderWrapper>);
 
@@ -35,7 +35,7 @@ describe('Active Label is colored theme.palette.primary.light', () => {
   it('Active theme color is correct', () => {
     mount(component);
     cy.get('[data-cy=labelText]').then((item) => {
-      cy.get(item[0]).should('have.css', 'color', 'rgb(121, 134, 203)');
+      cy.get(item[0]).should('have.css', 'color', 'rgb(44, 202, 143)');
     });
   });
 });
