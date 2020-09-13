@@ -6,6 +6,8 @@ export interface UpdateUser {
 
 export interface UserData extends UpdateUser {
   username: string;
+  name: string;
+  email: string;
 }
 export enum UserActions {
   LOAD_USER_DETAILS = 'LOAD_USER_DETAILS',
