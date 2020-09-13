@@ -96,11 +96,13 @@ const BrowseSchedule = () => {
     .filter((dataRow) =>
       dataRow.workflow_name.toLowerCase().includes(filter.search.toLowerCase())
     )
-    // .filter((dataRow) =>
-    //   filter.cluster === 'All'
-    //     ? true
-    //     : dataRow.cluster_name.toLowerCase().includes(filter.cluster)
-    // )
+    .filter((dataRow) =>
+      filter.cluster === 'All'
+        ? true
+        : dataRow.cluster_type
+            .toLowerCase()
+            .includes(filter.cluster.toLowerCase())
+    )
     .sort((a: ScheduleWorkflow, b: ScheduleWorkflow) => {
       // Sorting based on unique fields
       if (sortData.name.sort) {
