@@ -13,7 +13,7 @@ import {
 } from '../../../models/graphql/workflowData';
 import { history } from '../../../redux/configureStore';
 import timeDifferenceForDate from '../../../utils/datesModifier';
-import LinearProgressBar from '../../ReturningHome/ProgressBar/LinearProgressBar';
+import LinearProgressBar from '../../../components/ProgressBar/LinearProgressBar';
 import CustomStatus from '../CustomStatus/Status';
 import useStyles from './styles';
 

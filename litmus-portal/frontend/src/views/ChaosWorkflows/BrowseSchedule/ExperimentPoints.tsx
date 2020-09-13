@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@material-ui/core';
 import useStyles from './styles';
-import LinearProgressBar from '../../ReturningHome/ProgressBar/LinearProgressBar';
+import LinearProgressBar from '../../../components/ProgressBar/LinearProgressBar';
 
 interface ExperimentPointsProps {
   expName: string;

@@ -8,7 +8,7 @@ import TableRow from '@material-ui/core/TableRow';
 import React from 'react';
 import InfoTooltip from '../../../components/InfoTooltip';
 import Center from '../../../containers/layouts/Center';
-import LinearProgressBar from '../../ReturningHome/ProgressBar/LinearProgressBar';
+import LinearProgressBar from '../../../components/ProgressBar/LinearProgressBar';
 import ToggleComponent from '../ToggleComponent';
 import useStyles from './styles';
 
