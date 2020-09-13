@@ -203,6 +203,7 @@ type WorkflowRun struct {
 	ProjectID     string `json:"project_id"`
 	ClusterID     string `json:"cluster_id"`
 	WorkflowName  string `json:"workflow_name"`
+	ClusterType   string `json:"cluster_type"`
 	ExecutionData string `json:"execution_data"`
 }
 

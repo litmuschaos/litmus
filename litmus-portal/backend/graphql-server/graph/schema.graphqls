@@ -107,6 +107,7 @@ type WorkflowRun{
   project_id: ID!
   cluster_id: ID!
   workflow_name: String!
+  cluster_type: String!
   execution_data: String!
 }
 
