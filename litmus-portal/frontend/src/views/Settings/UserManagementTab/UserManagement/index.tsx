@@ -101,7 +101,7 @@ const UserManagement: React.FC = () => {
       .catch((err) => {
         console.error(err);
       });
-  }, []);
+  }, [showDiv]);
 
   const filteredData = rows
     ?.filter((dataRow) => dataRow.name.toLowerCase().includes(filters.search))

@@ -16,6 +16,7 @@ import {
 } from '../../models/graphql/createWorkflowData';
 import { experimentMap, WorkflowData } from '../../models/redux/workflow';
 import useActions from '../../redux/actions';
+import * as TabActions from '../../redux/actions/tabs';
 import * as WorkflowActions from '../../redux/actions/workflow';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
@@ -133,6 +134,7 @@ const CustomStepper = () => {
     (state: RootState) => state.selectTemplate.isDisable
   );
 
+  const tabs = useActions(TabActions);
   const workflow = useActions(WorkflowActions);
   const [invalidYaml, setinValidYaml] = React.useState(false);
   const steps = getSteps();
@@ -287,8 +289,9 @@ const CustomStepper = () => {
                     isPrimary
                     data-cy="selectFinish"
                     handleClick={() => {
-                      history.push('/workflows');
                       setOpen(false);
+                      tabs.changeWorkflowsTabs(0);
+                      history.push('/workflows');
                     }}
                   >
                     <div>Back to workflow</div>
