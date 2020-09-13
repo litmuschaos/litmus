@@ -146,6 +146,8 @@ github.com/litmuschaos/litmus v0.0.0-20200909115459-dfbe7082ae52 h1:LO4SUVs6/mTX
 github.com/litmuschaos/litmus v0.0.0-20200909124310-45f24cba48df h1:mH62y3I4i7EzNoWkTFdU8nkKIRr/jyFMxApKFFAzjlw=
 github.com/litmuschaos/litmus v0.0.0-20200910044250-c481a57c2edf h1:wQkYNNJEchnMzWKj+XzuYpBhe3OUqVU+Ce6cNmb4r00=
 github.com/litmuschaos/litmus v0.0.0-20200911074750-502a291ae938 h1:Oyq2TqpHtGkmbA+oIGfu+akjM58Eln24+2X8KzUv+VM=
+github.com/litmuschaos/litmus v0.0.0-20200913120947-8e7cb5e22e8d h1:dJT2anOyNnvu0zFXe/hLZGF89uvECSNbrrB6Vxiaz1Q=
+github.com/litmuschaos/litmus v0.0.0-20200913144135-1199ab3d94aa h1:idBDr+I3NJr7mw75VmVWRjCzoyamMtJic+MU2TTo0Cs=
 github.com/logrusorgru/aurora v0.0.0-20200102142835-e9ef32dff381/go.mod h1:7rIyQOR62GCctdiQpZ/zOJlFyk6y+94wXzv6RNZgaR4=
 github.com/mailru/easyjson v0.0.0-20160728113105-d5b7844b561a/go.mod h1:C1wdFJiN94OJF2b5HbByQZoLdCWB1Yqtg26g4irojpc=
 github.com/markbates/oncer v0.0.0-20181203154359-bf2de49a0be2/go.mod h1:Ld9puTsIW75CHf65OeIOkyKbteujpZVXDpWK6YGZbxE=

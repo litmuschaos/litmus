@@ -24,6 +24,7 @@ import * as UserActions from '../../redux/actions/user';
 import configureStore, { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import useStyles from './style';
+import ReturningHome from '../../views/Home/ReturningHome/index';
 
 const CreateWorkflowCard: React.FC = () => {
   const { t } = useTranslation();
@@ -80,15 +81,14 @@ const HomePage: React.FC = () => {
     setIsOpen(false);
   };
 
+  const [secondLogin, setSecondLogin] = useState<boolean>(true);
+
   useEffect(() => {
     if (data?.getUser.username === userData.username) {
       setIsOpen(false);
       if (userData.selectedProjectID === '') {
-        let isOwnerOfProject = {
-          id: '',
-          name: '',
-        };
-        const projectList: Project[] = data?.getUser.projects;
+        let isOwnerOfProject = { id: '', name: '' };
+        const projectList: Project[] = data?.getUser.projects ?? [];
         projectList.forEach((project) => {
           const memberList: Member[] = project.members;
           memberList.forEach((member) => {
@@ -127,39 +127,48 @@ const HomePage: React.FC = () => {
                 {t('home.heading')}
                 <strong>{` ${name}`}</strong>
               </Typography>
-              <div className={classes.headingDiv}>
-                <div className={classes.mainDiv}>
-                  <div>
-                    <Typography className={classes.mainHeading}>
-                      <strong>{t('home.subHeading1')}</strong>
-                    </Typography>
-                    <Typography className={classes.mainResult}>
-                      <strong>{t('home.subHeading2')}</strong>
-                    </Typography>
-                    <Typography className={classes.mainDesc}>
-                      {t('home.subHeading3')}
-                    </Typography>
-                    <Button
-                      variant="contained"
-                      className={classes.predefinedBtn}
-                      onClick={() => {
-                        tabs.changeWorkflowsTabs(2);
-                        history.push('/workflows');
-                      }}
-                    >
-                      <Typography variant="subtitle1">
-                        {t('home.button1')}
+              {secondLogin ? (
+                <ReturningHome
+                  callbackToSetSecondlogin={(secondLogin: boolean) => {
+                    setSecondLogin(secondLogin);
+                  }}
+                  currentStatus={secondLogin}
+                />
+              ) : (
+                <div className={classes.headingDiv}>
+                  <div className={classes.mainDiv}>
+                    <div>
+                      <Typography className={classes.mainHeading}>
+                        <strong>{t('home.subHeading1')}</strong>
                       </Typography>
-                    </Button>
+                      <Typography className={classes.mainResult}>
+                        <strong>{t('home.subHeading2')}</strong>
+                      </Typography>
+                      <Typography className={classes.mainDesc}>
+                        {t('home.subHeading3')}
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        className={classes.predefinedBtn}
+                        onClick={() => {
+                          tabs.changeWorkflowsTabs(2);
+                          history.push('/workflows');
+                        }}
+                      >
+                        <Typography variant="subtitle1">
+                          {t('home.button1')}
+                        </Typography>
+                      </Button>
+                    </div>
+                    <div className={classes.imageDiv}>
+                      <img src="icons/applause.png" alt="Applause icon" />
+                    </div>
                   </div>
-                  <div className={classes.imageDiv}>
-                    <img src="icons/applause.png" alt="Applause icon" />
+                  <div>
+                    <CreateWorkflowCard data-cy="CreateWorkflowCard" />
                   </div>
                 </div>
-                <div>
-                  <CreateWorkflowCard data-cy="CreateWorkflowCard" />
-                </div>
-              </div>
+              )}
               <div className={classes.contentDiv}>
                 <div className={classes.statDiv}>
                   <div className={classes.btnHeaderDiv}>
