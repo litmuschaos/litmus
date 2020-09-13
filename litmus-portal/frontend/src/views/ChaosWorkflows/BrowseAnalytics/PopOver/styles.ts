@@ -1,9 +1,14 @@
 import { makeStyles, Theme, withStyles, Typography } from '@material-ui/core';
 
+interface PopOverStyleProps {
+  xLoc: number;
+  yLoc: number;
+}
+
 const useStyles = makeStyles((theme: Theme) => ({
-  modalContainer: (props: any) => ({
+  modalContainer: (props: PopOverStyleProps) => ({
     position: 'absolute',
-    width: '197.5px',
+    width: '12.34375rem',
     left: props.xLoc !== 0 ? `${props.xLoc + 12.5}px` : '-100px',
     top: `${props.yLoc + 130}px`,
   }),
@@ -40,11 +45,52 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginRight: theme.spacing(1),
     display: 'block',
   },
+  dateIcon: {
+    backgroundColor: theme.palette.primary.dark,
+    width: 20,
+    height: 22,
+  },
+  dateRangeIcon: {
+    color: theme.palette.secondary.contrastText,
+    width: 20,
+    height: 22,
+  },
+  resilienceScoreIcon: {
+    backgroundColor: theme.palette.resilienceScore,
+    width: 18,
+    height: 18,
+  },
+  timeLineIcon: {
+    color: theme.palette.secondary.contrastText,
+    width: 15,
+    marginLeft: 2,
+    height: 18,
+  },
+  passedIcon: {
+    backgroundColor: theme.palette.secondary.contrastText,
+    width: 20,
+    height: 20,
+  },
+  failedIcon: {
+    backgroundColor: theme.palette.secondary.contrastText,
+    width: 20,
+    height: 20,
+  },
+  checkMarkIcon: {
+    color: theme.palette.primary.dark,
+    width: 20,
+    height: 20,
+  },
+  cancelMarkIcon: {
+    color: theme.palette.error.dark,
+    width: 20,
+    height: 20,
+  },
 }));
 
 export const CustomTypography = withStyles({
   root: {
-    color: '#FFFFFF',
+    color: '#FFF',
   },
 })(Typography);
 

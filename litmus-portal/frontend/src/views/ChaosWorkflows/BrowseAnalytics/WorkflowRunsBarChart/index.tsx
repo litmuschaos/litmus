@@ -4,6 +4,8 @@ import React, { useEffect } from 'react';
 import Plotly from 'plotly.js';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import moment from 'moment';
+import { useTheme } from '@material-ui/core/styles';
+import useStyles from './styles';
 
 const Plot = createPlotlyComponent(Plotly);
 
@@ -31,15 +33,17 @@ interface WorkflowRunData {
 
 interface WorkflowRunsBarChartProps {
   workflowRunData: WorkflowRunData[];
-  workflowID: string;
   callBackToShowPopOver: PopOverCallBackType;
 }
 
 const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
   workflowRunData,
   callBackToShowPopOver,
-  workflowID,
 }) => {
+  const { palette } = useTheme();
+
+  const classes = useStyles();
+
   const [plotData, setPlotData] = React.useState<any[]>([]);
 
   const [plotLayout, setPlotLayout] = React.useState<any>({});
@@ -54,15 +58,15 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
   const [visibleIndex, setVisibleIndex] = React.useState<any>(0);
 
   const [colorsPassed, setColorsPassed] = React.useState<string[]>([
-    '#109B67',
-    '#109B67',
-    '#109B67',
+    palette.primary.dark,
+    palette.primary.dark,
+    palette.primary.dark,
   ]);
 
   const [colorsFailed, setColorsFailed] = React.useState<string[]>([
-    '#CA2C2C',
-    '#CA2C2C',
-    '#CA2C2C',
+    palette.error.dark,
+    palette.error.dark,
+    palette.error.dark,
   ]);
 
   const [selected, setSelected] = React.useState<boolean>(false);
@@ -76,7 +80,7 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
 
   const processData = () => {
     const passed = {
-      x: [' '],
+      x: [''],
       y: [0],
       name: 'Passed tests',
       type: 'bar',
@@ -90,7 +94,7 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
     };
 
     const failed = {
-      x: [' '],
+      x: [''],
       y: [0],
       name: 'Failed tests',
       type: 'bar',
@@ -189,15 +193,15 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
         showgrid: false,
         showline: true,
         showticklabels: true,
-        linecolor: 'rgb(204,204,204)',
+        linecolor: palette.graphAnnotationsColor,
         linewidth: 0.5,
         ticks: 'outside',
-        tickcolor: 'rgb(204,204,204)',
+        tickcolor: palette.graphAnnotationsColor,
         tickwidth: 0,
         ticklen: 0,
         tickfont: {
-          family: 'Ubuntu',
-          color: 'rgba(0, 0, 0, 0.4)',
+          family: 'Ubuntu, monospace',
+          color: palette.customColors.black(0.4),
         },
         rangeselector: selectorOptions as any,
         rangeslider: { visible: true },
@@ -207,15 +211,15 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
         zeroline: false,
         showline: false,
         showticklabels: false,
-        linecolor: 'rgb(204,204,204)',
+        linecolor: palette.graphAnnotationsColor,
         linewidth: 0.5,
         ticks: 'outside',
-        tickcolor: 'rgb(204,204,204)',
+        tickcolor: palette.graphAnnotationsColor,
         tickwidth: 0,
         ticklen: 0,
         tickfont: {
-          family: 'Ubuntu',
-          color: 'rgba(0, 0, 0, 0.4)',
+          family: 'Ubuntu, monospace',
+          color: palette.customColors.black(0.4),
         },
       },
       cliponaxis: true,
@@ -231,15 +235,18 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
       },
       font: {
         family: 'Ubuntu, monospace',
-        color: 'rgba(0, 0, 0, 0.4)',
+        color: palette.customColors.black(0.4),
       },
       barmode: 'stack',
       showlegend: true,
       legend: { orientation: 'h', y: 1, x: 0.955 },
       hovermode: 'closest',
-      hoverlabel: { bgcolor: '#FFF', bordercolor: '#FFF' },
+      hoverlabel: {
+        bgcolor: palette.secondary.contrastText,
+        bordercolor: palette.secondary.contrastText,
+      },
       modebar: {
-        bgcolor: '#FFF',
+        bgcolor: palette.secondary.contrastText,
       },
     };
     setPlotLayout(layout);
@@ -249,8 +256,9 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
     processData();
     processLayout();
     try {
-      const nodeStyle = (document.getElementsByClassName('modebar')[0] as any)
-        .style;
+      const nodeStyle = (document.getElementsByClassName(
+        'modebar'
+      )[0] as HTMLElement).style;
       nodeStyle.left = '29%';
       nodeStyle.transform = 'translateY(110%)';
     } catch (err) {
@@ -261,8 +269,9 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
   useEffect(() => {
     processData();
     try {
-      const nodeStyle = (document.getElementsByClassName('modebar')[0] as any)
-        .style;
+      const nodeStyle = (document.getElementsByClassName(
+        'modebar'
+      )[0] as HTMLElement).style;
       nodeStyle.left = '29%';
       nodeStyle.transform = 'translateY(110%)';
     } catch (err) {
@@ -290,11 +299,7 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
           data={plotData}
           layout={plotLayout}
           useResizeHandler
-          style={{
-            width: '160%',
-            height: 830,
-            margin: 'auto',
-          }}
+          className={classes.plot}
           config={{
             displaylogo: false,
             autosizable: true,
@@ -306,7 +311,7 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
             displayModeBar: true,
             toImageButtonOptions: {
               format: 'png',
-              filename: `Workflow-${workflowID}_Runs`,
+              filename: `Workflow-Run-${workflowRunData[0].workflowRunID}`,
               width: 1920,
               height: 1080,
               scale: 2,
@@ -320,7 +325,7 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
               const newFailedColours = [];
               let loc = { x: 0, y: 0 };
               for (let i = 0; i < colorsPassed.length; i++) {
-                if (colorsPassed[i] === 'rgba(16, 155, 103, 0.2)') {
+                if (colorsPassed[i] === palette.graphHoverColors.passedTests) {
                   recolour = true;
                 }
               }
@@ -334,17 +339,17 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
                 }
                 for (let i = 0; i < colorsPassed.length; i++) {
                   if (i !== ind) {
-                    newPassedColours.push('rgba(16, 155, 103, 0.2)');
-                    newFailedColours.push('rgba(202, 44, 44, 0.2)');
+                    newPassedColours.push(palette.graphHoverColors.passedTests);
+                    newFailedColours.push(palette.graphHoverColors.failedTests);
                   } else {
-                    newPassedColours.push('#109B67');
-                    newFailedColours.push('#CA2C2C');
+                    newPassedColours.push(palette.primary.dark);
+                    newFailedColours.push(palette.error.dark);
                   }
                 }
               } else {
                 for (let i = 0; i < colorsPassed.length; i++) {
-                  newPassedColours.push('#109B67');
-                  newFailedColours.push('#CA2C2C');
+                  newPassedColours.push(palette.primary.dark);
+                  newFailedColours.push(palette.error.dark);
                 }
               }
               setVisibleIndex(ind);
@@ -363,11 +368,11 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
             }
             for (let i = 0; i < colorsPassed.length; i++) {
               if (i !== ind) {
-                newPassedColours.push('rgba(16, 155, 103, 0.2)');
-                newFailedColours.push('rgba(202, 44, 44, 0.2)');
+                newPassedColours.push(palette.graphHoverColors.passedTests);
+                newFailedColours.push(palette.graphHoverColors.failedTests);
               } else {
-                newPassedColours.push('#109B67');
-                newFailedColours.push('#CA2C2C');
+                newPassedColours.push(palette.primary.dark);
+                newFailedColours.push(palette.error.dark);
               }
             }
             setSelected(true);
@@ -379,8 +384,8 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
               const newPassedColours = [];
               const newFailedColours = [];
               for (let i = 0; i < colorsPassed.length; i++) {
-                newPassedColours.push('#109B67');
-                newFailedColours.push('#CA2C2C');
+                newPassedColours.push(palette.primary.dark);
+                newFailedColours.push(palette.error.dark);
               }
               setColorsPassed(newPassedColours);
               setColorsFailed(newFailedColours);

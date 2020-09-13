@@ -18,6 +18,20 @@ import WorkflowRunsBarChart from '../../views/ChaosWorkflows/BrowseAnalytics/Wor
 import PopOver from '../../views/ChaosWorkflows/BrowseAnalytics/PopOver';
 import useStyles from './styles';
 
+interface ChaosData {
+  engineName: string;
+  engineUID: string;
+  experimentName: string;
+  experimentPod: string;
+  experimentStatus: string;
+  experimentVerdict: string;
+  failStep: string;
+  lastUpdatedAt: string;
+  namespace: string;
+  probeSuccessPercentage: string;
+  runnerPod: string;
+}
+
 interface WorkflowRunData {
   testsPassed: number;
   testsFailed: number;
@@ -50,8 +64,6 @@ const AnalyticsPage: React.FC = () => {
     yLoc: 0,
     workflowRunID: '',
   });
-
-  const workflowID: string = 'hello';
 
   const [popoverOpen, setPopoverOpen] = React.useState<boolean>(false);
 
@@ -94,14 +106,14 @@ const AnalyticsPage: React.FC = () => {
     const workflowRunsExecutionData: ExecutionData[] = [];
     selectedWorkflows?.forEach((data) => {
       try {
-        const executionData = JSON.parse(data.execution_data);
+        const executionData: ExecutionData = JSON.parse(data.execution_data);
         workflowRunsExecutionData.push(executionData);
       } catch (error) {
         console.error(error);
       }
     });
 
-    const chaosDataArray: any[] = [];
+    const chaosDataArray: ChaosData[] = [];
     const experimentTestNameArray: string[] = [];
     const experimentTestVerdictArray: string[] = [];
     const experimentTestResultsArray: number[] = [];
@@ -222,7 +234,6 @@ const AnalyticsPage: React.FC = () => {
               <WorkflowRunsBarChart
                 workflowRunData={workflowRunDataForPlot}
                 callBackToShowPopOver={setPopOverDisplay}
-                workflowID={workflowID}
               />
               {popoverOpen ? (
                 <PopOver
