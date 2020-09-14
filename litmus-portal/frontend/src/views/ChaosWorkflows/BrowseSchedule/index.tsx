@@ -109,7 +109,7 @@ const BrowseSchedule = () => {
     .filter((dataRow) =>
       filter.cluster === 'All'
         ? true
-        : dataRow.cluster_type
+        : dataRow.cluster_name
             .toLowerCase()
             .includes(filter.cluster.toLowerCase())
     )

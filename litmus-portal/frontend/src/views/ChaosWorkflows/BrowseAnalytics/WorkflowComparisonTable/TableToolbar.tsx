@@ -123,7 +123,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
       startDate: ' ',
       endDate: ' ',
     });
-    setCluster('');
+    setCluster('All');
   };
 
   useEffect(() => {}, [compare]);

@@ -23,22 +23,29 @@ export interface PopOverCallBackType {
   (selectedWorkflowRunData: SelectedWorkflowRunData, visible: boolean): void;
 }
 
+export interface SelectWorkflowRunCallBackType {
+  (selectedWorkflowRunID: string): void;
+}
+
 interface WorkflowRunData {
   testsPassed: number;
   testsFailed: number;
   resilienceScore: number;
   testDate: string;
   workflowRunID: string;
+  workflowID: string;
 }
 
 interface WorkflowRunsBarChartProps {
   workflowRunData: WorkflowRunData[];
   callBackToShowPopOver: PopOverCallBackType;
+  callBackToSelectWorkflowRun: SelectWorkflowRunCallBackType;
 }
 
 const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
   workflowRunData,
   callBackToShowPopOver,
+  callBackToSelectWorkflowRun,
 }) => {
   const { palette } = useTheme();
 
@@ -378,6 +385,9 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
             setSelected(true);
             setColorsPassed(newPassedColours);
             setColorsFailed(newFailedColours);
+            callBackToSelectWorkflowRun(workflowRunData[ind].workflowRunID);
+            setVisibleIndex(ind);
+            setVisible(false);
           }}
           onUnhover={() => {
             if (!selected) {

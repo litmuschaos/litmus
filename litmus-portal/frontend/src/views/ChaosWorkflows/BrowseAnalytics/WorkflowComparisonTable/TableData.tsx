@@ -1,9 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { TableCell, Typography, IconButton, Checkbox } from '@material-ui/core';
 import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import DateRangeOutlinedIcon from '@material-ui/icons/DateRangeOutlined';
 import moment from 'moment';
-import WorkflowAnalytics from './WorkflowAnalyticsPopOver';
+import { history } from '../../../../redux/configureStore';
 import useStyles from './styles';
 
 interface TableDataProps {
@@ -21,7 +21,7 @@ const TableData: React.FC<TableDataProps> = ({
 }) => {
   const classes = useStyles();
 
-  const [isProfilePopoverOpen, setProfilePopoverOpen] = useState(false);
+  // const [isProfilePopoverOpen, setProfilePopoverOpen] = useState(false);
 
   const profileMenuRef = useRef();
 
@@ -76,23 +76,20 @@ const TableData: React.FC<TableDataProps> = ({
             ref={profileMenuRef as any}
             aria-label="analytics for workflow id"
             aria-haspopup="true"
-            onClick={() => setProfilePopoverOpen(true)}
-            className={
+            onClick={() =>
+              history.push(`/workflows/analytics/${data.workflow_id}`)
+            }
+            /*  className={
               isProfilePopoverOpen
                 ? classes.buttonPositionExpand
                 : classes.buttonPositionClose
             }
+            */
           >
             <ExpandMoreTwoToneIcon htmlColor="black" />
           </IconButton>
         </Typography>
       </TableCell>
-      <WorkflowAnalytics
-        anchorEl={profileMenuRef.current as any}
-        isOpen={isProfilePopoverOpen}
-        onClose={() => setProfilePopoverOpen(false)}
-        workflowID={data.workflow_id}
-      />
     </>
   );
 };

@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight: 'auto',
     marginLeft: theme.spacing(6.25),
     borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
-    width: '17.5rem',
+    width: '13rem',
   },
 
   calIcon: {
@@ -90,10 +90,10 @@ const useStyles = makeStyles((theme) => ({
   },
 
   tableMain: {
-    marginTop: theme.spacing(6.25),
+    marginTop: theme.spacing(-0.5),
     border: '1px solid rgba(0,0,0,0.1)',
     backgroundColor: theme.palette.common.white,
-    minHeight: '31.22rem',
+    minHeight: '25rem',
     '&::-webkit-scrollbar': {
       width: '0.2em',
     },
@@ -147,18 +147,22 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(1.75),
   },
 
-  workflowName: {
+  testName: {
     borderRight: '1px solid rgba(0,0,0,0.1)',
-    fontSize: '0.8rem',
+    paddingLeft: theme.spacing(10),
   },
 
-  workflowNameHead: {
+  testNameHead: {
     marginTop: theme.spacing(2.5),
+  },
+
+  testResultHead: {
+    marginTop: theme.spacing(2.5),
+    paddingLeft: theme.spacing(2),
   },
 
   tableObjects: {
     paddingLeft: theme.spacing(3.75),
-    fontSize: '0.8rem',
   },
 
   headSpacing: {
@@ -167,14 +171,16 @@ const useStyles = makeStyles((theme) => ({
 
   tableObjectRegularity: {
     marginTop: theme.spacing(-3),
-    paddingLeft: theme.spacing(7.75),
-    fontSize: '0.8rem',
+    paddingLeft: theme.spacing(5.75),
   },
 
   nameContent: {
     display: 'flex',
     flexDirection: 'row',
-    fontSize: '0.8rem',
+  },
+
+  testWeightPointHead: {
+    marginTop: theme.spacing(0.5),
   },
 
   nameContentIcons: {
@@ -226,39 +232,13 @@ const useStyles = makeStyles((theme) => ({
   popoverAnalyticsAdjust: {
     marginTop: theme.spacing(3),
     marginRight: theme.spacing(0),
-    [theme.breakpoints.down('xl')]: {
-      transform: 'translateX(-3%)',
-    },
-    [theme.breakpoints.down('lg')]: {
-      transform: 'translateX(1%)',
-    },
-    [theme.breakpoints.down('md')]: {
-      transform: 'translateX(1.5%)',
-    },
-    [theme.breakpoints.down('sm')]: {
-      transform: 'translateX(2.5%)',
-    },
-    [theme.breakpoints.down('xs')]: {
-      transform: 'translateX(2%)',
-    },
   },
 
   popoverAnalytics: {
     background: '#FFFFFF',
     borderRadius: theme.shape.borderRadius,
     width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      maxWidth: '72.5%',
-    },
-    [theme.breakpoints.up('md')]: {
-      maxWidth: '82%',
-    },
-    [theme.breakpoints.up('lg')]: {
-      maxWidth: '80%',
-    },
-    [theme.breakpoints.up('xl')]: {
-      maxWidth: '85%',
-    },
+    maxWidth: '81.5%',
     marginTop: theme.spacing(1.25),
     marginLeft: theme.spacing(1),
   },
@@ -266,6 +246,24 @@ const useStyles = makeStyles((theme) => ({
   analyticsContainer: {
     display: 'flex',
     padding: theme.spacing(2),
+    flexDirection: 'column',
+    alignItems: 'center',
+    overflowY: 'auto',
+    maxHeight: theme.spacing(70),
+  },
+
+  popoverDateRangeSelector: {
+    background: theme.palette.secondary.contrastText,
+    borderRadius: theme.shape.borderRadius,
+    width: '100%',
+    maxWidth: theme.spacing(70),
+    [theme.breakpoints.down('sm')]: {
+      maxWidth: theme.spacing(70),
+    },
+  },
+
+  dateRangeSelectorContainer: {
+    display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     overflowY: 'auto',
@@ -290,7 +288,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2.75),
   },
 
-  buttonCompare: {
+  buttonClose: {
     margin: theme.spacing(1),
     marginBottom: theme.spacing(1.5),
     paddingBottom: theme.spacing(0.75),
@@ -300,7 +298,7 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       border: '1px solid #5B44BA',
     },
-    marginRight: theme.spacing(3.25),
+    marginRight: theme.spacing(-3),
   },
 
   formLabel: {
@@ -340,46 +338,51 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(8),
   },
 
-  // Form Select Properties
-  formControl: {
-    margin: theme.spacing(0.5),
-    marginRight: theme.spacing(6.25),
-    height: '2.5rem',
-    minWidth: '9rem',
-  },
-  selectText: {
-    height: '2.5rem',
-    padding: theme.spacing(0.5),
+  tableDataStatus: {
+    paddingLeft: theme.spacing(8.5),
   },
 
-  selectDate: {
-    display: 'flex',
-    flexDirection: 'row',
-    height: '2.5rem',
-    minWidth: '9rem',
-    border: '1.7px solid',
-    borderRadius: 4,
-    borderColor: theme.palette.secondary.main,
-    marginRight: theme.spacing(3.75),
-    textTransform: 'none',
+  reliabiltyData: {
+    width: '8.125rem',
+    paddingLeft: theme.spacing(4),
   },
-  displayDate: {
-    marginLeft: theme.spacing(1),
+
+  progressBar: {
+    width: '6.5rem',
+  },
+
+  paginationArea: {
     width: '100%',
-  },
-
-  headerDiv: {
     display: 'flex',
     flexDirection: 'row',
-    marginTop: theme.spacing(3),
-  },
-
-  rootContainer: {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
+    alignContent: 'space-between',
     justifyContent: 'space-between',
-    overflow: 'hidden',
+    height: '4.5rem',
+    backgroundColor: theme.palette.common.white,
+  },
+  pagination: {
+    marginTop: theme.spacing(1),
+  },
+  toolTipGroup: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignContent: 'flex-start',
+    justifyContent: 'flex-start',
+  },
+  resultText: {
+    fontSize: '1.125rem',
+    color: theme.palette.customColors.black(0.6),
+    width: '20rem',
+    marginTop: theme.spacing(3),
+    verticalAlign: 'middle',
+    display: 'inline-flex',
+    marginLeft: theme.spacing(5),
+  },
+  reliabilityScore: {
+    fontSize: '2.25rem',
+    color: '#F6B92B',
+    marginTop: theme.spacing(1),
+    marginLeft: theme.spacing(-20),
   },
 }));
 
