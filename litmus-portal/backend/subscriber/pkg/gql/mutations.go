@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"io/ioutil"
 	"net/http"
-	"strings"
 
 	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/types"
 	"github.com/sirupsen/logrus"
@@ -62,10 +61,10 @@ func SendWorkflowUpdates(clusterData map[string]string, event chan types.Workflo
 				if node.Type == "ChaosEngine" && node.ChaosExp != nil && eventData.Nodes[key].ChaosExp == nil {
 					nodeData := eventData.Nodes[key]
 					nodeData.ChaosExp = node.ChaosExp
-					if strings.ToLower(nodeData.ChaosExp.ExperimentVerdict) == "fail" {
-						nodeData.Phase = "Failed"
+					nodeData.Phase = node.Phase
+					nodeData.Message = node.Message
+					if node.Phase == "Failed" {
 						eventData.Phase = "Failed"
-						nodeData.Message = "Chaos Experiment Failed"
 						eventData.Message = "Chaos Experiment Failed"
 					}
 					eventData.Nodes[key] = nodeData
