@@ -58,6 +58,7 @@ func startWatch(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan
 // responsible for extracting the required data from the event and streaming
 func workflowEventHandler(obj interface{}, eventType string, stream chan types.WorkflowEvent, startTime int64) {
 	workflowObj := obj.(*v1alpha1.Workflow)
+	experimentFail := 0
 	if workflowObj.ObjectMeta.CreationTimestamp.Unix() < startTime {
 		return
 	}
@@ -92,6 +93,11 @@ func workflowEventHandler(obj interface{}, eventType string, stream chan types.W
 			ChaosExp:   cd,
 			Message:    nodeStatus.Message,
 		}
+		if cd != nil && cd.ExperimentVerdict == "Fail" {
+			experimentFail = 1
+			details.Phase = "Failed"
+			details.Message = "Chaos Experiment Failed"
+		}
 		nodes[nodeStatus.ID] = details
 	}
 	workflow := types.WorkflowEvent{
@@ -106,6 +112,10 @@ func workflowEventHandler(obj interface{}, eventType string, stream chan types.W
 		StartedAt:         StrConvTime(workflowObj.Status.StartedAt.Unix()),
 		FinishedAt:        StrConvTime(workflowObj.Status.FinishedAt.Unix()),
 		Nodes:             nodes,
+	}
+	if experimentFail == 1 {
+		workflow.Phase = "Failed"
+		workflow.Message = "Chaos Experiment Failed"
 	}
 	//stream
 	stream <- workflow

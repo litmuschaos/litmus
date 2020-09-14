@@ -12,6 +12,7 @@ import {
 } from '@material-ui/core';
 import NotificationsOutlinedIcon from '@material-ui/icons/NotificationsOutlined';
 import React, { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Message,
   NotificationIds,
@@ -34,6 +35,7 @@ const NotificationsDropdown: React.FC<NotificationDropdownProps> = ({
   const classes = useStyles();
   const anchorEl = useRef();
   const [isOpen, setIsOpen] = useState(false);
+  const { t } = useTranslation();
 
   function handleClick() {
     // setIsOpen(!isOpen); uncomment to activate notifications.
@@ -103,7 +105,7 @@ const NotificationsDropdown: React.FC<NotificationDropdownProps> = ({
           {messages.length === 0 ? (
             <ListItem>
               <ListItemText>
-                You don&apos;t have any new notification.
+                {t('header.notificationDropdown.noNotifications')}
               </ListItemText>
             </ListItem>
           ) : (

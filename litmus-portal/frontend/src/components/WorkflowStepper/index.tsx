@@ -5,6 +5,7 @@ import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import Unimodal from '../../containers/layouts/Unimodal';
@@ -114,6 +115,7 @@ function getStepContent(
 const CustomStepper = () => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
+  const { t } = useTranslation();
 
   const workflowData: WorkflowData = useSelector(
     (state: RootState) => state.workflowData
@@ -365,7 +367,7 @@ const CustomStepper = () => {
               )}
               {invalidYaml ? (
                 <Typography className={classes.yamlError}>
-                  <strong>To continue, please check the error in code.</strong>
+                  <strong>{t('workflowStepper.continueError')}</strong>
                 </Typography>
               ) : null}
             </div>

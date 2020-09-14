@@ -71,7 +71,7 @@ jobs:
       - run:
           name: Build auth server docker image
           command: docker images && docker build . -f Dockerfile -t ${REPONAME}/${AUTHENTICATION_SERVER_IMAGE}:${IMGTAG}
-          working_directory: ~/project/litmus-portal/backend/auth
+          working_directory: ~/project/litmus-portal/authentication
       - run:
           name: Save auth server docker image
           command: docker save -o /tmp/workspace/${AUTHENTICATION_SERVER_IMAGE}.tar ${REPONAME}/${AUTHENTICATION_SERVER_IMAGE}:${IMGTAG}
@@ -85,7 +85,7 @@ jobs:
       - run:
           name: Build self-deployer docker image
           command: docker build . -f build/Dockerfile -t ${REPONAME}/${SELF_DEPLOYER_IMAGE}:${IMGTAG}
-          working_directory: ~/project/litmus-portal/backend/tools/self-deployer
+          working_directory: ~/project/litmus-portal/tools/self-deployer
       - run:
           name: Save self-deployer docker image
           command: docker save -o /tmp/workspace/${SELF_DEPLOYER_IMAGE}.tar ${REPONAME}/${SELF_DEPLOYER_IMAGE}:${IMGTAG}

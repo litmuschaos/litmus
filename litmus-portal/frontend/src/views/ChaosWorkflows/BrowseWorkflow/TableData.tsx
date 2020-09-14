@@ -35,6 +35,13 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  // Function to capitalize the first letter of the word
+  // eg: internal to Internal
+  const nameCapitalized = (clusterType: string) => {
+    if (clusterType)
+      return clusterType.charAt(0).toUpperCase() + clusterType.slice(1);
+    return 'Not Available';
+  };
 
   return (
     <>
@@ -48,7 +55,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
       </TableCell>
       <TableCell>
         <Typography className={classes.clusterName}>
-          {data.cluster_name}
+          {nameCapitalized(data.cluster_type)}
         </Typography>
       </TableCell>
       <TableCell>
