@@ -13,6 +13,7 @@ import { RootState } from '../../redux/reducers';
 import BrowseSchedule from '../../views/ChaosWorkflows/BrowseSchedule';
 import BrowseWorkflow from '../../views/ChaosWorkflows/BrowseWorkflow';
 import Templates from '../../views/ChaosWorkflows/Templates';
+import WorkflowComparisonTable from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowComparisonTable';
 import useStyles from './styles';
 
 const Workflows = () => {
@@ -65,11 +66,7 @@ const Workflows = () => {
         <Templates />
       </TabPanel>
       <TabPanel value={workflowTabValue} index={3}>
-        <Center>
-          <Typography variant="h3" align="center">
-            Analytics coming soon
-          </Typography>
-        </Center>
+        <WorkflowComparisonTable />
       </TabPanel>
     </Scaffold>
   );
