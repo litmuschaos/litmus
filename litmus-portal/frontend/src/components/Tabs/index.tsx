@@ -10,7 +10,7 @@ const TabPanel: React.FC<TabPanelProps> = ({ children, index, value }) => {
   return (
     <div role="tabpanel" hidden={value !== index}>
       {value === index && (
-        <Box p={3}>
+        <Box style={{ marginTop: 30, marginLeft: 10 }}>
           <>{children}</>
         </Box>
       )}
@@ -28,7 +28,7 @@ const StyledTab = withStyles((theme) =>
       fontSize: '0.95rem',
       paddingTop: theme.spacing(1.875),
       paddingBottom: theme.spacing(1.875),
-      width: '15.9375rem',
+      borderBottom: `1px solid ${theme.palette.customColors.black(0.1)}`,
       '&:focus': {
         opacity: 1,
       },

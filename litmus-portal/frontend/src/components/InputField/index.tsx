@@ -1,10 +1,10 @@
-import { TextField, OutlinedInputProps } from '@material-ui/core';
-import React, { useState } from 'react';
+import { OutlinedInputProps, TextField } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import AccountCircle from '@material-ui/icons/AccountCircle';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import AccountCircle from '@material-ui/icons/AccountCircle';
+import React, { useState } from 'react';
 import { useStyles, useStylesLitmus } from './styles';
 
 interface InputFieldProps {
@@ -17,6 +17,7 @@ interface InputFieldProps {
   value: string;
   required?: boolean;
   iconType?: string | undefined;
+  styles?: Object;
   handleChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -27,6 +28,7 @@ const InputField: React.FC<InputFieldProps> = ({
   disabled,
   helperText,
   validationError,
+  styles,
   success,
   required,
   iconType,
@@ -60,6 +62,7 @@ const InputField: React.FC<InputFieldProps> = ({
         required={required}
         onChange={handleChange}
         variant="filled"
+        style={styles}
         InputProps={
           {
             classes,
@@ -91,6 +94,7 @@ const InputField: React.FC<InputFieldProps> = ({
         type={showPassword ? 'text' : 'password'}
         required={required}
         onChange={handleChange}
+        style={styles}
         variant="filled"
         InputProps={
           {
@@ -123,6 +127,7 @@ const InputField: React.FC<InputFieldProps> = ({
           value={value}
           type={type}
           required={required}
+          style={styles}
           onChange={handleChange}
           variant="filled"
           InputProps={
@@ -148,6 +153,7 @@ const InputField: React.FC<InputFieldProps> = ({
           helperText={helperText}
           value={value}
           type={type}
+          style={styles}
           required={required}
           onChange={handleChange}
           variant="filled"
@@ -173,6 +179,7 @@ const InputField: React.FC<InputFieldProps> = ({
           helperText={helperText}
           value={value}
           type={type}
+          style={styles}
           required={required}
           onChange={handleChange}
           variant="filled"
@@ -203,6 +210,7 @@ const InputField: React.FC<InputFieldProps> = ({
           value={value}
           type={type}
           required={required}
+          style={styles}
           onChange={handleChange}
           variant="filled"
           InputProps={
@@ -228,6 +236,7 @@ const InputField: React.FC<InputFieldProps> = ({
           helperText={helperText}
           value={value}
           type={type}
+          style={styles}
           required={required}
           onChange={handleChange}
           variant="filled"
@@ -253,6 +262,7 @@ const InputField: React.FC<InputFieldProps> = ({
           helperText={helperText}
           value={value}
           type={type}
+          style={styles}
           required={required}
           onChange={handleChange}
           variant="filled"
@@ -284,6 +294,7 @@ const InputField: React.FC<InputFieldProps> = ({
           helperText={helperText}
           value={value}
           type={type}
+          style={styles}
           required={required}
           onChange={handleChange}
           variant="filled"
@@ -317,6 +328,7 @@ const InputField: React.FC<InputFieldProps> = ({
       helperText={helperText}
       value={value}
       type={type}
+      style={styles}
       required={required}
       onChange={handleChange}
       variant="filled"

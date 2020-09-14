@@ -19,6 +19,15 @@ export const validateEmail = (value: string) => {
   return false;
 };
 
+export const validateWorkflowName = (value: string) => {
+  const workflowValid = /^[a-z0-9._-]+$/g;
+  if (value.length > 0) {
+    if (value.match(workflowValid)) return false;
+    return true;
+  }
+  return false;
+};
+
 export const validatePassword = (value: string) => {
   const passValid = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
   if (value.length > 0) {

@@ -180,7 +180,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                 <div className={classes.body}>
                   <img src="./icons/checkmark.svg" alt="checkmark" />
                   <div className={classes.text}>
-                    <Typography className={classes.typo} align="center">
+                    <Typography className={classes.typo}>
                       Invitation <strong>sent successfully</strong>
                     </Typography>
                   </div>
@@ -238,7 +238,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
               <div className={classes.InviteBtn}>
                 <ButtonFilled
                   isPrimary
-                  isDisabled={false}
+                  isDisabled={!selected.length}
                   handleClick={() => {
                     setShowsuccess(true);
                     selected.map(
