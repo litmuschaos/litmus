@@ -4,11 +4,11 @@ import {
   TableCell,
   Typography,
   IconButton,
-  Button,
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import ExpandLessTwoToneIcon from '@material-ui/icons/ExpandLessTwoTone';
+import ButtonOutline from '../../../../components/Button/ButtonOutline';
 import useStyles from './styles';
 
 interface SortData {
@@ -183,16 +183,14 @@ const TableHeader: React.FC<TableHeaderProps> = ({
           </div>
         </TableCell>
         <TableCell>
-          <Button
-            variant="outlined"
-            color="secondary"
-            className={classes.buttonClose}
-            onClick={() => {
+          <ButtonOutline
+            handleClick={() => {
               setClose(true);
             }}
+            isDisabled={false}
           >
             <Typography className={classes.dateRangeDefault}>Close</Typography>
-          </Button>
+          </ButtonOutline>
         </TableCell>
       </TableRow>
     </TableHead>

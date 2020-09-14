@@ -96,19 +96,6 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
   },
 
-  buttonClose: {
-    margin: theme.spacing(1),
-    marginBottom: theme.spacing(1.5),
-    paddingBottom: theme.spacing(0.75),
-    paddingTop: theme.spacing(0.25),
-    color: theme.palette.secondary.dark,
-    border: `1px solid ${theme.palette.secondary.dark}`,
-    '&:hover': {
-      border: `1px solid ${theme.palette.secondary.dark}`,
-    },
-    marginRight: theme.spacing(-3),
-  },
-
   markerIconDown: {
     color: theme.palette.customColors.black(0.4),
     paddingTop: theme.spacing(0.5),

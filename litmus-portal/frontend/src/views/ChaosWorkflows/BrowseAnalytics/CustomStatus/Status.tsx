@@ -21,14 +21,18 @@ const CustomStatus: React.FC<StatusProps> = ({ status }) => {
 
   return (
     <>
-      <div className={label}>
+      <div className={`${label} ${classes.state}`}>
         {status === 'Passed' ? (
           <Avatar className={classes.miniIcons}>
-            <CheckCircleSharpIcon className={classes.checkIcon} />
+            <CheckCircleSharpIcon
+              className={`${classes.checkIcon} ${classes.stateIcon}`}
+            />
           </Avatar>
         ) : (
           <Avatar className={classes.miniIcons}>
-            <CancelSharpIcon className={classes.cancelIcon} />
+            <CancelSharpIcon
+              className={`${classes.cancelIcon} ${classes.stateIcon}`}
+            />
           </Avatar>
         )}
         <Typography className={classes.statusFont}>{status}</Typography>

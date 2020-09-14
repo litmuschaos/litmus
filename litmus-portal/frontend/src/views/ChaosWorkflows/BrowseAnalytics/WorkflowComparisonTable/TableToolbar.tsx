@@ -16,6 +16,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import useTheme from '@material-ui/core/styles/useTheme';
 import DateRangeSelector from '../../../../components/DateRangeSelector';
+import ButtonOutline from '../../../../components/Button/ButtonOutline';
 import useStyles from './styles';
 
 interface ClusterCallBackType {
@@ -211,30 +212,22 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
       </FormControl>
 
       {compare === false || comparisonState === false ? (
-        <Button
-          variant="outlined"
-          color="secondary"
-          // disabled={numSelected > 1 ? false : true} Remove comments to compare.
-          disabled
-          className={classes.buttonCompare}
-          onClick={handleClick}
+        <ButtonOutline
+          // isDisabled={numSelected > 1 ? false : true} Remove comments to compare.
+          handleClick={handleClick}
+          isDisabled
         >
           <Typography className={classes.dateRangeDefault}>
             Compare workflows
           </Typography>
-        </Button>
+        </ButtonOutline>
       ) : (
-        <Button
-          variant="outlined"
-          color="secondary"
-          className={classes.buttonCompare}
-          onClick={handleExport}
-        >
+        <ButtonOutline handleClick={handleExport} isDisabled={false}>
           <DescriptionOutlinedIcon htmlColor={palette.secondary.dark} />
           <Typography className={classes.dateRangeDefault}>
             Export PDF
           </Typography>
-        </Button>
+        </ButtonOutline>
       )}
       <DateRangeSelector
         anchorEl={dateRangeSelectorRef.current as HTMLElement}

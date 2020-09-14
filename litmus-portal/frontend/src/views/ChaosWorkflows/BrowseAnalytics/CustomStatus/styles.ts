@@ -2,24 +2,19 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   passed: {
-    width: '4.75rem',
-    textAlign: 'center',
-    borderRadius: 3,
-    paddingTop: theme.spacing(0.375),
-    paddingBottom: theme.spacing(0.375),
     color: theme.palette.primary.dark,
     backgroundColor: theme.palette.customColors.menuOption.active,
-    verticalAlign: 'middle',
-    display: 'inline-flex',
   },
   failed: {
+    color: theme.palette.error.dark,
+    backgroundColor: theme.palette.error.light,
+  },
+  state: {
     width: '4.75rem',
     textAlign: 'center',
     borderRadius: 3,
     paddingTop: theme.spacing(0.375),
     paddingBottom: theme.spacing(0.375),
-    color: theme.palette.error.dark,
-    backgroundColor: theme.palette.error.light,
     verticalAlign: 'middle',
     display: 'inline-flex',
   },
@@ -35,15 +30,15 @@ const useStyles = makeStyles((theme) => ({
     width: '0.9375rem',
     height: '0.9375rem',
   },
-  cancelIcon: {
-    color: theme.palette.error.dark,
+  stateIcon: {
     width: '0.9375rem',
     height: '0.9375rem',
   },
+  cancelIcon: {
+    color: theme.palette.error.dark,
+  },
   checkIcon: {
     color: theme.palette.primary.dark,
-    width: '0.9375rem',
-    height: '0.9375rem',
   },
 }));
 
