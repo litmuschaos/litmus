@@ -2,6 +2,7 @@ export interface UpdateUser {
   selectedProjectID: string;
   selectedProjectName: string;
   userRole: string;
+  loader: boolean;
 }
 
 export interface UserData extends UpdateUser {
