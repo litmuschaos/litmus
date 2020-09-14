@@ -10,6 +10,10 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
+import { ReactComponent as CommunityIcon } from '../../svg/community.svg';
+import { ReactComponent as HomeIcon } from '../../svg/home.svg';
+import { ReactComponent as SettingsIcon } from '../../svg/settings.svg';
+import { ReactComponent as WorkflowsIcon } from '../../svg/workflows.svg';
 import useStyles from './styles';
 
 interface CustomisedListItemProps {
@@ -66,7 +70,7 @@ const SideBar: React.FC = () => {
           }}
           label="Home"
         >
-          <img src="/icons/workflows.png" alt="home" />
+          <HomeIcon />
         </CustomisedListItem>
         <CustomisedListItem
           key="workflow"
@@ -75,17 +79,8 @@ const SideBar: React.FC = () => {
           }}
           label="Workflows"
         >
-          <img src="/icons/workflows.png" alt="workflow" />
+          <WorkflowsIcon />
         </CustomisedListItem>
-        {/* <CustomisedListItem
-          key="hub"
-          handleClick={() => {
-            history.push('/404');
-          }}
-          label="My Hub"
-        >
-          <img src="/icons/hub.png" alt="hub" />
-        </CustomisedListItem> */}
         <CustomisedListItem
           key="community"
           handleClick={() => {
@@ -93,7 +88,7 @@ const SideBar: React.FC = () => {
           }}
           label="Community"
         >
-          <img src="/icons/community.png" alt="community" />
+          <CommunityIcon />
         </CustomisedListItem>
         {userRole === 'Owner' && (
           <CustomisedListItem
@@ -103,7 +98,7 @@ const SideBar: React.FC = () => {
             }}
             label="Settings"
           >
-            <img src="/icons/setting.png" alt="settings" />
+            <SettingsIcon />
           </CustomisedListItem>
         )}
       </List>

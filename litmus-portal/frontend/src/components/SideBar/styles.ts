@@ -39,12 +39,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     '&:hover': {
       backgroundColor: theme.palette.secondary.light,
       color: theme.palette.getContrastText(theme.palette.primary.contrastText),
+      '& path': {
+        fill: theme.palette.common.white,
+      },
     },
   },
 
   listIcon: {
     paddingLeft: theme.spacing(2),
-    alignSelf: 'center',
   },
   listText: {
     marginLeft: theme.spacing(0),

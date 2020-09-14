@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
 
   // Table and Table Data Properties
   tableMain: {
-    marginTop: theme.spacing(6.25),
+    marginTop: theme.spacing(4.25),
     border: `1px solid ${theme.palette.customColors.black(0.07)}`,
     backgroundColor: theme.palette.common.white,
     height: '29.219rem',

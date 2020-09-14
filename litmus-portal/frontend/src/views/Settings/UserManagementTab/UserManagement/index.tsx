@@ -144,9 +144,6 @@ const UserManagement: React.FC = () => {
             // for displaying user table
             <div>
               <div className={classes.UMDiv}>
-                <Typography className={classes.headerText}>
-                  <strong>User Management</strong>
-                </Typography>
                 <div className={classes.members}>
                   <img src="./icons/user.svg" alt="members" />
                   <Typography className={classes.memTypo}>

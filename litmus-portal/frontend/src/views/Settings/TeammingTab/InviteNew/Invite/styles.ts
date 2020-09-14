@@ -64,10 +64,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   text: {
-    width: '23.5rem',
-    height: '5.875rem',
     marginTop: theme.spacing(3.75),
-    marginBottom: theme.spacing(3.75),
+    marginBottom: theme.spacing(2),
   },
   typo: {
     fontSize: '2.25rem',

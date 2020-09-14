@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
 import { Typography } from '@material-ui/core';
+import React, { useEffect } from 'react';
 import useStyles from './styles';
 
 interface StatusProps {
@@ -17,7 +17,8 @@ const CustomStatus: React.FC<StatusProps> = ({ status }) => {
       return setLabel(classes.running);
     }
     return setLabel(classes.failed);
-  }, [status, classes.failed, classes.completed, classes.running]);
+  }, [status]);
+
   return (
     <>
       <div className={label}>

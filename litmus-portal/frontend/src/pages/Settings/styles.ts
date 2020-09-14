@@ -7,13 +7,11 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: '63.75rem',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginLeft: theme.spacing(11),
+    marginLeft: theme.spacing(2),
+    borderBottom: `1px solid ${theme.palette.customColors.black(0.1)}`,
   },
   Head: {
-    fontSize: '2.25rem',
-    marginLeft: theme.spacing(11),
-    marginTop: theme.spacing(4.875),
-    marginBottom: theme.spacing(3.5),
+    margin: theme.spacing(4.5, 1.5, 2.5, 1.5),
   },
 }));
 export default useStyles;
