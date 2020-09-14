@@ -95,7 +95,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.customColors.black(0.4),
   },
   clusterName: {
-    marginLeft: theme.spacing(3.75),
+    marginLeft: theme.spacing(4),
   },
   reliabiltyData: {
     width: '8.125rem',
