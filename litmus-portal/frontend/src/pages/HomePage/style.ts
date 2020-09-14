@@ -8,14 +8,17 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
   },
 
+  backdrop: {
+    background: theme.palette.input.disabled,
+    display: 'flex',
+    flexDirection: 'column',
+  },
+
   root: {
     marginTop: theme.spacing(3),
     marginLeft: theme.spacing(6),
   },
-  backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
-    color: theme.palette.customColors.white(1),
-  },
+
   mainDiv: {
     padding: theme.spacing(3.75),
     backgroundColor: theme.palette.background.default,

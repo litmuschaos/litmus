@@ -16,6 +16,7 @@ const initialState: UserData = {
   userRole: 'Owner',
   name: '',
   email: '',
+  loader: false,
 };
 
 export const userData = createReducer<UserData>(initialState, {

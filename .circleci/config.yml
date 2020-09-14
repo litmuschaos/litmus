@@ -64,14 +64,14 @@ jobs:
       - run:
           name: Build graphql server docker image
           command: docker build . -f build/Dockerfile -t ${REPONAME}/${GRAPHQL_SERVER_IMAGE}:${IMGTAG}
-          working_directory: ~/project/litmus-portal/backend/graphql-server
+          working_directory: ~/project/litmus-portal/graphql-server
       - run:
           name: Save graphql server docker image
           command: docker save -o /tmp/workspace/${GRAPHQL_SERVER_IMAGE}.tar ${REPONAME}/${GRAPHQL_SERVER_IMAGE}:${IMGTAG}
       - run:
           name: Build auth server docker image
           command: docker images && docker build . -f Dockerfile -t ${REPONAME}/${AUTHENTICATION_SERVER_IMAGE}:${IMGTAG}
-          working_directory: ~/project/litmus-portal/backend/auth
+          working_directory: ~/project/litmus-portal/authentication
       - run:
           name: Save auth server docker image
           command: docker save -o /tmp/workspace/${AUTHENTICATION_SERVER_IMAGE}.tar ${REPONAME}/${AUTHENTICATION_SERVER_IMAGE}:${IMGTAG}
