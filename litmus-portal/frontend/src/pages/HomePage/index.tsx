@@ -70,12 +70,12 @@ const HomePage: React.FC = () => {
   const { persistor } = configureStore();
 
   // Query to get user details
-  const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
-    GET_USER,
-    {
-      variables: { username: userData.username },
-    }
-  );
+  const { data, loading } = useQuery<
+    CurrentUserDetails,
+    CurrentUserDedtailsVars
+  >(GET_USER, {
+    variables: { username: userData.username },
+  });
 
   const name: string = data?.getUser.name ?? '';
 
@@ -130,7 +130,11 @@ const HomePage: React.FC = () => {
         </Backdrop>
       ) : (
         <Scaffold>
-          {isOpen ? <WelcomeModal handleIsOpen={handleModal} /> : <></>}
+          {isOpen && !loading ? (
+            <WelcomeModal handleIsOpen={handleModal} />
+          ) : (
+            <></>
+          )}
           <div className={classes.rootContainer}>
             <div className={classes.root}>
               <Typography className={classes.userName}>
