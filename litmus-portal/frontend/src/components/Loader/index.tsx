@@ -8,7 +8,10 @@ interface LoaderProps {
 
 const useStyles = makeStyles((theme: Theme) => ({
   spinner: {
-    color: theme.palette.secondary.dark,
+    color: (props) =>
+      props !== undefined && props === true
+        ? theme.palette.background.paper
+        : theme.palette.secondary.dark,
   },
 }));
 
@@ -24,5 +27,4 @@ const Loader: React.FC<LoaderProps> = ({ size }) => {
     </Center>
   );
 };
-
 export default Loader;

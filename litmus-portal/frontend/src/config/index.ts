@@ -11,8 +11,10 @@ if (
   process.env.NODE_ENV.trim() === 'development' ||
   process.env.NODE_ENV.trim() === 'test'
 ) {
-  authURL = `${window.location.protocol}//${window.location.hostname}:3000`;
-  apiURL = `${window.location.protocol}//${window.location.hostname}:8080`;
+  authURL =
+    'http://3.9.117.22:30375' /* `${window.location.protocol}//${window.location.hostname}:3000` */;
+  apiURL =
+    'http://3.9.117.22:32591' /* `${window.location.protocol}//${window.location.hostname}:8080` */;
   sockURL += `//${window.location.hostname}:8080`;
 } else {
   authURL = '/auth';
