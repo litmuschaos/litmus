@@ -1,5 +1,6 @@
-import React from 'react';
 import { Typography } from '@material-ui/core';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
 
 interface CustomWorkflowCardProps {
@@ -10,6 +11,7 @@ const CustomWorkflowCard: React.FC<CustomWorkflowCardProps> = ({
   handleClick,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   return (
     <div
@@ -21,7 +23,7 @@ const CustomWorkflowCard: React.FC<CustomWorkflowCardProps> = ({
     >
       <img src="./icons/custom_workflow.svg" alt="Custom Workflow Icon" />
       <Typography className={classes.customWorkflowContent}>
-        Create your own workflow
+        {t('customWorkflowCard.customWorkflow')}
       </Typography>
     </div>
   );

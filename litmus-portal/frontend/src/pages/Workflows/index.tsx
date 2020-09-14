@@ -1,6 +1,7 @@
 import { AppBar, Typography } from '@material-ui/core';
 import Tabs from '@material-ui/core/Tabs';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ButtonFilled from '../../components/Button/ButtonFilled';
 import { StyledTab, TabPanel } from '../../components/Tabs';
@@ -16,6 +17,7 @@ import Templates from '../../views/ChaosWorkflows/Templates';
 import useStyles from './styles';
 
 const Workflows = () => {
+  const { t } = useTranslation();
   const classes = useStyles();
   const workflowTabValue = useSelector(
     (state: RootState) => state.tabNumber.workflows
@@ -67,7 +69,7 @@ const Workflows = () => {
       <TabPanel value={workflowTabValue} index={3}>
         <Center>
           <Typography variant="h3" align="center">
-            Analytics coming soon
+            {t('analytics.comingSoon')}
           </Typography>
         </Center>
       </TabPanel>

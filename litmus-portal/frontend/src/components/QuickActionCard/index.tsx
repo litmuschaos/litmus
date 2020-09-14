@@ -1,6 +1,7 @@
 import { List, ListItem, Typography } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import useActions from '../../redux/actions';
@@ -17,11 +18,14 @@ const QuickActionCard = () => {
   const classes = useStyles();
   const userRole = useSelector((state: RootState) => state.userData.userRole);
   const tabs = useActions(TabActions);
+  const { t } = useTranslation();
 
   return (
     <div className={classes.quickActionCard}>
       <Card elevation={0}>
-        <Typography className={classes.mainHeader}>Quick Actions</Typography>
+        <Typography className={classes.mainHeader}>
+          {t('quickActionCard.quickActions')}
+        </Typography>
         <List>
           {/* <QuickActionItems>
             <img src="icons/cluster.png" alt="cluster" />
@@ -37,7 +41,7 @@ const QuickActionCard = () => {
                 className={classes.listItem}
                 onClick={() => tabs.changeSettingsTabs(0)}
               >
-                Invite a team member
+                {t('quickActionCard.inviteTeamMember')}
               </Link>
             </QuickActionItems>
           )}
@@ -48,7 +52,7 @@ const QuickActionCard = () => {
               className={classes.listItem}
               target="_"
             >
-              Take a quick survey
+              {t('quickActionCard.quickSurvey')}
             </a>
           </QuickActionItems>
           <QuickActionItems>
@@ -58,7 +62,7 @@ const QuickActionCard = () => {
               className={classes.listItem}
               target="_"
             >
-              Read Litmus docs
+              {t('quickActionCard.readDocs')}
             </a>
           </QuickActionItems>
         </List>
