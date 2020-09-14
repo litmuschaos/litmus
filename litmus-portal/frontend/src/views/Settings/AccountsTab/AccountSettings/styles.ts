@@ -117,18 +117,5 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(13.75),
     margin: '0 auto',
   },
-  backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
-    color: theme.palette.customColors.white(1),
-  },
-  loader: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  loaderText: {
-    marginTop: theme.spacing(3),
-  },
 }));
 export default useStyles;

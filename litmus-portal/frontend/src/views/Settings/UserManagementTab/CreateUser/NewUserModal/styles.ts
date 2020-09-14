@@ -49,18 +49,5 @@ const useStyles = makeStyles((theme: Theme) => ({
   buttonModal: {
     marginTop: theme.spacing(3.75),
   },
-  backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
-    color: theme.palette.customColors.white(1),
-  },
-  loader: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  loaderText: {
-    marginTop: theme.spacing(3),
-  },
 }));
 export default useStyles;
