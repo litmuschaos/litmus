@@ -165,9 +165,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
 
       <Button
         className={classes.selectDate}
-        onClick={() => {
-          setDateRangeSelectorPopoverOpen(true);
-        }}
+        onClick={() => setDateRangeSelectorPopoverOpen(true)}
         ref={dateRangeSelectorRef}
         aria-label="time range"
         aria-haspopup="true"

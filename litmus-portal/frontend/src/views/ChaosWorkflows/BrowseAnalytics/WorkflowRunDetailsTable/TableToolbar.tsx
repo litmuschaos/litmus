@@ -7,10 +7,12 @@ import {
   MenuItem,
   Select,
   Button,
+  IconButton,
 } from '@material-ui/core';
 import React, { ChangeEvent, useRef, useState } from 'react';
 import SearchIcon from '@material-ui/icons/Search';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import useStyles from './styles';
 import DateRangeSelector from '../../../../components/DateRangeSelector';
 
@@ -109,6 +111,75 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
       />
 
       <Button
+        className={classes.selectDate}
+        onClick={() => setDateRangeSelectorPopoverOpen(true)}
+        ref={dateRangeSelectorRef}
+        aria-label="time range"
+        aria-haspopup="true"
+      >
+        <Typography className={classes.displayDate}>
+          {range.startDate === ' '
+            ? 'Select Period'
+            : `${range.startDate.split(' ')[2]} ${
+                range.startDate.split(' ')[1]
+              } ${range.startDate.split(' ')[3]} - ${
+                range.endDate.split(' ')[2]
+              } ${range.endDate.split(' ')[1]} ${range.endDate.split(' ')[3]}`}
+
+          <IconButton className={classes.rangeSelectorIcon}>
+            {isDateRangeSelectorPopoverOpen ? (
+              <KeyboardArrowDownIcon />
+            ) : (
+              <ChevronRightIcon />
+            )}
+          </IconButton>
+        </Typography>
+      </Button>
+
+      <FormControl
+        variant="outlined"
+        className={classes.formControl}
+        color="secondary"
+        focused
+      >
+        <InputLabel className={classes.selectText}> Test Result </InputLabel>
+        <Select
+          label="Target cluster"
+          value={testResult}
+          onChange={handleTestResultChange}
+          className={classes.selectText}
+          color="secondary"
+        >
+          <MenuItem value="All">All</MenuItem>
+          {testResults.map((testResult: string) => (
+            <MenuItem value={testResult}>{testResult}</MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
+      <FormControl
+        variant="outlined"
+        className={classes.formControl}
+        color="secondary"
+        focused
+      >
+        <InputLabel className={classes.selectText}> Test </InputLabel>
+        <Select
+          label="Target cluster"
+          value={test}
+          onChange={handleTestChange}
+          className={classes.selectText}
+          color="secondary"
+        >
+          <MenuItem value="All">All</MenuItem>
+          {tests.map((testName: string) => (
+            <MenuItem value={testName}>{testName}</MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
+      {/*
+      <Button
         variant="outlined"
         color="primary"
         className={classes.button}
@@ -186,7 +257,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           ))}
         </Select>
       </FormControl>
-
+          */}
       <DateRangeSelector
         anchorEl={dateRangeSelectorRef.current as HTMLElement}
         isOpen={isDateRangeSelectorPopoverOpen}

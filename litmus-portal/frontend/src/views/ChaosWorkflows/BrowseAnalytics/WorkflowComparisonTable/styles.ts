@@ -53,29 +53,14 @@ const useStyles = makeStyles((theme) => ({
   search: {
     marginRight: 'auto',
     marginLeft: theme.spacing(6.25),
-    borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+    borderBottom: `1px solid ${theme.palette.customColors.black(0.1)}`,
     width: '17.5rem',
   },
 
   calIcon: {
-    color: 'rgba(0, 0, 0, 0.4)',
+    color: theme.palette.customColors.black(0.4),
     paddingTop: theme.spacing(0.5),
     marginLeft: theme.spacing(2.75),
-  },
-
-  select: {
-    width: '9.375rem',
-    marginLeft: theme.spacing(1.25),
-    paddingBottom: theme.spacing(2.5),
-  },
-
-  select1: {
-    width: '16rem',
-    marginLeft: theme.spacing(1.25),
-    marginBottom: theme.spacing(1.5),
-    height: '2.75rem',
-    padding: theme.spacing(0.5),
-    paddingRight: theme.spacing(1.75),
   },
 
   formSize: {
@@ -83,32 +68,25 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0.5),
   },
 
-  headerText: {
-    marginLeft: theme.spacing(3.75),
-    color: theme.palette.text.disabled,
-    paddingBottom: theme.spacing(0.625),
-  },
-
   tableMain: {
     marginTop: theme.spacing(6.25),
-    border: '1px solid rgba(0,0,0,0.1)',
+    border: `1px solid ${theme.palette.customColors.black(0.1)}`,
     backgroundColor: theme.palette.common.white,
     minHeight: '31.22rem',
     '&::-webkit-scrollbar': {
       width: '0.2em',
     },
     '&::-webkit-scrollbar-track': {
-      webkitBoxShadow: 'inset 0 0 6px rgba(0,0,0,0.00)',
+      webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
     },
     '&::-webkit-scrollbar-thumb': {
       backgroundColor: theme.palette.secondary.dark,
-      outline: '1px solid slategrey',
     },
   },
 
   tableMainCompare: {
     marginTop: theme.spacing(-0.25),
-    border: '1px solid rgba(0,0,0,0.1)',
+    border: `1px solid ${theme.palette.customColors.black(0.1)}`,
     backgroundColor: theme.palette.common.white,
     height: '15rem',
     overflow: 'hidden',
@@ -116,24 +94,23 @@ const useStyles = makeStyles((theme) => ({
 
   tableMainShowAll: {
     marginTop: theme.spacing(6.25),
-    border: '1px solid rgba(0,0,0,0.1)',
+    border: `1px solid ${theme.palette.customColors.black(0.1)}`,
     backgroundColor: theme.palette.common.white,
     height: '29.75rem',
     '&::-webkit-scrollbar': {
       width: '0.2em',
     },
     '&::-webkit-scrollbar-track': {
-      webkitBoxShadow: 'inset 0 0 6px rgba(0,0,0,0.00)',
+      webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
     },
     '&::-webkit-scrollbar-thumb': {
       backgroundColor: theme.palette.secondary.dark,
-      outline: '1px solid slategrey',
     },
   },
 
   seeAllPaper: {
     height: '5rem',
-    backgroundColor: '#E5E5E5',
+    backgroundColor: theme.palette.paperBackground,
     paddingTop: theme.spacing(3.75),
     paddingBottom: theme.spacing(3.75),
     paddingLeft: '42%',
@@ -143,12 +120,8 @@ const useStyles = makeStyles((theme) => ({
     opacity: 0.5,
   },
 
-  menuItem: {
-    paddingLeft: theme.spacing(1.75),
-  },
-
   workflowName: {
-    borderRight: '1px solid rgba(0,0,0,0.1)',
+    borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
     fontSize: '0.8rem',
   },
 
@@ -190,104 +163,27 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
   },
 
-  dateRange: {
-    height: '2rem',
-    textDecoration: 'none',
-    textTransform: 'none',
-    padding: theme.spacing(1),
-    color: 'black',
-  },
-
   checkbox: {
     paddingLeft: theme.spacing(3.75),
-  },
-
-  buttonPositionExpand: {
-    alignContent: 'left',
-  },
-
-  buttonPositionClose: {
-    alignContent: 'left',
-    transform: 'rotate(-90deg)',
   },
 
   buttonBack: {
     alignContent: 'left',
     transform: 'rotate(-270deg)',
-    height: '50px',
-    width: '50px',
+    height: '3.125rem',
+    width: '3.125rem',
   },
 
   buttonBackStyle: {
-    height: '70px',
-    width: '70px',
-  },
-
-  popoverAnalyticsAdjust: {
-    marginTop: theme.spacing(3),
-    marginRight: theme.spacing(0),
-    [theme.breakpoints.down('xl')]: {
-      transform: 'translateX(-3%)',
-    },
-    [theme.breakpoints.down('lg')]: {
-      transform: 'translateX(1%)',
-    },
-    [theme.breakpoints.down('md')]: {
-      transform: 'translateX(1.5%)',
-    },
-    [theme.breakpoints.down('sm')]: {
-      transform: 'translateX(2.5%)',
-    },
-    [theme.breakpoints.down('xs')]: {
-      transform: 'translateX(2%)',
-    },
-  },
-
-  popoverAnalytics: {
-    background: '#FFFFFF',
-    borderRadius: theme.shape.borderRadius,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      maxWidth: '72.5%',
-    },
-    [theme.breakpoints.up('md')]: {
-      maxWidth: '82%',
-    },
-    [theme.breakpoints.up('lg')]: {
-      maxWidth: '80%',
-    },
-    [theme.breakpoints.up('xl')]: {
-      maxWidth: '85%',
-    },
-    marginTop: theme.spacing(1.25),
-    marginLeft: theme.spacing(1),
-  },
-
-  analyticsContainer: {
-    display: 'flex',
-    padding: theme.spacing(2),
-    flexDirection: 'column',
-    alignItems: 'center',
-    overflowY: 'auto',
-    maxHeight: theme.spacing(70),
+    height: '4.375rem',
+    width: '4.375rem',
   },
 
   markStyleCorrect: {
     display: 'inline-block',
     fontFamily: 'Ubuntu',
     fontSize: '1rem',
-    color: '#109B67',
-  },
-
-  button: {
-    margin: theme.spacing(1),
-    marginBottom: theme.spacing(1.5),
-    color: 'rgba(0, 0, 0, 0.4)',
-    border: '1px solid rgba(0, 0, 0, 0.2)',
-    '&:hover': {
-      border: '1px solid rgba(0, 0, 0, 1)',
-    },
-    marginLeft: theme.spacing(2.75),
+    color: theme.palette.primary.dark,
   },
 
   buttonCompare: {
@@ -296,35 +192,27 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(0.75),
     paddingTop: theme.spacing(0.25),
     color: theme.palette.secondary.dark,
-    border: '1px solid #5B44BA',
+    border: `1px solid ${theme.palette.secondary.dark}`,
     '&:hover': {
-      border: '1px solid #5B44BA',
+      border: `1px solid ${theme.palette.secondary.dark}`,
     },
     marginRight: theme.spacing(3.25),
   },
 
-  formLabel: {
-    color: 'rgba(0, 0, 0, 0.4)',
-  },
-
   markerIconDown: {
-    color: 'rgba(0, 0, 0, 0.4)',
+    color: theme.palette.customColors.black(0.4),
     paddingTop: theme.spacing(0.5),
     margin: 0,
   },
 
   markerIconUp: {
-    color: 'rgba(0, 0, 0, 0.4)',
+    color: theme.palette.customColors.black(0.4),
     paddingTop: theme.spacing(0.5),
     margin: 0,
   },
 
-  tableBody: {
-    height: '2rem',
-  },
-
   seeAllText: {
-    color: 'rgba(0, 0, 0, 0.6)',
+    color: theme.palette.customColors.black(0.6),
     fontWeight: 500,
   },
 
@@ -332,7 +220,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
     backgroundColor: theme.palette.secondary.contrastText,
     width: '100%',
-    height: 670,
+    height: '41.875rem',
     marginBottom: theme.spacing(-2),
   },
 
@@ -347,6 +235,7 @@ const useStyles = makeStyles((theme) => ({
     height: '2.5rem',
     minWidth: '9rem',
   },
+
   selectText: {
     height: '2.5rem',
     padding: theme.spacing(0.5),
@@ -363,6 +252,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(3.75),
     textTransform: 'none',
   },
+
   displayDate: {
     marginLeft: theme.spacing(1),
     width: '100%',
@@ -383,8 +273,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   rangeSelectorIcon: {
-    width: 10,
-    height: 10,
+    width: '0.625rem',
+    height: '0.625rem',
   },
 }));
 

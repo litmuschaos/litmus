@@ -36,6 +36,7 @@ declare module '@material-ui/core/styles/createPalette' {
       blue: string;
     };
     editorBackground: string;
+    paperBackground: string;
     resilienceScore: string;
     graphAnnotationsColor: string;
     graphHoverColors: {
@@ -60,6 +61,7 @@ declare module '@material-ui/core/styles/createPalette' {
       blue: string;
     };
     editorBackground?: string;
+    paperBackground?: string;
     resilienceScore?: string;
     graphAnnotationsColor?: string;
     graphHoverColors?: {
@@ -127,6 +129,7 @@ function customTheme(options: ThemeOptions) {
         },
       },
       editorBackground: '#1C1C1C',
+      paperBackground: '#E5E5E5',
       resilienceScore: '#F6B92B',
       graphAnnotationsColor: 'rgb(204,204,204)',
       graphHoverColors: {
