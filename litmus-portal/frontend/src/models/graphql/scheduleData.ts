@@ -15,6 +15,8 @@ export interface ScheduleWorkflow {
   workflow_id: string;
   workflow_manifest: string;
   workflow_name: string;
+  cluster_name: string;
+  cluster_type: string;
 }
 
 export interface Schedules {

@@ -46,6 +46,7 @@ export interface WorkflowRun {
   workflow_id: string;
   workflow_name: string;
   workflow_run_id: string;
+  cluster_type: string;
 }
 
 export interface Workflow {
