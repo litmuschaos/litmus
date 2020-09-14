@@ -6,9 +6,9 @@ import (
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/models"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/types"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/utils/uuid"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/models"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/types"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/utils/uuid"
 )
 
 // UserConfig user configuration parameters

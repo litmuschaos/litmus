@@ -6,8 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/golang/glog"
 
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/controller"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/models"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/controller"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/models"
 )
 
 // User is a type to be accepted as input

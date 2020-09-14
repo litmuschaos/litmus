@@ -3,7 +3,7 @@ package manage
 import (
 	"time"
 
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/models"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/models"
 )
 
 // Config authorization configuration parameters

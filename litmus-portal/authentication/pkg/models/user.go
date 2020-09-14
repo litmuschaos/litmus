@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/types"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/types"
 )
 
 func init() {
@@ -16,18 +16,18 @@ func init() {
 
 //UserCredentials contains the user information
 type UserCredentials struct {
-	ID       string `bson:"_id"`
-	UserName string `bson:"username"`
-	Password string `bson:"password"`
-	Email    string `bson:"email"`
-	Name     string `bson:"name"`
+	ID       string `bson:"_id,omitempty"`
+	UserName string `bson:"username,omitempty"`
+	Password string `bson:"password,omitempty"`
+	Email    string `bson:"email,omitempty"`
+	Name     string `bson:"name,omitempty"`
 	// UserID		string       `bson:"user_id"`
-	LoggedIn    bool         `bson:"logged_in"`
-	SocialAuths []SocialAuth `bson:"social_auths"`
-	CreatedAt   *time.Time   `bson:"created_at"`
-	UpdatedAt   *time.Time   `bson:"updated_at"`
-	RemovedAt   *time.Time   `bson:"removed_at"`
-	State       State        `bson:"state"`
+	LoggedIn    bool         `bson:"logged_in,omitempty"`
+	SocialAuths []SocialAuth `bson:"social_auths,omitempty"`
+	CreatedAt   *time.Time   `bson:"created_at,omitempty"`
+	UpdatedAt   *time.Time   `bson:"updated_at,omitempty"`
+	RemovedAt   *time.Time   `bson:"removed_at,omitempty"`
+	State       State        `bson:"state,omitempty"`
 }
 
 //DefaultUser is the admin user created by default

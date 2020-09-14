@@ -8,11 +8,11 @@ import (
 	"github.com/globalsign/mgo"
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/errors"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/generates"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/models"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/store"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/types"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/errors"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/generates"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/models"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/store"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/types"
 )
 
 // NewManager create to authorization management instance

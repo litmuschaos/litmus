@@ -2,7 +2,7 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/server"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/server"
 )
 
 // Server represents the server with default config
