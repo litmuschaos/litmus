@@ -144,7 +144,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
       >
         <InputLabel className={classes.selectText}> Test Result </InputLabel>
         <Select
-          label="Target cluster"
+          label="Test Result"
           value={testResult}
           onChange={handleTestResultChange}
           className={classes.selectText}
@@ -163,9 +163,9 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         color="secondary"
         focused
       >
-        <InputLabel className={classes.selectText}> Test </InputLabel>
+        <InputLabel className={classes.selectText}> Test Name </InputLabel>
         <Select
-          label="Target cluster"
+          label="Test Name"
           value={test}
           onChange={handleTestChange}
           className={classes.selectText}
