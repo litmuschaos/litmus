@@ -1,7 +1,7 @@
 import { Typography } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
 import React from 'react';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
+import Loader from '../../../../../components/Loader';
 import config from '../../../../../config';
 import Unimodal from '../../../../../containers/layouts/Unimodal';
 import getToken from '../../../../../utils/getToken';
@@ -25,14 +25,15 @@ const ResetModal: React.FC<ResetModalProps> = ({
   const classes = useStyles();
 
   const [open, setOpen] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string>('');
 
   const handleClose = () => {
     setOpen(false);
   };
 
   const handleClick = () => {
-    if (resetPossible) setOpen(true);
-
+    setLoading(true);
     fetch(`${config.auth.url}/reset/password`, {
       method: 'POST',
       headers: {
@@ -42,11 +43,24 @@ const ResetModal: React.FC<ResetModalProps> = ({
       body: JSON.stringify({ username, new_password }),
     })
       .then((response) => {
-        response.json();
+        return response.json();
       })
-
+      .then((data) => {
+        if ('error' in data) {
+          setError(data.error_description as string);
+        } else {
+          setError('');
+        }
+        setLoading(false);
+        setOpen(true);
+      })
       .catch((err) => {
         console.error(err);
+        setError(err.message as string);
+        if (resetPossible) {
+          setLoading(false);
+          setOpen(true);
+        }
       });
   };
 
@@ -56,36 +70,64 @@ const ResetModal: React.FC<ResetModalProps> = ({
         <div className={classes.buttonFilled}>
           <ButtonFilled
             isPrimary={false}
-            isDisabled={false}
+            isDisabled={!(new_password.length && !loading)}
             handleClick={handleClick}
           >
-            <Typography>Save</Typography>
+            {loading ? (
+              <div>
+                <Loader size={20} />
+              </div>
+            ) : (
+              <>Save</>
+            )}
           </ButtonFilled>
         </div>
-
-        <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn={false}>
-          <div className={classes.body}>
-            <img src="./icons/checkmark.svg" alt="checkmark" />
-            <div className={classes.textSucess}>
-              <Typography className={classes.typo} align="center">
-                The user’s password was <strong>successfully reset </strong>
-              </Typography>
+        <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn>
+          {error.length ? (
+            <div className={classes.errDiv}>
+              <div className={classes.textError}>
+                <Typography className={classes.typo} align="center">
+                  <strong> Error </strong> while resetting password.
+                </Typography>
+              </div>
+              <div className={classes.textSecondError}>
+                <Typography className={classes.typoSub}>
+                  Error: {error}
+                </Typography>
+              </div>
+              <div className={classes.buttonModal}>
+                <ButtonFilled
+                  isPrimary
+                  isDisabled={false}
+                  handleClick={handleClose}
+                >
+                  <>Done</>
+                </ButtonFilled>
+              </div>
             </div>
-            <div className={classes.text1Sucess}>
-              <Typography className={classes.typoSub} align="center">
-                The user needs to login with the new credentials.
-              </Typography>
-            </div>
+          ) : (
+            <div className={classes.body}>
+              <img src="./icons/checkmark.svg" alt="checkmark" />
+              <div className={classes.textSucess}>
+                <Typography className={classes.typo} align="center">
+                  The user’s password was <strong>successfully reset </strong>
+                </Typography>
+              </div>
+              <div className={classes.text1Sucess}>
+                <Typography className={classes.typoSub} align="center">
+                  The user needs to login with the new credentials.
+                </Typography>
+              </div>
 
-            <Button
-              data-cy="closeButton"
-              variant="contained"
-              className={classes.buttonModalSucess}
-              onClick={handleModal}
-            >
-              Done
-            </Button>
-          </div>
+              <ButtonFilled
+                isPrimary
+                isDisabled={false}
+                handleClick={handleModal}
+              >
+                Done
+              </ButtonFilled>
+            </div>
+          )}
         </Unimodal>
       </div>
     </div>

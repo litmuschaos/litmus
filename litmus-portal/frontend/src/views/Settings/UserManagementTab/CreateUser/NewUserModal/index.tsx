@@ -1,6 +1,7 @@
 import { Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
+import Loader from '../../../../../components/Loader';
 import config from '../../../../../config';
 import Unimodal from '../../../../../containers/layouts/Unimodal';
 import getToken from '../../../../../utils/getToken';
@@ -18,7 +19,6 @@ interface NewUserModalProps {
 
 // NewUserModal displays a modal on creating a new user
 const NewUserModal: React.FC<NewUserModalProps> = ({
-  showModal,
   username,
   password,
   name,
@@ -27,14 +27,14 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
 }) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
-
+  const [loading, setLoading] = React.useState(false);
   const handleClose = () => {
     setOpen(false);
     handleDiv();
   };
-
   const [error, setError] = useState<string>('');
   const handleOpen = () => {
+    setLoading(true);
     fetch(`${config.auth.url}/create`, {
       method: 'POST',
       headers: {
@@ -49,15 +49,17 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
       .then((data) => {
         if ('error' in data) {
           setError(data.error_description as string);
-          if (showModal) setOpen(true);
         } else {
-          setOpen(true);
+          setError('');
         }
+        setLoading(false);
+        setOpen(true);
       })
       .catch((err) => {
         console.error(err);
         setError(err.message as string);
-        if (showModal) setOpen(true);
+        setLoading(false);
+        setOpen(true);
       });
   };
 
@@ -66,13 +68,18 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
       <div className={classes.button}>
         <ButtonFilled
           isPrimary={false}
-          isDisabled={false}
+          isDisabled={!(username.length > 0 && password.length > 0 && !loading)}
           handleClick={handleOpen}
         >
-          <>Create</>
+          {loading ? (
+            <div>
+              <Loader size={20} />
+            </div>
+          ) : (
+            <>Create</>
+          )}
         </ButtonFilled>
       </div>
-
       <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn>
         {error.length ? (
           <div className={classes.errDiv}>

@@ -2,6 +2,7 @@ import { Divider, Typography } from '@material-ui/core';
 import React, { useRef, useState } from 'react';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import InputField from '../../../../components/InputField';
+import Loader from '../../../../components/Loader';
 import config from '../../../../config';
 import Unimodal from '../../../../containers/layouts/Unimodal';
 import getToken from '../../../../utils/getToken';
@@ -26,6 +27,7 @@ const AccountSettings: React.FC = () => {
   // used for modal
   const [open, setOpen] = React.useState(false);
   const isSuccess = useRef<boolean>(false);
+  const [loading, setLoading] = React.useState(false);
 
   const handleClose = () => {
     setOpen(false);
@@ -76,6 +78,7 @@ const AccountSettings: React.FC = () => {
   else isSuccess.current = false;
   const [error, setError] = useState<string>('');
   const handleChangePassword = () => {
+    setLoading(true);
     fetch(`${config.auth.url}/update/password`, {
       method: 'POST',
       headers: {
@@ -96,10 +99,13 @@ const AccountSettings: React.FC = () => {
         } else {
           setError('');
         }
+        setLoading(false);
         setOpen(true);
       })
-      .catch((error) => {
-        setError(error.message as string);
+      .catch((err) => {
+        setLoading(false);
+        setError(err.message as string);
+        setOpen(true);
       });
   };
 
@@ -171,14 +177,23 @@ const AccountSettings: React.FC = () => {
                   data-cy="button"
                   isPrimary
                   isDisabled={
-                    !(isSuccess.current && password.currPassword.length > 0)
+                    !(
+                      isSuccess.current &&
+                      password.currPassword.length > 0 &&
+                      !loading
+                    )
                   }
                   handleClick={handleChangePassword}
                 >
-                  <> Change password</>
+                  {loading ? (
+                    <div>
+                      <Loader size={20} />
+                    </div>
+                  ) : (
+                    <>Change Password</>
+                  )}
                 </ButtonFilled>
               </div>
-
               <Unimodal
                 isOpen={open}
                 handleClose={handleClose}
@@ -233,7 +248,6 @@ const AccountSettings: React.FC = () => {
                 )}
               </Unimodal>
             </form>
-
             <div className={classes.col2}>
               <img src="./icons/pass.svg" data-cy="lock" alt="lockIcon" />
               {/*  <Typography className={classes.txt1}>
