@@ -49,7 +49,7 @@ const InfoTooltip: React.FC<InfoTooltipProps> = ({ value }) => {
               onClick={handleTooltipOpen}
             >
               <img
-                src="icons/info.svg"
+                src="/icons/info.svg"
                 className={classes.infoImg}
                 alt="info tooltip"
               />

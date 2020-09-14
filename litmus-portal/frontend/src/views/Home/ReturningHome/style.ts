@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core';
 const useStyles = makeStyles((theme) => ({
   cardsDiv: {
     marginTop: theme.spacing(7),
+    marginBottom: theme.spacing(10),
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',

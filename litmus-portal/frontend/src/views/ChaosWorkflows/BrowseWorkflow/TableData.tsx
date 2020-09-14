@@ -109,7 +109,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           <MenuItem
             value="Workflow"
             onClick={() =>
-              history.push(`/workflows/details/${data.workflow_run_id}`)
+              history.push(`/workflows/details/${data.workflow_id}`)
             }
           >
             <div className={classes.expDiv}>
@@ -126,7 +126,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           <MenuItem
             value="Analysis"
             onClick={() =>
-              history.push(`/workflows/analytics/${data.workflow_run_id}`)
+              history.push(`/workflows/analytics/${data.workflow_id}`)
             }
           >
             <div className={classes.expDiv}>
