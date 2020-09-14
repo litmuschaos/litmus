@@ -4,9 +4,9 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/controller"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/controller/password"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/controller/user"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/controller"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/controller/password"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/controller/user"
 )
 
 const (
@@ -27,6 +27,7 @@ var (
 // New will create a new routes
 func New() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
+	gin.EnableJsonDecoderDisallowUnknownFields()
 	router := gin.Default()
 	config := cors.DefaultConfig()
 	config.AddAllowHeaders("Access-Control-Allow-Origin")

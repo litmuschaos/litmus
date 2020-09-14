@@ -7,7 +7,7 @@ import (
 
 	log "github.com/golang/glog"
 
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/router"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/router"
 )
 
 // Constant to define the port number

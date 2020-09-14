@@ -10,12 +10,12 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/golang/glog"
 
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/errors"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/generates"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/manage"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/models"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/store"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/auth/pkg/types"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/errors"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/generates"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/manage"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/models"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/store"
+	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/types"
 )
 
 func init() {
