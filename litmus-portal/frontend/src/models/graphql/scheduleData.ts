@@ -17,6 +17,7 @@ export interface ScheduleWorkflow {
   workflow_name: string;
   cluster_name: string;
   cluster_type: string;
+  regularity?: string;
 }
 
 export interface Schedules {

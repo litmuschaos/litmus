@@ -4,7 +4,6 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import ButtonFilled from '../../components/Button/ButtonFilled';
 import { StyledTab, TabPanel } from '../../components/Tabs';
-import Center from '../../containers/layouts/Center';
 import Scaffold from '../../containers/layouts/Scaffold';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';

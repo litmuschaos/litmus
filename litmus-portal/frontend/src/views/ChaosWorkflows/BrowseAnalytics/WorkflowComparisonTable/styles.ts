@@ -339,6 +339,34 @@ const useStyles = makeStyles((theme) => ({
   comparisonHeadingFix: {
     marginLeft: theme.spacing(8),
   },
+
+  // Form Select Properties
+  formControl: {
+    margin: theme.spacing(0.5),
+    marginRight: theme.spacing(6.25),
+    height: '2.5rem',
+    minWidth: '9rem',
+  },
+  selectText: {
+    height: '2.5rem',
+    padding: theme.spacing(0.5),
+  },
+
+  selectDate: {
+    display: 'flex',
+    flexDirection: 'row',
+    height: '2.5rem',
+    minWidth: '9rem',
+    border: '1.7px solid',
+    borderRadius: 4,
+    borderColor: theme.palette.secondary.main,
+    marginRight: theme.spacing(3.75),
+    textTransform: 'none',
+  },
+  displayDate: {
+    marginLeft: theme.spacing(1),
+    width: '100%',
+  },
 }));
 
 export const customTheme = createMuiTheme({

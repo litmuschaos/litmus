@@ -7,15 +7,16 @@ import {
   MenuItem,
   Select,
   Button,
-  TextField,
+  IconButton,
 } from '@material-ui/core';
-import React, { ChangeEvent, useRef, useState } from 'react';
-import useStyles from './styles';
+import React, { ChangeEvent, useRef, useState, useEffect } from 'react';
 import SearchIcon from '@material-ui/icons/Search';
-import DateRangeSelector from '../../../../components/DateRangeSelector';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import { useEffect } from 'react';
+
 import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import DateRangeSelector from '../../../../components/DateRangeSelector';
+import useStyles from './styles';
 
 interface ClusterCallBackType {
   (clusterName: string): void;
@@ -73,7 +74,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
     endDate: ' ',
   });
 
-  const [cluster, setCluster] = React.useState<String>('');
+  const [cluster, setCluster] = React.useState<String>('All');
 
   const [compare, setCompare] = React.useState<Boolean>(false);
 
@@ -97,20 +98,12 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
   ) => {
     setRange({ startDate: selectedStartDate, endDate: selectedEndDate });
     callbackToSetRange(
-      `${
-        selectedStartDate.split(' ')[2] +
-        ' ' +
-        selectedStartDate.split(' ')[1] +
-        ' ' +
-        selectedStartDate.split(' ')[3]
-      }`,
-      `${
-        selectedEndDate.split(' ')[2] +
-        ' ' +
-        selectedEndDate.split(' ')[1] +
-        ' ' +
+      `${`${selectedStartDate.split(' ')[2]} ${
+        selectedStartDate.split(' ')[1]
+      } ${selectedStartDate.split(' ')[3]}`}`,
+      `${`${selectedEndDate.split(' ')[2]} ${selectedEndDate.split(' ')[1]} ${
         selectedEndDate.split(' ')[3]
-      }`
+      }`}`
     );
   };
 
@@ -185,59 +178,50 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
       )}
 
       <Button
-        variant="outlined"
-        color="primary"
-        className={classes.button}
-        endIcon={<ArrowDropDownIcon />}
+        className={classes.selectDate}
+        onClick={() => {
+          setDateRangeSelectorPopoverOpen(true);
+        }}
         ref={dateRangeSelectorRef as any}
         aria-label="time range"
         aria-haspopup="true"
-        onClick={() => setDateRangeSelectorPopoverOpen(true)}
       >
-        {range.startDate === ' ' ? (
-          <Typography className={classes.dateRangeDefault}>
-            Select Period
-          </Typography>
-        ) : (
-          <Typography className={classes.dateRange}>
-            {range.startDate.split(' ')[2] +
-              ' ' +
-              range.startDate.split(' ')[1] +
-              ' ' +
-              range.startDate.split(' ')[3] +
-              ' - ' +
-              range.endDate.split(' ')[2] +
-              ' ' +
-              range.endDate.split(' ')[1] +
-              ' ' +
-              range.endDate.split(' ')[3]}
-          </Typography>
-        )}
+        <Typography className={classes.displayDate}>
+          {range.startDate === ' '
+            ? 'Select Period'
+            : `${range.startDate.split(' ')[2]} ${
+                range.startDate.split(' ')[1]
+              } ${range.startDate.split(' ')[3]} - ${
+                range.endDate.split(' ')[2]
+              } ${range.endDate.split(' ')[1]} ${range.endDate.split(' ')[3]}`}
+
+          <IconButton style={{ width: 10, height: 10 }}>
+            {isDateRangeSelectorPopoverOpen ? (
+              <KeyboardArrowDownIcon />
+            ) : (
+              <ChevronRightIcon />
+            )}
+          </IconButton>
+        </Typography>
       </Button>
 
-      <FormControl variant="outlined" className={classes.select1}>
-        <InputLabel htmlFor="outlined-selection" className={classes.formLabel}>
-          Target cluster
-        </InputLabel>
+      <FormControl
+        variant="outlined"
+        className={classes.formControl}
+        color="secondary"
+        focused
+      >
+        <InputLabel className={classes.selectText}>Target cluster</InputLabel>
         <Select
           label="Target cluster"
           value={cluster}
           onChange={handleClusterChange}
-          inputProps={{
-            name: 'name',
-            id: 'outlined-selection',
-          }}
-          className={classes.formSize}
+          className={classes.selectText}
           color="secondary"
-          disableUnderline
         >
-          <MenuItem value="">
-            <Typography className={classes.menuItem}>All</Typography>
-          </MenuItem>
+          <MenuItem value="All">All</MenuItem>
           {clusters.map((cluster: any) => (
-            <MenuItem value={cluster}>
-              <Typography className={classes.menuItem}>{cluster}</Typography>
-            </MenuItem>
+            <MenuItem value={cluster}>{cluster}</MenuItem>
           ))}
         </Select>
       </FormControl>
@@ -246,8 +230,8 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         <Button
           variant="outlined"
           color="secondary"
-          //disabled={numSelected > 1 ? false : true} Remove comments to compare.
-          disabled={true}
+          // disabled={numSelected > 1 ? false : true} Remove comments to compare.
+          disabled
           className={classes.buttonCompare}
           onClick={handleClick}
         >

@@ -1,10 +1,10 @@
 import React, { useRef, useState } from 'react';
 import { TableCell, Typography, IconButton, Checkbox } from '@material-ui/core';
-import useStyles from './styles';
 import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
-import WorkflowAnalytics from './WorkflowAnalyticsPopOver';
 import DateRangeOutlinedIcon from '@material-ui/icons/DateRangeOutlined';
 import moment from 'moment';
+import WorkflowAnalytics from './WorkflowAnalyticsPopOver';
+import useStyles from './styles';
 
 interface TableDataProps {
   data: any;
@@ -53,13 +53,14 @@ const TableData: React.FC<TableDataProps> = ({
       </TableCell>
       <TableCell>
         <Typography variant="body2" className={classes.tableObjects}>
-          {formatDate(data.starting_date)}
+          {formatDate(data.created_at)}
         </Typography>
       </TableCell>
       <TableCell>
         <DateRangeOutlinedIcon className={classes.calIcon} />
         <Typography variant="body2" className={classes.tableObjectRegularity}>
-          {data.regularity}
+          {/* data.regularity */}
+          Once
         </Typography>
       </TableCell>
       <TableCell>

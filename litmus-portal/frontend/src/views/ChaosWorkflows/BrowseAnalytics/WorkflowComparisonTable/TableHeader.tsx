@@ -3,13 +3,12 @@ import {
   TableRow,
   TableCell,
   Checkbox,
-  Typography,
   IconButton,
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import useStyles from './styles';
 import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import ExpandLessTwoToneIcon from '@material-ui/icons/ExpandLessTwoTone';
+import useStyles from './styles';
 
 interface SortData {
   startDate: { sort: boolean; ascending: boolean };

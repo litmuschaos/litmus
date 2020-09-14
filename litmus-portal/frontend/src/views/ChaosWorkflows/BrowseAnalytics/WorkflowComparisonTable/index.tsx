@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import React, { useEffect, useState } from 'react';
 import {
   Typography,
@@ -12,13 +13,15 @@ import {
   IconButton,
   Paper,
 } from '@material-ui/core';
-import useStyles, { customTheme } from './styles';
+import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
+import moment from 'moment';
+import { useQuery } from '@apollo/client';
+import { useSelector } from 'react-redux';
+import useStyles, { customTheme, customThemeCompare } from './styles';
 import TableData from './TableData';
 import TableHeader from './TableHeader';
 import TableToolBar from './TableToolbar';
-import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
-import { customThemeCompare } from './styles';
-import moment from 'moment';
+
 import {
   sortAlphaAsc,
   sortAlphaDesc,
@@ -26,13 +29,11 @@ import {
   sortNumDesc,
 } from '../../../../utils/sort';
 import { SCHEDULE_DETAILS } from '../../../../graphql/quries';
-import { useQuery } from '@apollo/client';
 import {
   Schedules,
   ScheduleDataVars,
   ScheduleWorkflow,
 } from '../../../../models/graphql/scheduleData';
-import { useSelector } from 'react-redux';
 import { RootState } from '../../../../redux/reducers';
 
 interface RangeType {
@@ -40,18 +41,6 @@ interface RangeType {
   endDate: string;
 }
 
-interface workflowAnalytics {
-  workflow_id: string;
-  workflow_name: string;
-  created_at: string;
-  regularity: string;
-  cluster_name: string;
-}
-/*
-interface queryAnalytics {
-  getWorkFlowAnalytics: workflowAnalytics[];
-}
-*/
 interface SortData {
   startDate: { sort: boolean; ascending: boolean };
   name: { sort: boolean; ascending: boolean };
@@ -71,30 +60,14 @@ const WorkflowComparisonTable = () => {
   );
 
   // Apollo query to get the scheduled data
-  const { data, loading, error } = useQuery<Schedules, ScheduleDataVars>(
-    SCHEDULE_DETAILS,
-    {
-      variables: { projectID: selectedProjectID },
-      fetchPolicy: 'cache-and-network',
-    }
-  );
-  /*
-  // Default table data
-  const [mainData, setMainData] = useState<queryAnalytics>({
-    getWorkFlowAnalytics: [
-      {
-        workflow_id: '0',
-        workflow_name: 'Workflow name',
-        starting_date: '00000000',
-        regularity: 'Every Sunday',
-        cluster_name: 'Cluster name',
-      },
-    ],
+  const { data } = useQuery<Schedules, ScheduleDataVars>(SCHEDULE_DETAILS, {
+    variables: { projectID: selectedProjectID },
+    fetchPolicy: 'cache-and-network',
   });
-*/
+
   const [filter, setFilter] = React.useState<Filter>({
     range: { startDate: 'all', endDate: 'all' },
-    selectedCluster: '',
+    selectedCluster: 'All',
     sortData: {
       name: { sort: false, ascending: true },
       startDate: { sort: true, ascending: false },
@@ -102,19 +75,9 @@ const WorkflowComparisonTable = () => {
     },
     searchTokens: [''],
   });
-  /*
-  const [displayData, setDisplayData] = useState<queryAnalytics>({
-    getWorkFlowAnalytics: [
-      {
-        workflow_id: '0',
-        workflow_name: 'Workflow name',
-        starting_date: '00000000',
-        regularity: 'Every Sunday',
-        cluster_name: 'Cluster name',
-      },
-    ],
-  });
-*/
+
+  const [displayData, setDisplayData] = useState<ScheduleWorkflow[]>([]);
+
   const [clusters, setClusters] = React.useState<string[]>([]);
 
   const getClusters = (searchingData: ScheduleWorkflow[]) => {
@@ -126,102 +89,9 @@ const WorkflowComparisonTable = () => {
     });
     setClusters(uniqueList);
   };
-  /*
+
   useEffect(() => {
-    // Get the inital table data
-    setMainData({
-      getWorkFlowAnalytics: [
-        {
-          workflow_id: '1',
-          workflow_name: 'Workflow Underground',
-          starting_date: '1599720650',
-          regularity: 'Every Monday',
-          cluster_name: 'Kubernetes Cluster',
-        },
-        {
-          workflow_id: '2',
-          workflow_name: 'Basic K8S Conformance',
-          starting_date: '1599720650',
-          regularity: 'Every Monday at 03:00 AM',
-          cluster_name: 'Personal Cluster 1',
-        },
-        {
-          workflow_id: '3',
-          workflow_name: 'Basic K8S Conformance',
-          starting_date: '1599720650',
-          regularity: 'Every Monday at 03:00 AM',
-          cluster_name: 'Personal Cluster 1',
-        },
-        {
-          workflow_id: '4',
-          workflow_name: 'Workflow Underground',
-          starting_date: '1599720650',
-          regularity: 'Every Monday',
-          cluster_name: 'Kubernetes Cluster',
-        },
-        {
-          workflow_id: '5',
-          workflow_name: 'Basic K8S Conformance',
-          starting_date: '1599720650',
-          regularity: 'Every Monday at 03:00 AM',
-          cluster_name: 'Personal Cluster 1',
-        },
-        {
-          workflow_id: '6',
-          workflow_name: 'Next',
-          starting_date: '1599720813',
-          regularity: 'Every Monday at 03:00 AM',
-          cluster_name: 'Personal Cluster 1',
-        },
-        {
-          workflow_id: '7',
-          workflow_name: 'Workflow Underground',
-          starting_date: '1599720650',
-          regularity: 'Every Monday',
-          cluster_name: 'Kubernetes Cluster',
-        },
-        {
-          workflow_id: '8',
-          workflow_name: 'Basic K8S Conformance',
-          starting_date: '1599720650',
-          regularity: 'Every Monday at 03:00 AM',
-          cluster_name: 'Personal Cluster 1',
-        },
-        {
-          workflow_id: '9',
-          workflow_name: 'Basic K8S Conformance',
-          starting_date: '1599720650',
-          regularity: 'Every Monday at 03:00 AM',
-          cluster_name: 'Personal Cluster 1',
-        },
-        {
-          workflow_id: '10',
-          workflow_name: 'Workflow Underground',
-          starting_date: '1599720650',
-          regularity: 'Every Monday',
-          cluster_name: 'Kubernetes Cluster',
-        },
-        {
-          workflow_id: '11',
-          workflow_name: 'Basic K8S Conformance',
-          starting_date: '1599720650',
-          regularity: 'Every Monday at 03:00 AM',
-          cluster_name: 'Personal Cluster 1',
-        },
-        {
-          workflow_id: '12',
-          workflow_name: 'Basic K8S Conformance',
-          starting_date: '1599720650',
-          regularity: 'Every Monday at 03:00 AM',
-          cluster_name: 'Personal Cluster 1',
-        },
-      ],
-    });
-    setDisplayData(mainData);
-  }, []);
-*/
-  useEffect(() => {
-    //setDisplayData(mainData);
+    setDisplayData(data ? data?.getScheduledWorkflows : []);
     getClusters(data ? data?.getScheduledWorkflows : []);
   }, [data]);
 
@@ -248,16 +118,11 @@ const WorkflowComparisonTable = () => {
 
   const emptyRows =
     rowsPerPage -
-    Math.min(
-      rowsPerPage,
-      displayData.getWorkFlowAnalytics.length - page * rowsPerPage
-    );
+    Math.min(rowsPerPage, displayData.length - page * rowsPerPage);
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelecteds = displayData.getWorkFlowAnalytics.map(
-        (n: any) => n.workflow_id
-      );
+      const newSelecteds = displayData.map((n: any) => n.workflow_id);
       setSelected(newSelecteds);
       return;
     }
@@ -309,16 +174,16 @@ const WorkflowComparisonTable = () => {
     setCompare(compareWorkflows);
     const payload: ScheduleWorkflow[] = [];
     selected.forEach((workflow) => {
-      displayData.getWorkFlowAnalytics.forEach((displayWorkflow, i) => {
+      displayData.forEach((displayWorkflow, i) => {
         if (displayWorkflow.workflow_id === workflow && data) {
           payload.push(data?.getScheduledWorkflows[i]);
         }
       });
     });
-    setDisplayData({ getWorkFlowAnalytics: payload });
+    setDisplayData(payload);
   };
 
-  const CallbackForExporting = (exportAnalytics: boolean) => {};
+  // const CallbackForExporting = (exportAnalytics: boolean) => {};
 
   useEffect(() => {
     const payload = searchingDataRetriever()
@@ -332,7 +197,7 @@ const WorkflowComparisonTable = () => {
         );
       })
       .filter((data) => {
-        return filter.selectedCluster === ''
+        return filter.selectedCluster === 'All'
           ? true
           : data.cluster_name === filter.selectedCluster;
       })
@@ -380,7 +245,7 @@ const WorkflowComparisonTable = () => {
         }
         return 0;
       });
-    setDisplayData({ getWorkFlowAnalytics: payload });
+    setDisplayData(payload);
     setShowAll(false);
     getClusters(searchingDataRetriever());
   }, [filter]);
@@ -460,9 +325,9 @@ const WorkflowComparisonTable = () => {
                   });
                 }}
                 callbackToCompare={CallbackForComparing}
-                callbackToExport={CallbackForExporting}
+                callbackToExport={() => {}} // CallbackForExporting}
                 comparisonState={compare}
-                reInitialize={compare === false ? true : false}
+                reInitialize={compare === false}
               />
             </section>
             <section className="table section">
@@ -486,7 +351,7 @@ const WorkflowComparisonTable = () => {
                     <TableHeader
                       onSelectAllClick={handleSelectAllClick}
                       numSelected={selected.length}
-                      rowCount={displayData.getWorkFlowAnalytics.length}
+                      rowCount={displayData.length}
                       comparisonState={compare}
                       callBackToSort={(sortConfigurations: SortData) => {
                         setFilter({
@@ -497,7 +362,7 @@ const WorkflowComparisonTable = () => {
                     />
                     <TableBody>
                       {displayData &&
-                        displayData.getWorkFlowAnalytics
+                        displayData
                           .slice(0)
                           .slice(
                             page * rowsPerPage,
@@ -541,7 +406,7 @@ const WorkflowComparisonTable = () => {
                   <TablePagination
                     rowsPerPageOptions={[5, 10, 25, 50]}
                     component="div"
-                    count={displayData.getWorkFlowAnalytics.length}
+                    count={displayData.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onChangePage={handleChangePage}

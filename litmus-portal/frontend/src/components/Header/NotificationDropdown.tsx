@@ -36,7 +36,7 @@ const NotificationsDropdown: React.FC<NotificationDropdownProps> = ({
   const [isOpen, setIsOpen] = useState(false);
 
   function handleClick() {
-    // setIsOpen(!isOpen); uncomment to activate notifications.
+    setIsOpen(!isOpen);
   }
 
   function handleClickAway() {
@@ -61,8 +61,7 @@ const NotificationsDropdown: React.FC<NotificationDropdownProps> = ({
         color="inherit"
       >
         <Badge
-          // badgeContent={count === '0' ? messages.length : count}
-          badgeContent={0}
+          badgeContent={count === '0' ? messages.length : count}
           color="secondary"
         >
           <NotificationsOutlinedIcon />

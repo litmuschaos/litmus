@@ -1,12 +1,12 @@
 /* eslint-disable react/no-array-index-key */
 import { Popover } from '@material-ui/core';
-import React from 'react';
-import useStyles from './styles';
+import React, { useState } from 'react';
 import { subDays } from 'date-fns';
-import { useState } from 'react';
+
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import { DateRangePicker } from 'react-date-range';
+import useStyles from './styles';
 
 interface RangeCallBackType {
   (selectedStartDate: string, selectedEndDate: string): void;
@@ -43,11 +43,11 @@ function DateRangeSelector(props: DateRangeSelectorProps) {
         onClose={onClose}
         anchorOrigin={{
           vertical: 'bottom',
-          horizontal: 'right',
+          horizontal: 'center',
         }}
         transformOrigin={{
           vertical: 'top',
-          horizontal: 'right',
+          horizontal: 'center',
         }}
         classes={{
           paper: classes.popoverDateRangeSelector,
@@ -62,15 +62,15 @@ function DateRangeSelector(props: DateRangeSelectorProps) {
                 `${(item as any).selection.endDate}`
               );
             }}
-            showSelectionPreview={true}
+            showSelectionPreview
             moveRangeOnFirstSelection={false}
             months={1}
             ranges={state}
             direction="vertical"
             scroll={{ enabled: true }}
-            editableDateInputs={true}
+            editableDateInputs
             rangeColors={['#5B44BA']}
-            showMonthAndYearPickers={true}
+            showMonthAndYearPickers
           />
         </div>
       </Popover>
