@@ -8,7 +8,7 @@ interface StatusProps {
   status: string;
 }
 
-const CustomStatus: React.FC<StatusProps> = ({ status }) => {
+const ExperimentStatus: React.FC<StatusProps> = ({ status }) => {
   const classes = useStyles();
   const [label, setLabel] = React.useState(' ');
 
@@ -17,7 +17,7 @@ const CustomStatus: React.FC<StatusProps> = ({ status }) => {
       return setLabel(classes.passed);
     }
     return setLabel(classes.failed);
-  }, [status, classes.failed, classes.passed]);
+  }, [status]);
 
   return (
     <>
@@ -40,4 +40,4 @@ const CustomStatus: React.FC<StatusProps> = ({ status }) => {
     </>
   );
 };
-export default CustomStatus;
+export default ExperimentStatus;

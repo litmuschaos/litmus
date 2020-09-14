@@ -85,12 +85,9 @@ const AnalyticsPage: React.FC = () => {
   );
 
   // Query to get workflows
-  const { data, loading, error } = useQuery<Workflow, WorkflowDataVars>(
+  const { data, error } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
-    {
-      variables: { projectID: selectedProjectID },
-      fetchPolicy: 'cache-and-network',
-    }
+    { variables: { projectID: selectedProjectID } }
   );
 
   const setPopOverDisplay = (
@@ -184,7 +181,7 @@ const AnalyticsPage: React.FC = () => {
     workflowRuns.push(edgeHigh);
 
     setWorkflowRunDataForPlot(workflowRuns);
-  }, [data, loading]);
+  }, [data]);
 
   useEffect(() => {
     const workflowTestsArray: WorkFlowTests[] = [];
@@ -214,7 +211,7 @@ const AnalyticsPage: React.FC = () => {
       }
     });
     setSelectedWorkflowRunDetails(workflowTestsArray);
-  }, [selectedWorkflowRunID, data, loading]);
+  }, [selectedWorkflowRunID, data]);
 
   return (
     <Scaffold>

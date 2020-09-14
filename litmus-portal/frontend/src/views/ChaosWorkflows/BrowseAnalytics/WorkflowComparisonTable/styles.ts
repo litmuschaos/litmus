@@ -1,4 +1,4 @@
-import { createMuiTheme, makeStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -264,27 +264,5 @@ const useStyles = makeStyles((theme) => ({
     height: '0.625rem',
   },
 }));
-
-export const customTheme = createMuiTheme({
-  palette: {
-    secondary: {
-      light: '#2CCA8F',
-      main: '#2CCA8F',
-      dark: '#109B67',
-      contrastText: '#000000',
-    },
-  },
-});
-
-export const customThemeCompare = createMuiTheme({
-  palette: {
-    secondary: {
-      light: '#FFFFFF',
-      main: '#FFFFFF',
-      dark: '#FFFFFF',
-      contrastText: '#000000',
-    },
-  },
-});
 
 export default useStyles;

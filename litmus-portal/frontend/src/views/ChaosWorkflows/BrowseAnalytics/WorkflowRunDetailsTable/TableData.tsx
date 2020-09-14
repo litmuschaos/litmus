@@ -2,7 +2,7 @@ import React from 'react';
 import { TableCell, Typography } from '@material-ui/core';
 import moment from 'moment';
 import useStyles from './styles';
-import CustomStatus from '../CustomStatus/Status';
+import ExperimentStatus from '../ExperimentStatus';
 import LinearProgressBar from '../../../../components/ProgressBar/LinearProgressBar';
 import AnalyticsLinearProgressBar from '../../../../components/ProgressBar/AnalyticsLinearProgressBar/index';
 
@@ -38,7 +38,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       </TableCell>
 
       <TableCell className={classes.tableDataStatus}>
-        <CustomStatus status={`${data.test_result}ed`} />
+        <ExperimentStatus status={`${data.test_result}ed`} />
       </TableCell>
 
       <TableCell>

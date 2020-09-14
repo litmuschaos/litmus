@@ -95,13 +95,10 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
   );
 
   // Apollo query to get the scheduled data
-  const { data, loading } = useQuery<Schedules, ScheduleDataVars>(
-    SCHEDULE_DETAILS,
-    {
-      variables: { projectID: selectedProjectID },
-      fetchPolicy: 'cache-and-network',
-    }
-  );
+  const { data } = useQuery<Schedules, ScheduleDataVars>(SCHEDULE_DETAILS, {
+    variables: { projectID: selectedProjectID },
+    fetchPolicy: 'cache-and-network',
+  });
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -197,7 +194,7 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
     getTests(processedWorkflowRunDetails);
     getTestResults(processedWorkflowRunDetails);
     setReload(true);
-  }, [data, loading, workflowID, reload]);
+  }, [data, workflowID, reload]);
 
   useEffect(() => {
     const payload: workFlowTests[] = mainData

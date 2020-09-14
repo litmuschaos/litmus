@@ -190,6 +190,28 @@ const theme = customTheme({
   },
 });
 
+export const customThemeAnalyticsTable = createMuiTheme({
+  palette: {
+    secondary: {
+      light: '#2CCA8F',
+      main: '#2CCA8F',
+      dark: '#109B67',
+      contrastText: '#000000',
+    },
+  },
+});
+
+export const customThemeAnalyticsTableCompareMode = createMuiTheme({
+  palette: {
+    secondary: {
+      light: '#FFFFFF',
+      main: '#FFFFFF',
+      dark: '#FFFFFF',
+      contrastText: '#000000',
+    },
+  },
+});
+
 const withTheme = (Component: any) => {
   function WithTheme(props: object) {
     return (

@@ -18,7 +18,11 @@ import moment from 'moment';
 import { useQuery } from '@apollo/client';
 import { useSelector } from 'react-redux';
 import useTheme from '@material-ui/core/styles/useTheme';
-import useStyles, { customTheme, customThemeCompare } from './styles';
+import {
+  customThemeAnalyticsTable,
+  customThemeAnalyticsTableCompareMode,
+} from '../../../../theme';
+import useStyles from './styles';
 import TableData from './TableData';
 import TableHeader from './TableHeader';
 import TableToolBar from './TableToolbar';
@@ -325,7 +329,11 @@ const WorkflowComparisonTable = () => {
             </section>
             <section className="table section">
               <MuiThemeProvider
-                theme={compare === false ? customTheme : customThemeCompare}
+                theme={
+                  compare === false
+                    ? customThemeAnalyticsTable
+                    : customThemeAnalyticsTableCompareMode
+                }
               >
                 <TableContainer
                   className={
