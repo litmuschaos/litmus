@@ -71,7 +71,6 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
   const classes = useStyles();
   const [close, setClose] = useState<boolean>(false);
   const [mainData, setMainData] = useState<workFlowTests[]>([]);
-  const [displayData, setDisplayData] = useState<workFlowTests[]>([]);
   const [filter, setFilter] = React.useState<Filter>({
     range: { startDate: 'all', endDate: 'all' },
     selectedTest: 'All',
@@ -85,8 +84,6 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
   });
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [tests, setTests] = React.useState<string[]>([]);
-  const [testResults, setTestResults] = React.useState<string[]>([]);
   const [reload, setReload] = React.useState<boolean>(false);
   const [resilienceScore, setResilienceScore] = React.useState<number>(0);
 
@@ -111,10 +108,6 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
     setPage(0);
   };
 
-  const emptyRows =
-    rowsPerPage -
-    Math.min(rowsPerPage, displayData.length - page * rowsPerPage);
-
   const getTests = (searchingData: workFlowTests[]) => {
     const uniqueList: string[] = [];
     searchingData.forEach((data) => {
@@ -122,7 +115,7 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
         uniqueList.push(data.test_name);
       }
     });
-    setTests(uniqueList);
+    return uniqueList;
   };
 
   const getTestResults = (searchingData: workFlowTests[]) => {
@@ -132,7 +125,7 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
         uniqueList.push(data.test_result);
       }
     });
-    setTestResults(uniqueList);
+    return uniqueList;
   };
 
   useEffect(() => {
@@ -181,7 +174,6 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
     });
 
     setMainData(processedWorkflowRunDetails);
-    setDisplayData(processedWorkflowRunDetails);
     setResilienceScore(
       parseFloat(
         (
@@ -191,80 +183,76 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
         ).toFixed(2)
       )
     );
-    getTests(processedWorkflowRunDetails);
-    getTestResults(processedWorkflowRunDetails);
     setReload(true);
   }, [data, workflowID, reload]);
 
-  useEffect(() => {
-    const payload: workFlowTests[] = mainData
-      .filter((wkf: workFlowTests) => {
-        return filter.searchTokens.every(
-          (s: string) =>
-            wkf.test_name.toLowerCase().includes(s) ||
-            (wkf.test_result !== undefined
-              ? wkf.test_result.toLowerCase().includes(s)
-              : false)
-        );
-      })
-      .filter((data) => {
-        return filter.selectedTest === 'All'
-          ? true
-          : data.test_name === filter.selectedTest;
-      })
-      .filter((data) => {
-        return filter.selectedTestResult === 'All'
-          ? true
-          : data.test_result === filter.selectedTestResult;
-      })
-      .filter((data) => {
-        return filter.range.startDate === 'all' ||
-          (filter.range.startDate && filter.range.endDate === undefined)
-          ? true
-          : parseInt(data.last_run, 10) * 1000 >=
-              new Date(moment(filter.range.startDate).format()).getTime() &&
-              parseInt(data.last_run, 10) * 1000 <=
-                new Date(
-                  new Date(moment(filter.range.endDate).format()).setHours(
-                    23,
-                    59,
-                    59
-                  )
-                ).getTime();
-      })
-      .sort((a: workFlowTests, b: workFlowTests) => {
-        // Sorting based on unique fields
-        if (filter.sortData.name.sort) {
-          const x = a.test_name;
-          const y = b.test_name;
+  const payload: workFlowTests[] = mainData
+    .filter((wkf: workFlowTests) => {
+      return filter.searchTokens.every(
+        (s: string) =>
+          wkf.test_name.toLowerCase().includes(s) ||
+          (wkf.test_result !== undefined
+            ? wkf.test_result.toLowerCase().includes(s)
+            : false)
+      );
+    })
+    .filter((data) => {
+      return filter.selectedTest === 'All'
+        ? true
+        : data.test_name === filter.selectedTest;
+    })
+    .filter((data) => {
+      return filter.selectedTestResult === 'All'
+        ? true
+        : data.test_result === filter.selectedTestResult;
+    })
+    .filter((data) => {
+      return filter.range.startDate === 'all' ||
+        (filter.range.startDate && filter.range.endDate === undefined)
+        ? true
+        : parseInt(data.last_run, 10) * 1000 >=
+            new Date(moment(filter.range.startDate).format()).getTime() &&
+            parseInt(data.last_run, 10) * 1000 <=
+              new Date(
+                new Date(moment(filter.range.endDate).format()).setHours(
+                  23,
+                  59,
+                  59
+                )
+              ).getTime();
+    })
+    .sort((a: workFlowTests, b: workFlowTests) => {
+      // Sorting based on unique fields
+      if (filter.sortData.name.sort) {
+        const x = a.test_name;
+        const y = b.test_name;
 
-          return filter.sortData.name.ascending
-            ? sortAlphaAsc(x, y)
-            : sortAlphaDesc(x, y);
-        }
-        if (filter.sortData.lastRun.sort) {
-          const x = parseInt(a.last_run, 10);
+        return filter.sortData.name.ascending
+          ? sortAlphaAsc(x, y)
+          : sortAlphaDesc(x, y);
+      }
+      if (filter.sortData.lastRun.sort) {
+        const x = parseInt(a.last_run, 10);
 
-          const y = parseInt(b.last_run, 10);
+        const y = parseInt(b.last_run, 10);
 
-          return filter.sortData.lastRun.ascending
-            ? sortNumAsc(y, x)
-            : sortNumDesc(y, x);
-        }
-        if (filter.sortData.testResult.sort) {
-          const x = a.test_result;
-          const y = b.test_result;
+        return filter.sortData.lastRun.ascending
+          ? sortNumAsc(y, x)
+          : sortNumDesc(y, x);
+      }
+      if (filter.sortData.testResult.sort) {
+        const x = a.test_result;
+        const y = b.test_result;
 
-          return filter.sortData.testResult.ascending
-            ? sortAlphaAsc(x, y)
-            : sortAlphaDesc(x, y);
-        }
-        return 0;
-      });
-    setDisplayData(payload);
-    getTests(payload);
-    getTestResults(payload);
-  }, [filter]);
+        return filter.sortData.testResult.ascending
+          ? sortAlphaAsc(x, y)
+          : sortAlphaDesc(x, y);
+      }
+      return 0;
+    });
+
+  const emptyRows =
+    rowsPerPage - Math.min(rowsPerPage, payload.length - page * rowsPerPage);
 
   return (
     <div>
@@ -292,8 +280,8 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
                         .filter((s) => s !== ''),
                     })
                   }
-                  tests={tests}
-                  testResults={testResults}
+                  tests={getTests(payload)}
+                  testResults={getTestResults(payload)}
                   callbackToSetTest={(testName: string) => {
                     setFilter({
                       ...filter,
@@ -335,8 +323,8 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
                       }}
                     />
                     <TableBody>
-                      {displayData &&
-                        displayData
+                      {payload &&
+                        payload
                           .slice(0)
                           .slice(
                             page * rowsPerPage,
@@ -373,7 +361,7 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
                   <TablePagination
                     rowsPerPageOptions={[5, 10, 25, 50]}
                     component="div"
-                    count={displayData.length}
+                    count={payload.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onChangePage={handleChangePage}
