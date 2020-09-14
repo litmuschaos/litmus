@@ -48,8 +48,8 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   };
 
   // Function to convert UNIX time in format of DD MMM YYY
-  const formatDate = (date: any) => {
-    const updated = new Date(date * 1000).toString();
+  const formatDate = (date: string) => {
+    const updated = new Date(parseInt(date, 10) * 1000).toString();
     const resDate = moment(updated).format('DD MMM YYYY');
     if (date) return resDate;
     return 'Date not available';
@@ -76,7 +76,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
         </div>
       </TableCell>
       <TableCell>
-        <Typography>Internal</Typography>
+        <Typography>{data.cluster_name}</Typography>
       </TableCell>
       <TableCell>
         <Button onClick={handlePopOverClick} style={{ textTransform: 'none' }}>

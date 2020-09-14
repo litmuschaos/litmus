@@ -10,6 +10,7 @@ export const WORKFLOW_DETAILS = gql`
       project_id
       cluster_name
       last_updated
+      cluster_type
     }
   }
 `;
@@ -31,6 +32,8 @@ export const SCHEDULE_DETAILS = gql`
       created_at
       project_id
       cluster_id
+      cluster_type
+      cluster_name
     }
   }
 `;
