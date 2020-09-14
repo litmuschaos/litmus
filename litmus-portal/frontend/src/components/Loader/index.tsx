@@ -14,9 +14,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const Loader: React.FC<LoaderProps> = ({ size }) => {
   const classes = useStyles();
+  const defaultSize = 40;
   return (
     <Center>
-      <CircularProgress className={classes.spinner} size={size || 40} />
+      <CircularProgress
+        className={classes.spinner}
+        size={size || defaultSize}
+      />
     </Center>
   );
 };

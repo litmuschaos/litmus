@@ -21,12 +21,16 @@ const LoginPage = () => {
   const { t } = useTranslation();
   const user = useActions(UserActions);
   const classes = useStyles();
+
   const [isError, setIsError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [authData, setAuthData] = useState<authData>({
     username: '',
     password: '',
   });
+
+  const responseCode = 200;
+  const loaderSize = 20;
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -38,7 +42,7 @@ const LoginPage = () => {
       body: JSON.stringify(authData),
     })
       .then((response) => {
-        if (response.status !== 200) {
+        if (response.status !== responseCode) {
           setIsError(true);
           setIsLoading(false);
         } else {
@@ -128,7 +132,7 @@ const LoginPage = () => {
                 data-cy="loginButton"
                 isDisabled={isLoading}
               >
-                {isLoading ? <Loader size={20} /> : 'Login'}
+                {isLoading ? <Loader size={loaderSize} /> : 'Login'}
               </ButtonFilled>
             </div>
           </form>
