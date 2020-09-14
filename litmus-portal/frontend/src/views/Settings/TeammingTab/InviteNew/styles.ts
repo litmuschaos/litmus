@@ -4,7 +4,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   body: {
     display: 'flex',
     flexDirection: 'column',
-    maxWidth: '63.75rem',
     minWidth: '39.0625rem',
     alignItems: 'center',
   },

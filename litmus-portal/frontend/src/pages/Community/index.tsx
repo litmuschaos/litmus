@@ -31,13 +31,15 @@ const Community: React.FC = () => {
 
   return (
     <Scaffold>
-      <div>
+      <div className={classes.root}>
         <div>
-          <Typography className={classes.mainHeader}>Community</Typography>
+          <Typography variant="h3" className={classes.mainHeader}>
+            Community
+          </Typography>
         </div>
 
         {/* Litmus Daily Insights */}
-        <section className="Daily Insights">
+        <section>
           <Header2>{t('community.heading')}</Header2>
           <Typography>{t('community.headingDesc')}</Typography>
           <div className={classes.cardDiv}>
@@ -46,7 +48,7 @@ const Community: React.FC = () => {
         </section>
 
         {/* Litmus Analytics Dashboard */}
-        <section className="Litmus Analytics Dashboard">
+        <section>
           <div className={classes.LitmusAnalyticsBlock}>
             <Header2>{t('community.analyticDesc')}</Header2>
             <div className={classes.LitmusAnalyticsDiv}>
@@ -93,7 +95,7 @@ const Community: React.FC = () => {
         </section>
 
         {/* Litmus Used Statistics all over the World */}
-        <section className="Litmus Used Stats">
+        <section>
           <div className={classes.LitmusUsedBlock}>
             <Header2>{t('community.statsHeading')}</Header2>
             <div className={classes.LitmusUsedDiv}>

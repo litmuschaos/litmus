@@ -1,4 +1,5 @@
 import { Box, Paper, Tab, Tabs, Typography } from '@material-ui/core';
+import useTheme from '@material-ui/core/styles/useTheme';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import Scaffold from '../../containers/layouts/Scaffold';
@@ -28,7 +29,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box p={3}>{children}</Box>}
+      {value === index && <Box style={{ marginLeft: 15 }}>{children}</Box>}
     </div>
   );
 }
@@ -54,15 +55,22 @@ const Settings: React.FC = () => {
     tabs.changeSettingsTabs(newValue);
   };
 
+  const theme = useTheme();
+
   return (
     <Scaffold>
-      <Typography className={classes.Head}>Settings </Typography>
+      <Typography variant="h3" className={classes.Head}>
+        Settings
+      </Typography>
       <Paper className={classes.root} elevation={0}>
         <Tabs
           value={settingsTabValue}
           onChange={handleChange}
-          indicatorColor="secondary"
-          textColor="secondary"
+          TabIndicatorProps={{
+            style: {
+              backgroundColor: theme.palette.secondary.dark,
+            },
+          }}
         >
           <Tab label="My Account" {...tabProps(0)} />
           <Tab label="Team" {...tabProps(1)} />

@@ -1,4 +1,4 @@
-import { makeStyles, createStyles, Theme, fade } from '@material-ui/core';
+import { createStyles, fade, makeStyles, Theme } from '@material-ui/core';
 
 const useStylesLitmus = makeStyles((theme: Theme) =>
   createStyles({
@@ -9,7 +9,6 @@ const useStylesLitmus = makeStyles((theme: Theme) =>
           : `1px solid ${theme.palette.primary.dark}`,
       overflow: 'hidden',
       borderRadius: 4,
-      margin: '0 1rem',
       backgroundColor: theme.palette.common.white,
       transition: theme.transitions.create(['border-color', 'box-shadow']),
       '&$error': {
@@ -81,6 +80,7 @@ const useStyles = makeStyles((theme) => ({
   inputArea: {
     width: theme.spacing(45),
     marginTop: theme.spacing(1),
+    paddingLeft: theme.spacing(2),
     textDecoration: 'none',
     borderRadius: 3,
   },

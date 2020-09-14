@@ -5,8 +5,8 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
-    marginTop: theme.spacing(2.5),
-    marginBottom: theme.spacing(2.5),
+    color: theme.palette.text.primary,
+    margin: theme.spacing(4.5, 1.5, 2.5, 1.5),
   },
   scheduleBtn: {
     marginLeft: 'auto',
@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
   appBar: {
     background: 'transparent',
     boxShadow: 'none',
+    paddingLeft: theme.spacing(1.5),
   },
 }));
 
