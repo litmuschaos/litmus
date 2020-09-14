@@ -54,7 +54,7 @@ backend-services-checks:
 	@echo "------------------"
 	@echo "--> Check litmus-portal backend [go mod tidy]"
 	@echo "------------------"
-	@tidyRes=$$(cd backend/graphql-server && go mod tidy); \
+	@tidyRes=$$(cd graphql-server && go mod tidy); \
 	if [ -n "$${tidyRes}" ]; then \
 		echo "go mod tidy checking failed!" && echo "$${tidyRes}" \
 		&& echo "Please ensure you are using $$($(GO) version) for formatting code." \

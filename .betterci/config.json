@@ -7,7 +7,7 @@
     "push": true
   },{
     "name":"portal-server",
-    "file":"litmus-portal/backend/graphql-server/build/Dockerfile",
+    "file":"litmus-portal/graphql-server/build/Dockerfile",
     "context":"litmus-portal/backend/graphql-server",
     "push":true
   },{
