@@ -1,4 +1,4 @@
-module github.com/litmuschaos/litmus/litmus-portal/backend/subscriber
+module github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber
 
 go 1.14
 
