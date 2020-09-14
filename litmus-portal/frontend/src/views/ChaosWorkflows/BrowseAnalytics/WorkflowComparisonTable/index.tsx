@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import {
   Typography,
-  Divider,
   TablePagination,
   MuiThemeProvider,
   Table,
@@ -248,204 +247,201 @@ const WorkflowComparisonTable = () => {
   }, [filter]);
 
   return (
-    <div>
-      <Divider variant="middle" className={classes.horizontalLine} />
-      <div className={classes.root}>
-        <div className={classes.analyticsDiv}>
-          <Typography className={classes.heading}>
-            <strong>
-              {' '}
-              {compare === true ? (
-                <IconButton
-                  aria-label="back"
-                  aria-haspopup="true"
-                  onClick={() => setCompare(false)}
-                  className={classes.buttonBack}
-                >
-                  <ExpandMoreTwoToneIcon
-                    htmlColor={palette.secondary.dark}
-                    className={classes.buttonBackStyle}
-                  />
-                </IconButton>
-              ) : (
-                <div />
-              )}{' '}
-              Workflow comparison
-            </strong>
-          </Typography>
-          <Typography className={classes.description}>
-            {compare === true
-              ? 'Choose the right workflows and get comparative results'
-              : 'Choose workflows to compare their resilience scores'}
-          </Typography>
-          <br />
-        </div>
+    <div className={classes.root}>
+      <div className={classes.analyticsDiv}>
+        <Typography className={classes.heading}>
+          <strong>
+            {' '}
+            {compare === true ? (
+              <IconButton
+                aria-label="back"
+                aria-haspopup="true"
+                onClick={() => setCompare(false)}
+                className={classes.buttonBack}
+              >
+                <ExpandMoreTwoToneIcon
+                  htmlColor={palette.secondary.dark}
+                  className={classes.buttonBackStyle}
+                />
+              </IconButton>
+            ) : (
+              <div />
+            )}{' '}
+            Workflow comparison
+          </strong>
+        </Typography>
+        <Typography className={classes.description}>
+          {compare === true
+            ? 'Choose the right workflows and get comparative results'
+            : 'Choose workflows to compare their resilience scores'}
+        </Typography>
+        <br />
+      </div>
 
-        <div className={classes.tableFix}>
-          <div>
-            <section className="Heading section">
-              <TableToolBar
-                numSelected={selected.length}
-                searchToken={filter.searchTokens[0]}
-                handleSearch={(
-                  event: React.ChangeEvent<{ value: unknown }> | undefined,
-                  token: string | undefined
-                ) =>
-                  setFilter({
-                    ...filter,
-                    searchTokens: (event !== undefined
-                      ? ((event.target as HTMLInputElement).value as string)
-                      : token || ''
-                    )
-                      .toLowerCase()
-                      .split(' ')
-                      .filter((s) => s !== ''),
-                  })
-                }
-                clusters={clusters}
-                callbackToSetCluster={(clusterName: string) => {
-                  setFilter({
-                    ...filter,
-                    selectedCluster: clusterName,
-                  });
-                }}
-                callbackToSetRange={(
-                  selectedStartDate: string,
-                  selectedEndDate: string
-                ) => {
-                  setFilter({
-                    ...filter,
-                    range: {
-                      startDate: selectedStartDate,
-                      endDate: selectedEndDate,
-                    },
-                  });
-                }}
-                callbackToCompare={CallbackForComparing}
-                callbackToExport={() => {}} // CallbackForExporting}
-                comparisonState={compare}
-                reInitialize={compare === false}
-              />
-            </section>
-            <section className="table section">
-              <MuiThemeProvider
-                theme={
-                  compare === false
-                    ? customThemeAnalyticsTable
-                    : customThemeAnalyticsTableCompareMode
+      <div className={classes.tableFix}>
+        <div>
+          <section className="Heading section">
+            <TableToolBar
+              numSelected={selected.length}
+              searchToken={filter.searchTokens[0]}
+              handleSearch={(
+                event: React.ChangeEvent<{ value: unknown }> | undefined,
+                token: string | undefined
+              ) =>
+                setFilter({
+                  ...filter,
+                  searchTokens: (event !== undefined
+                    ? ((event.target as HTMLInputElement).value as string)
+                    : token || ''
+                  )
+                    .toLowerCase()
+                    .split(' ')
+                    .filter((s) => s !== ''),
+                })
+              }
+              clusters={clusters}
+              callbackToSetCluster={(clusterName: string) => {
+                setFilter({
+                  ...filter,
+                  selectedCluster: clusterName,
+                });
+              }}
+              callbackToSetRange={(
+                selectedStartDate: string,
+                selectedEndDate: string
+              ) => {
+                setFilter({
+                  ...filter,
+                  range: {
+                    startDate: selectedStartDate,
+                    endDate: selectedEndDate,
+                  },
+                });
+              }}
+              callbackToCompare={CallbackForComparing}
+              callbackToExport={() => {}} // CallbackForExporting}
+              comparisonState={compare}
+              reInitialize={compare === false}
+            />
+          </section>
+          <section className="table section">
+            <MuiThemeProvider
+              theme={
+                compare === false
+                  ? customThemeAnalyticsTable
+                  : customThemeAnalyticsTableCompareMode
+              }
+            >
+              <TableContainer
+                className={
+                  compare === false && selected.length <= 2
+                    ? classes.tableMain
+                    : compare === false && selected.length > 2
+                    ? classes.tableMainShowAll
+                    : showAll === true && selected.length <= 3
+                    ? classes.tableMainShowAll
+                    : showAll === true && selected.length > 3
+                    ? classes.tableMain
+                    : classes.tableMainCompare
                 }
               >
-                <TableContainer
-                  className={
-                    compare === false && selected.length <= 2
-                      ? classes.tableMain
-                      : compare === false && selected.length > 2
-                      ? classes.tableMainShowAll
-                      : showAll === true && selected.length <= 3
-                      ? classes.tableMainShowAll
-                      : showAll === true && selected.length > 3
-                      ? classes.tableMain
-                      : classes.tableMainCompare
-                  }
-                >
-                  <Table aria-label="simple table">
-                    <TableHeader
-                      onSelectAllClick={handleSelectAllClick}
-                      numSelected={selected.length}
-                      rowCount={displayData.length}
-                      comparisonState={compare}
-                      callBackToSort={(sortConfigurations: SortData) => {
-                        setFilter({
-                          ...filter,
-                          sortData: sortConfigurations,
-                        });
-                      }}
-                    />
-                    <TableBody>
-                      {displayData &&
-                        displayData
-                          .slice(0)
-                          .slice(
-                            page * rowsPerPage,
-                            page * rowsPerPage + rowsPerPage
-                          )
-                          .map((data: ScheduleWorkflow, index: number) => {
-                            const isItemSelected = isSelected(data.workflow_id);
-                            const labelId = `enhanced-table-checkbox-${index}`;
-                            return (
-                              <TableRow
-                                hover
-                                onClick={(event) => {
-                                  if (compare === false) {
-                                    handleClick(event, data.workflow_id);
-                                  }
-                                }}
-                                role="checkbox"
-                                aria-checked={isItemSelected}
-                                tabIndex={-1}
-                                key={data.workflow_id}
-                                selected={isItemSelected}
-                              >
-                                <TableData
-                                  data={data}
-                                  itemSelectionStatus={isItemSelected}
-                                  labelIdentifier={labelId}
-                                  comparisonState={compare}
-                                />
-                              </TableRow>
-                            );
-                          })}
-                      {emptyRows > 0 && (
-                        <TableRow style={{ height: 75 * emptyRows }}>
-                          <TableCell colSpan={6} />
-                        </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-                {compare === false || showAll === true ? (
-                  <TablePagination
-                    rowsPerPageOptions={[5, 10, 25, 50]}
-                    component="div"
-                    count={displayData.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onChangePage={handleChangePage}
-                    onChangeRowsPerPage={handleChangeRowsPerPage}
+                <Table aria-label="simple table">
+                  <TableHeader
+                    onSelectAllClick={handleSelectAllClick}
+                    numSelected={selected.length}
+                    rowCount={displayData.length}
+                    comparisonState={compare}
+                    callBackToSort={(sortConfigurations: SortData) => {
+                      setFilter({
+                        ...filter,
+                        sortData: sortConfigurations,
+                      });
+                    }}
                   />
-                ) : (
-                  <Paper
-                    elevation={0}
-                    className={classes.seeAllPaper}
-                    onClick={() => setShowAll(true)}
-                  >
-                    <Typography className={classes.seeAllText} variant="body2">
-                      {' '}
-                      <strong>
-                        Show all selected workflows ({selected.length}){' '}
-                      </strong>{' '}
-                    </Typography>
-                  </Paper>
-                )}
-              </MuiThemeProvider>
-            </section>
-          </div>
+                  <TableBody>
+                    {displayData &&
+                      displayData
+                        .slice(0)
+                        .slice(
+                          page * rowsPerPage,
+                          page * rowsPerPage + rowsPerPage
+                        )
+                        .map((data: ScheduleWorkflow, index: number) => {
+                          const isItemSelected = isSelected(data.workflow_id);
+                          const labelId = `enhanced-table-checkbox-${index}`;
+                          return (
+                            <TableRow
+                              hover
+                              onClick={(event) => {
+                                if (compare === false) {
+                                  handleClick(event, data.workflow_id);
+                                }
+                              }}
+                              role="checkbox"
+                              aria-checked={isItemSelected}
+                              tabIndex={-1}
+                              key={data.workflow_id}
+                              selected={isItemSelected}
+                            >
+                              <TableData
+                                data={data}
+                                itemSelectionStatus={isItemSelected}
+                                labelIdentifier={labelId}
+                                comparisonState={compare}
+                              />
+                            </TableRow>
+                          );
+                        })}
+                    {emptyRows > 0 && (
+                      <TableRow style={{ height: 75 * emptyRows }}>
+                        <TableCell colSpan={6} />
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              {compare === false || showAll === true ? (
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25, 50]}
+                  component="div"
+                  count={displayData.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onChangePage={handleChangePage}
+                  onChangeRowsPerPage={handleChangeRowsPerPage}
+                />
+              ) : (
+                <Paper
+                  elevation={0}
+                  className={classes.seeAllPaper}
+                  onClick={() => setShowAll(true)}
+                >
+                  <Typography className={classes.seeAllText} variant="body2">
+                    {' '}
+                    <strong>
+                      Show all selected workflows ({selected.length}){' '}
+                    </strong>{' '}
+                  </Typography>
+                </Paper>
+              )}
+            </MuiThemeProvider>
+          </section>
         </div>
-        {compare === true ? (
-          <Paper variant="outlined" className={classes.backgroundFix}>
-            <div className={classes.comparisonHeadingFix}>
-              <Typography className={classes.heading}>
-                <strong>Resilience score comparison</strong>
-              </Typography>
-              <Typography className={classes.description}>
-                Comparative results of selected workflow
-              </Typography>
-            </div>
-          </Paper>
-        ) : (
-          <div />
-        )}
       </div>
+      {compare === true ? (
+        <Paper variant="outlined" className={classes.backgroundFix}>
+          <div className={classes.comparisonHeadingFix}>
+            <Typography className={classes.heading}>
+              <strong>Resilience score comparison</strong>
+            </Typography>
+            <Typography className={classes.description}>
+              Comparative results of selected workflow
+            </Typography>
+          </div>
+        </Paper>
+      ) : (
+        <div />
+      )}
     </div>
   );
 };

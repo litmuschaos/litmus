@@ -5,7 +5,8 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     width: '100%',
     flexDirection: 'column',
-    paddingBottom: theme.spacing(5),
+    marginTop: theme.spacing(-7),
+    paddingBottom: theme.spacing(3),
     marginLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
     overflow: 'hidden',
@@ -31,10 +32,6 @@ const useStyles = makeStyles((theme) => ({
   tableFix: {
     marginTop: theme.spacing(1),
     width: '100%',
-  },
-
-  horizontalLine: {
-    marginBottom: theme.spacing(2),
   },
 
   headerSection: {
@@ -72,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(6.25),
     border: '1px solid rgba(0, 0, 0, 0.1)',
     backgroundColor: theme.palette.common.white,
-    minHeight: '31.22rem',
+    minHeight: '29.5rem',
     '&::-webkit-scrollbar': {
       width: '0.2em',
     },
