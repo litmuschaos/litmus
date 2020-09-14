@@ -87,15 +87,17 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
       workflowRunsPerWeek.push(groupedResults[week].length);
     });
 
+    const testsPassPercentage =
+      (experimentTestResultsArray.reduce((a, b) => a + b, 0) /
+        experimentTestResultsArray.length) *
+      100;
+
     setAnalyticsData({
       avgWorkflows:
         workflowRunsPerWeek.reduce((a, b) => a + b, 0) /
         workflowRunsPerWeek.length,
       maxWorkflows: Math.max(...workflowRunsPerWeek),
-      passPercentage:
-        (experimentTestResultsArray.reduce((a, b) => a + b, 0) /
-          experimentTestResultsArray.length) *
-        100,
+      passPercentage: testsPassPercentage >= 0 ? testsPassPercentage : 0,
     });
   };
 
@@ -127,8 +129,8 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
             max={analyticsData.maxWorkflows}
           />
           <PassedVsFailed
-            passed={analyticsData.passPercentage}
-            failed={100 - analyticsData.passPercentage}
+            passed={parseFloat(analyticsData.passPercentage.toFixed(2))}
+            failed={100 - parseFloat(analyticsData.passPercentage.toFixed(2))}
           />
           <AverageResilienceScore value={analyticsData.passPercentage} />
         </div>

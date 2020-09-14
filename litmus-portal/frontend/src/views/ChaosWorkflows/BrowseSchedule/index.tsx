@@ -92,6 +92,16 @@ const BrowseSchedule = () => {
     startDate: { sort: true, ascending: true },
   });
 
+  const getClusters = (searchingData: ScheduleWorkflow[]) => {
+    const uniqueList: string[] = [];
+    searchingData.forEach((data) => {
+      if (!uniqueList.includes(data.cluster_name)) {
+        uniqueList.push(data.cluster_name);
+      }
+    });
+    return uniqueList;
+  };
+
   const filteredData = data?.getScheduledWorkflows
     .filter((dataRow) =>
       dataRow.workflow_name.toLowerCase().includes(filter.search.toLowerCase())
@@ -99,7 +109,7 @@ const BrowseSchedule = () => {
     .filter((dataRow) =>
       filter.cluster === 'All'
         ? true
-        : dataRow.cluster_type
+        : dataRow.cluster_name
             .toLowerCase()
             .includes(filter.cluster.toLowerCase())
     )
@@ -165,8 +175,11 @@ const BrowseSchedule = () => {
               className={classes.selectText}
             >
               <MenuItem value="All">All</MenuItem>
-              <MenuItem value="Internal">Internal</MenuItem>
-              <MenuItem value="External">External</MenuItem>
+              {(data ? getClusters(data?.getScheduledWorkflows) : []).map(
+                (cluster: any) => (
+                  <MenuItem value={cluster}>{cluster}</MenuItem>
+                )
+              )}
             </Select>
           </FormControl>
         </div>

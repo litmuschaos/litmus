@@ -19,6 +19,7 @@ import {
 import { RootState } from '../../redux/reducers';
 import PopOver from '../../views/ChaosWorkflows/BrowseAnalytics/PopOver';
 import WorkflowRunsBarChart from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowRunsBarChart';
+import WorkflowDetailsTable from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowRunDetailsTable';
 import useStyles from './styles';
 
 interface WorkflowRunData {
@@ -27,6 +28,7 @@ interface WorkflowRunData {
   resilienceScore: number;
   testDate: string;
   workflowRunID: string;
+  workflowID: string;
 }
 
 interface SelectedWorkflowRunData {
@@ -39,9 +41,32 @@ interface SelectedWorkflowRunData {
   workflowRunID: string;
 }
 
+interface WorkFlowTests {
+  test_id: number;
+  test_name: string;
+  test_result: string;
+  weight?: number;
+  resulting_points?: number;
+  last_run: string;
+}
+
 const AnalyticsPage: React.FC = () => {
   const classes = useStyles();
-
+  const [popoverOpen, setPopoverOpen] = React.useState<boolean>(false);
+  const { pathname } = useLocation();
+  // Getting the workflow nome from the pathname
+  const workflowId = pathname.split('/')[3];
+  const { t } = useTranslation();
+  const [selectedWorkflowRunID, setSelectedWorkflowRunID] = React.useState<
+    string
+  >('');
+  const [
+    selectedWorkflowRunDetails,
+    setSelectedWorkflowRunDetails,
+  ] = React.useState<WorkFlowTests[]>();
+  const [workflowRunDataForPlot, setWorkflowRunDataForPlot] = React.useState<
+    WorkflowRunData[]
+  >([]);
   const [selectedWorkflowRunData, setSelectedWorkflowRunData] = React.useState<
     SelectedWorkflowRunData
   >({
@@ -54,21 +79,6 @@ const AnalyticsPage: React.FC = () => {
     workflowRunID: '',
   });
 
-  const [popoverOpen, setPopoverOpen] = React.useState<boolean>(false);
-
-  const setPopOverDisplay = (
-    selectedWorkflowRunDetails: SelectedWorkflowRunData,
-    visible: boolean
-  ) => {
-    setSelectedWorkflowRunData(selectedWorkflowRunDetails);
-    setPopoverOpen(visible);
-  };
-
-  const { pathname } = useLocation();
-  // Getting the workflow nome from the pathname
-  const workflowRunId = pathname.split('/')[3];
-  const { t } = useTranslation();
-
   // get ProjectID
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
@@ -80,9 +90,13 @@ const AnalyticsPage: React.FC = () => {
     { variables: { projectID: selectedProjectID } }
   );
 
-  const [workflowRunDataForPlot, setWorkflowRunDataForPlot] = React.useState<
-    WorkflowRunData[]
-  >([]);
+  const setPopOverDisplay = (
+    selectedWorkflowRunDetails: SelectedWorkflowRunData,
+    visible: boolean
+  ) => {
+    setSelectedWorkflowRunData(selectedWorkflowRunDetails);
+    setPopoverOpen(visible);
+  };
 
   useEffect(() => {
     const workflowRuns: WorkflowRunData[] = [];
@@ -90,7 +104,7 @@ const AnalyticsPage: React.FC = () => {
     const chaosDataArray: ChaosData[] = [];
 
     const selectedWorkflows = data?.getWorkFlowRuns.filter(
-      (w) => w.workflow_run_id === workflowRunId
+      (w) => w.workflow_id === workflowId
     );
 
     selectedWorkflows?.forEach((data) => {
@@ -122,7 +136,10 @@ const AnalyticsPage: React.FC = () => {
           experimentTestResultsArray.length) *
         100,
       testDate: chaosDataArray[0]?.lastUpdatedAt ?? '',
-      workflowRunID: workflowRunId,
+      workflowRunID: selectedWorkflows
+        ? selectedWorkflows[0].workflow_run_id
+        : '',
+      workflowID: workflowId,
     };
 
     const resDate = moment(
@@ -142,6 +159,7 @@ const AnalyticsPage: React.FC = () => {
         ) / 1000
       ).toString(),
       workflowRunID: 'edge_low',
+      workflowID: workflowId,
     };
 
     const edgeHigh = {
@@ -155,6 +173,7 @@ const AnalyticsPage: React.FC = () => {
         ) / 1000
       ).toString(),
       workflowRunID: 'edge_high',
+      workflowID: workflowId,
     };
 
     workflowRuns.push(edgeLow);
@@ -163,6 +182,36 @@ const AnalyticsPage: React.FC = () => {
 
     setWorkflowRunDataForPlot(workflowRuns);
   }, [data]);
+
+  useEffect(() => {
+    const workflowTestsArray: WorkFlowTests[] = [];
+    const selectedWorkflows = data?.getWorkFlowRuns.filter(
+      (w) => w.workflow_run_id === selectedWorkflowRunID
+    );
+    selectedWorkflows?.forEach((data) => {
+      try {
+        const executionData: ExecutionData = JSON.parse(data.execution_data);
+        const { nodes } = executionData;
+        let index: number = 1;
+        for (const key of Object.keys(nodes)) {
+          const node = nodes[key];
+          if (node.chaosData) {
+            const { chaosData } = node;
+            workflowTestsArray.push({
+              test_id: index,
+              test_name: chaosData.experimentName,
+              test_result: chaosData.experimentVerdict,
+              last_run: chaosData.lastUpdatedAt,
+            });
+          }
+          index += 1;
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    });
+    setSelectedWorkflowRunDetails(workflowTestsArray);
+  }, [selectedWorkflowRunID, data]);
 
   return (
     <Scaffold>
@@ -182,7 +231,20 @@ const AnalyticsPage: React.FC = () => {
               <WorkflowRunsBarChart
                 workflowRunData={workflowRunDataForPlot}
                 callBackToShowPopOver={setPopOverDisplay}
+                callBackToSelectWorkflowRun={(
+                  selectedWorkflowRunID: string
+                ) => {
+                  setSelectedWorkflowRunID(selectedWorkflowRunID);
+                }}
               />
+              {selectedWorkflowRunID !== '' ? (
+                <WorkflowDetailsTable
+                  workflowRunDetails={selectedWorkflowRunDetails ?? []}
+                  workflowID={workflowId}
+                />
+              ) : (
+                <div />
+              )}
               {popoverOpen ? (
                 <PopOver
                   testsPassed={selectedWorkflowRunData.testsPassed}

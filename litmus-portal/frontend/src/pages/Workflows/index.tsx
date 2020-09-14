@@ -2,11 +2,9 @@ import { AppBar, Typography } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
 import Tabs from '@material-ui/core/Tabs';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ButtonFilled from '../../components/Button/ButtonFilled';
 import { StyledTab, TabPanel } from '../../components/Tabs';
-import Center from '../../containers/layouts/Center';
 import Scaffold from '../../containers/layouts/Scaffold';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
@@ -15,10 +13,10 @@ import { RootState } from '../../redux/reducers';
 import BrowseSchedule from '../../views/ChaosWorkflows/BrowseSchedule';
 import BrowseWorkflow from '../../views/ChaosWorkflows/BrowseWorkflow';
 import Templates from '../../views/ChaosWorkflows/Templates';
+import WorkflowComparisonTable from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowComparisonTable';
 import useStyles from './styles';
 
 const Workflows = () => {
-  const { t } = useTranslation();
   const classes = useStyles();
   const workflowTabValue = useSelector(
     (state: RootState) => state.tabNumber.workflows
@@ -73,11 +71,7 @@ const Workflows = () => {
         <Templates />
       </TabPanel>
       <TabPanel value={workflowTabValue} index={3}>
-        <Center>
-          <Typography variant="h3" align="center">
-            {t('analytics.comingSoon')}
-          </Typography>
-        </Center>
+        <WorkflowComparisonTable />
       </TabPanel>
     </Scaffold>
   );

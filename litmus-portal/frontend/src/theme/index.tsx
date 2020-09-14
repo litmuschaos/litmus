@@ -36,6 +36,7 @@ declare module '@material-ui/core/styles/createPalette' {
       blue: string;
     };
     editorBackground: string;
+    paperBackground: string;
     resilienceScore: string;
     graphAnnotationsColor: string;
     graphHoverColors: {
@@ -60,6 +61,7 @@ declare module '@material-ui/core/styles/createPalette' {
       blue: string;
     };
     editorBackground?: string;
+    paperBackground?: string;
     resilienceScore?: string;
     graphAnnotationsColor?: string;
     graphHoverColors?: {
@@ -127,6 +129,7 @@ function customTheme(options: ThemeOptions) {
         },
       },
       editorBackground: '#1C1C1C',
+      paperBackground: '#E5E5E5',
       resilienceScore: '#F6B92B',
       graphAnnotationsColor: 'rgb(204,204,204)',
       graphHoverColors: {
@@ -191,6 +194,28 @@ const theme = customTheme({
       asterisk: {
         color: 'transparent',
       },
+    },
+  },
+});
+
+export const customThemeAnalyticsTable = createMuiTheme({
+  palette: {
+    secondary: {
+      light: '#2CCA8F',
+      main: '#2CCA8F',
+      dark: '#109B67',
+      contrastText: '#000000',
+    },
+  },
+});
+
+export const customThemeAnalyticsTableCompareMode = createMuiTheme({
+  palette: {
+    secondary: {
+      light: '#FFFFFF',
+      main: '#FFFFFF',
+      dark: '#FFFFFF',
+      contrastText: '#000000',
     },
   },
 });
