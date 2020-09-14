@@ -384,6 +384,10 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1),
     marginLeft: theme.spacing(-20),
   },
+
+  reliabilityDataTypography: {
+    fontWeight: 500,
+  },
 }));
 
 export const customTheme = createMuiTheme({

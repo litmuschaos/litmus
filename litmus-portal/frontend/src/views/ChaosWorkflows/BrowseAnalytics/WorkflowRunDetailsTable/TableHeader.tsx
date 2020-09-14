@@ -35,6 +35,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({
   callBackToClose,
 }) => {
   const classes = useStyles();
+  const [close, setClose] = useState<boolean>(false);
 
   // State for sorting
   const [sortData, setSortData] = useState<SortData>({
@@ -42,8 +43,6 @@ const TableHeader: React.FC<TableHeaderProps> = ({
     lastRun: { sort: true, ascending: false },
     testResult: { sort: false, ascending: true },
   });
-
-  const [close, setClose] = useState<boolean>(false);
 
   useEffect(() => {
     callBackToSort(sortData);

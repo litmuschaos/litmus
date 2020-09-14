@@ -8,7 +8,7 @@ import {
   Select,
   Button,
 } from '@material-ui/core';
-import React, { useRef, useState } from 'react';
+import React, { ChangeEvent, useRef, useState } from 'react';
 import SearchIcon from '@material-ui/icons/Search';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import useStyles from './styles';
@@ -28,9 +28,12 @@ interface RangeCallBackType {
 
 interface TableToolBarProps {
   searchToken: string;
-  handleSearch: any;
-  tests: any;
-  testResults: any;
+  handleSearch: (
+    event?: ChangeEvent<{ value: unknown }>,
+    token?: string
+  ) => void;
+  tests: string[];
+  testResults: string[];
   callbackToSetTest: TestCallBackType;
   callbackToSetRange: RangeCallBackType;
   callbackToSetResult: TestResultCallBackType;
@@ -51,15 +54,17 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
   callbackToSetResult,
 }) => {
   const classes = useStyles();
-
+  const [test, setTest] = React.useState<String>('');
+  const [testResult, setTestResult] = React.useState<String>('');
+  const dateRangeSelectorRef = useRef<HTMLButtonElement>(null);
   const [range, setRange] = React.useState<RangeType>({
     startDate: ' ',
     endDate: ' ',
   });
-
-  const [test, setTest] = React.useState<String>('');
-
-  const [testResult, setTestResult] = React.useState<String>('');
+  const [
+    isDateRangeSelectorPopoverOpen,
+    setDateRangeSelectorPopoverOpen,
+  ] = useState(false);
 
   const handleTestChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setTest(event.target.value as String);
@@ -72,13 +77,6 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
     setTestResult(event.target.value as String);
     callbackToSetResult(event.target.value as string);
   };
-
-  const [
-    isDateRangeSelectorPopoverOpen,
-    setDateRangeSelectorPopoverOpen,
-  ] = useState(false);
-
-  const dateRangeSelectorRef = useRef();
 
   const CallbackFromRangeSelector = (
     selectedStartDate: string,
@@ -94,8 +92,6 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
       }`}`
     );
   };
-
-  // useEffect(() => {}, [range]);
 
   return (
     <div className={classes.headerSection}>
@@ -117,7 +113,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         color="primary"
         className={classes.button}
         endIcon={<ArrowDropDownIcon />}
-        ref={dateRangeSelectorRef as any}
+        ref={dateRangeSelectorRef}
         aria-label="time range"
         aria-haspopup="true"
         onClick={() => setDateRangeSelectorPopoverOpen(true)}
@@ -156,7 +152,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           <MenuItem value="">
             <Typography className={classes.menuItem}>All</Typography>
           </MenuItem>
-          {testResults.map((testResult: any) => (
+          {testResults.map((testResult: string) => (
             <MenuItem value={testResult}>
               <Typography className={classes.menuItem}>{testResult}</Typography>
             </MenuItem>
@@ -183,7 +179,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           <MenuItem value="">
             <Typography className={classes.menuItem}>All</Typography>
           </MenuItem>
-          {tests.map((test: any) => (
+          {tests.map((test: string) => (
             <MenuItem value={test}>
               <Typography className={classes.menuItem}>{test}</Typography>
             </MenuItem>
@@ -192,7 +188,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
       </FormControl>
 
       <DateRangeSelector
-        anchorEl={dateRangeSelectorRef.current as any}
+        anchorEl={dateRangeSelectorRef.current as HTMLElement}
         isOpen={isDateRangeSelectorPopoverOpen}
         onClose={() => {
           setDateRangeSelectorPopoverOpen(false);

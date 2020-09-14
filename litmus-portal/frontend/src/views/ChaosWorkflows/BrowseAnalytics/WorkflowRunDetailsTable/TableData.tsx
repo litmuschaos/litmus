@@ -23,8 +23,8 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
   const classes = useStyles();
 
   // Function to convert UNIX time in format of DD MMM YYY
-  const formatDate = (date: any) => {
-    const updated = new Date(date * 1000).toString();
+  const formatDate = (date: string) => {
+    const updated = new Date(parseInt(date, 10) * 1000).toString();
     const resDate = moment(updated).format('DD MMM  HH:mm');
     return resDate;
   };
@@ -43,7 +43,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
 
       <TableCell>
         <div className={classes.reliabiltyData}>
-          <Typography style={{ fontWeight: 500 }}>
+          <Typography className={classes.reliabilityDataTypography}>
             {data.weight} Points
           </Typography>
           <div className={classes.progressBar}>

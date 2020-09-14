@@ -48,35 +48,26 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
   callBackToSelectWorkflowRun,
 }) => {
   const { palette } = useTheme();
-
   const classes = useStyles();
-
   const [plotData, setPlotData] = React.useState<any[]>([]);
-
   const [plotLayout, setPlotLayout] = React.useState<any>({});
-
   const [visible, setVisible] = React.useState<boolean>(false);
-
+  const [visibleIndex, setVisibleIndex] = React.useState<number>(0);
+  const [selected, setSelected] = React.useState<boolean>(false);
   const [visibleLocation, setVisibleLocation] = React.useState<{
     x: number;
     y: number;
   }>({ x: 0, y: 0 });
-
-  const [visibleIndex, setVisibleIndex] = React.useState<number>(0);
-
   const [colorsPassed, setColorsPassed] = React.useState<string[]>([
     palette.primary.dark,
     palette.primary.dark,
     palette.primary.dark,
   ]);
-
   const [colorsFailed, setColorsFailed] = React.useState<string[]>([
     palette.error.dark,
     palette.error.dark,
     palette.error.dark,
   ]);
-
-  const [selected, setSelected] = React.useState<boolean>(false);
 
   // Function to convert UNIX time in format of DD MMM YYY
   const formatDate = (date: string) => {

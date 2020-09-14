@@ -70,18 +70,6 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
   workflowID,
 }) => {
   const classes = useStyles();
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
-
-  // Apollo query to get the scheduled data
-  const { data, loading } = useQuery<Schedules, ScheduleDataVars>(
-    SCHEDULE_DETAILS,
-    {
-      variables: { projectID: selectedProjectID },
-    }
-  );
-
   const [close, setClose] = useState<boolean>(false);
   const [mainData, setMainData] = useState<workFlowTests[]>([]);
   const [displayData, setDisplayData] = useState<workFlowTests[]>([]);
@@ -102,6 +90,18 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
   const [testResults, setTestResults] = React.useState<string[]>([]);
   const [reload, setReload] = React.useState<boolean>(false);
   const [resilienceScore, setResilienceScore] = React.useState<number>(0);
+
+  const selectedProjectID = useSelector(
+    (state: RootState) => state.userData.selectedProjectID
+  );
+
+  // Apollo query to get the scheduled data
+  const { data, loading } = useQuery<Schedules, ScheduleDataVars>(
+    SCHEDULE_DETAILS,
+    {
+      variables: { projectID: selectedProjectID },
+    }
+  );
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -137,6 +137,67 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
     });
     setTestResults(uniqueList);
   };
+
+  useEffect(() => {
+    const processedWorkflowRunDetails: workFlowTests[] = [];
+    let experimentWeights: Weights[] = [];
+    const points: number[] = [];
+    const weights: number[] = [];
+
+    data?.getScheduledWorkflows.forEach((data) => {
+      try {
+        if (data.workflow_id === workflowID) {
+          experimentWeights = data.weightages;
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    });
+
+    workflowRunDetails.forEach((detail) => {
+      try {
+        experimentWeights.forEach((mappedWeight) => {
+          try {
+            if (detail.test_name === mappedWeight.experiment_name) {
+              processedWorkflowRunDetails.push({
+                test_id: detail.test_id,
+                test_name: mappedWeight.experiment_name,
+                test_result: detail.test_result,
+                weight: mappedWeight.weightage,
+                resulting_points:
+                  (detail.test_result === 'Pass' ? 1 : 0) *
+                  mappedWeight.weightage,
+                last_run: detail.last_run,
+              });
+              points.push(
+                (detail.test_result === 'Pass' ? 1 : 0) * mappedWeight.weightage
+              );
+              weights.push(mappedWeight.weightage);
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    });
+
+    setMainData(processedWorkflowRunDetails);
+    setDisplayData(processedWorkflowRunDetails);
+    setResilienceScore(
+      parseFloat(
+        (
+          (points.reduce((a, b) => a + b, 0) /
+            weights.reduce((a, b) => a + b, 0)) *
+          100
+        ).toFixed(2)
+      )
+    );
+    getTests(processedWorkflowRunDetails);
+    getTestResults(processedWorkflowRunDetails);
+    setReload(true);
+  }, [data, loading, workflowID, reload]);
 
   useEffect(() => {
     const payload: workFlowTests[] = mainData
@@ -207,68 +268,6 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
     getTests(payload);
     getTestResults(payload);
   }, [filter]);
-
-  useEffect(() => {
-    const processedWorkflowRunDetails: workFlowTests[] = [];
-    let experimentWeights: Weights[] = [];
-
-    data?.getScheduledWorkflows.forEach((data) => {
-      try {
-        if (data.workflow_id === workflowID) {
-          experimentWeights = data.weightages;
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    });
-
-    const points: number[] = [];
-    const weights: number[] = [];
-
-    workflowRunDetails.forEach((detail) => {
-      try {
-        experimentWeights.forEach((mappedWeight) => {
-          try {
-            if (detail.test_name === mappedWeight.experiment_name) {
-              processedWorkflowRunDetails.push({
-                test_id: detail.test_id,
-                test_name: mappedWeight.experiment_name,
-                test_result: detail.test_result,
-                weight: mappedWeight.weightage,
-                resulting_points:
-                  (detail.test_result === 'Pass' ? 1 : 0) *
-                  mappedWeight.weightage,
-                last_run: detail.last_run,
-              });
-              points.push(
-                (detail.test_result === 'Pass' ? 1 : 0) * mappedWeight.weightage
-              );
-              weights.push(mappedWeight.weightage);
-            }
-          } catch (error) {
-            console.error(error);
-          }
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    });
-
-    setMainData(processedWorkflowRunDetails);
-    setDisplayData(processedWorkflowRunDetails);
-    setResilienceScore(
-      parseFloat(
-        (
-          (points.reduce((a, b) => a + b, 0) /
-            weights.reduce((a, b) => a + b, 0)) *
-          100
-        ).toFixed(2)
-      )
-    );
-    getTests(processedWorkflowRunDetails);
-    getTestResults(processedWorkflowRunDetails);
-    setReload(true);
-  }, [data, loading, workflowID, reload]);
 
   return (
     <div>
@@ -348,7 +347,7 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
                               page * rowsPerPage,
                               page * rowsPerPage + rowsPerPage
                             )
-                            .map((data: any) => {
+                            .map((data: workFlowTests) => {
                               return (
                                 <TableRow
                                   hover

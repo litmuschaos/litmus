@@ -52,7 +52,21 @@ interface WorkFlowTests {
 
 const AnalyticsPage: React.FC = () => {
   const classes = useStyles();
-
+  const [popoverOpen, setPopoverOpen] = React.useState<boolean>(false);
+  const { pathname } = useLocation();
+  // Getting the workflow nome from the pathname
+  const workflowId = pathname.split('/')[3];
+  const { t } = useTranslation();
+  const [selectedWorkflowRunID, setSelectedWorkflowRunID] = React.useState<
+    string
+  >('');
+  const [
+    selectedWorkflowRunDetails,
+    setSelectedWorkflowRunDetails,
+  ] = React.useState<WorkFlowTests[]>();
+  const [workflowRunDataForPlot, setWorkflowRunDataForPlot] = React.useState<
+    WorkflowRunData[]
+  >([]);
   const [selectedWorkflowRunData, setSelectedWorkflowRunData] = React.useState<
     SelectedWorkflowRunData
   >({
@@ -65,7 +79,16 @@ const AnalyticsPage: React.FC = () => {
     workflowRunID: '',
   });
 
-  const [popoverOpen, setPopoverOpen] = React.useState<boolean>(false);
+  // get ProjectID
+  const selectedProjectID = useSelector(
+    (state: RootState) => state.userData.selectedProjectID
+  );
+
+  // Query to get workflows
+  const { data, loading, error } = useQuery<Workflow, WorkflowDataVars>(
+    WORKFLOW_DETAILS,
+    { variables: { projectID: selectedProjectID } }
+  );
 
   const setPopOverDisplay = (
     selectedWorkflowRunDetails: SelectedWorkflowRunData,
@@ -74,34 +97,6 @@ const AnalyticsPage: React.FC = () => {
     setSelectedWorkflowRunData(selectedWorkflowRunDetails);
     setPopoverOpen(visible);
   };
-
-  const { pathname } = useLocation();
-  // Getting the workflow nome from the pathname
-  const workflowId = pathname.split('/')[3];
-  const { t } = useTranslation();
-  const [selectedWorkflowRunID, setSelectedWorkflowRunID] = React.useState<
-    string
-  >('');
-
-  const [
-    selectedWorkflowRunDetails,
-    setSelectedWorkflowRunDetails,
-  ] = React.useState<WorkFlowTests[]>();
-
-  // get ProjectID
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
-
-  // Query to get workflows
-  const { data, error } = useQuery<Workflow, WorkflowDataVars>(
-    WORKFLOW_DETAILS,
-    { variables: { projectID: selectedProjectID } }
-  );
-
-  const [workflowRunDataForPlot, setWorkflowRunDataForPlot] = React.useState<
-    WorkflowRunData[]
-  >([]);
 
   useEffect(() => {
     const workflowRuns: WorkflowRunData[] = [];
@@ -186,7 +181,7 @@ const AnalyticsPage: React.FC = () => {
     workflowRuns.push(edgeHigh);
 
     setWorkflowRunDataForPlot(workflowRuns);
-  }, [data]);
+  }, [data, loading]);
 
   useEffect(() => {
     const workflowTestsArray: WorkFlowTests[] = [];
@@ -216,7 +211,7 @@ const AnalyticsPage: React.FC = () => {
       }
     });
     setSelectedWorkflowRunDetails(workflowTestsArray);
-  }, [selectedWorkflowRunID, data]);
+  }, [selectedWorkflowRunID, data, loading]);
 
   return (
     <Scaffold>
