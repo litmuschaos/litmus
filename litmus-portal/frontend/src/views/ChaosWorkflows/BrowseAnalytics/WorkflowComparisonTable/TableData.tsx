@@ -1,15 +1,16 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { TableCell, Typography, IconButton, Checkbox } from '@material-ui/core';
 import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import DateRangeOutlinedIcon from '@material-ui/icons/DateRangeOutlined';
 import moment from 'moment';
 import { history } from '../../../../redux/configureStore';
 import useStyles from './styles';
+import { ScheduleWorkflow } from '../../../../models/graphql/scheduleData';
 
 interface TableDataProps {
-  data: any;
-  itemSelectionStatus: any;
-  labelIdentifier: any;
+  data: ScheduleWorkflow;
+  itemSelectionStatus: boolean;
+  labelIdentifier: string;
   comparisonState: Boolean;
 }
 
@@ -21,11 +22,9 @@ const TableData: React.FC<TableDataProps> = ({
 }) => {
   const classes = useStyles();
 
-  const profileMenuRef = useRef();
-
   // Function to convert UNIX time in format of DD MMM YYY
-  const formatDate = (date: any) => {
-    const updated = new Date(date * 1000).toString();
+  const formatDate = (date: string) => {
+    const updated = new Date(parseInt(date, 10) * 1000).toString();
     const resDate = moment(updated).format('DD MMM YYYY');
     return resDate;
   };
@@ -71,7 +70,6 @@ const TableData: React.FC<TableDataProps> = ({
           <strong>See analytics</strong>
           <IconButton
             edge="end"
-            ref={profileMenuRef as any}
             aria-label="analytics for workflow id"
             aria-haspopup="true"
             onClick={() =>

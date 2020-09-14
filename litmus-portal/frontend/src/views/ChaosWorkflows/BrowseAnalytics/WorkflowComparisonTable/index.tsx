@@ -17,11 +17,11 @@ import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import moment from 'moment';
 import { useQuery } from '@apollo/client';
 import { useSelector } from 'react-redux';
+import useTheme from '@material-ui/core/styles/useTheme';
 import useStyles, { customTheme, customThemeCompare } from './styles';
 import TableData from './TableData';
 import TableHeader from './TableHeader';
 import TableToolBar from './TableToolbar';
-
 import {
   sortAlphaAsc,
   sortAlphaDesc,
@@ -55,15 +55,8 @@ interface Filter {
 }
 
 const WorkflowComparisonTable = () => {
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
-
-  // Apollo query to get the scheduled data
-  const { data } = useQuery<Schedules, ScheduleDataVars>(SCHEDULE_DETAILS, {
-    variables: { projectID: selectedProjectID },
-  });
-
+  const classes = useStyles();
+  const { palette } = useTheme();
   const [filter, setFilter] = React.useState<Filter>({
     range: { startDate: 'all', endDate: 'all' },
     selectedCluster: 'All',
@@ -74,10 +67,26 @@ const WorkflowComparisonTable = () => {
     },
     searchTokens: [''],
   });
-
   const [displayData, setDisplayData] = useState<ScheduleWorkflow[]>([]);
-
   const [clusters, setClusters] = React.useState<string[]>([]);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [selected, setSelected] = React.useState<string[]>([]);
+  const isSelected = (name: string) => selected.indexOf(name) !== -1;
+  const emptyRows =
+    rowsPerPage -
+    Math.min(rowsPerPage, displayData.length - page * rowsPerPage);
+  const [compare, setCompare] = React.useState<Boolean>(false);
+  const [showAll, setShowAll] = React.useState<Boolean>(true);
+
+  const selectedProjectID = useSelector(
+    (state: RootState) => state.userData.selectedProjectID
+  );
+
+  // Apollo query to get the scheduled data
+  const { data } = useQuery<Schedules, ScheduleDataVars>(SCHEDULE_DETAILS, {
+    variables: { projectID: selectedProjectID },
+  });
 
   const getClusters = (searchingData: ScheduleWorkflow[]) => {
     const uniqueList: string[] = [];
@@ -88,21 +97,6 @@ const WorkflowComparisonTable = () => {
     });
     setClusters(uniqueList);
   };
-
-  useEffect(() => {
-    setDisplayData(data ? data?.getScheduledWorkflows : []);
-    getClusters(data ? data?.getScheduledWorkflows : []);
-  }, [data]);
-
-  const classes = useStyles();
-
-  const [page, setPage] = React.useState(0);
-
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-  const [selected, setSelected] = React.useState<string[]>([]);
-
-  const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -115,13 +109,11 @@ const WorkflowComparisonTable = () => {
     setPage(0);
   };
 
-  const emptyRows =
-    rowsPerPage -
-    Math.min(rowsPerPage, displayData.length - page * rowsPerPage);
-
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelecteds = displayData.map((n: any) => n.workflow_id);
+      const newSelecteds = displayData.map(
+        (n: ScheduleWorkflow) => n.workflow_id
+      );
       setSelected(newSelecteds);
       return;
     }
@@ -147,8 +139,6 @@ const WorkflowComparisonTable = () => {
     setSelected(newSelected);
   };
 
-  const [compare, setCompare] = React.useState<Boolean>(false);
-
   const searchingDataRetriever = () => {
     let searchingData: ScheduleWorkflow[] = [];
     if (compare === false) {
@@ -167,8 +157,6 @@ const WorkflowComparisonTable = () => {
     return searchingData;
   };
 
-  const [showAll, setShowAll] = React.useState<Boolean>(true);
-
   const CallbackForComparing = (compareWorkflows: boolean) => {
     setCompare(compareWorkflows);
     const payload: ScheduleWorkflow[] = [];
@@ -183,6 +171,11 @@ const WorkflowComparisonTable = () => {
   };
 
   // const CallbackForExporting = (exportAnalytics: boolean) => {};
+
+  useEffect(() => {
+    setDisplayData(data ? data?.getScheduledWorkflows : []);
+    getClusters(data ? data?.getScheduledWorkflows : []);
+  }, [data]);
 
   useEffect(() => {
     const payload = searchingDataRetriever()
@@ -265,7 +258,7 @@ const WorkflowComparisonTable = () => {
                   className={classes.buttonBack}
                 >
                   <ExpandMoreTwoToneIcon
-                    htmlColor="#5B44BA"
+                    htmlColor={palette.secondary.dark}
                     className={classes.buttonBackStyle}
                   />
                 </IconButton>
@@ -367,7 +360,7 @@ const WorkflowComparisonTable = () => {
                             page * rowsPerPage,
                             page * rowsPerPage + rowsPerPage
                           )
-                          .map((data: any, index: any) => {
+                          .map((data: ScheduleWorkflow, index: number) => {
                             const isItemSelected = isSelected(data.workflow_id);
                             const labelId = `enhanced-table-checkbox-${index}`;
                             return (

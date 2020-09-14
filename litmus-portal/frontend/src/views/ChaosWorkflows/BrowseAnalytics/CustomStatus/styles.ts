@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(0.375),
     paddingBottom: theme.spacing(0.375),
     color: theme.palette.primary.dark,
-    backgroundColor: 'rgba(16, 155, 103, 0.1)',
+    backgroundColor: theme.palette.customColors.menuOption.active,
     verticalAlign: 'middle',
     display: 'inline-flex',
   },
@@ -31,6 +31,19 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
     marginTop: theme.spacing(0.2),
     display: 'block',
+    backgroundColor: theme.palette.secondary.contrastText,
+    width: '0.9375rem',
+    height: '0.9375rem',
+  },
+  cancelIcon: {
+    color: theme.palette.error.dark,
+    width: '0.9375rem',
+    height: '0.9375rem',
+  },
+  checkIcon: {
+    color: theme.palette.primary.dark,
+    width: '0.9375rem',
+    height: '0.9375rem',
   },
 }));
 

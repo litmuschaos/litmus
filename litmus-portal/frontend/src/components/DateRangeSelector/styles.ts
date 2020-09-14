@@ -5,10 +5,7 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.secondary.contrastText,
     borderRadius: theme.shape.borderRadius,
     width: '100%',
-    maxWidth: theme.spacing(70),
-    [theme.breakpoints.down('sm')]: {
-      maxWidth: theme.spacing(70),
-    },
+    maxWidth: '35rem',
   },
 
   dateRangeSelectorContainer: {
@@ -16,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     overflowY: 'auto',
-    maxHeight: theme.spacing(70),
+    maxHeight: '35rem',
   },
 }));
 

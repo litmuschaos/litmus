@@ -381,6 +381,11 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     overflow: 'hidden',
   },
+
+  rangeSelectorIcon: {
+    width: 10,
+    height: 10,
+  },
 }));
 
 export const customTheme = createMuiTheme({

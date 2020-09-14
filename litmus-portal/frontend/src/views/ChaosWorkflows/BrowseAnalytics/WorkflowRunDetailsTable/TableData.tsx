@@ -4,6 +4,7 @@ import moment from 'moment';
 import useStyles from './styles';
 import CustomStatus from '../CustomStatus/Status';
 import LinearProgressBar from '../../../../components/ProgressBar/LinearProgressBar';
+import AnalyticsLinearProgressBar from '../../../../components/ProgressBar/AnalyticsLinearProgressBar/index';
 
 interface workFlowTests {
   test_id: number;
@@ -46,7 +47,11 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
             {data.weight} Points
           </Typography>
           <div className={classes.progressBar}>
-            <LinearProgressBar value={data.weight ?? 0} />
+            <AnalyticsLinearProgressBar
+              value={data.weight ?? 0}
+              maxValue={10}
+              isInTable
+            />
           </div>
         </div>
       </TableCell>

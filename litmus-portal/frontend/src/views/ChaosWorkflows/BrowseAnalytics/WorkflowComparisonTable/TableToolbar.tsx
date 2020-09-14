@@ -11,10 +11,10 @@ import {
 } from '@material-ui/core';
 import React, { ChangeEvent, useRef, useState, useEffect } from 'react';
 import SearchIcon from '@material-ui/icons/Search';
-
 import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import useTheme from '@material-ui/core/styles/useTheme';
 import DateRangeSelector from '../../../../components/DateRangeSelector';
 import useStyles from './styles';
 
@@ -68,15 +68,18 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
   reInitialize,
 }) => {
   const classes = useStyles();
-
+  const { palette } = useTheme();
+  const [cluster, setCluster] = React.useState<String>('All');
+  const [compare, setCompare] = React.useState<Boolean>(false);
   const [range, setRange] = React.useState<RangeType>({
     startDate: ' ',
     endDate: ' ',
   });
-
-  const [cluster, setCluster] = React.useState<String>('All');
-
-  const [compare, setCompare] = React.useState<Boolean>(false);
+  const [
+    isDateRangeSelectorPopoverOpen,
+    setDateRangeSelectorPopoverOpen,
+  ] = useState(false);
+  const dateRangeSelectorRef = useRef<HTMLButtonElement>(null);
 
   const handleClusterChange = (
     event: React.ChangeEvent<{ value: unknown }>
@@ -84,13 +87,6 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
     setCluster(event.target.value as String);
     callbackToSetCluster(event.target.value as string);
   };
-
-  const [
-    isDateRangeSelectorPopoverOpen,
-    setDateRangeSelectorPopoverOpen,
-  ] = useState(false);
-
-  const dateRangeSelectorRef = useRef();
 
   const CallbackFromRangeSelector = (
     selectedStartDate: string,
@@ -106,8 +102,6 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
       }`}`
     );
   };
-
-  useEffect(() => {}, [range]);
 
   const handleClick = () => {
     setCompare(true);
@@ -126,16 +120,8 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
     setCluster('All');
   };
 
-  useEffect(() => {}, [compare]);
-
   useEffect(() => {
-    if (comparisonState === false) {
-      reInitializer();
-    }
-  }, []);
-
-  useEffect(() => {
-    if (reInitialize === true) {
+    if (comparisonState === false || reInitialize === true) {
       reInitializer();
     }
   }, []);
@@ -182,7 +168,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         onClick={() => {
           setDateRangeSelectorPopoverOpen(true);
         }}
-        ref={dateRangeSelectorRef as any}
+        ref={dateRangeSelectorRef}
         aria-label="time range"
         aria-haspopup="true"
       >
@@ -195,7 +181,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
                 range.endDate.split(' ')[2]
               } ${range.endDate.split(' ')[1]} ${range.endDate.split(' ')[3]}`}
 
-          <IconButton style={{ width: 10, height: 10 }}>
+          <IconButton className={classes.rangeSelectorIcon}>
             {isDateRangeSelectorPopoverOpen ? (
               <KeyboardArrowDownIcon />
             ) : (
@@ -220,7 +206,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           color="secondary"
         >
           <MenuItem value="All">All</MenuItem>
-          {clusters.map((cluster: any) => (
+          {clusters.map((cluster: string) => (
             <MenuItem value={cluster}>{cluster}</MenuItem>
           ))}
         </Select>
@@ -246,14 +232,14 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           className={classes.buttonCompare}
           onClick={handleExport}
         >
-          <DescriptionOutlinedIcon htmlColor="#5B44BA" />
+          <DescriptionOutlinedIcon htmlColor={palette.secondary.dark} />
           <Typography className={classes.dateRangeDefault}>
             Export PDF
           </Typography>
         </Button>
       )}
       <DateRangeSelector
-        anchorEl={dateRangeSelectorRef.current as any}
+        anchorEl={dateRangeSelectorRef.current as HTMLElement}
         isOpen={isDateRangeSelectorPopoverOpen}
         onClose={() => {
           setDateRangeSelectorPopoverOpen(false);

@@ -21,9 +21,9 @@ interface SortCallBackType {
 }
 
 interface TableHeaderProps {
-  onSelectAllClick: any;
-  numSelected: any;
-  rowCount: any;
+  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  numSelected: number;
+  rowCount: number;
   comparisonState: Boolean;
   callBackToSort: SortCallBackType;
 }

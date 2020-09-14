@@ -2,10 +2,10 @@
 import { Popover } from '@material-ui/core';
 import React, { useState } from 'react';
 import { subDays } from 'date-fns';
-
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import { DateRangePicker } from 'react-date-range';
+import { useTheme } from '@material-ui/core/styles';
 import useStyles from './styles';
 
 interface RangeCallBackType {
@@ -19,16 +19,18 @@ interface DateRangeSelectorProps {
   callbackToSetRange: RangeCallBackType;
 }
 
-function DateRangeSelector(props: DateRangeSelectorProps) {
-  const { anchorEl, isOpen, onClose, callbackToSetRange } = props;
-
+const DateRangeSelector: React.FC<DateRangeSelectorProps> = ({
+  anchorEl,
+  isOpen,
+  onClose,
+  callbackToSetRange,
+}) => {
   const classes = useStyles();
-
+  const { palette } = useTheme();
   const id = isOpen ? 'profile-popover' : undefined;
-
   const [state, setState] = useState([
     {
-      startDate: subDays(new Date(), 14),
+      startDate: subDays(new Date(), 7),
       endDate: new Date(),
       key: 'selection',
     },
@@ -69,13 +71,13 @@ function DateRangeSelector(props: DateRangeSelectorProps) {
             direction="vertical"
             scroll={{ enabled: true }}
             editableDateInputs
-            rangeColors={['#5B44BA']}
+            rangeColors={[palette.secondary.dark]}
             showMonthAndYearPickers
           />
         </div>
       </Popover>
     </div>
   );
-}
+};
 
 export default DateRangeSelector;
