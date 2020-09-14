@@ -68,7 +68,7 @@ const LoginPage = () => {
     <div className={classes.rootContainer}>
       <div className={classes.mainDiv}>
         <div className={classes.box}>
-          <img src="icons/LitmusLogo.png" alt="litmus logo" />
+          <img src="icons/LitmusLogo.svg" alt="litmus logo" />
           <Typography variant="h2" className={classes.heading}>
             <div dangerouslySetInnerHTML={{ __html: t('login.heading') }} />
           </Typography>

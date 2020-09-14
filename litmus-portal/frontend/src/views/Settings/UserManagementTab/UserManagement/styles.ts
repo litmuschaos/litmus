@@ -3,7 +3,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme: Theme) => ({
   UMDiv: {
     marginTop: theme.spacing(3.75),
-    marginLeft: theme.spacing(7.5),
+    marginLeft: theme.spacing(1),
   },
   headerText: {
     fontSize: '1.5625rem',
@@ -53,6 +53,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '6.125rem',
     border: `1px solid ${theme.palette.customColors.black(0.05)}`,
     marginBottom: theme.spacing(1.25),
+    backgroundColor: theme.palette.common.white,
     display: 'flex',
     justifyContent: 'space-between',
   },
