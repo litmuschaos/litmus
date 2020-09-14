@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom';
 import config from '../../config';
 import { CREATE_USER } from '../../graphql';
 import { CreateUserData } from '../../models/graphql/user';
+import useActions from '../../redux/actions';
+import * as UserActions from '../../redux/actions/user';
 import { RootState } from '../../redux/reducers';
 import getToken from '../../utils/getToken';
 import {
@@ -28,6 +30,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   const { t } = useTranslation();
 
   const userData = useSelector((state: RootState) => state.userData);
+  const userLoader = useActions(UserActions);
   const [activeStep, setActiveStep] = React.useState<number>(0);
   const isError = useRef(true);
   const isSuccess = useRef(false);
@@ -68,6 +71,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   // Submit entered data to /update endpoint
   const handleSubmit = () => {
     Object.assign(info, { password: values.password });
+    userLoader.updateUserDetails({ loader: true });
 
     fetch(`${config.auth.url}/update/details`, {
       method: 'POST',

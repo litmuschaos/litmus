@@ -67,20 +67,6 @@ const useStyles = makeStyles((theme) => ({
     opacity: 0.5,
   },
 
-  submitButton: {
-    display: 'inline',
-    backgroundColor: theme.palette.secondary.dark,
-    width: '6.875rem',
-    height: '2.8125rem',
-    color: theme.palette.common.white,
-    '&:hover': {
-      backgroundColor: theme.palette.secondary.dark,
-    },
-    marginRight: theme.spacing(2),
-    marginLeft: theme.spacing(2),
-    textTransform: 'none',
-  },
-
   descImg: {
     verticalAlign: 'middle',
     paddingLeft: theme.spacing(0.625),
