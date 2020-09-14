@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/types"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 	"github.com/sirupsen/logrus"
 )
 

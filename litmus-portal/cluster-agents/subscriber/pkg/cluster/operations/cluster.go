@@ -6,7 +6,7 @@ import (
 	"log"
 
 	yaml_converter "github.com/ghodss/yaml"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/k8s"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"

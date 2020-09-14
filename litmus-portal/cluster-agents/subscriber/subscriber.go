@@ -5,16 +5,16 @@ import (
 	"flag"
 	"os/signal"
 
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/cluster/events"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/cluster/operations"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/cluster/events"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/cluster/operations"
 
 	"log"
 	"os"
 
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/types"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/gql"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/k8s"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/gql"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 )
 
 var (
