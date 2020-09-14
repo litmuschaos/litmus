@@ -153,6 +153,7 @@ const theme = customTheme({
       },
       mark: {
         marginLeft: -6.8,
+        paddingTop: 1.8,
         backgroundImage: `url(${'./icons/arrow.svg'})`,
         backgroundColor: 'none',
         '&[data-index="9"]': {
@@ -167,13 +168,20 @@ const theme = customTheme({
         fontFamily: 'Ubuntu',
         fontSize: 15,
         marginTop: -5,
-        marginLeft: -45,
+        marginLeft: '-5%',
         color: 'rgba(0, 0, 0, 0.4)',
       },
       markLabelActive: {
         fontFamily: 'Ubuntu',
         fontSize: 15,
         color: '#FFFFFF',
+      },
+    },
+    MuiTab: {
+      root: {
+        '&$selected': {
+          color: '#5B44BA',
+        },
       },
     },
     MuiFormLabel: {

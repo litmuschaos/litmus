@@ -1,4 +1,5 @@
 import { AppBar, Typography } from '@material-ui/core';
+import useTheme from '@material-ui/core/styles/useTheme';
 import Tabs from '@material-ui/core/Tabs';
 import React from 'react';
 import { useSelector } from 'react-redux';
@@ -22,15 +23,17 @@ const Workflows = () => {
   );
   const tabs = useActions(TabActions);
 
+  const theme = useTheme();
+
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     tabs.changeWorkflowsTabs(newValue);
   };
 
   return (
     <Scaffold>
-      <section className="Header section">
+      <section>
         <div className={classes.header}>
-          <Typography variant="h4">Chaos Workflows</Typography>
+          <Typography variant="h3">Chaos Workflows</Typography>
           <div className={classes.scheduleBtn}>
             <ButtonFilled
               isPrimary={false}
@@ -45,8 +48,11 @@ const Workflows = () => {
         <Tabs
           value={workflowTabValue}
           onChange={handleChange}
-          indicatorColor="secondary"
-          textColor="secondary"
+          TabIndicatorProps={{
+            style: {
+              backgroundColor: theme.palette.secondary.dark,
+            },
+          }}
           variant="fullWidth"
         >
           <StyledTab label="Browse workflows" />

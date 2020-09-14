@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
+import InputField from '../../../components/InputField';
 import PredifinedWorkflows from '../../../components/PredifinedWorkflows';
 import workflowsList from '../../../components/PredifinedWorkflows/data';
 import Unimodal from '../../../containers/layouts/Unimodal';
@@ -11,6 +12,7 @@ import useActions from '../../../redux/actions';
 import * as TemplateSelectionActions from '../../../redux/actions/template';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
+import { validateWorkflowName } from '../../../utils/validate';
 import useStyles, { CssTextField } from './styles';
 
 // import { getWkfRunCount } from "../../utils";
@@ -28,6 +30,7 @@ const ChooseWorkflow: React.FC = () => {
   );
 
   const [open, setOpen] = React.useState(false);
+  const isSuccess = React.useRef<boolean>(false);
   const [workflowDetails, setWorkflowData] = useState({
     workflowName: 'Personal Workflow Name',
     workflowDesc: 'Personal Description',
@@ -52,11 +55,13 @@ const ChooseWorkflow: React.FC = () => {
   };
 
   const handleSave = () => {
-    workflow.setWorkflowDetails({
-      name: workflowDetails.workflowName,
-      description: workflowDetails.workflowDesc,
-    });
-    setOpen(false);
+    if (isSuccess.current) {
+      workflow.setWorkflowDetails({
+        name: workflowDetails.workflowName,
+        description: workflowDetails.workflowDesc,
+      });
+      setOpen(false);
+    }
   };
 
   /*
@@ -64,6 +69,10 @@ const ChooseWorkflow: React.FC = () => {
 		(state: RootState) => state
 	);
   */
+
+  if (validateWorkflowName(workflowDetails.workflowName) === false)
+    isSuccess.current = true;
+  else isSuccess.current = false;
 
   useEffect(() => {
     workflow.setWorkflowDetails({
@@ -80,9 +89,11 @@ const ChooseWorkflow: React.FC = () => {
   // Sets workflow details based on user clicks
   const selectWorkflow = (index: number) => {
     template.selectTemplate({ selectedTemplateID: index, isDisable: false });
+
     const timeStampBasedWorkflowName: string = `argowf-chaos-${
       workflowsList[index].title
     }-${Math.round(new Date().getTime() / 1000)}`;
+
     workflow.setWorkflowDetails({
       name: timeStampBasedWorkflowName,
       link: workflowsList[index].chaosWkfCRDLink,
@@ -177,23 +188,26 @@ const ChooseWorkflow: React.FC = () => {
         </Typography>
         <div className={classes.modalContainerBody}>
           <div className={classes.inputDiv}>
-            <div className={classes.inputArea}>
-              <CssTextField
-                id="filled-workflowname-input"
-                label="Workflow name"
-                InputProps={{
-                  disableUnderline: true,
-                  classes: {
-                    input: classes.resizeName,
-                  },
-                }}
-                data-cy="inputWorkflow"
-                className={classes.textfieldworkflowname}
-                onChange={WorkflowNameChangeHandler}
-                value={workflowDetails.workflowName}
-                autoFocus
-              />
-            </div>
+            <InputField
+              // id="filled-workflowname-input"
+              label="Workflow name"
+              styles={{
+                width: '100%',
+              }}
+              data-cy="inputWorkflow"
+              helperText={
+                validateWorkflowName(workflowDetails.workflowName)
+                  ? 'Should not contain spaces or upper case letters'
+                  : ''
+              }
+              success={isSuccess.current}
+              validationError={validateWorkflowName(
+                workflowDetails.workflowName
+              )}
+              // className={classes.textfieldworkflowname}
+              handleChange={WorkflowNameChangeHandler}
+              value={workflowDetails.workflowName}
+            />
             <div className={classes.inputAreaDescription}>
               <CssTextField
                 id="filled-workflowdescription-input"
@@ -225,7 +239,7 @@ const ChooseWorkflow: React.FC = () => {
             <div className={classes.saveButton}>
               <ButtonFilled
                 isPrimary={false}
-                isDisabled={false}
+                isDisabled={!isSuccess.current}
                 handleClick={() => handleSave()}
               >
                 <div>Save</div>
