@@ -21,8 +21,6 @@ const TableData: React.FC<TableDataProps> = ({
 }) => {
   const classes = useStyles();
 
-  // const [isProfilePopoverOpen, setProfilePopoverOpen] = useState(false);
-
   const profileMenuRef = useRef();
 
   // Function to convert UNIX time in format of DD MMM YYY
@@ -79,12 +77,6 @@ const TableData: React.FC<TableDataProps> = ({
             onClick={() =>
               history.push(`/workflows/analytics/${data.workflow_id}`)
             }
-            /*  className={
-              isProfilePopoverOpen
-                ? classes.buttonPositionExpand
-                : classes.buttonPositionClose
-            }
-            */
           >
             <ExpandMoreTwoToneIcon htmlColor="black" />
           </IconButton>
