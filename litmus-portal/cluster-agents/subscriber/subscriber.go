@@ -6,8 +6,6 @@ import (
 	"os/signal"
 
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/cluster/events"
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/cluster/operations"
-
 	"log"
 	"os"
 
@@ -32,7 +30,7 @@ func init() {
 	flag.Parse()
 
 	var isConfirmed bool
-	isConfirmed, newKey, err = operations.IsClusterConfirmed(clusterData)
+	isConfirmed, newKey, err = k8s.IsClusterConfirmed(clusterData)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -55,7 +53,7 @@ func init() {
 		if responseInterface.Data.ClusterConfirm.IsClusterConfirmed == true {
 			log.Println("cluster confirmed")
 			clusterData["KEY"] = responseInterface.Data.ClusterConfirm.NewClusterKey
-			operations.ClusterRegister(clusterData)
+			k8s.ClusterRegister(clusterData)
 		} else {
 			log.Fatal("Cluster not confirmed")
 		}
