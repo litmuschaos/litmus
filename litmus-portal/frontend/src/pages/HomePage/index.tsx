@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { Button, Card, CardActionArea, Typography } from '@material-ui/core';
+import Backdrop from '@material-ui/core/Backdrop/Backdrop';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,8 +24,8 @@ import * as TemplateSelectionActions from '../../redux/actions/template';
 import * as UserActions from '../../redux/actions/user';
 import configureStore, { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
-import useStyles from './style';
 import ReturningHome from '../../views/Home/ReturningHome/index';
+import useStyles from './style';
 
 const CreateWorkflowCard: React.FC = () => {
   const { t } = useTranslation();
@@ -68,12 +69,12 @@ const HomePage: React.FC = () => {
   const { persistor } = configureStore();
 
   // Query to get user details
-  const { data, loading } = useQuery<
-    CurrentUserDetails,
-    CurrentUserDedtailsVars
-  >(GET_USER, {
-    variables: { username: userData.username },
-  });
+  const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
+    GET_USER,
+    {
+      variables: { username: userData.username },
+    }
+  );
 
   const name: string = data?.getUser.name ?? '';
 
@@ -108,6 +109,7 @@ const HomePage: React.FC = () => {
           userRole: 'Owner',
           selectedProjectName: isOwnerOfProject.name,
         });
+        user.updateUserDetails({ loader: false });
         // Flush data to persistor immediately
         persistor.flush();
       }
@@ -116,8 +118,10 @@ const HomePage: React.FC = () => {
 
   return (
     <div>
-      {loading ? (
-        <Loader />
+      {userData.loader ? (
+        <Backdrop open className={classes.backdrop}>
+          <Loader />
+        </Backdrop>
       ) : (
         <Scaffold>
           {isOpen ? <WelcomeModal handleIsOpen={handleModal} /> : <></>}
