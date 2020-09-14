@@ -7,7 +7,7 @@ import (
 
 	v1alpha13 "github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
 	v1alpha12 "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/types"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"

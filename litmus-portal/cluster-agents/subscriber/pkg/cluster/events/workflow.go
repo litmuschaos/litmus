@@ -7,8 +7,8 @@ import (
 	"github.com/argoproj/argo/pkg/client/clientset/versioned"
 	"github.com/argoproj/argo/pkg/client/informers/externalversions"
 	litmusV1alpha1 "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/k8s"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/types"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/tools/cache"
 )
