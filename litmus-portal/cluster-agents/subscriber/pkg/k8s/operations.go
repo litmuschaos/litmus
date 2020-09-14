@@ -1,4 +1,4 @@
-package operations
+package k8s
 
 import (
 	"context"
@@ -6,7 +6,6 @@ import (
 	"log"
 
 	yaml_converter "github.com/ghodss/yaml"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/k8s"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
@@ -32,7 +31,7 @@ var (
 
 // IsClusterConfirmed checks if the config map with "is_cluster_confirmed" is true or not.
 func IsClusterConfirmed(clusterData map[string]string) (bool, string, error) {
-	clientset, err := k8s.GetGenericK8sClient()
+	clientset, err := GetGenericK8sClient()
 	if err != nil {
 		return false, "", err
 	}
@@ -51,7 +50,7 @@ func IsClusterConfirmed(clusterData map[string]string) (bool, string, error) {
 
 // ClusterRegister function creates litmus-portal config map in the litmus namespace
 func ClusterRegister(clusterData map[string]string) (bool, error) {
-	clientset, err := k8s.GetGenericK8sClient()
+	clientset, err := GetGenericK8sClient()
 	if err != nil {
 		return false, err
 	}
@@ -148,7 +147,7 @@ func ClusterOperations(manifest string, requestType string) (*unstructured.Unstr
 	}
 
 	// Getting dynamic and discovery client
-	discoveryClient, dynamicClient, err := k8s.GetDynamicAndDiscoveryClient()
+	discoveryClient, dynamicClient, err := GetDynamicAndDiscoveryClient()
 	if err != nil {
 		return nil, err
 	}

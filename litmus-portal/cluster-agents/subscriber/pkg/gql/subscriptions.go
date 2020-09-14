@@ -3,9 +3,10 @@ package gql
 import (
 	"encoding/json"
 
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
+
 	"github.com/gorilla/websocket"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/cluster/operations"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/types"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 	"github.com/sirupsen/logrus"
 
 	"log"
@@ -60,7 +61,7 @@ func ClusterConnect(clusterData map[string]string) {
 		var r types.RawData
 		err = json.Unmarshal(message, &r)
 		if err != nil {
-			log.Fatal(err)
+			logrus.WithError(err).Fatal("error un-marshaling request payload")
 		}
 		if r.Type == "connection_ack" {
 			log.Print("Cluster Connect Established, Listening....")
@@ -69,7 +70,7 @@ func ClusterConnect(clusterData map[string]string) {
 			continue
 		}
 		if r.Payload.Errors != nil {
-			log.Fatal("ERROR: ", string(message))
+			logrus.Fatal("gql error : ", string(message))
 		}
 
 		if strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType) == "logs" {
@@ -78,16 +79,18 @@ func ClusterConnect(clusterData map[string]string) {
 			}
 			err = json.Unmarshal([]byte(r.Payload.Data.ClusterConnect.Action.ExternalData.(string)), &podRequest)
 			if err != nil {
-				logrus.WithError(err).Fatal("error reading cluster-action request [external-data]")
+				logrus.WithError(err).Print("error reading cluster-action request [external-data]")
+				continue
 			}
 			// send pod logs
 			logrus.Print("LOG REQUEST ", podRequest)
 			SendPodLogs(clusterData, podRequest)
 		} else if strings.Index("create update delete get", strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType)) >= 0 {
 			logrus.Print("WORKFLOW REQUEST ", r.Payload.Data.ClusterConnect.Action)
-			_, err = operations.ClusterOperations(r.Payload.Data.ClusterConnect.Action.K8SManifest, r.Payload.Data.ClusterConnect.Action.RequestType)
+			_, err = k8s.ClusterOperations(r.Payload.Data.ClusterConnect.Action.K8SManifest, r.Payload.Data.ClusterConnect.Action.RequestType)
 			if err != nil {
-				logrus.WithError(err).Fatal("error performing cluster operation")
+				logrus.WithError(err).Print("error performing cluster operation")
+				continue
 			}
 		}
 	}

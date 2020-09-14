@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/cluster/logs"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/types"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/cluster/logs"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 )
 
 // process event data into proper format acceptable by gql
