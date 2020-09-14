@@ -2,10 +2,10 @@ package gql
 
 import (
 	"encoding/json"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 
 	"github.com/gorilla/websocket"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/cluster/operations"
-	"github.com/litmuschaos/litmus/litmus-portal/backend/subscriber/pkg/types"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 	"github.com/sirupsen/logrus"
 
 	"log"
@@ -85,7 +85,7 @@ func ClusterConnect(clusterData map[string]string) {
 			SendPodLogs(clusterData, podRequest)
 		} else if strings.Index("create update delete get", strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType)) >= 0 {
 			logrus.Print("WORKFLOW REQUEST ", r.Payload.Data.ClusterConnect.Action)
-			_, err = operations.ClusterOperations(r.Payload.Data.ClusterConnect.Action.K8SManifest, r.Payload.Data.ClusterConnect.Action.RequestType)
+			_, err = k8s.ClusterOperations(r.Payload.Data.ClusterConnect.Action.K8SManifest, r.Payload.Data.ClusterConnect.Action.RequestType)
 			if err != nil {
 				logrus.WithError(err).Fatal("error performing cluster operation")
 			}

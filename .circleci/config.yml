@@ -78,7 +78,7 @@ jobs:
       - run:
           name: Build subscriber docker image
           command: docker build . -f build/Dockerfile -t ${REPONAME}/${SUBSCRIBER_IMAGE}:${IMGTAG}
-          working_directory: ~/project/litmus-portal/backend/subscriber
+          working_directory: ~/project/litmus-portal/cluster-agents/subscriber
       - run:
           name: Save subscriber docker image
           command: docker save -o /tmp/workspace/${SUBSCRIBER_IMAGE}.tar ${REPONAME}/${SUBSCRIBER_IMAGE}:${IMGTAG}
