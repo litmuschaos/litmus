@@ -10,6 +10,8 @@ const useStyles = makeStyles((theme) => ({
 
   backdrop: {
     background: theme.palette.input.disabled,
+    display: 'flex',
+    flexDirection: 'column',
   },
 
   root: {

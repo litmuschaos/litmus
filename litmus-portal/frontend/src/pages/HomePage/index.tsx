@@ -10,6 +10,7 @@ import InfoFilledWrap from '../../components/InfoFilled';
 import Loader from '../../components/Loader';
 import QuickActionCard from '../../components/QuickActionCard';
 import WelcomeModal from '../../components/WelcomeModal';
+import Center from '../../containers/layouts/Center';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { GET_USER } from '../../graphql';
 import {
@@ -121,6 +122,11 @@ const HomePage: React.FC = () => {
       {userData.loader ? (
         <Backdrop open className={classes.backdrop}>
           <Loader />
+          <Center>
+            <Typography variant="h4" align="center">
+              Updating User Details
+            </Typography>
+          </Center>
         </Backdrop>
       ) : (
         <Scaffold>
