@@ -5,6 +5,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { history } from '../../redux/configureStore';
@@ -33,6 +34,7 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
 const SideBar: React.FC = () => {
   const classes = useStyles();
   const userRole = useSelector((state: RootState) => state.userData.userRole);
+  const { t } = useTranslation();
 
   return (
     <Drawer
@@ -51,7 +53,7 @@ const SideBar: React.FC = () => {
             className={classes.logo}
           />
           <Typography className={classes.litmusHome} variant="body1">
-            Litmus
+            {t('sidebar.title')}
           </Typography>
         </div>
       </Link>

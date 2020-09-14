@@ -1,14 +1,16 @@
-import { Typography, Button } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import * as React from 'react';
-import useStyles from './styles';
-import { history } from '../../redux/configureStore';
+import { useTranslation } from 'react-i18next';
 import Scaffold from '../../containers/layouts/Scaffold';
+import { history } from '../../redux/configureStore';
+import useStyles from './styles';
 
 const ErrorPage = () => {
   const classes = useStyles();
   React.useEffect(() => {
     window.scrollTo(0, 0);
   });
+  const { t } = useTranslation();
   return (
     <Scaffold>
       <div className={classes.mainHeader}>
@@ -17,19 +19,19 @@ const ErrorPage = () => {
             <div className={classes.headerDiv}>
               <Typography className={classes.mainText}>
                 <strong>
-                  Whoops!
+                  {t('error.whoops')}
                   <br />
-                  This page is unavailable
+                  {t('error.pageUnavailable')}
                 </strong>
               </Typography>
               <Typography className={classes.descText}>
-                The page does not exist, or please try again later.
+                {t('error.pageDoesNotExist')}
               </Typography>
               <Button
                 onClick={() => history.push('/')}
                 className={classes.backBtn}
               >
-                Go back home
+                {t('error.backHome')}
               </Button>
             </div>
             <div className={classes.imgDiv}>
