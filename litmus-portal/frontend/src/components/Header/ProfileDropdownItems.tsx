@@ -11,6 +11,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import config from '../../config';
 import { GET_USER } from '../../graphql';
@@ -57,6 +58,7 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
   const tabs = useActions(TabActions);
   const id = isOpen ? 'profile-popover' : undefined;
   const initials = name ? userAvatar(name) : userAvatar(name);
+  const { t } = useTranslation();
 
   // Query to get user details
   const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
@@ -168,7 +170,7 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
                   history.push('/settings');
                 }}
               >
-                Edit Profile
+                {t('header.profileDropdown.editProfile')}
               </Button>
             )}
 
@@ -178,7 +180,7 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
               onClick={logOut}
               className={classes.buttonSignout}
             >
-              Log out
+              {t('header.profileDropdown.logOut')}
             </Button>
           </div>
         </div>
@@ -187,7 +189,7 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
           {switchableProjects.length === 0 ? (
             <ListItem>
               <ListItemText>
-                You haven&apos;t created any projects yet.
+                {t('header.profileDropdown.noProjects')}
               </ListItemText>
             </ListItem>
           ) : (
