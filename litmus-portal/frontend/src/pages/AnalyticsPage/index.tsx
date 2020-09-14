@@ -87,7 +87,10 @@ const AnalyticsPage: React.FC = () => {
   // Query to get workflows
   const { data, loading, error } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
-    { variables: { projectID: selectedProjectID } }
+    {
+      variables: { projectID: selectedProjectID },
+      fetchPolicy: 'cache-and-network',
+    }
   );
 
   const setPopOverDisplay = (

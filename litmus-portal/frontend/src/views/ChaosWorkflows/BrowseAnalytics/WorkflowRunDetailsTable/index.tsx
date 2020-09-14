@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import {
   Typography,
-  Divider,
   TablePagination,
   Table,
   TableBody,
@@ -75,13 +74,13 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
   const [displayData, setDisplayData] = useState<workFlowTests[]>([]);
   const [filter, setFilter] = React.useState<Filter>({
     range: { startDate: 'all', endDate: 'all' },
-    selectedTest: '',
+    selectedTest: 'All',
     sortData: {
       name: { sort: false, ascending: true },
       lastRun: { sort: true, ascending: false },
       testResult: { sort: false, ascending: true },
     },
-    selectedTestResult: '',
+    selectedTestResult: 'All',
     searchTokens: [''],
   });
   const [page, setPage] = React.useState(0);
@@ -100,6 +99,7 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
     SCHEDULE_DETAILS,
     {
       variables: { projectID: selectedProjectID },
+      fetchPolicy: 'cache-and-network',
     }
   );
 
@@ -211,12 +211,12 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
         );
       })
       .filter((data) => {
-        return filter.selectedTest === ''
+        return filter.selectedTest === 'All'
           ? true
           : data.test_name === filter.selectedTest;
       })
       .filter((data) => {
-        return filter.selectedTestResult === ''
+        return filter.selectedTestResult === 'All'
           ? true
           : data.test_result === filter.selectedTestResult;
       })
@@ -274,128 +274,117 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
       {close ? (
         <div />
       ) : (
-        <div>
-          <Divider variant="middle" className={classes.horizontalLine} />
-          <div className={classes.root}>
-            <div className={classes.tableFix}>
-              <div>
-                <section className="Heading section">
-                  <TableToolBar
-                    searchToken={filter.searchTokens[0]}
-                    handleSearch={(
-                      event: React.ChangeEvent<{ value: unknown }> | undefined,
-                      token: string | undefined
-                    ) =>
-                      setFilter({
-                        ...filter,
-                        searchTokens: (event !== undefined
-                          ? ((event.target as HTMLInputElement).value as string)
-                          : token || ''
-                        )
-                          .toLowerCase()
-                          .split(' ')
-                          .filter((s) => s !== ''),
-                      })
-                    }
-                    tests={tests}
-                    testResults={testResults}
-                    callbackToSetTest={(testName: string) => {
-                      setFilter({
-                        ...filter,
-                        selectedTest: testName,
-                      });
-                    }}
-                    callbackToSetResult={(testResult: string) => {
-                      setFilter({
-                        ...filter,
-                        selectedTestResult: testResult,
-                      });
-                    }}
-                    callbackToSetRange={(
-                      selectedStartDate: string,
-                      selectedEndDate: string
-                    ) => {
-                      setFilter({
-                        ...filter,
-                        range: {
-                          startDate: selectedStartDate,
-                          endDate: selectedEndDate,
-                        },
-                      });
-                    }}
-                  />
-                </section>
-                <section className="table section">
-                  <TableContainer className={classes.tableMain}>
-                    <Table aria-label="simple table">
-                      <TableHeader
-                        callBackToSort={(sortConfigurations: SortData) => {
-                          setFilter({
-                            ...filter,
-                            sortData: sortConfigurations,
-                          });
-                        }}
-                        callBackToClose={(close: boolean) => {
-                          setClose(close);
-                        }}
-                      />
-                      <TableBody>
-                        {displayData &&
-                          displayData
-                            .slice(0)
-                            .slice(
-                              page * rowsPerPage,
-                              page * rowsPerPage + rowsPerPage
-                            )
-                            .map((data: workFlowTests) => {
-                              return (
-                                <TableRow
-                                  hover
-                                  tabIndex={-1}
-                                  key={data.test_id}
-                                >
-                                  <TableData data={data} />
-                                </TableRow>
-                              );
-                            })}
-                        {emptyRows > 0 && (
-                          <TableRow style={{ height: 75 * emptyRows }}>
-                            <TableCell colSpan={6} />
-                          </TableRow>
-                        )}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                  <div className={classes.paginationArea}>
-                    <div className={classes.toolTipGroup}>
-                      <Typography
-                        className={classes.resultText}
-                        display="inline"
-                      >
-                        Resilience Score{' '}
-                        <InfoTooltip value="Resilience Score" />
-                      </Typography>
-                      <Typography
-                        className={classes.reliabilityScore}
-                        display="inline"
-                      >
-                        <strong>{resilienceScore}%</strong>
-                      </Typography>
-                    </div>
-
-                    <TablePagination
-                      rowsPerPageOptions={[5, 10, 25, 50]}
-                      component="div"
-                      count={displayData.length}
-                      rowsPerPage={rowsPerPage}
-                      page={page}
-                      onChangePage={handleChangePage}
-                      onChangeRowsPerPage={handleChangeRowsPerPage}
-                      className={classes.pagination}
+        <div className={classes.root}>
+          <div className={classes.tableFix}>
+            <div>
+              <section className="Heading section">
+                <TableToolBar
+                  searchToken={filter.searchTokens[0]}
+                  handleSearch={(
+                    event: React.ChangeEvent<{ value: unknown }> | undefined,
+                    token: string | undefined
+                  ) =>
+                    setFilter({
+                      ...filter,
+                      searchTokens: (event !== undefined
+                        ? ((event.target as HTMLInputElement).value as string)
+                        : token || ''
+                      )
+                        .toLowerCase()
+                        .split(' ')
+                        .filter((s) => s !== ''),
+                    })
+                  }
+                  tests={tests}
+                  testResults={testResults}
+                  callbackToSetTest={(testName: string) => {
+                    setFilter({
+                      ...filter,
+                      selectedTest: testName,
+                    });
+                  }}
+                  callbackToSetResult={(testResult: string) => {
+                    setFilter({
+                      ...filter,
+                      selectedTestResult: testResult,
+                    });
+                  }}
+                  callbackToSetRange={(
+                    selectedStartDate: string,
+                    selectedEndDate: string
+                  ) => {
+                    setFilter({
+                      ...filter,
+                      range: {
+                        startDate: selectedStartDate,
+                        endDate: selectedEndDate,
+                      },
+                    });
+                  }}
+                />
+              </section>
+              <section className="table section">
+                <TableContainer className={classes.tableMain}>
+                  <Table aria-label="simple table">
+                    <TableHeader
+                      callBackToSort={(sortConfigurations: SortData) => {
+                        setFilter({
+                          ...filter,
+                          sortData: sortConfigurations,
+                        });
+                      }}
+                      callBackToClose={(close: boolean) => {
+                        setClose(close);
+                      }}
                     />
+                    <TableBody>
+                      {displayData &&
+                        displayData
+                          .slice(0)
+                          .slice(
+                            page * rowsPerPage,
+                            page * rowsPerPage + rowsPerPage
+                          )
+                          .map((data: workFlowTests) => {
+                            return (
+                              <TableRow hover tabIndex={-1} key={data.test_id}>
+                                <TableData data={data} />
+                              </TableRow>
+                            );
+                          })}
+                      {emptyRows > 0 && (
+                        <TableRow style={{ height: 75 * emptyRows }}>
+                          <TableCell colSpan={6} />
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                <div className={classes.paginationArea}>
+                  <div className={classes.toolTipGroup}>
+                    <Typography className={classes.resultText} display="inline">
+                      Resilience Score <InfoTooltip value="Resilience Score" />
+                    </Typography>
+                    <Typography
+                      className={classes.reliabilityScore}
+                      display="inline"
+                    >
+                      <strong>{resilienceScore}%</strong>
+                    </Typography>
                   </div>
-                </section>
-              </div>
+
+                  <TablePagination
+                    rowsPerPageOptions={[5, 10, 25, 50]}
+                    component="div"
+                    count={displayData.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onChangePage={handleChangePage}
+                    onChangeRowsPerPage={handleChangeRowsPerPage}
+                    className={classes.pagination}
+                  />
+                </div>
+              </section>
             </div>
           </div>
         </div>

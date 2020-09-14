@@ -56,8 +56,8 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
   callbackToSetResult,
 }) => {
   const classes = useStyles();
-  const [test, setTest] = React.useState<String>('');
-  const [testResult, setTestResult] = React.useState<String>('');
+  const [test, setTest] = React.useState<String>('All');
+  const [testResult, setTestResult] = React.useState<String>('All');
   const dateRangeSelectorRef = useRef<HTMLButtonElement>(null);
   const [range, setRange] = React.useState<RangeType>({
     startDate: ' ',
@@ -178,86 +178,6 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         </Select>
       </FormControl>
 
-      {/*
-      <Button
-        variant="outlined"
-        color="primary"
-        className={classes.button}
-        endIcon={<ArrowDropDownIcon />}
-        ref={dateRangeSelectorRef}
-        aria-label="time range"
-        aria-haspopup="true"
-        onClick={() => setDateRangeSelectorPopoverOpen(true)}
-      >
-        {range.startDate === ' ' ? (
-          <Typography className={classes.dateRangeDefault}>
-            Select Period
-          </Typography>
-        ) : (
-          <Typography className={classes.dateRange}>
-            {`${range.startDate.split(' ')[2]} ${
-              range.startDate.split(' ')[1]
-            } ${range.startDate.split(' ')[3]} - ${
-              range.endDate.split(' ')[2]
-            } ${range.endDate.split(' ')[1]} ${range.endDate.split(' ')[3]}`}
-          </Typography>
-        )}
-      </Button>
-
-      <FormControl variant="outlined" className={classes.select1}>
-        <InputLabel htmlFor="outlined-selection" className={classes.formLabel}>
-          Test Result
-        </InputLabel>
-        <Select
-          label="Target cluster"
-          value={testResult}
-          onChange={handleTestResultChange}
-          inputProps={{
-            name: 'name',
-            id: 'outlined-selection',
-          }}
-          className={classes.formSize}
-          color="secondary"
-          disableUnderline
-        >
-          <MenuItem value="">
-            <Typography className={classes.menuItem}>All</Typography>
-          </MenuItem>
-          {testResults.map((testResult: string) => (
-            <MenuItem value={testResult}>
-              <Typography className={classes.menuItem}>{testResult}</Typography>
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-
-      <FormControl variant="outlined" className={classes.select1}>
-        <InputLabel htmlFor="outlined-selection" className={classes.formLabel}>
-          Test
-        </InputLabel>
-        <Select
-          label="Target cluster"
-          value={test}
-          onChange={handleTestChange}
-          inputProps={{
-            name: 'name',
-            id: 'outlined-selection',
-          }}
-          className={classes.formSize}
-          color="secondary"
-          disableUnderline
-        >
-          <MenuItem value="">
-            <Typography className={classes.menuItem}>All</Typography>
-          </MenuItem>
-          {tests.map((test: string) => (
-            <MenuItem value={test}>
-              <Typography className={classes.menuItem}>{test}</Typography>
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-          */}
       <DateRangeSelector
         anchorEl={dateRangeSelectorRef.current as HTMLElement}
         isOpen={isDateRangeSelectorPopoverOpen}

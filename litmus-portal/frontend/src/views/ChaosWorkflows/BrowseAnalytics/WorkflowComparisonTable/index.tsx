@@ -86,6 +86,7 @@ const WorkflowComparisonTable = () => {
   // Apollo query to get the scheduled data
   const { data } = useQuery<Schedules, ScheduleDataVars>(SCHEDULE_DETAILS, {
     variables: { projectID: selectedProjectID },
+    fetchPolicy: 'cache-and-network',
   });
 
   const getClusters = (searchingData: ScheduleWorkflow[]) => {

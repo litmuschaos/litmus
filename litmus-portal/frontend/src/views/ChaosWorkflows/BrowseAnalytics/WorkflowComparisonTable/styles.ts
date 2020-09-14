@@ -53,12 +53,12 @@ const useStyles = makeStyles((theme) => ({
   search: {
     marginRight: 'auto',
     marginLeft: theme.spacing(6.25),
-    borderBottom: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
     width: '17.5rem',
   },
 
   calIcon: {
-    color: theme.palette.customColors.black(0.4),
+    color: 'rgba(0, 0, 0, 0.4)',
     paddingTop: theme.spacing(0.5),
     marginLeft: theme.spacing(2.75),
   },
@@ -70,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
 
   tableMain: {
     marginTop: theme.spacing(6.25),
-    border: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    border: '1px solid rgba(0, 0, 0, 0.1)',
     backgroundColor: theme.palette.common.white,
     minHeight: '31.22rem',
     '&::-webkit-scrollbar': {
@@ -86,7 +86,7 @@ const useStyles = makeStyles((theme) => ({
 
   tableMainCompare: {
     marginTop: theme.spacing(-0.25),
-    border: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    border: '1px solid rgba(0, 0, 0, 0.1)',
     backgroundColor: theme.palette.common.white,
     height: '15rem',
     overflow: 'hidden',
@@ -94,7 +94,7 @@ const useStyles = makeStyles((theme) => ({
 
   tableMainShowAll: {
     marginTop: theme.spacing(6.25),
-    border: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    border: '1px solid rgba(0, 0, 0, 0.1)',
     backgroundColor: theme.palette.common.white,
     height: '29.75rem',
     '&::-webkit-scrollbar': {
@@ -121,7 +121,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   workflowName: {
-    borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    borderRight: '1px solid rgba(0, 0, 0, 0.1)',
     fontSize: '0.8rem',
   },
 
@@ -200,19 +200,19 @@ const useStyles = makeStyles((theme) => ({
   },
 
   markerIconDown: {
-    color: theme.palette.customColors.black(0.4),
+    color: 'rgba(0, 0, 0, 0.4)',
     paddingTop: theme.spacing(0.5),
     margin: 0,
   },
 
   markerIconUp: {
-    color: theme.palette.customColors.black(0.4),
+    color: 'rgba(0, 0, 0, 0.4)',
     paddingTop: theme.spacing(0.5),
     margin: 0,
   },
 
   seeAllText: {
-    color: theme.palette.customColors.black(0.6),
+    color: 'rgba(0, 0, 0, 0.6)',
     fontWeight: 500,
   },
 

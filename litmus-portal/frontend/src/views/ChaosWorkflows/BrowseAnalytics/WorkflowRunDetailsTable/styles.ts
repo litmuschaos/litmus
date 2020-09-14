@@ -6,8 +6,8 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     flexDirection: 'column',
     paddingBottom: theme.spacing(5),
-    marginLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
+    marginTop: theme.spacing(-37),
     overflow: 'hidden',
   },
 
@@ -16,12 +16,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   tableFix: {
-    marginTop: theme.spacing(1),
-    width: '100%',
-  },
-
-  horizontalLine: {
-    marginBottom: theme.spacing(2),
+    width: '97%',
   },
 
   headerSection: {
