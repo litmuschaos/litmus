@@ -158,14 +158,16 @@ type ScheduledWorkflows struct {
 	WorkflowID          string        `json:"workflow_id"`
 	WorkflowManifest    string        `json:"workflow_manifest"`
 	CronSyntax          string        `json:"cronSyntax"`
+	ClusterName         string        `json:"cluster_name"`
 	WorkflowName        string        `json:"workflow_name"`
 	WorkflowDescription string        `json:"workflow_description"`
 	Weightages          []*Weightages `json:"weightages"`
-	IsCustomWorkflow    string        `json:"isCustomWorkflow"`
+	IsCustomWorkflow    bool          `json:"isCustomWorkflow"`
 	UpdatedAt           string        `json:"updated_at"`
 	CreatedAt           string        `json:"created_at"`
 	ProjectID           string        `json:"project_id"`
 	ClusterID           string        `json:"cluster_id"`
+	ClusterType         string        `json:"cluster_type"`
 }
 
 type UpdateUserInput struct {
@@ -196,14 +198,15 @@ type WeightagesInput struct {
 }
 
 type WorkflowRun struct {
-	WorkflowRunID string `json:"workflow_run_id"`
-	WorkflowID    string `json:"workflow_id"`
-	ClusterName   string `json:"cluster_name"`
-	LastUpdated   string `json:"last_updated"`
-	ProjectID     string `json:"project_id"`
-	ClusterID     string `json:"cluster_id"`
-	WorkflowName  string `json:"workflow_name"`
-	ExecutionData string `json:"execution_data"`
+	WorkflowRunID string  `json:"workflow_run_id"`
+	WorkflowID    string  `json:"workflow_id"`
+	ClusterName   string  `json:"cluster_name"`
+	LastUpdated   string  `json:"last_updated"`
+	ProjectID     string  `json:"project_id"`
+	ClusterID     string  `json:"cluster_id"`
+	WorkflowName  string  `json:"workflow_name"`
+	ClusterType   *string `json:"cluster_type"`
+	ExecutionData string  `json:"execution_data"`
 }
 
 type WorkflowRunInput struct {

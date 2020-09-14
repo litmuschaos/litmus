@@ -1,4 +1,4 @@
-module github.com/litmuschaos/litmus/litmus-portal/backend/workflow-agent
+module github.com/litmuschaos/litmus/litmus-portal/cluster-agents/workflow-agent
 
 go 1.14
 

@@ -107,6 +107,7 @@ type WorkflowRun{
   project_id: ID!
   cluster_id: ID!
   workflow_name: String!
+  cluster_type: String
   execution_data: String!
 }
 
@@ -149,14 +150,16 @@ type ScheduledWorkflows {
 	workflow_id: String!
 	workflow_manifest: String!
 	cronSyntax: String!
+	cluster_name: String!
 	workflow_name: String!
 	workflow_description: String!
 	weightages: [weightages!]!
-	isCustomWorkflow: String!
+	isCustomWorkflow: Boolean!
 	updated_at: String!
 	created_at: String!
 	project_id: ID!
 	cluster_id: ID!
+	cluster_type: String!
 }
 
 type Query{
