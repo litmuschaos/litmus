@@ -40,14 +40,20 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(0.625),
   },
   tableMain: {
-    marginTop: theme.spacing(6.25),
+    marginTop: theme.spacing(4.25),
     border: `1px solid ${theme.palette.customColors.black(0.07)}`,
     backgroundColor: theme.palette.common.white,
     height: '29.220rem',
   },
   tableHead: {
-    opacity: 1,
     height: '4.6875rem',
+    '& p': {
+      fontWeight: 'bold',
+      fontSize: 13,
+    },
+    '& *': {
+      backgroundColor: theme.palette.common.white,
+    },
   },
   headerStatus: {
     paddingLeft: theme.spacing(10),
@@ -93,6 +99,15 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(3.75),
   },
   expInfo: {
+    fontWeight: 400,
+    fontSize: 13,
+  },
+  expInfoActive: {
+    color: theme.palette.primary.dark,
+    fontWeight: 400,
+    fontSize: 13,
+  },
+  expInfoActiveIcon: {
     color: theme.palette.primary.dark,
   },
   showExp: {

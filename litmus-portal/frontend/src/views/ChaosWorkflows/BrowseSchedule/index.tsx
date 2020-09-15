@@ -193,7 +193,7 @@ const BrowseSchedule = () => {
                 {/* WorkFlow Name */}
                 <TableCell className={classes.workflowName}>
                   <div style={{ display: 'flex', flexDirection: 'row' }}>
-                    <Typography style={{ paddingLeft: 30, paddingTop: 10 }}>
+                    <Typography style={{ paddingLeft: 30, paddingTop: 12 }}>
                       Schedule Name
                     </Typography>
                     <div className={classes.sortDiv}>
@@ -230,7 +230,7 @@ const BrowseSchedule = () => {
                 {/* Starting Date */}
                 <TableCell className={classes.headerStatus}>
                   <div style={{ display: 'flex', flexDirection: 'row' }}>
-                    <Typography style={{ paddingTop: 10 }}>
+                    <Typography style={{ paddingTop: 12 }}>
                       Starting Date
                     </Typography>
                     <div className={classes.sortDiv}>

@@ -51,13 +51,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   dateIcon: {
     backgroundColor: theme.palette.primary.dark,
-    width: 20,
+    width: 23,
     height: 22,
-  },
-  dateRangeIcon: {
-    color: theme.palette.secondary.contrastText,
-    width: 20,
-    height: 22,
+    paddingLeft: theme.spacing(0.375),
+    marginTop: theme.spacing(0.25),
   },
   resilienceScoreIcon: {
     backgroundColor: theme.palette.resilienceScore,
@@ -67,7 +64,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   timeLineIcon: {
     color: theme.palette.secondary.contrastText,
     width: 15,
-    marginLeft: 2,
+    marginLeft: theme.spacing(0.25),
     height: 18,
   },
   passedIcon: {

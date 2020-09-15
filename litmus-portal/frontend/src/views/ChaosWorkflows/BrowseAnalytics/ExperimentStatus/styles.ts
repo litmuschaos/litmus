@@ -5,6 +5,10 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.dark,
     backgroundColor: theme.palette.customColors.menuOption.active,
   },
+  awaited: {
+    color: theme.palette.warning.main,
+    backgroundColor: theme.palette.warning.light,
+  },
   failed: {
     color: theme.palette.error.dark,
     backgroundColor: theme.palette.error.light,

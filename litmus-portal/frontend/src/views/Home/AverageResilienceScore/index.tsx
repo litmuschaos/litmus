@@ -67,7 +67,7 @@ const AverageResilienceScore: React.FC<AverageResilienceScoreProps> = ({
         </Box>
       </Box>
       <Typography variant="body2" className={classes.testResultDesc}>
-        Based on tests result
+        Based on results of completed tests
       </Typography>
     </Paper>
   );
