@@ -129,7 +129,7 @@ const TableData: React.FC<TableDataProps> = ({
                   </div>
                   <div>
                     <Typography className={classes.menuDesc}>
-                      Can make changes in the project
+                      Can view the project
                     </Typography>
                   </div>
                 </div>

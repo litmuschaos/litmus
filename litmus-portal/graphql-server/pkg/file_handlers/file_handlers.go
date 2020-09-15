@@ -15,6 +15,7 @@ import (
 //FileHandler dynamically generates the manifest file and sends it as a response
 func FileHandler(w http.ResponseWriter, r *http.Request) {
 	serviceAddr := os.Getenv("SERVICE_ADDRESS")
+	subscriberImage := os.Getenv("SUBSCRIBER_IMAGE")
 	vars := mux.Vars(r)
 	token := vars["key"]
 
@@ -34,7 +35,7 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 
 	if !reqCluster.IsRegistered {
 		var respData []byte
-		respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, serviceAddr+"/query", "manifests/subscriber.yml")
+		respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, serviceAddr+"/query", subscriberImage, "manifests/subscriber.yml")
 
 		if err != nil {
 			log.Print("ERROR", err)
