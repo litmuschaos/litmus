@@ -65,6 +65,10 @@ spec:
               value: "http://litmusportal-server-service:9002"
             - name: SELF_CLUSTER
               value: "false"
+            - name: SUBSCRIBER_IMAGE
+              value: "litmuschaos/litmusportal-subscriber:ci"
+            - name: DEPLOYER_IMAGE
+              value: "litmuschaos/litmusportal-self-deployer:ci"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always

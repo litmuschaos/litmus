@@ -16,6 +16,7 @@ import (
 )
 
 func CreateDeployment(namespace, token string) (*appsv1.Deployment, error) {
+	deployerImage := os.Getenv("DEPLOYER_IMAGE")
 	cfg, err := GetKubeConfig()
 	clientset, err := kubernetes.NewForConfig(cfg)
 	if err != nil {
@@ -46,7 +47,7 @@ func CreateDeployment(namespace, token string) (*appsv1.Deployment, error) {
 					Containers: []apiv1.Container{
 						{
 							Name:            "deployer",
-							Image:           "litmuschaos/litmusportal-self-deployer:ci",
+							Image:           deployerImage,
 							ImagePullPolicy: "Always",
 							Env: []apiv1.EnvVar{
 								{
