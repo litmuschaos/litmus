@@ -18,8 +18,7 @@ export default [
       'The experiment aims to verify resiliency of applications whose replicas may be ' +
       'evicted on account on nodes turning unschedulable (Not Ready) due to lack of CPU resources.',
     recommendation:
-      'Check whether the application is resilient to the CPU hog, once the experiment (job) is completed.' +
-      'The ChaosResult resource name is derived like this: <ChaosEngine-Name>-<ChaosExperiment-Name>',
+      'Check whether the application is resilient to the CPU hog, once the experiment (job) is completed.',
     experimentinfo:
       'Node CPU Hog can be effected using the chaos library: litmus, ' +
       'The desired chaos library can be selected by setting litmus as value for the env variable LIB',
@@ -47,10 +46,7 @@ export default [
       'MEMORY_PERCENTAGE(out of 100). Application implies services. Can be reframed as: Tests application ' +
       'resiliency upon replica evictions caused due to lack of Memory resources ',
     recommendation:
-      'This Chaos Experiment can be triggered by creating a ChaosEngine resource on the cluster. ' +
-      'To understand the values to provide in a ChaosEngine specification, refer Getting Started Follow ' +
-      'the steps in the sections below to create the chaosServiceAccount,' +
-      'prepare the ChaosEngine & execute the experiment.',
+      'Check whether the application is resilient to the Memory hog, once the experiment (job) is completed',
     experimentinfo:
       'Provide the application info in spec.appinfo Provide the auxiliary applications ' +
       'info (ns & labels) in spec.auxiliaryAppInfo',
@@ -75,10 +71,7 @@ export default [
       'either due to expected/undesired processes thereby testing how the overall application ' +
       'stack behaves when this occurs.',
     recommendation:
-      'Check whether the application stack is resilient to CPU spikes on the app replica, ' +
-      'once the experiment (job) is completed. ' +
-      'The ChaosResult resource name is derived like this: <ChaosEngine-Name>-<ChaosExperiment-Name> ' +
-      'kubectl describe chaosresult nginx-chaos-pod-cpu-hog -n <application-namespace>',
+      'Check whether the application stack is resilient to CPU spikes on the app replica, once the experiment (job) is completed.',
     experimentinfo:
       'Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. ' +
       'This example consists of the minimum necessary role permissions to execute the experiment.',
@@ -102,10 +95,7 @@ export default [
       'megabytes. It simulates conditions where app pods experience Memory spikes either due to ' +
       'expected/undesired processes thereby testing how the overall application stack behaves when this occurs.',
     recommendation:
-      'Check whether the application stack is resilient to Memory spikes on the app replica, ' +
-      'once the experiment (job) is completed. The ChaosResult resource name is derived ' +
-      'like this: <ChaosEngine-Name>-<ChaosExperiment-Name>. ' +
-      'kubectl describe chaosresult nginx-chaos-pod-memory-hog -n <application-namespace>',
+      'Check whether the application stack is resilient to Memory spikes on the app replica, once the experiment (job) is completed.',
     experimentinfo:
       'Pod Memory can be effected using the chaos library: litmus',
   },
@@ -129,9 +119,7 @@ export default [
       'of the application The pod delete by Powerfulseal is only supporting single pod ' +
       'failure (kill_count = 1).',
     recommendation:
-      'Check whether the application is resilient to the pod failure, once the experiment (job) is completed. ' +
-      'The ChaosResult resource name is derived like this: <ChaosEngine-Name>-<ChaosExperiment-Name>. ' +
-      'kubectl describe chaosresult nginx-chaos-pod-delete -n <application-namespace>',
+      'Check whether the application is resilient to the pod failure, once the experiment (job) is completed.',
     experimentinfo:
       'Provide the application info in spec.appinfo Override the experiment tunables if desired ' +
       'in experiments.spec.components.env ',
