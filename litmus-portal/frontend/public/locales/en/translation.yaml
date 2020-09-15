@@ -95,7 +95,7 @@ workflowUnderground:
   heading: 'Click on test to see detailed log of your workflow'
 
 community:
-  heading: 'Daily Insights'
+  heading: 'Litmus Insights'
   headingDesc: 'Stats for the Litmus community in the last 24 hours'
   analyticDesc: 'Periodic growth of Litmus'
   statsHeading: 'Litmus users around the world:'
