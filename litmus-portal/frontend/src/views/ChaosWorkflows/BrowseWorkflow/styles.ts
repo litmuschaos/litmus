@@ -140,6 +140,9 @@ const useStyles = makeStyles((theme) => ({
   btnText: {
     paddingLeft: theme.spacing(1.625),
   },
+  paddedTypography: {
+    paddingTop: theme.spacing(1.5),
+  },
 }));
 
 export default useStyles;

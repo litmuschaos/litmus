@@ -53,8 +53,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.primary.dark,
     width: 23,
     height: 22,
-    paddingLeft: 3,
-    marginTop: 2,
+    paddingLeft: theme.spacing(0.375),
+    marginTop: theme.spacing(0.25),
   },
   resilienceScoreIcon: {
     backgroundColor: theme.palette.resilienceScore,
@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   timeLineIcon: {
     color: theme.palette.secondary.contrastText,
     width: 15,
-    marginLeft: 2,
+    marginLeft: theme.spacing(0.25),
     height: 18,
   },
   passedIcon: {
