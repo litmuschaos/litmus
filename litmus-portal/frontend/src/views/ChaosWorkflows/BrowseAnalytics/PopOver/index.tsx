@@ -4,7 +4,6 @@ import moment from 'moment';
 import CheckCircleSharpIcon from '@material-ui/icons/CheckCircleSharp';
 import CancelSharpIcon from '@material-ui/icons/CancelSharp';
 import TimelineSharpIcon from '@material-ui/icons/TimelineSharp';
-import DateRangeSharpIcon from '@material-ui/icons/DateRangeSharp';
 import useStyles from './styles';
 
 interface PopOverProps {
@@ -40,7 +39,7 @@ const PopOver: React.FC<PopOverProps> = ({
         <div className={classes.date}>
           <Typography className={classes.testDate}>
             <Avatar className={`${classes.miniIcons} ${classes.dateIcon}`}>
-              <DateRangeSharpIcon className={classes.dateRangeIcon} />
+              <img src="/icons/calenderAnalytics.svg" alt="Calender" />
             </Avatar>
             Tests date: {formatDate(testDate)}
           </Typography>

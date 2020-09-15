@@ -59,14 +59,20 @@ interface Filter {
   searchTokens: string[];
 }
 
+interface ReloadAnalyticsType {
+  (reload: boolean): void;
+}
+
 interface WorkflowRunDetailsTableProps {
   workflowRunDetails: workFlowTests[];
   workflowID: string;
+  reloadAnalytics: ReloadAnalyticsType;
 }
 
 const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
   workflowRunDetails,
   workflowID,
+  reloadAnalytics,
 }) => {
   const classes = useStyles();
   const [close, setClose] = useState<boolean>(false);
@@ -320,6 +326,7 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
                       }}
                       callBackToClose={(close: boolean) => {
                         setClose(close);
+                        reloadAnalytics(close);
                       }}
                     />
                     <TableBody>
@@ -348,7 +355,8 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
                 <div className={classes.paginationArea}>
                   <div className={classes.toolTipGroup}>
                     <Typography className={classes.resultText} display="inline">
-                      Resilience Score <InfoTooltip value="Resilience Score" />
+                      Resilience Score{' '}
+                      <InfoTooltip value="Resilience Score is the weighted average of all tests in the workflow." />
                     </Typography>
                     <Typography
                       className={classes.reliabilityScore}

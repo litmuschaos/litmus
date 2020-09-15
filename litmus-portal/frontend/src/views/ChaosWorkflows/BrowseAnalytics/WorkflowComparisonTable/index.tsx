@@ -9,14 +9,11 @@ import {
   TableCell,
   TableContainer,
   TableRow,
-  IconButton,
   Paper,
 } from '@material-ui/core';
-import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import moment from 'moment';
 import { useQuery } from '@apollo/client';
 import { useSelector } from 'react-redux';
-import useTheme from '@material-ui/core/styles/useTheme';
 import {
   customThemeAnalyticsTable,
   customThemeAnalyticsTableCompareMode,
@@ -59,7 +56,6 @@ interface Filter {
 
 const WorkflowComparisonTable = () => {
   const classes = useStyles();
-  const { palette } = useTheme();
   const [filter, setFilter] = React.useState<Filter>({
     range: { startDate: 'all', endDate: 'all' },
     selectedCluster: 'All',
@@ -248,8 +244,8 @@ const WorkflowComparisonTable = () => {
 
   return (
     <div className={classes.root}>
-      <div className={classes.analyticsDiv}>
-        <Typography className={classes.heading}>
+      {/*   <div className={classes.analyticsDiv}>
+          <Typography className={classes.heading}>
           <strong>
             {' '}
             {compare === true ? (
@@ -277,7 +273,7 @@ const WorkflowComparisonTable = () => {
         </Typography>
         <br />
       </div>
-
+          */}
       <div className={classes.tableFix}>
         <div>
           <section className="Heading section">

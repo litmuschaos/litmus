@@ -82,14 +82,14 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
         <Button onClick={handlePopOverClick} style={{ textTransform: 'none' }}>
           {isOpen ? (
             <div className={classes.expDiv}>
-              <Typography className={classes.expInfo}>
+              <Typography className={classes.expInfoActive}>
                 <strong>Show Experiment</strong>
               </Typography>
-              <KeyboardArrowDownIcon className={classes.expInfo} />
+              <KeyboardArrowDownIcon className={classes.expInfoActiveIcon} />
             </div>
           ) : (
             <div className={classes.expDiv}>
-              <Typography>
+              <Typography className={classes.expInfo}>
                 <strong>Show Experiment</strong>
               </Typography>
               <ChevronRightIcon />

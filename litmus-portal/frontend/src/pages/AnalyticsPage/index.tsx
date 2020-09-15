@@ -116,9 +116,14 @@ const AnalyticsPage: React.FC = () => {
           if (node.chaosData) {
             const { chaosData } = node;
             chaosDataArray.push(chaosData);
-            experimentTestResultsArray.push(
-              chaosData.experimentVerdict === 'Pass' ? 1 : 0
-            );
+            if (
+              chaosData.experimentVerdict === 'Pass' ||
+              chaosData.experimentVerdict === 'Fail'
+            ) {
+              experimentTestResultsArray.push(
+                chaosData.experimentVerdict === 'Pass' ? 1 : 0
+              );
+            }
           }
         }
       } catch (error) {
@@ -127,14 +132,18 @@ const AnalyticsPage: React.FC = () => {
     });
 
     const workflowRunOnce = {
-      testsPassed: experimentTestResultsArray.reduce((a, b) => a + b, 0),
-      testsFailed:
-        experimentTestResultsArray.length -
-        experimentTestResultsArray.reduce((a, b) => a + b, 0),
-      resilienceScore:
-        (experimentTestResultsArray.reduce((a, b) => a + b, 0) /
-          experimentTestResultsArray.length) *
-        100,
+      testsPassed: experimentTestResultsArray.length
+        ? experimentTestResultsArray.reduce((a, b) => a + b, 0)
+        : 0,
+      testsFailed: experimentTestResultsArray.length
+        ? experimentTestResultsArray.length -
+          experimentTestResultsArray.reduce((a, b) => a + b, 0)
+        : 0,
+      resilienceScore: experimentTestResultsArray.length
+        ? (experimentTestResultsArray.reduce((a, b) => a + b, 0) /
+            experimentTestResultsArray.length) *
+          100
+        : 0,
       testDate: chaosDataArray[0]?.lastUpdatedAt ?? '',
       workflowRunID: selectedWorkflows
         ? selectedWorkflows[0].workflow_run_id
@@ -154,7 +163,7 @@ const AnalyticsPage: React.FC = () => {
       resilienceScore: 0,
       testDate: Math.round(
         parseInt(
-          moment(resDate).subtract(1, 'months').endOf('month').format('x'),
+          moment(resDate).subtract(0.5, 'months').endOf('month').format('x'),
           10
         ) / 1000
       ).toString(),
@@ -168,7 +177,7 @@ const AnalyticsPage: React.FC = () => {
       resilienceScore: 0,
       testDate: Math.round(
         parseInt(
-          moment(resDate).add(1, 'months').endOf('month').format('x'),
+          moment(resDate).add(0.5, 'months').startOf('month').format('x'),
           10
         ) / 1000
       ).toString(),
@@ -218,11 +227,11 @@ const AnalyticsPage: React.FC = () => {
       {workflowRunDataForPlot.length ? (
         <div className={classes.rootContainer}>
           <div className={classes.root}>
-            <Typography variant="h3">
+            <Typography variant="h4">
               <strong>Workflow Analytics</strong>
             </Typography>
             <div className={classes.headerDiv}>
-              <Typography variant="h6">
+              <Typography variant="body1">
                 {t('analytics.viewTestResult')}
               </Typography>
             </div>
@@ -241,6 +250,9 @@ const AnalyticsPage: React.FC = () => {
                 <WorkflowDetailsTable
                   workflowRunDetails={selectedWorkflowRunDetails ?? []}
                   workflowID={workflowId}
+                  reloadAnalytics={(reload: boolean) => {
+                    setSelectedWorkflowRunID('');
+                  }}
                 />
               ) : (
                 <div />

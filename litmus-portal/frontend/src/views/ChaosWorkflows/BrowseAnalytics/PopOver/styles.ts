@@ -51,13 +51,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   dateIcon: {
     backgroundColor: theme.palette.primary.dark,
-    width: 20,
+    width: 23,
     height: 22,
-  },
-  dateRangeIcon: {
-    color: theme.palette.secondary.contrastText,
-    width: 20,
-    height: 22,
+    paddingLeft: 3,
+    marginTop: 2,
   },
   resilienceScoreIcon: {
     backgroundColor: theme.palette.resilienceScore,

@@ -35,7 +35,6 @@ const TableHeader: React.FC<TableHeaderProps> = ({
   callBackToClose,
 }) => {
   const classes = useStyles();
-  const [close, setClose] = useState<boolean>(false);
 
   // State for sorting
   const [sortData, setSortData] = useState<SortData>({
@@ -47,10 +46,6 @@ const TableHeader: React.FC<TableHeaderProps> = ({
   useEffect(() => {
     callBackToSort(sortData);
   }, [sortData]);
-
-  useEffect(() => {
-    callBackToClose(close);
-  }, [close]);
 
   return (
     <TableHead>
@@ -134,7 +129,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({
         <TableCell className={classes.headSpacing}>
           <div className={classes.nameContent}>
             <div className={classes.testWeightPointHead}>
-              <b>Weight of the teste</b>&nbsp;
+              <b>Weight of the test</b>&nbsp;
             </div>
           </div>
         </TableCell>
@@ -185,7 +180,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({
         <TableCell>
           <ButtonOutline
             handleClick={() => {
-              setClose(true);
+              callBackToClose(true);
             }}
             isDisabled={false}
           >

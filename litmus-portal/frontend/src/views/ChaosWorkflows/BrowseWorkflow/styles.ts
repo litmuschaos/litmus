@@ -59,7 +59,17 @@ const useStyles = makeStyles((theme) => ({
     height: '29.219rem',
   },
   tableHead: {
-    opacity: 1,
+    '& p': {
+      fontWeight: 'bold',
+      fontSize: 13,
+    },
+    '& th': {
+      fontWeight: 'bold',
+      fontSize: 13,
+    },
+    '& *': {
+      backgroundColor: theme.palette.common.white,
+    },
   },
   headerStatus: {
     paddingLeft: theme.spacing(10),

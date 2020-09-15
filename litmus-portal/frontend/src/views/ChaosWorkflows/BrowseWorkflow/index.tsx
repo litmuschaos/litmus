@@ -295,7 +295,7 @@ const BrowseWorkflow = () => {
                 {/* Workflow Name */}
                 <TableCell className={classes.workflowName}>
                   <div style={{ display: 'flex', flexDirection: 'row' }}>
-                    <Typography style={{ paddingTop: 10 }}>
+                    <Typography style={{ paddingTop: 12 }}>
                       Workflow Name
                     </Typography>
                     <div className={classes.sortDiv}>
@@ -344,7 +344,7 @@ const BrowseWorkflow = () => {
                 {/* No of Experiments */}
                 <TableCell className={classes.headData}>
                   <div style={{ display: 'flex', flexDirection: 'row' }}>
-                    <Typography style={{ paddingTop: 10 }}>
+                    <Typography style={{ paddingTop: 12 }}>
                       # of Steps
                     </Typography>
                     <div className={classes.sortDiv}>
@@ -379,7 +379,7 @@ const BrowseWorkflow = () => {
                 {/* Last Run */}
                 <TableCell className={classes.headData}>
                   <div style={{ display: 'flex', flexDirection: 'row' }}>
-                    <Typography style={{ paddingTop: 10 }}>Last Run</Typography>
+                    <Typography style={{ paddingTop: 12 }}>Last Run</Typography>
                     <div className={classes.sortDiv}>
                       <IconButton
                         aria-label="sort last run ascending"
