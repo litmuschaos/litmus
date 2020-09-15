@@ -11,11 +11,12 @@ import createReducer from './createReducer';
 
 const initialState: UserData = {
   selectedProjectID: '',
-  token: '',
   username: 'admin',
-  exp: 0,
   selectedProjectName: 'Default',
   userRole: 'Owner',
+  name: '',
+  email: '',
+  loader: false,
 };
 
 export const userData = createReducer<UserData>(initialState, {
@@ -23,11 +24,12 @@ export const userData = createReducer<UserData>(initialState, {
     try {
       const jwt = action.payload as string;
       const data: any = jwtDecode.decode(jwt);
-      setCookie('token', jwt, 1);
+      const expirationTime = (data.exp - data.iat) / 3600;
+      setCookie('token', jwt, expirationTime);
+
       return {
         ...state,
         ...data,
-        token: jwt,
       };
     } catch (err) {
       console.error('ERROR: ', err);
@@ -43,6 +45,7 @@ export const userData = createReducer<UserData>(initialState, {
     };
   },
   [UserActions.LOGOUT_USER](state: UserData, action: UserAction) {
+    setCookie('token', '', 1);
     return {
       ...initialState,
     };

@@ -2,12 +2,13 @@ export interface UpdateUser {
   selectedProjectID: string;
   selectedProjectName: string;
   userRole: string;
+  loader: boolean;
 }
 
 export interface UserData extends UpdateUser {
   username: string;
-  token: string;
-  exp: number;
+  name: string;
+  email: string;
 }
 export enum UserActions {
   LOAD_USER_DETAILS = 'LOAD_USER_DETAILS',

@@ -15,10 +15,12 @@ const useStyles = makeStyles((theme) => ({
   },
 
   box: {
-    padding: '5% 5%',
+    maxWidth: '40rem',
+    padding: '12% 5%',
     paddingLeft: theme.spacing(10),
     height: '100vh',
     overflowY: 'auto',
+    margin: 'auto',
   },
 
   heading: {
@@ -63,20 +65,6 @@ const useStyles = makeStyles((theme) => ({
   linkForgotPass: {
     color: theme.palette.common.black,
     opacity: 0.5,
-  },
-
-  submitButton: {
-    display: 'inline',
-    backgroundColor: theme.palette.secondary.dark,
-    width: '6.875rem',
-    height: '2.8125rem',
-    color: theme.palette.common.white,
-    '&:hover': {
-      backgroundColor: theme.palette.secondary.dark,
-    },
-    marginRight: theme.spacing(2),
-    marginLeft: theme.spacing(2),
-    textTransform: 'none',
   },
 
   descImg: {

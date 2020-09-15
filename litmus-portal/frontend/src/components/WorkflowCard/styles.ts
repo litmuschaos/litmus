@@ -4,14 +4,14 @@ const useStyles = makeStyles((theme) => ({
   // CustomWorkflow
 
   customCard: {
-    background: theme.palette.grey[200],
+    background: theme.palette.customColors.gray,
     borderRadius: 3,
     overflow: 'hidden',
     fontSize: '0.875rem',
     margin: '0 auto',
     textAlign: 'center',
     cursor: 'pointer',
-    border: '1px solid rgba(0, 0, 0, 0.2)',
+    border: `1px solid ${theme.palette.text.hint}`,
     boxSizing: 'border-box',
   },
 
@@ -33,24 +33,29 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     textAlign: 'center',
     cursor: 'pointer',
-    border: '1px solid rgba(0, 0, 0, 0.2)',
+    border: `1px solid ${theme.palette.text.hint}`,
     boxSizing: 'border-box',
     '&:hover': {
-      border: '1px solid #5B44BA',
-      boxShadow: '0px 4px 4px rgba(91, 68, 186, 0.25)',
+      border: `1px solid ${theme.palette.secondary.dark}`,
+      boxShadow: `0px 4px 4px ${theme.palette.shadow.blue}`,
     },
+  },
+
+  cardFocused: {
+    border: `1px solid ${theme.palette.secondary.dark}`,
+    boxShadow: `0px 4px 4px ${theme.palette.shadow.blue}`,
   },
 
   cardSelected: {
     background: theme.palette.background.paper,
-    boxShadow: '0px 4px 4px rgba(91, 68, 186, 0.25)',
+    boxShadow: `0px 4px 4px ${theme.palette.shadow.blue}`,
     borderRadius: 3,
     overflow: 'hidden',
     fontSize: '0.875rem',
     margin: '0 auto',
     textAlign: 'center',
     cursor: 'pointer',
-    border: '1px solid #5B44BA',
+    border: `1px solid ${theme.palette.secondary.dark}`,
     boxSizing: 'border-box',
   },
 

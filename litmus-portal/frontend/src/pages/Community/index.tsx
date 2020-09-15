@@ -1,17 +1,17 @@
-import React from 'react';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper'; // Temporary -> Should be replaced with Chart
+import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
-import { Link } from 'react-router-dom';
+import Paper from '@material-ui/core/Paper'; // Temporary -> Should be replaced with Chart
+import Typography from '@material-ui/core/Typography';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import InfoFilledWrap from '../../components/InfoFilled/index';
-import Scaffold from '../../containers/layouts/Scaffold/index';
-import useStyles from './styles';
 import QuickActionCard from '../../components/QuickActionCard';
-import GeoMap from '../../components/Sections/Community/GeoMap/index';
-import CommunityAnalyticsPlot from '../../components/Sections/Community/CommunityTimeSeriesPlot';
+import Scaffold from '../../containers/layouts/Scaffold/index';
+import CommunityAnalyticsPlot from '../../views/Community/CommunityTimeSeriesPlot';
+import GeoMap from '../../views/Community/GeoMap/index';
+import useStyles from './styles';
 
 // Reusable Header Component
 const Header2: React.FC = ({ children }) => {
@@ -31,13 +31,15 @@ const Community: React.FC = () => {
 
   return (
     <Scaffold>
-      <div>
+      <div className={classes.root}>
         <div>
-          <Typography className={classes.mainHeader}>Community</Typography>
+          <Typography variant="h3" className={classes.mainHeader}>
+            Community
+          </Typography>
         </div>
 
         {/* Litmus Daily Insights */}
-        <section className="Daily Insights">
+        <section>
           <Header2>{t('community.heading')}</Header2>
           <Typography>{t('community.headingDesc')}</Typography>
           <div className={classes.cardDiv}>
@@ -46,7 +48,7 @@ const Community: React.FC = () => {
         </section>
 
         {/* Litmus Analytics Dashboard */}
-        <section className="Litmus Analytics Dashboard">
+        <section>
           <div className={classes.LitmusAnalyticsBlock}>
             <Header2>{t('community.analyticDesc')}</Header2>
             <div className={classes.LitmusAnalyticsDiv}>
@@ -93,7 +95,7 @@ const Community: React.FC = () => {
         </section>
 
         {/* Litmus Used Statistics all over the World */}
-        <section className="Litmus Used Stats">
+        <section>
           <div className={classes.LitmusUsedBlock}>
             <Header2>{t('community.statsHeading')}</Header2>
             <div className={classes.LitmusUsedDiv}>

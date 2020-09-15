@@ -2,11 +2,12 @@ import { makeStyles } from '@material-ui/core/styles';
 
 // Community Component Styling
 const useStyles = makeStyles((theme) => ({
+  root: {
+    margin: theme.spacing(1.5),
+  },
   mainHeader: {
     color: theme.palette.text.primary,
-    fontSize: '2.5rem',
-    marginTop: theme.spacing(5),
-    marginBottom: theme.spacing(6),
+    margin: theme.spacing(4.5, 1.5, 2.5, 0),
   },
 
   LitmusAnalyticsBlock: {

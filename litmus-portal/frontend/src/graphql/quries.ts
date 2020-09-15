@@ -10,6 +10,30 @@ export const WORKFLOW_DETAILS = gql`
       project_id
       cluster_name
       last_updated
+      cluster_type
+    }
+  }
+`;
+
+export const SCHEDULE_DETAILS = gql`
+  query scheduleDetails($projectID: String!) {
+    getScheduledWorkflows(project_id: $projectID) {
+      workflow_id
+      workflow_manifest
+      cronSyntax
+      workflow_name
+      workflow_description
+      weightages {
+        experiment_name
+        weightage
+      }
+      isCustomWorkflow
+      updated_at
+      created_at
+      project_id
+      cluster_id
+      cluster_type
+      cluster_name
     }
   }
 `;
@@ -19,6 +43,7 @@ export const GET_USER = gql`
     getUser(username: $username) {
       username
       email
+      id
       name
       projects {
         members {

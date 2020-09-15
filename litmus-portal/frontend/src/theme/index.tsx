@@ -32,7 +32,17 @@ declare module '@material-ui/core/styles/createPalette' {
     input: {
       disabled: string;
     };
+    shadow: {
+      blue: string;
+    };
     editorBackground: string;
+    paperBackground: string;
+    resilienceScore: string;
+    graphAnnotationsColor: string;
+    graphHoverColors: {
+      passedTests: string;
+      failedTests: string;
+    };
   }
   // allow configuration using `createMuiTheme`
   interface PaletteOptions {
@@ -47,7 +57,17 @@ declare module '@material-ui/core/styles/createPalette' {
     input?: {
       disabled?: string;
     };
+    shadow?: {
+      blue: string;
+    };
     editorBackground?: string;
+    paperBackground?: string;
+    resilienceScore?: string;
+    graphAnnotationsColor?: string;
+    graphHoverColors?: {
+      passedTests: string;
+      failedTests: string;
+    };
   }
 }
 function customTheme(options: ThemeOptions) {
@@ -87,6 +107,9 @@ function customTheme(options: ThemeOptions) {
       input: {
         disabled: '#e2e2e1',
       },
+      shadow: {
+        blue: 'rgba(91, 68, 186, 0.25)',
+      },
       customColors: {
         white: (opacity: number): string => {
           let op = opacity;
@@ -106,6 +129,13 @@ function customTheme(options: ThemeOptions) {
         },
       },
       editorBackground: '#1C1C1C',
+      paperBackground: '#E5E5E5',
+      resilienceScore: '#F6B92B',
+      graphAnnotationsColor: 'rgb(204,204,204)',
+      graphHoverColors: {
+        passedTests: 'rgba(16, 155, 103, 0.2)',
+        failedTests: 'rgba(202, 44, 44, 0.2)',
+      },
     },
     typography: {
       fontSize: 12,
@@ -123,6 +153,7 @@ const theme = customTheme({
       },
       mark: {
         marginLeft: -6.8,
+        paddingTop: 1.8,
         backgroundImage: `url(${'./icons/arrow.svg'})`,
         backgroundColor: 'none',
         '&[data-index="9"]': {
@@ -137,13 +168,20 @@ const theme = customTheme({
         fontFamily: 'Ubuntu',
         fontSize: 15,
         marginTop: -5,
-        marginLeft: -45,
+        marginLeft: '-5%',
         color: 'rgba(0, 0, 0, 0.4)',
       },
       markLabelActive: {
         fontFamily: 'Ubuntu',
         fontSize: 15,
         color: '#FFFFFF',
+      },
+    },
+    MuiTab: {
+      root: {
+        '&$selected': {
+          color: '#5B44BA',
+        },
       },
     },
     MuiFormLabel: {
@@ -156,6 +194,28 @@ const theme = customTheme({
       asterisk: {
         color: 'transparent',
       },
+    },
+  },
+});
+
+export const customThemeAnalyticsTable = createMuiTheme({
+  palette: {
+    secondary: {
+      light: '#2CCA8F',
+      main: '#2CCA8F',
+      dark: '#109B67',
+      contrastText: '#000000',
+    },
+  },
+});
+
+export const customThemeAnalyticsTableCompareMode = createMuiTheme({
+  palette: {
+    secondary: {
+      light: '#FFFFFF',
+      main: '#FFFFFF',
+      dark: '#FFFFFF',
+      contrastText: '#000000',
     },
   },
 });

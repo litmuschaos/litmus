@@ -1,32 +1,57 @@
 welcomeModel:
   title: Welcome to Litmus Portal,
-  info: Do you want to name your project?
+  info: What do you want to name your project?
   button:
     continue: Continue
-    skip: Skip
     back: Back
     letsStart: Let's Start
   case-0:
     name: projectName
     label: Project Name
-    info: Do you want to name your project?
+    info: What do you want to name your project?
   case-1:
     name: fullName
     label: Full Name
-    info: How do i call you?
+    info: What should I call you?
   case-2:
     name: password
     label: Password
     cnfLabel: Confirm Password
     cnfName: confirmPassword
-    info: Set your new  Password
+    info: Set your new Password
   case-3:
     name: emailAddress
     label: Email Address
-    info: You can change your current mail (optional)
+    info: You can set your current mail
 
+###########################################
+############    Components    #############
+###########################################
+
+sidebar:
+  title: Litmus
+
+header:
+  notificationDropdown:
+    noNotifications: You don't have any new notification.
+  profileDropdown:
+    editProfile: Edit Profile
+    logOut: Log Out
+    noProjects: You haven't created any projects yet.
+
+quickActionCard:
+  quickActions: Quick Actions
+  inviteTeamMember: Invite a team member
+  quickSurvey: Take a quick survey
+  readDocs: Read The Litmus docs
+
+customWorkflowCard:
+  customWorkflow: Create your own workflow
+
+workflowStepper:
+  continueError: To continue, please check the error in code.
 ######################################
-############     Pages    ############
+############    Pages    #############
 ######################################
 home:
   workflow:
@@ -34,32 +59,58 @@ home:
     info: Schedule your first workflow
   heading: Welcome,
   subHeading1: Congratulations!
-  subHeading2: You have established your own first project on Litmus portal.
-  subHeading3: Now this is successfully running on your Kubernetes cluster. Once you schedule chaos workflows, reliability analytics are displayed here.
+  subHeading2: You have established your first project on the Litmus portal.
+  subHeading3: Now it is successfully running on your Kubernetes cluster. Once you have scheduled your chaos workflows, reliability analytics will be displayed here.
   button1: See pre-defined workflows
   analytics:
-    heading: How busy Litmus Project is?
+    heading: How busy is the Litmus Project?
     moreInfo: See more
 
 login:
-  heading: Welcome to
+  heading: Welcome to <strong>Litmus!</strong>
   subHeading1: Your one-stop-shop for Chaos Engineering on
   subHeading2: . Browse, create, manage, monitor and analyze your chaos workflows.
   subHeading3: With your own private ChaosHub, you can create your new chaos experiments and share them with your team.
   passwordForgot: Don’t remember your password?
 
 schedule:
-  heading: "Schedule a workflow"
-  headingDesc: "Click on test to see detailed log of your workflow"
-  headingText: "Schedule details:"
-  description: "Choose the right time to first workflow. Below you can find any option convenient for you."
-  save: "Save Changes"
+  heading: 'Schedule a workflow'
+  headingDesc: 'Click on test to see detailed log of your workflow'
+  headingText: 'Schedule details:'
+  description: 'Choose the right time to schedule your first workflow. Below you can find some options that may be convenient for you.'
+  save: 'Save Changes'
+  scheduleNow: Schedule now
+  scheduleAfter: Schedule after some time
+  scheduleAfterSometime: 'Choose the minutes, hours, or days when you want to start workflow'
+  scheduleSpecificTime: Schedule at a specific time
+  scheduleFuture: Select date and time to start workflow in future
+  scheduleRecurring: Recurring Schedule
+  scheduleRecurringTime: Choose the right recurring time to start your workflow
+  after: After
+  at: at
+  At: At
+  scheduleOn: 'On'
 
 workflowUnderground:
-  heading: "Click on test to see detailed log of your workflow"
+  heading: 'Click on test to see detailed log of your workflow'
 
 community:
-  heading: "Daily Insights"
-  headingDesc: "Stats for the Litmus community in the last 24 hours"
-  analyticDesc: "Periodic growth of Litmus"
-  statsHeading: "Where Litmus users are situated"
+  heading: 'Daily Insights'
+  headingDesc: 'Stats for the Litmus community in the last 24 hours'
+  analyticDesc: 'Periodic growth of Litmus'
+  statsHeading: 'Litmus users around the world:'
+
+analytics:
+  fetchError: An error has occurred while fetching the data
+  viewTestResult: Click on test to view the results for the selected period
+  comingSoon: Analytics Coming Soon!
+
+error:
+  whoops: Whoops!
+  pageUnavailable: This page is unavailable
+  pageDoesNotExist: The page does not exist, or please try again later.
+  backHome: Go back home
+
+workflowDetails:
+  detailedLog: Click on test to see detailed log of your workflow
+  fetchError: An error has occurred while fetching the data

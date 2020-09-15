@@ -6,7 +6,11 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import config from '../../config';
 import { CREATE_USER } from '../../graphql';
+import { CreateUserData } from '../../models/graphql/user';
+import useActions from '../../redux/actions';
+import * as UserActions from '../../redux/actions/user';
 import { RootState } from '../../redux/reducers';
+import getToken from '../../utils/getToken';
 import {
   validateConfirmPassword,
   validateEmail,
@@ -25,15 +29,17 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const { userData } = useSelector((state: RootState) => state);
+  const userData = useSelector((state: RootState) => state.userData);
+  const userLoader = useActions(UserActions);
   const [activeStep, setActiveStep] = React.useState<number>(0);
   const isError = useRef(true);
   const isSuccess = useRef(false);
 
-  const [info, setInfo] = React.useState({
-    email: '',
-    name: '',
-    projectName: '',
+  const [info, setInfo] = React.useState<CreateUserData>({
+    username: userData.username,
+    email: userData.email,
+    name: userData.name,
+    project_name: '',
   });
 
   const handleBack = () => {
@@ -56,7 +62,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
     window.location.reload();
   };
 
-  const [CreateUser] = useMutation(CREATE_USER, {
+  const [CreateUser] = useMutation<CreateUserData>(CREATE_USER, {
     onCompleted: () => {
       rerender();
     },
@@ -65,12 +71,13 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   // Submit entered data to /update endpoint
   const handleSubmit = () => {
     Object.assign(info, { password: values.password });
+    userLoader.updateUserDetails({ loader: true });
 
     fetch(`${config.auth.url}/update/details`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${userData.token}`,
+        Authorization: `Bearer ${getToken()}`,
       },
       body: JSON.stringify(info),
     })
@@ -85,7 +92,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                 username: userData.username,
                 email: info.email,
                 name: info.name,
-                project_name: info.projectName,
+                project_name: info.project_name,
               },
             },
           });
@@ -116,8 +123,8 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   // [Button State: Disabled]
   if (activeStep === 0) {
     if (
-      info.projectName.length > 0 &&
-      validateStartEmptySpacing(info.projectName) === false
+      info.project_name.length > 0 &&
+      validateStartEmptySpacing(info.project_name) === false
     ) {
       isError.current = false;
     } else {
@@ -194,9 +201,9 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
           <ButtonOutline
             isDisabled={false}
             handleClick={handleBack}
-            data-cy="Skip"
+            data-cy="Back"
           >
-            <>{t('welcomeModel.button.skip')}</>
+            <>{t('welcomeModel.button.back')}</>
           </ButtonOutline>
           <ButtonFilled
             isPrimary
@@ -241,19 +248,19 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                 <div className={classes.inputArea} data-cy="InputProjectName">
                   <InputField
                     label={t('welcomeModel.case-0.label')}
-                    value={info.projectName}
+                    value={info.project_name}
                     required
                     helperText={
-                      validateStartEmptySpacing(info.projectName)
+                      validateStartEmptySpacing(info.project_name)
                         ? 'Should not start with an empty space'
                         : ''
                     }
                     validationError={validateStartEmptySpacing(
-                      info.projectName
+                      info.project_name
                     )}
                     type="text"
                     handleChange={(event) => {
-                      setData('projectName', event.target.value);
+                      setData('project_name', event.target.value);
                     }}
                   />
                 </div>

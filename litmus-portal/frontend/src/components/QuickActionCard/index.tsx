@@ -1,56 +1,69 @@
 import { List, ListItem, Typography } from '@material-ui/core';
-import React from 'react';
-import { Link } from 'react-router-dom';
 import Card from '@material-ui/core/Card';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import useActions from '../../redux/actions';
+import * as TabActions from '../../redux/actions/tabs';
+import { RootState } from '../../redux/reducers';
 import useStyles from './style';
 
-interface QuickActionItemsProps {
-  children: React.ReactNode;
-}
-
-const QuickActionItems: React.FC<QuickActionItemsProps> = ({ children }) => {
+const QuickActionItems: React.FC = ({ children }) => {
   const classes = useStyles();
   return <ListItem className={classes.listItems}>{children}</ListItem>;
 };
 
 const QuickActionCard = () => {
   const classes = useStyles();
+  const userRole = useSelector((state: RootState) => state.userData.userRole);
+  const tabs = useActions(TabActions);
+  const { t } = useTranslation();
+
   return (
     <div className={classes.quickActionCard}>
       <Card elevation={0}>
-        <Typography className={classes.mainHeader}>Quick Actions</Typography>
+        <Typography className={classes.mainHeader}>
+          {t('quickActionCard.quickActions')}
+        </Typography>
         <List>
-          <QuickActionItems>
-            <>
-              <img src="icons/cluster.png" alt="cluster" />
-              <Link to="/" className={classes.listItem}>
-                Connect a new cluster
-              </Link>
-            </>
-          </QuickActionItems>
-          <QuickActionItems>
-            <>
+          {/* <QuickActionItems>
+            <img src="icons/cluster.png" alt="cluster" />
+            <Link to="/" className={classes.listItem}>
+              Connect a new cluster
+            </Link>
+          </QuickActionItems> */}
+          {userRole === 'Owner' && (
+            <QuickActionItems>
               <img src="icons/team.png" alt="team" />
-              <Link to="/" className={classes.listItem}>
-                Invite a team member
+              <Link
+                to="/settings"
+                className={classes.listItem}
+                onClick={() => tabs.changeSettingsTabs(0)}
+              >
+                {t('quickActionCard.inviteTeamMember')}
               </Link>
-            </>
+            </QuickActionItems>
+          )}
+          <QuickActionItems>
+            <img src="icons/survey.png" alt="survey" />
+            <a
+              href="https://forms.gle/qMuVphRyEWCFqjD56"
+              className={classes.listItem}
+              target="_"
+            >
+              {t('quickActionCard.quickSurvey')}
+            </a>
           </QuickActionItems>
           <QuickActionItems>
-            <>
-              <img src="icons/survey.png" alt="survey" />
-              <Link to="/" className={classes.listItem}>
-                Take a quick survey
-              </Link>
-            </>
-          </QuickActionItems>
-          <QuickActionItems>
-            <>
-              <img src="icons/docs.png" alt="docs" />
-              <Link to="/" className={classes.listItem}>
-                Read Litmus docs
-              </Link>
-            </>
+            <img src="icons/docs.png" alt="docs" />
+            <a
+              href="https://docs.litmuschaos.io/docs/getstarted/"
+              className={classes.listItem}
+              target="_"
+            >
+              {t('quickActionCard.readDocs')}
+            </a>
           </QuickActionItems>
         </List>
       </Card>

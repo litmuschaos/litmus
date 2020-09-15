@@ -1,14 +1,10 @@
 import CssBaseline from '@material-ui/core/CssBaseline';
 import React from 'react';
-import Header from '../Header';
-import SideBar from '../SideBar';
+import Header from '../../../components/Header';
+import SideBar from '../../../components/SideBar';
 import useStyles from './styles';
 
-interface ScaffoldProps {
-  children: React.ReactNode;
-}
-
-const Scaffold: React.FC<ScaffoldProps> = ({ children }) => {
+const Scaffold: React.FC = ({ children }) => {
   const classes = useStyles();
 
   return (
