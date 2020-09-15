@@ -9,14 +9,11 @@ import {
   TableCell,
   TableContainer,
   TableRow,
-  IconButton,
   Paper,
 } from '@material-ui/core';
-import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import moment from 'moment';
 import { useQuery } from '@apollo/client';
 import { useSelector } from 'react-redux';
-import useTheme from '@material-ui/core/styles/useTheme';
 import {
   customThemeAnalyticsTable,
   customThemeAnalyticsTableCompareMode,
@@ -38,6 +35,7 @@ import {
   ScheduleWorkflow,
 } from '../../../../models/graphql/scheduleData';
 import { RootState } from '../../../../redux/reducers';
+import Loader from '../../../../components/Loader';
 
 interface RangeType {
   startDate: string;
@@ -59,7 +57,6 @@ interface Filter {
 
 const WorkflowComparisonTable = () => {
   const classes = useStyles();
-  const { palette } = useTheme();
   const [filter, setFilter] = React.useState<Filter>({
     range: { startDate: 'all', endDate: 'all' },
     selectedCluster: 'All',
@@ -87,10 +84,13 @@ const WorkflowComparisonTable = () => {
   );
 
   // Apollo query to get the scheduled data
-  const { data } = useQuery<Schedules, ScheduleDataVars>(SCHEDULE_DETAILS, {
-    variables: { projectID: selectedProjectID },
-    fetchPolicy: 'cache-and-network',
-  });
+  const { data, loading, error } = useQuery<Schedules, ScheduleDataVars>(
+    SCHEDULE_DETAILS,
+    {
+      variables: { projectID: selectedProjectID },
+      fetchPolicy: 'cache-and-network',
+    }
+  );
 
   const getClusters = (searchingData: ScheduleWorkflow[]) => {
     const uniqueList: string[] = [];
@@ -248,8 +248,8 @@ const WorkflowComparisonTable = () => {
 
   return (
     <div className={classes.root}>
-      <div className={classes.analyticsDiv}>
-        <Typography className={classes.heading}>
+      {/*   <div className={classes.analyticsDiv}>
+          <Typography className={classes.heading}>
           <strong>
             {' '}
             {compare === true ? (
@@ -277,7 +277,7 @@ const WorkflowComparisonTable = () => {
         </Typography>
         <br />
       </div>
-
+          */}
       <div className={classes.tableFix}>
         <div>
           <section className="Heading section">
@@ -359,7 +359,21 @@ const WorkflowComparisonTable = () => {
                     }}
                   />
                   <TableBody>
-                    {displayData &&
+                    {loading ? (
+                      <TableRow>
+                        <TableCell colSpan={6}>
+                          <Loader />
+                        </TableCell>
+                      </TableRow>
+                    ) : error ? (
+                      <TableRow>
+                        <TableCell colSpan={6}>
+                          <Typography align="center">
+                            Unable to fetch data
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    ) : displayData && displayData.length ? (
                       displayData
                         .slice(0)
                         .slice(
@@ -391,7 +405,16 @@ const WorkflowComparisonTable = () => {
                               />
                             </TableRow>
                           );
-                        })}
+                        })
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={6}>
+                          <Typography align="center">
+                            No records available
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    )}
                     {emptyRows > 0 && (
                       <TableRow style={{ height: 75 * emptyRows }}>
                         <TableCell colSpan={6} />

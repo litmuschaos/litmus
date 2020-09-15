@@ -30,6 +30,7 @@ import {
   Weights,
 } from '../../../../models/graphql/scheduleData';
 import { RootState } from '../../../../redux/reducers';
+import Loader from '../../../../components/Loader';
 
 interface RangeType {
   startDate: string;
@@ -59,14 +60,20 @@ interface Filter {
   searchTokens: string[];
 }
 
+interface ReloadAnalyticsType {
+  (reload: boolean): void;
+}
+
 interface WorkflowRunDetailsTableProps {
   workflowRunDetails: workFlowTests[];
   workflowID: string;
+  reloadAnalytics: ReloadAnalyticsType;
 }
 
 const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
   workflowRunDetails,
   workflowID,
+  reloadAnalytics,
 }) => {
   const classes = useStyles();
   const [close, setClose] = useState<boolean>(false);
@@ -92,10 +99,13 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
   );
 
   // Apollo query to get the scheduled data
-  const { data } = useQuery<Schedules, ScheduleDataVars>(SCHEDULE_DETAILS, {
-    variables: { projectID: selectedProjectID },
-    fetchPolicy: 'cache-and-network',
-  });
+  const { data, loading, error } = useQuery<Schedules, ScheduleDataVars>(
+    SCHEDULE_DETAILS,
+    {
+      variables: { projectID: selectedProjectID },
+      fetchPolicy: 'cache-and-network',
+    }
+  );
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -320,10 +330,25 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
                       }}
                       callBackToClose={(close: boolean) => {
                         setClose(close);
+                        reloadAnalytics(close);
                       }}
                     />
                     <TableBody>
-                      {payload &&
+                      {loading ? (
+                        <TableRow>
+                          <TableCell colSpan={6}>
+                            <Loader />
+                          </TableCell>
+                        </TableRow>
+                      ) : error ? (
+                        <TableRow>
+                          <TableCell colSpan={6}>
+                            <Typography align="center">
+                              Unable to fetch data
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                      ) : payload && payload.length ? (
                         payload
                           .slice(0)
                           .slice(
@@ -336,7 +361,16 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
                                 <TableData data={data} />
                               </TableRow>
                             );
-                          })}
+                          })
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={6}>
+                            <Typography align="center">
+                              No records available
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                      )}
                       {emptyRows > 0 && (
                         <TableRow style={{ height: 75 * emptyRows }}>
                           <TableCell colSpan={6} />
@@ -348,7 +382,8 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
                 <div className={classes.paginationArea}>
                   <div className={classes.toolTipGroup}>
                     <Typography className={classes.resultText} display="inline">
-                      Resilience Score <InfoTooltip value="Resilience Score" />
+                      Resilience Score{' '}
+                      <InfoTooltip value="Resilience Score is the weighted average of all tests in the workflow." />
                     </Typography>
                     <Typography
                       className={classes.reliabilityScore}

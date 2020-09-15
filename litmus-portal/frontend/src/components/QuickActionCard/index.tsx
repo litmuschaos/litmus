@@ -39,7 +39,7 @@ const QuickActionCard = () => {
               <Link
                 to="/settings"
                 className={classes.listItem}
-                onClick={() => tabs.changeSettingsTabs(0)}
+                onClick={() => tabs.changeSettingsTabs(1)}
               >
                 {t('quickActionCard.inviteTeamMember')}
               </Link>

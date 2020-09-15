@@ -38,7 +38,13 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       </TableCell>
 
       <TableCell className={classes.tableDataStatus}>
-        <ExperimentStatus status={`${data.test_result}ed`} />
+        <ExperimentStatus
+          status={
+            data.test_result !== 'Awaited'
+              ? `${data.test_result}ed`
+              : data.test_result
+          }
+        />
       </TableCell>
 
       <TableCell>
