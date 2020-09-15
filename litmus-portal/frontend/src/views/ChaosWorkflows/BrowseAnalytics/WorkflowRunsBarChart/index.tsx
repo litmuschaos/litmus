@@ -5,7 +5,9 @@ import Plotly from 'plotly.js';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import moment from 'moment';
 import { useTheme } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import useStyles from './styles';
+import Loader from '../../../../components/Loader';
 
 const Plot = createPlotlyComponent(Plotly);
 
@@ -53,7 +55,6 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
   const [plotLayout, setPlotLayout] = React.useState<any>({});
   const [visible, setVisible] = React.useState<boolean>(false);
   const [visibleIndex, setVisibleIndex] = React.useState<number>(0);
-  const [selected, setSelected] = React.useState<boolean>(false);
   const [visibleLocation, setVisibleLocation] = React.useState<{
     x: number;
     y: number;
@@ -137,18 +138,6 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
   const selectorOptions = {
     buttons: [
       {
-        step: 'day',
-        stepmode: 'backward',
-        count: 7,
-        label: '1 Week',
-      },
-      {
-        step: 'day',
-        stepmode: 'backward',
-        count: 14,
-        label: '2 Weeks',
-      },
-      {
         step: 'month',
         stepmode: 'backward',
         count: 1,
@@ -171,12 +160,6 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
         stepmode: 'backward',
         count: 1,
         label: '1 Year',
-      },
-      {
-        step: 'year',
-        stepmode: 'backward',
-        count: 2,
-        label: '2 Years',
       },
       {
         step: 'all',
@@ -262,6 +245,20 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
     } catch (err) {
       console.log(err);
     }
+  }, [workflowRunData]);
+
+  useEffect(() => {
+    processData();
+    processLayout();
+    try {
+      const nodeStyle = (document.getElementsByClassName(
+        'modebar'
+      )[0] as HTMLElement).style;
+      nodeStyle.left = '29%';
+      nodeStyle.transform = 'translateY(110%)';
+    } catch (err) {
+      console.log(err);
+    }
   }, []);
 
   useEffect(() => {
@@ -292,31 +289,32 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
 
   return (
     <div>
-      <div id="myPlot">
-        <Plot
-          data={plotData}
-          layout={plotLayout}
-          useResizeHandler
-          className={classes.plot}
-          config={{
-            displaylogo: false,
-            autosizable: true,
-            responsive: true,
-            frameMargins: 0.2,
-            showAxisDragHandles: true,
-            showAxisRangeEntryBoxes: true,
-            showTips: true,
-            displayModeBar: true,
-            toImageButtonOptions: {
-              format: 'png',
-              filename: `Workflow-Run-${workflowRunData[0].workflowRunID}`,
-              width: 1920,
-              height: 1080,
-              scale: 2,
-            },
-          }}
-          onHover={(data) => {
-            if (!selected) {
+      {workflowRunData[1].testsPassed !== 0 ||
+      workflowRunData[1].testsFailed !== 0 ? (
+        <div id="myPlot">
+          <Plot
+            data={plotData}
+            layout={plotLayout}
+            useResizeHandler
+            className={classes.plot}
+            config={{
+              displaylogo: false,
+              autosizable: true,
+              responsive: true,
+              frameMargins: 0.2,
+              showAxisDragHandles: true,
+              showAxisRangeEntryBoxes: true,
+              showTips: true,
+              displayModeBar: true,
+              toImageButtonOptions: {
+                format: 'png',
+                filename: `Workflow-Run-${workflowRunData[0].workflowRunID}`,
+                width: 1920,
+                height: 1080,
+                scale: 2,
+              },
+            }}
+            onHover={(data) => {
               let ind = 0;
               let recolour = false;
               const newPassedColours = [];
@@ -355,33 +353,30 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
               setColorsPassed(newPassedColours);
               setColorsFailed(newFailedColours);
               setVisible(true);
-            }
-          }}
-          onClick={(data) => {
-            const newPassedColours = [];
-            const newFailedColours = [];
-            let ind = 0;
-            for (let i = 0; i < data.points.length; i++) {
-              ind = (data.points[i].customdata as unknown) as number;
-            }
-            for (let i = 0; i < colorsPassed.length; i++) {
-              if (i !== ind) {
-                newPassedColours.push(palette.graphHoverColors.passedTests);
-                newFailedColours.push(palette.graphHoverColors.failedTests);
-              } else {
-                newPassedColours.push(palette.primary.dark);
-                newFailedColours.push(palette.error.dark);
+            }}
+            onClick={(data) => {
+              const newPassedColours = [];
+              const newFailedColours = [];
+              let ind = 0;
+              for (let i = 0; i < data.points.length; i++) {
+                ind = (data.points[i].customdata as unknown) as number;
               }
-            }
-            setSelected(true);
-            setColorsPassed(newPassedColours);
-            setColorsFailed(newFailedColours);
-            callBackToSelectWorkflowRun(workflowRunData[ind].workflowRunID);
-            setVisibleIndex(ind);
-            setVisible(false);
-          }}
-          onUnhover={() => {
-            if (!selected) {
+              for (let i = 0; i < colorsPassed.length; i++) {
+                if (i !== ind) {
+                  newPassedColours.push(palette.graphHoverColors.passedTests);
+                  newFailedColours.push(palette.graphHoverColors.failedTests);
+                } else {
+                  newPassedColours.push(palette.primary.dark);
+                  newFailedColours.push(palette.error.dark);
+                }
+              }
+              setColorsPassed(newPassedColours);
+              setColorsFailed(newFailedColours);
+              callBackToSelectWorkflowRun(workflowRunData[ind].workflowRunID);
+              setVisibleIndex(ind);
+              setVisible(false);
+            }}
+            onUnhover={() => {
               const newPassedColours = [];
               const newFailedColours = [];
               for (let i = 0; i < colorsPassed.length; i++) {
@@ -391,10 +386,19 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
               setColorsPassed(newPassedColours);
               setColorsFailed(newFailedColours);
               setVisible(false);
-            }
-          }}
-        />
-      </div>
+            }}
+          />
+        </div>
+      ) : (
+        <div>
+          <Typography className={classes.waitingText}>
+            Waiting for tests to complete !
+          </Typography>
+          <div className={classes.loader}>
+            <Loader />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

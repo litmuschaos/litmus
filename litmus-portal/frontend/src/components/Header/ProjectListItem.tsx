@@ -1,14 +1,11 @@
 import {
   Avatar,
-  IconButton,
   ListItem,
   ListItemAvatar,
-  ListItemSecondaryAction,
   ListItemText,
 } from '@material-ui/core';
 import CheckCircleSharpIcon from '@material-ui/icons/CheckCircleSharp';
 import InsertDriveFileOutlinedIcon from '@material-ui/icons/InsertDriveFileOutlined';
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import React, { useState } from 'react';
 import { Project } from '../../models/graphql/user';
 import { ProjectsCallBackType } from '../../models/header';
@@ -36,8 +33,6 @@ const ProjectListItem: React.FC<ProjectListItemProps> = ({
     callbackToSetActiveProjectID(`${project.id}`);
     setProjSelected(true);
   };
-
-  const extraOptions = () => {};
 
   return (
     <ListItem
@@ -77,7 +72,7 @@ const ProjectListItem: React.FC<ProjectListItemProps> = ({
         )}
       </ListItemAvatar>
       <ListItemText primary={project.name} style={{ fontSize: 14 }} />
-      <ListItemSecondaryAction>
+      {/* <ListItemSecondaryAction>
         <IconButton edge="end" aria-label="more" onClick={extraOptions}>
           {projSelected ? (
             <MoreHorizIcon style={{ color: 'white' }} />
@@ -86,6 +81,7 @@ const ProjectListItem: React.FC<ProjectListItemProps> = ({
           )}
         </IconButton>
       </ListItemSecondaryAction>
+          */}
     </ListItem>
   );
 };

@@ -91,6 +91,7 @@ function customTheme(options: ThemeOptions) {
         dark: '#CA2C2C',
       },
       warning: {
+        light: 'rgba(246,185,43,0.6)',
         main: '#F6B92B',
         dark: '#EB5757',
       },
@@ -206,6 +207,19 @@ export const customThemeAnalyticsTable = createMuiTheme({
       dark: '#109B67',
       contrastText: '#000000',
     },
+    customColors: {
+      black: (opacity: number): string => {
+        let op = opacity;
+        if (op < 0) op = 0;
+        if (op > 1) op = 1;
+        return `rgba(0, 0, 0, ${op})`;
+      },
+    },
+  },
+  typography: {
+    fontSize: 12,
+    fontFamily: 'Ubuntu',
+    fontWeightRegular: 400,
   },
 });
 
@@ -217,6 +231,19 @@ export const customThemeAnalyticsTableCompareMode = createMuiTheme({
       dark: '#FFFFFF',
       contrastText: '#000000',
     },
+    customColors: {
+      black: (opacity: number): string => {
+        let op = opacity;
+        if (op < 0) op = 0;
+        if (op > 1) op = 1;
+        return `rgba(0, 0, 0, ${op})`;
+      },
+    },
+  },
+  typography: {
+    fontSize: 12,
+    fontFamily: 'Ubuntu',
+    fontWeightRegular: 400,
   },
 });
 

@@ -72,7 +72,7 @@ const PassedVsFailed: React.FC<PassedVsFailedProps> = ({ passed, failed }) => {
           </Box>
         </Box>
         <Typography variant="body2" className={classes.statsDesc}>
-          Statistics taken from all test results
+          Statistics taken from completed tests
         </Typography>
       </Box>
     </Paper>

@@ -25,6 +25,7 @@ interface Analyticsdata {
   avgWorkflows: number;
   maxWorkflows: number;
   passPercentage: number;
+  failPercentage: number;
 }
 
 interface ReturningHomeProps {
@@ -53,6 +54,7 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
     avgWorkflows: 0,
     maxWorkflows: 0,
     passPercentage: 0,
+    failPercentage: 0,
   });
 
   const loadAnalyticsData = (workflowRunData: WorkflowRun[]) => {
@@ -69,9 +71,14 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
           const node = nodes[key];
           if (node.chaosData) {
             const { chaosData } = node;
-            experimentTestResultsArray.push(
-              chaosData.experimentVerdict === 'Pass' ? 1 : 0
-            );
+            if (
+              chaosData.experimentVerdict === 'Pass' ||
+              chaosData.experimentVerdict === 'Fail'
+            ) {
+              experimentTestResultsArray.push(
+                chaosData.experimentVerdict === 'Pass' ? 1 : 0
+              );
+            }
           }
         }
       } catch (error) {
@@ -87,10 +94,11 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
       workflowRunsPerWeek.push(groupedResults[week].length);
     });
 
-    const testsPassPercentage =
-      (experimentTestResultsArray.reduce((a, b) => a + b, 0) /
-        experimentTestResultsArray.length) *
-      100;
+    const testsPassPercentage = experimentTestResultsArray.length
+      ? (experimentTestResultsArray.reduce((a, b) => a + b, 0) /
+          experimentTestResultsArray.length) *
+        100
+      : 0;
 
     setAnalyticsData({
       avgWorkflows:
@@ -98,6 +106,10 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
         workflowRunsPerWeek.length,
       maxWorkflows: Math.max(...workflowRunsPerWeek),
       passPercentage: testsPassPercentage >= 0 ? testsPassPercentage : 0,
+      failPercentage:
+        experimentTestResultsArray.length && testsPassPercentage >= 0
+          ? 100 - testsPassPercentage
+          : 0,
     });
   };
 
@@ -130,7 +142,7 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
           />
           <PassedVsFailed
             passed={parseFloat(analyticsData.passPercentage.toFixed(2))}
-            failed={100 - parseFloat(analyticsData.passPercentage.toFixed(2))}
+            failed={parseFloat(analyticsData.failPercentage.toFixed(2))}
           />
           <AverageResilienceScore value={analyticsData.passPercentage} />
         </div>

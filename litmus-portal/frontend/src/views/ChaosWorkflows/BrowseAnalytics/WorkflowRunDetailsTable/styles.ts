@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     paddingBottom: theme.spacing(5),
     paddingRight: theme.spacing(2),
-    marginTop: theme.spacing(-37),
+    marginTop: theme.spacing(-40.5),
     overflow: 'hidden',
   },
 
@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   tableFix: {
-    width: '97%',
+    width: '97.75%',
   },
 
   headerSection: {
@@ -26,22 +26,20 @@ const useStyles = makeStyles((theme) => ({
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    border: '1px solid ',
     height: '6rem',
-    borderColor: theme.palette.text.hint,
+    border: `1px solid ${theme.palette.customColors.black(0.07)}`,
     backgroundColor: theme.palette.common.white,
   },
 
   search: {
     marginRight: 'auto',
     marginLeft: theme.spacing(6.25),
-    borderBottom: `1px solid ${theme.palette.customColors.black(0.1)}`,
-    width: '13rem',
+    borderBottom: `1px solid ${theme.palette.customColors.black(0.07)}`,
   },
 
   tableMain: {
     marginTop: theme.spacing(-0.5),
-    border: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    border: `1px solid ${theme.palette.customColors.black(0.07)}`,
     backgroundColor: theme.palette.common.white,
     minHeight: '25rem',
     '&::-webkit-scrollbar': {
@@ -60,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   testName: {
-    borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    borderRight: `1px solid ${theme.palette.customColors.black(0.07)}`,
     paddingLeft: theme.spacing(10),
   },
 
@@ -129,6 +127,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     height: '4.5rem',
     backgroundColor: theme.palette.common.white,
+    marginTop: theme.spacing(-0.175),
   },
 
   pagination: {
@@ -176,7 +175,7 @@ const useStyles = makeStyles((theme) => ({
     border: '1.7px solid',
     borderRadius: 4,
     borderColor: theme.palette.secondary.main,
-    marginRight: theme.spacing(3.75),
+    marginRight: theme.spacing(3),
     textTransform: 'none',
   },
 
@@ -188,9 +187,16 @@ const useStyles = makeStyles((theme) => ({
   // Form Select Properties
   formControl: {
     margin: theme.spacing(0.5),
-    marginRight: theme.spacing(6.25),
     height: '2.5rem',
     minWidth: '9rem',
+  },
+
+  testResultForm: {
+    marginRight: theme.spacing(3),
+  },
+
+  testForm: {
+    marginRight: theme.spacing(4),
   },
 
   selectText: {
