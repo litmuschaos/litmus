@@ -138,7 +138,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
 
       <FormControl
         variant="outlined"
-        className={classes.formControl}
+        className={`${classes.formControl} ${classes.testResultForm}`}
         color="secondary"
         focused
       >
@@ -159,7 +159,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
 
       <FormControl
         variant="outlined"
-        className={classes.formControl}
+        className={`${classes.formControl} ${classes.testForm}`}
         color="secondary"
         focused
       >

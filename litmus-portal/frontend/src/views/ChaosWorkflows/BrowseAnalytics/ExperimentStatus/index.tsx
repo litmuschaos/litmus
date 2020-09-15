@@ -16,6 +16,9 @@ const ExperimentStatus: React.FC<StatusProps> = ({ status }) => {
     if (status === 'Passed') {
       return setLabel(classes.passed);
     }
+    if (status === 'Awaited') {
+      return setLabel(classes.awaited);
+    }
     return setLabel(classes.failed);
   }, [status]);
 

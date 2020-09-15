@@ -7,8 +7,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     marginTop: theme.spacing(-7),
     paddingBottom: theme.spacing(3),
-    marginLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
+    paddingLeft: theme.spacing(-1),
     overflow: 'hidden',
   },
 
@@ -30,7 +29,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   tableFix: {
-    marginTop: theme.spacing(1),
+    marginTop: theme.spacing(7),
+    paddingLeft: theme.spacing(-1),
     width: '100%',
   },
 
@@ -41,23 +41,20 @@ const useStyles = makeStyles((theme) => ({
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    border: '1px solid ',
-    height: '6rem',
-    borderColor: theme.palette.text.hint,
+    border: `1px solid ${theme.palette.customColors.black(0.07)}`,
+    height: '5.55rem',
     backgroundColor: theme.palette.common.white,
   },
 
   search: {
     marginRight: 'auto',
     marginLeft: theme.spacing(6.25),
-    borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
-    width: '17.5rem',
+    borderBottom: `1px solid ${theme.palette.customColors.black(0.07)}`,
   },
 
   calIcon: {
-    color: 'rgba(0, 0, 0, 0.4)',
-    paddingTop: theme.spacing(0.5),
-    marginLeft: theme.spacing(2.75),
+    color: `${theme.palette.customColors.black(0.4)}`,
+    marginLeft: theme.spacing(3.5),
   },
 
   formSize: {
@@ -66,10 +63,10 @@ const useStyles = makeStyles((theme) => ({
   },
 
   tableMain: {
-    marginTop: theme.spacing(6.25),
-    border: '1px solid rgba(0, 0, 0, 0.1)',
+    marginTop: theme.spacing(4.25),
+    border: `1px solid ${theme.palette.customColors.black(0.07)}`,
     backgroundColor: theme.palette.common.white,
-    minHeight: '29.5rem',
+    minHeight: '29rem',
     '&::-webkit-scrollbar': {
       width: '0.2em',
     },
@@ -83,15 +80,15 @@ const useStyles = makeStyles((theme) => ({
 
   tableMainCompare: {
     marginTop: theme.spacing(-0.25),
-    border: '1px solid rgba(0, 0, 0, 0.1)',
+    border: `1px solid ${theme.palette.customColors.black(0.07)}`,
     backgroundColor: theme.palette.common.white,
     height: '15rem',
     overflow: 'hidden',
   },
 
   tableMainShowAll: {
-    marginTop: theme.spacing(6.25),
-    border: '1px solid rgba(0, 0, 0, 0.1)',
+    marginTop: theme.spacing(4.25),
+    border: `1px solid ${theme.palette.customColors.black(0.07)}`,
     backgroundColor: theme.palette.common.white,
     height: '29.75rem',
     '&::-webkit-scrollbar': {
@@ -118,17 +115,16 @@ const useStyles = makeStyles((theme) => ({
   },
 
   workflowName: {
-    borderRight: '1px solid rgba(0, 0, 0, 0.1)',
-    fontSize: '0.8rem',
+    borderRight: `1px solid ${theme.palette.customColors.black(0.07)}`,
+    paddingTop: theme.spacing(2.5),
   },
 
   workflowNameHead: {
-    marginTop: theme.spacing(2.5),
+    marginTop: theme.spacing(2),
   },
 
   tableObjects: {
     paddingLeft: theme.spacing(3.75),
-    fontSize: '0.8rem',
   },
 
   headSpacing: {
@@ -136,9 +132,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   tableObjectRegularity: {
-    marginTop: theme.spacing(-3),
+    marginTop: theme.spacing(-2.5),
     paddingLeft: theme.spacing(7.75),
-    fontSize: '0.8rem',
   },
 
   nameContent: {
@@ -162,6 +157,7 @@ const useStyles = makeStyles((theme) => ({
 
   checkbox: {
     paddingLeft: theme.spacing(3.75),
+    paddingTop: theme.spacing(0.5),
   },
 
   buttonBack: {
@@ -184,19 +180,19 @@ const useStyles = makeStyles((theme) => ({
   },
 
   markerIconDown: {
-    color: 'rgba(0, 0, 0, 0.4)',
+    color: `${theme.palette.customColors.black(0.4)}`,
     paddingTop: theme.spacing(0.5),
     margin: 0,
   },
 
   markerIconUp: {
-    color: 'rgba(0, 0, 0, 0.4)',
+    color: `${theme.palette.customColors.black(0.4)}`,
     paddingTop: theme.spacing(0.5),
     margin: 0,
   },
 
   seeAllText: {
-    color: 'rgba(0, 0, 0, 0.6)',
+    color: `${theme.palette.customColors.black(0.6)}`,
     fontWeight: 500,
   },
 
@@ -212,10 +208,15 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(8),
   },
 
+  buttonSeeAnalytics: {
+    alignContent: 'left',
+    transform: 'rotate(-90deg)',
+  },
+
   // Form Select Properties
   formControl: {
     margin: theme.spacing(0.5),
-    marginRight: theme.spacing(6.25),
+    marginRight: theme.spacing(1.5),
     height: '2.5rem',
     minWidth: '9rem',
   },
@@ -233,7 +234,7 @@ const useStyles = makeStyles((theme) => ({
     border: '1.7px solid',
     borderRadius: 4,
     borderColor: theme.palette.secondary.main,
-    marginRight: theme.spacing(3.75),
+    marginRight: theme.spacing(3),
     textTransform: 'none',
   },
 
