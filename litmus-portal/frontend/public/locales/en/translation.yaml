@@ -96,7 +96,7 @@ workflowUnderground:
 
 community:
   heading: 'Litmus Insights'
-  headingDesc: 'Stats for the Litmus community in the last 24 hours'
+  headingDesc: 'Stats for the Litmus community'
   analyticDesc: 'Periodic growth of Litmus'
   statsHeading: 'Litmus users around the world:'
 
