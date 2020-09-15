@@ -170,7 +170,7 @@ const ReceivedInvitations: React.FC = () => {
           ) : (
             <TableRow>
               <TableCell colSpan={2}>
-                <Typography align="center">No users available.</Typography>
+                <Typography align="center">No invitations received.</Typography>
               </TableCell>
             </TableRow>
           )}

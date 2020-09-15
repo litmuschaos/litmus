@@ -79,7 +79,12 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${getToken()}`,
       },
-      body: JSON.stringify(info),
+      body: JSON.stringify({
+        username: userData.username,
+        email: userData.email,
+        name: userData.name,
+        password: values.password,
+      }),
     })
       .then((response) => response.json())
       .then((data) => {
