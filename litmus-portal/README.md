@@ -14,13 +14,20 @@ Litmus-Portal provides console and UI experience for managing, monitoring, and e
 
 ## **Installation**
 
-Applying k8s manifest
+#### Applying k8s manifest
+> Alpha0 (Stable)
+```bash
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/v1.8.x/litmus-portal/k8s-manifest.yml
+```
 
+Or
+
+> Master (Latest)
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/k8s-manifest.yml
 ```
 
-Retrieving external url to access the litmus portal
+#### Retrieving external url to access the litmus portal
 
 ```bash
 export NODE_NAME=$(kubectl get pod -n litmus -l "component=litmusportal-frontend" -o=jsonpath='{.items[*].spec.nodeName}')
@@ -33,13 +40,9 @@ Note: Default `username: admin` and `password: litmus`
 
 ### **User Guide for Litmus Portal**
 
-<br>
-
 Litmus-Portal provides console or UI experience for managing, monitoring, and events round chaos workflows. Chaos workflows consist of a sequence of experiments run together to achieve the objective of introducing some kind of fault into an application or the Kubernetes platform.
 
-<br>
-
-View the entire User Guide [here](https://docs.google.com/document/d/1fiN25BrZpvqg0UkBCuqQBE7Mx8BwDGC8ss2j2oXkZNA/edit#)
+View the User Guide <b>[here](https://docs.google.com/document/d/1fiN25BrZpvqg0UkBCuqQBE7Mx8BwDGC8ss2j2oXkZNA/edit#)</b>
 
 ### **Uninstallation**
 
