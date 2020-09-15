@@ -336,13 +336,13 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
                     <TableBody>
                       {loading ? (
                         <TableRow>
-                          <TableCell colSpan={5}>
+                          <TableCell colSpan={6}>
                             <Loader />
                           </TableCell>
                         </TableRow>
                       ) : error ? (
                         <TableRow>
-                          <TableCell colSpan={5}>
+                          <TableCell colSpan={6}>
                             <Typography align="center">
                               Unable to fetch data
                             </Typography>
@@ -364,7 +364,7 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
                           })
                       ) : (
                         <TableRow>
-                          <TableCell colSpan={5}>
+                          <TableCell colSpan={6}>
                             <Typography align="center">
                               No records available
                             </Typography>
@@ -373,7 +373,7 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
                       )}
                       {emptyRows > 0 && (
                         <TableRow style={{ height: 75 * emptyRows }}>
-                          <TableCell colSpan={5} />
+                          <TableCell colSpan={6} />
                         </TableRow>
                       )}
                     </TableBody>
