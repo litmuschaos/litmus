@@ -14,13 +14,20 @@ Litmus-Portal provides console and UI experience for managing, monitoring, and e
 
 ## **Installation**
 
-Applying k8s manifest
+#### Applying k8s manifest
+> Alpha 0
+```bash
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/v1.8.x/litmus-portal/k8s-manifest.yml
+```
 
+Or
+
+> Master
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/k8s-manifest.yml
 ```
 
-Retrieving external url to access the litmus portal
+#### Retrieving external url to access the litmus portal
 
 ```bash
 export NODE_NAME=$(kubectl get pod -n litmus -l "component=litmusportal-frontend" -o=jsonpath='{.items[*].spec.nodeName}')
