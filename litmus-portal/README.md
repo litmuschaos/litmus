@@ -15,7 +15,7 @@ Litmus-Portal provides console and UI experience for managing, monitoring, and e
 ## **Installation**
 
 #### Applying k8s manifest
-> Alpha0 (Unstable)
+> Alpha0 (Stable)
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/v1.8.x/litmus-portal/k8s-manifest.yml
 ```
