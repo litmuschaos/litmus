@@ -2,9 +2,10 @@ package queries
 
 import (
 	"encoding/json"
+	"log"
+
 	"github.com/jinzhu/copier"
 	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
-	"log"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"

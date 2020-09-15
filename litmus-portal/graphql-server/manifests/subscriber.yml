@@ -1044,7 +1044,7 @@ spec:
       serviceAccountName: litmus-svc-account
       containers:
         - name: subscriber
-          image: 'litmuschaos/litmusportal-subscriber:ci'
+          image: #{SUB-IMAGE}
           env:
             - name: GQL_SERVER
               value: #{SERVER}
