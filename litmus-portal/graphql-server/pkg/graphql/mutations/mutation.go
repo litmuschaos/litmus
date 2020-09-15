@@ -1,10 +1,11 @@
 package mutations
 
 import (
-	"github.com/jinzhu/copier"
 	"log"
 	"strconv"
 	"time"
+
+	"github.com/jinzhu/copier"
 
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
