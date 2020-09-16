@@ -1,28 +1,39 @@
 import { AppBar, Typography } from '@material-ui/core';
+import useTheme from '@material-ui/core/styles/useTheme';
 import Tabs from '@material-ui/core/Tabs';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import ButtonFilled from '../../components/Button/ButtonFilled';
-import BrowseSchedule from '../../components/Sections/ChaosWorkflows/BrowseSchedule';
-import BrowseWorkflow from '../../components/Sections/ChaosWorkflows/BrowseWorkflow';
-import Templates from '../../components/Sections/ChaosWorkflows/Templates';
 import { StyledTab, TabPanel } from '../../components/Tabs';
 import Scaffold from '../../containers/layouts/Scaffold';
+import useActions from '../../redux/actions';
+import * as TabActions from '../../redux/actions/tabs';
 import { history } from '../../redux/configureStore';
+import { RootState } from '../../redux/reducers';
+import BrowseSchedule from '../../views/ChaosWorkflows/BrowseSchedule';
+import BrowseWorkflow from '../../views/ChaosWorkflows/BrowseWorkflow';
+import Templates from '../../views/ChaosWorkflows/Templates';
+import WorkflowComparisonTable from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowComparisonTable';
 import useStyles from './styles';
 
 const Workflows = () => {
   const classes = useStyles();
-  const [value, setValue] = React.useState(0);
+  const workflowTabValue = useSelector(
+    (state: RootState) => state.tabNumber.workflows
+  );
+  const tabs = useActions(TabActions);
+
+  const theme = useTheme();
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setValue(newValue);
+    tabs.changeWorkflowsTabs(newValue);
   };
 
   return (
     <Scaffold>
-      <section className="Header section">
+      <section>
         <div className={classes.header}>
-          <Typography variant="h4">Chaos Workflows</Typography>
+          <Typography variant="h3">Chaos Workflows</Typography>
           <div className={classes.scheduleBtn}>
             <ButtonFilled
               isPrimary={false}
@@ -35,10 +46,13 @@ const Workflows = () => {
       </section>
       <AppBar position="static" color="default" className={classes.appBar}>
         <Tabs
-          value={value}
+          value={workflowTabValue}
           onChange={handleChange}
-          indicatorColor="secondary"
-          textColor="secondary"
+          TabIndicatorProps={{
+            style: {
+              backgroundColor: theme.palette.secondary.dark,
+            },
+          }}
           variant="fullWidth"
         >
           <StyledTab label="Browse workflows" />
@@ -47,17 +61,17 @@ const Workflows = () => {
           <StyledTab label="Analytics" />
         </Tabs>
       </AppBar>
-      <TabPanel value={value} index={0}>
+      <TabPanel value={workflowTabValue} index={0}>
         <BrowseWorkflow />
       </TabPanel>
-      <TabPanel value={value} index={1}>
+      <TabPanel value={workflowTabValue} index={1}>
         <BrowseSchedule />
       </TabPanel>
-      <TabPanel value={value} index={2}>
+      <TabPanel value={workflowTabValue} index={2}>
         <Templates />
       </TabPanel>
-      <TabPanel value={value} index={3}>
-        Analytics comming soon
+      <TabPanel value={workflowTabValue} index={3}>
+        <WorkflowComparisonTable />
       </TabPanel>
     </Scaffold>
   );

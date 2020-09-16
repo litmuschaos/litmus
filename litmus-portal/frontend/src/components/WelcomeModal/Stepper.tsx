@@ -1,22 +1,26 @@
 import { useMutation } from '@apollo/client/react/hooks';
 import MobileStepper from '@material-ui/core/MobileStepper';
 import React, { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import ButtonFilled from '../Button/ButtonFilled';
 import config from '../../config';
 import { CREATE_USER } from '../../graphql';
+import { CreateUserData } from '../../models/graphql/user';
+import useActions from '../../redux/actions';
+import * as UserActions from '../../redux/actions/user';
 import { RootState } from '../../redux/reducers';
+import getToken from '../../utils/getToken';
+import {
+  validateConfirmPassword,
+  validateEmail,
+  validateStartEmptySpacing,
+} from '../../utils/validate';
+import ButtonFilled from '../Button/ButtonFilled';
+import ButtonOutline from '../Button/ButtonOutline';
 import InputField from '../InputField';
 import ModalPage from './Modalpage';
 import useStyles from './styles';
-import {
-  validateStartEmptySpacing,
-  validateConfirmPassword,
-  validateEmail,
-} from '../../utils/validate';
-import ButtonOutline from '../Button/ButtonOutline';
 
 interface CStepperProps {
   handleModal: () => void;
@@ -25,15 +29,17 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const { userData } = useSelector((state: RootState) => state);
+  const userData = useSelector((state: RootState) => state.userData);
+  const userLoader = useActions(UserActions);
   const [activeStep, setActiveStep] = React.useState<number>(0);
   const isError = useRef(true);
   const isSuccess = useRef(false);
 
-  const [info, setInfo] = React.useState({
-    email: '',
-    name: '',
-    projectName: '',
+  const [info, setInfo] = React.useState<CreateUserData>({
+    username: userData.username,
+    email: userData.email,
+    name: userData.name,
+    project_name: '',
   });
 
   const handleBack = () => {
@@ -56,7 +62,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
     window.location.reload();
   };
 
-  const [CreateUser] = useMutation(CREATE_USER, {
+  const [CreateUser] = useMutation<CreateUserData>(CREATE_USER, {
     onCompleted: () => {
       rerender();
     },
@@ -65,14 +71,20 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   // Submit entered data to /update endpoint
   const handleSubmit = () => {
     Object.assign(info, { password: values.password });
+    userLoader.updateUserDetails({ loader: true });
 
     fetch(`${config.auth.url}/update/details`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${userData.token}`,
+        Authorization: `Bearer ${getToken()}`,
       },
-      body: JSON.stringify(info),
+      body: JSON.stringify({
+        username: userData.username,
+        email: userData.email,
+        name: userData.name,
+        password: values.password,
+      }),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -85,7 +97,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                 username: userData.username,
                 email: info.email,
                 name: info.name,
-                project_name: info.projectName,
+                project_name: info.project_name,
               },
             },
           });
@@ -116,8 +128,8 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   // [Button State: Disabled]
   if (activeStep === 0) {
     if (
-      info.projectName.length > 0 &&
-      validateStartEmptySpacing(info.projectName) === false
+      info.project_name.length > 0 &&
+      validateStartEmptySpacing(info.project_name) === false
     ) {
       isError.current = false;
     } else {
@@ -194,9 +206,9 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
           <ButtonOutline
             isDisabled={false}
             handleClick={handleBack}
-            data-cy="Skip"
+            data-cy="Back"
           >
-            <>{t('welcomeModel.button.skip')}</>
+            <>{t('welcomeModel.button.back')}</>
           </ButtonOutline>
           <ButtonFilled
             isPrimary
@@ -241,19 +253,19 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                 <div className={classes.inputArea} data-cy="InputProjectName">
                   <InputField
                     label={t('welcomeModel.case-0.label')}
-                    value={info.projectName}
+                    value={info.project_name}
                     required
                     helperText={
-                      validateStartEmptySpacing(info.projectName)
+                      validateStartEmptySpacing(info.project_name)
                         ? 'Should not start with an empty space'
                         : ''
                     }
                     validationError={validateStartEmptySpacing(
-                      info.projectName
+                      info.project_name
                     )}
                     type="text"
                     handleChange={(event) => {
-                      setData('projectName', event.target.value);
+                      setData('project_name', event.target.value);
                     }}
                   />
                 </div>
@@ -361,8 +373,8 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
         return (
           <ModalPage
             renderMenu={
-              <div>
-                <div className={classes.inputArea} data-cy="InputEmail">
+              <div className={classes.passwordSetterDiv}>
+                <div className={classes.inputArea} data-cy="InputName">
                   <InputField
                     label={t('welcomeModel.case-3.label')}
                     required
@@ -384,6 +396,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
             setText={t('welcomeModel.case-3.info')}
           />
         );
+
       default:
         return <Link to="/404" />;
     }
@@ -396,7 +409,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   return (
     <div>
       <div>
-        {activeStep === 3 ? (
+        {activeStep === 1 ? (
           <div>{getStepContent(activeStep)}</div>
         ) : (
           <div>{getStepContent(activeStep)}</div>

@@ -10,10 +10,13 @@ export interface preDefinedWorkflowData {
   provider?: string;
   description?: string;
   totalRuns?: number;
-  workflowID?: string;
+  workflowID?: number;
   CallbackOnSelectWorkflow?: SelectWorkflowCallBackType;
-  selectedID?: string;
+  selectedID?: number;
   isCustom?: boolean;
+  details?: string;
+  recommendation?: string;
+  experimentinfo?: string;
 }
 
 export interface workflowDetails {

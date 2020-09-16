@@ -5,24 +5,31 @@ import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import Unimodal from '../../containers/layouts/Unimodal';
 import { CREATE_WORKFLOW } from '../../graphql';
-import { experimentMap, WorkflowData } from '../../models/workflow';
+import {
+  CreateWorkFlowInput,
+  CreateWorkflowResponse,
+  WeightMap,
+} from '../../models/graphql/createWorkflowData';
+import { experimentMap, WorkflowData } from '../../models/redux/workflow';
 import useActions from '../../redux/actions';
+import * as TabActions from '../../redux/actions/tabs';
 import * as WorkflowActions from '../../redux/actions/workflow';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import parsed from '../../utils/yamlUtils';
+import ChooseWorkflow from '../../views/CreateWorkflow/ChooseWorkflow/index';
+import ReliablityScore from '../../views/CreateWorkflow/ReliabilityScore';
+import ScheduleWorkflow from '../../views/CreateWorkflow/ScheduleWorkflow';
+import TuneWorkflow from '../../views/CreateWorkflow/TuneWorkflow/index';
+import VerifyCommit from '../../views/CreateWorkflow/VerifyCommit';
+import ChooseAWorkflowCluster from '../../views/CreateWorkflow/WorkflowCluster';
 import ButtonFilled from '../Button/ButtonFilled';
 import ButtonOutline from '../Button/ButtonOutline';
-import ChooseWorkflow from '../Sections/CreateWorkflow/ChooseWorkflow/index';
-import ReliablityScore from '../Sections/CreateWorkflow/ReliabilityScore';
-import ScheduleWorkflow from '../Sections/CreateWorkflow/ScheduleWorkflow';
-import TuneWorkflow from '../Sections/CreateWorkflow/TuneWorkflow/index';
-import VerifyCommit from '../Sections/CreateWorkflow/VerifyCommit';
-import ChooseAWorkflowCluster from '../Sections/CreateWorkflow/WorkflowCluster';
 import QontoConnector from './quontoConnector';
 import useStyles from './styles';
 import useQontoStepIconStyles from './useQontoStepIconStyles';
@@ -36,11 +43,6 @@ function getSteps(): string[] {
     'Schedule',
     'Verify and Commit',
   ];
-}
-
-interface WeightMap {
-  experiment_name: string;
-  weightage: number;
 }
 
 function QontoStepIcon(props: StepIconProps) {
@@ -69,6 +71,7 @@ function QontoStepIcon(props: StepIconProps) {
       </div>
     );
   }
+
   return (
     <div
       className={`${classes.root} ${
@@ -112,12 +115,12 @@ function getStepContent(
 const CustomStepper = () => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
+  const { t } = useTranslation();
 
   const workflowData: WorkflowData = useSelector(
     (state: RootState) => state.workflowData
   );
   const {
-    id,
     yaml,
     weights,
     description,
@@ -129,11 +132,17 @@ const CustomStepper = () => {
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
   );
+  const isDisable = useSelector(
+    (state: RootState) => state.selectTemplate.isDisable
+  );
+  const userRole = useSelector((state: RootState) => state.userData.userRole);
+
+  const tabs = useActions(TabActions);
   const workflow = useActions(WorkflowActions);
+  const [invalidYaml, setinValidYaml] = React.useState(false);
   const steps = getSteps();
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
     if (activeStep === 2) {
       const tests = parsed(yaml);
       const arr: experimentMap[] = [];
@@ -142,7 +151,7 @@ const CustomStepper = () => {
         hashMap.set(weight.experimentName, weight.weight);
       });
       tests.forEach((test) => {
-        let value = 0;
+        let value = 10;
         if (hashMap.has(test)) {
           value = hashMap.get(test);
         }
@@ -151,16 +160,30 @@ const CustomStepper = () => {
       workflow.setWorkflowDetails({
         weights: arr,
       });
+      if (arr.length === 0) {
+        setinValidYaml(true);
+      } else {
+        setinValidYaml(false);
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      }
+    } else {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
   };
 
   const [open, setOpen] = React.useState(false);
 
   const handleBack = () => {
+    if (activeStep === 2) {
+      setinValidYaml(false);
+    }
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const [createChaosWorkFlow] = useMutation(CREATE_WORKFLOW, {
+  const [createChaosWorkFlow] = useMutation<
+    CreateWorkflowResponse,
+    CreateWorkFlowInput
+  >(CREATE_WORKFLOW, {
     onCompleted: () => {
       setOpen(true);
     },
@@ -200,6 +223,7 @@ const CustomStepper = () => {
 
   const handleOpen = () => {
     handleMutation();
+    setOpen(true);
   };
 
   const handleClose = () => {
@@ -210,6 +234,41 @@ const CustomStepper = () => {
   function gotoStep({ page }: { page: number }) {
     setActiveStep(page);
   }
+
+  // Check correct permissions for user
+  if (userRole === 'Viewer')
+    return (
+      <>
+        <Typography
+          variant="h3"
+          align="center"
+          style={{ marginTop: '10rem', marginBottom: '3rem' }}
+        >
+          Missing sufficient permissions :(
+        </Typography>
+        <Typography variant="h6" align="center">
+          Looks like you do not have the required permission to create a new
+          workflow on this project.
+        </Typography>
+        <br />
+        <Typography variant="body1" align="center">
+          Contact portal administrator to upgrade your permission.
+        </Typography>
+
+        {/* Back Button */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginTop: '1rem',
+          }}
+        >
+          <ButtonFilled isPrimary handleClick={() => history.goBack()}>
+            Go Back
+          </ButtonFilled>
+        </div>
+      </>
+    );
 
   return (
     <div className={classes.root}>
@@ -268,8 +327,9 @@ const CustomStepper = () => {
                     isPrimary
                     data-cy="selectFinish"
                     handleClick={() => {
-                      history.push('/workflows');
                       setOpen(false);
+                      tabs.changeWorkflowsTabs(0);
+                      history.push('/workflows');
                     }}
                   >
                     <div>Back to workflow</div>
@@ -279,7 +339,6 @@ const CustomStepper = () => {
             </Unimodal>
             {getStepContent(activeStep, (page: number) => gotoStep({ page }))}
           </div>
-
           {/* Control Buttons */}
           {activeStep !== 0 ? (
             <div className={classes.buttonGroup}>
@@ -292,9 +351,9 @@ const CustomStepper = () => {
                 </ButtonFilled>
               ) : (
                 <ButtonFilled
-                  isDisabled={id.length === 0}
                   handleClick={() => handleNext()}
                   isPrimary
+                  isDisabled={isDisable}
                 >
                   <div>
                     Next
@@ -306,6 +365,11 @@ const CustomStepper = () => {
                   </div>
                 </ButtonFilled>
               )}
+              {invalidYaml ? (
+                <Typography className={classes.yamlError}>
+                  <strong>{t('workflowStepper.continueError')}</strong>
+                </Typography>
+              ) : null}
             </div>
           ) : null}
         </div>

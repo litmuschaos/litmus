@@ -52,25 +52,40 @@ spec:
         component: litmusportal-server
     spec:
       containers:
-      - name: graphql-server
-        image: #{portal-server}
-        env:
-          - name: DB_SERVER
-            value: mongo-service:27017
-          - name: JWT_SECRET
-            value: "12345678"
-          - name: EXTERNAL_ADDRESS
-            value: ""
-          - name: SERVICE_ADDRESS
-            value: litmusportal-server-service:8080
-        ports:
-        - containerPort: 8080
-        imagePullPolicy: Always
-      - name: auth-server
-        image: #{auth-server}
-        ports:
-        - containerPort: 3000
-        imagePullPolicy: Always
+        - name: graphql-server
+          image: #{portal-server}
+          env:
+            - name: DB_SERVER
+              value: "mongo-service:27017"
+            - name: JWT_SECRET
+              value: "litmus-portal@123"
+            - name: EXTERNAL_ADDRESS
+              value: ""
+            - name: SERVICE_ADDRESS
+              value: "http://litmusportal-server-service:9002"
+            - name: SELF_CLUSTER
+              value: "false"
+            - name: SUBSCRIBER_IMAGE
+              value: "litmuschaos/litmusportal-subscriber:ci"
+            - name: DEPLOYER_IMAGE
+              value: "litmuschaos/litmusportal-self-deployer:ci"
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: Always
+        - name: auth-server
+          image: #{auth-server}
+          env:
+            - name: DB_SERVER
+              value: "mongodb://mongo-service:27017"
+            - name: JWT_SECRET
+              value: "litmus-portal@123"
+            - name: ADMIN_USERNAME
+              value: "admin"
+            - name: ADMIN_PASSWORD
+              value: "litmus"
+          ports:
+            - containerPort: 3000
+          imagePullPolicy: Always
 ---
 apiVersion: v1
 kind: Service

@@ -1,11 +1,10 @@
 import { useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import Loader from '../../components/Loader';
-import ArgoWorkflow from '../../components/Sections/WorkflowDetails/ArgoWorkflow';
-import WorkflowInfo from '../../components/Sections/WorkflowDetails/WorkflowInfo';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../graphql';
 import {
@@ -13,15 +12,18 @@ import {
   Workflow,
   WorkflowDataVars,
   WorkflowSubscription,
-} from '../../models/workflowData';
+} from '../../models/graphql/workflowData';
 import { RootState } from '../../redux/reducers';
+import ArgoWorkflow from '../../views/WorkflowDetails/ArgoWorkflow';
+import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
 import useStyles from './styles';
 
 const WorkflowDetails: React.FC = () => {
   const classes = useStyles();
   const { pathname } = useLocation();
   // Getting the workflow nome from the pathname
-  const workflowName = pathname.split('/')[2];
+  const workflowRunId = pathname.split('/')[3];
+  const { t } = useTranslation();
 
   // get ProjectID
   const selectedProjectID = useSelector(
@@ -35,7 +37,7 @@ const WorkflowDetails: React.FC = () => {
   );
 
   const workflow = data?.getWorkFlowRuns.filter(
-    (w) => w.workflow_name === workflowName
+    (w) => w.workflow_run_id === workflowRunId
   )[0];
 
   // Using subscription to get realtime data
@@ -81,9 +83,7 @@ const WorkflowDetails: React.FC = () => {
             <Typography className={classes.heading}>
               {workflow.workflow_name}
             </Typography>
-            <Typography>
-              Click on test to see detailed log of your workflow
-            </Typography>
+            <Typography>{t('workflowDetails.detailedLog')}</Typography>
 
             {/* Argo Workflow DAG Graph */}
             <ArgoWorkflow
@@ -101,7 +101,7 @@ const WorkflowDetails: React.FC = () => {
           />
         </div>
       ) : error ? (
-        <Typography>An error has occurred while fetching the data</Typography>
+        <Typography>{t('workflowDetails.fetchError')}</Typography>
       ) : (
         <Loader />
       )}

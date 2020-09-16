@@ -105,7 +105,7 @@ const SchedulePage: React.FC = () => {
                     control={<Radio />}
                     label={
                       <Typography className={classes.radioText}>
-                        Schedule now
+                        {t('schedule.scheduleNow')}
                       </Typography>
                     }
                   />
@@ -115,22 +115,21 @@ const SchedulePage: React.FC = () => {
                     control={<Radio />}
                     label={
                       <Typography className={classes.radioText}>
-                        Schedule after some time
+                        {t('schedule.scheduleAfter')}
                       </Typography>
                     }
                   />
                   {value === 'afterSometime' ? (
                     <div className={classes.schLater}>
                       <Typography className={classes.captionText}>
-                        Choose the minutes, hours, or days when you want to
-                        start workflow
+                        {t('schedule.scheduleAfterSometime')}
                       </Typography>
                       <div className={classes.wtDateTime}>
                         <Typography
                           variant="body2"
                           className={classes.captionText}
                         >
-                          After
+                          {t('schedule.after')}
                         </Typography>
 
                         <SetTime
@@ -151,7 +150,7 @@ const SchedulePage: React.FC = () => {
                     control={<Radio />}
                     label={
                       <Typography className={classes.radioText}>
-                        Schedule at a specific time
+                        {t('schedule.scheduleSpecificTime')}
                       </Typography>
                     }
                   />
@@ -159,7 +158,7 @@ const SchedulePage: React.FC = () => {
                   {value === 'specificTime' ? (
                     <div className={classes.schLater}>
                       <Typography className={classes.captionText}>
-                        Select date and time to start workflow in future
+                        {t('schedule.scheduleFuture')}
                       </Typography>
                       <div className={classes.innerSpecific}>
                         <CustomDate disabled={false} />
@@ -174,14 +173,14 @@ const SchedulePage: React.FC = () => {
                     control={<Radio />}
                     label={
                       <Typography className={classes.radioText}>
-                        Recurring Schedule
+                        {t('schedule.scheduleRecurring')}
                       </Typography>
                     }
                   />
                   {value === 'recurringScedule' ? (
                     <div className={classes.schLater}>
                       <Typography className={classes.captionText}>
-                        Choose the right recurring time to start your workflow
+                        {t('schedule.scheduleRecurringTime')}
                       </Typography>
 
                       {/* options to select time of recurring schedule */}
@@ -202,7 +201,7 @@ const SchedulePage: React.FC = () => {
                               <div>
                                 <div className={classes.scRandom}>
                                   <Typography className={classes.scRandsub1}>
-                                    At
+                                    {t('schedule.At')}
                                   </Typography>
                                   <SetTime
                                     start={start}
@@ -225,7 +224,7 @@ const SchedulePage: React.FC = () => {
                               <div>
                                 <div className={classes.scRandom}>
                                   <Typography className={classes.scRandsub1}>
-                                    At
+                                    {t('schedule.At')}
                                   </Typography>
                                   <CustomTime ampm disabled={false} />
                                 </div>
@@ -242,7 +241,7 @@ const SchedulePage: React.FC = () => {
                               <div>
                                 <div className={classes.scRandom}>
                                   <Typography className={classes.scRandsub1}>
-                                    On
+                                    {t('schedule.scheduleOn')}
                                   </Typography>
                                   <FormControl
                                     className={classes.formControlDT}
@@ -278,7 +277,7 @@ const SchedulePage: React.FC = () => {
                                     </Select>
                                   </FormControl>
                                   <Typography className={classes.scRandsub1}>
-                                    at
+                                    {t('schedule.at')}
                                   </Typography>
                                   <CustomTime ampm disabled={false} />
                                 </div>
@@ -295,7 +294,7 @@ const SchedulePage: React.FC = () => {
                               <div>
                                 <div className={classes.scRandom}>
                                   <Typography className={classes.scRandsub1}>
-                                    On
+                                    {t('schedule.scheduleOn')}
                                   </Typography>
                                   <FormControl
                                     className={classes.formControlMonth}
@@ -330,7 +329,7 @@ const SchedulePage: React.FC = () => {
                                     </Select>
                                   </FormControl>
                                   <Typography className={classes.scRandsub1}>
-                                    at
+                                    {t('schedule.at')}
                                   </Typography>
                                   <CustomTime ampm disabled={false} />
                                 </div>

@@ -1,18 +1,28 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { preDefinedWorkflowData } from '../../models/predefinedWorkflow';
-import useStyles from './styles';
+import { RootState } from '../../redux/reducers';
 import parsed from '../../utils/yamlUtils';
+import useStyles from './styles';
 
 const CardContent: React.FC<preDefinedWorkflowData> = ({
   title,
   urlToIcon,
+  workflowID,
   provider,
   handleClick,
   description,
   chaosWkfCRDLink,
 }) => {
+  const selectedTemplateID = useSelector(
+    (state: RootState) => state.selectTemplate.selectedTemplateID
+  );
+
+  const isSelected: boolean =
+    workflowID !== undefined && workflowID === selectedTemplateID;
+
   const classes = useStyles();
 
   const [yamlText, setYamlText] = useState<string>('');
@@ -53,7 +63,14 @@ const CardContent: React.FC<preDefinedWorkflowData> = ({
 
   return (
     <div className={classes.card}>
-      <div className={classes.cardContent} onClick={handleClick}>
+      <div
+        className={`${
+          isSelected
+            ? `${classes.cardContent} ${classes.cardFocused}`
+            : classes.cardContent
+        }`}
+        onClick={handleClick}
+      >
         <div className={classes.cardAnalytics}>
           {/* {totalRuns ? (
             <span
@@ -87,6 +104,7 @@ const CardContent: React.FC<preDefinedWorkflowData> = ({
           ) : (
             <span />
           )}
+          {description ? description.length < 28 ? <br /> : <div /> : <span />}
         </div>
         {/* <Divider variant="fullWidth" className={classes.horizontalLine} />
         <div className={classes.details}>

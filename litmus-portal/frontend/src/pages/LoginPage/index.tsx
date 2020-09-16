@@ -1,8 +1,10 @@
-import { Button, Typography } from '@material-ui/core';
+/* eslint-disable react/no-danger */
+import { Typography } from '@material-ui/core';
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import ButtonFilled from '../../components/Button/ButtonFilled';
 import InputField from '../../components/InputField';
+import Loader from '../../components/Loader';
 import config from '../../config';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
@@ -19,25 +21,41 @@ const LoginPage = () => {
   const { t } = useTranslation();
   const user = useActions(UserActions);
   const classes = useStyles();
+
+  const [isError, setIsError] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [authData, setAuthData] = useState<authData>({
     username: '',
     password: '',
   });
 
+  const responseCode = 200;
+  const loaderSize = 20;
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsLoading(true);
 
     fetch(`${config.auth.url}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(authData),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.status !== responseCode) {
+          setIsError(true);
+          setIsLoading(false);
+        } else {
+          setIsError(false);
+        }
+        return response.json();
+      })
       .then((data) => {
         if ('error' in data) {
           console.error(data);
         } else {
           user.setUserDetails(data.access_token);
+          setIsLoading(false);
           history.push('/');
         }
       })
@@ -45,13 +63,14 @@ const LoginPage = () => {
         console.error(err);
       });
   };
+
   return (
     <div className={classes.rootContainer}>
       <div className={classes.mainDiv}>
         <div className={classes.box}>
-          <img src="icons/LitmusLogo.png" alt="litmus logo" />
+          <img src="icons/LitmusLogo.svg" alt="litmus logo" />
           <Typography variant="h2" className={classes.heading}>
-            {t('login.heading')} <strong>Litmus!</strong>
+            <div dangerouslySetInnerHTML={{ __html: t('login.heading') }} />
           </Typography>
           <Typography className={classes.description} gutterBottom>
             {t('login.subHeading1')}
@@ -91,13 +110,12 @@ const LoginPage = () => {
                 type="password"
                 required
                 value={authData.password}
-                // helperText={
-                //   validatePassword(authData.password)
-                //     ? 'Should be >= 6 & contain 1 alphanumeric character and a number'
-                //     : ''
-                // }
-                // validationError={validatePassword(authData.password)}
-                validationError={false}
+                helperText={
+                  isError
+                    ? 'Wrong Credentials - Try again with correct username or password'
+                    : ''
+                }
+                validationError={isError}
                 data-cy="inputPassword"
                 handleChange={(e) =>
                   setAuthData({
@@ -107,23 +125,15 @@ const LoginPage = () => {
                 }
               />
             </div>
-            <Typography className={classes.forgotPasssword}>
-              <Link
-                to="/reset"
-                className={classes.linkForgotPass}
-                data-cy="forgotPassword"
-              >
-                {t('login.passwordForgot')}
-              </Link>
-            </Typography>
             <div className={classes.loginDiv}>
-              <Button
+              <ButtonFilled
                 type="submit"
-                className={classes.submitButton}
+                isPrimary
                 data-cy="loginButton"
+                isDisabled={isLoading}
               >
-                Login
-              </Button>
+                {isLoading ? <Loader size={loaderSize} /> : 'Login'}
+              </ButtonFilled>
             </div>
           </form>
         </div>
