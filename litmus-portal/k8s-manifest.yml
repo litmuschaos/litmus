@@ -69,7 +69,10 @@ spec:
               value: "litmus-portal@123"
             - name: EXTERNAL_ADDRESS
               value: ""
-            - name: SERVICE_ADDRESS
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
               value: "http://litmusportal-server-service:9002"
             - name: SELF_CLUSTER
               value: "true"
