@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"flag"
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -30,7 +31,7 @@ func VerifyCluster(identity model.ClusterIdentity) (*database.Cluster, error) {
 	return &cluster, nil
 }
 
-//Get NodeIP
+//GetNodeIP...
 func GetNodeIP(ctx context.Context) string {
 
 	// Require variables declared
@@ -71,10 +72,12 @@ func GetNodeIP(ctx context.Context) string {
 	internalIP := ""
 
 	for _, addr := range address {
-		if addr.Type == "ExternalIP" && addr.Address != "" {
+		if addr.Type == "NodeExternalIP" && addr.Address != "" {
 			externalIP = addr.Address
-		} else if addr.Type == "InternalIP" && addr.Address != "" {
+			fmt.Println(externalIP)
+		} else if addr.Type == "NodeInternalIP" && addr.Address != "" {
 			internalIP = addr.Address
+			fmt.Println(externalIP)
 		}
 	}
 
