@@ -16,7 +16,7 @@ const ExperimentStatus: React.FC<StatusProps> = ({ status }) => {
     if (status === 'Passed') {
       return setLabel(classes.passed);
     }
-    if (status === 'Awaited') {
+    if (status === 'Awaited' || status === 'N/A') {
       return setLabel(classes.awaited);
     }
     return setLabel(classes.failed);
@@ -31,12 +31,14 @@ const ExperimentStatus: React.FC<StatusProps> = ({ status }) => {
               className={`${classes.checkIcon} ${classes.stateIcon}`}
             />
           </Avatar>
-        ) : (
+        ) : status === 'Failed' ? (
           <Avatar className={classes.miniIcons}>
             <CancelSharpIcon
               className={`${classes.cancelIcon} ${classes.stateIcon}`}
             />
           </Avatar>
+        ) : (
+          <span className={classes.awaitedSpan} />
         )}
         <Typography className={classes.statusFont}>{status}</Typography>
       </div>

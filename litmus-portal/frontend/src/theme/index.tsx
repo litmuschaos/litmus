@@ -43,6 +43,7 @@ declare module '@material-ui/core/styles/createPalette' {
       passedTests: string;
       failedTests: string;
     };
+    waitingStatusColor: string;
   }
   // allow configuration using `createMuiTheme`
   interface PaletteOptions {
@@ -68,6 +69,7 @@ declare module '@material-ui/core/styles/createPalette' {
       passedTests: string;
       failedTests: string;
     };
+    waitingStatusColor?: string;
   }
 }
 function customTheme(options: ThemeOptions) {
@@ -137,6 +139,7 @@ function customTheme(options: ThemeOptions) {
         passedTests: 'rgba(16, 155, 103, 0.2)',
         failedTests: 'rgba(202, 44, 44, 0.2)',
       },
+      waitingStatusColor: 'rgba(246, 185, 43, 0.1)',
     },
     typography: {
       fontSize: 12,
