@@ -83,7 +83,7 @@ const HomePage: React.FC = () => {
     setIsOpen(false);
   };
 
-  const [secondLogin, setSecondLogin] = useState<boolean>(true);
+  const [dataPresent, setDataPresent] = useState<boolean>(true);
 
   useEffect(() => {
     if (data?.getUser.username === userData.username) {
@@ -141,12 +141,12 @@ const HomePage: React.FC = () => {
                 {t('home.heading')}
                 <strong>{` ${name}`}</strong>
               </Typography>
-              {secondLogin ? (
+              {dataPresent ? (
                 <ReturningHome
-                  callbackToSetSecondlogin={(secondLogin: boolean) => {
-                    setSecondLogin(secondLogin);
+                  callbackToSetDataPresent={(dataPresent: boolean) => {
+                    setDataPresent(dataPresent);
                   }}
-                  currentStatus={secondLogin}
+                  currentStatus={dataPresent}
                 />
               ) : (
                 <div className={classes.headingDiv}>
@@ -183,32 +183,36 @@ const HomePage: React.FC = () => {
                   </div>
                 </div>
               )}
-              <div className={classes.contentDiv}>
-                <div className={classes.statDiv}>
-                  <div className={classes.btnHeaderDiv}>
-                    <Typography className={classes.statsHeading}>
-                      <strong>{t('home.analytics.heading')}</strong>
-                    </Typography>
+              {!dataPresent ? (
+                <div className={classes.contentDiv}>
+                  <div className={classes.statDiv}>
+                    <div className={classes.btnHeaderDiv}>
+                      <Typography className={classes.statsHeading}>
+                        <strong>{t('home.analytics.heading')}</strong>
+                      </Typography>
 
-                    <Button className={classes.seeAllBtn}>
-                      <Link to="/community">
-                        <div className={classes.btnSpan}>
-                          <Typography className={classes.btnText}>
-                            {t('home.analytics.moreInfo')}
-                          </Typography>
-                          <img src="icons/next.png" alt="next" />
-                        </div>
-                      </Link>
-                    </Button>
+                      <Button className={classes.seeAllBtn}>
+                        <Link to="/community">
+                          <div className={classes.btnSpan}>
+                            <Typography className={classes.btnText}>
+                              {t('home.analytics.moreInfo')}
+                            </Typography>
+                            <img src="icons/next.png" alt="next" />
+                          </div>
+                        </Link>
+                      </Button>
+                    </div>
+                    <div className={classes.cardDiv}>
+                      <InfoFilledWrap />
+                    </div>
                   </div>
-                  <div className={classes.cardDiv}>
-                    <InfoFilledWrap />
+                  <div className={classes.quickActionDiv}>
+                    <QuickActionCard />
                   </div>
                 </div>
-                <div className={classes.quickActionDiv}>
-                  <QuickActionCard />
-                </div>
-              </div>
+              ) : (
+                <div />
+              )}
             </div>
           </div>
         </Scaffold>

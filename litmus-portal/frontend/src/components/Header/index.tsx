@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client';
 import { Box, Divider } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { GET_USER } from '../../graphql';
@@ -12,13 +12,13 @@ import {
   Member,
   Project,
 } from '../../models/graphql/user';
-// import { Message, NotificationIds } from '../../models/header';
+import { Message, NotificationIds } from '../../models/header';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
 import configureStore from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import CustomBreadCrumbs from '../BreadCrumbs';
-// import NotificationsDropdown from './NotificationDropdown';
+import NotificationsDropdown from './NotificationDropdown';
 import ProfileDropdownSection from './ProfileDropdownSection';
 import useStyles from './styles';
 
@@ -78,7 +78,6 @@ const Header: React.FC = () => {
     });
   };
 
-  /*
   // Fetch and Set Notifications from backend.
 
   const [messages, setMessages] = useState<Message[]>([]);
@@ -132,7 +131,7 @@ const Header: React.FC = () => {
     messages.reverse();
     setMessages(messages);
   }, [setMessages]);
-  /*
+
   const deleteNotification = (notificationIDs: NotificationIds) => {
     for (let i = 0; i < messages.length; i += 1) {
       if (messages[i].sequenceID === notificationIDs.sequenceID) {
@@ -141,18 +140,17 @@ const Header: React.FC = () => {
         }
       }
     }
-    
+
     // send POST request with #notificationIDs.id to update db with notification
     // id marked as disissed from active or persist it in redux or cookie.
     setMessages(messages);
-    //setCountOfMessages(messages.length);
+    setCountOfMessages(messages.length);
   };
 
   useEffect(() => {
     fetchRandomMessages();
   }, [fetchRandomMessages]);
 
-  */
   useEffect(() => {
     setSelectedProjectDetails({
       selectedProjectID: userData.selectedProjectID,
@@ -171,13 +169,11 @@ const Header: React.FC = () => {
                 <CustomBreadCrumbs location={useLocation().pathname} />
               </Box>
               <Box p={1} className={classes.headerFlexPadded}>
-                {/* uncomment to activate notifications.
-                  <NotificationsDropdown
+                <NotificationsDropdown
                   count={`${countOfMessages}`}
                   messages={messages}
                   CallbackToHeaderOnDeleteNotification={deleteNotification}
                 />
-               */}
               </Box>
               <Box p={1} flexGrow={1} className={classes.headerFlexProfile}>
                 <ProfileDropdownSection
