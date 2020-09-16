@@ -10,10 +10,13 @@ import {
   TableContainer,
   TableRow,
   Paper,
+  IconButton,
 } from '@material-ui/core';
 import moment from 'moment';
 import { useQuery } from '@apollo/client';
 import { useSelector } from 'react-redux';
+import useTheme from '@material-ui/core/styles/useTheme';
+import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import {
   customThemeAnalyticsTable,
   customThemeAnalyticsTableCompareMode,
@@ -36,6 +39,7 @@ import {
 } from '../../../../models/graphql/scheduleData';
 import { RootState } from '../../../../redux/reducers';
 import Loader from '../../../../components/Loader';
+import ResilienceScoreComparisonPlot from '../WorkflowComparisonPlot/index';
 
 interface RangeType {
   startDate: string;
@@ -57,6 +61,7 @@ interface Filter {
 
 const WorkflowComparisonTable = () => {
   const classes = useStyles();
+  const { palette } = useTheme();
   const [filter, setFilter] = React.useState<Filter>({
     range: { startDate: 'all', endDate: 'all' },
     selectedCluster: 'All',
@@ -174,8 +179,6 @@ const WorkflowComparisonTable = () => {
     setDisplayData(payload);
   };
 
-  // const CallbackForExporting = (exportAnalytics: boolean) => {};
-
   useEffect(() => {
     setDisplayData(data ? data?.getScheduledWorkflows : []);
     getClusters(data ? data?.getScheduledWorkflows : []);
@@ -244,12 +247,83 @@ const WorkflowComparisonTable = () => {
     setDisplayData(payload);
     setShowAll(false);
     getClusters(searchingDataRetriever());
-  }, [filter]);
+  }, [filter, compare]);
+
+  // data for comparison plot
+  const labels = ['K8S1', 'K8S4', 'K8S2', 'K8S3'];
+
+  const xData = {
+    Daily: [
+      [
+        '2020-04-08',
+        '2020-04-09',
+        '2020-04-10',
+        '2020-04-11',
+        '2020-04-12',
+        '2020-05-13',
+        '2020-05-14',
+        '2020-05-15',
+        '2020-05-16',
+        '2020-05-17',
+      ],
+      [
+        '2020-04-08',
+        '2020-04-09',
+        '2020-04-11',
+        '2020-04-12',
+        '2020-06-13',
+        '2020-06-16',
+        '2020-07-17',
+      ],
+      [
+        '2020-03-08',
+        '2020-03-09',
+        '2020-03-12',
+        '2020-04-13',
+        '2020-04-14',
+        '2020-04-15',
+        '2020-04-16',
+        '2020-04-17',
+      ],
+      [
+        '2020-04-08',
+        '2020-04-09',
+        '2020-07-10',
+        '2020-07-11',
+        '2020-09-12',
+        '2020-09-13',
+        '2020-11-14',
+        '2020-11-16',
+        '2020-11-17',
+      ],
+    ],
+    Monthly: [
+      ['2020-04-30', '2020-05-31'],
+      ['2020-04-30', '2020-06-30', '2020-07-31'],
+      ['2020-03-31', '2020-04-30'],
+      ['2020-04-30', '2020-07-31', '2020-09-30', '2020-11-30'],
+    ],
+  };
+
+  const yData = {
+    Daily: [
+      [0, 73, 72, 74, 70, 70, 66, 66, 69, 100],
+      [56, 45, 36, 34, 35, 28, 25],
+      [45, 13, 14, 24, 40, 35, 50, 55],
+      [23, 18, 21, 13, 18, 17, 16, 23, 76],
+    ],
+    Monthly: [
+      [57.8, 74.2],
+      [42.75, 49, 25],
+      [24, 45],
+      [20.5, 17, 17.5, 38.33],
+    ],
+  };
 
   return (
     <div className={classes.root}>
-      {/*   <div className={classes.analyticsDiv}>
-          <Typography className={classes.heading}>
+      <div className={classes.analyticsDiv}>
+        <Typography className={classes.heading}>
           <strong>
             {' '}
             {compare === true ? (
@@ -277,7 +351,6 @@ const WorkflowComparisonTable = () => {
         </Typography>
         <br />
       </div>
-          */}
       <div className={classes.tableFix}>
         <div>
           <section className="Heading section">
@@ -319,7 +392,7 @@ const WorkflowComparisonTable = () => {
                 });
               }}
               callbackToCompare={CallbackForComparing}
-              callbackToExport={() => {}} // CallbackForExporting}
+              callbackToExport={() => {}}
               comparisonState={compare}
               reInitialize={compare === false}
             />
@@ -460,6 +533,11 @@ const WorkflowComparisonTable = () => {
             <Typography className={classes.description}>
               Comparative results of selected workflow
             </Typography>
+            <ResilienceScoreComparisonPlot
+              xData={xData}
+              yData={yData}
+              labels={labels}
+            />
           </div>
         </Paper>
       ) : (

@@ -261,6 +261,24 @@ const useStyles = makeStyles((theme) => ({
     width: '0.625rem',
     height: '0.625rem',
   },
+
+  export: {
+    verticalAlign: 'middle',
+    display: 'inline-flex',
+    textAlign: 'center',
+    borderRadius: 3,
+    paddingBottom: theme.spacing(1),
+  },
+
+  exportIcon: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    display: 'block',
+    backgroundColor: theme.palette.secondary.contrastText,
+    width: '1.5rem',
+    height: '1.5rem',
+  },
 }));
 
 export default useStyles;
