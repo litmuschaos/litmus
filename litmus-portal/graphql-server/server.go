@@ -60,7 +60,6 @@ func main() {
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", c.Handler(authorization.Middleware(srv)))
 	router.HandleFunc("/file/{key}{path:.yaml}", file_handlers.FileHandler)
-	// router for UserHandler
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
 }

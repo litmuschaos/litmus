@@ -31,7 +31,7 @@ func VerifyCluster(identity model.ClusterIdentity) (*database.Cluster, error) {
 }
 
 //Get NodeIP
-func getNodeIP(ctx context.Context) string {
+func GetNodeIP(ctx context.Context) string {
 
 	// Require variables declared
 	var kubeconfig *string
