@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"flag"
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -72,12 +71,10 @@ func GetNodeIP(ctx context.Context) string {
 	internalIP := ""
 
 	for _, addr := range address {
-		if addr.Type == "NodeExternalIP" && addr.Address != "" {
+		if addr.Type == "ExternalIP" && addr.Address != "" {
 			externalIP = addr.Address
-			fmt.Println(externalIP)
-		} else if addr.Type == "NodeInternalIP" && addr.Address != "" {
+		} else if addr.Type == "InternalIP" && addr.Address != "" {
 			internalIP = addr.Address
-			fmt.Println(externalIP)
 		}
 	}
 
