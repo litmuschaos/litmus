@@ -75,6 +75,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1.25rem',
     fontWeight: 'bold',
     width: '20%',
+    marginRight: theme.spacing(2.5),
   },
   statsDesc: {
     marginLeft: theme.spacing(4.375),

@@ -27,7 +27,7 @@ var err error
 
 func init() {
 	if os.Getenv("JWT_SECRET") == "" || os.Getenv("SERVICE_ADDRESS") == "" || os.Getenv("SUBSCRIBER_IMAGE") == "" || os.Getenv("DEPLOYER_IMAGE") == "" {
-		log.Fatal("Some environment variable are not setup")
+		//log.Fatal("Some environment variable are not setup")
 	}
 }
 

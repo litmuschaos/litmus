@@ -124,4 +124,27 @@ export default [
       'Provide the application info in spec.appinfo Override the experiment tunables if desired ' +
       'in experiments.spec.components.env ',
   },
+  {
+    workflowID: 5,
+    title: 'kube-proxy-chaos',
+    urlToIcon: 'https://hub.litmuschaos.io/api/icon/1.8.0/generic/generic.png',
+    chaosWkfCRDLink:
+      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/kube-proxy-all/workflow.yaml',
+
+    gitLink:
+      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/kube-proxy-all/workflow.yaml',
+    provider: 'MayaData',
+    description: 'Induces chaos on kube proxy',
+    totalRuns: 9000,
+    isCustom: false,
+    details:
+      'Causes (forced/graceful) pod failure of specific/random replicas of kube proxy and the node it runs on' +
+      'Tests deployment sanity (replica availability & uninterrupted service) and recovery workflow ' +
+      'of the application The workflow also simulates memory spike on kube proxy pod and its node.',
+    recommendation:
+      'Check whether the application is resilient to the kube proxy failure, once the argo chaos workflow is completed.',
+    experimentinfo:
+      'Provide the application info in spec.appinfo Override the individual experiment tunables if desired ' +
+      'in experiments.spec.components.env ',
+  },
 ];
