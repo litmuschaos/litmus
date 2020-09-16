@@ -30,7 +30,7 @@ This document captures only the high level roadmap items. For the detailed backl
 
 -   Improved runtime validation of chaos dependencies via litmus admission controllers
 -   Support for Kubernetes pod scheduling policies (affinity rules for chaos resources)
--   A UI portal for LitmusChaos to trigger and schedule chaos experiments & workflows. Ongoing development [here](https://github.com/litmuschaos/litmus-portal)
+-   A UI portal for LitmusChaos to trigger and schedule chaos experiments & workflows. Ongoing development [here](https://github.com/litmuschaos/litmus/tree/master/litmus-portal/)
 -   Off the shelf chaos-integrated grafana dashboards for OpenEBS, Kafka, Cassandra [#1280](https://github.com/litmuschaos/litmus/issues/1280)
 -   Support for user defined chaos experiment result definition (ex:json blob as chaos result) [#1254](https://github.com/litmuschaos/litmus/issues/1254)
 -   Increased IO-Chaos libraries [#1623](https://github.com/litmuschaos/litmus/issues/1623)
