@@ -6,7 +6,7 @@ const useStyles = makeStyles((theme) => ({
     height: '14.6875rem',
     marginRight: theme.spacing(3),
     color: theme.palette.text.secondary,
-    backgroundColor: theme.palette.secondary.contrastText,
+    backgroundColor: theme.palette.homePageCardBackgroundColor,
   },
   headerMain: {
     fontWeight: 'bold',
@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
   testResultDesc: {
     marginLeft: theme.spacing(6),
     marginTop: theme.spacing(-9.5),
-    opacity: 0.5,
+    opacity: 0.6,
   },
 }));
 
