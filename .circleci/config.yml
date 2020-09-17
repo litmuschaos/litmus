@@ -8,7 +8,7 @@ executors:
   nodejs:
     docker:
       - image: circleci/node:10.0.0
-    resource_class: xlarge
+    resource_class: large
   cosmic:
     docker:
       - image: circleci/buildpack-deps:cosmic
