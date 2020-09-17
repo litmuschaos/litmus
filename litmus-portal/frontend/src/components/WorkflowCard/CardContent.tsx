@@ -85,7 +85,9 @@ const CardContent: React.FC<preDefinedWorkflowData> = ({
           ) : (
             <span />
           )} */}
-          <span className={classes.expCount}>{exptCount} Experiment</span>
+          <span className={classes.expCount}>
+            {exptCount} {exptCount > 1 ? 'Experiments' : 'Experiment'}
+          </span>
         </div>
         <div>
           {urlToIcon ? (

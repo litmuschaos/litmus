@@ -40,7 +40,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       <TableCell className={classes.tableDataStatus}>
         <ExperimentStatus
           status={
-            data.test_result !== 'Awaited'
+            data.test_result !== 'Awaited' && data.test_result !== 'N/A'
               ? `${data.test_result}ed`
               : data.test_result
           }
