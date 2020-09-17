@@ -8,7 +8,7 @@ executors:
   nodejs:
     docker:
       - image: circleci/node:10.0.0
-    resource_class: xlarge
+    resource_class: large
   cosmic:
     docker:
       - image: circleci/buildpack-deps:cosmic
@@ -99,7 +99,7 @@ jobs:
   docker-build-frontend:
     machine:
       image: circleci/classic:201808-01
-      resource_class: xlarge
+      resource_class: large
     steps:
       - attach_workspace:
           at: /tmp/workspace
