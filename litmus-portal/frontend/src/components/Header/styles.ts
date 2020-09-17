@@ -5,14 +5,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   appBar: {
     width: '100%',
     height: '100%',
-    backgroundColor: theme.palette.background.default,
+    background: theme.palette.background.default,
   },
 
   headerFlex: {
     height: '5%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: theme.palette.background.default,
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(0.5),
     paddingTop: theme.spacing(1),
@@ -23,7 +22,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '5%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: theme.palette.background.default,
     marginTop: theme.spacing(0),
     marginBottom: theme.spacing(0),
     paddingTop: theme.spacing(0),
@@ -36,7 +34,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '5%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: theme.palette.background.default,
     marginTop: theme.spacing(0),
     marginBottom: theme.spacing(0),
     paddingTop: theme.spacing(1),
@@ -47,7 +44,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '5%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: theme.palette.background.default,
     marginTop: theme.spacing(0.5),
     marginBottom: theme.spacing(0),
     paddingTop: theme.spacing(2),
@@ -63,7 +59,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   projectDisplay: {
     marginTop: theme.spacing(-1.25),
     fontSize: 12,
-    color: 'grey',
+    color: theme.palette.projectDisplayColor,
   },
   // Style for ProfileDropdownSection and ProfileDropdownItems.
   avatarBackground: {
@@ -155,6 +151,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingBottom: theme.spacing(1),
     paddingLeft: theme.spacing(8),
     paddingRight: theme.spacing(8),
+    color: theme.palette.buttonEditProfile,
   },
 
   dividerTop: {

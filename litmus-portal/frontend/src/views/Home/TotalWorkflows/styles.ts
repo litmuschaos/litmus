@@ -5,7 +5,7 @@ const useStyles = makeStyles((theme) => ({
     width: '20.3125rem',
     height: '14.6875rem',
     color: theme.palette.text.secondary,
-    backgroundColor: theme.palette.secondary.contrastText,
+    backgroundColor: theme.palette.homePageCardBackgroundColor,
   },
   heading: {
     textAlign: 'center',
@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.secondary.dark,
   },
   maxCount: {
-    color: theme.palette.customColors.black(0.2),
+    color: theme.palette.text.disabled,
   },
   workflow: {
     marginLeft: theme.spacing(4.375),
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   avgDesc: {
     marginLeft: theme.spacing(4.375),
     marginTop: theme.spacing(1.875),
-    opacity: 0.5,
+    opacity: 0.6,
   },
   avatarStyle: {
     backgroundColor: theme.palette.secondary.dark,

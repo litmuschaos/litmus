@@ -9,6 +9,7 @@ const useStylesLitmus = makeStyles((theme: Theme) =>
           : `1px solid ${theme.palette.primary.dark}`,
       overflow: 'hidden',
       borderRadius: 4,
+      color: 'inherit',
       backgroundColor: theme.palette.common.white,
       transition: theme.transitions.create(['border-color', 'box-shadow']),
       '&$error': {
@@ -28,6 +29,7 @@ const useStylesLitmus = makeStyles((theme: Theme) =>
       },
       '&$focused': {
         backgroundColor: theme.palette.common.white,
+        color: 'inherit',
       },
     },
     focused: {
@@ -78,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
     borderColor: theme.palette.error.main,
   },
   inputArea: {
-    width: theme.spacing(45),
+    width: 'inherit',
     marginTop: theme.spacing(1),
     paddingLeft: theme.spacing(2),
     textDecoration: 'none',
