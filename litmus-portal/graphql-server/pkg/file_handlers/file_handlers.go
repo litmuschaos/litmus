@@ -14,8 +14,8 @@ import (
 
 //FileHandler dynamically generates the manifest file and sends it as a response
 func FileHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	serviceAddr := cluster.GetNodeIP(ctx)
+	serviceAddr := cluster.GetNodeIP()
+
 	subscriberImage := os.Getenv("SUBSCRIBER_IMAGE")
 	vars := mux.Vars(r)
 	token := vars["key"]

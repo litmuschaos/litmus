@@ -23,7 +23,6 @@ func VerifyCluster(identity model.ClusterIdentity) (*database.Cluster, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	if !(cluster.AccessKey == identity.AccessKey && cluster.IsRegistered) {
 		return nil, errors.New("ERROR:  CLUSTER ID MISMATCH")
 	}
@@ -31,11 +30,9 @@ func VerifyCluster(identity model.ClusterIdentity) (*database.Cluster, error) {
 }
 
 //GetNodeIP...
-func GetNodeIP(ctx context.Context) string {
-
-	// Require variables declared
+func GetNodeIP() string {
+	ctx := context.TODO()
 	var kubeconfig *string
-	//nodeAddresses := []corev1.NodeAddress{}
 
 	// To get In-CLuster config
 	config, err := rest.InClusterConfig() // If In-Cluster is nil then it will go for Out-Cluster config
@@ -63,19 +60,30 @@ func GetNodeIP(ctx context.Context) string {
 		panic(err.Error())
 	}
 	nodeName := os.Getenv("NODE_NAME")
-
 	node, err := clientset.CoreV1().Nodes().Get(ctx, nodeName, metav1.GetOptions{})
 	address := node.Status.Addresses
 
 	externalIP := ""
 	internalIP := ""
-
 	for _, addr := range address {
 		if addr.Type == "ExternalIP" && addr.Address != "" {
 			externalIP = addr.Address
 		} else if addr.Type == "InternalIP" && addr.Address != "" {
 			internalIP = addr.Address
 		}
+	}
+	if externalIP == "" {
+		ser, err := clientset.CoreV1().Services("litmus").Get(ctx, "litmusportal-server-service", metav1.GetOptions{})
+		if err != nil {
+			panic(err.Error())
+		}
+		externalIP = ser.Spec.ClusterIP
+	} else if internalIP == "" {
+		serFrontend, err := clientset.CoreV1().Services("litmus").Get(ctx, "litmusportal-frontend-service", metav1.GetOptions{})
+		if err != nil {
+			panic(err.Error())
+		}
+		internalIP = serFrontend.Spec.ClusterIP
 	}
 
 	if externalIP == "" {

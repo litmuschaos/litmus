@@ -72,8 +72,7 @@ spec:
             - name: NODE_NAME
               valueFrom:
                 fieldRef:
-                  fieldPath: spec.nodeName
-              value: "http://litmusportal-server-service:9002"
+                  fieldPath: spec.nodeName  
             - name: SELF_CLUSTER
               value: "true"
             - name: SUBSCRIBER_IMAGE
