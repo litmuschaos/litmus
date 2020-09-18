@@ -136,12 +136,29 @@ jobs:
         env:
           RUN_ID: ${{ github.run_id }}
 
-  merge:
+  # This job will merge an equipped PR in two steps:
+  # Firstly it will add a merge label on the target PR and then it will merge the PR according to the envs provided.
+  merge:  
     if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/merge')
     runs-on: ubuntu-latest
     steps:
-      - name: Add a merge label when all jobs are passed
+      - name: Add a merge label 
         uses: actions-ecosystem/action-add-labels@v1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           labels: merge
+
+      # The action will automatically check if the required number of review approvals has been reached.   
+      - name: automerge      
+        uses: "pascalgn/automerge-action@f81beb99aef41bb55ad072857d43073fba833a98"
+        env:          
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          MERGE_LABELS: "merge,!WIP,!DO NOT MERGE"
+          MERGE_METHOD: "squash"
+          MERGE_FORKS: "false"
+          MERGE_RETRIES: "6"
+          MERGE_RETRY_SLEEP: "10000"
+          UPDATE_LABELS: ""
+          UPDATE_METHOD: "rebase"
+          MERGE_DELETE_BRANCH: true
+
