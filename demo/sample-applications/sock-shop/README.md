@@ -4,12 +4,11 @@ Chaos experiments on sock-shop app with grafana dashboard to monitor it.
 
 ## Step-0: Obtain the demo artefacts
 
-- Clone the sock-shop repo
+- Clone the litmus repo
 
   ```
-  git clone https://github.com/ishangupta-ds/chaos-monitoring.git
-  cd chaos-monitoring
-  cd node_exporter_kube_state
+  git clone https://github.com/litmuschaos/litmus.git
+  cd litmus/demo/sample-applications/sock-shop
   ```
 
 
@@ -24,7 +23,7 @@ Chaos experiments on sock-shop app with grafana dashboard to monitor it.
 - Apply the sock-shop microservices manifests
 
   ```
-  kubectl apply -f sample-application/sock-shop/deploy/sock-shop/
+  kubectl apply -f deployables/application-under-test/sock-shop/
   ```
 
 - Wait until all services are up. Verify via `kubectl get pods -n sock-shop`
@@ -35,7 +34,7 @@ Chaos experiments on sock-shop app with grafana dashboard to monitor it.
 - Install the litmus chaos operator and CRDs 
 
   ```
-  kubectl apply -f https://litmuschaos.github.io/litmus/litmus-operator-v1.7.0.yaml
+  kubectl apply -f https://litmuschaos.github.io/litmus/litmus-operator-v1.8.0.yaml
   ```
 
 - Install the litmus-admin serviceaccount for centralized/admin-mode of chaos execution
@@ -47,7 +46,7 @@ Chaos experiments on sock-shop app with grafana dashboard to monitor it.
 - Install the chaos experiments in admin(litmus) namespace
 
   ```
-  kubectl apply -f https://hub.litmuschaos.io/api/chaos/1.7.0?file=charts/generic/experiments.yaml -n litmus  
+  kubectl apply -f https://hub.litmuschaos.io/api/chaos/1.8.0?file=charts/generic/experiments.yaml -n litmus  
   ```
 
 
@@ -59,28 +58,28 @@ Chaos experiments on sock-shop app with grafana dashboard to monitor it.
 
 - Create the operator to instantiate all CRDs
   ```
-  kubectl -n monitoring apply -f deploy/prometheus-operator/
+  kubectl -n monitoring apply -f deployables/prometheus/prometheus-operator/
   ```
 
 - Deploy monitoring components
   ```
-  kubectl -n monitoring apply -f deploy/node-exporter/
-  kubectl -n monitoring apply -f deploy/kube-state-metrics/
-  kubectl -n monitoring apply -f deploy/alertmanager/
-  kubectl -n sock-shop apply -f deploy/sock-shop-service-mon/
-  kubectl -n litmus apply -f deploy/chaos-exporter/
-  kubectl -n litmus apply -f deploy/litmus-event-router/
+  kubectl -n monitoring apply -f deployables/metrics-exporters-with-service-monitors/node-exporter/
+  kubectl -n monitoring apply -f deployables/metrics-exporters-with-service-monitors/kube-state-metrics/
+  kubectl -n monitoring apply -f deployables/alertmanager/
+  kubectl -n sock-shop apply -f deployables/application-under-test/sock-shop-service-monitors/
+  kubectl -n litmus apply -f deployables/metrics-exporters-with-service-monitors/litmus-metrics/chaos-exporter/
+  kubectl -n litmus apply -f deployables/metrics-exporters-with-service-monitors/litmus-metrics/litmus-event-router/
   ```
 
 - Deploy prometheus instance and all the service monitors for targets
   ```
-  kubectl -n monitoring apply -f deploy/prometheus-cluster-monitoring/
+  kubectl -n monitoring apply -f deployables/prometheus/prometheus-configuration/
   ```
 
 - Apply the grafana manifests after deploying prometheus for all metrics.
 
   ```
-  kubectl -n monitoring apply -f sample-application/sock-shop/deploy/monitoring/
+  kubectl -n monitoring apply -f deployables/grafana/
   ```
 
 - Access the grafana dashboard via the LoadBalancer (or NodePort) service IP or via a port-forward operation on localhost
@@ -109,25 +108,25 @@ Chaos experiments on sock-shop app with grafana dashboard to monitor it.
  
 
   ```
-  kubectl apply -f sample-application/sock-shop/chaos/catalogue/catalogue-pod-cpu-hog.yaml
+  kubectl apply -f chaos-injectors/chaos-experiments/catalogue/catalogue-pod-cpu-hog.yaml
   ```
 
   Wait for ~60s
 
   ```
-  kubectl apply -f sample-application/sock-shop/chaos/orders/orders-pod-memory-hog.yaml
+  kubectl apply -f chaos-injectors/chaos-experiments/orders/orders-pod-memory-hog.yaml
   ```
 
   Wait for ~60s
 
   ```
-  kubectl apply -f sample-application/sock-shop/chaos/catalogue/catalogue-node-cpu-hog.yaml
+  kubectl apply -f chaos-injectors/chaos-experiments/catalogue/catalogue-node-cpu-hog.yaml
   ```
 
   Wait for ~60s
 
   ```
-  kubectl apply -f sample-application/sock-shop/chaos/orders/orders-node-memory-hog.yaml
+  kubectl apply -f chaos-injectors/chaos-experiments/orders/orders-node-memory-hog.yaml
   ```
   
 - Verify execution of chaos experiments
