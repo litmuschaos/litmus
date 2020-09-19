@@ -52,6 +52,7 @@ Chaos experiments on sock-shop app with grafana dashboard to monitor it.
 
 ## Step-4: Setup the Monitoring Infrastructure
 
+- Create monitoring namespace on the cluster
   ```
   kubectl create ns monitoring
   ```
@@ -190,26 +191,36 @@ Chaos experiments on sock-shop app with grafana dashboard to monitor it.
     argo version
     ```
 
-  - Create the Argo Access ServiceAccount
+- Create the Argo Access ServiceAccount
 
-    ```
-    kubectl apply -f https://raw.githubusercontent.com/litmuschaos/chaos-workflows/master/Argo/argo-access.yaml -n litmus
-    ```
+  ```
+  kubectl apply -f https://raw.githubusercontent.com/litmuschaos/chaos-workflows/master/Argo/argo-access.yaml -n litmus
+  ```
 
-  - Run litmuschaos experiments as Argo workflows.
+- Run litmuschaos experiments as Argo workflows using argo CLI or kubectl.
 
-    ```
-    argo submit chaos-injectors/chaos-workflows-with-argo-CD/catalogue/catalogue-node-cpu-hog-workflow.yaml -n litmus
-    argo submit chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-node-memory-hog-workflow.yaml -n litmus
-    argo submit chaos-injectors/chaos-workflows-with-argo-CD/catalogue/catalogue-pod-cpu-hog-workflow.yaml -n litmus
-    argo submit chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-pod-memory-hog-workflow.yaml -n litmus
-    ```
+  ```
+  argo cron create chaos-injectors/chaos-workflows-with-argo-CD/catalogue/catalogue-node-cpu-hog-workflow.yaml -n litmus
+  argo cron create chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-node-memory-hog-workflow.yaml -n litmus
+  kubectl apply -f chaos-injectors/chaos-workflows-with-argo-CD/catalogue/catalogue-pod-cpu-hog-workflow.yaml -n litmus
+  kubectl apply -f chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-pod-memory-hog-workflow.yaml -n litmus
+  ```
 
-  - Visualize the Chaos Workflow
+- Visualize the Chaos cron workflow through argo UI by obtaining Node port or Load Balancer IP.
 
-    ```
-    kubectl patch svc argo-server -n argo -p '{"spec": {"type": "NodePort"}}'
-    ```
+  ```
+  kubectl patch svc argo-server -n argo -p '{"spec": {"type": "NodePort"}}'
+  ```
+
+  OR
+
+  ```
+  kubectl patch svc argo-server -n argo -p '{"spec": {"type": "LoadBalancer"}}'
+  ```
+
+  ![image](https://github.com/litmuschaos/litmus/blob/monitoring-and-demo/demo/sample-applications/sock-shop/screenshots/chaos-workflow-representation.png?raw=true)
+
+  ![image](https://github.com/litmuschaos/litmus/blob/monitoring-and-demo/demo/sample-applications/sock-shop/screenshots/chaos-cron-workflows.png?raw=true)
     
 
 

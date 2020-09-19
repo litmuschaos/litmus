@@ -13,8 +13,8 @@ spec:
     templates:
       - name: argowf-chaos
         steps:
-          - name: run-pod-memory-hog
-            template: run-pod-memory-hog
+          - - name: run-pod-memory-hog
+              template: run-pod-memory-hog
       - name: run-pod-memory-hog
         inputs:
           artifacts:
