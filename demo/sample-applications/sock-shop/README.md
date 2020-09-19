@@ -95,15 +95,15 @@ Chaos experiments on sock-shop app with grafana dashboard to monitor it.
 
 - Add the prometheus datasource from monitoring namespace as DS_PROMETHEUS for Grafana via the Grafana Settings menu
 
-  ![image](https://user-images.githubusercontent.com/21166217/87426447-cbcf1c80-c5fc-11ea-976d-6a71ebac755a.png)
+  ![image](https://github.com/litmuschaos/litmus/blob/monitoring-and-demo/demo/sample-applications/sock-shop/screenshots/data-source-config.png?raw=true)
 
 - Import the grafana dashboards
 
-  ![image](https://user-images.githubusercontent.com/21166217/87426547-f28d5300-c5fc-11ea-95da-e091fb07f1b5.png)
+  ![image](https://github.com/litmuschaos/litmus/blob/monitoring-and-demo/demo/sample-applications/sock-shop/screenshots/import-dashboard.png?raw=true)
 
 - Import the grafana dashboard "Sock-Shop Performance" provided [here](https://raw.githubusercontent.com/litmuschaos/litmus/monitoring-and-demo/demo/sample-applications/sock-shop/grafana-dashboards/sock-shop-performance-under-chaos.json)
 
-- Import the grafana dashboard "Node and Pod Chaos Demo" provided [here](https://raw.githubusercontent.com/litmuschaos/litmus/monitoring-and-demo/demo/sample-applications/sock-shop/grafana-dashboards/node-and-pod-chaos.json)
+- Import the grafana dashboard "Node and Pod Chaos Demo" provided [here](https://raw.githubusercontent.com/litmuschaos/litmus/monitoring-and-demo/demo/sample-applications/sock-shop/grafana-dashboards/Node-and-pod-metrics-dashboard.json)
 
 
 ## Step-5: Execute the Chaos Experiments
@@ -150,9 +150,9 @@ Chaos experiments on sock-shop app with grafana dashboard to monitor it.
 - Observe the impact of chaos injection through increased Latency & reduced QPS (queries per second) on the microservices 
   under test. 
 
-  ![image](https://user-images.githubusercontent.com/21166217/87426747-4d26af00-c5fd-11ea-8d82-dabf6bc9048a.png)
+  ![image](https://github.com/litmuschaos/litmus/blob/monitoring-and-demo/demo/sample-applications/sock-shop/screenshots/Sock-Shop-Dashboard.png?raw=true)
 
-  ![image](https://user-images.githubusercontent.com/21166217/87426820-6cbdd780-c5fd-11ea-88de-1fe8a1b5b503.png)
+  ![image](https://github.com/litmuschaos/litmus/blob/monitoring-and-demo/demo/sample-applications/sock-shop/screenshots/Node-and-Pod-metrics-Dashboard.png?raw=true)
 
 
 ## Step-7 (optional): Inject continous chaos using Argo CD.
@@ -199,7 +199,10 @@ Chaos experiments on sock-shop app with grafana dashboard to monitor it.
   - Run litmuschaos experiments as Argo workflows.
 
     ```
-    argo submit https://raw.githubusercontent.com/litmuschaos/chaos-workflows/master/Argo/argowf-native-pod-delete.yaml -n litmus
+    argo submit chaos-injectors/chaos-workflows-with-argo-CD/catalogue/catalogue-node-cpu-hog-workflow.yaml -n litmus
+    argo submit chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-node-memory-hog-workflow.yaml -n litmus
+    argo submit chaos-injectors/chaos-workflows-with-argo-CD/catalogue/catalogue-pod-cpu-hog-workflow.yaml -n litmus
+    argo submit chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-pod-memory-hog-workflow.yaml -n litmus
     ```
 
   - Visualize the Chaos Workflow
