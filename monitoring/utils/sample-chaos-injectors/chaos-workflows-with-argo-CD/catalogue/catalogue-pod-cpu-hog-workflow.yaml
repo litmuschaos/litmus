@@ -13,9 +13,9 @@ spec:
     templates:
       - name: argowf-chaos
         steps:
-          - name: run-pod-cpu-hog
-            template: run-pod-cpu-hog
-      - name: run-pod-memory-hog
+          - - name: run-pod-cpu-hog
+              template: run-pod-cpu-hog
+      - name: run-pod-cpu-hog
         inputs:
           artifacts:
             - name: run-pod-cpu-hog

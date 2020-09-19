@@ -13,8 +13,8 @@ spec:
     templates:
       - name: argowf-chaos
         steps:
-          - name: run-node-memory-hog
-            template: run-node-memory-hog
+          - - name: run-node-memory-hog
+              template: run-node-memory-hog
       - name: run-node-memory-hog
         inputs:
           artifacts:
