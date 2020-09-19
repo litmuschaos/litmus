@@ -47,7 +47,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1598858610210,
+  "iteration": 1600497075563,
   "links": [],
   "panels": [
     {
@@ -80,7 +80,7 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 9,
+        "h": 16,
         "w": 12,
         "x": 0,
         "y": 1
@@ -243,7 +243,7 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 9,
+        "h": 16,
         "w": 12,
         "x": 12,
         "y": 1
@@ -399,10 +399,10 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 12,
+        "h": 13,
         "w": 12,
         "x": 0,
-        "y": 10
+        "y": 17
       },
       "hiddenSeries": false,
       "id": 62,
@@ -556,10 +556,10 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 12,
+        "h": 13,
         "w": 12,
         "x": 12,
-        "y": 10
+        "y": 17
       },
       "hiddenSeries": false,
       "id": 63,
@@ -747,7 +747,7 @@
     ]
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {
@@ -765,7 +765,7 @@
     ]
   },
   "timezone": "",
-  "title": "Node and Pod Chaos Dashboard",
-  "uid": "nodepoddash",
+  "title": "Node and Pod Chaos Metrics",
+  "uid": "nodepodmetrics",
   "version": 1
 }

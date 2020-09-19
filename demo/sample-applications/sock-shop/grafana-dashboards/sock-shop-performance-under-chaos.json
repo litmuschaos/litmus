@@ -38,6 +38,67 @@
   "annotations": {
     "list": [
       {
+        "datasource": "${DS_DS_PROMETHEUS}",
+        "enable": true,
+        "expr": "heptio_eventrouter_normal_total{reason=\"ChaosEngineInitialized\", involved_object_namespace=\"litmus\",involved_object_name=\"orders-pod-memory-hog\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\", involved_object_namespace=\"litmus\",involved_object_name=\"orders-pod-memory-hog\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+        "hide": false,
+        "iconColor": "#F2CC0C",
+        "limit": 100,
+        "name": "orders-pod-memory-hog",
+        "showIn": 0,
+        "step": "30s",
+        "tagKeys": "Chaos-orders-pod-memory-hog",
+        "tags": [],
+        "textFormat": "",
+        "titleFormat": "orders-pod-memory-hog",
+        "type": "tags"
+      },
+      {
+        "datasource": "${DS_DS_PROMETHEUS}",
+        "enable": true,
+        "expr": "heptio_eventrouter_normal_total{reason=\"ChaosEngineInitialized\",involved_object_name=\"catalogue-pod-cpu-hog\",involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\", involved_object_namespace=\"litmus\",involved_object_name=\"catalogue-pod-cpu-hog\",involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+        "hide": false,
+        "iconColor": "#E0B400",
+        "limit": 100,
+        "name": "catalogue-pod-cpu-hog",
+        "showIn": 0,
+        "step": "30s",
+        "tagKeys": "Chaos-catalogue-pod-cpu-hog",
+        "tags": [],
+        "titleFormat": "catalogue-pod-cpu-hog",
+        "type": "tags"
+      },
+      {
+        "datasource": "${DS_DS_PROMETHEUS}",
+        "enable": true,
+        "expr": "heptio_eventrouter_normal_total{reason=\"ChaosEngineInitialized\", involved_object_namespace=\"litmus\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\", involved_object_namespace=\"litmus\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+        "hide": false,
+        "iconColor": "#E0B400",
+        "limit": 100,
+        "name": "catalogue-node-cpu-hog",
+        "showIn": 0,
+        "step": "30s",
+        "tagKeys": "Chaos-catalogue-node-cpu-hog",
+        "tags": [],
+        "titleFormat": "catalogue-node-cpu-hog",
+        "type": "tags"
+      },
+      {
+        "datasource": "${DS_DS_PROMETHEUS}",
+        "enable": true,
+        "expr": "heptio_eventrouter_normal_total{reason=\"ChaosEngineInitialized\", involved_object_namespace=\"litmus\",involved_object_name=\"orders-node-memory-hog\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\", involved_object_namespace=\"litmus\",involved_object_name=\"orders-node-memory-hog\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+        "hide": false,
+        "iconColor": "#E0B400",
+        "limit": 100,
+        "name": "orders-node-memory-hog",
+        "showIn": 0,
+        "step": "30s",
+        "tagKeys": "Chaos-orders-node-memory-hog",
+        "tags": [],
+        "titleFormat": "orders-node-memory-hog",
+        "type": "tags"
+      },
+      {
         "$$hashKey": "object:258",
         "builtIn": 1,
         "datasource": "${DS_DS_PROMETHEUS}",
@@ -2225,7 +2286,7 @@
     "list": []
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {
@@ -2253,7 +2314,7 @@
     ]
   },
   "timezone": "browser",
-  "title": "Sock-Shop Performance under Chaos",
+  "title": "Sock-Shop Performance",
   "uid": "sockshopperfornamce",
   "version": 1
 }

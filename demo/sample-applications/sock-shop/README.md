@@ -2,7 +2,7 @@
 
 Chaos experiments on sock-shop app with grafana dashboard to monitor it. 
 
-## Step-0: Obtain the demo artefacts
+## Step-1: Obtain the demo artefacts
 
 - Clone the litmus repo
 
@@ -12,7 +12,7 @@ Chaos experiments on sock-shop app with grafana dashboard to monitor it.
   ```
 
 
-## Step-1: Setup Sock-Shop Microservices Application
+## Step-2: Setup Sock-Shop Microservices Application
 
 - Create sock-shop namespace on the cluster
 
@@ -29,7 +29,7 @@ Chaos experiments on sock-shop app with grafana dashboard to monitor it.
 - Wait until all services are up. Verify via `kubectl get pods -n sock-shop`
 
 
-## Step-2: Setup the LitmusChaos Infrastructure
+## Step-3: Setup the LitmusChaos Infrastructure
 
 - Install the litmus chaos operator and CRDs 
 
@@ -50,7 +50,7 @@ Chaos experiments on sock-shop app with grafana dashboard to monitor it.
   ```
 
 
-## Step-3: Setup the Monitoring Infrastructure
+## Step-4: Setup the Monitoring Infrastructure
 
   ```
   kubectl create ns monitoring
@@ -95,12 +95,12 @@ Chaos experiments on sock-shop app with grafana dashboard to monitor it.
 
 - Add the prometheus datasource from monitoring namespace as DS_PROMETHEUS for Grafana via the Grafana Settings menu
 
-- Import the grafana dashboard "Sock-Shop Performance" provided [here](https://raw.githubusercontent.com/ishangupta-ds/chaos-monitoring/master/node_exporter_kube_state/grafana-dashboards/sock-shop-performance.json)
+- Import the grafana dashboard "Sock-Shop Performance" provided [here](https://raw.githubusercontent.com/litmuschaos/litmus/monitoring-and-demo/demo/sample-applications/sock-shop/grafana-dashboards/sock-shop-performance-under-chaos.json)
 
-- Import the grafana dashboard "Node and Pod Chaos Demo" provided [here](https://raw.githubusercontent.com/ishangupta-ds/chaos-monitoring/master/node_exporter_kube_state/grafana-dashboards/node-and-pod-chaos-demo.json)
+- Import the grafana dashboard "Node and Pod Chaos Demo" provided [here](https://raw.githubusercontent.com/litmuschaos/litmus/monitoring-and-demo/demo/sample-applications/sock-shop/grafana-dashboards/node-and-pod-chaos.json)
 
 
-## Step-4: Execute the Chaos Experiments
+## Step-5: Execute the Chaos Experiments
 
 
 - For the sake of illustration, let us execute a CPU hog experiment on the `catalogue` microservice & a Memory Hog experiment on 
@@ -139,9 +139,68 @@ Chaos experiments on sock-shop app with grafana dashboard to monitor it.
   ```
   
 
-## Step-5: Visualize Chaos Impact
+## Step-6: Visualize Chaos Impact
 
 - Observe the impact of chaos injection through increased Latency & reduced QPS (queries per second) on the microservices 
   under test. 
+
+  ![image](https://user-images.githubusercontent.com/21166217/87426747-4d26af00-c5fd-11ea-8d82-dabf6bc9048a.png)
+
+  ![image](https://user-images.githubusercontent.com/21166217/87426820-6cbdd780-c5fd-11ea-88de-1fe8a1b5b503.png)
+
+
+## Step-7 (optional): Inject continous chaos using Argo CD.
+
+- Install Argo workflow infrastructure.
+
+  - Create argo namespace
+
+    ```
+    kubectl create ns argo
+    ```
+
+  - Create the CRDs, workflow controller deployment with associated RBAC.
+
+    ```
+    kubectl apply -f https://raw.githubusercontent.com/argoproj/argo/stable/manifests/install.yaml -n argo
+    ```
+
+  - Install the argo CLI on the test harness machine (where the kubeconfig is available)
+
+    ```
+    # Download the binary
+    curl -sLO https://github.com/argoproj/argo/releases/download/v2.11.0/argo-linux-amd64.gz
+
+    # Unzip
+    gunzip argo-linux-amd64.gz
+
+    # Make binary executable
+    chmod +x argo-linux-amd64
+
+    # Move binary to path
+    mv ./argo-linux-amd64 /usr/local/bin/argo
+
+    # Test installation
+    argo version
+    ```
+
+  - Create the Argo Access ServiceAccount
+
+    ```
+    kubectl apply -f https://raw.githubusercontent.com/litmuschaos/chaos-workflows/master/Argo/argo-access.yaml -n litmus
+    ```
+
+  - Run litmuschaos experiments as Argo workflows.
+
+    ```
+    argo submit https://raw.githubusercontent.com/litmuschaos/chaos-workflows/master/Argo/argowf-native-pod-delete.yaml -n litmus
+    ```
+
+  - Visualize the Chaos Workflow
+
+    ```
+    kubectl patch svc argo-server -n argo -p '{"spec": {"type": "NodePort"}}'
+    ```
+    
 
 
