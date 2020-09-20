@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
 
   mainDiv: {
     padding: theme.spacing(3.75),
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: theme.palette.homePageCardBackgroundColor,
     width: '50rem',
     display: 'flex',
     flexDirection: 'row',
@@ -40,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
     width: '14.375rem',
     border: '1px solid ',
     borderColor: theme.palette.secondary.dark,
+    backgroundColor: theme.palette.homePageWorkflowCardBackgroundColor,
     borderRadius: 3,
     marginLeft: theme.spacing(5),
     boxShadow: '2px 1px 9px rgba(91, 68, 186, 0.25)',
@@ -56,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
 
   createWorkflowTitle: {
     fontSize: 25,
-    color: theme.palette.secondary.dark,
+    color: theme.palette.workflowTitleColor,
     fontWeight: 'bold',
     marginLeft: theme.spacing(3.75),
     marginTop: theme.spacing(2.5),
@@ -72,7 +73,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   arrowForwardIcon: {
-    color: theme.palette.secondary.dark,
+    color: theme.palette.workflowTitleColor,
     marginLeft: theme.spacing(22.5),
     marginTop: theme.spacing(4.375),
     marginBottom: theme.spacing(2.5),
@@ -85,14 +86,14 @@ const useStyles = makeStyles((theme) => ({
   },
 
   mainResult: {
-    color: theme.palette.common.black,
+    color: theme.palette.text.primary,
     fontSize: '1.5625rem',
     maxWidth: '27.5rem',
     marginBottom: theme.spacing(3.125),
   },
 
   mainDesc: {
-    color: theme.palette.common.black,
+    color: theme.palette.text.primary,
     fontSize: '1.125rem',
     maxWidth: '36rem',
   },
@@ -116,7 +117,7 @@ const useStyles = makeStyles((theme) => ({
   statDiv: {
     width: '50rem',
     flexGrow: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    backgroundColor: theme.palette.homePageCardBackgroundColor,
     borderRadius: 3,
     [theme.breakpoints.down('sm')]: {
       width: '18rem',
@@ -132,16 +133,16 @@ const useStyles = makeStyles((theme) => ({
 
   quickActionDiv: {
     marginTop: theme.spacing(2),
-    borderLeft: '1px solid rgba(0, 0, 0, 0.05)',
     paddingLeft: theme.spacing(2),
     marginLeft: theme.spacing(3),
+    background: 'inherit',
   },
 
   cardDiv: {
     display: 'flex',
     flexDirection: 'row',
     flexGrow: 1,
-    paddingLeft: theme.spacing(5),
+    padding: theme.spacing(4),
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
       flexDirection: 'column',

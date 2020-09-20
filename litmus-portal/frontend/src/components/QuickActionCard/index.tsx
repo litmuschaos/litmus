@@ -22,7 +22,7 @@ const QuickActionCard = () => {
 
   return (
     <div className={classes.quickActionCard}>
-      <Card elevation={0}>
+      <Card className={classes.quickActionCard} elevation={0}>
         <Typography className={classes.mainHeader}>
           {t('quickActionCard.quickActions')}
         </Typography>

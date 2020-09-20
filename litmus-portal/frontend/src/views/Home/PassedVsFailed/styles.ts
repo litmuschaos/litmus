@@ -5,7 +5,7 @@ const useStyles = makeStyles((theme) => ({
     width: '20.3125rem',
     height: '14.6875rem',
     color: theme.palette.text.secondary,
-    backgroundColor: theme.palette.secondary.contrastText,
+    backgroundColor: theme.palette.homePageCardBackgroundColor,
   },
   boxMain: {
     display: 'flex',
@@ -80,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
   statsDesc: {
     marginLeft: theme.spacing(4.375),
     marginTop: theme.spacing(1.875),
-    opacity: 0.5,
+    opacity: 0.6,
   },
 }));
 

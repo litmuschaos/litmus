@@ -3,9 +3,10 @@ import { makeStyles } from '@material-ui/core';
 const useStyles = makeStyles((theme) => ({
   quickActionCard: {
     fontSize: '1.125rem',
+    backgroundColor: 'inherit',
   },
   listItem: {
-    color: theme.palette.common.black,
+    color: theme.palette.text.primary,
     paddingLeft: theme.spacing(2.5),
     paddingBottom: theme.spacing(0.25),
     textDecoration: 'none',
@@ -15,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
   },
   mainHeader: {
     fontSize: '1.0625rem',
-    color: theme.palette.common.black,
+    color: theme.palette.text.primary,
   },
 }));
 

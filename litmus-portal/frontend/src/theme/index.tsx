@@ -44,6 +44,13 @@ declare module '@material-ui/core/styles/createPalette' {
       failedTests: string;
     };
     waitingStatusColor: string;
+    projectDisplayColor?: string;
+    buttonEditProfile?: string;
+    homePageCardBackgroundColor?: string;
+    homePageWorkflowCardBackgroundColor?: string;
+    workflowTitleColor?: string;
+    layoutBackground?: string;
+    sidebarBackground?: string;
   }
   // allow configuration using `createMuiTheme`
   interface PaletteOptions {
@@ -70,6 +77,13 @@ declare module '@material-ui/core/styles/createPalette' {
       failedTests: string;
     };
     waitingStatusColor?: string;
+    projectDisplayColor?: string;
+    buttonEditProfile?: string;
+    homePageCardBackgroundColor?: string;
+    homePageWorkflowCardBackgroundColor?: string;
+    workflowTitleColor?: string;
+    layoutBackground?: string;
+    sidebarBackground?: string;
   }
 }
 function customTheme(options: ThemeOptions) {
@@ -140,6 +154,13 @@ function customTheme(options: ThemeOptions) {
         failedTests: 'rgba(202, 44, 44, 0.2)',
       },
       waitingStatusColor: 'rgba(246, 185, 43, 0.1)',
+      projectDisplayColor: 'rgba(128, 128, 128)',
+      buttonEditProfile: 'rgba(0, 0, 0)',
+      homePageCardBackgroundColor: '#FFFFFF',
+      homePageWorkflowCardBackgroundColor: '#FFFFFF',
+      workflowTitleColor: '#5B44BA',
+      layoutBackground: '#FAFBFD',
+      sidebarBackground: '#FAFBFD',
     },
     typography: {
       fontSize: 12,

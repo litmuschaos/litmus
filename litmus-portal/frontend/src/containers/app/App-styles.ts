@@ -2,7 +2,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    width: '100vw',
+    width: 'auto',
     height: '100vh',
     zIndex: 1,
   },
