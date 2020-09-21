@@ -2,8 +2,8 @@
 import React from 'react';
 import { mount } from 'cypress-react-unit-test';
 import { Typography } from '@material-ui/core';
-import ButtonFilled from '../../src/components/Button/ButtonFilled';
-import ButtonOutline from '../../src/components/Button/ButtonOutline';
+import ButtonFilled from './ButtonFilled';
+import ButtonOutline from './ButtonOutline';
 
 describe('Button Filled', () => {
   it('The button is clickable', () => {

@@ -1,7 +1,7 @@
 /// <reference types="Cypress" />
 import React from 'react';
 import { mount } from 'cypress-react-unit-test';
-import InfoTooltip from '../../src/components/InfoTooltip';
+import InfoTooltip from '../InfoTooltip';
 
 describe('ToolTip testing', () => {
   it('visible', () => {
@@ -15,10 +15,6 @@ describe('ToolTip testing', () => {
   it('Tooltip value is clickable', () => {
     cy.get('.makeStyles-infoImg-1').should('be.visible').click();
   });
-  const tooltipHidden = () => {
-    cy.get('.MuiTooltip-popper').should('not.be.visible');
-  };
-
   it('Value is being displayed on Click', () => {
     cy.get('.makeStyles-infoImg-1')
       .should('be.visible')
@@ -28,6 +24,6 @@ describe('ToolTip testing', () => {
   });
   it('Value is disappeared when clicked anywhere else on the screen', () => {
     cy.get('.makeStyles-infoImg-1').click().get('html').click(100, 30);
-    tooltipHidden();
+    cy.get('.MuiTooltip-popper').should('not.be.visible');
   });
 });

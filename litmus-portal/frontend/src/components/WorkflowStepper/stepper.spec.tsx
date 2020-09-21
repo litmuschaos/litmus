@@ -2,10 +2,14 @@
 
 import React from 'react';
 import { mount } from 'cypress-react-unit-test';
-import CustomStepper from '../../src/components/WorkflowStepper';
-import ProviderWrapper from '../../src/testHelpers/ProviderWrapper';
+import CustomStepper from '../WorkflowStepper';
+import ProviderWrapper from '../../testHelpers/ProviderWrapper';
 
-const component = (<ProviderWrapper><CustomStepper /></ProviderWrapper>);
+const component = (
+  <ProviderWrapper>
+    <CustomStepper />
+  </ProviderWrapper>
+);
 
 // Test Suite - Stepper Labels are present
 describe('Input Data is present', () => {

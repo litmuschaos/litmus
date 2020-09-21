@@ -1,8 +1,9 @@
 {
   "experimentalComponentTesting": true,
-  "componentFolder": "cypress/component",
+  "componentFolder": "src",
   "specFiles": "*spec.*",
   "defaultCommandTimeout": 4000,
   "execTimeout": 200000,
-  "taskTimeout": 200000
+  "taskTimeout": 200000,
+  "testFiles": "**/*.spec.tsx"
 }

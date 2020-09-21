@@ -2,3 +2,4 @@
 **/*.md
 **/cypress/
 **/geo.json
+**/*.spec.tsx

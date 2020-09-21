@@ -1,10 +1,14 @@
 /// <reference types="Cypress" />
 import React from 'react';
 import { mount } from 'cypress-react-unit-test';
-import QuickActionCard from '../../src/components/QuickActionCard';
-import ProviderWrapper from '../../src/testHelpers/ProviderWrapper';
+import QuickActionCard from '../QuickActionCard';
+import ProviderWrapper from '../..//testHelpers/ProviderWrapper';
 
-const Component = (<ProviderWrapper><QuickActionCard /></ProviderWrapper>)
+const Component = (
+  <ProviderWrapper>
+    <QuickActionCard />
+  </ProviderWrapper>
+);
 
 describe('QuickActionCard Testing', () => {
   it('Component is Visible', () => {

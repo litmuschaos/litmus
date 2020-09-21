@@ -203,41 +203,40 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
     if (activeStep === 3) {
       return (
         <div className={classes.buttonDiv}>
-          <ButtonOutline
-            isDisabled={false}
-            handleClick={handleBack}
-            data-cy="Back"
-          >
-            <>{t('welcomeModel.button.back')}</>
-          </ButtonOutline>
-          <ButtonFilled
-            isPrimary
-            isDisabled={isError.current}
-            handleClick={handleSubmit}
-            data-cy="Start"
-          >
-            <div>{t('welcomeModel.button.letsStart')}</div>
-          </ButtonFilled>
+          <div data-cy="backButton">
+            <ButtonOutline isDisabled={false} handleClick={handleBack}>
+              <>{t('welcomeModel.button.back')}</>
+            </ButtonOutline>
+          </div>
+          <div data-cy="startButton">
+            <ButtonFilled
+              isPrimary
+              isDisabled={isError.current}
+              handleClick={handleSubmit}
+              data-cy="Start"
+            >
+              <div>{t('welcomeModel.button.letsStart')}</div>
+            </ButtonFilled>
+          </div>
         </div>
       );
     }
     return (
       <div className={classes.buttonDiv}>
-        <ButtonOutline
-          isDisabled={false}
-          handleClick={handleBack}
-          data-cy="Back"
-        >
-          <>{t('welcomeModel.button.back')}</>
-        </ButtonOutline>
-        <ButtonFilled
-          isPrimary
-          isDisabled={isError.current}
-          handleClick={handleNext}
-          data-cy="Continue"
-        >
-          <div>{t('welcomeModel.button.continue')}</div>
-        </ButtonFilled>
+        <div data-cy="backButton">
+          <ButtonOutline isDisabled={false} handleClick={handleBack}>
+            <>{t('welcomeModel.button.back')}</>
+          </ButtonOutline>
+        </div>
+        <div data-cy="startButton">
+          <ButtonFilled
+            isPrimary
+            isDisabled={isError.current}
+            handleClick={handleNext}
+          >
+            <div>{t('welcomeModel.button.continue')}</div>
+          </ButtonFilled>
+        </div>
       </div>
     );
   };
@@ -374,7 +373,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
           <ModalPage
             renderMenu={
               <div className={classes.passwordSetterDiv}>
-                <div className={classes.inputArea} data-cy="InputName">
+                <div className={classes.inputArea} data-cy="InputEmail">
                   <InputField
                     label={t('welcomeModel.case-3.label')}
                     required
