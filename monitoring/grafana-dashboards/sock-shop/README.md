@@ -1,8 +1,8 @@
 # Sock shop application metrics dashboard
 
-This dashboard visualizes Sock Shop application metrics metrics interleaved with chaos events and chaos exporter metrics. 
+This dashboard visualizes Sock Shop application metrics metrics interleaved with chaos events and chaos exporter metrics.
 
-## Prerequisites 
+## Prerequisites
 
 - Sock shop microservices application deployments with service monitors.
 
@@ -18,15 +18,14 @@ This dashboard visualizes Sock Shop application metrics metrics interleaved with
 
 - Import the json file into grafana.
 
-  ![image](https://github.com/ishangupta-ds/litmus/blob/monitoring/monitoring/screenshots/import-dashboard.png?raw=true)
+  ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/import-dashboard.png?raw=true)
 
 - Change data source for the dashboard accordingly.
 
-  ![image](https://github.com/ishangupta-ds/litmus/blob/monitoring/monitoring/screenshots/data-source-config.png?raw=true)
+  ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/data-source-config.png?raw=true)
 
 - Tune the PromQL queries to match the labels with engine name and other parameters as per need.
 
-
 ## Screenshot
 
-  ![image](https://github.com/ishangupta-ds/litmus/blob/monitoring/monitoring/screenshots/Sock-Shop-Dashboard.png?raw=true)
+![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/Sock-Shop-Dashboard.png?raw=true)
