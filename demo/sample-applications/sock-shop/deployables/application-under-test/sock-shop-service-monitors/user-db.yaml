@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: user-db
+  labels:
+    name: user-db
+    k8s-app: user-db
+  namespace: sock-shop
+spec:
+  jobLabel: name
+  selector:
+    matchLabels:
+      name: user-db
+  namespaceSelector:
+    matchNames:
+    - sock-shop
+  endpoints:
+  - port: mongo
+    interval: 1s
