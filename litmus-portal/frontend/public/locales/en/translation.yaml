@@ -114,3 +114,17 @@ error:
 workflowDetails:
   detailedLog: Click on test to see detailed log of your workflow
   fetchError: An error has occurred while fetching the data
+######################################
+############    Views    #############
+######################################
+
+chaosWorkflows:
+  browseAnalytics:
+    workFlowComparisonTable:
+      unableToFetch: Unable to fetch data
+      noRecords: No records available
+      showSelectedWorkflows: Show all selected workflows
+      resilienceScoreComparison: Resilience score comparison
+      comparativeResults: Comparative results of selected workflow
+      once: Once
+      seeAnalytics: See analytics

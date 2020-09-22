@@ -3,6 +3,7 @@ import {
   FormControl,
   IconButton,
   InputAdornment,
+  InputLabel,
   Menu,
   MenuItem,
   Paper,
@@ -118,7 +119,7 @@ const UserManagement: React.FC = () => {
   const [currRow, setCurrRow] = React.useState<UserData>();
 
   const formatDate = (date: string) => {
-    const day = moment(date).format('Do MMM,YYYY LT');
+    const day = moment(date).format('Do MMM, YYYY LT');
     return day;
   };
 
@@ -152,7 +153,7 @@ const UserManagement: React.FC = () => {
                 </div>
                 <Typography className={classes.descText}>
                   Create users , manage them and reset their password and
-                  username when required
+                  username when required:
                 </Typography>
 
                 <Toolbar className={classes.toolbar}>
@@ -182,33 +183,31 @@ const UserManagement: React.FC = () => {
                     />
                     {/* filter menu */}
                     <div className={classes.filter}>
-                      <Typography className={classes.userStat}>
-                        User Status
-                      </Typography>
-
-                      <FormControl className={classes.filterMenu}>
+                      <FormControl
+                        variant="outlined"
+                        className={classes.formControl}
+                        color="secondary"
+                        focused
+                      >
+                        <InputLabel className={classes.selectText}>
+                          User Status
+                        </InputLabel>
                         <Select
-                          native
-                          placeholder="User Status"
+                          label="User Status"
                           value={filters.status}
-                          /* filters on the basis of users' current state */
-                          onChange={(e) => {
+                          onChange={(event) => {
                             setFilters({
                               ...filters,
-                              status: e.target.value as string,
+                              status: event.target.value as string,
                             });
                             setPaginationData({ ...paginationData, pageNo: 0 });
                           }}
-                          label="User Status"
-                          disableUnderline
-                          inputProps={{
-                            name: 'User Status',
-                            id: 'outlined-age-native-simple',
-                          }}
+                          className={classes.selectText}
+                          color="secondary"
                         >
-                          <option value="all">All</option>
-                          <option value="signedout">Not signed</option>
-                          <option value="signedin">Signed in</option>
+                          <MenuItem value="all">All</MenuItem>
+                          <MenuItem value="signedout">Not signed</MenuItem>
+                          <MenuItem value="signedin">Signed in</MenuItem>
                         </Select>
                       </FormControl>
                     </div>

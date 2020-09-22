@@ -7,7 +7,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import { ReactComponent as CommunityIcon } from '../../svg/community.svg';
@@ -19,16 +19,23 @@ import useStyles from './styles';
 interface CustomisedListItemProps {
   handleClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   label: string;
+  selected: boolean;
 }
 
 const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
   children,
   handleClick,
   label,
+  selected,
 }) => {
   const classes = useStyles();
   return (
-    <ListItem button onClick={handleClick} className={classes.drawerListItem}>
+    <ListItem
+      button
+      selected={selected}
+      onClick={handleClick}
+      className={`${classes.drawerListItem} ${selected ? classes.active : ''}`}
+    >
       <ListItemIcon className={classes.listIcon}>{children}</ListItemIcon>
       <ListItemText primary={label} className={classes.listText} />
     </ListItem>
@@ -39,6 +46,7 @@ const SideBar: React.FC = () => {
   const classes = useStyles();
   const userRole = useSelector((state: RootState) => state.userData.userRole);
   const { t } = useTranslation();
+  const pathName = useLocation().pathname.split('/')[1];
 
   return (
     <Drawer
@@ -69,6 +77,7 @@ const SideBar: React.FC = () => {
             history.push('/');
           }}
           label="Home"
+          selected={pathName === ''}
         >
           <HomeIcon />
         </CustomisedListItem>
@@ -78,6 +87,7 @@ const SideBar: React.FC = () => {
             history.push('/workflows');
           }}
           label="Workflows"
+          selected={pathName === 'workflows'}
         >
           <WorkflowsIcon />
         </CustomisedListItem>
@@ -87,6 +97,7 @@ const SideBar: React.FC = () => {
             history.push('/community');
           }}
           label="Community"
+          selected={pathName === 'community'}
         >
           <CommunityIcon />
         </CustomisedListItem>
@@ -97,6 +108,7 @@ const SideBar: React.FC = () => {
               history.push('/settings');
             }}
             label="Settings"
+            selected={pathName === 'settings'}
           >
             <SettingsIcon />
           </CustomisedListItem>
