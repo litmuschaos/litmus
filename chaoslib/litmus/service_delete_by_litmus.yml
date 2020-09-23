@@ -1,7 +1,0 @@
-- name: Delete Service
-  include: service_delete.yml
-  when: action == "delete"
-
-- name: Revive Service
-  include: service_revive.yml
-  when: action == "revive"

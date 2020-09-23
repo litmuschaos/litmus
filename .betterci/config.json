@@ -1,0 +1,20 @@
+{
+  "cmd":["echo betterci"],
+  "build":[{
+    "name":"portal-frontend",
+    "file":"litmus-portal/frontend/Dockerfile",
+    "context":"litmus-portal/frontend",
+    "push": true
+  },{
+    "name":"portal-server",
+    "file":"litmus-portal/graphql-server/build/Dockerfile",
+    "context":"litmus-portal/backend/graphql-server",
+    "push":true
+  },{
+    "name":"auth-server",
+    "file":"litmus-portal/authentication/Dockerfile",
+    "context":"litmus-portal/authentication",
+    "push":true
+  }],
+  "k8s-manifest":".betterci/ci-k8s-manifest.yml"
+}

@@ -1,37 +1,57 @@
 #!/bin/bash
 set -e
 
-if [ -z "${REPONAME}" ]
-then 
-  REPONAME="litmuschaos"
-fi
+# Push CI images
+function push_ci_image(){
 
-if [ -z "${IMGNAME}" ] || [ -z "${IMGTAG}" ]; 
+  echo "Pushing ${REPONAME}/${IMGNAME}:${IMGTAG} ..."
+  docker push ${REPONAME}/${IMGNAME}:${IMGTAG}
+
+}
+
+# Push Release Images
+function push_release_image(){
+
+  if [ ! -z "${CIRCLE_TAG}" ];
+  then
+    # Push with different tags if tagged as a release
+    # When github is tagged with a release, then CircleCI will
+    # set the release tag in env CIRCLE_TAG
+    echo "Pushing ${REPONAME}/${IMGNAME}:${CIRCLE_TAG} ..."
+    docker tag ${IMAGEID} ${REPONAME}/${IMGNAME}:${CIRCLE_TAG}
+    docker push ${REPONAME}/${IMGNAME}:${CIRCLE_TAG}
+    echo "Pushing ${REPONAME}/${IMGNAME}:latest ..."
+    docker tag ${IMAGEID} ${REPONAME}/${IMGNAME}:latest
+    docker push ${REPONAME}/${IMGNAME}:latest
+  fi;
+
+}
+
+BUILD_TYPE=$(echo $1 | cut -d "=" -f 2)
+REPONAME=$(echo $2 | cut -d "=" -f 2)
+IMGNAME=$(echo $3 | cut -d "=" -f 2)
+IMGTAG=$(echo $4 | cut -d "=" -f 2)
+
+# Check for Image Details
+if [ -z "${REPONAME}" ] || [ -z "${IMGNAME}" ] || [ -z "${IMGTAG}" ]
 then
-  echo "Image details are missing. Nothing to push."; 
+  echo "Image details are missing. Nothing to push.";
   exit 1
 fi
 
-IMAGEID=$( sudo docker images -q ${REPONAME}/${IMGNAME}:${IMGTAG} )
+IMAGEID=$( docker images -q ${REPONAME}/${IMGNAME}:${IMGTAG} )
 
-if [ ! -z "${DNAME}" ] && [ ! -z "${DPASS}" ]; 
-then 
-  sudo docker login -u "${DNAME}" -p "${DPASS}";
-  # Push image to docker hub
-  echo "Pushing ${REPONAME}/${IMGNAME}:${IMGTAG} ..."; 
-  sudo docker push ${REPONAME}/${IMGNAME}:${IMGTAG} ;
-  if [ ! -z "${TRAVIS_TAG}" ] ; 
-  then
-    # Push with different tags if tagged as a release
-    # When github is tagged with a release, then Travis will 
-    # set the release tag in env TRAVIS_TAG
-    echo "Pushing ${REPONAME}/${IMGNAME}:${TRAVIS_TAG} ..."; 
-    sudo docker tag ${IMAGEID} ${REPONAME}/${IMGNAME}:${TRAVIS_TAG}
-    sudo docker push ${REPONAME}/${IMGNAME}:${TRAVIS_TAG}; 
-    echo "Pushing ${REPONAME}/${IMGNAME}:latest ..."; 
-    sudo docker tag ${IMAGEID} ${REPONAME}/${IMGNAME}:latest
-    sudo docker push ${REPONAME}/${IMGNAME}:latest; 
-  fi;
+# Verify Docker Credentials
+if [ ! -z "${DNAME}" ] && [ ! -z "${DPASS}" ];
+then
+  docker login -u "${DNAME}" -p "${DPASS}";
+  if [ "${BUILD_TYPE}" == "ci" ]; then
+    push_ci_image;
+  elif [ "${BUILD_TYPE}" == "release" ]; then
+    push_release_image;
+  else
+    echo "Invalid build type"; exit 1
+  fi
 else
-  echo "No docker credentials provided. Skip uploading ${REPONAME}/${IMGNAME}:${IMGTAG} to docker hub"; 
-fi;
+  echo "No docker credentials provided. Skip uploading ${REPONAME}/${IMGNAME}:${IMGTAG} to docker hub";
+fi
