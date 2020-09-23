@@ -1029,7 +1029,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: subscriber
-  namespace: litmus
+  namespace: #{SUB-NAMESPACE}
   labels:
     app: subscriber
 spec:
