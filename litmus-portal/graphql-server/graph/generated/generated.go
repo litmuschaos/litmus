@@ -1362,19 +1362,19 @@ input PodLogRequest{
 }
 
 type ScheduledWorkflows {
-	workflow_id: String!
-	workflow_manifest: String!
-	cronSyntax: String!
-	cluster_name: String!
-	workflow_name: String!
-	workflow_description: String!
-	weightages: [weightages!]!
-	isCustomWorkflow: Boolean!
-	updated_at: String!
-	created_at: String!
-	project_id: ID!
-	cluster_id: ID!
-	cluster_type: String!
+  workflow_id: String!
+  workflow_manifest: String!
+  cronSyntax: String!
+  cluster_name: String!
+  workflow_name: String!
+  workflow_description: String!
+  weightages: [weightages!]!
+  isCustomWorkflow: Boolean!
+  updated_at: String!
+  created_at: String!
+  project_id: ID!
+  cluster_id: ID!
+  cluster_type: String!
 }
 
 type Query{
@@ -1432,8 +1432,7 @@ type Subscription{
 
   #It is used to listen cluster operation request from the graphql server
   clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
-}
-`, BuiltIn: false},
+}`, BuiltIn: false},
 	&ast.Source{Name: "graph/usermanagement.graphqls", Input: `type User {
     id: ID!
     username: String!
@@ -1463,7 +1462,6 @@ input UpdateUserInput {
     email: String
     company_name: String
 }
-
 `, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -1477,7 +1475,7 @@ func (ec *executionContext) field_Mutation_acceptInvitation_args(ctx context.Con
 	args := map[string]interface{}{}
 	var arg0 model.MemberInput
 	if tmp, ok := rawArgs["member"]; ok {
-		arg0, err = ec.unmarshalNMemberInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberInput(ctx, tmp)
+		arg0, err = ec.unmarshalNMemberInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1491,7 +1489,7 @@ func (ec *executionContext) field_Mutation_chaosWorkflowRun_args(ctx context.Con
 	args := map[string]interface{}{}
 	var arg0 model.WorkflowRunInput
 	if tmp, ok := rawArgs["workflowData"]; ok {
-		arg0, err = ec.unmarshalNWorkflowRunInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunInput(ctx, tmp)
+		arg0, err = ec.unmarshalNWorkflowRunInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1505,7 +1503,7 @@ func (ec *executionContext) field_Mutation_clusterConfirm_args(ctx context.Conte
 	args := map[string]interface{}{}
 	var arg0 model.ClusterIdentity
 	if tmp, ok := rawArgs["identity"]; ok {
-		arg0, err = ec.unmarshalNClusterIdentity2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterIdentity(ctx, tmp)
+		arg0, err = ec.unmarshalNClusterIdentity2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterIdentity(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1519,7 +1517,7 @@ func (ec *executionContext) field_Mutation_createChaosWorkFlow_args(ctx context.
 	args := map[string]interface{}{}
 	var arg0 model.ChaosWorkFlowInput
 	if tmp, ok := rawArgs["input"]; ok {
-		arg0, err = ec.unmarshalNChaosWorkFlowInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx, tmp)
+		arg0, err = ec.unmarshalNChaosWorkFlowInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1533,7 +1531,7 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 	args := map[string]interface{}{}
 	var arg0 model.CreateUserInput
 	if tmp, ok := rawArgs["user"]; ok {
-		arg0, err = ec.unmarshalNCreateUserInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateUserInput(ctx, tmp)
+		arg0, err = ec.unmarshalNCreateUserInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateUserInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1547,7 +1545,7 @@ func (ec *executionContext) field_Mutation_declineInvitation_args(ctx context.Co
 	args := map[string]interface{}{}
 	var arg0 model.MemberInput
 	if tmp, ok := rawArgs["member"]; ok {
-		arg0, err = ec.unmarshalNMemberInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberInput(ctx, tmp)
+		arg0, err = ec.unmarshalNMemberInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1575,7 +1573,7 @@ func (ec *executionContext) field_Mutation_newClusterEvent_args(ctx context.Cont
 	args := map[string]interface{}{}
 	var arg0 model.ClusterEventInput
 	if tmp, ok := rawArgs["clusterEvent"]; ok {
-		arg0, err = ec.unmarshalNClusterEventInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterEventInput(ctx, tmp)
+		arg0, err = ec.unmarshalNClusterEventInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterEventInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1589,7 +1587,7 @@ func (ec *executionContext) field_Mutation_podLog_args(ctx context.Context, rawA
 	args := map[string]interface{}{}
 	var arg0 model.PodLog
 	if tmp, ok := rawArgs["log"]; ok {
-		arg0, err = ec.unmarshalNPodLog2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐPodLog(ctx, tmp)
+		arg0, err = ec.unmarshalNPodLog2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPodLog(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1603,7 +1601,7 @@ func (ec *executionContext) field_Mutation_sendInvitation_args(ctx context.Conte
 	args := map[string]interface{}{}
 	var arg0 model.MemberInput
 	if tmp, ok := rawArgs["member"]; ok {
-		arg0, err = ec.unmarshalNMemberInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberInput(ctx, tmp)
+		arg0, err = ec.unmarshalNMemberInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1617,7 +1615,7 @@ func (ec *executionContext) field_Mutation_updateUser_args(ctx context.Context, 
 	args := map[string]interface{}{}
 	var arg0 model.UpdateUserInput
 	if tmp, ok := rawArgs["user"]; ok {
-		arg0, err = ec.unmarshalNUpdateUserInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateUserInput(ctx, tmp)
+		arg0, err = ec.unmarshalNUpdateUserInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateUserInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1631,7 +1629,7 @@ func (ec *executionContext) field_Mutation_userClusterReg_args(ctx context.Conte
 	args := map[string]interface{}{}
 	var arg0 model.ClusterInput
 	if tmp, ok := rawArgs["clusterInput"]; ok {
-		arg0, err = ec.unmarshalNClusterInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterInput(ctx, tmp)
+		arg0, err = ec.unmarshalNClusterInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1737,7 +1735,7 @@ func (ec *executionContext) field_Subscription_clusterConnect_args(ctx context.C
 	args := map[string]interface{}{}
 	var arg0 model.ClusterIdentity
 	if tmp, ok := rawArgs["clusterInfo"]; ok {
-		arg0, err = ec.unmarshalNClusterIdentity2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterIdentity(ctx, tmp)
+		arg0, err = ec.unmarshalNClusterIdentity2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterIdentity(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1765,7 +1763,7 @@ func (ec *executionContext) field_Subscription_getPodLog_args(ctx context.Contex
 	args := map[string]interface{}{}
 	var arg0 model.PodLogRequest
 	if tmp, ok := rawArgs["podDetails"]; ok {
-		arg0, err = ec.unmarshalNPodLogRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐPodLogRequest(ctx, tmp)
+		arg0, err = ec.unmarshalNPodLogRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPodLogRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2588,7 +2586,7 @@ func (ec *executionContext) _ClusterAction_action(ctx context.Context, field gra
 	}
 	res := resTmp.(*model.ActionPayload)
 	fc.Result = res
-	return ec.marshalNActionPayload2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐActionPayload(ctx, field.Selections, res)
+	return ec.marshalNActionPayload2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐActionPayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ClusterConfirmResponse_isClusterConfirmed(ctx context.Context, field graphql.CollectedField, obj *model.ClusterConfirmResponse) (ret graphql.Marshaler) {
@@ -2854,7 +2852,7 @@ func (ec *executionContext) _ClusterEvent_cluster(ctx context.Context, field gra
 	}
 	res := resTmp.(*model.Cluster)
 	fc.Result = res
-	return ec.marshalNCluster2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐCluster(ctx, field.Selections, res)
+	return ec.marshalNCluster2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCluster(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Member_user_id(ctx context.Context, field graphql.CollectedField, obj *model.Member) (ret graphql.Marshaler) {
@@ -3024,7 +3022,7 @@ func (ec *executionContext) _Member_role(ctx context.Context, field graphql.Coll
 	}
 	res := resTmp.(model.MemberRole)
 	fc.Result = res
-	return ec.marshalNMemberRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx, field.Selections, res)
+	return ec.marshalNMemberRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Member_invitation(ctx context.Context, field graphql.CollectedField, obj *model.Member) (ret graphql.Marshaler) {
@@ -3200,7 +3198,7 @@ func (ec *executionContext) _Mutation_createChaosWorkFlow(ctx context.Context, f
 		if data, ok := tmp.(*model.ChaosWorkFlowResponse); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model.ChaosWorkFlowResponse`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ChaosWorkFlowResponse`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3214,7 +3212,7 @@ func (ec *executionContext) _Mutation_createChaosWorkFlow(ctx context.Context, f
 	}
 	res := resTmp.(*model.ChaosWorkFlowResponse)
 	fc.Result = res
-	return ec.marshalNChaosWorkFlowResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowResponse(ctx, field.Selections, res)
+	return ec.marshalNChaosWorkFlowResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3261,7 +3259,7 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 		if data, ok := tmp.(*model.User); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model.User`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.User`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3275,7 +3273,7 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 	}
 	res := resTmp.(*model.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3444,7 +3442,7 @@ func (ec *executionContext) _Mutation_sendInvitation(ctx context.Context, field 
 		if data, ok := tmp.(*model.Member); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model.Member`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.Member`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3458,7 +3456,7 @@ func (ec *executionContext) _Mutation_sendInvitation(ctx context.Context, field 
 	}
 	res := resTmp.(*model.Member)
 	fc.Result = res
-	return ec.marshalNMember2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐMember(ctx, field.Selections, res)
+	return ec.marshalNMember2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMember(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_acceptInvitation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3621,7 +3619,7 @@ func (ec *executionContext) _Mutation_clusterConfirm(ctx context.Context, field 
 	}
 	res := resTmp.(*model.ClusterConfirmResponse)
 	fc.Result = res
-	return ec.marshalNClusterConfirmResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterConfirmResponse(ctx, field.Selections, res)
+	return ec.marshalNClusterConfirmResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterConfirmResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_newClusterEvent(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3982,7 +3980,7 @@ func (ec *executionContext) _Project_members(ctx context.Context, field graphql.
 	}
 	res := resTmp.([]*model.Member)
 	fc.Result = res
-	return ec.marshalNMember2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberᚄ(ctx, field.Selections, res)
+	return ec.marshalNMember2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Project_state(ctx context.Context, field graphql.CollectedField, obj *model.Project) (ret graphql.Marshaler) {
@@ -4162,7 +4160,7 @@ func (ec *executionContext) _Query_getWorkFlowRuns(ctx context.Context, field gr
 		if data, ok := tmp.([]*model.WorkflowRun); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model.WorkflowRun`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.WorkflowRun`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4176,7 +4174,7 @@ func (ec *executionContext) _Query_getWorkFlowRuns(ctx context.Context, field gr
 	}
 	res := resTmp.([]*model.WorkflowRun)
 	fc.Result = res
-	return ec.marshalNWorkflowRun2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunᚄ(ctx, field.Selections, res)
+	return ec.marshalNWorkflowRun2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getCluster(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4223,7 +4221,7 @@ func (ec *executionContext) _Query_getCluster(ctx context.Context, field graphql
 		if data, ok := tmp.([]*model.Cluster); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model.Cluster`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.Cluster`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4237,7 +4235,7 @@ func (ec *executionContext) _Query_getCluster(ctx context.Context, field graphql
 	}
 	res := resTmp.([]*model.Cluster)
 	fc.Result = res
-	return ec.marshalNCluster2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterᚄ(ctx, field.Selections, res)
+	return ec.marshalNCluster2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4284,7 +4282,7 @@ func (ec *executionContext) _Query_getUser(ctx context.Context, field graphql.Co
 		if data, ok := tmp.(*model.User); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model.User`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.User`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4298,7 +4296,7 @@ func (ec *executionContext) _Query_getUser(ctx context.Context, field graphql.Co
 	}
 	res := resTmp.(*model.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getProject(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4345,7 +4343,7 @@ func (ec *executionContext) _Query_getProject(ctx context.Context, field graphql
 		if data, ok := tmp.(*model.Project); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model.Project`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.Project`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4359,7 +4357,7 @@ func (ec *executionContext) _Query_getProject(ctx context.Context, field graphql
 	}
 	res := resTmp.(*model.Project)
 	fc.Result = res
-	return ec.marshalNProject2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐProject(ctx, field.Selections, res)
+	return ec.marshalNProject2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProject(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_users(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4399,7 +4397,7 @@ func (ec *executionContext) _Query_users(ctx context.Context, field graphql.Coll
 		if data, ok := tmp.([]*model.User); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model.User`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.User`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4413,7 +4411,7 @@ func (ec *executionContext) _Query_users(ctx context.Context, field graphql.Coll
 	}
 	res := resTmp.([]*model.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getScheduledWorkflows(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4460,7 +4458,7 @@ func (ec *executionContext) _Query_getScheduledWorkflows(ctx context.Context, fi
 		if data, ok := tmp.([]*model.ScheduledWorkflows); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model.ScheduledWorkflows`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ScheduledWorkflows`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4474,7 +4472,7 @@ func (ec *executionContext) _Query_getScheduledWorkflows(ctx context.Context, fi
 	}
 	res := resTmp.([]*model.ScheduledWorkflows)
 	fc.Result = res
-	return ec.marshalNScheduledWorkflows2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐScheduledWorkflows(ctx, field.Selections, res)
+	return ec.marshalNScheduledWorkflows2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐScheduledWorkflows(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4781,7 +4779,7 @@ func (ec *executionContext) _ScheduledWorkflows_weightages(ctx context.Context, 
 	}
 	res := resTmp.([]*model.Weightages)
 	fc.Result = res
-	return ec.marshalNweightages2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesᚄ(ctx, field.Selections, res)
+	return ec.marshalNweightages2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ScheduledWorkflows_isCustomWorkflow(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
@@ -5032,7 +5030,7 @@ func (ec *executionContext) _Subscription_clusterEventListener(ctx context.Conte
 		if data, ok := tmp.(<-chan *model.ClusterEvent); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be <-chan *github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model.ClusterEvent`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be <-chan *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ClusterEvent`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5053,7 +5051,7 @@ func (ec *executionContext) _Subscription_clusterEventListener(ctx context.Conte
 			w.Write([]byte{'{'})
 			graphql.MarshalString(field.Alias).MarshalGQL(w)
 			w.Write([]byte{':'})
-			ec.marshalNClusterEvent2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterEvent(ctx, field.Selections, res).MarshalGQL(w)
+			ec.marshalNClusterEvent2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterEvent(ctx, field.Selections, res).MarshalGQL(w)
 			w.Write([]byte{'}'})
 		})
 	}
@@ -5103,7 +5101,7 @@ func (ec *executionContext) _Subscription_workflowEventListener(ctx context.Cont
 		if data, ok := tmp.(<-chan *model.WorkflowRun); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be <-chan *github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model.WorkflowRun`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be <-chan *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.WorkflowRun`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5124,7 +5122,7 @@ func (ec *executionContext) _Subscription_workflowEventListener(ctx context.Cont
 			w.Write([]byte{'{'})
 			graphql.MarshalString(field.Alias).MarshalGQL(w)
 			w.Write([]byte{':'})
-			ec.marshalNWorkflowRun2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRun(ctx, field.Selections, res).MarshalGQL(w)
+			ec.marshalNWorkflowRun2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRun(ctx, field.Selections, res).MarshalGQL(w)
 			w.Write([]byte{'}'})
 		})
 	}
@@ -5174,7 +5172,7 @@ func (ec *executionContext) _Subscription_getPodLog(ctx context.Context, field g
 		if data, ok := tmp.(<-chan *model.PodLogResponse); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be <-chan *github.com/litmuschaos/litmus/litmus-portal/backend/graphql-server/graph/model.PodLogResponse`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be <-chan *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.PodLogResponse`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5195,7 +5193,7 @@ func (ec *executionContext) _Subscription_getPodLog(ctx context.Context, field g
 			w.Write([]byte{'{'})
 			graphql.MarshalString(field.Alias).MarshalGQL(w)
 			w.Write([]byte{':'})
-			ec.marshalNPodLogResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐPodLogResponse(ctx, field.Selections, res).MarshalGQL(w)
+			ec.marshalNPodLogResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPodLogResponse(ctx, field.Selections, res).MarshalGQL(w)
 			w.Write([]byte{'}'})
 		})
 	}
@@ -5246,7 +5244,7 @@ func (ec *executionContext) _Subscription_clusterConnect(ctx context.Context, fi
 			w.Write([]byte{'{'})
 			graphql.MarshalString(field.Alias).MarshalGQL(w)
 			w.Write([]byte{':'})
-			ec.marshalNClusterAction2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterAction(ctx, field.Selections, res).MarshalGQL(w)
+			ec.marshalNClusterAction2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterAction(ctx, field.Selections, res).MarshalGQL(w)
 			w.Write([]byte{'}'})
 		})
 	}
@@ -5475,7 +5473,7 @@ func (ec *executionContext) _User_projects(ctx context.Context, field graphql.Co
 	}
 	res := resTmp.([]*model.Project)
 	fc.Result = res
-	return ec.marshalNProject2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐProjectᚄ(ctx, field.Selections, res)
+	return ec.marshalNProject2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProjectᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_role(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
@@ -7100,7 +7098,7 @@ func (ec *executionContext) unmarshalInputChaosWorkFlowInput(ctx context.Context
 			}
 		case "weightages":
 			var err error
-			it.Weightages, err = ec.unmarshalNWeightagesInput2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesInputᚄ(ctx, v)
+			it.Weightages, err = ec.unmarshalNWeightagesInput2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -7316,7 +7314,7 @@ func (ec *executionContext) unmarshalInputMemberInput(ctx context.Context, obj i
 			}
 		case "role":
 			var err error
-			it.Role, err = ec.unmarshalOMemberRole2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx, v)
+			it.Role, err = ec.unmarshalOMemberRole2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -7334,7 +7332,7 @@ func (ec *executionContext) unmarshalInputPodLog(ctx context.Context, obj interf
 		switch k {
 		case "cluster_id":
 			var err error
-			it.ClusterID, err = ec.unmarshalNClusterIdentity2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterIdentity(ctx, v)
+			it.ClusterID, err = ec.unmarshalNClusterIdentity2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterIdentity(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -7526,7 +7524,7 @@ func (ec *executionContext) unmarshalInputWorkflowRunInput(ctx context.Context, 
 			}
 		case "cluster_id":
 			var err error
-			it.ClusterID, err = ec.unmarshalNClusterIdentity2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterIdentity(ctx, v)
+			it.ClusterID, err = ec.unmarshalNClusterIdentity2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterIdentity(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8681,11 +8679,11 @@ func (ec *executionContext) _weightages(ctx context.Context, sel ast.SelectionSe
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) marshalNActionPayload2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐActionPayload(ctx context.Context, sel ast.SelectionSet, v model.ActionPayload) graphql.Marshaler {
+func (ec *executionContext) marshalNActionPayload2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐActionPayload(ctx context.Context, sel ast.SelectionSet, v model.ActionPayload) graphql.Marshaler {
 	return ec._ActionPayload(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNActionPayload2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐActionPayload(ctx context.Context, sel ast.SelectionSet, v *model.ActionPayload) graphql.Marshaler {
+func (ec *executionContext) marshalNActionPayload2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐActionPayload(ctx context.Context, sel ast.SelectionSet, v *model.ActionPayload) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -8709,15 +8707,15 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) unmarshalNChaosWorkFlowInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx context.Context, v interface{}) (model.ChaosWorkFlowInput, error) {
+func (ec *executionContext) unmarshalNChaosWorkFlowInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx context.Context, v interface{}) (model.ChaosWorkFlowInput, error) {
 	return ec.unmarshalInputChaosWorkFlowInput(ctx, v)
 }
 
-func (ec *executionContext) marshalNChaosWorkFlowResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowResponse(ctx context.Context, sel ast.SelectionSet, v model.ChaosWorkFlowResponse) graphql.Marshaler {
+func (ec *executionContext) marshalNChaosWorkFlowResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowResponse(ctx context.Context, sel ast.SelectionSet, v model.ChaosWorkFlowResponse) graphql.Marshaler {
 	return ec._ChaosWorkFlowResponse(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNChaosWorkFlowResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowResponse(ctx context.Context, sel ast.SelectionSet, v *model.ChaosWorkFlowResponse) graphql.Marshaler {
+func (ec *executionContext) marshalNChaosWorkFlowResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowResponse(ctx context.Context, sel ast.SelectionSet, v *model.ChaosWorkFlowResponse) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -8727,11 +8725,11 @@ func (ec *executionContext) marshalNChaosWorkFlowResponse2ᚖgithubᚗcomᚋlitm
 	return ec._ChaosWorkFlowResponse(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNCluster2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐCluster(ctx context.Context, sel ast.SelectionSet, v model.Cluster) graphql.Marshaler {
+func (ec *executionContext) marshalNCluster2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCluster(ctx context.Context, sel ast.SelectionSet, v model.Cluster) graphql.Marshaler {
 	return ec._Cluster(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNCluster2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Cluster) graphql.Marshaler {
+func (ec *executionContext) marshalNCluster2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Cluster) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -8755,7 +8753,7 @@ func (ec *executionContext) marshalNCluster2ᚕᚖgithubᚗcomᚋlitmuschaosᚋl
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNCluster2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐCluster(ctx, sel, v[i])
+			ret[i] = ec.marshalNCluster2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCluster(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -8768,7 +8766,7 @@ func (ec *executionContext) marshalNCluster2ᚕᚖgithubᚗcomᚋlitmuschaosᚋl
 	return ret
 }
 
-func (ec *executionContext) marshalNCluster2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐCluster(ctx context.Context, sel ast.SelectionSet, v *model.Cluster) graphql.Marshaler {
+func (ec *executionContext) marshalNCluster2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCluster(ctx context.Context, sel ast.SelectionSet, v *model.Cluster) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -8778,11 +8776,11 @@ func (ec *executionContext) marshalNCluster2ᚖgithubᚗcomᚋlitmuschaosᚋlitm
 	return ec._Cluster(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNClusterAction2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterAction(ctx context.Context, sel ast.SelectionSet, v model.ClusterAction) graphql.Marshaler {
+func (ec *executionContext) marshalNClusterAction2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterAction(ctx context.Context, sel ast.SelectionSet, v model.ClusterAction) graphql.Marshaler {
 	return ec._ClusterAction(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNClusterAction2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterAction(ctx context.Context, sel ast.SelectionSet, v *model.ClusterAction) graphql.Marshaler {
+func (ec *executionContext) marshalNClusterAction2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterAction(ctx context.Context, sel ast.SelectionSet, v *model.ClusterAction) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -8792,11 +8790,11 @@ func (ec *executionContext) marshalNClusterAction2ᚖgithubᚗcomᚋlitmuschaos�
 	return ec._ClusterAction(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNClusterConfirmResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterConfirmResponse(ctx context.Context, sel ast.SelectionSet, v model.ClusterConfirmResponse) graphql.Marshaler {
+func (ec *executionContext) marshalNClusterConfirmResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterConfirmResponse(ctx context.Context, sel ast.SelectionSet, v model.ClusterConfirmResponse) graphql.Marshaler {
 	return ec._ClusterConfirmResponse(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNClusterConfirmResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterConfirmResponse(ctx context.Context, sel ast.SelectionSet, v *model.ClusterConfirmResponse) graphql.Marshaler {
+func (ec *executionContext) marshalNClusterConfirmResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterConfirmResponse(ctx context.Context, sel ast.SelectionSet, v *model.ClusterConfirmResponse) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -8806,11 +8804,11 @@ func (ec *executionContext) marshalNClusterConfirmResponse2ᚖgithubᚗcomᚋlit
 	return ec._ClusterConfirmResponse(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNClusterEvent2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterEvent(ctx context.Context, sel ast.SelectionSet, v model.ClusterEvent) graphql.Marshaler {
+func (ec *executionContext) marshalNClusterEvent2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterEvent(ctx context.Context, sel ast.SelectionSet, v model.ClusterEvent) graphql.Marshaler {
 	return ec._ClusterEvent(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNClusterEvent2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterEvent(ctx context.Context, sel ast.SelectionSet, v *model.ClusterEvent) graphql.Marshaler {
+func (ec *executionContext) marshalNClusterEvent2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterEvent(ctx context.Context, sel ast.SelectionSet, v *model.ClusterEvent) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -8820,27 +8818,27 @@ func (ec *executionContext) marshalNClusterEvent2ᚖgithubᚗcomᚋlitmuschaos�
 	return ec._ClusterEvent(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNClusterEventInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterEventInput(ctx context.Context, v interface{}) (model.ClusterEventInput, error) {
+func (ec *executionContext) unmarshalNClusterEventInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterEventInput(ctx context.Context, v interface{}) (model.ClusterEventInput, error) {
 	return ec.unmarshalInputClusterEventInput(ctx, v)
 }
 
-func (ec *executionContext) unmarshalNClusterIdentity2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterIdentity(ctx context.Context, v interface{}) (model.ClusterIdentity, error) {
+func (ec *executionContext) unmarshalNClusterIdentity2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterIdentity(ctx context.Context, v interface{}) (model.ClusterIdentity, error) {
 	return ec.unmarshalInputClusterIdentity(ctx, v)
 }
 
-func (ec *executionContext) unmarshalNClusterIdentity2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterIdentity(ctx context.Context, v interface{}) (*model.ClusterIdentity, error) {
+func (ec *executionContext) unmarshalNClusterIdentity2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterIdentity(ctx context.Context, v interface{}) (*model.ClusterIdentity, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalNClusterIdentity2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterIdentity(ctx, v)
+	res, err := ec.unmarshalNClusterIdentity2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterIdentity(ctx, v)
 	return &res, err
 }
 
-func (ec *executionContext) unmarshalNClusterInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterInput(ctx context.Context, v interface{}) (model.ClusterInput, error) {
+func (ec *executionContext) unmarshalNClusterInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterInput(ctx context.Context, v interface{}) (model.ClusterInput, error) {
 	return ec.unmarshalInputClusterInput(ctx, v)
 }
 
-func (ec *executionContext) unmarshalNCreateUserInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateUserInput(ctx context.Context, v interface{}) (model.CreateUserInput, error) {
+func (ec *executionContext) unmarshalNCreateUserInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateUserInput(ctx context.Context, v interface{}) (model.CreateUserInput, error) {
 	return ec.unmarshalInputCreateUserInput(ctx, v)
 }
 
@@ -8872,11 +8870,11 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) marshalNMember2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐMember(ctx context.Context, sel ast.SelectionSet, v model.Member) graphql.Marshaler {
+func (ec *executionContext) marshalNMember2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMember(ctx context.Context, sel ast.SelectionSet, v model.Member) graphql.Marshaler {
 	return ec._Member(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNMember2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Member) graphql.Marshaler {
+func (ec *executionContext) marshalNMember2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Member) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -8900,7 +8898,7 @@ func (ec *executionContext) marshalNMember2ᚕᚖgithubᚗcomᚋlitmuschaosᚋli
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNMember2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐMember(ctx, sel, v[i])
+			ret[i] = ec.marshalNMember2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMember(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -8913,7 +8911,7 @@ func (ec *executionContext) marshalNMember2ᚕᚖgithubᚗcomᚋlitmuschaosᚋli
 	return ret
 }
 
-func (ec *executionContext) marshalNMember2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐMember(ctx context.Context, sel ast.SelectionSet, v *model.Member) graphql.Marshaler {
+func (ec *executionContext) marshalNMember2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMember(ctx context.Context, sel ast.SelectionSet, v *model.Member) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -8923,32 +8921,32 @@ func (ec *executionContext) marshalNMember2ᚖgithubᚗcomᚋlitmuschaosᚋlitmu
 	return ec._Member(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNMemberInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberInput(ctx context.Context, v interface{}) (model.MemberInput, error) {
+func (ec *executionContext) unmarshalNMemberInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberInput(ctx context.Context, v interface{}) (model.MemberInput, error) {
 	return ec.unmarshalInputMemberInput(ctx, v)
 }
 
-func (ec *executionContext) unmarshalNMemberRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx context.Context, v interface{}) (model.MemberRole, error) {
+func (ec *executionContext) unmarshalNMemberRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx context.Context, v interface{}) (model.MemberRole, error) {
 	var res model.MemberRole
 	return res, res.UnmarshalGQL(v)
 }
 
-func (ec *executionContext) marshalNMemberRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx context.Context, sel ast.SelectionSet, v model.MemberRole) graphql.Marshaler {
+func (ec *executionContext) marshalNMemberRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx context.Context, sel ast.SelectionSet, v model.MemberRole) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) unmarshalNPodLog2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐPodLog(ctx context.Context, v interface{}) (model.PodLog, error) {
+func (ec *executionContext) unmarshalNPodLog2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPodLog(ctx context.Context, v interface{}) (model.PodLog, error) {
 	return ec.unmarshalInputPodLog(ctx, v)
 }
 
-func (ec *executionContext) unmarshalNPodLogRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐPodLogRequest(ctx context.Context, v interface{}) (model.PodLogRequest, error) {
+func (ec *executionContext) unmarshalNPodLogRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPodLogRequest(ctx context.Context, v interface{}) (model.PodLogRequest, error) {
 	return ec.unmarshalInputPodLogRequest(ctx, v)
 }
 
-func (ec *executionContext) marshalNPodLogResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐPodLogResponse(ctx context.Context, sel ast.SelectionSet, v model.PodLogResponse) graphql.Marshaler {
+func (ec *executionContext) marshalNPodLogResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPodLogResponse(ctx context.Context, sel ast.SelectionSet, v model.PodLogResponse) graphql.Marshaler {
 	return ec._PodLogResponse(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNPodLogResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐPodLogResponse(ctx context.Context, sel ast.SelectionSet, v *model.PodLogResponse) graphql.Marshaler {
+func (ec *executionContext) marshalNPodLogResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPodLogResponse(ctx context.Context, sel ast.SelectionSet, v *model.PodLogResponse) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -8958,11 +8956,11 @@ func (ec *executionContext) marshalNPodLogResponse2ᚖgithubᚗcomᚋlitmuschaos
 	return ec._PodLogResponse(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNProject2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐProject(ctx context.Context, sel ast.SelectionSet, v model.Project) graphql.Marshaler {
+func (ec *executionContext) marshalNProject2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProject(ctx context.Context, sel ast.SelectionSet, v model.Project) graphql.Marshaler {
 	return ec._Project(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNProject2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐProjectᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Project) graphql.Marshaler {
+func (ec *executionContext) marshalNProject2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProjectᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Project) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -8986,7 +8984,7 @@ func (ec *executionContext) marshalNProject2ᚕᚖgithubᚗcomᚋlitmuschaosᚋl
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNProject2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐProject(ctx, sel, v[i])
+			ret[i] = ec.marshalNProject2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProject(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -8999,7 +8997,7 @@ func (ec *executionContext) marshalNProject2ᚕᚖgithubᚗcomᚋlitmuschaosᚋl
 	return ret
 }
 
-func (ec *executionContext) marshalNProject2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐProject(ctx context.Context, sel ast.SelectionSet, v *model.Project) graphql.Marshaler {
+func (ec *executionContext) marshalNProject2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProject(ctx context.Context, sel ast.SelectionSet, v *model.Project) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -9009,7 +9007,7 @@ func (ec *executionContext) marshalNProject2ᚖgithubᚗcomᚋlitmuschaosᚋlitm
 	return ec._Project(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNScheduledWorkflows2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐScheduledWorkflows(ctx context.Context, sel ast.SelectionSet, v []*model.ScheduledWorkflows) graphql.Marshaler {
+func (ec *executionContext) marshalNScheduledWorkflows2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐScheduledWorkflows(ctx context.Context, sel ast.SelectionSet, v []*model.ScheduledWorkflows) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -9033,7 +9031,7 @@ func (ec *executionContext) marshalNScheduledWorkflows2ᚕᚖgithubᚗcomᚋlitm
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOScheduledWorkflows2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐScheduledWorkflows(ctx, sel, v[i])
+			ret[i] = ec.marshalOScheduledWorkflows2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐScheduledWorkflows(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -9060,15 +9058,15 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) unmarshalNUpdateUserInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateUserInput(ctx context.Context, v interface{}) (model.UpdateUserInput, error) {
+func (ec *executionContext) unmarshalNUpdateUserInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateUserInput(ctx context.Context, v interface{}) (model.UpdateUserInput, error) {
 	return ec.unmarshalInputUpdateUserInput(ctx, v)
 }
 
-func (ec *executionContext) marshalNUser2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUser2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.User) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -9092,7 +9090,7 @@ func (ec *executionContext) marshalNUser2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitm
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNUser2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐUser(ctx, sel, v[i])
+			ret[i] = ec.marshalNUser2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUser(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -9105,7 +9103,7 @@ func (ec *executionContext) marshalNUser2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitm
 	return ret
 }
 
-func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -9115,11 +9113,11 @@ func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋlitmuschaosᚋlitmus�
 	return ec._User(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNWeightagesInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesInput(ctx context.Context, v interface{}) (model.WeightagesInput, error) {
+func (ec *executionContext) unmarshalNWeightagesInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesInput(ctx context.Context, v interface{}) (model.WeightagesInput, error) {
 	return ec.unmarshalInputWeightagesInput(ctx, v)
 }
 
-func (ec *executionContext) unmarshalNWeightagesInput2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesInputᚄ(ctx context.Context, v interface{}) ([]*model.WeightagesInput, error) {
+func (ec *executionContext) unmarshalNWeightagesInput2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesInputᚄ(ctx context.Context, v interface{}) ([]*model.WeightagesInput, error) {
 	var vSlice []interface{}
 	if v != nil {
 		if tmp1, ok := v.([]interface{}); ok {
@@ -9131,7 +9129,7 @@ func (ec *executionContext) unmarshalNWeightagesInput2ᚕᚖgithubᚗcomᚋlitmu
 	var err error
 	res := make([]*model.WeightagesInput, len(vSlice))
 	for i := range vSlice {
-		res[i], err = ec.unmarshalNWeightagesInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNWeightagesInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -9139,19 +9137,19 @@ func (ec *executionContext) unmarshalNWeightagesInput2ᚕᚖgithubᚗcomᚋlitmu
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalNWeightagesInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesInput(ctx context.Context, v interface{}) (*model.WeightagesInput, error) {
+func (ec *executionContext) unmarshalNWeightagesInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesInput(ctx context.Context, v interface{}) (*model.WeightagesInput, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalNWeightagesInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesInput(ctx, v)
+	res, err := ec.unmarshalNWeightagesInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesInput(ctx, v)
 	return &res, err
 }
 
-func (ec *executionContext) marshalNWorkflowRun2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRun(ctx context.Context, sel ast.SelectionSet, v model.WorkflowRun) graphql.Marshaler {
+func (ec *executionContext) marshalNWorkflowRun2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRun(ctx context.Context, sel ast.SelectionSet, v model.WorkflowRun) graphql.Marshaler {
 	return ec._WorkflowRun(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNWorkflowRun2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.WorkflowRun) graphql.Marshaler {
+func (ec *executionContext) marshalNWorkflowRun2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.WorkflowRun) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -9175,7 +9173,7 @@ func (ec *executionContext) marshalNWorkflowRun2ᚕᚖgithubᚗcomᚋlitmuschaos
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNWorkflowRun2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRun(ctx, sel, v[i])
+			ret[i] = ec.marshalNWorkflowRun2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRun(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -9188,7 +9186,7 @@ func (ec *executionContext) marshalNWorkflowRun2ᚕᚖgithubᚗcomᚋlitmuschaos
 	return ret
 }
 
-func (ec *executionContext) marshalNWorkflowRun2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRun(ctx context.Context, sel ast.SelectionSet, v *model.WorkflowRun) graphql.Marshaler {
+func (ec *executionContext) marshalNWorkflowRun2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRun(ctx context.Context, sel ast.SelectionSet, v *model.WorkflowRun) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -9198,7 +9196,7 @@ func (ec *executionContext) marshalNWorkflowRun2ᚖgithubᚗcomᚋlitmuschaosᚋ
 	return ec._WorkflowRun(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNWorkflowRunInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunInput(ctx context.Context, v interface{}) (model.WorkflowRunInput, error) {
+func (ec *executionContext) unmarshalNWorkflowRunInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunInput(ctx context.Context, v interface{}) (model.WorkflowRunInput, error) {
 	return ec.unmarshalInputWorkflowRunInput(ctx, v)
 }
 
@@ -9428,11 +9426,11 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
-func (ec *executionContext) marshalNweightages2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightages(ctx context.Context, sel ast.SelectionSet, v model.Weightages) graphql.Marshaler {
+func (ec *executionContext) marshalNweightages2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightages(ctx context.Context, sel ast.SelectionSet, v model.Weightages) graphql.Marshaler {
 	return ec._weightages(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNweightages2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Weightages) graphql.Marshaler {
+func (ec *executionContext) marshalNweightages2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Weightages) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -9456,7 +9454,7 @@ func (ec *executionContext) marshalNweightages2ᚕᚖgithubᚗcomᚋlitmuschaos�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNweightages2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightages(ctx, sel, v[i])
+			ret[i] = ec.marshalNweightages2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightages(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -9469,7 +9467,7 @@ func (ec *executionContext) marshalNweightages2ᚕᚖgithubᚗcomᚋlitmuschaos�
 	return ret
 }
 
-func (ec *executionContext) marshalNweightages2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightages(ctx context.Context, sel ast.SelectionSet, v *model.Weightages) graphql.Marshaler {
+func (ec *executionContext) marshalNweightages2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightages(ctx context.Context, sel ast.SelectionSet, v *model.Weightages) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -9502,35 +9500,35 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return ec.marshalOBoolean2bool(ctx, sel, *v)
 }
 
-func (ec *executionContext) unmarshalOMemberRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx context.Context, v interface{}) (model.MemberRole, error) {
+func (ec *executionContext) unmarshalOMemberRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx context.Context, v interface{}) (model.MemberRole, error) {
 	var res model.MemberRole
 	return res, res.UnmarshalGQL(v)
 }
 
-func (ec *executionContext) marshalOMemberRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx context.Context, sel ast.SelectionSet, v model.MemberRole) graphql.Marshaler {
+func (ec *executionContext) marshalOMemberRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx context.Context, sel ast.SelectionSet, v model.MemberRole) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) unmarshalOMemberRole2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx context.Context, v interface{}) (*model.MemberRole, error) {
+func (ec *executionContext) unmarshalOMemberRole2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx context.Context, v interface{}) (*model.MemberRole, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalOMemberRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx, v)
+	res, err := ec.unmarshalOMemberRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx, v)
 	return &res, err
 }
 
-func (ec *executionContext) marshalOMemberRole2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx context.Context, sel ast.SelectionSet, v *model.MemberRole) graphql.Marshaler {
+func (ec *executionContext) marshalOMemberRole2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx context.Context, sel ast.SelectionSet, v *model.MemberRole) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return v
 }
 
-func (ec *executionContext) marshalOScheduledWorkflows2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐScheduledWorkflows(ctx context.Context, sel ast.SelectionSet, v model.ScheduledWorkflows) graphql.Marshaler {
+func (ec *executionContext) marshalOScheduledWorkflows2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐScheduledWorkflows(ctx context.Context, sel ast.SelectionSet, v model.ScheduledWorkflows) graphql.Marshaler {
 	return ec._ScheduledWorkflows(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalOScheduledWorkflows2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋbackendᚋgraphqlᚑserverᚋgraphᚋmodelᚐScheduledWorkflows(ctx context.Context, sel ast.SelectionSet, v *model.ScheduledWorkflows) graphql.Marshaler {
+func (ec *executionContext) marshalOScheduledWorkflows2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐScheduledWorkflows(ctx context.Context, sel ast.SelectionSet, v *model.ScheduledWorkflows) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
