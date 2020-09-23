@@ -217,6 +217,29 @@ type WorkflowRunInput struct {
 	ClusterID     *ClusterIdentity `json:"cluster_id"`
 }
 
+type WorkflowRuns struct {
+	ExecutionData string `json:"execution_data"`
+	WorkflowRunID string `json:"workflow_run_id"`
+	LastUpdated   string `json:"last_updated"`
+}
+
+type Workflows struct {
+	WorkflowID          string          `json:"workflow_id"`
+	WorkflowManifest    string          `json:"workflow_manifest"`
+	CronSyntax          string          `json:"cronSyntax"`
+	ClusterName         string          `json:"cluster_name"`
+	WorkflowName        string          `json:"workflow_name"`
+	WorkflowDescription string          `json:"workflow_description"`
+	Weightages          []*Weightages   `json:"weightages"`
+	IsCustomWorkflow    bool            `json:"isCustomWorkflow"`
+	UpdatedAt           string          `json:"updated_at"`
+	CreatedAt           string          `json:"created_at"`
+	ProjectID           string          `json:"project_id"`
+	ClusterID           string          `json:"cluster_id"`
+	ClusterType         string          `json:"cluster_type"`
+	WorkflowRuns        []*WorkflowRuns `json:"workflow_runs"`
+}
+
 type Weightages struct {
 	ExperimentName string `json:"experiment_name"`
 	Weightage      int    `json:"weightage"`

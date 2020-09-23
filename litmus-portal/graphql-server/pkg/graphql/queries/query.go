@@ -78,6 +78,47 @@ func QueryWorkflows(project_id string) ([]*model.ScheduledWorkflows, error) {
 	return result, nil
 }
 
+func QueryGetWorkflows(project_id string) ([]*model.Workflows, error) {
+	chaosWorkflows, err := database.GetWorkflowsByProjectID(project_id)
+	if err != nil {
+		return nil, err
+	}
+
+	result := []*model.Workflows{}
+	for _, workflow := range chaosWorkflows {
+		cluster, err := database.GetCluster(workflow.ClusterID)
+		if err != nil {
+			return nil, err
+		}
+		
+		var Weightages []*model.Weightages
+		copier.Copy(&Weightages, &workflow.Weightages)
+
+		var WorkflowRuns []*model.WorkflowRuns
+		copier.Copy(&WorkflowRuns, &workflow.WorkflowRuns)
+
+		newChaosWorkflows := model.Workflows{
+			WorkflowID:          workflow.WorkflowID,
+			WorkflowManifest:    workflow.WorkflowManifest,
+			WorkflowName:        workflow.WorkflowName,
+			CronSyntax:          workflow.CronSyntax,
+			WorkflowDescription: workflow.WorkflowDescription,
+			Weightages:          Weightages,
+			IsCustomWorkflow:    workflow.IsCustomWorkflow,
+			UpdatedAt:           workflow.UpdatedAt,
+			CreatedAt:           workflow.CreatedAt,
+			ProjectID:           workflow.ProjectID,
+			ClusterName:         cluster.ClusterName,
+			ClusterID:           cluster.ClusterType,
+			ClusterType:         cluster.ClusterType,
+			WorkflowRuns: 		 WorkflowRuns,
+		}
+		result = append(result, &newChaosWorkflows)
+	}
+
+	return result, nil
+}
+
 //GetLogs query is used to fetch the logs from the cluster
 func GetLogs(reqID string, pod model.PodLogRequest, r store.StateData) {
 	data, err := json.Marshal(pod)
