@@ -39,6 +39,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   innerPass: {
+    marginLeft: theme.spacing(-2),
     display: 'flex',
     flexDirection: 'column',
   },

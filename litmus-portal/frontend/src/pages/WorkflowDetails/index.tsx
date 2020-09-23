@@ -17,9 +17,23 @@ import { RootState } from '../../redux/reducers';
 import ArgoWorkflow from '../../views/WorkflowDetails/ArgoWorkflow';
 import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
 import useStyles from './styles';
+import TopNavButtons from './TopNavButtons';
+
+interface TopNavButtonsProps {
+  isAnalyticsToggled: boolean;
+  isExportToggled: boolean;
+  isInfoToggled: boolean;
+}
 
 const WorkflowDetails: React.FC = () => {
   const classes = useStyles();
+
+  const [isToggled, setIsToggled] = React.useState<TopNavButtonsProps>({
+    isAnalyticsToggled: false,
+    isExportToggled: false,
+    isInfoToggled: false,
+  });
+
   const { pathname } = useLocation();
   // Getting the workflow nome from the pathname
   const workflowRunId = pathname.split('/')[3];
@@ -77,6 +91,8 @@ const WorkflowDetails: React.FC = () => {
 
   return (
     <Scaffold>
+      <TopNavButtons isToggled={isToggled} setIsToggled={setIsToggled} />
+      {/* If workflow data is present then display the workflow details */}
       {workflow ? (
         <div className={classes.root}>
           <div className={classes.workflowGraph}>
@@ -86,19 +102,35 @@ const WorkflowDetails: React.FC = () => {
             <Typography>{t('workflowDetails.detailedLog')}</Typography>
 
             {/* Argo Workflow DAG Graph */}
-            <ArgoWorkflow
-              nodes={
-                (JSON.parse(workflow.execution_data) as ExecutionData).nodes
-              }
-            />
+            {isToggled.isInfoToggled ? (
+              <div className={classes.w100}>
+                <ArgoWorkflow
+                  nodes={
+                    (JSON.parse(workflow.execution_data) as ExecutionData).nodes
+                  }
+                />
+              </div>
+            ) : (
+              <div className={classes.w140}>
+                <ArgoWorkflow
+                  nodes={
+                    (JSON.parse(workflow.execution_data) as ExecutionData).nodes
+                  }
+                />
+              </div>
+            )}
           </div>
-          <WorkflowInfo
-            workflow_name={workflow.workflow_name}
-            execution_data={
-              JSON.parse(workflow?.execution_data) as ExecutionData
-            }
-            cluster_name={workflow.cluster_name}
-          />
+          {isToggled.isInfoToggled ? (
+            <WorkflowInfo
+              workflow_name={workflow.workflow_name}
+              execution_data={
+                JSON.parse(workflow?.execution_data) as ExecutionData
+              }
+              cluster_name={workflow.cluster_name}
+            />
+          ) : (
+            <></>
+          )}
         </div>
       ) : error ? (
         <Typography>{t('workflowDetails.fetchError')}</Typography>
