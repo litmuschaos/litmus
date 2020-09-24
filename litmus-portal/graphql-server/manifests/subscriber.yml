@@ -1,7 +1,8 @@
+
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: argo
+  name: #{SUB-NAMESPACE}
 ---
 # This is an auto-generated file. DO NOT EDIT
 apiVersion: apiextensions.k8s.io/v1beta1
@@ -76,19 +77,19 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: argo
-  namespace: argo
+  namespace: #{SUB-NAMESPACE}
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: argo-server
-  namespace: argo
+  namespace: #{SUB-NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: argo-role
-  namespace: argo
+  namespace: #{SUB-NAMESPACE}
 rules:
   - apiGroups:
       - ""
@@ -318,7 +319,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: argo-binding
-  namespace: argo
+  namespace: #{SUB-NAMESPACE}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -338,7 +339,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: argo
-    namespace: argo
+    namespace: #{SUB-NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -351,19 +352,19 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: argo-server
-    namespace: argo
+    namespace: #{SUB-NAMESPACE}
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: workflow-controller-configmap
-  namespace: argo
+  namespace: #{SUB-NAMESPACE}
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: argo-server
-  namespace: argo
+  namespace: #{SUB-NAMESPACE}
 spec:
   ports:
     - name: web
@@ -376,7 +377,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: workflow-controller-metrics
-  namespace: argo
+  namespace: #{SUB-NAMESPACE}
 spec:
   ports:
     - name: metrics
@@ -390,7 +391,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: argo-server
-  namespace: argo
+  namespace: #{SUB-NAMESPACE}
 spec:
   selector:
     matchLabels:
@@ -423,7 +424,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: workflow-controller
-  namespace: argo
+  namespace: #{SUB-NAMESPACE}
 spec:
   selector:
     matchLabels:
@@ -450,13 +451,13 @@ spec:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: litmus
+  name: #{SUB-NAMESPACE}
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: litmus
-  namespace: litmus
+  namespace: #{SUB-NAMESPACE}
   labels:
     name: litmus
 ---
@@ -487,13 +488,13 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: litmus
-    namespace: litmus
+    namespace: #{SUB-NAMESPACE}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: chaos-operator-ce
-  namespace: litmus
+  namespace: #{SUB-NAMESPACE}
 spec:
   replicas: 1
   selector:
@@ -961,7 +962,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: litmus-admin
-  namespace: litmus
+  namespace: #{SUB-NAMESPACE}
   labels:
     name: litmus-admin
 ---
@@ -993,7 +994,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: litmus-admin
-    namespace: litmus
+    namespace: #{SUB-NAMESPACE}
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -1023,7 +1024,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: argo-chaos
-    namespace: litmus
+    namespace: #{SUB-NAMESPACE}
 ---
 apiVersion: apps/v1
 kind: Deployment
