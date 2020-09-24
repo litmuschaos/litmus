@@ -90,7 +90,7 @@ func QueryGetWorkflows(project_id string) ([]*model.Workflows, error) {
 		if err != nil {
 			return nil, err
 		}
-		
+
 		var Weightages []*model.Weightages
 		copier.Copy(&Weightages, &workflow.Weightages)
 
@@ -111,7 +111,7 @@ func QueryGetWorkflows(project_id string) ([]*model.Workflows, error) {
 			ClusterName:         cluster.ClusterName,
 			ClusterID:           cluster.ClusterType,
 			ClusterType:         cluster.ClusterType,
-			WorkflowRuns: 		 WorkflowRuns,
+			WorkflowRuns:        WorkflowRuns,
 		}
 		result = append(result, &newChaosWorkflows)
 	}
