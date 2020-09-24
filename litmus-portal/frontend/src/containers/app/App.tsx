@@ -21,6 +21,10 @@ const BrowseTemplate = lazy(() =>
 const HomePage = lazy(() => import('../../pages/HomePage'));
 const Community = lazy(() => import('../../pages/Community'));
 const Settings = lazy(() => import('../../pages/Settings'));
+const TargetHome = lazy(() => import('../../components/Targets/ConnectHome'));
+const ConnectTargets = lazy(() =>
+  import('../../components/Targets/ConnectTarget')
+);
 const SchedulePage = lazy(() => import('../../pages/SchedulePage'));
 const AnalyticsPage = lazy(() => import('../../pages/AnalyticsPage'));
 
@@ -87,6 +91,9 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
           component={AnalyticsPage}
         />
         <Route exact path="/community" component={Community} />
+        <Route exact path="/targets" component={TargetHome} />
+        <Route exact path="/settings" component={Settings} />
+        <Route exact path="/target-connect" component={ConnectTargets} />
         {isOwner ? (
           <Route exact path="/settings" component={Settings} />
         ) : (

@@ -82,6 +82,15 @@ const SideBar: React.FC = () => {
           <WorkflowsIcon />
         </CustomisedListItem>
         <CustomisedListItem
+          key="targets"
+          handleClick={() => {
+            history.push('/targets');
+          }}
+          label="Targets"
+        >
+          <img src="./icons/targets.svg" alt="targets" />
+        </CustomisedListItem>
+        <CustomisedListItem
           key="community"
           handleClick={() => {
             history.push('/community');
