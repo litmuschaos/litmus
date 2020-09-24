@@ -1053,3 +1053,7 @@ spec:
               value: #{CID}
             - name: KEY
               value: #{KEY}
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace

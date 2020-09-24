@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
-
+	"os"
 	yaml_converter "github.com/ghodss/yaml"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -20,13 +20,13 @@ import (
 
 const (
 	PortalConfigName = "litmus-portal-config"
-	DefaultNamespace = "litmus"
 )
 
 var (
 	Ctx             = context.Background()
 	decUnstructured = yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
 	dr              dynamic.ResourceInterface
+	DefaultNamespace = os.Getenv("NAMESPACE")
 )
 
 // IsClusterConfirmed checks if the config map with "is_cluster_confirmed" is true or not.
@@ -171,7 +171,7 @@ func ClusterOperations(manifest string, requestType string) (*unstructured.Unstr
 	// Obtain REST interface for the GVR
 	if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
 		// namespaced resources should specify the namespace
-		dr = dynamicClient.Resource(mapping.Resource).Namespace("litmus")
+		dr = dynamicClient.Resource(mapping.Resource).Namespace(DefaultNamespace)
 	} else {
 		// for cluster-wide resources
 		dr = dynamicClient.Resource(mapping.Resource)

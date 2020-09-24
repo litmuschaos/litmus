@@ -8,7 +8,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 
 	"k8s.io/client-go/tools/clientcmd"
-
+	corev1 "k8s.io/api/core/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -57,6 +57,14 @@ func CreateDeployment(namespace, token string) (*appsv1.Deployment, error) {
 								{
 									Name:  "TOKEN",
 									Value: token,
+								},
+								{
+									Name:  "NameSpace",
+									ValueFrom: &corev1.EnvVarSource{
+										FieldRef: &corev1.ObjectFieldSelector{
+											FieldPath: "metadata.Namespace",
+										},
+									},
 								},
 							},
 						},
