@@ -200,7 +200,7 @@ type Query{
   # [Deprecated soon]
   getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
 
-  getWorkflows(project_id: String!): [Workflows]! @authorized
+  ListWorkflow(project_id: String!): [Workflows]! @authorized
 }
 
 type Mutation{

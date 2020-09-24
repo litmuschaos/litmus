@@ -78,7 +78,7 @@ func QueryWorkflows(project_id string) ([]*model.ScheduledWorkflows, error) {
 	return result, nil
 }
 
-func QueryGetWorkflows(project_id string) ([]*model.Workflows, error) {
+func QueryListWorkflow(project_id string) ([]*model.Workflows, error) {
 	chaosWorkflows, err := database.GetWorkflowsByProjectID(project_id)
 	if err != nil {
 		return nil, err

@@ -144,7 +144,7 @@ type ComplexityRoot struct {
 		GetScheduledWorkflows func(childComplexity int, projectID string) int
 		GetUser               func(childComplexity int, username string) int
 		GetWorkFlowRuns       func(childComplexity int, projectID string) int
-		GetWorkflows          func(childComplexity int, projectID string) int
+		ListWorkflow          func(childComplexity int, projectID string) int
 		Users                 func(childComplexity int) int
 	}
 
@@ -248,7 +248,7 @@ type QueryResolver interface {
 	GetProject(ctx context.Context, projectID string) (*model.Project, error)
 	Users(ctx context.Context) ([]*model.User, error)
 	GetScheduledWorkflows(ctx context.Context, projectID string) ([]*model.ScheduledWorkflows, error)
-	GetWorkflows(ctx context.Context, projectID string) ([]*model.Workflows, error)
+	ListWorkflow(ctx context.Context, projectID string) ([]*model.Workflows, error)
 }
 type SubscriptionResolver interface {
 	ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error)
@@ -819,17 +819,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetWorkFlowRuns(childComplexity, args["project_id"].(string)), true
 
-	case "Query.getWorkflows":
-		if e.complexity.Query.GetWorkflows == nil {
+	case "Query.ListWorkflow":
+		if e.complexity.Query.ListWorkflow == nil {
 			break
 		}
 
-		args, err := ec.field_Query_getWorkflows_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_ListWorkflow_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.GetWorkflows(childComplexity, args["project_id"].(string)), true
+		return e.complexity.Query.ListWorkflow(childComplexity, args["project_id"].(string)), true
 
 	case "Query.users":
 		if e.complexity.Query.Users == nil {
@@ -1571,7 +1571,7 @@ type Query{
   # [Deprecated soon]
   getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
 
-  getWorkflows(project_id: String!): [Workflows]! @authorized
+  ListWorkflow(project_id: String!): [Workflows]! @authorized
 }
 
 type Mutation{
@@ -1821,6 +1821,20 @@ func (ec *executionContext) field_Mutation_userClusterReg_args(ctx context.Conte
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_ListWorkflow_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["project_id"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["project_id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -1900,20 +1914,6 @@ func (ec *executionContext) field_Query_getUser_args(ctx context.Context, rawArg
 }
 
 func (ec *executionContext) field_Query_getWorkFlowRuns_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["project_id"]; ok {
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["project_id"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_getWorkflows_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -4672,7 +4672,7 @@ func (ec *executionContext) _Query_getScheduledWorkflows(ctx context.Context, fi
 	return ec.marshalNScheduledWorkflows2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐScheduledWorkflows(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_getWorkflows(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_ListWorkflow(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4688,7 +4688,7 @@ func (ec *executionContext) _Query_getWorkflows(ctx context.Context, field graph
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getWorkflows_args(ctx, rawArgs)
+	args, err := ec.field_Query_ListWorkflow_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -4697,7 +4697,7 @@ func (ec *executionContext) _Query_getWorkflows(ctx context.Context, field graph
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetWorkflows(rctx, args["project_id"].(string))
+			return ec.resolvers.Query().ListWorkflow(rctx, args["project_id"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -8979,7 +8979,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
-		case "getWorkflows":
+		case "ListWorkflow":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -8987,7 +8987,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getWorkflows(ctx, field)
+				res = ec._Query_ListWorkflow(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

@@ -104,8 +104,8 @@ func (r *queryResolver) GetScheduledWorkflows(ctx context.Context, projectID str
 	return queries.QueryWorkflows(projectID)
 }
 
-func (r *queryResolver) GetWorkflows(ctx context.Context, projectID string) ([]*model.Workflows, error) {
-	return queries.QueryGetWorkflows(projectID)
+func (r *queryResolver) ListWorkflow(ctx context.Context, projectID string) ([]*model.Workflows, error) {
+	return queries.QueryListWorkflow(projectID)
 }
 
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {
