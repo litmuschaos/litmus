@@ -2,6 +2,7 @@ import { AppBar, Typography } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
 import Tabs from '@material-ui/core/Tabs';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ButtonFilled from '../../components/Button/ButtonFilled';
 import { StyledTab, TabPanel } from '../../components/Tabs';
@@ -19,6 +20,7 @@ import useStyles from './styles';
 
 const Workflows = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   const template = useActions(TemplateSelectionActions);
   const workflowTabValue = useSelector(
@@ -47,7 +49,7 @@ const Workflows = () => {
               isPrimary={false}
               handleClick={handleScheduleWorkflow}
             >
-              <>Schedule a workflow</>
+              {t('workflows.scheduleAWorkflow')}
             </ButtonFilled>
           </div>
         </div>
@@ -63,10 +65,10 @@ const Workflows = () => {
           }}
           variant="fullWidth"
         >
-          <StyledTab label="Browse workflows" />
-          <StyledTab label="Schedules" />
-          <StyledTab label="Templates" />
-          <StyledTab label="Analytics" />
+          <StyledTab label={`${t('workflows.browseWorkflows')}`} />
+          <StyledTab label={`${t('workflows.schedules')}`} />
+          <StyledTab label={`${t('workflows.templates')}`} />
+          <StyledTab label={`${t('workflows.analytics')}`} />
         </Tabs>
       </AppBar>
       <TabPanel value={workflowTabValue} index={0}>

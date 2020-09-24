@@ -1,7 +1,8 @@
-import { Avatar, LinearProgress } from '@material-ui/core';
+import { Avatar } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
+import AnalyticsLinearProgressBar from '../../../components/ProgressBar/AnalyticsLinearProgressBar';
 import useStyles from './styles';
 
 interface TotalWorkflowProps {
@@ -50,13 +51,11 @@ const TotalWorkflows: React.FC<TotalWorkflowProps> = ({
               {max}
             </Typography>
           </div>
-          {/* {console.log(average)} */}
-          <LinearProgress variant="determinate" value={average} />
-          {/* <AnalyticsLinearProgressBar
+          <AnalyticsLinearProgressBar
             value={average}
             maxValue={max}
             isInTable={false}
-          /> */}
+          />
         </div>
       </div>
       <Typography variant="h5" gutterBottom className={classes.workflow}>
