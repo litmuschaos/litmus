@@ -90,7 +90,7 @@ func GetWorkflowsByProjectID(project_id string) ([]ChaosWorkFlowInput, error) {
 	return workflows, nil
 }
 
-func GetWorkflowsByID(workflow_id string) (*ChaosWorkFlowInput, error){
+func GetWorkflowByID(workflow_id string) (*ChaosWorkFlowInput, error){
 	query := bson.D{{ "workflow_id", workflow_id}}
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 

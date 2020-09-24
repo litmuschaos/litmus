@@ -120,7 +120,7 @@ func QueryListWorkflow(project_id string) ([]*model.Workflow, error) {
 }
 
 func QueryGetWorkflow(workflow_id string) (*model.Workflow, error) {
-	workflow, err := database.GetWorkflowsByID(workflow_id)
+	workflow, err := database.GetWorkflowByID(workflow_id)
 	if err != nil {
 		return nil, err
 	}
