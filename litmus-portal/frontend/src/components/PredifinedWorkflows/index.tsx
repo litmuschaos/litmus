@@ -19,13 +19,13 @@ const PredifinedWorkflows: React.FC<PredifinedWorkflowsProps> = ({
       {workflows &&
         workflows.map((w: preDefinedWorkflowData, index: number) =>
           w.isCustom ? (
-            <div data-cy="templatesCard">
+            <div key={w.workflowID} data-cy="templatesCard">
               <CustomWorkflowCard
                 handleClick={() => callbackOnSelectWorkflow(index)}
               />
             </div>
           ) : (
-            <div data-cy="templatesCard">
+            <div key={w.workflowID} data-cy="templatesCard">
               <CustomCard
                 key={w.workflowID}
                 title={w.title}
