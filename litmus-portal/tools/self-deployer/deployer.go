@@ -44,7 +44,7 @@ func main() {
 	}
 	log.Print("SUBSCRIBER DEPLOYED")
 	log.Print("PERFORMING CLEANUP")
-	err = CleanUp(os.Getenv("NameSpace"), "self-deployer")
+	err = CleanUp(os.Getenv("NAMESPACE"), "self-deployer")
 	if err != nil {
 		log.Panic(err.Error())
 	}

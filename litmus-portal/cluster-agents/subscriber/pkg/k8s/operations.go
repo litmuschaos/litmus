@@ -3,8 +3,6 @@ package k8s
 import (
 	"context"
 	"fmt"
-	"log"
-	"os"
 	yaml_converter "github.com/ghodss/yaml"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -14,6 +12,8 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/restmapper"
+	"log"
+	"os"
 
 	memory "k8s.io/client-go/discovery/cached"
 )
@@ -23,9 +23,9 @@ const (
 )
 
 var (
-	Ctx             = context.Background()
-	decUnstructured = yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
-	dr              dynamic.ResourceInterface
+	Ctx              = context.Background()
+	decUnstructured  = yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
+	dr               dynamic.ResourceInterface
 	DefaultNamespace = os.Getenv("NAMESPACE")
 )
 
