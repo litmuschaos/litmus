@@ -162,7 +162,7 @@ type ScheduledWorkflows {
   cluster_type: String!
 }
 
-type Workflows{
+type Workflow{
   workflow_id: String!
   workflow_manifest: String!
   cronSyntax: String!
@@ -200,7 +200,9 @@ type Query{
   # [Deprecated soon]
   getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
 
-  ListWorkflow(project_id: String!): [Workflows]! @authorized
+  ListWorkflow(project_id: String!): [Workflow]! @authorized
+
+  GetWorkflow(workflow_id: String!): Workflow @authorized
 }
 
 type Mutation{

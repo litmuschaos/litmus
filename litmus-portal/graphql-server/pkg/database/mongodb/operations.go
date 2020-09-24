@@ -90,6 +90,24 @@ func GetWorkflowsByProjectID(project_id string) ([]ChaosWorkFlowInput, error) {
 	return workflows, nil
 }
 
+func GetWorkflowsByID(workflow_id string) (*ChaosWorkFlowInput, error){
+	query := bson.D{{ "workflow_id", workflow_id}}
+	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
+
+	cursor, err := workflowCollection.Find(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	var workflow ChaosWorkFlowInput
+	err = cursor.All(ctx, &workflow)
+	if err != nil {
+		return nil, err
+	}
+
+	return &workflow, nil
+}
+
 func GetClusterWithProjectID(project_id string, cluster_type *string) ([]*Cluster, error) {
 
 	var query bson.M
