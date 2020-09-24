@@ -72,10 +72,14 @@ const Settings: React.FC = () => {
             },
           }}
         >
-          <Tab label="My Account" {...tabProps(0)} />
-          <Tab label="Team" {...tabProps(1)} />
+          <Tab data-cy="my-account" label="My Account" {...tabProps(0)} />
+          <Tab data-cy="teaming" label="Team" {...tabProps(1)} />
           {userData.username === 'admin' ? (
-            <Tab label="User Management" {...tabProps(2)} />
+            <Tab
+              data-cy="user-management"
+              label="User Management"
+              {...tabProps(2)}
+            />
           ) : (
             <></>
           )}
