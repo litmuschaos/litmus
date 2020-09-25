@@ -39,7 +39,7 @@ const Workflows = () => {
               isPrimary={false}
               handleClick={() => history.push('/create-workflow')}
             >
-              <>Schedule a workflow</>
+              <Typography>Schedule a workflow</Typography>
             </ButtonFilled>
           </div>
         </div>
@@ -55,10 +55,10 @@ const Workflows = () => {
           }}
           variant="fullWidth"
         >
-          <StyledTab label="Browse workflows" />
-          <StyledTab label="Schedules" />
-          <StyledTab label="Templates" />
-          <StyledTab label="Analytics" />
+          <StyledTab label="Browse workflows" data-cy="browseWorkflow" />
+          <StyledTab label="Schedules" data-cy="browseSchedule" />
+          <StyledTab label="Templates" data-cy="templates" />
+          <StyledTab label="Analytics" data-cy="analyticsWorkflow" />
         </Tabs>
       </AppBar>
       <TabPanel value={workflowTabValue} index={0}>

@@ -80,7 +80,7 @@ const WorkflowDetails: React.FC = () => {
       {workflow ? (
         <div className={classes.root}>
           <div className={classes.workflowGraph}>
-            <Typography className={classes.heading}>
+            <Typography data-cy="wfName" className={classes.heading}>
               {workflow.workflow_name}
             </Typography>
             <Typography>{t('workflowDetails.detailedLog')}</Typography>

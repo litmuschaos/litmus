@@ -59,7 +59,11 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     marginTop: theme.spacing(1),
-    marginLeft: theme.spacing(-2),
+    marginLeft: theme.spacing(-2.1),
+  },
+
+  inputValue: {
+    width: '25rem',
   },
 
   linkForgotPass: {

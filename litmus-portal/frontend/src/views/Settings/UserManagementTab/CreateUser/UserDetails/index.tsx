@@ -56,40 +56,45 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
           </div>
           {/* Fields for details including Full name, email, username */}
           <div className={classes.details1}>
-            <InputField
-              required
-              helperText={
-                validateStartEmptySpacing(nameValue)
-                  ? 'Should not start with an empty space'
-                  : ''
-              }
-              value={nameValue}
-              disabled={nameIsDisabled}
-              handleChange={handleNameChange}
-              validationError={validateStartEmptySpacing(nameValue)}
-              label="Full Name"
-            />
-
-            <InputField
-              required
-              helperText={
-                validateEmail(emailValue) ? 'Should be a valid email' : ''
-              }
-              type="email"
-              value={emailValue}
-              disabled={emailIsDisabled}
-              handleChange={handleEmailChange}
-              validationError={validateEmail(emailValue)}
-              label="Email Address"
-            />
+            <div data-cy="InputName">
+              <InputField
+                required
+                helperText={
+                  validateStartEmptySpacing(nameValue)
+                    ? 'Should not start with an empty space'
+                    : ''
+                }
+                value={nameValue}
+                disabled={nameIsDisabled}
+                handleChange={handleNameChange}
+                validationError={validateStartEmptySpacing(nameValue)}
+                label="Full Name"
+              />
+            </div>
+            <div data-cy="InputEmail">
+              <InputField
+                required
+                helperText={
+                  validateEmail(emailValue) ? 'Should be a valid email' : ''
+                }
+                type="email"
+                value={emailValue}
+                disabled={emailIsDisabled}
+                handleChange={handleEmailChange}
+                validationError={validateEmail(emailValue)}
+                label="Email Address"
+              />
+            </div>
             {/* Username is not editable normal user */}
-            <InputField
-              value={userValue}
-              handleChange={handleUserChange}
-              label="Username"
-              disabled={usernameIsDisabled}
-              validationError={false}
-            />
+            <div data-cy="username">
+              <InputField
+                value={userValue}
+                handleChange={handleUserChange}
+                label="Username"
+                disabled={usernameIsDisabled}
+                validationError={false}
+              />
+            </div>
           </div>
         </div>
       </form>

@@ -61,7 +61,7 @@ const Templates = () => {
           </div>
           <Typography className={classes.headerSize}>Sort</Typography>
         </div> */}
-      <div className={classes.predefinedCards}>
+      <div data-cy="templatesPage" className={classes.predefinedCards}>
         <PredifinedWorkflows
           callbackOnSelectWorkflow={(index: number) => {
             selectWorkflow(index);

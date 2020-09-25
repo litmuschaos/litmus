@@ -94,6 +94,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   buttonModal: {
     marginTop: theme.spacing(3.75),
+    width: '55%',
   },
   textSecondError: {
     width: '27.5rem',
