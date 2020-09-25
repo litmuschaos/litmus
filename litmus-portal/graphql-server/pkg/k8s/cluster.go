@@ -58,12 +58,8 @@ func CreateDeployment(namespace, token string) (*appsv1.Deployment, error) {
 									Value: token,
 								},
 								{
-									Name: "NAMESPACE",
-									ValueFrom: &apiv1.EnvVarSource{
-										FieldRef: &apiv1.ObjectFieldSelector{
-											FieldPath: "metadata.Namespace",
-										},
-									},
+									Name:  "NAMESPACE",
+									Value: namespace,
 								},
 							},
 						},
