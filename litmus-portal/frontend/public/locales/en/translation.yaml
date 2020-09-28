@@ -50,9 +50,11 @@ customWorkflowCard:
 
 workflowStepper:
   continueError: To continue, please check the error in code.
+
 ######################################
 ############    Pages    #############
 ######################################
+
 home:
   workflow:
     heading: Let's Start
@@ -114,3 +116,10 @@ error:
 workflowDetails:
   detailedLog: Click on test to see detailed log of your workflow
   fetchError: An error has occurred while fetching the data
+
+workflows:
+  browseWorkflows: Browse workflows
+  schedules: Schedules
+  templates: Templates
+  analytics: Analytics
+  scheduleAWorkflow: Schedule a workflow
