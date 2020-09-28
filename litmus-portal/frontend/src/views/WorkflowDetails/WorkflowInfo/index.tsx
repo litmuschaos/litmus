@@ -62,10 +62,6 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
   return (
     <div className={classes.root}>
       {/* Workflow Information */}
-      <Typography className={classes.header} variant="h6">
-        <span className={classes.bold}>Workflow Information</span>
-      </Typography>
-      <hr className={classes.divider} />
       <div className={classes.heightMaintainer}>
         <Typography className={classes.workflowSpacing}>
           <span className={classes.bold}>Workflow name:</span>

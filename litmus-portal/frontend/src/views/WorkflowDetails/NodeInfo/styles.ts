@@ -5,18 +5,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '100%',
     marginTop: '1rem',
   },
-  header: {
-    color: theme.palette.secondary.dark,
-  },
   bold: {
     fontWeight: 500,
   },
-  workflowSpacing: {
-    margin: '1rem 0',
+  header: {
+    color: theme.palette.secondary.dark,
   },
-  divider: {
-    background: theme.palette.secondary.dark,
-    height: '0.2rem',
+  nodeSpacing: {
+    margin: '1rem 0',
   },
   heightMaintainer: {
     lineHeight: '2rem',

@@ -41,6 +41,19 @@ const useStyles = makeStyles((theme: Theme) => ({
   loaderDiv: {
     height: '100%',
   },
+  appBar: {
+    background: 'transparent',
+    boxShadow: 'none',
+    paddingLeft: theme.spacing(1.5),
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  footerButton: {
+    marginLeft: 'auto',
+    display: 'flex',
+    flexDirection: 'row',
+    padding: theme.spacing(3, 4, 4, 0),
+  },
 }));
 
 export default useStyles;
