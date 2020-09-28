@@ -106,7 +106,7 @@ const ResultTable: React.FC<ResultModalProps> = ({ testValue, testNames }) => {
                     &nbsp; points
                     <br />
                     <div className={classes.progressBar}>
-                      <LinearProgressBar value={row.weight} />
+                      <LinearProgressBar width={2} value={row.weight} />
                     </div>
                   </TableCell>
                   <TableCell align="left" className={classes.tablePoints}>
@@ -114,7 +114,7 @@ const ResultTable: React.FC<ResultModalProps> = ({ testValue, testNames }) => {
                     &nbsp; points
                     <br />
                     <div className={classes.progressBar}>
-                      <LinearProgressBar value={row.points} />
+                      <LinearProgressBar width={2} value={row.points} />
                     </div>
                   </TableCell>
                 </TableRow>

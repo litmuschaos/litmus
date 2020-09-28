@@ -60,7 +60,11 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     maxWidth: '20rem',
     marginTop: theme.spacing(1),
-    marginLeft: theme.spacing(-2),
+    marginLeft: theme.spacing(-2.1),
+  },
+
+  inputValue: {
+    width: '25rem',
   },
 
   linkForgotPass: {

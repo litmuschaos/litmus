@@ -65,10 +65,22 @@ const Workflows = () => {
           }}
           variant="fullWidth"
         >
-          <StyledTab label={`${t('workflows.browseWorkflows')}`} />
-          <StyledTab label={`${t('workflows.schedules')}`} />
-          <StyledTab label={`${t('workflows.templates')}`} />
-          <StyledTab label={`${t('workflows.analytics')}`} />
+          <StyledTab
+            label={`${t('workflows.browseWorkflows')}`}
+            data-cy="browseWorkflow"
+          />
+          <StyledTab
+            label={`${t('workflows.schedules')}`}
+            data-cy="browseSchedule"
+          />
+          <StyledTab
+            label={`${t('workflows.templates')}`}
+            data-cy="templates"
+          />
+          <StyledTab
+            label={`${t('workflows.analytics')}`}
+            data-cy="analyticsWorkflow"
+          />
         </Tabs>
       </AppBar>
       <TabPanel value={workflowTabValue} index={0}>
