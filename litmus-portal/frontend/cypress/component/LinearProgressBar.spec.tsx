@@ -5,7 +5,7 @@ import LinearProgressBar from '../../src/components/ProgressBar/LinearProgressBa
 
 describe('Linear Progressbar Testing', () => {
   it('Progressbar stroke for value 3', () => {
-    mount(<LinearProgressBar value={2} />);
+    mount(<LinearProgressBar width={1.5} value={2} />);
     cy.get('.rc-progress-line-path').should(
       'have.css',
       'stroke-dasharray',
@@ -13,7 +13,7 @@ describe('Linear Progressbar Testing', () => {
     );
   });
   it('Progressbar stroke for value 8', () => {
-    mount(<LinearProgressBar value={8} />);
+    mount(<LinearProgressBar width={1.5} value={8} />);
     cy.get('.rc-progress-line-path').should(
       'have.css',
       'stroke-dasharray',
@@ -21,7 +21,7 @@ describe('Linear Progressbar Testing', () => {
     );
   });
   it('Progressbar stroke for value 6', () => {
-    mount(<LinearProgressBar value={6} />);
+    mount(<LinearProgressBar width={1.5} value={6} />);
     cy.get('.rc-progress-line-path').should(
       'have.css',
       'stroke-dasharray',
@@ -29,7 +29,7 @@ describe('Linear Progressbar Testing', () => {
     );
   });
   it('Progressbar stroke if default', () => {
-    mount(<LinearProgressBar value={8} isDefault />);
+    mount(<LinearProgressBar width={1.5} value={8} isDefault />);
     cy.get('.rc-progress-line-path').should(
       'have.css',
       'stroke-dasharray',

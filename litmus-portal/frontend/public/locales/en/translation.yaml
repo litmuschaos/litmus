@@ -50,9 +50,11 @@ customWorkflowCard:
 
 workflowStepper:
   continueError: To continue, please check the error in code.
+
 ######################################
 ############    Pages    #############
 ######################################
+
 home:
   workflow:
     heading: Let's Start
@@ -154,3 +156,9 @@ WorkflowCluster:
       menu4: Internal
       menu5: External
       
+workflows:
+  browseWorkflows: Browse workflows
+  schedules: Schedules
+  templates: Templates
+  analytics: Analytics
+  scheduleAWorkflow: Schedule a workflow
