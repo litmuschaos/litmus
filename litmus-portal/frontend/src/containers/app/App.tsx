@@ -61,11 +61,11 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
     <div className={classes.content}>
       <Switch>
         <Route exact path="/" component={HomePage} />
-        <Route exact path="/login" component={LoginPage} />
         <Route exact path="/workflows" component={Workflows} />
         <Route exact path="/create-workflow" component={CreateWorkflow} />
 
         {/* Redirects */}
+        <Redirect exact path="/login" to="/" />
         <Redirect exact path="/workflows/details" to="/workflows" />
         <Redirect exact path="/workflows/schedule" to="/workflows" />
         <Redirect exact path="/workflows/template" to="/workflows" />
