@@ -11,6 +11,7 @@ import Scaffold from '../../containers/layouts/Scaffold';
 import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../graphql';
 import {
   ExecutionData,
+  Node,
   Workflow,
   WorkflowDataVars,
   WorkflowSubscription,
@@ -152,7 +153,7 @@ const WorkflowDetails: React.FC = () => {
                     variant="fullWidth"
                   >
                     <StyledTab label="Workflow" />
-                    <StyledTab label="Node" />
+                    <StyledTab label="Nodes" />
                   </Tabs>
                 </AppBar>
                 <TabPanel value={value} index={0}>
@@ -168,7 +169,7 @@ const WorkflowDetails: React.FC = () => {
                 </TabPanel>
                 <TabPanel data-cy="scheduleWorkflow" value={value} index={1}>
                   <div data-cy="browseWorkflow">
-                    <WorkflowNodeInfo nodeDetails={selectedNode} />
+                    <WorkflowNodeInfo nodeDetails={selectedNode as Node} />
                   </div>
                 </TabPanel>
               </>
