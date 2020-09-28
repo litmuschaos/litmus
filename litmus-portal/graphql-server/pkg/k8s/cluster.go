@@ -50,8 +50,8 @@ func CreateDeployment(namespace, token string) (*appsv1.Deployment, error) {
 							Image: deployerImage,
 							Resources: apiv1.ResourceRequirements{
 								Limits: apiv1.ResourceList{
-									"cpu":    resource.MustParse("100m"),
-									"memory": resource.MustParse("128Mi"),
+									"cpu":    resource.MustParse("50m"),
+									"memory": resource.MustParse("64Mi"),
 								},
 							},
 							ImagePullPolicy: "Always",

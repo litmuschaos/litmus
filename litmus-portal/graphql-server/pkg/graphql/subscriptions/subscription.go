@@ -38,8 +38,7 @@ func SendWorkflowEvent(wfRun model.WorkflowRun, r store.StateData) {
 }
 
 func SendWorkflowRequest(wfRequest *database.ChaosWorkFlowInput, r store.StateData) {
-	workflowNS := os.Getenv("WORKFLOW_NAMESPACE")
-	namespace := workflowNS
+	namespace := os.Getenv("WORKFLOW_NAMESPACE")
 	requesttype := "create"
 	newAction := &model.ClusterAction{
 		ProjectID: wfRequest.ProjectID,
@@ -49,7 +48,6 @@ func SendWorkflowRequest(wfRequest *database.ChaosWorkFlowInput, r store.StateDa
 			RequestType: &requesttype,
 		},
 	}
-
 	r.Mutex.Lock()
 
 	if observer, ok := r.ConnectedCluster[wfRequest.ClusterID]; ok {

@@ -171,7 +171,7 @@ func ClusterOperations(manifest string, requestType string, namespace string) (*
 	}
 
 	// Obtain REST interface for the GVR
-	if mapping.Scope.Name() == meta.RESTScopeNameNamespace || workflowScope == "namespace" {
+	if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
 		// namespaced resources should specify the namespace
 		dr = dynamicClient.Resource(mapping.Resource).Namespace(namespace)
 	} else {
