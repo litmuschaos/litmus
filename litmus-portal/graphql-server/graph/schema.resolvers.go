@@ -104,8 +104,12 @@ func (r *queryResolver) GetScheduledWorkflows(ctx context.Context, projectID str
 	return queries.QueryWorkflows(projectID)
 }
 
-func (r *queryResolver) ListWorkflow(ctx context.Context, projectID string) ([]*model.Workflow, error) {
-	return queries.QueryListWorkflow(projectID)
+func (r *queryResolver) ListWorkflow(ctx context.Context, projectID string, workflowIds []string) ([]*model.Workflow, error) {
+	if len(workflowIds) == 0 {
+		return queries.QueryListWorkflow(projectID)
+	} else {
+		return queries.QueryListWorkflowByIDs(workflowIds)
+	}
 }
 
 func (r *queryResolver) GetWorkflow(ctx context.Context, workflowID string) (*model.Workflow, error) {

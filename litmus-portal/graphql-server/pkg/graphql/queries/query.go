@@ -2,6 +2,7 @@ package queries
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 
 	"github.com/jinzhu/copier"
@@ -69,7 +70,7 @@ func QueryWorkflows(project_id string) ([]*model.ScheduledWorkflows, error) {
 			CreatedAt:           workflow.CreatedAt,
 			ProjectID:           workflow.ProjectID,
 			ClusterName:         cluster.ClusterName,
-			ClusterID:           cluster.ClusterType,
+			ClusterID:           cluster.ClusterID,
 			ClusterType:         cluster.ClusterType,
 		}
 		result = append(result, &newChaosWorkflows)
@@ -85,6 +86,49 @@ func QueryListWorkflow(project_id string) ([]*model.Workflow, error) {
 	}
 
 	result := []*model.Workflow{}
+	for _, workflow := range chaosWorkflows {
+		fmt.Print(workflow.ClusterID)
+
+		cluster, err := database.GetCluster(workflow.ClusterID)
+		if err != nil {
+			return nil, err
+		}
+		var Weightages []*model.Weightages
+		copier.Copy(&Weightages, &workflow.Weightages)
+
+		var WorkflowRuns []*model.WorkflowRuns
+		copier.Copy(&WorkflowRuns, &workflow.WorkflowRuns)
+
+		newChaosWorkflows := model.Workflow{
+			WorkflowID:          workflow.WorkflowID,
+			WorkflowManifest:    workflow.WorkflowManifest,
+			WorkflowName:        workflow.WorkflowName,
+			CronSyntax:          workflow.CronSyntax,
+			WorkflowDescription: workflow.WorkflowDescription,
+			Weightages:          Weightages,
+			IsCustomWorkflow:    workflow.IsCustomWorkflow,
+			UpdatedAt:           workflow.UpdatedAt,
+			CreatedAt:           workflow.CreatedAt,
+			ProjectID:           workflow.ProjectID,
+			ClusterName:         cluster.ClusterName,
+			ClusterID:           cluster.ClusterID,
+			ClusterType:         cluster.ClusterType,
+			WorkflowRuns:        WorkflowRuns,
+		}
+		result = append(result, &newChaosWorkflows)
+	}
+	fmt.Print(result)
+	return result, nil
+}
+
+func QueryListWorkflowByIDs(workflow_ids []string) ([]*model.Workflow, error) {
+
+	chaosWorkflows, err := database.GetWorkflowsByIDs(workflow_ids)
+	if err != nil {
+		return nil, err
+	}
+	result := []*model.Workflow{}
+
 	for _, workflow := range chaosWorkflows {
 		cluster, err := database.GetCluster(workflow.ClusterID)
 		if err != nil {
@@ -109,7 +153,7 @@ func QueryListWorkflow(project_id string) ([]*model.Workflow, error) {
 			CreatedAt:           workflow.CreatedAt,
 			ProjectID:           workflow.ProjectID,
 			ClusterName:         cluster.ClusterName,
-			ClusterID:           cluster.ClusterType,
+			ClusterID:           cluster.ClusterID,
 			ClusterType:         cluster.ClusterType,
 			WorkflowRuns:        WorkflowRuns,
 		}
@@ -148,14 +192,13 @@ func QueryGetWorkflow(workflow_id string) (*model.Workflow, error) {
 		CreatedAt:           workflow.CreatedAt,
 		ProjectID:           workflow.ProjectID,
 		ClusterName:         cluster.ClusterName,
-		ClusterID:           cluster.ClusterType,
+		ClusterID:           cluster.ClusterID,
 		ClusterType:         cluster.ClusterType,
 		WorkflowRuns:        WorkflowRuns,
 	}
 
 	return &newChaosWorkflows, nil
 }
-
 
 //GetLogs query is used to fetch the logs from the cluster
 func GetLogs(reqID string, pod model.PodLogRequest, r store.StateData) {
