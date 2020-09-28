@@ -87,7 +87,7 @@ func ClusterConnect(clusterData map[string]string) {
 			SendPodLogs(clusterData, podRequest)
 		} else if strings.Index("create update delete get", strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType)) >= 0 {
 			logrus.Print("WORKFLOW REQUEST ", r.Payload.Data.ClusterConnect.Action)
-			_, err = k8s.ClusterOperations(r.Payload.Data.ClusterConnect.Action.K8SManifest, r.Payload.Data.ClusterConnect.Action.RequestType)
+			_, err = k8s.ClusterOperations(r.Payload.Data.ClusterConnect.Action.K8SManifest, r.Payload.Data.ClusterConnect.Action.RequestType, r.Payload.Data.ClusterConnect.Action.Namespace)
 			if err != nil {
 				logrus.WithError(err).Print("error performing cluster operation")
 				continue

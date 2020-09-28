@@ -7,6 +7,7 @@ apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   name: cronworkflows.argoproj.io
+  namespace: #{SUB-NAMESPACE}
 spec:
   group: argoproj.io
   names:
@@ -22,6 +23,7 @@ apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   name: workflows.argoproj.io
+  namespace: #{SUB-NAMESPACE}
 spec:
   additionalPrinterColumns:
     - JSONPath: .status.phase
@@ -46,6 +48,7 @@ apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   name: workflowtemplates.argoproj.io
+  namespace: #{SUB-NAMESPACE}
 spec:
   group: argoproj.io
   names:
@@ -74,6 +77,7 @@ metadata:
   labels:
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
   name: argo-aggregate-to-admin
+  namespace: #{SUB-NAMESPACE}
 rules:
   - apiGroups:
       - argoproj.io
@@ -100,6 +104,7 @@ metadata:
   labels:
     rbac.authorization.k8s.io/aggregate-to-edit: "true"
   name: argo-aggregate-to-edit
+  namespace: #{SUB-NAMESPACE}
 rules:
   - apiGroups:
       - argoproj.io
@@ -126,6 +131,7 @@ metadata:
   labels:
     rbac.authorization.k8s.io/aggregate-to-view: "true"
   name: argo-aggregate-to-view
+  namespace: #{SUB-NAMESPACE}
 rules:
   - apiGroups:
       - argoproj.io
@@ -145,6 +151,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: argo-role
+  namespace: #{SUB-NAMESPACE}
 rules:
   - apiGroups:
       - ""
@@ -241,6 +248,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: argo-server-role
+  namespace: #{SUB-NAMESPACE}
 rules:
   - apiGroups:
       - ""
@@ -302,6 +310,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: argo-binding
+  namespace: #{SUB-NAMESPACE}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -315,6 +324,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: argo-server-binding
+  namespace: #{SUB-NAMESPACE}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -428,189 +438,11 @@ spec:
         kubernetes.io/os: linux
       serviceAccountName: argo
 ---
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: #{SUB-NAMESPACE}
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: litmus-namespace-scope
-  namespace: #{SUB-NAMESPACE}
-  labels:
-    name: litmus-namespace-scope
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: Role
-metadata:
-  name: litmus-namespace-scope
-  namespace: #{SUB-NAMESPACE}
-  labels:
-    name: litmus-namespace-scope
-rules:
-  - apiGroups: ["","apps","batch","extensions","litmuschaos.io"]
-    resources: ["pods","pods/exec","pods/log","pods/eviction","jobs","deployments","daemonsets","statefulsets","events","configmaps","services","chaosengines","chaosexperiments","chaosresults"]
-    verbs: ["get","create","update","patch","delete","list","watch","deletecollection"]
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: RoleBinding
-metadata:
-  name: litmus-namespace-scope
-  namespace: #{SUB-NAMESPACE}
-  labels:
-    name: litmus-namespace-scope
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: litmus-namespace-scope
-subjects:
-  - kind: ServiceAccount
-    name: litmus-namespace-scope
-    namespace: #{SUB-NAMESPACE}
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: chaos-operator-ce
-  namespace: #{SUB-NAMESPACE}
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: chaos-operator
-  template:
-    metadata:
-      labels:
-        name: chaos-operator
-    spec:
-      serviceAccountName: litmus-namespace-scope
-      containers:
-        - name: chaos-operator
-          image: litmuschaos/chaos-operator:1.8.0
-          resources:
-            limits:
-              cpu: 250m
-              memory: 250Mi
-          command:
-            - chaos-operator
-          imagePullPolicy: Always
-          env:
-            - name: CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:1.8.0"
-            - name: WATCH_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: OPERATOR_NAME
-              value: "chaos-operator"
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: litmus-namespace-pod-delete
-  namespace: #{SUB-NAMESPACE}
-  labels:
-    name: litmus-namespace-pod-delete
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: Role
-metadata:
-  name: litmus-namespace-pod-delete
-  labels:
-    name: litmus-namespace-pod-delete
-rules:
-  - apiGroups: ["","litmuschaos.io","batch","apps"]
-    resources: ["pods","deployments","pods/log","events","jobs","chaosengines","chaosexperiments","chaosresults"]
-    verbs: ["create","list","get","patch","update","delete","deletecollection"]
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: RoleBinding
-metadata:
-  name: litmus-namespace-pod-delete
-  labels:
-    name: litmus-namespace-pod-delete
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: litmus-namespace-pod-delete
-subjects:
-  - kind: ServiceAccount
-    name: litmus-namespace-pod-delete
-    namespace: #{SUB-NAMESPACE}
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: litmus-namespace-admin
-  namespace: #{SUB-NAMESPACE}
-  labels:
-    name: litmus-namespace-admin
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: Role
-metadata:
-  name: litmus-namespace-admin
-  labels:
-    name: litmus-namespace-admin
-rules:
-  - apiGroups: ["","apps","batch","extensions","litmuschaos.io"]
-    resources: ["pods","pods/exec","pods/log","pods/eviction","jobs","deployments","daemonsets","statefulsets","events","configmaps","services","chaosengines","chaosexperiments","chaosresults"]
-    verbs: ["get","create","update","patch","delete","list","watch","deletecollection"]
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: RoleBinding
-metadata:
-  name: litmus-namespace-admin
-  labels:
-    name: litmus-namespace-admin
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: litmus-namespace-admin
-subjects:
-  - kind: ServiceAccount
-    name: litmus-namespace-admin
-    namespace: #{SUB-NAMESPACE}
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: argo-chaos
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: chaos-role
-rules:
-  - apiGroups:
-      - "*"
-    resources:
-      - "*"
-    verbs:
-      - "*"
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: RoleBinding
-metadata:
-  name: chaos-role-binding
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: chaos-role
-subjects:
-  - kind: ServiceAccount
-    name: argo-chaos
-    namespace: #{SUB-NAMESPACE}
----
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   name: chaosengines.litmuschaos.io
+  namespace: #{SUB-NAMESPACE}
 spec:
   group: litmuschaos.io
   names:
@@ -623,14 +455,16 @@ spec:
     openAPIV3Schema:
       properties:
         apiVersion:
-          description: 'APIVersion defines the versioned schema of this representation
+          description:
+            "APIVersion defines the versioned schema of this representation
             of an object. Servers should convert recognized schemas to the latest
-            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources"
           type: string
         kind:
-          description: 'Kind is a string value representing the REST resource this
+          description:
+            "Kind is a string value representing the REST resource this
             object represents. Servers may infer this from the endpoint the client
-            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds"
           type: string
         metadata:
           type: object
@@ -733,7 +567,7 @@ spec:
                                   type: integer
                                 interval:
                                   type: integer
-                                retry: 
+                                retry:
                                   type: integer
                             mode:
                               type: string
@@ -760,7 +594,7 @@ spec:
                                   type: integer
                                 interval:
                                   type: integer
-                                retry: 
+                                retry:
                                   type: integer
                             mode:
                               type: string
@@ -785,7 +619,7 @@ spec:
                                   type: integer
                                 interval:
                                   type: integer
-                                retry: 
+                                retry:
                                   type: integer
                             mode:
                               type: string
@@ -845,7 +679,6 @@ spec:
                                   minLength: 1
                                   allowEmptyValue: false
 
-
         status:
           type: object
   version: v1alpha1
@@ -858,6 +691,7 @@ apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   name: chaosexperiments.litmuschaos.io
+  namespace: #{SUB-NAMESPACE}
 spec:
   group: litmuschaos.io
   names:
@@ -872,14 +706,16 @@ spec:
     openAPIV3Schema:
       properties:
         apiVersion:
-          description: 'APIVersion defines the versioned schema of this representation
+          description:
+            "APIVersion defines the versioned schema of this representation
             of an object. Servers should convert recognized schemas to the latest
-            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources"
           type: string
         kind:
-          description: 'Kind is a string value representing the REST resource this
+          description:
+            "Kind is a string value representing the REST resource this
             object represents. Servers may infer this from the endpoint the client
-            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds"
           type: string
         metadata:
           type: object
@@ -1008,6 +844,7 @@ apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   name: chaosresults.litmuschaos.io
+  namespace: #{SUB-NAMESPACE}
 spec:
   group: litmuschaos.io
   names:
@@ -1020,14 +857,16 @@ spec:
     openAPIV3Schema:
       properties:
         apiVersion:
-          description: 'APIVersion defines the versioned schema of this representation
+          description:
+            "APIVersion defines the versioned schema of this representation
             of an object. Servers should convert recognized schemas to the latest
-            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources"
           type: string
         kind:
-          description: 'Kind is a string value representing the REST resource this
+          description:
+            "Kind is a string value representing the REST resource this
             object represents. Servers may infer this from the endpoint the client
-            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds"
           type: string
         metadata:
           type: object
@@ -1063,8 +902,8 @@ spec:
           image: #{SUB-IMAGE}
           resources:
             limits:
-              cpu: 500m
-              memory: 750Mi
+              cpu: 400m
+              memory: 400Mi
           env:
             - name: GQL_SERVER
               value: #{SERVER}
@@ -1072,7 +911,256 @@ spec:
               value: #{CID}
             - name: KEY
               value: #{KEY}
-            - name: NAMESPACE
+            - name: SUBSCRIBER_NAMESPACE
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+            - name: WORKFLOW_SCOPE
+              value: #{WORKFLOW-SCOPE}
+            - name: WORKFLOW_NAMESPACE
+              value: #{WORKFLOW-NAMESPACE}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: litmus-namespace-scope
+  namespace: #{SUB-NAMESPACE}
+  labels:
+    name: litmus-namespace-scope
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: litmus-namespace-scope
+  namespace: #{SUB-NAMESPACE}
+  labels:
+    name: litmus-namespace-scope
+rules:
+  - apiGroups: ["", "apps", "batch", "extensions", "litmuschaos.io"]
+    resources:
+      [
+        "pods",
+        "pods/exec",
+        "pods/log",
+        "pods/eviction",
+        "jobs",
+        "deployments",
+        "daemonsets",
+        "replicasets",
+        "statefulsets",
+        "events",
+        "configmaps",
+        "services",
+        "chaosengines",
+        "chaosexperiments",
+        "chaosresults",
+      ]
+    verbs:
+      [
+        "get",
+        "create",
+        "update",
+        "patch",
+        "delete",
+        "list",
+        "watch",
+        "deletecollection",
+      ]
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: litmus-namespace-scope
+  namespace: #{SUB-NAMESPACE}
+  labels:
+    name: litmus-namespace-scope
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: litmus-namespace-scope
+subjects:
+  - kind: ServiceAccount
+    name: litmus-namespace-scope
+    namespace: #{SUB-NAMESPACE}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chaos-operator-ce
+  namespace: #{SUB-NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: chaos-operator
+  template:
+    metadata:
+      labels:
+        name: chaos-operator
+    spec:
+      serviceAccountName: litmus-namespace-scope
+      containers:
+        - name: chaos-operator
+          image: litmuschaos/chaos-operator:1.8.0
+          resources:
+            limits:
+              cpu: 250m
+              memory: 250Mi
+          command:
+            - chaos-operator
+          imagePullPolicy: Always
+          env:
+            - name: CHAOS_RUNNER_IMAGE
+              value: "litmuschaos/chaos-runner:1.8.0"
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "chaos-operator"
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: litmus-namespace-pod-delete
+  namespace: #{SUB-NAMESPACE}
+  labels:
+    name: litmus-namespace-pod-delete
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: litmus-namespace-pod-delete
+  namespace: #{SUB-NAMESPACE}
+  labels:
+    name: litmus-namespace-pod-delete
+rules:
+  - apiGroups: ["", "litmuschaos.io", "batch", "apps"]
+    resources:
+      [
+        "pods",
+        "deployments",
+        "pods/log",
+        "events",
+        "jobs",
+        "chaosengines",
+        "chaosexperiments",
+        "chaosresults",
+      ]
+    verbs:
+      ["create", "list", "get", "patch", "update", "delete", "deletecollection"]
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: litmus-namespace-pod-delete
+  namespace: #{SUB-NAMESPACE}
+  labels:
+    name: litmus-namespace-pod-delete
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: litmus-namespace-pod-delete
+subjects:
+  - kind: ServiceAccount
+    name: litmus-namespace-pod-delete
+    namespace: #{SUB-NAMESPACE}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: litmus-namespace-admin
+  namespace: #{SUB-NAMESPACE}
+  labels:
+    name: litmus-namespace-admin
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: litmus-namespace-admin
+  namespace: #{SUB-NAMESPACE}
+  labels:
+    name: litmus-namespace-admin
+rules:
+  - apiGroups: ["", "apps", "batch", "extensions", "litmuschaos.io"]
+    resources:
+      [
+        "pods",
+        "pods/exec",
+        "pods/log",
+        "pods/eviction",
+        "jobs",
+        "deployments",
+        "daemonsets",
+        "statefulsets",
+        "events",
+        "configmaps",
+        "services",
+        "chaosengines",
+        "chaosexperiments",
+        "chaosresults",
+      ]
+    verbs:
+      [
+        "get",
+        "create",
+        "update",
+        "patch",
+        "delete",
+        "list",
+        "watch",
+        "deletecollection",
+      ]
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: litmus-namespace-admin
+  namespace: #{SUB-NAMESPACE}
+  labels:
+    name: litmus-namespace-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: litmus-namespace-admin
+subjects:
+  - kind: ServiceAccount
+    name: litmus-namespace-admin
+    namespace: #{SUB-NAMESPACE}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: argo-chaos
+  namespace: #{SUB-NAMESPACE}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: chaos-role
+  namespace: #{SUB-NAMESPACE}
+rules:
+  - apiGroups:
+      - "*"
+    resources:
+      - "*"
+    verbs:
+      - "*"
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: chaos-role-binding
+  namespace: #{SUB-NAMESPACE}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: chaos-role
+subjects:
+  - kind: ServiceAccount
+    name: argo-chaos
+    namespace: #{SUB-NAMESPACE}

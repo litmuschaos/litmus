@@ -26,7 +26,7 @@ func RandomString(n int) string {
 }
 
 //ManifestParser parses manifests yaml and generates dynamic manifest with specified keys
-func ManifestParser(id, key, server, subscriberImage, subscriberNS, template string) ([]byte, error) {
+func ManifestParser(id, key, server, subscriberImage, subscriberNS, workflowSC, workflowNS, template string) ([]byte, error) {
 	file, err := os.Open(template)
 	if err != nil {
 		return []byte{}, err
@@ -47,6 +47,10 @@ func ManifestParser(id, key, server, subscriberImage, subscriberNS, template str
 			line = strings.Replace(line, "#{SUB-IMAGE}", subscriberImage, -1)
 		} else if strings.Contains(line, "#{SUB-NAMESPACE}") {
 			line = strings.Replace(line, "#{SUB-NAMESPACE}", subscriberNS, -1)
+		} else if strings.Contains(line, "#{WORKFLOW-SCOPE}") {
+			line = strings.Replace(line, "#{WORKFLOW-SCOPE}", workflowSC, -1)
+		} else if strings.Contains(line, "#{WORKFLOW-NAMESPACE}") {
+			line = strings.Replace(line, "#{WORKFLOW-NAMESPACE}", workflowNS, -1)
 		}
 		lines = append(lines, line)
 	}

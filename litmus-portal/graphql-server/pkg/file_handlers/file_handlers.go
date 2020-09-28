@@ -18,6 +18,8 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 	subscriberImage := os.Getenv("SUBSCRIBER_IMAGE")
 	subscriberNS := os.Getenv("DEPLOYER_NAMESPACE")
 	subscriberSC := os.Getenv("SUBSCRIBER_SCOPE")
+	workflowSC := os.Getenv("WORKFLOW_SCOPE")
+	workflowNS := os.Getenv("WORKFLOW_NAMESPACE")
 
 	vars := mux.Vars(r)
 	token := vars["key"]
@@ -40,11 +42,11 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 		var respData []byte
 
 		if subscriberSC == "cluster" {
-		respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, serviceAddr+"/query", subscriberImage, subscriberNS, "manifests/cluster-subscriber.yml")
+			respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, serviceAddr+"/query", subscriberImage, subscriberNS, workflowSC, workflowNS, "manifests/cluster-subscriber.yml")
 		}
 
 		if subscriberSC == "namespace" {
-		respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, serviceAddr+"/query", subscriberImage, subscriberNS, "manifests/namespace-subscriber.yml")
+			respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, serviceAddr+"/query", subscriberImage, subscriberNS, workflowSC, workflowNS, "manifests/namespace-subscriber.yml")
 		}
 
 		if err != nil {

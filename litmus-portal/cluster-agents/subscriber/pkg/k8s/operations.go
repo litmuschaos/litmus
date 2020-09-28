@@ -3,6 +3,9 @@ package k8s
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
+
 	yaml_converter "github.com/ghodss/yaml"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -12,8 +15,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/restmapper"
-	"log"
-	"os"
 
 	memory "k8s.io/client-go/discovery/cached"
 )
@@ -23,10 +24,11 @@ const (
 )
 
 var (
-	Ctx              = context.Background()
-	decUnstructured  = yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
-	dr               dynamic.ResourceInterface
-	DefaultNamespace = os.Getenv("NAMESPACE")
+	Ctx                 = context.Background()
+	decUnstructured     = yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
+	dr                  dynamic.ResourceInterface
+	subscriberNamespace = os.Getenv("SUBSCRIBER_NAMESPACE")
+	workflowScope       = os.Getenv("WORKFLOW_SCOPE")
 )
 
 // IsClusterConfirmed checks if the config map with "is_cluster_confirmed" is true or not.
@@ -36,7 +38,7 @@ func IsClusterConfirmed(clusterData map[string]string) (bool, string, error) {
 		return false, "", err
 	}
 
-	getCM, err := clientset.CoreV1().ConfigMaps(DefaultNamespace).Get(PortalConfigName, metav1.GetOptions{})
+	getCM, err := clientset.CoreV1().ConfigMaps(subscriberNamespace).Get(PortalConfigName, metav1.GetOptions{})
 	if errors.IsNotFound(err) {
 		return false, "", nil
 	} else if getCM.Data["is_cluster_confirmed"] == "true" {
@@ -72,7 +74,7 @@ func ClusterRegister(clusterData map[string]string) (bool, error) {
 		Data: configMapData,
 	}
 
-	_, err = clientset.CoreV1().ConfigMaps(DefaultNamespace).Create(&newConfigMap)
+	_, err = clientset.CoreV1().ConfigMaps(subscriberNamespace).Create(&newConfigMap)
 	if err != nil {
 		return false, nil
 	}
@@ -138,7 +140,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 }
 
 // This function handles cluster operations
-func ClusterOperations(manifest string, requestType string) (*unstructured.Unstructured, error) {
+func ClusterOperations(manifest string, requestType string, namespace string) (*unstructured.Unstructured, error) {
 
 	// Converting JSON to YAML and store it in yamlStr variable
 	yamlStr, err := yaml_converter.JSONToYAML([]byte(manifest))
@@ -169,9 +171,9 @@ func ClusterOperations(manifest string, requestType string) (*unstructured.Unstr
 	}
 
 	// Obtain REST interface for the GVR
-	if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
+	if mapping.Scope.Name() == meta.RESTScopeNameNamespace || workflowScope == "namespace" {
 		// namespaced resources should specify the namespace
-		dr = dynamicClient.Resource(mapping.Resource).Namespace(DefaultNamespace)
+		dr = dynamicClient.Resource(mapping.Resource).Namespace(namespace)
 	} else {
 		// for cluster-wide resources
 		dr = dynamicClient.Resource(mapping.Resource)
