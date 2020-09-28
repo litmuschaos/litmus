@@ -202,7 +202,6 @@ type Query{
 
   ListWorkflow(project_id: String!, workflow_ids: [ID] ): [Workflow]! @authorized
 
-  GetWorkflow(workflow_id: String!): Workflow @authorized
 }
 
 type Mutation{
