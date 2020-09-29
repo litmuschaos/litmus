@@ -1,0 +1,26 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: orders-node-memory-hog
+  namespace: litmus
+spec:
+  annotationCheck: 'false'
+  engineState: 'active'
+  auxiliaryAppInfo: ''
+  appinfo:
+    appns: 'sock-shop'
+    applabel: 'name=orders'
+    appkind: 'deployment'
+  chaosServiceAccount: litmus-admin
+  monitoring: true
+  jobCleanUpPolicy: 'retain'
+  experiments:
+    - name: node-memory-hog
+      spec:
+        components:
+          env:
+            - name: TOTAL_CHAOS_DURATION
+              value: '240'
+
+            - name: MEMORY_PERCENTAGE
+              value: '90' # in seconds

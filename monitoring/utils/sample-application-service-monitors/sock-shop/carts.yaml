@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: carts
+  labels:
+    name: carts
+    k8s-app: carts
+  namespace: sock-shop
+spec:
+  jobLabel: name
+  selector:
+    matchLabels:
+      name: carts
+  namespaceSelector:
+    matchNames:
+    - sock-shop
+  endpoints:
+  - port: web
+    interval: 1s

@@ -1,0 +1,54 @@
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  name: node-memory-cron-wf
+  namespace: litmus
+spec:
+  schedule: "30-44/15 * * * *"
+  concurrencyPolicy: "Forbid"
+  startingDeadlineSeconds: 0
+  workflowSpec:
+    entrypoint: argowf-chaos
+    serviceAccountName: argo-chaos
+    templates:
+      - name: argowf-chaos
+        steps:
+          - - name: run-node-memory-hog
+              template: run-node-memory-hog
+      - name: run-node-memory-hog
+        inputs:
+          artifacts:
+            - name: run-node-memory-hog
+              path: /tmp/chaosengine-node-memory-hog.yaml
+              raw:
+                data: |
+                  apiVersion: litmuschaos.io/v1alpha1
+                  kind: ChaosEngine
+                  metadata:
+                    name: orders-node-memory-hog
+                    namespace: litmus
+                  spec:
+                    annotationCheck: 'false'
+                    engineState: 'active'
+                    auxiliaryAppInfo: ''
+                    appinfo:
+                      appns: 'sock-shop'
+                      applabel: 'name=orders'
+                      appkind: 'deployment'
+                    chaosServiceAccount: litmus-admin
+                    monitoring: true
+                    jobCleanUpPolicy: 'retain'
+                    experiments:
+                      - name: node-memory-hog
+                        spec:
+                          components:
+                            env:
+                              - name: TOTAL_CHAOS_DURATION
+                                value: '240'
+                              - name: MEMORY_PERCENTAGE
+                                value: '90' # in seconds
+        container:
+          image: lachlanevenson/k8s-kubectl
+          command: [sh, -c]
+          args:
+            ["kubectl apply -f /tmp/chaosengine-node-memory-hog.yaml -n litmus"]
