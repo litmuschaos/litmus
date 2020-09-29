@@ -1,11 +1,12 @@
-import { Avatar, Typography } from '@material-ui/core';
-import React from 'react';
+import { Avatar, Button, Typography } from '@material-ui/core';
+import React, { useState } from 'react';
 import InputField from '../../../../../components/InputField';
-import userAvatar from '../../../../../utils/user';
+import Unimodal from '../../../../../containers/layouts/Unimodal';
 import {
   validateEmail,
   validateStartEmptySpacing,
 } from '../../../../../utils/validate';
+import ChooseAvatarModal from '../ChooseAvatarModal';
 import useStyles from './styles';
 
 interface PersonalDetailsProps {
@@ -34,8 +35,17 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
 }) => {
   const classes = useStyles();
 
-  const nameSplit = nameValue.split(' ');
-  const initials = nameSplit[1] ? userAvatar(nameValue) : userAvatar(nameValue);
+  const [open, setOpen] = React.useState(false);
+  // avatar image source string
+  const [avatar, setAvatar] = useState<string>('./avatars/default.svg');
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   return (
     <div>
@@ -49,10 +59,18 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
               data-cy="avatar"
               alt="User"
               className={classes.avatarBackground}
-              style={{ alignContent: 'right' }}
-            >
-              {initials}
-            </Avatar>
+              src={avatar}
+            />
+            <Button className={classes.edit} onClick={handleOpen}>
+              Edit Photo
+            </Button>
+            <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn>
+              <ChooseAvatarModal
+                avatar={avatar}
+                setAvatar={setAvatar}
+                handleSubmit={handleClose}
+              />
+            </Unimodal>
           </div>
           {/* Fields for details including Full name, email, username */}
           <div className={classes.details1}>
