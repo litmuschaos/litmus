@@ -52,13 +52,13 @@ spec:
       serviceAccountName: litmus
       containers:
         - name: chaos-operator
-          image: litmuschaos/chaos-operator:1.8.0
+          image: litmuschaos/chaos-operator:1.8.2
           command:
           - chaos-operator
           imagePullPolicy: Always
           env:
             - name: CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:1.8.0"
+              value: "litmuschaos/chaos-runner:1.8.2"
             - name: WATCH_NAMESPACE
               valueFrom:
                 fieldRef:
