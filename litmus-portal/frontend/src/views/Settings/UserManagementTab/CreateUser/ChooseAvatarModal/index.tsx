@@ -54,6 +54,7 @@ const ChooseAvatarModal: React.FC<ChooseAvatarModalProps> = ({
             if (av === avatar) {
               return (
                 <Badge
+                  key={av}
                   overlap="circle"
                   anchorOrigin={{
                     vertical: 'top',
@@ -79,6 +80,7 @@ const ChooseAvatarModal: React.FC<ChooseAvatarModalProps> = ({
             }
             return (
               <Avatar
+                key={av}
                 data-cy="avatar"
                 className={classes.av}
                 alt="User"
@@ -93,6 +95,7 @@ const ChooseAvatarModal: React.FC<ChooseAvatarModalProps> = ({
             if (av === avatar) {
               return (
                 <Badge
+                  key={av}
                   overlap="circle"
                   anchorOrigin={{
                     vertical: 'top',
@@ -118,6 +121,7 @@ const ChooseAvatarModal: React.FC<ChooseAvatarModalProps> = ({
             }
             return (
               <Avatar
+                key={av}
                 data-cy="avatar"
                 className={classes.av}
                 alt="User"
