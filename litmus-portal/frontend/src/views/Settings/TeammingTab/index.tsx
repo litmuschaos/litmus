@@ -5,6 +5,7 @@ import {
   FormControl,
   IconButton,
   InputAdornment,
+  InputLabel,
   Menu,
   MenuItem,
   Paper,
@@ -133,7 +134,7 @@ const TeammingTab: React.FC = () => {
 
   // Function to display date in format Do MMM,YYYY Hr:MM AM/PM
   const formatDate = (date: string) => {
-    const day = moment(date).format('Do MMM,YYYY LT');
+    const day = moment(date).format('Do MMM, YYYY LT');
     return day;
   };
 
@@ -147,8 +148,8 @@ const TeammingTab: React.FC = () => {
           </Typography>
         </div>
         <Typography className={classes.descText}>
-          Manage your team, invite a member to your project or change the role
-          of members in the teamed
+          Manage your team - invite a member to your project or change the role
+          of exisiting members in the team:
         </Typography>
         <div>
           <Toolbar className={classes.toolbar}>
@@ -179,40 +180,30 @@ const TeammingTab: React.FC = () => {
               />
               {/* filter menu */}
               <div className={classes.filter}>
-                <Typography className={classes.userRole}>Role</Typography>
-
-                <FormControl className={classes.filterMenu}>
+                <FormControl
+                  variant="outlined"
+                  className={classes.formControl}
+                  color="secondary"
+                  focused
+                >
+                  <InputLabel className={classes.selectText}>Role</InputLabel>
                   <Select
-                    native
-                    placeholder="User Status"
+                    label="Role"
                     value={filters.role}
-                    /* filters on the basis of users' current state */
-                    onChange={(e) => {
+                    onChange={(event) => {
                       setFilters({
                         ...filters,
-                        role: e.target.value as string,
+                        role: event.target.value as string,
                       });
                       setPaginationData({ ...paginationData, pageNo: 0 });
                     }}
-                    label="Role"
-                    disableUnderline
-                    inputProps={{
-                      name: 'Role',
-                      id: 'outlined-age-native-simple',
-                    }}
+                    className={classes.selectText}
+                    color="secondary"
                   >
-                    <option value="all" className={classes.filterOpt}>
-                      All
-                    </option>
-                    <option value="Editor" className={classes.filterOpt}>
-                      Editor
-                    </option>
-                    <option value="Viewer" className={classes.filterOpt}>
-                      Viewer
-                    </option>
-                    <option value="Owner" className={classes.filterOpt}>
-                      Owner
-                    </option>
+                    <MenuItem value="all">All</MenuItem>
+                    <MenuItem value="Editor">Editor</MenuItem>
+                    <MenuItem value="Viewer">Viewer</MenuItem>
+                    <MenuItem value="Owner">Owner</MenuItem>
                   </Select>
                 </FormControl>
               </div>
