@@ -145,6 +145,7 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
 
           <div className={classes.userInfo}>
             <Typography
+              data-cy="name-header"
               className={classes.userName}
               component="span"
               color="textPrimary"
@@ -152,6 +153,7 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
               {name}
             </Typography>
             <Typography
+              data-cy="email-header"
               className={classes.userEmail}
               variant="body1"
               component="span"
@@ -175,6 +177,7 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
             )}
 
             <Button
+              data-cy="logout"
               disabled={loggedOut}
               size="small"
               onClick={logOut}
@@ -187,7 +190,7 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
         <Divider className={classes.dividerTop} />
         <List dense className={classes.tabContainerProfileDropdownItem}>
           {switchableProjects.length === 0 ? (
-            <ListItem>
+            <ListItem data-cy="project">
               <ListItemText>
                 {t('header.profileDropdown.noProjects')}
               </ListItemText>

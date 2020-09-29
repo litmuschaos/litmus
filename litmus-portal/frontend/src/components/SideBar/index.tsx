@@ -13,6 +13,7 @@ import { RootState } from '../../redux/reducers';
 import { ReactComponent as CommunityIcon } from '../../svg/community.svg';
 import { ReactComponent as HomeIcon } from '../../svg/home.svg';
 import { ReactComponent as SettingsIcon } from '../../svg/settings.svg';
+import { ReactComponent as TargetsIcon } from '../../svg/targets.svg';
 import { ReactComponent as WorkflowsIcon } from '../../svg/workflows.svg';
 import useStyles from './styles';
 
@@ -81,15 +82,27 @@ const SideBar: React.FC = () => {
         >
           <HomeIcon />
         </CustomisedListItem>
+        <div data-cy="workflows">
+          <CustomisedListItem
+            key="workflow"
+            handleClick={() => {
+              history.push('/workflows');
+            }}
+            label="Workflows"
+            selected={pathName === 'workflows'}
+          >
+            <WorkflowsIcon />
+          </CustomisedListItem>
+        </div>
         <CustomisedListItem
-          key="workflow"
+          key="targets"
           handleClick={() => {
-            history.push('/workflows');
+            history.push('/targets');
           }}
-          label="Workflows"
-          selected={pathName === 'workflows'}
+          label="Targets"
+          selected={pathName === 'targets'}
         >
-          <WorkflowsIcon />
+          <TargetsIcon />
         </CustomisedListItem>
         <CustomisedListItem
           key="community"

@@ -16,6 +16,8 @@ import (
 func FileHandler(w http.ResponseWriter, r *http.Request) {
 	serviceAddr := os.Getenv("SERVICE_ADDRESS")
 	subscriberImage := os.Getenv("SUBSCRIBER_IMAGE")
+	subscriberNS := os.Getenv("DEPLOYER_NAMESPACE")
+
 	vars := mux.Vars(r)
 	token := vars["key"]
 
@@ -35,7 +37,7 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 
 	if !reqCluster.IsRegistered {
 		var respData []byte
-		respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, serviceAddr+"/query", subscriberImage, "manifests/subscriber.yml")
+		respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, serviceAddr+"/query", subscriberImage, subscriberNS, "manifests/subscriber.yml")
 
 		if err != nil {
 			log.Print("ERROR", err)

@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
       fontWeight: 'bold',
       fontSize: 13,
     },
-    '& *': {
+    '& th': {
       backgroundColor: theme.palette.common.white,
     },
   },

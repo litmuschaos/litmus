@@ -16,6 +16,7 @@ import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import useStyles from './styles';
+import { history } from '../../../redux/configureStore';
 
 /*
   Check is image which is used as
@@ -138,9 +139,11 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
         <div className={classes.or}>or</div>
         <div data-cy="External">
           <ButtonOutLine
-            isDisabled
+            isDisabled={false}
             data-cy="selectLitmusKubernetes"
-            handleClick={() => handleClick()}
+            handleClick={() => {
+              history.push('/targets');
+            }}
           >
             <Typography>
               Install Litmus agents to other Kubernetes cluster

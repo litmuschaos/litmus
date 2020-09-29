@@ -212,12 +212,11 @@ const UserManagement: React.FC = () => {
                       </FormControl>
                     </div>
                   </div>
-                  <div>
+                  <div data-cy="createUser">
                     <ButtonFilled
                       handleClick={() => {
                         setShowDiv(true);
                       }}
-                      data-cy="gotItButton"
                       isPrimary
                     >
                       <div>Create new user</div>
