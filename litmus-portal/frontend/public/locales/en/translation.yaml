@@ -116,6 +116,20 @@ error:
 workflowDetails:
   detailedLog: Click on test to see detailed log of your workflow
   fetchError: An error has occurred while fetching the data
+######################################
+############    Views    #############
+######################################
+
+chaosWorkflows:
+  browseAnalytics:
+    workFlowComparisonTable:
+      unableToFetch: Unable to fetch data
+      noRecords: No records available
+      showSelectedWorkflows: Show all selected workflows
+      resilienceScoreComparison: Resilience score comparison
+      comparativeResults: Comparative results of selected workflow
+      once: Once
+      seeAnalytics: See analytics
 
 ######################################
 ############    Targets    ###########
@@ -123,12 +137,12 @@ workflowDetails:
 
 Targets:
   connectHome:
-    head : Targets
-    connectText: Connect the Target 
+    head: Targets
+    connectText: Connect the Target
   copy:
     copy: Copy
     copied: Copied
-    copying: Command copied to clickboard       
+    copying: Command copied to clickboard
   newTarget:
     head: Connect a new target on your devices
     head1: 1.Open the cluster console
@@ -138,9 +152,9 @@ Targets:
     head5: Connect the target
 ConnectTargets:
   title: A new Target,
-  head : is successfully created!
-  info:  Congratulations on connecting a new target! Now information about it 
-  mainLine:  will be displayed on "Targets".
+  head: is successfully created!
+  info: Congratulations on connecting a new target! Now information about it
+  mainLine: will be displayed on "Targets".
   button:
     buttonBack: Back to Targets
     buttonSchedule: Schedule a workflow
@@ -155,7 +169,7 @@ WorkflowCluster:
       menu3: Succeeded
       menu4: Internal
       menu5: External
-      
+
 workflows:
   browseWorkflows: Browse workflows
   schedules: Schedules

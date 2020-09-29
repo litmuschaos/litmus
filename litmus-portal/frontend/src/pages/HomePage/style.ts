@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
 
   root: {
     marginTop: theme.spacing(3),
-    marginLeft: theme.spacing(6),
+    marginLeft: theme.spacing(2),
   },
 
   mainDiv: {
@@ -33,11 +33,12 @@ const useStyles = makeStyles((theme) => ({
 
   userName: {
     fontSize: '2.5rem',
-    marginBottom: theme.spacing(3.75),
+    marginTop: theme.spacing(1.75),
+    marginBottom: theme.spacing(2.75),
   },
 
   createWorkflowCard: {
-    width: '14.375rem',
+    width: '15.65rem',
     border: '1px solid ',
     borderColor: theme.palette.secondary.dark,
     backgroundColor: theme.palette.homePageWorkflowCardBackgroundColor,
@@ -101,6 +102,9 @@ const useStyles = makeStyles((theme) => ({
   imageDiv: {
     marginLeft: theme.spacing(10),
     marginTop: theme.spacing(10),
+    '& img': {
+      userDrag: 'none',
+    },
   },
 
   contentDiv: {
@@ -149,7 +153,6 @@ const useStyles = makeStyles((theme) => ({
       alignItems: 'center',
     },
   },
-
   predefinedBtn: {
     height: '2.8125rem',
     backgroundColor: theme.palette.primary.dark,
