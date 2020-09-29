@@ -2,6 +2,7 @@ package queries
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 
 	"github.com/jinzhu/copier"
@@ -69,8 +70,92 @@ func QueryWorkflows(project_id string) ([]*model.ScheduledWorkflows, error) {
 			CreatedAt:           workflow.CreatedAt,
 			ProjectID:           workflow.ProjectID,
 			ClusterName:         cluster.ClusterName,
-			ClusterID:           cluster.ClusterType,
+			ClusterID:           cluster.ClusterID,
 			ClusterType:         cluster.ClusterType,
+		}
+		result = append(result, &newChaosWorkflows)
+	}
+
+	return result, nil
+}
+
+func QueryListWorkflow(project_id string) ([]*model.Workflow, error) {
+	chaosWorkflows, err := database.GetWorkflowsByProjectID(project_id)
+	if err != nil {
+		return nil, err
+	}
+
+	result := []*model.Workflow{}
+	for _, workflow := range chaosWorkflows {
+		fmt.Print(workflow.ClusterID)
+
+		cluster, err := database.GetCluster(workflow.ClusterID)
+		if err != nil {
+			return nil, err
+		}
+		var Weightages []*model.Weightages
+		copier.Copy(&Weightages, &workflow.Weightages)
+
+		var WorkflowRuns []*model.WorkflowRuns
+		copier.Copy(&WorkflowRuns, &workflow.WorkflowRuns)
+
+		newChaosWorkflows := model.Workflow{
+			WorkflowID:          workflow.WorkflowID,
+			WorkflowManifest:    workflow.WorkflowManifest,
+			WorkflowName:        workflow.WorkflowName,
+			CronSyntax:          workflow.CronSyntax,
+			WorkflowDescription: workflow.WorkflowDescription,
+			Weightages:          Weightages,
+			IsCustomWorkflow:    workflow.IsCustomWorkflow,
+			UpdatedAt:           workflow.UpdatedAt,
+			CreatedAt:           workflow.CreatedAt,
+			ProjectID:           workflow.ProjectID,
+			ClusterName:         cluster.ClusterName,
+			ClusterID:           cluster.ClusterID,
+			ClusterType:         cluster.ClusterType,
+			WorkflowRuns:        WorkflowRuns,
+		}
+		result = append(result, &newChaosWorkflows)
+	}
+	fmt.Print(result)
+	return result, nil
+}
+
+func QueryListWorkflowByIDs(workflow_ids []*string) ([]*model.Workflow, error) {
+
+	chaosWorkflows, err := database.GetWorkflowsByIDs(workflow_ids)
+	if err != nil {
+		return nil, err
+	}
+	result := []*model.Workflow{}
+
+	for _, workflow := range chaosWorkflows {
+		cluster, err := database.GetCluster(workflow.ClusterID)
+		if err != nil {
+			return nil, err
+		}
+
+		var Weightages []*model.Weightages
+		copier.Copy(&Weightages, &workflow.Weightages)
+
+		var WorkflowRuns []*model.WorkflowRuns
+		copier.Copy(&WorkflowRuns, &workflow.WorkflowRuns)
+
+		newChaosWorkflows := model.Workflow{
+			WorkflowID:          workflow.WorkflowID,
+			WorkflowManifest:    workflow.WorkflowManifest,
+			WorkflowName:        workflow.WorkflowName,
+			CronSyntax:          workflow.CronSyntax,
+			WorkflowDescription: workflow.WorkflowDescription,
+			Weightages:          Weightages,
+			IsCustomWorkflow:    workflow.IsCustomWorkflow,
+			UpdatedAt:           workflow.UpdatedAt,
+			CreatedAt:           workflow.CreatedAt,
+			ProjectID:           workflow.ProjectID,
+			ClusterName:         cluster.ClusterName,
+			ClusterID:           cluster.ClusterID,
+			ClusterType:         cluster.ClusterType,
+			WorkflowRuns:        WorkflowRuns,
 		}
 		result = append(result, &newChaosWorkflows)
 	}

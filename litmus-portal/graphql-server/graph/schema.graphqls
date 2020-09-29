@@ -147,22 +147,46 @@ input PodLogRequest{
 }
 
 type ScheduledWorkflows {
-	workflow_id: String!
-	workflow_manifest: String!
-	cronSyntax: String!
-	cluster_name: String!
-	workflow_name: String!
-	workflow_description: String!
-	weightages: [weightages!]!
-	isCustomWorkflow: Boolean!
-	updated_at: String!
-	created_at: String!
-	project_id: ID!
-	cluster_id: ID!
-	cluster_type: String!
+  workflow_id: String!
+  workflow_manifest: String!
+  cronSyntax: String!
+  cluster_name: String!
+  workflow_name: String!
+  workflow_description: String!
+  weightages: [weightages!]!
+  isCustomWorkflow: Boolean!
+  updated_at: String!
+  created_at: String!
+  project_id: ID!
+  cluster_id: ID!
+  cluster_type: String!
+}
+
+type Workflow{
+  workflow_id: String!
+  workflow_manifest: String!
+  cronSyntax: String!
+  cluster_name: String!
+  workflow_name: String!
+  workflow_description: String!
+  weightages: [weightages!]!
+  isCustomWorkflow: Boolean!
+  updated_at: String!
+  created_at: String!
+  project_id: ID!
+  cluster_id: ID!
+  cluster_type: String!
+  workflow_runs: [WorkflowRuns]
+}
+
+type WorkflowRuns {
+  execution_data: String!
+  workflow_run_id: ID!
+  last_updated: String!
 }
 
 type Query{
+  # [Deprecated soon]
   getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
 
   getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
@@ -173,7 +197,11 @@ type Query{
 
   users: [User!]! @authorized
 
+  # [Deprecated soon]
   getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
+
+  ListWorkflow(project_id: String!, workflow_ids: [ID] ): [Workflow]! @authorized
+
 }
 
 type Mutation{
