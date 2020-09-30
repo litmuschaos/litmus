@@ -11,19 +11,18 @@ import Scaffold from '../../containers/layouts/Scaffold';
 import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../graphql';
 import {
   ExecutionData,
-  Node,
   Workflow,
   WorkflowDataVars,
   WorkflowSubscription,
 } from '../../models/graphql/workflowData';
+import useActions from '../../redux/actions';
+import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
 import ArgoWorkflow from '../../views/WorkflowDetails/ArgoWorkflow';
 import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
+import WorkflowNodeInfo from '../../views/WorkflowDetails/WorkflowNodeInfo';
 import useStyles from './styles';
 import TopNavButtons from './TopNavButtons';
-import WorkflowNodeInfo from '../../views/WorkflowDetails/NodeInfo';
-import ButtonFilled from '../../components/Button/ButtonFilled';
-import ButtonOutline from '../../components/Button/ButtonOutline';
 
 interface TopNavButtonsProps {
   isAnalyticsToggled: boolean;
@@ -40,6 +39,7 @@ const WorkflowDetails: React.FC = () => {
     isInfoToggled: false,
   });
 
+  const tabs = useActions(TabActions);
   const { pathname } = useLocation();
   // Getting the workflow nome from the pathname
   const workflowRunId = pathname.split('/')[3];
@@ -49,8 +49,9 @@ const WorkflowDetails: React.FC = () => {
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
   );
-  // get Selected Node
-  const selectedNode = useSelector((state: RootState) => state.selectedNode);
+  const workflowDetailsTabValue = useSelector(
+    (state: RootState) => state.tabNumber.node
+  );
 
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
@@ -97,11 +98,16 @@ const WorkflowDetails: React.FC = () => {
     }
   }, [data]);
 
-  const [value, setValue] = React.useState(0);
   const theme = useTheme();
+
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setValue(newValue);
+    tabs.changeWorkflowDetailsTabs(newValue);
   };
+
+  // On fresh screen refresh 'Workflow' Tab would be selected
+  useEffect(() => {
+    tabs.changeWorkflowDetailsTabs(0);
+  }, []);
 
   return (
     <Scaffold>
@@ -116,75 +122,60 @@ const WorkflowDetails: React.FC = () => {
             <Typography>{t('workflowDetails.detailedLog')}</Typography>
 
             {/* Argo Workflow DAG Graph */}
-            {isToggled.isInfoToggled ? (
-              <div className={classes.w100}>
-                <ArgoWorkflow
-                  nodes={
-                    (JSON.parse(workflow.execution_data) as ExecutionData).nodes
-                  }
-                />
-              </div>
-            ) : (
-              <div className={classes.w140}>
-                <ArgoWorkflow
-                  nodes={
-                    (JSON.parse(workflow.execution_data) as ExecutionData).nodes
-                  }
-                />
-              </div>
-            )}
+            <ArgoWorkflow
+              nodes={
+                (JSON.parse(workflow.execution_data) as ExecutionData).nodes
+              }
+            />
           </div>
           {isToggled.isInfoToggled ? (
-            <div>
-              <>
-                <AppBar
-                  position="static"
-                  color="default"
-                  className={classes.appBar}
+            <div className={classes.workflowSideBar}>
+              <AppBar
+                position="static"
+                color="default"
+                className={classes.appBar}
+              >
+                <Tabs
+                  value={workflowDetailsTabValue || 0}
+                  onChange={handleChange}
+                  TabIndicatorProps={{
+                    style: {
+                      backgroundColor: theme.palette.secondary.dark,
+                    },
+                  }}
+                  variant="fullWidth"
                 >
-                  <Tabs
-                    value={value}
-                    onChange={handleChange}
-                    TabIndicatorProps={{
-                      style: {
-                        backgroundColor: theme.palette.secondary.dark,
-                      },
-                    }}
-                    variant="fullWidth"
-                  >
-                    <StyledTab label="Workflow" />
-                    <StyledTab label="Nodes" />
-                  </Tabs>
-                </AppBar>
-                <TabPanel value={value} index={0}>
-                  <div data-cy="browseWorkflow">
-                    <WorkflowInfo
-                      workflow_name={workflow.workflow_name}
-                      execution_data={
-                        JSON.parse(workflow?.execution_data) as ExecutionData
-                      }
-                      cluster_name={workflow.cluster_name}
-                    />
-                  </div>
-                </TabPanel>
-                <TabPanel data-cy="scheduleWorkflow" value={value} index={1}>
-                  <div data-cy="browseWorkflow">
-                    <WorkflowNodeInfo nodeDetails={selectedNode as Node} />
-                  </div>
-                </TabPanel>
-              </>
-              <div className={classes.footerButton}>
-                <ButtonFilled
-                  isPrimary
-                  isDisabled={false}
-                  handleClick={() => {}}
-                >
-                  Events
-                </ButtonFilled>
-                <ButtonOutline isDisabled={false} handleClick={() => {}}>
-                  Logs
-                </ButtonOutline>
-              </div>
+                  <StyledTab label="Workflow" />
+                  <StyledTab label="Nodes" />
+                </Tabs>
+              </AppBar>
+              <TabPanel value={workflowDetailsTabValue} index={0}>
+                <div data-cy="browseWorkflow">
+                  <WorkflowInfo
+                    workflow_name={workflow.workflow_name}
+                    execution_data={
+                      JSON.parse(workflow?.execution_data) as ExecutionData
+                    }
+                    cluster_name={workflow.cluster_name}
+                  />
+                </div>
+              </TabPanel>
+              <TabPanel
+                data-cy="scheduleWorkflow"
+                value={workflowDetailsTabValue}
+                index={1}
+              >
+                <div data-cy="browseWorkflow">
+                  <WorkflowNodeInfo
+                    cluster_id={workflow.cluster_id}
+                    workflow_run_id={workflow.workflow_run_id}
+                    pod_namespace={
+                      (JSON.parse(workflow.execution_data) as ExecutionData)
+                        .namespace
+                    }
+                  />
+                </div>
+              </TabPanel>
             </div>
           ) : (
             <></>
