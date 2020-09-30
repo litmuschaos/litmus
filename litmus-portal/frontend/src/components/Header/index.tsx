@@ -162,7 +162,7 @@ const Header: React.FC = () => {
   }, [userData.selectedProjectID]);
 
   return (
-    <div>
+    <div data-cy="headerComponent">
       <AppBar position="relative" className={classes.appBar} elevation={0}>
         <Toolbar>
           <div style={{ width: '100%' }}>

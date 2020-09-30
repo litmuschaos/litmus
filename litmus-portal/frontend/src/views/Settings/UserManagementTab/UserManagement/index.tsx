@@ -156,10 +156,11 @@ const UserManagement: React.FC = () => {
                   username when required:
                 </Typography>
 
-                <Toolbar className={classes.toolbar}>
+                <Toolbar data-cy="toolBarComponent" className={classes.toolbar}>
                   {/* Search user */}
                   <div className={classes.toolbarFirstCol}>
                     <TextField
+                      data-cy="searchField"
                       id="input-with-icon-adornment"
                       placeholder="Search..."
                       value={filters.search}
@@ -250,7 +251,11 @@ const UserManagement: React.FC = () => {
                                 paginationData.rowsPerPage
                             )
                             .map((row, index) => (
-                              <TableRow key={row.name} className={classes.TR}>
+                              <TableRow
+                                data-cy="userTableRow"
+                                key={row.name}
+                                className={classes.TR}
+                              >
                                 <TableCell
                                   className={classes.firstTC}
                                   component="th"
@@ -292,6 +297,7 @@ const UserManagement: React.FC = () => {
                                   key={row.username}
                                 >
                                   <IconButton
+                                    data-cy="editUser"
                                     aria-label="more"
                                     aria-controls="long-menu"
                                     aria-haspopup="true"
@@ -311,6 +317,7 @@ const UserManagement: React.FC = () => {
                                     onClose={handleClose}
                                   >
                                     <MenuItem
+                                      data-cy="editProfile"
                                       value={index}
                                       onClick={() => {
                                         setEditDiv(true);

@@ -152,10 +152,9 @@ const TeammingTab: React.FC = () => {
           of exisiting members in the team:
         </Typography>
         <div>
-          <Toolbar className={classes.toolbar}>
+          <Toolbar data-cy="toolBarComponent" className={classes.toolbar}>
             {/* Search user */}
-
-            <div className={classes.toolbarFirstCol}>
+            <div data-cy="teamingSearch" className={classes.toolbarFirstCol}>
               <TextField
                 id="input-with-icon-textfield"
                 placeholder="Search..."
@@ -242,7 +241,11 @@ const TeammingTab: React.FC = () => {
                           paginationData.rowsPerPage
                       )
                       .map((row, index) => (
-                        <TableRow key={row.name} className={classes.TR}>
+                        <TableRow
+                          data-cy="teamingTableRow"
+                          key={row.name}
+                          className={classes.TR}
+                        >
                           <TableCell
                             className={classes.firstTC}
                             component="th"
