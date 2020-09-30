@@ -111,70 +111,56 @@ const WorkflowDetails: React.FC = () => {
             <Typography>{t('workflowDetails.detailedLog')}</Typography>
 
             {/* Argo Workflow DAG Graph */}
-            {isToggled.isInfoToggled ? (
-              <div className={classes.w100}>
-                <ArgoWorkflow
-                  nodes={
-                    (JSON.parse(workflow.execution_data) as ExecutionData).nodes
-                  }
-                />
-              </div>
-            ) : (
-              <div className={classes.w140}>
-                <ArgoWorkflow
-                  nodes={
-                    (JSON.parse(workflow.execution_data) as ExecutionData).nodes
-                  }
-                />
-              </div>
-            )}
+            <ArgoWorkflow
+              nodes={
+                (JSON.parse(workflow.execution_data) as ExecutionData).nodes
+              }
+            />
           </div>
           {isToggled.isInfoToggled ? (
-            <div>
-              <>
-                <AppBar
-                  position="static"
-                  color="default"
-                  className={classes.appBar}
+            <div className={classes.workflowSideBar}>
+              <AppBar
+                position="static"
+                color="default"
+                className={classes.appBar}
+              >
+                <Tabs
+                  value={value}
+                  onChange={handleChange}
+                  TabIndicatorProps={{
+                    style: {
+                      backgroundColor: theme.palette.secondary.dark,
+                    },
+                  }}
+                  variant="fullWidth"
                 >
-                  <Tabs
-                    value={value}
-                    onChange={handleChange}
-                    TabIndicatorProps={{
-                      style: {
-                        backgroundColor: theme.palette.secondary.dark,
-                      },
-                    }}
-                    variant="fullWidth"
-                  >
-                    <StyledTab label="Workflow" />
-                    <StyledTab label="Nodes" />
-                  </Tabs>
-                </AppBar>
-                <TabPanel value={value} index={0}>
-                  <div data-cy="browseWorkflow">
-                    <WorkflowInfo
-                      workflow_name={workflow.workflow_name}
-                      execution_data={
-                        JSON.parse(workflow?.execution_data) as ExecutionData
-                      }
-                      cluster_name={workflow.cluster_name}
-                    />
-                  </div>
-                </TabPanel>
-                <TabPanel data-cy="scheduleWorkflow" value={value} index={1}>
-                  <div data-cy="browseWorkflow">
-                    <WorkflowNodeInfo
-                      cluster_id={workflow.cluster_id}
-                      workflow_run_id={workflow.workflow_run_id}
-                      pod_namespace={
-                        (JSON.parse(workflow.execution_data) as ExecutionData)
-                          .namespace
-                      }
-                    />
-                  </div>
-                </TabPanel>
-              </>
+                  <StyledTab label="Workflow" />
+                  <StyledTab label="Nodes" />
+                </Tabs>
+              </AppBar>
+              <TabPanel value={value} index={0}>
+                <div data-cy="browseWorkflow">
+                  <WorkflowInfo
+                    workflow_name={workflow.workflow_name}
+                    execution_data={
+                      JSON.parse(workflow?.execution_data) as ExecutionData
+                    }
+                    cluster_name={workflow.cluster_name}
+                  />
+                </div>
+              </TabPanel>
+              <TabPanel data-cy="scheduleWorkflow" value={value} index={1}>
+                <div data-cy="browseWorkflow">
+                  <WorkflowNodeInfo
+                    cluster_id={workflow.cluster_id}
+                    workflow_run_id={workflow.workflow_run_id}
+                    pod_namespace={
+                      (JSON.parse(workflow.execution_data) as ExecutionData)
+                        .namespace
+                    }
+                  />
+                </div>
+              </TabPanel>
             </div>
           ) : (
             <></>
