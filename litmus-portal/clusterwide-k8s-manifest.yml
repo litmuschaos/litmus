@@ -119,6 +119,7 @@ rules:
     resources:
       - pods
       - pods/exec
+      - deployments
     verbs:
       - create
       - patch
