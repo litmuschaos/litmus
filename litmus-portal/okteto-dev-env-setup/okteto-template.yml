@@ -92,6 +92,44 @@ roleRef:
   name: deployer-namespace
   apiGroup: rbac.authorization.k8s.io
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: litmus-server-account
+  namespace: %OKTETO_NAMESPACE%
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: litmus-server
+  namespace: %OKTETO_NAMESPACE%
+  labels:
+    name: litmus-server
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - pods/exec
+    verbs:
+      - create
+      - patch
+      - update
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: litmus-server-rb
+  namespace: %OKTETO_NAMESPACE%
+subjects:
+  - kind: ServiceAccount
+    name: litmus-server-account
+    namespace: %OKTETO_NAMESPACE%
+roleRef:
+  kind: Role
+  name: litmus-server
+  apiGroup: rbac.authorization.k8s.io
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -177,7 +215,7 @@ spec:
           ports:
             - containerPort: 3000
           imagePullPolicy: Always
-      serviceAccountName: litmus-svc-account
+      serviceAccountName: litmus-server-account
 ---
 apiVersion: v1
 kind: Service
