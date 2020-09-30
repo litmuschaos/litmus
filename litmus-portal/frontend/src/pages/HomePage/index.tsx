@@ -5,7 +5,6 @@ import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-// import { Link } from 'react-router-dom';
 import InfoFilledWrap from '../../components/InfoFilled';
 import Loader from '../../components/Loader';
 import QuickActionCard from '../../components/QuickActionCard';
