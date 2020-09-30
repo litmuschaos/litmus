@@ -47,7 +47,6 @@
     "react-simple-maps": "^2.1.2",
     "redux": "^4.0.1",
     "redux-devtools-extension": "^2.13.8",
-    "redux-logger": "^3.0.6",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0",
     "subscriptions-transport-ws": "^0.9.17",

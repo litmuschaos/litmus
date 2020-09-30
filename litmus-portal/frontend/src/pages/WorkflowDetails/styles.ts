@@ -48,12 +48,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
-  footerButton: {
-    marginLeft: 'auto',
-    display: 'flex',
-    flexDirection: 'row',
-    padding: theme.spacing(3, 4, 4, 0),
-  },
 }));
 
 export default useStyles;

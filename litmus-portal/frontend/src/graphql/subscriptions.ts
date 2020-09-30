@@ -11,6 +11,7 @@ export const WORKFLOW_EVENTS = gql`
       project_id
       cluster_name
       last_updated
+      cluster_id
     }
   }
 `;

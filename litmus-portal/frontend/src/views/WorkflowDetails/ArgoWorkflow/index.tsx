@@ -23,6 +23,11 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
     links: [],
   });
 
+  // Get the selected Node
+  const [selectedNodeID, setSelectedNodeID] = useState<string>(
+    Object.keys(nodes)[0]
+  );
+
   useEffect(() => {
     const data: GraphData = {
       nodes: [],
@@ -58,6 +63,13 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
     });
   }, [nodes]);
 
+  useEffect(() => {
+    nodeSelection.selectNode({
+      ...nodes[selectedNodeID],
+      pod_name: selectedNodeID,
+    });
+  }, [selectedNodeID]);
+
   return graphData.nodes.length ? (
     <DagreGraph
       className={classes.dagreGraph}
@@ -74,7 +86,7 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
         const nodeID = Object.keys(nodes).filter(
           (key) => key === original?.id
         )[0];
-        nodeSelection.selectNode(nodes[nodeID]);
+        setSelectedNodeID(nodeID);
       }}
     />
   ) : (

@@ -11,7 +11,6 @@ import Scaffold from '../../containers/layouts/Scaffold';
 import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../graphql';
 import {
   ExecutionData,
-  Node,
   Workflow,
   WorkflowDataVars,
   WorkflowSubscription,
@@ -19,11 +18,9 @@ import {
 import { RootState } from '../../redux/reducers';
 import ArgoWorkflow from '../../views/WorkflowDetails/ArgoWorkflow';
 import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
+import WorkflowNodeInfo from '../../views/WorkflowDetails/WorkflowNodeInfo';
 import useStyles from './styles';
 import TopNavButtons from './TopNavButtons';
-import WorkflowNodeInfo from '../../views/WorkflowDetails/NodeInfo';
-import ButtonFilled from '../../components/Button/ButtonFilled';
-import ButtonOutline from '../../components/Button/ButtonOutline';
 
 interface TopNavButtonsProps {
   isAnalyticsToggled: boolean;
@@ -49,8 +46,6 @@ const WorkflowDetails: React.FC = () => {
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
   );
-  // get Selected Node
-  const selectedNode = useSelector((state: RootState) => state.selectedNode);
 
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
@@ -169,22 +164,17 @@ const WorkflowDetails: React.FC = () => {
                 </TabPanel>
                 <TabPanel data-cy="scheduleWorkflow" value={value} index={1}>
                   <div data-cy="browseWorkflow">
-                    <WorkflowNodeInfo nodeDetails={selectedNode as Node} />
+                    <WorkflowNodeInfo
+                      cluster_id={workflow.cluster_id}
+                      workflow_run_id={workflow.workflow_run_id}
+                      namespace={
+                        (JSON.parse(workflow.execution_data) as ExecutionData)
+                          .namespace
+                      }
+                    />
                   </div>
                 </TabPanel>
               </>
-              <div className={classes.footerButton}>
-                <ButtonFilled
-                  isPrimary
-                  isDisabled={false}
-                  handleClick={() => {}}
-                >
-                  Events
-                </ButtonFilled>
-                <ButtonOutline isDisabled={false} handleClick={() => {}}>
-                  Logs
-                </ButtonOutline>
-              </div>
             </div>
           ) : (
             <></>
