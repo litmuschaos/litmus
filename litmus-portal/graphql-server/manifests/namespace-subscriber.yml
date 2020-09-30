@@ -390,13 +390,13 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: subscriber-service-account
-  namespace: litmus
+  namespace: #{SUB-NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
   name: subscriber-namespace
-  namespace: litmus
+  namespace: #{SUB-NAMESPACE}
   labels:
     name: subscriber-namespace
 rules:
@@ -419,11 +419,11 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
   name: subscriber-namespace-rb
-  namespace: litmus
+  namespace: #{SUB-NAMESPACE}
 subjects:
   - kind: ServiceAccount
     name: subscriber-service-account
-    namespace: litmus
+    namespace: #{SUB-NAMESPACE}
 roleRef:
   kind: Role
   name: subscriber-namespace

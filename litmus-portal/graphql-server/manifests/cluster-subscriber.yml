@@ -1014,13 +1014,13 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: subscriber-service-account
-  namespace: litmus
+  namespace: #{SUB-NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   name: subscriber-cluster
-  namespace: litmus
+  namespace: #{SUB-NAMESPACE}
   labels:
     name: subscriber-cluster
 rules:
@@ -1045,11 +1045,11 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
   name: subscriber-cluster-rb
-  namespace: litmus
+  namespace: #{SUB-NAMESPACE}
 subjects:
   - kind: ServiceAccount
     name: subscriber-service-account
-    namespace: litmus
+    namespace: #{SUB-NAMESPACE}
 roleRef:
   kind: ClusterRole
   name: subscriber-cluster
