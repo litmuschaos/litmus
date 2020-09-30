@@ -72,19 +72,43 @@ rules:
   - apiGroups:
       - ""
     resources:
-      - namespaces
-      - customresourcedefinitions
       - serviceaccounts
-      - roles
-      - clusterroles
-      - rolebindings
-      - clusterrolebindings
+      - services
       - configmaps
-      - deployments
       - pods
     verbs:
       - "create"
       - "delete"
+      - "patch"
+      - "update"
+  - apiGroups:
+      - "apiextensions.k8s.io"
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - "create"
+      - "delete"
+      - "patch"
+      - "update"
+  - apiGroups:
+      - "rbac.authorization.k8s.io"
+    resources:
+      - clusterroles
+      - clusterrolebindings
+    verbs:
+      - "create"
+      - "delete"
+      - "patch"
+      - "update"
+  - apiGroups:
+      - "apps"
+    resources:
+      - deployments
+    verbs:
+      - "create"
+      - "delete"
+      - "patch"
+      - "update"
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding

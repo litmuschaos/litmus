@@ -72,16 +72,34 @@ rules:
   - apiGroups:
       - ""
     resources:
-      - namespaces
       - serviceaccounts
-      - roles
-      - rolebindings
+      - services
       - configmaps
-      - deployments
       - pods
     verbs:
       - "create"
       - "delete"
+      - "patch"
+      - "update"
+  - apiGroups:
+      - "rbac.authorization.k8s.io"
+    resources:
+      - roles
+      - rolebindings
+    verbs:
+      - "create"
+      - "delete"
+      - "patch"
+      - "update"
+  - apiGroups:
+      - "apps"
+    resources:
+      - deployments
+    verbs:
+      - "create"
+      - "delete"
+      - "patch"
+      - "update"
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
