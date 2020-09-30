@@ -14,8 +14,15 @@ import (
 	"k8s.io/client-go/rest"
 )
 
+
+
 func CreateDeployment(namespace, token string) (*appsv1.Deployment, error) {
 	deployerImage := os.Getenv("DEPLOYER_IMAGE")
+	subscriberSC := os.Getenv("SUBSCRIBER_SCOPE")
+	selfDeployerSvcAccount := "self-deployer-namespace-account"
+	if subscriberSC == "cluster"{
+		selfDeployerSvcAccount = "self-deployer-admin-account"
+	} 
 	cfg, err := GetKubeConfig()
 	clientset, err := kubernetes.NewForConfig(cfg)
 	if err != nil {
@@ -74,7 +81,7 @@ func CreateDeployment(namespace, token string) (*appsv1.Deployment, error) {
 							},
 						},
 					},
-					ServiceAccountName: "litmus-svc-account",
+					ServiceAccountName: selfDeployerSvcAccount,
 				},
 			},
 		},

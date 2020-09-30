@@ -85,19 +85,6 @@ metadata:
   namespace: #{SUB-NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: argo-role
-  namespace: #{SUB-NAMESPACE}
-rules:
-  - apiGroups:
-      - ""
-    resources:
-      - secrets
-    verbs:
-      - get
----
-apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
@@ -315,19 +302,6 @@ rules:
       - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: argo-binding
-  namespace: #{SUB-NAMESPACE}
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: argo-role
-subjects:
-  - kind: ServiceAccount
-    name: argo
----
-apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: argo-binding
@@ -463,17 +437,17 @@ metadata:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: litmus
+  name: litmus-cluster-scope
   namespace: #{SUB-NAMESPACE}
   labels:
-    name: litmus
+    name: litmus-cluster-scope
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  name: litmus
+  name: litmus-cluster-scope
   labels:
-    name: litmus
+    name: litmus-cluster-scope
 rules:
   - apiGroups: ["", "apps", "batch", "litmuschaos.io", "apps.openshift.io"]
     resources: ["pods", "jobs", "deployments", "replicationcontrollers", "daemonsets", "replicasets", "statefulsets", "deploymentconfigs", "events", "configmaps", "services", "secrets", "chaosengines", "chaosexperiments", "chaosresults"]
@@ -485,16 +459,16 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  name: litmus
+  name: litmus-cluster-scope
   labels:
-    name: litmus
+    name: litmus-cluster-scope
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: litmus
+  name: litmus-cluster-scope
 subjects:
   - kind: ServiceAccount
-    name: litmus
+    name: litmus-cluster-scope
     namespace: #{SUB-NAMESPACE}
 ---
 apiVersion: apps/v1
@@ -512,10 +486,10 @@ spec:
       labels:
         name: chaos-operator
     spec:
-      serviceAccountName: litmus
+      serviceAccountName: litmus-cluster-scope
       containers:
         - name: chaos-operator
-          image: litmuschaos/chaos-operator:1.7.0
+          image: litmuschaos/chaos-operator:1.8.0
           resources:
             limits:
               cpu: 250m
@@ -525,7 +499,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:1.7.0"
+              value: "litmuschaos/chaos-runner:1.8.0"
             - name: WATCH_NAMESPACE
               value: ""
             - name: POD_NAME
@@ -1036,6 +1010,51 @@ subjects:
     name: argo-chaos
     namespace: #{SUB-NAMESPACE}
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: subscriber-service-account
+  namespace: litmus
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: subscriber-cluster
+  namespace: litmus
+  labels:
+    name: subscriber-cluster
+rules:
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - workflows
+      - workflows/finalizers
+      - workflowtemplates
+      - workflowtemplates/finalizers
+      - cronworkflows
+      - cronworkflows/finalizers
+      - clusterworkflowtemplates
+      - clusterworkflowtemplates/finalizers
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: subscriber-cluster-rb
+  namespace: litmus
+subjects:
+  - kind: ServiceAccount
+    name: subscriber-service-account
+    namespace: litmus
+roleRef:
+  kind: ClusterRole
+  name: subscriber-cluster
+  apiGroup: rbac.authorization.k8s.io
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1052,14 +1071,15 @@ spec:
       labels:
         app: subscriber
     spec:
-      serviceAccountName: litmus-svc-account
+      serviceAccountName: subscriber-service-account
       containers:
         - name: subscriber
           image: #{SUB-IMAGE}
           resources:
             limits:
-              cpu: 250m
+              cpu: 200m
               memory: 500Mi
+          imagePullPolicy: Always
           env:
             - name: GQL_SERVER
               value: #{SERVER}
@@ -1067,7 +1087,11 @@ spec:
               value: #{CID}
             - name: KEY
               value: #{KEY}
-            - name: NAMESPACE
+            - name: SUBSCRIBER_NAMESPACE
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+            - name: AGENT_SCOPE
+              value: #{AGENT-SCOPE}
+            - name: AGENT_NAMESPACE
+              value: #{AGENT-NAMESPACE}

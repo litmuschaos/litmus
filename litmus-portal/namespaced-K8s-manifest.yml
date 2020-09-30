@@ -4,6 +4,15 @@ kind: Namespace
 metadata:
   name: litmus
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: litmus-portal-operations-config
+  namespace: litmus
+data:
+  K8s-mode: namespace
+  SubscriberNamespace: litmus
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -24,6 +33,10 @@ spec:
       containers:
         - name: litmusportal-frontend
           image: litmuschaos/litmusportal-frontend:ci
+          resources:
+            limits:
+              cpu: 200m
+              memory: 400Mi
           imagePullPolicy: Always
           ports:
             - containerPort: 80
@@ -41,6 +54,48 @@ spec:
       targetPort: 80
   selector:
     component: litmusportal-frontend
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: self-deployer-namespace-account
+  namespace: litmus
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: deployer-namespace
+  namespace: litmus
+  labels:
+    name: deployer-namespace
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+      - serviceaccounts
+      - roles
+      - rolebindings
+      - configmaps
+      - deployments
+      - pods
+    verbs:
+      - "create"
+      - "delete"
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: deployer-namespace-rb
+  namespace: litmus
+subjects:
+  - kind: ServiceAccount
+    name: self-deployer-namespace-account
+    namespace: litmus
+roleRef:
+  kind: Role
+  name: deployer-namespace
+  apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -61,7 +116,11 @@ spec:
     spec:
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:ci
+          image: ishanguptads/litmusportal-server:private
+          resources:
+            limits:
+              cpu: 200m
+              memory: 400Mi
           env:
             - name: DB_SERVER
               value: "mongo-service:27017"
@@ -74,18 +133,43 @@ spec:
             - name: SELF_CLUSTER
               value: "true"
             - name: SUBSCRIBER_IMAGE
-              value: "litmuschaos/litmusportal-subscriber:ci"
+              value: "ishanguptads/litmusportal-subscriber:private"
+            - name: SUBSCRIBER_SCOPE
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-operations-config
+                  key: K8s-mode
+            - name: AGENT_SCOPE
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-operations-config
+                  key: K8s-mode
             - name: SUBSCRIBER_NAMESPACE
-              value: "litmus"
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-operations-config
+                  key: SubscriberNamespace
+            - name: AGENT_NAMESPACE
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-operations-config
+                  key: SubscriberNamespace
             - name: DEPLOYER_IMAGE
-              value: "litmuschaos/litmusportal-self-deployer:ci"
+              value: "ishanguptads/litmusportal-self-deployer:private"
             - name: DEPLOYER_NAMESPACE
-              value: "litmus"
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-operations-config
+                  key: SubscriberNamespace
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
         - name: auth-server
           image: litmuschaos/litmusportal-auth-server:ci
+          resources:
+            limits:
+              cpu: 200m
+              memory: 250Mi
           env:
             - name: DB_SERVER
               value: "mongodb://mongo-service:27017"
@@ -106,12 +190,11 @@ metadata:
   name: litmusportal-server-service
   namespace: litmus
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
     - name: graphql-server
       port: 9002
       targetPort: 8080
-      nodePort: 31000
     - name: auth-server
       port: 9003
       targetPort: 3000
@@ -138,6 +221,10 @@ spec:
       containers:
         - name: mongo
           image: mongo:4.2.8
+          resources:
+            limits:
+              cpu: 200m
+              memory: 400Mi
           ports:
             - containerPort: 27017
           imagePullPolicy: Always
@@ -176,23 +263,3 @@ spec:
       targetPort: 27017
   selector:
     component: database
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: litmus-svc-account
-  namespace: litmus
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: litmus-rb
-  namespace: litmus
-subjects:
-  - kind: ServiceAccount
-    name: litmus-svc-account
-    namespace: litmus
-roleRef:
-  kind: ClusterRole
-  name: cluster-admin
-  apiGroup: rbac.authorization.k8s.io

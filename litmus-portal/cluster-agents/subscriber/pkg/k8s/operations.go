@@ -28,7 +28,7 @@ var (
 	decUnstructured     = yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
 	dr                  dynamic.ResourceInterface
 	subscriberNamespace = os.Getenv("SUBSCRIBER_NAMESPACE")
-	workflowScope       = os.Getenv("WORKFLOW_SCOPE")
+	workflowScope       = os.Getenv("AGENT_SCOPE")
 )
 
 // IsClusterConfirmed checks if the config map with "is_cluster_confirmed" is true or not.

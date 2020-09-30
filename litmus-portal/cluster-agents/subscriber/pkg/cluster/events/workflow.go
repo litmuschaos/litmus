@@ -20,8 +20,8 @@ const (
 )
 
 var (
-	DefaultScope = os.Getenv("WORKFLOW_SCOPE")
-	DefaultNamespace = os.Getenv("WORKFLOW_NAMESPACE")
+	DefaultScope = os.Getenv("AGENT_SCOPE")
+	DefaultNamespace = os.Getenv("AGENT_NAMESPACE")
 )
 
 // initializes the Argo Workflow event watcher

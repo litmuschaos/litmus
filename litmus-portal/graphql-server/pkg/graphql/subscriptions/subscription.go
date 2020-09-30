@@ -40,7 +40,7 @@ func SendWorkflowEvent(wfRun model.WorkflowRun, r store.StateData) {
 
 func SendWorkflowRequest(wfRequest *database.ChaosWorkFlowInput, r store.StateData) {
 
-	namespace := os.Getenv("WORKFLOW_NAMESPACE")
+	namespace := os.Getenv("AGENT_NAMESPACE")
 	requesttype := "create"
 	newAction := &model.ClusterAction{
 		ProjectID: wfRequest.ProjectID,

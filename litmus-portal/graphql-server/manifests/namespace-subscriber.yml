@@ -386,6 +386,49 @@ spec:
         kubernetes.io/os: linux
       serviceAccountName: argo
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: subscriber-service-account
+  namespace: litmus
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: subscriber-namespace
+  namespace: litmus
+  labels:
+    name: subscriber-namespace
+rules:
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - workflows
+      - workflows/finalizers
+      - workflowtemplates
+      - workflowtemplates/finalizers
+      - cronworkflows
+      - cronworkflows/finalizers
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: subscriber-namespace-rb
+  namespace: litmus
+subjects:
+  - kind: ServiceAccount
+    name: subscriber-service-account
+    namespace: litmus
+roleRef:
+  kind: Role
+  name: subscriber-namespace
+  apiGroup: rbac.authorization.k8s.io
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -402,7 +445,7 @@ spec:
       labels:
         app: subscriber
     spec:
-      serviceAccountName: litmus-svc-account
+      serviceAccountName: subscriber-service-account
       containers:
         - name: subscriber
           image: #{SUB-IMAGE}
@@ -422,10 +465,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            - name: WORKFLOW_SCOPE
-              value: #{WORKFLOW-SCOPE}
-            - name: WORKFLOW_NAMESPACE
-              value: #{WORKFLOW-NAMESPACE}
+            - name: AGENT_SCOPE
+              value: #{AGENT-SCOPE}
+            - name: AGENT_NAMESPACE
+              value: #{AGENT-NAMESPACE}
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -529,53 +572,6 @@ spec:
                   fieldPath: metadata.name
             - name: OPERATOR_NAME
               value: "chaos-operator"
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: litmus-namespace-pod-delete
-  namespace: #{SUB-NAMESPACE}
-  labels:
-    name: litmus-namespace-pod-delete
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: Role
-metadata:
-  name: litmus-namespace-pod-delete
-  namespace: #{SUB-NAMESPACE}
-  labels:
-    name: litmus-namespace-pod-delete
-rules:
-  - apiGroups: ["", "litmuschaos.io", "batch", "apps"]
-    resources:
-      [
-        "pods",
-        "deployments",
-        "pods/log",
-        "events",
-        "jobs",
-        "chaosengines",
-        "chaosexperiments",
-        "chaosresults",
-      ]
-    verbs:
-      ["create", "list", "get", "patch", "update", "delete", "deletecollection"]
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: RoleBinding
-metadata:
-  name: litmus-namespace-pod-delete
-  namespace: #{SUB-NAMESPACE}
-  labels:
-    name: litmus-namespace-pod-delete
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: litmus-namespace-pod-delete
-subjects:
-  - kind: ServiceAccount
-    name: litmus-namespace-pod-delete
-    namespace: #{SUB-NAMESPACE}
 ---
 apiVersion: v1
 kind: ServiceAccount

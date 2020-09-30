@@ -18,8 +18,8 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 	subscriberImage := os.Getenv("SUBSCRIBER_IMAGE")
 	subscriberNS := os.Getenv("DEPLOYER_NAMESPACE")
 	subscriberSC := os.Getenv("SUBSCRIBER_SCOPE")
-	workflowSC := os.Getenv("WORKFLOW_SCOPE")
-	workflowNS := os.Getenv("WORKFLOW_NAMESPACE")
+	workflowSC := os.Getenv("AGENT_SCOPE")
+	workflowNS := os.Getenv("AGENT_NAMESPACE")
 
 	vars := mux.Vars(r)
 	token := vars["key"]
