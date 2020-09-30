@@ -15,6 +15,13 @@ interface SetTimeProps {
   interval: number;
   label: string;
   type: string;
+  handleChange: (
+    event: React.ChangeEvent<{
+      value: unknown;
+    }>
+  ) => void;
+  value: number;
+  setValue: React.Dispatch<React.SetStateAction<number>>;
 }
 
 // dropdown menu component for setting time
@@ -24,16 +31,13 @@ const SetTime: React.FC<SetTimeProps> = ({
   interval,
   label,
   type,
+  handleChange,
+  setValue,
+  value,
 }) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [age, setAge] = React.useState(0);
   const open = Boolean(anchorEl);
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setAge((event.target.value as unknown) as number);
-    setAnchorEl(null);
-  };
-
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -51,8 +55,11 @@ const SetTime: React.FC<SetTimeProps> = ({
           className={classes.textField}
           id="outlined-basic"
           variant="outlined"
-          value={age}
-          onChange={handleChange}
+          value={value}
+          onChange={(event) => {
+            handleChange(event);
+            setAnchorEl(null);
+          }}
           color="secondary"
           inputProps={{
             style: {
@@ -88,7 +95,7 @@ const SetTime: React.FC<SetTimeProps> = ({
             key={name}
             value={name}
             onClick={() => {
-              setAge(name);
+              setValue(name);
               setAnchorEl(null);
             }}
           >

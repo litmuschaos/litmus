@@ -5,8 +5,6 @@ import AdjustedWeights from '../../../components/AdjustedWeights';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline/index';
 import CustomText from '../../../components/CustomText';
-import CustomDate from '../../../components/DateTime/CustomDate';
-import CustomTime from '../../../components/DateTime/CustomTime';
 import YamlEditor from '../../../components/YamlEditor/Editor';
 import {
   AceValidations,
@@ -17,6 +15,7 @@ import { experimentMap, WorkflowData } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
+import convertCronToString from '../../../utils/cronToString';
 import useStyles from './styles';
 
 interface VerifyCommitProps {
@@ -35,7 +34,15 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     (state: RootState) => state.workflowData
   );
 
-  const { name, link, yaml, id, description, weights } = workflowData;
+  const {
+    name,
+    link,
+    yaml,
+    id,
+    description,
+    weights,
+    cronSyntax,
+  } = workflowData;
 
   const [open, setOpen] = React.useState(false);
 
@@ -154,8 +161,16 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               <Typography className={classes.col1}>Schedule:</Typography>
             </div>
             <div className={classes.schCol2}>
-              <CustomDate disabled={edit} />
-              <CustomTime ampm disabled={edit} />
+              {/* <CustomDate disabled={edit} />
+              <CustomTime
+                handleDateChange={handleDateChange}
+                value={selectedDate}
+                ampm
+                disabled={edit}
+              /> */}
+              <Typography className={classes.schedule}>
+                {convertCronToString(cronSyntax)}
+              </Typography>
               <div className={classes.editButton1}>
                 <ButtonOutline
                   isDisabled

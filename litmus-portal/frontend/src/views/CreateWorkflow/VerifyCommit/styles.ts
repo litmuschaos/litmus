@@ -59,6 +59,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '1rem',
     color: theme.palette.secondary.dark,
   },
+  schedule: {
+    fontSize: '1rem',
+  },
   col2: {
     marginLeft: theme.spacing(5),
   },
