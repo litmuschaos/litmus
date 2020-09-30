@@ -47,12 +47,19 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
       ) : (
         <></>
       )}
+
       {/* Node Name */}
       <div className={classes.heightMaintainer}>
         <Typography className={classes.nodeSpacing}>
-          <span className={classes.bold}>Node name:</span>
+          <span className={classes.bold}>Name:</span>
           <br />
-          {name}
+          {pod_name}
+        </Typography>
+      </div>
+      {/* Node Type */}
+      <div className={classes.heightMaintainer}>
+        <Typography className={classes.nodeSpacing}>
+          <span className={classes.bold}>Type:</span> {type}
         </Typography>
       </div>
       <hr />
@@ -85,6 +92,15 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
               60
             ).toFixed(1)}{' '}
             minutes
+          </Typography>
+        </div>
+      </div>
+      <hr />
+      {/* Node Name */}
+      <div className={classes.nodeSpacing}>
+        <div className={classes.heightMaintainer}>
+          <Typography>
+            <span className={classes.bold}>Node Name:</span> {name}
           </Typography>
         </div>
       </div>

@@ -90,7 +90,7 @@ const SideBar: React.FC = () => {
           }}
           label="Targets"
         >
-          <img src="./icons/targets.svg" alt="targets" />
+          <img src="/icons/targets.svg" alt="targets" />
         </CustomisedListItem>
         <CustomisedListItem
           key="community"

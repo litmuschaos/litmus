@@ -15,6 +15,8 @@ import {
   WorkflowDataVars,
   WorkflowSubscription,
 } from '../../models/graphql/workflowData';
+import useActions from '../../redux/actions';
+import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
 import ArgoWorkflow from '../../views/WorkflowDetails/ArgoWorkflow';
 import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
@@ -37,6 +39,7 @@ const WorkflowDetails: React.FC = () => {
     isInfoToggled: false,
   });
 
+  const tabs = useActions(TabActions);
   const { pathname } = useLocation();
   // Getting the workflow nome from the pathname
   const workflowRunId = pathname.split('/')[3];
@@ -45,6 +48,9 @@ const WorkflowDetails: React.FC = () => {
   // get ProjectID
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
+  );
+  const workflowDetailsTabValue = useSelector(
+    (state: RootState) => state.tabNumber.node
   );
 
   // Query to get workflows
@@ -92,11 +98,16 @@ const WorkflowDetails: React.FC = () => {
     }
   }, [data]);
 
-  const [value, setValue] = React.useState(0);
   const theme = useTheme();
+
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setValue(newValue);
+    tabs.changeWorkflowDetailsTabs(newValue);
   };
+
+  // On fresh screen refresh 'Workflow' Tab would be selected
+  useEffect(() => {
+    tabs.changeWorkflowDetailsTabs(0);
+  }, []);
 
   return (
     <Scaffold>
@@ -125,7 +136,7 @@ const WorkflowDetails: React.FC = () => {
                 className={classes.appBar}
               >
                 <Tabs
-                  value={value}
+                  value={workflowDetailsTabValue || 0}
                   onChange={handleChange}
                   TabIndicatorProps={{
                     style: {
@@ -138,7 +149,7 @@ const WorkflowDetails: React.FC = () => {
                   <StyledTab label="Nodes" />
                 </Tabs>
               </AppBar>
-              <TabPanel value={value} index={0}>
+              <TabPanel value={workflowDetailsTabValue} index={0}>
                 <div data-cy="browseWorkflow">
                   <WorkflowInfo
                     workflow_name={workflow.workflow_name}
@@ -149,7 +160,11 @@ const WorkflowDetails: React.FC = () => {
                   />
                 </div>
               </TabPanel>
-              <TabPanel data-cy="scheduleWorkflow" value={value} index={1}>
+              <TabPanel
+                data-cy="scheduleWorkflow"
+                value={workflowDetailsTabValue}
+                index={1}
+              >
                 <div data-cy="browseWorkflow">
                   <WorkflowNodeInfo
                     cluster_id={workflow.cluster_id}
