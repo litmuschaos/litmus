@@ -17,6 +17,9 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 	serviceAddr := os.Getenv("SERVICE_ADDRESS")
 	subscriberImage := os.Getenv("SUBSCRIBER_IMAGE")
 	subscriberNS := os.Getenv("DEPLOYER_NAMESPACE")
+	subscriberSC := os.Getenv("SUBSCRIBER_SCOPE")
+	workflowSC := os.Getenv("WORKFLOW_SCOPE")
+	workflowNS := os.Getenv("WORKFLOW_NAMESPACE")
 
 	vars := mux.Vars(r)
 	token := vars["key"]
@@ -37,7 +40,14 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 
 	if !reqCluster.IsRegistered {
 		var respData []byte
-		respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, serviceAddr+"/query", subscriberImage, subscriberNS, "manifests/subscriber.yml")
+		
+		if subscriberSC == "cluster" {
+			respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, serviceAddr+"/query", subscriberImage, subscriberNS, workflowSC, workflowNS, "manifests/cluster-subscriber.yml")
+		} else if subscriberSC == "namespace" {
+			respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, serviceAddr+"/query", subscriberImage, subscriberNS, workflowSC, workflowNS, "manifests/namespace-subscriber.yml")
+		} else {
+			log.Print("ERROR- PORTAL SCOPE NOT SELECTED!")
+		}
 
 		if err != nil {
 			log.Print("ERROR", err)

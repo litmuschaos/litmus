@@ -1,14 +1,16 @@
 ---
+kind: ConfigMap
 apiVersion: v1
-kind: Namespace
 metadata:
-  name: litmus
+  name: litmus-portal-okteto-config
+data:
+  oktetoNamespace: %OKTETO_NAMESPACE%
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: litmusportal-frontend
-  namespace: litmus
+  namespace: %OKTETO_NAMESPACE%
   labels:
     component: litmusportal-frontend
 spec:
@@ -32,7 +34,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: litmusportal-frontend-service
-  namespace: litmus
+  namespace: %OKTETO_NAMESPACE%
 spec:
   type: NodePort
   ports:
@@ -46,7 +48,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: litmusportal-server
-  namespace: litmus
+  namespace: %OKTETO_NAMESPACE%
   labels:
     component: litmusportal-server
 spec:
@@ -76,11 +78,17 @@ spec:
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos/litmusportal-subscriber:ci"
             - name: SUBSCRIBER_NAMESPACE
-              value: "litmus"
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-okteto-config
+                  key: oktetoNamespace
             - name: DEPLOYER_IMAGE
               value: "litmuschaos/litmusportal-self-deployer:ci"
             - name: DEPLOYER_NAMESPACE
-              value: "litmus"
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-okteto-config
+                  key: oktetoNamespace
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
@@ -104,14 +112,13 @@ apiVersion: v1
 kind: Service
 metadata:
   name: litmusportal-server-service
-  namespace: litmus
+  namespace: %OKTETO_NAMESPACE%
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
     - name: graphql-server
       port: 9002
       targetPort: 8080
-      nodePort: 31000
     - name: auth-server
       port: 9003
       targetPort: 3000
@@ -122,7 +129,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mongo
-  namespace: litmus
+  namespace: %OKTETO_NAMESPACE%
   labels:
     app: mongo
 spec:
@@ -153,7 +160,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mongo-pv-claim
-  namespace: litmus
+  namespace: %OKTETO_NAMESPACE%
   labels:
     app: mongo
 spec:
@@ -161,7 +168,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 20Gi
+      storage: 4Gi
 ---
 apiVersion: v1
 kind: Service
@@ -169,7 +176,7 @@ metadata:
   labels:
     app: mongo
   name: mongo-service
-  namespace: litmus
+  namespace: %OKTETO_NAMESPACE%
 spec:
   ports:
     - port: 27017
@@ -181,18 +188,18 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: litmus-svc-account
-  namespace: litmus
+  namespace: %OKTETO_NAMESPACE%
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: RoleBinding
 metadata:
   name: litmus-rb
-  namespace: litmus
+  namespace: %OKTETO_NAMESPACE%
 subjects:
   - kind: ServiceAccount
     name: litmus-svc-account
-    namespace: litmus
+    namespace: %OKTETO_NAMESPACE%
 roleRef:
-  kind: ClusterRole
-  name: cluster-admin
+  kind: Role
+  name: namespace-admin
   apiGroup: rbac.authorization.k8s.io
