@@ -1,11 +1,11 @@
 /* eslint-disable import/prefer-default-export */
-import { Node } from '../../models/graphql/workflowData';
 import {
   NodeSelectionAction,
   NodeSelectionActions,
+  SelectedNode,
 } from '../../models/redux/nodeSelection';
 
-export function selectNode(node: Node): NodeSelectionAction {
+export function selectNode(node: SelectedNode): NodeSelectionAction {
   return {
     type: NodeSelectionActions.SELECT_NODE,
     payload: node,

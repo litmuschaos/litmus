@@ -175,7 +175,7 @@ const CommunityAnalyticsPlot: React.FC = () => {
   }, [currentPlotType, currentGranularityType]);
 
   return (
-    <div style={{ alignContent: 'center' }}>
+    <div className={classes.plotCard}>
       <FormControl
         variant="outlined"
         className={classes.formControl}

@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
   },
   progressIcon: {
     borderRadius: '50%',
-    background: theme.palette.secondary.light,
+    background: theme.palette.secondary.main,
     padding: theme.spacing(1),
   },
   progressText: {

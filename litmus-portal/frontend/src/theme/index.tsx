@@ -96,7 +96,7 @@ function customTheme(options: ThemeOptions) {
         contrastText: '#000000',
       },
       secondary: {
-        light: '#858CDD',
+        light: 'rgba(133, 140, 221, 0.5)',
         main: '#858CDD',
         dark: '#5B44BA',
         contrastText: '#FFFFFF',

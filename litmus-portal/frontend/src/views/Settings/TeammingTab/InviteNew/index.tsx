@@ -18,7 +18,7 @@ const InviteNew: React.FC = () => {
   };
 
   return (
-    <div>
+    <div data-cy="inviteNewMemberButton">
       <div className={classes.button}>
         <ButtonFilled handleClick={handleOpen} isDisabled={false} isPrimary>
           <div>Invite new member</div>
@@ -31,7 +31,7 @@ const InviteNew: React.FC = () => {
         hasCloseBtn
         textAlign="center"
       >
-        <div className={classes.body}>
+        <div data-cy="inviteNewMemberModal" className={classes.body}>
           <Invite handleModal={handleClose} />
         </div>
       </Unimodal>
