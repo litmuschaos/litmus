@@ -3,6 +3,7 @@ import {
   FormControl,
   IconButton,
   InputAdornment,
+  InputLabel,
   Menu,
   MenuItem,
   Paper,
@@ -118,7 +119,7 @@ const UserManagement: React.FC = () => {
   const [currRow, setCurrRow] = React.useState<UserData>();
 
   const formatDate = (date: string) => {
-    const day = moment(date).format('Do MMM,YYYY LT');
+    const day = moment(date).format('Do MMM, YYYY LT');
     return day;
   };
 
@@ -152,13 +153,14 @@ const UserManagement: React.FC = () => {
                 </div>
                 <Typography className={classes.descText}>
                   Create users , manage them and reset their password and
-                  username when required
+                  username when required:
                 </Typography>
 
-                <Toolbar className={classes.toolbar}>
+                <Toolbar data-cy="toolBarComponent" className={classes.toolbar}>
                   {/* Search user */}
                   <div className={classes.toolbarFirstCol}>
                     <TextField
+                      data-cy="searchField"
                       id="input-with-icon-adornment"
                       placeholder="Search..."
                       value={filters.search}
@@ -182,33 +184,31 @@ const UserManagement: React.FC = () => {
                     />
                     {/* filter menu */}
                     <div className={classes.filter}>
-                      <Typography className={classes.userStat}>
-                        User Status
-                      </Typography>
-
-                      <FormControl className={classes.filterMenu}>
+                      <FormControl
+                        variant="outlined"
+                        className={classes.formControl}
+                        color="secondary"
+                        focused
+                      >
+                        <InputLabel className={classes.selectText}>
+                          User Status
+                        </InputLabel>
                         <Select
-                          native
-                          placeholder="User Status"
+                          label="User Status"
                           value={filters.status}
-                          /* filters on the basis of users' current state */
-                          onChange={(e) => {
+                          onChange={(event) => {
                             setFilters({
                               ...filters,
-                              status: e.target.value as string,
+                              status: event.target.value as string,
                             });
                             setPaginationData({ ...paginationData, pageNo: 0 });
                           }}
-                          label="User Status"
-                          disableUnderline
-                          inputProps={{
-                            name: 'User Status',
-                            id: 'outlined-age-native-simple',
-                          }}
+                          className={classes.selectText}
+                          color="secondary"
                         >
-                          <option value="all">All</option>
-                          <option value="signedout">Not signed</option>
-                          <option value="signedin">Signed in</option>
+                          <MenuItem value="all">All</MenuItem>
+                          <MenuItem value="signedout">Not signed</MenuItem>
+                          <MenuItem value="signedin">Signed in</MenuItem>
                         </Select>
                       </FormControl>
                     </div>
@@ -251,7 +251,11 @@ const UserManagement: React.FC = () => {
                                 paginationData.rowsPerPage
                             )
                             .map((row, index) => (
-                              <TableRow key={row.name} className={classes.TR}>
+                              <TableRow
+                                data-cy="userTableRow"
+                                key={row.name}
+                                className={classes.TR}
+                              >
                                 <TableCell
                                   className={classes.firstTC}
                                   component="th"
@@ -293,6 +297,7 @@ const UserManagement: React.FC = () => {
                                   key={row.username}
                                 >
                                   <IconButton
+                                    data-cy="editUser"
                                     aria-label="more"
                                     aria-controls="long-menu"
                                     aria-haspopup="true"
@@ -312,6 +317,7 @@ const UserManagement: React.FC = () => {
                                     onClose={handleClose}
                                   >
                                     <MenuItem
+                                      data-cy="editProfile"
                                       value={index}
                                       onClick={() => {
                                         setEditDiv(true);

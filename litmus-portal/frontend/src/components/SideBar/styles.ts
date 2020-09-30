@@ -15,6 +15,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'row',
     marginTop: theme.spacing(3.5),
     marginLeft: theme.spacing(4),
+    '& img': {
+      userDrag: 'none',
+    },
   },
   homeLink: {
     textDecoration: 'none',
@@ -45,7 +48,13 @@ const useStyles = makeStyles((theme: Theme) => ({
       },
     },
   },
-
+  active: {
+    backgroundColor: `${theme.palette.secondary.main} !important`,
+    color: theme.palette.getContrastText(theme.palette.primary.contrastText),
+    '& path': {
+      fill: theme.palette.common.white,
+    },
+  },
   listIcon: {
     paddingLeft: theme.spacing(2),
   },
