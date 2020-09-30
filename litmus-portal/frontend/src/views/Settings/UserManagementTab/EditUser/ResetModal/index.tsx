@@ -67,7 +67,7 @@ const ResetModal: React.FC<ResetModalProps> = ({
   return (
     <div>
       <div>
-        <div className={classes.buttonFilled}>
+        <div data-cy="edit" className={classes.buttonFilled}>
           <ButtonFilled
             isPrimary={false}
             isDisabled={!(new_password.length && !loading)}
@@ -95,7 +95,7 @@ const ResetModal: React.FC<ResetModalProps> = ({
                   Error: {error}
                 </Typography>
               </div>
-              <div className={classes.buttonModal}>
+              <div data-cy="done" className={classes.buttonModal}>
                 <ButtonFilled
                   isPrimary
                   isDisabled={false}
@@ -118,14 +118,15 @@ const ResetModal: React.FC<ResetModalProps> = ({
                   The user needs to login with the new credentials.
                 </Typography>
               </div>
-
-              <ButtonFilled
-                isPrimary
-                isDisabled={false}
-                handleClick={handleModal}
-              >
-                Done
-              </ButtonFilled>
+              <div data-cy="done">
+                <ButtonFilled
+                  isPrimary
+                  isDisabled={false}
+                  handleClick={handleModal}
+                >
+                  Done
+                </ButtonFilled>
+              </div>
             </div>
           )}
         </Unimodal>

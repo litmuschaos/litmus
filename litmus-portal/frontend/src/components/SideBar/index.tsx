@@ -51,6 +51,7 @@ const SideBar: React.FC = () => {
 
   return (
     <Drawer
+      data-cy="sidebarComponent"
       className={classes.drawer}
       variant="permanent"
       classes={{

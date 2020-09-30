@@ -104,7 +104,7 @@ const ReceivedInvitations: React.FC = () => {
   }, [data]);
 
   return (
-    <div>
+    <div data-cy="receivedInvitationModal">
       <TableContainer className={classes.table}>
         <Table>
           {rows.length > 0 ? (
@@ -145,23 +145,25 @@ const ReceivedInvitations: React.FC = () => {
                       >
                         <div>Ignore</div>
                       </ButtonOutline>
-                      <ButtonFilled
-                        isPrimary={false}
-                        handleClick={() => {
-                          setAcceptDecline(row.username);
-                          acceptInvite({
-                            variables: {
-                              member: {
-                                project_id: row.projectID,
-                                user_name: username,
+                      <div data-cy="receivedInvitationAccept">
+                        <ButtonFilled
+                          isPrimary={false}
+                          handleClick={() => {
+                            setAcceptDecline(row.username);
+                            acceptInvite({
+                              variables: {
+                                member: {
+                                  project_id: row.projectID,
+                                  user_name: username,
+                                },
                               },
-                            },
-                          });
-                        }}
-                        isDisabled={false}
-                      >
-                        <div>Accept</div>
-                      </ButtonFilled>
+                            });
+                          }}
+                          isDisabled={false}
+                        >
+                          Accept
+                        </ButtonFilled>
+                      </div>
                     </div>
                   </div>
                 </TableCell>
