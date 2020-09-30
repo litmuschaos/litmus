@@ -167,7 +167,7 @@ const WorkflowDetails: React.FC = () => {
                     <WorkflowNodeInfo
                       cluster_id={workflow.cluster_id}
                       workflow_run_id={workflow.workflow_run_id}
-                      namespace={
+                      pod_namespace={
                         (JSON.parse(workflow.execution_data) as ExecutionData)
                           .namespace
                       }
