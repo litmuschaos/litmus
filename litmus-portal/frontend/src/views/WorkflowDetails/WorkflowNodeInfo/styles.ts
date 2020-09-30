@@ -17,6 +17,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   heightMaintainer: {
     lineHeight: '2rem',
   },
+  footerButton: {
+    marginLeft: 'auto',
+    display: 'flex',
+    flexDirection: 'row',
+    padding: theme.spacing(3, 4, 4, 0),
+  },
 }));
 
 export default useStyles;

@@ -1,11 +1,10 @@
-import React from 'react';
-import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
+import Modal from '@material-ui/core/Modal';
+import React from 'react';
 import useStyles from './styles';
 /* DelUser, NewUserModal, ResetModal need to be shifted */
 
 interface UnimodalProps {
-  children?: React.ReactNode;
   isOpen: boolean;
   handleClose: () => void;
   hasCloseBtn: boolean;
@@ -21,7 +20,8 @@ const Unimodal: React.FC<UnimodalProps> = ({
   isDark,
   textAlign,
 }) => {
-  const styleProps = { textAlign, isDark };
+  const isDarkBg = isDark ?? false;
+  const styleProps = { textAlign, isDarkBg };
   const classes = useStyles(styleProps);
 
   return (
