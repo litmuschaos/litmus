@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(3.75),
     border: '1px solid ',
     borderColor: theme.palette.customColors.black(0.07),
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.homePageCardBackgroundColor,
     paddingBottom: theme.spacing(5),
   },
 

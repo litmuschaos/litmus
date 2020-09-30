@@ -42,9 +42,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'center',
     '&:hover': {
       backgroundColor: theme.palette.secondary.light,
-      color: theme.palette.getContrastText(theme.palette.primary.contrastText),
+      color: theme.palette.homePageCardBackgroundColor,
       '& path': {
-        fill: theme.palette.common.white,
+        fill: theme.palette.secondary.contrastText,
       },
     },
   },
