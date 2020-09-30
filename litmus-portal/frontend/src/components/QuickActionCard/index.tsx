@@ -21,7 +21,7 @@ const QuickActionCard = () => {
   const { t } = useTranslation();
 
   return (
-    <div className={classes.quickActionCard}>
+    <div data-cy="quickActionCardComponent" className={classes.quickActionCard}>
       <Card className={classes.quickActionCard} elevation={0}>
         <Typography className={classes.mainHeader}>
           {t('quickActionCard.quickActions')}
