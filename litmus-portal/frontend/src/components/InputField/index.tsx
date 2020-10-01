@@ -19,6 +19,7 @@ interface InputFieldProps {
   iconType?: string | undefined;
   styles?: Object;
   handleChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyPress?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -33,6 +34,7 @@ const InputField: React.FC<InputFieldProps> = ({
   required,
   iconType,
   handleChange,
+  onKeyPress,
 }) => {
   const LitmusTextFieldStylesExternal = useStyles();
 
@@ -63,6 +65,7 @@ const InputField: React.FC<InputFieldProps> = ({
         onChange={handleChange}
         variant="filled"
         style={styles}
+        onKeyPress={onKeyPress}
         InputProps={
           {
             classes,

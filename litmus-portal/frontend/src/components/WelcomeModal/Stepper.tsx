@@ -246,6 +246,21 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
     );
   };
 
+  // Submit on Enter Key-press
+  const keyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      if (activeStep === 0) {
+        handleNext();
+        return;
+      }
+      if (activeStep === 3) {
+        handleSubmit();
+        return;
+      }
+      handleNext();
+    }
+  };
+
   // Content of the steps based on active step count
   const getStepContent = (step: number) => {
     switch (step) {
@@ -271,6 +286,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                     handleChange={(event) => {
                       setData('project_name', event.target.value);
                     }}
+                    onKeyPress={keyPress}
                   />
                 </div>
                 {selectiveButtons()}
@@ -303,6 +319,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                     handleChange={(event) => {
                       setData('name', event.target.value);
                     }}
+                    onKeyPress={keyPress}
                   />
                 </div>
                 {selectiveButtons()}
@@ -334,6 +351,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                         confirmPassword: values.confirmPassword,
                       })
                     }
+                    onKeyPress={keyPress}
                   />
                 </div>
                 <div className={classes.passwordArea}>
@@ -364,6 +382,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                         confirmPassword: event.target.value,
                       })
                     }
+                    onKeyPress={keyPress}
                   />
                 </div>
                 {selectiveButtons()}
@@ -390,6 +409,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                     handleChange={(event) => {
                       setData('email', event.target.value);
                     }}
+                    onKeyPress={keyPress}
                   />
                 </div>
                 {selectiveButtons()}
