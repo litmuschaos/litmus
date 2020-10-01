@@ -8,6 +8,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
+import workflowsList from '../PredifinedWorkflows/data';
 import Unimodal from '../../containers/layouts/Unimodal';
 import { CREATE_WORKFLOW } from '../../graphql';
 import {
@@ -121,12 +122,15 @@ const CustomStepper = () => {
     (state: RootState) => state.workflowData
   );
   const {
+    id,
     yaml,
     weights,
     description,
     isCustomWorkflow,
+    cronSyntax,
     name,
     clusterid,
+    scheduleType,
   } = workflowData;
 
   const selectedProjectID = useSelector(
@@ -136,11 +140,81 @@ const CustomStepper = () => {
     (state: RootState) => state.selectTemplate.isDisable
   );
   const userRole = useSelector((state: RootState) => state.userData.userRole);
-
   const tabs = useActions(TabActions);
   const workflow = useActions(WorkflowActions);
   const [invalidYaml, setinValidYaml] = React.useState(false);
   const steps = getSteps();
+
+  function EditYaml() {
+    const oldParsedYaml = YAML.parse(yaml);
+    let NewLink: string = ' ';
+    let NewYaml: string = ' ';
+    if (
+      oldParsedYaml.kind === 'Workflow' &&
+      scheduleType.scheduleOnce !== 'now'
+    ) {
+      NewLink = workflowsList[parseInt(id, 10)].chaosWkfCRDLink_Recur as string;
+      fetch(NewLink)
+        .then((data) => {
+          data.text().then((yamlText) => {
+            const oldParsedYaml = YAML.parse(yaml);
+            const newParsedYaml = YAML.parse(yamlText);
+            delete newParsedYaml.spec.workflowSpec;
+            newParsedYaml.spec.schedule = cronSyntax;
+            delete newParsedYaml.metadata.generateName;
+            newParsedYaml.metadata.name = workflowData.name;
+            newParsedYaml.spec.workflowSpec = oldParsedYaml.spec;
+            NewYaml = YAML.stringify(newParsedYaml);
+            workflow.setWorkflowDetails({
+              link: NewLink,
+              yaml: NewYaml,
+            });
+          });
+        })
+        .catch((err) => {
+          console.error(`Unable to fetch the yaml text${err}`);
+        });
+    }
+    if (
+      oldParsedYaml.kind === 'CronWorkflow' &&
+      scheduleType.scheduleOnce === 'now'
+    ) {
+      NewLink = workflowsList[parseInt(id, 10)].chaosWkfCRDLink as string;
+      fetch(NewLink)
+        .then((data) => {
+          data.text().then((yamlText) => {
+            const oldParsedYaml = YAML.parse(yaml);
+            const newParsedYaml = YAML.parse(yamlText);
+            delete newParsedYaml.spec;
+            delete newParsedYaml.metadata.generateName;
+            newParsedYaml.metadata.name = workflowData.name;
+            newParsedYaml.spec = oldParsedYaml.spec.workflowSpec;
+            NewYaml = YAML.stringify(newParsedYaml);
+            workflow.setWorkflowDetails({
+              link: NewLink,
+              yaml: NewYaml,
+            });
+          });
+        })
+        .catch((err) => {
+          console.error(`Unable to fetch the yaml text${err}`);
+        });
+    }
+    if (
+      oldParsedYaml.kind === 'CronWorkflow' &&
+      scheduleType.scheduleOnce !== 'now'
+    ) {
+      const newParsedYaml = YAML.parse(yaml);
+      newParsedYaml.spec.schedule = cronSyntax;
+      delete newParsedYaml.metadata.generateName;
+      newParsedYaml.metadata.name = workflowData.name;
+      NewYaml = YAML.stringify(newParsedYaml);
+      workflow.setWorkflowDetails({
+        link: NewLink,
+        yaml: NewYaml,
+      });
+    }
+  }
 
   const handleNext = () => {
     if (activeStep === 2) {
@@ -166,6 +240,9 @@ const CustomStepper = () => {
         setinValidYaml(false);
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       }
+    } else if (activeStep === 4) {
+      EditYaml();
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
     } else {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }

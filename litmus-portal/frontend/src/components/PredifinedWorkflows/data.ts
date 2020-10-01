@@ -6,6 +6,8 @@ export default [
       'https://hub.litmuschaos.io/api/icon/1.7.0/generic/node-cpu-hog.png',
     chaosWkfCRDLink:
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/node-cpu-hog/workflow.yaml',
+    chaosWkfCRDLink_Recur:
+      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/cron-workflows/node-cpu-hog/workflow.yaml',
 
     gitLink:
       'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/node-cpu-hog/workflow.yaml',
@@ -30,6 +32,8 @@ export default [
       'https://hub.litmuschaos.io/api/icon/1.7.0/generic/node-memory-hog.png',
     chaosWkfCRDLink:
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/node-memory-hog/workflow.yaml',
+    chaosWkfCRDLink_Recur:
+      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/cron-workflows/node-memory-hog/workflow.yaml',
 
     gitLink:
       'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/node-memory-hog/workflow.yaml',
