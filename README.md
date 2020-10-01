@@ -1,4 +1,4 @@
-<img alt="LitmusChaos" src="https://landscape.cncf.io/logos/litmus.svg" width="200" align="left">
+<img alt="LitmusChaos" src="https://landscape.cncf.io/logos/litmus.svg" width="200" align="left"> #it is used for image of litmuschaos
 
 # Litmus
 ### Cloud-Native Chaos Engineering
