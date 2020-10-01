@@ -12,6 +12,8 @@ metadata:
 data:
   K8s-mode: cluster
   SubscriberNamespace: litmus
+  DataBaseServer: "mongodb://mongo-service:27017"
+  JWTSecret: "litmus-portal@123"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -157,9 +159,15 @@ spec:
               memory: 400Mi
           env:
             - name: DB_SERVER
-              value: "mongo-service:27017"
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-operations-config
+                  key: DataBaseServer
             - name: JWT_SECRET
-              value: "litmus-portal@123"
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-operations-config
+                  key: JWTSecret
             - name: EXTERNAL_ADDRESS
               value: ""
             - name: SERVICE_ADDRESS
@@ -195,6 +203,16 @@ spec:
                 configMapKeyRef:
                   name: litmus-portal-operations-config
                   key: SubscriberNamespace
+            - name: ARGO_SERVER_IMAGE
+              value: "argoproj/argocli:v2.9.3"
+            - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
+              value: "argoproj/workflow-controller:v2.9.3"
+            - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
+              value: "argoproj/argoexec:v2.9.3"
+            - name: LITMUS_CHAOS_OPERATOR_IMAGE
+              value: "litmuschaos/chaos-operator:1.8.0"
+            - name: LITMUS_CHAOS_RUNNER_IMAGE
+              value: "litmuschaos/chaos-runner:1.8.0"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
@@ -206,9 +224,15 @@ spec:
               memory: 250Mi
           env:
             - name: DB_SERVER
-              value: "mongodb://mongo-service:27017"
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-operations-config
+                  key: DataBaseServer
             - name: JWT_SECRET
-              value: "litmus-portal@123"
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-operations-config
+                  key: JWTSecret
             - name: ADMIN_USERNAME
               value: "admin"
             - name: ADMIN_PASSWORD

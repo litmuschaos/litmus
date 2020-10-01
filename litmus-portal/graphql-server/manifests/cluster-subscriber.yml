@@ -372,7 +372,7 @@ spec:
       containers:
         - args:
             - server
-          image: argoproj/argocli:v2.9.3
+          image: #{ARGO-SERVER}
           name: argo-server
           resources:
             limits:
@@ -411,10 +411,10 @@ spec:
             - --configmap
             - workflow-controller-configmap
             - --executor-image
-            - argoproj/argoexec:v2.9.3
+            - #{ARGO-WORKFLOW-EXECUTOR}
           command:
             - workflow-controller
-          image: argoproj/workflow-controller:v2.9.3
+          image: #{ARGO-WORKFLOW-CONTROLLER}
           name: workflow-controller
           resources:
             limits:
@@ -506,7 +506,7 @@ spec:
       serviceAccountName: litmus-cluster-scope
       containers:
         - name: chaos-operator
-          image: litmuschaos/chaos-operator:1.8.0
+          image: #{LITMUS-CHAOS-OPERATOR}
           resources:
             limits:
               cpu: 250m
@@ -516,7 +516,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:1.8.0"
+              value: #{LITMUS-CHAOS-RUNNER}
             - name: WATCH_NAMESPACE
               value: ""
             - name: POD_NAME
@@ -1079,6 +1079,12 @@ metadata:
   labels:
     name: subscriber-cluster
 rules:
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - get
   - apiGroups:
       - argoproj.io
     resources:

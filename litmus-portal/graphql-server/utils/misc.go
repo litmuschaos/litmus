@@ -26,7 +26,7 @@ func RandomString(n int) string {
 }
 
 //ManifestParser parses manifests yaml and generates dynamic manifest with specified keys
-func ManifestParser(id, key, server, subscriberImage, subscriberNS, workflowSC, workflowNS, template string) ([]byte, error) {
+func ManifestParser(id, key, server, subscriberImage, subscriberNS, workflowSC, workflowNS, argoSER, argoWFCTRL, litmusCOP, argoWFEXEC, litmusCRUN, template string) ([]byte, error) {
 	file, err := os.Open(template)
 	if err != nil {
 		return []byte{}, err
@@ -51,6 +51,16 @@ func ManifestParser(id, key, server, subscriberImage, subscriberNS, workflowSC, 
 			line = strings.Replace(line, "#{AGENT-SCOPE}", workflowSC, -1)
 		} else if strings.Contains(line, "#{AGENT-NAMESPACE}") {
 			line = strings.Replace(line, "#{AGENT-NAMESPACE}", workflowNS, -1)
+		} else if strings.Contains(line, "#{ARGO-SERVER}") {
+			line = strings.Replace(line, "#{ARGO-SERVER}", argoSER, -1)
+		} else if strings.Contains(line, "#{ARGO-WORKFLOW-CONTROLLER}") {
+			line = strings.Replace(line, "#{ARGO-WORKFLOW-CONTROLLER}", argoWFCTRL, -1)
+		} else if strings.Contains(line, "#{LITMUS-CHAOS-OPERATOR}") {
+			line = strings.Replace(line, "#{LITMUS-CHAOS-OPERATOR}", litmusCOP, -1)
+		} else if strings.Contains(line, "#{ARGO-WORKFLOW-EXECUTOR}") {
+			line = strings.Replace(line, "#{ARGO-WORKFLOW-EXECUTOR}", argoWFEXEC, -1)
+		} else if strings.Contains(line, "#{LITMUS-CHAOS-RUNNER}") {
+			line = strings.Replace(line, "#{LITMUS-CHAOS-RUNNER}", litmusCRUN, -1)
 		}
 		lines = append(lines, line)
 	}

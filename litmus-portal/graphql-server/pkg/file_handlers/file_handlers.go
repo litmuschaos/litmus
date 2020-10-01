@@ -20,7 +20,11 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 	subscriberSC := os.Getenv("SUBSCRIBER_SCOPE")
 	workflowSC := os.Getenv("AGENT_SCOPE")
 	workflowNS := os.Getenv("AGENT_NAMESPACE")
-
+	argoSER := os.Getenv("ARGO_SERVER_IMAGE")
+	argoWFCTRL := os.Getenv("ARGO_WORKFLOW_CONTROLLER_IMAGE")
+	litmusCOP := os.Getenv("LITMUS_CHAOS_OPERATOR_IMAGE")
+	argoWFEXEC := os.Getenv("ARGO_WORKFLOW_EXECUTOR_IMAGE")
+	litmusCRUN := os.Getenv("LITMUS_CHAOS_RUNNER_IMAGE")
 	vars := mux.Vars(r)
 	token := vars["key"]
 
@@ -42,9 +46,9 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 		var respData []byte
 		
 		if subscriberSC == "cluster" {
-			respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, serviceAddr+"/query", subscriberImage, subscriberNS, workflowSC, workflowNS, "manifests/cluster-subscriber.yml")
+			respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, serviceAddr+"/query", subscriberImage, subscriberNS, workflowSC, workflowNS, argoSER, argoWFCTRL, litmusCOP, argoWFEXEC, litmusCRUN, "manifests/cluster-subscriber.yml")
 		} else if subscriberSC == "namespace" {
-			respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, serviceAddr+"/query", subscriberImage, subscriberNS, workflowSC, workflowNS, "manifests/namespace-subscriber.yml")
+			respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, serviceAddr+"/query", subscriberImage, subscriberNS, workflowSC, workflowNS, argoSER, argoWFCTRL, litmusCOP, argoWFEXEC, litmusCRUN, "manifests/namespace-subscriber.yml")
 		} else {
 			log.Print("ERROR- PORTAL SCOPE NOT SELECTED!")
 		}
