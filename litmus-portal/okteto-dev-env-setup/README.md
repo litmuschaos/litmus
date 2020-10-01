@@ -7,7 +7,13 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
 
 - Fork the repository [litmuschaos/litmus](https://github.com/litmuschaos/litmus)
 
-- Clone the repository locally.
+- Clone your forked version of [litmuschaos/litmus](https://github.com/litmuschaos/litmus) locally.
+
+- Branch out from `master` to a `dev` branch on your fork.
+
+  ```
+  git checkout -b dev
+  ```
 
 - Enter `okteto-dev-env-setup` directory.
 
@@ -36,13 +42,13 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
   sed s/%GITHUB_USERNAME%/$OKTETO_NAMESPACE/g README.md > README.md
   ```
 
-- STEP-4: Go to root folder of this repository then add, commit and push these changes to your GitHub.
+- STEP-4: Go to root folder of this cloned repository then add, commit and push these changes to your GitHub.
 
   ```
   cd ../..
   git add .
   git commit -s -m "Obtained development manifest and updated README"
-  git push
+  git push --set-upstream origin dev
   ```
 
 - STEP-5: Install Okteto CLI
@@ -88,4 +94,15 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
   okteto push --name frontend -t $OKTETO_NAMESPACE/itmusportal-frontend:ci
   ```
 
-- STEP-10: Raise a pull request to [litmuschaos/litmus](https://github.com/litmuschaos/litmus) after deleting the generated development manifest file `litmus-portal-dev-manifest.yml` in `litmus-portal/okteto-dev-env-setup` folder of `litmus` repository.
+- STEP-10: Enter the `okteto-dev-env-setup` directory of the cloned repository, delete the  `litmus-portal-dev-manifest.yml` file and then enter the root directory of the cloned repository i.e. `litmus`  and push the changes to your forked repository.
+
+  ```
+  cd ../okteto-dev-env-setup
+  rm litmus-portal-dev-manifest.yml
+  cd ../..
+  git add .
+  git commit -s -m "Updated frontend component and dev-manifest deleted."
+  git push --set-upstream origin dev
+  ```
+
+- STEP-11: Raise a pull request from the `dev` branch in your fork to [litmuschaos/litmus](https://github.com/litmuschaos/litmus) after deleting the generated development manifest file `litmus-portal-dev-manifest.yml` in `litmus-portal/okteto-dev-env-setup` folder of `litmus` repository and pushing the changes.
