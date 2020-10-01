@@ -96,3 +96,4 @@ Community Resources:
 <a href="https://landscape.cncf.io/selected=litmus">
   CNCF Landscape <img src="https://landscape.cncf.io/images/left-logo.svg" alt="Litmus on CNCF Landscape" height="15">
 </a>
+## Be the game changer in this pandemic situation.
