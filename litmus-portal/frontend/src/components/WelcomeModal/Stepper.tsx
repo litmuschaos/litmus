@@ -81,8 +81,8 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
       },
       body: JSON.stringify({
         username: userData.username,
-        email: userData.email,
-        name: userData.name,
+        email: info.email,
+        name: info.name,
         password: values.password,
       }),
     })
