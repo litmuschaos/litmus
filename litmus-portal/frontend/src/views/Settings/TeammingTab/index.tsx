@@ -119,7 +119,9 @@ const TeammingTab: React.FC = () => {
   const filteredData =
     rows &&
     rows
-      .filter((dataRow) => dataRow?.name.toLowerCase().includes(filters.search))
+      .filter((dataRow) =>
+        dataRow?.name.toLowerCase().includes(filters.search.toLowerCase())
+      )
       .filter((dataRow) => {
         if (filters.role === 'all') return true;
         if (filters.role === 'Editor') return dataRow.role === 'Editor';
