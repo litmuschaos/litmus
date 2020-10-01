@@ -120,6 +120,13 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
     setInfo(data);
   };
 
+  const checkForEnterKey = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const ENTER_KEY = 13;
+    if (event.which === ENTER_KEY) {
+      handleNext();
+    }
+  };
+
   // Custom Button Validation
 
   // If first character is empty then all the successive letters would
@@ -268,8 +275,11 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                       info.project_name
                     )}
                     type="text"
-                    handleChange={(event) => {
+                    handleChange={(
+                      event: React.ChangeEvent<HTMLInputElement>,
+                    ) => {
                       setData('project_name', event.target.value);
+                      checkForEnterKey(event);
                     }}
                   />
                 </div>
@@ -300,8 +310,11 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                         : ''
                     }
                     validationError={validateStartEmptySpacing(info.name)}
-                    handleChange={(event) => {
+                    handleChange={(
+                      event: React.ChangeEvent<HTMLInputElement>,
+                    ) => {
                       setData('name', event.target.value);
+                      checkForEnterKey(event);
                     }}
                   />
                 </div>
@@ -309,7 +322,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
               </div>
             }
             setName={info.name}
-            setText={t('welcomeModel.case-1.info')}
+            setText={t('welcomeModal.case-1.info')}
           />
         );
       case 2:
@@ -322,7 +335,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
               >
                 <div className={classes.passwordArea}>
                   <InputField
-                    label={t('welcomeModel.case-2.label')}
+                    label={t('welcomeModal.case-2.label')}
                     type="password"
                     required
                     validationError={false}
@@ -338,7 +351,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                 </div>
                 <div className={classes.passwordArea}>
                   <InputField
-                    label={t('welcomeModel.case-2.cnfLabel')}
+                    label={t('welcomeModal.case-2.cnfLabel')}
                     type="password"
                     required
                     value={values.confirmPassword}
@@ -358,12 +371,15 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                         values.confirmPassword
                       )
                     }
-                    handleChange={(event) =>
+                    handleChange={(
+                      event: React.ChangeEvent<HTMLInputElement>,
+                    ) => {
                       setValues({
                         password: values.password,
                         confirmPassword: event.target.value,
-                      })
-                    }
+                      });
+                      checkForEnterKey(event);
+                    }}
                   />
                 </div>
                 {selectiveButtons()}
@@ -387,8 +403,11 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                       validateEmail(info.email) ? 'Should be a valid email' : ''
                     }
                     validationError={validateEmail(info.email)}
-                    handleChange={(event) => {
+                    handleChange={(
+                      event: React.ChangeEvent<HTMLInputElement>,
+                    ) => {
                       setData('email', event.target.value);
+                      checkForEnterKey(event);
                     }}
                   />
                 </div>
@@ -412,13 +431,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   */
   return (
     <div>
-      <div>
-        {activeStep === 1 ? (
-          <div>{getStepContent(activeStep)}</div>
-        ) : (
-          <div>{getStepContent(activeStep)}</div>
-        )}
-      </div>
+      <div>{getStepContent(activeStep)}</div>
       <div className={classes.stepper}>
         <MobileStepper
           variant="dots"
