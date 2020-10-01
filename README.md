@@ -59,11 +59,11 @@ as mentioned in the [ROADMAP](./ROADMAP.md). For details or limitations around s
 - Network chaos for container runtimes other than Docker, such as containerd, CRIO is not supported yet
 - Litmus chaos operator and the chaos experiments run as kubernetes resources in the cluster. In case of airgapped environments, the chaos custom resources
   and images need to be hosted on premise.
-- When attempting to execute platform specific chaos experiments (like those on AWS, GCP cloud) the access details are passed via kubernetes secrets. Support
+- When attempting to execute the platform specific chaos experiments (like those on AWS, GCP cloud) the access details are passed through kubernetes secrets. Support
   for other modes of secret management with Litmus is yet to be tested/implemented.
 - Some chaos experiments make use of the docker api from within the experiment pods, and thereby require the docker socket to be mounted. User discretion is
   advised when allowing developers/devops admins/SREs access for running these experiments.
-- In (rare) cases where chaos experiments make use of privileged containers, the recommended security policies will be documented.
+- In cases (rare) where chaos experiments make use of privileged containers, the recommended security policies will be documented.
 
 ## License
 
