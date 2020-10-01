@@ -271,6 +271,12 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                     handleChange={(event) => {
                       setData('project_name', event.target.value);
                     }}
+                    handleListenEnter={(event) => {
+                      if (event.key === 'Enter' && !isError.current) {
+                        handleNext();
+                        event.preventDefault();
+                      }
+                    }}
                   />
                 </div>
                 {selectiveButtons()}
@@ -303,6 +309,12 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                     handleChange={(event) => {
                       setData('name', event.target.value);
                     }}
+                    handleListenEnter={(event) => {
+                      if (event.key === 'Enter' && !isError.current) {
+                        handleNext();
+                        event.preventDefault();
+                      }
+                    }}
                   />
                 </div>
                 {selectiveButtons()}
@@ -334,6 +346,12 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                         confirmPassword: values.confirmPassword,
                       })
                     }
+                    handleListenEnter={(event) => {
+                      if (event.key === 'Enter' && !isError.current) {
+                        handleNext();
+                        event.preventDefault();
+                      }
+                    }}
                   />
                 </div>
                 <div className={classes.passwordArea}>
@@ -364,6 +382,12 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                         confirmPassword: event.target.value,
                       })
                     }
+                    handleListenEnter={(event) => {
+                      if (event.key === 'Enter' && !isError.current) {
+                        handleNext();
+                        event.preventDefault();
+                      }
+                    }}
                   />
                 </div>
                 {selectiveButtons()}
@@ -389,6 +413,12 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                     validationError={validateEmail(info.email)}
                     handleChange={(event) => {
                       setData('email', event.target.value);
+                    }}
+                    handleListenEnter={(event) => {
+                      if (event.key === 'Enter' && !isError.current) {
+                        handleSubmit();
+                        event.preventDefault();
+                      }
                     }}
                   />
                 </div>

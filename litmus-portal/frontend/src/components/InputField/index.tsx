@@ -19,6 +19,7 @@ interface InputFieldProps {
   iconType?: string | undefined;
   styles?: Object;
   handleChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleListenEnter?: (event: React.KeyboardEvent) => void;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -33,6 +34,7 @@ const InputField: React.FC<InputFieldProps> = ({
   required,
   iconType,
   handleChange,
+  handleListenEnter,
 }) => {
   const LitmusTextFieldStylesExternal = useStyles();
 
@@ -61,6 +63,7 @@ const InputField: React.FC<InputFieldProps> = ({
         type={showPassword ? 'text' : 'password'}
         required={required}
         onChange={handleChange}
+        onKeyPress={handleListenEnter}
         variant="filled"
         style={styles}
         InputProps={
@@ -94,6 +97,7 @@ const InputField: React.FC<InputFieldProps> = ({
         type={showPassword ? 'text' : 'password'}
         required={required}
         onChange={handleChange}
+        onKeyPress={handleListenEnter}
         style={styles}
         variant="filled"
         InputProps={
@@ -331,6 +335,7 @@ const InputField: React.FC<InputFieldProps> = ({
       style={styles}
       required={required}
       onChange={handleChange}
+      onKeyPress={handleListenEnter}
       variant="filled"
       InputProps={
         {
