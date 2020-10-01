@@ -25,7 +25,9 @@ Litmus takes a cloud-native approach to create, manage and monitor chaos. Chaos 
 - **ChaosExperiment**: A resource to group the configuration parameters of a chaos experiment. ChaosExperiment CRs are created by the operator when experiments are invoked by ChaosEngine.
 - **ChaosResult**: A resource to hold the results of a chaos-experiment. The Chaos-exporter reads the results and exports the metrics into a configured Prometheus server.
 
-Chaos experiments are hosted on <a href="https://hub.litmuschaos.io" target="_blank">hub.litmuschaos.io</a>. It is a central hub where the application developers or vendors share their chaos experiments so that their users can use them to increase the resilience of the applications in production.
+Chaos experiments are hosted on <a href="https://
+
+" target="_blank">hub.litmus chaos.io</a>. It is a central hub where the application developers or vendors share their chaos experiments so that their users can use them to increase the resilience of the applications in production.
 
 ![Litmus workflow](/images/litmus-arch_1.png)
 
@@ -43,7 +45,7 @@ Check out the <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" ta
 
 ## Contributing to Chaos Hub
 
-Check out the <a href="https://github.com/litmuschaos/community-charts/blob/master/CONTRIBUTING.md" target="_blank">Contributing Guildelines for the Chaos Hub</a>
+Check out the <a href="https://github.com/litmuschaos/community-charts/blob/master/CONTRIBUTING.md" target="_blank">Contributing Guidelines for the Chaos Hub</a>
 
 ## Adopters
 
@@ -57,7 +59,7 @@ Some of the considerations that need to be made with Litmus (as a chaos framewor
 as mentioned in the [ROADMAP](./ROADMAP.md). For details or limitations around specific experiments, refer to the respective [experiments docs](https://docs.litmuschaos.io/docs/pod-delete/).
 
 - Network chaos for container runtimes other than Docker, such as containerd, CRIO is not supported yet
-- Litmus chaos operator and the chaos experiments run as kubernetes resources in the cluster. In case of airgapped environments, the chaos custom resources
+- Litmus chaos operator and the chaos experiments run as kubernetes resources in the cluster. In case of air gapped environments, the chaos custom resources
   and images need to be hosted on premise.
 - When attempting to execute platform specific chaos experiments (like those on AWS, GCP cloud) the access details are passed via kubernetes secrets. Support
   for other modes of secret management with Litmus is yet to be tested/implemented.
