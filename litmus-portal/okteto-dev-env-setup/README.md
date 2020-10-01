@@ -1,4 +1,4 @@
-# Litmus Portal Dvelopment Environment Setup for Okteto cloud
+# Litmus Portal Development Environment Setup for Okteto cloud
 
 This directory contains setup guide to start developing Litmus Portal on Okteto cloud. 
 
