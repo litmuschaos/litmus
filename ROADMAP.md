@@ -42,7 +42,7 @@ This document captures only the high level roadmap items. For the detailed backl
 ### Backlog
 
 -   Pre-defined chaos workflows to inject chaos during application benchmark runs 
--   Support for cloudevents compliant chaos events
+-   Support for cloud events compliant chaos events
 -   Increased chaos metrics via prometheus chaos exporter
 -   Migration to native Kubernetes ansible modules for ansible-based experiments
 -   Improved application Chaos Suites (OpenEBS, Kafka, Cassandra) 
