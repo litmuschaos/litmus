@@ -7,7 +7,7 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
 - STEP-1: Export your GitHub username to an environment variable.
 
   ```
-  OKTETO_NAMESPACE=“<GitHub username>” 
+  OKTETO_NAMESPACE="<GitHub username>"
   ```
 
 - STEP-2: Enter `okteto-dev-env-setup` folder and obtain the Litmus Portal development manifest using the given template.
