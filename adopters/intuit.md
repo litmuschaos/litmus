@@ -7,7 +7,7 @@
 
 When we started building our next-gen platform on kubernetes [Keiko](https://github.com/keikoproj), we realized that its reliability is most important. We started using the litmus base solution. 
 
-We have our homegrown solution build on kubernetes with a container-native approach, using [chaostoolki](https://chaostoolkit.org/). We need a solution that can reuse the work and help in building kubernetes native way.
+We have our homegrown solution build on kubernetes with a container-native approach, using [chaostoolkit](https://chaostoolkit.org/). We need a solution that can reuse the work and help in building kubernetes native way.
 
 ### **How do we use litmus**
 
