@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world
+  labels:
+    app: hello-world
+  annotations:
+    litmuschaos.io/chaos: "true"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hello-world
+  template:
+    metadata:
+      labels:
+        app: hello-world
+    spec:
+      containers:
+      - image: okteto/hello-chaos
+        name: hello-world
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          periodSeconds: 1
+        resources:
+          limits:
+            cpu: 100m
+            memory: 64Mi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-world
+  annotations:
+    dev.okteto.com/auto-ingress: "true"
+spec:
+  type: ClusterIP  
+  ports:
+  - name: "hello-world"
+    port: 8080
+  selector:
+    app: hello-world
