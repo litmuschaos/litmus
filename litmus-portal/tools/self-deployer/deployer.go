@@ -40,9 +40,10 @@ func main() {
 	log.Print(server + "/file/" + token + ".yaml")
 	err := Deploy(server + "/file/" + token + ".yaml")
 	if err != nil {
-		log.Print(err.Error())
-	}
+		log.Panic(err.Error())
+	} else {
 	log.Print("SUBSCRIBER DEPLOYED")
+	}
 	log.Print("PERFORMING CLEANUP")
 	err = CleanUp(os.Getenv("NAMESPACE"), "self-deployer")
 	if err != nil {

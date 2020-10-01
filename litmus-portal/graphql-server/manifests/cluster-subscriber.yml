@@ -440,8 +440,35 @@ metadata:
     name: litmus-cluster-scope
 rules:
   - apiGroups: ["", "apps", "batch", "litmuschaos.io", "apps.openshift.io"]
-    resources: ["pods", "jobs", "deployments", "replicationcontrollers", "daemonsets", "replicasets", "statefulsets", "deploymentconfigs", "events", "configmaps", "services", "secrets", "chaosengines", "chaosexperiments", "chaosresults"]
-    verbs: ["get", "create", "update", "patch", "delete", "list", "watch", "deletecollection"]
+    resources:
+      [
+        "pods",
+        "jobs",
+        "deployments",
+        "replicationcontrollers",
+        "daemonsets",
+        "replicasets",
+        "statefulsets",
+        "deploymentconfigs",
+        "events",
+        "configmaps",
+        "services",
+        "secrets",
+        "chaosengines",
+        "chaosexperiments",
+        "chaosresults",
+      ]
+    verbs:
+      [
+        "get",
+        "create",
+        "update",
+        "patch",
+        "delete",
+        "list",
+        "watch",
+        "deletecollection",
+      ]
   - apiGroups: ["admissionregistration.k8s.io"]
     resources: ["validatingwebhookconfigurations"]
     verbs: ["get", "create", "list", "delete", "update"]
@@ -515,12 +542,14 @@ spec:
     openAPIV3Schema:
       properties:
         apiVersion:
-          description: "APIVersion defines the versioned schema of this representation
+          description:
+            "APIVersion defines the versioned schema of this representation
             of an object. Servers should convert recognized schemas to the latest
             internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources"
           type: string
         kind:
-          description: "Kind is a string value representing the REST resource this
+          description:
+            "Kind is a string value representing the REST resource this
             object represents. Servers may infer this from the endpoint the client
             submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds"
           type: string
@@ -763,12 +792,14 @@ spec:
     openAPIV3Schema:
       properties:
         apiVersion:
-          description: "APIVersion defines the versioned schema of this representation
+          description:
+            "APIVersion defines the versioned schema of this representation
             of an object. Servers should convert recognized schemas to the latest
             internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources"
           type: string
         kind:
-          description: "Kind is a string value representing the REST resource this
+          description:
+            "Kind is a string value representing the REST resource this
             object represents. Servers may infer this from the endpoint the client
             submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds"
           type: string
@@ -911,12 +942,14 @@ spec:
     openAPIV3Schema:
       properties:
         apiVersion:
-          description: "APIVersion defines the versioned schema of this representation
+          description:
+            "APIVersion defines the versioned schema of this representation
             of an object. Servers should convert recognized schemas to the latest
             internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources"
           type: string
         kind:
-          description: "Kind is a string value representing the REST resource this
+          description:
+            "Kind is a string value representing the REST resource this
             object represents. Servers may infer this from the endpoint the client
             submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds"
           type: string
@@ -948,8 +981,40 @@ metadata:
   labels:
     name: litmus-admin
 rules:
-  - apiGroups: ["", "apps", "batch", "extensions", "litmuschaos.io", "openebs.io", "storage.k8s.io"]
-    resources: ["chaosengines", "chaosexperiments", "chaosresults", "cstorpools", "cstorvolumereplicas", "configmaps", "secrets", "pods", "pods/exec", "pods/log", "pods/eviction", "jobs", "replicasets", "deployments", "daemonsets", "statefulsets", "persistentvolumeclaims", "persistentvolumes", "storageclasses", "services", "events"]
+  - apiGroups:
+      [
+        "",
+        "apps",
+        "batch",
+        "extensions",
+        "litmuschaos.io",
+        "openebs.io",
+        "storage.k8s.io",
+      ]
+    resources:
+      [
+        "chaosengines",
+        "chaosexperiments",
+        "chaosresults",
+        "cstorpools",
+        "cstorvolumereplicas",
+        "configmaps",
+        "secrets",
+        "pods",
+        "pods/exec",
+        "pods/log",
+        "pods/eviction",
+        "jobs",
+        "replicasets",
+        "deployments",
+        "daemonsets",
+        "statefulsets",
+        "persistentvolumeclaims",
+        "persistentvolumes",
+        "storageclasses",
+        "services",
+        "events",
+      ]
     verbs: ["create", "delete", "get", "list", "patch", "update"]
   - apiGroups: [""]
     resources: ["nodes"]

@@ -56,7 +56,7 @@ func CreateDeployment(namespace, token string) (*appsv1.Deployment, error) {
 							Image: deployerImage,
 							Resources: apiv1.ResourceRequirements{
 								Limits: apiv1.ResourceList{
-									"cpu":    resource.MustParse("75m"),
+									"cpu":    resource.MustParse("100m"),
 									"memory": resource.MustParse("128Mi"),
 								},
 							},
