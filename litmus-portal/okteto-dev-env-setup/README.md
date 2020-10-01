@@ -74,4 +74,4 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
   okteto push --name frontend -t $OKTETO_NAMESPACE/itmusportal-frontend:ci
   ```
 
-- STEP-10: Delete the generated development manifest file before raising your pull request.
+- STEP-10: Raise a pull request to [litmuschaos/litmus](https://github.com/litmuschaos/litmus) after deleting the generated development manifest file `litmus-portal-dev-manifest.yml` in `litmus-portal/okteto-dev-env-setup` folder of `litmus` repository.
