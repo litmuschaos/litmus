@@ -247,7 +247,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   };
 
   // Submit on Enter Key-press
-  const keyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const keyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       if (activeStep === 0) {
         handleNext();
