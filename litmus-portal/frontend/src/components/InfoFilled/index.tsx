@@ -1,10 +1,10 @@
-import React from 'react';
-import Typography from '@material-ui/core/Typography';
-import { useSelector } from 'react-redux';
 import { useTheme } from '@material-ui/core/styles';
-import useStyles from './styles';
+import Typography from '@material-ui/core/Typography';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/reducers';
 import formatCount from '../../utils/formatCount';
+import useStyles from './styles';
 
 interface CardValueData {
   color: string;
@@ -51,6 +51,7 @@ const InfoFilledWrap: React.FC = () => {
   const cardArray = cardData.map((individualCard) => {
     return (
       <div
+        key={individualCard.value}
         style={{ backgroundColor: `${individualCard.color}` }}
         className={classes.infoFilledDiv}
       >

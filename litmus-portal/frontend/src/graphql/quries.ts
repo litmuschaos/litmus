@@ -11,6 +11,7 @@ export const WORKFLOW_DETAILS = gql`
       cluster_name
       last_updated
       cluster_type
+      cluster_id
     }
   }
 `;

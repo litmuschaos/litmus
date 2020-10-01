@@ -5,7 +5,6 @@ import Paper from '@material-ui/core/Paper'; // Temporary -> Should be replaced 
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import InfoFilledWrap from '../../components/InfoFilled/index';
 import QuickActionCard from '../../components/QuickActionCard';
 import Scaffold from '../../containers/layouts/Scaffold/index';
@@ -59,7 +58,9 @@ const Community: React.FC = () => {
               <div>
                 <Card className={classes.card}>
                   <CardContent className={classes.cardContent}>
-                    <img src="./icons/litmusPurple.svg" alt="litmus logo" />
+                    <div className={classes.imgDiv}>
+                      <img src="./icons/litmusPurple.svg" alt="litmus logo" />
+                    </div>
                     <Typography
                       variant="body1"
                       component="p"
@@ -75,19 +76,16 @@ const Community: React.FC = () => {
                       />
                     </Typography>
                   </CardContent>
-                  <Link
-                    to="https://blog.mayadata.io/"
+                  <a
+                    href="https://blog.mayadata.io/"
                     target="_blank"
+                    rel="noreferrer"
                     className={classes.devToLink}
-                    onClick={(event) => {
-                      event.preventDefault();
-                      window.open('https://blog.mayadata.io/');
-                    }}
                   >
                     <Button variant="contained" className={classes.followBtn}>
                       Follow
                     </Button>
-                  </Link>
+                  </a>
                 </Card>
               </div>
             </div>

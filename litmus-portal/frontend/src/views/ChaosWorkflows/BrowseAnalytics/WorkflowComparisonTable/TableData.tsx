@@ -1,10 +1,11 @@
-import React from 'react';
-import { TableCell, Typography, IconButton, Checkbox } from '@material-ui/core';
+import { Checkbox, IconButton, TableCell, Typography } from '@material-ui/core';
 import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import moment from 'moment';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { ScheduleWorkflow } from '../../../../models/graphql/scheduleData';
 import { history } from '../../../../redux/configureStore';
 import useStyles from './styles';
-import { ScheduleWorkflow } from '../../../../models/graphql/scheduleData';
 
 interface TableDataProps {
   data: ScheduleWorkflow;
@@ -20,6 +21,7 @@ const TableData: React.FC<TableDataProps> = ({
   comparisonState,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   // Function to convert UNIX time in format of DD MMM YYY
   const formatDate = (date: string) => {
@@ -59,7 +61,7 @@ const TableData: React.FC<TableDataProps> = ({
         />
         <Typography className={classes.tableObjectRegularity}>
           {/* data.regularity */}
-          Once
+          {t('chaosWorkflows.browseAnalytics.workFlowComparisonTable.once')}
         </Typography>
       </TableCell>
       <TableCell>
@@ -69,7 +71,11 @@ const TableData: React.FC<TableDataProps> = ({
       </TableCell>
       <TableCell>
         <Typography className={classes.tableObjects}>
-          <strong>See analytics</strong>
+          <strong>
+            {t(
+              'chaosWorkflows.browseAnalytics.workFlowComparisonTable.seeAnalytics'
+            )}
+          </strong>
           <IconButton
             edge="end"
             aria-label="analytics for workflow id"

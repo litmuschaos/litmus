@@ -91,10 +91,10 @@ const TopNavButtons: React.FC<Props> = ({ isToggled, setIsToggled }) => {
 
   return (
     <div className={classes.button}>
-      <div className={classes.buttonLeft}>
+      <div>
         <BackButton isDisabled={false} />
       </div>
-      <div className={classes.buttonRight}>
+      <div>
         {AnalyticsButton()}
         {ExportButton()}
         {InfoButton()}
