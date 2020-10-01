@@ -24,16 +24,24 @@ Or
 
 > Master (Latest) Cluster scope.
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/k8s-manifest.yml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/clusterwide-k8s-manifest.yml
 ```
 
 Or
 
 > Master (Latest) Namespaced scope.
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/k8s-manifest.yml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/namespaced-K8s-manifest.yml
 ```
 
+#### Configuration Options
+
+- `litmus-portal-operations-config` configmap.
+
+    > `K8s-mode: namespace`
+    > `SubscriberNamespace: litmus`
+
+- All environment variables.
 
 
 #### Retrieving external url to access the litmus portal
