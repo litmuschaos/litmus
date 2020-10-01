@@ -195,7 +195,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
             isDisabled={isError.current}
             handleClick={handleNext}
           >
-            <div>{t('welcomeModel.button.continue')}</div>
+            <div>{t('welcomeModal.button.continue')}</div>
           </ButtonFilled>
         </div>
       );
@@ -205,7 +205,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
         <div className={classes.buttonDiv}>
           <div data-cy="backButton">
             <ButtonOutline isDisabled={false} handleClick={handleBack}>
-              <>{t('welcomeModel.button.back')}</>
+              <>{t('welcomeModal.button.back')}</>
             </ButtonOutline>
           </div>
           <div data-cy="startButton">
@@ -215,7 +215,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
               handleClick={handleSubmit}
               data-cy="Start"
             >
-              <div>{t('welcomeModel.button.letsStart')}</div>
+              <div>{t('welcomeModal.button.letsStart')}</div>
             </ButtonFilled>
           </div>
         </div>
@@ -229,7 +229,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
             handleClick={handleBack}
             data-cy="Back"
           >
-            <>{t('welcomeModel.button.back')}</>
+            <>{t('welcomeModal.button.back')}</>
           </ButtonOutline>
         </div>
         <div data-cy="startButton">
@@ -239,7 +239,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
             handleClick={handleNext}
             data-cy="Continue"
           >
-            <div>{t('welcomeModel.button.continue')}</div>
+            <div>{t('welcomeModal.button.continue')}</div>
           </ButtonFilled>
         </div>
       </div>
@@ -256,7 +256,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
               <div>
                 <div className={classes.inputArea} data-cy="InputProjectName">
                   <InputField
-                    label={t('welcomeModel.case-0.label')}
+                    label={t('welcomeModal.case-0.label')}
                     value={info.project_name}
                     required
                     helperText={
@@ -281,7 +281,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                 ? 'Administrator'
                 : userData.username
             }
-            setText={t('welcomeModel.case-0.info')}
+            setText={t('welcomeModal.case-0.info')}
           />
         );
       case 1:
@@ -291,7 +291,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
               <div>
                 <div className={classes.inputArea} data-cy="InputName">
                   <InputField
-                    label={t('welcomeModel.case-1.label')}
+                    label={t('welcomeModal.case-1.label')}
                     value={info.name}
                     required
                     helperText={
@@ -370,7 +370,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
               </div>
             }
             setName={info.name}
-            setText={t('welcomeModel.case-2.info')}
+            setText={t('welcomeModal.case-2.info')}
           />
         );
       case 3:
@@ -380,7 +380,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
               <div className={classes.passwordSetterDiv}>
                 <div className={classes.inputArea} data-cy="InputEmail">
                   <InputField
-                    label={t('welcomeModel.case-3.label')}
+                    label={t('welcomeModal.case-3.label')}
                     required
                     value={info.email}
                     helperText={
@@ -397,7 +397,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
             }
             // pass here corresponding name of user
             setName={info.name}
-            setText={t('welcomeModel.case-3.info')}
+            setText={t('welcomeModal.case-3.info')}
           />
         );
 
