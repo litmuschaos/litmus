@@ -22,10 +22,19 @@ kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/v1.8.x/lit
 
 Or
 
-> Master (Latest)
+> Master (Latest) Cluster scope.
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/k8s-manifest.yml
 ```
+
+Or
+
+> Master (Latest) Namespaced scope.
+```bash
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/k8s-manifest.yml
+```
+
+
 
 #### Retrieving external url to access the litmus portal
 

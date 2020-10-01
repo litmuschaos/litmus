@@ -2,6 +2,20 @@
 
 This directory contains setup guide to start developing Litmus Portal on Okteto cloud. 
 
+
+## Prerequisites 
+
+- Fork the repository [litmuschaos/litmus](https://github.com/litmuschaos/litmus)
+
+- Clone the repository locally.
+
+- Enter `okteto-dev-env-setup` directory.
+
+  ```
+  cd litmus/litmus-portal/okteto-dev-env-setup
+  ```
+
+
 ## Instructions
 
 - STEP-1: Export your GitHub username to an environment variable.
