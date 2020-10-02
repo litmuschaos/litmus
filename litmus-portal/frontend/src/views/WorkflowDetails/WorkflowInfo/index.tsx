@@ -1,10 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// TODO: remove this after creating UI for node details sidebar
 import { Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { ExecutionData } from '../../../models/graphql/workflowData';
-import { RootState } from '../../../redux/reducers';
 import timeDifference from '../../../utils/datesModifier';
 import useStyles from './styles';
 
@@ -26,7 +22,6 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
 }) => {
   const classes = useStyles();
   // Get selected node data from redux
-  const selectedNode = useSelector((state: RootState) => state.selectedNode);
 
   const [duration, setDuration] = useState<number>(0);
   const [data, setData] = useState<SidebarState>({
