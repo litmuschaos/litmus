@@ -118,6 +118,8 @@ If this is your first time executing this make sure you install the dependencies
 
 > NOTE: This process will ask you for a `CID` as well as a `KEY`. Since you opted for the minimalistic setup you won't have these two key-value pairs yet. To bypass this you can just press `ENTER` or enter any random value.
 
+**After you have this `starter` running just navigate to `litmus` frontend directory and execute `npm start` to get your frontend up and running.**
+
 <br />
 
 #### **Without CID and KEY**
