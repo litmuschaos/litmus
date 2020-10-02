@@ -26,15 +26,16 @@ Litmus is a toolset to do cloud-native chaos engineering. Litmus provides tools 
 ## Table of Contents
 
 1. [Project Structure Practices](#1-project-structure-practices)
-2. [Available Scripts](#2-available-scripts)
-3. [Tech Stack](#3-tech-stack)
-4. [Frontend Contribution Guidelines](#4-frontend-contribution-guidelines)
-5. [Error Handling Practices](#5-error-handling-practices)
-6. [Testing And Overall Quality Practices](#6-testing-and-overall-quality-practices)
-7. [Project Structure Practices](#7-project-structure-practices)
-8. [Coding Style Guide](#8-coding-style-guide)
-9. [User Guide for Litmus Portal](#9-user-guide-for-litmus-portal)
-   <br><br><br>
+2. [Local Setup](#2-local-setup)
+3. [Available Scripts](#3-available-scripts)
+4. [Tech Stack](#4-tech-stack)
+5. [Frontend Contribution Guidelines](#5-frontend-contribution-guidelines)
+6. [Error Handling Practices](#6-error-handling-practices)
+7. [Testing And Overall Quality Practices](#7-testing-and-overall-quality-practices)
+8. [Project Structure Practices](#8-project-structure-practices)
+9. [Coding Style Guide](#9-coding-style-guide)
+10. [User Guide for Litmus Portal](#10-user-guide-for-litmus-portal)
+    <br><br><br>
 
 ### `1. Project Structure Practices`
 
@@ -79,7 +80,76 @@ frontend
 
 <br>
 
-### `2. Available Scripts`
+### `2. Local Setup`
+
+<br>
+
+There are two ways you can set up this project, a quick one and the other rather a long process but will grant you full access to the litmus-portal:
+
+#### 💨 **Quick Setup**
+
+In order to proceed forward make sure you have these installed in your system:
+
+- node
+- mongodb
+- docker
+- kubectl
+- minikube
+
+Once all the pre-requisites have been verified, clone this repository and keep it at the same directory level as `litmus`
+
+```bash
+git clone https://github.com/S-ayanide/litmus-starter.git litmus-starter
+```
+
+Litmus-Starter Repository - [https://github.com/S-ayanide/litmus-starter](https://github.com/S-ayanide/litmus-starter)
+
+For example -
+
+> If your `litmus` project is at directory `/abc/litmus` then keep the litmus-starter at `/abc/litmus-starter`
+
+Once the repository is cloned and ready, all you need to do is navigate inside and run
+
+```
+npm start
+```
+
+If this is your first time executing this make sure you install the dependencies by doing an `npm i`
+
+> NOTE: This process will ask you for a `CID` as well as a `KEY`. Since you opted for the minimalistic setup you won't have these two key-value pairs yet. To bypass this you can just press `ENTER` or enter any random value.
+
+<br />
+
+#### **Without CID and KEY**
+
+<br />
+
+Since you don't have the CID and KEY you won't be able to run/schedule workflows and see analytics for the same. But you'd have the frontend running.
+
+<br />
+
+#### **With CID and KEY**
+
+<br />
+
+In order to get the CID and KEY you'd require to register a cluster. To get this registered you'd require to follow the long process of installing Argo and Workflow Agent.
+
+1. [Getting the servers up](https://github.com/litmuschaos/litmus/wiki/Litmus-Portal-Development-Guide)
+2. [Follow the Detailed Wiki](https://github.com/litmuschaos/litmus/wiki/Litmus-Portal-Development-Guide)
+
+After logging in you'd find a `selectedProjectID` field in Redux on the console. That would be required for any further steps in the length setup process.
+
+Once you have that covered you can simply paste the CID and KEY that you received and you'd get access to the entire `litmus-portal`.
+
+**Happy Hacking!**
+
+<br />
+
+#### 🤖 **Detailed Setup**
+
+In order to get full access to the Litmus-portal you'd require to complete the entire setup process. Get step by step instructions on how to do the same on [our wiki](https://github.com/litmuschaos/litmus/wiki/Litmus-Portal-Development-Guide#frontend)
+
+### `3. Available Scripts`
 
 <br>
 
@@ -148,14 +218,14 @@ It correctly bundles React in production mode and optimizes the build for the be
 `Prettier` for formatting and `linters` for catching bugs! 🐛
 <br><br>
 
-### `3. Tech Stack`
+### `4. Tech Stack`
 
 <br>
 
 <img src = 'https://image.flaticon.com/icons/svg/919/919853.svg' width='30'/> <img src = 'https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fwww.codeproject.com%2FKB%2FHTML%2F843860%2FTypeScript.png&f=1&nofb=1' width='30'/> <img src = 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.volaresystems.com%2FImages%2FPosts%2F2019%2F12%2Feslint_logo_text.png&f=1&nofb=1' width='30'/> <img src = 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ffaridoon.com%2Fwp-content%2Fuploads%2F2019%2F08%2FMaterialUILogo.png&f=1&nofb=1' width='30'/> <img src = 'https://image.flaticon.com/icons/svg/919/919851.svg' width='30'/> <img src = 'https://image.flaticon.com/icons/svg/919/919856.svg' width='30'/> <img src = 'https://upload-icon.s3.us-east-2.amazonaws.com/uploads/icons/png/3556671901536211770-512.png' width='30'/> <img src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/GraphQL_Logo.svg/1200px-GraphQL_Logo.svg.png' width='30'/> <img src = 'https://d2eip9sf3oo6c2.cloudfront.net/tags/images/000/001/216/thumb/apollo-seeklogo.com_%281%29.png' width='30'/><img src = 'https://cdn.iconscout.com/icon/free/png-512/redux-283024.png' width='30'>
 <br><br>
 
-### `4. Frontend Contribution Guidelines`
+### `5. Frontend Contribution Guidelines`
 
 <br>
 
@@ -163,7 +233,7 @@ We at Litmus always welcome a good frontend developer with open arms.<br>
 Read our Contribution guidelines to get started quickly with our project 🗒️
 <br><br>
 
-### `5. Error Handling Practices`
+### `6. Error Handling Practices`
 
 <br>
 
@@ -175,7 +245,7 @@ Read our Contribution guidelines to get started quickly with our project 🗒️
 - `Husky` and `Pre-commit` will ensure that all your code is properly formatted before you commit your code. Please do not skip this check, it'll help us accept your PRs faster.
   <br><br>
 
-### `6. Testing And Overall Quality Practices`
+### `7. Testing And Overall Quality Practices`
 
 <br>
 
@@ -197,7 +267,7 @@ Assign componentFolder to your preferred location for your tests. ⏳
 All the components which are having unit tests are present in `cypress/components` folder.
 <br><br>
 
-### `7. Project Structure Practices`
+### `8. Project Structure Practices`
 
 <br>
 
@@ -245,7 +315,7 @@ All the components which are having unit tests are present in `cypress/component
   SVG images that we import as React Components goes here.
   <br><br>
 
-### `8. Coding Style Guide`
+### `9. Coding Style Guide`
 
 <br>
 
@@ -274,7 +344,7 @@ Rules we follow from `AirBnB` style guide:
 
 <br><br>
 
-### `9. User Guide for Litmus Portal`
+### `10. User Guide for Litmus Portal`
 
 <br>
 
