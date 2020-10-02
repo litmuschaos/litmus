@@ -21,7 +21,7 @@ docker tag gaiaadm/pumba:0.4.8 gcr.io/<project-id>/pumba:0.4.8
 
 #### STEP-2: PUSH THE RETAGGED IMAGES TO GCR
 
-Ensure sufficient privileges on the gcloud iam/user/serviceaccount
+Ensure that sufficient privileges are granted on the gcloud iam/user/serviceaccount
 
 ```
 gcloud docker -- push gcr.io/<project-id>/ansible-runner:ci
