@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: litmus-portal-operations-config
+  name: litmus-portal-admin-config
   namespace: %OKTETO_NAMESPACE%
 data:
   K8s-mode: namespace
@@ -184,12 +184,12 @@ spec:
             - name: DB_SERVER
               valueFrom:
                 configMapKeyRef:
-                  name: litmus-portal-operations-config
+                  name: litmus-portal-admin-config
                   key: DataBaseServer
             - name: JWT_SECRET
               valueFrom:
                 configMapKeyRef:
-                  name: litmus-portal-operations-config
+                  name: litmus-portal-admin-config
                   key: JWTSecret
             - name: EXTERNAL_ADDRESS
               value: ""
@@ -202,29 +202,29 @@ spec:
             - name: SUBSCRIBER_SCOPE
               valueFrom:
                 configMapKeyRef:
-                  name: litmus-portal-operations-config
+                  name: litmus-portal-admin-config
                   key: K8s-mode
             - name: AGENT_SCOPE
               valueFrom:
                 configMapKeyRef:
-                  name: litmus-portal-operations-config
+                  name: litmus-portal-admin-config
                   key: K8s-mode
             - name: SUBSCRIBER_NAMESPACE
               valueFrom:
                 configMapKeyRef:
-                  name: litmus-portal-operations-config
+                  name: litmus-portal-admin-config
                   key: SubscriberNamespace
             - name: AGENT_NAMESPACE
               valueFrom:
                 configMapKeyRef:
-                  name: litmus-portal-operations-config
+                  name: litmus-portal-admin-config
                   key: SubscriberNamespace
             - name: DEPLOYER_IMAGE
               value: "litmuschaos/litmusportal-self-deployer:ci"
             - name: DEPLOYER_NAMESPACE
               valueFrom:
                 configMapKeyRef:
-                  name: litmus-portal-operations-config
+                  name: litmus-portal-admin-config
                   key: SubscriberNamespace
             - name: ARGO_SERVER_IMAGE
               value: "argoproj/argocli:v2.9.3"
@@ -249,12 +249,12 @@ spec:
             - name: DB_SERVER
               valueFrom:
                 configMapKeyRef:
-                  name: litmus-portal-operations-config
+                  name: litmus-portal-admin-config
                   key: DataBaseServer
             - name: JWT_SECRET
               valueFrom:
                 configMapKeyRef:
-                  name: litmus-portal-operations-config
+                  name: litmus-portal-admin-config
                   key: JWTSecret
             - name: ADMIN_USERNAME
               value: "admin"

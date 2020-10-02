@@ -76,7 +76,7 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
 
 - STEP-6: Click the button below to deploy litmus-portal on Okteto cloud and start developing.
   
-  [![Develop Litmus Portal on Okteto](https://okteto.com/develop-okteto.svg)](https://cloud.okteto.com/deploy?repository=https://github.com/%GITHUB_USERNAME%/litmus)
+  [![Develop Litmus Portal on Okteto](https://okteto.com/develop-okteto.svg)](https://cloud.okteto.com/deploy?repository=https://github.com/%GITHUB_USERNAME%/litmus&branch=dev)
 
 - STEP-7: Login to Okteto cloud using the CLI.
 
@@ -96,13 +96,14 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
 - STEP-9: Run okteto build and push after making the code changes to get them reflected on deployed litmus-portal component.
 
   ```
-  okteto build -t okteto.dev/litmusportal-frontend:ci .
-  okteto push --name frontend -t $OKTETO_NAMESPACE/itmusportal-frontend:ci
+  okteto build -t okteto.dev/litmusportal-frontend:dev .
+  okteto push --name frontend -t $OKTETO_NAMESPACE/litmusportal-frontend:dev
   ```
 
-- STEP-10: Go to the `okteto-dev-env-setup` directory of the cloned repository, delete the  `litmus-portal-dev-manifest.yml` file and then enter the root directory of the cloned repository i.e. `litmus`  and push the changes to your forked repository.
+- STEP-10: Stop development environment using `okteto down` and go to the `okteto-dev-env-setup` directory of the cloned repository, delete the  `litmus-portal-dev-manifest.yml` file and then enter the root directory of the cloned repository i.e. `litmus`  and push the changes to your forked repository.
 
   ```
+  okteto down
   cd ../okteto-dev-env-setup
   rm litmus-portal-dev-manifest.yml
   cd ../..

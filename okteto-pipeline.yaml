@@ -1,4 +1,7 @@
 icon: https://raw.githubusercontent.com/litmuschaos/icons/master/litmus.png
 deploy:
+#  - okteto build -t okteto.dev/litmudportal-frontend:dev litmus-portal/frontend
   - kubectl apply -f litmus-portal/okteto-dev-env-setup/hello-world-AUT.yml
   - kubectl apply -f litmus-portal/okteto-dev-env-setup/litmus-portal-dev-manifest.yml
+devs:
+  - litmus-portal/frontend/okteto.yml
