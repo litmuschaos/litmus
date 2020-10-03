@@ -29,5 +29,36 @@ const useStyles = makeStyles((theme) => ({
   buttonDiv: {
     display: 'flex',
   },
+
+  pending: {
+    minWidth: '2.625rem',
+    background: theme.palette.customColors.menuOption.active,
+    marginLeft: theme.spacing(1.0),
+    borderRadius: '0.1875rem',
+    color: theme.palette.primary.dark,
+    fontSize: '0.625rem',
+
+    paddingRight: theme.spacing(0.5),
+    paddingLeft: theme.spacing(0.5),
+    paddingTop: theme.spacing(0.5),
+    paddingBottom: theme.spacing(0.5),
+  },
+  declined: {
+    minWidth: '2.625rem',
+    marginLeft: theme.spacing(1.0),
+    borderRadius: '0.1875rem',
+    fontSize: '0.625rem',
+    paddingRight: theme.spacing(0.5),
+    paddingLeft: theme.spacing(0.5),
+    paddingTop: theme.spacing(0.5),
+    paddingBottom: theme.spacing(0.5),
+    color: theme.palette.error.dark,
+    background: theme.palette.error.light,
+  },
+
+  flexstatus: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
 }));
 export default useStyles;
