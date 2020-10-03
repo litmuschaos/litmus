@@ -32,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   userName: {
+    color: theme.palette.userNameTextColor,
     fontSize: '2.5rem',
     marginTop: theme.spacing(1.75),
     marginBottom: theme.spacing(2.75),
@@ -44,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.homePageWorkflowCardBackgroundColor,
     borderRadius: 3,
     marginLeft: theme.spacing(5),
-    boxShadow: '2px 1px 9px rgba(91, 68, 186, 0.25)',
+    boxShadow: theme.palette.createWorkflowCardShadow,
     [theme.breakpoints.down('sm')]: {
       marginTop: theme.spacing(5),
     },

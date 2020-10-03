@@ -105,9 +105,9 @@ const useStyles = makeStyles((theme) => ({
   followBtn: {
     width: '10rem',
     height: '3rem',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.palette.secondary.contrastText,
     fontSize: '0.8rem',
-    color: theme.palette.text.primary,
+    color: theme.palette.buttonEditProfile,
     textTransform: 'none',
   },
 
