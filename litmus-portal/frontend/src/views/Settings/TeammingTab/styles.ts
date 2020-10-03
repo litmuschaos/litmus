@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   toolbar: {
     height: '6.125rem',
     border: `1px solid ${theme.palette.customColors.black(0.05)}`,
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.homePageCardBackgroundColor,
     marginBottom: theme.spacing(1.25),
     display: 'flex',
     justifyContent: 'space-between',
@@ -84,7 +84,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: 'auto',
   },
   avatarBackground: {
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.totalRunsCountColor,
     width: '2.56rem',
     height: '2.56rem',
     color: theme.palette.customColors.white(1),

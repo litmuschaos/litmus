@@ -7,6 +7,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     maxWidth: '63.75rem',
     minWidth: '39.0625rem',
     alignItems: 'center',
+    color: theme.palette.personalDetailsBodyColor,
   },
   root: {
     display: 'flex',

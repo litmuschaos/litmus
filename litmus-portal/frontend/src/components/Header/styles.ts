@@ -29,6 +29,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingBottom: theme.spacing(0),
     marginLeft: theme.spacing(5),
     paddingleft: theme.spacing(5),
+    color: theme.palette.userNameTextColor,
   },
   // Notification
   headerFlexPadded: {
@@ -63,8 +64,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   // Style for ProfileDropdownSection and ProfileDropdownItems.
   avatarBackground: {
+    backgroundColor: theme.palette.totalRunsCountColor,
     color: theme.palette.customColors.white(1),
-    backgroundColor: theme.palette.secondary.main,
     marginBottom: theme.spacing(2),
     marginTop: theme.spacing(1),
   },
@@ -112,6 +113,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   userName: {
+    color: 'inherit',
     fontSize: '0.875rem',
   },
 
