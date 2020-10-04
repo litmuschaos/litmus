@@ -1,49 +1,20 @@
-# name: litmusportal-frontend
-# labels:
-#   component: litmusportal-frontend
-# image: node:12.18.0
-# sync:
-# - .:/frontend
-# command: ["CYPRESS_INSTALL_BINARY=0 && npm install && npm audit fix && cd src && npm start"]
-# forward:
-# - 3000:80
-# resources:
-#   limits:
-#     cpu: "400m"
-#     memory: 1Gi
-#PORT=8080 react-scripts start
-      
-# name: litmusportal-frontend
-# labels:
-#   component: litmusportal-frontend
-# image: okteto/node:12
-# sync:
-#  - .:/frontend
-# workdir: /frontend
-# environment:
-#   - CI=true
-# command: 
-# - "CYPRESS_INSTALL_BINARY=0 && npm install && npm audit fix && cd src"
-# - "npm run dev"
-# forward:
-#   - 9091:9091
-# persistentVolume:
-#   enabled: false
-
 name: litmusportal-frontend
 labels:
   component: litmusportal-frontend
 image: okteto/node:12
-sync:
-  - .:/frontend
-workdir: /frontend
 environment:
   - CI=true
   - CYPRESS_INSTALL_BINARY=0
-  - PORT=9091
-command: 
-  - bash #npm install && npm audit fix && cd src && npm start
+  - PORT=80
+command:
+  - bash
+sync:
+  - .:/usr/src/app
 forward:
-  - 9091:9091
+  - 80:80
+resources:
+  limits:
+    cpu: "1"
+    memory: 2Gi
 persistentVolume:
   enabled: true

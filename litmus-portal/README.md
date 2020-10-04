@@ -31,7 +31,9 @@ Or
 
 > Master (Latest) Namespaced scope.
 ```bash
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/namespaced-K8s-manifest.yml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/okteto-dev-env-setup/hello-world-AUT.yml -n <namespace>
 ```
 
 #### Configuration Options
