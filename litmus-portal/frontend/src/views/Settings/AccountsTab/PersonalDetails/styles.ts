@@ -38,6 +38,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: 'center',
     marginTop: theme.spacing(15),
     paddingBottom: '7rem',
+    color: theme.palette.personalDetailsBodyColor,
   },
   text: {
     width: '31rem',

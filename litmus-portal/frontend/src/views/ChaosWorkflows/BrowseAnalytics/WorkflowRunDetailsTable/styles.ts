@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     height: '6rem',
     border: `1px solid ${theme.palette.customColors.black(0.07)}`,
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.homePageCardBackgroundColor,
   },
 
   search: {
@@ -126,7 +126,7 @@ const useStyles = makeStyles((theme) => ({
     alignContent: 'space-between',
     justifyContent: 'space-between',
     height: '4.5rem',
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.homePageCardBackgroundColor,
     marginTop: theme.spacing(-0.175),
   },
 

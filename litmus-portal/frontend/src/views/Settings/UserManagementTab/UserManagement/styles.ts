@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '6.125rem',
     border: `1px solid ${theme.palette.customColors.black(0.05)}`,
     marginBottom: theme.spacing(1.25),
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.homePageCardBackgroundColor,
     display: 'flex',
     justifyContent: 'space-between',
   },
