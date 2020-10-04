@@ -8,9 +8,9 @@ if (loc.protocol === 'https:') {
   sockURL = 'ws:';
 }
 if (
-  (!loc.href.includes('cloud.okteto.net') &&
-    process.env.NODE_ENV.trim() === 'development') ||
-  process.env.NODE_ENV.trim() === 'test'
+  !loc.href.includes('cloud.okteto.net') &&
+  (process.env.NODE_ENV.trim() === 'development' ||
+    process.env.NODE_ENV.trim() === 'test')
 ) {
   authURL = `${window.location.protocol}//${window.location.hostname}:3000`;
   apiURL = `${window.location.protocol}//${window.location.hostname}:8080`;
