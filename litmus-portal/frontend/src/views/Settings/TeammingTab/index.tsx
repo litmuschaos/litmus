@@ -48,6 +48,7 @@ const StyledTableCell = withStyles((theme: Theme) =>
     },
     body: {
       fontSize: '0.875rem',
+      backgroundColor: theme.palette.homePageCardBackgroundColor,
     },
   })
 )(TableCell);
@@ -215,7 +216,7 @@ const TeammingTab: React.FC = () => {
             </div>
           </Toolbar>
           {/* user table */}
-          <Paper>
+          <Paper className={classes.root}>
             <TableContainer
               className={classes.table}
               elevation={0}

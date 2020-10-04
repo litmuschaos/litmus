@@ -18,6 +18,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: 'center',
     marginLeft: theme.spacing(2),
     justifyContent: 'space-between',
+    backgroundColor: theme.palette.common.white,
+    color: theme.palette.teamingTabHeadTextColor,
   },
   button: {
     marginRight: theme.spacing(-2),

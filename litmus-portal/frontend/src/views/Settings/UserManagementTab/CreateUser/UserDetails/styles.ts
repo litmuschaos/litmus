@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   // Style for ProfileDropdownSection and ProfileDropdownItems.
   avatarBackground: {
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.totalRunsCountColor,
     width: '4.81rem',
     height: '4.81rem',
     color: theme.palette.customColors.white(1),

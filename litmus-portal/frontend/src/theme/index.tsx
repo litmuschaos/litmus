@@ -311,6 +311,20 @@ const theme = customTheme({
         },
       },
     },
+    MuiPaper: {
+      root: {
+        color: 'black',
+        backgroundColor: 'none',
+        '&$selected': {
+          backgroundColor: 'white',
+        },
+      },
+    },
+    MuiDivider: {
+      root: {
+        backgroundColor: 'rgba(0, 0, 0, 0.12)',
+      },
+    },
     MuiFormLabel: {
       root: {
         paddingLeft: 20,

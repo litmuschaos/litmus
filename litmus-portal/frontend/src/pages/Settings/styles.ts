@@ -2,6 +2,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    color: 'inherit',
     display: 'flex',
     flexGrow: 1,
     maxWidth: '63.75rem',

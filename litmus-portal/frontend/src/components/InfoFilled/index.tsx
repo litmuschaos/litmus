@@ -7,7 +7,7 @@ import formatCount from '../../utils/formatCount';
 import useStyles from './styles';
 
 interface CardValueData {
-  color: string;
+  color: string | undefined;
   value: number;
   statType: string;
   plus?: boolean | undefined;
@@ -36,7 +36,7 @@ const InfoFilledWrap: React.FC = () => {
       plus: true,
     },
     {
-      color: theme.palette.secondary.main,
+      color: theme.palette.totalRunsCountColor,
       value: parseInt(communityData.google.totalRuns, 10),
       statType: 'Total Experiment Runs',
       plus: true,
