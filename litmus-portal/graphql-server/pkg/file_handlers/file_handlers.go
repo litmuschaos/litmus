@@ -48,9 +48,9 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 	if !reqCluster.IsRegistered {
 		var respData []byte
 
-		if subscriberSC == "cluster" {
+		if subscriberConfiguration.SubscriberSC == "cluster" {
 			respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, subscriberConfiguration, "manifests/cluster-subscriber.yml")
-		} else if subscriberSC == "namespace" {
+		} else if subscriberConfiguration.SubscriberSC == "namespace" {
 			respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, subscriberConfiguration, "manifests/namespace-subscriber.yml")
 		} else {
 			log.Print("ERROR- PORTAL SCOPE NOT SELECTED!")
