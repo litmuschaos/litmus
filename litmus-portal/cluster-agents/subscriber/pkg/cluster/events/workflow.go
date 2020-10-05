@@ -1,8 +1,8 @@
 package events
 
 import (
-	"time"
 	"os"
+	"time"
 
 	"github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
 	"github.com/argoproj/argo/pkg/client/clientset/versioned"
@@ -20,7 +20,7 @@ const (
 )
 
 var (
-	DefaultScope = os.Getenv("AGENT_SCOPE")
+	DefaultScope     = os.Getenv("AGENT_SCOPE")
 	DefaultNamespace = os.Getenv("AGENT_NAMESPACE")
 )
 

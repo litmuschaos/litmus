@@ -44,7 +44,7 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 
 	if !reqCluster.IsRegistered {
 		var respData []byte
-		
+
 		if subscriberSC == "cluster" {
 			respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, serviceAddr+"/query", subscriberImage, subscriberNS, workflowSC, workflowNS, argoSER, argoWFCTRL, litmusCOP, argoWFEXEC, litmusCRUN, "manifests/cluster-subscriber.yml")
 		} else if subscriberSC == "namespace" {

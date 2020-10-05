@@ -96,7 +96,6 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
 
 - <h4>STEP-9:</h4> Start the selected component's service on its container to start developing and get the changes reflected on deployed litmus-portal component which can be accessed from Okteto UI or from `https://<service name>-<okteto-namespace>.cloud.okteto.net`. This may take several minutes to start running inside the docker container. Add the given `if block` after changing `<okteto-namespace>` with your GitHub username to `litmus-portal/frontend/src/config/index.ts` file just before the `export default` statement. Then enter username as `admin` and password as `litmus` to login from the UI.
 
-
   > `<okteto-namespace>`:litmusportal-frontend app>
   ```bash
   npm install && npm audit fix && cd src && npm start
