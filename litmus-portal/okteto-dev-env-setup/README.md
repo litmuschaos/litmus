@@ -94,20 +94,45 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
   okteto up
   ```
 
-- <h4>STEP-9:</h4> Start the selected component's service on its container to start developing and get the changes reflected on deployed litmus-portal component which can be accessed from Okteto UI or from `https://<service name>-<namespace>.cloud.okteto.net`. This may take several minutes to start running inside the docker container.
+- <h4>STEP-9:</h4> Start the selected component's service on its container to start developing and get the changes reflected on deployed litmus-portal component which can be accessed from Okteto UI or from `https://<service name>-<okteto-namespace>.cloud.okteto.net`. This may take several minutes to start running inside the docker container. Add the given `if block` after changing `<okteto-namespace>` with your GitHub username to `litmus-portal/frontend/src/config/index.ts` file just before the `export default` statement. Then enter username as `admin` and password as `litmus` to login from the UI.
 
   > `<okteto-namespace>`:litmusportal-frontend app>
   ```bash
   npm install && npm audit fix && cd src && npm start
   ```
 
-- <h4>STEP-10:</h4> After you are done with the code changes, stop development environment using `okteto down` and go to the `okteto-dev-env-setup` directory of the cloned repository, delete the  `env` folder contents and then enter the root directory of the cloned repository i.e. `litmus` and push the changes to your forked repository.
+  > Add the given `if block` after changing `<okteto-namespace>` with your GitHub username to `litmus-portal/frontend/src/config/index.ts` file just before the `export default` statement. <h5>Must be done before login.</h5>
+  ```js
+  if (loc.href.includes('cloud.okteto.net')) {
+    authURL =
+      'https://litmusportal-production-frontend-service-<okteto-namespace>.cloud.okteto.net/auth';
+    apiURL =
+      'https://litmusportal-production-frontend-service-<okteto-namespace>.cloud.okteto.net/api';
+    sockURL = `wss://litmusportal-production-frontend-service-<okteto-namespace>.cloud.okteto.net/ws`;
+  }
+  ```
 
+  > login as default user with username as `admin` and password as `litmus` 
+
+- <h4>STEP-10:</h4> After you are done with the code changes, you may stop the development environment using `okteto down` and go to the `okteto-dev-env-setup` directory of the cloned repository, delete the  `env` folder contents, delete the `if block` which was added for okteto dev env setup from `litmus-portal/frontend/src/config/index.ts` file and then enter the root directory of the cloned repository i.e. `litmus` and push the changes to your forked repository.
+
+  >
   ```bash
   okteto down
   cd ../okteto-dev-env-setup
   rm -v env/*
-  cd ../..
+  ```
+  
+  >
+  ```bash
+  cd ../frontend/src/config
+  ```
+  
+  > Delete the added `if block` for okteto env setup from `index.ts` file.
+
+  >
+  ```bash
+  cd ../../../..
   git add .
   git commit -s -m "Updated frontend component and dev-manifest deleted."
   git push --set-upstream origin dev
@@ -135,3 +160,8 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
   ```bash
   kubectl get pods
   ```
+
+
+## Optional
+
+- To compare the changes made during development phase with the actual production code you can visit `https://litmusportal-production-frontend-service-<okteto-namespace>.cloud.okteto.net` after replacing `<okteto-namespace>` with your GitHub username.

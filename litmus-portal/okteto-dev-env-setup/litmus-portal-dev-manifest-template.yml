@@ -32,8 +32,8 @@ spec:
           image: litmuschaos/litmusportal-frontend:ci
           resources:
             limits:
-              cpu: 200m
-              memory: 400Mi
+              cpu: 150m
+              memory: 200Mi
           imagePullPolicy: Always
           ports:
             - containerPort: 80
@@ -344,3 +344,47 @@ spec:
       targetPort: 27017
   selector:
     component: database
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: litmusportal-production-frontend
+  namespace: %OKTETO_NAMESPACE%
+  labels:
+    component: litmusportal-production-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: litmusportal-production-frontend
+  template:
+    metadata:
+      labels:
+        component: litmusportal-production-frontend
+    spec:
+      containers:
+        - name: litmusportal-production-frontend
+          image: litmuschaos/litmusportal-frontend:ci
+          resources:
+            limits:
+              cpu: 100m
+              memory: 150Mi
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: litmusportal-production-frontend-service
+  namespace: %OKTETO_NAMESPACE%
+  annotations:
+    dev.okteto.com/auto-ingress: "true"
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      port: 9091
+      targetPort: 80
+  selector:
+    component: litmusportal-production-frontend
