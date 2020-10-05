@@ -1,6 +1,8 @@
-import { Divider, Typography } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import { Divider, IconButton, Typography } from '@material-ui/core';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import EditIcon from '@material-ui/icons/Edit';
+import cronstrue from 'cronstrue';
 import AdjustedWeights from '../../../components/AdjustedWeights';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline/index';
@@ -15,7 +17,6 @@ import { experimentMap, WorkflowData } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
-import convertCronToString from '../../../utils/cronToString';
 import useStyles from './styles';
 
 interface VerifyCommitProps {
@@ -24,11 +25,8 @@ interface VerifyCommitProps {
 
 const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const classes = useStyles();
-  const width1 = 700;
-  const width2 = 700;
 
   const workflow = useActions(WorkflowActions);
-  const [edit, setEdit] = useState(true);
 
   const workflowData: WorkflowData = useSelector(
     (state: RootState) => state.workflowData
@@ -129,7 +127,6 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               <CustomText
                 value={name}
                 id="name"
-                width={width1}
                 onchange={(changedName: string) =>
                   handleNameChange({ changedName })
                 }
@@ -149,7 +146,6 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               <CustomText
                 value={description}
                 id="desc"
-                width={width2}
                 onchange={(changedDesc: string) =>
                   handleDescChange({ changedDesc })
                 }
@@ -168,19 +164,20 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 ampm
                 disabled={edit}
               /> */}
-              <Typography className={classes.schedule}>
-                {convertCronToString(cronSyntax)}
-              </Typography>
+              {cronSyntax === '' ? (
+                <Typography className={classes.schedule}>
+                  Scheduling now
+                </Typography>
+              ) : (
+                <Typography className={classes.schedule}>
+                  {cronstrue.toString(cronSyntax)}
+                </Typography>
+              )}
+
               <div className={classes.editButton1}>
-                <ButtonOutline
-                  isDisabled
-                  handleClick={() => setEdit(!edit)}
-                  data-cy="testRunButton"
-                >
-                  <Typography className={classes.buttonOutlineText}>
-                    Edit
-                  </Typography>
-                </ButtonOutline>
+                <IconButton onClick={() => gotoStep(4)}>
+                  <EditIcon className={classes.editbtn} data-cy="edit" />
+                </IconButton>
               </div>
             </div>
           </div>

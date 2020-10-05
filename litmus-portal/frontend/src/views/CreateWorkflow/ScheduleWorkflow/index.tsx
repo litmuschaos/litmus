@@ -17,6 +17,7 @@ import { RootState } from '../../../redux/reducers';
 import SetTime from './SetTime/index';
 import useStyles from './styles';
 import * as WorkflowActions from '../../../redux/actions/workflow';
+import * as TemplateSelectionActions from '../../../redux/actions/template';
 
 interface ScheduleSyntax {
   minute: string | undefined;
@@ -27,10 +28,6 @@ interface ScheduleSyntax {
 }
 
 const ScheduleWorkflow: React.FC = () => {
-  const start = 0;
-  const end = 10;
-  const interval = 2;
-
   // Initial Cron State
   const [cronValue, setCronValue] = useState<ScheduleSyntax>({
     minute: '*',
@@ -45,7 +42,7 @@ const ScheduleWorkflow: React.FC = () => {
     (state: RootState) => state.workflowData
   );
   const workflow = useActions(WorkflowActions);
-
+  const template = useActions(TemplateSelectionActions);
   // Controls Radio Buttons
   const [value, setValue] = React.useState(
     workflowData.scheduleType.scheduleOnce
@@ -172,7 +169,10 @@ const ScheduleWorkflow: React.FC = () => {
   for (let i = 1; i <= 30; i += 1) {
     names[i] = i + 1;
   }
-
+  const mins: number[] = [0];
+  for (let i = 0; i <= 59; i += 1) {
+    mins[i] = i;
+  }
   // Day names
   const weekdays: string[] = [
     'Monday',
@@ -247,7 +247,11 @@ const ScheduleWorkflow: React.FC = () => {
         day_week: '*',
       });
     }
-
+    if (value === 'recurringSchedule' && valueDef === '') {
+      template.selectTemplate({ isDisable: true });
+    } else {
+      template.selectTemplate({ isDisable: false });
+    }
     workflow.setWorkflowDetails({
       scheduleType: {
         scheduleOnce: value,
@@ -337,7 +341,7 @@ const ScheduleWorkflow: React.FC = () => {
                 <></>
               )}
               <FormControlLabel
-                value="recurringScedule"
+                value="recurringSchedule"
                 control={<Radio />}
                 label={
                   <Typography className={classes.radioText}>
@@ -345,7 +349,7 @@ const ScheduleWorkflow: React.FC = () => {
                   </Typography>
                 }
               />
-              {value === 'recurringScedule' ? (
+              {value === 'recurringSchedule' ? (
                 <div className={classes.schLater}>
                   <Typography className={classes.captionText}>
                     Choose the right recurring time to start your workflow
@@ -374,11 +378,7 @@ const ScheduleWorkflow: React.FC = () => {
                                 At
                               </Typography>
                               <SetTime
-                                start={start}
-                                end={end}
-                                interval={interval}
-                                label="th"
-                                type=""
+                                minutes={mins}
                                 handleChange={(event) => {
                                   setMinute(
                                     (event.target.value as unknown) as number
@@ -397,9 +397,13 @@ const ScheduleWorkflow: React.FC = () => {
                                     },
                                   });
                                 }}
-                                setValue={setMinute}
                                 value={minute}
                               />
+                              {minute === 0 || minute === 1 ? (
+                                <Typography>min</Typography>
+                              ) : (
+                                <Typography>mins</Typography>
+                              )}
                             </div>
                           </div>
                         ) : (

@@ -20,6 +20,7 @@ import { experimentMap, WorkflowData } from '../../models/redux/workflow';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import * as WorkflowActions from '../../redux/actions/workflow';
+import * as TemplateSelectionActions from '../../redux/actions/template';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import parsed from '../../utils/yamlUtils';
@@ -117,7 +118,7 @@ const CustomStepper = () => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
   const { t } = useTranslation();
-
+  const template = useActions(TemplateSelectionActions);
   const workflowData: WorkflowData = useSelector(
     (state: RootState) => state.workflowData
   );
@@ -253,6 +254,8 @@ const CustomStepper = () => {
   const handleBack = () => {
     if (activeStep === 2) {
       setinValidYaml(false);
+    } else if (activeStep === 4 && isDisable === true) {
+      template.selectTemplate({ isDisable: false });
     }
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
