@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   active: {
     backgroundColor: `${theme.palette.totalRunsCountColor} !important`,
-    color: theme.palette.getContrastText(theme.palette.primary.contrastText),
+    color: theme.palette.secondary.contrastText,
     '& path': {
       fill: theme.palette.common.white,
     },

@@ -304,25 +304,30 @@ const theme = customTheme({
         color: '#FFFFFF',
       },
     },
-    MuiTab: {
+    MuiDivider: {
       root: {
-        '&$selected': {
-          color: '#5B44BA',
-        },
+        backgroundColor: 'rgba(0, 0, 0, 0.12)',
+      },
+    },
+    MuiIconButton: {
+      root: {
+        color: 'inherit',
       },
     },
     MuiPaper: {
       root: {
         color: 'black',
-        backgroundColor: 'none',
+        backgroundColor: 'white',
         '&$selected': {
           backgroundColor: 'white',
         },
       },
     },
-    MuiDivider: {
+    MuiTab: {
       root: {
-        backgroundColor: 'rgba(0, 0, 0, 0.12)',
+        '&$selected': {
+          color: '#5B44BA',
+        },
       },
     },
     MuiFormLabel: {

@@ -1,10 +1,10 @@
+import React, { useState } from 'react';
 import { OutlinedInputProps, TextField } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import React, { useState } from 'react';
 import { useStyles, useStylesLitmus } from './styles';
 
 interface InputFieldOutlineProps {
@@ -17,7 +17,7 @@ interface InputFieldOutlineProps {
   value: string;
   required?: boolean;
   iconType?: string | undefined;
-  styles?: Object;
+  styles?: {};
   handleChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -270,13 +270,13 @@ const InputFieldOutline: React.FC<InputFieldOutlineProps> = ({
             {
               classes,
               disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
+              endAdornment: (
+                <InputAdornment position="end">
                   <AccountCircle />
                 </InputAdornment>
               ),
-              endAdornment: (
-                <InputAdornment position="end">
+              startAdornment: (
+                <InputAdornment position="start">
                   <AccountCircle />
                 </InputAdornment>
               ),

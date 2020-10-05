@@ -47,8 +47,8 @@ const StyledTableCell = withStyles((theme: Theme) =>
       color: theme.palette.teamingTabHeadTextColor,
     },
     body: {
-      fontSize: '0.875rem',
       backgroundColor: theme.palette.homePageCardBackgroundColor,
+      fontSize: '0.875rem',
     },
   })
 )(TableCell);

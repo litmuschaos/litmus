@@ -137,6 +137,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   nameContent: {
+    color: theme.palette.getContrastText(theme.palette.primary.contrastText),
     display: 'flex',
     flexDirection: 'row',
     fontSize: '0.8rem',

@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: 'center',
     marginLeft: theme.spacing(2),
     justifyContent: 'space-between',
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.secondary.contrastText,
     color: theme.palette.teamingTabHeadTextColor,
   },
   button: {

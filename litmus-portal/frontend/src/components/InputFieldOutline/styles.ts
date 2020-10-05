@@ -7,10 +7,20 @@ const useStylesLitmus = makeStyles((theme: Theme) =>
         props !== true
           ? `1px solid ${theme.palette.input.disabled}`
           : `1px solid ${theme.palette.primary.dark}`,
+      borderRadius: '0.25rem',
       overflow: 'hidden',
-      borderRadius: 4,
       color: 'inherit',
       backgroundColor: theme.palette.homePageCardBackgroundColor,
+      focused: {
+        borderColor: (props) =>
+          props === true
+            ? theme.palette.primary.dark
+            : theme.palette.secondary.dark,
+        color: (props) =>
+          props !== true
+            ? theme.palette.secondary.dark
+            : theme.palette.primary.dark,
+      },
       transition: theme.transitions.create(['border-color', 'box-shadow']),
       '&$error': {
         backgroundColor: theme.palette.homePageCardBackgroundColor,
@@ -33,16 +43,6 @@ const useStylesLitmus = makeStyles((theme: Theme) =>
         color: 'inherit',
       },
     },
-    focused: {
-      borderColor: (props) =>
-        props === true
-          ? theme.palette.primary.dark
-          : theme.palette.secondary.dark,
-      color: (props) =>
-        props !== true
-          ? theme.palette.secondary.dark
-          : theme.palette.primary.dark,
-    },
     selected: {
       borderColor: (props) =>
         props === true
@@ -55,14 +55,14 @@ const useStylesLitmus = makeStyles((theme: Theme) =>
     },
     error: {
       borderColor: theme.palette.error.main,
-      '&:hover': {
-        borderColor: theme.palette.error.main,
-        boxShadow: '',
-      },
       '&$focused': {
         backgroundColor: theme.palette.homePageCardBackgroundColor,
         borderColor: theme.palette.error.main,
         color: theme.palette.error.main,
+      },
+      '&:hover': {
+        borderColor: theme.palette.error.main,
+        boxShadow: '',
       },
     },
     disabled: {
@@ -72,20 +72,20 @@ const useStylesLitmus = makeStyles((theme: Theme) =>
 );
 
 const useStyles = makeStyles((theme) => ({
-  success: {
-    border: '0.0625rem solid',
-    borderColor: theme.palette.secondary.dark,
-  },
   error: {
     border: '0.0625rem solid',
     borderColor: theme.palette.error.main,
   },
+  success: {
+    border: '0.0625rem solid',
+    borderColor: theme.palette.secondary.dark,
+  },
   inputArea: {
-    width: 'inherit',
+    borderRadius: 3,
     marginTop: theme.spacing(1),
     paddingLeft: theme.spacing(2),
     textDecoration: 'none',
-    borderRadius: 3,
+    width: 'inherit',
   },
   passwordDiv: {
     margin: 0,

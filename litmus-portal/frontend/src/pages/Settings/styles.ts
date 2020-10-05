@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     marginLeft: theme.spacing(2),
     borderBottom: `1px solid ${theme.palette.customColors.black(0.1)}`,
-    backgroundColor: theme.palette.tabSelectorBackgroundColor,
+    backgroundColor: `${theme.palette.customColors.black(0)} !important`,
   },
   Head: {
     margin: theme.spacing(4.5, 1.5, 2.5, 1.5),
