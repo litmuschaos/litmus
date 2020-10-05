@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bufio"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/types"
 	"math/rand"
 	"net/http"
 	"os"
@@ -26,7 +27,7 @@ func RandomString(n int) string {
 }
 
 //ManifestParser parses manifests yaml and generates dynamic manifest with specified keys
-func ManifestParser(id, key, server, subscriberImage, subscriberNS, workflowSC, workflowNS, argoSER, argoWFCTRL, litmusCOP, argoWFEXEC, litmusCRUN, template string) ([]byte, error) {
+func ManifestParser(id string, key string, subscriberConfig types.SubscriberConfigurationVars, template string) ([]byte, error) {
 	file, err := os.Open(template)
 	if err != nil {
 		return []byte{}, err
@@ -42,25 +43,25 @@ func ManifestParser(id, key, server, subscriberImage, subscriberNS, workflowSC, 
 		} else if strings.Contains(line, "#{KEY}") {
 			line = strings.Replace(line, "#{KEY}", key, -1)
 		} else if strings.Contains(line, "#{SERVER}") {
-			line = strings.Replace(line, "#{SERVER}", server, -1)
+			line = strings.Replace(line, "#{SERVER}", subscriberConfig.Server, -1)
 		} else if strings.Contains(line, "#{SUB-IMAGE}") {
-			line = strings.Replace(line, "#{SUB-IMAGE}", subscriberImage, -1)
+			line = strings.Replace(line, "#{SUB-IMAGE}", subscriberConfig.SubscriberImage, -1)
 		} else if strings.Contains(line, "#{SUB-NAMESPACE}") {
-			line = strings.Replace(line, "#{SUB-NAMESPACE}", subscriberNS, -1)
+			line = strings.Replace(line, "#{SUB-NAMESPACE}", subscriberConfig.SubscriberNS, -1)
 		} else if strings.Contains(line, "#{AGENT-SCOPE}") {
-			line = strings.Replace(line, "#{AGENT-SCOPE}", workflowSC, -1)
+			line = strings.Replace(line, "#{AGENT-SCOPE}", subscriberConfig.WorkflowSC, -1)
 		} else if strings.Contains(line, "#{AGENT-NAMESPACE}") {
-			line = strings.Replace(line, "#{AGENT-NAMESPACE}", workflowNS, -1)
+			line = strings.Replace(line, "#{AGENT-NAMESPACE}", subscriberConfig.WorkflowNS, -1)
 		} else if strings.Contains(line, "#{ARGO-SERVER}") {
-			line = strings.Replace(line, "#{ARGO-SERVER}", argoSER, -1)
+			line = strings.Replace(line, "#{ARGO-SERVER}", subscriberConfig.ArgoSER, -1)
 		} else if strings.Contains(line, "#{ARGO-WORKFLOW-CONTROLLER}") {
-			line = strings.Replace(line, "#{ARGO-WORKFLOW-CONTROLLER}", argoWFCTRL, -1)
+			line = strings.Replace(line, "#{ARGO-WORKFLOW-CONTROLLER}", subscriberConfig.ArgoWFCTRL, -1)
 		} else if strings.Contains(line, "#{LITMUS-CHAOS-OPERATOR}") {
-			line = strings.Replace(line, "#{LITMUS-CHAOS-OPERATOR}", litmusCOP, -1)
+			line = strings.Replace(line, "#{LITMUS-CHAOS-OPERATOR}", subscriberConfig.LitmusCOP, -1)
 		} else if strings.Contains(line, "#{ARGO-WORKFLOW-EXECUTOR}") {
-			line = strings.Replace(line, "#{ARGO-WORKFLOW-EXECUTOR}", argoWFEXEC, -1)
+			line = strings.Replace(line, "#{ARGO-WORKFLOW-EXECUTOR}", subscriberConfig.ArgoWFEXEC, -1)
 		} else if strings.Contains(line, "#{LITMUS-CHAOS-RUNNER}") {
-			line = strings.Replace(line, "#{LITMUS-CHAOS-RUNNER}", litmusCRUN, -1)
+			line = strings.Replace(line, "#{LITMUS-CHAOS-RUNNER}", subscriberConfig.LitmusCRUN, -1)
 		}
 		lines = append(lines, line)
 	}

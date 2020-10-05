@@ -327,6 +327,15 @@ kind: ConfigMap
 metadata:
   name: workflow-controller-configmap
   namespace: #{SUB-NAMESPACE}
+data:
+  config: |
+    containerRuntimeExecutor: k8sapi
+    executor:
+      imagePullPolicy: IfNotPresent
+      resources:
+        limits:
+          cpu: 0.2
+          memory: 512Mi
 ---
 apiVersion: v1
 kind: Service
