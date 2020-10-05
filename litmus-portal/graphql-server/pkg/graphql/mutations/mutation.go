@@ -45,8 +45,8 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 	}
 
 	return &model.ClusterRegResponse{
-		ClusterID: newCluster.ClusterID,
-		Token: token,
+		ClusterID:   newCluster.ClusterID,
+		Token:       token,
 		ClusterName: newCluster.ClusterName,
 	}, nil
 }
