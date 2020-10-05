@@ -15,6 +15,7 @@ export interface ChaosData {
 export interface Node {
   children: string[] | null;
   finishedAt: string;
+  message: string;
   name: string;
   phase: string;
   startedAt: string;
@@ -47,6 +48,7 @@ export interface WorkflowRun {
   workflow_name: string;
   workflow_run_id: string;
   cluster_type: string;
+  cluster_id: string;
 }
 
 export interface Workflow {

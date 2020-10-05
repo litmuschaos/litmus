@@ -159,7 +159,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   });
 
   const filteredData = rows.filter((dataRow) =>
-    dataRow?.username.toLowerCase().includes(filters.search)
+    dataRow?.username.toLowerCase().includes(filters.search.toLowerCase())
   );
 
   const [showsuccess, setShowsuccess] = useState<boolean>(false);
@@ -177,7 +177,10 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
               {errorB ? (
                 <Typography>{errorB.message}</Typography>
               ) : (
-                <div className={classes.body}>
+                <div
+                  data-cy="inviteNewMemberSuccessModal"
+                  className={classes.body}
+                >
                   <img src="./icons/checkmark.svg" alt="checkmark" />
                   <div className={classes.text}>
                     <Typography className={classes.typo}>
@@ -191,7 +194,10 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                       member.
                     </Typography>
                   </div>
-                  <div className={classes.buttonModal}>
+                  <div
+                    data-cy="inviteNewMemberSuccessModalDoneButton"
+                    className={classes.buttonModal}
+                  >
                     <ButtonFilled
                       isPrimary
                       isDisabled={false}
@@ -211,7 +217,10 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
             Invite <strong>new member</strong>
           </Typography>
           <Toolbar className={classes.toolbar}>
-            <div className={classes.inviteSomeone}>
+            <div
+              data-cy="inviteNewMemberSearch"
+              className={classes.inviteSomeone}
+            >
               <div>
                 <Input
                   id="input-with-icon-textfield"
@@ -235,7 +244,10 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                   }}
                 />
               </div>
-              <div className={classes.InviteBtn}>
+              <div
+                data-cy="inviteNewMemberSendInviteButton"
+                className={classes.InviteBtn}
+              >
                 <ButtonFilled
                   isPrimary
                   isDisabled={!selected.length}
@@ -262,7 +274,10 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
               </div>
             </div>
           </Toolbar>
-          <TableContainer className={classes.table}>
+          <TableContainer
+            data-cy="inviteNewMemberTable"
+            className={classes.table}
+          >
             <Table stickyHeader aria-label="sticky table">
               {filteredData && filteredData.length > 0 ? (
                 filteredData.map((row, index) => {
@@ -271,6 +286,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
 
                   return (
                     <TableRow
+                      data-cy="inviteNewMemberCheckBox"
                       role="checkbox"
                       key={row.username}
                       aria-checked={isItemSelected}

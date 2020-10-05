@@ -26,15 +26,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '30.25rem',
     border: `1px solid ${theme.palette.customColors.black(0.05)}`,
   },
-  filterOpt: {
-    '&:hover': {
-      background: theme.palette.customColors.menuOption.active,
-    },
-  },
   toolbar: {
     height: '6.125rem',
     border: `1px solid ${theme.palette.customColors.black(0.05)}`,
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.homePageCardBackgroundColor,
     marginBottom: theme.spacing(1.25),
     display: 'flex',
     justifyContent: 'space-between',
@@ -42,18 +37,17 @@ const useStyles = makeStyles((theme: Theme) => ({
   filter: {
     display: 'flex',
     alignItems: 'center',
+    paddingBottom: theme.spacing(0.5),
     marginLeft: theme.spacing(5),
   },
-  filterMenu: {
-    marginLeft: theme.spacing(1.25),
-    border: `1px solid ${theme.palette.customColors.black(0.05)}`,
-    borderRadius: '0.1875rem',
-    minWidth: '11.375rem',
-    height: '2.375rem',
-    paddingLeft: theme.spacing(2.5),
-    paddingRight: theme.spacing(2.5),
-    paddingTop: theme.spacing(0.625),
-    paddingBottom: theme.spacing(0.625),
+  formControl: {
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(6.25),
+    minWidth: '9rem',
+  },
+  selectText: {
+    height: '2.5rem',
+    padding: theme.spacing(0.5),
   },
   TR: {
     height: '4.8125rem',
@@ -80,6 +74,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   toolbarFirstCol: {
     display: 'flex',
+    alignItems: 'center',
   },
   buttonDiv: {
     marginRight: theme.spacing(1),
@@ -89,7 +84,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: 'auto',
   },
   avatarBackground: {
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.totalRunsCountColor,
     width: '2.56rem',
     height: '2.56rem',
     color: theme.palette.customColors.white(1),
