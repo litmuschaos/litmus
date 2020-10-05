@@ -1,6 +1,5 @@
-import { Line } from 'rc-progress';
 import React from 'react';
-import { useTheme } from '@material-ui/core/styles';
+import { withStyles, lighten, LinearProgress, Theme } from '@material-ui/core';
 
 interface LinearProgressBarProps {
   value: number | number[];
@@ -8,28 +7,82 @@ interface LinearProgressBarProps {
   width: number;
 }
 
+const RedLinearProgress = withStyles((theme: Theme) => ({
+  root: {
+    backgroundColor: lighten(theme.palette.error.dark, 0.5),
+  },
+  bar: {
+    backgroundColor: theme.palette.error.dark,
+  },
+}))(LinearProgress);
+
+const YellowLinearProgress = withStyles((theme: Theme) => ({
+  root: {
+    backgroundColor: lighten(theme.palette.warning.main, 0.5),
+  },
+  bar: {
+    backgroundColor: theme.palette.warning.main,
+  },
+}))(LinearProgress);
+
+const GreenLinearProgress = withStyles((theme: Theme) => ({
+  root: {
+    backgroundColor: lighten(theme.palette.success.dark, 0.5),
+  },
+
+  bar: {
+    backgroundColor: theme.palette.success.dark,
+  },
+}))(LinearProgress);
+
 const LinearProgressBar: React.FC<LinearProgressBarProps> = ({
   value,
   isDefault,
   width,
 }) => {
   const resultValue = (value as number) * 10;
-  const theme = useTheme();
-
+  const defaultSize = 20;
+  if (isDefault) {
+    if (resultValue <= 30) {
+      return (
+        <RedLinearProgress
+          value={resultValue}
+          variant="determinate"
+          style={{
+            height: defaultSize | (width * 10),
+            borderRadius: defaultSize | (width * 10),
+          }}
+        />
+      );
+    } else if (resultValue > 30 && resultValue <= 60) {
+      return (
+        <YellowLinearProgress
+          value={resultValue}
+          variant="determinate"
+          style={{
+            height: defaultSize | (width * 10),
+            borderRadius: defaultSize | (width * 10),
+          }}
+        />
+      );
+    } else {
+      return (
+        <GreenLinearProgress
+          value={resultValue}
+          variant="determinate"
+          style={{
+            height: defaultSize | (width * 10),
+            borderRadius: defaultSize | (width * 10),
+          }}
+        />
+      );
+    }
+  }
   return (
-    <Line
-      percent={resultValue}
-      strokeWidth={width}
-      trailWidth={width}
-      strokeColor={
-        isDefault
-          ? theme.palette.secondary.dark
-          : resultValue > 30 && resultValue <= 60
-          ? theme.palette.warning.main
-          : resultValue > 60
-          ? theme.palette.primary.dark
-          : theme.palette.error.dark
-      }
+    <LinearProgress
+      value={0}
+      variant="determinate"
+      style={{ height: defaultSize | width }}
     />
   );
 };
