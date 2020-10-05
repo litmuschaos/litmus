@@ -1,5 +1,6 @@
 import { Avatar, Badge, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import useStyles from './styles';
 
@@ -32,11 +33,12 @@ const ChooseAvatarModal: React.FC<ChooseAvatarModalProps> = ({
   avatar,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   // is the avatar still default, helps is enabling button
   const [isDefault, setIsDefault] = useState<boolean>(true);
 
-  const handleChange: (src: string) => void = (src) => {
+  const handleChange = (src: string) => {
     setAvatar(src);
     setIsDefault(false);
   };
@@ -44,12 +46,14 @@ const ChooseAvatarModal: React.FC<ChooseAvatarModalProps> = ({
   return (
     <div>
       <img src={avatar} alt="Selected Avatar" height="100px" />
-      <Typography className={classes.typo}>Change your Avatar</Typography>
-      <Typography className={classes.typosm}>
-        You can now use your new password to login to your account
+      <Typography className={classes.typo}>
+        {t('settings.userManagementTab.createUser.chooseAvatarModal.title')}
+      </Typography>
+      <Typography className={classes.info}>
+        {t('settings.userManagementTab.createUser.chooseAvatarModal.info')}
       </Typography>
       <div className={classes.selectorbg}>
-        <div className={classes.avline}>
+        <div className={classes.avatarline}>
           {maleAvatars.map((av) => {
             if (av === avatar) {
               return (
@@ -70,7 +74,7 @@ const ChooseAvatarModal: React.FC<ChooseAvatarModalProps> = ({
                 >
                   <Avatar
                     data-cy="avatar"
-                    className={classes.selav}
+                    className={classes.selectedavatar}
                     alt="User"
                     src={av}
                     onClick={() => handleChange(av)}
@@ -82,7 +86,7 @@ const ChooseAvatarModal: React.FC<ChooseAvatarModalProps> = ({
               <Avatar
                 key={av}
                 data-cy="avatar"
-                className={classes.av}
+                className={classes.avatar}
                 alt="User"
                 src={av}
                 onClick={() => handleChange(av)}
@@ -90,7 +94,7 @@ const ChooseAvatarModal: React.FC<ChooseAvatarModalProps> = ({
             );
           })}
         </div>
-        <div className={classes.avline}>
+        <div className={classes.avatarline}>
           {femaleAvatars.map((av) => {
             if (av === avatar) {
               return (
@@ -111,7 +115,7 @@ const ChooseAvatarModal: React.FC<ChooseAvatarModalProps> = ({
                 >
                   <Avatar
                     data-cy="avatar"
-                    className={classes.selav}
+                    className={classes.selectedavatar}
                     alt="User"
                     src={av}
                     onClick={() => handleChange(av)}
@@ -123,7 +127,7 @@ const ChooseAvatarModal: React.FC<ChooseAvatarModalProps> = ({
               <Avatar
                 key={av}
                 data-cy="avatar"
-                className={classes.av}
+                className={classes.avatar}
                 alt="User"
                 src={av}
                 onClick={() => handleChange(av)}
@@ -133,7 +137,7 @@ const ChooseAvatarModal: React.FC<ChooseAvatarModalProps> = ({
         </div>
       </div>
       <ButtonFilled isDisabled={isDefault} isPrimary handleClick={handleSubmit}>
-        Choose an avatar
+        {t('settings.userManagementTab.createUser.chooseAvatarModal.button')}
       </ButtonFilled>
     </div>
   );

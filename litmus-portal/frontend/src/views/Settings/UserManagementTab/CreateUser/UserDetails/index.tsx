@@ -1,5 +1,6 @@
 import { Avatar, Button, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import InputField from '../../../../../components/InputField';
 import Unimodal from '../../../../../containers/layouts/Unimodal';
 import {
@@ -34,6 +35,7 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
   emailIsDisabled,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   const [open, setOpen] = React.useState(false);
   // avatar image source string
@@ -50,7 +52,9 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
   return (
     <div>
       <Typography className={classes.headerText}>
-        <strong> Personal Details</strong>
+        <strong>
+          {t('settings.userManagementTab.createUser.userDetails.header')}
+        </strong>
       </Typography>
       <form>
         <div className={classes.details}>
@@ -62,7 +66,7 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
               src={avatar}
             />
             <Button className={classes.edit} onClick={handleOpen}>
-              Edit Photo
+              {t('settings.userManagementTab.createUser.userDetails.button')}
             </Button>
             <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn>
               <ChooseAvatarModal
@@ -86,7 +90,9 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
                 disabled={nameIsDisabled}
                 handleChange={handleNameChange}
                 validationError={validateStartEmptySpacing(nameValue)}
-                label="Full Name"
+                label={t(
+                  'settings.userManagementTab.createUser.userDetails.label.fullName'
+                )}
               />
             </div>
             <div data-cy="InputEmail">
@@ -100,7 +106,9 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
                 disabled={emailIsDisabled}
                 handleChange={handleEmailChange}
                 validationError={validateEmail(emailValue)}
-                label="Email Address"
+                label={t(
+                  'settings.userManagementTab.createUser.userDetails.label.email'
+                )}
               />
             </div>
             {/* Username is not editable normal user */}
@@ -108,9 +116,11 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
               <InputField
                 value={userValue}
                 handleChange={handleUserChange}
-                label="Username"
                 disabled={usernameIsDisabled}
                 validationError={false}
+                label={t(
+                  'settings.userManagementTab.createUser.userDetails.label.username'
+                )}
               />
             </div>
           </div>
