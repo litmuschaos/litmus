@@ -11,7 +11,7 @@ metadata:
   labels:
     name: litmus
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: litmus
@@ -25,7 +25,7 @@ rules:
   resources: ["validatingwebhookconfigurations"]
   verbs: ["get","create","list","delete","update"]
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: litmus
