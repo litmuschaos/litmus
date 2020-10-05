@@ -1,27 +1,16 @@
 # Monitor Chaos
 
-This directory contains chaos interleaved grafana dashboards along with the utilities needed to get started with monitoring chaos experiments and workflows.  
+This directory contains chaos interleaved grafana dashboards along with the utilities needed to get started with monitoring chaos experiments and workflows.
 
-# Instructions
+# Components
 
-- Clone the litmus repo
+- [Grafana Dashboards](https://github.com/litmuschaos/litmus/blob/master/monitoring/grafana-dashboards)
 
-  ```
-  git clone https://github.com/litmuschaos/litmus.git
-  cd litmus/monitoring
-  ```
+  > Contains chaos interleaved grafana dashboards for various native k8s and application metrics.
 
-- Grafana Dashboards
+- [Utilities](https://github.com/litmuschaos/litmus/blob/master/monitoring/utils)
 
-  ```
-  cd grafana-dashboards
-  ```
-
-- Utilities 
-
-  ```
-  cd utils
-  ```
+  > Contains utilities required to setup monitoring infrastructure on a kubernetes cluster.
 
 # Demonstration
 
@@ -171,7 +160,7 @@ kubectl apply -f utils/sample-chaos-injectors/chaos-experiments/orders/orders-no
 
 ### Step-6 (optional): Inject continous chaos using Argo CD.
 
-- Install Argo workflow infrastructure.
+- Install Chaos workflow infrastructure.
 
   - Create argo namespace
 
@@ -187,7 +176,7 @@ kubectl apply -f utils/sample-chaos-injectors/chaos-experiments/orders/orders-no
 
   - Install the argo CLI on the test harness machine (where the kubeconfig is available)
 
-    ```
+    ```bash
     # Download the binary
     curl -sLO https://github.com/argoproj/argo/releases/download/v2.11.0/argo-linux-amd64.gz
 
@@ -210,14 +199,12 @@ kubectl apply -f utils/sample-chaos-injectors/chaos-experiments/orders/orders-no
   kubectl apply -f https://raw.githubusercontent.com/litmuschaos/chaos-workflows/master/Argo/argo-access.yaml -n litmus
   ```
 
-- Run litmuschaos experiments as Argo workflows using argo CLI or kubectl.
+- Run one or more of the litmuschaos experiments as Chaos workflows using argo CLI or kubectl.
 
-  ```
-  argo cron create utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/catalogue/catalogue-node-cpu-hog-workflow.yaml -n litmus
-  argo cron create utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-node-memory-hog-workflow.yaml -n litmus
-  kubectl apply -f utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/catalogue/catalogue-pod-cpu-hog-workflow.yaml -n litmus
-  kubectl apply -f utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-pod-memory-hog-workflow.yaml -n litmus
-  ```
+  > argo cron create utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/catalogue/catalogue-node-cpu-hog-workflow.yaml -n litmus
+  > argo cron create utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-node-memory-hog-workflow.yaml -n litmus
+  > kubectl apply -f utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/catalogue/catalogue-pod-cpu-hog-workflow.yaml -n litmus
+  > kubectl apply -f utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-pod-memory-hog-workflow.yaml -n litmus
 
 - Visualize the Chaos cron workflow through argo UI by obtaining Node port or Load Balancer IP.
 
