@@ -202,16 +202,25 @@ kubectl apply -f utils/sample-chaos-injectors/chaos-experiments/orders/orders-no
 - Run one or more of the litmuschaos experiments as Chaos workflows using argo CLI or kubectl.
 
   > Node CPU hog
-  ```argo cron create utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/catalogue/catalogue-node-cpu-hog-workflow.yaml -n litmus```
+  ```bash
+  argo cron create utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/catalogue/catalogue-node-cpu-hog-workflow.yaml -n litmus
+  ```
 
   > Node memory hog
-  ```argo cron create utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-node-memory-hog-workflow.yaml -n litmus```
+  ```bash
+  argo cron create utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-node-memory-hog-workflow.yaml -n litmus
+  ```
 
   > Pod CPU hog
-  ```kubectl apply -f utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/catalogue/catalogue-pod-cpu-hog-workflow.yaml -n litmus```
+
+  ```bash
+  kubectl apply -f utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/catalogue/catalogue-pod-cpu-hog-workflow.yaml -n litmus
+  ```
 
   > Pod memory hog
-  ```kubectl apply -f utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-pod-memory-hog-workflow.yaml -n litmus```
+  ```bash
+  kubectl apply -f utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-pod-memory-hog-workflow.yaml -n litmus
+  ```
 
 - Visualize the Chaos cron workflow through argo UI by obtaining Node port or Load Balancer IP.
 
