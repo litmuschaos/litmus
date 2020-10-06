@@ -7,7 +7,7 @@ import formatCount from '../../utils/formatCount';
 import useStyles from './styles';
 
 interface CardValueData {
-  color: string | undefined;
+  color: string;
   value: number;
   statType: string;
   plus?: boolean | undefined;

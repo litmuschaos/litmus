@@ -78,7 +78,7 @@ declare module '@material-ui/core/styles/createPalette' {
     sidebarBackground?: string;
     createWorkflowCardShadow?: string;
     userNameTextColor?: string;
-    totalRunsCountColor?: string;
+    totalRunsCountColor: string;
     tabsComponentColor?: string;
     tabSelectorBackgroundColor?: string;
     providerTextColor?: string;
