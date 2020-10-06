@@ -26,7 +26,7 @@ Or
 
 > Master (Latest) Cluster scope. Installed in litmus namespace by default.
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/clusterwide-k8s-manifest.yml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml
 ```
 
 Or

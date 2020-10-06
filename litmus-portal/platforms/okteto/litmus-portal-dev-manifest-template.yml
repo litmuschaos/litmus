@@ -242,7 +242,7 @@ kind: Service
 metadata:
   name: litmusportal-server-service
 spec:
-  type: ClusterIP
+  type: NodePort
   ports:
     - name: graphql-server
       port: 9002
