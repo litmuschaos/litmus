@@ -77,7 +77,7 @@ const DelUser: React.FC<DelUserProps> = ({
           )}
         </>
       )} */}
-      <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn={false}>
+      <Unimodal open={open} handleClose={handleClose} hasCloseBtn={false}>
         <div className={classes.body}>
           <img src="./icons/userDel.svg" alt="lock" />
           <div className={classes.text}>

@@ -103,24 +103,29 @@ const ReliablityScore = () => {
                 <InfoTooltip value="Text Default" />
                 </div> */}
               <Unimodal
-                isOpen={open}
+                open={open}
                 handleClose={() => setOpen(false)}
                 hasCloseBtn={false}
               >
                 <div>
-                  <ResultTable testValue={testWeights} testNames={testNames} />
-                </div>
-                <hr className={classes.horizontalLineResult} />
-                <div className={classes.gotItBtn}>
-                  <Center>
-                    <ButtonFilled
-                      handleClick={() => setOpen(false)}
-                      data-cy="gotItButton"
-                      isPrimary
-                    >
-                      <div>Got it</div>
-                    </ButtonFilled>
-                  </Center>
+                  <div>
+                    <ResultTable
+                      testValue={testWeights}
+                      testNames={testNames}
+                    />
+                  </div>
+                  <hr className={classes.horizontalLineResult} />
+                  <div className={classes.gotItBtn}>
+                    <Center>
+                      <ButtonFilled
+                        handleClick={() => setOpen(false)}
+                        data-cy="gotItButton"
+                        isPrimary
+                      >
+                        <div>Got it</div>
+                      </ButtonFilled>
+                    </Center>
+                  </div>
                 </div>
               </Unimodal>
             </div>

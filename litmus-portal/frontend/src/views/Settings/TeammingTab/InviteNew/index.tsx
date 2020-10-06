@@ -26,7 +26,7 @@ const InviteNew: React.FC = () => {
       </div>
 
       <Unimodal
-        isOpen={open}
+        open={open}
         handleClose={handleClose}
         hasCloseBtn
         textAlign="center"

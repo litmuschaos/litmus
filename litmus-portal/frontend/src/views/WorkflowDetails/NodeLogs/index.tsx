@@ -40,7 +40,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({
 
   return (
     <Unimodal
-      isOpen={logsOpen}
+      open={logsOpen}
       handleClose={handleClose}
       hasCloseBtn
       textAlign="left"
