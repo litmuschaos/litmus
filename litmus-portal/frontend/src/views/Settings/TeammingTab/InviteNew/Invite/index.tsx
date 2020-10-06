@@ -159,7 +159,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   });
 
   const filteredData = rows.filter((dataRow) =>
-    dataRow?.username.toLowerCase().includes(filters.search)
+    dataRow?.username.toLowerCase().includes(filters.search.toLowerCase())
   );
 
   const [showsuccess, setShowsuccess] = useState<boolean>(false);

@@ -1,4 +1,4 @@
-welcomeModel:
+welcomeModal:
   title: Welcome to Litmus Portal,
   info: What do you want to name your project?
   button:

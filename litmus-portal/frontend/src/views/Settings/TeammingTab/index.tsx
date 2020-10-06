@@ -43,8 +43,8 @@ import useStyles from './styles';
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
     head: {
-      backgroundColor: theme.palette.common.white,
-      color: theme.palette.common.black,
+      backgroundColor: theme.palette.homePageCardBackgroundColor,
+      color: theme.palette.teamingTabHeadTextColor,
     },
     body: {
       fontSize: '0.875rem',
@@ -119,7 +119,9 @@ const TeammingTab: React.FC = () => {
   const filteredData =
     rows &&
     rows
-      .filter((dataRow) => dataRow?.name.toLowerCase().includes(filters.search))
+      .filter((dataRow) =>
+        dataRow?.name.toLowerCase().includes(filters.search.toLowerCase())
+      )
       .filter((dataRow) => {
         if (filters.role === 'all') return true;
         if (filters.role === 'Editor') return dataRow.role === 'Editor';
