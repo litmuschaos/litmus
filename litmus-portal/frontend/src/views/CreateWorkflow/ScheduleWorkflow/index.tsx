@@ -114,10 +114,10 @@ const ScheduleWorkflow: React.FC = () => {
       });
       setCronValue({
         ...cronValue,
-        minute: newTime?.getMinutes().toString(),
-        hour: newTime?.getHours().toString(),
+        minute: newTime.getMinutes().toString(),
+        hour: newTime.getHours().toString(),
         day_month: date?.getDate().toString(),
-        month: (date && date?.getMonth() + 1)?.toString(),
+        month: (date && date.getMonth() + 1)?.toString(),
       });
     } else {
       workflow.setWorkflowDetails({
@@ -132,7 +132,7 @@ const ScheduleWorkflow: React.FC = () => {
         minute: time?.getMinutes().toString(),
         hour: time?.getHours().toString(),
         day_month: date?.getDate().toString(),
-        month: (date && date?.getMonth() + 1)?.toString(),
+        month: (date && date.getMonth() + 1)?.toString(),
       });
     }
   };
@@ -496,7 +496,11 @@ const ScheduleWorkflow: React.FC = () => {
                                   }}
                                 >
                                   {weekdays.map((day) => (
-                                    <option className={classes.opt} value={day}>
+                                    <option
+                                      key={day}
+                                      className={classes.opt}
+                                      value={day}
+                                    >
                                       {day}
                                     </option>
                                   ))}

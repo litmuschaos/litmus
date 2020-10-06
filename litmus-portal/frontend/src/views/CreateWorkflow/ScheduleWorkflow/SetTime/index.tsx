@@ -33,7 +33,7 @@ const SetTime: React.FC<SetTimeProps> = ({ handleChange, value, data }) => {
           MenuProps={{ classes: { paper: classes.menuPaper } }}
         >
           {data.map((dataValue) => (
-            <option className={classes.opt} value={dataValue}>
+            <option key={dataValue} className={classes.opt} value={dataValue}>
               {dataValue}
             </option>
           ))}
