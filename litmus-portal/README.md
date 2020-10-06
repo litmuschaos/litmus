@@ -46,11 +46,15 @@ kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/lit
 
 - `litmus-portal-operations-config` configmap.
 
-    > `PortalNamespace: litmus`
+    > `AgentNamespace: litmus`
 
 - All environment variables.
 
 #### Configuration Options for Namespace scope.
+
+- `litmus-portal-operations-config` configmap.
+
+    > `AgentNamespace: ${LITMUS_PORTAL_NAMESPACE}`
 
 - All environment variables.
 
