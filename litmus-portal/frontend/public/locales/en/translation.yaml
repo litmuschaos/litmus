@@ -131,6 +131,21 @@ chaosWorkflows:
       once: Once
       seeAnalytics: See analytics
 
+settings:
+  userManagementTab:
+    createUser:
+      userDetails:
+        header: Personal Details
+        button: Edit Photo
+        label:
+          fullName: Full Name
+          email: Email Address
+          username: Username
+      chooseAvatarModal:
+        title: Change your Avatar
+        info: You can now use your new password to login to your account
+        button: Choose an avatar
+
 ######################################
 ############    Targets    ###########
 ######################################
