@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import EditIcon from '@material-ui/icons/Edit';
 import cronstrue from 'cronstrue';
+import YAML from 'yaml';
 import AdjustedWeights from '../../../components/AdjustedWeights';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline/index';
@@ -61,8 +62,12 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   };
 
   const handleNameChange = ({ changedName }: { changedName: string }) => {
+    const parsedYaml = YAML.parse(yaml);
+    parsedYaml.metadata.name = changedName;
+    const nameMappedYaml = YAML.stringify(parsedYaml);
     workflow.setWorkflowDetails({
       name: changedName,
+      yaml: nameMappedYaml,
     });
   };
 
