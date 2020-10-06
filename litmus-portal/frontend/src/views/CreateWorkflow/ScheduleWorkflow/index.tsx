@@ -158,7 +158,6 @@ const ScheduleWorkflow: React.FC = () => {
     workflow.setWorkflowDetails({
       scheduleInput: {
         ...workflowData.scheduleInput,
-        date,
         time: date,
       },
     });
@@ -201,25 +200,32 @@ const ScheduleWorkflow: React.FC = () => {
       setCronValue({
         minute: selectedTime?.getMinutes().toString(),
         hour: selectedTime?.getHours().toString(),
-        day_month: new Date(workflowData.scheduleInput.date)
-          .getDate()
-          .toString(),
-        month: (
-          new Date(workflowData.scheduleInput.date).getMonth() + 1
-        ).toString(),
+        day_month: selectedDate?.getDate().toString(),
+        month: (selectedDate && selectedDate.getMonth() + 1)?.toString(),
         day_week: '*',
       });
       if (workflowData.scheduleInput.time <= new Date()) {
         const newTime = new Date();
         newTime.setMinutes(newTime.getMinutes() + 5);
         setSelectedTime(newTime);
-      } else {
-        setSelectedTime(workflowData.scheduleInput.time);
+        setCronValue({
+          minute: newTime.getMinutes().toString(),
+          hour: newTime.getHours().toString(),
+          day_month: selectedDate?.getDate().toString(),
+          month: (selectedDate && selectedDate.getMonth() + 1)?.toString(),
+          day_week: '*',
+        });
+        workflow.setWorkflowDetails({
+          scheduleInput: {
+            ...workflowData.scheduleInput,
+            time: newTime,
+          },
+        });
       }
     }
     if (valueDef === 'everyHr') {
       setCronValue({
-        minute: workflowData.scheduleInput.hour_interval.toString(),
+        minute: minute.toString(),
         hour: '0-23',
         day_month: '*',
         month: '*',
@@ -241,14 +247,14 @@ const ScheduleWorkflow: React.FC = () => {
         hour: selectedTime?.getHours().toString(),
         day_month: '*',
         month: '*',
-        day_week: workflowData.scheduleInput.weekday.slice(0, 3),
+        day_week: days.slice(0, 3),
       });
     }
     if (valueDef === 'everyMonth') {
       setCronValue({
         minute: selectedTime?.getMinutes().toString(),
         hour: selectedTime?.getHours().toString(),
-        day_month: workflowData.scheduleInput.day.toString(),
+        day_month: dates.toString(),
         month: '*',
         day_week: '*',
       });
