@@ -1,0 +1,54 @@
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  name: node-cpu-cron-wf
+  namespace: litmus
+spec:
+  schedule: "0-14/15 * * * *"
+  concurrencyPolicy: "Forbid"
+  startingDeadlineSeconds: 0
+  workflowSpec:
+    entrypoint: argowf-chaos
+    serviceAccountName: argo-chaos
+    templates:
+      - name: argowf-chaos
+        steps:
+          - - name: run-node-cpu-hog
+              template: run-node-cpu-hog
+      - name: run-node-cpu-hog
+        inputs:
+          artifacts:
+            - name: run-node-cpu-hog
+              path: /tmp/chaosengine-node-cpu-hog.yaml
+              raw:
+                data: |
+                  apiVersion: litmuschaos.io/v1alpha1
+                  kind: ChaosEngine
+                  metadata:
+                    name: catalogue-node-cpu-hog
+                    namespace: litmus
+                  spec:
+                    annotationCheck: 'false'
+                    engineState: 'active'
+                    auxiliaryAppInfo: ''
+                    appinfo:
+                      appns: 'sock-shop'
+                      applabel: 'name=catalogue'
+                      appkind: 'deployment'
+                    chaosServiceAccount: litmus-admin
+                    monitoring: true
+                    jobCleanUpPolicy: 'retain'
+                    experiments:
+                      - name: node-cpu-hog
+                        spec:
+                          components:
+                            env:
+                              - name: TOTAL_CHAOS_DURATION
+                                value: '240' # in seconds
+                              - name: NODE_CPU_CORE
+                                value: '1'
+        container:
+          image: lachlanevenson/k8s-kubectl
+          command: [sh, -c]
+          args:
+            ["kubectl apply -f /tmp/chaosengine-node-cpu-hog.yaml -n litmus"]

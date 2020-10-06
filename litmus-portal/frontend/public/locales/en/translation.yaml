@@ -1,4 +1,4 @@
-welcomeModel:
+welcomeModal:
   title: Welcome to Litmus Portal,
   info: What do you want to name your project?
   button:
@@ -130,6 +130,21 @@ chaosWorkflows:
       comparativeResults: Comparative results of selected workflow
       once: Once
       seeAnalytics: See analytics
+
+settings:
+  userManagementTab:
+    createUser:
+      userDetails:
+        header: Personal Details
+        button: Edit Photo
+        label:
+          fullName: Full Name
+          email: Email Address
+          username: Username
+      chooseAvatarModal:
+        title: Change your Avatar
+        info: You can now use your new password to login to your account
+        button: Choose an avatar
 
 ######################################
 ############    Targets    ###########
