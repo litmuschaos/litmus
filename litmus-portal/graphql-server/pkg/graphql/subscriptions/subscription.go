@@ -40,8 +40,8 @@ func SendWorkflowEvent(wfRun model.WorkflowRun, r store.StateData) {
 
 func SendWorkflowRequest(wfRequest *database.ChaosWorkFlowInput, r store.StateData) {
 
-	namespace := os.Getenv("AGENT_NAMESPACE")
-	if os.Getenv("AGENT_SCOPE") == "cluster" {
+	namespace := os.Getenv("PORTAL_NAMESPACE")
+	if os.Getenv("PORTAL_SCOPE") == "cluster" {
 		/*
 			namespace = Obtain from WorkflowManifest or
 			from frontend as a separate workflowNamespace field under ChaosWorkFlowInput model

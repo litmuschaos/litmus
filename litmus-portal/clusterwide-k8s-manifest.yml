@@ -10,8 +10,8 @@ metadata:
   name: litmus-portal-admin-config
   namespace: litmus
 data:
-  K8s-mode: cluster
-  SubscriberNamespace: litmus
+  PortalScope: cluster
+  PortalNamespace: litmus
   DataBaseServer: "mongodb://mongo-service:27017"
   JWTSecret: "litmus-portal@123"
 ---
@@ -168,41 +168,24 @@ spec:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
                   key: JWTSecret
-            - name: EXTERNAL_ADDRESS
-              value: ""
             - name: SERVICE_ADDRESS
               value: "http://litmusportal-server-service:9002"
             - name: SELF_CLUSTER
               value: "true"
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos/litmusportal-subscriber:ci"
-            - name: SUBSCRIBER_SCOPE
+            - name: PORTAL_SCOPE
               valueFrom:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
-                  key: K8s-mode
-            - name: AGENT_SCOPE
+                  key: PortalScope
+            - name: PORTAL_NAMESPACE
               valueFrom:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
-                  key: K8s-mode
-            - name: SUBSCRIBER_NAMESPACE
-              valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
-                  key: SubscriberNamespace
-            - name: AGENT_NAMESPACE
-              valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
-                  key: SubscriberNamespace
+                  key: PortalNamespace
             - name: DEPLOYER_IMAGE
               value: "litmuschaos/litmusportal-self-deployer:ci"
-            - name: DEPLOYER_NAMESPACE
-              valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
-                  key: SubscriberNamespace
             - name: ARGO_SERVER_IMAGE
               value: "argoproj/argocli:v2.9.3"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE

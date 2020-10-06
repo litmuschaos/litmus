@@ -1,17 +1,10 @@
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: litmus
----
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: litmus-portal-admin-config
-  namespace: litmus
 data:
-  K8s-mode: namespace
-  SubscriberNamespace: litmus
+  PortalScope: namespace
+  PortalNamespace: ${LITMUS_PORTAL_NAMESPACE}
   DataBaseServer: "mongodb://mongo-service:27017"
   JWTSecret: "litmus-portal@123"
 ---
@@ -19,7 +12,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: litmusportal-frontend
-  namespace: litmus
   labels:
     component: litmusportal-frontend
 spec:
@@ -47,7 +39,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: litmusportal-frontend-service
-  namespace: litmus
 spec:
   type: NodePort
   ports:
@@ -61,13 +52,11 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: self-deployer-namespace-account
-  namespace: litmus
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
   name: deployer-namespace
-  namespace: litmus
   labels:
     name: deployer-namespace
 rules:
@@ -79,11 +68,10 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
   name: deployer-namespace-rb
-  namespace: litmus
 subjects:
   - kind: ServiceAccount
     name: self-deployer-namespace-account
-    namespace: litmus
+    namespace: ${LITMUS_PORTAL_NAMESPACE}
 roleRef:
   kind: Role
   name: deployer-namespace
@@ -93,13 +81,11 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: litmus-server-account
-  namespace: litmus
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
   name: litmus-server
-  namespace: litmus
   labels:
     name: litmus-server
 rules:
@@ -123,11 +109,10 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
   name: litmus-server-rb
-  namespace: litmus
 subjects:
   - kind: ServiceAccount
     name: litmus-server-account
-    namespace: litmus
+    namespace: ${LITMUS_PORTAL_NAMESPACE}
 roleRef:
   kind: Role
   name: litmus-server
@@ -137,7 +122,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: litmusportal-server
-  namespace: litmus
   labels:
     component: litmusportal-server
 spec:
@@ -168,41 +152,24 @@ spec:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
                   key: JWTSecret
-            - name: EXTERNAL_ADDRESS
-              value: ""
             - name: SERVICE_ADDRESS
               value: "http://litmusportal-server-service:9002"
             - name: SELF_CLUSTER
               value: "true"
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos/litmusportal-subscriber:ci"
-            - name: SUBSCRIBER_SCOPE
+            - name: PORTAL_SCOPE
               valueFrom:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
-                  key: K8s-mode
-            - name: AGENT_SCOPE
+                  key: PortalScope
+            - name: PORTAL_NAMESPACE
               valueFrom:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
-                  key: K8s-mode
-            - name: SUBSCRIBER_NAMESPACE
-              valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
-                  key: SubscriberNamespace
-            - name: AGENT_NAMESPACE
-              valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
-                  key: SubscriberNamespace
+                  key: PortalNamespace
             - name: DEPLOYER_IMAGE
               value: "litmuschaos/litmusportal-self-deployer:ci"
-            - name: DEPLOYER_NAMESPACE
-              valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
-                  key: SubscriberNamespace
             - name: ARGO_SERVER_IMAGE
               value: "argoproj/argocli:v2.9.3"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
@@ -246,7 +213,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: litmusportal-server-service
-  namespace: litmus
 spec:
   type: ClusterIP
   ports:
@@ -263,7 +229,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mongo
-  namespace: litmus
   labels:
     app: mongo
 spec:
@@ -298,7 +263,6 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mongo-pv-claim
-  namespace: litmus
   labels:
     app: mongo
 spec:
@@ -314,7 +278,6 @@ metadata:
   labels:
     app: mongo
   name: mongo-service
-  namespace: litmus
 spec:
   ports:
     - port: 27017

@@ -7,6 +7,8 @@ Litmus-Portal provides console and UI experience for managing, monitoring, and e
 -   Minikube
 -   GKE
 -   KIND
+-   EKS
+-   Okteto Cloud
 
 ## **Pre-requisites**
 
@@ -22,26 +24,33 @@ kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/v1.8.x/lit
 
 Or
 
-> Master (Latest) Cluster scope.
+> Master (Latest) Cluster scope. Installed in litmus namespace by default.
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/clusterwide-k8s-manifest.yml
 ```
 
 Or
 
-> Master (Latest) Namespaced scope.
+> Master (Latest) Namespaced scope. Replace <namespace> with the desired namespace.
 ```bash
+export LITMUS_PORTAL_NAMESPACE="<namespace>"
+kubectl create ns ${LITMUS_PORTAL_NAMESPACE}
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/namespaced-K8s-manifest.yml
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/okteto-dev-env-setup/hello-world-AUT.yml -n <namespace>
+curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/namespaced-K8s-template.yml --output litmus-portal-namespaced-K8s-template.yml
+envsubst < litmus-portal-namespaced-K8s-template.yml > ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
+kubectl apply -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml -n ${LITMUS_PORTAL_NAMESPACE}
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/platforms/okteto/hello-world-AUT.yml -n ${LITMUS_PORTAL_NAMESPACE}
 ```
 
-#### Configuration Options
+#### Configuration Options for Cluster scope.
 
 - `litmus-portal-operations-config` configmap.
 
-    > `K8s-mode: namespace`
-    > `SubscriberNamespace: litmus`
+    > `PortalNamespace: litmus`
+
+- All environment variables.
+
+#### Configuration Options for Namespace scope.
 
 - All environment variables.
 
@@ -82,7 +91,6 @@ kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/li
     -   GQLGEN GraphQL Server
 -   Database
     -   MongoDB
-    -   Prometheus
 
 ##### **Additional information**
 

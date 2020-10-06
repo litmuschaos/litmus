@@ -16,7 +16,7 @@ import (
 
 func CreateDeployment(namespace, token string) (*appsv1.Deployment, error) {
 	deployerImage := os.Getenv("DEPLOYER_IMAGE")
-	subscriberSC := os.Getenv("SUBSCRIBER_SCOPE")
+	subscriberSC := os.Getenv("PORTAL_SCOPE")
 	selfDeployerSvcAccount := "self-deployer-namespace-account"
 	if subscriberSC == "cluster" {
 		selfDeployerSvcAccount = "self-deployer-admin-account"
