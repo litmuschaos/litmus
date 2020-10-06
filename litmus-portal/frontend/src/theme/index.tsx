@@ -21,6 +21,31 @@ declare module '@material-ui/core/styles/createMuiTheme' {
 // Augument the Palette interface
 declare module '@material-ui/core/styles/createPalette' {
   interface Palette {
+    map: {
+      cityMap: {
+        backgroundColor: string;
+        marker: {
+          hover: string;
+          fill: string;
+          stroke: string;
+        };
+        geography: {
+          fill: string;
+          stroke: string;
+          hover: {
+            fill: string;
+            stroke: string;
+          };
+        };
+      };
+      countryMap: {
+        background: string;
+        colorAxis: string[];
+        backgroundMap: string;
+        datalessRegion: string;
+        default: string;
+      };
+    };
     customColors: {
       white: (opacity: number) => string;
       black: (opacity: number) => string;
@@ -54,6 +79,31 @@ declare module '@material-ui/core/styles/createPalette' {
   }
   // allow configuration using `createMuiTheme`
   interface PaletteOptions {
+    map?: {
+      cityMap?: {
+        backgroundColor?: string;
+        marker?: {
+          hover?: string;
+          fill?: string;
+          stroke?: string;
+        };
+        geography?: {
+          fill?: string;
+          stroke?: string;
+          hover?: {
+            fill?: string;
+            stroke?: string;
+          };
+        };
+      };
+      countryMap: {
+        background?: string;
+        colorAxis?: string[];
+        backgroundMap?: string;
+        datalessRegion?: string;
+        default?: string;
+      };
+    };
     customColors?: {
       white?: (opacity: number) => string;
       black?: (opacity: number) => string;
@@ -126,6 +176,31 @@ function customTheme(options: ThemeOptions) {
       },
       shadow: {
         blue: 'rgba(91, 68, 186, 0.25)',
+      },
+      map: {
+        cityMap: {
+          backgroundColor: '#FFFFFF',
+          marker: {
+            hover: '#808000',
+            fill: '#2B39A5',
+            stroke: '#FFFFFF',
+          },
+          geography: {
+            fill: '#BFEAFF',
+            stroke: '#CFCFCF',
+            hover: {
+              fill: '#EEFFFF',
+              stroke: '#CBCED3',
+            },
+          },
+        },
+        countryMap: {
+          background: '#FFFFFF',
+          colorAxis: ['#1297FF', '#6666FF', '#3D4DDC', '#2B39A5', '#23006A'],
+          backgroundMap: '#FFFFFF',
+          datalessRegion: '#BFEAFF',
+          default: '#CFCFCF',
+        },
       },
       customColors: {
         white: (opacity: number): string => {
