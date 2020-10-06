@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: catalogue-db
+  labels:
+    name: catalogue-db
+    k8s-app: catalogue-db
+  namespace: sock-shop
+spec:
+  jobLabel: name
+  selector:
+    matchLabels:
+      name: catalogue-db
+  namespaceSelector:
+    matchNames:
+    - sock-shop
+  endpoints:
+  - port: mysql
+    interval: 1s

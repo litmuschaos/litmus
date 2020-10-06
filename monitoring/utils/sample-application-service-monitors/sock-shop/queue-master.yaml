@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: queue-master
+  labels:
+    name: queue-master
+    k8s-app: queue-master
+  namespace: sock-shop
+spec:
+  jobLabel: name
+  selector:
+    matchLabels:
+      name: queue-master
+  namespaceSelector:
+    matchNames:
+    - sock-shop
+  endpoints:
+  - port: web
+    path: /prometheus
+    interval: 1s
