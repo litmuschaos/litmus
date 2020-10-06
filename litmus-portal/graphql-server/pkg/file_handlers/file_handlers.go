@@ -46,12 +46,12 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 	if !reqCluster.IsRegistered {
 		var respData []byte
 
-		if subscriberConfiguration.PortalScope == "cluster" {
+		if subscriberConfiguration.AgentScope == "cluster" {
 			respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, "manifests/cluster-subscriber.yml", subscriberConfiguration)
-		} else if subscriberConfiguration.PortalScope == "namespace" {
+		} else if subscriberConfiguration.AgentScope == "namespace" {
 			respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, "manifests/namespace-subscriber.yml", subscriberConfiguration)
 		} else {
-			log.Print("ERROR- PORTAL SCOPE NOT SELECTED!")
+			log.Print("ERROR- AGENT SCOPE NOT SELECTED!")
 		}
 
 		if err != nil {
