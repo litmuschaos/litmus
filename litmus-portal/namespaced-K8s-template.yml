@@ -156,8 +156,6 @@ spec:
               value: "http://litmusportal-server-service:9002"
             - name: SELF_CLUSTER
               value: "true"
-            - name: SUBSCRIBER_IMAGE
-              value: "litmuschaos/litmusportal-subscriber:ci"
             - name: AGENT_SCOPE
               valueFrom:
                 configMapKeyRef:
@@ -168,6 +166,8 @@ spec:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
                   key: AgentNamespace
+            - name: SUBSCRIBER_IMAGE
+              value: "litmuschaos/litmusportal-subscriber:ci"
             - name: DEPLOYER_IMAGE
               value: "litmuschaos/litmusportal-self-deployer:ci"
             - name: ARGO_SERVER_IMAGE
