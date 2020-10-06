@@ -85,6 +85,7 @@ declare module '@material-ui/core/styles/createPalette' {
     personalDetailsBodyColor?: string;
     teamingTabHeadTextColor?: string;
     sectionDividerColor?: string;
+    inputFieldDisabled?: string;
   }
   // allow configuration using `createMuiTheme`
   interface PaletteOptions {
@@ -152,6 +153,7 @@ declare module '@material-ui/core/styles/createPalette' {
     personalDetailsBodyColor?: string;
     teamingTabHeadTextColor?: string;
     sectionDividerColor?: string;
+    inputFieldDisabled?: string;
   }
 }
 function customTheme(options: ThemeOptions) {
@@ -263,6 +265,7 @@ function customTheme(options: ThemeOptions) {
       personalDetailsBodyColor: 'none',
       teamingTabHeadTextColor: 'Black',
       sectionDividerColor: '#5B44BA',
+      inputFieldDisabled: '#e2e2e1',
     },
     typography: {
       fontSize: 12,
@@ -321,6 +324,11 @@ const theme = customTheme({
         '&$selected': {
           backgroundColor: 'white',
         },
+      },
+    },
+    MuiSelect: {
+      icon: {
+        color: 'rgba(0,0,0,0.54)',
       },
     },
     MuiTab: {

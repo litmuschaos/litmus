@@ -66,7 +66,7 @@ const useStylesLitmus = makeStyles((theme: Theme) =>
       },
     },
     disabled: {
-      backgroundColor: theme.palette.input.disabled,
+      backgroundColor: theme.palette.inputFieldDisabled,
     },
   })
 );
