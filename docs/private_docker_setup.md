@@ -100,7 +100,7 @@ spec:
 
 #### STEP-7: CREATE THE CHAOSENGINE AND WATCH EXPERIMENT EXECUTION
 
-Run the experiment and watch pod/resource status & chaosresult verdict
+- Run the experiment and watch pod/resource status & chaosresult verdict
 
 `kubectl apply -f chaosengine.yaml -n <namespace>`
 
