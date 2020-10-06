@@ -124,6 +124,8 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
   kubectl get pods
   ```
 
+- If `No cluster is registerted with the selected projectID` message is displayed, select a project from header's project list dropdown.
+
 
 ## Optional
 
