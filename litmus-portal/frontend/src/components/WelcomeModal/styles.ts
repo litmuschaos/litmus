@@ -60,6 +60,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     justifyContent: 'center',
     marginBottom: theme.spacing(1),
+    gap: '1rem',
   },
 }));
 export default useStyles;

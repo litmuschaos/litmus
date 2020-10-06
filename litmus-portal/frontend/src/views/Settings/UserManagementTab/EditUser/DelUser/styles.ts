@@ -35,6 +35,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '2.75rem',
     marginTop: theme.spacing(2.5),
     justifyContent: 'space-between',
+    gap: '1rem',
   },
   // delete user
   delDiv: {

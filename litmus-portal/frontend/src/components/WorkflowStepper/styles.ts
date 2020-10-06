@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   buttonGroup: {
     display: 'flex',
     flexDirection: 'row',
+    gap: '1rem',
     marginLeft: '9%',
   },
   yamlError: {

@@ -50,6 +50,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(6),
     display: 'flex',
     flexDirection: 'row',
+    gap: '1rem',
   },
   or: {
     marginTop: theme.spacing(1.5),
