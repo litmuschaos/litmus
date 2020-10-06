@@ -147,4 +147,28 @@ export default [
       'Provide the application info in spec.appinfo Override the individual experiment tunables if desired ' +
       'in experiments.spec.components.env ',
   },
+  {
+    workflowID: 6,
+    title: 'namespaced-scope-chaos',
+    urlToIcon: 'https://hub.litmuschaos.io/api/icon/1.7.0/generic/pod-delete.png',
+    chaosWkfCRDLink:
+      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/namespaced-scope-chaos/workflow.yaml',
+
+    gitLink:
+      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/namespaced-scope-chaos/workflow.yaml',
+    provider: 'MayaData',
+    description: 'Induces chaos on Hello world application',
+    totalRuns: 12000,
+    isCustom: false,
+    details:
+    'Causes (forced/graceful) pod failure of specific/random replicas of hello world application resources ' +
+    'Tests deployment sanity (replica availability & uninterrupted service) and recovery workflow ' +
+    'of the application The pod delete by Powerfulseal is only supporting single pod ' +
+    'failure (kill_count = 1).',
+    recommendation:
+    'Check whether the application is resilient to the pod failure, once the experiment (job) is completed.',
+    experimentinfo:
+    'Provide the application info in spec.appinfo Override the experiment tunables if desired ' +
+    'in experiments.spec.components.env ',
+  },
 ];
