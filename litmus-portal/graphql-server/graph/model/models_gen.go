@@ -242,6 +242,12 @@ type WorkflowRuns struct {
 	LastUpdated   string `json:"last_updated"`
 }
 
+type ClusterRegResponse struct {
+	Token       string `json:"token"`
+	ClusterID   string `json:"cluster_id"`
+	ClusterName string `json:"cluster_name"`
+}
+
 type Weightages struct {
 	ExperimentName string `json:"experiment_name"`
 	Weightage      int    `json:"weightage"`

@@ -31,7 +31,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   edit: {
     fontSize: '0.75rem',
     color: theme.palette.secondary.dark,
-    marginLeft: theme.spacing(1),
     marginTop: theme.spacing(0.75),
     [theme.breakpoints.down('sm')]: {
       marginLeft: theme.spacing(2.5),

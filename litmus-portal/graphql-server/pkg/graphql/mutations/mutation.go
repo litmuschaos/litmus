@@ -1,8 +1,10 @@
 package mutations
 
 import (
+	"encoding/json"
 	"log"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/jinzhu/copier"
@@ -20,7 +22,7 @@ import (
 )
 
 //ClusterRegister creates an entry for a new cluster in DB and generates the url used to apply manifest
-func ClusterRegister(input model.ClusterInput) (string, error) {
+func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error) {
 	newCluster := database.Cluster{
 		ClusterID:    uuid.New().String(),
 		ClusterName:  input.ClusterName,
@@ -35,16 +37,20 @@ func ClusterRegister(input model.ClusterInput) (string, error) {
 
 	err := database.InsertCluster(newCluster)
 	if err != nil {
-		return "", err
+		return &model.ClusterRegResponse{}, err
 	}
 
 	log.Print("NEW CLUSTER REGISTERED : ID-", newCluster.ClusterID, " PID-", newCluster.ProjectID)
 	token, err := cluster.ClusterCreateJWT(newCluster.ClusterID)
 	if err != nil {
-		return "", err
+		return &model.ClusterRegResponse{}, err
 	}
 
-	return token, nil
+	return &model.ClusterRegResponse{
+		ClusterID:   newCluster.ClusterID,
+		Token:       token,
+		ClusterName: newCluster.ClusterName,
+	}, nil
 }
 
 //ConfirmClusterRegistration takes the cluster_id and access_key from the subscriber and validates it, if validated generates and sends new access_key
@@ -160,7 +166,16 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 
 	workflow_id := uuid.New().String()
 
+	var workflow map[string]interface{}
+	err := json.Unmarshal([]byte(input.WorkflowManifest), &workflow)
+	if err != nil {
+		return nil, err
+	}
+
 	newWorkflowManifest, _ := sjson.Set(input.WorkflowManifest, "metadata.labels.workflow_id", workflow_id)
+	if strings.ToLower(workflow["kind"].(string)) == "cronworkflow" {
+		newWorkflowManifest, _ = sjson.Set(input.WorkflowManifest, "spec.workflowMetadata.labels.workflow_id", workflow_id)
+	}
 
 	newChaosWorkflow := database.ChaosWorkFlowInput{
 		WorkflowID:          workflow_id,
@@ -177,7 +192,7 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		WorkflowRuns:        []*database.WorkflowRun{},
 	}
 
-	err := database.InsertChaosWorkflow(newChaosWorkflow)
+	err = database.InsertChaosWorkflow(newChaosWorkflow)
 	if err != nil {
 		return nil, err
 	}
