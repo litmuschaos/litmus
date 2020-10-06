@@ -92,7 +92,7 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(10),
   },
   regularityData: {
-    maxWidth: '12.5rem',
+    maxWidth: '16rem',
     paddingLeft: theme.spacing(0.2),
   },
   stepsData: {

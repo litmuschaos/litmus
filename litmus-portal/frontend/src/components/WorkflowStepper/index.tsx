@@ -287,7 +287,7 @@ const CustomStepper = () => {
 
       const chaosWorkFlowInputs = {
         workflow_manifest: yamlJson,
-        cronSyntax: '',
+        cronSyntax,
         workflow_name: name,
         workflow_description: description,
         isCustomWorkflow,
