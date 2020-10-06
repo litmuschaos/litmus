@@ -1,8 +1,10 @@
 package mutations
 
 import (
+	"encoding/json"
 	"log"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/jinzhu/copier"
@@ -153,7 +155,16 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 
 	workflow_id := uuid.New().String()
 
+	var workflow map[string]interface{}
+	err := json.Unmarshal([]byte(input.WorkflowManifest), &workflow)
+	if err != nil {
+		return nil, err
+	}
+
 	newWorkflowManifest, _ := sjson.Set(input.WorkflowManifest, "metadata.labels.workflow_id", workflow_id)
+	if strings.ToLower(workflow["kind"].(string)) == "cronworkflow" {
+		newWorkflowManifest, _ = sjson.Set(input.WorkflowManifest, "spec.workflowMetadata.labels.workflow_id", workflow_id)
+	}
 
 	newChaosWorkflow := database.ChaosWorkFlowInput{
 		WorkflowID:          workflow_id,
@@ -170,7 +181,7 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		WorkflowRuns:        []*database.WorkflowRun{},
 	}
 
-	err := database.InsertChaosWorkflow(newChaosWorkflow)
+	err = database.InsertChaosWorkflow(newChaosWorkflow)
 	if err != nil {
 		return nil, err
 	}
