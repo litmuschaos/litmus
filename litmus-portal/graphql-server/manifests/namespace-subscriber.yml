@@ -3,13 +3,13 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: argo
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: argo-server
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -17,7 +17,7 @@ metadata:
   labels:
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
   name: argo-aggregate-to-admin
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
 rules:
   - apiGroups:
       - argoproj.io
@@ -44,7 +44,7 @@ metadata:
   labels:
     rbac.authorization.k8s.io/aggregate-to-edit: "true"
   name: argo-aggregate-to-edit
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
 rules:
   - apiGroups:
       - argoproj.io
@@ -71,7 +71,7 @@ metadata:
   labels:
     rbac.authorization.k8s.io/aggregate-to-view: "true"
   name: argo-aggregate-to-view
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
 rules:
   - apiGroups:
       - argoproj.io
@@ -91,7 +91,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: argo-role
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
 rules:
   - apiGroups:
       - ""
@@ -188,7 +188,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: argo-server-role
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
 rules:
   - apiGroups:
       - ""
@@ -250,7 +250,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: argo-binding
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -258,13 +258,13 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: argo
-    namespace: #{SUB-NAMESPACE}
+    namespace: #{AGENT-NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: argo-server-binding
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -272,13 +272,13 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: argo-server
-    namespace: #{SUB-NAMESPACE}
+    namespace: #{AGENT-NAMESPACE}
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: workflow-controller-configmap
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
 data:
   config: |
     containerRuntimeExecutor: k8sapi
@@ -293,7 +293,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: argo-server
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
 spec:
   ports:
     - name: web
@@ -306,7 +306,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: workflow-controller-metrics
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
 spec:
   ports:
     - name: metrics
@@ -320,7 +320,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: argo-server
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
 spec:
   selector:
     matchLabels:
@@ -358,7 +358,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: workflow-controller
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
 spec:
   selector:
     matchLabels:
@@ -391,13 +391,13 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: subscriber-service-account
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
   name: subscriber-namespace
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
   labels:
     name: subscriber-namespace
 rules:
@@ -426,11 +426,11 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
   name: subscriber-namespace-rb
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
 subjects:
   - kind: ServiceAccount
     name: subscriber-service-account
-    namespace: #{SUB-NAMESPACE}
+    namespace: #{AGENT-NAMESPACE}
 roleRef:
   kind: Role
   name: subscriber-namespace
@@ -440,7 +440,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: subscriber
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
   labels:
     app: subscriber
 spec:
@@ -479,7 +479,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: litmus-namespace-scope
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
   labels:
     name: litmus-namespace-scope
 ---
@@ -487,7 +487,7 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
   name: litmus-namespace-scope
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
   labels:
     name: litmus-namespace-scope
 rules:
@@ -526,7 +526,7 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
   name: litmus-namespace-scope
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
   labels:
     name: litmus-namespace-scope
 roleRef:
@@ -536,13 +536,13 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: litmus-namespace-scope
-    namespace: #{SUB-NAMESPACE}
+    namespace: #{AGENT-NAMESPACE}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: chaos-operator-ce
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
 spec:
   replicas: 1
   selector:
@@ -582,7 +582,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: litmus-namespace-admin
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
   labels:
     name: litmus-namespace-admin
 ---
@@ -590,7 +590,7 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
   name: litmus-namespace-admin
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
   labels:
     name: litmus-namespace-admin
 rules:
@@ -628,7 +628,7 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
   name: litmus-namespace-admin
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
   labels:
     name: litmus-namespace-admin
 roleRef:
@@ -638,19 +638,19 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: litmus-namespace-admin
-    namespace: #{SUB-NAMESPACE}
+    namespace: #{AGENT-NAMESPACE}
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: argo-chaos
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: chaos-role
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
 rules:
   - apiGroups:
       - "*"
@@ -663,7 +663,7 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
   name: chaos-role-binding
-  namespace: #{SUB-NAMESPACE}
+  namespace: #{AGENT-NAMESPACE}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -671,4 +671,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: argo-chaos
-    namespace: #{SUB-NAMESPACE}
+    namespace: #{AGENT-NAMESPACE}

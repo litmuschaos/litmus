@@ -4,7 +4,7 @@ metadata:
   name: litmus-portal-admin-config
 data:
   AgentScope: namespace
-  AgentNamespace: ${LITMUS_AGENT_NAMESPACE}
+  AgentNamespace: ${LITMUS_PORTAL_NAMESPACE}
   DataBaseServer: "mongodb://mongo-service:27017"
   JWTSecret: "litmus-portal@123"
 ---
@@ -71,7 +71,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: self-deployer-namespace-account
-    namespace: ${LITMUS_AGENT_NAMESPACE}
+    namespace: ${LITMUS_PORTAL_NAMESPACE}
 roleRef:
   kind: Role
   name: deployer-namespace
@@ -112,7 +112,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: litmus-server-account
-    namespace: ${LITMUS_AGENT_NAMESPACE}
+    namespace: ${LITMUS_PORTAL_NAMESPACE}
 roleRef:
   kind: Role
   name: litmus-server
