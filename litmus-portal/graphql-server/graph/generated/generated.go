@@ -72,6 +72,8 @@ type ComplexityRoot struct {
 		IsActive           func(childComplexity int) int
 		IsClusterConfirmed func(childComplexity int) int
 		IsRegistered       func(childComplexity int) int
+		NoOfSchedules      func(childComplexity int) int
+		NoOfWorkflows      func(childComplexity int) int
 		PlatformName       func(childComplexity int) int
 		ProjectID          func(childComplexity int) int
 		UpdatedAt          func(childComplexity int) int
@@ -397,6 +399,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Cluster.IsRegistered(childComplexity), true
+
+	case "Cluster.no_of_schedules":
+		if e.complexity.Cluster.NoOfSchedules == nil {
+			break
+		}
+
+		return e.complexity.Cluster.NoOfSchedules(childComplexity), true
+
+	case "Cluster.no_of_workflows":
+		if e.complexity.Cluster.NoOfWorkflows == nil {
+			break
+		}
+
+		return e.complexity.Cluster.NoOfWorkflows(childComplexity), true
 
 	case "Cluster.platform_name":
 		if e.complexity.Cluster.PlatformName == nil {
@@ -1388,6 +1404,8 @@ type Cluster {
   updated_at: String!
   created_at: String!
   cluster_type: String!
+  no_of_schedules: Int
+  no_of_workflows: Int
 }
 
 input ClusterInput{
@@ -2725,6 +2743,68 @@ func (ec *executionContext) _Cluster_cluster_type(ctx context.Context, field gra
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Cluster_no_of_schedules(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Cluster",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NoOfSchedules, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Cluster_no_of_workflows(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Cluster",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NoOfWorkflows, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ClusterAction_project_id(ctx context.Context, field graphql.CollectedField, obj *model.ClusterAction) (ret graphql.Marshaler) {
@@ -8529,6 +8609,10 @@ func (ec *executionContext) _Cluster(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "no_of_schedules":
+			out.Values[i] = ec._Cluster_no_of_schedules(ctx, field, obj)
+		case "no_of_workflows":
+			out.Values[i] = ec._Cluster_no_of_workflows(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -10572,6 +10656,29 @@ func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.Se
 		return graphql.Null
 	}
 	return ec.marshalOID2string(ctx, sel, *v)
+}
+
+func (ec *executionContext) unmarshalOInt2int(ctx context.Context, v interface{}) (int, error) {
+	return graphql.UnmarshalInt(v)
+}
+
+func (ec *executionContext) marshalOInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
+	return graphql.MarshalInt(v)
+}
+
+func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOInt2int(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec.marshalOInt2int(ctx, sel, *v)
 }
 
 func (ec *executionContext) unmarshalOMemberRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx context.Context, v interface{}) (model.MemberRole, error) {
