@@ -132,7 +132,6 @@ const useStyles = makeStyles((theme) => ({
   expDiv: {
     display: 'flex',
     flexDirection: 'row',
-    cursor: 'pointer',
   },
   btnImg: {
     width: '0.8125rem',

@@ -9,11 +9,11 @@ interface SetTimeProps {
     }>
   ) => void;
   value: number;
-  minutes: number[];
+  data: number[];
 }
 
 // dropdown menu component for setting time
-const SetTime: React.FC<SetTimeProps> = ({ handleChange, value, minutes }) => {
+const SetTime: React.FC<SetTimeProps> = ({ handleChange, value, data }) => {
   const classes = useStyles();
   return (
     <div>
@@ -26,16 +26,15 @@ const SetTime: React.FC<SetTimeProps> = ({ handleChange, value, minutes }) => {
           label="dates"
           inputProps={{
             name: 'dates',
-            id: 'outlined-age-native-simple',
             style: {
               fontSize: '0.75rem',
-              height: 7,
             },
           }}
+          MenuProps={{ classes: { paper: classes.menuPaper } }}
         >
-          {minutes.map((date) => (
-            <option className={classes.opt} value={date}>
-              {date}
+          {data.map((dataValue) => (
+            <option className={classes.opt} value={dataValue}>
+              {dataValue}
             </option>
           ))}
         </Select>

@@ -40,5 +40,8 @@ const useStyles = makeStyles((theme: Theme) => ({
       background: theme.palette.customColors.black(0.2),
     },
   },
+  menuPaper: {
+    maxHeight: '12.5rem',
+  },
 }));
 export default useStyles;

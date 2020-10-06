@@ -209,7 +209,13 @@ const ScheduleWorkflow: React.FC = () => {
         ).toString(),
         day_week: '*',
       });
-      setSelectedTime(workflowData.scheduleInput.time);
+      if (workflowData.scheduleInput.time <= new Date()) {
+        const newTime = new Date();
+        newTime.setMinutes(newTime.getMinutes() + 5);
+        setSelectedTime(newTime);
+      } else {
+        setSelectedTime(workflowData.scheduleInput.time);
+      }
     }
     if (valueDef === 'everyHr') {
       setCronValue({
@@ -378,22 +384,20 @@ const ScheduleWorkflow: React.FC = () => {
                                 At
                               </Typography>
                               <SetTime
-                                minutes={mins}
+                                data={mins}
                                 handleChange={(event) => {
-                                  setMinute(
-                                    (event.target.value as unknown) as number
-                                  );
+                                  setMinute(event.target.value as number);
                                   setCronValue({
                                     ...cronValue,
-                                    minute: ((event.target
-                                      .value as unknown) as number).toString(),
+                                    minute: (event.target
+                                      .value as number).toString(),
                                     hour: '0-23',
                                   });
                                   workflow.setWorkflowDetails({
                                     scheduleInput: {
                                       ...workflowData.scheduleInput,
-                                      hour_interval: (event.target
-                                        .value as unknown) as number,
+                                      hour_interval: event.target
+                                        .value as number,
                                     },
                                   });
                                 }}
@@ -485,8 +489,6 @@ const ScheduleWorkflow: React.FC = () => {
                                   label="days"
                                   inputProps={{
                                     name: 'days',
-
-                                    id: 'outlined-age-native-simple',
                                     style: {
                                       fontSize: '0.75rem',
                                       height: 7,
@@ -527,48 +529,24 @@ const ScheduleWorkflow: React.FC = () => {
                               <Typography className={classes.scRandsub1}>
                                 On
                               </Typography>
-                              <FormControl className={classes.formControlMonth}>
-                                <Select
-                                  className={classes.select}
-                                  disableUnderline
-                                  value={dates}
-                                  onChange={(e) => {
-                                    setCronValue({
-                                      ...cronValue,
-                                      day_month: (e.target
-                                        .value as unknown) as string,
-                                    });
-                                    setDates(
-                                      (e.target.value as unknown) as number
-                                    );
-                                    workflow.setWorkflowDetails({
-                                      scheduleInput: {
-                                        ...workflowData.scheduleInput,
-                                        day: (e.target
-                                          .value as unknown) as number,
-                                      },
-                                    });
-                                  }}
-                                  label="dates"
-                                  inputProps={{
-                                    name: 'dates',
-                                    id: 'outlined-age-native-simple',
-                                    style: {
-                                      fontSize: '0.75rem',
-                                      height: 7,
+                              <SetTime
+                                data={names}
+                                handleChange={(event) => {
+                                  setCronValue({
+                                    ...cronValue,
+                                    day_month: (event.target
+                                      .value as number).toString(),
+                                  });
+                                  setDates(event.target.value as number);
+                                  workflow.setWorkflowDetails({
+                                    scheduleInput: {
+                                      ...workflowData.scheduleInput,
+                                      day: event.target.value as number,
                                     },
-                                  }}
-                                >
-                                  {names.map((date) => (
-                                    <option
-                                      className={classes.opt}
-                                      value={date}
-                                    >
-                                      {date}
-                                    </option>
-                                  ))}
-                                </Select>
-                              </FormControl>
+                                  });
+                                }}
+                                value={dates}
+                              />
                               <Typography className={classes.scRandsub1}>
                                 at
                               </Typography>
