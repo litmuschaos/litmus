@@ -14,7 +14,7 @@ forward:
   - 80:80
 resources:
   limits:
-    cpu: "1"
-    memory: 2Gi
+    cpu: "0.5"
+    memory: 1Gi
 persistentVolume:
   enabled: true
