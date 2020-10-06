@@ -33,6 +33,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   inputArea: {
     width: '60%',
     margin: '1rem auto',
+    color: theme.palette.primary.contrastText,
   },
   passwordArea: {
     width: '60%',

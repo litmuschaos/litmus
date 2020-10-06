@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     border: `1px solid ${theme.palette.customColors.black(0.07)}`,
     height: '5.55rem',
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.homePageCardBackgroundColor,
   },
 
   search: {
@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
   tableMain: {
     marginTop: theme.spacing(4.25),
     border: `1px solid ${theme.palette.customColors.black(0.07)}`,
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.homePageCardBackgroundColor,
     minHeight: '29rem',
     '&::-webkit-scrollbar': {
       width: '0.2em',

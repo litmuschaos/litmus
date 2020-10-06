@@ -44,7 +44,6 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: theme.spacing(8),
     },
   },
-
   paper: {
     flexGrow: 1,
     marginRight: theme.spacing(2),
@@ -57,7 +56,6 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: 'column',
     },
   },
-
   card: {
     backgroundColor: theme.palette.secondary.dark,
     height: '21.25rem',
@@ -99,13 +97,17 @@ const useStyles = makeStyles((theme) => ({
     width: '5rem',
     height: '3rem',
   },
-
+  imgDiv: {
+    '& img': {
+      userDrag: 'none',
+    },
+  },
   followBtn: {
     width: '10rem',
     height: '3rem',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.palette.secondary.contrastText,
     fontSize: '0.8rem',
-    color: theme.palette.text.primary,
+    color: theme.palette.buttonEditProfile,
     textTransform: 'none',
   },
 

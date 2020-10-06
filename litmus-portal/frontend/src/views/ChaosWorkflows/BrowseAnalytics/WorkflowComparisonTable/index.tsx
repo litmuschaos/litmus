@@ -1,19 +1,20 @@
 /* eslint-disable no-unused-expressions */
-import React, { useEffect, useState } from 'react';
+import { useQuery } from '@apollo/client';
 import {
-  Typography,
-  TablePagination,
   MuiThemeProvider,
   Table,
   TableBody,
   TableCell,
   TableContainer,
+  TablePagination,
   TableRow,
   Paper,
   IconButton,
+  Typography,
 } from '@material-ui/core';
 import moment from 'moment';
-import { useQuery } from '@apollo/client';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import useTheme from '@material-ui/core/styles/useTheme';
 import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
@@ -21,10 +22,6 @@ import {
   customThemeAnalyticsTable,
   customThemeAnalyticsTableCompareMode,
 } from '../../../../theme';
-import useStyles from './styles';
-import TableData from './TableData';
-import TableHeader from './TableHeader';
-import TableToolBar from './TableToolbar';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
@@ -40,6 +37,10 @@ import {
 import { RootState } from '../../../../redux/reducers';
 import Loader from '../../../../components/Loader';
 import ResilienceScoreComparisonPlot from '../WorkflowComparisonPlot/index';
+import useStyles from './styles';
+import TableData from './TableData';
+import TableHeader from './TableHeader';
+import TableToolBar from './TableToolbar';
 
 interface RangeType {
   startDate: string;
@@ -62,6 +63,7 @@ interface Filter {
 const WorkflowComparisonTable = () => {
   const classes = useStyles();
   const { palette } = useTheme();
+  const { t } = useTranslation();
   const [filter, setFilter] = React.useState<Filter>({
     range: { startDate: 'all', endDate: 'all' },
     selectedCluster: 'All',
@@ -442,7 +444,9 @@ const WorkflowComparisonTable = () => {
                       <TableRow>
                         <TableCell colSpan={6}>
                           <Typography align="center">
-                            Unable to fetch data
+                            {t(
+                              'chaosWorkflows.browseAnalytics.workFlowComparisonTable.unableToFetch'
+                            )}
                           </Typography>
                         </TableCell>
                       </TableRow>
@@ -483,7 +487,9 @@ const WorkflowComparisonTable = () => {
                       <TableRow>
                         <TableCell colSpan={6}>
                           <Typography align="center">
-                            No records available
+                            {t(
+                              'chaosWorkflows.browseAnalytics.workFlowComparisonTable.noRecords'
+                            )}
                           </Typography>
                         </TableCell>
                       </TableRow>
@@ -515,7 +521,10 @@ const WorkflowComparisonTable = () => {
                   <Typography className={classes.seeAllText} variant="body2">
                     {' '}
                     <strong>
-                      Show all selected workflows ({selected.length}){' '}
+                      {t(
+                        'chaosWorkflows.browseAnalytics.workFlowComparisonTable.showSelectedWorkflows'
+                      )}{' '}
+                      ({selected.length}){' '}
                     </strong>{' '}
                   </Typography>
                 </Paper>
@@ -528,10 +537,16 @@ const WorkflowComparisonTable = () => {
         <Paper variant="outlined" className={classes.backgroundFix}>
           <div className={classes.comparisonHeadingFix}>
             <Typography className={classes.heading}>
-              <strong>Resilience score comparison</strong>
+              <strong>
+                {t(
+                  'chaosWorkflows.browseAnalytics.workFlowComparisonTable.resilienceScoreComparison'
+                )}
+              </strong>
             </Typography>
             <Typography className={classes.description}>
-              Comparative results of selected workflow
+              {t(
+                'chaosWorkflows.browseAnalytics.workFlowComparisonTable.comparativeResults'
+              )}
             </Typography>
             <ResilienceScoreComparisonPlot
               xData={xData}

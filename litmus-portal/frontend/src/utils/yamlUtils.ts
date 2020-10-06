@@ -1,4 +1,5 @@
 /* eslint-disable no-unsafe-finally */
+/* eslint-disable no-loop-func */
 import YAML from 'yaml';
 
 const nameextractor = (val: any) => {
@@ -28,9 +29,14 @@ const parsed = (yaml: string) => {
   try {
     const parsedYaml = YAML.parse(file as string);
     try {
-      const embeddedYaml =
-        parsedYaml.spec.templates[2].inputs.artifacts[0].raw.data;
-      testNames = nameextractor(embeddedYaml);
+      const count = (file.match(/kind: ChaosEngine/g) || []).length;
+      for (let i = 0; i < count; i += 1) {
+        const embeddedYaml =
+          parsedYaml.spec.templates[2 + i].inputs.artifacts[0].raw.data;
+        nameextractor(embeddedYaml).forEach((test) => {
+          testNames.push(test);
+        });
+      }
     } catch (err) {
       testNames = [];
     } finally {

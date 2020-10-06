@@ -5,7 +5,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(3.75),
     border: '1px solid ',
     borderColor: theme.palette.customColors.black(0.07),
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.homePageCardBackgroundColor,
     borderRadius: '0.1875rem',
     paddingBottom: theme.spacing(5),
   },
@@ -39,6 +39,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   innerPass: {
+    marginLeft: theme.spacing(-2),
     display: 'flex',
     flexDirection: 'column',
   },
@@ -94,6 +95,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   buttonModal: {
     marginTop: theme.spacing(3.75),
+    width: '55%',
   },
   textSecondError: {
     width: '27.5rem',

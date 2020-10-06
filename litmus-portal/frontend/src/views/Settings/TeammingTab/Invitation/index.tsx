@@ -57,7 +57,7 @@ const Invitation: React.FC = () => {
   };
 
   return (
-    <div>
+    <div data-cy="invitationButton">
       <div className={classes.button}>
         <ButtonOutline handleClick={handleOpen} isDisabled={false}>
           <div>Invitation</div>
@@ -65,7 +65,7 @@ const Invitation: React.FC = () => {
       </div>
 
       <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn>
-        <div className={classes.body}>
+        <div data-cy="invitationModal" className={classes.body}>
           <Typography className={classes.Header}>
             Manage <strong>invitations</strong>
           </Typography>
@@ -77,8 +77,8 @@ const Invitation: React.FC = () => {
                 indicatorColor="secondary"
                 textColor="secondary"
               >
-                <Tab label="Received" {...tabProps(0)} />
-                <Tab label="Sent" {...tabProps(1)} />
+                <Tab data-cy="receivedTab" label="Received" {...tabProps(0)} />
+                <Tab data-cy="sentTab" label="Sent" {...tabProps(1)} />
               </Tabs>
             </Paper>
             <TabPanel value={activeTab} index={0}>

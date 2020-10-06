@@ -1,0 +1,33 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: orders-pod-memory-hog
+  namespace: litmus
+spec:
+  annotationCheck: 'false'
+  engineState: 'active'
+  auxiliaryAppInfo: ''
+  appinfo:
+    appns: 'sock-shop'
+    applabel: 'name=orders'
+    appkind: 'deployment'
+  chaosServiceAccount: litmus-admin
+  monitoring: true
+  jobCleanUpPolicy: 'retain'
+  experiments:
+    - name: pod-memory-hog
+      spec:
+        components:
+          experimentImage: "litmuschaos/go-runner:ci"
+          env:
+            - name: TARGET_CONTAINER
+              value: 'orders'
+
+            - name: MEMORY_CONSUMPTION
+              value: '500'
+
+            - name: TOTAL_CHAOS_DURATION
+              value: '240' # in seconds
+
+            - name: CHAOS_KILL_COMMAND
+              value: "kill -9 $(ps afx | grep \"[dd] if /dev/zero\" | awk '{print $1}' | tr '\n' ' ')"

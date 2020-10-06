@@ -21,6 +21,31 @@ declare module '@material-ui/core/styles/createMuiTheme' {
 // Augument the Palette interface
 declare module '@material-ui/core/styles/createPalette' {
   interface Palette {
+    map: {
+      cityMap: {
+        backgroundColor: string;
+        marker: {
+          hover: string;
+          fill: string;
+          stroke: string;
+        };
+        geography: {
+          fill: string;
+          stroke: string;
+          hover: {
+            fill: string;
+            stroke: string;
+          };
+        };
+      };
+      countryMap: {
+        background: string;
+        colorAxis: string[];
+        backgroundMap: string;
+        datalessRegion: string;
+        default: string;
+      };
+    };
     customColors: {
       white: (opacity: number) => string;
       black: (opacity: number) => string;
@@ -43,9 +68,51 @@ declare module '@material-ui/core/styles/createPalette' {
       passedTests: string;
       failedTests: string;
     };
+    waitingStatusColor: string;
+    projectDisplayColor?: string;
+    buttonEditProfile?: string;
+    homePageCardBackgroundColor?: string;
+    homePageWorkflowCardBackgroundColor?: string;
+    workflowTitleColor?: string;
+    layoutBackground?: string;
+    sidebarBackground?: string;
+    createWorkflowCardShadow?: string;
+    userNameTextColor?: string;
+    totalRunsCountColor?: string;
+    tabsComponentColor?: string;
+    tabSelectorBackgroundColor?: string;
+    providerTextColor?: string;
+    personalDetailsBodyColor?: string;
+    teamingTabHeadTextColor?: string;
+    sectionDividerColor?: string;
   }
   // allow configuration using `createMuiTheme`
   interface PaletteOptions {
+    map?: {
+      cityMap?: {
+        backgroundColor?: string;
+        marker?: {
+          hover?: string;
+          fill?: string;
+          stroke?: string;
+        };
+        geography?: {
+          fill?: string;
+          stroke?: string;
+          hover?: {
+            fill?: string;
+            stroke?: string;
+          };
+        };
+      };
+      countryMap: {
+        background?: string;
+        colorAxis?: string[];
+        backgroundMap?: string;
+        datalessRegion?: string;
+        default?: string;
+      };
+    };
     customColors?: {
       white?: (opacity: number) => string;
       black?: (opacity: number) => string;
@@ -68,6 +135,23 @@ declare module '@material-ui/core/styles/createPalette' {
       passedTests: string;
       failedTests: string;
     };
+    waitingStatusColor?: string;
+    projectDisplayColor?: string;
+    buttonEditProfile?: string;
+    homePageCardBackgroundColor?: string;
+    homePageWorkflowCardBackgroundColor?: string;
+    workflowTitleColor?: string;
+    layoutBackground?: string;
+    sidebarBackground?: string;
+    createWorkflowCardShadow?: string;
+    userNameTextColor?: string;
+    totalRunsCountColor?: string;
+    tabsComponentColor?: string;
+    tabSelectorBackgroundColor?: string;
+    providerTextColor?: string;
+    personalDetailsBodyColor?: string;
+    teamingTabHeadTextColor?: string;
+    sectionDividerColor?: string;
   }
 }
 function customTheme(options: ThemeOptions) {
@@ -80,7 +164,7 @@ function customTheme(options: ThemeOptions) {
         contrastText: '#000000',
       },
       secondary: {
-        light: '#858CDD',
+        light: 'rgba(133, 140, 221, 0.5)',
         main: '#858CDD',
         dark: '#5B44BA',
         contrastText: '#FFFFFF',
@@ -111,6 +195,31 @@ function customTheme(options: ThemeOptions) {
       shadow: {
         blue: 'rgba(91, 68, 186, 0.25)',
       },
+      map: {
+        cityMap: {
+          backgroundColor: '#FFFFFF',
+          marker: {
+            hover: '#808000',
+            fill: '#2B39A5',
+            stroke: '#FFFFFF',
+          },
+          geography: {
+            fill: '#BFEAFF',
+            stroke: '#CFCFCF',
+            hover: {
+              fill: '#EEFFFF',
+              stroke: '#CBCED3',
+            },
+          },
+        },
+        countryMap: {
+          background: '#FFFFFF',
+          colorAxis: ['#1297FF', '#6666FF', '#3D4DDC', '#2B39A5', '#23006A'],
+          backgroundMap: '#FFFFFF',
+          datalessRegion: '#BFEAFF',
+          default: '#CFCFCF',
+        },
+      },
       customColors: {
         white: (opacity: number): string => {
           let op = opacity;
@@ -137,6 +246,23 @@ function customTheme(options: ThemeOptions) {
         passedTests: 'rgba(16, 155, 103, 0.2)',
         failedTests: 'rgba(202, 44, 44, 0.2)',
       },
+      waitingStatusColor: 'rgba(246, 185, 43, 0.1)',
+      projectDisplayColor: 'rgba(128, 128, 128)',
+      buttonEditProfile: 'rgba(0, 0, 0)',
+      homePageCardBackgroundColor: '#FFFFFF',
+      homePageWorkflowCardBackgroundColor: '#FFFFFF',
+      workflowTitleColor: '#5B44BA',
+      layoutBackground: '#FAFBFD',
+      sidebarBackground: '#FAFBFD',
+      userNameTextColor: '#rgba(0, 0, 0)',
+      totalRunsCountColor: '#858CDD',
+      tabsComponentColor: 'rgba(0, 0, 0, 0.5)',
+      createWorkflowCardShadow: '2px 1px 9px rgba(91, 68, 186, 0.25)',
+      providerTextColor: 'rgba(0,0,0,0.4)',
+      tabSelectorBackgroundColor: 'none',
+      personalDetailsBodyColor: 'none',
+      teamingTabHeadTextColor: 'Black',
+      sectionDividerColor: '#5B44BA',
     },
     typography: {
       fontSize: 12,

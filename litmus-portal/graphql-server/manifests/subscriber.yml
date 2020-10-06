@@ -460,7 +460,7 @@ metadata:
   labels:
     name: litmus
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: litmus
@@ -474,7 +474,7 @@ rules:
     resources: ["validatingwebhookconfigurations"]
     verbs: ["get","create","list","delete","update"]
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: litmus
@@ -966,7 +966,7 @@ metadata:
     name: litmus-admin
 ---
 # Source: openebs/templates/clusterrole.yaml
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: litmus-admin
@@ -980,7 +980,7 @@ rules:
     resources: ["nodes"]
     verbs: ["get","list","patch","update"]
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: litmus-admin
@@ -1012,7 +1012,7 @@ rules:
     verbs:
       - '*'
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: chaos-cluster-role-binding
@@ -1029,7 +1029,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: subscriber
-  namespace: litmus
+  namespace: #{SUB-NAMESPACE}
   labels:
     app: subscriber
 spec:
