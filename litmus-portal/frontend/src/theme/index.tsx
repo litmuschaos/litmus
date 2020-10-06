@@ -76,6 +76,15 @@ declare module '@material-ui/core/styles/createPalette' {
     workflowTitleColor?: string;
     layoutBackground?: string;
     sidebarBackground?: string;
+    createWorkflowCardShadow?: string;
+    userNameTextColor?: string;
+    totalRunsCountColor?: string;
+    tabsComponentColor?: string;
+    tabSelectorBackgroundColor?: string;
+    providerTextColor?: string;
+    personalDetailsBodyColor?: string;
+    teamingTabHeadTextColor?: string;
+    sectionDividerColor?: string;
   }
   // allow configuration using `createMuiTheme`
   interface PaletteOptions {
@@ -134,6 +143,15 @@ declare module '@material-ui/core/styles/createPalette' {
     workflowTitleColor?: string;
     layoutBackground?: string;
     sidebarBackground?: string;
+    createWorkflowCardShadow?: string;
+    userNameTextColor?: string;
+    totalRunsCountColor?: string;
+    tabsComponentColor?: string;
+    tabSelectorBackgroundColor?: string;
+    providerTextColor?: string;
+    personalDetailsBodyColor?: string;
+    teamingTabHeadTextColor?: string;
+    sectionDividerColor?: string;
   }
 }
 function customTheme(options: ThemeOptions) {
@@ -236,6 +254,15 @@ function customTheme(options: ThemeOptions) {
       workflowTitleColor: '#5B44BA',
       layoutBackground: '#FAFBFD',
       sidebarBackground: '#FAFBFD',
+      userNameTextColor: '#rgba(0, 0, 0)',
+      totalRunsCountColor: '#858CDD',
+      tabsComponentColor: 'rgba(0, 0, 0, 0.5)',
+      createWorkflowCardShadow: '2px 1px 9px rgba(91, 68, 186, 0.25)',
+      providerTextColor: 'rgba(0,0,0,0.4)',
+      tabSelectorBackgroundColor: 'none',
+      personalDetailsBodyColor: 'none',
+      teamingTabHeadTextColor: 'Black',
+      sectionDividerColor: '#5B44BA',
     },
     typography: {
       fontSize: 12,

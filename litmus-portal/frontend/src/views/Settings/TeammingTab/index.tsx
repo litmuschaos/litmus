@@ -43,8 +43,8 @@ import useStyles from './styles';
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
     head: {
-      backgroundColor: theme.palette.common.white,
-      color: theme.palette.common.black,
+      backgroundColor: theme.palette.homePageCardBackgroundColor,
+      color: theme.palette.teamingTabHeadTextColor,
     },
     body: {
       fontSize: '0.875rem',
@@ -119,7 +119,9 @@ const TeammingTab: React.FC = () => {
   const filteredData =
     rows &&
     rows
-      .filter((dataRow) => dataRow?.name.toLowerCase().includes(filters.search))
+      .filter((dataRow) =>
+        dataRow?.name.toLowerCase().includes(filters.search.toLowerCase())
+      )
       .filter((dataRow) => {
         if (filters.role === 'all') return true;
         if (filters.role === 'Editor') return dataRow.role === 'Editor';
@@ -152,10 +154,9 @@ const TeammingTab: React.FC = () => {
           of exisiting members in the team:
         </Typography>
         <div>
-          <Toolbar className={classes.toolbar}>
+          <Toolbar data-cy="toolBarComponent" className={classes.toolbar}>
             {/* Search user */}
-
-            <div className={classes.toolbarFirstCol}>
+            <div data-cy="teamingSearch" className={classes.toolbarFirstCol}>
               <TextField
                 id="input-with-icon-textfield"
                 placeholder="Search..."
@@ -242,7 +243,11 @@ const TeammingTab: React.FC = () => {
                           paginationData.rowsPerPage
                       )
                       .map((row, index) => (
-                        <TableRow key={row.name} className={classes.TR}>
+                        <TableRow
+                          data-cy="teamingTableRow"
+                          key={row.name}
+                          className={classes.TR}
+                        >
                           <TableCell
                             className={classes.firstTC}
                             component="th"

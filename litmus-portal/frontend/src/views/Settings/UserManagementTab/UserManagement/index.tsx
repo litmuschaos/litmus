@@ -105,7 +105,10 @@ const UserManagement: React.FC = () => {
   }, [showDiv]);
 
   const filteredData = rows
-    ?.filter((dataRow) => dataRow.name.toLowerCase().includes(filters.search))
+    ?.filter((dataRow) => dataRow.username !== 'admin')
+    ?.filter((dataRow) =>
+      dataRow.name.toLowerCase().includes(filters.search.toLowerCase())
+    )
     .filter((datarow) => {
       if (filters.status === 'all') return true;
       if (filters.status === 'signedin') return datarow.logged_in === true;
@@ -156,10 +159,11 @@ const UserManagement: React.FC = () => {
                   username when required:
                 </Typography>
 
-                <Toolbar className={classes.toolbar}>
+                <Toolbar data-cy="toolBarComponent" className={classes.toolbar}>
                   {/* Search user */}
                   <div className={classes.toolbarFirstCol}>
                     <TextField
+                      data-cy="searchField"
                       id="input-with-icon-adornment"
                       placeholder="Search..."
                       value={filters.search}
@@ -230,7 +234,7 @@ const UserManagement: React.FC = () => {
                       <TableHead>
                         <TableRow className={classes.TR}>
                           <StyledTableCell className={classes.styledTC}>
-                            Name
+                            Status
                           </StyledTableCell>
                           <StyledTableCell>Username</StyledTableCell>
                           <StyledTableCell>Email</StyledTableCell>
@@ -250,7 +254,11 @@ const UserManagement: React.FC = () => {
                                 paginationData.rowsPerPage
                             )
                             .map((row, index) => (
-                              <TableRow key={row.name} className={classes.TR}>
+                              <TableRow
+                                data-cy="userTableRow"
+                                key={row.name}
+                                className={classes.TR}
+                              >
                                 <TableCell
                                   className={classes.firstTC}
                                   component="th"
@@ -292,6 +300,7 @@ const UserManagement: React.FC = () => {
                                   key={row.username}
                                 >
                                   <IconButton
+                                    data-cy="editUser"
                                     aria-label="more"
                                     aria-controls="long-menu"
                                     aria-haspopup="true"
@@ -311,6 +320,7 @@ const UserManagement: React.FC = () => {
                                     onClose={handleClose}
                                   >
                                     <MenuItem
+                                      data-cy="editProfile"
                                       value={index}
                                       onClick={() => {
                                         setEditDiv(true);

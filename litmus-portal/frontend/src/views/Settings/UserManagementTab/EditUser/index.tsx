@@ -50,7 +50,11 @@ const EditUser: React.FC<EditUserProps> = ({
     <div>
       <div className={classes.headDiv}>
         <div className={classes.createDiv}>
-          <IconButton onClick={handleDiv} className={classes.backButton}>
+          <IconButton
+            data-cy="backButton"
+            onClick={handleDiv}
+            className={classes.backButton}
+          >
             <img src="./icons/BackArrow.svg" alt="back" />
           </IconButton>
           <Typography className={classes.divHeaderText}>
@@ -84,7 +88,7 @@ const EditUser: React.FC<EditUserProps> = ({
                 </Typography>
                 <div>
                   <form>
-                    <div className={classes.details1}>
+                    <div data-cy="editPassword" className={classes.details1}>
                       <InputField
                         required
                         helperText={

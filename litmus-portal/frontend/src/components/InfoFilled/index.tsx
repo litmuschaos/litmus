@@ -51,7 +51,7 @@ const InfoFilledWrap: React.FC = () => {
   const cardArray = cardData.map((individualCard) => {
     return (
       <div
-        key={`${individualCard.statType}_${individualCard.value}`}
+        key={individualCard.value}
         style={{ backgroundColor: `${individualCard.color}` }}
         className={classes.infoFilledDiv}
       >
