@@ -276,7 +276,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                     )}
                     type="text"
                     handleChange={(
-                      event: React.ChangeEvent<HTMLInputElement>,
+                      event: React.ChangeEvent<HTMLInputElement>
                     ) => {
                       setData('project_name', event.target.value);
                       checkForEnterKey(event);
@@ -311,7 +311,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                     }
                     validationError={validateStartEmptySpacing(info.name)}
                     handleChange={(
-                      event: React.ChangeEvent<HTMLInputElement>,
+                      event: React.ChangeEvent<HTMLInputElement>
                     ) => {
                       setData('name', event.target.value);
                       checkForEnterKey(event);
@@ -372,7 +372,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                       )
                     }
                     handleChange={(
-                      event: React.ChangeEvent<HTMLInputElement>,
+                      event: React.ChangeEvent<HTMLInputElement>
                     ) => {
                       setValues({
                         password: values.password,
@@ -404,7 +404,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                     }
                     validationError={validateEmail(info.email)}
                     handleChange={(
-                      event: React.ChangeEvent<HTMLInputElement>,
+                      event: React.ChangeEvent<HTMLInputElement>
                     ) => {
                       setData('email', event.target.value);
                       checkForEnterKey(event);
