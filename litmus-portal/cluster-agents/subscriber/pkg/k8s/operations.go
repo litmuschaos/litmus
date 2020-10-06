@@ -24,10 +24,10 @@ const (
 )
 
 var (
-	Ctx                 = context.Background()
-	decUnstructured     = yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
-	dr                  dynamic.ResourceInterface
-	subscriberNamespace = os.Getenv("SUBSCRIBER_NAMESPACE")
+	Ctx             = context.Background()
+	decUnstructured = yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
+	dr              dynamic.ResourceInterface
+	AgentNamespace  = os.Getenv("AGENT_NAMESPACE")
 )
 
 // IsClusterConfirmed checks if the config map with "is_cluster_confirmed" is true or not.
@@ -37,7 +37,7 @@ func IsClusterConfirmed(clusterData map[string]string) (bool, string, error) {
 		return false, "", err
 	}
 
-	getCM, err := clientset.CoreV1().ConfigMaps(subscriberNamespace).Get(PortalConfigName, metav1.GetOptions{})
+	getCM, err := clientset.CoreV1().ConfigMaps(AgentNamespace).Get(PortalConfigName, metav1.GetOptions{})
 	if errors.IsNotFound(err) {
 		return false, "", nil
 	} else if getCM.Data["is_cluster_confirmed"] == "true" {
@@ -73,7 +73,7 @@ func ClusterRegister(clusterData map[string]string) (bool, error) {
 		Data: configMapData,
 	}
 
-	_, err = clientset.CoreV1().ConfigMaps(subscriberNamespace).Create(&newConfigMap)
+	_, err = clientset.CoreV1().ConfigMaps(AgentNamespace).Create(&newConfigMap)
 	if err != nil {
 		return false, nil
 	}

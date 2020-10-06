@@ -3,8 +3,8 @@ kind: ConfigMap
 metadata:
   name: litmus-portal-admin-config
 data:
-  PortalScope: namespace
-  PortalNamespace: ${OKTETO_NAMESPACE}
+  AgentScope: namespace
+  AgentNamespace: ${OKTETO_NAMESPACE}
   DataBaseServer: "mongodb://mongo-service:27017"
   JWTSecret: "litmus-portal@123"
 ---
@@ -186,16 +186,16 @@ spec:
               value: "true"
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos/litmusportal-subscriber:ci"
-            - name: PORTAL_SCOPE
+            - name: AGENT_SCOPE
               valueFrom:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
-                  key: PortalScope
-            - name: PORTAL_NAMESPACE
+                  key: AgentScope
+            - name: AGENT_NAMESPACE
               valueFrom:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
-                  key: PortalNamespace
+                  key: AgentNamespace
             - name: DEPLOYER_IMAGE
               value: "litmuschaos/litmusportal-self-deployer:ci"
             - name: ARGO_SERVER_IMAGE

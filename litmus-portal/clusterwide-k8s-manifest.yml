@@ -10,8 +10,8 @@ metadata:
   name: litmus-portal-admin-config
   namespace: litmus
 data:
-  PortalScope: cluster
-  PortalNamespace: litmus
+  AgentScope: cluster
+  AgentNamespace: litmus
   DataBaseServer: "mongodb://mongo-service:27017"
   JWTSecret: "litmus-portal@123"
 ---
@@ -35,10 +35,6 @@ spec:
       containers:
         - name: litmusportal-frontend
           image: litmuschaos/litmusportal-frontend:ci
-          resources:
-            limits:
-              cpu: 200m
-              memory: 400Mi
           imagePullPolicy: Always
           ports:
             - containerPort: 80
@@ -153,10 +149,6 @@ spec:
       containers:
         - name: graphql-server
           image: litmuschaos/litmusportal-server:ci
-          resources:
-            limits:
-              cpu: 200m
-              memory: 400Mi
           env:
             - name: DB_SERVER
               valueFrom:
@@ -174,16 +166,16 @@ spec:
               value: "true"
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos/litmusportal-subscriber:ci"
-            - name: PORTAL_SCOPE
+            - name: AGENT_SCOPE
               valueFrom:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
-                  key: PortalScope
-            - name: PORTAL_NAMESPACE
+                  key: AgentScope
+            - name: AGENT_NAMESPACE
               valueFrom:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
-                  key: PortalNamespace
+                  key: AgentNamespace
             - name: DEPLOYER_IMAGE
               value: "litmuschaos/litmusportal-self-deployer:ci"
             - name: ARGO_SERVER_IMAGE
@@ -201,10 +193,6 @@ spec:
           imagePullPolicy: Always
         - name: auth-server
           image: litmuschaos/litmusportal-auth-server:ci
-          resources:
-            limits:
-              cpu: 200m
-              memory: 250Mi
           env:
             - name: DB_SERVER
               valueFrom:
@@ -262,10 +250,6 @@ spec:
       containers:
         - name: mongo
           image: mongo:4.2.8
-          resources:
-            limits:
-              cpu: 200m
-              memory: 400Mi
           ports:
             - containerPort: 27017
           imagePullPolicy: Always

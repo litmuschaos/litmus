@@ -2,8 +2,8 @@ package types
 
 //SubscriberConfigurationVars contains the required configurable parameters for subscriber installation
 type SubscriberConfigurationVars struct {
-	PortalNamespace         string
-	PortalScope             string
+	AgentNamespace          string
+	AgentScope              string
 	GQLServerURI            string
 	SubscriberImage         string
 	ArgoServerImage         string

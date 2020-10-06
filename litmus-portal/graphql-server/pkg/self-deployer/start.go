@@ -13,7 +13,7 @@ import (
 // StartDeployer registers a new internal self-cluster and starts the deployer
 func StartDeployer(projectId string) {
 	log.Print("STARTING SELF-DEPLOYER")
-	DEPLOYER_NAMESPACE := os.Getenv("PORTAL_NAMESPACE")
+	DEPLOYER_NAMESPACE := os.Getenv("AGENT_NAMESPACE")
 
 	clusterInput := model.ClusterInput{
 		ProjectID:    projectId,

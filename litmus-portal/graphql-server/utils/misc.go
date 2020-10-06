@@ -47,12 +47,10 @@ func ManifestParser(id, key, template string, subscriberConfig *types.Subscriber
 			line = strings.Replace(line, "#{SERVER}", subscriberConfig.GQLServerURI, -1)
 		} else if strings.Contains(line, "#{SUB-IMAGE}") {
 			line = strings.Replace(line, "#{SUB-IMAGE}", subscriberConfig.SubscriberImage, -1)
-		} else if strings.Contains(line, "#{SUB-NAMESPACE}") {
-			line = strings.Replace(line, "#{SUB-NAMESPACE}", subscriberConfig.PortalNamespace, -1)
-		} else if strings.Contains(line, "#{AGENT-SCOPE}") {
-			line = strings.Replace(line, "#{AGENT-SCOPE}", subscriberConfig.PortalScope, -1)
 		} else if strings.Contains(line, "#{AGENT-NAMESPACE}") {
-			line = strings.Replace(line, "#{AGENT-NAMESPACE}", subscriberConfig.PortalNamespace, -1)
+			line = strings.Replace(line, "#{AGENT-NAMESPACE}", subscriberConfig.AgentNamespace, -1)
+		} else if strings.Contains(line, "#{AGENT-SCOPE}") {
+			line = strings.Replace(line, "#{AGENT-SCOPE}", subscriberConfig.AgentScope, -1)
 		} else if strings.Contains(line, "#{ARGO-SERVER}") {
 			line = strings.Replace(line, "#{ARGO-SERVER}", subscriberConfig.ArgoServerImage, -1)
 		} else if strings.Contains(line, "#{ARGO-WORKFLOW-CONTROLLER}") {

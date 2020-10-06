@@ -13,8 +13,8 @@ import (
 )
 
 var subscriberConfiguration = &types.SubscriberConfigurationVars{
-	PortalNamespace:         os.Getenv("PORTAL_NAMESPACE"),
-	PortalScope:             os.Getenv("PORTAL_SCOPE"),
+	AgentNamespace:          os.Getenv("AGENT_NAMESPACE"),
+	AgentScope:              os.Getenv("AGENT_SCOPE"),
 	GQLServerURI:            os.Getenv("SERVICE_ADDRESS") + "/query",
 	SubscriberImage:         os.Getenv("SUBSCRIBER_IMAGE"),
 	ArgoServerImage:         os.Getenv("ARGO_SERVER_IMAGE"),
@@ -46,9 +46,9 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 	if !reqCluster.IsRegistered {
 		var respData []byte
 
-		if subscriberConfiguration.SubscriberSC == "cluster" {
+		if subscriberConfiguration.PortalScope == "cluster" {
 			respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, "manifests/cluster-subscriber.yml", subscriberConfiguration)
-		} else if subscriberConfiguration.SubscriberSC == "namespace" {
+		} else if subscriberConfiguration.PortalScope == "namespace" {
 			respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, "manifests/namespace-subscriber.yml", subscriberConfiguration)
 		} else {
 			log.Print("ERROR- PORTAL SCOPE NOT SELECTED!")

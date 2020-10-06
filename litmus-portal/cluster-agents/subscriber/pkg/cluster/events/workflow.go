@@ -20,8 +20,8 @@ const (
 )
 
 var (
-	DefaultScope     = os.Getenv("AGENT_SCOPE")
-	DefaultNamespace = os.Getenv("AGENT_NAMESPACE")
+	AgentScope     = os.Getenv("AGENT_SCOPE")
+	AgentNamespace = os.Getenv("AGENT_NAMESPACE")
 )
 
 // initializes the Argo Workflow event watcher
@@ -36,8 +36,8 @@ func WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent)
 		logrus.WithError(err).Fatal("could not generate dynamic client for config")
 	}
 	// Create a factory object to watch workflows depending on default scope
-	if DefaultScope == "namespace" {
-		f := externalversions.NewSharedInformerFactoryWithOptions(clientSet, resyncPeriod, externalversions.WithNamespace(DefaultNamespace))
+	if AgentScope == "namespace" {
+		f := externalversions.NewSharedInformerFactoryWithOptions(clientSet, resyncPeriod, externalversions.WithNamespace(AgentNamespace))
 		informer := f.Argoproj().V1alpha1().Workflows().Informer()
 		// Start Event Watch
 		go startWatch(stopCh, informer, stream)

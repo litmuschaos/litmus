@@ -31,7 +31,7 @@ kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/lit
 
 Or
 
-> Master (Latest) Namespaced scope. Replace <namespace> with the desired namespace.
+> Master (Latest) Namespaced scope. Replace `<namespace>` with the desired namespace.
 ```bash
 export LITMUS_PORTAL_NAMESPACE="<namespace>"
 kubectl create ns ${LITMUS_PORTAL_NAMESPACE}
