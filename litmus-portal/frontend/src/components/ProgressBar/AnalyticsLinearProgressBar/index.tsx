@@ -6,32 +6,32 @@ interface LinearProgressBarProps {
   maxValue: number;
   isInTable: boolean;
 }
+const lightConstant = 0.5;
 
 const RedLinearProgress = withStyles((theme: Theme) => ({
-  root: {
-    backgroundColor: lighten(theme.palette.error.dark, 0.5),
-  },
   bar: {
     backgroundColor: theme.palette.error.dark,
+  },
+  root: {
+    backgroundColor: lighten(theme.palette.error.dark, lightConstant),
   },
 }))(LinearProgress);
 
 const YellowLinearProgress = withStyles((theme: Theme) => ({
-  root: {
-    backgroundColor: lighten(theme.palette.warning.main, 0.5),
-  },
   bar: {
     backgroundColor: theme.palette.warning.main,
+  },
+  root: {
+    backgroundColor: lighten(theme.palette.warning.main, lightConstant),
   },
 }))(LinearProgress);
 
 const GreenLinearProgress = withStyles((theme: Theme) => ({
-  root: {
-    backgroundColor: lighten(theme.palette.success.dark, 0.5),
-  },
-
   bar: {
-    backgroundColor: theme.palette.success.dark,
+    backgroundColor: theme.palette.primary.dark,
+  },
+  root: {
+    backgroundColor: lighten(theme.palette.primary.dark, lightConstant),
   },
 }))(LinearProgress);
 
@@ -42,38 +42,42 @@ const AnalyticsLinearProgressBar: React.FC<LinearProgressBarProps> = ({
 }) => {
   const resultValue = ((value as number) / (maxValue as number)) * 100;
   const defaultSize = 20;
+  const lowerLimit = 30;
+  const upperLimit = 60;
 
   if (isInTable) {
-    if (resultValue <= 30) {
+    if (resultValue <= lowerLimit) {
       return (
         <RedLinearProgress
           value={resultValue}
           variant="determinate"
           style={{
-            height: defaultSize,
             borderRadius: defaultSize,
+            height: defaultSize,
           }}
         />
       );
-    } else if (resultValue > 30 && resultValue <= 60) {
+    }
+    if (resultValue > lowerLimit && resultValue <= upperLimit) {
       return (
         <YellowLinearProgress
           value={resultValue}
           variant="determinate"
           style={{
-            height: defaultSize,
             borderRadius: defaultSize,
+            height: defaultSize,
           }}
         />
       );
-    } else {
+    }
+    if (resultValue > upperLimit) {
       return (
         <GreenLinearProgress
           value={resultValue}
           variant="determinate"
           style={{
-            height: defaultSize,
             borderRadius: defaultSize,
+            height: defaultSize,
           }}
         />
       );
@@ -85,8 +89,8 @@ const AnalyticsLinearProgressBar: React.FC<LinearProgressBarProps> = ({
       value={0}
       variant="determinate"
       style={{
-        height: defaultSize,
         borderRadius: defaultSize,
+        height: defaultSize,
       }}
     />
   );
