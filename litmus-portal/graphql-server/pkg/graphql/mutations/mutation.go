@@ -74,8 +74,11 @@ func ConfirmClusterRegistration(identity model.ClusterIdentity, r store.StateDat
 		cluster.IsRegistered = true
 		cluster.AccessKey = ""
 
+		newCluster := model.Cluster{}
+		copier.Copy(&newCluster, &cluster)
+
 		log.Print("CLUSTER Confirmed : ID-", cluster.ClusterID, " PID-", cluster.ProjectID)
-		subscriptions.SendClusterEvent("cluster-registration", "New Cluster", "New Cluster registration", model.Cluster(cluster), r)
+		subscriptions.SendClusterEvent("cluster-registration", "New Cluster", "New Cluster registration", newCluster, r)
 
 		return &model.ClusterConfirmResponse{IsClusterConfirmed: true, NewClusterKey: &newKey, ClusterID: &cluster.ClusterID}, err
 	}
@@ -91,7 +94,11 @@ func NewEvent(clusterEvent model.ClusterEventInput, r store.StateData) (string, 
 
 	if cluster.AccessKey == clusterEvent.AccessKey && cluster.IsRegistered {
 		log.Print("CLUSTER EVENT : ID-", cluster.ClusterID, " PID-", cluster.ProjectID)
-		subscriptions.SendClusterEvent("cluster-event", clusterEvent.EventName, clusterEvent.Description, model.Cluster(cluster), r)
+
+		newCluster := model.Cluster{}
+		copier.Copy(&newCluster, &cluster)
+
+		subscriptions.SendClusterEvent("cluster-event", clusterEvent.EventName, clusterEvent.Description, newCluster, r)
 		return "Event Published", nil
 	}
 
