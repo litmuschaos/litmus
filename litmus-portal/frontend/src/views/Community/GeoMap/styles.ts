@@ -8,13 +8,13 @@ const useStyles = makeStyles((theme) => ({
     fill: theme.palette.map.cityMap.marker.fill,
     '& circle': {
       stroke: theme.palette.map.cityMap.marker.stroke,
-      strokeWidth: '2',
+      strokeWidth: 2,
       strokeLinecap: 'round',
       strokeLinejoin: 'round',
       transform: 'translate(-12, -24)',
-      cx: '12',
-      cy: '10',
-      r: '4',
+      cx: 12,
+      cy: 10,
+      r: 4,
     },
     '&:hover': {
       fill: theme.palette.map.cityMap.marker.hover,
