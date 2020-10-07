@@ -1,6 +1,6 @@
 import { Divider, IconButton, Typography } from '@material-ui/core';
 import React from 'react';
-import InputField from '../../../../components/InputField';
+import InputFieldOutline from '../../../../components/InputFieldOutline';
 import {
   validateLength,
   validateStartEmptySpacing,
@@ -125,7 +125,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
                   <form>
                     <div className={classes.details1}>
                       <div data-cy="userName">
-                        <InputField
+                        <InputFieldOutline
                           helperText={
                             validateStartEmptySpacing(personalData.userName)
                               ? 'Should not start with an empty space'
@@ -142,7 +142,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
                       </div>
 
                       <div data-cy="passwordInput">
-                        <InputField
+                        <InputFieldOutline
                           required
                           type="password"
                           helperText={
