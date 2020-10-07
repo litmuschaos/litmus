@@ -10,6 +10,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import { useTheme } from '@material-ui/core/styles';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import SearchIcon from '@material-ui/icons/Search';
 import React, { useState } from 'react';
@@ -77,7 +78,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
     },
   ]);
   const { t } = useTranslation();
-
+  const { palette } = useTheme();
   return (
     <div>
       <div className={classes.headerSection}>
@@ -190,7 +191,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
             ranges={state}
             direction="vertical"
             editableDateInputs
-            rangeColors={['#5B44BA']}
+            rangeColors={[palette.secondary.dark]}
             showMonthAndYearPickers
           />
         </Popover>

@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   headerFlexProfile: {
+    color: theme.palette.userNameTextColor,
     height: '5%',
     fontSize: '2.08rem',
     flexDirection: 'row',
@@ -29,7 +30,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingBottom: theme.spacing(0),
     marginLeft: theme.spacing(5),
     paddingleft: theme.spacing(5),
-    color: theme.palette.userNameTextColor,
   },
   // Notification
   headerFlexPadded: {
@@ -113,7 +113,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   userName: {
-    color: 'inherit',
+    color: theme.palette.userNameTextColor,
     fontSize: '0.875rem',
   },
 
