@@ -8,7 +8,7 @@ export default [
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/node-cpu-hog/workflow.yaml',
 
     gitLink:
-      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/node-cpu-hog/workflow.yaml',
+      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/node-cpu-hog',
     provider: 'MayaData',
     description: 'Injects a CPU spike on a node',
     totalRuns: 5300,
@@ -32,7 +32,7 @@ export default [
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/node-memory-hog/workflow.yaml',
 
     gitLink:
-      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/node-memory-hog/workflow.yaml',
+      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/node-memory-hog',
     provider: 'MayaData',
     description: 'Injects a memory spike on a node',
     totalRuns: 4300,
@@ -60,7 +60,7 @@ export default [
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/pod-cpu-hog/workflow.yaml',
 
     gitLink:
-      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/pod-cpu-hog/workflow.yaml',
+      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/pod-cpu-hog',
     provider: 'MayaData',
     description: 'Injects a CPU spike on a pod',
     totalRuns: 5000,
@@ -85,7 +85,7 @@ export default [
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/pod-memory-hog/workflow.yaml',
 
     gitLink:
-      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/pod-memory-hog/workflow.yaml',
+      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/pod-memory-hog',
     provider: 'MayaData',
     description: 'Injects a memory spike on a pod',
     totalRuns: 3005,
@@ -108,7 +108,7 @@ export default [
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/pod-delete/workflow.yaml',
 
     gitLink:
-      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/pod-delete/workflow.yaml',
+      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/pod-delete',
     provider: 'MayaData',
     description: 'Deletes a pod',
     totalRuns: 6700,
@@ -132,7 +132,7 @@ export default [
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/kube-proxy-all/workflow.yaml',
 
     gitLink:
-      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/kube-proxy-all/workflow.yaml',
+      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/kube-proxy-all',
     provider: 'MayaData',
     description: 'Induces chaos on kube proxy',
     totalRuns: 9000,
@@ -150,25 +150,27 @@ export default [
   {
     workflowID: 6,
     title: 'namespaced-scope-chaos',
-    urlToIcon: 'https://hub.litmuschaos.io/api/icon/1.7.0/generic/pod-delete.png',
+    urlToIcon:
+      'https://hub.litmuschaos.io/api/icon/1.7.0/generic/pod-delete.png',
     chaosWkfCRDLink:
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/namespaced-scope-chaos/workflow.yaml',
-
+    chaosWkfCRDLink_Recur:
+      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/namespaced-scope-chaos/workflow_cron.yaml',
     gitLink:
-      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/namespaced-scope-chaos/workflow.yaml',
+      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/namespaced-scope-chaos',
     provider: 'MayaData',
     description: 'Induces chaos on Hello world application',
     totalRuns: 12000,
     isCustom: false,
     details:
-    'Causes (forced/graceful) pod failure of specific/random replicas of hello world application resources ' +
-    'Tests deployment sanity (replica availability & uninterrupted service) and recovery workflow ' +
-    'of the application The pod delete by Powerfulseal is only supporting single pod ' +
-    'failure (kill_count = 1).',
+      'Causes (forced/graceful) pod failure of specific/random replicas of hello world application resources ' +
+      'Tests deployment sanity (replica availability & uninterrupted service) and recovery workflow ' +
+      'of the application The pod delete by Powerfulseal is only supporting single pod ' +
+      'failure (kill_count = 1).',
     recommendation:
-    'Check whether the application is resilient to the pod failure, once the experiment (job) is completed.',
+      'Check whether the application is resilient to the pod failure, once the experiment (job) is completed.',
     experimentinfo:
-    'Provide the application info in spec.appinfo Override the experiment tunables if desired ' +
-    'in experiments.spec.components.env ',
+      'Provide the application info in spec.appinfo Override the experiment tunables if desired ' +
+      'in experiments.spec.components.env ',
   },
 ];
