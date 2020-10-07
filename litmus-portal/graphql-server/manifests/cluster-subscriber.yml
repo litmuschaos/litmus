@@ -1084,6 +1084,13 @@ rules:
     verbs:
       - get
   - apiGroups:
+      - litmuschaos.io
+    resources:
+      - chaosengines
+      - chaosresults
+    verbs:
+      - get  
+  - apiGroups:
       - argoproj.io
     resources:
       - workflows
