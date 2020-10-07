@@ -1,6 +1,7 @@
 package events
 
 import (
+	"os"
 	"time"
 
 	"github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
@@ -18,6 +19,11 @@ const (
 	resyncPeriod time.Duration = 0
 )
 
+var (
+	AgentScope     = os.Getenv("AGENT_SCOPE")
+	AgentNamespace = os.Getenv("AGENT_NAMESPACE")
+)
+
 // initializes the Argo Workflow event watcher
 func WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent) {
 	cfg, err := k8s.GetKubeConfig()
@@ -29,12 +35,18 @@ func WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent)
 	if err != nil {
 		logrus.WithError(err).Fatal("could not generate dynamic client for config")
 	}
-	// Create a factory object to watch workflows
-	f := externalversions.NewSharedInformerFactory(clientSet, resyncPeriod)
-	informer := f.Argoproj().V1alpha1().Workflows().Informer()
-
-	// Start Event Watch
-	go startWatch(stopCh, informer, stream)
+	// Create a factory object to watch workflows depending on default scope
+	if AgentScope == "namespace" {
+		f := externalversions.NewSharedInformerFactoryWithOptions(clientSet, resyncPeriod, externalversions.WithNamespace(AgentNamespace))
+		informer := f.Argoproj().V1alpha1().Workflows().Informer()
+		// Start Event Watch
+		go startWatch(stopCh, informer, stream)
+	} else {
+		f := externalversions.NewSharedInformerFactory(clientSet, resyncPeriod)
+		informer := f.Argoproj().V1alpha1().Workflows().Informer()
+		// Start Event Watch
+		go startWatch(stopCh, informer, stream)
+	}
 }
 
 // handles the different workflow events - add, update and delete
