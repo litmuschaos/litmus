@@ -60,5 +60,19 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'center',
   },
+  menuHeader: {
+    fontSize: '0.75rem',
+  },
+  menuDesc: {
+    fontSize: '0.625rem',
+  },
+  menuOpt: {
+    '&:hover': {
+      background: theme.palette.customColors.menuOption.active,
+    },
+  },
+  optionBtn: {
+    marginLeft: 'auto',
+  },
 }));
 export default useStyles;

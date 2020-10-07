@@ -1,13 +1,23 @@
 import { useMutation } from '@apollo/client/react/hooks/useMutation';
-import { Avatar, TableCell } from '@material-ui/core';
-import React from 'react';
+import {
+  Avatar,
+  IconButton,
+  Menu,
+  MenuItem,
+  TableCell,
+  Typography,
+} from '@material-ui/core';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../../../components/Button/ButtonOutline';
 import Loader from '../../../../../components/Loader';
 import { CANCEL_INVITE, SEND_INVITE } from '../../../../../graphql/mutations';
 import { GET_USER } from '../../../../../graphql/quries';
-import { MemberInviteNew } from '../../../../../models/graphql/invite';
+import {
+  MemberInvitation,
+  MemberInviteNew,
+} from '../../../../../models/graphql/invite';
 import { Member } from '../../../../../models/graphql/user';
 import { RootState } from '../../../../../redux/reducers';
 import userAvatar from '../../../../../utils/user';
@@ -20,11 +30,11 @@ interface TableDataProps {
 const TableData: React.FC<TableDataProps> = ({ row }) => {
   const userData = useSelector((state: RootState) => state.userData);
   const classes = useStyles();
-  // const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  // const [role, setRole] = useState<string>('Viewer');
-  // const handleClose = () => {
-  //   setAnchorEl(null);
-  // };
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [role, setRole] = useState<string>(row.role);
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const username = useSelector((state: RootState) => state.userData.username);
 
@@ -36,7 +46,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
     }
   );
 
-  const [CancelInvite, { loading: loadingA }] = useMutation<MemberInviteNew>(
+  const [CancelInvite, { loading: loadingA }] = useMutation<MemberInvitation>(
     CANCEL_INVITE,
     {
       refetchQueries: [{ query: GET_USER, variables: { username } }],
@@ -72,7 +82,79 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                   {row.invitation}
                 </div>
               </div>
-              <div>{row.role}</div>
+              <div>
+                {role}
+                <IconButton
+                  aria-label="more"
+                  aria-controls="long-menu"
+                  aria-haspopup="true"
+                  onClick={(event) => {
+                    setAnchorEl(event.currentTarget);
+                  }}
+                  className={classes.optionBtn}
+                >
+                  <img src="./icons/down-arrow.svg" alt="more" />
+                </IconButton>
+                <Menu
+                  keepMounted
+                  open={Boolean(anchorEl)}
+                  id="long-menu"
+                  anchorEl={anchorEl}
+                  onClose={handleClose}
+                >
+                  <MenuItem
+                    onClick={() => {
+                      setRole('Editor');
+                      setAnchorEl(null);
+                    }}
+                    className={classes.menuOpt}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                      }}
+                    >
+                      <div>
+                        <Typography className={classes.menuHeader}>
+                          <strong>Editor</strong>
+                        </Typography>
+                      </div>
+                      <div>
+                        <Typography className={classes.menuDesc}>
+                          Can make changes in the project
+                        </Typography>
+                      </div>
+                    </div>
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      setRole('Viewer');
+                      setAnchorEl(null);
+                      // sendInvite(row.username, 'Viewer');
+                    }}
+                    className={classes.menuOpt}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                      }}
+                    >
+                      <div>
+                        <Typography className={classes.menuHeader}>
+                          <strong>Viewer</strong>
+                        </Typography>
+                      </div>
+                      <div>
+                        <Typography className={classes.menuDesc}>
+                          Can view the project
+                        </Typography>
+                      </div>
+                    </div>
+                  </MenuItem>
+                </Menu>
+              </div>
             </div>
           </div>
           <div className={classes.buttonDiv}>
@@ -102,7 +184,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                       member: {
                         project_id: userData.selectedProjectID,
                         user_name: row.user_name,
-                        role: 'Viewer',
+                        role,
                       },
                     },
                   })

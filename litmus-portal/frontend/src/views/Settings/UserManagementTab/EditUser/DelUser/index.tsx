@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { IconButton, Typography } from '@material-ui/core';
 import React from 'react';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../../../components/Button/ButtonOutline';
@@ -19,7 +19,7 @@ const DelUser: React.FC<DelUserProps> = ({
   tableDelete,
   teammingDel,
   handleTable,
-  // disabled,
+  disabled,
 }) => {
   const classes = useStyles();
 
@@ -32,9 +32,9 @@ const DelUser: React.FC<DelUserProps> = ({
 
   return (
     <div>
-      {/* {tableDelete ? (
+      {tableDelete ? (
         <>
-          <MenuItem
+          {/*  <MenuItem
             value="delete"
             onClick={() => {
               setOpen(true);
@@ -44,7 +44,7 @@ const DelUser: React.FC<DelUserProps> = ({
               <img alt="delete" src="./icons/bin.svg" />
             </IconButton>
             <Typography>Delete User</Typography>
-          </MenuItem>
+          </MenuItem> */}
         </>
       ) : (
         <>
@@ -76,8 +76,8 @@ const DelUser: React.FC<DelUserProps> = ({
             </div>
           )}
         </>
-      )} */}
-      <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn={false}>
+      )}
+      <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn>
         <div className={classes.body}>
           <img src="./icons/userDel.svg" alt="lock" />
           <div className={classes.text}>
@@ -89,7 +89,7 @@ const DelUser: React.FC<DelUserProps> = ({
           <div className={classes.textSecond}>
             <Typography className={classes.typoSub} align="center">
               {teammingDel ? (
-                <>The user will lost access to the team’s work and all</>
+                <>The user will lose access to the team’s work and all</>
               ) : (
                 <>The user will lose access to the portal</>
               )}

@@ -108,13 +108,14 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
       }
     },
   });
-  const username = useSelector((state: RootState) => state.userData.username);
 
   // mutation to send invitation to selected users
   const [SendInvite, { error: errorB, loading: loadingB }] = useMutation<
     MemberInviteNew
   >(SEND_INVITE, {
-    refetchQueries: [{ query: GET_USER, variables: { username } }],
+    refetchQueries: [
+      { query: GET_USER, variables: { username: userData.username } },
+    ],
   });
 
   // Checks if the user the already selected or not
