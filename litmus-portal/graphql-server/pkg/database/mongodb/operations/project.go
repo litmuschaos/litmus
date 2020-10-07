@@ -103,7 +103,7 @@ func UpdateInvite(ctx context.Context, projectID, userName string, invitation db
 	})
 
 	query := bson.M{"_id": projectID}
-	update := bson.M{"$set": bson.M{"members.$[elem].invitation": invitation}}
+	var update bson.M
 
 	switch invitation {
 	case dbSchema.PendingInvitation:
