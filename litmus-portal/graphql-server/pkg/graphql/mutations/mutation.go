@@ -25,7 +25,6 @@ import (
 func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error) {
 	clusterID := uuid.New().String()
 
-	log.Print("NEW CLUSTER REGISTERED : ID-", clusterID, " PID-", input.ProjectID)
 	token, err := cluster.ClusterCreateJWT(clusterID)
 	if err != nil {
 		return &model.ClusterRegResponse{}, err
@@ -48,6 +47,8 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 	if err != nil {
 		return &model.ClusterRegResponse{}, err
 	}
+	
+	log.Print("NEW CLUSTER REGISTERED : ID-", clusterID, " PID-", input.ProjectID)
 
 	return &model.ClusterRegResponse{
 		ClusterID:   newCluster.ClusterID,
