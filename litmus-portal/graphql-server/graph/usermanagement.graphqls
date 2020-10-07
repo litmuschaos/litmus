@@ -27,4 +27,3 @@ input UpdateUserInput {
     email: String
     company_name: String
 }
-

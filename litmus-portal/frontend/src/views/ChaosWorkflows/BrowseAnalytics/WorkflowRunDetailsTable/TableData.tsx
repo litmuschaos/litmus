@@ -40,7 +40,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       <TableCell className={classes.tableDataStatus}>
         <ExperimentStatus
           status={
-            data.test_result !== 'Awaited'
+            data.test_result !== 'Awaited' && data.test_result !== 'N/A'
               ? `${data.test_result}ed`
               : data.test_result
           }
@@ -66,7 +66,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
         <div className={classes.reliabiltyData}>
           <Typography>{data.resulting_points} Points</Typography>
           <div className={classes.progressBar}>
-            <LinearProgressBar value={data.resulting_points ?? 0} />
+            <LinearProgressBar width={2} value={data.resulting_points ?? 0} />
           </div>
         </div>
       </TableCell>

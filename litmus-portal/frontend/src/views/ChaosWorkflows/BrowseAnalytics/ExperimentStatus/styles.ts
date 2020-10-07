@@ -7,11 +7,14 @@ const useStyles = makeStyles((theme) => ({
   },
   awaited: {
     color: theme.palette.warning.main,
-    backgroundColor: theme.palette.warning.light,
+    backgroundColor: theme.palette.waitingStatusColor,
   },
   failed: {
     color: theme.palette.error.dark,
     backgroundColor: theme.palette.error.light,
+  },
+  awaitedSpan: {
+    marginLeft: theme.spacing(2),
   },
   state: {
     width: '4.75rem',

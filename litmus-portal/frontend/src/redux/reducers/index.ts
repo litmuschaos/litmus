@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
-import { Node } from '../../models/graphql/workflowData';
 import { CommunityData } from '../../models/redux/analytics';
+import { SelectedNode } from '../../models/redux/nodeSelection';
 import { TabState } from '../../models/redux/tabs';
 import { TemplateData } from '../../models/redux/template';
 import { UserData } from '../../models/redux/user';
@@ -16,7 +16,7 @@ export interface RootState {
   communityData: CommunityData;
   userData: UserData;
   workflowData: WorkflowData;
-  selectedNode: Node;
+  selectedNode: SelectedNode;
   tabNumber: TabState;
   selectTemplate: TemplateData;
 }
