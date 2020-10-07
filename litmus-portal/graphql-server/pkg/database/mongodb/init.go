@@ -41,6 +41,7 @@ type Cluster struct {
 	UpdatedAt          string  `bson:"updated_at"`
 	CreatedAt          string  `bson:"created_at"`
 	ClusterType        string  `bson:"cluster_type"`
+	Token              string  `bson:"token"`
 }
 
 type ChaosWorkFlowInput struct {

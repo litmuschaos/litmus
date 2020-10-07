@@ -23,8 +23,16 @@ import (
 
 //ClusterRegister creates an entry for a new cluster in DB and generates the url used to apply manifest
 func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error) {
+	clusterID := uuid.New().String()
+
+	log.Print("NEW CLUSTER REGISTERED : ID-", clusterID, " PID-", input.ProjectID)
+	token, err := cluster.ClusterCreateJWT(clusterID)
+	if err != nil {
+		return &model.ClusterRegResponse{}, err
+	}
+
 	newCluster := database.Cluster{
-		ClusterID:    uuid.New().String(),
+		ClusterID:    clusterID,
 		ClusterName:  input.ClusterName,
 		Description:  input.Description,
 		ProjectID:    input.ProjectID,
@@ -33,15 +41,10 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		PlatformName: input.PlatformName,
 		CreatedAt:    strconv.FormatInt(time.Now().Unix(), 10),
 		UpdatedAt:    strconv.FormatInt(time.Now().Unix(), 10),
+		Token:        token,
 	}
 
-	err := database.InsertCluster(newCluster)
-	if err != nil {
-		return &model.ClusterRegResponse{}, err
-	}
-
-	log.Print("NEW CLUSTER REGISTERED : ID-", newCluster.ClusterID, " PID-", newCluster.ProjectID)
-	token, err := cluster.ClusterCreateJWT(newCluster.ClusterID)
+	err = database.InsertCluster(newCluster)
 	if err != nil {
 		return &model.ClusterRegResponse{}, err
 	}
