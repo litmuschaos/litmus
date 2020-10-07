@@ -1,6 +1,8 @@
 package subscriptions
 
 import (
+	"os"
+
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
@@ -38,7 +40,14 @@ func SendWorkflowEvent(wfRun model.WorkflowRun, r store.StateData) {
 
 func SendWorkflowRequest(wfRequest *database.ChaosWorkFlowInput, r store.StateData) {
 
-	namespace := "litmus"
+	namespace := os.Getenv("AGENT_NAMESPACE")
+	if os.Getenv("AGENT_SCOPE") == "cluster" {
+		/*
+			namespace = Obtain from WorkflowManifest or
+			from frontend as a separate workflowNamespace field under ChaosWorkFlowInput model
+			for CreateChaosWorkflow mutation to be passed to this function.
+		*/
+	}
 	requesttype := "create"
 	newAction := &model.ClusterAction{
 		ProjectID: wfRequest.ProjectID,
