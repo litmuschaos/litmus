@@ -2,15 +2,15 @@ package k8s
 
 import (
 	"context"
-	"log"
-	"os"
-	"strconv"
-
+	"fmt"
 	appsv1 "k8s.io/api/apps/v1"
 	apiv1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
+	"log"
+	"os"
+	"strconv"
 )
 
 func CreateDeployment(namespace, token string) (*appsv1.Deployment, error) {
@@ -93,34 +93,40 @@ func CreateDeployment(namespace, token string) (*appsv1.Deployment, error) {
 	return result, nil
 }
 
-func GetPortalEndpoint() (string, error){
+func GetPortalEndpoint() (string, error) {
 	var (
-		Nodeport int32
-		ExternalIP string
-		InternalIP string
+		Nodeport       int32
+		ExternalIP     string
+		InternalIP     string
 		LitmusPortalNS = os.Getenv("LITMUS_PORTAL_NAMESPACE")
 	)
 
 	clientset, err := GetGenericK8sClient()
 	if err != nil {
+		log.Print("Error from here")
 		return "", err
 	}
 
 	podList, _ := clientset.CoreV1().Pods(LitmusPortalNS).List(context.TODO(), metav1.ListOptions{
 		LabelSelector: "component=litmusportal-server",
-	});
+	})
 
 	svc, err := clientset.CoreV1().Services(LitmusPortalNS).Get(context.TODO(), "litmusportal-server-service", metav1.GetOptions{})
 	if err != nil {
 		return "", err
 	}
 
+	fmt.Print(svc)
+	fmt.Print("here0")
+	fmt.Print(svc.Spec)
+
 	for _, port := range svc.Spec.Ports {
 		if port.Name == "graphql-server" {
 			Nodeport = port.NodePort
 		}
 	}
-
+	fmt.Print(podList.Items)
+	fmt.Print("here1")
 	nodeIP, err := clientset.CoreV1().Nodes().Get(context.TODO(), podList.Items[0].Spec.NodeName, metav1.GetOptions{})
 	if err != nil {
 		return "", err
@@ -135,8 +141,8 @@ func GetPortalEndpoint() (string, error){
 	}
 
 	if ExternalIP == "" {
-		return "http://" + InternalIP + ":"+ strconv.Itoa(int(Nodeport)), nil
+		return "http://" + InternalIP + ":" + strconv.Itoa(int(Nodeport)), nil
 	} else {
-		return "http://" + ExternalIP + ":"+ strconv.Itoa(int(Nodeport)), nil
+		return "http://" + ExternalIP + ":" + strconv.Itoa(int(Nodeport)), nil
 	}
 }
