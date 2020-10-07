@@ -47,7 +47,7 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 	if err != nil {
 		return &model.ClusterRegResponse{}, err
 	}
-	
+
 	log.Print("NEW CLUSTER REGISTERED : ID-", clusterID, " PID-", input.ProjectID)
 
 	return &model.ClusterRegResponse{
