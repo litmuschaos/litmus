@@ -1,12 +1,5 @@
 import { useMutation } from '@apollo/client/react/hooks';
-import {
-  Avatar,
-  IconButton,
-  Menu,
-  MenuItem,
-  TableCell,
-  Typography,
-} from '@material-ui/core';
+import { Avatar, IconButton, TableCell, Typography } from '@material-ui/core';
 import moment from 'moment';
 import React from 'react';
 import { useSelector } from 'react-redux';
@@ -26,17 +19,17 @@ interface TableDataProps {
   row: Member;
   index: number;
 }
-const TableData: React.FC<TableDataProps> = ({ row, index }) => {
+const TableData: React.FC<TableDataProps> = ({ row /* index */ }) => {
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  // const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   // const [role, setRole] = useState<string>('Viewer');
 
   const userData = useSelector((state: RootState) => state.userData);
 
   // for closing the menu option
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  // const handleClose = () => {
+  //   setAnchorEl(null);
+  // };
   const [open, setOpen] = React.useState(false);
   // Function to display date in format Do MMM,YYYY Hr:MM AM/PM
   const formatDate = (date: string) => {
@@ -67,14 +60,14 @@ const TableData: React.FC<TableDataProps> = ({ row, index }) => {
             alt="User"
             className={classes.avatarBackground}
           >
-            {row?.name ? userAvatar(row.name) : userAvatar(row.name)}
+            {row?.name ? userAvatar(row?.name) : userAvatar(row?.user_name)}
           </Avatar>
-          {row.name}
+          {row?.name}
         </div>
       </TableCell>
       <TableCell className={classes.otherTC}>
-        {row.role}
-        {row.role === 'editor' || row.role === 'viewer' ? (
+        {row?.role}
+        {/* {row?.role === 'editor' || row?.role === 'viewer' ? (
           <>
             <IconButton
               disabled
@@ -139,9 +132,9 @@ const TableData: React.FC<TableDataProps> = ({ row, index }) => {
           </>
         ) : (
           <></>
-        )}
+        )} */}
       </TableCell>
-      <TableCell className={classes.otherTC}>{row.email}</TableCell>
+      <TableCell className={classes.otherTC}>{row?.email}</TableCell>
       <TableCell className={classes.otherTC}>
         <div className={classes.dateDiv}>
           <img
@@ -149,11 +142,11 @@ const TableData: React.FC<TableDataProps> = ({ row, index }) => {
             src="./icons/calendarIcon.svg"
             alt="calendar"
           />
-          {formatDate(row.joined_at)}
+          {formatDate(row?.joined_at)}
         </div>
       </TableCell>
 
-      <TableCell className={classes.otherTC} key={row.user_name}>
+      <TableCell className={classes.otherTC} key={row?.user_name}>
         <IconButton
           onClick={() => {
             setOpen(true);
@@ -200,7 +193,7 @@ const TableData: React.FC<TableDataProps> = ({ row, index }) => {
                   variables: {
                     data: {
                       project_id: userData.selectedProjectID,
-                      user_name: row.user_name,
+                      user_name: row?.user_name,
                     },
                   },
                 });
