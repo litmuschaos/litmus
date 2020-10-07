@@ -1,6 +1,7 @@
 package file_handlers
 
 import (
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 	"log"
 	"net/http"
 	"os"
@@ -42,6 +43,13 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 		utils.WriteHeaders(&w, 500)
 		return
 	}
+
+	portalEndpoint, err := k8s.GetPortalEndpoint()
+	if err != nil {
+		log.Print(err)
+	}
+
+	subscriberConfiguration.GQLServerURI = portalEndpoint
 
 	if !reqCluster.IsRegistered {
 		var respData []byte
