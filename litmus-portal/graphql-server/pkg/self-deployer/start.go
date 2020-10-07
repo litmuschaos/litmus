@@ -21,11 +21,11 @@ func StartDeployer(projectId string) {
 		ClusterType:  "internal",
 		PlatformName: "others",
 	}
-	key, err := mutations.ClusterRegister(clusterInput)
+	resp, err := mutations.ClusterRegister(clusterInput)
 	if err != nil {
 		log.Print("SELF CLUSTER REG FAILED[DB-REG] : ", err)
 	}
-	response, err := k8s.CreateDeployment(DEPLOYER_NAMESPACE, key)
+	response, err := k8s.CreateDeployment(DEPLOYER_NAMESPACE, resp.Token)
 	if err != nil {
 		log.Print("SELF CLUSTER REG FAILED[DEPLOY-CREATION] : ", err)
 	}
