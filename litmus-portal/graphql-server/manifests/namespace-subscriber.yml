@@ -1,0 +1,681 @@
+# This is an auto-generated file. DO NOT EDIT
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: argo
+  namespace: #{AGENT-NAMESPACE}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: argo-server
+  namespace: #{AGENT-NAMESPACE}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+  name: argo-aggregate-to-admin
+  namespace: #{AGENT-NAMESPACE}
+rules:
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - workflows
+      - workflows/finalizers
+      - workflowtemplates
+      - workflowtemplates/finalizers
+      - cronworkflows
+      - cronworkflows/finalizers
+    verbs:
+      - create
+      - delete
+      - deletecollection
+      - get
+      - list
+      - patch
+      - update
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+  name: argo-aggregate-to-edit
+  namespace: #{AGENT-NAMESPACE}
+rules:
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - workflows
+      - workflows/finalizers
+      - workflowtemplates
+      - workflowtemplates/finalizers
+      - cronworkflows
+      - cronworkflows/finalizers
+    verbs:
+      - create
+      - delete
+      - deletecollection
+      - get
+      - list
+      - patch
+      - update
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+  name: argo-aggregate-to-view
+  namespace: #{AGENT-NAMESPACE}
+rules:
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - workflows
+      - workflows/finalizers
+      - workflowtemplates
+      - workflowtemplates/finalizers
+      - cronworkflows
+      - cronworkflows/finalizers
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: argo-role
+  namespace: #{AGENT-NAMESPACE}
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - pods/exec
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - watch
+      - list
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumeclaims
+    verbs:
+      - create
+      - delete
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - workflows
+      - workflows/finalizers
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - patch
+      - delete
+      - create
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - workflowtemplates
+      - workflowtemplates/finalizers
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - serviceaccounts
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - cronworkflows
+      - cronworkflows/finalizers
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+  - apiGroups:
+      - "policy"
+    resources:
+      - poddisruptionbudgets
+    verbs:
+      - create
+      - get
+      - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: argo-server-role
+  namespace: #{AGENT-NAMESPACE}
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - watch
+      - list
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - pods/exec
+      - pods/log
+    verbs:
+      - get
+      - list
+      - watch
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - watch
+      - create
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+      - serviceaccounts
+    verbs:
+      - get
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - workflows
+      - workfloweventbindings
+      - workflowtemplates
+      - cronworkflows
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+      - update
+      - patch
+      - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: argo-binding
+  namespace: #{AGENT-NAMESPACE}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: argo-role
+subjects:
+  - kind: ServiceAccount
+    name: argo
+    namespace: #{AGENT-NAMESPACE}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: argo-server-binding
+  namespace: #{AGENT-NAMESPACE}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: argo-server-role
+subjects:
+  - kind: ServiceAccount
+    name: argo-server
+    namespace: #{AGENT-NAMESPACE}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: workflow-controller-configmap
+  namespace: #{AGENT-NAMESPACE}
+data:
+  config: |
+    containerRuntimeExecutor: k8sapi
+    executor:
+      imagePullPolicy: IfNotPresent
+      resources:
+        limits:
+          cpu: 0.15
+          memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: argo-server
+  namespace: #{AGENT-NAMESPACE}
+spec:
+  ports:
+    - name: web
+      port: 2746
+      targetPort: 2746
+  selector:
+    app: argo-server
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: workflow-controller-metrics
+  namespace: #{AGENT-NAMESPACE}
+spec:
+  ports:
+    - name: metrics
+      port: 9090
+      protocol: TCP
+      targetPort: 9090
+  selector:
+    app: workflow-controller
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argo-server
+  namespace: #{AGENT-NAMESPACE}
+spec:
+  selector:
+    matchLabels:
+      app: argo-server
+  template:
+    metadata:
+      labels:
+        app: argo-server
+    spec:
+      containers:
+        - args:
+            - server
+            - --namespaced
+          image: #{ARGO-SERVER}
+          name: argo-server
+          resources:
+            limits:
+              cpu: 150m
+              memory: 250Mi
+          ports:
+            - containerPort: 2746
+              name: web
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 2746
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 20
+      nodeSelector:
+        kubernetes.io/os: linux
+      serviceAccountName: argo-server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workflow-controller
+  namespace: #{AGENT-NAMESPACE}
+spec:
+  selector:
+    matchLabels:
+      app: workflow-controller
+  template:
+    metadata:
+      labels:
+        app: workflow-controller
+    spec:
+      containers:
+        - args:
+            - --configmap
+            - workflow-controller-configmap
+            - --executor-image
+            -  #{ARGO-WORKFLOW-EXECUTOR}
+            - --namespaced
+          command:
+            - workflow-controller
+          image: #{ARGO-WORKFLOW-CONTROLLER}
+          name: workflow-controller
+          resources:
+            limits:
+              cpu: 150m
+              memory: 250Mi
+      nodeSelector:
+        kubernetes.io/os: linux
+      serviceAccountName: argo
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: subscriber-service-account
+  namespace: #{AGENT-NAMESPACE}
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: subscriber-namespace
+  namespace: #{AGENT-NAMESPACE}
+  labels:
+    name: subscriber-namespace
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - get
+  - apiGroups:
+      - litmuschaos.io
+    resources:
+      - chaosengines
+      - chaosresults
+    verbs:
+      - get 
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - workflows
+      - workflows/finalizers
+      - workflowtemplates
+      - workflowtemplates/finalizers
+      - cronworkflows
+      - cronworkflows/finalizers
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: subscriber-namespace-rb
+  namespace: #{AGENT-NAMESPACE}
+subjects:
+  - kind: ServiceAccount
+    name: subscriber-service-account
+    namespace: #{AGENT-NAMESPACE}
+roleRef:
+  kind: Role
+  name: subscriber-namespace
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subscriber
+  namespace: #{AGENT-NAMESPACE}
+  labels:
+    app: subscriber
+spec:
+  selector:
+    matchLabels:
+      app: subscriber
+  template:
+    metadata:
+      labels:
+        app: subscriber
+    spec:
+      serviceAccountName: subscriber-service-account
+      containers:
+        - name: subscriber
+          image: #{SUB-IMAGE}
+          resources:
+            limits:
+              cpu: 200m
+              memory: 500Mi
+          imagePullPolicy: Always
+          env:
+            - name: GQL_SERVER
+              value: #{SERVER}
+            - name: CID
+              value: #{CID}
+            - name: KEY
+              value: #{KEY}
+            - name: AGENT_SCOPE
+              value: #{AGENT-SCOPE}
+            - name: AGENT_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: litmus-namespace-scope
+  namespace: #{AGENT-NAMESPACE}
+  labels:
+    name: litmus-namespace-scope
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: litmus-namespace-scope
+  namespace: #{AGENT-NAMESPACE}
+  labels:
+    name: litmus-namespace-scope
+rules:
+  - apiGroups: ["", "apps", "batch", "extensions", "litmuschaos.io"]
+    resources:
+      [
+        "pods",
+        "pods/exec",
+        "pods/log",
+        "pods/eviction",
+        "jobs",
+        "deployments",
+        "daemonsets",
+        "replicasets",
+        "statefulsets",
+        "events",
+        "configmaps",
+        "services",
+        "chaosengines",
+        "chaosexperiments",
+        "chaosresults",
+      ]
+    verbs:
+      [
+        "get",
+        "create",
+        "update",
+        "patch",
+        "delete",
+        "list",
+        "watch",
+        "deletecollection",
+      ]
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: litmus-namespace-scope
+  namespace: #{AGENT-NAMESPACE}
+  labels:
+    name: litmus-namespace-scope
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: litmus-namespace-scope
+subjects:
+  - kind: ServiceAccount
+    name: litmus-namespace-scope
+    namespace: #{AGENT-NAMESPACE}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chaos-operator-ce
+  namespace: #{AGENT-NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: chaos-operator
+  template:
+    metadata:
+      labels:
+        name: chaos-operator
+    spec:
+      serviceAccountName: litmus-namespace-scope
+      containers:
+        - name: chaos-operator
+          image: #{LITMUS-CHAOS-OPERATOR}
+          resources:
+            limits:
+              cpu: 150m
+              memory: 250Mi
+          command:
+            - chaos-operator
+          imagePullPolicy: Always
+          env:
+            - name: CHAOS_RUNNER_IMAGE
+              value: #{LITMUS-CHAOS-RUNNER}
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "chaos-operator"
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: litmus-namespace-admin
+  namespace: #{AGENT-NAMESPACE}
+  labels:
+    name: litmus-namespace-admin
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: litmus-namespace-admin
+  namespace: #{AGENT-NAMESPACE}
+  labels:
+    name: litmus-namespace-admin
+rules:
+  - apiGroups: ["", "apps", "batch", "extensions", "litmuschaos.io"]
+    resources:
+      [
+        "pods",
+        "pods/exec",
+        "pods/log",
+        "pods/eviction",
+        "jobs",
+        "deployments",
+        "daemonsets",
+        "statefulsets",
+        "events",
+        "configmaps",
+        "services",
+        "chaosengines",
+        "chaosexperiments",
+        "chaosresults",
+      ]
+    verbs:
+      [
+        "get",
+        "create",
+        "update",
+        "patch",
+        "delete",
+        "list",
+        "watch",
+        "deletecollection",
+      ]
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: litmus-namespace-admin
+  namespace: #{AGENT-NAMESPACE}
+  labels:
+    name: litmus-namespace-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: litmus-namespace-admin
+subjects:
+  - kind: ServiceAccount
+    name: litmus-namespace-admin
+    namespace: #{AGENT-NAMESPACE}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: argo-chaos
+  namespace: #{AGENT-NAMESPACE}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: chaos-role
+  namespace: #{AGENT-NAMESPACE}
+rules:
+  - apiGroups:
+      - "*"
+    resources:
+      - "*"
+    verbs:
+      - "*"
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: chaos-role-binding
+  namespace: #{AGENT-NAMESPACE}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: chaos-role
+subjects:
+  - kind: ServiceAccount
+    name: argo-chaos
+    namespace: #{AGENT-NAMESPACE}

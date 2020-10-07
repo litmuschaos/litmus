@@ -41,6 +41,7 @@ type Cluster struct {
 	UpdatedAt          string  `bson:"updated_at"`
 	CreatedAt          string  `bson:"created_at"`
 	ClusterType        string  `bson:"cluster_type"`
+	Token              string  `bson:"token"`
 }
 
 type ChaosWorkFlowInput struct {
@@ -76,7 +77,7 @@ func init() {
 	if dbServer == "" {
 		log.Fatal("Environment Variable DB_SERVER is not present")
 	}
-	clientOptions := options.Client().ApplyURI("mongodb://" + dbServer)
+	clientOptions := options.Client().ApplyURI(dbServer)
 	client, err := mongo.Connect(backgroundContext, clientOptions)
 	if err != nil {
 		log.Fatal(err)

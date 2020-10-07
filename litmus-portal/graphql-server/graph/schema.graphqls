@@ -17,6 +17,9 @@ type Cluster {
   updated_at: String!
   created_at: String!
   cluster_type: String!
+  no_of_schedules: Int
+  no_of_workflows: Int
+  token: String!
 }
 
 input ClusterInput{
@@ -185,6 +188,12 @@ type WorkflowRuns {
   last_updated: String!
 }
 
+type clusterRegResponse{
+  token: String!,
+  cluster_id: String!,
+  cluster_name: String!,
+}
+
 type Query{
   # [Deprecated soon]
   getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
@@ -206,7 +215,7 @@ type Query{
 
 type Mutation{
   #It is used to create external cluster.
-  userClusterReg(clusterInput: ClusterInput!): String! @authorized
+  userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
   #It is used to create chaosworkflow
   createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
