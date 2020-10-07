@@ -76,6 +76,7 @@ type ComplexityRoot struct {
 		NoOfWorkflows      func(childComplexity int) int
 		PlatformName       func(childComplexity int) int
 		ProjectID          func(childComplexity int) int
+		Token              func(childComplexity int) int
 		UpdatedAt          func(childComplexity int) int
 	}
 
@@ -433,6 +434,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Cluster.ProjectID(childComplexity), true
+
+	case "Cluster.token":
+		if e.complexity.Cluster.Token == nil {
+			break
+		}
+
+		return e.complexity.Cluster.Token(childComplexity), true
 
 	case "Cluster.updated_at":
 		if e.complexity.Cluster.UpdatedAt == nil {
@@ -1433,6 +1441,7 @@ type Cluster {
   cluster_type: String!
   no_of_schedules: Int
   no_of_workflows: Int
+  token: String!
 }
 
 input ClusterInput{
@@ -2838,6 +2847,40 @@ func (ec *executionContext) _Cluster_no_of_workflows(ctx context.Context, field 
 	res := resTmp.(*int)
 	fc.Result = res
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Cluster_token(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Cluster",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Token, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ClusterAction_project_id(ctx context.Context, field graphql.CollectedField, obj *model.ClusterAction) (ret graphql.Marshaler) {
@@ -8748,6 +8791,11 @@ func (ec *executionContext) _Cluster(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = ec._Cluster_no_of_schedules(ctx, field, obj)
 		case "no_of_workflows":
 			out.Values[i] = ec._Cluster_no_of_workflows(ctx, field, obj)
+		case "token":
+			out.Values[i] = ec._Cluster_token(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
