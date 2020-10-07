@@ -5,9 +5,13 @@ import Paper from '@material-ui/core/Paper'; // Temporary -> Should be replaced 
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import InfoFilledWrap from '../../components/InfoFilled/index';
+import Loader from '../../components/Loader';
 import QuickActionCard from '../../components/QuickActionCard';
+import Center from '../../containers/layouts/Center';
 import Scaffold from '../../containers/layouts/Scaffold/index';
+import { RootState } from '../../redux/reducers';
 import CommunityAnalyticsPlot from '../../views/Community/CommunityTimeSeriesPlot';
 import GeoMap from '../../views/Community/GeoMap/index';
 import useStyles from './styles';
@@ -27,6 +31,48 @@ const Header2: React.FC = ({ children }) => {
 const Community: React.FC = () => {
   const { t } = useTranslation();
   const classes = useStyles();
+  const { loading, error } = useSelector(
+    (state: RootState) => state.communityData
+  );
+
+  if (loading) {
+    return (
+      <Scaffold>
+        <div className={classes.root}>
+          <div>
+            <Typography variant="h3" className={classes.mainHeader}>
+              Community
+            </Typography>
+            <div>
+              <Loader />
+              <Typography>Fetching the data...</Typography>
+            </div>
+          </div>
+        </div>
+      </Scaffold>
+    );
+  }
+  if (error) {
+    return (
+      <Scaffold>
+        <div className={classes.root}>
+          <div>
+            <Typography variant="h3" className={classes.mainHeader}>
+              Community
+            </Typography>
+          </div>
+          <div className={classes.errorMessage}>
+            <Center>
+              <Typography variant="h4">
+                It seems you have no internet connection, Please try again when
+                connectivity resumes.
+              </Typography>
+            </Center>
+          </div>
+        </div>
+      </Scaffold>
+    );
+  }
 
   return (
     <Scaffold>

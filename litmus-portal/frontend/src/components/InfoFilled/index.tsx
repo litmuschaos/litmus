@@ -2,8 +2,10 @@ import { useTheme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import Center from '../../containers/layouts/Center';
 import { RootState } from '../../redux/reducers';
 import formatCount from '../../utils/formatCount';
+import Loader from '../Loader';
 import useStyles from './styles';
 
 interface CardValueData {
@@ -22,7 +24,10 @@ const InfoFilledWrap: React.FC = () => {
   const classes = useStyles();
   const theme = useTheme();
   // Card Value Data fetched from Redux
-  const communityData = useSelector((state: RootState) => state.communityData);
+  const { communityData, loading, error } = useSelector(
+    (state: RootState) => state.communityData
+  );
+
   const cardData: CardValueData[] = [
     {
       color: theme.palette.warning.main,
@@ -79,7 +84,28 @@ const InfoFilledWrap: React.FC = () => {
       </div>
     );
   });
-  return <div className={classes.infoFilledWrap}>{cardArray}</div>;
+
+  return (
+    <div className={classes.infoFilledWrap}>
+      {loading ? (
+        <div>
+          <Loader />
+          <Typography>Fetching the data...</Typography>
+        </div>
+      ) : error ? (
+        <div className={classes.errorMessage}>
+          <Center>
+            <Typography variant="h4">
+              It seems you have no internet connection, Please try again When
+              connectivity resumes.
+            </Typography>
+          </Center>
+        </div>
+      ) : (
+        cardArray
+      )}
+    </div>
+  );
 };
 
 export default InfoFilledWrap;
