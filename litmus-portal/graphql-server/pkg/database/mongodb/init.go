@@ -76,7 +76,7 @@ func init() {
 	if dbServer == "" {
 		log.Fatal("Environment Variable DB_SERVER is not present")
 	}
-	clientOptions := options.Client().ApplyURI("mongodb://" + dbServer)
+	clientOptions := options.Client().ApplyURI(dbServer)
 	client, err := mongo.Connect(backgroundContext, clientOptions)
 	if err != nil {
 		log.Fatal(err)
