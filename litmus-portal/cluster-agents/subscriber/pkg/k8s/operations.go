@@ -27,6 +27,7 @@ var (
 	Ctx             = context.Background()
 	decUnstructured = yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
 	dr              dynamic.ResourceInterface
+	AgentScope      = os.Getenv("AGENT_SCOPE")
 	AgentNamespace  = os.Getenv("AGENT_NAMESPACE")
 )
 
@@ -171,6 +172,10 @@ func ClusterOperations(manifest string, requestType string, namespace string) (*
 
 	// Obtain REST interface for the GVR
 	if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
+		//check for agent scope to ensure namespace for dynamic client is in compliance with the enforced RBAC.
+		if AgentScope == "namespace" {
+			namespace = AgentNamespace
+		}
 		// namespaced resources should specify the namespace
 		dr = dynamicClient.Resource(mapping.Resource).Namespace(namespace)
 	} else {
