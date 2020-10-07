@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client/react/hooks';
+import { useTheme } from '@material-ui/core/styles';
 import {
   Input,
   InputAdornment,
@@ -48,6 +49,7 @@ interface Role {
 
 const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   const classes = useStyles();
+  const theme = useTheme();
   // for response data
   const [rows, setRows] = useState<UserInvite[]>([]);
 
@@ -238,6 +240,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                   disableUnderline
                   inputProps={{
                     style: {
+                      color: theme.palette.personalDetailsBodyColor,
                       maxWidth: '31.75rem',
                       minWidth: '31.375rem',
                     },

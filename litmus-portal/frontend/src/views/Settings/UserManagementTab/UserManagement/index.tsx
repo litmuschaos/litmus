@@ -36,8 +36,8 @@ import useStyles from './styles';
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
     head: {
-      backgroundColor: theme.palette.common.white,
-      color: theme.palette.common.black,
+      backgroundColor: theme.palette.homePageCardBackgroundColor,
+      color: theme.palette.teamingTabHeadTextColor,
     },
     body: {
       fontSize: '0.875rem',

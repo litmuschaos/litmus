@@ -7,42 +7,172 @@ import {
   Select,
   Typography,
 } from '@material-ui/core';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import CustomDate from '../../../components/DateTime/CustomDate/index';
 import CustomTime from '../../../components/DateTime/CustomTime/index';
+import { WorkflowData } from '../../../models/redux/workflow';
+import useActions from '../../../redux/actions';
+import { RootState } from '../../../redux/reducers';
 import SetTime from './SetTime/index';
 import useStyles from './styles';
+import * as WorkflowActions from '../../../redux/actions/workflow';
+import * as TemplateSelectionActions from '../../../redux/actions/template';
+
+interface ScheduleSyntax {
+  minute: string | undefined;
+  hour: string | undefined;
+  day_month: string | undefined;
+  month: string | undefined;
+  day_week: string;
+}
 
 const ScheduleWorkflow: React.FC = () => {
-  const start = 0;
-  const end = 10;
-  const interval = 2;
+  // Initial Cron State
+  const [cronValue, setCronValue] = useState<ScheduleSyntax>({
+    minute: '*',
+    hour: '*',
+    day_month: '*',
+    month: '*',
+    day_week: '*',
+  });
 
-  const classes = useStyles();
-  // controls radio buttons
-  const [value, setValue] = React.useState('now');
+  // Redux States for Schedule
+  const workflowData: WorkflowData = useSelector(
+    (state: RootState) => state.workflowData
+  );
+  const workflow = useActions(WorkflowActions);
+  const template = useActions(TemplateSelectionActions);
+  // Controls Radio Buttons
+  const [value, setValue] = React.useState(
+    workflowData.scheduleType.scheduleOnce
+  );
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
   };
 
-  // controls inner radio buttons of recurring schedule
-  const [valueDef, setValueDef] = React.useState('');
+  // Controls inner radio buttons of Recurring Schedule
+  const [valueDef, setValueDef] = React.useState(
+    workflowData.scheduleType.recurringSchedule
+  );
   const handleChangeInstance = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValueDef(event.target.value);
   };
 
-  // sets weekdays
-  const [days, setDays] = React.useState('Monday');
+  // UseEffect to update the cron syntax with changes
+  useEffect(() => {
+    const cronSyntax = `${cronValue.minute} ${cronValue.hour} ${cronValue.day_month} ${cronValue.month} ${cronValue.day_week}`;
+    if (value === 'now')
+      workflow.setWorkflowDetails({
+        cronSyntax: '',
+      });
+    else
+      workflow.setWorkflowDetails({
+        cronSyntax,
+      });
+  }, [cronValue]);
 
-  // sets dates
-  const [dates, setDates] = React.useState(1);
+  const classes = useStyles();
 
-  // stores dates in an array
+  // Sets individual minutes
+  const [minute, setMinute] = React.useState(
+    workflowData.scheduleInput.hour_interval
+  );
+
+  // Sets Weekdays
+  const [days, setDays] = React.useState(workflowData.scheduleInput.weekday);
+
+  // Sets Day in number
+  const [dates, setDates] = React.useState(workflowData.scheduleInput.day);
+
+  // Sets Time
+  const [selectedTime, setSelectedTime] = React.useState<Date | null>(
+    workflowData.scheduleInput.time
+  );
+
+  // Sets Date
+  const [selectedDate, setSelectedDate] = React.useState<Date | null>(
+    workflowData.scheduleInput.date
+  );
+
+  // Function to validate the date and time for "Specific Time" radio button
+  const validateTime = (time: Date | null, date: Date | null) => {
+    if (
+      value === 'specificTime' &&
+      (time?.setSeconds(0) as number) <= new Date().setSeconds(0) &&
+      (date?.getTime() as number) <= new Date().getTime()
+    ) {
+      const newTime = new Date();
+      newTime.setMinutes(newTime.getMinutes() + 5);
+      setSelectedTime(newTime);
+      workflow.setWorkflowDetails({
+        scheduleInput: {
+          ...workflowData.scheduleInput,
+          date,
+          time: newTime,
+        },
+      });
+      setCronValue({
+        ...cronValue,
+        minute: newTime.getMinutes().toString(),
+        hour: newTime.getHours().toString(),
+        day_month: date?.getDate().toString(),
+        month: (date && date.getMonth() + 1)?.toString(),
+      });
+    } else {
+      workflow.setWorkflowDetails({
+        scheduleInput: {
+          ...workflowData.scheduleInput,
+          date,
+          time,
+        },
+      });
+      setCronValue({
+        ...cronValue,
+        minute: time?.getMinutes().toString(),
+        hour: time?.getHours().toString(),
+        day_month: date?.getDate().toString(),
+        month: (date && date.getMonth() + 1)?.toString(),
+      });
+    }
+  };
+
+  const handleTimeChange = (time: Date | null) => {
+    setSelectedTime(time);
+    validateTime(time, selectedDate);
+  };
+
+  const handleDateChange = (date: Date | null) => {
+    setSelectedDate(date);
+    validateTime(selectedTime, date);
+  };
+
+  // Function for recurring date change
+  const reccuringDateChange = (date: Date | null) => {
+    setSelectedTime(date);
+    setCronValue({
+      ...cronValue,
+      minute: date?.getMinutes().toString(),
+      hour: date?.getHours().toString(),
+    });
+    workflow.setWorkflowDetails({
+      scheduleInput: {
+        ...workflowData.scheduleInput,
+        time: date,
+      },
+    });
+  };
+
+  // Stores dates in an array
   const names: number[] = [1];
   for (let i = 1; i <= 30; i += 1) {
     names[i] = i + 1;
   }
-
+  const mins: number[] = [0];
+  for (let i = 0; i <= 59; i += 1) {
+    mins[i] = i;
+  }
+  // Day names
   const weekdays: string[] = [
     'Monday',
     'Tuesday',
@@ -52,6 +182,95 @@ const ScheduleWorkflow: React.FC = () => {
     'Saturday',
     'Sunday',
   ];
+
+  // UseEffect to update the values of CronSyntax on radio button change
+  useEffect(() => {
+    if (value === 'now') {
+      setValueDef('');
+      setCronValue({
+        minute: '',
+        hour: '',
+        day_month: '',
+        month: '',
+        day_week: '',
+      });
+    }
+    if (value === 'specificTime') {
+      setValueDef('');
+      setCronValue({
+        minute: selectedTime?.getMinutes().toString(),
+        hour: selectedTime?.getHours().toString(),
+        day_month: selectedDate?.getDate().toString(),
+        month: (selectedDate && selectedDate.getMonth() + 1)?.toString(),
+        day_week: '*',
+      });
+      if (workflowData.scheduleInput.time <= new Date()) {
+        const newTime = new Date();
+        newTime.setMinutes(newTime.getMinutes() + 5);
+        setSelectedTime(newTime);
+        setCronValue({
+          minute: newTime.getMinutes().toString(),
+          hour: newTime.getHours().toString(),
+          day_month: selectedDate?.getDate().toString(),
+          month: (selectedDate && selectedDate.getMonth() + 1)?.toString(),
+          day_week: '*',
+        });
+        workflow.setWorkflowDetails({
+          scheduleInput: {
+            ...workflowData.scheduleInput,
+            time: newTime,
+          },
+        });
+      }
+    }
+    if (valueDef === 'everyHr') {
+      setCronValue({
+        minute: minute.toString(),
+        hour: '0-23',
+        day_month: '*',
+        month: '*',
+        day_week: '*',
+      });
+    }
+    if (valueDef === 'everyDay') {
+      setCronValue({
+        minute: selectedTime?.getMinutes().toString(),
+        hour: selectedTime?.getHours().toString(),
+        day_month: '*',
+        month: '*',
+        day_week: '0-6',
+      });
+    }
+    if (valueDef === 'everyWeek') {
+      setCronValue({
+        minute: selectedTime?.getMinutes().toString(),
+        hour: selectedTime?.getHours().toString(),
+        day_month: '*',
+        month: '*',
+        day_week: days.slice(0, 3),
+      });
+    }
+    if (valueDef === 'everyMonth') {
+      setCronValue({
+        minute: selectedTime?.getMinutes().toString(),
+        hour: selectedTime?.getHours().toString(),
+        day_month: dates.toString(),
+        month: '*',
+        day_week: '*',
+      });
+    }
+    if (value === 'recurringSchedule' && valueDef === '') {
+      template.selectTemplate({ isDisable: true });
+    } else {
+      template.selectTemplate({ isDisable: false });
+    }
+    workflow.setWorkflowDetails({
+      scheduleType: {
+        scheduleOnce: value,
+        recurringSchedule: valueDef,
+      },
+    });
+  }, [valueDef, value]);
 
   return (
     <div className={classes.root}>
@@ -98,73 +317,52 @@ const ScheduleWorkflow: React.FC = () => {
                   </Typography>
                 }
               />
-
-              <FormControlLabel
-                value="afterSometime"
-                control={<Radio disabled />}
-                label={
-                  <Typography className={classes.radioText}>
-                    Schedule after some time
-                  </Typography>
-                }
-              />
-              {value === 'afterSometime' ? (
-                <div className={classes.schLater}>
-                  <Typography className={classes.captionText}>
-                    Choose the minutes, hours, or days when you want to start
-                    workflow
-                  </Typography>
-                  <div className={classes.wtDateTime}>
-                    <Typography variant="body2" className={classes.captionText}>
-                      After
-                    </Typography>
-
-                    <SetTime
-                      start={start}
-                      end={end}
-                      interval={interval}
-                      label="Days"
-                      type="days"
-                    />
-                    <CustomTime ampm disabled={false} />
-                  </div>
-                </div>
-              ) : (
-                <></>
-              )}
               <FormControlLabel
                 value="specificTime"
-                control={<Radio disabled />}
+                disabled
+                control={<Radio />}
                 label={
                   <Typography className={classes.radioText}>
                     Schedule at a specific time
                   </Typography>
                 }
               />
-
               {value === 'specificTime' ? (
                 <div className={classes.schLater}>
                   <Typography className={classes.captionText}>
                     Select date and time to start workflow in future
                   </Typography>
                   <div className={classes.innerSpecific}>
-                    <CustomDate disabled={false} />
-                    <CustomTime ampm disabled={false} />
+                    <CustomDate
+                      selectedDate={selectedDate}
+                      handleDateChange={(event) => {
+                        handleDateChange(event);
+                      }}
+                      disabled={false}
+                    />
+                    <CustomTime
+                      handleDateChange={(event) => {
+                        handleTimeChange(event);
+                      }}
+                      value={selectedTime}
+                      ampm
+                      disabled={false}
+                    />
                   </div>
                 </div>
               ) : (
                 <></>
               )}
               <FormControlLabel
-                value="recurringScedule"
-                control={<Radio disabled />}
+                value="recurringSchedule"
+                control={<Radio />}
                 label={
                   <Typography className={classes.radioText}>
                     Recurring Schedule
                   </Typography>
                 }
               />
-              {value === 'recurringScedule' ? (
+              {value === 'recurringSchedule' ? (
                 <div className={classes.schLater}>
                   <Typography className={classes.captionText}>
                     Choose the right recurring time to start your workflow
@@ -177,7 +375,9 @@ const ScheduleWorkflow: React.FC = () => {
                         aria-label="instanceDef"
                         name="instanceDef"
                         value={valueDef}
-                        onChange={handleChangeInstance}
+                        onChange={(event) => {
+                          handleChangeInstance(event);
+                        }}
                       >
                         <FormControlLabel
                           value="everyHr"
@@ -191,12 +391,30 @@ const ScheduleWorkflow: React.FC = () => {
                                 At
                               </Typography>
                               <SetTime
-                                start={start}
-                                end={end}
-                                interval={interval}
-                                label="th"
-                                type=""
+                                data={mins}
+                                handleChange={(event) => {
+                                  setMinute(event.target.value as number);
+                                  setCronValue({
+                                    ...cronValue,
+                                    minute: (event.target
+                                      .value as number).toString(),
+                                    hour: '0-23',
+                                  });
+                                  workflow.setWorkflowDetails({
+                                    scheduleInput: {
+                                      ...workflowData.scheduleInput,
+                                      hour_interval: event.target
+                                        .value as number,
+                                    },
+                                  });
+                                }}
+                                value={minute}
                               />
+                              {minute === 0 || minute === 1 ? (
+                                <Typography>min</Typography>
+                              ) : (
+                                <Typography>mins</Typography>
+                              )}
                             </div>
                           </div>
                         ) : (
@@ -213,7 +431,26 @@ const ScheduleWorkflow: React.FC = () => {
                               <Typography className={classes.scRandsub1}>
                                 At
                               </Typography>
-                              <CustomTime ampm disabled={false} />
+                              <CustomTime
+                                handleDateChange={(date: Date | null) => {
+                                  setSelectedTime(date);
+                                  setCronValue({
+                                    ...cronValue,
+                                    minute: date?.getMinutes().toString(),
+                                    hour: date?.getHours().toString(),
+                                    day_week: '0-6',
+                                  });
+                                  workflow.setWorkflowDetails({
+                                    scheduleInput: {
+                                      ...workflowData.scheduleInput,
+                                      time: date,
+                                    },
+                                  });
+                                }}
+                                value={selectedTime}
+                                ampm
+                                disabled={false}
+                              />
                             </div>
                           </div>
                         ) : (
@@ -236,15 +473,29 @@ const ScheduleWorkflow: React.FC = () => {
                                   disableUnderline
                                   value={days}
                                   onChange={(e) => {
+                                    setCronValue({
+                                      ...cronValue,
+                                      month: '*',
+                                      day_week: ((e.target
+                                        .value as unknown) as string).slice(
+                                        0,
+                                        3
+                                      ),
+                                    });
                                     setDays(
                                       (e.target.value as unknown) as string
                                     );
+                                    workflow.setWorkflowDetails({
+                                      scheduleInput: {
+                                        ...workflowData.scheduleInput,
+                                        weekday: (e.target
+                                          .value as unknown) as string,
+                                      },
+                                    });
                                   }}
                                   label="days"
                                   inputProps={{
                                     name: 'days',
-
-                                    id: 'outlined-age-native-simple',
                                     style: {
                                       fontSize: '0.75rem',
                                       height: 7,
@@ -252,7 +503,11 @@ const ScheduleWorkflow: React.FC = () => {
                                   }}
                                 >
                                   {weekdays.map((day) => (
-                                    <option className={classes.opt} value={day}>
+                                    <option
+                                      key={day}
+                                      className={classes.opt}
+                                      value={day}
+                                    >
                                       {day}
                                     </option>
                                   ))}
@@ -261,7 +516,14 @@ const ScheduleWorkflow: React.FC = () => {
                               <Typography className={classes.scRandsub1}>
                                 at
                               </Typography>
-                              <CustomTime ampm disabled={false} />
+                              <CustomTime
+                                handleDateChange={(date: Date | null) => {
+                                  reccuringDateChange(date);
+                                }}
+                                value={selectedTime}
+                                ampm
+                                disabled={false}
+                              />
                             </div>
                           </div>
                         ) : (
@@ -278,40 +540,35 @@ const ScheduleWorkflow: React.FC = () => {
                               <Typography className={classes.scRandsub1}>
                                 On
                               </Typography>
-                              <FormControl className={classes.formControlMonth}>
-                                <Select
-                                  className={classes.select}
-                                  disableUnderline
-                                  value={dates}
-                                  onChange={(e) => {
-                                    setDates(
-                                      (e.target.value as unknown) as number
-                                    );
-                                  }}
-                                  label="dates"
-                                  inputProps={{
-                                    name: 'dates',
-                                    id: 'outlined-age-native-simple',
-                                    style: {
-                                      fontSize: '0.75rem',
-                                      height: 7,
+                              <SetTime
+                                data={names}
+                                handleChange={(event) => {
+                                  setCronValue({
+                                    ...cronValue,
+                                    day_month: (event.target
+                                      .value as number).toString(),
+                                  });
+                                  setDates(event.target.value as number);
+                                  workflow.setWorkflowDetails({
+                                    scheduleInput: {
+                                      ...workflowData.scheduleInput,
+                                      day: event.target.value as number,
                                     },
-                                  }}
-                                >
-                                  {names.map((date) => (
-                                    <option
-                                      className={classes.opt}
-                                      value={date}
-                                    >
-                                      {date}
-                                    </option>
-                                  ))}
-                                </Select>
-                              </FormControl>
+                                  });
+                                }}
+                                value={dates}
+                              />
                               <Typography className={classes.scRandsub1}>
                                 at
                               </Typography>
-                              <CustomTime ampm disabled={false} />
+                              <CustomTime
+                                handleDateChange={(date: Date | null) => {
+                                  reccuringDateChange(date);
+                                }}
+                                value={selectedTime}
+                                ampm
+                                disabled={false}
+                              />
                             </div>
                           </div>
                         ) : (

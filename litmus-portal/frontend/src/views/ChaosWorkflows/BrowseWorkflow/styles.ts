@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     height: '2.5rem',
     minWidth: '9rem',
-    border: '1.7px solid',
+    border: '0.125rem solid',
     borderRadius: 4,
     borderColor: theme.palette.secondary.main,
     marginRight: theme.spacing(3.75),
