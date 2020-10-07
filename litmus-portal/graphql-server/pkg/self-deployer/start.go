@@ -11,12 +11,12 @@ import (
 )
 
 // StartDeployer registers a new internal self-cluster and starts the deployer
-func StartDeployer(projectId string) {
+func StartDeployer(projectID string) {
 	log.Print("STARTING SELF-DEPLOYER")
-	DEPLOYER_NAMESPACE := os.Getenv("DEPLOYER_NAMESPACE")
+	DeployerNamespace := os.Getenv("AGENT_NAMESPACE")
 
 	clusterInput := model.ClusterInput{
-		ProjectID:    projectId,
+		ProjectID:    projectID,
 		ClusterName:  "Self-Cluster",
 		ClusterType:  "internal",
 		PlatformName: "others",
@@ -25,7 +25,7 @@ func StartDeployer(projectId string) {
 	if err != nil {
 		log.Print("SELF CLUSTER REG FAILED[DB-REG] : ", err)
 	}
-	response, err := k8s.CreateDeployment(DEPLOYER_NAMESPACE, resp.Token)
+	response, err := k8s.CreateDeployment(DeployerNamespace, resp.Token)
 	if err != nil {
 		log.Print("SELF CLUSTER REG FAILED[DEPLOY-CREATION] : ", err)
 	}
