@@ -2,6 +2,20 @@ export interface experimentMap {
   experimentName: string;
   weight: number;
 }
+
+export interface scheduleType {
+  scheduleOnce: string;
+  recurringSchedule: string;
+}
+
+export interface scheduleInput {
+  hour_interval: number;
+  day: number;
+  weekday: string;
+  time: Date;
+  date: Date;
+}
+
 export interface WorkflowData {
   name: string;
   link: string;
@@ -11,6 +25,9 @@ export interface WorkflowData {
   weights: experimentMap[];
   isCustomWorkflow: boolean;
   clusterid: string;
+  cronSyntax: string;
+  scheduleType: scheduleType;
+  scheduleInput: scheduleInput;
 }
 
 export enum WorkflowActions {

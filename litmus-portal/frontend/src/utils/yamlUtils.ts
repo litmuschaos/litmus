@@ -30,12 +30,23 @@ const parsed = (yaml: string) => {
     const parsedYaml = YAML.parse(file as string);
     try {
       const count = (file.match(/kind: ChaosEngine/g) || []).length;
-      for (let i = 0; i < count; i += 1) {
-        const embeddedYaml =
-          parsedYaml.spec.templates[2 + i].inputs.artifacts[0].raw.data;
-        nameextractor(embeddedYaml).forEach((test) => {
-          testNames.push(test);
-        });
+      if (parsedYaml.kind === 'CronWorkflow') {
+        for (let i = 0; i < count; i += 1) {
+          const embeddedYaml =
+            parsedYaml.spec.workflowSpec.templates[2 + i].inputs.artifacts[0]
+              .raw.data;
+          nameextractor(embeddedYaml).forEach((test) => {
+            testNames.push(test);
+          });
+        }
+      } else {
+        for (let i = 0; i < count; i += 1) {
+          const embeddedYaml =
+            parsedYaml.spec.templates[2 + i].inputs.artifacts[0].raw.data;
+          nameextractor(embeddedYaml).forEach((test) => {
+            testNames.push(test);
+          });
+        }
       }
     } catch (err) {
       testNames = [];

@@ -51,13 +51,18 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '7.625rem',
   },
   sumText: {
-    marginTop: theme.spacing(7.5),
+    marginTop: theme.spacing(4.5),
     marginBottom: theme.spacing(3),
     fontSize: '1.5rem',
   },
   col1: {
     fontSize: '1rem',
     color: theme.palette.secondary.dark,
+    paddingTop: theme.spacing(0.5),
+  },
+  schedule: {
+    fontSize: '1rem',
+    paddingTop: theme.spacing(0.75),
   },
   col2: {
     marginLeft: theme.spacing(5),
@@ -68,7 +73,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'row',
   },
   editButton1: {
-    marginLeft: theme.spacing(43.75),
+    marginLeft: theme.spacing(1),
+  },
+  editbtn: {
+    color: theme.palette.common.black,
   },
   link: {
     fontSize: '0.875rem',

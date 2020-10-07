@@ -59,6 +59,18 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
         workflow.setWorkflowDetails({
           clusterid: data.getCluster[0].cluster_id,
           project_id: selectedProjectID,
+          cronSyntax: '',
+          scheduleType: {
+            scheduleOnce: 'now',
+            recurringSchedule: '',
+          },
+          scheduleInput: {
+            hour_interval: 0,
+            day: 1,
+            weekday: 'Monday',
+            time: new Date(Date.now()),
+            date: new Date(Date.now()),
+          },
         });
         gotoStep(1);
       } else {
