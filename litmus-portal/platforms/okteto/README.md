@@ -83,7 +83,9 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
 
   > login as default user with username as `admin` and password as `litmus` from the browser via `https://litmusportal-frontend-service-<okteto-namespace>.cloud.okteto.net` replacing `<okteto-namespace>` with your GitHub username.
 
-- <h4>STEP-5:</h4> After you are done with the code changes, you may stop the development environment using `okteto down` and go to the `litmus-portal/frontend/src/config` directory of the cloned repository on `dev` branch from IDE or code editor and delete the `if block` which was added for okteto dev env setup from `index.ts` file. Then change to the root directory of the cloned repository i.e. `litmus` and push the changes to your fork's `dev` branch.
+- <h4>STEP-5:</h4> Schedule a chaos workflow from frontend selecting `namespaced-scope-chaos` from predefined workflow templates. Also replace the `adminModeNamespace` parameter's value field `litmus` with your GitHub username using the Yaml editor while scheduling. Now, you can start developing.
+
+- <h4>STEP-6:</h4> After you are done with the code changes, you may stop the development environment using `okteto down` and go to the `litmus-portal/frontend/src/config` directory of the cloned repository on `dev` branch from IDE or code editor and delete the `if block` which was added for okteto dev env setup from `index.ts` file. Then change to the root directory of the cloned repository i.e. `litmus` and push the changes to your fork's `dev` branch.
 
   > Exit the process and the container. Stop it using the given commands in sequence.
   ```bash
@@ -101,7 +103,7 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
   git push --set-upstream origin dev
   ```
 
-- <h4>STEP-6:</h4> Raise a pull request from the `dev` branch in your fork to https://github.com/litmuschaos/litmus using GitHub UI after pushing all the changes.
+- <h4>STEP-7:</h4> Raise a pull request from the `dev` branch in your fork to https://github.com/litmuschaos/litmus using GitHub UI after pushing all the changes.
 
 
 ## Debugging
