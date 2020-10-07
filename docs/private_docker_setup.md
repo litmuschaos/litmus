@@ -21,7 +21,7 @@ docker tag gaiaadm/pumba:0.4.8 gcr.io/<project-id>/pumba:0.4.8
 
 #### STEP-2: PUSH THE RETAGGED IMAGES TO GCR
 
-Ensure sufficient privileges on the gcloud iam/user/serviceaccount
+- Ensure sufficient privileges on the gcloud iam/user/serviceaccount
 
 ```
 gcloud docker -- push gcr.io/<project-id>/ansible-runner:ci
@@ -32,29 +32,29 @@ gcloud docker -- push gcr.io/<project-id>/pumba:0.4.8
 
 #### STEP-3: DOWNLOAD, MODIFY AND APPLY LITMUS OPERATOR YAML
 
-Download the latest version of the litmus operator (install) yaml
+- Download the latest version of the litmus operator (install) yaml
 
 `wget https://litmuschaos.github.io/litmus/litmus-operator-ci.yaml`
 
-Modify the chaos-operator image from
+- Modify the chaos-operator image from
 
 `litmuschaos/chaos-operator:ci` to `gcr.io/<project-id>/chaos-operator:latest`
 
-Modify the namespace of the operator deployment as well as the RBAC components as desired.
+- Modify the namespace of the operator deployment as well as the RBAC components as desired.
 
-Install the litmus operator and other dependencies
+- Install the litmus operator and other dependencies
 
 `kubectl apply -f litmus-operator-ci.yaml`
 
 #### STEP-4: PULL EXPERIMENTS FROM HUB INTO THE DESIRED APP NAMESPACE
 
-Browse the hub to pull the latest experiment charts
+- Browse the hub to pull the latest experiment charts
 
 `kubectl create -f https://hub.litmuschaos.io/api/chaos?file=charts/generic/experiments.yaml`
 
 #### STEP-5: UPDATE THE IMAGE OF THE EXPERIMENT RUNNER
 
-Update the value of spec.definition.image in the experiments to the new ansible-runner image
+- Update the value of spec.definition.image in the experiments to the new ansible-runner image
 
 `gcr.io/<project-id>/ansible-runner:ci`
 
@@ -62,7 +62,7 @@ Update the value of spec.definition.image in the experiments to the new ansible-
 
 #### STEP-6: CREATE THE CHAOSENGINE WITH NEW EXECUTOR, MONITOR & LIB IMAGES (if applicable)
 
-Apart from the right namespace, label & container-names etc., (corresponding to your test app), provide spec.components.monitor.image & spec.components.runner.image with appropriate values (newly pushed GCR).
+- Apart from the right namespace, label & container-names etc., (corresponding to your test app), provide spec.components.monitor.image & spec.components.runner.image with appropriate values (newly pushed GCR).
 Also provide the appropriate lib image if applicable (in case of: container kill, network loss/latency experiments)
 
 Example chaosengine for container kill is shown below:
@@ -100,7 +100,7 @@ spec:
 
 #### STEP-7: CREATE THE CHAOSENGINE AND WATCH EXPERIMENT EXECUTION
 
-Run the experiment and watch pod/resource status & chaosresult verdict
+- Run the experiment and watch pod/resource status & chaosresult verdict
 
 `kubectl apply -f chaosengine.yaml -n <namespace>`
 

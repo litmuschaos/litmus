@@ -47,6 +47,8 @@ type Cluster struct {
 	UpdatedAt          string  `json:"updated_at"`
 	CreatedAt          string  `json:"created_at"`
 	ClusterType        string  `json:"cluster_type"`
+	NoOfSchedules      *int    `json:"no_of_schedules"`
+	NoOfWorkflows      *int    `json:"no_of_workflows"`
 }
 
 type ClusterAction struct {
@@ -238,6 +240,12 @@ type WorkflowRuns struct {
 	ExecutionData string `json:"execution_data"`
 	WorkflowRunID string `json:"workflow_run_id"`
 	LastUpdated   string `json:"last_updated"`
+}
+
+type ClusterRegResponse struct {
+	Token       string `json:"token"`
+	ClusterID   string `json:"cluster_id"`
+	ClusterName string `json:"cluster_name"`
 }
 
 type Weightages struct {
