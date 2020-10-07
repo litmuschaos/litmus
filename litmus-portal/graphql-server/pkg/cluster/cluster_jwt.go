@@ -3,20 +3,16 @@ package cluster
 import (
 	"errors"
 	"fmt"
-	"os"
-	"time"
-
 	"github.com/dgrijalva/jwt-go"
+	"os"
 )
 
 var secret = os.Getenv("JWT_SECRET")
 
 //ClusterCreateJWT generates jwt used in cluster registration
 func ClusterCreateJWT(id string) (string, error) {
-	expirationTime := time.Now().Add(12 * time.Hour)
 	claims := jwt.MapClaims{}
 	claims["cluster_id"] = id
-	claims["exp"] = expirationTime.Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	tokenString, err := token.SignedString([]byte(secret))
