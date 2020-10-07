@@ -319,6 +319,7 @@ const ScheduleWorkflow: React.FC = () => {
               />
               <FormControlLabel
                 value="specificTime"
+                disabled
                 control={<Radio />}
                 label={
                   <Typography className={classes.radioText}>
