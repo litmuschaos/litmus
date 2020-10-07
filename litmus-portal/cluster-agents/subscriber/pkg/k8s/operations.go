@@ -140,7 +140,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 }
 
 // This function handles cluster operations
-func ClusterOperations(manifest string, requestType string, namespace string) (*unstructured.Unstructured, error) {
+func ClusterOperations(manifest string, requestType string) (*unstructured.Unstructured, error) {
 
 	// Converting JSON to YAML and store it in yamlStr variable
 	yamlStr, err := yaml_converter.JSONToYAML([]byte(manifest))
@@ -170,14 +170,13 @@ func ClusterOperations(manifest string, requestType string, namespace string) (*
 		return nil, err
 	}
 
-	// Obtain REST interface for the GVR
-	if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
-		//check for agent scope to ensure namespace for dynamic client is in compliance with the enforced RBAC.
-		if AgentScope == "namespace" {
-			namespace = AgentNamespace
-		}
+	//check for agent scope to ensure namespace for dynamic client is in compliance with the enforced RBAC.
+	if AgentScope == "namespace" {
+		// Obtain REST interface for the GVR
+		dr = dynamicClient.Resource(mapping.Resource).Namespace(AgentNamespace)
+	} else if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
 		// namespaced resources should specify the namespace
-		dr = dynamicClient.Resource(mapping.Resource).Namespace(namespace)
+		dr = dynamicClient.Resource(mapping.Resource).Namespace(obj.GetNamespace())
 	} else {
 		// for cluster-wide resources
 		dr = dynamicClient.Resource(mapping.Resource)
