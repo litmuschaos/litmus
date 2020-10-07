@@ -5,18 +5,22 @@ import (
 	"log"
 	"os"
 
-	"k8s.io/client-go/kubernetes"
-
-	"k8s.io/client-go/tools/clientcmd"
-
 	appsv1 "k8s.io/api/apps/v1"
 	apiv1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
 )
 
 func CreateDeployment(namespace, token string) (*appsv1.Deployment, error) {
 	deployerImage := os.Getenv("DEPLOYER_IMAGE")
+	subscriberSC := os.Getenv("AGENT_SCOPE")
+	selfDeployerSvcAccount := "self-deployer-namespace-account"
+	if subscriberSC == "cluster" {
+		selfDeployerSvcAccount = "self-deployer-admin-account"
+	}
 	cfg, err := GetKubeConfig()
 	clientset, err := kubernetes.NewForConfig(cfg)
 	if err != nil {
@@ -46,8 +50,14 @@ func CreateDeployment(namespace, token string) (*appsv1.Deployment, error) {
 				Spec: apiv1.PodSpec{
 					Containers: []apiv1.Container{
 						{
-							Name:            "deployer",
-							Image:           deployerImage,
+							Name:  "deployer",
+							Image: deployerImage,
+							Resources: apiv1.ResourceRequirements{
+								Limits: apiv1.ResourceList{
+									"cpu":    resource.MustParse("100m"),
+									"memory": resource.MustParse("128Mi"),
+								},
+							},
 							ImagePullPolicy: "Always",
 							Env: []apiv1.EnvVar{
 								{
@@ -58,10 +68,18 @@ func CreateDeployment(namespace, token string) (*appsv1.Deployment, error) {
 									Name:  "TOKEN",
 									Value: token,
 								},
+								{
+									Name: "NAMESPACE",
+									ValueFrom: &apiv1.EnvVarSource{
+										FieldRef: &apiv1.ObjectFieldSelector{
+											FieldPath: "metadata.namespace",
+										},
+									},
+								},
 							},
 						},
 					},
-					ServiceAccountName: "litmus-svc-account",
+					ServiceAccountName: selfDeployerSvcAccount,
 				},
 			},
 		},
