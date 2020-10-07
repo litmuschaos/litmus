@@ -12,7 +12,10 @@ import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../../../components/Button/ButtonOutline';
 import Loader from '../../../../../components/Loader';
-import { CANCEL_INVITE, SEND_INVITE } from '../../../../../graphql/mutations';
+import {
+  REMOVE_INVITATION,
+  SEND_INVITE,
+} from '../../../../../graphql/mutations';
 import { GET_USER } from '../../../../../graphql/quries';
 import {
   MemberInvitation,
@@ -47,7 +50,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
   );
 
   const [CancelInvite, { loading: loadingA }] = useMutation<MemberInvitation>(
-    CANCEL_INVITE,
+    REMOVE_INVITATION,
     {
       refetchQueries: [{ query: GET_USER, variables: { username } }],
     }
@@ -82,82 +85,83 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                   {row.invitation}
                 </div>
               </div>
-              <div>
-                {role}
-                <IconButton
-                  aria-label="more"
-                  aria-controls="long-menu"
-                  aria-haspopup="true"
-                  onClick={(event) => {
-                    setAnchorEl(event.currentTarget);
-                  }}
-                  className={classes.optionBtn}
-                >
-                  <img src="./icons/down-arrow.svg" alt="more" />
-                </IconButton>
-                <Menu
-                  keepMounted
-                  open={Boolean(anchorEl)}
-                  id="long-menu"
-                  anchorEl={anchorEl}
-                  onClose={handleClose}
-                >
-                  <MenuItem
-                    onClick={() => {
-                      setRole('Editor');
-                      setAnchorEl(null);
-                    }}
-                    className={classes.menuOpt}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                      }}
-                    >
-                      <div>
-                        <Typography className={classes.menuHeader}>
-                          <strong>Editor</strong>
-                        </Typography>
-                      </div>
-                      <div>
-                        <Typography className={classes.menuDesc}>
-                          Can make changes in the project
-                        </Typography>
-                      </div>
-                    </div>
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => {
-                      setRole('Viewer');
-                      setAnchorEl(null);
-                      // sendInvite(row.username, 'Viewer');
-                    }}
-                    className={classes.menuOpt}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                      }}
-                    >
-                      <div>
-                        <Typography className={classes.menuHeader}>
-                          <strong>Viewer</strong>
-                        </Typography>
-                      </div>
-                      <div>
-                        <Typography className={classes.menuDesc}>
-                          Can view the project
-                        </Typography>
-                      </div>
-                    </div>
-                  </MenuItem>
-                </Menu>
-              </div>
+              <div>{row.email}</div>
             </div>
           </div>
           <div className={classes.buttonDiv}>
+            <div className={classes.dropDown}>
+              {role}
+              <IconButton
+                aria-label="more"
+                aria-controls="long-menu"
+                aria-haspopup="true"
+                onClick={(event) => {
+                  setAnchorEl(event.currentTarget);
+                }}
+                className={classes.optionBtn}
+              >
+                <img src="./icons/down-arrow.svg" alt="more" />
+              </IconButton>
+              <Menu
+                keepMounted
+                open={Boolean(anchorEl)}
+                id="long-menu"
+                anchorEl={anchorEl}
+                onClose={handleClose}
+              >
+                <MenuItem
+                  onClick={() => {
+                    setRole('Editor');
+                    setAnchorEl(null);
+                  }}
+                  className={classes.menuOpt}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}
+                  >
+                    <div>
+                      <Typography className={classes.menuHeader}>
+                        <strong>Editor</strong>
+                      </Typography>
+                    </div>
+                    <div>
+                      <Typography className={classes.menuDesc}>
+                        Can make changes in the project
+                      </Typography>
+                    </div>
+                  </div>
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    setRole('Viewer');
+                    setAnchorEl(null);
+                    // sendInvite(row.username, 'Viewer');
+                  }}
+                  className={classes.menuOpt}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}
+                  >
+                    <div>
+                      <Typography className={classes.menuHeader}>
+                        <strong>Viewer</strong>
+                      </Typography>
+                    </div>
+                    <div>
+                      <Typography className={classes.menuDesc}>
+                        Can view the project
+                      </Typography>
+                    </div>
+                  </div>
+                </MenuItem>
+              </Menu>
+            </div>
             <div>
               <ButtonOutline
                 handleClick={() =>
@@ -170,13 +174,14 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                     },
                   })
                 }
-                isDisabled={false}
+                isDisabled={row.invitation === 'Declined' || loadingA}
               >
-                {loadingA ? <Loader size={20} /> : 'Cancel Invite'}
+                {loadingA ? <Loader size={20} /> : 'Cancel'}
               </ButtonOutline>
             </div>
             <div>
               <ButtonFilled
+                isDisabled={loadingB}
                 isPrimary
                 handleClick={() =>
                   SendInvite({
@@ -190,7 +195,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                   })
                 }
               >
-                {loadingB ? <Loader size={20} /> : 'Resend Invite'}
+                {loadingB ? <Loader size={20} /> : 'Resend'}
               </ButtonFilled>
             </div>
           </div>

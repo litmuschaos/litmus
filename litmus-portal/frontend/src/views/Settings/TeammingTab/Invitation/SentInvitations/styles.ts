@@ -32,33 +32,26 @@ const useStyles = makeStyles((theme) => ({
 
   pending: {
     minWidth: '2.625rem',
-    background: theme.palette.customColors.menuOption.active,
+    background: theme.palette.customColors.menuOption.pending,
     marginLeft: theme.spacing(1.0),
     borderRadius: '0.1875rem',
-    color: theme.palette.primary.dark,
+    color: theme.palette.warning.main,
     fontSize: '0.625rem',
-
-    paddingRight: theme.spacing(0.5),
-    paddingLeft: theme.spacing(0.5),
-    paddingTop: theme.spacing(0.5),
-    paddingBottom: theme.spacing(0.5),
+    padding: theme.spacing(0.5, 0.5, 0.5, 0.5),
   },
   declined: {
     minWidth: '2.625rem',
     marginLeft: theme.spacing(1.0),
     borderRadius: '0.1875rem',
     fontSize: '0.625rem',
-    paddingRight: theme.spacing(0.5),
-    paddingLeft: theme.spacing(0.5),
-    paddingTop: theme.spacing(0.5),
-    paddingBottom: theme.spacing(0.5),
+    padding: theme.spacing(0.5, 0.5, 0.5, 0.5),
     color: theme.palette.error.dark,
     background: theme.palette.error.light,
   },
 
   flexstatus: {
     display: 'flex',
-    justifyContent: 'center',
+    // justifyContent: 'center',
   },
   menuHeader: {
     fontSize: '0.75rem',
@@ -73,6 +66,9 @@ const useStyles = makeStyles((theme) => ({
   },
   optionBtn: {
     marginLeft: 'auto',
+  },
+  dropDown: {
+    paddingTop: theme.spacing(1.0),
   },
 }));
 export default useStyles;

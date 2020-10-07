@@ -34,15 +34,9 @@ export const SEND_INVITE = gql`
   }
 `;
 
-export const CANCEL_INVITE = gql`
-  mutation cancelInvite($data: MemberInput!) {
-    removeInvite(member: $data)
-  }
-`;
-
-export const REMOVE_MEMBER = gql`
-  mutation RemoveMember($data: MemberInput!) {
-    removeMember(member: $data)
+export const REMOVE_INVITATION = gql`
+  mutation RemoveInvitation($data: MemberInput!) {
+    removeInvitation(member: $data)
   }
 `;
 

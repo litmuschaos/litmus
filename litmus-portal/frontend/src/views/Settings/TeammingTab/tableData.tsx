@@ -14,7 +14,7 @@ import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import Loader from '../../../components/Loader';
 import Unimodal from '../../../containers/layouts/Unimodal';
-import { REMOVE_MEMBER } from '../../../graphql/mutations';
+import { REMOVE_INVITATION } from '../../../graphql/mutations';
 import { GET_USER } from '../../../graphql/quries';
 import { MemberInvitation } from '../../../models/graphql/invite';
 import { Member } from '../../../models/graphql/user';
@@ -46,7 +46,7 @@ const TableData: React.FC<TableDataProps> = ({ row, index }) => {
 
   // mutation to remove member
   const [removeMember, { loading }] = useMutation<MemberInvitation>(
-    REMOVE_MEMBER,
+    REMOVE_INVITATION,
     {
       onCompleted: () => {
         setOpen(false);
@@ -193,7 +193,7 @@ const TableData: React.FC<TableDataProps> = ({ row, index }) => {
             </ButtonOutline>
 
             <ButtonFilled
-              isDisabled={false}
+              isDisabled={loading}
               isPrimary
               handleClick={() => {
                 removeMember({

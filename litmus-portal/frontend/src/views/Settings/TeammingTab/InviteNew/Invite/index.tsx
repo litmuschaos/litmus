@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from '@apollo/client/react/hooks';
-import { useTheme } from '@material-ui/core/styles';
 import {
   Input,
   InputAdornment,
@@ -10,6 +9,7 @@ import {
   Toolbar,
   Typography,
 } from '@material-ui/core';
+import { useTheme } from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
@@ -90,12 +90,13 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
       if (dataA !== undefined) {
         if (dataB?.getUser.username === userData.username) {
           const projectList: Project[] = dataB?.getUser.projects;
-
           projectList.forEach(
             (project) =>
               project.id === userData.selectedProjectID &&
-              project.members.map((member) =>
-                memberList.set(member.user_name, 1)
+              project.members.map(
+                (member) =>
+                  member.invitation !== 'Declined' &&
+                  memberList.set(member.user_name, 1)
               )
           );
           // login for displaying only those users who are not the part of team
