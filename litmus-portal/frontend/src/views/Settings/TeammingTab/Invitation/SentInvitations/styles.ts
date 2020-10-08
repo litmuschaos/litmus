@@ -51,7 +51,6 @@ const useStyles = makeStyles((theme) => ({
 
   flexstatus: {
     display: 'flex',
-    // justifyContent: 'center',
   },
   menuHeader: {
     fontSize: '0.75rem',

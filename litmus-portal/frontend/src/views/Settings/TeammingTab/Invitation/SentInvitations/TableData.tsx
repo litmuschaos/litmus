@@ -34,7 +34,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
   const userData = useSelector((state: RootState) => state.userData);
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [role, setRole] = useState<string>(row?.role);
+  const [role, setRole] = useState<string>(row.role);
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -67,23 +67,23 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
               className={classes.avatarBackground}
               style={{ alignContent: 'right' }}
             >
-              {row?.name ? userAvatar(row?.name) : userAvatar(row?.user_name)}
+              {row.name ? userAvatar(row.name) : userAvatar(row.user_name)}
             </Avatar>
             <div className={classes.detail}>
               <div className={classes.flexstatus}>
-                <div> {row?.user_name}</div>
+                <div> {row.user_name}</div>
 
                 <div
                   className={
-                    row?.invitation === 'Pending'
+                    row.invitation === 'Pending'
                       ? classes.pending
                       : classes.declined
                   }
                 >
-                  {row?.invitation}
+                  {row.invitation}
                 </div>
               </div>
-              <div>{row?.email}</div>
+              <div>{row.email}</div>
             </div>
           </div>
           <div className={classes.buttonDiv}>
@@ -136,7 +136,6 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                   onClick={() => {
                     setRole('Viewer');
                     setAnchorEl(null);
-                    // sendInvite(row.username, 'Viewer');
                   }}
                   className={classes.menuOpt}
                 >
@@ -167,12 +166,12 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                     variables: {
                       data: {
                         project_id: userData.selectedProjectID,
-                        user_name: row?.user_name,
+                        user_name: row.user_name,
                       },
                     },
                   })
                 }
-                isDisabled={row?.invitation === 'Declined' || loadingA}
+                isDisabled={row.invitation === 'Declined' || loadingA}
               >
                 {loadingA ? <Loader size={20} /> : 'Cancel'}
               </ButtonOutline>
@@ -186,7 +185,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                     variables: {
                       member: {
                         project_id: userData.selectedProjectID,
-                        user_name: row?.user_name,
+                        user_name: row.user_name,
                         role,
                       },
                     },
