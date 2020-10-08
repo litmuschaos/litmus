@@ -20,8 +20,7 @@ interface ClusterVarsProps {
 const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
   const { data } = location.state;
   const classes = useStyles();
-  const link: string = data?.token;
-
+  const link: string = data.token;
   const handleClick = () => {
     history.push('/targets');
   };
@@ -33,7 +32,7 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
       <section className="Header section">
         <div className={classes.backBotton}>
           <ButtonOutline isDisabled={false} handleClick={handleClick}>
-            <div>Back</div>
+            <div>{t('workflowCluster.header.formControl.back')}</div>
           </ButtonOutline>
           <div className={classes.header}>
             <Typography variant="h4">
