@@ -18,6 +18,17 @@ const useStyles = makeStyles((theme: Theme) => ({
       shadow: theme.palette.secondary.dark,
     },
   },
+  // External agent styles
+  selectText: {
+    height: '2.9rem',
+    paddingLeft: theme.spacing(1),
+  },
+  formControl: {
+    marginRight: theme.spacing(2.5),
+    height: '2.5rem',
+    minWidth: '14rem',
+  },
+
   heading: {
     marginLeft: theme.spacing(20),
     marginTop: theme.spacing(5),
@@ -49,11 +60,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   buttonDiv: {
     marginTop: theme.spacing(6),
     display: 'flex',
+    alignContent: 'center',
+    alignItems: 'center',
     flexDirection: 'row',
     gap: '1rem',
-  },
-  or: {
-    marginTop: theme.spacing(1.5),
   },
   marginTemporary: {
     marginTop: theme.spacing(1.5),
