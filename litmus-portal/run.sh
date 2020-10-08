@@ -3,10 +3,12 @@
 # ENV VAR SETUP
 export DB_SERVER=mongodb://localhost:27017
 export JWT_SECRET=litmus-portal@123
-export SERVICE_ADDRESS=http://localhost:8080
+export PORTAL_ENDPOINT=http://localhost:8080
 export SELF_CLUSTER=false # self-cluster needs k8s env
 export AGENT_SCOPE=cluster
 export AGENT_NAMESPACE=litmus
+export LITMUS_PORTAL_NAMESPACE=litmus
+export PORTAL_SCOPE=namespace
 export SUBSCRIBER_IMAGE=litmuschaos/litmusportal-subscriber:ci
 export DEPLOYER_IMAGE=litmuschaos/litmusportal-self-deployer:ci
 export ARGO_SERVER_IMAGE=argoproj/argocli:v2.9.3
@@ -16,7 +18,6 @@ export LITMUS_CHAOS_OPERATOR_IMAGE=litmuschaos/chaos-operator:1.8.2
 export LITMUS_CHAOS_RUNNER_IMAGE=litmuschaos/chaos-runner:1.8.2
 export ADMIN_USERNAME=admin
 export ADMIN_PASSWORD=litmus
-
 # Dependency Checks
 dir=($(pwd | tr "/" "\n"))
 count=${#dir[@]}
