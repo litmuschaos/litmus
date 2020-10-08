@@ -104,10 +104,14 @@ rules:
     resources:
       - pods
       - pods/exec
+      - services
+      - nodes
     verbs:
       - create
       - patch
       - update
+      - get
+      - list
   - apiGroups:
       - "apps"
     resources:
@@ -160,8 +164,6 @@ spec:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
                   key: JWTSecret
-            - name: SERVICE_ADDRESS
-              value: "http://litmusportal-server-service:9002"
             - name: SELF_CLUSTER
               value: "true"
             - name: AGENT_SCOPE
@@ -174,6 +176,12 @@ spec:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
                   key: AgentNamespace
+            - name: LITMUS_PORTAL_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: PORTAL_SCOPE
+              value: "cluster"
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos/litmusportal-subscriber:ci"
             - name: DEPLOYER_IMAGE
