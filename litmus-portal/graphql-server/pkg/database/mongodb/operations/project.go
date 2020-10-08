@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 	"go.mongodb.org/mongo-driver/bson"
@@ -76,9 +77,25 @@ func AddMember(ctx context.Context, projectID string, member *dbSchema.Member) e
 	return nil
 }
 
-//UpdateInvite ...
-func UpdateInvite(ctx context.Context, projectID, userName string, invitation dbSchema.Invitation) error {
+//RemoveInvitation ...
+func RemoveInvitation(ctx context.Context, projectID string, userName string, invitation dbSchema.Invitation) error {
+	query := bson.M{"_id": projectID}
+	update := bson.M{"$pull": bson.M{"members": bson.M{"username": userName}}}
+	_, err := projectCollection.UpdateOne(ctx, query, update)
+	if err != nil {
+		if invitation == dbSchema.AcceptedInvitation {
+			log.Print("Error Removing the member with username:", userName, "from project with project id: ", projectID, err)
+			return err
+		}
+		log.Print("Error Removing the invite with username:", userName, "from project with project id: ", projectID, err)
+		return err
 
+	}
+	return nil
+}
+
+//UpdateInvite ...
+func UpdateInvite(ctx context.Context, projectID, userName string, invitation dbSchema.Invitation, Role *model.MemberRole) error {
 	options := options.Update().SetArrayFilters(options.ArrayFilters{
 		Filters: []interface{}{
 			bson.M{"elem.username": userName},
@@ -86,11 +103,17 @@ func UpdateInvite(ctx context.Context, projectID, userName string, invitation db
 	})
 
 	query := bson.M{"_id": projectID}
-	update := bson.M{"$set": bson.M{"members.$[elem].invitation": invitation}}
-	if invitation == dbSchema.AcceptedInvitation {
-		update = bson.M{"$set": bson.M{"members.$[elem].invitation": invitation, "members.$[elem].joined_at": time.Now().Format(time.RFC1123Z)}}
-	}
+	var update bson.M
 
+	switch invitation {
+	case dbSchema.PendingInvitation:
+		update = bson.M{"$set": bson.M{"members.$[elem].invitation": invitation, "members.$[elem].role": Role}}
+	case dbSchema.DeclinedInvitation:
+		update = bson.M{"$set": bson.M{"members.$[elem].invitation": invitation}}
+	case dbSchema.AcceptedInvitation:
+		update = bson.M{"$set": bson.M{"members.$[elem].invitation": invitation, "members.$[elem].joined_at": time.Now().Format(time.RFC1123Z)}}
+
+	}
 	_, err := projectCollection.UpdateOne(ctx, query, update, options)
 	if err != nil {
 		log.Print("Error updating project with projectID: ", projectID, " error: ", err)
