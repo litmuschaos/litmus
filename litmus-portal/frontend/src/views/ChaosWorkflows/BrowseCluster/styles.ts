@@ -60,14 +60,15 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.common.white,
     height: '29.219rem',
   },
+  tableRows: {
+    padding: theme.spacing(4),
+    color: theme.palette.customColors.black(0.4),
+  },
   headerStatus: {
-    paddingLeft: theme.spacing(5),
-    paddingRight: theme.spacing(2.2),
-    paddingTop: theme.spacing(2.2),
+    paddingLeft: theme.spacing(7),
     color: theme.palette.customColors.black(0.4),
   },
   workflowName: {
-    paddingTop: theme.spacing(2.2),
     borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
     color: theme.palette.customColors.black(0.4),
   },
@@ -79,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.customColors.black(0.4),
   },
   tableDataStatus: {
-    paddingLeft: theme.spacing(8.5),
+    paddingLeft: theme.spacing(6.5),
   },
   progressBar: {
     width: '6.5rem',
@@ -111,9 +112,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
   },
-  failed: {
-    color: theme.palette.error.main,
-  },
   success: {
     color: theme.palette.primary.dark,
   },
@@ -138,6 +136,98 @@ const useStyles = makeStyles((theme) => ({
   },
   btnText: {
     paddingLeft: theme.spacing(1.625),
+  },
+  // date picker
+  datePickerColor: {
+    color: theme.palette.secondary.dark,
+  },
+  // Table status
+  completed: {
+    width: '5.9125rem',
+    textAlign: 'center',
+    borderRadius: 3,
+    paddingTop: theme.spacing(0.375),
+    paddingBottom: theme.spacing(0.375),
+    color: theme.palette.primary.dark,
+    backgroundColor: 'rgba(16, 155, 103, 0.1)',
+  },
+  failed: {
+    width: '5.9125rem',
+    textAlign: 'center',
+    borderRadius: 3,
+    paddingTop: theme.spacing(0.375),
+    paddingBottom: theme.spacing(0.375),
+    color: theme.palette.error.dark,
+    backgroundColor: theme.palette.error.light,
+  },
+  statusFont: {
+    fontSize: '0.725rem',
+  },
+
+  // Delete Cluster Modal
+  body: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: theme.spacing(7.5),
+  },
+
+  // styles for text
+  text: {
+    width: '31.93rem',
+    height: '5.875rem',
+    marginTop: theme.spacing(3.75),
+    marginBottom: theme.spacing(3.75),
+  },
+  typo: {
+    fontSize: '2rem',
+  },
+  textSecond: {
+    width: '29.06rem',
+    height: '1.6875rem',
+    marginTop: theme.spacing(1.875),
+    marginBottom: theme.spacing(3.75),
+  },
+  typoSub: {
+    fontSize: '1rem',
+  },
+  // for yes or no buttons
+  buttonGroup: {
+    display: 'flex',
+    width: '10.75rem',
+    height: '2.75rem',
+    marginTop: theme.spacing(2.5),
+    justifyContent: 'space-between',
+  },
+  // delete user
+  delDiv: {
+    maxWidth: '8.56rem',
+    display: 'flex',
+    marginTop: theme.spacing(3),
+    color: '#CA2C2C',
+  },
+  bin: {
+    marginRight: theme.spacing(1.485),
+  },
+  otherTC: {
+    maxWidth: '15.375rem',
+  },
+  deleteCluster: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  error: {
+    borderColor: theme.palette.error.main,
+    '&:hover': {
+      borderColor: theme.palette.error.main,
+      boxShadow: '',
+    },
+    '&$focused': {
+      backgroundColor: theme.palette.common.white,
+      borderColor: theme.palette.error.main,
+      color: theme.palette.error.main,
+    },
   },
 }));
 

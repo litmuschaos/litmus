@@ -68,10 +68,10 @@ const BrowseWorkflow = () => {
     WORKFLOW_DETAILS,
     {
       variables: { projectID: selectedProjectID },
+      pollInterval: 500,
       fetchPolicy: 'cache-and-network',
     }
   );
-
   // Using subscription to get realtime data
   useEffect(() => {
     subscribeToMore<WorkflowSubscription>({
