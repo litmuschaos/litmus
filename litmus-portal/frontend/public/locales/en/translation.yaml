@@ -165,7 +165,7 @@ targets:
     head3: 3.Paste it into the cluster console
     head4: 4.Click on the button
     head5: Connect the target
-    conformation: Kuberenetes Agent is conforming, Please wait...
+    conformation: Kuberenetes Agent is confirming, Please wait...
 
 connectTargets:
   title: A new Target,
@@ -179,6 +179,13 @@ workflowCluster:
   header:
     status: Current Status
     target: Target Cluster
+    chooseAgent: Choose the target Kubernetes Agent
+    creatingNew: You are creating a
+    creatingNewBold: new chaos workflow.
+    selectAgent: Select a target Kubernetes Agent to run this workflow.
+    selectCluster: Choose Active Cluster
+    select: Select and Continue
+    snackbar: No Cluster Registered With Your Project ID, Please Wait...
     formControl:
       # For Header
       menu: All

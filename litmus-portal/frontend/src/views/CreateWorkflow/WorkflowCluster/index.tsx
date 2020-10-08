@@ -10,6 +10,7 @@ import {
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import { GET_CLUSTER } from '../../../graphql';
 import useActions from '../../../redux/actions';
@@ -85,6 +86,7 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
   const handleClick = () => {
     gotoStep(1);
   };
+  const { t } = useTranslation();
 
   return (
     <div className={classes.rootcontainer}>
@@ -94,13 +96,14 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
       </div>
       <div>
         <Typography className={classes.heading}>
-          <strong> Choose the target Kubernetes Agent</strong>
+          <strong> {t('workflowCluster.header.connecchooseAgent')}</strong>
         </Typography>
         <Typography className={classes.headchaos}>
-          You are creating a <strong> new chaos workflow.</strong>
+          {t('workflowCluster.header.creatingNew')}
+          <strong>{t('workflowCluster.header.creatingNewBold')} </strong>
         </Typography>
         <Typography className={classes.headcluster}>
-          Select a target Kubernetes Agent to run this workflow.
+          {t('workflowCluster.header.selectAgent')}
         </Typography>
 
         <div className={classes.radiobutton}>
@@ -108,10 +111,9 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
             variant="outlined"
             className={classes.formControl}
             color="secondary"
-            // focused
           >
             <InputLabel className={classes.selectText}>
-              Choose Active Cluster
+              {t('workflowCluster.header.selectCluster')}
             </InputLabel>
             <Select
               value={name}
@@ -143,7 +145,7 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
             isDisabled={isTragetSelected}
             handleClick={() => handleClick()}
           >
-            <div>Select and Continue</div>
+            <div>{t('workflowCluster.header.select')}</div>
           </ButtonFilled>
         </div>
       </div>
@@ -151,9 +153,7 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
         open={isOpenSnackBar}
         action={
           <Typography>
-            <strong>
-              No Cluster Registered With Your Project ID, Please Wait...
-            </strong>
+            <strong>{t('workflowCluster.header.snackbar')}</strong>
           </Typography>
         }
         autoHideDuration={6000}
