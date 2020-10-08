@@ -139,7 +139,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({
         </TableCell>
         <TableCell className={classes.headSpacing}>
           <div className={classes.nameContent}>
-            <b>Regularity</b>&nbsp;
+            &nbsp;&nbsp;<b>Regularity</b>&nbsp;
           </div>
         </TableCell>
         <TableCell className={classes.headSpacing}>

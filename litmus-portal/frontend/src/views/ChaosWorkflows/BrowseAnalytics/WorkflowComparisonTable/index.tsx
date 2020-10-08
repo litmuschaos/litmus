@@ -69,7 +69,7 @@ const WorkflowComparisonTable = () => {
     selectedCluster: 'All',
     sortData: {
       name: { sort: false, ascending: true },
-      startDate: { sort: true, ascending: false },
+      startDate: { sort: true, ascending: true },
       cluster: { sort: false, ascending: true },
     },
     searchTokens: [''],

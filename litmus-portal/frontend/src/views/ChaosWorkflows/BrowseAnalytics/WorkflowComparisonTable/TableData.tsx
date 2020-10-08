@@ -3,6 +3,7 @@ import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import cronstrue from 'cronstrue';
 import { ScheduleWorkflow } from '../../../../models/graphql/scheduleData';
 import { history } from '../../../../redux/configureStore';
 import useStyles from './styles';
@@ -53,16 +54,18 @@ const TableData: React.FC<TableDataProps> = ({
         </Typography>
       </TableCell>
       <TableCell>
-        &nbsp;
-        <img
-          src="/icons/calender.svg"
-          alt="Calender"
-          className={classes.calIcon}
-        />
-        <Typography className={classes.tableObjectRegularity}>
-          {/* data.regularity */}
-          {t('chaosWorkflows.browseAnalytics.workFlowComparisonTable.once')}
-        </Typography>
+        <div className={classes.regularityData}>
+          <div className={classes.iconDiv}>
+            <img src="/icons/calender.svg" alt="Calender" />
+            <Typography style={{ paddingLeft: 10 }}>
+              {data.cronSyntax === ''
+                ? t(
+                    'chaosWorkflows.browseAnalytics.workFlowComparisonTable.once'
+                  )
+                : cronstrue.toString(data.cronSyntax)}{' '}
+            </Typography>
+          </div>
+        </div>
       </TableCell>
       <TableCell>
         <Typography className={classes.tableObjects}>

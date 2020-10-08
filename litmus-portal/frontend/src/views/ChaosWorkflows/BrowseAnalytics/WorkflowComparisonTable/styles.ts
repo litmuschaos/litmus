@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   tableFix: {
-    marginTop: theme.spacing(7),
+    marginTop: theme.spacing(3),
     paddingLeft: theme.spacing(-1),
     width: '100%',
   },
@@ -117,6 +117,7 @@ const useStyles = makeStyles((theme) => ({
   workflowName: {
     borderRight: `1px solid ${theme.palette.customColors.black(0.07)}`,
     paddingTop: theme.spacing(2.5),
+    maxWidth: '16.5rem',
   },
 
   workflowNameHead: {
@@ -128,12 +129,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   headSpacing: {
-    paddingLeft: theme.spacing(5.5),
-  },
-
-  tableObjectRegularity: {
-    marginTop: theme.spacing(-2.5),
-    paddingLeft: theme.spacing(7.75),
+    paddingLeft: theme.spacing(6),
   },
 
   nameContent: {
@@ -279,6 +275,17 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.secondary.contrastText,
     width: '1.5rem',
     height: '1.5rem',
+  },
+
+  regularityData: {
+    maxWidth: '17rem',
+    marginLeft: theme.spacing(-3),
+  },
+
+  iconDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginLeft: theme.spacing(3),
   },
 }));
 
