@@ -1,7 +1,6 @@
 package file_handlers
 
 import (
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 	"log"
 	"net/http"
 	"os"
@@ -16,6 +15,7 @@ import (
 var subscriberConfiguration = &types.SubscriberConfigurationVars{
 	AgentNamespace:          os.Getenv("AGENT_NAMESPACE"),
 	AgentScope:              os.Getenv("AGENT_SCOPE"),
+	GQLServerURI:            os.Getenv("SERVICE_ADDRESS") + "/query",
 	SubscriberImage:         os.Getenv("SUBSCRIBER_IMAGE"),
 	ArgoServerImage:         os.Getenv("ARGO_SERVER_IMAGE"),
 	WorkflowControllerImage: os.Getenv("ARGO_WORKFLOW_CONTROLLER_IMAGE"),
@@ -26,11 +26,8 @@ var subscriberConfiguration = &types.SubscriberConfigurationVars{
 
 //FileHandler dynamically generates the manifest file and sends it as a response
 func FileHandler(w http.ResponseWriter, r *http.Request) {
-	var (
-		vars           = mux.Vars(r)
-		token          = vars["key"]
-		portalEndpoint string
-	)
+	vars := mux.Vars(r)
+	token := vars["key"]
 
 	id, err := cluster.ClusterValidateJWT(token)
 	if err != nil {
@@ -45,17 +42,6 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 		utils.WriteHeaders(&w, 500)
 		return
 	}
-
-	if os.Getenv("PORTAL_SCOPE") == "cluster" {
-		portalEndpoint, err = k8s.GetPortalEndpoint()
-		if err != nil {
-			log.Print(err)
-		}
-	} else if os.Getenv("PORTAL_SCOPE") == "namespace" {
-		portalEndpoint = os.Getenv("PORTAL_ENDPOINT")
-	}
-
-	subscriberConfiguration.GQLServerURI = portalEndpoint + "/query"
 
 	if !reqCluster.IsRegistered {
 		var respData []byte
