@@ -20,17 +20,11 @@ interface TableDataProps {
   row: Member;
   index: number;
 }
-const TableData: React.FC<TableDataProps> = ({ row /* index */ }) => {
+const TableData: React.FC<TableDataProps> = ({ row }) => {
   const classes = useStyles();
-  // const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  // const [role, setRole] = useState<string>('Viewer');
-
   const userData = useSelector((state: RootState) => state.userData);
   const { t } = useTranslation();
-  // for closing the menu option
-  // const handleClose = () => {
-  //   setAnchorEl(null);
-  // };
+
   const [open, setOpen] = React.useState(false);
   // Function to display date in format Do MMM,YYYY Hr:MM AM/PM
   const formatDate = (date: string) => {
@@ -66,75 +60,7 @@ const TableData: React.FC<TableDataProps> = ({ row /* index */ }) => {
           {row.name}
         </div>
       </TableCell>
-      <TableCell className={classes.otherTC}>
-        {row.role}
-        {/* {row.role === 'editor' || row.role === 'viewer' ? (
-          <>
-            <IconButton
-              disabled
-              aria-label="more"
-              aria-controls="long-menu"
-              aria-haspopup="true"
-              onClick={(event) => {
-                setAnchorEl(event.currentTarget);
-              }}
-              className={classes.optionBtn}
-            >
-              <img src="./icons/right-arrow.svg" alt="more" />
-            </IconButton>
-            <Menu
-              keepMounted
-              open={Boolean(anchorEl)}
-              id="long-menu"
-              anchorEl={anchorEl}
-              onClose={handleClose}
-            >
-              <MenuItem
-                value={index}
-                onClick={() => {
-                  setAnchorEl(null);
-                }}
-                className={classes.menuOpt}
-              >
-                <div className={classes.menuDiv}>
-                  <div>
-                    <Typography className={classes.menuHeader}>
-                      <strong>Editor</strong>
-                    </Typography>
-                  </div>
-                  <div>
-                    <Typography className={classes.menuDesc}>
-                      Can make changes in the project
-                    </Typography>
-                  </div>
-                </div>
-              </MenuItem>
-              <MenuItem
-                value={index}
-                onClick={() => {
-                  setAnchorEl(null);
-                }}
-                className={classes.menuOpt}
-              >
-                <div className={classes.menuDiv}>
-                  <div>
-                    <Typography className={classes.menuHeader}>
-                      <strong>Viewer</strong>
-                    </Typography>
-                  </div>
-                  <div>
-                    <Typography className={classes.menuDesc}>
-                      Can make changes in the project
-                    </Typography>
-                  </div>
-                </div>
-              </MenuItem>
-            </Menu>
-          </>
-        ) : (
-          <></>
-        )} */}
-      </TableCell>
+      <TableCell className={classes.otherTC}>{row.role}</TableCell>
       <TableCell className={classes.otherTC}>{row.email}</TableCell>
       <TableCell className={classes.otherTC}>
         <div className={classes.dateDiv}>
@@ -183,7 +109,7 @@ const TableData: React.FC<TableDataProps> = ({ row /* index */ }) => {
                 setOpen(false);
               }}
             >
-              <>No</>
+              <>{t('settings.teamingTab.deleteModal.noButton')}</>
             </ButtonOutline>
 
             <ButtonFilled
@@ -206,7 +132,7 @@ const TableData: React.FC<TableDataProps> = ({ row /* index */ }) => {
                     <Loader size={20} />
                   </div>
                 ) : (
-                  <>Yes</>
+                  <>{t('settings.teamingTab.deleteModal.yesButton')}</>
                 )}
               </>
             </ButtonFilled>

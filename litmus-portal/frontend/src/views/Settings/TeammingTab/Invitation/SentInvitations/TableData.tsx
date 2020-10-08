@@ -8,6 +8,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../../../components/Button/ButtonOutline';
@@ -40,6 +41,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
   };
 
   const username = useSelector((state: RootState) => state.userData.username);
+  const { t } = useTranslation();
 
   // mutation to send invitation to selected users
   const [SendInvite, { loading: loadingB }] = useMutation<MemberInviteNew>(
@@ -122,12 +124,18 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                   >
                     <div>
                       <Typography className={classes.menuHeader}>
-                        <strong>Editor</strong>
+                        <strong>
+                          {t(
+                            'settings.teamingTab.sentInvitation.menuItem.editorRole.label'
+                          )}
+                        </strong>
                       </Typography>
                     </div>
                     <div>
                       <Typography className={classes.menuDesc}>
-                        Can make changes in the project
+                        {t(
+                          'settings.teamingTab.sentInvitation.menuItem.editorRole.body'
+                        )}
                       </Typography>
                     </div>
                   </div>
@@ -147,12 +155,18 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                   >
                     <div>
                       <Typography className={classes.menuHeader}>
-                        <strong>Viewer</strong>
+                        <strong>
+                          {t(
+                            'settings.teamingTab.sentInvitation.menuItem.viewerRole.label'
+                          )}
+                        </strong>
                       </Typography>
                     </div>
                     <div>
                       <Typography className={classes.menuDesc}>
-                        Can view the project
+                        {t(
+                          'settings.teamingTab.sentInvitation.menuItem.viewerRole.body'
+                        )}
                       </Typography>
                     </div>
                   </div>
