@@ -25,9 +25,6 @@ const useStyles = makeStyles((theme) => ({
       height: '100%',
     },
   },
-  errorMessage: {
-    marginLeft: theme.spacing(10),
-  },
   horizontalRule: {
     width: theme.spacing(14),
     opacity: 0.5,

@@ -15,9 +15,7 @@ const Plot = createPlotlyComponent(Plotly);
 const CommunityAnalyticsPlot: React.FC = () => {
   const classes = useStyles();
 
-  const { communityData } = useSelector(
-    (state: RootState) => state.communityData
-  );
+  const communityData = useSelector((state: RootState) => state.communityData);
 
   const dailyOperators = communityData.google.dailyOperatorData;
 

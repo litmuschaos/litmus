@@ -8,14 +8,11 @@ import useStyles from './styles';
 respective count of users wise to present it on map */
 
 const CountryMap = () => {
-  const { communityData } = useSelector(
-    (state: RootState) => state.communityData
+  const data: string[][] = useSelector(
+    (state: RootState) => state.communityData.google.geoCountry
   );
   const classes = useStyles();
   const theme = useTheme();
-
-  const data = communityData.google.geoCountry;
-
   const parsedData = data.map((item) => [item[0], parseInt(item[1], 10)]);
   parsedData.unshift(['Country', 'Count']);
 

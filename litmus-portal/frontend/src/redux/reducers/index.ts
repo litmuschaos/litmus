@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { AnalyticsData } from '../../models/redux/analytics';
+import { CommunityData } from '../../models/redux/analytics';
 import { SelectedNode } from '../../models/redux/nodeSelection';
 import { TabState } from '../../models/redux/tabs';
 import { TemplateData } from '../../models/redux/template';
@@ -13,7 +13,7 @@ import * as userReducer from './user';
 import * as workflowReducer from './workflow';
 
 export interface RootState {
-  communityData: AnalyticsData;
+  communityData: CommunityData;
   userData: UserData;
   workflowData: WorkflowData;
   selectedNode: SelectedNode;
