@@ -119,7 +119,6 @@ type ComplexityRoot struct {
 		DeleteChaosWorkflow func(childComplexity int, workflowid string) int
 		NewClusterEvent     func(childComplexity int, clusterEvent model.ClusterEventInput) int
 		PodLog              func(childComplexity int, log model.PodLog) int
-		RemoveInvitation    func(childComplexity int, member model.MemberInput) int
 		SendInvitation      func(childComplexity int, member model.MemberInput) int
 		UpdateUser          func(childComplexity int, user model.UpdateUserInput) int
 		UserClusterReg      func(childComplexity int, clusterInput model.ClusterInput) int
@@ -246,7 +245,6 @@ type MutationResolver interface {
 	SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error)
 	AcceptInvitation(ctx context.Context, member model.MemberInput) (string, error)
 	DeclineInvitation(ctx context.Context, member model.MemberInput) (string, error)
-	RemoveInvitation(ctx context.Context, member model.MemberInput) (string, error)
 	ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error)
 	NewClusterEvent(ctx context.Context, clusterEvent model.ClusterEventInput) (string, error)
 	ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error)
@@ -677,18 +675,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.PodLog(childComplexity, args["log"].(model.PodLog)), true
-
-	case "Mutation.removeInvitation":
-		if e.complexity.Mutation.RemoveInvitation == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_removeInvitation_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.RemoveInvitation(childComplexity, args["member"].(model.MemberInput)), true
 
 	case "Mutation.sendInvitation":
 		if e.complexity.Mutation.SendInvitation == nil {
@@ -1458,7 +1444,7 @@ type Cluster {
   token: String!
 }
 
-input ClusterInput {
+input ClusterInput{
   cluster_name: String!
   description: String
   platform_name: String!
@@ -1488,17 +1474,17 @@ type ClusterAction {
 
 input ClusterActionInput {
   cluster_id: ID!
-  action: String!
+  action:String!
 }
 
-input ClusterEventInput {
+input ClusterEventInput{
   event_name: String!
   description: String!
   cluster_id: String!
   access_key: String!
 }
 
-input ClusterIdentity {
+input ClusterIdentity{
   cluster_id: String!
   access_key: String!
 }
@@ -1538,7 +1524,7 @@ type ChaosWorkFlowResponse {
   isCustomWorkflow: Boolean!
 }
 
-type WorkflowRun {
+type WorkflowRun{
   workflow_run_id: ID!
   workflow_id: ID!
   cluster_name: String!
@@ -1550,7 +1536,7 @@ type WorkflowRun {
   execution_data: String!
 }
 
-input WorkflowRunInput {
+input WorkflowRunInput{
   workflow_id: ID!
   workflow_run_id: ID!
   workflow_name: String!
@@ -1558,14 +1544,14 @@ input WorkflowRunInput {
   cluster_id: ClusterIdentity!
 }
 
-type PodLogResponse {
+type PodLogResponse{
   workflow_run_id: ID!
   pod_name: String!
   pod_type: String!
   log: String!
 }
 
-input PodLog {
+input PodLog{
   cluster_id: ClusterIdentity!
   request_id: ID!
   workflow_run_id: ID!
@@ -1574,7 +1560,7 @@ input PodLog {
   log: String!
 }
 
-input PodLogRequest {
+input PodLogRequest{
   cluster_id: ID!
   workflow_run_id: ID!
   pod_name: String!
@@ -1601,7 +1587,7 @@ type ScheduledWorkflows {
   cluster_type: String!
 }
 
-type Workflow {
+type Workflow{
   workflow_id: String!
   workflow_manifest: String!
   cronSyntax: String!
@@ -1624,13 +1610,13 @@ type WorkflowRuns {
   last_updated: String!
 }
 
-type clusterRegResponse {
-  token: String!
-  cluster_id: String!
-  cluster_name: String!
+type clusterRegResponse{
+  token: String!,
+  cluster_id: String!,
+  cluster_name: String!,
 }
 
-type Query {
+type Query{
   # [Deprecated soon]
   getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
 
@@ -1645,16 +1631,16 @@ type Query {
   # [Deprecated soon]
   getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
 
-  ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
+  ListWorkflow(project_id: String!, workflow_ids: [ID] ): [Workflow]! @authorized
+
 }
 
-type Mutation {
+type Mutation{
   #It is used to create external cluster.
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
   #It is used to create chaosworkflow
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
-    @authorized
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
 
   createUser(user: CreateUserInput!): User! @authorized
 
@@ -1662,13 +1648,11 @@ type Mutation {
 
   deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
 
-  sendInvitation(member: MemberInput!): Member @authorized
+  sendInvitation(member: MemberInput!): Member! @authorized
 
   acceptInvitation(member: MemberInput!): String! @authorized
 
   declineInvitation(member: MemberInput!): String! @authorized
-
-  removeInvitation(member: MemberInput!): String! @authorized
 
   #It is used to confirm the subscriber registration
   clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
@@ -1679,9 +1663,10 @@ type Mutation {
   chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
 
   podLog(log: PodLog!): String!
+
 }
 
-type Subscription {
+type Subscription{
   #It is used to listen cluster events from the graphql server
   clusterEventListener(project_id: String!): ClusterEvent! @authorized
 
@@ -1691,8 +1676,7 @@ type Subscription {
 
   #It is used to listen cluster operation request from the graphql server
   clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
-}
-`, BuiltIn: false},
+}`, BuiltIn: false},
 	&ast.Source{Name: "graph/usermanagement.graphqls", Input: `type User {
     id: ID!
     username: String!
@@ -1853,20 +1837,6 @@ func (ec *executionContext) field_Mutation_podLog_args(ctx context.Context, rawA
 		}
 	}
 	args["log"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_removeInvitation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 model.MemberInput
-	if tmp, ok := rawArgs["member"]; ok {
-		arg0, err = ec.unmarshalNMemberInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["member"] = arg0
 	return args, nil
 }
 
@@ -3841,11 +3811,14 @@ func (ec *executionContext) _Mutation_sendInvitation(ctx context.Context, field 
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*model.Member)
 	fc.Result = res
-	return ec.marshalOMember2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMember(ctx, field.Selections, res)
+	return ec.marshalNMember2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMember(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_acceptInvitation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3935,67 +3908,6 @@ func (ec *executionContext) _Mutation_declineInvitation(ctx context.Context, fie
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().DeclineInvitation(rctx, args["member"].(model.MemberInput))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(string); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_removeInvitation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Mutation",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_removeInvitation_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().RemoveInvitation(rctx, args["member"].(model.MemberInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -9104,6 +9016,9 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "sendInvitation":
 			out.Values[i] = ec._Mutation_sendInvitation(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "acceptInvitation":
 			out.Values[i] = ec._Mutation_acceptInvitation(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -9111,11 +9026,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "declineInvitation":
 			out.Values[i] = ec._Mutation_declineInvitation(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "removeInvitation":
-			out.Values[i] = ec._Mutation_removeInvitation(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -11003,17 +10913,6 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 		return graphql.Null
 	}
 	return ec.marshalOInt2int(ctx, sel, *v)
-}
-
-func (ec *executionContext) marshalOMember2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMember(ctx context.Context, sel ast.SelectionSet, v model.Member) graphql.Marshaler {
-	return ec._Member(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalOMember2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMember(ctx context.Context, sel ast.SelectionSet, v *model.Member) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Member(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOMemberRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx context.Context, v interface{}) (model.MemberRole, error) {

@@ -56,10 +56,6 @@ func (r *mutationResolver) DeclineInvitation(ctx context.Context, member model.M
 	return project.DeclineInvitation(ctx, member)
 }
 
-func (r *mutationResolver) RemoveInvitation(ctx context.Context, member model.MemberInput) (string, error) {
-	return project.RemoveInvitation(ctx, member)
-}
-
 func (r *mutationResolver) ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error) {
 	return mutations.ConfirmClusterRegistration(identity, *store)
 }

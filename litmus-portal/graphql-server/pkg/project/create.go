@@ -75,9 +75,13 @@ func SendInvitation(ctx context.Context, member model.MemberInput) (*model.Membe
 
 	if invitation == dbSchema.AcceptedInvitation {
 		return nil, errors.New("This user is already a member of this project")
-	} else if invitation == dbSchema.PendingInvitation || invitation == dbSchema.DeclinedInvitation {
-		err = database.UpdateInvite(ctx, member.ProjectID, member.UserName, dbSchema.PendingInvitation, member.Role)
-		return nil, err
+	} else if invitation == dbSchema.PendingInvitation {
+		return nil, errors.New("Invitation already sent")
+	} else if invitation == dbSchema.DeclinedInvitation {
+		err = database.UpdateInvite(ctx, member.ProjectID, member.UserName, dbSchema.PendingInvitation)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	user, err := database.GetUserByUserName(ctx, member.UserName)
@@ -109,7 +113,7 @@ func AcceptInvitation(ctx context.Context, member model.MemberInput) (string, er
 	if invitation == dbSchema.AcceptedInvitation {
 		return "Unsuccessful", errors.New("You are already a member of this project")
 	} else if invitation == dbSchema.PendingInvitation {
-		err := database.UpdateInvite(ctx, member.ProjectID, member.UserName, dbSchema.AcceptedInvitation, nil)
+		err := database.UpdateInvite(ctx, member.ProjectID, member.UserName, dbSchema.AcceptedInvitation)
 		if err != nil {
 			return "Unsuccessful", err
 		}
@@ -132,7 +136,7 @@ func DeclineInvitation(ctx context.Context, member model.MemberInput) (string, e
 	if invitation == dbSchema.AcceptedInvitation {
 		return "Unsuccessful", errors.New("You are already a member of this project")
 	} else if invitation == dbSchema.PendingInvitation {
-		err := database.UpdateInvite(ctx, member.ProjectID, member.UserName, dbSchema.DeclinedInvitation, nil)
+		err := database.UpdateInvite(ctx, member.ProjectID, member.UserName, dbSchema.DeclinedInvitation)
 		if err != nil {
 			return "Unsuccessful", err
 		}
@@ -159,22 +163,4 @@ func getInvitation(ctx context.Context, member model.MemberInput) (dbSchema.Invi
 	}
 
 	return "", nil
-}
-
-//RemoveInvitation ...
-func RemoveInvitation(ctx context.Context, member model.MemberInput) (string, error) {
-
-	invitation, err := getInvitation(ctx, member)
-	if err != nil {
-		return "Unsuccessful", err
-	}
-	if invitation == dbSchema.AcceptedInvitation || invitation == dbSchema.PendingInvitation {
-		er := database.RemoveInvitation(ctx, member.ProjectID, member.UserName, invitation)
-		if er != nil {
-			return "Unsuccessful", er
-		}
-	} else {
-		return "Unsuccessful", errors.New("User has already declined the invitation")
-	}
-	return "Successful", nil
 }
