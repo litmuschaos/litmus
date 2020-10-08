@@ -2,7 +2,6 @@ package k8s
 
 import (
 	"context"
-	"fmt"
 	appsv1 "k8s.io/api/apps/v1"
 	apiv1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -103,7 +102,6 @@ func GetPortalEndpoint() (string, error) {
 
 	clientset, err := GetGenericK8sClient()
 	if err != nil {
-		log.Print("Error from here")
 		return "", err
 	}
 
@@ -116,17 +114,12 @@ func GetPortalEndpoint() (string, error) {
 		return "", err
 	}
 
-	fmt.Print(svc)
-	fmt.Print("here0")
-	fmt.Print(svc.Spec)
-
 	for _, port := range svc.Spec.Ports {
 		if port.Name == "graphql-server" {
 			Nodeport = port.NodePort
 		}
 	}
-	fmt.Print(podList.Items)
-	fmt.Print("here1")
+
 	nodeIP, err := clientset.CoreV1().Nodes().Get(context.TODO(), podList.Items[0].Spec.NodeName, metav1.GetOptions{})
 	if err != nil {
 		return "", err
