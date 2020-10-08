@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(4),
     marginLeft: theme.spacing(4),
     marginTop: theme.spacing(4),
-    marginButtom: theme.spacing(2),
+    marginBottom: theme.spacing(2),
   },
   body: {
     display: 'flex',
@@ -26,8 +26,8 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2.5),
     marginLeft: theme.spacing(2),
   },
-  backBotton: {
-    paddingTop: theme.spacing(3),
+  backButton: {
+    paddingTop: theme.spacing(6),
     marginLeft: theme.spacing(2),
   },
   mark: {

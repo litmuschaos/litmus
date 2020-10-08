@@ -105,20 +105,23 @@ const AnalyticsPage: React.FC = () => {
     const workflowRuns: WorkflowRunData[] = [];
     const experimentTestResultsArray: number[] = [];
     const chaosDataArray: ChaosData[] = [];
+    const validWorkflowRunsData: WorkflowRunData[] = [];
 
     const selectedWorkflows = data?.getWorkFlowRuns.filter(
       (w) => w.workflow_id === workflowId
     );
-
     selectedWorkflows?.forEach((data) => {
       try {
         const executionData: ExecutionData = JSON.parse(data.execution_data);
         const { nodes } = executionData;
+        const experimentTestResultsArrayPerWorkflowRun: number[] = [];
+        const chaosDataArrayPerWorkflowRun: ChaosData[] = [];
         for (const key of Object.keys(nodes)) {
           const node = nodes[key];
           if (node.chaosData) {
             const { chaosData } = node;
             chaosDataArray.push(chaosData);
+            chaosDataArrayPerWorkflowRun.push(chaosData);
             if (
               chaosData.experimentVerdict === 'Pass' ||
               chaosData.experimentVerdict === 'Fail'
@@ -126,8 +129,44 @@ const AnalyticsPage: React.FC = () => {
               experimentTestResultsArray.push(
                 chaosData.experimentVerdict === 'Pass' ? 1 : 0
               );
+              experimentTestResultsArrayPerWorkflowRun.push(
+                chaosData.experimentVerdict === 'Pass' ? 1 : 0
+              );
             }
           }
+        }
+
+        const workflowRun = {
+          testsPassed: experimentTestResultsArrayPerWorkflowRun.length
+            ? experimentTestResultsArrayPerWorkflowRun.reduce(
+                (a, b) => a + b,
+                0
+              )
+            : 0,
+          testsFailed: experimentTestResultsArrayPerWorkflowRun.length
+            ? experimentTestResultsArrayPerWorkflowRun.length -
+              experimentTestResultsArrayPerWorkflowRun.reduce(
+                (a, b) => a + b,
+                0
+              )
+            : 0,
+          resilienceScore: experimentTestResultsArrayPerWorkflowRun.length
+            ? (experimentTestResultsArrayPerWorkflowRun.reduce(
+                (a, b) => a + b,
+                0
+              ) /
+                experimentTestResultsArrayPerWorkflowRun.length) *
+              100
+            : 0,
+          testDate:
+            chaosDataArrayPerWorkflowRun[
+              chaosDataArrayPerWorkflowRun.length - 1
+            ]?.lastUpdatedAt ?? '',
+          workflowRunID: data.workflow_run_id,
+          workflowID: workflowId,
+        };
+        if (executionData.event_type === 'UPDATE') {
+          validWorkflowRunsData.push(workflowRun);
         }
       } catch (error) {
         console.error(error);
@@ -142,66 +181,70 @@ const AnalyticsPage: React.FC = () => {
       setWorkflowRunPresent(false);
       return;
     }
+    if (experimentTestResultsArray.length === 1) {
+      const workflowRunOnce = {
+        testsPassed: experimentTestResultsArray.length
+          ? experimentTestResultsArray.reduce((a, b) => a + b, 0)
+          : 0,
+        testsFailed: experimentTestResultsArray.length
+          ? experimentTestResultsArray.length -
+            experimentTestResultsArray.reduce((a, b) => a + b, 0)
+          : 0,
+        resilienceScore: experimentTestResultsArray.length
+          ? (experimentTestResultsArray.reduce((a, b) => a + b, 0) /
+              experimentTestResultsArray.length) *
+            100
+          : 0,
+        testDate:
+          chaosDataArray[chaosDataArray.length - 1]?.lastUpdatedAt ?? '',
+        workflowRunID: selectedWorkflows
+          ? selectedWorkflows[0].workflow_run_id
+          : '',
+        workflowID: workflowId,
+      };
 
-    const workflowRunOnce = {
-      testsPassed: experimentTestResultsArray.length
-        ? experimentTestResultsArray.reduce((a, b) => a + b, 0)
-        : 0,
-      testsFailed: experimentTestResultsArray.length
-        ? experimentTestResultsArray.length -
-          experimentTestResultsArray.reduce((a, b) => a + b, 0)
-        : 0,
-      resilienceScore: experimentTestResultsArray.length
-        ? (experimentTestResultsArray.reduce((a, b) => a + b, 0) /
-            experimentTestResultsArray.length) *
-          100
-        : 0,
-      testDate: chaosDataArray[0]?.lastUpdatedAt ?? '',
-      workflowRunID: selectedWorkflows
-        ? selectedWorkflows[0].workflow_run_id
-        : '',
-      workflowID: workflowId,
-    };
+      const resDate = moment(
+        new Date(
+          parseInt(chaosDataArray[0]?.lastUpdatedAt ?? '', 10) * 1000
+        ).toString()
+      ).format('YYYY-MM-DD');
 
-    const resDate = moment(
-      new Date(
-        parseInt(chaosDataArray[0]?.lastUpdatedAt ?? '', 10) * 1000
-      ).toString()
-    ).format('YYYY-MM-DD');
+      const edgeLow = {
+        testsPassed: 0,
+        testsFailed: 0,
+        resilienceScore: 0,
+        testDate: Math.round(
+          parseInt(
+            moment(resDate).subtract(0.5, 'months').endOf('month').format('x'),
+            10
+          ) / 1000
+        ).toString(),
+        workflowRunID: 'edge_low',
+        workflowID: workflowId,
+      };
 
-    const edgeLow = {
-      testsPassed: 0,
-      testsFailed: 0,
-      resilienceScore: 0,
-      testDate: Math.round(
-        parseInt(
-          moment(resDate).subtract(0.5, 'months').endOf('month').format('x'),
-          10
-        ) / 1000
-      ).toString(),
-      workflowRunID: 'edge_low',
-      workflowID: workflowId,
-    };
+      const edgeHigh = {
+        testsPassed: 0,
+        testsFailed: 0,
+        resilienceScore: 0,
+        testDate: Math.round(
+          parseInt(
+            moment(resDate).add(0.5, 'months').startOf('month').format('x'),
+            10
+          ) / 1000
+        ).toString(),
+        workflowRunID: 'edge_high',
+        workflowID: workflowId,
+      };
 
-    const edgeHigh = {
-      testsPassed: 0,
-      testsFailed: 0,
-      resilienceScore: 0,
-      testDate: Math.round(
-        parseInt(
-          moment(resDate).add(0.5, 'months').startOf('month').format('x'),
-          10
-        ) / 1000
-      ).toString(),
-      workflowRunID: 'edge_high',
-      workflowID: workflowId,
-    };
+      workflowRuns.push(edgeLow);
+      workflowRuns.push(workflowRunOnce);
+      workflowRuns.push(edgeHigh);
 
-    workflowRuns.push(edgeLow);
-    workflowRuns.push(workflowRunOnce);
-    workflowRuns.push(edgeHigh);
-
-    setWorkflowRunDataForPlot(workflowRuns);
+      setWorkflowRunDataForPlot(workflowRuns);
+    } else {
+      setWorkflowRunDataForPlot(validWorkflowRunsData);
+    }
   }, [data]);
 
   useEffect(() => {

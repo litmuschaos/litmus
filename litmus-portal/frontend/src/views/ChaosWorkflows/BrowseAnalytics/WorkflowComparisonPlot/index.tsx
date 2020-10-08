@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import Plotly from 'plotly.js';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
+import moment from 'moment';
 import useStyles from './style';
 import Score from './Score';
 // import moment from 'moment';
@@ -13,9 +14,10 @@ const Plot = createPlotlyComponent(Plotly);
 interface ResilienceScoreComparisonPlotProps {
   xData: { Daily: string[][]; Monthly: string[][] };
   yData: { Daily: number[][]; Monthly: number[][] };
-  labels?: string[];
+  labels: string[];
+  colors: string[];
 }
-/*
+
 interface AverageDateWiseResilienceScores {
   Daily: {
     dates: string[];
@@ -26,7 +28,7 @@ interface AverageDateWiseResilienceScores {
     avgResilienceScores: number[];
   };
 }
-
+/*
 interface AverageDateWiseResilienceScore {
   date: string;
   avgResilienceScore: number;
@@ -36,6 +38,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
   xData,
   yData,
   labels,
+  colors,
 }) => {
   const classes = useStyles();
 
@@ -74,7 +77,6 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
   // const average = (list: number[]) =>
   // list.reduce((prev, curr) => prev + curr) / list.length;
 
-  /*
   // Function to convert UNIX time in format of DD MMM YYY
   const formatDate = (date: string) => {
     const updated = new Date(parseInt(date, 10) * 1000).toString();
@@ -82,6 +84,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
     return resDate;
   };
 
+  /*
   // Function to calculate average of resilience scores based on common dates
   const avgWorkflowsCommon = () => {
     const averageDateWiseResilienceScores: AverageDateWiseResilienceScores = {
@@ -210,6 +213,7 @@ const getGroupedData = () => {
     avgResScores.Monthly.avgResilienceScores.push(average);
   });
 };
+*/
   // Function to calculate average of resilience scores based on all dates with range as edge dates
   const avgWorkflowsAll = () => {
     const averageDateWiseResilienceScores: AverageDateWiseResilienceScores = {
@@ -225,7 +229,7 @@ const getGroupedData = () => {
 
     for (let i = 0; i < xData.Daily.length; i += 1) {
       for (let j = 0; j < xData.Daily[i].length; j += 1) {
-        let date: string = xData.Daily[i][j];
+        const date: string = xData.Daily[i][j];
         let sum: number = 0;
         let count: number = 0;
         for (let k = 0; k < xData.Daily.length; k += 1) {
@@ -237,7 +241,7 @@ const getGroupedData = () => {
             count += 1;
           }
         }
-        if (count != 0) {
+        if (count !== 0) {
           averageDateWiseResilienceScores.Daily.dates.push(date);
           averageDateWiseResilienceScores.Daily.avgResilienceScores.push(
             sum / count
@@ -248,7 +252,7 @@ const getGroupedData = () => {
 
     for (let i = 0; i < xData.Monthly.length; i += 1) {
       for (let j = 0; j < xData.Monthly[i].length; j += 1) {
-        let date: string = xData.Monthly[i][j];
+        const date: string = xData.Monthly[i][j];
         let sum: number = 0;
         let count: number = 0;
         for (let k = 0; k < xData.Monthly.length; k += 1) {
@@ -260,7 +264,7 @@ const getGroupedData = () => {
             count += 1;
           }
         }
-        if (count != 0) {
+        if (count !== 0) {
           averageDateWiseResilienceScores.Monthly.dates.push(date);
           averageDateWiseResilienceScores.Monthly.avgResilienceScores.push(
             sum / count
@@ -270,32 +274,45 @@ const getGroupedData = () => {
     }
     return averageDateWiseResilienceScores;
   };
-*/
+
+  const argSort = (arr1: number[], arr2: number[]) =>
+    arr1
+      .map((item: any, index: number) => [arr2[index], item]) // add the args to sort by
+      .sort(([arg1], [arg2]) => arg2 - arg1) // sort by the args
+      .map(([, item]) => item); // extract the sorted items
+
   const processData = () => {
     // const calculatedAverageCommon: AverageDateWiseResilienceScores = avgWorkflowsCommon();
     // console.log(calculatedAverageCommon);
-    // const calculatedAverageAll: AverageDateWiseResilienceScores = avgWorkflowsAll();
+    const calculatedAverageAll: AverageDateWiseResilienceScores = avgWorkflowsAll();
     // console.log(calculatedAverageAll);
 
     let dataX = [['']];
     let dataY = [[0]];
+    let xAvg: string[] = [];
+    let yAvg: number[] = [];
     if (currentGranularity.name === 'Daily') {
       dataX = xData.Daily;
       dataY = yData.Daily;
+      xAvg = calculatedAverageAll.Daily.dates;
+      yAvg = calculatedAverageAll.Daily.avgResilienceScores;
     }
     if (currentGranularity.name === 'Monthly') {
       dataX = xData.Monthly;
       dataY = yData.Monthly;
+      xAvg = calculatedAverageAll.Monthly.dates;
+      yAvg = calculatedAverageAll.Monthly.avgResilienceScores;
     }
-    const colors = ['#CA2C2C', '#109B67', '#F6B92B', '#858CDD'];
 
-    const lineSize = [3, 3, 3, 3];
+    //
+
+    const lineSize: number[] = Array(labels?.length).fill(3);
 
     const data = [];
 
-    const series = [0, 0, 0, 0];
+    const series: number[] = Array(labels?.length).fill(0);
 
-    const lengths = [0, 0, 0, 0];
+    const lengths: number[] = Array(labels?.length).fill(0);
 
     for (let i = 0; i < dataX.length; i += 1) {
       const result = {
@@ -317,7 +334,41 @@ const getGroupedData = () => {
       lengths[i] = dataY[i].length;
     }
 
-    const normalized = [0, 0, 0, 0];
+    const unixTimeArray: number[] = [];
+    xAvg.forEach((x) => {
+      unixTimeArray.push(parseInt(moment(x).format('X'), 10));
+    });
+
+    const argSortResultY = argSort(yAvg, unixTimeArray).reverse();
+    const sortedResultX = unixTimeArray.sort(function difference(a, b) {
+      return a - b;
+    });
+
+    const datesX: string[] = [];
+
+    sortedResultX.forEach((date) => {
+      datesX.push(formatDate(date.toString()));
+    });
+
+    // console.log(datesX);
+    // console.log(argSortResultY);
+
+    const avgResult = {
+      x: datesX,
+      y: argSortResultY,
+      type: 'scatter',
+      mode: 'lines',
+      line: {
+        shape: 'spline',
+        dash: 'dash',
+        color: '5B44BA',
+        width: 3,
+      },
+      name: 'AVG Workflows',
+    };
+    data.push(avgResult);
+
+    const normalized = Array(labels?.length).fill(0);
 
     for (let k = 0; k < lengths.length; k += 1) {
       normalized[k] = series[k] / lengths[k];
@@ -327,12 +378,11 @@ const getGroupedData = () => {
     const maxID = normalized.indexOf(max);
     const min = Math.min(...normalized);
     const minID = normalized.indexOf(min);
-
     setEdgeData({
       highScore: max,
       lowScore: min,
-      highColor: colors[maxID],
-      lowColor: colors[minID],
+      highColor: `#${colors[maxID]}`,
+      lowColor: `#${colors[minID]}`,
       highName: labels ? labels[maxID] : '',
       lowName: labels ? labels[minID] : '',
     });
@@ -426,6 +476,10 @@ const getGroupedData = () => {
           color: 'rgba(0, 0, 0, 0.4)',
         },
         mirror: true,
+        tickmode: 'array',
+        tickvals: [0, 20, 40, 60, 80, 100],
+        ticktext: ['0', '20', '40', '60', '80', '100'],
+        range: [-10, 110],
       },
       cliponaxis: true,
       layer: 'below_traces',

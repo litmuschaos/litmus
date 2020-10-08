@@ -4,12 +4,12 @@ import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import cronstrue from 'cronstrue';
-import { ScheduleWorkflow } from '../../../../models/graphql/scheduleData';
 import { history } from '../../../../redux/configureStore';
 import useStyles from './styles';
+import { Workflow } from '../../../../models/graphql/workflowListData';
 
 interface TableDataProps {
-  data: ScheduleWorkflow;
+  data: Workflow;
   itemSelectionStatus: boolean;
   labelIdentifier: string;
   comparisonState: Boolean;

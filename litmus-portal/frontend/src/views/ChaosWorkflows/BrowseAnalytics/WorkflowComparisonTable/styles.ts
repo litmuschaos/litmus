@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(4.25),
     border: `1px solid ${theme.palette.customColors.black(0.07)}`,
     backgroundColor: theme.palette.homePageCardBackgroundColor,
-    minHeight: '29rem',
+    maxHeight: '30.15rem',
     '&::-webkit-scrollbar': {
       width: '0.2em',
     },
@@ -90,7 +90,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(4.25),
     border: `1px solid ${theme.palette.customColors.black(0.07)}`,
     backgroundColor: theme.palette.common.white,
-    height: '29.75rem',
+    maxHeight: '30.15rem',
     '&::-webkit-scrollbar': {
       width: '0.2em',
     },
@@ -279,7 +279,7 @@ const useStyles = makeStyles((theme) => ({
 
   regularityData: {
     maxWidth: '17rem',
-    marginLeft: theme.spacing(-3),
+    marginLeft: theme.spacing(-1),
   },
 
   iconDiv: {

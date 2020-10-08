@@ -28,7 +28,7 @@ const CenteredTabs = () => {
   return (
     <Scaffold>
       <section className="Header section">
-        <div className={classes.backBotton}>
+        <div className={classes.backButton}>
           <ButtonOutline
             isDisabled={false}
             handleClick={handleClick}
