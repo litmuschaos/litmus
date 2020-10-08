@@ -132,6 +132,11 @@ chaosWorkflows:
       seeAnalytics: See analytics
 
 settings:
+  teamingTab:
+    deleteModal:
+      header: Are you sure
+      text: to remove the current user?
+      body: The user will lose access to the team’s work and all
   userManagementTab:
     createUser:
       userDetails:

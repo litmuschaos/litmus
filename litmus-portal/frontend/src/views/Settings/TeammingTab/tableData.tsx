@@ -2,6 +2,7 @@ import { useMutation } from '@apollo/client/react/hooks';
 import { Avatar, IconButton, TableCell, Typography } from '@material-ui/core';
 import moment from 'moment';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
@@ -25,7 +26,7 @@ const TableData: React.FC<TableDataProps> = ({ row /* index */ }) => {
   // const [role, setRole] = useState<string>('Viewer');
 
   const userData = useSelector((state: RootState) => state.userData);
-
+  const { t } = useTranslation();
   // for closing the menu option
   // const handleClose = () => {
   //   setAnchorEl(null);
@@ -166,13 +167,13 @@ const TableData: React.FC<TableDataProps> = ({ row /* index */ }) => {
           <img src="./icons/userDel.svg" alt="lock" />
           <div className={classes.text}>
             <Typography className={classes.typo} align="center">
-              Are you sure
-              <strong> to remove the current user?</strong>
+              {t('settings.teamingTab.deleteModal.header')}
+              <strong> {t('settings.teamingTab.deleteModal.text')}</strong>
             </Typography>
           </div>
           <div className={classes.textSecond}>
             <Typography className={classes.typoSub} align="center">
-              <>The user will lose access to the team’s work and all</>
+              <>{t('settings.teamingTab.deleteModal.body')}</>
             </Typography>
           </div>
           <div className={classes.buttonGroup}>
