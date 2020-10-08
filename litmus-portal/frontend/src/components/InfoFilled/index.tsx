@@ -1,6 +1,7 @@
 import { useTheme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import Center from '../../containers/layouts/Center';
 import { RootState } from '../../redux/reducers';
@@ -22,6 +23,7 @@ interface CardValueData {
 
 const InfoFilledWrap: React.FC = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
   const theme = useTheme();
   // Card Value Data fetched from Redux
   const { communityData, loading, error } = useSelector(
@@ -90,14 +92,13 @@ const InfoFilledWrap: React.FC = () => {
       {loading ? (
         <div>
           <Loader />
-          <Typography>Fetching the data...</Typography>
+          <Typography>{t('airGapped.fetchData')}</Typography>
         </div>
       ) : error ? (
         <div className={classes.errorMessage}>
           <Center>
             <Typography variant="h4">
-              It seems you have no internet connection, Please try again When
-              connectivity resumes.
+              {t('airGapped.connectionError')}
             </Typography>
           </Center>
         </div>

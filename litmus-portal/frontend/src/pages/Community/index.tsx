@@ -41,11 +41,11 @@ const Community: React.FC = () => {
         <div className={classes.root}>
           <div>
             <Typography variant="h3" className={classes.mainHeader}>
-              Community
+              {t('community.title')}
             </Typography>
             <div>
               <Loader />
-              <Typography>Fetching the data...</Typography>
+              <Typography>{t('community.fetchData')}</Typography>
             </div>
           </div>
         </div>
@@ -58,14 +58,13 @@ const Community: React.FC = () => {
         <div className={classes.root}>
           <div>
             <Typography variant="h3" className={classes.mainHeader}>
-              Community
+              {t('community.title')}
             </Typography>
           </div>
           <div className={classes.errorMessage}>
             <Center>
               <Typography variant="h4">
-                It seems you have no internet connection, Please try again when
-                connectivity resumes.
+                {t('airGapped.connectionError')}
               </Typography>
             </Center>
           </div>
@@ -79,7 +78,7 @@ const Community: React.FC = () => {
       <div className={classes.root}>
         <div>
           <Typography variant="h3" className={classes.mainHeader}>
-            Community
+            {t('community.title')}
           </Typography>
         </div>
 
@@ -112,7 +111,7 @@ const Community: React.FC = () => {
                       component="p"
                       className={classes.LitmusOnDev}
                     >
-                      Litmuschaos
+                      {t('community.litmusChaos')}
                       <br />
                       <span className={classes.LitmusOnDevSpan}>on </span>
                       <img
@@ -129,7 +128,7 @@ const Community: React.FC = () => {
                     className={classes.devToLink}
                   >
                     <Button variant="contained" className={classes.followBtn}>
-                      Follow
+                      {t('community.follow')}
                     </Button>
                   </a>
                 </Card>
