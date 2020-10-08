@@ -108,6 +108,10 @@ const BrowseCluster = () => {
         const p = 'false';
         return p.includes(filters.status.toLowerCase());
       }
+      if ((dataRow.is_active as boolean).toString().toLowerCase() === 'true') {
+        const p = 'true';
+        return p.includes(filters.status.toLowerCase());
+      }
       return true;
     })
     .filter((dataRow) =>

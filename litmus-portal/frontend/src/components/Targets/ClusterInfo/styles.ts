@@ -27,18 +27,14 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(5),
     marginTop: theme.spacing(5),
   },
-  Signed: {
-    minWidth: '2.625rem',
-    minHeight: '0.8125rem',
-    background: 'rgba(16, 155, 103, 0.1)',
-    marginRight: theme.spacing(2.5),
-    borderRadius: '0.1875rem',
+  active: {
+    width: '5.9125rem',
+    textAlign: 'center',
+    borderRadius: 3,
+    paddingTop: theme.spacing(0.375),
+    paddingBottom: theme.spacing(0.375),
     color: theme.palette.primary.dark,
-    fontSize: '0.625rem',
-    paddingRight: theme.spacing(1.18),
-    paddingLeft: theme.spacing(1.18),
-    paddingTop: theme.spacing(0.834),
-    paddingBottom: theme.spacing(0.834),
+    background: theme.palette.customColors.menuOption.active,
   },
   firstCol: {
     display: 'flex',
@@ -56,15 +52,14 @@ const useStyles = makeStyles((theme) => ({
   version: {
     marginTop: theme.spacing(2),
   },
-  NotSigned: {
-    minWidth: '2.625rem',
-    minHeight: '0.8125rem',
-    background: 'rgba(202, 44, 44, 0.1)',
-    marginRight: theme.spacing(2.5),
-    fontSize: '0.625rem',
-    padding: theme.spacing(0.834),
-    borderRadius: '0.1875rem',
-    color: '#CA2C2C',
+  notactive: {
+    width: '5.9125rem',
+    textAlign: 'center',
+    borderRadius: 3,
+    paddingTop: theme.spacing(0.375),
+    paddingBottom: theme.spacing(0.375),
+    color: theme.palette.error.dark,
+    backgroundColor: theme.palette.error.light,
   },
   aboutDiv: {
     display: 'flex',
@@ -89,7 +84,6 @@ const useStyles = makeStyles((theme) => ({
   btnText: {
     paddingLeft: theme.spacing(1.625),
   },
-  //
   rightMargin: {
     marginRight: theme.spacing(8),
   },

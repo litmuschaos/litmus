@@ -149,7 +149,7 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(0.375),
     paddingBottom: theme.spacing(0.375),
     color: theme.palette.primary.dark,
-    backgroundColor: 'rgba(16, 155, 103, 0.1)',
+    background: theme.palette.customColors.menuOption.active,
   },
   failed: {
     width: '5.9125rem',
@@ -205,7 +205,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: '8.56rem',
     display: 'flex',
     marginTop: theme.spacing(3),
-    color: '#CA2C2C',
+    color: theme.palette.error.dark,
   },
   bin: {
     marginRight: theme.spacing(1.485),

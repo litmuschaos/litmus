@@ -16,15 +16,21 @@ import {
 import { USER_CLUSTER_REG, GET_CLUSTER } from '../../../graphql';
 import { RootState } from '../../../redux/reducers';
 import Loader from '../../Loader';
+import ButtonFilled from '../../Button/ButtonFilled';
+import Unimodal from '../../../containers/layouts/Unimodal';
 
 const ConnectTarget = () => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const [link, setLink] = React.useState('');
   const [id, setID] = React.useState('');
-  // const [modal, setModal] = React.useState(false);
+  const [modal, setModal] = React.useState(false);
 
   const handleClick = () => {
+    history.push('/targets');
+  };
+
+  const handleClose = () => {
     history.push('/targets');
   };
 
@@ -51,7 +57,7 @@ const ConnectTarget = () => {
           if (id === e.cluster_id) {
             if (e.is_cluster_confirmed === true) {
               setOpen(false);
-              // setModal(true)
+              setModal(true);
             }
           }
         });
@@ -63,9 +69,9 @@ const ConnectTarget = () => {
 
   useEffect(() => {
     const createClusterInput = {
-      cluster_name: Math.random().toString(36).substring(7), // 'oumkale-agent',
-      description: 'external',
-      platform_name: 'aws',
+      cluster_name: Math.random().toString(36).substring(7),
+      description: 'external agent',
+      platform_name: '',
       project_id: selectedProjectID,
       cluster_type: 'external',
     };
@@ -128,12 +134,56 @@ const ConnectTarget = () => {
                 <Loader size={20} />
               </div>
               <div>
-                <Typography> {t('targets.newTarget.conformation')} </Typography>
+                <Typography>{t('targets.newTarget.conformation')}</Typography>
               </div>
             </div>
           ) : null}
         </div>
       </section>
+      <div>
+        <Unimodal
+          isOpen={modal}
+          handleClose={handleClose}
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+          hasCloseBtn
+        >
+          <div className={classes.body}>
+            <img src="icons/finish.svg" className={classes.mark} alt="mark" />
+            <Typography className={classes.heading}>
+              {t('ConnectTargets.title')}
+              <br />
+              {t('ConnectTargets.head')}
+            </Typography>
+            <Typography className={classes.headWorkflow}>
+              {t('ConnectTargets.info')} <br />
+              {t('ConnectTargets.mainLine')}
+            </Typography>
+            <div className={classes.buttonModal}>
+              <ButtonOutline
+                isDisabled={false}
+                handleClick={() => {
+                  history.push('/targets');
+                  setOpen(false);
+                }}
+              >
+                <div>{t('ConnectTargets.button.buttonBack')}</div>
+              </ButtonOutline>
+
+              <ButtonFilled
+                data-cy="connectTarget"
+                isPrimary={false}
+                handleClick={() => {
+                  history.push('/create-workflow');
+                  setOpen(false);
+                }}
+              >
+                <div> {t('ConnectTargets.button.buttonSchedule')}</div>
+              </ButtonFilled>
+            </div>
+          </div>
+        </Unimodal>
+      </div>
     </Scaffold>
   );
 };

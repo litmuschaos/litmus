@@ -54,11 +54,11 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
                 </div>
                 <div>
                   {data.is_active ? (
-                    <div className={classes.Signed}>
+                    <div className={classes.active}>
                       {t('workflowCluster.header.formControl.menu1')}
                     </div>
                   ) : (
-                    <div className={classes.NotSigned}>
+                    <div className={classes.notactive}>
                       {t('workflowCluster.header.formControl.menu2')}
                     </div>
                   )}
