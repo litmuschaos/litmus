@@ -53,6 +53,9 @@ interface WorkFlowTests {
 const AnalyticsPage: React.FC = () => {
   const classes = useStyles();
   const [popoverOpen, setPopoverOpen] = React.useState<boolean>(false);
+  const [workflowRunPresent, setWorkflowRunPresent] = React.useState<boolean>(
+    true
+  );
   const { pathname } = useLocation();
   // Getting the workflow nome from the pathname
   const workflowId = pathname.split('/')[3];
@@ -130,6 +133,15 @@ const AnalyticsPage: React.FC = () => {
         console.error(error);
       }
     });
+
+    try {
+      const check: string = selectedWorkflows
+        ? selectedWorkflows[0].workflow_run_id
+        : '';
+    } catch (error) {
+      setWorkflowRunPresent(false);
+      return;
+    }
 
     const workflowRunOnce = {
       testsPassed: experimentTestResultsArray.length
@@ -224,58 +236,75 @@ const AnalyticsPage: React.FC = () => {
 
   return (
     <Scaffold>
-      {workflowRunDataForPlot.length ? (
-        <div className={classes.rootContainer}>
-          <div className={classes.root}>
-            <Typography variant="h4">
-              <strong>Workflow Analytics</strong>
-            </Typography>
-            <div className={classes.headerDiv}>
-              <Typography variant="body1">
-                {t('analytics.viewTestResult')}
+      {workflowRunPresent ? (
+        <div>
+          {workflowRunDataForPlot.length ? (
+            <div className={classes.rootContainer}>
+              <div className={classes.root}>
+                <Typography variant="h4">
+                  <strong>Workflow Analytics</strong>
+                </Typography>
+                <div className={classes.headerDiv}>
+                  <Typography variant="body1">
+                    {t('analytics.viewTestResult')}
+                  </Typography>
+                </div>
+
+                <div className={classes.analyticsDiv}>
+                  <WorkflowRunsBarChart
+                    workflowRunData={workflowRunDataForPlot}
+                    callBackToShowPopOver={setPopOverDisplay}
+                    callBackToSelectWorkflowRun={(
+                      selectedWorkflowRunID: string
+                    ) => {
+                      setSelectedWorkflowRunID(selectedWorkflowRunID);
+                    }}
+                  />
+                  {selectedWorkflowRunID !== '' ? (
+                    <WorkflowDetailsTable
+                      workflowRunDetails={selectedWorkflowRunDetails ?? []}
+                      workflowID={workflowId}
+                      reloadAnalytics={(reload: boolean) => {
+                        setSelectedWorkflowRunID('');
+                      }}
+                    />
+                  ) : (
+                    <div />
+                  )}
+                  {popoverOpen ? (
+                    <PopOver
+                      testsPassed={selectedWorkflowRunData.testsPassed}
+                      testsFailed={selectedWorkflowRunData.testsFailed}
+                      resilienceScore={selectedWorkflowRunData.resilienceScore}
+                      testDate={selectedWorkflowRunData.testDate}
+                      xLoc={selectedWorkflowRunData.xLoc}
+                      yLoc={selectedWorkflowRunData.yLoc}
+                    />
+                  ) : (
+                    <div />
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : error ? (
+            <div>
+              <Typography className={classes.waitingText}>
+                {t('analytics.fetchError')}
               </Typography>
             </div>
-
-            <div className={classes.analyticsDiv}>
-              <WorkflowRunsBarChart
-                workflowRunData={workflowRunDataForPlot}
-                callBackToShowPopOver={setPopOverDisplay}
-                callBackToSelectWorkflowRun={(
-                  selectedWorkflowRunID: string
-                ) => {
-                  setSelectedWorkflowRunID(selectedWorkflowRunID);
-                }}
-              />
-              {selectedWorkflowRunID !== '' ? (
-                <WorkflowDetailsTable
-                  workflowRunDetails={selectedWorkflowRunDetails ?? []}
-                  workflowID={workflowId}
-                  reloadAnalytics={(reload: boolean) => {
-                    setSelectedWorkflowRunID('');
-                  }}
-                />
-              ) : (
-                <div />
-              )}
-              {popoverOpen ? (
-                <PopOver
-                  testsPassed={selectedWorkflowRunData.testsPassed}
-                  testsFailed={selectedWorkflowRunData.testsFailed}
-                  resilienceScore={selectedWorkflowRunData.resilienceScore}
-                  testDate={selectedWorkflowRunData.testDate}
-                  xLoc={selectedWorkflowRunData.xLoc}
-                  yLoc={selectedWorkflowRunData.yLoc}
-                />
-              ) : (
-                <div />
-              )}
-            </div>
+          ) : (
+            <Loader />
+          )}
+        </div>
+      ) : (
+        <div>
+          <Typography className={classes.waitingText}>
+            Waiting for workflow to start running !
+          </Typography>
+          <div className={classes.loader}>
+            <Loader />
           </div>
         </div>
-      ) : error ? (
-        <Typography>{t('analytics.fetchError')}</Typography>
-      ) : (
-        <Loader />
       )}
     </Scaffold>
   );

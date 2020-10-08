@@ -28,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(6),
     marginBottom: theme.spacing(8),
   },
+
   headerDiv: {
     display: 'flex',
     flexDirection: 'row',
@@ -36,6 +37,17 @@ const useStyles = makeStyles((theme) => ({
 
   analyticsDiv: {
     marginTop: theme.spacing(5),
+  },
+
+  waitingText: {
+    fontSize: '2rem',
+    marginLeft: '25%',
+    marginTop: '25%',
+    marginBottom: '10%',
+  },
+
+  loader: {
+    marginLeft: '-8%',
   },
 }));
 
