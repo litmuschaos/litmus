@@ -150,14 +150,14 @@ settings:
 ############    Targets    ###########
 ######################################
 
-Targets:
+targets:
   connectHome:
-    head: Targets
-    connectText: Connect the Target
+    head : Targets
+    connectText: Connect the Target 
   copy:
     copy: Copy
     copied: Copied
-    copying: Command copied to clickboard
+    copying: Command copied to clickboard       
   newTarget:
     head: Connect a new target on your devices
     head1: 1.Open the cluster console
@@ -165,25 +165,43 @@ Targets:
     head3: 3.Paste it into the cluster console
     head4: 4.Click on the button
     head5: Connect the target
-ConnectTargets:
+    conformation: Kuberenetes Agent is conforming, Please wait...
+
+connectTargets:
   title: A new Target,
-  head: is successfully created!
-  info: Congratulations on connecting a new target! Now information about it
-  mainLine: will be displayed on "Targets".
+  head : is successfully created!
+  info:  Congratulations on connecting a new target! Now information about it 
+  mainLine:  will be displayed on "Targets".
   button:
     buttonBack: Back to Targets
     buttonSchedule: Schedule a workflow
-WorkflowCluster:
+workflowCluster:
   header:
     status: Current Status
     target: Target Cluster
     formControl:
+      # For Header
       menu: All
-      menu1: Failed
-      menu2: Running
-      menu3: Succeeded
+      menu1: Active
+      menu2: Not active
       menu4: Internal
       menu5: External
+      menu6: pending
+      # For Table
+      tableStatus: Status
+      tableCluster: cluster
+      name: Name
+      time: Time
+      run: Last Run
+      connectionDate: Connection Date
+      noWorkflows: Nom of workflows
+      noSchedules: Nom of schedules
+      fetchingError: Unable to fetch data
+      recordAvailable: No records available
+      delete: Delete
+      clusterInfo: Cluster information
+      about: About Litmus Cluster
+      back: Back
 
 workflows:
   browseWorkflows: Browse workflows
