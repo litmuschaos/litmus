@@ -5,15 +5,33 @@ import createPlotlyComponent from 'react-plotly.js/factory';
 import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import useStyles from './style';
 import Score from './Score';
+// import moment from 'moment';
+// import * as _ from 'lodash';
 
 const Plot = createPlotlyComponent(Plotly);
 
 interface ResilienceScoreComparisonPlotProps {
   xData: { Daily: string[][]; Monthly: string[][] };
   yData: { Daily: number[][]; Monthly: number[][] };
-  labels: string[];
+  labels?: string[];
+}
+/*
+interface AverageDateWiseResilienceScores {
+  Daily: {
+    dates: string[];
+    avgResilienceScores: number[];
+  };
+  Monthly: {
+    dates: string[];
+    avgResilienceScores: number[];
+  };
 }
 
+interface AverageDateWiseResilienceScore {
+  date: string;
+  avgResilienceScore: number;
+}
+*/
 const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps> = ({
   xData,
   yData,
@@ -52,7 +70,213 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
 
   const [plotLayout, setPlotLayout] = React.useState<any>({});
 
+  // Function to find average
+  // const average = (list: number[]) =>
+  // list.reduce((prev, curr) => prev + curr) / list.length;
+
+  /*
+  // Function to convert UNIX time in format of DD MMM YYY
+  const formatDate = (date: string) => {
+    const updated = new Date(parseInt(date, 10) * 1000).toString();
+    const resDate = moment(updated).format('YYYY-MM-DD');
+    return resDate;
+  };
+
+  // Function to calculate average of resilience scores based on common dates
+  const avgWorkflowsCommon = () => {
+    const averageDateWiseResilienceScores: AverageDateWiseResilienceScores = {
+      Daily: {
+        dates: [],
+        avgResilienceScores: [],
+      },
+      Monthly: {
+        dates: [],
+        avgResilienceScores: [],
+      },
+    };
+    for (let i = 0; i < xData.Daily[0].length; i += 1) {
+      let date: string = xData.Daily[0][i]; //formatDate(xData.Daily[0][i]);
+      let count: number = 0;
+      const valuesForProbableCommonDate: number[] = [];
+      for (let j = 0; j < xData.Daily.length; j += 1) {
+        const parsedDates: string[] = [];
+        xData.Daily[j].forEach(function (date: string) {
+          parsedDates.push(date); //formatDate(date));
+        });
+        if (parsedDates.includes(date)) {
+          count += 1;
+          valuesForProbableCommonDate.push(
+            yData.Daily[j][parsedDates.indexOf(date)]
+          );
+        }
+      }
+      if (count == xData.Daily.length) {
+        averageDateWiseResilienceScores.Daily.dates.push(date);
+        averageDateWiseResilienceScores.Daily.avgResilienceScores.push(
+          average(valuesForProbableCommonDate)
+        );
+      }
+    }
+
+    for (let i = 0; i < xData.Monthly[0].length; i += 1) {
+      let date: string = xData.Monthly[0][i]; //formatDate(xData.Monthly[0][i]);
+      let count: number = 0;
+      const valuesForProbableCommonDate: number[] = [];
+      for (let j = 0; j < xData.Monthly.length; j += 1) {
+        const parsedDates: string[] = [];
+        xData.Monthly[j].forEach(function (date: string) {
+          parsedDates.push(date); //formatDate(date));
+        });
+        if (parsedDates.includes(date)) {
+          count += 1;
+          valuesForProbableCommonDate.push(
+            yData.Monthly[j][parsedDates.indexOf(date)]
+          );
+        }
+      }
+      if (count == xData.Monthly.length) {
+        averageDateWiseResilienceScores.Monthly.dates.push(date);
+        averageDateWiseResilienceScores.Monthly.avgResilienceScores.push(
+          average(valuesForProbableCommonDate)
+        );
+      }
+    }
+    return averageDateWiseResilienceScores;
+  };
+*/
+  /*
+ // Function to group data based on dates and months
+const getGroupedData = () => {
+  const dailyList: AverageDateWiseResilienceScore[] = [];
+  calculatedAverageAll.Daily.dates.forEach((date: string, index: number) => {
+    dailyList.push({
+      date: date,
+      avgResilienceScore:
+        calculatedAverageAll.Daily.avgResilienceScores[index],
+    });
+  });
+
+  const monthlyList: AverageDateWiseResilienceScore[] = [];
+  calculatedAverageAll.Monthly.dates.forEach(
+    (date: string, index: number) => {
+      dailyList.push({
+        date: date,
+        avgResilienceScore:
+          calculatedAverageAll.Monthly.avgResilienceScores[index],
+      });
+    }
+  );
+
+  const dailyGroupedResults = _.groupBy(dailyList, (data) =>
+    moment.unix(parseInt(data.date, 10)).startOf('day')
+  );
+
+  const monthlyGroupedResults = _.groupBy(monthlyList, (data) =>
+    moment.unix(parseInt(data.date, 10)).startOf('month')
+  );
+
+  const avgResScores: AverageDateWiseResilienceScores = {
+    Daily: {
+      dates: [],
+      avgResilienceScores: [],
+    },
+    Monthly: {
+      dates: [],
+      avgResilienceScores: [],
+    },
+  };
+
+  Object.keys(dailyGroupedResults).forEach((day) => {
+    const scoresForTheDay: AverageDateWiseResilienceScore[] =
+      dailyGroupedResults[day];
+    const average =
+      scoresForTheDay.reduce(
+        (total, next) => total + next.avgResilienceScore,
+        0
+      ) / scoresForTheDay.length;
+    avgResScores.Daily.dates.push(day);
+    avgResScores.Daily.avgResilienceScores.push(average);
+  });
+
+  Object.keys(monthlyGroupedResults).forEach((month) => {
+    const scoresForTheMonth: AverageDateWiseResilienceScore[] =
+      monthlyGroupedResults[month];
+    const average =
+      scoresForTheMonth.reduce(
+        (total, next) => total + next.avgResilienceScore,
+        0
+      ) / scoresForTheMonth.length;
+    avgResScores.Monthly.dates.push(month);
+    avgResScores.Monthly.avgResilienceScores.push(average);
+  });
+};
+  // Function to calculate average of resilience scores based on all dates with range as edge dates
+  const avgWorkflowsAll = () => {
+    const averageDateWiseResilienceScores: AverageDateWiseResilienceScores = {
+      Daily: {
+        dates: [],
+        avgResilienceScores: [],
+      },
+      Monthly: {
+        dates: [],
+        avgResilienceScores: [],
+      },
+    };
+
+    for (let i = 0; i < xData.Daily.length; i += 1) {
+      for (let j = 0; j < xData.Daily[i].length; j += 1) {
+        let date: string = xData.Daily[i][j];
+        let sum: number = 0;
+        let count: number = 0;
+        for (let k = 0; k < xData.Daily.length; k += 1) {
+          if (
+            xData.Daily[k].includes(date) &&
+            !averageDateWiseResilienceScores.Daily.dates.includes(date)
+          ) {
+            sum += yData.Daily[k][xData.Daily[k].indexOf(date)];
+            count += 1;
+          }
+        }
+        if (count != 0) {
+          averageDateWiseResilienceScores.Daily.dates.push(date);
+          averageDateWiseResilienceScores.Daily.avgResilienceScores.push(
+            sum / count
+          );
+        }
+      }
+    }
+
+    for (let i = 0; i < xData.Monthly.length; i += 1) {
+      for (let j = 0; j < xData.Monthly[i].length; j += 1) {
+        let date: string = xData.Monthly[i][j];
+        let sum: number = 0;
+        let count: number = 0;
+        for (let k = 0; k < xData.Monthly.length; k += 1) {
+          if (
+            xData.Monthly[k].includes(date) &&
+            !averageDateWiseResilienceScores.Monthly.dates.includes(date)
+          ) {
+            sum += yData.Monthly[k][xData.Monthly[k].indexOf(date)];
+            count += 1;
+          }
+        }
+        if (count != 0) {
+          averageDateWiseResilienceScores.Monthly.dates.push(date);
+          averageDateWiseResilienceScores.Monthly.avgResilienceScores.push(
+            sum / count
+          );
+        }
+      }
+    }
+    return averageDateWiseResilienceScores;
+  };
+*/
   const processData = () => {
+    // const calculatedAverageCommon: AverageDateWiseResilienceScores = avgWorkflowsCommon();
+    // console.log(calculatedAverageCommon);
+    // const calculatedAverageAll: AverageDateWiseResilienceScores = avgWorkflowsAll();
+    // console.log(calculatedAverageAll);
+
     let dataX = [['']];
     let dataY = [[0]];
     if (currentGranularity.name === 'Daily') {
@@ -84,7 +308,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
           color: colors[i],
           width: lineSize[i],
         },
-        name: labels[i],
+        name: labels ? labels[i] : '',
       };
       data.push(result);
       for (let j = 0; j < dataY[i].length; j += 1) {
@@ -109,8 +333,8 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
       lowScore: min,
       highColor: colors[maxID],
       lowColor: colors[minID],
-      highName: labels[maxID],
-      lowName: labels[minID],
+      highName: labels ? labels[maxID] : '',
+      lowName: labels ? labels[minID] : '',
     });
     setPlotData(data);
   };
