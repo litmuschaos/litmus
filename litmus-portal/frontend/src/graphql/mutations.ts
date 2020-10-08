@@ -34,6 +34,12 @@ export const SEND_INVITE = gql`
   }
 `;
 
+export const REMOVE_INVITATION = gql`
+  mutation RemoveInvitation($data: MemberInput!) {
+    removeInvitation(member: $data)
+  }
+`;
+
 export const ACCEPT_INVITE = gql`
   mutation accept($member: MemberInput!) {
     acceptInvitation(member: $member)

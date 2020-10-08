@@ -135,6 +135,21 @@ chaosWorkflows:
       seeAnalytics: See analytics
 
 settings:
+  teamingTab:
+    deleteModal:
+      header: Are you sure
+      text: to remove the current user?
+      body: The user will lose access to the team’s work and all
+      yesButton: Yes
+      noButton: No
+    sentInvitation:
+      menuItem:
+        editorRole:
+          label: Editor
+          body: Can make changes in the project
+        viewerRole:
+          label: Viewer
+          body: Can view the project
   userManagementTab:
     createUser:
       userDetails:
@@ -148,6 +163,9 @@ settings:
         title: Change your Avatar
         info: You can now use your new password to login to your account
         button: Choose an avatar
+    deleteUser:
+      deleteModal:
+        body: The user will lose access to the portal
 
 ######################################
 ############    Targets    ###########
