@@ -59,9 +59,6 @@ func startWatch(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan
 		UpdateFunc: func(oldObj, obj interface{}) {
 			workflowEventHandler(obj, "UPDATE", stream, startTime)
 		},
-		DeleteFunc: func(obj interface{}) {
-			workflowEventHandler(obj, "DELETE", stream, startTime)
-		},
 	}
 	s.AddEventHandler(handlers)
 	s.Run(stopCh)

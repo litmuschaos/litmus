@@ -97,10 +97,13 @@ workflowUnderground:
   heading: 'Click on test to see detailed log of your workflow'
 
 community:
+  title: 'Community'
   heading: 'Litmus Insights'
   headingDesc: 'Stats for the Litmus community'
   analyticDesc: 'Periodic growth of Litmus'
   statsHeading: 'Litmus users around the world:'
+  litmusChaos: Litmuschaos
+  follow: Follow
 
 analytics:
   fetchError: An error has occurred while fetching the data
@@ -132,6 +135,21 @@ chaosWorkflows:
       seeAnalytics: See analytics
 
 settings:
+  teamingTab:
+    deleteModal:
+      header: Are you sure
+      text: to remove the current user?
+      body: The user will lose access to the team’s work and all
+      yesButton: Yes
+      noButton: No
+    sentInvitation:
+      menuItem:
+        editorRole:
+          label: Editor
+          body: Can make changes in the project
+        viewerRole:
+          label: Viewer
+          body: Can view the project
   userManagementTab:
     createUser:
       userDetails:
@@ -145,6 +163,9 @@ settings:
         title: Change your Avatar
         info: You can now use your new password to login to your account
         button: Choose an avatar
+    deleteUser:
+      deleteModal:
+        body: The user will lose access to the portal
 
 ######################################
 ############    Targets    ###########
@@ -216,3 +237,11 @@ workflows:
   templates: Templates
   analytics: Analytics
   scheduleAWorkflow: Schedule a workflow
+
+#########################################
+############    dataErrors    ###########
+#########################################
+
+internetIssues:
+  fetchData: 'Fetching the data...'
+  connectionError: It seems you have no internet connection, Please try again When connectivity resumes.
