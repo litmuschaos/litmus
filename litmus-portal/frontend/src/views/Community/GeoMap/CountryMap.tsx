@@ -14,7 +14,7 @@ const CountryMap = () => {
   const classes = useStyles();
   const theme = useTheme();
 
-  const data: string[][] = communityData.google.geoCountry;
+  const data = communityData.google.geoCountry;
 
   const parsedData = data.map((item) => [item[0], parseInt(item[1], 10)]);
   parsedData.unshift(['Country', 'Count']);

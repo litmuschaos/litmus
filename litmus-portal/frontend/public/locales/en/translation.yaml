@@ -195,10 +195,10 @@ workflows:
   analytics: Analytics
   scheduleAWorkflow: Schedule a workflow
 
-#################################################
-############    Air-Gapped Screens    ###########
-#################################################
+#########################################
+############    dataErrors    ###########
+#########################################
 
-airGapped:
+internetIssues:
   fetchData: 'Fetching the data...'
   connectionError: It seems you have no internet connection, Please try again When connectivity resumes.

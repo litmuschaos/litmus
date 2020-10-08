@@ -45,7 +45,7 @@ const Community: React.FC = () => {
             </Typography>
             <div>
               <Loader />
-              <Typography>{t('community.fetchData')}</Typography>
+              <Typography>{t('internetIssues.fetchData')}</Typography>
             </div>
           </div>
         </div>
@@ -64,7 +64,7 @@ const Community: React.FC = () => {
           <div className={classes.errorMessage}>
             <Center>
               <Typography variant="h4">
-                {t('airGapped.connectionError')}
+                {t('internetIssues.connectionError')}
               </Typography>
             </Center>
           </div>

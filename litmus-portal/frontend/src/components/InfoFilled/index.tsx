@@ -92,13 +92,13 @@ const InfoFilledWrap: React.FC = () => {
       {loading ? (
         <div>
           <Loader />
-          <Typography>{t('airGapped.fetchData')}</Typography>
+          <Typography>{t('internetIssues.fetchData')}</Typography>
         </div>
       ) : error ? (
         <div className={classes.errorMessage}>
           <Center>
             <Typography variant="h4">
-              {t('airGapped.connectionError')}
+              {t('internetIssues.connectionError')}
             </Typography>
           </Center>
         </div>
