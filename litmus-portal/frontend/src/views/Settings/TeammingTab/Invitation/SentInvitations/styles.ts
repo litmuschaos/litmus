@@ -29,45 +29,5 @@ const useStyles = makeStyles((theme) => ({
   buttonDiv: {
     display: 'flex',
   },
-
-  pending: {
-    minWidth: '2.625rem',
-    background: theme.palette.customColors.menuOption.pending,
-    marginLeft: theme.spacing(1.0),
-    borderRadius: '0.1875rem',
-    color: theme.palette.warning.main,
-    fontSize: '0.625rem',
-    padding: theme.spacing(0.5, 0.5, 0.5, 0.5),
-  },
-  declined: {
-    minWidth: '2.625rem',
-    marginLeft: theme.spacing(1.0),
-    borderRadius: '0.1875rem',
-    fontSize: '0.625rem',
-    padding: theme.spacing(0.5, 0.5, 0.5, 0.5),
-    color: theme.palette.error.dark,
-    background: theme.palette.error.light,
-  },
-
-  flexstatus: {
-    display: 'flex',
-  },
-  menuHeader: {
-    fontSize: '0.75rem',
-  },
-  menuDesc: {
-    fontSize: '0.625rem',
-  },
-  menuOpt: {
-    '&:hover': {
-      background: theme.palette.customColors.menuOption.active,
-    },
-  },
-  optionBtn: {
-    marginLeft: 'auto',
-  },
-  dropDown: {
-    paddingTop: theme.spacing(1.0),
-  },
 }));
 export default useStyles;

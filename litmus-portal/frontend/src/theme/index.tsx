@@ -52,7 +52,6 @@ declare module '@material-ui/core/styles/createPalette' {
       gray: string;
       menuOption: {
         active: string;
-        pending: string;
       };
     };
     input: {
@@ -121,7 +120,6 @@ declare module '@material-ui/core/styles/createPalette' {
       gray?: string;
       menuOption?: {
         active?: string;
-        pending?: string;
       };
     };
     input?: {
@@ -240,7 +238,6 @@ function customTheme(options: ThemeOptions) {
         gray: '#5D6173',
         menuOption: {
           active: 'rgba(16, 155, 103, 0.1)',
-          pending: 'rgba(246,185,43,0.2)',
         },
       },
       editorBackground: '#1C1C1C',

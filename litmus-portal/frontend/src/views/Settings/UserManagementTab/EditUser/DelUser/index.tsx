@@ -1,6 +1,5 @@
-import { IconButton, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../../../components/Button/ButtonOutline';
 import Unimodal from '../../../../../containers/layouts/Unimodal';
@@ -20,13 +19,11 @@ const DelUser: React.FC<DelUserProps> = ({
   tableDelete,
   teammingDel,
   handleTable,
-  disabled,
+  // disabled,
 }) => {
   const classes = useStyles();
 
   const [open, setOpen] = React.useState(false);
-
-  const { t } = useTranslation();
 
   const handleClose = () => {
     handleTable();
@@ -35,9 +32,9 @@ const DelUser: React.FC<DelUserProps> = ({
 
   return (
     <div>
-      {tableDelete ? (
+      {/* {tableDelete ? (
         <>
-          {/*  <MenuItem
+          <MenuItem
             value="delete"
             onClick={() => {
               setOpen(true);
@@ -47,7 +44,7 @@ const DelUser: React.FC<DelUserProps> = ({
               <img alt="delete" src="./icons/bin.svg" />
             </IconButton>
             <Typography>Delete User</Typography>
-          </MenuItem> */}
+          </MenuItem>
         </>
       ) : (
         <>
@@ -79,24 +76,22 @@ const DelUser: React.FC<DelUserProps> = ({
             </div>
           )}
         </>
-      )}
-      <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn>
+      )} */}
+      <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn={false}>
         <div className={classes.body}>
           <img src="./icons/userDel.svg" alt="lock" />
           <div className={classes.text}>
             <Typography className={classes.typo} align="center">
-              {t('settings.teamingTab.deleteModal.header')}
-              <strong> {t('settings.teamingTab.deleteModal.text')}</strong>
+              Are you sure
+              <strong> to remove the current user?</strong>
             </Typography>
           </div>
           <div className={classes.textSecond}>
             <Typography className={classes.typoSub} align="center">
               {teammingDel ? (
-                <>{t('settings.teamingTab.deleteModal.body')}</>
+                <>The user will lost access to the team’s work and all</>
               ) : (
-                <>
-                  {t('settings.userManagementTab.deleteUser.deleteModal.body')}
-                </>
+                <>The user will lose access to the portal</>
               )}
             </Typography>
           </div>
@@ -107,7 +102,7 @@ const DelUser: React.FC<DelUserProps> = ({
                 setOpen(false);
               }}
             >
-              <> {t('settings.teamingTab.deleteModal.noButton')}</>
+              <> No</>
             </ButtonOutline>
 
             <ButtonFilled
@@ -115,7 +110,7 @@ const DelUser: React.FC<DelUserProps> = ({
               isPrimary
               handleClick={tableDelete ? handleModal : handleClose}
             >
-              <>{t('settings.teamingTab.deleteModal.yesButton')}</>
+              <>Yes</>
             </ButtonFilled>
           </div>
         </div>

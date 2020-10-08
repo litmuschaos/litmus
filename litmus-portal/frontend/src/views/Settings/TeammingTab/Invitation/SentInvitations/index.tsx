@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client/react/hooks';
 import {
+  Avatar,
   Table,
   TableCell,
   TableContainer,
@@ -8,6 +9,7 @@ import {
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import { GET_USER } from '../../../../../graphql';
 import {
   CurrentUserDedtailsVars,
@@ -15,8 +17,8 @@ import {
   Member,
 } from '../../../../../models/graphql/user';
 import { RootState } from '../../../../../redux/reducers';
+import userAvatar from '../../../../../utils/user';
 import useStyles from './styles';
-import TableData from './TableData';
 
 const SentInvitations: React.FC = () => {
   const classes = useStyles();
@@ -44,10 +46,7 @@ const SentInvitations: React.FC = () => {
       });
 
       memberList.forEach((member) => {
-        if (
-          member.invitation === 'Pending' ||
-          member.invitation === 'Declined'
-        ) {
+        if (member.invitation === 'Pending') {
           users.push(member);
         }
         setRows(users);
@@ -62,7 +61,31 @@ const SentInvitations: React.FC = () => {
           {rows.length > 0 ? (
             rows.map((row) => (
               <TableRow key={row.user_name}>
-                <TableData row={row} />
+                <TableCell>
+                  <div className={classes.rowDiv}>
+                    <div className={classes.firstCol}>
+                      <Avatar
+                        data-cy="avatar"
+                        alt="User"
+                        className={classes.avatarBackground}
+                        style={{ alignContent: 'right' }}
+                      >
+                        {row.user_name
+                          ? userAvatar(row.user_name)
+                          : userAvatar(row.user_name)}
+                      </Avatar>
+                      <div className={classes.detail}>
+                        <div> {row.user_name}</div>
+                        <div>{row.role}</div>
+                      </div>
+                    </div>
+                    <div className={classes.buttonDiv}>
+                      <ButtonFilled isPrimary handleClick={() => {}} isDisabled>
+                        <div>Resend invite link </div>
+                      </ButtonFilled>
+                    </div>
+                  </div>
+                </TableCell>
               </TableRow>
             ))
           ) : (

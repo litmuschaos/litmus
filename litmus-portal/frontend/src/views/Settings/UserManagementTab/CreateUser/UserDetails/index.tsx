@@ -112,7 +112,7 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
                 )}
               />
             </div>
-            {/* Username is not editable by non admin user */}
+            {/* Username is not editable normal user */}
             <div data-cy="username">
               <InputFieldOutline
                 value={userValue}
