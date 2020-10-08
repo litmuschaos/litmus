@@ -6,6 +6,7 @@ import Unimodal from '../../../../../containers/layouts/Unimodal';
 import {
   validateEmail,
   validateStartEmptySpacing,
+  validateUsername,
 } from '../../../../../utils/validate';
 import ChooseAvatarModal from '../ChooseAvatarModal';
 import useStyles from './styles';
@@ -117,7 +118,12 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
                 value={userValue}
                 handleChange={handleUserChange}
                 disabled={usernameIsDisabled}
-                validationError={false}
+                validationError={validateUsername(userValue)}
+                helperText={
+                  validateUsername(userValue)
+                    ? 'Should be a valid Username'
+                    : ''
+                }
                 label={t(
                   'settings.userManagementTab.createUser.userDetails.label.username'
                 )}
