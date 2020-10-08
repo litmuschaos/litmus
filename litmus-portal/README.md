@@ -24,7 +24,7 @@ kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/v1.8.x/lit
 
 Or
 
-> Master (Latest) Cluster scope. Installed in litmus namespace by default.
+> Master (Latest) Cluster scope. Install in litmus namespace by default.
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml
 ```
@@ -78,8 +78,26 @@ View the User Guide <b>[here](https://docs.google.com/document/d/1fiN25BrZpvqg0U
 
 ### **Uninstallation**
 
+> Alpha0 (Stable)
 ```bash
-kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/k8s-manifest.yml
+kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/v1.8.x/litmus-portal/k8s-manifest.yml
+```
+
+Or
+
+> Master (Latest) Cluster scope. Uninstall in litmus namespace by default.
+```bash
+kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml
+```
+
+Or
+
+> Master (Latest) Namespaced scope. Replace `<namespace>` with the desired namespace.
+```bash
+export LITMUS_PORTAL_NAMESPACE="<namespace>"
+kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
+kubectl delete -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml -n ${LITMUS_PORTAL_NAMESPACE}
+kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/platforms/okteto/hello-world-AUT.yml -n ${LITMUS_PORTAL_NAMESPACE}
 ```
 
 ### **Tech Stack**

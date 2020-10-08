@@ -97,10 +97,13 @@ workflowUnderground:
   heading: 'Click on test to see detailed log of your workflow'
 
 community:
+  title: 'Community'
   heading: 'Litmus Insights'
   headingDesc: 'Stats for the Litmus community'
   analyticDesc: 'Periodic growth of Litmus'
   statsHeading: 'Litmus users around the world:'
+  litmusChaos: Litmuschaos
+  follow: Follow
 
 analytics:
   fetchError: An error has occurred while fetching the data
@@ -132,6 +135,21 @@ chaosWorkflows:
       seeAnalytics: See analytics
 
 settings:
+  teamingTab:
+    deleteModal:
+      header: Are you sure
+      text: to remove the current user?
+      body: The user will lose access to the team’s work and all
+      yesButton: Yes
+      noButton: No
+    sentInvitation:
+      menuItem:
+        editorRole:
+          label: Editor
+          body: Can make changes in the project
+        viewerRole:
+          label: Viewer
+          body: Can view the project
   userManagementTab:
     createUser:
       userDetails:
@@ -145,6 +163,9 @@ settings:
         title: Change your Avatar
         info: You can now use your new password to login to your account
         button: Choose an avatar
+    deleteUser:
+      deleteModal:
+        body: The user will lose access to the portal
 
 ######################################
 ############    Targets    ###########
@@ -165,7 +186,7 @@ targets:
     head3: 3.Paste it into the cluster console
     head4: 4.Click on the button
     head5: Connect the target
-    conformation: Kuberenetes Agent is conforming, Please wait...
+    conformation: Kuberenetes Agent is confirming, Please wait...
 
 connectTargets:
   title: A new Target,
@@ -179,6 +200,13 @@ workflowCluster:
   header:
     status: Current Status
     target: Target Cluster
+    chooseAgent: Choose the target Kubernetes Agent
+    creatingNew: You are creating a
+    creatingNewBold: new chaos workflow.
+    selectAgent: Select a target Kubernetes Agent to run this workflow.
+    selectCluster: Choose Active Cluster
+    select: Select and Continue
+    snackbar: No Cluster Registered With Your Project ID, Please Wait...
     formControl:
       # For Header
       menu: All
@@ -209,3 +237,11 @@ workflows:
   templates: Templates
   analytics: Analytics
   scheduleAWorkflow: Schedule a workflow
+
+#########################################
+############    dataErrors    ###########
+#########################################
+
+internetIssues:
+  fetchData: 'Fetching the data...'
+  connectionError: It seems you have no internet connection, Please try again When connectivity resumes.
