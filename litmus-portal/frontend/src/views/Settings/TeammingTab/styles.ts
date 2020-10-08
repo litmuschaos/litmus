@@ -21,8 +21,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   memTypo: {
     fontSize: '1rem',
   },
-
+  root: {
+    backgroundColor: theme.palette.background.paper,
+    color: 'inherit',
+  },
   table: {
+    backgroundColor: 'inherit',
     height: '30.25rem',
     border: `1px solid ${theme.palette.customColors.black(0.05)}`,
   },

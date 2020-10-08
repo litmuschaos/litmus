@@ -15,6 +15,18 @@ const initialState: WorkflowData = {
   weights: [],
   isCustomWorkflow: false,
   clusterid: '',
+  cronSyntax: '',
+  scheduleType: {
+    scheduleOnce: 'now',
+    recurringSchedule: '',
+  },
+  scheduleInput: {
+    hour_interval: 0,
+    day: 1,
+    weekday: 'Monday',
+    time: new Date(Date.now()),
+    date: new Date(Date.now()),
+  },
 };
 
 export const workflowData = createReducer<WorkflowData>(initialState, {
