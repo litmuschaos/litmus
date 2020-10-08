@@ -97,10 +97,13 @@ workflowUnderground:
   heading: 'Click on test to see detailed log of your workflow'
 
 community:
+  title: 'Community'
   heading: 'Litmus Insights'
   headingDesc: 'Stats for the Litmus community'
   analyticDesc: 'Periodic growth of Litmus'
   statsHeading: 'Litmus users around the world:'
+  litmusChaos: Litmuschaos
+  follow: Follow
 
 analytics:
   fetchError: An error has occurred while fetching the data
@@ -191,3 +194,11 @@ workflows:
   templates: Templates
   analytics: Analytics
   scheduleAWorkflow: Schedule a workflow
+
+#########################################
+############    dataErrors    ###########
+#########################################
+
+internetIssues:
+  fetchData: 'Fetching the data...'
+  connectionError: It seems you have no internet connection, Please try again When connectivity resumes.
