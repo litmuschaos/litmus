@@ -103,7 +103,10 @@ const useStyles = makeStyles((theme) => ({
     width: '8.125rem',
   },
   stepsData: {
-    paddingLeft: theme.spacing(3.75),
+    paddingLeft: theme.spacing(6),
+  },
+  stepsDataschedule: {
+    paddingLeft: theme.spacing(8),
   },
   optionBtn: {
     marginLeft: 'auto',

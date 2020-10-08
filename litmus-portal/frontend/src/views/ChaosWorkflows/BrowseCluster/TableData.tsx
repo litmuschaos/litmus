@@ -56,7 +56,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           {data.no_of_workflows}
         </Typography>
       </TableCell>
-      <TableCell>
+      <TableCell className={classes.stepsDataschedule}>
         <Typography>{data.no_of_schedules}</Typography>
       </TableCell>
       <TableCell>{formatDate(data.updated_at)}</TableCell>
