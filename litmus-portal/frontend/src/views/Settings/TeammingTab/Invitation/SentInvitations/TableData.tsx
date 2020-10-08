@@ -126,7 +126,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                       <Typography className={classes.menuHeader}>
                         <strong>
                           {t(
-                            'settings.teamingTab.sentInvitation.menuItem.editorRole.label'
+                            'settings.teamingTab.invitation.sentInvitation.menuItem.editorRole.label'
                           )}
                         </strong>
                       </Typography>
@@ -134,7 +134,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                     <div>
                       <Typography className={classes.menuDesc}>
                         {t(
-                          'settings.teamingTab.sentInvitation.menuItem.editorRole.body'
+                          'settings.teamingTab.invitation.sentInvitation.menuItem.editorRole.body'
                         )}
                       </Typography>
                     </div>
@@ -157,7 +157,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                       <Typography className={classes.menuHeader}>
                         <strong>
                           {t(
-                            'settings.teamingTab.sentInvitation.menuItem.viewerRole.label'
+                            'settings.teamingTab.invitation.sentInvitation.menuItem.viewerRole.label'
                           )}
                         </strong>
                       </Typography>
@@ -165,7 +165,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                     <div>
                       <Typography className={classes.menuDesc}>
                         {t(
-                          'settings.teamingTab.sentInvitation.menuItem.viewerRole.body'
+                          'settings.teamingTab.invitation.sentInvitation.menuItem.viewerRole.body'
                         )}
                       </Typography>
                     </div>

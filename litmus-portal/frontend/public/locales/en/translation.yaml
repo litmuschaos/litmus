@@ -147,23 +147,112 @@ chaosWorkflows:
       seeAnalytics: See analytics
 
 settings:
+  accountsTab:
+    personalDetails:
+      modal:
+        header: Your personal information <1>has been changed!</1>
+        headerErr: <0>Error:</0> while updating details.
+        headerErrStrong: Error
+        info: Changes took effect
+      button:
+        saveChanges: Save Changes
+        done: Done
+    accountsSettings:
+      header: Password
+      modal:
+        header: Your password <1>has been changed!</1>
+        headerErr: <0>Error:</0> while changing the password.
+        info: You can now use your new password to login to your account
+        headerErrStrong: Error
+      label:
+        currPassword: Current Password
+        newPassword: New Password
+        confNewPassword: Confirm Password
+      button: 
+        changePass: Change Password
+        done: Done
+
   teamingTab:
+    header: Members
+    description: Manage your team - invite a member to your project or change the role of exisiting members in the team
+    noUsers: No users available
+    label:
+      search: Search...
+      role: Role
+      options:
+        all: All
+        owner: Owner
+        editor: Editor
+        viewer: Viewer
+    tableCell:
+      name: Name
+      role: Role
+      email: Email
+      joined: Joined to team
     deleteModal:
       header: Are you sure
       text: to remove the current user?
       body: The user will lose access to the team’s work and all
       yesButton: Yes
       noButton: No
-    sentInvitation:
-      menuItem:
-        editorRole:
-          label: Editor
-          body: Can make changes in the project
-        viewerRole:
-          label: Viewer
-          body: Can view the project
+    inviteNew:
+      header: Invite new member
+      invite:
+        header: Invite <1>new member</1>
+        successHeader: Invitation <1>sent successfully</1>
+        info: You have successfully sent the invitation. After confirmation user will be added to the existing list of member.
+        noUsers: No users available.
+        label:
+          someone: Invite someone
+        button:
+          done: Done
+          send: Send Invite
+    invitation:
+      button:
+        invitation: Invitation
+      modal:
+        header: Manage <1>invitations</1> 
+      receivedInvitation:
+        noInvites: No invitations received.
+        button:
+          accept: accept
+          ignore: ignore
+      sentInvitation:  
+        noInvites: There is no one waiting for your invitation.
+        menuItem:
+          editorRole:
+            label: Editor
+            body: Can make changes in the project
+          viewerRole:
+            label: Viewer
+            body: Can view the project
+      
   userManagementTab:
+    header: Members
+    info: Create users, manage them and reset their password and username when required
+    editProfile: Edit Profile
+    noUsers: No users available.
+    button:
+      create: Create new user
+    label:
+      search: Search...
+      userStatus: User Status
+      options:
+        all: All
+        signedIn: Signed in
+        notSignedIn: Not Signed in
+    tableCell:
+      status: Status
+      username: Username
+      email: Email
+      userCreated: User Created
     createUser:
+      header: Create a new user
+      info: Enter the user's personal and login details
+      login: Login Details
+      label:
+        username: Username
+        newPassword: New Password
       userDetails:
         header: Personal Details
         button: Edit Photo
@@ -175,9 +264,31 @@ settings:
         title: Change your Avatar
         info: You can now use your new password to login to your account
         button: Choose an avatar
-    deleteUser:
-      deleteModal:
-        body: The user will lose access to the portal
+      newUserModal:
+        header: A new user <1>{{name}}</1> was successfully created
+        headerErr: <0> Error </0> while creating a new user.
+        error: Error
+        info: Now information about it will be displayed on the user management screen of the application.
+        button:
+          done: Done
+          create: Create
+    editUser:
+      header: Edit user profile
+      info: Edit the user's personal and login details
+      login: Login Details
+      label:
+        newPassword: New Password
+      resetModal:
+        header: The user’s password was <1>successfully reset </1>
+        headerErr: <0> Error </0> while resetting password.
+        info: The user needs to login with the new credentials.
+        error: Error
+        button:
+          save: Save
+          done: Done
+      deleteUser:
+        deleteModal:
+          body: The user will lose access to the portal
 
 ######################################
 ############    Targets    ###########

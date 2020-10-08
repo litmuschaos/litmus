@@ -1,5 +1,6 @@
 import { Typography } from '@material-ui/core';
 import React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import Loader from '../../../../../components/Loader';
 import config from '../../../../../config';
@@ -23,6 +24,7 @@ const ResetModal: React.FC<ResetModalProps> = ({
   handleModal,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -78,7 +80,11 @@ const ResetModal: React.FC<ResetModalProps> = ({
                 <Loader size={20} />
               </div>
             ) : (
-              <>Save</>
+              <>
+                {t(
+                  'settings.userManagementTab.editUser.resetModal.button.save'
+                )}
+              </>
             )}
           </ButtonFilled>
         </div>
@@ -87,12 +93,15 @@ const ResetModal: React.FC<ResetModalProps> = ({
             <div className={classes.errDiv}>
               <div className={classes.textError}>
                 <Typography className={classes.typo} align="center">
-                  <strong> Error </strong> while resetting password.
+                  <Trans i18nKey="settings.userManagementTab.editUser.resetModal.headerErr">
+                    <strong> Error </strong> while resetting password.
+                  </Trans>
                 </Typography>
               </div>
               <div className={classes.textSecondError}>
                 <Typography className={classes.typoSub}>
-                  Error: {error}
+                  {t('settings.userManagementTab.editUser.resetModal.error')}:{' '}
+                  {error}
                 </Typography>
               </div>
               <div data-cy="done" className={classes.buttonModal}>
@@ -101,7 +110,11 @@ const ResetModal: React.FC<ResetModalProps> = ({
                   isDisabled={false}
                   handleClick={handleClose}
                 >
-                  <>Done</>
+                  <>
+                    {t(
+                      'settings.userManagementTab.editUser.resetModal.button.done'
+                    )}
+                  </>
                 </ButtonFilled>
               </div>
             </div>
@@ -110,12 +123,14 @@ const ResetModal: React.FC<ResetModalProps> = ({
               <img src="./icons/checkmark.svg" alt="checkmark" />
               <div className={classes.textSucess}>
                 <Typography className={classes.typo} align="center">
-                  The user’s password was <strong>successfully reset </strong>
+                  <Trans i18nKey="settings.userManagementTab.editUser.resetModal.header">
+                    The user’s password was <strong>successfully reset </strong>
+                  </Trans>
                 </Typography>
               </div>
               <div className={classes.text1Sucess}>
                 <Typography className={classes.typoSub} align="center">
-                  The user needs to login with the new credentials.
+                  {t('settings.userManagementTab.editUser.resetModal.info')}
                 </Typography>
               </div>
               <div data-cy="done">
@@ -124,7 +139,9 @@ const ResetModal: React.FC<ResetModalProps> = ({
                   isDisabled={false}
                   handleClick={handleModal}
                 >
-                  Done
+                  {t(
+                    'settings.userManagementTab.editUser.resetModal.button.done'
+                  )}
                 </ButtonFilled>
               </div>
             </div>

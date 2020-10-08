@@ -8,6 +8,7 @@ import {
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { GET_USER } from '../../../../../graphql';
 import {
   CurrentUserDedtailsVars,
@@ -20,6 +21,8 @@ import TableData from './TableData';
 
 const SentInvitations: React.FC = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
+
   // for response data
   const [rows, setRows] = useState<Member[]>([]);
 
@@ -69,7 +72,7 @@ const SentInvitations: React.FC = () => {
             <TableRow>
               <TableCell colSpan={2}>
                 <Typography>
-                  There is no one waiting for your invitation.
+                  {t('settings.teamingTab.invitation.sentInvitation.noInvites')}
                 </Typography>
               </TableCell>
             </TableRow>

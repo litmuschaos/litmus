@@ -1,6 +1,7 @@
 import { Box, Paper, Tab, Tabs, Typography } from '@material-ui/core';
 import React from 'react';
 import useTheme from '@material-ui/core/styles/useTheme';
+import { Trans, useTranslation } from 'react-i18next';
 import ButtonOutline from '../../../../components/Button/ButtonOutline';
 import Unimodal from '../../../../containers/layouts/Unimodal';
 import ReceivedInvitations from './ReceivedInvitations';
@@ -43,6 +44,7 @@ function tabProps(index: any) {
 // NewUserModal displays a modal on creating a new user
 const Invitation: React.FC = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   const [open, setOpen] = React.useState(false);
 
@@ -61,14 +63,16 @@ const Invitation: React.FC = () => {
     <div data-cy="invitationButton">
       <div className={classes.button}>
         <ButtonOutline handleClick={handleOpen} isDisabled={false}>
-          <div>Invitation</div>
+          <div>{t('settings.teamingTab.invitation.button.invitation')}</div>
         </ButtonOutline>
       </div>
 
       <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn>
         <div data-cy="invitationModal" className={classes.body}>
           <Typography className={classes.Header}>
-            Manage <strong>invitations</strong>
+            <Trans i18nKey="settings.teamingTab.invitation.modal.header">
+              Manage <strong>invitations</strong>
+            </Trans>
           </Typography>
           <div>
             <Paper className={classes.root} elevation={0}>

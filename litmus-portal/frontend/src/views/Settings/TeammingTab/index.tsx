@@ -23,6 +23,7 @@ import {
 import SearchIcon from '@material-ui/icons/Search';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { GET_USER } from '../../../graphql';
 import {
   CurrentUserDedtailsVars,
@@ -61,6 +62,8 @@ interface PaginationData {
 // TeammingTab displays team member table
 const TeammingTab: React.FC = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
+
   const userData = useSelector((state: RootState) => state.userData);
 
   // for response data
@@ -132,12 +135,12 @@ const TeammingTab: React.FC = () => {
         <div className={classes.members}>
           <img src="./icons/user.svg" alt="members" />
           <Typography className={classes.memTypo}>
-            Members (<span>{rows ? rows.length : 0}</span>)
+            {t('settings.teamingTab.header')} (
+            <span>{rows ? rows.length : 0}</span>)
           </Typography>
         </div>
         <Typography className={classes.descText}>
-          Manage your team - invite a member to your project or change the role
-          of exisiting members in the team:
+          {t('settings.teamingTab.description')}:
         </Typography>
         <div>
           <Toolbar data-cy="toolBarComponent" className={classes.toolbar}>
@@ -145,7 +148,7 @@ const TeammingTab: React.FC = () => {
             <div data-cy="teamingSearch" className={classes.toolbarFirstCol}>
               <TextField
                 id="input-with-icon-textfield"
-                placeholder="Search..."
+                placeholder={t('settings.teamingTab.label.search')}
                 value={filters.search}
                 onChange={(e) => {
                   setFilters({
@@ -175,7 +178,7 @@ const TeammingTab: React.FC = () => {
                 >
                   <InputLabel className={classes.selectText}>Role</InputLabel>
                   <Select
-                    label="Role"
+                    label={t('settings.teamingTab.label.role')}
                     value={filters.role}
                     onChange={(event) => {
                       setFilters({
@@ -187,10 +190,18 @@ const TeammingTab: React.FC = () => {
                     className={classes.selectText}
                     color="secondary"
                   >
-                    <MenuItem value="all">All</MenuItem>
-                    <MenuItem value="Editor">Editor</MenuItem>
-                    <MenuItem value="Viewer">Viewer</MenuItem>
-                    <MenuItem value="Owner">Owner</MenuItem>
+                    <MenuItem value="all">
+                      {t('settings.teamingTab.label.options.all')}
+                    </MenuItem>
+                    <MenuItem value="Editor">
+                      {t('settings.teamingTab.label.options.editor')}
+                    </MenuItem>
+                    <MenuItem value="Viewer">
+                      {t('settings.teamingTab.label.options.viewer')}
+                    </MenuItem>
+                    <MenuItem value="Owner">
+                      {t('settings.teamingTab.label.options.owner')}
+                    </MenuItem>
                   </Select>
                 </FormControl>
               </div>
@@ -211,11 +222,17 @@ const TeammingTab: React.FC = () => {
                 <TableHead>
                   <TableRow className={classes.TR}>
                     <StyledTableCell className={classes.styledTC}>
-                      Name
+                      {t('settings.teamingTab.tableCell.name')}
                     </StyledTableCell>
-                    <StyledTableCell>Role</StyledTableCell>
-                    <StyledTableCell>Email</StyledTableCell>
-                    <StyledTableCell>Joined to team</StyledTableCell>
+                    <StyledTableCell>
+                      {t('settings.teamingTab.tableCell.role')}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      {t('settings.teamingTab.tableCell.email')}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      {t('settings.teamingTab.tableCell.joined')}
+                    </StyledTableCell>
                     <StyledTableCell />
                     <TableHead />
                   </TableRow>
@@ -241,7 +258,7 @@ const TeammingTab: React.FC = () => {
                     <TableRow>
                       <TableCell colSpan={5}>
                         <Typography align="center">
-                          No users available
+                          {t('settings.teamingTab.noUsers')}
                         </Typography>
                       </TableCell>
                     </TableRow>
