@@ -45,6 +45,9 @@ import {
   WorkflowList,
   WorkflowListDataVars,
 } from '../../../../models/graphql/workflowListData';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 interface RangeType {
   startDate: string;
@@ -76,6 +79,23 @@ interface DatedResilienceScore {
   value: number;
 }
 
+interface TestDetails {
+  testNames: string[];
+  testWeights: number[];
+  testResults: string[];
+}
+
+interface WorkflowDataForExport {
+  cluster_name: string;
+  workflow_name: string;
+  run_date: string;
+  tests_passed: number | string;
+  tests_failed: number | string;
+  resilience_score: number | string;
+  test_details?: TestDetails;
+  test_details_string?: string;
+}
+
 const WorkflowComparisonTable = () => {
   const classes = useStyles();
   const { palette } = useTheme();
@@ -104,6 +124,13 @@ const WorkflowComparisonTable = () => {
   const [plotDataForComparison, setPlotDataForComparison] = React.useState<
     ResilienceScoreComparisonPlotProps
   >();
+  const [totalValidWorkflowRuns, setTotalValidWorkflowRuns] = React.useState<
+    WorkflowDataForExport[]
+  >([]);
+  const [
+    totalValidWorkflowRunsCount,
+    setTotalValidWorkflowRunsCount,
+  ] = React.useState<number>(0);
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
   );
@@ -186,6 +213,13 @@ const WorkflowComparisonTable = () => {
 
   const randomColor = () => Math.floor(Math.random() * 16777215).toString(16);
 
+  // Function to convert UNIX time in format of DD MMM YYY
+  const formatDate = (date: string) => {
+    const updated = new Date(parseInt(date, 10) * 1000).toString();
+    const resDate = moment(updated).format('dddd DD/MM/YYYY HH:mm:ss Z');
+    return resDate;
+  };
+
   const generateDataForComparing = () => {
     const plotData: ResilienceScoreComparisonPlotProps = {
       xData: {
@@ -199,13 +233,15 @@ const WorkflowComparisonTable = () => {
       labels: [],
       colors: [],
     };
+    let totalValidRuns: number = 0;
+    const totalValidWorkflowRuns: WorkflowDataForExport[] = [];
     const timeSeriesArray: DatedResilienceScore[][] = [];
     selected.forEach((workflow) => {
       const workflowData = data?.ListWorkflow.filter(function match(wkf) {
         return wkf.workflow_id === workflow;
       });
       plotData.labels.push(workflowData ? workflowData[0].workflow_name : '');
-      plotData.colors.push(randomColor());
+      plotData.colors.push('#' + randomColor());
       const runs = workflowData ? workflowData[0].workflow_runs : [];
       const workflowTimeSeriesData: DatedResilienceScore[] = [];
       runs.forEach((data) => {
@@ -213,7 +249,13 @@ const WorkflowComparisonTable = () => {
           const executionData: ExecutionData = JSON.parse(data.execution_data);
           const { nodes } = executionData;
           const experimentTestResultsArrayPerWorkflowRun: number[] = [];
+          let totalExperimentsPassed: number = 0;
           let weightsSum: number = 0;
+          let testDetails: TestDetails = {
+            testNames: [],
+            testWeights: [],
+            testResults: [],
+          };
           for (const key of Object.keys(nodes)) {
             const node = nodes[key];
             if (node.chaosData) {
@@ -233,12 +275,39 @@ const WorkflowComparisonTable = () => {
                         : 0
                     );
                     weightsSum += weightage.weightage;
+                    if (chaosData.experimentVerdict === 'Pass') {
+                      totalExperimentsPassed += 1;
+                    }
+                    testDetails.testNames.push(weightage.experiment_name);
+                    testDetails.testWeights.push(weightage.weightage);
+                    testDetails.testResults.push(chaosData.experimentVerdict);
                   }
                 });
               }
             }
           }
           if (executionData.event_type === 'UPDATE') {
+            totalValidRuns += 1;
+
+            totalValidWorkflowRuns.push({
+              cluster_name: workflowData ? workflowData[0].cluster_name : '',
+              workflow_name: workflowData ? workflowData[0].workflow_name : '',
+              run_date: formatDate(executionData.creationTimestamp),
+              tests_passed: totalExperimentsPassed,
+              tests_failed:
+                experimentTestResultsArrayPerWorkflowRun.length -
+                totalExperimentsPassed,
+              resilience_score: experimentTestResultsArrayPerWorkflowRun.length
+                ? (experimentTestResultsArrayPerWorkflowRun.reduce(
+                    (a, b) => a + b,
+                    0
+                  ) /
+                    weightsSum) *
+                  100
+                : 0,
+              test_details: testDetails,
+            });
+
             workflowTimeSeriesData.push({
               date: data.last_updated,
               value: experimentTestResultsArrayPerWorkflowRun.length
@@ -295,6 +364,8 @@ const WorkflowComparisonTable = () => {
       });
     });
     setPlotDataForComparison(plotData);
+    setTotalValidWorkflowRuns(totalValidWorkflowRuns);
+    setTotalValidWorkflowRunsCount(totalValidRuns);
   };
 
   const CallbackForComparing = (compareWorkflows: boolean) => {
@@ -309,6 +380,155 @@ const WorkflowComparisonTable = () => {
     });
     generateDataForComparing();
     setDisplayData(payload);
+  };
+
+  const generatePDF = () => {
+    if (document.getElementById('analytics')) {
+      /*
+      let heads = [
+        { workflow_name: 'Workflow Name', cluster_name: 'Cluster Name' },
+      ];
+
+      let rows = [{ workflow_name: ['hi', 'hi2'], cluster_name: 'Cluster 1' }];
+*/
+
+      let heads = [
+        {
+          cluster_name: 'Cluster Name',
+          workflow_name: 'Workflow Name',
+          run_date: 'Date-Time',
+          tests_passed: '#Expts. Passed',
+          tests_failed: '#Expts. Failed',
+          resilience_score: 'Reliability Score',
+          test_details_string:
+            'Experiment Details     Name                             Weight / Verdict',
+        },
+      ];
+
+      let rows: any[] = [];
+
+      totalValidWorkflowRuns.forEach((run) => {
+        let detail_string = '';
+        run.test_details?.testNames.forEach((experiment, index) => {
+          detail_string +=
+            experiment +
+            '\n' +
+            run.test_details?.testWeights[index] +
+            '/' +
+            run.test_details?.testResults[index] +
+            '\n';
+        });
+
+        rows.push({
+          cluster_name: run.cluster_name,
+          workflow_name: run.workflow_name,
+          run_date: run.run_date,
+          tests_passed: run.tests_passed.toString(),
+          tests_failed: run.tests_failed.toString(),
+          resilience_score: run.resilience_score.toString(),
+          test_details_string: detail_string,
+        });
+      });
+
+      const input: HTMLElement | null = document.getElementById('analytics');
+      html2canvas(input as HTMLElement).then((canvas) => {
+        const imgWidth = 206;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        const contentDataURL = canvas.toDataURL('image/png');
+        const doc = new jsPDF('p', 'mm', 'a4'); // A4 size page of PDF
+        const position = -44;
+
+        doc.setFontSize(10);
+        // doc.setFontType("bold");
+        doc.text('Litmus Portal Report: Version 1.9', 10, 10);
+        //doc.text(this.programReport.ClassName, 35, 10);
+
+        doc.text('Time of Generation:', 10, 15);
+        doc.text(new Date().toString(), 42, 15);
+
+        doc.text(
+          'Total Number of Chaos Workflow Schedules under consideration:',
+          10,
+          20
+        );
+        doc.text(
+          plotDataForComparison
+            ? plotDataForComparison.labels.length.toString()
+            : '0',
+          114,
+          20
+        );
+
+        doc.text(
+          'Total Number of Chaos Workflow Runs under consideration:',
+          10,
+          25
+        );
+        doc.text(totalValidWorkflowRunsCount.toString(), 105, 25);
+
+        let img = new Image();
+        img.src = '/icons/LitmusLogo.png';
+        doc.addImage(img, 'png', 165, 10, 30, 12.5);
+
+        doc.line(0, 33, 300, 33);
+
+        doc.setLineWidth(5.0);
+
+        doc.text(
+          'Workflow Run Details Table & Workflow Schedules Table with Resilience Score Comparison Graph',
+          27.5,
+          39
+        );
+
+        /*
+        doc.text('Sponsored By :', 100, 30);
+         doc.text(this.programReport.sponsorInfo[0].SponsorName, 10, 40);
+         doc.text(this.programReport.sponsorInfo[0].City + ' ' + this.programReport.sponsorInfo[0].StateZipcode, 10, 45);
+    
+    
+         doc.text(this.programReport.sponsorInfo[1].SponsorName, 130, 40);
+         doc.text(this.programReport.sponsorInfo[1].City + ' ' + this.programReport.sponsorInfo[1].StateZipcode, 130, 45);
+    
+    
+         doc.text(this.programReport.sponsorInfo[2].SponsorName, 10, 55);
+        doc.text(this.programReport.sponsorInfo[2].City + ' ' + this.programReport.sponsorInfo[2].StateZipcode, 10, 60);
+    
+    
+        doc.text(this.programReport.sponsorInfo[3].SponsorName, 130, 55);
+         doc.text(this.programReport.sponsorInfo[3].City + ' ' + this.programReport.sponsorInfo[3].StateZipcode, 130, 60);
+    */
+
+        try {
+          // autoTable(doc, {
+          //   startY: 800,
+          //   margin: { vertical: 150, horizontal: 10 },
+          //   html: '.table',
+          //   useCss: true,
+          //   tableWidth: 'wrap',
+          //   styles: { cellPadding: 0.5, fontSize: 8 },
+          //   columnStyles: { text: { cellWidth: 'auto' } },
+          //   rowPageBreak: 'auto',
+          // });
+
+          //doc.autoTable(columns, rows, {
+          autoTable(doc, {
+            head: heads,
+            body: rows,
+            startY: 44,
+            margin: { horizontal: 4 },
+            styles: { overflow: 'linebreak' },
+            bodyStyles: { valign: 'top' },
+            theme: 'striped',
+            showHead: 'firstPage',
+          });
+        } catch (err) {
+          console.log(err);
+        }
+        doc.addPage();
+        doc.addImage(contentDataURL, 'PNG', 2, position, imgWidth, imgHeight);
+        doc.save('litmus-portal-analytics.pdf'); // Generated PDF
+      });
+    }
   };
 
   useEffect(() => {
@@ -451,11 +671,11 @@ const WorkflowComparisonTable = () => {
       [20.5, 17, 17.5, 38.33],
     ],
   };
-  
-  const colors = ['#CA2C2C', '#109B67', '#F6B92B', '#858CDD'];
 */
+  const colors = ['#CA2C2C', '#109B67', '#F6B92B', '#858CDD'];
+
   return (
-    <div className={classes.root}>
+    <div className={classes.root} id="analytics">
       <div className={classes.analyticsDiv}>
         <Typography className={classes.heading}>
           <strong>
@@ -526,7 +746,7 @@ const WorkflowComparisonTable = () => {
                 });
               }}
               callbackToCompare={CallbackForComparing}
-              callbackToExport={() => {}}
+              callbackToExport={() => generatePDF()}
               comparisonState={compare}
               reInitialize={compare === false}
             />
@@ -694,14 +914,15 @@ const WorkflowComparisonTable = () => {
               labels={plotDataForComparison ? plotDataForComparison.labels : []}
               colors={plotDataForComparison ? plotDataForComparison.colors : []}
             />
-
-            {/*   <ResilienceScoreComparisonPlot
+            {/*
+            <ResilienceScoreComparisonPlot
               xData={xData}
               yData={yData}
               labels={labels}
               colors={colors}
             />
-         */}
+
+*/}
           </div>
         </Paper>
       ) : (

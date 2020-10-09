@@ -381,8 +381,8 @@ const getGroupedData = () => {
     setEdgeData({
       highScore: max,
       lowScore: min,
-      highColor: `#${colors[maxID]}`,
-      lowColor: `#${colors[minID]}`,
+      highColor: colors[maxID],
+      lowColor: colors[minID],
       highName: labels ? labels[maxID] : '',
       lowName: labels ? labels[minID] : '',
     });
@@ -498,7 +498,6 @@ const getGroupedData = () => {
       showlegend: true,
       legend: { orientation: 'h', y: -0.5 },
     };
-
     setPlotLayout(layout);
   };
 

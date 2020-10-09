@@ -31,7 +31,7 @@ const PopOver: React.FC<PopOverProps> = ({
     const updated = new Date(parseInt(date, 10) * 1000).toString();
     const dateTime = {
       date: moment(updated).format('DD MMM YYYY'),
-      time: moment(updated).format('hh:mm A'),
+      time: moment(updated).format('HH:mm'),
     };
     return dateTime;
   };

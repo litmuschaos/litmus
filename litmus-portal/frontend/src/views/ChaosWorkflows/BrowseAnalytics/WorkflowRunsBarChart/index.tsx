@@ -69,7 +69,7 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
   // Function to convert UNIX time in format of DD MMM YYY
   const formatDate = (date: string) => {
     const updated = new Date(parseInt(date, 10) * 1000).toString();
-    const resDate = moment(updated).format('YYYY-MM-DD hh:mm:ss');
+    const resDate = moment(updated).format('YYYY-MM-DD HH:mm:ss');
     return resDate;
   };
 
