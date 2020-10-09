@@ -7,21 +7,22 @@ import BrowseCluster from '../../../views/ChaosWorkflows/BrowseCluster';
 import useStyles from './styles';
 import Scaffold from '../../../containers/layouts/Scaffold';
 
-const CenteredTabs = () => {
+const ConnectHome = () => {
   const classes = useStyles();
   const { t } = useTranslation();
+
+  const handleCluster = () => {
+    history.push('/target-connect');
+  };
 
   return (
     <Scaffold>
       <section className="Header section">
         <div className={classes.header}>
-          <Typography variant="h4">{t('Targets.connectHome.head')}</Typography>
+          <Typography variant="h4">{t('targets.connectHome.head')}</Typography>
           <div className={classes.scheduleBtn}>
-            <ButtonFilled
-              isPrimary
-              handleClick={() => history.push('/target-connect')}
-            >
-              <div>{t('Targets.connectHome.connectText')}</div>
+            <ButtonFilled isPrimary handleClick={handleCluster}>
+              <div>{t('targets.connectHome.connectText')}</div>
             </ButtonFilled>
           </div>
         </div>
@@ -30,4 +31,4 @@ const CenteredTabs = () => {
     </Scaffold>
   );
 };
-export default CenteredTabs;
+export default ConnectHome;
