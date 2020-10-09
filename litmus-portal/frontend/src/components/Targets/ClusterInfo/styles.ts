@@ -14,7 +14,6 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     marginLeft: theme.spacing(4),
     marginTop: theme.spacing(4),
-    marginButtom: theme.spacing(2),
     border: '0.0625rem solid',
     borderColor: theme.palette.customColors.black(0.07),
     backgroundColor: theme.palette.common.white,
