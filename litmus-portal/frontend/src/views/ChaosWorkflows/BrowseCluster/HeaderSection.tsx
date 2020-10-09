@@ -113,19 +113,15 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
             className={classes.selectText}
           >
             <MenuItem value="All">
-              {' '}
               {t('workflowCluster.header.formControl.menu')}
             </MenuItem>
             <MenuItem value="true">
-              {' '}
               {t('workflowCluster.header.formControl.menu1')}
             </MenuItem>
             <MenuItem value="false">
-              {' '}
               {t('workflowCluster.header.formControl.menu2')}
             </MenuItem>
             <MenuItem value="pending">
-              {' '}
               {t('workflowCluster.header.formControl.menu6')}
             </MenuItem>
           </Select>
