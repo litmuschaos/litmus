@@ -34,7 +34,6 @@ export default [
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/node-memory-hog/workflow.yaml',
     chaosWkfCRDLink_Recur:
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/node-memory-hog/workflow_cron.yaml',
-
     gitLink:
       'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/node-memory-hog',
     provider: 'MayaData',
@@ -66,6 +65,7 @@ export default [
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/pod-cpu-hog/workflow_cron.yaml',
     gitLink:
       'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/pod-cpu-hog',
+    provider: 'MayaData',
     description: 'Injects a CPU spike on a pod',
     totalRuns: 5000,
     isCustom: false,
@@ -91,6 +91,7 @@ export default [
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/pod-memory-hog/workflow_cron.yaml',
     gitLink:
       'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/pod-memory-hog',
+    provider: 'MayaData',
     description: 'Injects a memory spike on a pod',
     totalRuns: 3005,
     isCustom: false,
@@ -112,7 +113,6 @@ export default [
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/pod-delete/workflow.yaml',
     chaosWkfCRDLink_Recur:
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/pod-delete/workflow_cron.yaml',
-
     provider: 'MayaData',
     description: 'Deletes a pod',
     totalRuns: 6700,
@@ -135,7 +135,6 @@ export default [
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/kube-proxy-all/workflow.yaml',
     chaosWkfCRDLink_Recur:
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/kube-proxy-all/workflow_cron.yaml',
-
     gitLink:
       'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/kube-proxy-all',
     provider: 'MayaData',
