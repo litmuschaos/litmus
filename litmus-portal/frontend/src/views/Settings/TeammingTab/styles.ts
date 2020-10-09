@@ -119,5 +119,40 @@ const useStyles = makeStyles((theme: Theme) => ({
   dateDiv: {
     display: 'flex',
   },
+  body: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: theme.spacing(7.5),
+  },
+
+  // styles for text
+  text: {
+    width: '31.93rem',
+    height: '5.875rem',
+    marginTop: theme.spacing(3.75),
+    marginBottom: theme.spacing(3.75),
+  },
+  typo: {
+    fontSize: '2rem',
+  },
+  textSecond: {
+    width: '29.06rem',
+    height: '1.6875rem',
+    marginTop: theme.spacing(1.875),
+    marginBottom: theme.spacing(3.75),
+  },
+  typoSub: {
+    fontSize: '1rem',
+  },
+  // for yes or no buttons
+  buttonGroup: {
+    display: 'flex',
+    width: '12.75rem',
+    height: '2.75rem',
+    marginTop: theme.spacing(2.5),
+    justifyContent: 'space-between',
+  },
 }));
 export default useStyles;

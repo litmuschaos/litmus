@@ -59,9 +59,6 @@ func startWatch(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan
 		UpdateFunc: func(oldObj, obj interface{}) {
 			workflowEventHandler(obj, "UPDATE", stream, startTime)
 		},
-		DeleteFunc: func(obj interface{}) {
-			workflowEventHandler(obj, "DELETE", stream, startTime)
-		},
 	}
 	s.AddEventHandler(handlers)
 	s.Run(stopCh)
@@ -90,7 +87,7 @@ func workflowEventHandler(obj interface{}, eventType string, stream chan types.W
 		// considering chaos workflow has only 1 artifact with manifest as raw data
 		if nodeStatus.Type == "Pod" && nodeStatus.Inputs != nil && len(nodeStatus.Inputs.Artifacts) == 1 {
 			//extracts chaos data
-			nodeType, cd, err = CheckChaosData(nodeStatus, chaosClient)
+			nodeType, cd, err = CheckChaosData(nodeStatus, workflowObj.ObjectMeta.Namespace, chaosClient)
 			if err != nil {
 				logrus.WithError(err).Print("FAILED PARSING CHAOS ENGINE CRD")
 			}

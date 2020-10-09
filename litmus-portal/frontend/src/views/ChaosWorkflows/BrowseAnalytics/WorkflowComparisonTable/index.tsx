@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-loop-func */
+/* eslint-disable no-console */
 import { useQuery } from '@apollo/client';
 import {
   MuiThemeProvider,
@@ -20,6 +21,9 @@ import { useSelector } from 'react-redux';
 import useTheme from '@material-ui/core/styles/useTheme';
 import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import * as _ from 'lodash';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import {
   customThemeAnalyticsTable,
   customThemeAnalyticsTableCompareMode,
@@ -45,9 +49,6 @@ import {
   WorkflowList,
   WorkflowListDataVars,
 } from '../../../../models/graphql/workflowListData';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 
 interface RangeType {
   startDate: string;
@@ -241,7 +242,7 @@ const WorkflowComparisonTable = () => {
         return wkf.workflow_id === workflow;
       });
       plotData.labels.push(workflowData ? workflowData[0].workflow_name : '');
-      plotData.colors.push('#' + randomColor());
+      plotData.colors.push(`#${randomColor()}`);
       const runs = workflowData ? workflowData[0].workflow_runs : [];
       const workflowTimeSeriesData: DatedResilienceScore[] = [];
       runs.forEach((data) => {
@@ -251,7 +252,7 @@ const WorkflowComparisonTable = () => {
           const experimentTestResultsArrayPerWorkflowRun: number[] = [];
           let totalExperimentsPassed: number = 0;
           let weightsSum: number = 0;
-          let testDetails: TestDetails = {
+          const testDetails: TestDetails = {
             testNames: [],
             testWeights: [],
             testResults: [],
@@ -392,7 +393,7 @@ const WorkflowComparisonTable = () => {
       let rows = [{ workflow_name: ['hi', 'hi2'], cluster_name: 'Cluster 1' }];
 */
 
-      let heads = [
+      const heads = [
         {
           cluster_name: 'Cluster Name',
           workflow_name: 'Workflow Name',
@@ -405,18 +406,12 @@ const WorkflowComparisonTable = () => {
         },
       ];
 
-      let rows: any[] = [];
+      const rows: any[] = [];
 
       totalValidWorkflowRuns.forEach((run) => {
         let detail_string = '';
         run.test_details?.testNames.forEach((experiment, index) => {
-          detail_string +=
-            experiment +
-            '\n' +
-            run.test_details?.testWeights[index] +
-            '/' +
-            run.test_details?.testResults[index] +
-            '\n';
+          detail_string += `${experiment}\n${run.test_details?.testWeights[index]}/${run.test_details?.testResults[index]}\n`;
         });
 
         rows.push({
@@ -441,7 +436,7 @@ const WorkflowComparisonTable = () => {
         doc.setFontSize(10);
         // doc.setFontType("bold");
         doc.text('Litmus Portal Report: Version 1.9', 10, 10);
-        //doc.text(this.programReport.ClassName, 35, 10);
+        // doc.text(this.programReport.ClassName, 35, 10);
 
         doc.text('Time of Generation:', 10, 15);
         doc.text(new Date().toString(), 42, 15);
@@ -466,7 +461,7 @@ const WorkflowComparisonTable = () => {
         );
         doc.text(totalValidWorkflowRunsCount.toString(), 105, 25);
 
-        let img = new Image();
+        const img = new Image();
         img.src = '/icons/LitmusLogo.png';
         doc.addImage(img, 'png', 165, 10, 30, 12.5);
 
@@ -510,7 +505,7 @@ const WorkflowComparisonTable = () => {
           //   rowPageBreak: 'auto',
           // });
 
-          //doc.autoTable(columns, rows, {
+          // doc.autoTable(columns, rows, {
           autoTable(doc, {
             head: heads,
             body: rows,
@@ -671,9 +666,9 @@ const WorkflowComparisonTable = () => {
       [20.5, 17, 17.5, 38.33],
     ],
   };
-*/
-  const colors = ['#CA2C2C', '#109B67', '#F6B92B', '#858CDD'];
 
+  const colors = ['#CA2C2C', '#109B67', '#F6B92B', '#858CDD'];
+*/
   return (
     <div className={classes.root} id="analytics">
       <div className={classes.analyticsDiv}>

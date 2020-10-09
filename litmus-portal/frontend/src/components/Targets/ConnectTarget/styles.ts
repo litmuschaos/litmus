@@ -26,8 +26,8 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2.5),
     marginLeft: theme.spacing(2),
   },
-  backButton: {
-    paddingTop: theme.spacing(6),
+  backBotton: {
+    paddingTop: theme.spacing(5),
     marginLeft: theme.spacing(2),
   },
   mark: {
@@ -52,6 +52,13 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(8),
     marginRight: theme.spacing(8),
   },
+  loader: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop: theme.spacing(6),
+    textalign: 'center',
+    marginLeft: theme.spacing(10),
+  },
   connectdevice: {
     fontSize: '1rem',
     lineHeight: '175%',
@@ -72,9 +79,8 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  button: {
-    marginTop: theme.spacing(6),
-    marginLeft: theme.spacing(6),
+  loaderMargin: {
+    marginRight: theme.spacing(2),
   },
   rightMargin: {
     paddingTop: theme.spacing(4),
