@@ -2,5 +2,6 @@
 
 |  | Translated Link |
 | --- | --- |
-| 🇰🇷 | [Korean](README-ko.md) |
+| 🇨🇳 | [Chinese](README-chn.md)|
+| 🇰🇷 | [Korean](README-ko.md)  |
 | :uk: | [English](../README.md) |
