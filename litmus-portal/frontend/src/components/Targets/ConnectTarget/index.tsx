@@ -30,10 +30,6 @@ const ConnectTarget = () => {
     history.push('/targets');
   };
 
-  const handleClose = () => {
-    history.push('/targets');
-  };
-
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
   );
@@ -143,7 +139,7 @@ const ConnectTarget = () => {
       <div>
         <Unimodal
           isOpen={modal}
-          handleClose={handleClose}
+          handleClose={handleClick}
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           hasCloseBtn

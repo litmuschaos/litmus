@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    border: '1px solid ',
+    border: '0.0625rem solid',
     borderColor: theme.palette.customColors.black(0.07),
     backgroundColor: theme.palette.common.white,
   },
