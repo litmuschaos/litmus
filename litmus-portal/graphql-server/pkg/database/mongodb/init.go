@@ -42,6 +42,7 @@ type Cluster struct {
 	CreatedAt          string  `bson:"created_at"`
 	ClusterType        string  `bson:"cluster_type"`
 	Token              string  `bson:"token"`
+	Endpoint           string  `bson:"endpoint"`
 }
 
 type ChaosWorkFlowInput struct {

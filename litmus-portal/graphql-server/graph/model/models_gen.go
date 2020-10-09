@@ -50,6 +50,7 @@ type Cluster struct {
 	NoOfSchedules      *int    `json:"no_of_schedules"`
 	NoOfWorkflows      *int    `json:"no_of_workflows"`
 	Token              string  `json:"token"`
+	Endpoint           string  `json:"endpoint"`
 }
 
 type ClusterAction struct {
@@ -247,6 +248,7 @@ type ClusterRegResponse struct {
 	Token       string `json:"token"`
 	ClusterID   string `json:"cluster_id"`
 	ClusterName string `json:"cluster_name"`
+	Endpoint    string `json:"endpoint"`
 }
 
 type Weightages struct {

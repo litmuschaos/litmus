@@ -69,6 +69,7 @@ type ComplexityRoot struct {
 		ClusterType        func(childComplexity int) int
 		CreatedAt          func(childComplexity int) int
 		Description        func(childComplexity int) int
+		Endpoint           func(childComplexity int) int
 		IsActive           func(childComplexity int) int
 		IsClusterConfirmed func(childComplexity int) int
 		IsRegistered       func(childComplexity int) int
@@ -228,6 +229,7 @@ type ComplexityRoot struct {
 	ClusterRegResponse struct {
 		ClusterID   func(childComplexity int) int
 		ClusterName func(childComplexity int) int
+		Endpoint    func(childComplexity int) int
 		Token       func(childComplexity int) int
 	}
 
@@ -387,6 +389,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Cluster.Description(childComplexity), true
+
+	case "Cluster.endpoint":
+		if e.complexity.Cluster.Endpoint == nil {
+			break
+		}
+
+		return e.complexity.Cluster.Endpoint(childComplexity), true
 
 	case "Cluster.is_active":
 		if e.complexity.Cluster.IsActive == nil {
@@ -1301,6 +1310,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ClusterRegResponse.ClusterName(childComplexity), true
 
+	case "clusterRegResponse.endpoint":
+		if e.complexity.ClusterRegResponse.Endpoint == nil {
+			break
+		}
+
+		return e.complexity.ClusterRegResponse.Endpoint(childComplexity), true
+
 	case "clusterRegResponse.token":
 		if e.complexity.ClusterRegResponse.Token == nil {
 			break
@@ -1456,6 +1472,7 @@ type Cluster {
   no_of_schedules: Int
   no_of_workflows: Int
   token: String!
+  endpoint: String!
 }
 
 input ClusterInput {
@@ -1628,6 +1645,7 @@ type clusterRegResponse {
   token: String!
   cluster_id: String!
   cluster_name: String!
+  endpoint: String!
 }
 
 type Query {
@@ -2897,6 +2915,40 @@ func (ec *executionContext) _Cluster_token(ctx context.Context, field graphql.Co
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Token, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Cluster_endpoint(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Cluster",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Endpoint, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -8182,6 +8234,40 @@ func (ec *executionContext) _clusterRegResponse_cluster_name(ctx context.Context
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _clusterRegResponse_endpoint(ctx context.Context, field graphql.CollectedField, obj *model.ClusterRegResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "clusterRegResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Endpoint, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _weightages_experiment_name(ctx context.Context, field graphql.CollectedField, obj *model.Weightages) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -8881,6 +8967,11 @@ func (ec *executionContext) _Cluster(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = ec._Cluster_no_of_workflows(ctx, field, obj)
 		case "token":
 			out.Values[i] = ec._Cluster_token(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "endpoint":
+			out.Values[i] = ec._Cluster_endpoint(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -10005,6 +10096,11 @@ func (ec *executionContext) _clusterRegResponse(ctx context.Context, sel ast.Sel
 			}
 		case "cluster_name":
 			out.Values[i] = ec._clusterRegResponse_cluster_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "endpoint":
+			out.Values[i] = ec._clusterRegResponse_endpoint(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

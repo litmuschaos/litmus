@@ -20,6 +20,7 @@ type Cluster {
   no_of_schedules: Int
   no_of_workflows: Int
   token: String!
+  endpoint: String!
 }
 
 input ClusterInput {
@@ -192,6 +193,7 @@ type clusterRegResponse {
   token: String!
   cluster_id: String!
   cluster_name: String!
+  endpoint: String!
 }
 
 type Query {

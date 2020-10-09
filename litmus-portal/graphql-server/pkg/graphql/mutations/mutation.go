@@ -2,6 +2,7 @@ package mutations
 
 import (
 	"encoding/json"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 	"log"
 	"strconv"
 	"strings"
@@ -30,6 +31,11 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		return &model.ClusterRegResponse{}, err
 	}
 
+	endPoint, err := k8s.GetPortalEndpoint()
+	if err != nil {
+		return nil, err
+	}
+
 	newCluster := database.Cluster{
 		ClusterID:    clusterID,
 		ClusterName:  input.ClusterName,
@@ -41,6 +47,7 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		CreatedAt:    strconv.FormatInt(time.Now().Unix(), 10),
 		UpdatedAt:    strconv.FormatInt(time.Now().Unix(), 10),
 		Token:        token,
+		Endpoint:     endPoint,
 	}
 
 	err = database.InsertCluster(newCluster)
@@ -54,6 +61,7 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		ClusterID:   newCluster.ClusterID,
 		Token:       token,
 		ClusterName: newCluster.ClusterName,
+		Endpoint:    endPoint,
 	}, nil
 }
 
