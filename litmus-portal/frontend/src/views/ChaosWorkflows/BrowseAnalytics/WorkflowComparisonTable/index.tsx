@@ -475,8 +475,8 @@ const WorkflowComparisonTable = () => {
   };
 
   useEffect(() => {
-    setDisplayData(data ? data?.ListWorkflow : []);
-    getClusters(data ? data?.ListWorkflow : []);
+    setDisplayData(data ? data.ListWorkflow : []);
+    getClusters(data ? data.ListWorkflow : []);
   }, [data]);
 
   useEffect(() => {

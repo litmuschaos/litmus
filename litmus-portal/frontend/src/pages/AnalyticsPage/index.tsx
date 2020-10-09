@@ -183,18 +183,14 @@ const AnalyticsPage: React.FC = () => {
     }
     if (experimentTestResultsArray.length === 1) {
       const workflowRunOnce = {
-        testsPassed: experimentTestResultsArray.length
-          ? experimentTestResultsArray.reduce((a, b) => a + b, 0)
-          : 0,
-        testsFailed: experimentTestResultsArray.length
-          ? experimentTestResultsArray.length -
-            experimentTestResultsArray.reduce((a, b) => a + b, 0)
-          : 0,
-        resilienceScore: experimentTestResultsArray.length
-          ? (experimentTestResultsArray.reduce((a, b) => a + b, 0) /
-              experimentTestResultsArray.length) *
-            100
-          : 0,
+        testsPassed: experimentTestResultsArray.reduce((a, b) => a + b, 0),
+        testsFailed:
+          experimentTestResultsArray.length -
+          experimentTestResultsArray.reduce((a, b) => a + b, 0),
+        resilienceScore:
+          (experimentTestResultsArray.reduce((a, b) => a + b, 0) /
+            experimentTestResultsArray.length) *
+          100,
         testDate:
           chaosDataArray[chaosDataArray.length - 1]?.lastUpdatedAt ?? '',
         workflowRunID: selectedWorkflows
