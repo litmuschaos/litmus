@@ -147,11 +147,9 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
               {t('workflowCluster.header.formControl.menu')}
             </MenuItem>
             <MenuItem value="Internal">
-              {' '}
               {t('workflowCluster.header.formControl.menu4')}
             </MenuItem>
             <MenuItem value="External">
-              {' '}
               {t('workflowCluster.header.formControl.menu5')}
             </MenuItem>
           </Select>
