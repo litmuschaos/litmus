@@ -7,6 +7,8 @@ Litmus-Portal provides console and UI experience for managing, monitoring, and e
 -   Minikube
 -   GKE
 -   KIND
+-   EKS
+-   Okteto Cloud
 
 ## **Pre-requisites**
 
@@ -22,10 +24,40 @@ kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/v1.8.x/lit
 
 Or
 
-> Master (Latest)
+> Master (Latest) Cluster scope. Install in litmus namespace by default.
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/k8s-manifest.yml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml
 ```
+
+Or
+
+> Master (Latest) Namespaced scope. Replace `<namespace>` with the desired namespace.
+```bash
+export LITMUS_PORTAL_NAMESPACE="<namespace>"
+kubectl create ns ${LITMUS_PORTAL_NAMESPACE}
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
+curl https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/namespaced-K8s-template.yml --output litmus-portal-namespaced-K8s-template.yml
+envsubst < litmus-portal-namespaced-K8s-template.yml > ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
+kubectl apply -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml -n ${LITMUS_PORTAL_NAMESPACE}
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/platforms/okteto/hello-world-AUT.yml -n ${LITMUS_PORTAL_NAMESPACE}
+```
+
+#### Configuration Options for Cluster scope.
+
+- `litmus-portal-operations-config` configmap.
+
+    > `AgentNamespace: litmus`
+
+- All environment variables.
+
+#### Configuration Options for Namespace scope.
+
+- `litmus-portal-operations-config` configmap.
+
+    > `AgentNamespace: ${LITMUS_PORTAL_NAMESPACE}`
+
+- All environment variables.
+
 
 #### Retrieving external url to access the litmus portal
 
@@ -46,8 +78,26 @@ View the User Guide <b>[here](https://docs.google.com/document/d/1fiN25BrZpvqg0U
 
 ### **Uninstallation**
 
+> Alpha0 (Stable)
 ```bash
-kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/k8s-manifest.yml
+kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/v1.8.x/litmus-portal/k8s-manifest.yml
+```
+
+Or
+
+> Master (Latest) Cluster scope. Uninstall in litmus namespace by default.
+```bash
+kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml
+```
+
+Or
+
+> Master (Latest) Namespaced scope. Replace `<namespace>` with the desired namespace.
+```bash
+export LITMUS_PORTAL_NAMESPACE="<namespace>"
+kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
+kubectl delete -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml -n ${LITMUS_PORTAL_NAMESPACE}
+kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/platforms/okteto/hello-world-AUT.yml -n ${LITMUS_PORTAL_NAMESPACE}
 ```
 
 ### **Tech Stack**
@@ -63,7 +113,6 @@ kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/li
     -   GQLGEN GraphQL Server
 -   Database
     -   MongoDB
-    -   Prometheus
 
 ##### **Additional information**
 

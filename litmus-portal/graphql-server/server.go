@@ -26,7 +26,7 @@ const defaultPort = "8080"
 var err error
 
 func init() {
-	if os.Getenv("JWT_SECRET") == "" || os.Getenv("SERVICE_ADDRESS") == "" || os.Getenv("SUBSCRIBER_IMAGE") == "" || os.Getenv("DEPLOYER_IMAGE") == "" {
+	if os.Getenv("LITMUS_CHAOS_RUNNER_IMAGE") == "" || os.Getenv("LITMUS_CHAOS_OPERATOR_IMAGE") == "" || os.Getenv("SUBSCRIBER_IMAGE") == "" || os.Getenv("DEPLOYER_IMAGE") == "" || os.Getenv("ARGO_SERVER_IMAGE") == "" || os.Getenv("ARGO_WORKFLOW_EXECUTOR_IMAGE") == "" || os.Getenv("ARGO_WORKFLOW_EXECUTOR_IMAGE") == "" || os.Getenv("JWT_SECRET") == "" || os.Getenv("PORTAL_SCOPE") == "" {
 		log.Fatal("Some environment variable are not setup")
 	}
 }

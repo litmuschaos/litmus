@@ -1,36 +1,37 @@
 import { useLazyQuery } from '@apollo/client';
 import {
   FormControl,
-  FormControlLabel,
-  RadioGroup,
   Snackbar,
   Typography,
+  MenuItem,
+  Select,
+  InputLabel,
+  Input,
 } from '@material-ui/core';
-import Radio from '@material-ui/core/Radio';
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
-import ButtonOutLine from '../../../components/Button/ButtonOutline';
 import { GET_CLUSTER } from '../../../graphql';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import useStyles from './styles';
-import { history } from '../../../redux/configureStore';
 
-/*
-  Check is image which is used as
-  a sign on cluster page
-*/
-function Check() {
-  const classes = useStyles();
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 4;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+    },
+  },
+};
 
-  return <img src="icons/check.png" className={classes.check} alt="Check" />;
+interface Cluster {
+  cluster_id: string;
+  is_active: boolean;
 }
-
-/*
-  This screen is starting page of workflow
-*/
 
 interface WorkflowClusterProps {
   gotoStep: (page: number) => void;
@@ -38,29 +39,39 @@ interface WorkflowClusterProps {
 
 const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
   const classes = useStyles();
-  const [value, setValue] = React.useState('Experiment');
   const workflow = useActions(WorkflowActions);
   const [isTragetSelected, setTarget] = React.useState(true);
   const [isOpenSnackBar, setOpenSnackBar] = React.useState(false);
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
   );
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue((event.target as HTMLInputElement).value);
+
+  const [name, setName] = React.useState('');
+  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    const str: string = event.target.value as string;
+    workflow.setWorkflowDetails({
+      clusterid: str,
+      project_id: selectedProjectID,
+    });
+    setName(str);
+    setTarget(false);
   };
+
+  const [clusterData, setclusterData] = useState<Cluster[]>([]);
 
   const [getCluster] = useLazyQuery(GET_CLUSTER, {
     onCompleted: (data) => {
-      if (
-        data &&
-        data.getCluster.length !== 0 &&
-        data.getCluster[0].is_active !== false
-      ) {
-        workflow.setWorkflowDetails({
-          clusterid: data.getCluster[0].cluster_id,
-          project_id: selectedProjectID,
+      const clusters: Cluster[] = [];
+      if (data && data.getCluster.length !== 0) {
+        data.getCluster.forEach((e: Cluster) => {
+          if (e.is_active === true) {
+            clusters.push({
+              cluster_id: e.cluster_id,
+              is_active: e.is_active,
+            });
+          }
         });
-        gotoStep(1);
+        setclusterData(clusters);
       } else {
         setOpenSnackBar(true);
       }
@@ -68,53 +79,55 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
     fetchPolicy: 'cache-and-network',
   });
 
+  useEffect(() => {
+    getCluster({ variables: { project_id: selectedProjectID } });
+  }, []);
+
   const handleClick = () => {
-    getCluster({
-      variables: {
-        project_id: selectedProjectID,
-        cluster_type: 'internal',
-      },
-    });
+    gotoStep(1);
   };
+  const { t } = useTranslation();
 
   return (
     <div className={classes.rootcontainer}>
       {/* Arrow mark */}
       <div>
-        <Check />
+        <img src="icons/check.png" className={classes.check} alt="Check" />
       </div>
       <div>
         <Typography className={classes.heading}>
-          <strong> Choose the target Kubernetes cluster</strong>
+          <strong> {t('workflowCluster.header.chooseAgent')}</strong>
         </Typography>
         <Typography className={classes.headchaos}>
-          You are creating a <strong> new chaos workflow.</strong>
+          {t('workflowCluster.header.creatingNew')}
+          <strong>{t('workflowCluster.header.creatingNewBold')} </strong>
         </Typography>
         <Typography className={classes.headcluster}>
-          Select a target Kubernetes cluster to run this workflow.
+          {t('workflowCluster.header.selectAgent')}
         </Typography>
 
         <div className={classes.radiobutton}>
-          <FormControl component="fieldset">
-            <RadioGroup
-              data-cy="selectRadio"
-              onClick={() => setTarget(false)}
-              aria-label="D"
-              name="radio-button-demo"
-              value={value}
+          <FormControl
+            variant="outlined"
+            className={classes.formControl}
+            color="secondary"
+          >
+            <InputLabel className={classes.selectText}>
+              {t('workflowCluster.header.selectCluster')}
+            </InputLabel>
+            <Select
+              value={name}
               onChange={handleChange}
+              input={<Input />}
+              MenuProps={MenuProps}
+              className={classes.selectText}
             >
-              <FormControlLabel
-                value="d"
-                control={<Radio />}
-                label={
-                  <Typography>
-                    Ignite-cluster(where this Litmus portal is install and
-                    running)
-                  </Typography>
-                }
-              />
-            </RadioGroup>
+              {clusterData.map((name: Cluster) => (
+                <MenuItem key={name.cluster_id} value={name.cluster_id}>
+                  {name.cluster_id}
+                </MenuItem>
+              ))}
+            </Select>
           </FormControl>
         </div>
       </div>
@@ -132,32 +145,15 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
             isDisabled={isTragetSelected}
             handleClick={() => handleClick()}
           >
-            <div>Select and Continue</div>
+            <div>{t('workflowCluster.header.select')}</div>
           </ButtonFilled>
-        </div>
-
-        <div className={classes.or}>or</div>
-        <div data-cy="External">
-          <ButtonOutLine
-            isDisabled={false}
-            data-cy="selectLitmusKubernetes"
-            handleClick={() => {
-              history.push('/targets');
-            }}
-          >
-            <Typography>
-              Install Litmus agents to other Kubernetes cluster
-            </Typography>
-          </ButtonOutLine>
         </div>
       </div>
       <Snackbar
         open={isOpenSnackBar}
         action={
           <Typography>
-            <strong>
-              No Cluster Registered With Your Project ID, Please Wait...
-            </strong>
+            <strong>{t('workflowCluster.header.snackbar')}</strong>
           </Typography>
         }
         autoHideDuration={6000}

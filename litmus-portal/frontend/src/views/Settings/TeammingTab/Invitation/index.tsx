@@ -1,5 +1,6 @@
 import { Box, Paper, Tab, Tabs, Typography } from '@material-ui/core';
 import React from 'react';
+import useTheme from '@material-ui/core/styles/useTheme';
 import ButtonOutline from '../../../../components/Button/ButtonOutline';
 import Unimodal from '../../../../containers/layouts/Unimodal';
 import ReceivedInvitations from './ReceivedInvitations';
@@ -55,7 +56,7 @@ const Invitation: React.FC = () => {
   const handleChange = (event: React.ChangeEvent<{}>, actTab: number) => {
     setActiveTab(actTab);
   };
-
+  const theme = useTheme();
   return (
     <div data-cy="invitationButton">
       <div className={classes.button}>
@@ -74,8 +75,11 @@ const Invitation: React.FC = () => {
               <Tabs
                 value={activeTab}
                 onChange={handleChange}
-                indicatorColor="secondary"
-                textColor="secondary"
+                TabIndicatorProps={{
+                  style: {
+                    backgroundColor: theme.palette.secondary.dark,
+                  },
+                }}
               >
                 <Tab data-cy="receivedTab" label="Received" {...tabProps(0)} />
                 <Tab data-cy="sentTab" label="Sent" {...tabProps(1)} />

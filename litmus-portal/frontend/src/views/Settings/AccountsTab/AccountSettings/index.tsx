@@ -1,7 +1,7 @@
 import { Divider, Typography } from '@material-ui/core';
 import React, { useRef, useState } from 'react';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
-import InputField from '../../../../components/InputField';
+import InputFieldOutline from '../../../../components/InputFieldOutline';
 import Loader from '../../../../components/Loader';
 import config from '../../../../config';
 import Unimodal from '../../../../containers/layouts/Unimodal';
@@ -125,7 +125,7 @@ const AccountSettings: React.FC = () => {
             <form className={classes.innerPass}>
               {/* Current Password */}
               <div data-cy="currPassword">
-                <InputField
+                <InputFieldOutline
                   required
                   value={password.currPassword}
                   handleChange={handleCurrPassword('currPassword')}
@@ -136,7 +136,7 @@ const AccountSettings: React.FC = () => {
               </div>
               {/* New Password */}
               <div data-cy="newPassword">
-                <InputField
+                <InputFieldOutline
                   required
                   type="password"
                   handleChange={handleNewPassword('newPassword')}
@@ -155,7 +155,7 @@ const AccountSettings: React.FC = () => {
               </div>
               {/* Confirm new password */}
               <div data-cy="confPassword">
-                <InputField
+                <InputFieldOutline
                   helperText={
                     validateConfirmPassword(
                       password.newPassword,
