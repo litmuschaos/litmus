@@ -4,10 +4,9 @@ import Plotly from 'plotly.js';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import moment from 'moment';
+import { useTheme } from '@material-ui/core/styles';
 import useStyles from './style';
 import Score from './Score';
-// import moment from 'moment';
-// import * as _ from 'lodash';
 
 const Plot = createPlotlyComponent(Plotly);
 
@@ -28,12 +27,7 @@ interface AverageDateWiseResilienceScores {
     avgResilienceScores: number[];
   };
 }
-/*
-interface AverageDateWiseResilienceScore {
-  date: string;
-  avgResilienceScore: number;
-}
-*/
+
 const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps> = ({
   xData,
   yData,
@@ -41,7 +35,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
   colors,
 }) => {
   const classes = useStyles();
-
+  const { palette } = useTheme();
   const [currentGranularity, setCurrentGranularity] = React.useState<{
     name: string;
   }>({
@@ -73,10 +67,6 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
 
   const [plotLayout, setPlotLayout] = React.useState<any>({});
 
-  // Function to find average
-  // const average = (list: number[]) =>
-  // list.reduce((prev, curr) => prev + curr) / list.length;
-
   // Function to convert UNIX time in format of DD MMM YYY
   const formatDate = (date: string) => {
     const updated = new Date(parseInt(date, 10) * 1000).toString();
@@ -84,136 +74,6 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
     return resDate;
   };
 
-  /*
-  // Function to calculate average of resilience scores based on common dates
-  const avgWorkflowsCommon = () => {
-    const averageDateWiseResilienceScores: AverageDateWiseResilienceScores = {
-      Daily: {
-        dates: [],
-        avgResilienceScores: [],
-      },
-      Monthly: {
-        dates: [],
-        avgResilienceScores: [],
-      },
-    };
-    for (let i = 0; i < xData.Daily[0].length; i += 1) {
-      let date: string = xData.Daily[0][i]; //formatDate(xData.Daily[0][i]);
-      let count: number = 0;
-      const valuesForProbableCommonDate: number[] = [];
-      for (let j = 0; j < xData.Daily.length; j += 1) {
-        const parsedDates: string[] = [];
-        xData.Daily[j].forEach(function (date: string) {
-          parsedDates.push(date); //formatDate(date));
-        });
-        if (parsedDates.includes(date)) {
-          count += 1;
-          valuesForProbableCommonDate.push(
-            yData.Daily[j][parsedDates.indexOf(date)]
-          );
-        }
-      }
-      if (count == xData.Daily.length) {
-        averageDateWiseResilienceScores.Daily.dates.push(date);
-        averageDateWiseResilienceScores.Daily.avgResilienceScores.push(
-          average(valuesForProbableCommonDate)
-        );
-      }
-    }
-
-    for (let i = 0; i < xData.Monthly[0].length; i += 1) {
-      let date: string = xData.Monthly[0][i]; //formatDate(xData.Monthly[0][i]);
-      let count: number = 0;
-      const valuesForProbableCommonDate: number[] = [];
-      for (let j = 0; j < xData.Monthly.length; j += 1) {
-        const parsedDates: string[] = [];
-        xData.Monthly[j].forEach(function (date: string) {
-          parsedDates.push(date); //formatDate(date));
-        });
-        if (parsedDates.includes(date)) {
-          count += 1;
-          valuesForProbableCommonDate.push(
-            yData.Monthly[j][parsedDates.indexOf(date)]
-          );
-        }
-      }
-      if (count == xData.Monthly.length) {
-        averageDateWiseResilienceScores.Monthly.dates.push(date);
-        averageDateWiseResilienceScores.Monthly.avgResilienceScores.push(
-          average(valuesForProbableCommonDate)
-        );
-      }
-    }
-    return averageDateWiseResilienceScores;
-  };
-*/
-  /*
- // Function to group data based on dates and months
-const getGroupedData = () => {
-  const dailyList: AverageDateWiseResilienceScore[] = [];
-  calculatedAverageAll.Daily.dates.forEach((date: string, index: number) => {
-    dailyList.push({
-      date: date,
-      avgResilienceScore:
-        calculatedAverageAll.Daily.avgResilienceScores[index],
-    });
-  });
-
-  const monthlyList: AverageDateWiseResilienceScore[] = [];
-  calculatedAverageAll.Monthly.dates.forEach(
-    (date: string, index: number) => {
-      dailyList.push({
-        date: date,
-        avgResilienceScore:
-          calculatedAverageAll.Monthly.avgResilienceScores[index],
-      });
-    }
-  );
-
-  const dailyGroupedResults = _.groupBy(dailyList, (data) =>
-    moment.unix(parseInt(data.date, 10)).startOf('day')
-  );
-
-  const monthlyGroupedResults = _.groupBy(monthlyList, (data) =>
-    moment.unix(parseInt(data.date, 10)).startOf('month')
-  );
-
-  const avgResScores: AverageDateWiseResilienceScores = {
-    Daily: {
-      dates: [],
-      avgResilienceScores: [],
-    },
-    Monthly: {
-      dates: [],
-      avgResilienceScores: [],
-    },
-  };
-
-  Object.keys(dailyGroupedResults).forEach((day) => {
-    const scoresForTheDay: AverageDateWiseResilienceScore[] =
-      dailyGroupedResults[day];
-    const average =
-      scoresForTheDay.reduce(
-        (total, next) => total + next.avgResilienceScore,
-        0
-      ) / scoresForTheDay.length;
-    avgResScores.Daily.dates.push(day);
-    avgResScores.Daily.avgResilienceScores.push(average);
-  });
-
-  Object.keys(monthlyGroupedResults).forEach((month) => {
-    const scoresForTheMonth: AverageDateWiseResilienceScore[] =
-      monthlyGroupedResults[month];
-    const average =
-      scoresForTheMonth.reduce(
-        (total, next) => total + next.avgResilienceScore,
-        0
-      ) / scoresForTheMonth.length;
-    avgResScores.Monthly.dates.push(month);
-    avgResScores.Monthly.avgResilienceScores.push(average);
-  });
-};
-*/
   // Function to calculate average of resilience scores based on all dates with range as edge dates
   const avgWorkflowsAll = () => {
     const averageDateWiseResilienceScores: AverageDateWiseResilienceScores = {
@@ -282,11 +142,7 @@ const getGroupedData = () => {
       .map(([, item]) => item); // extract the sorted items
 
   const processData = () => {
-    // const calculatedAverageCommon: AverageDateWiseResilienceScores = avgWorkflowsCommon();
-    // console.log(calculatedAverageCommon);
     const calculatedAverageAll: AverageDateWiseResilienceScores = avgWorkflowsAll();
-    // console.log(calculatedAverageAll);
-
     let dataX = [['']];
     let dataY = [[0]];
     let xAvg: string[] = [];
@@ -303,15 +159,9 @@ const getGroupedData = () => {
       xAvg = calculatedAverageAll.Monthly.dates;
       yAvg = calculatedAverageAll.Monthly.avgResilienceScores;
     }
-
-    //
-
     const lineSize: number[] = Array(labels?.length).fill(3);
-
     const data = [];
-
     const series: number[] = Array(labels?.length).fill(0);
-
     const lengths: number[] = Array(labels?.length).fill(0);
 
     for (let i = 0; i < dataX.length; i += 1) {
@@ -338,20 +188,14 @@ const getGroupedData = () => {
     xAvg.forEach((x) => {
       unixTimeArray.push(parseInt(moment(x).format('X'), 10));
     });
-
     const argSortResultY = argSort(yAvg, unixTimeArray).reverse();
     const sortedResultX = unixTimeArray.sort(function difference(a, b) {
       return a - b;
     });
-
     const datesX: string[] = [];
-
     sortedResultX.forEach((date) => {
       datesX.push(formatDate(date.toString()));
     });
-
-    // console.log(datesX);
-    // console.log(argSortResultY);
 
     const avgResult = {
       x: datesX,
@@ -361,19 +205,16 @@ const getGroupedData = () => {
       line: {
         shape: 'spline',
         dash: 'dash',
-        color: '5B44BA',
+        color: palette.secondary.dark,
         width: 3,
       },
       name: 'AVG Workflows',
     };
     data.push(avgResult);
-
     const normalized = Array(labels?.length).fill(0);
-
     for (let k = 0; k < lengths.length; k += 1) {
       normalized[k] = series[k] / lengths[k];
     }
-
     const max = Math.max(...normalized);
     const maxID = normalized.indexOf(max);
     const min = Math.min(...normalized);
@@ -446,15 +287,15 @@ const getGroupedData = () => {
         showgrid: true,
         showline: false,
         showticklabels: true,
-        linecolor: 'rgb(204,204,204)',
+        linecolor: palette.graphAnnotationsColor,
         linewidth: 0.5,
         ticks: 'outside',
-        tickcolor: 'rgb(204,204,204)',
+        tickcolor: palette.graphAnnotationsColor,
         tickwidth: 2,
         ticklen: 5,
         tickfont: {
           family: 'Ubuntu',
-          color: 'rgba(0, 0, 0, 0.4)',
+          color: palette.customColors.black(0.4),
         },
         mirror: true,
         rangeselector: selectorOptions as any,
@@ -465,15 +306,15 @@ const getGroupedData = () => {
         zeroline: false,
         showline: false,
         showticklabels: true,
-        linecolor: 'rgb(204,204,204)',
+        linecolor: palette.graphAnnotationsColor,
         linewidth: 0.5,
         ticks: 'outside',
-        tickcolor: 'rgb(204,204,204)',
+        tickcolor: palette.graphAnnotationsColor,
         tickwidth: 2,
         ticklen: 5,
         tickfont: {
           family: 'Ubuntu',
-          color: 'rgba(0, 0, 0, 0.4)',
+          color: palette.customColors.black(0.4),
         },
         mirror: true,
         tickmode: 'array',
@@ -493,7 +334,7 @@ const getGroupedData = () => {
       },
       font: {
         family: 'Ubuntu, monospace',
-        color: 'rgba(0, 0, 0, 0.4)',
+        color: palette.customColors.black(0.4),
       },
       showlegend: true,
       legend: { orientation: 'h', y: -0.5 },

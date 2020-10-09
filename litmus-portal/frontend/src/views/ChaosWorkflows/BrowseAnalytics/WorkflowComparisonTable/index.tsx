@@ -385,14 +385,6 @@ const WorkflowComparisonTable = () => {
 
   const generatePDF = () => {
     if (document.getElementById('analytics')) {
-      /*
-      let heads = [
-        { workflow_name: 'Workflow Name', cluster_name: 'Cluster Name' },
-      ];
-
-      let rows = [{ workflow_name: ['hi', 'hi2'], cluster_name: 'Cluster 1' }];
-*/
-
       const heads = [
         {
           cluster_name: 'Cluster Name',
@@ -405,15 +397,12 @@ const WorkflowComparisonTable = () => {
             'Experiment Details     Name                             Weight / Verdict',
         },
       ];
-
       const rows: any[] = [];
-
       totalValidWorkflowRuns.forEach((run) => {
         let detail_string = '';
         run.test_details?.testNames.forEach((experiment, index) => {
-          detail_string += `${experiment}\n${run.test_details?.testWeights[index]}/${run.test_details?.testResults[index]}\n`;
+          detail_string += `${experiment}\n${run.test_details?.testWeights[index]} / ${run.test_details?.testResults[index]}\n`;
         });
-
         rows.push({
           cluster_name: run.cluster_name,
           workflow_name: run.workflow_name,
@@ -431,16 +420,11 @@ const WorkflowComparisonTable = () => {
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         const contentDataURL = canvas.toDataURL('image/png');
         const doc = new jsPDF('p', 'mm', 'a4'); // A4 size page of PDF
-        const position = -44;
-
+        const position = -45;
         doc.setFontSize(10);
-        // doc.setFontType("bold");
         doc.text('Litmus Portal Report: Version 1.9', 10, 10);
-        // doc.text(this.programReport.ClassName, 35, 10);
-
         doc.text('Time of Generation:', 10, 15);
         doc.text(new Date().toString(), 42, 15);
-
         doc.text(
           'Total Number of Chaos Workflow Schedules under consideration:',
           10,
@@ -453,59 +437,23 @@ const WorkflowComparisonTable = () => {
           114,
           20
         );
-
         doc.text(
           'Total Number of Chaos Workflow Runs under consideration:',
           10,
           25
         );
         doc.text(totalValidWorkflowRunsCount.toString(), 105, 25);
-
         const img = new Image();
         img.src = '/icons/LitmusLogo.png';
         doc.addImage(img, 'png', 165, 10, 30, 12.5);
-
         doc.line(0, 33, 300, 33);
-
         doc.setLineWidth(5.0);
-
         doc.text(
           'Workflow Run Details Table & Workflow Schedules Table with Resilience Score Comparison Graph',
           27.5,
           39
         );
-
-        /*
-        doc.text('Sponsored By :', 100, 30);
-         doc.text(this.programReport.sponsorInfo[0].SponsorName, 10, 40);
-         doc.text(this.programReport.sponsorInfo[0].City + ' ' + this.programReport.sponsorInfo[0].StateZipcode, 10, 45);
-    
-    
-         doc.text(this.programReport.sponsorInfo[1].SponsorName, 130, 40);
-         doc.text(this.programReport.sponsorInfo[1].City + ' ' + this.programReport.sponsorInfo[1].StateZipcode, 130, 45);
-    
-    
-         doc.text(this.programReport.sponsorInfo[2].SponsorName, 10, 55);
-        doc.text(this.programReport.sponsorInfo[2].City + ' ' + this.programReport.sponsorInfo[2].StateZipcode, 10, 60);
-    
-    
-        doc.text(this.programReport.sponsorInfo[3].SponsorName, 130, 55);
-         doc.text(this.programReport.sponsorInfo[3].City + ' ' + this.programReport.sponsorInfo[3].StateZipcode, 130, 60);
-    */
-
         try {
-          // autoTable(doc, {
-          //   startY: 800,
-          //   margin: { vertical: 150, horizontal: 10 },
-          //   html: '.table',
-          //   useCss: true,
-          //   tableWidth: 'wrap',
-          //   styles: { cellPadding: 0.5, fontSize: 8 },
-          //   columnStyles: { text: { cellWidth: 'auto' } },
-          //   rowPageBreak: 'auto',
-          // });
-
-          // doc.autoTable(columns, rows, {
           autoTable(doc, {
             head: heads,
             body: rows,
@@ -595,80 +543,7 @@ const WorkflowComparisonTable = () => {
     setShowAll(false);
     getClusters(searchingDataRetriever());
   }, [filter, compare]);
-  /*
-  // data for comparison plot
-  const labels = ['K8S1', 'K8S4', 'K8S2', 'K8S3'];
 
-  const xData = {
-    Daily: [
-      [
-        '2020-04-08',
-        '2020-04-09',
-        '2020-04-10',
-        '2020-04-11',
-        '2020-04-12',
-        '2020-05-13',
-        '2020-05-14',
-        '2020-05-15',
-        '2020-05-16',
-        '2020-05-17',
-      ],
-      [
-        '2020-04-08',
-        '2020-04-09',
-        '2020-04-11',
-        '2020-04-12',
-        '2020-06-13',
-        '2020-06-16',
-        '2020-07-17',
-      ],
-      [
-        '2020-03-08',
-        '2020-03-09',
-        '2020-03-12',
-        '2020-04-09',
-        '2020-04-14',
-        '2020-04-15',
-        '2020-04-16',
-        '2020-04-17',
-      ],
-      [
-        '2020-04-08',
-        '2020-04-09',
-        '2020-07-10',
-        '2020-07-11',
-        '2020-09-12',
-        '2020-09-13',
-        '2020-11-14',
-        '2020-11-16',
-        '2020-11-17',
-      ],
-    ],
-    Monthly: [
-      ['2020-04-30', '2020-05-31'],
-      ['2020-04-30', '2020-06-30', '2020-07-31'],
-      ['2020-03-31', '2020-04-30'],
-      ['2020-04-30', '2020-07-31', '2020-09-30', '2020-11-30'],
-    ],
-  };
-
-  const yData = {
-    Daily: [
-      [0, 73, 72, 74, 70, 70, 66, 66, 69, 100],
-      [56, 45, 36, 34, 35, 28, 25],
-      [45, 13, 14, 24, 40, 35, 50, 55],
-      [23, 18, 21, 13, 18, 17, 16, 23, 76],
-    ],
-    Monthly: [
-      [57.8, 74.2],
-      [42.75, 49, 25],
-      [24, 45],
-      [20.5, 17, 17.5, 38.33],
-    ],
-  };
-
-  const colors = ['#CA2C2C', '#109B67', '#F6B92B', '#858CDD'];
-*/
   return (
     <div className={classes.root} id="analytics">
       <div className={classes.analyticsDiv}>
@@ -909,15 +784,6 @@ const WorkflowComparisonTable = () => {
               labels={plotDataForComparison ? plotDataForComparison.labels : []}
               colors={plotDataForComparison ? plotDataForComparison.colors : []}
             />
-            {/*
-            <ResilienceScoreComparisonPlot
-              xData={xData}
-              yData={yData}
-              labels={labels}
-              colors={colors}
-            />
-
-*/}
           </div>
         </Paper>
       ) : (

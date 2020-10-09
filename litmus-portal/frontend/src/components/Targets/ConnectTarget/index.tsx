@@ -85,7 +85,7 @@ const ConnectTarget = () => {
   return (
     <Scaffold>
       <section className="Header section">
-        <div className={classes.backButton}>
+        <div className={classes.backBotton}>
           <ButtonOutline
             isDisabled={false}
             handleClick={handleClick}

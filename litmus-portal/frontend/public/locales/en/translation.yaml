@@ -109,6 +109,7 @@ analytics:
   fetchError: An error has occurred while fetching the data
   viewTestResult: Click on test to view the results for the selected period
   comingSoon: Analytics Coming Soon!
+  waitingMessage: Waiting for workflow to start running!
 
 error:
   whoops: Whoops!

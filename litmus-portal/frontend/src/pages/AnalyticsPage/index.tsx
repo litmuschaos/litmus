@@ -342,7 +342,7 @@ const AnalyticsPage: React.FC = () => {
       ) : (
         <div>
           <Typography className={classes.waitingText}>
-            Waiting for workflow to start running !
+            {t('analytics.waitingMessage')}
           </Typography>
           <div className={classes.loader}>
             <Loader />
