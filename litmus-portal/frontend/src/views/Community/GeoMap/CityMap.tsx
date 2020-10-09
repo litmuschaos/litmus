@@ -18,9 +18,10 @@ lat and lng wise to present it on map */
 const CityMap: React.FC = () => {
   const classes = useStyles();
 
-  const geoCity = useSelector(
-    (state: RootState) => state.communityData.google.geoCity
+  const { communityData } = useSelector(
+    (state: RootState) => state.communityData
   );
+  const { geoCity } = communityData.google;
   return (
     <div>
       <ComposableMap

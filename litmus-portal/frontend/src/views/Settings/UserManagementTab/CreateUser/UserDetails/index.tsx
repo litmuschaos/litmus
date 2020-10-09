@@ -1,7 +1,7 @@
 import { Avatar, Button, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import InputField from '../../../../../components/InputField';
+import InputFieldOutline from '../../../../../components/InputFieldOutline';
 import Unimodal from '../../../../../containers/layouts/Unimodal';
 import {
   validateEmail,
@@ -79,7 +79,7 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
           {/* Fields for details including Full name, email, username */}
           <div className={classes.details1}>
             <div data-cy="InputName">
-              <InputField
+              <InputFieldOutline
                 required
                 helperText={
                   validateStartEmptySpacing(nameValue)
@@ -96,7 +96,7 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
               />
             </div>
             <div data-cy="InputEmail">
-              <InputField
+              <InputFieldOutline
                 required
                 helperText={
                   validateEmail(emailValue) ? 'Should be a valid email' : ''
@@ -111,9 +111,9 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
                 )}
               />
             </div>
-            {/* Username is not editable normal user */}
+            {/* Username is not editable by non admin user */}
             <div data-cy="username">
-              <InputField
+              <InputFieldOutline
                 value={userValue}
                 handleChange={handleUserChange}
                 disabled={usernameIsDisabled}

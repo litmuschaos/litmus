@@ -6,18 +6,18 @@ import useStyles from './styles';
 interface CustomTimeProps {
   ampm: boolean;
   disabled: boolean;
+  value: Date | null;
+  handleDateChange: (date: Date | null) => void;
 }
 
 // Used to set and display time in hours and minutes
-const CustomTime: React.FC<CustomTimeProps> = ({ ampm, disabled }) => {
+const CustomTime: React.FC<CustomTimeProps> = ({
+  ampm,
+  disabled,
+  value,
+  handleDateChange,
+}) => {
   const classes = useStyles();
-  const [selectedDate, setSelectedDate] = React.useState<Date | null>(
-    new Date(Date.now())
-  );
-
-  const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date);
-  };
 
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -39,7 +39,7 @@ const CustomTime: React.FC<CustomTimeProps> = ({ ampm, disabled }) => {
         variant="dialog"
         cancelLabel="Cancel"
         okLabel="Save"
-        value={selectedDate}
+        value={value}
         onChange={handleDateChange}
       />
     </MuiPickersUtilsProvider>

@@ -25,23 +25,23 @@ const TargetCopy: React.FC<InstallProps> = ({ yamlLink }) => {
 
     setTimeout(() => setCopying(false), 3000);
   }
+  const engineUrl: string = `kubectl apply -f http://localhost:8080/file/${yamlLink}.yaml`;
+
   const { t } = useTranslation();
 
   return (
     <div className={classes.root}>
       {copying ? (
         <Typography className={classes.copiedDiv}>
-          {t('Targets.copy.copying')}
+          {t('targets.copy.copying')}
         </Typography>
       ) : null}
       <div className={classes.linkBox}>
-        <Typography variant="subtitle1" className={classes.yamlLink}>
-          {yamlLink}
-        </Typography>
+        <Typography className={classes.yamlLink}>{engineUrl}</Typography>
         <div className={classes.buttonBox}>
           <ButtonOutline
             isDisabled={false}
-            handleClick={() => copyTextToClipboard(yamlLink)}
+            handleClick={() => copyTextToClipboard(engineUrl)}
           >
             {!copying ? (
               <div className={classes.copyText}>
@@ -50,13 +50,13 @@ const TargetCopy: React.FC<InstallProps> = ({ yamlLink }) => {
                   style={{ paddingRight: 10 }}
                   alt="copy"
                 />
-                <Typography>{t('Targets.copy.copy')}</Typography>
+                <Typography>{t('targets.copy.copy')}</Typography>
               </div>
             ) : (
               <>
                 <div className={classes.copyText}>
                   <Done className={classes.done} />
-                  <Typography>{t('Targets.copy.copied')}</Typography>
+                  <Typography>{t('targets.copy.copied')}</Typography>
                 </div>
               </>
             )}
