@@ -319,6 +319,19 @@ workflowDetailsView:
     button:
       logs: Logs
 
+homeView:
+  averageResilienceScore:
+    header: Average Resilience Score
+    desc: Based on results of completed tests
+  passedVsFailed:
+    header: Passed Vs Failed
+    desc: Statistics taken from completed tests
+  totalWorkflows:
+    header: Number of total Workflows
+    subtitle: AVG amount of workflows
+    perWeek: per week
+    desc: AVG is calculated from the max of workflows
+
 ######################################
 ############    Targets    ###########
 ######################################
