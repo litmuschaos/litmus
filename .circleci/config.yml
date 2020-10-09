@@ -272,7 +272,7 @@ jobs:
       - checkout
       - run:
           name: Init Workflows
-          command: chmod +x .circleci/setup.sh && .circleci/setup.sh <<pipeline.git.base_revision>> <<pipeline.git.revision>> false
+          command: .circleci/setup.sh && echo hello
 
   init-release:
     docker:

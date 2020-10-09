@@ -10,7 +10,7 @@ import (
 func Deploy(file string) error {
 	cmd := exec.Command("kubectl", "apply", "-f", file)
 	if output, err := cmd.Output(); err != nil {
-		log.Print("XX FAILED TO DEPLOY SUBSCRIBER COMPONENTS")
+		log.Print("XX ERROR: FAILED TO DEPLOY SUBSCRIBER COMPONENTS")
 		return err
 	} else {
 		log.Printf("\n%s", output)
