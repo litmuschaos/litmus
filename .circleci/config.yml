@@ -1,5 +1,36 @@
 ---
 version: 2.1
+
+parameters:
+  # This parameter is used to trigger the main workflow
+  init:
+    type: boolean
+    default: true
+
+  # A parameter per module
+  subscriber:
+    type: boolean
+    default: false
+  auth:
+    type: boolean
+    default: false
+  deployer:
+    type: boolean
+    default: false
+  frontend:
+    type: boolean
+    default: false
+  gql:
+    type: boolean
+    default: false
+  backend:
+    type: boolean
+    default: false
+  env:
+    type: boolean
+    default: false
+
+
 executors:
   golang:
     docker:
@@ -17,107 +48,143 @@ jobs:
   backend-services-checks:
     executor: golang
     steps:
-      - checkout
-      - run:
-          name: Run backend service checks
-          command: make backend-services-checks
-          working_directory: ~/project/litmus-portal
+      - when:
+          condition: << pipeline.parameters.backend >>
+          steps:
+            - checkout
+            - run:
+                name: Run backend service checks
+                command: make backend-services-checks
+                working_directory: ~/project/litmus-portal
   frontend-services-checks:
     executor: nodejs
     steps:
-      - checkout
-      - run:
-          name: Run frontend service checks
-          command: make frontend-services-checks
-          working_directory: ~/project/litmus-portal
+      - when:
+          condition: << pipeline.parameters.frontend >>
+          steps:
+            - checkout
+            - run:
+                name: Run frontend service checks
+                command: make frontend-services-checks
+                working_directory: ~/project/litmus-portal
   setup-env:
     executor: cosmic
     steps:
-      - run: mkdir -p workspace
-      - run:
-          name: Setup ENV
-          command: |
-            echo 'export REPONAME="litmuschaos"' >> workspace/env-vars
-            echo 'export GRAPHQL_SERVER_IMAGE="litmusportal-server"' >> workspace/env-vars
-            echo 'export AUTHENTICATION_SERVER_IMAGE="litmusportal-auth-server"' >> workspace/env-vars
-            echo 'export FRONTEND_IMAGE="litmusportal-frontend"' >> workspace/env-vars
-            echo 'export SUBSCRIBER_IMAGE="litmusportal-subscriber"' >> workspace/env-vars
-            echo 'export SELF_DEPLOYER_IMAGE="litmusportal-self-deployer"' >> workspace/env-vars
-            echo 'export IMGTAG="ci"' >> workspace/env-vars
-            cat workspace/env-vars >> $BASH_ENV
-            source $BASH_ENV
-      - persist_to_workspace:
-          root: workspace
-          paths:
-            - env-vars
+      - when:
+          condition: << pipeline.parameters.env >>
+          steps:
+            - run: mkdir -p workspace
+            - run:
+                name: Setup ENV
+                command: |
+                  echo 'export REPONAME="litmuschaos"' >> workspace/env-vars
+                  echo 'export GRAPHQL_SERVER_IMAGE="litmusportal-server"' >> workspace/env-vars
+                  echo 'export AUTHENTICATION_SERVER_IMAGE="litmusportal-auth-server"' >> workspace/env-vars
+                  echo 'export FRONTEND_IMAGE="litmusportal-frontend"' >> workspace/env-vars
+                  echo 'export SUBSCRIBER_IMAGE="litmusportal-subscriber"' >> workspace/env-vars
+                  echo 'export SELF_DEPLOYER_IMAGE="litmusportal-self-deployer"' >> workspace/env-vars
+                  echo 'export IMGTAG="ci"' >> workspace/env-vars
+                  cat workspace/env-vars >> $BASH_ENV
+                  source $BASH_ENV
+            - persist_to_workspace:
+                root: workspace
+                paths:
+                  - env-vars
   docker-build-backend:
     machine:
       image: circleci/classic:201808-01
       resource_class: large
     steps:
-      - attach_workspace:
-          at: /tmp/workspace
-      - run: |
-          cat /tmp/workspace/env-vars >> $BASH_ENV
-          source $BASH_ENV
-      - checkout
-      - run:
-          name: Build graphql server docker image
-          command: docker build . -f build/Dockerfile -t ${REPONAME}/${GRAPHQL_SERVER_IMAGE}:${IMGTAG}
-          working_directory: ~/project/litmus-portal/graphql-server
-      - run:
-          name: Save graphql server docker image
-          command: docker save -o /tmp/workspace/${GRAPHQL_SERVER_IMAGE}.tar ${REPONAME}/${GRAPHQL_SERVER_IMAGE}:${IMGTAG}
-      - run:
-          name: Build auth server docker image
-          command: docker images && docker build . -f Dockerfile -t ${REPONAME}/${AUTHENTICATION_SERVER_IMAGE}:${IMGTAG}
-          working_directory: ~/project/litmus-portal/authentication
-      - run:
-          name: Save auth server docker image
-          command: docker save -o /tmp/workspace/${AUTHENTICATION_SERVER_IMAGE}.tar ${REPONAME}/${AUTHENTICATION_SERVER_IMAGE}:${IMGTAG}
-      - run:
-          name: Build subscriber docker image
-          command: docker build . -f build/Dockerfile -t ${REPONAME}/${SUBSCRIBER_IMAGE}:${IMGTAG}
-          working_directory: ~/project/litmus-portal/cluster-agents/subscriber
-      - run:
-          name: Save subscriber docker image
-          command: docker save -o /tmp/workspace/${SUBSCRIBER_IMAGE}.tar ${REPONAME}/${SUBSCRIBER_IMAGE}:${IMGTAG}
-      - run:
-          name: Build self-deployer docker image
-          command: docker build . -f build/Dockerfile -t ${REPONAME}/${SELF_DEPLOYER_IMAGE}:${IMGTAG}
-          working_directory: ~/project/litmus-portal/tools/self-deployer
-      - run:
-          name: Save self-deployer docker image
-          command: docker save -o /tmp/workspace/${SELF_DEPLOYER_IMAGE}.tar ${REPONAME}/${SELF_DEPLOYER_IMAGE}:${IMGTAG}
-      - persist_to_workspace:
-          root: /tmp/workspace
-          paths:
-            - litmusportal-server.tar
-            - litmusportal-subscriber.tar
-            - litmusportal-self-deployer.tar
-            - litmusportal-auth-server.tar
+      - when:
+          condition: << pipeline.parameters.backend >>
+          steps:
+            - attach_workspace:
+                at: /tmp/workspace
+            - run: |
+                cat /tmp/workspace/env-vars >> $BASH_ENV
+                source $BASH_ENV
+            - checkout
+      - when:
+          condition: << pipeline.parameters.gql >>
+          steps:
+            - run:
+                name: Build graphql server docker image
+                command: docker build . -f build/Dockerfile -t ${REPONAME}/${GRAPHQL_SERVER_IMAGE}:${IMGTAG}
+                working_directory: ~/project/litmus-portal/graphql-server
+            - run:
+                name: Save graphql server docker image
+                command: docker save -o /tmp/workspace/${GRAPHQL_SERVER_IMAGE}.tar ${REPONAME}/${GRAPHQL_SERVER_IMAGE}:${IMGTAG}
+            - persist_to_workspace:
+                root: /tmp/workspace
+                paths:
+                  - litmusportal-server.tar
+      - when:
+          condition: << pipeline.parameters.auth >>
+          steps:
+            - run:
+                name: Build auth server docker image
+                command: docker images && docker build . -f Dockerfile -t ${REPONAME}/${AUTHENTICATION_SERVER_IMAGE}:${IMGTAG}
+                working_directory: ~/project/litmus-portal/authentication
+            - run:
+                name: Save auth server docker image
+                command: docker save -o /tmp/workspace/${AUTHENTICATION_SERVER_IMAGE}.tar ${REPONAME}/${AUTHENTICATION_SERVER_IMAGE}:${IMGTAG}
+            - persist_to_workspace:
+                root: /tmp/workspace
+                paths:
+                  - litmusportal-auth-server.tar
+      - when:
+          condition: << pipeline.parameters.subscriber >>
+          steps:
+            - run:
+                name: Save subscriber docker image
+                command: docker save -o /tmp/workspace/${SUBSCRIBER_IMAGE}.tar ${REPONAME}/${SUBSCRIBER_IMAGE}:${IMGTAG}
+            - run:
+                name: Build subscriber docker image
+                command: docker build . -f build/Dockerfile -t ${REPONAME}/${SUBSCRIBER_IMAGE}:${IMGTAG}
+                working_directory: ~/project/litmus-portal/cluster-agents/subscriber
+            - persist_to_workspace:
+                root: /tmp/workspace
+                paths:
+                  - litmusportal-subscriber.tar
+      - when:
+          condition: << pipeline.parameters.deployer >>
+          steps:
+            - run:
+                name: Save self-deployer docker image
+                command: docker save -o /tmp/workspace/${SELF_DEPLOYER_IMAGE}.tar ${REPONAME}/${SELF_DEPLOYER_IMAGE}:${IMGTAG}
+            - run:
+                name: Build self-deployer docker image
+                command: docker build . -f build/Dockerfile -t ${REPONAME}/${SELF_DEPLOYER_IMAGE}:${IMGTAG}
+                working_directory: ~/project/litmus-portal/tools/self-deployer
+            - persist_to_workspace:
+                root: /tmp/workspace
+                paths:
+                  - litmusportal-self-deployer.tar
   docker-build-frontend:
     machine:
       image: circleci/classic:201808-01
       resource_class: large
     steps:
-      - attach_workspace:
-          at: /tmp/workspace
-      - run: |
-          cat /tmp/workspace/env-vars >> $BASH_ENV
-          source $BASH_ENV
-      - checkout
-      - run:
-          name: Build frontend docker image
-          command: docker build . -f Dockerfile -t ${REPONAME}/${FRONTEND_IMAGE}:${IMGTAG}
-          working_directory: ~/project/litmus-portal/frontend
-      - run:
-          name: Save frontend docker image
-          command: docker save -o /tmp/workspace/${FRONTEND_IMAGE}.tar ${REPONAME}/${FRONTEND_IMAGE}:${IMGTAG}
-      - persist_to_workspace:
-          root: /tmp/workspace
-          paths:
-            - litmusportal-frontend.tar
+      - when:
+          condition: << pipeline.parameters.frontend >>
+          steps:
+            - attach_workspace:
+                at: /tmp/workspace
+            - run: |
+                cat /tmp/workspace/env-vars >> $BASH_ENV
+                source $BASH_ENV
+            - checkout
+            - run:
+                name: Build frontend docker image
+                command: docker build . -f Dockerfile -t ${REPONAME}/${FRONTEND_IMAGE}:${IMGTAG}
+                working_directory: ~/project/litmus-portal/frontend
+            - run:
+                name: Save frontend docker image
+                command: docker save -o /tmp/workspace/${FRONTEND_IMAGE}.tar ${REPONAME}/${FRONTEND_IMAGE}:${IMGTAG}
+            - persist_to_workspace:
+                root: /tmp/workspace
+                paths:
+                  - litmusportal-frontend.tar
   docker-push:
     machine:
       image: circleci/classic:201808-01
@@ -129,29 +196,36 @@ jobs:
           cat /tmp/workspace/env-vars >> $BASH_ENV
           source $BASH_ENV
       - checkout
-      - run:
-          name: Loading all docker images
-          command: |
-            docker load -i /tmp/workspace/${GRAPHQL_SERVER_IMAGE}.tar
-            docker load -i /tmp/workspace/${SUBSCRIBER_IMAGE}.tar
-            docker load -i /tmp/workspace/${SELF_DEPLOYER_IMAGE}.tar
-            docker load -i /tmp/workspace/${AUTHENTICATION_SERVER_IMAGE}.tar
-            docker load -i /tmp/workspace/${FRONTEND_IMAGE}.tar
-      - run:
-          name: Pushing graphql server
-          command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${GRAPHQL_SERVER_IMAGE} --IMGTAG=${IMGTAG}
-      - run:
-          name: Pushing frontend server
-          command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${FRONTEND_IMAGE} --IMGTAG=${IMGTAG}
-      - run:
-          name: Pushing auth server
-          command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${AUTHENTICATION_SERVER_IMAGE} --IMGTAG=${IMGTAG}
-      - run:
-          name: Pushing subscriber server
-          command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${SUBSCRIBER_IMAGE} --IMGTAG=${IMGTAG}
-      - run:
-          name: Pushing self deployer
-          command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${SELF_DEPLOYER_IMAGE} --IMGTAG=${IMGTAG}
+      - when:
+          condition: << pipeline.parameters.frontend >>
+          steps:
+            - run:
+                name: Pushing frontend server
+                command: docker load -i /tmp/workspace/${FRONTEND_IMAGE}.tar && bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${FRONTEND_IMAGE} --IMGTAG=${IMGTAG}
+      - when:
+          condition: << pipeline.parameters.gql >>
+          steps:
+            - run:
+                name: Pushing graphql server
+                command: docker load -i /tmp/workspace/${GRAPHQL_SERVER_IMAGE}.tar && bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${GRAPHQL_SERVER_IMAGE} --IMGTAG=${IMGTAG}
+      - when:
+          condition: << pipeline.parameters.auth >>
+          steps:
+            - run:
+                name: Pushing auth server
+                command: docker load -i /tmp/workspace/${AUTHENTICATION_SERVER_IMAGE}.tar && bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${AUTHENTICATION_SERVER_IMAGE} --IMGTAG=${IMGTAG}
+      - when:
+          condition: << pipeline.parameters.subscriber >>
+          steps:
+            - run:
+                name: Pushing subscriber server
+                command: docker load -i /tmp/workspace/${SUBSCRIBER_IMAGE}.tar && bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${SUBSCRIBER_IMAGE} --IMGTAG=${IMGTAG}
+      - when:
+          condition: << pipeline.parameters.deployer >>
+          steps:
+            - run:
+                name: Pushing self deployer
+                command: docker load -i /tmp/workspace/${SELF_DEPLOYER_IMAGE}.tar && bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${SELF_DEPLOYER_IMAGE} --IMGTAG=${IMGTAG}
 
   release:
     machine:
@@ -191,9 +265,47 @@ jobs:
           name: Pushing self deployer
           command: bash ./hack/push --TYPE=release --REPONAME=${REPONAME} --IMGNAME=${SELF_DEPLOYER_IMAGE} --IMGTAG=${IMGTAG}
 
+  init:
+    docker:
+      - image: cimg/base:2019.06
+    steps:
+      - checkout
+      - run:
+          name: Init Workflows
+          command: chmod +x .circleci/setup.sh && .circleci/setup.sh <<pipeline.git.base_revision>> <<pipeline.git.revision>> false
+
+  init-release:
+    docker:
+      - image: cimg/base:2019.06
+    steps:
+      - checkout
+      - run:
+          name: Init Workflows
+          command: chmod +x .circleci/setup.sh && .circleci/setup.sh <<pipeline.git.base_revision>> <<pipeline.git.revision>> true
 workflows:
   version: 2
+
+  init-workflow:
+    when: << pipeline.parameters.init >>
+    jobs:
+      - init:
+          filters:
+            branches:
+              only:
+                - master
+                - /^v.*/
+                - /(pull\/[0-9]*)/
+      - init-release:
+          filters:
+            ## release jobs needs to be run for tagged releases alone & not for any branch commits
+            branches:
+              ignore: /.*/
+            tags:
+              only: /.*/
+
   litmus-portal:
+    when:
+      not: << pipeline.parameters.init >>
     jobs:
       - frontend-services-checks:
           filters:
