@@ -422,7 +422,7 @@ const WorkflowComparisonTable = () => {
         const doc = new jsPDF('p', 'mm', 'a4'); // A4 size page of PDF
         const position = -45;
         doc.setFontSize(10);
-        doc.text('Litmus Portal Report: Version 1.9', 10, 10);
+        doc.text('Litmus Portal Report Version: 1.9', 10, 10);
         doc.text('Time of Generation:', 10, 15);
         doc.text(new Date().toString(), 42, 15);
         doc.text(
