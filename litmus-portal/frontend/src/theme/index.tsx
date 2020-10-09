@@ -21,12 +21,38 @@ declare module '@material-ui/core/styles/createMuiTheme' {
 // Augument the Palette interface
 declare module '@material-ui/core/styles/createPalette' {
   interface Palette {
+    map: {
+      cityMap: {
+        backgroundColor: string;
+        marker: {
+          hover: string;
+          fill: string;
+          stroke: string;
+        };
+        geography: {
+          fill: string;
+          stroke: string;
+          hover: {
+            fill: string;
+            stroke: string;
+          };
+        };
+      };
+      countryMap: {
+        background: string;
+        colorAxis: string[];
+        backgroundMap: string;
+        datalessRegion: string;
+        default: string;
+      };
+    };
     customColors: {
       white: (opacity: number) => string;
       black: (opacity: number) => string;
       gray: string;
       menuOption: {
         active: string;
+        pending: string;
       };
     };
     input: {
@@ -53,22 +79,49 @@ declare module '@material-ui/core/styles/createPalette' {
     sidebarBackground?: string;
     createWorkflowCardShadow?: string;
     userNameTextColor?: string;
-    totalRunsCountColor?: string;
+    totalRunsCountColor: string;
     tabsComponentColor?: string;
     tabSelectorBackgroundColor?: string;
     providerTextColor?: string;
     personalDetailsBodyColor?: string;
     teamingTabHeadTextColor?: string;
     sectionDividerColor?: string;
+    inputFieldDisabled?: string;
   }
   // allow configuration using `createMuiTheme`
   interface PaletteOptions {
+    map?: {
+      cityMap?: {
+        backgroundColor?: string;
+        marker?: {
+          hover?: string;
+          fill?: string;
+          stroke?: string;
+        };
+        geography?: {
+          fill?: string;
+          stroke?: string;
+          hover?: {
+            fill?: string;
+            stroke?: string;
+          };
+        };
+      };
+      countryMap: {
+        background?: string;
+        colorAxis?: string[];
+        backgroundMap?: string;
+        datalessRegion?: string;
+        default?: string;
+      };
+    };
     customColors?: {
       white?: (opacity: number) => string;
       black?: (opacity: number) => string;
       gray?: string;
       menuOption?: {
         active?: string;
+        pending?: string;
       };
     };
     input?: {
@@ -102,6 +155,7 @@ declare module '@material-ui/core/styles/createPalette' {
     personalDetailsBodyColor?: string;
     teamingTabHeadTextColor?: string;
     sectionDividerColor?: string;
+    inputFieldDisabled?: string;
   }
 }
 function customTheme(options: ThemeOptions) {
@@ -145,6 +199,31 @@ function customTheme(options: ThemeOptions) {
       shadow: {
         blue: 'rgba(91, 68, 186, 0.25)',
       },
+      map: {
+        cityMap: {
+          backgroundColor: '#FFFFFF',
+          marker: {
+            hover: '#808000',
+            fill: '#2B39A5',
+            stroke: '#FFFFFF',
+          },
+          geography: {
+            fill: '#BFEAFF',
+            stroke: '#CFCFCF',
+            hover: {
+              fill: '#EEFFFF',
+              stroke: '#CBCED3',
+            },
+          },
+        },
+        countryMap: {
+          background: '#FFFFFF',
+          colorAxis: ['#1297FF', '#6666FF', '#3D4DDC', '#2B39A5', '#23006A'],
+          backgroundMap: '#FFFFFF',
+          datalessRegion: '#BFEAFF',
+          default: '#CFCFCF',
+        },
+      },
       customColors: {
         white: (opacity: number): string => {
           let op = opacity;
@@ -161,6 +240,7 @@ function customTheme(options: ThemeOptions) {
         gray: '#5D6173',
         menuOption: {
           active: 'rgba(16, 155, 103, 0.1)',
+          pending: 'rgba(246,185,43,0.2)',
         },
       },
       editorBackground: '#1C1C1C',
@@ -188,6 +268,7 @@ function customTheme(options: ThemeOptions) {
       personalDetailsBodyColor: 'none',
       teamingTabHeadTextColor: 'Black',
       sectionDividerColor: '#5B44BA',
+      inputFieldDisabled: '#e2e2e1',
     },
     typography: {
       fontSize: 12,
@@ -227,6 +308,30 @@ const theme = customTheme({
         fontFamily: 'Ubuntu',
         fontSize: 15,
         color: '#FFFFFF',
+      },
+    },
+    MuiDivider: {
+      root: {
+        backgroundColor: 'rgba(0, 0, 0, 0.12)',
+      },
+    },
+    MuiIconButton: {
+      root: {
+        color: 'inherit',
+      },
+    },
+    MuiPaper: {
+      root: {
+        color: 'black',
+        backgroundColor: 'white',
+        '&$selected': {
+          backgroundColor: 'white',
+        },
+      },
+    },
+    MuiSelect: {
+      icon: {
+        color: 'rgba(0,0,0,0.54)',
       },
     },
     MuiTab: {

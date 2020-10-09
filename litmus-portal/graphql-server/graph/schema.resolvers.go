@@ -24,7 +24,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (string, error) {
+func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (*model.ClusterRegResponse, error) {
 	return mutations.ClusterRegister(clusterInput)
 }
 
@@ -56,6 +56,10 @@ func (r *mutationResolver) DeclineInvitation(ctx context.Context, member model.M
 	return project.DeclineInvitation(ctx, member)
 }
 
+func (r *mutationResolver) RemoveInvitation(ctx context.Context, member model.MemberInput) (string, error) {
+	return project.RemoveInvitation(ctx, member)
+}
+
 func (r *mutationResolver) ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error) {
 	return mutations.ConfirmClusterRegistration(identity, *store)
 }
@@ -77,15 +81,7 @@ func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) (
 }
 
 func (r *queryResolver) GetCluster(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error) {
-	cluster, err := database.GetClusterWithProjectID(projectID, clusterType)
-	if err != nil {
-		return nil, err
-	}
-
-	newClusters := []*model.Cluster{}
-	copier.Copy(&newClusters, &cluster)
-
-	return newClusters, nil
+	return queries.QueryGetClusters(projectID, clusterType)
 }
 
 func (r *queryResolver) GetUser(ctx context.Context, username string) (*model.User, error) {
@@ -176,7 +172,11 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 		<-ctx.Done()
 		verifiedCluster.IsActive = false
 
-		subscriptions.SendClusterEvent("cluster-status", "Cluster Offline", "Cluster Disconnect", model.Cluster(*verifiedCluster), *store)
+		newVerifiedCluster := model.Cluster{}
+		copier.Copy(&newVerifiedCluster, &verifiedCluster)
+
+		subscriptions.SendClusterEvent("cluster-status", "Cluster Offline", "Cluster Disconnect", newVerifiedCluster, *store)
+
 		store.Mutex.Lock()
 		delete(store.ConnectedCluster, clusterInfo.ClusterID)
 		store.Mutex.Unlock()
@@ -197,8 +197,11 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 		return clusterAction, err
 	}
 
+	newVerifiedCluster := model.Cluster{}
+	copier.Copy(&newVerifiedCluster, &verifiedCluster)
+
 	verifiedCluster.IsActive = true
-	subscriptions.SendClusterEvent("cluster-status", "Cluster Live", "Cluster is Live and Connected", model.Cluster(*verifiedCluster), *store)
+	subscriptions.SendClusterEvent("cluster-status", "Cluster Live", "Cluster is Live and Connected", newVerifiedCluster, *store)
 	return clusterAction, nil
 }
 

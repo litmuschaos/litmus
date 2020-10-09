@@ -72,8 +72,11 @@ type ComplexityRoot struct {
 		IsActive           func(childComplexity int) int
 		IsClusterConfirmed func(childComplexity int) int
 		IsRegistered       func(childComplexity int) int
+		NoOfSchedules      func(childComplexity int) int
+		NoOfWorkflows      func(childComplexity int) int
 		PlatformName       func(childComplexity int) int
 		ProjectID          func(childComplexity int) int
+		Token              func(childComplexity int) int
 		UpdatedAt          func(childComplexity int) int
 	}
 
@@ -116,6 +119,7 @@ type ComplexityRoot struct {
 		DeleteChaosWorkflow func(childComplexity int, workflowid string) int
 		NewClusterEvent     func(childComplexity int, clusterEvent model.ClusterEventInput) int
 		PodLog              func(childComplexity int, log model.PodLog) int
+		RemoveInvitation    func(childComplexity int, member model.MemberInput) int
 		SendInvitation      func(childComplexity int, member model.MemberInput) int
 		UpdateUser          func(childComplexity int, user model.UpdateUserInput) int
 		UserClusterReg      func(childComplexity int, clusterInput model.ClusterInput) int
@@ -221,6 +225,12 @@ type ComplexityRoot struct {
 		WorkflowRunID func(childComplexity int) int
 	}
 
+	ClusterRegResponse struct {
+		ClusterID   func(childComplexity int) int
+		ClusterName func(childComplexity int) int
+		Token       func(childComplexity int) int
+	}
+
 	Weightages struct {
 		ExperimentName func(childComplexity int) int
 		Weightage      func(childComplexity int) int
@@ -228,7 +238,7 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (string, error)
+	UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (*model.ClusterRegResponse, error)
 	CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error)
 	CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error)
 	UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error)
@@ -236,6 +246,7 @@ type MutationResolver interface {
 	SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error)
 	AcceptInvitation(ctx context.Context, member model.MemberInput) (string, error)
 	DeclineInvitation(ctx context.Context, member model.MemberInput) (string, error)
+	RemoveInvitation(ctx context.Context, member model.MemberInput) (string, error)
 	ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error)
 	NewClusterEvent(ctx context.Context, clusterEvent model.ClusterEventInput) (string, error)
 	ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error)
@@ -398,6 +409,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Cluster.IsRegistered(childComplexity), true
 
+	case "Cluster.no_of_schedules":
+		if e.complexity.Cluster.NoOfSchedules == nil {
+			break
+		}
+
+		return e.complexity.Cluster.NoOfSchedules(childComplexity), true
+
+	case "Cluster.no_of_workflows":
+		if e.complexity.Cluster.NoOfWorkflows == nil {
+			break
+		}
+
+		return e.complexity.Cluster.NoOfWorkflows(childComplexity), true
+
 	case "Cluster.platform_name":
 		if e.complexity.Cluster.PlatformName == nil {
 			break
@@ -411,6 +436,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Cluster.ProjectID(childComplexity), true
+
+	case "Cluster.token":
+		if e.complexity.Cluster.Token == nil {
+			break
+		}
+
+		return e.complexity.Cluster.Token(childComplexity), true
 
 	case "Cluster.updated_at":
 		if e.complexity.Cluster.UpdatedAt == nil {
@@ -645,6 +677,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.PodLog(childComplexity, args["log"].(model.PodLog)), true
+
+	case "Mutation.removeInvitation":
+		if e.complexity.Mutation.RemoveInvitation == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeInvitation_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveInvitation(childComplexity, args["member"].(model.MemberInput)), true
 
 	case "Mutation.sendInvitation":
 		if e.complexity.Mutation.SendInvitation == nil {
@@ -1243,6 +1287,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WorkflowRuns.WorkflowRunID(childComplexity), true
 
+	case "clusterRegResponse.cluster_id":
+		if e.complexity.ClusterRegResponse.ClusterID == nil {
+			break
+		}
+
+		return e.complexity.ClusterRegResponse.ClusterID(childComplexity), true
+
+	case "clusterRegResponse.cluster_name":
+		if e.complexity.ClusterRegResponse.ClusterName == nil {
+			break
+		}
+
+		return e.complexity.ClusterRegResponse.ClusterName(childComplexity), true
+
+	case "clusterRegResponse.token":
+		if e.complexity.ClusterRegResponse.Token == nil {
+			break
+		}
+
+		return e.complexity.ClusterRegResponse.Token(childComplexity), true
+
 	case "weightages.experiment_name":
 		if e.complexity.Weightages.ExperimentName == nil {
 			break
@@ -1388,9 +1453,12 @@ type Cluster {
   updated_at: String!
   created_at: String!
   cluster_type: String!
+  no_of_schedules: Int
+  no_of_workflows: Int
+  token: String!
 }
 
-input ClusterInput{
+input ClusterInput {
   cluster_name: String!
   description: String
   platform_name: String!
@@ -1420,17 +1488,17 @@ type ClusterAction {
 
 input ClusterActionInput {
   cluster_id: ID!
-  action:String!
+  action: String!
 }
 
-input ClusterEventInput{
+input ClusterEventInput {
   event_name: String!
   description: String!
   cluster_id: String!
   access_key: String!
 }
 
-input ClusterIdentity{
+input ClusterIdentity {
   cluster_id: String!
   access_key: String!
 }
@@ -1470,7 +1538,7 @@ type ChaosWorkFlowResponse {
   isCustomWorkflow: Boolean!
 }
 
-type WorkflowRun{
+type WorkflowRun {
   workflow_run_id: ID!
   workflow_id: ID!
   cluster_name: String!
@@ -1482,7 +1550,7 @@ type WorkflowRun{
   execution_data: String!
 }
 
-input WorkflowRunInput{
+input WorkflowRunInput {
   workflow_id: ID!
   workflow_run_id: ID!
   workflow_name: String!
@@ -1490,14 +1558,14 @@ input WorkflowRunInput{
   cluster_id: ClusterIdentity!
 }
 
-type PodLogResponse{
+type PodLogResponse {
   workflow_run_id: ID!
   pod_name: String!
   pod_type: String!
   log: String!
 }
 
-input PodLog{
+input PodLog {
   cluster_id: ClusterIdentity!
   request_id: ID!
   workflow_run_id: ID!
@@ -1506,7 +1574,7 @@ input PodLog{
   log: String!
 }
 
-input PodLogRequest{
+input PodLogRequest {
   cluster_id: ID!
   workflow_run_id: ID!
   pod_name: String!
@@ -1533,7 +1601,7 @@ type ScheduledWorkflows {
   cluster_type: String!
 }
 
-type Workflow{
+type Workflow {
   workflow_id: String!
   workflow_manifest: String!
   cronSyntax: String!
@@ -1556,7 +1624,13 @@ type WorkflowRuns {
   last_updated: String!
 }
 
-type Query{
+type clusterRegResponse {
+  token: String!
+  cluster_id: String!
+  cluster_name: String!
+}
+
+type Query {
   # [Deprecated soon]
   getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
 
@@ -1571,16 +1645,16 @@ type Query{
   # [Deprecated soon]
   getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
 
-  ListWorkflow(project_id: String!, workflow_ids: [ID] ): [Workflow]! @authorized
-
+  ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
 }
 
-type Mutation{
+type Mutation {
   #It is used to create external cluster.
-  userClusterReg(clusterInput: ClusterInput!): String! @authorized
+  userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
   #It is used to create chaosworkflow
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
+    @authorized
 
   createUser(user: CreateUserInput!): User! @authorized
 
@@ -1588,11 +1662,13 @@ type Mutation{
 
   deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
 
-  sendInvitation(member: MemberInput!): Member! @authorized
+  sendInvitation(member: MemberInput!): Member @authorized
 
   acceptInvitation(member: MemberInput!): String! @authorized
 
   declineInvitation(member: MemberInput!): String! @authorized
+
+  removeInvitation(member: MemberInput!): String! @authorized
 
   #It is used to confirm the subscriber registration
   clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
@@ -1603,10 +1679,9 @@ type Mutation{
   chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
 
   podLog(log: PodLog!): String!
-
 }
 
-type Subscription{
+type Subscription {
   #It is used to listen cluster events from the graphql server
   clusterEventListener(project_id: String!): ClusterEvent! @authorized
 
@@ -1616,7 +1691,8 @@ type Subscription{
 
   #It is used to listen cluster operation request from the graphql server
   clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
-}`, BuiltIn: false},
+}
+`, BuiltIn: false},
 	&ast.Source{Name: "graph/usermanagement.graphqls", Input: `type User {
     id: ID!
     username: String!
@@ -1777,6 +1853,20 @@ func (ec *executionContext) field_Mutation_podLog_args(ctx context.Context, rawA
 		}
 	}
 	args["log"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeInvitation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.MemberInput
+	if tmp, ok := rawArgs["member"]; ok {
+		arg0, err = ec.unmarshalNMemberInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["member"] = arg0
 	return args, nil
 }
 
@@ -2727,6 +2817,102 @@ func (ec *executionContext) _Cluster_cluster_type(ctx context.Context, field gra
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Cluster_no_of_schedules(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Cluster",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NoOfSchedules, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Cluster_no_of_workflows(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Cluster",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NoOfWorkflows, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Cluster_token(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Cluster",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Token, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ClusterAction_project_id(ctx context.Context, field graphql.CollectedField, obj *model.ClusterAction) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -3340,10 +3526,10 @@ func (ec *executionContext) _Mutation_userClusterReg(ctx context.Context, field 
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(string); ok {
+		if data, ok := tmp.(*model.ClusterRegResponse); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ClusterRegResponse`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3355,9 +3541,9 @@ func (ec *executionContext) _Mutation_userClusterReg(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*model.ClusterRegResponse)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNclusterRegResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterRegResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createChaosWorkFlow(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3655,14 +3841,11 @@ func (ec *executionContext) _Mutation_sendInvitation(ctx context.Context, field 
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(*model.Member)
 	fc.Result = res
-	return ec.marshalNMember2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMember(ctx, field.Selections, res)
+	return ec.marshalOMember2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMember(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_acceptInvitation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3752,6 +3935,67 @@ func (ec *executionContext) _Mutation_declineInvitation(ctx context.Context, fie
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().DeclineInvitation(rctx, args["member"].(model.MemberInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(string); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeInvitation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeInvitation_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().RemoveInvitation(rctx, args["member"].(model.MemberInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -7836,6 +8080,108 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 	return ec.marshalO__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _clusterRegResponse_token(ctx context.Context, field graphql.CollectedField, obj *model.ClusterRegResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "clusterRegResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Token, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _clusterRegResponse_cluster_id(ctx context.Context, field graphql.CollectedField, obj *model.ClusterRegResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "clusterRegResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ClusterID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _clusterRegResponse_cluster_name(ctx context.Context, field graphql.CollectedField, obj *model.ClusterRegResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "clusterRegResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ClusterName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _weightages_experiment_name(ctx context.Context, field graphql.CollectedField, obj *model.Weightages) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -8529,6 +8875,15 @@ func (ec *executionContext) _Cluster(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "no_of_schedules":
+			out.Values[i] = ec._Cluster_no_of_schedules(ctx, field, obj)
+		case "no_of_workflows":
+			out.Values[i] = ec._Cluster_no_of_workflows(ctx, field, obj)
+		case "token":
+			out.Values[i] = ec._Cluster_token(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -8749,9 +9104,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "sendInvitation":
 			out.Values[i] = ec._Mutation_sendInvitation(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "acceptInvitation":
 			out.Values[i] = ec._Mutation_acceptInvitation(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -8759,6 +9111,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "declineInvitation":
 			out.Values[i] = ec._Mutation_declineInvitation(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeInvitation":
+			out.Values[i] = ec._Mutation_removeInvitation(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -9625,6 +9982,43 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 	return out
 }
 
+var clusterRegResponseImplementors = []string{"clusterRegResponse"}
+
+func (ec *executionContext) _clusterRegResponse(ctx context.Context, sel ast.SelectionSet, obj *model.ClusterRegResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, clusterRegResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("clusterRegResponse")
+		case "token":
+			out.Values[i] = ec._clusterRegResponse_token(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "cluster_id":
+			out.Values[i] = ec._clusterRegResponse_cluster_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "cluster_name":
+			out.Values[i] = ec._clusterRegResponse_cluster_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var weightagesImplementors = []string{"weightages"}
 
 func (ec *executionContext) _weightages(ctx context.Context, sel ast.SelectionSet, obj *model.Weightages) graphql.Marshaler {
@@ -10445,6 +10839,20 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
+func (ec *executionContext) marshalNclusterRegResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterRegResponse(ctx context.Context, sel ast.SelectionSet, v model.ClusterRegResponse) graphql.Marshaler {
+	return ec._clusterRegResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNclusterRegResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterRegResponse(ctx context.Context, sel ast.SelectionSet, v *model.ClusterRegResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._clusterRegResponse(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNweightages2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightages(ctx context.Context, sel ast.SelectionSet, v model.Weightages) graphql.Marshaler {
 	return ec._weightages(ctx, sel, &v)
 }
@@ -10572,6 +10980,40 @@ func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.Se
 		return graphql.Null
 	}
 	return ec.marshalOID2string(ctx, sel, *v)
+}
+
+func (ec *executionContext) unmarshalOInt2int(ctx context.Context, v interface{}) (int, error) {
+	return graphql.UnmarshalInt(v)
+}
+
+func (ec *executionContext) marshalOInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
+	return graphql.MarshalInt(v)
+}
+
+func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOInt2int(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec.marshalOInt2int(ctx, sel, *v)
+}
+
+func (ec *executionContext) marshalOMember2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMember(ctx context.Context, sel ast.SelectionSet, v model.Member) graphql.Marshaler {
+	return ec._Member(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOMember2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMember(ctx context.Context, sel ast.SelectionSet, v *model.Member) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Member(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOMemberRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx context.Context, v interface{}) (model.MemberRole, error) {

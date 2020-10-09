@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.common.white,
     borderRadius: '0.1875rem',
     padding: theme.spacing(6),
+    paddingRight: theme.spacing(9),
     display: 'flex',
     flexDirection: 'row',
     wordWrap: 'break-word',
@@ -26,7 +27,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   buttonBox: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-around',
   },
   copyText: {
     display: 'flex',
@@ -40,6 +40,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   done: {
     color: theme.palette.text.primary,
+    paddingRight: theme.spacing(1),
+  },
+  copying: {
     paddingRight: theme.spacing(1),
   },
 }));

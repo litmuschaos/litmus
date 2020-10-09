@@ -1,11 +1,13 @@
-import { Avatar, Typography } from '@material-ui/core';
-import React from 'react';
-import InputField from '../../../../../components/InputField';
-import userAvatar from '../../../../../utils/user';
+import { Avatar, Button, Typography } from '@material-ui/core';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import InputFieldOutline from '../../../../../components/InputFieldOutline';
+import Unimodal from '../../../../../containers/layouts/Unimodal';
 import {
   validateEmail,
   validateStartEmptySpacing,
 } from '../../../../../utils/validate';
+import ChooseAvatarModal from '../ChooseAvatarModal';
 import useStyles from './styles';
 
 interface PersonalDetailsProps {
@@ -33,14 +35,26 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
   emailIsDisabled,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
-  const nameSplit = nameValue.split(' ');
-  const initials = nameSplit[1] ? userAvatar(nameValue) : userAvatar(nameValue);
+  const [open, setOpen] = React.useState(false);
+  // avatar image source string
+  const [avatar, setAvatar] = useState<string>('./avatars/default.svg');
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   return (
     <div>
       <Typography className={classes.headerText}>
-        <strong> Personal Details</strong>
+        <strong>
+          {t('settings.userManagementTab.createUser.userDetails.header')}
+        </strong>
       </Typography>
       <form>
         <div className={classes.details}>
@@ -49,15 +63,23 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
               data-cy="avatar"
               alt="User"
               className={classes.avatarBackground}
-              style={{ alignContent: 'right' }}
-            >
-              {initials}
-            </Avatar>
+              src={avatar}
+            />
+            <Button className={classes.edit} onClick={handleOpen}>
+              {t('settings.userManagementTab.createUser.userDetails.button')}
+            </Button>
+            <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn>
+              <ChooseAvatarModal
+                avatar={avatar}
+                setAvatar={setAvatar}
+                handleSubmit={handleClose}
+              />
+            </Unimodal>
           </div>
           {/* Fields for details including Full name, email, username */}
           <div className={classes.details1}>
             <div data-cy="InputName">
-              <InputField
+              <InputFieldOutline
                 required
                 helperText={
                   validateStartEmptySpacing(nameValue)
@@ -68,11 +90,13 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
                 disabled={nameIsDisabled}
                 handleChange={handleNameChange}
                 validationError={validateStartEmptySpacing(nameValue)}
-                label="Full Name"
+                label={t(
+                  'settings.userManagementTab.createUser.userDetails.label.fullName'
+                )}
               />
             </div>
             <div data-cy="InputEmail">
-              <InputField
+              <InputFieldOutline
                 required
                 helperText={
                   validateEmail(emailValue) ? 'Should be a valid email' : ''
@@ -82,17 +106,21 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
                 disabled={emailIsDisabled}
                 handleChange={handleEmailChange}
                 validationError={validateEmail(emailValue)}
-                label="Email Address"
+                label={t(
+                  'settings.userManagementTab.createUser.userDetails.label.email'
+                )}
               />
             </div>
-            {/* Username is not editable normal user */}
+            {/* Username is not editable by non admin user */}
             <div data-cy="username">
-              <InputField
+              <InputFieldOutline
                 value={userValue}
                 handleChange={handleUserChange}
-                label="Username"
                 disabled={usernameIsDisabled}
                 validationError={false}
+                label={t(
+                  'settings.userManagementTab.createUser.userDetails.label.username'
+                )}
               />
             </div>
           </div>

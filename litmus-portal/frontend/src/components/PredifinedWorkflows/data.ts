@@ -6,6 +6,8 @@ export default [
       'https://hub.litmuschaos.io/api/icon/1.7.0/generic/node-cpu-hog.png',
     chaosWkfCRDLink:
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/node-cpu-hog/workflow.yaml',
+    chaosWkfCRDLink_Recur:
+      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/node-cpu-hog/workflow_cron.yaml',
 
     gitLink:
       'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/node-cpu-hog/workflow.yaml',
@@ -30,6 +32,8 @@ export default [
       'https://hub.litmuschaos.io/api/icon/1.7.0/generic/node-memory-hog.png',
     chaosWkfCRDLink:
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/node-memory-hog/workflow.yaml',
+    chaosWkfCRDLink_Recur:
+      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/node-memory-hog/workflow_cron.yaml',
 
     gitLink:
       'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/node-memory-hog/workflow.yaml',
@@ -58,6 +62,8 @@ export default [
       'https://hub.litmuschaos.io/api/icon/1.7.0/generic/pod-cpu-hog.png',
     chaosWkfCRDLink:
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/pod-cpu-hog/workflow.yaml',
+    chaosWkfCRDLink_Recur:
+      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/pod-cpu-hog/workflow_cron.yaml',
 
     gitLink:
       'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/pod-cpu-hog/workflow.yaml',
@@ -83,6 +89,8 @@ export default [
       'https://hub.litmuschaos.io/api/icon/1.7.0/generic/pod-memory-hog.png',
     chaosWkfCRDLink:
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/pod-memory-hog/workflow.yaml',
+    chaosWkfCRDLink_Recur:
+      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/pod-memory-hog/workflow_cron.yaml',
 
     gitLink:
       'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/pod-memory-hog/workflow.yaml',
@@ -106,6 +114,8 @@ export default [
       'https://hub.litmuschaos.io/api/icon/1.7.0/generic/pod-delete.png',
     chaosWkfCRDLink:
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/pod-delete/workflow.yaml',
+    chaosWkfCRDLink_Recur:
+      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/pod-delete/workflow_cron.yaml',
 
     gitLink:
       'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/pod-delete/workflow.yaml',
@@ -130,6 +140,8 @@ export default [
     urlToIcon: 'https://hub.litmuschaos.io/api/icon/1.8.0/generic/generic.png',
     chaosWkfCRDLink:
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/kube-proxy-all/workflow.yaml',
+    chaosWkfCRDLink_Recur:
+      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/kube-proxy-all/workflow_cron.yaml',
 
     gitLink:
       'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/kube-proxy-all/workflow.yaml',

@@ -191,3 +191,32 @@ func GetLogs(reqID string, pod model.PodLogRequest, r store.StateData) {
 		close(reqChan)
 	}
 }
+
+func QueryGetClusters(projectID string, clusterType *string) ([]*model.Cluster, error) {
+	clusters, err := database.GetClusterWithProjectID(projectID, clusterType)
+	if err != nil {
+		return nil, err
+	}
+	newClusters := []*model.Cluster{}
+
+	for _, cluster := range clusters {
+		var totalNoOfSchedules int
+
+		workflows, err := database.GetWorkflowsByClusterID(cluster.ClusterID)
+		if err != nil {
+			return nil, err
+		}
+		newCluster := model.Cluster{}
+		copier.Copy(&newCluster, &cluster)
+		newCluster.NoOfWorkflows = func(i int) *int { return &i }(len(workflows))
+		for _, workflow := range workflows {
+			totalNoOfSchedules = totalNoOfSchedules + len(workflow.WorkflowRuns)
+		}
+
+		newCluster.NoOfSchedules = func(i int) *int { return &i }(totalNoOfSchedules)
+
+		newClusters = append(newClusters, &newCluster)
+	}
+
+	return newClusters, nil
+}
