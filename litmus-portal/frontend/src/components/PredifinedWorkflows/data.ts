@@ -113,9 +113,12 @@ export default [
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/pod-delete/workflow.yaml',
     chaosWkfCRDLink_Recur:
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/pod-delete/workflow_cron.yaml',
+    gitLink:
+      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/pod-delete',
     provider: 'MayaData',
     description: 'Deletes a pod',
     totalRuns: 6700,
+    isCustom: false,
     details:
       'Causes (forced/graceful) pod failure of specific/random replicas of an application resources ' +
       'Tests deployment sanity (replica availability & uninterrupted service) and recovery workflow ' +
