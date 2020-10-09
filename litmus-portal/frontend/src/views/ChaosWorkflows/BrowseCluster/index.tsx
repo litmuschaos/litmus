@@ -74,6 +74,7 @@ const BrowseCluster = () => {
         project_id: selectedProjectID,
       },
       fetchPolicy: 'cache-and-network',
+      pollInterval: 3000,
     }
   );
 
@@ -84,7 +85,7 @@ const BrowseCluster = () => {
   });
 
   const [sortData, setSortData] = useState<SortData>({
-    name: { sort: false, ascending: false },
+    name: { sort: false, ascending: true },
     lastRun: { sort: true, ascending: true },
   });
 
@@ -132,8 +133,8 @@ const BrowseCluster = () => {
     .sort((a: Cluster, b: Cluster) => {
       // Sorting based on unique fields
       if (sortData.name.sort) {
-        const x = a.updated_at;
-        const y = b.updated_at;
+        const x = a.cluster_name;
+        const y = b.cluster_name;
 
         return sortData.name.ascending
           ? sortAlphaAsc(x, y)
@@ -239,10 +240,15 @@ const BrowseCluster = () => {
                   <IconButton
                     aria-label="sort last run descending"
                     size="small"
+                    onClick={() =>
+                      setSortData({
+                        ...sortData,
+                        lastRun: { sort: true, ascending: false },
+                      })
+                    }
                   >
                     <div className={classes.tableCell}>
                       <Typography>
-                        {' '}
                         {t('workflowCluster.header.formControl.tableStatus')}
                       </Typography>
                       <div className={classes.sortDiv}>
@@ -262,7 +268,6 @@ const BrowseCluster = () => {
                     onClick={() =>
                       setSortData({
                         ...sortData,
-                        lastRun: { sort: true, ascending: false },
                         name: { sort: true, ascending: false },
                       })
                     }
@@ -350,7 +355,7 @@ const BrowseCluster = () => {
                   ))
               ) : (
                 <TableRow>
-                  <TableCell data-cy="browseScheduleNoData" colSpan={7}>
+                  <TableCell data-cy="browseScheduleNoData" colSpan={0}>
                     <Typography align="center">
                       {t('workflowCluster.header.formControl.recordAvailable')}
                     </Typography>
