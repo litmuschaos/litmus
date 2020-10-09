@@ -49,6 +49,7 @@ type Cluster struct {
 	ClusterType        string  `json:"cluster_type"`
 	NoOfSchedules      *int    `json:"no_of_schedules"`
 	NoOfWorkflows      *int    `json:"no_of_workflows"`
+	Token              string  `json:"token"`
 }
 
 type ClusterAction struct {

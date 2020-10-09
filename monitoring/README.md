@@ -74,7 +74,7 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
   kubectl -n monitoring apply -f utils/metrics-exporters-with-service-monitors/node-exporter/
   kubectl -n monitoring apply -f utils/metrics-exporters-with-service-monitors/kube-state-metrics/
   kubectl -n monitoring apply -f utils/alert-manager-with-service-monitor/
-  kubectl -n sock-shop apply -f utils/sample-application-service-monitors/
+  kubectl -n sock-shop apply -f utils/sample-application-service-monitors/sock-shop/
   kubectl -n litmus apply -f utils/metrics-exporters-with-service-monitors/litmus-metrics/chaos-exporter/
   kubectl -n litmus apply -f utils/metrics-exporters-with-service-monitors/litmus-metrics/litmus-event-router/
   ```
@@ -91,14 +91,16 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
   kubectl -n monitoring apply -f utils/grafana/
   ```
 
-- Access the grafana dashboard via the LoadBalancer (or NodePort) service IP or via a port-forward operation on localhost
+- You may access the grafana dashboard via the LoadBalancer (or NodePort) service IP or via a port-forward operation on localhost
 
   Note: To change the service type to NodePort, perform a `kubectl edit svc prometheus-k8s -n monitoring` and replace
   `type: LoadBalancer` to `type: NodePort`
 
+  View the services running in the monitoring namespace
   ```
   kubectl get svc -n monitoring
   ```
+  Now copy the EXTERNAL-IP of grafana and view it in the browser 
 
   Default username/password credentials: `admin/admin`
 

@@ -1,32 +1,37 @@
 import {
   AnalyticsAction,
   AnalyticsActions,
+  AnalyticsData,
   CommunityData,
   GeoCity,
   SeriesData,
 } from '../../models/redux/analytics';
 import createReducer from './createReducer';
 
-const initialState: CommunityData = {
-  github: { stars: '', experimentsCount: '' },
-  google: {
-    totalRuns: '',
-    operatorInstalls: '',
-    geoCity: [],
-    geoCountry: [],
-    dailyExperimentData: [],
-    dailyOperatorData: [],
-    monthlyExperimentData: [],
-    monthlyOperatorData: [],
+const initialState: AnalyticsData = {
+  communityData: {
+    github: { stars: '', experimentsCount: '' },
+    google: {
+      totalRuns: '',
+      operatorInstalls: '',
+      geoCity: [],
+      geoCountry: [],
+      dailyExperimentData: [],
+      dailyOperatorData: [],
+      monthlyExperimentData: [],
+      monthlyOperatorData: [],
+    },
   },
+  loading: false,
+  error: false,
 };
 
-export const communityData = createReducer<CommunityData>(initialState, {
-  [AnalyticsActions.LOAD_COMMUNITY_ANALYTICS](
-    state: CommunityData,
+export const communityData = createReducer<AnalyticsData>(initialState, {
+  [AnalyticsActions.COMMUNITY_ANALYTICS_SUCCESS](
+    state: AnalyticsData,
     action: AnalyticsAction
   ) {
-    const data = action.payload;
+    const data = action.payload as CommunityData;
     const geoCity: GeoCity[] = [];
     data.google.geoCity.forEach((c: any) => {
       geoCity.push({
@@ -73,17 +78,40 @@ export const communityData = createReducer<CommunityData>(initialState, {
 
     return {
       ...state,
-      github: data.github,
-      google: {
-        totalRuns: data.google.totalRuns,
-        operatorInstalls: data.google.operatorInstalls,
-        geoCountry,
-        geoCity,
-        dailyExperimentData,
-        dailyOperatorData,
-        monthlyExperimentData,
-        monthlyOperatorData,
+      communityData: {
+        github: data.github,
+        google: {
+          totalRuns: data.google.totalRuns,
+          operatorInstalls: data.google.operatorInstalls,
+          geoCountry,
+          geoCity,
+          dailyExperimentData,
+          dailyOperatorData,
+          monthlyExperimentData,
+          monthlyOperatorData,
+        },
       },
+      loading: false,
+      error: false,
+    };
+  },
+  [AnalyticsActions.COMMUNITY_ANALYTICS_LOADING](
+    state: AnalyticsData,
+    action: AnalyticsAction
+  ) {
+    return {
+      ...state,
+      loading: action.payload as boolean,
+    };
+  },
+  [AnalyticsActions.COMMUNITY_ANALYTICS_ERROR](
+    state: AnalyticsData,
+    action: AnalyticsAction
+  ) {
+    return {
+      ...state,
+      loading: false,
+      error: action.payload as boolean,
     };
   },
 });
