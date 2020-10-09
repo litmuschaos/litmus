@@ -1,28 +1,85 @@
 import { Typography } from '@material-ui/core';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useMutation, useLazyQuery } from '@apollo/client';
+import { useSelector } from 'react-redux';
 import { history } from '../../../redux/configureStore';
-import ButtonFilled from '../../Button/ButtonFilled';
 import ButtonOutline from '../../Button/ButtonOutline';
 import TargetCopy from '../TargetCopy';
 import useStyles from './styles';
 import Scaffold from '../../../containers/layouts/Scaffold';
+import {
+  CreateClusterInput,
+  CreateClusterInputResponse,
+  Cluster,
+} from '../../../models/graphql/clusterData';
+import { USER_CLUSTER_REG, GET_CLUSTER } from '../../../graphql';
+import { RootState } from '../../../redux/reducers';
+import Loader from '../../Loader';
+import ButtonFilled from '../../Button/ButtonFilled';
 import Unimodal from '../../../containers/layouts/Unimodal';
 
-const engineUrl: string = 'kubectl apply -f';
-const CenteredTabs = () => {
+const ConnectTarget = () => {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
-  const handleClose = () => {
-    history.push('/workflows');
-    setOpen(false);
-  };
-  const handleClickModal = () => {
-    setOpen(true);
-  };
+  const [open, setOpen] = React.useState(true);
+  const [link, setLink] = React.useState('');
+  const [id, setID] = React.useState('');
+  const [modal, setModal] = React.useState(false);
+
   const handleClick = () => {
     history.push('/targets');
   };
+
+  const selectedProjectID = useSelector(
+    (state: RootState) => state.userData.selectedProjectID
+  );
+
+  const [createClusterReg] = useMutation<
+    CreateClusterInputResponse,
+    CreateClusterInput
+  >(USER_CLUSTER_REG, {
+    onCompleted: (data) => {
+      const ID: string = data.userClusterReg.cluster_id;
+      const linkYaml: string = data.userClusterReg.token;
+      setLink(linkYaml);
+      setID(ID);
+    },
+  });
+
+  const [getCluster] = useLazyQuery(GET_CLUSTER, {
+    onCompleted: (data) => {
+      if (data && data.getCluster.length !== 0) {
+        data.getCluster.forEach((e: Cluster) => {
+          if (id === e.cluster_id) {
+            if (e.is_cluster_confirmed === true) {
+              setOpen(false);
+              setModal(true);
+            }
+          }
+        });
+      }
+    },
+    fetchPolicy: 'cache-and-network',
+    pollInterval: 5000,
+  });
+
+  useEffect(() => {
+    const createClusterInput = {
+      cluster_name: Math.random().toString(36).substring(7),
+      description: 'external agent',
+      platform_name: '',
+      project_id: selectedProjectID,
+      cluster_type: 'external',
+    };
+    createClusterReg({
+      variables: { ClusterInput: createClusterInput },
+    });
+
+    getCluster({
+      variables: { project_id: selectedProjectID },
+    });
+  }, []);
+
   const { t } = useTranslation();
 
   return (
@@ -38,7 +95,7 @@ const CenteredTabs = () => {
           </ButtonOutline>
           <div className={classes.header}>
             <Typography variant="h4">
-              {t('Targets.connectHome.connectText')}
+              {t('targets.connectHome.connectText')}
             </Typography>
           </div>
         </div>
@@ -48,32 +105,35 @@ const CenteredTabs = () => {
           <div className={classes.connectTarget}>
             <div className={classes.stepsDiv}>
               <Typography className={classes.connectdevice}>
-                {t('Targets.newTarget.head')}
+                {t('targets.newTarget.head')}
               </Typography>
-              <Typography>{t('Targets.newTarget.head1')}</Typography>
-              <Typography>{t('Targets.newTarget.head2')}</Typography>
-              <Typography>{t('Targets.newTarget.head3')}</Typography>
+              <Typography>{t('targets.newTarget.head1')}</Typography>
+              <Typography>{t('targets.newTarget.head2')}</Typography>
+              <Typography>{t('targets.newTarget.head3')}</Typography>
+              {/*
               <Typography>
-                {t('Targets.newTarget.head4')}{' '}
-                <strong>{t('Targets.newTarget.head5')}</strong>
+                {t('targets.newTarget.head4')}{' '}
+                <strong>{t('targets.newTarget.head5')}</strong>
               </Typography>
+              */}
             </div>
             <div className={classes.rightMargin}>
               <img src="icons/targetsC.svg" alt="down arrow icon" />
             </div>
           </div>
           <div className={classes.rightMargin}>
-            {engineUrl && <TargetCopy yamlLink={engineUrl} />}
+            {link && <TargetCopy yamlLink={link} />}
           </div>
-          <div className={classes.button}>
-            <ButtonFilled
-              data-cy="connectTarget"
-              isPrimary
-              handleClick={handleClickModal}
-            >
-              <div> {t('Targets.connectHome.connectText')} </div>
-            </ButtonFilled>
-          </div>
+          {open ? (
+            <div className={classes.loader}>
+              <div className={classes.loaderMargin}>
+                <Loader size={20} />
+              </div>
+              <div>
+                <Typography>{t('targets.newTarget.conformation')}</Typography>
+              </div>
+            </div>
+          ) : null}
         </div>
       </section>
       <div>
@@ -123,4 +183,4 @@ const CenteredTabs = () => {
     </Scaffold>
   );
 };
-export default CenteredTabs;
+export default ConnectTarget;
