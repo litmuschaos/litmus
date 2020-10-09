@@ -138,8 +138,8 @@ const ConnectTarget = () => {
       </section>
       <div>
         <Unimodal
-          open={open}
-          handleClose={handleClose}
+          open={modal}
+          handleClose={handleClick}
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           hasCloseBtn
