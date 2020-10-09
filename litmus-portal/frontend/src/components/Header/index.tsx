@@ -15,7 +15,7 @@ import {
 // import { Message, NotificationIds } from '../../models/header';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
-import configureStore from '../../redux/configureStore';
+import configureStore, { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import CustomBreadCrumbs from '../BreadCrumbs';
 // import NotificationsDropdown from './NotificationDropdown';
@@ -72,6 +72,10 @@ const Header: React.FC = () => {
               selectedUserRole: member.role,
               selectedProjectName: project.name,
             });
+
+            if (member.role !== 'Owner') {
+              history.push('/');
+            }
           }
         });
       }
