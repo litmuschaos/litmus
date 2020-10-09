@@ -290,6 +290,35 @@ settings:
         deleteModal:
           body: The user will lose access to the portal
 
+workflowDetailsView:
+  argoWorkflow:
+    loading: Loading Graph...
+  nodeLogs:
+    fetching: Fetching Logs...
+  workflowInfo:
+    header: Workflow name
+    cluster: Cluster
+    param:
+      state: State
+      startTime: Start Time
+      endTime: End Time
+      duration: Duration
+      namespace: Namespace
+    nodeDetails:
+      curr: Currently Running Nodes
+      exec: Executed Nodes
+      noExec: No executed nodes
+  workflowNodeInfo:
+    name: Name
+    type: Type
+    phase: Phase
+    startTime: Start Time
+    endTime: End Time
+    duration: Duration
+    nodeName: Node Name
+    button:
+      logs: Logs
+
 ######################################
 ############    Targets    ###########
 ######################################
