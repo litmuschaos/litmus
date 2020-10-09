@@ -42,9 +42,9 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
         }}
         className={classes.workflowNameData}
       >
-        <Typography>
-          <strong>{data.cluster_name}</strong>
-        </Typography>
+        <IconButton aria-label="sort last run descending" size="small">
+          <Typography>{data.cluster_name}</Typography>
+        </IconButton>
       </TableCell>
       <TableCell>
         <Typography className={classes.clusterName}>
@@ -66,7 +66,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       <TableCell>
         <div className={classes.deleteCluster}>
           <div>
-            <IconButton onClick={() => {}}>
+            <IconButton>
               <img alt="delete" src="./icons/bin-red.svg" />
             </IconButton>
           </div>
