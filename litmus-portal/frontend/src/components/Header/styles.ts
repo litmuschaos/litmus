@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '5%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: theme.spacing(0),
+    marginTop: theme.spacing(1.25),
     marginBottom: theme.spacing(0),
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(0),

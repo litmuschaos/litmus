@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { useQuery } from '@apollo/client';
 import moment from 'moment';
 import * as _ from 'lodash';
-import { Button, Paper, Typography } from '@material-ui/core';
+import { Paper, Typography } from '@material-ui/core';
 import useStyles from './style';
 import { WORKFLOW_DETAILS } from '../../../graphql';
 import {
@@ -46,6 +46,7 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
   const [workflowDataPresent, setWorkflowDataPresent] = useState<boolean>(
     currentStatus
   );
+  const [messageActive, setMessageActive] = useState<boolean>(false);
 
   // Query to get workflows
   const { data, loading, error } = useQuery<Workflow, WorkflowDataVars>(
@@ -213,20 +214,20 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
     const notificationsList = [
       {
         id: '1',
-        MessageType: 'Pod Delete workflow',
-        Message: 'complete',
+        MessageType: 'New cluster',
+        Message: 'connected',
         generatedTime: '',
       },
       {
         id: '2',
         MessageType: 'Argo Chaos workflow',
-        Message: 'started started yo',
+        Message: 'crashed',
         generatedTime: '',
       },
       {
         id: '3',
         MessageType: 'New workflow',
-        Message: 'crashed',
+        Message: 'created',
         generatedTime: '',
       },
       {
@@ -238,13 +239,13 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
       {
         id: '5',
         MessageType: 'Argo Chaos workflow',
-        Message: 'started started',
+        Message: 'started',
         generatedTime: '',
       },
       {
         id: '6',
-        MessageType: 'New workflow',
-        Message: 'crashed',
+        MessageType: 'New project',
+        Message: 'Invite Recieved',
         generatedTime: '',
       },
     ];
@@ -312,6 +313,7 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
                   <Typography className={classes.statsHeading}>
                     <strong>Recent activity</strong>
                   </Typography>
+                  {/*
                   <Button className={classes.seeAllBtn}>
                     <div className={classes.btnSpan}>
                       <Typography className={classes.btnText}>
@@ -320,9 +322,26 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
                       <img src="icons/next.png" alt="next" />
                     </div>
                   </Button>
+                  */}
                 </div>
-                <Paper variant="outlined" className={classes.fixedRecents}>
-                  <RecentActivity activities={activities} />
+                <Paper
+                  variant="outlined"
+                  className={classes.fixedRecents}
+                  onMouseEnter={() => {
+                    setMessageActive(true);
+                  }}
+                  onMouseLeave={() => {
+                    setMessageActive(false);
+                  }}
+                >
+                  {messageActive ? (
+                    <Typography variant="h4" className={classes.commingSoon}>
+                      {' '}
+                      Comming soon!{' '}
+                    </Typography>
+                  ) : (
+                    <RecentActivity activities={activities} />
+                  )}
                 </Paper>
               </div>
               <div className={classes.quickActionDiv}>

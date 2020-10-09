@@ -80,12 +80,19 @@ const useStyles = makeStyles((theme) => ({
     height: '15rem',
     width: '20rem',
     color: theme.palette.text.secondary,
-    backgroundColor: theme.palette.secondary.contrastText,
+    // backgroundColor: theme.palette.secondary.contrastText,
+    background: theme.palette.customColors.black(0.7),
   },
 
   backgroundFix: {
     color: theme.palette.text.secondary,
     backgroundColor: theme.palette.secondary.contrastText,
+  },
+
+  commingSoon: {
+    color: '#FFF',
+    marginLeft: '17%',
+    marginTop: '30%',
   },
 }));
 
