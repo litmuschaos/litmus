@@ -2,6 +2,7 @@ package gql
 
 import (
 	"encoding/json"
+	"log"
 	"strconv"
 	"strings"
 
@@ -11,6 +12,7 @@ import (
 
 // process event data into proper format acceptable by gql
 func MarshalGQLData(gqlData interface{}) (string, error) {
+	log.Print(gqlData)
 	data, err := json.Marshal(gqlData)
 	if err != nil {
 		return "", err
@@ -21,10 +23,18 @@ func MarshalGQLData(gqlData interface{}) (string, error) {
 	return processed, nil
 }
 
+
 // generate gql mutation payload for workflow event
 func GenerateWorkflowPayload(cid, accessKey string, wfEvent types.WorkflowEvent) ([]byte, error) {
 	clusterID := `{cluster_id: \"` + cid + `\", access_key: \"` + accessKey + `\"}`
 	// process event data
+	for id, event := range wfEvent.Nodes {
+		if event.Phase == "Error" {
+			event.Message = strings.Replace(event.Message, `"`, ` `, -1)
+			wfEvent.Nodes[id] = event
+		}
+	}
+
 	processed, err := MarshalGQLData(wfEvent)
 	if err != nil {
 		return nil, err
