@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   tableFix: {
-    marginTop: theme.spacing(7),
+    marginTop: theme.spacing(3),
     paddingLeft: theme.spacing(-1),
     width: '100%',
   },
@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(4.25),
     border: `1px solid ${theme.palette.customColors.black(0.07)}`,
     backgroundColor: theme.palette.homePageCardBackgroundColor,
-    minHeight: '29rem',
+    maxHeight: '30.15rem',
     '&::-webkit-scrollbar': {
       width: '0.2em',
     },
@@ -90,7 +90,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(4.25),
     border: `1px solid ${theme.palette.customColors.black(0.07)}`,
     backgroundColor: theme.palette.common.white,
-    height: '29.75rem',
+    maxHeight: '30.15rem',
     '&::-webkit-scrollbar': {
       width: '0.2em',
     },
@@ -117,6 +117,7 @@ const useStyles = makeStyles((theme) => ({
   workflowName: {
     borderRight: `1px solid ${theme.palette.customColors.black(0.07)}`,
     paddingTop: theme.spacing(2.5),
+    maxWidth: '16.5rem',
   },
 
   workflowNameHead: {
@@ -128,12 +129,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   headSpacing: {
-    paddingLeft: theme.spacing(5.5),
-  },
-
-  tableObjectRegularity: {
-    marginTop: theme.spacing(-2.5),
-    paddingLeft: theme.spacing(7.75),
+    paddingLeft: theme.spacing(6),
   },
 
   nameContent: {
@@ -261,6 +257,39 @@ const useStyles = makeStyles((theme) => ({
   rangeSelectorIcon: {
     width: '0.625rem',
     height: '0.625rem',
+  },
+
+  export: {
+    verticalAlign: 'middle',
+    display: 'inline-flex',
+    textAlign: 'center',
+    borderRadius: 3,
+    paddingBottom: theme.spacing(1),
+  },
+
+  exportIcon: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    display: 'block',
+    backgroundColor: theme.palette.secondary.contrastText,
+    width: '1.5rem',
+    height: '1.5rem',
+  },
+
+  regularityData: {
+    maxWidth: '17rem',
+    marginLeft: theme.spacing(-1),
+  },
+
+  iconDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginLeft: theme.spacing(3),
+  },
+
+  paddedText: {
+    paddingLeft: theme.spacing(1.25),
   },
 }));
 
