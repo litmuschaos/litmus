@@ -1,6 +1,5 @@
 import { TableCell, Typography, IconButton } from '@material-ui/core';
 import React from 'react';
-// import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
@@ -42,7 +41,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
         }}
         className={classes.workflowNameData}
       >
-        <IconButton aria-label="sort last run descending" size="small">
+        <IconButton size="small">
           <Typography>{data.cluster_name}</Typography>
         </IconButton>
       </TableCell>
