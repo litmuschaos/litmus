@@ -144,6 +144,23 @@ const useStyles = makeStyles((theme) => ({
   datePickerColor: {
     color: theme.palette.secondary.dark,
   },
+  // Table status
+  check: {
+    width: '5.9125rem',
+    textAlign: 'center',
+    borderRadius: 3,
+    paddingTop: theme.spacing(0.375),
+    paddingBottom: theme.spacing(0.375),
+    color: theme.palette.primary.dark,
+  },
+  active: {
+    color: theme.palette.primary.dark,
+    background: theme.palette.customColors.menuOption.active,
+  },
+  notactive: {
+    color: theme.palette.error.dark,
+    backgroundColor: theme.palette.error.light,
+  },
   statusFont: {
     fontSize: '0.725rem',
   },

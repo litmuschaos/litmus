@@ -229,7 +229,7 @@ workflowCluster:
       menu6: pending
       # For Table
       tableStatus: Status
-      tableCluster: cluster
+      tableCluster: Target agent
       name: Name
       time: Time
       run: Last Run
