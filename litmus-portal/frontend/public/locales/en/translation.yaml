@@ -110,6 +110,17 @@ analytics:
   viewTestResult: Click on test to view the results for the selected period
   comingSoon: Analytics Coming Soon!
   waitingMessage: Waiting for workflow to start running!
+  highestScore: 'Highest Score:'
+  lowestScore: 'Lowest Score:'
+  exportPDF: Export PDF
+  compareWorkflows: Compare workflows
+  targetCluster: Target cluster
+  workflowSelected: workflow selected
+  workflowsSelected: workflows selected
+  tableHead1: Workflow Name
+  tableHead2: Starting Date
+  tableHead3: Regularity
+  tableHead4: Cluster
 
 error:
   whoops: Whoops!

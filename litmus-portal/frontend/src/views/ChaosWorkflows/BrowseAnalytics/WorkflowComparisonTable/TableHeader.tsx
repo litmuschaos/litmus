@@ -6,6 +6,7 @@ import {
   IconButton,
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import ExpandLessTwoToneIcon from '@material-ui/icons/ExpandLessTwoTone';
 import useStyles from './styles';
@@ -36,7 +37,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({
   callBackToSort,
 }) => {
   const classes = useStyles();
-
+  const { t } = useTranslation();
   // State for sorting
   const [sortData, setSortData] = useState<SortData>({
     name: { sort: false, ascending: true },
@@ -66,7 +67,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({
         <TableCell className={classes.workflowName}>
           <div className={classes.nameContent}>
             <div className={classes.workflowNameHead}>
-              <b>Workflow Name </b>&nbsp;
+              <b>{t('analytics.tableHead1')} </b>&nbsp;
             </div>
             <div className={classes.nameContentIcons}>
               <IconButton
@@ -103,7 +104,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({
         <TableCell className={classes.headSpacing}>
           <div className={classes.nameContent}>
             <div className={classes.workflowNameHead}>
-              <b>Starting Date</b>&nbsp;
+              <b>{t('analytics.tableHead2')}</b>&nbsp;
             </div>
             <div className={classes.nameContentIcons}>
               <IconButton
@@ -139,13 +140,13 @@ const TableHeader: React.FC<TableHeaderProps> = ({
         </TableCell>
         <TableCell className={classes.headSpacing}>
           <div className={classes.nameContent}>
-            &nbsp;&nbsp;<b>Regularity</b>&nbsp;
+            &nbsp;&nbsp;<b>{t('analytics.tableHead3')}</b>&nbsp;
           </div>
         </TableCell>
         <TableCell className={classes.headSpacing}>
           <div className={classes.nameContent}>
             <div className={classes.workflowNameHead}>
-              <b>Cluster</b>&nbsp;
+              <b>{t('analytics.tableHead4')}</b>&nbsp;
             </div>
             <div className={classes.nameContentIcons}>
               <IconButton

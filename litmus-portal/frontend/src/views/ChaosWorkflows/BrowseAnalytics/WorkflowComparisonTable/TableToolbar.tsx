@@ -11,6 +11,7 @@ import {
   Avatar,
 } from '@material-ui/core';
 import React, { ChangeEvent, useRef, useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import SearchIcon from '@material-ui/icons/Search';
 import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
@@ -71,6 +72,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
 }) => {
   const classes = useStyles();
   const { palette } = useTheme();
+  const { t } = useTranslation();
   const [cluster, setCluster] = React.useState<String>('All');
   const [compare, setCompare] = React.useState<Boolean>(false);
   const [range, setRange] = React.useState<RangeType>({
@@ -155,8 +157,10 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           <Typography variant="h6" component="div" display="inline">
             <strong>
               &nbsp; {numSelected}{' '}
-              {numSelected === 1 ? 'workflow' : 'workflows'} selected &nbsp;
-              &emsp;
+              {numSelected === 1
+                ? t('analytics.workflowSelected')
+                : t('analytics.workflowsSelected')}{' '}
+              &nbsp; &emsp;
             </strong>
           </Typography>
         </span>
@@ -196,7 +200,9 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         color="secondary"
         focused
       >
-        <InputLabel className={classes.selectText}>Target cluster</InputLabel>
+        <InputLabel className={classes.selectText}>
+          {t('analytics.targetCluster')}
+        </InputLabel>
         <Select
           label="Target cluster"
           value={cluster}
@@ -217,7 +223,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           handleClick={handleClick}
         >
           <Typography className={classes.dateRangeDefault}>
-            Compare workflows
+            {t('analytics.compareWorkflows')}
           </Typography>
         </ButtonOutline>
       ) : (
@@ -227,7 +233,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
               <DescriptionOutlinedIcon htmlColor={palette.secondary.dark} />
             </Avatar>
             <Typography className={classes.dateRangeDefault} display="inline">
-              Export PDF
+              {t('analytics.exportPDF')}
             </Typography>
           </div>
         </ButtonOutline>
