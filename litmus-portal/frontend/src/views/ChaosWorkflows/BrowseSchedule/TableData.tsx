@@ -75,7 +75,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
             <Typography style={{ paddingLeft: 10 }}>
               {data.cronSyntax === ''
                 ? 'Once'
-                : cronstrue.toString(data.cronSyntax)}{' '}
+                : cronstrue.toString(data.cronSyntax)}
             </Typography>
           </div>
         </div>
