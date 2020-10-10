@@ -66,7 +66,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
         <div className={classes.deleteCluster}>
           <div>
             <IconButton>
-              <img alt="delete" src="./icons/bin-red.svg" />
+              <img alt="delete" src="/icons/bin-red.svg" />
             </IconButton>
           </div>
           <div>
