@@ -2,7 +2,6 @@ package gql
 
 import (
 	"encoding/json"
-	"log"
 	"strconv"
 	"strings"
 
@@ -12,7 +11,6 @@ import (
 
 // process event data into proper format acceptable by gql
 func MarshalGQLData(gqlData interface{}) (string, error) {
-	log.Print(gqlData)
 	data, err := json.Marshal(gqlData)
 	if err != nil {
 		return "", err
@@ -30,7 +28,7 @@ func GenerateWorkflowPayload(cid, accessKey string, wfEvent types.WorkflowEvent)
 	// process event data
 	for id, event := range wfEvent.Nodes {
 		if event.Phase == "Error" {
-			event.Message = strings.Replace(event.Message, `"`, ` `, -1)
+			event.Message = strings.Replace(event.Message, `"`, ``, -1)
 			wfEvent.Nodes[id] = event
 		}
 	}
