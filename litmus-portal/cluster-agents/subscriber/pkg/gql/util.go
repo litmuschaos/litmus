@@ -26,10 +26,8 @@ func GenerateWorkflowPayload(cid, accessKey string, wfEvent types.WorkflowEvent)
 	clusterID := `{cluster_id: \"` + cid + `\", access_key: \"` + accessKey + `\"}`
 	// process event data
 	for id, event := range wfEvent.Nodes {
-		if event.Phase == "Error" {
-			event.Message = strings.Replace(event.Message, `"`, ``, -1)
-			wfEvent.Nodes[id] = event
-		}
+		event.Message = strings.Replace(event.Message, `"`, ``, -1)
+		wfEvent.Nodes[id] = event
 	}
 
 	processed, err := MarshalGQLData(wfEvent)
