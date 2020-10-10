@@ -145,21 +145,19 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.secondary.dark,
   },
   // Table status
-  completed: {
+  check: {
     width: '5.9125rem',
     textAlign: 'center',
     borderRadius: 3,
     paddingTop: theme.spacing(0.375),
     paddingBottom: theme.spacing(0.375),
     color: theme.palette.primary.dark,
+  },
+  active: {
+    color: theme.palette.primary.dark,
     background: theme.palette.customColors.menuOption.active,
   },
-  failed: {
-    width: '5.9125rem',
-    textAlign: 'center',
-    borderRadius: 3,
-    paddingTop: theme.spacing(0.375),
-    paddingBottom: theme.spacing(0.375),
+  notactive: {
     color: theme.palette.error.dark,
     backgroundColor: theme.palette.error.light,
   },

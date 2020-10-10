@@ -237,53 +237,53 @@ const BrowseCluster = () => {
               <TableRow className={classes.tableRows}>
                 {/* Status */}
                 <TableCell className={classes.headerStatus}>
-                  <IconButton
-                    aria-label="sort last run descending"
-                    size="small"
-                    onClick={() =>
-                      setSortData({
-                        ...sortData,
-                        lastRun: { sort: true, ascending: false },
-                      })
-                    }
-                  >
-                    <div className={classes.tableCell}>
-                      <Typography>
-                        {t('workflowCluster.header.formControl.tableStatus')}
-                      </Typography>
+                  <div className={classes.tableCell}>
+                    <Typography>
+                      {t('workflowCluster.header.formControl.tableStatus')}
+                    </Typography>
+                    <IconButton
+                      aria-label="sort last run descending"
+                      size="small"
+                      onClick={() =>
+                        setSortData({
+                          ...sortData,
+                          lastRun: { sort: true, ascending: false },
+                        })
+                      }
+                    >
                       <div className={classes.sortDiv}>
                         <img
                           src="/icons/arrow_downward.svg"
                           alt="ConnectTarget icon"
                         />
                       </div>
-                    </div>
-                  </IconButton>
+                    </IconButton>
+                  </div>
                 </TableCell>
                 {/* Workflow Name */}
                 <TableCell className={classes.workflowName}>
-                  <IconButton
-                    aria-label="sort last run descending"
-                    size="small"
-                    onClick={() =>
-                      setSortData({
-                        ...sortData,
-                        name: { sort: true, ascending: false },
-                      })
-                    }
-                  >
-                    <div className={classes.tableCell}>
-                      <Typography>
-                        {t('workflowCluster.header.formControl.tableCluster')}
-                      </Typography>
+                  <div className={classes.tableCell}>
+                    <Typography>
+                      {t('workflowCluster.header.formControl.tableCluster')}
+                    </Typography>
+                    <IconButton
+                      aria-label="sort last run descending"
+                      size="small"
+                      onClick={() =>
+                        setSortData({
+                          ...sortData,
+                          name: { sort: true, ascending: false },
+                        })
+                      }
+                    >
                       <div className={classes.sortDiv}>
                         <img
                           src="/icons/arrow_downward.svg"
                           alt="ConnectTarget icon"
                         />
                       </div>
-                    </div>
-                  </IconButton>
+                    </IconButton>
+                  </div>
                 </TableCell>
                 {/* Target Cluster */}
                 <TableCell>

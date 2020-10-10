@@ -72,6 +72,7 @@ const BrowseWorkflow = () => {
       fetchPolicy: 'cache-and-network',
     }
   );
+
   // Using subscription to get realtime data
   useEffect(() => {
     subscribeToMore<WorkflowSubscription>({

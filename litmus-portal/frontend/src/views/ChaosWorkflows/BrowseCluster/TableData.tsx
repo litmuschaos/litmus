@@ -26,11 +26,11 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
     <>
       <TableCell className={classes.tableDataStatus}>
         {data.is_active ? (
-          <Typography className={classes.completed}>
+          <Typography className={`${classes.check} ${classes.active}`}>
             {t('workflowCluster.header.formControl.menu1')}
           </Typography>
         ) : (
-          <Typography className={classes.failed}>
+          <Typography className={`${classes.check} ${classes.notactive}`}>
             {t('workflowCluster.header.formControl.menu2')}
           </Typography>
         )}

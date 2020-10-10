@@ -29,9 +29,8 @@ const MenuProps = {
 };
 
 interface Cluster {
-  cluster_name: string;
-  is_active: boolean;
   cluster_id: string;
+  is_active: boolean;
 }
 
 interface WorkflowClusterProps {
@@ -67,9 +66,8 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
         data.getCluster.forEach((e: Cluster) => {
           if (e.is_active === true) {
             clusters.push({
-              cluster_name: e.cluster_name,
-              is_active: e.is_active,
               cluster_id: e.cluster_id,
+              is_active: e.is_active,
             });
           }
         });
@@ -125,8 +123,8 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
               className={classes.selectText}
             >
               {clusterData.map((name: Cluster) => (
-                <MenuItem key={name.cluster_name} value={name.cluster_id}>
-                  {name.cluster_name}
+                <MenuItem key={name.cluster_id} value={name.cluster_id}>
+                  {name.cluster_id}
                 </MenuItem>
               ))}
             </Select>

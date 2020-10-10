@@ -93,7 +93,6 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
         <Route exact path="/community" component={Community} />
         <Route exact path="/targets" component={TargetHome} />
         <Route exact path="/targets/cluster" component={ClusterInfo} />
-        <Route exact path="/settings" component={Settings} />
         <Route exact path="/target-connect" component={ConnectTargets} />
         {isOwner ? (
           <Route exact path="/settings" component={Settings} />
