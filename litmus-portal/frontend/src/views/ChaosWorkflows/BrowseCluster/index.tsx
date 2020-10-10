@@ -98,6 +98,14 @@ const BrowseCluster = () => {
         return true;
       }
       if (
+        (dataRow.is_active as boolean).toString().toLowerCase() === 'true' &&
+        (dataRow.is_cluster_confirmed as boolean).toString().toLowerCase() ===
+          'true'
+      ) {
+        const p = 'true';
+        return p.includes(filters.status.toLowerCase());
+      }
+      if (
         (dataRow.is_cluster_confirmed as boolean).toString().toLowerCase() ===
           'false' &&
         filters.status === 'pending'
@@ -105,15 +113,7 @@ const BrowseCluster = () => {
         const p = 'pending';
         return p.includes(filters.status.toLowerCase());
       }
-      if ((dataRow.is_active as boolean).toString().toLowerCase() === 'false') {
-        const p = 'false';
-        return p.includes(filters.status.toLowerCase());
-      }
-      if ((dataRow.is_active as boolean).toString().toLowerCase() === 'true') {
-        const p = 'true';
-        return p.includes(filters.status.toLowerCase());
-      }
-      return true;
+      return false;
     })
     .filter((dataRow) =>
       filters.cluster === 'All'
@@ -242,7 +242,7 @@ const BrowseCluster = () => {
                       {t('workflowCluster.header.formControl.tableStatus')}
                     </Typography>
                     <IconButton
-                      aria-label="sort last run descending"
+                      aria-label="sort in descending order"
                       size="small"
                       onClick={() =>
                         setSortData({
@@ -267,7 +267,7 @@ const BrowseCluster = () => {
                       {t('workflowCluster.header.formControl.tableCluster')}
                     </Typography>
                     <IconButton
-                      aria-label="sort last run descending"
+                      aria-label="sort in descending"
                       size="small"
                       onClick={() =>
                         setSortData({
@@ -314,11 +314,6 @@ const BrowseCluster = () => {
                     </Typography>
                   </div>
                 </TableCell>
-
-                {/* Re-connect */}
-                <TableCell />
-                <TableCell />
-                <TableCell />
               </TableRow>
             </TableHead>
 
@@ -326,13 +321,13 @@ const BrowseCluster = () => {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={8}>
+                  <TableCell colSpan={6}>
                     <Loader />
                   </TableCell>
                 </TableRow>
               ) : error ? (
                 <TableRow>
-                  <TableCell data-cy="browseScheduleError" colSpan={8}>
+                  <TableCell data-cy="browseError" colSpan={6}>
                     <Typography align="center">
                       {t('workflowCluster.header.formControl.fetchingError')}
                     </Typography>
@@ -346,16 +341,13 @@ const BrowseCluster = () => {
                       paginationData.rowsPerPage
                   )
                   .map((data: Cluster) => (
-                    <TableRow
-                      data-cy="browseScheduleData"
-                      key={data.cluster_id}
-                    >
+                    <TableRow data-cy="browseData" key={data.cluster_id}>
                       <TableData data={data} />
                     </TableRow>
                   ))
               ) : (
                 <TableRow>
-                  <TableCell data-cy="browseScheduleNoData" colSpan={0}>
+                  <TableCell data-cy="browseClusterData" colSpan={0}>
                     <Typography align="center">
                       {t('workflowCluster.header.formControl.recordAvailable')}
                     </Typography>

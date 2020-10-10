@@ -54,13 +54,23 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
                 </div>
                 <div>
                   {data.is_active ? (
-                    <div className={classes.active}>
+                    <Typography
+                      className={`${classes.check} ${classes.active}`}
+                    >
                       {t('workflowCluster.header.formControl.menu1')}
-                    </div>
+                    </Typography>
+                  ) : data.is_cluster_confirmed === false ? (
+                    <Typography
+                      className={`${classes.check} ${classes.pending}`}
+                    >
+                      {t('workflowCluster.header.formControl.menu6')}
+                    </Typography>
                   ) : (
-                    <div className={classes.notactive}>
+                    <Typography
+                      className={`${classes.check} ${classes.notactive}`}
+                    >
                       {t('workflowCluster.header.formControl.menu2')}
-                    </div>
+                    </Typography>
                   )}
                 </div>
               </div>

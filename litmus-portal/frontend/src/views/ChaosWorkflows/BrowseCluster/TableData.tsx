@@ -28,6 +28,10 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           <Typography className={`${classes.check} ${classes.active}`}>
             {t('workflowCluster.header.formControl.menu1')}
           </Typography>
+        ) : data.is_cluster_confirmed === false ? (
+          <Typography className={`${classes.check} ${classes.pending}`}>
+            {t('workflowCluster.header.formControl.menu6')}
+          </Typography>
         ) : (
           <Typography className={`${classes.check} ${classes.notactive}`}>
             {t('workflowCluster.header.formControl.menu2')}
@@ -45,10 +49,8 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           <Typography>{data.cluster_name}</Typography>
         </IconButton>
       </TableCell>
-      <TableCell>
-        <Typography className={classes.clusterName}>
-          {formatDate(data.created_at)}
-        </Typography>
+      <TableCell className={classes.stepsData}>
+        {formatDate(data.updated_at)}
       </TableCell>
       <TableCell>
         <Typography className={classes.stepsData}>
@@ -59,23 +61,6 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
         <Typography>{data.no_of_schedules}</Typography>
       </TableCell>
       <TableCell>{formatDate(data.updated_at)}</TableCell>
-      <TableCell>
-        <Typography>{/* reconnect */}</Typography>
-      </TableCell>
-      <TableCell>
-        <div className={classes.deleteCluster}>
-          <div>
-            <IconButton>
-              <img alt="delete" src="/icons/bin-red.svg" />
-            </IconButton>
-          </div>
-          <div>
-            <Typography>
-              {t('workflowCluster.header.formControl.delete')}
-            </Typography>
-          </div>
-        </div>
-      </TableCell>
     </>
   );
 };
