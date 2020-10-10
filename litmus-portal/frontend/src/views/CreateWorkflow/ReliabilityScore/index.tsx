@@ -1,6 +1,7 @@
 import { Typography } from '@material-ui/core';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { Trans, useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import Center from '../../../containers/layouts/Center';
@@ -16,6 +17,7 @@ import useStyles from './styles';
 
 const ReliablityScore = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   const workflowData: WorkflowData = useSelector(
     (state: RootState) => state.workflowData
@@ -52,22 +54,28 @@ const ReliablityScore = () => {
         <div className={classes.mainDiv}>
           <div>
             <Typography className={classes.headerText}>
-              <strong>
-                Adjust the weights of the experiments in the workflow
-              </strong>
+              <strong>{t('createWorkflow.reliabilityScore.header')}</strong>
             </Typography>
             <Typography className={classes.description}>
-              You have selected {weights?.length} tests in the “Kubernetes
-              conformance test” workflow. Successful outcome of each test
-              carries a certain weight. We have pre-selected weights for each
-              test for you. However, you may review and modify the weigtage
-              against. <strong>The weights are relative to each other.</strong>
+              <Trans
+                i18nKey="createWorkflow.reliabilityScore.info"
+                count={weights?.length}
+              >
+                You have selected {{ count: weights?.length }} tests in the
+                “Kubernetes conformance test” workflow. Successful outcome of
+                each test carries a certain weight. We have pre-selected weights
+                for each test for you. However, you may review and modify the
+                weigtage against.
+                <strong>The weights are relative to each other.</strong>
+              </Trans>
             </Typography>
           </div>
           <hr className={classes.horizontalLine} />
           <div className={classes.divRow}>
             <Typography className={classes.testHeading}>
-              <strong>Kubernetes conformance test</strong>
+              <strong>
+                {t('createWorkflow.reliabilityScore.testHeading')}
+              </strong>
             </Typography>
           </div>
           {(weights as any).map((Data: experimentMap, index: number) => (
@@ -95,7 +103,7 @@ const ReliablityScore = () => {
                 <div className={classes.buttonOutlineDiv}>
                   <img src="icons/video.png" alt="Play icon" />
                   <Typography className={classes.buttonOutlineText}>
-                    Demo Launch
+                    {t('createWorkflow.reliabilityScore.button.demo')}
                   </Typography>
                 </div>
               </ButtonOutline>
@@ -118,7 +126,9 @@ const ReliablityScore = () => {
                       data-cy="gotItButton"
                       isPrimary
                     >
-                      <div>Got it</div>
+                      <div>
+                        {t('createWorkflow.reliabilityScore.button.gotIt')}
+                      </div>
                     </ButtonFilled>
                   </Center>
                 </div>
@@ -126,8 +136,7 @@ const ReliablityScore = () => {
             </div>
             <div>
               <Typography className={classes.testInfo}>
-                Compare the importance of the items above and launch a demo
-                version of Kubernetes conformance test to see how it works.
+                {t('createWorkflow.reliabilityScore.testInfo')}
               </Typography>
             </div>
           </div>

@@ -332,6 +332,82 @@ homeView:
     perWeek: per week
     desc: AVG is calculated from the max of workflows
 
+createWorkflow:
+  chooseWorkflow:
+    header: Select or design workflow
+    info: Select one of the pre-defined chaos workflows or design your own workflow.
+    preDefined: pre-defined workflows
+    saved: Name saved as
+    modalHeading: Create your <1>workflow name</1>
+    label:
+      workflowName: Workflow name
+      desc: Description
+    button:
+      edit: Edit workflow name
+      cancel: Cancel
+      save: Save
+  reliabilityScore:
+    header: Adjust the weights of the experiments in the workflow
+    info: You have selected {{count}} tests in the “Kubernetes conformance test” workflow. Successful outcome of each test carries a certain weight. We have pre-selected weights for each test for you. However, you may review and modify the weigtage against. <3>The weights are relative to each other.</3>
+    testHeading: Kubernetes conformance test
+    testInfo: Compare the importance of the items above and launch a demo version of Kubernetes conformance test to see how it works.
+    button:
+      demo: Demo Launch
+      gotIt: Got it
+    resultTable:
+      header: Simulate the workflow run and see the suggested reliability score
+      headerDesc: workflow1 K8S conformance test on Ignite cluster
+      info: Tips from Litmus Portal
+      tips: When you set the test result, then pay attention to the total values of the total score. This will help you in setting up your tests, getting the maximum result and the correct operation of the test in the future.
+      points: points
+      totalScore: Total Score
+      reliabilityScore: Reliability score
+      tableCell:
+        testName: Test Name
+        testResult: Test Result
+        testWeight: Weight of test
+        testPoints: Test Points
+  scheduleWorkflow:
+    header: Choose a chaos schedule
+    info: Choose the right time to start your first workflow. Below your first workflow. Below you can find any option convenient for you.
+    min: min
+    mins: mins
+    at: at
+    on: On
+    every:
+      hr: Every Hour
+      day: Every Day
+      week: Every Week
+      month: Every Month
+    radio:
+      now: Schedule now
+      specific: Schedule at a specific time
+      future: Select date and time to start workflow in future
+      recurr: Recurring Schedule
+      rightRecurr: Choose the right recurring time to start your workflow
+  toggleComponent:
+    pass: Pass
+    fail: Fail
+  tuneWorkflow:
+    header: Tune the selected workflow
+    info: The following tests are run in sequence. The sequence of tests cannot be changed.
+    infoExtended: Select the tests you want to keep in the workflow and adjust the variables in the selected test.
+  verifyCommit:
+    header: Confirmation of Results
+    info: Before committing the workflow changes to your, verify and if needed go back to a corresponding section of the wizard to modify.
+    error: Invalid Workflow CRD found ! Please correct the errors.
+    errYaml: Error in CRD Yaml.
+    button:
+      edit: Edit
+      viewYaml: View YAML
+    summary:
+      header: Summary
+      workflowName: Workflow name
+      desc: Description
+      schedule: Schedule
+      schedulingNow: Scheduling now
+      adjustedWeights: Adjusted Weights
+
 ######################################
 ############    Targets    ###########
 ######################################

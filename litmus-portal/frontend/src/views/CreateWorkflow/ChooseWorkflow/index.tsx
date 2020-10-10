@@ -2,6 +2,7 @@ import { Typography } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Trans, useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import InputField from '../../../components/InputField';
@@ -19,6 +20,7 @@ import useStyles, { CssTextField } from './styles';
 
 const ChooseWorkflow: React.FC = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   const workflow = useActions(WorkflowActions);
   const template = useActions(TemplateSelectionActions);
@@ -139,16 +141,16 @@ const ChooseWorkflow: React.FC = () => {
     <div>
       <div className={classes.root}>
         <Typography className={classes.heading}>
-          <strong>Select or design workflow</strong>
+          <strong>{t('createWorkflow.chooseWorkflow.header')}</strong>
         </Typography>
         <Typography className={classes.description}>
-          Select one of the pre-defined chaos workflows or design your own
-          workflow.
+          {t('createWorkflow.chooseWorkflow.info')}
         </Typography>
         <Divider variant="middle" className={classes.horizontalLine} />
         <div className={classes.cards}>
           <Typography className={classes.totalWorkflows}>
-            {workflowsList.length} pre-defined workflows
+            {workflowsList.length}{' '}
+            {t('createWorkflow.chooseWorkflow.preDefined')}
           </Typography>
           <PredifinedWorkflows
             callbackOnSelectWorkflow={(index: number) => {
@@ -164,11 +166,12 @@ const ChooseWorkflow: React.FC = () => {
               isPrimary={false}
               isDisabled={isDisable}
             >
-              <div>Edit workflow name</div>
+              <div>{t('createWorkflow.chooseWorkflow.button.edit')}</div>
             </ButtonFilled>
             <Typography className={classes.saved} display="inline">
               <strong>
-                <span> &nbsp; &nbsp; &#10003;</span> &nbsp; Name saved as &quot;
+                <span> &nbsp; &nbsp; &#10003;</span> &nbsp;{' '}
+                {t('createWorkflow.chooseWorkflow.saved')} &quot;
                 <Typography
                   id="SetName"
                   className={classes.selectionName}
@@ -184,13 +187,15 @@ const ChooseWorkflow: React.FC = () => {
       </div>
       <Unimodal isOpen={open} handleClose={() => setOpen(false)} hasCloseBtn>
         <Typography className={classes.modalHeading} display="inline">
-          Create your <strong>workflow name</strong>
+          <Trans i18nKey="createWorkflow.chooseWorkflow.modalHeading">
+            Create your <strong>workflow name</strong>
+          </Trans>
         </Typography>
         <div className={classes.modalContainerBody}>
           <div className={classes.inputDiv}>
             <InputField
               // id="filled-workflowname-input"
-              label="Workflow name"
+              label={t('createWorkflow.chooseWorkflow.label.workflowName')}
               styles={{
                 width: '100%',
               }}
@@ -211,7 +216,7 @@ const ChooseWorkflow: React.FC = () => {
             <div className={classes.inputAreaDescription}>
               <CssTextField
                 id="filled-workflowdescription-input"
-                label="Description"
+                label={t('createWorkflow.chooseWorkflow.label.desc')}
                 InputProps={{
                   disableUnderline: true,
                   classes: {
@@ -233,7 +238,7 @@ const ChooseWorkflow: React.FC = () => {
                 handleClick={() => setOpen(false)}
                 isDisabled={false}
               >
-                <div>Cancel</div>
+                <div>{t('createWorkflow.chooseWorkflow.button.cancel')}</div>
               </ButtonOutline>
             </div>
             <div className={classes.saveButton}>
@@ -242,7 +247,7 @@ const ChooseWorkflow: React.FC = () => {
                 isDisabled={!isSuccess.current}
                 handleClick={() => handleSave()}
               >
-                <div>Save</div>
+                <div>{t('createWorkflow.chooseWorkflow.button.save')}</div>
               </ButtonFilled>
             </div>
           </div>
