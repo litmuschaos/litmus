@@ -140,7 +140,7 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
             >
               {clusterData.map((name: Cluster) => (
                 <MenuItem key={name.cluster_id} value={name.cluster_id}>
-                  {name.cluster_id}
+                  {name.cluster_name}
                 </MenuItem>
               ))}
             </Select>
