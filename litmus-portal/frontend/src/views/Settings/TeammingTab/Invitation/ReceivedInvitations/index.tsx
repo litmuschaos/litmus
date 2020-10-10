@@ -64,7 +64,10 @@ const ReceivedInvitations: React.FC = () => {
   // query for getting all the data for the logged in user
   const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
-    { variables: { username } }
+    {
+      variables: { username },
+      fetchPolicy: 'cache-and-network',
+    }
   );
 
   useEffect(() => {
