@@ -287,6 +287,10 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     marginLeft: theme.spacing(3),
   },
+
+  paddedText: {
+    paddingLeft: theme.spacing(1.25),
+  },
 }));
 
 export default useStyles;

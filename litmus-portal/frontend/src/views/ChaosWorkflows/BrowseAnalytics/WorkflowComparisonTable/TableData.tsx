@@ -57,12 +57,12 @@ const TableData: React.FC<TableDataProps> = ({
         <div className={classes.regularityData}>
           <div className={classes.iconDiv}>
             <img src="/icons/calender.svg" alt="Calender" />
-            <Typography style={{ paddingLeft: 10 }}>
+            <Typography className={classes.paddedText}>
               {data.cronSyntax === ''
                 ? t(
                     'chaosWorkflows.browseAnalytics.workFlowComparisonTable.once'
                   )
-                : cronstrue.toString(data.cronSyntax)}{' '}
+                : cronstrue.toString(data.cronSyntax)}
             </Typography>
           </div>
         </div>
