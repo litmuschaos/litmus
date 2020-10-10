@@ -21,7 +21,6 @@ func MarshalGQLData(gqlData interface{}) (string, error) {
 	return processed, nil
 }
 
-
 // generate gql mutation payload for workflow event
 func GenerateWorkflowPayload(cid, accessKey string, wfEvent types.WorkflowEvent) ([]byte, error) {
 	clusterID := `{cluster_id: \"` + cid + `\", access_key: \"` + accessKey + `\"}`
