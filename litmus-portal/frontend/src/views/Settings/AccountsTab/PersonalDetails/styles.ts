@@ -51,11 +51,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   text1: {
     width: '27.5rem',
-    height: '1.6875rem',
     marginBottom: theme.spacing(3.75),
   },
   typo1: {
     fontSize: '1rem',
+    marginBottom: theme.spacing(2),
   },
   buttonModal: {
     marginTop: theme.spacing(3.75),

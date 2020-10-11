@@ -23,7 +23,6 @@ const useStyles = makeStyles((theme) => ({
     borderBottom: `1px solid ${theme.palette.customColors.black(0.1)}`,
     marginLeft: theme.spacing(6.25),
   },
-
   // Form Select Properties
   formControl: {
     margin: theme.spacing(0.5),
@@ -31,12 +30,10 @@ const useStyles = makeStyles((theme) => ({
     height: '2.5rem',
     minWidth: '9rem',
   },
-
   selectText: {
     height: '2.5rem',
     padding: theme.spacing(0.5),
   },
-
   selectDate: {
     display: 'flex',
     flexDirection: 'row',
@@ -52,7 +49,6 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(1),
     width: '100%',
   },
-
   // Table and Table Data Properties
   tableMain: {
     marginTop: theme.spacing(4.25),
@@ -73,7 +69,6 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.customColors.black(0.4),
   },
   sortDiv: {
-    paddingTop: theme.spacing(0.5),
     paddingLeft: theme.spacing(1.5),
   },
   headData: {
@@ -161,10 +156,13 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.error.dark,
     backgroundColor: theme.palette.error.light,
   },
+  pending: {
+    background: theme.palette.customColors.menuOption.pending,
+    color: theme.palette.warning.main,
+  },
   statusFont: {
     fontSize: '0.725rem',
   },
-
   // Delete Cluster Modal
   body: {
     display: 'flex',
