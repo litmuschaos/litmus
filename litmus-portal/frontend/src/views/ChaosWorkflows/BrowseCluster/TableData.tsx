@@ -24,13 +24,13 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
   return (
     <>
       <TableCell className={classes.tableDataStatus}>
-        {data.is_active ? (
-          <Typography className={`${classes.check} ${classes.active}`}>
-            {t('workflowCluster.header.formControl.menu1')}
-          </Typography>
-        ) : data.is_cluster_confirmed === false ? (
+        {data.is_cluster_confirmed === false ? (
           <Typography className={`${classes.check} ${classes.pending}`}>
             {t('workflowCluster.header.formControl.menu6')}
+          </Typography>
+        ) : data.is_cluster_confirmed === true && data.is_active ? (
+          <Typography className={`${classes.check} ${classes.active}`}>
+            {t('workflowCluster.header.formControl.menu1')}
           </Typography>
         ) : (
           <Typography className={`${classes.check} ${classes.notactive}`}>

@@ -98,14 +98,6 @@ const BrowseCluster = () => {
         return true;
       }
       if (
-        (dataRow.is_active as boolean).toString().toLowerCase() === 'true' &&
-        (dataRow.is_cluster_confirmed as boolean).toString().toLowerCase() ===
-          'true'
-      ) {
-        const p = 'true';
-        return p.includes(filters.status.toLowerCase());
-      }
-      if (
         (dataRow.is_cluster_confirmed as boolean).toString().toLowerCase() ===
           'false' &&
         filters.status === 'pending'
@@ -113,7 +105,10 @@ const BrowseCluster = () => {
         const p = 'pending';
         return p.includes(filters.status.toLowerCase());
       }
-      return false;
+      return (dataRow.is_active as boolean)
+        .toString()
+        .toLowerCase()
+        .includes(filters.status.toLowerCase());
     })
     .filter((dataRow) =>
       filters.cluster === 'All'
