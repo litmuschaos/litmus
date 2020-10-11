@@ -336,13 +336,13 @@ const BrowseCluster = () => {
                       paginationData.rowsPerPage
                   )
                   .map((data: Cluster) => (
-                    <TableRow data-cy="browseData" key={data.cluster_id}>
+                    <TableRow data-cy="browseClusterData" key={data.cluster_id}>
                       <TableData data={data} />
                     </TableRow>
                   ))
               ) : (
                 <TableRow>
-                  <TableCell data-cy="browseClusterData" colSpan={0}>
+                  <TableCell data-cy="browseClusterNoData" colSpan={0}>
                     <Typography align="center">
                       {t('workflowCluster.header.formControl.recordAvailable')}
                     </Typography>
