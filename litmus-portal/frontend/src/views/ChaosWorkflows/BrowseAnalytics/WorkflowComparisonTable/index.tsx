@@ -69,8 +69,8 @@ interface Filter {
 }
 
 interface ResilienceScoreComparisonPlotProps {
-  xData: { Daily: string[][]; Monthly: string[][] };
-  yData: { Daily: number[][]; Monthly: number[][] };
+  xData: { Hourly: string[][]; Daily: string[][]; Monthly: string[][] };
+  yData: { Hourly: number[][]; Daily: number[][]; Monthly: number[][] };
   labels: string[];
   colors: string[];
 }
@@ -224,10 +224,12 @@ const WorkflowComparisonTable = () => {
   const generateDataForComparing = () => {
     const plotData: ResilienceScoreComparisonPlotProps = {
       xData: {
+        Hourly: [[]],
         Daily: [[]],
         Monthly: [[]],
       },
       yData: {
+        Hourly: [[]],
         Daily: [[]],
         Monthly: [[]],
       },
@@ -241,10 +243,9 @@ const WorkflowComparisonTable = () => {
       const workflowData = data?.ListWorkflow.filter(function match(wkf) {
         return wkf.workflow_id === workflow;
       });
-      plotData.labels.push(workflowData ? workflowData[0].workflow_name : '');
-      plotData.colors.push(`#${randomColor()}`);
       const runs = workflowData ? workflowData[0].workflow_runs : [];
       const workflowTimeSeriesData: DatedResilienceScore[] = [];
+      let isWorkflowValid: boolean = false;
       runs.forEach((data) => {
         try {
           const executionData: ExecutionData = JSON.parse(data.execution_data);
@@ -257,6 +258,7 @@ const WorkflowComparisonTable = () => {
             testWeights: [],
             testResults: [],
           };
+          let isValid: boolean = false;
           for (const key of Object.keys(nodes)) {
             const node = nodes[key];
             if (node.chaosData) {
@@ -270,26 +272,33 @@ const WorkflowComparisonTable = () => {
                   : [];
                 weightageMap.forEach((weightage) => {
                   if (weightage.experiment_name === chaosData.experimentName) {
-                    experimentTestResultsArrayPerWorkflowRun.push(
-                      chaosData.experimentVerdict === 'Pass'
-                        ? 1 * weightage.weightage
-                        : 0
-                    );
-                    weightsSum += weightage.weightage;
                     if (chaosData.experimentVerdict === 'Pass') {
+                      experimentTestResultsArrayPerWorkflowRun.push(
+                        weightage.weightage
+                      );
                       totalExperimentsPassed += 1;
                     }
-                    testDetails.testNames.push(weightage.experiment_name);
-                    testDetails.testWeights.push(weightage.weightage);
-                    testDetails.testResults.push(chaosData.experimentVerdict);
+                    if (chaosData.experimentVerdict === 'Fail') {
+                      experimentTestResultsArrayPerWorkflowRun.push(0);
+                    }
+                    if (
+                      chaosData.experimentVerdict === 'Pass' ||
+                      chaosData.experimentVerdict === 'Fail'
+                    ) {
+                      weightsSum += weightage.weightage;
+                      testDetails.testNames.push(weightage.experiment_name);
+                      testDetails.testWeights.push(weightage.weightage);
+                      testDetails.testResults.push(chaosData.experimentVerdict);
+                      isValid = true;
+                      isWorkflowValid = true;
+                    }
                   }
                 });
               }
             }
           }
-          if (executionData.event_type === 'UPDATE') {
+          if (executionData.event_type === 'UPDATE' && isValid) {
             totalValidRuns += 1;
-
             totalValidWorkflowRuns.push({
               cluster_name: workflowData ? workflowData[0].cluster_name : '',
               workflow_name: workflowData ? workflowData[0].workflow_name : '',
@@ -308,7 +317,6 @@ const WorkflowComparisonTable = () => {
                 : 0,
               test_details: testDetails,
             });
-
             workflowTimeSeriesData.push({
               date: data.last_updated,
               value: experimentTestResultsArrayPerWorkflowRun.length
@@ -325,20 +333,38 @@ const WorkflowComparisonTable = () => {
           console.error(error);
         }
       });
-      timeSeriesArray.push(workflowTimeSeriesData);
+      if (isWorkflowValid) {
+        plotData.labels.push(workflowData ? workflowData[0].workflow_name : '');
+        plotData.colors.push(`#${randomColor()}`);
+        timeSeriesArray.push(workflowTimeSeriesData);
+      }
     });
 
     timeSeriesArray.forEach((workflowTimeSeriesData, index) => {
+      const hourlyGroupedResults = _.groupBy(workflowTimeSeriesData, (data) =>
+        moment
+          .unix(parseInt(data.date, 10))
+          .startOf('hour')
+          .format('YYYY-MM-DD HH:mm:ss')
+      );
       const dailyGroupedResults = _.groupBy(workflowTimeSeriesData, (data) =>
         moment.unix(parseInt(data.date, 10)).startOf('day').format('YYYY-MM-DD')
       );
-
       const monthlyGroupedResults = _.groupBy(workflowTimeSeriesData, (data) =>
-        moment
-          .unix(parseInt(data.date, 10))
-          .startOf('month')
-          .format('YYYY-MM-DD')
+        moment.unix(parseInt(data.date, 10)).startOf('month').format('YYYY-MM')
       );
+      plotData.xData.Hourly[index] = [];
+      plotData.yData.Hourly[index] = [];
+      Object.keys(hourlyGroupedResults).forEach((hour) => {
+        let total = 0;
+        hourlyGroupedResults[hour].forEach((data) => {
+          total += data.value;
+        });
+        plotData.xData.Hourly[index].push(hour);
+        plotData.yData.Hourly[index].push(
+          total / hourlyGroupedResults[hour].length
+        );
+      });
       plotData.xData.Daily[index] = [];
       plotData.yData.Daily[index] = [];
       Object.keys(dailyGroupedResults).forEach((day) => {
@@ -393,8 +419,7 @@ const WorkflowComparisonTable = () => {
           tests_passed: '#Expts. Passed',
           tests_failed: '#Expts. Failed',
           resilience_score: 'Reliability Score',
-          test_details_string:
-            'Experiment Details     Name                             Weight / Verdict',
+          test_details_string: 'Experiment Details\nName\nWeight / Verdict',
         },
       ];
       const rows: any[] = [];
@@ -458,7 +483,7 @@ const WorkflowComparisonTable = () => {
             head: heads,
             body: rows,
             startY: 44,
-            margin: { horizontal: 4 },
+            margin: { horizontal: 2 },
             styles: { overflow: 'linebreak' },
             bodyStyles: { valign: 'top' },
             theme: 'striped',
@@ -770,20 +795,16 @@ const WorkflowComparisonTable = () => {
                 'chaosWorkflows.browseAnalytics.workFlowComparisonTable.comparativeResults'
               )}
             </Typography>
-            <ResilienceScoreComparisonPlot
-              xData={
-                plotDataForComparison
-                  ? plotDataForComparison.xData
-                  : { Daily: [[]], Monthly: [[]] }
-              }
-              yData={
-                plotDataForComparison
-                  ? plotDataForComparison.yData
-                  : { Daily: [[]], Monthly: [[]] }
-              }
-              labels={plotDataForComparison ? plotDataForComparison.labels : []}
-              colors={plotDataForComparison ? plotDataForComparison.colors : []}
-            />
+            {plotDataForComparison ? (
+              <ResilienceScoreComparisonPlot
+                xData={plotDataForComparison.xData}
+                yData={plotDataForComparison.yData}
+                labels={plotDataForComparison.labels}
+                colors={plotDataForComparison.colors}
+              />
+            ) : (
+              <div />
+            )}
           </div>
         </Paper>
       ) : (

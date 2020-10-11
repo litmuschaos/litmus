@@ -1,4 +1,6 @@
 /* eslint-disable no-unused-expressions */
+/* eslint-disable no-loop-func */
+/* eslint-disable max-len */
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useQuery } from '@apollo/client';
@@ -6,13 +8,8 @@ import moment from 'moment';
 import * as _ from 'lodash';
 import { Paper, Typography } from '@material-ui/core';
 import useStyles from './style';
-import { WORKFLOW_DETAILS } from '../../../graphql';
-import {
-  Workflow,
-  WorkflowDataVars,
-  WorkflowRun,
-  ExecutionData,
-} from '../../../models/graphql/workflowData';
+import { WORKFLOW_LIST_DETAILS } from '../../../graphql';
+import { ExecutionData } from '../../../models/graphql/workflowData';
 import { RootState } from '../../../redux/reducers';
 import PassedVsFailed from '../PassedVsFailed';
 import TotalWorkflows from '../TotalWorkflows';
@@ -21,6 +18,11 @@ import QuickActionCard from '../../../components/QuickActionCard';
 import { Message } from '../../../models/header';
 import ResilienceScoreComparisonPlot from '../ResilienceScoreComparisonPlot';
 import RecentActivity from '../RecentActivity';
+import {
+  WeightageMap,
+  WorkflowList,
+  WorkflowListDataVars,
+} from '../../../models/graphql/workflowListData';
 
 interface DataPresentCallBackType {
   (dataPresent: boolean): void;
@@ -31,6 +33,24 @@ interface Analyticsdata {
   maxWorkflows: number;
   passPercentage: number;
   failPercentage: number;
+  avgResilienceScore: number;
+}
+
+interface WorkflowRunData {
+  tests_passed: number;
+  tests_failed: number;
+  resilience_score: number;
+}
+
+interface ResilienceScoreComparisonPlotProps {
+  xData: { Hourly: string[][]; Daily: string[][]; Monthly: string[][] };
+  yData: { Hourly: number[][]; Daily: number[][]; Monthly: number[][] };
+  labels: string[];
+}
+
+interface DatedResilienceScore {
+  date: string;
+  value: number;
 }
 
 interface ReturningHomeProps {
@@ -46,13 +66,21 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
   const [workflowDataPresent, setWorkflowDataPresent] = useState<boolean>(
     currentStatus
   );
+  const [plotDataForComparison, setPlotDataForComparison] = React.useState<
+    ResilienceScoreComparisonPlotProps
+  >();
+  const [
+    totalValidWorkflowRunsCount,
+    setTotalValidWorkflowRunsCount,
+  ] = React.useState<number>(0);
   const [messageActive, setMessageActive] = useState<boolean>(false);
 
-  // Query to get workflows
-  const { data, loading, error } = useQuery<Workflow, WorkflowDataVars>(
-    WORKFLOW_DETAILS,
+  // Apollo query to get the scheduled data
+  const { data, loading, error } = useQuery<WorkflowList, WorkflowListDataVars>(
+    WORKFLOW_LIST_DETAILS,
     {
-      variables: { projectID: userData.selectedProjectID },
+      variables: { projectID: userData.selectedProjectID, workflowIDs: [] },
+      fetchPolicy: 'cache-and-network',
     }
   );
 
@@ -61,73 +89,214 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
     maxWorkflows: 0,
     passPercentage: 0,
     failPercentage: 0,
+    avgResilienceScore: 0,
   });
 
-  const loadAnalyticsData = (workflowRunData: WorkflowRun[]) => {
-    const workflowRunExecutionData: ExecutionData[] = [];
-    const experimentTestResultsArray: number[] = [];
+  const loadWorkflowAnalyticssData = () => {
+    const plotData: ResilienceScoreComparisonPlotProps = {
+      xData: {
+        Hourly: [[]],
+        Daily: [[]],
+        Monthly: [[]],
+      },
+      yData: {
+        Hourly: [[]],
+        Daily: [[]],
+        Monthly: [[]],
+      },
+      labels: [],
+    };
+    let totalValidRuns: number = 0;
+    const timeSeriesArray: DatedResilienceScore[][] = [];
+    const timeSeriesArrayForAveragePerWeek: DatedResilienceScore[] = [];
+    const totalValidWorkflowRuns: WorkflowRunData = {
+      tests_passed: 0,
+      tests_failed: 0,
+      resilience_score: 0,
+    };
     const workflowRunsPerWeek: number[] = [];
-
-    workflowRunData?.forEach((data) => {
-      try {
-        const executionData: ExecutionData = JSON.parse(data.execution_data);
-        workflowRunExecutionData.push(executionData);
-        const { nodes } = executionData;
-        for (const key of Object.keys(nodes)) {
-          const node = nodes[key];
-          if (node.chaosData) {
-            const { chaosData } = node;
-            if (
-              chaosData.experimentVerdict === 'Pass' ||
-              chaosData.experimentVerdict === 'Fail'
-            ) {
-              experimentTestResultsArray.push(
-                chaosData.experimentVerdict === 'Pass' ? 1 : 0
-              );
+    data?.ListWorkflow.forEach((workflowData) => {
+      const runs = workflowData ? workflowData.workflow_runs : [];
+      const workflowTimeSeriesData: DatedResilienceScore[] = [];
+      let isWorkflowValid: boolean = false;
+      runs.forEach((data) => {
+        try {
+          const executionData: ExecutionData = JSON.parse(data.execution_data);
+          const { nodes } = executionData;
+          const experimentTestResultsArrayPerWorkflowRun: number[] = [];
+          let totalExperimentsPassed: number = 0;
+          let weightsSum: number = 0;
+          let isValid: boolean = false;
+          for (const key of Object.keys(nodes)) {
+            const node = nodes[key];
+            if (node.chaosData) {
+              const { chaosData } = node;
+              if (
+                chaosData.experimentVerdict === 'Pass' ||
+                chaosData.experimentVerdict === 'Fail'
+              ) {
+                const weightageMap: WeightageMap[] = workflowData
+                  ? workflowData.weightages
+                  : [];
+                weightageMap.forEach((weightage) => {
+                  if (weightage.experiment_name === chaosData.experimentName) {
+                    if (chaosData.experimentVerdict === 'Pass') {
+                      experimentTestResultsArrayPerWorkflowRun.push(
+                        weightage.weightage
+                      );
+                      totalExperimentsPassed += 1;
+                    }
+                    if (chaosData.experimentVerdict === 'Fail') {
+                      experimentTestResultsArrayPerWorkflowRun.push(0);
+                    }
+                    if (
+                      chaosData.experimentVerdict === 'Pass' ||
+                      chaosData.experimentVerdict === 'Fail'
+                    ) {
+                      weightsSum += weightage.weightage;
+                      isValid = true;
+                      isWorkflowValid = true;
+                    }
+                  }
+                });
+              }
             }
           }
+          if (executionData.event_type === 'UPDATE' && isValid) {
+            totalValidRuns += 1;
+            totalValidWorkflowRuns.tests_passed += totalExperimentsPassed;
+            totalValidWorkflowRuns.tests_failed +=
+              experimentTestResultsArrayPerWorkflowRun.length -
+              totalExperimentsPassed;
+            totalValidWorkflowRuns.resilience_score += experimentTestResultsArrayPerWorkflowRun.length
+              ? (experimentTestResultsArrayPerWorkflowRun.reduce(
+                  (a, b) => a + b,
+                  0
+                ) /
+                  weightsSum) *
+                100
+              : 0;
+            workflowTimeSeriesData.push({
+              date: data.last_updated,
+              value: experimentTestResultsArrayPerWorkflowRun.length
+                ? (experimentTestResultsArrayPerWorkflowRun.reduce(
+                    (a, b) => a + b,
+                    0
+                  ) /
+                    weightsSum) *
+                  100
+                : 0,
+            });
+            timeSeriesArrayForAveragePerWeek.push({
+              date: data.last_updated,
+              value: experimentTestResultsArrayPerWorkflowRun.length
+                ? (experimentTestResultsArrayPerWorkflowRun.reduce(
+                    (a, b) => a + b,
+                    0
+                  ) /
+                    weightsSum) *
+                  100
+                : 0,
+            });
+          }
+        } catch (error) {
+          console.error(error);
         }
-      } catch (error) {
-        console.error(error);
+      });
+      if (isWorkflowValid) {
+        plotData.labels.push(workflowData ? workflowData.workflow_name : '');
+        timeSeriesArray.push(workflowTimeSeriesData);
       }
     });
-
-    const groupedResults = _.groupBy(workflowRunExecutionData, (data) =>
-      moment.unix(parseInt(data['creationTimestamp'], 10)).startOf('isoWeek')
-    );
-
-    Object.keys(groupedResults).forEach((week) => {
-      workflowRunsPerWeek.push(groupedResults[week].length);
+    timeSeriesArray.reverse().forEach((workflowTimeSeriesData, index) => {
+      const hourlyGroupedResults = _.groupBy(workflowTimeSeriesData, (data) =>
+        moment
+          .unix(parseInt(data.date, 10))
+          .startOf('hour')
+          .format('YYYY-MM-DD HH:mm:ss')
+      );
+      const dailyGroupedResults = _.groupBy(workflowTimeSeriesData, (data) =>
+        moment.unix(parseInt(data.date, 10)).startOf('day').format('YYYY-MM-DD')
+      );
+      const monthlyGroupedResults = _.groupBy(workflowTimeSeriesData, (data) =>
+        moment.unix(parseInt(data.date, 10)).startOf('month').format('YYYY-MM')
+      );
+      if (index < 4) {
+        plotData.xData.Hourly[index] = [];
+        plotData.yData.Hourly[index] = [];
+        Object.keys(hourlyGroupedResults).forEach((hour) => {
+          let total = 0;
+          hourlyGroupedResults[hour].forEach((data) => {
+            total += data.value;
+          });
+          plotData.xData.Hourly[index].push(hour);
+          plotData.yData.Hourly[index].push(
+            total / hourlyGroupedResults[hour].length
+          );
+        });
+        plotData.xData.Daily[index] = [];
+        plotData.yData.Daily[index] = [];
+        Object.keys(dailyGroupedResults).forEach((day) => {
+          let total = 0;
+          dailyGroupedResults[day].forEach((data) => {
+            total += data.value;
+          });
+          plotData.xData.Daily[index].push(day);
+          plotData.yData.Daily[index].push(
+            total / dailyGroupedResults[day].length
+          );
+        });
+        plotData.xData.Monthly[index] = [];
+        plotData.yData.Monthly[index] = [];
+        Object.keys(monthlyGroupedResults).forEach((month) => {
+          let total = 0;
+          monthlyGroupedResults[month].forEach((data) => {
+            total += data.value;
+          });
+          plotData.xData.Monthly[index].push(month);
+          plotData.yData.Monthly[index].push(
+            total / monthlyGroupedResults[month].length
+          );
+        });
+      }
     });
+    setPlotDataForComparison(plotData);
+    setTotalValidWorkflowRunsCount(totalValidRuns);
+    const testsPassedPercentage: number =
+      (totalValidWorkflowRuns.tests_passed /
+        (totalValidWorkflowRuns.tests_passed +
+          totalValidWorkflowRuns.tests_failed)) *
+      100;
 
-    const testsPassPercentage = experimentTestResultsArray.length
-      ? (experimentTestResultsArray.reduce((a, b) => a + b, 0) /
-          experimentTestResultsArray.length) *
-        100
-      : 0;
-
+    const weeklyGroupedResults = _.groupBy(
+      timeSeriesArrayForAveragePerWeek,
+      (data) => moment.unix(parseInt(data.date, 10)).startOf('isoWeek')
+    );
+    Object.keys(weeklyGroupedResults).forEach((week) => {
+      workflowRunsPerWeek.push(weeklyGroupedResults[week].length);
+    });
     setAnalyticsData({
       avgWorkflows:
         workflowRunsPerWeek.reduce((a, b) => a + b, 0) /
         workflowRunsPerWeek.length,
       maxWorkflows: Math.max(...workflowRunsPerWeek),
-      passPercentage: testsPassPercentage >= 0 ? testsPassPercentage : 0,
-      failPercentage:
-        experimentTestResultsArray.length && testsPassPercentage >= 0
-          ? 100 - testsPassPercentage
+      passPercentage:
+        totalValidRuns > 0 && testsPassedPercentage >= 0
+          ? testsPassedPercentage
           : 0,
+      failPercentage:
+        totalValidRuns > 0 && testsPassedPercentage >= 0
+          ? 100 - testsPassedPercentage
+          : 0,
+      avgResilienceScore:
+        totalValidWorkflowRuns.resilience_score / totalValidRuns,
     });
   };
 
   useEffect(() => {
-    if (
-      !loading &&
-      !error &&
-      data &&
-      data.getWorkFlowRuns.slice(0).length >= 1
-    ) {
+    if (!loading && !error && data && data.ListWorkflow.slice(0).length >= 1) {
       setWorkflowDataPresent(true);
-      loadAnalyticsData(data.getWorkFlowRuns);
+      loadWorkflowAnalyticssData();
     } else if (loading === false) {
       setWorkflowDataPresent(false);
     }
@@ -137,75 +306,6 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
     callbackToSetDataPresent(workflowDataPresent);
   }, [workflowDataPresent]);
 
-  const labels = ['K8S1', 'K8S3', 'K8S2', 'K8S4'];
-
-  const xData = {
-    Daily: [
-      [
-        '2020-04-08',
-        '2020-04-09',
-        '2020-04-10',
-        '2020-04-11',
-        '2020-04-12',
-        '2020-05-13',
-        '2020-05-14',
-        '2020-05-15',
-        '2020-05-16',
-        '2020-05-17',
-      ],
-      [
-        '2020-04-08',
-        '2020-04-09',
-        '2020-04-11',
-        '2020-04-12',
-        '2020-06-13',
-        '2020-06-16',
-        '2020-07-17',
-      ],
-      [
-        '2020-03-08',
-        '2020-03-09',
-        '2020-03-12',
-        '2020-04-13',
-        '2020-04-14',
-        '2020-04-15',
-        '2020-04-16',
-        '2020-04-17',
-      ],
-      [
-        '2020-04-08',
-        '2020-04-09',
-        '2020-07-10',
-        '2020-07-11',
-        '2020-09-12',
-        '2020-09-13',
-        '2020-11-14',
-        '2020-11-16',
-        '2020-11-17',
-      ],
-    ],
-    Monthly: [
-      ['2020-04-30', '2020-05-31'],
-      ['2020-04-30', '2020-06-30', '2020-07-31'],
-      ['2020-03-31', '2020-04-30'],
-      ['2020-04-30', '2020-07-31', '2020-09-30', '2020-11-30'],
-    ],
-  };
-
-  const yData = {
-    Daily: [
-      [0, 73, 72, 74, 70, 70, 66, 66, 69, 100],
-      [56, 45, 36, 34, 35, 28, 25],
-      [45, 13, 14, 24, 40, 35, 50, 55],
-      [23, 18, 21, 13, 18, 17, 16, 23, 76],
-    ],
-    Monthly: [
-      [57.8, 74.2],
-      [42.75, 49, 25],
-      [24, 45],
-      [20.5, 17, 17.5, 38.33],
-    ],
-  };
   const [activities, setActivities] = useState<Message[]>([]);
 
   const fetchRandomActivities = useCallback(() => {
@@ -284,15 +384,17 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
         <div>
           <div className={classes.cardsDiv}>
             <TotalWorkflows
-              workflow={data?.getWorkFlowRuns.slice(0).length ?? 0}
-              average={analyticsData.avgWorkflows}
+              workflow={totalValidWorkflowRunsCount}
+              average={parseFloat(analyticsData.avgWorkflows.toFixed(0))}
               max={analyticsData.maxWorkflows}
             />
             <PassedVsFailed
               passed={parseFloat(analyticsData.passPercentage.toFixed(2))}
               failed={parseFloat(analyticsData.failPercentage.toFixed(2))}
             />
-            <AverageResilienceScore value={analyticsData.passPercentage} />
+            <AverageResilienceScore
+              value={parseFloat(analyticsData.avgResilienceScore.toFixed(2))}
+            />
           </div>
           <div className={classes.othersDiv}>
             <div className={classes.resilienceScoresDiv}>
@@ -300,11 +402,15 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
                 <strong>Resilience score</strong>
               </Typography>
               <Paper variant="outlined" className={classes.backgroundFix}>
-                <ResilienceScoreComparisonPlot
-                  xData={xData}
-                  yData={yData}
-                  labels={labels}
-                />
+                {plotDataForComparison ? (
+                  <ResilienceScoreComparisonPlot
+                    xData={plotDataForComparison.xData}
+                    yData={plotDataForComparison.yData}
+                    labels={plotDataForComparison.labels}
+                  />
+                ) : (
+                  <div />
+                )}
               </Paper>
             </div>
             <div className={classes.extrasDiv}>

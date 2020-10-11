@@ -20,12 +20,12 @@ const Score: React.FC<ScoreProps> = ({ score, high, color, name }) => {
       <div className={classes.mainDiv}>
         <div className={classes.mainDivRow}>
           <Typography variant="subtitle2" className={classes.typographyScores}>
-            {high ? 'Highest ' : 'Lowest '}Score:
+            {high ? 'Highest ' : 'Lowest '}Score:{' '}
           </Typography>
           <Typography
             variant="caption"
             display="inline"
-            className={classes.typographyScores}
+            className={classes.typographyScoresResult}
             style={{ color }}
             gutterBottom
           >

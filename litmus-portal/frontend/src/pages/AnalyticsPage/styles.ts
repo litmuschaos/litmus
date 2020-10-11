@@ -49,6 +49,10 @@ const useStyles = makeStyles((theme) => ({
   loader: {
     marginLeft: '-8%',
   },
+
+  button: {
+    marginBottom: theme.spacing(3),
+  },
 }));
 
 export default useStyles;

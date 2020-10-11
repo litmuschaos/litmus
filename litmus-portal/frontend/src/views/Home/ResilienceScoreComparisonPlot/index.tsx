@@ -20,8 +20,8 @@ import * as TabActions from '../../../redux/actions/tabs';
 const Plot = createPlotlyComponent(Plotly);
 
 interface ResilienceScoreComparisonPlotProps {
-  xData: { Daily: string[][]; Monthly: string[][] };
-  yData: { Daily: number[][]; Monthly: number[][] };
+  xData: { Hourly: string[][]; Daily: string[][]; Monthly: string[][] };
+  yData: { Hourly: number[][]; Daily: number[][]; Monthly: number[][] };
   labels: string[];
 }
 
@@ -36,7 +36,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
   const [currentGranularity, setCurrentGranularity] = React.useState<{
     name: string;
   }>({
-    name: 'Monthly',
+    name: 'Daily',
   });
 
   const handleChangeInGranularity = (
@@ -67,6 +67,10 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
   const processData = () => {
     let dataX = [['']];
     let dataY = [[0]];
+    if (currentGranularity.name === 'Hourly') {
+      dataX = xData.Hourly;
+      dataY = yData.Hourly;
+    }
     if (currentGranularity.name === 'Daily') {
       dataX = xData.Daily;
       dataY = yData.Daily;
@@ -81,27 +85,21 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
 
     const data = [];
 
-    const series = [0, 0, 0, 0];
+    const series: number[] = Array(labels?.length).fill(0);
 
-    const lengths = [0, 0, 0, 0];
+    const lengths: number[] = Array(labels?.length).fill(0);
 
     for (let i = 0; i < dataX.length; i += 1) {
       const result = {
         x: dataX[i],
         y: dataY[i],
         type: 'scatter',
-        mode: 'lines',
+        mode: 'lines + text',
         line: {
           shape: 'spline',
           color: colors[i],
           width: lineSize[i],
         },
-      };
-      const result2 = {
-        x: [dataX[i][dataY[i].length - 2]],
-        y: [dataY[i][dataY[i].length - 2]],
-        type: 'scatter',
-        mode: 'text',
         text: labels[i],
         textposition: 'top center',
         textfont: {
@@ -110,15 +108,16 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
           fontWeight: 500,
           color: colors[i],
         },
+        name: '',
       };
-      data.push(result, result2);
+      data.push(result);
       for (let j = 0; j < dataY[i].length; j += 1) {
         series[i] += dataY[i][j];
       }
       lengths[i] = dataY[i].length;
     }
 
-    const normalized = [0, 0, 0, 0];
+    const normalized: number[] = Array(labels?.length).fill(0);
 
     for (let k = 0; k < lengths.length; k += 1) {
       normalized[k] = series[k] / lengths[k];
@@ -142,6 +141,12 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
 
   const selectorOptions = {
     buttons: [
+      {
+        step: 'day',
+        stepmode: 'backward',
+        count: 1,
+        label: '1 Day',
+      },
       {
         step: 'day',
         stepmode: 'backward',
@@ -230,6 +235,10 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
           color: 'rgba(0, 0, 0, 0.4)',
         },
         mirror: true,
+        tickmode: 'array',
+        tickvals: [0, 20, 40, 60, 80, 100],
+        ticktext: ['0', '20', '40', '60', '80', '100'],
+        range: [-10, 110],
       },
       cliponaxis: true,
       layer: 'below_traces',
@@ -299,6 +308,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
             }}
             className={classes.root}
           >
+            <MenuItem value="Hourly">Hourly</MenuItem>
             <MenuItem value="Daily">Daily</MenuItem>
             <MenuItem value="Monthly">Monthly</MenuItem>
           </Select>

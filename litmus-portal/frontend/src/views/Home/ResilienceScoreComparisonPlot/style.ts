@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     marginLeft: theme.spacing(5),
     marginTop: theme.spacing(5),
-    width: theme.spacing(20),
+    width: theme.spacing(21.5),
     [theme.breakpoints.down('sm')]: {
       marginLeft: theme.spacing(0),
     },
@@ -78,6 +78,12 @@ const useStyles = makeStyles((theme) => ({
   typographyScores: {
     fontWeight: 500,
     fontSize: '0.75rem',
+  },
+
+  typographyScoresResult: {
+    fontWeight: 500,
+    fontSize: '0.75rem',
+    marginLeft: theme.spacing(2.5),
   },
 }));
 

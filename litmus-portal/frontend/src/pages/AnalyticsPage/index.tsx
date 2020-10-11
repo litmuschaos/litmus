@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useQuery } from '@apollo/client';
-import { Typography } from '@material-ui/core';
+import { IconButton, Typography, useTheme } from '@material-ui/core';
 import moment from 'moment';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -17,6 +17,7 @@ import {
   WorkflowDataVars,
 } from '../../models/graphql/workflowData';
 import { RootState } from '../../redux/reducers';
+import BackButton from '../../components/Button/BackButton';
 import PopOver from '../../views/ChaosWorkflows/BrowseAnalytics/PopOver';
 import WorkflowRunsBarChart from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowRunsBarChart';
 import WorkflowDetailsTable from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowRunDetailsTable';
@@ -57,6 +58,7 @@ const AnalyticsPage: React.FC = () => {
     true
   );
   const { pathname } = useLocation();
+  const { palette } = useTheme();
   // Getting the workflow nome from the pathname
   const workflowId = pathname.split('/')[3];
   const { t } = useTranslation();
@@ -280,6 +282,9 @@ const AnalyticsPage: React.FC = () => {
           {workflowRunDataForPlot.length ? (
             <div className={classes.rootContainer}>
               <div className={classes.root}>
+                <div className={classes.button}>
+                  <BackButton isDisabled={false} />
+                </div>
                 <Typography variant="h4">
                   <strong>Workflow Analytics</strong>
                 </Typography>
@@ -288,7 +293,6 @@ const AnalyticsPage: React.FC = () => {
                     {t('analytics.viewTestResult')}
                   </Typography>
                 </div>
-
                 <div className={classes.analyticsDiv}>
                   <WorkflowRunsBarChart
                     workflowRunData={workflowRunDataForPlot}

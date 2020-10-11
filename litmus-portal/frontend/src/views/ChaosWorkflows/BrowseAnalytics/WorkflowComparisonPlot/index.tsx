@@ -11,13 +11,17 @@ import Score from './Score';
 const Plot = createPlotlyComponent(Plotly);
 
 interface ResilienceScoreComparisonPlotProps {
-  xData: { Daily: string[][]; Monthly: string[][] };
-  yData: { Daily: number[][]; Monthly: number[][] };
+  xData: { Hourly: string[][]; Daily: string[][]; Monthly: string[][] };
+  yData: { Hourly: number[][]; Daily: number[][]; Monthly: number[][] };
   labels: string[];
   colors: string[];
 }
 
 interface AverageDateWiseResilienceScores {
+  Hourly: {
+    dates: string[];
+    avgResilienceScores: number[];
+  };
   Daily: {
     dates: string[];
     avgResilienceScores: number[];
@@ -39,7 +43,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
   const [currentGranularity, setCurrentGranularity] = React.useState<{
     name: string;
   }>({
-    name: 'Monthly',
+    name: 'Daily',
   });
 
   const handleChangeInGranularity = (
@@ -68,15 +72,19 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
   const [plotLayout, setPlotLayout] = React.useState<any>({});
 
   // Function to convert UNIX time in format of DD MMM YYY
-  const formatDate = (date: string) => {
+  const formatDate = (date: string, dateFormat: string) => {
     const updated = new Date(parseInt(date, 10) * 1000).toString();
-    const resDate = moment(updated).format('YYYY-MM-DD');
+    const resDate = moment(updated).format(dateFormat);
     return resDate;
   };
 
   // Function to calculate average of resilience scores based on all dates with range as edge dates
   const avgWorkflowsAll = () => {
     const averageDateWiseResilienceScores: AverageDateWiseResilienceScores = {
+      Hourly: {
+        dates: [],
+        avgResilienceScores: [],
+      },
       Daily: {
         dates: [],
         avgResilienceScores: [],
@@ -86,6 +94,29 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         avgResilienceScores: [],
       },
     };
+
+    for (let i = 0; i < xData.Hourly.length; i += 1) {
+      for (let j = 0; j < xData.Hourly[i].length; j += 1) {
+        const date: string = xData.Hourly[i][j];
+        let sum: number = 0;
+        let count: number = 0;
+        for (let k = 0; k < xData.Hourly.length; k += 1) {
+          if (
+            xData.Hourly[k].includes(date) &&
+            !averageDateWiseResilienceScores.Hourly.dates.includes(date)
+          ) {
+            sum += yData.Hourly[k][xData.Hourly[k].indexOf(date)];
+            count += 1;
+          }
+        }
+        if (count !== 0) {
+          averageDateWiseResilienceScores.Hourly.dates.push(date);
+          averageDateWiseResilienceScores.Hourly.avgResilienceScores.push(
+            sum / count
+          );
+        }
+      }
+    }
 
     for (let i = 0; i < xData.Daily.length; i += 1) {
       for (let j = 0; j < xData.Daily[i].length; j += 1) {
@@ -147,17 +178,27 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
     let dataY = [[0]];
     let xAvg: string[] = [];
     let yAvg: number[] = [];
+    let avgDateFormat: string = '';
+    if (currentGranularity.name === 'Hourly') {
+      dataX = xData.Hourly;
+      dataY = yData.Hourly;
+      xAvg = calculatedAverageAll.Hourly.dates;
+      yAvg = calculatedAverageAll.Hourly.avgResilienceScores;
+      avgDateFormat = 'YYYY-MM-DD HH:mm:ss';
+    }
     if (currentGranularity.name === 'Daily') {
       dataX = xData.Daily;
       dataY = yData.Daily;
       xAvg = calculatedAverageAll.Daily.dates;
       yAvg = calculatedAverageAll.Daily.avgResilienceScores;
+      avgDateFormat = 'YYYY-MM-DD';
     }
     if (currentGranularity.name === 'Monthly') {
       dataX = xData.Monthly;
       dataY = yData.Monthly;
       xAvg = calculatedAverageAll.Monthly.dates;
       yAvg = calculatedAverageAll.Monthly.avgResilienceScores;
+      avgDateFormat = 'YYYY-MM';
     }
     const lineSize: number[] = Array(labels?.length).fill(3);
     const data = [];
@@ -169,7 +210,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         x: dataX[i],
         y: dataY[i],
         type: 'scatter',
-        mode: 'lines',
+        mode: 'lines + text',
         line: {
           shape: 'spline',
           color: colors[i],
@@ -194,7 +235,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
     });
     const datesX: string[] = [];
     sortedResultX.forEach((date) => {
-      datesX.push(formatDate(date.toString()));
+      datesX.push(formatDate(date.toString(), avgDateFormat));
     });
 
     const avgResult = {
@@ -232,6 +273,12 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
 
   const selectorOptions = {
     buttons: [
+      {
+        step: 'day',
+        stepmode: 'backward',
+        count: 1,
+        label: '1 Day',
+      },
       {
         step: 'day',
         stepmode: 'backward',
@@ -330,7 +377,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         l: 60,
         r: 50,
         t: 30,
-        b: 150,
+        b: 130,
       },
       font: {
         family: 'Ubuntu, monospace',
@@ -386,6 +433,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
             }}
             className={classes.root}
           >
+            <MenuItem value="Hourly">Hourly</MenuItem>
             <MenuItem value="Daily">Daily</MenuItem>
             <MenuItem value="Monthly">Monthly</MenuItem>
           </Select>
