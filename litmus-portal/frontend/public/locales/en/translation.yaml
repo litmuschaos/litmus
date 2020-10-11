@@ -109,6 +109,18 @@ analytics:
   fetchError: An error has occurred while fetching the data
   viewTestResult: Click on test to view the results for the selected period
   comingSoon: Analytics Coming Soon!
+  waitingMessage: Waiting for workflow to start running!
+  highestScore: 'Highest Score:'
+  lowestScore: 'Lowest Score:'
+  exportPDF: Export PDF
+  compareWorkflows: Compare workflows
+  targetCluster: Target cluster
+  workflowSelected: workflow selected
+  workflowsSelected: workflows selected
+  tableHead1: Workflow Name
+  tableHead2: Starting Date
+  tableHead3: Regularity
+  tableHead4: Cluster
 
 error:
   whoops: Whoops!
@@ -214,16 +226,16 @@ workflowCluster:
       menu2: Not active
       menu4: Internal
       menu5: External
-      menu6: pending
+      menu6: Pending
       # For Table
       tableStatus: Status
-      tableCluster: cluster
+      tableCluster: Target agent
       name: Name
       time: Time
       run: Last Run
       connectionDate: Connection Date
-      noWorkflows: Nom of workflows
-      noSchedules: Nom of schedules
+      noWorkflows: No. of workflows
+      noSchedules: No. of schedules
       fetchingError: Unable to fetch data
       recordAvailable: No records available
       delete: Delete

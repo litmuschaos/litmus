@@ -29,8 +29,9 @@ const MenuProps = {
 };
 
 interface Cluster {
-  cluster_id: string;
+  cluster_name: string;
   is_active: boolean;
+  cluster_id: string;
 }
 
 interface WorkflowClusterProps {
@@ -66,8 +67,23 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
         data.getCluster.forEach((e: Cluster) => {
           if (e.is_active === true) {
             clusters.push({
-              cluster_id: e.cluster_id,
+              cluster_name: e.cluster_name,
               is_active: e.is_active,
+              cluster_id: e.cluster_id,
+            });
+            workflow.setWorkflowDetails({
+              cronSyntax: '',
+              scheduleType: {
+                scheduleOnce: 'now',
+                recurringSchedule: '',
+              },
+              scheduleInput: {
+                hour_interval: 0,
+                day: 1,
+                weekday: 'Monday',
+                time: new Date(),
+                date: new Date(),
+              },
             });
           }
         });
@@ -124,7 +140,7 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
             >
               {clusterData.map((name: Cluster) => (
                 <MenuItem key={name.cluster_id} value={name.cluster_id}>
-                  {name.cluster_id}
+                  {name.cluster_name}
                 </MenuItem>
               ))}
             </Select>

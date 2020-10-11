@@ -60,7 +60,6 @@ Check out the <a href="https://github.com/litmuschaos/litmus/blob/master/ADOPTER
 Some of the considerations that need to be made with Litmus (as a chaos framework), are broadly listed here. Many of these are already being worked on
 as mentioned in the [ROADMAP](./ROADMAP.md). For details or limitations around specific experiments, refer to the respective [experiments docs](https://docs.litmuschaos.io/docs/pod-delete/).
 
-- Network chaos for container runtimes other than Docker, such as containerd, CRIO is not supported yet
 - Litmus chaos operator and the chaos experiments run as kubernetes resources in the cluster. In case of airgapped environments, the chaos custom resources
   and images need to be hosted on premise.
 - When attempting to execute platform specific chaos experiments (like those on AWS, GCP cloud) the access details are passed via kubernetes secrets. Support
