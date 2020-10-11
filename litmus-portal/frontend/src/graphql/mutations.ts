@@ -11,6 +11,7 @@ export const CREATE_WORKFLOW = gql`
     }
   }
 `;
+
 export const CREATE_USER = gql`
   mutation CreateUser($user: CreateUserInput!) {
     createUser(user: $user) {
@@ -31,6 +32,12 @@ export const SEND_INVITE = gql`
       role
       invitation
     }
+  }
+`;
+
+export const REMOVE_INVITATION = gql`
+  mutation RemoveInvitation($data: MemberInput!) {
+    removeInvitation(member: $data)
   }
 `;
 
@@ -55,5 +62,15 @@ export const DELETE_SCHEDULE = gql`
 export const UPDATE_DETAILS = gql`
   mutation updateUser($user: UpdateUserInput!) {
     updateUser(user: $user)
+  }
+`;
+
+export const USER_CLUSTER_REG = gql`
+  mutation userCluster($ClusterInput: ClusterInput!) {
+    userClusterReg(clusterInput: $ClusterInput) {
+      token
+      cluster_id
+      cluster_name
+    }
   }
 `;

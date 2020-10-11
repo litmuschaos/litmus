@@ -98,7 +98,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   provider: {
-    color: 'rgba(0, 0, 0, 0.4)',
+    color: theme.palette.providerTextColor,
     fontSize: '0.75rem',
     lineHeight: '170%',
     textAlign: 'center',
@@ -115,7 +115,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   totalRuns: {
-    color: theme.palette.secondary.main,
+    color: theme.palette.totalRunsCountColor,
     fontSize: '0.875rem',
     fontWeight: 500,
     marginTop: theme.spacing(0.375),
@@ -131,7 +131,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   expCount: {
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.totalRunsCountColor,
     color: theme.palette.secondary.contrastText,
     borderRadius: 3,
     paddingTop: theme.spacing(0.375),

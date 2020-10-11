@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '1rem',
   },
   table: {
+    backgroundColor: 'inherit',
     height: '30.25rem',
     border: `1px solid ${theme.palette.customColors.black(0.05)}`,
   },
@@ -52,7 +53,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '6.125rem',
     border: `1px solid ${theme.palette.customColors.black(0.05)}`,
     marginBottom: theme.spacing(1.25),
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.homePageCardBackgroundColor,
     display: 'flex',
     justifyContent: 'space-between',
   },
@@ -75,7 +76,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '2.5rem',
     padding: theme.spacing(0.5),
   },
-  root: {},
+  root: {
+    backgroundColor: theme.palette.background.paper,
+    color: 'inherit',
+  },
   TR: {
     height: '4.8125rem',
   },

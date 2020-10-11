@@ -43,8 +43,9 @@ const useStyles = makeStyles((theme) => ({
     borderColor: theme.palette.secondary.dark,
     backgroundColor: theme.palette.homePageWorkflowCardBackgroundColor,
     borderRadius: 3,
+    color: 'inherit',
     marginLeft: theme.spacing(5),
-    boxShadow: '2px 1px 9px rgba(91, 68, 186, 0.25)',
+    boxShadow: theme.palette.createWorkflowCardShadow,
     [theme.breakpoints.down('sm')]: {
       marginTop: theme.spacing(5),
     },

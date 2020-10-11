@@ -12,10 +12,10 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     border: '1px solid ',
     borderColor: theme.palette.customColors.black(0.07),
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.homePageCardBackgroundColor,
   },
   search: {
-    fontSize: 14,
+    fontSize: '0.875rem',
     marginRight: 'auto',
     borderBottom: `1px solid ${theme.palette.customColors.black(0.1)}`,
     marginLeft: theme.spacing(6.25),
@@ -42,17 +42,17 @@ const useStyles = makeStyles((theme) => ({
   tableMain: {
     marginTop: theme.spacing(4.25),
     border: `1px solid ${theme.palette.customColors.black(0.07)}`,
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.homePageCardBackgroundColor,
     height: '29.220rem',
   },
   tableHead: {
     height: '4.6875rem',
     '& p': {
+      fontSize: '0.8125rem',
       fontWeight: 'bold',
-      fontSize: 13,
     },
     '& th': {
-      backgroundColor: theme.palette.common.white,
+      backgroundColor: theme.palette.homePageCardBackgroundColor,
     },
   },
   headerStatus: {
@@ -92,7 +92,7 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(10),
   },
   regularityData: {
-    maxWidth: '12.5rem',
+    maxWidth: '16rem',
     paddingLeft: theme.spacing(0.2),
   },
   stepsData: {
@@ -132,7 +132,6 @@ const useStyles = makeStyles((theme) => ({
   expDiv: {
     display: 'flex',
     flexDirection: 'row',
-    cursor: 'pointer',
   },
   btnImg: {
     width: '0.8125rem',

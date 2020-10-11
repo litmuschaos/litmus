@@ -9,6 +9,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '100%',
     position: 'relative',
     backgroundColor: theme.palette.sidebarBackground,
+    color: 'inherit',
   },
   litmusDiv: {
     display: 'flex',
@@ -42,15 +43,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'center',
     '&:hover': {
       backgroundColor: theme.palette.secondary.light,
-      color: theme.palette.getContrastText(theme.palette.primary.contrastText),
+      color: theme.palette.secondary.contrastText,
       '& path': {
-        fill: theme.palette.common.white,
+        fill: theme.palette.secondary.contrastText,
       },
     },
   },
   active: {
-    backgroundColor: `${theme.palette.secondary.main} !important`,
-    color: theme.palette.getContrastText(theme.palette.primary.contrastText),
+    backgroundColor: `${theme.palette.totalRunsCountColor} !important`,
+    color: theme.palette.secondary.contrastText,
     '& path': {
       fill: theme.palette.common.white,
     },

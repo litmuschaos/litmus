@@ -59,21 +59,17 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
     x: number;
     y: number;
   }>({ x: 0, y: 0 });
-  const [colorsPassed, setColorsPassed] = React.useState<string[]>([
-    palette.primary.dark,
-    palette.primary.dark,
-    palette.primary.dark,
-  ]);
-  const [colorsFailed, setColorsFailed] = React.useState<string[]>([
-    palette.error.dark,
-    palette.error.dark,
-    palette.error.dark,
-  ]);
+  const [colorsPassed, setColorsPassed] = React.useState<string[]>(
+    Array(workflowRunData.length).fill(palette.primary.dark)
+  );
+  const [colorsFailed, setColorsFailed] = React.useState<string[]>(
+    Array(workflowRunData.length).fill(palette.error.dark)
+  );
 
   // Function to convert UNIX time in format of DD MMM YYY
   const formatDate = (date: string) => {
     const updated = new Date(parseInt(date, 10) * 1000).toString();
-    const resDate = moment(updated).format('YYYY-MM-DD');
+    const resDate = moment(updated).format('YYYY-MM-DD HH:mm:ss');
     return resDate;
   };
 
@@ -113,7 +109,7 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
           (workflowRunData[i].testsPassed + workflowRunData[i].testsFailed)) *
           100
       );
-      passed.width.push(1000 * 3600 * 7);
+      passed.width.push(1000 * 3600 * 0.1);
       failed.x.push(formatDate(workflowRunData[i].testDate));
       failed.y.push(
         (workflowRunData[i].testsFailed /

@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   headerFlexProfile: {
+    color: theme.palette.userNameTextColor,
     height: '5%',
     fontSize: '2.08rem',
     flexDirection: 'row',
@@ -63,8 +64,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   // Style for ProfileDropdownSection and ProfileDropdownItems.
   avatarBackground: {
+    backgroundColor: theme.palette.totalRunsCountColor,
     color: theme.palette.customColors.white(1),
-    backgroundColor: theme.palette.secondary.main,
     marginBottom: theme.spacing(2),
     marginTop: theme.spacing(1),
   },
@@ -112,6 +113,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   userName: {
+    color: theme.palette.userNameTextColor,
     fontSize: '0.875rem',
   },
 

@@ -36,8 +36,8 @@ import useStyles from './styles';
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
     head: {
-      backgroundColor: theme.palette.common.white,
-      color: theme.palette.common.black,
+      backgroundColor: theme.palette.homePageCardBackgroundColor,
+      color: theme.palette.teamingTabHeadTextColor,
     },
     body: {
       fontSize: '0.875rem',
@@ -105,7 +105,10 @@ const UserManagement: React.FC = () => {
   }, [showDiv]);
 
   const filteredData = rows
-    ?.filter((dataRow) => dataRow.name.toLowerCase().includes(filters.search))
+    ?.filter((dataRow) => dataRow.username !== 'admin')
+    ?.filter((dataRow) =>
+      dataRow.name.toLowerCase().includes(filters.search.toLowerCase())
+    )
     .filter((datarow) => {
       if (filters.status === 'all') return true;
       if (filters.status === 'signedin') return datarow.logged_in === true;
@@ -231,7 +234,7 @@ const UserManagement: React.FC = () => {
                       <TableHead>
                         <TableRow className={classes.TR}>
                           <StyledTableCell className={classes.styledTC}>
-                            Name
+                            Status
                           </StyledTableCell>
                           <StyledTableCell>Username</StyledTableCell>
                           <StyledTableCell>Email</StyledTableCell>

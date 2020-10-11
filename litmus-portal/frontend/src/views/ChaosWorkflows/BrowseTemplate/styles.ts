@@ -8,8 +8,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     padding: theme.spacing(2),
   },
   contentWrapper: {
-    background: theme.palette.common.white,
-    padding: '0 1rem',
+    background: theme.palette.homePageCardBackgroundColor,
+    padding: theme.spacing(1),
   },
   headerTitle: {
     fontSize: '2rem',

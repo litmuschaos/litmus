@@ -21,15 +21,19 @@ const useStyles = makeStyles((theme: Theme) => ({
   memTypo: {
     fontSize: '1rem',
   },
-
+  root: {
+    backgroundColor: theme.palette.background.paper,
+    color: 'inherit',
+  },
   table: {
+    backgroundColor: 'inherit',
     height: '30.25rem',
     border: `1px solid ${theme.palette.customColors.black(0.05)}`,
   },
   toolbar: {
     height: '6.125rem',
     border: `1px solid ${theme.palette.customColors.black(0.05)}`,
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.homePageCardBackgroundColor,
     marginBottom: theme.spacing(1.25),
     display: 'flex',
     justifyContent: 'space-between',
@@ -84,7 +88,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: 'auto',
   },
   avatarBackground: {
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.totalRunsCountColor,
     width: '2.56rem',
     height: '2.56rem',
     color: theme.palette.customColors.white(1),
@@ -114,6 +118,41 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   dateDiv: {
     display: 'flex',
+  },
+  body: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: theme.spacing(7.5),
+  },
+
+  // styles for text
+  text: {
+    width: '31.93rem',
+    height: '5.875rem',
+    marginTop: theme.spacing(3.75),
+    marginBottom: theme.spacing(3.75),
+  },
+  typo: {
+    fontSize: '2rem',
+  },
+  textSecond: {
+    width: '29.06rem',
+    height: '1.6875rem',
+    marginTop: theme.spacing(1.875),
+    marginBottom: theme.spacing(3.75),
+  },
+  typoSub: {
+    fontSize: '1rem',
+  },
+  // for yes or no buttons
+  buttonGroup: {
+    display: 'flex',
+    width: '12.75rem',
+    height: '2.75rem',
+    marginTop: theme.spacing(2.5),
+    justifyContent: 'space-between',
   },
 }));
 export default useStyles;

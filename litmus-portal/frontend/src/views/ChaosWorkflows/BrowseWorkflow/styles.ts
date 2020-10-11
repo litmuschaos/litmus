@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     border: '1px solid ',
     borderColor: theme.palette.customColors.black(0.07),
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.homePageCardBackgroundColor,
   },
 
   search: {
@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     height: '2.5rem',
     minWidth: '9rem',
-    border: '1.7px solid',
+    border: '0.125rem solid',
     borderRadius: 4,
     borderColor: theme.palette.secondary.main,
     marginRight: theme.spacing(3.75),
@@ -55,18 +55,18 @@ const useStyles = makeStyles((theme) => ({
   tableMain: {
     marginTop: theme.spacing(4.25),
     border: `1px solid ${theme.palette.customColors.black(0.07)}`,
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.homePageCardBackgroundColor,
     height: '29.219rem',
   },
   tableHead: {
     '& p': {
       fontWeight: 'bold',
-      fontSize: 13,
+      fontSize: '0.8125rem',
     },
     '& th': {
       fontWeight: 'bold',
-      fontSize: 13,
-      backgroundColor: theme.palette.common.white,
+      fontSize: '0.8125rem',
+      backgroundColor: theme.palette.homePageCardBackgroundColor,
     },
   },
   headerStatus: {

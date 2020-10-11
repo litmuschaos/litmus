@@ -1,12 +1,13 @@
-import { Divider, Typography } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import { Divider, IconButton, Typography } from '@material-ui/core';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import EditIcon from '@material-ui/icons/Edit';
+import cronstrue from 'cronstrue';
+import YAML from 'yaml';
 import AdjustedWeights from '../../../components/AdjustedWeights';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline/index';
 import CustomText from '../../../components/CustomText';
-import CustomDate from '../../../components/DateTime/CustomDate';
-import CustomTime from '../../../components/DateTime/CustomTime';
 import YamlEditor from '../../../components/YamlEditor/Editor';
 import {
   AceValidations,
@@ -25,17 +26,22 @@ interface VerifyCommitProps {
 
 const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const classes = useStyles();
-  const width1 = 700;
-  const width2 = 700;
 
   const workflow = useActions(WorkflowActions);
-  const [edit, setEdit] = useState(true);
 
   const workflowData: WorkflowData = useSelector(
     (state: RootState) => state.workflowData
   );
 
-  const { name, link, yaml, id, description, weights } = workflowData;
+  const {
+    name,
+    link,
+    yaml,
+    id,
+    description,
+    weights,
+    cronSyntax,
+  } = workflowData;
 
   const [open, setOpen] = React.useState(false);
 
@@ -56,8 +62,12 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   };
 
   const handleNameChange = ({ changedName }: { changedName: string }) => {
+    const parsedYaml = YAML.parse(yaml);
+    parsedYaml.metadata.name = changedName;
+    const nameMappedYaml = YAML.stringify(parsedYaml);
     workflow.setWorkflowDetails({
       name: changedName,
+      yaml: nameMappedYaml,
     });
   };
 
@@ -122,7 +132,6 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               <CustomText
                 value={name}
                 id="name"
-                width={width1}
                 onchange={(changedName: string) =>
                   handleNameChange({ changedName })
                 }
@@ -142,7 +151,6 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               <CustomText
                 value={description}
                 id="desc"
-                width={width2}
                 onchange={(changedDesc: string) =>
                   handleDescChange({ changedDesc })
                 }
@@ -154,18 +162,27 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               <Typography className={classes.col1}>Schedule:</Typography>
             </div>
             <div className={classes.schCol2}>
-              <CustomDate disabled={edit} />
-              <CustomTime ampm disabled={edit} />
+              {/* <CustomDate disabled={edit} />
+              <CustomTime
+                handleDateChange={handleDateChange}
+                value={selectedDate}
+                ampm
+                disabled={edit}
+              /> */}
+              {cronSyntax === '' ? (
+                <Typography className={classes.schedule}>
+                  Scheduling now
+                </Typography>
+              ) : (
+                <Typography className={classes.schedule}>
+                  {cronstrue.toString(cronSyntax)}
+                </Typography>
+              )}
+
               <div className={classes.editButton1}>
-                <ButtonOutline
-                  isDisabled
-                  handleClick={() => setEdit(!edit)}
-                  data-cy="testRunButton"
-                >
-                  <Typography className={classes.buttonOutlineText}>
-                    Edit
-                  </Typography>
-                </ButtonOutline>
+                <IconButton onClick={() => gotoStep(4)}>
+                  <EditIcon className={classes.editbtn} data-cy="edit" />
+                </IconButton>
               </div>
             </div>
           </div>

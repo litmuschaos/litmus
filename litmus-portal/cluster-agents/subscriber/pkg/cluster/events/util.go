@@ -1,9 +1,12 @@
 package events
 
 import (
-	"strconv"
-
+	"errors"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/cluster/logs"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"regexp"
+	"strconv"
+	"strings"
 
 	v1alpha13 "github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
 	v1alpha12 "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
@@ -44,7 +47,7 @@ func getChaosData(engineName, engineNS string, chaosClient *v1alpha12.Litmuschao
 }
 
 // util function, checks if event is a chaos-exp event, if so -  extract the chaos data
-func CheckChaosData(nodeStatus v1alpha13.NodeStatus, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (string, *types.ChaosData, error) {
+func CheckChaosData(nodeStatus v1alpha13.NodeStatus, workflowNS string, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (string, *types.ChaosData, error) {
 	nodeType := string(nodeStatus.Type)
 	var cd *types.ChaosData = nil
 	// considering chaos workflow has only 1 artifact with manifest as raw data
@@ -55,7 +58,18 @@ func CheckChaosData(nodeStatus v1alpha13.NodeStatus, chaosClient *v1alpha12.Litm
 	if err == nil && obj.GetKind() == "ChaosEngine" {
 		nodeType = "ChaosEngine"
 		if nodeStatus.Phase != "Pending" {
-			cd, err = getChaosData(obj.GetName(), obj.GetNamespace(), chaosClient)
+			name := obj.GetName()
+			if obj.GetGenerateName() != "" {
+				log, err := logs.GetLogs(nodeStatus.ID, workflowNS, "main")
+				if err != nil {
+					return nodeType, nil, err
+				}
+				name = getNameFromLog(log)
+				if name == "" {
+					return nodeType, nil, errors.New("Chaos-Engine Generated Name couldn't be retrieved")
+				}
+			}
+			cd, err = getChaosData(name, obj.GetNamespace(), chaosClient)
 			if err != nil {
 				return nodeType, nil, err
 			}
@@ -63,6 +77,19 @@ func CheckChaosData(nodeStatus v1alpha13.NodeStatus, chaosClient *v1alpha12.Litm
 		}
 	}
 	return nodeType, nil, nil
+}
+
+func getNameFromLog(log string) string {
+	s := regexp.MustCompile(`\n\nChaosEngine Name : .*\n\n`).FindString(log)
+	if s == "" {
+		return ""
+	}
+	s = strings.TrimSpace(s)
+	name := strings.Split(s, ": ")
+	if len(name) != 2 {
+		return ""
+	}
+	return name[1]
 }
 
 // converts unix timestamp to string

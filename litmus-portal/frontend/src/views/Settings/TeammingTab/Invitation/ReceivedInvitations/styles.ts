@@ -6,7 +6,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(3),
   },
   avatarBackground: {
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.totalRunsCountColor,
     width: '2.56rem',
     height: '2.56rem',
     color: theme.palette.customColors.white(1),

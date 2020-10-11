@@ -19,6 +19,7 @@ interface InputFieldProps {
   iconType?: string | undefined;
   styles?: Object;
   handleChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyPress?: (event: React.KeyboardEvent) => void;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -33,6 +34,7 @@ const InputField: React.FC<InputFieldProps> = ({
   required,
   iconType,
   handleChange,
+  onKeyPress,
 }) => {
   const LitmusTextFieldStylesExternal = useStyles();
 
@@ -63,6 +65,7 @@ const InputField: React.FC<InputFieldProps> = ({
         onChange={handleChange}
         variant="filled"
         style={styles}
+        onKeyPress={onKeyPress}
         InputProps={
           {
             classes,
@@ -86,6 +89,7 @@ const InputField: React.FC<InputFieldProps> = ({
   if (type === 'password' && validationError === true) {
     return (
       <TextField
+        onKeyPress={onKeyPress}
         className={LitmusTextFieldStylesExternal.inputArea}
         error
         label={label}
@@ -121,6 +125,7 @@ const InputField: React.FC<InputFieldProps> = ({
     if (iconType === 'iconLeft' && validationError === false) {
       return (
         <TextField
+          onKeyPress={onKeyPress}
           className={LitmusTextFieldStylesExternal.inputArea}
           label={label}
           helperText={helperText}
@@ -147,6 +152,7 @@ const InputField: React.FC<InputFieldProps> = ({
     if (iconType === 'iconLeft' && validationError === true) {
       return (
         <TextField
+          onKeyPress={onKeyPress}
           className={LitmusTextFieldStylesExternal.inputArea}
           error
           label={label}
@@ -174,6 +180,7 @@ const InputField: React.FC<InputFieldProps> = ({
     if (iconType === 'iconRight' && validationError === false) {
       return (
         <TextField
+          onKeyPress={onKeyPress}
           className={LitmusTextFieldStylesExternal.inputArea}
           label={label}
           helperText={helperText}
@@ -204,6 +211,7 @@ const InputField: React.FC<InputFieldProps> = ({
     ) {
       return (
         <TextField
+          onKeyPress={onKeyPress}
           className={LitmusTextFieldStylesExternal.inputArea}
           label={label}
           helperText={helperText}
@@ -230,6 +238,7 @@ const InputField: React.FC<InputFieldProps> = ({
     if (iconType === 'iconRight' && validationError === true) {
       return (
         <TextField
+          onKeyPress={onKeyPress}
           className={LitmusTextFieldStylesExternal.inputArea}
           error
           label={label}
@@ -257,6 +266,7 @@ const InputField: React.FC<InputFieldProps> = ({
     if (iconType === 'iconLeftRight' && validationError === false) {
       return (
         <TextField
+          onKeyPress={onKeyPress}
           className={LitmusTextFieldStylesExternal.inputArea}
           label={label}
           helperText={helperText}
@@ -288,6 +298,7 @@ const InputField: React.FC<InputFieldProps> = ({
     if (iconType === 'iconLeftRight' && validationError === true) {
       return (
         <TextField
+          onKeyPress={onKeyPress}
           className={LitmusTextFieldStylesExternal.inputArea}
           error
           label={label}
@@ -321,6 +332,7 @@ const InputField: React.FC<InputFieldProps> = ({
 
   return (
     <TextField
+      onKeyPress={onKeyPress}
       className={LitmusTextFieldStylesExternal.inputArea}
       error={validationError}
       disabled={disabled}
