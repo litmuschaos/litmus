@@ -5,7 +5,6 @@ import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 import InfoFilledWrap from '../../components/InfoFilled';
 import Loader from '../../components/Loader';
 import QuickActionCard from '../../components/QuickActionCard';
@@ -190,15 +189,19 @@ const HomePage: React.FC = () => {
                       <strong>{t('home.analytics.heading')}</strong>
                     </Typography>
 
-                    <Button className={classes.seeAllBtn}>
-                      <Link to="/community">
-                        <div className={classes.btnSpan}>
-                          <Typography className={classes.btnText}>
-                            {t('home.analytics.moreInfo')}
-                          </Typography>
-                          <img src="icons/next.png" alt="next" />
-                        </div>
-                      </Link>
+                    <Button
+                      className={classes.seeAllBtn}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        history.push('/community');
+                      }}
+                    >
+                      <div className={classes.btnSpan}>
+                        <Typography className={classes.btnText}>
+                          {t('home.analytics.moreInfo')}
+                        </Typography>
+                        <img src="icons/next.png" alt="next" />
+                      </div>
                     </Button>
                   </div>
                   <div className={classes.cardDiv}>
