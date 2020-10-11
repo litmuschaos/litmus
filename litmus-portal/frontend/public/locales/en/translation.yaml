@@ -226,7 +226,7 @@ workflowCluster:
       menu2: Not active
       menu4: Internal
       menu5: External
-      menu6: pending
+      menu6: Pending
       # For Table
       tableStatus: Status
       tableCluster: Target agent
@@ -234,8 +234,8 @@ workflowCluster:
       time: Time
       run: Last Run
       connectionDate: Connection Date
-      noWorkflows: Nom of workflows
-      noSchedules: Nom of schedules
+      noWorkflows: No. of workflows
+      noSchedules: No. of schedules
       fetchingError: Unable to fetch data
       recordAvailable: No records available
       delete: Delete
