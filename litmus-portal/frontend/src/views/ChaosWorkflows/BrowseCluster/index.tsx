@@ -322,7 +322,7 @@ const BrowseCluster = () => {
                 </TableRow>
               ) : error ? (
                 <TableRow>
-                  <TableCell data-cy="browseError" colSpan={6}>
+                  <TableCell data-cy="browseClusterError" colSpan={6}>
                     <Typography align="center">
                       {t('workflowCluster.header.formControl.fetchingError')}
                     </Typography>
