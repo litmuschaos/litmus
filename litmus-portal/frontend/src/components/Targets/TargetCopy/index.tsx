@@ -29,7 +29,7 @@ const TargetCopy: React.FC<InstallProps> = ({ yamlLink }) => {
   const x = window.location.hostname;
   const y = window.location.port;
 
-  const engineUrl: string = `kubectl apply -f http://${x}:${y}/file/${yamlLink}.yaml`;
+  const engineUrl: string = `kubectl apply -f http://${x}:${y}/api/file/${yamlLink}.yaml`;
 
   const { t } = useTranslation();
 

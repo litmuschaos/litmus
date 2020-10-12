@@ -99,8 +99,7 @@ const BrowseCluster = () => {
       }
       if (
         (dataRow.is_cluster_confirmed as boolean).toString().toLowerCase() ===
-          'false' &&
-        filters.status === 'pending'
+        'false'
       ) {
         const p = 'pending';
         return p.includes(filters.status.toLowerCase());
@@ -322,7 +321,7 @@ const BrowseCluster = () => {
                 </TableRow>
               ) : error ? (
                 <TableRow>
-                  <TableCell data-cy="browseError" colSpan={6}>
+                  <TableCell data-cy="browseClusterError" colSpan={6}>
                     <Typography align="center">
                       {t('workflowCluster.header.formControl.fetchingError')}
                     </Typography>
@@ -336,13 +335,13 @@ const BrowseCluster = () => {
                       paginationData.rowsPerPage
                   )
                   .map((data: Cluster) => (
-                    <TableRow data-cy="browseData" key={data.cluster_id}>
+                    <TableRow data-cy="browseClusterData" key={data.cluster_id}>
                       <TableData data={data} />
                     </TableRow>
                   ))
               ) : (
                 <TableRow>
-                  <TableCell data-cy="browseClusterData" colSpan={0}>
+                  <TableCell data-cy="browseClusterNoData" colSpan={0}>
                     <Typography align="center">
                       {t('workflowCluster.header.formControl.recordAvailable')}
                     </Typography>

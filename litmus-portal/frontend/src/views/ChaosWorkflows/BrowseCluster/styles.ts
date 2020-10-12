@@ -171,7 +171,6 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     marginTop: theme.spacing(7.5),
   },
-
   // styles for text
   text: {
     width: '31.93rem',

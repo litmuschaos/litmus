@@ -80,7 +80,6 @@ const useStyles = makeStyles((theme) => ({
   },
 
   nameContent: {
-    color: theme.palette.secondary.contrastText,
     display: 'flex',
     flexDirection: 'row',
   },

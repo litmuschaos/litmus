@@ -197,7 +197,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
     backgroundColor: theme.palette.secondary.contrastText,
     width: '100%',
-    height: '41.875rem',
+    height: '45rem',
     marginBottom: theme.spacing(-2),
   },
 

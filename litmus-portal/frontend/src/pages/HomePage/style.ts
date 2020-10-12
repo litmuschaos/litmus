@@ -154,17 +154,10 @@ const useStyles = makeStyles((theme) => ({
       alignItems: 'center',
     },
   },
+
   predefinedBtn: {
-    height: '2.8125rem',
-    backgroundColor: theme.palette.primary.dark,
-    color: theme.palette.common.white,
-    paddingLeft: theme.spacing(2.5),
-    paddingRight: theme.spacing(2.5),
-    textTransform: 'none',
-    marginTop: theme.spacing(3.75),
-    '&:hover': {
-      backgroundColor: theme.palette.primary.dark,
-    },
+    marginLeft: theme.spacing(-2),
+    marginTop: theme.spacing(2.5),
   },
 
   btnHeaderDiv: {
@@ -177,9 +170,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   seeAllBtn: {
-    width: '7.5rem',
-    height: theme.spacing(5),
-    marginTop: theme.spacing(5),
+    marginTop: theme.spacing(1.5),
+    marginRight: theme.spacing(6),
     marginLeft: 'auto',
     [theme.breakpoints.down('sm')]: {
       marginTop: theme.spacing(0.2),
