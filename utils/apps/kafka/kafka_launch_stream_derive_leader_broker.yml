@@ -1,3 +1,0 @@
-- include_tasks: "/utils/apps/kafka/kafka_liveness_stream.yml"
-- include_tasks: "/utils/apps/kafka/kafka_select_broker.yml"
-- include_tasks: "/utils/apps/kafka/display_kafka_broker_info.yml"

@@ -1,7 +1,0 @@
-pool_label: "app=cstor-pool"
-cstor_target_pod_suffix: "target"
-cstor_target_pod_label: "openebs.io/target=cstor-target"
-jiva_controller_pod_suffix: "ctrl"
-jiva_controller_container_suffix: "con"
-jiva_controller_pod_label: "openebs.io/controller=jiva-controller"
-jiva_controller_svc_label: "openebs.io/controller-service=jiva-controller-svc"

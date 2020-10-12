@@ -1,6 +1,0 @@
-cloud_platform: "{{ lookup('env','CLOUD_PLATFORM') }}"
-disk_name: "{{ lookup('env','DISK_NAME') }}"
-device_name: "{{ lookup('env', 'DEVICE_NAME') }}"
-node_name: "{{ lookup('env','NODE_NAME') }}"
-project_id: "{{ lookup('env','PROJECT_ID') }}"
-zone_name: "{{ lookup('env','ZONE_NAME') }}"

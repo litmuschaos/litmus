@@ -1,5 +1,0 @@
-{% if a_pvc is defined and a_pvc  != '' %}
-c_util: /experiments/openebs/openebs-pool-pod-failure/cstor_pool_delete.yml
-{% else %}
-c_util: /chaoslib/litmus/pod_delete/kill_random_pod.yml
-{% endif %}

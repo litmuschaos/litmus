@@ -1,0 +1,58 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  labels:
+    prometheus: k8s
+  name: k8s
+spec:
+  alerting:
+    alertmanagers:
+    - name: alertmanager-main
+      namespace: monitoring
+      port: web
+  externalLabels:
+    cluster: docker-desktop
+  image: quay.io/prometheus/prometheus:v2.19.2
+  nodeSelector:
+    kubernetes.io/os: linux
+  podMonitorNamespaceSelector: {}
+  podMonitorSelector: {}
+  replicas: 1
+  resources:
+    requests:
+      memory: 400Mi
+  ruleSelector:
+    matchLabels:
+      prometheus: k8s
+      role: alert-rules
+  securityContext:
+    fsGroup: 2000
+    runAsNonRoot: true
+    runAsUser: 1000
+  serviceAccountName: prometheus-k8s
+  serviceMonitorNamespaceSelector: {}
+  serviceMonitorSelector:
+    matchExpressions:
+    - key: k8s-app
+      operator: In
+      values:
+      - node-exporter
+      - kube-state-metrics
+      - apiserver
+      - kubelet
+      - carts
+      - carts-db
+      - shipping
+      - rabbitmq
+      - queue-master
+      - catalogue-db
+      - catalogue
+      - front-end
+      - orders-db
+      - orders
+      - payment
+      - user-db
+      - user
+      - litmus-event-router
+      - chaos-exporter
+  version: v2.19.2

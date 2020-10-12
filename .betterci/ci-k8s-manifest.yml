@@ -1,0 +1,205 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: litmus-portal-admin-config
+data:
+  AgentScope: cluster
+  AgentNamespace: litmus
+  DataBaseServer: "mongodb://mongo-service:27017"
+  JWTSecret: "litmus-portal@123"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: litmusportal-frontend
+  labels:
+    component: litmusportal-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: litmusportal-frontend
+  template:
+    metadata:
+      labels:
+        component: litmusportal-frontend
+    spec:
+      containers:
+        - name: litmusportal-frontend
+          image: #{portal-frontend}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: litmusportal-frontend-service
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      port: 9091
+      targetPort: 80
+  selector:
+    component: litmusportal-frontend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: litmusportal-server
+  labels:
+    component: litmusportal-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: litmusportal-server
+  template:
+    metadata:
+      labels:
+        component: litmusportal-server
+    spec:
+      containers:
+        - name: graphql-server
+          image: #{portal-server}
+          env:
+            - name: DB_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: DataBaseServer
+            - name: JWT_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: JWTSecret
+            - name: SELF_CLUSTER
+              value: "false"
+            - name: AGENT_SCOPE
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: AgentScope
+            - name: AGENT_NAMESPACE
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: AgentNamespace
+            - name: LITMUS_PORTAL_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: PORTAL_SCOPE
+              value: "cluster"
+            - name: SUBSCRIBER_IMAGE
+              value: #{subscriber}
+            - name: DEPLOYER_IMAGE
+              value: "litmuschaos/litmusportal-self-deployer:ci"
+            - name: ARGO_SERVER_IMAGE
+              value: "argoproj/argocli:v2.9.3"
+            - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
+              value: "argoproj/workflow-controller:v2.9.3"
+            - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
+              value: "argoproj/argoexec:v2.9.3"
+            - name: LITMUS_CHAOS_OPERATOR_IMAGE
+              value: "litmuschaos/chaos-operator:1.8.2"
+            - name: LITMUS_CHAOS_RUNNER_IMAGE
+              value: "litmuschaos/chaos-runner:1.8.2"
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: Always
+        - name: auth-server
+          image: #{auth-server}
+          env:
+            - name: DB_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: DataBaseServer
+            - name: JWT_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: JWTSecret
+            - name: ADMIN_USERNAME
+              value: "admin"
+            - name: ADMIN_PASSWORD
+              value: "litmus"
+          ports:
+            - containerPort: 3000
+          imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: litmusportal-server-service
+spec:
+  type: NodePort
+  ports:
+    - name: graphql-server
+      port: 9002
+      targetPort: 8080
+    - name: auth-server
+      port: 9003
+      targetPort: 3000
+  selector:
+    component: litmusportal-server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+  labels:
+    app: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: database
+  template:
+    metadata:
+      labels:
+        component: database
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:4.2.8
+          ports:
+            - containerPort: 27017
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: mongo-persistent-storage
+              mountPath: /data/db
+      volumes:
+        - name: mongo-persistent-storage
+          persistentVolumeClaim:
+            claimName: mongo-pv-claim
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pv-claim
+  labels:
+    app: mongo
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: mongo
+  name: mongo-service
+spec:
+  ports:
+    - port: 27017
+      targetPort: 27017
+  selector:
+    component: database
+---

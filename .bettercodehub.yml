@@ -1,9 +1,11 @@
 component_depth: 2
 languages:
 - go
+- typescript
 exclude:
 - /build/plugins/.*
 - /build/utils/.*
+- /litmus-portal/backend/graphql-server/graph/generated/.*
 test:
     include:
       - /contribute/developer_guide/test_*\.py

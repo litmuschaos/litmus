@@ -6,43 +6,44 @@ This document captures only the high level roadmap items. For the detailed backl
 
 -   Declarative Chaos Intent via custom resources
 -   Chaos Operator to orchestrate chaos experiments
--   Off the shelf / ready chaos experiments for general Kubernetes chaos
+-   Off the shelf / ready chaos experiments for general Kubernetes chaos 
+-   Self sufficient, Centralized Hub for chaos experiments
 -   Per-experiment minimal RBAC permissions definition
 -   Helm3 charts for Litmus Chaos (operator, kubernetes/generic chaos charts)
--   Support for Kubernetes events for chaos experiments
--   Support for admin mode (centralized chaos management) 
--   Centralized Hub for chaos experiments
--   Documentation (user & developer guides, integration with other chaos tools)
+-   Support for admin mode (centralized chaos management) as well as namespaced mode (multi-tenant clusters)
+-   Generation of Kubernetes chaos events in experiments
+-   Support for Docker, Containerd & CRI-O runtime
+-   Scaffolding scripts (SDK) to help bootstrap a new chaos experiment in Go, Ansible
+-   Continuous chaos via flexible scheduling policies, with support to halt/resume or abort experiments
+-   Ability to customize/override experiment defaults on an instance basis
+-   Support orchestration of non-native chaos libraries via the BYOC (Bring-Your-Own-Chaos) model
+-   Define creation of scenarios involving multiple experiments via Argo-based Chaos Workflows
+-   Support for OpenShift platform 
 -   Gitlab e2e pipeline for chaos experiments
--   Define community sync up schedule 
+-   Documentation (user & developer guides, integration with other chaos tools)
+- 	Add architecture details & design resources 
+-   Define community sync up schedule  
 
 ------
 
 ### In-Progress (Near-term) 
 
+-   Improved runtime validation of chaos dependencies via litmus admission controllers
+-   Support for Kubernetes pod scheduling policies (affinity rules for chaos resources)
+-   A UI portal for LitmusChaos to trigger and schedule chaos experiments & workflows. Ongoing development [here](https://github.com/litmuschaos/litmus/tree/master/litmus-portal/)
 -   Off the shelf chaos-integrated grafana dashboards for OpenEBS, Kafka, Cassandra [#1280](https://github.com/litmuschaos/litmus/issues/1280)
--   Support for scheduled (continuous/background) chaos with halt/resume [#1223](https://github.com/litmuschaos/litmus/issues/1223)
--   Support for OpenShift platform/resources [1406](https://github.com/litmuschaos/litmus/issues/1406)
--   Support for complete chaos abort via pre-stop hooks [#1284](https://github.com/litmuschaos/litmus/issues/1284)
--   Go, Python SDK for Litmus Experiments [1466](https://github.com/litmuschaos/litmus/issues/1466) [#1259](https://github.com/litmuschaos/litmus/issues/1259)
 -   Support for user defined chaos experiment result definition (ex:json blob as chaos result) [#1254](https://github.com/litmuschaos/litmus/issues/1254)
--   Pod level resource chaos libraries (memory, disk stress) [#877](https://github.com/litmuschaos/litmus/issues/877)
--   HTTP proxy Chaos libraries [#1179](https://github.com/litmuschaos/litmus/issues/1179)
--   Support for chaos on containerd runtime [#1245](https://github.com/litmuschaos/litmus/issues/1245)
--   Self-sufficient ChaosHub with downloadable sample chaosengine, experiment-level RBAC manifests & versioned chaos charts [#1228](https://github.com/litmuschaos/litmus/issues/1228)
--   Support for custom override of chaos-operator, chaos-runner and chaos-experiment attributes [#1253](https://github.com/litmuschaos/litmus/issues/1253) [#1252](https://github.com/litmuschaos/litmus/issues/1252) [#1227](https://github.com/litmuschaos/litmus/issues/1227)
--   Integration with Argo project for Chaos workflows, support for scenario creation with experiments[1465](https://github.com/litmuschaos/litmus/issues/1465)
--   Detailed design [#1282](https://github.com/litmuschaos/litmus/issues/1282)
+-   Increased IO-Chaos libraries [#1623](https://github.com/litmuschaos/litmus/issues/1623)
+-   HTTP Chaos libraries [#1179](https://github.com/litmuschaos/litmus/issues/1179)
+-   Create and functionalize Special Interest Groups (SIGs) around specific areas in the project to take the roadmap forward
 
 ------
 
 ### Backlog
 
--   Support for Kubernetes pod scheduling policies (affinity rules for chaos resources)
+-   Pre-defined chaos workflows to inject chaos during application benchmark runs 
 -   Support for cloudevents compliant chaos events
--   Kubectl plugin for CLI based execution of chaos experiments
 -   Increased chaos metrics via prometheus chaos exporter
--   CI (Gitlab) chaos templates
 -   Migration to native Kubernetes ansible modules for ansible-based experiments
 -   Improved application Chaos Suites (OpenEBS, Kafka, Cassandra) 
 -   Support for platform (AWS, GKE, vSphere) Chaos  

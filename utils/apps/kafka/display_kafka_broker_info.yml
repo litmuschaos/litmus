@@ -1,7 +1,0 @@
-- debug: 
-    msg: "{{ kafka_broker }}"
-  when: kafka_broker is defined and kafka_broker != ''
-
-- debug:
-    msg: "kafka broker will be selected randomly across the cluster"
-  when: kafka_broker is defined and kafka_broker == ''

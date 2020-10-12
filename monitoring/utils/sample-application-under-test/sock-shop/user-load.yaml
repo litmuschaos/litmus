@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: user-load
+  name: user-load
+  namespace: sock-shop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: user-load
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        name: user-load
+    spec:
+      containers:
+      - args:
+        - -h
+        - front-end:80
+        - -r
+        - "9999999"
+        image: weaveworksdemos/load-test
+        imagePullPolicy: Always
+        name: user-load
