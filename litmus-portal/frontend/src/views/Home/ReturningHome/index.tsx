@@ -75,7 +75,7 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
   ] = React.useState<number>(0);
   const [messageActive, setMessageActive] = useState<boolean>(false);
 
-  // Apollo query to get the scheduled data
+  // Apollo query to get the scheduled workflow data
   const { data, loading, error } = useQuery<WorkflowList, WorkflowListDataVars>(
     WORKFLOW_LIST_DETAILS,
     {

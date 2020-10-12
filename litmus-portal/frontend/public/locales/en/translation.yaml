@@ -110,6 +110,7 @@ analytics:
   viewTestResult: Click on test to view the results for the selected period
   comingSoon: Analytics Coming Soon!
   waitingMessage: Waiting for workflow to start running!
+  chaosStartWaitingMessage: Waiting for chaos experiments to start!
   highestScore: 'Highest Score:'
   lowestScore: 'Lowest Score:'
   exportPDF: Export PDF
