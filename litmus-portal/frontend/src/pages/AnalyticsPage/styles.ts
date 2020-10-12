@@ -52,6 +52,7 @@ const useStyles = makeStyles((theme) => ({
 
   button: {
     marginBottom: theme.spacing(3),
+    marginLeft: theme.spacing(-2),
   },
 }));
 
