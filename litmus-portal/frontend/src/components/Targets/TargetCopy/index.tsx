@@ -23,9 +23,13 @@ const TargetCopy: React.FC<InstallProps> = ({ yamlLink }) => {
       .writeText(text)
       .catch((err) => console.error('Async: Could not copy text: ', err));
 
-    setTimeout(() => setCopying(false), 3000);
+    setTimeout(() => setCopying(false), 6000);
   }
-  const engineUrl: string = `kubectl apply -f http://localhost:8080/file/${yamlLink}.yaml`;
+
+  const x = window.location.hostname;
+  const y = window.location.port;
+
+  const engineUrl: string = `kubectl apply -f http://${x}:${y}/file/${yamlLink}.yaml`;
 
   const { t } = useTranslation();
 

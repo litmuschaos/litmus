@@ -68,6 +68,7 @@ const BrowseWorkflow = () => {
     WORKFLOW_DETAILS,
     {
       variables: { projectID: selectedProjectID },
+      pollInterval: 500,
       fetchPolicy: 'cache-and-network',
     }
   );
