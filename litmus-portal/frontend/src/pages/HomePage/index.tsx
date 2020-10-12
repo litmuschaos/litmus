@@ -84,7 +84,7 @@ const HomePage: React.FC = () => {
     setIsOpen(false);
   };
 
-  const [dataPresent, setDataPresent] = useState<boolean>(false);
+  const [dataPresent, setDataPresent] = useState<boolean>(true);
 
   useEffect(() => {
     if (data?.getUser.username === userData.username) {
