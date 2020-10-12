@@ -99,8 +99,7 @@ const BrowseCluster = () => {
       }
       if (
         (dataRow.is_cluster_confirmed as boolean).toString().toLowerCase() ===
-          'false' &&
-        filters.status === 'pending'
+          'false'
       ) {
         const p = 'pending';
         return p.includes(filters.status.toLowerCase());
