@@ -15,6 +15,16 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: theme.spacing(2.5),
     },
   },
+  nameRole: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  role: {
+    marginLeft: theme.spacing(1.0),
+    borderRadius: '0.1875rem',
+    fontSize: '0.75rem',
+    color: theme.palette.secondary.dark,
+  },
   rowDiv: {
     display: 'flex',
     justifyContent: 'space-between',

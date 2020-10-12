@@ -76,6 +76,7 @@ const ReceivedInvitations: React.FC = () => {
       const users: ReceivedInvitation[] = [];
 
       let flag = 0;
+      let roleVar = '';
 
       projectList.forEach((project) => {
         project.members.forEach((member) => {
@@ -85,6 +86,7 @@ const ReceivedInvitations: React.FC = () => {
             member.invitation === 'Pending'
           ) {
             flag = 1;
+            roleVar = member.role;
           }
         });
         if (flag === 1) {
@@ -92,7 +94,7 @@ const ReceivedInvitations: React.FC = () => {
             if (member.user_name !== username && member.role === 'Owner') {
               users.push({
                 username: member.user_name,
-                role: member.role,
+                role: roleVar,
                 projectName: project.name,
                 projectID: project.id,
               });
@@ -127,7 +129,10 @@ const ReceivedInvitations: React.FC = () => {
                           : userAvatar(row.username)}
                       </Avatar>
                       <div className={classes.detail}>
-                        <div> {row.username}</div>
+                        <div className={classes.nameRole}>
+                          <div>{row.username}</div>
+                          <div className={classes.role}>({row.role})</div>
+                        </div>
                         <div>{row.projectName}</div>
                       </div>
                     </div>

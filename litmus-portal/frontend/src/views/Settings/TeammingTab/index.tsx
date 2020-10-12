@@ -142,8 +142,9 @@ const TeammingTab: React.FC = () => {
         <div>
           <Toolbar data-cy="toolBarComponent" className={classes.toolbar}>
             {/* Search user */}
-            <div data-cy="teamingSearch" className={classes.toolbarFirstCol}>
+            <div className={classes.toolbarFirstCol}>
               <TextField
+                data-cy="teamingSearch"
                 id="input-with-icon-textfield"
                 placeholder="Search..."
                 value={filters.search}

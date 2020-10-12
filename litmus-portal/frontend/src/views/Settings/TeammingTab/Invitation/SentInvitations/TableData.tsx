@@ -173,7 +173,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                 </MenuItem>
               </Menu>
             </div>
-            <div>
+            <div data-cy="cancelInviteDoneButton">
               <ButtonOutline
                 handleClick={() =>
                   CancelInvite({
@@ -190,7 +190,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                 {loadingA ? <Loader size={20} /> : 'Cancel'}
               </ButtonOutline>
             </div>
-            <div>
+            <div data-cy="resendInviteDoneButton">
               <ButtonFilled
                 isDisabled={loadingB}
                 isPrimary
