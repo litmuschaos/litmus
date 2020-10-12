@@ -442,8 +442,8 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
                   }}
                 >
                   {messageActive ? (
-                    <Typography variant="h4" className={classes.commingSoon}>
-                      {t('home.commingSoon')}
+                    <Typography variant="h4" className={classes.comingSoon}>
+                      {t('home.comingSoon')}
                     </Typography>
                   ) : (
                     <RecentActivity activities={activities} />
