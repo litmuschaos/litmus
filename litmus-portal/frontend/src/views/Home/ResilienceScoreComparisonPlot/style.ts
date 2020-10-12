@@ -85,11 +85,6 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '0.75rem',
     marginLeft: theme.spacing(2.5),
   },
-
-  plotPosition: {
-    width: 'fit-content',
-    margin: 'auto',
-  },
 }));
 
 export default useStyles;

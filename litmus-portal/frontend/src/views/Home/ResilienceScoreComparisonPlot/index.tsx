@@ -334,7 +334,10 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
           data={plotData}
           layout={plotLayout}
           useResizeHandler
-          className={classes.plotPosition}
+          style={{
+            width: 'fit-content',
+            margin: 'auto',
+          }}
           config={{
             displaylogo: false,
             autosizable: true,
