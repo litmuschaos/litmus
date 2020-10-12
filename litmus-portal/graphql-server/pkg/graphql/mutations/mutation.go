@@ -68,7 +68,7 @@ func ConfirmClusterRegistration(identity model.ClusterIdentity, r store.StateDat
 		newKey := utils.RandomString(32)
 		time := strconv.FormatInt(time.Now().Unix(), 10)
 		query := bson.D{{"cluster_id", identity.ClusterID}}
-		update := bson.D{{"$unset", bson.D{{"token", ""}}}, {"$set", bson.D{{"access_key", newKey}, {"is_registered", true}, {"updated_at", time}}}}
+		update := bson.D{{"$unset", bson.D{{"token", ""}}}, {"$set", bson.D{{"access_key", newKey}, {"is_registered", true}, {"is_cluster_confirmed", true}, {"updated_at", time}}}}
 
 		err = database.UpdateCluster(query, update)
 		if err != nil {
