@@ -22,12 +22,6 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.primary.dark,
     },
   },
-  buttonTransparent: {
-    backgroundColor: theme.palette.secondary.contrastText,
-    '&:hover': {
-      backgroundColor: theme.palette.secondary.contrastText,
-    },
-  },
 }));
 
 export default useStyles;

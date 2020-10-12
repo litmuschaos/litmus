@@ -5,6 +5,7 @@ import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import IconButton from '@material-ui/core/IconButton';
 import InfoFilledWrap from '../../components/InfoFilled';
 import Loader from '../../components/Loader';
 import QuickActionCard from '../../components/QuickActionCard';
@@ -83,7 +84,7 @@ const HomePage: React.FC = () => {
     setIsOpen(false);
   };
 
-  const [dataPresent, setDataPresent] = useState<boolean>(true);
+  const [dataPresent, setDataPresent] = useState<boolean>(false);
 
   useEffect(() => {
     if (data?.getUser.username === userData.username) {
@@ -191,24 +192,20 @@ const HomePage: React.FC = () => {
                       <Typography className={classes.statsHeading}>
                         <strong>{t('home.analytics.heading')}</strong>
                       </Typography>
-                      <div className={classes.seeAllBtn}>
-                        <ButtonFilled
-                          isPrimary={false}
-                          isNotElevated
-                          isTransparent
-                          handleClick={(event) => {
-                            event.preventDefault();
-                            history.push('/community');
-                          }}
-                        >
-                          <div className={classes.btnSpan}>
-                            <Typography className={classes.btnText}>
-                              {t('home.analytics.moreInfo')}
-                            </Typography>
-                            <img src="icons/next.png" alt="next" />
-                          </div>
-                        </ButtonFilled>
-                      </div>
+                      <IconButton
+                        className={classes.seeAllBtn}
+                        onClick={(event) => {
+                          event.preventDefault();
+                          history.push('/community');
+                        }}
+                      >
+                        <div className={classes.btnSpan}>
+                          <Typography className={classes.btnText}>
+                            {t('home.analytics.moreInfo')}
+                          </Typography>
+                          <img src="icons/next.png" alt="next" />
+                        </div>
+                      </IconButton>
                     </div>
                     <div className={classes.cardDiv}>
                       <InfoFilledWrap />

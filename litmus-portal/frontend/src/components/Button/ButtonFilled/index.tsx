@@ -9,8 +9,6 @@ interface ButtonFilledProps {
   children: React.ReactNode;
   isPrimary: boolean;
   isDisabled?: boolean;
-  isNotElevated?: boolean;
-  isTransparent?: boolean;
   styles?: Object;
   type?: any;
 }
@@ -21,8 +19,6 @@ const ButtonFilled: React.FC<ButtonFilledProps> = ({
   isDisabled,
   styles,
   type,
-  isTransparent,
-  isNotElevated,
 }) => {
   const classes = useStyles();
   return (
@@ -33,12 +29,9 @@ const ButtonFilled: React.FC<ButtonFilledProps> = ({
       disabled={isDisabled}
       type={type}
       onClick={handleClick}
-      disableElevation={isNotElevated}
       className={
         isPrimary
           ? `${classes.button} ${classes.buttonPrimary}`
-          : isTransparent
-          ? `${classes.button} ${classes.buttonTransparent}`
           : `${classes.button} ${classes.buttonSecondary}`
       }
     >

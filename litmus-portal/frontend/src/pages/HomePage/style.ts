@@ -170,8 +170,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   seeAllBtn: {
-    marginTop: theme.spacing(5),
-    marginRight: theme.spacing(3.25),
+    marginTop: theme.spacing(1.5),
+    marginRight: theme.spacing(6),
     marginLeft: 'auto',
     [theme.breakpoints.down('sm')]: {
       marginTop: theme.spacing(0.2),
