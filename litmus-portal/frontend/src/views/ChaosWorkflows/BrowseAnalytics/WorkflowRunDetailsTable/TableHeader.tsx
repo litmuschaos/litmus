@@ -6,6 +6,7 @@ import {
   IconButton,
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import ExpandLessTwoToneIcon from '@material-ui/icons/ExpandLessTwoTone';
 import ButtonOutline from '../../../../components/Button/ButtonOutline';
@@ -35,7 +36,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({
   callBackToClose,
 }) => {
   const classes = useStyles();
-
+  const { t } = useTranslation();
   // State for sorting
   const [sortData, setSortData] = useState<SortData>({
     name: { sort: false, ascending: true },
@@ -53,7 +54,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({
         <TableCell className={classes.testName}>
           <div className={classes.nameContent}>
             <div className={classes.testNameHead}>
-              <b>Test Name</b>&nbsp;
+              <b>{t('analytics.workflowRunDetailsTable.tableHead1')}</b>&nbsp;
             </div>
             <div className={classes.nameContentIcons}>
               <IconButton
@@ -91,7 +92,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({
         <TableCell className={classes.headSpacing}>
           <div className={classes.nameContent}>
             <div className={classes.testResultHead}>
-              <b>Test Result</b>&nbsp;
+              <b>{t('analytics.workflowRunDetailsTable.tableHead2')}</b>&nbsp;
             </div>
             <div className={classes.nameContentIcons}>
               <IconButton
@@ -129,21 +130,21 @@ const TableHeader: React.FC<TableHeaderProps> = ({
         <TableCell className={classes.headSpacing}>
           <div className={classes.nameContent}>
             <div className={classes.testWeightPointHead}>
-              <b>Weight of the test</b>&nbsp;
+              <b>{t('analytics.workflowRunDetailsTable.tableHead3')}</b>&nbsp;
             </div>
           </div>
         </TableCell>
         <TableCell className={classes.headSpacing}>
           <div className={classes.nameContent}>
             <div className={classes.testWeightPointHead}>
-              <b>Resulting Points</b>&nbsp;
+              <b>{t('analytics.workflowRunDetailsTable.tableHead4')}</b>&nbsp;
             </div>
           </div>
         </TableCell>
         <TableCell className={classes.headSpacing}>
           <div className={classes.nameContent}>
             <div className={classes.testNameHead}>
-              <b>Last run</b>&nbsp;
+              <b>{t('analytics.workflowRunDetailsTable.tableHead5')}</b>&nbsp;
             </div>
             <div className={classes.nameContentIcons}>
               <IconButton
@@ -184,7 +185,9 @@ const TableHeader: React.FC<TableHeaderProps> = ({
             }}
             isDisabled={false}
           >
-            <Typography className={classes.dateRangeDefault}>Close</Typography>
+            <Typography className={classes.dateRangeDefault}>
+              {t('analytics.workflowRunDetailsTable.close')}
+            </Typography>
           </ButtonOutline>
         </TableCell>
       </TableRow>

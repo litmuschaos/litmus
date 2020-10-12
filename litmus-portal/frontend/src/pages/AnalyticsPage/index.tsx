@@ -94,7 +94,6 @@ const AnalyticsPage: React.FC = () => {
     WORKFLOW_LIST_DETAILS,
     {
       variables: { projectID: selectedProjectID, workflowIDs: [] },
-      fetchPolicy: 'cache-and-network',
     }
   );
 
@@ -344,24 +343,20 @@ const AnalyticsPage: React.FC = () => {
               </Typography>
             </div>
           ) : (
-            <div>
+            <div className={classes.waitingScreen}>
               <Typography className={classes.waitingText}>
                 {t('analytics.chaosStartWaitingMessage')}
               </Typography>
-              <div className={classes.loader}>
-                <Loader />
-              </div>
+              <Loader />
             </div>
           )}
         </div>
       ) : (
-        <div>
+        <div className={classes.waitingScreen}>
           <Typography className={classes.waitingText}>
             {t('analytics.waitingMessage')}
           </Typography>
-          <div className={classes.loader}>
-            <Loader />
-          </div>
+          <Loader />
         </div>
       )}
     </Scaffold>

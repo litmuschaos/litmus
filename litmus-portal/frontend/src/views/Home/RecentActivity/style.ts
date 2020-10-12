@@ -13,13 +13,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     '&::-webkit-scrollbar-thumb': {
       backgroundColor: theme.palette.secondary.dark,
-      outline: '1px solid slategrey',
     },
   },
 
   // Styles for RecentActivityListItem
   messageID: {
     color: theme.palette.text.disabled,
+    marginLeft: theme.spacing(3),
   },
 }));
 

@@ -20,10 +20,7 @@ const RecentActivityListItem: React.FC<RecentActivityListItemProps> = ({
   return (
     <ListItem>
       <ListItemAvatar>
-        <Typography className={classes.messageID}>
-          {' '}
-          &nbsp; &nbsp; {message.id}
-        </Typography>
+        <Typography className={classes.messageID}>{message.id}</Typography>
       </ListItemAvatar>
       <ListItemText primary={message.text} />
     </ListItem>

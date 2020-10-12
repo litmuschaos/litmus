@@ -11,6 +11,7 @@ import {
   Tooltip,
 } from '@material-ui/core';
 import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '@material-ui/core/styles';
 import useStyles from './style';
 import Score from './Score';
@@ -33,6 +34,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
 }) => {
   const classes = useStyles();
   const { palette } = useTheme();
+  const { t } = useTranslation();
   const tabs = useActions(TabActions);
   const [currentGranularity, setCurrentGranularity] = React.useState<{
     name: string;
@@ -48,7 +50,6 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
     highName: '',
     lowName: '',
   });
-
   const [plotLayout, setPlotLayout] = React.useState<any>({});
 
   const handleChangeInGranularity = (
@@ -292,7 +293,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
             htmlFor="outlined-selection-granularity"
             className={classes.root}
           >
-            Granularity
+            {t('home.resilienceScoreComparisonOptions.granularity')}
           </InputLabel>
           <Select
             value={currentGranularity.name}
@@ -304,9 +305,15 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
             }}
             className={classes.root}
           >
-            <MenuItem value="Hourly">Hourly</MenuItem>
-            <MenuItem value="Daily">Daily</MenuItem>
-            <MenuItem value="Monthly">Monthly</MenuItem>
+            <MenuItem value="Hourly">
+              {t('home.resilienceScoreComparisonOptions.option1')}
+            </MenuItem>
+            <MenuItem value="Daily">
+              {t('home.resilienceScoreComparisonOptions.option2')}
+            </MenuItem>
+            <MenuItem value="Monthly">
+              {t('home.resilienceScoreComparisonOptions.option3')}
+            </MenuItem>
           </Select>
         </FormControl>
         <Tooltip title="Analytics">
@@ -327,10 +334,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
           data={plotData}
           layout={plotLayout}
           useResizeHandler
-          style={{
-            width: 'fit-content',
-            margin: 'auto',
-          }}
+          className={classes.plotPosition}
           config={{
             displaylogo: false,
             autosizable: true,
@@ -342,7 +346,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
             displayModeBar: false,
             toImageButtonOptions: {
               format: 'png',
-              filename: 'Top4_ResilienceScores_Comparison',
+              filename: `Top4_ResilienceScores_Comparison-${new Date().toString()}`,
               width: 1920,
               height: 1080,
               scale: 2,
