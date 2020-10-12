@@ -67,6 +67,9 @@ home:
   analytics:
     heading: How busy is the Litmus Project?
     moreInfo: See more
+  commingSoon: Comming soon!
+  resilienceScore: Resilience score
+  recentActivity: Recent activity
 
 login:
   heading: Welcome to <strong>Litmus!</strong>

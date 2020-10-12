@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme: Theme) => ({
       width: '0.2em',
     },
     '&::-webkit-scrollbar-track': {
-      webkitBoxShadow: 'inset 0 0 6px rgba(0,0,0,0.00)',
+      webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
     },
     '&::-webkit-scrollbar-thumb': {
       backgroundColor: theme.palette.secondary.dark,

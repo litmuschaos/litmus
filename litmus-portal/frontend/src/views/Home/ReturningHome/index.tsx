@@ -7,6 +7,7 @@ import { useQuery } from '@apollo/client';
 import moment from 'moment';
 import * as _ from 'lodash';
 import { Paper, Typography } from '@material-ui/core';
+import { useTranslation } from 'react-i18next';
 import useStyles from './style';
 import { WORKFLOW_LIST_DETAILS } from '../../../graphql';
 import { ExecutionData } from '../../../models/graphql/workflowData';
@@ -57,11 +58,13 @@ interface ReturningHomeProps {
   callbackToSetDataPresent: DataPresentCallBackType;
   currentStatus: boolean;
 }
+
 const ReturningHome: React.FC<ReturningHomeProps> = ({
   callbackToSetDataPresent,
   currentStatus,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
   const userData = useSelector((state: RootState) => state.userData);
   const [workflowDataPresent, setWorkflowDataPresent] = useState<boolean>(
     currentStatus
@@ -74,6 +77,13 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
     setTotalValidWorkflowRunsCount,
   ] = React.useState<number>(0);
   const [messageActive, setMessageActive] = useState<boolean>(false);
+  const [analyticsData, setAnalyticsData] = useState<Analyticsdata>({
+    avgWorkflows: 0,
+    maxWorkflows: 0,
+    passPercentage: 0,
+    failPercentage: 0,
+    avgResilienceScore: 0,
+  });
 
   // Apollo query to get the scheduled workflow data
   const { data, loading, error } = useQuery<WorkflowList, WorkflowListDataVars>(
@@ -83,14 +93,6 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
       fetchPolicy: 'cache-and-network',
     }
   );
-
-  const [analyticsData, setAnalyticsData] = useState<Analyticsdata>({
-    avgWorkflows: 0,
-    maxWorkflows: 0,
-    passPercentage: 0,
-    failPercentage: 0,
-    avgResilienceScore: 0,
-  });
 
   const loadWorkflowAnalyticssData = () => {
     const plotData: ResilienceScoreComparisonPlotProps = {
@@ -267,7 +269,6 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
         (totalValidWorkflowRuns.tests_passed +
           totalValidWorkflowRuns.tests_failed)) *
       100;
-
     const weeklyGroupedResults = _.groupBy(
       timeSeriesArrayForAveragePerWeek,
       (data) => moment.unix(parseInt(data.date, 10)).startOf('isoWeek')
@@ -399,7 +400,7 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
           <div className={classes.othersDiv}>
             <div className={classes.resilienceScoresDiv}>
               <Typography className={classes.statsHeading}>
-                <strong>Resilience score</strong>
+                <strong>{t('home.resilienceScore')}</strong>
               </Typography>
               <Paper variant="outlined" className={classes.backgroundFix}>
                 {plotDataForComparison ? (
@@ -417,13 +418,13 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
               <div>
                 <div className={classes.btnHeaderDiv}>
                   <Typography className={classes.statsHeading}>
-                    <strong>Recent activity</strong>
+                    <strong>{t('home.recentActivity')}</strong>
                   </Typography>
                   {/*
                   <Button className={classes.seeAllBtn}>
                     <div className={classes.btnSpan}>
                       <Typography className={classes.btnText}>
-                        See more
+                        {t('home.analytics.moreInfo')}
                       </Typography>
                       <img src="icons/next.png" alt="next" />
                     </div>
@@ -442,8 +443,7 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
                 >
                   {messageActive ? (
                     <Typography variant="h4" className={classes.commingSoon}>
-                      {' '}
-                      Comming soon!{' '}
+                      {t('home.commingSoon')}
                     </Typography>
                   ) : (
                     <RecentActivity activities={activities} />

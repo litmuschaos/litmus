@@ -11,6 +11,7 @@ import {
   Tooltip,
 } from '@material-ui/core';
 import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
+import { useTheme } from '@material-ui/core/styles';
 import useStyles from './style';
 import Score from './Score';
 import { history } from '../../../redux/configureStore';
@@ -31,13 +32,24 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
   labels,
 }) => {
   const classes = useStyles();
+  const { palette } = useTheme();
   const tabs = useActions(TabActions);
-
   const [currentGranularity, setCurrentGranularity] = React.useState<{
     name: string;
   }>({
     name: 'Daily',
   });
+  const [plotData, setPlotData] = React.useState<any[]>([]);
+  const [edgeData, setEdgeData] = React.useState({
+    highScore: 0,
+    lowScore: 0,
+    highColor: '',
+    lowColor: '',
+    highName: '',
+    lowName: '',
+  });
+
+  const [plotLayout, setPlotLayout] = React.useState<any>({});
 
   const handleChangeInGranularity = (
     event: React.ChangeEvent<{ name?: string; value: unknown }>
@@ -50,19 +62,6 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
       });
     }
   };
-
-  const [plotData, setPlotData] = React.useState<any[]>([]);
-
-  const [edgeData, setEdgeData] = React.useState({
-    highScore: 0,
-    lowScore: 0,
-    highColor: '',
-    lowColor: '',
-    highName: '',
-    lowName: '',
-  });
-
-  const [plotLayout, setPlotLayout] = React.useState<any>({});
 
   const processData = () => {
     let dataX = [['']];
@@ -79,16 +78,16 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
       dataX = xData.Monthly;
       dataY = yData.Monthly;
     }
-    const colors = ['#CA2C2C', '#109B67', '#F6B92B', '#858CDD'];
-
+    const colors = [
+      palette.error.dark,
+      palette.primary.dark,
+      palette.warning.main,
+      palette.secondary.main,
+    ];
     const lineSize = [3, 3, 3, 3];
-
     const data = [];
-
     const series: number[] = Array(labels?.length).fill(0);
-
     const lengths: number[] = Array(labels?.length).fill(0);
-
     for (let i = 0; i < dataX.length; i += 1) {
       const result = {
         x: dataX[i],
@@ -118,11 +117,9 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
     }
 
     const normalized: number[] = Array(labels?.length).fill(0);
-
     for (let k = 0; k < lengths.length; k += 1) {
       normalized[k] = series[k] / lengths[k];
     }
-
     const max = Math.max(...normalized);
     const maxID = normalized.indexOf(max);
     const min = Math.min(...normalized);
@@ -205,15 +202,15 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         showgrid: true,
         showline: false,
         showticklabels: true,
-        linecolor: 'rgb(204,204,204)',
+        linecolor: palette.graphAnnotationsColor,
         linewidth: 0.5,
         ticks: 'outside',
-        tickcolor: 'rgb(204,204,204)',
+        tickcolor: palette.graphAnnotationsColor,
         tickwidth: 2,
         ticklen: 5,
         tickfont: {
           family: 'Ubuntu',
-          color: 'rgba(0, 0, 0, 0.4)',
+          color: palette.customColors.black(0.4),
         },
         mirror: true,
         rangeselector: selectorOptions as any,
@@ -224,15 +221,15 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         zeroline: false,
         showline: false,
         showticklabels: true,
-        linecolor: 'rgb(204,204,204)',
+        linecolor: palette.graphAnnotationsColor,
         linewidth: 0.5,
         ticks: 'outside',
-        tickcolor: 'rgb(204,204,204)',
+        tickcolor: palette.graphAnnotationsColor,
         tickwidth: 2,
         ticklen: 5,
         tickfont: {
           family: 'Ubuntu',
-          color: 'rgba(0, 0, 0, 0.4)',
+          color: palette.customColors.black(0.4),
         },
         mirror: true,
         tickmode: 'array',
@@ -252,10 +249,9 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
       },
       font: {
         family: 'Ubuntu, monospace',
-        color: 'rgba(0, 0, 0, 0.4)',
+        color: palette.customColors.black(0.4),
       },
     };
-
     setPlotLayout(layout);
   };
 
