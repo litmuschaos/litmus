@@ -92,7 +92,7 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(10),
   },
   regularityData: {
-    maxWidth: '12.5rem',
+    maxWidth: '16rem',
     paddingLeft: theme.spacing(0.2),
   },
   stepsData: {
@@ -132,7 +132,6 @@ const useStyles = makeStyles((theme) => ({
   expDiv: {
     display: 'flex',
     flexDirection: 'row',
-    cursor: 'pointer',
   },
   btnImg: {
     width: '0.8125rem',

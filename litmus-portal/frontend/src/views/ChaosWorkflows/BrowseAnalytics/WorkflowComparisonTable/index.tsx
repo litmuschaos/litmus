@@ -1,28 +1,29 @@
 /* eslint-disable no-unused-expressions */
+/* eslint-disable no-loop-func */
+/* eslint-disable no-console */
 import { useQuery } from '@apollo/client';
 import {
   MuiThemeProvider,
-  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TablePagination,
   TableRow,
+  Paper,
+  IconButton,
   Typography,
 } from '@material-ui/core';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import Loader from '../../../../components/Loader';
-import { SCHEDULE_DETAILS } from '../../../../graphql/quries';
-import {
-  ScheduleDataVars,
-  Schedules,
-  ScheduleWorkflow,
-} from '../../../../models/graphql/scheduleData';
-import { RootState } from '../../../../redux/reducers';
+import useTheme from '@material-ui/core/styles/useTheme';
+import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
+import * as _ from 'lodash';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import {
   customThemeAnalyticsTable,
   customThemeAnalyticsTableCompareMode,
@@ -33,10 +34,21 @@ import {
   sortNumAsc,
   sortNumDesc,
 } from '../../../../utils/sort';
+import { WORKFLOW_LIST_DETAILS } from '../../../../graphql/quries';
+import { RootState } from '../../../../redux/reducers';
+import Loader from '../../../../components/Loader';
+import ResilienceScoreComparisonPlot from '../WorkflowComparisonPlot/index';
 import useStyles from './styles';
 import TableData from './TableData';
 import TableHeader from './TableHeader';
 import TableToolBar from './TableToolbar';
+import {
+  WeightageMap,
+  ExecutionData,
+  Workflow,
+  WorkflowList,
+  WorkflowListDataVars,
+} from '../../../../models/graphql/workflowListData';
 
 interface RangeType {
   startDate: string;
@@ -56,20 +68,50 @@ interface Filter {
   searchTokens: string[];
 }
 
+interface ResilienceScoreComparisonPlotProps {
+  xData: { Hourly: string[][]; Daily: string[][]; Monthly: string[][] };
+  yData: { Hourly: number[][]; Daily: number[][]; Monthly: number[][] };
+  labels: string[];
+  colors: string[];
+}
+
+interface DatedResilienceScore {
+  date: string;
+  value: number;
+}
+
+interface TestDetails {
+  testNames: string[];
+  testWeights: number[];
+  testResults: string[];
+}
+
+interface WorkflowDataForExport {
+  cluster_name: string;
+  workflow_name: string;
+  run_date: string;
+  tests_passed: number | string;
+  tests_failed: number | string;
+  resilience_score: number | string;
+  test_details?: TestDetails;
+  test_details_string?: string;
+}
+
 const WorkflowComparisonTable = () => {
   const classes = useStyles();
+  const { palette } = useTheme();
   const { t } = useTranslation();
   const [filter, setFilter] = React.useState<Filter>({
     range: { startDate: 'all', endDate: 'all' },
     selectedCluster: 'All',
     sortData: {
       name: { sort: false, ascending: true },
-      startDate: { sort: true, ascending: false },
+      startDate: { sort: true, ascending: true },
       cluster: { sort: false, ascending: true },
     },
     searchTokens: [''],
   });
-  const [displayData, setDisplayData] = useState<ScheduleWorkflow[]>([]);
+  const [displayData, setDisplayData] = useState<Workflow[]>([]);
   const [clusters, setClusters] = React.useState<string[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -80,21 +122,30 @@ const WorkflowComparisonTable = () => {
     Math.min(rowsPerPage, displayData.length - page * rowsPerPage);
   const [compare, setCompare] = React.useState<Boolean>(false);
   const [showAll, setShowAll] = React.useState<Boolean>(true);
-
+  const [plotDataForComparison, setPlotDataForComparison] = React.useState<
+    ResilienceScoreComparisonPlotProps
+  >();
+  const [totalValidWorkflowRuns, setTotalValidWorkflowRuns] = React.useState<
+    WorkflowDataForExport[]
+  >([]);
+  const [
+    totalValidWorkflowRunsCount,
+    setTotalValidWorkflowRunsCount,
+  ] = React.useState<number>(0);
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
   );
 
-  // Apollo query to get the scheduled data
-  const { data, loading, error } = useQuery<Schedules, ScheduleDataVars>(
-    SCHEDULE_DETAILS,
+  // Apollo query to get the scheduled workflow data
+  const { data, loading, error } = useQuery<WorkflowList, WorkflowListDataVars>(
+    WORKFLOW_LIST_DETAILS,
     {
-      variables: { projectID: selectedProjectID },
+      variables: { projectID: selectedProjectID, workflowIDs: [] },
       fetchPolicy: 'cache-and-network',
     }
   );
 
-  const getClusters = (searchingData: ScheduleWorkflow[]) => {
+  const getClusters = (searchingData: Workflow[]) => {
     const uniqueList: string[] = [];
     searchingData.forEach((data) => {
       if (!uniqueList.includes(data.cluster_name)) {
@@ -117,9 +168,7 @@ const WorkflowComparisonTable = () => {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelecteds = displayData.map(
-        (n: ScheduleWorkflow) => n.workflow_id
-      );
+      const newSelecteds = displayData.map((n: Workflow) => n.workflow_id);
       setSelected(newSelecteds);
       return;
     }
@@ -146,13 +195,13 @@ const WorkflowComparisonTable = () => {
   };
 
   const searchingDataRetriever = () => {
-    let searchingData: ScheduleWorkflow[] = [];
+    let searchingData: Workflow[] = [];
     if (compare === false) {
-      searchingData = data?.getScheduledWorkflows ?? [];
+      searchingData = data?.ListWorkflow ?? [];
     } else {
-      const searchedData: ScheduleWorkflow[] = [];
+      const searchedData: Workflow[] = [];
       selected.forEach((workflowID) => {
-        data?.getScheduledWorkflows.forEach((workflow) => {
+        data?.ListWorkflow.forEach((workflow) => {
           if (workflow.workflow_id === workflowID) {
             searchedData.push(workflow);
           }
@@ -163,29 +212,301 @@ const WorkflowComparisonTable = () => {
     return searchingData;
   };
 
+  const randomColor = () => Math.floor(Math.random() * 16777215).toString(16);
+
+  // Function to convert UNIX time in format of DD MMM YYY
+  const formatDate = (date: string) => {
+    const updated = new Date(parseInt(date, 10) * 1000).toString();
+    const resDate = moment(updated).format('dddd DD/MM/YYYY HH:mm:ss Z');
+    return resDate;
+  };
+
+  const generateDataForComparing = () => {
+    const plotData: ResilienceScoreComparisonPlotProps = {
+      xData: {
+        Hourly: [[]],
+        Daily: [[]],
+        Monthly: [[]],
+      },
+      yData: {
+        Hourly: [[]],
+        Daily: [[]],
+        Monthly: [[]],
+      },
+      labels: [],
+      colors: [],
+    };
+    let totalValidRuns: number = 0;
+    const totalValidWorkflowRuns: WorkflowDataForExport[] = [];
+    const timeSeriesArray: DatedResilienceScore[][] = [];
+    selected.forEach((workflow) => {
+      const workflowData = data?.ListWorkflow.filter(function match(wkf) {
+        return wkf.workflow_id === workflow;
+      });
+      const runs = workflowData ? workflowData[0].workflow_runs : [];
+      const workflowTimeSeriesData: DatedResilienceScore[] = [];
+      let isWorkflowValid: boolean = false;
+      runs.forEach((data) => {
+        try {
+          const executionData: ExecutionData = JSON.parse(data.execution_data);
+          const { nodes } = executionData;
+          const experimentTestResultsArrayPerWorkflowRun: number[] = [];
+          let totalExperimentsPassed: number = 0;
+          let weightsSum: number = 0;
+          const testDetails: TestDetails = {
+            testNames: [],
+            testWeights: [],
+            testResults: [],
+          };
+          let isValid: boolean = false;
+          for (const key of Object.keys(nodes)) {
+            const node = nodes[key];
+            if (node.chaosData) {
+              const { chaosData } = node;
+              if (
+                chaosData.experimentVerdict === 'Pass' ||
+                chaosData.experimentVerdict === 'Fail'
+              ) {
+                const weightageMap: WeightageMap[] = workflowData
+                  ? workflowData[0].weightages
+                  : [];
+                weightageMap.forEach((weightage) => {
+                  if (weightage.experiment_name === chaosData.experimentName) {
+                    if (chaosData.experimentVerdict === 'Pass') {
+                      experimentTestResultsArrayPerWorkflowRun.push(
+                        weightage.weightage
+                      );
+                      totalExperimentsPassed += 1;
+                    }
+                    if (chaosData.experimentVerdict === 'Fail') {
+                      experimentTestResultsArrayPerWorkflowRun.push(0);
+                    }
+                    if (
+                      chaosData.experimentVerdict === 'Pass' ||
+                      chaosData.experimentVerdict === 'Fail'
+                    ) {
+                      weightsSum += weightage.weightage;
+                      testDetails.testNames.push(weightage.experiment_name);
+                      testDetails.testWeights.push(weightage.weightage);
+                      testDetails.testResults.push(chaosData.experimentVerdict);
+                      isValid = true;
+                      isWorkflowValid = true;
+                    }
+                  }
+                });
+              }
+            }
+          }
+          if (executionData.event_type === 'UPDATE' && isValid) {
+            totalValidRuns += 1;
+            totalValidWorkflowRuns.push({
+              cluster_name: workflowData ? workflowData[0].cluster_name : '',
+              workflow_name: workflowData ? workflowData[0].workflow_name : '',
+              run_date: formatDate(executionData.creationTimestamp),
+              tests_passed: totalExperimentsPassed,
+              tests_failed:
+                experimentTestResultsArrayPerWorkflowRun.length -
+                totalExperimentsPassed,
+              resilience_score: experimentTestResultsArrayPerWorkflowRun.length
+                ? (experimentTestResultsArrayPerWorkflowRun.reduce(
+                    (a, b) => a + b,
+                    0
+                  ) /
+                    weightsSum) *
+                  100
+                : 0,
+              test_details: testDetails,
+            });
+            workflowTimeSeriesData.push({
+              date: data.last_updated,
+              value: experimentTestResultsArrayPerWorkflowRun.length
+                ? (experimentTestResultsArrayPerWorkflowRun.reduce(
+                    (a, b) => a + b,
+                    0
+                  ) /
+                    weightsSum) *
+                  100
+                : 0,
+            });
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      });
+      if (isWorkflowValid) {
+        plotData.labels.push(workflowData ? workflowData[0].workflow_name : '');
+        plotData.colors.push(`#${randomColor()}`);
+        timeSeriesArray.push(workflowTimeSeriesData);
+      }
+    });
+
+    timeSeriesArray.forEach((workflowTimeSeriesData, index) => {
+      const hourlyGroupedResults = _.groupBy(workflowTimeSeriesData, (data) =>
+        moment
+          .unix(parseInt(data.date, 10))
+          .startOf('hour')
+          .format('YYYY-MM-DD HH:mm:ss')
+      );
+      const dailyGroupedResults = _.groupBy(workflowTimeSeriesData, (data) =>
+        moment.unix(parseInt(data.date, 10)).startOf('day').format('YYYY-MM-DD')
+      );
+      const monthlyGroupedResults = _.groupBy(workflowTimeSeriesData, (data) =>
+        moment.unix(parseInt(data.date, 10)).startOf('month').format('YYYY-MM')
+      );
+      plotData.xData.Hourly[index] = [];
+      plotData.yData.Hourly[index] = [];
+      Object.keys(hourlyGroupedResults).forEach((hour) => {
+        let total = 0;
+        hourlyGroupedResults[hour].forEach((data) => {
+          total += data.value;
+        });
+        plotData.xData.Hourly[index].push(hour);
+        plotData.yData.Hourly[index].push(
+          total / hourlyGroupedResults[hour].length
+        );
+      });
+      plotData.xData.Daily[index] = [];
+      plotData.yData.Daily[index] = [];
+      Object.keys(dailyGroupedResults).forEach((day) => {
+        let total = 0;
+        dailyGroupedResults[day].forEach((data) => {
+          total += data.value;
+        });
+        plotData.xData.Daily[index].push(day);
+        plotData.yData.Daily[index].push(
+          total / dailyGroupedResults[day].length
+        );
+      });
+      plotData.xData.Monthly[index] = [];
+      plotData.yData.Monthly[index] = [];
+      Object.keys(monthlyGroupedResults).forEach((month) => {
+        let total = 0;
+        monthlyGroupedResults[month].forEach((data) => {
+          total += data.value;
+        });
+        plotData.xData.Monthly[index].push(month);
+        plotData.yData.Monthly[index].push(
+          total / monthlyGroupedResults[month].length
+        );
+      });
+    });
+    setPlotDataForComparison(plotData);
+    setTotalValidWorkflowRuns(totalValidWorkflowRuns);
+    setTotalValidWorkflowRunsCount(totalValidRuns);
+  };
+
   const CallbackForComparing = (compareWorkflows: boolean) => {
     setCompare(compareWorkflows);
-    const payload: ScheduleWorkflow[] = [];
+    const payload: Workflow[] = [];
     selected.forEach((workflow) => {
       displayData.forEach((displayWorkflow, i) => {
         if (displayWorkflow.workflow_id === workflow && data) {
-          payload.push(data?.getScheduledWorkflows[i]);
+          payload.push(data?.ListWorkflow[i]);
         }
       });
     });
+    generateDataForComparing();
     setDisplayData(payload);
   };
 
-  // const CallbackForExporting = (exportAnalytics: boolean) => {};
+  const generatePDF = () => {
+    if (document.getElementById('analytics')) {
+      const heads = [
+        {
+          cluster_name: 'Cluster Name',
+          workflow_name: 'Workflow Name',
+          run_date: 'Date-Time',
+          tests_passed: '#Expts. Passed',
+          tests_failed: '#Expts. Failed',
+          resilience_score: 'Reliability Score',
+          test_details_string: 'Experiment Details\nName\nWeight / Verdict',
+        },
+      ];
+      const rows: any[] = [];
+      totalValidWorkflowRuns.forEach((run) => {
+        let detail_string = '';
+        run.test_details?.testNames.forEach((experiment, index) => {
+          detail_string += `${experiment}\n${run.test_details?.testWeights[index]} / ${run.test_details?.testResults[index]}\n`;
+        });
+        rows.push({
+          cluster_name: run.cluster_name,
+          workflow_name: run.workflow_name,
+          run_date: run.run_date,
+          tests_passed: run.tests_passed.toString(),
+          tests_failed: run.tests_failed.toString(),
+          resilience_score: run.resilience_score.toString(),
+          test_details_string: detail_string,
+        });
+      });
+
+      const input: HTMLElement | null = document.getElementById('analytics');
+      html2canvas(input as HTMLElement).then((canvas) => {
+        const imgWidth = 206;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        const contentDataURL = canvas.toDataURL('image/png');
+        const doc = new jsPDF('p', 'mm', 'a4'); // A4 size page of PDF
+        const position = -45;
+        doc.setFontSize(10);
+        doc.text('Litmus Portal Report Version: 1.9', 10, 10);
+        doc.text('Time of Generation:', 10, 15);
+        doc.text(new Date().toString(), 42, 15);
+        doc.text(
+          'Total Number of Chaos Workflow Schedules under consideration:',
+          10,
+          20
+        );
+        doc.text(
+          plotDataForComparison
+            ? plotDataForComparison.labels.length.toString()
+            : '0',
+          114,
+          20
+        );
+        doc.text(
+          'Total Number of Chaos Workflow Runs under consideration:',
+          10,
+          25
+        );
+        doc.text(totalValidWorkflowRunsCount.toString(), 105, 25);
+        const img = new Image();
+        img.src = '/icons/LitmusLogo.png';
+        doc.addImage(img, 'png', 165, 10, 30, 12.5);
+        doc.line(0, 33, 300, 33);
+        doc.setLineWidth(5.0);
+        doc.text(
+          'Workflow Run Details Table & Workflow Schedules Table with Resilience Score Comparison Graph',
+          27.5,
+          39
+        );
+        try {
+          autoTable(doc, {
+            head: heads,
+            body: rows,
+            startY: 44,
+            margin: { horizontal: 2 },
+            styles: { overflow: 'linebreak' },
+            bodyStyles: { valign: 'top' },
+            theme: 'striped',
+            showHead: 'firstPage',
+          });
+        } catch (err) {
+          console.log(err);
+        }
+        doc.addPage();
+        doc.addImage(contentDataURL, 'PNG', 2, position, imgWidth, imgHeight);
+        doc.save('litmus-portal-analytics.pdf'); // Generated PDF
+      });
+    }
+  };
 
   useEffect(() => {
-    setDisplayData(data ? data?.getScheduledWorkflows : []);
-    getClusters(data ? data?.getScheduledWorkflows : []);
+    setDisplayData(data ? data.ListWorkflow : []);
+    getClusters(data ? data.ListWorkflow : []);
   }, [data]);
 
   useEffect(() => {
     const payload = searchingDataRetriever()
-      .filter((wkf: ScheduleWorkflow) => {
+      .filter((wkf: Workflow) => {
         return filter.searchTokens.every(
           (s: string) =>
             wkf.workflow_name.toLowerCase().includes(s) ||
@@ -214,7 +535,7 @@ const WorkflowComparisonTable = () => {
                   )
                 ).getTime();
       })
-      .sort((a: ScheduleWorkflow, b: ScheduleWorkflow) => {
+      .sort((a: Workflow, b: Workflow) => {
         // Sorting based on unique fields
         if (filter.sortData.name.sort) {
           const x = a.workflow_name;
@@ -246,12 +567,12 @@ const WorkflowComparisonTable = () => {
     setDisplayData(payload);
     setShowAll(false);
     getClusters(searchingDataRetriever());
-  }, [filter]);
+  }, [filter, compare]);
 
   return (
-    <div className={classes.root}>
-      {/*   <div className={classes.analyticsDiv}>
-          <Typography className={classes.heading}>
+    <div className={classes.root} id="analytics">
+      <div className={classes.analyticsDiv}>
+        <Typography className={classes.heading}>
           <strong>
             {' '}
             {compare === true ? (
@@ -279,7 +600,6 @@ const WorkflowComparisonTable = () => {
         </Typography>
         <br />
       </div>
-          */}
       <div className={classes.tableFix}>
         <div>
           <section className="Heading section">
@@ -321,7 +641,7 @@ const WorkflowComparisonTable = () => {
                 });
               }}
               callbackToCompare={CallbackForComparing}
-              callbackToExport={() => {}} // CallbackForExporting}
+              callbackToExport={() => generatePDF()}
               comparisonState={compare}
               reInitialize={compare === false}
             />
@@ -384,7 +704,7 @@ const WorkflowComparisonTable = () => {
                           page * rowsPerPage,
                           page * rowsPerPage + rowsPerPage
                         )
-                        .map((data: ScheduleWorkflow, index: number) => {
+                        .map((data: Workflow, index: number) => {
                           const isItemSelected = isSelected(data.workflow_id);
                           const labelId = `enhanced-table-checkbox-${index}`;
                           return (
@@ -475,6 +795,16 @@ const WorkflowComparisonTable = () => {
                 'chaosWorkflows.browseAnalytics.workFlowComparisonTable.comparativeResults'
               )}
             </Typography>
+            {plotDataForComparison ? (
+              <ResilienceScoreComparisonPlot
+                xData={plotDataForComparison.xData}
+                yData={plotDataForComparison.yData}
+                labels={plotDataForComparison.labels}
+                colors={plotDataForComparison.colors}
+              />
+            ) : (
+              <div />
+            )}
           </div>
         </Paper>
       ) : (

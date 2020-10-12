@@ -1,9 +1,12 @@
 import { useTheme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import Center from '../../containers/layouts/Center';
 import { RootState } from '../../redux/reducers';
 import formatCount from '../../utils/formatCount';
+import Loader from '../Loader';
 import useStyles from './styles';
 
 interface CardValueData {
@@ -20,9 +23,13 @@ interface CardValueData {
 
 const InfoFilledWrap: React.FC = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
   const theme = useTheme();
   // Card Value Data fetched from Redux
-  const communityData = useSelector((state: RootState) => state.communityData);
+  const { communityData, loading, error } = useSelector(
+    (state: RootState) => state.communityData
+  );
+
   const cardData: CardValueData[] = [
     {
       color: theme.palette.warning.main,
@@ -36,7 +43,7 @@ const InfoFilledWrap: React.FC = () => {
       plus: true,
     },
     {
-      color: theme.palette.secondary.main,
+      color: theme.palette.totalRunsCountColor,
       value: parseInt(communityData.google.totalRuns, 10),
       statType: 'Total Experiment Runs',
       plus: true,
@@ -79,7 +86,27 @@ const InfoFilledWrap: React.FC = () => {
       </div>
     );
   });
-  return <div className={classes.infoFilledWrap}>{cardArray}</div>;
+
+  return (
+    <div className={classes.infoFilledWrap}>
+      {loading ? (
+        <div>
+          <Loader />
+          <Typography>{t('internetIssues.fetchData')}</Typography>
+        </div>
+      ) : error ? (
+        <div className={classes.errorMessage}>
+          <Center>
+            <Typography variant="h4">
+              {t('internetIssues.connectionError')}
+            </Typography>
+          </Center>
+        </div>
+      ) : (
+        cardArray
+      )}
+    </div>
+  );
 };
 
 export default InfoFilledWrap;

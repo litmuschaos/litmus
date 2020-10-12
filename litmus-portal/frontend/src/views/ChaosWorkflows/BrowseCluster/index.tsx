@@ -5,12 +5,32 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TablePagination,
+  IconButton,
   Typography,
 } from '@material-ui/core';
 import moment from 'moment';
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useQuery } from '@apollo/client';
+import { useTranslation } from 'react-i18next';
 import HeaderSection from './HeaderSection';
 import useStyles from './styles';
+import { GET_CLUSTER } from '../../../graphql';
+import Loader from '../../../components/Loader';
+import { RootState } from '../../../redux/reducers';
+import TableData from './TableData';
+import {
+  sortAlphaAsc,
+  sortAlphaDesc,
+  sortNumAsc,
+  sortNumDesc,
+} from '../../../utils/sort';
+import {
+  Cluster,
+  ClusterVars,
+  Clusters,
+} from '../../../models/graphql/clusterData';
 
 interface FilterOptions {
   search: string;
@@ -19,9 +39,8 @@ interface FilterOptions {
 }
 
 interface SortData {
-  lastRun: { sort: boolean; ascending: boolean };
   name: { sort: boolean; ascending: boolean };
-  noOfSteps: { sort: boolean; ascending: boolean };
+  lastRun: { sort: boolean; ascending: boolean };
 }
 
 interface DateData {
@@ -30,13 +49,107 @@ interface DateData {
   toDate: string;
 }
 
+interface PaginationData {
+  pageNo: number;
+  rowsPerPage: number;
+}
+
 const BrowseCluster = () => {
   const classes = useStyles();
-  // States for filters
+
+  const selectedProjectID = useSelector(
+    (state: RootState) => state.userData.selectedProjectID
+  );
+
   const [filters, setFilters] = useState<FilterOptions>({
     search: '',
     status: 'All',
     cluster: 'All',
+  });
+
+  const { data, loading, error } = useQuery<Clusters, ClusterVars>(
+    GET_CLUSTER,
+    {
+      variables: {
+        project_id: selectedProjectID,
+      },
+      fetchPolicy: 'cache-and-network',
+      pollInterval: 3000,
+    }
+  );
+
+  const [dateRange, setDateRange] = React.useState<DateData>({
+    dateValue: 'Select a period',
+    fromDate: new Date(0).toString(),
+    toDate: new Date(new Date().setHours(23, 59, 59)).toString(),
+  });
+
+  const [sortData, setSortData] = useState<SortData>({
+    name: { sort: false, ascending: true },
+    lastRun: { sort: true, ascending: true },
+  });
+
+  const filteredData = data?.getCluster
+    .filter((dataRow) =>
+      dataRow.cluster_name.toLowerCase().includes(filters.search.toLowerCase())
+    )
+    .filter((dataRow) => {
+      if (filters.status === 'All') {
+        return true;
+      }
+      if (
+        (dataRow.is_cluster_confirmed as boolean).toString().toLowerCase() ===
+        'false'
+      ) {
+        const p = 'pending';
+        return p.includes(filters.status.toLowerCase());
+      }
+      return (dataRow.is_active as boolean)
+        .toString()
+        .toLowerCase()
+        .includes(filters.status.toLowerCase());
+    })
+    .filter((dataRow) =>
+      filters.cluster === 'All'
+        ? true
+        : dataRow.cluster_type
+            .toLowerCase()
+            .includes(filters.cluster.toLowerCase())
+    )
+    .filter((dataRow) => {
+      return dateRange.fromDate && dateRange.toDate === undefined
+        ? true
+        : parseInt(dataRow.updated_at, 10) * 1000 >=
+            new Date(moment(dateRange.fromDate).format()).getTime() &&
+            parseInt(dataRow.updated_at, 10) * 1000 <=
+              new Date(moment(dateRange.toDate).format()).getTime();
+    })
+    .sort((a: Cluster, b: Cluster) => {
+      // Sorting based on unique fields
+      if (sortData.name.sort) {
+        const x = a.cluster_name;
+        const y = b.cluster_name;
+
+        return sortData.name.ascending
+          ? sortAlphaAsc(x, y)
+          : sortAlphaDesc(x, y);
+      }
+
+      if (sortData.lastRun.sort) {
+        const x = parseInt(a.created_at, 10);
+        const y = parseInt(b.created_at, 10);
+
+        return sortData.lastRun.ascending
+          ? sortNumAsc(y, x)
+          : sortNumDesc(y, x);
+      }
+
+      return 0;
+    });
+
+  const [paginationData, setPaginationData] = useState<PaginationData>({
+    pageNo: 0,
+    rowsPerPage: 5,
   });
 
   const [popAnchorEl, setPopAnchorEl] = React.useState<null | HTMLElement>(
@@ -54,13 +167,6 @@ const BrowseCluster = () => {
     setPopAnchorEl(event.currentTarget);
     setOpen(true);
   };
-
-  // State for start date and end date
-  const [dateRange, setDateRange] = React.useState<DateData>({
-    dateValue: 'Select a period',
-    fromDate: new Date(0).toString(),
-    toDate: new Date(new Date().setHours(23, 59, 59)).toString(),
-  });
 
   // Functions passed as props in the headerSeaction
   const changeSearch = (
@@ -87,7 +193,6 @@ const BrowseCluster = () => {
     setFilters({ ...filters, cluster: event.target.value as string });
   };
 
-  // Function to set the date range for filtering
   const dateChange = (selectFromDate: string, selectToDate: string) => {
     setDateRange({
       dateValue: `${moment(selectFromDate)
@@ -97,6 +202,7 @@ const BrowseCluster = () => {
       toDate: new Date(new Date(selectToDate).setHours(23, 59, 59)).toString(),
     });
   };
+  const { t } = useTranslation();
 
   return (
     <div>
@@ -122,71 +228,148 @@ const BrowseCluster = () => {
         <TableContainer className={classes.tableMain}>
           <Table stickyHeader aria-label="simple table">
             <TableHead>
-              <TableRow>
+              <TableRow className={classes.tableRows}>
                 {/* Status */}
                 <TableCell className={classes.headerStatus}>
                   <div className={classes.tableCell}>
-                    <Typography>Status</Typography>
-                    <div className={classes.sortDiv}>
-                      <img
-                        src="/icons/arrow_downward.svg"
-                        alt="ConnectTarget icon"
-                      />
-                    </div>
+                    <Typography>
+                      {t('workflowCluster.header.formControl.tableStatus')}
+                    </Typography>
+                    <IconButton
+                      aria-label="sort in descending order"
+                      size="small"
+                      onClick={() =>
+                        setSortData({
+                          ...sortData,
+                          lastRun: { sort: true, ascending: false },
+                        })
+                      }
+                    >
+                      <div className={classes.sortDiv}>
+                        <img
+                          src="/icons/arrow_downward.svg"
+                          alt="ConnectTarget icon"
+                        />
+                      </div>
+                    </IconButton>
                   </div>
                 </TableCell>
                 {/* Workflow Name */}
                 <TableCell className={classes.workflowName}>
                   <div className={classes.tableCell}>
-                    <Typography>Target Cluster</Typography>
-                    <div className={classes.sortDiv}>
-                      <img
-                        src="/icons/arrow_downward.svg"
-                        alt="ConnectTarget icon"
-                      />
-                    </div>
+                    <Typography>
+                      {t('workflowCluster.header.formControl.tableCluster')}
+                    </Typography>
+                    <IconButton
+                      aria-label="sort in descending"
+                      size="small"
+                      onClick={() =>
+                        setSortData({
+                          ...sortData,
+                          name: { sort: true, ascending: false },
+                        })
+                      }
+                    >
+                      <div className={classes.sortDiv}>
+                        <img
+                          src="/icons/arrow_downward.svg"
+                          alt="ConnectTarget icon"
+                        />
+                      </div>
+                    </IconButton>
                   </div>
                 </TableCell>
-
                 {/* Target Cluster */}
                 <TableCell>
                   <Typography className={classes.targetCluster}>
-                    Connection Data
+                    {t('workflowCluster.header.formControl.connectionDate')}
                   </Typography>
                 </TableCell>
 
                 {/* Reliability */}
                 <TableCell className={classes.headData}>
-                  # of workflows
+                  {t('workflowCluster.header.formControl.noWorkflows')}
                 </TableCell>
 
                 {/* No of Experiments */}
                 <TableCell className={classes.headData}>
                   <div className={classes.tableCell}>
-                    <Typography># of schedules</Typography>
+                    <Typography>
+                      {t('workflowCluster.header.formControl.noSchedules')}
+                    </Typography>
                   </div>
                 </TableCell>
 
                 {/* Last Run */}
                 <TableCell className={classes.headData}>
                   <div className={classes.tableCell}>
-                    <Typography>Last Run</Typography>
+                    <Typography>
+                      {t('workflowCluster.header.formControl.run')}
+                    </Typography>
                   </div>
                 </TableCell>
-                <TableCell />
               </TableRow>
             </TableHead>
 
             {/* Body */}
             <TableBody>
-              <TableRow>
-                <TableCell colSpan={8}>
-                  <Typography align="center">No records available</Typography>
-                </TableCell>
-              </TableRow>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={6}>
+                    <Loader />
+                  </TableCell>
+                </TableRow>
+              ) : error ? (
+                <TableRow>
+                  <TableCell data-cy="browseClusterError" colSpan={6}>
+                    <Typography align="center">
+                      {t('workflowCluster.header.formControl.fetchingError')}
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              ) : filteredData ? (
+                filteredData
+                  .slice(
+                    paginationData.pageNo * paginationData.rowsPerPage,
+                    paginationData.pageNo * paginationData.rowsPerPage +
+                      paginationData.rowsPerPage
+                  )
+                  .map((data: Cluster) => (
+                    <TableRow data-cy="browseClusterData" key={data.cluster_id}>
+                      <TableData data={data} />
+                    </TableRow>
+                  ))
+              ) : (
+                <TableRow>
+                  <TableCell data-cy="browseClusterNoData" colSpan={0}>
+                    <Typography align="center">
+                      {t('workflowCluster.header.formControl.recordAvailable')}
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
+
+        {/* Pagination Section */}
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredData?.length ?? 0}
+          rowsPerPage={paginationData.rowsPerPage}
+          page={paginationData.pageNo}
+          onChangePage={(_, page) =>
+            setPaginationData({ ...paginationData, pageNo: page })
+          }
+          onChangeRowsPerPage={(event) => {
+            setPaginationData({
+              ...paginationData,
+              pageNo: 0,
+              rowsPerPage: parseInt(event.target.value, 10),
+            });
+          }}
+        />
       </section>
     </div>
   );

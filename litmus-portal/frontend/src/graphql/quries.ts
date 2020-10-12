@@ -39,6 +39,33 @@ export const SCHEDULE_DETAILS = gql`
   }
 `;
 
+export const WORKFLOW_LIST_DETAILS = gql`
+  query workflowListDetails($projectID: String!, $workflowIDs: [ID]) {
+    ListWorkflow(project_id: $projectID, workflow_ids: $workflowIDs) {
+      workflow_id
+      cronSyntax
+      cluster_name
+      workflow_name
+      workflow_description
+      weightages {
+        experiment_name
+        weightage
+      }
+      isCustomWorkflow
+      updated_at
+      created_at
+      project_id
+      cluster_id
+      cluster_type
+      workflow_runs {
+        execution_data
+        workflow_run_id
+        last_updated
+      }
+    }
+  }
+`;
+
 export const GET_USER = gql`
   query getUser($username: String!) {
     getUser(username: $username) {
@@ -71,10 +98,23 @@ export const GET_USER = gql`
 `;
 
 export const GET_CLUSTER = gql`
-  query getCluster($project_id: String!, $cluster_type: String) {
+  query getClusters($project_id: String!, $cluster_type: String) {
     getCluster(project_id: $project_id, cluster_type: $cluster_type) {
       cluster_id
       is_active
+      project_id
+      cluster_name
+      description
+      platform_name
+      access_key
+      is_registered
+      is_cluster_confirmed
+      updated_at
+      created_at
+      cluster_type
+      no_of_schedules
+      no_of_workflows
+      token
     }
   }
 `;
