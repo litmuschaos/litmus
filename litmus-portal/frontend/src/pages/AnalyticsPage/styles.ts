@@ -41,13 +41,18 @@ const useStyles = makeStyles((theme) => ({
 
   waitingText: {
     fontSize: '2rem',
-    marginLeft: '25%',
-    marginTop: '25%',
+    marginLeft: '30%',
+    marginTop: '20%',
     marginBottom: '10%',
   },
 
-  loader: {
-    marginLeft: '-8%',
+  waitingScreen: {
+    alignContent: 'center',
+  },
+
+  button: {
+    marginBottom: theme.spacing(3),
+    marginLeft: theme.spacing(-2),
   },
 }));
 
