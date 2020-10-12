@@ -10,6 +10,7 @@ Please send PRs to add or remove organizations/users.
 |[Intuit](https://www.intuit.com?utm_source=github&utm_campaign=litmuschaos_repo)|[Argo-Litmus Demo](https://youtu.be/Uwqop-s99LA?t=720)|[our story](https://github.com/litmuschaos/litmus/tree/master/adopters/intuit.md)|
 |[Okteto](https://okteto.com)|[Okteto-Litmus Demo](https://okteto.com/blog/chaos-engineering-with-litmus/)| [our story](adopters/okteto.md)|
 |[WeScale](https://www.wescale.fr)|[Chaos Engineering](https://blog.wescale.fr/2020/03/19/le-guide-de-chaos-engineering-partie-2/)|[our story](https://github.com/litmuschaos/litmus/blob/master/adopters/wescale.md)|
+|[NetApp](https://www.netapp.com)|[Chaos Engineering](https://www.netapp.com/us/index.aspx)|[our story](https://github.com/litmuschaos/litmus/blob/master/adopters/netapp.md)|
 
 | User | Applications/Workloads | Success Story |
 | :--- | :--- | :--- |
