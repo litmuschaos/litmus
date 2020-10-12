@@ -86,8 +86,8 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
     ];
     const lineSize = [3, 3, 3, 3];
     const data = [];
-    const series: number[] = Array(labels?.length).fill(0);
-    const lengths: number[] = Array(labels?.length).fill(0);
+    const series: number[] = Array(labels.length).fill(0);
+    const lengths: number[] = Array(labels.length).fill(0);
     for (let i = 0; i < dataX.length; i += 1) {
       const result = {
         x: dataX[i],
@@ -116,7 +116,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
       lengths[i] = dataY[i].length;
     }
 
-    const normalized: number[] = Array(labels?.length).fill(0);
+    const normalized: number[] = Array(labels.length).fill(0);
     for (let k = 0; k < lengths.length; k += 1) {
       normalized[k] = series[k] / lengths[k];
     }

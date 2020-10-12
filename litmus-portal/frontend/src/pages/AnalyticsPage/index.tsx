@@ -122,7 +122,6 @@ const AnalyticsPage: React.FC = () => {
         const executionData: ExecutionData = JSON.parse(data.execution_data);
         const { nodes } = executionData;
         const experimentTestResultsArrayPerWorkflowRun: number[] = [];
-        const chaosDataArrayPerWorkflowRun: ChaosData[] = [];
         let weightsSum: number = 0;
         let isValid: boolean = false;
         let totalExperimentsPassed: number = 0;
@@ -131,7 +130,6 @@ const AnalyticsPage: React.FC = () => {
           if (node.chaosData) {
             const { chaosData } = node;
             chaosDataArray.push(chaosData);
-            chaosDataArrayPerWorkflowRun.push(chaosData);
             if (
               chaosData.experimentVerdict === 'Pass' ||
               chaosData.experimentVerdict === 'Fail'
