@@ -2,11 +2,22 @@
 import React, { useEffect } from 'react';
 import Plotly from 'plotly.js';
 import createPlotlyComponent from 'react-plotly.js/factory';
-import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
-import moment from 'moment';
+import {
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  Tooltip,
+} from '@material-ui/core';
+import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '@material-ui/core/styles';
 import useStyles from './style';
 import Score from './Score';
+import { history } from '../../../redux/configureStore';
+import useActions from '../../../redux/actions';
+import * as TabActions from '../../../redux/actions/tabs';
 
 const Plot = createPlotlyComponent(Plotly);
 
@@ -14,37 +25,32 @@ interface ResilienceScoreComparisonPlotProps {
   xData: { Hourly: string[][]; Daily: string[][]; Monthly: string[][] };
   yData: { Hourly: number[][]; Daily: number[][]; Monthly: number[][] };
   labels: string[];
-  colors: string[];
-}
-
-interface AverageDateWiseResilienceScores {
-  Hourly: {
-    dates: string[];
-    avgResilienceScores: number[];
-  };
-  Daily: {
-    dates: string[];
-    avgResilienceScores: number[];
-  };
-  Monthly: {
-    dates: string[];
-    avgResilienceScores: number[];
-  };
 }
 
 const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps> = ({
   xData,
   yData,
   labels,
-  colors,
 }) => {
   const classes = useStyles();
   const { palette } = useTheme();
+  const { t } = useTranslation();
+  const tabs = useActions(TabActions);
   const [currentGranularity, setCurrentGranularity] = React.useState<{
     name: string;
   }>({
     name: 'Daily',
   });
+  const [plotData, setPlotData] = React.useState<any[]>([]);
+  const [edgeData, setEdgeData] = React.useState({
+    highScore: 0,
+    lowScore: 0,
+    highColor: '',
+    lowColor: '',
+    highName: '',
+    lowName: '',
+  });
+  const [plotLayout, setPlotLayout] = React.useState<any>({});
 
   const handleChangeInGranularity = (
     event: React.ChangeEvent<{ name?: string; value: unknown }>
@@ -58,153 +64,31 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
     }
   };
 
-  const [plotData, setPlotData] = React.useState<any[]>([]);
-
-  const [edgeData, setEdgeData] = React.useState({
-    highScore: 0,
-    lowScore: 0,
-    highColor: '',
-    lowColor: '',
-    highName: '',
-    lowName: '',
-  });
-
-  const [plotLayout, setPlotLayout] = React.useState<any>({});
-
-  // Function to convert UNIX time in format of DD MMM YYY
-  const formatDate = (date: string, dateFormat: string) => {
-    const updated = new Date(parseInt(date, 10) * 1000).toString();
-    const resDate = moment(updated).format(dateFormat);
-    return resDate;
-  };
-
-  // Function to calculate average of resilience scores based on all dates with range as edge dates
-  const avgWorkflowsAll = () => {
-    const averageDateWiseResilienceScores: AverageDateWiseResilienceScores = {
-      Hourly: {
-        dates: [],
-        avgResilienceScores: [],
-      },
-      Daily: {
-        dates: [],
-        avgResilienceScores: [],
-      },
-      Monthly: {
-        dates: [],
-        avgResilienceScores: [],
-      },
-    };
-
-    for (let i = 0; i < xData.Hourly.length; i += 1) {
-      for (let j = 0; j < xData.Hourly[i].length; j += 1) {
-        const date: string = xData.Hourly[i][j];
-        let sum: number = 0;
-        let count: number = 0;
-        for (let k = 0; k < xData.Hourly.length; k += 1) {
-          if (
-            xData.Hourly[k].includes(date) &&
-            !averageDateWiseResilienceScores.Hourly.dates.includes(date)
-          ) {
-            sum += yData.Hourly[k][xData.Hourly[k].indexOf(date)];
-            count += 1;
-          }
-        }
-        if (count !== 0) {
-          averageDateWiseResilienceScores.Hourly.dates.push(date);
-          averageDateWiseResilienceScores.Hourly.avgResilienceScores.push(
-            sum / count
-          );
-        }
-      }
-    }
-
-    for (let i = 0; i < xData.Daily.length; i += 1) {
-      for (let j = 0; j < xData.Daily[i].length; j += 1) {
-        const date: string = xData.Daily[i][j];
-        let sum: number = 0;
-        let count: number = 0;
-        for (let k = 0; k < xData.Daily.length; k += 1) {
-          if (
-            xData.Daily[k].includes(date) &&
-            !averageDateWiseResilienceScores.Daily.dates.includes(date)
-          ) {
-            sum += yData.Daily[k][xData.Daily[k].indexOf(date)];
-            count += 1;
-          }
-        }
-        if (count !== 0) {
-          averageDateWiseResilienceScores.Daily.dates.push(date);
-          averageDateWiseResilienceScores.Daily.avgResilienceScores.push(
-            sum / count
-          );
-        }
-      }
-    }
-
-    for (let i = 0; i < xData.Monthly.length; i += 1) {
-      for (let j = 0; j < xData.Monthly[i].length; j += 1) {
-        const date: string = xData.Monthly[i][j];
-        let sum: number = 0;
-        let count: number = 0;
-        for (let k = 0; k < xData.Monthly.length; k += 1) {
-          if (
-            xData.Monthly[k].includes(date) &&
-            !averageDateWiseResilienceScores.Monthly.dates.includes(date)
-          ) {
-            sum += yData.Monthly[k][xData.Monthly[k].indexOf(date)];
-            count += 1;
-          }
-        }
-        if (count !== 0) {
-          averageDateWiseResilienceScores.Monthly.dates.push(date);
-          averageDateWiseResilienceScores.Monthly.avgResilienceScores.push(
-            sum / count
-          );
-        }
-      }
-    }
-    return averageDateWiseResilienceScores;
-  };
-
-  const argSort = (arr1: number[], arr2: number[]) =>
-    arr1
-      .map((item: any, index: number) => [arr2[index], item]) // add the args to sort by
-      .sort(([arg1], [arg2]) => arg2 - arg1) // sort by the args
-      .map(([, item]) => item); // extract the sorted items
-
   const processData = () => {
-    const calculatedAverageAll: AverageDateWiseResilienceScores = avgWorkflowsAll();
     let dataX = [['']];
     let dataY = [[0]];
-    let xAvg: string[] = [];
-    let yAvg: number[] = [];
-    let avgDateFormat: string = '';
     if (currentGranularity.name === 'Hourly') {
       dataX = xData.Hourly;
       dataY = yData.Hourly;
-      xAvg = calculatedAverageAll.Hourly.dates;
-      yAvg = calculatedAverageAll.Hourly.avgResilienceScores;
-      avgDateFormat = 'YYYY-MM-DD HH:mm:ss';
     }
     if (currentGranularity.name === 'Daily') {
       dataX = xData.Daily;
       dataY = yData.Daily;
-      xAvg = calculatedAverageAll.Daily.dates;
-      yAvg = calculatedAverageAll.Daily.avgResilienceScores;
-      avgDateFormat = 'YYYY-MM-DD';
     }
     if (currentGranularity.name === 'Monthly') {
       dataX = xData.Monthly;
       dataY = yData.Monthly;
-      xAvg = calculatedAverageAll.Monthly.dates;
-      yAvg = calculatedAverageAll.Monthly.avgResilienceScores;
-      avgDateFormat = 'YYYY-MM';
     }
-    const lineSize: number[] = Array(labels?.length).fill(3);
+    const colors = [
+      palette.error.dark,
+      palette.primary.dark,
+      palette.warning.main,
+      palette.secondary.main,
+    ];
+    const lineSize = [3, 3, 3, 3];
     const data = [];
-    const series: number[] = Array(labels?.length).fill(0);
-    const lengths: number[] = Array(labels?.length).fill(0);
-
+    const series: number[] = Array(labels.length).fill(0);
+    const lengths: number[] = Array(labels.length).fill(0);
     for (let i = 0; i < dataX.length; i += 1) {
       const result = {
         x: dataX[i],
@@ -216,7 +100,15 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
           color: colors[i],
           width: lineSize[i],
         },
-        name: labels ? labels[i] : '',
+        text: labels[i],
+        textposition: 'top center',
+        textfont: {
+          family: 'Ubuntu',
+          size: 12,
+          fontWeight: 500,
+          color: colors[i],
+        },
+        name: '',
       };
       data.push(result);
       for (let j = 0; j < dataY[i].length; j += 1) {
@@ -225,34 +117,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
       lengths[i] = dataY[i].length;
     }
 
-    const unixTimeArray: number[] = [];
-    xAvg.forEach((x) => {
-      unixTimeArray.push(parseInt(moment(x).format('X'), 10));
-    });
-    const argSortResultY = argSort(yAvg, unixTimeArray).reverse();
-    const sortedResultX = unixTimeArray.sort(function difference(a, b) {
-      return a - b;
-    });
-    const datesX: string[] = [];
-    sortedResultX.forEach((date) => {
-      datesX.push(formatDate(date.toString(), avgDateFormat));
-    });
-
-    const avgResult = {
-      x: datesX,
-      y: argSortResultY,
-      type: 'scatter',
-      mode: 'lines',
-      line: {
-        shape: 'spline',
-        dash: 'dash',
-        color: palette.secondary.dark,
-        width: 3,
-      },
-      name: 'AVG Workflows',
-    };
-    data.push(avgResult);
-    const normalized = Array(labels?.length).fill(0);
+    const normalized: number[] = Array(labels.length).fill(0);
     for (let k = 0; k < lengths.length; k += 1) {
       normalized[k] = series[k] / lengths[k];
     }
@@ -260,13 +125,14 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
     const maxID = normalized.indexOf(max);
     const min = Math.min(...normalized);
     const minID = normalized.indexOf(min);
+
     setEdgeData({
       highScore: max,
       lowScore: min,
       highColor: colors[maxID],
       lowColor: colors[minID],
-      highName: labels ? labels[maxID] : '',
-      lowName: labels ? labels[minID] : '',
+      highName: labels[maxID],
+      lowName: labels[minID],
     });
     setPlotData(data);
   };
@@ -330,6 +196,9 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
 
   const processLayout = () => {
     const layout = {
+      showlegend: false,
+      height: 405,
+      width: 610,
       xaxis: {
         showgrid: true,
         showline: false,
@@ -371,22 +240,25 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
       },
       cliponaxis: true,
       layer: 'below_traces',
-      autosize: true,
+      autosize: false,
       margin: {
         autoexpand: false,
-        l: 60,
-        r: 50,
+        l: 30,
+        r: 30,
         t: 30,
-        b: 130,
+        b: 105,
       },
       font: {
         family: 'Ubuntu, monospace',
         color: palette.customColors.black(0.4),
       },
-      showlegend: true,
-      legend: { orientation: 'h', y: -0.5 },
     };
     setPlotLayout(layout);
+  };
+
+  const redirect = () => {
+    tabs.changeWorkflowsTabs(3);
+    history.push('/workflows');
   };
 
   useEffect(() => {
@@ -395,7 +267,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
   }, [currentGranularity]);
 
   return (
-    <div style={{ alignContent: 'center', width: '100%' }}>
+    <div style={{ alignContent: 'center' }}>
       <div className={classes.flexDisplay}>
         <div className={classes.adjust}>
           <Score
@@ -421,7 +293,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
             htmlFor="outlined-selection-granularity"
             className={classes.root}
           >
-            Granularity
+            {t('home.resilienceScoreComparisonOptions.granularity')}
           </InputLabel>
           <Select
             value={currentGranularity.name}
@@ -433,11 +305,29 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
             }}
             className={classes.root}
           >
-            <MenuItem value="Hourly">Hourly</MenuItem>
-            <MenuItem value="Daily">Daily</MenuItem>
-            <MenuItem value="Monthly">Monthly</MenuItem>
+            <MenuItem value="Hourly">
+              {t('home.resilienceScoreComparisonOptions.option1')}
+            </MenuItem>
+            <MenuItem value="Daily">
+              {t('home.resilienceScoreComparisonOptions.option2')}
+            </MenuItem>
+            <MenuItem value="Monthly">
+              {t('home.resilienceScoreComparisonOptions.option3')}
+            </MenuItem>
           </Select>
         </FormControl>
+        <Tooltip title="Analytics">
+          <IconButton
+            aria-label="Analytics"
+            onClick={redirect}
+            className={classes.analyticsBtnPos}
+          >
+            <AssessmentOutlinedIcon
+              color="secondary"
+              className={classes.analyticsButton}
+            />
+          </IconButton>
+        </Tooltip>
       </div>
       <div className={classes.plot}>
         <Plot
@@ -445,8 +335,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
           layout={plotLayout}
           useResizeHandler
           style={{
-            width: '166.55%',
-            height: 720,
+            width: 'fit-content',
             margin: 'auto',
           }}
           config={{
@@ -460,7 +349,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
             displayModeBar: false,
             toImageButtonOptions: {
               format: 'png',
-              filename: 'ResilienceScores_Comparison',
+              filename: `Top4_ResilienceScores_Comparison-${new Date().toString()}`,
               width: 1920,
               height: 1080,
               scale: 2,

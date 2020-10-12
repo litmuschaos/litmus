@@ -67,6 +67,15 @@ home:
   analytics:
     heading: How busy is the Litmus Project?
     moreInfo: See more
+  comingSoon: Coming soon!
+  resilienceScore: Resilience score
+  recentActivity: Recent activity
+  resilienceScoreComparisonOptions:
+    option1: Hourly
+    option2: Daily
+    option3: Monthly
+    granularity: Granularity
+  recentActivityEmpty: No recent activity. 
 
 login:
   heading: Welcome to <strong>Litmus!</strong>
@@ -110,6 +119,7 @@ analytics:
   viewTestResult: Click on test to view the results for the selected period
   comingSoon: Analytics Coming Soon!
   waitingMessage: Waiting for workflow to start running!
+  chaosStartWaitingMessage: Waiting for chaos experiments to start!
   highestScore: 'Highest Score:'
   lowestScore: 'Lowest Score:'
   exportPDF: Export PDF
@@ -121,6 +131,13 @@ analytics:
   tableHead2: Starting Date
   tableHead3: Regularity
   tableHead4: Cluster
+  workflowRunDetailsTable: 
+    tableHead1: Test Name
+    tableHead2: Test Result
+    tableHead3: Weight of the test
+    tableHead4: Resulting Points
+    tableHead5: Last run
+    close: Close
 
 error:
   whoops: Whoops!
@@ -142,7 +159,7 @@ chaosWorkflows:
       noRecords: No records available
       showSelectedWorkflows: Show all selected workflows
       resilienceScoreComparison: Resilience score comparison
-      comparativeResults: Comparative results of selected workflow
+      comparativeResults: Comparative results of selected workflows which ran successfully
       once: Once
       seeAnalytics: See analytics
 
