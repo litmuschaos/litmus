@@ -407,6 +407,7 @@ rules:
       - configmaps
     verbs:
       - get
+      - create
   - apiGroups:
       - litmuschaos.io
     resources:

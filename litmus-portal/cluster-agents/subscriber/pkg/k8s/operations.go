@@ -31,7 +31,7 @@ var (
 )
 
 // IsClusterConfirmed checks if the config map with "is_cluster_confirmed" is true or not.
-func IsClusterConfirmed(clusterData map[string]string) (bool, string, error) {
+func IsClusterConfirmed() (bool, string, error) {
 	clientset, err := GetGenericK8sClient()
 	if err != nil {
 		return false, "", err
@@ -75,7 +75,7 @@ func ClusterRegister(clusterData map[string]string) (bool, error) {
 
 	_, err = clientset.CoreV1().ConfigMaps(AgentNamespace).Create(&newConfigMap)
 	if err != nil {
-		return false, nil
+		return false, err
 	}
 
 	log.Println("Configmap created")
