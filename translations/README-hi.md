@@ -90,10 +90,10 @@ _(यदि आप अपने कैओस  इंजीनियरिंग 
 
 ## महत्वपूर्ण लिंक
 
-<a href="https://docs.litmuschaos.io">
+<b><a href="https://docs.litmuschaos.io">
   लिटमस डॉक्स <img src="https://avatars0.githubusercontent.com/u/49853472?s=200&v=4" alt="Litmus Docs" height="15">
 </a>
 <br>
 <a href="https://landscape.cncf.io/selected=litmus">
   सीएनसीएफ लैंडस्केप <img src="https://landscape.cncf.io/images/left-logo.svg" alt="Litmus on CNCF Landscape" height="15">
-</a>
+</a></b>
