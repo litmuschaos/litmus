@@ -1039,6 +1039,7 @@ metadata:
   name: argo-chaos
   namespace: #{AGENT-NAMESPACE}
 ---
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -1084,6 +1085,7 @@ rules:
       - configmaps
     verbs:
       - get
+      - create
   - apiGroups:
       - litmuschaos.io
     resources:

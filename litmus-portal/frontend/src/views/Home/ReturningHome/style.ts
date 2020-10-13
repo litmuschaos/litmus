@@ -94,6 +94,12 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(7),
     marginTop: theme.spacing(12),
   },
+
+  loader: {
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+  },
 }));
 
 export default useStyles;
