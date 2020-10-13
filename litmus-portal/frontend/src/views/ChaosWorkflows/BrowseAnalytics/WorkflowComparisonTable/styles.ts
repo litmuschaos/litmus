@@ -267,6 +267,15 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(1),
   },
 
+  noData: {
+    color: theme.palette.text.secondary,
+    backgroundColor: theme.palette.secondary.contrastText,
+    width: '100%',
+    height: '25rem',
+    marginBottom: theme.spacing(-2),
+    paddingTop: theme.spacing(22.5),
+  },
+
   exportIcon: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
