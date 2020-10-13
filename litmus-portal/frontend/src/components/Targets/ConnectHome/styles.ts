@@ -1,6 +1,10 @@
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
+  appBar: {
+    background: 'transparent',
+    boxShadow: 'none',
+  },
   header: {
     width: '100%',
     display: 'flex',
@@ -11,9 +15,10 @@ const useStyles = makeStyles((theme) => ({
   scheduleBtn: {
     marginLeft: 'auto',
   },
-  appBar: {
-    background: 'transparent',
-    boxShadow: 'none',
+  customTooltip: {
+    backgroundColor: theme.palette.secondary.light,
+    color: theme.palette.text.primary,
+    fontSize: '0.775rem',
   },
 }));
 
