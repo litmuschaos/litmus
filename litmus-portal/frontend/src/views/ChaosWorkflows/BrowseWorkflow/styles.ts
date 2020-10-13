@@ -52,11 +52,23 @@ const useStyles = makeStyles((theme) => ({
   },
 
   // Table and Table Data Properties
+  root: {
+    backgroundColor: theme.palette.background.paper,
+  },
   tableMain: {
     marginTop: theme.spacing(4.25),
-    border: `1px solid ${theme.palette.customColors.black(0.07)}`,
+    border: `1px solid ${theme.palette.customColors.black(0.05)}`,
     backgroundColor: theme.palette.homePageCardBackgroundColor,
     height: '29.219rem',
+    '&::-webkit-scrollbar': {
+      width: '0.2em',
+    },
+    '&::-webkit-scrollbar-track': {
+      webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: theme.palette.secondary.dark,
+    },
   },
   tableHead: {
     '& p': {

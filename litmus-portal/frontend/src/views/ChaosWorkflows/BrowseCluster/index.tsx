@@ -8,6 +8,7 @@ import {
   TablePagination,
   IconButton,
   Typography,
+  Paper,
 } from '@material-ui/core';
 import moment from 'moment';
 import React, { useState } from 'react';
@@ -224,7 +225,7 @@ const BrowseCluster = () => {
           selectDate={dateChange}
         />
       </section>
-      <section className="table section">
+      <Paper className={classes.root}>
         <TableContainer className={classes.tableMain}>
           <Table stickyHeader aria-label="simple table">
             <TableHead>
@@ -335,7 +336,11 @@ const BrowseCluster = () => {
                       paginationData.rowsPerPage
                   )
                   .map((data: Cluster) => (
-                    <TableRow data-cy="browseClusterData" key={data.cluster_id}>
+                    <TableRow
+                      data-cy="browseClusterData"
+                      key={data.cluster_id}
+                      className={classes.dataRow}
+                    >
                       <TableData data={data} />
                     </TableRow>
                   ))
@@ -370,7 +375,7 @@ const BrowseCluster = () => {
             });
           }}
         />
-      </section>
+      </Paper>
     </div>
   );
 };

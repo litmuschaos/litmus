@@ -6,6 +6,7 @@ import {
   InputBase,
   InputLabel,
   MenuItem,
+  Paper,
   Select,
   Table,
   TableBody,
@@ -184,7 +185,7 @@ const BrowseSchedule = () => {
           </FormControl>
         </div>
       </section>
-      <section className="table section">
+      <Paper className={classes.root}>
         {/* Table Header */}
         <TableContainer
           data-cy="browseScheduleTable"
@@ -347,7 +348,7 @@ const BrowseSchedule = () => {
             });
           }}
         />
-      </section>
+      </Paper>
     </div>
   );
 };

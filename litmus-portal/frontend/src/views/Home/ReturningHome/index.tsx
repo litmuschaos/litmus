@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-loop-func */
 /* eslint-disable max-len */
+/* eslint-disable no-console */
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useQuery } from '@apollo/client';
@@ -19,6 +20,7 @@ import QuickActionCard from '../../../components/QuickActionCard';
 import { Message } from '../../../models/header';
 import ResilienceScoreComparisonPlot from '../ResilienceScoreComparisonPlot';
 import RecentActivity from '../RecentActivity';
+import Loader from '../../../components/Loader';
 import {
   WeightageMap,
   WorkflowList,
@@ -69,6 +71,7 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
   const [workflowDataPresent, setWorkflowDataPresent] = useState<boolean>(
     currentStatus
   );
+  const [isChecking, setIsChecking] = useState<boolean>(true);
   const [plotDataForComparison, setPlotDataForComparison] = React.useState<
     ResilienceScoreComparisonPlotProps
   >();
@@ -121,95 +124,111 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
       const runs = workflowData ? workflowData.workflow_runs : [];
       const workflowTimeSeriesData: DatedResilienceScore[] = [];
       let isWorkflowValid: boolean = false;
-      runs.forEach((data) => {
-        try {
-          const executionData: ExecutionData = JSON.parse(data.execution_data);
-          const { nodes } = executionData;
-          const experimentTestResultsArrayPerWorkflowRun: number[] = [];
-          let totalExperimentsPassed: number = 0;
-          let weightsSum: number = 0;
-          let isValid: boolean = false;
-          for (const key of Object.keys(nodes)) {
-            const node = nodes[key];
-            if (node.chaosData) {
-              const { chaosData } = node;
-              if (
-                chaosData.experimentVerdict === 'Pass' ||
-                chaosData.experimentVerdict === 'Fail'
-              ) {
-                const weightageMap: WeightageMap[] = workflowData
-                  ? workflowData.weightages
-                  : [];
-                weightageMap.forEach((weightage) => {
-                  if (weightage.experiment_name === chaosData.experimentName) {
-                    if (chaosData.experimentVerdict === 'Pass') {
-                      experimentTestResultsArrayPerWorkflowRun.push(
-                        weightage.weightage
-                      );
-                      totalExperimentsPassed += 1;
-                    }
-                    if (chaosData.experimentVerdict === 'Fail') {
-                      experimentTestResultsArrayPerWorkflowRun.push(0);
-                    }
+      if (data?.ListWorkflow.length === 1 && runs === null) {
+        setWorkflowDataPresent(false);
+      }
+      try {
+        runs.forEach((data) => {
+          try {
+            const executionData: ExecutionData = JSON.parse(
+              data.execution_data
+            );
+            const { nodes } = executionData;
+            const experimentTestResultsArrayPerWorkflowRun: number[] = [];
+            let totalExperimentsPassed: number = 0;
+            let weightsSum: number = 0;
+            let isValid: boolean = false;
+            for (const key of Object.keys(nodes)) {
+              const node = nodes[key];
+              if (node.chaosData) {
+                const { chaosData } = node;
+                if (
+                  chaosData.experimentVerdict === 'Pass' ||
+                  chaosData.experimentVerdict === 'Fail'
+                ) {
+                  const weightageMap: WeightageMap[] = workflowData
+                    ? workflowData.weightages
+                    : [];
+                  weightageMap.forEach((weightage) => {
                     if (
-                      chaosData.experimentVerdict === 'Pass' ||
-                      chaosData.experimentVerdict === 'Fail'
+                      weightage.experiment_name === chaosData.experimentName
                     ) {
-                      weightsSum += weightage.weightage;
-                      isValid = true;
-                      isWorkflowValid = true;
+                      if (chaosData.experimentVerdict === 'Pass') {
+                        experimentTestResultsArrayPerWorkflowRun.push(
+                          weightage.weightage
+                        );
+                        totalExperimentsPassed += 1;
+                      }
+                      if (chaosData.experimentVerdict === 'Fail') {
+                        experimentTestResultsArrayPerWorkflowRun.push(0);
+                      }
+                      if (
+                        chaosData.experimentVerdict === 'Pass' ||
+                        chaosData.experimentVerdict === 'Fail'
+                      ) {
+                        weightsSum += weightage.weightage;
+                        isValid = true;
+                        isWorkflowValid = true;
+                      }
                     }
-                  }
-                });
+                  });
+                }
               }
             }
-          }
-          if (executionData.event_type === 'UPDATE' && isValid) {
-            totalValidRuns += 1;
-            totalValidWorkflowRuns.tests_passed += totalExperimentsPassed;
-            totalValidWorkflowRuns.tests_failed +=
-              experimentTestResultsArrayPerWorkflowRun.length -
-              totalExperimentsPassed;
-            totalValidWorkflowRuns.resilience_score += experimentTestResultsArrayPerWorkflowRun.length
-              ? (experimentTestResultsArrayPerWorkflowRun.reduce(
-                  (a, b) => a + b,
-                  0
-                ) /
-                  weightsSum) *
-                100
-              : 0;
-            workflowTimeSeriesData.push({
-              date: data.last_updated,
-              value: experimentTestResultsArrayPerWorkflowRun.length
+            if (executionData.event_type === 'UPDATE' && isValid) {
+              totalValidRuns += 1;
+              totalValidWorkflowRuns.tests_passed += totalExperimentsPassed;
+              totalValidWorkflowRuns.tests_failed +=
+                experimentTestResultsArrayPerWorkflowRun.length -
+                totalExperimentsPassed;
+              totalValidWorkflowRuns.resilience_score += experimentTestResultsArrayPerWorkflowRun.length
                 ? (experimentTestResultsArrayPerWorkflowRun.reduce(
                     (a, b) => a + b,
                     0
                   ) /
                     weightsSum) *
                   100
-                : 0,
-            });
-            timeSeriesArrayForAveragePerWeek.push({
-              date: data.last_updated,
-              value: experimentTestResultsArrayPerWorkflowRun.length
-                ? (experimentTestResultsArrayPerWorkflowRun.reduce(
-                    (a, b) => a + b,
-                    0
-                  ) /
-                    weightsSum) *
-                  100
-                : 0,
-            });
+                : 0;
+              workflowTimeSeriesData.push({
+                date: data.last_updated,
+                value: experimentTestResultsArrayPerWorkflowRun.length
+                  ? (experimentTestResultsArrayPerWorkflowRun.reduce(
+                      (a, b) => a + b,
+                      0
+                    ) /
+                      weightsSum) *
+                    100
+                  : 0,
+              });
+              timeSeriesArrayForAveragePerWeek.push({
+                date: data.last_updated,
+                value: experimentTestResultsArrayPerWorkflowRun.length
+                  ? (experimentTestResultsArrayPerWorkflowRun.reduce(
+                      (a, b) => a + b,
+                      0
+                    ) /
+                      weightsSum) *
+                    100
+                  : 0,
+              });
+            }
+          } catch (error) {
+            console.error(error);
           }
-        } catch (error) {
-          console.error(error);
-        }
-      });
+        });
+      } catch (error) {
+        console.log(error);
+      }
       if (isWorkflowValid) {
         plotData.labels.push(workflowData ? workflowData.workflow_name : '');
         timeSeriesArray.push(workflowTimeSeriesData);
       }
     });
+
+    if (totalValidRuns === 0) {
+      setWorkflowDataPresent(false);
+    }
+
     timeSeriesArray.reverse().forEach((workflowTimeSeriesData, index) => {
       const hourlyGroupedResults = _.groupBy(workflowTimeSeriesData, (data) =>
         moment
@@ -301,6 +320,9 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
     } else if (loading === false) {
       setWorkflowDataPresent(false);
     }
+    setTimeout(() => {
+      setIsChecking(false);
+    }, 500);
   }, [data]);
 
   useEffect(() => {
@@ -381,46 +403,55 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
 
   return (
     <div>
-      {workflowDataPresent ? (
+      {' '}
+      {isChecking ? (
+        <div className={classes.loader}>
+          <Loader />
+        </div>
+      ) : (
         <div>
-          <div className={classes.cardsDiv}>
-            <TotalWorkflows
-              workflow={totalValidWorkflowRunsCount}
-              average={parseFloat(analyticsData.avgWorkflows.toFixed(0))}
-              max={analyticsData.maxWorkflows}
-            />
-            <PassedVsFailed
-              passed={parseFloat(analyticsData.passPercentage.toFixed(2))}
-              failed={parseFloat(analyticsData.failPercentage.toFixed(2))}
-            />
-            <AverageResilienceScore
-              value={parseFloat(analyticsData.avgResilienceScore.toFixed(2))}
-            />
-          </div>
-          <div className={classes.othersDiv}>
-            <div className={classes.resilienceScoresDiv}>
-              <Typography className={classes.statsHeading}>
-                <strong>{t('home.resilienceScore')}</strong>
-              </Typography>
-              <Paper variant="outlined" className={classes.backgroundFix}>
-                {plotDataForComparison ? (
-                  <ResilienceScoreComparisonPlot
-                    xData={plotDataForComparison.xData}
-                    yData={plotDataForComparison.yData}
-                    labels={plotDataForComparison.labels}
-                  />
-                ) : (
-                  <div />
-                )}
-              </Paper>
-            </div>
-            <div className={classes.extrasDiv}>
-              <div>
-                <div className={classes.btnHeaderDiv}>
+          {workflowDataPresent ? (
+            <div>
+              <div className={classes.cardsDiv}>
+                <TotalWorkflows
+                  workflow={totalValidWorkflowRunsCount}
+                  average={parseFloat(analyticsData.avgWorkflows.toFixed(0))}
+                  max={analyticsData.maxWorkflows}
+                />
+                <PassedVsFailed
+                  passed={parseFloat(analyticsData.passPercentage.toFixed(2))}
+                  failed={parseFloat(analyticsData.failPercentage.toFixed(2))}
+                />
+                <AverageResilienceScore
+                  value={parseFloat(
+                    analyticsData.avgResilienceScore.toFixed(2)
+                  )}
+                />
+              </div>
+              <div className={classes.othersDiv}>
+                <div className={classes.resilienceScoresDiv}>
                   <Typography className={classes.statsHeading}>
-                    <strong>{t('home.recentActivity')}</strong>
+                    <strong>{t('home.resilienceScore')}</strong>
                   </Typography>
-                  {/*
+                  <Paper variant="outlined" className={classes.backgroundFix}>
+                    {plotDataForComparison ? (
+                      <ResilienceScoreComparisonPlot
+                        xData={plotDataForComparison.xData}
+                        yData={plotDataForComparison.yData}
+                        labels={plotDataForComparison.labels}
+                      />
+                    ) : (
+                      <Loader />
+                    )}
+                  </Paper>
+                </div>
+                <div className={classes.extrasDiv}>
+                  <div>
+                    <div className={classes.btnHeaderDiv}>
+                      <Typography className={classes.statsHeading}>
+                        <strong>{t('home.recentActivity')}</strong>
+                      </Typography>
+                      {/*
                   <Button className={classes.seeAllBtn}>
                     <div className={classes.btnSpan}>
                       <Typography className={classes.btnText}>
@@ -430,34 +461,38 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
                     </div>
                   </Button>
                   */}
+                    </div>
+                    <Paper
+                      variant="outlined"
+                      className={classes.fixedRecents}
+                      onMouseEnter={() => {
+                        setMessageActive(true);
+                      }}
+                      onMouseLeave={() => {
+                        setMessageActive(false);
+                      }}
+                    >
+                      {messageActive ? (
+                        <Typography variant="h4" className={classes.comingSoon}>
+                          {t('home.comingSoon')}
+                        </Typography>
+                      ) : (
+                        <RecentActivity activities={activities} />
+                      )}
+                    </Paper>
+                  </div>
+                  <div className={classes.quickActionDiv}>
+                    <QuickActionCard />
+                  </div>
                 </div>
-                <Paper
-                  variant="outlined"
-                  className={classes.fixedRecents}
-                  onMouseEnter={() => {
-                    setMessageActive(true);
-                  }}
-                  onMouseLeave={() => {
-                    setMessageActive(false);
-                  }}
-                >
-                  {messageActive ? (
-                    <Typography variant="h4" className={classes.comingSoon}>
-                      {t('home.comingSoon')}
-                    </Typography>
-                  ) : (
-                    <RecentActivity activities={activities} />
-                  )}
-                </Paper>
-              </div>
-              <div className={classes.quickActionDiv}>
-                <QuickActionCard />
               </div>
             </div>
-          </div>
+          ) : (
+            <div className={classes.loader}>
+              <Loader />
+            </div>
+          )}
         </div>
-      ) : (
-        <div />
       )}
     </div>
   );
