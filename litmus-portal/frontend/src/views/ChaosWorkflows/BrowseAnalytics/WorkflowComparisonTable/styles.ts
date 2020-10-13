@@ -86,6 +86,9 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'hidden',
   },
 
+  tableBody: {
+    backgroundColor: theme.palette.background.paper,
+  },
   tableMainShowAll: {
     marginTop: theme.spacing(4.25),
     border: `1px solid ${theme.palette.customColors.black(0.07)}`,

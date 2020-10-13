@@ -20,7 +20,9 @@ const useStyles = makeStyles((theme) => ({
     borderBottom: `1px solid ${theme.palette.customColors.black(0.1)}`,
     marginLeft: theme.spacing(6.25),
   },
-
+  root: {
+    backgroundColor: theme.palette.background.paper,
+  },
   // Form Select Properties
   formControl: {
     margin: theme.spacing(0.5),
@@ -44,6 +46,15 @@ const useStyles = makeStyles((theme) => ({
     border: `1px solid ${theme.palette.customColors.black(0.07)}`,
     backgroundColor: theme.palette.homePageCardBackgroundColor,
     height: '29.220rem',
+    '&::-webkit-scrollbar': {
+      width: '0.2em',
+    },
+    '&::-webkit-scrollbar-track': {
+      webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: theme.palette.secondary.dark,
+    },
   },
   tableHead: {
     height: '4.6875rem',
