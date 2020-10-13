@@ -50,15 +50,31 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
   },
   // Table and Table Data Properties
+  root: {
+    backgroundColor: theme.palette.background.paper,
+  },
   tableMain: {
     marginTop: theme.spacing(4.25),
     border: `1px solid ${theme.palette.customColors.black(0.07)}`,
     backgroundColor: theme.palette.common.white,
-    height: '29.219rem',
+    height: '28.219rem',
+    '&::-webkit-scrollbar': {
+      width: '0.2em',
+    },
+    '&::-webkit-scrollbar-track': {
+      webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: theme.palette.secondary.dark,
+    },
   },
   tableRows: {
     padding: theme.spacing(4),
     color: theme.palette.customColors.black(0.4),
+    height: '4.6875rem',
+  },
+  dataRow: {
+    height: '4.6875rem',
   },
   headerStatus: {
     paddingLeft: theme.spacing(7),
