@@ -275,4 +275,3 @@ workflows:
 internetIssues:
   fetchData: 'Fetching the data...'
   connectionError: It seems you have no internet connection, Please try again When connectivity resumes.
-  
