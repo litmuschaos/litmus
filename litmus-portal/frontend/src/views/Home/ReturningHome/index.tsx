@@ -410,7 +410,7 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
         </div>
       ) : (
         <div>
-          {workflowDataPresent && !isChecking ? (
+          {workflowDataPresent ? (
             <div>
               <div className={classes.cardsDiv}>
                 <TotalWorkflows
