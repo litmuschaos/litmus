@@ -20,10 +20,10 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
   },
   role: {
-    marginLeft: theme.spacing(1.0),
     borderRadius: '0.1875rem',
-    fontSize: '0.75rem',
     color: theme.palette.secondary.dark,
+    fontSize: '0.75rem',
+    marginLeft: theme.spacing(1.0),
   },
   rowDiv: {
     display: 'flex',

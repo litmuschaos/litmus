@@ -80,7 +80,8 @@ const useStyles = makeStyles((theme) => ({
     height: '15rem',
     width: '20rem',
     color: theme.palette.text.secondary,
-    // backgroundColor: theme.palette.secondary.contrastText, (Uncomment when recent activities are available.)
+    // (Uncomment when recent activities are available.)
+    // backgroundColor: theme.palette.secondary.contrastText,
     background: theme.palette.customColors.black(0.4),
   },
 

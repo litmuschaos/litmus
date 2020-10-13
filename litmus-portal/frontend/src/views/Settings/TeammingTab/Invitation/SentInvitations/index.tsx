@@ -28,7 +28,10 @@ const SentInvitations: React.FC = () => {
   // query for getting all the data for the logged in user
   const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
-    { variables: { username: userData.username } }
+    {
+      variables: { username: userData.username },
+      fetchPolicy: 'cache-and-network',
+    }
   );
 
   let memberList: Member[];

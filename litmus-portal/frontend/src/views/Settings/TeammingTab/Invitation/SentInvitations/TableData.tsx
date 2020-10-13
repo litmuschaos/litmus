@@ -46,9 +46,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
   // mutation to send invitation to selected users
   const [SendInvite, { loading: loadingB }] = useMutation<MemberInviteNew>(
     SEND_INVITE,
-    {
-      refetchQueries: [{ query: GET_USER, variables: { username } }],
-    }
+    { refetchQueries: [{ query: GET_USER, variables: { username } }] }
   );
 
   const [CancelInvite, { loading: loadingA }] = useMutation<MemberInvitation>(

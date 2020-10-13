@@ -93,10 +93,10 @@ const ReceivedInvitations: React.FC = () => {
           project.members.forEach((member) => {
             if (member.user_name !== username && member.role === 'Owner') {
               users.push({
-                username: member.user_name,
-                role: roleVar,
-                projectName: project.name,
                 projectID: project.id,
+                projectName: project.name,
+                role: roleVar,
+                username: member.user_name,
               });
             }
           });
