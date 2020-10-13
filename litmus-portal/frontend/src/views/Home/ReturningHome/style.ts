@@ -91,7 +91,7 @@ const useStyles = makeStyles((theme) => ({
 
   comingSoon: {
     color: theme.palette.secondary.contrastText,
-    marginLeft: theme.spacing(7),
+    marginLeft: theme.spacing(8.25),
     marginTop: theme.spacing(12),
   },
 
