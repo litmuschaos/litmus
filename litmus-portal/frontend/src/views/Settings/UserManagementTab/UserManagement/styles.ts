@@ -25,6 +25,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: 'inherit',
     height: '30.25rem',
     border: `1px solid ${theme.palette.customColors.black(0.05)}`,
+    '&::-webkit-scrollbar': {
+      width: '0.2em',
+    },
+    '&::-webkit-scrollbar-track': {
+      webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: theme.palette.secondary.dark,
+    },
   },
   Signed: {
     minWidth: '2.625rem',

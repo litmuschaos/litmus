@@ -80,7 +80,8 @@ const useStyles = makeStyles((theme) => ({
     height: '15rem',
     width: '20rem',
     color: theme.palette.text.secondary,
-    // backgroundColor: theme.palette.secondary.contrastText, (Uncomment when recent activities are available.)
+    // (Uncomment when recent activities are available.)
+    // backgroundColor: theme.palette.secondary.contrastText,
     background: theme.palette.customColors.black(0.4),
   },
 
@@ -91,8 +92,14 @@ const useStyles = makeStyles((theme) => ({
 
   comingSoon: {
     color: theme.palette.secondary.contrastText,
-    marginLeft: theme.spacing(7),
+    marginLeft: theme.spacing(8.25),
     marginTop: theme.spacing(12),
+  },
+
+  loader: {
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
   },
 }));
 

@@ -86,6 +86,9 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'hidden',
   },
 
+  tableBody: {
+    backgroundColor: theme.palette.background.paper,
+  },
   tableMainShowAll: {
     marginTop: theme.spacing(4.25),
     border: `1px solid ${theme.palette.customColors.black(0.07)}`,
@@ -265,6 +268,15 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     borderRadius: 3,
     paddingBottom: theme.spacing(1),
+  },
+
+  noData: {
+    color: theme.palette.text.secondary,
+    backgroundColor: theme.palette.secondary.contrastText,
+    width: '100%',
+    height: '25rem',
+    marginBottom: theme.spacing(-2),
+    paddingTop: theme.spacing(22.5),
   },
 
   exportIcon: {

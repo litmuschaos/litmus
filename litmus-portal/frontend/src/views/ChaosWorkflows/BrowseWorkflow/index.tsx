@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client';
 import {
   IconButton,
+  Paper,
   Table,
   TableBody,
   TableCell,
@@ -68,7 +69,6 @@ const BrowseWorkflow = () => {
     WORKFLOW_DETAILS,
     {
       variables: { projectID: selectedProjectID },
-      pollInterval: 500,
       fetchPolicy: 'cache-and-network',
     }
   );
@@ -285,7 +285,7 @@ const BrowseWorkflow = () => {
           selectDate={dateChange}
         />
       </section>
-      <section className="table section">
+      <Paper className={classes.root}>
         <TableContainer
           data-cy="browseWorkflowTable"
           className={classes.tableMain}
@@ -471,7 +471,7 @@ const BrowseWorkflow = () => {
             })
           }
         />
-      </section>
+      </Paper>
     </div>
   );
 };

@@ -407,6 +407,7 @@ rules:
       - configmaps
     verbs:
       - get
+      - create
   - apiGroups:
       - litmuschaos.io
     resources:
@@ -425,6 +426,14 @@ rules:
       - cronworkflows/finalizers
     verbs:
       - create
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - pods/log
+    verbs:
       - get
       - list
       - watch

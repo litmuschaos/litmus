@@ -121,6 +121,7 @@ const WorkflowComparisonTable = () => {
     rowsPerPage -
     Math.min(rowsPerPage, displayData.length - page * rowsPerPage);
   const [compare, setCompare] = React.useState<Boolean>(false);
+  const [isDataAvailable, setIsDataAvailable] = React.useState<Boolean>(true);
   const [showAll, setShowAll] = React.useState<Boolean>(true);
   const [plotDataForComparison, setPlotDataForComparison] = React.useState<
     ResilienceScoreComparisonPlotProps
@@ -246,99 +247,117 @@ const WorkflowComparisonTable = () => {
       const runs = workflowData ? workflowData[0].workflow_runs : [];
       const workflowTimeSeriesData: DatedResilienceScore[] = [];
       let isWorkflowValid: boolean = false;
-      runs.forEach((data) => {
-        try {
-          const executionData: ExecutionData = JSON.parse(data.execution_data);
-          const { nodes } = executionData;
-          const experimentTestResultsArrayPerWorkflowRun: number[] = [];
-          let totalExperimentsPassed: number = 0;
-          let weightsSum: number = 0;
-          const testDetails: TestDetails = {
-            testNames: [],
-            testWeights: [],
-            testResults: [],
-          };
-          let isValid: boolean = false;
-          for (const key of Object.keys(nodes)) {
-            const node = nodes[key];
-            if (node.chaosData) {
-              const { chaosData } = node;
-              if (
-                chaosData.experimentVerdict === 'Pass' ||
-                chaosData.experimentVerdict === 'Fail'
-              ) {
-                const weightageMap: WeightageMap[] = workflowData
-                  ? workflowData[0].weightages
-                  : [];
-                weightageMap.forEach((weightage) => {
-                  if (weightage.experiment_name === chaosData.experimentName) {
-                    if (chaosData.experimentVerdict === 'Pass') {
-                      experimentTestResultsArrayPerWorkflowRun.push(
-                        weightage.weightage
-                      );
-                      totalExperimentsPassed += 1;
-                    }
-                    if (chaosData.experimentVerdict === 'Fail') {
-                      experimentTestResultsArrayPerWorkflowRun.push(0);
-                    }
+      try {
+        runs.forEach((data) => {
+          try {
+            const executionData: ExecutionData = JSON.parse(
+              data.execution_data
+            );
+            const { nodes } = executionData;
+            const experimentTestResultsArrayPerWorkflowRun: number[] = [];
+            let totalExperimentsPassed: number = 0;
+            let weightsSum: number = 0;
+            const testDetails: TestDetails = {
+              testNames: [],
+              testWeights: [],
+              testResults: [],
+            };
+            let isValid: boolean = false;
+            for (const key of Object.keys(nodes)) {
+              const node = nodes[key];
+              if (node.chaosData) {
+                const { chaosData } = node;
+                if (
+                  chaosData.experimentVerdict === 'Pass' ||
+                  chaosData.experimentVerdict === 'Fail'
+                ) {
+                  const weightageMap: WeightageMap[] = workflowData
+                    ? workflowData[0].weightages
+                    : [];
+                  weightageMap.forEach((weightage) => {
                     if (
-                      chaosData.experimentVerdict === 'Pass' ||
-                      chaosData.experimentVerdict === 'Fail'
+                      weightage.experiment_name === chaosData.experimentName
                     ) {
-                      weightsSum += weightage.weightage;
-                      testDetails.testNames.push(weightage.experiment_name);
-                      testDetails.testWeights.push(weightage.weightage);
-                      testDetails.testResults.push(chaosData.experimentVerdict);
-                      isValid = true;
-                      isWorkflowValid = true;
+                      if (chaosData.experimentVerdict === 'Pass') {
+                        experimentTestResultsArrayPerWorkflowRun.push(
+                          weightage.weightage
+                        );
+                        totalExperimentsPassed += 1;
+                      }
+                      if (chaosData.experimentVerdict === 'Fail') {
+                        experimentTestResultsArrayPerWorkflowRun.push(0);
+                      }
+                      if (
+                        chaosData.experimentVerdict === 'Pass' ||
+                        chaosData.experimentVerdict === 'Fail'
+                      ) {
+                        weightsSum += weightage.weightage;
+                        testDetails.testNames.push(weightage.experiment_name);
+                        testDetails.testWeights.push(weightage.weightage);
+                        testDetails.testResults.push(
+                          chaosData.experimentVerdict
+                        );
+                        isValid = true;
+                        isWorkflowValid = true;
+                      }
                     }
-                  }
-                });
+                  });
+                }
               }
             }
+            if (executionData.event_type === 'UPDATE' && isValid) {
+              totalValidRuns += 1;
+              totalValidWorkflowRuns.push({
+                cluster_name: workflowData ? workflowData[0].cluster_name : '',
+                workflow_name: workflowData
+                  ? workflowData[0].workflow_name
+                  : '',
+                run_date: formatDate(executionData.creationTimestamp),
+                tests_passed: totalExperimentsPassed,
+                tests_failed:
+                  experimentTestResultsArrayPerWorkflowRun.length -
+                  totalExperimentsPassed,
+                resilience_score: experimentTestResultsArrayPerWorkflowRun.length
+                  ? (experimentTestResultsArrayPerWorkflowRun.reduce(
+                      (a, b) => a + b,
+                      0
+                    ) /
+                      weightsSum) *
+                    100
+                  : 0,
+                test_details: testDetails,
+              });
+              workflowTimeSeriesData.push({
+                date: data.last_updated,
+                value: experimentTestResultsArrayPerWorkflowRun.length
+                  ? (experimentTestResultsArrayPerWorkflowRun.reduce(
+                      (a, b) => a + b,
+                      0
+                    ) /
+                      weightsSum) *
+                    100
+                  : 0,
+              });
+            }
+          } catch (error) {
+            console.error(error);
           }
-          if (executionData.event_type === 'UPDATE' && isValid) {
-            totalValidRuns += 1;
-            totalValidWorkflowRuns.push({
-              cluster_name: workflowData ? workflowData[0].cluster_name : '',
-              workflow_name: workflowData ? workflowData[0].workflow_name : '',
-              run_date: formatDate(executionData.creationTimestamp),
-              tests_passed: totalExperimentsPassed,
-              tests_failed:
-                experimentTestResultsArrayPerWorkflowRun.length -
-                totalExperimentsPassed,
-              resilience_score: experimentTestResultsArrayPerWorkflowRun.length
-                ? (experimentTestResultsArrayPerWorkflowRun.reduce(
-                    (a, b) => a + b,
-                    0
-                  ) /
-                    weightsSum) *
-                  100
-                : 0,
-              test_details: testDetails,
-            });
-            workflowTimeSeriesData.push({
-              date: data.last_updated,
-              value: experimentTestResultsArrayPerWorkflowRun.length
-                ? (experimentTestResultsArrayPerWorkflowRun.reduce(
-                    (a, b) => a + b,
-                    0
-                  ) /
-                    weightsSum) *
-                  100
-                : 0,
-            });
-          }
-        } catch (error) {
-          console.error(error);
+        });
+        if (isWorkflowValid) {
+          plotData.labels.push(
+            workflowData ? workflowData[0].workflow_name : ''
+          );
+          plotData.colors.push(`#${randomColor()}`);
+          timeSeriesArray.push(workflowTimeSeriesData);
         }
-      });
-      if (isWorkflowValid) {
-        plotData.labels.push(workflowData ? workflowData[0].workflow_name : '');
-        plotData.colors.push(`#${randomColor()}`);
-        timeSeriesArray.push(workflowTimeSeriesData);
+      } catch (error) {
+        console.log(error);
       }
     });
+
+    if (plotData.labels.length === 0) {
+      setIsDataAvailable(false);
+    }
 
     timeSeriesArray.forEach((workflowTimeSeriesData, index) => {
       const hourlyGroupedResults = _.groupBy(workflowTimeSeriesData, (data) =>
@@ -654,161 +673,173 @@ const WorkflowComparisonTable = () => {
                   : customThemeAnalyticsTableCompareMode
               }
             >
-              <TableContainer
-                className={
-                  compare === false && selected.length <= 2
-                    ? classes.tableMain
-                    : compare === false && selected.length > 2
-                    ? classes.tableMainShowAll
-                    : showAll === true && selected.length <= 3
-                    ? classes.tableMainShowAll
-                    : showAll === true && selected.length > 3
-                    ? classes.tableMain
-                    : classes.tableMainCompare
-                }
-              >
-                <Table aria-label="simple table">
-                  <TableHeader
-                    onSelectAllClick={handleSelectAllClick}
-                    numSelected={selected.length}
-                    rowCount={displayData.length}
-                    comparisonState={compare}
-                    callBackToSort={(sortConfigurations: SortData) => {
-                      setFilter({
-                        ...filter,
-                        sortData: sortConfigurations,
-                      });
-                    }}
-                  />
-                  <TableBody>
-                    {loading ? (
-                      <TableRow>
-                        <TableCell colSpan={6}>
-                          <Loader />
-                        </TableCell>
-                      </TableRow>
-                    ) : error ? (
-                      <TableRow>
-                        <TableCell colSpan={6}>
-                          <Typography align="center">
-                            {t(
-                              'chaosWorkflows.browseAnalytics.workFlowComparisonTable.unableToFetch'
-                            )}
-                          </Typography>
-                        </TableCell>
-                      </TableRow>
-                    ) : displayData && displayData.length ? (
-                      displayData
-                        .slice(0)
-                        .slice(
-                          page * rowsPerPage,
-                          page * rowsPerPage + rowsPerPage
-                        )
-                        .map((data: Workflow, index: number) => {
-                          const isItemSelected = isSelected(data.workflow_id);
-                          const labelId = `enhanced-table-checkbox-${index}`;
-                          return (
-                            <TableRow
-                              hover
-                              onClick={(event) => {
-                                if (compare === false) {
-                                  handleClick(event, data.workflow_id);
-                                }
-                              }}
-                              role="checkbox"
-                              aria-checked={isItemSelected}
-                              tabIndex={-1}
-                              key={data.workflow_id}
-                              selected={isItemSelected}
-                            >
-                              <TableData
-                                data={data}
-                                itemSelectionStatus={isItemSelected}
-                                labelIdentifier={labelId}
-                                comparisonState={compare}
-                              />
-                            </TableRow>
-                          );
-                        })
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={6}>
-                          <Typography align="center">
-                            {t(
-                              'chaosWorkflows.browseAnalytics.workFlowComparisonTable.noRecords'
-                            )}
-                          </Typography>
-                        </TableCell>
-                      </TableRow>
-                    )}
-                    {emptyRows > 0 && (
-                      <TableRow style={{ height: 75 * emptyRows }}>
-                        <TableCell colSpan={6} />
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              {compare === false || showAll === true ? (
-                <TablePagination
-                  rowsPerPageOptions={[5, 10, 25, 50]}
-                  component="div"
-                  count={displayData.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  onChangePage={handleChangePage}
-                  onChangeRowsPerPage={handleChangeRowsPerPage}
-                />
-              ) : (
-                <Paper
-                  elevation={0}
-                  className={classes.seeAllPaper}
-                  onClick={() => setShowAll(true)}
+              <Paper className={classes.tableBody}>
+                <TableContainer
+                  className={
+                    compare === false && selected.length <= 2
+                      ? classes.tableMain
+                      : compare === false && selected.length > 2
+                      ? classes.tableMainShowAll
+                      : showAll === true && selected.length <= 3
+                      ? classes.tableMainShowAll
+                      : showAll === true && selected.length > 3
+                      ? classes.tableMain
+                      : classes.tableMainCompare
+                  }
                 >
-                  <Typography className={classes.seeAllText} variant="body2">
-                    {' '}
-                    <strong>
-                      {t(
-                        'chaosWorkflows.browseAnalytics.workFlowComparisonTable.showSelectedWorkflows'
-                      )}{' '}
-                      ({selected.length}){' '}
-                    </strong>{' '}
-                  </Typography>
-                </Paper>
-              )}
+                  <Table aria-label="simple table">
+                    <TableHeader
+                      onSelectAllClick={handleSelectAllClick}
+                      numSelected={selected.length}
+                      rowCount={displayData.length}
+                      comparisonState={compare}
+                      callBackToSort={(sortConfigurations: SortData) => {
+                        setFilter({
+                          ...filter,
+                          sortData: sortConfigurations,
+                        });
+                      }}
+                    />
+                    <TableBody>
+                      {loading ? (
+                        <TableRow>
+                          <TableCell colSpan={6}>
+                            <Loader />
+                          </TableCell>
+                        </TableRow>
+                      ) : error ? (
+                        <TableRow>
+                          <TableCell colSpan={6}>
+                            <Typography align="center">
+                              {t(
+                                'chaosWorkflows.browseAnalytics.workFlowComparisonTable.unableToFetch'
+                              )}
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                      ) : displayData && displayData.length ? (
+                        displayData
+                          .slice(0)
+                          .slice(
+                            page * rowsPerPage,
+                            page * rowsPerPage + rowsPerPage
+                          )
+                          .map((data: Workflow, index: number) => {
+                            const isItemSelected = isSelected(data.workflow_id);
+                            const labelId = `enhanced-table-checkbox-${index}`;
+                            return (
+                              <TableRow
+                                hover
+                                onClick={(event) => {
+                                  if (compare === false) {
+                                    handleClick(event, data.workflow_id);
+                                  }
+                                }}
+                                role="checkbox"
+                                aria-checked={isItemSelected}
+                                tabIndex={-1}
+                                key={data.workflow_id}
+                                selected={isItemSelected}
+                              >
+                                <TableData
+                                  data={data}
+                                  itemSelectionStatus={isItemSelected}
+                                  labelIdentifier={labelId}
+                                  comparisonState={compare}
+                                />
+                              </TableRow>
+                            );
+                          })
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={6}>
+                            <Typography align="center">
+                              {t(
+                                'chaosWorkflows.browseAnalytics.workFlowComparisonTable.noRecords'
+                              )}
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                      {emptyRows > 0 && (
+                        <TableRow style={{ height: 75 * emptyRows }}>
+                          <TableCell colSpan={6} />
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                {compare === false || showAll === true ? (
+                  <TablePagination
+                    rowsPerPageOptions={[5, 10, 25, 50]}
+                    component="div"
+                    count={displayData.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onChangePage={handleChangePage}
+                    onChangeRowsPerPage={handleChangeRowsPerPage}
+                  />
+                ) : (
+                  <Paper
+                    elevation={0}
+                    className={classes.seeAllPaper}
+                    onClick={() => setShowAll(true)}
+                  >
+                    <Typography className={classes.seeAllText} variant="body2">
+                      {' '}
+                      <strong>
+                        {t(
+                          'chaosWorkflows.browseAnalytics.workFlowComparisonTable.showSelectedWorkflows'
+                        )}{' '}
+                        ({selected.length}){' '}
+                      </strong>{' '}
+                    </Typography>
+                  </Paper>
+                )}
+              </Paper>
             </MuiThemeProvider>
           </section>
         </div>
       </div>
-      {compare === true ? (
-        <Paper variant="outlined" className={classes.backgroundFix}>
-          <div className={classes.comparisonHeadingFix}>
-            <Typography className={classes.heading}>
-              <strong>
-                {t(
-                  'chaosWorkflows.browseAnalytics.workFlowComparisonTable.resilienceScoreComparison'
+      {isDataAvailable === true ? (
+        <div>
+          {compare === true ? (
+            <Paper variant="outlined" className={classes.backgroundFix}>
+              <div className={classes.comparisonHeadingFix}>
+                <Typography className={classes.heading}>
+                  <strong>
+                    {t(
+                      'chaosWorkflows.browseAnalytics.workFlowComparisonTable.resilienceScoreComparison'
+                    )}
+                  </strong>
+                </Typography>
+                <Typography className={classes.description}>
+                  {t(
+                    'chaosWorkflows.browseAnalytics.workFlowComparisonTable.comparativeResults'
+                  )}
+                </Typography>
+                {plotDataForComparison ? (
+                  <ResilienceScoreComparisonPlot
+                    xData={plotDataForComparison.xData}
+                    yData={plotDataForComparison.yData}
+                    labels={plotDataForComparison.labels}
+                    colors={plotDataForComparison.colors}
+                  />
+                ) : (
+                  <div />
                 )}
-              </strong>
-            </Typography>
-            <Typography className={classes.description}>
-              {t(
-                'chaosWorkflows.browseAnalytics.workFlowComparisonTable.comparativeResults'
-              )}
-            </Typography>
-            {plotDataForComparison ? (
-              <ResilienceScoreComparisonPlot
-                xData={plotDataForComparison.xData}
-                yData={plotDataForComparison.yData}
-                labels={plotDataForComparison.labels}
-                colors={plotDataForComparison.colors}
-              />
-            ) : (
-              <div />
-            )}
-          </div>
-        </Paper>
+              </div>
+            </Paper>
+          ) : (
+            <div />
+          )}
+        </div>
       ) : (
-        <div />
+        <Paper variant="outlined" className={classes.noData}>
+          <Typography variant="h5" align="center">
+            {t('chaosWorkflows.browseAnalytics.workFlowComparisonTable.noRuns')}
+          </Typography>{' '}
+        </Paper>
       )}
     </div>
   );

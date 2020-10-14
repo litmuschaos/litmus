@@ -26,11 +26,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   buttonBox: {
     display: 'flex',
-    flexDirection: 'row',
+    paddingLeft: theme.spacing(3),
+    paddingTop: theme.spacing(2.5),
   },
   copyText: {
     display: 'flex',
-    flexDirection: 'row',
   },
   yamlLink: {
     width: '90%',

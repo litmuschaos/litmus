@@ -110,85 +110,82 @@ const AnalyticsPage: React.FC = () => {
     const experimentTestResultsArray: number[] = [];
     const chaosDataArray: ChaosData[] = [];
     const validWorkflowRunsData: WorkflowRunData[] = [];
-    const selectedWorkflowSchedule = data?.ListWorkflow.filter(
-      (w) => w.workflow_id === workflowId
-    );
-    const selectedWorkflows = selectedWorkflowSchedule
-      ? selectedWorkflowSchedule[0].workflow_runs
-      : [];
-    selectedWorkflows?.forEach((data) => {
-      try {
-        const executionData: ExecutionData = JSON.parse(data.execution_data);
-        const { nodes } = executionData;
-        const experimentTestResultsArrayPerWorkflowRun: number[] = [];
-        let weightsSum: number = 0;
-        let isValid: boolean = false;
-        let totalExperimentsPassed: number = 0;
-        for (const key of Object.keys(nodes)) {
-          const node = nodes[key];
-          if (node.chaosData) {
-            const { chaosData } = node;
-            chaosDataArray.push(chaosData);
-            if (
-              chaosData.experimentVerdict === 'Pass' ||
-              chaosData.experimentVerdict === 'Fail'
-            ) {
-              const weightageMap: WeightageMap[] = selectedWorkflowSchedule
-                ? selectedWorkflowSchedule[0].weightages
-                : [];
-              weightageMap.forEach((weightage) => {
-                if (weightage.experiment_name === chaosData.experimentName) {
-                  if (chaosData.experimentVerdict === 'Pass') {
-                    experimentTestResultsArray.push(weightage.weightage);
-                    experimentTestResultsArrayPerWorkflowRun.push(
-                      weightage.weightage
-                    );
-                    totalExperimentsPassed += 1;
+    try {
+      const selectedWorkflowSchedule = data?.ListWorkflow.filter(
+        (w) => w.workflow_id === workflowId
+      );
+      const selectedWorkflows = selectedWorkflowSchedule
+        ? selectedWorkflowSchedule[0].workflow_runs
+        : [];
+      selectedWorkflows?.forEach((data) => {
+        try {
+          const executionData: ExecutionData = JSON.parse(data.execution_data);
+          const { nodes } = executionData;
+          const experimentTestResultsArrayPerWorkflowRun: number[] = [];
+          let weightsSum: number = 0;
+          let isValid: boolean = false;
+          let totalExperimentsPassed: number = 0;
+          for (const key of Object.keys(nodes)) {
+            const node = nodes[key];
+            if (node.chaosData) {
+              const { chaosData } = node;
+              chaosDataArray.push(chaosData);
+              if (
+                chaosData.experimentVerdict === 'Pass' ||
+                chaosData.experimentVerdict === 'Fail'
+              ) {
+                const weightageMap: WeightageMap[] = selectedWorkflowSchedule
+                  ? selectedWorkflowSchedule[0].weightages
+                  : [];
+                weightageMap.forEach((weightage) => {
+                  if (weightage.experiment_name === chaosData.experimentName) {
+                    if (chaosData.experimentVerdict === 'Pass') {
+                      experimentTestResultsArray.push(weightage.weightage);
+                      experimentTestResultsArrayPerWorkflowRun.push(
+                        weightage.weightage
+                      );
+                      totalExperimentsPassed += 1;
+                    }
+                    if (chaosData.experimentVerdict === 'Fail') {
+                      experimentTestResultsArray.push(0);
+                      experimentTestResultsArrayPerWorkflowRun.push(0);
+                    }
+                    if (
+                      chaosData.experimentVerdict === 'Pass' ||
+                      chaosData.experimentVerdict === 'Fail'
+                    ) {
+                      weightsSum += weightage.weightage;
+                      isValid = true;
+                    }
                   }
-                  if (chaosData.experimentVerdict === 'Fail') {
-                    experimentTestResultsArray.push(0);
-                    experimentTestResultsArrayPerWorkflowRun.push(0);
-                  }
-                  if (
-                    chaosData.experimentVerdict === 'Pass' ||
-                    chaosData.experimentVerdict === 'Fail'
-                  ) {
-                    weightsSum += weightage.weightage;
-                    isValid = true;
-                  }
-                }
-              });
+                });
+              }
             }
           }
+          if (executionData.event_type === 'UPDATE' && isValid) {
+            const workflowRun = {
+              testsPassed: totalExperimentsPassed,
+              testsFailed:
+                experimentTestResultsArrayPerWorkflowRun.length -
+                totalExperimentsPassed,
+              resilienceScore: experimentTestResultsArrayPerWorkflowRun.length
+                ? (experimentTestResultsArrayPerWorkflowRun.reduce(
+                    (a, b) => a + b,
+                    0
+                  ) /
+                    weightsSum) *
+                  100
+                : 0,
+              testDate: data.last_updated,
+              workflowRunID: data.workflow_run_id,
+              workflowID: workflowId,
+            };
+            validWorkflowRunsData.push(workflowRun);
+          }
+        } catch (error) {
+          console.error(error);
         }
-        if (executionData.event_type === 'UPDATE' && isValid) {
-          const workflowRun = {
-            testsPassed: totalExperimentsPassed,
-            testsFailed:
-              experimentTestResultsArrayPerWorkflowRun.length -
-              totalExperimentsPassed,
-            resilienceScore: experimentTestResultsArrayPerWorkflowRun.length
-              ? (experimentTestResultsArrayPerWorkflowRun.reduce(
-                  (a, b) => a + b,
-                  0
-                ) /
-                  weightsSum) *
-                100
-              : 0,
-            testDate: data.last_updated,
-            workflowRunID: data.workflow_run_id,
-            workflowID: workflowId,
-          };
-          validWorkflowRunsData.push(workflowRun);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    });
-    try {
-      const check: string = selectedWorkflows
-        ? selectedWorkflows[0].workflow_run_id
-        : '';
+      });
     } catch (error) {
       setWorkflowRunPresent(false);
       return;
@@ -236,50 +233,54 @@ const AnalyticsPage: React.FC = () => {
 
   useEffect(() => {
     const workflowTestsArray: WorkFlowTests[] = [];
-    const selectedWorkflowSchedule = data?.ListWorkflow.filter(
-      (w) => w.workflow_id === workflowId
-    );
-    const workflowRuns = selectedWorkflowSchedule
-      ? selectedWorkflowSchedule[0].workflow_runs
-      : [];
-    const selectedWorkflows = workflowRuns.filter(
-      (w) => w.workflow_run_id === selectedWorkflowRunID
-    );
-    selectedWorkflows?.forEach((data) => {
-      try {
-        const executionData: ExecutionData = JSON.parse(data.execution_data);
-        const { nodes } = executionData;
-        let index: number = 1;
-        for (const key of Object.keys(nodes)) {
-          const node = nodes[key];
-          if (node.chaosData) {
-            const { chaosData } = node;
-            const weightageMap: WeightageMap[] = selectedWorkflowSchedule
-              ? selectedWorkflowSchedule[0].weightages
-              : [];
-            weightageMap.forEach((weightage) => {
-              if (weightage.experiment_name === chaosData.experimentName) {
-                workflowTestsArray.push({
-                  test_id: index,
-                  test_name: chaosData.experimentName,
-                  test_result: chaosData.experimentVerdict,
-                  test_weight: weightage.weightage,
-                  resulting_points:
-                    chaosData.experimentVerdict === 'Pass'
-                      ? weightage.weightage
-                      : 0,
-                  last_run: chaosData.lastUpdatedAt,
-                });
-              }
-            });
+    try {
+      const selectedWorkflowSchedule = data?.ListWorkflow.filter(
+        (w) => w.workflow_id === workflowId
+      );
+      const workflowRuns = selectedWorkflowSchedule
+        ? selectedWorkflowSchedule[0].workflow_runs
+        : [];
+      const selectedWorkflows = workflowRuns.filter(
+        (w) => w.workflow_run_id === selectedWorkflowRunID
+      );
+      selectedWorkflows?.forEach((data) => {
+        try {
+          const executionData: ExecutionData = JSON.parse(data.execution_data);
+          const { nodes } = executionData;
+          let index: number = 1;
+          for (const key of Object.keys(nodes)) {
+            const node = nodes[key];
+            if (node.chaosData) {
+              const { chaosData } = node;
+              const weightageMap: WeightageMap[] = selectedWorkflowSchedule
+                ? selectedWorkflowSchedule[0].weightages
+                : [];
+              weightageMap.forEach((weightage) => {
+                if (weightage.experiment_name === chaosData.experimentName) {
+                  workflowTestsArray.push({
+                    test_id: index,
+                    test_name: chaosData.experimentName,
+                    test_result: chaosData.experimentVerdict,
+                    test_weight: weightage.weightage,
+                    resulting_points:
+                      chaosData.experimentVerdict === 'Pass'
+                        ? weightage.weightage
+                        : 0,
+                    last_run: chaosData.lastUpdatedAt,
+                  });
+                }
+              });
+            }
+            index += 1;
           }
-          index += 1;
+        } catch (error) {
+          console.error(error);
         }
-      } catch (error) {
-        console.error(error);
-      }
-    });
-    setSelectedWorkflowRunDetails(workflowTestsArray);
+      });
+      setSelectedWorkflowRunDetails(workflowTestsArray);
+    } catch (error) {
+      setWorkflowRunPresent(false);
+    }
   }, [selectedWorkflowRunID, data]);
 
   return (
