@@ -91,7 +91,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.customColors.black(0.4),
   },
   tableDataStatus: {
-    paddingLeft: theme.spacing(6.5),
+    paddingLeft: theme.spacing(5),
   },
   progressBar: {
     width: '6.5rem',
@@ -102,6 +102,7 @@ const useStyles = makeStyles((theme) => ({
   workflowNameData: {
     maxWidth: '15.625rem',
     borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    paddingLeft: theme.spacing(4),
   },
   targetCluster: {
     paddingLeft: theme.spacing(3.75),
@@ -114,7 +115,7 @@ const useStyles = makeStyles((theme) => ({
     width: '8.125rem',
   },
   stepsData: {
-    paddingLeft: theme.spacing(6),
+    paddingLeft: theme.spacing(8),
   },
   stepsDataschedule: {
     paddingLeft: theme.spacing(8),
