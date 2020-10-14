@@ -74,24 +74,6 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
                   )}
                 </div>
               </div>
-              <div className={classes.expDiv}>
-                {/* Set isDisabled to false when implemented */}
-                <ButtonOutline handleClick={() => {}} isDisabled>
-                  <div className={classes.expDiv}>
-                    <img
-                      src="/icons/bin-red.svg"
-                      alt="Delete"
-                      className={classes.btnImg}
-                    />
-                    <Typography className={classes.btnText}>
-                      {t('workflowCluster.header.formControl.delete')}
-                    </Typography>
-                  </div>
-                </ButtonOutline>
-              </div>
-            </div>
-            <div>
-              <Typography>Version : </Typography>
             </div>
             <div className={classes.version}>
               <Typography>
