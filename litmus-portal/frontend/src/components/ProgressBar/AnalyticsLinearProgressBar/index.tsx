@@ -1,26 +1,36 @@
-import React from "react";
-import LinearProgress from "@material-ui/core/LinearProgress";
-const MIN = 100;
-const MAX = 200;
-const normalize = value => ((value - MIN) * 100) / (MAX - MIN);
-export default function App() {
-  const [progress, setProgress] = React.useState(MIN);
-  React.useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress(oldProgress => {
-        if (oldProgress === MAX) {
-          return 0;
-        }
-        return Math.min(oldProgress + 15, MAX);
-      });
-    }, 500);
-  return () => {
-      clearInterval(timer);
-    };
-  }, []);
-  return (
-    <div>
-      <LinearProgress variant="determinate" value={normalize(progress)} />
-    </div>
-  );
+import { Line } from 'rc-progress';
+import React from 'react';
+import { useTheme } from '@material-ui/core/styles';
+
+interface LinearProgressBarProps {
+  value: number;
+  maxValue: number;
+  isInTable: boolean;
 }
+const AnalyticsLinearProgressBar: React.FC<LinearProgressBarProps> = ({
+  value,
+  maxValue,
+  isInTable,
+}) => 
+{
+  const resultValue = ((value as number) / (maxValue as number)) * 100;
+  const defaultSize = 20;
+  const { palette } = useTheme();
+
+  return (
+    <Line
+      percent={resultValue}
+      strokeWidth={width}
+      trailWidth={width}
+      strokeColor={
+        isDefault
+          ? theme.palette.secondary.dark
+          : resultValue > 30 && resultValue <= 60
+          ? theme.palette.warning.main
+          : resultValue > 60
+          ? theme.palette.primary.dark
+          : theme.palette.error.dark
+      }
+    />
+  );
+};
