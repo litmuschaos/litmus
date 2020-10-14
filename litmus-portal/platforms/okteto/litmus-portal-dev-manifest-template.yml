@@ -180,7 +180,11 @@ spec:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
                   key: JWTSecret
-            - name: SERVICE_ADDRESS
+            - name: LITMUS_PORTAL_NAMESPACE
+              value: ${OKTETO_NAMESPACE}
+            - name: PORTAL_SCOPE
+              value: "namespace"
+            - name: PORTAL_ENDPOINT
               value: "http://litmusportal-server-service:9002"
             - name: SELF_CLUSTER
               value: "true"
@@ -298,7 +302,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 4Gi
+      storage: 2Gi
 ---
 apiVersion: v1
 kind: Service
