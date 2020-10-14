@@ -75,6 +75,7 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
                 </div>
               </div>
               <div className={classes.expDiv}>
+                {/*
                 <ButtonOutline handleClick={() => {}} isDisabled={false}>
                   <div className={classes.expDiv}>
                     <img
@@ -87,6 +88,7 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
                     </Typography>
                   </div>
                 </ButtonOutline>
+                */}
               </div>
             </div>
             <div className={classes.version}>
