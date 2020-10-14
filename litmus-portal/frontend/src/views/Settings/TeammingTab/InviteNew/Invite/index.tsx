@@ -81,7 +81,10 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   // query for getting all the data for the logged in user
   const { data: dataB } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
-    { variables: { username: userData.username } }
+    {
+      variables: { username: userData.username },
+      fetchPolicy: 'cache-and-network',
+    }
   );
 
   // query to list all the users

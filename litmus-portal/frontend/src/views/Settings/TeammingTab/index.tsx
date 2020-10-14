@@ -72,7 +72,10 @@ const TeammingTab: React.FC = () => {
   // query for getting all the data for the logged in user
   const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
-    { variables: { username: userData.username } }
+    {
+      variables: { username: userData.username },
+      fetchPolicy: 'cache-and-network',
+    }
   );
 
   // State for pagination
@@ -145,8 +148,9 @@ const TeammingTab: React.FC = () => {
         <div>
           <Toolbar data-cy="toolBarComponent" className={classes.toolbar}>
             {/* Search user */}
-            <div data-cy="teamingSearch" className={classes.toolbarFirstCol}>
+            <div className={classes.toolbarFirstCol}>
               <TextField
+                data-cy="teamingSearch"
                 id="input-with-icon-textfield"
                 placeholder={t('settings.teamingTab.label.search')}
                 value={filters.search}

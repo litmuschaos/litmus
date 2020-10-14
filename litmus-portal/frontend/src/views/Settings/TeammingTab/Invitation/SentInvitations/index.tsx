@@ -31,7 +31,10 @@ const SentInvitations: React.FC = () => {
   // query for getting all the data for the logged in user
   const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
-    { variables: { username: userData.username } }
+    {
+      variables: { username: userData.username },
+      fetchPolicy: 'cache-and-network',
+    }
   );
 
   let memberList: Member[];
@@ -46,15 +49,17 @@ const SentInvitations: React.FC = () => {
         }
       });
 
-      memberList.forEach((member) => {
-        if (
-          member.invitation === 'Pending' ||
-          member.invitation === 'Declined'
-        ) {
-          users.push(member);
-        }
-        setRows(users);
-      });
+      if (memberList) {
+        memberList.forEach((member) => {
+          if (
+            member.invitation === 'Pending' ||
+            member.invitation === 'Declined'
+          ) {
+            users.push(member);
+          }
+          setRows(users);
+        });
+      }
     }
   }, [data, userData.selectedProjectID]);
 

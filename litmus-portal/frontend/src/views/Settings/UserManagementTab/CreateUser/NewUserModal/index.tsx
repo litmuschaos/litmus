@@ -105,10 +105,7 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
                 {error}
               </Typography>
             </div>
-            <div
-              data-cy="newUserSuccessfulDoneButton"
-              className={classes.buttonModal}
-            >
+            <div data-cy="newUserDoneButton" className={classes.buttonModal}>
               <ButtonFilled
                 isPrimary
                 isDisabled={false}
@@ -141,7 +138,7 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
                 {t('settings.userManagementTab.createUser.newUserModal.info')}
               </Typography>
             </div>
-            <div data-cy="done" className={classes.buttonModal}>
+            <div data-cy="newUserDoneButton" className={classes.buttonModal}>
               <ButtonFilled
                 isPrimary
                 isDisabled={false}
