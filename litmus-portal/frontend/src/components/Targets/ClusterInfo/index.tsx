@@ -75,7 +75,8 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
                 </div>
               </div>
               <div className={classes.expDiv}>
-                <ButtonOutline handleClick={() => {}} isDisabled={false}>
+                {/* Set isDisabled to false when implemented */}
+                <ButtonOutline handleClick={() => {}} isDisabled>
                   <div className={classes.expDiv}>
                     <img
                       src="/icons/bin-red.svg"
