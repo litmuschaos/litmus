@@ -153,9 +153,7 @@ spec:
                   name: litmus-portal-admin-config
                   key: JWTSecret
             - name: LITMUS_PORTAL_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
+              value: ${LITMUS_PORTAL_NAMESPACE}
             - name: PORTAL_SCOPE
               value: "namespace"
             - name: PORTAL_ENDPOINT
