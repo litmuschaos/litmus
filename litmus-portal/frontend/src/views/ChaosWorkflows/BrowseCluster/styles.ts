@@ -115,7 +115,10 @@ const useStyles = makeStyles((theme) => ({
     width: '8.125rem',
   },
   stepsData: {
-    paddingLeft: theme.spacing(8),
+    paddingLeft: theme.spacing(5),
+  },
+  stepsDataTime: {
+    paddingLeft: theme.spacing(7),
   },
   stepsDataschedule: {
     paddingLeft: theme.spacing(8),

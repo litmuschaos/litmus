@@ -50,7 +50,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           <Typography>{data.cluster_name}</Typography>
         </IconButton>
       </TableCell>
-      <TableCell className={classes.stepsData}>
+      <TableCell className={classes.stepsDataTime}>
         {formatDate(data.updated_at)}
       </TableCell>
       <TableCell>
