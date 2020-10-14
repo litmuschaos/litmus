@@ -1,4 +1,4 @@
-import { IconButton, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
@@ -20,7 +20,6 @@ const DelUser: React.FC<DelUserProps> = ({
   tableDelete,
   teammingDel,
   handleTable,
-  disabled,
 }) => {
   const classes = useStyles();
 
@@ -35,51 +34,6 @@ const DelUser: React.FC<DelUserProps> = ({
 
   return (
     <div>
-      {tableDelete ? (
-        <>
-          {/*  <MenuItem
-            value="delete"
-            onClick={() => {
-              setOpen(true);
-            }}
-          >
-            <IconButton disabled>
-              <img alt="delete" src="./icons/bin.svg" />
-            </IconButton>
-            <Typography>Delete User</Typography>
-          </MenuItem> */}
-        </>
-      ) : (
-        <>
-          {teammingDel ? (
-            <>
-              <IconButton
-                disabled={disabled}
-                onClick={() => {
-                  setOpen(true);
-                }}
-              >
-                <img alt="delete" src="./icons/bin-grey.svg" />
-              </IconButton>
-            </>
-          ) : (
-            <div
-              role="button"
-              tabIndex={0}
-              onKeyDown={() => {
-                setOpen(true);
-              }}
-              className={classes.delDiv}
-              onClick={() => {
-                setOpen(true);
-              }}
-            >
-              <img src="./icons/bin.svg" alt="delete" className={classes.bin} />
-              <Typography>Delete user </Typography>
-            </div>
-          )}
-        </>
-      )}
       <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn>
         <div className={classes.body}>
           <img src="./icons/userDel.svg" alt="lock" />

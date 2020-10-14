@@ -164,6 +164,11 @@ chaosWorkflows:
       once: Once
       seeAnalytics: See analytics
 
+createWorkflow:
+  workflowCluster:
+    activeCluster: Choose an active cluster
+    none: None
+
 settings:
   accountsTab:
     personalDetails:

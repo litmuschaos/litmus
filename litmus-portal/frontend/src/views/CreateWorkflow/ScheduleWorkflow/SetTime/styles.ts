@@ -1,27 +1,6 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
-  button: {
-    fontSize: '0.75rem',
-    '&:hover': {
-      focusVisible: 'none',
-      background: theme.palette.secondary.contrastText,
-    },
-    marginTop: theme.spacing(0.7),
-    textTransform: 'none',
-    fontWeight: 'normal',
-  },
-  textField: {
-    width: '4.4375rem',
-    height: '2.75rem',
-    marginLeft: theme.spacing(1.875),
-  },
-  formControlMonth: {
-    margin: theme.spacing(1),
-    minWidth: '5.3125rem',
-    minHeight: '2.75rem',
-  },
-
   /* for each select */
   select: {
     padding: theme.spacing(2.5),
@@ -40,8 +19,9 @@ const useStyles = makeStyles((theme: Theme) => ({
       background: theme.palette.customColors.black(0.2),
     },
   },
-  menuPaper: {
-    maxHeight: '12.5rem',
+  formControl: {
+    margin: theme.spacing(1),
+    maxWidth: '7.5rem',
   },
 }));
 export default useStyles;

@@ -165,6 +165,13 @@ const CustomStepper = () => {
             delete newParsedYaml.metadata.generateName;
             newParsedYaml.metadata.name = workflowData.name;
             newParsedYaml.spec.workflowSpec = oldParsedYaml.spec;
+            const tz = {
+              timezone:
+                Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+            };
+            Object.entries(tz).forEach(([key, value]) => {
+              newParsedYaml.spec[key] = value;
+            });
             NewYaml = YAML.stringify(newParsedYaml);
             workflow.setWorkflowDetails({
               link: NewLink,
@@ -209,6 +216,12 @@ const CustomStepper = () => {
       newParsedYaml.spec.schedule = cronSyntax;
       delete newParsedYaml.metadata.generateName;
       newParsedYaml.metadata.name = workflowData.name;
+      const tz = {
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+      };
+      Object.entries(tz).forEach(([key, value]) => {
+        newParsedYaml.spec[key] = value;
+      });
       NewYaml = YAML.stringify(newParsedYaml);
       workflow.setWorkflowDetails({
         link: NewLink,
