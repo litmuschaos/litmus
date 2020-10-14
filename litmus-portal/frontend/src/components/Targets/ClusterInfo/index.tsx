@@ -89,9 +89,6 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
                 </ButtonOutline>
               </div>
             </div>
-            <div>
-              <Typography>Version : </Typography>
-            </div>
             <div className={classes.version}>
               <Typography>
                 <strong>Details : {data.description}</strong>
