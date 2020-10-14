@@ -116,7 +116,7 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
         </Typography>
         <Typography className={classes.headchaos}>
           {t('workflowCluster.header.creatingNew')}
-          <strong>{t('workflowCluster.header.creatingNewBold')} </strong>
+          <strong> {t('workflowCluster.header.creatingNewBold')} </strong>
         </Typography>
         <Typography className={classes.headcluster}>
           {t('workflowCluster.header.selectAgent')}

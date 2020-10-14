@@ -95,10 +95,7 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
                 Error: {error}
               </Typography>
             </div>
-            <div
-              data-cy="newUserSuccessfulDoneButton"
-              className={classes.buttonModal}
-            >
+            <div data-cy="newUserDoneButton" className={classes.buttonModal}>
               <ButtonFilled
                 isPrimary
                 isDisabled={false}
@@ -122,7 +119,7 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
                 management screen of the application.
               </Typography>
             </div>
-            <div data-cy="done" className={classes.buttonModal}>
+            <div data-cy="newUserDoneButton" className={classes.buttonModal}>
               <ButtonFilled
                 isPrimary
                 isDisabled={false}
