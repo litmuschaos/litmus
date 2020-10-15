@@ -59,10 +59,11 @@ _Envoyez un PR à la page ci-dessus si vous utilisez Litmus dans votre pratique 
 
 Certaines des considérations qui doivent être prises avec Litmus (en tant que cadre de chaos) sont énumérées ici. Beaucoup d'entre eux sont déjà en cours d'élaboration comme mentionné dans la [ROADMAP](./ROADMAP.md). Pour obtenir des détails ou des limitations concernant des tests spécifiques, reportez-vous aux [documents relatifs aux tests](https://docs.litmuschaos.io/docs/pod-delete/).
 
-- L'opérateur de chaos Litmus et les expériences de chaos s'exécutent en tant que ressources kubernetes dans le cluster. En cas d'environnements espacés, les ressources personnalisées du chaos et les images doivent être hébergées sur site.
-- Lorsque vous essayez d'exécuter des expériences de chaos spécifiques à une plate-forme (comme celles sur AWS, le cloud GCP), les détails d'accès sont transmis via des secrets Kubernetes. Soutien pour les autres modes de gestion des secrets avec Litmus reste à tester / implémenter.
-- Certaines expériences de chaos utilisent l'API docker à partir des modules d'expérimentation, et nécessitent ainsi le montage de la prise docker. La discrétion de l'utilisateur est conseillé lors de l'autorisation d'accès aux développeurs / administrateurs devops / SRE pour exécuter ces expériences.
-- Dans les (rares) cas où les expériences de chaos utilisent des conteneurs privilégiés,les politiques de sécurité recommandées seront documentées.
+- Le test de chaos réseau ne prend actuellement pas en charge les environnements d'exécution de conteneur autres que Docker, tels que containerd et CRIO
+- Litmus Chaos Controller et Chaos Test Object s'exécutent dans le cluster Kubernetes sous la forme de ressources Kubernetes. Dans l'environnement de l'entrefer, les définitions d'image et de CR doivent être préchargées sur la machine.
+- Pour les plates-formes de cloud public spécifiques (telles que AWS, GCP), les informations de compte sont transmises via les secrets Kubernetes. D'autres      méthodes entrantes doivent être davantage testées et mises en œuvre.
+- Certains tests chaotiques doivent appeler l'API Docker à partir du pod, donc le socket Docker doit être monté. Vous devez juger par vous-même si vous souhaitez accorder aux développeurs / opérations et des autorisations de maintenance pour exécuter ces tests.
+- Dans certains (quelques) cas, les tests de chaos nécessitent des autorisations de conteneur privilégiées, nous enregistrerons la politique de sécurité       recommandée.
 
 ## Licence
 
