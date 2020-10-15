@@ -1,8 +1,7 @@
 <img alt="LitmusChaos" src="https://landscape.cncf.io/logos/litmus.svg" width="200" align="left">
 
 # Litmus
-### 
-Ingénierie du chaos native du cloud
+### Ingénierie du chaos native du cloud
 
 [![Slack Channel](https://img.shields.io/badge/Slack-Join-purple)](https://slack.litmuschaos.io)
 [![CircleCI](https://circleci.com/gh/litmuschaos/litmus/tree/master.svg?style=shield)](https://app.circleci.com/pipelines/github/litmuschaos/litmus)
@@ -36,9 +35,9 @@ Les expériences de chaos sont hébergées sur <a href="https://hub.litmuschaos.
 
 ## Cas d'utilisation
 
-- **Pour les développeurs**: pour exécuter des expériences de chaos pendant le développement d'applications en tant qu'extension des tests unitaires ou des tests d'intégration.
-- **Pour les constructeurs de pipelines CI**: Pour exécuter le chaos en tant qu'étape de pipeline pour trouver des bogues lorsque l'application est soumise à des chemins de défaillance dans un pipeline.
-- **Pour les SRE**: pour planifier et programmer des expériences de chaos dans l'application et / ou l'infrastructure environnante. Cette pratique identifie les faiblesses du système et augmente la résilience.
+- **Pour les développeurs**: pour exécuter des expériences de chaos pendant le développement d'applications en tant qu'extension des tests unitaires ou des tests                              d'intégration.
+- **Pour les constructeurs de pipelines CI**: Pour exécuter le chaos en tant qu'étape de pipeline pour trouver des bogues lorsque l'application est soumise à des                                               chemins de défaillance dans un pipeline.
+- **Pour les SRE**: pour planifier et programmer des expériences de chaos dans l'application et / ou l'infrastructure environnante. Cette pratique identifie les                     faiblesses du système et augmente la résilience.
 
 ## Premiers pas avec Litmus
 
@@ -61,7 +60,7 @@ Vérifiez  <a href="https://github.com/litmuschaos/community-charts/blob/master/
 Certaines des considérations qui doivent être prises avec Litmus (en tant que cadre de chaos) sont énumérées ici. Beaucoup d'entre eux sont déjà en cours d'élaboration
 comme mentionné dans la [ROADMAP](./ROADMAP.md). Pour obtenir des détails ou des limitations concernant des tests spécifiques, reportez-vous aux [documents relatifs aux tests](https://docs.litmuschaos.io/docs/pod-delete/).
 
-- L'opérateur de chaos Litmus et les expériences de chaos s'exécutent en tant que ressources kubernetes dans le cluster. En cas d'environnements espacés, les      ressources personnalisées du chaos et les images doivent être hébergées sur site.
+- L'opérateur de chaos Litmus et les expériences de chaos s'exécutent en tant que ressources kubernetes dans le cluster. En cas d'environnements espacés, les       ressources personnalisées du chaos et les images doivent être hébergées sur site.
 - Lorsque vous essayez d'exécuter des expériences de chaos spécifiques à une plate-forme (comme celles sur AWS, le cloud GCP), les détails d'accès sont transmis via des secrets Kubernetes. Soutien pour les autres modes de gestion des secrets avec Litmus reste à tester / implémenter.
 - Certaines expériences de chaos utilisent l'API docker à partir des modules d'expérimentation, et nécessitent ainsi le montage de la prise docker. La discrétion de l'utilisateur est conseillé lors de l'autorisation d'accès aux développeurs / administrateurs devops / SRE pour exécuter ces expériences.
 - Dans les (rares) cas où les expériences de chaos utilisent des conteneurs privilégiés, les politiques de sécurité recommandées seront documentées.
