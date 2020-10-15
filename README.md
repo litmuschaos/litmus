@@ -59,13 +59,10 @@ _Envoyez un PR à la page ci-dessus si vous utilisez Litmus dans votre pratique 
 
 Certaines des considérations qui doivent être prises avec Litmus (en tant que cadre de chaos) sont énumérées ici. Beaucoup d'entre eux sont déjà en cours d'élaboration comme mentionné dans la [ROADMAP](./ROADMAP.md). Pour obtenir des détails ou des limitations concernant des tests spécifiques, reportez-vous aux [documents relatifs aux tests](https://docs.litmuschaos.io/docs/pod-delete/).
 
-- Litmus chaos operator and the chaos experiments run as kubernetes resources in the cluster. In case of airgapped environments, the chaos custom resources
-  and images need to be hosted on premise.
-- When attempting to execute platform specific chaos experiments (like those on AWS, GCP cloud) the access details are passed via kubernetes secrets. Support
-  for other modes of secret management with Litmus is yet to be tested/implemented.
-- Some chaos experiments make use of the docker api from within the experiment pods, and thereby require the docker socket to be mounted. User discretion is
-  advised when allowing developers/devops admins/SREs access for running these experiments.
-- In (rare) cases where chaos experiments make use of privileged containers, the recommended security policies will be documented.
+- L'opérateur de chaos Litmus et les expériences de chaos s'exécutent en tant que ressources kubernetes dans le cluster. En cas d'environnements espacés, les       ressources personnalisées du chaos et les images doivent être hébergées sur site.
+- Lorsque vous essayez d'exécuter des expériences de chaos spécifiques à une plate-forme (comme celles sur AWS, le cloud GCP), les détails d'accès sont transmis   via des secrets Kubernetes. La prise en charge d'autres modes de gestion des secrets avec Litmus n'a pas encore été testée / mise en œuvre.
+- Certaines expériences de chaos utilisent l'API docker à partir des modules d'expérimentation et nécessitent ainsi le montage de la prise docker. La discrétion   de l'utilisateur est conseillée lors de l'autorisation d'accès aux développeurs / administrateurs devops / SRE pour exécuter ces expériences.
+- Dans les (rares) cas où les expériences de chaos utilisent des conteneurs privilégiés, les politiques de sécurité recommandées seront documentées.
 
 ## Licence
 
