@@ -17,7 +17,7 @@
 
 #### *Read this in [other languages](translations/TRANSLATIONS.md).*
 
-[🇰🇷](translations/README-ko.md) [🇨🇳](translations/README-chn.md)
+[🇰🇷](translations/README-ko.md) [🇨🇳](translations/README-chn.md) [🇯🇵](translations/README-ja.md) [🇮🇳](translations/README-hi.md)
 
 ## Overview
 
