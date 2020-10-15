@@ -16,8 +16,7 @@ Ingénierie du chaos native du cloud
 [![YouTube Channel](https://img.shields.io/badge/YouTube-Subscribe-red)](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
 <br><br><br><br>
 
-
-#### *Lisez ceci en [autres langues](translations/TRANSLATIONS.md).*
+#### *Lisez ceci en [autres langues](translations/TRANSLATIONS.md)*
 
 [🇰🇷](translations/README-ko.md) [🇨🇳](translations/README-chn.md)
 
@@ -27,9 +26,9 @@ Litmus est un ensemble d'outils pour faire de l'ingénierie du chaos native du c
 
 Litmus adopte une approche cloud native pour créer, gérer et surveiller le chaos. Le chaos est orchestré à l'aide des définitions de ressources personnalisées Kubernetes suivantes (**CRDs**):
 
-- **ChaosEngine**: Une ressource pour lier une application Kubernetes ou un nœud Kubernetes à un ChaosExperiment. ChaosEngine est surveillé par l'opérateur du chaos de Litmus qui invoque ensuite des expériences de chaos.
-- **ChaosExperiment**:Une ressource pour regrouper les paramètres de configuration d'une expérience de chaos. Les CR ChaosExperiment sont créés par l'opérateur lorsque les expériences sont appelées par ChaosEngine.
-- **ChaosResult**: Une ressource pour contenir les résultats d'une expérience de chaos. L'exportateur Chaos lit les résultats et exporte les métriques dans un serveur Prometheus configuré.
+- **ChaosEngine**: Une ressource pour lier une application Kubernetes ou un nœud Kubernetes à un ChaosExperiment. ChaosEngine est surveillé par l'opérateur du                      chaos de Litmus qui invoque ensuite des expériences de chaos.
+- **ChaosExperiment**:Une ressource pour regrouper les paramètres de configuration d'une expérience de chaos. Les CR ChaosExperiment sont créés par l'opérateur                         lorsque les expériences sont appelées par ChaosEngine.
+- **ChaosResult**: Une ressource pour contenir les résultats d'une expérience de chaos. L'exportateur Chaos lit les résultats et exporte les métriques dans un                      serveur Prometheus configuré.
 
 Les expériences de chaos sont hébergées sur <a href="https://hub.litmuschaos.io" target="_blank">hub.litmuschaos.io</a>. Il s'agit d'un hub central où les développeurs ou fournisseurs d'applications partagent leurs expériences de chaos afin que leurs utilisateurs puissent les utiliser pour augmenter la résilience des applications en production.
 
@@ -55,24 +54,21 @@ Vérifiez  <a href="https://github.com/litmuschaos/community-charts/blob/master/
 
  <a href="https://github.com/litmuschaos/litmus/blob/master/ADOPTERS.md" target="_blank">Adopteurs de LitmusChaos</a>
 
-(_Envoyez un PR à la page ci-dessus si vous utilisez Litmus dans votre pratique d'ingénierie du chaos_)
+*_Envoyez un PR à la page ci-dessus si vous utilisez Litmus dans votre pratique d'ingénierie du chaos_*
 
 ## Choses à considérer
 
 Certaines des considérations qui doivent être prises avec Litmus (en tant que cadre de chaos) sont énumérées ici. Beaucoup d'entre eux sont déjà en cours d'élaboration
 comme mentionné dans la [ROADMAP](./ROADMAP.md). Pour obtenir des détails ou des limitations concernant des tests spécifiques, reportez-vous aux [documents relatifs aux tests](https://docs.litmuschaos.io/docs/pod-delete/).
 
-- L'opérateur de chaos Litmus et les expériences de chaos s'exécutent en tant que ressources kubernetes dans le cluster. En cas d'environnements espacés, les ressources personnalisées du chaos
-  et les images doivent être hébergées sur site.
-- Lorsque vous essayez d'exécuter des expériences de chaos spécifiques à une plate-forme (comme celles sur AWS, le cloud GCP), les détails d'accès sont transmis via des secrets Kubernetes. Soutien
-  pour les autres modes de gestion des secrets avec Litmus reste à tester / implémenter.
-- Certaines expériences de chaos utilisent l'API docker à partir des modules d'expérimentation, et nécessitent ainsi le montage de la prise docker. La discrétion de l'utilisateur est
-  conseillé lors de l'autorisation d'accès aux développeurs / administrateurs devops / SRE pour exécuter ces expériences.
+- L'opérateur de chaos Litmus et les expériences de chaos s'exécutent en tant que ressources kubernetes dans le cluster. En cas d'environnements espacés, les      ressources personnalisées du chaos et les images doivent être hébergées sur site.
+- Lorsque vous essayez d'exécuter des expériences de chaos spécifiques à une plate-forme (comme celles sur AWS, le cloud GCP), les détails d'accès sont transmis via des secrets Kubernetes. Soutien pour les autres modes de gestion des secrets avec Litmus reste à tester / implémenter.
+- Certaines expériences de chaos utilisent l'API docker à partir des modules d'expérimentation, et nécessitent ainsi le montage de la prise docker. La discrétion de l'utilisateur est conseillé lors de l'autorisation d'accès aux développeurs / administrateurs devops / SRE pour exécuter ces expériences.
 - Dans les (rares) cas où les expériences de chaos utilisent des conteneurs privilégiés, les politiques de sécurité recommandées seront documentées.
 
 ## Licence
 
-Litmus est concédé sous licence Apache, version 2.0. Voir [LICENCE] (./ LICENSE) pour le texte complet de la licence. Certains des projets utilisés par le projet Litmus peuvent être régis par une licence différente, veuillez vous référer à sa licence spécifique.
+Litmus est concédé sous licence Apache, version 2.0. Voir [LICENCE] (./LICENSE) pour le texte complet de la licence. Certains des projets utilisés par le projet Litmus peuvent être régis par une licence différente, veuillez vous référer à sa licence spécifique.
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_large)
 
