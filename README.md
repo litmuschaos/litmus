@@ -21,7 +21,7 @@
 
 ## Aperçu
 
-Litmus est un ensemble d'outils pour faire de l'ingénierie du chaos native du cloud. Litmus fournit des outils pour orchestrer le chaos sur Kubernetes afin d'aider les SRE à trouver des faiblesses dans leurs déploiements. Les SRE utilisent Litmus pour exécuter des expériences de chaos initialement dans l'environnement de préparation et finalement en production pour trouver des bogues, des vulnérabilités. La correction des faiblesses conduit à une résilience accrue du système.
+Litmus est un ensemble d'outils pour faire de l'ingénierie du chaos native du cloud. Litmus fournit des outils pour orchestrer le chaos sur Kubernetes afin d'aider les SRE à trouver des faiblesses dans leurs déploiements. Les SRE utilisent Litmus pour exécuter des expériences de chaos initialement dans l'environnement de  préparation et finalement en production pour trouver des bogues, des vulnérabilités. La correction des faiblesses conduit à une résilience accrue du système.
 
 Litmus adopte une approche cloud native pour créer, gérer et surveiller le chaos. Le chaos est orchestré à l'aide des définitions de ressources personnalisées Kubernetes suivantes (**CRDs**):
 
