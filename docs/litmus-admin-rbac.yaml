@@ -14,9 +14,12 @@ metadata:
   labels:
     name: litmus-admin
 rules:
-- apiGroups: ["","apps","batch","extensions","litmuschaos.io","openebs.io","storage.k8s.io"]
-  resources: ["chaosengines","chaosexperiments","chaosresults","cstorpools","cstorvolumereplicas","configmaps","secrets","pods","pods/exec","pods/log","pods/eviction","jobs","replicasets","deployments","daemonsets","statefulsets","persistentvolumeclaims","persistentvolumes","storageclasses","services","events"]
+- apiGroups: ["","apps","batch","extensions","litmuschaos.io"]
+  resources: ["pods","pods/exec","pods/eviction","jobs","daemonsets","events","chaosresults","chaosengines"]
   verbs: ["create","delete","get","list","patch","update", "deletecollection"]
+- apiGroups: ["","apps","litmuschaos.io"]
+  resources: ["configmaps","secrets","services","chaosexperiments","pods/log","replicasets","deployments","statefulsets","services"]
+  verbs: ["get","list","patch","update"]
 - apiGroups: [""]
   resources: ["nodes"]
   verbs: ["get","list","patch","update"]
@@ -35,3 +38,4 @@ subjects:
 - kind: ServiceAccount
   name: litmus-admin
   namespace: litmus
+
