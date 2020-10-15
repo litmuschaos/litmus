@@ -14,8 +14,8 @@ export DEPLOYER_IMAGE=litmuschaos/litmusportal-self-deployer:latest
 export ARGO_SERVER_IMAGE=argoproj/argocli:v2.9.3
 export ARGO_WORKFLOW_CONTROLLER_IMAGE=argoproj/workflow-controller:v2.9.3
 export ARGO_WORKFLOW_EXECUTOR_IMAGE=argoproj/argoexec:v2.9.3
-export LITMUS_CHAOS_OPERATOR_IMAGE=litmuschaos/chaos-operator:1.8.2
-export LITMUS_CHAOS_RUNNER_IMAGE=litmuschaos/chaos-runner:1.8.2
+export LITMUS_CHAOS_OPERATOR_IMAGE=litmuschaos/chaos-operator:latest
+export LITMUS_CHAOS_RUNNER_IMAGE=litmuschaos/chaos-runner:latest
 export ADMIN_USERNAME=admin
 export ADMIN_PASSWORD=litmus
 # Dependency Checks
