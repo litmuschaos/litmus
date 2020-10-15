@@ -116,28 +116,30 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
         </Typography>
         <Typography className={classes.headchaos}>
           {t('workflowCluster.header.creatingNew')}
-          <strong>{t('workflowCluster.header.creatingNewBold')} </strong>
+          <strong> {t('workflowCluster.header.creatingNewBold')} </strong>
         </Typography>
         <Typography className={classes.headcluster}>
           {t('workflowCluster.header.selectAgent')}
         </Typography>
 
         <div className={classes.radiobutton}>
-          <FormControl
-            variant="outlined"
-            className={classes.formControl}
-            color="secondary"
-          >
+          <FormControl variant="outlined" className={classes.formControl}>
             <InputLabel className={classes.selectText}>
-              {t('workflowCluster.header.selectCluster')}
+              {t('createWorkflow.workflowCluster.activeCluster')}
             </InputLabel>
             <Select
+              labelId="Active Cluster"
               value={name}
               onChange={handleChange}
+              label="Active Cluster"
               input={<Input />}
               MenuProps={MenuProps}
               className={classes.selectText}
+              color="secondary"
             >
+              <MenuItem value="" disabled>
+                <em> {t('createWorkflow.workflowCluster.none')}</em>
+              </MenuItem>
               {clusterData.map((name: Cluster) => (
                 <MenuItem key={name.cluster_id} value={name.cluster_id}>
                   {name.cluster_name}

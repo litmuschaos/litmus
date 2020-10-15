@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
 import { Cluster } from '../../../models/graphql/clusterData';
 import { history } from '../../../redux/configureStore';
+import timeDifferenceForDate from '../../../utils/datesModifier';
 
 interface TableDataProps {
   data: Cluster;
@@ -49,7 +50,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
           <Typography>{data.cluster_name}</Typography>
         </IconButton>
       </TableCell>
-      <TableCell className={classes.stepsData}>
+      <TableCell className={classes.stepsDataTime}>
         {formatDate(data.updated_at)}
       </TableCell>
       <TableCell>
@@ -60,7 +61,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       <TableCell className={classes.stepsDataschedule}>
         <Typography>{data.no_of_schedules}</Typography>
       </TableCell>
-      <TableCell>{formatDate(data.updated_at)}</TableCell>
+      <TableCell>{timeDifferenceForDate(data.updated_at)}</TableCell>
     </>
   );
 };
