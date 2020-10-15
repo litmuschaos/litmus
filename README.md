@@ -59,11 +59,6 @@ _Envoyez un PR à la page ci-dessus si vous utilisez Litmus dans votre pratique 
 
 Certaines des considérations qui doivent être prises avec Litmus (en tant que cadre de chaos) sont énumérées ici. Beaucoup d'entre eux sont déjà en cours d'élaboration comme mentionné dans la [ROADMAP](./ROADMAP.md). Pour obtenir des détails ou des limitations concernant des tests spécifiques, reportez-vous aux [documents relatifs aux tests](https://docs.litmuschaos.io/docs/pod-delete/).
 
-- L'opérateur de chaos Litmus et les expériences de chaos s'exécutent en tant que ressources kubernetes dans le cluster. En cas d'environnements espacés, les ressources personnalisées du chaos et les images doivent être hébergées sur site.
-- Lorsque vous essayez d'exécuter des expériences de chaos spécifiques à une plate-forme (comme celles sur AWS, le cloud GCP), les détails d'accès sont transmis via des secrets Kubernetes. La prise en charge d'autres modes de gestion des secrets avec Litmus n'a pas encore été testée / mise en œuvre.
-- Certaines expériences de chaos utilisent l'API docker à partir des modules d'expérimentation et nécessitent ainsi le montage de la prise docker. La discrétion  de l'utilisateur est conseillée lors de l'autorisation d'accès aux développeurs / administrateurs devops / SRE pour exécuter ces expériences.
-- Dans les (rares) cas où les expériences de chaos utilisent des conteneurs privilégiés, les politiques de sécurité recommandées seront documentées.
-
 ## Licence
 
 Litmus est concédé sous licence Apache, version 2.0. Voir [LICENCE](./LICENSE) pour le texte complet de la licence. Certains des projets utilisés par le projet Litmus peuvent être régis par une licence différente, veuillez vous référer à sa licence spécifique.
