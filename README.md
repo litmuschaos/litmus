@@ -59,11 +59,11 @@ _Envoyez un PR à la page ci-dessus si vous utilisez Litmus dans votre pratique 
 
 Certaines des considérations qui doivent être prises avec Litmus (en tant que cadre de chaos) sont énumérées ici. Beaucoup d'entre eux sont déjà en cours d'élaboration comme mentionné dans la [ROADMAP](./ROADMAP.md). Pour obtenir des détails ou des limitations concernant des tests spécifiques, reportez-vous aux [documents relatifs aux tests](https://docs.litmuschaos.io/docs/pod-delete/).
 
-- Le test de chaos réseau ne prend actuellement pas en charge les environnements d'exécution de conteneur autres que Docker, tels que containerd et CRIO
-- Litmus Chaos Controller et Chaos Test Object s'exécutent dans le cluster Kubernetes sous la forme de ressources Kubernetes. Dans l'environnement de l'entrefer, les définitions d'image et de CR doivent être préchargées sur la machine.
-- Pour les plates-formes de cloud public spécifiques (telles que AWS, GCP), les informations de compte sont transmises via les secrets Kubernetes. D'autres      méthodes entrantes doivent être davantage testées et mises en œuvre.
-- Certains tests chaotiques doivent appeler l'API Docker à partir du pod, donc le socket Docker doit être monté. Vous devez juger par vous-même si vous souhaitez accorder aux développeurs / opérations et des autorisations de maintenance pour exécuter ces tests.
-- Dans certains (quelques) cas, les tests de chaos nécessitent des autorisations de conteneur privilégiées, nous enregistrerons la politique de sécurité       recommandée.
+- 网络混沌测试目前不支持除Docker以外的容器运行时，如containerd和CRIO
+- 石蕊混沌控制器以及混沌测试对象以Kubernetes资源的形式运行于Kubernetes集群中。在airgap环境需要在把镜像以及CR定义预先加载到机器上。
+- 对于特定公有云平台(如AWS，GCP)，账号信息是通过Kubernetes secret的方式传入的。别的传入方式尚需进一步测试及实现。
+- 些混沌测试需要从pod里调用Docker API所以需要挂载Docker socket。需要自行判断是否要给开发者/运维权限来运行这些测试。
+- 在一些(少数)情况下混沌测试需要privileged container权限，我们会记录推荐的安全策略。
 
 ## Licence
 
