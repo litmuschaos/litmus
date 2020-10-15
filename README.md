@@ -61,13 +61,13 @@ Certaines des considérations qui doivent être prises avec Litmus (en tant que 
 comme mentionné dans la [ROADMAP](./ROADMAP.md). Pour obtenir des détails ou des limitations concernant des tests spécifiques, reportez-vous aux [documents relatifs aux tests](https://docs.litmuschaos.io/docs/pod-delete/).
 
 - L'opérateur de chaos Litmus et les expériences de chaos s'exécutent en tant que ressources kubernetes dans le cluster. En cas d'environnements espacés, les       ressources personnalisées du chaos et les images doivent être hébergées sur site.
-- Lorsque vous essayez d'exécuter des expériences de chaos spécifiques à une plate-forme (comme celles sur AWS, le cloud GCP), les détails d'accès sont transmis via des secrets Kubernetes. Soutien pour les autres modes de gestion des secrets avec Litmus reste à tester / implémenter.
-- Certaines expériences de chaos utilisent l'API docker à partir des modules d'expérimentation, et nécessitent ainsi le montage de la prise docker. La discrétion de l'utilisateur est conseillé lors de l'autorisation d'accès aux développeurs / administrateurs devops / SRE pour exécuter ces expériences.
+- Lorsque vous essayez d'exécuter des expériences de chaos spécifiques à une plate-forme (comme celles sur AWS, le cloud GCP), les détails d'accès sont transmis   via des secrets Kubernetes. Soutien pour les autres modes de gestion des secrets avec Litmus reste à tester / implémenter.
+- Certaines expériences de chaos utilisent l'API docker à partir des modules d'expérimentation, et nécessitent ainsi le montage de la prise docker. La discrétion   de l'utilisateur est conseillé lors de l'autorisation d'accès aux développeurs / administrateurs devops / SRE pour exécuter ces expériences.
 - Dans les (rares) cas où les expériences de chaos utilisent des conteneurs privilégiés, les politiques de sécurité recommandées seront documentées.
 
 ## Licence
 
-Litmus est concédé sous licence Apache, version 2.0. Voir [LICENCE] (./LICENSE) pour le texte complet de la licence. Certains des projets utilisés par le projet Litmus peuvent être régis par une licence différente, veuillez vous référer à sa licence spécifique.
+Litmus est concédé sous licence Apache, version 2.0. Voir [LICENCE](./LICENSE) pour le texte complet de la licence. Certains des projets utilisés par le projet Litmus peuvent être régis par une licence différente, veuillez vous référer à sa licence spécifique.
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_large)
 
@@ -81,7 +81,7 @@ La communauté Litmus se réunit le troisième mercredi de chaque mois à 22h00 
 
 Ressources communautaires:
 
-- [Communauté Slack](https://slack.litmuschaos.io)
+- [Community Slack](https://slack.litmuschaos.io)
 - [Sync Up Meeting Link](https://zoom.us/j/91358162694)
 - [Sync Up Agenda & Meeting Notes](https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q)
 - [Youtube Channel (demos, meeting recordings, virtual meetups)](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
