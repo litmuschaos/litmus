@@ -15,6 +15,8 @@
 [![유튜브 채널](https://img.shields.io/badge/YouTube-Subscribe-red)](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
 <br><br><br><br>
 
+#### *이것을 읽으십시오[기타 언어](translations/TRANSLATIONS.md).*
+
 ## 개요
 
 리트머스는 클라우드 네이티브 카오스(Chaos) 엔지니어링을 수행하기 위한 도구 세트입니다. 리트머스는 쿠버네티스에서 카오스를 조율하는 도구를 제공하여 SRE가 배포된 환경에서 약점을 찾을 수 있도록 지원합니다. SRE는 리트머스를 사용하여 초기에 스테이징 환경에서 카오스 실험을 실행하고 결국에는 프로덕션에서 버그와 취약점을 찾습니다. 약점을 수정하면 시스템의 회복 탄력성이 향상됩니다.
