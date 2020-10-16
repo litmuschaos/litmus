@@ -1,6 +1,10 @@
-## **Litmus Portal**
+#Litmus portal#
+
 
 Litmus-Portal provides console and UI experience for managing, monitoring, and events around chaos workflows. Chaos workflows consist of a sequence of experiments run together to achieve the objective of introducing some kind of fault into an application or the Kubernetes platform.
+Multiple team members can share the workflows management together.
+Plan your chaos testing efforts seamless in a cloud-native way. 
+Get started with ready to use experiments from ChaosHub. Develop new experiments with easy to use SDK. Schedule workflows and monitor them using Portal. Take control of resilience of your Kubernetes.Find defects on your Kubernetes clusters and applications
 
 ## **Platforms Support**
 
@@ -100,7 +104,7 @@ kubectl delete -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.ym
 kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/platforms/okteto/hello-world-AUT.yml -n ${LITMUS_PORTAL_NAMESPACE}
 ```
 
-### **Tech Stack**
+### *Technologies Stack*
 
 -   Frontend
     -   TypeScript
@@ -114,7 +118,7 @@ kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/master/li
 -   Database
     -   MongoDB
 
-##### **Additional information**
+##### *check below links for additional inforfation*
 
 -   <a href="https://github.com/litmuschaos/litmus/wiki/portal-design-spec" target="_blank">Litmus Portal Design Specification</a><br>
 -   <a href="https://github.com/litmuschaos/litmus/wiki/Litmus-Portal-Development-Guide" target="_blank">Litmus Portal Development Guide</a>
