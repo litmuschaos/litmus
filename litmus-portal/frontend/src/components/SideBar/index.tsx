@@ -15,6 +15,7 @@ import { ReactComponent as HomeIcon } from '../../svg/home.svg';
 import { ReactComponent as SettingsIcon } from '../../svg/settings.svg';
 import { ReactComponent as TargetsIcon } from '../../svg/targets.svg';
 import { ReactComponent as WorkflowsIcon } from '../../svg/workflows.svg';
+import { ReactComponent as MyHubIcon } from '../../svg/myhub.svg';
 import useStyles from './styles';
 
 interface CustomisedListItemProps {
@@ -93,6 +94,18 @@ const SideBar: React.FC = () => {
             selected={pathName === 'workflows'}
           >
             <WorkflowsIcon />
+          </CustomisedListItem>
+        </div>
+        <div data-cy="myHub">
+          <CustomisedListItem
+            key="myhub"
+            handleClick={() => {
+              history.push('/myhub');
+            }}
+            label="My Hub"
+            selected={pathName === 'myhub'}
+          >
+            <MyHubIcon />
           </CustomisedListItem>
         </div>
         <CustomisedListItem
