@@ -15,7 +15,7 @@
 [![YouTube Channel](https://img.shields.io/badge/YouTube-Subscribe-red)](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
 <br><br><br><br>
 
-#### *Read this in [other languages](translations/TRANSLATIONS.md).*
+#### *Das README in [anderen Sprachen](translations/TRANSLATIONS.md).*
 
 [🇰🇷](translations/README-ko.md) [🇨🇳](translations/README-chn.md)
 
