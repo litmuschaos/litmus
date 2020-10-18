@@ -17,7 +17,7 @@
 
 #### *Das README in [anderen Sprachen](translations/TRANSLATIONS.md).*
 
-[🇰🇷](translations/README-ko.md) [🇨🇳](translations/README-chn.md)
+[🇰🇷](https://github.com/litmuschaos/litmus/blob/master/translations/README-ko.md) [🇨🇳](https://github.com/litmuschaos/litmus/blob/master/translations/README-chn.md) [gb](https://github.com/litmuschaos/litmus/blob/master/README.md)
 
 ## Überblick
 
@@ -53,9 +53,9 @@ Die Chaos-Experimente werden auf <a href="https://hub.litmuschaos.io" target="_b
 - **Für CI-pipelines**: In der kontinuierlichen Integration können
   Chaos-Experimente als Schritt in der Pipeline genutzt werden um Bugs zu
   finden.
-  - **Für SREs**: Mit Litmus können Chaos-Experimente geplant durchgeführt
-    werden um möglichst früh Schwächen in Anwendungen zu finden und die
-    Stabilität des Endproduktes zu steigern.
+- **Für SREs**: Mit Litmus können Chaos-Experimente geplant durchgeführt
+  werden um möglichst früh Schwächen in Anwendungen zu finden und die
+  Stabilität des Endproduktes zu steigern.
 
 ## Mit Litmus loslegen
 
