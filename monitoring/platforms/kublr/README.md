@@ -25,7 +25,7 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
 - Apply the sock-shop microservices manifests
 
   ```
-  kubectl apply -f utils/sample-application-under-test/sock-shop/
+  kubectl apply -f ../../utils/sample-application-under-test/sock-shop/
   ```
 
 - Wait until all services are up. Verify via `kubectl get pods -n sock-shop`
@@ -52,12 +52,18 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
 
 ### Step-3: Congigure the Kublr centralized monitoring Infrastructure
 
+- Create monitoring namespace on the cluster
+
+  ```
+  kubectl create ns monitoring
+  ```
+
 - Deploy monitoring components
 
   ```
-  kubectl -n litmus apply -f utils/metrics-exporters/node-exporter/
-  kubectl -n litmus apply -f utils/metrics-exporters/litmus-metrics/chaos-exporter/
-  kubectl -n litmus apply -f utils/metrics-exporters/litmus-metrics/litmus-event-router/
+  kubectl -n monitoring apply -f ../../utils/metrics-exporters/node-exporter/
+  kubectl -n litmus apply -f ../../utils/metrics-exporters/litmus-metrics/chaos-exporter/
+  kubectl -n litmus apply -f ../../utils/metrics-exporters/litmus-metrics/litmus-event-router/
   ```
 
 - Add the jobs provided [here](https://raw.githubusercontent.com/litmuschaos/litmus/master/monitoring/platforms/kublr/utils/prometheus-config-template-jobs.yaml) to Kublr's prometheus configuration in the template section of `kublr-monitoring-prometheus` configMap in `kublr` namespace of deployed kublr platform using K8s dashboard UI or `kubectl`
@@ -110,25 +116,25 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
 - For the sake of illustration, let us execute node and pod level, CPU hog experiments on the `catalogue` microservice & Memory Hog experiments on the `orders` microservice in a staggered manner.
 
 ```
-kubectl apply -f utils/sample-chaos-injectors/chaos-experiments/catalogue/catalogue-pod-cpu-hog.yaml
+kubectl apply -f ../../utils/sample-chaos-injectors/chaos-experiments/catalogue/catalogue-pod-cpu-hog.yaml
 ```
 
 Wait for ~60s
 
 ```
-kubectl apply -f utils/sample-chaos-injectors/chaos-experiments/orders/orders-pod-memory-hog.yaml
+kubectl apply -f ../../utils/sample-chaos-injectors/chaos-experiments/orders/orders-pod-memory-hog.yaml
 ```
 
 Wait for ~60s
 
 ```
-kubectl apply -f utils/sample-chaos-injectors/chaos-experiments/catalogue/catalogue-node-cpu-hog.yaml
+kubectl apply -f ../../utils/sample-chaos-injectors/chaos-experiments/catalogue/catalogue-node-cpu-hog.yaml
 ```
 
 Wait for ~60s
 
 ```
-kubectl apply -f utils/sample-chaos-injectors/chaos-experiments/orders/orders-node-memory-hog.yaml
+kubectl apply -f ../../utils/sample-chaos-injectors/chaos-experiments/orders/orders-node-memory-hog.yaml
 ```
 
 - Verify execution of chaos experiments
@@ -194,23 +200,23 @@ kubectl apply -f utils/sample-chaos-injectors/chaos-experiments/orders/orders-no
 
   > Node CPU hog
   ```bash
-  argo cron create utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/catalogue/catalogue-node-cpu-hog-workflow.yaml -n litmus
+  argo cron create ../../utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/catalogue/catalogue-node-cpu-hog-workflow.yaml -n litmus
   ```
 
   > Node memory hog
   ```bash
-  argo cron create utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-node-memory-hog-workflow.yaml -n litmus
+  argo cron create ../../utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-node-memory-hog-workflow.yaml -n litmus
   ```
 
   > Pod CPU hog
 
   ```bash
-  kubectl apply -f utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/catalogue/catalogue-pod-cpu-hog-workflow.yaml -n litmus
+  kubectl apply -f ../../utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/catalogue/catalogue-pod-cpu-hog-workflow.yaml -n litmus
   ```
 
   > Pod memory hog
   ```bash
-  kubectl apply -f utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-pod-memory-hog-workflow.yaml -n litmus
+  kubectl apply -f ../../utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-pod-memory-hog-workflow.yaml -n litmus
   ```
 
 - Visualize the Chaos cron workflow through argo UI by obtaining Node port or Load Balancer IP.

@@ -33,7 +33,7 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
 - Install the litmus chaos operator and CRDs
 
   ```
-  kubectl apply -f https://litmuschaos.github.io/litmus/litmus-operator-v1.8.0.yaml
+  kubectl apply -f https://litmuschaos.github.io/litmus/litmus-operator-v1.9.0.yaml
   ```
 
 - Install the litmus-admin serviceaccount for centralized/admin-mode of chaos execution
@@ -45,7 +45,7 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
 - Install the chaos experiments in admin(litmus) namespace
 
   ```
-  kubectl apply -f https://hub.litmuschaos.io/api/chaos/1.8.0?file=charts/generic/experiments.yaml -n litmus
+  kubectl apply -f https://hub.litmuschaos.io/api/chaos/1.9.0?file=charts/generic/experiments.yaml -n litmus
   ```
 
 ### Step-3: Setup the Monitoring Infrastructure
