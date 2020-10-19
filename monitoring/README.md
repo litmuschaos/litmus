@@ -58,7 +58,7 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
 
 - Setup prometheus TSDB
   
-  > Model-1 (optional): Service monitor and prometheus operator model.
+#### Model-1 (optional): Service monitor and prometheus operator model.
 
       - Create the operator to instantiate all CRDs
 
@@ -87,7 +87,7 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
   `type: LoadBalancer` to `type: NodePort`
 
 
-  > Model-2 (optional): Prometheus scrape config model.
+#### Model-2 (optional): Prometheus scrape config model.
 
       - Deploy prometheus components
 
