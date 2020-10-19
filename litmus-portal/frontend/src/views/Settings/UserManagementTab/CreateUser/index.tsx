@@ -1,6 +1,6 @@
 import { Divider, IconButton, Typography } from '@material-ui/core';
 import React from 'react';
-import InputField from '../../../../components/InputField';
+import InputFieldOutline from '../../../../components/InputFieldOutline';
 import {
   validateLength,
   validateStartEmptySpacing,
@@ -63,7 +63,11 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
     <div>
       <div className={classes.headDiv}>
         <div className={classes.createDiv}>
-          <IconButton onClick={handleDiv} className={classes.backButton}>
+          <IconButton
+            data-cy="backButton"
+            onClick={handleDiv}
+            className={classes.backButton}
+          >
             <img src="./icons/BackArrow.svg" alt="back" />
           </IconButton>
           <Typography className={classes.divHeaderText}>
@@ -120,35 +124,40 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
                 <div>
                   <form>
                     <div className={classes.details1}>
-                      <InputField
-                        helperText={
-                          validateStartEmptySpacing(personalData.userName)
-                            ? 'Should not start with an empty space'
-                            : ''
-                        }
-                        label="Username"
-                        value={personalData.userName}
-                        handleChange={handleUsername}
-                        validationError={validateStartEmptySpacing(
-                          personalData.userName
-                        )}
-                        disabled
-                      />
-                      <InputField
-                        required
-                        type="password"
-                        helperText={
-                          validateLength(createPAssword.password)
-                            ? 'Password is too short'
-                            : ''
-                        }
-                        handleChange={handleCreatePassword('password')}
-                        value={createPAssword.password}
-                        validationError={validateLength(
-                          createPAssword.password
-                        )}
-                        label="New Password"
-                      />
+                      <div data-cy="userName">
+                        <InputFieldOutline
+                          helperText={
+                            validateStartEmptySpacing(personalData.userName)
+                              ? 'Should not start with an empty space'
+                              : ''
+                          }
+                          label="Username"
+                          value={personalData.userName}
+                          handleChange={handleUsername}
+                          validationError={validateStartEmptySpacing(
+                            personalData.userName
+                          )}
+                          disabled
+                        />
+                      </div>
+
+                      <div data-cy="passwordInput">
+                        <InputFieldOutline
+                          required
+                          type="password"
+                          helperText={
+                            validateLength(createPAssword.password)
+                              ? 'Password is too short'
+                              : ''
+                          }
+                          handleChange={handleCreatePassword('password')}
+                          value={createPAssword.password}
+                          validationError={validateLength(
+                            createPAssword.password
+                          )}
+                          label="New Password"
+                        />
+                      </div>
                     </div>
                   </form>
                 </div>

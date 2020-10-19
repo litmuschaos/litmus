@@ -1,11 +1,9 @@
 import { useQuery } from '@apollo/client/react/hooks';
 import {
-  Avatar,
   createStyles,
   FormControl,
-  IconButton,
   InputAdornment,
-  Menu,
+  InputLabel,
   MenuItem,
   Paper,
   Select,
@@ -23,7 +21,6 @@ import {
   withStyles,
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
-import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { GET_USER } from '../../../graphql';
@@ -33,19 +30,20 @@ import {
   Member,
 } from '../../../models/graphql/user';
 import { RootState } from '../../../redux/reducers';
-import userAvatar from '../../../utils/user';
 import Invitation from './Invitation';
 import InviteNew from './InviteNew';
 import useStyles from './styles';
+import TableData from './tableData';
 
 // StyledTableCell used to create custom table cell
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
     head: {
-      backgroundColor: theme.palette.common.white,
-      color: theme.palette.common.black,
+      backgroundColor: theme.palette.homePageCardBackgroundColor,
+      color: theme.palette.teamingTabHeadTextColor,
     },
     body: {
+      backgroundColor: theme.palette.homePageCardBackgroundColor,
       fontSize: '0.875rem',
     },
   })
@@ -71,7 +69,10 @@ const TeammingTab: React.FC = () => {
   // query for getting all the data for the logged in user
   const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
-    { variables: { username: userData.username } }
+    {
+      variables: { username: userData.username },
+      fetchPolicy: 'cache-and-network',
+    }
   );
 
   // State for pagination
@@ -86,7 +87,7 @@ const TeammingTab: React.FC = () => {
     role: 'all',
   });
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  // const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   // logic for displaying the team members of the user
   let memberList: Member[] = [];
@@ -118,24 +119,15 @@ const TeammingTab: React.FC = () => {
   const filteredData =
     rows &&
     rows
-      .filter((dataRow) => dataRow?.name.toLowerCase().includes(filters.search))
+      .filter((dataRow) =>
+        dataRow?.name.toLowerCase().includes(filters.search.toLowerCase())
+      )
       .filter((dataRow) => {
         if (filters.role === 'all') return true;
         if (filters.role === 'Editor') return dataRow.role === 'Editor';
         if (filters.role === 'Viewer') return dataRow.role === 'Viewer';
         return dataRow.role === 'Owner';
       });
-
-  // for closing the menu option
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  // Function to display date in format Do MMM,YYYY Hr:MM AM/PM
-  const formatDate = (date: string) => {
-    const day = moment(date).format('Do MMM,YYYY LT');
-    return day;
-  };
 
   return (
     <div>
@@ -147,15 +139,15 @@ const TeammingTab: React.FC = () => {
           </Typography>
         </div>
         <Typography className={classes.descText}>
-          Manage your team, invite a member to your project or change the role
-          of members in the teamed
+          Manage your team - invite a member to your project or change the role
+          of exisiting members in the team:
         </Typography>
         <div>
-          <Toolbar className={classes.toolbar}>
+          <Toolbar data-cy="toolBarComponent" className={classes.toolbar}>
             {/* Search user */}
-
             <div className={classes.toolbarFirstCol}>
               <TextField
+                data-cy="teamingSearch"
                 id="input-with-icon-textfield"
                 placeholder="Search..."
                 value={filters.search}
@@ -179,40 +171,30 @@ const TeammingTab: React.FC = () => {
               />
               {/* filter menu */}
               <div className={classes.filter}>
-                <Typography className={classes.userRole}>Role</Typography>
-
-                <FormControl className={classes.filterMenu}>
+                <FormControl
+                  variant="outlined"
+                  className={classes.formControl}
+                  color="secondary"
+                  focused
+                >
+                  <InputLabel className={classes.selectText}>Role</InputLabel>
                   <Select
-                    native
-                    placeholder="User Status"
+                    label="Role"
                     value={filters.role}
-                    /* filters on the basis of users' current state */
-                    onChange={(e) => {
+                    onChange={(event) => {
                       setFilters({
                         ...filters,
-                        role: e.target.value as string,
+                        role: event.target.value as string,
                       });
                       setPaginationData({ ...paginationData, pageNo: 0 });
                     }}
-                    label="Role"
-                    disableUnderline
-                    inputProps={{
-                      name: 'Role',
-                      id: 'outlined-age-native-simple',
-                    }}
+                    className={classes.selectText}
+                    color="secondary"
                   >
-                    <option value="all" className={classes.filterOpt}>
-                      All
-                    </option>
-                    <option value="Editor" className={classes.filterOpt}>
-                      Editor
-                    </option>
-                    <option value="Viewer" className={classes.filterOpt}>
-                      Viewer
-                    </option>
-                    <option value="Owner" className={classes.filterOpt}>
-                      Owner
-                    </option>
+                    <MenuItem value="all">All</MenuItem>
+                    <MenuItem value="Editor">Editor</MenuItem>
+                    <MenuItem value="Viewer">Viewer</MenuItem>
+                    <MenuItem value="Owner">Owner</MenuItem>
                   </Select>
                 </FormControl>
               </div>
@@ -223,7 +205,7 @@ const TeammingTab: React.FC = () => {
             </div>
           </Toolbar>
           {/* user table */}
-          <Paper>
+          <Paper className={classes.root}>
             <TableContainer
               className={classes.table}
               elevation={0}
@@ -251,133 +233,12 @@ const TeammingTab: React.FC = () => {
                           paginationData.rowsPerPage
                       )
                       .map((row, index) => (
-                        <TableRow key={row.name} className={classes.TR}>
-                          <TableCell
-                            className={classes.firstTC}
-                            component="th"
-                            scope="row"
-                          >
-                            <div className={classes.firstCol}>
-                              <Avatar
-                                data-cy="avatar"
-                                alt="User"
-                                className={classes.avatarBackground}
-                              >
-                                {row?.name
-                                  ? userAvatar(row.name)
-                                  : userAvatar(row.name)}
-                              </Avatar>
-                              {row.name}
-                            </div>
-                          </TableCell>
-                          <TableCell className={classes.otherTC}>
-                            {row.role}
-                            {row.role === 'editor' || row.role === 'viewer' ? (
-                              <>
-                                <IconButton
-                                  disabled
-                                  aria-label="more"
-                                  aria-controls="long-menu"
-                                  aria-haspopup="true"
-                                  onClick={(event) => {
-                                    setAnchorEl(event.currentTarget);
-                                  }}
-                                  className={classes.optionBtn}
-                                >
-                                  <img
-                                    src="./icons/right-arrow.svg"
-                                    alt="more"
-                                  />
-                                </IconButton>
-                                <Menu
-                                  keepMounted
-                                  open={Boolean(anchorEl)}
-                                  id="long-menu"
-                                  anchorEl={anchorEl}
-                                  onClose={handleClose}
-                                >
-                                  <MenuItem
-                                    value={index}
-                                    onClick={() => {
-                                      setAnchorEl(null);
-                                    }}
-                                    className={classes.menuOpt}
-                                  >
-                                    <div className={classes.menuDiv}>
-                                      <div>
-                                        <Typography
-                                          className={classes.menuHeader}
-                                        >
-                                          <strong>Editor</strong>
-                                        </Typography>
-                                      </div>
-                                      <div>
-                                        <Typography
-                                          className={classes.menuDesc}
-                                        >
-                                          Can make changes in the project
-                                        </Typography>
-                                      </div>
-                                    </div>
-                                  </MenuItem>
-                                  <MenuItem
-                                    value={index}
-                                    onClick={() => {
-                                      setAnchorEl(null);
-                                    }}
-                                    className={classes.menuOpt}
-                                  >
-                                    <div className={classes.menuDiv}>
-                                      <div>
-                                        <Typography
-                                          className={classes.menuHeader}
-                                        >
-                                          <strong>Viewer</strong>
-                                        </Typography>
-                                      </div>
-                                      <div>
-                                        <Typography
-                                          className={classes.menuDesc}
-                                        >
-                                          Can make changes in the project
-                                        </Typography>
-                                      </div>
-                                    </div>
-                                  </MenuItem>
-                                </Menu>
-                              </>
-                            ) : (
-                              <></>
-                            )}
-                          </TableCell>
-                          <TableCell className={classes.otherTC}>
-                            {row.email}
-                          </TableCell>
-                          <TableCell className={classes.otherTC}>
-                            <div className={classes.dateDiv}>
-                              <img
-                                className={classes.calIcon}
-                                src="./icons/calendarIcon.svg"
-                                alt="calendar"
-                              />
-                              {formatDate(row.joined_at)}
-                            </div>
-                          </TableCell>
-
-                          <TableCell
-                            className={classes.otherTC}
-                            key={row.user_name}
-                          >
-                            {/*  <DelUser
-                              handleTable={() => {}}
-                              tableDelete={false}
-                              teammingDel
-                              disabled
-                            /> */}
-                            <IconButton disabled onClick={() => {}}>
-                              <img alt="delete" src="./icons/bin-grey.svg" />
-                            </IconButton>
-                          </TableCell>
+                        <TableRow
+                          data-cy="teamingTableRow"
+                          key={row.name}
+                          className={classes.TR}
+                        >
+                          <TableData index={index} row={row} />
                         </TableRow>
                       ))
                   ) : (

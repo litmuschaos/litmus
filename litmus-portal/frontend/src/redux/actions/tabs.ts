@@ -13,3 +13,10 @@ export function changeSettingsTabs(tabNumber: number): TabAction {
     payload: tabNumber,
   };
 }
+
+export function changeWorkflowDetailsTabs(tabNumber: number): TabAction {
+  return {
+    type: TabActions.CHANGE_WORKFLOW_DETAILS_TAB,
+    payload: tabNumber,
+  };
+}

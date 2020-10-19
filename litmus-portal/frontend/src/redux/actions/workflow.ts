@@ -1,5 +1,10 @@
 /* eslint-disable import/prefer-default-export */
-import { experimentMap, WorkflowActions } from '../../models/redux/workflow';
+import {
+  experimentMap,
+  scheduleInput,
+  scheduleType,
+  WorkflowActions,
+} from '../../models/redux/workflow';
 
 export const setWorkflowDetails = (data: {
   name: string;
@@ -10,6 +15,9 @@ export const setWorkflowDetails = (data: {
   weights: experimentMap[];
   isCustomWorkflow: boolean;
   clusterid: string;
+  cronSyntax: string;
+  scheduleType: scheduleType;
+  scheduleInput: scheduleInput;
 }) => (dispatch: Function) => {
   dispatch({
     type: WorkflowActions.SET_WORKFLOW_DETAILS,

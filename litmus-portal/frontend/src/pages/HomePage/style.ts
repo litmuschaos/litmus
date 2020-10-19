@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
 
   root: {
     marginTop: theme.spacing(3),
-    marginLeft: theme.spacing(6),
+    marginLeft: theme.spacing(2),
   },
 
   mainDiv: {
@@ -33,17 +33,19 @@ const useStyles = makeStyles((theme) => ({
 
   userName: {
     fontSize: '2.5rem',
-    marginBottom: theme.spacing(3.75),
+    marginTop: theme.spacing(1.75),
+    marginBottom: theme.spacing(2.75),
   },
 
   createWorkflowCard: {
-    width: '14.375rem',
+    width: '15.65rem',
     border: '1px solid ',
     borderColor: theme.palette.secondary.dark,
     backgroundColor: theme.palette.homePageWorkflowCardBackgroundColor,
     borderRadius: 3,
+    color: 'inherit',
     marginLeft: theme.spacing(5),
-    boxShadow: '2px 1px 9px rgba(91, 68, 186, 0.25)',
+    boxShadow: theme.palette.createWorkflowCardShadow,
     [theme.breakpoints.down('sm')]: {
       marginTop: theme.spacing(5),
     },
@@ -101,6 +103,9 @@ const useStyles = makeStyles((theme) => ({
   imageDiv: {
     marginLeft: theme.spacing(10),
     marginTop: theme.spacing(10),
+    '& img': {
+      userDrag: 'none',
+    },
   },
 
   contentDiv: {
@@ -151,16 +156,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   predefinedBtn: {
-    height: '2.8125rem',
-    backgroundColor: theme.palette.primary.dark,
-    color: theme.palette.common.white,
-    paddingLeft: theme.spacing(2.5),
-    paddingRight: theme.spacing(2.5),
-    textTransform: 'none',
-    marginTop: theme.spacing(3.75),
-    '&:hover': {
-      backgroundColor: theme.palette.primary.dark,
-    },
+    marginLeft: theme.spacing(-2),
+    marginTop: theme.spacing(2.5),
   },
 
   btnHeaderDiv: {
@@ -173,9 +170,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   seeAllBtn: {
-    width: '7.5rem',
-    height: theme.spacing(5),
-    marginTop: theme.spacing(5),
+    marginTop: theme.spacing(1.5),
+    marginRight: theme.spacing(6),
     marginLeft: 'auto',
     [theme.breakpoints.down('sm')]: {
       marginTop: theme.spacing(0.2),

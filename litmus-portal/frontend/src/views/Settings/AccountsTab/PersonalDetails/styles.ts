@@ -38,6 +38,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: 'center',
     marginTop: theme.spacing(15),
     paddingBottom: '7rem',
+    color: theme.palette.personalDetailsBodyColor,
   },
   text: {
     width: '31rem',
@@ -50,11 +51,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   text1: {
     width: '27.5rem',
-    height: '1.6875rem',
     marginBottom: theme.spacing(3.75),
   },
   typo1: {
     fontSize: '1rem',
+    marginBottom: theme.spacing(2),
   },
   buttonModal: {
     marginTop: theme.spacing(3.75),
@@ -66,6 +67,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: '0 auto',
   },
   errDiv: {
+    color: theme.palette.personalDetailsBodyColor,
     width: '100%',
     display: 'flex',
     flexDirection: 'column',

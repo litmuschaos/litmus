@@ -64,7 +64,10 @@ const ReceivedInvitations: React.FC = () => {
   // query for getting all the data for the logged in user
   const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
-    { variables: { username } }
+    {
+      variables: { username },
+      fetchPolicy: 'cache-and-network',
+    }
   );
 
   useEffect(() => {
@@ -73,6 +76,7 @@ const ReceivedInvitations: React.FC = () => {
       const users: ReceivedInvitation[] = [];
 
       let flag = 0;
+      let roleVar = '';
 
       projectList.forEach((project) => {
         project.members.forEach((member) => {
@@ -82,16 +86,17 @@ const ReceivedInvitations: React.FC = () => {
             member.invitation === 'Pending'
           ) {
             flag = 1;
+            roleVar = member.role;
           }
         });
         if (flag === 1) {
           project.members.forEach((member) => {
             if (member.user_name !== username && member.role === 'Owner') {
               users.push({
-                username: member.user_name,
-                role: member.role,
-                projectName: project.name,
                 projectID: project.id,
+                projectName: project.name,
+                role: roleVar,
+                username: member.user_name,
               });
             }
           });
@@ -104,7 +109,7 @@ const ReceivedInvitations: React.FC = () => {
   }, [data]);
 
   return (
-    <div>
+    <div data-cy="receivedInvitationModal">
       <TableContainer className={classes.table}>
         <Table>
           {rows.length > 0 ? (
@@ -124,7 +129,10 @@ const ReceivedInvitations: React.FC = () => {
                           : userAvatar(row.username)}
                       </Avatar>
                       <div className={classes.detail}>
-                        <div> {row.username}</div>
+                        <div className={classes.nameRole}>
+                          <div>{row.username}</div>
+                          <div className={classes.role}>({row.role})</div>
+                        </div>
                         <div>{row.projectName}</div>
                       </div>
                     </div>
@@ -145,23 +153,25 @@ const ReceivedInvitations: React.FC = () => {
                       >
                         <div>Ignore</div>
                       </ButtonOutline>
-                      <ButtonFilled
-                        isPrimary={false}
-                        handleClick={() => {
-                          setAcceptDecline(row.username);
-                          acceptInvite({
-                            variables: {
-                              member: {
-                                project_id: row.projectID,
-                                user_name: username,
+                      <div data-cy="receivedInvitationAccept">
+                        <ButtonFilled
+                          isPrimary={false}
+                          handleClick={() => {
+                            setAcceptDecline(row.username);
+                            acceptInvite({
+                              variables: {
+                                member: {
+                                  project_id: row.projectID,
+                                  user_name: username,
+                                },
                               },
-                            },
-                          });
-                        }}
-                        isDisabled={false}
-                      >
-                        <div>Accept</div>
-                      </ButtonFilled>
+                            });
+                          }}
+                          isDisabled={false}
+                        >
+                          Accept
+                        </ButtonFilled>
+                      </div>
                     </div>
                   </div>
                 </TableCell>

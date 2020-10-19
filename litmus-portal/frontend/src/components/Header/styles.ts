@@ -19,7 +19,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   headerFlexProfile: {
+    color: theme.palette.userNameTextColor,
     height: '5%',
+    fontSize: '2.08rem',
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: theme.spacing(0),
@@ -29,12 +31,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: theme.spacing(5),
     paddingleft: theme.spacing(5),
   },
-
+  // Notification
   headerFlexPadded: {
     height: '5%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: theme.spacing(0),
+    marginTop: theme.spacing(1.25),
     marginBottom: theme.spacing(0),
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(0),
@@ -52,21 +54,20 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // Style for ProfileDropdownSection
   buttonPositionExpand: {
-    marginTop: theme.spacing(-1.75),
     alignContent: 'left',
   },
 
   projectDisplay: {
-    marginTop: theme.spacing(-1.25),
+    marginTop: theme.spacing(-1.75),
     fontSize: 12,
     color: theme.palette.projectDisplayColor,
   },
   // Style for ProfileDropdownSection and ProfileDropdownItems.
   avatarBackground: {
+    backgroundColor: theme.palette.totalRunsCountColor,
     color: theme.palette.customColors.white(1),
-    backgroundColor: theme.palette.secondary.main,
-    alignContent: 'right',
-    marginBottom: theme.spacing(1),
+    marginBottom: theme.spacing(2),
+    marginTop: theme.spacing(1),
   },
 
   // Styles for ProfileDropdownItems.
@@ -109,10 +110,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    paddingLeft: theme.spacing(1),
   },
 
   userName: {
+    color: theme.palette.userNameTextColor,
     fontSize: '0.875rem',
   },
 

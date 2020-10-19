@@ -38,4 +38,5 @@ type Action struct {
 	K8SManifest  string      `json:"k8s_manifest"`
 	ExternalData interface{} `json:"external_data"`
 	RequestType  string      `json:"request_type"`
+	Namespace    string      `json:"namespace"`
 }

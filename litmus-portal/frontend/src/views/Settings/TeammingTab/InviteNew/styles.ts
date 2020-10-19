@@ -6,6 +6,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
     minWidth: '39.0625rem',
     alignItems: 'center',
+    color: theme.palette.personalDetailsBodyColor,
   },
 
   // styles for buttons

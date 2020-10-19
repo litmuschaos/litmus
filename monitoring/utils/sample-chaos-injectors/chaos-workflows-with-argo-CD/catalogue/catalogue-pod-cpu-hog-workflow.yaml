@@ -1,0 +1,59 @@
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  name: pod-cpu-cron-wf
+  namespace: litmus
+spec:
+  schedule: "15-29/15 * * * *"
+  concurrencyPolicy: "Forbid"
+  startingDeadlineSeconds: 0
+  workflowSpec:
+    entrypoint: argowf-chaos
+    serviceAccountName: argo-chaos
+    templates:
+      - name: argowf-chaos
+        steps:
+          - - name: run-pod-cpu-hog
+              template: run-pod-cpu-hog
+      - name: run-pod-cpu-hog
+        inputs:
+          artifacts:
+            - name: run-pod-cpu-hog
+              path: /tmp/chaosengine-pod-cpu-hog.yaml
+              raw:
+                data: |
+                  apiVersion: litmuschaos.io/v1alpha1
+                  kind: ChaosEngine
+                  metadata:
+                    name: catalogue-pod-cpu-hog
+                    namespace: litmus
+                  spec:
+                    annotationCheck: 'false'
+                    engineState: 'active'
+                    auxiliaryAppInfo: ''
+                    appinfo:
+                      appns: 'sock-shop'
+                      applabel: 'name=catalogue'
+                      appkind: 'deployment'
+                    chaosServiceAccount: litmus-admin
+                    monitoring: true
+                    jobCleanUpPolicy: 'retain'
+                    experiments:
+                      - name: pod-cpu-hog
+                        spec:
+                          components:
+                            experimentImage: "litmuschaos/go-runner:ci"
+                            env:
+                              - name: TARGET_CONTAINER
+                                value: 'catalogue'
+                              - name: CPU_CORES
+                                value: '1'
+                              - name: TOTAL_CHAOS_DURATION
+                                value: '240' # in seconds
+                                
+                              - name: CHAOS_KILL_COMMAND
+                                value: "kill -9 $(ps afx | grep \"[md5sum] /dev/zero\" | awk '{print$1}' | tr '\n' ' ')"
+        container:
+          image: lachlanevenson/k8s-kubectl
+          command: [sh, -c]
+          args: ["kubectl apply -f /tmp/chaosengine-pod-cpu-hog.yaml -n litmus"]

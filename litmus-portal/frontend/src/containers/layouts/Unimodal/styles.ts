@@ -6,7 +6,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '70%',
     padding: '1rem',
     margin: '2rem auto',
-    background: props.isDark
+    background: props.isDarkBg
       ? theme.palette.editorBackground
       : theme.palette.common.white,
     borderRadius: 3,
@@ -30,14 +30,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     minHeight: 0,
     minWidth: 0,
     borderRadius: 3,
-    color: props.isDark
+    color: props.isDarkBg
       ? theme.palette.secondary.contrastText
       : theme.palette.customColors.black(0.4),
     border: '1px solid',
-    borderColor: props.isDark
+    borderColor: props.isDarkBg
       ? theme.palette.customColors.white(0.2)
       : theme.palette.customColors.black(0.4),
-    marginLeft: props.isDark ? '82.5%' : '60%',
+    marginLeft: props.isDarkBg ? '82.5%' : '60%',
     marginTop: theme.spacing(5),
   }),
 

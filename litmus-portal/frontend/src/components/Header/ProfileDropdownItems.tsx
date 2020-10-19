@@ -148,7 +148,6 @@ const ProfileInfoDropdownItems: React.FC<ProfileInfoDropdownItemProps> = ({
               data-cy="name-header"
               className={classes.userName}
               component="span"
-              color="textPrimary"
             >
               {name}
             </Typography>

@@ -8,18 +8,20 @@ import useStyles from './styles';
 
 interface CustomDateProps {
   disabled: boolean;
+  selectedDate: Date | null;
+  handleDateChange: (
+    date: Date | null,
+    value?: string | null | undefined
+  ) => void;
 }
 
 // Used to set and display the date, month and year
-const CustomDate: React.FC<CustomDateProps> = ({ disabled }) => {
+const CustomDate: React.FC<CustomDateProps> = ({
+  disabled,
+  selectedDate,
+  handleDateChange,
+}) => {
   const classes = useStyles();
-  const [selectedDate, setSelectedDate] = React.useState<Date | null>(
-    new Date(Date.now())
-  );
-
-  const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date);
-  };
 
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -29,6 +31,7 @@ const CustomDate: React.FC<CustomDateProps> = ({ disabled }) => {
         format="dd/MM/yyyy"
         id="date-picker-inline"
         inputVariant="outlined"
+        disablePast
         disabled={disabled}
         cancelLabel="Cancel"
         okLabel="Save"

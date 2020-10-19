@@ -7,6 +7,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     maxWidth: '63.75rem',
     minWidth: '39.0625rem',
     alignItems: 'center',
+    color: theme.palette.personalDetailsBodyColor,
   },
   root: {
     display: 'flex',
@@ -17,6 +18,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: 'center',
     marginLeft: theme.spacing(2),
     justifyContent: 'space-between',
+    backgroundColor: theme.palette.secondary.contrastText,
+    color: theme.palette.teamingTabHeadTextColor,
   },
   button: {
     marginRight: theme.spacing(-2),

@@ -1,0 +1,20 @@
+name: litmusportal-frontend
+labels:
+  component: litmusportal-frontend
+image: okteto/node:12
+environment:
+  - CI=true
+  - CYPRESS_INSTALL_BINARY=0
+  - PORT=80
+command:
+  - bash
+sync:
+  - .:/usr/src/app
+forward:
+  - 80:80
+resources:
+  limits:
+    cpu: "1"
+    memory: 2Gi
+persistentVolume:
+  enabled: true

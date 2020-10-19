@@ -3,7 +3,6 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme: Theme) => ({
   UMDiv: {
     marginTop: theme.spacing(3.75),
-    marginLeft: theme.spacing(1),
   },
   headerText: {
     fontSize: '1.5625rem',
@@ -23,8 +22,18 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '1rem',
   },
   table: {
+    backgroundColor: 'inherit',
     height: '30.25rem',
     border: `1px solid ${theme.palette.customColors.black(0.05)}`,
+    '&::-webkit-scrollbar': {
+      width: '0.2em',
+    },
+    '&::-webkit-scrollbar-track': {
+      webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: theme.palette.secondary.dark,
+    },
   },
   Signed: {
     minWidth: '2.625rem',
@@ -53,30 +62,33 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '6.125rem',
     border: `1px solid ${theme.palette.customColors.black(0.05)}`,
     marginBottom: theme.spacing(1.25),
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.homePageCardBackgroundColor,
     display: 'flex',
     justifyContent: 'space-between',
   },
   toolbarFirstCol: {
     display: 'flex',
+    alignItems: 'center',
   },
   filter: {
     display: 'flex',
     alignItems: 'center',
+    paddingBottom: theme.spacing(0.5),
     marginLeft: theme.spacing(5),
   },
-  filterMenu: {
-    marginLeft: theme.spacing(1.25),
-    border: `1px solid ${theme.palette.customColors.black(0.05)}`,
-    borderRadius: '0.1875rem',
-    minWidth: '11.375rem',
-    height: '2.375rem',
-    paddingLeft: theme.spacing(2.5),
-    paddingRight: theme.spacing(2.5),
-    paddingTop: theme.spacing(0.625),
-    paddingBottom: theme.spacing(0.625),
+  formControl: {
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(6.25),
+    minWidth: '9rem',
   },
-  root: {},
+  selectText: {
+    height: '2.5rem',
+    padding: theme.spacing(0.5),
+  },
+  root: {
+    backgroundColor: theme.palette.background.paper,
+    color: 'inherit',
+  },
   TR: {
     height: '4.8125rem',
   },

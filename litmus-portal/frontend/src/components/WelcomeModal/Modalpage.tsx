@@ -27,7 +27,7 @@ const ModalPage: React.FC<ModalDataProps> = ({
     <div className={classes.insideModal}>
       <Icon />
       <div className={classes.heading}>
-        {t('welcomeModel.title')}
+        {t('welcomeModal.title')}
         <br />
         <strong> {setName} </strong>
       </div>

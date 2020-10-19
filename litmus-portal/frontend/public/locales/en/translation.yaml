@@ -1,4 +1,4 @@
-welcomeModel:
+welcomeModal:
   title: Welcome to Litmus Portal,
   info: What do you want to name your project?
   button:
@@ -67,6 +67,15 @@ home:
   analytics:
     heading: How busy is the Litmus Project?
     moreInfo: See more
+  comingSoon: Coming soon!
+  resilienceScore: Resilience score
+  recentActivity: Recent activity
+  resilienceScoreComparisonOptions:
+    option1: Hourly
+    option2: Daily
+    option3: Monthly
+    granularity: Granularity
+  recentActivityEmpty: No recent activity. 
 
 login:
   heading: Welcome to <strong>Litmus!</strong>
@@ -97,15 +106,38 @@ workflowUnderground:
   heading: 'Click on test to see detailed log of your workflow'
 
 community:
+  title: 'Community'
   heading: 'Litmus Insights'
   headingDesc: 'Stats for the Litmus community'
   analyticDesc: 'Periodic growth of Litmus'
   statsHeading: 'Litmus users around the world:'
+  litmusChaos: Litmuschaos
+  follow: Follow
 
 analytics:
   fetchError: An error has occurred while fetching the data
   viewTestResult: Click on test to view the results for the selected period
   comingSoon: Analytics Coming Soon!
+  waitingMessage: Waiting for workflow to start running!
+  chaosStartWaitingMessage: Waiting for chaos experiments to start!
+  highestScore: 'Highest Score:'
+  lowestScore: 'Lowest Score:'
+  exportPDF: Export PDF
+  compareWorkflows: Compare workflows
+  targetCluster: Target cluster
+  workflowSelected: workflow selected
+  workflowsSelected: workflows selected
+  tableHead1: Workflow Name
+  tableHead2: Starting Date
+  tableHead3: Regularity
+  tableHead4: Cluster
+  workflowRunDetailsTable: 
+    tableHead1: Test Name
+    tableHead2: Test Result
+    tableHead3: Weight of the test
+    tableHead4: Resulting Points
+    tableHead5: Last run
+    close: Close
 
 error:
   whoops: Whoops!
@@ -116,6 +148,123 @@ error:
 workflowDetails:
   detailedLog: Click on test to see detailed log of your workflow
   fetchError: An error has occurred while fetching the data
+######################################
+############    Views    #############
+######################################
+
+chaosWorkflows:
+  browseAnalytics:
+    workFlowComparisonTable:
+      unableToFetch: Unable to fetch data
+      noRecords: No records available
+      noRuns: No workflow runs available for selected workflows
+      showSelectedWorkflows: Show all selected workflows
+      resilienceScoreComparison: Resilience score comparison
+      comparativeResults: Comparative results of selected workflows which ran successfully
+      once: Once
+      seeAnalytics: See analytics
+
+createWorkflow:
+  workflowCluster:
+    activeCluster: Choose an active cluster
+    none: None
+
+settings:
+  teamingTab:
+    deleteModal:
+      header: Are you sure
+      text: to remove the current user?
+      body: The user will lose access to the team’s work and all
+      yesButton: Yes
+      noButton: No
+    sentInvitation:
+      menuItem:
+        editorRole:
+          label: Editor
+          body: Can make changes in the project
+        viewerRole:
+          label: Viewer
+          body: Can view the project
+  userManagementTab:
+    createUser:
+      userDetails:
+        header: Personal Details
+        button: Edit Photo
+        label:
+          fullName: Full Name
+          email: Email Address
+          username: Username
+      chooseAvatarModal:
+        title: Change your Avatar
+        info: You can now use your new password to login to your account
+        button: Choose an avatar
+    deleteUser:
+      deleteModal:
+        body: The user will lose access to the portal
+
+######################################
+############    Targets    ###########
+######################################
+
+targets:
+  connectHome:
+    head : Targets
+    connectText: Connect the Target 
+  copy:
+    copy: Copy
+    copied: Copied
+    copying: Command copied to clickboard       
+  newTarget:
+    head: Connect a new target on your devices
+    head1: 1.Open the cluster console
+    head2: 2.Copy the command
+    head3: 3.Paste it into the cluster console
+    head4: 4.Click on the button
+    head5: Connect the target
+    conformation: Kuberenetes Agent is confirming, Please wait...
+
+connectTargets:
+  title: A new Target,
+  head : is successfully created!
+  info:  Congratulations on connecting a new target! Now information about it 
+  mainLine:  will be displayed on "Targets".
+  button:
+    buttonBack: Back to Targets
+    buttonSchedule: Schedule a workflow
+workflowCluster:
+  header:
+    status: Current Status
+    target: Target Cluster
+    chooseAgent: Choose the target Kubernetes Agent
+    creatingNew: You are creating a
+    creatingNewBold: new chaos workflow.
+    selectAgent: Select a target Kubernetes Agent to run this workflow.
+    selectCluster: Choose Active Cluster
+    select: Select and Continue
+    snackbar: No Cluster Registered With Your Project ID, Please Wait...
+    formControl:
+      # For Header
+      menu: All
+      menu1: Active
+      menu2: Not active
+      menu4: Internal
+      menu5: External
+      menu6: Pending
+      # For Table
+      tableStatus: Status
+      tableCluster: Target agent
+      name: Name
+      time: Time
+      run: Last Run
+      connectionDate: Connection Date
+      noWorkflows: No. of workflows
+      noSchedules: No. of schedules
+      fetchingError: Unable to fetch data
+      recordAvailable: No records available
+      delete: Delete
+      clusterInfo: Cluster information
+      about: About Litmus Cluster
+      back: Back
 
 workflows:
   browseWorkflows: Browse workflows
@@ -123,3 +272,11 @@ workflows:
   templates: Templates
   analytics: Analytics
   scheduleAWorkflow: Schedule a workflow
+
+#########################################
+############    dataErrors    ###########
+#########################################
+
+internetIssues:
+  fetchData: 'Fetching the data...'
+  connectionError: It seems you have no internet connection, Please try again When connectivity resumes.

@@ -1,5 +1,7 @@
 export enum AnalyticsActions {
-  LOAD_COMMUNITY_ANALYTICS = 'LOAD_COMMUNITY_ANALYTICS',
+  COMMUNITY_ANALYTICS_SUCCESS = 'LOAD_COMMUNITY_ANALYTICS',
+  COMMUNITY_ANALYTICS_LOADING = 'COMMUNITY_ANALYTICS_LOADING',
+  COMMUNITY_ANALYTICS_ERROR = 'COMMUNITY_ANALYTICS_ERROR',
 }
 
 export interface Github {
@@ -35,12 +37,27 @@ export interface CommunityData {
   google: Google;
 }
 
+export interface AnalyticsData {
+  communityData: CommunityData;
+  loading: boolean;
+  error: boolean;
+}
+
 interface AnalyticsActionType<T, P> {
   type: T;
   payload: P;
 }
 
-export type AnalyticsAction = AnalyticsActionType<
-  typeof AnalyticsActions.LOAD_COMMUNITY_ANALYTICS,
-  CommunityData
->;
+export type AnalyticsAction =
+  | AnalyticsActionType<
+      typeof AnalyticsActions.COMMUNITY_ANALYTICS_SUCCESS,
+      CommunityData
+    >
+  | AnalyticsActionType<
+      typeof AnalyticsActions.COMMUNITY_ANALYTICS_LOADING,
+      boolean
+    >
+  | AnalyticsActionType<
+      typeof AnalyticsActions.COMMUNITY_ANALYTICS_ERROR,
+      boolean
+    >;
