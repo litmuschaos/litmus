@@ -58,51 +58,45 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
 
 - Setup prometheus TSDB
   
-#### Model-1 (optional): Service monitor and prometheus operator model.
+  > Model-1 (optional): Service monitor and prometheus operator model.
 
-      - Create the operator to instantiate all CRDs
+    Create the operator to instantiate all CRDs
 
-        ```
-        kubectl -n monitoring apply -f utils/prometheus/prometheus-operator/
-        ```
+    kubectl -n monitoring apply -f utils/prometheus/prometheus-operator/
+    
 
-      - Deploy monitoring components
+    Deploy monitoring components
 
-        ```
-        kubectl -n monitoring apply -f utils/metrics-exporters-with-service-monitors/node-exporter/
-        kubectl -n monitoring apply -f utils/metrics-exporters-with-service-monitors/kube-state-metrics/
-        kubectl -n monitoring apply -f utils/alert-manager-with-service-monitor/
-        kubectl -n sock-shop apply -f utils/sample-application-service-monitors/sock-shop/
-        kubectl -n litmus apply -f utils/metrics-exporters-with-service-monitors/litmus-metrics/chaos-exporter/
-        kubectl -n litmus apply -f utils/metrics-exporters-with-service-monitors/litmus-metrics/litmus-event-router/
-        ```
+    kubectl -n monitoring apply -f utils/metrics-exporters-with-service-monitors/node-exporter/
+    kubectl -n monitoring apply -f utils/metrics-exporters-with-service-monitors/kube-state-metrics/
+    kubectl -n monitoring apply -f utils/alert-manager-with-service-monitor/
+    kubectl -n sock-shop apply -f utils/sample-application-service-monitors/sock-shop/
+    kubectl -n litmus apply -f utils/metrics-exporters-with-service-monitors/litmus-metrics/chaos-exporter/
+    kubectl -n litmus apply -f utils/metrics-exporters-with-service-monitors/litmus-metrics/litmus-event-router/
+    
 
-      - Deploy prometheus instance and all the service monitors for targets
+    Deploy prometheus instance and all the service monitors for targets
 
-        ```
-        kubectl -n monitoring apply -f utils/prometheus/prometheus-configuration/
-        ```
+    kubectl -n monitoring apply -f utils/prometheus/prometheus-configuration/
+
 
       Note: To change the service type to NodePort, perform a `kubectl edit svc prometheus-k8s -n monitoring` and replace
   `type: LoadBalancer` to `type: NodePort`
 
 
-#### Model-2 (optional): Prometheus scrape config model.
+  > Model-2 (optional): Prometheus scrape config model.
 
-      - Deploy prometheus components
+    Deploy prometheus components
 
-        ```
-        kubectl -n monitoring apply -f utils/prometheus/prometheus-scrape-configuration/
-        ```
+    kubectl -n monitoring apply -f utils/prometheus/prometheus-scrape-configuration/
 
-      - Deploy metrics exporters
 
-        ```
-        kubectl -n monitoring apply -f utils/metrics-exporters/kube-state-metrics/
-        kubectl -n monitoring apply -f utils/metrics-exporters/node-exporter/
-        kubectl -n litmus apply -f utils/metrics-exporters/litmus-metrics/chaos-exporter/
-        kubectl -n litmus apply -f utils/metrics-exporters/litmus-metrics/litmus-event-router/
-        ```
+    Deploy metrics exporters
+
+    kubectl -n monitoring apply -f utils/metrics-exporters/kube-state-metrics/
+    kubectl -n monitoring apply -f utils/metrics-exporters/node-exporter/
+    kubectl -n litmus apply -f utils/metrics-exporters/litmus-metrics/chaos-exporter/
+    kubectl -n litmus apply -f utils/metrics-exporters/litmus-metrics/litmus-event-router/
 
 
 - Apply the grafana manifests after deploying prometheus for all metrics.
