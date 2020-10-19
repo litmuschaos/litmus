@@ -80,8 +80,7 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
     kubectl -n monitoring apply -f utils/prometheus/prometheus-configuration/
 
 
-      Note: To change the service type to NodePort, perform a `kubectl edit svc prometheus-k8s -n monitoring` and replace
-  `type: LoadBalancer` to `type: NodePort`
+    Note: To change the service type to NodePort, perform a `kubectl edit svc prometheus-k8s -n monitoring` and replace `type: LoadBalancer` to `type: NodePort`
 
 
   > Model-2 (optional): Prometheus scrape config model.
