@@ -1,0 +1,30 @@
+    - job_name: 'sock-shop'
+      metrics_path: /metrics
+      kubernetes_sd_configs:
+        - role: pod
+      relabel_configs:
+        - source_labels:
+            - __meta_kubernetes_namespace
+            - __meta_kubernetes_pod_label_app
+            - __meta_kubernetes_pod_label_name
+          action: keep
+          regex: ^sock-shop;sock-shop;(.+?)$
+        - source_labels:
+            - __meta_kubernetes_namespace
+            - __meta_kubernetes_pod_container_name
+            - __address__
+          action: replace
+          target_label: __address__
+          regex: 'sock-shop;^(.+);(.+?)(?::\d+)?$'
+          replacement: '$1:6782'
+        - source_labels:
+            - __meta_kubernetes_namespace
+            - __meta_kubernetes_pod_label_app
+            - __meta_kubernetes_pod_container_name
+          action: replace
+          regex: ^sock-shop;sock-shop;(.+?)$
+          target_label: job
+
+    - job_name: 'chaos-monitor'
+      static_configs:
+        - targets: ['chaos-monitor.litmus.svc.cluster.local:8080']
