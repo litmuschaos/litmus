@@ -50,7 +50,7 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
   kubectl apply -f https://hub.litmuschaos.io/api/chaos/1.9.0?file=charts/generic/experiments.yaml -n litmus
   ```
 
-### Step-3: Congigure the Kublr centralized monitoring Infrastructure
+### Step-3: Configure the Kublr centralized monitoring Infrastructure
 
 - Create monitoring namespace on the cluster
 
