@@ -1,0 +1,17 @@
+type MyHub {
+  id: ID!
+  GitURL: String!
+  GitBranch: String!
+  IsConfirmed: Boolean!
+}
+
+input CreateMyHub {
+  GitURL: String!
+  GitBranch: String!
+}
+
+input UpdateMyHub {
+  id: ID!
+  GitURL: String!
+  GitBranch: String!
+}

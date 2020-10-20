@@ -243,6 +243,14 @@ type Mutation {
   chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
 
   podLog(log: PodLog!): String!
+
+  addMyHub(myhubInput: CreateMyHub!, username: String!): User! @authorized
+
+  updateMyHub(username: String!, updateMyHub: UpdateMyHub!): User! @authorized
+
+  
+
+
 }
 
 type Subscription {

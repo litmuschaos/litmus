@@ -96,6 +96,11 @@ type ClusterInput struct {
 	ClusterType  string  `json:"cluster_type"`
 }
 
+type CreateMyHub struct {
+	GitURL    string `json:"GitURL"`
+	GitBranch string `json:"GitBranch"`
+}
+
 type CreateUserInput struct {
 	Username    string  `json:"username"`
 	Email       *string `json:"email"`
@@ -118,6 +123,13 @@ type MemberInput struct {
 	ProjectID string      `json:"project_id"`
 	UserName  string      `json:"user_name"`
 	Role      *MemberRole `json:"role"`
+}
+
+type MyHub struct {
+	ID          string `json:"id"`
+	GitURL      string `json:"GitURL"`
+	GitBranch   string `json:"GitBranch"`
+	IsConfirmed bool   `json:"IsConfirmed"`
 }
 
 type PodLog struct {
@@ -173,6 +185,12 @@ type ScheduledWorkflows struct {
 	ClusterType         string        `json:"cluster_type"`
 }
 
+type UpdateMyHub struct {
+	ID        string `json:"id"`
+	GitURL    string `json:"GitURL"`
+	GitBranch string `json:"GitBranch"`
+}
+
 type UpdateUserInput struct {
 	ID          string  `json:"id"`
 	Name        *string `json:"name"`
@@ -185,6 +203,7 @@ type User struct {
 	Username        string     `json:"username"`
 	Email           *string    `json:"email"`
 	IsEmailVerified *bool      `json:"is_email_verified"`
+	MyHub           []*MyHub   `json:"my_hub"`
 	CompanyName     *string    `json:"company_name"`
 	Name            *string    `json:"name"`
 	Projects        []*Project `json:"projects"`

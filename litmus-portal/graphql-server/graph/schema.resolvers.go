@@ -6,6 +6,7 @@ package graph
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"strconv"
 	"time"
@@ -19,6 +20,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/mutations"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/queries"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/subscriptions"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usermanagement"
 	"go.mongodb.org/mongo-driver/bson"
@@ -74,6 +76,14 @@ func (r *mutationResolver) ChaosWorkflowRun(ctx context.Context, workflowData mo
 
 func (r *mutationResolver) PodLog(ctx context.Context, log model.PodLog) (string, error) {
 	return mutations.LogsHandler(log, *store)
+}
+
+func (r *mutationResolver) AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, username string) (*model.User, error) {
+	return myhub.AddMyHub(ctx, myhubInput, username)
+}
+
+func (r *mutationResolver) UpdateMyHub(ctx context.Context, username string, updateMyHub model.UpdateMyHub) (*model.User, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {
