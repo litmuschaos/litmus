@@ -108,24 +108,18 @@ const ReliablityScore = () => {
                 hasCloseBtn={false}
               >
                 <div>
-                  <div>
-                    <ResultTable
-                      testValue={testWeights}
-                      testNames={testNames}
-                    />
-                  </div>
+                  <ResultTable testValue={testWeights} testNames={testNames} />
                   <hr className={classes.horizontalLineResult} />
-                  <div className={classes.gotItBtn}>
-                    <Center>
-                      <ButtonFilled
-                        handleClick={() => setOpen(false)}
-                        data-cy="gotItButton"
-                        isPrimary
-                      >
-                        <div>Got it</div>
-                      </ButtonFilled>
-                    </Center>
-                  </div>
+                  <Center>
+                    <ButtonFilled
+                      handleClick={() => setOpen(false)}
+                      data-cy="gotItButton"
+                      isPrimary
+                      styles={classes.gotItBtn}
+                    >
+                      Got it
+                    </ButtonFilled>
+                  </Center>
                 </div>
               </Unimodal>
             </div>

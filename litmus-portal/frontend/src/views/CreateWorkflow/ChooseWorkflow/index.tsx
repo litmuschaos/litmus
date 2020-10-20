@@ -234,7 +234,7 @@ const ChooseWorkflow: React.FC = () => {
                   handleClick={() => setOpen(false)}
                   isDisabled={false}
                 >
-                  <div>Cancel</div>
+                  Cancel
                 </ButtonOutline>
               </div>
               <div className={classes.saveButton}>
@@ -243,7 +243,7 @@ const ChooseWorkflow: React.FC = () => {
                   isDisabled={!isSuccess.current}
                   handleClick={() => handleSave()}
                 >
-                  <div>Save</div>
+                  Save
                 </ButtonFilled>
               </div>
             </div>
