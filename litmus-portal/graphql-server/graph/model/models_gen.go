@@ -34,6 +34,22 @@ type ChaosWorkFlowResponse struct {
 	IsCustomWorkflow    bool   `json:"isCustomWorkflow"`
 }
 
+type Chart struct {
+	ChartName  string        `json:"ChartName"`
+	Experiment []*Experiment `json:"Experiment"`
+}
+
+type Charts struct {
+	Charts []*Chart `json:"Charts"`
+}
+
+type ChartsInput struct {
+	UserName   string `json:"UserName"`
+	RepoOwner  string `json:"RepoOwner"`
+	RepoBranch string `json:"RepoBranch"`
+	RepoName   string `json:"RepoName"`
+}
+
 type Cluster struct {
 	ClusterID          string  `json:"cluster_id"`
 	ProjectID          string  `json:"project_id"`
@@ -107,6 +123,10 @@ type CreateUserInput struct {
 	CompanyName *string `json:"company_name"`
 	Name        *string `json:"name"`
 	ProjectName string  `json:"project_name"`
+}
+
+type Experiment struct {
+	ExperimentName string `json:"ExperimentName"`
 }
 
 type Member struct {

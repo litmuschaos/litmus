@@ -62,6 +62,15 @@ type ComplexityRoot struct {
 		WorkflowName        func(childComplexity int) int
 	}
 
+	Chart struct {
+		ChartName  func(childComplexity int) int
+		Experiment func(childComplexity int) int
+	}
+
+	Charts struct {
+		Charts func(childComplexity int) int
+	}
+
 	Cluster struct {
 		AccessKey          func(childComplexity int) int
 		ClusterID          func(childComplexity int) int
@@ -97,6 +106,10 @@ type ComplexityRoot struct {
 		EventID     func(childComplexity int) int
 		EventName   func(childComplexity int) int
 		EventType   func(childComplexity int) int
+	}
+
+	Experiment struct {
+		ExperimentName func(childComplexity int) int
 	}
 
 	Member struct {
@@ -152,6 +165,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		GetCharts             func(childComplexity int, chartsInput model.ChartsInput) int
 		GetCluster            func(childComplexity int, projectID string, clusterType *string) int
 		GetProject            func(childComplexity int, projectID string) int
 		GetScheduledWorkflows func(childComplexity int, projectID string) int
@@ -272,6 +286,7 @@ type QueryResolver interface {
 	Users(ctx context.Context) ([]*model.User, error)
 	GetScheduledWorkflows(ctx context.Context, projectID string) ([]*model.ScheduledWorkflows, error)
 	ListWorkflow(ctx context.Context, projectID string, workflowIds []*string) ([]*model.Workflow, error)
+	GetCharts(ctx context.Context, chartsInput model.ChartsInput) (*model.Charts, error)
 }
 type SubscriptionResolver interface {
 	ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error)
@@ -357,6 +372,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ChaosWorkFlowResponse.WorkflowName(childComplexity), true
+
+	case "Chart.ChartName":
+		if e.complexity.Chart.ChartName == nil {
+			break
+		}
+
+		return e.complexity.Chart.ChartName(childComplexity), true
+
+	case "Chart.Experiment":
+		if e.complexity.Chart.Experiment == nil {
+			break
+		}
+
+		return e.complexity.Chart.Experiment(childComplexity), true
+
+	case "Charts.Charts":
+		if e.complexity.Charts.Charts == nil {
+			break
+		}
+
+		return e.complexity.Charts.Charts(childComplexity), true
 
 	case "Cluster.access_key":
 		if e.complexity.Cluster.AccessKey == nil {
@@ -532,6 +568,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ClusterEvent.EventType(childComplexity), true
+
+	case "Experiment.ExperimentName":
+		if e.complexity.Experiment.ExperimentName == nil {
+			break
+		}
+
+		return e.complexity.Experiment.ExperimentName(childComplexity), true
 
 	case "Member.email":
 		if e.complexity.Member.Email == nil {
@@ -866,6 +909,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Project.UpdatedAt(childComplexity), true
+
+	case "Query.getCharts":
+		if e.complexity.Query.GetCharts == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getCharts_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetCharts(childComplexity, args["chartsInput"].(model.ChartsInput)), true
 
 	case "Query.getCluster":
 		if e.complexity.Query.GetCluster == nil {
@@ -1475,21 +1530,41 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 
 var sources = []*ast.Source{
 	&ast.Source{Name: "graph/myhub.graphqls", Input: `type MyHub {
-  id: ID!
-  GitURL: String!
-  GitBranch: String!
-  IsConfirmed: Boolean!
+	id: ID!
+	GitURL: String!
+	GitBranch: String!
+	IsConfirmed: Boolean!
+}
+
+type Charts {
+	Charts: [Chart!]!
+}
+
+type Experiment {
+	ExperimentName: String!
+}
+
+type Chart {
+	ChartName: String!
+	Experiment: [Experiment!]!
+}
+
+input ChartsInput {
+	UserName: String!
+	RepoOwner: String!
+	RepoBranch: String!
+	RepoName: String!
 }
 
 input CreateMyHub {
-  GitURL: String!
-  GitBranch: String!
+	GitURL: String!
+	GitBranch: String!
 }
 
 input UpdateMyHub {
-  id: ID!
-  GitURL: String!
-  GitBranch: String!
+	id: ID!
+	GitURL: String!
+	GitBranch: String!
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/project.graphqls", Input: `type Project {
@@ -1531,260 +1606,262 @@ enum MemberRole {
 directive @authorized on FIELD_DEFINITION
 
 type Cluster {
-  cluster_id: ID!
-  project_id: ID!
-  cluster_name: String!
-  description: String
-  platform_name: String!
-  access_key: String!
-  is_registered: Boolean!
-  is_cluster_confirmed: Boolean!
-  is_active: Boolean!
-  updated_at: String!
-  created_at: String!
-  cluster_type: String!
-  no_of_schedules: Int
-  no_of_workflows: Int
-  token: String!
+	cluster_id: ID!
+	project_id: ID!
+	cluster_name: String!
+	description: String
+	platform_name: String!
+	access_key: String!
+	is_registered: Boolean!
+	is_cluster_confirmed: Boolean!
+	is_active: Boolean!
+	updated_at: String!
+	created_at: String!
+	cluster_type: String!
+	no_of_schedules: Int
+	no_of_workflows: Int
+	token: String!
 }
 
 input ClusterInput {
-  cluster_name: String!
-  description: String
-  platform_name: String!
-  project_id: ID!
-  cluster_type: String!
+	cluster_name: String!
+	description: String
+	platform_name: String!
+	project_id: ID!
+	cluster_type: String!
 }
 
 type ClusterEvent {
-  event_id: ID!
-  event_type: String!
-  event_name: String!
-  description: String!
-  cluster: Cluster!
+	event_id: ID!
+	event_type: String!
+	event_name: String!
+	description: String!
+	cluster: Cluster!
 }
 
 type ActionPayload {
-  request_type: String
-  k8s_manifest: String
-  namespace: String
-  external_data: String
+	request_type: String
+	k8s_manifest: String
+	namespace: String
+	external_data: String
 }
 
 type ClusterAction {
-  project_id: ID!
-  action: ActionPayload!
+	project_id: ID!
+	action: ActionPayload!
 }
 
 input ClusterActionInput {
-  cluster_id: ID!
-  action: String!
+	cluster_id: ID!
+	action: String!
 }
 
 input ClusterEventInput {
-  event_name: String!
-  description: String!
-  cluster_id: String!
-  access_key: String!
+	event_name: String!
+	description: String!
+	cluster_id: String!
+	access_key: String!
 }
 
 input ClusterIdentity {
-  cluster_id: String!
-  access_key: String!
+	cluster_id: String!
+	access_key: String!
 }
 
 type ClusterConfirmResponse {
-  isClusterConfirmed: Boolean!
-  newClusterKey: String
-  cluster_id: String
+	isClusterConfirmed: Boolean!
+	newClusterKey: String
+	cluster_id: String
 }
 
 input WeightagesInput {
-  experiment_name: String!
-  weightage: Int!
+	experiment_name: String!
+	weightage: Int!
 }
 
 type weightages {
-  experiment_name: String!
-  weightage: Int!
+	experiment_name: String!
+	weightage: Int!
 }
 
 input ChaosWorkFlowInput {
-  workflow_manifest: String!
-  cronSyntax: String!
-  workflow_name: String!
-  workflow_description: String!
-  weightages: [WeightagesInput!]!
-  isCustomWorkflow: Boolean!
-  project_id: ID!
-  cluster_id: ID!
+	workflow_manifest: String!
+	cronSyntax: String!
+	workflow_name: String!
+	workflow_description: String!
+	weightages: [WeightagesInput!]!
+	isCustomWorkflow: Boolean!
+	project_id: ID!
+	cluster_id: ID!
 }
 
 type ChaosWorkFlowResponse {
-  workflow_id: String!
-  cronSyntax: String!
-  workflow_name: String!
-  workflow_description: String!
-  isCustomWorkflow: Boolean!
+	workflow_id: String!
+	cronSyntax: String!
+	workflow_name: String!
+	workflow_description: String!
+	isCustomWorkflow: Boolean!
 }
 
 type WorkflowRun {
-  workflow_run_id: ID!
-  workflow_id: ID!
-  cluster_name: String!
-  last_updated: String!
-  project_id: ID!
-  cluster_id: ID!
-  workflow_name: String!
-  cluster_type: String
-  execution_data: String!
+	workflow_run_id: ID!
+	workflow_id: ID!
+	cluster_name: String!
+	last_updated: String!
+	project_id: ID!
+	cluster_id: ID!
+	workflow_name: String!
+	cluster_type: String
+	execution_data: String!
 }
 
 input WorkflowRunInput {
-  workflow_id: ID!
-  workflow_run_id: ID!
-  workflow_name: String!
-  execution_data: String!
-  cluster_id: ClusterIdentity!
+	workflow_id: ID!
+	workflow_run_id: ID!
+	workflow_name: String!
+	execution_data: String!
+	cluster_id: ClusterIdentity!
 }
 
 type PodLogResponse {
-  workflow_run_id: ID!
-  pod_name: String!
-  pod_type: String!
-  log: String!
+	workflow_run_id: ID!
+	pod_name: String!
+	pod_type: String!
+	log: String!
 }
 
 input PodLog {
-  cluster_id: ClusterIdentity!
-  request_id: ID!
-  workflow_run_id: ID!
-  pod_name: String!
-  pod_type: String!
-  log: String!
+	cluster_id: ClusterIdentity!
+	request_id: ID!
+	workflow_run_id: ID!
+	pod_name: String!
+	pod_type: String!
+	log: String!
 }
 
 input PodLogRequest {
-  cluster_id: ID!
-  workflow_run_id: ID!
-  pod_name: String!
-  pod_namespace: String!
-  pod_type: String!
-  exp_pod: String
-  runner_pod: String
-  chaos_namespace: String
+	cluster_id: ID!
+	workflow_run_id: ID!
+	pod_name: String!
+	pod_namespace: String!
+	pod_type: String!
+	exp_pod: String
+	runner_pod: String
+	chaos_namespace: String
 }
 
 type ScheduledWorkflows {
-  workflow_id: String!
-  workflow_manifest: String!
-  cronSyntax: String!
-  cluster_name: String!
-  workflow_name: String!
-  workflow_description: String!
-  weightages: [weightages!]!
-  isCustomWorkflow: Boolean!
-  updated_at: String!
-  created_at: String!
-  project_id: ID!
-  cluster_id: ID!
-  cluster_type: String!
+	workflow_id: String!
+	workflow_manifest: String!
+	cronSyntax: String!
+	cluster_name: String!
+	workflow_name: String!
+	workflow_description: String!
+	weightages: [weightages!]!
+	isCustomWorkflow: Boolean!
+	updated_at: String!
+	created_at: String!
+	project_id: ID!
+	cluster_id: ID!
+	cluster_type: String!
 }
 
 type Workflow {
-  workflow_id: String!
-  workflow_manifest: String!
-  cronSyntax: String!
-  cluster_name: String!
-  workflow_name: String!
-  workflow_description: String!
-  weightages: [weightages!]!
-  isCustomWorkflow: Boolean!
-  updated_at: String!
-  created_at: String!
-  project_id: ID!
-  cluster_id: ID!
-  cluster_type: String!
-  workflow_runs: [WorkflowRuns]
+	workflow_id: String!
+	workflow_manifest: String!
+	cronSyntax: String!
+	cluster_name: String!
+	workflow_name: String!
+	workflow_description: String!
+	weightages: [weightages!]!
+	isCustomWorkflow: Boolean!
+	updated_at: String!
+	created_at: String!
+	project_id: ID!
+	cluster_id: ID!
+	cluster_type: String!
+	workflow_runs: [WorkflowRuns]
 }
 
 type WorkflowRuns {
-  execution_data: String!
-  workflow_run_id: ID!
-  last_updated: String!
+	execution_data: String!
+	workflow_run_id: ID!
+	last_updated: String!
 }
 
 type clusterRegResponse {
-  token: String!
-  cluster_id: String!
-  cluster_name: String!
+	token: String!
+	cluster_id: String!
+	cluster_name: String!
 }
 
 type Query {
-  # [Deprecated soon]
-  getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
+	# [Deprecated soon]
+	getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
 
-  getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
+	getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
 
-  getUser(username: String!): User! @authorized
+	getUser(username: String!): User! @authorized
 
-  getProject(projectID: String!): Project! @authorized
+	getProject(projectID: String!): Project! @authorized
 
-  users: [User!]! @authorized
+	users: [User!]! @authorized
 
-  # [Deprecated soon]
-  getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
+	# [Deprecated soon]
+	getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
 
-  ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
+	ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
+
+	getCharts(chartsInput: ChartsInput!): Charts! @authorized
 }
 
 type Mutation {
-  #It is used to create external cluster.
-  userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
+	#It is used to create external cluster.
+	userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
-  #It is used to create chaosworkflow
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
-    @authorized
+	#It is used to create chaosworkflow
+	createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
+		@authorized
 
-  createUser(user: CreateUserInput!): User! @authorized
+	createUser(user: CreateUserInput!): User! @authorized
 
-  updateUser(user: UpdateUserInput!): String! @authorized
+	updateUser(user: UpdateUserInput!): String! @authorized
 
-  deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
+	deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
 
-  sendInvitation(member: MemberInput!): Member @authorized
+	sendInvitation(member: MemberInput!): Member @authorized
 
-  acceptInvitation(member: MemberInput!): String! @authorized
+	acceptInvitation(member: MemberInput!): String! @authorized
 
-  declineInvitation(member: MemberInput!): String! @authorized
+	declineInvitation(member: MemberInput!): String! @authorized
 
-  removeInvitation(member: MemberInput!): String! @authorized
+	removeInvitation(member: MemberInput!): String! @authorized
 
-  #It is used to confirm the subscriber registration
-  clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
+	#It is used to confirm the subscriber registration
+	clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
 
-  #It is used to send cluster related events from the subscriber
-  newClusterEvent(clusterEvent: ClusterEventInput!): String!
+	#It is used to send cluster related events from the subscriber
+	newClusterEvent(clusterEvent: ClusterEventInput!): String!
 
-  chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
+	chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
 
-  podLog(log: PodLog!): String!
+	podLog(log: PodLog!): String!
 
-  addMyHub(myhubInput: CreateMyHub!, username: String!): User! @authorized
+	addMyHub(myhubInput: CreateMyHub!, username: String!): User! @authorized
 
-  updateMyHub(username: String!, updateMyHub: UpdateMyHub!): User! @authorized
+	updateMyHub(username: String!, updateMyHub: UpdateMyHub!): User! @authorized
 }
 
 type Subscription {
-  #It is used to listen cluster events from the graphql server
-  clusterEventListener(project_id: String!): ClusterEvent! @authorized
+	#It is used to listen cluster events from the graphql server
+	clusterEventListener(project_id: String!): ClusterEvent! @authorized
 
-  workflowEventListener(project_id: String!): WorkflowRun! @authorized
+	workflowEventListener(project_id: String!): WorkflowRun! @authorized
 
-  getPodLog(podDetails: PodLogRequest!): PodLogResponse! @authorized
+	getPodLog(podDetails: PodLogRequest!): PodLogResponse! @authorized
 
-  #It is used to listen cluster operation request from the graphql server
-  clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
+	#It is used to listen cluster operation request from the graphql server
+	clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/usermanagement.graphqls", Input: `type User {
@@ -2084,6 +2161,20 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getCharts_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.ChartsInput
+	if tmp, ok := rawArgs["chartsInput"]; ok {
+		arg0, err = ec.unmarshalNChartsInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChartsInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["chartsInput"] = arg0
 	return args, nil
 }
 
@@ -2549,6 +2640,108 @@ func (ec *executionContext) _ChaosWorkFlowResponse_isCustomWorkflow(ctx context.
 	res := resTmp.(bool)
 	fc.Result = res
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Chart_ChartName(ctx context.Context, field graphql.CollectedField, obj *model.Chart) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Chart",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ChartName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Chart_Experiment(ctx context.Context, field graphql.CollectedField, obj *model.Chart) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Chart",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Experiment, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Experiment)
+	fc.Result = res
+	return ec.marshalNExperiment2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐExperimentᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Charts_Charts(ctx context.Context, field graphql.CollectedField, obj *model.Charts) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Charts",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Charts, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Chart)
+	fc.Result = res
+	return ec.marshalNChart2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChartᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Cluster_cluster_id(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
@@ -3384,6 +3577,40 @@ func (ec *executionContext) _ClusterEvent_cluster(ctx context.Context, field gra
 	res := resTmp.(*model.Cluster)
 	fc.Result = res
 	return ec.marshalNCluster2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCluster(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Experiment_ExperimentName(ctx context.Context, field graphql.CollectedField, obj *model.Experiment) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Experiment",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExperimentName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Member_user_id(ctx context.Context, field graphql.CollectedField, obj *model.Member) (ret graphql.Marshaler) {
@@ -5381,6 +5608,67 @@ func (ec *executionContext) _Query_ListWorkflow(ctx context.Context, field graph
 	res := resTmp.([]*model.Workflow)
 	fc.Result = res
 	return ec.marshalNWorkflow2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflow(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getCharts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getCharts_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetCharts(rctx, args["chartsInput"].(model.ChartsInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.Charts); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.Charts`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Charts)
+	fc.Result = res
+	return ec.marshalNCharts2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCharts(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -8745,6 +9033,42 @@ func (ec *executionContext) unmarshalInputChaosWorkFlowInput(ctx context.Context
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputChartsInput(ctx context.Context, obj interface{}) (model.ChartsInput, error) {
+	var it model.ChartsInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "UserName":
+			var err error
+			it.UserName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "RepoOwner":
+			var err error
+			it.RepoOwner, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "RepoBranch":
+			var err error
+			it.RepoBranch, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "RepoName":
+			var err error
+			it.RepoName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputClusterActionInput(ctx context.Context, obj interface{}) (model.ClusterActionInput, error) {
 	var it model.ClusterActionInput
 	var asMap = obj.(map[string]interface{})
@@ -9292,6 +9616,65 @@ func (ec *executionContext) _ChaosWorkFlowResponse(ctx context.Context, sel ast.
 	return out
 }
 
+var chartImplementors = []string{"Chart"}
+
+func (ec *executionContext) _Chart(ctx context.Context, sel ast.SelectionSet, obj *model.Chart) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, chartImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Chart")
+		case "ChartName":
+			out.Values[i] = ec._Chart_ChartName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Experiment":
+			out.Values[i] = ec._Chart_Experiment(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var chartsImplementors = []string{"Charts"}
+
+func (ec *executionContext) _Charts(ctx context.Context, sel ast.SelectionSet, obj *model.Charts) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, chartsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Charts")
+		case "Charts":
+			out.Values[i] = ec._Charts_Charts(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var clusterImplementors = []string{"Cluster"}
 
 func (ec *executionContext) _Cluster(ctx context.Context, sel ast.SelectionSet, obj *model.Cluster) graphql.Marshaler {
@@ -9476,6 +9859,33 @@ func (ec *executionContext) _ClusterEvent(ctx context.Context, sel ast.Selection
 			}
 		case "cluster":
 			out.Values[i] = ec._ClusterEvent_cluster(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var experimentImplementors = []string{"Experiment"}
+
+func (ec *executionContext) _Experiment(ctx context.Context, sel ast.SelectionSet, obj *model.Experiment) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, experimentImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Experiment")
+		case "ExperimentName":
+			out.Values[i] = ec._Experiment_ExperimentName(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -9891,6 +10301,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_ListWorkflow(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getCharts":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getCharts(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -10643,6 +11067,75 @@ func (ec *executionContext) marshalNChaosWorkFlowResponse2ᚖgithubᚗcomᚋlitm
 	return ec._ChaosWorkFlowResponse(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNChart2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChart(ctx context.Context, sel ast.SelectionSet, v model.Chart) graphql.Marshaler {
+	return ec._Chart(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNChart2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChartᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Chart) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNChart2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChart(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNChart2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChart(ctx context.Context, sel ast.SelectionSet, v *model.Chart) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Chart(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNCharts2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCharts(ctx context.Context, sel ast.SelectionSet, v model.Charts) graphql.Marshaler {
+	return ec._Charts(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNCharts2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCharts(ctx context.Context, sel ast.SelectionSet, v *model.Charts) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Charts(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNChartsInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChartsInput(ctx context.Context, v interface{}) (model.ChartsInput, error) {
+	return ec.unmarshalInputChartsInput(ctx, v)
+}
+
 func (ec *executionContext) marshalNCluster2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCluster(ctx context.Context, sel ast.SelectionSet, v model.Cluster) graphql.Marshaler {
 	return ec._Cluster(ctx, sel, &v)
 }
@@ -10762,6 +11255,57 @@ func (ec *executionContext) unmarshalNCreateMyHub2githubᚗcomᚋlitmuschaosᚋl
 
 func (ec *executionContext) unmarshalNCreateUserInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateUserInput(ctx context.Context, v interface{}) (model.CreateUserInput, error) {
 	return ec.unmarshalInputCreateUserInput(ctx, v)
+}
+
+func (ec *executionContext) marshalNExperiment2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐExperiment(ctx context.Context, sel ast.SelectionSet, v model.Experiment) graphql.Marshaler {
+	return ec._Experiment(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNExperiment2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐExperimentᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Experiment) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNExperiment2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐExperiment(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNExperiment2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐExperiment(ctx context.Context, sel ast.SelectionSet, v *model.Experiment) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Experiment(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {

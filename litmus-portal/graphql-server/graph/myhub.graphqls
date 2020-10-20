@@ -1,17 +1,37 @@
 type MyHub {
-  id: ID!
-  GitURL: String!
-  GitBranch: String!
-  IsConfirmed: Boolean!
+	id: ID!
+	GitURL: String!
+	GitBranch: String!
+	IsConfirmed: Boolean!
+}
+
+type Charts {
+	Charts: [Chart!]!
+}
+
+type Experiment {
+	ExperimentName: String!
+}
+
+type Chart {
+	ChartName: String!
+	Experiment: [Experiment!]!
+}
+
+input ChartsInput {
+	UserName: String!
+	RepoOwner: String!
+	RepoBranch: String!
+	RepoName: String!
 }
 
 input CreateMyHub {
-  GitURL: String!
-  GitBranch: String!
+	GitURL: String!
+	GitBranch: String!
 }
 
 input UpdateMyHub {
-  id: ID!
-  GitURL: String!
-  GitBranch: String!
+	id: ID!
+	GitURL: String!
+	GitBranch: String!
 }

@@ -118,6 +118,10 @@ func (r *queryResolver) ListWorkflow(ctx context.Context, projectID string, work
 	}
 }
 
+func (r *queryResolver) GetCharts(ctx context.Context, chartsInput model.ChartsInput) (*model.Charts, error) {
+	return myhub.GetCharts(ctx, chartsInput)
+}
+
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {
 	log.Print("NEW EVENT ", projectID)
 	clusterEvent := make(chan *model.ClusterEvent, 1)

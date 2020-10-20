@@ -5,7 +5,6 @@ import (
 	"os"
 	"strings"
 	"time"
-
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
@@ -33,36 +32,28 @@ var (
 	status *git.Status
 	err    error
 )
-var (
-	UserName   = "amit_das"
-	RepoOwner  = "Jonsy13"
-	RepoName   = "litmus"
-	RepoBranch = "master"
-)
 
-// Trigger is reposible for setting off the go routine for git-op
-func gitClone() {
+//gitClone Trigger is reposible for setting off the go routine for git-op
+func GitClone(UserName string, RepoName string, RepoBranch string, RepoOwner string) {
 	gitConfig := GitConfig{
 		UserName:       UserName,
 		RepositoryName: RepoName,
 		RepositoryURL:  "https://github.com/" + RepoOwner + "/" + RepoName,
 		RemoteName:     "origin",
 	}
-	for {
-		_, err := gitConfig.getChaosChartRepo()
+		_, err := gitConfig.getChaosChartRepo(RepoBranch)
 		if err != nil {
 			fmt.Print("Error in cloning")
 		}
 		if err := gitConfig.chaosChartSyncHandler(RepoBranch); err != nil {
 			log.Error(err)
 		}
-		log.Infof("********* Repository syncing completed for version: '%s' *********", RepoBranch)
-		time.Sleep(timeInterval)
-	}
+		log.Infof("********* Repository syncing completed for version: '%s' *********", RepoBranch)	
 }
 
+
 //getChaosChartVersion is responsible for plain cloning the repository
-func (c GitConfig) getChaosChartRepo() (string, error) {
+func (c GitConfig) getChaosChartRepo(RepoBranch string) (string, error) {
 	if _, err := os.Stat("/tmp/version/" + c.UserName + "/" + c.RepositoryName); err == nil {
 		os.RemoveAll("/tmp/version/" + c.UserName + "/" + c.RepositoryName)
 	}
@@ -235,7 +226,7 @@ func (c GitConfig) GitPull(RepoBranch string) error {
 }
 
 // HandlerForCleanStatus calls relative functions if the GitGetStatus gives a clean status as a result
-func (c GitConfig) HandlerForCleanStatus(version string) error {
+func (c GitConfig) HandlerForCleanStatus(RepoBranch string) error {
 	MatchValue, err := c.CompareLocalandRemoteCommit(RepoBranch)
 	if err != nil {
 		return err

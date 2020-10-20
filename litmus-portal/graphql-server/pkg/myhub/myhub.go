@@ -1,6 +1,7 @@
 package myhub
 
 import (
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/gitops"
 	"context"
 	"fmt"
 	"log"
@@ -75,4 +76,15 @@ func IsMyHubAvailable(ctx context.Context, myhub model.CreateMyHub, username str
 		}
 	}
 	return false, nil
+}
+
+//GetCharts is responsible for getting the charts details
+func GetCharts(ctx context.Context, chartsInput model.ChartsInput) (*model.Charts, error){
+	username:= chartsInput.UserName
+	reponame:= chartsInput.RepoName
+	repobranch:= chartsInput.RepoBranch
+	repowoner:= chartsInput.RepoOwner
+	gitops.GitClone(username, reponame, repobranch, repowoner)
+	
+	return nil, nil
 }
