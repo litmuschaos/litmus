@@ -2,7 +2,7 @@ import { Typography } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import InputField from '../../../components/InputField';
@@ -187,9 +187,10 @@ const ChooseWorkflow: React.FC = () => {
       </div>
       <Unimodal isOpen={open} handleClose={() => setOpen(false)} hasCloseBtn>
         <Typography className={classes.modalHeading} display="inline">
-          <Trans i18nKey="createWorkflow.chooseWorkflow.modalHeading">
-            Create your <strong>workflow name</strong>
-          </Trans>
+          {t('createWorkflow.chooseWorkflow.modalHeading')}{' '}
+          <strong>
+            {t('createWorkflow.chooseWorkflow.modalHeadingStrong')}
+          </strong>
         </Typography>
         <div className={classes.modalContainerBody}>
           <div className={classes.inputDiv}>

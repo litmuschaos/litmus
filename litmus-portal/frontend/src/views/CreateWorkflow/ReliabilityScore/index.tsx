@@ -1,7 +1,7 @@
 import { Typography } from '@material-ui/core';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import Center from '../../../containers/layouts/Center';
@@ -58,13 +58,10 @@ const ReliablityScore = () => {
             </Typography>
             <Typography className={classes.description}>
               {t('createWorkflow.reliabilityScore.info')} {weights?.length}{' '}
-              <Trans i18nKey="createWorkflow.reliabilityScore.infoNext">
-                tests in the “Kubernetes conformance test” workflow. Successful
-                outcome of each test carries a certain weight. We have
-                pre-selected weights for each test for you. However, you may
-                review and modify the weigtage against.
-                <strong>The weights are relative to each other.</strong>
-              </Trans>
+              {t('createWorkflow.reliabilityScore.infoNext')}{' '}
+              <strong>
+                {t('createWorkflow.reliabilityScore.infoNextStrong')}
+              </strong>
             </Typography>
           </div>
           <hr className={classes.horizontalLine} />

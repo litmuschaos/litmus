@@ -1,6 +1,6 @@
 import { Divider, Typography } from '@material-ui/core';
 import React, { useRef, useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import InputFieldOutline from '../../../../components/InputFieldOutline';
 import Loader from '../../../../components/Loader';
@@ -219,9 +219,15 @@ const AccountSettings: React.FC = () => {
                   <div className={classes.errDiv}>
                     <div className={classes.textError}>
                       <Typography className={classes.typo} align="center">
-                        <Trans i18nKey="settings.accountsTab.accountsSettings.modal.headerErr">
-                          <strong>Error:</strong> while changing the password.
-                        </Trans>
+                        <strong>
+                          {t(
+                            'settings.accountsTab.accountsSettings.modal.headerErrStrong'
+                          )}
+                          :
+                        </strong>{' '}
+                        {t(
+                          'settings.accountsTab.accountsSettings.modal.headerErr'
+                        )}
                       </Typography>
                     </div>
                     <div className={classes.textSecondError}>
@@ -251,9 +257,15 @@ const AccountSettings: React.FC = () => {
                     <img src="./icons/lock.svg" alt="lock" />
                     <div className={classes.text}>
                       <Typography className={classes.typo} align="center">
-                        <Trans i18nKey="settings.accountsTab.accountsSettings.modal.header">
-                          Your password <strong>has been changed!</strong>
-                        </Trans>
+                        {t(
+                          'settings.accountsTab.accountsSettings.modal.header'
+                        )}{' '}
+                        <strong>
+                          {t(
+                            'settings.accountsTab.accountsSettings.modal.headerStrong'
+                          )}
+                        </strong>
+                        Your password <strong>has been changed!</strong>
                       </Typography>
                     </div>
                     <div className={classes.text1}>

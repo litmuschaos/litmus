@@ -12,7 +12,7 @@ import {
 import { useTheme } from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import Loader from '../../../../../components/Loader';
 import { ALL_USERS, GET_USER, SEND_INVITE } from '../../../../../graphql';
@@ -194,9 +194,12 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                   <img src="./icons/checkmark.svg" alt="checkmark" />
                   <div className={classes.text}>
                     <Typography className={classes.typo}>
-                      <Trans i18nKey="settings.teamingTab.inviteNew.invite.successHeader">
-                        Invitation <strong>sent successfully</strong>
-                      </Trans>
+                      {t('settings.teamingTab.inviteNew.invite.successHeader')}{' '}
+                      <strong>
+                        {t(
+                          'settings.teamingTab.inviteNew.invite.successHeaderStrong'
+                        )}
+                      </strong>
                     </Typography>
                   </div>
                   <div className={classes.textSecond}>
@@ -226,9 +229,10 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
       ) : (
         <div>
           <Typography className={classes.Header}>
-            <Trans i18nKey="settings.teamingTab.inviteNew.invite.header">
-              Invite <strong>new member</strong>
-            </Trans>
+            {t('settings.teamingTab.inviteNew.invite.header')}{' '}
+            <strong>
+              {t('settings.teamingTab.inviteNew.invite.headerStrong')}
+            </strong>
           </Typography>
           <Toolbar className={classes.toolbar}>
             <div

@@ -162,19 +162,15 @@ chaosWorkflows:
       resilienceScoreComparison: Resilience score comparison
       comparativeResults: Comparative results of selected workflows which ran successfully
       once: Once
-      seeAnalytics: See analytics
-
-createWorkflow:
-  workflowCluster:
-    activeCluster: Choose an active cluster
-    none: None
+      seeAnalytics: See analytics  
 
 settings:
   accountsTab:
     personalDetails:
       modal:
-        header: Your personal information <1>has been changed!</1>
-        headerErr: <0>Error:</0> while updating details.
+        header: Your personal information
+        headerStrong: has been changed!
+        headerErr: while updating details.
         headerErrStrong: Error
         info: Changes took effect
       button:
@@ -183,8 +179,9 @@ settings:
     accountsSettings:
       header: Password
       modal:
-        header: Your password <1>has been changed!</1>
-        headerErr: <0>Error:</0> while changing the password.
+        header: Your password
+        headerStrong: has been changed!
+        headerErr: while changing the password.
         info: You can now use your new password to login to your account
         headerErrStrong: Error
       label:
@@ -221,8 +218,10 @@ settings:
     inviteNew:
       header: Invite new member
       invite:
-        header: Invite <1>new member</1>
-        successHeader: Invitation <1>sent successfully</1>
+        header: Invite
+        headerStrong: new member
+        successHeader: Invitation
+        successHeaderStrong: sent successfully
         info: You have successfully sent the invitation. After confirmation user will be added to the existing list of member.
         noUsers: No users available.
         label:
@@ -234,7 +233,8 @@ settings:
       button:
         invitation: Invitation
       modal:
-        header: Manage <1>invitations</1> 
+        header: Manage
+        headerStrong: invitations
       receivedInvitation:
         noInvites: No invitations received.
         button:
@@ -288,8 +288,9 @@ settings:
         info: You can now use your new password to login to your account
         button: Choose an avatar
       newUserModal:
-        header: A new user <1>{{name}}</1> was successfully created
-        headerErr: <0> Error </0> while creating a new user.
+        header: A new user
+        headerInfo: was successfully created
+        headerErr: while creating a new user.
         error: Error
         info: Now information about it will be displayed on the user management screen of the application.
         button:
@@ -302,8 +303,9 @@ settings:
       label:
         newPassword: New Password
       resetModal:
-        header: The user’s password was <1>successfully reset </1>
-        headerErr: <0> Error </0> while resetting password.
+        header: The user’s password was
+        headerStrong: successfully reset
+        headerErr: while resetting password.
         info: The user needs to login with the new credentials.
         error: Error
         button:
@@ -361,7 +363,8 @@ createWorkflow:
     info: Select one of the pre-defined chaos workflows or design your own workflow.
     preDefined: pre-defined workflows
     saved: Name saved as
-    modalHeading: Create your <1>workflow name</1>
+    modalHeading: Create your
+    modalHeadingStrong: workflow name
     label:
       workflowName: Workflow name
       desc: Description
@@ -372,7 +375,8 @@ createWorkflow:
   reliabilityScore:
     header: Adjust the weights of the experiments in the workflow
     info: You have selected
-    infoNext: tests in the “Kubernetes conformance test” workflow. Successful outcome of each test carries a certain weight. We have pre-selected weights for each test for you. However, you may review and modify the weigtage against. <1>The weights are relative to each other.</1>
+    infoNext: tests in the “Kubernetes conformance test” workflow. Successful outcome of each test carries a certain weight. We have pre-selected weights for each test for you. However, you may review and modify the weigtage against.
+    infoNextStrong: The weights are relative to each other.
     testHeading: Kubernetes conformance test
     testInfo: Compare the importance of the items above and launch a demo version of Kubernetes conformance test to see how it works.
     button:
@@ -431,6 +435,9 @@ createWorkflow:
       schedule: Schedule
       schedulingNow: Scheduling now
       adjustedWeights: Adjusted Weights
+  workflowCluster:
+    activeCluster: Choose an active cluster
+    none: None
 
 ######################################
 ############    Targets    ###########

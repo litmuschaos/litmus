@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Loader from '../../../../components/Loader';
 import config from '../../../../config';
@@ -160,9 +160,13 @@ const PersonalDetails: React.FC = () => {
                 {/* <img src="./icons/checkmark.svg" alt="checkmark" /> */}
                 <div className={classes.textError}>
                   <Typography className={classes.typo} align="center">
-                    <Trans i18nKey="settings.accountsTab.personalDetails.modal.headerErr">
-                      <strong>Error:</strong> while updating details.
-                    </Trans>
+                    <strong>
+                      {t(
+                        'settings.accountsTab.personalDetails.modal.headerErrStrong'
+                      )}
+                      :
+                    </strong>{' '}
+                    {t('settings.accountsTab.personalDetails.modal.headerErr')}
                   </Typography>
                 </div>
                 <div className={classes.textSecondError}>
@@ -188,10 +192,12 @@ const PersonalDetails: React.FC = () => {
                 <img src="./icons/userLarge.svg" alt="user" />
                 <div className={classes.text}>
                   <Typography className={classes.typo} align="center">
-                    <Trans i18nKey="settings.accountsTab.personalDetails.modal.header">
-                      Your personal information{' '}
-                      <strong>has been changed!</strong>
-                    </Trans>
+                    {t('settings.accountsTab.personalDetails.modal.header')}{' '}
+                    <strong>
+                      {t(
+                        'settings.accountsTab.personalDetails.modal.headerStrong'
+                      )}
+                    </strong>
                   </Typography>
                 </div>
                 <div className={classes.text1}>

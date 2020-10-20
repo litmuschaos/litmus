@@ -1,6 +1,6 @@
 import { Typography } from '@material-ui/core';
 import React, { useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import Loader from '../../../../../components/Loader';
 import config from '../../../../../config';
@@ -94,9 +94,14 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
 
             <div className={classes.textError}>
               <Typography className={classes.typo} align="center">
-                <Trans i18nKey="settings.userManagementTab.createUser.newUserModal.headerErr">
-                  <strong> Error </strong> while creating a new user.
-                </Trans>
+                <strong>
+                  {t(
+                    'settings.userManagementTab.createUser.newUserModal.error'
+                  )}
+                </strong>{' '}
+                {t(
+                  'settings.userManagementTab.createUser.newUserModal.headerErr'
+                )}
               </Typography>
             </div>
             <div className={classes.textSecondError}>
@@ -124,13 +129,11 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
             <img src="./icons/checkmark.svg" alt="checkmark" />
             <div className={classes.text}>
               <Typography className={classes.typo} align="center">
-                <Trans
-                  i18nKey="settings.userManagementTab.createUser.newUserModal.header"
-                  name={name}
-                >
-                  A new user <strong>{{ name }}</strong> was successfully
-                  created
-                </Trans>
+                {t('settings.userManagementTab.createUser.newUserModal.header')}{' '}
+                <strong>{name}</strong>{' '}
+                {t(
+                  'settings.userManagementTab.createUser.newUserModal.headerInfo'
+                )}
               </Typography>
             </div>
             <div className={classes.textSecond}>
