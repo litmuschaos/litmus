@@ -17,7 +17,7 @@
 
 #### *Das README in [anderen Sprachen](translations/TRANSLATIONS.md).*
 
-[🇰🇷](https://github.com/litmuschaos/litmus/blob/master/translations/README-ko.md) [🇨🇳](https://github.com/litmuschaos/litmus/blob/master/translations/README-chn.md) [gb](https://github.com/litmuschaos/litmus/blob/master/README.md)
+[🇰🇷](https://github.com/litmuschaos/litmus/blob/master/translations/README-ko.md) [🇨🇳](https://github.com/litmuschaos/litmus/blob/master/translations/README-chn.md) [:gb](https://github.com/litmuschaos/litmus/blob/master/README.md)
 
 ## Überblick
 
