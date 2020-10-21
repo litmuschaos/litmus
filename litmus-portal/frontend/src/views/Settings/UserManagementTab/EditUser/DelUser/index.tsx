@@ -49,7 +49,9 @@ const DelUser: React.FC<DelUserProps> = ({
                 <>{t('settings.teamingTab.deleteModal.body')}</>
               ) : (
                 <>
-                  {t('settings.userManagementTab.deleteUser.deleteModal.body')}
+                  {t(
+                    'settings.userManagementTab.editUser.deleteUser.deleteModal.body'
+                  )}
                 </>
               )}
             </Typography>

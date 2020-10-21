@@ -1,5 +1,6 @@
 import { Divider, Typography } from '@material-ui/core';
 import React, { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import InputFieldOutline from '../../../../components/InputFieldOutline';
 import Loader from '../../../../components/Loader';
@@ -23,6 +24,7 @@ interface Password {
 // AccountSettings displays the starting page of "Accounts" tab
 const AccountSettings: React.FC = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   // used for modal
   const [open, setOpen] = React.useState(false);
@@ -119,7 +121,7 @@ const AccountSettings: React.FC = () => {
 
           {/* Displays the lower segment containing the password details */}
           <Typography className={classes.headerText}>
-            <strong>Password</strong>
+            <strong>{t('settings.accountsTab.accountsSettings.header')}</strong>
           </Typography>
           <div className={classes.outerPass}>
             <form className={classes.innerPass}>
@@ -130,7 +132,9 @@ const AccountSettings: React.FC = () => {
                   value={password.currPassword}
                   handleChange={handleCurrPassword('currPassword')}
                   type="password"
-                  label="Current Password"
+                  label={t(
+                    'settings.accountsTab.accountsSettings.label.currPassword'
+                  )}
                   validationError={false}
                 />
               </div>
@@ -146,7 +150,9 @@ const AccountSettings: React.FC = () => {
                       ? 'Should not start with empty space'
                       : ''
                   }
-                  label="New Password"
+                  label={t(
+                    'settings.accountsTab.accountsSettings.label.newPassword'
+                  )}
                   validationError={validateStartEmptySpacing(
                     password.newPassword
                   )}
@@ -168,7 +174,9 @@ const AccountSettings: React.FC = () => {
                   type="password"
                   handleChange={handleConfPassword('confNewPassword')}
                   success={isSuccess.current}
-                  label="Confirm Password"
+                  label={t(
+                    'settings.accountsTab.accountsSettings.label.confNewPassword'
+                  )}
                   validationError={validateConfirmPassword(
                     password.newPassword,
                     password.confNewPassword
@@ -194,7 +202,11 @@ const AccountSettings: React.FC = () => {
                       <Loader size={20} />
                     </div>
                   ) : (
-                    <>Change Password</>
+                    <>
+                      {t(
+                        'settings.accountsTab.accountsSettings.button.changePass'
+                      )}
+                    </>
                   )}
                 </ButtonFilled>
               </div>
@@ -207,12 +219,23 @@ const AccountSettings: React.FC = () => {
                   <div className={classes.errDiv}>
                     <div className={classes.textError}>
                       <Typography className={classes.typo} align="center">
-                        <strong> Error </strong> while changing the password.
+                        <strong>
+                          {t(
+                            'settings.accountsTab.accountsSettings.modal.headerErrStrong'
+                          )}
+                          :
+                        </strong>{' '}
+                        {t(
+                          'settings.accountsTab.accountsSettings.modal.headerErr'
+                        )}
                       </Typography>
                     </div>
                     <div className={classes.textSecondError}>
                       <Typography className={classes.typoSub}>
-                        Error: {error}
+                        {t(
+                          'settings.accountsTab.accountsSettings.modal.headerErrStrong'
+                        )}
+                        : {error}
                       </Typography>
                     </div>
                     <div data-cy="done" className={classes.buttonModal}>
@@ -221,7 +244,11 @@ const AccountSettings: React.FC = () => {
                         isDisabled={false}
                         handleClick={handleClose}
                       >
-                        <>Done</>
+                        <>
+                          {t(
+                            'settings.accountsTab.accountsSettings.button.done'
+                          )}
+                        </>
                       </ButtonFilled>
                     </div>
                   </div>
@@ -230,13 +257,20 @@ const AccountSettings: React.FC = () => {
                     <img src="./icons/lock.svg" alt="lock" />
                     <div className={classes.text}>
                       <Typography className={classes.typo} align="center">
+                        {t(
+                          'settings.accountsTab.accountsSettings.modal.header'
+                        )}{' '}
+                        <strong>
+                          {t(
+                            'settings.accountsTab.accountsSettings.modal.headerStrong'
+                          )}
+                        </strong>
                         Your password <strong>has been changed!</strong>
                       </Typography>
                     </div>
                     <div className={classes.text1}>
                       <Typography className={classes.typo1}>
-                        You can now use your new password to login to your
-                        account
+                        {t('settings.accountsTab.accountsSettings.modal.info')}
                       </Typography>
                     </div>
                     <div data-cy="done" className={classes.buttonModal}>
@@ -245,7 +279,11 @@ const AccountSettings: React.FC = () => {
                         isDisabled={false}
                         handleClick={handleClose}
                       >
-                        <>Done</>
+                        <>
+                          {t(
+                            'settings.accountsTab.accountsSettings.button.done'
+                          )}
+                        </>
                       </ButtonFilled>
                     </div>
                   </div>

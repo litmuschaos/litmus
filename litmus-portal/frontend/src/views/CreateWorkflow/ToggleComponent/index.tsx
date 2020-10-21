@@ -1,10 +1,12 @@
 import React from 'react';
 import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
+import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
 
 const ToggleComponent = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   // Default Props are false
   const [currentState, setCurrentState] = React.useState<boolean>(true);
@@ -39,7 +41,9 @@ const ToggleComponent = () => {
         ) : (
           <img src="icons/NotPass.png" alt="Not Pass" />
         )}
-        <Typography className={classes.typography}>Pass</Typography>
+        <Typography className={classes.typography}>
+          {t('createWorkflow.toggleComponent.pass')}
+        </Typography>
       </Button>
 
       {/* Failed Button */}
@@ -58,7 +62,9 @@ const ToggleComponent = () => {
         ) : (
           <img src="icons/NotFail.png" alt="Not Fail" />
         )}
-        <Typography className={classes.typography}>Fail</Typography>
+        <Typography className={classes.typography}>
+          {t('createWorkflow.toggleComponent.fail')}
+        </Typography>
       </Button>
     </div>
   );
