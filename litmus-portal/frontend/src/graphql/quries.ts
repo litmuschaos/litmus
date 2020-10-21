@@ -86,6 +86,10 @@ export const GET_USER = gql`
         name
         id
       }
+      my_hub {
+        GitURL
+        GitBranch
+      }
       company_name
       updated_at
       created_at
@@ -126,6 +130,16 @@ export const ALL_USERS = gql`
       name
       username
       email
+    }
+  }
+`;
+
+export const GET_CHARTS = gql`
+  query getCharts($chartsInput: ChartsInput!) {
+    getCharts(chartsInput: $chartsInput) {
+      Charts {
+        ChartName
+      }
     }
   }
 `;

@@ -1,5 +1,7 @@
 import { Typography } from '@material-ui/core';
 import React, { useState } from 'react';
+import { useMutation } from '@apollo/client';
+import { useSelector } from 'react-redux';
 import BackButton from '../../../components/Button/BackButton';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import InputField from '../../../components/InputField';
@@ -10,6 +12,8 @@ import Unimodal from '../../../containers/layouts/Unimodal';
 import { validateStartEmptySpacing } from '../../../utils/validate';
 import useStyles from './styles';
 import { history } from '../../../redux/configureStore';
+import { ADD_MY_HUB } from '../../../graphql/mutations';
+import { RootState } from '../../../redux/reducers';
 
 interface GitHub {
   GitURL: string;
@@ -18,11 +22,19 @@ interface GitHub {
 
 const MyHub = () => {
   const classes = useStyles();
+  const userData = useSelector((state: RootState) => state.userData);
   const [gitHub, setGitHub] = useState<GitHub>({
     GitURL: '',
     GitBranch: '',
   });
+
   const [isOpen, setIsOpen] = useState(false);
+
+  const [addMyHub] = useMutation(ADD_MY_HUB, {
+    onCompleted: () => {
+      setIsOpen(true);
+    },
+  });
   const handleClose = () => {
     setIsOpen(false);
     history.push({ pathname: '/myhub' });
@@ -90,7 +102,15 @@ const MyHub = () => {
               <ButtonFilled
                 isPrimary={false}
                 handleClick={() => {
-                  setIsOpen(true);
+                  addMyHub({
+                    variables: {
+                      MyHubDetails: {
+                        GitURL: gitHub.GitURL,
+                        GitBranch: gitHub.GitBranch,
+                      },
+                      Username: userData.username,
+                    },
+                  });
                 }}
               >
                 Submit Now

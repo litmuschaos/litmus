@@ -8,15 +8,17 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
   },
   root: {
-    width: 450,
     marginLeft: 'auto',
   },
   header: {
     width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
     color: theme.palette.text.primary,
     margin: theme.spacing(4.5, 1.5, 2.5, 1.5),
+  },
+  backdrop: {
+    background: theme.palette.input.disabled,
+    display: 'flex',
+    flexDirection: 'column',
   },
   noGithubAccount: {
     margin: 'auto',
@@ -42,10 +44,16 @@ const useStyles = makeStyles((theme) => ({
     border: '1px solid rgba(0, 0, 0, 0.05)',
     padding: 40,
   },
+  chartsGroup: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
   cardDiv: {
     width: 200,
     border: '1px dashed #434343',
     borderRadius: 4,
+    margin: theme.spacing(2),
   },
   cardContent: {
     height: 240,
