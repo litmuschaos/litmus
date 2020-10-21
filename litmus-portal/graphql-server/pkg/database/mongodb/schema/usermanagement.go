@@ -44,6 +44,7 @@ type MyHub struct {
 	GitURL      string `bson:"git_url"`
 	GitBranch   string `bson:"git_branch"`
 	IsConfirmed bool   `bson:"is_confirmed"`
+	HubName     string `bson:"hub_name"`
 }
 
 //GetOuputMyHubs ...
@@ -66,5 +67,6 @@ func (myhub *MyHub) GetOutputMyHub() *model.MyHub {
 		GitURL:      myhub.GitURL,
 		GitBranch:   myhub.GitBranch,
 		IsConfirmed: myhub.IsConfirmed,
+		HubName:     myhub.HubName,
 	}
 }

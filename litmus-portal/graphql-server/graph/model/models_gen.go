@@ -57,6 +57,7 @@ type Charts struct {
 }
 
 type ChartsInput struct {
+	HubName    string `json:"HubName"`
 	UserName   string `json:"UserName"`
 	RepoOwner  string `json:"RepoOwner"`
 	RepoBranch string `json:"RepoBranch"`
@@ -126,6 +127,7 @@ type ClusterInput struct {
 }
 
 type CreateMyHub struct {
+	HubName   string `json:"HubName"`
 	GitURL    string `json:"GitURL"`
 	GitBranch string `json:"GitBranch"`
 }
@@ -181,6 +183,7 @@ type MyHub struct {
 	GitURL      string `json:"GitURL"`
 	GitBranch   string `json:"GitBranch"`
 	IsConfirmed bool   `json:"IsConfirmed"`
+	HubName     string `json:"HubName"`
 }
 
 type PackageInformation struct {

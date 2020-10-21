@@ -9,10 +9,11 @@ import (
 )
 
 type chartData struct {
-    Chartname   string      `json:"chart"`
-    Experiment []string `json:"experiment"`
+	Chartname  string   `json:"chart"`
+	Experiment []string `json:"experiment"`
 }
 
+//Chart ...
 type Chart struct {
 	ApiVersion  string             `yaml:"apiVersion"`
 	Kind        string             `yaml:"kind"`
@@ -22,22 +23,26 @@ type Chart struct {
 	Experiments []Chart            `yaml:"experiments"`
 }
 
+//Maintainer ...
 type Maintainer struct {
 	Name  string
 	Email string
 }
 
+//Link ...
 type Link struct {
 	Name string
 	Url  string
 }
 
+//Metadata ...
 type Metadata struct {
 	Name        string     `yaml:"name"`
 	Version     string     `yaml:"version"`
 	Annotations Annotation `yaml:"annotations"`
 }
 
+//Annotation ...
 type Annotation struct {
 	Categories       string `yaml:"categories"`
 	Vendor           string `yaml:"vendor"`
@@ -47,6 +52,7 @@ type Annotation struct {
 	ChartDescription string `yaml:"chartDescription"`
 }
 
+//Spec ...
 type Spec struct {
 	DisplayName         string   `yaml:"displayName"`
 	CategoryDescription string   `yaml:"categoryDescription"`
@@ -66,6 +72,7 @@ type Spec struct {
 	ChaosType       string   `yaml:"chaosType"`
 }
 
+//PackageInformation ...
 type PackageInformation struct {
 	PackageName string `yaml:"packageName"`
 	Experiments []struct {
@@ -75,24 +82,26 @@ type PackageInformation struct {
 	} `yaml:"experiments"`
 }
 
+//Charts ...
 type Charts []Chart
 
-func GetChartsData(UserName string, RepoName string, Branch string, Owner string)([]byte, error) {  
-    var chartsd Charts
-    data, err := ioutil.ReadDir("/tmp/version/"+UserName+"/"+RepoName+"/"+Branch+"/charts")
-    if err != nil {
+//GetChartsData is used to get details of charts like experiments.
+func GetChartsData(UserName string, RepoName string, Branch string, Owner string, HubName string) ([]byte, error) {
+	var chartsd Charts
+	data, err := ioutil.ReadDir("/tmp/version/" + UserName + "/" + HubName + "/" + RepoName + "/" + Branch + "/charts")
+	if err != nil {
 		fmt.Println("File reading error", err)
 		fmt.Println("Cloning repository...")
-        return nil, err
-    }
-    for _, file := range data {
-        
-      data1,_:= readExperimentFile("/tmp/version/"+UserName+"/"+RepoName+"/"+Branch+"/charts/"+file.Name()+"/"+file.Name()+".chartserviceversion.yaml")
-        chartsd = append(chartsd,data1)
-    }
+		return nil, err
+	}
+	for _, file := range data {
 
-     e, _ := json.Marshal(chartsd)
-    return e, nil
+		data1, _ := readExperimentFile("/tmp/version/" + UserName + "/" + HubName + "/" + RepoName + "/" + Branch + "/charts/" + file.Name() + "/" + file.Name() + ".chartserviceversion.yaml")
+		chartsd = append(chartsd, data1)
+	}
+
+	e, _ := json.Marshal(chartsd)
+	return e, nil
 }
 
 func readExperimentFile(path string) (Chart, error) {
@@ -101,7 +110,7 @@ func readExperimentFile(path string) (Chart, error) {
 	if err != nil {
 		return experiment, fmt.Errorf("file path of the, err: %+v", err)
 	}
-	
+
 	if yaml.Unmarshal([]byte(experimentFile), &experiment) != nil {
 		return experiment, err
 	}

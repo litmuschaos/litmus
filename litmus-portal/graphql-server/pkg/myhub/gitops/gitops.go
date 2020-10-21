@@ -24,6 +24,7 @@ type GitConfig struct {
 	RemoteName     string
 	LocalCommit    string
 	RemoteCommit   string
+	HubName        string
 }
 
 var (
@@ -34,31 +35,31 @@ var (
 	err    error
 )
 
-//gitClone Trigger is reposible for setting off the go routine for git-op
-func GitClone(UserName string, RepoName string, RepoBranch string, RepoOwner string)(error) {
+//GitClone Trigger is reposible for setting off the go routine for git-op
+func GitClone(UserName string, RepoName string, RepoBranch string, RepoOwner string, MyHubName string) error {
 	gitConfig := GitConfig{
 		UserName:       UserName,
 		RepositoryName: RepoName,
+		HubName:        MyHubName,
 		RepositoryURL:  "https://github.com/" + RepoOwner + "/" + RepoName,
 		RemoteName:     "origin",
 	}
-		_, err := gitConfig.getChaosChartRepo(RepoBranch)
-		if err != nil {
-			fmt.Print("Error in cloning")
-			return err
-		}
-		if err := gitConfig.chaosChartSyncHandler(RepoBranch); err != nil {
-			log.Error(err)
-		}
-		log.Infof("********* Repository syncing completed for version: '%s' *********", RepoBranch)	
-		return nil
+	_, err := gitConfig.getChaosChartRepo(RepoBranch)
+	if err != nil {
+		fmt.Print("Error in cloning")
+		return err
+	}
+	if err := gitConfig.chaosChartSyncHandler(RepoBranch); err != nil {
+		log.Error(err)
+	}
+	log.Infof("********* Repository syncing completed for version: '%s' *********", RepoBranch)
+	return nil
 }
-
 
 //getChaosChartVersion is responsible for plain cloning the repository
 func (c GitConfig) getChaosChartRepo(RepoBranch string) (string, error) {
-	os.RemoveAll("/tmp/version/" + c.UserName + "/" + c.RepositoryName+"/"+RepoBranch)
-	_, err := git.PlainClone("/tmp/version/"+c.UserName+"/"+c.RepositoryName+"/"+RepoBranch, false, &git.CloneOptions{
+	os.RemoveAll("/tmp/version/" + c.UserName + "/" + c.HubName + "/" + c.RepositoryName + "/" + RepoBranch)
+	_, err := git.PlainClone("/tmp/version/"+c.UserName+"/"+c.HubName+"/"+c.RepositoryName+"/"+RepoBranch, false, &git.CloneOptions{
 		URL: c.RepositoryURL, Progress: os.Stdout,
 		ReferenceName: plumbing.NewBranchReferenceName(RepoBranch),
 	})
@@ -80,7 +81,7 @@ func (c GitConfig) chaosChartSyncHandler(RepoBranch string) error {
 
 // isRepositoryExists checks for the existence of this past existence of this repository
 func (c GitConfig) isRepositoryExists(RepoBranch string) (bool, error) {
-	_, err := os.Stat("/tmp/version/" + c.UserName + "/" + c.RepositoryName + "/" + RepoBranch)
+	_, err := os.Stat("/tmp/version/" + c.UserName + "/" + c.HubName + "/" + c.RepositoryName + "/" + RepoBranch)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return false, nil
@@ -98,7 +99,7 @@ func (c GitConfig) HandlerForNonExistingRepository(RepoBranch string) error {
 	} else {
 		referenceName = plumbing.NewTagReferenceName(RepoBranch)
 	}
-	_, err := git.PlainClone("/tmp/version/"+c.UserName+"/"+c.RepositoryName+"/"+RepoBranch, false, &git.CloneOptions{
+	_, err := git.PlainClone("/tmp/version/"+c.UserName+"/"+c.HubName+"/"+c.RepositoryName+"/"+RepoBranch, false, &git.CloneOptions{
 		URL: c.RepositoryURL, Progress: os.Stdout,
 		ReferenceName: referenceName,
 	})
@@ -135,7 +136,7 @@ func (c GitConfig) GitGetStatus(RepoBranch string) (bool, error) {
 	return !(len == 0), nil
 }
 func (c GitConfig) setterRepositoryWorktreeReference(RepoBranch string) error {
-	if r, err = git.PlainOpen("/tmp/version/" + c.UserName + "/" + c.RepositoryName + "/" + RepoBranch); err != nil {
+	if r, err = git.PlainOpen("/tmp/version/" + c.UserName + "/" + c.HubName + "/" + c.RepositoryName + "/" + RepoBranch); err != nil {
 		return fmt.Errorf("error in executing PlainOpen: %s", err)
 	}
 	if w, err = r.Worktree(); err != nil {
@@ -177,7 +178,7 @@ func getListofFilesChanged() (int, error) {
 
 // GitHardReset executes "git reset --hard HEAD" in provided Repository Path
 func (c GitConfig) GitHardReset(RepoBranch string) error {
-	r, err := git.PlainOpen("/tmp/version/" + c.UserName + "/" + c.RepositoryName + "/" + RepoBranch)
+	r, err := git.PlainOpen("/tmp/version/" + c.UserName + "/" + c.HubName + "/" + c.RepositoryName + "/" + RepoBranch)
 	if err != nil {
 		return fmt.Errorf("error in executing PlainOpen: %s", err)
 	}
@@ -193,7 +194,7 @@ func (c GitConfig) GitHardReset(RepoBranch string) error {
 
 // CompareLocalandRemoteCommit compares local and remote latest commit
 func (c GitConfig) CompareLocalandRemoteCommit(RepoBranch string) (bool, error) {
-	r, err := git.PlainOpen("/tmp/version/" + c.UserName + "/" + c.RepositoryName + "/" + RepoBranch)
+	r, err := git.PlainOpen("/tmp/version/" + c.UserName + "/" + c.HubName + "/" + c.RepositoryName + "/" + RepoBranch)
 	if err != nil {
 		return false, fmt.Errorf("error in executing PlainOpen: %s", err)
 	}

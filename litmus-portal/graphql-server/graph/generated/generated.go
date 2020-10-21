@@ -174,6 +174,7 @@ type ComplexityRoot struct {
 	MyHub struct {
 		GitBranch   func(childComplexity int) int
 		GitURL      func(childComplexity int) int
+		HubName     func(childComplexity int) int
 		ID          func(childComplexity int) int
 		IsConfirmed func(childComplexity int) int
 	}
@@ -1007,6 +1008,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.MyHub.GitURL(childComplexity), true
 
+	case "MyHub.HubName":
+		if e.complexity.MyHub.HubName == nil {
+			break
+		}
+
+		return e.complexity.MyHub.HubName(childComplexity), true
+
 	case "MyHub.id":
 		if e.complexity.MyHub.ID == nil {
 			break
@@ -1823,96 +1831,99 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 
 var sources = []*ast.Source{
 	&ast.Source{Name: "graph/myhub.graphqls", Input: `type MyHub {
-	id: ID!
-	GitURL: String!
-	GitBranch: String!
-	IsConfirmed: Boolean!
+  id: ID!
+  GitURL: String!
+  GitBranch: String!
+  IsConfirmed: Boolean!
+  HubName: String!
 }
 
 type Charts {
-	Charts: [Chart!]!
+  Charts: [Chart!]!
 }
 
 input ChartsInput {
-	UserName: String!
-	RepoOwner: String!
-	RepoBranch: String!
-	RepoName: String!
+  HubName: String!
+  UserName: String!
+  RepoOwner: String!
+  RepoBranch: String!
+  RepoName: String!
 }
 
 type Chart {
-	ApiVersion: String!
-	Kind: String!
-	Metadata: Metadata!
-	Spec: Spec!
-	PackageInfo: PackageInformation!
-	Experiments: [Chart!]!
+  ApiVersion: String!
+  Kind: String!
+  Metadata: Metadata!
+  Spec: Spec!
+  PackageInfo: PackageInformation!
+  Experiments: [Chart!]!
 }
 
 type Maintainer {
-	Name: String!
-	Email: String!
+  Name: String!
+  Email: String!
 }
 
 type Link {
-	Name: String!
-	Url: String!
+  Name: String!
+  Url: String!
 }
 
 type Metadata {
-	Name: String!
-	Version: String!
-	Annotations: Annotation!
+  Name: String!
+  Version: String!
+  Annotations: Annotation!
 }
 
 type Annotation {
-	Categories: String!
-	Vendor: String!
-	CreatedAt: String!
-	Repository: String!
-	Support: String!
-	ChartDescription: String!
+  Categories: String!
+  Vendor: String!
+  CreatedAt: String!
+  Repository: String!
+  Support: String!
+  ChartDescription: String!
 }
 
 type Spec {
-	DisplayName: String!
-	CategoryDescription: String!
-	Keywords: [String!]!
-	Maturity: String!
-	Maintainers: [Maintainer!]!
-	MinKubeVersion: String!
-	Provider: String!
-	Links: [Link!]!
-	Experiments: [String!]!
-	ChaosExpCRDLink: String!
-	Platforms: [String!]!
-	ChaosType: String
+  DisplayName: String!
+  CategoryDescription: String!
+  Keywords: [String!]!
+  Maturity: String!
+  Maintainers: [Maintainer!]!
+  MinKubeVersion: String!
+  Provider: String!
+  Links: [Link!]!
+  Experiments: [String!]!
+  ChaosExpCRDLink: String!
+  Platforms: [String!]!
+  ChaosType: String
 }
 
 type Provider {
-	Name: String!
+  Name: String!
 }
 
 type PackageInformation {
-	PackageName: String!
-	Experiments: [Experiments!]!
+  PackageName: String!
+  Experiments: [Experiments!]!
 }
 
 type Experiments {
-	Name: String!
-	CSV: String!
-	Desc: String!
+  Name: String!
+  CSV: String!
+  Desc: String!
 }
 
 input CreateMyHub {
-	GitURL: String!
-	GitBranch: String!
+  HubName: String!
+  GitURL: String!
+  GitBranch: String!
 }
 
 input UpdateMyHub {
-	id: ID!
-	GitURL: String!
-	GitBranch: String!
+  id: ID!
+  GitURL: String!
+  GitBranch: String!
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/project.graphqls", Input: `type Project {
@@ -5811,6 +5822,40 @@ func (ec *executionContext) _MyHub_IsConfirmed(ctx context.Context, field graphq
 	res := resTmp.(bool)
 	fc.Result = res
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MyHub_HubName(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "MyHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HubName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PackageInformation_PackageName(ctx context.Context, field graphql.CollectedField, obj *model.PackageInformation) (ret graphql.Marshaler) {
@@ -10540,6 +10585,12 @@ func (ec *executionContext) unmarshalInputChartsInput(ctx context.Context, obj i
 
 	for k, v := range asMap {
 		switch k {
+		case "HubName":
+			var err error
+			it.HubName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "UserName":
 			var err error
 			it.UserName, err = ec.unmarshalNString2string(ctx, v)
@@ -10702,6 +10753,12 @@ func (ec *executionContext) unmarshalInputCreateMyHub(ctx context.Context, obj i
 
 	for k, v := range asMap {
 		switch k {
+		case "HubName":
+			var err error
+			it.HubName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "GitURL":
 			var err error
 			it.GitURL, err = ec.unmarshalNString2string(ctx, v)
@@ -11767,6 +11824,11 @@ func (ec *executionContext) _MyHub(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "IsConfirmed":
 			out.Values[i] = ec._MyHub_IsConfirmed(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "HubName":
+			out.Values[i] = ec._MyHub_HubName(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
