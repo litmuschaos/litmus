@@ -140,6 +140,16 @@ type CreateUserInput struct {
 	ProjectName string  `json:"project_name"`
 }
 
+type ExperimentInput struct {
+	UserName       string `json:"UserName"`
+	RepoOwner      string `json:"RepoOwner"`
+	RepoBranch     string `json:"RepoBranch"`
+	RepoName       string `json:"RepoName"`
+	ChartName      string `json:"ChartName"`
+	ExperimentName string `json:"ExperimentName"`
+	HubName        string `json:"HubName"`
+}
+
 type Experiments struct {
 	Name string `json:"Name"`
 	Csv  string `json:"CSV"`

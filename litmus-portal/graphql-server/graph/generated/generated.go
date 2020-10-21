@@ -208,6 +208,7 @@ type ComplexityRoot struct {
 	Query struct {
 		GetCharts             func(childComplexity int, chartsInput model.ChartsInput) int
 		GetCluster            func(childComplexity int, projectID string, clusterType *string) int
+		GetHubExperiment      func(childComplexity int, experimentInput model.ExperimentInput) int
 		GetProject            func(childComplexity int, projectID string) int
 		GetScheduledWorkflows func(childComplexity int, projectID string) int
 		GetUser               func(childComplexity int, username string) int
@@ -343,6 +344,7 @@ type QueryResolver interface {
 	GetScheduledWorkflows(ctx context.Context, projectID string) ([]*model.ScheduledWorkflows, error)
 	ListWorkflow(ctx context.Context, projectID string, workflowIds []*string) ([]*model.Workflow, error)
 	GetCharts(ctx context.Context, chartsInput model.ChartsInput) ([]*model.Chart, error)
+	GetHubExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error)
 }
 type SubscriptionResolver interface {
 	ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error)
@@ -1151,6 +1153,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetCluster(childComplexity, args["project_id"].(string), args["cluster_type"].(*string)), true
 
+	case "Query.getHubExperiment":
+		if e.complexity.Query.GetHubExperiment == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getHubExperiment_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetHubExperiment(childComplexity, args["experimentInput"].(model.ExperimentInput)), true
+
 	case "Query.getProject":
 		if e.complexity.Query.GetProject == nil {
 			break
@@ -1831,99 +1845,109 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 
 var sources = []*ast.Source{
 	&ast.Source{Name: "graph/myhub.graphqls", Input: `type MyHub {
-  id: ID!
-  GitURL: String!
-  GitBranch: String!
-  IsConfirmed: Boolean!
-  HubName: String!
+	id: ID!
+	GitURL: String!
+	GitBranch: String!
+	IsConfirmed: Boolean!
+	HubName: String!
 }
 
 type Charts {
-  Charts: [Chart!]!
+	Charts: [Chart!]!
 }
 
 input ChartsInput {
-  HubName: String!
-  UserName: String!
-  RepoOwner: String!
-  RepoBranch: String!
-  RepoName: String!
+	HubName: String!
+	UserName: String!
+	RepoOwner: String!
+	RepoBranch: String!
+	RepoName: String!
 }
 
 type Chart {
-  ApiVersion: String!
-  Kind: String!
-  Metadata: Metadata!
-  Spec: Spec!
-  PackageInfo: PackageInformation!
-  Experiments: [Chart!]!
+	ApiVersion: String!
+	Kind: String!
+	Metadata: Metadata!
+	Spec: Spec!
+	PackageInfo: PackageInformation!
+	Experiments: [Chart!]!
 }
 
 type Maintainer {
-  Name: String!
-  Email: String!
+	Name: String!
+	Email: String!
 }
 
 type Link {
-  Name: String!
-  Url: String!
+	Name: String!
+	Url: String!
 }
 
 type Metadata {
-  Name: String!
-  Version: String!
-  Annotations: Annotation!
+	Name: String!
+	Version: String!
+	Annotations: Annotation!
 }
 
 type Annotation {
-  Categories: String!
-  Vendor: String!
-  CreatedAt: String!
-  Repository: String!
-  Support: String!
-  ChartDescription: String!
+	Categories: String!
+	Vendor: String!
+	CreatedAt: String!
+	Repository: String!
+	Support: String!
+	ChartDescription: String!
 }
 
 type Spec {
-  DisplayName: String!
-  CategoryDescription: String!
-  Keywords: [String!]!
-  Maturity: String!
-  Maintainers: [Maintainer!]!
-  MinKubeVersion: String!
-  Provider: String!
-  Links: [Link!]!
-  Experiments: [String!]!
-  ChaosExpCRDLink: String!
-  Platforms: [String!]!
-  ChaosType: String
+	DisplayName: String!
+	CategoryDescription: String!
+	Keywords: [String!]!
+	Maturity: String!
+	Maintainers: [Maintainer!]!
+	MinKubeVersion: String!
+	Provider: String!
+	Links: [Link!]!
+	Experiments: [String!]!
+	ChaosExpCRDLink: String!
+	Platforms: [String!]!
+	ChaosType: String
 }
 
 type Provider {
-  Name: String!
+	Name: String!
 }
 
 type PackageInformation {
-  PackageName: String!
-  Experiments: [Experiments!]!
+	PackageName: String!
+	Experiments: [Experiments!]!
 }
 
 type Experiments {
-  Name: String!
-  CSV: String!
-  Desc: String!
+	Name: String!
+	CSV: String!
+	Desc: String!
 }
 
 input CreateMyHub {
-  HubName: String!
-  GitURL: String!
-  GitBranch: String!
+	HubName: String!
+	GitURL: String!
+	GitBranch: String!
 }
 
 input UpdateMyHub {
-  id: ID!
-  GitURL: String!
-  GitBranch: String!
+	id: ID!
+	GitURL: String!
+	GitBranch: String!
+}
+
+input ExperimentInput {
+	UserName: String!
+	RepoOwner: String!
+	RepoBranch: String!
+	RepoName: String!
+	ChartName: String!
+	ExperimentName: String!
+	HubName: String!
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/project.graphqls", Input: `type Project {
@@ -2172,6 +2196,8 @@ type Query {
 	ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
 
 	getCharts(chartsInput: ChartsInput!): [Chart!]! @authorized
+
+	getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
 }
 
 type Mutation {
@@ -2556,6 +2582,20 @@ func (ec *executionContext) field_Query_getCluster_args(ctx context.Context, raw
 		}
 	}
 	args["cluster_type"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getHubExperiment_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.ExperimentInput
+	if tmp, ok := rawArgs["experimentInput"]; ok {
+		arg0, err = ec.unmarshalNExperimentInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐExperimentInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["experimentInput"] = arg0
 	return args, nil
 }
 
@@ -6812,6 +6852,67 @@ func (ec *executionContext) _Query_getCharts(ctx context.Context, field graphql.
 	return ec.marshalNChart2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChartᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_getHubExperiment(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getHubExperiment_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetHubExperiment(rctx, args["experimentInput"].(model.ExperimentInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.Chart); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.Chart`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Chart)
+	fc.Result = res
+	return ec.marshalNChart2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChart(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -10819,6 +10920,60 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputExperimentInput(ctx context.Context, obj interface{}) (model.ExperimentInput, error) {
+	var it model.ExperimentInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "UserName":
+			var err error
+			it.UserName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "RepoOwner":
+			var err error
+			it.RepoOwner, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "RepoBranch":
+			var err error
+			it.RepoBranch, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "RepoName":
+			var err error
+			it.RepoName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "ChartName":
+			var err error
+			it.ChartName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "ExperimentName":
+			var err error
+			it.ExperimentName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "HubName":
+			var err error
+			it.HubName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputMemberInput(ctx context.Context, obj interface{}) (model.MemberInput, error) {
 	var it model.MemberInput
 	var asMap = obj.(map[string]interface{})
@@ -12125,6 +12280,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "getHubExperiment":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getHubExperiment(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -13139,6 +13308,10 @@ func (ec *executionContext) unmarshalNCreateMyHub2githubᚗcomᚋlitmuschaosᚋl
 
 func (ec *executionContext) unmarshalNCreateUserInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateUserInput(ctx context.Context, v interface{}) (model.CreateUserInput, error) {
 	return ec.unmarshalInputCreateUserInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNExperimentInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐExperimentInput(ctx context.Context, v interface{}) (model.ExperimentInput, error) {
+	return ec.unmarshalInputExperimentInput(ctx, v)
 }
 
 func (ec *executionContext) marshalNExperiments2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐExperiments(ctx context.Context, sel ast.SelectionSet, v model.Experiments) graphql.Marshaler {

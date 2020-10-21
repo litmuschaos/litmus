@@ -5,15 +5,10 @@ import (
 	"fmt"
 	"io/ioutil"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"gopkg.in/yaml.v2"
 )
 
-type chartData struct {
-	Chartname  string   `json:"chart"`
-	Experiment []string `json:"experiment"`
-}
-
-//Chart ...
 type Chart struct {
 	ApiVersion  string             `yaml:"apiVersion"`
 	Kind        string             `yaml:"kind"`
@@ -86,21 +81,27 @@ type PackageInformation struct {
 type Charts []Chart
 
 //GetChartsData is used to get details of charts like experiments.
-func GetChartsData(UserName string, RepoName string, Branch string, Owner string, HubName string) ([]byte, error) {
+func GetChartsData(hubDetail model.ChartsInput) ([]byte, error) {
 	var chartsd Charts
-	data, err := ioutil.ReadDir("/tmp/version/" + UserName + "/" + HubName + "/" + RepoName + "/" + Branch + "/charts")
+	data, err := ioutil.ReadDir("/tmp/version/" +hubDetail.UserName + "/" + hubDetail.HubName + "/" + hubDetail.RepoName + "/" + hubDetail.RepoBranch + "/charts/")
 	if err != nil {
 		fmt.Println("File reading error", err)
-		fmt.Println("Cloning repository...")
-		return nil, err
-	}
-	for _, file := range data {
+        return nil, err
+    }
+    for _, file := range data {
+        
+      data1,_:= readExperimentFile("/tmp/version/" + hubDetail.UserName + "/" + hubDetail.HubName + "/" + hubDetail.RepoName + "/" + hubDetail.RepoBranch + "/charts"+"/"+file.Name()+"/"+file.Name()+".chartserviceversion.yaml")
+        chartsd = append(chartsd,data1)
+    }
 
-		data1, _ := readExperimentFile("/tmp/version/" + UserName + "/" + HubName + "/" + RepoName + "/" + Branch + "/charts/" + file.Name() + "/" + file.Name() + ".chartserviceversion.yaml")
-		chartsd = append(chartsd, data1)
-	}
+     e, _ := json.Marshal(chartsd)
+    return e, nil
+}
 
-	e, _ := json.Marshal(chartsd)
+func GetExperimentData(experimentInput model.ExperimentInput)([]byte, error){
+	data,_ := readExperimentFile("/tmp/version/"+experimentInput.UserName+"/"+experimentInput.HubName+"/"+experimentInput.RepoName+"/"+experimentInput.RepoBranch+"/charts"+"/"+experimentInput.ChartName+"/"+experimentInput.ExperimentName+"/"+experimentInput.ExperimentName+".chartserviceversion.yaml")
+	
+	e, _ := json.Marshal(data)
 	return e, nil
 }
 

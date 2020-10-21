@@ -58,8 +58,15 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*m
 			return nil, err
 		}
 
+		cloneHub:= model.ChartsInput{
+			UserName: username,
+			RepoName: repo,
+			RepoBranch: myhub.GitBranch,
+			RepoOwner: owner,
+			HubName: myhub.HubName,
+		}
 		//Cloning the repository at a path from myhub link structure.
-		err = gitops.GitClone(username, repo, myhub.GitBranch, owner, myhub.HubName)
+		err = gitops.GitClone(cloneHub)
 		if err != nil {
 			return nil, err
 		}
@@ -94,18 +101,20 @@ func IsMyHubAvailable(ctx context.Context, myhub model.CreateMyHub, username str
 
 //GetCharts is responsible for getting the charts details
 func GetCharts(ctx context.Context, chartsInput model.ChartsInput) ([]*model.Chart, error) {
-	username := chartsInput.UserName
-	reponame := chartsInput.RepoName
-	repobranch := chartsInput.RepoBranch
-	repoowner := chartsInput.RepoOwner
-	hubname := chartsInput.HubName
-	data, err := handler.GetChartsData(username, reponame, repobranch, repoowner, hubname)
+	cloneHub:= model.ChartsInput{
+			UserName:chartsInput.UserName,
+			RepoName: chartsInput.RepoName,
+			RepoBranch: chartsInput.RepoBranch,
+			RepoOwner: chartsInput.RepoOwner,
+			HubName: chartsInput.HubName,
+		}
+	data, err := handler.GetChartsData(cloneHub)
 	if err != nil {
-		err = gitops.GitClone(username, reponame, repobranch, repoowner, hubname)
+		err = gitops.GitClone(cloneHub)
 		if err != nil {
 			return nil, err
 		}
-		data, err = handler.GetChartsData(username, reponame, repobranch, repoowner, hubname)
+		data, err = handler.GetChartsData(cloneHub)
 		if err != nil {
 			return nil, err
 		}
@@ -113,5 +122,16 @@ func GetCharts(ctx context.Context, chartsInput model.ChartsInput) ([]*model.Cha
 
 	var data1 []*model.Chart
 	json.Unmarshal([]byte(data), &data1)
+	return data1, nil
+}
+
+func GetExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error){
+	data, err := handler.GetExperimentData(experimentInput)
+	if err != nil {
+		return nil, err
+	}
+	
+	var data1 *model.Chart
+	json.Unmarshal([]byte(data),&data1)
 	return data1, nil
 }

@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
@@ -36,23 +37,23 @@ var (
 )
 
 //GitClone Trigger is reposible for setting off the go routine for git-op
-func GitClone(UserName string, RepoName string, RepoBranch string, RepoOwner string, MyHubName string) error {
+func GitClone(repoData model.ChartsInput) error {
 	gitConfig := GitConfig{
-		UserName:       UserName,
-		RepositoryName: RepoName,
-		HubName:        MyHubName,
-		RepositoryURL:  "https://github.com/" + RepoOwner + "/" + RepoName,
+		UserName:       repoData.UserName,
+		RepositoryName: repoData.RepoName,
+		HubName:        repoData.HubName,
+		RepositoryURL:  "https://github.com/" + repoData.RepoOwner + "/" +repoData.RepoName,
 		RemoteName:     "origin",
 	}
-	_, err := gitConfig.getChaosChartRepo(RepoBranch)
+	_, err := gitConfig.getChaosChartRepo(repoData.RepoBranch)
 	if err != nil {
 		fmt.Print("Error in cloning")
 		return err
 	}
-	if err := gitConfig.chaosChartSyncHandler(RepoBranch); err != nil {
+	if err := gitConfig.chaosChartSyncHandler(repoData.RepoBranch); err != nil {
 		log.Error(err)
 	}
-	log.Infof("********* Repository syncing completed for version: '%s' *********", RepoBranch)
+	log.Infof("********* Repository syncing completed for version: '%s' *********", repoData.RepoBranch)
 	return nil
 }
 
