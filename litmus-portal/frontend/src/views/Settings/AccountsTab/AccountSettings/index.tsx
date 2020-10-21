@@ -211,7 +211,7 @@ const AccountSettings: React.FC = () => {
                 </ButtonFilled>
               </div>
               <Unimodal
-                isOpen={open}
+                open={open}
                 handleClose={handleClose}
                 hasCloseBtn={false}
               >

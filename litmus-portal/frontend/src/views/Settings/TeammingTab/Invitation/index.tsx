@@ -67,7 +67,7 @@ const Invitation: React.FC = () => {
         </ButtonOutline>
       </div>
 
-      <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn>
+      <Unimodal open={open} handleClose={handleClose} hasCloseBtn>
         <div data-cy="invitationModal" className={classes.body}>
           <Typography className={classes.Header}>
             {t('settings.teamingTab.invitation.modal.header')}{' '}

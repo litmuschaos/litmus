@@ -105,20 +105,19 @@ const ReliablityScore = () => {
                 <InfoTooltip value="Text Default" />
                 </div> */}
               <Unimodal
-                isOpen={open}
+                open={open}
                 handleClose={() => setOpen(false)}
                 hasCloseBtn={false}
               >
                 <div>
                   <ResultTable testValue={testWeights} testNames={testNames} />
-                </div>
-                <hr className={classes.horizontalLineResult} />
-                <div className={classes.gotItBtn}>
+                  <hr className={classes.horizontalLineResult} />
                   <Center>
                     <ButtonFilled
                       handleClick={() => setOpen(false)}
                       data-cy="gotItButton"
                       isPrimary
+                      styles={classes.gotItBtn}
                     >
                       <div>
                         {t('createWorkflow.reliabilityScore.button.gotIt')}

@@ -87,7 +87,7 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
           )}
         </ButtonFilled>
       </div>
-      <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn>
+      <Unimodal open={open} handleClose={handleClose} hasCloseBtn>
         {error.length ? (
           <div className={classes.errDiv}>
             {/* <img src="./icons/checkmark.svg" alt="checkmark" /> */}

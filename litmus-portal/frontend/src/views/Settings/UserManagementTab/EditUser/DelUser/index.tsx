@@ -34,7 +34,7 @@ const DelUser: React.FC<DelUserProps> = ({
 
   return (
     <div>
-      <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn>
+      <Unimodal open={open} handleClose={handleClose} hasCloseBtn>
         <div className={classes.body}>
           <img src="./icons/userDel.svg" alt="lock" />
           <div className={classes.text}>

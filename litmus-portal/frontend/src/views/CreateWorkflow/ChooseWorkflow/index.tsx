@@ -185,71 +185,73 @@ const ChooseWorkflow: React.FC = () => {
           </div>
         </div>
       </div>
-      <Unimodal isOpen={open} handleClose={() => setOpen(false)} hasCloseBtn>
-        <Typography className={classes.modalHeading} display="inline">
-          {t('createWorkflow.chooseWorkflow.modalHeading')}{' '}
-          <strong>
-            {t('createWorkflow.chooseWorkflow.modalHeadingStrong')}
-          </strong>
-        </Typography>
-        <div className={classes.modalContainerBody}>
-          <div className={classes.inputDiv}>
-            <InputField
-              // id="filled-workflowname-input"
-              label={t('createWorkflow.chooseWorkflow.label.workflowName')}
-              styles={{
-                width: '100%',
-              }}
-              data-cy="inputWorkflow"
-              helperText={
-                validateWorkflowName(workflowDetails.workflowName)
-                  ? 'Should not contain spaces or upper case letters'
-                  : ''
-              }
-              success={isSuccess.current}
-              validationError={validateWorkflowName(
-                workflowDetails.workflowName
-              )}
-              // className={classes.textfieldworkflowname}
-              handleChange={WorkflowNameChangeHandler}
-              value={workflowDetails.workflowName}
-            />
-            <div className={classes.inputAreaDescription}>
-              <CssTextField
-                id="filled-workflowdescription-input"
-                label={t('createWorkflow.chooseWorkflow.label.desc')}
-                InputProps={{
-                  disableUnderline: true,
-                  classes: {
-                    input: classes.resize,
-                  },
+      <Unimodal open={open} handleClose={() => setOpen(false)} hasCloseBtn>
+        <div>
+          <Typography className={classes.modalHeading} display="inline">
+            {t('createWorkflow.chooseWorkflow.modalHeading')}{' '}
+            <strong>
+              {t('createWorkflow.chooseWorkflow.modalHeadingStrong')}
+            </strong>
+          </Typography>
+          <div className={classes.modalContainerBody}>
+            <div className={classes.inputDiv}>
+              <InputField
+                // id="filled-workflowname-input"
+                label={t('createWorkflow.chooseWorkflow.label.workflowName')}
+                styles={{
+                  width: '100%',
                 }}
-                data-cy="inputWorkflowDescription"
-                className={classes.textfieldworkflowdescription}
-                value={workflowDetails.workflowDesc}
-                onChange={WorkflowDescriptionChangeHandler}
-                multiline
-                rows={12}
+                data-cy="inputWorkflow"
+                helperText={
+                  validateWorkflowName(workflowDetails.workflowName)
+                    ? 'Should not contain spaces or upper case letters'
+                    : ''
+                }
+                success={isSuccess.current}
+                validationError={validateWorkflowName(
+                  workflowDetails.workflowName
+                )}
+                // className={classes.textfieldworkflowname}
+                handleChange={WorkflowNameChangeHandler}
+                value={workflowDetails.workflowName}
               />
+              <div className={classes.inputAreaDescription}>
+                <CssTextField
+                  id="filled-workflowdescription-input"
+                  label={t('createWorkflow.chooseWorkflow.label.desc')}
+                  InputProps={{
+                    disableUnderline: true,
+                    classes: {
+                      input: classes.resize,
+                    },
+                  }}
+                  data-cy="inputWorkflowDescription"
+                  className={classes.textfieldworkflowdescription}
+                  value={workflowDetails.workflowDesc}
+                  onChange={WorkflowDescriptionChangeHandler}
+                  multiline
+                  rows={12}
+                />
+              </div>
             </div>
-          </div>
-          <div className={classes.buttons}>
-            <div className={classes.cancelButton}>
-              <ButtonOutline
-                handleClick={() => setOpen(false)}
-                isDisabled={false}
-              >
-                <div>{t('createWorkflow.chooseWorkflow.button.cancel')}</div>
-              </ButtonOutline>
-            </div>
-            <div className={classes.saveButton}>
-              <ButtonFilled
-                isPrimary={false}
-                isDisabled={!isSuccess.current}
-                handleClick={() => handleSave()}
-              >
-                <div>{t('createWorkflow.chooseWorkflow.button.save')}</div>
-              </ButtonFilled>
+            <div className={classes.buttons}>
+              <div className={classes.cancelButton}>
+                <ButtonOutline
+                  handleClick={() => setOpen(false)}
+                  isDisabled={false}
+                >
+                  <div>{t('createWorkflow.chooseWorkflow.button.cancel')}</div>
+                </ButtonOutline>
+              </div>
+              <div className={classes.saveButton}>
+                <ButtonFilled
+                  isPrimary={false}
+                  isDisabled={!isSuccess.current}
+                  handleClick={() => handleSave()}
+                >
+                  <div>{t('createWorkflow.chooseWorkflow.button.save')}</div>
+                </ButtonFilled>
+              </div>
             </div>
           </div>
         </div>

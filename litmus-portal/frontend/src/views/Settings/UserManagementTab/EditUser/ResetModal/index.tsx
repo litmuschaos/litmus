@@ -88,7 +88,7 @@ const ResetModal: React.FC<ResetModalProps> = ({
             )}
           </ButtonFilled>
         </div>
-        <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn>
+        <Unimodal open={open} handleClose={handleClose} hasCloseBtn>
           {error.length ? (
             <div className={classes.errDiv}>
               <div className={classes.textError}>

@@ -273,7 +273,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       </div>
 
       <Unimodal
-        isOpen={open}
+        open={open}
         handleClose={handleClose}
         hasCloseBtn
         isDark
