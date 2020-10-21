@@ -32,16 +32,16 @@ Litmus nutzt einen cloud-nativen Ansatz um Chaos zu erzeugen, verwalten und zu
 beobachten. Um Chaos zu initialisieren und manipulieren werden die folgenden
 Kubernetes Custom Resource Definitions (kurz CRDs) benötigt:
 - **ChaosEngine**: Mittel, um eine Kubernetes-Anwendung der eine
-  Kubernetes-Node mit dem Chaos-Experiment zu verbinden. Der Chaos-Engine wird
+  Kubernetes-Node mit dem Chaos-Experiment zu verbinden. Das Chaos-Engine wird
   vom Chaos-Operator beobachtet, welcher die Chaos-Experimente ausführt.
 - **ChaosExperiment**: Mittel, um die Konfigurationsparameter eines
   Chaos-Experiments zu gruppieren. Chaos-Experiment CRs werden vom Operator
-  kreiert wenn Experimente vom Chaos-Enginge ausgeführt werden.
+  kreiert, wenn Experimente vom Chaos-Enginge ausgeführt werden.
 - **ChaosResult**: Mittel, um die Ergebnisse des Chaos-Experiments zu
   speichern. Der Chaos-Exporter liest die Ergebnisse aus und exportiert die
   Messwerte auf einen konfigurierten Prometheus-Server.
 
-Die Chaos-Experimente werden auf <a href="https://hub.litmuschaos.io" target="_blank">hub.litmuschaos.io</a> gehostet. Das ist die zentrale Stelle, an der die Entwicker von Anwendungen oder die Nutzer ihre Chaos-Experimente teilen, sodass diese genutzt werden können um die Belastbarkeit und Sicherheit der Anwendung im Endeinsatz weiter zu verbessern. 
+Die Chaos-Experimente werden auf <a href="https://hub.litmuschaos.io" target="_blank">hub.litmuschaos.io</a> gehostet. Das ist die zentrale Stelle, an der die Entwickler von Anwendungen oder die Nutzer ihre Chaos-Experimente teilen, sodass diese genutzt werden können, um die Belastbarkeit und Sicherheit der Anwendung im Endeinsatz weiter zu verbessern. 
 
 ![Litmus workflow](/images/litmus-arch_1.png)
 
@@ -51,10 +51,10 @@ Die Chaos-Experimente werden auf <a href="https://hub.litmuschaos.io" target="_b
   Entwicklungsphase einer Anwendung als Erweiterung zu Modultests
   oder auch Integrationstests durchgeführt werden.
 - **Für CI-pipelines**: In der kontinuierlichen Integration können
-  Chaos-Experimente als Schritt in der Pipeline genutzt werden um Bugs zu
+  Chaos-Experimente als Schritt in der Pipeline genutzt werden, um Bugs zu
   finden.
 - **Für SREs**: Mit Litmus können Chaos-Experimente geplant durchgeführt
-  werden um möglichst früh Schwächen in Anwendungen zu finden und die
+  werden, um möglichst früh Schwächen in Anwendungen zu finden und die
   Stabilität des Endproduktes zu steigern.
 
 ## Mit Litmus loslegen
@@ -71,15 +71,14 @@ Erste Informationen findet man in den <a href="https://github.com/litmuschaos/co
 
 Informationen befinden sich hier: <a href="https://github.com/litmuschaos/litmus/blob/master/ADOPTERS.md" target="_blank">Anwender von LitmusChaos</a>
 
-(_Senden Sie bitte eine PR an die Seite wenn Sie mit Ihren Anwendungen oder
+(_Senden Sie bitte eine PR an die Seite, wenn Sie mit Ihren Anwendungen oder
 Entwicklungen Litmus zum Chaos
 Engineering nutzen_)
 
 ## Anmerkungen
 
 Ein paar relevante Dinge, die bei der Arbeit mit Litmus zu beachten sind, sind hier
-gelistet. An den meisten Dingen wird bereits gearbeitet in der
-[ROADMAP](./ROADMAP.nd) kann man dazu mehr finden. Für Details zu den
+gelistet. Die meisten offenen Punkte sind bereits Teil der [ROADMAP](./ROADMAP.nd). Für Details zu den
 Einschränkungen bestimmter Experimente empfiehlt sich ein Blick in die
 jeweilige Dokumentation unter [Dokumentation der Experimente](https://docs.litmuschaos.io/docs/pod-delete/).
 
@@ -93,10 +92,10 @@ jeweilige Dokumentation unter [Dokumentation der Experimente](https://docs.litmu
   sind aktuell noch nicht getestet oder implementiert.
 - Wenn Chaos-Experimente die Docker-API von innerhalb aufrufen, dann muss das
     Docker-Socket installiert werden. Sinnvolles Management und ein geeigneter
-    Ermessensfreiraum sind empfohlen wenn Entwicker und Admins Zugang zu den
+    Ermessensfreiraum sind empfohlen wenn Entwicker und Administratoren Zugang zu den
     Experimenten haben.
 - In (seltenen) Fällen, bei denen die Chaos-Experimente Privileged-Container
-  benutzen werden die empfohlenen Sicherheitsrichtlinien dokumentiert.
+  benutzen, werden die empfohlenen Sicherheitsrichtlinien dokumentiert.
 
 ## Lizenz
 
