@@ -118,7 +118,7 @@ func (r *queryResolver) ListWorkflow(ctx context.Context, projectID string, work
 	}
 }
 
-func (r *queryResolver) GetCharts(ctx context.Context, chartsInput model.ChartsInput) (*model.Charts, error) {
+func (r *queryResolver) GetCharts(ctx context.Context, chartsInput model.ChartsInput) ([]*model.Chart, error) {
 	return myhub.GetCharts(ctx, chartsInput)
 }
 

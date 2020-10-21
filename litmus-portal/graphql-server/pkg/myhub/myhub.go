@@ -1,8 +1,8 @@
 package myhub
 
 import (
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/gitops"
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,6 +12,8 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
 	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/gitops"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/handler"
 )
 
 //AddMyHub ...
@@ -22,7 +24,6 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*m
 	repo := gitLink[4]
 
 	response, err := http.Get("https://api.github.com/repos/" + owner + "/" + repo + "/branches/" + myhub.GitBranch)
-	fmt.Print(err)
 	if err != nil {
 		log.Print(err)
 		return nil, err
@@ -46,9 +47,14 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*m
 			GitURL:    myhub.GitURL,
 			GitBranch: myhub.GitBranch,
 		}
+		
 		err = database.AddNewMyHub(ctx, username, newHub)
 		if err != nil {
 			log.Print("ERROR", err)
+			return nil, err
+		}
+		err=gitops.GitClone(username, repo, myhub.GitBranch ,owner)
+		if err != nil {
 			return nil, err
 		}
 		user, err := database.GetUserByUserName(ctx, username)
@@ -79,12 +85,24 @@ func IsMyHubAvailable(ctx context.Context, myhub model.CreateMyHub, username str
 }
 
 //GetCharts is responsible for getting the charts details
-func GetCharts(ctx context.Context, chartsInput model.ChartsInput) (*model.Charts, error){
+func GetCharts(ctx context.Context, chartsInput model.ChartsInput) ([]*model.Chart, error){
 	username:= chartsInput.UserName
 	reponame:= chartsInput.RepoName
 	repobranch:= chartsInput.RepoBranch
-	repowoner:= chartsInput.RepoOwner
-	gitops.GitClone(username, reponame, repobranch, repowoner)
+	repoowner:= chartsInput.RepoOwner
+	data, err := handler.GetChartsData(username, reponame, repobranch, repoowner)
+	if err != nil {
+		err= gitops.GitClone(username, reponame, repobranch,repoowner)
+		if err != nil {
+			return nil, err
+		}
+		data, err= handler.GetChartsData(username, reponame, repobranch, repoowner)
+		if err != nil {
+			return nil,err
+		}
+	}
 	
-	return nil, nil
+	var data1 []*model.Chart
+	json.Unmarshal([]byte(data),&data1)
+	return data1, nil
 }

@@ -211,7 +211,7 @@ type Query {
 
 	ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
 
-	getCharts(chartsInput: ChartsInput!): Charts! @authorized
+	getCharts(chartsInput: ChartsInput!): [Chart!]! @authorized
 }
 
 type Mutation {

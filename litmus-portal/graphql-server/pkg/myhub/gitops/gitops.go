@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 	"time"
+
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
@@ -34,7 +35,7 @@ var (
 )
 
 //gitClone Trigger is reposible for setting off the go routine for git-op
-func GitClone(UserName string, RepoName string, RepoBranch string, RepoOwner string) {
+func GitClone(UserName string, RepoName string, RepoBranch string, RepoOwner string)(error) {
 	gitConfig := GitConfig{
 		UserName:       UserName,
 		RepositoryName: RepoName,
@@ -44,19 +45,19 @@ func GitClone(UserName string, RepoName string, RepoBranch string, RepoOwner str
 		_, err := gitConfig.getChaosChartRepo(RepoBranch)
 		if err != nil {
 			fmt.Print("Error in cloning")
+			return err
 		}
 		if err := gitConfig.chaosChartSyncHandler(RepoBranch); err != nil {
 			log.Error(err)
 		}
 		log.Infof("********* Repository syncing completed for version: '%s' *********", RepoBranch)	
+		return nil
 }
 
 
 //getChaosChartVersion is responsible for plain cloning the repository
 func (c GitConfig) getChaosChartRepo(RepoBranch string) (string, error) {
-	if _, err := os.Stat("/tmp/version/" + c.UserName + "/" + c.RepositoryName); err == nil {
-		os.RemoveAll("/tmp/version/" + c.UserName + "/" + c.RepositoryName)
-	}
+	os.RemoveAll("/tmp/version/" + c.UserName + "/" + c.RepositoryName+"/"+RepoBranch)
 	_, err := git.PlainClone("/tmp/version/"+c.UserName+"/"+c.RepositoryName+"/"+RepoBranch, false, &git.CloneOptions{
 		URL: c.RepositoryURL, Progress: os.Stdout,
 		ReferenceName: plumbing.NewBranchReferenceName(RepoBranch),

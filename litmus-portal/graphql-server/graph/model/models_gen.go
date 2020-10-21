@@ -15,6 +15,15 @@ type ActionPayload struct {
 	ExternalData *string `json:"external_data"`
 }
 
+type Annotation struct {
+	Categories       string `json:"Categories"`
+	Vendor           string `json:"Vendor"`
+	CreatedAt        string `json:"CreatedAt"`
+	Repository       string `json:"Repository"`
+	Support          string `json:"Support"`
+	ChartDescription string `json:"ChartDescription"`
+}
+
 type ChaosWorkFlowInput struct {
 	WorkflowManifest    string             `json:"workflow_manifest"`
 	CronSyntax          string             `json:"cronSyntax"`
@@ -35,8 +44,12 @@ type ChaosWorkFlowResponse struct {
 }
 
 type Chart struct {
-	ChartName  string        `json:"ChartName"`
-	Experiment []*Experiment `json:"Experiment"`
+	APIVersion  string              `json:"ApiVersion"`
+	Kind        string              `json:"Kind"`
+	Metadata    *Metadata           `json:"Metadata"`
+	Spec        *Spec               `json:"Spec"`
+	PackageInfo *PackageInformation `json:"PackageInfo"`
+	Experiments []*Chart            `json:"Experiments"`
 }
 
 type Charts struct {
@@ -125,8 +138,20 @@ type CreateUserInput struct {
 	ProjectName string  `json:"project_name"`
 }
 
-type Experiment struct {
-	ExperimentName string `json:"ExperimentName"`
+type Experiments struct {
+	Name string `json:"Name"`
+	Csv  string `json:"CSV"`
+	Desc string `json:"Desc"`
+}
+
+type Link struct {
+	Name string `json:"Name"`
+	URL  string `json:"Url"`
+}
+
+type Maintainer struct {
+	Name  string `json:"Name"`
+	Email string `json:"Email"`
 }
 
 type Member struct {
@@ -145,11 +170,22 @@ type MemberInput struct {
 	Role      *MemberRole `json:"role"`
 }
 
+type Metadata struct {
+	Name        string      `json:"Name"`
+	Version     string      `json:"Version"`
+	Annotations *Annotation `json:"Annotations"`
+}
+
 type MyHub struct {
 	ID          string `json:"id"`
 	GitURL      string `json:"GitURL"`
 	GitBranch   string `json:"GitBranch"`
 	IsConfirmed bool   `json:"IsConfirmed"`
+}
+
+type PackageInformation struct {
+	PackageName string         `json:"PackageName"`
+	Experiments []*Experiments `json:"Experiments"`
 }
 
 type PodLog struct {
@@ -189,6 +225,10 @@ type Project struct {
 	RemovedAt string    `json:"removed_at"`
 }
 
+type Provider struct {
+	Name string `json:"Name"`
+}
+
 type ScheduledWorkflows struct {
 	WorkflowID          string        `json:"workflow_id"`
 	WorkflowManifest    string        `json:"workflow_manifest"`
@@ -203,6 +243,21 @@ type ScheduledWorkflows struct {
 	ProjectID           string        `json:"project_id"`
 	ClusterID           string        `json:"cluster_id"`
 	ClusterType         string        `json:"cluster_type"`
+}
+
+type Spec struct {
+	DisplayName         string        `json:"DisplayName"`
+	CategoryDescription string        `json:"CategoryDescription"`
+	Keywords            []string      `json:"Keywords"`
+	Maturity            string        `json:"Maturity"`
+	Maintainers         []*Maintainer `json:"Maintainers"`
+	MinKubeVersion      string        `json:"MinKubeVersion"`
+	Provider            string        `json:"Provider"`
+	Links               []*Link       `json:"Links"`
+	Experiments         []string      `json:"Experiments"`
+	ChaosExpCRDLink     string        `json:"ChaosExpCRDLink"`
+	Platforms           []string      `json:"Platforms"`
+	ChaosType           *string       `json:"ChaosType"`
 }
 
 type UpdateMyHub struct {
