@@ -32,11 +32,11 @@ Litmus nutzt einen cloud-nativen Ansatz um Chaos zu erzeugen, verwalten und zu
 beobachten. Um Chaos zu initialisieren und manipulieren werden die folgenden
 Kubernetes Custom Resource Definitions (kurz CRDs) benötigt:
 - **ChaosEngine**: Mittel, um eine Kubernetes-Anwendung der eine
-  Kubernetes-Node mit dem Chaos-Experiment zu verbinden. Das Chaos-Engine wird
+  Kubernetes-Node mit dem Chaos-Experiment zu verbinden. Die Chaos-Engine wird
   vom Chaos-Operator beobachtet, welcher die Chaos-Experimente ausführt.
 - **ChaosExperiment**: Mittel, um die Konfigurationsparameter eines
   Chaos-Experiments zu gruppieren. Chaos-Experiment CRs werden vom Operator
-  kreiert, wenn Experimente vom Chaos-Enginge ausgeführt werden.
+  kreiert, wenn Experimente vom Chaos-Engine ausgeführt werden.
 - **ChaosResult**: Mittel, um die Ergebnisse des Chaos-Experiments zu
   speichern. Der Chaos-Exporter liest die Ergebnisse aus und exportiert die
   Messwerte auf einen konfigurierten Prometheus-Server.
@@ -92,7 +92,7 @@ jeweilige Dokumentation unter [Dokumentation der Experimente](https://docs.litmu
   sind aktuell noch nicht getestet oder implementiert.
 - Wenn Chaos-Experimente die Docker-API von innerhalb aufrufen, dann muss das
     Docker-Socket installiert werden. Sinnvolles Management und ein geeigneter
-    Ermessensfreiraum sind empfohlen wenn Entwicker und Administratoren Zugang zu den
+    Ermessensfreiraum sind empfohlen wenn Entwickler und Administratoren Zugang zu den
     Experimenten haben.
 - In (seltenen) Fällen, bei denen die Chaos-Experimente Privileged-Container
   benutzen, werden die empfohlenen Sicherheitsrichtlinien dokumentiert.
