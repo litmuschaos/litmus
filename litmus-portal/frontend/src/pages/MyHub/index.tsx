@@ -16,7 +16,7 @@ import DeveloperGuide from '../../components/DeveloperGuide';
 import VideoCarousel from '../../components/VideoCarousel';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
-import { GET_USER, GET_CHARTS } from '../../graphql';
+import { GET_USER, GET_CHARTS_DATA } from '../../graphql';
 
 import Loader from '../../components/Loader';
 import Center from '../../containers/layouts/Center';
@@ -29,10 +29,10 @@ const MyHub = () => {
     fetchPolicy: 'cache-and-network',
   });
 
-  const [getCharts] = useLazyQuery(GET_CHARTS, {
-    onCompleted: () => {
+  const [getCharts] = useLazyQuery(GET_CHARTS_DATA, {
+    onCompleted: (data) => {
       setcloneLoading(false);
-      history.push({ pathname: '/myhub/connect' });
+      history.push({ pathname: '/myhub/experiments', state: data.getCharts });
     },
     fetchPolicy: 'cache-and-network',
   });
@@ -90,8 +90,8 @@ const MyHub = () => {
                           setcloneLoading(true);
                           getCharts({
                             variables: {
-                              chartsInput: {
-                                UserName: 'admin',
+                              data: {
+                                UserName: userData.username,
                                 RepoOwner: repoOwner,
                                 RepoBranch: hub.GitBranch,
                                 RepoName: reponame,

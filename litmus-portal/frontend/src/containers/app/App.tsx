@@ -30,6 +30,7 @@ const AnalyticsPage = lazy(() => import('../../pages/AnalyticsPage'));
 const ClusterInfo = lazy(() => import('../../components/Targets/ClusterInfo'));
 const MyHub = lazy(() => import('../../pages/MyHub'));
 const MyHubConnect = lazy(() => import('../../views/MyHub/MyHubConnect'));
+const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
 interface RoutesProps {
   isOwner: boolean;
   isProjectAvailable: boolean;
@@ -98,6 +99,7 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
         <Route exact path="/target-connect" component={ConnectTargets} />
         <Route exact path="/myhub" component={MyHub} />
         <Route exact path="/myhub/connect" component={MyHubConnect} />
+        <Route exact path="/myhub/experiments" component={ChaosChart} />
         {isOwner ? (
           <Route exact path="/settings" component={Settings} />
         ) : (
