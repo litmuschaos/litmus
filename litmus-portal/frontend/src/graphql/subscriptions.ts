@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import { gql } from '@apollo/client';
 
 export const WORKFLOW_EVENTS = gql`
@@ -11,6 +10,15 @@ export const WORKFLOW_EVENTS = gql`
       project_id
       cluster_name
       last_updated
+      cluster_id
+    }
+  }
+`;
+
+export const WORKFLOW_LOGS = gql`
+  subscription podLog($podDetails: PodLogRequest!) {
+    getPodLog(podDetails: $podDetails) {
+      log
     }
   }
 `;

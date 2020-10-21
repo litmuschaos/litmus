@@ -12,6 +12,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import moment from 'moment';
 import React from 'react';
+import cronstrue from 'cronstrue';
 import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
 import useStyles from './styles';
 import ExperimentPoints from './ExperimentPoints';
@@ -71,7 +72,11 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
         <div className={classes.regularityData}>
           <div className={classes.expDiv}>
             <img src="/icons/calender.svg" alt="Calender" />
-            <Typography style={{ paddingLeft: 10 }}>Once </Typography>
+            <Typography style={{ paddingLeft: 10 }}>
+              {data.cronSyntax === ''
+                ? 'Once'
+                : cronstrue.toString(data.cronSyntax)}
+            </Typography>
           </div>
         </div>
       </TableCell>
@@ -134,6 +139,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           aria-haspopup="true"
           onClick={handleClick}
           className={classes.optionBtn}
+          data-cy="browseScheduleOptions"
         >
           <MoreVertIcon />
         </IconButton>
@@ -154,7 +160,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                 alt="Delete Schedule"
                 className={classes.btnImg}
               />
-              <Typography className={classes.btnText}>
+              <Typography data-cy="deleteSchedule" className={classes.btnText}>
                 Delete Schedule
               </Typography>
             </div>

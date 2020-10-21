@@ -1,9 +1,9 @@
-import React from 'react';
+import { Avatar } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import { Avatar } from '@material-ui/core';
-import useStyles from './styles';
+import React from 'react';
 import AnalyticsLinearProgressBar from '../../../components/ProgressBar/AnalyticsLinearProgressBar';
+import useStyles from './styles';
 
 interface TotalWorkflowProps {
   workflow: number;
@@ -60,7 +60,7 @@ const TotalWorkflows: React.FC<TotalWorkflowProps> = ({
       </div>
       <Typography variant="h5" gutterBottom className={classes.workflow}>
         <strong>
-          {workflow} {workflow > 1 ? 'workflows' : 'workflow'}
+          {workflow > 1 ? `${workflow} workflows` : `${workflow} workflow`}
         </strong>
       </Typography>
       <Typography variant="body2" className={classes.avgDesc}>

@@ -64,6 +64,7 @@ const Settings: React.FC = () => {
       </Typography>
       <Paper className={classes.root} elevation={0}>
         <Tabs
+          data-cy="settingsTabPanel"
           value={settingsTabValue}
           onChange={handleChange}
           TabIndicatorProps={{
@@ -72,10 +73,14 @@ const Settings: React.FC = () => {
             },
           }}
         >
-          <Tab label="My Account" {...tabProps(0)} />
-          <Tab label="Team" {...tabProps(1)} />
+          <Tab data-cy="my-account" label="My Account" {...tabProps(0)} />
+          <Tab data-cy="teaming" label="Team" {...tabProps(1)} />
           {userData.username === 'admin' ? (
-            <Tab label="User Management" {...tabProps(2)} />
+            <Tab
+              data-cy="user-management"
+              label="User Management"
+              {...tabProps(2)}
+            />
           ) : (
             <></>
           )}
@@ -84,9 +89,11 @@ const Settings: React.FC = () => {
       <TabPanel value={settingsTabValue} index={0}>
         <AccountSettings />
       </TabPanel>
-      <TabPanel value={settingsTabValue} index={1}>
-        <TeammingTab />
-      </TabPanel>
+      <div data-cy="teamTabPanel">
+        <TabPanel value={settingsTabValue} index={1}>
+          <TeammingTab />
+        </TabPanel>
+      </div>
       {userData.username === 'admin' ? (
         <TabPanel value={settingsTabValue} index={2}>
           <UserManagement />

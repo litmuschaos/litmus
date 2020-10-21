@@ -2,22 +2,27 @@ import { AppBar, Typography } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
 import Tabs from '@material-ui/core/Tabs';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ButtonFilled from '../../components/Button/ButtonFilled';
 import { StyledTab, TabPanel } from '../../components/Tabs';
 import Scaffold from '../../containers/layouts/Scaffold';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
+import * as TemplateSelectionActions from '../../redux/actions/template';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
+import WorkflowComparisonTable from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowComparisonTable';
 import BrowseSchedule from '../../views/ChaosWorkflows/BrowseSchedule';
 import BrowseWorkflow from '../../views/ChaosWorkflows/BrowseWorkflow';
 import Templates from '../../views/ChaosWorkflows/Templates';
-import WorkflowComparisonTable from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowComparisonTable';
 import useStyles from './styles';
 
 const Workflows = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
+
+  const template = useActions(TemplateSelectionActions);
   const workflowTabValue = useSelector(
     (state: RootState) => state.tabNumber.workflows
   );
@@ -29,6 +34,11 @@ const Workflows = () => {
     tabs.changeWorkflowsTabs(newValue);
   };
 
+  const handleScheduleWorkflow = () => {
+    template.selectTemplate({ selectedTemplateID: 0, isDisable: true });
+    history.push('/create-workflow');
+  };
+
   return (
     <Scaffold>
       <section>
@@ -37,9 +47,9 @@ const Workflows = () => {
           <div className={classes.scheduleBtn}>
             <ButtonFilled
               isPrimary={false}
-              handleClick={() => history.push('/create-workflow')}
+              handleClick={handleScheduleWorkflow}
             >
-              <>Schedule a workflow</>
+              {t('workflows.scheduleAWorkflow')}
             </ButtonFilled>
           </div>
         </div>
@@ -55,10 +65,22 @@ const Workflows = () => {
           }}
           variant="fullWidth"
         >
-          <StyledTab label="Browse workflows" />
-          <StyledTab label="Schedules" />
-          <StyledTab label="Templates" />
-          <StyledTab label="Analytics" />
+          <StyledTab
+            label={`${t('workflows.browseWorkflows')}`}
+            data-cy="browseWorkflow"
+          />
+          <StyledTab
+            label={`${t('workflows.schedules')}`}
+            data-cy="browseSchedule"
+          />
+          <StyledTab
+            label={`${t('workflows.templates')}`}
+            data-cy="templates"
+          />
+          <StyledTab
+            label={`${t('workflows.analytics')}`}
+            data-cy="analyticsWorkflow"
+          />
         </Tabs>
       </AppBar>
       <TabPanel value={workflowTabValue} index={0}>

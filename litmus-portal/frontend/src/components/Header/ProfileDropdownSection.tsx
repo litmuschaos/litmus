@@ -51,9 +51,10 @@ const ProfileDropdownSection: React.FC<ProfileInfoDropdownSectionProps> = ({
         </Box>
 
         <Box p={1}>
-          <Typography>
+          <Typography data-cy="full-name">
             {name}{' '}
             <IconButton
+              data-cy="header-dropdown"
               edge="end"
               ref={profileMenuRef}
               aria-label="account of current user"

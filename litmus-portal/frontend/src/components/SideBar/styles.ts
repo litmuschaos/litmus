@@ -9,12 +9,16 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '100%',
     position: 'relative',
     backgroundColor: theme.palette.sidebarBackground,
+    color: 'inherit',
   },
   litmusDiv: {
     display: 'flex',
     flexDirection: 'row',
     marginTop: theme.spacing(3.5),
     marginLeft: theme.spacing(4),
+    '& img': {
+      userDrag: 'none',
+    },
   },
   homeLink: {
     textDecoration: 'none',
@@ -39,13 +43,19 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'center',
     '&:hover': {
       backgroundColor: theme.palette.secondary.light,
-      color: theme.palette.getContrastText(theme.palette.primary.contrastText),
+      color: theme.palette.secondary.contrastText,
       '& path': {
-        fill: theme.palette.common.white,
+        fill: theme.palette.secondary.contrastText,
       },
     },
   },
-
+  active: {
+    backgroundColor: `${theme.palette.totalRunsCountColor} !important`,
+    color: theme.palette.secondary.contrastText,
+    '& path': {
+      fill: theme.palette.common.white,
+    },
+  },
   listIcon: {
     paddingLeft: theme.spacing(2),
   },

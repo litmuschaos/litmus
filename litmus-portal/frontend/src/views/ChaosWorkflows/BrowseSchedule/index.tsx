@@ -6,6 +6,7 @@ import {
   InputBase,
   InputLabel,
   MenuItem,
+  Paper,
   Select,
   Table,
   TableBody,
@@ -184,9 +185,12 @@ const BrowseSchedule = () => {
           </FormControl>
         </div>
       </section>
-      <section className="table section">
+      <Paper className={classes.root}>
         {/* Table Header */}
-        <TableContainer className={classes.tableMain}>
+        <TableContainer
+          data-cy="browseScheduleTable"
+          className={classes.tableMain}
+        >
           <Table stickyHeader aria-label="simple table">
             <TableHead>
               <TableRow className={classes.tableHead}>
@@ -203,8 +207,8 @@ const BrowseSchedule = () => {
                         onClick={() =>
                           setSortData({
                             ...sortData,
-                            name: { sort: true, ascending: true },
-                            startDate: { sort: false, ascending: true },
+                            name: { sort: false, ascending: false },
+                            startDate: { sort: false, ascending: false },
                           })
                         }
                       >
@@ -216,8 +220,8 @@ const BrowseSchedule = () => {
                         onClick={() =>
                           setSortData({
                             ...sortData,
-                            name: { sort: true, ascending: false },
-                            startDate: { sort: false, ascending: false },
+                            name: { sort: false, ascending: true },
+                            startDate: { sort: true, ascending: true },
                           })
                         }
                       >
@@ -296,7 +300,7 @@ const BrowseSchedule = () => {
                 </TableRow>
               ) : error ? (
                 <TableRow>
-                  <TableCell colSpan={7}>
+                  <TableCell data-cy="browseScheduleError" colSpan={7}>
                     <Typography align="center">Unable to fetch data</Typography>
                   </TableCell>
                 </TableRow>
@@ -308,13 +312,16 @@ const BrowseSchedule = () => {
                       paginationData.rowsPerPage
                   )
                   .map((data: ScheduleWorkflow) => (
-                    <TableRow key={data.workflow_id}>
+                    <TableRow
+                      data-cy="browseScheduleData"
+                      key={data.workflow_id}
+                    >
                       <TableData data={data} deleteRow={deleteRow} />
                     </TableRow>
                   ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={7}>
+                  <TableCell data-cy="browseScheduleNoData" colSpan={7}>
                     <Typography align="center">No records available</Typography>
                   </TableCell>
                 </TableRow>
@@ -341,7 +348,7 @@ const BrowseSchedule = () => {
             });
           }}
         />
-      </section>
+      </Paper>
     </div>
   );
 };

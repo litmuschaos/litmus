@@ -11,6 +11,11 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(0.25),
     textDecoration: 'none',
   },
+  imgDiv: {
+    '& img': {
+      userDrag: 'none',
+    },
+  },
   listItems: {
     marginTop: theme.spacing(2.5),
   },

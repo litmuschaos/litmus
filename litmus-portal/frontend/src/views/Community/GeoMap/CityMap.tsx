@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import {
   ComposableMap,
@@ -9,69 +9,53 @@ import {
 } from 'react-simple-maps';
 import { RootState } from '../../../redux/reducers';
 import datageo from './geo.json';
+import useStyles from './styles';
 
 const geoUrl = datageo;
-
-interface CityData {
-  name: string;
-  coordinates: [number, number];
-}
 
 /* City geo Map is used for location of users with 
 lat and lng wise to present it on map */
 const CityMap: React.FC = () => {
-  const [mapData, setMapData] = useState<CityData[]>([]);
+  const classes = useStyles();
 
-  const geoCity = useSelector(
-    (state: RootState) => state.communityData.google.geoCity
+  const { communityData } = useSelector(
+    (state: RootState) => state.communityData
   );
-
-  useEffect(() => {
-    const cityData: CityData[] = [];
-    geoCity.map((e) =>
-      cityData.push({
-        name: e.name,
-        coordinates: [parseFloat(e.longitude), parseFloat(e.latitude)],
-      })
-    );
-    setMapData(cityData);
-  }, []);
-
+  const { geoCity } = communityData.google;
   return (
     <div>
       <ComposableMap
-        style={{
-          width: 640,
-          height: 340,
-        }}
+        projection="geoMercator"
+        className={classes.cityMapComposableMap}
       >
-        <ZoomableGroup zoom={1.3}>
+        <ZoomableGroup center={[0, -675]} zoom={0.85}>
           <Geographies geography={geoUrl}>
             {({ geographies }) =>
               geographies.map((geo) => (
                 <Geography
+                  className={classes.cityMapGeography}
                   key={geo.rsmKey}
                   geography={geo}
-                  fill="#CFCFCF"
-                  stroke="#CFCFCF"
                 />
               ))
             }
           </Geographies>
-          {mapData &&
-            mapData.map(({ name, coordinates }) => (
-              <Marker key={`${name}_${coordinates}`} coordinates={coordinates}>
-                <g
-                  stroke="#858CDD"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  transform="translate(-12, -24)"
-                >
-                  <circle cx="12" cy="10" r="4" />
-                </g>
-              </Marker>
-            ))}
+          {geoCity &&
+            geoCity.map(
+              ({ name, latitude, longitude }) =>
+                name !== '(not set)' && (
+                  <Marker
+                    className={classes.cityMapMarkerStyles}
+                    key={`${name}_${latitude}_${longitude}`}
+                    coordinates={[
+                      parseFloat(longitude) - 4,
+                      parseFloat(latitude) + 4,
+                    ]}
+                  >
+                    <circle />
+                  </Marker>
+                )
+            )}
         </ZoomableGroup>
       </ComposableMap>
     </div>

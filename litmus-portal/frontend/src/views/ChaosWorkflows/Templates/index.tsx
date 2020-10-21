@@ -15,7 +15,7 @@ const Templates = () => {
   const testWeights: number[] = [];
 
   // Setting initial selected template ID to 0
-  template.selectTemplate({ selectedTemplateID: 0, isDisable: true });
+  template.selectTemplate({ selectedTemplateID: -1, isDisable: true });
 
   const selectWorkflow = (index: number) => {
     // Updating template ID to the selected one
@@ -61,7 +61,7 @@ const Templates = () => {
           </div>
           <Typography className={classes.headerSize}>Sort</Typography>
         </div> */}
-      <div className={classes.predefinedCards}>
+      <div data-cy="templatesPage" className={classes.predefinedCards}>
         <PredifinedWorkflows
           callbackOnSelectWorkflow={(index: number) => {
             selectWorkflow(index);

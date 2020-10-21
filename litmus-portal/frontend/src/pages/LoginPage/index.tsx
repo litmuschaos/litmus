@@ -87,52 +87,51 @@ const LoginPage = () => {
           </Typography>
           <form id="login-form" autoComplete="on" onSubmit={handleSubmit}>
             <div className={classes.inputDiv}>
-              <InputField
-                label="Username"
-                value={authData.username}
-                helperText={
-                  validateStartEmptySpacing(authData.username)
-                    ? 'Should not start with an empty space'
-                    : ''
-                }
-                validationError={validateStartEmptySpacing(authData.username)}
-                data-cy="inputEmail"
-                required
-                handleChange={(e) =>
-                  setAuthData({
-                    username: e.target.value,
-                    password: authData.password,
-                  })
-                }
-              />
-              <InputField
-                label="Password"
-                type="password"
-                required
-                value={authData.password}
-                helperText={
-                  isError
-                    ? 'Wrong Credentials - Try again with correct username or password'
-                    : ''
-                }
-                validationError={isError}
-                data-cy="inputPassword"
-                handleChange={(e) =>
-                  setAuthData({
-                    username: authData.username,
-                    password: e.target.value,
-                  })
-                }
-              />
+              <div className={classes.inputValue} data-cy="inputName">
+                <InputField
+                  label="Username"
+                  value={authData.username}
+                  helperText={
+                    validateStartEmptySpacing(authData.username)
+                      ? 'Should not start with an empty space'
+                      : ''
+                  }
+                  validationError={validateStartEmptySpacing(authData.username)}
+                  required
+                  handleChange={(e) =>
+                    setAuthData({
+                      username: e.target.value,
+                      password: authData.password,
+                    })
+                  }
+                />
+              </div>
+              <div className={classes.inputValue} data-cy="inputPassword">
+                <InputField
+                  label="Password"
+                  type="password"
+                  required
+                  value={authData.password}
+                  helperText={
+                    isError
+                      ? 'Wrong Credentials - Try again with correct username or password'
+                      : ''
+                  }
+                  validationError={isError}
+                  handleChange={(e) =>
+                    setAuthData({
+                      username: authData.username,
+                      password: e.target.value,
+                    })
+                  }
+                />
+              </div>
             </div>
             <div className={classes.loginDiv}>
-              <ButtonFilled
-                type="submit"
-                isPrimary
-                data-cy="loginButton"
-                isDisabled={isLoading}
-              >
-                {isLoading ? <Loader size={loaderSize} /> : 'Login'}
+              <ButtonFilled type="submit" isPrimary isDisabled={isLoading}>
+                <div data-cy="loginButton">
+                  {isLoading ? <Loader size={loaderSize} /> : 'Login'}
+                </div>
               </ButtonFilled>
             </div>
           </form>

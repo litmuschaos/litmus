@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: rabbitmq
+  labels:
+    name: rabbitmq
+    k8s-app: rabbitmq
+  namespace: sock-shop
+spec:
+  jobLabel: name
+  selector:
+    matchLabels:
+      name: rabbitmq
+  namespaceSelector:
+    matchNames:
+    - sock-shop
+  endpoints:
+  - port: exporter
+    interval: 1s

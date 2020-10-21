@@ -7,13 +7,13 @@ import {
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import React from 'react';
+import LinearProgressBar from '../../../components/ProgressBar/LinearProgressBar';
 import {
   ExecutionData,
   WorkflowRun,
 } from '../../../models/graphql/workflowData';
 import { history } from '../../../redux/configureStore';
 import timeDifferenceForDate from '../../../utils/datesModifier';
-import LinearProgressBar from '../../../components/ProgressBar/LinearProgressBar';
 import CustomStatus from '../CustomStatus/Status';
 import useStyles from './styles';
 
@@ -49,7 +49,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
         <CustomStatus status={exeData.phase} />
       </TableCell>
       <TableCell className={classes.workflowNameData}>
-        <Typography>
+        <Typography data-cy="workflowName">
           <strong>{data.workflow_name}</strong>
         </Typography>
       </TableCell>
@@ -66,7 +66,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
                 Overall RR: <span className={classes.failed}>0%</span>
               </Typography>
               <div className={classes.progressBar}>
-                <LinearProgressBar value={0} />
+                <LinearProgressBar width={2} value={0} />
               </div>
             </>
           ) : (
@@ -75,7 +75,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
                 Overall RR: <span className={classes.success}>100%</span>
               </Typography>
               <div className={classes.progressBar}>
-                <LinearProgressBar value={100} />
+                <LinearProgressBar width={2} value={100} />
               </div>
             </>
           )}
@@ -96,6 +96,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
           aria-haspopup="true"
           onClick={handleClick}
           className={classes.optionBtn}
+          data-cy="browseWorkflowOptions"
         >
           <MoreVertIcon />
         </IconButton>
@@ -108,11 +109,11 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
         >
           <MenuItem
             value="Workflow"
-            onClick={() =>
-              history.push(`/workflows/details/${data.workflow_run_id}`)
-            }
+            onClick={() => {
+              history.push(`/workflows/details/${data.workflow_run_id}`);
+            }}
           >
-            <div className={classes.expDiv}>
+            <div className={classes.expDiv} data-cy="workflowDetails">
               <img
                 src="/icons/show-workflow.svg"
                 alt="Display Workflow"
@@ -129,7 +130,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
               history.push(`/workflows/analytics/${data.workflow_id}`)
             }
           >
-            <div className={classes.expDiv}>
+            <div className={classes.expDiv} data-cy="workflowAnalytics">
               <img
                 src="/icons/show-analytics.svg"
                 alt="Display Analytics"

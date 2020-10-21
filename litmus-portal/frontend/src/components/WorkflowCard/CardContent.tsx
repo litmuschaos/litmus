@@ -98,7 +98,9 @@ const CardContent: React.FC<preDefinedWorkflowData> = ({
             <div className={classes.noImage}>Image</div>
           )}
           <div>
-            <div className={classes.title}>{title}</div>
+            <div data-cy="expName" className={classes.title}>
+              {title}
+            </div>
             <div className={classes.provider}>Contributed by {provider}</div>
           </div>
           {description ? (

@@ -1,5 +1,6 @@
 import { Box, Paper, Tab, Tabs, Typography } from '@material-ui/core';
 import React from 'react';
+import useTheme from '@material-ui/core/styles/useTheme';
 import ButtonOutline from '../../../../components/Button/ButtonOutline';
 import Unimodal from '../../../../containers/layouts/Unimodal';
 import ReceivedInvitations from './ReceivedInvitations';
@@ -55,9 +56,9 @@ const Invitation: React.FC = () => {
   const handleChange = (event: React.ChangeEvent<{}>, actTab: number) => {
     setActiveTab(actTab);
   };
-
+  const theme = useTheme();
   return (
-    <div>
+    <div data-cy="invitationButton">
       <div className={classes.button}>
         <ButtonOutline handleClick={handleOpen} isDisabled={false}>
           <div>Invitation</div>
@@ -65,7 +66,7 @@ const Invitation: React.FC = () => {
       </div>
 
       <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn>
-        <div className={classes.body}>
+        <div data-cy="invitationModal" className={classes.body}>
           <Typography className={classes.Header}>
             Manage <strong>invitations</strong>
           </Typography>
@@ -74,11 +75,14 @@ const Invitation: React.FC = () => {
               <Tabs
                 value={activeTab}
                 onChange={handleChange}
-                indicatorColor="secondary"
-                textColor="secondary"
+                TabIndicatorProps={{
+                  style: {
+                    backgroundColor: theme.palette.secondary.dark,
+                  },
+                }}
               >
-                <Tab label="Received" {...tabProps(0)} />
-                <Tab label="Sent" {...tabProps(1)} />
+                <Tab data-cy="receivedTab" label="Received" {...tabProps(0)} />
+                <Tab data-cy="sentTab" label="Sent" {...tabProps(1)} />
               </Tabs>
             </Paper>
             <TabPanel value={activeTab} index={0}>

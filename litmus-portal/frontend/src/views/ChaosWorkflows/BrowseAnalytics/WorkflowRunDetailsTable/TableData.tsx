@@ -10,8 +10,8 @@ interface workFlowTests {
   test_id: number;
   test_name: string;
   test_result: string;
-  weight?: number;
-  resulting_points?: number;
+  test_weight: number;
+  resulting_points: number;
   last_run: string;
 }
 
@@ -50,11 +50,11 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       <TableCell>
         <div className={classes.reliabiltyData}>
           <Typography className={classes.reliabilityDataTypography}>
-            {data.weight} Points
+            {data.test_weight} Points
           </Typography>
           <div className={classes.progressBar}>
             <AnalyticsLinearProgressBar
-              value={data.weight ?? 0}
+              value={data.test_weight ?? 0}
               maxValue={10}
               isInTable
             />
@@ -66,7 +66,7 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
         <div className={classes.reliabiltyData}>
           <Typography>{data.resulting_points} Points</Typography>
           <div className={classes.progressBar}>
-            <LinearProgressBar value={data.resulting_points ?? 0} />
+            <LinearProgressBar width={2} value={data.resulting_points ?? 0} />
           </div>
         </div>
       </TableCell>

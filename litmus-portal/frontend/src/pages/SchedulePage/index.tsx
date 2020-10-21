@@ -57,7 +57,13 @@ const SchedulePage: React.FC = () => {
     'Saturday',
     'Sunday',
   ];
+  const [selectedDate, setSelectedDate] = React.useState<Date | null>(
+    new Date(Date.now())
+  );
 
+  const handleDateChange = (date: Date | null) => {
+    setSelectedDate(date);
+  };
   return (
     <Scaffold>
       <div className={classes.rootContainer}>
@@ -139,7 +145,12 @@ const SchedulePage: React.FC = () => {
                           label="Days"
                           type="days"
                         />
-                        <CustomTime ampm disabled={false} />
+                        <CustomTime
+                          handleDateChange={handleDateChange}
+                          value={selectedDate}
+                          ampm
+                          disabled={false}
+                        />
                       </div>
                     </div>
                   ) : (
@@ -161,8 +172,17 @@ const SchedulePage: React.FC = () => {
                         {t('schedule.scheduleFuture')}
                       </Typography>
                       <div className={classes.innerSpecific}>
-                        <CustomDate disabled={false} />
-                        <CustomTime ampm disabled={false} />
+                        <CustomDate
+                          selectedDate={selectedDate}
+                          handleDateChange={handleDateChange}
+                          disabled={false}
+                        />
+                        <CustomTime
+                          handleDateChange={handleDateChange}
+                          value={selectedDate}
+                          ampm
+                          disabled={false}
+                        />
                       </div>
                     </div>
                   ) : (
@@ -226,7 +246,12 @@ const SchedulePage: React.FC = () => {
                                   <Typography className={classes.scRandsub1}>
                                     {t('schedule.At')}
                                   </Typography>
-                                  <CustomTime ampm disabled={false} />
+                                  <CustomTime
+                                    handleDateChange={handleDateChange}
+                                    value={selectedDate}
+                                    ampm
+                                    disabled={false}
+                                  />
                                 </div>
                               </div>
                             ) : (
@@ -279,7 +304,12 @@ const SchedulePage: React.FC = () => {
                                   <Typography className={classes.scRandsub1}>
                                     {t('schedule.at')}
                                   </Typography>
-                                  <CustomTime ampm disabled={false} />
+                                  <CustomTime
+                                    handleDateChange={handleDateChange}
+                                    value={selectedDate}
+                                    ampm
+                                    disabled={false}
+                                  />
                                 </div>
                               </div>
                             ) : (
@@ -331,7 +361,12 @@ const SchedulePage: React.FC = () => {
                                   <Typography className={classes.scRandsub1}>
                                     {t('schedule.at')}
                                   </Typography>
-                                  <CustomTime ampm disabled={false} />
+                                  <CustomTime
+                                    handleDateChange={handleDateChange}
+                                    value={selectedDate}
+                                    ampm
+                                    disabled={false}
+                                  />
                                 </div>
                               </div>
                             ) : (

@@ -47,6 +47,9 @@ type Cluster struct {
 	UpdatedAt          string  `json:"updated_at"`
 	CreatedAt          string  `json:"created_at"`
 	ClusterType        string  `json:"cluster_type"`
+	NoOfSchedules      *int    `json:"no_of_schedules"`
+	NoOfWorkflows      *int    `json:"no_of_workflows"`
+	Token              string  `json:"token"`
 }
 
 type ClusterAction struct {
@@ -197,6 +200,23 @@ type WeightagesInput struct {
 	Weightage      int    `json:"weightage"`
 }
 
+type Workflow struct {
+	WorkflowID          string          `json:"workflow_id"`
+	WorkflowManifest    string          `json:"workflow_manifest"`
+	CronSyntax          string          `json:"cronSyntax"`
+	ClusterName         string          `json:"cluster_name"`
+	WorkflowName        string          `json:"workflow_name"`
+	WorkflowDescription string          `json:"workflow_description"`
+	Weightages          []*Weightages   `json:"weightages"`
+	IsCustomWorkflow    bool            `json:"isCustomWorkflow"`
+	UpdatedAt           string          `json:"updated_at"`
+	CreatedAt           string          `json:"created_at"`
+	ProjectID           string          `json:"project_id"`
+	ClusterID           string          `json:"cluster_id"`
+	ClusterType         string          `json:"cluster_type"`
+	WorkflowRuns        []*WorkflowRuns `json:"workflow_runs"`
+}
+
 type WorkflowRun struct {
 	WorkflowRunID string  `json:"workflow_run_id"`
 	WorkflowID    string  `json:"workflow_id"`
@@ -215,6 +235,18 @@ type WorkflowRunInput struct {
 	WorkflowName  string           `json:"workflow_name"`
 	ExecutionData string           `json:"execution_data"`
 	ClusterID     *ClusterIdentity `json:"cluster_id"`
+}
+
+type WorkflowRuns struct {
+	ExecutionData string `json:"execution_data"`
+	WorkflowRunID string `json:"workflow_run_id"`
+	LastUpdated   string `json:"last_updated"`
+}
+
+type ClusterRegResponse struct {
+	Token       string `json:"token"`
+	ClusterID   string `json:"cluster_id"`
+	ClusterName string `json:"cluster_name"`
 }
 
 type Weightages struct {

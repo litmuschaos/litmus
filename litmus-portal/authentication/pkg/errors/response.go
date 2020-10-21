@@ -54,7 +54,7 @@ var Descriptions = map[error]string{
 	ErrTemporarilyUnavailable: "The authorization server is currently unable to handle the request due to a temporary overloading or maintenance of the server",
 	ErrInvalidUser:            "User does not exist",
 	ErrInvalidPassword:        "User authentication failed",
-	ErrUserExists:             "This username is already to assigned to a user",
+	ErrUserExists:             "This username is already assigned to another user",
 }
 
 // StatusCodes response error HTTP status code

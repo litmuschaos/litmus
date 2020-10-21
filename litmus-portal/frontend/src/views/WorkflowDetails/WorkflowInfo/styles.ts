@@ -2,8 +2,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    width: '25%',
-    padding: '1rem 2rem',
+    width: '100%',
     marginTop: '1rem',
   },
   header: {
@@ -16,7 +15,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: '1rem 0',
   },
   divider: {
-    background: theme.palette.secondary.dark,
+    background: theme.palette.sectionDividerColor,
     height: '0.2rem',
   },
   heightMaintainer: {

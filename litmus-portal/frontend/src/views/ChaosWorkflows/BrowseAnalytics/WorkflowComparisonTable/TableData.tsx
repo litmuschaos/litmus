@@ -1,13 +1,15 @@
-import React from 'react';
-import { TableCell, Typography, IconButton, Checkbox } from '@material-ui/core';
+import { Checkbox, IconButton, TableCell, Typography } from '@material-ui/core';
 import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import moment from 'moment';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import cronstrue from 'cronstrue';
 import { history } from '../../../../redux/configureStore';
 import useStyles from './styles';
-import { ScheduleWorkflow } from '../../../../models/graphql/scheduleData';
+import { Workflow } from '../../../../models/graphql/workflowListData';
 
 interface TableDataProps {
-  data: ScheduleWorkflow;
+  data: Workflow;
   itemSelectionStatus: boolean;
   labelIdentifier: string;
   comparisonState: Boolean;
@@ -20,6 +22,7 @@ const TableData: React.FC<TableDataProps> = ({
   comparisonState,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   // Function to convert UNIX time in format of DD MMM YYY
   const formatDate = (date: string) => {
@@ -51,16 +54,18 @@ const TableData: React.FC<TableDataProps> = ({
         </Typography>
       </TableCell>
       <TableCell>
-        &nbsp;
-        <img
-          src="/icons/calender.svg"
-          alt="Calender"
-          className={classes.calIcon}
-        />
-        <Typography className={classes.tableObjectRegularity}>
-          {/* data.regularity */}
-          Once
-        </Typography>
+        <div className={classes.regularityData}>
+          <div className={classes.iconDiv}>
+            <img src="/icons/calender.svg" alt="Calender" />
+            <Typography className={classes.paddedText}>
+              {data.cronSyntax === ''
+                ? t(
+                    'chaosWorkflows.browseAnalytics.workFlowComparisonTable.once'
+                  )
+                : cronstrue.toString(data.cronSyntax)}
+            </Typography>
+          </div>
+        </div>
       </TableCell>
       <TableCell>
         <Typography className={classes.tableObjects}>
@@ -69,7 +74,11 @@ const TableData: React.FC<TableDataProps> = ({
       </TableCell>
       <TableCell>
         <Typography className={classes.tableObjects}>
-          <strong>See analytics</strong>
+          <strong>
+            {t(
+              'chaosWorkflows.browseAnalytics.workFlowComparisonTable.seeAnalytics'
+            )}
+          </strong>
           <IconButton
             edge="end"
             aria-label="analytics for workflow id"

@@ -7,7 +7,10 @@ const useStyles = makeStyles((theme) => ({
     height: '2.5rem',
     width: '19.375rem',
   },
-
+  plotCard: {
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+  },
   root: {
     height: '2.5rem',
     padding: theme.spacing(0.5),

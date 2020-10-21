@@ -21,7 +21,7 @@ const QuickActionCard = () => {
   const { t } = useTranslation();
 
   return (
-    <div className={classes.quickActionCard}>
+    <div data-cy="quickActionCardComponent" className={classes.quickActionCard}>
       <Card className={classes.quickActionCard} elevation={0}>
         <Typography className={classes.mainHeader}>
           {t('quickActionCard.quickActions')}
@@ -35,7 +35,9 @@ const QuickActionCard = () => {
           </QuickActionItems> */}
           {userRole === 'Owner' && (
             <QuickActionItems>
-              <img src="icons/team.png" alt="team" />
+              <div className={classes.imgDiv}>
+                <img src="icons/team.png" alt="team" />
+              </div>
               <Link
                 to="/settings"
                 className={classes.listItem}
@@ -46,7 +48,9 @@ const QuickActionCard = () => {
             </QuickActionItems>
           )}
           <QuickActionItems>
-            <img src="icons/survey.png" alt="survey" />
+            <div className={classes.imgDiv}>
+              <img src="icons/survey.png" alt="survey" />
+            </div>
             <a
               href="https://forms.gle/qMuVphRyEWCFqjD56"
               className={classes.listItem}
@@ -56,7 +60,9 @@ const QuickActionCard = () => {
             </a>
           </QuickActionItems>
           <QuickActionItems>
-            <img src="icons/docs.png" alt="docs" />
+            <div className={classes.imgDiv}>
+              <img src="icons/docs.png" alt="docs" />
+            </div>
             <a
               href="https://docs.litmuschaos.io/docs/getstarted/"
               className={classes.listItem}

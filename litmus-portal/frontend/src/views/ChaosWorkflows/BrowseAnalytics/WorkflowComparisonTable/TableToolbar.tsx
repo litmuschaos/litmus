@@ -8,8 +8,10 @@ import {
   Select,
   Button,
   IconButton,
+  Avatar,
 } from '@material-ui/core';
 import React, { ChangeEvent, useRef, useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import SearchIcon from '@material-ui/icons/Search';
 import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
@@ -70,6 +72,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
 }) => {
   const classes = useStyles();
   const { palette } = useTheme();
+  const { t } = useTranslation();
   const [cluster, setCluster] = React.useState<String>('All');
   const [compare, setCompare] = React.useState<Boolean>(false);
   const [range, setRange] = React.useState<RangeType>({
@@ -144,7 +147,6 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
 
       {numSelected > 0 && comparisonState === false ? (
         <span>
-          {/* Remove comments to compare.
           <Typography
             variant="h6"
             className={classes.markStyleCorrect}
@@ -155,10 +157,12 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           <Typography variant="h6" component="div" display="inline">
             <strong>
               &nbsp; {numSelected}{' '}
-              {numSelected === 1 ? 'workflow' : 'workflows'} selected
+              {numSelected === 1
+                ? t('analytics.workflowSelected')
+                : t('analytics.workflowsSelected')}{' '}
+              &nbsp; &emsp;
             </strong>
           </Typography>
-          */}
         </span>
       ) : (
         <span />
@@ -196,7 +200,9 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         color="secondary"
         focused
       >
-        <InputLabel className={classes.selectText}>Target cluster</InputLabel>
+        <InputLabel className={classes.selectText}>
+          {t('analytics.targetCluster')}
+        </InputLabel>
         <Select
           label="Target cluster"
           value={cluster}
@@ -213,20 +219,23 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
 
       {compare === false || comparisonState === false ? (
         <ButtonOutline
-          // isDisabled={numSelected > 1 ? false : true} Remove comments to compare.
+          isDisabled={!(numSelected > 1)}
           handleClick={handleClick}
-          isDisabled
         >
           <Typography className={classes.dateRangeDefault}>
-            Compare workflows
+            {t('analytics.compareWorkflows')}
           </Typography>
         </ButtonOutline>
       ) : (
         <ButtonOutline handleClick={handleExport} isDisabled={false}>
-          <DescriptionOutlinedIcon htmlColor={palette.secondary.dark} />
-          <Typography className={classes.dateRangeDefault}>
-            Export PDF
-          </Typography>
+          <div className={classes.export}>
+            <Avatar className={classes.exportIcon}>
+              <DescriptionOutlinedIcon htmlColor={palette.secondary.dark} />
+            </Avatar>
+            <Typography className={classes.dateRangeDefault} display="inline">
+              {t('analytics.exportPDF')}
+            </Typography>
+          </div>
         </ButtonOutline>
       )}
       <DateRangeSelector

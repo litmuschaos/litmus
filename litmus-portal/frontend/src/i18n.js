@@ -4,8 +4,6 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
 import yaml from 'js-yaml';
 
-const languages = ['en'];
-
 i18n
   // load translation using http -> see /public/locales
   // learn more: https://github.com/i18next/i18next-http-backend
@@ -20,7 +18,6 @@ i18n
   .init({
     fallbackLng: 'en',
     debug: true,
-    whitelist: languages,
     backend: {
       loadPath: '/locales/{{lng}}/{{ns}}.yaml',
       parse(data) {

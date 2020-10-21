@@ -9,6 +9,7 @@ import {
   Toolbar,
   Typography,
 } from '@material-ui/core';
+import { useTheme } from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
@@ -48,6 +49,7 @@ interface Role {
 
 const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   const classes = useStyles();
+  const theme = useTheme();
   // for response data
   const [rows, setRows] = useState<UserInvite[]>([]);
 
@@ -76,7 +78,10 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   // query for getting all the data for the logged in user
   const { data: dataB } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
-    { variables: { username: userData.username } }
+    {
+      variables: { username: userData.username },
+      fetchPolicy: 'cache-and-network',
+    }
   );
 
   // query to list all the users
@@ -88,12 +93,13 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
       if (dataA !== undefined) {
         if (dataB?.getUser.username === userData.username) {
           const projectList: Project[] = dataB?.getUser.projects;
-
           projectList.forEach(
             (project) =>
               project.id === userData.selectedProjectID &&
-              project.members.map((member) =>
-                memberList.set(member.user_name, 1)
+              project.members.map(
+                (member) =>
+                  member.invitation !== 'Declined' &&
+                  memberList.set(member.user_name, 1)
               )
           );
           // login for displaying only those users who are not the part of team
@@ -106,13 +112,14 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
       }
     },
   });
-  const username = useSelector((state: RootState) => state.userData.username);
 
   // mutation to send invitation to selected users
   const [SendInvite, { error: errorB, loading: loadingB }] = useMutation<
     MemberInviteNew
   >(SEND_INVITE, {
-    refetchQueries: [{ query: GET_USER, variables: { username } }],
+    refetchQueries: [
+      { query: GET_USER, variables: { username: userData.username } },
+    ],
   });
 
   // Checks if the user the already selected or not
@@ -159,7 +166,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   });
 
   const filteredData = rows.filter((dataRow) =>
-    dataRow?.username.toLowerCase().includes(filters.search)
+    dataRow?.username.toLowerCase().includes(filters.search.toLowerCase())
   );
 
   const [showsuccess, setShowsuccess] = useState<boolean>(false);
@@ -177,7 +184,10 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
               {errorB ? (
                 <Typography>{errorB.message}</Typography>
               ) : (
-                <div className={classes.body}>
+                <div
+                  data-cy="inviteNewMemberSuccessModal"
+                  className={classes.body}
+                >
                   <img src="./icons/checkmark.svg" alt="checkmark" />
                   <div className={classes.text}>
                     <Typography className={classes.typo}>
@@ -191,7 +201,10 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                       member.
                     </Typography>
                   </div>
-                  <div className={classes.buttonModal}>
+                  <div
+                    data-cy="inviteNewMemberSuccessModalDoneButton"
+                    className={classes.buttonModal}
+                  >
                     <ButtonFilled
                       isPrimary
                       isDisabled={false}
@@ -211,7 +224,10 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
             Invite <strong>new member</strong>
           </Typography>
           <Toolbar className={classes.toolbar}>
-            <div className={classes.inviteSomeone}>
+            <div
+              data-cy="inviteNewMemberSearch"
+              className={classes.inviteSomeone}
+            >
               <div>
                 <Input
                   id="input-with-icon-textfield"
@@ -229,13 +245,17 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                   disableUnderline
                   inputProps={{
                     style: {
+                      color: theme.palette.personalDetailsBodyColor,
                       maxWidth: '31.75rem',
                       minWidth: '31.375rem',
                     },
                   }}
                 />
               </div>
-              <div className={classes.InviteBtn}>
+              <div
+                data-cy="inviteNewMemberSendInviteButton"
+                className={classes.InviteBtn}
+              >
                 <ButtonFilled
                   isPrimary
                   isDisabled={!selected.length}
@@ -262,7 +282,10 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
               </div>
             </div>
           </Toolbar>
-          <TableContainer className={classes.table}>
+          <TableContainer
+            data-cy="inviteNewMemberTable"
+            className={classes.table}
+          >
             <Table stickyHeader aria-label="sticky table">
               {filteredData && filteredData.length > 0 ? (
                 filteredData.map((row, index) => {
@@ -271,6 +294,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
 
                   return (
                     <TableRow
+                      data-cy="inviteNewMemberCheckBox"
                       role="checkbox"
                       key={row.username}
                       aria-checked={isItemSelected}

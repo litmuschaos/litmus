@@ -6,7 +6,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(3),
   },
   avatarBackground: {
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.totalRunsCountColor,
     width: '2.56rem',
     height: '2.56rem',
     color: theme.palette.customColors.white(1),
@@ -14,6 +14,16 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       marginLeft: theme.spacing(2.5),
     },
+  },
+  nameRole: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  role: {
+    borderRadius: '0.1875rem',
+    color: theme.palette.secondary.dark,
+    fontSize: '0.75rem',
+    marginLeft: theme.spacing(1.0),
   },
   rowDiv: {
     display: 'flex',

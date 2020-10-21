@@ -2,6 +2,7 @@ package queries
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 
 	"github.com/jinzhu/copier"
@@ -69,8 +70,92 @@ func QueryWorkflows(project_id string) ([]*model.ScheduledWorkflows, error) {
 			CreatedAt:           workflow.CreatedAt,
 			ProjectID:           workflow.ProjectID,
 			ClusterName:         cluster.ClusterName,
-			ClusterID:           cluster.ClusterType,
+			ClusterID:           cluster.ClusterID,
 			ClusterType:         cluster.ClusterType,
+		}
+		result = append(result, &newChaosWorkflows)
+	}
+
+	return result, nil
+}
+
+func QueryListWorkflow(project_id string) ([]*model.Workflow, error) {
+	chaosWorkflows, err := database.GetWorkflowsByProjectID(project_id)
+	if err != nil {
+		return nil, err
+	}
+
+	result := []*model.Workflow{}
+	for _, workflow := range chaosWorkflows {
+		fmt.Print(workflow.ClusterID)
+
+		cluster, err := database.GetCluster(workflow.ClusterID)
+		if err != nil {
+			return nil, err
+		}
+		var Weightages []*model.Weightages
+		copier.Copy(&Weightages, &workflow.Weightages)
+
+		var WorkflowRuns []*model.WorkflowRuns
+		copier.Copy(&WorkflowRuns, &workflow.WorkflowRuns)
+
+		newChaosWorkflows := model.Workflow{
+			WorkflowID:          workflow.WorkflowID,
+			WorkflowManifest:    workflow.WorkflowManifest,
+			WorkflowName:        workflow.WorkflowName,
+			CronSyntax:          workflow.CronSyntax,
+			WorkflowDescription: workflow.WorkflowDescription,
+			Weightages:          Weightages,
+			IsCustomWorkflow:    workflow.IsCustomWorkflow,
+			UpdatedAt:           workflow.UpdatedAt,
+			CreatedAt:           workflow.CreatedAt,
+			ProjectID:           workflow.ProjectID,
+			ClusterName:         cluster.ClusterName,
+			ClusterID:           cluster.ClusterID,
+			ClusterType:         cluster.ClusterType,
+			WorkflowRuns:        WorkflowRuns,
+		}
+		result = append(result, &newChaosWorkflows)
+	}
+	fmt.Print(result)
+	return result, nil
+}
+
+func QueryListWorkflowByIDs(workflow_ids []*string) ([]*model.Workflow, error) {
+
+	chaosWorkflows, err := database.GetWorkflowsByIDs(workflow_ids)
+	if err != nil {
+		return nil, err
+	}
+	result := []*model.Workflow{}
+
+	for _, workflow := range chaosWorkflows {
+		cluster, err := database.GetCluster(workflow.ClusterID)
+		if err != nil {
+			return nil, err
+		}
+
+		var Weightages []*model.Weightages
+		copier.Copy(&Weightages, &workflow.Weightages)
+
+		var WorkflowRuns []*model.WorkflowRuns
+		copier.Copy(&WorkflowRuns, &workflow.WorkflowRuns)
+
+		newChaosWorkflows := model.Workflow{
+			WorkflowID:          workflow.WorkflowID,
+			WorkflowManifest:    workflow.WorkflowManifest,
+			WorkflowName:        workflow.WorkflowName,
+			CronSyntax:          workflow.CronSyntax,
+			WorkflowDescription: workflow.WorkflowDescription,
+			Weightages:          Weightages,
+			IsCustomWorkflow:    workflow.IsCustomWorkflow,
+			UpdatedAt:           workflow.UpdatedAt,
+			CreatedAt:           workflow.CreatedAt,
+			ProjectID:           workflow.ProjectID,
+			ClusterName:         cluster.ClusterName,
+			ClusterID:           cluster.ClusterID,
+			ClusterType:         cluster.ClusterType,
+			WorkflowRuns:        WorkflowRuns,
 		}
 		result = append(result, &newChaosWorkflows)
 	}
@@ -105,4 +190,33 @@ func GetLogs(reqID string, pod model.PodLogRequest, r store.StateData) {
 		reqChan <- &resp
 		close(reqChan)
 	}
+}
+
+func QueryGetClusters(projectID string, clusterType *string) ([]*model.Cluster, error) {
+	clusters, err := database.GetClusterWithProjectID(projectID, clusterType)
+	if err != nil {
+		return nil, err
+	}
+	newClusters := []*model.Cluster{}
+
+	for _, cluster := range clusters {
+		var totalNoOfSchedules int
+
+		workflows, err := database.GetWorkflowsByClusterID(cluster.ClusterID)
+		if err != nil {
+			return nil, err
+		}
+		newCluster := model.Cluster{}
+		copier.Copy(&newCluster, &cluster)
+		newCluster.NoOfWorkflows = func(i int) *int { return &i }(len(workflows))
+		for _, workflow := range workflows {
+			totalNoOfSchedules = totalNoOfSchedules + len(workflow.WorkflowRuns)
+		}
+
+		newCluster.NoOfSchedules = func(i int) *int { return &i }(totalNoOfSchedules)
+
+		newClusters = append(newClusters, &newCluster)
+	}
+
+	return newClusters, nil
 }

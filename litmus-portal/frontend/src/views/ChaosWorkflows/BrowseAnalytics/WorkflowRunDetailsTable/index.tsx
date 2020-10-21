@@ -10,8 +10,6 @@ import {
   TableRow,
 } from '@material-ui/core';
 import moment from 'moment';
-import { useQuery } from '@apollo/client';
-import { useSelector } from 'react-redux';
 import useStyles from './styles';
 import TableData from './TableData';
 import TableHeader from './TableHeader';
@@ -23,14 +21,6 @@ import {
   sortNumDesc,
 } from '../../../../utils/sort';
 import InfoTooltip from '../../../../components/InfoTooltip';
-import { SCHEDULE_DETAILS } from '../../../../graphql';
-import {
-  Schedules,
-  ScheduleDataVars,
-  Weights,
-} from '../../../../models/graphql/scheduleData';
-import { RootState } from '../../../../redux/reducers';
-import Loader from '../../../../components/Loader';
 
 interface RangeType {
   startDate: string;
@@ -41,8 +31,8 @@ interface workFlowTests {
   test_id: number;
   test_name: string;
   test_result: string;
-  weight?: number;
-  resulting_points?: number;
+  test_weight: number;
+  resulting_points: number;
   last_run: string;
 }
 
@@ -61,7 +51,7 @@ interface Filter {
 }
 
 interface ReloadAnalyticsType {
-  (reload: boolean): void;
+  (): void;
 }
 
 interface WorkflowRunDetailsTableProps {
@@ -77,7 +67,6 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
 }) => {
   const classes = useStyles();
   const [close, setClose] = useState<boolean>(false);
-  const [mainData, setMainData] = useState<workFlowTests[]>([]);
   const [filter, setFilter] = React.useState<Filter>({
     range: { startDate: 'all', endDate: 'all' },
     selectedTest: 'All',
@@ -93,19 +82,6 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [reload, setReload] = React.useState<boolean>(false);
   const [resilienceScore, setResilienceScore] = React.useState<number>(0);
-
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
-
-  // Apollo query to get the scheduled data
-  const { data, loading, error } = useQuery<Schedules, ScheduleDataVars>(
-    SCHEDULE_DETAILS,
-    {
-      variables: { projectID: selectedProjectID },
-      fetchPolicy: 'cache-and-network',
-    }
-  );
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -139,64 +115,19 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
   };
 
   useEffect(() => {
-    const processedWorkflowRunDetails: workFlowTests[] = [];
-    let experimentWeights: Weights[] = [];
-    const points: number[] = [];
-    const weights: number[] = [];
-
-    data?.getScheduledWorkflows.forEach((data) => {
-      try {
-        if (data.workflow_id === workflowID) {
-          experimentWeights = data.weightages;
-        }
-      } catch (error) {
-        console.error(error);
-      }
+    let totalWeight: number = 0;
+    let weightedSum: number = 0;
+    workflowRunDetails.forEach((test) => {
+      totalWeight += test.test_weight;
+      weightedSum += test.resulting_points;
     });
-
-    workflowRunDetails.forEach((detail) => {
-      try {
-        experimentWeights.forEach((mappedWeight) => {
-          try {
-            if (detail.test_name === mappedWeight.experiment_name) {
-              processedWorkflowRunDetails.push({
-                test_id: detail.test_id,
-                test_name: mappedWeight.experiment_name,
-                test_result: detail.test_result,
-                weight: mappedWeight.weightage,
-                resulting_points:
-                  (detail.test_result === 'Pass' ? 1 : 0) *
-                  mappedWeight.weightage,
-                last_run: detail.last_run,
-              });
-              points.push(
-                (detail.test_result === 'Pass' ? 1 : 0) * mappedWeight.weightage
-              );
-              weights.push(mappedWeight.weightage);
-            }
-          } catch (error) {
-            console.error(error);
-          }
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    });
-
-    setMainData(processedWorkflowRunDetails);
     setResilienceScore(
-      parseFloat(
-        (
-          (points.reduce((a, b) => a + b, 0) /
-            weights.reduce((a, b) => a + b, 0)) *
-          100
-        ).toFixed(2)
-      )
+      parseFloat(((weightedSum / totalWeight) * 100).toFixed(2))
     );
     setReload(true);
-  }, [data, workflowID, reload]);
+  }, [workflowID, reload]);
 
-  const payload: workFlowTests[] = mainData
+  const payload: workFlowTests[] = workflowRunDetails
     .filter((wkf: workFlowTests) => {
       return filter.searchTokens.every(
         (s: string) =>
@@ -330,17 +261,11 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
                       }}
                       callBackToClose={(close: boolean) => {
                         setClose(close);
-                        reloadAnalytics(close);
+                        reloadAnalytics();
                       }}
                     />
                     <TableBody>
-                      {loading ? (
-                        <TableRow>
-                          <TableCell colSpan={6}>
-                            <Loader />
-                          </TableCell>
-                        </TableRow>
-                      ) : error ? (
+                      {!workflowRunDetails.length ? (
                         <TableRow>
                           <TableCell colSpan={6}>
                             <Typography align="center">

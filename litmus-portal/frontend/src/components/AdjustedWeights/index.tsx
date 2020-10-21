@@ -66,7 +66,7 @@ const AdjustedWeights: React.FC<AdjustedWeightsProps> = ({
       </div>
 
       <div>
-        <LinearProgressBar value={testValue} />
+        <LinearProgressBar width={1} value={testValue} />
       </div>
     </div>
   );

@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/types"
 )
 
 //WriteHeaders adds important headers to API responses
@@ -26,7 +28,7 @@ func RandomString(n int) string {
 }
 
 //ManifestParser parses manifests yaml and generates dynamic manifest with specified keys
-func ManifestParser(id, key, server, subscriberImage, template string) ([]byte, error) {
+func ManifestParser(id, key, template string, subscriberConfig *types.SubscriberConfigurationVars) ([]byte, error) {
 	file, err := os.Open(template)
 	if err != nil {
 		return []byte{}, err
@@ -42,9 +44,23 @@ func ManifestParser(id, key, server, subscriberImage, template string) ([]byte, 
 		} else if strings.Contains(line, "#{KEY}") {
 			line = strings.Replace(line, "#{KEY}", key, -1)
 		} else if strings.Contains(line, "#{SERVER}") {
-			line = strings.Replace(line, "#{SERVER}", server, -1)
+			line = strings.Replace(line, "#{SERVER}", subscriberConfig.GQLServerURI, -1)
 		} else if strings.Contains(line, "#{SUB-IMAGE}") {
-			line = strings.Replace(line, "#{SUB-IMAGE}", subscriberImage, -1)
+			line = strings.Replace(line, "#{SUB-IMAGE}", subscriberConfig.SubscriberImage, -1)
+		} else if strings.Contains(line, "#{AGENT-NAMESPACE}") {
+			line = strings.Replace(line, "#{AGENT-NAMESPACE}", subscriberConfig.AgentNamespace, -1)
+		} else if strings.Contains(line, "#{AGENT-SCOPE}") {
+			line = strings.Replace(line, "#{AGENT-SCOPE}", subscriberConfig.AgentScope, -1)
+		} else if strings.Contains(line, "#{ARGO-SERVER}") {
+			line = strings.Replace(line, "#{ARGO-SERVER}", subscriberConfig.ArgoServerImage, -1)
+		} else if strings.Contains(line, "#{ARGO-WORKFLOW-CONTROLLER}") {
+			line = strings.Replace(line, "#{ARGO-WORKFLOW-CONTROLLER}", subscriberConfig.WorkflowControllerImage, -1)
+		} else if strings.Contains(line, "#{LITMUS-CHAOS-OPERATOR}") {
+			line = strings.Replace(line, "#{LITMUS-CHAOS-OPERATOR}", subscriberConfig.ChaosOperatorImage, -1)
+		} else if strings.Contains(line, "#{ARGO-WORKFLOW-EXECUTOR}") {
+			line = strings.Replace(line, "#{ARGO-WORKFLOW-EXECUTOR}", subscriberConfig.WorkflowExecutorImage, -1)
+		} else if strings.Contains(line, "#{LITMUS-CHAOS-RUNNER}") {
+			line = strings.Replace(line, "#{LITMUS-CHAOS-RUNNER}", subscriberConfig.ChaosRunnerImage, -1)
 		}
 		lines = append(lines, line)
 	}

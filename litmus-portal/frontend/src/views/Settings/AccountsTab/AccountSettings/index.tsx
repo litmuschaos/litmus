@@ -1,7 +1,7 @@
 import { Divider, Typography } from '@material-ui/core';
 import React, { useRef, useState } from 'react';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
-import InputField from '../../../../components/InputField';
+import InputFieldOutline from '../../../../components/InputFieldOutline';
 import Loader from '../../../../components/Loader';
 import config from '../../../../config';
 import Unimodal from '../../../../containers/layouts/Unimodal';
@@ -124,55 +124,59 @@ const AccountSettings: React.FC = () => {
           <div className={classes.outerPass}>
             <form className={classes.innerPass}>
               {/* Current Password */}
-              <InputField
-                required
-                value={password.currPassword}
-                handleChange={handleCurrPassword('currPassword')}
-                type="password"
-                label="Current Password"
-                validationError={false}
-              />
-
+              <div data-cy="currPassword">
+                <InputFieldOutline
+                  required
+                  value={password.currPassword}
+                  handleChange={handleCurrPassword('currPassword')}
+                  type="password"
+                  label="Current Password"
+                  validationError={false}
+                />
+              </div>
               {/* New Password */}
-              <InputField
-                required
-                type="password"
-                handleChange={handleNewPassword('newPassword')}
-                success={isSuccess.current}
-                helperText={
-                  validateStartEmptySpacing(password.newPassword)
-                    ? 'Should not start with empty space'
-                    : ''
-                }
-                label="New Password"
-                validationError={validateStartEmptySpacing(
-                  password.newPassword
-                )}
-                value={password.newPassword}
-              />
-
+              <div data-cy="newPassword">
+                <InputFieldOutline
+                  required
+                  type="password"
+                  handleChange={handleNewPassword('newPassword')}
+                  success={isSuccess.current}
+                  helperText={
+                    validateStartEmptySpacing(password.newPassword)
+                      ? 'Should not start with empty space'
+                      : ''
+                  }
+                  label="New Password"
+                  validationError={validateStartEmptySpacing(
+                    password.newPassword
+                  )}
+                  value={password.newPassword}
+                />
+              </div>
               {/* Confirm new password */}
-              <InputField
-                helperText={
-                  validateConfirmPassword(
+              <div data-cy="confPassword">
+                <InputFieldOutline
+                  helperText={
+                    validateConfirmPassword(
+                      password.newPassword,
+                      password.confNewPassword
+                    )
+                      ? 'Password is not same'
+                      : ''
+                  }
+                  required
+                  type="password"
+                  handleChange={handleConfPassword('confNewPassword')}
+                  success={isSuccess.current}
+                  label="Confirm Password"
+                  validationError={validateConfirmPassword(
                     password.newPassword,
                     password.confNewPassword
-                  )
-                    ? 'Password is not same'
-                    : ''
-                }
-                required
-                type="password"
-                handleChange={handleConfPassword('confNewPassword')}
-                success={isSuccess.current}
-                label="Confirm Password"
-                validationError={validateConfirmPassword(
-                  password.newPassword,
-                  password.confNewPassword
-                )}
-                value={password.confNewPassword}
-              />
-              <div className={classes.buttonModal}>
+                  )}
+                  value={password.confNewPassword}
+                />
+              </div>
+              <div data-cy="change-password" className={classes.buttonModal}>
                 <ButtonFilled
                   data-cy="button"
                   isPrimary
@@ -211,7 +215,7 @@ const AccountSettings: React.FC = () => {
                         Error: {error}
                       </Typography>
                     </div>
-                    <div className={classes.buttonModal}>
+                    <div data-cy="done" className={classes.buttonModal}>
                       <ButtonFilled
                         isPrimary
                         isDisabled={false}
@@ -235,7 +239,7 @@ const AccountSettings: React.FC = () => {
                         account
                       </Typography>
                     </div>
-                    <div className={classes.buttonModal}>
+                    <div data-cy="done" className={classes.buttonModal}>
                       <ButtonFilled
                         isPrimary
                         isDisabled={false}

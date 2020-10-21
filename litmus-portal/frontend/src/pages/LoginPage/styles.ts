@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     padding: '12% 5%',
     paddingLeft: theme.spacing(10),
     height: '100vh',
-    overflowY: 'auto',
+    overflowY: 'hidden',
     margin: 'auto',
   },
 
@@ -58,8 +58,13 @@ const useStyles = makeStyles((theme) => ({
   inputDiv: {
     display: 'flex',
     flexDirection: 'column',
+    maxWidth: '20rem',
     marginTop: theme.spacing(1),
-    marginLeft: theme.spacing(-2),
+    marginLeft: theme.spacing(-2.1),
+  },
+
+  inputValue: {
+    width: '25rem',
   },
 
   linkForgotPass: {
