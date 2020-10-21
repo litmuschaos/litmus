@@ -82,6 +82,7 @@ const MyHub = () => {
                     const repoarray: String[] = hub.GitURL.split('/');
                     const reponame: String = repoarray[repoarray.length - 1];
                     const repoOwner: String = repoarray[repoarray.length - 2];
+                    const hubName: String = hub.HubName;
                     return (
                       <Card
                         elevation={3}
@@ -104,7 +105,7 @@ const MyHub = () => {
                           <CardContent className={classes.cardContent}>
                             {/* <img src="/icons/add-hub.svg" alt="add-hub" /> */}
                             <Typography variant="h6" align="center">
-                              {reponame}
+                              {hubName}/{reponame}
                             </Typography>
                             <Typography variant="h6" align="center">
                               {hub.GitBranch}

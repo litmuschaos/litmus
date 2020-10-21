@@ -80,6 +80,7 @@ export const ADD_MY_HUB = gql`
     addMyHub(myhubInput: $MyHubDetails, username: $Username) {
       username
       my_hub {
+        HubName
         GitURL
         GitBranch
       }

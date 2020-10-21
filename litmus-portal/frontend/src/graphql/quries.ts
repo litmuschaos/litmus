@@ -87,6 +87,7 @@ export const GET_USER = gql`
         id
       }
       my_hub {
+        HubName
         GitURL
         GitBranch
       }

@@ -16,6 +16,7 @@ import { ADD_MY_HUB } from '../../../graphql/mutations';
 import { RootState } from '../../../redux/reducers';
 
 interface GitHub {
+  HubName: string;
   GitURL: string;
   GitBranch: string;
 }
@@ -24,6 +25,7 @@ const MyHub = () => {
   const classes = useStyles();
   const userData = useSelector((state: RootState) => state.userData);
   const [gitHub, setGitHub] = useState<GitHub>({
+    HubName: '',
     GitURL: '',
     GitBranch: '',
   });
@@ -62,6 +64,26 @@ const MyHub = () => {
           <div className={classes.inputDiv}>
             <div className={classes.inputField}>
               <InputField
+                label="Hub Name"
+                value={gitHub.HubName}
+                helperText={
+                  validateStartEmptySpacing(gitHub.HubName)
+                    ? 'Should not start with an empty space'
+                    : ''
+                }
+                validationError={validateStartEmptySpacing(gitHub.HubName)}
+                required
+                handleChange={(e) =>
+                  setGitHub({
+                    HubName: e.target.value,
+                    GitURL: gitHub.GitURL,
+                    GitBranch: gitHub.GitBranch,
+                  })
+                }
+              />
+            </div>
+            <div className={classes.inputField}>
+              <InputField
                 label="Git URL"
                 value={gitHub.GitURL}
                 helperText={
@@ -73,6 +95,7 @@ const MyHub = () => {
                 required
                 handleChange={(e) =>
                   setGitHub({
+                    HubName: gitHub.HubName,
                     GitURL: e.target.value,
                     GitBranch: gitHub.GitBranch,
                   })
@@ -92,6 +115,7 @@ const MyHub = () => {
                 required
                 handleChange={(e) =>
                   setGitHub({
+                    HubName: gitHub.HubName,
                     GitURL: gitHub.GitURL,
                     GitBranch: e.target.value,
                   })
@@ -105,6 +129,7 @@ const MyHub = () => {
                   addMyHub({
                     variables: {
                       MyHubDetails: {
+                        HubName: gitHub.HubName,
                         GitURL: gitHub.GitURL,
                         GitBranch: gitHub.GitBranch,
                       },
