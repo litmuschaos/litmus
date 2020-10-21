@@ -1,0 +1,78 @@
+apiVersion: litmuschaos.io/v1alpha1
+description:
+  message: |
+    Deletes a pod belonging to a deployment/statefulset/daemonset
+kind: ChaosExperiment
+metadata:
+  name: k8-pod-delete
+spec:
+  definition:
+    scope: Namespaced
+    permissions:
+      - apiGroups:
+          - ""
+          - "apps"
+          - "batch"
+          - "litmuschaos.io"
+        resources:
+          - "deployments"
+          - "jobs"
+          - "pods"
+          - "configmaps"
+          - "chaosengines"
+          - "chaosexperiments"
+          - "chaosresults"
+        verbs:
+          - "create"
+          - "list"
+          - "get"
+          - "patch"
+          - "update"
+          - "delete"
+      - apiGroups:
+          - ""
+        resources:
+          - "nodes"
+        verbs :
+          - "get"
+          - "list"
+    labels:
+      name: k8-pod-delete    
+    image: "litmuschaos/chaostoolkit:latest"
+    args:
+    - -c
+    - python /app/chaos/chaostest/kubernetes/k8_wrapper.py ; exit 0
+    command:
+    - /bin/bash
+    env:
+
+    - name: CHAOSTOOLKIT_IN_POD
+      value: 'true'
+
+    - name: FILE
+      value: 'pod-app-kill-count.json'
+
+    - name: NAME_SPACE
+      value: 'default'
+
+    - name: LABEL_NAME
+      value: 'nginx-demo-app'
+
+    - name: APP_ENDPOINT
+      value: 'http://localhost'
+
+    # Period to wait before injection of chaos in sec
+    - name: PERCENTAGE
+      value: '50'
+
+    # Variable to set for custom report upload
+    - name: REPORT
+      value: 'false'
+
+    # Variable to set for report upload endpoint
+    - name: REPORT_ENDPOINT
+      value: 'none'
+
+    # labels:
+    #   name: k8-pod-delete
+

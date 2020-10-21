@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: k8-pod-delete-sa
+  namespace: default
+  labels:
+    name: chaos-local
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: k8-pod-delete-sa
+  namespace: default
+  labels:
+    name: chaos-local
+rules:
+- apiGroups: ["","apps","batch"]
+  resources: ["jobs","deployments","daemonsets"]
+  verbs: ["create","list","get","patch","delete"]
+- apiGroups: ["","litmuschaos.io"]
+  resources: ["pods","configmaps","events","services","chaosengines","chaosexperiments","chaosresults","deployments","jobs"]
+  verbs: ["get","create","update","patch","delete","list"] 
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs : ["get","list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: k8-pod-delete-sa
+  namespace: default
+  labels:
+    name: chaos-local
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: k8-pod-delete-sa
+subjects:
+- kind: ServiceAccount
+  name: k8-pod-delete-sa
+  namespace: default
