@@ -79,6 +79,9 @@ type Cluster struct {
 	NoOfSchedules      *int    `json:"no_of_schedules"`
 	NoOfWorkflows      *int    `json:"no_of_workflows"`
 	Token              string  `json:"token"`
+	AgentNamespace     *string `json:"agent_namespace"`
+	Serviceaccount     *string `json:"serviceaccount"`
+	AgentScope         string  `json:"agent_scope"`
 }
 
 type ClusterAction struct {
@@ -118,11 +121,14 @@ type ClusterIdentity struct {
 }
 
 type ClusterInput struct {
-	ClusterName  string  `json:"cluster_name"`
-	Description  *string `json:"description"`
-	PlatformName string  `json:"platform_name"`
-	ProjectID    string  `json:"project_id"`
-	ClusterType  string  `json:"cluster_type"`
+	ClusterName    string  `json:"cluster_name"`
+	Description    *string `json:"description"`
+	PlatformName   string  `json:"platform_name"`
+	ProjectID      string  `json:"project_id"`
+	ClusterType    string  `json:"cluster_type"`
+	AgentNamespace *string `json:"agent_namespace"`
+	Serviceaccount *string `json:"serviceaccount"`
+	AgentScope     string  `json:"agent_scope"`
 }
 
 type CreateMyHub struct {

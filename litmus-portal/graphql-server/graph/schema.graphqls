@@ -20,6 +20,9 @@ type Cluster {
   no_of_schedules: Int
   no_of_workflows: Int
   token: String!
+  agent_namespace: String
+  serviceaccount: String
+  agent_scope: String!
 }
 
 input ClusterInput {
@@ -28,6 +31,9 @@ input ClusterInput {
   platform_name: String!
   project_id: ID!
   cluster_type: String!
+  agent_namespace: String
+  serviceaccount: String
+  agent_scope: String!
 }
 
 type ClusterEvent {

@@ -34,6 +34,9 @@ type Cluster struct {
 	ClusterName        string  `bson:"cluster_name"`
 	Description        *string `bson:"description"`
 	PlatformName       string  `bson:"platform_name"`
+	AgentNamespace     *string `bson:"agent_namespace"`
+	Serviceaccount     *string `bson:"serviceaccount"`
+	AgentScope         string  `bson:"agent_scope"`
 	AccessKey          string  `bson:"access_key"`
 	IsRegistered       bool    `bson:"is_registered"`
 	IsClusterConfirmed bool    `bson:"is_cluster_confirmed"`
