@@ -3,7 +3,6 @@ package myhub
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -16,7 +15,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/handler"
 )
 
-//AddMyHub ...
+//AddMyHub is used for Adding a new MyHub
 func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*model.User, error) {
 
 	gitLink := strings.Split(myhub.GitURL, "/")
@@ -34,14 +33,9 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*m
 	//If link and branch are good, then check if they are already present or not.
 	if data >= 200 && data <= 299 {
 		IsExist, err := IsMyHubAvailable(ctx, myhub, username)
-		if err != nil {
+		if err != nil || IsExist == true {
 			return nil, err
 		}
-		if IsExist == true {
-			return nil, err
-		}
-
-		fmt.Println("HTTP Status is in the 2xx range")
 		//Initialize a UID for new Hub.
 		uuid := uuid.New()
 		newHub := &dbSchema.MyHub{
@@ -58,12 +52,12 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*m
 			return nil, err
 		}
 
-		cloneHub:= model.ChartsInput{
-			UserName: username,
-			RepoName: repo,
+		cloneHub := model.ChartsInput{
+			UserName:   username,
+			RepoName:   repo,
 			RepoBranch: myhub.GitBranch,
-			RepoOwner: owner,
-			HubName: myhub.HubName,
+			RepoOwner:  owner,
+			HubName:    myhub.HubName,
 		}
 		//Cloning the repository at a path from myhub link structure.
 		err = gitops.GitClone(cloneHub)
@@ -83,7 +77,7 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*m
 	return nil, err
 }
 
-//IsMyHubAvailable ...
+//IsMyHubAvailable is used for checking if hub already exist or not
 func IsMyHubAvailable(ctx context.Context, myhub model.CreateMyHub, username string) (bool, error) {
 	user, err := database.GetUserByUserName(ctx, username)
 	if err != nil {
@@ -92,7 +86,7 @@ func IsMyHubAvailable(ctx context.Context, myhub model.CreateMyHub, username str
 	outputUser := user.GetOutputUser()
 
 	for _, n := range outputUser.MyHub {
-		if myhub.GitURL == n.GitURL && myhub.GitBranch == n.GitBranch {
+		if myhub.GitURL == n.GitURL && myhub.GitBranch == n.GitBranch && myhub.HubName == n.HubName {
 			return true, nil
 		}
 	}
@@ -101,37 +95,46 @@ func IsMyHubAvailable(ctx context.Context, myhub model.CreateMyHub, username str
 
 //GetCharts is responsible for getting the charts details
 func GetCharts(ctx context.Context, chartsInput model.ChartsInput) ([]*model.Chart, error) {
-	cloneHub:= model.ChartsInput{
-			UserName:chartsInput.UserName,
-			RepoName: chartsInput.RepoName,
-			RepoBranch: chartsInput.RepoBranch,
-			RepoOwner: chartsInput.RepoOwner,
-			HubName: chartsInput.HubName,
-		}
-	data, err := handler.GetChartsData(cloneHub)
+
+	//Syncing the local clone with origin before fetching charts.
+	gitops.GitSyncHandlerForUser(chartsInput)
+
+	cloneHub := model.ChartsInput{
+		UserName:   chartsInput.UserName,
+		RepoName:   chartsInput.RepoName,
+		RepoBranch: chartsInput.RepoBranch,
+		RepoOwner:  chartsInput.RepoOwner,
+		HubName:    chartsInput.HubName,
+	}
+
+	ChartsPath := handler.GetChartsPath(ctx, chartsInput)
+	ChartsData, err := handler.GetChartsData(ChartsPath)
 	if err != nil {
 		err = gitops.GitClone(cloneHub)
 		if err != nil {
 			return nil, err
 		}
-		data, err = handler.GetChartsData(cloneHub)
+		ChartsData, err = handler.GetChartsData(ChartsPath)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	var data1 []*model.Chart
-	json.Unmarshal([]byte(data), &data1)
-	return data1, nil
+	var AllChartsData []*model.Chart
+	json.Unmarshal([]byte(ChartsData), &AllChartsData)
+	return AllChartsData, nil
 }
 
-func GetExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error){
-	data, err := handler.GetExperimentData(experimentInput)
+//GetExperiment is used for getting details or yaml file of given experiment.
+func GetExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error) {
+
+	ExperimentPath := handler.GetExperimentPath(ctx, experimentInput)
+	experimentData, err := handler.GetExperimentData(ExperimentPath)
 	if err != nil {
 		return nil, err
 	}
-	
-	var data1 *model.Chart
-	json.Unmarshal([]byte(data),&data1)
-	return data1, nil
+
+	var ExperimentData *model.Chart
+	json.Unmarshal([]byte(experimentData), &ExperimentData)
+	return ExperimentData, nil
 }

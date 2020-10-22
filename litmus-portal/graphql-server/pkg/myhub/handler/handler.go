@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -9,8 +10,9 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+//Chart ...
 type Chart struct {
-	ApiVersion  string             `yaml:"apiVersion"`
+	APIVersion  string             `yaml:"apiVersion"`
 	Kind        string             `yaml:"kind"`
 	Metadata    Metadata           `yaml:"metadata"`
 	Spec        Spec               `yaml:"spec"`
@@ -27,7 +29,7 @@ type Maintainer struct {
 //Link ...
 type Link struct {
 	Name string
-	Url  string
+	URL  string
 }
 
 //Metadata ...
@@ -80,31 +82,59 @@ type PackageInformation struct {
 //Charts ...
 type Charts []Chart
 
-//GetChartsData is used to get details of charts like experiments.
-func GetChartsData(hubDetail model.ChartsInput) ([]byte, error) {
-	var chartsd Charts
-	data, err := ioutil.ReadDir("/tmp/version/" +hubDetail.UserName + "/" + hubDetail.HubName + "/" + hubDetail.RepoName + "/" + hubDetail.RepoBranch + "/charts/")
-	if err != nil {
-		fmt.Println("File reading error", err)
-        return nil, err
-    }
-    for _, file := range data {
-        
-      data1,_:= readExperimentFile("/tmp/version/" + hubDetail.UserName + "/" + hubDetail.HubName + "/" + hubDetail.RepoName + "/" + hubDetail.RepoBranch + "/charts"+"/"+file.Name()+"/"+file.Name()+".chartserviceversion.yaml")
-        chartsd = append(chartsd,data1)
-    }
+//default path for storing local clones
+const (
+	defaultPath = "/tmp/version/"
+)
 
-     e, _ := json.Marshal(chartsd)
-    return e, nil
+//GetChartsPath is used to construct path for given chart.
+func GetChartsPath(ctx context.Context, chartsInput model.ChartsInput) string {
+	UserName := chartsInput.UserName
+	RepoName := chartsInput.RepoName
+	RepoBranch := chartsInput.RepoBranch
+	HubName := chartsInput.HubName
+	ChartsPath := defaultPath + UserName + "/" + HubName + "/" + RepoName + "/" + RepoBranch + "/charts/"
+	return ChartsPath
 }
 
-func GetExperimentData(experimentInput model.ExperimentInput)([]byte, error){
-	data,_ := readExperimentFile("/tmp/version/"+experimentInput.UserName+"/"+experimentInput.HubName+"/"+experimentInput.RepoName+"/"+experimentInput.RepoBranch+"/charts"+"/"+experimentInput.ChartName+"/"+experimentInput.ExperimentName+"/"+experimentInput.ExperimentName+".chartserviceversion.yaml")
-	
+//GetExperimentPath is used to construct path for given experiment.
+func GetExperimentPath(ctx context.Context, experimentInput model.ExperimentInput) string {
+	UserName := experimentInput.UserName
+	RepoName := experimentInput.RepoName
+	RepoBranch := experimentInput.RepoBranch
+	HubName := experimentInput.HubName
+	experimentName := experimentInput.ExperimentName
+	chartName := experimentInput.ChartName
+	ExperimentPath := defaultPath + UserName + "/" + HubName + "/" + RepoName + "/" + RepoBranch + "/charts/" + chartName + "/" + experimentName + "/" + experimentName + ".chartserviceversion.yaml"
+	return ExperimentPath
+}
+
+//GetChartsData is used to get details of charts like experiments.
+func GetChartsData(ChartsPath string) ([]byte, error) {
+	var AllChartsDetails Charts
+	Charts, err := ioutil.ReadDir(ChartsPath)
+	if err != nil {
+		fmt.Println("File reading error", err)
+		return nil, err
+	}
+	for _, Chart := range Charts {
+
+		ChartDetails, _ := readExperimentFile(ChartsPath + Chart.Name() + "/" + Chart.Name() + ".chartserviceversion.yaml")
+		AllChartsDetails = append(AllChartsDetails, ChartDetails)
+	}
+
+	e, _ := json.Marshal(AllChartsDetails)
+	return e, nil
+}
+
+//GetExperimentData is used for getting details of selected Experiment path
+func GetExperimentData(experimentFilePath string) ([]byte, error) {
+	data, _ := readExperimentFile(experimentFilePath)
 	e, _ := json.Marshal(data)
 	return e, nil
 }
 
+//readExperimentFile is used for reading a experiment file from given path
 func readExperimentFile(path string) (Chart, error) {
 	var experiment Chart
 	experimentFile, err := ioutil.ReadFile(path)

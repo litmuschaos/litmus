@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	log "github.com/sirupsen/logrus"
@@ -13,7 +12,6 @@ import (
 )
 
 const (
-	timeInterval  = 1 * time.Hour
 	defaultBranch = "master"
 )
 
@@ -26,6 +24,7 @@ type GitConfig struct {
 	LocalCommit    string
 	RemoteCommit   string
 	HubName        string
+	Branch         string
 }
 
 var (
@@ -36,53 +35,84 @@ var (
 	err    error
 )
 
-//GitClone Trigger is reposible for setting off the go routine for git-op
-func GitClone(repoData model.ChartsInput) error {
+const (
+	defaultPath = "/tmp/version/"
+)
+
+//GetClonePath is used to construct path for Repository.
+func GetClonePath(c GitConfig) string {
+	RepoPath := defaultPath + c.UserName + "/" + c.HubName + "/" + c.RepositoryName + "/" + c.Branch
+	return RepoPath
+}
+
+//GitConfigConstruct is used for constructing the gitconfig
+func GitConfigConstruct(repoData model.ChartsInput) GitConfig {
 	gitConfig := GitConfig{
 		UserName:       repoData.UserName,
 		RepositoryName: repoData.RepoName,
 		HubName:        repoData.HubName,
-		RepositoryURL:  "https://github.com/" + repoData.RepoOwner + "/" +repoData.RepoName,
+		RepositoryURL:  "https://github.com/" + repoData.RepoOwner + "/" + repoData.RepoName,
 		RemoteName:     "origin",
+		Branch:         repoData.RepoBranch,
 	}
-	_, err := gitConfig.getChaosChartRepo(repoData.RepoBranch)
+
+	return gitConfig
+}
+
+//GitClone Trigger is reponsible for setting off the go routine for git-op
+func GitClone(repoData model.ChartsInput) error {
+	gitConfig := GitConfigConstruct(repoData)
+	_, err := gitConfig.getChaosChartRepo()
 	if err != nil {
 		fmt.Print("Error in cloning")
 		return err
 	}
-	if err := gitConfig.chaosChartSyncHandler(repoData.RepoBranch); err != nil {
+	log.Infof("********* Successfully Cloned '%s' Branch of '%s' Repo in '%s' Hub *********", gitConfig.Branch, gitConfig.RepositoryName, gitConfig.HubName)
+
+	return nil
+}
+
+//GitSyncHandlerForUser ...
+func GitSyncHandlerForUser(repoData model.ChartsInput) error {
+
+	gitConfig := GitConfigConstruct(repoData)
+	if err := gitConfig.chaosChartSyncHandler(); err != nil {
 		log.Error(err)
+		return err
 	}
-	log.Infof("********* Repository syncing completed for version: '%s' *********", repoData.RepoBranch)
+	log.Infof("********* Repository syncing completed for '%s' Branch of '%s' Repo in '%s' Hub *********", gitConfig.Branch, gitConfig.RepositoryName, gitConfig.HubName)
+
 	return nil
 }
 
 //getChaosChartVersion is responsible for plain cloning the repository
-func (c GitConfig) getChaosChartRepo(RepoBranch string) (string, error) {
-	os.RemoveAll("/tmp/version/" + c.UserName + "/" + c.HubName + "/" + c.RepositoryName + "/" + RepoBranch)
-	_, err := git.PlainClone("/tmp/version/"+c.UserName+"/"+c.HubName+"/"+c.RepositoryName+"/"+RepoBranch, false, &git.CloneOptions{
+func (c GitConfig) getChaosChartRepo() (string, error) {
+	ClonePath := GetClonePath(c)
+	os.RemoveAll(ClonePath)
+	_, err := git.PlainClone(ClonePath, false, &git.CloneOptions{
 		URL: c.RepositoryURL, Progress: os.Stdout,
-		ReferenceName: plumbing.NewBranchReferenceName(RepoBranch),
+		ReferenceName: plumbing.NewBranchReferenceName(c.Branch),
 	})
-	return RepoBranch, err
+	return c.Branch, err
 }
 
 // chaosChartSyncHandler is responsible for all the handler functions
-func (c GitConfig) chaosChartSyncHandler(RepoBranch string) error {
-	repositoryExists, err := c.isRepositoryExists(RepoBranch)
+func (c GitConfig) chaosChartSyncHandler() error {
+	repositoryExists, err := c.isRepositoryExists()
 	if err != nil {
 		return fmt.Errorf("Error while checking repo exists, err: %s", err)
 	}
 	log.WithFields(log.Fields{"repositoryExists": repositoryExists}).Info("Executed isRepositoryExists()... ")
 	if !repositoryExists {
-		return c.HandlerForNonExistingRepository(RepoBranch)
+		return c.HandlerForNonExistingRepository()
 	}
-	return c.HandlerForExistingRepository(RepoBranch)
+	return c.HandlerForExistingRepository()
 }
 
 // isRepositoryExists checks for the existence of this past existence of this repository
-func (c GitConfig) isRepositoryExists(RepoBranch string) (bool, error) {
-	_, err := os.Stat("/tmp/version/" + c.UserName + "/" + c.HubName + "/" + c.RepositoryName + "/" + RepoBranch)
+func (c GitConfig) isRepositoryExists() (bool, error) {
+	RepoPath := GetClonePath(c)
+	_, err := os.Stat(RepoPath)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return false, nil
@@ -93,42 +123,43 @@ func (c GitConfig) isRepositoryExists(RepoBranch string) (bool, error) {
 }
 
 // HandlerForNonExistingRepository calls function GitPlainClone, which is called only when the repository exists
-func (c GitConfig) HandlerForNonExistingRepository(RepoBranch string) error {
+func (c GitConfig) HandlerForNonExistingRepository() error {
+	RepoPath := GetClonePath(c)
 	var referenceName plumbing.ReferenceName
-	if RepoBranch == defaultBranch {
-		referenceName = plumbing.NewBranchReferenceName(RepoBranch)
+	if c.Branch == defaultBranch {
+		referenceName = plumbing.NewBranchReferenceName(c.Branch)
 	} else {
-		referenceName = plumbing.NewTagReferenceName(RepoBranch)
+		referenceName = plumbing.NewTagReferenceName(c.Branch)
 	}
-	_, err := git.PlainClone("/tmp/version/"+c.UserName+"/"+c.HubName+"/"+c.RepositoryName+"/"+RepoBranch, false, &git.CloneOptions{
+	_, err := git.PlainClone(RepoPath, false, &git.CloneOptions{
 		URL: c.RepositoryURL, Progress: os.Stdout,
 		ReferenceName: referenceName,
 	})
 	if err != nil {
-		return fmt.Errorf("unable to clone '%s' reference of chaos-chart, err: %+v", RepoBranch, err)
+		return fmt.Errorf("unable to clone '%s' reference of chaos-chart, err: %+v", c.Branch, err)
 	}
 	return nil
 }
 
 // HandlerForExistingRepository relative functions if the isRepositoryExists fails
-func (c GitConfig) HandlerForExistingRepository(RepoBranch string) error {
-	dirtyStatus, err := c.GitGetStatus(RepoBranch)
+func (c GitConfig) HandlerForExistingRepository() error {
+	dirtyStatus, err := c.GitGetStatus()
 	if err != nil {
 		return err
 	}
 	log.WithFields(log.Fields{"DirtyStatus": dirtyStatus}).Info("Executed GitGetStatus()... ")
 	if dirtyStatus {
-		return c.HandlerForDirtyStatus(RepoBranch)
+		return c.HandlerForDirtyStatus()
 	}
-	return c.HandlerForCleanStatus(RepoBranch)
+	return c.HandlerForCleanStatus()
 }
 
 // GitGetStatus excutes "git get status --porcelain" for the provided Repository Path,
 // returns false if the repository is clean
 // and true if the repository is dirtygitConfig
-func (c GitConfig) GitGetStatus(RepoBranch string) (bool, error) {
+func (c GitConfig) GitGetStatus() (bool, error) {
 	log.Info("executing GitGetStatus() ...")
-	err := c.setterRepositoryWorktreeReference(RepoBranch)
+	err := c.setterRepositoryWorktreeReference()
 	if err != nil {
 		return true, err
 	}
@@ -136,8 +167,9 @@ func (c GitConfig) GitGetStatus(RepoBranch string) (bool, error) {
 	len, _ := getListofFilesChanged()
 	return !(len == 0), nil
 }
-func (c GitConfig) setterRepositoryWorktreeReference(RepoBranch string) error {
-	if r, err = git.PlainOpen("/tmp/version/" + c.UserName + "/" + c.HubName + "/" + c.RepositoryName + "/" + RepoBranch); err != nil {
+func (c GitConfig) setterRepositoryWorktreeReference() error {
+	RepoPath := GetClonePath(c)
+	if r, err = git.PlainOpen(RepoPath); err != nil {
 		return fmt.Errorf("error in executing PlainOpen: %s", err)
 	}
 	if w, err = r.Worktree(); err != nil {
@@ -151,17 +183,17 @@ func (c GitConfig) setterRepositoryWorktreeReference(RepoBranch string) error {
 }
 
 // HandlerForDirtyStatus calls relative functions if the GitGetStatus gives a clean status as a result
-func (c GitConfig) HandlerForDirtyStatus(RepoBranch string) error {
-	if err := c.GitHardReset(RepoBranch); err != nil {
+func (c GitConfig) HandlerForDirtyStatus() error {
+	if err := c.GitHardReset(); err != nil {
 		return err
 	}
-	MatchValue, err := c.CompareLocalandRemoteCommit(RepoBranch)
+	MatchValue, err := c.CompareLocalandRemoteCommit()
 	if err != nil {
 		return err
 	}
 	log.WithFields(log.Fields{"MatchValue": MatchValue}).Info("Executed CompareLocalandRemoteCommit()... ")
 	if !MatchValue {
-		return c.HandlerForMismatchCommits(RepoBranch)
+		return c.HandlerForMismatchCommits()
 	}
 	return nil
 }
@@ -178,8 +210,9 @@ func getListofFilesChanged() (int, error) {
 }
 
 // GitHardReset executes "git reset --hard HEAD" in provided Repository Path
-func (c GitConfig) GitHardReset(RepoBranch string) error {
-	r, err := git.PlainOpen("/tmp/version/" + c.UserName + "/" + c.HubName + "/" + c.RepositoryName + "/" + RepoBranch)
+func (c GitConfig) GitHardReset() error {
+	RepoPath := GetClonePath(c)
+	r, err := git.PlainOpen(RepoPath)
 	if err != nil {
 		return fmt.Errorf("error in executing PlainOpen: %s", err)
 	}
@@ -194,12 +227,13 @@ func (c GitConfig) GitHardReset(RepoBranch string) error {
 }
 
 // CompareLocalandRemoteCommit compares local and remote latest commit
-func (c GitConfig) CompareLocalandRemoteCommit(RepoBranch string) (bool, error) {
-	r, err := git.PlainOpen("/tmp/version/" + c.UserName + "/" + c.HubName + "/" + c.RepositoryName + "/" + RepoBranch)
+func (c GitConfig) CompareLocalandRemoteCommit() (bool, error) {
+	RepoPath := GetClonePath(c)
+	r, err := git.PlainOpen(RepoPath)
 	if err != nil {
 		return false, fmt.Errorf("error in executing PlainOpen: %s", err)
 	}
-	h, err := r.ResolveRevision(plumbing.Revision(RepoBranch))
+	h, err := r.ResolveRevision(plumbing.Revision(c.Branch))
 	if err != nil {
 		return false, fmt.Errorf("error in executing ResolveRevision: %s", err)
 	}
@@ -209,17 +243,17 @@ func (c GitConfig) CompareLocalandRemoteCommit(RepoBranch string) (bool, error) 
 }
 
 // GitPull updates the repository in provided Path
-func (c GitConfig) GitPull(RepoBranch string) error {
+func (c GitConfig) GitPull() error {
 	log.Info("executing GitPull() ...")
-	err := c.setterRepositoryWorktreeReference(RepoBranch)
+	err := c.setterRepositoryWorktreeReference()
 	if err != nil {
 		return err
 	}
 	var referenceName plumbing.ReferenceName
-	if RepoBranch == defaultBranch {
-		referenceName = plumbing.NewBranchReferenceName(RepoBranch)
+	if c.Branch == defaultBranch {
+		referenceName = plumbing.NewBranchReferenceName(c.Branch)
 	} else {
-		referenceName = plumbing.NewTagReferenceName(RepoBranch)
+		referenceName = plumbing.NewTagReferenceName(c.Branch)
 	}
 	log.Info("git pull origin")
 	err = w.Pull(&git.PullOptions{RemoteName: c.RemoteName, ReferenceName: referenceName})
@@ -229,14 +263,14 @@ func (c GitConfig) GitPull(RepoBranch string) error {
 }
 
 // HandlerForCleanStatus calls relative functions if the GitGetStatus gives a clean status as a result
-func (c GitConfig) HandlerForCleanStatus(RepoBranch string) error {
-	MatchValue, err := c.CompareLocalandRemoteCommit(RepoBranch)
+func (c GitConfig) HandlerForCleanStatus() error {
+	MatchValue, err := c.CompareLocalandRemoteCommit()
 	if err != nil {
 		return err
 	}
 	log.WithFields(log.Fields{"MatchValue": MatchValue}).Info("Executed CompareLocalandRemoteCommit()... ")
 	if !MatchValue {
-		err := c.GitPull(RepoBranch)
+		err := c.GitPull()
 		if err != nil {
 			return err
 		}
@@ -245,8 +279,8 @@ func (c GitConfig) HandlerForCleanStatus(RepoBranch string) error {
 }
 
 // HandlerForMismatchCommits calls relative functions if the Local and Remote Commits do not match
-func (c GitConfig) HandlerForMismatchCommits(RepoBranch string) error {
-	err := c.GitPull(RepoBranch)
+func (c GitConfig) HandlerForMismatchCommits() error {
+	err := c.GitPull()
 	if err != nil {
 		return err
 	}
