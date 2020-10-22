@@ -35,11 +35,11 @@ If you would like to run argo with a namespace scope, refer to [this](https://gi
 
 - Create argo namespace
   ```
-  root@demo:~/chaos-workflows# kubectl create ns argo
+  ➜  2020-NA git:(kubecon-2020) ✗ kubectl create ns argo
   ```
 - Create the CRDs, workflow controller deployment with associated RBAC
   ```
-  root@demo:~/chaos-workflows# kubectl apply -f https://raw.githubusercontent.com/argoproj/argo/stable/manifests/install.yaml
+  ➜  2020-NA git:(kubecon-2020) ✗ kubectl apply -f https://raw.githubusercontent.com/argoproj/argo/stable/manifests/install.yaml
   ```
 - Verify successful creation of argo resources (crds)
 ```
@@ -82,7 +82,7 @@ workflow-controller-589bf468d7-bwjtr   1/1     Running   0          13h
 ## Application
 - Create a namespace for chaos experiment as chaos-ns
 ```
-  root@demo:~/chaos-workflows# kubectl create ns chaos-ns
+  ➜  2020-NA git:(kubecon-2020) ✗ kubectl create ns chaos-ns
 ```
 - Install a simple multi-replica stateless nginx deployment with service exposed over nodeport
 ```
@@ -110,7 +110,6 @@ NAME            AGE
 k8-pod-delete   4s
   ```
 ## Chaos Execution
-###  Admin Mode
 - Setup the RBAC to execute chaos experiment in your namespace
 ```
 ➜  2020-NA git:(kubecon-2020) ✗ kubectl apply -f ChaosExecution/rbac-chaos-admin.yaml
@@ -120,46 +119,20 @@ clusterrolebinding.rbac.authorization.k8s.io/chaos-admin configured
   ```
 - Execute the Chaos Experiment in your namespace
 ```
-  root@demo:~/chaos-workflows# kubectl apply -f ChaosExecution/engine-nginx-count-admin.yaml
-  ```
-### Service Mode
-- Setup the RBAC to execute chaos experiment in your namespace
-```
-  root@demo:~/chaos-workflows# kubectl apply -f ChaosExecution/rbac-chaos-service.yaml
-  ```
-- Execute the Chaos Experiment in your namespace
-```
-  root@demo:~/chaos-workflows# kubectl apply -f ChaosExecution/engine-nginx-count-service.yaml
+  ➜  2020-NA git:(kubecon-2020) ✗ kubectl apply -f ChaosExecution/engine-nginx-count-admin.yaml
   ```
 ## Chaos Workflow - Argo Workflow
-- Setup the RBAC for executing Argo Workflow
-```
-  root@demo:~/chaos-workflows# argo submit Argo/rbac-argo-service.yaml --watch
-  ```
-###  Admin Mode
 - Execute the Chaos Experiment via Argo Workflow
 ```
-  root@demo:~/chaos-workflows# argo submit Argo/argowf-chaos-admin.yaml --watch
-  ```
-###  Service Mode
-- Execute the Chaos Experiment via Argo Workflow
-```
-  root@demo:~/chaos-workflows# argo submit Argo/argowf-chaos-service.yaml --watch
+  ➜  2020-NA git:(kubecon-2020) ✗ argo submit Argo/argowf-chaos-admin.yaml --watch
   ```
 ## Perf WorkFlow - Argo workflow on NGINX Application
 - Execute the Performance Test via Argo Workflow
 ```
-  root@demo:~/chaos-workflows# argo submit Argo/argowf-perf.yaml --watch
+  ➜  2020-NA git:(kubecon-2020) ✗ argo submit Argo/argowf-perf.yaml --watch
   ```
 ## Chaos with Performance testing - Argo Workflow
 - Execute the Chaos Experiment with Performance Test via Argo Workflow
-###  Admin Mode
-- Execute the Chaos Experiment via Argo Workflow
 ```
-  root@demo:~/chaos-workflows# argo submit Argo/argowf-perf-chaos-admin.yaml --watch
-  ```
-###  Service Mode
-- Execute the Chaos Experiment via Argo Workflow
-```
-  root@demo:~/chaos-workflows# argo submit Argo/argowf-perf-chaos-service.yaml --watch
+  ➜  2020-NA git:(kubecon-2020) ✗ argo submit Argo/argowf-perf-chaos-admin.yaml --watch
   ```
