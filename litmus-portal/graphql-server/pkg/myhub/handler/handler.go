@@ -110,7 +110,7 @@ func GetExperimentPath(ctx context.Context, experimentInput model.ExperimentInpu
 }
 
 //GetChartsData is used to get details of charts like experiments.
-func GetChartsData(ChartsPath string) ([]byte, error) {
+func GetChartsData(ChartsPath string) ([]*model.Chart, error) {
 	var AllChartsDetails Charts
 	Charts, err := ioutil.ReadDir(ChartsPath)
 	if err != nil {
@@ -124,14 +124,18 @@ func GetChartsData(ChartsPath string) ([]byte, error) {
 	}
 
 	e, _ := json.Marshal(AllChartsDetails)
-	return e, nil
+	var data1 []*model.Chart
+	json.Unmarshal([]byte(e), &data1)
+    return data1, nil
 }
 
 //GetExperimentData is used for getting details of selected Experiment path
-func GetExperimentData(experimentFilePath string) ([]byte, error) {
+func GetExperimentData(experimentFilePath string) (*model.Chart, error) {
 	data, _ := readExperimentFile(experimentFilePath)
 	e, _ := json.Marshal(data)
-	return e, nil
+	var data1 *model.Chart
+	json.Unmarshal([]byte(e), &data1)
+    return data1, nil
 }
 
 //readExperimentFile is used for reading a experiment file from given path

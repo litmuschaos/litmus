@@ -2,7 +2,7 @@ package myhub
 
 import (
 	"context"
-	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"strings"
@@ -29,12 +29,17 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*m
 		return nil, err
 	}
 	data := response.StatusCode
-
+	if data >= 400 && data <= 499{
+		return nil, errors.New("Repository does not exist, Enter a valid GitHub URL")
+	}
 	//If link and branch are good, then check if they are already present or not.
 	if data >= 200 && data <= 299 {
 		IsExist, err := IsMyHubAvailable(ctx, myhub, username)
-		if err != nil || IsExist == true {
+		if err != nil {
 			return nil, err
+		}
+		if IsExist == true {
+			return nil, errors.New("Repository already present in MyHub")
 		}
 		//Initialize a UID for new Hub.
 		uuid := uuid.New()
@@ -120,21 +125,18 @@ func GetCharts(ctx context.Context, chartsInput model.ChartsInput) ([]*model.Cha
 		}
 	}
 
-	var AllChartsData []*model.Chart
-	json.Unmarshal([]byte(ChartsData), &AllChartsData)
-	return AllChartsData, nil
+	
+	return ChartsData, nil
 }
 
 //GetExperiment is used for getting details or yaml file of given experiment.
 func GetExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error) {
 
 	ExperimentPath := handler.GetExperimentPath(ctx, experimentInput)
-	experimentData, err := handler.GetExperimentData(ExperimentPath)
+	ExperimentData, err := handler.GetExperimentData(ExperimentPath)
 	if err != nil {
 		return nil, err
 	}
-
-	var ExperimentData *model.Chart
-	json.Unmarshal([]byte(experimentData), &ExperimentData)
+	
 	return ExperimentData, nil
 }
