@@ -10,19 +10,19 @@ spec:
   arguments:
     parameters:
       - name: appNamespace
-        value: "default"
+        value: "dev-reliabilityiks2-usw2-e2e"
       - name: appCurrentNamespace
-        value: "default"
+        value: "ipfmea2-perfinfra-usw2-pfi"
       - name: appLabel
         value: "nginx-demo-app"
       - name: appEndpoint
-        value: "http://localhost"
+        value: "nginx-e2e.ipfmea2ppdusw2.iks2.a.intuit.com"
       - name: fileName
         value: "pod-app-kill-count.json"
       - name: chaosServiceAccount
         value: chaos-admin
       - name: reportEndpoint
-        value: none
+        value: "https://eventbus-e2e.intuit.com/v2/ip-quality-reliability-realtime-prf"
   templates:
     - name: argowf-chaos
       steps:
@@ -77,9 +77,9 @@ spec:
                           - name: TEST_NAMESPACE
                             value: {{workflow.parameters.appCurrentNamespace}}
       container:
-        image: lachlanevenson/k8s-kubectl
+        image: docker.artifactory.a.intuit.com/lachlanevenson/k8s-kubectl
         command: [sh, -c]
-        args: ['kubectl apply -f /tmp/createChaosEngine.yaml -n {{workflow.parameters.appCurrentNamespace}} | echo "sleeping for 60s" | sleep 60 ']
+        args: ['kubectl apply -f /tmp/createChaosEngine.yaml -n {{workflow.parameters.appCurrentNamespace}} | echo "sleeping for 20s" | sleep 20 ']
 
     - name: revert-chaos
       inputs:
@@ -127,6 +127,6 @@ spec:
                           - name: TEST_NAMESPACE
                             value: {{workflow.parameters.appCurrentNamespace}}
       container:
-        image: lachlanevenson/k8s-kubectl
+        image: docker.artifactory.a.intuit.com/lachlanevenson/k8s-kubectl
         command: [sh, -c]
-        args: [' sleep 20 | kubectl delete  -f /tmp/deleteChaosEngine.yaml -n {{workflow.parameters.appCurrentNamespace}} | echo "sleeping for 60s" | sleep 60 ']
+        args: [' sleep 20 | kubectl delete  -f /tmp/deleteChaosEngine.yaml -n {{workflow.parameters.appCurrentNamespace}} | echo "sleeping for 20s" | sleep 20 ']
