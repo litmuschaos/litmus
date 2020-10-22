@@ -2,9 +2,9 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  generateName: perf-chaos-infra-
+  generateName: argowf-perf-chaos-
 spec:
-  entrypoint: pdbcreate
+  entrypoint: argowf-perf-chaos
   serviceAccountName: argowf-svcacc
   poddisruptionbudget:
     minavailable: 100%
@@ -26,67 +26,74 @@ spec:
         value: 1
       - name: steadyStateTime
         value: 1
-      - name: gitrepo
-        value: "NA"
-      - name: buildURL
-        value: "NA"
-      - name: envName
-        value: "prf"
       - name: buildnum
         value: 1
       - name: baseurl
-        value: "http://localhost"
+        value: "https://nginx-e2e.ipfmea2ppdusw2.iks2.a.intuit.com"
       - name: uniqueName
         value: "{{workflow.creationTimestamp}}"
       - name: Custom
         value: "Custom_Param" 
       - name: dataFlag
-        value: false
+        value: "false"
       - name: appTestImg
-        value: "distroproj/gatling:latest"
+        value: "docker.artifactory.a.intuit.com/distroproj/gatling:latest"
       - name: awscliGatmergeImg
-        value: "distroproj/gatling-merge:latest"
+        value: "docker.artifactory.a.intuit.com/distroproj/gatling-merge:latest"
       - name: pfiNamespace
-        value: "default"
+        value: "ipfmea2-perfinfra-usw2-pfi"
       - name: query
         value: "/health/full"
       - name: simulationClass
         value: "Echo.EchoSimulation"
+# Please create a bucket on your aws account where you are storing your results
+      - name: s3BucketName
+        value: perf-results-331419223978
       - name: reportEndpoint
-        value: none
+        value: 'https://eventbus-e2e.intuit.com/v2/ip-quality-reliability-realtime-prf'
       - name: appNamespace
-        value: "default"
+        value: "dev-reliabilityiks2-usw2-e2e"
       - name: appCurrentNamespace
-        value: "default"
+        value: "ipfmea2-perfinfra-usw2-pfi"
       - name: appLabel
         value: "nginx-demo-app"
       - name: appEndpoint
-        value: "none"
+        value: "nginx-e2e.ipfmea2ppdusw2.iks2.a.intuit.com"
       - name: fileName
-        value: "pod-app-kill-count.json"
+        value: "pod-app-kill-health.json"
       - name: chaosServiceAccount
         value: chaos-admin
   templates:
-    - name: perf-infra
+    - name: argowf-perf-chaos
       steps:
         - - name: pdbcreate
             template: pdbcreate 
-        - - name: run-chaos
-            template: run-chaos
-        - - name: revert-chaos
-            template: revert-chaos
+        - - name: perf-exec
+            template: perf-exec
+          - name: chaos-exec
+            template: chaos-exec
+
+    - name: perf-exec
+      steps:
         - - name: run-test
             template: run-test
             withSequence:
               count: "{{workflow.parameters.limit}}"
         - - name: list-test
             template: list
-        - - name: s3-access
-            template: s3access
+
+
+    - name: chaos-exec
+      steps:
+        - - name: run-chaos
+            template: run-chaos
+        - - name: revert-chaos
+            template: revert-chaos
+
 
     - name: pdbcreate
       container:
-        image: alpine:latest
+        image: docker.artifactory.a.intuit.com/alpine:latest
         command: [sh, -c]
         args: [sleep 10]
 
@@ -136,9 +143,9 @@ spec:
                           - name: TEST_NAMESPACE
                             value: {{workflow.parameters.appCurrentNamespace}}
       container:
-        image: lachlanevenson/k8s-kubectl
+        image: docker.artifactory.a.intuit.com/lachlanevenson/k8s-kubectl
         command: [sh, -c]
-        args: ['kubectl apply -f /tmp/createChaosEngine.yaml -n {{workflow.parameters.appCurrentNamespace}} | echo "sleeping for 60s" | sleep 60 ']
+        args: ['kubectl apply -f /tmp/createChaosEngine.yaml -n {{workflow.parameters.appCurrentNamespace}} | echo "sleeping for 20s" | sleep 20 ']
 
     - name: revert-chaos
       inputs:
@@ -186,9 +193,9 @@ spec:
                           - name: TEST_NAMESPACE
                             value: {{workflow.parameters.appCurrentNamespace}}
       container:
-        image: lachlanevenson/k8s-kubectl
+        image: docker.artifactory.a.intuit.com/lachlanevenson/k8s-kubectl
         command: [sh, -c]
-        args: [' sleep 20 | kubectl delete  -f /tmp/deleteChaosEngine.yaml -n {{workflow.parameters.appCurrentNamespace}} | echo "sleeping for 60s" | sleep 60 ']
+        args: [' sleep 20 | kubectl delete  -f /tmp/deleteChaosEngine.yaml -n {{workflow.parameters.appCurrentNamespace}} | echo "sleeping for 20s" | sleep 20 ']
 
     
     - name: run-test
@@ -229,7 +236,7 @@ spec:
               #   GCS: storage.googleapis.com
               #   Minio: my-minio-endpoint.default:9000
               endpoint: s3.amazonaws.com
-              bucket: perf-results-final
+              bucket: "{{workflow.parameters.s3BucketName}}"
               region: us-west-2
               key: results/{{workflow.namespace}}/{{workflow.parameters.uniqueName}}/finalResult/simulations/
           - name: simulation
@@ -246,7 +253,7 @@ spec:
               #   GCS: storage.googleapis.com
               #   Minio: my-minio-endpoint.default:9000
               endpoint: s3.amazonaws.com
-              bucket: perf-results-final
+              bucket: "{{workflow.parameters.s3BucketName}}"
               region: us-west-2
               key: results/{{workflow.namespace}}/{{workflow.name}}_{{workflow.creationTimestamp}}/simulations/{{pod.name}}.tgz
 
@@ -289,7 +296,7 @@ spec:
               #   GCS: storage.googleapis.com
               #   Minio: my-minio-endpoint.default:9000
               endpoint: s3.amazonaws.com
-              bucket: perf-results-final
+              bucket: "{{workflow.parameters.s3BucketName}}"
               region: us-west-2
               key: results/{{workflow.namespace}}/{{workflow.name}}_{{workflow.creationTimestamp}}/simulations/
 
@@ -309,7 +316,7 @@ spec:
               #   GCS: storage.googleapis.com
               #   Minio: my-minio-endpoint.default:9000
               endpoint: s3.amazonaws.com
-              bucket: perf-results-final
+              bucket: "{{workflow.parameters.s3BucketName}}"
               region: us-west-2
               key: results/{{workflow.namespace}}/{{workflow.parameters.uniqueName}}/finalResult/
 
@@ -320,4 +327,4 @@ spec:
       container:
         image:  "{{workflow.parameters.awscliGatmergeImg}}"
         command: [sh, -c]
-        args: ["sleep 20 && aws s3 ls s3://perf-results-final/results/ && aws s3 cp --recursive --acl authenticated-read 's3://perf-results-final/results/{{workflow.namespace}}/{{workflow.parameters.uniqueName}}' 's3://perf-results-final/results/{{workflow.namespace}}/{{workflow.parameters.uniqueName}}'"]
+        args: ["sleep 20 && aws s3 ls s3://{{workflow.parameters.s3BucketName}}/results/ && aws s3 cp --recursive --acl authenticated-read 's3://perf-results-final/results/{{workflow.namespace}}/{{workflow.parameters.uniqueName}}' 's3://perf-results-final/results/{{workflow.namespace}}/{{workflow.parameters.uniqueName}}'"]
