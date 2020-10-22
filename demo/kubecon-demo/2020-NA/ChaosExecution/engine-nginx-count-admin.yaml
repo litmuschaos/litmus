@@ -14,7 +14,7 @@ spec:
     appkind: deployment
   jobCleanUpPolicy: delete
   monitoring: false
-  annotationCheck: 'true'
+  annotationCheck: 'false'
   engineState: 'active'
   chaosServiceAccount: chaos-admin
   experiments:
@@ -27,12 +27,12 @@ spec:
             - name: LABEL_NAME
               value: nginx-demo-app
             - name: APP_ENDPOINT
-              value: http://localhost
+              value: nginx.xxx.com
             - name: FILE
               value: 'pod-app-kill-count.json'
             - name: REPORT
               value: 'false'
             - name: REPORT_ENDPOINT
-              value: 'none'
+              value: 'https://report.xxx.com'
             - name: TEST_NAMESPACE
               value: chaos-ns

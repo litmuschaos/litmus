@@ -4,10 +4,10 @@ kind: Workflow
 metadata:
   generateName: perf-infra-
 spec:
-  entrypoint: pdbcreate
+  entrypoint: perf-infra
+  serviceAccountName: argowf-svcacc
   poddisruptionbudget:
     minavailable: 100%
-  entrypoint: perf-infra
   # must complete in 1m
   activeDeadlineSeconds: 86400
   # keep workflows for 3m
@@ -26,32 +26,29 @@ spec:
         value: 1
       - name: steadyStateTime
         value: 1
-      - name: gitrepo
-        value: "NA"
-      - name: buildURL
-        value: "NA"
-      - name: envName
-        value: "prf"
       - name: buildnum
         value: 1
       - name: baseurl
-        value: "http://localhost"
+        value: "https://nginx.xxx.com"
       - name: uniqueName
         value: "{{workflow.creationTimestamp}}"
       - name: Custom
         value: "Custom_Param" 
       - name: dataFlag
-        value: false
+        value: "false"
       - name: appTestImg
         value: "distroproj/gatling:latest"
       - name: awscliGatmergeImg
-        value: "distroproj/gatling-merge:latest"
+        value: "gatling-merge:latest"
       - name: pfiNamespace
-        value: "default"
+        value: "chaos-ns"
       - name: query
         value: "/health/full"
       - name: simulationClass
         value: "Echo.EchoSimulation"
+# Please create a bucket on your aws account where you are storing your results
+      - name: s3BucketName
+        value: perf-results-000000000
   templates:
     - name: perf-infra
       steps:
@@ -61,10 +58,8 @@ spec:
             template: run-test
             withSequence:
               count: "{{workflow.parameters.limit}}"
-        - - name: list-test
+        - - name: Aggregation
             template: list
-        - - name: s3-access
-            template: s3access
 
     - name: pdbcreate
       container:
@@ -110,7 +105,7 @@ spec:
               #   GCS: storage.googleapis.com
               #   Minio: my-minio-endpoint.default:9000
               endpoint: s3.amazonaws.com
-              bucket: perf-results-final
+              bucket: "{{workflow.parameters.s3BucketName}}"
               region: us-west-2
               key: results/{{workflow.namespace}}/{{workflow.parameters.uniqueName}}/finalResult/simulations/
           - name: simulation
@@ -127,7 +122,7 @@ spec:
               #   GCS: storage.googleapis.com
               #   Minio: my-minio-endpoint.default:9000
               endpoint: s3.amazonaws.com
-              bucket: perf-results-final
+              bucket: "{{workflow.parameters.s3BucketName}}"
               region: us-west-2
               key: results/{{workflow.namespace}}/{{workflow.name}}_{{workflow.creationTimestamp}}/simulations/{{pod.name}}.tgz
 
@@ -170,7 +165,7 @@ spec:
               #   GCS: storage.googleapis.com
               #   Minio: my-minio-endpoint.default:9000
               endpoint: s3.amazonaws.com
-              bucket: perf-results-final
+              bucket: "{{workflow.parameters.s3BucketName}}"
               region: us-west-2
               key: results/{{workflow.namespace}}/{{workflow.name}}_{{workflow.creationTimestamp}}/simulations/
 
@@ -190,7 +185,7 @@ spec:
               #   GCS: storage.googleapis.com
               #   Minio: my-minio-endpoint.default:9000
               endpoint: s3.amazonaws.com
-              bucket: perf-results-final
+              bucket: "{{workflow.parameters.s3BucketName}}"
               region: us-west-2
               key: results/{{workflow.namespace}}/{{workflow.parameters.uniqueName}}/finalResult/
 
@@ -201,4 +196,4 @@ spec:
       container:
         image:  "{{workflow.parameters.awscliGatmergeImg}}"
         command: [sh, -c]
-        args: ["sleep 20 && aws s3 ls s3://perf-results-final/results/ && aws s3 cp --recursive --acl authenticated-read 's3://perf-results-final/results/{{workflow.namespace}}/{{workflow.parameters.uniqueName}}' 's3://perf-results-final/results/{{workflow.namespace}}/{{workflow.parameters.uniqueName}}'"]
+        args: ["sleep 20 && aws s3 ls s3://{{workflow.parameters.s3BucketName}}/results/ && aws s3 cp --recursive --acl authenticated-read 's3://perf-results-final/results/{{workflow.namespace}}/{{workflow.parameters.uniqueName}}' 's3://perf-results-final/results/{{workflow.namespace}}/{{workflow.parameters.uniqueName}}'"]

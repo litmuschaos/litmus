@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: nginx-demo-app
-        image: docker.intuit.com/nginxdemos/hello:plain-text
+        image: nginxdemos/hello:plain-text
         ports:
         - containerPort: 80
         readinessProbe:

@@ -29,7 +29,7 @@ spec:
       - name: buildnum
         value: 1
       - name: baseurl
-        value: "https://nginx-e2e.ipfmea2ppdusw2.iks2.a.intuit.com"
+        value: "https://nginx.xxx.com"
       - name: uniqueName
         value: "{{workflow.creationTimestamp}}"
       - name: Custom
@@ -37,28 +37,28 @@ spec:
       - name: dataFlag
         value: "false"
       - name: appTestImg
-        value: "docker.artifactory.a.intuit.com/distroproj/gatling:latest"
+        value: "distroproj/gatling:latest"
       - name: awscliGatmergeImg
-        value: "docker.artifactory.a.intuit.com/distroproj/gatling-merge:latest"
+        value: "distroproj/gatling-merge:latest"
       - name: pfiNamespace
-        value: "ipfmea2-perfinfra-usw2-pfi"
+        value: "chaos-ns"
       - name: query
         value: "/health/full"
       - name: simulationClass
         value: "Echo.EchoSimulation"
 # Please create a bucket on your aws account where you are storing your results
       - name: s3BucketName
-        value: perf-results-331419223978
+        value: perf-results-000000000
       - name: reportEndpoint
-        value: 'https://eventbus-e2e.intuit.com/v2/ip-quality-reliability-realtime-prf'
+        value: 'https://report.xxx.com'
       - name: appNamespace
-        value: "dev-reliabilityiks2-usw2-e2e"
+        value: "default"
       - name: appCurrentNamespace
-        value: "ipfmea2-perfinfra-usw2-pfi"
+        value: "chaos-ns"
       - name: appLabel
         value: "nginx-demo-app"
       - name: appEndpoint
-        value: "nginx-e2e.ipfmea2ppdusw2.iks2.a.intuit.com"
+        value: "nginx.xxx.com"
       - name: fileName
         value: "pod-app-kill-health.json"
       - name: chaosServiceAccount
@@ -93,7 +93,7 @@ spec:
 
     - name: pdbcreate
       container:
-        image: docker.artifactory.a.intuit.com/alpine:latest
+        image: alpine:latest
         command: [sh, -c]
         args: [sleep 10]
 
@@ -143,7 +143,7 @@ spec:
                           - name: TEST_NAMESPACE
                             value: {{workflow.parameters.appCurrentNamespace}}
       container:
-        image: docker.artifactory.a.intuit.com/lachlanevenson/k8s-kubectl
+        image: lachlanevenson/k8s-kubectl
         command: [sh, -c]
         args: ['kubectl apply -f /tmp/createChaosEngine.yaml -n {{workflow.parameters.appCurrentNamespace}} | echo "sleeping for 20s" | sleep 20 ']
 
@@ -193,7 +193,7 @@ spec:
                           - name: TEST_NAMESPACE
                             value: {{workflow.parameters.appCurrentNamespace}}
       container:
-        image: docker.artifactory.a.intuit.com/lachlanevenson/k8s-kubectl
+        image: lachlanevenson/k8s-kubectl
         command: [sh, -c]
         args: [' sleep 20 | kubectl delete  -f /tmp/deleteChaosEngine.yaml -n {{workflow.parameters.appCurrentNamespace}} | echo "sleeping for 20s" | sleep 20 ']
 

@@ -1,8 +1,31 @@
 # Getting Started
 ## Litmus
 - Refer to the LitmusChaos [documentation](https://docs.litmuschaos.io) to get started on installing Litmus infra on your
-Kubernetes clusters. In this example, we will use the [admin mode](https://docs.litmuschaos.io/docs/admin-mode/) of execution where
-all chaos resources will be created in the centralized namespace, litmus.
+Kubernetes clusters. All chaos resources will be created in the centralized namespace from below manifest, litmus.
+- Apply the LitmusChaos Operator manifest
+```
+ 2020-NA git:(kubecon-2020)kubectl apply -f https://litmuschaos.github.io/litmus/litmus-operator-v1.9.0.yaml
+```
+- Verify if the ChaosOperator is running
+```
+2020-NA git:(kubecon-2020) ✗ kubectl get pods -n litmus
+NAME                                 READY   STATUS    RESTARTS   AGE
+chaos-operator-ce-658b7dfc7b-4nw45   1/1     Running   0          11d
+```
+- verify the CRD's
+```
+2020-NA git:(kubecon-2020) ✗ kubectl get crds | grep chaos
+chaosengines.litmuschaos.io                   2020-06-11T17:59:33Z
+chaosexperiments.litmuschaos.io               2020-06-11T17:59:33Z
+chaosresults.litmuschaos.io                   2020-06-11T17:59:34Z
+```
+- Verify the api-resources
+```
+2020-NA git:(kubecon-2020) ✗ kubectl api-resources | grep chaos
+chaosengines                                           litmuschaos.io                 true         ChaosEngine
+chaosexperiments                                       litmuschaos.io                 true         ChaosExperiment
+chaosresults                                           litmuschaos.io                 true         ChaosResult
+```
 ## Argo Workflows
 The Argo workflow infra consists of the Argo workflow CRDs, Workflow Controller, associated RBAC & Argo CLI. The steps
 shown below installs argo in the standard cluster-wide mode wherein the workflow controller operates on all
@@ -19,34 +42,34 @@ If you would like to run argo with a namespace scope, refer to [this](https://gi
   root@demo:~/chaos-workflows# kubectl apply -f https://raw.githubusercontent.com/argoproj/argo/stable/manifests/install.yaml
   ```
 - Verify successful creation of argo resources (crds)
-  ```
-  root@demo:~/chaos-workflows# kubectl get crds | grep argo
-  clusterworkflowtemplates.argoproj.io                         2020-05-15T03:01:31Z
-  cronworkflows.argoproj.io                                    2020-05-15T03:01:31Z
-  workflows.argoproj.io                                        2020-05-15T03:01:31Z
-  workflowtemplates.argoproj.io                                2020-05-15T03:01:31Z
-  ```
-- Verify successful creation of argo resources (api-ressources)
-  ```
-  root@demo:~/chaos-workflows# kubectl api-resources | grep argo
-  clusterworkflowtemplates          clusterwftmpl,cwft   argoproj.io                              false        ClusterWorkflowTemplate
-  cronworkflows                     cronwf,cwf           argoproj.io                              true         CronWorkflow
-  workflows                         wf                   argoproj.io                              true         Workflow
-  workflowtemplates                 wftmpl               argoproj.io                              true         WorkflowTemplate
-  ```
+```
+2020-NA git:(kubecon-2020) ✗ kubectl get crds | grep argo
+clusterworkflowtemplates.argoproj.io          2020-05-14T04:57:16Z
+cronworkflows.argoproj.io                     2020-05-14T04:57:18Z
+workflows.argoproj.io                         2020-05-14T04:57:20Z
+workflowtemplates.argoproj.io                 2020-05-14T04:57:21Z
+```
+- Verify successful creation of argo resources (api-resources)
+```
+2020-NA git:(kubecon-2020) ✗ kubectl api-resources | grep argo
+clusterworkflowtemplates          clusterwftmpl,cwft   argoproj.io                    false        ClusterWorkflowTemplate
+cronworkflows                     cwf,cronwf           argoproj.io                    true         CronWorkflow
+workflows                         wf                   argoproj.io                    true         Workflow
+workflowtemplates                 wftmpl               argoproj.io                    true         WorkflowTemplate
+```
 - Verify successful creation of argo server and workflow
-  ```
-  root@demo:~/chaos-workflows# kubectl get pods -n argo
-  NAME                                   READY   STATUS    RESTARTS   AGE
-  argo-server-65cbb4874c-cbq2h           1/1     Running   0          20s
-  workflow-controller-55bffbdbfd-c4jdf   1/1     Running   0          20s
-  ```
+```
+2020-NA git:(kubecon-2020) ✗  kubectl get pods -n argo
+NAME                                   READY   STATUS    RESTARTS   AGE
+argo-server-78b774dd56-j8xwx           1/1     Running   0          13h
+workflow-controller-589bf468d7-bwjtr   1/1     Running   0          13h
+```
 - Install the argo CLI on the harness/test machine (where the kubeconfig is available)
-  ```
-  root@demo:~# curl -sLO https://github.com/argoproj/argo/releases/download/v2.8.0/argo-linux-amd64
-  root@demo:~# chmod +x argo-linux-amd64
-  root@demo:~# mv ./argo-linux-amd64 /usr/local/bin/argo
-  root@demo:~# argo version
+```
+2020-NA git:(kubecon-2020) curl -sLO https://github.com/argoproj/argo/releases/download/v2.8.0/argo-linux-amd64
+2020-NA git:(kubecon-2020) chmod +x argo-linux-amd64
+2020-NA git:(kubecon-2020) mv ./argo-linux-amd64 /usr/local/bin/argo
+2020-NA git:(kubecon-2020) argo version
   argo: v2.8.0
   BuildDate: 2020-05-11T22:55:16Z
   GitCommit: 8f696174746ed01b9bf1941ad03da62d312df641
@@ -55,33 +78,49 @@ If you would like to run argo with a namespace scope, refer to [this](https://gi
   GoVersion: go1.13.4
   Compiler: gc
   Platform: linux/amd64
-  ```
+```
 ## Application
+- Create a namespace for chaos experiment as chaos-ns
+```
+  root@demo:~/chaos-workflows# kubectl create ns chaos-ns
+```
 - Install a simple multi-replica stateless nginx deployment with service exposed over nodeport
+```
+➜  App git:(kubecon-2020) ✗ kubectl  apply -f nginx_demo.yaml
+deployment.apps/nginx-demo-app created
+service/nginx-demo-app-svc created
   ```
-  root@demo:~# kubectl apply -f https://raw.githubusercontent.com/litmuschaos/chaos-workflows/master/App/nginx.yaml
   ```
-  ```
-  root@demo:~# kubectl apply -f https://raw.githubusercontent.com/litmuschaos/chaos-workflows/master/App/service.yaml
-  ```
-  ```
-  root@demo:~# kubectl get pods -w
+App git:(kubecon-2020) ✗ kubectl get pods -l app=nginx-demo-app  -w
+NAME                              READY   STATUS    RESTARTS   AGE
+nginx-demo-app-68c58bb7d7-fg2bc   1/1     Running   0          94s
+nginx-demo-app-68c58bb7d7-jfrrr   1/1     Running   0          94s
+nginx-demo-app-68c58bb7d7-s98wz   1/1     Running   0          94s
   ```
 - You can access this service over `https://<node-ip>:<nodeport>`
 ## Chaos Experiment
 - Setup the Chaos Experiment for your namespace
 ```
-  root@demo:~/chaos-workflows# kubectl apply -f ChaosExperiment/experiments-k8.yaml
+ 2020-NA git:(kubecon-2020) ✗ kubectl apply -f ChaosExperiment/experiments-k8.yaml
+chaosexperiment.litmuschaos.io/k8-pod-delete created
+```
+```
+➜  2020-NA git:(kubecon-2020) ✗ k get chaosexperiments
+NAME            AGE
+k8-pod-delete   4s
   ```
 ## Chaos Execution
 ###  Admin Mode
 - Setup the RBAC to execute chaos experiment in your namespace
 ```
-  root@demo:~/chaos-workflows# kubectl apply -f ChaosExecution/rbac-chaos-admin.yaml
+➜  2020-NA git:(kubecon-2020) ✗ kubectl apply -f ChaosExecution/rbac-chaos-admin.yaml
+serviceaccount/chaos-admin created
+clusterrole.rbac.authorization.k8s.io/chaos-admin configured
+clusterrolebinding.rbac.authorization.k8s.io/chaos-admin configured
   ```
 - Execute the Chaos Experiment in your namespace
 ```
-  root@demo:~/chaos-workflows# kubectl apply -f ChaosExperiment/engine-nginx-count-admin.yaml
+  root@demo:~/chaos-workflows# kubectl apply -f ChaosExecution/engine-nginx-count-admin.yaml
   ```
 ### Service Mode
 - Setup the RBAC to execute chaos experiment in your namespace
@@ -90,37 +129,37 @@ If you would like to run argo with a namespace scope, refer to [this](https://gi
   ```
 - Execute the Chaos Experiment in your namespace
 ```
-  root@demo:~/chaos-workflows# kubectl apply -f ChaosExperiment/engine-nginx-count-service.yaml
+  root@demo:~/chaos-workflows# kubectl apply -f ChaosExecution/engine-nginx-count-service.yaml
   ```
 ## Chaos Workflow - Argo Workflow
 - Setup the RBAC for executing Argo Workflow
 ```
-  root@demo:~/chaos-workflows# kubectl apply -f Argo/rbac-argo-service.yaml
+  root@demo:~/chaos-workflows# argo submit Argo/rbac-argo-service.yaml --watch
   ```
 ###  Admin Mode
 - Execute the Chaos Experiment via Argo Workflow
 ```
-  root@demo:~/chaos-workflows# kubectl apply -f Argo/argowf-chaos-admin.yaml
+  root@demo:~/chaos-workflows# argo submit Argo/argowf-chaos-admin.yaml --watch
   ```
 ###  Service Mode
 - Execute the Chaos Experiment via Argo Workflow
 ```
-  root@demo:~/chaos-workflows# kubectl apply -f Argo/argowf-chaos-service.yaml
+  root@demo:~/chaos-workflows# argo submit Argo/argowf-chaos-service.yaml --watch
   ```
 ## Perf WorkFlow - Argo workflow on NGINX Application
 - Execute the Performance Test via Argo Workflow
 ```
-  root@demo:~/chaos-workflows# kubectl apply -f Argo/argowf-perf.yaml
+  root@demo:~/chaos-workflows# argo submit Argo/argowf-perf.yaml --watch
   ```
 ## Chaos with Performance testing - Argo Workflow
 - Execute the Chaos Experiment with Performance Test via Argo Workflow
 ###  Admin Mode
 - Execute the Chaos Experiment via Argo Workflow
 ```
-  root@demo:~/chaos-workflows# kubectl apply -f Argo/argowf-perf-chaos-admin.yaml
+  root@demo:~/chaos-workflows# argo submit Argo/argowf-perf-chaos-admin.yaml --watch
   ```
 ###  Service Mode
 - Execute the Chaos Experiment via Argo Workflow
 ```
-  root@demo:~/chaos-workflows# kubectl apply -f Argo/argowf-perf-chaos-service.yaml
+  root@demo:~/chaos-workflows# argo submit Argo/argowf-perf-chaos-service.yaml --watch
   ```
