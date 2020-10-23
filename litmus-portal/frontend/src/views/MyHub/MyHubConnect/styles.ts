@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
   },
   root: {
-    width: 450,
+    width: '28.125rem',
     marginLeft: 'auto',
   },
   header: {
@@ -22,29 +22,29 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: '#FFFFFF',
-    border: '1px solid rgba(0, 0, 0, 0.05)',
-    padding: 40,
+    backgroundColor: theme.palette.common.white,
+    border: `1px solid ${theme.palette.customColors.black(0.05)}`,
+    padding: theme.spacing(2.5),
   },
   connectText: {
     fontWeight: 400,
     fontSize: '14px',
-    marginTop: 10,
+    marginTop: theme.spacing(1.25),
   },
   inputDiv: {
     display: 'flex',
     flexDirection: 'column',
-    marginTop: 20,
-    marginLeft: -10,
+    marginTop: theme.spacing(2.5),
+    marginLeft: theme.spacing(-1.25),
   },
   inputField: {
-    marginBottom: 20,
-    width: 400,
+    marginBottom: theme.spacing(2.5),
+    width: '25rem',
   },
   modalDiv: {
     display: 'flex',
     flexDirection: 'column',
-    height: 400,
+    height: '25rem',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -55,15 +55,23 @@ const useStyles = makeStyles((theme) => ({
   modalDesc: {
     fontWeight: 400,
     fontSize: '16px',
-    width: 350,
-    marginBottom: 20,
+    width: '21.875',
+    marginBottom: theme.spacing(2.5),
   },
   videoDescription: {
-    marginTop: -50,
-    marginLeft: 45,
-    width: 300,
-    marginBottom: 40,
+    marginTop: theme.spacing(-6.25),
+    marginLeft: theme.spacing(5.625),
+    width: '18.75rem',
+    marginBottom: theme.spacing(5),
     fontSize: '16px',
+  },
+  btnDiv: {
+    marginRight: 'auto',
+    marginBottom: theme.spacing(2.5),
+  },
+  enterInfoText: {
+    fontWeight: 400,
+    fontSize: '24px',
   },
 }));
 

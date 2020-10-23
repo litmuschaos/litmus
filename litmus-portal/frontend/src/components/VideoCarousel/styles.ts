@@ -7,6 +7,10 @@ const useStyles = makeStyles((theme) => ({
   },
   videoDiv: {
     paddingLeft: theme.spacing(3.75),
+    maxWidth: '93%',
+  },
+  sliderBtn: {
+    top: theme.spacing(-18.125),
   },
 }));
 

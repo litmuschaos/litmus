@@ -7,9 +7,6 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     marginTop: theme.spacing(3),
   },
-  root: {
-    marginLeft: 'auto',
-  },
   header: {
     width: '100%',
     color: theme.palette.text.primary,
@@ -23,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
   noGithubAccount: {
     margin: 'auto',
     height: '100%',
-    width: 400,
+    width: '25rem',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -31,8 +28,8 @@ const useStyles = makeStyles((theme) => ({
   },
   noGitHubText: {
     textAlign: 'center',
-    paddingTop: 20,
-    paddingBottom: 20,
+    paddingTop: theme.spacing(2.5),
+    paddingBottom: theme.spacing(2.5),
   },
   githubConfirmed: {
     display: 'flex',
@@ -40,9 +37,9 @@ const useStyles = makeStyles((theme) => ({
   },
   detailsDiv: {
     flexGrow: 1,
-    backgroundColor: '#FFFFFF',
-    border: '1px solid rgba(0, 0, 0, 0.05)',
-    padding: 40,
+    backgroundColor: theme.palette.common.white,
+    border: `1px solid ${theme.palette.customColors.black(0.05)}`,
+    padding: theme.spacing(5),
   },
   chartsGroup: {
     display: 'flex',
@@ -50,24 +47,45 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: 'wrap',
   },
   cardDiv: {
-    width: 200,
-    border: '1px dashed #434343',
+    width: '12.5rem',
+    border: `1px dashed ${theme.palette.customColors.black(0.5)}`,
     borderRadius: 4,
     margin: theme.spacing(2),
   },
+  cardDivChart: {
+    width: '12.5rem',
+    border: `1px solid ${theme.palette.customColors.black(0.2)}`,
+    '&:hover': {
+      border: `1.8px solid ${theme.palette.secondary.dark}`,
+      cursor: 'pointer',
+    },
+    borderRadius: theme.spacing(0.5),
+    margin: theme.spacing(2),
+  },
   cardContent: {
-    height: 240,
+    height: '15.625rem',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column',
+    backgroundColor: theme.palette.common.white,
   },
   videoDescription: {
-    marginTop: -50,
-    marginLeft: 45,
-    width: 300,
-    marginBottom: 40,
+    marginTop: theme.spacing(-6.25),
+    marginLeft: theme.spacing(5.625),
+    width: '18.75rem',
+    marginBottom: theme.spacing(5),
     fontSize: '16px',
+  },
+  connectHub: {
+    fontWeight: 400,
+    fontSize: '14px',
+  },
+  noHub: {
+    marginTop: theme.spacing(2.5),
+  },
+  quickActionDiv: {
+    marginLeft: theme.spacing(5.625),
   },
 }));
 

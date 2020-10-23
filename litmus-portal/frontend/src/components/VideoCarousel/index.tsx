@@ -54,12 +54,15 @@ const VideoCarousel = () => {
   const classes = useStyles();
   return (
     <div>
+      {/* Header Text */}
       <Typography variant="subtitle1" className={classes.heading}>
         Video Tips
       </Typography>
+      {/* Video Frame */}
       <div className={classes.videoDiv}>
-        <VideoFrame width="360px" src={sliderData[activeStep].link} />
+        <VideoFrame width="22.5rem" src={sliderData[activeStep].link} />
       </div>
+      {/* Slider Div */}
       <MobileSlider
         steps={maxSteps}
         variant="dots"
@@ -67,8 +70,8 @@ const VideoCarousel = () => {
         activeStep={activeStep}
         nextButton={
           <IconButton
-            style={{ top: -150 }}
-            aria-label="delete"
+            className={classes.sliderBtn}
+            aria-label="next-button"
             onClick={handleNext}
             disabled={activeStep === maxSteps - 1}
           >
@@ -77,10 +80,10 @@ const VideoCarousel = () => {
         }
         backButton={
           <IconButton
-            aria-label="delete"
+            aria-label="next-button"
             onClick={handleBack}
             disabled={activeStep === 0}
-            style={{ top: -150 }}
+            className={classes.sliderBtn}
           >
             <ArrowBackIcon fontSize="small" />
           </IconButton>

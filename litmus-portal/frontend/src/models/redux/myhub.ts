@@ -67,7 +67,7 @@ export interface ChartsInput {
 }
 
 export interface Charts {
-  Charts: Chart[];
+  getCharts: Chart[];
 }
 
 export interface HubDetails {

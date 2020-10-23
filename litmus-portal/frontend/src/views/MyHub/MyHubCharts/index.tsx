@@ -1,62 +1,144 @@
 import {
+  Backdrop,
   Card,
-  CardActionArea,
   CardContent,
+  Link,
   Typography,
 } from '@material-ui/core';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useQuery } from '@apollo/client';
+import { useSelector } from 'react-redux';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import useStyles from './styles';
-import { LocationState } from '../../../models/routerModel';
+import { GET_CHARTS_DATA } from '../../../graphql';
+import { RootState } from '../../../redux/reducers';
+import { Chart, Charts } from '../../../models/redux/myhub';
+import Loader from '../../../components/Loader';
+import Center from '../../../containers/layouts/Center';
+import HeaderSection from './headerSection';
 
-interface LocationObjectProps {
-  data: any;
+interface ChartName {
+  ChaosName: string;
+  ExperimentName: string;
 }
 
-interface MyHubChartProps {
-  location: LocationState<LocationObjectProps>;
-}
-
-const MyHub: React.FC<MyHubChartProps> = ({ location }) => {
-  const data: any = location.state;
+const MyHub = () => {
   const classes = useStyles();
-  return (
+
+  const hubData = useSelector((state: RootState) => state.hubDetails);
+
+  const { HubName, RepoName, RepoURL, RepoBranch, UserName } = hubData;
+
+  const experimentDefaultImagePath = `https://raw.githubusercontent.com/${
+    RepoURL.split('/')[3]
+  }/${RepoName}/${RepoBranch}/charts/`;
+
+  const { data, loading } = useQuery<Charts>(GET_CHARTS_DATA, {
+    variables: {
+      data: {
+        UserName,
+        RepoURL,
+        RepoBranch,
+        RepoName,
+        HubName,
+      },
+    },
+    fetchPolicy: 'cache-and-network',
+  });
+
+  const [search, setSearch] = useState('');
+
+  const changeSearch = (
+    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    setSearch(event.target.value as string);
+  };
+
+  const [totalExp, setTotalExperiment] = useState<ChartName[]>([]);
+
+  const exp: ChartName[] = [];
+
+  useEffect(() => {
+    if (data !== undefined) {
+      const chartList = data?.getCharts;
+      chartList.forEach((expData: Chart) => {
+        expData.Spec.Experiments.forEach((expName) => {
+          exp.push({
+            ChaosName: expData.Metadata.Name,
+            ExperimentName: expName,
+          });
+        });
+      });
+      setTotalExperiment(exp);
+    }
+  }, [data]);
+  return loading ? (
+    <>
+      <Backdrop open className={classes.backdrop}>
+        <Loader />
+        <Center>
+          <Typography variant="h4" align="center">
+            Please wait while we are syncing your repo!
+          </Typography>
+        </Center>
+      </Backdrop>
+    </>
+  ) : (
     <Scaffold>
       <div className={classes.header}>
         <Typography variant="h3" gutterBottom>
           My Hub
         </Typography>
         <Typography variant="h4">
-          <strong>github.com/</strong>
+          <strong>
+            github.com/{HubName}/{RepoName}
+          </strong>
         </Typography>
       </div>
       <div className={classes.mainDiv}>
-        <div className={classes.detailsDiv}>
-          <div className={classes.chartsGroup}>
-            {data.map((hub: any) => {
-              return hub.Spec.Experiments.map((expName: any) => {
+        <HeaderSection searchValue={search} changeSearch={changeSearch} />
+        <div className={classes.chartsGroup}>
+          {totalExp && totalExp.length > 0 ? (
+            totalExp
+              .filter(
+                (data) =>
+                  data.ChaosName.toLowerCase().includes(search.trim()) ||
+                  data.ExperimentName.toLowerCase().includes(search.trim())
+              )
+              .map((expName: ChartName) => {
                 return (
                   <Card elevation={3} className={classes.cardDiv}>
-                    <CardActionArea>
-                      <CardContent className={classes.cardContent}>
-                        {/* <img
-                          src="{https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/cassandra/icons/cassandra-pod-delete.png}"
-                          alt="add-hub"
-                        /> */}
-                        <Typography variant="h6" align="center">
-                          {hub.Spec.DisplayName}/
-                        </Typography>
-
-                        <Typography variant="h6" align="center">
-                          {expName}
-                        </Typography>
-                      </CardContent>
-                    </CardActionArea>
+                    <CardContent className={classes.cardContent}>
+                      <img
+                        src={`${experimentDefaultImagePath}${expName.ChaosName}/icons/${expName.ExperimentName}.png`}
+                        alt="add-hub"
+                        className={classes.cardImage}
+                      />
+                      <Link
+                        href="#"
+                        onClick={(e: any) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setSearch(expName.ChaosName);
+                        }}
+                        className={classes.categoryName}
+                      >
+                        {expName.ChaosName}/
+                      </Link>
+                      <Typography
+                        className={classes.expName}
+                        variant="h6"
+                        align="center"
+                      >
+                        {expName.ExperimentName}
+                      </Typography>
+                    </CardContent>
                   </Card>
                 );
-              });
-            })}
-          </div>
+              })
+          ) : (
+            <></>
+          )}
         </div>
       </div>
     </Scaffold>
