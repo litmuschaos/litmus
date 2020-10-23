@@ -29,7 +29,7 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*m
 		return nil, err
 	}
 	data := response.StatusCode
-	if data >= 400 && data <= 499{
+	if data >= 400 && data <= 499 {
 		return nil, errors.New("Repository does not exist, Enter a valid GitHub URL")
 	}
 	//If link and branch are good, then check if they are already present or not.
@@ -125,7 +125,6 @@ func GetCharts(ctx context.Context, chartsInput model.ChartsInput) ([]*model.Cha
 		}
 	}
 
-	
 	return ChartsData, nil
 }
 
@@ -137,6 +136,6 @@ func GetExperiment(ctx context.Context, experimentInput model.ExperimentInput) (
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return ExperimentData, nil
 }

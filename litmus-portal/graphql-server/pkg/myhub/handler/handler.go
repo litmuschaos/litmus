@@ -126,7 +126,7 @@ func GetChartsData(ChartsPath string) ([]*model.Chart, error) {
 	e, _ := json.Marshal(AllChartsDetails)
 	var data1 []*model.Chart
 	json.Unmarshal([]byte(e), &data1)
-    return data1, nil
+	return data1, nil
 }
 
 //GetExperimentData is used for getting details of selected Experiment path
@@ -135,7 +135,7 @@ func GetExperimentData(experimentFilePath string) (*model.Chart, error) {
 	e, _ := json.Marshal(data)
 	var data1 *model.Chart
 	json.Unmarshal([]byte(e), &data1)
-    return data1, nil
+	return data1, nil
 }
 
 //readExperimentFile is used for reading a experiment file from given path

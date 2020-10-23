@@ -28,11 +28,11 @@ type GitConfig struct {
 }
 
 var (
-	r      *git.Repository
-	w      *git.Worktree
-	t      *plumbing.Reference
-	status *git.Status
-	err    error
+	repository  *git.Repository
+	workTree    *git.Worktree
+	plumbingRef *plumbing.Reference
+	status      *git.Status
+	err         error
 )
 
 const (
@@ -169,13 +169,13 @@ func (c GitConfig) GitGetStatus() (bool, error) {
 }
 func (c GitConfig) setterRepositoryWorktreeReference() error {
 	RepoPath := GetClonePath(c)
-	if r, err = git.PlainOpen(RepoPath); err != nil {
+	if repository, err = git.PlainOpen(RepoPath); err != nil {
 		return fmt.Errorf("error in executing PlainOpen: %s", err)
 	}
-	if w, err = r.Worktree(); err != nil {
+	if workTree, err = repository.Worktree(); err != nil {
 		return fmt.Errorf("error in executing Worktree: %s", err)
 	}
-	t, err = r.Head()
+	plumbingRef, err = repository.Head()
 	if err != nil {
 		return fmt.Errorf("error in executing Head: %s", err)
 	}
@@ -198,7 +198,7 @@ func (c GitConfig) HandlerForDirtyStatus() error {
 	return nil
 }
 func getListofFilesChanged() (int, error) {
-	status, err := w.Status()
+	status, err := workTree.Status()
 	if err != nil {
 		return 0, fmt.Errorf("error in executing Status: %s", err)
 	}
@@ -256,9 +256,9 @@ func (c GitConfig) GitPull() error {
 		referenceName = plumbing.NewTagReferenceName(c.Branch)
 	}
 	log.Info("git pull origin")
-	err = w.Pull(&git.PullOptions{RemoteName: c.RemoteName, ReferenceName: referenceName})
+	err = workTree.Pull(&git.PullOptions{RemoteName: c.RemoteName, ReferenceName: referenceName})
 	log.Infof("Executed git pull origin, Status: %s", err)
-	c.LocalCommit = strings.Split(t.String(), " ")[0]
+	c.LocalCommit = strings.Split(plumbingRef.String(), " ")[0]
 	return nil
 }
 

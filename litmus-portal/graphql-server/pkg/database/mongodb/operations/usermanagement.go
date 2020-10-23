@@ -94,7 +94,7 @@ func UpdateUser(ctx context.Context, user *dbSchema.User) error {
 func AddNewMyHub(ctx context.Context, username string, myHub *dbSchema.MyHub) error {
 	query := bson.M{"username": username}
 	change := bson.M{"$push": bson.M{"myhub": myHub}}
-	
+
 	_, err := userCollection.UpdateOne(ctx, query, change)
 	if err != nil {
 		log.Print("Error adding hub")
