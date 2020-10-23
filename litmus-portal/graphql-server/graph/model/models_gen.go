@@ -59,9 +59,9 @@ type Charts struct {
 type ChartsInput struct {
 	HubName    string `json:"HubName"`
 	UserName   string `json:"UserName"`
-	RepoOwner  string `json:"RepoOwner"`
 	RepoBranch string `json:"RepoBranch"`
 	RepoName   string `json:"RepoName"`
+	RepoURL    string `json:"RepoURL"`
 }
 
 type Cluster struct {

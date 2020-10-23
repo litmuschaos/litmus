@@ -13,9 +13,9 @@ type Charts {
 input ChartsInput {
 	HubName: String!
 	UserName: String!
-	RepoOwner: String!
 	RepoBranch: String!
 	RepoName: String!
+	RepoURL: String!
 }
 
 type Chart {

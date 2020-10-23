@@ -51,7 +51,7 @@ func GitConfigConstruct(repoData model.ChartsInput) GitConfig {
 		UserName:       repoData.UserName,
 		RepositoryName: repoData.RepoName,
 		HubName:        repoData.HubName,
-		RepositoryURL:  "https://github.com/" + repoData.RepoOwner + "/" + repoData.RepoName,
+		RepositoryURL:  repoData.RepoURL,
 		RemoteName:     "origin",
 		Branch:         repoData.RepoBranch,
 	}

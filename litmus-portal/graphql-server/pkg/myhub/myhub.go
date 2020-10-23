@@ -19,11 +19,10 @@ import (
 func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*model.User, error) {
 
 	gitLink := strings.Split(myhub.GitURL, "/")
-	owner := gitLink[3]
 	repo := gitLink[4]
 
 	//Checking if the link and branch are existing or not.
-	response, err := http.Get("https://api.github.com/repos/" + owner + "/" + repo + "/branches/" + myhub.GitBranch)
+	response, err := http.Get(myhub.GitURL + "/tree/" + myhub.GitBranch)
 	if err != nil {
 		log.Print(err)
 		return nil, err
@@ -61,7 +60,7 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*m
 			UserName:   username,
 			RepoName:   repo,
 			RepoBranch: myhub.GitBranch,
-			RepoOwner:  owner,
+			RepoURL:    myhub.GitURL,
 			HubName:    myhub.HubName,
 		}
 		//Cloning the repository at a path from myhub link structure.
@@ -104,18 +103,10 @@ func GetCharts(ctx context.Context, chartsInput model.ChartsInput) ([]*model.Cha
 	//Syncing the local clone with origin before fetching charts.
 	gitops.GitSyncHandlerForUser(chartsInput)
 
-	cloneHub := model.ChartsInput{
-		UserName:   chartsInput.UserName,
-		RepoName:   chartsInput.RepoName,
-		RepoBranch: chartsInput.RepoBranch,
-		RepoOwner:  chartsInput.RepoOwner,
-		HubName:    chartsInput.HubName,
-	}
-
 	ChartsPath := handler.GetChartsPath(ctx, chartsInput)
 	ChartsData, err := handler.GetChartsData(ChartsPath)
 	if err != nil {
-		err = gitops.GitClone(cloneHub)
+		err = gitops.GitClone(chartsInput)
 		if err != nil {
 			return nil, err
 		}
