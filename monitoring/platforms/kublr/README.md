@@ -2,17 +2,15 @@
 
 This directory contains chaos interleaved grafana dashboards along with the utilities needed to get started with monitoring chaos experiments and workflows on Kublr platform.
 
+The main difference from the standard getting started guide is that Kublr platform includes a centralized monitoring subsystem out of the box. As a result, there is no
+need to set up prometheus and grafana to enable monitoring, it is possible to just enable monitoring integration in the test application and in Litmus.
 
 # Components
 
 - [Grafana Dashboards](https://github.com/litmuschaos/litmus/blob/master/monitoring/platforms/kublr/grafana-dashboards)
 
-  > Contains chaos interleaved grafana dashboards for various native k8s and application metrics.
-
-- [Utilities](https://github.com/litmuschaos/litmus/blob/master/monitoring/platforms/kublr/utils)
-
-  > Contains utilities required to configure Kublr's monitoring infrastructure for chaos engineering.
-
+  > Contains chaos interleaved grafana dashboards for various native k8s and application metrics. These dashboards are modified slightly relative to the dashboards in the
+    generic getting started guide to accomodate for additional labels Kublr introduces in its centralized monitoring.
 
 # Demonstration
 
@@ -50,64 +48,36 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
   kubectl apply -f https://hub.litmuschaos.io/api/chaos/1.9.0?file=charts/generic/experiments.yaml -n litmus
   ```
 
-### Step-3: Configure the Kublr centralized monitoring Infrastructure
+### Step-3: Configure Sock-shop application and Litmus for the Kublr centralized monitoring Infrastructure
 
-- Create monitoring namespace on the cluster
-
-  ```
-  kubectl create ns monitoring
-  ```
-
-- Deploy monitoring components
+- Deploy Litmus monitoring components
 
   ```
-  kubectl -n monitoring apply -f ../../utils/metrics-exporters/node-exporter/
   kubectl -n litmus apply -f ../../utils/metrics-exporters/litmus-metrics/chaos-exporter/
   kubectl -n litmus apply -f ../../utils/metrics-exporters/litmus-metrics/litmus-event-router/
   ```
 
-- Add the jobs provided [here](https://raw.githubusercontent.com/litmuschaos/litmus/master/monitoring/platforms/kublr/utils/prometheus-config-template-jobs.yaml) to Kublr's prometheus configuration in the template section of `kublr-monitoring-prometheus` configMap in `kublr` namespace of deployed kublr platform using K8s dashboard UI or `kubectl`
+- Enable Litmus metrics collection on the Litmus monitoring components
 
-  ```yaml
-      - job_name: 'sock-shop'
-      metrics_path: /metrics
-      kubernetes_sd_configs:
-        - role: pod
-      relabel_configs:
-        - source_labels:
-            - __meta_kubernetes_namespace
-            - __meta_kubernetes_pod_label_app
-            - __meta_kubernetes_pod_label_name
-          action: keep
-          regex: ^sock-shop;sock-shop;(.+?)$
-        - source_labels:
-            - __meta_kubernetes_namespace
-            - __meta_kubernetes_pod_container_name
-            - __address__
-          action: replace
-          target_label: __address__
-          regex: 'sock-shop;^(.+);(.+?)(?::\d+)?$'
-          replacement: '$1:6782'
-        - source_labels:
-            - __meta_kubernetes_namespace
-            - __meta_kubernetes_pod_label_app
-            - __meta_kubernetes_pod_container_name
-          action: replace
-          regex: ^sock-shop;sock-shop;(.+?)$
-          target_label: job
-
-    - job_name: 'chaos-monitor'
-      static_configs:
-        - targets: ['chaos-monitor.litmus.svc.cluster.local:8080']
+  ```
+  kubectl annotate svc -n litmus \
+    chaos-monitor chaos-operator-metrics litmus-eventrouter \
+    'prometheus.io/scrape=true'
   ```
 
-  ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/platforms/kublr/screenshots/prometheus-config-update.png?raw=true)
+- Enable custom metrics collection on the Sock-shop application
+
+  ```
+  kubectl annotate svc -n sock-shop \
+    carts catalogue front-end orders payment shipping user \
+    'prometheus.io/scrape=true'
+  ```
 
 - Import the grafana dashboards choosing `prometheus` as data source.
 
   ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/import-dashboard.png?raw=true)
 
-- Import the grafana dashboard "Sock-Shop Performance" provided [here](https://raw.githubusercontent.com/litmuschaos/litmus/master/monitoring/grafana-dashboards/sock-shop/Sock-Shop-Performance-Under-Chaos.json)
+- Import the grafana dashboard "Sock-Shop Performance" provided [here](https://raw.githubusercontent.com/litmuschaos/litmus/master/monitoring/platforms/kublr/grafana-dashboards/sock-shop/Sock-Shop-Performance-Under-Chaos.json)
 
 - Import the grafana dashboard "Node and Pod Chaos Demo" provided [here](https://raw.githubusercontent.com/litmuschaos/litmus/master/monitoring/platforms/kublr/grafana-dashboards/kubernetes/Node-and-pod-metrics-dashboard-kublr.json)
 
@@ -220,6 +190,12 @@ kubectl apply -f ../../utils/sample-chaos-injectors/chaos-experiments/orders/ord
   ```
 
 - Visualize the Chaos cron workflow through argo UI by obtaining Node port or Load Balancer IP.
+
+  ```
+  kubectl port-forward svc/argo-server -n argo 2746
+  ```
+
+  OR
 
   ```
   kubectl patch svc argo-server -n argo -p '{"spec": {"type": "NodePort"}}'
