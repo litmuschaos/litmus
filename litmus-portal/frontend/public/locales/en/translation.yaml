@@ -162,31 +162,120 @@ chaosWorkflows:
       resilienceScoreComparison: Resilience score comparison
       comparativeResults: Comparative results of selected workflows which ran successfully
       once: Once
-      seeAnalytics: See analytics
-
-createWorkflow:
-  workflowCluster:
-    activeCluster: Choose an active cluster
-    none: None
+      seeAnalytics: See analytics  
 
 settings:
+  accountsTab:
+    personalDetails:
+      modal:
+        header: Your personal information
+        headerStrong: has been changed!
+        headerErr: while updating details.
+        headerErrStrong: Error
+        info: Changes took effect
+      button:
+        saveChanges: Save Changes
+        done: Done
+    accountsSettings:
+      header: Password
+      modal:
+        header: Your password
+        headerStrong: has been changed!
+        headerErr: while changing the password.
+        info: You can now use your new password to login to your account
+        headerErrStrong: Error
+      label:
+        currPassword: Current Password
+        newPassword: New Password
+        confNewPassword: Confirm Password
+      button: 
+        changePass: Change Password
+        done: Done
+
   teamingTab:
+    header: Members
+    description: Manage your team - invite a member to your project or change the role of exisiting members in the team
+    noUsers: No users available
+    label:
+      search: Search...
+      role: Role
+      options:
+        all: All
+        owner: Owner
+        editor: Editor
+        viewer: Viewer
+    tableCell:
+      name: Name
+      role: Role
+      email: Email
+      joined: Joined to team
     deleteModal:
       header: Are you sure
       text: to remove the current user?
       body: The user will lose access to the team’s work and all
       yesButton: Yes
       noButton: No
-    sentInvitation:
-      menuItem:
-        editorRole:
-          label: Editor
-          body: Can make changes in the project
-        viewerRole:
-          label: Viewer
-          body: Can view the project
+    inviteNew:
+      header: Invite new member
+      invite:
+        header: Invite
+        headerStrong: new member
+        successHeader: Invitation
+        successHeaderStrong: sent successfully
+        info: You have successfully sent the invitation. After confirmation user will be added to the existing list of member.
+        noUsers: No users available.
+        label:
+          someone: Invite someone
+        button:
+          done: Done
+          send: Send Invite
+    invitation:
+      button:
+        invitation: Invitation
+      modal:
+        header: Manage
+        headerStrong: invitations
+      receivedInvitation:
+        noInvites: No invitations received.
+        button:
+          accept: accept
+          ignore: ignore
+      sentInvitation:  
+        noInvites: There is no one waiting for your invitation.
+        menuItem:
+          editorRole:
+            label: Editor
+            body: Can make changes in the project
+          viewerRole:
+            label: Viewer
+            body: Can view the project
+      
   userManagementTab:
+    header: Members
+    info: Create users, manage them and reset their password and username when required
+    editProfile: Edit Profile
+    noUsers: No users available.
+    button:
+      create: Create new user
+    label:
+      search: Search...
+      userStatus: User Status
+      options:
+        all: All
+        signedIn: Signed in
+        notSignedIn: Not Signed in
+    tableCell:
+      status: Status
+      username: Username
+      email: Email
+      userCreated: User Created
     createUser:
+      header: Create a new user
+      info: Enter the user's personal and login details
+      login: Login Details
+      label:
+        username: Username
+        newPassword: New Password
       userDetails:
         header: Personal Details
         button: Edit Photo
@@ -198,9 +287,157 @@ settings:
         title: Change your Avatar
         info: You can now use your new password to login to your account
         button: Choose an avatar
-    deleteUser:
-      deleteModal:
-        body: The user will lose access to the portal
+      newUserModal:
+        header: A new user
+        headerInfo: was successfully created
+        headerErr: while creating a new user.
+        error: Error
+        info: Now information about it will be displayed on the user management screen of the application.
+        button:
+          done: Done
+          create: Create
+    editUser:
+      header: Edit user profile
+      info: Edit the user's personal and login details
+      login: Login Details
+      label:
+        newPassword: New Password
+      resetModal:
+        header: The user’s password was
+        headerStrong: successfully reset
+        headerErr: while resetting password.
+        info: The user needs to login with the new credentials.
+        error: Error
+        button:
+          save: Save
+          done: Done
+      deleteUser:
+        deleteModal:
+          body: The user will lose access to the portal
+
+workflowDetailsView:
+  argoWorkflow:
+    loading: Loading Graph...
+  nodeLogs:
+    fetching: Fetching Logs...
+  workflowInfo:
+    header: Workflow name
+    cluster: Cluster
+    param:
+      state: State
+      startTime: Start Time
+      endTime: End Time
+      duration: Duration
+      namespace: Namespace
+    nodeDetails:
+      curr: Currently Running Nodes
+      exec: Executed Nodes
+      noExec: No executed nodes
+  workflowNodeInfo:
+    name: Name
+    type: Type
+    phase: Phase
+    startTime: Start Time
+    endTime: End Time
+    duration: Duration
+    nodeName: Node Name
+    button:
+      logs: Logs
+
+homeView:
+  averageResilienceScore:
+    header: Average Resilience Score
+    desc: Based on results of completed tests
+  passedVsFailed:
+    header: Passed Vs Failed
+    desc: Statistics taken from completed tests
+  totalWorkflows:
+    header: Number of total Workflows
+    subtitle: AVG amount of workflows
+    perWeek: per week
+    desc: AVG is calculated from the max of workflows
+
+createWorkflow:
+  chooseWorkflow:
+    header: Select or design workflow
+    info: Select one of the pre-defined chaos workflows or design your own workflow.
+    preDefined: pre-defined workflows
+    saved: Name saved as
+    modalHeading: Create your
+    modalHeadingStrong: workflow name
+    label:
+      workflowName: Workflow name
+      desc: Description
+    button:
+      edit: Edit workflow name
+      cancel: Cancel
+      save: Save
+  reliabilityScore:
+    header: Adjust the weights of the experiments in the workflow
+    info: You have selected
+    infoNext: tests in the “Kubernetes conformance test” workflow. Successful outcome of each test carries a certain weight. We have pre-selected weights for each test for you. However, you may review and modify the weigtage against.
+    infoNextStrong: The weights are relative to each other.
+    testHeading: Kubernetes conformance test
+    testInfo: Compare the importance of the items above and launch a demo version of Kubernetes conformance test to see how it works.
+    button:
+      demo: Demo Launch
+      gotIt: Got it
+    resultTable:
+      header: Simulate the workflow run and see the suggested reliability score
+      headerDesc: workflow1 K8S conformance test on Ignite cluster
+      info: Tips from Litmus Portal
+      tips: When you set the test result, then pay attention to the total values of the total score. This will help you in setting up your tests, getting the maximum result and the correct operation of the test in the future.
+      points: points
+      totalScore: Total Score
+      reliabilityScore: Reliability score
+      tableCell:
+        testName: Test Name
+        testResult: Test Result
+        testWeight: Weight of test
+        testPoints: Test Points
+  scheduleWorkflow:
+    header: Choose a chaos schedule
+    info: Choose the right time to start your first workflow. Below your first workflow. Below you can find any option convenient for you.
+    min: min
+    mins: mins
+    at: at
+    on: On
+    every:
+      hr: Every Hour
+      day: Every Day
+      week: Every Week
+      month: Every Month
+    radio:
+      now: Schedule now
+      specific: Schedule at a specific time
+      future: Select date and time to start workflow in future
+      recurr: Recurring Schedule
+      rightRecurr: Choose the right recurring time to start your workflow
+  toggleComponent:
+    pass: Pass
+    fail: Fail
+  tuneWorkflow:
+    header: Tune the selected workflow
+    info: The following tests are run in sequence. The sequence of tests cannot be changed.
+    infoExtended: Select the tests you want to keep in the workflow and adjust the variables in the selected test.
+  verifyCommit:
+    header: Confirmation of Results
+    info: Before committing the workflow changes to your, verify and if needed go back to a corresponding section of the wizard to modify.
+    error: Invalid Workflow CRD found ! Please correct the errors.
+    errYaml: Error in CRD Yaml.
+    button:
+      edit: Edit
+      viewYaml: View YAML
+    summary:
+      header: Summary
+      workflowName: Workflow name
+      desc: Description
+      schedule: Schedule
+      schedulingNow: Scheduling now
+      adjustedWeights: Adjusted Weights
+  workflowCluster:
+    activeCluster: Choose an active cluster
+    none: None
 
 ######################################
 ############    Targets    ###########
