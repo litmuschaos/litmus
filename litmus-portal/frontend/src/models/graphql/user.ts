@@ -27,6 +27,14 @@ export interface UserDetails {
   is_email_verified: string;
   state: string;
   role: string;
+  my_hub: MyHubDetail[];
+}
+
+export interface MyHubDetail {
+  id: string;
+  HubName: string;
+  GitBranch: string;
+  GitURL: string;
 }
 
 export interface CurrentUserDetails {
