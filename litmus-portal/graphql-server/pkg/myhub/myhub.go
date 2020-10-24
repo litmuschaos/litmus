@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"log"
-	"net/http"
 	"strings"
 
 	"github.com/google/uuid"
@@ -21,64 +20,51 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*m
 	gitLink := strings.Split(myhub.GitURL, "/")
 	repo := gitLink[4]
 
-	//Checking if the link and branch are existing or not.
-	response, err := http.Get(myhub.GitURL + "/tree/" + myhub.GitBranch)
+	IsExist, err := IsMyHubAvailable(ctx, myhub, username)
 	if err != nil {
-		log.Print(err)
 		return nil, err
 	}
-	data := response.StatusCode
-	if data >= 400 && data <= 499 {
-		return nil, errors.New("Repository does not exist, Enter a valid GitHub URL")
-	}
-	//If link and branch are good, then check if they are already present or not.
-	if data >= 200 && data <= 299 {
-		IsExist, err := IsMyHubAvailable(ctx, myhub, username)
-		if err != nil {
-			return nil, err
-		}
-		if IsExist == true {
-			return nil, errors.New("Repository already present in MyHub")
-		}
-		//Initialize a UID for new Hub.
-		uuid := uuid.New()
-		newHub := &dbSchema.MyHub{
-			ID:        uuid.String(),
-			GitURL:    myhub.GitURL,
-			GitBranch: myhub.GitBranch,
-			HubName:   myhub.HubName,
-		}
-
-		//Adding the new hub into database with the given username.
-		err = database.AddNewMyHub(ctx, username, newHub)
-		if err != nil {
-			log.Print("ERROR", err)
-			return nil, err
-		}
-
-		cloneHub := model.ChartsInput{
-			UserName:   username,
-			RepoName:   repo,
-			RepoBranch: myhub.GitBranch,
-			RepoURL:    myhub.GitURL,
-			HubName:    myhub.HubName,
-		}
-		//Cloning the repository at a path from myhub link structure.
-		err = gitops.GitClone(cloneHub)
-		if err != nil {
-			return nil, err
-		}
-
-		//Getting the updated user details from database for sending response back.
-		user, err := database.GetUserByUserName(ctx, username)
-		if err != nil {
-			return nil, err
-		}
-		outputUser := user.GetOutputUser()
-		return outputUser, nil
+	if IsExist == true {
+		return nil, errors.New("Repository already present in MyHub")
 	}
 
-	return nil, err
+	cloneHub := model.ChartsInput{
+		UserName:   username,
+		RepoName:   repo,
+		RepoBranch: myhub.GitBranch,
+		RepoURL:    myhub.GitURL,
+		HubName:    myhub.HubName,
+	}
+	//Cloning the repository at a path from myhub link structure.
+	err = gitops.GitClone(cloneHub)
+	if err != nil {
+		return nil, err
+	}
+
+	//Initialize a UID for new Hub.
+	uuid := uuid.New()
+	newHub := &dbSchema.MyHub{
+		ID:        uuid.String(),
+		GitURL:    myhub.GitURL,
+		GitBranch: myhub.GitBranch,
+		HubName:   myhub.HubName,
+	}
+
+	//Adding the new hub into database with the given username.
+	err = database.AddNewMyHub(ctx, username, newHub)
+	if err != nil {
+		log.Print("ERROR", err)
+		return nil, err
+	}
+
+	//Getting the updated user details from database for sending response back.
+	user, err := database.GetUserByUserName(ctx, username)
+	if err != nil {
+		return nil, err
+	}
+	outputUser := user.GetOutputUser()
+	return outputUser, nil
+
 }
 
 //IsMyHubAvailable is used for checking if hub already exist or not
