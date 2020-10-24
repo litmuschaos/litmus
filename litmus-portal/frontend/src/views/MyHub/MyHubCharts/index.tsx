@@ -30,9 +30,9 @@ const MyHub = () => {
 
   const { HubName, RepoName, RepoURL, RepoBranch, UserName } = hubData;
 
-  const experimentDefaultImagePath = `https://raw.githubusercontent.com/${
-    RepoURL.split('/')[3]
-  }/${RepoName}/${RepoBranch}/charts/`;
+  const experimentDefaultImagePath = `${RepoURL.split('/')[0]}//${
+    RepoURL.split('/')[2]
+  }/${RepoURL.split('/')[3]}/${RepoName}/raw/${RepoBranch}/charts/`;
 
   const { t } = useTranslation();
 
@@ -63,7 +63,7 @@ const MyHub = () => {
 
   useEffect(() => {
     if (data !== undefined) {
-      const chartList = data?.getCharts;
+      const chartList = data.getCharts;
       chartList.forEach((expData: Chart) => {
         expData.Spec.Experiments.forEach((expName) => {
           exp.push({
