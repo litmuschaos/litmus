@@ -68,7 +68,6 @@ func GitClone(repoData model.ChartsInput) error {
 		return err
 	}
 	log.Infof("********* Successfully Cloned '%s' Branch of '%s' Repo in '%s' Hub *********", gitConfig.Branch, gitConfig.RepositoryName, gitConfig.HubName)
-
 	return nil
 }
 
@@ -212,15 +211,15 @@ func getListofFilesChanged() (int, error) {
 // GitHardReset executes "git reset --hard HEAD" in provided Repository Path
 func (c GitConfig) GitHardReset() error {
 	RepoPath := GetClonePath(c)
-	r, err := git.PlainOpen(RepoPath)
+	repository, err := git.PlainOpen(RepoPath)
 	if err != nil {
 		return fmt.Errorf("error in executing PlainOpen: %s", err)
 	}
-	w, err := r.Worktree()
+	workTree, err := repository.Worktree()
 	if err != nil {
 		return fmt.Errorf("error in executing Worktree: %s", err)
 	}
-	if w.Reset(&git.ResetOptions{Mode: git.HardReset}) != nil {
+	if workTree.Reset(&git.ResetOptions{Mode: git.HardReset}) != nil {
 		return fmt.Errorf("error in executing Reset: %s", err)
 	}
 	return nil
@@ -229,15 +228,15 @@ func (c GitConfig) GitHardReset() error {
 // CompareLocalandRemoteCommit compares local and remote latest commit
 func (c GitConfig) CompareLocalandRemoteCommit() (bool, error) {
 	RepoPath := GetClonePath(c)
-	r, err := git.PlainOpen(RepoPath)
+	repository, err := git.PlainOpen(RepoPath)
 	if err != nil {
 		return false, fmt.Errorf("error in executing PlainOpen: %s", err)
 	}
-	h, err := r.ResolveRevision(plumbing.Revision(c.Branch))
+	hash, err := repository.ResolveRevision(plumbing.Revision(c.Branch))
 	if err != nil {
 		return false, fmt.Errorf("error in executing ResolveRevision: %s", err)
 	}
-	c.RemoteCommit = h.String()
+	c.RemoteCommit = hash.String()
 	log.Infof("LocalCommit: '%s',RemoteCommit: '%s'", c.LocalCommit, c.RemoteCommit)
 	return c.RemoteCommit == c.LocalCommit, nil
 }

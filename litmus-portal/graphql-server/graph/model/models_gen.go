@@ -273,12 +273,6 @@ type Spec struct {
 	ChaosType           *string       `json:"ChaosType"`
 }
 
-type UpdateMyHub struct {
-	ID        string `json:"id"`
-	GitURL    string `json:"GitURL"`
-	GitBranch string `json:"GitBranch"`
-}
-
 type UpdateUserInput struct {
 	ID          string  `json:"id"`
 	Name        *string `json:"name"`

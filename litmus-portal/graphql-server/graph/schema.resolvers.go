@@ -6,7 +6,6 @@ package graph
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log"
 	"strconv"
 	"time"
@@ -80,10 +79,6 @@ func (r *mutationResolver) PodLog(ctx context.Context, log model.PodLog) (string
 
 func (r *mutationResolver) AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, username string) (*model.User, error) {
 	return myhub.AddMyHub(ctx, myhubInput, username)
-}
-
-func (r *mutationResolver) UpdateMyHub(ctx context.Context, username string, updateMyHub model.UpdateMyHub) (*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {

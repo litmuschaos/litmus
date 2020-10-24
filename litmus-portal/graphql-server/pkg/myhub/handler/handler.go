@@ -51,18 +51,16 @@ type Annotation struct {
 
 //Spec ...
 type Spec struct {
-	DisplayName         string   `yaml:"displayName"`
-	CategoryDescription string   `yaml:"categoryDescription"`
-	Keywords            []string `yaml:"keywords"`
-
-	Maturity       string       `yaml:"maturity"`
-	Maintainers    []Maintainer `yaml:"maintainers"`
-	MinKubeVersion string       `yaml:"minKubeVersion"`
-	Provider       struct {
+	DisplayName         string       `yaml:"displayName"`
+	CategoryDescription string       `yaml:"categoryDescription"`
+	Keywords            []string     `yaml:"keywords"`
+	Maturity            string       `yaml:"maturity"`
+	Maintainers         []Maintainer `yaml:"maintainers"`
+	MinKubeVersion      string       `yaml:"minKubeVersion"`
+	Provider            struct {
 		Name string `yaml:"name"`
 	} `yaml:"provider"`
-	Links []Link `yaml:"links"`
-
+	Links           []Link   `yaml:"links"`
 	Experiments     []string `yaml:"experiments"`
 	ChaosExpCRDLink string   `yaml:"chaosexpcrdlink"`
 	Platforms       []string `yaml:"platforms"`
