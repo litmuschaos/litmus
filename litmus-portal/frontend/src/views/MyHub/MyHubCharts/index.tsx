@@ -110,7 +110,11 @@ const MyHub = () => {
               )
               .map((expName: ChartName) => {
                 return (
-                  <Card elevation={3} className={classes.cardDiv}>
+                  <Card
+                    key={expName.ExperimentName}
+                    elevation={3}
+                    className={classes.cardDiv}
+                  >
                     <CardContent className={classes.cardContent}>
                       <img
                         src={`${experimentDefaultImagePath}${expName.ChaosName}/icons/${expName.ExperimentName}.png`}

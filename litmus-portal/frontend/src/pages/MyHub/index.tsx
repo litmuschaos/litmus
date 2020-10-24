@@ -79,6 +79,7 @@ const MyHub = () => {
                       {data?.getUser.my_hub.map((hub: MyHubDetail) => {
                         return (
                           <Card
+                            key={hub.id}
                             elevation={3}
                             className={classes.cardDivChart}
                             onClick={() => {
