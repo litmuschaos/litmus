@@ -5,6 +5,7 @@ import InputFieldOutline from '../../../../../components/InputFieldOutline';
 import Unimodal from '../../../../../containers/layouts/Unimodal';
 import {
   validateEmail,
+  validateUsername,
   validateStartEmptySpacing,
 } from '../../../../../utils/validate';
 import ChooseAvatarModal from '../ChooseAvatarModal';
@@ -117,7 +118,12 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
                 value={userValue}
                 handleChange={handleUserChange}
                 disabled={usernameIsDisabled}
-                validationError={false}
+                validationError={validateUsername(userValue)}
+                helperText={
+                  validateUsername(userValue)
+                    ? 'Should contain alphanumeric characters or period(.)'
+                    : ''
+                }
                 label={t(
                   'settings.userManagementTab.createUser.userDetails.label.username'
                 )}
