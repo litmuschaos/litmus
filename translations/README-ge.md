@@ -50,7 +50,7 @@ Die Chaos-Experimente werden auf <a href="https://hub.litmuschaos.io" target="_b
 - **Für Entwickler**: Mit Litmus können Chaos-Experimente in der
   Entwicklungsphase einer Anwendung als Erweiterung zu Modultests
   oder auch Integrationstests durchgeführt werden.
-- **Für CI-pipelines**: In der kontinuierlichen Integration können
+- **Für CI-Pipelines**: In der Continuous Integration können
   Chaos-Experimente als Schritt in der Pipeline genutzt werden, um Bugs zu
   finden.
 - **Für SREs**: Mit Litmus können Chaos-Experimente geplant durchgeführt
@@ -65,45 +65,45 @@ Erste Informationen findet man in der <a href="https://docs.litmuschaos.io/docs/
 
 ## Am Chaos Hub mitarbeiten
 
-Erste Informationen findet man in den <a href="https://github.com/litmuschaos/community-charts/blob/master/CONTRIBUTING.md" target="_blank">Guildelines für Mitwirkende des Chaos Hub (Seite aktuell noch auf Englisch)</a>
+Erste Informationen findet man in den <a href="https://github.com/litmuschaos/community-charts/blob/master/CONTRIBUTING.md" target="_blank">Guidelines für Mitwirkende des Chaos Hub (Seite aktuell noch auf Englisch)</a>
 
 ## Anwender
 
 Informationen befinden sich hier: <a href="https://github.com/litmuschaos/litmus/blob/master/ADOPTERS.md" target="_blank">Anwender von LitmusChaos</a>
 
-(_Senden Sie bitte eine PR an die Seite, wenn Sie mit Ihren Anwendungen oder
-Entwicklungen Litmus zum Chaos
+(_Senden Sie bitte eine PR an die Seite, wenn Sie in Ihren Anwendungen oder
+während der Entwicklung Litmus zum Chaos
 Engineering nutzen_)
 
 ## Anmerkungen
 
-Ein paar relevante Dinge, die bei der Arbeit mit Litmus zu beachten sind, sind hier
-gelistet. Die meisten offenen Punkte sind bereits Teil der [ROADMAP](./ROADMAP.nd). Für Details zu den
+Ein paar relevante Dinge, die bei der Arbeit mit Litmus zu beachten sind, sind im Folgenden
+aufgelistet. Die meisten offenen Punkte sind bereits Teil der [Roadmap](./ROADMAP.nd). Für Details zu den
 Einschränkungen bestimmter Experimente empfiehlt sich ein Blick in die
-jeweilige Dokumentation unter [Dokumentation der Experimente](https://docs.litmuschaos.io/docs/pod-delete/).
+jeweilige [Dokumentation](https://docs.litmuschaos.io/docs/pod-delete/).
 
 - Der Chaos-Operator sowie die Chaos-Experimente laufen als
-  Kubernetes-Resources auf einem Cluster. Im Falle von air-gapped Umgebungen
+  Kubernetes-Resourcen auf einem Cluster. Im Falle von air-gapped Umgebungen
   oder Netzwerken müssen die Chaos-Ressourcen unter dieser Prämisse gehostet
   werden.
-- Wenn plattform-spezifische Chaos-Experimente (vgl. die der AWS, GCP cloud) durchgeführt
-  werden sollen, werden die nötigen Informationen über Kubernetes Secret
-  bereitgestellt. Andere Optionen Informationen und Daten sicher weiterzugeben
+- Wenn plattform-spezifische Chaos-Experimente (vgl. die der AWS, GCP Cloud) durchgeführt
+  werden sollen, werden die nötigen Informationen über Kubernetes Secrets
+  bereitgestellt. Andere Optionen, Informationen und Daten sicher
+  weiterzugeben,
   sind aktuell noch nicht getestet oder implementiert.
 - Wenn Chaos-Experimente die Docker-API von innerhalb aufrufen, dann muss das
-    Docker-Socket installiert werden. Sinnvolles Management und ein geeigneter
-    Ermessensfreiraum sind empfohlen wenn Entwickler und Administratoren Zugang zu den
+    Docker-Socket installiert werden. Sinnvolles Management ist empfohlen, wenn Entwickler und Administratoren Zugang zu den
     Experimenten haben.
 - In (seltenen) Fällen, bei denen die Chaos-Experimente Privileged-Container
   benutzen, werden die empfohlenen Sicherheitsrichtlinien dokumentiert.
 
 ## Lizenz
 
-Litmus ist unter Apache License, Version 2.0 zugelassen. Die komplette Lizenz
-ist auf folgender Seite zu finden: [LIZENZ](./LICENSE). Einige Projekte, die
-von Litmus genutzt werden laufen eventuell unter anderen Lizenzen, bitte
+Litmus ist unter der Apache License, Version 2.0 zugelassen. Die komplette Lizenz
+ist auf folgender Seite zu finden: [Lizenz](./LICENSE). Einige Projekte, die
+von Litmus genutzt werden, laufen eventuell unter anderen Lizenzen, bitte
 schauen Sie
-bei der jeweiligen Anwendung nach.
+bei dem jeweiligen Projekt nach.
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_large)
 
@@ -114,10 +114,10 @@ Litmus Chaos ist Teil der CNCF Projekte.
 
 ## Gemeinschaft
 
-Die Litmus Gemeinschaft trifft sich immer am dritten Mittwoch jeden Monats um
+Die Litmus Community trifft sich immer am dritten Mittwoch jeden Monats um
 10:00PM IST oder 9:30 AM PST.
 
-Kommunikationsmedien und Anwendungen, die zum Austausch genutzt werden:
+Kommunikationsmedien zum Austausch und weitere Informationen:
 
 - [Community Slack](https://slack.litmuschaos.io)
 - [Sync Up Meeting Link](https://zoom.us/j/91358162694)
