@@ -87,6 +87,10 @@ const useStyles = makeStyles((theme) => ({
   quickActionDiv: {
     marginLeft: theme.spacing(5.625),
   },
+  root: {
+    minWidth: '28.125rem',
+    marginLeft: 'auto',
+  },
 }));
 
 export default useStyles;

@@ -7,6 +7,7 @@ import {
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useQuery } from '@apollo/client';
+import { useTranslation } from 'react-i18next';
 import Scaffold from '../../containers/layouts/Scaffold';
 import useStyles from './styles';
 import QuickActionCard from '../../components/QuickActionCard';
@@ -23,13 +24,18 @@ import { CurrentUserDetails, MyHubDetail } from '../../models/graphql/user';
 
 const MyHub = () => {
   const userData = useSelector((state: RootState) => state.userData);
+
   const myHub = useActions(MyHubActions);
+
   const { data, loading } = useQuery<CurrentUserDetails>(GET_USER, {
     variables: { username: userData.username },
     fetchPolicy: 'cache-and-network',
   });
 
   const classes = useStyles();
+
+  const { t } = useTranslation();
+
   const [github, setGithub] = useState(true);
 
   return (
@@ -41,10 +47,10 @@ const MyHub = () => {
           {/* Header Div */}
           <div className={classes.header}>
             <Typography variant="h3" gutterBottom>
-              My Hub
+              {t('myhub.mainPage.header')}
             </Typography>
             <Typography variant="h4">
-              <strong>github.com/</strong>
+              <strong>{t('myhub.mainPage.github')}</strong>
             </Typography>
           </div>
           {/* Charts Div */}
@@ -53,21 +59,22 @@ const MyHub = () => {
               {github ? (
                 <div className={classes.githubConfirmed}>
                   <Typography variant="h4" gutterBottom>
-                    <strong>Available chaos hubs</strong>
+                    <strong>{t('myhub.mainPage.availableHubs')}</strong>
                   </Typography>
                   <Typography className={classes.connectHub}>
-                    You can switch between connected hubs or connect a new one.
+                    {t('myhub.mainPage.switchHub')}
                   </Typography>
                   <div className={classes.noHub}>
                     {data?.getUser.my_hub.length === 0 ? (
                       <DeveloperGuide
-                        header="You have no hubs currently connect. Start connecting your first hub"
-                        description="You should have your litmus chaos hub forked and made ready before connecting to it."
+                        header={t('myhub.mainPage.devGuideHeader')}
+                        description={t('myhub.mainPage.devGuideDescription')}
                         expAvailable={false}
                       />
                     ) : (
                       <></>
                     )}
+
                     <div className={classes.chartsGroup}>
                       {data?.getUser.my_hub.map((hub: MyHubDetail) => {
                         return (
@@ -109,23 +116,23 @@ const MyHub = () => {
                           </Card>
                         );
                       })}
+                      <Card
+                        elevation={3}
+                        className={classes.cardDiv}
+                        onClick={() => {
+                          history.push({ pathname: '/myhub/connect' });
+                        }}
+                      >
+                        <CardActionArea>
+                          <CardContent className={classes.cardContent}>
+                            <img src="/icons/add-hub.svg" alt="add-hub" />
+                            <Typography variant="h6" align="center">
+                              {t('myhub.mainPage.connectNewHub')}
+                            </Typography>
+                          </CardContent>
+                        </CardActionArea>
+                      </Card>
                     </div>
-                    <Card
-                      elevation={3}
-                      className={classes.cardDiv}
-                      onClick={() => {
-                        history.push({ pathname: '/myhub/connect' });
-                      }}
-                    >
-                      <CardActionArea>
-                        <CardContent className={classes.cardContent}>
-                          <img src="/icons/add-hub.svg" alt="add-hub" />
-                          <Typography variant="h6" align="center">
-                            Connect a new chaos hub
-                          </Typography>
-                        </CardContent>
-                      </CardActionArea>
-                    </Card>
                   </div>
                 </div>
               ) : (
@@ -133,7 +140,7 @@ const MyHub = () => {
                 <div className={classes.noGithubAccount}>
                   <img src="/icons/myhub-crossed.svg" alt="myhub" />
                   <Typography variant="h4" className={classes.noGitHubText}>
-                    <strong>You have not given your Github credential</strong>
+                    <strong>{t('myhub.mainPage.noGithubCredentials')}</strong>
                   </Typography>
                   <ButtonFilled
                     isPrimary={false}
@@ -141,16 +148,16 @@ const MyHub = () => {
                       setGithub(true);
                     }}
                   >
-                    Submit Now
+                    {t('myhub.mainPage.submitBtn')}
                   </ButtonFilled>
                 </div>
               )}
             </div>
-            <div>
+            <div className={classes.root}>
               {/* Video Carousel Div */}
               <VideoCarousel />
               <Typography className={classes.videoDescription}>
-                Get resilient and compliance scores for your Kuberenetes product
+                {t('myhub.mainPage.videoDescription')}
               </Typography>
               <div className={classes.quickActionDiv}>
                 <QuickActionCard />

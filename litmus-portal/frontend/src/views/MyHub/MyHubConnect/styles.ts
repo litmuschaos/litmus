@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
   },
   root: {
-    width: '28.125rem',
+    minWidth: '28.125rem',
     marginLeft: 'auto',
   },
   header: {
@@ -65,8 +65,12 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(5),
     fontSize: '16px',
   },
-  btnDiv: {
-    marginRight: 'auto',
+  backBtnDiv: {
+    marginLeft: theme.spacing(-1),
+    marginBottom: theme.spacing(2.5),
+  },
+  submitBtnDiv: {
+    marginLeft: theme.spacing(2),
     marginBottom: theme.spacing(2.5),
   },
   enterInfoText: {

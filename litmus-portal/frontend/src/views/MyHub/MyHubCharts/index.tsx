@@ -8,6 +8,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import useStyles from './styles';
 import { GET_CHARTS_DATA } from '../../../graphql';
@@ -32,6 +33,8 @@ const MyHub = () => {
   const experimentDefaultImagePath = `https://raw.githubusercontent.com/${
     RepoURL.split('/')[3]
   }/${RepoName}/${RepoBranch}/charts/`;
+
+  const { t } = useTranslation();
 
   const { data, loading } = useQuery<Charts>(GET_CHARTS_DATA, {
     variables: {
@@ -72,26 +75,26 @@ const MyHub = () => {
       setTotalExperiment(exp);
     }
   }, [data]);
+
   return loading ? (
-    <>
-      <Backdrop open className={classes.backdrop}>
-        <Loader />
-        <Center>
-          <Typography variant="h4" align="center">
-            Please wait while we are syncing your repo!
-          </Typography>
-        </Center>
-      </Backdrop>
-    </>
+    <Backdrop open className={classes.backdrop}>
+      <Loader />
+      <Center>
+        <Typography variant="h4" align="center">
+          {t('myhub.myhubChart.syncingRepo')}
+        </Typography>
+      </Center>
+    </Backdrop>
   ) : (
     <Scaffold>
       <div className={classes.header}>
         <Typography variant="h3" gutterBottom>
-          My Hub
+          {t('myhub.myhubChart.header')}
         </Typography>
         <Typography variant="h4">
           <strong>
-            github.com/{HubName}/{RepoName}
+            {t('myhub.myhubChart.github')}
+            {HubName}/{RepoName}
           </strong>
         </Typography>
       </div>

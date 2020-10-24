@@ -2,6 +2,7 @@ import { Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import BackButton from '../../../components/Button/BackButton';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import InputField from '../../../components/InputField';
@@ -27,6 +28,7 @@ interface GitHub {
 
 const MyHub = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
   const userData = useSelector((state: RootState) => state.userData);
   const [gitHub, setGitHub] = useState<GitHub>({
     HubName: '',
@@ -67,22 +69,22 @@ const MyHub = () => {
   return (
     <Scaffold>
       <div className={classes.header}>
-        <div className={classes.btnDiv}>
+        <div className={classes.backBtnDiv}>
           <BackButton isDisabled={false} />
         </div>
         <Typography variant="h3" gutterBottom>
-          Connect a new chaos hub
+          {t('myhub.connectHubPage.connectHub')}
         </Typography>
       </div>
       <div className={classes.mainDiv}>
         <div className={classes.detailsDiv}>
           <Typography variant="h4" gutterBottom />
           <Typography className={classes.enterInfoText}>
-            <strong>Enter information in the required fields</strong>
+            <strong>{t('myhub.connectHubPage.enterInfo')}</strong>
           </Typography>
 
           <Typography className={classes.connectText}>
-            Then click on the connect button
+            {t('myhub.connectHubPage.connectBtn')}
           </Typography>
           <form id="login-form" autoComplete="on" onSubmit={handleSubmit}>
             <div className={classes.inputDiv}>
@@ -144,9 +146,9 @@ const MyHub = () => {
                   }
                 />
               </div>
-              <div className={classes.btnDiv}>
+              <div className={classes.submitBtnDiv}>
                 <ButtonFilled isPrimary={false} type="submit">
-                  Submit Now
+                  {t('myhub.connectHubPage.submitBtn')}
                 </ButtonFilled>
               </div>
               <Unimodal open={isOpen} handleClose={handleClose} hasCloseBtn>
@@ -155,7 +157,7 @@ const MyHub = () => {
                     <div>
                       <Loader />
                       <Typography className={classes.modalDesc}>
-                        Please wait while we are cloning your repo!
+                        {t('myhub.connectHubPage.cloningText')}
                       </Typography>
                     </div>
                   ) : (
@@ -166,7 +168,10 @@ const MyHub = () => {
                             gutterBottom
                             className={classes.modalHeading}
                           >
-                            <strong>Error</strong> while creating MyHub
+                            <strong>
+                              {t('myhub.connectHubPage.errorText')}
+                            </strong>{' '}
+                            {t('myhub.connectHubPage.cretingHub')}
                           </Typography>
                           <Typography className={classes.modalDesc}>
                             Error: {error}
@@ -183,17 +188,17 @@ const MyHub = () => {
                             gutterBottom
                             className={classes.modalHeading}
                           >
-                            A new chaos hub <br /> is successfully created
+                            {t('myhub.connectHubPage.newHub')} <br />{' '}
+                            {t('myhub.connectHubPage.success')}
                           </Typography>
                           <Typography className={classes.modalDesc}>
-                            A new chaos hub will be added to the main page of
-                            the My hubs section
+                            {t('myhub.connectHubPage.newHubCreated')}
                           </Typography>
                           <ButtonFilled
                             isPrimary={false}
                             handleClick={handleClose}
                           >
-                            Back to my hubs
+                            {t('myhub.connectHubPage.myHub')}
                           </ButtonFilled>
                         </>
                       )}
@@ -207,7 +212,7 @@ const MyHub = () => {
         <div className={classes.root}>
           <VideoCarousel />
           <Typography className={classes.videoDescription}>
-            Get resilient and compliance scores for your Kuberenetes product
+            {t('myhub.connectHubPage.videoDesc')}
           </Typography>
           <div style={{ marginLeft: 45 }}>
             <QuickActionCard />
