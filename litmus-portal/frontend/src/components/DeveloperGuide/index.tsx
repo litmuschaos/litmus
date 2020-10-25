@@ -26,7 +26,7 @@ const DeveloperGuide: React.FC<DeveloperGuideProps> = ({
     <>
       {display ? (
         <div className={classes.root}>
-          <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <div className={classes.rootContainer}>
             <div className={classes.mainDiv}>
               <Typography className={classes.mainText}>{header}</Typography>
               <Typography className={classes.textDesc}>
@@ -43,7 +43,7 @@ const DeveloperGuide: React.FC<DeveloperGuideProps> = ({
                 <></>
               )}
             </div>
-            <div style={{ marginLeft: 'auto' }}>
+            <div className={classes.iconDiv}>
               <IconButton
                 aria-label="upload picture"
                 component="span"
