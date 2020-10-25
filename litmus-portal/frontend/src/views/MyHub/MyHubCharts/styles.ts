@@ -59,8 +59,8 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     flexWrap: 'wrap',
     border: '0.0625rem solid',
-    marginTop: theme.spacing(5),
-    paddingTop: theme.spacing(3.75),
+    marginTop: theme.spacing(3),
+    paddingTop: theme.spacing(2),
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: theme.palette.customColors.black(0.07),
@@ -91,11 +91,11 @@ const useStyles = makeStyles((theme) => ({
   },
   categoryName: {
     marginTop: theme.spacing(2),
-    fontSize: '16px',
+    fontSize: '1rem',
     color: theme.palette.secondary.dark,
   },
   expName: {
-    fontSize: '14px',
+    fontSize: '0.875rem',
   },
 }));
 

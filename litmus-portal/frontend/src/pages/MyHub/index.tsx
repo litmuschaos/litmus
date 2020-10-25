@@ -74,7 +74,6 @@ const MyHub = () => {
                     ) : (
                       <></>
                     )}
-
                     <div className={classes.chartsGroup}>
                       {data?.getUser.my_hub.map((hub: MyHubDetail) => {
                         return (
@@ -102,14 +101,14 @@ const MyHub = () => {
                               <Typography
                                 variant="h6"
                                 align="center"
-                                style={{ marginTop: 10 }}
+                                className={classes.hubName}
                               >
                                 {hub.HubName}
                               </Typography>
                               <Typography
                                 variant="h6"
                                 align="center"
-                                style={{ fontSize: 14 }}
+                                className={classes.hubBranch}
                               >
                                 {hub.GitURL.split('/')[4]}/{hub.GitBranch}
                               </Typography>

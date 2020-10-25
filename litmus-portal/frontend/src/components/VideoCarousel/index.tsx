@@ -7,6 +7,7 @@ import {
 import React from 'react';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import { useTranslation } from 'react-i18next';
 import VideoFrame from '../VideoFrame';
 import useStyles from './styles';
 
@@ -50,13 +51,13 @@ const VideoCarousel = () => {
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
-
+  const { t } = useTranslation();
   const classes = useStyles();
   return (
     <div>
       {/* Header Text */}
       <Typography variant="subtitle1" className={classes.heading}>
-        Video Tips
+        {t('myhub.videoCarousel.video')}
       </Typography>
       {/* Video Frame */}
       <div className={classes.videoDiv}>

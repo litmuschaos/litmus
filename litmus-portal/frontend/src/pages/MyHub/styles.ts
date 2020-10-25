@@ -75,11 +75,11 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(5.625),
     width: '18.75rem',
     marginBottom: theme.spacing(5),
-    fontSize: '16px',
+    fontSize: '1rem',
   },
   connectHub: {
     fontWeight: 400,
-    fontSize: '14px',
+    fontSize: '0.875rem',
   },
   noHub: {
     marginTop: theme.spacing(2.5),
@@ -90,6 +90,12 @@ const useStyles = makeStyles((theme) => ({
   root: {
     minWidth: '28.125rem',
     marginLeft: 'auto',
+  },
+  hubName: {
+    marginTop: theme.spacing(1.25),
+  },
+  hubBranch: {
+    fontSize: '0.875rem',
   },
 }));
 

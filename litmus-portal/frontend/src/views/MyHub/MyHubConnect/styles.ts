@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   },
   connectText: {
     fontWeight: 400,
-    fontSize: '14px',
+    fontSize: '0.875rem',
     marginTop: theme.spacing(1.25),
   },
   inputDiv: {
@@ -50,11 +50,11 @@ const useStyles = makeStyles((theme) => ({
   },
   modalHeading: {
     fontWeight: 30,
-    fontSize: '36px',
+    fontSize: '2.25rem',
   },
   modalDesc: {
     fontWeight: 400,
-    fontSize: '16px',
+    fontSize: '1rem',
     width: '21.875',
     marginBottom: theme.spacing(2.5),
   },
@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(5.625),
     width: '18.75rem',
     marginBottom: theme.spacing(5),
-    fontSize: '16px',
+    fontSize: '1rem',
   },
   backBtnDiv: {
     marginLeft: theme.spacing(-1),
@@ -75,7 +75,13 @@ const useStyles = makeStyles((theme) => ({
   },
   enterInfoText: {
     fontWeight: 400,
-    fontSize: '24px',
+    fontSize: '1.5rem',
+  },
+  checkImg: {
+    marginBottom: theme.spacing(2.5),
+  },
+  quickActionDiv: {
+    marginLeft: theme.spacing(5.625),
   },
 }));
 

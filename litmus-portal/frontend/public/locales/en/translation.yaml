@@ -544,9 +544,11 @@ myhub:
     submitBtn: Submit Now
     cloningText: Please wait while we are cloning your repo!
     errorText: Error
-    cretingHub: while creating MyHub
+    creatingHub: while creating MyHub
     newHub: A new chaos hub
     success: is successfully created
     newHubCreated: A new chaos hub will be added to the main page of the My hubs section
     myHub: Back to my hubs
     videoDesc: Get resilient and compliance scores for your Kuberenetes product
+  videoCarousel:
+    video: Video Tips

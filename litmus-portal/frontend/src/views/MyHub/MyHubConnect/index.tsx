@@ -171,7 +171,7 @@ const MyHub = () => {
                             <strong>
                               {t('myhub.connectHubPage.errorText')}
                             </strong>{' '}
-                            {t('myhub.connectHubPage.cretingHub')}
+                            {t('myhub.connectHubPage.creatingHub')}
                           </Typography>
                           <Typography className={classes.modalDesc}>
                             Error: {error}
@@ -182,7 +182,7 @@ const MyHub = () => {
                           <img
                             src="/icons/checkmark.svg"
                             alt="checkmark"
-                            style={{ marginBottom: 20 }}
+                            className={classes.checkImg}
                           />
                           <Typography
                             gutterBottom
@@ -214,7 +214,7 @@ const MyHub = () => {
           <Typography className={classes.videoDescription}>
             {t('myhub.connectHubPage.videoDesc')}
           </Typography>
-          <div style={{ marginLeft: 45 }}>
+          <div className={classes.quickActionDiv}>
             <QuickActionCard />
           </div>
         </div>
