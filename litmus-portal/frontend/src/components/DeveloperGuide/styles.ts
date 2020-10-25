@@ -8,6 +8,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderLeft: `6px solid ${theme.palette.secondary.dark} `,
     marginBottom: theme.spacing(1.25),
   },
+  rootContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
   mainDiv: {
     padding: theme.spacing(2.5, 0, 2.5, 2.5),
   },
@@ -32,6 +36,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   imgDiv: {
     display: 'block',
     paddingTop: theme.spacing(3.125),
+  },
+  iconDiv: {
+    marginLeft: 'auto',
   },
 }));
 
