@@ -25,7 +25,7 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*m
 		return nil, err
 	}
 	if IsExist == true {
-		return nil, errors.New("Repository already present in MyHub")
+		return nil, errors.New("HubName Already exists")
 	}
 
 	cloneHub := model.ChartsInput{
@@ -76,7 +76,7 @@ func IsMyHubAvailable(ctx context.Context, myhub model.CreateMyHub, username str
 	outputUser := user.GetOutputUser()
 
 	for _, n := range outputUser.MyHub {
-		if myhub.GitURL == n.GitURL && myhub.GitBranch == n.GitBranch && myhub.HubName == n.HubName {
+		if myhub.HubName == n.HubName {
 			return true, nil
 		}
 	}

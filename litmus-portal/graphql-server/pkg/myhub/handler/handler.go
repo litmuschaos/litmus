@@ -88,22 +88,18 @@ const (
 //GetChartsPath is used to construct path for given chart.
 func GetChartsPath(ctx context.Context, chartsInput model.ChartsInput) string {
 	UserName := chartsInput.UserName
-	RepoName := chartsInput.RepoName
-	RepoBranch := chartsInput.RepoBranch
 	HubName := chartsInput.HubName
-	ChartsPath := defaultPath + UserName + "/" + HubName + "/" + RepoName + "/" + RepoBranch + "/charts/"
+	ChartsPath := defaultPath + UserName + "/" + HubName + "/charts/"
 	return ChartsPath
 }
 
 //GetExperimentPath is used to construct path for given experiment.
 func GetExperimentPath(ctx context.Context, experimentInput model.ExperimentInput) string {
 	UserName := experimentInput.UserName
-	RepoName := experimentInput.RepoName
-	RepoBranch := experimentInput.RepoBranch
 	HubName := experimentInput.HubName
 	experimentName := experimentInput.ExperimentName
 	chartName := experimentInput.ChartName
-	ExperimentPath := defaultPath + UserName + "/" + HubName + "/" + RepoName + "/" + RepoBranch + "/charts/" + chartName + "/" + experimentName + "/" + experimentName + ".chartserviceversion.yaml"
+	ExperimentPath := defaultPath + UserName + "/" + HubName + "/" + "/charts/" + chartName + "/" + experimentName + "/" + experimentName + ".chartserviceversion.yaml"
 	return ExperimentPath
 }
 

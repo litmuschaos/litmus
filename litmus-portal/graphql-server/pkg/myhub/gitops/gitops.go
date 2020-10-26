@@ -41,7 +41,7 @@ const (
 
 //GetClonePath is used to construct path for Repository.
 func GetClonePath(c GitConfig) string {
-	RepoPath := defaultPath + c.UserName + "/" + c.HubName + "/" + c.RepositoryName + "/" + c.Branch
+	RepoPath := defaultPath + c.UserName + "/" + c.HubName
 	return RepoPath
 }
 
