@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import EditIcon from '@material-ui/icons/Edit';
 import cronstrue from 'cronstrue';
 import YAML from 'yaml';
+import { useTranslation } from 'react-i18next';
 import AdjustedWeights from '../../../components/AdjustedWeights';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline/index';
@@ -26,6 +27,7 @@ interface VerifyCommitProps {
 
 const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   const workflow = useActions(WorkflowActions);
 
@@ -104,11 +106,10 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         <div className={classes.suHeader}>
           <div className={classes.suBody}>
             <Typography className={classes.headerText}>
-              <strong> Confirmation of Results</strong>
+              <strong> {t('createWorkflow.verifyCommit.header')}</strong>
             </Typography>
             <Typography className={classes.description}>
-              Before committing the workflow changes to your, verify and if
-              needed go back to a corresponding section of the wizard to modify.
+              {t('createWorkflow.verifyCommit.info')}
             </Typography>
           </div>
           <img
@@ -120,13 +121,15 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         <Divider />
 
         <Typography className={classes.sumText}>
-          <strong>Summary</strong>
+          <strong>{t('createWorkflow.verifyCommit.summary.header')}</strong>
         </Typography>
 
         <div className={classes.outerSum}>
           <div className={classes.summaryDiv}>
             <div className={classes.innerSumDiv}>
-              <Typography className={classes.col1}>Workflow name:</Typography>
+              <Typography className={classes.col1}>
+                {t('createWorkflow.verifyCommit.summary.workflowName')}:
+              </Typography>
             </div>
             <div className={classes.col2}>
               <CustomText
@@ -140,7 +143,9 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
           </div>
           <div className={classes.summaryDiv}>
             <div className={classes.innerSumDiv}>
-              <Typography className={classes.col1}>Description:</Typography>
+              <Typography className={classes.col1}>
+                {t('createWorkflow.verifyCommit.summary.desc')}:
+              </Typography>
             </div>
             <div
               className={classes.col2}
@@ -159,7 +164,9 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
           </div>
           <div className={classes.summaryDiv}>
             <div className={classes.innerSumDiv}>
-              <Typography className={classes.col1}>Schedule:</Typography>
+              <Typography className={classes.col1}>
+                {t('createWorkflow.verifyCommit.summary.schedule')}:
+              </Typography>
             </div>
             <div className={classes.schCol2}>
               {/* <CustomDate disabled={edit} />
@@ -171,7 +178,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               /> */}
               {cronSyntax === '' ? (
                 <Typography className={classes.schedule}>
-                  Scheduling now
+                  {t('createWorkflow.verifyCommit.summary.schedulingNow')}
                 </Typography>
               ) : (
                 <Typography className={classes.schedule}>
@@ -189,15 +196,13 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
           <div className={classes.summaryDiv}>
             <div className={classes.innerSumDiv}>
               <Typography className={classes.col1}>
-                Adjusted Weights:
+                {t('createWorkflow.verifyCommit.summary.adjustedWeights')}:
               </Typography>
             </div>
             {weights.length === 0 ? (
               <div>
                 <Typography className={classes.errorText}>
-                  <strong>
-                    Invalid Workflow CRD found ! Please correct the errors.
-                  </strong>
+                  <strong>{t('createWorkflow.verifyCommit.error')}</strong>
                 </Typography>
               </div>
             ) : (
@@ -220,7 +225,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                   data-cy="testRunButton"
                 >
                   <Typography className={classes.buttonOutlineText}>
-                    Edit
+                    {t('createWorkflow.verifyCommit.button.edit')}
                   </Typography>
                 </ButtonOutline>
                 {/* </div> */}
@@ -233,13 +238,16 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             </div>
             <div className={classes.yamlFlex}>
               {weights.length === 0 ? (
-                <Typography> Error in CRD Yaml. </Typography>
+                <Typography>
+                  {' '}
+                  {t('createWorkflow.verifyCommit.errYaml')}{' '}
+                </Typography>
               ) : (
                 <Typography>{yamlStatus}</Typography>
               )}
               <div className={classes.yamlButton}>
                 <ButtonFilled handleClick={handleOpen} isPrimary>
-                  <div>View YAML</div>
+                  <div>{t('createWorkflow.verifyCommit.button.viewYaml')}</div>
                 </ButtonFilled>
               </div>
             </div>
@@ -265,7 +273,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       </div>
 
       <Unimodal
-        isOpen={open}
+        open={open}
         handleClose={handleClose}
         hasCloseBtn
         isDark

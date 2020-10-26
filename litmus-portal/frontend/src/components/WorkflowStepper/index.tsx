@@ -393,7 +393,7 @@ const CustomStepper = () => {
         <div>
           <div>
             <Unimodal
-              isOpen={open}
+              open={open}
               handleClose={handleClose}
               aria-labelledby="simple-modal-title"
               aria-describedby="simple-modal-description"

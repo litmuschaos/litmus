@@ -92,6 +92,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   buttonDiv: {
     marginRight: theme.spacing(1),
     display: 'flex',
+    gap: '1.5rem',
   },
   optionBtn: {
     marginLeft: 'auto',

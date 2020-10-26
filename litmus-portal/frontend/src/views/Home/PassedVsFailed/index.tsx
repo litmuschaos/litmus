@@ -5,6 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import { Avatar } from '@material-ui/core';
 import CheckCircleSharpIcon from '@material-ui/icons/CheckCircleSharp';
 import CancelSharpIcon from '@material-ui/icons/CancelSharp';
+import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
 
 interface PassedVsFailedProps {
@@ -19,6 +20,8 @@ interface PassedVsFailedProps {
 
 const PassedVsFailed: React.FC<PassedVsFailedProps> = ({ passed, failed }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
+
   const [passedValue, setPassedValue] = useState<number>(0);
   const [failedValue, setFailedValue] = useState<number>(0);
 
@@ -38,7 +41,9 @@ const PassedVsFailed: React.FC<PassedVsFailedProps> = ({ passed, failed }) => {
   return (
     <Paper className={classes.root} variant="outlined">
       <Box width="100%" className={classes.boxMain}>
-        <Typography className={classes.headerMain}>Passed Vs Failed</Typography>
+        <Typography className={classes.headerMain}>
+          {t('homeView.passedVsFail.header')}
+        </Typography>
         <Box className={classes.boxDisplay}>
           <Box width={`${passedValue}%`} className={classes.passedBox}>
             {/* Render an empty div if props is not
@@ -72,7 +77,7 @@ const PassedVsFailed: React.FC<PassedVsFailedProps> = ({ passed, failed }) => {
           </Box>
         </Box>
         <Typography variant="body2" className={classes.statsDesc}>
-          Statistics taken from completed tests
+          {t('homeView.passedVsFail.desc')}
         </Typography>
       </Box>
     </Paper>

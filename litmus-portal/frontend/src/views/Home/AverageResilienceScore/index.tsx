@@ -3,6 +3,7 @@ import Paper from '@material-ui/core/Paper';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
+import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
 
 interface AverageResilienceScoreProps {
@@ -13,6 +14,8 @@ const AverageResilienceScore: React.FC<AverageResilienceScoreProps> = ({
   value,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
+
   const [progress, setProgress] = useState<number>(0);
 
   /*
@@ -28,7 +31,7 @@ const AverageResilienceScore: React.FC<AverageResilienceScoreProps> = ({
   return (
     <Paper className={classes.root} variant="outlined">
       <Typography className={classes.headerMain}>
-        Average Resilience Score
+        {t('homeView.averageResilienceScore.header')}
       </Typography>
       <Box className={classes.progressBox}>
         <div className={classes.progressIndicatorDiv}>
@@ -67,7 +70,7 @@ const AverageResilienceScore: React.FC<AverageResilienceScoreProps> = ({
         </Box>
       </Box>
       <Typography variant="body2" className={classes.testResultDesc}>
-        Based on results of completed tests
+        {t('homeView.averageResilienceScore.desc')}
       </Typography>
     </Paper>
   );

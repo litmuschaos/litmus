@@ -283,7 +283,7 @@ data:
   config: |
     containerRuntimeExecutor: k8sapi
     executor:
-      imagePullPolicy: IfNotPresent
+      imagePullPolicy: Always
       resources:
         limits:
           cpu: 0.15

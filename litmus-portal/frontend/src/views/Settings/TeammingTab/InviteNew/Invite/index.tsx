@@ -12,6 +12,7 @@ import {
 import { useTheme } from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import Loader from '../../../../../components/Loader';
 import { ALL_USERS, GET_USER, SEND_INVITE } from '../../../../../graphql';
@@ -50,6 +51,8 @@ interface Role {
 const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   const classes = useStyles();
   const theme = useTheme();
+  const { t } = useTranslation();
+
   // for response data
   const [rows, setRows] = useState<UserInvite[]>([]);
 
@@ -191,14 +194,17 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                   <img src="./icons/checkmark.svg" alt="checkmark" />
                   <div className={classes.text}>
                     <Typography className={classes.typo}>
-                      Invitation <strong>sent successfully</strong>
+                      {t('settings.teamingTab.inviteNew.invite.successHeader')}{' '}
+                      <strong>
+                        {t(
+                          'settings.teamingTab.inviteNew.invite.successHeaderStrong'
+                        )}
+                      </strong>
                     </Typography>
                   </div>
                   <div className={classes.textSecond}>
                     <Typography className={classes.typoSub}>
-                      You have successfully sent the invitation. After
-                      confirmation user will be added to the existing list of
-                      member.
+                      {t('settings.teamingTab.inviteNew.invite.info')}
                     </Typography>
                   </div>
                   <div
@@ -210,7 +216,9 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                       isDisabled={false}
                       handleClick={handleModal}
                     >
-                      <>Done</>
+                      <>
+                        {t('settings.teamingTab.inviteNew.invite.button.done')}
+                      </>
                     </ButtonFilled>
                   </div>
                 </div>
@@ -221,7 +229,10 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
       ) : (
         <div>
           <Typography className={classes.Header}>
-            Invite <strong>new member</strong>
+            {t('settings.teamingTab.inviteNew.invite.header')}{' '}
+            <strong>
+              {t('settings.teamingTab.inviteNew.invite.headerStrong')}
+            </strong>
           </Typography>
           <Toolbar className={classes.toolbar}>
             <div
@@ -231,7 +242,9 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
               <div>
                 <Input
                   id="input-with-icon-textfield"
-                  placeholder="Invite someone"
+                  placeholder={t(
+                    'settings.teamingTab.inviteNew.invite.label.someone'
+                  )}
                   onChange={(e) => {
                     setFilters({
                       search: e.target.value,
@@ -277,7 +290,9 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                     );
                   }}
                 >
-                  <div>Send Invite</div>
+                  <div>
+                    {t('settings.teamingTab.inviteNew.invite.button.send')}
+                  </div>
                 </ButtonFilled>
               </div>
             </div>
@@ -313,7 +328,9 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
               ) : (
                 <TableRow>
                   <TableCell colSpan={2}>
-                    <Typography align="center">No users available.</Typography>
+                    <Typography align="center">
+                      {t('settings.teamingTab.inviteNew.invite.noUsers')}
+                    </Typography>
                   </TableCell>
                 </TableRow>
               )}

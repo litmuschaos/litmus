@@ -6,8 +6,6 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '6.875rem',
     height: '2.8125rem',
     color: theme.palette.common.white,
-    marginRight: theme.spacing(2),
-    marginLeft: theme.spacing(2),
     textTransform: 'none',
   },
   buttonPrimary: {

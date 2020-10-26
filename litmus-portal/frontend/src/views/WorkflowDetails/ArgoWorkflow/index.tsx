@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import DagreGraph, { d3Link, d3Node } from '../../../components/DagreGraph';
 import { Nodes } from '../../../models/graphql/workflowData';
 import useActions from '../../../redux/actions';
@@ -16,6 +17,8 @@ interface ArgoWorkflowProps {
 
 const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
+
   // Redux action call for updating selected node
   const nodeSelection = useActions(NodeSelectionActions);
   const tabs = useActions(TabActions);
@@ -93,7 +96,7 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
       }}
     />
   ) : (
-    <div>Loading Graph...</div>
+    <div>{t('workflowDetailsView.argoWorkFlow.loading')}</div>
   );
 };
 
