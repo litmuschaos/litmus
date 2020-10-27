@@ -25,17 +25,12 @@ interface ChartName {
 
 const MyHub = () => {
   const classes = useStyles();
-
   const hubData = useSelector((state: RootState) => state.hubDetails);
-
   const { HubName, RepoName, RepoURL, RepoBranch, UserName } = hubData;
-
   const experimentDefaultImagePath = `${RepoURL.split('/')[0]}//${
     RepoURL.split('/')[2]
   }/${RepoURL.split('/')[3]}/${RepoName}/raw/${RepoBranch}/charts/`;
-
   const { t } = useTranslation();
-
   const { data, loading } = useQuery<Charts>(GET_CHARTS_DATA, {
     variables: {
       data: {
@@ -48,17 +43,13 @@ const MyHub = () => {
     },
     fetchPolicy: 'cache-and-network',
   });
-
   const [search, setSearch] = useState('');
-
   const changeSearch = (
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
     setSearch(event.target.value as string);
   };
-
   const [totalExp, setTotalExperiment] = useState<ChartName[]>([]);
-
   const exp: ChartName[] = [];
 
   useEffect(() => {

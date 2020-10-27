@@ -24,18 +24,13 @@ import { CurrentUserDetails, MyHubDetail } from '../../models/graphql/user';
 
 const MyHub = () => {
   const userData = useSelector((state: RootState) => state.userData);
-
   const myHub = useActions(MyHubActions);
-
   const { data, loading } = useQuery<CurrentUserDetails>(GET_USER, {
     variables: { username: userData.username },
     fetchPolicy: 'cache-and-network',
   });
-
   const classes = useStyles();
-
   const { t } = useTranslation();
-
   const [github, setGithub] = useState(true);
 
   return (

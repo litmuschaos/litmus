@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
       border: `1.8px solid ${theme.palette.secondary.dark}`,
       cursor: 'pointer',
     },
-    borderRadius: 4,
+    borderRadius: theme.spacing(0.5),
     margin: theme.spacing(2),
   },
   cardContent: {

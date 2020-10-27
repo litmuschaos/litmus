@@ -27,7 +27,6 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2.5),
   },
   connectText: {
-    fontWeight: 400,
     fontSize: '0.875rem',
     marginTop: theme.spacing(1.25),
   },
@@ -49,11 +48,9 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
   },
   modalHeading: {
-    fontWeight: 30,
     fontSize: '2.25rem',
   },
   modalDesc: {
-    fontWeight: 400,
     fontSize: '1rem',
     width: '21.875',
     marginBottom: theme.spacing(2.5),
@@ -74,7 +71,6 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2.5),
   },
   enterInfoText: {
-    fontWeight: 400,
     fontSize: '1.5rem',
   },
   checkImg: {

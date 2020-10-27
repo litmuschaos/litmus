@@ -78,7 +78,6 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1rem',
   },
   connectHub: {
-    fontWeight: 400,
     fontSize: '0.875rem',
   },
   noHub: {
