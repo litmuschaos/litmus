@@ -29,7 +29,7 @@ export interface Maintainer {
 
 export interface Link {
   Name: string;
-  URL: string;
+  Url: string;
 }
 
 export interface Metadata {
@@ -68,6 +68,10 @@ export interface ChartsInput {
 
 export interface Charts {
   getCharts: Chart[];
+}
+
+export interface ExperimentDetail {
+  getHubExperiment: Chart;
 }
 
 export interface HubDetails {

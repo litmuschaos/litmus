@@ -85,7 +85,7 @@ const MyHub = () => {
                                 RepoBranch: hub.GitBranch,
                                 UserName: userData.username,
                               });
-                              history.push('/myhub/experiments');
+                              history.push(`/myhub/${hub.HubName}`);
                             }}
                           >
                             <CardContent className={classes.cardContent}>
