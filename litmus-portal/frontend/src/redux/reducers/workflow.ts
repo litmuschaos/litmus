@@ -27,6 +27,15 @@ const initialState: WorkflowData = {
     time: new Date(Date.now()),
     date: new Date(Date.now()),
   },
+  customWorkflow: {
+    experiment_name: '',
+    hubName: '',
+    repoUrl: '',
+    repoBranch: '',
+    yamlLink: '',
+    yaml: '',
+  },
+  customWorkflows: [],
 };
 
 export const workflowData = createReducer<WorkflowData>(initialState, {

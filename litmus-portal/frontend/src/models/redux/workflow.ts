@@ -16,6 +16,15 @@ export interface scheduleInput {
   date: Date;
 }
 
+export interface customWorkflow {
+  experiment_name: string;
+  hubName: string;
+  repoUrl: string;
+  repoBranch: string;
+  yamlLink: string;
+  yaml: string;
+}
+
 export interface WorkflowData {
   name: string;
   link: string;
@@ -28,10 +37,13 @@ export interface WorkflowData {
   cronSyntax: string;
   scheduleType: scheduleType;
   scheduleInput: scheduleInput;
+  customWorkflow: customWorkflow;
+  customWorkflows: customWorkflow[];
 }
 
 export enum WorkflowActions {
   SET_WORKFLOW_DETAILS = 'SET_WORKFLOW_DETAILS',
+  SET_CUSTOM_WORKFLOW = 'SET_CUSTOM_WORKFLOW',
 }
 
 interface WorkflowActionType<T, P> {
@@ -39,7 +51,12 @@ interface WorkflowActionType<T, P> {
   payload: P;
 }
 
-export type WorkflowAction = WorkflowActionType<
-  typeof WorkflowActions.SET_WORKFLOW_DETAILS,
-  WorkflowData
->;
+export type WorkflowAction =
+  | WorkflowActionType<
+      typeof WorkflowActions.SET_WORKFLOW_DETAILS,
+      WorkflowData
+    >
+  | WorkflowActionType<
+      typeof WorkflowActions.SET_CUSTOM_WORKFLOW,
+      WorkflowData
+    >;

@@ -1,5 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import {
+  customWorkflow,
   experimentMap,
   scheduleInput,
   scheduleType,
@@ -18,6 +19,8 @@ export const setWorkflowDetails = (data: {
   cronSyntax: string;
   scheduleType: scheduleType;
   scheduleInput: scheduleInput;
+  customWorkflow: customWorkflow;
+  customWorkflows: customWorkflow[];
 }) => (dispatch: Function) => {
   dispatch({
     type: WorkflowActions.SET_WORKFLOW_DETAILS,

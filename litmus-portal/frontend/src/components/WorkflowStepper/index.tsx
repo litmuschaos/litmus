@@ -116,7 +116,7 @@ function getStepContent(
 
 const CustomStepper = () => {
   const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(0);
+  const [activeStep, setActiveStep] = React.useState(1);
   const { t } = useTranslation();
   const template = useActions(TemplateSelectionActions);
   const workflowData: WorkflowData = useSelector(

@@ -1,5 +1,6 @@
 import React from 'react';
 import { preDefinedWorkflowData } from '../../models/predefinedWorkflow';
+import { history } from '../../redux/configureStore';
 import CustomCard from '../WorkflowCard';
 import CustomWorkflowCard from '../WorkflowCard/CustomWorkflow';
 import useStyles from './styles';
@@ -42,6 +43,11 @@ const PredifinedWorkflows: React.FC<PredifinedWorkflowsProps> = ({
             </div>
           )
         )}
+      <CustomWorkflowCard
+        handleClick={() => {
+          history.push('/create-workflow/custom');
+        }}
+      />
     </div>
   );
 };

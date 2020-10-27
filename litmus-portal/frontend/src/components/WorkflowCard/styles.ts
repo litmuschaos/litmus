@@ -4,14 +4,16 @@ const useStyles = makeStyles((theme) => ({
   // CustomWorkflow
 
   customCard: {
-    background: theme.palette.customColors.gray,
+    background: theme.palette.customColors.black(0.05),
+    height: 250,
+    width: 190,
     borderRadius: 3,
-    overflow: 'hidden',
     fontSize: '0.875rem',
     margin: '0 auto',
     textAlign: 'center',
     cursor: 'pointer',
-    border: `1px solid ${theme.palette.text.hint}`,
+    padding: 30,
+    border: `1px solid ${theme.palette.customColors.black(0.05)}`,
     boxSizing: 'border-box',
   },
 

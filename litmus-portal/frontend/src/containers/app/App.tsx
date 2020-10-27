@@ -4,6 +4,7 @@ import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import Loader from '../../components/Loader';
 import useActions from '../../redux/actions';
 import * as AnalyticsActions from '../../redux/actions/analytics';
+import * as MyHubActions from '../../redux/actions/myhub';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import withTheme from '../../theme';
@@ -31,6 +32,15 @@ const ClusterInfo = lazy(() => import('../../components/Targets/ClusterInfo'));
 const MyHub = lazy(() => import('../../pages/MyHub'));
 const MyHubConnect = lazy(() => import('../../views/MyHub/MyHubConnect'));
 const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
+const CreateCustomWorkflow = lazy(() =>
+  import('../../views/CreateWorkflow/CustomWorkflow/CreateWorkflow')
+);
+const ScheduleCustomWorkflow = lazy(() =>
+  import('../../views/CreateWorkflow/CustomWorkflow/ScheduleWorkflow')
+);
+const TuneCustomWorkflow = lazy(() =>
+  import('../../views/CreateWorkflow/CustomWorkflow/TuneWorkflow')
+);
 
 interface RoutesProps {
   isOwner: boolean;
@@ -101,7 +111,21 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
         <Route exact path="/myhub" component={MyHub} />
         <Route exact path="/myhub/connect" component={MyHubConnect} />
         <Route exact path="/myhub/experiments" component={ChaosChart} />
-
+        <Route
+          exact
+          path="/create-workflow/custom"
+          component={CreateCustomWorkflow}
+        />
+        <Route
+          exact
+          path="/create-workflow/custom/tune"
+          component={TuneCustomWorkflow}
+        />
+        <Route
+          exact
+          path="/create-workflow/custom/schedule"
+          component={ScheduleCustomWorkflow}
+        />
         {isOwner ? (
           <Route exact path="/settings" component={Settings} />
         ) : (
@@ -117,10 +141,14 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
 function App() {
   const classes = useStyles();
   const analyticsAction = useActions(AnalyticsActions);
+  const publicHubAction = useActions(MyHubActions);
   const userData = useSelector((state: RootState) => state.userData);
   const token = getToken();
   useEffect(() => {
-    if (token !== '') analyticsAction.loadCommunityAnalytics();
+    if (token !== '') {
+      analyticsAction.loadCommunityAnalytics();
+      publicHubAction.getAllPublicCharts();
+    }
   }, [token]);
 
   return (
