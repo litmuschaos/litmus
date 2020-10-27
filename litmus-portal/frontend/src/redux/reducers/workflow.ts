@@ -24,8 +24,8 @@ const initialState: WorkflowData = {
     hour_interval: 0,
     day: 1,
     weekday: 'Monday',
-    time: new Date(Date.now()),
-    date: new Date(Date.now()),
+    time: new Date(),
+    date: new Date(),
   },
   customWorkflow: {
     experiment_name: '',

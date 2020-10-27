@@ -89,12 +89,12 @@ const ScheduleWorkflow: React.FC = () => {
 
   // Sets Time
   const [selectedTime, setSelectedTime] = React.useState<Date | null>(
-    workflowData.scheduleInput.time
+    new Date(workflowData.scheduleInput.time)
   );
 
   // Sets Date
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(
-    workflowData.scheduleInput.date
+    new Date(workflowData.scheduleInput.date)
   );
 
   // Function to validate the date and time for "Specific Time" radio button

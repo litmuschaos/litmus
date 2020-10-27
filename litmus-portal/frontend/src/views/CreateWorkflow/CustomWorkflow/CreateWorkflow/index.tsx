@@ -37,11 +37,8 @@ interface ChartName {
 
 const CreateCustomWorkflow = () => {
   const userData = useSelector((state: RootState) => state.userData);
-
   const hubData = useSelector((state: RootState) => state.publicHubDetails);
-
   const workflowDetails = useSelector((state: RootState) => state.workflowData);
-
   const workflowAction = useActions(WorkflowActions);
 
   const [workflowData, setWorkflowData] = useState<WorkflowDetails>({
@@ -50,11 +47,8 @@ const CreateCustomWorkflow = () => {
   });
 
   const classes = useStyles();
-
   const [allExperiment, setAllExperiment] = useState<ChartName[]>([]);
-
   const [selectedHub, setSelectedHub] = useState('Public Hub');
-
   const [selectedExp, setSelectedExp] = useState('Select');
 
   const allExp: ChartName[] = [];
@@ -80,7 +74,7 @@ const CreateCustomWorkflow = () => {
             });
           });
         });
-        setAllExperiment(allExp);
+        setAllExperiment([...allExp]);
       },
       fetchPolicy: 'cache-and-network',
     }
@@ -114,16 +108,19 @@ const CreateCustomWorkflow = () => {
 
   useEffect(() => {
     if (selectedHub === 'Public Hub') {
+      setSelectedHub('Public Hub');
       const ChartsData = hubData.charts;
       ChartsData.forEach((data: Chart) => {
-        data.Spec.Experiments.forEach((experiment) => {
-          allExp.push({
-            ChaosName: data.Metadata.Name,
-            ExperimentName: experiment,
+        if (data.Spec.Experiments) {
+          data.Spec.Experiments.forEach((experiment) => {
+            allExp.push({
+              ChaosName: data.Metadata.Name,
+              ExperimentName: experiment,
+            });
           });
-        });
+        }
       });
-      setAllExperiment(allExp);
+      setAllExperiment([...allExp]);
       workflowAction.setWorkflowDetails({
         customWorkflow: {
           ...workflowDetails.customWorkflow,
@@ -303,6 +300,21 @@ const CreateCustomWorkflow = () => {
         >
           <ButtonFilled
             handleClick={() => {
+              const CustomWorkflowDetails = {
+                WorkflowName: workflowData.workflow_name,
+                WorkflowDesc: workflowData.workflow_desc,
+                experimentDetails: [
+                  {
+                    HubName: selectedHub,
+                    ExperimentName: selectedExp,
+                    yamlLink: workflowDetails.customWorkflow.yamlLink,
+                  },
+                ],
+              };
+              window.localStorage.setItem(
+                'WorkflowData',
+                JSON.stringify(CustomWorkflowDetails)
+              );
               history.push('/create-workflow/custom/tune');
             }}
             isPrimary

@@ -25,6 +25,8 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     margin: theme.spacing(2.5),
+
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
   resize: {
