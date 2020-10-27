@@ -336,7 +336,7 @@ data:
   config: |
     containerRuntimeExecutor: k8sapi
     executor:
-      imagePullPolicy: IfNotPresent
+      imagePullPolicy: Always
 ---
 apiVersion: v1
 kind: Service
