@@ -11,11 +11,11 @@ type Charts {
 }
 
 input ChartsInput {
-	HubName: String!
-	UserName: String!
-	RepoBranch: String!
-	RepoName: String!
-	RepoURL: String!
+  HubName: String!
+  UserName: String!
+  RepoBranch: String!
+  RepoName: String!
+  RepoURL: String!
 }
 
 type Chart {
