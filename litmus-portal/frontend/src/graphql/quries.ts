@@ -86,6 +86,12 @@ export const GET_USER = gql`
         name
         id
       }
+      my_hub {
+        id
+        HubName
+        GitURL
+        GitBranch
+      }
       company_name
       updated_at
       created_at
@@ -126,6 +132,110 @@ export const ALL_USERS = gql`
       name
       username
       email
+    }
+  }
+`;
+
+export const GET_CHARTS_DATA = gql`
+  query getCharts($data: ChartsInput!) {
+    getCharts(chartsInput: $data) {
+      ApiVersion
+      Kind
+      Metadata {
+        Name
+        Version
+        Annotations {
+          Categories
+          Vendor
+          CreatedAt
+          Repository
+          Support
+          ChartDescription
+        }
+      }
+      Spec {
+        DisplayName
+        CategoryDescription
+        Keywords
+        Maturity
+        Experiments
+        Maintainers {
+          Name
+          Email
+        }
+        MinKubeVersion
+        Provider
+        Links {
+          Name
+          Url
+        }
+        ChaosExpCRDLink
+        Platforms
+        ChaosType
+      }
+      PackageInfo {
+        PackageName
+        Experiments {
+          Name
+          CSV
+          Desc
+        }
+      }
+      Experiments {
+        ApiVersion
+      }
+    }
+  }
+`;
+
+export const GET_EXPERIMENT_DATA = gql`
+  query getExperiment($data: ExperimentInput!) {
+    getHubExperiment(experimentInput: $data) {
+      ApiVersion
+      Kind
+      Metadata {
+        Name
+        Version
+        Annotations {
+          Categories
+          Vendor
+          CreatedAt
+          Repository
+          Support
+          ChartDescription
+        }
+      }
+      Spec {
+        DisplayName
+        CategoryDescription
+        Keywords
+        Maturity
+        Experiments
+        Maintainers {
+          Name
+          Email
+        }
+        MinKubeVersion
+        Provider
+        Links {
+          Name
+          Url
+        }
+        ChaosExpCRDLink
+        Platforms
+        ChaosType
+      }
+      PackageInfo {
+        PackageName
+        Experiments {
+          Name
+          CSV
+          Desc
+        }
+      }
+      Experiments {
+        ApiVersion
+      }
     }
   }
 `;

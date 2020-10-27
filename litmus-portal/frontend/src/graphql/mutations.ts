@@ -74,3 +74,16 @@ export const USER_CLUSTER_REG = gql`
     }
   }
 `;
+
+export const ADD_MY_HUB = gql`
+  mutation addMyHub($MyHubDetails: CreateMyHub!, $Username: String!) {
+    addMyHub(myhubInput: $MyHubDetails, username: $Username) {
+      username
+      my_hub {
+        HubName
+        GitURL
+        GitBranch
+      }
+    }
+  }
+`;
