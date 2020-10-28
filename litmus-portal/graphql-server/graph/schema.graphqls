@@ -5,262 +5,264 @@
 directive @authorized on FIELD_DEFINITION
 
 type Cluster {
-	cluster_id: ID!
-	project_id: ID!
-	cluster_name: String!
-	description: String
-	platform_name: String!
-	access_key: String!
-	is_registered: Boolean!
-	is_cluster_confirmed: Boolean!
-	is_active: Boolean!
-	updated_at: String!
-	created_at: String!
-	cluster_type: String!
-	no_of_schedules: Int
-	no_of_workflows: Int
-	token: String!
+  cluster_id: ID!
+  project_id: ID!
+  cluster_name: String!
+  description: String
+  platform_name: String!
+  access_key: String!
+  is_registered: Boolean!
+  is_cluster_confirmed: Boolean!
+  is_active: Boolean!
+  updated_at: String!
+  created_at: String!
+  cluster_type: String!
+  no_of_schedules: Int
+  no_of_workflows: Int
+  token: String!
 }
 
 input ClusterInput {
-	cluster_name: String!
-	description: String
-	platform_name: String!
-	project_id: ID!
-	cluster_type: String!
+  cluster_name: String!
+  description: String
+  platform_name: String!
+  project_id: ID!
+  cluster_type: String!
 }
 
 type ClusterEvent {
-	event_id: ID!
-	event_type: String!
-	event_name: String!
-	description: String!
-	cluster: Cluster!
+  event_id: ID!
+  event_type: String!
+  event_name: String!
+  description: String!
+  cluster: Cluster!
 }
 
 type ActionPayload {
-	request_type: String
-	k8s_manifest: String
-	namespace: String
-	external_data: String
+  request_type: String
+  k8s_manifest: String
+  namespace: String
+  external_data: String
 }
 
 type ClusterAction {
-	project_id: ID!
-	action: ActionPayload!
+  project_id: ID!
+  action: ActionPayload!
 }
 
 input ClusterActionInput {
-	cluster_id: ID!
-	action: String!
+  cluster_id: ID!
+  action: String!
 }
 
 input ClusterEventInput {
-	event_name: String!
-	description: String!
-	cluster_id: String!
-	access_key: String!
+  event_name: String!
+  description: String!
+  cluster_id: String!
+  access_key: String!
 }
 
 input ClusterIdentity {
-	cluster_id: String!
-	access_key: String!
+  cluster_id: String!
+  access_key: String!
 }
 
 type ClusterConfirmResponse {
-	isClusterConfirmed: Boolean!
-	newClusterKey: String
-	cluster_id: String
+  isClusterConfirmed: Boolean!
+  newClusterKey: String
+  cluster_id: String
 }
 
 input WeightagesInput {
-	experiment_name: String!
-	weightage: Int!
+  experiment_name: String!
+  weightage: Int!
 }
 
 type weightages {
-	experiment_name: String!
-	weightage: Int!
+  experiment_name: String!
+  weightage: Int!
 }
 
 input ChaosWorkFlowInput {
-	workflow_manifest: String!
-	cronSyntax: String!
-	workflow_name: String!
-	workflow_description: String!
-	weightages: [WeightagesInput!]!
-	isCustomWorkflow: Boolean!
-	project_id: ID!
-	cluster_id: ID!
+  workflow_manifest: String!
+  cronSyntax: String!
+  workflow_name: String!
+  workflow_description: String!
+  weightages: [WeightagesInput!]!
+  isCustomWorkflow: Boolean!
+  project_id: ID!
+  cluster_id: ID!
 }
 
 type ChaosWorkFlowResponse {
-	workflow_id: String!
-	cronSyntax: String!
-	workflow_name: String!
-	workflow_description: String!
-	isCustomWorkflow: Boolean!
+  workflow_id: String!
+  cronSyntax: String!
+  workflow_name: String!
+  workflow_description: String!
+  isCustomWorkflow: Boolean!
 }
 
 type WorkflowRun {
-	workflow_run_id: ID!
-	workflow_id: ID!
-	cluster_name: String!
-	last_updated: String!
-	project_id: ID!
-	cluster_id: ID!
-	workflow_name: String!
-	cluster_type: String
-	execution_data: String!
+  workflow_run_id: ID!
+  workflow_id: ID!
+  cluster_name: String!
+  last_updated: String!
+  project_id: ID!
+  cluster_id: ID!
+  workflow_name: String!
+  cluster_type: String
+  execution_data: String!
 }
 
 input WorkflowRunInput {
-	workflow_id: ID!
-	workflow_run_id: ID!
-	workflow_name: String!
-	execution_data: String!
-	cluster_id: ClusterIdentity!
+  workflow_id: ID!
+  workflow_run_id: ID!
+  workflow_name: String!
+  execution_data: String!
+  cluster_id: ClusterIdentity!
 }
 
 type PodLogResponse {
-	workflow_run_id: ID!
-	pod_name: String!
-	pod_type: String!
-	log: String!
+  workflow_run_id: ID!
+  pod_name: String!
+  pod_type: String!
+  log: String!
 }
 
 input PodLog {
-	cluster_id: ClusterIdentity!
-	request_id: ID!
-	workflow_run_id: ID!
-	pod_name: String!
-	pod_type: String!
-	log: String!
+  cluster_id: ClusterIdentity!
+  request_id: ID!
+  workflow_run_id: ID!
+  pod_name: String!
+  pod_type: String!
+  log: String!
 }
 
 input PodLogRequest {
-	cluster_id: ID!
-	workflow_run_id: ID!
-	pod_name: String!
-	pod_namespace: String!
-	pod_type: String!
-	exp_pod: String
-	runner_pod: String
-	chaos_namespace: String
+  cluster_id: ID!
+  workflow_run_id: ID!
+  pod_name: String!
+  pod_namespace: String!
+  pod_type: String!
+  exp_pod: String
+  runner_pod: String
+  chaos_namespace: String
 }
 
 type ScheduledWorkflows {
-	workflow_id: String!
-	workflow_manifest: String!
-	cronSyntax: String!
-	cluster_name: String!
-	workflow_name: String!
-	workflow_description: String!
-	weightages: [weightages!]!
-	isCustomWorkflow: Boolean!
-	updated_at: String!
-	created_at: String!
-	project_id: ID!
-	cluster_id: ID!
-	cluster_type: String!
+  workflow_id: String!
+  workflow_manifest: String!
+  cronSyntax: String!
+  cluster_name: String!
+  workflow_name: String!
+  workflow_description: String!
+  weightages: [weightages!]!
+  isCustomWorkflow: Boolean!
+  updated_at: String!
+  created_at: String!
+  project_id: ID!
+  cluster_id: ID!
+  cluster_type: String!
 }
 
 type Workflow {
-	workflow_id: String!
-	workflow_manifest: String!
-	cronSyntax: String!
-	cluster_name: String!
-	workflow_name: String!
-	workflow_description: String!
-	weightages: [weightages!]!
-	isCustomWorkflow: Boolean!
-	updated_at: String!
-	created_at: String!
-	project_id: ID!
-	cluster_id: ID!
-	cluster_type: String!
-	workflow_runs: [WorkflowRuns]
+  workflow_id: String!
+  workflow_manifest: String!
+  cronSyntax: String!
+  cluster_name: String!
+  workflow_name: String!
+  workflow_description: String!
+  weightages: [weightages!]!
+  isCustomWorkflow: Boolean!
+  updated_at: String!
+  created_at: String!
+  project_id: ID!
+  cluster_id: ID!
+  cluster_type: String!
+  workflow_runs: [WorkflowRuns]
 }
 
 type WorkflowRuns {
-	execution_data: String!
-	workflow_run_id: ID!
-	last_updated: String!
+  execution_data: String!
+  workflow_run_id: ID!
+  last_updated: String!
 }
 
 type clusterRegResponse {
-	token: String!
-	cluster_id: String!
-	cluster_name: String!
+  token: String!
+  cluster_id: String!
+  cluster_name: String!
 }
 
 type Query {
-	# [Deprecated soon]
-	getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
+  # [Deprecated soon]
+  getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
 
-	getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
+  getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
 
-	getUser(username: String!): User! @authorized
+  getUser(username: String!): User! @authorized
 
-	getProject(projectID: String!): Project! @authorized
+  getProject(projectID: String!): Project! @authorized
 
-	users: [User!]! @authorized
+  users: [User!]! @authorized
 
-	# [Deprecated soon]
-	getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
+  # [Deprecated soon]
+  getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
 
-	ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
+  ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
 
-	getCharts(chartsInput: ChartsInput!): [Chart!]! @authorized
+  getCharts(chartsInput: ChartsInput!): [Chart!]! @authorized
 
-	getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
+  getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
 
-	getHubStatus(username: String!): [MyHubStatus]! @authorized
+  getHubStatus(username: String!): [MyHubStatus]! @authorized
 }
 
 type Mutation {
-	#It is used to create external cluster.
-	userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
+  #It is used to create external cluster.
+  userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
-	#It is used to create chaosworkflow
-	createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
-		@authorized
+  #It is used to create chaosworkflow
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
+    @authorized
 
-	createUser(user: CreateUserInput!): User! @authorized
+  createUser(user: CreateUserInput!): User! @authorized
 
-	updateUser(user: UpdateUserInput!): String! @authorized
+  updateUser(user: UpdateUserInput!): String! @authorized
 
-	deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
+  deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
 
-	sendInvitation(member: MemberInput!): Member @authorized
+  sendInvitation(member: MemberInput!): Member @authorized
 
-	acceptInvitation(member: MemberInput!): String! @authorized
+  acceptInvitation(member: MemberInput!): String! @authorized
 
-	declineInvitation(member: MemberInput!): String! @authorized
+  declineInvitation(member: MemberInput!): String! @authorized
 
-	removeInvitation(member: MemberInput!): String! @authorized
+  removeInvitation(member: MemberInput!): String! @authorized
 
-	#It is used to confirm the subscriber registration
-	clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
+  #It is used to confirm the subscriber registration
+  clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
 
-	#It is used to send cluster related events from the subscriber
-	newClusterEvent(clusterEvent: ClusterEventInput!): String!
+  #It is used to send cluster related events from the subscriber
+  newClusterEvent(clusterEvent: ClusterEventInput!): String!
 
-	chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
+  chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
 
-	podLog(log: PodLog!): String!
+  podLog(log: PodLog!): String!
 
-	addMyHub(myhubInput: CreateMyHub!, username: String!): User! @authorized
+  addMyHub(myhubInput: CreateMyHub!, username: String!): User! @authorized
+
+  syncHub(syncHubInput: ChartsInput!): [MyHubStatus!]! @authorized
 }
 
 type Subscription {
-	#It is used to listen cluster events from the graphql server
-	clusterEventListener(project_id: String!): ClusterEvent! @authorized
+  #It is used to listen cluster events from the graphql server
+  clusterEventListener(project_id: String!): ClusterEvent! @authorized
 
-	workflowEventListener(project_id: String!): WorkflowRun! @authorized
+  workflowEventListener(project_id: String!): WorkflowRun! @authorized
 
-	getPodLog(podDetails: PodLogRequest!): PodLogResponse! @authorized
+  getPodLog(podDetails: PodLogRequest!): PodLogResponse! @authorized
 
-	#It is used to listen cluster operation request from the graphql server
-	clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
+  #It is used to listen cluster operation request from the graphql server
+  clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
 }

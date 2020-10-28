@@ -27,8 +27,8 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*m
 
 	cloneHub := model.ChartsInput{
 		UserName:   username,
-		RepoBranch: myhub.GitBranch,
-		RepoURL:    myhub.GitURL,
+		RepoBranch: myhub.RepoBranch,
+		RepoURL:    myhub.RepoURL,
 		HubName:    myhub.HubName,
 	}
 
@@ -41,10 +41,10 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*m
 	//Initialize a UID for new Hub.
 	uuid := uuid.New()
 	newHub := &dbSchema.MyHub{
-		ID:        uuid.String(),
-		GitURL:    myhub.GitURL,
-		GitBranch: myhub.GitBranch,
-		HubName:   myhub.HubName,
+		ID:         uuid.String(),
+		RepoURL:    myhub.RepoURL,
+		RepoBranch: myhub.RepoBranch,
+		HubName:    myhub.HubName,
 	}
 
 	//Adding the new hub into database with the given username.
@@ -64,7 +64,8 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*m
 
 }
 
-func MyHubStatus(ctx context.Context, username string) ([]*model.MyHubStatus, error) {
+//HubStatus returns the array of hubdetails with their current status.
+func HubStatus(ctx context.Context, username string) ([]*model.MyHubStatus, error) {
 	user, err := database.GetUserByUserName(ctx, username)
 	if err != nil {
 		return nil, err
@@ -80,8 +81,8 @@ func MyHubStatus(ctx context.Context, username string) ([]*model.MyHubStatus, er
 		chartsInput := model.ChartsInput{
 			HubName:    userHubs[i].HubName,
 			UserName:   user.GetOutputUser().Username,
-			RepoURL:    userHubs[i].GitURL,
-			RepoBranch: userHubs[i].GitBranch,
+			RepoURL:    userHubs[i].RepoURL,
+			RepoBranch: userHubs[i].RepoBranch,
 		}
 		ChartsPath := handler.GetChartsPath(ctx, chartsInput)
 		ChartData, err := handler.GetChartsData(ChartsPath)
@@ -97,9 +98,9 @@ func MyHubStatus(ctx context.Context, username string) ([]*model.MyHubStatus, er
 		hubDetail = &model.MyHubStatus{
 			IsAvailable: isConfirmed,
 			ID:          hub.ID,
-			GitURL:      hub.GitURL,
+			RepoURL:     hub.RepoURL,
 			HubName:     hub.HubName,
-			GitBranch:   hub.GitBranch,
+			RepoBranch:  hub.RepoBranch,
 			TotalExp:    strconv.Itoa(sum),
 		}
 		hubDetails = append(hubDetails, hubDetail)
@@ -153,4 +154,13 @@ func GetExperiment(ctx context.Context, experimentInput model.ExperimentInput) (
 	}
 
 	return ExperimentData, nil
+}
+
+//SyncHub is used for syncing the hub again if some not present or some error happens.
+func SyncHub(ctx context.Context, syncHubInput model.ChartsInput) ([]*model.MyHubStatus, error) {
+	err := gitops.GitSyncHandlerForUser(syncHubInput)
+	if err != nil {
+		return nil, err
+	}
+	return HubStatus(ctx, syncHubInput.UserName)
 }

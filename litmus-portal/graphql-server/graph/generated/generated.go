@@ -166,24 +166,25 @@ type ComplexityRoot struct {
 		PodLog              func(childComplexity int, log model.PodLog) int
 		RemoveInvitation    func(childComplexity int, member model.MemberInput) int
 		SendInvitation      func(childComplexity int, member model.MemberInput) int
+		SyncHub             func(childComplexity int, syncHubInput model.ChartsInput) int
 		UpdateUser          func(childComplexity int, user model.UpdateUserInput) int
 		UserClusterReg      func(childComplexity int, clusterInput model.ClusterInput) int
 	}
 
 	MyHub struct {
-		GitBranch   func(childComplexity int) int
-		GitURL      func(childComplexity int) int
 		HubName     func(childComplexity int) int
 		ID          func(childComplexity int) int
 		IsConfirmed func(childComplexity int) int
+		RepoBranch  func(childComplexity int) int
+		RepoURL     func(childComplexity int) int
 	}
 
 	MyHubStatus struct {
-		GitBranch   func(childComplexity int) int
-		GitURL      func(childComplexity int) int
 		HubName     func(childComplexity int) int
 		ID          func(childComplexity int) int
 		IsAvailable func(childComplexity int) int
+		RepoBranch  func(childComplexity int) int
+		RepoURL     func(childComplexity int) int
 		TotalExp    func(childComplexity int) int
 	}
 
@@ -342,6 +343,7 @@ type MutationResolver interface {
 	ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error)
 	PodLog(ctx context.Context, log model.PodLog) (string, error)
 	AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, username string) (*model.User, error)
+	SyncHub(ctx context.Context, syncHubInput model.ChartsInput) ([]*model.MyHubStatus, error)
 }
 type QueryResolver interface {
 	GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error)
@@ -969,6 +971,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.SendInvitation(childComplexity, args["member"].(model.MemberInput)), true
 
+	case "Mutation.syncHub":
+		if e.complexity.Mutation.SyncHub == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_syncHub_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.SyncHub(childComplexity, args["syncHubInput"].(model.ChartsInput)), true
+
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
 			break
@@ -993,20 +1007,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UserClusterReg(childComplexity, args["clusterInput"].(model.ClusterInput)), true
 
-	case "MyHub.GitBranch":
-		if e.complexity.MyHub.GitBranch == nil {
-			break
-		}
-
-		return e.complexity.MyHub.GitBranch(childComplexity), true
-
-	case "MyHub.GitURL":
-		if e.complexity.MyHub.GitURL == nil {
-			break
-		}
-
-		return e.complexity.MyHub.GitURL(childComplexity), true
-
 	case "MyHub.HubName":
 		if e.complexity.MyHub.HubName == nil {
 			break
@@ -1028,19 +1028,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.MyHub.IsConfirmed(childComplexity), true
 
-	case "MyHubStatus.GitBranch":
-		if e.complexity.MyHubStatus.GitBranch == nil {
+	case "MyHub.RepoBranch":
+		if e.complexity.MyHub.RepoBranch == nil {
 			break
 		}
 
-		return e.complexity.MyHubStatus.GitBranch(childComplexity), true
+		return e.complexity.MyHub.RepoBranch(childComplexity), true
 
-	case "MyHubStatus.GitURL":
-		if e.complexity.MyHubStatus.GitURL == nil {
+	case "MyHub.RepoURL":
+		if e.complexity.MyHub.RepoURL == nil {
 			break
 		}
 
-		return e.complexity.MyHubStatus.GitURL(childComplexity), true
+		return e.complexity.MyHub.RepoURL(childComplexity), true
 
 	case "MyHubStatus.HubName":
 		if e.complexity.MyHubStatus.HubName == nil {
@@ -1062,6 +1062,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.MyHubStatus.IsAvailable(childComplexity), true
+
+	case "MyHubStatus.RepoBranch":
+		if e.complexity.MyHubStatus.RepoBranch == nil {
+			break
+		}
+
+		return e.complexity.MyHubStatus.RepoBranch(childComplexity), true
+
+	case "MyHubStatus.RepoURL":
+		if e.complexity.MyHubStatus.RepoURL == nil {
+			break
+		}
+
+		return e.complexity.MyHubStatus.RepoURL(childComplexity), true
 
 	case "MyHubStatus.TotalExp":
 		if e.complexity.MyHubStatus.TotalExp == nil {
@@ -1896,110 +1910,110 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 
 var sources = []*ast.Source{
 	&ast.Source{Name: "graph/myhub.graphqls", Input: `type MyHub {
-	id: ID!
-	GitURL: String!
-	GitBranch: String!
-	IsConfirmed: Boolean!
-	HubName: String!
+  id: ID!
+  RepoURL: String!
+  RepoBranch: String!
+  IsConfirmed: Boolean!
+  HubName: String!
 }
 
 type Charts {
-	Charts: [Chart!]!
+  Charts: [Chart!]!
 }
 
 type Chart {
-	ApiVersion: String!
-	Kind: String!
-	Metadata: Metadata!
-	Spec: Spec!
-	PackageInfo: PackageInformation!
-	Experiments: [Chart!]!
+  ApiVersion: String!
+  Kind: String!
+  Metadata: Metadata!
+  Spec: Spec!
+  PackageInfo: PackageInformation!
+  Experiments: [Chart!]!
 }
 
 type Maintainer {
-	Name: String!
-	Email: String!
+  Name: String!
+  Email: String!
 }
 
 type Link {
-	Name: String!
-	Url: String!
+  Name: String!
+  Url: String!
 }
 
 type Metadata {
-	Name: String!
-	Version: String!
-	Annotations: Annotation!
+  Name: String!
+  Version: String!
+  Annotations: Annotation!
 }
 
 type Annotation {
-	Categories: String!
-	Vendor: String!
-	CreatedAt: String!
-	Repository: String!
-	Support: String!
-	ChartDescription: String!
+  Categories: String!
+  Vendor: String!
+  CreatedAt: String!
+  Repository: String!
+  Support: String!
+  ChartDescription: String!
 }
 
 type Spec {
-	DisplayName: String!
-	CategoryDescription: String!
-	Keywords: [String!]!
-	Maturity: String!
-	Maintainers: [Maintainer!]!
-	MinKubeVersion: String!
-	Provider: String!
-	Links: [Link!]!
-	Experiments: [String!]!
-	ChaosExpCRDLink: String!
-	Platforms: [String!]!
-	ChaosType: String
+  DisplayName: String!
+  CategoryDescription: String!
+  Keywords: [String!]!
+  Maturity: String!
+  Maintainers: [Maintainer!]!
+  MinKubeVersion: String!
+  Provider: String!
+  Links: [Link!]!
+  Experiments: [String!]!
+  ChaosExpCRDLink: String!
+  Platforms: [String!]!
+  ChaosType: String
 }
 
 type Provider {
-	Name: String!
+  Name: String!
 }
 
 type PackageInformation {
-	PackageName: String!
-	Experiments: [Experiments!]!
+  PackageName: String!
+  Experiments: [Experiments!]!
 }
 
 type Experiments {
-	Name: String!
-	CSV: String!
-	Desc: String!
+  Name: String!
+  CSV: String!
+  Desc: String!
 }
 
 type MyHubStatus {
-	id: ID!
-	GitURL: String!
-	GitBranch: String!
-	IsAvailable: Boolean!
-	TotalExp: String!
-	HubName: String!
+  id: ID!
+  RepoURL: String!
+  RepoBranch: String!
+  IsAvailable: Boolean!
+  TotalExp: String!
+  HubName: String!
 }
 
 input CreateMyHub {
-	HubName: String!
-	GitURL: String!
-	GitBranch: String!
+  HubName: String!
+  RepoURL: String!
+  RepoBranch: String!
 }
 
 input ExperimentInput {
-	UserName: String!
-	RepoURL: String!
-	RepoBranch: String!
-	ChartName: String!
-	ExperimentName: String!
-	HubName: String!
+  UserName: String!
+  RepoURL: String!
+  RepoBranch: String!
+  ChartName: String!
+  ExperimentName: String!
+  HubName: String!
 }
 
 input ChartsInput {
-	HubName: String!
-	UserName: String!
-	RepoBranch: String!
-	RepoURL: String!
+  HubName: String!
+  UserName: String!
+  RepoBranch: String!
+  RepoURL: String!
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/project.graphqls", Input: `type Project {
@@ -2041,264 +2055,266 @@ enum MemberRole {
 directive @authorized on FIELD_DEFINITION
 
 type Cluster {
-	cluster_id: ID!
-	project_id: ID!
-	cluster_name: String!
-	description: String
-	platform_name: String!
-	access_key: String!
-	is_registered: Boolean!
-	is_cluster_confirmed: Boolean!
-	is_active: Boolean!
-	updated_at: String!
-	created_at: String!
-	cluster_type: String!
-	no_of_schedules: Int
-	no_of_workflows: Int
-	token: String!
+  cluster_id: ID!
+  project_id: ID!
+  cluster_name: String!
+  description: String
+  platform_name: String!
+  access_key: String!
+  is_registered: Boolean!
+  is_cluster_confirmed: Boolean!
+  is_active: Boolean!
+  updated_at: String!
+  created_at: String!
+  cluster_type: String!
+  no_of_schedules: Int
+  no_of_workflows: Int
+  token: String!
 }
 
 input ClusterInput {
-	cluster_name: String!
-	description: String
-	platform_name: String!
-	project_id: ID!
-	cluster_type: String!
+  cluster_name: String!
+  description: String
+  platform_name: String!
+  project_id: ID!
+  cluster_type: String!
 }
 
 type ClusterEvent {
-	event_id: ID!
-	event_type: String!
-	event_name: String!
-	description: String!
-	cluster: Cluster!
+  event_id: ID!
+  event_type: String!
+  event_name: String!
+  description: String!
+  cluster: Cluster!
 }
 
 type ActionPayload {
-	request_type: String
-	k8s_manifest: String
-	namespace: String
-	external_data: String
+  request_type: String
+  k8s_manifest: String
+  namespace: String
+  external_data: String
 }
 
 type ClusterAction {
-	project_id: ID!
-	action: ActionPayload!
+  project_id: ID!
+  action: ActionPayload!
 }
 
 input ClusterActionInput {
-	cluster_id: ID!
-	action: String!
+  cluster_id: ID!
+  action: String!
 }
 
 input ClusterEventInput {
-	event_name: String!
-	description: String!
-	cluster_id: String!
-	access_key: String!
+  event_name: String!
+  description: String!
+  cluster_id: String!
+  access_key: String!
 }
 
 input ClusterIdentity {
-	cluster_id: String!
-	access_key: String!
+  cluster_id: String!
+  access_key: String!
 }
 
 type ClusterConfirmResponse {
-	isClusterConfirmed: Boolean!
-	newClusterKey: String
-	cluster_id: String
+  isClusterConfirmed: Boolean!
+  newClusterKey: String
+  cluster_id: String
 }
 
 input WeightagesInput {
-	experiment_name: String!
-	weightage: Int!
+  experiment_name: String!
+  weightage: Int!
 }
 
 type weightages {
-	experiment_name: String!
-	weightage: Int!
+  experiment_name: String!
+  weightage: Int!
 }
 
 input ChaosWorkFlowInput {
-	workflow_manifest: String!
-	cronSyntax: String!
-	workflow_name: String!
-	workflow_description: String!
-	weightages: [WeightagesInput!]!
-	isCustomWorkflow: Boolean!
-	project_id: ID!
-	cluster_id: ID!
+  workflow_manifest: String!
+  cronSyntax: String!
+  workflow_name: String!
+  workflow_description: String!
+  weightages: [WeightagesInput!]!
+  isCustomWorkflow: Boolean!
+  project_id: ID!
+  cluster_id: ID!
 }
 
 type ChaosWorkFlowResponse {
-	workflow_id: String!
-	cronSyntax: String!
-	workflow_name: String!
-	workflow_description: String!
-	isCustomWorkflow: Boolean!
+  workflow_id: String!
+  cronSyntax: String!
+  workflow_name: String!
+  workflow_description: String!
+  isCustomWorkflow: Boolean!
 }
 
 type WorkflowRun {
-	workflow_run_id: ID!
-	workflow_id: ID!
-	cluster_name: String!
-	last_updated: String!
-	project_id: ID!
-	cluster_id: ID!
-	workflow_name: String!
-	cluster_type: String
-	execution_data: String!
+  workflow_run_id: ID!
+  workflow_id: ID!
+  cluster_name: String!
+  last_updated: String!
+  project_id: ID!
+  cluster_id: ID!
+  workflow_name: String!
+  cluster_type: String
+  execution_data: String!
 }
 
 input WorkflowRunInput {
-	workflow_id: ID!
-	workflow_run_id: ID!
-	workflow_name: String!
-	execution_data: String!
-	cluster_id: ClusterIdentity!
+  workflow_id: ID!
+  workflow_run_id: ID!
+  workflow_name: String!
+  execution_data: String!
+  cluster_id: ClusterIdentity!
 }
 
 type PodLogResponse {
-	workflow_run_id: ID!
-	pod_name: String!
-	pod_type: String!
-	log: String!
+  workflow_run_id: ID!
+  pod_name: String!
+  pod_type: String!
+  log: String!
 }
 
 input PodLog {
-	cluster_id: ClusterIdentity!
-	request_id: ID!
-	workflow_run_id: ID!
-	pod_name: String!
-	pod_type: String!
-	log: String!
+  cluster_id: ClusterIdentity!
+  request_id: ID!
+  workflow_run_id: ID!
+  pod_name: String!
+  pod_type: String!
+  log: String!
 }
 
 input PodLogRequest {
-	cluster_id: ID!
-	workflow_run_id: ID!
-	pod_name: String!
-	pod_namespace: String!
-	pod_type: String!
-	exp_pod: String
-	runner_pod: String
-	chaos_namespace: String
+  cluster_id: ID!
+  workflow_run_id: ID!
+  pod_name: String!
+  pod_namespace: String!
+  pod_type: String!
+  exp_pod: String
+  runner_pod: String
+  chaos_namespace: String
 }
 
 type ScheduledWorkflows {
-	workflow_id: String!
-	workflow_manifest: String!
-	cronSyntax: String!
-	cluster_name: String!
-	workflow_name: String!
-	workflow_description: String!
-	weightages: [weightages!]!
-	isCustomWorkflow: Boolean!
-	updated_at: String!
-	created_at: String!
-	project_id: ID!
-	cluster_id: ID!
-	cluster_type: String!
+  workflow_id: String!
+  workflow_manifest: String!
+  cronSyntax: String!
+  cluster_name: String!
+  workflow_name: String!
+  workflow_description: String!
+  weightages: [weightages!]!
+  isCustomWorkflow: Boolean!
+  updated_at: String!
+  created_at: String!
+  project_id: ID!
+  cluster_id: ID!
+  cluster_type: String!
 }
 
 type Workflow {
-	workflow_id: String!
-	workflow_manifest: String!
-	cronSyntax: String!
-	cluster_name: String!
-	workflow_name: String!
-	workflow_description: String!
-	weightages: [weightages!]!
-	isCustomWorkflow: Boolean!
-	updated_at: String!
-	created_at: String!
-	project_id: ID!
-	cluster_id: ID!
-	cluster_type: String!
-	workflow_runs: [WorkflowRuns]
+  workflow_id: String!
+  workflow_manifest: String!
+  cronSyntax: String!
+  cluster_name: String!
+  workflow_name: String!
+  workflow_description: String!
+  weightages: [weightages!]!
+  isCustomWorkflow: Boolean!
+  updated_at: String!
+  created_at: String!
+  project_id: ID!
+  cluster_id: ID!
+  cluster_type: String!
+  workflow_runs: [WorkflowRuns]
 }
 
 type WorkflowRuns {
-	execution_data: String!
-	workflow_run_id: ID!
-	last_updated: String!
+  execution_data: String!
+  workflow_run_id: ID!
+  last_updated: String!
 }
 
 type clusterRegResponse {
-	token: String!
-	cluster_id: String!
-	cluster_name: String!
+  token: String!
+  cluster_id: String!
+  cluster_name: String!
 }
 
 type Query {
-	# [Deprecated soon]
-	getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
+  # [Deprecated soon]
+  getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
 
-	getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
+  getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
 
-	getUser(username: String!): User! @authorized
+  getUser(username: String!): User! @authorized
 
-	getProject(projectID: String!): Project! @authorized
+  getProject(projectID: String!): Project! @authorized
 
-	users: [User!]! @authorized
+  users: [User!]! @authorized
 
-	# [Deprecated soon]
-	getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
+  # [Deprecated soon]
+  getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
 
-	ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
+  ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
 
-	getCharts(chartsInput: ChartsInput!): [Chart!]! @authorized
+  getCharts(chartsInput: ChartsInput!): [Chart!]! @authorized
 
-	getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
+  getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
 
-	getHubStatus(username: String!): [MyHubStatus]! @authorized
+  getHubStatus(username: String!): [MyHubStatus]! @authorized
 }
 
 type Mutation {
-	#It is used to create external cluster.
-	userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
+  #It is used to create external cluster.
+  userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
-	#It is used to create chaosworkflow
-	createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
-		@authorized
+  #It is used to create chaosworkflow
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
+    @authorized
 
-	createUser(user: CreateUserInput!): User! @authorized
+  createUser(user: CreateUserInput!): User! @authorized
 
-	updateUser(user: UpdateUserInput!): String! @authorized
+  updateUser(user: UpdateUserInput!): String! @authorized
 
-	deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
+  deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
 
-	sendInvitation(member: MemberInput!): Member @authorized
+  sendInvitation(member: MemberInput!): Member @authorized
 
-	acceptInvitation(member: MemberInput!): String! @authorized
+  acceptInvitation(member: MemberInput!): String! @authorized
 
-	declineInvitation(member: MemberInput!): String! @authorized
+  declineInvitation(member: MemberInput!): String! @authorized
 
-	removeInvitation(member: MemberInput!): String! @authorized
+  removeInvitation(member: MemberInput!): String! @authorized
 
-	#It is used to confirm the subscriber registration
-	clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
+  #It is used to confirm the subscriber registration
+  clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
 
-	#It is used to send cluster related events from the subscriber
-	newClusterEvent(clusterEvent: ClusterEventInput!): String!
+  #It is used to send cluster related events from the subscriber
+  newClusterEvent(clusterEvent: ClusterEventInput!): String!
 
-	chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
+  chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
 
-	podLog(log: PodLog!): String!
+  podLog(log: PodLog!): String!
 
-	addMyHub(myhubInput: CreateMyHub!, username: String!): User! @authorized
+  addMyHub(myhubInput: CreateMyHub!, username: String!): User! @authorized
+
+  syncHub(syncHubInput: ChartsInput!): [MyHubStatus!]! @authorized
 }
 
 type Subscription {
-	#It is used to listen cluster events from the graphql server
-	clusterEventListener(project_id: String!): ClusterEvent! @authorized
+  #It is used to listen cluster events from the graphql server
+  clusterEventListener(project_id: String!): ClusterEvent! @authorized
 
-	workflowEventListener(project_id: String!): WorkflowRun! @authorized
+  workflowEventListener(project_id: String!): WorkflowRun! @authorized
 
-	getPodLog(podDetails: PodLogRequest!): PodLogResponse! @authorized
+  getPodLog(podDetails: PodLogRequest!): PodLogResponse! @authorized
 
-	#It is used to listen cluster operation request from the graphql server
-	clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
+  #It is used to listen cluster operation request from the graphql server
+  clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/usermanagement.graphqls", Input: `type User {
@@ -2512,6 +2528,20 @@ func (ec *executionContext) field_Mutation_sendInvitation_args(ctx context.Conte
 		}
 	}
 	args["member"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_syncHub_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.ChartsInput
+	if tmp, ok := rawArgs["syncHubInput"]; ok {
+		arg0, err = ec.unmarshalNChartsInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChartsInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["syncHubInput"] = arg0
 	return args, nil
 }
 
@@ -5711,6 +5741,67 @@ func (ec *executionContext) _Mutation_addMyHub(ctx context.Context, field graphq
 	return ec.marshalNUser2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_syncHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_syncHub_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().SyncHub(rctx, args["syncHubInput"].(model.ChartsInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.MyHubStatus); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.MyHubStatus`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.MyHubStatus)
+	fc.Result = res
+	return ec.marshalNMyHubStatus2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHubStatusᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _MyHub_id(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -5745,7 +5836,7 @@ func (ec *executionContext) _MyHub_id(ctx context.Context, field graphql.Collect
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _MyHub_GitURL(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
+func (ec *executionContext) _MyHub_RepoURL(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5762,7 +5853,7 @@ func (ec *executionContext) _MyHub_GitURL(ctx context.Context, field graphql.Col
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.GitURL, nil
+		return obj.RepoURL, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5779,7 +5870,7 @@ func (ec *executionContext) _MyHub_GitURL(ctx context.Context, field graphql.Col
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _MyHub_GitBranch(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
+func (ec *executionContext) _MyHub_RepoBranch(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5796,7 +5887,7 @@ func (ec *executionContext) _MyHub_GitBranch(ctx context.Context, field graphql.
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.GitBranch, nil
+		return obj.RepoBranch, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5915,7 +6006,7 @@ func (ec *executionContext) _MyHubStatus_id(ctx context.Context, field graphql.C
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _MyHubStatus_GitURL(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
+func (ec *executionContext) _MyHubStatus_RepoURL(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5932,7 +6023,7 @@ func (ec *executionContext) _MyHubStatus_GitURL(ctx context.Context, field graph
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.GitURL, nil
+		return obj.RepoURL, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5949,7 +6040,7 @@ func (ec *executionContext) _MyHubStatus_GitURL(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _MyHubStatus_GitBranch(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
+func (ec *executionContext) _MyHubStatus_RepoBranch(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5966,7 +6057,7 @@ func (ec *executionContext) _MyHubStatus_GitBranch(ctx context.Context, field gr
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.GitBranch, nil
+		return obj.RepoBranch, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11102,15 +11193,15 @@ func (ec *executionContext) unmarshalInputCreateMyHub(ctx context.Context, obj i
 			if err != nil {
 				return it, err
 			}
-		case "GitURL":
+		case "RepoURL":
 			var err error
-			it.GitURL, err = ec.unmarshalNString2string(ctx, v)
+			it.RepoURL, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "GitBranch":
+		case "RepoBranch":
 			var err error
-			it.GitBranch, err = ec.unmarshalNString2string(ctx, v)
+			it.RepoBranch, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -12141,6 +12232,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "syncHub":
+			out.Values[i] = ec._Mutation_syncHub(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -12168,13 +12264,13 @@ func (ec *executionContext) _MyHub(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "GitURL":
-			out.Values[i] = ec._MyHub_GitURL(ctx, field, obj)
+		case "RepoURL":
+			out.Values[i] = ec._MyHub_RepoURL(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "GitBranch":
-			out.Values[i] = ec._MyHub_GitBranch(ctx, field, obj)
+		case "RepoBranch":
+			out.Values[i] = ec._MyHub_RepoBranch(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -12215,13 +12311,13 @@ func (ec *executionContext) _MyHubStatus(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "GitURL":
-			out.Values[i] = ec._MyHubStatus_GitURL(ctx, field, obj)
+		case "RepoURL":
+			out.Values[i] = ec._MyHubStatus_RepoURL(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "GitBranch":
-			out.Values[i] = ec._MyHubStatus_GitBranch(ctx, field, obj)
+		case "RepoBranch":
+			out.Values[i] = ec._MyHubStatus_RepoBranch(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -13891,6 +13987,10 @@ func (ec *executionContext) marshalNMyHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmus
 	return ec._MyHub(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNMyHubStatus2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHubStatus(ctx context.Context, sel ast.SelectionSet, v model.MyHubStatus) graphql.Marshaler {
+	return ec._MyHubStatus(ctx, sel, &v)
+}
+
 func (ec *executionContext) marshalNMyHubStatus2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHubStatus(ctx context.Context, sel ast.SelectionSet, v []*model.MyHubStatus) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -13926,6 +14026,53 @@ func (ec *executionContext) marshalNMyHubStatus2ᚕᚖgithubᚗcomᚋlitmuschaos
 	}
 	wg.Wait()
 	return ret
+}
+
+func (ec *executionContext) marshalNMyHubStatus2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHubStatusᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.MyHubStatus) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNMyHubStatus2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHubStatus(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNMyHubStatus2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHubStatus(ctx context.Context, sel ast.SelectionSet, v *model.MyHubStatus) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._MyHubStatus(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNPackageInformation2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPackageInformation(ctx context.Context, sel ast.SelectionSet, v model.PackageInformation) graphql.Marshaler {
