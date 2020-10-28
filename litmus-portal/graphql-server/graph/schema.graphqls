@@ -23,6 +23,8 @@ type Cluster {
   agent_namespace: String
   serviceaccount: String
   agent_scope: String!
+  agent_ns_exists: Boolean
+  agent_sa_exists: Boolean
 }
 
 input ClusterInput {
@@ -34,6 +36,8 @@ input ClusterInput {
   agent_namespace: String
   serviceaccount: String
   agent_scope: String!
+  agent_ns_exists: Boolean
+  agent_sa_exists: Boolean
 }
 
 type ClusterEvent {

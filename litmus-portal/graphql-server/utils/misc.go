@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bufio"
+	"fmt"
 	"math/rand"
 	"net/http"
 	"os"
@@ -30,6 +31,13 @@ func RandomString(n int) string {
 
 //ManifestParser parses manifests yaml and generates dynamic manifest with specified keys
 func ManifestParser(cluster database.Cluster, template string, subscriberConfig *types.SubscriberConfigurationVars) ([]byte, error) {
+	defaultState := false
+	if cluster.AgentNsExists == nil {
+		cluster.AgentNsExists = &defaultState
+	}
+	if cluster.AgentSaExists == nil {
+		cluster.AgentSaExists = &defaultState
+	}
 	file, err := os.Open(template)
 	if err != nil {
 		return []byte{}, err
@@ -38,9 +46,40 @@ func ManifestParser(cluster database.Cluster, template string, subscriberConfig 
 	scanner := bufio.NewScanner(file)
 	var lines []string
 
+	if !*cluster.AgentNsExists || !*cluster.AgentSaExists {
+		comment := fmt.Sprintf("# This is an auto-generated file. DO NOT EDIT")
+		lines = append(lines, comment)
+	}
+	if !*cluster.AgentNsExists {
+		var nsYaml string
+		if cluster.AgentNamespace != nil {
+			nsYaml = fmt.Sprintf("apiVersion: v1\nkind: Namespace\nmetadata:\n  name: %s\n---", *cluster.AgentNamespace)
+		} else {
+			nsYaml = fmt.Sprintf("apiVersion: v1\nkind: Namespace\nmetadata:\n  name: litmus\n---")
+		}
+		lines = append(lines, nsYaml)
+	}
+	if !*cluster.AgentSaExists {
+		var saYaml string
+		if cluster.Serviceaccount != nil && cluster.AgentNamespace != nil {
+			saYaml = fmt.Sprintf("apiVersion: v1\nkind: ServiceAccount\nmetadata:\n  name: %s\n  namespace: %s\n---", *cluster.Serviceaccount, *cluster.AgentNamespace)
+		} else if cluster.Serviceaccount == nil && cluster.AgentNamespace != nil {
+			saYaml = fmt.Sprintf("apiVersion: v1\nkind: ServiceAccount\nmetadata:\n  name: litmus\n  namespace: %s\n---", *cluster.AgentNamespace)
+		} else if cluster.Serviceaccount != nil && cluster.AgentNamespace == nil {
+			saYaml = fmt.Sprintf("apiVersion: v1\nkind: ServiceAccount\nmetadata:\n  name: %s\n  namespace: litmus\n---", *cluster.Serviceaccount)
+		} else {
+			saYaml = fmt.Sprintf("apiVersion: v1\nkind: ServiceAccount\nmetadata:\n  name: litmus\n  namespace: litmus\n---")
+		}
+		lines = append(lines, saYaml)
+	}
+
 	for scanner.Scan() {
 		line := scanner.Text()
-		if strings.Contains(line, "#{CID}") {
+		if strings.Contains(line, "# This is an auto-generated file. DO NOT EDIT") {
+			if !*cluster.AgentNsExists || !*cluster.AgentSaExists {
+				line = strings.Replace(line, "# This is an auto-generated file. DO NOT EDIT", "", -1)
+			}
+		} else if strings.Contains(line, "#{CID}") {
 			line = strings.Replace(line, "#{CID}", cluster.ClusterID, -1)
 		} else if strings.Contains(line, "#{KEY}") {
 			line = strings.Replace(line, "#{KEY}", cluster.AccessKey, -1)

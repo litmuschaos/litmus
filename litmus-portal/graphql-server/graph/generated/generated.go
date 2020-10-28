@@ -87,6 +87,8 @@ type ComplexityRoot struct {
 	Cluster struct {
 		AccessKey          func(childComplexity int) int
 		AgentNamespace     func(childComplexity int) int
+		AgentNsExists      func(childComplexity int) int
+		AgentSaExists      func(childComplexity int) int
 		AgentScope         func(childComplexity int) int
 		ClusterID          func(childComplexity int) int
 		ClusterName        func(childComplexity int) int
@@ -549,6 +551,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Cluster.AgentNamespace(childComplexity), true
+
+	case "Cluster.agent_ns_exists":
+		if e.complexity.Cluster.AgentNsExists == nil {
+			break
+		}
+
+		return e.complexity.Cluster.AgentNsExists(childComplexity), true
+
+	case "Cluster.agent_sa_exists":
+		if e.complexity.Cluster.AgentSaExists == nil {
+			break
+		}
+
+		return e.complexity.Cluster.AgentSaExists(childComplexity), true
 
 	case "Cluster.agent_scope":
 		if e.complexity.Cluster.AgentScope == nil {
@@ -2097,6 +2113,8 @@ type Cluster {
   agent_namespace: String
   serviceaccount: String
   agent_scope: String!
+  agent_ns_exists: Boolean
+  agent_sa_exists: Boolean
 }
 
 input ClusterInput {
@@ -2108,6 +2126,8 @@ input ClusterInput {
   agent_namespace: String
   serviceaccount: String
   agent_scope: String!
+  agent_ns_exists: Boolean
+  agent_sa_exists: Boolean
 }
 
 type ClusterEvent {
@@ -3783,6 +3803,68 @@ func (ec *executionContext) _Cluster_agent_scope(ctx context.Context, field grap
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Cluster_agent_ns_exists(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Cluster",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AgentNsExists, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Cluster_agent_sa_exists(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Cluster",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AgentSaExists, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ClusterAction_project_id(ctx context.Context, field graphql.CollectedField, obj *model.ClusterAction) (ret graphql.Marshaler) {
@@ -11353,6 +11435,18 @@ func (ec *executionContext) unmarshalInputClusterInput(ctx context.Context, obj 
 			if err != nil {
 				return it, err
 			}
+		case "agent_ns_exists":
+			var err error
+			it.AgentNsExists, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "agent_sa_exists":
+			var err error
+			it.AgentSaExists, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -12021,6 +12115,10 @@ func (ec *executionContext) _Cluster(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "agent_ns_exists":
+			out.Values[i] = ec._Cluster_agent_ns_exists(ctx, field, obj)
+		case "agent_sa_exists":
+			out.Values[i] = ec._Cluster_agent_sa_exists(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

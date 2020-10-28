@@ -1,10 +1,5 @@
 # This is an auto-generated file. DO NOT EDIT
 apiVersion: v1
-kind: Namespace
-metadata:
-  name: #{AGENT-NAMESPACE}
----
-apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: argo
@@ -391,12 +386,6 @@ spec:
       nodeSelector:
         kubernetes.io/os: linux
       serviceAccountName: argo
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: #{SUBSCRIBER-SERVICE-ACCOUNT}
-  namespace: #{AGENT-NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role

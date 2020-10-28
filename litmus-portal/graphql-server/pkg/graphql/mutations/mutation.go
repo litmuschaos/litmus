@@ -41,6 +41,8 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		AgentNamespace: input.AgentNamespace,
 		Serviceaccount: input.Serviceaccount,
 		AgentScope:     input.AgentScope,
+		AgentNsExists:  input.AgentNsExists,
+		AgentSaExists:  input.AgentSaExists,
 		CreatedAt:      strconv.FormatInt(time.Now().Unix(), 10),
 		UpdatedAt:      strconv.FormatInt(time.Now().Unix(), 10),
 		Token:          token,

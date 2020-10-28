@@ -82,6 +82,8 @@ type Cluster struct {
 	AgentNamespace     *string `json:"agent_namespace"`
 	Serviceaccount     *string `json:"serviceaccount"`
 	AgentScope         string  `json:"agent_scope"`
+	AgentNsExists      *bool   `json:"agent_ns_exists"`
+	AgentSaExists      *bool   `json:"agent_sa_exists"`
 }
 
 type ClusterAction struct {
@@ -129,6 +131,8 @@ type ClusterInput struct {
 	AgentNamespace *string `json:"agent_namespace"`
 	Serviceaccount *string `json:"serviceaccount"`
 	AgentScope     string  `json:"agent_scope"`
+	AgentNsExists  *bool   `json:"agent_ns_exists"`
+	AgentSaExists  *bool   `json:"agent_sa_exists"`
 }
 
 type CreateMyHub struct {
