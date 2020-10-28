@@ -42,7 +42,7 @@ const MyHub = () => {
     },
   });
 
-  const totalHubs = data && data?.getHubStatus;
+  const totalHubs = data && data.getHubStatus;
   const classes = useStyles();
   const { t } = useTranslation();
   const [github, setGithub] = useState(true);
@@ -112,14 +112,14 @@ const MyHub = () => {
                                   align="center"
                                   className={classes.hubName}
                                 >
-                                  {hub?.HubName}
+                                  {hub.HubName}
                                 </Typography>
                                 <Typography
                                   variant="h6"
                                   align="center"
                                   className={classes.hubBranch}
                                 >
-                                  {hub?.RepoURL.split('/')[4]}/{hub.RepoBranch}
+                                  {hub.RepoURL.split('/')[4]}/{hub.RepoBranch}
                                 </Typography>
                                 <Typography style={{ fontSize: '12px' }}>
                                   {parseInt(hub.TotalExp, 10) > 0
@@ -127,7 +127,7 @@ const MyHub = () => {
                                     : '[Error: could not connect]'}
                                 </Typography>
                                 <hr className={classes.horizontalLine} />
-                                {hub?.IsAvailable ? (
+                                {hub.IsAvailable ? (
                                   <ButtonFilled
                                     styles={{ width: '100%' }}
                                     handleClick={() => {
