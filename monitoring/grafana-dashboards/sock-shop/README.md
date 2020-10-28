@@ -10,6 +10,12 @@ This dashboard visualizes Sock Shop application metrics metrics interleaved with
 
 - Prometheus operator and deployment configured for using the service monitors.
 
+OR
+
+- Sock shop microservices application deployments
+
+- prometheus deployment with a scrape job for litmus and sock-shop application metrics.
+
 - Chaos engine name must match the labels used in PromQL for the grafana dashboard.
 
 ## Instructions
