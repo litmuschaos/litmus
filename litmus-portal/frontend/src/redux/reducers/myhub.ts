@@ -10,8 +10,8 @@ const initialState: HubDetails = {
   HubName: '',
   RepoURL: '',
   RepoBranch: '',
-  RepoName: '',
-  UserName: '',
+  TotalExp: '',
+  IsAvailable: true,
 };
 
 export const hubDetails = createReducer<HubDetails>(initialState, {

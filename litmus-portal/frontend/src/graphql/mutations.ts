@@ -81,9 +81,19 @@ export const ADD_MY_HUB = gql`
       username
       my_hub {
         HubName
-        GitURL
-        GitBranch
+        RepoURL
+        RepoBranch
       }
+    }
+  }
+`;
+
+export const SYNC_REPO = gql`
+  mutation syncHub($data: ChartsInput!) {
+    syncHub(syncHubInput: $data) {
+      RepoURL
+      RepoBranch
+      IsAvailable
     }
   }
 `;

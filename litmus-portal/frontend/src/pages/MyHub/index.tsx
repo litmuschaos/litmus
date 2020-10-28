@@ -1,12 +1,14 @@
 import {
+  Button,
   Card,
   CardActionArea,
   CardContent,
+  Paper,
   Typography,
 } from '@material-ui/core';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import Scaffold from '../../containers/layouts/Scaffold';
 import useStyles from './styles';
@@ -16,22 +18,35 @@ import DeveloperGuide from '../../components/DeveloperGuide';
 import VideoCarousel from '../../components/VideoCarousel';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
-import { GET_USER } from '../../graphql';
-import useActions from '../../redux/actions';
+import { GET_HUB_STATUS, SYNC_REPO } from '../../graphql';
 import Loader from '../../components/Loader';
-import * as MyHubActions from '../../redux/actions/myhub';
-import { CurrentUserDetails, MyHubDetail } from '../../models/graphql/user';
+import { HubDetails, HubStatus } from '../../models/redux/myhub';
 
 const MyHub = () => {
+  // UserData from Redux
   const userData = useSelector((state: RootState) => state.userData);
-  const myHub = useActions(MyHubActions);
-  const { data, loading } = useQuery<CurrentUserDetails>(GET_USER, {
-    variables: { username: userData.username },
+
+  // Get MyHubs with Status
+  const { data, loading, refetch } = useQuery<HubStatus>(GET_HUB_STATUS, {
+    variables: { data: userData.username },
     fetchPolicy: 'cache-and-network',
   });
+
+  const [loader, setLoader] = useState(false);
+
+  // Mutation to sync a repo
+  const [syncRepo] = useMutation(SYNC_REPO, {
+    onCompleted: () => {
+      refetch();
+      setLoader(false);
+    },
+  });
+
+  const totalHubs = data && data?.getHubStatus;
   const classes = useStyles();
   const { t } = useTranslation();
   const [github, setGithub] = useState(true);
+  const [key, setKey] = useState('');
 
   return (
     <Scaffold>
@@ -60,7 +75,7 @@ const MyHub = () => {
                     {t('myhub.mainPage.switchHub')}
                   </Typography>
                   <div className={classes.noHub}>
-                    {data?.getUser.my_hub.length === 0 ? (
+                    {totalHubs && totalHubs.length === 0 ? (
                       <DeveloperGuide
                         header={t('myhub.mainPage.devGuideHeader')}
                         description={t('myhub.mainPage.devGuideDescription')}
@@ -70,47 +85,86 @@ const MyHub = () => {
                       <></>
                     )}
                     <div className={classes.chartsGroup}>
-                      {data?.getUser.my_hub.map((hub: MyHubDetail) => {
-                        return (
-                          <Card
-                            key={hub.id}
-                            elevation={3}
-                            className={classes.cardDivChart}
-                            onClick={() => {
-                              myHub.setHubDetails({
-                                id: hub.id,
-                                HubName: hub.HubName,
-                                RepoURL: hub.GitURL,
-                                RepoName: hub.GitURL.split('/')[4],
-                                RepoBranch: hub.GitBranch,
-                                UserName: userData.username,
-                              });
-                              history.push(`/myhub/${hub.HubName}`);
-                            }}
-                          >
-                            <CardContent className={classes.cardContent}>
-                              <img
-                                src="/icons/my-hub-charts.svg"
-                                alt="add-hub"
-                              />
-                              <Typography
-                                variant="h6"
-                                align="center"
-                                className={classes.hubName}
-                              >
-                                {hub.HubName}
-                              </Typography>
-                              <Typography
-                                variant="h6"
-                                align="center"
-                                className={classes.hubBranch}
-                              >
-                                {hub.GitURL.split('/')[4]}/{hub.GitBranch}
-                              </Typography>
-                            </CardContent>
-                          </Card>
-                        );
-                      })}
+                      {totalHubs &&
+                        totalHubs.map((hub: HubDetails) => {
+                          return (
+                            <Paper
+                              key={hub.id}
+                              elevation={3}
+                              className={classes.cardDivChart}
+                            >
+                              <CardContent className={classes.cardContent}>
+                                <Typography
+                                  className={
+                                    hub.IsAvailable
+                                      ? classes.connected
+                                      : classes.error
+                                  }
+                                >
+                                  {hub.IsAvailable ? 'Connected' : 'Error'}
+                                </Typography>
+                                <img
+                                  src="/icons/my-hub-charts.svg"
+                                  alt="add-hub"
+                                />
+                                <Typography
+                                  variant="h6"
+                                  align="center"
+                                  className={classes.hubName}
+                                >
+                                  {hub?.HubName}
+                                </Typography>
+                                <Typography
+                                  variant="h6"
+                                  align="center"
+                                  className={classes.hubBranch}
+                                >
+                                  {hub?.RepoURL.split('/')[4]}/{hub.RepoBranch}
+                                </Typography>
+                                <Typography style={{ fontSize: '12px' }}>
+                                  {parseInt(hub.TotalExp, 10) > 0
+                                    ? `${hub.TotalExp} experiments`
+                                    : '[Error: could not connect]'}
+                                </Typography>
+                                <hr className={classes.horizontalLine} />
+                                {hub?.IsAvailable ? (
+                                  <ButtonFilled
+                                    styles={{ width: '100%' }}
+                                    handleClick={() => {
+                                      history.push(`/myhub/${hub.HubName}`);
+                                    }}
+                                    isPrimary={false}
+                                  >
+                                    View
+                                  </ButtonFilled>
+                                ) : (
+                                  <Button
+                                    className={classes.failedBtn}
+                                    disabled={key === hub.id && loader}
+                                    onClick={() => {
+                                      syncRepo({
+                                        variables: {
+                                          data: {
+                                            HubName: hub.HubName,
+                                            UserName: userData.username,
+                                            RepoURL: hub.RepoURL,
+                                            RepoBranch: hub.RepoBranch,
+                                          },
+                                        },
+                                      });
+                                      setKey(hub.id);
+                                      setLoader(true);
+                                    }}
+                                  >
+                                    {key === hub.id && loader
+                                      ? 'Syncing Repo...'
+                                      : 'Retry Connection'}
+                                  </Button>
+                                )}
+                              </CardContent>
+                            </Paper>
+                          );
+                        })}
                       <Card
                         elevation={3}
                         className={classes.cardDiv}

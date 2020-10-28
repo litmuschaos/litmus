@@ -536,7 +536,7 @@ myhub:
   myhubChart:
     header: My Hub
     github: github.com/
-    syncingRepo: Please wait while we are syncing your repo!
+    syncingRepo: Loading Charts, Please Wait...!
   connectHubPage:
     connectHub: Connect a new chaos hub
     enterInfo: Enter information in the required fields

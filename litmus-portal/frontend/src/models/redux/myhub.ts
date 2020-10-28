@@ -63,7 +63,6 @@ export interface ChartsInput {
   UserName: string;
   RepoURL: string;
   RepoBranch: string;
-  RepoName: string;
 }
 
 export interface Charts {
@@ -79,8 +78,12 @@ export interface HubDetails {
   HubName: string;
   RepoURL: string;
   RepoBranch: string;
-  RepoName: string;
-  UserName: string;
+  TotalExp: string;
+  IsAvailable: boolean;
+}
+
+export interface HubStatus {
+  getHubStatus: HubDetails[];
 }
 
 export enum MyHubActions {

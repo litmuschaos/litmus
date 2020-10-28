@@ -10,10 +10,9 @@ import DeveloperGuide from '../../../components/DeveloperGuide';
 import ExperimentInfo from '../../../components/ExperimentInfo';
 import UsefulLinks from '../../../components/UsefulLinks';
 import InstallChaos from '../../../components/InstallChaos';
-import { GET_EXPERIMENT_DATA, GET_USER } from '../../../graphql';
-import { ExperimentDetail, Link } from '../../../models/redux/myhub';
+import { GET_EXPERIMENT_DATA, GET_HUB_STATUS } from '../../../graphql';
+import { ExperimentDetail, HubStatus, Link } from '../../../models/redux/myhub';
 import Loader from '../../../components/Loader';
-import { CurrentUserDetails } from '../../../models/graphql/user';
 
 interface URLParams {
   chart: string;
@@ -23,23 +22,32 @@ interface URLParams {
 
 const MyHub = () => {
   const classes = useStyles();
+
+  // User Data from Redux
   const userData = useSelector((state: RootState) => state.userData);
-  const paramData: URLParams = useParams();
-  const { data: userDetails } = useQuery<CurrentUserDetails>(GET_USER, {
-    variables: { username: userData.username },
+
+  // Get all MyHubs with status
+  const { data: userDetails } = useQuery<HubStatus>(GET_HUB_STATUS, {
+    variables: { data: userData.username },
     fetchPolicy: 'cache-and-network',
   });
-  const UserHub = userDetails?.getUser.my_hub.filter((myHub) => {
+
+  // Get Parameters from URL
+  const paramData: URLParams = useParams();
+
+  // Filter the selected MyHub
+  const UserHub = userDetails?.getHubStatus.filter((myHub) => {
     return paramData.hubname === myHub.HubName;
   })[0];
+
+  // Query to get charts of selected MyHub
   const { data, loading } = useQuery<ExperimentDetail>(GET_EXPERIMENT_DATA, {
     variables: {
       data: {
         HubName: paramData.hubname,
         UserName: userData.username,
-        RepoOwner: UserHub?.GitURL.split('/')[3],
-        RepoName: UserHub?.GitURL.split('/')[4],
-        RepoBranch: UserHub?.GitBranch,
+        RepoURL: UserHub?.RepoURL,
+        RepoBranch: UserHub?.RepoBranch,
         ChartName: paramData.chart,
         ExperimentName: paramData.experiment,
       },
@@ -47,13 +55,17 @@ const MyHub = () => {
     fetchPolicy: 'cache-and-network',
   });
   const experimentData = data?.getHubExperiment;
+
+  // State for default video URL
   let videoURL: string = '';
   const video = data?.getHubExperiment.Spec.Links.filter(
     (l: Link) => l.Name === 'Video'
   )[0];
-
   videoURL = video ? video.Url : '';
-  const urltoIcon = `${UserHub?.GitURL}/raw/${UserHub?.GitBranch}/charts/${paramData.chart}/icons/${paramData.experiment}.png`;
+
+  // State for default icon URL
+  const urltoIcon = `${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/charts/${paramData.chart}/icons/${paramData.experiment}.png`;
+
   return (
     <Scaffold>
       {loading ? (
@@ -123,17 +135,17 @@ Finish it on GitHub using a developer`s guide."
               <InstallChaos
                 title="Install this Chaos Experiment"
                 description="You can install the Chaos Experiment using the following command"
-                yamlLink={`${UserHub?.GitURL}/raw/${UserHub?.GitBranch}/charts/${paramData.chart}/${paramData.experiment}/experiment.yaml`}
+                yamlLink={`${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/charts/${paramData.chart}/${paramData.experiment}/experiment.yaml`}
               />
               <InstallChaos
                 title="Setup Service Account (RBAC)"
                 description="Create a service account using the following command"
-                yamlLink={`${UserHub?.GitURL}/raw/${UserHub?.GitBranch}/charts/${paramData.chart}/${paramData.experiment}/rbac.yaml`}
+                yamlLink={`${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/charts/${paramData.chart}/${paramData.experiment}/rbac.yaml`}
               />
               <InstallChaos
                 title="Sample Chaos Engine"
                 description="Copy and edit this sample Chaos Engine yaml according to your application needs"
-                yamlLink={`${UserHub?.GitURL}/raw/${UserHub?.GitBranch}/charts/${paramData.chart}/${paramData.experiment}/engine.yaml`}
+                yamlLink={`${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/charts/${paramData.chart}/${paramData.experiment}/engine.yaml`}
               />
             </div>
           </div>

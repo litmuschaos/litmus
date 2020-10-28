@@ -12,14 +12,13 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import useStyles from './styles';
-import { GET_CHARTS_DATA, GET_USER } from '../../../graphql';
+import { GET_CHARTS_DATA, GET_HUB_STATUS } from '../../../graphql';
 import { RootState } from '../../../redux/reducers';
-import { Chart, Charts } from '../../../models/redux/myhub';
+import { Chart, Charts, HubStatus } from '../../../models/redux/myhub';
 import Loader from '../../../components/Loader';
 import Center from '../../../containers/layouts/Center';
 import HeaderSection from './headerSection';
 import { history } from '../../../redux/configureStore';
-import { CurrentUserDetails } from '../../../models/graphql/user';
 
 interface ChartName {
   ChaosName: string;
@@ -31,35 +30,42 @@ interface URLParams {
 }
 
 const MyHub = () => {
+  // User Data from Redux
   const userData = useSelector((state: RootState) => state.userData);
-  const { data: userDetails } = useQuery<CurrentUserDetails>(GET_USER, {
-    variables: { username: userData.username },
+
+  // Get all MyHubs with status
+  const { data: userDetails } = useQuery<HubStatus>(GET_HUB_STATUS, {
+    variables: { data: userData.username },
     fetchPolicy: 'cache-and-network',
   });
+
+  // Get Parameters from URL
   const paramData: URLParams = useParams();
-  const UserHub = userDetails?.getUser.my_hub.filter((myHub) => {
+
+  // Filter the selected MyHub
+  const UserHub = userDetails?.getHubStatus.filter((myHub) => {
     return paramData.hubname === myHub.HubName;
-  });
+  })[0];
 
   const classes = useStyles();
-  const hubData = useSelector((state: RootState) => state.hubDetails);
-  const { HubName, RepoName, RepoURL, RepoBranch } = hubData;
-  const experimentDefaultImagePath = `${RepoURL.split('/')[0]}//${
-    RepoURL.split('/')[2]
-  }/${RepoURL.split('/')[3]}/${RepoName}/raw/${RepoBranch}/charts/`;
+
+  const experimentDefaultImagePath = `${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/charts/`;
   const { t } = useTranslation();
+
+  // Query to get charts of selected MyHub
   const { data, loading } = useQuery<Charts>(GET_CHARTS_DATA, {
     variables: {
       data: {
         UserName: userData.username,
-        RepoURL: UserHub && UserHub[0].GitURL,
-        RepoBranch: UserHub && UserHub[0].GitBranch,
-        RepoName: UserHub && UserHub[0].GitURL.split('/')[4],
+        RepoURL: UserHub?.RepoURL,
+        RepoBranch: UserHub?.RepoBranch,
         HubName: paramData.hubname,
       },
     },
     fetchPolicy: 'cache-and-network',
   });
+
+  // State for searching charts
   const [search, setSearch] = useState('');
   const changeSearch = (
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -101,8 +107,8 @@ const MyHub = () => {
         </Typography>
         <Typography variant="h4">
           <strong>
-            {t('myhub.myhubChart.github')}
-            {HubName}/{RepoName}
+            {UserHub?.HubName}/{UserHub?.RepoURL.split('/')[4]}/
+            {UserHub?.RepoBranch}
           </strong>
         </Typography>
       </div>
@@ -124,14 +130,14 @@ const MyHub = () => {
                     className={classes.cardDiv}
                     onClick={() =>
                       history.push(
-                        `${HubName}/${expName.ChaosName}/${expName.ExperimentName}`
+                        `${UserHub?.HubName}/${expName.ChaosName}/${expName.ExperimentName}`
                       )
                     }
                   >
                     <CardContent className={classes.cardContent}>
                       <img
                         src={`${experimentDefaultImagePath}${expName.ChaosName}/icons/${expName.ExperimentName}.png`}
-                        alt="add-hub"
+                        alt={expName.ExperimentName}
                         className={classes.cardImage}
                       />
                       <Link
