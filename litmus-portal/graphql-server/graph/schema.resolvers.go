@@ -121,6 +121,10 @@ func (r *queryResolver) GetHubExperiment(ctx context.Context, experimentInput mo
 	return myhub.GetExperiment(ctx, experimentInput)
 }
 
+func (r *queryResolver) GetHubStatus(ctx context.Context, username string) ([]*model.MyHubStatus, error) {
+	return myhub.MyHubStatus(ctx, username)
+}
+
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {
 	log.Print("NEW EVENT ", projectID)
 	clusterEvent := make(chan *model.ClusterEvent, 1)

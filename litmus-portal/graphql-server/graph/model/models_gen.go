@@ -194,6 +194,15 @@ type MyHub struct {
 	HubName     string `json:"HubName"`
 }
 
+type MyHubStatus struct {
+	ID          string `json:"id"`
+	GitURL      string `json:"GitURL"`
+	GitBranch   string `json:"GitBranch"`
+	IsAvailable bool   `json:"IsAvailable"`
+	TotalExp    string `json:"TotalExp"`
+	HubName     string `json:"HubName"`
+}
+
 type PackageInformation struct {
 	PackageName string         `json:"PackageName"`
 	Experiments []*Experiments `json:"Experiments"`

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
@@ -60,6 +61,50 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*m
 	}
 	outputUser := user.GetOutputUser()
 	return outputUser, nil
+
+}
+
+func MyHubStatus(ctx context.Context, username string) ([]*model.MyHubStatus, error) {
+	user, err := database.GetUserByUserName(ctx, username)
+	if err != nil {
+		return nil, err
+	}
+
+	userHubs := user.GetOutputUser().MyHub
+
+	var hubDetails []*model.MyHubStatus
+	var hubDetail *model.MyHubStatus
+	var isConfirmed bool
+	for i, hub := range userHubs {
+		sum := 0
+		chartsInput := model.ChartsInput{
+			HubName:    userHubs[i].HubName,
+			UserName:   user.GetOutputUser().Username,
+			RepoURL:    userHubs[i].GitURL,
+			RepoBranch: userHubs[i].GitBranch,
+		}
+		ChartsPath := handler.GetChartsPath(ctx, chartsInput)
+		ChartData, err := handler.GetChartsData(ChartsPath)
+		if err != nil {
+			isConfirmed = false
+			sum = 0
+		} else {
+			isConfirmed = true
+			for _, chart := range ChartData {
+				sum = sum + len(chart.Spec.Experiments)
+			}
+		}
+		hubDetail = &model.MyHubStatus{
+			IsAvailable: isConfirmed,
+			ID:          hub.ID,
+			GitURL:      hub.GitURL,
+			HubName:     hub.HubName,
+			GitBranch:   hub.GitBranch,
+			TotalExp:    strconv.Itoa(sum),
+		}
+		hubDetails = append(hubDetails, hubDetail)
+	}
+	return hubDetails, nil
 
 }
 
