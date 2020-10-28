@@ -6,7 +6,7 @@ This dashboard visualizes Sock Shop application metrics metrics interleaved with
 
 - Sock shop microservices application deployments.
   
-- Configure Kublr's prometheus for litmus and sock shop application metrics.
+- Kublr's central monitoring with Prometheus enabled for litmus and sock-shop application metrics.
 
 - Chaos engine name must match the labels used in PromQL for the grafana dashboard.
 
