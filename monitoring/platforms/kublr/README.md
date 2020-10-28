@@ -2,17 +2,16 @@
 
 This directory contains chaos interleaved grafana dashboards along with the utilities needed to get started with monitoring chaos experiments and workflows on Kublr platform.
 
+The main difference from the standard getting started guide is that Kublr platform includes a centralized monitoring subsystem out of the box. As a result, there is no
+need to set up prometheus and grafana to enable monitoring, it is possible to just enable monitoring integration in the test application and in Litmus.
 
 # Components
 
-- [Grafana Dashboards](https://github.com/litmuschaos/litmus/blob/master/monitoring/platforms/kublr/grafana-dashboards)
+-   [Grafana Dashboards](https://github.com/litmuschaos/litmus/blob/master/monitoring/platforms/kublr/grafana-dashboards)
 
-  > Contains chaos interleaved grafana dashboards for various native k8s and application metrics.
-
-- [Utilities](https://github.com/litmuschaos/litmus/blob/master/monitoring/platforms/kublr/utils)
-
-  > Contains utilities required to configure Kublr's monitoring infrastructure for chaos engineering.
-
+    > Contains chaos interleaved grafana dashboards for various native k8s and application metrics. These dashboards are
+    > modified slightly relative to the dashboards in the generic getting started guide to accomodate for additional labels
+    > Kublr introduces in its centralized monitoring.
 
 # Demonstration
 
@@ -22,215 +21,194 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
 
 ### Step-1: Setup Sock-Shop Microservices Application
 
-- Apply the sock-shop microservices manifests
+-   Apply the sock-shop microservices manifests
 
-  ```
-  kubectl apply -f ../../utils/sample-application-under-test/sock-shop/
-  ```
+    ```
+    kubectl apply -f ../../utils/sample-application-under-test/sock-shop/
+    ```
 
-- Wait until all services are up. Verify via `kubectl get pods -n sock-shop`
+-   Wait until all services are up. Verify via `kubectl get pods -n sock-shop`
 
 ### Step-2: Setup the LitmusChaos Infrastructure
 
-- Install the litmus chaos operator and CRDs
+-   Install the litmus chaos operator and CRDs
 
-  ```
-  kubectl apply -f https://litmuschaos.github.io/litmus/litmus-operator-v1.9.0.yaml
-  ```
+    ```
+    kubectl apply -f https://litmuschaos.github.io/litmus/litmus-operator-v1.9.0.yaml
+    ```
 
-- Install the litmus-admin serviceaccount for centralized/admin-mode of chaos execution
+-   Install the litmus-admin serviceaccount for centralized/admin-mode of chaos execution
 
-  ```
-  kubectl apply -f https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml
-  ```
+    ```
+    kubectl apply -f https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml
+    ```
 
-- Install the chaos experiments in admin(litmus) namespace
+-   Install the chaos experiments in admin(litmus) namespace
 
-  ```
-  kubectl apply -f https://hub.litmuschaos.io/api/chaos/1.9.0?file=charts/generic/experiments.yaml -n litmus
-  ```
+    ```
+    kubectl apply -f https://hub.litmuschaos.io/api/chaos/1.9.0?file=charts/generic/experiments.yaml -n litmus
+    ```
 
-### Step-3: Configure the Kublr centralized monitoring Infrastructure
+### Step-3: Configure Sock-shop application and Litmus for the Kublr centralized monitoring Infrastructure
 
-- Create monitoring namespace on the cluster
+-   Deploy Litmus monitoring components
 
-  ```
-  kubectl create ns monitoring
-  ```
+    ```
+    kubectl -n litmus apply -f ../../utils/metrics-exporters/litmus-metrics/chaos-exporter/
+    kubectl -n litmus apply -f ../../utils/metrics-exporters/litmus-metrics/litmus-event-router/
+    ```
 
-- Deploy monitoring components
+-   Enable Litmus metrics collection on the Litmus monitoring components
 
-  ```
-  kubectl -n monitoring apply -f ../../utils/metrics-exporters/node-exporter/
-  kubectl -n litmus apply -f ../../utils/metrics-exporters/litmus-metrics/chaos-exporter/
-  kubectl -n litmus apply -f ../../utils/metrics-exporters/litmus-metrics/litmus-event-router/
-  ```
+    ```
+    kubectl annotate svc -n litmus \
+      chaos-monitor chaos-operator-metrics litmus-eventrouter \
+      'prometheus.io/scrape=true'
+    ```
 
-- Add the jobs provided [here](https://raw.githubusercontent.com/litmuschaos/litmus/master/monitoring/platforms/kublr/utils/prometheus-config-template-jobs.yaml) to Kublr's prometheus configuration in the template section of `kublr-monitoring-prometheus` configMap in `kublr` namespace of deployed kublr platform using K8s dashboard UI or `kubectl`
+-   Enable custom metrics collection on the Sock-shop application
 
-  ```yaml
-      - job_name: 'sock-shop'
-      metrics_path: /metrics
-      kubernetes_sd_configs:
-        - role: pod
-      relabel_configs:
-        - source_labels:
-            - __meta_kubernetes_namespace
-            - __meta_kubernetes_pod_label_app
-            - __meta_kubernetes_pod_label_name
-          action: keep
-          regex: ^sock-shop;sock-shop;(.+?)$
-        - source_labels:
-            - __meta_kubernetes_namespace
-            - __meta_kubernetes_pod_container_name
-            - __address__
-          action: replace
-          target_label: __address__
-          regex: 'sock-shop;^(.+);(.+?)(?::\d+)?$'
-          replacement: '$1:6782'
-        - source_labels:
-            - __meta_kubernetes_namespace
-            - __meta_kubernetes_pod_label_app
-            - __meta_kubernetes_pod_container_name
-          action: replace
-          regex: ^sock-shop;sock-shop;(.+?)$
-          target_label: job
+    ```
+    kubectl annotate svc -n sock-shop \
+      carts catalogue front-end orders payment shipping user \
+      'prometheus.io/scrape=true'
+    ```
 
-    - job_name: 'chaos-monitor'
-      static_configs:
-        - targets: ['chaos-monitor.litmus.svc.cluster.local:8080']
-  ```
+-   Import the grafana dashboards choosing `prometheus` as data source.
 
-  ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/platforms/kublr/screenshots/prometheus-config-update.png?raw=true)
+    ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/import-dashboard.png?raw=true)
 
-- Import the grafana dashboards choosing `prometheus` as data source.
-
-  ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/import-dashboard.png?raw=true)
-
-- Import the grafana dashboard "Sock-Shop Performance" provided [here](https://raw.githubusercontent.com/litmuschaos/litmus/master/monitoring/grafana-dashboards/sock-shop/Sock-Shop-Performance-Under-Chaos.json)
+- Import the grafana dashboard "Sock-Shop Performance" provided [here](https://raw.githubusercontent.com/litmuschaos/litmus/master/monitoring/platforms/kublr/grafana-dashboards/sock-shop/Sock-Shop-Performance-Under-Chaos.json)
 
 - Import the grafana dashboard "Node and Pod Chaos Demo" provided [here](https://raw.githubusercontent.com/litmuschaos/litmus/master/monitoring/platforms/kublr/grafana-dashboards/kubernetes/Node-and-pod-metrics-dashboard-kublr.json)
 
 ### Step-4: Execute the Chaos Experiments
 
-- For the sake of illustration, let us execute node and pod level, CPU hog experiments on the `catalogue` microservice & Memory Hog experiments on the `orders` microservice in a staggered manner.
+-   For the sake of illustration, let us execute node and pod level, CPU hog experiments on the `catalogue` microservice & Memory Hog
+    experiments on the `orders` microservice in a staggered manner.
 
-```
-kubectl apply -f ../../utils/sample-chaos-injectors/chaos-experiments/catalogue/catalogue-pod-cpu-hog.yaml
-```
+    ```
+    kubectl apply -f ../../utils/sample-chaos-injectors/chaos-experiments/catalogue/catalogue-pod-cpu-hog.yaml
+    ```
 
-Wait for ~60s
+    Wait for ~60s
 
-```
-kubectl apply -f ../../utils/sample-chaos-injectors/chaos-experiments/orders/orders-pod-memory-hog.yaml
-```
+    ```
+    kubectl apply -f ../../utils/sample-chaos-injectors/chaos-experiments/orders/orders-pod-memory-hog.yaml
+    ```
 
-Wait for ~60s
+    Wait for ~60s
 
-```
-kubectl apply -f ../../utils/sample-chaos-injectors/chaos-experiments/catalogue/catalogue-node-cpu-hog.yaml
-```
+    ```
+    kubectl apply -f ../../utils/sample-chaos-injectors/chaos-experiments/catalogue/catalogue-node-cpu-hog.yaml
+    ```
 
-Wait for ~60s
+    Wait for ~60s
 
-```
-kubectl apply -f ../../utils/sample-chaos-injectors/chaos-experiments/orders/orders-node-memory-hog.yaml
-```
+    ```
+    kubectl apply -f ../../utils/sample-chaos-injectors/chaos-experiments/orders/orders-node-memory-hog.yaml
+    ```
 
-- Verify execution of chaos experiments
+-   Verify execution of chaos experiments
 
-  ```
-  kubectl describe chaosengine catalogue-pod-cpu-hog -n litmus
-  kubectl describe chaosengine orders-pod-memory-hog -n litmus
-  kubectl describe chaosengine catalogue-node-cpu-hog -n litmus
-  kubectl describe chaosengine orders-node-memory-hog -n litmus
-  ```
+    ```
+    kubectl describe chaosengine catalogue-pod-cpu-hog -n litmus
+    kubectl describe chaosengine orders-pod-memory-hog -n litmus
+    kubectl describe chaosengine catalogue-node-cpu-hog -n litmus
+    kubectl describe chaosengine orders-node-memory-hog -n litmus
+    ```
 
 ### Step-5: Visualize Chaos Impact
 
-- Observe the impact of chaos injection through increased Latency & reduced QPS (queries per second) on the microservices
-  under test.
+-   Observe the impact of chaos injection through increased Latency & reduced QPS (queries per second) on the microservices
+    under test.
 
-  ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/Sock-Shop-Dashboard.png?raw=true)
+    ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/Sock-Shop-Dashboard.png?raw=true)
 
-  ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/Node-and-Pod-metrics-Dashboard.png?raw=true)
+    ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/Node-and-Pod-metrics-Dashboard.png?raw=true)
 
 ### Step-6 (optional): Inject continous chaos using Argo CD.
 
-- Install Chaos workflow infrastructure.
+-   Install Chaos workflow infrastructure.
 
-  - Create argo namespace
+    -   Create argo namespace
+
+        ```
+        kubectl create ns argo
+        ```
+
+    -   Create the CRDs, workflow controller deployment with associated RBAC.
+
+        ```
+        kubectl apply -f https://raw.githubusercontent.com/argoproj/argo/stable/manifests/install.yaml -n argo
+        ```
+
+    -   Install the argo CLI on the test harness machine (where the kubeconfig is available)
+
+        ```bash
+        # Download the binary
+        curl -sLO https://github.com/argoproj/argo/releases/download/v2.11.0/argo-linux-amd64.gz
+
+        # Unzip
+        gunzip argo-linux-amd64.gz
+
+        # Make binary executable
+        chmod +x argo-linux-amd64
+
+        # Move binary to path
+        mv ./argo-linux-amd64 /usr/local/bin/argo
+
+        # Test installation
+        argo version
+        ```
+
+-   Create the Argo Access ServiceAccount
 
     ```
-    kubectl create ns argo
+    kubectl apply -f https://raw.githubusercontent.com/litmuschaos/chaos-workflows/master/Argo/argo-access.yaml -n litmus
     ```
 
-  - Create the CRDs, workflow controller deployment with associated RBAC.
+-   Run one or more of the litmuschaos experiments as Chaos workflows using argo CLI or kubectl.
 
-    ```
-    kubectl apply -f https://raw.githubusercontent.com/argoproj/argo/stable/manifests/install.yaml -n argo
+    > Node CPU hog
+    ```bash
+    argo cron create ../../utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/catalogue/catalogue-node-cpu-hog-workflow.yaml -n litmus
     ```
 
-  - Install the argo CLI on the test harness machine (where the kubeconfig is available)
+    > Node memory hog
+    ```bash
+    argo cron create ../../utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-node-memory-hog-workflow.yaml -n litmus
+    ```
+
+    > Pod CPU hog
 
     ```bash
-    # Download the binary
-    curl -sLO https://github.com/argoproj/argo/releases/download/v2.11.0/argo-linux-amd64.gz
-
-    # Unzip
-    gunzip argo-linux-amd64.gz
-
-    # Make binary executable
-    chmod +x argo-linux-amd64
-
-    # Move binary to path
-    mv ./argo-linux-amd64 /usr/local/bin/argo
-
-    # Test installation
-    argo version
+    kubectl apply -f ../../utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/catalogue/catalogue-pod-cpu-hog-workflow.yaml -n litmus
     ```
 
-- Create the Argo Access ServiceAccount
+    > Pod memory hog
+    ```bash
+    kubectl apply -f ../../utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-pod-memory-hog-workflow.yaml -n litmus
+    ```
 
-  ```
-  kubectl apply -f https://raw.githubusercontent.com/litmuschaos/chaos-workflows/master/Argo/argo-access.yaml -n litmus
-  ```
+-   Visualize the Chaos cron workflow through argo UI by obtaining Node port or Load Balancer IP.
 
-- Run one or more of the litmuschaos experiments as Chaos workflows using argo CLI or kubectl.
+    ```
+    kubectl port-forward svc/argo-server -n argo 2746
+    ```
 
-  > Node CPU hog
-  ```bash
-  argo cron create ../../utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/catalogue/catalogue-node-cpu-hog-workflow.yaml -n litmus
-  ```
+    OR
 
-  > Node memory hog
-  ```bash
-  argo cron create ../../utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-node-memory-hog-workflow.yaml -n litmus
-  ```
+    ```
+    kubectl patch svc argo-server -n argo -p '{"spec": {"type": "NodePort"}}'
+    ```
 
-  > Pod CPU hog
+    OR
 
-  ```bash
-  kubectl apply -f ../../utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/catalogue/catalogue-pod-cpu-hog-workflow.yaml -n litmus
-  ```
+    ```
+    kubectl patch svc argo-server -n argo -p '{"spec": {"type": "LoadBalancer"}}'
+    ```
 
-  > Pod memory hog
-  ```bash
-  kubectl apply -f ../../utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-pod-memory-hog-workflow.yaml -n litmus
-  ```
+    ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/chaos-workflow-representation.png?raw=true)
 
-- Visualize the Chaos cron workflow through argo UI by obtaining Node port or Load Balancer IP.
-
-  ```
-  kubectl patch svc argo-server -n argo -p '{"spec": {"type": "NodePort"}}'
-  ```
-
-  OR
-
-  ```
-  kubectl patch svc argo-server -n argo -p '{"spec": {"type": "LoadBalancer"}}'
-  ```
-
-  ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/chaos-workflow-representation.png?raw=true)
-
-  ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/chaos-cron-workflows.png?raw=true)
+    ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/chaos-cron-workflows.png?raw=true)
