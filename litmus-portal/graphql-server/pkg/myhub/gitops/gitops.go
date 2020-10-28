@@ -11,10 +11,6 @@ import (
 	"gopkg.in/src-d/go-git.v4/plumbing"
 )
 
-const (
-	defaultBranch = "master"
-)
-
 //GitConfig ...
 type GitConfig struct {
 	UserName      string
@@ -123,11 +119,7 @@ func (c GitConfig) isRepositoryExists() (bool, error) {
 func (c GitConfig) HandlerForNonExistingRepository() error {
 	RepoPath := GetClonePath(c)
 	var referenceName plumbing.ReferenceName
-	if c.Branch == defaultBranch {
-		referenceName = plumbing.NewBranchReferenceName(c.Branch)
-	} else {
-		referenceName = plumbing.NewTagReferenceName(c.Branch)
-	}
+	referenceName = plumbing.NewBranchReferenceName(c.Branch)
 	_, err := git.PlainClone(RepoPath, false, &git.CloneOptions{
 		URL: c.RepositoryURL, Progress: os.Stdout,
 		ReferenceName: referenceName,
@@ -247,11 +239,7 @@ func (c GitConfig) GitPull() error {
 		return err
 	}
 	var referenceName plumbing.ReferenceName
-	if c.Branch == defaultBranch {
-		referenceName = plumbing.NewBranchReferenceName(c.Branch)
-	} else {
-		referenceName = plumbing.NewTagReferenceName(c.Branch)
-	}
+	referenceName = plumbing.NewBranchReferenceName(c.Branch)
 	log.Info("git pull origin")
 	err = workTree.Pull(&git.PullOptions{RemoteName: c.RemoteName, ReferenceName: referenceName})
 	log.Infof("Executed git pull origin, Status: %s", err)
