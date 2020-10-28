@@ -1843,11 +1843,10 @@ type Charts {
 }
 
 input ChartsInput {
-	HubName: String!
-	UserName: String!
-	RepoBranch: String!
-	RepoName: String!
-	RepoURL: String!
+  HubName: String!
+  UserName: String!
+  RepoBranch: String!
+  RepoURL: String!
 }
 
 type Chart {
@@ -1922,9 +1921,8 @@ input CreateMyHub {
 
 input ExperimentInput {
   UserName: String!
-  RepoOwner: String!
+  RepoURL: String!
   RepoBranch: String!
-  RepoName: String!
   ChartName: String!
   ExperimentName: String!
   HubName: String!
@@ -10599,12 +10597,6 @@ func (ec *executionContext) unmarshalInputChartsInput(ctx context.Context, obj i
 			if err != nil {
 				return it, err
 			}
-		case "RepoName":
-			var err error
-			it.RepoName, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "RepoURL":
 			var err error
 			it.RepoURL, err = ec.unmarshalNString2string(ctx, v)
@@ -10827,21 +10819,15 @@ func (ec *executionContext) unmarshalInputExperimentInput(ctx context.Context, o
 			if err != nil {
 				return it, err
 			}
-		case "RepoOwner":
+		case "RepoURL":
 			var err error
-			it.RepoOwner, err = ec.unmarshalNString2string(ctx, v)
+			it.RepoURL, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "RepoBranch":
 			var err error
 			it.RepoBranch, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "RepoName":
-			var err error
-			it.RepoName, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}

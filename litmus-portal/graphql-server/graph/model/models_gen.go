@@ -60,7 +60,6 @@ type ChartsInput struct {
 	HubName    string `json:"HubName"`
 	UserName   string `json:"UserName"`
 	RepoBranch string `json:"RepoBranch"`
-	RepoName   string `json:"RepoName"`
 	RepoURL    string `json:"RepoURL"`
 }
 
@@ -142,9 +141,8 @@ type CreateUserInput struct {
 
 type ExperimentInput struct {
 	UserName       string `json:"UserName"`
-	RepoOwner      string `json:"RepoOwner"`
+	RepoURL        string `json:"RepoURL"`
 	RepoBranch     string `json:"RepoBranch"`
-	RepoName       string `json:"RepoName"`
 	ChartName      string `json:"ChartName"`
 	ExperimentName string `json:"ExperimentName"`
 	HubName        string `json:"HubName"`

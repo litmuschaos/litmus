@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"log"
-	"strings"
 
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
@@ -17,9 +16,6 @@ import (
 //AddMyHub is used for Adding a new MyHub
 func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*model.User, error) {
 
-	gitLink := strings.Split(myhub.GitURL, "/")
-	repo := gitLink[4]
-
 	IsExist, err := IsMyHubAvailable(ctx, myhub, username)
 	if err != nil {
 		return nil, err
@@ -30,11 +26,11 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*m
 
 	cloneHub := model.ChartsInput{
 		UserName:   username,
-		RepoName:   repo,
 		RepoBranch: myhub.GitBranch,
 		RepoURL:    myhub.GitURL,
 		HubName:    myhub.HubName,
 	}
+
 	//Cloning the repository at a path from myhub link structure.
 	err = gitops.GitClone(cloneHub)
 	if err != nil {
@@ -85,9 +81,6 @@ func IsMyHubAvailable(ctx context.Context, myhub model.CreateMyHub, username str
 
 //GetCharts is responsible for getting the charts details
 func GetCharts(ctx context.Context, chartsInput model.ChartsInput) ([]*model.Chart, error) {
-
-	//Syncing the local clone with origin before fetching charts.
-	gitops.GitSyncHandlerForUser(chartsInput)
 
 	ChartsPath := handler.GetChartsPath(ctx, chartsInput)
 	ChartsData, err := handler.GetChartsData(ChartsPath)

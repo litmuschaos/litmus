@@ -17,14 +17,13 @@ const (
 
 //GitConfig ...
 type GitConfig struct {
-	UserName       string
-	RepositoryName string
-	RepositoryURL  string
-	RemoteName     string
-	LocalCommit    string
-	RemoteCommit   string
-	HubName        string
-	Branch         string
+	UserName      string
+	RepositoryURL string
+	RemoteName    string
+	LocalCommit   string
+	RemoteCommit  string
+	HubName       string
+	Branch        string
 }
 
 var (
@@ -48,12 +47,11 @@ func GetClonePath(c GitConfig) string {
 //GitConfigConstruct is used for constructing the gitconfig
 func GitConfigConstruct(repoData model.ChartsInput) GitConfig {
 	gitConfig := GitConfig{
-		UserName:       repoData.UserName,
-		RepositoryName: repoData.RepoName,
-		HubName:        repoData.HubName,
-		RepositoryURL:  repoData.RepoURL,
-		RemoteName:     "origin",
-		Branch:         repoData.RepoBranch,
+		UserName:      repoData.UserName,
+		HubName:       repoData.HubName,
+		RepositoryURL: repoData.RepoURL,
+		RemoteName:    "origin",
+		Branch:        repoData.RepoBranch,
 	}
 
 	return gitConfig
@@ -67,7 +65,7 @@ func GitClone(repoData model.ChartsInput) error {
 		fmt.Print("Error in cloning")
 		return err
 	}
-	log.Infof("********* Successfully Cloned '%s' Branch of '%s' Repo in '%s' Hub *********", gitConfig.Branch, gitConfig.RepositoryName, gitConfig.HubName)
+	log.Infof("********* Successfully Cloned '%s' Hub *********", gitConfig.HubName)
 	return nil
 }
 
@@ -79,7 +77,7 @@ func GitSyncHandlerForUser(repoData model.ChartsInput) error {
 		log.Error(err)
 		return err
 	}
-	log.Infof("********* Repository syncing completed for '%s' Branch of '%s' Repo in '%s' Hub *********", gitConfig.Branch, gitConfig.RepositoryName, gitConfig.HubName)
+	log.Infof("********* Repository syncing completed for '%s' Hub *********", gitConfig.HubName)
 
 	return nil
 }

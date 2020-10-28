@@ -14,7 +14,6 @@ input ChartsInput {
   HubName: String!
   UserName: String!
   RepoBranch: String!
-  RepoName: String!
   RepoURL: String!
 }
 
@@ -90,9 +89,8 @@ input CreateMyHub {
 
 input ExperimentInput {
   UserName: String!
-  RepoOwner: String!
+  RepoURL: String!
   RepoBranch: String!
-  RepoName: String!
   ChartName: String!
   ExperimentName: String!
   HubName: String!
