@@ -12,7 +12,7 @@ This dashboard visualizes Sock Shop application metrics metrics interleaved with
 
 OR
 
-- Sock shop microservices application deployments
+- Sock shop microservices application deployments.
 
 - prometheus deployment with a scrape job for litmus and sock-shop application metrics.
 
