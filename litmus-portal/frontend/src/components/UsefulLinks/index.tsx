@@ -70,9 +70,9 @@ const UsefulLinks: React.FC<UsefulLinkProps> = ({
           </Typography>
         </div>
         <div className={classes.linkListBox}>
-          {data.map((d, i) => (
-            <span className={classes.staticType} key={d}>
-              {d}
+          {data.map((platform, i) => (
+            <span className={classes.staticType} key={platform}>
+              {platform}
               {i !== data.length - 1 ? ', ' : ''}
             </span>
           ))}

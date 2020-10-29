@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
+import { useTranslation } from 'react-i18next';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import useStyles from './styles';
 import { RootState } from '../../../redux/reducers';
@@ -66,6 +67,8 @@ const MyHub = () => {
   // State for default icon URL
   const urltoIcon = `${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/charts/${paramData.chart}/icons/${paramData.experiment}.png`;
 
+  const { t } = useTranslation();
+
   return (
     <Scaffold>
       {loading ? (
@@ -90,8 +93,7 @@ const MyHub = () => {
           <div className={classes.developerDiv}>
             <DeveloperGuide
               expAvailable
-              header="Congratulations! You have created a template for new experiment.
-Finish it on GitHub using a developer`s guide."
+              header={t('myhub.experimentPage.congrats')}
               description=""
             />
           </div>
@@ -133,18 +135,18 @@ Finish it on GitHub using a developer`s guide."
             {/* Install Chaos Section */}
             <div className={classes.installLinks}>
               <InstallChaos
-                title="Install this Chaos Experiment"
-                description="You can install the Chaos Experiment using the following command"
+                title={t('myhub.experimentPage.installExp')}
+                description={t('myhub.experimentPage.installExpDesc')}
                 yamlLink={`${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/charts/${paramData.chart}/${paramData.experiment}/experiment.yaml`}
               />
               <InstallChaos
-                title="Setup Service Account (RBAC)"
-                description="Create a service account using the following command"
+                title={t('myhub.experimentPage.installRBAC')}
+                description={t('myhub.experimentPage.installRBACDesc')}
                 yamlLink={`${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/charts/${paramData.chart}/${paramData.experiment}/rbac.yaml`}
               />
               <InstallChaos
-                title="Sample Chaos Engine"
-                description="Copy and edit this sample Chaos Engine yaml according to your application needs"
+                title={t('myhub.experimentPage.installEngine')}
+                description={t('myhub.experimentPage.installEngineDesc')}
                 yamlLink={`${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/charts/${paramData.chart}/${paramData.experiment}/engine.yaml`}
               />
             </div>

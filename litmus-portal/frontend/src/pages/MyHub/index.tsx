@@ -157,8 +157,8 @@ const MyHub = () => {
                                     }}
                                   >
                                     {key === hub.id && loader
-                                      ? 'Syncing Repo...'
-                                      : 'Retry Connection'}
+                                      ? t('myhub.mainPage.sync')
+                                      : t('myhub.mainPage.retry')}
                                   </Button>
                                 )}
                               </CardContent>

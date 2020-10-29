@@ -533,6 +533,8 @@ myhub:
     noGithubCredentials: You have not given your Github credential
     submitBtn: Submit Now
     videoDescription: Get resilient and compliance scores for your Kuberenetes product
+    sync: Syncing Repo...
+    retry: Retry Connection
   myhubChart:
     header: My Hub
     github: github.com/
@@ -557,3 +559,11 @@ myhub:
     copied: Copied
   usefulLink:
     maintainer: Maintainers
+  experimentPage:
+    congrats: Congratulations! You have created a template for new experiment. Finish it on GitHub using a developer`s guide.
+    installExp: Install this Chaos Experiment
+    installExpDesc: You can install the Chaos Experiment using the following command
+    installRBAC: Setup Service Account (RBAC)
+    installRBACDesc: Create a service account using the following command
+    installEngine: Sample Chaos Engine
+    installEngineDesc: Copy and edit this sample Chaos Engine yaml according to your application needs

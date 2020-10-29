@@ -47,13 +47,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
-
-  copyBtn: {
-    width: '5.9375rem',
-    height: '3.125',
-    borderColor: theme.palette.text.primary,
-    textTransform: 'none',
-  },
   yamlLink: {
     width: '90%',
     whiteSpace: 'pre-wrap',
