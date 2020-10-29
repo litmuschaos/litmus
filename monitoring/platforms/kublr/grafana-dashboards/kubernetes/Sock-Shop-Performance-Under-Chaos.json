@@ -40,7 +40,7 @@
       {
         "datasource": "${DS_DS_PROMETHEUS}",
         "enable": true,
-        "expr": "sum by (reason,involved_object_namespace,involved_object_name,involved_object_kind) (heptio_eventrouter_normal_total{reason=\"ChaosInject\", involved_object_namespace=\"litmus\",involved_object_name=\"orders-pod-memory-hog\", involved_object_kind=\"ChaosEngine\"}) - on () (sum by (reason,involved_object_namespace,involved_object_name,involved_object_kind) (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\", involved_object_namespace=\"litmus\",involved_object_name=\"orders-pod-memory-hog\", involved_object_kind=\"ChaosEngine\"}) OR on() vector(0))",
+        "expr": "sum by (reason,involved_object_namespace,involved_object_name,involved_object_kind) (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\", involved_object_namespace=\"litmus\",involved_object_name=\"orders-pod-memory-hog\", involved_object_kind=\"ChaosEngine\"}) - on () (sum by (reason,involved_object_namespace,involved_object_name,involved_object_kind) (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\", involved_object_namespace=\"litmus\",involved_object_name=\"orders-pod-memory-hog\", involved_object_kind=\"ChaosEngine\"}) OR on() vector(0))",
         "hide": false,
         "iconColor": "#F2CC0C",
         "limit": 100,
@@ -56,7 +56,7 @@
       {
         "datasource": "${DS_DS_PROMETHEUS}",
         "enable": true,
-        "expr": "sum by (reason,involved_object_namespace,involved_object_name,involved_object_kind) (heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\",involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"}) - on () (sum by (reason,involved_object_namespace,involved_object_name,involved_object_kind) (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\", involved_object_namespace=\"litmus\",involved_object_name=\"catalogue-pod-cpu-hog\",involved_object_kind=\"ChaosEngine\"}) OR on() vector(0))",
+        "expr": "sum by (reason,involved_object_namespace,involved_object_name,involved_object_kind) (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\",involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"}) - on () (sum by (reason,involved_object_namespace,involved_object_name,involved_object_kind) (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\", involved_object_namespace=\"litmus\",involved_object_name=\"catalogue-pod-cpu-hog\",involved_object_kind=\"ChaosEngine\"}) OR on() vector(0))",
         "hide": false,
         "iconColor": "#E0B400",
         "limit": 100,
@@ -71,7 +71,7 @@
       {
         "datasource": "${DS_DS_PROMETHEUS}",
         "enable": true,
-        "expr": "sum by (reason,involved_object_namespace,involved_object_name,involved_object_kind) (heptio_eventrouter_normal_total{reason=\"ChaosInject\", involved_object_namespace=\"litmus\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_kind=\"ChaosEngine\"}) - on () (sum by (reason,involved_object_namespace,involved_object_name,involved_object_kind) (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\", involved_object_namespace=\"litmus\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_kind=\"ChaosEngine\"}) OR on() vector(0))",
+        "expr": "sum by (reason,involved_object_namespace,involved_object_name,involved_object_kind) (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\", involved_object_namespace=\"litmus\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_kind=\"ChaosEngine\"}) - on () (sum by (reason,involved_object_namespace,involved_object_name,involved_object_kind) (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\", involved_object_namespace=\"litmus\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_kind=\"ChaosEngine\"}) OR on() vector(0))",
         "hide": false,
         "iconColor": "#E0B400",
         "limit": 100,
@@ -86,7 +86,7 @@
       {
         "datasource": "${DS_DS_PROMETHEUS}",
         "enable": true,
-        "expr": "sum by (reason,involved_object_namespace,involved_object_name,involved_object_kind) (heptio_eventrouter_normal_total{reason=\"ChaosInject\", involved_object_namespace=\"litmus\",involved_object_name=\"orders-node-memory-hog\", involved_object_kind=\"ChaosEngine\"}) - on () (sum by (reason,involved_object_namespace,involved_object_name,involved_object_kind) (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\", involved_object_namespace=\"litmus\",involved_object_name=\"orders-node-memory-hog\", involved_object_kind=\"ChaosEngine\"}) OR on() vector(0))",
+        "expr": "sum by (reason,involved_object_namespace,involved_object_name,involved_object_kind) (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\", involved_object_namespace=\"litmus\",involved_object_name=\"orders-node-memory-hog\", involved_object_kind=\"ChaosEngine\"}) - on () (sum by (reason,involved_object_namespace,involved_object_name,involved_object_kind) (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\", involved_object_namespace=\"litmus\",involved_object_name=\"orders-node-memory-hog\", involved_object_kind=\"ChaosEngine\"}) OR on() vector(0))",
         "hide": false,
         "iconColor": "#E0B400",
         "limit": 100,
@@ -213,7 +213,7 @@
       "steppedLine": true,
       "targets": [
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "instant": false,
           "interval": "",
           "intervalFactor": 2,
@@ -221,20 +221,20 @@
           "refId": "A"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "orders-pod-memory-hog",
           "refId": "B"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "catalogue-node-cpu-hog",
           "refId": "C"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "orders-node-memory-hog",
           "refId": "D"
@@ -339,7 +339,7 @@
       "pluginVersion": "7.1.5",
       "targets": [
         {
-          "expr": "sum(chaosengine_experiments_count{engine_namespace=\"litmus\"})",
+          "expr": "sum(chaosengine_experiments_count{kublr_space=\"$space\",kublr_cluster=\"$cluster\",engine_namespace=\"litmus\"})",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -408,7 +408,7 @@
       "pluginVersion": "7.1.5",
       "targets": [
         {
-          "expr": "sum(chaosengine_passed_experiments{engine_namespace=\"litmus\"})",
+          "expr": "sum(chaosengine_passed_experiments{kublr_space=\"$space\",kublr_cluster=\"$cluster\",engine_namespace=\"litmus\"})",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -477,7 +477,7 @@
       "pluginVersion": "7.1.5",
       "targets": [
         {
-          "expr": "sum(chaosengine_failed_experiments{engine_namespace=\"litmus\"})",
+          "expr": "sum(chaosengine_failed_experiments{kublr_space=\"$space\",kublr_cluster=\"$cluster\",engine_namespace=\"litmus\"})",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -544,7 +544,7 @@
       "pluginVersion": "7.1.5",
       "targets": [
         {
-          "expr": "sum(chaosengine_waiting_experiments{engine_namespace=\"litmus\"})",
+          "expr": "sum(chaosengine_waiting_experiments{kublr_space=\"$space\",kublr_cluster=\"$cluster\",engine_namespace=\"litmus\"})",
           "interval": "",
           "intervalFactor": 3,
           "legendFormat": "",
@@ -638,7 +638,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(request_duration_seconds_count{kubernetes_name=\"orders\",status_code=~\"2..\",route!=\"metrics\"}[1m])) * 100",
+          "expr": "sum(rate(request_duration_seconds_count{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"orders\",status_code=~\"2..\",route!=\"metrics\"}[1m])) * 100",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "2xx",
@@ -646,7 +646,7 @@
           "step": 2
         },
         {
-          "expr": "sum(rate(request_duration_seconds_count{kubernetes_name=\"orders\",status_code=~\"4.+|5.+\"}[1m])) * 100",
+          "expr": "sum(rate(request_duration_seconds_count{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"orders\",status_code=~\"4.+|5.+\"}[1m])) * 100",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "4xx/5xx",
@@ -654,13 +654,13 @@
           "step": 2
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "orders-pod-memory-hog",
           "refId": "D"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "orders-node-memory-hog",
           "refId": "F"
@@ -788,7 +788,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.99, sum(rate(request_duration_seconds_bucket{kubernetes_name=\"orders\"}[1m])) by (name, le))",
+          "expr": "histogram_quantile(0.99, sum(rate(request_duration_seconds_bucket{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"orders\"}[1m])) by (name, le))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "99th quantile",
@@ -796,7 +796,7 @@
           "step": 2
         },
         {
-          "expr": "histogram_quantile(0.5, sum(rate(request_duration_seconds_bucket{kubernetes_name=\"orders\"}[1m])) by (name, le))",
+          "expr": "histogram_quantile(0.5, sum(rate(request_duration_seconds_bucket{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"orders\"}[1m])) by (name, le))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "50th quantile",
@@ -804,7 +804,7 @@
           "step": 2
         },
         {
-          "expr": "sum(rate(request_duration_seconds_sum{kubernetes_name=\"orders\"}[1m])) / sum(rate(request_duration_seconds_count{kubernetes_name=\"orders\"}[1m]))",
+          "expr": "sum(rate(request_duration_seconds_sum{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"orders\"}[1m])) / sum(rate(request_duration_seconds_count{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"orders\"}[1m]))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Mean",
@@ -812,13 +812,13 @@
           "step": 2
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "orders-pod-memory-hog",
           "refId": "E"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "orders-node-memory-hog",
           "refId": "G"
@@ -953,7 +953,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(request_duration_seconds_count{kubernetes_name=\"catalogue\",status_code=~\"2..\",route!=\"metrics\"}[1m])) * 100",
+          "expr": "sum(rate(request_duration_seconds_count{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"catalogue\",status_code=~\"2..\",route!=\"metrics\"}[1m])) * 100",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "2xx",
@@ -961,7 +961,7 @@
           "step": 2
         },
         {
-          "expr": "sum(rate(request_duration_seconds_count{kubernetes_name=\"catalogue\",status_code=~\"4.+|5.+\"}[1m])) * 100",
+          "expr": "sum(rate(request_duration_seconds_count{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"catalogue\",status_code=~\"4.+|5.+\"}[1m])) * 100",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "4xx/5xx",
@@ -969,13 +969,13 @@
           "step": 2
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "catalogue-pod-cpu-hog",
           "refId": "C"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "catalogue-node-cpu-hog",
           "refId": "E"
@@ -1105,7 +1105,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.99, sum(rate(request_duration_seconds_bucket{kubernetes_name=\"catalogue\"}[1m])) by (name, le))",
+          "expr": "histogram_quantile(0.99, sum(rate(request_duration_seconds_bucket{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"catalogue\"}[1m])) by (name, le))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "99th quantile",
@@ -1113,7 +1113,7 @@
           "step": 2
         },
         {
-          "expr": "histogram_quantile(0.5, sum(rate(request_duration_seconds_bucket{kubernetes_name=\"catalogue\"}[1m])) by (name, le))",
+          "expr": "histogram_quantile(0.5, sum(rate(request_duration_seconds_bucket{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"catalogue\"}[1m])) by (name, le))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "50th quantile",
@@ -1121,7 +1121,7 @@
           "step": 2
         },
         {
-          "expr": "sum(rate(request_duration_seconds_sum{kubernetes_name=\"catalogue\"}[1m])) / sum(rate(request_duration_seconds_count{kubernetes_name=\"catalogue\"}[1m]))",
+          "expr": "sum(rate(request_duration_seconds_sum{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"catalogue\"}[1m])) / sum(rate(request_duration_seconds_count{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"catalogue\"}[1m]))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Mean",
@@ -1129,13 +1129,13 @@
           "step": 2
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "catalogue-pod-cpu-hog",
           "refId": "D"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "catalogue-node-cpu-hog",
           "refId": "F"
@@ -1244,7 +1244,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(request_duration_seconds_count{kubernetes_name=\"payment\",status_code=~\"2..\",route!=\"metrics\"}[1m])) * 100",
+          "expr": "sum(rate(request_duration_seconds_count{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"payment\",status_code=~\"2..\",route!=\"metrics\"}[1m])) * 100",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "2xx",
@@ -1252,7 +1252,7 @@
           "step": 2
         },
         {
-          "expr": "sum(rate(request_duration_seconds_count{kubernetes_name=\"payment\",status_code=~\"4.+|5.+\"}[1m])) * 100",
+          "expr": "sum(rate(request_duration_seconds_count{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"payment\",status_code=~\"4.+|5.+\"}[1m])) * 100",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "4xx/5xx",
@@ -1348,7 +1348,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.99, sum(rate(request_duration_seconds_bucket{kubernetes_name=\"payment\"}[1m])) by (name, le))",
+          "expr": "histogram_quantile(0.99, sum(rate(request_duration_seconds_bucket{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"payment\"}[1m])) by (name, le))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "99th quantile",
@@ -1356,7 +1356,7 @@
           "step": 2
         },
         {
-          "expr": "histogram_quantile(0.5, sum(rate(request_duration_seconds_bucket{kubernetes_name=\"payment\"}[1m])) by (name, le))",
+          "expr": "histogram_quantile(0.5, sum(rate(request_duration_seconds_bucket{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"payment\"}[1m])) by (name, le))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "50th quantile",
@@ -1364,7 +1364,7 @@
           "step": 2
         },
         {
-          "expr": "sum(rate(request_duration_seconds_sum{kubernetes_name=\"payment\"}[1m])) / sum(rate(request_duration_seconds_count{kubernetes_name=\"payment\"}[1m]))",
+          "expr": "sum(rate(request_duration_seconds_sum{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"payment\"}[1m])) / sum(rate(request_duration_seconds_count{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"payment\"}[1m]))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Mean",
@@ -1470,7 +1470,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(request_duration_seconds_count{kubernetes_name=\"shipping\",status_code=~\"2..\",route!=\"metrics\"}[1m])) * 100",
+          "expr": "sum(rate(request_duration_seconds_count{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"shipping\",status_code=~\"2..\",route!=\"metrics\"}[1m])) * 100",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "2xx",
@@ -1478,7 +1478,7 @@
           "step": 10
         },
         {
-          "expr": "sum(rate(request_duration_seconds_count{kubernetes_name=\"shipping\",status_code=~\"4.+|5.+\"}[1m])) * 100",
+          "expr": "sum(rate(request_duration_seconds_count{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"shipping\",status_code=~\"4.+|5.+\"}[1m])) * 100",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "4xx/5xx",
@@ -1575,7 +1575,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.99, sum(rate(request_duration_seconds_bucket{kubernetes_name=\"shipping\"}[1m])) by (name, le))",
+          "expr": "histogram_quantile(0.99, sum(rate(request_duration_seconds_bucket{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"shipping\"}[1m])) by (name, le))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "99th quantile",
@@ -1583,7 +1583,7 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.5, sum(rate(request_duration_seconds_bucket{kubernetes_name=\"shipping\"}[1m])) by (name, le))",
+          "expr": "histogram_quantile(0.5, sum(rate(request_duration_seconds_bucket{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"shipping\"}[1m])) by (name, le))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "50th quantile",
@@ -1591,7 +1591,7 @@
           "step": 10
         },
         {
-          "expr": "sum(rate(request_duration_seconds_sum{kubernetes_name=\"shipping\"}[1m])) / sum(rate(request_duration_seconds_count{kubernetes_name=\"shipping\"}[1m]))",
+          "expr": "sum(rate(request_duration_seconds_sum{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"shipping\"}[1m])) / sum(rate(request_duration_seconds_count{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"shipping\"}[1m]))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Mean",
@@ -1697,7 +1697,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(request_duration_seconds_count{kubernetes_name=\"user\",status_code=~\"2..\",route!=\"metrics\"}[1m])) * 100",
+          "expr": "sum(rate(request_duration_seconds_count{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"user\",status_code=~\"2..\",route!=\"metrics\"}[1m])) * 100",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "2xx",
@@ -1705,7 +1705,7 @@
           "step": 10
         },
         {
-          "expr": "sum(rate(request_duration_seconds_count{kubernetes_name=\"user\",status_code=~\"4.+|5.+\"}[1m])) * 100",
+          "expr": "sum(rate(request_duration_seconds_count{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"user\",status_code=~\"4.+|5.+\"}[1m])) * 100",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "4xx/5xx",
@@ -1797,7 +1797,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.99, sum(rate(request_duration_seconds_bucket{kubernetes_name=\"user\"}[1m])) by (name, le))",
+          "expr": "histogram_quantile(0.99, sum(rate(request_duration_seconds_bucket{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"user\"}[1m])) by (name, le))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "99th quantile",
@@ -1805,7 +1805,7 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.5, sum(rate(request_duration_seconds_bucket{kubernetes_name=\"user\"}[1m])) by (name, le))",
+          "expr": "histogram_quantile(0.5, sum(rate(request_duration_seconds_bucket{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"user\"}[1m])) by (name, le))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "50th quantile",
@@ -1813,7 +1813,7 @@
           "step": 10
         },
         {
-          "expr": "sum(rate(request_duration_seconds_sum{kubernetes_name=\"user\"}[1m])) / sum(rate(request_duration_seconds_count{kubernetes_name=\"user\"}[1m]))",
+          "expr": "sum(rate(request_duration_seconds_sum{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"user\"}[1m])) / sum(rate(request_duration_seconds_count{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"user\"}[1m]))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Mean",
@@ -1919,7 +1919,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(request_duration_seconds_count{kubernetes_name=\"front-end\",status_code=~\"2..\",route!=\"metrics\"}[1m])) * 100",
+          "expr": "sum(rate(request_duration_seconds_count{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"front-end\",status_code=~\"2..\",route!=\"metrics\"}[1m])) * 100",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "2xx",
@@ -1927,7 +1927,7 @@
           "step": 10
         },
         {
-          "expr": "sum(rate(request_duration_seconds_count{kubernetes_name=\"front-end\",status_code=~\"4.+|5.+\"}[1m])) * 100",
+          "expr": "sum(rate(request_duration_seconds_count{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"front-end\",status_code=~\"4.+|5.+\"}[1m])) * 100",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "4xx/5xx",
@@ -2019,7 +2019,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.99, sum(rate(request_duration_seconds_bucket{kubernetes_name=\"front-end\"}[1m])) by (name, le))",
+          "expr": "histogram_quantile(0.99, sum(rate(request_duration_seconds_bucket{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"front-end\"}[1m])) by (name, le))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "99th quantile",
@@ -2027,7 +2027,7 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.5, sum(rate(request_duration_seconds_bucket{kubernetes_name=\"front-end\"}[1m])) by (name, le))",
+          "expr": "histogram_quantile(0.5, sum(rate(request_duration_seconds_bucket{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"front-end\"}[1m])) by (name, le))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "50th quantile",
@@ -2035,7 +2035,7 @@
           "step": 10
         },
         {
-          "expr": "sum(rate(request_duration_seconds_sum{kubernetes_name=\"front-end\"}[1m])) / sum(rate(request_duration_seconds_count{kubernetes_name=\"front-end\"}[1m]))",
+          "expr": "sum(rate(request_duration_seconds_sum{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"front-end\"}[1m])) / sum(rate(request_duration_seconds_count{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"front-end\"}[1m]))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Mean",
@@ -2141,7 +2141,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(request_duration_seconds_count{kubernetes_name=\"carts\",status_code=~\"2..\",route!=\"metrics\"}[1m])) * 100",
+          "expr": "sum(rate(request_duration_seconds_count{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"carts\",status_code=~\"2..\",route!=\"metrics\"}[1m])) * 100",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "2xx",
@@ -2149,7 +2149,7 @@
           "step": 10
         },
         {
-          "expr": "sum(rate(request_duration_seconds_count{kubernetes_name=\"carts\",status_code=~\"4.+|5.+\"}[1m])) * 100",
+          "expr": "sum(rate(request_duration_seconds_count{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"carts\",status_code=~\"4.+|5.+\"}[1m])) * 100",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "4xx/5xx",
@@ -2241,7 +2241,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.99, sum(rate(request_duration_seconds_bucket{kubernetes_name=\"carts\"}[1m])) by (name, le))",
+          "expr": "histogram_quantile(0.99, sum(rate(request_duration_seconds_bucket{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"carts\"}[1m])) by (name, le))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "99th quantile",
@@ -2249,7 +2249,7 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.5, sum(rate(request_duration_seconds_bucket{kubernetes_name=\"carts\"}[1m])) by (name, le))",
+          "expr": "histogram_quantile(0.5, sum(rate(request_duration_seconds_bucket{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"carts\"}[1m])) by (name, le))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "50th quantile",
@@ -2257,7 +2257,7 @@
           "step": 10
         },
         {
-          "expr": "sum(rate(request_duration_seconds_sum{kubernetes_name=\"carts\"}[1m])) / sum(rate(request_duration_seconds_count{kubernetes_name=\"carts\"}[1m]))",
+          "expr": "sum(rate(request_duration_seconds_sum{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"carts\"}[1m])) / sum(rate(request_duration_seconds_count{kublr_space=\"$space\",kublr_cluster=\"$cluster\",kubernetes_name=\"carts\"}[1m]))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Mean",
@@ -2307,7 +2307,50 @@
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "allValue": null,
+        "datasource": "${DS_DS_PROMETHEUS}",
+        "definition": "",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Space",
+        "multi": false,
+        "name": "space",
+        "options": [],
+        "query": "label_values(chaosengine_experiments_count, kublr_space)",
+        "refresh": 2,
+        "regex": "/.+/",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "datasource": "${DS_DS_PROMETHEUS}",
+        "definition": "",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Cluster",
+        "multi": false,
+        "name": "cluster",
+        "options": [],
+        "query": "label_values(chaosengine_experiments_count{kublr_space=\"$space\"}, kublr_cluster)",
+        "refresh": 2,
+        "regex": "/.+/",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
   },
   "time": {
     "from": "now-30m",
@@ -2342,4 +2385,3 @@
   "uid": "sockshopperfornamce",
   "version": 1
 }
-
