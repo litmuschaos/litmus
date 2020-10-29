@@ -214,6 +214,8 @@ type Query {
   getCharts(chartsInput: ChartsInput!): [Chart!]! @authorized
 
   getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
+
+  getHubStatus(username: String!): [MyHubStatus]! @authorized
 }
 
 type Mutation {
@@ -249,6 +251,8 @@ type Mutation {
   podLog(log: PodLog!): String!
 
   addMyHub(myhubInput: CreateMyHub!, username: String!): User! @authorized
+
+  syncHub(syncHubInput: ChartsInput!): [MyHubStatus!]! @authorized
 }
 
 type Subscription {
