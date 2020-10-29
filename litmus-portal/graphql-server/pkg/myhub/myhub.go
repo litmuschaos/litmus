@@ -76,13 +76,13 @@ func HubStatus(ctx context.Context, username string) ([]*model.MyHubStatus, erro
 	var hubDetails []*model.MyHubStatus
 	var hubDetail *model.MyHubStatus
 	var isConfirmed bool
-	for i, hub := range userHubs {
+	for _, hub := range userHubs {
 		sum := 0
 		chartsInput := model.ChartsInput{
-			HubName:    userHubs[i].HubName,
-			UserName:   user.GetOutputUser().Username,
-			RepoURL:    userHubs[i].RepoURL,
-			RepoBranch: userHubs[i].RepoBranch,
+			HubName:    hub.HubName,
+			UserName:   username,
+			RepoURL:    hub.RepoURL,
+			RepoBranch: hub.RepoBranch,
 		}
 		ChartsPath := handler.GetChartsPath(ctx, chartsInput)
 		ChartData, err := handler.GetChartsData(ChartsPath)
