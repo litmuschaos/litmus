@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
   },
   horizontalLine: {
     marginTop: theme.spacing(5),
-    marginRight: '5%',
+    marginRight: theme.spacing(12.5),
     border: `0.5px solid ${theme.palette.customColors.black(0.05)}`,
     boxSizing: 'border-box',
   },
