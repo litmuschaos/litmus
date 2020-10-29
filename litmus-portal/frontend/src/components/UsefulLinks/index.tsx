@@ -1,5 +1,6 @@
 import { Typography } from '@material-ui/core';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, Maintainer } from '../../models/redux/myhub';
 import useStyles from './styles';
 
@@ -16,17 +17,13 @@ const UsefulLinks: React.FC<UsefulLinkProps> = ({
   maturity,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
   const createMaintainers = (maintainers: Maintainer[] | undefined) => {
     return (
       <div className={classes.usefulLinks}>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-          }}
-        >
+        <div className={classes.linkDiv}>
           <Typography variant="body1" className={classes.heading}>
-            Maintainers
+            {t('myhub.usefulLink.maintainer')}
           </Typography>
         </div>
         {maintainers?.map((m: Maintainer) => (
@@ -46,12 +43,7 @@ const UsefulLinks: React.FC<UsefulLinkProps> = ({
   const createLinks = (header: string, data: Link[] | undefined) => {
     return (
       <div className={classes.usefulLinks}>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-          }}
-        >
+        <div className={classes.linkDiv}>
           <Typography variant="body1" className={classes.heading}>
             {header}
           </Typography>
@@ -60,7 +52,7 @@ const UsefulLinks: React.FC<UsefulLinkProps> = ({
           (d: Link) =>
             d.Url && (
               <div key={d.Name}>
-                <a href={d.Url} style={{ textDecoration: 'none' }}>
+                <a href={d.Url} className={classes.createLinkText}>
                   <Typography className={classes.linkType}>{d.Name}</Typography>
                 </a>
               </div>
@@ -72,12 +64,7 @@ const UsefulLinks: React.FC<UsefulLinkProps> = ({
   function createPlatformData(header: string, data: string[]) {
     return (
       <div className={classes.usefulLinks}>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-          }}
-        >
+        <div className={classes.linkDiv}>
           <Typography variant="body1" className={classes.heading}>
             {header}
           </Typography>
@@ -97,12 +84,7 @@ const UsefulLinks: React.FC<UsefulLinkProps> = ({
   function createStaticData(header: string, data: string[]) {
     return (
       <div className={classes.usefulLinks}>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-          }}
-        >
+        <div className={classes.linkDiv}>
           <Typography variant="body1" className={classes.heading}>
             {header}
           </Typography>

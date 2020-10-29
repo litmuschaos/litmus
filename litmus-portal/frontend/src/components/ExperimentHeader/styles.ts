@@ -18,6 +18,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginBottom: theme.spacing(1),
     color: theme.palette.common.black,
   },
+  backBtnImg: {
+    height: '1.5625rem',
+  },
   expImg: {
     width: '5.625rem',
     height: '5.625rem',

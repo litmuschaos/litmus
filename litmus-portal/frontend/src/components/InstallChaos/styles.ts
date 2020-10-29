@@ -21,6 +21,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginBottom: theme.spacing(2),
   },
 
+  rowDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+
+  copyBtnImg: {
+    paddingRight: '0.625rem',
+  },
+
   linkBox: {
     backgroundColor: theme.palette.customColors.black(0.02),
     border: `1px solid ${theme.palette.customColors.black(0.02)} `,

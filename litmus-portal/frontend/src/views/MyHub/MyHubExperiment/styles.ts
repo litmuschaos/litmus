@@ -42,10 +42,17 @@ const useStyles = makeStyles((theme) => ({
   expMain: {
     marginLeft: theme.spacing(1.25),
   },
+  linkText: {
+    fontSize: '1rem',
+  },
+  developerDiv: {
+    marginLeft: theme.spacing(2.5),
+    marginTop: theme.spacing(6.25),
+  },
   detailDiv: {
     backgroundColor: theme.palette.common.white,
     border: `1px solid ${theme.palette.customColors.black(0.05)}`,
-    borderRadius: '3px',
+    borderRadius: '0.1875rem',
     padding: theme.spacing(3.75),
     paddingTop: theme.spacing(6.25),
     marginLeft: theme.spacing(2.5),

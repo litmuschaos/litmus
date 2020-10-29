@@ -552,3 +552,8 @@ myhub:
     videoDesc: Get resilient and compliance scores for your Kuberenetes product
   videoCarousel:
     video: Video Tips
+  installChaos:
+    copy: Copy
+    copied: Copied
+  usefulLink:
+    maintainer: Maintainers

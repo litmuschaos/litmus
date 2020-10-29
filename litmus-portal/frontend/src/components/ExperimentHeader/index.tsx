@@ -22,7 +22,11 @@ const ExperimentHeader: React.FC<ExpInfoProps> = ({
         onClick={() => window.history.back()}
         className={classes.backButton}
       >
-        <img src="/icons/BackArrow.svg" alt="back" style={{ height: 25 }} />
+        <img
+          src="/icons/BackArrow.svg"
+          alt="back"
+          className={classes.backBtnImg}
+        />
       </IconButton>
       <img src={urlToIcon} alt="exp icon" className={classes.expImg} />
       <div className={classes.titleDiv}>

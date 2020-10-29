@@ -121,7 +121,7 @@ const MyHub = () => {
                                 >
                                   {hub.RepoURL.split('/')[4]}/{hub.RepoBranch}
                                 </Typography>
-                                <Typography style={{ fontSize: '12px' }}>
+                                <Typography className={classes.totalExp}>
                                   {parseInt(hub.TotalExp, 10) > 0
                                     ? `${hub.TotalExp} experiments`
                                     : '[Error: could not connect]'}

@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
   cardDiv: {
     maxWidth: '12.5rem',
     border: `1px dashed ${theme.palette.customColors.black(0.5)}`,
-    borderRadius: 4,
+    borderRadius: '0.25rem',
     height: '100%',
     margin: theme.spacing(2),
   },
@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(2),
   },
   cardContent: {
-    minHeight: '15.625rem',
+    height: '17.625rem',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -113,6 +113,9 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       backgroundColor: theme.palette.error.dark,
     },
+  },
+  totalExp: {
+    fontSize: '0.75rem',
   },
   connectHub: {
     fontSize: '0.875rem',

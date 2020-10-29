@@ -14,6 +14,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontWeight: 'bold',
     color: theme.palette.common.black,
   },
+  linkDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  createLinkText: {
+    textDecoration: 'none',
+  },
   linkType: {
     fontSize: '0.875rem',
     marginBottom: theme.spacing(1.25),

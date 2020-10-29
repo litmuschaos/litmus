@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   expDesc: {
     marginBottom: theme.spacing(1),
     maxWidth: '37.5rem',
-    fontSize: '16px',
+    fontSize: '1rem',
   },
 }));
 

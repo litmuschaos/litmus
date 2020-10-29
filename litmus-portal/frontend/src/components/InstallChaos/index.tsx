@@ -1,6 +1,7 @@
 import { Typography } from '@material-ui/core';
 import Done from '@material-ui/icons/DoneAllTwoTone';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
 import ButtonOutline from '../Button/ButtonOutline';
 
@@ -16,6 +17,7 @@ const InstallChaos: React.FC<InstallProps> = ({
   yamlLink,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
   const [copying, setCopying] = useState(false);
   const yaml = `kubectl apply -f ${yamlLink}`;
 
@@ -47,23 +49,18 @@ const InstallChaos: React.FC<InstallProps> = ({
             handleClick={() => copyTextToClipboard(yaml)}
           >
             {!copying ? (
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                }}
-              >
+              <div className={classes.rowDiv}>
                 <img
                   src="/icons/copy.svg"
-                  style={{ paddingRight: 10 }}
+                  className={classes.copyBtnImg}
                   alt="copy"
                 />
-                <Typography>Copy</Typography>
+                <Typography>{t('myhub.installChaos.copy')}</Typography>
               </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'row' }}>
+              <div className={classes.rowDiv}>
                 <Done className={classes.done} />
-                <Typography>Copied</Typography>
+                <Typography>{t('myhub.installChaos.copied')}</Typography>
               </div>
             )}
           </ButtonOutline>

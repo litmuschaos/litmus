@@ -4,7 +4,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   root: {
     width: '100%',
     backgroundColor: theme.palette.customColors.black(0.03),
-    borderRadius: '3px',
+    borderRadius: '0.1875rem',
     borderLeft: `6px solid ${theme.palette.secondary.dark} `,
     marginBottom: theme.spacing(2.25),
   },
@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   mainText: {
     fontWeight: 'bold',
     fontSize: '1.25rem',
-    width: 650,
+    width: '40.625rem',
     color: theme.palette.common.black,
   },
   textDesc: {

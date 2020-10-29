@@ -87,7 +87,7 @@ const MyHub = () => {
             </div>
           </div>
           {/* Developer Guide Component */}
-          <div style={{ marginLeft: 20, marginTop: 50 }}>
+          <div className={classes.developerDiv}>
             <DeveloperGuide
               expAvailable
               header="Congratulations! You have created a template for new experiment.
@@ -107,7 +107,7 @@ Finish it on GitHub using a developer`s guide."
                   <hr className={classes.horizontalLine} />
                   <div>
                     <div className={classes.note}>PRE-REQUISITE:</div>
-                    <div style={{ fontSize: '1rem' }}>
+                    <div className={classes.linkText}>
                       <a
                         href="https://docs.litmuschaos.io/docs/getstarted/"
                         target="_"
