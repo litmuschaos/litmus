@@ -61,7 +61,7 @@ func GitClone(repoData model.ChartsInput) error {
 		fmt.Print("Error in cloning")
 		return err
 	}
-	log.Infof("********* Successfully Cloned '%s' Hub *********", gitConfig.HubName)
+	//Successfully Cloned
 	return nil
 }
 
@@ -73,7 +73,7 @@ func GitSyncHandlerForUser(repoData model.ChartsInput) error {
 		log.Error(err)
 		return err
 	}
-	log.Infof("********* Repository syncing completed for '%s' Hub *********", gitConfig.HubName)
+	//Repository syncing completed
 
 	return nil
 }
@@ -147,12 +147,11 @@ func (c GitConfig) HandlerForExistingRepository() error {
 // returns false if the repository is clean
 // and true if the repository is dirtygitConfig
 func (c GitConfig) GitGetStatus() (bool, error) {
-	log.Info("executing GitGetStatus() ...")
 	err := c.setterRepositoryWorktreeReference()
 	if err != nil {
 		return true, err
 	}
-	log.Info("git status --porcelain")
+	// git status --porcelain
 	len, _ := getListofFilesChanged()
 	return !(len == 0), nil
 }
@@ -227,22 +226,18 @@ func (c GitConfig) CompareLocalandRemoteCommit() (bool, error) {
 		return false, fmt.Errorf("error in executing ResolveRevision: %s", err)
 	}
 	c.RemoteCommit = hash.String()
-	log.Infof("LocalCommit: '%s',RemoteCommit: '%s'", c.LocalCommit, c.RemoteCommit)
 	return c.RemoteCommit == c.LocalCommit, nil
 }
 
 // GitPull updates the repository in provided Path
 func (c GitConfig) GitPull() error {
-	log.Info("executing GitPull() ...")
 	err := c.setterRepositoryWorktreeReference()
 	if err != nil {
 		return err
 	}
 	var referenceName plumbing.ReferenceName
 	referenceName = plumbing.NewBranchReferenceName(c.Branch)
-	log.Info("git pull origin")
 	err = workTree.Pull(&git.PullOptions{RemoteName: c.RemoteName, ReferenceName: referenceName})
-	log.Infof("Executed git pull origin, Status: %s", err)
 	c.LocalCommit = strings.Split(plumbingRef.String(), " ")[0]
 	return nil
 }
