@@ -19,78 +19,75 @@
 
 [🇰🇷](translations/README-ko.md) [🇨🇳](translations/README-chn.md)
 
-## Overview
+## Visión de conjunto
 
-Litmus is a toolset to do cloud-native chaos engineering. Litmus provides tools to orchestrate chaos on Kubernetes to help SREs find weaknesses in their deployments. SREs use Litmus to run chaos experiments initially in the staging environment and eventually in production to find bugs, vulnerabilities. Fixing the weaknesses leads to increased resilience of the system.
+Litmus es un conjunto de herramientas para realizar ingeniería de caos nativa de la nube. Litmus proporciona herramientas para orquestar el caos en Kubernetes para ayudar a los SRE a encontrar debilidades en sus implementaciones. Los SRE utilizan Litmus para ejecutar experimentos de caos inicialmente en el entorno de ensayo y, finalmente, en producción para encontrar errores y vulnerabilidades. La reparación de las debilidades conduce a una mayor resistencia del sistema.
 
-Litmus takes a cloud-native approach to create, manage and monitor chaos. Chaos is orchestrated using the following Kubernetes Custom Resource Definitions (**CRDs**):
+Litmus adopta un enfoque nativo de la nube para crear, administrar y monitorear el caos. El caos se organiza mediante las siguientes definiciones de recursos personalizados de Kubernetes (**CRDs**):
 
-- **ChaosEngine**: A resource to link a Kubernetes application or Kubernetes node to a ChaosExperiment. ChaosEngine is watched by Litmus' Chaos-Operator which then invokes Chaos-Experiments
-- **ChaosExperiment**: A resource to group the configuration parameters of a chaos experiment. ChaosExperiment CRs are created by the operator when experiments are invoked by ChaosEngine.
-- **ChaosResult**: A resource to hold the results of a chaos-experiment. The Chaos-exporter reads the results and exports the metrics into a configured Prometheus server.
+- **ChaosEngine**: Un recurso para vincular una aplicación de Kubernetes o un nodo de Kubernetes a un experimento de caos. Chaos Engine es observado por el Chaos-Operator de Litmus, que luego invoca los Chaos-Experiments.
+- **ChaosExperiment**: Un recurso para agrupar los parámetros de configuración de un experimento de caos. El operador crea los IC de Experimento de Caos cuando Chaos Engine invoca los experimentos.
+- **ChaosResult**: Un recurso para contener los resultados de un experimento de caos. El Chaos-exporter lee los resultados y exporta las métricas a un servidor Prometheus configurado.
 
-Chaos experiments are hosted on <a href="https://hub.litmuschaos.io" target="_blank">hub.litmuschaos.io</a>. It is a central hub where the application developers or vendors share their chaos experiments so that their users can use them to increase the resilience of the applications in production.
+Los experimentos de caos están alojados en <a href="https://hub.litmuschaos.io" target="_blank"> hub.litmuschaos.io </a>. Es un eje central donde los desarrolladores o proveedores de aplicaciones comparten sus experimentos de caos para que sus usuarios puedan usarlos para aumentar la resiliencia de las aplicaciones en producción.
 
 ![Litmus workflow](/images/litmus-arch_1.png)
 
-## Use cases
+## Casos de uso
 
-- **For Developers**: To run chaos experiments during application development as an extension of unit testing or integration testing.
-- **For CI pipeline builders**: To run chaos as a pipeline stage to find bugs when the application is subjected to fail paths in a pipeline.
-- **For SREs**: To plan and schedule chaos experiments into the application and/or surrounding infrastructure. This practice identifies the weaknesses in the system and increases resilience.
+- **Para desarrolladores**: Para ejecutar experimentos de caos durante el desarrollo de aplicaciones como una extensión de las pruebas unitarias o de integración.
+- **Para constructoras de tuberías de CI**: Ejecutar el caos como una etapa de canalización para encontrar errores cuando la aplicación está sujeta a rutas fallidas en una canalización.
+- **Para las SRE**: Planificar y programar experimentos de caos en la aplicación y / o la infraestructura circundante. Esta práctica identifica las debilidades del sistema y aumenta la resiliencia.
 
-## Getting Started with Litmus
+## Empezando con Litmus
 
 [![IMAGE ALT TEXT](images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
 
-Check out the <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" target="_blank">Litmus Docs</a> to get started.
+Consulte los <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" target="_blank"> Litmus Docs </a> para comenzar.
 
-## Contributing to Chaos Hub
+## Contribuyendo a Chaos Hub
 
-Check out the <a href="https://github.com/litmuschaos/community-charts/blob/master/CONTRIBUTING.md" target="_blank">Contributing Guildelines for the Chaos Hub</a>
+Consulte las <a href="https://github.com/litmuschaos/community-charts/blob/master/CONTRIBUTING.md" target="_blank"> Pautas de contribución para el Chaos Hub </a>
 
-## Adopters
+## Adoptadoras
 
-Check out the <a href="https://github.com/litmuschaos/litmus/blob/master/ADOPTERS.md" target="_blank">Adopters of LitmusChaos</a>
+Echa un vistazo a los <a href="https://github.com/litmuschaos/litmus/blob/master/ADOPTERS.md" target="_blank"> Adopdores de LitmusChaos </a>
 
-(_Send a PR to the above page if you are using Litmus in your chaos engineering practice_)
+(_Envíe un PR a la página anterior si está utilizando Litmus en su práctica de ingeniería del caos_)
 
-## Things to Consider
+## Cosas para considerar
 
-Some of the considerations that need to be made with Litmus (as a chaos framework), are broadly listed here. Many of these are already being worked on
-as mentioned in the [ROADMAP](./ROADMAP.md). For details or limitations around specific experiments, refer to the respective [experiments docs](https://docs.litmuschaos.io/docs/pod-delete/).
+Algunas de las consideraciones que deben hacerse con Litmus (como un marco de caos) se enumeran ampliamente aquí. Muchos de estos ya se están trabajando en
+como se menciona en [ROADMAP] (./ ROADMAP.md). Para obtener detalles o limitaciones sobre experimentos específicos, consulte los [documentos de experimentos] respectivos (https://docs.litmuschaos.io/docs/pod-delete/).
 
-- Litmus chaos operator and the chaos experiments run as kubernetes resources in the cluster. In case of airgapped environments, the chaos custom resources
-  and images need to be hosted on premise.
-- When attempting to execute platform specific chaos experiments (like those on AWS, GCP cloud) the access details are passed via kubernetes secrets. Support
-  for other modes of secret management with Litmus is yet to be tested/implemented.
-- Some chaos experiments make use of the docker api from within the experiment pods, and thereby require the docker socket to be mounted. User discretion is
-  advised when allowing developers/devops admins/SREs access for running these experiments.
-- In (rare) cases where chaos experiments make use of privileged containers, the recommended security policies will be documented.
+- El operador de caos de tornasol y los experimentos de caos se ejecutan como recursos de kubernetes en el clúster. En caso de entornos con espacio de aire, los recursos personalizados del caos y las imágenes deben alojarse en las instalaciones.
+- Al intentar ejecutar experimentos de caos específicos de la plataforma (como los de AWS, la nube de GCP), los detalles de acceso se pasan a través de los secretos de Kubernetes. Apoyo para otros modos de gestión secreta con Litmus aún no se ha probado / implementado.
+- Algunos experimentos de caos hacen uso de la API de la ventana acoplable desde dentro de los módulos de experimentos y, por lo tanto, requieren que se monte el conector de la ventana acoplable. La discreción del usuario es se recomienda al permitir el acceso de desarrolladores / administradores de devops / SRE para ejecutar estos experimentos.
+- En casos (raros) en los que los experimentos de caos hacen uso de contenedores privilegiados, se documentarán las políticas de seguridad recomendadas.
 
-## License
+## Licencia
 
-Litmus is licensed under the Apache License, Version 2.0. See [LICENSE](./LICENSE) for the full license text. Some of the projects used by the Litmus project may be governed by a different license, please refer to its specific license.
+Litmus tiene licencia de Apache License, Versión 2.0. Consulte [LICENCIA] (./ LICENCIA) para obtener el texto completo de la licencia. Algunos de los proyectos utilizados por el proyecto Litmus pueden estar regidos por una licencia diferente, consulte su licencia específica.
 
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_large)
+[![Estado FOSSA](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_large)
 
-Litmus Chaos is part of the CNCF Projects.
+Litmus Chaos es parte de los Proyectos de CNCF.
 
 [![CNCF](https://github.com/cncf/artwork/blob/master/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/selected=litmus)
 
-## Community
+## Comunidad
 
-The Litmus community meets on the third wednesday of every month at 10:00PM IST/9.30 AM PST.
+La comunidad de Litmus se reúne el tercer miércoles de cada mes a las 10:00 PM IST / 9:30 AM PST.
 
-Community Resources:
+Recursos de la comunidad:
 
-- [Community Slack](https://slack.litmuschaos.io)
-- [Sync Up Meeting Link](https://zoom.us/j/91358162694)
-- [Sync Up Agenda & Meeting Notes](https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q)
-- [Youtube Channel (demos, meeting recordings, virtual meetups)](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
+- [Comunidad Slack](https://slack.litmuschaos.io)
+- [Sincronizar enlace de reunión](https://zoom.us/j/91358162694)
+- [Sincronizar la agenda y las notas de la reunión](https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q)
+- [Canal de Youtube (demostraciones, grabaciones de reuniones, reuniones virtuales)](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
 - [Release Tracker](https://github.com/litmuschaos/litmus/milestones)
 
-## Important Links
+## Links importantes
 
 <a href="https://docs.litmuschaos.io">
   Litmus Docs <img src="https://avatars0.githubusercontent.com/u/49853472?s=200&v=4" alt="Litmus Docs" height="15">
