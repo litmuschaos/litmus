@@ -11,3 +11,11 @@ This directory contains chaos interleaved grafana dashboards to monitor chaos ex
   ```
   cd kubernetes
   ```
+
+- Sock Shop
+
+  Contains application metrics dashboard for Sock Shop.
+
+  ```
+  cd sock-shop
+  ```

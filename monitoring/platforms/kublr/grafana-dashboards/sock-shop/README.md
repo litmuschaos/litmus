@@ -4,17 +4,9 @@ This dashboard visualizes Sock Shop application metrics metrics interleaved with
 
 ## Prerequisites
 
-- Sock shop microservices application deployments with service monitors.
-
-- Litmus event router and chaos exporter with service monitors.
-
-- Prometheus operator and deployment configured for using the service monitors.
-
-OR
-
 - Sock shop microservices application deployments.
-
-- prometheus deployment with a scrape job for litmus and sock-shop application metrics.
+  
+- Kublr's central monitoring with Prometheus enabled for litmus and sock-shop application metrics.
 
 - Chaos engine name must match the labels used in PromQL for the grafana dashboard.
 

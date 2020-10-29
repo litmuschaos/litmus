@@ -1,0 +1,45 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: argowf-role
+  namespace: chaos-ns
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get","watch","patch","list"] 
+- apiGroups: [""]
+  resources: ["pods/log"]
+  verbs: ["get","watch"] 
+- apiGroups: ["argoproj.io"]
+  resources: ["workflow","workflows"]
+  verbs: ["get","create","update","patch","delete","list","watch"] 
+- apiGroups: ["policy"]
+  resources: ["poddisruptionbudgets"]
+  verbs: ["get","create","delete","list"] 
+- apiGroups: ["","litmuschaos.io"]
+  resources: ["chaosengines","chaosexperiments","chaosresults"]
+  verbs: ["get","create","update","patch","delete","list","watch","deletecollection"] 
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: argowf-svcacc
+  namespace: chaos-ns
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: argowf-rolebinding
+  namespace: chaos-ns
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: argowf-role
+subjects: 
+  [
+    {
+      "kind": "ServiceAccount",
+      "name": "argowf-svcacc",
+      "namespace": "chaos-ns"
+    }
+  ]

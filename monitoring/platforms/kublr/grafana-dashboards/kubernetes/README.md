@@ -5,11 +5,7 @@ This dashboard visualizes Node and Pod level CPU and memory utilization metrics 
 
 ## Prerequisites 
 
-- Node exporter and kube state metrics exporter with service monitor.
-
-- Litmus event router with service monitor.
-
-- Prometheus operator and deployment configured for using the service monitors.
+- Kublr's central monitoring with Prometheus enabled for litmus and node exporter metrics.
 
 - Chaos engine name must match the labels used in PromQL for the grafana dashboard.
 

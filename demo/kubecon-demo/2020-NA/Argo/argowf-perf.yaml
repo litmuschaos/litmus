@@ -1,0 +1,199 @@
+# Stress test to test upper bounds of concurrent pods
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: perf-infra-
+spec:
+  entrypoint: perf-infra
+  serviceAccountName: argowf-svcacc
+  poddisruptionbudget:
+    minavailable: 100%
+  # must complete in 1m
+  activeDeadlineSeconds: 86400
+  # keep workflows for 3m
+  ttlStrategy:
+    secondsAfterCompletion: 3600
+  # delete all pods as soon as they complete
+  podGC:
+    strategy: OnPodCompletion
+  arguments:
+    parameters:
+      - name: limit
+        value: 1
+      - name: peakTPS
+        value: 1
+      - name: rampupTime
+        value: 1
+      - name: steadyStateTime
+        value: 1
+      - name: buildnum
+        value: 1
+      - name: baseurl
+        value: "https://nginx.xxx.com"
+      - name: uniqueName
+        value: "{{workflow.creationTimestamp}}"
+      - name: Custom
+        value: "Custom_Param" 
+      - name: dataFlag
+        value: "false"
+      - name: appTestImg
+        value: "distroproj/gatling:latest"
+      - name: awscliGatmergeImg
+        value: "gatling-merge:latest"
+      - name: pfiNamespace
+        value: "chaos-ns"
+      - name: query
+        value: "/health/full"
+      - name: simulationClass
+        value: "Echo.EchoSimulation"
+# Please create a bucket on your aws account where you are storing your results
+      - name: s3BucketName
+        value: perf-results-000000000
+  templates:
+    - name: perf-infra
+      steps:
+        - - name: pdbcreate
+            template: pdbcreate 
+        - - name: run-test
+            template: run-test
+            withSequence:
+              count: "{{workflow.parameters.limit}}"
+        - - name: Aggregation
+            template: list
+
+    - name: pdbcreate
+      container:
+        image: alpine:latest
+        command: [sh, -c]
+        args: [sleep 10]
+    
+    - name: run-test
+      metadata:
+        annotations:
+          # You need this role to upload Perf results to S3
+          iam.amazonaws.com/role: "k8s-{{workflow.parameters.pfiNamespace}}"
+      container:
+        image: "{{workflow.parameters.appTestImg}}"
+        imagePullPolicy: Always
+        command: ["sh","-c"]
+        args: [
+           "cd /gatling && mvn gatling:test -Dgatling.simulationClass={{workflow.parameters.simulationClass}} -Durl={{workflow.parameters.baseurl}} -Dquery={{workflow.parameters.query}} -DpeakTPS={{workflow.parameters.peakTPS}} -DrampupTime={{workflow.parameters.rampupTime}} -DsteadyStateTime={{workflow.parameters.steadyStateTime}} && cp -r /gatling/gatling_results /tmp && mkdir /tmp/simulations && cp $(find . -name 'simulation.log' | tail -1) /tmp/simulations/simulation_$(date +'%s')_$(cat /dev/urandom | env LC_CTYPE=C tr -cd 'a-f0-9' | head -c 6).log && ls /tmp"
+        ]
+        resources:                # limit the resources
+          requests:
+            memory: 1Gi
+            cpu: "1"
+          limits:
+            memory: 2Gi
+            cpu: "1"
+        # volumeMounts:
+        # - name: finalresults
+        #   mountPath: /tmp
+      outputs:
+        artifacts:
+          - name: result
+            path: /tmp
+            # It is possible to disable tar.gz archiving by setting the archive strategy to 'none'
+            # Disabling archiving has the following limitations on S3: symboloic links will not be
+            # uploaded, as S3 does not support the concept/file mode of symlinks.
+            # archive:
+            #   none: {}
+            #commnt
+            s3:
+              # Use the corresponding endpoint depending on your S3 provider:
+              #   AWS: s3.amazonaws.com
+              #   GCS: storage.googleapis.com
+              #   Minio: my-minio-endpoint.default:9000
+              endpoint: s3.amazonaws.com
+              bucket: "{{workflow.parameters.s3BucketName}}"
+              region: us-west-2
+              key: results/{{workflow.namespace}}/{{workflow.parameters.uniqueName}}/finalResult/simulations/
+          - name: simulation
+            path: /tmp/simulations
+            # It is possible to disable tar.gz archiving by setting the archive strategy to 'none'
+            # Disabling archiving has the following limitations on S3: symboloic links will not be
+            # uploaded, as S3 does not support the concept/file mode of symlinks.
+            # archive:
+            #   none: {}
+
+            s3:
+              # Use the corresponding endpoint depending on your S3 provider:
+              #   AWS: s3.amazonaws.com
+              #   GCS: storage.googleapis.com
+              #   Minio: my-minio-endpoint.default:9000
+              endpoint: s3.amazonaws.com
+              bucket: "{{workflow.parameters.s3BucketName}}"
+              region: us-west-2
+              key: results/{{workflow.namespace}}/{{workflow.name}}_{{workflow.creationTimestamp}}/simulations/{{pod.name}}.tgz
+
+    - name: list
+      container:
+        image: "{{workflow.parameters.awscliGatmergeImg}}"
+        command: [sh, -c]
+        args: ["
+          cd /perf-in &&
+          ls -R &&
+          for a in `ls -1 *.tgz`; do
+              gzip -dc $a | tar xf -;
+          done &&
+          echo '=======' &&
+          ls -R /perf-in &&
+          cd /opt/gatling/bin &&
+          ./gatling.sh -ro /perf-in/simulations &&
+          mkdir /perf-out &&
+          cp -rf /perf-in /perf-out &&
+          rm $(find /perf-out/ -name '*.log') &&
+          ls -R /perf-out
+          "]
+        resources:        # limit the resources
+          requests:
+            memory: 1Gi
+            cpu: "1"
+          limits:
+            memory: 2Gi
+            cpu: "1"
+      metadata:
+        annotations:
+          iam.amazonaws.com/role: "k8s-{{workflow.parameters.pfiNamespace}}"
+      inputs:
+        artifacts:
+          - name: inputsimulations
+            path: /perf-in
+            s3:
+              # Use the corresponding endpoint depending on your S3 provider:
+              #   AWS: s3.amazonaws.com
+              #   GCS: storage.googleapis.com
+              #   Minio: my-minio-endpoint.default:9000
+              endpoint: s3.amazonaws.com
+              bucket: "{{workflow.parameters.s3BucketName}}"
+              region: us-west-2
+              key: results/{{workflow.namespace}}/{{workflow.name}}_{{workflow.creationTimestamp}}/simulations/
+
+      outputs:
+        artifacts:
+          - name: finalResult
+            path: /perf-out
+            # It is possible to disable tar.gz archiving by setting the archive strategy to 'none'
+            # Disabling archiving has the following limitations on S3: symboloic links will not be
+            # uploaded, as S3 does not support the concept/file mode of symlinks.
+            archive:
+              none: {}
+
+            s3:
+              # Use the corresponding endpoint depending on your S3 provider:
+              #   AWS: s3.amazonaws.com
+              #   GCS: storage.googleapis.com
+              #   Minio: my-minio-endpoint.default:9000
+              endpoint: s3.amazonaws.com
+              bucket: "{{workflow.parameters.s3BucketName}}"
+              region: us-west-2
+              key: results/{{workflow.namespace}}/{{workflow.parameters.uniqueName}}/finalResult/
+
+    - name: s3access
+      metadata:
+        annotations:
+          iam.amazonaws.com/role: "k8s-{{workflow.parameters.pfiNamespace}}"
+      container:
+        image:  "{{workflow.parameters.awscliGatmergeImg}}"
+        command: [sh, -c]
+        args: ["sleep 20 && aws s3 ls s3://{{workflow.parameters.s3BucketName}}/results/ && aws s3 cp --recursive --acl authenticated-read 's3://perf-results-final/results/{{workflow.namespace}}/{{workflow.parameters.uniqueName}}' 's3://perf-results-final/results/{{workflow.namespace}}/{{workflow.parameters.uniqueName}}'"]
