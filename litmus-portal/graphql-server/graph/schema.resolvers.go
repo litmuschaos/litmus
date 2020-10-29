@@ -81,6 +81,10 @@ func (r *mutationResolver) AddMyHub(ctx context.Context, myhubInput model.Create
 	return myhub.AddMyHub(ctx, myhubInput, username)
 }
 
+func (r *mutationResolver) SyncHub(ctx context.Context, syncHubInput model.ChartsInput) ([]*model.MyHubStatus, error) {
+	return myhub.SyncHub(ctx, syncHubInput)
+}
+
 func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {
 	return queries.QueryWorkflowRuns(projectID)
 }
@@ -119,6 +123,10 @@ func (r *queryResolver) GetCharts(ctx context.Context, chartsInput model.ChartsI
 
 func (r *queryResolver) GetHubExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error) {
 	return myhub.GetExperiment(ctx, experimentInput)
+}
+
+func (r *queryResolver) GetHubStatus(ctx context.Context, username string) ([]*model.MyHubStatus, error) {
+	return myhub.HubStatus(ctx, username)
 }
 
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {

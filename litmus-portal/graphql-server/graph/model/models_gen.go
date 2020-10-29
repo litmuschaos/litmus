@@ -60,7 +60,6 @@ type ChartsInput struct {
 	HubName    string `json:"HubName"`
 	UserName   string `json:"UserName"`
 	RepoBranch string `json:"RepoBranch"`
-	RepoName   string `json:"RepoName"`
 	RepoURL    string `json:"RepoURL"`
 }
 
@@ -127,9 +126,9 @@ type ClusterInput struct {
 }
 
 type CreateMyHub struct {
-	HubName   string `json:"HubName"`
-	GitURL    string `json:"GitURL"`
-	GitBranch string `json:"GitBranch"`
+	HubName    string `json:"HubName"`
+	RepoURL    string `json:"RepoURL"`
+	RepoBranch string `json:"RepoBranch"`
 }
 
 type CreateUserInput struct {
@@ -142,9 +141,8 @@ type CreateUserInput struct {
 
 type ExperimentInput struct {
 	UserName       string `json:"UserName"`
-	RepoOwner      string `json:"RepoOwner"`
+	RepoURL        string `json:"RepoURL"`
 	RepoBranch     string `json:"RepoBranch"`
-	RepoName       string `json:"RepoName"`
 	ChartName      string `json:"ChartName"`
 	ExperimentName string `json:"ExperimentName"`
 	HubName        string `json:"HubName"`
@@ -190,9 +188,18 @@ type Metadata struct {
 
 type MyHub struct {
 	ID          string `json:"id"`
-	GitURL      string `json:"GitURL"`
-	GitBranch   string `json:"GitBranch"`
+	RepoURL     string `json:"RepoURL"`
+	RepoBranch  string `json:"RepoBranch"`
 	IsConfirmed bool   `json:"IsConfirmed"`
+	HubName     string `json:"HubName"`
+}
+
+type MyHubStatus struct {
+	ID          string `json:"id"`
+	RepoURL     string `json:"RepoURL"`
+	RepoBranch  string `json:"RepoBranch"`
+	IsAvailable bool   `json:"IsAvailable"`
+	TotalExp    string `json:"TotalExp"`
 	HubName     string `json:"HubName"`
 }
 
