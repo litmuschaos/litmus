@@ -57,8 +57,8 @@ const MyHub = () => {
       variables: {
         MyHubDetails: {
           HubName: gitHub.HubName,
-          GitURL: gitHub.GitURL,
-          GitBranch: gitHub.GitBranch,
+          RepoURL: gitHub.GitURL,
+          RepoBranch: gitHub.GitBranch,
         },
         Username: userData.username,
       },

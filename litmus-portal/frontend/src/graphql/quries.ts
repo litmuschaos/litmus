@@ -89,8 +89,8 @@ export const GET_USER = gql`
       my_hub {
         id
         HubName
-        GitURL
-        GitBranch
+        RepoURL
+        RepoBranch
       }
       company_name
       updated_at
@@ -236,6 +236,19 @@ export const GET_EXPERIMENT_DATA = gql`
       Experiments {
         ApiVersion
       }
+    }
+  }
+`;
+
+export const GET_HUB_STATUS = gql`
+  query getHubStatus($data: String!) {
+    getHubStatus(username: $data) {
+      id
+      HubName
+      RepoBranch
+      RepoURL
+      TotalExp
+      IsAvailable
     }
   }
 `;

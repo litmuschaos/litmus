@@ -34,7 +34,7 @@ const DeveloperGuide: React.FC<DeveloperGuideProps> = ({
               </Typography>
               {expAvailable ? (
                 <div className={classes.imgDiv}>
-                  <img src="/icons/guide.png" alt="dev_guide" />
+                  <img src="/icons/guide.svg" alt="dev_guide" />
                   <a href={docs} className={classes.guideLink} target="_">
                     Developer&#39;s guide
                   </a>
