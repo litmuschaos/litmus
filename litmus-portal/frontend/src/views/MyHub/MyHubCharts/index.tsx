@@ -9,40 +9,63 @@ import React, { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import useStyles from './styles';
-import { GET_CHARTS_DATA } from '../../../graphql';
+import { GET_CHARTS_DATA, GET_HUB_STATUS } from '../../../graphql';
 import { RootState } from '../../../redux/reducers';
-import { Chart, Charts } from '../../../models/redux/myhub';
+import { Chart, Charts, HubStatus } from '../../../models/redux/myhub';
 import Loader from '../../../components/Loader';
 import Center from '../../../containers/layouts/Center';
 import HeaderSection from './headerSection';
+import { history } from '../../../redux/configureStore';
 
 interface ChartName {
   ChaosName: string;
   ExperimentName: string;
 }
 
+interface URLParams {
+  hubname: string;
+}
+
 const MyHub = () => {
+  // User Data from Redux
+  const userData = useSelector((state: RootState) => state.userData);
+
+  // Get all MyHubs with status
+  const { data: userDetails } = useQuery<HubStatus>(GET_HUB_STATUS, {
+    variables: { data: userData.username },
+    fetchPolicy: 'cache-and-network',
+  });
+
+  // Get Parameters from URL
+  const paramData: URLParams = useParams();
+
+  // Filter the selected MyHub
+  const UserHub = userDetails?.getHubStatus.filter((myHub) => {
+    return paramData.hubname === myHub.HubName;
+  })[0];
+
   const classes = useStyles();
-  const hubData = useSelector((state: RootState) => state.hubDetails);
-  const { HubName, RepoName, RepoURL, RepoBranch, UserName } = hubData;
-  const experimentDefaultImagePath = `${RepoURL.split('/')[0]}//${
-    RepoURL.split('/')[2]
-  }/${RepoURL.split('/')[3]}/${RepoName}/raw/${RepoBranch}/charts/`;
+
+  const experimentDefaultImagePath = `${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/charts/`;
   const { t } = useTranslation();
+
+  // Query to get charts of selected MyHub
   const { data, loading } = useQuery<Charts>(GET_CHARTS_DATA, {
     variables: {
       data: {
-        UserName,
-        RepoURL,
-        RepoBranch,
-        RepoName,
-        HubName,
+        UserName: userData.username,
+        RepoURL: UserHub?.RepoURL,
+        RepoBranch: UserHub?.RepoBranch,
+        HubName: paramData.hubname,
       },
     },
     fetchPolicy: 'cache-and-network',
   });
+
+  // State for searching charts
   const [search, setSearch] = useState('');
   const changeSearch = (
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -84,8 +107,8 @@ const MyHub = () => {
         </Typography>
         <Typography variant="h4">
           <strong>
-            {t('myhub.myhubChart.github')}
-            {HubName}/{RepoName}
+            {UserHub?.HubName}/{UserHub?.RepoURL.split('/')[4]}/
+            {UserHub?.RepoBranch}
           </strong>
         </Typography>
       </div>
@@ -105,11 +128,16 @@ const MyHub = () => {
                     key={expName.ExperimentName}
                     elevation={3}
                     className={classes.cardDiv}
+                    onClick={() =>
+                      history.push(
+                        `${UserHub?.HubName}/${expName.ChaosName}/${expName.ExperimentName}`
+                      )
+                    }
                   >
                     <CardContent className={classes.cardContent}>
                       <img
                         src={`${experimentDefaultImagePath}${expName.ChaosName}/icons/${expName.ExperimentName}.png`}
-                        alt="add-hub"
+                        alt={expName.ExperimentName}
                         className={classes.cardImage}
                       />
                       <Link

@@ -11,20 +11,15 @@ import (
 	"gopkg.in/src-d/go-git.v4/plumbing"
 )
 
-const (
-	defaultBranch = "master"
-)
-
 //GitConfig ...
 type GitConfig struct {
-	UserName       string
-	RepositoryName string
-	RepositoryURL  string
-	RemoteName     string
-	LocalCommit    string
-	RemoteCommit   string
-	HubName        string
-	Branch         string
+	UserName      string
+	RepositoryURL string
+	RemoteName    string
+	LocalCommit   string
+	RemoteCommit  string
+	HubName       string
+	Branch        string
 }
 
 var (
@@ -48,12 +43,11 @@ func GetClonePath(c GitConfig) string {
 //GitConfigConstruct is used for constructing the gitconfig
 func GitConfigConstruct(repoData model.ChartsInput) GitConfig {
 	gitConfig := GitConfig{
-		UserName:       repoData.UserName,
-		RepositoryName: repoData.RepoName,
-		HubName:        repoData.HubName,
-		RepositoryURL:  repoData.RepoURL,
-		RemoteName:     "origin",
-		Branch:         repoData.RepoBranch,
+		UserName:      repoData.UserName,
+		HubName:       repoData.HubName,
+		RepositoryURL: repoData.RepoURL,
+		RemoteName:    "origin",
+		Branch:        repoData.RepoBranch,
 	}
 
 	return gitConfig
@@ -67,7 +61,7 @@ func GitClone(repoData model.ChartsInput) error {
 		fmt.Print("Error in cloning")
 		return err
 	}
-	log.Infof("********* Successfully Cloned '%s' Branch of '%s' Repo in '%s' Hub *********", gitConfig.Branch, gitConfig.RepositoryName, gitConfig.HubName)
+	//Successfully Cloned
 	return nil
 }
 
@@ -79,7 +73,7 @@ func GitSyncHandlerForUser(repoData model.ChartsInput) error {
 		log.Error(err)
 		return err
 	}
-	log.Infof("********* Repository syncing completed for '%s' Branch of '%s' Repo in '%s' Hub *********", gitConfig.Branch, gitConfig.RepositoryName, gitConfig.HubName)
+	//Repository syncing completed
 
 	return nil
 }
@@ -125,11 +119,7 @@ func (c GitConfig) isRepositoryExists() (bool, error) {
 func (c GitConfig) HandlerForNonExistingRepository() error {
 	RepoPath := GetClonePath(c)
 	var referenceName plumbing.ReferenceName
-	if c.Branch == defaultBranch {
-		referenceName = plumbing.NewBranchReferenceName(c.Branch)
-	} else {
-		referenceName = plumbing.NewTagReferenceName(c.Branch)
-	}
+	referenceName = plumbing.NewBranchReferenceName(c.Branch)
 	_, err := git.PlainClone(RepoPath, false, &git.CloneOptions{
 		URL: c.RepositoryURL, Progress: os.Stdout,
 		ReferenceName: referenceName,
@@ -157,12 +147,11 @@ func (c GitConfig) HandlerForExistingRepository() error {
 // returns false if the repository is clean
 // and true if the repository is dirtygitConfig
 func (c GitConfig) GitGetStatus() (bool, error) {
-	log.Info("executing GitGetStatus() ...")
 	err := c.setterRepositoryWorktreeReference()
 	if err != nil {
 		return true, err
 	}
-	log.Info("git status --porcelain")
+	// git status --porcelain
 	len, _ := getListofFilesChanged()
 	return !(len == 0), nil
 }
@@ -237,26 +226,18 @@ func (c GitConfig) CompareLocalandRemoteCommit() (bool, error) {
 		return false, fmt.Errorf("error in executing ResolveRevision: %s", err)
 	}
 	c.RemoteCommit = hash.String()
-	log.Infof("LocalCommit: '%s',RemoteCommit: '%s'", c.LocalCommit, c.RemoteCommit)
 	return c.RemoteCommit == c.LocalCommit, nil
 }
 
 // GitPull updates the repository in provided Path
 func (c GitConfig) GitPull() error {
-	log.Info("executing GitPull() ...")
 	err := c.setterRepositoryWorktreeReference()
 	if err != nil {
 		return err
 	}
 	var referenceName plumbing.ReferenceName
-	if c.Branch == defaultBranch {
-		referenceName = plumbing.NewBranchReferenceName(c.Branch)
-	} else {
-		referenceName = plumbing.NewTagReferenceName(c.Branch)
-	}
-	log.Info("git pull origin")
+	referenceName = plumbing.NewBranchReferenceName(c.Branch)
 	err = workTree.Pull(&git.PullOptions{RemoteName: c.RemoteName, ReferenceName: referenceName})
-	log.Infof("Executed git pull origin, Status: %s", err)
 	c.LocalCommit = strings.Split(plumbingRef.String(), " ")[0]
 	return nil
 }

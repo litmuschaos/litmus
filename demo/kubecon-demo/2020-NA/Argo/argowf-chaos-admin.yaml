@@ -1,0 +1,132 @@
+# This test can be executed only in Chaos namespace
+# this will launch the argo and chaos in chaos namespace
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: argowf-chaos-
+spec:
+  entrypoint: argowf-chaos
+  serviceAccountName: argowf-svcacc
+  arguments:
+    parameters:
+      - name: appNamespace
+        value: "default"
+      - name: appCurrentNamespace
+        value: "chaos-ns"
+      - name: appLabel
+        value: "nginx-demo-app"
+      - name: appEndpoint
+        value: "nginx.xxx.com"
+      - name: fileName
+        value: "pod-app-kill-count.json"
+      - name: chaosServiceAccount
+        value: chaos-admin
+      - name: reportEndpoint
+        value: "https://report.xxx.com"
+  templates:
+    - name: argowf-chaos
+      steps:
+        - - name: run-chaos
+            template: run-chaos
+        - - name: revert-chaos
+            template: revert-chaos
+
+    - name: run-chaos
+      inputs:
+        artifacts:
+        - name: run-chaos
+          path: /tmp/createChaosEngine.yaml
+          raw:
+            data: |
+              # chaosengine.yaml
+              apiVersion: litmuschaos.io/v1alpha1
+              kind: ChaosEngine
+              metadata:
+                name: k8-pod-delete
+                namespace: {{workflow.parameters.appCurrentNamespace}}
+              spec:
+                #ex. values: ns1:name=percona,ns2:run=nginx
+                appinfo:
+                  appns: {{workflow.parameters.appNamespace}}
+                  # FYI, To see app label, apply kubectl get pods --show-labels
+                  #applabel: "app=nginx"
+                  applabel: "app={{workflow.parameters.appLabel}}"
+                  appkind: deployment
+                jobCleanUpPolicy: delete
+                monitoring: false
+                annotationCheck: 'false'
+                engineState: 'active'
+                chaosServiceAccount: {{workflow.parameters.chaosServiceAccount}}
+                experiments:
+                  - name: k8-pod-delete
+                    spec:
+                      components:
+                        env:
+                          - name: NAME_SPACE
+                            value: {{workflow.parameters.appNamespace}}
+                          - name: LABEL_NAME
+                            value: {{workflow.parameters.appLabel}}
+                          - name: APP_ENDPOINT
+                            value: {{workflow.parameters.appEndpoint}}
+                          - name: FILE
+                            value: {{workflow.parameters.fileName}}
+                          - name: REPORT
+                            value: 'false'
+                          - name: REPORT_ENDPOINT
+                            value: '{{workflow.parameters.reportEndpoint}}'
+                          - name: TEST_NAMESPACE
+                            value: {{workflow.parameters.appCurrentNamespace}}
+      container:
+        image: lachlanevenson/k8s-kubectl
+        command: [sh, -c]
+        args: ['kubectl apply -f /tmp/createChaosEngine.yaml -n {{workflow.parameters.appCurrentNamespace}} | echo "sleeping for 20s" | sleep 20 ']
+
+    - name: revert-chaos
+      inputs:
+        artifacts:
+        - name: revert-chaos
+          path: /tmp/deleteChaosEngine.yaml
+          raw:
+            data: |
+              # chaosengine.yaml
+              apiVersion: litmuschaos.io/v1alpha1
+              kind: ChaosEngine
+              metadata:
+                name: k8-pod-delete
+                namespace: {{workflow.parameters.appCurrentNamespace}}
+              spec:
+                #ex. values: ns1:name=percona,ns2:run=nginx
+                appinfo:
+                  appns: {{workflow.parameters.appNamespace}}
+                  # FYI, To see app label, apply kubectl get pods --show-labels
+                  #applabel: "app=nginx"
+                  applabel: "app={{workflow.parameters.appLabel}}"
+                  appkind: deployment
+                jobCleanUpPolicy: delete
+                monitoring: false
+                annotationCheck: 'false'
+                engineState: 'active'
+                chaosServiceAccount: {{workflow.parameters.chaosServiceAccount}}
+                experiments:
+                  - name: k8-pod-delete
+                    spec:
+                      components:
+                        env:
+                          - name: NAME_SPACE
+                            value: {{workflow.parameters.appNamespace}}
+                          - name: LABEL_NAME
+                            value: {{workflow.parameters.appLabel}}
+                          - name: APP_ENDPOINT
+                            value: {{workflow.parameters.appEndpoint}}
+                          - name: FILE
+                            value: {{workflow.parameters.fileName}}
+                          - name: REPORT
+                            value: 'false'
+                          - name: REPORT_ENDPOINT
+                            value: '{{workflow.parameters.reportEndpoint}}'
+                          - name: TEST_NAMESPACE
+                            value: {{workflow.parameters.appCurrentNamespace}}
+      container:
+        image: lachlanevenson/k8s-kubectl
+        command: [sh, -c]
+        args: [' sleep 20 | kubectl delete  -f /tmp/deleteChaosEngine.yaml -n {{workflow.parameters.appCurrentNamespace}} | echo "sleeping for 20s" | sleep 20 ']

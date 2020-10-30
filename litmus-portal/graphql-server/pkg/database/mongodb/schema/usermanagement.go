@@ -41,8 +41,8 @@ func (user User) GetOutputUser() *model.User {
 //MyHub ...
 type MyHub struct {
 	ID          string `bson:"myhub_id"`
-	GitURL      string `bson:"git_url"`
-	GitBranch   string `bson:"git_branch"`
+	RepoURL     string `bson:"repo_url"`
+	RepoBranch  string `bson:"repo_branch"`
 	IsConfirmed bool   `bson:"is_confirmed"`
 	HubName     string `bson:"hub_name"`
 }
@@ -64,8 +64,8 @@ func (myhub *MyHub) GetOutputMyHub() *model.MyHub {
 
 	return &model.MyHub{
 		ID:          myhub.ID,
-		GitURL:      myhub.GitURL,
-		GitBranch:   myhub.GitBranch,
+		RepoURL:     myhub.RepoURL,
+		RepoBranch:  myhub.RepoBranch,
 		IsConfirmed: myhub.IsConfirmed,
 		HubName:     myhub.HubName,
 	}

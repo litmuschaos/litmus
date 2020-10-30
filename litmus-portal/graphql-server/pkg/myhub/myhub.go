@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
-	"strings"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
@@ -17,9 +17,6 @@ import (
 //AddMyHub is used for Adding a new MyHub
 func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*model.User, error) {
 
-	gitLink := strings.Split(myhub.GitURL, "/")
-	repo := gitLink[4]
-
 	IsExist, err := IsMyHubAvailable(ctx, myhub, username)
 	if err != nil {
 		return nil, err
@@ -30,11 +27,11 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*m
 
 	cloneHub := model.ChartsInput{
 		UserName:   username,
-		RepoName:   repo,
-		RepoBranch: myhub.GitBranch,
-		RepoURL:    myhub.GitURL,
+		RepoBranch: myhub.RepoBranch,
+		RepoURL:    myhub.RepoURL,
 		HubName:    myhub.HubName,
 	}
+
 	//Cloning the repository at a path from myhub link structure.
 	err = gitops.GitClone(cloneHub)
 	if err != nil {
@@ -44,10 +41,10 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*m
 	//Initialize a UID for new Hub.
 	uuid := uuid.New()
 	newHub := &dbSchema.MyHub{
-		ID:        uuid.String(),
-		GitURL:    myhub.GitURL,
-		GitBranch: myhub.GitBranch,
-		HubName:   myhub.HubName,
+		ID:         uuid.String(),
+		RepoURL:    myhub.RepoURL,
+		RepoBranch: myhub.RepoBranch,
+		HubName:    myhub.HubName,
 	}
 
 	//Adding the new hub into database with the given username.
@@ -64,6 +61,51 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*m
 	}
 	outputUser := user.GetOutputUser()
 	return outputUser, nil
+
+}
+
+//HubStatus returns the array of hubdetails with their current status.
+func HubStatus(ctx context.Context, username string) ([]*model.MyHubStatus, error) {
+	user, err := database.GetUserByUserName(ctx, username)
+	if err != nil {
+		return nil, err
+	}
+
+	userHubs := user.GetOutputUser().MyHub
+
+	var hubDetails []*model.MyHubStatus
+	var hubDetail *model.MyHubStatus
+	var isConfirmed bool
+	for _, hub := range userHubs {
+		sum := 0
+		chartsInput := model.ChartsInput{
+			HubName:    hub.HubName,
+			UserName:   username,
+			RepoURL:    hub.RepoURL,
+			RepoBranch: hub.RepoBranch,
+		}
+		ChartsPath := handler.GetChartsPath(ctx, chartsInput)
+		ChartData, err := handler.GetChartsData(ChartsPath)
+		if err != nil {
+			isConfirmed = false
+			sum = 0
+		} else {
+			isConfirmed = true
+			for _, chart := range ChartData {
+				sum = sum + len(chart.Spec.Experiments)
+			}
+		}
+		hubDetail = &model.MyHubStatus{
+			IsAvailable: isConfirmed,
+			ID:          hub.ID,
+			RepoURL:     hub.RepoURL,
+			HubName:     hub.HubName,
+			RepoBranch:  hub.RepoBranch,
+			TotalExp:    strconv.Itoa(sum),
+		}
+		hubDetails = append(hubDetails, hubDetail)
+	}
+	return hubDetails, nil
 
 }
 
@@ -85,9 +127,6 @@ func IsMyHubAvailable(ctx context.Context, myhub model.CreateMyHub, username str
 
 //GetCharts is responsible for getting the charts details
 func GetCharts(ctx context.Context, chartsInput model.ChartsInput) ([]*model.Chart, error) {
-
-	//Syncing the local clone with origin before fetching charts.
-	gitops.GitSyncHandlerForUser(chartsInput)
 
 	ChartsPath := handler.GetChartsPath(ctx, chartsInput)
 	ChartsData, err := handler.GetChartsData(ChartsPath)
@@ -115,4 +154,13 @@ func GetExperiment(ctx context.Context, experimentInput model.ExperimentInput) (
 	}
 
 	return ExperimentData, nil
+}
+
+//SyncHub is used for syncing the hub again if some not present or some error happens.
+func SyncHub(ctx context.Context, syncHubInput model.ChartsInput) ([]*model.MyHubStatus, error) {
+	err := gitops.GitSyncHandlerForUser(syncHubInput)
+	if err != nil {
+		return nil, err
+	}
+	return HubStatus(ctx, syncHubInput.UserName)
 }

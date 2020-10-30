@@ -1,21 +1,13 @@
 type MyHub {
   id: ID!
-  GitURL: String!
-  GitBranch: String!
+  RepoURL: String!
+  RepoBranch: String!
   IsConfirmed: Boolean!
   HubName: String!
 }
 
 type Charts {
   Charts: [Chart!]!
-}
-
-input ChartsInput {
-  HubName: String!
-  UserName: String!
-  RepoBranch: String!
-  RepoName: String!
-  RepoURL: String!
 }
 
 type Chart {
@@ -82,18 +74,33 @@ type Experiments {
   Desc: String!
 }
 
+type MyHubStatus {
+  id: ID!
+  RepoURL: String!
+  RepoBranch: String!
+  IsAvailable: Boolean!
+  TotalExp: String!
+  HubName: String!
+}
+
 input CreateMyHub {
   HubName: String!
-  GitURL: String!
-  GitBranch: String!
+  RepoURL: String!
+  RepoBranch: String!
 }
 
 input ExperimentInput {
   UserName: String!
-  RepoOwner: String!
+  RepoURL: String!
   RepoBranch: String!
-  RepoName: String!
   ChartName: String!
   ExperimentName: String!
   HubName: String!
+}
+
+input ChartsInput {
+  HubName: String!
+  UserName: String!
+  RepoBranch: String!
+  RepoURL: String!
 }
