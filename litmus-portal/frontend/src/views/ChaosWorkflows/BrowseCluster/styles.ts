@@ -23,7 +23,6 @@ const useStyles = makeStyles((theme) => ({
     borderBottom: `1px solid ${theme.palette.customColors.black(0.1)}`,
     marginLeft: theme.spacing(6.25),
   },
-
   // Form Select Properties
   formControl: {
     margin: theme.spacing(0.5),
@@ -31,12 +30,10 @@ const useStyles = makeStyles((theme) => ({
     height: '2.5rem',
     minWidth: '9rem',
   },
-
   selectText: {
     height: '2.5rem',
     padding: theme.spacing(0.5),
   },
-
   selectDate: {
     display: 'flex',
     flexDirection: 'row',
@@ -52,17 +49,32 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(1),
     width: '100%',
   },
-
   // Table and Table Data Properties
+  root: {
+    backgroundColor: theme.palette.background.paper,
+  },
   tableMain: {
     marginTop: theme.spacing(4.25),
     border: `1px solid ${theme.palette.customColors.black(0.07)}`,
     backgroundColor: theme.palette.common.white,
-    height: '29.219rem',
+    height: '28.219rem',
+    '&::-webkit-scrollbar': {
+      width: '0.2em',
+    },
+    '&::-webkit-scrollbar-track': {
+      webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: theme.palette.secondary.dark,
+    },
   },
   tableRows: {
     padding: theme.spacing(4),
     color: theme.palette.customColors.black(0.4),
+    height: '4.6875rem',
+  },
+  dataRow: {
+    height: '4.6875rem',
   },
   headerStatus: {
     paddingLeft: theme.spacing(7),
@@ -73,14 +85,13 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.customColors.black(0.4),
   },
   sortDiv: {
-    paddingTop: theme.spacing(0.5),
     paddingLeft: theme.spacing(1.5),
   },
   headData: {
     color: theme.palette.customColors.black(0.4),
   },
   tableDataStatus: {
-    paddingLeft: theme.spacing(6.5),
+    paddingLeft: theme.spacing(5),
   },
   progressBar: {
     width: '6.5rem',
@@ -91,6 +102,7 @@ const useStyles = makeStyles((theme) => ({
   workflowNameData: {
     maxWidth: '15.625rem',
     borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    paddingLeft: theme.spacing(4),
   },
   targetCluster: {
     paddingLeft: theme.spacing(3.75),
@@ -103,7 +115,10 @@ const useStyles = makeStyles((theme) => ({
     width: '8.125rem',
   },
   stepsData: {
-    paddingLeft: theme.spacing(6),
+    paddingLeft: theme.spacing(5),
+  },
+  stepsDataTime: {
+    paddingLeft: theme.spacing(7),
   },
   stepsDataschedule: {
     paddingLeft: theme.spacing(8),
@@ -144,10 +159,30 @@ const useStyles = makeStyles((theme) => ({
   datePickerColor: {
     color: theme.palette.secondary.dark,
   },
+  // Table status
+  check: {
+    width: '5.9125rem',
+    textAlign: 'center',
+    borderRadius: 3,
+    paddingTop: theme.spacing(0.375),
+    paddingBottom: theme.spacing(0.375),
+    color: theme.palette.primary.dark,
+  },
+  active: {
+    color: theme.palette.primary.dark,
+    background: theme.palette.customColors.menuOption.active,
+  },
+  notactive: {
+    color: theme.palette.error.dark,
+    backgroundColor: theme.palette.error.light,
+  },
+  pending: {
+    background: theme.palette.customColors.menuOption.pending,
+    color: theme.palette.warning.main,
+  },
   statusFont: {
     fontSize: '0.725rem',
   },
-
   // Delete Cluster Modal
   body: {
     display: 'flex',
@@ -156,7 +191,6 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     marginTop: theme.spacing(7.5),
   },
-
   // styles for text
   text: {
     width: '31.93rem',

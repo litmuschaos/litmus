@@ -29,8 +29,9 @@ const MenuProps = {
 };
 
 interface Cluster {
-  cluster_id: string;
+  cluster_name: string;
   is_active: boolean;
+  cluster_id: string;
 }
 
 interface WorkflowClusterProps {
@@ -66,8 +67,23 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
         data.getCluster.forEach((e: Cluster) => {
           if (e.is_active === true) {
             clusters.push({
-              cluster_id: e.cluster_id,
+              cluster_name: e.cluster_name,
               is_active: e.is_active,
+              cluster_id: e.cluster_id,
+            });
+            workflow.setWorkflowDetails({
+              cronSyntax: '',
+              scheduleType: {
+                scheduleOnce: 'now',
+                recurringSchedule: '',
+              },
+              scheduleInput: {
+                hour_interval: 0,
+                day: 1,
+                weekday: 'Monday',
+                time: new Date(),
+                date: new Date(),
+              },
             });
           }
         });
@@ -100,31 +116,33 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
         </Typography>
         <Typography className={classes.headchaos}>
           {t('workflowCluster.header.creatingNew')}
-          <strong>{t('workflowCluster.header.creatingNewBold')} </strong>
+          <strong> {t('workflowCluster.header.creatingNewBold')} </strong>
         </Typography>
         <Typography className={classes.headcluster}>
           {t('workflowCluster.header.selectAgent')}
         </Typography>
 
         <div className={classes.radiobutton}>
-          <FormControl
-            variant="outlined"
-            className={classes.formControl}
-            color="secondary"
-          >
+          <FormControl variant="outlined" className={classes.formControl}>
             <InputLabel className={classes.selectText}>
-              {t('workflowCluster.header.selectCluster')}
+              {t('createWorkflow.workflowCluster.activeCluster')}
             </InputLabel>
             <Select
+              labelId="Active Cluster"
               value={name}
               onChange={handleChange}
+              label="Active Cluster"
               input={<Input />}
               MenuProps={MenuProps}
               className={classes.selectText}
+              color="secondary"
             >
+              <MenuItem value="" disabled>
+                <em> {t('createWorkflow.workflowCluster.none')}</em>
+              </MenuItem>
               {clusterData.map((name: Cluster) => (
                 <MenuItem key={name.cluster_id} value={name.cluster_id}>
-                  {name.cluster_id}
+                  {name.cluster_name}
                 </MenuItem>
               ))}
             </Select>

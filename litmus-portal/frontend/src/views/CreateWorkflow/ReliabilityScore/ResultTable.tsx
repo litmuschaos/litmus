@@ -6,6 +6,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import InfoTooltip from '../../../components/InfoTooltip';
 import Center from '../../../containers/layouts/Center';
 import LinearProgressBar from '../../../components/ProgressBar/LinearProgressBar';
@@ -27,6 +28,7 @@ interface ResultModalProps {
 }
 const ResultTable: React.FC<ResultModalProps> = ({ testValue, testNames }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   const rows: {
     name: string;
@@ -54,13 +56,12 @@ const ResultTable: React.FC<ResultModalProps> = ({ testValue, testNames }) => {
           <div className={classes.tableHeader}>
             <Typography className={classes.headingModal}>
               <strong>
-                Simulate the workflow run and see the suggested reliability
-                score
+                {t('createWorkflow.reliabilityScore.resultTable.header')}
               </strong>
             </Typography>
             <Typography className={classes.headingModal}>
               <strong>
-                (workflow1 K8S conformance test on Ignite cluster)
+                ({t('createWorkflow.reliabilityScore.resultTable.headerDesc')})
               </strong>
             </Typography>
           </div>
@@ -75,16 +76,24 @@ const ResultTable: React.FC<ResultModalProps> = ({ testValue, testNames }) => {
             <TableHead>
               <TableRow>
                 <TableCell className={classes.tableHeading}>
-                  Test Name
+                  {t(
+                    'createWorkflow.reliabilityScore.resultTable.tableCell.testName'
+                  )}
                 </TableCell>
                 <TableCell align="center" className={classes.tableHeadingLine}>
-                  Test Result
+                  {t(
+                    'createWorkflow.reliabilityScore.resultTable.tableCell.testResult'
+                  )}
                 </TableCell>
                 <TableCell align="center" className={classes.tableHeading}>
-                  Weight of test
+                  {t(
+                    'createWorkflow.reliabilityScore.resultTable.tableCell.testWeight'
+                  )}
                 </TableCell>
                 <TableCell align="center" className={classes.tableHeading}>
-                  Test Points
+                  {t(
+                    'createWorkflow.reliabilityScore.resultTable.tableCell.testPoints'
+                  )}
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -103,7 +112,8 @@ const ResultTable: React.FC<ResultModalProps> = ({ testValue, testNames }) => {
                   </TableCell>
                   <TableCell align="left" className={classes.tableWeight}>
                     {row.weight}
-                    &nbsp; points
+                    &nbsp;{' '}
+                    {t('createWorkflow.reliabilityScore.resultTable.points')}
                     <br />
                     <div className={classes.progressBar}>
                       <LinearProgressBar width={2} value={row.weight} />
@@ -111,7 +121,8 @@ const ResultTable: React.FC<ResultModalProps> = ({ testValue, testNames }) => {
                   </TableCell>
                   <TableCell align="left" className={classes.tablePoints}>
                     {row.points}
-                    &nbsp; points
+                    &nbsp;{' '}
+                    {t('createWorkflow.reliabilityScore.resultTable.points')}
                     <br />
                     <div className={classes.progressBar}>
                       <LinearProgressBar width={2} value={row.points} />
@@ -128,7 +139,7 @@ const ResultTable: React.FC<ResultModalProps> = ({ testValue, testNames }) => {
           <div className={classes.resultDiv}>
             <div className={classes.toolTipGroup}>
               <Typography className={classes.resultText}>
-                Total Score
+                {t('createWorkflow.reliabilityScore.resultTable.totalScore')}
               </Typography>
               <div className={classes.toolTip2}>
                 <InfoTooltip value="Text Default" />
@@ -144,7 +155,9 @@ const ResultTable: React.FC<ResultModalProps> = ({ testValue, testNames }) => {
           <div className={classes.resultDiv}>
             <div className={classes.toolTipGroup}>
               <Typography className={classes.resultText}>
-                Reliability score
+                {t(
+                  'createWorkflow.reliabilityScore.resultTable.reliabilityScore'
+                )}
               </Typography>
               <div className={classes.toolTip3}>
                 <InfoTooltip value="Text Default" />
@@ -156,13 +169,10 @@ const ResultTable: React.FC<ResultModalProps> = ({ testValue, testNames }) => {
           </div>
           <div className={classes.resultDiv}>
             <Typography className={classes.resultTextInfo}>
-              Tips from Litmus Portal:
+              {t('createWorkflow.reliabilityScore.resultTable.info')}
             </Typography>
             <Typography className={classes.testTips}>
-              When you set the test result, then pay attention to the total
-              values of the total score. This will help you in setting up your
-              tests, getting the maximum result and the correct operation of the
-              test in the future.
+              {t('createWorkflow.reliabilityScore.resultTable.tips')}
             </Typography>
           </div>
         </Center>

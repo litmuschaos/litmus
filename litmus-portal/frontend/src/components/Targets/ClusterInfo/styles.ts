@@ -26,15 +26,6 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(5),
     marginTop: theme.spacing(5),
   },
-  active: {
-    width: '5.9125rem',
-    textAlign: 'center',
-    borderRadius: 3,
-    paddingTop: theme.spacing(0.375),
-    paddingBottom: theme.spacing(0.375),
-    color: theme.palette.primary.dark,
-    background: theme.palette.customColors.menuOption.active,
-  },
   firstCol: {
     display: 'flex',
     alignItems: 'center',
@@ -50,15 +41,6 @@ const useStyles = makeStyles((theme) => ({
   },
   version: {
     marginTop: theme.spacing(2),
-  },
-  notactive: {
-    width: '5.9125rem',
-    textAlign: 'center',
-    borderRadius: 3,
-    paddingTop: theme.spacing(0.375),
-    paddingBottom: theme.spacing(0.375),
-    color: theme.palette.error.dark,
-    backgroundColor: theme.palette.error.light,
   },
   aboutDiv: {
     display: 'flex',
@@ -99,6 +81,26 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     flexGrow: 1,
+  },
+  check: {
+    width: '5.9125rem',
+    textAlign: 'center',
+    borderRadius: 3,
+    paddingTop: theme.spacing(0.375),
+    paddingBottom: theme.spacing(0.375),
+    color: theme.palette.primary.dark,
+  },
+  active: {
+    color: theme.palette.primary.dark,
+    background: theme.palette.customColors.menuOption.active,
+  },
+  notactive: {
+    color: theme.palette.error.dark,
+    backgroundColor: theme.palette.error.light,
+  },
+  pending: {
+    background: theme.palette.customColors.menuOption.pending,
+    color: theme.palette.warning.main,
   },
 }));
 

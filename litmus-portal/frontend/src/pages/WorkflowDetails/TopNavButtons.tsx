@@ -61,7 +61,7 @@ const TopNavButtons: React.FC<Props> = ({ isToggled, setIsToggled }) => {
       </ButtonOutline>
     );
   };
-
+  /*
   const AnalyticsButton = () =>
     isToggled.isAnalyticsToggled
       ? setFilledButtonState('Analytics', 'show-analytics')
@@ -79,7 +79,7 @@ const TopNavButtons: React.FC<Props> = ({ isToggled, setIsToggled }) => {
           isExportToggled: true,
           isInfoToggled: false,
         });
-
+*/
   const InfoButton = () =>
     isToggled.isInfoToggled
       ? setFilledButtonState('Info', 'alignment')
@@ -95,8 +95,8 @@ const TopNavButtons: React.FC<Props> = ({ isToggled, setIsToggled }) => {
         <BackButton isDisabled={false} />
       </div>
       <div>
-        {AnalyticsButton()}
-        {ExportButton()}
+        {/* AnalyticsButton() */}
+        {/* ExportButton() */}
         {InfoButton()}
       </div>
     </div>

@@ -28,7 +28,7 @@ const QuickActionCard = () => {
         </Typography>
         <List>
           {/* <QuickActionItems>
-            <img src="icons/cluster.png" alt="cluster" />
+            <img src="/icons/cluster.png" alt="cluster" />
             <Link to="/" className={classes.listItem}>
               Connect a new cluster
             </Link>
@@ -36,7 +36,7 @@ const QuickActionCard = () => {
           {userRole === 'Owner' && (
             <QuickActionItems>
               <div className={classes.imgDiv}>
-                <img src="icons/team.png" alt="team" />
+                <img src="/icons/team.png" alt="team" />
               </div>
               <Link
                 to="/settings"
@@ -49,7 +49,7 @@ const QuickActionCard = () => {
           )}
           <QuickActionItems>
             <div className={classes.imgDiv}>
-              <img src="icons/survey.png" alt="survey" />
+              <img src="/icons/survey.png" alt="survey" />
             </div>
             <a
               href="https://forms.gle/qMuVphRyEWCFqjD56"
@@ -61,7 +61,7 @@ const QuickActionCard = () => {
           </QuickActionItems>
           <QuickActionItems>
             <div className={classes.imgDiv}>
-              <img src="icons/docs.png" alt="docs" />
+              <img src="/icons/docs.png" alt="docs" />
             </div>
             <a
               href="https://docs.litmuschaos.io/docs/getstarted/"

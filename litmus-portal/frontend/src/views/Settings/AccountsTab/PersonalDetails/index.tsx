@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Loader from '../../../../components/Loader';
 import config from '../../../../config';
@@ -26,6 +27,8 @@ interface personaData {
 // Displays the personals details on the "accounts" tab
 const PersonalDetails: React.FC = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
+
   const username = useSelector((state: RootState) => state.userData.username);
   const [loading, setLoading] = React.useState(false);
   // Query to get user details
@@ -145,22 +148,33 @@ const PersonalDetails: React.FC = () => {
                   <Loader size={20} />
                 </div>
               ) : (
-                <>Save Changes</>
+                <>
+                  {t('settings.accountsTab.personalDetails.button.saveChanges')}
+                </>
               )}
             </ButtonFilled>
           </div>
-          <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn>
+          <Unimodal open={open} handleClose={handleClose} hasCloseBtn>
             {error.length ? (
               <div className={classes.errDiv}>
                 {/* <img src="./icons/checkmark.svg" alt="checkmark" /> */}
                 <div className={classes.textError}>
                   <Typography className={classes.typo} align="center">
-                    <strong> Error </strong> while updating details.
+                    <strong>
+                      {t(
+                        'settings.accountsTab.personalDetails.modal.headerErrStrong'
+                      )}
+                      :
+                    </strong>{' '}
+                    {t('settings.accountsTab.personalDetails.modal.headerErr')}
                   </Typography>
                 </div>
                 <div className={classes.textSecondError}>
                   <Typography className={classes.typoSub}>
-                    Error: {error}
+                    {t(
+                      'settings.accountsTab.personalDetails.modal.headerErrStrong'
+                    )}
+                    : {error}
                   </Typography>
                 </div>
                 <div data-cy="done" className={classes.buttonModal}>
@@ -169,7 +183,7 @@ const PersonalDetails: React.FC = () => {
                     isDisabled={false}
                     handleClick={handleClose}
                   >
-                    <>Done</>
+                    <>{t('settings.accountsTab.personalDetails.button.done')}</>
                   </ButtonFilled>
                 </div>
               </div>
@@ -178,12 +192,17 @@ const PersonalDetails: React.FC = () => {
                 <img src="./icons/userLarge.svg" alt="user" />
                 <div className={classes.text}>
                   <Typography className={classes.typo} align="center">
-                    Your personal information <strong>has been changed!</strong>
+                    {t('settings.accountsTab.personalDetails.modal.header')}{' '}
+                    <strong>
+                      {t(
+                        'settings.accountsTab.personalDetails.modal.headerStrong'
+                      )}
+                    </strong>
                   </Typography>
                 </div>
                 <div className={classes.text1}>
                   <Typography align="center" className={classes.typo1}>
-                    Changes took effect
+                    {t('settings.accountsTab.personalDetails.modal.info')}
                   </Typography>
                 </div>
                 <div data-cy="done">
@@ -192,7 +211,7 @@ const PersonalDetails: React.FC = () => {
                     isDisabled={false}
                     handleClick={handleClose}
                   >
-                    <>Done</>
+                    <>{t('settings.accountsTab.personalDetails.button.done')}</>
                   </ButtonFilled>
                 </div>
               </div>

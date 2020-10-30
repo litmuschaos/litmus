@@ -1,5 +1,6 @@
 import { Typography } from '@material-ui/core';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import Loader from '../../../../../components/Loader';
 import config from '../../../../../config';
@@ -26,6 +27,8 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
   handleDiv,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
+
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const handleClose = () => {
@@ -76,35 +79,48 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
               <Loader size={20} />
             </div>
           ) : (
-            <>Create</>
+            <>
+              {t(
+                'settings.userManagementTab.createUser.newUserModal.button.create'
+              )}
+            </>
           )}
         </ButtonFilled>
       </div>
-      <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn>
+      <Unimodal open={open} handleClose={handleClose} hasCloseBtn>
         {error.length ? (
           <div className={classes.errDiv}>
             {/* <img src="./icons/checkmark.svg" alt="checkmark" /> */}
 
             <div className={classes.textError}>
               <Typography className={classes.typo} align="center">
-                <strong> Error </strong> while creating a new user.
+                <strong>
+                  {t(
+                    'settings.userManagementTab.createUser.newUserModal.error'
+                  )}
+                </strong>{' '}
+                {t(
+                  'settings.userManagementTab.createUser.newUserModal.headerErr'
+                )}
               </Typography>
             </div>
             <div className={classes.textSecondError}>
               <Typography className={classes.typoSub}>
-                Error: {error}
+                {t('settings.userManagementTab.createUser.newUserModal.error')}:{' '}
+                {error}
               </Typography>
             </div>
-            <div
-              data-cy="newUserSuccessfulDoneButton"
-              className={classes.buttonModal}
-            >
+            <div data-cy="newUserDoneButton" className={classes.buttonModal}>
               <ButtonFilled
                 isPrimary
                 isDisabled={false}
                 handleClick={handleClose}
               >
-                <>Done</>
+                <>
+                  {t(
+                    'settings.userManagementTab.createUser.newUserModal.button.done'
+                  )}
+                </>
               </ButtonFilled>
             </div>
           </div>
@@ -113,22 +129,29 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
             <img src="./icons/checkmark.svg" alt="checkmark" />
             <div className={classes.text}>
               <Typography className={classes.typo} align="center">
-                A new user <strong>{name}</strong> was successfully created
+                {t('settings.userManagementTab.createUser.newUserModal.header')}{' '}
+                <strong>{name}</strong>{' '}
+                {t(
+                  'settings.userManagementTab.createUser.newUserModal.headerInfo'
+                )}
               </Typography>
             </div>
             <div className={classes.textSecond}>
               <Typography className={classes.typoSub}>
-                Now information about it will be displayed on the user
-                management screen of the application.
+                {t('settings.userManagementTab.createUser.newUserModal.info')}
               </Typography>
             </div>
-            <div data-cy="done" className={classes.buttonModal}>
+            <div data-cy="newUserDoneButton" className={classes.buttonModal}>
               <ButtonFilled
                 isPrimary
                 isDisabled={false}
                 handleClick={handleClose}
               >
-                <>Done</>
+                <>
+                  {t(
+                    'settings.userManagementTab.createUser.newUserModal.button.done'
+                  )}
+                </>
               </ButtonFilled>
             </div>
           </div>

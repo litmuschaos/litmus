@@ -65,10 +65,10 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
               className={classes.avatarBackground}
               src={avatar}
             />
-            <Button className={classes.edit} onClick={handleOpen}>
+            <Button className={classes.edit} onClick={handleOpen} disabled>
               {t('settings.userManagementTab.createUser.userDetails.button')}
             </Button>
-            <Unimodal isOpen={open} handleClose={handleClose} hasCloseBtn>
+            <Unimodal open={open} handleClose={handleClose} hasCloseBtn>
               <ChooseAvatarModal
                 avatar={avatar}
                 setAvatar={setAvatar}

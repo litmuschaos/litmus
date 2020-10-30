@@ -46,9 +46,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
   // mutation to send invitation to selected users
   const [SendInvite, { loading: loadingB }] = useMutation<MemberInviteNew>(
     SEND_INVITE,
-    {
-      refetchQueries: [{ query: GET_USER, variables: { username } }],
-    }
+    { refetchQueries: [{ query: GET_USER, variables: { username } }] }
   );
 
   const [CancelInvite, { loading: loadingA }] = useMutation<MemberInvitation>(
@@ -126,7 +124,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                       <Typography className={classes.menuHeader}>
                         <strong>
                           {t(
-                            'settings.teamingTab.sentInvitation.menuItem.editorRole.label'
+                            'settings.teamingTab.invitation.sentInvitation.menuItem.editorRole.label'
                           )}
                         </strong>
                       </Typography>
@@ -134,7 +132,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                     <div>
                       <Typography className={classes.menuDesc}>
                         {t(
-                          'settings.teamingTab.sentInvitation.menuItem.editorRole.body'
+                          'settings.teamingTab.invitation.sentInvitation.menuItem.editorRole.body'
                         )}
                       </Typography>
                     </div>
@@ -157,7 +155,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                       <Typography className={classes.menuHeader}>
                         <strong>
                           {t(
-                            'settings.teamingTab.sentInvitation.menuItem.viewerRole.label'
+                            'settings.teamingTab.invitation.sentInvitation.menuItem.viewerRole.label'
                           )}
                         </strong>
                       </Typography>
@@ -165,7 +163,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                     <div>
                       <Typography className={classes.menuDesc}>
                         {t(
-                          'settings.teamingTab.sentInvitation.menuItem.viewerRole.body'
+                          'settings.teamingTab.invitation.sentInvitation.menuItem.viewerRole.body'
                         )}
                       </Typography>
                     </div>
@@ -173,7 +171,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                 </MenuItem>
               </Menu>
             </div>
-            <div>
+            <div data-cy="cancelInviteDoneButton">
               <ButtonOutline
                 handleClick={() =>
                   CancelInvite({
@@ -190,7 +188,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                 {loadingA ? <Loader size={20} /> : 'Cancel'}
               </ButtonOutline>
             </div>
-            <div>
+            <div data-cy="resendInviteDoneButton">
               <ButtonFilled
                 isDisabled={loadingB}
                 isPrimary

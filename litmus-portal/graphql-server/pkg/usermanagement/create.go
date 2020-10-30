@@ -33,6 +33,7 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 		ID:          uuid.String(),
 		Username:    user.Username,
 		Email:       user.Email,
+		MyHub:       []*dbSchema.MyHub{},
 		CompanyName: user.CompanyName,
 		Name:        user.Name,
 		CreatedAt:   time.Now().Format(time.RFC1123Z),

@@ -68,14 +68,13 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.dark,
     fontSize: '1.25rem',
     fontWeight: 'bold',
-    width: '80%',
+    width: '82.5%',
   },
   failedLabel: {
     color: theme.palette.error.dark,
     fontSize: '1.25rem',
     fontWeight: 'bold',
-    width: '20%',
-    marginRight: theme.spacing(2.5),
+    width: '17.5%',
   },
   statsDesc: {
     marginLeft: theme.spacing(4.375),

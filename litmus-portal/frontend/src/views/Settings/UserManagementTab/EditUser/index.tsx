@@ -1,5 +1,6 @@
 import { Divider, IconButton, Typography } from '@material-ui/core';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import InputField from '../../../../components/InputField';
 import { validateLength } from '../../../../utils/validate';
 import UserDetails from '../CreateUser/UserDetails';
@@ -28,6 +29,7 @@ const EditUser: React.FC<EditUserProps> = ({
   fullName,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   // for conditional rendering of reset password div
 
@@ -58,12 +60,12 @@ const EditUser: React.FC<EditUserProps> = ({
             <img src="./icons/BackArrow.svg" alt="back" />
           </IconButton>
           <Typography className={classes.divHeaderText}>
-            <strong>Edit user profile</strong>
+            <strong>{t('settings.userManagementTab.editUser.header')}</strong>
           </Typography>
         </div>
 
         <Typography className={classes.descText}>
-          Edit the user&apos;s personal and login details
+          {t('settings.userManagementTab.editUser.info')}
         </Typography>
         <div className={classes.container}>
           <div>
@@ -84,7 +86,9 @@ const EditUser: React.FC<EditUserProps> = ({
 
               <div>
                 <Typography className={classes.headerText}>
-                  <strong> Login Details</strong>
+                  <strong>
+                    {t('settings.userManagementTab.editUser.login')}
+                  </strong>
                 </Typography>
                 <div>
                   <form>
@@ -101,7 +105,9 @@ const EditUser: React.FC<EditUserProps> = ({
                         validationError={validateLength(
                           createPAssword.password
                         )}
-                        label="New Password"
+                        label={t(
+                          'settings.userManagementTab.editUser.label.newPassword'
+                        )}
                         value={createPAssword.password}
                       />
                     </div>

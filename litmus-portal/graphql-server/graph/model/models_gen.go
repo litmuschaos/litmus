@@ -15,6 +15,15 @@ type ActionPayload struct {
 	ExternalData *string `json:"external_data"`
 }
 
+type Annotation struct {
+	Categories       string `json:"Categories"`
+	Vendor           string `json:"Vendor"`
+	CreatedAt        string `json:"CreatedAt"`
+	Repository       string `json:"Repository"`
+	Support          string `json:"Support"`
+	ChartDescription string `json:"ChartDescription"`
+}
+
 type ChaosWorkFlowInput struct {
 	WorkflowManifest    string             `json:"workflow_manifest"`
 	CronSyntax          string             `json:"cronSyntax"`
@@ -32,6 +41,26 @@ type ChaosWorkFlowResponse struct {
 	WorkflowName        string `json:"workflow_name"`
 	WorkflowDescription string `json:"workflow_description"`
 	IsCustomWorkflow    bool   `json:"isCustomWorkflow"`
+}
+
+type Chart struct {
+	APIVersion  string              `json:"ApiVersion"`
+	Kind        string              `json:"Kind"`
+	Metadata    *Metadata           `json:"Metadata"`
+	Spec        *Spec               `json:"Spec"`
+	PackageInfo *PackageInformation `json:"PackageInfo"`
+	Experiments []*Chart            `json:"Experiments"`
+}
+
+type Charts struct {
+	Charts []*Chart `json:"Charts"`
+}
+
+type ChartsInput struct {
+	HubName    string `json:"HubName"`
+	UserName   string `json:"UserName"`
+	RepoBranch string `json:"RepoBranch"`
+	RepoURL    string `json:"RepoURL"`
 }
 
 type Cluster struct {
@@ -96,12 +125,43 @@ type ClusterInput struct {
 	ClusterType  string  `json:"cluster_type"`
 }
 
+type CreateMyHub struct {
+	HubName    string `json:"HubName"`
+	RepoURL    string `json:"RepoURL"`
+	RepoBranch string `json:"RepoBranch"`
+}
+
 type CreateUserInput struct {
 	Username    string  `json:"username"`
 	Email       *string `json:"email"`
 	CompanyName *string `json:"company_name"`
 	Name        *string `json:"name"`
 	ProjectName string  `json:"project_name"`
+}
+
+type ExperimentInput struct {
+	UserName       string `json:"UserName"`
+	RepoURL        string `json:"RepoURL"`
+	RepoBranch     string `json:"RepoBranch"`
+	ChartName      string `json:"ChartName"`
+	ExperimentName string `json:"ExperimentName"`
+	HubName        string `json:"HubName"`
+}
+
+type Experiments struct {
+	Name string `json:"Name"`
+	Csv  string `json:"CSV"`
+	Desc string `json:"Desc"`
+}
+
+type Link struct {
+	Name string `json:"Name"`
+	URL  string `json:"Url"`
+}
+
+type Maintainer struct {
+	Name  string `json:"Name"`
+	Email string `json:"Email"`
 }
 
 type Member struct {
@@ -118,6 +178,34 @@ type MemberInput struct {
 	ProjectID string      `json:"project_id"`
 	UserName  string      `json:"user_name"`
 	Role      *MemberRole `json:"role"`
+}
+
+type Metadata struct {
+	Name        string      `json:"Name"`
+	Version     string      `json:"Version"`
+	Annotations *Annotation `json:"Annotations"`
+}
+
+type MyHub struct {
+	ID          string `json:"id"`
+	RepoURL     string `json:"RepoURL"`
+	RepoBranch  string `json:"RepoBranch"`
+	IsConfirmed bool   `json:"IsConfirmed"`
+	HubName     string `json:"HubName"`
+}
+
+type MyHubStatus struct {
+	ID          string `json:"id"`
+	RepoURL     string `json:"RepoURL"`
+	RepoBranch  string `json:"RepoBranch"`
+	IsAvailable bool   `json:"IsAvailable"`
+	TotalExp    string `json:"TotalExp"`
+	HubName     string `json:"HubName"`
+}
+
+type PackageInformation struct {
+	PackageName string         `json:"PackageName"`
+	Experiments []*Experiments `json:"Experiments"`
 }
 
 type PodLog struct {
@@ -157,6 +245,10 @@ type Project struct {
 	RemovedAt string    `json:"removed_at"`
 }
 
+type Provider struct {
+	Name string `json:"Name"`
+}
+
 type ScheduledWorkflows struct {
 	WorkflowID          string        `json:"workflow_id"`
 	WorkflowManifest    string        `json:"workflow_manifest"`
@@ -173,6 +265,21 @@ type ScheduledWorkflows struct {
 	ClusterType         string        `json:"cluster_type"`
 }
 
+type Spec struct {
+	DisplayName         string        `json:"DisplayName"`
+	CategoryDescription string        `json:"CategoryDescription"`
+	Keywords            []string      `json:"Keywords"`
+	Maturity            string        `json:"Maturity"`
+	Maintainers         []*Maintainer `json:"Maintainers"`
+	MinKubeVersion      string        `json:"MinKubeVersion"`
+	Provider            string        `json:"Provider"`
+	Links               []*Link       `json:"Links"`
+	Experiments         []string      `json:"Experiments"`
+	ChaosExpCRDLink     string        `json:"ChaosExpCRDLink"`
+	Platforms           []string      `json:"Platforms"`
+	ChaosType           *string       `json:"ChaosType"`
+}
+
 type UpdateUserInput struct {
 	ID          string  `json:"id"`
 	Name        *string `json:"name"`
@@ -185,6 +292,7 @@ type User struct {
 	Username        string     `json:"username"`
 	Email           *string    `json:"email"`
 	IsEmailVerified *bool      `json:"is_email_verified"`
+	MyHub           []*MyHub   `json:"my_hub"`
 	CompanyName     *string    `json:"company_name"`
 	Name            *string    `json:"name"`
 	Projects        []*Project `json:"projects"`

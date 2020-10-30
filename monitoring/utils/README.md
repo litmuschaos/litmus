@@ -12,6 +12,10 @@ This directory contains utilities required to setup a monitoring infrastructure 
 
   > Contains setup for Grafana.
 
+- [Metrics exporters](https://github.com/litmuschaos/litmus/blob/master/monitoring/utils/metrics-exporters)
+
+  > Contains setup for different metrics exporters.
+
 - [Metrics exporters with service monitors](https://github.com/litmuschaos/litmus/blob/master/monitoring/utils/metrics-exporters-with-service-monitors)
 
   > Contains setup for different metrics exporters with their corresponding service monitors.

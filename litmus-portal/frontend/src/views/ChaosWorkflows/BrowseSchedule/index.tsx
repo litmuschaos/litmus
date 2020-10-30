@@ -6,6 +6,7 @@ import {
   InputBase,
   InputLabel,
   MenuItem,
+  Paper,
   Select,
   Table,
   TableBody,
@@ -184,7 +185,7 @@ const BrowseSchedule = () => {
           </FormControl>
         </div>
       </section>
-      <section className="table section">
+      <Paper className={classes.root}>
         {/* Table Header */}
         <TableContainer
           data-cy="browseScheduleTable"
@@ -206,8 +207,8 @@ const BrowseSchedule = () => {
                         onClick={() =>
                           setSortData({
                             ...sortData,
-                            name: { sort: true, ascending: true },
-                            startDate: { sort: false, ascending: true },
+                            name: { sort: false, ascending: false },
+                            startDate: { sort: false, ascending: false },
                           })
                         }
                       >
@@ -219,8 +220,8 @@ const BrowseSchedule = () => {
                         onClick={() =>
                           setSortData({
                             ...sortData,
-                            name: { sort: true, ascending: false },
-                            startDate: { sort: false, ascending: false },
+                            name: { sort: false, ascending: true },
+                            startDate: { sort: true, ascending: true },
                           })
                         }
                       >
@@ -347,7 +348,7 @@ const BrowseSchedule = () => {
             });
           }}
         />
-      </section>
+      </Paper>
     </div>
   );
 };

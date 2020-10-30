@@ -336,7 +336,7 @@ data:
   config: |
     containerRuntimeExecutor: k8sapi
     executor:
-      imagePullPolicy: IfNotPresent
+      imagePullPolicy: Always
 ---
 apiVersion: v1
 kind: Service
@@ -1037,6 +1037,8 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: argo-chaos
+  namespace: #{AGENT-NAMESPACE}
+---
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -1083,6 +1085,7 @@ rules:
       - configmaps
     verbs:
       - get
+      - create
   - apiGroups:
       - litmuschaos.io
     resources:
@@ -1103,6 +1106,14 @@ rules:
       - clusterworkflowtemplates/finalizers
     verbs:
       - create
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - pods/log
+    verbs:
       - get
       - list
       - watch

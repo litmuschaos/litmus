@@ -29,8 +29,11 @@ const PopOver: React.FC<PopOverProps> = ({
   // Function to convert UNIX time in format of DD MMM YYY
   const formatDate = (date: string) => {
     const updated = new Date(parseInt(date, 10) * 1000).toString();
-    const resDate = moment(updated).format('DD MMM YYYY');
-    return resDate;
+    const dateTime = {
+      date: moment(updated).format('DD MMM YYYY'),
+      time: moment(updated).format('HH:mm'),
+    };
+    return dateTime;
   };
 
   return (
@@ -41,7 +44,8 @@ const PopOver: React.FC<PopOverProps> = ({
             <Avatar className={`${classes.miniIcons} ${classes.dateIcon}`}>
               <img src="/icons/calenderAnalytics.svg" alt="Calender" />
             </Avatar>
-            Tests date: {formatDate(testDate)}
+            Tests date: {formatDate(testDate).date} <br />
+            Tests time: {formatDate(testDate).time}
           </Typography>
         </div>
         <Typography className={classes.resilienceScore}>

@@ -9,6 +9,7 @@ import {
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../../../components/Button/ButtonOutline';
 import {
@@ -34,6 +35,7 @@ interface ReceivedInvitation {
 
 const ReceivedInvitations: React.FC = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   // for response data
   const [rows, setRows] = useState<ReceivedInvitation[]>([]);
@@ -64,7 +66,10 @@ const ReceivedInvitations: React.FC = () => {
   // query for getting all the data for the logged in user
   const { data } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
     GET_USER,
-    { variables: { username } }
+    {
+      variables: { username },
+      fetchPolicy: 'cache-and-network',
+    }
   );
 
   useEffect(() => {
@@ -73,6 +78,7 @@ const ReceivedInvitations: React.FC = () => {
       const users: ReceivedInvitation[] = [];
 
       let flag = 0;
+      let roleVar = '';
 
       projectList.forEach((project) => {
         project.members.forEach((member) => {
@@ -82,16 +88,17 @@ const ReceivedInvitations: React.FC = () => {
             member.invitation === 'Pending'
           ) {
             flag = 1;
+            roleVar = member.role;
           }
         });
         if (flag === 1) {
           project.members.forEach((member) => {
             if (member.user_name !== username && member.role === 'Owner') {
               users.push({
-                username: member.user_name,
-                role: member.role,
-                projectName: project.name,
                 projectID: project.id,
+                projectName: project.name,
+                role: roleVar,
+                username: member.user_name,
               });
             }
           });
@@ -124,7 +131,10 @@ const ReceivedInvitations: React.FC = () => {
                           : userAvatar(row.username)}
                       </Avatar>
                       <div className={classes.detail}>
-                        <div> {row.username}</div>
+                        <div className={classes.nameRole}>
+                          <div>{row.username}</div>
+                          <div className={classes.role}>({row.role})</div>
+                        </div>
                         <div>{row.projectName}</div>
                       </div>
                     </div>
@@ -143,7 +153,11 @@ const ReceivedInvitations: React.FC = () => {
                         }}
                         isDisabled={false}
                       >
-                        <div>Ignore</div>
+                        <div>
+                          {t(
+                            'settings.teamingTab.invitation.receivedInvitation.button.ignore'
+                          )}
+                        </div>
                       </ButtonOutline>
                       <div data-cy="receivedInvitationAccept">
                         <ButtonFilled
@@ -161,7 +175,9 @@ const ReceivedInvitations: React.FC = () => {
                           }}
                           isDisabled={false}
                         >
-                          Accept
+                          {t(
+                            'settings.teamingTab.invitation.receivedInvitation.button.accept'
+                          )}
                         </ButtonFilled>
                       </div>
                     </div>
@@ -172,7 +188,11 @@ const ReceivedInvitations: React.FC = () => {
           ) : (
             <TableRow>
               <TableCell colSpan={2}>
-                <Typography align="center">No invitations received.</Typography>
+                <Typography align="center">
+                  {t(
+                    'settings.teamingTab.invitation.receivedInvitation.noInvites'
+                  )}
+                </Typography>
               </TableCell>
             </TableRow>
           )}
