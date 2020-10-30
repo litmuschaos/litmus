@@ -1,9 +1,4 @@
 # This is an auto-generated file. DO NOT EDIT
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: #{AGENT-NAMESPACE}
----
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -1065,12 +1060,6 @@ subjects:
     name: argo-chaos
     namespace: #{AGENT-NAMESPACE}
 ---
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: subscriber-service-account
-  namespace: #{AGENT-NAMESPACE}
----
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
@@ -1125,7 +1114,7 @@ metadata:
   namespace: #{AGENT-NAMESPACE}
 subjects:
   - kind: ServiceAccount
-    name: subscriber-service-account
+    name: #{SUBSCRIBER-SERVICE-ACCOUNT}
     namespace: #{AGENT-NAMESPACE}
 roleRef:
   kind: ClusterRole
@@ -1148,7 +1137,7 @@ spec:
       labels:
         app: subscriber
     spec:
-      serviceAccountName: subscriber-service-account
+      serviceAccountName: #{SUBSCRIBER-SERVICE-ACCOUNT}
       containers:
         - name: subscriber
           image: #{SUB-IMAGE}

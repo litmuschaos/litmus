@@ -16,10 +16,12 @@ func StartDeployer(projectID string) {
 	DeployerNamespace := os.Getenv("AGENT_NAMESPACE")
 
 	clusterInput := model.ClusterInput{
-		ProjectID:    projectID,
-		ClusterName:  "Self-Cluster",
-		ClusterType:  "internal",
-		PlatformName: "others",
+		ProjectID:      projectID,
+		ClusterName:    "Self-Cluster",
+		ClusterType:    "internal",
+		PlatformName:   "others",
+		AgentScope:     os.Getenv("AGENT_SCOPE"),
+		AgentNamespace: &DeployerNamespace,
 	}
 	resp, err := mutations.ClusterRegister(clusterInput)
 	if err != nil {
