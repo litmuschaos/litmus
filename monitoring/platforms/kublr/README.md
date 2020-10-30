@@ -61,15 +61,17 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
 -   Enable Litmus metrics collection on the Litmus monitoring components
 
     ```
+
     kubectl annotate svc -n litmus --overwrite \
+    kubectl annotate svc -n litmus \
       chaos-monitor chaos-operator-metrics litmus-eventrouter \
       'prometheus.io/scrape=true'
-    ```
 
 -   Enable custom metrics collection on the Sock-shop application
 
     ```
     kubectl annotate svc -n sock-shop --overwrite \
+    kubectl annotate svc -n sock-shop \
       carts catalogue front-end orders payment shipping user \
       'prometheus.io/scrape=true'
     ```

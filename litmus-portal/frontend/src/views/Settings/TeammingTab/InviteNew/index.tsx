@@ -28,6 +28,7 @@ const InviteNew: React.FC = () => {
       </div>
 
       <Unimodal
+        data-cy="modal"
         open={open}
         handleClose={handleClose}
         hasCloseBtn

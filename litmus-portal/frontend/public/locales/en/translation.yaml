@@ -75,7 +75,7 @@ home:
     option2: Daily
     option3: Monthly
     granularity: Granularity
-  recentActivityEmpty: No recent activity. 
+  recentActivityEmpty: No recent activity.
 
 login:
   heading: Welcome to <strong>Litmus!</strong>
@@ -131,7 +131,7 @@ analytics:
   tableHead2: Starting Date
   tableHead3: Regularity
   tableHead4: Cluster
-  workflowRunDetailsTable: 
+  workflowRunDetailsTable:
     tableHead1: Test Name
     tableHead2: Test Result
     tableHead3: Weight of the test
@@ -162,7 +162,7 @@ chaosWorkflows:
       resilienceScoreComparison: Resilience score comparison
       comparativeResults: Comparative results of selected workflows which ran successfully
       once: Once
-      seeAnalytics: See analytics  
+      seeAnalytics: See analytics
 
 settings:
   accountsTab:
@@ -188,7 +188,7 @@ settings:
         currPassword: Current Password
         newPassword: New Password
         confNewPassword: Confirm Password
-      button: 
+      button:
         changePass: Change Password
         done: Done
 
@@ -240,7 +240,7 @@ settings:
         button:
           accept: accept
           ignore: ignore
-      sentInvitation:  
+      sentInvitation:
         noInvites: There is no one waiting for your invitation.
         menuItem:
           editorRole:
@@ -249,7 +249,7 @@ settings:
           viewerRole:
             label: Viewer
             body: Can view the project
-      
+
   userManagementTab:
     header: Members
     info: Create users, manage them and reset their password and username when required
@@ -445,12 +445,12 @@ createWorkflow:
 
 targets:
   connectHome:
-    head : Targets
-    connectText: Connect the Target 
+    head: Targets
+    connectText: Connect the Target
   copy:
     copy: Copy
     copied: Copied
-    copying: Command copied to clickboard       
+    copying: Command copied to clickboard
   newTarget:
     head: Connect a new target on your devices
     head1: 1.Open the cluster console
@@ -462,9 +462,9 @@ targets:
 
 connectTargets:
   title: A new Target,
-  head : is successfully created!
-  info:  Congratulations on connecting a new target! Now information about it 
-  mainLine:  will be displayed on "Targets".
+  head: is successfully created!
+  info: Congratulations on connecting a new target! Now information about it
+  mainLine: will be displayed on "Targets".
   button:
     buttonBack: Back to Targets
     buttonSchedule: Schedule a workflow
@@ -517,3 +517,53 @@ workflows:
 internetIssues:
   fetchData: 'Fetching the data...'
   connectionError: It seems you have no internet connection, Please try again When connectivity resumes.
+
+######################################
+############     MyHub     ###########
+######################################
+myhub:
+  mainPage:
+    header: My Hub
+    github: github.com/
+    availableHubs: Available chaos hubs
+    switchHub: You can switch between connected hubs or connect a new one.
+    devGuideHeader: You have no hubs currently connect. Start connecting your first hub.
+    devGuideDescription: You should have your litmus chaos hub forked and made ready before connecting to it.
+    connectNewHub: Connect a new chaos hub
+    noGithubCredentials: You have not given your Github credential
+    submitBtn: Submit Now
+    videoDescription: Get resilient and compliance scores for your Kuberenetes product
+    sync: Syncing Repo...
+    retry: Retry Connection
+  myhubChart:
+    header: My Hub
+    github: github.com/
+    syncingRepo: Loading Charts, Please Wait...!
+  connectHubPage:
+    connectHub: Connect a new chaos hub
+    enterInfo: Enter information in the required fields
+    connectBtn: Then click on the connect button
+    submitBtn: Submit Now
+    cloningText: Please wait while we are cloning your repo!
+    errorText: Error
+    creatingHub: while creating MyHub
+    newHub: A new chaos hub
+    success: is successfully created
+    newHubCreated: A new chaos hub will be added to the main page of the My hubs section
+    myHub: Back to my hubs
+    videoDesc: Get resilient and compliance scores for your Kuberenetes product
+  videoCarousel:
+    video: Video Tips
+  installChaos:
+    copy: Copy
+    copied: Copied
+  usefulLink:
+    maintainer: Maintainers
+  experimentPage:
+    congrats: Congratulations! You have created a template for new experiment. Finish it on GitHub using a developer`s guide.
+    installExp: Install this Chaos Experiment
+    installExpDesc: You can install the Chaos Experiment using the following command
+    installRBAC: Setup Service Account (RBAC)
+    installRBACDesc: Create a service account using the following command
+    installEngine: Sample Chaos Engine
+    installEngineDesc: Copy and edit this sample Chaos Engine yaml according to your application needs

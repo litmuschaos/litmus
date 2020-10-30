@@ -210,6 +210,12 @@ type Query {
   getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
 
   ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
+
+  getCharts(chartsInput: ChartsInput!): [Chart!]! @authorized
+
+  getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
+
+  getHubStatus(username: String!): [MyHubStatus]! @authorized
 }
 
 type Mutation {
@@ -243,6 +249,10 @@ type Mutation {
   chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
 
   podLog(log: PodLog!): String!
+
+  addMyHub(myhubInput: CreateMyHub!, username: String!): User! @authorized
+
+  syncHub(syncHubInput: ChartsInput!): [MyHubStatus!]! @authorized
 }
 
 type Subscription {

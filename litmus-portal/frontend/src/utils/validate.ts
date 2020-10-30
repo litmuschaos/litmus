@@ -58,3 +58,9 @@ export const validateLength = (value: string) => {
   if (value.length > 0) return false;
   return true;
 };
+
+export const isValidWebUrl = (value: string) => {
+  const regEx = /^(http|https):\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/gm;
+  if (value.match(regEx) || value === '') return true;
+  return false;
+};

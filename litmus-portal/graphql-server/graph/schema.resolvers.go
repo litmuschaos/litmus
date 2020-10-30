@@ -19,6 +19,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/mutations"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/queries"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/subscriptions"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usermanagement"
 	"go.mongodb.org/mongo-driver/bson"
@@ -76,6 +77,14 @@ func (r *mutationResolver) PodLog(ctx context.Context, log model.PodLog) (string
 	return mutations.LogsHandler(log, *store)
 }
 
+func (r *mutationResolver) AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, username string) (*model.User, error) {
+	return myhub.AddMyHub(ctx, myhubInput, username)
+}
+
+func (r *mutationResolver) SyncHub(ctx context.Context, syncHubInput model.ChartsInput) ([]*model.MyHubStatus, error) {
+	return myhub.SyncHub(ctx, syncHubInput)
+}
+
 func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {
 	return queries.QueryWorkflowRuns(projectID)
 }
@@ -106,6 +115,18 @@ func (r *queryResolver) ListWorkflow(ctx context.Context, projectID string, work
 	} else {
 		return queries.QueryListWorkflowByIDs(workflowIds)
 	}
+}
+
+func (r *queryResolver) GetCharts(ctx context.Context, chartsInput model.ChartsInput) ([]*model.Chart, error) {
+	return myhub.GetCharts(ctx, chartsInput)
+}
+
+func (r *queryResolver) GetHubExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error) {
+	return myhub.GetExperiment(ctx, experimentInput)
+}
+
+func (r *queryResolver) GetHubStatus(ctx context.Context, username string) ([]*model.MyHubStatus, error) {
+	return myhub.HubStatus(ctx, username)
 }
 
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {
