@@ -63,7 +63,6 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
     ```
 
     kubectl annotate svc -n litmus --overwrite \
-    kubectl annotate svc -n litmus \
       chaos-monitor chaos-operator-metrics litmus-eventrouter \
       'prometheus.io/scrape=true'
 
@@ -71,7 +70,6 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
 
     ```
     kubectl annotate svc -n sock-shop --overwrite \
-    kubectl annotate svc -n sock-shop \
       carts catalogue front-end orders payment shipping user \
       'prometheus.io/scrape=true'
     ```
@@ -80,7 +78,7 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
 
     ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/import-dashboard.png?raw=true)
 
-- Import the grafana dashboard "Sock-Shop Performance" provided [here](https://raw.githubusercontent.com/litmuschaos/litmus/master/monitoring/platforms/kublr/grafana-dashboards/sock-shop/Sock-Shop-Performance-Under-Chaos.json)
+- Import the grafana dashboard "Sock-Shop Performance" provided [here](https://raw.githubusercontent.com/litmuschaos/litmus/master/monitoring/platforms/kublr/grafana-dashboards/kubernetes/Sock-Shop-Performance-Under-Chaos.json)
 
 - Import the grafana dashboard "Node and Pod Chaos Demo" provided [here](https://raw.githubusercontent.com/litmuschaos/litmus/master/monitoring/platforms/kublr/grafana-dashboards/kubernetes/Node-and-pod-metrics-dashboard-kublr.json)
 
