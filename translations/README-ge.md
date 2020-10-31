@@ -1,7 +1,7 @@
 <img alt="LitmusChaos" src="https://landscape.cncf.io/logos/litmus.svg" width="200" align="left">
 
 # Litmus
-### Cloud-Natives Chaos Engineering
+### Cloud-Native Chaos Engineering
 
 [![Slack Channel](https://img.shields.io/badge/Slack-Join-purple)](https://slack.litmuschaos.io)
 [![CircleCI](https://circleci.com/gh/litmuschaos/litmus/tree/master.svg?style=shield)](https://app.circleci.com/pipelines/github/litmuschaos/litmus)
@@ -17,7 +17,7 @@
 
 #### *Das README in [anderen Sprachen](translations/TRANSLATIONS.md).*
 
-[🇰🇷](https://github.com/litmuschaos/litmus/blob/master/translations/README-ko.md) [🇨🇳](https://github.com/litmuschaos/litmus/blob/master/translations/README-chn.md) [:gb](https://github.com/litmuschaos/litmus/blob/master/README.md)
+[KR](https://github.com/litmuschaos/litmus/blob/master/translations/README-ko.md) [CN](https://github.com/litmuschaos/litmus/blob/master/translations/README-chn.md) [GB](https://github.com/litmuschaos/litmus/blob/master/README.md)
 
 ## Überblick
 
