@@ -47,7 +47,7 @@ Check out the <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" ta
 
 ## Contributing to Chaos Hub
 
-Check out the <a href="https://github.com/litmuschaos/community-charts/blob/master/CONTRIBUTING.md" target="_blank">Contributing Guildelines for the Chaos Hub</a>
+Check out the <a href="https://github.com/litmuschaos/community-charts/blob/master/CONTRIBUTING.md" target="_blank">Contributing Guidelines for the Chaos Hub</a>
 
 ## Adopters
 
