@@ -152,31 +152,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "(kube_node_status_capacity_cpu_cores-kube_node_status_allocatable_cpu_cores)/kube_node_status_capacity_cpu_cores",
+          "expr": "(kube_node_status_capacity_cpu_cores{kublr_space=\"$space\",kublr_cluster=\"$cluster\"}-kube_node_status_allocatable_cpu_cores{kublr_space=\"$space\",kublr_cluster=\"$cluster\"})/kube_node_status_capacity_cpu_cores{kublr_space=\"$space\",kublr_cluster=\"$cluster\"}",
           "interval": "",
           "legendFormat": "\"{{instance}}\"",
           "refId": "B"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "catalogue-pod-cpu-hog",
           "refId": "A"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "orders-pod-memory-hog",
           "refId": "C"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "catalogue-node-cpu-hog",
           "refId": "D"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "orders-node-memory-hog",
           "refId": "E"
@@ -311,31 +311,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "(kube_node_status_capacity_memory_bytes-kube_node_status_allocatable_memory_bytes)/kube_node_status_capacity_memory_bytes",
+          "expr": "(kube_node_status_capacity_memory_bytes{kublr_space=\"$space\",kublr_cluster=\"$cluster\"}-kube_node_status_allocatable_memory_bytes{kublr_space=\"$space\",kublr_cluster=\"$cluster\"})/kube_node_status_capacity_memory_bytes{kublr_space=\"$space\",kublr_cluster=\"$cluster\"}",
           "interval": "",
           "legendFormat": "\"{{instance}}\"",
           "refId": "B"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "catalogue-pod-cpu-hog",
           "refId": "A"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "orders-pod-memory-hog",
           "refId": "C"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "catalogue-node-cpu-hog",
           "refId": "D"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "orders-node-memory-hog",
           "refId": "E"
@@ -471,31 +471,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(container_cpu_usage_seconds_total{container!=\"POD\",pod!=\"\"}[5m])) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",container!=\"POD\",pod!=\"\"}[5m])) by (pod)",
           "interval": "",
           "legendFormat": "\"{{pod}}\"",
           "refId": "B"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "catalogue-pod-cpu-hog",
           "refId": "A"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "orders-pod-memory-hog",
           "refId": "C"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "catalogue-node-cpu-hog",
           "refId": "D"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "orders-node-memory-hog",
           "refId": "E"
@@ -630,31 +630,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(container_memory_usage_bytes{container!=\"POD\",container!=\"\"}) by (pod)",
+          "expr": "sum(container_memory_usage_bytes{kublr_space=\"$space\",kublr_cluster=\"$cluster\",container!=\"POD\",container!=\"\"}) by (pod)",
           "interval": "",
           "legendFormat": "\"{{pod}}\"",
           "refId": "B"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-pod-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "catalogue-pod-cpu-hog",
           "refId": "A"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-pod-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "orders-pod-memory-hog",
           "refId": "C"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"catalogue-node-cpu-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "catalogue-node-cpu-hog",
           "refId": "D"
         },
         {
-          "expr": "heptio_eventrouter_normal_total{reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
+          "expr": "heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosInject\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} - on () (heptio_eventrouter_normal_total{kublr_space=\"$space\",kublr_cluster=\"$cluster\",reason=\"ChaosEngineCompleted\",involved_object_name=\"orders-node-memory-hog\", involved_object_namespace=\"litmus\", involved_object_kind=\"ChaosEngine\"} OR on() vector(0))",
           "interval": "",
           "legendFormat": "orders-node-memory-hog",
           "refId": "E"
@@ -740,6 +740,48 @@
         "query": "label_values(kube_pod_info, cluster)",
         "refresh": 1,
         "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "datasource": "$datasource",
+        "definition": "",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Space",
+        "multi": false,
+        "name": "space",
+        "options": [],
+        "query": "label_values(chaosengine_experiments_count, kublr_space)",
+        "refresh": 2,
+        "regex": "/.+/",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "datasource": "$datasource",
+        "definition": "",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Cluster",
+        "multi": false,
+        "name": "cluster",
+        "options": [],
+        "query": "label_values(chaosengine_experiments_count{kublr_space=\"$space\"}, kublr_cluster)",
+        "refresh": 2,
+        "regex": "/.+/",
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
