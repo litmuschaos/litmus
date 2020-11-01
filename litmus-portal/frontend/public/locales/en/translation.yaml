@@ -527,7 +527,7 @@ myhub:
     github: github.com/
     availableHubs: Available chaos hubs
     switchHub: You can switch between connected hubs or connect a new one.
-    devGuideHeader: You have no hubs currently connect. Start connecting your first hub.
+    devGuideHeader: You have no hubs currently connected. Start connecting your first hub.
     devGuideDescription: You should have your litmus chaos hub forked and made ready before connecting to it.
     connectNewHub: Connect a new chaos hub
     noGithubCredentials: You have not given your Github credential

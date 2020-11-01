@@ -1,30 +1,16 @@
 /* eslint-disable import/prefer-default-export */
 import {
-  customWorkflow,
-  experimentMap,
-  scheduleInput,
-  scheduleType,
+  // SET_WORKFLOW_DETAILS,
+  WorkflowData,
+  WorkflowAction,
   WorkflowActions,
 } from '../../models/redux/workflow';
 
-export const setWorkflowDetails = (data: {
-  name: string;
-  link: string;
-  yaml: string;
-  id: string;
-  description: string;
-  weights: experimentMap[];
-  isCustomWorkflow: boolean;
-  clusterid: string;
-  cronSyntax: string;
-  scheduleType: scheduleType;
-  scheduleInput: scheduleInput;
-  customWorkflow: customWorkflow;
-  customWorkflows: customWorkflow[];
-  stepperActiveStep: number;
-}) => (dispatch: Function) => {
-  dispatch({
+export const setWorkflowDetails = (data: WorkflowData): WorkflowAction => {
+  return {
     type: WorkflowActions.SET_WORKFLOW_DETAILS,
     payload: data,
-  });
+  };
 };
+
+export default setWorkflowDetails;
