@@ -9,7 +9,6 @@ const useStyles = makeStyles((theme) => ({
     width: 190,
     borderRadius: 3,
     fontSize: '0.875rem',
-    margin: '0 auto',
     textAlign: 'center',
     cursor: 'pointer',
     padding: 30,

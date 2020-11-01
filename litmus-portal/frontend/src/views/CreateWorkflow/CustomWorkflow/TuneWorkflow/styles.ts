@@ -10,10 +10,70 @@ const useStyles = makeStyles((theme) => ({
   headerDiv: {
     margin: theme.spacing(4, 0, 2, 1.5),
   },
+  headerText: {
+    marginTop: theme.spacing(2),
+  },
   headerDesc: {
     fontSize: '1rem',
   },
-  workflowInfo: {},
+  mainText: {
+    width: '20%',
+  },
+  mainDetail: {
+    width: '100%',
+    fontSize: '0.875rem',
+  },
+  appInfoMainDiv: {
+    display: 'flex',
+    flexDirection: 'column',
+    paddingLeft: theme.spacing(3.75),
+  },
+  appInfoDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingLeft: theme.spacing(2.5),
+  },
+  appInfoHeader: {
+    fontSize: '0.75rem',
+    marginTop: theme.spacing(2.5),
+    marginBottom: theme.spacing(1.25),
+  },
+  appInfoText: {
+    fontSize: '0.875rem',
+    width: '6.25rem',
+  },
+  appKind: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingLeft: theme.spacing(2.5),
+    marginBottom: theme.spacing(2.5),
+  },
+  envHeader: {
+    fontSize: '0.75rem',
+  },
+  envName: {
+    width: '40%',
+    fontSize: '0.875rem',
+  },
+  customEnvDiv: {
+    display: 'flex',
+    flexDirection: 'column',
+    paddingLeft: theme.spacing(3.75),
+    marginTop: theme.spacing(2.5),
+  },
+  addEnvBtn: {
+    width: '12.5rem',
+    marginLeft: theme.spacing(2.5),
+    marginTop: theme.spacing(1.5),
+  },
+  nextBtn: {
+    width: '12.5rem',
+    marginLeft: 'auto',
+    marginTop: theme.spacing(3.75),
+    marginBottom: theme.spacing(3.75),
+  },
   workflowDiv: {
     width: '95%',
     flexGrow: 1,
@@ -27,8 +87,23 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(2.5),
     alignItems: 'center',
   },
-  resize: {
-    fontSize: '0.85rem',
+  inputDivEnv: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop: theme.spacing(1.25),
+    marginLeft: theme.spacing(-2.5),
+  },
+  horizontalLineHeader: {
+    border: `1px solid  ${theme.palette.customColors.black(0.3)}`,
+    width: '97%',
+    marginTop: theme.spacing(1.25),
+    marginBottom: theme.spacing(1.25),
+  },
+  horizontalLine: {
+    border: `1px solid  ${theme.palette.customColors.black(0.3)}`,
+    width: '100%',
+    marginTop: theme.spacing(1.25),
+    marginBottom: theme.spacing(1.25),
   },
   formControl: {
     height: '2.5rem',
@@ -40,20 +115,20 @@ const useStyles = makeStyles((theme) => ({
   },
   selectText1: {
     height: '2.5rem',
-    top: -7,
+    top: theme.spacing(0.875),
     maxWidth: '5rem',
-    fontSize: 14,
+    fontSize: '0.875rem',
     padding: theme.spacing(0.5),
   },
   nextArrow: {
-    marginLeft: theme.spacing(2.5),
+    paddingRight: theme.spacing(0.625),
   },
 }));
 export default useStyles;
 
 export const CustomTextField = withStyles((theme) => ({
   root: {
-    borderRadius: 4,
+    borderRadius: theme.spacing(0.5),
     width: '90%',
     border: `1px solid ${theme.palette.input.disabled}`,
     '&:hover': {
@@ -65,6 +140,6 @@ export const CustomTextField = withStyles((theme) => ({
       backgroundColor: theme.palette.common.white,
       color: 'inherit',
     },
-    paddingLeft: 16,
+    paddingLeft: theme.spacing(2),
   },
 }))(TextField);

@@ -18,11 +18,12 @@ export interface scheduleInput {
 
 export interface customWorkflow {
   experiment_name: string;
-  hubName: string;
-  repoUrl: string;
-  repoBranch: string;
-  yamlLink: string;
-  yaml: string;
+  hubName?: string;
+  repoUrl?: string;
+  repoBranch?: string;
+  yamlLink?: string;
+  yaml?: string;
+  index?: number;
 }
 
 export interface WorkflowData {
@@ -39,6 +40,7 @@ export interface WorkflowData {
   scheduleInput: scheduleInput;
   customWorkflow: customWorkflow;
   customWorkflows: customWorkflow[];
+  stepperActiveStep: number;
 }
 
 export enum WorkflowActions {

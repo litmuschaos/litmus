@@ -21,6 +21,7 @@ export const setWorkflowDetails = (data: {
   scheduleInput: scheduleInput;
   customWorkflow: customWorkflow;
   customWorkflows: customWorkflow[];
+  stepperActiveStep: number;
 }) => (dispatch: Function) => {
   dispatch({
     type: WorkflowActions.SET_WORKFLOW_DETAILS,

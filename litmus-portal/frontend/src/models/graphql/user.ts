@@ -33,8 +33,8 @@ export interface UserDetails {
 export interface MyHubDetail {
   id: string;
   HubName: string;
-  GitBranch: string;
-  GitURL: string;
+  RepoBranch: string;
+  RepoURL: string;
 }
 
 export interface CurrentUserDetails {

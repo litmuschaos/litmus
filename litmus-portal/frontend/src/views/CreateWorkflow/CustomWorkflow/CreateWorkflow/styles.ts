@@ -10,10 +10,12 @@ const useStyles = makeStyles((theme) => ({
   headerDiv: {
     margin: theme.spacing(4, 0, 2, 1.5),
   },
+  headerText: {
+    marginTop: theme.spacing(2),
+  },
   headerDesc: {
     fontSize: '1rem',
   },
-  workflowInfo: {},
   workflowDiv: {
     width: '95%',
     flexGrow: 1,
@@ -40,20 +42,33 @@ const useStyles = makeStyles((theme) => ({
   },
   selectText1: {
     height: '2.5rem',
-    top: -7,
+    top: theme.spacing(-0.875),
     maxWidth: '5rem',
-    fontSize: 14,
+    fontSize: '0.875rem',
     padding: theme.spacing(0.5),
   },
   nextArrow: {
     marginLeft: theme.spacing(2.5),
+  },
+  titleText: {
+    width: '11.25rem',
+  },
+  chooseExpDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  nextButtonDiv: {
+    width: '12.5rem',
+    marginLeft: 'auto',
+    marginTop: theme.spacing(3.75),
+    marginBottom: theme.spacing(3.75),
   },
 }));
 export default useStyles;
 
 export const CustomTextField = withStyles((theme) => ({
   root: {
-    borderRadius: 4,
+    borderRadius: theme.spacing(0.5),
     width: '90%',
     border: `1px solid ${theme.palette.input.disabled}`,
     '&:hover': {
@@ -65,6 +80,6 @@ export const CustomTextField = withStyles((theme) => ({
       backgroundColor: theme.palette.common.white,
       color: 'inherit',
     },
-    paddingLeft: 16,
+    paddingLeft: theme.spacing(2),
   },
 }))(TextField);

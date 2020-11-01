@@ -33,6 +33,9 @@ const MyHub = lazy(() => import('../../pages/MyHub'));
 const MyHubConnect = lazy(() => import('../../views/MyHub/MyHubConnect'));
 const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
 const MyHubExperiment = lazy(() => import('../../views/MyHub/MyHubExperiment'));
+const CreateCustomWorkflow = lazy(() =>
+  import('../../pages/CreateCustomWorkflow')
+);
 
 interface RoutesProps {
   isOwner: boolean;
@@ -108,7 +111,11 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
           path="/myhub/:hubname/:chart/:experiment"
           component={MyHubExperiment}
         />
-
+        <Route
+          exact
+          path="/create-workflow/custom"
+          component={CreateCustomWorkflow}
+        />
         {isOwner ? (
           <Route exact path="/settings" component={Settings} />
         ) : (
