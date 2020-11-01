@@ -31,16 +31,21 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 	}
 
 	newCluster := database.Cluster{
-		ClusterID:    clusterID,
-		ClusterName:  input.ClusterName,
-		Description:  input.Description,
-		ProjectID:    input.ProjectID,
-		AccessKey:    utils.RandomString(32),
-		ClusterType:  input.ClusterType,
-		PlatformName: input.PlatformName,
-		CreatedAt:    strconv.FormatInt(time.Now().Unix(), 10),
-		UpdatedAt:    strconv.FormatInt(time.Now().Unix(), 10),
-		Token:        token,
+		ClusterID:      clusterID,
+		ClusterName:    input.ClusterName,
+		Description:    input.Description,
+		ProjectID:      input.ProjectID,
+		AccessKey:      utils.RandomString(32),
+		ClusterType:    input.ClusterType,
+		PlatformName:   input.PlatformName,
+		AgentNamespace: input.AgentNamespace,
+		Serviceaccount: input.Serviceaccount,
+		AgentScope:     input.AgentScope,
+		AgentNsExists:  input.AgentNsExists,
+		AgentSaExists:  input.AgentSaExists,
+		CreatedAt:      strconv.FormatInt(time.Now().Unix(), 10),
+		UpdatedAt:      strconv.FormatInt(time.Now().Unix(), 10),
+		Token:          token,
 	}
 
 	err = database.InsertCluster(newCluster)

@@ -1,10 +1,11 @@
 package file_handlers
 
 import (
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 
 	"github.com/gorilla/mux"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
@@ -60,10 +61,10 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 	if !reqCluster.IsRegistered {
 		var respData []byte
 
-		if subscriberConfiguration.AgentScope == "cluster" {
-			respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, "manifests/cluster-subscriber.yml", subscriberConfiguration)
-		} else if subscriberConfiguration.AgentScope == "namespace" {
-			respData, err = utils.ManifestParser(reqCluster.ClusterID, reqCluster.AccessKey, "manifests/namespace-subscriber.yml", subscriberConfiguration)
+		if reqCluster.AgentScope == "cluster" {
+			respData, err = utils.ManifestParser(reqCluster, "manifests/cluster-subscriber.yml", subscriberConfiguration)
+		} else if reqCluster.AgentScope == "namespace" {
+			respData, err = utils.ManifestParser(reqCluster, "manifests/namespace-subscriber.yml", subscriberConfiguration)
 		} else {
 			log.Print("ERROR- AGENT SCOPE NOT SELECTED!")
 		}
