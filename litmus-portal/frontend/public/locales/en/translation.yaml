@@ -569,7 +569,7 @@ myhub:
     installEngineDesc: Copy and edit this sample Chaos Engine yaml according to your application needs
 
 ######################################
-############     MyHub     ###########
+########   Custom Workflow     #######
 ######################################
 customWorkflow:
   createWorkflow:
@@ -606,3 +606,7 @@ customWorkflow:
     customEnvText: To change the variables in chaos experiment specific to this workflow, you can override them at the chaos engine.
     addEnv: Add Key
     addExp: Add experiment
+  viewYAML:
+    view: View the YAML here
+  backBtn:
+    back: Back

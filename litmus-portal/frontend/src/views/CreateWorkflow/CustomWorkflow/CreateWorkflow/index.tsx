@@ -229,7 +229,9 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               >
                 <MenuItem value="Public Hub">Public Hub</MenuItem>
                 {availableHubs.map((hubs) => (
-                  <MenuItem value={hubs.HubName}>{hubs.HubName}</MenuItem>
+                  <MenuItem key={hubs.HubName} value={hubs.HubName}>
+                    {hubs.HubName}
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -285,7 +287,10 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                     {t('customWorkflow.createWorkflow.selectAnExp')}
                   </MenuItem>
                   {allExperiment.map((exp) => (
-                    <MenuItem value={`${exp.ChaosName}/${exp.ExperimentName}`}>
+                    <MenuItem
+                      key={`${exp.ChaosName}/${exp.ExperimentName}`}
+                      value={`${exp.ChaosName}/${exp.ExperimentName}`}
+                    >
                       {exp.ExperimentName}
                     </MenuItem>
                   ))}

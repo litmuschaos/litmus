@@ -1,5 +1,6 @@
 import { Button, Typography } from '@material-ui/core';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
 
 interface BackButtonProps {
@@ -9,6 +10,7 @@ interface BackButtonProps {
 
 const BackButton: React.FC<BackButtonProps> = ({ isDisabled, gotoStep }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
   return (
     <Button
       size="medium"
@@ -17,7 +19,9 @@ const BackButton: React.FC<BackButtonProps> = ({ isDisabled, gotoStep }) => {
       onClick={() => gotoStep(1)}
     >
       <img src="/icons/back.svg" alt="back" />
-      <Typography className={classes.text}>Back</Typography>
+      <Typography className={classes.text}>
+        {t('customWorkflow.backBtn.back')}
+      </Typography>
     </Button>
   );
 };

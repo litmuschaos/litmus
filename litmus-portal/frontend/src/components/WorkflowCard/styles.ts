@@ -5,13 +5,13 @@ const useStyles = makeStyles((theme) => ({
 
   customCard: {
     background: theme.palette.customColors.black(0.05),
-    height: 250,
-    width: 190,
+    height: '15.625rem',
+    width: '11.875rem',
     borderRadius: 3,
     fontSize: '0.875rem',
     textAlign: 'center',
     cursor: 'pointer',
-    padding: 30,
+    padding: theme.spacing(3.75),
     border: `1px solid ${theme.palette.customColors.black(0.05)}`,
     boxSizing: 'border-box',
   },
