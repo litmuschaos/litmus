@@ -88,13 +88,13 @@ func ManifestParser(cluster database.Cluster, template string, subscriberConfig 
 		} else if strings.Contains(line, "#{SUB-IMAGE}") {
 			line = strings.Replace(line, "#{SUB-IMAGE}", subscriberConfig.SubscriberImage, -1)
 		} else if strings.Contains(line, "#{AGENT-NAMESPACE}") {
-			if cluster.AgentNamespace != nil || *cluster.AgentNamespace != "" {
+			if cluster.AgentNamespace != nil && *cluster.AgentNamespace != "" {
 				line = strings.Replace(line, "#{AGENT-NAMESPACE}", *cluster.AgentNamespace, -1)
 			} else {
 				line = strings.Replace(line, "#{AGENT-NAMESPACE}", "litmus", -1)
 			}
 		} else if strings.Contains(line, "#{SUBSCRIBER-SERVICE-ACCOUNT}") {
-			if cluster.Serviceaccount != nil || *cluster.Serviceaccount != "" {
+			if cluster.Serviceaccount != nil && *cluster.Serviceaccount != "" {
 				line = strings.Replace(line, "#{SUBSCRIBER-SERVICE-ACCOUNT}", *cluster.Serviceaccount, -1)
 			} else {
 				line = strings.Replace(line, "#{SUBSCRIBER-SERVICE-ACCOUNT}", "litmus", -1)
