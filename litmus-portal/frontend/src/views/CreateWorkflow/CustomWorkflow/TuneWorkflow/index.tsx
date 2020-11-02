@@ -326,7 +326,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
           </div>
         )}
         <div className={classes.customEnvDiv}>
-          <Typography className={classes.envName}>
+          <Typography className={classes.envHeader}>
             {t('customWorkflow.tuneExperiment.customEnvText')}
           </Typography>
           {overrideEnvs.map((data, index) => (

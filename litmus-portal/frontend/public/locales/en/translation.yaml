@@ -588,7 +588,7 @@ customWorkflow:
   scheduleWorkflow:
     scheduleHeader: Schedule a new chaos workflow
     addedExp: Your added experiments to the workflow
-    finishText: Tap finish to the end or you can add a new experiments and edit current added
+    finishText: Tap finish to end or you can add a new experiments and edit the sequence of currently added experiments
     viewYAML: View YAML
     editBtn: Edit
     deleteBtn: Delete
@@ -603,7 +603,7 @@ customWorkflow:
     sequence: Sequence
     appInfo: Specify the appinfo for the experiment
     envText: We have created a chaos engine specification for this experiment. You can tune the following variables for the chaos engine.
-    customEnvText: To change the variables in chaos experiment specific to this workflow, you can override them at the chaos engine.
+    customEnvText: To change the variables in chaos experiment specific to this workflow, You can tune it here.
     addEnv: Add Key
     addExp: Add experiment
   viewYAML:
