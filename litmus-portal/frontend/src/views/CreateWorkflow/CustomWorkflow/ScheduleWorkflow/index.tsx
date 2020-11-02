@@ -244,7 +244,8 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                     className={classes.experimentDiv}
                   >
                     <Typography className={classes.experimentNameText}>
-                      Experiment {index + 1}:
+                      {t('customWorkflow.scheduleWorkflow.experiment')}{' '}
+                      {index + 1}:
                     </Typography>
                     <Typography className={classes.experimentName}>
                       {data.experiment_name}

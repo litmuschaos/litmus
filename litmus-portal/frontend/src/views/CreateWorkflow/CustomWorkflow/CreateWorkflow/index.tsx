@@ -19,7 +19,7 @@ import { Chart, Charts, HubStatus } from '../../../../models/redux/myhub';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
 import useActions from '../../../../redux/actions';
 import { RootState } from '../../../../redux/reducers';
-import useStyles, { CustomTextField } from './styles';
+import useStyles, { CustomTextField, MenuProps } from './styles';
 import WorkflowDetails from '../../../../pages/WorkflowDetails';
 
 interface WorkflowDetails {
@@ -35,17 +35,6 @@ interface ChartName {
 interface VerifyCommitProps {
   gotoStep: (page: number) => void;
 }
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-    },
-  },
-};
 
 const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const userData = useSelector((state: RootState) => state.userData);
@@ -227,7 +216,9 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 MenuProps={MenuProps}
                 className={classes.selectText}
               >
-                <MenuItem value="Public Hub">Public Hub</MenuItem>
+                <MenuItem value="Public Hub">
+                  {t('customWorkflow.createWorkflow.public')}
+                </MenuItem>
                 {availableHubs.map((hubs) => (
                   <MenuItem key={hubs.HubName} value={hubs.HubName}>
                     {hubs.HubName}

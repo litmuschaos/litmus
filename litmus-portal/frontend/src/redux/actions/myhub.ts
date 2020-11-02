@@ -13,7 +13,7 @@ export function setHubDetails(selectedHub: HubDetails): MyHubAction {
 }
 
 export const getAllPublicCharts = () => (dispatch: Function) => {
-  fetch('https://hub.litmuschaos.io/api/charts/1.9.0')
+  fetch('https://hub.litmuschaos.io/api/charts/master')
     .then((response) => response.json())
     .then((data) => {
       dispatch({

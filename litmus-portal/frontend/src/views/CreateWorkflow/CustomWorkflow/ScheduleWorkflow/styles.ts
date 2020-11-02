@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     border: `1px solid ${theme.palette.customColors.black(0.05)}`,
   },
   experimentDiv: {
-    padding: '20px',
+    padding: theme.spacing(2.5),
     display: 'flex',
     flexDirection: 'row',
     marginBottom: theme.spacing(1.25),
@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     width: '20%',
     textAlign: 'left',
     marginTop: theme.spacing(1.25),
-    fontSize: '14px',
+    fontSize: '0.875rem',
     color: theme.palette.secondary.dark,
   },
   experimentName: {

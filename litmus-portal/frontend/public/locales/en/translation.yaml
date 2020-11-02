@@ -580,6 +580,7 @@ customWorkflow:
     workflowDesc: Description
     firstChaos: First Chaos Experiment
     selectHub: Select the hub
+    public: Public Hub
     chooseExp: Choose the experiment
     loadingExp: Loading Experiments, please wait...
     selectExp: Select the experiment
@@ -589,6 +590,7 @@ customWorkflow:
     scheduleHeader: Schedule a new chaos workflow
     addedExp: Your added experiments to the workflow
     finishText: Tap finish to end or you can add a new experiments and edit the sequence of currently added experiments
+    experiment: Experiment
     viewYAML: View YAML
     editBtn: Edit
     deleteBtn: Delete
