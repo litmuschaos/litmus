@@ -68,12 +68,14 @@ func ManifestParser(cluster database.Cluster, template string, subscriberConfig 
 
 	var (
 		headerStr         = "# This is an auto-generated file. DO NOT EDIT\n"
-		namspaceStr       = "----\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: " + AgentNamespace + "\n"
+		namspaceStr       = "\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: " + AgentNamespace + "\n"
 		serviceAccountStr = "---\napiVersion: v1\nkind: ServiceAccount\nmetadata:\n  name: " + ServiceAccountName + "\n  namespace: " + AgentNamespace + "\n---"
 	)
 
-	saYaml := fmt.Sprintf(headerStr + namspaceStr + serviceAccountStr)
-	lines = append(lines, saYaml)
+	if cluster.AgentNsExists == nil && *cluster.AgentNsExists == false && cluster.AgentSaExists != nil && *cluster.AgentSaExists == false {
+		saYaml := fmt.Sprintf(headerStr + namspaceStr + serviceAccountStr)
+		lines = append(lines, saYaml)
+	}
 
 	for scanner.Scan() {
 		line := scanner.Text()
