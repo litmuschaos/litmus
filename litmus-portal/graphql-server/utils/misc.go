@@ -32,11 +32,11 @@ func RandomString(n int) string {
 //ManifestParser parses manifests yaml and generates dynamic manifest with specified keys
 func ManifestParser(cluster database.Cluster, template string, subscriberConfig *types.SubscriberConfigurationVars) ([]byte, error) {
 	var (
-		lines []string
-		defaultState = false
-		AgentNamespace string
-		ServiceAccountName string
-		DefaultAgentNamespace = "litmus"
+		lines                     []string
+		defaultState              = false
+		AgentNamespace            string
+		ServiceAccountName        string
+		DefaultAgentNamespace     = "litmus"
 		DefaultServiceAccountName = "litmus"
 	)
 
@@ -67,9 +67,9 @@ func ManifestParser(cluster database.Cluster, template string, subscriberConfig 
 	}
 
 	var (
-		headerStr = "# This is an auto-generated file. DO NOT EDIT\n"
-		namspaceStr = "----\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: " + AgentNamespace + "\n"
-		serviceAccountStr = "---\napiVersion: v1\nkind: ServiceAccount\nmetadata:\n  name: " + ServiceAccountName + "\n  namespace: " + AgentNamespace +"\n---"
+		headerStr         = "# This is an auto-generated file. DO NOT EDIT\n"
+		namspaceStr       = "----\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: " + AgentNamespace + "\n"
+		serviceAccountStr = "---\napiVersion: v1\nkind: ServiceAccount\nmetadata:\n  name: " + ServiceAccountName + "\n  namespace: " + AgentNamespace + "\n---"
 	)
 
 	saYaml := fmt.Sprintf(headerStr + namspaceStr + serviceAccountStr)
