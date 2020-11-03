@@ -72,10 +72,18 @@ func ManifestParser(cluster database.Cluster, template string, subscriberConfig 
 		serviceAccountStr = "---\napiVersion: v1\nkind: ServiceAccount\nmetadata:\n  name: " + ServiceAccountName + "\n  namespace: " + AgentNamespace + "\n---"
 	)
 
-	if *cluster.AgentNsExists == false && *cluster.AgentSaExists != false {
-		saYaml := fmt.Sprintf(headerStr + namspaceStr + serviceAccountStr)
+	if *cluster.AgentNsExists == false  {
+		saYaml := fmt.Sprintf(namspaceStr)
 		lines = append(lines, saYaml)
 	}
+
+	if *cluster.AgentSaExists == false {
+		saYaml := fmt.Sprintf(serviceAccountStr)
+		lines = append(lines, saYaml)
+	}
+
+	saYaml := fmt.Sprintf(headerStr)
+	lines = append(lines, saYaml)
 
 	for scanner.Scan() {
 		line := scanner.Text()
