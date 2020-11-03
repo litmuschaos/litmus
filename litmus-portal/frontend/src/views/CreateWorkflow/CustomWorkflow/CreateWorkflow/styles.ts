@@ -42,8 +42,6 @@ const useStyles = makeStyles((theme) => ({
   },
   selectText1: {
     height: '2.5rem',
-    top: theme.spacing(-0.875),
-    maxWidth: '5rem',
     fontSize: '0.875rem',
     padding: theme.spacing(0.5),
   },
@@ -62,6 +60,20 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 'auto',
     marginTop: theme.spacing(3.75),
     marginBottom: theme.spacing(3.75),
+  },
+  formControlExp: {
+    height: '2.5rem',
+    minWidth: '9rem',
+    backgroundColor: theme.palette.common.white,
+  },
+  inputExpDiv: {
+    height: '2.5rem',
+    maxWidth: '15.625rem',
+  },
+  expMenu: {
+    minWidth: '15.625rem',
+    maxHeight: '9.375rem',
+    overflow: 'auto',
   },
 }));
 export default useStyles;
