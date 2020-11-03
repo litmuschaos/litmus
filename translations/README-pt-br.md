@@ -41,7 +41,7 @@ Experimentos Chaos são hospedados em <a href="https://hub.litmuschaos.io" targe
 
 ## Começando a Usar o Litmus
 
-[![IMAGE ALT TEXT](images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
+[![IMAGE ALT TEXT](../images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
 
 Confira <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" target="_blank">os Litmus Docs</a> para começar.
 
