@@ -21,6 +21,11 @@ import (
 //CreateUser ...
 func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error) {
 
+	var (
+		uuid       = uuid.New()
+		active     = os.Getenv("SELF_CLUSTER")
+		agentScope = os.Getenv("AGENT_SCOPE")
+	)
 	outputUser, err := GetUser(ctx, user.Username)
 	if err != nil && err != mongo.ErrNoDocuments {
 		return nil, err
@@ -28,7 +33,6 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 		return outputUser, errors.New("User already exists")
 	}
 
-	uuid := uuid.New()
 	newUser := &dbSchema.User{
 		ID:          uuid.String(),
 		Username:    user.Username,
@@ -53,8 +57,7 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 	outputUser = newUser.GetOutputUser()
 	outputUser.Projects = append(outputUser.Projects, project)
 
-	active := os.Getenv("SELF_CLUSTER")
-	if strings.ToLower(active) == "true" && strings.ToLower(outputUser.Username) == "admin" {
+	if strings.ToLower(active) == "true" && strings.ToLower(outputUser.Username) == "admin" && strings.ToLower(agentScope) == "cluster" {
 		go self_deployer.StartDeployer(project.ID)
 	}
 

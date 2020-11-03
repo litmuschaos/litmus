@@ -1,17 +1,15 @@
 package file_handlers
 
 import (
-	"log"
-	"net/http"
-	"os"
-
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
-
 	"github.com/gorilla/mux"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/types"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+	"log"
+	"net/http"
+	"os"
 )
 
 var subscriberConfiguration = &types.SubscriberConfigurationVars{
@@ -28,19 +26,15 @@ var subscriberConfiguration = &types.SubscriberConfigurationVars{
 //FileHandler dynamically generates the manifest file and sends it as a response
 func FileHandler(w http.ResponseWriter, r *http.Request) {
 	var (
-		vars           = mux.Vars(r)
-		token          = vars["key"]
+		vars  = mux.Vars(r)
+		token = vars["key"]
 	)
-	log.Print("here")
-	log.Print(token)
 
 	response, statusCode, err := GetManifest(token)
-	if err != nil{
+	if err != nil {
 		log.Print("error", err)
 		utils.WriteHeaders(&w, statusCode)
 	}
-	//log.Print(response)
-	log.Print("here")
 
 	utils.WriteHeaders(&w, statusCode)
 	w.Write(response)
@@ -53,13 +47,11 @@ func GetManifest(token string) ([]byte, int, error) {
 
 	id, err := cluster.ClusterValidateJWT(token)
 	if err != nil {
-		log.Print("ERROR", err)
 		return nil, 404, err
 	}
 
 	reqCluster, err := database.GetCluster(id)
 	if err != nil {
-		log.Print("ERROR", err)
 		return nil, 500, err
 	}
 
@@ -73,20 +65,14 @@ func GetManifest(token string) ([]byte, int, error) {
 	}
 
 	subscriberConfiguration.GQLServerURI = portalEndpoint + "/query"
-	log.Print(reqCluster)
 	if !reqCluster.IsRegistered {
 		var respData []byte
 
 		if reqCluster.AgentScope == "cluster" {
 			respData, err = utils.ManifestParser(reqCluster, "manifests/cluster-subscriber.yml", subscriberConfiguration)
-				log.Print("found it")
-
-			//log.Print(respData)
-			//log.Print(err)
-			//if err != nil {
-			//	log.Print("found it")
-			//	return nil, 500, err
-			//}
+			if err != nil {
+				return nil, 500, err
+			}
 		} else if reqCluster.AgentScope == "namespace" {
 			respData, err = utils.ManifestParser(reqCluster, "manifests/namespace-subscriber.yml", subscriberConfiguration)
 			if err != nil {
@@ -96,8 +82,6 @@ func GetManifest(token string) ([]byte, int, error) {
 			log.Print("ERROR- AGENT SCOPE NOT SELECTED!")
 		}
 
-		//utils.WriteHeaders(&w, 200)
-		//w.Write(respData)
 		return respData, 200, nil
 	} else {
 		return []byte("Cluster is already registered"), 200, nil
