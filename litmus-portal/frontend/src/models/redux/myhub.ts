@@ -69,6 +69,10 @@ export interface Charts {
   getCharts: Chart[];
 }
 
+export interface PublicHubData {
+  charts: Chart[];
+}
+
 export interface ExperimentDetail {
   getHubExperiment: Chart;
 }
@@ -88,6 +92,7 @@ export interface HubStatus {
 
 export enum MyHubActions {
   SET_MYHUB = 'SET_MYHUBS',
+  LOAD_PUBLIC_CHARTS = 'LOAD_PUBLIC_CHARTS',
 }
 
 interface MyHubActionType<T, P> {
@@ -95,7 +100,6 @@ interface MyHubActionType<T, P> {
   payload: P;
 }
 
-export type MyHubAction = MyHubActionType<
-  typeof MyHubActions.SET_MYHUB,
-  HubDetails
->;
+export type MyHubAction =
+  | MyHubActionType<typeof MyHubActions.SET_MYHUB, HubDetails>
+  | MyHubActionType<typeof MyHubActions.LOAD_PUBLIC_CHARTS, Chart[]>;

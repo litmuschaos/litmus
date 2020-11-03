@@ -28,13 +28,18 @@ import { RootState } from '../../redux/reducers';
 import ReturningHome from '../../views/Home/ReturningHome';
 import useStyles from './style';
 import ButtonFilled from '../../components/Button/ButtonFilled';
+import * as WorkflowActions from '../../redux/actions/workflow';
 
 const CreateWorkflowCard: React.FC = () => {
   const { t } = useTranslation();
   const classes = useStyles();
   const template = useActions(TemplateSelectionActions);
-
+  const workflowAction = useActions(WorkflowActions);
   const handleCreateWorkflow = () => {
+    workflowAction.setWorkflowDetails({
+      isCustomWorkflow: false,
+      customWorkflows: [],
+    });
     template.selectTemplate({ selectedTemplateID: 0, isDisable: true });
     history.push('/create-workflow');
   };

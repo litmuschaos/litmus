@@ -75,7 +75,7 @@ const TuneWorkflow: React.FC = () => {
           {t('createWorkflow.tuneWorkflow.info')}
         </Typography>
         <Typography className={classes.descriptionextended}>
-          S{t('createWorkflow.tuneWorkflow.infoExtended')}
+          {t('createWorkflow.tuneWorkflow.infoExtended')}
         </Typography>
       </div>
 

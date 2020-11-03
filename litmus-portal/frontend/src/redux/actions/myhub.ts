@@ -11,3 +11,21 @@ export function setHubDetails(selectedHub: HubDetails): MyHubAction {
     payload: selectedHub,
   };
 }
+
+export const getAllPublicCharts = () => (dispatch: Function) => {
+  fetch('https://hub.litmuschaos.io/api/charts/master')
+    .then((response) => response.json())
+    .then((data) => {
+      dispatch({
+        type: MyHubActions.LOAD_PUBLIC_CHARTS,
+        payload: data,
+      });
+    })
+    .catch((error) => {
+      console.error('Cant load data', error);
+      dispatch({
+        type: MyHubActions.LOAD_PUBLIC_CHARTS,
+        payload: [],
+      });
+    });
+};
