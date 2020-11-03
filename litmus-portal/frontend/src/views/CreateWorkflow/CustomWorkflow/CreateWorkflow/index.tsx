@@ -55,7 +55,9 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const classes = useStyles();
   const [allExperiment, setAllExperiment] = useState<ChartName[]>([]);
   const [selectedHub, setSelectedHub] = useState('Public Hub');
-  const [selectedExp, setSelectedExp] = useState('Select an experiment');
+  const [selectedExp, setSelectedExp] = useState(
+    t('customWorkflow.createWorkflow.selectAnExp') as string
+  );
   const allExp: ChartName[] = [];
   const [selectedHubDetails, setSelectedHubDetails] = useState<MyHubDetail>();
   // Get all MyHubs with status
@@ -324,7 +326,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                         ))
                       ) : (
                         <MenuItem value="Select an experiment">
-                          No experiments found
+                          {t('customWorkflow.createWorkflow.noExp')}
                         </MenuItem>
                       )}
                     </MenuList>

@@ -70,6 +70,7 @@ const ConnectTarget = () => {
       platform_name: '',
       project_id: selectedProjectID,
       cluster_type: 'external',
+      agent_scope: (process.env.AGENT_SCOPE as string) || 'cluster',
     };
     createClusterReg({
       variables: { ClusterInput: createClusterInput },

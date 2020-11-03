@@ -584,7 +584,8 @@ customWorkflow:
     chooseExp: Choose the experiment
     loadingExp: Loading Experiments, please wait...
     selectExp: Select the experiment
-    selectAnExp: Select an Experiment
+    selectAnExp: Select an experiment
+    noExp: No experiments found
     nextBtn: Next
   scheduleWorkflow:
     scheduleHeader: Schedule a new chaos workflow
