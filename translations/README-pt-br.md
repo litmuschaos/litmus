@@ -23,7 +23,7 @@
 
 O Litmus é uma caixa de ferramentas para engenharia do caos Cloud-Native. O Litmus oferece as ferramentas necessárias para orquestrar o caos no Kubernetes e ajudar o SREs a encontrar falhas nos seus deploys. SREs usam o Litmus para rodar experimentos começando pelo ambiente de homologação e, eventualmente, em produção para encontrar bugs e vulnerabilidades. Corrigir as falhas leva o sistema ao aumento da sua resiliência.
 
-O Litmus opera numa abordagem cloud-native para criar, gerenciar e monitorar o caos. O caos é orquestrado usando as seguintes definições padrão de recursos do Kubernetes (**CRDs**):
+O Litmus opera em uma abordagem cloud-native para criar, gerenciar e monitorar o caos. O caos é orquestrado usando as seguintes definições padrão de recursos do Kubernetes (**CRDs**):
 
 - **ChaosEngine**: Recurso para linkar uma aplicação Kubernetes ou um nodo Kubernetes a um ChaosExperiment. A ChaosEngine é monitorada pelo Litmus Chaos-Operator que então invoca os Chaos-Experiments.
 - **ChaosExperiment**: Recurso para agrupar a configuração de parâmetros de um chaos experiment. ChaosExperiment CR´s são criados pelo operadores quando os experimentos são invocados pelo ChaosEngine.
