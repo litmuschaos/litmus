@@ -130,6 +130,7 @@ input WorkflowRunInput {
   workflow_name: String!
   execution_data: String!
   cluster_id: ClusterIdentity!
+  completed: Boolean!
 }
 
 type PodLogResponse {

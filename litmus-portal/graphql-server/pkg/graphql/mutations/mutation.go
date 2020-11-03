@@ -122,15 +122,20 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		return "", err
 	}
 
-	//err = database.UpsertWorkflowRun(database.WorkflowRun(newWorkflowRun))
-	err = database.UpsertWorkflowRun(input.WorkflowID, database.WorkflowRun{
+	//err = database.UpdateWorkflowRun(database.WorkflowRun(newWorkflowRun))
+	count, err := database.UpdateWorkflowRun(input.WorkflowID, database.WorkflowRun{
 		WorkflowRunID: input.WorkflowRunID,
 		LastUpdated:   strconv.FormatInt(time.Now().Unix(), 10),
 		ExecutionData: input.ExecutionData,
+		Completed:     input.Completed,
 	})
 	if err != nil {
 		log.Print("ERROR", err)
 		return "", err
+	}
+
+	if count == 0 {
+		return "Workflow Run Discarded[Duplicate Event]", nil
 	}
 
 	subscriptions.SendWorkflowEvent(model.WorkflowRun{
