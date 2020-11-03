@@ -56,38 +56,6 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: self-deployer-admin-account
-  namespace: litmus
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRole
-metadata:
-  name: deployer-admin
-  namespace: litmus
-  labels:
-    name: deployer-admin
-rules:
-  - apiGroups: ["*"]
-    resources: ["*"]
-    verbs: ["*"]
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRoleBinding
-metadata:
-  name: deployer-admin-rb
-  namespace: litmus
-subjects:
-  - kind: ServiceAccount
-    name: self-deployer-admin-account
-    namespace: litmus
-roleRef:
-  kind: ClusterRole
-  name: deployer-admin
-  apiGroup: rbac.authorization.k8s.io
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
   name: litmus-server-account
   namespace: litmus
 ---
@@ -100,24 +68,11 @@ metadata:
     name: litmus-server
 rules:
   - apiGroups:
-      - ""
+      - "*"
     resources:
-      - pods
-      - pods/exec
-      - services
-      - nodes
+      - "*"
     verbs:
-      - create
-      - patch
-      - update
-      - get
-      - list
-  - apiGroups:
-      - "apps"
-    resources:
-      - deployments
-    verbs:
-      - create
+      - "*"
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
