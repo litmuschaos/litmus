@@ -75,7 +75,7 @@ func ManifestParser(cluster database.Cluster, template string, subscriberConfig 
 	saYaml := fmt.Sprintf(headerStr)
 	lines = append(lines, saYaml)
 
-	if *cluster.AgentNsExists == false  {
+	if *cluster.AgentNsExists == false {
 		saYaml := fmt.Sprintf(namspaceStr)
 		lines = append(lines, saYaml)
 	}
