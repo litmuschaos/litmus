@@ -4,6 +4,7 @@ import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import Loader from '../../components/Loader';
 import useActions from '../../redux/actions';
 import * as AnalyticsActions from '../../redux/actions/analytics';
+import * as MyHubActions from '../../redux/actions/myhub';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import withTheme from '../../theme';
@@ -32,6 +33,9 @@ const MyHub = lazy(() => import('../../pages/MyHub'));
 const MyHubConnect = lazy(() => import('../../views/MyHub/MyHubConnect'));
 const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
 const MyHubExperiment = lazy(() => import('../../views/MyHub/MyHubExperiment'));
+const CreateCustomWorkflow = lazy(() =>
+  import('../../pages/CreateCustomWorkflow')
+);
 
 interface RoutesProps {
   isOwner: boolean;
@@ -107,7 +111,11 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
           path="/myhub/:hubname/:chart/:experiment"
           component={MyHubExperiment}
         />
-
+        <Route
+          exact
+          path="/create-workflow/custom"
+          component={CreateCustomWorkflow}
+        />
         {isOwner ? (
           <Route exact path="/settings" component={Settings} />
         ) : (
@@ -123,10 +131,14 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
 function App() {
   const classes = useStyles();
   const analyticsAction = useActions(AnalyticsActions);
+  const publicHubAction = useActions(MyHubActions);
   const userData = useSelector((state: RootState) => state.userData);
   const token = getToken();
   useEffect(() => {
-    if (token !== '') analyticsAction.loadCommunityAnalytics();
+    if (token !== '') {
+      analyticsAction.loadCommunityAnalytics();
+      publicHubAction.getAllPublicCharts();
+    }
   }, [token]);
 
   return (

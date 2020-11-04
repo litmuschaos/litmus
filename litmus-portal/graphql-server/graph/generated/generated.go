@@ -2220,6 +2220,7 @@ input WorkflowRunInput {
   workflow_name: String!
   execution_data: String!
   cluster_id: ClusterIdentity!
+  completed: Boolean!
 }
 
 type PodLogResponse {
@@ -11770,6 +11771,12 @@ func (ec *executionContext) unmarshalInputWorkflowRunInput(ctx context.Context, 
 		case "cluster_id":
 			var err error
 			it.ClusterID, err = ec.unmarshalNClusterIdentity2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterIdentity(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "completed":
+			var err error
+			it.Completed, err = ec.unmarshalNBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}

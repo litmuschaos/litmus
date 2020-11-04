@@ -527,7 +527,7 @@ myhub:
     github: github.com/
     availableHubs: Available chaos hubs
     switchHub: You can switch between connected hubs or connect a new one.
-    devGuideHeader: You have no hubs currently connect. Start connecting your first hub.
+    devGuideHeader: You have no hubs currently connected. Start connecting your first hub.
     devGuideDescription: You should have your litmus chaos hub forked and made ready before connecting to it.
     connectNewHub: Connect a new chaos hub
     noGithubCredentials: You have not given your Github credential
@@ -567,3 +567,48 @@ myhub:
     installRBACDesc: Create a service account using the following command
     installEngine: Sample Chaos Engine
     installEngineDesc: Copy and edit this sample Chaos Engine yaml according to your application needs
+
+######################################
+########   Custom Workflow     #######
+######################################
+customWorkflow:
+  createWorkflow:
+    create: Creating a new chaos workflow
+    createDesc: Add new experiments from your ChaosHubs defined at MyHubs section
+    workflowInfo: Workflow information
+    workflowName: Workflow Name
+    workflowDesc: Description
+    firstChaos: First Chaos Experiment
+    selectHub: Select the hub
+    public: Public Hub
+    chooseExp: Choose the experiment
+    loadingExp: Loading Experiments, please wait...
+    selectExp: Select the experiment
+    selectAnExp: Select an Experiment
+    nextBtn: Next
+  scheduleWorkflow:
+    scheduleHeader: Schedule a new chaos workflow
+    addedExp: Your added experiments to the workflow
+    finishText: Tap finish to end or you can add a new experiments and edit the sequence of currently added experiments
+    experiment: Experiment
+    viewYAML: View YAML
+    editBtn: Edit
+    deleteBtn: Delete
+    addExp: Add a new experiment
+    finish: Finish adding experiments
+  tuneExperiment:
+    headerText: Tune the chaos engine
+    addKey: Add keys for add experiments
+    experimentInfo: Experiment information
+    expName: Experiment name
+    description: Description
+    sequence: Sequence
+    appInfo: Specify the appinfo for the experiment
+    envText: We have created a chaos engine specification for this experiment. You can tune the following variables for the chaos engine.
+    customEnvText: To change the variables in chaos experiment specific to this workflow, You can tune it here.
+    addEnv: Add Key
+    addExp: Add experiment
+  viewYAML:
+    view: View the YAML here
+  backBtn:
+    back: Back

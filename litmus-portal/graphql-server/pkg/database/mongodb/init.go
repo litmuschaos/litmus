@@ -68,6 +68,7 @@ type WorkflowRun struct {
 	WorkflowRunID string `bson:"workflow_run_id"`
 	LastUpdated   string `bson:"last_updated"`
 	ExecutionData string `bson:"execution_data"`
+	Completed     bool   `bson:"completed"`
 }
 
 type WeightagesInput struct {

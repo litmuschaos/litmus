@@ -116,7 +116,6 @@ function getStepContent(
 
 const CustomStepper = () => {
   const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(0);
   const { t } = useTranslation();
   const template = useActions(TemplateSelectionActions);
   const workflowData: WorkflowData = useSelector(
@@ -133,6 +132,10 @@ const CustomStepper = () => {
     clusterid,
     scheduleType,
   } = workflowData;
+
+  const defaultStep = isCustomWorkflow ? 2 : 0;
+
+  const [activeStep, setActiveStep] = React.useState(defaultStep);
 
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
