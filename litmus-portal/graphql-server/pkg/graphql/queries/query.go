@@ -174,7 +174,7 @@ func GetLogs(reqID string, pod model.PodLogRequest, r store.StateData) {
 	payload := model.ClusterAction{
 		ProjectID: reqID,
 		Action: &model.ActionPayload{
-			RequestType:  &reqType,
+			RequestType:  reqType,
 			ExternalData: &externalData,
 		},
 	}

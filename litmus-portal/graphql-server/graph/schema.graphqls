@@ -49,9 +49,9 @@ type ClusterEvent {
 }
 
 type ActionPayload {
-  request_type: String
-  k8s_manifest: String
-  namespace: String
+  request_type: String!
+  k8s_manifest: String!
+  namespace: String!
   external_data: String
 }
 
@@ -263,6 +263,8 @@ type Mutation {
   addMyHub(myhubInput: CreateMyHub!, username: String!): User! @authorized
 
   syncHub(syncHubInput: ChartsInput!): [MyHubStatus!]! @authorized
+
+  deleteClusterReg(cluster_id: String!): String! @authorized
 }
 
 type Subscription {
