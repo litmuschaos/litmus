@@ -42,7 +42,7 @@ func StartDeployer(projectID string) {
 	if statusCode == 200 {
 		manifests := strings.Split(string(response), "---")
 		for _, manifest := range manifests {
-			_, err = k8s.ClusterOperations(manifest, deployerNamespace)
+			_, err = k8s.ClusterResource(manifest, deployerNamespace)
 			if err != nil {
 				log.Print(err)
 				failedManifest = failedManifest + manifest

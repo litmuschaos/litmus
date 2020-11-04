@@ -70,21 +70,18 @@ func GetManifest(token string) ([]byte, int, error) {
 
 		if reqCluster.AgentScope == "cluster" {
 			respData, err = utils.ManifestParser(reqCluster, "manifests/cluster-subscriber.yml", subscriberConfiguration)
-			if err != nil {
-				return nil, 500, err
-			}
 		} else if reqCluster.AgentScope == "namespace" {
 			respData, err = utils.ManifestParser(reqCluster, "manifests/namespace-subscriber.yml", subscriberConfiguration)
-			if err != nil {
-				return nil, 500, err
-			}
 		} else {
 			log.Print("ERROR- AGENT SCOPE NOT SELECTED!")
+		}
+		if err != nil {
+			return nil, 500, err
 		}
 
 		return respData, 200, nil
 	} else {
-		return []byte("Cluster is already registered"), 200, nil
+		return []byte("Cluster is already registered"), 409, nil
 	}
 
 }

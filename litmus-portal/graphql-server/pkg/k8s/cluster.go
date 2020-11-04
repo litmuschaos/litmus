@@ -24,7 +24,7 @@ var (
 )
 
 // This function handles cluster operations
-func ClusterOperations(manifest string, namespace string) (*unstructured.Unstructured, error) {
+func ClusterResource(manifest string, namespace string) (*unstructured.Unstructured, error) {
 	// Getting dynamic and discovery client
 	discoveryClient, dynamicClient, err := GetDynamicAndDiscoveryClient()
 	if err != nil {
