@@ -55,7 +55,7 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
       </TableCell>
       <TableCell>
         <Typography className={classes.clusterName}>
-          {nameCapitalized(data.cluster_type)}
+          {nameCapitalized(data.cluster_name)}
         </Typography>
       </TableCell>
       <TableCell>

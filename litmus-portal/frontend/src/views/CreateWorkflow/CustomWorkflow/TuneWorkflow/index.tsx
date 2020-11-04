@@ -98,6 +98,11 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             parsedYaml.metadata.name =
               workflowDetails.customWorkflow.experiment_name;
             setEnv([...parsedYaml.spec.experiments[0].spec.components.env]);
+            setAppInfo({
+              appns: parsedYaml.spec.appinfo.appns,
+              applabel: parsedYaml.spec.appinfo.applabel,
+              appkind: parsedYaml.spec.appinfo.appkind,
+            });
             setYaml(YAML.stringify(parsedYaml));
             setLoadingEnv(false);
           });
@@ -109,6 +114,11 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       const parsedYaml = YAML.parse(
         workflowDetails.customWorkflow.yaml as string
       );
+      setAppInfo({
+        appns: parsedYaml.spec.appinfo.appns,
+        applabel: parsedYaml.spec.appinfo.applabel,
+        appkind: parsedYaml.spec.appinfo.appkind,
+      });
       setEnv([...parsedYaml.spec.experiments[0].spec.components.env]);
       setYaml(workflowDetails.customWorkflow.yaml as string);
       setLoadingEnv(false);
@@ -261,7 +271,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 handleChange={(event) =>
                   setAppInfo({
                     ...appInfo,
-                    appns: event.target.value,
+                    appns: event.target.value.toLowerCase(),
                   })
                 }
                 value={appInfo.appns}
@@ -279,7 +289,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 handleChange={(event) =>
                   setAppInfo({
                     ...appInfo,
-                    applabel: event.target.value,
+                    applabel: event.target.value.toLowerCase(),
                   })
                 }
                 value={appInfo.applabel}
@@ -297,7 +307,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 handleChange={(event) =>
                   setAppInfo({
                     ...appInfo,
-                    appkind: event.target.value,
+                    appkind: event.target.value.toLowerCase(),
                   })
                 }
                 value={appInfo.appkind}
@@ -376,7 +386,6 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       <div className={classes.nextBtn}>
         <ButtonFilled
           handleClick={() => {
-            // history.push('/create-workflow/custom/tune');
             handleEnvModification();
             gotoStep(2);
           }}
