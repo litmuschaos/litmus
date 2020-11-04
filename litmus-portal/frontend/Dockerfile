@@ -23,9 +23,14 @@ COPY . ./
 RUN npm run build
 
 # Stage 2: the production environment
-FROM nginx:alpine
+FROM nginxinc/nginx-unprivileged
+
+# Add Maintainer Info
+LABEL maintainer="LitmusChaos"
+
 RUN rm /etc/nginx/conf.d/default.conf
 COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
 COPY  --from=react-build /frontend/build /usr/share/nginx/html
-EXPOSE 80
+
+EXPOSE 8080
 CMD ["nginx", "-g", "daemon off;"]

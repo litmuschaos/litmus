@@ -50,7 +50,7 @@ spec:
   ports:
     - name: http
       port: 9091
-      targetPort: 80
+      targetPort: 8080
   selector:
     component: litmusportal-frontend
 ---
