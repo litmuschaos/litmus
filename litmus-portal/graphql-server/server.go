@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
@@ -36,7 +37,6 @@ func main() {
 	if port == "" {
 		port = defaultPort
 	}
-
 	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig()))
 	srv.AddTransport(transport.POST{})
 	srv.AddTransport(transport.GET{})
@@ -59,10 +59,11 @@ func main() {
 		AllowedOrigins:   []string{"*"},
 		AllowCredentials: true,
 	}).Handler)
-
+	go myhub.RecurringHubSync() //go routine for syncing hubs for all users
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", authorization.Middleware(srv))
 	router.HandleFunc("/file/{key}{path:.yaml}", file_handlers.FileHandler)
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
+
 }

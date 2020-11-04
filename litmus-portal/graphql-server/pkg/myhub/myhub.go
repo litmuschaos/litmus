@@ -5,6 +5,9 @@ import (
 	"errors"
 	"log"
 	"strconv"
+	"time"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usermanagement"
 
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
@@ -12,6 +15,10 @@ import (
 	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/gitops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/handler"
+)
+
+const (
+	timeInterval = 6 * time.Hour
 )
 
 //AddMyHub is used for Adding a new MyHub
@@ -163,4 +170,25 @@ func SyncHub(ctx context.Context, syncHubInput model.ChartsInput) ([]*model.MyHu
 		return nil, err
 	}
 	return HubStatus(ctx, syncHubInput.UserName)
+}
+
+//RecurringHubSync is used for syncing
+func RecurringHubSync() {
+	for {
+		//Started Syncing of hubs
+		users, _ := usermanagement.GetUsers(nil)
+		for _, user := range users {
+			for _, n := range user.MyHub {
+				chartsInput := model.ChartsInput{
+					HubName:    n.HubName,
+					UserName:   user.Username,
+					RepoURL:    n.RepoURL,
+					RepoBranch: n.RepoBranch,
+				}
+				gitops.GitSyncHandlerForUser(chartsInput)
+			}
+		}
+		//Syncing Completed
+		time.Sleep(timeInterval)
+	}
 }
