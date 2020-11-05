@@ -181,7 +181,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     const readFile = e.target.files && e.target.files[0];
     setFileName(readFile && readFile.name);
     const extension = readFile?.name.substring(
-      readFile?.name.lastIndexOf('.') + 1
+      readFile.name.lastIndexOf('.') + 1
     );
     if ((extension === 'yaml' || extension === 'yml') && readFile) {
       readFile.text().then((response) => {
