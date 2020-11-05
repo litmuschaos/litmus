@@ -186,7 +186,7 @@ func UpdateChaosWorkflow(query bson.D, update bson.D) error {
 		return err
 	}
 
-	if workflow.MatchedCount == 0 && workflow.ModifiedCount == 0 {
+	if workflow.MatchedCount != 0 && workflow.ModifiedCount != 0 {
 		return errors.New("Failed to update the document")
 	}
 
