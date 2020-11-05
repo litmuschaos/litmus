@@ -42,7 +42,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, user model.UpdateUser
 }
 
 func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid string) (bool, error) {
-	return database.DeleteChaosWorkflow(workflowid)
+	return mutations.DeleteWorkflow(workflowid, *store)
 }
 
 func (r *mutationResolver) SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error) {
