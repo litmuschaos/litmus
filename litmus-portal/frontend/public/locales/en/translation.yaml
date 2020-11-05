@@ -578,9 +578,15 @@ customWorkflow:
     workflowInfo: Workflow information
     workflowName: Workflow Name
     workflowDesc: Description
-    firstChaos: First Chaos Experiment
+    firstChaos: Choose the hub
     selectHub: Select the hub
     public: Public Hub
+    configure: Configure your YAML
+    construct: Construct your YAML
+    upload: Upload your YAML
+    uploadFile: Upload File
+    uploadSuccess: Successfully uploaded
+    drag: Drag & Drop here
     chooseExp: Choose the experiment
     loadingExp: Loading Experiments, please wait...
     selectExp: Select the experiment
