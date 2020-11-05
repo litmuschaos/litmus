@@ -419,7 +419,8 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 control={<Radio />}
                 label={
                   <Typography className={classes.radioText}>
-                    {t('customWorkflow.createWorkflow.upload')}
+                    {t('customWorkflow.createWorkflow.upload')}{' '}
+                    <strong>{t('customWorkflow.createWorkflow.yaml')}</strong>
                   </Typography>
                 }
               />
