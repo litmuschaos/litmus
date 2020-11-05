@@ -252,3 +252,27 @@ func UpdateWorkflow(workflow *model.ChaosWorkflowUpdateInput, r store.StateData)
 		IsCustomWorkflow:    workflow.IsCustomWorkflow,
 	}, nil
 }
+
+func DeleteWorkflow(workflow_id string, r store.StateData) (bool, error) {
+
+	workflows, err := database.GetWorkflowsByIDs([]*string{&workflow_id})
+	if err != nil {
+		return false, err
+	}
+
+	bool, err := database.DeleteChaosWorkflow(workflow_id)
+	if err != nil {
+		return false, err
+	}
+
+	for _, workflow := range workflows {
+		subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
+			K8sManifest: workflow.WorkflowManifest,
+			RequestType: "delete",
+			ProjectID:   workflow.ProjectID,
+			ClusterID:   workflow.ClusterID,
+		}, r)
+	}
+
+	return bool, nil
+}
