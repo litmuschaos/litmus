@@ -2,6 +2,7 @@ package mutations
 
 import (
 	"encoding/json"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql"
 	"log"
 	"strconv"
 	"strings"
@@ -211,7 +212,12 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		return nil, err
 	}
 
-	subscriptions.SendWorkflowRequest(&newChaosWorkflow, r)
+	subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
+		K8sManifest: newWorkflowManifest,
+		RequestType: "create",
+		ProjectID:   input.ProjectID,
+		ClusterID:   input.ClusterID,
+	}, r)
 
 	return &model.ChaosWorkFlowResponse{
 		WorkflowID:          workflow_id,
@@ -219,5 +225,30 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		WorkflowName:        input.WorkflowName,
 		WorkflowDescription: input.WorkflowDescription,
 		IsCustomWorkflow:    input.IsCustomWorkflow,
+	}, nil
+}
+
+func UpdateWorkflow(workflow *model.ChaosWorkflowUpdateInput, r store.StateData) (*model.ChaosWorkFlowResponse, error) {
+	query := bson.D{{"cluster_id", workflow.WorkflowID}}
+	update := bson.D{{"$set", bson.D{{"project_id", workflow.ProjectID}, {"cluster_id", workflow.ClusterID}, {"workflow_manifest", workflow.WorkflowManifest}, {"cronSyntax", workflow.CronSyntax}, {"workflow_name", workflow.WorkflowName}, {"workflow_description", workflow.WorkflowDescription}, {"isCustomWorkflow", workflow.IsCustomWorkflow}, {"weightages", workflow.Weightages}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
+
+	err := database.UpdateChaosWorkflow(query, update)
+	if err != nil {
+		return nil, err
+	}
+
+	subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
+		K8sManifest: workflow.WorkflowManifest,
+		RequestType: "update",
+		ProjectID:   workflow.ProjectID,
+		ClusterID:   workflow.ClusterID,
+	}, r)
+
+	return &model.ChaosWorkFlowResponse{
+		WorkflowID:          workflow.WorkflowID,
+		CronSyntax:          workflow.CronSyntax,
+		WorkflowName:        workflow.WorkflowName,
+		WorkflowDescription: workflow.WorkflowDescription,
+		IsCustomWorkflow:    workflow.IsCustomWorkflow,
 	}, nil
 }

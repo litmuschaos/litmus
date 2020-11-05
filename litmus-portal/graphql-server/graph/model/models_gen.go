@@ -9,9 +9,9 @@ import (
 )
 
 type ActionPayload struct {
-	RequestType  *string `json:"request_type"`
-	K8sManifest  *string `json:"k8s_manifest"`
-	Namespace    *string `json:"namespace"`
+	RequestType  string  `json:"request_type"`
+	K8sManifest  string  `json:"k8s_manifest"`
+	Namespace    string  `json:"namespace"`
 	ExternalData *string `json:"external_data"`
 }
 
@@ -41,6 +41,18 @@ type ChaosWorkFlowResponse struct {
 	WorkflowName        string `json:"workflow_name"`
 	WorkflowDescription string `json:"workflow_description"`
 	IsCustomWorkflow    bool   `json:"isCustomWorkflow"`
+}
+
+type ChaosWorkflowUpdateInput struct {
+	WorkflowID          string             `json:"workflow_id"`
+	WorkflowManifest    string             `json:"workflow_manifest"`
+	CronSyntax          string             `json:"cronSyntax"`
+	WorkflowName        string             `json:"workflow_name"`
+	WorkflowDescription string             `json:"workflow_description"`
+	Weightages          []*WeightagesInput `json:"weightages"`
+	IsCustomWorkflow    bool               `json:"isCustomWorkflow"`
+	ProjectID           string             `json:"project_id"`
+	ClusterID           string             `json:"cluster_id"`
 }
 
 type Chart struct {

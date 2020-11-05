@@ -49,9 +49,9 @@ type ClusterEvent {
 }
 
 type ActionPayload {
-  request_type: String
-  k8s_manifest: String
-  namespace: String
+  request_type: String!
+  k8s_manifest: String!
+  namespace: String!
   external_data: String
 }
 
@@ -94,6 +94,18 @@ type weightages {
 }
 
 input ChaosWorkFlowInput {
+  workflow_manifest: String!
+  cronSyntax: String!
+  workflow_name: String!
+  workflow_description: String!
+  weightages: [WeightagesInput!]!
+  isCustomWorkflow: Boolean!
+  project_id: ID!
+  cluster_id: ID!
+}
+
+input ChaosWorkflowUpdateInput {
+  workflow_id: String!
   workflow_manifest: String!
   cronSyntax: String!
   workflow_name: String!
@@ -264,6 +276,8 @@ type Mutation {
   addMyHub(myhubInput: CreateMyHub!, username: String!): User! @authorized
 
   syncHub(syncHubInput: ChartsInput!): [MyHubStatus!]! @authorized
+
+  updateChaosWorkflow(input: ChaosWorkflowUpdateInput): ChaosWorkFlowResponse! @authorized
 }
 
 type Subscription {
