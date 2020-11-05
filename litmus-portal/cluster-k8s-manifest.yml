@@ -37,7 +37,7 @@ spec:
           image: litmuschaos/litmusportal-frontend:ci
           imagePullPolicy: Always
           ports:
-            - containerPort: 80
+            - containerPort: 8080
           env:
             - name: AGENT_SCOPE
               valueFrom:
