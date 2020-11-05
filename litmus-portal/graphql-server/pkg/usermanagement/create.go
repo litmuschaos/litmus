@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	self_deployer "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/self-deployer"
 	"go.mongodb.org/mongo-driver/mongo"
 
@@ -44,6 +45,13 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 		log.Print("ERROR", err)
 		return nil, err
 	}
+
+	publicHub := model.CreateMyHub{
+		HubName:    "Chaos Hub",
+		RepoURL:    "https://github.com/litmuschaos/chaos-charts",
+		RepoBranch: "master",
+	}
+	_, err = myhub.AddMyHub(ctx, publicHub, user.Username)
 
 	project, err := project.CreateProjectWithUser(ctx, user.ProjectName, newUser)
 	if err != nil {
