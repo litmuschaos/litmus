@@ -2,6 +2,7 @@ package mutations
 
 import (
 	"encoding/json"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql"
 	"log"
 	"strconv"
 	"strings"
@@ -211,7 +212,12 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		return nil, err
 	}
 
-	subscriptions.SendWorkflowRequest(&newChaosWorkflow, r)
+	subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
+		K8sManifest: newWorkflowManifest,
+		RequestType: "create",
+		ProjectID:   input.ProjectID,
+		ClusterID:   input.ClusterID,
+	}, r)
 
 	return &model.ChaosWorkFlowResponse{
 		WorkflowID:          workflow_id,
@@ -220,4 +226,28 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		WorkflowDescription: input.WorkflowDescription,
 		IsCustomWorkflow:    input.IsCustomWorkflow,
 	}, nil
+}
+
+func DeleteWorkflow(workflow_id string, r store.StateData) (bool, error) {
+
+	workflows, err := database.GetWorkflowsByIDs([]*string{&workflow_id})
+	if err != nil {
+		return false, err
+	}
+
+	bool, err := database.DeleteChaosWorkflow(workflow_id)
+	if err != nil {
+		return false, err
+	}
+
+	for _, workflow := range workflows {
+		subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
+			K8sManifest: workflow.WorkflowManifest,
+			RequestType: "delete",
+			ProjectID:   workflow.ProjectID,
+			ClusterID:   workflow.ClusterID,
+		}, r)
+	}
+
+	return bool, nil
 }
