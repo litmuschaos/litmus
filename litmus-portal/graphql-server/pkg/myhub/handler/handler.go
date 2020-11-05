@@ -93,14 +93,25 @@ func GetChartsPath(ctx context.Context, chartsInput model.ChartsInput) string {
 	return ChartsPath
 }
 
-//GetExperimentPath is used to construct path for given experiment.
-func GetExperimentPath(ctx context.Context, experimentInput model.ExperimentInput) string {
+//GetExperimentChartsVersionYamlPath is used to construct path for given chartsversion.yaml.
+func GetExperimentChartsVersionYamlPath(ctx context.Context, experimentInput model.ExperimentInput) string {
 	UserName := experimentInput.UserName
 	HubName := experimentInput.HubName
 	experimentName := experimentInput.ExperimentName
 	chartName := experimentInput.ChartName
 	ExperimentPath := defaultPath + UserName + "/" + HubName + "/" + "/charts/" + chartName + "/" + experimentName + "/" + experimentName + ".chartserviceversion.yaml"
 	return ExperimentPath
+}
+
+//GetExperimentYAMLPath is used to construct path for given experiment/engine.
+func GetExperimentYAMLPath(ctx context.Context, experimentInput model.ExperimentInput) string {
+	UserName := experimentInput.UserName
+	HubName := experimentInput.HubName
+	experimentName := experimentInput.ExperimentName
+	chartName := experimentInput.ChartName
+	fileType := *experimentInput.FileType
+	ExperimentYAMLPath := defaultPath + UserName + "/" + HubName + "/" + "charts/" + chartName + "/" + experimentName + "/" + fileType + ".yaml"
+	return ExperimentYAMLPath
 }
 
 //GetChartsData is used to get details of charts like experiments.
@@ -113,7 +124,7 @@ func GetChartsData(ChartsPath string) ([]*model.Chart, error) {
 	}
 	for _, Chart := range Charts {
 
-		ChartDetails, _ := readExperimentFile(ChartsPath + Chart.Name() + "/" + Chart.Name() + ".chartserviceversion.yaml")
+		ChartDetails, _ := ReadExperimentFile(ChartsPath + Chart.Name() + "/" + Chart.Name() + ".chartserviceversion.yaml")
 		AllChartsDetails = append(AllChartsDetails, ChartDetails)
 	}
 
@@ -125,15 +136,15 @@ func GetChartsData(ChartsPath string) ([]*model.Chart, error) {
 
 //GetExperimentData is used for getting details of selected Experiment path
 func GetExperimentData(experimentFilePath string) (*model.Chart, error) {
-	data, _ := readExperimentFile(experimentFilePath)
+	data, _ := ReadExperimentFile(experimentFilePath)
 	e, _ := json.Marshal(data)
 	var data1 *model.Chart
 	json.Unmarshal([]byte(e), &data1)
 	return data1, nil
 }
 
-//readExperimentFile is used for reading a experiment file from given path
-func readExperimentFile(path string) (Chart, error) {
+//ReadExperimentFile is used for reading a experiment file from given path
+func ReadExperimentFile(path string) (Chart, error) {
 	var experiment Chart
 	experimentFile, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -144,4 +155,15 @@ func readExperimentFile(path string) (Chart, error) {
 		return experiment, err
 	}
 	return experiment, nil
+}
+
+//ReadExperimentYAMLFile is used for reading a experiment/engine file from given path
+func ReadExperimentYAMLFile(path string) (string, error) {
+	var s string
+	YAMLData, err := ioutil.ReadFile(path)
+	if err != nil {
+		return s, fmt.Errorf("file path of the, err: %+v", err)
+	}
+	s = string(YAMLData)
+	return s, nil
 }

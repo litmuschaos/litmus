@@ -227,6 +227,8 @@ type Query {
   getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
 
   getHubStatus(username: String!): [MyHubStatus]! @authorized
+
+  getYAMLData(experimentInput: ExperimentInput!): String!
 }
 
 type Mutation {

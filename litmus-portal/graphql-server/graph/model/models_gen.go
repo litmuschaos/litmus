@@ -150,12 +150,11 @@ type CreateUserInput struct {
 }
 
 type ExperimentInput struct {
-	UserName       string `json:"UserName"`
-	RepoURL        string `json:"RepoURL"`
-	RepoBranch     string `json:"RepoBranch"`
-	ChartName      string `json:"ChartName"`
-	ExperimentName string `json:"ExperimentName"`
-	HubName        string `json:"HubName"`
+	UserName       string  `json:"UserName"`
+	ChartName      string  `json:"ChartName"`
+	ExperimentName string  `json:"ExperimentName"`
+	HubName        string  `json:"HubName"`
+	FileType       *string `json:"FileType"`
 }
 
 type Experiments struct {

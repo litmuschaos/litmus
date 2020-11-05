@@ -129,6 +129,10 @@ func (r *queryResolver) GetHubStatus(ctx context.Context, username string) ([]*m
 	return myhub.HubStatus(ctx, username)
 }
 
+func (r *queryResolver) GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
+	return myhub.GetYAMLData(ctx, experimentInput)
+}
+
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {
 	log.Print("NEW EVENT ", projectID)
 	clusterEvent := make(chan *model.ClusterEvent, 1)
