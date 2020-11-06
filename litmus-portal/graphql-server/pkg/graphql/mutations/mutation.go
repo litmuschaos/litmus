@@ -250,7 +250,7 @@ func DeleteCluster(cluster_id string, r store.StateData) (string, error) {
 			"kind": "Deployment",
 			"metadata": {
 				"name": "subscriber",
-				"namespace":` + *cluster.AgentNamespace + ` 
+				"namespace": ` + *cluster.AgentNamespace + ` 
 			}
 		}`,
 		`{
