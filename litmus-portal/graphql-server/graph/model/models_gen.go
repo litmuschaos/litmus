@@ -25,6 +25,7 @@ type Annotation struct {
 }
 
 type ChaosWorkFlowInput struct {
+	WorkflowID          *string            `json:"workflow_id"`
 	WorkflowManifest    string             `json:"workflow_manifest"`
 	CronSyntax          string             `json:"cronSyntax"`
 	WorkflowName        string             `json:"workflow_name"`
