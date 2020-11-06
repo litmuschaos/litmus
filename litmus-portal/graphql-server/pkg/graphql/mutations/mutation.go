@@ -273,7 +273,7 @@ func DeleteCluster(cluster_id string, r store.StateData) (string, error) {
 	}
 
 	return "Successfully deleted cluster", nil
-} 
+}
 
 func UpdateWorkflow(workflow *model.ChaosWorkFlowInput, r store.StateData) (*model.ChaosWorkFlowResponse, error) {
 	query := bson.D{{"workflow_id", workflow.WorkflowID}}
