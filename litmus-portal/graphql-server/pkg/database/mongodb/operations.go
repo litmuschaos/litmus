@@ -132,9 +132,9 @@ func GetClusterWithProjectID(project_id string, cluster_type *string) ([]*Cluste
 
 	var query bson.M
 	if cluster_type == nil {
-		query = bson.M{"project_id": project_id}
+		query = bson.M{"project_id": project_id, "is_removed": false}
 	} else {
-		query = bson.M{"project_id": project_id, "cluster_type": cluster_type}
+		query = bson.M{"project_id": project_id, "cluster_type": cluster_type, "is_removed": false}
 	}
 
 	fmt.Print(query)

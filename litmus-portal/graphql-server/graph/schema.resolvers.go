@@ -89,6 +89,10 @@ func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, input *model
 	return mutations.UpdateWorkflow(input, *store)
 }
 
+func (r *mutationResolver) DeleteClusterReg(ctx context.Context, clusterID string) (string, error) {
+	return mutations.DeleteCluster(clusterID, *store)
+}
+
 func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {
 	return queries.QueryWorkflowRuns(projectID)
 }
