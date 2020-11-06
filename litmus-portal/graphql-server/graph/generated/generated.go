@@ -228,6 +228,7 @@ type ComplexityRoot struct {
 		GetScheduledWorkflows func(childComplexity int, projectID string) int
 		GetUser               func(childComplexity int, username string) int
 		GetWorkFlowRuns       func(childComplexity int, projectID string) int
+		GetYAMLData           func(childComplexity int, experimentInput model.ExperimentInput) int
 		ListWorkflow          func(childComplexity int, projectID string, workflowIds []*string) int
 		Users                 func(childComplexity int) int
 	}
@@ -361,6 +362,7 @@ type QueryResolver interface {
 	GetCharts(ctx context.Context, chartsInput model.ChartsInput) ([]*model.Chart, error)
 	GetHubExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error)
 	GetHubStatus(ctx context.Context, username string) ([]*model.MyHubStatus, error)
+	GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error)
 }
 type SubscriptionResolver interface {
 	ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error)
@@ -1318,6 +1320,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetWorkFlowRuns(childComplexity, args["project_id"].(string)), true
 
+	case "Query.getYAMLData":
+		if e.complexity.Query.GetYAMLData == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getYAMLData_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetYAMLData(childComplexity, args["experimentInput"].(model.ExperimentInput)), true
+
 	case "Query.ListWorkflow":
 		if e.complexity.Query.ListWorkflow == nil {
 			break
@@ -2042,11 +2056,10 @@ input CreateMyHub {
 
 input ExperimentInput {
   UserName: String!
-  RepoURL: String!
-  RepoBranch: String!
   ChartName: String!
   ExperimentName: String!
   HubName: String!
+  FileType: String
 }
 
 input ChartsInput {
@@ -2317,6 +2330,8 @@ type Query {
   getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
 
   getHubStatus(username: String!): [MyHubStatus]! @authorized
+
+  getYAMLData(experimentInput: ExperimentInput!): String!
 }
 
 type Mutation {
@@ -2777,6 +2792,20 @@ func (ec *executionContext) field_Query_getWorkFlowRuns_args(ctx context.Context
 		}
 	}
 	args["project_id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getYAMLData_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.ExperimentInput
+	if tmp, ok := rawArgs["experimentInput"]; ok {
+		arg0, err = ec.unmarshalNExperimentInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐExperimentInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["experimentInput"] = arg0
 	return args, nil
 }
 
@@ -7470,6 +7499,47 @@ func (ec *executionContext) _Query_getHubStatus(ctx context.Context, field graph
 	return ec.marshalNMyHubStatus2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHubStatus(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_getYAMLData(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getYAMLData_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetYAMLData(rctx, args["experimentInput"].(model.ExperimentInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -11513,18 +11583,6 @@ func (ec *executionContext) unmarshalInputExperimentInput(ctx context.Context, o
 			if err != nil {
 				return it, err
 			}
-		case "RepoURL":
-			var err error
-			it.RepoURL, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "RepoBranch":
-			var err error
-			it.RepoBranch, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "ChartName":
 			var err error
 			it.ChartName, err = ec.unmarshalNString2string(ctx, v)
@@ -11540,6 +11598,12 @@ func (ec *executionContext) unmarshalInputExperimentInput(ctx context.Context, o
 		case "HubName":
 			var err error
 			it.HubName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "FileType":
+			var err error
+			it.FileType, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -12928,6 +12992,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getHubStatus(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getYAMLData":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getYAMLData(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
