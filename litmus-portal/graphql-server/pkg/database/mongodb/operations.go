@@ -181,13 +181,9 @@ func DeleteChaosWorkflow(workflowid string) (bool, error) {
 func UpdateChaosWorkflow(query bson.D, update bson.D) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
-	workflow, err := workflowCollection.UpdateOne(ctx, query, update)
+	_, err := workflowCollection.UpdateOne(ctx, query, update)
 	if err != nil {
 		return err
-	}
-
-	if workflow.MatchedCount != 0 && workflow.ModifiedCount != 0 {
-		return errors.New("Failed to update the document")
 	}
 
 	return nil
