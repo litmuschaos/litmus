@@ -85,7 +85,7 @@ func (r *mutationResolver) SyncHub(ctx context.Context, syncHubInput model.Chart
 	return myhub.SyncHub(ctx, syncHubInput)
 }
 
-func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, input *model.ChaosWorkflowUpdateInput) (*model.ChaosWorkFlowResponse, error) {
+func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
 	return mutations.UpdateWorkflow(input, *store)
 }
 

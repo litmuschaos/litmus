@@ -94,18 +94,7 @@ type weightages {
 }
 
 input ChaosWorkFlowInput {
-  workflow_manifest: String!
-  cronSyntax: String!
-  workflow_name: String!
-  workflow_description: String!
-  weightages: [WeightagesInput!]!
-  isCustomWorkflow: Boolean!
-  project_id: ID!
-  cluster_id: ID!
-}
-
-input ChaosWorkflowUpdateInput {
-  workflow_id: String!
+  workflow_id: String
   workflow_manifest: String!
   cronSyntax: String!
   workflow_name: String!
@@ -246,8 +235,7 @@ type Mutation {
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
   #It is used to create chaosworkflow
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
-    @authorized
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
 
   createUser(user: CreateUserInput!): User! @authorized
 
@@ -277,7 +265,7 @@ type Mutation {
 
   syncHub(syncHubInput: ChartsInput!): [MyHubStatus!]! @authorized
 
-  updateChaosWorkflow(input: ChaosWorkflowUpdateInput): ChaosWorkFlowResponse! @authorized
+  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse! @authorized
 }
 
 type Subscription {

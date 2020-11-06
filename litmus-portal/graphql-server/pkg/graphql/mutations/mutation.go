@@ -228,9 +228,9 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 	}, nil
 }
 
-func UpdateWorkflow(workflow *model.ChaosWorkflowUpdateInput, r store.StateData) (*model.ChaosWorkFlowResponse, error) {
-	query := bson.D{{"cluster_id", workflow.WorkflowID}}
-	update := bson.D{{"$set", bson.D{{"project_id", workflow.ProjectID}, {"cluster_id", workflow.ClusterID}, {"workflow_manifest", workflow.WorkflowManifest}, {"cronSyntax", workflow.CronSyntax}, {"workflow_name", workflow.WorkflowName}, {"workflow_description", workflow.WorkflowDescription}, {"isCustomWorkflow", workflow.IsCustomWorkflow}, {"weightages", workflow.Weightages}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
+func UpdateWorkflow(workflow *model.ChaosWorkFlowInput, r store.StateData) (*model.ChaosWorkFlowResponse, error) {
+	query := bson.D{{"workflow_id", workflow.WorkflowID}}
+	update := bson.D{{"$set", bson.D{{"workflow_manifest", workflow.WorkflowManifest}, {"cronSyntax", workflow.CronSyntax}, {"workflow_name", workflow.WorkflowName}, {"workflow_description", workflow.WorkflowDescription}, {"isCustomWorkflow", workflow.IsCustomWorkflow}, {"weightages", workflow.Weightages}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
 	err := database.UpdateChaosWorkflow(query, update)
 	if err != nil {
@@ -245,7 +245,7 @@ func UpdateWorkflow(workflow *model.ChaosWorkflowUpdateInput, r store.StateData)
 	}, r)
 
 	return &model.ChaosWorkFlowResponse{
-		WorkflowID:          workflow.WorkflowID,
+		WorkflowID:          *workflow.WorkflowID,
 		CronSyntax:          workflow.CronSyntax,
 		WorkflowName:        workflow.WorkflowName,
 		WorkflowDescription: workflow.WorkflowDescription,
