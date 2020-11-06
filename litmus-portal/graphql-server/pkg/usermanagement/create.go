@@ -53,6 +53,10 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 	}
 	_, err = myhub.AddMyHub(ctx, publicHub, user.Username)
 
+	if err != nil {
+		return nil, err
+	}
+
 	project, err := project.CreateProjectWithUser(ctx, user.ProjectName, newUser)
 	if err != nil {
 		return nil, err
