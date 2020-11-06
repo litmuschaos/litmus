@@ -98,6 +98,19 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 		log.Println("Resource successfully created")
 		return response, nil
 	} else if requestType == "update" {
+		getObj, err := dr.Get(obj.GetName(), metav1.GetOptions{})
+		if errors.IsNotFound(err) {
+			// This doesnt ever happen even if it is already deleted or not found
+			log.Printf("%v not found", obj.GetName())
+			return nil, nil
+		}
+
+		if err != nil {
+			return nil, err
+		}
+
+		obj.SetResourceVersion(getObj.GetResourceVersion())
+
 		response, err := dr.Update(obj, metav1.UpdateOptions{})
 		if err != nil {
 			return nil, err

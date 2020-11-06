@@ -424,6 +424,7 @@ rules:
       - list
       - watch
       - delete
+      - update
   - apiGroups:
       - ""
     resources:

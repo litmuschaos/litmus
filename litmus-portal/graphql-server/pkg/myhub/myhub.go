@@ -144,10 +144,10 @@ func GetCharts(ctx context.Context, chartsInput model.ChartsInput) ([]*model.Cha
 	return ChartsData, nil
 }
 
-//GetExperiment is used for getting details or yaml file of given experiment.
+//GetExperiment is used for getting details of a given experiment using chartserviceversion.yaml.
 func GetExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error) {
 
-	ExperimentPath := handler.GetExperimentPath(ctx, experimentInput)
+	ExperimentPath := handler.GetExperimentChartsVersionYamlPath(ctx, experimentInput)
 	ExperimentData, err := handler.GetExperimentData(ExperimentPath)
 	if err != nil {
 		return nil, err
@@ -163,4 +163,14 @@ func SyncHub(ctx context.Context, syncHubInput model.ChartsInput) ([]*model.MyHu
 		return nil, err
 	}
 	return HubStatus(ctx, syncHubInput.UserName)
+}
+
+// GetYAMLData is responsible for sending the experiment/engine.yaml for a given experiment.
+func GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
+	YAMLPath := handler.GetExperimentYAMLPath(ctx, experimentInput)
+	YAMLData, err := handler.ReadExperimentYAMLFile(YAMLPath)
+	if err != nil {
+		return "", err
+	}
+	return YAMLData, nil
 }

@@ -273,6 +273,31 @@ func DeleteCluster(cluster_id string, r store.StateData) (string, error) {
 	}
 
 	return "Successfully deleted cluster", nil
+} 
+
+func UpdateWorkflow(workflow *model.ChaosWorkFlowInput, r store.StateData) (*model.ChaosWorkFlowResponse, error) {
+	query := bson.D{{"workflow_id", workflow.WorkflowID}}
+	update := bson.D{{"$set", bson.D{{"workflow_manifest", workflow.WorkflowManifest}, {"cronSyntax", workflow.CronSyntax}, {"workflow_name", workflow.WorkflowName}, {"workflow_description", workflow.WorkflowDescription}, {"isCustomWorkflow", workflow.IsCustomWorkflow}, {"weightages", workflow.Weightages}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
+
+	err := database.UpdateChaosWorkflow(query, update)
+	if err != nil {
+		return nil, err
+	}
+
+	subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
+		K8sManifest: workflow.WorkflowManifest,
+		RequestType: "update",
+		ProjectID:   workflow.ProjectID,
+		ClusterID:   workflow.ClusterID,
+	}, r)
+
+	return &model.ChaosWorkFlowResponse{
+		WorkflowID:          *workflow.WorkflowID,
+		CronSyntax:          workflow.CronSyntax,
+		WorkflowName:        workflow.WorkflowName,
+		WorkflowDescription: workflow.WorkflowDescription,
+		IsCustomWorkflow:    workflow.IsCustomWorkflow,
+	}, nil
 }
 
 func DeleteWorkflow(workflow_id string, r store.StateData) (bool, error) {
