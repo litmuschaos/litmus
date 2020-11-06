@@ -353,6 +353,7 @@ type WorkflowRunInput struct {
 	WorkflowName  string           `json:"workflow_name"`
 	ExecutionData string           `json:"execution_data"`
 	ClusterID     *ClusterIdentity `json:"cluster_id"`
+	Completed     bool             `json:"completed"`
 }
 
 type WorkflowRuns struct {

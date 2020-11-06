@@ -18,6 +18,7 @@ import React, { useState } from 'react';
 import { DateRangePicker } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
+import { Workflow, WorkflowRun } from '../../../models/graphql/workflowData';
 import useStyles from './styles';
 
 interface HeaderSectionProps {
@@ -25,6 +26,8 @@ interface HeaderSectionProps {
   statusValue: string;
   clusterValue: string;
   isOpen: boolean;
+  data: Workflow | undefined;
+  getClusters: (wfdata: WorkflowRun[]) => string[];
   isDateOpen: boolean;
   popAnchorEl: HTMLElement | null;
   displayDate: string;
@@ -59,8 +62,10 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
   statusValue,
   clusterValue,
   isOpen,
+  data,
   popAnchorEl,
   displayDate,
+  getClusters,
   changeSearch,
   changeStatus,
   changeCluster,
@@ -132,8 +137,13 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
             className={classes.selectText}
           >
             <MenuItem value="All">All</MenuItem>
-            <MenuItem value="Internal">Internal</MenuItem>
-            <MenuItem value="External">External</MenuItem>
+            {(data ? getClusters(data.getWorkFlowRuns) : []).map(
+              (cluster: string) => (
+                <MenuItem key={cluster} value={cluster}>
+                  {cluster}
+                </MenuItem>
+              )
+            )}
           </Select>
         </FormControl>
 

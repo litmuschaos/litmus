@@ -55,11 +55,11 @@ const TableData: React.FC<TableDataProps> = ({ data }) => {
       </TableCell>
       <TableCell>
         <Typography className={classes.stepsData}>
-          {data.no_of_workflows}
+          {data.no_of_schedules}
         </Typography>
       </TableCell>
       <TableCell className={classes.stepsDataschedule}>
-        <Typography>{data.no_of_schedules}</Typography>
+        <Typography>{data.no_of_workflows}</Typography>
       </TableCell>
       <TableCell>{timeDifferenceForDate(data.updated_at)}</TableCell>
     </>

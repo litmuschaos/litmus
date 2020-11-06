@@ -401,6 +401,7 @@ rules:
     verbs:
       - get
       - create
+      - delete
   - apiGroups:
       - litmuschaos.io
     resources:
@@ -422,6 +423,7 @@ rules:
       - get
       - list
       - watch
+      - delete
   - apiGroups:
       - ""
     resources:
@@ -430,6 +432,12 @@ rules:
       - get
       - list
       - watch
+  - apiGroups:
+      - "apps"
+    resources:
+      - deployments
+    verbs:
+      - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding

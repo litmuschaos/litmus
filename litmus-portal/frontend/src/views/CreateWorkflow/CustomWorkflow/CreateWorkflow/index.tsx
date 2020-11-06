@@ -1,14 +1,20 @@
 import { useLazyQuery, useQuery } from '@apollo/client';
 import {
   FormControl,
+  IconButton,
+  InputAdornment,
   InputLabel,
   MenuItem,
+  MenuList,
+  OutlinedInput,
+  Paper,
   Select,
   Typography,
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import BackButton from '../../../../components/Button/BackButton';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import InputField from '../../../../components/InputField';
@@ -49,7 +55,9 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const classes = useStyles();
   const [allExperiment, setAllExperiment] = useState<ChartName[]>([]);
   const [selectedHub, setSelectedHub] = useState('Public Hub');
-  const [selectedExp, setSelectedExp] = useState('Select');
+  const [selectedExp, setSelectedExp] = useState(
+    t('customWorkflow.createWorkflow.selectAnExp') as string
+  );
   const allExp: ChartName[] = [];
   const [selectedHubDetails, setSelectedHubDetails] = useState<MyHubDetail>();
   // Get all MyHubs with status
@@ -129,6 +137,16 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     }
   }, [selectedHub]);
   const availableHubs: MyHubDetail[] = data ? data.getHubStatus : [];
+
+  const [open, setOpen] = useState(false);
+
+  const filteredExperiment = allExperiment.filter((exp) => {
+    const name = `${exp.ChaosName}/${exp.ExperimentName}`;
+    if (selectedExp === 'Select an experiment') {
+      return true;
+    }
+    return name.includes(selectedExp);
+  });
 
   return (
     <div className={classes.root}>
@@ -241,51 +259,79 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             ) : (
               <FormControl
                 variant="outlined"
-                className={classes.formControl}
                 color="secondary"
                 focused
+                component="button"
+                className={classes.formControlExp}
               >
                 <InputLabel className={classes.selectText1}>
                   {t('customWorkflow.createWorkflow.selectExp')}
                 </InputLabel>
-                <Select
+                <OutlinedInput
                   value={selectedExp}
                   onChange={(e) => {
-                    setSelectedExp(e.target.value as string);
-                    if (selectedHub === 'Public Hub') {
-                      workflowAction.setWorkflowDetails({
-                        customWorkflow: {
-                          ...workflowDetails.customWorkflow,
-                          experiment_name: e.target.value,
-                          yamlLink: `${workflowDetails.customWorkflow.repoUrl}/raw/${workflowDetails.customWorkflow.repoBranch}/charts/${e.target.value}/engine.yaml`,
-                        },
-                      });
-                    } else {
-                      workflowAction.setWorkflowDetails({
-                        customWorkflow: {
-                          ...workflowDetails.customWorkflow,
-                          experiment_name: e.target.value,
-                          yamlLink: `${selectedHubDetails?.RepoURL}/raw/${selectedHubDetails?.RepoBranch}/charts/${e.target.value}/engine.yaml`,
-                        },
-                      });
-                    }
+                    setSelectedExp(e.target.value);
+                    setOpen(true);
                   }}
-                  label="Cluster Status"
-                  MenuProps={MenuProps}
-                  className={classes.selectText}
-                >
-                  <MenuItem value="Select">
-                    {t('customWorkflow.createWorkflow.selectAnExp')}
-                  </MenuItem>
-                  {allExperiment.map((exp) => (
-                    <MenuItem
-                      key={`${exp.ChaosName}/${exp.ExperimentName}`}
-                      value={`${exp.ChaosName}/${exp.ExperimentName}`}
-                    >
-                      {exp.ExperimentName}
-                    </MenuItem>
-                  ))}
-                </Select>
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={() => {
+                          setOpen(!open);
+                        }}
+                        edge="end"
+                      >
+                        <ArrowDropDownIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  className={classes.inputExpDiv}
+                  labelWidth={150}
+                />
+                {open ? (
+                  <Paper elevation={3}>
+                    <MenuList className={classes.expMenu}>
+                      {filteredExperiment.length > 0 ? (
+                        filteredExperiment.map((exp) => (
+                          <MenuItem
+                            key={`${exp.ChaosName}/${exp.ExperimentName}`}
+                            value={`${exp.ChaosName}/${exp.ExperimentName}`}
+                            onClick={() => {
+                              setSelectedExp(
+                                `${exp.ChaosName}/${exp.ExperimentName}`
+                              );
+                              setOpen(false);
+                              if (selectedHub === 'Public Hub') {
+                                workflowAction.setWorkflowDetails({
+                                  customWorkflow: {
+                                    ...workflowDetails.customWorkflow,
+                                    experiment_name: `${exp.ChaosName}/${exp.ExperimentName}`,
+                                    yamlLink: `${workflowDetails.customWorkflow.repoUrl}/raw/${workflowDetails.customWorkflow.repoBranch}/charts/${exp.ChaosName}/${exp.ExperimentName}/engine.yaml`,
+                                  },
+                                });
+                              } else {
+                                workflowAction.setWorkflowDetails({
+                                  customWorkflow: {
+                                    ...workflowDetails.customWorkflow,
+                                    experiment_name: `${exp.ChaosName}/${exp.ExperimentName}`,
+                                    yamlLink: `${selectedHubDetails?.RepoURL}/raw/${selectedHubDetails?.RepoBranch}/charts/${exp.ChaosName}/${exp.ExperimentName}/engine.yaml`,
+                                  },
+                                });
+                              }
+                            }}
+                          >
+                            {exp.ExperimentName}
+                          </MenuItem>
+                        ))
+                      ) : (
+                        <MenuItem value="Select an experiment">
+                          {t('customWorkflow.createWorkflow.noExp')}
+                        </MenuItem>
+                      )}
+                    </MenuList>
+                  </Paper>
+                ) : null}
               </FormControl>
             )}
           </div>
@@ -306,7 +352,10 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             gotoStep(1);
           }}
           isPrimary
-          isDisabled={selectedExp === 'Select'}
+          isDisabled={
+            selectedExp === 'Select an experiment' ||
+            filteredExperiment.length !== 1
+          }
         >
           <div>
             {t('customWorkflow.createWorkflow.nextBtn')}
