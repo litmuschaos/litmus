@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/synchandler"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
@@ -59,7 +59,7 @@ func main() {
 		AllowedOrigins:   []string{"*"},
 		AllowCredentials: true,
 	}).Handler)
-	go myhub.RecurringHubSync() //go routine for syncing hubs for all users
+	go synchandler.RecurringHubSync() //go routine for syncing hubs for all users
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", authorization.Middleware(srv))
 	router.HandleFunc("/file/{key}{path:.yaml}", file_handlers.FileHandler)
