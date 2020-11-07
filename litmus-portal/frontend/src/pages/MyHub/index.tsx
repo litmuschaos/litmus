@@ -28,7 +28,7 @@ const MyHub = () => {
 
   // Get MyHubs with Status
   const { data, loading, refetch } = useQuery<HubStatus>(GET_HUB_STATUS, {
-    variables: { data: userData.username },
+    variables: { data: userData.selectedProjectOwner },
     fetchPolicy: 'cache-and-network',
   });
 
@@ -104,7 +104,11 @@ const MyHub = () => {
                                   {hub.IsAvailable ? 'Connected' : 'Error'}
                                 </Typography>
                                 <img
-                                  src="/icons/my-hub-charts.svg"
+                                  src={`/icons/${
+                                    hub.HubName === 'Chaos Hub'
+                                      ? 'myhub-litmus.svg'
+                                      : 'my-hub-charts.svg'
+                                  }`}
                                   alt="add-hub"
                                 />
                                 <Typography
@@ -112,7 +116,9 @@ const MyHub = () => {
                                   align="center"
                                   className={classes.hubName}
                                 >
-                                  {hub.HubName}
+                                  {hub.HubName === 'Chaos Hub'
+                                    ? 'Public Hub'
+                                    : hub.HubName}
                                 </Typography>
                                 <Typography
                                   variant="h6"

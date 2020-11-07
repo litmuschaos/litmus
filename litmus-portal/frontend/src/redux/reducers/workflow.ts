@@ -35,9 +35,11 @@ const initialState: WorkflowData = {
     yamlLink: '',
     yaml: '',
     index: -1,
+    description: '',
   },
   customWorkflows: [],
   stepperActiveStep: 1,
+  clustername: '',
 };
 
 export const workflowData = createReducer<WorkflowData>(initialState, {

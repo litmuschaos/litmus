@@ -69,6 +69,7 @@ const useStyles = makeStyles((theme) => ({
   inputExpDiv: {
     height: '2.5rem',
     maxWidth: '15.625rem',
+    backgroundColor: theme.palette.common.white,
   },
   expMenu: {
     minWidth: '15.625rem',

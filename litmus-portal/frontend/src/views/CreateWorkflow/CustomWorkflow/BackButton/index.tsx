@@ -5,10 +5,10 @@ import useStyles from './styles';
 
 interface BackButtonProps {
   isDisabled: boolean;
-  gotoStep: (page: number) => void;
+  onClick: () => void;
 }
 
-const BackButton: React.FC<BackButtonProps> = ({ isDisabled, gotoStep }) => {
+const BackButton: React.FC<BackButtonProps> = ({ isDisabled, onClick }) => {
   const classes = useStyles();
   const { t } = useTranslation();
   return (
@@ -16,7 +16,7 @@ const BackButton: React.FC<BackButtonProps> = ({ isDisabled, gotoStep }) => {
       size="medium"
       className={classes.btn}
       disabled={isDisabled}
-      onClick={() => gotoStep(1)}
+      onClick={() => onClick()}
     >
       <img src="/icons/back.svg" alt="back" />
       <Typography className={classes.text}>

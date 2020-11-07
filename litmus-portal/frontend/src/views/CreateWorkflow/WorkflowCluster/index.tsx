@@ -46,19 +46,24 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
   );
-
+  const [clusterData, setclusterData] = useState<Cluster[]>([]);
   const [name, setName] = React.useState('');
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     const str: string = event.target.value as string;
+    let clusterName;
+    clusterData.forEach((cluster) => {
+      if (str === cluster.cluster_id) {
+        clusterName = cluster.cluster_name;
+      }
+    });
     workflow.setWorkflowDetails({
       clusterid: str,
       project_id: selectedProjectID,
+      clustername: clusterName,
     });
     setName(str);
     setTarget(false);
   };
-
-  const [clusterData, setclusterData] = useState<Cluster[]>([]);
 
   const [getCluster] = useLazyQuery(GET_CLUSTER, {
     onCompleted: (data) => {

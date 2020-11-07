@@ -435,6 +435,7 @@ createWorkflow:
       schedule: Schedule
       schedulingNow: Scheduling now
       adjustedWeights: Adjusted Weights
+      clustername: Cluster Name
   workflowCluster:
     activeCluster: Choose an active cluster
     none: None

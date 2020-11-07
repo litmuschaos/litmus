@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import YAML from 'yaml';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useLazyQuery } from '@apollo/client';
 import BackButton from '../BackButton';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import InputField from '../../../../components/InputField';
@@ -11,6 +12,7 @@ import { RootState } from '../../../../redux/reducers';
 import useActions from '../../../../redux/actions';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
 import Loader from '../../../../components/Loader';
+import { GET_ENGINE_YAML } from '../../../../graphql/quries';
 
 interface EnvValues {
   name: string;
@@ -32,17 +34,37 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const [overrideEnvs, setOverrideEnvs] = useState<EnvValues[]>([
     { name: '', value: '' },
   ]);
+  const { customWorkflow, customWorkflows } = useSelector(
+    (state: RootState) => state.workflowData
+  );
   const [appInfo, setAppInfo] = useState<AppInfo>({
     appns: 'kube-system',
     applabel: 'k8s-app=kube-proxy',
     appkind: 'daemonset',
   });
-  const { t } = useTranslation();
-  const workflowDetails = useSelector((state: RootState) => state.workflowData);
-  const workflowAction = useActions(WorkflowActions);
-  const [expDesc, setExpDesc] = useState('');
-  const [loadingEnv, setLoadingEnv] = useState(true);
+
+  const [env, setEnv] = useState<EnvValues[]>([]);
   const [yaml, setYaml] = useState<string>('');
+  const [loadingEnv, setLoadingEnv] = useState(true);
+
+  const { t } = useTranslation();
+  const userData = useSelector((state: RootState) => state.userData);
+  const [getEngineYaml] = useLazyQuery(GET_ENGINE_YAML, {
+    onCompleted: (data) => {
+      const parsedYaml = YAML.parse(data.getYAMLData);
+      setEnv([...parsedYaml.spec.experiments[0].spec.components.env]);
+      setAppInfo({
+        appns: parsedYaml.spec.appinfo.appns,
+        applabel: parsedYaml.spec.appinfo.applabel,
+        appkind: parsedYaml.spec.appinfo.appkind,
+      });
+      setYaml(YAML.stringify(parsedYaml));
+      setLoadingEnv(false);
+    },
+  });
+
+  const workflowAction = useActions(WorkflowActions);
+
   const changeKey = (
     index: number,
     event: React.ChangeEvent<HTMLInputElement>
@@ -60,7 +82,6 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const AddEnvPair = () => {
     setOverrideEnvs([...overrideEnvs, { name: '', value: '' }]);
   };
-  const [env, setEnv] = useState<EnvValues[]>([]);
 
   const changeOriginalEnvValue = (
     index: number,
@@ -69,87 +90,53 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     env[index].value = event.target.value;
     setEnv([...env]);
   };
-  // Function to fetch workflow description
-  const getWorkflowDesc = () => {
-    fetch(
-      `${workflowDetails.customWorkflow.repoUrl}/raw/${workflowDetails.customWorkflow.repoBranch}/charts/${workflowDetails.customWorkflow.experiment_name}/experiment.yaml`
-    )
-      .then((data) => {
-        data.text().then((yamlText) => {
-          const parsedYaml = YAML.parse(yamlText);
-          setExpDesc(parsedYaml.description.message);
-        });
-      })
-      .catch((error) => {
-        console.error('Error', error);
-      });
-    if (expDesc) {
-      return expDesc;
-    }
-    return '';
-  };
+
   // UseEffect to fetch the env variables
   useEffect(() => {
-    if (workflowDetails.customWorkflow.yaml === '') {
-      fetch(workflowDetails.customWorkflow.yamlLink as string)
-        .then((data) => {
-          data.text().then((yamlText) => {
-            const parsedYaml = YAML.parse(yamlText);
-            parsedYaml.metadata.name =
-              workflowDetails.customWorkflow.experiment_name;
-            setEnv([...parsedYaml.spec.experiments[0].spec.components.env]);
-            setAppInfo({
-              appns: parsedYaml.spec.appinfo.appns,
-              applabel: parsedYaml.spec.appinfo.applabel,
-              appkind: parsedYaml.spec.appinfo.appkind,
-            });
-            setYaml(YAML.stringify(parsedYaml));
-            setLoadingEnv(false);
-          });
-        })
-        .catch((error) => {
-          console.error('Error', error);
-        });
+    if (customWorkflow.yaml === '') {
+      getEngineYaml({
+        variables: {
+          experimentInput: {
+            UserName: userData.selectedProjectOwner, // It should be name of project owner
+            HubName: customWorkflow.hubName,
+            ChartName: customWorkflow.experiment_name.split('/')[0],
+            ExperimentName: customWorkflow.experiment_name.split('/')[1],
+            FileType: 'engine',
+          },
+        },
+      });
     } else {
-      const parsedYaml = YAML.parse(
-        workflowDetails.customWorkflow.yaml as string
-      );
+      const parsedYaml = YAML.parse(customWorkflow.yaml as string);
       setAppInfo({
         appns: parsedYaml.spec.appinfo.appns,
         applabel: parsedYaml.spec.appinfo.applabel,
         appkind: parsedYaml.spec.appinfo.appkind,
       });
       setEnv([...parsedYaml.spec.experiments[0].spec.components.env]);
-      setYaml(workflowDetails.customWorkflow.yaml as string);
+      setYaml(customWorkflow.yaml as string);
       setLoadingEnv(false);
     }
   }, []);
   // Function to generate sequence of experiemnt
   const experimentSequence = () => {
-    const elemPos = workflowDetails.customWorkflows
+    const elemPos = customWorkflows
       .map((exp) => {
         return exp.experiment_name;
       })
-      .indexOf(workflowDetails.customWorkflow.experiment_name);
+      .indexOf(customWorkflow.experiment_name);
     if (
-      (workflowDetails.customWorkflow.index === -1 &&
-        workflowDetails.customWorkflows.length === 0) ||
+      (customWorkflow.index === -1 && customWorkflows.length === 0) ||
       elemPos === 0
     ) {
       return 'This is your first experiment';
     }
-    if (workflowDetails.customWorkflow.index === -1) {
-      return `This experiment will execute after 
-                  ${
-                    workflowDetails.customWorkflows[
-                      workflowDetails.customWorkflows.length - 1
-                    ].experiment_name
-                  }`;
+    if (customWorkflow.index === -1) {
+      return `This experiment will execute after ${
+        customWorkflows[customWorkflows.length - 1].experiment_name
+      }`;
     }
     return `This experiment will execute after 
-                  ${
-                    workflowDetails.customWorkflows[elemPos - 1].experiment_name
-                  }`;
+                  ${customWorkflows[elemPos - 1].experiment_name}`;
   };
   // Function to handle the change in env variables
   const handleEnvModification = () => {
@@ -176,33 +163,30 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     parsedYaml.spec.appinfo.appns = appInfo.appns;
     parsedYaml.spec.appinfo.applabel = appInfo.applabel;
     parsedYaml.spec.appinfo.appkind = appInfo.appkind;
-    parsedYaml.metadata.name = workflowDetails.customWorkflow.experiment_name?.split(
-      '/'
-    )[1];
+    parsedYaml.metadata.name = customWorkflow.experiment_name?.split('/')[1];
     parsedYaml.metadata.namespace =
       '{{workflow.parameters.adminModeNamespace}}';
     parsedYaml.spec.chaosServiceAccount = 'litmus-admin';
     const YamlString = YAML.stringify(parsedYaml);
-    const experimentArray = workflowDetails.customWorkflows;
+    const experimentArray = customWorkflows;
 
-    if (workflowDetails.customWorkflow.index === -1) {
+    if (customWorkflow.index === -1) {
       workflowAction.setWorkflowDetails({
         customWorkflows: [
-          ...workflowDetails.customWorkflows,
+          ...customWorkflows,
           {
-            experiment_name: workflowDetails.customWorkflow.experiment_name,
-            hubName: workflowDetails.customWorkflow.hubName,
-            repoUrl: workflowDetails.customWorkflow.repoUrl,
-            repoBranch: workflowDetails.customWorkflow.repoBranch,
-            yamlLink: workflowDetails.customWorkflow.yamlLink,
+            experiment_name: customWorkflow.experiment_name,
+            hubName: customWorkflow.hubName,
+            repoUrl: customWorkflow.repoUrl,
+            repoBranch: customWorkflow.repoBranch,
+            yamlLink: customWorkflow.yamlLink,
             yaml: YamlString,
+            description: customWorkflow.description,
           },
         ],
       });
     } else {
-      experimentArray[
-        workflowDetails.customWorkflow.index as number
-      ].yaml = YamlString;
+      experimentArray[customWorkflow.index as number].yaml = YamlString;
       workflowAction.setWorkflowDetails({
         customWorkflows: [...experimentArray],
       });
@@ -212,7 +196,9 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   return (
     <div className={classes.root}>
       <div className={classes.headerDiv}>
-        <BackButton isDisabled={false} gotoStep={() => gotoStep(0)} />
+        {customWorkflow.index === -1 ? (
+          <BackButton isDisabled={false} onClick={() => gotoStep(0)} />
+        ) : null}
         <Typography variant="h3" className={classes.headerText} gutterBottom>
           {t('customWorkflow.tuneExperiment.headerText')}
         </Typography>
@@ -230,7 +216,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               {t('customWorkflow.tuneExperiment.expName')}:
             </Typography>
             <Typography className={classes.mainDetail}>
-              {workflowDetails.customWorkflow.experiment_name}
+              {customWorkflow.experiment_name}
             </Typography>
           </div>
           <div className={classes.inputDiv}>
@@ -238,7 +224,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               {t('customWorkflow.tuneExperiment.description')}:
             </Typography>
             <Typography className={classes.mainDetail}>
-              {getWorkflowDesc()}
+              {customWorkflow.description}
             </Typography>
           </div>
           <hr className={classes.horizontalLineHeader} />
