@@ -575,13 +575,20 @@ myhub:
 customWorkflow:
   createWorkflow:
     create: Creating a new chaos workflow
-    createDesc: Add new experiments from your ChaosHubs defined at MyHubs section
+    createDesc: Add new experiments from your ChaosHubs defined at MyHub section
     workflowInfo: Workflow information
     workflowName: Workflow Name
     workflowDesc: Description
-    firstChaos: First Chaos Experiment
+    firstChaos: Choose the hub
     selectHub: Select the hub
     public: Public Hub
+    configure: Construct your workflow
+    construct: Using experiments from MyHub
+    upload: Upload your
+    yaml: YAML
+    uploadFile: Upload File
+    uploadSuccess: Successfully uploaded
+    drag: Drag & Drop here
     chooseExp: Choose the experiment
     loadingExp: Loading Experiments, please wait...
     selectExp: Select the experiment

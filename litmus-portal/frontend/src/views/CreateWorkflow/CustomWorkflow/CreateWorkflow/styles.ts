@@ -76,6 +76,59 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: '9.375rem',
     overflow: 'auto',
   },
+  configureYAML: {
+    marginTop: theme.spacing(2.5),
+    marginBottom: theme.spacing(2.5),
+  },
+  radioText: {
+    fontSize: '1rem',
+  },
+  uploadYAMLDiv: {
+    width: '39.375rem',
+    height: '7.5rem',
+    backgroundColor: theme.palette.common.white,
+    border: `1px dashed ${theme.palette.common.black}`,
+    margin: 'auto',
+    marginTop: theme.spacing(5),
+    borderRadius: theme.spacing(1.25),
+  },
+  uploadYAMLText: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '31.25rem',
+    margin: 'auto',
+    paddingTop: theme.spacing(3.125),
+  },
+  uploadBtn: {
+    textTransform: 'none',
+    width: '8.5rem',
+    fontSize: '0.9rem',
+    height: '2.8125rem',
+    border: `2px solid ${theme.palette.secondary.main}`,
+    borderRadius: theme.spacing(0.5),
+  },
+  uploadSuccessDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    maxWidth: '31.25rem',
+    margin: '0 auto',
+    paddingTop: theme.spacing(4.375),
+  },
+  uploadSuccessImg: {
+    width: '3.125rem',
+    height: '3.125rem',
+    verticalAlign: 'middle',
+    paddingBottom: theme.spacing(1),
+  },
+  uploadSuccessText: {
+    display: 'inline-block',
+    fontSize: '1rem',
+    marginBottom: theme.spacing(1.25),
+    marginLeft: theme.spacing(2.5),
+  },
 }));
 export default useStyles;
 

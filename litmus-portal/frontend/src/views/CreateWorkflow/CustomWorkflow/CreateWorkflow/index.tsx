@@ -1,6 +1,8 @@
 import { useLazyQuery, useQuery } from '@apollo/client';
 import {
+  Button,
   FormControl,
+  FormControlLabel,
   IconButton,
   InputAdornment,
   InputLabel,
@@ -8,6 +10,8 @@ import {
   MenuList,
   OutlinedInput,
   Paper,
+  Radio,
+  RadioGroup,
   Select,
   Typography,
   ClickAwayListener,
@@ -30,6 +34,8 @@ import useStyles, { CustomTextField, MenuProps } from './styles';
 import WorkflowDetails from '../../../../pages/WorkflowDetails';
 import { GET_EXPERIMENT_YAML } from '../../../../graphql/quries';
 import BackButton from '../BackButton';
+import * as TemplateSelectionActions from '../../../../redux/actions/template';
+import { history } from '../../../../redux/configureStore';
 
 interface WorkflowDetails {
   workflow_name: string;
@@ -68,6 +74,8 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   );
 
   const [availableHubs, setAvailableHubs] = useState<MyHubDetail[]>([]);
+  const template = useActions(TemplateSelectionActions);
+  const [constructYAML, setConstructYAML] = useState('construct');
   const [selectedHubDetails, setSelectedHubDetails] = useState<MyHubDetail>();
 
   const [getExperimentYaml] = useLazyQuery(GET_EXPERIMENT_YAML, {
@@ -160,7 +168,49 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     }
     return name.includes(selectedExp);
   });
+  const [uploadedYAML, setUploadedYAML] = useState('');
+  const [fileName, setFileName] = useState<string | null>('');
 
+  const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
+    Array.from(e.dataTransfer.files)
+      .filter(
+        (file) =>
+          file.name.split('.')[1] === 'yaml' ||
+          file.name.split('.')[1] === 'yml'
+      )
+      .forEach(async (file) => {
+        const readFile = await file.text();
+        setUploadedYAML(readFile);
+        setFileName(file.name);
+        const parsedYaml = YAML.parse(readFile);
+        workflowAction.setWorkflowDetails({
+          ...workflowDetails,
+          yaml: YAML.stringify(parsedYaml),
+        });
+      });
+  };
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const readFile = e.target.files && e.target.files[0];
+    setFileName(readFile && readFile.name);
+    const extension = readFile?.name.substring(
+      readFile.name.lastIndexOf('.') + 1
+    );
+    if ((extension === 'yaml' || extension === 'yml') && readFile) {
+      readFile.text().then((response) => {
+        setUploadedYAML(response);
+        const parsedYaml = YAML.parse(response);
+        workflowAction.setWorkflowDetails({
+          ...workflowDetails,
+          yaml: YAML.stringify(parsedYaml),
+        });
+      });
+    } else {
+      workflowAction.setWorkflowDetails({
+        ...workflowDetails,
+        yaml: '',
+      });
+    }
+  };
   return (
     <div className={classes.root}>
       <div className={classes.headerDiv}>
@@ -230,124 +280,234 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             />
           </div>
           <hr />
-          <div className={classes.inputDiv}>
-            <Typography variant="h6" className={classes.titleText}>
-              {t('customWorkflow.createWorkflow.firstChaos')}
-            </Typography>
-            <FormControl
-              variant="outlined"
-              className={classes.formControl}
-              color="secondary"
-              focused
+          <Typography variant="h5" className={classes.configureYAML}>
+            <strong>{t('customWorkflow.createWorkflow.configure')}</strong>
+          </Typography>
+
+          <FormControl component="fieldset">
+            <RadioGroup
+              aria-label="gender"
+              name="gender1"
+              value={constructYAML}
+              onChange={(event) => {
+                setConstructYAML(event.target.value);
+                if (event.target.value === 'construct') {
+                  setUploadedYAML('');
+                }
+              }}
             >
-              <InputLabel className={classes.selectText}>
-                {t('customWorkflow.createWorkflow.selectHub')}
-              </InputLabel>
-              <Select
-                value={selectedHub}
-                onChange={(e) => {
-                  setSelectedHub(e.target.value as string);
-                  findChart(e.target.value as string);
-                }}
-                label="Cluster Status"
-                MenuProps={MenuProps}
-                className={classes.selectText}
-              >
-                {availableHubs.map((hubs) => (
-                  <MenuItem key={hubs.HubName} value={hubs.HubName}>
-                    {hubs.HubName}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </div>
-          <div className={classes.inputDiv}>
-            <Typography variant="h6" className={classes.titleText}>
-              {t('customWorkflow.createWorkflow.chooseExp')}
-            </Typography>
-            {chartsLoading ? (
-              <div className={classes.chooseExpDiv}>
-                <Loader />
-                <Typography variant="body2">
-                  {t('customWorkflow.createWorkflow.loadingExp')}
-                </Typography>
-              </div>
-            ) : (
-              <FormControl
-                variant="outlined"
-                color="secondary"
-                focused
-                component="button"
-                className={classes.formControl}
-              >
-                <InputLabel className={classes.selectText1}>
-                  {t('customWorkflow.createWorkflow.selectExp')}
-                </InputLabel>
-                <OutlinedInput
-                  value={selectedExp}
-                  onChange={(e) => {
-                    setSelectedExp(e.target.value);
-                    setOpen(true);
-                  }}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={() => {
-                          setOpen(!open);
+              <FormControlLabel
+                value="construct"
+                control={<Radio />}
+                label={
+                  <Typography className={classes.radioText}>
+                    {t('customWorkflow.createWorkflow.construct')}
+                  </Typography>
+                }
+              />
+              {constructYAML === 'construct' ? (
+                <>
+                  <div className={classes.inputDiv}>
+                    <Typography variant="h6" className={classes.titleText}>
+                      {t('customWorkflow.createWorkflow.firstChaos')}
+                    </Typography>
+                    <FormControl
+                      variant="outlined"
+                      className={classes.formControl}
+                      color="secondary"
+                      focused
+                    >
+                      <InputLabel className={classes.selectText}>
+                        {t('customWorkflow.createWorkflow.selectHub')}
+                      </InputLabel>
+                      <Select
+                        value={selectedHub}
+                        onChange={(e) => {
+                          setSelectedHub(e.target.value as string);
+                          if (e.target.value !== 'Public Hub') {
+                            findChart(e.target.value as string);
+                          }
                         }}
-                        edge="end"
+                        label="Cluster Status"
+                        MenuProps={MenuProps}
+                        className={classes.selectText}
                       >
-                        <ArrowDropDownIcon />
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                  className={classes.inputExpDiv}
-                  labelWidth={150}
-                />
-                {open ? (
-                  <ClickAwayListener onClickAway={() => setOpen(!open)}>
-                    <Paper elevation={3}>
-                      <MenuList className={classes.expMenu}>
-                        {filteredExperiment.length > 0 ? (
-                          filteredExperiment.map((exp) => (
-                            <MenuItem
-                              key={`${exp.ChaosName}/${exp.ExperimentName}`}
-                              value={`${exp.ChaosName}/${exp.ExperimentName}`}
-                              onClick={() => {
-                                setSelectedExp(
-                                  `${exp.ChaosName}/${exp.ExperimentName}`
-                                );
-                                setOpen(false);
-                                workflowAction.setWorkflowDetails({
-                                  customWorkflow: {
-                                    ...workflowDetails.customWorkflow,
-                                    experiment_name: `${exp.ChaosName}/${exp.ExperimentName}`,
-                                    yamlLink: `${selectedHubDetails?.RepoURL}/raw/${selectedHubDetails?.RepoBranch}/charts/${exp.ChaosName}/${exp.ExperimentName}/engine.yaml`,
-                                  },
-                                });
-                              }}
-                            >
-                              {exp.ExperimentName}
-                            </MenuItem>
-                          ))
-                        ) : (
-                          <MenuItem value="Select an experiment">
-                            {t('customWorkflow.createWorkflow.noExp')}
+                        {availableHubs.map((hubs) => (
+                          <MenuItem key={hubs.HubName} value={hubs.HubName}>
+                            {hubs.HubName}
                           </MenuItem>
-                        )}
-                      </MenuList>
-                    </Paper>
-                  </ClickAwayListener>
-                ) : null}
-              </FormControl>
-            )}
-          </div>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </div>
+                  <div className={classes.inputDiv}>
+                    <Typography variant="h6" className={classes.titleText}>
+                      {t('customWorkflow.createWorkflow.chooseExp')}
+                    </Typography>
+                    {chartsLoading ? (
+                      <div className={classes.chooseExpDiv}>
+                        <Loader />
+                        <Typography variant="body2">
+                          {t('customWorkflow.createWorkflow.loadingExp')}
+                        </Typography>
+                      </div>
+                    ) : (
+                      <FormControl
+                        variant="outlined"
+                        color="secondary"
+                        focused
+                        component="button"
+                        className={classes.formControlExp}
+                      >
+                        <InputLabel className={classes.selectText1}>
+                          {t('customWorkflow.createWorkflow.selectExp')}
+                        </InputLabel>
+                        <OutlinedInput
+                          value={selectedExp}
+                          onChange={(e) => {
+                            setSelectedExp(e.target.value);
+                            setOpen(true);
+                          }}
+                          endAdornment={
+                            <InputAdornment position="end">
+                              <IconButton
+                                onClick={() => {
+                                  setOpen(!open);
+                                }}
+                                edge="end"
+                              >
+                                <ArrowDropDownIcon />
+                              </IconButton>
+                            </InputAdornment>
+                          }
+                          className={classes.inputExpDiv}
+                          labelWidth={150}
+                        />
+                        {open ? (
+                          <ClickAwayListener onClickAway={() => setOpen(!open)}>
+                            <Paper elevation={3}>
+                              <MenuList className={classes.expMenu}>
+                                {filteredExperiment.length > 0 ? (
+                                  filteredExperiment.map((exp) => (
+                                    <MenuItem
+                                      key={`${exp.ChaosName}/${exp.ExperimentName}`}
+                                      value={`${exp.ChaosName}/${exp.ExperimentName}`}
+                                      onClick={() => {
+                                        setSelectedExp(
+                                          `${exp.ChaosName}/${exp.ExperimentName}`
+                                        );
+                                        setOpen(false);
+                                        if (selectedHub === 'Public Hub') {
+                                          workflowAction.setWorkflowDetails({
+                                            customWorkflow: {
+                                              ...workflowDetails.customWorkflow,
+                                              experiment_name: `${exp.ChaosName}/${exp.ExperimentName}`,
+                                              yamlLink: `${workflowDetails.customWorkflow.repoUrl}/raw/${workflowDetails.customWorkflow.repoBranch}/charts/${exp.ChaosName}/${exp.ExperimentName}/engine.yaml`,
+                                            },
+                                          });
+                                        } else {
+                                          workflowAction.setWorkflowDetails({
+                                            customWorkflow: {
+                                              ...workflowDetails.customWorkflow,
+                                              experiment_name: `${exp.ChaosName}/${exp.ExperimentName}`,
+                                              yamlLink: `${selectedHubDetails?.RepoURL}/raw/${selectedHubDetails?.RepoBranch}/charts/${exp.ChaosName}/${exp.ExperimentName}/engine.yaml`,
+                                            },
+                                          });
+                                        }
+                                      }}
+                                    >
+                                      {exp.ExperimentName}
+                                    </MenuItem>
+                                  ))
+                                ) : (
+                                  <MenuItem value="Select an experiment">
+                                    {t('customWorkflow.createWorkflow.noExp')}
+                                  </MenuItem>
+                                )}
+                              </MenuList>
+                            </Paper>
+                          </ClickAwayListener>
+                        ) : null}
+                      </FormControl>
+                    )}
+                  </div>
+                </>
+              ) : null}
+              <FormControlLabel
+                value="upload"
+                control={<Radio />}
+                label={
+                  <Typography className={classes.radioText}>
+                    {t('customWorkflow.createWorkflow.upload')}{' '}
+                    <strong>{t('customWorkflow.createWorkflow.yaml')}</strong>
+                  </Typography>
+                }
+              />
+              {constructYAML === 'upload' ? (
+                <Paper
+                  elevation={3}
+                  component="div"
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    handleDrag(e);
+                  }}
+                  className={classes.uploadYAMLDiv}
+                >
+                  {uploadedYAML === '' ? (
+                    <div className={classes.uploadYAMLText}>
+                      <img src="/icons/upload-yaml.svg" alt="upload yaml" />
+                      <Typography variant="h5">
+                        {t('customWorkflow.createWorkflow.drag')}
+                      </Typography>
+                      <Typography>or</Typography>
+                      <input
+                        accept=".yaml"
+                        style={{ display: 'none' }}
+                        id="contained-button-file"
+                        type="file"
+                        onChange={(e) => {
+                          handleFileUpload(e);
+                        }}
+                      />
+                      <label htmlFor="contained-button-file">
+                        <Button
+                          variant="outlined"
+                          className={classes.uploadBtn}
+                          component="span"
+                        >
+                          {t('customWorkflow.createWorkflow.uploadFile')}
+                        </Button>
+                      </label>
+                    </div>
+                  ) : (
+                    <div className={classes.uploadSuccessDiv}>
+                      <img
+                        src="/icons/upload-success.svg"
+                        alt="checkmark"
+                        className={classes.uploadSuccessImg}
+                      />
+                      <Typography className={classes.uploadSuccessText}>
+                        {t('customWorkflow.createWorkflow.uploadSuccess')}{' '}
+                        {fileName}
+                      </Typography>
+                    </div>
+                  )}
+                </Paper>
+              ) : null}
+            </RadioGroup>
+          </FormControl>
         </div>
       </div>
       <div className={classes.nextButtonDiv}>
         <ButtonFilled
           handleClick={() => {
+            if (constructYAML === 'upload' && uploadedYAML !== '') {
+              history.push('/create-workflow');
+              template.selectTemplate({ isDisable: false });
+            }
             workflowAction.setWorkflowDetails({
               name: workflowData.workflow_name,
               description: workflowData.workflow_desc,
@@ -364,8 +524,11 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
           }}
           isPrimary
           isDisabled={
-            selectedExp === 'Select an experiment' ||
-            filteredExperiment.length !== 1
+            constructYAML === 'construct' &&
+            (selectedExp === 'Select an experiment' ||
+              filteredExperiment.length !== 1)
+              ? true
+              : !!(constructYAML === 'upload' && uploadedYAML === '')
           }
         >
           <div>
