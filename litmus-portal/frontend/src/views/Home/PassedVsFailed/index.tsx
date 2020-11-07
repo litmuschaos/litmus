@@ -42,7 +42,7 @@ const PassedVsFailed: React.FC<PassedVsFailedProps> = ({ passed, failed }) => {
     <Paper className={classes.root} variant="outlined">
       <Box width="100%" className={classes.boxMain}>
         <Typography className={classes.headerMain}>
-          {t('homeView.passedVsFail.header')}
+          {t('homeView.passedVsFailed.header')}
         </Typography>
         <Box className={classes.boxDisplay}>
           <Box width={`${passedValue}%`} className={classes.passedBox}>
@@ -77,7 +77,7 @@ const PassedVsFailed: React.FC<PassedVsFailedProps> = ({ passed, failed }) => {
           </Box>
         </Box>
         <Typography variant="body2" className={classes.statsDesc}>
-          {t('homeView.passedVsFail.desc')}
+          {t('homeView.passedVsFailed.desc')}
         </Typography>
       </Box>
     </Paper>

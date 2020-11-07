@@ -2,6 +2,7 @@ package mutations
 
 import (
 	"encoding/json"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql"
 	"log"
 	"strconv"
 	"strings"
@@ -46,6 +47,7 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		CreatedAt:      strconv.FormatInt(time.Now().Unix(), 10),
 		UpdatedAt:      strconv.FormatInt(time.Now().Unix(), 10),
 		Token:          token,
+		IsRemoved:      false,
 	}
 
 	err = database.InsertCluster(newCluster)
@@ -211,7 +213,12 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		return nil, err
 	}
 
-	subscriptions.SendWorkflowRequest(&newChaosWorkflow, r)
+	subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
+		K8sManifest: newWorkflowManifest,
+		RequestType: "create",
+		ProjectID:   input.ProjectID,
+		ClusterID:   input.ClusterID,
+	}, r)
 
 	return &model.ChaosWorkFlowResponse{
 		WorkflowID:          workflow_id,
@@ -220,4 +227,99 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		WorkflowDescription: input.WorkflowDescription,
 		IsCustomWorkflow:    input.IsCustomWorkflow,
 	}, nil
+}
+
+func DeleteCluster(cluster_id string, r store.StateData) (string, error) {
+	time := strconv.FormatInt(time.Now().Unix(), 10)
+
+	query := bson.D{{"cluster_id", cluster_id}}
+	update := bson.D{{"$set", bson.D{{"is_removed", true}, {"updated_at", time}}}}
+
+	err := database.UpdateCluster(query, update)
+	if err != nil {
+		return "", err
+	}
+	cluster, err := database.GetCluster(cluster_id)
+	if err != nil {
+		return "", nil
+	}
+
+	requests := []string{
+		`{
+			"apiVersion": "apps/v1",
+			"kind": "Deployment",
+			"metadata": {
+				"name": "subscriber",
+				"namespace": ` + *cluster.AgentNamespace + ` 
+			}
+		}`,
+		`{
+		   "apiVersion": "v1",
+		   "kind": "ConfigMap",
+		   "metadata": {
+			  "name": "litmus-portal-config",
+			  "namespace": ` + *cluster.AgentNamespace + ` 
+		   }
+		}`,
+	}
+
+	for _, request := range requests {
+		subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
+			K8sManifest: request,
+			RequestType: "delete",
+			ProjectID:   cluster.ProjectID,
+			ClusterID:   cluster_id,
+		}, r)
+	}
+
+	return "Successfully deleted cluster", nil
+}
+
+func UpdateWorkflow(workflow *model.ChaosWorkFlowInput, r store.StateData) (*model.ChaosWorkFlowResponse, error) {
+	query := bson.D{{"workflow_id", workflow.WorkflowID}}
+	update := bson.D{{"$set", bson.D{{"workflow_manifest", workflow.WorkflowManifest}, {"cronSyntax", workflow.CronSyntax}, {"workflow_name", workflow.WorkflowName}, {"workflow_description", workflow.WorkflowDescription}, {"isCustomWorkflow", workflow.IsCustomWorkflow}, {"weightages", workflow.Weightages}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
+
+	err := database.UpdateChaosWorkflow(query, update)
+	if err != nil {
+		return nil, err
+	}
+
+	subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
+		K8sManifest: workflow.WorkflowManifest,
+		RequestType: "update",
+		ProjectID:   workflow.ProjectID,
+		ClusterID:   workflow.ClusterID,
+	}, r)
+
+	return &model.ChaosWorkFlowResponse{
+		WorkflowID:          *workflow.WorkflowID,
+		CronSyntax:          workflow.CronSyntax,
+		WorkflowName:        workflow.WorkflowName,
+		WorkflowDescription: workflow.WorkflowDescription,
+		IsCustomWorkflow:    workflow.IsCustomWorkflow,
+	}, nil
+}
+
+func DeleteWorkflow(workflow_id string, r store.StateData) (bool, error) {
+
+	workflows, err := database.GetWorkflowsByIDs([]*string{&workflow_id})
+	if err != nil {
+		return false, err
+	}
+
+	bool, err := database.DeleteChaosWorkflow(workflow_id)
+	if err != nil {
+		return false, err
+	}
+
+	for _, workflow := range workflows {
+		subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
+			K8sManifest: workflow.WorkflowManifest,
+			RequestType: "delete",
+			ProjectID:   workflow.ProjectID,
+			ClusterID:   workflow.ClusterID,
+		}, r)
+	}
+
+	return bool, nil
 }

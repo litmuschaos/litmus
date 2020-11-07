@@ -49,9 +49,9 @@ type ClusterEvent {
 }
 
 type ActionPayload {
-  request_type: String
-  k8s_manifest: String
-  namespace: String
+  request_type: String!
+  k8s_manifest: String!
+  namespace: String!
   external_data: String
 }
 
@@ -94,6 +94,7 @@ type weightages {
 }
 
 input ChaosWorkFlowInput {
+  workflow_id: String
   workflow_manifest: String!
   cronSyntax: String!
   workflow_name: String!
@@ -227,6 +228,8 @@ type Query {
   getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
 
   getHubStatus(username: String!): [MyHubStatus]! @authorized
+
+  getYAMLData(experimentInput: ExperimentInput!): String!
 }
 
 type Mutation {
@@ -234,8 +237,7 @@ type Mutation {
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
   #It is used to create chaosworkflow
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
-    @authorized
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
 
   createUser(user: CreateUserInput!): User! @authorized
 
@@ -264,6 +266,11 @@ type Mutation {
   addMyHub(myhubInput: CreateMyHub!, username: String!): User! @authorized
 
   syncHub(syncHubInput: ChartsInput!): [MyHubStatus!]! @authorized
+
+  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse! @authorized
+
+  deleteClusterReg(cluster_id: String!): String! @authorized
+
 }
 
 type Subscription {

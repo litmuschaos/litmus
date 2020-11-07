@@ -5,9 +5,6 @@ import (
 	"errors"
 	"log"
 	"strconv"
-	"time"
-
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usermanagement"
 
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
@@ -15,10 +12,6 @@ import (
 	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/gitops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/handler"
-)
-
-const (
-	timeInterval = 6 * time.Hour
 )
 
 //AddMyHub is used for Adding a new MyHub
@@ -151,10 +144,10 @@ func GetCharts(ctx context.Context, chartsInput model.ChartsInput) ([]*model.Cha
 	return ChartsData, nil
 }
 
-//GetExperiment is used for getting details or yaml file of given experiment.
+//GetExperiment is used for getting details of a given experiment using chartserviceversion.yaml.
 func GetExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error) {
 
-	ExperimentPath := handler.GetExperimentPath(ctx, experimentInput)
+	ExperimentPath := handler.GetExperimentChartsVersionYamlPath(ctx, experimentInput)
 	ExperimentData, err := handler.GetExperimentData(ExperimentPath)
 	if err != nil {
 		return nil, err
@@ -172,23 +165,12 @@ func SyncHub(ctx context.Context, syncHubInput model.ChartsInput) ([]*model.MyHu
 	return HubStatus(ctx, syncHubInput.UserName)
 }
 
-//RecurringHubSync is used for syncing
-func RecurringHubSync() {
-	for {
-		//Started Syncing of hubs
-		users, _ := usermanagement.GetUsers(nil)
-		for _, user := range users {
-			for _, n := range user.MyHub {
-				chartsInput := model.ChartsInput{
-					HubName:    n.HubName,
-					UserName:   user.Username,
-					RepoURL:    n.RepoURL,
-					RepoBranch: n.RepoBranch,
-				}
-				gitops.GitSyncHandlerForUser(chartsInput)
-			}
-		}
-		//Syncing Completed
-		time.Sleep(timeInterval)
+// GetYAMLData is responsible for sending the experiment/engine.yaml for a given experiment.
+func GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
+	YAMLPath := handler.GetExperimentYAMLPath(ctx, experimentInput)
+	YAMLData, err := handler.ReadExperimentYAMLFile(YAMLPath)
+	if err != nil {
+		return "", err
 	}
+	return YAMLData, nil
 }

@@ -167,11 +167,13 @@ type ComplexityRoot struct {
 		CreateUser          func(childComplexity int, user model.CreateUserInput) int
 		DeclineInvitation   func(childComplexity int, member model.MemberInput) int
 		DeleteChaosWorkflow func(childComplexity int, workflowid string) int
+		DeleteClusterReg    func(childComplexity int, clusterID string) int
 		NewClusterEvent     func(childComplexity int, clusterEvent model.ClusterEventInput) int
 		PodLog              func(childComplexity int, log model.PodLog) int
 		RemoveInvitation    func(childComplexity int, member model.MemberInput) int
 		SendInvitation      func(childComplexity int, member model.MemberInput) int
 		SyncHub             func(childComplexity int, syncHubInput model.ChartsInput) int
+		UpdateChaosWorkflow func(childComplexity int, input *model.ChaosWorkFlowInput) int
 		UpdateUser          func(childComplexity int, user model.UpdateUserInput) int
 		UserClusterReg      func(childComplexity int, clusterInput model.ClusterInput) int
 	}
@@ -228,6 +230,7 @@ type ComplexityRoot struct {
 		GetScheduledWorkflows func(childComplexity int, projectID string) int
 		GetUser               func(childComplexity int, username string) int
 		GetWorkFlowRuns       func(childComplexity int, projectID string) int
+		GetYAMLData           func(childComplexity int, experimentInput model.ExperimentInput) int
 		ListWorkflow          func(childComplexity int, projectID string, workflowIds []*string) int
 		Users                 func(childComplexity int) int
 	}
@@ -349,6 +352,8 @@ type MutationResolver interface {
 	PodLog(ctx context.Context, log model.PodLog) (string, error)
 	AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, username string) (*model.User, error)
 	SyncHub(ctx context.Context, syncHubInput model.ChartsInput) ([]*model.MyHubStatus, error)
+	UpdateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error)
+	DeleteClusterReg(ctx context.Context, clusterID string) (string, error)
 }
 type QueryResolver interface {
 	GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error)
@@ -361,6 +366,7 @@ type QueryResolver interface {
 	GetCharts(ctx context.Context, chartsInput model.ChartsInput) ([]*model.Chart, error)
 	GetHubExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error)
 	GetHubStatus(ctx context.Context, username string) ([]*model.MyHubStatus, error)
+	GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error)
 }
 type SubscriptionResolver interface {
 	ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error)
@@ -963,6 +969,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteChaosWorkflow(childComplexity, args["workflowid"].(string)), true
 
+	case "Mutation.deleteClusterReg":
+		if e.complexity.Mutation.DeleteClusterReg == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteClusterReg_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteClusterReg(childComplexity, args["cluster_id"].(string)), true
+
 	case "Mutation.newClusterEvent":
 		if e.complexity.Mutation.NewClusterEvent == nil {
 			break
@@ -1022,6 +1040,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.SyncHub(childComplexity, args["syncHubInput"].(model.ChartsInput)), true
+
+	case "Mutation.updateChaosWorkflow":
+		if e.complexity.Mutation.UpdateChaosWorkflow == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateChaosWorkflow_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateChaosWorkflow(childComplexity, args["input"].(*model.ChaosWorkFlowInput)), true
 
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
@@ -1317,6 +1347,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetWorkFlowRuns(childComplexity, args["project_id"].(string)), true
+
+	case "Query.getYAMLData":
+		if e.complexity.Query.GetYAMLData == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getYAMLData_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetYAMLData(childComplexity, args["experimentInput"].(model.ExperimentInput)), true
 
 	case "Query.ListWorkflow":
 		if e.complexity.Query.ListWorkflow == nil {
@@ -2042,11 +2084,10 @@ input CreateMyHub {
 
 input ExperimentInput {
   UserName: String!
-  RepoURL: String!
-  RepoBranch: String!
   ChartName: String!
   ExperimentName: String!
   HubName: String!
+  FileType: String
 }
 
 input ChartsInput {
@@ -2139,9 +2180,9 @@ type ClusterEvent {
 }
 
 type ActionPayload {
-  request_type: String
-  k8s_manifest: String
-  namespace: String
+  request_type: String!
+  k8s_manifest: String!
+  namespace: String!
   external_data: String
 }
 
@@ -2184,6 +2225,7 @@ type weightages {
 }
 
 input ChaosWorkFlowInput {
+  workflow_id: String
   workflow_manifest: String!
   cronSyntax: String!
   workflow_name: String!
@@ -2317,6 +2359,8 @@ type Query {
   getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
 
   getHubStatus(username: String!): [MyHubStatus]! @authorized
+
+  getYAMLData(experimentInput: ExperimentInput!): String!
 }
 
 type Mutation {
@@ -2324,8 +2368,7 @@ type Mutation {
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
   #It is used to create chaosworkflow
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
-    @authorized
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
 
   createUser(user: CreateUserInput!): User! @authorized
 
@@ -2354,6 +2397,11 @@ type Mutation {
   addMyHub(myhubInput: CreateMyHub!, username: String!): User! @authorized
 
   syncHub(syncHubInput: ChartsInput!): [MyHubStatus!]! @authorized
+
+  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse! @authorized
+
+  deleteClusterReg(cluster_id: String!): String! @authorized
+
 }
 
 type Subscription {
@@ -2526,6 +2574,20 @@ func (ec *executionContext) field_Mutation_deleteChaosWorkflow_args(ctx context.
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_deleteClusterReg_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["cluster_id"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["cluster_id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_newClusterEvent_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2593,6 +2655,20 @@ func (ec *executionContext) field_Mutation_syncHub_args(ctx context.Context, raw
 		}
 	}
 	args["syncHubInput"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateChaosWorkflow_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.ChaosWorkFlowInput
+	if tmp, ok := rawArgs["input"]; ok {
+		arg0, err = ec.unmarshalOChaosWorkFlowInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -2780,6 +2856,20 @@ func (ec *executionContext) field_Query_getWorkFlowRuns_args(ctx context.Context
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_getYAMLData_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.ExperimentInput
+	if tmp, ok := rawArgs["experimentInput"]; ok {
+		arg0, err = ec.unmarshalNExperimentInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐExperimentInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["experimentInput"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Subscription_clusterConnect_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2896,11 +2986,14 @@ func (ec *executionContext) _ActionPayload_request_type(ctx context.Context, fie
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ActionPayload_k8s_manifest(ctx context.Context, field graphql.CollectedField, obj *model.ActionPayload) (ret graphql.Marshaler) {
@@ -2927,11 +3020,14 @@ func (ec *executionContext) _ActionPayload_k8s_manifest(ctx context.Context, fie
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ActionPayload_namespace(ctx context.Context, field graphql.CollectedField, obj *model.ActionPayload) (ret graphql.Marshaler) {
@@ -2958,11 +3054,14 @@ func (ec *executionContext) _ActionPayload_namespace(ctx context.Context, field 
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ActionPayload_external_data(ctx context.Context, field graphql.CollectedField, obj *model.ActionPayload) (ret graphql.Marshaler) {
@@ -6011,6 +6110,128 @@ func (ec *executionContext) _Mutation_syncHub(ctx context.Context, field graphql
 	return ec.marshalNMyHubStatus2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHubStatusᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_updateChaosWorkflow(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateChaosWorkflow_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateChaosWorkflow(rctx, args["input"].(*model.ChaosWorkFlowInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.ChaosWorkFlowResponse); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ChaosWorkFlowResponse`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.ChaosWorkFlowResponse)
+	fc.Result = res
+	return ec.marshalNChaosWorkFlowResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_deleteClusterReg(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_deleteClusterReg_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().DeleteClusterReg(rctx, args["cluster_id"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(string); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _MyHub_id(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -7459,6 +7680,47 @@ func (ec *executionContext) _Query_getHubStatus(ctx context.Context, field graph
 	res := resTmp.([]*model.MyHubStatus)
 	fc.Result = res
 	return ec.marshalNMyHubStatus2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHubStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getYAMLData(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getYAMLData_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetYAMLData(rctx, args["experimentInput"].(model.ExperimentInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -11174,6 +11436,12 @@ func (ec *executionContext) unmarshalInputChaosWorkFlowInput(ctx context.Context
 
 	for k, v := range asMap {
 		switch k {
+		case "workflow_id":
+			var err error
+			it.WorkflowID, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "workflow_manifest":
 			var err error
 			it.WorkflowManifest, err = ec.unmarshalNString2string(ctx, v)
@@ -11504,18 +11772,6 @@ func (ec *executionContext) unmarshalInputExperimentInput(ctx context.Context, o
 			if err != nil {
 				return it, err
 			}
-		case "RepoURL":
-			var err error
-			it.RepoURL, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "RepoBranch":
-			var err error
-			it.RepoBranch, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "ChartName":
 			var err error
 			it.ChartName, err = ec.unmarshalNString2string(ctx, v)
@@ -11531,6 +11787,12 @@ func (ec *executionContext) unmarshalInputExperimentInput(ctx context.Context, o
 		case "HubName":
 			var err error
 			it.HubName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "FileType":
+			var err error
+			it.FileType, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -11807,10 +12069,19 @@ func (ec *executionContext) _ActionPayload(ctx context.Context, sel ast.Selectio
 			out.Values[i] = graphql.MarshalString("ActionPayload")
 		case "request_type":
 			out.Values[i] = ec._ActionPayload_request_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "k8s_manifest":
 			out.Values[i] = ec._ActionPayload_k8s_manifest(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "namespace":
 			out.Values[i] = ec._ActionPayload_namespace(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "external_data":
 			out.Values[i] = ec._ActionPayload_external_data(ctx, field, obj)
 		default:
@@ -12495,6 +12766,16 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "updateChaosWorkflow":
+			out.Values[i] = ec._Mutation_updateChaosWorkflow(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deleteClusterReg":
+			out.Values[i] = ec._Mutation_deleteClusterReg(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -12910,6 +13191,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getHubStatus(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getYAMLData":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getYAMLData(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -15005,6 +15300,18 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 		return graphql.Null
 	}
 	return ec.marshalOBoolean2bool(ctx, sel, *v)
+}
+
+func (ec *executionContext) unmarshalOChaosWorkFlowInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx context.Context, v interface{}) (model.ChaosWorkFlowInput, error) {
+	return ec.unmarshalInputChaosWorkFlowInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOChaosWorkFlowInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx context.Context, v interface{}) (*model.ChaosWorkFlowInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOChaosWorkFlowInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx, v)
+	return &res, err
 }
 
 func (ec *executionContext) unmarshalOID2string(ctx context.Context, v interface{}) (string, error) {

@@ -27,6 +27,7 @@ export interface CreateClusterInput {
     platform_name: string;
     project_id: string;
     cluster_type: string;
+    agent_scope: string;
   };
 }
 

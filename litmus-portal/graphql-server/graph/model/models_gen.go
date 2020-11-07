@@ -9,9 +9,9 @@ import (
 )
 
 type ActionPayload struct {
-	RequestType  *string `json:"request_type"`
-	K8sManifest  *string `json:"k8s_manifest"`
-	Namespace    *string `json:"namespace"`
+	RequestType  string  `json:"request_type"`
+	K8sManifest  string  `json:"k8s_manifest"`
+	Namespace    string  `json:"namespace"`
 	ExternalData *string `json:"external_data"`
 }
 
@@ -25,6 +25,7 @@ type Annotation struct {
 }
 
 type ChaosWorkFlowInput struct {
+	WorkflowID          *string            `json:"workflow_id"`
 	WorkflowManifest    string             `json:"workflow_manifest"`
 	CronSyntax          string             `json:"cronSyntax"`
 	WorkflowName        string             `json:"workflow_name"`
@@ -150,12 +151,11 @@ type CreateUserInput struct {
 }
 
 type ExperimentInput struct {
-	UserName       string `json:"UserName"`
-	RepoURL        string `json:"RepoURL"`
-	RepoBranch     string `json:"RepoBranch"`
-	ChartName      string `json:"ChartName"`
-	ExperimentName string `json:"ExperimentName"`
-	HubName        string `json:"HubName"`
+	UserName       string  `json:"UserName"`
+	ChartName      string  `json:"ChartName"`
+	ExperimentName string  `json:"ExperimentName"`
+	HubName        string  `json:"HubName"`
+	FileType       *string `json:"FileType"`
 }
 
 type Experiments struct {

@@ -91,11 +91,10 @@ input CreateMyHub {
 
 input ExperimentInput {
   UserName: String!
-  RepoURL: String!
-  RepoBranch: String!
   ChartName: String!
   ExperimentName: String!
   HubName: String!
+  FileType: String
 }
 
 input ChartsInput {

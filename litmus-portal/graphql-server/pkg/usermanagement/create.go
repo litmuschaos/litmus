@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	self_deployer "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/self-deployer"
 	"go.mongodb.org/mongo-driver/mongo"
 
@@ -21,6 +22,10 @@ import (
 //CreateUser ...
 func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error) {
 
+	var (
+		uuid   = uuid.New()
+		active = os.Getenv("SELF_CLUSTER")
+	)
 	outputUser, err := GetUser(ctx, user.Username)
 	if err != nil && err != mongo.ErrNoDocuments {
 		return nil, err
@@ -28,7 +33,6 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 		return outputUser, errors.New("User already exists")
 	}
 
-	uuid := uuid.New()
 	newUser := &dbSchema.User{
 		ID:          uuid.String(),
 		Username:    user.Username,
@@ -45,6 +49,17 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 		return nil, err
 	}
 
+	publicHub := model.CreateMyHub{
+		HubName:    "Chaos Hub",
+		RepoURL:    "https://github.com/litmuschaos/chaos-charts",
+		RepoBranch: "master",
+	}
+	_, err = myhub.AddMyHub(ctx, publicHub, user.Username)
+
+	if err != nil {
+		return nil, err
+	}
+
 	project, err := project.CreateProjectWithUser(ctx, user.ProjectName, newUser)
 	if err != nil {
 		return nil, err
@@ -53,7 +68,6 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 	outputUser = newUser.GetOutputUser()
 	outputUser.Projects = append(outputUser.Projects, project)
 
-	active := os.Getenv("SELF_CLUSTER")
 	if strings.ToLower(active) == "true" && strings.ToLower(outputUser.Username) == "admin" {
 		go self_deployer.StartDeployer(project.ID)
 	}

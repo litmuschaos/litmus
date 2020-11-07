@@ -42,7 +42,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, user model.UpdateUser
 }
 
 func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid string) (bool, error) {
-	return database.DeleteChaosWorkflow(workflowid)
+	return mutations.DeleteWorkflow(workflowid, *store)
 }
 
 func (r *mutationResolver) SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error) {
@@ -83,6 +83,14 @@ func (r *mutationResolver) AddMyHub(ctx context.Context, myhubInput model.Create
 
 func (r *mutationResolver) SyncHub(ctx context.Context, syncHubInput model.ChartsInput) ([]*model.MyHubStatus, error) {
 	return myhub.SyncHub(ctx, syncHubInput)
+}
+
+func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
+	return mutations.UpdateWorkflow(input, *store)
+}
+
+func (r *mutationResolver) DeleteClusterReg(ctx context.Context, clusterID string) (string, error) {
+	return mutations.DeleteCluster(clusterID, *store)
 }
 
 func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {
@@ -127,6 +135,10 @@ func (r *queryResolver) GetHubExperiment(ctx context.Context, experimentInput mo
 
 func (r *queryResolver) GetHubStatus(ctx context.Context, username string) ([]*model.MyHubStatus, error) {
 	return myhub.HubStatus(ctx, username)
+}
+
+func (r *queryResolver) GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
+	return myhub.GetYAMLData(ctx, experimentInput)
 }
 
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {

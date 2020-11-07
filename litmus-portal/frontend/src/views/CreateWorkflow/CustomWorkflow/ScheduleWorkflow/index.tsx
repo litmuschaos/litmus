@@ -147,7 +147,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
           template: data.experiment_name?.split('/')[1] as string,
         },
       ]);
-      installAllExp = `${installAllExp}kubectl apply -f https://github.com/litmuschaos/chaos-charts/raw/master/charts/${data.experiment_name}/experiment.yaml -n {{workflow.parameters.adminModeNamespace}} | `;
+      installAllExp = `${installAllExp}kubectl apply -f ${data.repoUrl}/raw/${data.repoBranch}/charts/${data.experiment_name}/experiment.yaml -n {{workflow.parameters.adminModeNamespace}} | `;
     });
     customSteps.push([
       {
@@ -312,6 +312,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             customYAMLGenerator();
           }}
           isPrimary
+          isDisabled={workflows.length === 0}
         >
           <div>
             <img
