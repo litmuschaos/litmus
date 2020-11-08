@@ -56,7 +56,7 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
   okteto login
   ```
 
-- <h4>STEP-3:</h4> Go to specific component folders i.e. `authentication`, `cluster-agents/subscriber`, `graphql-server`, `tools/self-deployer` or `frontend` of `litmus-portal` folder and then run `okteto up` before manking changes to the code.
+- <h4>STEP-3:</h4> Go to specific component folders i.e. `authentication`, `cluster-agents/subscriber`, `graphql-server` or `frontend` of `litmus-portal` folder and then run `okteto up` before manking changes to the code.
 
   ```bash
   cd litmus-portal/frontend

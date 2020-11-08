@@ -276,16 +276,35 @@ func DeleteCluster(cluster_id string, r store.StateData) (string, error) {
 }
 
 func UpdateWorkflow(workflow *model.ChaosWorkFlowInput, r store.StateData) (*model.ChaosWorkFlowResponse, error) {
-	query := bson.D{{"workflow_id", workflow.WorkflowID}}
-	update := bson.D{{"$set", bson.D{{"workflow_manifest", workflow.WorkflowManifest}, {"cronSyntax", workflow.CronSyntax}, {"workflow_name", workflow.WorkflowName}, {"workflow_description", workflow.WorkflowDescription}, {"isCustomWorkflow", workflow.IsCustomWorkflow}, {"weightages", workflow.Weightages}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
-	err := database.UpdateChaosWorkflow(query, update)
+	var newWeightages []*database.WeightagesInput
+	copier.Copy(&newWeightages, &workflow.Weightages)
+
+	var workflowManifest map[string]interface{}
+	err := json.Unmarshal([]byte(workflow.WorkflowManifest), &workflowManifest)
+	if err != nil {
+		return nil, err
+	}
+
+	newWorkflowManifest, err := sjson.Set(workflow.WorkflowManifest, "metadata.labels.workflow_id", workflow.WorkflowID)
+	if err != nil {
+		return nil, err
+	}
+
+	if strings.ToLower(workflowManifest["kind"].(string)) == "cronworkflow" {
+		newWorkflowManifest, _ = sjson.Set(workflow.WorkflowManifest, "spec.workflowMetadata.labels.workflow_id", workflow.WorkflowID)
+	}
+
+	query := bson.D{{"workflow_id", workflow.WorkflowID}}
+	update := bson.D{{"$set", bson.D{{"workflow_manifest", newWorkflowManifest}, {"cronSyntax", workflow.CronSyntax}, {"Workflow_name", workflow.WorkflowName}, {"Workflow_description", workflow.WorkflowDescription}, {"isCustomWorkflow", workflow.IsCustomWorkflow}, {"Weightages", newWeightages}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
+
+	err = database.UpdateChaosWorkflow(query, update)
 	if err != nil {
 		return nil, err
 	}
 
 	subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
-		K8sManifest: workflow.WorkflowManifest,
+		K8sManifest: newWorkflowManifest,
 		RequestType: "update",
 		ProjectID:   workflow.ProjectID,
 		ClusterID:   workflow.ClusterID,
