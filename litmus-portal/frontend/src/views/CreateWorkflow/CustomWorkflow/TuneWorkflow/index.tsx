@@ -128,15 +128,16 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       (customWorkflow.index === -1 && customWorkflows.length === 0) ||
       elemPos === 0
     ) {
-      return 'This is your first experiment';
+      return t('customWorkflow.tuneExperiment.sequenceFirstExp');
     }
     if (customWorkflow.index === -1) {
-      return `This experiment will execute after ${
+      return `${t('customWorkflow.tuneExperiment.sequenceNotFirstExp')} ${
         customWorkflows[customWorkflows.length - 1].experiment_name
       }`;
     }
-    return `This experiment will execute after 
-                  ${customWorkflows[elemPos - 1].experiment_name}`;
+    return `${t('customWorkflow.tuneExperiment.sequenceNotFirstExp')} ${
+      customWorkflows[elemPos - 1].experiment_name
+    }`;
   };
   // Function to handle the change in env variables
   const handleEnvModification = () => {
