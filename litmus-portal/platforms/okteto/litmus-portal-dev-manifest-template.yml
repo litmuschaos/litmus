@@ -51,63 +51,6 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: self-deployer-namespace-account
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: Role
-metadata:
-  name: deployer-namespace
-  labels:
-    name: deployer-namespace
-rules:
-  - apiGroups:
-      - ""
-    resources:
-      - serviceaccounts
-      - services
-      - configmaps
-      - pods
-    verbs:
-      - "create"
-      - "delete"
-      - "patch"
-      - "update"
-  - apiGroups:
-      - "rbac.authorization.k8s.io"
-    resources:
-      - roles
-      - rolebindings
-    verbs:
-      - "create"
-      - "delete"
-      - "patch"
-      - "update"
-  - apiGroups:
-      - "apps"
-    resources:
-      - deployments
-    verbs:
-      - "create"
-      - "delete"
-      - "patch"
-      - "update"
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: RoleBinding
-metadata:
-  name: deployer-namespace-rb
-subjects:
-  - kind: ServiceAccount
-    name: self-deployer-namespace-account
-    namespace: ${OKTETO_NAMESPACE}
-roleRef:
-  kind: Role
-  name: deployer-namespace
-  apiGroup: rbac.authorization.k8s.io
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
   name: litmus-server-account
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -200,8 +143,6 @@ spec:
                   key: AgentNamespace
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos/litmusportal-subscriber:ci"
-            - name: DEPLOYER_IMAGE
-              value: "litmuschaos/litmusportal-self-deployer:ci"
             - name: ARGO_SERVER_IMAGE
               value: "argoproj/argocli:v2.9.3"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
