@@ -330,7 +330,10 @@ func DeleteWorkflow(workflow_id string, r store.StateData) (bool, error) {
 		return false, err
 	}
 
-	bool, err := database.DeleteChaosWorkflow(workflow_id)
+	query := bson.D{{"workflow_id", workflow_id}}
+	update := bson.D{{"$set", bson.D{{"isRemoved", true}}}}
+
+	err = database.UpdateChaosWorkflow(query, update)
 	if err != nil {
 		return false, err
 	}
@@ -344,5 +347,5 @@ func DeleteWorkflow(workflow_id string, r store.StateData) (bool, error) {
 		}, r)
 	}
 
-	return bool, nil
+	return true, nil
 }

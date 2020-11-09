@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -162,19 +161,6 @@ func InsertChaosWorkflow(chaosWorkflow ChaosWorkFlowInput) error {
 	}
 
 	return nil
-}
-
-func DeleteChaosWorkflow(workflowid string) (bool, error) {
-	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	update := bson.M{"$set": bson.M{"isRemoved": true}}
-	_, err := workflowCollection.UpdateOne(ctx, bson.M{"workflow_id": workflowid}, update)
-
-	if err != nil {
-		return false, err
-	}
-
-	log.Println("Schedule successfully removed %v", workflowid)
-	return true, nil
 }
 
 func UpdateChaosWorkflow(query bson.D, update bson.D) error {

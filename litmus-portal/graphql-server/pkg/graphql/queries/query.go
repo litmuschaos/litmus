@@ -55,26 +55,28 @@ func QueryWorkflows(project_id string) ([]*model.ScheduledWorkflows, error) {
 		if err != nil {
 			return nil, err
 		}
-		var Weightages []*model.Weightages
-		copier.Copy(&Weightages, &workflow.Weightages)
+		if workflow.IsRemoved == false {
+			var Weightages []*model.Weightages
+			copier.Copy(&Weightages, &workflow.Weightages)
 
-		newChaosWorkflows := model.ScheduledWorkflows{
-			WorkflowID:          workflow.WorkflowID,
-			WorkflowManifest:    workflow.WorkflowManifest,
-			WorkflowName:        workflow.WorkflowName,
-			CronSyntax:          workflow.CronSyntax,
-			WorkflowDescription: workflow.WorkflowDescription,
-			Weightages:          Weightages,
-			IsCustomWorkflow:    workflow.IsCustomWorkflow,
-			UpdatedAt:           workflow.UpdatedAt,
-			CreatedAt:           workflow.CreatedAt,
-			ProjectID:           workflow.ProjectID,
-			IsRemoved:           workflow.IsRemoved,
-			ClusterName:         cluster.ClusterName,
-			ClusterID:           cluster.ClusterID,
-			ClusterType:         cluster.ClusterType,
+			newChaosWorkflows := model.ScheduledWorkflows{
+				WorkflowID:          workflow.WorkflowID,
+				WorkflowManifest:    workflow.WorkflowManifest,
+				WorkflowName:        workflow.WorkflowName,
+				CronSyntax:          workflow.CronSyntax,
+				WorkflowDescription: workflow.WorkflowDescription,
+				Weightages:          Weightages,
+				IsCustomWorkflow:    workflow.IsCustomWorkflow,
+				UpdatedAt:           workflow.UpdatedAt,
+				CreatedAt:           workflow.CreatedAt,
+				ProjectID:           workflow.ProjectID,
+				IsRemoved:           workflow.IsRemoved,
+				ClusterName:         cluster.ClusterName,
+				ClusterID:           cluster.ClusterID,
+				ClusterType:         cluster.ClusterType,
+			}
+			result = append(result, &newChaosWorkflows)
 		}
-		result = append(result, &newChaosWorkflows)
 	}
 
 	return result, nil
