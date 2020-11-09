@@ -116,9 +116,7 @@ const MyHub = () => {
                                   align="center"
                                   className={classes.hubName}
                                 >
-                                  {hub.HubName === 'Chaos Hub'
-                                    ? 'Public Hub'
-                                    : hub.HubName}
+                                  {hub.HubName}
                                 </Typography>
                                 <Typography
                                   variant="h6"
