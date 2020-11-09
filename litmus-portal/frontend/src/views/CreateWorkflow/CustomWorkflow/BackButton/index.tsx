@@ -16,7 +16,7 @@ const BackButton: React.FC<BackButtonProps> = ({ isDisabled, onClick }) => {
       size="medium"
       className={classes.btn}
       disabled={isDisabled}
-      onClick={() => onClick()}
+      onClick={onClick}
     >
       <img src="/icons/back.svg" alt="back" />
       <Typography className={classes.text}>
