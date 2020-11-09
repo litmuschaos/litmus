@@ -2,11 +2,12 @@ package mutations
 
 import (
 	"encoding/json"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql"
 	"log"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql"
 
 	"github.com/jinzhu/copier"
 
@@ -193,6 +194,8 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		newWorkflowManifest, _ = sjson.Set(input.WorkflowManifest, "spec.workflowMetadata.labels.workflow_id", workflow_id)
 	}
 
+	isRemoved := false
+
 	newChaosWorkflow := database.ChaosWorkFlowInput{
 		WorkflowID:          workflow_id,
 		WorkflowManifest:    newWorkflowManifest,
@@ -206,6 +209,7 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		CreatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
 		UpdatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
 		WorkflowRuns:        []*database.WorkflowRun{},
+		IsRemoved:           isRemoved,
 	}
 
 	err = database.InsertChaosWorkflow(newChaosWorkflow)

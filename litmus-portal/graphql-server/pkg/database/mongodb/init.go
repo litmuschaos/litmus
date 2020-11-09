@@ -63,6 +63,7 @@ type ChaosWorkFlowInput struct {
 	ProjectID           string             `bson:"project_id"`
 	ClusterID           string             `bson:"cluster_id"`
 	WorkflowRuns        []*WorkflowRun     `bson:"workflow_runs"`
+	IsRemoved			bool			   `bson:"isRemoved"`	
 }
 
 type WorkflowRun struct {

@@ -242,6 +242,7 @@ type ComplexityRoot struct {
 		CreatedAt           func(childComplexity int) int
 		CronSyntax          func(childComplexity int) int
 		IsCustomWorkflow    func(childComplexity int) int
+		IsRemoved           func(childComplexity int) int
 		ProjectID           func(childComplexity int) int
 		UpdatedAt           func(childComplexity int) int
 		Weightages          func(childComplexity int) int
@@ -296,6 +297,7 @@ type ComplexityRoot struct {
 		CreatedAt           func(childComplexity int) int
 		CronSyntax          func(childComplexity int) int
 		IsCustomWorkflow    func(childComplexity int) int
+		IsRemoved           func(childComplexity int) int
 		ProjectID           func(childComplexity int) int
 		UpdatedAt           func(childComplexity int) int
 		Weightages          func(childComplexity int) int
@@ -1421,6 +1423,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ScheduledWorkflows.IsCustomWorkflow(childComplexity), true
 
+	case "ScheduledWorkflows.isRemoved":
+		if e.complexity.ScheduledWorkflows.IsRemoved == nil {
+			break
+		}
+
+		return e.complexity.ScheduledWorkflows.IsRemoved(childComplexity), true
+
 	case "ScheduledWorkflows.project_id":
 		if e.complexity.ScheduledWorkflows.ProjectID == nil {
 			break
@@ -1734,6 +1743,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Workflow.IsCustomWorkflow(childComplexity), true
+
+	case "Workflow.isRemoved":
+		if e.complexity.Workflow.IsRemoved == nil {
+			break
+		}
+
+		return e.complexity.Workflow.IsRemoved(childComplexity), true
 
 	case "Workflow.project_id":
 		if e.complexity.Workflow.ProjectID == nil {
@@ -2306,6 +2322,7 @@ type ScheduledWorkflows {
   project_id: ID!
   cluster_id: ID!
   cluster_type: String!
+  isRemoved: Boolean!
 }
 
 type Workflow {
@@ -2322,6 +2339,7 @@ type Workflow {
   project_id: ID!
   cluster_id: ID!
   cluster_type: String!
+  isRemoved: Boolean!
   workflow_runs: [WorkflowRuns]
 }
 
@@ -8234,6 +8252,40 @@ func (ec *executionContext) _ScheduledWorkflows_cluster_type(ctx context.Context
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ScheduledWorkflows_isRemoved(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ScheduledWorkflows",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsRemoved, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Spec_DisplayName(ctx context.Context, field graphql.CollectedField, obj *model.Spec) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -9767,6 +9819,40 @@ func (ec *executionContext) _Workflow_cluster_type(ctx context.Context, field gr
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Workflow_isRemoved(ctx context.Context, field graphql.CollectedField, obj *model.Workflow) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Workflow",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsRemoved, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Workflow_workflow_runs(ctx context.Context, field graphql.CollectedField, obj *model.Workflow) (ret graphql.Marshaler) {
@@ -13301,6 +13387,11 @@ func (ec *executionContext) _ScheduledWorkflows(ctx context.Context, sel ast.Sel
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "isRemoved":
+			out.Values[i] = ec._ScheduledWorkflows_isRemoved(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -13559,6 +13650,11 @@ func (ec *executionContext) _Workflow(ctx context.Context, sel ast.SelectionSet,
 			}
 		case "cluster_type":
 			out.Values[i] = ec._Workflow_cluster_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "isRemoved":
+			out.Values[i] = ec._Workflow_isRemoved(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

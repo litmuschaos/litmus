@@ -165,17 +165,16 @@ func InsertChaosWorkflow(chaosWorkflow ChaosWorkFlowInput) error {
 }
 
 func DeleteChaosWorkflow(workflowid string) (bool, error) {
-	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	res, err := workflowCollection.DeleteOne(ctx, bson.M{"workflow_id": workflowid})
+ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
+update := bson.M{"$set": bson.M{"isRemoved":true}}
+_, err := workflowCollection.UpdateOne(ctx, bson.M{"workflow_id": workflowid}, update)
 
-	if err != nil {
-		return false, err
-	} else if res.DeletedCount == 0 {
-		return false, nil
-	}
+if err != nil {
+return false, err
+}
 
-	log.Println("Successfully delete %v", workflowid)
-	return true, nil
+log.Println("Schedule successfully removed %v", workflowid)
+return true, nil
 }
 
 func UpdateChaosWorkflow(query bson.D, update bson.D) error {
