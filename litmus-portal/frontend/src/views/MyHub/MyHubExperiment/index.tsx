@@ -29,7 +29,7 @@ const MyHub = () => {
 
   // Get all MyHubs with status
   const { data: userDetails } = useQuery<HubStatus>(GET_HUB_STATUS, {
-    variables: { data: userData.username },
+    variables: { data: userData.selectedProjectOwner },
     fetchPolicy: 'cache-and-network',
   });
 
@@ -46,9 +46,7 @@ const MyHub = () => {
     variables: {
       data: {
         HubName: paramData.hubname,
-        UserName: userData.username,
-        RepoURL: UserHub?.RepoURL,
-        RepoBranch: UserHub?.RepoBranch,
+        UserName: userData.selectedProjectOwner,
         ChartName: paramData.chart,
         ExperimentName: paramData.experiment,
       },

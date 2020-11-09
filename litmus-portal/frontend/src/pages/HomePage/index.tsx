@@ -115,6 +115,7 @@ const HomePage: React.FC = () => {
           selectedProjectID: isOwnerOfProject.id,
           userRole: 'Owner',
           selectedProjectName: isOwnerOfProject.name,
+          selectedProjectOwner: userData.username,
         });
         user.updateUserDetails({ loader: false });
         // Flush data to persistor immediately

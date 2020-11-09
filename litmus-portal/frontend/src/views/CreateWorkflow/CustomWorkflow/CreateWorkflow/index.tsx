@@ -14,24 +14,26 @@ import {
   RadioGroup,
   Select,
   Typography,
+  ClickAwayListener,
 } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import YAML from 'yaml';
-import BackButton from '../../../../components/Button/BackButton';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import InputField from '../../../../components/InputField';
 import Loader from '../../../../components/Loader';
 import { GET_CHARTS_DATA, GET_HUB_STATUS } from '../../../../graphql';
 import { MyHubDetail } from '../../../../models/graphql/user';
-import { Chart, Charts, HubStatus } from '../../../../models/redux/myhub';
+import { Charts, HubStatus } from '../../../../models/redux/myhub';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
 import useActions from '../../../../redux/actions';
 import { RootState } from '../../../../redux/reducers';
 import useStyles, { CustomTextField, MenuProps } from './styles';
 import WorkflowDetails from '../../../../pages/WorkflowDetails';
+import { GET_EXPERIMENT_YAML } from '../../../../graphql/quries';
+import BackButton from '../BackButton';
 import * as TemplateSelectionActions from '../../../../redux/actions/template';
 import { history } from '../../../../redux/configureStore';
 
@@ -50,35 +52,60 @@ interface VerifyCommitProps {
 }
 
 const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
-  const userData = useSelector((state: RootState) => state.userData);
-  const hubData = useSelector((state: RootState) => state.publicHubDetails);
   const workflowDetails = useSelector((state: RootState) => state.workflowData);
   const workflowAction = useActions(WorkflowActions);
+
+  const { selectedProjectOwner } = useSelector(
+    (state: RootState) => state.userData
+  );
+
   const [workflowData, setWorkflowData] = useState<WorkflowDetails>({
     workflow_name: workflowDetails.name,
     workflow_desc: workflowDetails.description,
   });
+
   const { t } = useTranslation();
   const classes = useStyles();
-  const [allExperiment, setAllExperiment] = useState<ChartName[]>([]);
-  const template = useActions(TemplateSelectionActions);
-  const [selectedHub, setSelectedHub] = useState('Public Hub');
+
+  const [allExperiments, setAllExperiments] = useState<ChartName[]>([]);
+  const [selectedHub, setSelectedHub] = useState('');
   const [selectedExp, setSelectedExp] = useState(
     t('customWorkflow.createWorkflow.selectAnExp') as string
   );
+
+  const [availableHubs, setAvailableHubs] = useState<MyHubDetail[]>([]);
+  const template = useActions(TemplateSelectionActions);
   const [constructYAML, setConstructYAML] = useState('construct');
-  const allExp: ChartName[] = [];
   const [selectedHubDetails, setSelectedHubDetails] = useState<MyHubDetail>();
-  // Get all MyHubs with status
-  const { data } = useQuery<HubStatus>(GET_HUB_STATUS, {
-    variables: { data: userData.username },
-    fetchPolicy: 'cache-and-network',
+
+  const [getExperimentYaml] = useLazyQuery(GET_EXPERIMENT_YAML, {
+    variables: {
+      experimentInput: {
+        UserName: selectedProjectOwner, // It should be name of project owner
+        HubName: selectedHub,
+        ChartName: selectedExp.split('/')[0],
+        ExperimentName: selectedExp.split('/')[1],
+        FileType: 'experiment',
+      },
+    },
+    onCompleted: (data) => {
+      const parsedYaml = YAML.parse(data.getYAMLData);
+      workflowAction.setWorkflowDetails({
+        customWorkflow: {
+          ...workflowDetails.customWorkflow,
+          description: parsedYaml.description.message,
+        },
+      });
+      gotoStep(1);
+    },
   });
+
   // Graphql query to get charts
   const [getCharts, { loading: chartsLoading }] = useLazyQuery<Charts>(
     GET_CHARTS_DATA,
     {
       onCompleted: (data) => {
+        const allExp: ChartName[] = [];
         data.getCharts.forEach((data) => {
           return data.Spec.Experiments?.forEach((experiment) => {
             allExp.push({
@@ -87,11 +114,33 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             });
           });
         });
-        setAllExperiment(allExp);
+        setAllExperiments([...allExp]);
       },
       fetchPolicy: 'cache-and-network',
     }
   );
+
+  // Get all MyHubs with status
+  const { data } = useQuery<HubStatus>(GET_HUB_STATUS, {
+    variables: { data: selectedProjectOwner },
+    fetchPolicy: 'cache-and-network',
+    onCompleted: (data) => {
+      setSelectedHub(data.getHubStatus[0].HubName);
+      setAvailableHubs([...data.getHubStatus]);
+      getCharts({
+        variables: {
+          data: {
+            UserName: selectedProjectOwner,
+            RepoURL: data.getHubStatus[0].RepoURL,
+            RepoBranch: data.getHubStatus[0].RepoBranch,
+            HubName: data.getHubStatus[0].HubName,
+          },
+        },
+      });
+      setSelectedHubDetails(data.getHubStatus[0]);
+    },
+  });
+
   // Function to get charts of a particular hub
   const findChart = (hubname: string) => {
     const myHubData = data?.getHubStatus.filter((myHub) => {
@@ -100,7 +149,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     getCharts({
       variables: {
         data: {
-          UserName: userData.username,
+          UserName: selectedProjectOwner,
           RepoURL: myHubData?.RepoURL,
           RepoBranch: myHubData?.RepoBranch,
           HubName: hubname,
@@ -108,48 +157,11 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       },
     });
     setSelectedHubDetails(myHubData);
-    workflowAction.setWorkflowDetails({
-      customWorkflow: {
-        ...workflowDetails.customWorkflow,
-        hubName: hubname,
-        repoUrl: myHubData?.RepoURL,
-        repoBranch: myHubData?.RepoBranch,
-      },
-    });
   };
-
-  useEffect(() => {
-    if (selectedHub === 'Public Hub') {
-      setSelectedHub('Public Hub');
-      const ChartsData = hubData.charts;
-      ChartsData.forEach((data: Chart) => {
-        if (data.Spec.Experiments) {
-          data.Spec.Experiments.forEach((experiment) => {
-            allExp.push({
-              ChaosName: data.Metadata.Name,
-              ExperimentName: experiment,
-            });
-          });
-        }
-      });
-      setAllExperiment([...allExp]);
-      workflowAction.setWorkflowDetails({
-        customWorkflow: {
-          ...workflowDetails.customWorkflow,
-          hubName: 'Public Hub',
-          repoUrl: 'https://github.com/litmuschaos/chaos-charts',
-          repoBranch: 'master',
-        },
-      });
-    } else {
-      setAllExperiment([]);
-    }
-  }, [selectedHub]);
-  const availableHubs: MyHubDetail[] = data ? data.getHubStatus : [];
 
   const [open, setOpen] = useState(false);
 
-  const filteredExperiment = allExperiment.filter((exp) => {
+  const filteredExperiment = allExperiments.filter((exp) => {
     const name = `${exp.ChaosName}/${exp.ExperimentName}`;
     if (selectedExp === 'Select an experiment') {
       return true;
@@ -202,7 +214,15 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   return (
     <div className={classes.root}>
       <div className={classes.headerDiv}>
-        <BackButton isDisabled={false} />
+        <BackButton
+          isDisabled={false}
+          onClick={() => {
+            workflowAction.setWorkflowDetails({
+              isCustomWorkflow: false,
+            });
+            window.history.back();
+          }}
+        />
         <Typography variant="h3" className={classes.headerText} gutterBottom>
           {t('customWorkflow.createWorkflow.create')}
         </Typography>
@@ -224,7 +244,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               styles={{
                 width: '100%',
               }}
-              data-cy="inputWorkflow"
+              data-cy="inputWorkflowName"
               validationError={false}
               handleChange={(e) => {
                 setWorkflowData({
@@ -241,7 +261,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             </Typography>
             <CustomTextField
               label="Description"
-              data-cy="inputWorkflow"
+              data-cy="inputWorkflowDesc"
               InputProps={{
                 disableUnderline: true,
                 classes: {
@@ -312,9 +332,6 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                         MenuProps={MenuProps}
                         className={classes.selectText}
                       >
-                        <MenuItem value="Public Hub">
-                          {t('customWorkflow.createWorkflow.public')}
-                        </MenuItem>
                         {availableHubs.map((hubs) => (
                           <MenuItem key={hubs.HubName} value={hubs.HubName}>
                             {hubs.HubName}
@@ -367,47 +384,49 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                           labelWidth={150}
                         />
                         {open ? (
-                          <Paper elevation={3}>
-                            <MenuList className={classes.expMenu}>
-                              {filteredExperiment.length > 0 ? (
-                                filteredExperiment.map((exp) => (
-                                  <MenuItem
-                                    key={`${exp.ChaosName}/${exp.ExperimentName}`}
-                                    value={`${exp.ChaosName}/${exp.ExperimentName}`}
-                                    onClick={() => {
-                                      setSelectedExp(
-                                        `${exp.ChaosName}/${exp.ExperimentName}`
-                                      );
-                                      setOpen(false);
-                                      if (selectedHub === 'Public Hub') {
-                                        workflowAction.setWorkflowDetails({
-                                          customWorkflow: {
-                                            ...workflowDetails.customWorkflow,
-                                            experiment_name: `${exp.ChaosName}/${exp.ExperimentName}`,
-                                            yamlLink: `${workflowDetails.customWorkflow.repoUrl}/raw/${workflowDetails.customWorkflow.repoBranch}/charts/${exp.ChaosName}/${exp.ExperimentName}/engine.yaml`,
-                                          },
-                                        });
-                                      } else {
-                                        workflowAction.setWorkflowDetails({
-                                          customWorkflow: {
-                                            ...workflowDetails.customWorkflow,
-                                            experiment_name: `${exp.ChaosName}/${exp.ExperimentName}`,
-                                            yamlLink: `${selectedHubDetails?.RepoURL}/raw/${selectedHubDetails?.RepoBranch}/charts/${exp.ChaosName}/${exp.ExperimentName}/engine.yaml`,
-                                          },
-                                        });
-                                      }
-                                    }}
-                                  >
-                                    {exp.ExperimentName}
+                          <ClickAwayListener onClickAway={() => setOpen(!open)}>
+                            <Paper elevation={3}>
+                              <MenuList className={classes.expMenu}>
+                                {filteredExperiment.length > 0 ? (
+                                  filteredExperiment.map((exp) => (
+                                    <MenuItem
+                                      key={`${exp.ChaosName}/${exp.ExperimentName}`}
+                                      value={`${exp.ChaosName}/${exp.ExperimentName}`}
+                                      onClick={() => {
+                                        setSelectedExp(
+                                          `${exp.ChaosName}/${exp.ExperimentName}`
+                                        );
+                                        setOpen(false);
+                                        if (selectedHub === 'Public Hub') {
+                                          workflowAction.setWorkflowDetails({
+                                            customWorkflow: {
+                                              ...workflowDetails.customWorkflow,
+                                              experiment_name: `${exp.ChaosName}/${exp.ExperimentName}`,
+                                              yamlLink: `${workflowDetails.customWorkflow.repoUrl}/raw/${workflowDetails.customWorkflow.repoBranch}/charts/${exp.ChaosName}/${exp.ExperimentName}/engine.yaml`,
+                                            },
+                                          });
+                                        } else {
+                                          workflowAction.setWorkflowDetails({
+                                            customWorkflow: {
+                                              ...workflowDetails.customWorkflow,
+                                              experiment_name: `${exp.ChaosName}/${exp.ExperimentName}`,
+                                              yamlLink: `${selectedHubDetails?.RepoURL}/raw/${selectedHubDetails?.RepoBranch}/charts/${exp.ChaosName}/${exp.ExperimentName}/engine.yaml`,
+                                            },
+                                          });
+                                        }
+                                      }}
+                                    >
+                                      {exp.ExperimentName}
+                                    </MenuItem>
+                                  ))
+                                ) : (
+                                  <MenuItem value="Select an experiment">
+                                    {t('customWorkflow.createWorkflow.noExp')}
                                   </MenuItem>
-                                ))
-                              ) : (
-                                <MenuItem value="Select an experiment">
-                                  {t('customWorkflow.createWorkflow.noExp')}
-                                </MenuItem>
-                              )}
-                            </MenuList>
-                          </Paper>
+                                )}
+                              </MenuList>
+                            </Paper>
+                          </ClickAwayListener>
                         ) : null}
                       </FormControl>
                     )}
@@ -494,11 +513,14 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               description: workflowData.workflow_desc,
               customWorkflow: {
                 ...workflowDetails.customWorkflow,
+                hubName: selectedHub,
+                repoUrl: selectedHubDetails?.RepoURL,
+                repoBranch: selectedHubDetails?.RepoBranch,
                 yaml: '',
                 index: -1,
               },
             });
-            gotoStep(1);
+            getExperimentYaml();
           }}
           isPrimary
           isDisabled={

@@ -21,6 +21,7 @@ export interface customWorkflow {
   hubName?: string;
   repoUrl?: string;
   repoBranch?: string;
+  description: string;
   yamlLink?: string;
   yaml?: string;
   index?: number;
@@ -34,6 +35,7 @@ export interface WorkflowData {
   description: string;
   weights: experimentMap[];
   isCustomWorkflow: boolean;
+  clustername: string;
   clusterid: string;
   cronSyntax: string;
   scheduleType: scheduleType;

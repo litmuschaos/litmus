@@ -252,3 +252,15 @@ export const GET_HUB_STATUS = gql`
     }
   }
 `;
+
+export const GET_ENGINE_YAML = gql`
+  query getEngineData($experimentInput: ExperimentInput!) {
+    getYAMLData(experimentInput: $experimentInput)
+  }
+`;
+
+export const GET_EXPERIMENT_YAML = gql`
+  query getExperimentData($experimentInput: ExperimentInput!) {
+    getYAMLData(experimentInput: $experimentInput)
+  }
+`;

@@ -435,6 +435,7 @@ createWorkflow:
       schedule: Schedule
       schedulingNow: Scheduling now
       adjustedWeights: Adjusted Weights
+      clustername: Cluster Name
   workflowCluster:
     activeCluster: Choose an active cluster
     none: None
@@ -611,6 +612,8 @@ customWorkflow:
     expName: Experiment name
     description: Description
     sequence: Sequence
+    sequenceFirstExp: This is your first experiment
+    sequenceNotFirstExp: This Experiment will execute after
     appInfo: Specify the appinfo for the experiment
     envText: We have created a chaos engine specification for this experiment. You can tune the following variables for the chaos engine.
     customEnvText: To change the variables in chaos experiment specific to this workflow, You can tune it here.

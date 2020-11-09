@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import { useTranslation } from 'react-i18next';
-import BackButton from '../BackButton';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../../components/Button/ButtonOutline';
 import { customWorkflow } from '../../../../models/redux/workflow';
@@ -56,6 +55,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   // Edit experiment operation
   const editExperiment = (index: number) => {
     workflowAction.setWorkflowDetails({
+      ...workflowDetails,
       customWorkflow: {
         ...workflowDetails.customWorkflows[index],
         index,
@@ -217,7 +217,6 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   return (
     <div className={classes.root}>
       <div className={classes.headerDiv}>
-        <BackButton isDisabled={false} gotoStep={() => gotoStep(1)} />
         <Typography variant="h3" className={classes.headerText} gutterBottom>
           {t('customWorkflow.scheduleWorkflow.scheduleHeader')}
         </Typography>
