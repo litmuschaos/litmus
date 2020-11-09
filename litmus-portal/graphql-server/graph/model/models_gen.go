@@ -273,6 +273,7 @@ type ScheduledWorkflows struct {
 	ProjectID           string        `json:"project_id"`
 	ClusterID           string        `json:"cluster_id"`
 	ClusterType         string        `json:"cluster_type"`
+	IsRemoved           bool          `json:"isRemoved"`
 }
 
 type Spec struct {
@@ -332,6 +333,7 @@ type Workflow struct {
 	ProjectID           string          `json:"project_id"`
 	ClusterID           string          `json:"cluster_id"`
 	ClusterType         string          `json:"cluster_type"`
+	IsRemoved           bool            `json:"isRemoved"`
 	WorkflowRuns        []*WorkflowRuns `json:"workflow_runs"`
 }
 

@@ -2,11 +2,12 @@ package mutations
 
 import (
 	"encoding/json"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql"
 	"log"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql"
 
 	"github.com/jinzhu/copier"
 
@@ -193,6 +194,8 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		newWorkflowManifest, _ = sjson.Set(input.WorkflowManifest, "spec.workflowMetadata.labels.workflow_id", workflow_id)
 	}
 
+	isRemoved := false
+
 	newChaosWorkflow := database.ChaosWorkFlowInput{
 		WorkflowID:          workflow_id,
 		WorkflowManifest:    newWorkflowManifest,
@@ -206,6 +209,7 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		CreatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
 		UpdatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
 		WorkflowRuns:        []*database.WorkflowRun{},
+		IsRemoved:           isRemoved,
 	}
 
 	err = database.InsertChaosWorkflow(newChaosWorkflow)
@@ -276,16 +280,35 @@ func DeleteCluster(cluster_id string, r store.StateData) (string, error) {
 }
 
 func UpdateWorkflow(workflow *model.ChaosWorkFlowInput, r store.StateData) (*model.ChaosWorkFlowResponse, error) {
-	query := bson.D{{"workflow_id", workflow.WorkflowID}}
-	update := bson.D{{"$set", bson.D{{"workflow_manifest", workflow.WorkflowManifest}, {"cronSyntax", workflow.CronSyntax}, {"workflow_name", workflow.WorkflowName}, {"workflow_description", workflow.WorkflowDescription}, {"isCustomWorkflow", workflow.IsCustomWorkflow}, {"weightages", workflow.Weightages}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
-	err := database.UpdateChaosWorkflow(query, update)
+	var newWeightages []*database.WeightagesInput
+	copier.Copy(&newWeightages, &workflow.Weightages)
+
+	var workflowManifest map[string]interface{}
+	err := json.Unmarshal([]byte(workflow.WorkflowManifest), &workflowManifest)
+	if err != nil {
+		return nil, err
+	}
+
+	newWorkflowManifest, err := sjson.Set(workflow.WorkflowManifest, "metadata.labels.workflow_id", workflow.WorkflowID)
+	if err != nil {
+		return nil, err
+	}
+
+	if strings.ToLower(workflowManifest["kind"].(string)) == "cronworkflow" {
+		newWorkflowManifest, _ = sjson.Set(workflow.WorkflowManifest, "spec.workflowMetadata.labels.workflow_id", workflow.WorkflowID)
+	}
+
+	query := bson.D{{"workflow_id", workflow.WorkflowID}}
+	update := bson.D{{"$set", bson.D{{"workflow_manifest", newWorkflowManifest}, {"cronSyntax", workflow.CronSyntax}, {"Workflow_name", workflow.WorkflowName}, {"Workflow_description", workflow.WorkflowDescription}, {"isCustomWorkflow", workflow.IsCustomWorkflow}, {"Weightages", newWeightages}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
+
+	err = database.UpdateChaosWorkflow(query, update)
 	if err != nil {
 		return nil, err
 	}
 
 	subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
-		K8sManifest: workflow.WorkflowManifest,
+		K8sManifest: newWorkflowManifest,
 		RequestType: "update",
 		ProjectID:   workflow.ProjectID,
 		ClusterID:   workflow.ClusterID,
@@ -307,7 +330,10 @@ func DeleteWorkflow(workflow_id string, r store.StateData) (bool, error) {
 		return false, err
 	}
 
-	bool, err := database.DeleteChaosWorkflow(workflow_id)
+	query := bson.D{{"workflow_id", workflow_id}}
+	update := bson.D{{"$set", bson.D{{"isRemoved", true}}}}
+
+	err = database.UpdateChaosWorkflow(query, update)
 	if err != nil {
 		return false, err
 	}
@@ -321,5 +347,5 @@ func DeleteWorkflow(workflow_id string, r store.StateData) (bool, error) {
 		}, r)
 	}
 
-	return bool, nil
+	return true, nil
 }

@@ -175,6 +175,7 @@ type ScheduledWorkflows {
   project_id: ID!
   cluster_id: ID!
   cluster_type: String!
+  isRemoved: Boolean!
 }
 
 type Workflow {
@@ -191,6 +192,7 @@ type Workflow {
   project_id: ID!
   cluster_id: ID!
   cluster_type: String!
+  isRemoved: Boolean!
   workflow_runs: [WorkflowRuns]
 }
 
