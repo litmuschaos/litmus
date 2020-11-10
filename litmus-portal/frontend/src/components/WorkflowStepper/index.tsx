@@ -8,7 +8,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import workflowsList from '../PredifinedWorkflows/data';
 import Unimodal from '../../containers/layouts/Unimodal';
 import { CREATE_WORKFLOW } from '../../graphql';
 import {
@@ -123,7 +122,6 @@ const CustomStepper = () => {
     (state: RootState) => state.workflowData
   );
   const {
-    id,
     yaml,
     weights,
     description,
@@ -154,14 +152,12 @@ const CustomStepper = () => {
 
   function EditYaml() {
     const oldParsedYaml = YAML.parse(yaml);
-    let NewLink: string = ' ';
+    const NewLink: string = ' ';
     let NewYaml: string = ' ';
     if (
       oldParsedYaml.kind === 'Workflow' &&
       scheduleType.scheduleOnce !== 'now'
     ) {
-      NewLink = workflowsList[parseInt(id, 10)].chaosWkfCRDLink_Recur as string;
-
       const oldParsedYaml = YAML.parse(yaml);
       const newParsedYaml = YAML.parse(scheduleMore);
       delete newParsedYaml.spec.workflowSpec;
@@ -185,8 +181,6 @@ const CustomStepper = () => {
       oldParsedYaml.kind === 'CronWorkflow' &&
       scheduleType.scheduleOnce === 'now'
     ) {
-      NewLink = workflowsList[parseInt(id, 10)].chaosWkfCRDLink as string;
-
       const oldParsedYaml = YAML.parse(yaml);
       const newParsedYaml = YAML.parse(scheduleOnce);
       delete newParsedYaml.spec;
