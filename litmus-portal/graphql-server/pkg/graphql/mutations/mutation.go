@@ -3,6 +3,7 @@ package mutations
 import (
 	"encoding/json"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -19,6 +20,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/subscriptions"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"github.com/pkg/errors"
+	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -217,11 +219,18 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		return nil, err
 	}
 
+	workflowNamespace := gjson.Get(newWorkflowManifest, "metadata.namespace").String()
+
+	if workflowNamespace == "" {
+		workflowNamespace = os.Getenv("AGENT_NAMESPACE")
+	}
+
 	subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
 		K8sManifest: newWorkflowManifest,
 		RequestType: "create",
 		ProjectID:   input.ProjectID,
 		ClusterID:   input.ClusterID,
+		Namespace:   workflowNamespace,
 	}, r)
 
 	return &model.ChaosWorkFlowResponse{
@@ -273,6 +282,7 @@ func DeleteCluster(cluster_id string, r store.StateData) (string, error) {
 			RequestType: "delete",
 			ProjectID:   cluster.ProjectID,
 			ClusterID:   cluster_id,
+			Namespace:   *cluster.AgentNamespace,
 		}, r)
 	}
 
@@ -307,11 +317,18 @@ func UpdateWorkflow(workflow *model.ChaosWorkFlowInput, r store.StateData) (*mod
 		return nil, err
 	}
 
+	workflowNamespace := gjson.Get(workflow.WorkflowManifest, "metadata.namespace").String()
+
+	if workflowNamespace == "" {
+		workflowNamespace = os.Getenv("AGENT_NAMESPACE")
+	}
+
 	subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
 		K8sManifest: newWorkflowManifest,
 		RequestType: "update",
 		ProjectID:   workflow.ProjectID,
 		ClusterID:   workflow.ClusterID,
+		Namespace:   workflowNamespace,
 	}, r)
 
 	return &model.ChaosWorkFlowResponse{
@@ -339,11 +356,18 @@ func DeleteWorkflow(workflow_id string, r store.StateData) (bool, error) {
 	}
 
 	for _, workflow := range workflows {
+		workflowNamespace := gjson.Get(workflow.WorkflowManifest, "metadata.namespace").String()
+
+		if workflowNamespace == "" {
+			workflowNamespace = os.Getenv("AGENT_NAMESPACE")
+		}
+
 		subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
 			K8sManifest: workflow.WorkflowManifest,
 			RequestType: "delete",
 			ProjectID:   workflow.ProjectID,
 			ClusterID:   workflow.ClusterID,
+			Namespace:   workflowNamespace,
 		}, r)
 	}
 

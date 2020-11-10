@@ -39,7 +39,6 @@ func SendWorkflowEvent(wfRun model.WorkflowRun, r store.StateData) {
 }
 
 func SendRequestToSubscriber(subscriberRequest graphql.SubscriberRequests, r store.StateData) {
-	namespace := os.Getenv("AGENT_NAMESPACE")
 	if os.Getenv("AGENT_SCOPE") == "cluster" {
 		/*
 			namespace = Obtain from WorkflowManifest or
@@ -51,7 +50,7 @@ func SendRequestToSubscriber(subscriberRequest graphql.SubscriberRequests, r sto
 		ProjectID: subscriberRequest.ProjectID,
 		Action: &model.ActionPayload{
 			K8sManifest: subscriberRequest.K8sManifest,
-			Namespace:   namespace,
+			Namespace:   subscriberRequest.Namespace,
 			RequestType: subscriberRequest.RequestType,
 		},
 	}
