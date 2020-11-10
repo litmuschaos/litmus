@@ -153,7 +153,6 @@ const CustomStepper = () => {
   function EditYaml() {
     const oldParsedYaml = YAML.parse(yaml);
     const NewLink: string = ' ';
-    let NewYaml: string = ' ';
     if (
       oldParsedYaml.kind === 'Workflow' &&
       scheduleType.scheduleOnce !== 'now'
@@ -165,13 +164,13 @@ const CustomStepper = () => {
       delete newParsedYaml.metadata.generateName;
       newParsedYaml.metadata.name = workflowData.name;
       newParsedYaml.spec.workflowSpec = oldParsedYaml.spec;
-      const tz = {
+      const timeZone = {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
       };
-      Object.entries(tz).forEach(([key, value]) => {
+      Object.entries(timeZone).forEach(([key, value]) => {
         newParsedYaml.spec[key] = value;
       });
-      NewYaml = YAML.stringify(newParsedYaml);
+      const NewYaml = YAML.stringify(newParsedYaml);
       workflow.setWorkflowDetails({
         link: NewLink,
         yaml: NewYaml,
@@ -187,7 +186,7 @@ const CustomStepper = () => {
       delete newParsedYaml.metadata.generateName;
       newParsedYaml.metadata.name = workflowData.name;
       newParsedYaml.spec = oldParsedYaml.spec.workflowSpec;
-      NewYaml = YAML.stringify(newParsedYaml);
+      const NewYaml = YAML.stringify(newParsedYaml);
       workflow.setWorkflowDetails({
         link: NewLink,
         yaml: NewYaml,
@@ -201,13 +200,13 @@ const CustomStepper = () => {
       newParsedYaml.spec.schedule = cronSyntax;
       delete newParsedYaml.metadata.generateName;
       newParsedYaml.metadata.name = workflowData.name;
-      const tz = {
+      const timeZone = {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
       };
-      Object.entries(tz).forEach(([key, value]) => {
+      Object.entries(timeZone).forEach(([key, value]) => {
         newParsedYaml.spec[key] = value;
       });
-      NewYaml = YAML.stringify(newParsedYaml);
+      const NewYaml = YAML.stringify(newParsedYaml);
       workflow.setWorkflowDetails({
         link: NewLink,
         yaml: NewYaml,
