@@ -6,4 +6,5 @@ type SubscriberRequests struct {
 	ExternalData *string `json:"external_data"`
 	ProjectID    string  `json:"project_id"`
 	ClusterID    string  `json:"cluster_id"`
+	Namespace    string  `json:"namespace"`
 }
