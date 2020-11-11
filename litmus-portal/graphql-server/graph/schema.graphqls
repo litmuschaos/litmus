@@ -229,7 +229,7 @@ type Query {
 
   getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
 
-  getHubStatus(username: String!): [MyHubStatus]! @authorized
+  getHubStatus(projectID: String!): [MyHubStatus]! @authorized
 
   getYAMLData(experimentInput: ExperimentInput!): String!
 }
@@ -265,7 +265,7 @@ type Mutation {
 
   podLog(log: PodLog!): String!
 
-  addMyHub(myhubInput: CreateMyHub!, username: String!): User! @authorized
+  addMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
   syncHub(syncHubInput: ChartsInput!): [MyHubStatus!]! @authorized
 

@@ -2,7 +2,7 @@ type MyHub {
   id: ID!
   RepoURL: String!
   RepoBranch: String!
-  IsConfirmed: Boolean!
+  ProjectID: String!
   HubName: String!
 }
 
@@ -90,7 +90,7 @@ input CreateMyHub {
 }
 
 input ExperimentInput {
-  UserName: String!
+  ProjectID: String!
   ChartName: String!
   ExperimentName: String!
   HubName: String!
@@ -99,7 +99,7 @@ input ExperimentInput {
 
 input ChartsInput {
   HubName: String!
-  UserName: String!
+  ProjectID: String!
   RepoBranch: String!
   RepoURL: String!
 }

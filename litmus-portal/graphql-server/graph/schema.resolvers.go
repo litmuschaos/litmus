@@ -77,8 +77,8 @@ func (r *mutationResolver) PodLog(ctx context.Context, log model.PodLog) (string
 	return mutations.LogsHandler(log, *store)
 }
 
-func (r *mutationResolver) AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, username string) (*model.User, error) {
-	return myhub.AddMyHub(ctx, myhubInput, username)
+func (r *mutationResolver) AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error) {
+	return myhub.AddMyHub(ctx, myhubInput, projectID)
 }
 
 func (r *mutationResolver) SyncHub(ctx context.Context, syncHubInput model.ChartsInput) ([]*model.MyHubStatus, error) {
@@ -133,8 +133,8 @@ func (r *queryResolver) GetHubExperiment(ctx context.Context, experimentInput mo
 	return myhub.GetExperiment(ctx, experimentInput)
 }
 
-func (r *queryResolver) GetHubStatus(ctx context.Context, username string) ([]*model.MyHubStatus, error) {
-	return myhub.HubStatus(ctx, username)
+func (r *queryResolver) GetHubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, error) {
+	return myhub.HubStatus(ctx, projectID)
 }
 
 func (r *queryResolver) GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {

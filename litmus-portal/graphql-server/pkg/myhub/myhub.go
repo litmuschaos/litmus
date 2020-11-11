@@ -3,6 +3,7 @@ package myhub
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"strconv"
 
@@ -15,9 +16,9 @@ import (
 )
 
 //AddMyHub is used for Adding a new MyHub
-func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*model.User, error) {
+func AddMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (*model.MyHub, error) {
 
-	IsExist, err := IsMyHubAvailable(ctx, myhub, username)
+	IsExist, err := IsMyHubAvailable(ctx, myhub.HubName, projectID)
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +27,7 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*m
 	}
 
 	cloneHub := model.ChartsInput{
-		UserName:   username,
+		ProjectID:  projectID,
 		RepoBranch: myhub.RepoBranch,
 		RepoURL:    myhub.RepoURL,
 		HubName:    myhub.HubName,
@@ -42,45 +43,39 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, username string) (*m
 	uuid := uuid.New()
 	newHub := &dbSchema.MyHub{
 		ID:         uuid.String(),
+		ProjectID:  projectID,
 		RepoURL:    myhub.RepoURL,
 		RepoBranch: myhub.RepoBranch,
 		HubName:    myhub.HubName,
 	}
 
 	//Adding the new hub into database with the given username.
-	err = database.AddNewMyHub(ctx, username, newHub)
+	err = database.CreateMyHub(ctx, newHub)
 	if err != nil {
 		log.Print("ERROR", err)
 		return nil, err
 	}
 
-	//Getting the updated user details from database for sending response back.
-	user, err := database.GetUserByUserName(ctx, username)
-	if err != nil {
-		return nil, err
-	}
-	outputUser := user.GetOutputUser()
-	return outputUser, nil
+	return newHub.GetOutputMyHub(), nil
 
 }
 
 //HubStatus returns the array of hubdetails with their current status.
-func HubStatus(ctx context.Context, username string) ([]*model.MyHubStatus, error) {
-	user, err := database.GetUserByUserName(ctx, username)
+func HubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, error) {
+
+	allHubs, err := database.GetMyHubByProjectID(ctx, projectID)
 	if err != nil {
 		return nil, err
 	}
-
-	userHubs := user.GetOutputUser().MyHub
-
+	fmt.Print(allHubs)
 	var hubDetails []*model.MyHubStatus
 	var hubDetail *model.MyHubStatus
 	var isConfirmed bool
-	for _, hub := range userHubs {
+	for _, hub := range allHubs {
 		sum := 0
 		chartsInput := model.ChartsInput{
 			HubName:    hub.HubName,
-			UserName:   username,
+			ProjectID:  hub.ProjectID,
 			RepoURL:    hub.RepoURL,
 			RepoBranch: hub.RepoBranch,
 		}
@@ -110,15 +105,14 @@ func HubStatus(ctx context.Context, username string) ([]*model.MyHubStatus, erro
 }
 
 //IsMyHubAvailable is used for checking if hub already exist or not
-func IsMyHubAvailable(ctx context.Context, myhub model.CreateMyHub, username string) (bool, error) {
-	user, err := database.GetUserByUserName(ctx, username)
+func IsMyHubAvailable(ctx context.Context, hubname string, projectID string) (bool, error) {
+	myhubs, err := database.GetMyHubByProjectID(ctx, projectID)
 	if err != nil {
 		return true, err
 	}
-	outputUser := user.GetOutputUser()
 
-	for _, n := range outputUser.MyHub {
-		if myhub.HubName == n.HubName {
+	for _, n := range myhubs {
+		if n.HubName == hubname {
 			return true, nil
 		}
 	}
@@ -162,7 +156,7 @@ func SyncHub(ctx context.Context, syncHubInput model.ChartsInput) ([]*model.MyHu
 	if err != nil {
 		return nil, err
 	}
-	return HubStatus(ctx, syncHubInput.UserName)
+	return HubStatus(ctx, syncHubInput.ProjectID)
 }
 
 // GetYAMLData is responsible for sending the experiment/engine.yaml for a given experiment.

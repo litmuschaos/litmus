@@ -87,30 +87,30 @@ const (
 
 //GetChartsPath is used to construct path for given chart.
 func GetChartsPath(ctx context.Context, chartsInput model.ChartsInput) string {
-	UserName := chartsInput.UserName
+	ProjectID := chartsInput.ProjectID
 	HubName := chartsInput.HubName
-	ChartsPath := defaultPath + UserName + "/" + HubName + "/charts/"
+	ChartsPath := defaultPath + ProjectID + "/" + HubName + "/charts/"
 	return ChartsPath
 }
 
 //GetExperimentChartsVersionYamlPath is used to construct path for given chartsversion.yaml.
 func GetExperimentChartsVersionYamlPath(ctx context.Context, experimentInput model.ExperimentInput) string {
-	UserName := experimentInput.UserName
+	ProjectID := experimentInput.ProjectID
 	HubName := experimentInput.HubName
 	experimentName := experimentInput.ExperimentName
 	chartName := experimentInput.ChartName
-	ExperimentPath := defaultPath + UserName + "/" + HubName + "/" + "/charts/" + chartName + "/" + experimentName + "/" + experimentName + ".chartserviceversion.yaml"
+	ExperimentPath := defaultPath + ProjectID + "/" + HubName + "/" + "/charts/" + chartName + "/" + experimentName + "/" + experimentName + ".chartserviceversion.yaml"
 	return ExperimentPath
 }
 
 //GetExperimentYAMLPath is used to construct path for given experiment/engine.
 func GetExperimentYAMLPath(ctx context.Context, experimentInput model.ExperimentInput) string {
-	UserName := experimentInput.UserName
+	ProjectID := experimentInput.ProjectID
 	HubName := experimentInput.HubName
 	experimentName := experimentInput.ExperimentName
 	chartName := experimentInput.ChartName
 	fileType := *experimentInput.FileType
-	ExperimentYAMLPath := defaultPath + UserName + "/" + HubName + "/" + "charts/" + chartName + "/" + experimentName + "/" + fileType + ".yaml"
+	ExperimentYAMLPath := defaultPath + ProjectID + "/" + HubName + "/" + "charts/" + chartName + "/" + experimentName + "/" + fileType + ".yaml"
 	return ExperimentYAMLPath
 }
 

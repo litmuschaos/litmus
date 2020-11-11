@@ -160,7 +160,7 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		AcceptInvitation    func(childComplexity int, member model.MemberInput) int
-		AddMyHub            func(childComplexity int, myhubInput model.CreateMyHub, username string) int
+		AddMyHub            func(childComplexity int, myhubInput model.CreateMyHub, projectID string) int
 		ChaosWorkflowRun    func(childComplexity int, workflowData model.WorkflowRunInput) int
 		ClusterConfirm      func(childComplexity int, identity model.ClusterIdentity) int
 		CreateChaosWorkFlow func(childComplexity int, input model.ChaosWorkFlowInput) int
@@ -179,11 +179,11 @@ type ComplexityRoot struct {
 	}
 
 	MyHub struct {
-		HubName     func(childComplexity int) int
-		ID          func(childComplexity int) int
-		IsConfirmed func(childComplexity int) int
-		RepoBranch  func(childComplexity int) int
-		RepoURL     func(childComplexity int) int
+		HubName    func(childComplexity int) int
+		ID         func(childComplexity int) int
+		ProjectID  func(childComplexity int) int
+		RepoBranch func(childComplexity int) int
+		RepoURL    func(childComplexity int) int
 	}
 
 	MyHubStatus struct {
@@ -225,7 +225,7 @@ type ComplexityRoot struct {
 		GetCharts             func(childComplexity int, chartsInput model.ChartsInput) int
 		GetCluster            func(childComplexity int, projectID string, clusterType *string) int
 		GetHubExperiment      func(childComplexity int, experimentInput model.ExperimentInput) int
-		GetHubStatus          func(childComplexity int, username string) int
+		GetHubStatus          func(childComplexity int, projectID string) int
 		GetProject            func(childComplexity int, projectID string) int
 		GetScheduledWorkflows func(childComplexity int, projectID string) int
 		GetUser               func(childComplexity int, username string) int
@@ -280,7 +280,6 @@ type ComplexityRoot struct {
 		Email           func(childComplexity int) int
 		ID              func(childComplexity int) int
 		IsEmailVerified func(childComplexity int) int
-		MyHub           func(childComplexity int) int
 		Name            func(childComplexity int) int
 		Projects        func(childComplexity int) int
 		RemovedAt       func(childComplexity int) int
@@ -352,7 +351,7 @@ type MutationResolver interface {
 	NewClusterEvent(ctx context.Context, clusterEvent model.ClusterEventInput) (string, error)
 	ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error)
 	PodLog(ctx context.Context, log model.PodLog) (string, error)
-	AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, username string) (*model.User, error)
+	AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error)
 	SyncHub(ctx context.Context, syncHubInput model.ChartsInput) ([]*model.MyHubStatus, error)
 	UpdateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error)
 	DeleteClusterReg(ctx context.Context, clusterID string) (string, error)
@@ -367,7 +366,7 @@ type QueryResolver interface {
 	ListWorkflow(ctx context.Context, projectID string, workflowIds []*string) ([]*model.Workflow, error)
 	GetCharts(ctx context.Context, chartsInput model.ChartsInput) ([]*model.Chart, error)
 	GetHubExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error)
-	GetHubStatus(ctx context.Context, username string) ([]*model.MyHubStatus, error)
+	GetHubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, error)
 	GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error)
 }
 type SubscriptionResolver interface {
@@ -897,7 +896,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AddMyHub(childComplexity, args["myhubInput"].(model.CreateMyHub), args["username"].(string)), true
+		return e.complexity.Mutation.AddMyHub(childComplexity, args["myhubInput"].(model.CreateMyHub), args["projectID"].(string)), true
 
 	case "Mutation.chaosWorkflowRun":
 		if e.complexity.Mutation.ChaosWorkflowRun == nil {
@@ -1093,12 +1092,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.MyHub.ID(childComplexity), true
 
-	case "MyHub.IsConfirmed":
-		if e.complexity.MyHub.IsConfirmed == nil {
+	case "MyHub.ProjectID":
+		if e.complexity.MyHub.ProjectID == nil {
 			break
 		}
 
-		return e.complexity.MyHub.IsConfirmed(childComplexity), true
+		return e.complexity.MyHub.ProjectID(childComplexity), true
 
 	case "MyHub.RepoBranch":
 		if e.complexity.MyHub.RepoBranch == nil {
@@ -1300,7 +1299,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetHubStatus(childComplexity, args["username"].(string)), true
+		return e.complexity.Query.GetHubStatus(childComplexity, args["projectID"].(string)), true
 
 	case "Query.getProject":
 		if e.complexity.Query.GetProject == nil {
@@ -1645,13 +1644,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.IsEmailVerified(childComplexity), true
-
-	case "User.my_hub":
-		if e.complexity.User.MyHub == nil {
-			break
-		}
-
-		return e.complexity.User.MyHub(childComplexity), true
 
 	case "User.name":
 		if e.complexity.User.Name == nil {
@@ -2011,7 +2003,7 @@ var sources = []*ast.Source{
   id: ID!
   RepoURL: String!
   RepoBranch: String!
-  IsConfirmed: Boolean!
+  ProjectID: String!
   HubName: String!
 }
 
@@ -2099,7 +2091,7 @@ input CreateMyHub {
 }
 
 input ExperimentInput {
-  UserName: String!
+  ProjectID: String!
   ChartName: String!
   ExperimentName: String!
   HubName: String!
@@ -2108,7 +2100,7 @@ input ExperimentInput {
 
 input ChartsInput {
   HubName: String!
-  UserName: String!
+  ProjectID: String!
   RepoBranch: String!
   RepoURL: String!
 }
@@ -2376,7 +2368,7 @@ type Query {
 
   getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
 
-  getHubStatus(username: String!): [MyHubStatus]! @authorized
+  getHubStatus(projectID: String!): [MyHubStatus]! @authorized
 
   getYAMLData(experimentInput: ExperimentInput!): String!
 }
@@ -2412,7 +2404,7 @@ type Mutation {
 
   podLog(log: PodLog!): String!
 
-  addMyHub(myhubInput: CreateMyHub!, username: String!): User! @authorized
+  addMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
   syncHub(syncHubInput: ChartsInput!): [MyHubStatus!]! @authorized
 
@@ -2439,7 +2431,6 @@ type Subscription {
   username: String!
   email: String
   is_email_verified: Boolean
-  my_hub: [MyHub!]!
   company_name: String
   name: String
   projects: [Project!]!
@@ -2498,13 +2489,13 @@ func (ec *executionContext) field_Mutation_addMyHub_args(ctx context.Context, ra
 	}
 	args["myhubInput"] = arg0
 	var arg1 string
-	if tmp, ok := rawArgs["username"]; ok {
+	if tmp, ok := rawArgs["projectID"]; ok {
 		arg1, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["username"] = arg1
+	args["projectID"] = arg1
 	return args, nil
 }
 
@@ -2808,13 +2799,13 @@ func (ec *executionContext) field_Query_getHubStatus_args(ctx context.Context, r
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["username"]; ok {
+	if tmp, ok := rawArgs["projectID"]; ok {
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["username"] = arg0
+	args["projectID"] = arg0
 	return args, nil
 }
 
@@ -6031,7 +6022,7 @@ func (ec *executionContext) _Mutation_addMyHub(ctx context.Context, field graphq
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().AddMyHub(rctx, args["myhubInput"].(model.CreateMyHub), args["username"].(string))
+			return ec.resolvers.Mutation().AddMyHub(rctx, args["myhubInput"].(model.CreateMyHub), args["projectID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -6047,10 +6038,10 @@ func (ec *executionContext) _Mutation_addMyHub(ctx context.Context, field graphq
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*model.User); ok {
+		if data, ok := tmp.(*model.MyHub); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.User`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.MyHub`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6062,9 +6053,9 @@ func (ec *executionContext) _Mutation_addMyHub(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.User)
+	res := resTmp.(*model.MyHub)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNMyHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHub(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_syncHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -6352,7 +6343,7 @@ func (ec *executionContext) _MyHub_RepoBranch(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _MyHub_IsConfirmed(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
+func (ec *executionContext) _MyHub_ProjectID(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -6369,7 +6360,7 @@ func (ec *executionContext) _MyHub_IsConfirmed(ctx context.Context, field graphq
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.IsConfirmed, nil
+		return obj.ProjectID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6381,9 +6372,9 @@ func (ec *executionContext) _MyHub_IsConfirmed(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.(bool)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _MyHub_HubName(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
@@ -7664,7 +7655,7 @@ func (ec *executionContext) _Query_getHubStatus(ctx context.Context, field graph
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetHubStatus(rctx, args["username"].(string))
+			return ec.resolvers.Query().GetHubStatus(rctx, args["projectID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -9083,40 +9074,6 @@ func (ec *executionContext) _User_is_email_verified(ctx context.Context, field g
 	res := resTmp.(*bool)
 	fc.Result = res
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _User_my_hub(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "User",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.MyHub, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.MyHub)
-	fc.Result = res
-	return ec.marshalNMyHub2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHubᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_company_name(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
@@ -11594,9 +11551,9 @@ func (ec *executionContext) unmarshalInputChartsInput(ctx context.Context, obj i
 			if err != nil {
 				return it, err
 			}
-		case "UserName":
+		case "ProjectID":
 			var err error
-			it.UserName, err = ec.unmarshalNString2string(ctx, v)
+			it.ProjectID, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -11852,9 +11809,9 @@ func (ec *executionContext) unmarshalInputExperimentInput(ctx context.Context, o
 
 	for k, v := range asMap {
 		switch k {
-		case "UserName":
+		case "ProjectID":
 			var err error
-			it.UserName, err = ec.unmarshalNString2string(ctx, v)
+			it.ProjectID, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -12899,8 +12856,8 @@ func (ec *executionContext) _MyHub(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "IsConfirmed":
-			out.Values[i] = ec._MyHub_IsConfirmed(ctx, field, obj)
+		case "ProjectID":
+			out.Values[i] = ec._MyHub_ProjectID(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -13533,11 +13490,6 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = ec._User_email(ctx, field, obj)
 		case "is_email_verified":
 			out.Values[i] = ec._User_is_email_verified(ctx, field, obj)
-		case "my_hub":
-			out.Values[i] = ec._User_my_hub(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "company_name":
 			out.Values[i] = ec._User_company_name(ctx, field, obj)
 		case "name":
@@ -14587,43 +14539,6 @@ func (ec *executionContext) marshalNMetadata2ᚖgithubᚗcomᚋlitmuschaosᚋlit
 
 func (ec *executionContext) marshalNMyHub2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHub(ctx context.Context, sel ast.SelectionSet, v model.MyHub) graphql.Marshaler {
 	return ec._MyHub(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNMyHub2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHubᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.MyHub) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNMyHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHub(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
 }
 
 func (ec *executionContext) marshalNMyHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHub(ctx context.Context, sel ast.SelectionSet, v *model.MyHub) graphql.Marshaler {

@@ -13,7 +13,7 @@ import (
 
 //GitConfig ...
 type GitConfig struct {
-	UserName      string
+	ProjectID     string
 	RepositoryURL string
 	RemoteName    string
 	LocalCommit   string
@@ -36,14 +36,14 @@ const (
 
 //GetClonePath is used to construct path for Repository.
 func GetClonePath(c GitConfig) string {
-	RepoPath := defaultPath + c.UserName + "/" + c.HubName
+	RepoPath := defaultPath + c.ProjectID + "/" + c.HubName
 	return RepoPath
 }
 
 //GitConfigConstruct is used for constructing the gitconfig
 func GitConfigConstruct(repoData model.ChartsInput) GitConfig {
 	gitConfig := GitConfig{
-		UserName:      repoData.UserName,
+		ProjectID:     repoData.ProjectID,
 		HubName:       repoData.HubName,
 		RepositoryURL: repoData.RepoURL,
 		RemoteName:    "origin",
