@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import Paper from '@material-ui/core/Paper';
-import Box from '@material-ui/core/Box';
-import Typography from '@material-ui/core/Typography';
 import { Avatar } from '@material-ui/core';
-import CheckCircleSharpIcon from '@material-ui/icons/CheckCircleSharp';
+import Box from '@material-ui/core/Box';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
 import CancelSharpIcon from '@material-ui/icons/CancelSharp';
+import CheckCircleSharpIcon from '@material-ui/icons/CheckCircleSharp';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
 
@@ -48,7 +48,7 @@ const PassedVsFailed: React.FC<PassedVsFailedProps> = ({ passed, failed }) => {
           <Box width={`${passedValue}%`} className={classes.passedBox}>
             {/* Render an empty div if props is not
             passed */}
-            {passedValue === 0 ? (
+            {passedValue < 11 ? (
               <div />
             ) : (
               <Avatar className={classes.passedIcon}>
@@ -59,7 +59,7 @@ const PassedVsFailed: React.FC<PassedVsFailedProps> = ({ passed, failed }) => {
           <Box width={`${failedValue}%`} className={classes.failedBox}>
             {/* Render an empty div if props is not
             passed */}
-            {failedValue === 0 ? (
+            {failedValue < 11 ? (
               <div />
             ) : (
               <Avatar className={classes.failedIcon}>
