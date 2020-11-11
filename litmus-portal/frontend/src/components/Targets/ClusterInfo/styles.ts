@@ -36,9 +36,7 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(5),
     marginLeft: theme.spacing(2),
   },
-  checkDelete: {
-    marginRight: theme.spacing(90),
-  },
+
   version: {
     marginTop: theme.spacing(2),
   },

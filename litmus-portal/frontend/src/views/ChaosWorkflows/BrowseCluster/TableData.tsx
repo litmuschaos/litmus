@@ -92,7 +92,13 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
         <div>
           {open ? (
             <div>
-              <Unimodal open={open} handleClose={() => {}} hasCloseBtn>
+              <Unimodal
+                open={open}
+                handleClose={() => {
+                  history.push('/targets');
+                }}
+                hasCloseBtn
+              >
                 <div className={classes.body}>
                   <img src="/icons/bin-red-delete.svg" alt="Delete" />
                   <div className={classes.text}>

@@ -131,7 +131,13 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
           <div>
             {open ? (
               <div>
-                <Unimodal open={open} handleClose={() => {}} hasCloseBtn>
+                <Unimodal
+                  open={open}
+                  handleClose={() => {
+                    history.push('/targets/cluster');
+                  }}
+                  hasCloseBtn
+                >
                   <div className={classes.body}>
                     <img src="/icons/bin-red-delete.svg" alt="Delete" />
                     <div className={classes.text}>
