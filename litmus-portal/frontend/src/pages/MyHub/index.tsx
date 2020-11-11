@@ -169,22 +169,24 @@ const MyHub = () => {
                             </Paper>
                           );
                         })}
-                      <Card
-                        elevation={3}
-                        className={classes.cardDiv}
-                        onClick={() => {
-                          history.push({ pathname: '/myhub/connect' });
-                        }}
-                      >
-                        <CardActionArea>
-                          <CardContent className={classes.cardContent}>
-                            <img src="/icons/add-hub.svg" alt="add-hub" />
-                            <Typography variant="h6" align="center">
-                              {t('myhub.mainPage.connectNewHub')}
-                            </Typography>
-                          </CardContent>
-                        </CardActionArea>
-                      </Card>
+                      {userData.userRole !== 'Viewer' ? (
+                        <Card
+                          elevation={3}
+                          className={classes.cardDiv}
+                          onClick={() => {
+                            history.push({ pathname: '/myhub/connect' });
+                          }}
+                        >
+                          <CardActionArea>
+                            <CardContent className={classes.cardContent}>
+                              <img src="/icons/add-hub.svg" alt="add-hub" />
+                              <Typography variant="h6" align="center">
+                                {t('myhub.mainPage.connectNewHub')}
+                              </Typography>
+                            </CardContent>
+                          </CardActionArea>
+                        </Card>
+                      ) : null}
                     </div>
                   </div>
                 </div>
