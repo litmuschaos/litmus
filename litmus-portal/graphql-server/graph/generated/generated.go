@@ -2364,7 +2364,7 @@ type Query {
 
   ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
 
-  getCharts(HubName: String!, projectID: ID!): [Chart!]! @authorized
+  getCharts(HubName: String!, projectID: String!): [Chart!]! @authorized
 
   getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
 
@@ -2767,7 +2767,7 @@ func (ec *executionContext) field_Query_getCharts_args(ctx context.Context, rawA
 	args["HubName"] = arg0
 	var arg1 string
 	if tmp, ok := rawArgs["projectID"]; ok {
-		arg1, err = ec.unmarshalNID2string(ctx, tmp)
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}

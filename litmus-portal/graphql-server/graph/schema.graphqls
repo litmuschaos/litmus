@@ -225,7 +225,7 @@ type Query {
 
   ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
 
-  getCharts(HubName: String!, projectID: ID!): [Chart!]! @authorized
+  getCharts(HubName: String!, projectID: String!): [Chart!]! @authorized
 
   getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
 
