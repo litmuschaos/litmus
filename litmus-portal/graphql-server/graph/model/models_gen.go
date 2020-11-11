@@ -57,7 +57,7 @@ type Charts struct {
 	Charts []*Chart `json:"Charts"`
 }
 
-type ChartsInput struct {
+type CloningInput struct {
 	HubName    string `json:"HubName"`
 	ProjectID  string `json:"ProjectID"`
 	RepoBranch string `json:"RepoBranch"`

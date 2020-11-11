@@ -86,7 +86,7 @@ const (
 )
 
 //GetChartsPath is used to construct path for given chart.
-func GetChartsPath(ctx context.Context, chartsInput model.ChartsInput) string {
+func GetChartsPath(ctx context.Context, chartsInput model.CloningInput) string {
 	ProjectID := chartsInput.ProjectID
 	HubName := chartsInput.HubName
 	ChartsPath := defaultPath + ProjectID + "/" + HubName + "/charts/"
@@ -99,7 +99,7 @@ func GetExperimentChartsVersionYamlPath(ctx context.Context, experimentInput mod
 	HubName := experimentInput.HubName
 	experimentName := experimentInput.ExperimentName
 	chartName := experimentInput.ChartName
-	ExperimentPath := defaultPath + ProjectID + "/" + HubName + "/" + "/charts/" + chartName + "/" + experimentName + "/" + experimentName + ".chartserviceversion.yaml"
+	ExperimentPath := defaultPath + ProjectID + "/" + HubName + "/charts/" + chartName + "/" + experimentName + "/" + experimentName + ".chartserviceversion.yaml"
 	return ExperimentPath
 }
 
@@ -110,7 +110,7 @@ func GetExperimentYAMLPath(ctx context.Context, experimentInput model.Experiment
 	experimentName := experimentInput.ExperimentName
 	chartName := experimentInput.ChartName
 	fileType := *experimentInput.FileType
-	ExperimentYAMLPath := defaultPath + ProjectID + "/" + HubName + "/" + "charts/" + chartName + "/" + experimentName + "/" + fileType + ".yaml"
+	ExperimentYAMLPath := defaultPath + ProjectID + "/" + HubName + "/charts/" + chartName + "/" + experimentName + "/" + fileType + ".yaml"
 	return ExperimentYAMLPath
 }
 

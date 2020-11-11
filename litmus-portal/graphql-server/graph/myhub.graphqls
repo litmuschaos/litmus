@@ -97,7 +97,7 @@ input ExperimentInput {
   FileType: String
 }
 
-input ChartsInput {
+input CloningInput {
   HubName: String!
   ProjectID: String!
   RepoBranch: String!

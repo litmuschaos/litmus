@@ -172,7 +172,7 @@ type ComplexityRoot struct {
 		PodLog              func(childComplexity int, log model.PodLog) int
 		RemoveInvitation    func(childComplexity int, member model.MemberInput) int
 		SendInvitation      func(childComplexity int, member model.MemberInput) int
-		SyncHub             func(childComplexity int, syncHubInput model.ChartsInput) int
+		SyncHub             func(childComplexity int, projectID string, hubName string) int
 		UpdateChaosWorkflow func(childComplexity int, input *model.ChaosWorkFlowInput) int
 		UpdateUser          func(childComplexity int, user model.UpdateUserInput) int
 		UserClusterReg      func(childComplexity int, clusterInput model.ClusterInput) int
@@ -222,7 +222,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		GetCharts             func(childComplexity int, chartsInput model.ChartsInput) int
+		GetCharts             func(childComplexity int, hubName string, projectID string) int
 		GetCluster            func(childComplexity int, projectID string, clusterType *string) int
 		GetHubExperiment      func(childComplexity int, experimentInput model.ExperimentInput) int
 		GetHubStatus          func(childComplexity int, projectID string) int
@@ -352,7 +352,7 @@ type MutationResolver interface {
 	ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error)
 	PodLog(ctx context.Context, log model.PodLog) (string, error)
 	AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error)
-	SyncHub(ctx context.Context, syncHubInput model.ChartsInput) ([]*model.MyHubStatus, error)
+	SyncHub(ctx context.Context, projectID string, hubName string) ([]*model.MyHubStatus, error)
 	UpdateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error)
 	DeleteClusterReg(ctx context.Context, clusterID string) (string, error)
 }
@@ -364,7 +364,7 @@ type QueryResolver interface {
 	Users(ctx context.Context) ([]*model.User, error)
 	GetScheduledWorkflows(ctx context.Context, projectID string) ([]*model.ScheduledWorkflows, error)
 	ListWorkflow(ctx context.Context, projectID string, workflowIds []*string) ([]*model.Workflow, error)
-	GetCharts(ctx context.Context, chartsInput model.ChartsInput) ([]*model.Chart, error)
+	GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error)
 	GetHubExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error)
 	GetHubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, error)
 	GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error)
@@ -1040,7 +1040,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.SyncHub(childComplexity, args["syncHubInput"].(model.ChartsInput)), true
+		return e.complexity.Mutation.SyncHub(childComplexity, args["projectID"].(string), args["HubName"].(string)), true
 
 	case "Mutation.updateChaosWorkflow":
 		if e.complexity.Mutation.UpdateChaosWorkflow == nil {
@@ -1263,7 +1263,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetCharts(childComplexity, args["chartsInput"].(model.ChartsInput)), true
+		return e.complexity.Query.GetCharts(childComplexity, args["HubName"].(string), args["projectID"].(string)), true
 
 	case "Query.getCluster":
 		if e.complexity.Query.GetCluster == nil {
@@ -2098,7 +2098,7 @@ input ExperimentInput {
   FileType: String
 }
 
-input ChartsInput {
+input CloningInput {
   HubName: String!
   ProjectID: String!
   RepoBranch: String!
@@ -2364,7 +2364,7 @@ type Query {
 
   ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
 
-  getCharts(chartsInput: ChartsInput!): [Chart!]! @authorized
+  getCharts(HubName: String!, projectID: ID!): [Chart!]! @authorized
 
   getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
 
@@ -2378,7 +2378,8 @@ type Mutation {
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
   #It is used to create chaosworkflow
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
+    @authorized
 
   createUser(user: CreateUserInput!): User! @authorized
 
@@ -2406,12 +2407,12 @@ type Mutation {
 
   addMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
-  syncHub(syncHubInput: ChartsInput!): [MyHubStatus!]! @authorized
+  syncHub(projectID: String!, HubName: String!): [MyHubStatus!]! @authorized
 
-  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse! @authorized
+  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
+    @authorized
 
   deleteClusterReg(cluster_id: String!): String! @authorized
-
 }
 
 type Subscription {
@@ -2656,14 +2657,22 @@ func (ec *executionContext) field_Mutation_sendInvitation_args(ctx context.Conte
 func (ec *executionContext) field_Mutation_syncHub_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.ChartsInput
-	if tmp, ok := rawArgs["syncHubInput"]; ok {
-		arg0, err = ec.unmarshalNChartsInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChartsInput(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["syncHubInput"] = arg0
+	args["projectID"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["HubName"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["HubName"] = arg1
 	return args, nil
 }
 
@@ -2748,14 +2757,22 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 func (ec *executionContext) field_Query_getCharts_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.ChartsInput
-	if tmp, ok := rawArgs["chartsInput"]; ok {
-		arg0, err = ec.unmarshalNChartsInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChartsInput(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["HubName"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["chartsInput"] = arg0
+	args["HubName"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg1, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg1
 	return args, nil
 }
 
@@ -6083,7 +6100,7 @@ func (ec *executionContext) _Mutation_syncHub(ctx context.Context, field graphql
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().SyncHub(rctx, args["syncHubInput"].(model.ChartsInput))
+			return ec.resolvers.Mutation().SyncHub(rctx, args["projectID"].(string), args["HubName"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -7533,7 +7550,7 @@ func (ec *executionContext) _Query_getCharts(ctx context.Context, field graphql.
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetCharts(rctx, args["chartsInput"].(model.ChartsInput))
+			return ec.resolvers.Query().GetCharts(rctx, args["HubName"].(string), args["projectID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -11539,8 +11556,8 @@ func (ec *executionContext) unmarshalInputChaosWorkFlowInput(ctx context.Context
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputChartsInput(ctx context.Context, obj interface{}) (model.ChartsInput, error) {
-	var it model.ChartsInput
+func (ec *executionContext) unmarshalInputCloningInput(ctx context.Context, obj interface{}) (model.CloningInput, error) {
+	var it model.CloningInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -14147,10 +14164,6 @@ func (ec *executionContext) marshalNChart2ᚖgithubᚗcomᚋlitmuschaosᚋlitmus
 		return graphql.Null
 	}
 	return ec._Chart(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNChartsInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChartsInput(ctx context.Context, v interface{}) (model.ChartsInput, error) {
-	return ec.unmarshalInputChartsInput(ctx, v)
 }
 
 func (ec *executionContext) marshalNCluster2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCluster(ctx context.Context, sel ast.SelectionSet, v model.Cluster) graphql.Marshaler {

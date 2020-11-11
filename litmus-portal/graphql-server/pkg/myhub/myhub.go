@@ -26,7 +26,7 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (*
 		return nil, errors.New("HubName Already exists")
 	}
 
-	cloneHub := model.ChartsInput{
+	cloneHub := model.CloningInput{
 		ProjectID:  projectID,
 		RepoBranch: myhub.RepoBranch,
 		RepoURL:    myhub.RepoURL,
@@ -73,7 +73,7 @@ func HubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, err
 	var isConfirmed bool
 	for _, hub := range allHubs {
 		sum := 0
-		chartsInput := model.ChartsInput{
+		chartsInput := model.CloningInput{
 			HubName:    hub.HubName,
 			ProjectID:  hub.ProjectID,
 			RepoURL:    hub.RepoURL,
@@ -120,7 +120,20 @@ func IsMyHubAvailable(ctx context.Context, hubname string, projectID string) (bo
 }
 
 //GetCharts is responsible for getting the charts details
-func GetCharts(ctx context.Context, chartsInput model.ChartsInput) ([]*model.Chart, error) {
+func GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error) {
+
+	chartsInput := model.CloningInput{}
+	myhubs, err := database.GetMyHubByProjectID(ctx, projectID)
+	for _, n := range myhubs {
+		if n.HubName == hubName {
+			chartsInput = model.CloningInput{
+				HubName:    hubName,
+				ProjectID:  projectID,
+				RepoURL:    n.RepoURL,
+				RepoBranch: n.RepoBranch,
+			}
+		}
+	}
 
 	ChartsPath := handler.GetChartsPath(ctx, chartsInput)
 	ChartsData, err := handler.GetChartsData(ChartsPath)
@@ -151,8 +164,20 @@ func GetExperiment(ctx context.Context, experimentInput model.ExperimentInput) (
 }
 
 //SyncHub is used for syncing the hub again if some not present or some error happens.
-func SyncHub(ctx context.Context, syncHubInput model.ChartsInput) ([]*model.MyHubStatus, error) {
-	err := gitops.GitSyncHandlerForUser(syncHubInput)
+func SyncHub(ctx context.Context, projectID string, hubName string) ([]*model.MyHubStatus, error) {
+	syncHubInput := model.CloningInput{}
+	myhubs, err := database.GetMyHubByProjectID(ctx, projectID)
+	for _, n := range myhubs {
+		if n.HubName == hubName {
+			syncHubInput = model.CloningInput{
+				HubName:    hubName,
+				ProjectID:  projectID,
+				RepoURL:    n.RepoURL,
+				RepoBranch: n.RepoBranch,
+			}
+		}
+	}
+	err = gitops.GitSyncHandlerForProjects(syncHubInput)
 	if err != nil {
 		return nil, err
 	}
@@ -167,4 +192,20 @@ func GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (st
 		return "", err
 	}
 	return YAMLData, nil
+}
+
+//GetAllHubs ...
+func GetAllHubs(ctx context.Context) ([]*model.MyHub, error) {
+
+	myhubs, err := database.GetHubs(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var outputMyHubs []*model.MyHub
+	for _, myhub := range myhubs {
+		outputMyHubs = append(outputMyHubs, myhub.GetOutputMyHub())
+	}
+
+	return outputMyHubs, nil
 }

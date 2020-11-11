@@ -225,7 +225,7 @@ type Query {
 
   ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
 
-  getCharts(chartsInput: ChartsInput!): [Chart!]! @authorized
+  getCharts(HubName: String!, projectID: ID!): [Chart!]! @authorized
 
   getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
 
@@ -239,7 +239,8 @@ type Mutation {
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
   #It is used to create chaosworkflow
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
+    @authorized
 
   createUser(user: CreateUserInput!): User! @authorized
 
@@ -267,12 +268,12 @@ type Mutation {
 
   addMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
-  syncHub(syncHubInput: ChartsInput!): [MyHubStatus!]! @authorized
+  syncHub(projectID: String!, HubName: String!): [MyHubStatus!]! @authorized
 
-  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse! @authorized
+  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
+    @authorized
 
   deleteClusterReg(cluster_id: String!): String! @authorized
-
 }
 
 type Subscription {

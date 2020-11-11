@@ -41,7 +41,7 @@ func GetClonePath(c GitConfig) string {
 }
 
 //GitConfigConstruct is used for constructing the gitconfig
-func GitConfigConstruct(repoData model.ChartsInput) GitConfig {
+func GitConfigConstruct(repoData model.CloningInput) GitConfig {
 	gitConfig := GitConfig{
 		ProjectID:     repoData.ProjectID,
 		HubName:       repoData.HubName,
@@ -54,7 +54,7 @@ func GitConfigConstruct(repoData model.ChartsInput) GitConfig {
 }
 
 //GitClone Trigger is reponsible for setting off the go routine for git-op
-func GitClone(repoData model.ChartsInput) error {
+func GitClone(repoData model.CloningInput) error {
 	gitConfig := GitConfigConstruct(repoData)
 	_, err := gitConfig.getChaosChartRepo()
 	if err != nil {
@@ -65,8 +65,8 @@ func GitClone(repoData model.ChartsInput) error {
 	return nil
 }
 
-//GitSyncHandlerForUser ...
-func GitSyncHandlerForUser(repoData model.ChartsInput) error {
+//GitSyncHandlerForProjects ...
+func GitSyncHandlerForProjects(repoData model.CloningInput) error {
 
 	gitConfig := GitConfigConstruct(repoData)
 	if err := gitConfig.chaosChartSyncHandler(); err != nil {
