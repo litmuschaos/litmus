@@ -3,7 +3,6 @@ package myhub
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log"
 	"strconv"
 
@@ -67,7 +66,6 @@ func HubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, err
 	if err != nil {
 		return nil, err
 	}
-	fmt.Print(allHubs)
 	var hubDetails []*model.MyHubStatus
 	var hubDetail *model.MyHubStatus
 	var isConfirmed bool
