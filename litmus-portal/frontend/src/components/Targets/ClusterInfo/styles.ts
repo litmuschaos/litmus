@@ -53,9 +53,9 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: theme.spacing(9),
     display: 'flex',
     flexDirection: 'row',
+    width: '100%',
     wordWrap: 'break-word',
     justifyContent: 'space-between',
-    gap: '1rem',
   },
   status: {
     display: 'flex',

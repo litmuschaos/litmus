@@ -57,31 +57,33 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
             {/* name */}
             <div className={classes.firstCol}>
               <div className={classes.linkBox}>
-                <div>
-                  <Typography variant="h6">
-                    <strong>{t('targets.newTarget.clusterDetails')}</strong>
-                  </Typography>
-                </div>
-                <div className={classes.checkDelete}>
-                  {data.is_active ? (
-                    <Typography
-                      className={`${classes.check} ${classes.active}`}
-                    >
-                      {t('workflowCluster.header.formControl.menu1')}
+                <div className={classes.status}>
+                  <div>
+                    <Typography variant="h6">
+                      <strong>{t('targets.newTarget.clusterDetails')}</strong>
                     </Typography>
-                  ) : data.is_cluster_confirmed === false ? (
-                    <Typography
-                      className={`${classes.check} ${classes.pending}`}
-                    >
-                      {t('workflowCluster.header.formControl.menu6')}
-                    </Typography>
-                  ) : (
-                    <Typography
-                      className={`${classes.check} ${classes.notactive}`}
-                    >
-                      {t('workflowCluster.header.formControl.menu2')}
-                    </Typography>
-                  )}
+                  </div>
+                  <div>
+                    {data.is_active ? (
+                      <Typography
+                        className={`${classes.check} ${classes.active}`}
+                      >
+                        {t('workflowCluster.header.formControl.menu1')}
+                      </Typography>
+                    ) : data.is_cluster_confirmed === false ? (
+                      <Typography
+                        className={`${classes.check} ${classes.pending}`}
+                      >
+                        {t('workflowCluster.header.formControl.menu6')}
+                      </Typography>
+                    ) : (
+                      <Typography
+                        className={`${classes.check} ${classes.notactive}`}
+                      >
+                        {t('workflowCluster.header.formControl.menu2')}
+                      </Typography>
+                    )}
+                  </div>
                 </div>
                 <div className={classes.buttonBox}>
                   <ButtonOutline
