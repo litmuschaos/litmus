@@ -68,7 +68,7 @@ const ConnectTarget = () => {
       project_id: selectedProjectID,
       cluster_type: 'external',
       agent_scope: 'cluster',
-      agent_namespace: 'litmus',
+      agent_namespace: '',
       serviceaccount: '',
       agent_sa_exists: false,
       agent_ns_exists: false,
