@@ -28,7 +28,7 @@ const MyHub = () => {
 
   // Get MyHubs with Status
   const { data, loading, refetch } = useQuery<HubStatus>(GET_HUB_STATUS, {
-    variables: { data: userData.selectedProjectOwner },
+    variables: { data: userData.selectedProjectID },
     fetchPolicy: 'cache-and-network',
   });
 

@@ -94,7 +94,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         parameters: [
           {
             name: 'adminModeNamespace',
-            value: 'litmus',
+            value: `${workflowDetails.namespace}`,
           },
         ],
       },

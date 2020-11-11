@@ -46,6 +46,7 @@ const PredifinedWorkflows: React.FC<PredifinedWorkflowsProps> = ({
             )}`,
             description: 'Custom Chaos Workflow',
             isCustomWorkflow: true,
+            namespace: 'litmus',
             customWorkflows: [],
           });
           history.push('/create-workflow/custom');

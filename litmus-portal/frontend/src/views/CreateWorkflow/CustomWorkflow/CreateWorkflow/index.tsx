@@ -40,6 +40,7 @@ import { history } from '../../../../redux/configureStore';
 interface WorkflowDetails {
   workflow_name: string;
   workflow_desc: string;
+  namespace: string;
 }
 
 interface ChartName {
@@ -55,13 +56,14 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const workflowDetails = useSelector((state: RootState) => state.workflowData);
   const workflowAction = useActions(WorkflowActions);
 
-  const { selectedProjectOwner } = useSelector(
+  const { selectedProjectID } = useSelector(
     (state: RootState) => state.userData
   );
 
   const [workflowData, setWorkflowData] = useState<WorkflowDetails>({
     workflow_name: workflowDetails.name,
     workflow_desc: workflowDetails.description,
+    namespace: workflowDetails.namespace,
   });
 
   const { t } = useTranslation();
@@ -81,7 +83,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const [getExperimentYaml] = useLazyQuery(GET_EXPERIMENT_YAML, {
     variables: {
       experimentInput: {
-        UserName: selectedProjectOwner, // It should be name of project owner
+        ProjectID: selectedProjectID,
         HubName: selectedHub,
         ChartName: selectedExp.split('/')[0],
         ExperimentName: selectedExp.split('/')[1],
@@ -122,19 +124,15 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
 
   // Get all MyHubs with status
   const { data } = useQuery<HubStatus>(GET_HUB_STATUS, {
-    variables: { data: selectedProjectOwner },
+    variables: { data: selectedProjectID },
     fetchPolicy: 'cache-and-network',
     onCompleted: (data) => {
       setSelectedHub(data.getHubStatus[0].HubName);
       setAvailableHubs([...data.getHubStatus]);
       getCharts({
         variables: {
-          data: {
-            UserName: selectedProjectOwner,
-            RepoURL: data.getHubStatus[0].RepoURL,
-            RepoBranch: data.getHubStatus[0].RepoBranch,
-            HubName: data.getHubStatus[0].HubName,
-          },
+          projectID: selectedProjectID,
+          HubName: data.getHubStatus[0].HubName,
         },
       });
       setSelectedHubDetails(data.getHubStatus[0]);
@@ -148,12 +146,8 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     })[0];
     getCharts({
       variables: {
-        data: {
-          UserName: selectedProjectOwner,
-          RepoURL: myHubData?.RepoURL,
-          RepoBranch: myHubData?.RepoBranch,
-          HubName: hubname,
-        },
+        projectID: selectedProjectID,
+        HubName: hubname,
       },
     });
     setSelectedHubDetails(myHubData);
@@ -250,6 +244,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 setWorkflowData({
                   workflow_name: e.target.value,
                   workflow_desc: workflowData.workflow_desc,
+                  namespace: workflowData.namespace,
                 });
               }}
               value={workflowData.workflow_name}
@@ -272,6 +267,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 setWorkflowData({
                   workflow_name: workflowData.workflow_name,
                   workflow_desc: e.target.value,
+                  namespace: workflowData.namespace,
                 });
               }}
               value={workflowData.workflow_desc}
@@ -324,9 +320,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                         value={selectedHub}
                         onChange={(e) => {
                           setSelectedHub(e.target.value as string);
-                          if (e.target.value !== 'Public Hub') {
-                            findChart(e.target.value as string);
-                          }
+                          findChart(e.target.value as string);
                         }}
                         label="Cluster Status"
                         MenuProps={MenuProps}
@@ -431,8 +425,38 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                       </FormControl>
                     )}
                   </div>
+                  <div className={classes.inputDiv}>
+                    <Typography variant="h6" className={classes.titleText}>
+                      {t('customWorkflow.createWorkflow.chooseNamespace')}
+                    </Typography>
+                    <FormControl
+                      variant="outlined"
+                      color="secondary"
+                      focused
+                      component="button"
+                      className={classes.formControlExp}
+                    >
+                      <InputLabel className={classes.selectText1}>
+                        {t('customWorkflow.createWorkflow.chooseNamespace')}
+                      </InputLabel>
+
+                      <OutlinedInput
+                        value={workflowData.namespace}
+                        onChange={(e) => {
+                          setWorkflowData({
+                            workflow_name: workflowData.workflow_name,
+                            workflow_desc: workflowData.workflow_desc,
+                            namespace: e.target.value,
+                          });
+                        }}
+                        className={classes.inputExpDiv}
+                        labelWidth={130}
+                      />
+                    </FormControl>
+                  </div>
                 </>
               ) : null}
+
               <FormControlLabel
                 value="upload"
                 control={<Radio />}
@@ -511,6 +535,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             workflowAction.setWorkflowDetails({
               name: workflowData.workflow_name,
               description: workflowData.workflow_desc,
+              namespace: workflowData.namespace,
               customWorkflow: {
                 ...workflowDetails.customWorkflow,
                 hubName: selectedHub,
@@ -526,7 +551,8 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
           isDisabled={
             constructYAML === 'construct' &&
             (selectedExp === 'Select an experiment' ||
-              filteredExperiment.length !== 1)
+              filteredExperiment.length !== 1 ||
+              workflowData.namespace.trim() === '')
               ? true
               : !!(constructYAML === 'upload' && uploadedYAML === '')
           }

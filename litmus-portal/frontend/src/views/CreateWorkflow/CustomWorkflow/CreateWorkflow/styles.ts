@@ -75,6 +75,8 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '15.625rem',
     maxHeight: '9.375rem',
     overflow: 'auto',
+    zIndex: 2,
+    backgroundColor: theme.palette.common.white,
   },
   configureYAML: {
     marginTop: theme.spacing(2.5),

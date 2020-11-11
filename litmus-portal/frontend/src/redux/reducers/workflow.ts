@@ -14,6 +14,7 @@ const initialState: WorkflowData = {
   description: '',
   weights: [],
   isCustomWorkflow: false,
+  namespace: 'litmus',
   clusterid: '',
   cronSyntax: '',
   scheduleType: {
