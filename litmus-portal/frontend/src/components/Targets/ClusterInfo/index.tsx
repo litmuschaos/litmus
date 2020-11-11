@@ -134,7 +134,7 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
                 <Unimodal
                   open={open}
                   handleClose={() => {
-                    history.push('/targets/cluster');
+                    setOpen(false);
                   }}
                   hasCloseBtn
                 >

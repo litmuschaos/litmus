@@ -95,7 +95,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
               <Unimodal
                 open={open}
                 handleClose={() => {
-                  history.push('/targets');
+                  setOpen(false);
                 }}
                 hasCloseBtn
               >
