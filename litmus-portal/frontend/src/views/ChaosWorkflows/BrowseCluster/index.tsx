@@ -82,7 +82,7 @@ const BrowseCluster = () => {
   );
 
   // Apollo mutation to delete the selected Target Cluster
-  const [deleteCluster] = useMutation<DeleteCluster>(DELETE_CLUSTER, {});
+  const [deleteCluster] = useMutation<DeleteCluster>(DELETE_CLUSTER);
 
   const [dateRange, setDateRange] = React.useState<DateData>({
     dateValue: 'Select a period',

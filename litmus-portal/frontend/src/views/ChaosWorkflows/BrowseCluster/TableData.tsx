@@ -119,7 +119,6 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                     <ButtonFilled
                       isDisabled={false}
                       isPrimary
-                      // styles={classes.error}
                       handleClick={handleClose}
                     >
                       <>{t('targets.modalDelete.yes')}</>

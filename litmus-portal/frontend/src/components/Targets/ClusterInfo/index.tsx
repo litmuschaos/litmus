@@ -11,7 +11,6 @@ import TargetCopy from '../TargetCopy';
 import { Cluster, DeleteCluster } from '../../../models/graphql/clusterData';
 import { LocationState } from '../../../models/routerModel';
 import { DELETE_CLUSTER } from '../../../graphql';
-
 import Unimodal from '../../../containers/layouts/Unimodal';
 import ButtonFilled from '../../Button/ButtonFilled';
 import BackButton from '../../Button/BackButton';
@@ -28,7 +27,7 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
   const classes = useStyles();
   const link: string = data.token;
 
-  const [deleteCluster] = useMutation<DeleteCluster>(DELETE_CLUSTER, {});
+  const [deleteCluster] = useMutation<DeleteCluster>(DELETE_CLUSTER);
   const [open, setOpen] = React.useState(false);
 
   const handleDelete = () => {
@@ -157,7 +156,6 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
                       <ButtonFilled
                         isDisabled={false}
                         isPrimary
-                        // styles={classes.error}
                         handleClick={handleDelete}
                       >
                         <>{t('targets.modalDelete.yes')}</>
