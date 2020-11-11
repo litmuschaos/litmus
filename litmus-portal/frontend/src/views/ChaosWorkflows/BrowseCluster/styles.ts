@@ -213,10 +213,9 @@ const useStyles = makeStyles((theme) => ({
   // for yes or no buttons
   buttonGroup: {
     display: 'flex',
-    width: '10.75rem',
-    height: '2.75rem',
     marginTop: theme.spacing(2.5),
     justifyContent: 'space-between',
+    gap: '1rem',
   },
   // delete user
   delDiv: {
