@@ -1,8 +1,9 @@
 package store
 
 import (
-	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/errors"
 	"time"
+	"errors"
+	
 	log "github.com/golang/glog"
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
