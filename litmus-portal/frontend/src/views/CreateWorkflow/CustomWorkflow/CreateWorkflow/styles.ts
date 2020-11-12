@@ -65,6 +65,7 @@ const useStyles = makeStyles((theme) => ({
     height: '2.5rem',
     minWidth: '9rem',
     backgroundColor: theme.palette.common.white,
+    outline: 'none',
   },
   inputExpDiv: {
     height: '2.5rem',
