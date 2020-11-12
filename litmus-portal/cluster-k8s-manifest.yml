@@ -14,6 +14,8 @@ data:
   AgentNamespace: litmus
   DataBaseServer: "mongodb://mongo-service:27017"
   JWTSecret: "litmus-portal@123"
+  DB_USER: "admin"
+  DB_PASSWORD: "1234"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -113,7 +115,7 @@ spec:
     spec:
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:ci
+          image: imrajdas/graphql-server:ci
           env:
             - name: DB_SERVER
               valueFrom:
@@ -141,6 +143,16 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: DB_PASSWORD
             - name: PORTAL_SCOPE
               value: "cluster"
             - name: SUBSCRIBER_IMAGE
@@ -159,7 +171,7 @@ spec:
             - containerPort: 8080
           imagePullPolicy: Always
         - name: auth-server
-          image: litmuschaos/litmusportal-auth-server:ci
+          image: imrajdas/auth-server:ci
           env:
             - name: DB_SERVER
               valueFrom:
@@ -171,6 +183,16 @@ spec:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
                   key: JWTSecret
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: DB_PASSWORD
             - name: ADMIN_USERNAME
               value: "admin"
             - name: ADMIN_PASSWORD
@@ -223,6 +245,17 @@ spec:
           volumeMounts:
             - name: mongo-persistent-storage
               mountPath: /data/db
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: DB_USER
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: DB_PASSWORD
       volumes:
         - name: mongo-persistent-storage
           persistentVolumeClaim:
