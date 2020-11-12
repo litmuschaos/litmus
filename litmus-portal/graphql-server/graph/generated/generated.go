@@ -179,11 +179,13 @@ type ComplexityRoot struct {
 	}
 
 	MyHub struct {
+		CreatedAt  func(childComplexity int) int
 		HubName    func(childComplexity int) int
 		ID         func(childComplexity int) int
 		ProjectID  func(childComplexity int) int
 		RepoBranch func(childComplexity int) int
 		RepoURL    func(childComplexity int) int
+		UpdatedAt  func(childComplexity int) int
 	}
 
 	MyHubStatus struct {
@@ -1078,6 +1080,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UserClusterReg(childComplexity, args["clusterInput"].(model.ClusterInput)), true
 
+	case "MyHub.CreatedAt":
+		if e.complexity.MyHub.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.MyHub.CreatedAt(childComplexity), true
+
 	case "MyHub.HubName":
 		if e.complexity.MyHub.HubName == nil {
 			break
@@ -1112,6 +1121,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.MyHub.RepoURL(childComplexity), true
+
+	case "MyHub.UpdatedAt":
+		if e.complexity.MyHub.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.MyHub.UpdatedAt(childComplexity), true
 
 	case "MyHubStatus.HubName":
 		if e.complexity.MyHubStatus.HubName == nil {
@@ -2005,6 +2021,8 @@ var sources = []*ast.Source{
   RepoBranch: String!
   ProjectID: String!
   HubName: String!
+  CreatedAt: String!
+  UpdatedAt: String!
 }
 
 type Charts {
@@ -6412,6 +6430,74 @@ func (ec *executionContext) _MyHub_HubName(ctx context.Context, field graphql.Co
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.HubName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MyHub_CreatedAt(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "MyHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MyHub_UpdatedAt(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "MyHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12880,6 +12966,16 @@ func (ec *executionContext) _MyHub(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "HubName":
 			out.Values[i] = ec._MyHub_HubName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "CreatedAt":
+			out.Values[i] = ec._MyHub_CreatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "UpdatedAt":
+			out.Values[i] = ec._MyHub_UpdatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

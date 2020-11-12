@@ -202,6 +202,8 @@ type MyHub struct {
 	RepoBranch string `json:"RepoBranch"`
 	ProjectID  string `json:"ProjectID"`
 	HubName    string `json:"HubName"`
+	CreatedAt  string `json:"CreatedAt"`
+	UpdatedAt  string `json:"UpdatedAt"`
 }
 
 type MyHubStatus struct {

@@ -9,6 +9,8 @@ type MyHub struct {
 	RepoURL    string `bson:"repo_url"`
 	RepoBranch string `bson:"repo_branch"`
 	HubName    string `bson:"hub_name"`
+	CreatedAt  string `bson:"created_at"`
+	UpdatedAt  string `bson:"updated_at"`
 }
 
 //GetOutputMyHub ...
@@ -20,5 +22,7 @@ func (myhub *MyHub) GetOutputMyHub() *model.MyHub {
 		RepoURL:    myhub.RepoURL,
 		RepoBranch: myhub.RepoBranch,
 		HubName:    myhub.HubName,
+		CreatedAt:  myhub.CreatedAt,
+		UpdatedAt:  myhub.UpdatedAt,
 	}
 }

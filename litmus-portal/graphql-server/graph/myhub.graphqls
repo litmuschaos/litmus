@@ -4,6 +4,8 @@ type MyHub {
   RepoBranch: String!
   ProjectID: String!
   HubName: String!
+  CreatedAt: String!
+  UpdatedAt: String!
 }
 
 type Charts {

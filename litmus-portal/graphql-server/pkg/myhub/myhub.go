@@ -3,15 +3,15 @@ package myhub
 import (
 	"context"
 	"errors"
-	"log"
-	"strconv"
-
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
 	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/gitops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/handler"
+	"log"
+	"strconv"
+	"time"
 )
 
 //AddMyHub is used for Adding a new MyHub
@@ -46,6 +46,8 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (*
 		RepoURL:    myhub.RepoURL,
 		RepoBranch: myhub.RepoBranch,
 		HubName:    myhub.HubName,
+		CreatedAt:  strconv.FormatInt(time.Now().Unix(), 10),
+		UpdatedAt:  strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
 	//Adding the new hub into database with the given username.
