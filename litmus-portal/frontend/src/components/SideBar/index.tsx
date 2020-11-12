@@ -141,6 +141,16 @@ const SideBar: React.FC = () => {
           </CustomisedListItem>
         )}
       </List>
+      <div className={classes.versionDiv}>
+        <img
+          src="/icons/litmusPurple.svg"
+          alt="litmus logo"
+          className={classes.versionlogo}
+        />
+        <Typography className={classes.versionText}>
+          {t('sidebar.version')}
+        </Typography>
+      </div>
     </Drawer>
   );
 };
