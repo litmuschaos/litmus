@@ -20,3 +20,4 @@ Please send PRs to add or remove organizations/users.
 | [Jayesh Kumar Tank](https://github.com/k8s-dev)|Create Cloud Native Validation Suite on [Microservices Application](https://github.com/k8s-dev/microservices-demo)|[My Story](adopters/users/Jayesh_Kumar_Tank.md)|
 | [Bhaumik Shah](https://github.com/Bhaumik1802)|Use LitmusChaos for Kafka Resiliency on Dev/Staging|[My Story](adopters/users/Bhaumik_Shah.md)|
 | [Jayadeep KM](https://github.com/kmjayadeep)|Ensure reliability of microservices|[My Story](adopters/users/Jayadeep_KM.md)|
+| [Shantanu Deshpande](https://github.com/ishantanu)|Chaos Engineering Practice as SRE|[My Story](adopters/users/Shantanu_Deshpande.md)|
