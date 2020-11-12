@@ -74,7 +74,6 @@ const BrowseCluster = () => {
     {
       variables: {
         project_id: selectedProjectID,
-        cluster_type: 'external',
       },
       fetchPolicy: 'cache-and-network',
       pollInterval: 3000,
