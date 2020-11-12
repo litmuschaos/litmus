@@ -18,6 +18,7 @@ export interface ScheduleWorkflow {
   cluster_name: string;
   cluster_type: string;
   regularity?: string;
+  isRemoved: boolean;
 }
 
 export interface Schedules {

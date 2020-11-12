@@ -35,6 +35,7 @@ export const SCHEDULE_DETAILS = gql`
       cluster_id
       cluster_type
       cluster_name
+      isRemoved
     }
   }
 `;
