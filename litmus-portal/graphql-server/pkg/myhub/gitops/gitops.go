@@ -13,7 +13,7 @@ import (
 
 //GitConfig ...
 type GitConfig struct {
-	UserName      string
+	ProjectID     string
 	RepositoryURL string
 	RemoteName    string
 	LocalCommit   string
@@ -36,14 +36,14 @@ const (
 
 //GetClonePath is used to construct path for Repository.
 func GetClonePath(c GitConfig) string {
-	RepoPath := defaultPath + c.UserName + "/" + c.HubName
+	RepoPath := defaultPath + c.ProjectID + "/" + c.HubName
 	return RepoPath
 }
 
 //GitConfigConstruct is used for constructing the gitconfig
-func GitConfigConstruct(repoData model.ChartsInput) GitConfig {
+func GitConfigConstruct(repoData model.CloningInput) GitConfig {
 	gitConfig := GitConfig{
-		UserName:      repoData.UserName,
+		ProjectID:     repoData.ProjectID,
 		HubName:       repoData.HubName,
 		RepositoryURL: repoData.RepoURL,
 		RemoteName:    "origin",
@@ -54,7 +54,7 @@ func GitConfigConstruct(repoData model.ChartsInput) GitConfig {
 }
 
 //GitClone Trigger is reponsible for setting off the go routine for git-op
-func GitClone(repoData model.ChartsInput) error {
+func GitClone(repoData model.CloningInput) error {
 	gitConfig := GitConfigConstruct(repoData)
 	_, err := gitConfig.getChaosChartRepo()
 	if err != nil {
@@ -65,8 +65,8 @@ func GitClone(repoData model.ChartsInput) error {
 	return nil
 }
 
-//GitSyncHandlerForUser ...
-func GitSyncHandlerForUser(repoData model.ChartsInput) error {
+//GitSyncHandlerForProjects ...
+func GitSyncHandlerForProjects(repoData model.CloningInput) error {
 
 	gitConfig := GitConfigConstruct(repoData)
 	if err := gitConfig.chaosChartSyncHandler(); err != nil {

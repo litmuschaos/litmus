@@ -77,12 +77,12 @@ func (r *mutationResolver) PodLog(ctx context.Context, log model.PodLog) (string
 	return mutations.LogsHandler(log, *store)
 }
 
-func (r *mutationResolver) AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, username string) (*model.User, error) {
-	return myhub.AddMyHub(ctx, myhubInput, username)
+func (r *mutationResolver) AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error) {
+	return myhub.AddMyHub(ctx, myhubInput, projectID)
 }
 
-func (r *mutationResolver) SyncHub(ctx context.Context, syncHubInput model.ChartsInput) ([]*model.MyHubStatus, error) {
-	return myhub.SyncHub(ctx, syncHubInput)
+func (r *mutationResolver) SyncHub(ctx context.Context, projectID string, hubName string) ([]*model.MyHubStatus, error) {
+	return myhub.SyncHub(ctx, projectID, hubName)
 }
 
 func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
@@ -125,16 +125,16 @@ func (r *queryResolver) ListWorkflow(ctx context.Context, projectID string, work
 	}
 }
 
-func (r *queryResolver) GetCharts(ctx context.Context, chartsInput model.ChartsInput) ([]*model.Chart, error) {
-	return myhub.GetCharts(ctx, chartsInput)
+func (r *queryResolver) GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error) {
+	return myhub.GetCharts(ctx, hubName, projectID)
 }
 
 func (r *queryResolver) GetHubExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error) {
 	return myhub.GetExperiment(ctx, experimentInput)
 }
 
-func (r *queryResolver) GetHubStatus(ctx context.Context, username string) ([]*model.MyHubStatus, error) {
-	return myhub.HubStatus(ctx, username)
+func (r *queryResolver) GetHubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, error) {
+	return myhub.HubStatus(ctx, projectID)
 }
 
 func (r *queryResolver) GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
