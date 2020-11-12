@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	self_deployer "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/self-deployer"
 	"go.mongodb.org/mongo-driver/mongo"
 
@@ -37,7 +36,6 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 		ID:          uuid.String(),
 		Username:    user.Username,
 		Email:       user.Email,
-		MyHub:       []*dbSchema.MyHub{},
 		CompanyName: user.CompanyName,
 		Name:        user.Name,
 		CreatedAt:   time.Now().Format(time.RFC1123Z),
@@ -46,17 +44,6 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 	err = database.InsertUser(ctx, newUser)
 	if err != nil {
 		log.Print("ERROR", err)
-		return nil, err
-	}
-
-	publicHub := model.CreateMyHub{
-		HubName:    "Chaos Hub",
-		RepoURL:    "https://github.com/litmuschaos/chaos-charts",
-		RepoBranch: "master",
-	}
-	_, err = myhub.AddMyHub(ctx, publicHub, user.Username)
-
-	if err != nil {
 		return nil, err
 	}
 
