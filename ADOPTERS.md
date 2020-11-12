@@ -11,6 +11,7 @@ Please send PRs to add or remove organizations/users.
 |[Okteto](https://okteto.com)|[Okteto-Litmus Integration](https://okteto.com/blog/chaos-engineering-with-litmus/)| [Our Story](adopters/organizations/okteto.md)|
 |[WeScale](https://www.wescale.fr)|[Chaos Engineering](https://blog.wescale.fr/2020/03/19/le-guide-de-chaos-engineering-partie-2/)|[Our Story](adopters/organizations/wescale.md)|
 |[NetApp](https://www.netapp.com)|[Chaos Engineering](https://www.netapp.com/us/index.aspx)|[Our Story](adopters/organizations/netapp.md)|
+|[Keptn](https://keptn.sh)|[Chaos Engineering integration in CD](https://www.youtube.com/watch?v=aa5SzQmv4EQ)|To Be Added|
 
 | User | Usecase | Details |
 | :--- | :---    | :---    |
