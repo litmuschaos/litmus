@@ -3,27 +3,37 @@
 /* eslint-disable no-console */
 import { useQuery } from '@apollo/client';
 import {
+  IconButton,
   MuiThemeProvider,
+  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TablePagination,
   TableRow,
-  Paper,
-  IconButton,
   Typography,
 } from '@material-ui/core';
+import useTheme from '@material-ui/core/styles/useTheme';
+import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import useTheme from '@material-ui/core/styles/useTheme';
-import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
-import * as _ from 'lodash';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import Loader from '../../../../components/Loader';
+import { WORKFLOW_LIST_DETAILS } from '../../../../graphql/quries';
+import {
+  ExecutionData,
+  WeightageMap,
+  Workflow,
+  WorkflowList,
+  WorkflowListDataVars,
+} from '../../../../models/graphql/workflowListData';
+import { RootState } from '../../../../redux/reducers';
 import {
   customThemeAnalyticsTable,
   customThemeAnalyticsTableCompareMode,
@@ -34,21 +44,11 @@ import {
   sortNumAsc,
   sortNumDesc,
 } from '../../../../utils/sort';
-import { WORKFLOW_LIST_DETAILS } from '../../../../graphql/quries';
-import { RootState } from '../../../../redux/reducers';
-import Loader from '../../../../components/Loader';
 import ResilienceScoreComparisonPlot from '../WorkflowComparisonPlot/index';
 import useStyles from './styles';
 import TableData from './TableData';
 import TableHeader from './TableHeader';
 import TableToolBar from './TableToolbar';
-import {
-  WeightageMap,
-  ExecutionData,
-  Workflow,
-  WorkflowList,
-  WorkflowListDataVars,
-} from '../../../../models/graphql/workflowListData';
 
 interface RangeType {
   startDate: string;
@@ -466,7 +466,7 @@ const WorkflowComparisonTable = () => {
         const doc = new jsPDF('p', 'mm', 'a4'); // A4 size page of PDF
         const position = -45;
         doc.setFontSize(10);
-        doc.text('Litmus Portal Report Version: 1.9', 10, 10);
+        doc.text('Litmus Portal Report Version: 1.10', 10, 10);
         doc.text('Time of Generation:', 10, 15);
         doc.text(new Date().toString(), 42, 15);
         doc.text(
