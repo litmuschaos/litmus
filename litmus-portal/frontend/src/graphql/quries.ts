@@ -121,6 +121,11 @@ export const GET_CLUSTER = gql`
       no_of_schedules
       no_of_workflows
       token
+      agent_namespace
+      serviceaccount
+      agent_scope
+      agent_ns_exists
+      agent_sa_exists
     }
   }
 `;

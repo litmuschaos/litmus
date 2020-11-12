@@ -97,3 +97,9 @@ export const SYNC_REPO = gql`
     }
   }
 `;
+
+export const DELETE_CLUSTER = gql`
+  mutation deleteCluster($cluster_id: String!) {
+    deleteClusterReg(cluster_id: $cluster_id)
+  }
+`;
