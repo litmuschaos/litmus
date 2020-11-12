@@ -84,7 +84,7 @@ func init() {
 	var (
 		dbServer = os.Getenv("DB_SERVER")
 		username = os.Getenv("DB_USER")
-		pwd = os.Getenv("DB_PASSWORD")
+		pwd      = os.Getenv("DB_PASSWORD")
 	)
 
 	if dbServer == "" || username == "" || pwd == "" {
