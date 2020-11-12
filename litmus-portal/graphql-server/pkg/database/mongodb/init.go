@@ -81,11 +81,22 @@ type WeightagesInput struct {
 //init initializes database connection
 func init() {
 
-	dbServer := os.Getenv("DB_SERVER")
-	if dbServer == "" {
-		log.Fatal("Environment Variable DB_SERVER is not present")
+	var (
+		dbServer = os.Getenv("DB_SERVER")
+		username = os.Getenv("DB_USER")
+		pwd      = os.Getenv("DB_PASSWORD")
+	)
+
+	if dbServer == "" || username == "" || pwd == "" {
+		log.Fatal("DB configuration failed")
 	}
-	clientOptions := options.Client().ApplyURI(dbServer)
+
+	credential := options.Credential{
+		Username: username,
+		Password: pwd,
+	}
+
+	clientOptions := options.Client().ApplyURI(dbServer).SetAuth(credential)
 	client, err := mongo.Connect(backgroundContext, clientOptions)
 	if err != nil {
 		log.Fatal(err)

@@ -13,11 +13,11 @@ import {
 import moment from 'moment';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import HeaderSection from './HeaderSection';
 import useStyles from './styles';
-import { GET_CLUSTER } from '../../../graphql';
+import { GET_CLUSTER, DELETE_CLUSTER } from '../../../graphql';
 import Loader from '../../../components/Loader';
 import { RootState } from '../../../redux/reducers';
 import TableData from './TableData';
@@ -31,6 +31,7 @@ import {
   Cluster,
   ClusterVars,
   Clusters,
+  DeleteCluster,
 } from '../../../models/graphql/clusterData';
 
 interface FilterOptions {
@@ -73,11 +74,15 @@ const BrowseCluster = () => {
     {
       variables: {
         project_id: selectedProjectID,
+        cluster_type: 'external',
       },
       fetchPolicy: 'cache-and-network',
       pollInterval: 3000,
     }
   );
+
+  // Apollo mutation to delete the selected Target Cluster
+  const [deleteCluster] = useMutation<DeleteCluster>(DELETE_CLUSTER);
 
   const [dateRange, setDateRange] = React.useState<DateData>({
     dateValue: 'Select a period',
@@ -205,6 +210,12 @@ const BrowseCluster = () => {
   };
   const { t } = useTranslation();
 
+  const deleteRow = (clid: string) => {
+    deleteCluster({
+      variables: { cluster_id: clid },
+    });
+  };
+
   return (
     <div>
       <section className="Heading section">
@@ -309,6 +320,15 @@ const BrowseCluster = () => {
                     </Typography>
                   </div>
                 </TableCell>
+
+                {/* Delete Cluster */}
+                <TableCell className={classes.headData}>
+                  <div className={classes.tableCell}>
+                    <Typography>
+                      {t('workflowCluster.header.formControl.delete')}
+                    </Typography>
+                  </div>
+                </TableCell>
               </TableRow>
             </TableHead>
 
@@ -316,13 +336,13 @@ const BrowseCluster = () => {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={6}>
+                  <TableCell colSpan={7}>
                     <Loader />
                   </TableCell>
                 </TableRow>
               ) : error ? (
                 <TableRow>
-                  <TableCell data-cy="browseClusterError" colSpan={6}>
+                  <TableCell data-cy="browseClusterError" colSpan={7}>
                     <Typography align="center">
                       {t('workflowCluster.header.formControl.fetchingError')}
                     </Typography>
@@ -341,7 +361,7 @@ const BrowseCluster = () => {
                       key={data.cluster_id}
                       className={classes.dataRow}
                     >
-                      <TableData data={data} />
+                      <TableData data={data} deleteRow={deleteRow} />
                     </TableRow>
                   ))
               ) : (

@@ -460,6 +460,15 @@ targets:
     head4: 4.Click on the button
     head5: Connect the target
     conformation: Kuberenetes Agent is confirming, Please wait...
+    clusterDetails: Cluster Details 
+  modalDelete:
+    head1: Are you sure to
+    head2: remove the current Agent?
+    head3: It will be removed forever
+    delete: Delete
+    yes: Yes
+    no: No
+
 
 connectTargets:
   title: A new Target,
