@@ -86,11 +86,14 @@ export const ADD_MY_HUB = gql`
 `;
 
 export const SYNC_REPO = gql`
-  mutation syncHub($data: ChartsInput!) {
-    syncHub(syncHubInput: $data) {
+  mutation syncHub($projectID: String!, $HubName: String!) {
+    syncHub(projectID: $projectID, HubName: $HubName) {
+      id
       RepoURL
       RepoBranch
       IsAvailable
+      TotalExp
+      HubName
     }
   }
 `;

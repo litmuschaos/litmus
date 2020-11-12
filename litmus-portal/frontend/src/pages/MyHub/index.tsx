@@ -148,12 +148,8 @@ const MyHub = () => {
                                     onClick={() => {
                                       syncRepo({
                                         variables: {
-                                          data: {
-                                            HubName: hub.HubName,
-                                            UserName: userData.username,
-                                            RepoURL: hub.RepoURL,
-                                            RepoBranch: hub.RepoBranch,
-                                          },
+                                          HubName: hub.HubName,
+                                          projectID: userData.selectedProjectID,
                                         },
                                       });
                                       setKey(hub.id);
