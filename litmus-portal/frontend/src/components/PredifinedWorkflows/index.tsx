@@ -10,11 +10,13 @@ import useStyles from './styles';
 interface PredifinedWorkflowsProps {
   workflows: preDefinedWorkflowData[];
   callbackOnSelectWorkflow: (index: number) => void;
+  isCustomWorkflowVisible: boolean;
 }
 
 const PredifinedWorkflows: React.FC<PredifinedWorkflowsProps> = ({
   workflows,
   callbackOnSelectWorkflow,
+  isCustomWorkflowVisible,
 }) => {
   const workflowAction = useActions(WorkflowActions);
   const classes = useStyles();
@@ -38,19 +40,22 @@ const PredifinedWorkflows: React.FC<PredifinedWorkflowsProps> = ({
             />
           </div>
         ))}
-      <CustomWorkflowCard
-        handleClick={() => {
-          workflowAction.setWorkflowDetails({
-            name: `custom-chaos-workflow-${Math.round(
-              new Date().getTime() / 1000
-            )}`,
-            description: 'Custom Chaos Workflow',
-            isCustomWorkflow: true,
-            customWorkflows: [],
-          });
-          history.push('/create-workflow/custom');
-        }}
-      />
+      {isCustomWorkflowVisible ? (
+        <CustomWorkflowCard
+          handleClick={() => {
+            workflowAction.setWorkflowDetails({
+              name: `custom-chaos-workflow-${Math.round(
+                new Date().getTime() / 1000
+              )}`,
+              description: 'Custom Chaos Workflow',
+              isCustomWorkflow: true,
+              namespace: 'litmus',
+              customWorkflows: [],
+            });
+            history.push('/create-workflow/custom');
+          }}
+        />
+      ) : null}
     </div>
   );
 };

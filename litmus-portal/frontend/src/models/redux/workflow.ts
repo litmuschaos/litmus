@@ -35,6 +35,7 @@ export interface WorkflowData {
   description: string;
   weights: experimentMap[];
   isCustomWorkflow: boolean;
+  namespace: string;
   clustername: string;
   clusterid: string;
   cronSyntax: string;
