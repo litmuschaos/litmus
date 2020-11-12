@@ -115,7 +115,7 @@ spec:
     spec:
       containers:
         - name: graphql-server
-          image: imrajdas/graphql-server:ci
+          image: litmuschaos/litmusportal-server:ci
           env:
             - name: DB_SERVER
               valueFrom:
@@ -171,7 +171,7 @@ spec:
             - containerPort: 8080
           imagePullPolicy: Always
         - name: auth-server
-          image: imrajdas/auth-server:ci
+          image: litmuschaos/litmusportal-auth-server:ci
           env:
             - name: DB_SERVER
               valueFrom:
