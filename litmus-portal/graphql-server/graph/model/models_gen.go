@@ -57,9 +57,9 @@ type Charts struct {
 	Charts []*Chart `json:"Charts"`
 }
 
-type ChartsInput struct {
+type CloningInput struct {
 	HubName    string `json:"HubName"`
-	UserName   string `json:"UserName"`
+	ProjectID  string `json:"ProjectID"`
 	RepoBranch string `json:"RepoBranch"`
 	RepoURL    string `json:"RepoURL"`
 }
@@ -151,7 +151,7 @@ type CreateUserInput struct {
 }
 
 type ExperimentInput struct {
-	UserName       string  `json:"UserName"`
+	ProjectID      string  `json:"ProjectID"`
 	ChartName      string  `json:"ChartName"`
 	ExperimentName string  `json:"ExperimentName"`
 	HubName        string  `json:"HubName"`
@@ -197,11 +197,13 @@ type Metadata struct {
 }
 
 type MyHub struct {
-	ID          string `json:"id"`
-	RepoURL     string `json:"RepoURL"`
-	RepoBranch  string `json:"RepoBranch"`
-	IsConfirmed bool   `json:"IsConfirmed"`
-	HubName     string `json:"HubName"`
+	ID         string `json:"id"`
+	RepoURL    string `json:"RepoURL"`
+	RepoBranch string `json:"RepoBranch"`
+	ProjectID  string `json:"ProjectID"`
+	HubName    string `json:"HubName"`
+	CreatedAt  string `json:"CreatedAt"`
+	UpdatedAt  string `json:"UpdatedAt"`
 }
 
 type MyHubStatus struct {
@@ -303,7 +305,6 @@ type User struct {
 	Username        string     `json:"username"`
 	Email           *string    `json:"email"`
 	IsEmailVerified *bool      `json:"is_email_verified"`
-	MyHub           []*MyHub   `json:"my_hub"`
 	CompanyName     *string    `json:"company_name"`
 	Name            *string    `json:"name"`
 	Projects        []*Project `json:"projects"`

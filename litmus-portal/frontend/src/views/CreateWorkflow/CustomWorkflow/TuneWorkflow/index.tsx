@@ -97,7 +97,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       getEngineYaml({
         variables: {
           experimentInput: {
-            UserName: userData.selectedProjectOwner, // It should be name of project owner
+            ProjectID: userData.selectedProjectID,
             HubName: customWorkflow.hubName,
             ChartName: customWorkflow.experiment_name.split('/')[0],
             ExperimentName: customWorkflow.experiment_name.split('/')[1],

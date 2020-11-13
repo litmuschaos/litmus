@@ -76,24 +76,24 @@ export const USER_CLUSTER_REG = gql`
 `;
 
 export const ADD_MY_HUB = gql`
-  mutation addMyHub($MyHubDetails: CreateMyHub!, $Username: String!) {
-    addMyHub(myhubInput: $MyHubDetails, username: $Username) {
-      username
-      my_hub {
-        HubName
-        RepoURL
-        RepoBranch
-      }
+  mutation addMyHub($MyHubDetails: CreateMyHub!, $projectID: String!) {
+    addMyHub(myhubInput: $MyHubDetails, projectID: $projectID) {
+      HubName
+      RepoURL
+      RepoBranch
     }
   }
 `;
 
 export const SYNC_REPO = gql`
-  mutation syncHub($data: ChartsInput!) {
-    syncHub(syncHubInput: $data) {
+  mutation syncHub($projectID: String!, $HubName: String!) {
+    syncHub(projectID: $projectID, HubName: $HubName) {
+      id
       RepoURL
       RepoBranch
       IsAvailable
+      TotalExp
+      HubName
     }
   }
 `;

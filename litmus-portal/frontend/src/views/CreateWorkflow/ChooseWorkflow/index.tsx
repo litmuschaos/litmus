@@ -157,6 +157,7 @@ const ChooseWorkflow: React.FC = () => {
               selectWorkflow(index);
             }}
             workflows={workflowsList}
+            isCustomWorkflowVisible
           />
           <div className={classes.paddedTop}>
             <ButtonFilled

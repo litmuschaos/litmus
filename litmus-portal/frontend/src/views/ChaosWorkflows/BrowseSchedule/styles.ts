@@ -152,7 +152,15 @@ const useStyles = makeStyles((theme) => ({
   btnText: {
     paddingLeft: theme.spacing(1.625),
   },
-
+  downloadText: {
+    paddingLeft: theme.spacing(1.2),
+  },
+  downloadBtn: {
+    marginTop: theme.spacing(0.375),
+    marginLeft: theme.spacing(-0.375),
+    width: '1.2rem',
+    height: '1.2rem',
+  },
   // Experiment Weights PopOver Property
   weightDiv: {
     width: '15.1875rem',
