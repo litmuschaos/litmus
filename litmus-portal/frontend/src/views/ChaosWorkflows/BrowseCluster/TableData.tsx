@@ -2,6 +2,7 @@ import { TableCell, Typography, IconButton } from '@material-ui/core';
 import React from 'react';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import useStyles from './styles';
 import { Cluster } from '../../../models/graphql/clusterData';
 import { history } from '../../../redux/configureStore';
@@ -9,6 +10,7 @@ import timeDifferenceForDate from '../../../utils/datesModifier';
 import Unimodal from '../../../containers/layouts/Unimodal';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
+import { RootState } from '../../../redux/reducers';
 
 interface TableDataProps {
   data: Cluster;
@@ -32,6 +34,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   const handleClick = () => {
     setOpen(true);
   };
+  const userRole = useSelector((state: RootState) => state.userData.userRole);
 
   const handleClose = () => {
     deleteRow(data.cluster_id);
@@ -123,7 +126,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                     </ButtonOutline>
 
                     <ButtonFilled
-                      isDisabled={false}
+                      isDisabled={userRole === 'Viewer'}
                       isPrimary
                       handleClick={handleClose}
                     >
