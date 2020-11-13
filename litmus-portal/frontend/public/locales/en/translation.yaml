@@ -30,6 +30,7 @@ welcomeModal:
 
 sidebar:
   title: Litmus
+  version: 'Version: 1.10'
 
 header:
   notificationDropdown:
