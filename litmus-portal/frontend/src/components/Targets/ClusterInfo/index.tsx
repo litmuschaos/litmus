@@ -2,6 +2,7 @@ import { Typography } from '@material-ui/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from '@apollo/client';
+import { useSelector } from 'react-redux';
 import { history } from '../../../redux/configureStore';
 import ButtonOutline from '../../Button/ButtonOutline';
 // import BrowseWorkflow from '../TargetHome/BrowseWorkflow';
@@ -14,6 +15,7 @@ import { DELETE_CLUSTER } from '../../../graphql';
 import Unimodal from '../../../containers/layouts/Unimodal';
 import ButtonFilled from '../../Button/ButtonFilled';
 import BackButton from '../../Button/BackButton';
+import { RootState } from '../../../redux/reducers';
 
 interface ClusterProps {
   data: Cluster;
@@ -35,6 +37,7 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
     history.push('/targets');
   };
 
+  const userRole = useSelector((state: RootState) => state.userData.userRole);
   const { t } = useTranslation();
 
   return (
@@ -87,7 +90,7 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
                 </div>
                 <div className={classes.buttonBox}>
                   <ButtonOutline
-                    isDisabled={false}
+                    isDisabled={userRole === 'Viewer'}
                     handleClick={() => {
                       setOpen(true);
                     }}
