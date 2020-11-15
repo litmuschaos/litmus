@@ -42,6 +42,7 @@ jobs:
             echo 'export AUTHENTICATION_SERVER_IMAGE="litmusportal-auth-server"' >> workspace/env-vars
             echo 'export FRONTEND_IMAGE="litmusportal-frontend"' >> workspace/env-vars
             echo 'export SUBSCRIBER_IMAGE="litmusportal-subscriber"' >> workspace/env-vars
+            echo 'export FRONTEND_UNPRIVILEGED_IMAGE="litmusportal-unprivileged-frontend"' >> workspace/env-vars
             echo 'export IMGTAG="ci"' >> workspace/env-vars
             cat workspace/env-vars >> $BASH_ENV
             source $BASH_ENV
@@ -109,6 +110,28 @@ jobs:
           root: /tmp/workspace
           paths:
             - litmusportal-frontend.tar
+  unprivileged-frontend-build:
+    machine:
+      image: circleci/classic:201808-01
+      resource_class: large
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - run: |
+          cat /tmp/workspace/env-vars >> $BASH_ENV
+          source $BASH_ENV
+      - checkout
+      - run:
+          name: Build unprivileged frontend docker image
+          command: docker build . -f Dockerfile-Unprivileged -t ${REPONAME}/${FRONTEND_UNPRIVILEGED_IMAGE}:${IMGTAG}
+          working_directory: ~/project/litmus-portal/frontend
+      - run:
+          name: Save unprivileged frontend docker image
+          command: docker save -o /tmp/workspace/${FRONTEND_UNPRIVILEGED_IMAGE}.tar ${REPONAME}/${FRONTEND_UNPRIVILEGED_IMAGE}:${IMGTAG}
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - litmusportal-unprivileged-frontend.tar
   docker-push:
     machine:
       image: circleci/classic:201808-01
@@ -127,18 +150,22 @@ jobs:
             docker load -i /tmp/workspace/${SUBSCRIBER_IMAGE}.tar
             docker load -i /tmp/workspace/${AUTHENTICATION_SERVER_IMAGE}.tar
             docker load -i /tmp/workspace/${FRONTEND_IMAGE}.tar
+            docker load -i /tmp/workspace/${FRONTEND_UNPRIVILEGED_IMAGE}.tar
       - run:
-          name: Pushing graphql server
+          name: Pushing graphql server image
           command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${GRAPHQL_SERVER_IMAGE} --IMGTAG=${IMGTAG}
       - run:
-          name: Pushing frontend server
+          name: Pushing frontend image
           command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${FRONTEND_IMAGE} --IMGTAG=${IMGTAG}
       - run:
-          name: Pushing auth server
+          name: Pushing auth server image
           command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${AUTHENTICATION_SERVER_IMAGE} --IMGTAG=${IMGTAG}
       - run:
-          name: Pushing subscriber server
+          name: Pushing subscriber server image
           command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${SUBSCRIBER_IMAGE} --IMGTAG=${IMGTAG}
+      - run:
+          name: Pushing unprivileged frontend image
+          command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${FRONTEND_UNPRIVILEGED_IMAGE} --IMGTAG=${IMGTAG}
   release:
     machine:
       image: circleci/classic:201808-01
@@ -157,21 +184,25 @@ jobs:
             docker load -i /tmp/workspace/${SUBSCRIBER_IMAGE}.tar
             docker load -i /tmp/workspace/${AUTHENTICATION_SERVER_IMAGE}.tar
             docker load -i /tmp/workspace/${FRONTEND_IMAGE}.tar
+            docker load -i /tmp/workspace/${FRONTEND_UNPRIVILEGED_IMAGE}.tar
       - run:
           name: Docker images
           command: docker images
       - run:
-          name: Pushing graphql server
+          name: Pushing graphql server image
           command: bash ./hack/push --TYPE=release --REPONAME=${REPONAME} --IMGNAME=${GRAPHQL_SERVER_IMAGE} --IMGTAG=${IMGTAG}
       - run:
-          name: Pushing frontend server
+          name: Pushing frontend image
           command: bash ./hack/push --TYPE=release --REPONAME=${REPONAME} --IMGNAME=${FRONTEND_IMAGE} --IMGTAG=${IMGTAG}
       - run:
-          name: Pushing auth server
+          name: Pushing auth server image
           command: bash ./hack/push --TYPE=release --REPONAME=${REPONAME} --IMGNAME=${AUTHENTICATION_SERVER_IMAGE} --IMGTAG=${IMGTAG}
       - run:
-          name: Pushing subscriber server
+          name: Pushing subscriber server image
           command: bash ./hack/push --TYPE=release --REPONAME=${REPONAME} --IMGNAME=${SUBSCRIBER_IMAGE} --IMGTAG=${IMGTAG}
+      - run:
+          name: Pushing unprivileged frontend image
+          command: bash ./hack/push --TYPE=release --REPONAME=${REPONAME} --IMGNAME=${FRONTEND_UNPRIVILEGED_IMAGE} --IMGTAG=${IMGTAG}
 
 workflows:
   version: 2
@@ -205,6 +236,16 @@ workflows:
           filters:
             tags:
               only: /.*/
+      - docker-build-unprivileged-frontend:
+        requires:
+          - setup-env
+          - backend-services-checks
+          - frontend-services-checks
+        filters:
+          branches:
+          only:
+            - master
+            - /^v.*/
       - docker-push:
           requires:
             - docker-build-backend
