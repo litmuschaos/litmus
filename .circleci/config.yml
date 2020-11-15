@@ -242,8 +242,10 @@ workflows:
             - backend-services-checks
             - frontend-services-checks
           filters:
-            tags:
-              only: /.*/
+            branches:
+              only:
+                - master
+                - /^v.*/
       - docker-push:
           requires:
             - docker-build-backend
