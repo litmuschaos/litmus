@@ -110,7 +110,7 @@ jobs:
           root: /tmp/workspace
           paths:
             - litmusportal-frontend.tar
-  unprivileged-frontend-build:
+  docker-build-unprivileged-frontend:
     machine:
       image: circleci/classic:201808-01
       resource_class: large
@@ -242,8 +242,7 @@ workflows:
             - backend-services-checks
             - frontend-services-checks
           filters:
-            branches:
-            only:
+            tags:
               only: /.*/
       - docker-push:
           requires:
