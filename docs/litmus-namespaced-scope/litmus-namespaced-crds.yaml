@@ -46,7 +46,7 @@ spec:
               properties:
                 appkind:
                   type: string
-                  pattern: ^(^$|deployment|statefulset|daemonset|deploymentconfig)$
+                  pattern: ^(^$|deployment|statefulset|daemonset|deploymentconfig|rollout)$
                 applabel:
                   pattern: (([a-z0-9A-Z_\.-/]+)=([a-z0-9A-Z_\.-/_]+)|^$)
                   type: string
