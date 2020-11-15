@@ -12,6 +12,7 @@ Please send PRs to add or remove organizations/users.
 |[WeScale](https://www.wescale.fr)|[Chaos Engineering](https://blog.wescale.fr/2020/03/19/le-guide-de-chaos-engineering-partie-2/)|[Our Story](adopters/organizations/wescale.md)|
 |[NetApp](https://www.netapp.com)|[Chaos Engineering](https://www.netapp.com/us/index.aspx)|[Our Story](adopters/organizations/netapp.md)|
 |[Keptn](https://keptn.sh)|[Chaos Engineering integration in CD](https://www.youtube.com/watch?v=aa5SzQmv4EQ)|To Be Added|
+|[AkriData](https://www.akridata.com/)|Pod Chaos Experiments in AWS & Azure|[Our Story](adopters/organizations/akridata.md)|
 
 | User | Usecase | Details |
 | :--- | :---    | :---    |
