@@ -34,8 +34,8 @@ const MyHub = () => {
   const userData = useSelector((state: RootState) => state.userData);
 
   // Get all MyHubs with status
-  const { data: userDetails } = useQuery<HubStatus>(GET_HUB_STATUS, {
-    variables: { data: userData.username },
+  const { data: hubDetails } = useQuery<HubStatus>(GET_HUB_STATUS, {
+    variables: { data: userData.selectedProjectID },
     fetchPolicy: 'cache-and-network',
   });
 
@@ -43,7 +43,7 @@ const MyHub = () => {
   const paramData: URLParams = useParams();
 
   // Filter the selected MyHub
-  const UserHub = userDetails?.getHubStatus.filter((myHub) => {
+  const UserHub = hubDetails?.getHubStatus.filter((myHub) => {
     return paramData.hubname === myHub.HubName;
   })[0];
 
@@ -55,12 +55,8 @@ const MyHub = () => {
   // Query to get charts of selected MyHub
   const { data, loading } = useQuery<Charts>(GET_CHARTS_DATA, {
     variables: {
-      data: {
-        UserName: userData.username,
-        RepoURL: UserHub?.RepoURL,
-        RepoBranch: UserHub?.RepoBranch,
-        HubName: paramData.hubname,
-      },
+      HubName: paramData.hubname,
+      projectID: userData.selectedProjectID,
     },
     fetchPolicy: 'cache-and-network',
   });

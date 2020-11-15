@@ -1,6 +1,7 @@
 export interface UpdateUser {
   selectedProjectID: string;
   selectedProjectName: string;
+  selectedProjectOwner: string;
   userRole: string;
   loader: boolean;
 }

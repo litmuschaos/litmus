@@ -72,6 +72,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'row',
   },
+  clusterName: {
+    fontSize: '1rem',
+    marginLeft: theme.spacing(5),
+    paddingTop: theme.spacing(0.5),
+  },
   editButton1: {
     marginLeft: theme.spacing(1),
   },

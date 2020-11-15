@@ -6,6 +6,8 @@ import (
 	"log"
 	"time"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
+
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
@@ -36,6 +38,17 @@ func CreateProjectWithUser(ctx context.Context, projectName string, user *dbSche
 	err := database.CreateProject(ctx, newProject)
 	if err != nil {
 		log.Print("ERROR", err)
+		return nil, err
+	}
+
+	defaultHub := model.CreateMyHub{
+		HubName:    "Chaos Hub",
+		RepoURL:    "https://github.com/litmuschaos/chaos-charts",
+		RepoBranch: "master",
+	}
+
+	_, err = myhub.AddMyHub(ctx, defaultHub, newProject.ID)
+	if err != nil {
 		return nil, err
 	}
 

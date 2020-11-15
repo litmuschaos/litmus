@@ -43,6 +43,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     description,
     weights,
     cronSyntax,
+    clustername,
   } = workflowData;
 
   const [open, setOpen] = React.useState(false);
@@ -92,7 +93,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       annotations: editorValidations.annotations,
     };
     if (stateObject.annotations.length > 0) {
-      setYamlStatus('Error in CRD Yaml.');
+      setYamlStatus('Error in CRHeloD Yaml.');
     } else {
       setYamlStatus('Your code is fine. You can move on !');
     }
@@ -141,6 +142,18 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               />
             </div>
           </div>
+
+          <div className={classes.summaryDiv}>
+            <div className={classes.innerSumDiv}>
+              <Typography className={classes.col1}>
+                {t('createWorkflow.verifyCommit.summary.clustername')}:
+              </Typography>
+            </div>
+            <Typography className={classes.clusterName}>
+              {clustername}
+            </Typography>
+          </div>
+
           <div className={classes.summaryDiv}>
             <div className={classes.innerSumDiv}>
               <Typography className={classes.col1}>
@@ -254,22 +267,6 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
           </div>
         </div>
         <Divider />
-        {/*
-        <div>
-          <Typography className={classes.config}>
-            The configuration details of this workflow will be committed to:{' '}
-            <span>
-              <Link
-                href="https://github.com/abcorn-org/reputeops/sandbox-repute.yaml"
-                onClick={preventDefault}
-                className={classes.link}
-              >
-                https://github.com/abcorn-org/reputeops/sandbox-repute.yaml
-              </Link>
-            </span>
-          </Typography>
-        </div>
-        */}
       </div>
 
       <Unimodal

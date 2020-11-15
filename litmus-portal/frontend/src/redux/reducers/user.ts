@@ -17,6 +17,7 @@ const initialState: UserData = {
   name: '',
   email: '',
   loader: false,
+  selectedProjectOwner: '',
 };
 
 export const userData = createReducer<UserData>(initialState, {

@@ -10,7 +10,6 @@ export AGENT_NAMESPACE=litmus
 export LITMUS_PORTAL_NAMESPACE=litmus
 export PORTAL_SCOPE=namespace
 export SUBSCRIBER_IMAGE=litmuschaos/litmusportal-subscriber:ci
-export DEPLOYER_IMAGE=litmuschaos/litmusportal-self-deployer:ci
 export ARGO_SERVER_IMAGE=argoproj/argocli:v2.9.3
 export ARGO_WORKFLOW_CONTROLLER_IMAGE=argoproj/workflow-controller:v2.9.3
 export ARGO_WORKFLOW_EXECUTOR_IMAGE=argoproj/argoexec:v2.9.3

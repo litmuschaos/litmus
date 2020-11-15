@@ -12,34 +12,27 @@ function getStepContent(
 ): React.ReactNode {
   switch (stepIndex) {
     case 0:
-      return <CreateWorkflow gotoStep={(page: number) => gotoStep(page)} />;
+      return <CreateWorkflow gotoStep={gotoStep} />;
     case 1:
-      return <TuneCustomWorkflow gotoStep={(page: number) => gotoStep(page)} />;
+      return <TuneCustomWorkflow gotoStep={gotoStep} />;
     case 2:
-      return (
-        <ScheduleCustomWorkflow gotoStep={(page: number) => gotoStep(page)} />
-      );
+      return <ScheduleCustomWorkflow gotoStep={gotoStep} />;
     case 3:
-      return <ExperimentEditor gotoStep={(page: number) => gotoStep(page)} />;
+      return <ExperimentEditor gotoStep={gotoStep} />;
     default:
-      return <CreateWorkflow gotoStep={(page: number) => gotoStep(page)} />;
+      return <CreateWorkflow gotoStep={gotoStep} />;
   }
 }
-
 const CreateCustomWorkflow = () => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
-  function gotoStep({ page }: { page: number }) {
+  const gotoStep = (page: number) => {
     setActiveStep(page);
-  }
-
+  };
   return (
     <Scaffold>
-      <div className={classes.root}>
-        {getStepContent(activeStep, (page: number) => gotoStep({ page }))}
-      </div>
+      <div className={classes.root}>{getStepContent(activeStep, gotoStep)}</div>
     </Scaffold>
   );
 };
-
 export default CreateCustomWorkflow;

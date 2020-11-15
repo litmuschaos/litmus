@@ -30,6 +30,7 @@ welcomeModal:
 
 sidebar:
   title: Litmus
+  version: 'Version: 1.10'
 
 header:
   notificationDropdown:
@@ -435,6 +436,7 @@ createWorkflow:
       schedule: Schedule
       schedulingNow: Scheduling now
       adjustedWeights: Adjusted Weights
+      clustername: Cluster Name
   workflowCluster:
     activeCluster: Choose an active cluster
     none: None
@@ -459,6 +461,15 @@ targets:
     head4: 4.Click on the button
     head5: Connect the target
     conformation: Kuberenetes Agent is confirming, Please wait...
+    clusterDetails: Cluster Details 
+  modalDelete:
+    head1: Are you sure to
+    head2: remove the current Agent?
+    head3: It will be removed forever
+    delete: Delete
+    yes: Yes
+    no: No
+
 
 connectTargets:
   title: A new Target,
@@ -574,13 +585,21 @@ myhub:
 customWorkflow:
   createWorkflow:
     create: Creating a new chaos workflow
-    createDesc: Add new experiments from your ChaosHubs defined at MyHubs section
+    createDesc: Add new experiments from your ChaosHubs defined at MyHub section
     workflowInfo: Workflow information
     workflowName: Workflow Name
     workflowDesc: Description
-    firstChaos: First Chaos Experiment
+    chooseNamespace: Choose Namespace
+    firstChaos: Choose the hub
     selectHub: Select the hub
     public: Public Hub
+    configure: Construct your workflow
+    construct: Using experiments from MyHub
+    upload: Upload your
+    yaml: YAML
+    uploadFile: Upload File
+    uploadSuccess: Successfully uploaded
+    drag: Drag & Drop here
     chooseExp: Choose the experiment
     loadingExp: Loading Experiments, please wait...
     selectExp: Select the experiment
@@ -604,6 +623,8 @@ customWorkflow:
     expName: Experiment name
     description: Description
     sequence: Sequence
+    sequenceFirstExp: This is your first experiment
+    sequenceNotFirstExp: This Experiment will execute after
     appInfo: Specify the appinfo for the experiment
     envText: We have created a chaos engine specification for this experiment. You can tune the following variables for the chaos engine.
     customEnvText: To change the variables in chaos experiment specific to this workflow, You can tune it here.

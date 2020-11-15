@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -132,9 +131,9 @@ func GetClusterWithProjectID(project_id string, cluster_type *string) ([]*Cluste
 
 	var query bson.M
 	if cluster_type == nil {
-		query = bson.M{"project_id": project_id}
+		query = bson.M{"project_id": project_id, "is_removed": false}
 	} else {
-		query = bson.M{"project_id": project_id, "cluster_type": cluster_type}
+		query = bson.M{"project_id": project_id, "cluster_type": cluster_type, "is_removed": false}
 	}
 
 	fmt.Print(query)
@@ -164,16 +163,13 @@ func InsertChaosWorkflow(chaosWorkflow ChaosWorkFlowInput) error {
 	return nil
 }
 
-func DeleteChaosWorkflow(workflowid string) (bool, error) {
+func UpdateChaosWorkflow(query bson.D, update bson.D) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	res, err := workflowCollection.DeleteOne(ctx, bson.M{"workflow_id": workflowid})
 
+	_, err := workflowCollection.UpdateOne(ctx, query, update)
 	if err != nil {
-		return false, err
-	} else if res.DeletedCount == 0 {
-		return false, nil
+		return err
 	}
 
-	log.Println("Successfully delete %v", workflowid)
-	return true, nil
+	return nil
 }

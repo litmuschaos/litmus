@@ -3,7 +3,6 @@ type User {
   username: String!
   email: String
   is_email_verified: Boolean
-  my_hub: [MyHub!]!
   company_name: String
   name: String
   projects: [Project!]!

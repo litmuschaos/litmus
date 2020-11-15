@@ -24,7 +24,7 @@ const ExperimentEditor: React.FC<ExperimentEditorProps> = ({ gotoStep }) => {
   return (
     <div className={classes.root}>
       <div className={classes.tuneDiv}>
-        <BackButton isDisabled={false} gotoStep={() => gotoStep(2)} />
+        <BackButton isDisabled={false} onClick={() => gotoStep(2)} />
         <Typography className={classes.headerText} variant="h4">
           {customWorkflow.experiment_name}
         </Typography>

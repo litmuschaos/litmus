@@ -28,7 +28,7 @@ const MyHub = () => {
 
   // Get MyHubs with Status
   const { data, loading, refetch } = useQuery<HubStatus>(GET_HUB_STATUS, {
-    variables: { data: userData.username },
+    variables: { data: userData.selectedProjectID },
     fetchPolicy: 'cache-and-network',
   });
 
@@ -104,7 +104,11 @@ const MyHub = () => {
                                   {hub.IsAvailable ? 'Connected' : 'Error'}
                                 </Typography>
                                 <img
-                                  src="/icons/my-hub-charts.svg"
+                                  src={`/icons/${
+                                    hub.HubName === 'Chaos Hub'
+                                      ? 'myhub-litmus.svg'
+                                      : 'my-hub-charts.svg'
+                                  }`}
                                   alt="add-hub"
                                 />
                                 <Typography
@@ -144,12 +148,8 @@ const MyHub = () => {
                                     onClick={() => {
                                       syncRepo({
                                         variables: {
-                                          data: {
-                                            HubName: hub.HubName,
-                                            UserName: userData.username,
-                                            RepoURL: hub.RepoURL,
-                                            RepoBranch: hub.RepoBranch,
-                                          },
+                                          HubName: hub.HubName,
+                                          projectID: userData.selectedProjectID,
                                         },
                                       });
                                       setKey(hub.id);
@@ -165,22 +165,24 @@ const MyHub = () => {
                             </Paper>
                           );
                         })}
-                      <Card
-                        elevation={3}
-                        className={classes.cardDiv}
-                        onClick={() => {
-                          history.push({ pathname: '/myhub/connect' });
-                        }}
-                      >
-                        <CardActionArea>
-                          <CardContent className={classes.cardContent}>
-                            <img src="/icons/add-hub.svg" alt="add-hub" />
-                            <Typography variant="h6" align="center">
-                              {t('myhub.mainPage.connectNewHub')}
-                            </Typography>
-                          </CardContent>
-                        </CardActionArea>
-                      </Card>
+                      {userData.userRole !== 'Viewer' ? (
+                        <Card
+                          elevation={3}
+                          className={classes.cardDiv}
+                          onClick={() => {
+                            history.push({ pathname: '/myhub/connect' });
+                          }}
+                        >
+                          <CardActionArea>
+                            <CardContent className={classes.cardContent}>
+                              <img src="/icons/add-hub.svg" alt="add-hub" />
+                              <Typography variant="h6" align="center">
+                                {t('myhub.mainPage.connectNewHub')}
+                              </Typography>
+                            </CardContent>
+                          </CardActionArea>
+                        </Card>
+                      ) : null}
                     </div>
                   </div>
                 </div>
