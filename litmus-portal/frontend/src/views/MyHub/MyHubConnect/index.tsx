@@ -60,7 +60,7 @@ const MyHub = () => {
           RepoURL: gitHub.GitURL,
           RepoBranch: gitHub.GitBranch,
         },
-        Username: userData.selectedProjectOwner,
+        projectID: userData.selectedProjectID,
       },
     });
     setCloningRepo(true);

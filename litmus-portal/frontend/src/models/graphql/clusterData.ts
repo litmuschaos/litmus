@@ -52,7 +52,6 @@ export interface CreateClusterInputResponse {
 
 export interface ClusterVars {
   project_id: string;
-  cluster_type: string;
 }
 
 export interface DeleteCluster {

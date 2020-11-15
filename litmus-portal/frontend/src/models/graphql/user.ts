@@ -27,7 +27,6 @@ export interface UserDetails {
   is_email_verified: string;
   state: string;
   role: string;
-  my_hub: MyHubDetail[];
 }
 
 export interface MyHubDetail {
