@@ -184,7 +184,6 @@ jobs:
             docker load -i /tmp/workspace/${SUBSCRIBER_IMAGE}.tar
             docker load -i /tmp/workspace/${AUTHENTICATION_SERVER_IMAGE}.tar
             docker load -i /tmp/workspace/${FRONTEND_IMAGE}.tar
-            docker load -i /tmp/workspace/${FRONTEND_UNPRIVILEGED_IMAGE}.tar
       - run:
           name: Docker images
           command: docker images
@@ -200,10 +199,6 @@ jobs:
       - run:
           name: Pushing subscriber server image
           command: bash ./hack/push --TYPE=release --REPONAME=${REPONAME} --IMGNAME=${SUBSCRIBER_IMAGE} --IMGTAG=${IMGTAG}
-      - run:
-          name: Pushing unprivileged frontend image
-          command: bash ./hack/push --TYPE=release --REPONAME=${REPONAME} --IMGNAME=${FRONTEND_UNPRIVILEGED_IMAGE} --IMGTAG=${IMGTAG}
-
 workflows:
   version: 2
   litmus-portal:
@@ -260,7 +255,6 @@ workflows:
           requires:
             - docker-build-backend
             - docker-build-frontend
-            - docker-build-unprivileged-frontend
           filters:
             ## release jobs needs to be run for tagged releases alone & not for any branch commits
             branches:
