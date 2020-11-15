@@ -237,19 +237,19 @@ workflows:
             tags:
               only: /.*/
       - docker-build-unprivileged-frontend:
-        requires:
-          - setup-env
-          - backend-services-checks
-          - frontend-services-checks
-        filters:
-          branches:
-          only:
-            - master
-            - /^v.*/
+          requires:
+            - setup-env
+            - backend-services-checks
+            - frontend-services-checks
+          filters:
+            branches:
+            only:
+              only: /.*/
       - docker-push:
           requires:
             - docker-build-backend
             - docker-build-frontend
+            - docker-build-unprivileged-frontend
           filters:
             branches:
               only:
@@ -259,6 +259,7 @@ workflows:
           requires:
             - docker-build-backend
             - docker-build-frontend
+            - docker-build-unprivileged-frontend
           filters:
             ## release jobs needs to be run for tagged releases alone & not for any branch commits
             branches:
