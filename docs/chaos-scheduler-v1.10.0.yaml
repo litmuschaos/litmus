@@ -162,14 +162,16 @@ spec:
                       spec:
                         type: object
                         properties:
-                          k8sProbe:
+                          probe:
                             type: array
                             items:
                               type: object
                               properties:
                                 name:
                                   type: string
-                                inputs:
+                                type:
+                                  type: string
+                                k8sProbe/inputs:
                                   type: object
                                   properties:
                                     command:
@@ -185,27 +187,11 @@ spec:
                                           type: string
                                         fieldSelector:
                                           type: string
+                                        labelSelector:
+                                          type: string
                                     expectedResult:
                                       type: string
-                                runProperties:
-                                  type: object
-                                  properties:
-                                    probeTimeout:
-                                      type: integer
-                                    interval:
-                                      type: integer
-                                    retry:
-                                      type: integer
-                                mode:
-                                  type: string
-                          cmdProbe:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                name:
-                                  type: string
-                                inputs:
+                                cmdProbe/inputs:
                                   type: object
                                   properties:
                                     command:
@@ -214,25 +200,7 @@ spec:
                                       type: string
                                     source:
                                       type: string
-                                runProperties:
-                                  type: object
-                                  properties:
-                                    probeTimeout:
-                                      type: integer
-                                    interval:
-                                      type: integer
-                                    retry:
-                                      type: integer
-                                mode:
-                                  type: string
-                          httpProbe:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                name:
-                                  type: string
-                                inputs:
+                                httpProbe/inputs:
                                   type: object
                                   properties:
                                     url:
