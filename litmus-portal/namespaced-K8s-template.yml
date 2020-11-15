@@ -35,7 +35,7 @@ spec:
               memory: 400Mi
           imagePullPolicy: Always
           ports:
-            - containerPort: 80
+            - containerPort: 8080
           env:
             - name: AGENT_SCOPE
               valueFrom:
@@ -52,7 +52,7 @@ spec:
   ports:
     - name: http
       port: 9091
-      targetPort: 80
+      targetPort: 8080
   selector:
     component: litmusportal-frontend
 ---
