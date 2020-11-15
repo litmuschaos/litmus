@@ -82,16 +82,14 @@ spec:
     openAPIV3Schema:
       properties:
         apiVersion:
-          description:
-            "APIVersion defines the versioned schema of this representation
+          description: 'APIVersion defines the versioned schema of this representation
             of an object. Servers should convert recognized schemas to the latest
-            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources"
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
           type: string
         kind:
-          description:
-            "Kind is a string value representing the REST resource this
+          description: 'Kind is a string value representing the REST resource this
             object represents. Servers may infer this from the endpoint the client
-            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds"
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
           type: string
         metadata:
           type: object
@@ -115,10 +113,10 @@ spec:
               properties:
                 appkind:
                   type: string
-                  pattern: ^(deployment|statefulset|daemonset|deploymentconfig)$
+                  pattern: ^(^$|deployment|statefulset|daemonset|deploymentconfig|rollout)$
                 applabel:
-                  pattern: ([a-z0-9A-Z_\.-/]+)=([a-z0-9A-Z_\.-/_]+)
                   type: string
+                  pattern: (([a-z0-9A-Z_\.-/]+)=([a-z0-9A-Z_\.-/_]+)|^$)
                 appns:
                   type: string
             auxiliaryAppInfo:
@@ -162,14 +160,16 @@ spec:
                   spec:
                     type: object
                     properties:
-                      k8sProbe:
+                      probe:
                         type: array
                         items:
                           type: object
                           properties:
                             name:
                               type: string
-                            inputs:
+                            type:
+                              type: string
+                            k8sProbe/inputs:
                               type: object
                               properties:
                                 command:
@@ -185,27 +185,11 @@ spec:
                                       type: string
                                     fieldSelector:
                                       type: string
+                                    labelSelector:
+                                      type: string
                                 expectedResult:
                                   type: string
-                            runProperties:
-                              type: object
-                              properties:
-                                probeTimeout:
-                                  type: integer
-                                interval:
-                                  type: integer
-                                retry:
-                                  type: integer
-                            mode:
-                              type: string
-                      cmdProbe:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            name:
-                              type: string
-                            inputs:
+                            cmdProbe/inputs:
                               type: object
                               properties:
                                 command:
@@ -214,25 +198,7 @@ spec:
                                   type: string
                                 source:
                                   type: string
-                            runProperties:
-                              type: object
-                              properties:
-                                probeTimeout:
-                                  type: integer
-                                interval:
-                                  type: integer
-                                retry:
-                                  type: integer
-                            mode:
-                              type: string
-                      httpProbe:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            name:
-                              type: string
-                            inputs:
+                            httpProbe/inputs:
                               type: object
                               properties:
                                 url:
@@ -306,6 +272,7 @@ spec:
                                   minLength: 1
                                   allowEmptyValue: false
 
+
         status:
           type: object
   version: v1alpha1
@@ -332,16 +299,14 @@ spec:
     openAPIV3Schema:
       properties:
         apiVersion:
-          description:
-            "APIVersion defines the versioned schema of this representation
+          description: 'APIVersion defines the versioned schema of this representation
             of an object. Servers should convert recognized schemas to the latest
-            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources"
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
           type: string
         kind:
-          description:
-            "Kind is a string value representing the REST resource this
+          description: 'Kind is a string value representing the REST resource this
             object represents. Servers may infer this from the endpoint the client
-            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds"
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
           type: string
         metadata:
           type: object
@@ -482,16 +447,14 @@ spec:
     openAPIV3Schema:
       properties:
         apiVersion:
-          description:
-            "APIVersion defines the versioned schema of this representation
+          description: 'APIVersion defines the versioned schema of this representation
             of an object. Servers should convert recognized schemas to the latest
-            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources"
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
           type: string
         kind:
-          description:
-            "Kind is a string value representing the REST resource this
+          description: 'Kind is a string value representing the REST resource this
             object represents. Servers may infer this from the endpoint the client
-            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds"
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
           type: string
         metadata:
           type: object
