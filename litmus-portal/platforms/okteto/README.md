@@ -49,14 +49,14 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
   
   [![Develop on Okteto](https://okteto.com/develop-okteto.svg)](https://cloud.okteto.com/deploy)
 
-- <h4>STEP-2:</h4> Download and export the kubeconfig file from Okteto cloud settings page into `KUBECONFIG` environment variable and Login to Okteto cloud using the CLI.
+- <h4>STEP-2:</h4> Login to Okteto cloud using the CLI to download your kubernetes credentials.
 
   ```bash
-  export KUBECONFIG=$HOME/Downloads/okteto-kube.config:${KUBECONFIG:-$HOME/.kube/config}
   okteto login
+  okteto namespace
   ```
 
-- <h4>STEP-3:</h4> Go to specific component folders i.e. `authentication`, `cluster-agents/subscriber`, `graphql-server` or `frontend` of `litmus-portal` folder and then run `okteto up` before manking changes to the code.
+- <h4>STEP-3:</h4> Go to specific component folders i.e. `authentication`, `cluster-agents/subscriber`, `graphql-server`, `tools/self-deployer` or `frontend` of `litmus-portal` folder and then run `okteto up` before making changes to the code.
 
   ```bash
   cd litmus-portal/frontend
@@ -126,7 +126,7 @@ This directory contains setup guide to start developing Litmus Portal on Okteto 
   kubectl get pods
   ```
 
-- If `No cluster is registerted with the selected projectID` message is displayed, select a project from header's project list dropdown.
+- If `No cluster is registered with the selected projectID` message is displayed, select a project from header's project list dropdown.
 
 
 ## Optional
