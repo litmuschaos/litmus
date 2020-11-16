@@ -1,17 +1,15 @@
 package file_handlers
 
 import (
-	"log"
-	"net/http"
-	"os"
-
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
-
 	"github.com/gorilla/mux"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/types"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+	"log"
+	"net/http"
+	"os"
 )
 
 var subscriberConfiguration = &types.SubscriberConfigurationVars{
@@ -28,36 +26,45 @@ var subscriberConfiguration = &types.SubscriberConfigurationVars{
 //FileHandler dynamically generates the manifest file and sends it as a response
 func FileHandler(w http.ResponseWriter, r *http.Request) {
 	var (
-		vars           = mux.Vars(r)
-		token          = vars["key"]
+		vars  = mux.Vars(r)
+		token = vars["key"]
+	)
+
+	response, statusCode, err := GetManifest(token)
+	if err != nil {
+		log.Print("error", err)
+		utils.WriteHeaders(&w, statusCode)
+	}
+
+	utils.WriteHeaders(&w, statusCode)
+	w.Write(response)
+}
+
+func GetManifest(token string) ([]byte, int, error) {
+	var (
 		portalEndpoint string
 	)
 
 	id, err := cluster.ClusterValidateJWT(token)
 	if err != nil {
-		log.Print("ERROR", err)
-		utils.WriteHeaders(&w, 404)
-		return
+		return nil, 404, err
 	}
 
 	reqCluster, err := database.GetCluster(id)
 	if err != nil {
-		log.Print("ERROR", err)
-		utils.WriteHeaders(&w, 500)
-		return
+		return nil, 500, err
 	}
 
 	if os.Getenv("PORTAL_SCOPE") == "cluster" {
 		portalEndpoint, err = k8s.GetPortalEndpoint()
 		if err != nil {
-			log.Print(err)
+			return nil, 500, err
 		}
 	} else if os.Getenv("PORTAL_SCOPE") == "namespace" {
 		portalEndpoint = os.Getenv("PORTAL_ENDPOINT")
 	}
 
 	subscriberConfiguration.GQLServerURI = portalEndpoint + "/query"
-
 	if !reqCluster.IsRegistered {
 		var respData []byte
 
@@ -68,16 +75,13 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 		} else {
 			log.Print("ERROR- AGENT SCOPE NOT SELECTED!")
 		}
-
 		if err != nil {
-			log.Print("ERROR", err)
-			utils.WriteHeaders(&w, 500)
-			return
+			return nil, 500, err
 		}
-		utils.WriteHeaders(&w, 200)
-		w.Write(respData)
-		return
+
+		return respData, 200, nil
+	} else {
+		return []byte("Cluster is already registered"), 409, nil
 	}
 
-	utils.WriteHeaders(&w, 404)
 }

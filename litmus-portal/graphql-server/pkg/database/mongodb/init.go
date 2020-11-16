@@ -47,6 +47,7 @@ type Cluster struct {
 	CreatedAt          string  `bson:"created_at"`
 	ClusterType        string  `bson:"cluster_type"`
 	Token              string  `bson:"token"`
+	IsRemoved          bool    `bson:"is_removed"`
 }
 
 type ChaosWorkFlowInput struct {
@@ -62,12 +63,14 @@ type ChaosWorkFlowInput struct {
 	ProjectID           string             `bson:"project_id"`
 	ClusterID           string             `bson:"cluster_id"`
 	WorkflowRuns        []*WorkflowRun     `bson:"workflow_runs"`
+	IsRemoved           bool               `bson:"isRemoved"`
 }
 
 type WorkflowRun struct {
 	WorkflowRunID string `bson:"workflow_run_id"`
 	LastUpdated   string `bson:"last_updated"`
 	ExecutionData string `bson:"execution_data"`
+	Completed     bool   `bson:"completed"`
 }
 
 type WeightagesInput struct {
@@ -78,11 +81,22 @@ type WeightagesInput struct {
 //init initializes database connection
 func init() {
 
-	dbServer := os.Getenv("DB_SERVER")
-	if dbServer == "" {
-		log.Fatal("Environment Variable DB_SERVER is not present")
+	var (
+		dbServer = os.Getenv("DB_SERVER")
+		username = os.Getenv("DB_USER")
+		pwd      = os.Getenv("DB_PASSWORD")
+	)
+
+	if dbServer == "" || username == "" || pwd == "" {
+		log.Fatal("DB configuration failed")
 	}
-	clientOptions := options.Client().ApplyURI(dbServer)
+
+	credential := options.Credential{
+		Username: username,
+		Password: pwd,
+	}
+
+	clientOptions := options.Client().ApplyURI(dbServer).SetAuth(credential)
 	client, err := mongo.Connect(backgroundContext, clientOptions)
 	if err != nil {
 		log.Fatal(err)

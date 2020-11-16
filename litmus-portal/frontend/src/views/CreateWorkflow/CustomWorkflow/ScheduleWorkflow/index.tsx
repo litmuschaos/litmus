@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import { useTranslation } from 'react-i18next';
-import BackButton from '../BackButton';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../../components/Button/ButtonOutline';
 import { customWorkflow } from '../../../../models/redux/workflow';
@@ -56,6 +55,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   // Edit experiment operation
   const editExperiment = (index: number) => {
     workflowAction.setWorkflowDetails({
+      ...workflowDetails,
       customWorkflow: {
         ...workflowDetails.customWorkflows[index],
         index,
@@ -94,7 +94,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         parameters: [
           {
             name: 'adminModeNamespace',
-            value: 'litmus',
+            value: `${workflowDetails.namespace}`,
           },
         ],
       },
@@ -147,7 +147,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
           template: data.experiment_name?.split('/')[1] as string,
         },
       ]);
-      installAllExp = `${installAllExp}kubectl apply -f https://github.com/litmuschaos/chaos-charts/raw/master/charts/${data.experiment_name}/experiment.yaml -n {{workflow.parameters.adminModeNamespace}} | `;
+      installAllExp = `${installAllExp}kubectl apply -f ${data.repoUrl}/raw/${data.repoBranch}/charts/${data.experiment_name}/experiment.yaml -n {{workflow.parameters.adminModeNamespace}} | `;
     });
     customSteps.push([
       {
@@ -217,7 +217,6 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   return (
     <div className={classes.root}>
       <div className={classes.headerDiv}>
-        <BackButton isDisabled={false} gotoStep={() => gotoStep(1)} />
         <Typography variant="h3" className={classes.headerText} gutterBottom>
           {t('customWorkflow.scheduleWorkflow.scheduleHeader')}
         </Typography>
@@ -312,6 +311,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             customYAMLGenerator();
           }}
           isPrimary
+          isDisabled={workflows.length === 0}
         >
           <div>
             <img

@@ -13,6 +13,8 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import moment from 'moment';
 import React from 'react';
 import cronstrue from 'cronstrue';
+import YAML from 'yaml';
+import GetAppIcon from '@material-ui/icons/GetApp';
 import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
 import useStyles from './styles';
 import ExperimentPoints from './ExperimentPoints';
@@ -46,6 +48,21 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  // Function to download the manifest
+  const downloadYAML = (manifest: string, name: string) => {
+    const parsedYAML = YAML.parse(manifest);
+    const doc = new YAML.Document();
+    doc.contents = parsedYAML;
+    const element = document.createElement('a');
+    const file = new Blob([YAML.stringify(doc)], {
+      type: 'text/yaml',
+    });
+    element.href = URL.createObjectURL(file);
+    element.download = `${name}.yaml`;
+    document.body.appendChild(element);
+    element.click();
   };
 
   // Function to convert UNIX time in format of DD MMM YYY
@@ -150,6 +167,22 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           open={open}
           onClose={handleClose}
         >
+          <MenuItem
+            value="Download"
+            onClick={() =>
+              downloadYAML(data.workflow_manifest, data.workflow_name)
+            }
+          >
+            <div className={classes.expDiv}>
+              <GetAppIcon className={classes.downloadBtn} />
+              <Typography
+                data-cy="downloadManifest"
+                className={classes.downloadText}
+              >
+                Download Manifest
+              </Typography>
+            </div>
+          </MenuItem>
           <MenuItem
             value="Analysis"
             onClick={() => deleteRow(data.workflow_id)}

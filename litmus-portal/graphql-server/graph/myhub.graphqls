@@ -2,8 +2,10 @@ type MyHub {
   id: ID!
   RepoURL: String!
   RepoBranch: String!
-  IsConfirmed: Boolean!
+  ProjectID: String!
   HubName: String!
+  CreatedAt: String!
+  UpdatedAt: String!
 }
 
 type Charts {
@@ -90,17 +92,16 @@ input CreateMyHub {
 }
 
 input ExperimentInput {
-  UserName: String!
-  RepoURL: String!
-  RepoBranch: String!
+  ProjectID: String!
   ChartName: String!
   ExperimentName: String!
   HubName: String!
+  FileType: String
 }
 
-input ChartsInput {
+input CloningInput {
   HubName: String!
-  UserName: String!
+  ProjectID: String!
   RepoBranch: String!
   RepoURL: String!
 }

@@ -32,8 +32,8 @@ metadata:
     app.kubernetes.io/managed-by: kubectl
     name: litmus
 rules:
-- apiGroups: ["","apps","batch","apps.openshift.io"]
-  resources: ["jobs","deployments","replicationcontrollers","daemonsets","replicasets","statefulsets","deploymentconfigs","secrets"]
+- apiGroups: ["","apps","batch","apps.openshift.io","argoproj.io"]
+  resources: ["jobs","deployments","replicationcontrollers","daemonsets","replicasets","statefulsets","deploymentconfigs","rollouts","secrets"]
   verbs: ["get","list","watch","deletecollection"]
 - apiGroups: ["","litmuschaos.io"]
   resources: ["pods","configmaps","events","services","chaosengines","chaosexperiments","chaosresults"]
@@ -158,7 +158,7 @@ spec:
               properties:
                 appkind:
                   type: string
-                  pattern: ^(^$|deployment|statefulset|daemonset|deploymentconfig)$
+                  pattern: ^(^$|deployment|statefulset|daemonset|deploymentconfig|rollout)$
                 applabel:
                   type: string
                   pattern: (([a-z0-9A-Z_\.-/]+)=([a-z0-9A-Z_\.-/_]+)|^$)
@@ -181,7 +181,7 @@ spec:
                       type: string
                     type:
                       type: string
-                      pattern: ^(go|ansible)$
+                      pattern: ^(go)$
                     runnerannotation:
                       type: object
                       additionalProperties:
@@ -205,6 +205,62 @@ spec:
                   spec:
                     type: object
                     properties:
+                      probe:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            type:
+                              type: string
+                            k8sProbe/inputs:
+                              type: object
+                              properties:
+                                command:
+                                  type: object
+                                  properties:
+                                    group:
+                                      type: string
+                                    version:
+                                      type: string
+                                    resource:
+                                      type: string
+                                    namespace:
+                                      type: string
+                                    fieldSelector:
+                                      type: string
+                                    labelSelector:
+                                      type: string
+                                expectedResult:
+                                  type: string
+                            cmdProbe/inputs:
+                              type: object
+                              properties:
+                                command:
+                                  type: string
+                                expectedResult:
+                                  type: string
+                                source:
+                                  type: string
+                            httpProbe/inputs:
+                              type: object
+                              properties:
+                                url:
+                                  type: string
+                                expectedResponseCode:
+                                  type: string
+                            runProperties:
+                              type: object
+                              properties:
+                                probeTimeout:
+                                  type: integer
+                                interval:
+                                  type: integer
+                                retry: 
+                                  type: integer
+                            mode:
+                              type: string
                       components:
                         type: object
                         properties:
@@ -212,9 +268,9 @@ spec:
                             type: object
                             properties:
                               delay:
-                                type: int
+                                type: integer
                               timeout:
-                                type: int
+                                type: integer
                           nodeSelector:
                             type: object
                             minLength: 1
@@ -233,7 +289,6 @@ spec:
                             type: array
                             items:
                               type: object
-                              minProperties: 2
                               properties:
                                 name:
                                   type: string
@@ -243,7 +298,6 @@ spec:
                             type: array
                             items:
                               type: object
-                              minProperties: 2
                               properties:
                                 name:
                                   type: string

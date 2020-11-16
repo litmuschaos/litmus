@@ -9,9 +9,9 @@ import (
 )
 
 type ActionPayload struct {
-	RequestType  *string `json:"request_type"`
-	K8sManifest  *string `json:"k8s_manifest"`
-	Namespace    *string `json:"namespace"`
+	RequestType  string  `json:"request_type"`
+	K8sManifest  string  `json:"k8s_manifest"`
+	Namespace    string  `json:"namespace"`
 	ExternalData *string `json:"external_data"`
 }
 
@@ -25,6 +25,7 @@ type Annotation struct {
 }
 
 type ChaosWorkFlowInput struct {
+	WorkflowID          *string            `json:"workflow_id"`
 	WorkflowManifest    string             `json:"workflow_manifest"`
 	CronSyntax          string             `json:"cronSyntax"`
 	WorkflowName        string             `json:"workflow_name"`
@@ -56,9 +57,9 @@ type Charts struct {
 	Charts []*Chart `json:"Charts"`
 }
 
-type ChartsInput struct {
+type CloningInput struct {
 	HubName    string `json:"HubName"`
-	UserName   string `json:"UserName"`
+	ProjectID  string `json:"ProjectID"`
 	RepoBranch string `json:"RepoBranch"`
 	RepoURL    string `json:"RepoURL"`
 }
@@ -150,12 +151,11 @@ type CreateUserInput struct {
 }
 
 type ExperimentInput struct {
-	UserName       string `json:"UserName"`
-	RepoURL        string `json:"RepoURL"`
-	RepoBranch     string `json:"RepoBranch"`
-	ChartName      string `json:"ChartName"`
-	ExperimentName string `json:"ExperimentName"`
-	HubName        string `json:"HubName"`
+	ProjectID      string  `json:"ProjectID"`
+	ChartName      string  `json:"ChartName"`
+	ExperimentName string  `json:"ExperimentName"`
+	HubName        string  `json:"HubName"`
+	FileType       *string `json:"FileType"`
 }
 
 type Experiments struct {
@@ -197,11 +197,13 @@ type Metadata struct {
 }
 
 type MyHub struct {
-	ID          string `json:"id"`
-	RepoURL     string `json:"RepoURL"`
-	RepoBranch  string `json:"RepoBranch"`
-	IsConfirmed bool   `json:"IsConfirmed"`
-	HubName     string `json:"HubName"`
+	ID         string `json:"id"`
+	RepoURL    string `json:"RepoURL"`
+	RepoBranch string `json:"RepoBranch"`
+	ProjectID  string `json:"ProjectID"`
+	HubName    string `json:"HubName"`
+	CreatedAt  string `json:"CreatedAt"`
+	UpdatedAt  string `json:"UpdatedAt"`
 }
 
 type MyHubStatus struct {
@@ -273,6 +275,7 @@ type ScheduledWorkflows struct {
 	ProjectID           string        `json:"project_id"`
 	ClusterID           string        `json:"cluster_id"`
 	ClusterType         string        `json:"cluster_type"`
+	IsRemoved           bool          `json:"isRemoved"`
 }
 
 type Spec struct {
@@ -302,7 +305,6 @@ type User struct {
 	Username        string     `json:"username"`
 	Email           *string    `json:"email"`
 	IsEmailVerified *bool      `json:"is_email_verified"`
-	MyHub           []*MyHub   `json:"my_hub"`
 	CompanyName     *string    `json:"company_name"`
 	Name            *string    `json:"name"`
 	Projects        []*Project `json:"projects"`
@@ -332,6 +334,7 @@ type Workflow struct {
 	ProjectID           string          `json:"project_id"`
 	ClusterID           string          `json:"cluster_id"`
 	ClusterType         string          `json:"cluster_type"`
+	IsRemoved           bool            `json:"isRemoved"`
 	WorkflowRuns        []*WorkflowRuns `json:"workflow_runs"`
 }
 
@@ -353,6 +356,7 @@ type WorkflowRunInput struct {
 	WorkflowName  string           `json:"workflow_name"`
 	ExecutionData string           `json:"execution_data"`
 	ClusterID     *ClusterIdentity `json:"cluster_id"`
+	Completed     bool             `json:"completed"`
 }
 
 type WorkflowRuns struct {

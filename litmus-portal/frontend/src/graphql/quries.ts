@@ -35,6 +35,7 @@ export const SCHEDULE_DETAILS = gql`
       cluster_id
       cluster_type
       cluster_name
+      isRemoved
     }
   }
 `;
@@ -86,12 +87,6 @@ export const GET_USER = gql`
         name
         id
       }
-      my_hub {
-        id
-        HubName
-        RepoURL
-        RepoBranch
-      }
       company_name
       updated_at
       created_at
@@ -121,6 +116,11 @@ export const GET_CLUSTER = gql`
       no_of_schedules
       no_of_workflows
       token
+      agent_namespace
+      serviceaccount
+      agent_scope
+      agent_ns_exists
+      agent_sa_exists
     }
   }
 `;
@@ -137,8 +137,8 @@ export const ALL_USERS = gql`
 `;
 
 export const GET_CHARTS_DATA = gql`
-  query getCharts($data: ChartsInput!) {
-    getCharts(chartsInput: $data) {
+  query getCharts($HubName: String!, $projectID: String!) {
+    getCharts(HubName: $HubName, projectID: $projectID) {
       ApiVersion
       Kind
       Metadata {
@@ -242,7 +242,7 @@ export const GET_EXPERIMENT_DATA = gql`
 
 export const GET_HUB_STATUS = gql`
   query getHubStatus($data: String!) {
-    getHubStatus(username: $data) {
+    getHubStatus(projectID: $data) {
       id
       HubName
       RepoBranch
@@ -250,5 +250,17 @@ export const GET_HUB_STATUS = gql`
       TotalExp
       IsAvailable
     }
+  }
+`;
+
+export const GET_ENGINE_YAML = gql`
+  query getEngineData($experimentInput: ExperimentInput!) {
+    getYAMLData(experimentInput: $experimentInput)
+  }
+`;
+
+export const GET_EXPERIMENT_YAML = gql`
+  query getExperimentData($experimentInput: ExperimentInput!) {
+    getYAMLData(experimentInput: $experimentInput)
   }
 `;
