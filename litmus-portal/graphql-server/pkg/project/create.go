@@ -49,7 +49,7 @@ func CreateProjectWithUser(ctx context.Context, projectName string, user *dbSche
 
 	_, err = myhub.AddMyHub(ctx, defaultHub, newProject.ID)
 	if err != nil {
-		return nil, err
+		log.Print("Error on cloning https://github.com/litmuschaos/chaos-charts :", err)
 	}
 
 	return newProject.GetOutputProject(), nil
