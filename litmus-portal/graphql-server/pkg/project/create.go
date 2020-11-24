@@ -48,7 +48,7 @@ func CreateProjectWithUser(ctx context.Context, projectName string, user *dbSche
 	}
 
 	log.Print("Cloning https://github.com/litmuschaos/chaos-charts")
-	go myhub.AddMyHub(context.TODO(), defaultHub, newProject.ID)
+	go myhub.AddMyHub(context.Background(), defaultHub, newProject.ID)
 
 	return newProject.GetOutputProject(), nil
 }
