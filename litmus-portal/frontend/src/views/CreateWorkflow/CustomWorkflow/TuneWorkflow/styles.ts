@@ -39,6 +39,9 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2.5),
     marginBottom: theme.spacing(1.25),
   },
+  annotationField: {
+    marginLeft: theme.spacing(2.5),
+  },
   appInfoText: {
     fontSize: '0.875rem',
     width: '6.25rem',

@@ -42,7 +42,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     applabel: 'k8s-app=kube-proxy',
     appkind: 'daemonset',
   });
-
+  const [annotation, setAnnotation] = useState('true');
   const [env, setEnv] = useState<EnvValues[]>([]);
   const [yaml, setYaml] = useState<string>('');
   const [loadingEnv, setLoadingEnv] = useState(true);
@@ -58,6 +58,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         applabel: parsedYaml.spec.appinfo.applabel,
         appkind: parsedYaml.spec.appinfo.appkind,
       });
+      setAnnotation(parsedYaml.spec.annotationCheck);
       setYaml(YAML.stringify(parsedYaml));
       setLoadingEnv(false);
     },
@@ -112,6 +113,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         applabel: parsedYaml.spec.appinfo.applabel,
         appkind: parsedYaml.spec.appinfo.appkind,
       });
+      setAnnotation(parsedYaml.spec.annotationCheck);
       setEnv([...parsedYaml.spec.experiments[0].spec.components.env]);
       setYaml(customWorkflow.yaml as string);
       setLoadingEnv(false);
@@ -164,6 +166,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     parsedYaml.spec.appinfo.appns = appInfo.appns;
     parsedYaml.spec.appinfo.applabel = appInfo.applabel;
     parsedYaml.spec.appinfo.appkind = appInfo.appkind;
+    parsedYaml.spec.annotationCheck = annotation;
     parsedYaml.metadata.name = customWorkflow.experiment_name?.split('/')[1];
     parsedYaml.metadata.namespace =
       '{{workflow.parameters.adminModeNamespace}}';
@@ -299,6 +302,23 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 }
                 value={appInfo.appkind}
               />
+            </div>
+            <div className={classes.appInfoDiv}>
+              <Typography className={classes.appInfoText}>
+                annotationCheck:
+              </Typography>
+              <div className={classes.annotationField}>
+                <InputField
+                  label="annotationCheck"
+                  styles={{
+                    width: '100%',
+                  }}
+                  data-cy="inputWorkflow"
+                  validationError={false}
+                  handleChange={(event) => setAnnotation(event.target.value)}
+                  value={annotation}
+                />
+              </div>
             </div>
             <hr className={classes.horizontalLine} />
             <Typography className={classes.envHeader}>

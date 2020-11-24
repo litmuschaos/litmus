@@ -15,9 +15,11 @@ import React from 'react';
 import cronstrue from 'cronstrue';
 import YAML from 'yaml';
 import GetAppIcon from '@material-ui/icons/GetApp';
+import { useSelector } from 'react-redux';
 import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
 import useStyles from './styles';
 import ExperimentPoints from './ExperimentPoints';
+import { RootState } from '../../../redux/reducers';
 
 interface TableDataProps {
   data: ScheduleWorkflow;
@@ -37,6 +39,8 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   const handlePopOverClose = () => {
     setPopAnchorEl(null);
   };
+
+  const userData = useSelector((state: RootState) => state.userData);
 
   const handlePopOverClick = (event: React.MouseEvent<HTMLElement>) => {
     setPopAnchorEl(event.currentTarget);
@@ -183,21 +187,26 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
               </Typography>
             </div>
           </MenuItem>
-          <MenuItem
-            value="Analysis"
-            onClick={() => deleteRow(data.workflow_id)}
-          >
-            <div className={classes.expDiv}>
-              <img
-                src="/icons/deleteSchedule.svg"
-                alt="Delete Schedule"
-                className={classes.btnImg}
-              />
-              <Typography data-cy="deleteSchedule" className={classes.btnText}>
-                Delete Schedule
-              </Typography>
-            </div>
-          </MenuItem>
+          {userData.userRole !== 'Viewer' ? (
+            <MenuItem
+              value="Analysis"
+              onClick={() => deleteRow(data.workflow_id)}
+            >
+              <div className={classes.expDiv}>
+                <img
+                  src="/icons/deleteSchedule.svg"
+                  alt="Delete Schedule"
+                  className={classes.btnImg}
+                />
+                <Typography
+                  data-cy="deleteSchedule"
+                  className={classes.btnText}
+                >
+                  Delete Schedule
+                </Typography>
+              </div>
+            </MenuItem>
+          ) : null}
         </Menu>
       </TableCell>
     </>
