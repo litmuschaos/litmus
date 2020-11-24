@@ -22,8 +22,8 @@ import (
 func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error) {
 
 	var (
-		uuid   = uuid.New()
-		active = os.Getenv("SELF_CLUSTER")
+		uuid         = uuid.New()
+		self_cluster = os.Getenv("SELF_CLUSTER")
 	)
 	outputUser, err := GetUser(ctx, user.Username)
 	if err != nil && err != mongo.ErrNoDocuments {
@@ -55,7 +55,8 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 	outputUser = newUser.GetOutputUser()
 	outputUser.Projects = append(outputUser.Projects, project)
 
-	if strings.ToLower(active) == "true" && strings.ToLower(outputUser.Username) == "admin" {
+	if strings.ToLower(self_cluster) == "true" && strings.ToLower(outputUser.Username) == "admin" {
+		log.Print("Starting self deployer")
 		go self_deployer.StartDeployer(project.ID)
 	}
 

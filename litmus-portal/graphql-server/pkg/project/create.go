@@ -47,10 +47,8 @@ func CreateProjectWithUser(ctx context.Context, projectName string, user *dbSche
 		RepoBranch: "master",
 	}
 
-	_, err = myhub.AddMyHub(ctx, defaultHub, newProject.ID)
-	if err != nil {
-		log.Print("Error on cloning https://github.com/litmuschaos/chaos-charts :", err)
-	}
+	log.Print("Cloning https://github.com/litmuschaos/chaos-charts")
+	go myhub.AddMyHub(context.TODO(), defaultHub, newProject.ID)
 
 	return newProject.GetOutputProject(), nil
 }

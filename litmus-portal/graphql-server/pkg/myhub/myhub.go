@@ -58,7 +58,6 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (*
 	}
 
 	return newHub.GetOutputMyHub(), nil
-
 }
 
 //HubStatus returns the array of hubdetails with their current status.
