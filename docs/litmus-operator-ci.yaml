@@ -43,7 +43,7 @@ rules:
   verbs: ["get","list"]
 - apiGroups: ["batch"]
   resources: ["jobs"]
-  verbs: ["get","list"]
+  verbs: ["get","list","deletecollection"]
 - apiGroups: ["argoproj.io"]
   resources: ["rollouts"]
   verbs: ["get","list"]
