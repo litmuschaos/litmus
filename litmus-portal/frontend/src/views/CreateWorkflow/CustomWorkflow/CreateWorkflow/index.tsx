@@ -74,10 +74,9 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const [selectedExp, setSelectedExp] = useState(
     t('customWorkflow.createWorkflow.selectAnExp') as string
   );
-
   const [availableHubs, setAvailableHubs] = useState<MyHubDetail[]>([]);
   const template = useActions(TemplateSelectionActions);
-  const [constructYAML, setConstructYAML] = useState('construct');
+
   const [selectedHubDetails, setSelectedHubDetails] = useState<MyHubDetail>();
 
   const [getExperimentYaml] = useLazyQuery(GET_EXPERIMENT_YAML, {
@@ -126,19 +125,23 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const { data } = useQuery<HubStatus>(GET_HUB_STATUS, {
     variables: { data: selectedProjectID },
     fetchPolicy: 'cache-and-network',
-    onCompleted: (data) => {
-      setSelectedHub(data.getHubStatus[0].HubName);
-      setAvailableHubs([...data.getHubStatus]);
-      getCharts({
-        variables: {
-          projectID: selectedProjectID,
-          HubName: data.getHubStatus[0].HubName,
-        },
-      });
-      setSelectedHubDetails(data.getHubStatus[0]);
+    onCompleted: (hubData) => {
+      if (hubData.getHubStatus.length) {
+        setSelectedHub(hubData.getHubStatus[0].HubName);
+        setAvailableHubs([...hubData.getHubStatus]);
+        getCharts({
+          variables: {
+            projectID: selectedProjectID,
+            HubName: hubData.getHubStatus[0].HubName,
+          },
+        });
+        setSelectedHubDetails(hubData.getHubStatus[0]);
+      }
     },
   });
-
+  const [constructYAML, setConstructYAML] = useState(
+    data?.getHubStatus.length ? 'construct' : 'upload'
+  );
   // Function to get charts of a particular hub
   const findChart = (hubname: string) => {
     const myHubData = data?.getHubStatus.filter((myHub) => {
@@ -295,6 +298,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               <FormControlLabel
                 value="construct"
                 control={<Radio />}
+                disabled={data?.getHubStatus.length === 0}
                 label={
                   <Typography className={classes.radioText}>
                     {t('customWorkflow.createWorkflow.construct')}
@@ -460,6 +464,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               <FormControlLabel
                 value="upload"
                 control={<Radio />}
+                disabled={workflowDetails.customWorkflows.length !== 0}
                 label={
                   <Typography className={classes.radioText}>
                     {t('customWorkflow.createWorkflow.upload')}{' '}
