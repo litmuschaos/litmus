@@ -32,11 +32,26 @@ metadata:
     app.kubernetes.io/managed-by: kubectl
     name: litmus
 rules:
-- apiGroups: ["","apps","batch","apps.openshift.io","argoproj.io"]
-  resources: ["jobs","deployments","replicationcontrollers","daemonsets","replicasets","statefulsets","deploymentconfigs","rollouts","secrets"]
-  verbs: ["get","list","watch","deletecollection"]
-- apiGroups: ["","litmuschaos.io"]
-  resources: ["pods","configmaps","events","services","chaosengines","chaosexperiments","chaosresults"]
+- apiGroups: [""]
+  resources: ["replicationcontrollers","secrets"]
+  verbs: ["get","list"]
+- apiGroups: ["apps.openshift.io"]
+  resources: ["deploymentconfigs"]
+  verbs: ["get","list"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "daemonsets", "replicasets", "statefulsets"]
+  verbs: ["get","list"]
+- apiGroups: ["batch"]
+  resources: ["jobs"]
+  verbs: ["get","list","deletecollection"]
+- apiGroups: ["argoproj.io"]
+  resources: ["rollouts"]
+  verbs: ["get","list"]
+- apiGroups: [""]
+  resources: ["pods","configmaps","events","services"]
+  verbs: ["get","create","update","patch","delete","list","watch","deletecollection"]
+- apiGroups: ["litmuschaos.io"]
+  resources: ["chaosengines","chaosexperiments","chaosresults"]
   verbs: ["get","create","update","patch","delete","list","watch","deletecollection"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
