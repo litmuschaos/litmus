@@ -58,7 +58,6 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         applabel: parsedYaml.spec.appinfo.applabel,
         appkind: parsedYaml.spec.appinfo.appkind,
       });
-      setAnnotation(parsedYaml.spec.annotationCheck);
       setYaml(YAML.stringify(parsedYaml));
       setLoadingEnv(false);
     },
@@ -251,63 +250,69 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             </Typography>
             <div className={classes.appInfoDiv}>
               <Typography className={classes.appInfoText}>appns:</Typography>
-              <InputField
-                label="appns"
-                styles={{
-                  width: '20%',
-                }}
-                data-cy="inputWorkflow"
-                validationError={false}
-                handleChange={(event) =>
-                  setAppInfo({
-                    ...appInfo,
-                    appns: event.target.value.toLowerCase(),
-                  })
-                }
-                value={appInfo.appns}
-              />
+              <div className={classes.inputField}>
+                <InputField
+                  label="appns"
+                  styles={{
+                    width: '100%',
+                  }}
+                  data-cy="inputWorkflow"
+                  validationError={false}
+                  handleChange={(event) =>
+                    setAppInfo({
+                      ...appInfo,
+                      appns: event.target.value.toLowerCase(),
+                    })
+                  }
+                  value={appInfo.appns}
+                />
+              </div>
             </div>
             <div className={classes.appInfoDiv}>
               <Typography className={classes.appInfoText}>applabel:</Typography>
-              <InputField
-                label="applabel"
-                styles={{
-                  width: '20%',
-                }}
-                data-cy="inputWorkflow"
-                validationError={false}
-                handleChange={(event) =>
-                  setAppInfo({
-                    ...appInfo,
-                    applabel: event.target.value.toLowerCase(),
-                  })
-                }
-                value={appInfo.applabel}
-              />
+              <div className={classes.inputField}>
+                <InputField
+                  label="applabel"
+                  styles={{
+                    width: '100%',
+                  }}
+                  data-cy="inputWorkflow"
+                  validationError={false}
+                  handleChange={(event) =>
+                    setAppInfo({
+                      ...appInfo,
+                      applabel: event.target.value.toLowerCase(),
+                    })
+                  }
+                  value={appInfo.applabel}
+                />
+              </div>
             </div>
             <div className={classes.appKind}>
               <Typography className={classes.appInfoText}>appkind:</Typography>
-              <InputField
-                label="appkind"
-                styles={{
-                  width: '20%',
-                }}
-                data-cy="inputWorkflow"
-                validationError={false}
-                handleChange={(event) =>
-                  setAppInfo({
-                    ...appInfo,
-                    appkind: event.target.value.toLowerCase(),
-                  })
-                }
-                value={appInfo.appkind}
-              />
+              <div className={classes.inputField}>
+                <InputField
+                  label="appkind"
+                  styles={{
+                    width: '100%',
+                  }}
+                  data-cy="inputWorkflow"
+                  validationError={false}
+                  handleChange={(event) =>
+                    setAppInfo({
+                      ...appInfo,
+                      appkind: event.target.value.toLowerCase(),
+                    })
+                  }
+                  value={appInfo.appkind}
+                />
+              </div>
             </div>
-            <div className={classes.appInfoDiv}>
+            <div className={classes.appKind}>
               <Typography className={classes.appInfoText}>
                 annotationCheck:
               </Typography>
-              <div className={classes.annotationField}>
+              <div className={classes.inputField}>
                 <InputField
                   label="annotationCheck"
                   styles={{
