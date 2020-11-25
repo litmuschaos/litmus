@@ -39,6 +39,9 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2.5),
     marginBottom: theme.spacing(1.25),
   },
+  inputField: {
+    marginLeft: theme.spacing(2.5),
+  },
   appInfoText: {
     fontSize: '0.875rem',
     width: '6.25rem',
@@ -48,7 +51,6 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     alignItems: 'center',
     paddingLeft: theme.spacing(2.5),
-    marginBottom: theme.spacing(2.5),
   },
   envHeader: {
     fontSize: '0.75rem',
@@ -102,7 +104,7 @@ const useStyles = makeStyles((theme) => ({
   horizontalLine: {
     border: `1px solid  ${theme.palette.customColors.black(0.3)}`,
     width: '100%',
-    marginTop: theme.spacing(1.25),
+    marginTop: theme.spacing(3.25),
     marginBottom: theme.spacing(1.25),
   },
   formControl: {
