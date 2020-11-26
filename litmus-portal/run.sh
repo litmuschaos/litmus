@@ -17,6 +17,8 @@ export LITMUS_CHAOS_OPERATOR_IMAGE=litmuschaos/chaos-operator:1.8.2
 export LITMUS_CHAOS_RUNNER_IMAGE=litmuschaos/chaos-runner:1.8.2
 export ADMIN_USERNAME=admin
 export ADMIN_PASSWORD=litmus
+export DB_USER=admin
+export DB_PASSWORD=1234
 # Dependency Checks
 dir=($(pwd | tr "/" "\n"))
 count=${#dir[@]}
