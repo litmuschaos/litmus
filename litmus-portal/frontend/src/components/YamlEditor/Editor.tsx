@@ -37,6 +37,7 @@ import 'ace-builds/src-min-noconflict/ext-statusbar';
 import 'ace-builds/src-min-noconflict/ext-textarea';
 import 'ace-builds/src-min-noconflict/ext-themelist';
 import 'ace-builds/src-min-noconflict/ext-whitespace';
+import YAML from 'yaml';
 import { AceValidations, parseYamlValidations } from './Validations';
 import useStyles from './styles';
 import useActions from '../../redux/actions';
@@ -123,9 +124,11 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
     }
     setEditorState(stateObject as any);
     setModifiedYaml(value);
+    const yamlData = YAML.parse(value);
     workflow.setWorkflowDetails({
       name: filename,
       link: yamlLink,
+      namespace: yamlData.metadata.namespace,
       yaml: value,
       id,
       description,
@@ -230,6 +233,10 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
       });
     }
     setEditorState(stateObject as any);
+    const yamlData = YAML.parse(content);
+    workflow.setWorkflowDetails({
+      namespace: yamlData.metadata.namespace,
+    });
   }, []);
 
   return (

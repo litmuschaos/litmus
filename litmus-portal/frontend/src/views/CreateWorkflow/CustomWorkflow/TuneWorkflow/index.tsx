@@ -248,83 +248,95 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             <Typography className={classes.appInfoHeader}>
               {t('customWorkflow.tuneExperiment.appInfo')}
             </Typography>
-            <div className={classes.appInfoDiv}>
-              <Typography className={classes.appInfoText}>appns:</Typography>
-              <div className={classes.inputField}>
-                <InputField
-                  label="appns"
-                  styles={{
-                    width: '100%',
-                  }}
-                  data-cy="inputWorkflow"
-                  validationError={false}
-                  handleChange={(event) =>
-                    setAppInfo({
-                      ...appInfo,
-                      appns: event.target.value.toLowerCase(),
-                    })
-                  }
-                  value={appInfo.appns}
-                />
+            {YAML.parse(yaml).spec.appinfo.appns ? (
+              <div className={classes.appInfoDiv}>
+                <Typography className={classes.appInfoText}>appns:</Typography>
+                <div className={classes.inputField}>
+                  <InputField
+                    label="appns"
+                    styles={{
+                      width: '100%',
+                    }}
+                    data-cy="inputWorkflow"
+                    validationError={false}
+                    handleChange={(event) =>
+                      setAppInfo({
+                        ...appInfo,
+                        appns: event.target.value.toLowerCase(),
+                      })
+                    }
+                    value={appInfo.appns}
+                  />
+                </div>
               </div>
-            </div>
-            <div className={classes.appInfoDiv}>
-              <Typography className={classes.appInfoText}>applabel:</Typography>
-              <div className={classes.inputField}>
-                <InputField
-                  label="applabel"
-                  styles={{
-                    width: '100%',
-                  }}
-                  data-cy="inputWorkflow"
-                  validationError={false}
-                  handleChange={(event) =>
-                    setAppInfo({
-                      ...appInfo,
-                      applabel: event.target.value.toLowerCase(),
-                    })
-                  }
-                  value={appInfo.applabel}
-                />
+            ) : null}
+            {YAML.parse(yaml).spec.appinfo.applabel ? (
+              <div className={classes.appInfoDiv}>
+                <Typography className={classes.appInfoText}>
+                  applabel:
+                </Typography>
+                <div className={classes.inputField}>
+                  <InputField
+                    label="applabel"
+                    styles={{
+                      width: '100%',
+                    }}
+                    data-cy="inputWorkflow"
+                    validationError={false}
+                    handleChange={(event) =>
+                      setAppInfo({
+                        ...appInfo,
+                        applabel: event.target.value.toLowerCase(),
+                      })
+                    }
+                    value={appInfo.applabel}
+                  />
+                </div>
               </div>
-            </div>
-            <div className={classes.appKind}>
-              <Typography className={classes.appInfoText}>appkind:</Typography>
-              <div className={classes.inputField}>
-                <InputField
-                  label="appkind"
-                  styles={{
-                    width: '100%',
-                  }}
-                  data-cy="inputWorkflow"
-                  validationError={false}
-                  handleChange={(event) =>
-                    setAppInfo({
-                      ...appInfo,
-                      appkind: event.target.value.toLowerCase(),
-                    })
-                  }
-                  value={appInfo.appkind}
-                />
+            ) : null}
+            {YAML.parse(yaml).spec.appinfo.appkind ? (
+              <div className={classes.appKind}>
+                <Typography className={classes.appInfoText}>
+                  appkind:
+                </Typography>
+                <div className={classes.inputField}>
+                  <InputField
+                    label="appkind"
+                    styles={{
+                      width: '100%',
+                    }}
+                    data-cy="inputWorkflow"
+                    validationError={false}
+                    handleChange={(event) =>
+                      setAppInfo({
+                        ...appInfo,
+                        appkind: event.target.value.toLowerCase(),
+                      })
+                    }
+                    value={appInfo.appkind}
+                  />
+                </div>
               </div>
-            </div>
-            <div className={classes.appKind}>
-              <Typography className={classes.appInfoText}>
-                annotationCheck:
-              </Typography>
-              <div className={classes.inputField}>
-                <InputField
-                  label="annotationCheck"
-                  styles={{
-                    width: '100%',
-                  }}
-                  data-cy="inputWorkflow"
-                  validationError={false}
-                  handleChange={(event) => setAnnotation(event.target.value)}
-                  value={annotation}
-                />
+            ) : null}
+            {YAML.parse(yaml).spec.annotationCheck ? (
+              <div className={classes.appKind}>
+                <Typography className={classes.appInfoText}>
+                  annotationCheck:
+                </Typography>
+                <div className={classes.inputField}>
+                  <InputField
+                    label="annotationCheck"
+                    styles={{
+                      width: '100%',
+                    }}
+                    data-cy="inputWorkflow"
+                    validationError={false}
+                    handleChange={(event) => setAnnotation(event.target.value)}
+                    value={annotation}
+                  />
+                </div>
               </div>
-            </div>
+            ) : null}
             <hr className={classes.horizontalLine} />
             <Typography className={classes.envHeader}>
               {t('customWorkflow.tuneExperiment.envText')}
