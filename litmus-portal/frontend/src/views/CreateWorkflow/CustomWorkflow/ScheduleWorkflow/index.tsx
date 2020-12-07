@@ -87,7 +87,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     kind: 'Workflow',
     metadata: {
       name: `${workflowDetails.name}`,
-      namespace: 'litmus',
+      namespace: `${workflowDetails.namespace}`,
     },
     spec: {
       arguments: {
