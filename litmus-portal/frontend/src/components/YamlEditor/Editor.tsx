@@ -234,9 +234,11 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
     }
     setEditorState(stateObject as any);
     const yamlData = YAML.parse(content);
-    workflow.setWorkflowDetails({
-      namespace: yamlData.metadata.namespace,
-    });
+    if (readOnly !== true) {
+      workflow.setWorkflowDetails({
+        namespace: yamlData.metadata.namespace,
+      });
+    }
   }, []);
 
   return (

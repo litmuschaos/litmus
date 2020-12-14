@@ -53,11 +53,14 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     onCompleted: (data) => {
       const parsedYaml = YAML.parse(data.getYAMLData);
       setEnv([...parsedYaml.spec.experiments[0].spec.components.env]);
-      setAppInfo({
-        appns: parsedYaml.spec.appinfo.appns,
-        applabel: parsedYaml.spec.appinfo.applabel,
-        appkind: parsedYaml.spec.appinfo.appkind,
-      });
+      if (parsedYaml.spec.appinfo !== undefined) {
+        setAppInfo({
+          appns: parsedYaml.spec.appinfo.appns,
+          applabel: parsedYaml.spec.appinfo.applabel,
+          appkind: parsedYaml.spec.appinfo.appkind,
+        });
+      }
+      setAnnotation(parsedYaml.spec.annotationCheck);
       setYaml(YAML.stringify(parsedYaml));
       setLoadingEnv(false);
     },
@@ -107,11 +110,13 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       });
     } else {
       const parsedYaml = YAML.parse(customWorkflow.yaml as string);
-      setAppInfo({
-        appns: parsedYaml.spec.appinfo.appns,
-        applabel: parsedYaml.spec.appinfo.applabel,
-        appkind: parsedYaml.spec.appinfo.appkind,
-      });
+      if (parsedYaml.spec.appinfo !== undefined) {
+        setAppInfo({
+          appns: parsedYaml.spec.appinfo.appns,
+          applabel: parsedYaml.spec.appinfo.applabel,
+          appkind: parsedYaml.spec.appinfo.appkind,
+        });
+      }
       setAnnotation(parsedYaml.spec.annotationCheck);
       setEnv([...parsedYaml.spec.experiments[0].spec.components.env]);
       setYaml(customWorkflow.yaml as string);
@@ -162,9 +167,11 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     });
     const parsedYaml = YAML.parse(yaml);
     parsedYaml.spec.experiments[0].spec.components.env = newEnvs;
-    parsedYaml.spec.appinfo.appns = appInfo.appns;
-    parsedYaml.spec.appinfo.applabel = appInfo.applabel;
-    parsedYaml.spec.appinfo.appkind = appInfo.appkind;
+    if (parsedYaml.spec.appinfo !== undefined) {
+      parsedYaml.spec.appinfo.appns = appInfo.appns;
+      parsedYaml.spec.appinfo.applabel = appInfo.applabel;
+      parsedYaml.spec.appinfo.appkind = appInfo.appkind;
+    }
     parsedYaml.spec.annotationCheck = annotation;
     parsedYaml.metadata.name = customWorkflow.experiment_name?.split('/')[1];
     parsedYaml.metadata.namespace =
@@ -248,7 +255,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             <Typography className={classes.appInfoHeader}>
               {t('customWorkflow.tuneExperiment.appInfo')}
             </Typography>
-            {YAML.parse(yaml).spec.appinfo.appns ? (
+            {YAML.parse(yaml).spec.appinfo?.appns ? (
               <div className={classes.appInfoDiv}>
                 <Typography className={classes.appInfoText}>appns:</Typography>
                 <div className={classes.inputField}>
@@ -270,7 +277,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 </div>
               </div>
             ) : null}
-            {YAML.parse(yaml).spec.appinfo.applabel ? (
+            {YAML.parse(yaml).spec.appinfo?.applabel ? (
               <div className={classes.appInfoDiv}>
                 <Typography className={classes.appInfoText}>
                   applabel:
@@ -294,7 +301,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 </div>
               </div>
             ) : null}
-            {YAML.parse(yaml).spec.appinfo.appkind ? (
+            {YAML.parse(yaml).spec.appinfo?.appkind ? (
               <div className={classes.appKind}>
                 <Typography className={classes.appInfoText}>
                   appkind:
