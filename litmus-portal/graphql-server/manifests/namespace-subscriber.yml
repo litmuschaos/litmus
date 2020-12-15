@@ -509,36 +509,27 @@ metadata:
   labels:
     name: litmus-namespace-scope
 rules:
-  - apiGroups: ["", "apps", "batch", "extensions", "litmuschaos.io"]
-    resources:
-      [
-        "pods",
-        "pods/exec",
-        "pods/log",
-        "pods/eviction",
-        "jobs",
-        "deployments",
-        "daemonsets",
-        "replicasets",
-        "statefulsets",
-        "events",
-        "configmaps",
-        "services",
-        "chaosengines",
-        "chaosexperiments",
-        "chaosresults",
-      ]
-    verbs:
-      [
-        "get",
-        "create",
-        "update",
-        "patch",
-        "delete",
-        "list",
-        "watch",
-        "deletecollection",
-      ]
+- apiGroups: [""]
+  resources: ["replicationcontrollers","secrets"]
+  verbs: ["get","list"]
+- apiGroups: ["apps.openshift.io"]
+  resources: ["deploymentconfigs"]
+  verbs: ["get","list"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "daemonsets", "replicasets", "statefulsets"]
+  verbs: ["get","list"]
+- apiGroups: ["batch"]
+  resources: ["jobs"]
+  verbs: ["get","list","deletecollection"]
+- apiGroups: ["argoproj.io"]
+  resources: ["rollouts"]
+  verbs: ["get","list"]
+- apiGroups: [""]
+  resources: ["pods","configmaps","events","services"]
+  verbs: ["get","create","update","patch","delete","list","watch","deletecollection"]
+- apiGroups: ["litmuschaos.io"]
+  resources: ["chaosengines","chaosexperiments","chaosresults"]
+  verbs: ["get","create","update","patch","delete","list","watch","deletecollection"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
