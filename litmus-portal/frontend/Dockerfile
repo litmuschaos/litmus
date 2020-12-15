@@ -23,7 +23,7 @@ COPY . ./
 RUN npm run build
 
 # Stage 2: the production environment
-FROM nginx:alpine
+FROM nginxinc/nginx-unprivileged:1.18-alpine
 RUN rm /etc/nginx/conf.d/default.conf
 COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
 COPY  --from=react-build /frontend/build /usr/share/nginx/html
