@@ -19,6 +19,7 @@ const QuickActionCard = () => {
   const userRole = useSelector((state: RootState) => state.userData.userRole);
   const tabs = useActions(TabActions);
   const { t } = useTranslation();
+  const apiDocsUrl = `${window.location.href}api-doc`;
 
   return (
     <div data-cy="quickActionCardComponent" className={classes.quickActionCard}>
@@ -69,6 +70,14 @@ const QuickActionCard = () => {
               target="_"
             >
               {t('quickActionCard.readDocs')}
+            </a>
+          </QuickActionItems>
+          <QuickActionItems>
+            <div className={classes.imgDiv}>
+              <img src="/icons/docs.png" alt="docs" />
+            </div>
+            <a href={apiDocsUrl} className={classes.listItem} target="_">
+              {t('quickActionCard.readAPIDocs')}
             </a>
           </QuickActionItems>
         </List>

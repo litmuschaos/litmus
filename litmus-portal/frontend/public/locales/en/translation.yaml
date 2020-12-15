@@ -44,7 +44,8 @@ quickActionCard:
   quickActions: Quick Actions
   inviteTeamMember: Invite a team member
   quickSurvey: Take a quick survey
-  readDocs: Read The Litmus docs
+  readDocs: Read the Litmus docs
+  readAPIDocs: Read the Litmus Portal API docs
 
 customWorkflowCard:
   customWorkflow: Create your own workflow

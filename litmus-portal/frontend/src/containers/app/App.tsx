@@ -43,10 +43,24 @@ interface RoutesProps {
 
 const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
   const classes = useStyles();
+  const iframe = () => {
+    return {
+      __html:
+        '<iframe src="./api-doc/index.html" width="100%" height="100%"></iframe>',
+    };
+  };
+
   if (getToken() === '') {
     return (
       <div className={classes.content}>
         <Switch>
+          <Route
+            exact
+            path="/api-doc"
+            component={() => {
+              return <div dangerouslySetInnerHTML={iframe()} />;
+            }}
+          />
           <Route exact path="/login" component={LoginPage} />
           <Route path="/" render={() => <Redirect to="/login" />} />
         </Switch>
