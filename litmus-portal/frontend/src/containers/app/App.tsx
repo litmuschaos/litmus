@@ -46,7 +46,7 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
   const iframe = () => {
     return {
       __html:
-        '<iframe src="./api-doc/index.html" width="100%" height="100%"></iframe>',
+        '<iframe src="/api-doc/index.html" style="width:100%; height:100vh;"></iframe>',
     };
   };
 
@@ -73,6 +73,13 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
       <div className={classes.content}>
         <Switch>
           <Route exact path="/" component={HomePage} />
+          <Route
+            exact
+            path="/api-doc"
+            component={() => {
+              return <div dangerouslySetInnerHTML={iframe()} />;
+            }}
+          />
           <Route path="/" render={() => <Redirect to="/" />} />
         </Switch>
       </div>
@@ -85,7 +92,13 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
         <Route exact path="/" component={HomePage} />
         <Route exact path="/workflows" component={Workflows} />
         <Route exact path="/create-workflow" component={CreateWorkflow} />
-
+        <Route
+          exact
+          path="/api-doc"
+          component={() => {
+            return <div dangerouslySetInnerHTML={iframe()} />;
+          }}
+        />
         {/* Redirects */}
         <Redirect exact path="/login" to="/" />
         <Redirect exact path="/workflows/details" to="/workflows" />
