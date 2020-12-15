@@ -1,0 +1,638 @@
+introspection: http://localhost:8080/query
+
+servers:
+  - url: http://localhost:8080
+    description: Dev
+  - url: http://localhost:8080/query
+    description: Prod
+
+info:
+    title: Litmus Portal API Documentation
+    description: |
+      Litmus Portal provides console and UI experience for managing, monitoring, and events around chaos workflows. Chaos workflows consist of a sequence of experiments run together to achieve the objective of introducing some kind of fault into an application or the Kubernetes platform.
+domains:
+  - name: Cluster
+    description: |
+      Litmus Portal gives the ability to run chaos on remote Kubernetes cluster. Self cluster is automatically getting connected after submitting the welcome model. To connect an external cluster, use the following APIs for cluster operations. <br/>
+      User can access connected clusters via <b>targets</b> page of Litmus Portal.
+    usecases:      
+    - name: Register Cluster
+      query: mutation.userClusterReg
+      description: | 
+        User can make requests to connect their kubernetes cluster and get a token as response, that token can be used to get the subscriber manifest which needs to apply in their cluster.
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>platform_name</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+          <tr>
+            <td>cluster_type</td>
+            <td>external/internal</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>agent_namespace</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+          <tr>
+            <td>serviceaccount</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+          <tr>
+            <td>agent_scope</td>
+            <td>cluster/namespace</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>agent_ns_exists</td>
+            <td>true/false</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>agent_sa_exists</td>
+            <td>true/false</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+        <h6>Example Body:</h6>
+        {<br/>
+        <p style="margin-left: 40px">
+            <b>"cluster_name"</b>: "Litmus-cluster", <br/>
+            <b>"description"</b>: "New Litmus Portal Cluster",<br/>
+            <b>"platform_name"</b>: "AWS",<br/>
+            <b>"project_id"</b>: "5fd7d9212c9f32447e28317b",<br/>
+            <b>"cluster_type"</b>: "external",<br/>
+            <b>"agent_namespace"</b>: "",<br/>
+            <b>"agent_namespace"</b>: "",<br/>
+            <b>"agent_scope"</b>: cluster,<br/>
+            <b>"agent_ns_exists"</b>: false,<br/>
+            <b>"agent_sa_exists"</b>: false,
+        </p>
+        }
+    - name: List Cluster
+      query: query.getCluster
+      description: |
+        Returns a list of cluster with Litmus Portal. It includes pending, active and inactive clusters.
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>cluster_type</td>
+            <td>external/internal</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+        <h6>Example Body:</h6>
+        {<br/>
+        <p style="margin-left: 40px">
+            <b>"project_id"</b>: "5fd7d9212c9f32447e28317b", <br/>
+            <b>"cluster_type"</b>: "external",<br/>
+        </p>
+        }
+        
+    - name: Delete Cluster
+      query: mutation.deleteClusterReg
+      description: |
+        This query can be used to delete a cluster from litmus portal. It cannot be undone. <br/>
+        <b>Note:</b> User can access the details of deleted cluster inside MongoDB, which are being marked as removed.
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>cluster_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+        <h6>Example Body:</h6>
+        {<br/>
+        <p style="margin-left: 40px">
+            <b>"cluster_id"</b>: "2df3212c9f32447e28317b", <br/>
+        </p>
+        }
+
+
+  - name: Chaos Workflow
+    description: |
+      Chaos workflows consist of a sequence of experiments run together to introduce chaos in the Kubernetes platform. <br/>
+      <b>Note:</b> Target cluster should be in active state before scheduling the workflow
+    usecases:      
+    - name: Create ChaosWorkflow
+      query: mutation.createChaosWorkFlow
+      description: |
+        User can create chaosworkflow easily via the workflow page of the Litmus Portal dashboard. 
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>workflow_manifest</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>cronSyntax</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+          <tr>
+            <td>workflow_name</td>
+            <td>external/internal</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>workflow_description</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+          <tr>
+            <td>isCustomWorkflow</td>
+            <td>true/false</td>
+            <td>Madatory</td>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td></td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>cluster_id</td>
+            <td></td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+        <h6>Example Body:</h6>
+        {<br/>
+        <p style="margin-left: 40px">
+            <b>"workflow_name"</b>: "Pod-networkloss-chaos", <br/>
+            <b>"workflow_manifest"</b>: "{ apiVersion: v1 ......}",<br/>
+            <b>"cronSyntax"</b>: "***/2",<br/>
+            <b>"project_id"</b>: "5fd7d9212c9f32447e28317b",<br/>
+            <b>"cluster_id"</b>: "3gr3f492146f53d4g3e283re",<br/>
+            <b>"workflow_description"</b>: "Pod networkloss-experiment",<br/>
+            <b>"isCustomWorkflow"</b>: false,<br/>
+        </p>
+        }
+
+    - name: List ChaosWorkflow
+      query: query.ListWorkflow
+      description: |
+        Returns a list of chaos workflow and details of particular using a same endpoint. It can fetch both cron and non-cron workflow present in the Litmus Portal. <br/>
+        User can get a particular workflow by appending <b>workflow_id</b> inside an array of <b>workflow_ids</b>, if the array is empty it will return a list of chaos workflow.
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>workflow_ids</td>
+            <td>[]</td>
+            <td>Optional</td>
+          </tr>
+        </table>
+        <h6>Example Body:</h6>
+        {<br/>
+        <p style="margin-left: 40px">
+            <b>"project_id"</b>: "5fd7d9212c9f32447e28317b", <br/>
+            <b>"workflow_ids"</b>: ["3gr3f492146f53d4g3e283re"],<br/>
+        </p>
+        }
+
+    - name: Update ChaosWorkflow
+      query: mutation.updateChaosWorkflow
+      description: |
+        Update the specified chaos workflow by setting the values of the parameters passed. Any parameters not provided will change with its empty value.
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>workflow_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>cronSyntax</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>workflow_name</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>workflow_description</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>isCustomWorkflow</td>
+            <td>true/false</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+        <h6>Example Body:</h6>
+        {<br/>
+        <p style="margin-left: 40px">
+            <b>"workflow_id"</b>: "5fd7d9212c9f32447e28317b", <br/>
+            <b>"cronSyntax"</b>: "****",<br/>
+            <b>"workflow_name"</b>: "New-network-chaos",<br/>
+            <b>"workflow_description"</b>: "Update Chaos workflow",<br/>
+            <b>"isCustomWorkflow"</b>: false<br/>
+        </p>
+        }
+
+    - name: Delete ChaosWorkflow
+      query: mutation.deleteChaosWorkflow
+      description: |
+        Delete chaos workflow will permanently delete schedule workflow from the cluster. It cannot be undone.
+        <b>Note:</b> User can access the details of deleted workflow inside MongoDB, which are being marked as removed.
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>workflowid</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+        <h6>Example Body:</h6>
+        {<br/>
+        <p style="margin-left: 40px">
+            <b>"workflowid"</b>: "2df3212c9f32447e28317b", <br/>
+        </p>
+        }
+
+
+  - name: MyHub
+    description: MyHub constructs workflow from a set of experiments from Chaos Hub or the Git Repo. There is a public hub which get cloned during the installation by default.
+    usecases:      
+    - name: Add Myhub
+      query: mutation.addMyHub
+      description: |
+        User can add myhub easily via the myhub page of the Litmus Portal dashboard. After adding myhub, it will clone the git repository which has the chaos charts. 
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>RepoURL</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>RepoBranch</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>HubName</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+        <h6>Example Body:</h6>
+        {<br/>
+        <p style="margin-left: 40px">
+            <b>"RepoURL"</b>: "https://github.com/litmuschaos/chaos-charts", <br/>
+            <b>"RepoBranch"</b>: "master",<br/>
+            <b>"HubName"</b>: "my-chaos-hub",<br/>
+        </p>
+        }
+    - name: List MyHub
+      query: query.getHubStatus
+      description: |
+        Returns a list of myhub connected with Litmus Portal
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>projectID</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+        <h6>Example Body:</h6>
+        {<br/>
+        <p style="margin-left: 40px">
+            <b>"projectID"</b>: "5fd7d9212c9f32447e28317b", <br/>
+        </p>
+        }
+
+    - name: Sync MyHub
+      query: mutation.syncHub 
+      description: |
+        Sync hub will pull the latest commits from the git repository. 
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>projectID</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>HubName</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+        <h6>Example Body:</h6>
+        {<br/>
+        <p style="margin-left: 40px">
+            <b>"project_id"</b>: "5fd7d9212c9f32447e28317b", <br/>
+            <b>"HubName"</b>: "my-chaos-hub", <br/>
+        </p>
+        }
+  - name: User Management
+    description: User Management APIs manages user accessibility with Litmus Portal 
+    usecases:      
+    - name: Add User
+      description: |
+        Admin can add their team members via the user management panel of settings page. After that, user can login with their credentials to litmus portal.
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>username</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>email</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>company_name</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>name</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>project_name</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+        <h6>Example Body:</h6>
+        {<br/>
+        <p style="margin-left: 40px">
+            <b>"username"</b>: "litmus-user", <br/>
+            <b>"email"</b>: "litmuschaos@gmail.com", <br/>
+            <b>"company_name"</b>: "CNCF", <br/>
+            <b>"name"</b>: "Litmus User", <br/>
+            <b>"project_name"</b>: "my-project", <br/>
+        </p>
+        }
+      query: mutation.createUser
+    - name: List User
+      query: query.users
+      description: |
+        Returns a list of user within the Litmus Portal
+    - name: Get User
+      query: query.getUser
+      description: |
+        Returns a specified user within the Litmus Portal
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>username</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+        <h6>Example Body:</h6>
+        {<br/>
+        <p style="margin-left: 40px">
+            <b>"username"</b>: "litmus-user", <br/>
+        </p>
+        }
+    - name: Update User
+      query: muatation.updateUser
+      description: |
+        User can update its details details by providing the following parameters:
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>name</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>email</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>company_name</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+        <h6>Example Body:</h6>
+        {<br/>
+        <p style="margin-left: 40px">
+            <b>"id"</b>: "5fd7d9212c9f32447e28317b", <br/>
+            <b>"name"</b>: "litmus-user", <br/>
+            <b>"email"</b>: "litmususer@yahoo.com", <br/>
+            <b>"company_name"</b>: "CNCF", <br/>
+        </p>
+        }
+    - name: Send Invitation
+      query: mutation.sendInvitation 
+      description: |
+        Admin can invite registered user to their project and assign them with viewer or editor access. Following are the parameters for this mutation:
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>user_name</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>role</td>
+            <td>Viewer/Editor</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+        <h6>Example Body:</h6>
+        {<br/>
+        <p style="margin-left: 40px">
+            <b>"project_id"</b>: "5fd7d9212c9f32447e28317b", <br/>
+            <b>"username"</b>: "litmus-user", <br/>
+            <b>"role"</b>: "Editor", <br/>
+        </p>
+        }
+    - name: Accept Invitation
+      query: mutation.acceptInvitation
+      description: |
+        User can accept the invitation by invoking this endpoint.
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>user_name</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>role</td>
+            <td>Viewer/Editor</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+        <h6>Example Body:</h6>
+        {<br/>
+        <p style="margin-left: 40px">
+            <b>"project_id"</b>: "5fd7d9212c9f32447e28317b", <br/>
+            <b>"username"</b>: "litmus-user", <br/>
+            <b>"role"</b>: "Viewer", <br/>
+        </p>
+        }
+    - name: Decline Invitation
+      query: mutation.declineInvitation
+      description: |
+        User can decline the invitation by invoking this endpoint.
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>user_name</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>role</td>
+            <td>Viewer/Editor</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+        <h6>Example Body:</h6>
+        {<br/>
+        <p style="margin-left: 40px">
+            <b>"project_id"</b>: "5fd7d9212c9f32447e28317b", <br/>
+            <b>"username"</b>: "litmus-user", <br/>
+            <b>"role"</b>: "Viewer", <br/>
+        </p>
+        }
+    - name: Remove Invitation
+      query: mutation.declineInvitation
+      description: |
+        User can remove the invitation by invoking this endpoint.
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>user_name</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>role</td>
+            <td>Viewer/Editor</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+        <h6>Example Body:</h6>
+        {<br/>
+        <p style="margin-left: 40px">
+            <b>"project_id"</b>: "5fd7d9212c9f32447e28317b", <br/>
+            <b>"username"</b>: "litmus-user", <br/>
+            <b>"role"</b>: "Viewer", <br/>
+        </p>
+        }
