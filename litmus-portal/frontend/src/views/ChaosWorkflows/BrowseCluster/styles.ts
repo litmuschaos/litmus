@@ -246,6 +246,11 @@ const useStyles = makeStyles((theme) => ({
       color: theme.palette.error.main,
     },
   },
+  customTooltip: {
+    backgroundColor: theme.palette.secondary.light,
+    color: theme.palette.text.primary,
+    fontSize: '0.775rem',
+  },
 }));
 
 export default useStyles;

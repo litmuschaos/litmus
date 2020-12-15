@@ -1,4 +1,4 @@
-import { TableCell, Typography, IconButton } from '@material-ui/core';
+import { TableCell, Typography, IconButton, Tooltip } from '@material-ui/core';
 import React from 'react';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
@@ -82,16 +82,29 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
       </TableCell>
       <TableCell>{timeDifferenceForDate(data.updated_at)}</TableCell>
       <TableCell>
-        <div className={classes.deleteCluster}>
-          <div>
-            <IconButton onClick={handleClick}>
-              <img alt="delete" src="./icons/bin-red.svg" />
-            </IconButton>
+        <Tooltip
+          classes={{
+            tooltip: classes.customTooltip,
+          }}
+          disableFocusListener
+          disableHoverListener={userRole !== 'Viewer'}
+          placement="bottom"
+          title="Insufficient Permissions"
+        >
+          <div className={classes.deleteCluster}>
+            <div>
+              <IconButton
+                disabled={userRole === 'Viewer'}
+                onClick={handleClick}
+              >
+                <img alt="delete" src="./icons/bin-red.svg" />
+              </IconButton>
+            </div>
+            <div>
+              <Typography>{t('targets.modalDelete.delete')}</Typography>
+            </div>
           </div>
-          <div>
-            <Typography>{t('targets.modalDelete.delete')}</Typography>
-          </div>
-        </div>
+        </Tooltip>
         <div>
           {open ? (
             <div>
