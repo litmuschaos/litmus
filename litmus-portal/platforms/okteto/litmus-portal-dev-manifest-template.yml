@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
         - name: litmusportal-frontend
-          image: litmuschaos/litmusportal-frontend:ci
+          image: litmuschaos/litmusportal-frontend:1.11.0
           resources:
             limits:
               cpu: 100m
@@ -109,7 +109,7 @@ spec:
     spec:
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:ci
+          image: litmuschaos/litmusportal-server:1.11.0
           resources:
             limits:
               cpu: 200m
@@ -154,7 +154,7 @@ spec:
                   name: litmus-portal-admin-config
                   key: DB_PASSWORD
             - name: SUBSCRIBER_IMAGE
-              value: "litmuschaos/litmusportal-subscriber:ci"
+              value: "litmuschaos/litmusportal-subscriber:1.11.0"
             - name: ARGO_SERVER_IMAGE
               value: "argoproj/argocli:v2.9.3"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
@@ -169,7 +169,7 @@ spec:
             - containerPort: 8080
           imagePullPolicy: Always
         - name: auth-server
-          image: litmuschaos/litmusportal-auth-server:ci
+          image: litmuschaos/litmusportal-auth-server:1.11.0
           resources:
             limits:
               cpu: 200m
@@ -309,7 +309,7 @@ spec:
     spec:
       containers:
         - name: litmusportal-production-frontend
-          image: litmuschaos/litmusportal-frontend:ci
+          image: litmuschaos/litmusportal-frontend:1.11.0
           resources:
             limits:
               cpu: 100m
