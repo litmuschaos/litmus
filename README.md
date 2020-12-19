@@ -36,8 +36,8 @@ Chaos experiments are hosted on <a href="https://hub.litmuschaos.io" target="_bl
 ## Use cases
 
 - **For Developers**: To run chaos experiments during application development as an extension of unit testing or integration testing.
-- **For CI pipeline builders**: To run chaos as a pipeline stage to find bugs when the application is subjected to fail paths in a pipeline.
-- **For SREs**: To plan and schedule chaos experiments into the application and/or surrounding infrastructure. This practice identifies the weaknesses in the system and increases resilience.
+- **For CI pipeline builders**: To run chaos as a pipeline stage to find bugs when the application is subjected to failed paths in a pipeline.
+- **For SREs**: To plan and schedule chaos experiments into the application or surrounding infrastructure. This practice identifies the weaknesses in the system and increases resilience.
 
 ## Getting Started with Litmus
 
