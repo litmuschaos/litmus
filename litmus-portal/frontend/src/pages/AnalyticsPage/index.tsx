@@ -93,8 +93,8 @@ const AnalyticsPage: React.FC = () => {
   const { data, error } = useQuery<WorkflowList, WorkflowListDataVars>(
     WORKFLOW_LIST_DETAILS,
     {
-      variables: { projectID: selectedProjectID, workflowIDs: [] },
       pollInterval: 50,
+      variables: { projectID: selectedProjectID, workflowIDs: [] },
     }
   );
 
