@@ -106,6 +106,14 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
       )[stateObject.annotations[0].row] as any).style;
       nodeStyleError.background = 'red';
       nodeStyleError.color = '#FFFFFF';
+      setModifiedYaml(value);
+      workflow.setWorkflowDetails({
+        name: filename,
+        link: yamlLink,
+        yaml: value,
+        id,
+        description,
+      });
     } else {
       setIsValid(true);
       setErrors({
@@ -121,18 +129,18 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
         (nodeStyleErrorList[i] as any).style.backgroundColor = '#1C1C1C';
         (nodeStyleErrorList[i] as any).style.color = 'rgba(255, 255, 255, 0.4)';
       }
+      setModifiedYaml(value);
+      const yamlData = YAML.parse(value);
+      workflow.setWorkflowDetails({
+        name: filename,
+        link: yamlLink,
+        namespace: yamlData.metadata.namespace,
+        yaml: value,
+        id,
+        description,
+      });
     }
     setEditorState(stateObject as any);
-    setModifiedYaml(value);
-    const yamlData = YAML.parse(value);
-    workflow.setWorkflowDetails({
-      name: filename,
-      link: yamlLink,
-      namespace: yamlData.metadata.namespace,
-      yaml: value,
-      id,
-      description,
-    });
   };
 
   const downloadYamlFile = () => {
