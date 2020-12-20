@@ -16,7 +16,7 @@ import { ChaosData, ExecutionData } from '../../models/graphql/workflowData';
 import {
   WeightageMap,
   WorkflowList,
-  WorkflowListDataVars
+  WorkflowListDataVars,
 } from '../../models/graphql/workflowListData';
 import { RootState } from '../../redux/reducers';
 import PopOver from '../../views/ChaosWorkflows/BrowseAnalytics/PopOver';
