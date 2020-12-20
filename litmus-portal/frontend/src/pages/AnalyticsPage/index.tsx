@@ -8,21 +8,21 @@ import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
 import Scaffold from '../../containers/layouts/Scaffold';
 import { WORKFLOW_LIST_DETAILS } from '../../graphql';
 import { ChaosData, ExecutionData } from '../../models/graphql/workflowData';
-import { RootState } from '../../redux/reducers';
-import BackButton from '../../components/Button/BackButton';
-import PopOver from '../../views/ChaosWorkflows/BrowseAnalytics/PopOver';
-import WorkflowRunsBarChart from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowRunsBarChart';
-import WorkflowDetailsTable from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowRunDetailsTable';
-import useStyles from './styles';
 import {
   WeightageMap,
   WorkflowList,
-  WorkflowListDataVars,
+  WorkflowListDataVars
 } from '../../models/graphql/workflowListData';
+import { RootState } from '../../redux/reducers';
+import PopOver from '../../views/ChaosWorkflows/BrowseAnalytics/PopOver';
+import WorkflowDetailsTable from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowRunDetailsTable';
+import WorkflowRunsBarChart from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowRunsBarChart';
+import useStyles from './styles';
 
 interface WorkflowRunData {
   testsPassed: number;
@@ -94,6 +94,7 @@ const AnalyticsPage: React.FC = () => {
     WORKFLOW_LIST_DETAILS,
     {
       variables: { projectID: selectedProjectID, workflowIDs: [] },
+      pollInterval: 50,
     }
   );
 
