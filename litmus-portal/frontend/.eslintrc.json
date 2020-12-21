@@ -25,6 +25,7 @@
       "property assignment",
       { "defaultProps": "static public field" }
     ],
+    "import/prefer-default-export": 0,
     "lines-between-class-members": 0,
     "no-restricted-syntax": 0,
     "no-nested-ternary": 0,

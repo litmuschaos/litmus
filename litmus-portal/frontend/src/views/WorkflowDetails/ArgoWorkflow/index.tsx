@@ -1,10 +1,13 @@
+import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import ButtonOutline from '../../../components/Button/ButtonOutline';
 import DagreGraph, { d3Link, d3Node } from '../../../components/DagreGraph';
 import { Nodes } from '../../../models/graphql/workflowData';
 import useActions from '../../../redux/actions';
 import * as NodeSelectionActions from '../../../redux/actions/nodeSelection';
 import * as TabActions from '../../../redux/actions/tabs';
+import { createLabel } from './createLabel';
 import useStyles from './styles';
 
 interface GraphData {
@@ -18,6 +21,9 @@ interface ArgoWorkflowProps {
 const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
   const classes = useStyles();
   const { t } = useTranslation();
+
+  // Graph orientation
+  const [horizontal, setHorizontal] = useState(false);
 
   // Redux action call for updating selected node
   const nodeSelection = useActions(NodeSelectionActions);
@@ -45,8 +51,16 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
       data.nodes.push({
         id: key,
         class: `${node.phase} ${node.type}`,
-        label: node.type !== 'StepGroup' ? node.name : '',
-        labelType: 'html',
+        label:
+          node.type !== 'StepGroup'
+            ? createLabel({
+                label: node.name,
+                tooltip: node.name,
+                horizontal,
+              })
+            : '',
+        labelType: node.type !== 'StepGroup' ? 'svg' : 'string',
+        config: { fullName: node.name },
       });
 
       if (node.children) {
@@ -55,7 +69,8 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
             source: key,
             target: child,
             config: {
-              arrowheadStyle: 'display: arrowhead',
+              arrowhead:
+                nodes[child].type === 'StepGroup' ? 'undirected' : 'vee',
             },
           })
         );
@@ -66,7 +81,7 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
       nodes: [...data.nodes],
       links: [...data.links],
     });
-  }, [nodes]);
+  }, [nodes, horizontal]);
 
   useEffect(() => {
     nodeSelection.selectNode({
@@ -76,25 +91,32 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
   }, [selectedNodeID]);
 
   return graphData.nodes.length ? (
-    <DagreGraph
-      className={classes.dagreGraph}
-      nodes={graphData.nodes}
-      links={graphData.links}
-      config={{
-        ranker: 'tight-tree',
-      }}
-      animate={1000}
-      shape="rect"
-      fitBoundaries
-      zoomable
-      onNodeClick={({ original }) => {
-        const nodeID = Object.keys(nodes).filter(
-          (key) => key === original?.id
-        )[0];
-        setSelectedNodeID(nodeID);
-        tabs.changeWorkflowDetailsTabs(1);
-      }}
-    />
+    <>
+      <ButtonOutline handleClick={() => setHorizontal(!horizontal)}>
+        <AccountTreeRoundedIcon color="secondary" />
+      </ButtonOutline>
+      <DagreGraph
+        className={classes.dagreGraph}
+        nodes={graphData.nodes}
+        links={graphData.links}
+        config={{
+          rankdir: horizontal ? 'LR' : 'TB',
+          align: 'UR',
+          ranker: 'tight-tree',
+        }}
+        animate={1000}
+        shape="rect"
+        fitBoundaries
+        zoomable
+        onNodeClick={({ original }) => {
+          const nodeID = Object.keys(nodes).filter(
+            (key) => key === original?.id
+          )[0];
+          setSelectedNodeID(nodeID);
+          tabs.changeWorkflowDetailsTabs(1);
+        }}
+      />
+    </>
   ) : (
     <div>{t('workflowDetailsView.argoWorkFlow.loading')}</div>
   );

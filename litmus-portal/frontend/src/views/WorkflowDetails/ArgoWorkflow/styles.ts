@@ -3,37 +3,54 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme: Theme) => ({
   dagreGraph: {
     width: '100%',
-    height: '100%',
+    height: '90%',
 
     // Styles for nodes
     '& g g.nodes': {
       '& g.node': {
         cursor: 'pointer',
-        color: theme.palette.common.white,
-        '& rect': {
-          rx: '0.2rem',
-          ry: '0.2rem',
+        fill: 'none',
+        '& g.label g': {
+          transform: 'translate(0, 0)',
+        },
+        '& circle:after': {
+          content: 'hello',
+          display: 'inline-block',
+        },
+        '& text': {
+          fill: theme.palette.text.primary,
         },
       },
       '& g.Succeeded': {
-        fill: theme.palette.primary.dark,
+        '& circle': {
+          fill: theme.palette.primary.dark,
+        },
       },
       '& g.Running': {
-        fill: theme.palette.warning.main,
+        '& circle': {
+          fill: theme.palette.warning.main,
+        },
       },
       '& g.Pending': {
-        fill: theme.palette.customColors.gray,
+        '& circle': {
+          fill: theme.palette.customColors.gray,
+        },
       },
       '& g.Failed': {
-        fill: theme.palette.error.dark,
+        '& circle': {
+          fill: theme.palette.error.dark,
+        },
       },
       '& g.StepGroup': {
         fill: theme.palette.customColors.gray,
         cursor: 'default',
         '& rect': {
+          x: -1.5,
+          y: -1.5,
+          width: '0.2rem',
+          height: '0.2rem',
           rx: '0.625rem !important',
           ry: '0.625rem !important',
-          transform: 'scale(0.5)',
         },
       },
     },

@@ -33,7 +33,7 @@ type relationshipClick = (nodeData: {
 
 export type d3Node = {
   id: any;
-  label: string;
+  label: string | SVGElement;
   class?: string;
   labelType?: labelType;
   config?: object;
