@@ -1,24 +1,10 @@
-interface Attributes {
-  [index: string]: Object;
-}
-
-function getNode(type: string, attr?: Attributes) {
-  const node = document.createElementNS('http://www.w3.org/2000/svg', type);
-  for (const p in attr) {
-    if (Object.prototype.hasOwnProperty.call(attr, p)) {
-      node.setAttributeNS(
-        null,
-        p.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`),
-        attr[p] as any
-      );
-    }
-  }
-  return node;
-}
+import { getNode } from '../../../utils/createSVGNode';
+import { getIcon } from './icons';
 
 interface CreateLabelProps {
   label: string;
   tooltip?: string;
+  phase: string;
   horizontal: boolean;
 }
 
@@ -26,15 +12,13 @@ interface CreateLabel {
   (props: CreateLabelProps): SVGElement;
 }
 
-const createLabel: CreateLabel = ({ label, tooltip, horizontal }) => {
+const createLabel: CreateLabel = ({ label, tooltip, phase, horizontal }) => {
   const g = getNode('g');
-  document.body.appendChild(g);
 
   const circle = getNode('circle', {
     cx: 0,
-    cy: horizontal ? 0 : -10,
-    r: 20,
-    fill: 'green',
+    cy: 0,
+    r: 15,
   });
   g.appendChild(circle);
 
@@ -43,6 +27,8 @@ const createLabel: CreateLabel = ({ label, tooltip, horizontal }) => {
     title.innerHTML = tooltip;
     circle.appendChild(title);
   }
+
+  g.appendChild(getIcon(phase));
 
   const text = getNode('text');
   g.appendChild(text);

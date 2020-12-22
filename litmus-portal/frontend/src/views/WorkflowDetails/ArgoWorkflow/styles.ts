@@ -1,5 +1,9 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
+interface StyleProps {
+  horizontal: boolean;
+}
+
 const useStyles = makeStyles((theme: Theme) => ({
   dagreGraph: {
     width: '100%',
@@ -11,15 +15,31 @@ const useStyles = makeStyles((theme: Theme) => ({
         cursor: 'pointer',
         fill: 'none',
         '& g.label g': {
-          transform: 'translate(0, 0)',
-        },
-        '& circle:after': {
-          content: 'hello',
-          display: 'inline-block',
+          transform: (props: StyleProps) =>
+            props.horizontal ? 'translate(0, 0)' : 'translate(0, -5px)',
+          '& path': {
+            fill: theme.palette.common.white,
+          },
         },
         '& text': {
           fill: theme.palette.text.primary,
         },
+      },
+      '& path.pendingIcon': {
+        transform: (props: StyleProps) =>
+          `scale(1.8) translate(-5px, ${props.horizontal ? -5.6 : -2.8}px)`,
+      },
+      '& path.runningIcon': {
+        transform: (props: StyleProps) =>
+          `scale(1.5) translate(-6px, ${props.horizontal ? -6.5 : -3.2}px)`,
+      },
+      '& path.succeededIcon': {
+        transform: (props: StyleProps) =>
+          `scale(1.8) translate(-5px, ${props.horizontal ? -3.6 : -1}px)`,
+      },
+      '& path.failedIcon': {
+        transform: (props: StyleProps) =>
+          `scale(1.5) translate(-5px, ${props.horizontal ? -5.5 : -2.5}px)`,
       },
       '& g.Succeeded': {
         '& circle': {

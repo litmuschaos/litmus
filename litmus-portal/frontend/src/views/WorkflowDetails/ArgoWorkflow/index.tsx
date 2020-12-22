@@ -19,12 +19,12 @@ interface ArgoWorkflowProps {
 }
 
 const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
-  const classes = useStyles();
   const { t } = useTranslation();
 
   // Graph orientation
   const [horizontal, setHorizontal] = useState(false);
 
+  const classes = useStyles({ horizontal });
   // Redux action call for updating selected node
   const nodeSelection = useActions(NodeSelectionActions);
   const tabs = useActions(TabActions);
@@ -56,6 +56,7 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
             ? createLabel({
                 label: node.name,
                 tooltip: node.name,
+                phase: node.phase.toLowerCase(),
                 horizontal,
               })
             : '',
@@ -101,7 +102,7 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
         links={graphData.links}
         config={{
           rankdir: horizontal ? 'LR' : 'TB',
-          align: 'UR',
+          // align: 'UR',
           ranker: 'tight-tree',
         }}
         animate={1000}
