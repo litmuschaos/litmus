@@ -12,6 +12,10 @@ FROM alpine:latest
 LABEL maintainer="LitmusChaos"
 
 COPY --from=builder /output/server /
+
+RUN addgroup -S litmus && adduser -S -G litmus 1001 
+USER 1001
+
 CMD ["./server"]
 
 EXPOSE 3000

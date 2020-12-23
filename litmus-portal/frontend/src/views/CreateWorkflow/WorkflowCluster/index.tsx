@@ -46,19 +46,24 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
   );
-
+  const [clusterData, setclusterData] = useState<Cluster[]>([]);
   const [name, setName] = React.useState('');
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     const str: string = event.target.value as string;
+    let clusterName;
+    clusterData.forEach((cluster) => {
+      if (str === cluster.cluster_id) {
+        clusterName = cluster.cluster_name;
+      }
+    });
     workflow.setWorkflowDetails({
       clusterid: str,
       project_id: selectedProjectID,
+      clustername: clusterName,
     });
     setName(str);
     setTarget(false);
   };
-
-  const [clusterData, setclusterData] = useState<Cluster[]>([]);
 
   const [getCluster] = useLazyQuery(GET_CLUSTER, {
     onCompleted: (data) => {
@@ -123,21 +128,23 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
         </Typography>
 
         <div className={classes.radiobutton}>
-          <FormControl
-            variant="outlined"
-            className={classes.formControl}
-            color="secondary"
-          >
+          <FormControl variant="outlined" className={classes.formControl}>
             <InputLabel className={classes.selectText}>
-              {t('workflowCluster.header.selectCluster')}
+              {t('createWorkflow.workflowCluster.activeCluster')}
             </InputLabel>
             <Select
+              labelId="Active Cluster"
               value={name}
               onChange={handleChange}
+              label="Active Cluster"
               input={<Input />}
               MenuProps={MenuProps}
               className={classes.selectText}
+              color="secondary"
             >
+              <MenuItem value="" disabled>
+                <em> {t('createWorkflow.workflowCluster.none')}</em>
+              </MenuItem>
               {clusterData.map((name: Cluster) => (
                 <MenuItem key={name.cluster_id} value={name.cluster_id}>
                   {name.cluster_name}

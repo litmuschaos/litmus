@@ -19,6 +19,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/mutations"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/queries"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/subscriptions"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usermanagement"
 	"go.mongodb.org/mongo-driver/bson"
@@ -41,7 +42,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, user model.UpdateUser
 }
 
 func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid string) (bool, error) {
-	return database.DeleteChaosWorkflow(workflowid)
+	return mutations.DeleteWorkflow(workflowid, *store)
 }
 
 func (r *mutationResolver) SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error) {
@@ -76,6 +77,22 @@ func (r *mutationResolver) PodLog(ctx context.Context, log model.PodLog) (string
 	return mutations.LogsHandler(log, *store)
 }
 
+func (r *mutationResolver) AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error) {
+	return myhub.AddMyHub(ctx, myhubInput, projectID)
+}
+
+func (r *mutationResolver) SyncHub(ctx context.Context, projectID string, hubName string) ([]*model.MyHubStatus, error) {
+	return myhub.SyncHub(ctx, projectID, hubName)
+}
+
+func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
+	return mutations.UpdateWorkflow(input, *store)
+}
+
+func (r *mutationResolver) DeleteClusterReg(ctx context.Context, clusterID string) (string, error) {
+	return mutations.DeleteCluster(clusterID, *store)
+}
+
 func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {
 	return queries.QueryWorkflowRuns(projectID)
 }
@@ -106,6 +123,22 @@ func (r *queryResolver) ListWorkflow(ctx context.Context, projectID string, work
 	} else {
 		return queries.QueryListWorkflowByIDs(workflowIds)
 	}
+}
+
+func (r *queryResolver) GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error) {
+	return myhub.GetCharts(ctx, hubName, projectID)
+}
+
+func (r *queryResolver) GetHubExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error) {
+	return myhub.GetExperiment(ctx, experimentInput)
+}
+
+func (r *queryResolver) GetHubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, error) {
+	return myhub.HubStatus(ctx, projectID)
+}
+
+func (r *queryResolver) GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
+	return myhub.GetYAMLData(ctx, experimentInput)
 }
 
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {

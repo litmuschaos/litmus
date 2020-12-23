@@ -1,0 +1,107 @@
+type MyHub {
+  id: ID!
+  RepoURL: String!
+  RepoBranch: String!
+  ProjectID: String!
+  HubName: String!
+  CreatedAt: String!
+  UpdatedAt: String!
+}
+
+type Charts {
+  Charts: [Chart!]!
+}
+
+type Chart {
+  ApiVersion: String!
+  Kind: String!
+  Metadata: Metadata!
+  Spec: Spec!
+  PackageInfo: PackageInformation!
+  Experiments: [Chart!]!
+}
+
+type Maintainer {
+  Name: String!
+  Email: String!
+}
+
+type Link {
+  Name: String!
+  Url: String!
+}
+
+type Metadata {
+  Name: String!
+  Version: String!
+  Annotations: Annotation!
+}
+
+type Annotation {
+  Categories: String!
+  Vendor: String!
+  CreatedAt: String!
+  Repository: String!
+  Support: String!
+  ChartDescription: String!
+}
+
+type Spec {
+  DisplayName: String!
+  CategoryDescription: String!
+  Keywords: [String!]!
+  Maturity: String!
+  Maintainers: [Maintainer!]!
+  MinKubeVersion: String!
+  Provider: String!
+  Links: [Link!]!
+  Experiments: [String!]!
+  ChaosExpCRDLink: String!
+  Platforms: [String!]!
+  ChaosType: String
+}
+
+type Provider {
+  Name: String!
+}
+
+type PackageInformation {
+  PackageName: String!
+  Experiments: [Experiments!]!
+}
+
+type Experiments {
+  Name: String!
+  CSV: String!
+  Desc: String!
+}
+
+type MyHubStatus {
+  id: ID!
+  RepoURL: String!
+  RepoBranch: String!
+  IsAvailable: Boolean!
+  TotalExp: String!
+  HubName: String!
+}
+
+input CreateMyHub {
+  HubName: String!
+  RepoURL: String!
+  RepoBranch: String!
+}
+
+input ExperimentInput {
+  ProjectID: String!
+  ChartName: String!
+  ExperimentName: String!
+  HubName: String!
+  FileType: String
+}
+
+input CloningInput {
+  HubName: String!
+  ProjectID: String!
+  RepoBranch: String!
+  RepoURL: String!
+}

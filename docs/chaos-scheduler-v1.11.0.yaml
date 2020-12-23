@@ -1,0 +1,339 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: litmus
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: scheduler
+  namespace: litmus
+  labels:
+    name: scheduler
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: scheduler
+  labels:
+    name: scheduler
+rules:
+- apiGroups: ["","apps","batch","litmuschaos.io","argoproj.io"]
+  resources: ["pods","jobs","deployments","daemonsets","statefulsets","events","configmaps","services","chaosengines","chaosexperiments","chaosresults","chaosschedules","rollouts"]
+  verbs: ["get","create","update","patch","delete","list","watch","deletecollection"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: scheduler
+  labels:
+    name: scheduler
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: scheduler
+subjects:
+- kind: ServiceAccount
+  name: scheduler
+  namespace: litmus
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chaos-scheduler
+  namespace: litmus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: chaos-scheduler
+  template:
+    metadata:
+      labels:
+        name: chaos-scheduler
+    spec:
+      serviceAccountName: scheduler
+      containers:
+        - name: chaos-scheduler
+          image: litmuschaos/chaos-scheduler:v1.11.0
+          command:
+          - chaos-scheduler
+          imagePullPolicy: Always
+          env:
+            - name: WATCH_NAMESPACE
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "chaos-scheduler"
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: chaosschedules.litmuschaos.io
+spec:
+  group: litmuschaos.io
+  names:
+    kind: ChaosSchedule
+    listKind: ChaosScheduleList
+    plural: chaosschedules
+    singular: chaosschedule
+  scope: Namespaced
+  subresources:
+  validation:
+    openAPIV3Schema:
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          type: object
+          properties:
+            engineTemplateSpec:
+              type: object
+              properties:
+                monitoring:
+                  type: boolean
+                jobCleanUpPolicy:
+                  type: string
+                  pattern: "^(delete|retain)$"
+                annotationCheck:
+                  type: string
+                  pattern: "^(true|false)$"
+                appinfo:
+                  type: object
+                  properties:
+                    appkind:
+                      type: string
+                      pattern: "^(deployment|statefulset|daemonset|deploymentconfig|rollout)$"
+                    applabel:
+                      pattern: "([a-z0-9A-Z_\\.-/]+)=([a-z0-9A-Z_\\.-/_]+)"
+                      type: string
+                    appns:
+                      type: string
+                auxiliaryAppInfo:
+                  type: string
+                engineState:
+                  type: string
+                  pattern: "^(active|stop|initialized|stopped)$"
+                chaosServiceAccount:
+                  type: string
+                components:
+                  type: object
+                  properties:
+                    runner:
+                      type: object
+                      properties:
+                        image:
+                          type: string
+                        type:
+                          type: string
+                          pattern: "^(go)$"
+                        runnerannotation:
+                          type: object
+                          additionalProperties:
+                            type: string
+                            properties:
+                              key:
+                                type: string
+                                minLength: 1
+                                allowEmptyValue: false
+                              value:
+                                type: string
+                                minLength: 1
+                                allowEmptyValue: false
+                experiments:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      spec:
+                        type: object
+                        properties:
+                          probe:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                type:
+                                  type: string
+                                k8sProbe/inputs:
+                                  type: object
+                                  properties:
+                                    command:
+                                      type: object
+                                      properties:
+                                        group:
+                                          type: string
+                                        version:
+                                          type: string
+                                        resource:
+                                          type: string
+                                        namespace:
+                                          type: string
+                                        fieldSelector:
+                                          type: string
+                                        labelSelector:
+                                          type: string
+                                    expectedResult:
+                                      type: string
+                                cmdProbe/inputs:
+                                  type: object
+                                  properties:
+                                    command:
+                                      type: string
+                                    expectedResult:
+                                      type: string
+                                    source:
+                                      type: string
+                                httpProbe/inputs:
+                                  type: object
+                                  properties:
+                                    url:
+                                      type: string
+                                    expectedResponseCode:
+                                      type: string
+                                runProperties:
+                                  type: object
+                                  properties:
+                                    probeTimeout:
+                                      type: integer
+                                    interval:
+                                      type: integer
+                                    retry:
+                                      type: integer
+                                mode:
+                                  type: string
+                          components:
+                            type: object
+                            properties:
+                              statusCheckTimeouts:
+                                type: object
+                                properties:
+                                  delay:
+                                    type: integer
+                                  timeout:
+                                    type: integer
+                              nodeSelector:
+                                type: object
+                                minLength: 1
+                              experimentImage:
+                                type: string
+                              env:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    value:
+                                      type: string
+                              configMaps:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    mountPath:
+                                      type: string
+                              secrets:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    mountPath:
+                                      type: string
+                              experimentannotation:
+                                type: object
+                                additionalProperties:
+                                  type: string
+                                  properties:
+                                    key:
+                                      type: string
+                                      minLength: 1
+                                      allowEmptyValue: false
+                                    value:
+                                      type: string
+                                      minLength: 1
+                                      allowEmptyValue: false
+            schedule:
+              oneOf:
+              - required:
+                - now
+              - required:
+                - once
+              - required:
+                - repeat
+              properties:
+                now:
+                  type: boolean
+                once:
+                  properties:
+                    executionTime:
+                      format: date-time
+                      type: date
+                  type: object
+                repeat:
+                  properties:
+                    timeRange:
+                      properties:
+                        endTime:
+                          format: date-time
+                          type: date
+                        startTime:
+                          format: date-time
+                          type: date
+                      type: object
+                    workkHours:
+                      properties:
+                        includedHours:
+                          type: string
+                      type: object
+                      required:
+                      - includedHours
+                    workDays:
+                      properties:
+                        includedDays:
+                          pattern: ((Mon|Tue|Wed|Thu|Fri|Sat|Sun)(,))*(Mon|Tue|Wed|Thu|Fri|Sat|Sun)
+                          type: string
+                      type: object
+                      required:
+                      - includedDays
+                    properties:
+                      properties:
+                        minChaosInterval:
+                          pattern: (([1-6][0-9]|[1-9])m)|(\d+h)
+                          type: string
+                        random:
+                          type: boolean
+                      type: object
+                      required:
+                      - minChaosInterval
+                  type: object
+                  required:
+                  - properties
+              type: object
+        status:
+          type: object
+  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true

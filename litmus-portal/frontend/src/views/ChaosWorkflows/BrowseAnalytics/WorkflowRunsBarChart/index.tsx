@@ -116,7 +116,7 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
           (workflowRunData[i].testsPassed + workflowRunData[i].testsFailed)) *
           100
       );
-      failed.width.push(1000 * 3600 * 7);
+      failed.width.push(1000 * 3600 * 0.1);
       passed.customdata.push(i);
       failed.customdata.push(i);
     }

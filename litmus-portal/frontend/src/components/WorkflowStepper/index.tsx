@@ -8,7 +8,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import workflowsList from '../PredifinedWorkflows/data';
 import Unimodal from '../../containers/layouts/Unimodal';
 import { CREATE_WORKFLOW } from '../../graphql';
 import {
@@ -35,6 +34,7 @@ import ButtonOutline from '../Button/ButtonOutline';
 import QontoConnector from './quontoConnector';
 import useStyles from './styles';
 import useQontoStepIconStyles from './useQontoStepIconStyles';
+import { cronWorkflow, workflowOnce } from '../../utils/workflowTemplate';
 
 function getSteps(): string[] {
   return [
@@ -116,14 +116,12 @@ function getStepContent(
 
 const CustomStepper = () => {
   const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(0);
   const { t } = useTranslation();
   const template = useActions(TemplateSelectionActions);
   const workflowData: WorkflowData = useSelector(
     (state: RootState) => state.workflowData
   );
   const {
-    id,
     yaml,
     weights,
     description,
@@ -133,6 +131,10 @@ const CustomStepper = () => {
     clusterid,
     scheduleType,
   } = workflowData;
+
+  const defaultStep = isCustomWorkflow ? 2 : 0;
+
+  const [activeStep, setActiveStep] = React.useState(defaultStep);
 
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
@@ -145,61 +147,52 @@ const CustomStepper = () => {
   const workflow = useActions(WorkflowActions);
   const [invalidYaml, setinValidYaml] = React.useState(false);
   const steps = getSteps();
+  const scheduleOnce = workflowOnce;
+  const scheduleMore = cronWorkflow;
 
   function EditYaml() {
     const oldParsedYaml = YAML.parse(yaml);
-    let NewLink: string = ' ';
-    let NewYaml: string = ' ';
+    const NewLink: string = ' ';
     if (
       oldParsedYaml.kind === 'Workflow' &&
       scheduleType.scheduleOnce !== 'now'
     ) {
-      NewLink = workflowsList[parseInt(id, 10)].chaosWkfCRDLink_Recur as string;
-      fetch(NewLink)
-        .then((data) => {
-          data.text().then((yamlText) => {
-            const oldParsedYaml = YAML.parse(yaml);
-            const newParsedYaml = YAML.parse(yamlText);
-            delete newParsedYaml.spec.workflowSpec;
-            newParsedYaml.spec.schedule = cronSyntax;
-            delete newParsedYaml.metadata.generateName;
-            newParsedYaml.metadata.name = workflowData.name;
-            newParsedYaml.spec.workflowSpec = oldParsedYaml.spec;
-            NewYaml = YAML.stringify(newParsedYaml);
-            workflow.setWorkflowDetails({
-              link: NewLink,
-              yaml: NewYaml,
-            });
-          });
-        })
-        .catch((err) => {
-          console.error(`Unable to fetch the yaml text${err}`);
-        });
+      const oldParsedYaml = YAML.parse(yaml);
+      const newParsedYaml = YAML.parse(scheduleMore);
+      delete newParsedYaml.spec.workflowSpec;
+      newParsedYaml.spec.schedule = cronSyntax;
+      delete newParsedYaml.metadata.generateName;
+      newParsedYaml.metadata.name = workflowData.name;
+      newParsedYaml.metadata.namespace = workflowData.namespace;
+      newParsedYaml.spec.workflowSpec = oldParsedYaml.spec;
+      const timeZone = {
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+      };
+      Object.entries(timeZone).forEach(([key, value]) => {
+        newParsedYaml.spec[key] = value;
+      });
+      const NewYaml = YAML.stringify(newParsedYaml);
+      workflow.setWorkflowDetails({
+        link: NewLink,
+        yaml: NewYaml,
+      });
     }
     if (
       oldParsedYaml.kind === 'CronWorkflow' &&
       scheduleType.scheduleOnce === 'now'
     ) {
-      NewLink = workflowsList[parseInt(id, 10)].chaosWkfCRDLink as string;
-      fetch(NewLink)
-        .then((data) => {
-          data.text().then((yamlText) => {
-            const oldParsedYaml = YAML.parse(yaml);
-            const newParsedYaml = YAML.parse(yamlText);
-            delete newParsedYaml.spec;
-            delete newParsedYaml.metadata.generateName;
-            newParsedYaml.metadata.name = workflowData.name;
-            newParsedYaml.spec = oldParsedYaml.spec.workflowSpec;
-            NewYaml = YAML.stringify(newParsedYaml);
-            workflow.setWorkflowDetails({
-              link: NewLink,
-              yaml: NewYaml,
-            });
-          });
-        })
-        .catch((err) => {
-          console.error(`Unable to fetch the yaml text${err}`);
-        });
+      const oldParsedYaml = YAML.parse(yaml);
+      const newParsedYaml = YAML.parse(scheduleOnce);
+      delete newParsedYaml.spec;
+      delete newParsedYaml.metadata.generateName;
+      newParsedYaml.metadata.name = workflowData.name;
+      newParsedYaml.spec = oldParsedYaml.spec.workflowSpec;
+      newParsedYaml.metadata.namespace = workflowData.namespace;
+      const NewYaml = YAML.stringify(newParsedYaml);
+      workflow.setWorkflowDetails({
+        link: NewLink,
+        yaml: NewYaml,
+      });
     }
     if (
       oldParsedYaml.kind === 'CronWorkflow' &&
@@ -209,7 +202,14 @@ const CustomStepper = () => {
       newParsedYaml.spec.schedule = cronSyntax;
       delete newParsedYaml.metadata.generateName;
       newParsedYaml.metadata.name = workflowData.name;
-      NewYaml = YAML.stringify(newParsedYaml);
+      newParsedYaml.metadata.namespace = workflowData.namespace;
+      const timeZone = {
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+      };
+      Object.entries(timeZone).forEach(([key, value]) => {
+        newParsedYaml.spec[key] = value;
+      });
+      const NewYaml = YAML.stringify(newParsedYaml);
       workflow.setWorkflowDetails({
         link: NewLink,
         yaml: NewYaml,
@@ -380,7 +380,7 @@ const CustomStepper = () => {
         <div>
           <div>
             <Unimodal
-              isOpen={open}
+              open={open}
               handleClose={handleClose}
               aria-labelledby="simple-modal-title"
               aria-describedby="simple-modal-description"

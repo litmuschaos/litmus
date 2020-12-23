@@ -1,0 +1,23 @@
+name: litmusportal-server
+labels:
+  component: litmusportal-server
+container: graphql-server
+image: okteto/golang:1.14
+command: bash
+workdir: /gql-server
+sync:
+- .:/gql-server
+securityContext:
+  capabilities:
+    add:
+    - SYS_PTRACE
+volumes:
+- /go/pkg/
+- /root/.cache/go-build/
+forward:
+- 2346:2345
+- 8080:8080
+resources:
+  limits:
+    cpu: "1"
+    memory: 2Gi

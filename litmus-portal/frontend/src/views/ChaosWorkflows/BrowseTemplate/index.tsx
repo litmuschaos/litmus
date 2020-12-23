@@ -10,6 +10,8 @@ import ExperimentDetails from './ExperimentDetails';
 import Head from './Head';
 import Recommendation from './Recommendation';
 import useStyles from './styles';
+import useActions from '../../../redux/actions';
+import * as WorkflowActions from '../../../redux/actions/workflow';
 
 interface LocationObjectProps {
   workflowData: preDefinedWorkflowData;
@@ -23,7 +25,7 @@ interface BrowseTemplateProps {
 
 const BrowseAWorkflow: React.FC<BrowseTemplateProps> = ({ location }) => {
   const classes = useStyles();
-
+  const workflowAction = useActions(WorkflowActions);
   const { workflowData, testNames, testWeights } = location.state;
 
   return (
@@ -66,7 +68,14 @@ const BrowseAWorkflow: React.FC<BrowseTemplateProps> = ({ location }) => {
             </ButtonOutlined>
             <ButtonFilled
               isPrimary={false}
-              handleClick={() => history.push('/create-workflow')}
+              handleClick={() => {
+                workflowAction.setWorkflowDetails({
+                  description: '',
+                  isCustomWorkflow: false,
+                  customWorkflows: [],
+                });
+                history.push('/create-workflow');
+              }}
             >
               <>Schedule this template</>
             </ButtonFilled>

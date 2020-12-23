@@ -63,6 +63,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
+    gap: '1rem',
   },
   marginTemporary: {
     marginTop: theme.spacing(1.5),

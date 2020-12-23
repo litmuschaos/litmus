@@ -1,10 +1,12 @@
 package store
 
 import (
+	"errors"
 	"time"
 
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
+	log "github.com/golang/glog"
 
 	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/models"
 	"github.com/litmuschaos/litmus/litmus-portal/authentication/pkg/types"
@@ -29,6 +31,20 @@ func NewUserStore(cfg *Config, ucfgs ...*UserConfig) (*UserStore, error) {
 	session, err := mgo.Dial(cfg.URL)
 	if err != nil {
 		return nil, err
+	}
+
+	if types.DBUser != "" && types.DBPassword != "" {
+		cred := mgo.Credential{
+			Username: types.DBUser,
+			Password: types.DBPassword,
+		}
+		err = session.Login(&cred)
+		if err != nil {
+			log.Errorln("Database connection failed", err)
+			return nil, err
+		}
+	} else {
+		return nil, errors.New("Some DB configs are not present")
 	}
 
 	return NewUserStoreWithSession(session, cfg.DB, ucfgs...)

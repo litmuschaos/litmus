@@ -13,9 +13,13 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import moment from 'moment';
 import React from 'react';
 import cronstrue from 'cronstrue';
+import YAML from 'yaml';
+import GetAppIcon from '@material-ui/icons/GetApp';
+import { useSelector } from 'react-redux';
 import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
 import useStyles from './styles';
 import ExperimentPoints from './ExperimentPoints';
+import { RootState } from '../../../redux/reducers';
 
 interface TableDataProps {
   data: ScheduleWorkflow;
@@ -36,6 +40,8 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
     setPopAnchorEl(null);
   };
 
+  const userData = useSelector((state: RootState) => state.userData);
+
   const handlePopOverClick = (event: React.MouseEvent<HTMLElement>) => {
     setPopAnchorEl(event.currentTarget);
   };
@@ -46,6 +52,21 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  // Function to download the manifest
+  const downloadYAML = (manifest: string, name: string) => {
+    const parsedYAML = YAML.parse(manifest);
+    const doc = new YAML.Document();
+    doc.contents = parsedYAML;
+    const element = document.createElement('a');
+    const file = new Blob([YAML.stringify(doc)], {
+      type: 'text/yaml',
+    });
+    element.href = URL.createObjectURL(file);
+    element.download = `${name}.yaml`;
+    document.body.appendChild(element);
+    element.click();
   };
 
   // Function to convert UNIX time in format of DD MMM YYY
@@ -151,20 +172,41 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           onClose={handleClose}
         >
           <MenuItem
-            value="Analysis"
-            onClick={() => deleteRow(data.workflow_id)}
+            value="Download"
+            onClick={() =>
+              downloadYAML(data.workflow_manifest, data.workflow_name)
+            }
           >
             <div className={classes.expDiv}>
-              <img
-                src="/icons/deleteSchedule.svg"
-                alt="Delete Schedule"
-                className={classes.btnImg}
-              />
-              <Typography data-cy="deleteSchedule" className={classes.btnText}>
-                Delete Schedule
+              <GetAppIcon className={classes.downloadBtn} />
+              <Typography
+                data-cy="downloadManifest"
+                className={classes.downloadText}
+              >
+                Download Manifest
               </Typography>
             </div>
           </MenuItem>
+          {userData.userRole !== 'Viewer' ? (
+            <MenuItem
+              value="Analysis"
+              onClick={() => deleteRow(data.workflow_id)}
+            >
+              <div className={classes.expDiv}>
+                <img
+                  src="/icons/deleteSchedule.svg"
+                  alt="Delete Schedule"
+                  className={classes.btnImg}
+                />
+                <Typography
+                  data-cy="deleteSchedule"
+                  className={classes.btnText}
+                >
+                  Delete Schedule
+                </Typography>
+              </div>
+            </MenuItem>
+          ) : null}
         </Menu>
       </TableCell>
     </>

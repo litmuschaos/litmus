@@ -11,6 +11,8 @@ import * as tabsReducer from './tabs';
 import * as templateReducer from './template';
 import * as userReducer from './user';
 import * as workflowReducer from './workflow';
+import * as hubDetails from './myhub';
+import { HubDetails } from '../../models/redux/myhub';
 
 export interface RootState {
   communityData: AnalyticsData;
@@ -19,6 +21,7 @@ export interface RootState {
   selectedNode: SelectedNode;
   tabNumber: TabState;
   selectTemplate: TemplateData;
+  hubDetails: HubDetails;
 }
 
 export default () =>
@@ -29,4 +32,5 @@ export default () =>
     ...nodeSelectionReducer,
     ...tabsReducer,
     ...templateReducer,
+    ...hubDetails,
   });

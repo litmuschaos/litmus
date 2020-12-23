@@ -28,6 +28,14 @@ const ConnectTargets = lazy(() =>
 const SchedulePage = lazy(() => import('../../pages/SchedulePage'));
 const AnalyticsPage = lazy(() => import('../../pages/AnalyticsPage'));
 const ClusterInfo = lazy(() => import('../../components/Targets/ClusterInfo'));
+const MyHub = lazy(() => import('../../pages/MyHub'));
+const MyHubConnect = lazy(() => import('../../views/MyHub/MyHubConnect'));
+const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
+const MyHubExperiment = lazy(() => import('../../views/MyHub/MyHubExperiment'));
+const CreateCustomWorkflow = lazy(() =>
+  import('../../pages/CreateCustomWorkflow')
+);
+
 interface RoutesProps {
   isOwner: boolean;
   isProjectAvailable: boolean;
@@ -35,10 +43,24 @@ interface RoutesProps {
 
 const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
   const classes = useStyles();
+  const iframe = () => {
+    return {
+      __html:
+        '<iframe src="/api-doc/index.html" style="width:100%; height:100vh;"></iframe>',
+    };
+  };
+
   if (getToken() === '') {
     return (
       <div className={classes.content}>
         <Switch>
+          <Route
+            exact
+            path="/api-doc"
+            component={() => {
+              return <div dangerouslySetInnerHTML={iframe()} />;
+            }}
+          />
           <Route exact path="/login" component={LoginPage} />
           <Route path="/" render={() => <Redirect to="/login" />} />
         </Switch>
@@ -51,6 +73,13 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
       <div className={classes.content}>
         <Switch>
           <Route exact path="/" component={HomePage} />
+          <Route
+            exact
+            path="/api-doc"
+            component={() => {
+              return <div dangerouslySetInnerHTML={iframe()} />;
+            }}
+          />
           <Route path="/" render={() => <Redirect to="/" />} />
         </Switch>
       </div>
@@ -63,7 +92,13 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
         <Route exact path="/" component={HomePage} />
         <Route exact path="/workflows" component={Workflows} />
         <Route exact path="/create-workflow" component={CreateWorkflow} />
-
+        <Route
+          exact
+          path="/api-doc"
+          component={() => {
+            return <div dangerouslySetInnerHTML={iframe()} />;
+          }}
+        />
         {/* Redirects */}
         <Redirect exact path="/login" to="/" />
         <Redirect exact path="/workflows/details" to="/workflows" />
@@ -94,6 +129,19 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
         <Route exact path="/targets" component={TargetHome} />
         <Route exact path="/targets/cluster" component={ClusterInfo} />
         <Route exact path="/target-connect" component={ConnectTargets} />
+        <Route exact path="/myhub" component={MyHub} />
+        <Route exact path="/myhub/connect" component={MyHubConnect} />
+        <Route exact path="/myhub/:hubname" component={ChaosChart} />
+        <Route
+          exact
+          path="/myhub/:hubname/:chart/:experiment"
+          component={MyHubExperiment}
+        />
+        <Route
+          exact
+          path="/create-workflow/custom"
+          component={CreateCustomWorkflow}
+        />
         {isOwner ? (
           <Route exact path="/settings" component={Settings} />
         ) : (
@@ -112,9 +160,10 @@ function App() {
   const userData = useSelector((state: RootState) => state.userData);
   const token = getToken();
   useEffect(() => {
-    if (token !== '') analyticsAction.loadCommunityAnalytics();
+    if (token !== '') {
+      analyticsAction.loadCommunityAnalytics();
+    }
   }, [token]);
-
   return (
     <Suspense fallback={<Loader />}>
       <Router history={history}>

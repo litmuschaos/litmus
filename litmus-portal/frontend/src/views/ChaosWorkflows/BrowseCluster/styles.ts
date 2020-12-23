@@ -91,7 +91,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.customColors.black(0.4),
   },
   tableDataStatus: {
-    paddingLeft: theme.spacing(6.5),
+    paddingLeft: theme.spacing(5),
   },
   progressBar: {
     width: '6.5rem',
@@ -102,6 +102,7 @@ const useStyles = makeStyles((theme) => ({
   workflowNameData: {
     maxWidth: '15.625rem',
     borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    paddingLeft: theme.spacing(4),
   },
   targetCluster: {
     paddingLeft: theme.spacing(3.75),
@@ -114,7 +115,10 @@ const useStyles = makeStyles((theme) => ({
     width: '8.125rem',
   },
   stepsData: {
-    paddingLeft: theme.spacing(6),
+    paddingLeft: theme.spacing(5),
+  },
+  stepsDataTime: {
+    paddingLeft: theme.spacing(7),
   },
   stepsDataschedule: {
     paddingLeft: theme.spacing(8),
@@ -209,10 +213,9 @@ const useStyles = makeStyles((theme) => ({
   // for yes or no buttons
   buttonGroup: {
     display: 'flex',
-    width: '10.75rem',
-    height: '2.75rem',
     marginTop: theme.spacing(2.5),
     justifyContent: 'space-between',
+    gap: '1rem',
   },
   // delete user
   delDiv: {
@@ -242,6 +245,11 @@ const useStyles = makeStyles((theme) => ({
       borderColor: theme.palette.error.main,
       color: theme.palette.error.main,
     },
+  },
+  customTooltip: {
+    backgroundColor: theme.palette.secondary.light,
+    color: theme.palette.text.primary,
+    fontSize: '0.775rem',
   },
 }));
 
