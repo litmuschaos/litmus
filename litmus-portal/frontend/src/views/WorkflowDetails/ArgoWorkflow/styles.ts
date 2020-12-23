@@ -10,6 +10,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.text.disabled,
     display: 'flex',
     justifyContent: 'space-between',
+    marginTop: theme.spacing(2),
   },
   layoutButton: {
     minWidth: 0,
