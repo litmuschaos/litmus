@@ -69,6 +69,7 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
           data.links.push({
             source: key,
             target: child,
+            class: nodes[child].phase,
             config: {
               arrowhead:
                 nodes[child].type === 'StepGroup' ? 'undirected' : 'vee',

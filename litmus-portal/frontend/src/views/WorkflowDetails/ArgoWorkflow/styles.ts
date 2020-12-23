@@ -30,8 +30,8 @@ const useStyles = makeStyles((theme: Theme) => ({
           `scale(1.8) translate(-5px, ${props.horizontal ? -5.6 : -2.8}px)`,
       },
       '& path.runningIcon': {
-        transform: (props: StyleProps) =>
-          `scale(1.5) translate(-6px, ${props.horizontal ? -6.5 : -3.2}px)`,
+        transformOrigin: '6.05px 6.55px',
+        animation: 'runningNodeSpinAnimation 2s ease-in-out infinite',
       },
       '& path.succeededIcon': {
         transform: (props: StyleProps) =>
@@ -62,7 +62,6 @@ const useStyles = makeStyles((theme: Theme) => ({
         },
       },
       '& g.StepGroup': {
-        fill: theme.palette.customColors.gray,
         cursor: 'default',
         '& rect': {
           x: -1.5,
@@ -73,11 +72,54 @@ const useStyles = makeStyles((theme: Theme) => ({
           ry: '0.625rem !important',
         },
       },
+      '& g.StepGroup.Succeeded': {
+        fill: theme.palette.primary.dark,
+      },
+      '& g.StepGroup.Running': {
+        fill: theme.palette.warning.main,
+      },
+      '& g.StepGroup.Pending': {
+        fill: theme.palette.customColors.gray,
+      },
+      '& g.StepGroup.Failed': {
+        fill: theme.palette.error.dark,
+      },
     },
 
     // Styles for edges
     '& g g.edgePaths': {
-      stroke: theme.palette.customColors.gray,
+      '& g.Succeeded': {
+        fill: theme.palette.primary.dark,
+        stroke: theme.palette.primary.dark,
+      },
+      '& g.Running': {
+        fill: theme.palette.warning.main,
+        stroke: theme.palette.warning.main,
+      },
+      '& g.Pending': {
+        fill: theme.palette.customColors.gray,
+        stroke: theme.palette.customColors.gray,
+      },
+      '& g.Failed': {
+        fill: theme.palette.error.dark,
+        stroke: theme.palette.error.dark,
+      },
+    },
+  },
+  '@global': {
+    '@keyframes runningNodeSpinAnimation': {
+      from: {
+        transform: (props: StyleProps) =>
+          `scale(1.5) translate(-4px, ${
+            props.horizontal ? -4.3 : -1
+          }px) rotate(0deg)`,
+      },
+      to: {
+        transform: (props: StyleProps) =>
+          `scale(1.5) translate(-4px, ${
+            props.horizontal ? -4.3 : -1
+          }px) rotate(360deg)`,
+      },
     },
   },
 }));
