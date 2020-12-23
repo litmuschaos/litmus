@@ -74,3 +74,32 @@ export const USER_CLUSTER_REG = gql`
     }
   }
 `;
+
+export const ADD_MY_HUB = gql`
+  mutation addMyHub($MyHubDetails: CreateMyHub!, $projectID: String!) {
+    addMyHub(myhubInput: $MyHubDetails, projectID: $projectID) {
+      HubName
+      RepoURL
+      RepoBranch
+    }
+  }
+`;
+
+export const SYNC_REPO = gql`
+  mutation syncHub($projectID: String!, $HubName: String!) {
+    syncHub(projectID: $projectID, HubName: $HubName) {
+      id
+      RepoURL
+      RepoBranch
+      IsAvailable
+      TotalExp
+      HubName
+    }
+  }
+`;
+
+export const DELETE_CLUSTER = gql`
+  mutation deleteCluster($cluster_id: String!) {
+    deleteClusterReg(cluster_id: $cluster_id)
+  }
+`;

@@ -17,11 +17,12 @@ import BrowseSchedule from '../../views/ChaosWorkflows/BrowseSchedule';
 import BrowseWorkflow from '../../views/ChaosWorkflows/BrowseWorkflow';
 import Templates from '../../views/ChaosWorkflows/Templates';
 import useStyles from './styles';
+import * as WorkflowActions from '../../redux/actions/workflow';
 
 const Workflows = () => {
   const classes = useStyles();
   const { t } = useTranslation();
-
+  const workflowAction = useActions(WorkflowActions);
   const template = useActions(TemplateSelectionActions);
   const workflowTabValue = useSelector(
     (state: RootState) => state.tabNumber.workflows
@@ -35,6 +36,10 @@ const Workflows = () => {
   };
 
   const handleScheduleWorkflow = () => {
+    workflowAction.setWorkflowDetails({
+      isCustomWorkflow: false,
+      customWorkflows: [],
+    });
     template.selectTemplate({ selectedTemplateID: 0, isDisable: true });
     history.push('/create-workflow');
   };

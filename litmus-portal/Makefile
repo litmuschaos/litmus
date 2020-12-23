@@ -70,15 +70,6 @@ backend-services-checks:
 		&& exit 1; \
 	fi
 	@echo "------------------"
-	@echo "--> Check litmus-portal self-deployer [go mod tidy]"
-	@echo "------------------"
-	@tidyRes=$$(cd tools/self-deployer && go mod tidy); \
-	if [ -n "$${tidyRes}" ]; then \
-		echo "go mod tidy checking failed!" && echo "$${tidyRes}" \
-		&& echo "Please ensure you are using $$($(GO) version) for formatting code." \
-		&& exit 1; \
-	fi
-	@echo "------------------"
 	@echo "--> Check litmus-portal workflow-agent [go mod tidy]"
 	@echo "------------------"
 	@tidyRes=$$(cd cluster-agents/workflow-agent && go mod tidy); \

@@ -83,7 +83,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
         </IconButton>
       </TableCell>
       <Unimodal
-        isOpen={open}
+        open={open}
         handleClose={() => {
           setOpen(false);
         }}

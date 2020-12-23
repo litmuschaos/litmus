@@ -67,6 +67,22 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(8),
     height: '16.68rem',
   },
+  versionlogo: {
+    width: '1.25rem',
+    height: '2.185rem',
+  },
+  versionText: {
+    margin: 'auto',
+    marginLeft: theme.spacing(1.25),
+    fontSize: '0.75rem',
+  },
+  versionDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop: 'auto',
+    marginBottom: theme.spacing(2),
+    marginLeft: theme.spacing(4),
+  },
 }));
 
 export default useStyles;

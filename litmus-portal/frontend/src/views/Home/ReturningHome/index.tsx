@@ -2,30 +2,30 @@
 /* eslint-disable no-loop-func */
 /* eslint-disable max-len */
 /* eslint-disable no-console */
-import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useQuery } from '@apollo/client';
-import moment from 'moment';
-import * as _ from 'lodash';
 import { Paper, Typography } from '@material-ui/core';
+import * as _ from 'lodash';
+import moment from 'moment';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useStyles from './style';
+import { useSelector } from 'react-redux';
+import Loader from '../../../components/Loader';
+import QuickActionCard from '../../../components/QuickActionCard';
 import { WORKFLOW_LIST_DETAILS } from '../../../graphql';
 import { ExecutionData } from '../../../models/graphql/workflowData';
-import { RootState } from '../../../redux/reducers';
-import PassedVsFailed from '../PassedVsFailed';
-import TotalWorkflows from '../TotalWorkflows';
-import AverageResilienceScore from '../AverageResilienceScore';
-import QuickActionCard from '../../../components/QuickActionCard';
-import { Message } from '../../../models/header';
-import ResilienceScoreComparisonPlot from '../ResilienceScoreComparisonPlot';
-import RecentActivity from '../RecentActivity';
-import Loader from '../../../components/Loader';
 import {
   WeightageMap,
   WorkflowList,
   WorkflowListDataVars,
 } from '../../../models/graphql/workflowListData';
+import { Message } from '../../../models/header';
+import { RootState } from '../../../redux/reducers';
+import AverageResilienceScore from '../AverageResilienceScore';
+import PassedVsFailed from '../PassedVsFailed';
+import RecentActivity from '../RecentActivity';
+import ResilienceScoreComparisonPlot from '../ResilienceScoreComparisonPlot';
+import TotalWorkflows from '../TotalWorkflows';
+import useStyles from './style';
 
 interface DataPresentCallBackType {
   (dataPresent: boolean): void;
@@ -93,7 +93,6 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
     WORKFLOW_LIST_DETAILS,
     {
       variables: { projectID: userData.selectedProjectID, workflowIDs: [] },
-      fetchPolicy: 'cache-and-network',
     }
   );
 

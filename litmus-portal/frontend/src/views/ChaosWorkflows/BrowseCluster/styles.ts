@@ -213,10 +213,9 @@ const useStyles = makeStyles((theme) => ({
   // for yes or no buttons
   buttonGroup: {
     display: 'flex',
-    width: '10.75rem',
-    height: '2.75rem',
     marginTop: theme.spacing(2.5),
     justifyContent: 'space-between',
+    gap: '1rem',
   },
   // delete user
   delDiv: {
@@ -246,6 +245,11 @@ const useStyles = makeStyles((theme) => ({
       borderColor: theme.palette.error.main,
       color: theme.palette.error.main,
     },
+  },
+  customTooltip: {
+    backgroundColor: theme.palette.secondary.light,
+    color: theme.palette.text.primary,
+    fontSize: '0.775rem',
   },
 }));
 

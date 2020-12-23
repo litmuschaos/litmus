@@ -56,6 +56,12 @@ const Header: React.FC = () => {
         const memberList: Member[] = project.members;
 
         memberList.forEach((member) => {
+          if (member.role === 'Owner') {
+            user.updateUserDetails({
+              selectedProjectOwner: member.user_name,
+            });
+          }
+
           if (member.user_name === data?.getUser.username) {
             user.updateUserDetails({
               selectedProjectID,

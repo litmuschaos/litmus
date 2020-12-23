@@ -36,7 +36,6 @@ const useStyles = makeStyles((theme) => ({
 
   loginDiv: {
     marginTop: theme.spacing(5),
-    marginLeft: theme.spacing(-2),
   },
 
   imageDiv: {

@@ -1,4 +1,3 @@
-# This is an auto-generated file. DO NOT EDIT
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -283,7 +282,7 @@ data:
   config: |
     containerRuntimeExecutor: k8sapi
     executor:
-      imagePullPolicy: IfNotPresent
+      imagePullPolicy: Always
       resources:
         limits:
           cpu: 0.15
@@ -387,12 +386,6 @@ spec:
         kubernetes.io/os: linux
       serviceAccountName: argo
 ---
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: subscriber-service-account
-  namespace: #{AGENT-NAMESPACE}
----
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
@@ -408,6 +401,7 @@ rules:
     verbs:
       - get
       - create
+      - delete
   - apiGroups:
       - litmuschaos.io
     resources:
@@ -429,6 +423,8 @@ rules:
       - get
       - list
       - watch
+      - delete
+      - update
   - apiGroups:
       - ""
     resources:
@@ -437,6 +433,12 @@ rules:
       - get
       - list
       - watch
+  - apiGroups:
+      - "apps"
+    resources:
+      - deployments
+    verbs:
+      - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
@@ -445,7 +447,7 @@ metadata:
   namespace: #{AGENT-NAMESPACE}
 subjects:
   - kind: ServiceAccount
-    name: subscriber-service-account
+    name: #{SUBSCRIBER-SERVICE-ACCOUNT}
     namespace: #{AGENT-NAMESPACE}
 roleRef:
   kind: Role
@@ -468,7 +470,7 @@ spec:
       labels:
         app: subscriber
     spec:
-      serviceAccountName: subscriber-service-account
+      serviceAccountName: #{SUBSCRIBER-SERVICE-ACCOUNT}
       containers:
         - name: subscriber
           image: #{SUB-IMAGE}
@@ -507,36 +509,27 @@ metadata:
   labels:
     name: litmus-namespace-scope
 rules:
-  - apiGroups: ["", "apps", "batch", "extensions", "litmuschaos.io"]
-    resources:
-      [
-        "pods",
-        "pods/exec",
-        "pods/log",
-        "pods/eviction",
-        "jobs",
-        "deployments",
-        "daemonsets",
-        "replicasets",
-        "statefulsets",
-        "events",
-        "configmaps",
-        "services",
-        "chaosengines",
-        "chaosexperiments",
-        "chaosresults",
-      ]
-    verbs:
-      [
-        "get",
-        "create",
-        "update",
-        "patch",
-        "delete",
-        "list",
-        "watch",
-        "deletecollection",
-      ]
+- apiGroups: [""]
+  resources: ["replicationcontrollers","secrets"]
+  verbs: ["get","list"]
+- apiGroups: ["apps.openshift.io"]
+  resources: ["deploymentconfigs"]
+  verbs: ["get","list"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "daemonsets", "replicasets", "statefulsets"]
+  verbs: ["get","list"]
+- apiGroups: ["batch"]
+  resources: ["jobs"]
+  verbs: ["get","list","deletecollection"]
+- apiGroups: ["argoproj.io"]
+  resources: ["rollouts"]
+  verbs: ["get","list"]
+- apiGroups: [""]
+  resources: ["pods","configmaps","events","services"]
+  verbs: ["get","create","update","patch","delete","list","watch","deletecollection"]
+- apiGroups: ["litmuschaos.io"]
+  resources: ["chaosengines","chaosexperiments","chaosresults"]
+  verbs: ["get","create","update","patch","delete","list","watch","deletecollection"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
@@ -557,6 +550,14 @@ subjects:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  labels:
+    app.kubernetes.io/name: litmus
+    # provide unique instance-id if applicable
+    # app.kubernetes.io/instance: litmus-abcxzy
+    app.kubernetes.io/version: latest
+    app.kubernetes.io/component: operator
+    app.kubernetes.io/part-of: litmus
+    app.kubernetes.io/managed-by: kubectl
   name: chaos-operator-ce
   namespace: #{AGENT-NAMESPACE}
 spec:
@@ -567,6 +568,13 @@ spec:
   template:
     metadata:
       labels:
+        app.kubernetes.io/name: litmus
+        # provide unique instance-id if applicable
+        # app.kubernetes.io/instance: litmus-abcxzy
+        app.kubernetes.io/version: latest
+        app.kubernetes.io/component: operator
+        app.kubernetes.io/part-of: litmus
+        app.kubernetes.io/managed-by: kubectl
         name: chaos-operator
     spec:
       serviceAccountName: litmus-namespace-scope

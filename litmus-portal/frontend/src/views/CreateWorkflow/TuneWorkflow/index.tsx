@@ -3,6 +3,7 @@ import Divider from '@material-ui/core/Divider';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
+import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
 import YamlEditor from '../../../components/YamlEditor/Editor';
 import { WorkflowData } from '../../../models/redux/workflow';
@@ -13,6 +14,7 @@ import useStyles from './styles';
 
 const TuneWorkflow: React.FC = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   const workflowData: WorkflowData = useSelector(
     (state: RootState) => state.workflowData
@@ -67,15 +69,13 @@ const TuneWorkflow: React.FC = () => {
     <div className={classes.root}>
       <div className={classes.tuneDiv}>
         <Typography className={classes.heading}>
-          <strong>Tune the selected workflow</strong>
+          <strong>{t('createWorkflow.tuneWorkflow.header')}</strong>
         </Typography>
         <Typography className={classes.description}>
-          The following tests are run in sequence. The sequence of tests cannot
-          be changed.
+          {t('createWorkflow.tuneWorkflow.info')}
         </Typography>
         <Typography className={classes.descriptionextended}>
-          Select the tests you want to keep in the workflow and adjust the
-          variables in the selected test.
+          {t('createWorkflow.tuneWorkflow.infoExtended')}
         </Typography>
       </div>
 

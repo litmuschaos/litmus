@@ -6,6 +6,7 @@ import ButtonOutline from '../../../components/Button/ButtonOutline';
 import { RootState } from '../../../redux/reducers';
 import timeDifference from '../../../utils/datesModifier';
 import NodeLogs from '../NodeLogs';
+import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
 
 interface WorkflowNodeInfoProps {
@@ -20,6 +21,8 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
   pod_namespace,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
+
   const [logsOpen, setLogsOpen] = useState<boolean>(false);
 
   // Get the nelected node from redux
@@ -51,7 +54,9 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
       {/* Node Name */}
       <div className={classes.heightMaintainer}>
         <Typography className={classes.nodeSpacing}>
-          <span className={classes.bold}>Name:</span>
+          <span className={classes.bold}>
+            {t('workflowDetailsView.workflowNodeInfo.name')}:
+          </span>
           <br />
           {pod_name}
         </Typography>
@@ -59,7 +64,10 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
       {/* Node Type */}
       <div className={classes.heightMaintainer}>
         <Typography className={classes.nodeSpacing}>
-          <span className={classes.bold}>Type:</span> {type}
+          <span className={classes.bold}>
+            {t('workflowDetailsView.workflowNodeInfo.type')}:
+          </span>{' '}
+          {type}
         </Typography>
       </div>
       <hr />
@@ -68,7 +76,10 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
       <div className={classes.nodeSpacing}>
         <div className={classes.heightMaintainer}>
           <Typography>
-            <span className={classes.bold}>Phase:</span> {phase}
+            <span className={classes.bold}>
+              {t('workflowDetailsView.workflowNodeInfo.phase')}:
+            </span>{' '}
+            {phase}
           </Typography>
         </div>
       </div>
@@ -78,19 +89,32 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
       <div className={classes.nodeSpacing}>
         <div className={classes.heightMaintainer}>
           <Typography>
-            <span className={classes.bold}>Start time:</span>{' '}
+            <span className={classes.bold}>
+              {t('workflowDetailsView.workflowNodeInfo.startTime')}:
+            </span>{' '}
             {timeDifference(startedAt)}
           </Typography>
           <Typography>
-            <span className={classes.bold}>End time:</span>{' '}
-            {timeDifference(finishedAt)}
+            <span className={classes.bold}>
+              {t('workflowDetailsView.workflowNodeInfo.endTime')}:
+            </span>{' '}
+            {finishedAt !== ''
+              ? timeDifference(finishedAt)
+              : 'Not yet finished'}
           </Typography>
           <Typography>
-            <span className={classes.bold}>Duration: </span>{' '}
-            {(
-              (parseInt(finishedAt, 10) - parseInt(startedAt, 10)) /
-              60
-            ).toFixed(1)}{' '}
+            <span className={classes.bold}>
+              {t('workflowDetailsView.workflowNodeInfo.duration')}:{' '}
+            </span>{' '}
+            {finishedAt !== ''
+              ? (
+                  (parseInt(finishedAt, 10) - parseInt(startedAt, 10)) /
+                  60
+                ).toFixed(1)
+              : (
+                  (new Date().getTime() / 1000 - parseInt(startedAt, 10)) /
+                  60
+                ).toFixed(1)}{' '}
             minutes
           </Typography>
         </div>
@@ -100,13 +124,16 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
       <div className={classes.nodeSpacing}>
         <div className={classes.heightMaintainer}>
           <Typography>
-            <span className={classes.bold}>Node Name:</span> {name}
+            <span className={classes.bold}>
+              {t('workflowDetailsView.workflowNodeInfo.nodeName')}:
+            </span>{' '}
+            {name}
           </Typography>
         </div>
       </div>
       <div className={classes.footerButton}>
         <ButtonOutline isDisabled={false} handleClick={() => setLogsOpen(true)}>
-          Logs
+          {t('workflowDetailsView.workflowNodeInfo.button.logs')}
         </ButtonOutline>
       </div>
     </div>

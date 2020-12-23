@@ -1,0 +1,23 @@
+name: litmusportal-server
+labels:
+  component: litmusportal-server
+container: auth-server
+image: okteto/golang:1.14
+command: bash
+workdir: /auth-server
+sync:
+- .:/auth-server
+securityContext:
+  capabilities:
+    add:
+    - SYS_PTRACE
+volumes:
+- /go/pkg/
+- /root/.cache/go-build/
+forward:
+- 2345:2345
+- 3000:3000
+resources:
+  limits:
+    cpu: "1"
+    memory: 2Gi

@@ -39,6 +39,7 @@ const useStyles = makeStyles((theme) => ({
   },
   buttonDiv: {
     display: 'flex',
+    gap: '1rem',
   },
 }));
 export default useStyles;

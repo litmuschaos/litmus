@@ -18,6 +18,7 @@ import { RootState } from '../../../redux/reducers';
 import Loader from '../../Loader';
 import ButtonFilled from '../../Button/ButtonFilled';
 import Unimodal from '../../../containers/layouts/Unimodal';
+import BackButton from '../../Button/BackButton';
 
 const ConnectTarget = () => {
   const classes = useStyles();
@@ -25,10 +26,6 @@ const ConnectTarget = () => {
   const [link, setLink] = React.useState('');
   const [id, setID] = React.useState('');
   const [modal, setModal] = React.useState(false);
-
-  const handleClick = () => {
-    history.push('/targets');
-  };
 
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
@@ -70,6 +67,11 @@ const ConnectTarget = () => {
       platform_name: '',
       project_id: selectedProjectID,
       cluster_type: 'external',
+      agent_scope: 'cluster',
+      agent_namespace: 'litmus',
+      serviceaccount: '',
+      agent_sa_exists: false,
+      agent_ns_exists: false,
     };
     createClusterReg({
       variables: { ClusterInput: createClusterInput },
@@ -86,13 +88,9 @@ const ConnectTarget = () => {
     <Scaffold>
       <section className="Header section">
         <div className={classes.backBotton}>
-          <ButtonOutline
-            isDisabled={false}
-            handleClick={handleClick}
-            data-cy="backSelect"
-          >
+          <BackButton isDisabled={false}>
             <Typography>Back</Typography>
-          </ButtonOutline>
+          </BackButton>
           <div className={classes.header}>
             <Typography variant="h4">
               {t('targets.connectHome.connectText')}
@@ -138,8 +136,10 @@ const ConnectTarget = () => {
       </section>
       <div>
         <Unimodal
-          isOpen={modal}
-          handleClose={handleClick}
+          open={modal}
+          handleClose={() => {
+            history.push('/targets');
+          }}
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           hasCloseBtn

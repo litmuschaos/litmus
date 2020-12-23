@@ -15,6 +15,7 @@ import { ReactComponent as HomeIcon } from '../../svg/home.svg';
 import { ReactComponent as SettingsIcon } from '../../svg/settings.svg';
 import { ReactComponent as TargetsIcon } from '../../svg/targets.svg';
 import { ReactComponent as WorkflowsIcon } from '../../svg/workflows.svg';
+import { ReactComponent as MyHubIcon } from '../../svg/myhub.svg';
 import useStyles from './styles';
 
 interface CustomisedListItemProps {
@@ -95,6 +96,18 @@ const SideBar: React.FC = () => {
             <WorkflowsIcon />
           </CustomisedListItem>
         </div>
+        <div data-cy="myHub">
+          <CustomisedListItem
+            key="myhub"
+            handleClick={() => {
+              history.push('/myhub');
+            }}
+            label="My Hub"
+            selected={pathName === 'myhub'}
+          >
+            <MyHubIcon />
+          </CustomisedListItem>
+        </div>
         <CustomisedListItem
           key="targets"
           handleClick={() => {
@@ -128,6 +141,16 @@ const SideBar: React.FC = () => {
           </CustomisedListItem>
         )}
       </List>
+      <div className={classes.versionDiv}>
+        <img
+          src="/icons/litmusPurple.svg"
+          alt="litmus logo"
+          className={classes.versionlogo}
+        />
+        <Typography className={classes.versionText}>
+          {t('sidebar.version')}
+        </Typography>
+      </div>
     </Drawer>
   );
 };
