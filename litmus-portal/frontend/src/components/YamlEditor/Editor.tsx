@@ -103,7 +103,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
       });
       const nodeStyleError = (document.getElementsByClassName(
         'ace_gutter-cell'
-      )[stateObject.annotations[0].row] as any).style;
+      )[stateObject.annotations[0].row - 1] as any).style;
       nodeStyleError.background = 'red';
       nodeStyleError.color = '#FFFFFF';
     } else {
@@ -122,13 +122,11 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
         (nodeStyleErrorList[i] as any).style.color = 'rgba(255, 255, 255, 0.4)';
       }
     }
-    setEditorState(stateObject as any);
     setModifiedYaml(value);
-    const yamlData = YAML.parse(value);
+    setEditorState(stateObject as any);
     workflow.setWorkflowDetails({
       name: filename,
       link: yamlLink,
-      namespace: yamlData.metadata.namespace,
       yaml: value,
       id,
       description,
@@ -508,7 +506,6 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
                   autoScrollEditorIntoView: true,
                   tooltipFollowsMouse: true,
                 });
-                (YamlAce.current!.editor as any).focus();
 
                 const nodeStyleActiveList = document.getElementsByClassName(
                   'ace_gutter-cell'

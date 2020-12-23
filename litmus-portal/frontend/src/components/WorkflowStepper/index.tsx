@@ -232,12 +232,14 @@ const CustomStepper = () => {
         }
         arr.push({ experimentName: test, weight: value });
       });
-      workflow.setWorkflowDetails({
-        weights: arr,
-      });
       if (arr.length === 0) {
         setinValidYaml(true);
       } else {
+        const yamlData = YAML.parse(yaml);
+        workflow.setWorkflowDetails({
+          namespace: yamlData.metadata.namespace,
+          weights: arr,
+        });
         setinValidYaml(false);
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       }
