@@ -112,7 +112,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:1.11.0"
+              value: "litmuschaos/chaos-runner:1.11.1"
             - name: WATCH_NAMESPACE
               valueFrom:
                 fieldRef:
