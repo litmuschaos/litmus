@@ -23,7 +23,12 @@ const Welcomemodal: React.FC<WelcomemodalProps> = ({ handleIsOpen }) => {
   );
 
   return (
-    <Unimodal isOpen handleClose={handleClose} hasCloseBtn={false}>
+    <Unimodal
+      open
+      handleClose={handleClose}
+      hasCloseBtn={false}
+      disableBackdropClick
+    >
       {body}
     </Unimodal>
   );

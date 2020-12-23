@@ -20,7 +20,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "7.1.5"
+      "version": "7.2.2"
     },
     {
       "type": "panel",
@@ -169,8 +169,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.2",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -330,10 +333,11 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.2",
       "targets": [
         {
           "expr": "sum(chaosengine_experiments_count{engine_namespace=\"litmus\",job=\"chaos-monitor\"})",
+          "instant": true,
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -393,10 +397,11 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.2",
       "targets": [
         {
           "expr": "sum(chaosengine_passed_experiments{engine_namespace=\"litmus\",job=\"chaos-monitor\"})",
+          "instant": true,
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -456,10 +461,11 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.2",
       "targets": [
         {
           "expr": "sum(chaosengine_failed_experiments{engine_namespace=\"litmus\",job=\"chaos-monitor\"})",
+          "instant": true,
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -517,10 +523,11 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.2",
       "targets": [
         {
           "expr": "sum(chaosengine_waiting_experiments{engine_namespace=\"litmus\",job=\"chaos-monitor\"})",
+          "instant": true,
           "interval": "",
           "intervalFactor": 3,
           "legendFormat": "",
@@ -581,8 +588,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.2",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -721,8 +731,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.2",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -894,8 +907,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.2",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1036,8 +1052,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.2",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1209,8 +1228,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.2",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1313,8 +1335,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.2",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1435,8 +1460,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.2",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1540,8 +1568,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.2",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1662,8 +1693,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.2",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1762,8 +1796,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.2",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1884,8 +1921,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.2",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1984,8 +2024,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.2",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2106,8 +2149,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.2",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2206,8 +2252,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.2.2",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",

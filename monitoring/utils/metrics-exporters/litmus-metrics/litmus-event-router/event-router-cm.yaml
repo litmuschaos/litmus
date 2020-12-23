@@ -1,0 +1,13 @@
+apiVersion: v1
+data:
+  config.json: |-
+    {
+      "sink": "http",
+      "httpSinkUrl": "http://localhost:8080",
+      "httpSinkBufferSize": 1500,
+      "httpSinkDiscardMessages": true
+    }
+kind: ConfigMap
+metadata:
+  name: litmus-eventrouter-http-cm
+  namespace: litmus

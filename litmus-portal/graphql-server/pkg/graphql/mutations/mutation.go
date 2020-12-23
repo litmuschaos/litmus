@@ -3,9 +3,12 @@ package mutations
 import (
 	"encoding/json"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql"
 
 	"github.com/jinzhu/copier"
 
@@ -17,6 +20,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/subscriptions"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"github.com/pkg/errors"
+	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -31,16 +35,22 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 	}
 
 	newCluster := database.Cluster{
-		ClusterID:    clusterID,
-		ClusterName:  input.ClusterName,
-		Description:  input.Description,
-		ProjectID:    input.ProjectID,
-		AccessKey:    utils.RandomString(32),
-		ClusterType:  input.ClusterType,
-		PlatformName: input.PlatformName,
-		CreatedAt:    strconv.FormatInt(time.Now().Unix(), 10),
-		UpdatedAt:    strconv.FormatInt(time.Now().Unix(), 10),
-		Token:        token,
+		ClusterID:      clusterID,
+		ClusterName:    input.ClusterName,
+		Description:    input.Description,
+		ProjectID:      input.ProjectID,
+		AccessKey:      utils.RandomString(32),
+		ClusterType:    input.ClusterType,
+		PlatformName:   input.PlatformName,
+		AgentNamespace: input.AgentNamespace,
+		Serviceaccount: input.Serviceaccount,
+		AgentScope:     input.AgentScope,
+		AgentNsExists:  input.AgentNsExists,
+		AgentSaExists:  input.AgentSaExists,
+		CreatedAt:      strconv.FormatInt(time.Now().Unix(), 10),
+		UpdatedAt:      strconv.FormatInt(time.Now().Unix(), 10),
+		Token:          token,
+		IsRemoved:      false,
 	}
 
 	err = database.InsertCluster(newCluster)
@@ -117,15 +127,20 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		return "", err
 	}
 
-	//err = database.UpsertWorkflowRun(database.WorkflowRun(newWorkflowRun))
-	err = database.UpsertWorkflowRun(input.WorkflowID, database.WorkflowRun{
+	//err = database.UpdateWorkflowRun(database.WorkflowRun(newWorkflowRun))
+	count, err := database.UpdateWorkflowRun(input.WorkflowID, database.WorkflowRun{
 		WorkflowRunID: input.WorkflowRunID,
 		LastUpdated:   strconv.FormatInt(time.Now().Unix(), 10),
 		ExecutionData: input.ExecutionData,
+		Completed:     input.Completed,
 	})
 	if err != nil {
 		log.Print("ERROR", err)
 		return "", err
+	}
+
+	if count == 0 {
+		return "Workflow Run Discarded[Duplicate Event]", nil
 	}
 
 	subscriptions.SendWorkflowEvent(model.WorkflowRun{
@@ -181,6 +196,8 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		newWorkflowManifest, _ = sjson.Set(input.WorkflowManifest, "spec.workflowMetadata.labels.workflow_id", workflow_id)
 	}
 
+	isRemoved := false
+
 	newChaosWorkflow := database.ChaosWorkFlowInput{
 		WorkflowID:          workflow_id,
 		WorkflowManifest:    newWorkflowManifest,
@@ -194,6 +211,7 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		CreatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
 		UpdatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
 		WorkflowRuns:        []*database.WorkflowRun{},
+		IsRemoved:           isRemoved,
 	}
 
 	err = database.InsertChaosWorkflow(newChaosWorkflow)
@@ -201,7 +219,19 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		return nil, err
 	}
 
-	subscriptions.SendWorkflowRequest(&newChaosWorkflow, r)
+	workflowNamespace := gjson.Get(newWorkflowManifest, "metadata.namespace").String()
+
+	if workflowNamespace == "" {
+		workflowNamespace = os.Getenv("AGENT_NAMESPACE")
+	}
+
+	subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
+		K8sManifest: newWorkflowManifest,
+		RequestType: "create",
+		ProjectID:   input.ProjectID,
+		ClusterID:   input.ClusterID,
+		Namespace:   workflowNamespace,
+	}, r)
 
 	return &model.ChaosWorkFlowResponse{
 		WorkflowID:          workflow_id,
@@ -210,4 +240,136 @@ func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*m
 		WorkflowDescription: input.WorkflowDescription,
 		IsCustomWorkflow:    input.IsCustomWorkflow,
 	}, nil
+}
+
+func DeleteCluster(cluster_id string, r store.StateData) (string, error) {
+	time := strconv.FormatInt(time.Now().Unix(), 10)
+
+	query := bson.D{{"cluster_id", cluster_id}}
+	update := bson.D{{"$set", bson.D{{"is_removed", true}, {"updated_at", time}}}}
+
+	err := database.UpdateCluster(query, update)
+	if err != nil {
+		return "", err
+	}
+	cluster, err := database.GetCluster(cluster_id)
+	if err != nil {
+		return "", nil
+	}
+
+	requests := []string{
+		`{
+			"apiVersion": "apps/v1",
+			"kind": "Deployment",
+			"metadata": {
+				"name": "subscriber",
+				"namespace": ` + *cluster.AgentNamespace + ` 
+			}
+		}`,
+		`{
+		   "apiVersion": "v1",
+		   "kind": "ConfigMap",
+		   "metadata": {
+			  "name": "litmus-portal-config",
+			  "namespace": ` + *cluster.AgentNamespace + ` 
+		   }
+		}`,
+	}
+
+	for _, request := range requests {
+		subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
+			K8sManifest: request,
+			RequestType: "delete",
+			ProjectID:   cluster.ProjectID,
+			ClusterID:   cluster_id,
+			Namespace:   *cluster.AgentNamespace,
+		}, r)
+	}
+
+	return "Successfully deleted cluster", nil
+}
+
+func UpdateWorkflow(workflow *model.ChaosWorkFlowInput, r store.StateData) (*model.ChaosWorkFlowResponse, error) {
+
+	var newWeightages []*database.WeightagesInput
+	copier.Copy(&newWeightages, &workflow.Weightages)
+
+	var workflowManifest map[string]interface{}
+	err := json.Unmarshal([]byte(workflow.WorkflowManifest), &workflowManifest)
+	if err != nil {
+		return nil, err
+	}
+
+	newWorkflowManifest, err := sjson.Set(workflow.WorkflowManifest, "metadata.labels.workflow_id", workflow.WorkflowID)
+	if err != nil {
+		return nil, err
+	}
+
+	if strings.ToLower(workflowManifest["kind"].(string)) == "cronworkflow" {
+		newWorkflowManifest, _ = sjson.Set(workflow.WorkflowManifest, "spec.workflowMetadata.labels.workflow_id", workflow.WorkflowID)
+	}
+
+	query := bson.D{{"workflow_id", workflow.WorkflowID}}
+	update := bson.D{{"$set", bson.D{{"workflow_manifest", newWorkflowManifest}, {"cronSyntax", workflow.CronSyntax}, {"Workflow_name", workflow.WorkflowName}, {"Workflow_description", workflow.WorkflowDescription}, {"isCustomWorkflow", workflow.IsCustomWorkflow}, {"Weightages", newWeightages}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
+
+	err = database.UpdateChaosWorkflow(query, update)
+	if err != nil {
+		return nil, err
+	}
+
+	workflowNamespace := gjson.Get(workflow.WorkflowManifest, "metadata.namespace").String()
+
+	if workflowNamespace == "" {
+		workflowNamespace = os.Getenv("AGENT_NAMESPACE")
+	}
+
+	subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
+		K8sManifest: newWorkflowManifest,
+		RequestType: "update",
+		ProjectID:   workflow.ProjectID,
+		ClusterID:   workflow.ClusterID,
+		Namespace:   workflowNamespace,
+	}, r)
+
+	return &model.ChaosWorkFlowResponse{
+		WorkflowID:          *workflow.WorkflowID,
+		CronSyntax:          workflow.CronSyntax,
+		WorkflowName:        workflow.WorkflowName,
+		WorkflowDescription: workflow.WorkflowDescription,
+		IsCustomWorkflow:    workflow.IsCustomWorkflow,
+	}, nil
+}
+
+func DeleteWorkflow(workflow_id string, r store.StateData) (bool, error) {
+
+	workflows, err := database.GetWorkflowsByIDs([]*string{&workflow_id})
+	if err != nil {
+		return false, err
+	}
+
+	query := bson.D{{"workflow_id", workflow_id}}
+	update := bson.D{{"$set", bson.D{{"isRemoved", true}}}}
+
+	err = database.UpdateChaosWorkflow(query, update)
+	if err != nil {
+		return false, err
+	}
+
+	for _, workflow := range workflows {
+		workflowNamespace := gjson.Get(workflow.WorkflowManifest, "metadata.namespace").String()
+
+		if workflowNamespace == "" {
+			workflowNamespace = os.Getenv("AGENT_NAMESPACE")
+		}
+
+		subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
+			K8sManifest: workflow.WorkflowManifest,
+			RequestType: "delete",
+			ProjectID:   workflow.ProjectID,
+			ClusterID:   workflow.ClusterID,
+			Namespace:   workflowNamespace,
+		}, r)
+	}
+
+	return true, nil
 }

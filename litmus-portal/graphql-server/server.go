@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/synchandler"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
@@ -26,7 +27,7 @@ const defaultPort = "8080"
 var err error
 
 func init() {
-	if os.Getenv("LITMUS_CHAOS_RUNNER_IMAGE") == "" || os.Getenv("LITMUS_CHAOS_OPERATOR_IMAGE") == "" || os.Getenv("SUBSCRIBER_IMAGE") == "" || os.Getenv("DEPLOYER_IMAGE") == "" || os.Getenv("ARGO_SERVER_IMAGE") == "" || os.Getenv("ARGO_WORKFLOW_EXECUTOR_IMAGE") == "" || os.Getenv("ARGO_WORKFLOW_EXECUTOR_IMAGE") == "" || os.Getenv("JWT_SECRET") == "" || os.Getenv("PORTAL_SCOPE") == "" {
+	if os.Getenv("LITMUS_CHAOS_RUNNER_IMAGE") == "" || os.Getenv("LITMUS_CHAOS_OPERATOR_IMAGE") == "" || os.Getenv("SUBSCRIBER_IMAGE") == "" || os.Getenv("ARGO_SERVER_IMAGE") == "" || os.Getenv("ARGO_WORKFLOW_EXECUTOR_IMAGE") == "" || os.Getenv("ARGO_WORKFLOW_EXECUTOR_IMAGE") == "" || os.Getenv("JWT_SECRET") == "" || os.Getenv("PORTAL_SCOPE") == "" {
 		log.Fatal("Some environment variable are not setup")
 	}
 }
@@ -36,7 +37,6 @@ func main() {
 	if port == "" {
 		port = defaultPort
 	}
-
 	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig()))
 	srv.AddTransport(transport.POST{})
 	srv.AddTransport(transport.GET{})
@@ -59,10 +59,11 @@ func main() {
 		AllowedOrigins:   []string{"*"},
 		AllowCredentials: true,
 	}).Handler)
-
+	go synchandler.RecurringHubSync() //go routine for syncing hubs for all users
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", authorization.Middleware(srv))
 	router.HandleFunc("/file/{key}{path:.yaml}", file_handlers.FileHandler)
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
+
 }

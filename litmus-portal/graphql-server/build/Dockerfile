@@ -14,6 +14,10 @@ LABEL maintainer="LitmusChaos"
 
 COPY --from=builder /output/server /
 COPY --from=builder /gql-server/manifests/. /manifests
+
+RUN addgroup -S litmus && adduser -S -G litmus 1001 
+USER 1001
+
 CMD ["./server"]
 
 EXPOSE 8080

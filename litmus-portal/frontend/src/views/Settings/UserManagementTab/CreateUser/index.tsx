@@ -1,5 +1,6 @@
 import { Divider, IconButton, Typography } from '@material-ui/core';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import InputFieldOutline from '../../../../components/InputFieldOutline';
 import {
   validateLength,
@@ -28,6 +29,7 @@ interface CreateUserProps {
 // CreateUser displays the UI screen for creating a new user by admin
 const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   // for conditional rendering of reset password div
   const [createPAssword, setCreatePassword] = React.useState<Password>({
@@ -71,12 +73,12 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
             <img src="./icons/BackArrow.svg" alt="back" />
           </IconButton>
           <Typography className={classes.divHeaderText}>
-            <strong>Create a new user</strong>
+            <strong>{t('settings.userManagementTab.createUser.header')}</strong>
           </Typography>
         </div>
 
         <Typography className={classes.descText}>
-          Enter the user&apos;s personal and login details
+          {t('settings.userManagementTab.createUser.info')}
         </Typography>
 
         <div className={classes.container}>
@@ -119,7 +121,9 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
 
               <div>
                 <Typography className={classes.headerText}>
-                  <strong> Login Details</strong>
+                  <strong>
+                    {t('settings.userManagementTab.createUser.login')}
+                  </strong>
                 </Typography>
                 <div>
                   <form>
@@ -131,7 +135,9 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
                               ? 'Should not start with an empty space'
                               : ''
                           }
-                          label="Username"
+                          label={t(
+                            'settings.userManagementTab.createUser.label.username'
+                          )}
                           value={personalData.userName}
                           handleChange={handleUsername}
                           validationError={validateStartEmptySpacing(
@@ -155,7 +161,9 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
                           validationError={validateLength(
                             createPAssword.password
                           )}
-                          label="New Password"
+                          label={t(
+                            'settings.userManagementTab.createUser.label.newPassword'
+                          )}
                         />
                       </div>
                     </div>

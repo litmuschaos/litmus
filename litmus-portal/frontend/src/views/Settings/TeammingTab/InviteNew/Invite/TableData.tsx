@@ -8,6 +8,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { UserInvite } from '../../../../../models/graphql/invite';
 import userAvatar from '../../../../../utils/user';
 import useStyles from './styles';
@@ -27,6 +28,8 @@ const TableData: React.FC<TableDataProps> = ({
   sendInvite,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [role, setRole] = useState<string>('Viewer');
   const handleClose = () => {
@@ -98,12 +101,18 @@ const TableData: React.FC<TableDataProps> = ({
                 >
                   <div>
                     <Typography className={classes.menuHeader}>
-                      <strong>Editor</strong>
+                      <strong>
+                        {t(
+                          'settings.teamingTab.invitation.sentInvitation.menuItem.editorRole.label'
+                        )}
+                      </strong>
                     </Typography>
                   </div>
                   <div>
                     <Typography className={classes.menuDesc}>
-                      Can make changes in the project
+                      {t(
+                        'settings.teamingTab.invitation.sentInvitation.menuItem.editorRole.body'
+                      )}
                     </Typography>
                   </div>
                 </div>
@@ -124,12 +133,18 @@ const TableData: React.FC<TableDataProps> = ({
                 >
                   <div>
                     <Typography className={classes.menuHeader}>
-                      <strong>Viewer</strong>
+                      <strong>
+                        {t(
+                          'settings.teamingTab.invitation.sentInvitation.menuItem.viewerRole.label'
+                        )}
+                      </strong>
                     </Typography>
                   </div>
                   <div>
                     <Typography className={classes.menuDesc}>
-                      Can view the project
+                      {t(
+                        'settings.teamingTab.invitation.sentInvitation.menuItem.viewerRole.body'
+                      )}
                     </Typography>
                   </div>
                 </div>

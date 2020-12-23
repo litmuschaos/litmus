@@ -35,6 +35,7 @@ export const SCHEDULE_DETAILS = gql`
       cluster_id
       cluster_type
       cluster_name
+      isRemoved
     }
   }
 `;
@@ -115,6 +116,11 @@ export const GET_CLUSTER = gql`
       no_of_schedules
       no_of_workflows
       token
+      agent_namespace
+      serviceaccount
+      agent_scope
+      agent_ns_exists
+      agent_sa_exists
     }
   }
 `;
@@ -127,5 +133,134 @@ export const ALL_USERS = gql`
       username
       email
     }
+  }
+`;
+
+export const GET_CHARTS_DATA = gql`
+  query getCharts($HubName: String!, $projectID: String!) {
+    getCharts(HubName: $HubName, projectID: $projectID) {
+      ApiVersion
+      Kind
+      Metadata {
+        Name
+        Version
+        Annotations {
+          Categories
+          Vendor
+          CreatedAt
+          Repository
+          Support
+          ChartDescription
+        }
+      }
+      Spec {
+        DisplayName
+        CategoryDescription
+        Keywords
+        Maturity
+        Experiments
+        Maintainers {
+          Name
+          Email
+        }
+        MinKubeVersion
+        Provider
+        Links {
+          Name
+          Url
+        }
+        ChaosExpCRDLink
+        Platforms
+        ChaosType
+      }
+      PackageInfo {
+        PackageName
+        Experiments {
+          Name
+          CSV
+          Desc
+        }
+      }
+      Experiments {
+        ApiVersion
+      }
+    }
+  }
+`;
+
+export const GET_EXPERIMENT_DATA = gql`
+  query getExperiment($data: ExperimentInput!) {
+    getHubExperiment(experimentInput: $data) {
+      ApiVersion
+      Kind
+      Metadata {
+        Name
+        Version
+        Annotations {
+          Categories
+          Vendor
+          CreatedAt
+          Repository
+          Support
+          ChartDescription
+        }
+      }
+      Spec {
+        DisplayName
+        CategoryDescription
+        Keywords
+        Maturity
+        Experiments
+        Maintainers {
+          Name
+          Email
+        }
+        MinKubeVersion
+        Provider
+        Links {
+          Name
+          Url
+        }
+        ChaosExpCRDLink
+        Platforms
+        ChaosType
+      }
+      PackageInfo {
+        PackageName
+        Experiments {
+          Name
+          CSV
+          Desc
+        }
+      }
+      Experiments {
+        ApiVersion
+      }
+    }
+  }
+`;
+
+export const GET_HUB_STATUS = gql`
+  query getHubStatus($data: String!) {
+    getHubStatus(projectID: $data) {
+      id
+      HubName
+      RepoBranch
+      RepoURL
+      TotalExp
+      IsAvailable
+    }
+  }
+`;
+
+export const GET_ENGINE_YAML = gql`
+  query getEngineData($experimentInput: ExperimentInput!) {
+    getYAMLData(experimentInput: $experimentInput)
+  }
+`;
+
+export const GET_EXPERIMENT_YAML = gql`
+  query getExperimentData($experimentInput: ExperimentInput!) {
+    getYAMLData(experimentInput: $experimentInput)
   }
 `;

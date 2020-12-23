@@ -2,11 +2,13 @@ package utils
 
 import (
 	"bufio"
+	"fmt"
 	"math/rand"
 	"net/http"
 	"os"
 	"strings"
 
+	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/types"
 )
 
@@ -28,29 +30,77 @@ func RandomString(n int) string {
 }
 
 //ManifestParser parses manifests yaml and generates dynamic manifest with specified keys
-func ManifestParser(id, key, template string, subscriberConfig *types.SubscriberConfigurationVars) ([]byte, error) {
+func ManifestParser(cluster database.Cluster, template string, subscriberConfig *types.SubscriberConfigurationVars) ([]byte, error) {
+	var (
+		lines                     []string
+		defaultState              = false
+		AgentNamespace            string
+		ServiceAccountName        string
+		DefaultAgentNamespace     = "litmus"
+		DefaultServiceAccountName = "litmus"
+	)
+
 	file, err := os.Open(template)
 	if err != nil {
 		return []byte{}, err
 	}
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
-	var lines []string
+
+	if cluster.AgentNsExists == nil {
+		cluster.AgentNsExists = &defaultState
+	}
+	if cluster.AgentSaExists == nil {
+		cluster.AgentSaExists = &defaultState
+	}
+
+	if !*cluster.AgentNsExists && cluster.AgentNamespace != nil && *cluster.AgentNamespace != "" {
+		AgentNamespace = *cluster.AgentNamespace
+	} else {
+		AgentNamespace = DefaultAgentNamespace
+	}
+
+	if !*cluster.AgentSaExists && cluster.Serviceaccount != nil && *cluster.Serviceaccount != "" {
+		ServiceAccountName = *cluster.Serviceaccount
+	} else {
+		ServiceAccountName = DefaultServiceAccountName
+	}
+
+	var (
+		headerStr         = "# This is an auto-generated file. DO NOT EDIT\n"
+		namspaceStr       = "\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: " + AgentNamespace + "\n"
+		serviceAccountStr = "---\napiVersion: v1\nkind: ServiceAccount\nmetadata:\n  name: " + ServiceAccountName + "\n  namespace: " + AgentNamespace + "\n---"
+	)
+
+	saYaml := fmt.Sprintf(headerStr)
+	lines = append(lines, saYaml)
+
+	if *cluster.AgentNsExists == false {
+		saYaml := fmt.Sprintf(namspaceStr)
+		lines = append(lines, saYaml)
+	}
+
+	if *cluster.AgentSaExists == false {
+		saYaml := fmt.Sprintf(serviceAccountStr)
+		lines = append(lines, saYaml)
+	}
 
 	for scanner.Scan() {
 		line := scanner.Text()
 		if strings.Contains(line, "#{CID}") {
-			line = strings.Replace(line, "#{CID}", id, -1)
+			line = strings.Replace(line, "#{CID}", cluster.ClusterID, -1)
 		} else if strings.Contains(line, "#{KEY}") {
-			line = strings.Replace(line, "#{KEY}", key, -1)
+			line = strings.Replace(line, "#{KEY}", cluster.AccessKey, -1)
 		} else if strings.Contains(line, "#{SERVER}") {
 			line = strings.Replace(line, "#{SERVER}", subscriberConfig.GQLServerURI, -1)
 		} else if strings.Contains(line, "#{SUB-IMAGE}") {
 			line = strings.Replace(line, "#{SUB-IMAGE}", subscriberConfig.SubscriberImage, -1)
 		} else if strings.Contains(line, "#{AGENT-NAMESPACE}") {
-			line = strings.Replace(line, "#{AGENT-NAMESPACE}", subscriberConfig.AgentNamespace, -1)
+			line = strings.Replace(line, "#{AGENT-NAMESPACE}", AgentNamespace, -1)
+		} else if strings.Contains(line, "#{SUBSCRIBER-SERVICE-ACCOUNT}") {
+			line = strings.Replace(line, "#{SUBSCRIBER-SERVICE-ACCOUNT}", ServiceAccountName, -1)
 		} else if strings.Contains(line, "#{AGENT-SCOPE}") {
-			line = strings.Replace(line, "#{AGENT-SCOPE}", subscriberConfig.AgentScope, -1)
+			line = strings.Replace(line, "#{AGENT-SCOPE}", cluster.AgentScope, -1)
 		} else if strings.Contains(line, "#{ARGO-SERVER}") {
 			line = strings.Replace(line, "#{ARGO-SERVER}", subscriberConfig.ArgoServerImage, -1)
 		} else if strings.Contains(line, "#{ARGO-WORKFLOW-CONTROLLER}") {

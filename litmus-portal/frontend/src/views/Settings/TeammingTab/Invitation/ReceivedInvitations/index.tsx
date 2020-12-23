@@ -9,6 +9,7 @@ import {
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../../../components/Button/ButtonOutline';
 import {
@@ -34,6 +35,7 @@ interface ReceivedInvitation {
 
 const ReceivedInvitations: React.FC = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   // for response data
   const [rows, setRows] = useState<ReceivedInvitation[]>([]);
@@ -151,7 +153,11 @@ const ReceivedInvitations: React.FC = () => {
                         }}
                         isDisabled={false}
                       >
-                        <div>Ignore</div>
+                        <div>
+                          {t(
+                            'settings.teamingTab.invitation.receivedInvitation.button.ignore'
+                          )}
+                        </div>
                       </ButtonOutline>
                       <div data-cy="receivedInvitationAccept">
                         <ButtonFilled
@@ -169,7 +175,9 @@ const ReceivedInvitations: React.FC = () => {
                           }}
                           isDisabled={false}
                         >
-                          Accept
+                          {t(
+                            'settings.teamingTab.invitation.receivedInvitation.button.accept'
+                          )}
                         </ButtonFilled>
                       </div>
                     </div>
@@ -180,7 +188,11 @@ const ReceivedInvitations: React.FC = () => {
           ) : (
             <TableRow>
               <TableCell colSpan={2}>
-                <Typography align="center">No invitations received.</Typography>
+                <Typography align="center">
+                  {t(
+                    'settings.teamingTab.invitation.receivedInvitation.noInvites'
+                  )}
+                </Typography>
               </TableCell>
             </TableRow>
           )}

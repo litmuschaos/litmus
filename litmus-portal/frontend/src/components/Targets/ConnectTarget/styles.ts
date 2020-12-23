@@ -78,6 +78,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(6),
     alignItems: 'center',
     justifyContent: 'space-between',
+    gap: '1rem',
   },
   loaderMargin: {
     marginRight: theme.spacing(2),
