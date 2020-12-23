@@ -6,7 +6,6 @@ interface ButtonFilledProps {
   handleClick?: (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
-  children: React.ReactNode;
   isPrimary: boolean;
   isDisabled?: boolean;
   styles?: Object;
