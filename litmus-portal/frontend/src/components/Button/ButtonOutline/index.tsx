@@ -1,8 +1,8 @@
-import { Button } from '@material-ui/core';
+import { Button, ButtonProps } from '@material-ui/core';
 import React from 'react';
 import useStyles from './styles';
 
-interface ButtonOutlineProps {
+interface ButtonOutlineProps extends ButtonProps {
   isDisabled?: boolean;
   handleClick?: (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -13,6 +13,7 @@ const ButtonOutline: React.FC<ButtonOutlineProps> = ({
   isDisabled,
   handleClick,
   styles,
+  className,
   children,
 }) => {
   const classes = useStyles();
@@ -23,7 +24,7 @@ const ButtonOutline: React.FC<ButtonOutlineProps> = ({
       size="medium"
       disabled={isDisabled}
       onClick={handleClick}
-      className={classes.buttonOutline}
+      className={`${classes.buttonOutline} ${className}`}
     >
       <div className={classes.valueField}>{children}</div>
     </Button>

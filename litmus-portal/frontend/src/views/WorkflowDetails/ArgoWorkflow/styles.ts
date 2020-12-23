@@ -5,9 +5,26 @@ interface StyleProps {
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
+  // Graph options
+  graphOptions: {
+    color: theme.palette.text.disabled,
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  layoutButton: {
+    minWidth: 0,
+    borderColor: theme.palette.text.hint,
+    marginRight: theme.spacing(2),
+    '& svg': {
+      fill: theme.palette.text.disabled,
+    },
+  },
+
+  // Workflow Graph
   dagreGraph: {
     width: '100%',
     height: '90%',
+    cursor: 'grab',
 
     // Styles for nodes
     '& g g.nodes': {
@@ -62,7 +79,6 @@ const useStyles = makeStyles((theme: Theme) => ({
         },
       },
       '& g.StepGroup': {
-        cursor: 'default',
         '& rect': {
           x: -1.5,
           y: -1.5,

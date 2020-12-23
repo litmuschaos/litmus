@@ -1,3 +1,4 @@
+import { Typography } from '@material-ui/core';
 import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -94,9 +95,32 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
 
   return graphData.nodes.length ? (
     <>
-      <ButtonOutline handleClick={() => setHorizontal(!horizontal)}>
-        <AccountTreeRoundedIcon color="secondary" />
-      </ButtonOutline>
+      <div className={classes.graphOptions}>
+        <div>
+          <ButtonOutline
+            className={classes.layoutButton}
+            handleClick={() => setHorizontal(!horizontal)}
+          >
+            <AccountTreeRoundedIcon />
+          </ButtonOutline>
+          <Typography component="span">Horizontal</Typography>
+        </div>
+        {/* <div>
+          <ButtonOutline
+            className={classes.layoutButton}
+            handleClick={() => scrollGraph(true)}
+          >
+            <AddRoundedIcon />
+          </ButtonOutline>
+          <ButtonOutline
+            className={classes.layoutButton}
+            handleClick={() => scrollGraph(false)}
+          >
+            <RemoveRoundedIcon />
+          </ButtonOutline>
+        </div> */}
+      </div>
+
       <DagreGraph
         className={classes.dagreGraph}
         nodes={graphData.nodes}
