@@ -77,7 +77,9 @@ jobs:
       - name: Deploying the litmus-portal for E2E testing
         if: startsWith(github.event.comment.body, '/run-e2e')
         run: |
-          kubectl apply -f ./.github/cluster-k8s-manifest.yml
+          wget https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml
+          sed -i 's/Always/IfNotPresent/g' cluster-k8s-manifest.yml
+          kubectl apply -f cluster-k8s-manifest.yml
           kubectl get pods -n litmus
           kubectl get deployments -o wide -n litmus
           kubectl wait --for=condition=Ready pods --all --namespace litmus --timeout=120s
