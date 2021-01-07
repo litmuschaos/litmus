@@ -150,8 +150,7 @@ jobs:
         if: |
          startsWith(github.event.comment.body, '/run-unit') || startsWith(github.event.comment.body, '/run-e2e')
         run: |
-          echo "::stop-commands::`echo -n ${{ github.token }} | sha256sum | head -c 64`" 
-          echo ::set-env name=TEST_RUN::true
+          echo "TEST_RUN=true" >> $GITHUB_ENV
 
       - name: Check for all the jobs are succeeded
         if: ${{ success() && env.TEST_RUN == 'true' }}
