@@ -11,14 +11,14 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     justifyContent: 'center',
     border: '1px solid ',
-    borderColor: theme.palette.customColors.black(0.07),
-    backgroundColor: theme.palette.homePageCardBackgroundColor,
+    borderColor: theme.palette.border.main,
+    backgroundColor: theme.palette.cards.background,
   },
 
   search: {
     fontSize: 14,
     marginRight: 'auto',
-    borderBottom: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    borderBottom: `1px solid ${theme.palette.border.main}`,
     marginLeft: theme.spacing(6.25),
   },
 
@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '9rem',
     border: '0.125rem solid',
     borderRadius: 4,
-    borderColor: theme.palette.secondary.main,
+    borderColor: theme.palette.primary.main,
     marginRight: theme.spacing(3.75),
     textTransform: 'none',
   },
@@ -57,8 +57,8 @@ const useStyles = makeStyles((theme) => ({
   },
   tableMain: {
     marginTop: theme.spacing(4.25),
-    border: `1px solid ${theme.palette.customColors.black(0.05)}`,
-    backgroundColor: theme.palette.homePageCardBackgroundColor,
+    border: `1px solid ${theme.palette.border.main}`,
+    backgroundColor: theme.palette.cards.background,
     height: '29.219rem',
     '&::-webkit-scrollbar': {
       width: '0.2em',
@@ -78,16 +78,16 @@ const useStyles = makeStyles((theme) => ({
     '& th': {
       fontWeight: 'bold',
       fontSize: '0.8125rem',
-      backgroundColor: theme.palette.homePageCardBackgroundColor,
+      backgroundColor: theme.palette.cards.background,
     },
   },
   headerStatus: {
     paddingLeft: theme.spacing(10),
-    color: theme.palette.customColors.black(0.4),
+    color: theme.palette.text.primary,
   },
   workflowName: {
-    borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
-    color: theme.palette.customColors.black(0.4),
+    borderRight: `1px solid ${theme.palette.border.main}`,
+    color: theme.palette.text.primary,
   },
   sortDiv: {
     display: 'flex',
@@ -95,7 +95,7 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(1.25),
   },
   headData: {
-    color: theme.palette.customColors.black(0.4),
+    color: theme.palette.text.primary,
   },
   tableDataStatus: {
     paddingLeft: theme.spacing(8.5),
@@ -108,11 +108,11 @@ const useStyles = makeStyles((theme) => ({
   },
   workflowNameData: {
     maxWidth: '15.625rem',
-    borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    borderRight: `1px solid ${theme.palette.border.main}`,
   },
   targetCluster: {
     paddingLeft: theme.spacing(3.75),
-    color: theme.palette.customColors.black(0.4),
+    color: theme.palette.text.primary,
   },
   clusterName: {
     marginLeft: theme.spacing(4),

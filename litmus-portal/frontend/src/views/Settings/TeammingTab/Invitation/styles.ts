@@ -7,11 +7,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     maxWidth: '63.75rem',
     minWidth: '39.0625rem',
     alignItems: 'center',
-    color: theme.palette.personalDetailsBodyColor,
+    color: 'none',
   },
   root: {
     display: 'flex',
-    borderBottom: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    borderBottom: `1px solid ${theme.palette.border.main}`,
     flexGrow: 1,
     maxWidth: '63.75rem',
     minWidth: '39.0625rem',
@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: theme.spacing(2),
     justifyContent: 'space-between',
     backgroundColor: theme.palette.secondary.contrastText,
-    color: theme.palette.teamingTabHeadTextColor,
+    color: theme.palette.text.primary,
   },
   button: {
     marginRight: theme.spacing(-2),

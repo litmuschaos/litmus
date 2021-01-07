@@ -6,10 +6,10 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(3),
   },
   avatarBackground: {
-    backgroundColor: theme.palette.totalRunsCountColor,
+    backgroundColor: theme.palette.primary.light,
     width: '2.56rem',
     height: '2.56rem',
-    color: theme.palette.customColors.white(1),
+    color: theme.palette.common.white,
     marginRight: theme.spacing(2.5),
     [theme.breakpoints.down('sm')]: {
       marginLeft: theme.spacing(2.5),

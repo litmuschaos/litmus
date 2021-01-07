@@ -103,7 +103,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
         <FormControl
           variant="outlined"
           className={classes.formControl}
-          color="secondary"
+          color="primary"
           focused
         >
           <InputLabel className={classes.selectText}>
@@ -126,7 +126,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
         <FormControl
           variant="outlined"
           className={classes.formControl}
-          color="secondary"
+          color="primary"
           focused
         >
           <InputLabel className={classes.selectText}>Target Cluster</InputLabel>

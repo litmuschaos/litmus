@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 
   quickActionDiv: {
     marginTop: theme.spacing(4),
-    borderLeft: `1px solid ${theme.palette.customColors.black(0.05)}`,
+    borderLeft: `1px solid ${theme.palette.border.main}`,
     paddingLeft: theme.spacing(3),
   },
 
@@ -79,14 +79,14 @@ const useStyles = makeStyles((theme) => ({
   fixedRecents: {
     height: '15rem',
     width: '20rem',
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
     // (Uncomment when recent activities are available.)
     // backgroundColor: theme.palette.secondary.contrastText,
-    background: theme.palette.customColors.black(0.4),
+    background: theme.palette.background.paper,
   },
 
   backgroundFix: {
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
     backgroundColor: theme.palette.secondary.contrastText,
   },
 

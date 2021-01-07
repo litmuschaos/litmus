@@ -140,7 +140,7 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
               input={<Input />}
               MenuProps={MenuProps}
               className={classes.selectText}
-              color="secondary"
+              color="primary"
             >
               <MenuItem value="" disabled>
                 <em> {t('createWorkflow.workflowCluster.none')}</em>

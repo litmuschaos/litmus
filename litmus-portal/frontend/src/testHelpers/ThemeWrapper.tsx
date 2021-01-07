@@ -1,14 +1,17 @@
 // This Component will work as a Theme Wrapper for the component to be tested.
-
+import { KuberaThemeProvider } from 'kubera-ui';
 import React from 'react';
-import withTheme from '../theme';
 
 interface ThemeWrapperProps {
   children?: React.ReactNode;
 }
 
 const ThemeWrapper: React.FC<ThemeWrapperProps> = ({ children }) => {
-  return <div>{children}</div>;
+  return (
+    <KuberaThemeProvider platform="litmus-portal">
+      {children}
+    </KuberaThemeProvider>
+  );
 };
 
-export default withTheme(ThemeWrapper);
+export default ThemeWrapper;

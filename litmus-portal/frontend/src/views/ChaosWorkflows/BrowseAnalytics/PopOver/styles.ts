@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(0.25),
   },
   resilienceScoreIcon: {
-    backgroundColor: theme.palette.resilienceScore,
+    backgroundColor: theme.palette.warning.main,
     width: 18,
     height: 18,
   },

@@ -139,7 +139,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
       <FormControl
         variant="outlined"
         className={`${classes.formControl} ${classes.testResultForm}`}
-        color="secondary"
+        color="primary"
         focused
       >
         <InputLabel className={classes.selectText}> Test Result </InputLabel>
@@ -148,7 +148,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           value={testResult}
           onChange={handleTestResultChange}
           className={classes.selectText}
-          color="secondary"
+          color="primary"
         >
           <MenuItem value="All">All</MenuItem>
           {testResults.map((testResult: string) => (
@@ -160,7 +160,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
       <FormControl
         variant="outlined"
         className={`${classes.formControl} ${classes.testForm}`}
-        color="secondary"
+        color="primary"
         focused
       >
         <InputLabel className={classes.selectText}> Test Name </InputLabel>
@@ -169,7 +169,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           value={test}
           onChange={handleTestChange}
           className={classes.selectText}
-          color="secondary"
+          color="primary"
         >
           <MenuItem value="All">All</MenuItem>
           {tests.map((testName: string) => (

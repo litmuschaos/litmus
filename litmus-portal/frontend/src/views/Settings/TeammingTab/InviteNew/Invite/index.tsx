@@ -9,7 +9,6 @@ import {
   Toolbar,
   Typography,
 } from '@material-ui/core';
-import { useTheme } from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -50,7 +49,6 @@ interface Role {
 
 const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   const classes = useStyles();
-  const theme = useTheme();
   const { t } = useTranslation();
 
   // for response data
@@ -258,7 +256,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                   disableUnderline
                   inputProps={{
                     style: {
-                      color: theme.palette.personalDetailsBodyColor,
+                      color: 'none',
                       maxWidth: '31.75rem',
                       minWidth: '31.375rem',
                     },

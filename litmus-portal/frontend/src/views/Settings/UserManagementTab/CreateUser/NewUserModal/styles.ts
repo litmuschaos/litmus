@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: '0 auto',
   },
   errDiv: {
-    color: theme.palette.personalDetailsBodyColor,
+    color: 'none',
     width: '100%',
     display: 'flex',
     flexDirection: 'column',

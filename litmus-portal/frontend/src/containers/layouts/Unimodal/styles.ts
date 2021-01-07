@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     padding: '1rem',
     margin: '2rem auto',
     background: props.isDarkBg
-      ? theme.palette.editorBackground
+      ? theme.palette.common.black
       : theme.palette.common.white,
     borderRadius: 3,
     textAlign: props.textAlign ?? 'center',
@@ -30,17 +30,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderRadius: 3,
     color: props.isDarkBg
       ? theme.palette.secondary.contrastText
-      : theme.palette.customColors.black(0.4),
+      : theme.palette.text.primary,
     border: '1px solid',
     borderColor: props.isDarkBg
-      ? theme.palette.customColors.white(0.2)
-      : theme.palette.customColors.black(0.4),
+      ? theme.palette.secondary.contrastText
+      : theme.palette.background.paper,
   }),
 
   uniModalStyle: {
     alignItems: 'center',
     justifyContent: 'center',
-    background: theme.palette.customColors.black(0.8),
+    background: theme.palette.background.default,
   },
 }));
 

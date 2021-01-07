@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(4.5, 1.5, 2.5, 1.5),
   },
   backdrop: {
-    background: theme.palette.input.disabled,
+    background: theme.palette.disabledBackground,
     display: 'flex',
     flexDirection: 'column',
   },
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   detailsDiv: {
     flexGrow: 1,
     backgroundColor: theme.palette.common.white,
-    border: `1px solid ${theme.palette.customColors.black(0.05)}`,
+    border: `1px solid ${theme.palette.border.main}`,
     padding: theme.spacing(5),
   },
   chartsGroup: {
@@ -48,14 +48,14 @@ const useStyles = makeStyles((theme) => ({
   },
   cardDiv: {
     maxWidth: '12.5rem',
-    border: `1px dashed ${theme.palette.customColors.black(0.5)}`,
+    border: `1px dashed ${theme.palette.border.main}`,
     borderRadius: '0.25rem',
     height: '100%',
     margin: theme.spacing(2),
   },
   cardDivChart: {
     width: '12.5rem',
-    border: `1px solid ${theme.palette.customColors.black(0.2)}`,
+    border: `1px solid ${theme.palette.border.main}`,
     '&:hover': {
       border: `1.1px solid ${theme.palette.secondary.dark}`,
       cursor: 'pointer',
@@ -99,7 +99,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1rem',
   },
   horizontalLine: {
-    border: `1px solid  ${theme.palette.customColors.black(0.3)}`,
+    border: `1px solid ${theme.palette.border.main}`,
     width: '95%',
     marginTop: theme.spacing(1.25),
     marginBottom: theme.spacing(1.25),
