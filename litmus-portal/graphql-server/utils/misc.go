@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"bufio"
 	"fmt"
+	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"os"
@@ -30,22 +30,15 @@ func RandomString(n int) string {
 }
 
 //ManifestParser parses manifests yaml and generates dynamic manifest with specified keys
-func ManifestParser(cluster database.Cluster, template string, subscriberConfig *types.SubscriberConfigurationVars) ([]byte, error) {
+func ManifestParser(cluster database.Cluster, rootPath string, subscriberConfig *types.SubscriberConfigurationVars) ([]byte, error) {
 	var (
-		lines                     []string
+		generatedYAML            []string
 		defaultState              = false
 		AgentNamespace            string
 		ServiceAccountName        string
 		DefaultAgentNamespace     = "litmus"
 		DefaultServiceAccountName = "litmus"
 	)
-
-	file, err := os.Open(template)
-	if err != nil {
-		return []byte{}, err
-	}
-	defer file.Close()
-	scanner := bufio.NewScanner(file)
 
 	if cluster.AgentNsExists == nil {
 		cluster.AgentNsExists = &defaultState
@@ -67,57 +60,54 @@ func ManifestParser(cluster database.Cluster, template string, subscriberConfig 
 	}
 
 	var (
-		headerStr         = "# This is an auto-generated file. DO NOT EDIT\n"
-		namspaceStr       = "\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: " + AgentNamespace + "\n"
-		serviceAccountStr = "---\napiVersion: v1\nkind: ServiceAccount\nmetadata:\n  name: " + ServiceAccountName + "\n  namespace: " + AgentNamespace + "\n---"
+		namspaceStr       = "---\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: " + AgentNamespace + "\n"
+		serviceAccountStr = "---\napiVersion: v1\nkind: ServiceAccount\nmetadata:\n  name: " + ServiceAccountName + "\n  namespace: " + AgentNamespace + "\n"
 	)
 
-	saYaml := fmt.Sprintf(headerStr)
-	lines = append(lines, saYaml)
-
 	if *cluster.AgentNsExists == false {
-		saYaml := fmt.Sprintf(namspaceStr)
-		lines = append(lines, saYaml)
+		generatedYAML = append(generatedYAML, fmt.Sprintf(namspaceStr))
 	}
 
 	if *cluster.AgentSaExists == false {
-		saYaml := fmt.Sprintf(serviceAccountStr)
-		lines = append(lines, saYaml)
+		generatedYAML = append(generatedYAML, fmt.Sprintf(serviceAccountStr))
 	}
 
-	for scanner.Scan() {
-		line := scanner.Text()
-		if strings.Contains(line, "#{CID}") {
-			line = strings.Replace(line, "#{CID}", cluster.ClusterID, -1)
-		} else if strings.Contains(line, "#{KEY}") {
-			line = strings.Replace(line, "#{KEY}", cluster.AccessKey, -1)
-		} else if strings.Contains(line, "#{SERVER}") {
-			line = strings.Replace(line, "#{SERVER}", subscriberConfig.GQLServerURI, -1)
-		} else if strings.Contains(line, "#{SUB-IMAGE}") {
-			line = strings.Replace(line, "#{SUB-IMAGE}", subscriberConfig.SubscriberImage, -1)
-		} else if strings.Contains(line, "#{AGENT-NAMESPACE}") {
-			line = strings.Replace(line, "#{AGENT-NAMESPACE}", AgentNamespace, -1)
-		} else if strings.Contains(line, "#{SUBSCRIBER-SERVICE-ACCOUNT}") {
-			line = strings.Replace(line, "#{SUBSCRIBER-SERVICE-ACCOUNT}", ServiceAccountName, -1)
-		} else if strings.Contains(line, "#{AGENT-SCOPE}") {
-			line = strings.Replace(line, "#{AGENT-SCOPE}", cluster.AgentScope, -1)
-		} else if strings.Contains(line, "#{ARGO-SERVER}") {
-			line = strings.Replace(line, "#{ARGO-SERVER}", subscriberConfig.ArgoServerImage, -1)
-		} else if strings.Contains(line, "#{ARGO-WORKFLOW-CONTROLLER}") {
-			line = strings.Replace(line, "#{ARGO-WORKFLOW-CONTROLLER}", subscriberConfig.WorkflowControllerImage, -1)
-		} else if strings.Contains(line, "#{LITMUS-CHAOS-OPERATOR}") {
-			line = strings.Replace(line, "#{LITMUS-CHAOS-OPERATOR}", subscriberConfig.ChaosOperatorImage, -1)
-		} else if strings.Contains(line, "#{ARGO-WORKFLOW-EXECUTOR}") {
-			line = strings.Replace(line, "#{ARGO-WORKFLOW-EXECUTOR}", subscriberConfig.WorkflowExecutorImage, -1)
-		} else if strings.Contains(line, "#{LITMUS-CHAOS-RUNNER}") {
-			line = strings.Replace(line, "#{LITMUS-CHAOS-RUNNER}", subscriberConfig.ChaosRunnerImage, -1)
+	// File operations
+	file, err := os.Open(rootPath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	list, err := file.Readdirnames(0) // 0 to read all files and folders
+	if err != nil {
+		return nil, err
+	}
+
+	for _, fileName := range list {
+
+		fileContent, err := ioutil.ReadFile(rootPath + "/" + fileName)
+		if err != nil {
+			return nil, err
 		}
-		lines = append(lines, line)
+
+		var newContent = string(fileContent)
+
+		newContent = strings.Replace(newContent, "#{CID}", cluster.ClusterID, -1)
+		newContent = strings.Replace(newContent, "#{KEY}", cluster.AccessKey, -1)
+		newContent = strings.Replace(newContent, "#{SERVER}", subscriberConfig.GQLServerURI, -1)
+		newContent = strings.Replace(newContent, "#{SUB-IMAGE}", subscriberConfig.SubscriberImage, -1)
+		newContent = strings.Replace(newContent, "#{AGENT-NAMESPACE}", AgentNamespace, -1)
+		newContent = strings.Replace(newContent, "#{SUBSCRIBER-SERVICE-ACCOUNT}", ServiceAccountName, -1)
+		newContent = strings.Replace(newContent, "#{AGENT-SCOPE}", cluster.AgentScope, -1)
+		newContent = strings.Replace(newContent, "#{ARGO-SERVER}", subscriberConfig.ArgoServerImage, -1)
+		newContent = strings.Replace(newContent, "#{ARGO-WORKFLOW-CONTROLLER}", subscriberConfig.WorkflowControllerImage, -1)
+		newContent = strings.Replace(newContent, "#{LITMUS-CHAOS-OPERATOR}", subscriberConfig.ChaosOperatorImage, -1)
+		newContent = strings.Replace(newContent, "#{ARGO-WORKFLOW-EXECUTOR}", subscriberConfig.WorkflowExecutorImage, -1)
+		newContent = strings.Replace(newContent, "#{LITMUS-CHAOS-RUNNER}", subscriberConfig.ChaosRunnerImage, -1)
+
+		generatedYAML = append(generatedYAML, newContent)
 	}
 
-	if err := scanner.Err(); err != nil {
-		return []byte{}, err
-	}
-
-	return []byte(strings.Join(lines, "\n")), nil
+	return []byte(strings.Join(generatedYAML, "\n")), nil
 }
