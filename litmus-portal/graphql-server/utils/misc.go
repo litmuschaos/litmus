@@ -32,7 +32,7 @@ func RandomString(n int) string {
 //ManifestParser parses manifests yaml and generates dynamic manifest with specified keys
 func ManifestParser(cluster database.Cluster, rootPath string, subscriberConfig *types.SubscriberConfigurationVars) ([]byte, error) {
 	var (
-		generatedYAML            []string
+		generatedYAML             []string
 		defaultState              = false
 		AgentNamespace            string
 		ServiceAccountName        string
