@@ -58,10 +58,16 @@ type Charts struct {
 }
 
 type CloningInput struct {
-	HubName    string `json:"HubName"`
-	ProjectID  string `json:"ProjectID"`
-	RepoBranch string `json:"RepoBranch"`
-	RepoURL    string `json:"RepoURL"`
+	HubName       string   `json:"HubName"`
+	ProjectID     string   `json:"ProjectID"`
+	RepoBranch    string   `json:"RepoBranch"`
+	RepoURL       string   `json:"RepoURL"`
+	IsPrivate     bool     `json:"IsPrivate"`
+	AuthType      AuthType `json:"AuthType"`
+	Token         *string  `json:"Token"`
+	UserName      *string  `json:"UserName"`
+	Password      *string  `json:"Password"`
+	SSHPrivateKey *string  `json:"SSHPrivateKey"`
 }
 
 type Cluster struct {
@@ -137,9 +143,16 @@ type ClusterInput struct {
 }
 
 type CreateMyHub struct {
-	HubName    string `json:"HubName"`
-	RepoURL    string `json:"RepoURL"`
-	RepoBranch string `json:"RepoBranch"`
+	HubName       string   `json:"HubName"`
+	RepoURL       string   `json:"RepoURL"`
+	RepoBranch    string   `json:"RepoBranch"`
+	IsPrivate     bool     `json:"IsPrivate"`
+	AuthType      AuthType `json:"AuthType"`
+	Token         *string  `json:"Token"`
+	UserName      *string  `json:"UserName"`
+	Password      *string  `json:"Password"`
+	SSHPrivateKey *string  `json:"SSHPrivateKey"`
+	SSHPublicKey  *string  `json:"SSHPublicKey"`
 }
 
 type CreateUserInput struct {
@@ -197,22 +210,39 @@ type Metadata struct {
 }
 
 type MyHub struct {
-	ID         string `json:"id"`
-	RepoURL    string `json:"RepoURL"`
-	RepoBranch string `json:"RepoBranch"`
-	ProjectID  string `json:"ProjectID"`
-	HubName    string `json:"HubName"`
-	CreatedAt  string `json:"CreatedAt"`
-	UpdatedAt  string `json:"UpdatedAt"`
+	ID            string   `json:"id"`
+	RepoURL       string   `json:"RepoURL"`
+	RepoBranch    string   `json:"RepoBranch"`
+	ProjectID     string   `json:"ProjectID"`
+	HubName       string   `json:"HubName"`
+	IsPrivate     bool     `json:"IsPrivate"`
+	AuthType      AuthType `json:"AuthType"`
+	Token         *string  `json:"Token"`
+	UserName      *string  `json:"UserName"`
+	Password      *string  `json:"Password"`
+	SSHPrivateKey *string  `json:"SSHPrivateKey"`
+	IsRemoved     bool     `json:"IsRemoved"`
+	CreatedAt     string   `json:"CreatedAt"`
+	UpdatedAt     string   `json:"UpdatedAt"`
+	LastSyncedAt  string   `json:"LastSyncedAt"`
 }
 
 type MyHubStatus struct {
-	ID          string `json:"id"`
-	RepoURL     string `json:"RepoURL"`
-	RepoBranch  string `json:"RepoBranch"`
-	IsAvailable bool   `json:"IsAvailable"`
-	TotalExp    string `json:"TotalExp"`
-	HubName     string `json:"HubName"`
+	ID            string   `json:"id"`
+	RepoURL       string   `json:"RepoURL"`
+	RepoBranch    string   `json:"RepoBranch"`
+	IsAvailable   bool     `json:"IsAvailable"`
+	TotalExp      string   `json:"TotalExp"`
+	HubName       string   `json:"HubName"`
+	IsPrivate     bool     `json:"IsPrivate"`
+	AuthType      AuthType `json:"AuthType"`
+	Token         *string  `json:"Token"`
+	UserName      *string  `json:"UserName"`
+	Password      *string  `json:"Password"`
+	IsRemoved     bool     `json:"IsRemoved"`
+	SSHPrivateKey *string  `json:"SSHPrivateKey"`
+	SSHPublicKey  *string  `json:"SSHPublicKey"`
+	LastSyncedAt  string   `json:"LastSyncedAt"`
 }
 
 type PackageInformation struct {
@@ -261,6 +291,11 @@ type Provider struct {
 	Name string `json:"Name"`
 }
 
+type SSHKey struct {
+	PublicKey  string `json:"publicKey"`
+	PrivateKey string `json:"privateKey"`
+}
+
 type ScheduledWorkflows struct {
 	WorkflowID          string        `json:"workflow_id"`
 	WorkflowManifest    string        `json:"workflow_manifest"`
@@ -291,6 +326,20 @@ type Spec struct {
 	ChaosExpCRDLink     string        `json:"ChaosExpCRDLink"`
 	Platforms           []string      `json:"Platforms"`
 	ChaosType           *string       `json:"ChaosType"`
+}
+
+type UpdateMyHub struct {
+	ID            string   `json:"id"`
+	HubName       string   `json:"HubName"`
+	RepoURL       string   `json:"RepoURL"`
+	RepoBranch    string   `json:"RepoBranch"`
+	IsPrivate     bool     `json:"IsPrivate"`
+	AuthType      AuthType `json:"AuthType"`
+	Token         *string  `json:"Token"`
+	UserName      *string  `json:"UserName"`
+	Password      *string  `json:"Password"`
+	SSHPrivateKey *string  `json:"SSHPrivateKey"`
+	SSHPublicKey  *string  `json:"SSHPublicKey"`
 }
 
 type UpdateUserInput struct {
@@ -374,6 +423,49 @@ type ClusterRegResponse struct {
 type Weightages struct {
 	ExperimentName string `json:"experiment_name"`
 	Weightage      int    `json:"weightage"`
+}
+
+type AuthType string
+
+const (
+	AuthTypeBasic AuthType = "basic"
+	AuthTypeToken AuthType = "token"
+	AuthTypeSSH   AuthType = "ssh"
+)
+
+var AllAuthType = []AuthType{
+	AuthTypeBasic,
+	AuthTypeToken,
+	AuthTypeSSH,
+}
+
+func (e AuthType) IsValid() bool {
+	switch e {
+	case AuthTypeBasic, AuthTypeToken, AuthTypeSSH:
+		return true
+	}
+	return false
+}
+
+func (e AuthType) String() string {
+	return string(e)
+}
+
+func (e *AuthType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = AuthType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid AuthType", str)
+	}
+	return nil
+}
+
+func (e AuthType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 type MemberRole string

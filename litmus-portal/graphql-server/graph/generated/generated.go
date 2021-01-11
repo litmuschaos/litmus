@@ -168,33 +168,54 @@ type ComplexityRoot struct {
 		DeclineInvitation   func(childComplexity int, member model.MemberInput) int
 		DeleteChaosWorkflow func(childComplexity int, workflowid string) int
 		DeleteClusterReg    func(childComplexity int, clusterID string) int
+		DeleteMyHub         func(childComplexity int, hubID string) int
+		GeneraterSSHKey     func(childComplexity int) int
 		NewClusterEvent     func(childComplexity int, clusterEvent model.ClusterEventInput) int
 		PodLog              func(childComplexity int, log model.PodLog) int
 		RemoveInvitation    func(childComplexity int, member model.MemberInput) int
+		SaveMyHub           func(childComplexity int, myhubInput model.CreateMyHub, projectID string) int
 		SendInvitation      func(childComplexity int, member model.MemberInput) int
-		SyncHub             func(childComplexity int, projectID string, hubName string) int
+		SyncHub             func(childComplexity int, id string) int
 		UpdateChaosWorkflow func(childComplexity int, input *model.ChaosWorkFlowInput) int
+		UpdateMyHub         func(childComplexity int, myhubInput model.UpdateMyHub, projectID string) int
 		UpdateUser          func(childComplexity int, user model.UpdateUserInput) int
 		UserClusterReg      func(childComplexity int, clusterInput model.ClusterInput) int
 	}
 
 	MyHub struct {
-		CreatedAt  func(childComplexity int) int
-		HubName    func(childComplexity int) int
-		ID         func(childComplexity int) int
-		ProjectID  func(childComplexity int) int
-		RepoBranch func(childComplexity int) int
-		RepoURL    func(childComplexity int) int
-		UpdatedAt  func(childComplexity int) int
+		AuthType      func(childComplexity int) int
+		CreatedAt     func(childComplexity int) int
+		HubName       func(childComplexity int) int
+		ID            func(childComplexity int) int
+		IsPrivate     func(childComplexity int) int
+		IsRemoved     func(childComplexity int) int
+		LastSyncedAt  func(childComplexity int) int
+		Password      func(childComplexity int) int
+		ProjectID     func(childComplexity int) int
+		RepoBranch    func(childComplexity int) int
+		RepoURL       func(childComplexity int) int
+		SSHPrivateKey func(childComplexity int) int
+		Token         func(childComplexity int) int
+		UpdatedAt     func(childComplexity int) int
+		UserName      func(childComplexity int) int
 	}
 
 	MyHubStatus struct {
-		HubName     func(childComplexity int) int
-		ID          func(childComplexity int) int
-		IsAvailable func(childComplexity int) int
-		RepoBranch  func(childComplexity int) int
-		RepoURL     func(childComplexity int) int
-		TotalExp    func(childComplexity int) int
+		AuthType      func(childComplexity int) int
+		HubName       func(childComplexity int) int
+		ID            func(childComplexity int) int
+		IsAvailable   func(childComplexity int) int
+		IsPrivate     func(childComplexity int) int
+		IsRemoved     func(childComplexity int) int
+		LastSyncedAt  func(childComplexity int) int
+		Password      func(childComplexity int) int
+		RepoBranch    func(childComplexity int) int
+		RepoURL       func(childComplexity int) int
+		SSHPrivateKey func(childComplexity int) int
+		SSHPublicKey  func(childComplexity int) int
+		Token         func(childComplexity int) int
+		TotalExp      func(childComplexity int) int
+		UserName      func(childComplexity int) int
 	}
 
 	PackageInformation struct {
@@ -235,6 +256,11 @@ type ComplexityRoot struct {
 		GetYAMLData           func(childComplexity int, experimentInput model.ExperimentInput) int
 		ListWorkflow          func(childComplexity int, projectID string, workflowIds []*string) int
 		Users                 func(childComplexity int) int
+	}
+
+	SSHKey struct {
+		PrivateKey func(childComplexity int) int
+		PublicKey  func(childComplexity int) int
 	}
 
 	ScheduledWorkflows struct {
@@ -354,9 +380,13 @@ type MutationResolver interface {
 	ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error)
 	PodLog(ctx context.Context, log model.PodLog) (string, error)
 	AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error)
-	SyncHub(ctx context.Context, projectID string, hubName string) ([]*model.MyHubStatus, error)
+	SaveMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error)
+	SyncHub(ctx context.Context, id string) ([]*model.MyHubStatus, error)
 	UpdateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error)
 	DeleteClusterReg(ctx context.Context, clusterID string) (string, error)
+	GeneraterSSHKey(ctx context.Context) (*model.SSHKey, error)
+	UpdateMyHub(ctx context.Context, myhubInput model.UpdateMyHub, projectID string) (*model.MyHub, error)
+	DeleteMyHub(ctx context.Context, hubID string) (bool, error)
 }
 type QueryResolver interface {
 	GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error)
@@ -984,6 +1014,25 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteClusterReg(childComplexity, args["cluster_id"].(string)), true
 
+	case "Mutation.deleteMyHub":
+		if e.complexity.Mutation.DeleteMyHub == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteMyHub_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteMyHub(childComplexity, args["hub_id"].(string)), true
+
+	case "Mutation.generaterSSHKey":
+		if e.complexity.Mutation.GeneraterSSHKey == nil {
+			break
+		}
+
+		return e.complexity.Mutation.GeneraterSSHKey(childComplexity), true
+
 	case "Mutation.newClusterEvent":
 		if e.complexity.Mutation.NewClusterEvent == nil {
 			break
@@ -1020,6 +1069,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.RemoveInvitation(childComplexity, args["member"].(model.MemberInput)), true
 
+	case "Mutation.saveMyHub":
+		if e.complexity.Mutation.SaveMyHub == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_saveMyHub_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.SaveMyHub(childComplexity, args["myhubInput"].(model.CreateMyHub), args["projectID"].(string)), true
+
 	case "Mutation.sendInvitation":
 		if e.complexity.Mutation.SendInvitation == nil {
 			break
@@ -1042,7 +1103,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.SyncHub(childComplexity, args["projectID"].(string), args["HubName"].(string)), true
+		return e.complexity.Mutation.SyncHub(childComplexity, args["id"].(string)), true
 
 	case "Mutation.updateChaosWorkflow":
 		if e.complexity.Mutation.UpdateChaosWorkflow == nil {
@@ -1055,6 +1116,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateChaosWorkflow(childComplexity, args["input"].(*model.ChaosWorkFlowInput)), true
+
+	case "Mutation.updateMyHub":
+		if e.complexity.Mutation.UpdateMyHub == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateMyHub_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateMyHub(childComplexity, args["myhubInput"].(model.UpdateMyHub), args["projectID"].(string)), true
 
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
@@ -1080,6 +1153,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UserClusterReg(childComplexity, args["clusterInput"].(model.ClusterInput)), true
 
+	case "MyHub.AuthType":
+		if e.complexity.MyHub.AuthType == nil {
+			break
+		}
+
+		return e.complexity.MyHub.AuthType(childComplexity), true
+
 	case "MyHub.CreatedAt":
 		if e.complexity.MyHub.CreatedAt == nil {
 			break
@@ -1100,6 +1180,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.MyHub.ID(childComplexity), true
+
+	case "MyHub.IsPrivate":
+		if e.complexity.MyHub.IsPrivate == nil {
+			break
+		}
+
+		return e.complexity.MyHub.IsPrivate(childComplexity), true
+
+	case "MyHub.IsRemoved":
+		if e.complexity.MyHub.IsRemoved == nil {
+			break
+		}
+
+		return e.complexity.MyHub.IsRemoved(childComplexity), true
+
+	case "MyHub.LastSyncedAt":
+		if e.complexity.MyHub.LastSyncedAt == nil {
+			break
+		}
+
+		return e.complexity.MyHub.LastSyncedAt(childComplexity), true
+
+	case "MyHub.Password":
+		if e.complexity.MyHub.Password == nil {
+			break
+		}
+
+		return e.complexity.MyHub.Password(childComplexity), true
 
 	case "MyHub.ProjectID":
 		if e.complexity.MyHub.ProjectID == nil {
@@ -1122,12 +1230,40 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.MyHub.RepoURL(childComplexity), true
 
+	case "MyHub.SSHPrivateKey":
+		if e.complexity.MyHub.SSHPrivateKey == nil {
+			break
+		}
+
+		return e.complexity.MyHub.SSHPrivateKey(childComplexity), true
+
+	case "MyHub.Token":
+		if e.complexity.MyHub.Token == nil {
+			break
+		}
+
+		return e.complexity.MyHub.Token(childComplexity), true
+
 	case "MyHub.UpdatedAt":
 		if e.complexity.MyHub.UpdatedAt == nil {
 			break
 		}
 
 		return e.complexity.MyHub.UpdatedAt(childComplexity), true
+
+	case "MyHub.UserName":
+		if e.complexity.MyHub.UserName == nil {
+			break
+		}
+
+		return e.complexity.MyHub.UserName(childComplexity), true
+
+	case "MyHubStatus.AuthType":
+		if e.complexity.MyHubStatus.AuthType == nil {
+			break
+		}
+
+		return e.complexity.MyHubStatus.AuthType(childComplexity), true
 
 	case "MyHubStatus.HubName":
 		if e.complexity.MyHubStatus.HubName == nil {
@@ -1150,6 +1286,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.MyHubStatus.IsAvailable(childComplexity), true
 
+	case "MyHubStatus.IsPrivate":
+		if e.complexity.MyHubStatus.IsPrivate == nil {
+			break
+		}
+
+		return e.complexity.MyHubStatus.IsPrivate(childComplexity), true
+
+	case "MyHubStatus.IsRemoved":
+		if e.complexity.MyHubStatus.IsRemoved == nil {
+			break
+		}
+
+		return e.complexity.MyHubStatus.IsRemoved(childComplexity), true
+
+	case "MyHubStatus.LastSyncedAt":
+		if e.complexity.MyHubStatus.LastSyncedAt == nil {
+			break
+		}
+
+		return e.complexity.MyHubStatus.LastSyncedAt(childComplexity), true
+
+	case "MyHubStatus.Password":
+		if e.complexity.MyHubStatus.Password == nil {
+			break
+		}
+
+		return e.complexity.MyHubStatus.Password(childComplexity), true
+
 	case "MyHubStatus.RepoBranch":
 		if e.complexity.MyHubStatus.RepoBranch == nil {
 			break
@@ -1164,12 +1328,40 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.MyHubStatus.RepoURL(childComplexity), true
 
+	case "MyHubStatus.SSHPrivateKey":
+		if e.complexity.MyHubStatus.SSHPrivateKey == nil {
+			break
+		}
+
+		return e.complexity.MyHubStatus.SSHPrivateKey(childComplexity), true
+
+	case "MyHubStatus.SSHPublicKey":
+		if e.complexity.MyHubStatus.SSHPublicKey == nil {
+			break
+		}
+
+		return e.complexity.MyHubStatus.SSHPublicKey(childComplexity), true
+
+	case "MyHubStatus.Token":
+		if e.complexity.MyHubStatus.Token == nil {
+			break
+		}
+
+		return e.complexity.MyHubStatus.Token(childComplexity), true
+
 	case "MyHubStatus.TotalExp":
 		if e.complexity.MyHubStatus.TotalExp == nil {
 			break
 		}
 
 		return e.complexity.MyHubStatus.TotalExp(childComplexity), true
+
+	case "MyHubStatus.UserName":
+		if e.complexity.MyHubStatus.UserName == nil {
+			break
+		}
+
+		return e.complexity.MyHubStatus.UserName(childComplexity), true
 
 	case "PackageInformation.Experiments":
 		if e.complexity.PackageInformation.Experiments == nil {
@@ -1395,6 +1587,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Users(childComplexity), true
+
+	case "SSHKey.privateKey":
+		if e.complexity.SSHKey.PrivateKey == nil {
+			break
+		}
+
+		return e.complexity.SSHKey.PrivateKey(childComplexity), true
+
+	case "SSHKey.publicKey":
+		if e.complexity.SSHKey.PublicKey == nil {
+			break
+		}
+
+		return e.complexity.SSHKey.PublicKey(childComplexity), true
 
 	case "ScheduledWorkflows.cluster_id":
 		if e.complexity.ScheduledWorkflows.ClusterID == nil {
@@ -2015,112 +2221,178 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	&ast.Source{Name: "graph/myhub.graphqls", Input: `type MyHub {
-  id: ID!
-  RepoURL: String!
-  RepoBranch: String!
-  ProjectID: String!
-  HubName: String!
-  CreatedAt: String!
-  UpdatedAt: String!
+	&ast.Source{Name: "graph/myhub.graphqls", Input: `enum AuthType {
+	basic
+	token
+	ssh
+}
+
+type MyHub {
+	id: ID!
+	RepoURL: String!
+	RepoBranch: String!
+	ProjectID: String!
+	HubName: String!
+	IsPrivate: Boolean!
+	# Auth Types-
+	#  token: Token based authentication
+	#  basic: Username/Password based authentication
+	#  ssh: SSH based authentication
+	AuthType: AuthType!
+	Token: String
+	UserName: String
+	Password: String
+	SSHPrivateKey: String
+	IsRemoved: Boolean!
+	CreatedAt: String!
+	UpdatedAt: String!
+	LastSyncedAt: String!
 }
 
 type Charts {
-  Charts: [Chart!]!
+	Charts: [Chart!]!
 }
 
 type Chart {
-  ApiVersion: String!
-  Kind: String!
-  Metadata: Metadata!
-  Spec: Spec!
-  PackageInfo: PackageInformation!
-  Experiments: [Chart!]!
+	ApiVersion: String!
+	Kind: String!
+	Metadata: Metadata!
+	Spec: Spec!
+	PackageInfo: PackageInformation!
+	Experiments: [Chart!]!
 }
 
 type Maintainer {
-  Name: String!
-  Email: String!
+	Name: String!
+	Email: String!
 }
 
 type Link {
-  Name: String!
-  Url: String!
+	Name: String!
+	Url: String!
 }
 
 type Metadata {
-  Name: String!
-  Version: String!
-  Annotations: Annotation!
+	Name: String!
+	Version: String!
+	Annotations: Annotation!
 }
 
 type Annotation {
-  Categories: String!
-  Vendor: String!
-  CreatedAt: String!
-  Repository: String!
-  Support: String!
-  ChartDescription: String!
+	Categories: String!
+	Vendor: String!
+	CreatedAt: String!
+	Repository: String!
+	Support: String!
+	ChartDescription: String!
 }
 
 type Spec {
-  DisplayName: String!
-  CategoryDescription: String!
-  Keywords: [String!]!
-  Maturity: String!
-  Maintainers: [Maintainer!]!
-  MinKubeVersion: String!
-  Provider: String!
-  Links: [Link!]!
-  Experiments: [String!]!
-  ChaosExpCRDLink: String!
-  Platforms: [String!]!
-  ChaosType: String
+	DisplayName: String!
+	CategoryDescription: String!
+	Keywords: [String!]!
+	Maturity: String!
+	Maintainers: [Maintainer!]!
+	MinKubeVersion: String!
+	Provider: String!
+	Links: [Link!]!
+	Experiments: [String!]!
+	ChaosExpCRDLink: String!
+	Platforms: [String!]!
+	ChaosType: String
 }
 
 type Provider {
-  Name: String!
+	Name: String!
 }
 
 type PackageInformation {
-  PackageName: String!
-  Experiments: [Experiments!]!
+	PackageName: String!
+	Experiments: [Experiments!]!
 }
 
 type Experiments {
-  Name: String!
-  CSV: String!
-  Desc: String!
+	Name: String!
+	CSV: String!
+	Desc: String!
 }
 
 type MyHubStatus {
-  id: ID!
-  RepoURL: String!
-  RepoBranch: String!
-  IsAvailable: Boolean!
-  TotalExp: String!
-  HubName: String!
+	id: ID!
+	RepoURL: String!
+	RepoBranch: String!
+	IsAvailable: Boolean!
+	TotalExp: String!
+	HubName: String!
+	IsPrivate: Boolean!
+	# Auth Types-
+	#  token: Token based authentication
+	#  basic: Username/Password based authentication
+	#  ssh: SSH based authentication
+	AuthType: AuthType!
+	Token: String
+	UserName: String
+	Password: String
+	IsRemoved: Boolean!
+	SSHPrivateKey: String
+	SSHPublicKey: String
+	LastSyncedAt: String!
 }
 
 input CreateMyHub {
-  HubName: String!
-  RepoURL: String!
-  RepoBranch: String!
+	HubName: String!
+	RepoURL: String!
+	RepoBranch: String!
+	IsPrivate: Boolean!
+	# Auth Types-
+	#  token: Token based authentication
+	#  basic: Username/Password based authentication
+	#  ssh: SSH based authentication
+	AuthType: AuthType!
+	Token: String
+	UserName: String
+	Password: String
+	SSHPrivateKey: String
+	SSHPublicKey: String
 }
 
 input ExperimentInput {
-  ProjectID: String!
-  ChartName: String!
-  ExperimentName: String!
-  HubName: String!
-  FileType: String
+	ProjectID: String!
+	ChartName: String!
+	ExperimentName: String!
+	HubName: String!
+	FileType: String
 }
 
 input CloningInput {
-  HubName: String!
-  ProjectID: String!
-  RepoBranch: String!
-  RepoURL: String!
+	HubName: String!
+	ProjectID: String!
+	RepoBranch: String!
+	RepoURL: String!
+	IsPrivate: Boolean!
+	# Auth Types-
+	#  token: Token based authentication
+	#  basic: Username/Password based authentication
+	#  ssh: SSH based authentication
+	AuthType: AuthType!
+	Token: String
+	UserName: String
+	Password: String
+	SSHPrivateKey: String
+}
+
+input UpdateMyHub {
+	id: String!
+	HubName: String!
+	RepoURL: String!
+	RepoBranch: String!
+	IsPrivate: Boolean!
+	AuthType: AuthType!
+	Token: String
+	UserName: String
+	Password: String
+	SSHPrivateKey: String
+	SSHPublicKey: String
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/project.graphqls", Input: `type Project {
@@ -2162,287 +2434,300 @@ enum MemberRole {
 directive @authorized on FIELD_DEFINITION
 
 type Cluster {
-  cluster_id: ID!
-  project_id: ID!
-  cluster_name: String!
-  description: String
-  platform_name: String!
-  access_key: String!
-  is_registered: Boolean!
-  is_cluster_confirmed: Boolean!
-  is_active: Boolean!
-  updated_at: String!
-  created_at: String!
-  cluster_type: String!
-  no_of_schedules: Int
-  no_of_workflows: Int
-  token: String!
-  agent_namespace: String
-  serviceaccount: String
-  agent_scope: String!
-  agent_ns_exists: Boolean
-  agent_sa_exists: Boolean
+	cluster_id: ID!
+	project_id: ID!
+	cluster_name: String!
+	description: String
+	platform_name: String!
+	access_key: String!
+	is_registered: Boolean!
+	is_cluster_confirmed: Boolean!
+	is_active: Boolean!
+	updated_at: String!
+	created_at: String!
+	cluster_type: String!
+	no_of_schedules: Int
+	no_of_workflows: Int
+	token: String!
+	agent_namespace: String
+	serviceaccount: String
+	agent_scope: String!
+	agent_ns_exists: Boolean
+	agent_sa_exists: Boolean
 }
 
 input ClusterInput {
-  cluster_name: String!
-  description: String
-  platform_name: String!
-  project_id: ID!
-  cluster_type: String!
-  agent_namespace: String
-  serviceaccount: String
-  agent_scope: String!
-  agent_ns_exists: Boolean
-  agent_sa_exists: Boolean
+	cluster_name: String!
+	description: String
+	platform_name: String!
+	project_id: ID!
+	cluster_type: String!
+	agent_namespace: String
+	serviceaccount: String
+	agent_scope: String!
+	agent_ns_exists: Boolean
+	agent_sa_exists: Boolean
 }
 
 type ClusterEvent {
-  event_id: ID!
-  event_type: String!
-  event_name: String!
-  description: String!
-  cluster: Cluster!
+	event_id: ID!
+	event_type: String!
+	event_name: String!
+	description: String!
+	cluster: Cluster!
 }
 
 type ActionPayload {
-  request_type: String!
-  k8s_manifest: String!
-  namespace: String!
-  external_data: String
+	request_type: String!
+	k8s_manifest: String!
+	namespace: String!
+	external_data: String
 }
 
 type ClusterAction {
-  project_id: ID!
-  action: ActionPayload!
+	project_id: ID!
+	action: ActionPayload!
 }
 
 input ClusterActionInput {
-  cluster_id: ID!
-  action: String!
+	cluster_id: ID!
+	action: String!
 }
 
 input ClusterEventInput {
-  event_name: String!
-  description: String!
-  cluster_id: String!
-  access_key: String!
+	event_name: String!
+	description: String!
+	cluster_id: String!
+	access_key: String!
 }
 
 input ClusterIdentity {
-  cluster_id: String!
-  access_key: String!
+	cluster_id: String!
+	access_key: String!
 }
 
 type ClusterConfirmResponse {
-  isClusterConfirmed: Boolean!
-  newClusterKey: String
-  cluster_id: String
+	isClusterConfirmed: Boolean!
+	newClusterKey: String
+	cluster_id: String
 }
 
 input WeightagesInput {
-  experiment_name: String!
-  weightage: Int!
+	experiment_name: String!
+	weightage: Int!
 }
 
 type weightages {
-  experiment_name: String!
-  weightage: Int!
+	experiment_name: String!
+	weightage: Int!
 }
 
 input ChaosWorkFlowInput {
-  workflow_id: String
-  workflow_manifest: String!
-  cronSyntax: String!
-  workflow_name: String!
-  workflow_description: String!
-  weightages: [WeightagesInput!]!
-  isCustomWorkflow: Boolean!
-  project_id: ID!
-  cluster_id: ID!
+	workflow_id: String
+	workflow_manifest: String!
+	cronSyntax: String!
+	workflow_name: String!
+	workflow_description: String!
+	weightages: [WeightagesInput!]!
+	isCustomWorkflow: Boolean!
+	project_id: ID!
+	cluster_id: ID!
 }
 
 type ChaosWorkFlowResponse {
-  workflow_id: String!
-  cronSyntax: String!
-  workflow_name: String!
-  workflow_description: String!
-  isCustomWorkflow: Boolean!
+	workflow_id: String!
+	cronSyntax: String!
+	workflow_name: String!
+	workflow_description: String!
+	isCustomWorkflow: Boolean!
 }
 
 type WorkflowRun {
-  workflow_run_id: ID!
-  workflow_id: ID!
-  cluster_name: String!
-  last_updated: String!
-  project_id: ID!
-  cluster_id: ID!
-  workflow_name: String!
-  cluster_type: String
-  execution_data: String!
+	workflow_run_id: ID!
+	workflow_id: ID!
+	cluster_name: String!
+	last_updated: String!
+	project_id: ID!
+	cluster_id: ID!
+	workflow_name: String!
+	cluster_type: String
+	execution_data: String!
 }
 
 input WorkflowRunInput {
-  workflow_id: ID!
-  workflow_run_id: ID!
-  workflow_name: String!
-  execution_data: String!
-  cluster_id: ClusterIdentity!
-  completed: Boolean!
+	workflow_id: ID!
+	workflow_run_id: ID!
+	workflow_name: String!
+	execution_data: String!
+	cluster_id: ClusterIdentity!
+	completed: Boolean!
 }
 
 type PodLogResponse {
-  workflow_run_id: ID!
-  pod_name: String!
-  pod_type: String!
-  log: String!
+	workflow_run_id: ID!
+	pod_name: String!
+	pod_type: String!
+	log: String!
 }
 
 input PodLog {
-  cluster_id: ClusterIdentity!
-  request_id: ID!
-  workflow_run_id: ID!
-  pod_name: String!
-  pod_type: String!
-  log: String!
+	cluster_id: ClusterIdentity!
+	request_id: ID!
+	workflow_run_id: ID!
+	pod_name: String!
+	pod_type: String!
+	log: String!
 }
 
 input PodLogRequest {
-  cluster_id: ID!
-  workflow_run_id: ID!
-  pod_name: String!
-  pod_namespace: String!
-  pod_type: String!
-  exp_pod: String
-  runner_pod: String
-  chaos_namespace: String
+	cluster_id: ID!
+	workflow_run_id: ID!
+	pod_name: String!
+	pod_namespace: String!
+	pod_type: String!
+	exp_pod: String
+	runner_pod: String
+	chaos_namespace: String
 }
 
 type ScheduledWorkflows {
-  workflow_id: String!
-  workflow_manifest: String!
-  cronSyntax: String!
-  cluster_name: String!
-  workflow_name: String!
-  workflow_description: String!
-  weightages: [weightages!]!
-  isCustomWorkflow: Boolean!
-  updated_at: String!
-  created_at: String!
-  project_id: ID!
-  cluster_id: ID!
-  cluster_type: String!
-  isRemoved: Boolean!
+	workflow_id: String!
+	workflow_manifest: String!
+	cronSyntax: String!
+	cluster_name: String!
+	workflow_name: String!
+	workflow_description: String!
+	weightages: [weightages!]!
+	isCustomWorkflow: Boolean!
+	updated_at: String!
+	created_at: String!
+	project_id: ID!
+	cluster_id: ID!
+	cluster_type: String!
+	isRemoved: Boolean!
 }
 
 type Workflow {
-  workflow_id: String!
-  workflow_manifest: String!
-  cronSyntax: String!
-  cluster_name: String!
-  workflow_name: String!
-  workflow_description: String!
-  weightages: [weightages!]!
-  isCustomWorkflow: Boolean!
-  updated_at: String!
-  created_at: String!
-  project_id: ID!
-  cluster_id: ID!
-  cluster_type: String!
-  isRemoved: Boolean!
-  workflow_runs: [WorkflowRuns]
+	workflow_id: String!
+	workflow_manifest: String!
+	cronSyntax: String!
+	cluster_name: String!
+	workflow_name: String!
+	workflow_description: String!
+	weightages: [weightages!]!
+	isCustomWorkflow: Boolean!
+	updated_at: String!
+	created_at: String!
+	project_id: ID!
+	cluster_id: ID!
+	cluster_type: String!
+	isRemoved: Boolean!
+	workflow_runs: [WorkflowRuns]
 }
 
 type WorkflowRuns {
-  execution_data: String!
-  workflow_run_id: ID!
-  last_updated: String!
+	execution_data: String!
+	workflow_run_id: ID!
+	last_updated: String!
 }
 
 type clusterRegResponse {
-  token: String!
-  cluster_id: String!
-  cluster_name: String!
+	token: String!
+	cluster_id: String!
+	cluster_name: String!
+}
+
+type SSHKey {
+	publicKey: String!
+	privateKey: String!
 }
 
 type Query {
-  # [Deprecated soon]
-  getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
+	# [Deprecated soon]
+	getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
 
-  getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
+	getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
 
-  getUser(username: String!): User! @authorized
+	getUser(username: String!): User! @authorized
 
-  getProject(projectID: String!): Project! @authorized
+	getProject(projectID: String!): Project! @authorized
 
-  users: [User!]! @authorized
+	users: [User!]! @authorized
 
-  # [Deprecated soon]
-  getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
+	# [Deprecated soon]
+	getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
 
-  ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
+	ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
 
-  getCharts(HubName: String!, projectID: String!): [Chart!]! @authorized
+	getCharts(HubName: String!, projectID: String!): [Chart!]! @authorized
 
-  getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
+	getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
 
-  getHubStatus(projectID: String!): [MyHubStatus]! @authorized
+	getHubStatus(projectID: String!): [MyHubStatus]! @authorized
 
-  getYAMLData(experimentInput: ExperimentInput!): String!
+	getYAMLData(experimentInput: ExperimentInput!): String!
 }
 
 type Mutation {
-  #It is used to create external cluster.
-  userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
+	#It is used to create external cluster.
+	userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
-  #It is used to create chaosworkflow
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
-    @authorized
+	#It is used to create chaosworkflow
+	createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
+		@authorized
 
-  createUser(user: CreateUserInput!): User! @authorized
+	createUser(user: CreateUserInput!): User! @authorized
 
-  updateUser(user: UpdateUserInput!): String! @authorized
+	updateUser(user: UpdateUserInput!): String! @authorized
 
-  deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
+	deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
 
-  sendInvitation(member: MemberInput!): Member @authorized
+	sendInvitation(member: MemberInput!): Member @authorized
 
-  acceptInvitation(member: MemberInput!): String! @authorized
+	acceptInvitation(member: MemberInput!): String! @authorized
 
-  declineInvitation(member: MemberInput!): String! @authorized
+	declineInvitation(member: MemberInput!): String! @authorized
 
-  removeInvitation(member: MemberInput!): String! @authorized
+	removeInvitation(member: MemberInput!): String! @authorized
 
-  #It is used to confirm the subscriber registration
-  clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
+	#It is used to confirm the subscriber registration
+	clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
 
-  #It is used to send cluster related events from the subscriber
-  newClusterEvent(clusterEvent: ClusterEventInput!): String!
+	#It is used to send cluster related events from the subscriber
+	newClusterEvent(clusterEvent: ClusterEventInput!): String!
 
-  chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
+	chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
 
-  podLog(log: PodLog!): String!
+	podLog(log: PodLog!): String!
 
-  addMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
+	addMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
-  syncHub(projectID: String!, HubName: String!): [MyHubStatus!]! @authorized
+	saveMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
-  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
-    @authorized
+	syncHub(id: ID!): [MyHubStatus!]! @authorized
 
-  deleteClusterReg(cluster_id: String!): String! @authorized
+	updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
+		@authorized
+
+	deleteClusterReg(cluster_id: String!): String! @authorized
+
+	generaterSSHKey: SSHKey! @authorized
+
+	updateMyHub(myhubInput: UpdateMyHub!, projectID: String!): MyHub! @authorized
+
+	deleteMyHub(hub_id: String!): Boolean! @authorized
 }
 
 type Subscription {
-  #It is used to listen cluster events from the graphql server
-  clusterEventListener(project_id: String!): ClusterEvent! @authorized
+	#It is used to listen cluster events from the graphql server
+	clusterEventListener(project_id: String!): ClusterEvent! @authorized
 
-  workflowEventListener(project_id: String!): WorkflowRun! @authorized
+	workflowEventListener(project_id: String!): WorkflowRun! @authorized
 
-  getPodLog(podDetails: PodLogRequest!): PodLogResponse! @authorized
+	getPodLog(podDetails: PodLogRequest!): PodLogResponse! @authorized
 
-  #It is used to listen cluster operation request from the graphql server
-  clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
+	#It is used to listen cluster operation request from the graphql server
+	clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/usermanagement.graphqls", Input: `type User {
@@ -2616,6 +2901,20 @@ func (ec *executionContext) field_Mutation_deleteClusterReg_args(ctx context.Con
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_deleteMyHub_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["hub_id"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["hub_id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_newClusterEvent_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2658,6 +2957,28 @@ func (ec *executionContext) field_Mutation_removeInvitation_args(ctx context.Con
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_saveMyHub_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.CreateMyHub
+	if tmp, ok := rawArgs["myhubInput"]; ok {
+		arg0, err = ec.unmarshalNCreateMyHub2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateMyHub(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["myhubInput"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_sendInvitation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2676,21 +2997,13 @@ func (ec *executionContext) field_Mutation_syncHub_args(ctx context.Context, raw
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["projectID"]; ok {
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+	if tmp, ok := rawArgs["id"]; ok {
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["projectID"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["HubName"]; ok {
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["HubName"] = arg1
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -2705,6 +3018,28 @@ func (ec *executionContext) field_Mutation_updateChaosWorkflow_args(ctx context.
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateMyHub_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.UpdateMyHub
+	if tmp, ok := rawArgs["myhubInput"]; ok {
+		arg0, err = ec.unmarshalNUpdateMyHub2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateMyHub(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["myhubInput"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg1
 	return args, nil
 }
 
@@ -6093,6 +6428,67 @@ func (ec *executionContext) _Mutation_addMyHub(ctx context.Context, field graphq
 	return ec.marshalNMyHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHub(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_saveMyHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_saveMyHub_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().SaveMyHub(rctx, args["myhubInput"].(model.CreateMyHub), args["projectID"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.MyHub); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.MyHub`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MyHub)
+	fc.Result = res
+	return ec.marshalNMyHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHub(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_syncHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -6118,7 +6514,7 @@ func (ec *executionContext) _Mutation_syncHub(ctx context.Context, field graphql
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().SyncHub(rctx, args["projectID"].(string), args["HubName"].(string))
+			return ec.resolvers.Mutation().SyncHub(rctx, args["id"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -6274,6 +6670,182 @@ func (ec *executionContext) _Mutation_deleteClusterReg(ctx context.Context, fiel
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_generaterSSHKey(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().GeneraterSSHKey(rctx)
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.SSHKey); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.SSHKey`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.SSHKey)
+	fc.Result = res
+	return ec.marshalNSSHKey2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSSHKey(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updateMyHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateMyHub_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateMyHub(rctx, args["myhubInput"].(model.UpdateMyHub), args["projectID"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.MyHub); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.MyHub`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MyHub)
+	fc.Result = res
+	return ec.marshalNMyHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHub(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_deleteMyHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_deleteMyHub_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().DeleteMyHub(rctx, args["hub_id"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _MyHub_id(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
@@ -6446,6 +7018,232 @@ func (ec *executionContext) _MyHub_HubName(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _MyHub_IsPrivate(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "MyHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsPrivate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MyHub_AuthType(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "MyHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AuthType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.AuthType)
+	fc.Result = res
+	return ec.marshalNAuthType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAuthType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MyHub_Token(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "MyHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Token, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MyHub_UserName(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "MyHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MyHub_Password(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "MyHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Password, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MyHub_SSHPrivateKey(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "MyHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SSHPrivateKey, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MyHub_IsRemoved(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "MyHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsRemoved, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _MyHub_CreatedAt(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -6498,6 +7296,40 @@ func (ec *executionContext) _MyHub_UpdatedAt(ctx context.Context, field graphql.
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MyHub_LastSyncedAt(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "MyHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastSyncedAt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6702,6 +7534,297 @@ func (ec *executionContext) _MyHubStatus_HubName(ctx context.Context, field grap
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.HubName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MyHubStatus_IsPrivate(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "MyHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsPrivate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MyHubStatus_AuthType(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "MyHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AuthType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.AuthType)
+	fc.Result = res
+	return ec.marshalNAuthType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAuthType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MyHubStatus_Token(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "MyHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Token, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MyHubStatus_UserName(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "MyHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MyHubStatus_Password(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "MyHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Password, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MyHubStatus_IsRemoved(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "MyHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsRemoved, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MyHubStatus_SSHPrivateKey(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "MyHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SSHPrivateKey, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MyHubStatus_SSHPublicKey(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "MyHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SSHPublicKey, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MyHubStatus_LastSyncedAt(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "MyHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastSyncedAt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -7902,6 +9025,74 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	res := resTmp.(*introspection.Schema)
 	fc.Result = res
 	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SSHKey_publicKey(ctx context.Context, field graphql.CollectedField, obj *model.SSHKey) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "SSHKey",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PublicKey, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SSHKey_privateKey(ctx context.Context, field graphql.CollectedField, obj *model.SSHKey) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "SSHKey",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PrivateKey, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ScheduledWorkflows_workflow_id(ctx context.Context, field graphql.CollectedField, obj *model.ScheduledWorkflows) (ret graphql.Marshaler) {
@@ -11672,6 +12863,42 @@ func (ec *executionContext) unmarshalInputCloningInput(ctx context.Context, obj 
 			if err != nil {
 				return it, err
 			}
+		case "IsPrivate":
+			var err error
+			it.IsPrivate, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "AuthType":
+			var err error
+			it.AuthType, err = ec.unmarshalNAuthType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAuthType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "Token":
+			var err error
+			it.Token, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "UserName":
+			var err error
+			it.UserName, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "Password":
+			var err error
+			it.Password, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "SSHPrivateKey":
+			var err error
+			it.SSHPrivateKey, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -11855,6 +13082,48 @@ func (ec *executionContext) unmarshalInputCreateMyHub(ctx context.Context, obj i
 		case "RepoBranch":
 			var err error
 			it.RepoBranch, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "IsPrivate":
+			var err error
+			it.IsPrivate, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "AuthType":
+			var err error
+			it.AuthType, err = ec.unmarshalNAuthType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAuthType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "Token":
+			var err error
+			it.Token, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "UserName":
+			var err error
+			it.UserName, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "Password":
+			var err error
+			it.Password, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "SSHPrivateKey":
+			var err error
+			it.SSHPrivateKey, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "SSHPublicKey":
+			var err error
+			it.SSHPublicKey, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -12077,6 +13346,84 @@ func (ec *executionContext) unmarshalInputPodLogRequest(ctx context.Context, obj
 		case "chaos_namespace":
 			var err error
 			it.ChaosNamespace, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdateMyHub(ctx context.Context, obj interface{}) (model.UpdateMyHub, error) {
+	var it model.UpdateMyHub
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+			it.ID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "HubName":
+			var err error
+			it.HubName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "RepoURL":
+			var err error
+			it.RepoURL, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "RepoBranch":
+			var err error
+			it.RepoBranch, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "IsPrivate":
+			var err error
+			it.IsPrivate, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "AuthType":
+			var err error
+			it.AuthType, err = ec.unmarshalNAuthType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAuthType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "Token":
+			var err error
+			it.Token, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "UserName":
+			var err error
+			it.UserName, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "Password":
+			var err error
+			it.Password, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "SSHPrivateKey":
+			var err error
+			it.SSHPrivateKey, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "SSHPublicKey":
+			var err error
+			it.SSHPublicKey, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -12907,6 +14254,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "saveMyHub":
+			out.Values[i] = ec._Mutation_saveMyHub(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "syncHub":
 			out.Values[i] = ec._Mutation_syncHub(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -12919,6 +14271,21 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "deleteClusterReg":
 			out.Values[i] = ec._Mutation_deleteClusterReg(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "generaterSSHKey":
+			out.Values[i] = ec._Mutation_generaterSSHKey(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updateMyHub":
+			out.Values[i] = ec._Mutation_updateMyHub(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deleteMyHub":
+			out.Values[i] = ec._Mutation_deleteMyHub(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -12969,6 +14336,29 @@ func (ec *executionContext) _MyHub(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "IsPrivate":
+			out.Values[i] = ec._MyHub_IsPrivate(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "AuthType":
+			out.Values[i] = ec._MyHub_AuthType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Token":
+			out.Values[i] = ec._MyHub_Token(ctx, field, obj)
+		case "UserName":
+			out.Values[i] = ec._MyHub_UserName(ctx, field, obj)
+		case "Password":
+			out.Values[i] = ec._MyHub_Password(ctx, field, obj)
+		case "SSHPrivateKey":
+			out.Values[i] = ec._MyHub_SSHPrivateKey(ctx, field, obj)
+		case "IsRemoved":
+			out.Values[i] = ec._MyHub_IsRemoved(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "CreatedAt":
 			out.Values[i] = ec._MyHub_CreatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -12976,6 +14366,11 @@ func (ec *executionContext) _MyHub(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "UpdatedAt":
 			out.Values[i] = ec._MyHub_UpdatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "LastSyncedAt":
+			out.Values[i] = ec._MyHub_LastSyncedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -13028,6 +14423,36 @@ func (ec *executionContext) _MyHubStatus(ctx context.Context, sel ast.SelectionS
 			}
 		case "HubName":
 			out.Values[i] = ec._MyHubStatus_HubName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "IsPrivate":
+			out.Values[i] = ec._MyHubStatus_IsPrivate(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "AuthType":
+			out.Values[i] = ec._MyHubStatus_AuthType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Token":
+			out.Values[i] = ec._MyHubStatus_Token(ctx, field, obj)
+		case "UserName":
+			out.Values[i] = ec._MyHubStatus_UserName(ctx, field, obj)
+		case "Password":
+			out.Values[i] = ec._MyHubStatus_Password(ctx, field, obj)
+		case "IsRemoved":
+			out.Values[i] = ec._MyHubStatus_IsRemoved(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "SSHPrivateKey":
+			out.Values[i] = ec._MyHubStatus_SSHPrivateKey(ctx, field, obj)
+		case "SSHPublicKey":
+			out.Values[i] = ec._MyHubStatus_SSHPublicKey(ctx, field, obj)
+		case "LastSyncedAt":
+			out.Values[i] = ec._MyHubStatus_LastSyncedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -13370,6 +14795,38 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
 			out.Values[i] = ec._Query___schema(ctx, field)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var sSHKeyImplementors = []string{"SSHKey"}
+
+func (ec *executionContext) _SSHKey(ctx context.Context, sel ast.SelectionSet, obj *model.SSHKey) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, sSHKeyImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SSHKey")
+		case "publicKey":
+			out.Values[i] = ec._SSHKey_publicKey(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "privateKey":
+			out.Values[i] = ec._SSHKey_privateKey(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -14179,6 +15636,15 @@ func (ec *executionContext) marshalNAnnotation2ᚖgithubᚗcomᚋlitmuschaosᚋl
 	return ec._Annotation(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNAuthType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAuthType(ctx context.Context, v interface{}) (model.AuthType, error) {
+	var res model.AuthType
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalNAuthType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAuthType(ctx context.Context, sel ast.SelectionSet, v model.AuthType) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	return graphql.UnmarshalBoolean(v)
 }
@@ -14835,6 +16301,20 @@ func (ec *executionContext) marshalNProject2ᚖgithubᚗcomᚋlitmuschaosᚋlitm
 	return ec._Project(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNSSHKey2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSSHKey(ctx context.Context, sel ast.SelectionSet, v model.SSHKey) graphql.Marshaler {
+	return ec._SSHKey(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNSSHKey2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSSHKey(ctx context.Context, sel ast.SelectionSet, v *model.SSHKey) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._SSHKey(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNScheduledWorkflows2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐScheduledWorkflows(ctx context.Context, sel ast.SelectionSet, v []*model.ScheduledWorkflows) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -14927,6 +16407,10 @@ func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel
 	}
 
 	return ret
+}
+
+func (ec *executionContext) unmarshalNUpdateMyHub2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateMyHub(ctx context.Context, v interface{}) (model.UpdateMyHub, error) {
+	return ec.unmarshalInputUpdateMyHub(ctx, v)
 }
 
 func (ec *executionContext) unmarshalNUpdateUserInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateUserInput(ctx context.Context, v interface{}) (model.UpdateUserInput, error) {

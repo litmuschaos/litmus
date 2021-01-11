@@ -2,6 +2,7 @@ package operations
 
 import (
 	"context"
+	"errors"
 	"log"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
@@ -59,4 +60,28 @@ func GetHubs(ctx context.Context) ([]dbSchema.MyHub, error) {
 		return []dbSchema.MyHub{}, err
 	}
 	return MyHubs, nil
+}
+
+//GetHubByID
+func GetHubByID(ctx context.Context, hubID string) (dbSchema.MyHub, error) {
+	var myHub dbSchema.MyHub
+	err := myhubCollection.FindOne(ctx, bson.M{"myhub_id": hubID}).Decode(&myHub)
+	if err != nil {
+		return dbSchema.MyHub{}, err
+	}
+
+	return myHub, nil
+}
+
+func UpdateMyHub(ctx context.Context, query bson.D, update bson.D) error {
+	updateResult, err := myhubCollection.UpdateOne(ctx, query, update)
+	if err != nil {
+		return err
+	}
+
+	if updateResult.MatchedCount == 0 {
+		return errors.New("Myhub collection query didn't matched")
+	}
+
+	return nil
 }

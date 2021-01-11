@@ -2,6 +2,10 @@ package gitops
 
 import (
 	"fmt"
+	ssh2 "golang.org/x/crypto/ssh"
+	"gopkg.in/src-d/go-git.v4/plumbing/transport"
+	"gopkg.in/src-d/go-git.v4/plumbing/transport/http"
+	"gopkg.in/src-d/go-git.v4/plumbing/transport/ssh"
 	"os"
 	"strings"
 
@@ -11,8 +15,8 @@ import (
 	"gopkg.in/src-d/go-git.v4/plumbing"
 )
 
-//GitConfig ...
-type GitConfig struct {
+//MyHubConfig ...
+type MyHubConfig struct {
 	ProjectID     string
 	RepositoryURL string
 	RemoteName    string
@@ -20,34 +24,38 @@ type GitConfig struct {
 	RemoteCommit  string
 	HubName       string
 	Branch        string
+	IsPrivate     bool
+	UserName      *string
+	Password      *string
+	AuthType      model.AuthType
+	Token         *string
+	SSHPrivateKey *string
 }
-
-var (
-	repository  *git.Repository
-	workTree    *git.Worktree
-	plumbingRef *plumbing.Reference
-	status      *git.Status
-	err         error
-)
 
 const (
 	defaultPath = "/tmp/version/"
 )
 
 //GetClonePath is used to construct path for Repository.
-func GetClonePath(c GitConfig) string {
+func GetClonePath(c MyHubConfig) string {
 	RepoPath := defaultPath + c.ProjectID + "/" + c.HubName
 	return RepoPath
 }
 
 //GitConfigConstruct is used for constructing the gitconfig
-func GitConfigConstruct(repoData model.CloningInput) GitConfig {
-	gitConfig := GitConfig{
+func GitConfigConstruct(repoData model.CloningInput) MyHubConfig {
+	gitConfig := MyHubConfig{
 		ProjectID:     repoData.ProjectID,
 		HubName:       repoData.HubName,
 		RepositoryURL: repoData.RepoURL,
 		RemoteName:    "origin",
 		Branch:        repoData.RepoBranch,
+		IsPrivate:     repoData.IsPrivate,
+		UserName:      repoData.UserName,
+		Password:      repoData.Password,
+		AuthType:      repoData.AuthType,
+		Token:         repoData.Token,
+		SSHPrivateKey: repoData.SSHPrivateKey,
 	}
 
 	return gitConfig
@@ -56,18 +64,56 @@ func GitConfigConstruct(repoData model.CloningInput) GitConfig {
 //GitClone Trigger is reponsible for setting off the go routine for git-op
 func GitClone(repoData model.CloningInput) error {
 	gitConfig := GitConfigConstruct(repoData)
-	_, err := gitConfig.getChaosChartRepo()
-	if err != nil {
-		fmt.Print("Error in cloning")
-		return err
+	if repoData.IsPrivate {
+		_, err := gitConfig.getPrivateChaosChartRepo()
+		if err != nil {
+			fmt.Print("Error in cloning")
+			return err
+		}
+	} else {
+		_, err := gitConfig.getChaosChartRepo()
+		if err != nil {
+			fmt.Print("Error in cloning")
+			return err
+		}
+
 	}
 	//Successfully Cloned
 	return nil
 }
 
+//getChaosChartVersion is responsible for plain cloning the repository
+func (c MyHubConfig) getChaosChartRepo() (string, error) {
+	ClonePath := GetClonePath(c)
+	os.RemoveAll(ClonePath)
+	_, err := git.PlainClone(ClonePath, false, &git.CloneOptions{
+		URL: c.RepositoryURL, Progress: os.Stdout,
+		ReferenceName: plumbing.NewBranchReferenceName(c.Branch),
+	})
+	return c.Branch, err
+}
+
+//getPrivateChaosChartVersion is responsible for plain cloning the private repository
+func (c MyHubConfig) getPrivateChaosChartRepo() (string, error) {
+	ClonePath := GetClonePath(c)
+	os.RemoveAll(ClonePath)
+
+	auth, err := c.generateAuthMethod()
+	if err != nil {
+		return "", err
+	}
+
+	_, err = git.PlainClone(ClonePath, false, &git.CloneOptions{
+		Auth:          auth,
+		URL:           c.RepositoryURL,
+		Progress:      os.Stdout,
+		ReferenceName: plumbing.NewBranchReferenceName(c.Branch),
+	})
+	return c.Branch, err
+}
+
 //GitSyncHandlerForProjects ...
 func GitSyncHandlerForProjects(repoData model.CloningInput) error {
-
 	gitConfig := GitConfigConstruct(repoData)
 	if err := gitConfig.chaosChartSyncHandler(); err != nil {
 		log.Error(err)
@@ -78,32 +124,33 @@ func GitSyncHandlerForProjects(repoData model.CloningInput) error {
 	return nil
 }
 
-//getChaosChartVersion is responsible for plain cloning the repository
-func (c GitConfig) getChaosChartRepo() (string, error) {
-	ClonePath := GetClonePath(c)
-	os.RemoveAll(ClonePath)
-	_, err := git.PlainClone(ClonePath, false, &git.CloneOptions{
-		URL: c.RepositoryURL, Progress: os.Stdout,
-		ReferenceName: plumbing.NewBranchReferenceName(c.Branch),
-	})
-	return c.Branch, err
-}
-
 // chaosChartSyncHandler is responsible for all the handler functions
-func (c GitConfig) chaosChartSyncHandler() error {
+func (c MyHubConfig) chaosChartSyncHandler() error {
 	repositoryExists, err := c.isRepositoryExists()
 	if err != nil {
 		return fmt.Errorf("Error while checking repo exists, err: %s", err)
 	}
 	log.WithFields(log.Fields{"repositoryExists": repositoryExists}).Info("Executed isRepositoryExists()... ")
+
 	if !repositoryExists {
-		return c.HandlerForNonExistingRepository()
+		return GitClone(model.CloningInput{
+			HubName:       c.HubName,
+			ProjectID:     c.ProjectID,
+			RepoURL:       c.RepositoryURL,
+			RepoBranch:    c.Branch,
+			IsPrivate:     c.IsPrivate,
+			AuthType:      c.AuthType,
+			Token:         c.Token,
+			UserName:      c.UserName,
+			Password:      c.Password,
+			SSHPrivateKey: c.SSHPrivateKey,
+		})
 	}
-	return c.HandlerForExistingRepository()
+	return c.GitPull()
 }
 
 // isRepositoryExists checks for the existence of this past existence of this repository
-func (c GitConfig) isRepositoryExists() (bool, error) {
+func (c MyHubConfig) isRepositoryExists() (bool, error) {
 	RepoPath := GetClonePath(c)
 	_, err := os.Stat(RepoPath)
 	if err != nil {
@@ -115,90 +162,25 @@ func (c GitConfig) isRepositoryExists() (bool, error) {
 	return true, nil
 }
 
-// HandlerForNonExistingRepository calls function GitPlainClone, which is called only when the repository exists
-func (c GitConfig) HandlerForNonExistingRepository() error {
+func (c MyHubConfig) setterRepositoryWorktreeReference() (*git.Repository, *git.Worktree, *plumbing.Reference, error) {
 	RepoPath := GetClonePath(c)
-	var referenceName plumbing.ReferenceName
-	referenceName = plumbing.NewBranchReferenceName(c.Branch)
-	_, err := git.PlainClone(RepoPath, false, &git.CloneOptions{
-		URL: c.RepositoryURL, Progress: os.Stdout,
-		ReferenceName: referenceName,
-	})
+	repository, err := git.PlainOpen(RepoPath)
 	if err != nil {
-		return fmt.Errorf("unable to clone '%s' reference of chaos-chart, err: %+v", c.Branch, err)
+		return nil, nil, nil, fmt.Errorf("error in executing PlainOpen: %s", err)
 	}
-	return nil
-}
-
-// HandlerForExistingRepository relative functions if the isRepositoryExists fails
-func (c GitConfig) HandlerForExistingRepository() error {
-	dirtyStatus, err := c.GitGetStatus()
+	workTree, err := repository.Worktree()
 	if err != nil {
-		return err
+		return nil, nil, nil, fmt.Errorf("error in executing Worktree: %s", err)
 	}
-	log.WithFields(log.Fields{"DirtyStatus": dirtyStatus}).Info("Executed GitGetStatus()... ")
-	if dirtyStatus {
-		return c.HandlerForDirtyStatus()
-	}
-	return c.HandlerForCleanStatus()
-}
-
-// GitGetStatus excutes "git get status --porcelain" for the provided Repository Path,
-// returns false if the repository is clean
-// and true if the repository is dirtygitConfig
-func (c GitConfig) GitGetStatus() (bool, error) {
-	err := c.setterRepositoryWorktreeReference()
+	plumbingRef, err := repository.Head()
 	if err != nil {
-		return true, err
+		return nil, nil, nil, fmt.Errorf("error in executing Head: %s", err)
 	}
-	// git status --porcelain
-	len, _ := getListofFilesChanged()
-	return !(len == 0), nil
-}
-func (c GitConfig) setterRepositoryWorktreeReference() error {
-	RepoPath := GetClonePath(c)
-	if repository, err = git.PlainOpen(RepoPath); err != nil {
-		return fmt.Errorf("error in executing PlainOpen: %s", err)
-	}
-	if workTree, err = repository.Worktree(); err != nil {
-		return fmt.Errorf("error in executing Worktree: %s", err)
-	}
-	plumbingRef, err = repository.Head()
-	if err != nil {
-		return fmt.Errorf("error in executing Head: %s", err)
-	}
-	return nil
-}
-
-// HandlerForDirtyStatus calls relative functions if the GitGetStatus gives a clean status as a result
-func (c GitConfig) HandlerForDirtyStatus() error {
-	if err := c.GitHardReset(); err != nil {
-		return err
-	}
-	MatchValue, err := c.CompareLocalandRemoteCommit()
-	if err != nil {
-		return err
-	}
-	log.WithFields(log.Fields{"MatchValue": MatchValue}).Info("Executed CompareLocalandRemoteCommit()... ")
-	if !MatchValue {
-		return c.HandlerForMismatchCommits()
-	}
-	return nil
-}
-func getListofFilesChanged() (int, error) {
-	status, err := workTree.Status()
-	if err != nil {
-		return 0, fmt.Errorf("error in executing Status: %s", err)
-	}
-	var listOfFilesChanged []string
-	for file := range status {
-		listOfFilesChanged = append(listOfFilesChanged, file)
-	}
-	return len(listOfFilesChanged), nil
+	return repository, workTree, plumbingRef, nil
 }
 
 // GitHardReset executes "git reset --hard HEAD" in provided Repository Path
-func (c GitConfig) GitHardReset() error {
+func (c MyHubConfig) GitHardReset() error {
 	RepoPath := GetClonePath(c)
 	repository, err := git.PlainOpen(RepoPath)
 	if err != nil {
@@ -215,7 +197,7 @@ func (c GitConfig) GitHardReset() error {
 }
 
 // CompareLocalandRemoteCommit compares local and remote latest commit
-func (c GitConfig) CompareLocalandRemoteCommit() (bool, error) {
+func (c MyHubConfig) CompareLocalandRemoteCommit() (bool, error) {
 	RepoPath := GetClonePath(c)
 	repository, err := git.PlainOpen(RepoPath)
 	if err != nil {
@@ -230,40 +212,84 @@ func (c GitConfig) CompareLocalandRemoteCommit() (bool, error) {
 }
 
 // GitPull updates the repository in provided Path
-func (c GitConfig) GitPull() error {
-	err := c.setterRepositoryWorktreeReference()
+func (c MyHubConfig) GitPull() error {
+	_, workTree, plumbingRef, err := c.setterRepositoryWorktreeReference()
 	if err != nil {
 		return err
 	}
 	var referenceName plumbing.ReferenceName
 	referenceName = plumbing.NewBranchReferenceName(c.Branch)
-	err = workTree.Pull(&git.PullOptions{RemoteName: c.RemoteName, ReferenceName: referenceName})
-	c.LocalCommit = strings.Split(plumbingRef.String(), " ")[0]
+	if !c.IsPrivate {
+		err = workTree.Pull(&git.PullOptions{RemoteName: c.RemoteName, ReferenceName: referenceName})
+		if err == git.NoErrAlreadyUpToDate {
+			log.Print("Already up-to-date")
+			return nil
+		} else if err != nil {
+			return err
+		}
+		c.LocalCommit = strings.Split(plumbingRef.String(), " ")[0]
+		return nil
+	}
+	err = c.gitPullPrivateRepo()
+	if err == git.NoErrAlreadyUpToDate {
+		log.Print("Already up-to-date")
+		return nil
+	} else if err != nil {
+		return err
+	}
 	return nil
 }
 
-// HandlerForCleanStatus calls relative functions if the GitGetStatus gives a clean status as a result
-func (c GitConfig) HandlerForCleanStatus() error {
-	MatchValue, err := c.CompareLocalandRemoteCommit()
+// gitPullPrivateRepo updates the repository of private hubs
+func (c MyHubConfig) gitPullPrivateRepo() error {
+	_, workTree, _, err := c.setterRepositoryWorktreeReference()
 	if err != nil {
 		return err
 	}
-	log.WithFields(log.Fields{"MatchValue": MatchValue}).Info("Executed CompareLocalandRemoteCommit()... ")
-	if !MatchValue {
-		err := c.GitPull()
-		if err != nil {
-			return err
-		}
+	var referenceName plumbing.ReferenceName
+	referenceName = plumbing.NewBranchReferenceName(c.Branch)
+	auth, err := c.generateAuthMethod()
+	if err != nil {
+		return nil
+	}
+	err = workTree.Pull(&git.PullOptions{RemoteName: c.RemoteName, ReferenceName: referenceName, Auth: auth})
+	if err != nil {
+		return err
 	}
 	return nil
 }
 
 // HandlerForMismatchCommits calls relative functions if the Local and Remote Commits do not match
-func (c GitConfig) HandlerForMismatchCommits() error {
+func (c MyHubConfig) HandlerForMismatchCommits() error {
 	err := c.GitPull()
 	if err != nil {
 		return err
 	}
 	log.WithFields(log.Fields{"execution": "complete"}).Info("Executed GitPull()... ")
 	return nil
+}
+
+// generateAuthMethod creates AuthMethod for private repos
+func (c MyHubConfig) generateAuthMethod() (transport.AuthMethod, error) {
+	var auth transport.AuthMethod
+	if c.AuthType == model.AuthTypeToken {
+		auth = &http.BasicAuth{
+			Username: "kubera", // this can be anything except an empty string
+			Password: *c.Token,
+		}
+	} else if c.AuthType == model.AuthTypeBasic {
+		auth = &http.BasicAuth{
+			Username: *c.UserName,
+			Password: *c.Password,
+		}
+	} else if c.AuthType == model.AuthTypeSSH {
+		publicKey, err := ssh.NewPublicKeys("git", []byte(*c.SSHPrivateKey), "")
+		if err != nil {
+			return nil, err
+		}
+
+		auth = publicKey
+		auth.(*ssh.PublicKeys).HostKeyCallback = ssh2.InsecureIgnoreHostKey()
+	}
+	return auth, nil
 }
