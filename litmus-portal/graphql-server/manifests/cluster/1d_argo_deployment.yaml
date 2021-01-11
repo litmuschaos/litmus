@@ -1,0 +1,88 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: argo-server
+  namespace: #{AGENT-NAMESPACE}
+spec:
+  ports:
+    - name: web
+      port: 2746
+      targetPort: 2746
+  selector:
+    app: argo-server
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: workflow-controller-metrics
+  namespace: #{AGENT-NAMESPACE}
+spec:
+  ports:
+    - name: metrics
+      port: 9090
+      protocol: TCP
+      targetPort: 9090
+  selector:
+    app: workflow-controller
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argo-server
+  namespace: #{AGENT-NAMESPACE}
+spec:
+  selector:
+    matchLabels:
+      app: argo-server
+  template:
+    metadata:
+      labels:
+        app: argo-server
+    spec:
+      containers:
+        - args:
+            - server
+          image: #{ARGO-SERVER}
+          name: argo-server
+          ports:
+            - containerPort: 2746
+              name: web
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 2746
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 20
+      nodeSelector:
+        kubernetes.io/os: linux
+      serviceAccountName: argo-server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workflow-controller
+  namespace: #{AGENT-NAMESPACE}
+spec:
+  selector:
+    matchLabels:
+      app: workflow-controller
+  template:
+    metadata:
+      labels:
+        app: workflow-controller
+    spec:
+      containers:
+        - args:
+            - --configmap
+            - workflow-controller-configmap
+            - --executor-image
+            -  #{ARGO-WORKFLOW-EXECUTOR}
+          command:
+            - workflow-controller
+          image: #{ARGO-WORKFLOW-CONTROLLER}
+          name: workflow-controller
+      nodeSelector:
+        kubernetes.io/os: linux
+      serviceAccountName: argo

@@ -1,0 +1,39 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subscriber
+  namespace: #{AGENT-NAMESPACE}
+  labels:
+    app: subscriber
+spec:
+  selector:
+    matchLabels:
+      app: subscriber
+  template:
+    metadata:
+      labels:
+        app: subscriber
+    spec:
+      serviceAccountName: #{SUBSCRIBER-SERVICE-ACCOUNT}
+      containers:
+        - name: subscriber
+          image: #{SUB-IMAGE}
+          resources:
+            limits:
+              cpu: 200m
+              memory: 500Mi
+          imagePullPolicy: Always
+          env:
+            - name: GQL_SERVER
+              value: #{SERVER}
+            - name: CID
+              value: #{CID}
+            - name: KEY
+              value: #{KEY}
+            - name: AGENT_SCOPE
+              value: #{AGENT-SCOPE}
+            - name: AGENT_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace

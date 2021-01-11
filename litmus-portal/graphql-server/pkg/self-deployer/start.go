@@ -2,13 +2,13 @@ package self_deployer
 
 import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/file_handlers"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 	"log"
 	"os"
 	"strings"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/mutations"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 )
 
 // StartDeployer registers a new internal self-cluster and starts the deployer
@@ -42,12 +42,15 @@ func StartDeployer(projectID string) {
 	if statusCode == 200 {
 		manifests := strings.Split(string(response), "---")
 		for _, manifest := range manifests {
-			_, err = k8s.ClusterResource(manifest, deployerNamespace)
-			if err != nil {
-				log.Print(err)
-				failedManifest = failedManifest + manifest
-				isAllManifestInstall = false
+			if len(strings.TrimSpace(manifest)) > 0 {
+				_, err = k8s.ClusterResource(manifest, deployerNamespace)
+				if err != nil {
+					log.Print(err)
+					failedManifest = failedManifest + manifest
+					isAllManifestInstall = false
+				}
 			}
+
 		}
 	}
 
