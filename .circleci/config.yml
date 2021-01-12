@@ -100,6 +100,7 @@ jobs:
       - checkout
       - run:
           name: Build frontend docker image
+          no_output_timeout: 20m
           command: docker build . -f Dockerfile -t ${REPONAME}/${FRONTEND_IMAGE}:${IMGTAG}
           working_directory: ~/project/litmus-portal/frontend
       - run:
