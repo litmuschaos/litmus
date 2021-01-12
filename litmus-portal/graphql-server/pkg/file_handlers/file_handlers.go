@@ -69,9 +69,9 @@ func GetManifest(token string) ([]byte, int, error) {
 		var respData []byte
 
 		if reqCluster.AgentScope == "cluster" {
-			respData, err = utils.ManifestParser(reqCluster, "manifests/cluster-subscriber.yml", subscriberConfiguration)
+			respData, err = utils.ManifestParser(reqCluster, "manifests/cluster", subscriberConfiguration)
 		} else if reqCluster.AgentScope == "namespace" {
-			respData, err = utils.ManifestParser(reqCluster, "manifests/namespace-subscriber.yml", subscriberConfiguration)
+			respData, err = utils.ManifestParser(reqCluster, "manifests/namespace", subscriberConfiguration)
 		} else {
 			log.Print("ERROR- AGENT SCOPE NOT SELECTED!")
 		}

@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: workflow-controller-configmap
+  namespace: #{AGENT-NAMESPACE}
+data:
+  config: |
+    containerRuntimeExecutor: k8sapi
+    executor:
+      imagePullPolicy: Always

@@ -4,8 +4,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   container: {
     marginTop: theme.spacing(3.75),
     border: '1px solid ',
-    borderColor: theme.palette.customColors.black(0.07),
-    backgroundColor: theme.palette.homePageCardBackgroundColor,
+    borderColor: theme.palette.border.main,
+    backgroundColor: theme.palette.cards.background,
     borderRadius: '0.1875rem',
     paddingBottom: theme.spacing(5),
   },

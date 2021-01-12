@@ -181,7 +181,7 @@ const CommunityAnalyticsPlot: React.FC = () => {
       <FormControl
         variant="outlined"
         className={classes.formControl}
-        color="secondary"
+        color="primary"
         focused
       >
         <InputLabel htmlFor="outlined-selection" className={classes.root}>
@@ -205,7 +205,7 @@ const CommunityAnalyticsPlot: React.FC = () => {
       <FormControl
         variant="outlined"
         className={classes.formControl}
-        color="secondary"
+        color="primary"
         focused
       >
         <InputLabel

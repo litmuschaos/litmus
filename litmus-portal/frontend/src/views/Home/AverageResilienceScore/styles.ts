@@ -5,8 +5,8 @@ const useStyles = makeStyles((theme) => ({
     width: '20.3125rem',
     height: '14.6875rem',
     marginRight: theme.spacing(3),
-    color: theme.palette.text.secondary,
-    backgroundColor: theme.palette.homePageCardBackgroundColor,
+    color: theme.palette.text.primary,
+    backgroundColor: theme.palette.cards.background,
   },
   headerMain: {
     fontWeight: 'bold',

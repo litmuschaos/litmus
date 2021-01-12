@@ -334,15 +334,15 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         showgrid: true,
         showline: false,
         showticklabels: true,
-        linecolor: palette.graphAnnotationsColor,
+        linecolor: palette.border.main,
         linewidth: 0.5,
         ticks: 'outside',
-        tickcolor: palette.graphAnnotationsColor,
+        tickcolor: palette.border.main,
         tickwidth: 2,
         ticklen: 5,
         tickfont: {
           family: 'Ubuntu',
-          color: palette.customColors.black(0.4),
+          color: palette.text.primary,
         },
         mirror: true,
         rangeselector: selectorOptions as any,
@@ -353,15 +353,15 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         zeroline: false,
         showline: false,
         showticklabels: true,
-        linecolor: palette.graphAnnotationsColor,
+        linecolor: palette.border.main,
         linewidth: 0.5,
         ticks: 'outside',
-        tickcolor: palette.graphAnnotationsColor,
+        tickcolor: palette.border.main,
         tickwidth: 2,
         ticklen: 5,
         tickfont: {
           family: 'Ubuntu',
-          color: palette.customColors.black(0.4),
+          color: palette.text.primary,
         },
         mirror: true,
         tickmode: 'array',
@@ -381,7 +381,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
       },
       font: {
         family: 'Ubuntu, monospace',
-        color: palette.customColors.black(0.4),
+        color: palette.text.primary,
       },
       showlegend: true,
       legend: { orientation: 'h', y: -0.5 },
@@ -414,7 +414,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         <FormControl
           variant="outlined"
           className={classes.formControl}
-          color="secondary"
+          color="primary"
           focused
         >
           <InputLabel

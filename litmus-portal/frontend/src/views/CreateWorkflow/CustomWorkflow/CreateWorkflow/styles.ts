@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     padding: theme.spacing(3),
     backgroundColor: theme.palette.common.white,
-    border: `1px solid ${theme.palette.customColors.black(0.05)}`,
+    border: `1px solid ${theme.palette.border.main}`,
   },
   inputDiv: {
     display: 'flex',
@@ -150,7 +150,7 @@ export const CustomTextField = withStyles((theme) => ({
   root: {
     borderRadius: theme.spacing(0.5),
     width: '90%',
-    border: `1px solid ${theme.palette.input.disabled}`,
+    border: `1px solid ${theme.palette.border.main}`,
     '&:hover': {
       border: `1px solid ${theme.palette.secondary.dark}`,
       boxShadow: `${fade(theme.palette.secondary.dark, 0.5)} 0 0.3rem 0.4rem 0`,

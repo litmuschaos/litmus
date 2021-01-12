@@ -24,11 +24,11 @@ const StyledTab = withStyles((theme) =>
   createStyles({
     root: {
       textTransform: 'none',
-      color: theme.palette.tabsComponentColor,
+      color: theme.palette.text.disabled,
       fontSize: '0.95rem',
       paddingTop: theme.spacing(1.875),
       paddingBottom: theme.spacing(1.875),
-      borderBottom: `1px solid ${theme.palette.customColors.black(0.1)}`,
+      borderBottom: `1px solid ${theme.palette.border.main}`,
       '&:focus': {
         opacity: 1,
       },

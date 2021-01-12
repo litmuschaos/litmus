@@ -3,7 +3,7 @@ import { makeStyles, Theme } from '@material-ui/core';
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     width: '100%',
-    backgroundColor: theme.palette.customColors.black(0.03),
+    backgroundColor: theme.palette.background.default,
     borderRadius: '0.1875rem',
     borderLeft: `6px solid ${theme.palette.secondary.dark} `,
     marginBottom: theme.spacing(2.25),

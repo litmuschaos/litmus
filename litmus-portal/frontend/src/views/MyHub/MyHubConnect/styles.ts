@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     backgroundColor: theme.palette.common.white,
-    border: `1px solid ${theme.palette.customColors.black(0.05)}`,
+    border: `1px solid ${theme.palette.border.main}`,
     padding: theme.spacing(2.5),
   },
   connectText: {
