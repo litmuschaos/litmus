@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'flex-start',
     marginTop: theme.spacing(2.625),
     marginBottom: theme.spacing(1.875),
-    color: theme.palette.secondary.dark,
+    color: theme.palette.primary.main,
   },
   descText: {
     marginBottom: theme.spacing(3.75),
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   table: {
     backgroundColor: 'inherit',
     height: '30.25rem',
-    border: `1px solid ${theme.palette.customColors.black(0.05)}`,
+    border: `1px solid ${theme.palette.border.main}`,
     '&::-webkit-scrollbar': {
       width: '0.2em',
     },
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   Signed: {
     minWidth: '2.625rem',
     minHeight: '0.8125rem',
-    background: theme.palette.customColors.menuOption.active,
+    background: theme.palette.success.light,
     marginRight: theme.spacing(2.5),
     borderRadius: '0.1875rem',
     color: theme.palette.primary.dark,
@@ -60,9 +60,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   toolbar: {
     height: '6.125rem',
-    border: `1px solid ${theme.palette.customColors.black(0.05)}`,
+    border: `1px solid ${theme.palette.border.main}`,
     marginBottom: theme.spacing(1.25),
-    backgroundColor: theme.palette.homePageCardBackgroundColor,
+    backgroundColor: theme.palette.cards.background,
     display: 'flex',
     justifyContent: 'space-between',
   },
@@ -93,7 +93,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '4.8125rem',
   },
   firstTC: {
-    borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    borderRight: `1px solid ${theme.palette.border.main}`,
     maxWidth: '17.56rem',
   },
   firstCol: {
@@ -106,10 +106,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     maxWidth: '15.375rem',
   },
   lastTC: {
-    borderLeft: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    borderLeft: `1px solid ${theme.palette.border.main}`,
   },
   styledTC: {
-    borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    borderRight: `1px solid ${theme.palette.border.main}`,
   },
   opt: {
     background: theme.palette.secondary.contrastText,

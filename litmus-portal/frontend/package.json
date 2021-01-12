@@ -32,6 +32,7 @@
     "jsonwebtoken": "^8.5.1",
     "jspdf": "^2.1.1",
     "jspdf-autotable": "^3.5.13",
+    "kubera-ui": "^0.3.4",
     "localforage": "^1.7.3",
     "lodash": "^4.17.20",
     "moment": "^2.27.0",

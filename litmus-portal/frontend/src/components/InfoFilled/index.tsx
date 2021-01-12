@@ -43,7 +43,7 @@ const InfoFilledWrap: React.FC = () => {
       plus: true,
     },
     {
-      color: theme.palette.totalRunsCountColor,
+      color: theme.palette.primary.light,
       value: parseInt(communityData.google.totalRuns, 10),
       statType: 'Total Experiment Runs',
       plus: true,

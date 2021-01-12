@@ -140,7 +140,7 @@ const WorkflowDetails: React.FC = () => {
                   onChange={handleChange}
                   TabIndicatorProps={{
                     style: {
-                      backgroundColor: theme.palette.secondary.dark,
+                      backgroundColor: theme.palette.primary.main,
                     },
                   }}
                   variant="fullWidth"

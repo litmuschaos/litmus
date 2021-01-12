@@ -83,7 +83,7 @@ const useStyles = makeStyles((theme) => ({
   },
   mainText: {
     fontSize: '3.125rem',
-    color: theme.palette.primary.contrastText,
+    color: theme.palette.text.primary,
     [theme.breakpoints.up('xl')]: {
       fontSize: '3.75rem',
     },
@@ -107,7 +107,7 @@ const useStyles = makeStyles((theme) => ({
   },
   descText: {
     fontSize: '1rem',
-    color: theme.palette.primary.contrastText,
+    color: theme.palette.text.primary,
     paddingTop: theme.spacing(2.5),
     paddingBottom: theme.spacing(2.5),
     [theme.breakpoints.up('lg')]: {

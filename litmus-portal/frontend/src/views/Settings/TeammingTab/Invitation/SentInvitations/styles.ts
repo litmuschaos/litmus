@@ -5,10 +5,10 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: '20.1875rem',
   },
   avatarBackground: {
-    backgroundColor: theme.palette.totalRunsCountColor,
+    backgroundColor: theme.palette.primary.light,
     width: '2.56rem',
     height: '2.56rem',
-    color: theme.palette.customColors.white(1),
+    color: theme.palette.common.white,
     marginRight: theme.spacing(2.5),
     [theme.breakpoints.down('sm')]: {
       marginLeft: theme.spacing(2.5),
@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
 
   pending: {
     minWidth: '2.625rem',
-    background: theme.palette.customColors.menuOption.pending,
+    background: theme.palette.warning.light,
     marginLeft: theme.spacing(1.0),
     borderRadius: '0.1875rem',
     color: theme.palette.warning.main,
@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
   },
   menuOpt: {
     '&:hover': {
-      background: theme.palette.customColors.menuOption.active,
+      background: theme.palette.success.light,
     },
   },
   optionBtn: {

@@ -2,12 +2,12 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    backgroundColor: theme.palette.customColors.white(0.6),
+    backgroundColor: theme.palette.cards.background,
     height: '100%',
     width: '90%',
     marginLeft: theme.spacing(3.75),
     border: 1,
-    borderColor: theme.palette.customColors.black(0.05),
+    borderColor: theme.palette.border.main,
     borderRadius: theme.spacing(0.375),
     flexDirection: 'column',
     paddingBottom: theme.spacing(5),
