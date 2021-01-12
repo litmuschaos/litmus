@@ -1,10 +1,10 @@
 import { Divider, IconButton, Typography } from '@material-ui/core';
-import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import EditIcon from '@material-ui/icons/Edit';
 import cronstrue from 'cronstrue';
-import YAML from 'yaml';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import YAML from 'yaml';
 import AdjustedWeights from '../../../components/AdjustedWeights';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline/index';
@@ -23,9 +23,13 @@ import useStyles from './styles';
 
 interface VerifyCommitProps {
   gotoStep: (page: number) => void;
+  isEditable?: boolean;
 }
 
-const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
+const VerifyCommit: React.FC<VerifyCommitProps> = ({
+  gotoStep,
+  isEditable,
+}) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
@@ -114,7 +118,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             </Typography>
           </div>
           <img
-            src="./icons/b-finance.png"
+            src="/icons/b-finance.png"
             alt="bfinance"
             className={classes.bfinIcon}
           />
@@ -139,6 +143,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 onchange={(changedName: string) =>
                   handleNameChange({ changedName })
                 }
+                isEditable={isEditable}
               />
             </div>
           </div>
@@ -172,6 +177,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 onchange={(changedDesc: string) =>
                   handleDescChange({ changedDesc })
                 }
+                isEditable={isEditable}
               />
             </div>
           </div>

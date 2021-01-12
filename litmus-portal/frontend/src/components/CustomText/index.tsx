@@ -7,6 +7,7 @@ interface CustomTextProps {
   value: string;
   id: string;
   onchange: (val: string) => void;
+  isEditable?: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -23,7 +24,12 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 // Editable text field used to edit and save the input in the text box
-const CustomText: React.FC<CustomTextProps> = ({ value, id, onchange }) => {
+const CustomText: React.FC<CustomTextProps> = ({
+  value,
+  id,
+  onchange,
+  isEditable,
+}) => {
   const [isDisabled, setIsDisabled] = React.useState(true);
   const [newValue, setNewValue] = React.useState<string>(value);
 
@@ -58,15 +64,19 @@ const CustomText: React.FC<CustomTextProps> = ({ value, id, onchange }) => {
         }}
         onChange={handleChange}
       />
-      {isDisabled ? (
-        <IconButton size="medium" onClick={handleEdit}>
-          <EditIcon className={classes.editBtn} data-cy="edit" />
-        </IconButton>
-      ) : (
-        <IconButton size="medium" onClick={handleSave}>
-          <SaveIcon className={classes.saveBtn} data-cy="save" />
-        </IconButton>
-      )}
+      {isEditable ? (
+        <>
+          {isDisabled ? (
+            <IconButton size="medium" onClick={handleEdit}>
+              <EditIcon className={classes.editBtn} data-cy="edit" />
+            </IconButton>
+          ) : (
+            <IconButton size="medium" onClick={handleSave}>
+              <SaveIcon className={classes.saveBtn} data-cy="save" />
+            </IconButton>
+          )}
+        </>
+      ) : null}
     </div>
   );
 };

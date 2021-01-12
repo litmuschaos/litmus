@@ -11,11 +11,12 @@ import {
 } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import Loader from '../../../../../components/Loader';
-import { ALL_USERS, GET_USER, SEND_INVITE } from '../../../../../graphql';
+import { SEND_INVITE } from '../../../../../graphql/mutations';
+import { ALL_USERS, GET_USER } from '../../../../../graphql/queries';
 import {
   MemberInviteNew,
   UserInvite,

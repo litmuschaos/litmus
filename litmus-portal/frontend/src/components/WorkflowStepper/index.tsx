@@ -18,10 +18,11 @@ import {
 import { experimentMap, WorkflowData } from '../../models/redux/workflow';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
-import * as WorkflowActions from '../../redux/actions/workflow';
 import * as TemplateSelectionActions from '../../redux/actions/template';
+import * as WorkflowActions from '../../redux/actions/workflow';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
+import { cronWorkflow, workflowOnce } from '../../utils/workflowTemplate';
 import parsed from '../../utils/yamlUtils';
 import ChooseWorkflow from '../../views/CreateWorkflow/ChooseWorkflow/index';
 import ReliablityScore from '../../views/CreateWorkflow/ReliabilityScore';
@@ -34,7 +35,6 @@ import ButtonOutline from '../Button/ButtonOutline';
 import QontoConnector from './quontoConnector';
 import useStyles from './styles';
 import useQontoStepIconStyles from './useQontoStepIconStyles';
-import { cronWorkflow, workflowOnce } from '../../utils/workflowTemplate';
 
 function getSteps(): string[] {
   return [
@@ -98,7 +98,7 @@ function getStepContent(
         <ChooseAWorkflowCluster gotoStep={(page: number) => gotoStep(page)} />
       );
     case 1:
-      return <ChooseWorkflow />;
+      return <ChooseWorkflow isEditable />;
     case 2:
       return <TuneWorkflow />;
     case 3:
@@ -106,7 +106,9 @@ function getStepContent(
     case 4:
       return <ScheduleWorkflow />;
     case 5:
-      return <VerifyCommit gotoStep={(page: number) => gotoStep(page)} />;
+      return (
+        <VerifyCommit isEditable gotoStep={(page: number) => gotoStep(page)} />
+      );
     default:
       return (
         <ChooseAWorkflowCluster gotoStep={(page: number) => gotoStep(page)} />
@@ -390,7 +392,7 @@ const CustomStepper = () => {
             >
               <div>
                 <img
-                  src="icons/finish.svg"
+                  src="/icons/finish.svg"
                   className={classes.mark}
                   alt="mark"
                 />

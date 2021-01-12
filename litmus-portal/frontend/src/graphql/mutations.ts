@@ -59,6 +59,18 @@ export const DELETE_SCHEDULE = gql`
   }
 `;
 
+export const UPDATE_SCHEDULE = gql`
+  mutation updateChaos($ChaosWorkFlowInput: ChaosWorkFlowInput!) {
+    updateChaosWorkflow(input: $ChaosWorkFlowInput) {
+      workflow_id
+      workflow_name
+      workflow_description
+      isCustomWorkflow
+      cronSyntax
+    }
+  }
+`;
+
 export const UPDATE_DETAILS = gql`
   mutation updateUser($user: UpdateUserInput!) {
     updateUser(user: $user)

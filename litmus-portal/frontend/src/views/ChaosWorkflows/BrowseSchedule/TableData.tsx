@@ -8,22 +8,30 @@ import {
   Typography,
 } from '@material-ui/core';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import GetAppIcon from '@material-ui/icons/GetApp';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import cronstrue from 'cronstrue';
 import moment from 'moment';
 import React from 'react';
-import cronstrue from 'cronstrue';
-import YAML from 'yaml';
-import GetAppIcon from '@material-ui/icons/GetApp';
 import { useSelector } from 'react-redux';
+import YAML from 'yaml';
 import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
-import useStyles from './styles';
-import ExperimentPoints from './ExperimentPoints';
+import useActions from '../../../redux/actions';
+import * as WorkflowActions from '../../../redux/actions/workflow';
+import { history } from '../../../redux/configureStore';
 import { RootState } from '../../../redux/reducers';
+import ExperimentPoints from './ExperimentPoints';
+import useStyles from './styles';
 
 interface TableDataProps {
   data: ScheduleWorkflow;
   deleteRow: (wfid: string) => void;
+}
+
+interface Weights {
+  experimentName: string;
+  weight: number;
 }
 
 const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
@@ -40,6 +48,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
     setPopAnchorEl(null);
   };
 
+  const workflow = useActions(WorkflowActions);
   const userData = useSelector((state: RootState) => state.userData);
 
   const handlePopOverClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -76,6 +85,19 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
     if (date) return resDate;
     return 'Date not available';
   };
+
+  const editSchedule = () => {
+    history.push(
+      `/workflows/schedule/${data.project_id}/${data.workflow_name}`
+    );
+  };
+
+  // If regularity is not Once then set recurring schedule state to true
+  if (data.cronSyntax !== '') {
+    workflow.setWorkflowDetails({
+      isRecurring: true,
+    });
+  }
 
   return (
     <>
@@ -171,6 +193,22 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           open={open}
           onClose={handleClose}
         >
+          {data.cronSyntax !== '' ? (
+            <MenuItem value="Edit_Schedule" onClick={() => editSchedule()}>
+              <div className={classes.expDiv}>
+                <img
+                  src="./icons/Edit.svg"
+                  alt="Edit Schedule"
+                  className={classes.btnImg}
+                />
+                <Typography data-cy="editSchedule" className={classes.btnText}>
+                  Edit Schedule
+                </Typography>
+              </div>
+            </MenuItem>
+          ) : (
+            <></>
+          )}
           <MenuItem
             value="Download"
             onClick={() =>

@@ -17,7 +17,7 @@ import {
   REMOVE_INVITATION,
   SEND_INVITE,
 } from '../../../../../graphql/mutations';
-import { GET_USER } from '../../../../../graphql/quries';
+import { GET_USER } from '../../../../../graphql/queries';
 import {
   MemberInvitation,
   MemberInviteNew,

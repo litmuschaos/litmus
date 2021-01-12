@@ -4,6 +4,7 @@ export interface WeightMap {
 }
 export interface CreateWorkFlowInput {
   ChaosWorkFlowInput: {
+    workflow_id?: string;
     workflow_manifest: string;
     cronSyntax: string;
     workflow_name: string;
@@ -13,6 +14,14 @@ export interface CreateWorkFlowInput {
     project_id: string;
     cluster_id: string;
   };
+}
+
+export interface UpdateWorkflowResponse {
+  workflow_id: string;
+  workflow_name: string;
+  workflow_description: string;
+  isCustomWorkflow: string;
+  cronSyntax: string;
 }
 
 export interface CreateWorkflowResponse {

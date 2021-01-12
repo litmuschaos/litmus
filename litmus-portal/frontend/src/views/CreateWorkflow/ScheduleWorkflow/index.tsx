@@ -8,17 +8,17 @@ import {
   Typography,
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import CustomDate from '../../../components/DateTime/CustomDate/index';
 import CustomTime from '../../../components/DateTime/CustomTime/index';
 import { WorkflowData } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
+import * as TemplateSelectionActions from '../../../redux/actions/template';
+import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import SetTime from './SetTime/index';
 import useStyles from './styles';
-import * as WorkflowActions from '../../../redux/actions/workflow';
-import * as TemplateSelectionActions from '../../../redux/actions/template';
 
 interface ScheduleSyntax {
   minute: string | undefined;
@@ -291,7 +291,7 @@ const ScheduleWorkflow: React.FC = () => {
             </div>
           </div>
           <img
-            src="./icons/calendar.svg"
+            src="/icons/calendar.svg"
             alt="calendar"
             className={classes.calIcon}
           />
@@ -308,15 +308,20 @@ const ScheduleWorkflow: React.FC = () => {
               onChange={handleChange}
             >
               {/* options to choose schedule */}
-              <FormControlLabel
-                value="now"
-                control={<Radio />}
-                label={
-                  <Typography className={classes.radioText}>
-                    {t('createWorkflow.scheduleWorkflow.radio.now')}
-                  </Typography>
-                }
-              />
+              {!workflowData.isRecurring ? (
+                <FormControlLabel
+                  value="now"
+                  control={<Radio />}
+                  label={
+                    <Typography className={classes.radioText}>
+                      {t('createWorkflow.scheduleWorkflow.radio.now')}
+                    </Typography>
+                  }
+                />
+              ) : (
+                <></>
+              )}
+
               <FormControlLabel
                 value="specificTime"
                 disabled

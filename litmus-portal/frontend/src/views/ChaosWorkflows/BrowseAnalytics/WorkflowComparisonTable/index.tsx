@@ -25,7 +25,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import Loader from '../../../../components/Loader';
-import { WORKFLOW_LIST_DETAILS } from '../../../../graphql/quries';
+import { WORKFLOW_LIST_DETAILS } from '../../../../graphql/queries';
 import {
   ExecutionData,
   WeightageMap,
