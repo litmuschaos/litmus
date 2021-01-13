@@ -1,18 +1,18 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    borderColor: theme.palette.text.disabled,
-    backgroundColor: theme.palette.background.paper,
-    borderRadius: '0.1875rem',
-    height: '100%',
-    width: '80%',
-    margin: '0 auto',
-    flexDirection: 'column',
-    padding: theme.spacing(3.75, 6, 3.75, 3.75),
-  },
   horizontalLine: {
     background: theme.palette.border.main,
+  },
+  root: {
+    backgroundColor: theme.palette.background.paper,
+    borderColor: theme.palette.text.disabled,
+    borderRadius: '0.1875rem',
+    flexDirection: 'column',
+    height: '100%',
+    margin: '0 auto',
+    padding: theme.spacing(3.75, 6, 3.75, 3.75),
+    width: '80%',
   },
   suHeader: {
     display: 'flex',
@@ -126,8 +126,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     padding: theme.spacing(1.5),
   },
   errorText: {
-    fontSize: '1rem',
     color: theme.palette.error.main,
+    fontSize: '1rem',
     marginLeft: theme.spacing(5),
   },
   yamlFlex: {
@@ -136,14 +136,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: theme.spacing(7),
   },
   yamlButton: {
-    width: theme.spacing(1.5),
-    marginTop: theme.spacing(1),
     marginLeft: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    width: theme.spacing(1.5),
   },
   progress: {
     display: 'flex',
-    flexGrow: 1,
     flexDirection: 'row',
+    flexGrow: 1,
     marginLeft: theme.spacing(5),
   },
   buttomPad: {
