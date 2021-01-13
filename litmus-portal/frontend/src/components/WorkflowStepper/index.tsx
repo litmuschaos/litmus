@@ -397,14 +397,15 @@ const CustomStepper = () => {
                   alt="mark"
                 />
                 <div className={classes.heading}>
-                  A new chaos workflow,
+                  {t('workflowStepper.aNewChaosWorkflow')}
                   <br />
-                  <strong>was successfully created!</strong>
+                  <span className={classes.successful}>{name}</span>,
+                  <br />
+                  <strong>{t('workflowStepper.successful')}</strong>
                 </div>
                 <div className={classes.headWorkflow}>
-                  Congratulations on creating your first workflow! Now
-                  information about <br /> it will be displayed on the main
-                  screen of the application.
+                  {t('workflowStepper.congratulationsSub1')} <br />{' '}
+                  {t('workflowStepper.congratulationsSub2')}
                 </div>
                 <div className={classes.button}>
                   <ButtonFilled
@@ -416,7 +417,7 @@ const CustomStepper = () => {
                       history.push('/workflows');
                     }}
                   >
-                    <div>Back to workflow</div>
+                    <div>{t('workflowStepper.workflowBtn')}</div>
                   </ButtonFilled>
                 </div>
               </div>

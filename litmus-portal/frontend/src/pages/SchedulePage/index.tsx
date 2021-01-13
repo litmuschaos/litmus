@@ -405,15 +405,14 @@ const EditScheduledWorkflow = () => {
           align="center"
           style={{ marginTop: '10rem', marginBottom: '3rem' }}
         >
-          Missing sufficient permissions :(
+          {t('schedule.missingPerm')}
         </Typography>
         <Typography variant="h6" align="center">
-          Looks like you do not have the required permission to create a new
-          workflow on this project.
+          {t('schedule.requiredPerm')}
         </Typography>
         <br />
         <Typography variant="body1" align="center">
-          Contact portal administrator to upgrade your permission.
+          {t('schedule.contact')}
         </Typography>
 
         {/* Back Button */}
@@ -425,7 +424,7 @@ const EditScheduledWorkflow = () => {
           }}
         >
           <ButtonFilled isPrimary handleClick={() => history.goBack()}>
-            Go Back
+            {t('schedule.backBtn')}
           </ButtonFilled>
         </div>
       </>
@@ -478,14 +477,14 @@ const EditScheduledWorkflow = () => {
                       alt="mark"
                     />
                     <div className={classes.heading}>
-                      Chaos workflow,
+                      {t('schedule.chaosWorkflow')}
                       <br />
-                      <strong>was successfully updated!</strong>
+                      <strong>{t('schedule.successful')}</strong>
                     </div>
                     <div className={classes.headWorkflow}>
-                      Chaos workflow updated successfully! Now information about{' '}
-                      <br /> it will be displayed on the main screen of the
-                      application.
+                      {t('schedule.congratulationsSub1')}
+                      <br />
+                      {t('schedule.congratulationsSub2')}
                     </div>
                     <div className={classes.button}>
                       <ButtonFilled
@@ -497,7 +496,7 @@ const EditScheduledWorkflow = () => {
                           history.push('/workflows');
                         }}
                       >
-                        <div>Back to workflow</div>
+                        <div>{t('workflowStepper.workflowBtn')}</div>
                       </ButtonFilled>
                     </div>
                   </div>
@@ -509,14 +508,18 @@ const EditScheduledWorkflow = () => {
               {/* Control Buttons */}
 
               <div className={classes.buttonGroup}>
-                {activeStep !== 1 ? (
+                {activeStep === steps.length - 2 ? (
+                  <ButtonOutline isDisabled handleClick={handleBack}>
+                    <Typography>Back</Typography>
+                  </ButtonOutline>
+                ) : activeStep !== 1 ? (
                   <ButtonOutline isDisabled={false} handleClick={handleBack}>
                     <Typography>Back</Typography>
                   </ButtonOutline>
                 ) : null}
                 {activeStep === steps.length - 1 ? (
                   <ButtonFilled handleClick={handleOpen} isPrimary>
-                    <div>Finish</div>
+                    <div>{t('workflowStepper.finish')}</div>
                   </ButtonFilled>
                 ) : (
                   <ButtonFilled
@@ -525,7 +528,7 @@ const EditScheduledWorkflow = () => {
                     isDisabled={isDisable}
                   >
                     <div>
-                      Next
+                      {t('workflowStepper.next')}
                       <img
                         alt="next"
                         src="/icons/nextArrow.svg"

@@ -20,6 +20,12 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.primary.dark,
     },
   },
+  buttonWarning: {
+    backgroundColor: theme.palette.error.dark,
+    '&:hover': {
+      backgroundColor: theme.palette.error.dark,
+    },
+  },
 }));
 
 export default useStyles;

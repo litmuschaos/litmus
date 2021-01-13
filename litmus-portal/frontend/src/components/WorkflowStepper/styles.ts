@@ -63,6 +63,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     textAlign: 'center',
     marginTop: theme.spacing(6),
   },
+  successful: {
+    fontSize: '2.2rem',
+    fontWeight: 'bold',
+  },
 }));
 
 export default useStyles;

@@ -5,7 +5,7 @@ const useStyles = makeStyles((theme) => ({
 
   customCard: {
     background: theme.palette.customColors.black(0.05),
-    height: '15.625rem',
+    height: '16rem',
     width: '11.875rem',
     borderRadius: 3,
     fontSize: '0.875rem',
@@ -23,12 +23,20 @@ const useStyles = makeStyles((theme) => ({
     width: '70%',
   },
 
+  // Tooltip
+  tooltip: {
+    '.MuiTooltip-tooltip': {
+      maxWidth: '18.75rem',
+    },
+  },
+
   // CardContent
 
   card: {
     width: theme.spacing(23),
     background: theme.palette.background.paper,
     borderRadius: 3,
+    height: '16rem',
     overflow: 'hidden',
     fontSize: 14,
     margin: theme.spacing(1),

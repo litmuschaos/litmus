@@ -59,8 +59,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   // Experiment Details
 
   experimentWrapperDiv: {
-    display: 'inline-block',
-    margin: '1.6rem 0',
+    display: 'grid',
+    margin: '2rem',
+    gridTemplateColumns: '1fr 1fr 1fr 1fr',
+    gridGap: '1.5rem',
   },
   tests: {
     width: '17rem',

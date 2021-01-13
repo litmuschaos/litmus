@@ -143,7 +143,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
                 onchange={(changedName: string) =>
                   handleNameChange({ changedName })
                 }
-                isEditable={isEditable}
+                isEditable={workflowData.isRecurring ? false : isEditable}
               />
             </div>
           </div>
@@ -239,7 +239,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
                 </div>
                 {/* <div className={classes.editButton2}> */}
                 <ButtonOutline
-                  isDisabled={false}
+                  isDisabled={workflowData.isRecurring}
                   handleClick={() => gotoStep(3)}
                   data-cy="testRunButton"
                 >

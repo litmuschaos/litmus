@@ -14,13 +14,18 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import cronstrue from 'cronstrue';
 import moment from 'moment';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
+import ButtonFilled from '../../../components/Button/ButtonFilled';
+import ButtonOutline from '../../../components/Button/ButtonOutline';
+import Unimodal from '../../../containers/layouts/Unimodal';
 import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { history } from '../../../redux/configureStore';
 import { RootState } from '../../../redux/reducers';
+import { ReactComponent as CrossMarkIcon } from '../../../svg/crossmark.svg';
 import ExperimentPoints from './ExperimentPoints';
 import useStyles from './styles';
 
@@ -36,11 +41,14 @@ interface Weights {
 
 const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
   // States for PopOver to display Experiment Weights
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [popAnchorEl, setPopAnchorEl] = React.useState<null | HTMLElement>(
     null
   );
+  const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
+
   const open = Boolean(anchorEl);
   const isOpen = Boolean(popAnchorEl);
   const id = isOpen ? 'simple-popover' : undefined;
@@ -226,10 +234,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
             </div>
           </MenuItem>
           {userData.userRole !== 'Viewer' ? (
-            <MenuItem
-              value="Analysis"
-              onClick={() => deleteRow(data.workflow_id)}
-            >
+            <MenuItem value="Analysis" onClick={() => setIsModalOpen(true)}>
               <div className={classes.expDiv}>
                 <img
                   src="/icons/deleteSchedule.svg"
@@ -247,6 +252,39 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           ) : null}
         </Menu>
       </TableCell>
+      {isModalOpen ? (
+        <Unimodal open={isModalOpen} handleClose={handleClose} hasCloseBtn>
+          <div className={classes.modalDiv}>
+            <CrossMarkIcon />
+            <Typography className={classes.modalHeader}>
+              {t('createWorkflow.scheduleWorkflow.modalHeader')}
+            </Typography>
+            <Typography className={classes.modalConfirm}>
+              {t('createWorkflow.scheduleWorkflow.modalSubheader')}
+            </Typography>
+            <div className={classes.modalBtns}>
+              <ButtonOutline
+                isDisabled={false}
+                handleClick={() => setIsModalOpen(false)}
+              >
+                {t('createWorkflow.scheduleWorkflow.cancelBtn')}
+              </ButtonOutline>
+              <ButtonFilled
+                isPrimary={false}
+                isWarning
+                handleClick={() => {
+                  deleteRow(data.workflow_id);
+                  setIsModalOpen(false);
+                }}
+              >
+                {t('createWorkflow.scheduleWorkflow.deleteBtn')}
+              </ButtonFilled>
+            </div>
+          </div>
+        </Unimodal>
+      ) : (
+        <></>
+      )}
     </>
   );
 };

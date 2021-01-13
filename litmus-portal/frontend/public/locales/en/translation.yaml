@@ -52,6 +52,13 @@ customWorkflowCard:
 
 workflowStepper:
   continueError: To continue, please check the error in code.
+  aNewChaosWorkflow: A new chaos workflow,
+  successful: is successfully created!
+  congratulationsSub1: Congratulations on creating your workflow! Now information about
+  congratulationsSub2: it will be displayed on the workflow schedules.
+  workflowBtn: Go to Workflow
+  finish: Finish
+  next: Next
 
 ######################################
 ############    Pages    #############
@@ -103,6 +110,15 @@ schedule:
   at: at
   At: At
   scheduleOn: 'On'
+  missingPerm: Missing sufficient permissions :(
+  requiredPerm: Looks like you do not have the required permission to create a new workflow on this project.
+  contact: Contact portal administrator to upgrade your permission.
+  chaosWorkflow: Chaos workflow,
+  successful: was successfully updated!
+  congratulationsSub1: Chaos workflow updated successfully! Now information about
+  congratulationsSub2: it will be displayed on the workflow schedules.
+  workflowBtn: Go to Workflow
+  backBtn: Go Back
 
 workflowUnderground:
   heading: 'Click on test to see detailed log of your workflow'
@@ -415,6 +431,10 @@ createWorkflow:
       future: Select date and time to start workflow in future
       recurr: Recurring Schedule
       rightRecurr: Choose the right recurring time to start your workflow
+    modalHeader: Are you sure you want to delete this Schedule
+    modalSubheader: This action is irreversible
+    cancelBtn: Cancel
+    deleteBtn: Delete
   toggleComponent:
     pass: Pass
     fail: Fail
