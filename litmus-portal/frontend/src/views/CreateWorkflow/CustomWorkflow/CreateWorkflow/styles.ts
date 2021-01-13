@@ -44,6 +44,9 @@ const useStyles = makeStyles((theme) => ({
     height: '2.5rem',
     fontSize: '0.875rem',
     padding: theme.spacing(0.5),
+    '& .MuiSelect-icon': {
+      color: theme.palette.text.secondary,
+    },
   },
   nextArrow: {
     marginLeft: theme.spacing(2.5),

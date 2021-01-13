@@ -383,6 +383,7 @@ createWorkflow:
     saved: Name saved as
     modalHeading: Create your
     modalHeadingStrong: workflow name
+    validate: Workflow name can only contain - and alphanumeric characters
     label:
       workflowName: Workflow name
       desc: Description

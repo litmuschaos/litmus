@@ -8,6 +8,8 @@ interface CustomTextProps {
   id: string;
   onchange: (val: string) => void;
   isEditable?: boolean;
+  validateText?: boolean;
+  helperText?: string;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -21,7 +23,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '40.75rem',
     paddingTop: theme.spacing(0.375),
   },
+  helperMessage: {
+    width: '40.75rem',
+    color: 'red',
+    paddingTop: theme.spacing(0.375),
+  },
 }));
+
+// If validateText => True => There is a validation error
+// If validateText => False => There is no validation error
 
 // Editable text field used to edit and save the input in the text box
 const CustomText: React.FC<CustomTextProps> = ({
@@ -29,6 +39,8 @@ const CustomText: React.FC<CustomTextProps> = ({
   id,
   onchange,
   isEditable,
+  validateText,
+  helperText,
 }) => {
   const [isDisabled, setIsDisabled] = React.useState(true);
   const [newValue, setNewValue] = React.useState<string>(value);
@@ -46,38 +58,42 @@ const CustomText: React.FC<CustomTextProps> = ({
 
   const classes = useStyles();
   return (
-    <div>
-      <TextField
-        data-cy="text"
-        className={classes.inputText}
-        disabled={isDisabled}
-        id={id}
-        defaultValue={newValue}
-        multiline
-        InputProps={{
-          disableUnderline: true,
-          style: {
-            color: 'rgba(0,0,0)',
-            lineHeight: '1rem',
-            fontSize: '1rem',
-          },
-        }}
-        onChange={handleChange}
-      />
-      {isEditable ? (
-        <>
-          {isDisabled ? (
-            <IconButton size="medium" onClick={handleEdit}>
-              <EditIcon className={classes.editBtn} data-cy="edit" />
-            </IconButton>
-          ) : (
-            <IconButton size="medium" onClick={handleSave}>
-              <SaveIcon className={classes.saveBtn} data-cy="save" />
-            </IconButton>
-          )}
-        </>
-      ) : null}
-    </div>
+    <>
+      <div>
+        <TextField
+          data-cy="text"
+          className={classes.inputText}
+          disabled={isDisabled}
+          id={id}
+          defaultValue={newValue}
+          multiline
+          InputProps={{
+            disableUnderline: true,
+            style: {
+              color: validateText ? 'red' : 'white',
+              lineHeight: '1rem',
+              fontSize: '1rem',
+            },
+          }}
+          onChange={handleChange}
+        />
+
+        {isEditable ? (
+          <>
+            {isDisabled ? (
+              <IconButton size="medium" onClick={handleEdit}>
+                <EditIcon className={classes.editBtn} data-cy="edit" />
+              </IconButton>
+            ) : (
+              <IconButton size="medium" onClick={handleSave}>
+                <SaveIcon className={classes.saveBtn} data-cy="save" />
+              </IconButton>
+            )}
+          </>
+        ) : null}
+      </div>
+      <div className={classes.helperMessage}>{helperText}</div>
+    </>
   );
 };
 export default CustomText;

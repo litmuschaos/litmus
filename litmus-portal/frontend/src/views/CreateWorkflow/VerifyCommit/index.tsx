@@ -19,6 +19,7 @@ import { experimentMap, WorkflowData } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
+import { validateWorkflowName } from '../../../utils/validate';
 import useStyles from './styles';
 
 interface VerifyCommitProps {
@@ -97,7 +98,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
       annotations: editorValidations.annotations,
     };
     if (stateObject.annotations.length > 0) {
-      setYamlStatus('Error in CRHeloD Yaml.');
+      setYamlStatus('Error in CRD Yaml.');
     } else {
       setYamlStatus('Your code is fine. You can move on !');
     }
@@ -144,6 +145,12 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
                   handleNameChange({ changedName })
                 }
                 isEditable={workflowData.isRecurring ? false : isEditable}
+                validateText={validateWorkflowName(name)}
+                helperText={
+                  validateWorkflowName(name)
+                    ? t('createWorkflow.chooseWorkflow.validate')
+                    : ''
+                }
               />
             </div>
           </div>

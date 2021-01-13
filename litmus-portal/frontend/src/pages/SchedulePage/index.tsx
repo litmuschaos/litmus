@@ -32,6 +32,7 @@ import * as TemplateSelectionActions from '../../redux/actions/template';
 import * as WorkflowActions from '../../redux/actions/workflow';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
+import { validateWorkflowName } from '../../utils/validate';
 import parsed from '../../utils/yamlUtils';
 import ChooseWorkflow from '../../views/CreateWorkflow/ChooseWorkflow/index';
 import ReliablityScore from '../../views/CreateWorkflow/ReliabilityScore';
@@ -518,7 +519,11 @@ const EditScheduledWorkflow = () => {
                   </ButtonOutline>
                 ) : null}
                 {activeStep === steps.length - 1 ? (
-                  <ButtonFilled handleClick={handleOpen} isPrimary>
+                  <ButtonFilled
+                    isDisabled={validateWorkflowName(name)}
+                    handleClick={handleOpen}
+                    isPrimary
+                  >
                     <div>{t('workflowStepper.finish')}</div>
                   </ButtonFilled>
                 ) : (

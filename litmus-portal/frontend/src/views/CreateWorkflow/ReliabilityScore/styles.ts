@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(15),
     marginBottom: theme.spacing(10),
     fontSize: '1.6rem',
-    color: 'red',
+    color: theme.palette.error.main,
   },
   description: {
     width: '50rem',

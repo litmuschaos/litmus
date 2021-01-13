@@ -1,11 +1,11 @@
 import { Typography } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
+import { InputField } from 'kubera-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
-import InputField from '../../../components/InputField';
 import PredifinedWorkflows from '../../../components/PredifinedWorkflows';
 import workflowsList from '../../../components/PredifinedWorkflows/data';
 import Unimodal from '../../../containers/layouts/Unimodal';
@@ -15,7 +15,7 @@ import * as TemplateSelectionActions from '../../../redux/actions/template';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import { validateWorkflowName } from '../../../utils/validate';
-import useStyles, { CssTextField } from './styles';
+import useStyles from './styles';
 
 // import { getWkfRunCount } from "../../utils";
 
@@ -220,42 +220,36 @@ const ChooseWorkflow: React.FC<ChooseWorkflowProps> = ({ isEditable }) => {
               <InputField
                 // id="filled-workflowname-input"
                 label={t('createWorkflow.chooseWorkflow.label.workflowName')}
-                disabled={!isEditable}
-                styles={{
-                  width: '100%',
-                }}
                 data-cy="inputWorkflow"
+                fullWidth
                 helperText={
                   validateWorkflowName(workflowDetails.workflowName)
-                    ? 'Should not contain spaces or upper case letters'
+                    ? t('createWorkflow.chooseWorkflow.validate')
                     : ''
                 }
-                success={isSuccess.current}
-                validationError={validateWorkflowName(
-                  workflowDetails.workflowName
-                )}
-                // className={classes.textfieldworkflowname}
-                handleChange={WorkflowNameChangeHandler}
+                variant={
+                  validateWorkflowName(workflowDetails.workflowName)
+                    ? 'error'
+                    : 'primary'
+                }
+                disabled={!isEditable}
+                onChange={WorkflowNameChangeHandler}
                 value={workflowDetails.workflowName}
               />
-              <div className={classes.inputAreaDescription}>
-                <CssTextField
-                  id="filled-workflowdescription-input"
-                  label={t('createWorkflow.chooseWorkflow.label.desc')}
-                  InputProps={{
-                    disableUnderline: true,
-                    classes: {
-                      input: classes.resize,
-                    },
-                  }}
-                  data-cy="inputWorkflowDescription"
-                  className={classes.textfieldworkflowdescription}
-                  value={workflowDetails.workflowDesc}
-                  onChange={WorkflowDescriptionChangeHandler}
-                  multiline
-                  rows={12}
-                />
-              </div>
+              <div aria-details="spacer" style={{ margin: '1rem 0' }} />
+              <InputField
+                id="filled-workflowdescription-input"
+                label={t('createWorkflow.chooseWorkflow.label.desc')}
+                fullWidth
+                InputProps={{
+                  disableUnderline: true,
+                }}
+                data-cy="inputWorkflowDescription"
+                value={workflowDetails.workflowDesc}
+                onChange={WorkflowDescriptionChangeHandler}
+                multiline
+                rows={12}
+              />
             </div>
             <div className={classes.buttons}>
               <div className={classes.cancelButton}>
