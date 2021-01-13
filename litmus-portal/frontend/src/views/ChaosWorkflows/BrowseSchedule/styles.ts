@@ -181,6 +181,34 @@ const useStyles = makeStyles((theme) => ({
         : theme.palette.error.dark,
     fontWeight: 500,
   },
+
+  // Modal
+  modalDiv: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '25rem',
+    marginTop: '10%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalHeader: {
+    fontSize: '2.125rem',
+    fontWeight: 400,
+    marginBottom: theme.spacing(2.5),
+    marginTop: theme.spacing(2.5),
+    width: '31.25rem',
+  },
+  modalConfirm: {
+    fontSize: '1.25rem',
+    marginBottom: theme.spacing(5),
+    width: '31.25rem',
+  },
+  modalBtns: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '16rem',
+  },
 }));
 
 export default useStyles;

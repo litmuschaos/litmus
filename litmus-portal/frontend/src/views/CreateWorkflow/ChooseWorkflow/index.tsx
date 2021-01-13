@@ -1,14 +1,15 @@
 import { Typography } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import InputField from '../../../components/InputField';
 import PredifinedWorkflows from '../../../components/PredifinedWorkflows';
 import workflowsList from '../../../components/PredifinedWorkflows/data';
 import Unimodal from '../../../containers/layouts/Unimodal';
+import { WorkflowData } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as TemplateSelectionActions from '../../../redux/actions/template';
 import * as WorkflowActions from '../../../redux/actions/workflow';
@@ -18,7 +19,11 @@ import useStyles, { CssTextField } from './styles';
 
 // import { getWkfRunCount } from "../../utils";
 
-const ChooseWorkflow: React.FC = () => {
+interface ChooseWorkflowProps {
+  isEditable?: boolean;
+}
+
+const ChooseWorkflow: React.FC<ChooseWorkflowProps> = ({ isEditable }) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
@@ -29,6 +34,9 @@ const ChooseWorkflow: React.FC = () => {
   );
   const selectedTemplateID = useSelector(
     (state: RootState) => state.selectTemplate.selectedTemplateID
+  );
+  const workflowData: WorkflowData = useSelector(
+    (state: RootState) => state.workflowData
   );
 
   const [open, setOpen] = React.useState(false);
@@ -92,17 +100,24 @@ const ChooseWorkflow: React.FC = () => {
   const selectWorkflow = (index: number) => {
     template.selectTemplate({ selectedTemplateID: index, isDisable: false });
 
-    const timeStampBasedWorkflowName: string = `argowf-chaos-${
-      workflowsList[index].title
-    }-${Math.round(new Date().getTime() / 1000)}`;
+    const timeStampBasedWorkflowName: string = isEditable
+      ? `argowf-chaos-${workflowsList[index].title}-${Math.round(
+          new Date().getTime() / 1000
+        )}`
+      : workflowData.name;
 
     workflow.setWorkflowDetails({
       name: timeStampBasedWorkflowName,
       link: workflowsList[index].chaosWkfCRDLink,
       id: workflowsList[index].workflowID,
       yaml: 'none',
-      description: workflowsList[index].description,
-      isCustomWorkflow: workflowsList[index].isCustom,
+      description: isEditable
+        ? workflowsList[index].description
+        : workflowData.description,
+      isCustomWorkflow: isEditable
+        ? workflowsList[index].isCustom
+        : workflowData.isCustomWorkflow,
+      isRecurring: false,
     });
 
     setWorkflowData({
@@ -119,16 +134,22 @@ const ChooseWorkflow: React.FC = () => {
   useEffect(() => {
     const index = selectedTemplateID;
 
-    const timeStampBasedWorkflowName: string = `argowf-chaos-${
-      workflowsList[index].title
-    }-${Math.round(new Date().getTime() / 1000)}`;
+    const timeStampBasedWorkflowName: string = isEditable
+      ? `argowf-chaos-${workflowsList[index].title}-${Math.round(
+          new Date().getTime() / 1000
+        )}`
+      : workflowData.name;
+
     workflow.setWorkflowDetails({
       name: timeStampBasedWorkflowName,
       link: workflowsList[index].chaosWkfCRDLink,
       id: workflowsList[index].workflowID,
       yaml: 'none',
       description: workflowsList[index].description,
-      isCustomWorkflow: workflowsList[index].isCustom,
+      isCustomWorkflow: isEditable
+        ? workflowsList[index].isCustom
+        : workflowData.isCustomWorkflow,
+      isRecurring: false,
     });
 
     setWorkflowData({
@@ -199,6 +220,7 @@ const ChooseWorkflow: React.FC = () => {
               <InputField
                 // id="filled-workflowname-input"
                 label={t('createWorkflow.chooseWorkflow.label.workflowName')}
+                disabled={!isEditable}
                 styles={{
                   width: '100%',
                 }}
