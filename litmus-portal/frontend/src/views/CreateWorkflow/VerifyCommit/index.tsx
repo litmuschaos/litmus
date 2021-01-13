@@ -1,6 +1,7 @@
 import { Divider, IconButton, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import cronstrue from 'cronstrue';
+import { EditableText } from 'kubera-ui';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -8,7 +9,6 @@ import YAML from 'yaml';
 import AdjustedWeights from '../../../components/AdjustedWeights';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline/index';
-import CustomText from '../../../components/CustomText';
 import YamlEditor from '../../../components/YamlEditor/Editor';
 import {
   AceValidations,
@@ -19,7 +19,6 @@ import { experimentMap, WorkflowData } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
-import { validateWorkflowName } from '../../../utils/validate';
 import useStyles from './styles';
 
 interface VerifyCommitProps {
@@ -139,19 +138,14 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
               </Typography>
             </div>
             <div className={classes.col2}>
-              <CustomText
+              <EditableText
                 value={name}
                 id="name"
-                onchange={(changedName: string) =>
-                  handleNameChange({ changedName })
+                fullWidth
+                onChange={(e) =>
+                  handleNameChange({ changedName: e.target.value })
                 }
-                isEditable={workflowData.isRecurring ? false : isEditable}
-                validateText={validateWorkflowName(name)}
-                helperText={
-                  validateWorkflowName(name)
-                    ? t('createWorkflow.chooseWorkflow.validate')
-                    : ''
-                }
+                disabled={workflowData.isRecurring}
               />
             </div>
           </div>
@@ -173,19 +167,15 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
                 {t('createWorkflow.verifyCommit.summary.desc')}:
               </Typography>
             </div>
-            <div
-              className={classes.col2}
-              style={{
-                width: 724,
-              }}
-            >
-              <CustomText
+            <div className={classes.col2}>
+              <EditableText
                 value={description}
                 id="desc"
-                onchange={(changedDesc: string) =>
-                  handleDescChange({ changedDesc })
+                fullWidth
+                onChange={(e) =>
+                  handleDescChange({ changedDesc: e.target.value })
                 }
-                isEditable={isEditable}
+                disabled={!isEditable}
               />
             </div>
           </div>
