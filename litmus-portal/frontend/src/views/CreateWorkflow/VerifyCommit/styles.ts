@@ -2,13 +2,17 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    borderColor: theme.palette.text.disabled,
+    backgroundColor: theme.palette.background.paper,
+    borderRadius: '0.1875rem',
+    height: '100%',
     width: '80%',
     margin: '0 auto',
-    border: 1,
-    borderColor: theme.palette.text.disabled,
-    borderRadius: 3,
-    padding: theme.spacing(2),
+    flexDirection: 'column',
+    padding: theme.spacing(3.75, 6, 3.75, 3.75),
+  },
+  horizontalLine: {
+    background: theme.palette.border.main,
   },
   suHeader: {
     display: 'flex',
@@ -16,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'space-even',
   },
   headerText: {
-    marginTop: theme.spacing(1.25),
+    marginTop: theme.spacing(2.75),
     fontSize: '1.5625rem',
   },
   description: {
@@ -25,13 +29,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '1.0625rem',
   },
   suBody: {
-    width: '40%',
+    width: '65%',
   },
   bfinIcon: {
     width: '7rem',
     height: '6.31rem',
     marginTop: theme.spacing(5),
-    marginLeft: theme.spacing(25),
+    marginLeft: theme.spacing(12),
   },
   outerSum: {
     marginTop: theme.spacing(2),
@@ -44,27 +48,37 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'row',
     width: '100%',
     justifyContent: 'flex-start',
-    alignItems: 'stretch',
+    alignItems: 'baseline',
     marginTop: theme.spacing(3),
   },
   innerSumDiv: {
-    width: '7.625rem',
+    width: '20%',
+    verticalAlign: 'middle',
+    display: 'table-cell',
+    alignContent: 'center',
+    height: '100%',
   },
   sumText: {
+    width: '100%',
     marginTop: theme.spacing(4.5),
     marginBottom: theme.spacing(3),
     fontSize: '1.5rem',
   },
   col1: {
     fontSize: '1rem',
-    color: theme.palette.secondary.dark,
+    color: theme.palette.highlight,
     paddingTop: theme.spacing(0.5),
+    verticalAlign: 'middle',
+    alignContent: 'center',
   },
   schedule: {
     fontSize: '1rem',
+    paddingLeft: theme.spacing(2),
     paddingTop: theme.spacing(0.75),
   },
   col2: {
+    width: '75%',
+    color: theme.palette.text.secondary,
     marginLeft: theme.spacing(5),
   },
   schCol2: {
@@ -74,22 +88,25 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   clusterName: {
     fontSize: '1rem',
-    marginLeft: theme.spacing(5),
+    marginLeft: theme.spacing(7),
     paddingTop: theme.spacing(0.5),
   },
   editButton1: {
     marginLeft: theme.spacing(1),
   },
   editbtn: {
-    color: theme.palette.common.black,
+    color: theme.palette.text.secondary,
   },
   link: {
     fontSize: '0.875rem',
     color: theme.palette.secondary.dark,
   },
   adjWeights: {
+    width: '80%',
+    marginLeft: theme.spacing(2),
     display: 'flex',
     flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   config: {
     height: '3rem',
@@ -110,25 +127,27 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   errorText: {
     fontSize: '1rem',
-    color: 'red',
+    color: theme.palette.error.main,
     marginLeft: theme.spacing(5),
   },
   yamlFlex: {
     display: 'flex',
     flexDirection: 'column',
-    marginLeft: theme.spacing(5),
+    marginLeft: theme.spacing(7),
   },
   yamlButton: {
     width: theme.spacing(1.5),
     marginTop: theme.spacing(1),
-    marginLeft: theme.spacing(-2),
+    marginLeft: theme.spacing(1),
   },
   progress: {
     display: 'flex',
+    flexGrow: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     marginLeft: theme.spacing(5),
-    width: theme.spacing(79.5),
+  },
+  buttomPad: {
+    paddingBottom: theme.spacing(3.75),
   },
 }));
 export default useStyles;
