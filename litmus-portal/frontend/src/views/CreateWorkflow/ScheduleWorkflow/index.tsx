@@ -339,7 +339,14 @@ const ScheduleWorkflow: React.FC = () => {
               {!workflowData.isRecurring ? (
                 <FormControlLabel
                   value="now"
-                  control={<Radio />}
+                  control={
+                    <Radio
+                      classes={{
+                        root: classes.radio,
+                        checked: classes.checked,
+                      }}
+                    />
+                  }
                   label={
                     <Typography className={classes.radioText}>
                       {t('createWorkflow.scheduleWorkflow.radio.now')}
@@ -351,7 +358,14 @@ const ScheduleWorkflow: React.FC = () => {
               ) : !workflowData.isDisabled ? (
                 <FormControlLabel
                   value="disable"
-                  control={<Radio />}
+                  control={
+                    <Radio
+                      classes={{
+                        root: classes.radio,
+                        checked: classes.checked,
+                      }}
+                    />
+                  }
                   label={
                     <Typography className={classes.radioText}>
                       Disable Schedule
@@ -364,7 +378,7 @@ const ScheduleWorkflow: React.FC = () => {
               {/* <FormControlLabel
                 value="specificTime"
                 disabled
-                control={<Radio />}
+                control={<Radio classes={{ root: classes.radio, checked: classes.checked }}/>}
                 label={
                   <Typography className={classes.radioText}>
                     {t('createWorkflow.scheduleWorkflow.radio.specific')}
@@ -399,7 +413,11 @@ const ScheduleWorkflow: React.FC = () => {
               )}
               <FormControlLabel
                 value="recurringSchedule"
-                control={<Radio />}
+                control={
+                  <Radio
+                    classes={{ root: classes.radio, checked: classes.checked }}
+                  />
+                }
                 label={
                   <Typography className={classes.radioText}>
                     {t('createWorkflow.scheduleWorkflow.radio.recurr')}
@@ -425,7 +443,14 @@ const ScheduleWorkflow: React.FC = () => {
                       >
                         <FormControlLabel
                           value="everyHr"
-                          control={<Radio />}
+                          control={
+                            <Radio
+                              classes={{
+                                root: classes.radio,
+                                checked: classes.checked,
+                              }}
+                            />
+                          }
                           label={t('createWorkflow.scheduleWorkflow.every.hr')}
                         />
                         {valueDef === 'everyHr' ? (
@@ -470,7 +495,14 @@ const ScheduleWorkflow: React.FC = () => {
                         )}
                         <FormControlLabel
                           value="everyDay"
-                          control={<Radio />}
+                          control={
+                            <Radio
+                              classes={{
+                                root: classes.radio,
+                                checked: classes.checked,
+                              }}
+                            />
+                          }
                           label={t('createWorkflow.scheduleWorkflow.every.day')}
                         />
                         {valueDef === 'everyDay' ? (
@@ -506,7 +538,14 @@ const ScheduleWorkflow: React.FC = () => {
                         )}
                         <FormControlLabel
                           value="everyWeek"
-                          control={<Radio />}
+                          control={
+                            <Radio
+                              classes={{
+                                root: classes.radio,
+                                checked: classes.checked,
+                              }}
+                            />
+                          }
                           label={t(
                             'createWorkflow.scheduleWorkflow.every.week'
                           )}
@@ -581,7 +620,14 @@ const ScheduleWorkflow: React.FC = () => {
                         )}
                         <FormControlLabel
                           value="everyMonth"
-                          control={<Radio />}
+                          control={
+                            <Radio
+                              classes={{
+                                root: classes.radio,
+                                checked: classes.checked,
+                              }}
+                            />
+                          }
                           label={t(
                             'createWorkflow.scheduleWorkflow.every.month'
                           )}

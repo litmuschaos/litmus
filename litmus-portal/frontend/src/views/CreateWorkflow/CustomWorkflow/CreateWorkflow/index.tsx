@@ -302,7 +302,14 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             >
               <FormControlLabel
                 value="construct"
-                control={<Radio />}
+                control={
+                  <Radio
+                    classes={{
+                      root: classes.radio,
+                      checked: classes.checked,
+                    }}
+                  />
+                }
                 disabled={data?.getHubStatus.length === 0}
                 label={
                   <Typography className={classes.radioText}>
@@ -468,7 +475,11 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
 
               <FormControlLabel
                 value="upload"
-                control={<Radio />}
+                control={
+                  <Radio
+                    classes={{ root: classes.radio, checked: classes.checked }}
+                  />
+                }
                 disabled={workflowDetails.customWorkflows.length !== 0}
                 label={
                   <Typography className={classes.radioText}>

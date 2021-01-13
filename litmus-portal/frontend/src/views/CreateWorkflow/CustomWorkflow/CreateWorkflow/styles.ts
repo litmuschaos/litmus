@@ -48,6 +48,13 @@ const useStyles = makeStyles((theme) => ({
       color: theme.palette.text.secondary,
     },
   },
+  radio: {
+    color: theme.palette.primary.dark,
+    '&$checked': {
+      color: theme.palette.primary.dark,
+    },
+  },
+  checked: {},
   nextArrow: {
     marginLeft: theme.spacing(2.5),
   },
