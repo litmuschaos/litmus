@@ -23,6 +23,12 @@ const CustomBreadcrumbs: React.FC<CustomBreadcrumbsProps> = ({ location }) => {
           if (pathname[2] === 'template' && path === pathname[3]) {
             return <span>{path}</span>;
           }
+          if (
+            pathname[2] === 'schedule' &&
+            (path === pathname[3] || path === pathname[4])
+          ) {
+            return <span>{path}</span>;
+          }
           const link = (
             <Link
               key={path}

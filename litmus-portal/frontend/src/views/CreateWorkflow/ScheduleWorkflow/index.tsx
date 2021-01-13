@@ -307,7 +307,7 @@ const ScheduleWorkflow: React.FC = () => {
       <div className={classes.scHeader}>
         {/* Upper segment */}
         <div className={classes.scSegments}>
-          <div aria-details="content wrapper" style={{ width: '90%' }}>
+          <div>
             <Typography className={classes.headerText}>
               <strong>{t('createWorkflow.scheduleWorkflow.header')}</strong>
             </Typography>
@@ -319,7 +319,7 @@ const ScheduleWorkflow: React.FC = () => {
             </div>
           </div>
           <img
-            src="./icons/calendar.svg"
+            src="/icons/calendar.svg"
             alt="calendar"
             className={classes.calIcon}
           />
@@ -346,7 +346,9 @@ const ScheduleWorkflow: React.FC = () => {
                     </Typography>
                   }
                 />
-              ) : YAML.parse(workflowData.yaml).spec.suspend === false ? (
+              ) : YAML.parse(workflowData.yaml).spec.suspend === true ? (
+                <></>
+              ) : !workflowData.isDisabled ? (
                 <FormControlLabel
                   value="disable"
                   control={<Radio />}

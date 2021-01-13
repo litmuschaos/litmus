@@ -48,6 +48,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
     description,
     weights,
     cronSyntax,
+    isDisabled,
     clustername,
   } = workflowData;
 
@@ -202,7 +203,11 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
                 ampm
                 disabled={edit}
               /> */}
-              {cronSyntax === '' ? (
+              {isDisabled ? (
+                <Typography className={classes.schedule}>
+                  Currently Disabled
+                </Typography>
+              ) : cronSyntax === '' ? (
                 <Typography className={classes.schedule}>
                   {t('createWorkflow.verifyCommit.summary.schedulingNow')}
                 </Typography>

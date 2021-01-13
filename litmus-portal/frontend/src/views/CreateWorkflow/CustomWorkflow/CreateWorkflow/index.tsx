@@ -379,7 +379,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                                 }}
                                 edge="end"
                               >
-                                <ArrowDropDownIcon />
+                                <ArrowDropDownIcon color="secondary" />
                               </IconButton>
                             </InputAdornment>
                           }

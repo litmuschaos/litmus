@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingLeft: theme.spacing(1),
 
     '& .MuiSelect-icon': {
-      color: theme.palette.text.secondary,
+      color: theme.palette.text.primary,
     },
   },
   formControl: {

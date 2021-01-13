@@ -111,12 +111,28 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
     <>
       <TableCell className={classes.workflowNameData}>
         <Typography>
-          <strong>{data.workflow_name}</strong>
+          <span
+            className={
+              YAML.parse(data.workflow_manifest).spec.suspend === true
+                ? classes.dark
+                : ''
+            }
+          >
+            <strong>{data.workflow_name}</strong>
+          </span>
         </Typography>
       </TableCell>
       <TableCell>
         <Typography className={classes.clusterStartDate}>
-          {formatDate(data.created_at)}
+          <span
+            className={
+              YAML.parse(data.workflow_manifest).spec.suspend === true
+                ? classes.dark
+                : ''
+            }
+          >
+            {formatDate(data.created_at)}
+          </span>
         </Typography>
       </TableCell>
       <TableCell>
@@ -124,33 +140,59 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           <div className={classes.expDiv}>
             <img src="/icons/calender.svg" alt="Calender" />
             <Typography style={{ paddingLeft: 10 }}>
-              {data.cronSyntax === ''
-                ? 'Once'
-                : cronstrue.toString(data.cronSyntax)}
+              <span
+                className={
+                  YAML.parse(data.workflow_manifest).spec.suspend === true
+                    ? classes.dark
+                    : ''
+                }
+              >
+                {data.cronSyntax === ''
+                  ? 'Once'
+                  : cronstrue.toString(data.cronSyntax)}
+              </span>
             </Typography>
           </div>
         </div>
       </TableCell>
       <TableCell>
-        <Typography>{data.cluster_name}</Typography>
+        <Typography>
+          <span
+            className={
+              YAML.parse(data.workflow_manifest).spec.suspend === true
+                ? classes.dark
+                : ''
+            }
+          >
+            {data.cluster_name}
+          </span>
+        </Typography>
       </TableCell>
       <TableCell>
         <Button onClick={handlePopOverClick} style={{ textTransform: 'none' }}>
-          {isOpen ? (
-            <div className={classes.expDiv}>
-              <Typography className={classes.expInfoActive}>
-                <strong>Show Experiment</strong>
-              </Typography>
-              <KeyboardArrowDownIcon className={classes.expInfoActiveIcon} />
-            </div>
-          ) : (
-            <div className={classes.expDiv}>
-              <Typography className={classes.expInfo}>
-                <strong>Show Experiment</strong>
-              </Typography>
-              <ChevronRightIcon />
-            </div>
-          )}
+          <span
+            className={
+              YAML.parse(data.workflow_manifest).spec.suspend === true
+                ? classes.dark
+                : ''
+            }
+          >
+            {isOpen ? (
+              <div className={classes.expDiv}>
+                <Typography className={classes.expInfoActive}>
+                  <strong>Show Experiment</strong>
+                </Typography>
+                <KeyboardArrowDownIcon className={classes.expInfoActiveIcon} />
+              </div>
+            ) : (
+              <div className={classes.expDiv}>
+                <Typography className={classes.expInfo}>
+                  <strong>Show Experiment</strong>
+                </Typography>
+                <ChevronRightIcon />
+              </div>
+            )}
+          </span>
         </Button>
         <Popover
           id={id}

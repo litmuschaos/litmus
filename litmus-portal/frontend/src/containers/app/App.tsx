@@ -101,13 +101,12 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
         />
         {/* Redirects */}
         <Redirect exact path="/login" to="/" />
-        <Redirect exact path="/workflows/details" to="/workflows" />
         <Redirect exact path="/workflows/schedule" to="/workflows" />
         <Redirect exact path="/workflows/template" to="/workflows" />
         <Redirect exact path="/workflows/analytics" to="/workflows" />
         <Route
           exact
-          path="/workflows/details/:workflowRunId"
+          path="/workflows/:workflowRunId"
           component={WorkflowDetails}
         />
         <Route

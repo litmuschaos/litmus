@@ -121,7 +121,7 @@ schedule:
   backBtn: Go Back
 
 workflowUnderground:
-  heading: 'Click on test to see detailed log of your workflow'
+  heading: 'Click on Info to see details of your workflow'
 
 community:
   title: 'Community'
@@ -164,7 +164,7 @@ error:
   backHome: Go back home
 
 workflowDetails:
-  detailedLog: Click on test to see detailed log of your workflow
+  detailedLog: Click on Info to see details of your workflow
   fetchError: An error has occurred while fetching the data
 ######################################
 ############    Views    #############
@@ -358,7 +358,7 @@ workflowDetailsView:
     startTime: Start Time
     endTime: End Time
     duration: Duration
-    nodeName: Node Name
+    nodeName: Step Name
     button:
       logs: Logs
 

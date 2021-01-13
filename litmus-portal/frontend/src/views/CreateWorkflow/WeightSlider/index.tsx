@@ -1,18 +1,18 @@
 import Slider from '@material-ui/core/Slider';
-import { withStyles } from '@material-ui/core/styles';
+import { Theme, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import useStyles from './styles';
 
-const PrettoSlider = withStyles({
+const PrettoSlider = withStyles((theme: Theme) => ({
   root: {
-    backgroundColor: 'null',
-    height: 8,
+    background: 'transparent',
+    height: '0.5rem',
   },
   track: {
     background:
       'linear-gradient(90deg, #5B44BA 0%, #858CDD 49.48%, #109B67 100%)',
-    height: 38,
+    height: '2.374rem',
     borderRadius: 4,
     borderTopRightRadius: 13,
     borderBottomRightRadius: 13,
@@ -21,29 +21,54 @@ const PrettoSlider = withStyles({
       borderBottomRightRadius: 4,
     },
   },
-  rail: {
-    height: 38,
-    background: '#C9C9CA',
-    borderRadius: 4,
+  thumb: {
+    opacity: 0,
   },
   mark: {
+    marginLeft: theme.spacing(-0.85),
+    paddingTop: theme.spacing(0.225),
+    backgroundImage: `url(${'./icons/arrow.svg'})`,
+    backgroundColor: 'transparent',
+    '&[data-index="9"]': {
+      background: 'transparent',
+    },
     backgroundSize: 'cover',
-    height: 40,
-    width: 10,
-    marginTop: -2,
+    height: '2.4375rem',
+    width: '0.75rem',
+    marginTop: theme.spacing(-0.25),
   },
   markActive: {
+    backgroundImage: `url(${'./icons/arrow.svg'})`,
+    background: 'transparent',
     opacity: 1,
+  },
+  rail: {
+    height: '2.375rem',
+    background: '#C9C9CA',
+    borderRadius: 4,
   },
   valueLabel: {
     top: -22,
     '& *': {
       background: 'transparent',
-      color: '#000',
+      color: theme.palette.background.paper,
     },
   },
-})(Slider);
-
+  markLabel: {
+    fontFamily: 'Ubuntu',
+    fontSize: '0.9375rem',
+    marginTop: theme.spacing(-0.625),
+    marginLeft: '-5%',
+    color: 'black',
+    opacity: 0.4,
+  },
+  markLabelActive: {
+    fontFamily: 'Ubuntu',
+    fontSize: '0.9375rem',
+    color: theme.palette.background.paper,
+    opacity: 1,
+  },
+}))(Slider);
 const marks = [
   {
     value: 1,
@@ -86,14 +111,12 @@ const marks = [
     label: '10',
   },
 ];
-
 interface CustomSliderProps {
   testName: string;
   weight: number;
   index: number;
   handleChange: (newValue: number, index: number) => void;
 }
-
 const WeightSlider: React.FC<CustomSliderProps> = ({
   testName,
   weight,
@@ -125,5 +148,4 @@ const WeightSlider: React.FC<CustomSliderProps> = ({
     </div>
   );
 };
-
 export default WeightSlider;

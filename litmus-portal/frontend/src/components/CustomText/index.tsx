@@ -1,4 +1,10 @@
-import { IconButton, makeStyles, TextField, Theme } from '@material-ui/core';
+import {
+  IconButton,
+  makeStyles,
+  TextField,
+  Theme,
+  useTheme,
+} from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import SaveIcon from '@material-ui/icons/Save';
 import React from 'react';
@@ -25,7 +31,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   helperMessage: {
     width: '40.75rem',
-    color: 'red',
+    color: theme.palette.error.main,
     paddingTop: theme.spacing(0.375),
   },
 }));
@@ -57,6 +63,7 @@ const CustomText: React.FC<CustomTextProps> = ({
   };
 
   const classes = useStyles();
+  const { palette } = useTheme();
   return (
     <>
       <div>
@@ -70,7 +77,7 @@ const CustomText: React.FC<CustomTextProps> = ({
           InputProps={{
             disableUnderline: true,
             style: {
-              color: validateText ? 'red' : 'white',
+              color: validateText ? palette.error.main : palette.text.primary,
               lineHeight: '1rem',
               fontSize: '1rem',
             },

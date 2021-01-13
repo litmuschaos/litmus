@@ -63,6 +63,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   inputValue: {
+    marginLeft: theme.spacing(2),
     width: '25rem',
   },
 
