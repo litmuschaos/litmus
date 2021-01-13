@@ -52,11 +52,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(3),
   },
   innerSumDiv: {
-    width: '20%',
-    verticalAlign: 'middle',
-    display: 'table-cell',
     alignContent: 'center',
+    display: 'table-cell',
     height: '100%',
+    verticalAlign: 'middle',
+    width: '20%',
   },
   sumText: {
     width: '100%',
@@ -65,11 +65,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '1.5rem',
   },
   col1: {
-    fontSize: '1rem',
+    alignContent: 'center',
     color: theme.palette.highlight,
+    fontSize: '1rem',
     paddingTop: theme.spacing(0.5),
     verticalAlign: 'middle',
-    alignContent: 'center',
   },
   schedule: {
     fontSize: '1rem',
@@ -77,9 +77,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingTop: theme.spacing(0.75),
   },
   col2: {
-    width: '75%',
     color: theme.palette.text.secondary,
     marginLeft: theme.spacing(5),
+    width: '75%',
   },
   schCol2: {
     marginLeft: theme.spacing(5),
@@ -102,11 +102,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.secondary.dark,
   },
   adjWeights: {
-    width: '80%',
-    marginLeft: theme.spacing(2),
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginLeft: theme.spacing(2),
+    width: '80%',
   },
   config: {
     height: '3rem',
