@@ -85,6 +85,7 @@ const useStyles = makeStyles((theme) => ({
   // CARD CONTENT
   cardContent: {
     color: theme.palette.text.primary,
+    height: '16rem',
   },
 
   title: {

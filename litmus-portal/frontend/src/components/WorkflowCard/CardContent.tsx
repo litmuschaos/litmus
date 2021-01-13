@@ -106,11 +106,6 @@ const CardContent: React.FC<preDefinedWorkflowData> = ({
             <div className={classes.provider}>Contributed by {provider}</div>
           </div>
           {description ? (
-            <div className={classes.description}>{description}</div>
-          ) : (
-            <span />
-          )}
-          {description ? (
             description.length > 30 ? (
               <Tooltip
                 disableFocusListener
