@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme: Theme) => ({
       },
       '& g.Pending': {
         '& circle': {
-          fill: theme.palette.customColors.gray,
+          fill: theme.palette.horizontalStepper.completed,
         },
       },
       '& g.Failed': {
@@ -96,7 +96,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         fill: theme.palette.warning.main,
       },
       '& g.StepGroup.Pending': {
-        fill: theme.palette.customColors.gray,
+        fill: theme.palette.horizontalStepper.completed,
       },
       '& g.StepGroup.Failed': {
         fill: theme.palette.error.dark,
@@ -114,8 +114,8 @@ const useStyles = makeStyles((theme: Theme) => ({
         stroke: theme.palette.warning.main,
       },
       '& g.Pending': {
-        fill: theme.palette.customColors.gray,
-        stroke: theme.palette.customColors.gray,
+        fill: theme.palette.horizontalStepper.completed,
+        stroke: theme.palette.horizontalStepper.completed,
       },
       '& g.Failed': {
         fill: theme.palette.error.dark,

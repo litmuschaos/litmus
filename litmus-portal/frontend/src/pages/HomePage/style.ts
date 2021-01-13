@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   backdrop: {
-    background: theme.palette.input.disabled,
+    background: theme.palette.border.main,
     display: 'flex',
     flexDirection: 'column',
   },
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
 
   mainDiv: {
     padding: theme.spacing(3.75),
-    backgroundColor: theme.palette.homePageCardBackgroundColor,
+    backgroundColor: theme.palette.background.paper,
     width: '50rem',
     display: 'flex',
     flexDirection: 'row',
@@ -41,11 +41,11 @@ const useStyles = makeStyles((theme) => ({
     width: '15.65rem',
     border: '1px solid ',
     borderColor: theme.palette.secondary.dark,
-    backgroundColor: theme.palette.homePageWorkflowCardBackgroundColor,
+    backgroundColor: theme.palette.background.paper,
     borderRadius: 3,
     color: 'inherit',
     marginLeft: theme.spacing(5),
-    boxShadow: theme.palette.createWorkflowCardShadow,
+    boxShadow: `2px 1px 9px ${theme.palette.primary.light}`,
     [theme.breakpoints.down('sm')]: {
       marginTop: theme.spacing(5),
     },
@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
 
   createWorkflowTitle: {
     fontSize: 25,
-    color: theme.palette.workflowTitleColor,
+    color: theme.palette.primary.main,
     fontWeight: 'bold',
     marginLeft: theme.spacing(3.75),
     marginTop: theme.spacing(2.5),
@@ -75,7 +75,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   arrowForwardIcon: {
-    color: theme.palette.workflowTitleColor,
+    color: theme.palette.primary.main,
     marginLeft: theme.spacing(22.5),
     marginTop: theme.spacing(4.375),
     marginBottom: theme.spacing(2.5),
@@ -122,7 +122,7 @@ const useStyles = makeStyles((theme) => ({
   statDiv: {
     width: '50rem',
     flexGrow: 1,
-    backgroundColor: theme.palette.homePageCardBackgroundColor,
+    backgroundColor: theme.palette.cards.background,
     borderRadius: 3,
     [theme.breakpoints.down('sm')]: {
       width: '18rem',

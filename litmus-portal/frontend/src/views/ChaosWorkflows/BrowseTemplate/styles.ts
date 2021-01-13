@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     padding: theme.spacing(2),
   },
   contentWrapper: {
-    background: theme.palette.homePageCardBackgroundColor,
+    background: theme.palette.cards.background,
     padding: theme.spacing(1),
   },
   headerTitle: {

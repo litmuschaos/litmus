@@ -161,7 +161,7 @@ const BrowseSchedule = () => {
           <FormControl
             variant="outlined"
             className={classes.formControl}
-            color="secondary"
+            color="primary"
             focused
           >
             <InputLabel className={classes.selectText}>

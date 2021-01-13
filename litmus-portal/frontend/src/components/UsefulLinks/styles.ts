@@ -34,13 +34,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   staticType: {
     fontSize: '0.875rem',
     marginBottom: theme.spacing(1.25),
-    color: theme.palette.primary.contrastText,
+    color: theme.palette.text.primary,
   },
   mainDiv: {
     padding: theme.spacing(3.75),
     justifyContent: 'space-around',
     borderRadius: theme.spacing(1.25),
-    borderLeft: `1px solid ${theme.palette.customColors.black(0.2)}`,
+    borderLeft: `1px solid ${theme.palette.border.main}`,
     paddingBottom: theme.spacing(2.5),
   },
   maintainerField: {

@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'flex-start',
     marginTop: theme.spacing(2.625),
     marginBottom: theme.spacing(1.875),
-    color: theme.palette.secondary.dark,
+    color: theme.palette.primary.main,
   },
   descText: {
     marginBottom: theme.spacing(3.75),
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   table: {
     backgroundColor: 'inherit',
     height: '30.25rem',
-    border: `1px solid ${theme.palette.customColors.black(0.05)}`,
+    border: `1px solid ${theme.palette.border.main}`,
     '&::-webkit-scrollbar': {
       width: '0.2em',
     },
@@ -41,8 +41,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   toolbar: {
     height: '6.125rem',
-    border: `1px solid ${theme.palette.customColors.black(0.05)}`,
-    backgroundColor: theme.palette.homePageCardBackgroundColor,
+    border: `1px solid ${theme.palette.border.main}`,
+    backgroundColor: theme.palette.cards.background,
     marginBottom: theme.spacing(1.25),
     display: 'flex',
     justifyContent: 'space-between',
@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '4.8125rem',
   },
   firstTC: {
-    borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    borderRight: `1px solid ${theme.palette.border.main}`,
     maxWidth: '17.56rem',
   },
   firstCol: {
@@ -79,7 +79,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     maxWidth: '15.375rem',
   },
   styledTC: {
-    borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    borderRight: `1px solid ${theme.palette.border.main}`,
   },
   userRole: {
     fontSize: '0.625rem',
@@ -98,10 +98,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: 'auto',
   },
   avatarBackground: {
-    backgroundColor: theme.palette.totalRunsCountColor,
+    backgroundColor: theme.palette.primary.light,
     width: '2.56rem',
     height: '2.56rem',
-    color: theme.palette.customColors.white(1),
+    color: theme.palette.common.white,
     alignContent: 'right',
     marginRight: theme.spacing(2.5),
     [theme.breakpoints.down('sm')]: {
@@ -116,7 +116,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   menuOpt: {
     '&:hover': {
-      background: theme.palette.customColors.menuOption.active,
+      background: theme.palette.success.light,
     },
   },
   menuDiv: {

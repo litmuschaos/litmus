@@ -4,8 +4,8 @@ const useStyles = makeStyles((theme) => ({
   root: {
     width: '20.3125rem',
     height: '14.6875rem',
-    color: theme.palette.text.secondary,
-    backgroundColor: theme.palette.homePageCardBackgroundColor,
+    color: theme.palette.text.primary,
+    backgroundColor: theme.palette.cards.background,
   },
   boxMain: {
     display: 'flex',
@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
     height: '1.5625rem',
   },
   passedMark: {
-    color: theme.palette.secondary.contrastText,
+    color: theme.palette.text.primary,
     width: '1.5625rem',
     height: '1.5625rem',
   },
@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
     height: '1.5625rem',
   },
   failedMark: {
-    color: theme.palette.secondary.contrastText,
+    color: theme.palette.text.primary,
     width: '1.5625rem',
     height: '1.5625rem',
   },

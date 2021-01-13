@@ -4,7 +4,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   root: {
     width: '95%',
     fontSize: '1.125rem',
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
     margin: theme.spacing(2, 0),
   },
 
@@ -31,8 +31,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   linkBox: {
-    backgroundColor: theme.palette.customColors.black(0.02),
-    border: `1px solid ${theme.palette.customColors.black(0.02)} `,
+    backgroundColor: theme.palette.disabledBackground,
+    border: `1px solid ${theme.palette.border.main} `,
     padding: theme.spacing(3.75),
     borderRadius: theme.spacing(1),
     display: 'flex',

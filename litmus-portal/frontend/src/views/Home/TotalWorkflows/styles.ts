@@ -4,8 +4,8 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     width: '20.3125rem',
     height: '14.6875rem',
-    color: theme.palette.text.secondary,
-    backgroundColor: theme.palette.homePageCardBackgroundColor,
+    color: theme.palette.text.primary,
+    backgroundColor: theme.palette.cards.background,
   },
   heading: {
     textAlign: 'center',

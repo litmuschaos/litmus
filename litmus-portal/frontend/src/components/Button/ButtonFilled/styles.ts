@@ -9,9 +9,9 @@ const useStyles = makeStyles((theme) => ({
     textTransform: 'none',
   },
   buttonPrimary: {
-    backgroundColor: theme.palette.secondary.dark,
+    backgroundColor: theme.palette.primary.main,
     '&:hover': {
-      backgroundColor: theme.palette.secondary.dark,
+      backgroundColor: theme.palette.primary.main,
     },
   },
   buttonSecondary: {

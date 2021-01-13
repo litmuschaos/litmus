@@ -314,7 +314,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                     <FormControl
                       variant="outlined"
                       className={classes.formControl}
-                      color="secondary"
+                      color="primary"
                       focused
                     >
                       <InputLabel className={classes.selectText}>
@@ -352,7 +352,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                     ) : (
                       <FormControl
                         variant="outlined"
-                        color="secondary"
+                        color="primary"
                         focused
                         component="button"
                         className={classes.formControlExp}
@@ -435,7 +435,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                     </Typography>
                     <FormControl
                       variant="outlined"
-                      color="secondary"
+                      color="primary"
                       focused
                       component="button"
                       className={classes.formControlExp}

@@ -3,6 +3,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     width: '100%',
+    background: theme.palette.background.paper,
   },
   stepper: {
     marginTop: theme.spacing(5),

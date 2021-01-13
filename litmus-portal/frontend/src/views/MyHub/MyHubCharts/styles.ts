@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(4.5, 1.5, 2.5, 1.5),
   },
   backdrop: {
-    background: theme.palette.input.disabled,
+    background: theme.palette.disabledBackground,
     display: 'flex',
     flexDirection: 'column',
   },
@@ -36,13 +36,13 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     justifyContent: 'center',
     border: '0.0625rem solid',
-    borderColor: theme.palette.customColors.black(0.07),
+    borderColor: theme.palette.border.main,
     backgroundColor: theme.palette.common.white,
   },
   search: {
     fontSize: '1rem',
     marginRight: 'auto',
-    borderBottom: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    borderBottom: `1px solid ${theme.palette.border.main}`,
     marginLeft: theme.spacing(6.25),
   },
   noGitHubText: {
@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(2),
     justifyContent: 'center',
     alignItems: 'center',
-    borderColor: theme.palette.customColors.black(0.07),
+    borderColor: theme.palette.border.main,
     backgroundColor: theme.palette.common.white,
   },
   cardDiv: {

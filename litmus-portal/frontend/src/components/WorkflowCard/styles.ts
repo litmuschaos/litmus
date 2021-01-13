@@ -4,7 +4,7 @@ const useStyles = makeStyles((theme) => ({
   // CustomWorkflow
 
   customCard: {
-    background: theme.palette.customColors.black(0.05),
+    background: theme.palette.cards.background,
     height: '16rem',
     width: '11.875rem',
     borderRadius: 3,
@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     cursor: 'pointer',
     padding: theme.spacing(3.75),
-    border: `1px solid ${theme.palette.customColors.black(0.05)}`,
+    border: `1px solid ${theme.palette.border.main}`,
     boxSizing: 'border-box',
   },
 
@@ -46,18 +46,18 @@ const useStyles = makeStyles((theme) => ({
     boxSizing: 'border-box',
     '&:hover': {
       border: `1px solid ${theme.palette.secondary.dark}`,
-      boxShadow: `0px 4px 4px ${theme.palette.shadow.blue}`,
+      boxShadow: `0px 4px 4px ${theme.palette.primary.light}`,
     },
   },
 
   cardFocused: {
     border: `1px solid ${theme.palette.secondary.dark}`,
-    boxShadow: `0px 4px 4px ${theme.palette.shadow.blue}`,
+    boxShadow: `0px 4px 4px ${theme.palette.primary.light}`,
   },
 
   cardSelected: {
     background: theme.palette.background.paper,
-    boxShadow: `0px 4px 4px ${theme.palette.shadow.blue}`,
+    boxShadow: `0px 4px 4px ${theme.palette.primary.light}`,
     borderRadius: 3,
     overflow: 'hidden',
     fontSize: '0.875rem',
@@ -91,7 +91,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 500,
     fontSize: '1rem',
     lineHeight: '130%',
-    color: theme.palette.primary.contrastText,
+    color: theme.palette.text.primary,
   },
 
   description: {
@@ -107,7 +107,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   provider: {
-    color: theme.palette.providerTextColor,
+    color: theme.palette.text.primary,
     fontSize: '0.75rem',
     lineHeight: '170%',
     textAlign: 'center',
@@ -124,7 +124,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   totalRuns: {
-    color: theme.palette.totalRunsCountColor,
+    color: theme.palette.primary.light,
     fontSize: '0.875rem',
     fontWeight: 500,
     marginTop: theme.spacing(0.375),
@@ -140,7 +140,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   expCount: {
-    backgroundColor: theme.palette.totalRunsCountColor,
+    backgroundColor: theme.palette.primary.light,
     color: theme.palette.secondary.contrastText,
     borderRadius: 3,
     paddingTop: theme.spacing(0.375),

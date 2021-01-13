@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(4),
     marginTop: theme.spacing(4),
     border: '0.0625rem solid',
-    borderColor: theme.palette.customColors.black(0.07),
+    borderColor: theme.palette.border.main,
     backgroundColor: theme.palette.common.white,
     borderRadius: '0.1875rem',
     paddingBottom: theme.spacing(4),
@@ -105,14 +105,14 @@ const useStyles = makeStyles((theme) => ({
   },
   active: {
     color: theme.palette.primary.dark,
-    background: theme.palette.customColors.menuOption.active,
+    background: theme.palette.success.light,
   },
   notactive: {
     color: theme.palette.error.dark,
     backgroundColor: theme.palette.error.light,
   },
   pending: {
-    background: theme.palette.customColors.menuOption.pending,
+    background: theme.palette.warning.light,
     color: theme.palette.warning.main,
   },
   body: {
