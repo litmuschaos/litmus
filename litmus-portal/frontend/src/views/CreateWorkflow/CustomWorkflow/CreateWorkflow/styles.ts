@@ -132,6 +132,13 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1.25),
     marginLeft: theme.spacing(2.5),
   },
+  radio: {
+    color: theme.palette.primary.dark,
+    '&$checked': {
+      color: theme.palette.primary.dark,
+    },
+  },
+  checked: {},
 }));
 export default useStyles;
 

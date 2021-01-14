@@ -31,7 +31,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   linkBox: {
-    backgroundColor: theme.palette.disabledBackground,
     border: `1px solid ${theme.palette.border.main} `,
     padding: theme.spacing(3.75),
     borderRadius: theme.spacing(1),
@@ -50,7 +49,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   yamlLink: {
     width: '90%',
     whiteSpace: 'pre-wrap',
-    paddingTop: theme.spacing(1.25),
+    paddingTop: theme.spacing(1),
     fontSize: '0.9375rem',
   },
 

@@ -3,9 +3,9 @@ import { makeStyles, Theme } from '@material-ui/core';
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     width: '100%',
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: theme.palette.disabledBackground,
     borderRadius: '0.1875rem',
-    borderLeft: `6px solid ${theme.palette.secondary.dark} `,
+    borderLeft: `6px solid ${theme.palette.primary.main} `,
     marginBottom: theme.spacing(2.25),
   },
   rootContainer: {

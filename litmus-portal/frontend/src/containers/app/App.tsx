@@ -32,6 +32,7 @@ const MyHub = lazy(() => import('../../pages/MyHub'));
 const MyHubConnect = lazy(() => import('../../views/MyHub/MyHubConnect'));
 const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
 const MyHubExperiment = lazy(() => import('../../views/MyHub/MyHubExperiment'));
+const MyHubEdit = lazy(() => import('../../views/MyHub/MyHubEdit'));
 const CreateCustomWorkflow = lazy(() =>
   import('../../pages/CreateCustomWorkflow')
 );
@@ -131,6 +132,7 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
         <Route exact path="/target-connect" component={ConnectTargets} />
         <Route exact path="/myhub" component={MyHub} />
         <Route exact path="/myhub/connect" component={MyHubConnect} />
+        <Route exact path="/myhub/edit/:hubname" component={MyHubEdit} />
         <Route exact path="/myhub/:hubname" component={ChaosChart} />
         <Route
           exact

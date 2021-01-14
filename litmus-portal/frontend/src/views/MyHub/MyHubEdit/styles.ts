@@ -36,19 +36,14 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2.5),
     marginLeft: theme.spacing(-1.25),
   },
-  hubNameInput: {
+  inputField: {
     marginBottom: theme.spacing(2.5),
     marginLeft: theme.spacing(2),
   },
-  inputField: {
-    marginBottom: theme.spacing(2.5),
-    width: '20rem',
-  },
   inputFieldBranch: {
     marginBottom: theme.spacing(2.5),
-    marginRight: theme.spacing(2.5),
-    marginLeft: theme.spacing(2.5),
     width: '10rem',
+    marginRight: theme.spacing(2.5),
   },
   modalDiv: {
     display: 'flex',
@@ -98,7 +93,7 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: '0.625rem',
   },
   done: {
-    color: theme.palette.primary.main,
+    color: theme.palette.text.secondary,
     paddingRight: theme.spacing(0.625),
   },
   mainPrivateRepo: {
@@ -146,12 +141,11 @@ const useStyles = makeStyles((theme) => ({
   },
   sshText: {
     wordBreak: 'break-all',
-    fontSize: '0.875rem',
   },
   copyBtn: {
     margin: 'auto',
     marginLeft: theme.spacing(2.5),
-    borderLeft: `1px solid ${theme.palette.primary.main}`,
+    borderLeft: `1px solid ${theme.palette.secondary.main}`,
     paddingLeft: theme.spacing(2.5),
   },
   privateToggleDiv: {
@@ -163,22 +157,22 @@ const useStyles = makeStyles((theme) => ({
   },
   toggleActive: {
     height: '2.25rem',
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.text.secondary,
+    backgroundColor: theme.palette.text.secondary,
+    color: theme.palette.common.black,
     width: '6.25rem',
     textTransform: 'none',
     '&:hover': {
-      backgroundColor: theme.palette.primary.main,
+      backgroundColor: theme.palette.text.secondary,
     },
   },
   toggleInactive: {
     height: '2.25rem',
-    backgroundColor: theme.palette.disabledBackground,
-    color: theme.palette.text.hint,
+    backgroundColor: theme.palette.primary.dark,
+    color: theme.palette.cards.background,
     width: '6.25rem',
     textTransform: 'none',
     '&:hover': {
-      backgroundColor: theme.palette.disabledBackground,
+      backgroundColor: theme.palette.primary.dark,
     },
   },
   toggleFont: {

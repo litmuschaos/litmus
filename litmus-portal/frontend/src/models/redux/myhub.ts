@@ -1,3 +1,5 @@
+import { MyHubType } from '../graphql/user';
+
 export interface Chart {
   ApiVersion: string;
   Kind: string;
@@ -80,6 +82,14 @@ export interface HubDetails {
   RepoBranch: string;
   TotalExp: string;
   IsAvailable: boolean;
+  AuthType?: MyHubType;
+  IsPrivate: boolean;
+  Token: string;
+  UserName: string;
+  Password: string;
+  SSHPrivateKey: string;
+  SSHPublicKey: string;
+  LastSyncedAt: string;
 }
 
 export interface HubStatus {

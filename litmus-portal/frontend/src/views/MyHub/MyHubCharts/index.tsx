@@ -10,6 +10,7 @@ import { useQuery } from '@apollo/client';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import moment from 'moment';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import useStyles from './styles';
 import { GET_CHARTS_DATA, GET_HUB_STATUS } from '../../../graphql';
@@ -71,6 +72,14 @@ const MyHub = () => {
   const [totalExp, setTotalExperiment] = useState<ChartName[]>([]);
   const exp: ChartName[] = [];
 
+  // Function to convert UNIX time in format of DD MMM YYY
+  const formatDate = (date: string) => {
+    const updated = new Date(parseInt(date, 10) * 1000).toString();
+    const resDate = moment(updated).format('DD MMM YYYY hh:mm:ss A');
+    if (date) return resDate;
+    return 'Date not available';
+  };
+
   useEffect(() => {
     if (data !== undefined) {
       const chartList = data.getCharts;
@@ -99,13 +108,15 @@ const MyHub = () => {
     <Scaffold>
       <div className={classes.header}>
         <Typography variant="h3" gutterBottom>
-          {t('myhub.myhubChart.header')}
+          {UserHub?.HubName}
         </Typography>
         <Typography variant="h4">
           <strong>
-            {UserHub?.HubName}/{UserHub?.RepoURL.split('/')[4]}/
-            {UserHub?.RepoBranch}
+            {UserHub?.RepoURL}/{UserHub?.RepoBranch}
           </strong>
+        </Typography>
+        <Typography className={classes.lastSyncText}>
+          Last synced at: {formatDate(UserHub ? UserHub.LastSyncedAt : '')}
         </Typography>
       </div>
       <div className={classes.mainDiv}>
@@ -132,7 +143,11 @@ const MyHub = () => {
                   >
                     <CardContent className={classes.cardContent}>
                       <img
-                        src={`${experimentDefaultImagePath}${expName.ChaosName}/icons/${expName.ExperimentName}.png`}
+                        src={
+                          UserHub?.IsPrivate
+                            ? '/icons/default-experiment.svg'
+                            : `${experimentDefaultImagePath}${expName.ChaosName}/icons/${expName.ExperimentName}.png`
+                        }
                         alt={expName.ExperimentName}
                         className={classes.cardImage}
                       />
