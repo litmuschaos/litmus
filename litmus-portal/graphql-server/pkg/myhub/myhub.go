@@ -313,7 +313,15 @@ func UpdateMyHub(ctx context.Context, myhub model.UpdateMyHub, projectID string)
 	if err != nil {
 		return nil, err
 	}
-
+	if prevMyHub.HubName != myhub.HubName {
+		IsExist, err := IsMyHubAvailable(ctx, myhub.HubName, projectID)
+		if err != nil {
+			return nil, err
+		}
+		if IsExist == true {
+			return nil, errors.New("HubName Already exists")
+		}
+	}
 	// Syncing/Cloning the repository at a path from myhub link structure.
 	if prevMyHub.RepoURL != myhub.RepoURL || prevMyHub.RepoBranch != myhub.RepoBranch || prevMyHub.IsPrivate != myhub.IsPrivate || prevMyHub.AuthType != myhub.AuthType.String() {
 		fmt.Println(myhub.AuthType.String())

@@ -29,7 +29,7 @@ func CreateMyHub(ctx context.Context, myhub *dbSchema.MyHub) error {
 
 //GetMyHubByProjectID ...
 func GetMyHubByProjectID(ctx context.Context, projectID string) ([]dbSchema.MyHub, error) {
-	query := bson.M{"project_id": projectID}
+	query := bson.M{"project_id": projectID, "IsRemoved": false}
 	cursor, err := myhubCollection.Find(ctx, query)
 	if err != nil {
 		log.Print("ERROR GETTING USERS : ", err)
