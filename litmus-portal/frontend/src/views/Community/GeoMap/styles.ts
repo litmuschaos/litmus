@@ -5,7 +5,7 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(2),
   },
   cityMapMarkerStyles: {
-    fill: '#2B39A5',
+    fill: theme.palette.primary.dark,
     '& circle': {
       stroke: theme.palette.cards.background,
       strokeWidth: 2,
@@ -17,15 +17,15 @@ const useStyles = makeStyles((theme) => ({
       r: 4,
     },
     '&:hover': {
-      fill: '#808000',
+      fill: theme.palette.border.main,
     },
   },
   cityMapGeography: {
-    fill: '#BFEAFF',
-    stroke: '#CFCFCF',
+    fill: theme.palette.primary.light,
+    stroke: theme.palette.background.default,
     '&:hover': {
-      stroke: '#EEFFFF',
-      fill: '#CBCED3',
+      stroke: theme.palette.background.default,
+      fill: theme.palette.border.main,
     },
   },
   cityMapComposableMap: {
