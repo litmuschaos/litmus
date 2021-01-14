@@ -3,11 +3,11 @@ import { makeStyles } from '@material-ui/core';
 const useStyles = makeStyles((theme) => ({
   passed: {
     color: theme.palette.primary.dark,
-    backgroundColor: theme.palette.customColors.menuOption.active,
+    backgroundColor: theme.palette.success.light,
   },
   awaited: {
     color: theme.palette.warning.main,
-    backgroundColor: theme.palette.waitingStatusColor,
+    backgroundColor: theme.palette.warning.light,
   },
   failed: {
     color: theme.palette.error.dark,

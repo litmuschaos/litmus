@@ -40,11 +40,11 @@ import TableData from './tableData';
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
     head: {
-      backgroundColor: theme.palette.homePageCardBackgroundColor,
-      color: theme.palette.teamingTabHeadTextColor,
+      backgroundColor: theme.palette.cards.background,
+      color: theme.palette.text.primary,
     },
     body: {
-      backgroundColor: theme.palette.homePageCardBackgroundColor,
+      backgroundColor: theme.palette.cards.background,
       fontSize: '0.875rem',
     },
   })
@@ -177,7 +177,7 @@ const TeammingTab: React.FC = () => {
                 <FormControl
                   variant="outlined"
                   className={classes.formControl}
-                  color="secondary"
+                  color="primary"
                   focused
                 >
                   <InputLabel className={classes.selectText}>Role</InputLabel>
@@ -192,7 +192,7 @@ const TeammingTab: React.FC = () => {
                       setPaginationData({ ...paginationData, pageNo: 0 });
                     }}
                     className={classes.selectText}
-                    color="secondary"
+                    color="primary"
                   >
                     <MenuItem value="all">
                       {t('settings.teamingTab.label.options.all')}

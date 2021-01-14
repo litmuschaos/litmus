@@ -1,3 +1,4 @@
+import { KuberaThemeProvider } from 'kubera-ui';
 import React, { lazy, Suspense, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
@@ -6,7 +7,6 @@ import useActions from '../../redux/actions';
 import * as AnalyticsActions from '../../redux/actions/analytics';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
-import withTheme from '../../theme';
 import getToken from '../../utils/getToken';
 import useStyles from './App-styles';
 
@@ -112,7 +112,7 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
         />
         <Route
           exact
-          path="/workflows/schedule/:scheduleId"
+          path="/workflows/schedule/:projectID/:workflowName"
           component={SchedulePage}
         />
         <Route
@@ -165,20 +165,22 @@ function App() {
     }
   }, [token]);
   return (
-    <Suspense fallback={<Loader />}>
-      <Router history={history}>
-        <div className={classes.root}>
-          <div className={classes.appFrame}>
-            {/* <Routes /> */}
-            <Routes
-              isOwner={userData.userRole === 'Owner'}
-              isProjectAvailable={!!userData.selectedProjectID}
-            />
+    <KuberaThemeProvider platform="litmus-portal">
+      <Suspense fallback={<Loader />}>
+        <Router history={history}>
+          <div className={classes.root}>
+            <div className={classes.appFrame}>
+              {/* <Routes /> */}
+              <Routes
+                isOwner={userData.userRole === 'Owner'}
+                isProjectAvailable={!!userData.selectedProjectID}
+              />
+            </div>
           </div>
-        </div>
-      </Router>
-    </Suspense>
+        </Router>
+      </Suspense>
+    </KuberaThemeProvider>
   );
 }
 
-export default withTheme(App);
+export default App;

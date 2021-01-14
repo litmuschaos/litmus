@@ -40,6 +40,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   radioText: {
     fontSize: '0.875rem',
+    color: theme.palette.text.primary,
   },
   description: {
     width: '32.18rem',

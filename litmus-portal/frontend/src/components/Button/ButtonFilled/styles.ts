@@ -9,15 +9,21 @@ const useStyles = makeStyles((theme) => ({
     textTransform: 'none',
   },
   buttonPrimary: {
-    backgroundColor: theme.palette.secondary.dark,
+    backgroundColor: theme.palette.primary.main,
     '&:hover': {
-      backgroundColor: theme.palette.secondary.dark,
+      backgroundColor: theme.palette.primary.main,
     },
   },
   buttonSecondary: {
     backgroundColor: theme.palette.primary.dark,
     '&:hover': {
       backgroundColor: theme.palette.primary.dark,
+    },
+  },
+  buttonWarning: {
+    backgroundColor: theme.palette.error.dark,
+    '&:hover': {
+      backgroundColor: theme.palette.error.dark,
     },
   },
 }));

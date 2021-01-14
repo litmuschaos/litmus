@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
   },
   detailDiv: {
     backgroundColor: theme.palette.common.white,
-    border: `1px solid ${theme.palette.customColors.black(0.05)}`,
+    border: `1px solid ${theme.palette.border.main}`,
     borderRadius: '0.1875rem',
     padding: theme.spacing(3.75),
     paddingTop: theme.spacing(6.25),
@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
   horizontalLine: {
     marginTop: theme.spacing(5),
     marginRight: theme.spacing(12.5),
-    border: `0.5px solid ${theme.palette.customColors.black(0.05)}`,
+    border: `0.5px solid ${theme.palette.border.main}`,
     boxSizing: 'border-box',
   },
   installExp: {

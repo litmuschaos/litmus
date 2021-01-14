@@ -8,7 +8,7 @@ interface LoaderProps {
 
 const useStyles = makeStyles((theme: Theme) => ({
   spinner: {
-    color: theme.palette.secondary.dark,
+    color: theme.palette.primary.main,
   },
 }));
 

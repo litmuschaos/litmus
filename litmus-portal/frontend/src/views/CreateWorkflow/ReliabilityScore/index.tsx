@@ -1,7 +1,7 @@
 import { Typography } from '@material-ui/core';
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import Center from '../../../containers/layouts/Center';
@@ -95,7 +95,7 @@ const ReliablityScore = () => {
                 data-cy="testRunButton"
               >
                 <div className={classes.buttonOutlineDiv}>
-                  <img src="icons/video.png" alt="Play icon" />
+                  <img src="/icons/video.png" alt="Play icon" />
                   <Typography className={classes.buttonOutlineText}>
                     {t('createWorkflow.reliabilityScore.button.demo')}
                   </Typography>

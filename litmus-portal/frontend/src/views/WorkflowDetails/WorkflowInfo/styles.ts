@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: '1rem 0',
   },
   divider: {
-    background: theme.palette.sectionDividerColor,
+    background: theme.palette.primary.main,
     height: '0.2rem',
   },
   heightMaintainer: {

@@ -1,9 +1,9 @@
 import { Typography } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
 import YamlEditor from '../../../components/YamlEditor/Editor';
 import { WorkflowData } from '../../../models/redux/workflow';

@@ -11,13 +11,13 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     justifyContent: 'center',
     border: '1px solid ',
-    borderColor: theme.palette.customColors.black(0.07),
-    backgroundColor: theme.palette.homePageCardBackgroundColor,
+    borderColor: theme.palette.border.main,
+    backgroundColor: theme.palette.cards.background,
   },
   search: {
     fontSize: '0.875rem',
     marginRight: 'auto',
-    borderBottom: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    borderBottom: `1px solid ${theme.palette.border.main}`,
     marginLeft: theme.spacing(6.25),
   },
   root: {
@@ -43,8 +43,8 @@ const useStyles = makeStyles((theme) => ({
   },
   tableMain: {
     marginTop: theme.spacing(4.25),
-    border: `1px solid ${theme.palette.customColors.black(0.07)}`,
-    backgroundColor: theme.palette.homePageCardBackgroundColor,
+    border: `1px solid ${theme.palette.border.main}`,
+    backgroundColor: theme.palette.cards.background,
     height: '29.220rem',
     '&::-webkit-scrollbar': {
       width: '0.2em',
@@ -63,12 +63,12 @@ const useStyles = makeStyles((theme) => ({
       fontWeight: 'bold',
     },
     '& th': {
-      backgroundColor: theme.palette.homePageCardBackgroundColor,
+      backgroundColor: theme.palette.cards.background,
     },
   },
   headerStatus: {
     paddingLeft: theme.spacing(10),
-    color: theme.palette.customColors.black(0.4),
+    color: theme.palette.text.primary,
   },
   headerStatus1: {
     paddingLeft: theme.spacing(8),
@@ -80,8 +80,8 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(1.75),
   },
   workflowName: {
-    borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
-    color: theme.palette.customColors.black(0.4),
+    borderRight: `1px solid ${theme.palette.border.main}`,
+    color: theme.palette.text.primary,
   },
   sortDiv: {
     display: 'flex',
@@ -91,13 +91,13 @@ const useStyles = makeStyles((theme) => ({
   workflowNameData: {
     maxWidth: '15.625rem',
     paddingLeft: theme.spacing(6.25),
-    borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    borderRight: `1px solid ${theme.palette.border.main}`,
   },
   regularity: {
-    color: theme.palette.customColors.black(0.4),
+    color: theme.palette.text.primary,
   },
   targetCluster: {
-    color: theme.palette.customColors.black(0.4),
+    color: theme.palette.text.primary,
   },
   clusterStartDate: {
     paddingLeft: theme.spacing(10),
@@ -123,7 +123,7 @@ const useStyles = makeStyles((theme) => ({
   },
   showExp: {
     paddingLeft: theme.spacing(1),
-    color: theme.palette.customColors.black(0.4),
+    color: theme.palette.text.primary,
   },
   clusterData: {
     paddingTop: theme.spacing(1.25),
@@ -180,6 +180,34 @@ const useStyles = makeStyles((theme) => ({
         ? theme.palette.primary.dark
         : theme.palette.error.dark,
     fontWeight: 500,
+  },
+
+  // Modal
+  modalDiv: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '25rem',
+    marginTop: '10%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalHeader: {
+    fontSize: '2.125rem',
+    fontWeight: 400,
+    marginBottom: theme.spacing(2.5),
+    marginTop: theme.spacing(2.5),
+    width: '31.25rem',
+  },
+  modalConfirm: {
+    fontSize: '1.25rem',
+    marginBottom: theme.spacing(5),
+    width: '31.25rem',
+  },
+  modalBtns: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '16rem',
   },
 }));
 

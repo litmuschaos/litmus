@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     marginRight: theme.spacing(2),
     textAlign: 'center',
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
     backgroundColor: '#FFF',
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
@@ -110,7 +110,7 @@ const useStyles = makeStyles((theme) => ({
     height: '3rem',
     backgroundColor: theme.palette.secondary.contrastText,
     fontSize: '0.8rem',
-    color: theme.palette.buttonEditProfile,
+    color: theme.palette.common.black,
     textTransform: 'none',
   },
 

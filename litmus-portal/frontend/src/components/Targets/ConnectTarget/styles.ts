@@ -5,7 +5,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     border: '1px solid ',
-    borderColor: theme.palette.customColors.black(0.07),
+    borderColor: theme.palette.border.main,
     backgroundColor: theme.palette.common.white,
     borderRadius: '0.1875rem',
     paddingBottom: theme.spacing(4),

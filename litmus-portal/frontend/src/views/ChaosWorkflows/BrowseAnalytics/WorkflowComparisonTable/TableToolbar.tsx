@@ -197,7 +197,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
       <FormControl
         variant="outlined"
         className={classes.formControl}
-        color="secondary"
+        color="primary"
         focused
       >
         <InputLabel className={classes.selectText}>
@@ -208,7 +208,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           value={cluster}
           onChange={handleClusterChange}
           className={classes.selectText}
-          color="secondary"
+          color="primary"
         >
           <MenuItem value="All">All</MenuItem>
           {clusters.map((cluster: string) => (

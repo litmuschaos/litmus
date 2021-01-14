@@ -8,6 +8,7 @@ interface ButtonFilledProps {
   ) => void;
   isPrimary: boolean;
   isDisabled?: boolean;
+  isWarning?: boolean;
   styles?: Object;
   type?: any;
 }
@@ -16,6 +17,7 @@ const ButtonFilled: React.FC<ButtonFilledProps> = ({
   children,
   isPrimary,
   isDisabled,
+  isWarning,
   styles,
   type,
 }) => {
@@ -29,7 +31,9 @@ const ButtonFilled: React.FC<ButtonFilledProps> = ({
       type={type}
       onClick={handleClick}
       className={
-        isPrimary
+        isWarning
+          ? `${classes.button} ${classes.buttonWarning}`
+          : isPrimary
           ? `${classes.button} ${classes.buttonPrimary}`
           : `${classes.button} ${classes.buttonSecondary}`
       }

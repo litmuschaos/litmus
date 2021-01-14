@@ -41,19 +41,19 @@ const useStyles = makeStyles((theme) => ({
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    border: `1px solid ${theme.palette.customColors.black(0.07)}`,
+    border: `1px solid ${theme.palette.border.main}`,
     height: '5.55rem',
-    backgroundColor: theme.palette.homePageCardBackgroundColor,
+    backgroundColor: theme.palette.cards.background,
   },
 
   search: {
     marginRight: 'auto',
     marginLeft: theme.spacing(6.25),
-    borderBottom: `1px solid ${theme.palette.customColors.black(0.07)}`,
+    borderBottom: `1px solid ${theme.palette.border.main}`,
   },
 
   calIcon: {
-    color: `${theme.palette.customColors.black(0.4)}`,
+    color: `${theme.palette.text.primary}`,
     marginLeft: theme.spacing(3.5),
   },
 
@@ -64,8 +64,8 @@ const useStyles = makeStyles((theme) => ({
 
   tableMain: {
     marginTop: theme.spacing(4.25),
-    border: `1px solid ${theme.palette.customColors.black(0.07)}`,
-    backgroundColor: theme.palette.homePageCardBackgroundColor,
+    border: `1px solid ${theme.palette.border.main}`,
+    backgroundColor: theme.palette.cards.background,
     maxHeight: '30.15rem',
     '&::-webkit-scrollbar': {
       width: '0.2em',
@@ -80,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
 
   tableMainCompare: {
     marginTop: theme.spacing(-0.25),
-    border: `1px solid ${theme.palette.customColors.black(0.07)}`,
+    border: `1px solid ${theme.palette.border.main}`,
     backgroundColor: theme.palette.common.white,
     height: '15rem',
     overflow: 'hidden',
@@ -91,7 +91,7 @@ const useStyles = makeStyles((theme) => ({
   },
   tableMainShowAll: {
     marginTop: theme.spacing(4.25),
-    border: `1px solid ${theme.palette.customColors.black(0.07)}`,
+    border: `1px solid ${theme.palette.border.main}`,
     backgroundColor: theme.palette.common.white,
     maxHeight: '30.15rem',
     '&::-webkit-scrollbar': {
@@ -107,7 +107,7 @@ const useStyles = makeStyles((theme) => ({
 
   seeAllPaper: {
     height: '5rem',
-    backgroundColor: theme.palette.paperBackground,
+    backgroundColor: theme.palette.background.paper,
     paddingTop: theme.spacing(3.75),
     paddingBottom: theme.spacing(3.75),
     paddingLeft: '42%',
@@ -118,7 +118,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   workflowName: {
-    borderRight: `1px solid ${theme.palette.customColors.black(0.07)}`,
+    borderRight: `1px solid ${theme.palette.border.main}`,
     paddingTop: theme.spacing(2.5),
     maxWidth: '16.5rem',
   },
@@ -180,24 +180,24 @@ const useStyles = makeStyles((theme) => ({
   },
 
   markerIconDown: {
-    color: `${theme.palette.customColors.black(0.4)}`,
+    color: `${theme.palette.text.primary}`,
     paddingTop: theme.spacing(0.5),
     margin: 0,
   },
 
   markerIconUp: {
-    color: `${theme.palette.customColors.black(0.4)}`,
+    color: `${theme.palette.text.primary}`,
     paddingTop: theme.spacing(0.5),
     margin: 0,
   },
 
   seeAllText: {
-    color: `${theme.palette.customColors.black(0.6)}`,
+    color: `${theme.palette.text.primary}`,
     fontWeight: 500,
   },
 
   backgroundFix: {
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
     backgroundColor: theme.palette.secondary.contrastText,
     width: '100%',
     height: '45rem',
@@ -233,7 +233,7 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '9rem',
     border: '0.125rem solid',
     borderRadius: 4,
-    borderColor: theme.palette.secondary.main,
+    borderColor: theme.palette.primary.main,
     marginRight: theme.spacing(3),
     textTransform: 'none',
   },
@@ -271,7 +271,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   noData: {
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
     backgroundColor: theme.palette.secondary.contrastText,
     width: '100%',
     height: '25rem',

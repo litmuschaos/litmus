@@ -1,6 +1,7 @@
 import { useLazyQuery, useQuery } from '@apollo/client';
 import {
   Button,
+  ClickAwayListener,
   FormControl,
   FormControlLabel,
   IconButton,
@@ -14,28 +15,27 @@ import {
   RadioGroup,
   Select,
   Typography,
-  ClickAwayListener,
 } from '@material-ui/core';
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import InputField from '../../../../components/InputField';
 import Loader from '../../../../components/Loader';
 import { GET_CHARTS_DATA, GET_HUB_STATUS } from '../../../../graphql';
+import { GET_EXPERIMENT_YAML } from '../../../../graphql/queries';
 import { MyHubDetail } from '../../../../models/graphql/user';
 import { Charts, HubStatus } from '../../../../models/redux/myhub';
-import * as WorkflowActions from '../../../../redux/actions/workflow';
-import useActions from '../../../../redux/actions';
-import { RootState } from '../../../../redux/reducers';
-import useStyles, { CustomTextField, MenuProps } from './styles';
 import WorkflowDetails from '../../../../pages/WorkflowDetails';
-import { GET_EXPERIMENT_YAML } from '../../../../graphql/quries';
-import BackButton from '../BackButton';
+import useActions from '../../../../redux/actions';
 import * as TemplateSelectionActions from '../../../../redux/actions/template';
+import * as WorkflowActions from '../../../../redux/actions/workflow';
 import { history } from '../../../../redux/configureStore';
+import { RootState } from '../../../../redux/reducers';
+import BackButton from '../BackButton';
+import useStyles, { CustomTextField, MenuProps } from './styles';
 
 interface WorkflowDetails {
   workflow_name: string;
@@ -314,7 +314,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                     <FormControl
                       variant="outlined"
                       className={classes.formControl}
-                      color="secondary"
+                      color="primary"
                       focused
                     >
                       <InputLabel className={classes.selectText}>
@@ -352,7 +352,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                     ) : (
                       <FormControl
                         variant="outlined"
-                        color="secondary"
+                        color="primary"
                         focused
                         component="button"
                         className={classes.formControlExp}
@@ -435,7 +435,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                     </Typography>
                     <FormControl
                       variant="outlined"
-                      color="secondary"
+                      color="primary"
                       focused
                       component="button"
                       className={classes.formControlExp}

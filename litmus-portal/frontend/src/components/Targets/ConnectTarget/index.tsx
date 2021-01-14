@@ -1,24 +1,24 @@
+import { useLazyQuery, useMutation } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMutation, useLazyQuery } from '@apollo/client';
 import { useSelector } from 'react-redux';
-import { history } from '../../../redux/configureStore';
-import ButtonOutline from '../../Button/ButtonOutline';
-import TargetCopy from '../TargetCopy';
-import useStyles from './styles';
 import Scaffold from '../../../containers/layouts/Scaffold';
+import Unimodal from '../../../containers/layouts/Unimodal';
+import { GET_CLUSTER, USER_CLUSTER_REG } from '../../../graphql';
 import {
+  Cluster,
   CreateClusterInput,
   CreateClusterInputResponse,
-  Cluster,
 } from '../../../models/graphql/clusterData';
-import { USER_CLUSTER_REG, GET_CLUSTER } from '../../../graphql';
+import { history } from '../../../redux/configureStore';
 import { RootState } from '../../../redux/reducers';
-import Loader from '../../Loader';
-import ButtonFilled from '../../Button/ButtonFilled';
-import Unimodal from '../../../containers/layouts/Unimodal';
 import BackButton from '../../Button/BackButton';
+import ButtonFilled from '../../Button/ButtonFilled';
+import ButtonOutline from '../../Button/ButtonOutline';
+import Loader from '../../Loader';
+import TargetCopy from '../TargetCopy';
+import useStyles from './styles';
 
 const ConnectTarget = () => {
   const classes = useStyles();
@@ -145,7 +145,7 @@ const ConnectTarget = () => {
           hasCloseBtn
         >
           <div className={classes.body}>
-            <img src="icons/finish.svg" className={classes.mark} alt="mark" />
+            <img src="/icons/finish.svg" className={classes.mark} alt="mark" />
             <Typography className={classes.heading}>
               {t('ConnectTargets.title')}
               <br />
