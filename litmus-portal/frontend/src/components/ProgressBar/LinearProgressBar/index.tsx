@@ -1,6 +1,6 @@
+import { useTheme } from '@material-ui/core/styles';
 import { Line } from 'rc-progress';
 import React from 'react';
-import { useTheme } from '@material-ui/core/styles';
 
 interface LinearProgressBarProps {
   value: number | number[];
@@ -27,8 +27,8 @@ const LinearProgressBar: React.FC<LinearProgressBarProps> = ({
           : resultValue > 30 && resultValue <= 60
           ? theme.palette.warning.main
           : resultValue > 60
-          ? theme.palette.primary.dark
-          : theme.palette.error.dark
+          ? theme.palette.success.main
+          : theme.palette.error.main
       }
     />
   );

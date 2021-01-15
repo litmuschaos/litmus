@@ -1,13 +1,13 @@
-import { Typography, Tooltip } from '@material-ui/core';
+import { Tooltip, Typography } from '@material-ui/core';
+import { ButtonFilled } from 'kubera-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import Scaffold from '../../../containers/layouts/Scaffold';
 import { history } from '../../../redux/configureStore';
-import ButtonFilled from '../../Button/ButtonFilled';
+import { RootState } from '../../../redux/reducers';
 import BrowseCluster from '../../../views/ChaosWorkflows/BrowseCluster';
 import useStyles from './styles';
-import Scaffold from '../../../containers/layouts/Scaffold';
-import { RootState } from '../../../redux/reducers';
 
 const ConnectHome = () => {
   const classes = useStyles();
@@ -35,9 +35,9 @@ const ConnectHome = () => {
           >
             <div className={classes.scheduleBtn}>
               <ButtonFilled
-                isPrimary={false}
-                handleClick={handleCluster}
-                isDisabled={userRole === 'Viewer'}
+                variant="success"
+                onClick={handleCluster}
+                disabled={userRole === 'Viewer'}
               >
                 <div>{t('targets.connectHome.connectText')}</div>
               </ButtonFilled>

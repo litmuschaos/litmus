@@ -217,6 +217,8 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     gap: '1rem',
   },
+
+  w7: { width: '7rem' },
   // delete user
   delDiv: {
     maxWidth: '8.56rem',
