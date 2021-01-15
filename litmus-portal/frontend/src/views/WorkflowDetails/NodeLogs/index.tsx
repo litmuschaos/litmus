@@ -132,7 +132,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({
             {podLogs?.chaos_logs != null ? (
               <div style={{ whiteSpace: 'pre-wrap' }}>
                 <Typography className={classes.text}>
-                  {chaosLogs(podLogs?.chaos_logs)}
+                  {chaosLogs(podLogs.chaos_logs)}
                 </Typography>
               </div>
             ) : (

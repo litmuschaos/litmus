@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
   },
   tableMain: {
     marginTop: theme.spacing(4.25),
-    border: '1px solid rgba(0, 0, 0, 0.05)',
+    border: `1px solid ${theme.palette.disabledBackground}`,
     backgroundColor: theme.palette.cards.background,
     height: '29.220rem',
     '&::-webkit-scrollbar': {
