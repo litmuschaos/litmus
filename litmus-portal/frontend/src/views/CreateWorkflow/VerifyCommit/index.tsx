@@ -98,9 +98,9 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
       annotations: editorValidations.annotations,
     };
     if (stateObject.annotations.length > 0) {
-      setYamlStatus('Error in CRD Yaml.');
+      setYamlStatus(`${t('createWorkflow.verifyCommit.errYaml')}`);
     } else {
-      setYamlStatus('Your code is fine. You can move on !');
+      setYamlStatus(`${t('createWorkflow.verifyCommit.codeIsFine')}`);
     }
   }, [modified]);
 
@@ -195,7 +195,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
               /> */}
               {isDisabled ? (
                 <Typography className={classes.schedule}>
-                  Currently Disabled
+                  {t('createWorkflow.verifyCommit.summary.disabled')}
                 </Typography>
               ) : cronSyntax === '' ? (
                 <Typography className={classes.schedule}>

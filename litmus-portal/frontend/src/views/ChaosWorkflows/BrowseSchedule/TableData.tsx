@@ -147,9 +147,11 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                     : ''
                 }
               >
-                {data.cronSyntax === ''
-                  ? 'Once'
-                  : cronstrue.toString(data.cronSyntax)}
+                {data.cronSyntax === '' ? (
+                  <>{t('chaosWorkflows.browseSchedule.regularityOnce')}</>
+                ) : (
+                  cronstrue.toString(data.cronSyntax)
+                )}
               </span>
             </Typography>
           </div>
@@ -180,14 +182,18 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
             {isOpen ? (
               <div className={classes.expDiv}>
                 <Typography className={classes.expInfoActive}>
-                  <strong>Show Experiment</strong>
+                  <strong>
+                    {t('chaosWorkflows.browseSchedule.showExperiment')}
+                  </strong>
                 </Typography>
                 <KeyboardArrowDownIcon className={classes.expInfoActiveIcon} />
               </div>
             ) : (
               <div className={classes.expDiv}>
                 <Typography className={classes.expInfo}>
-                  <strong>Show Experiment</strong>
+                  <strong>
+                    {t('chaosWorkflows.browseSchedule.showExperiment')}
+                  </strong>
                 </Typography>
                 <ChevronRightIcon />
               </div>

@@ -181,6 +181,9 @@ chaosWorkflows:
       comparativeResults: Comparative results of selected workflows which ran successfully
       once: Once
       seeAnalytics: See analytics
+  browseSchedule:
+    regularityOnce: Once
+    showExperiment: Show Experiment
 
 settings:
   accountsTab:
@@ -448,6 +451,7 @@ createWorkflow:
     info: Before committing the workflow changes to your, verify and if needed go back to a corresponding section of the wizard to modify.
     error: Invalid Workflow CRD found ! Please correct the errors.
     errYaml: Error in CRD Yaml.
+    codeIsFine: Your code is fine. You can move on !
     button:
       edit: Edit
       viewYaml: View YAML
@@ -456,6 +460,7 @@ createWorkflow:
       workflowName: Workflow name
       desc: Description
       schedule: Schedule
+      disabled: Currently Disabled
       schedulingNow: Scheduling now
       adjustedWeights: Adjusted Weights
       clustername: Cluster Name
