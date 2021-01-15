@@ -23,11 +23,11 @@ const LinearProgressBar: React.FC<LinearProgressBarProps> = ({
       trailWidth={width}
       strokeColor={
         isDefault
-          ? theme.palette.secondary.dark
+          ? theme.palette.success.main
           : resultValue > 30 && resultValue <= 60
           ? theme.palette.warning.main
           : resultValue > 60
-          ? theme.palette.primary.dark
+          ? theme.palette.success.main
           : theme.palette.error.dark
       }
     />

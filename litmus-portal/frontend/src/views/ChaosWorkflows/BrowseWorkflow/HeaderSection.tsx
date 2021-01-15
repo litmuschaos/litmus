@@ -185,7 +185,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
             ranges={state}
             direction="vertical"
             editableDateInputs
-            rangeColors={[palette.secondary.dark]}
+            rangeColors={[palette.primary.dark]}
             showMonthAndYearPickers
           />
         </Popover>

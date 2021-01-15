@@ -115,7 +115,7 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
         <div className={classes.heightMaintainer}>
           <Typography>
             <span className={classes.bold}>
-              {t('workflowDetailsView.workflowNodeInfo.stepName')}:
+              {t('workflowDetailsView.workflowNodeInfo.nodeName')}:
             </span>{' '}
             {name}
           </Typography>

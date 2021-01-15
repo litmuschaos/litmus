@@ -1,5 +1,4 @@
 import {
-  Button,
   Card,
   CardActionArea,
   CardContent,
@@ -110,6 +109,7 @@ const MyHub = () => {
                                       : 'my-hub-charts.svg'
                                   }`}
                                   alt="add-hub"
+                                  style={{ width: '4rem', height: '4rem' }}
                                 />
                                 <Typography
                                   variant="h6"
@@ -142,10 +142,12 @@ const MyHub = () => {
                                     View
                                   </ButtonFilled>
                                 ) : (
-                                  <Button
-                                    className={classes.failedBtn}
-                                    disabled={key === hub.id && loader}
-                                    onClick={() => {
+                                  <ButtonFilled
+                                    isPrimary={false}
+                                    isWarning
+                                    styles={{ width: '100%' }}
+                                    isDisabled={key === hub.id && loader}
+                                    handleClick={() => {
                                       syncRepo({
                                         variables: {
                                           HubName: hub.HubName,
@@ -159,7 +161,7 @@ const MyHub = () => {
                                     {key === hub.id && loader
                                       ? t('myhub.mainPage.sync')
                                       : t('myhub.mainPage.retry')}
-                                  </Button>
+                                  </ButtonFilled>
                                 )}
                               </CardContent>
                             </Paper>

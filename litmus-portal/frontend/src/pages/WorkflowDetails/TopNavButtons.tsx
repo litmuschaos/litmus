@@ -33,7 +33,7 @@ const TopNavButtons: React.FC = () => {
             }
           >
             <img
-              src="./icons/alignment.svg"
+              src="/icons/alignment.svg"
               alt="Info Icon"
               className={classes.icon}
             />
@@ -50,7 +50,7 @@ const TopNavButtons: React.FC = () => {
             }
           >
             <img
-              src="./icons/alignment.svg"
+              src="/icons/alignment.svg"
               alt="Info Icon"
               className={classes.icon}
             />

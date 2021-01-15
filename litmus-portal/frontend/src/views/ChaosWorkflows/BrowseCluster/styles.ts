@@ -169,7 +169,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.dark,
   },
   active: {
-    color: theme.palette.primary.dark,
+    color: theme.palette.status.completed.text,
     background: theme.palette.success.light,
   },
   notactive: {
