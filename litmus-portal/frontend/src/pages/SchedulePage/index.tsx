@@ -32,6 +32,7 @@ import * as TemplateSelectionActions from '../../redux/actions/template';
 import * as WorkflowActions from '../../redux/actions/workflow';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
+import { validateWorkflowName } from '../../utils/validate';
 import parsed from '../../utils/yamlUtils';
 import ChooseWorkflow from '../../views/CreateWorkflow/ChooseWorkflow/index';
 import ReliablityScore from '../../views/CreateWorkflow/ReliabilityScore';
@@ -202,6 +203,7 @@ const EditScheduledWorkflow = () => {
     weights,
     description,
     isCustomWorkflow,
+    isDisabled,
     cronSyntax,
     name,
     clusterid,
@@ -274,13 +276,30 @@ const EditScheduledWorkflow = () => {
     }
     if (
       oldParsedYaml.kind === 'CronWorkflow' &&
-      scheduleType.scheduleOnce !== 'now'
+      scheduleType.scheduleOnce !== 'now' &&
+      !isDisabled
     ) {
       const newParsedYaml = YAML.parse(yaml);
       newParsedYaml.spec.schedule = cronSyntax;
+      newParsedYaml.spec.suspend = false;
       delete newParsedYaml.metadata.generateName;
       newParsedYaml.metadata.name = workflowData.name;
       newParsedYaml.metadata.labels = { workflow_id: workflowData.workflow_id };
+      const tz = {
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+      };
+      Object.entries(tz).forEach(([key, value]) => {
+        newParsedYaml.spec[key] = value;
+      });
+      NewYaml = YAML.stringify(newParsedYaml);
+      workflow.setWorkflowDetails({
+        link: NewLink,
+        yaml: NewYaml,
+      });
+    }
+    if (oldParsedYaml.kind === 'CronWorkflow' && isDisabled === true) {
+      const newParsedYaml = YAML.parse(yaml);
+      newParsedYaml.spec.suspend = true;
       const tz = {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
       };
@@ -375,7 +394,6 @@ const EditScheduledWorkflow = () => {
         cluster_id: clusterid,
       };
 
-      // console.log(chaosWorkFlowInputs);
       createChaosWorkFlow({
         variables: { ChaosWorkFlowInput: chaosWorkFlowInputs },
       });
@@ -518,7 +536,11 @@ const EditScheduledWorkflow = () => {
                   </ButtonOutline>
                 ) : null}
                 {activeStep === steps.length - 1 ? (
-                  <ButtonFilled handleClick={handleOpen} isPrimary>
+                  <ButtonFilled
+                    isDisabled={validateWorkflowName(name)}
+                    handleClick={handleOpen}
+                    isPrimary
+                  >
                     <div>{t('workflowStepper.finish')}</div>
                   </ButtonFilled>
                 ) : (

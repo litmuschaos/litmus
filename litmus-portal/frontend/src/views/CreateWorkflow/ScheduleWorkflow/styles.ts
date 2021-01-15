@@ -60,6 +60,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(5),
   },
 
+  radio: {
+    color: theme.palette.primary.dark,
+    '&$checked': {
+      color: theme.palette.primary.dark,
+    },
+  },
+  checked: {},
+
   /* For recurring schedule options */
   scRandom: {
     display: 'flex',

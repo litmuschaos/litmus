@@ -47,6 +47,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
     description,
     weights,
     cronSyntax,
+    isDisabled,
     clustername,
   } = workflowData;
 
@@ -97,9 +98,9 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
       annotations: editorValidations.annotations,
     };
     if (stateObject.annotations.length > 0) {
-      setYamlStatus('Error in CRHeloD Yaml.');
+      setYamlStatus(`${t('createWorkflow.verifyCommit.errYaml')}`);
     } else {
-      setYamlStatus('Your code is fine. You can move on !');
+      setYamlStatus(`${t('createWorkflow.verifyCommit.codeIsFine')}`);
     }
   }, [modified]);
 
@@ -192,7 +193,11 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
                 ampm
                 disabled={edit}
               /> */}
-              {cronSyntax === '' ? (
+              {isDisabled ? (
+                <Typography className={classes.schedule}>
+                  {t('createWorkflow.verifyCommit.summary.disabled')}
+                </Typography>
+              ) : cronSyntax === '' ? (
                 <Typography className={classes.schedule}>
                   {t('createWorkflow.verifyCommit.summary.schedulingNow')}
                 </Typography>
