@@ -37,32 +37,24 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2.75),
   },
 
-  createWorkflowCard: {
-    width: '15.65rem',
-    border: '1px solid ',
-    borderColor: theme.palette.secondary.dark,
-    backgroundColor: theme.palette.background.paper,
-    borderRadius: 3,
-    color: 'inherit',
-    marginLeft: theme.spacing(5),
-    boxShadow: `2px 1px 9px ${theme.palette.primary.light}`,
-    [theme.breakpoints.down('sm')]: {
-      marginTop: theme.spacing(5),
-    },
+  cardAreaBody: {
+    height: '100%',
   },
 
   createWorkflowHeading: {
     fontSize: '0.9375rem',
+    position: 'absolute',
     marginLeft: theme.spacing(3.75),
-    paddingTop: theme.spacing(5),
+    top: '10%',
   },
 
   createWorkflowTitle: {
     fontSize: 25,
+    position: 'absolute',
     color: theme.palette.primary.main,
     fontWeight: 'bold',
     marginLeft: theme.spacing(3.75),
-    marginTop: theme.spacing(2.5),
+    top: '30%',
   },
 
   headingDiv: {
@@ -77,12 +69,12 @@ const useStyles = makeStyles((theme) => ({
   arrowForwardIcon: {
     color: theme.palette.primary.main,
     marginLeft: theme.spacing(22.5),
-    marginTop: theme.spacing(4.375),
-    marginBottom: theme.spacing(2.5),
+    position: 'absolute',
+    bottom: '10%',
   },
 
   mainHeading: {
-    color: theme.palette.primary.dark,
+    color: theme.palette.secondary.main,
     fontSize: '1.5625rem',
     marginBottom: theme.spacing(0.625),
   },
@@ -156,7 +148,6 @@ const useStyles = makeStyles((theme) => ({
   },
 
   predefinedBtn: {
-    marginLeft: theme.spacing(-2),
     marginTop: theme.spacing(2.5),
   },
 

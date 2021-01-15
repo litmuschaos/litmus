@@ -233,7 +233,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(6),
     fontFamily: 'Ubuntu',
     fontSize: '1rem',
-    color: theme.palette.secondary.dark,
+    color: theme.palette.success.main,
     display: 'inline',
   },
 
@@ -241,14 +241,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'inline-block',
     fontFamily: 'Ubuntu',
     fontSize: '1rem',
-    color: theme.palette.primary.dark,
+    color: theme.palette.success.main,
   },
 
   markStyleWrong: {
     display: 'inline-block',
     fontFamily: 'Ubuntu',
     fontSize: '1rem',
-    color: theme.palette.error.dark,
+    color: theme.palette.error.main,
   },
 
   fullScreenGrid: {

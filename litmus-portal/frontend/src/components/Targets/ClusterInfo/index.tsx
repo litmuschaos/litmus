@@ -1,21 +1,21 @@
+import { useMutation } from '@apollo/client';
 import { Typography } from '@material-ui/core';
+import { ButtonFilled } from 'kubera-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMutation } from '@apollo/client';
 import { useSelector } from 'react-redux';
-import { history } from '../../../redux/configureStore';
-import ButtonOutline from '../../Button/ButtonOutline';
-// import BrowseWorkflow from '../TargetHome/BrowseWorkflow';
-import useStyles from './styles';
 import Scaffold from '../../../containers/layouts/Scaffold';
-import TargetCopy from '../TargetCopy';
+import Unimodal from '../../../containers/layouts/Unimodal';
+import { DELETE_CLUSTER } from '../../../graphql';
 import { Cluster, DeleteCluster } from '../../../models/graphql/clusterData';
 import { LocationState } from '../../../models/routerModel';
-import { DELETE_CLUSTER } from '../../../graphql';
-import Unimodal from '../../../containers/layouts/Unimodal';
-import ButtonFilled from '../../Button/ButtonFilled';
-import BackButton from '../../Button/BackButton';
+import { history } from '../../../redux/configureStore';
 import { RootState } from '../../../redux/reducers';
+import BackButton from '../../Button/BackButton';
+import ButtonOutline from '../../Button/ButtonOutline';
+import TargetCopy from '../TargetCopy';
+// import BrowseWorkflow from '../TargetHome/BrowseWorkflow';
+import useStyles from './styles';
 
 interface ClusterProps {
   data: Cluster;
@@ -165,9 +165,9 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
                       </ButtonOutline>
 
                       <ButtonFilled
-                        isDisabled={false}
-                        isPrimary
-                        handleClick={handleDelete}
+                        variant="error"
+                        onClick={handleDelete}
+                        className={classes.w7}
                       >
                         <>{t('targets.modalDelete.yes')}</>
                       </ButtonFilled>

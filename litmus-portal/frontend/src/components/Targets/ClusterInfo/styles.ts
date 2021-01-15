@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(5),
     marginTop: theme.spacing(5),
   },
+  w7: { width: '7rem' },
   firstCol: {
     display: 'flex',
     alignItems: 'center',

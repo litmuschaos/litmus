@@ -211,6 +211,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     width: '16rem',
   },
+  w7: { width: '7rem' },
 }));
 
 export default useStyles;

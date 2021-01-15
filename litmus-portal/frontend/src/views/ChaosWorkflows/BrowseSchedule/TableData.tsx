@@ -12,12 +12,12 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import cronstrue from 'cronstrue';
+import { ButtonFilled } from 'kubera-ui';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import Unimodal from '../../../containers/layouts/Unimodal';
 import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
@@ -69,6 +69,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
 
   const handleClose = () => {
     setAnchorEl(null);
+    setIsModalOpen(false);
   };
 
   // Function to download the manifest
@@ -318,9 +319,9 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                 {t('createWorkflow.scheduleWorkflow.cancelBtn')}
               </ButtonOutline>
               <ButtonFilled
-                isPrimary={false}
-                isWarning
-                handleClick={() => {
+                variant="error"
+                className={classes.w7}
+                onClick={() => {
                   deleteRow(data.workflow_id);
                   setIsModalOpen(false);
                 }}
