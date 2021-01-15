@@ -1,12 +1,12 @@
 /* eslint-disable max-len */
-import React, { useEffect } from 'react';
-import Plotly from 'plotly.js';
-import createPlotlyComponent from 'react-plotly.js/factory';
 import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
-import moment from 'moment';
 import { useTheme } from '@material-ui/core/styles';
-import useStyles from './style';
+import moment from 'moment';
+import Plotly from 'plotly.js';
+import React, { useEffect } from 'react';
+import createPlotlyComponent from 'react-plotly.js/factory';
 import Score from './Score';
+import useStyles from './style';
 
 const Plot = createPlotlyComponent(Plotly);
 
@@ -246,7 +246,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
       line: {
         shape: 'spline',
         dash: 'dash',
-        color: palette.secondary.dark,
+        color: palette.primary.main,
         width: 3,
       },
       name: 'AVG Workflows',
@@ -342,7 +342,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         ticklen: 5,
         tickfont: {
           family: 'Ubuntu',
-          color: palette.text.primary,
+          color: palette.text.disabled,
         },
         mirror: true,
         rangeselector: selectorOptions as any,
@@ -361,7 +361,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         ticklen: 5,
         tickfont: {
           family: 'Ubuntu',
-          color: palette.text.primary,
+          color: palette.text.disabled,
         },
         mirror: true,
         tickmode: 'array',
@@ -381,7 +381,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
       },
       font: {
         family: 'Ubuntu, monospace',
-        color: palette.text.primary,
+        color: palette.text.disabled,
       },
       showlegend: true,
       legend: { orientation: 'h', y: -0.5 },

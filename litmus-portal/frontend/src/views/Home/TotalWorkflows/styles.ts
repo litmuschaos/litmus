@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2.5),
   },
   avgCount: {
-    color: theme.palette.secondary.dark,
+    color: theme.palette.primary.main,
   },
   maxCount: {
     color: theme.palette.text.disabled,
@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
     opacity: 0.6,
   },
   avatarStyle: {
-    backgroundColor: theme.palette.secondary.dark,
+    backgroundColor: theme.palette.primary.main,
     width: '2.5rem',
     height: '2.5rem',
     marginTop: theme.spacing(0.625),

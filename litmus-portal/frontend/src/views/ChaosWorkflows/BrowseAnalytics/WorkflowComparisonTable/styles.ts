@@ -1,4 +1,10 @@
-import { makeStyles } from '@material-ui/core';
+import {
+  Checkbox,
+  createStyles,
+  makeStyles,
+  Theme,
+  withStyles,
+} from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    border: `1px solid ${theme.palette.border.main}`,
+    border: `1px solid ${theme.palette.disabledBackground}`,
     height: '5.55rem',
     backgroundColor: theme.palette.cards.background,
   },
@@ -49,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
   search: {
     marginRight: 'auto',
     marginLeft: theme.spacing(6.25),
-    borderBottom: `1px solid ${theme.palette.border.main}`,
+    borderBottom: `1px solid ${theme.palette.disabledBackground}`,
   },
 
   calIcon: {
@@ -64,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
 
   tableMain: {
     marginTop: theme.spacing(4.25),
-    border: `1px solid ${theme.palette.border.main}`,
+    border: `1px solid ${theme.palette.disabledBackground}`,
     backgroundColor: theme.palette.cards.background,
     maxHeight: '30.15rem',
     '&::-webkit-scrollbar': {
@@ -74,13 +80,13 @@ const useStyles = makeStyles((theme) => ({
       webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
     },
     '&::-webkit-scrollbar-thumb': {
-      backgroundColor: theme.palette.secondary.dark,
+      backgroundColor: theme.palette.primary.main,
     },
   },
 
   tableMainCompare: {
     marginTop: theme.spacing(-0.25),
-    border: `1px solid ${theme.palette.border.main}`,
+    border: `1px solid ${theme.palette.disabledBackground}`,
     backgroundColor: theme.palette.common.white,
     height: '15rem',
     overflow: 'hidden',
@@ -91,8 +97,8 @@ const useStyles = makeStyles((theme) => ({
   },
   tableMainShowAll: {
     marginTop: theme.spacing(4.25),
-    border: `1px solid ${theme.palette.border.main}`,
-    backgroundColor: theme.palette.common.white,
+    border: `1px solid ${theme.palette.disabledBackground}`,
+    backgroundColor: theme.palette.background.paper,
     maxHeight: '30.15rem',
     '&::-webkit-scrollbar': {
       width: '0.2em',
@@ -101,13 +107,13 @@ const useStyles = makeStyles((theme) => ({
       webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
     },
     '&::-webkit-scrollbar-thumb': {
-      backgroundColor: theme.palette.secondary.dark,
+      backgroundColor: theme.palette.primary.main,
     },
   },
 
   seeAllPaper: {
     height: '5rem',
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.palette.disabledBackground,
     paddingTop: theme.spacing(3.75),
     paddingBottom: theme.spacing(3.75),
     paddingLeft: '42%',
@@ -118,7 +124,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   workflowName: {
-    borderRight: `1px solid ${theme.palette.border.main}`,
+    borderRight: `1px solid ${theme.palette.disabledBackground}`,
     paddingTop: theme.spacing(2.5),
     maxWidth: '16.5rem',
   },
@@ -136,7 +142,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   nameContent: {
-    color: theme.palette.secondary.contrastText,
+    color: theme.palette.text.primary,
     display: 'flex',
     flexDirection: 'row',
     fontSize: '0.8rem',
@@ -160,6 +166,10 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(0.5),
   },
 
+  button: {
+    marginRight: theme.spacing(3),
+  },
+
   buttonBack: {
     alignContent: 'left',
     transform: 'rotate(-270deg)',
@@ -176,29 +186,29 @@ const useStyles = makeStyles((theme) => ({
     display: 'inline-block',
     fontFamily: 'Ubuntu',
     fontSize: '1rem',
-    color: theme.palette.primary.dark,
+    color: theme.palette.secondary.main,
   },
 
   markerIconDown: {
-    color: `${theme.palette.text.primary}`,
+    color: theme.palette.text.primary,
     paddingTop: theme.spacing(0.5),
     margin: 0,
   },
 
   markerIconUp: {
-    color: `${theme.palette.text.primary}`,
+    color: theme.palette.text.primary,
     paddingTop: theme.spacing(0.5),
     margin: 0,
   },
 
   seeAllText: {
-    color: `${theme.palette.text.primary}`,
+    color: theme.palette.primary.main,
     fontWeight: 500,
   },
 
   backgroundFix: {
     color: theme.palette.text.primary,
-    backgroundColor: theme.palette.secondary.contrastText,
+    backgroundColor: theme.palette.background.paper,
     width: '100%',
     height: '45rem',
     marginBottom: theme.spacing(-2),
@@ -216,7 +226,7 @@ const useStyles = makeStyles((theme) => ({
   // Form Select Properties
   formControl: {
     margin: theme.spacing(0.5),
-    marginRight: theme.spacing(1.5),
+    marginRight: theme.spacing(2.5),
     height: '2.5rem',
     minWidth: '9rem',
   },
@@ -234,7 +244,7 @@ const useStyles = makeStyles((theme) => ({
     border: '0.125rem solid',
     borderRadius: 4,
     borderColor: theme.palette.primary.main,
-    marginRight: theme.spacing(3),
+    marginRight: theme.spacing(2),
     textTransform: 'none',
   },
 
@@ -272,7 +282,7 @@ const useStyles = makeStyles((theme) => ({
 
   noData: {
     color: theme.palette.text.primary,
-    backgroundColor: theme.palette.secondary.contrastText,
+    backgroundColor: theme.palette.background.paper,
     width: '100%',
     height: '25rem',
     marginBottom: theme.spacing(-2),
@@ -284,7 +294,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
     marginTop: theme.spacing(1),
     display: 'block',
-    backgroundColor: theme.palette.secondary.contrastText,
+    backgroundColor: theme.palette.common.white,
     width: '1.5rem',
     height: '1.5rem',
   },
@@ -304,5 +314,17 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(1.25),
   },
 }));
+
+export const StyledCheckbox = withStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      color: theme.palette.disabledBackground,
+      '&$checked': {
+        color: theme.palette.secondary.main,
+      },
+    },
+    checked: {},
+  })
+)(Checkbox);
 
 export default useStyles;
