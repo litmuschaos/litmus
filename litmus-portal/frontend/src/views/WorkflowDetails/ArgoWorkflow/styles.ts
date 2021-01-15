@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme: Theme) => ({
       },
       '& g.Succeeded': {
         '& circle': {
-          fill: theme.palette.primary.dark,
+          fill: theme.palette.success.main,
         },
       },
       '& g.Running': {
@@ -90,7 +90,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         },
       },
       '& g.StepGroup.Succeeded': {
-        fill: theme.palette.primary.dark,
+        fill: theme.palette.success.main,
       },
       '& g.StepGroup.Running': {
         fill: theme.palette.warning.main,
@@ -106,8 +106,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     // Styles for edges
     '& g g.edgePaths': {
       '& g.Succeeded': {
-        fill: theme.palette.primary.dark,
-        stroke: theme.palette.primary.dark,
+        fill: theme.palette.success.main,
+        stroke: theme.palette.success.main,
       },
       '& g.Running': {
         fill: theme.palette.warning.main,

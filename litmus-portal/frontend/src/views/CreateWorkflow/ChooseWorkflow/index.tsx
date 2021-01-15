@@ -1,10 +1,9 @@
 import { Typography } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
-import { InputField } from 'kubera-ui';
+import { ButtonFilled, InputField } from 'kubera-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import PredifinedWorkflows from '../../../components/PredifinedWorkflows';
 import workflowsList from '../../../components/PredifinedWorkflows/data';
@@ -182,11 +181,11 @@ const ChooseWorkflow: React.FC<ChooseWorkflowProps> = ({ isEditable }) => {
           />
           <div className={classes.paddedTop}>
             <ButtonFilled
-              handleClick={() => {
+              onClick={() => {
                 setOpen(true);
               }}
-              isPrimary={false}
-              isDisabled={isDisable}
+              variant="success"
+              disabled={isDisable}
             >
               <div>{t('createWorkflow.chooseWorkflow.button.edit')}</div>
             </ButtonFilled>
@@ -252,23 +251,20 @@ const ChooseWorkflow: React.FC<ChooseWorkflowProps> = ({ isEditable }) => {
               />
             </div>
             <div className={classes.buttons}>
-              <div className={classes.cancelButton}>
-                <ButtonOutline
-                  handleClick={() => setOpen(false)}
-                  isDisabled={false}
-                >
-                  <div>{t('createWorkflow.chooseWorkflow.button.cancel')}</div>
-                </ButtonOutline>
-              </div>
-              <div className={classes.saveButton}>
-                <ButtonFilled
-                  isPrimary={false}
-                  isDisabled={!isSuccess.current}
-                  handleClick={() => handleSave()}
-                >
-                  <div>{t('createWorkflow.chooseWorkflow.button.save')}</div>
-                </ButtonFilled>
-              </div>
+              <ButtonOutline
+                handleClick={() => setOpen(false)}
+                isDisabled={false}
+              >
+                <div>{t('createWorkflow.chooseWorkflow.button.cancel')}</div>
+              </ButtonOutline>
+
+              <ButtonFilled
+                variant="success"
+                disabled={!isSuccess.current}
+                onClick={() => handleSave()}
+              >
+                <div>{t('createWorkflow.chooseWorkflow.button.save')}</div>
+              </ButtonFilled>
             </div>
           </div>
         </div>
