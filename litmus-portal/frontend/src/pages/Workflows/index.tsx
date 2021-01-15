@@ -1,15 +1,16 @@
 import { AppBar, Typography } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
 import Tabs from '@material-ui/core/Tabs';
+import { ButtonFilled } from 'kubera-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import ButtonFilled from '../../components/Button/ButtonFilled';
 import { StyledTab, TabPanel } from '../../components/Tabs';
 import Scaffold from '../../containers/layouts/Scaffold';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import * as TemplateSelectionActions from '../../redux/actions/template';
+import * as WorkflowActions from '../../redux/actions/workflow';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import WorkflowComparisonTable from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowComparisonTable';
@@ -17,7 +18,6 @@ import BrowseSchedule from '../../views/ChaosWorkflows/BrowseSchedule';
 import BrowseWorkflow from '../../views/ChaosWorkflows/BrowseWorkflow';
 import Templates from '../../views/ChaosWorkflows/Templates';
 import useStyles from './styles';
-import * as WorkflowActions from '../../redux/actions/workflow';
 
 const Workflows = () => {
   const classes = useStyles();
@@ -50,10 +50,7 @@ const Workflows = () => {
         <div className={classes.header}>
           <Typography variant="h3">Chaos Workflows</Typography>
           <div className={classes.scheduleBtn}>
-            <ButtonFilled
-              isPrimary={false}
-              handleClick={handleScheduleWorkflow}
-            >
+            <ButtonFilled onClick={handleScheduleWorkflow}>
               {t('workflows.scheduleAWorkflow')}
             </ButtonFilled>
           </div>

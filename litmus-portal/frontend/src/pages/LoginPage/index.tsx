@@ -1,9 +1,8 @@
 /* eslint-disable react/no-danger */
 import { Typography } from '@material-ui/core';
-import { InputField } from 'kubera-ui';
+import { ButtonFilled, InputField } from 'kubera-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ButtonFilled from '../../components/Button/ButtonFilled';
 import Loader from '../../components/Loader';
 import config from '../../config';
 import useActions from '../../redux/actions';
@@ -133,7 +132,11 @@ const LoginPage = () => {
               </div>
             </div>
             <div className={classes.loginDiv}>
-              <ButtonFilled type="submit" isPrimary isDisabled={isLoading}>
+              <ButtonFilled
+                className={classes.w20}
+                type="submit"
+                disabled={isLoading}
+              >
                 <div data-cy="loginButton">
                   {isLoading ? <Loader size={loaderSize} /> : 'Login'}
                 </div>

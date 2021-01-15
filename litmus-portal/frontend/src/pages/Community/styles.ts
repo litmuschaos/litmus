@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   card: {
-    backgroundColor: theme.palette.secondary.dark,
+    backgroundColor: theme.palette.primary.main,
     height: '21.25rem',
     width: '20rem',
     textAlign: 'center',
