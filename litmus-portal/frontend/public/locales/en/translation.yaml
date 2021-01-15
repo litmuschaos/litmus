@@ -30,7 +30,7 @@ welcomeModal:
 
 sidebar:
   title: Litmus
-  version: "Version: 1.12"
+  version: 'Version: 1.12'
 
 header:
   notificationDropdown:
@@ -94,14 +94,14 @@ login:
   passwordForgot: Don’t remember your password?
 
 schedule:
-  heading: "Schedule a workflow"
-  headingDesc: "Click on test to see detailed log of your workflow"
-  headingText: "Schedule details:"
-  description: "Choose the right time to schedule your first workflow. Below you can find some options that may be convenient for you."
-  save: "Save Changes"
+  heading: 'Schedule a workflow'
+  headingDesc: 'Click on test to see detailed log of your workflow'
+  headingText: 'Schedule details:'
+  description: 'Choose the right time to schedule your first workflow. Below you can find some options that may be convenient for you.'
+  save: 'Save Changes'
   scheduleNow: Schedule now
   scheduleAfter: Schedule after some time
-  scheduleAfterSometime: "Choose the minutes, hours, or days when you want to start workflow"
+  scheduleAfterSometime: 'Choose the minutes, hours, or days when you want to start workflow'
   scheduleSpecificTime: Schedule at a specific time
   scheduleFuture: Select date and time to start workflow in future
   scheduleRecurring: Recurring Schedule
@@ -109,7 +109,7 @@ schedule:
   after: After
   at: at
   At: At
-  scheduleOn: "On"
+  scheduleOn: 'On'
   missingPerm: Missing sufficient permissions :(
   requiredPerm: Looks like you do not have the required permission to create a new workflow on this project.
   contact: Contact portal administrator to upgrade your permission.
@@ -121,14 +121,14 @@ schedule:
   backBtn: Go Back
 
 workflowUnderground:
-  heading: "Click on Info to see details of your workflow"
+  heading: 'Click on Info to see details of your workflow'
 
 community:
-  title: "Community"
-  heading: "Litmus Insights"
-  headingDesc: "Stats for the Litmus community"
-  analyticDesc: "Periodic growth of Litmus"
-  statsHeading: "Litmus users around the world:"
+  title: 'Community'
+  heading: 'Litmus Insights'
+  headingDesc: 'Stats for the Litmus community'
+  analyticDesc: 'Periodic growth of Litmus'
+  statsHeading: 'Litmus users around the world:'
   litmusChaos: Litmuschaos
   follow: Follow
 
@@ -138,8 +138,8 @@ analytics:
   comingSoon: Analytics Coming Soon!
   waitingMessage: Waiting for workflow to start running!
   chaosStartWaitingMessage: Waiting for chaos experiments to start!
-  highestScore: "Highest Score:"
-  lowestScore: "Lowest Score:"
+  highestScore: 'Highest Score:'
+  lowestScore: 'Lowest Score:'
   exportPDF: Export PDF
   compareWorkflows: Compare workflows
   targetCluster: Target cluster
@@ -488,7 +488,7 @@ targets:
     head4: 4.Click on the button
     head5: Connect the target
     conformation: Kuberenetes Agent is confirming, Please wait...
-    clusterDetails: Cluster Details
+    clusterDetails: Cluster Details 
   modalDelete:
     head1: Are you sure to
     head2: remove the current Agent?
@@ -496,6 +496,7 @@ targets:
     delete: Delete
     yes: Yes
     no: No
+
 
 connectTargets:
   title: A new Target,
@@ -552,7 +553,7 @@ workflows:
 #########################################
 
 internetIssues:
-  fetchData: "Fetching the data..."
+  fetchData: 'Fetching the data...'
   connectionError: It seems you have no internet connection, Please try again When connectivity resumes.
 
 ######################################
