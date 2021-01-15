@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 
   quickActionDiv: {
     marginTop: theme.spacing(4),
-    borderLeft: `1px solid ${theme.palette.border.main}`,
+    borderLeft: `1px solid ${theme.palette.disabledBackground}`,
     paddingLeft: theme.spacing(3),
   },
 
@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: theme.spacing(1.25),
     textDecoration: 'none',
     textTransform: 'none',
-    color: theme.palette.secondary.dark,
+    color: theme.palette.primary.main,
   },
 
   resilienceScoresDiv: { width: '63%' },
@@ -82,16 +82,16 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
     // (Uncomment when recent activities are available.)
     // backgroundColor: theme.palette.secondary.contrastText,
-    background: theme.palette.background.paper,
+    background: 'rgba(0, 0, 0, 0.4)',
   },
 
   backgroundFix: {
     color: theme.palette.text.primary,
-    backgroundColor: theme.palette.secondary.contrastText,
+    backgroundColor: theme.palette.background.paper,
   },
 
   comingSoon: {
-    color: theme.palette.secondary.contrastText,
+    color: theme.palette.text.secondary,
     marginLeft: theme.spacing(8.25),
     marginTop: theme.spacing(12),
   },
