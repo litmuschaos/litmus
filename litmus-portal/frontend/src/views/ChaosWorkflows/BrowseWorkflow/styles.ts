@@ -10,8 +10,7 @@ const useStyles = makeStyles((theme) => ({
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    border: '1px solid ',
-    borderColor: theme.palette.border.main,
+    border: '1px solid rgba(0, 0, 0, 0.05)',
     backgroundColor: theme.palette.cards.background,
   },
 
@@ -57,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
   },
   tableMain: {
     marginTop: theme.spacing(4.25),
-    border: `1px solid ${theme.palette.border.main}`,
+    border: `1px solid ${theme.palette.disabledBackground}`,
     backgroundColor: theme.palette.cards.background,
     height: '29.219rem',
     '&::-webkit-scrollbar': {
@@ -67,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
       webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
     },
     '&::-webkit-scrollbar-thumb': {
-      backgroundColor: theme.palette.secondary.dark,
+      backgroundColor: theme.palette.primary.main,
     },
   },
   tableHead: {
@@ -83,11 +82,11 @@ const useStyles = makeStyles((theme) => ({
   },
   headerStatus: {
     paddingLeft: theme.spacing(10),
-    color: theme.palette.text.primary,
+    color: theme.palette.text.disabled,
   },
   workflowName: {
-    borderRight: `1px solid ${theme.palette.border.main}`,
-    color: theme.palette.text.primary,
+    borderRight: '1px solid rgba(0, 0, 0, 0.1)',
+    color: theme.palette.text.disabled,
   },
   sortDiv: {
     display: 'flex',
@@ -95,7 +94,7 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(1.25),
   },
   headData: {
-    color: theme.palette.text.primary,
+    color: theme.palette.text.disabled,
   },
   tableDataStatus: {
     paddingLeft: theme.spacing(8.5),
@@ -108,11 +107,11 @@ const useStyles = makeStyles((theme) => ({
   },
   workflowNameData: {
     maxWidth: '15.625rem',
-    borderRight: `1px solid ${theme.palette.border.main}`,
+    borderRight: '1px solid rgba(0, 0, 0, 0.1)',
   },
   targetCluster: {
     paddingLeft: theme.spacing(3.75),
-    color: theme.palette.text.primary,
+    color: theme.palette.text.disabled,
   },
   clusterName: {
     marginLeft: theme.spacing(4),
