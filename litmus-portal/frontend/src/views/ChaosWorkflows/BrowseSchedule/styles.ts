@@ -166,6 +166,9 @@ const useStyles = makeStyles((theme) => ({
     width: '15.1875rem',
     padding: theme.spacing(3.125, 2.6),
   },
+  dark: {
+    color: theme.palette.text.disabled,
+  },
   weightInfo: {
     display: 'flex',
     flexDirection: 'row',

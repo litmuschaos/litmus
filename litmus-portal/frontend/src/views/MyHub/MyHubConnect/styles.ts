@@ -36,9 +36,14 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2.5),
     marginLeft: theme.spacing(-1.25),
   },
-  inputField: {
+  hubNameInput: {
     marginBottom: theme.spacing(2.5),
-    width: '25rem',
+    marginLeft: theme.spacing(2),
+  },
+  inputField: {
+    marginLeft: theme.spacing(2),
+    marginBottom: theme.spacing(2.5),
+    width: '20rem',
   },
   modalDiv: {
     display: 'flex',

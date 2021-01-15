@@ -1,9 +1,9 @@
 /* eslint-disable react/no-danger */
 import { Typography } from '@material-ui/core';
+import { InputField } from 'kubera-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../components/Button/ButtonFilled';
-import InputField from '../../components/InputField';
 import Loader from '../../components/Loader';
 import config from '../../config';
 import useActions from '../../redux/actions';
@@ -96,9 +96,13 @@ const LoginPage = () => {
                       ? 'Should not start with an empty space'
                       : ''
                   }
-                  validationError={validateStartEmptySpacing(authData.username)}
+                  variant={
+                    validateStartEmptySpacing(authData.username)
+                      ? 'error'
+                      : 'primary'
+                  }
                   required
-                  handleChange={(e) =>
+                  onChange={(e) =>
                     setAuthData({
                       username: e.target.value,
                       password: authData.password,
@@ -106,6 +110,7 @@ const LoginPage = () => {
                   }
                 />
               </div>
+              <div aria-details="spacer" style={{ margin: '0.4rem 0' }} />
               <div className={classes.inputValue} data-cy="inputPassword">
                 <InputField
                   label="Password"
@@ -117,8 +122,8 @@ const LoginPage = () => {
                       ? 'Wrong Credentials - Try again with correct username or password'
                       : ''
                   }
-                  validationError={isError}
-                  handleChange={(e) =>
+                  variant={isError ? 'error' : 'primary'}
+                  onChange={(e) =>
                     setAuthData({
                       username: authData.username,
                       password: e.target.value,

@@ -24,30 +24,21 @@ import WorkflowNodeInfo from '../../views/WorkflowDetails/WorkflowNodeInfo';
 import useStyles from './styles';
 import TopNavButtons from './TopNavButtons';
 
-interface TopNavButtonsProps {
-  isAnalyticsToggled: boolean;
-  isExportToggled: boolean;
-  isInfoToggled: boolean;
-}
-
 const WorkflowDetails: React.FC = () => {
   const classes = useStyles();
-
-  const [isToggled, setIsToggled] = React.useState<TopNavButtonsProps>({
-    isAnalyticsToggled: false,
-    isExportToggled: false,
-    isInfoToggled: false,
-  });
 
   const tabs = useActions(TabActions);
   const { pathname } = useLocation();
   // Getting the workflow nome from the pathname
-  const workflowRunId = pathname.split('/')[3];
+  const workflowRunId = pathname.split('/')[2];
   const { t } = useTranslation();
 
   // get ProjectID
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
+  );
+  const isInfoToggled = useSelector(
+    (state: RootState) => state.toggleInfoButton.isInfoToggled
   );
   const workflowDetailsTabValue = useSelector(
     (state: RootState) => state.tabNumber.node
@@ -111,7 +102,7 @@ const WorkflowDetails: React.FC = () => {
 
   return (
     <Scaffold>
-      <TopNavButtons isToggled={isToggled} setIsToggled={setIsToggled} />
+      <TopNavButtons />
       {/* If workflow data is present then display the workflow details */}
       {workflow ? (
         <div className={classes.root}>
@@ -128,7 +119,7 @@ const WorkflowDetails: React.FC = () => {
               }
             />
           </div>
-          {isToggled.isInfoToggled ? (
+          {isInfoToggled ? (
             <div className={classes.workflowSideBar}>
               <AppBar
                 position="static"
@@ -146,7 +137,7 @@ const WorkflowDetails: React.FC = () => {
                   variant="fullWidth"
                 >
                   <StyledTab label="Workflow" />
-                  <StyledTab label="Nodes" />
+                  <StyledTab label="Steps" />
                 </Tabs>
               </AppBar>
               <TabPanel value={workflowDetailsTabValue} index={0}>
