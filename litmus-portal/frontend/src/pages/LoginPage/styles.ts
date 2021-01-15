@@ -76,6 +76,10 @@ const useStyles = makeStyles((theme) => ({
     verticalAlign: 'middle',
     paddingLeft: theme.spacing(0.625),
   },
+
+  w20: {
+    width: '20%',
+  },
 }));
 
 export default useStyles;

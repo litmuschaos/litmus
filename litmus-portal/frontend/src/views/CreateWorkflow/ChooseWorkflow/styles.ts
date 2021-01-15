@@ -60,13 +60,12 @@ const useStyles = makeStyles((theme) => ({
   },
 
   saved: {
-    width: '25rem',
     marginTop: theme.spacing(6),
     fontFamily: 'Ubuntu',
     lineHeight: '130%',
     fontWeight: 500,
     fontSize: '1rem',
-    color: theme.palette.primary.dark,
+    color: theme.palette.success.main,
   },
 
   testType: {
@@ -86,6 +85,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   buttons: {
+    marginTop: theme.spacing(4),
     display: 'flex',
     justifyContent: 'space-between',
   },
@@ -93,13 +93,6 @@ const useStyles = makeStyles((theme) => ({
   selectionName: {
     fontFamily: 'Ubuntu',
     fontSize: '1rem',
-  },
-
-  cancelButton: {
-    marginLeft: theme.spacing(-2),
-  },
-  saveButton: {
-    marginRight: theme.spacing(-2),
   },
 }));
 

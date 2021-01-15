@@ -1,16 +1,16 @@
-import { TableCell, Typography, IconButton, Tooltip } from '@material-ui/core';
-import React from 'react';
+import { IconButton, TableCell, Tooltip, Typography } from '@material-ui/core';
+import { ButtonFilled } from 'kubera-ui';
 import moment from 'moment';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import useStyles from './styles';
+import ButtonOutline from '../../../components/Button/ButtonOutline';
+import Unimodal from '../../../containers/layouts/Unimodal';
 import { Cluster } from '../../../models/graphql/clusterData';
 import { history } from '../../../redux/configureStore';
-import timeDifferenceForDate from '../../../utils/datesModifier';
-import Unimodal from '../../../containers/layouts/Unimodal';
-import ButtonFilled from '../../../components/Button/ButtonFilled';
-import ButtonOutline from '../../../components/Button/ButtonOutline';
 import { RootState } from '../../../redux/reducers';
+import timeDifferenceForDate from '../../../utils/datesModifier';
+import useStyles from './styles';
 
 interface TableDataProps {
   data: Cluster;
@@ -139,9 +139,10 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                     </ButtonOutline>
 
                     <ButtonFilled
-                      isDisabled={userRole === 'Viewer'}
-                      isPrimary
-                      handleClick={handleClose}
+                      disabled={userRole === 'Viewer'}
+                      variant="error"
+                      onClick={handleClose}
+                      className={classes.w7}
                     >
                       <>{t('targets.modalDelete.yes')}</>
                     </ButtonFilled>
