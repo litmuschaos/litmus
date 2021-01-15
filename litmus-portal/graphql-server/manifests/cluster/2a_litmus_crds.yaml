@@ -55,7 +55,7 @@ spec:
               type: string
             engineState:
               type: string
-              pattern: ^(active|stop|initialized|stopped)$
+              pattern: ^(active|stop)$
             chaosServiceAccount:
               type: string
             components:
@@ -94,6 +94,8 @@ spec:
                         type: array
                         items:
                           type: object
+                          required:
+                            - runProperties
                           properties:
                             name:
                               type: string
@@ -166,6 +168,11 @@ spec:
                                       type: string
                             runProperties:
                               type: object
+                              minProperties: 3
+                              required:
+                                - probeTimeout
+                                - interval
+                                - retry
                               properties:
                                 probeTimeout:
                                   type: integer
