@@ -91,9 +91,9 @@ const useStyles = makeStyles((theme) => ({
   },
   inputDivEnv: {
     display: 'flex',
+    width: '100%',
     flexDirection: 'row',
     marginTop: theme.spacing(1.25),
-    marginLeft: theme.spacing(-2.5),
   },
   horizontalLineHeader: {
     border: `1px solid  ${theme.palette.border.main}`,

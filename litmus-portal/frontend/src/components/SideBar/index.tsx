@@ -8,14 +8,16 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
+import useActions from '../../redux/actions';
+import * as TabActions from '../../redux/actions/tabs';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import { ReactComponent as CommunityIcon } from '../../svg/community.svg';
 import { ReactComponent as HomeIcon } from '../../svg/home.svg';
+import { ReactComponent as MyHubIcon } from '../../svg/myhub.svg';
 import { ReactComponent as SettingsIcon } from '../../svg/settings.svg';
 import { ReactComponent as TargetsIcon } from '../../svg/targets.svg';
 import { ReactComponent as WorkflowsIcon } from '../../svg/workflows.svg';
-import { ReactComponent as MyHubIcon } from '../../svg/myhub.svg';
 import useStyles from './styles';
 
 interface CustomisedListItemProps {
@@ -47,6 +49,7 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
 const SideBar: React.FC = () => {
   const classes = useStyles();
   const userRole = useSelector((state: RootState) => state.userData.userRole);
+  const tabs = useActions(TabActions);
   const { t } = useTranslation();
   const pathName = useLocation().pathname.split('/')[1];
 
@@ -89,6 +92,7 @@ const SideBar: React.FC = () => {
             key="workflow"
             handleClick={() => {
               history.push('/workflows');
+              tabs.changeWorkflowsTabs(0);
             }}
             label="Workflows"
             selected={pathName === 'workflows'}

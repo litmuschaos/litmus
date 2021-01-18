@@ -100,12 +100,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
         />
 
         {/* Select Workflow */}
-        <FormControl
-          variant="outlined"
-          className={classes.formControl}
-          color="primary"
-          focused
-        >
+        <FormControl variant="outlined" className={classes.formControl} focused>
           <InputLabel className={classes.selectText}>
             Workflow Status
           </InputLabel>
@@ -123,12 +118,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
         </FormControl>
 
         {/* Select Cluster */}
-        <FormControl
-          variant="outlined"
-          className={classes.formControl}
-          color="primary"
-          focused
-        >
+        <FormControl variant="outlined" className={classes.formControl} focused>
           <InputLabel className={classes.selectText}>Target Cluster</InputLabel>
           <Select
             value={clusterValue}
@@ -185,7 +175,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
             ranges={state}
             direction="vertical"
             editableDateInputs
-            rangeColors={[palette.secondary.dark]}
+            rangeColors={[palette.primary.dark]}
             showMonthAndYearPickers
           />
         </Popover>

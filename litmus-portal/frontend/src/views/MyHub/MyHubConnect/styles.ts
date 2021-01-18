@@ -41,6 +41,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2),
   },
   inputField: {
+    marginLeft: theme.spacing(2),
     marginBottom: theme.spacing(2.5),
     width: '20rem',
   },
