@@ -1,24 +1,24 @@
-import { Typography } from '@material-ui/core';
-import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
-import { useSelector } from 'react-redux';
+import { Typography } from '@material-ui/core';
+import { InputField } from 'kubera-ui';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import BackButton from '../../../components/Button/BackButton';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
-import InputField from '../../../components/InputField';
+import Loader from '../../../components/Loader';
 import QuickActionCard from '../../../components/QuickActionCard';
 import VideoCarousel from '../../../components/VideoCarousel';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import Unimodal from '../../../containers/layouts/Unimodal';
+import { ADD_MY_HUB } from '../../../graphql/mutations';
+import { history } from '../../../redux/configureStore';
+import { RootState } from '../../../redux/reducers';
 import {
   isValidWebUrl,
   validateStartEmptySpacing,
 } from '../../../utils/validate';
 import useStyles from './styles';
-import { history } from '../../../redux/configureStore';
-import { ADD_MY_HUB } from '../../../graphql/mutations';
-import { RootState } from '../../../redux/reducers';
-import Loader from '../../../components/Loader';
 
 interface GitHub {
   HubName: string;
@@ -88,7 +88,7 @@ const MyHub = () => {
           </Typography>
           <form id="login-form" autoComplete="on" onSubmit={handleSubmit}>
             <div className={classes.inputDiv}>
-              <div className={classes.inputField}>
+              <div className={classes.hubNameInput}>
                 <InputField
                   label="Hub Name"
                   value={gitHub.HubName}
@@ -97,9 +97,13 @@ const MyHub = () => {
                       ? 'Should not start with an empty space'
                       : ''
                   }
-                  validationError={validateStartEmptySpacing(gitHub.HubName)}
+                  variant={
+                    validateStartEmptySpacing(gitHub.HubName)
+                      ? 'error'
+                      : 'primary'
+                  }
                   required
-                  handleChange={(e) =>
+                  onChange={(e) =>
                     setGitHub({
                       HubName: e.target.value,
                       GitURL: gitHub.GitURL,
@@ -115,9 +119,9 @@ const MyHub = () => {
                   helperText={
                     !isValidWebUrl(gitHub.GitURL) ? 'Enter a valid URL' : ''
                   }
-                  validationError={!isValidWebUrl(gitHub.GitURL)}
+                  variant={isValidWebUrl(gitHub.GitURL) ? 'error' : 'primary'}
                   required
-                  handleChange={(e) =>
+                  onChange={(e) =>
                     setGitHub({
                       HubName: gitHub.HubName,
                       GitURL: e.target.value,
@@ -135,9 +139,13 @@ const MyHub = () => {
                       ? 'Should not start with an empty space'
                       : ''
                   }
-                  validationError={validateStartEmptySpacing(gitHub.GitBranch)}
+                  variant={
+                    validateStartEmptySpacing(gitHub.GitBranch)
+                      ? 'error'
+                      : 'primary'
+                  }
                   required
-                  handleChange={(e) =>
+                  onChange={(e) =>
                     setGitHub({
                       HubName: gitHub.HubName,
                       GitURL: gitHub.GitURL,

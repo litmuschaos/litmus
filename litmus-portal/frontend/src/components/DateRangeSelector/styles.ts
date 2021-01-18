@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   popoverDateRangeSelector: {
-    background: theme.palette.secondary.contrastText,
+    background: theme.palette.background.paper,
     borderRadius: theme.shape.borderRadius,
     width: '100%',
     maxWidth: '35rem',

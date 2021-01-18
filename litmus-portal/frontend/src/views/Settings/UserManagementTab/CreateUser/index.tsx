@@ -1,7 +1,7 @@
 import { Divider, IconButton, Typography } from '@material-ui/core';
+import { InputField } from 'kubera-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import InputFieldOutline from '../../../../components/InputFieldOutline';
 import {
   validateLength,
   validateStartEmptySpacing,
@@ -129,7 +129,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
                   <form>
                     <div className={classes.details1}>
                       <div data-cy="userName">
-                        <InputFieldOutline
+                        <InputField
                           helperText={
                             validateStartEmptySpacing(personalData.userName)
                               ? 'Should not start with an empty space'
@@ -139,16 +139,19 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
                             'settings.userManagementTab.createUser.label.username'
                           )}
                           value={personalData.userName}
-                          handleChange={handleUsername}
-                          validationError={validateStartEmptySpacing(
-                            personalData.userName
-                          )}
+                          onChange={handleUsername}
+                          variant={
+                            validateStartEmptySpacing(personalData.userName)
+                              ? 'error'
+                              : 'primary'
+                          }
                           disabled
                         />
                       </div>
+                      <div style={{ width: '2rem' }} />
 
                       <div data-cy="passwordInput">
-                        <InputFieldOutline
+                        <InputField
                           required
                           type="password"
                           helperText={
@@ -156,11 +159,13 @@ const CreateUser: React.FC<CreateUserProps> = ({ handleDiv }) => {
                               ? 'Password is too short'
                               : ''
                           }
-                          handleChange={handleCreatePassword('password')}
+                          onChange={handleCreatePassword('password')}
                           value={createPAssword.password}
-                          validationError={validateLength(
-                            createPAssword.password
-                          )}
+                          variant={
+                            validateLength(createPAssword.password)
+                              ? 'error'
+                              : 'primary'
+                          }
                           label={t(
                             'settings.userManagementTab.createUser.label.newPassword'
                           )}

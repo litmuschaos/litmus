@@ -10,8 +10,7 @@ const useStyles = makeStyles((theme) => ({
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    border: '1px solid ',
-    borderColor: theme.palette.border.main,
+    border: '1px solid rgba(0, 0, 0, 0.05)',
     backgroundColor: theme.palette.cards.background,
   },
   search: {
@@ -43,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
   },
   tableMain: {
     marginTop: theme.spacing(4.25),
-    border: `1px solid ${theme.palette.border.main}`,
+    border: `1px solid ${theme.palette.disabledBackground}`,
     backgroundColor: theme.palette.cards.background,
     height: '29.220rem',
     '&::-webkit-scrollbar': {
@@ -53,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
       webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
     },
     '&::-webkit-scrollbar-thumb': {
-      backgroundColor: theme.palette.secondary.dark,
+      backgroundColor: theme.palette.primary.main,
     },
   },
   tableHead: {
@@ -68,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
   },
   headerStatus: {
     paddingLeft: theme.spacing(10),
-    color: theme.palette.text.primary,
+    color: theme.palette.text.disabled,
   },
   headerStatus1: {
     paddingLeft: theme.spacing(8),
@@ -80,8 +79,8 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(1.75),
   },
   workflowName: {
-    borderRight: `1px solid ${theme.palette.border.main}`,
-    color: theme.palette.text.primary,
+    border: '1px solid rgba(0, 0, 0, 0.1)',
+    color: theme.palette.text.disabled,
   },
   sortDiv: {
     display: 'flex',
@@ -91,13 +90,13 @@ const useStyles = makeStyles((theme) => ({
   workflowNameData: {
     maxWidth: '15.625rem',
     paddingLeft: theme.spacing(6.25),
-    borderRight: `1px solid ${theme.palette.border.main}`,
+    border: '1px solid rgba(0, 0, 0, 0.1)',
   },
   regularity: {
-    color: theme.palette.text.primary,
+    color: theme.palette.text.disabled,
   },
   targetCluster: {
-    color: theme.palette.text.primary,
+    color: theme.palette.text.disabled,
   },
   clusterStartDate: {
     paddingLeft: theme.spacing(10),
@@ -123,7 +122,7 @@ const useStyles = makeStyles((theme) => ({
   },
   showExp: {
     paddingLeft: theme.spacing(1),
-    color: theme.palette.text.primary,
+    color: theme.palette.text.disabled,
   },
   clusterData: {
     paddingTop: theme.spacing(1.25),
@@ -166,6 +165,9 @@ const useStyles = makeStyles((theme) => ({
     width: '15.1875rem',
     padding: theme.spacing(3.125, 2.6),
   },
+  dark: {
+    color: theme.palette.text.disabled,
+  },
   weightInfo: {
     display: 'flex',
     flexDirection: 'row',
@@ -174,11 +176,11 @@ const useStyles = makeStyles((theme) => ({
   points: {
     marginLeft: 'auto',
     color: (props) =>
-      props >= 4 && props <= 6
+      props >= 3 && props <= 6
         ? theme.palette.warning.main
         : props >= 7
-        ? theme.palette.primary.dark
-        : theme.palette.error.dark,
+        ? theme.palette.success.main
+        : theme.palette.error.main,
     fontWeight: 500,
   },
 
@@ -209,6 +211,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     width: '16rem',
   },
+  w7: { width: '7rem' },
 }));
 
 export default useStyles;

@@ -22,6 +22,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   selectText: {
     height: '2.9rem',
     paddingLeft: theme.spacing(1),
+
+    '& .MuiSelect-icon': {
+      color: theme.palette.text.primary,
+    },
   },
   formControl: {
     marginRight: theme.spacing(2.5),

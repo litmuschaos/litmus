@@ -36,6 +36,7 @@ export interface WorkflowData {
   weights: experimentMap[];
   isCustomWorkflow: boolean;
   isRecurring: boolean;
+  isDisabled: boolean;
   namespace: string;
   workflow_id?: string;
   clustername: string;

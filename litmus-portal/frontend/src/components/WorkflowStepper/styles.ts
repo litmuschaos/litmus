@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(1.5),
   },
   activeLabel: {
-    color: theme.palette.primary.light,
+    color: theme.palette.secondary.main,
     marginTop: theme.spacing(-9),
     fontWeight: 'bold',
     fontSize: theme.spacing(1.5),

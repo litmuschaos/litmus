@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
     width: '12.5rem',
     border: `1px solid ${theme.palette.border.main}`,
     '&:hover': {
-      border: `1.1px solid ${theme.palette.secondary.dark}`,
+      border: `1.1px solid ${theme.palette.primary.light}`,
       cursor: 'pointer',
       borderRadius: theme.spacing(0.375),
     },
@@ -76,7 +76,7 @@ const useStyles = makeStyles((theme) => ({
   connected: {
     marginLeft: 'auto',
     padding: theme.spacing(0.375, 1.25, 0.375, 1.25),
-    backgroundColor: theme.palette.primary.dark,
+    backgroundColor: theme.palette.primary.main,
     color: theme.palette.common.white,
     fontSize: '0.625rem',
     borderRadius: theme.spacing(0.375),

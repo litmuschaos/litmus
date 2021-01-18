@@ -1,17 +1,17 @@
 import { useLazyQuery } from '@apollo/client';
 import {
   FormControl,
-  Snackbar,
-  Typography,
+  Input,
+  InputLabel,
   MenuItem,
   Select,
-  InputLabel,
-  Input,
+  Snackbar,
+  Typography,
 } from '@material-ui/core';
+import { ButtonFilled } from 'kubera-ui';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import ButtonFilled from '../../../components/Button/ButtonFilled';
+import { useSelector } from 'react-redux';
 import { GET_CLUSTER } from '../../../graphql';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
@@ -164,9 +164,8 @@ const WorkflowCluster: React.FC<WorkflowClusterProps> = ({ gotoStep }) => {
         <div className={classes.button} data-cy="Internal">
           <ButtonFilled
             data-cy="gotItButton"
-            isPrimary
-            isDisabled={isTragetSelected}
-            handleClick={() => handleClick()}
+            disabled={isTragetSelected}
+            onClick={() => handleClick()}
           >
             <div>{t('workflowCluster.header.select')}</div>
           </ButtonFilled>
