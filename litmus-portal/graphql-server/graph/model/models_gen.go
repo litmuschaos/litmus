@@ -50,7 +50,6 @@ type Chart struct {
 	Metadata    *Metadata           `json:"Metadata"`
 	Spec        *Spec               `json:"Spec"`
 	PackageInfo *PackageInformation `json:"PackageInfo"`
-	Experiments []*Chart            `json:"Experiments"`
 }
 
 type Charts struct {

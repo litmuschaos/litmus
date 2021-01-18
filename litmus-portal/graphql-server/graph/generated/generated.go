@@ -73,7 +73,6 @@ type ComplexityRoot struct {
 
 	Chart struct {
 		APIVersion  func(childComplexity int) int
-		Experiments func(childComplexity int) int
 		Kind        func(childComplexity int) int
 		Metadata    func(childComplexity int) int
 		PackageInfo func(childComplexity int) int
@@ -534,13 +533,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Chart.APIVersion(childComplexity), true
-
-	case "Chart.Experiments":
-		if e.complexity.Chart.Experiments == nil {
-			break
-		}
-
-		return e.complexity.Chart.Experiments(childComplexity), true
 
 	case "Chart.Kind":
 		if e.complexity.Chart.Kind == nil {
@@ -2259,7 +2251,6 @@ type Chart {
 	Metadata: Metadata!
 	Spec: Spec!
 	PackageInfo: PackageInformation!
-	Experiments: [Chart!]!
 }
 
 type Maintainer {
@@ -4016,40 +4007,6 @@ func (ec *executionContext) _Chart_PackageInfo(ctx context.Context, field graphq
 	res := resTmp.(*model.PackageInformation)
 	fc.Result = res
 	return ec.marshalNPackageInformation2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPackageInformation(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Chart_Experiments(ctx context.Context, field graphql.CollectedField, obj *model.Chart) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Chart",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Experiments, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.Chart)
-	fc.Result = res
-	return ec.marshalNChart2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChartᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Charts_Charts(ctx context.Context, field graphql.CollectedField, obj *model.Charts) (ret graphql.Marshaler) {
@@ -13720,11 +13677,6 @@ func (ec *executionContext) _Chart(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "PackageInfo":
 			out.Values[i] = ec._Chart_PackageInfo(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "Experiments":
-			out.Values[i] = ec._Chart_Experiments(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

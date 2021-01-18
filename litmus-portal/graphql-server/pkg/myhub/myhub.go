@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
@@ -12,7 +13,10 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/gitops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/handler"
 	"go.mongodb.org/mongo-driver/bson"
+	"io"
 	"log"
+	"net/http"
+	"os"
 	"strconv"
 	"time"
 )
@@ -370,3 +374,19 @@ func DeleteMyHub(ctx context.Context, hubID string) (bool, error) {
 	}
 	return true, nil
 }
+
+// GetIconHandler ...
+var GetIconHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	img, err := os.Open("/tmp/version/" + vars["ProjectID"] + "/" + vars["HubName"] + "/charts/" + vars["ChartName"] + "/icons/" + vars["IconName"])
+	responseStatusCode := 200
+	if err != nil {
+		responseStatusCode = 500
+		fmt.Fprint(w, "icon cannot be fetched, err : "+err.Error())
+	}
+	defer img.Close()
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.WriteHeader(responseStatusCode)
+	w.Header().Set("Content-Type", "image/png") // <-- set the content-type header
+	io.Copy(w, img)
+})
