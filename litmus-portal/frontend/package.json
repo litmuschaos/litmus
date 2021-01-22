@@ -40,7 +40,7 @@
     "prop-types": "^15.7.2",
     "rc-progress": "^3.0.0",
     "react": "^16.9.0",
-    "react-ace": "^9.1.1",
+    "react-ace": "^9.2.1",
     "react-date-range": "^1.0.3",
     "react-dom": "^16.9.0",
     "react-google-charts": "^3.0.15",
