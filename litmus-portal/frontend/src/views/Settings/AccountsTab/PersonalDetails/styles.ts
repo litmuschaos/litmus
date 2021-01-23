@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: 'center',
     marginTop: theme.spacing(15),
     paddingBottom: '7rem',
-    color: theme.palette.personalDetailsBodyColor,
+    color: 'none',
   },
   text: {
     width: '31rem',
@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: '0 auto',
   },
   errDiv: {
-    color: theme.palette.personalDetailsBodyColor,
+    color: 'none',
     width: '100%',
     display: 'flex',
     flexDirection: 'column',

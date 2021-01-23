@@ -3,52 +3,47 @@
 /* eslint-disable no-console */
 import { useQuery } from '@apollo/client';
 import {
-  MuiThemeProvider,
+  IconButton,
+  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TablePagination,
   TableRow,
-  Paper,
-  IconButton,
   Typography,
 } from '@material-ui/core';
+import useTheme from '@material-ui/core/styles/useTheme';
+import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import useTheme from '@material-ui/core/styles/useTheme';
-import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
-import * as _ from 'lodash';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import Loader from '../../../../components/Loader';
+import { WORKFLOW_LIST_DETAILS } from '../../../../graphql/queries';
 import {
-  customThemeAnalyticsTable,
-  customThemeAnalyticsTableCompareMode,
-} from '../../../../theme';
+  ExecutionData,
+  WeightageMap,
+  Workflow,
+  WorkflowList,
+  WorkflowListDataVars,
+} from '../../../../models/graphql/workflowListData';
+import { RootState } from '../../../../redux/reducers';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
   sortNumAsc,
   sortNumDesc,
 } from '../../../../utils/sort';
-import { WORKFLOW_LIST_DETAILS } from '../../../../graphql/quries';
-import { RootState } from '../../../../redux/reducers';
-import Loader from '../../../../components/Loader';
 import ResilienceScoreComparisonPlot from '../WorkflowComparisonPlot/index';
 import useStyles from './styles';
 import TableData from './TableData';
 import TableHeader from './TableHeader';
 import TableToolBar from './TableToolbar';
-import {
-  WeightageMap,
-  ExecutionData,
-  Workflow,
-  WorkflowList,
-  WorkflowListDataVars,
-} from '../../../../models/graphql/workflowListData';
 
 interface RangeType {
   startDate: string;
@@ -466,7 +461,7 @@ const WorkflowComparisonTable = () => {
         const doc = new jsPDF('p', 'mm', 'a4'); // A4 size page of PDF
         const position = -45;
         doc.setFontSize(10);
-        doc.text('Litmus Portal Report Version: 1.9', 10, 10);
+        doc.text('Litmus Portal Report Version: 1.12', 10, 10);
         doc.text('Time of Generation:', 10, 15);
         doc.text(new Date().toString(), 42, 15);
         doc.text(
@@ -602,7 +597,7 @@ const WorkflowComparisonTable = () => {
                 className={classes.buttonBack}
               >
                 <ExpandMoreTwoToneIcon
-                  htmlColor={palette.secondary.dark}
+                  htmlColor={palette.primary.main}
                   className={classes.buttonBackStyle}
                 />
               </IconButton>
@@ -666,138 +661,130 @@ const WorkflowComparisonTable = () => {
             />
           </section>
           <section className="table section">
-            <MuiThemeProvider
-              theme={
-                compare === false
-                  ? customThemeAnalyticsTable
-                  : customThemeAnalyticsTableCompareMode
-              }
-            >
-              <Paper className={classes.tableBody}>
-                <TableContainer
-                  className={
-                    compare === false && selected.length <= 2
-                      ? classes.tableMain
-                      : compare === false && selected.length > 2
-                      ? classes.tableMainShowAll
-                      : showAll === true && selected.length <= 3
-                      ? classes.tableMainShowAll
-                      : showAll === true && selected.length > 3
-                      ? classes.tableMain
-                      : classes.tableMainCompare
-                  }
-                >
-                  <Table aria-label="simple table">
-                    <TableHeader
-                      onSelectAllClick={handleSelectAllClick}
-                      numSelected={selected.length}
-                      rowCount={displayData.length}
-                      comparisonState={compare}
-                      callBackToSort={(sortConfigurations: SortData) => {
-                        setFilter({
-                          ...filter,
-                          sortData: sortConfigurations,
-                        });
-                      }}
-                    />
-                    <TableBody>
-                      {loading ? (
-                        <TableRow>
-                          <TableCell colSpan={6}>
-                            <Loader />
-                          </TableCell>
-                        </TableRow>
-                      ) : error ? (
-                        <TableRow>
-                          <TableCell colSpan={6}>
-                            <Typography align="center">
-                              {t(
-                                'chaosWorkflows.browseAnalytics.workFlowComparisonTable.unableToFetch'
-                              )}
-                            </Typography>
-                          </TableCell>
-                        </TableRow>
-                      ) : displayData && displayData.length ? (
-                        displayData
-                          .slice(0)
-                          .slice(
-                            page * rowsPerPage,
-                            page * rowsPerPage + rowsPerPage
-                          )
-                          .map((data: Workflow, index: number) => {
-                            const isItemSelected = isSelected(data.workflow_id);
-                            const labelId = `enhanced-table-checkbox-${index}`;
-                            return (
-                              <TableRow
-                                hover
-                                onClick={(event) => {
-                                  if (compare === false) {
-                                    handleClick(event, data.workflow_id);
-                                  }
-                                }}
-                                role="checkbox"
-                                aria-checked={isItemSelected}
-                                tabIndex={-1}
-                                key={data.workflow_id}
-                                selected={isItemSelected}
-                              >
-                                <TableData
-                                  data={data}
-                                  itemSelectionStatus={isItemSelected}
-                                  labelIdentifier={labelId}
-                                  comparisonState={compare}
-                                />
-                              </TableRow>
-                            );
-                          })
-                      ) : (
-                        <TableRow>
-                          <TableCell colSpan={6}>
-                            <Typography align="center">
-                              {t(
-                                'chaosWorkflows.browseAnalytics.workFlowComparisonTable.noRecords'
-                              )}
-                            </Typography>
-                          </TableCell>
-                        </TableRow>
-                      )}
-                      {emptyRows > 0 && (
-                        <TableRow style={{ height: 75 * emptyRows }}>
-                          <TableCell colSpan={6} />
-                        </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-                {compare === false || showAll === true ? (
-                  <TablePagination
-                    rowsPerPageOptions={[5, 10, 25, 50]}
-                    component="div"
-                    count={displayData.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onChangePage={handleChangePage}
-                    onChangeRowsPerPage={handleChangeRowsPerPage}
+            <Paper className={classes.tableBody}>
+              <TableContainer
+                className={
+                  compare === false && selected.length <= 2
+                    ? classes.tableMain
+                    : compare === false && selected.length > 2
+                    ? classes.tableMainShowAll
+                    : showAll === true && selected.length <= 3
+                    ? classes.tableMainShowAll
+                    : showAll === true && selected.length > 3
+                    ? classes.tableMain
+                    : classes.tableMainCompare
+                }
+              >
+                <Table aria-label="simple table">
+                  <TableHeader
+                    onSelectAllClick={handleSelectAllClick}
+                    numSelected={selected.length}
+                    rowCount={displayData.length}
+                    comparisonState={compare}
+                    callBackToSort={(sortConfigurations: SortData) => {
+                      setFilter({
+                        ...filter,
+                        sortData: sortConfigurations,
+                      });
+                    }}
                   />
-                ) : (
-                  <Paper
-                    elevation={0}
-                    className={classes.seeAllPaper}
-                    onClick={() => setShowAll(true)}
-                  >
-                    <Typography className={classes.seeAllText} variant="body2">
-                      {' '}
-                      <strong>
-                        {t(
-                          'chaosWorkflows.browseAnalytics.workFlowComparisonTable.showSelectedWorkflows'
-                        )}{' '}
-                        ({selected.length}){' '}
-                      </strong>{' '}
-                    </Typography>
-                  </Paper>
-                )}
-              </Paper>
-            </MuiThemeProvider>
+                  <TableBody>
+                    {loading ? (
+                      <TableRow>
+                        <TableCell colSpan={6}>
+                          <Loader />
+                        </TableCell>
+                      </TableRow>
+                    ) : error ? (
+                      <TableRow>
+                        <TableCell colSpan={6}>
+                          <Typography align="center">
+                            {t(
+                              'chaosWorkflows.browseAnalytics.workFlowComparisonTable.unableToFetch'
+                            )}
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    ) : displayData && displayData.length ? (
+                      displayData
+                        .slice(0)
+                        .slice(
+                          page * rowsPerPage,
+                          page * rowsPerPage + rowsPerPage
+                        )
+                        .map((data: Workflow, index: number) => {
+                          const isItemSelected = isSelected(data.workflow_id);
+                          const labelId = `enhanced-table-checkbox-${index}`;
+                          return (
+                            <TableRow
+                              hover
+                              onClick={(event) => {
+                                if (compare === false) {
+                                  handleClick(event, data.workflow_id);
+                                }
+                              }}
+                              role="checkbox"
+                              aria-checked={isItemSelected}
+                              tabIndex={-1}
+                              key={data.workflow_id}
+                              selected={isItemSelected}
+                            >
+                              <TableData
+                                data={data}
+                                itemSelectionStatus={isItemSelected}
+                                labelIdentifier={labelId}
+                                comparisonState={compare}
+                              />
+                            </TableRow>
+                          );
+                        })
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={6}>
+                          <Typography align="center">
+                            {t(
+                              'chaosWorkflows.browseAnalytics.workFlowComparisonTable.noRecords'
+                            )}
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                    {emptyRows > 0 && (
+                      <TableRow style={{ height: 75 * emptyRows }}>
+                        <TableCell colSpan={6} />
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              {compare === false || showAll === true ? (
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25, 50]}
+                  component="div"
+                  count={displayData.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onChangePage={handleChangePage}
+                  onChangeRowsPerPage={handleChangeRowsPerPage}
+                />
+              ) : (
+                <Paper
+                  elevation={0}
+                  className={classes.seeAllPaper}
+                  onClick={() => setShowAll(true)}
+                >
+                  <Typography className={classes.seeAllText} variant="body2">
+                    {' '}
+                    <strong>
+                      {t(
+                        'chaosWorkflows.browseAnalytics.workFlowComparisonTable.showSelectedWorkflows'
+                      )}{' '}
+                      ({selected.length}){' '}
+                    </strong>{' '}
+                  </Typography>
+                </Paper>
+              )}
+            </Paper>
           </section>
         </div>
       </div>

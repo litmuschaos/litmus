@@ -67,7 +67,12 @@ const Invitation: React.FC = () => {
         </ButtonOutline>
       </div>
 
-      <Unimodal open={open} handleClose={handleClose} hasCloseBtn>
+      <Unimodal
+        data-cy="modal"
+        open={open}
+        handleClose={handleClose}
+        hasCloseBtn
+      >
         <div data-cy="invitationModal" className={classes.body}>
           <Typography className={classes.Header}>
             {t('settings.teamingTab.invitation.modal.header')}{' '}
@@ -82,7 +87,7 @@ const Invitation: React.FC = () => {
                 onChange={handleChange}
                 TabIndicatorProps={{
                   style: {
-                    backgroundColor: theme.palette.secondary.dark,
+                    backgroundColor: theme.palette.primary.main,
                   },
                 }}
               >

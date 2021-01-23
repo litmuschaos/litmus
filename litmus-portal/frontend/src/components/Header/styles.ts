@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   headerFlexProfile: {
-    color: theme.palette.userNameTextColor,
+    color: theme.palette.text.primary,
     height: '5%',
     fontSize: '2.08rem',
     flexDirection: 'row',
@@ -60,19 +60,19 @@ const useStyles = makeStyles((theme: Theme) => ({
   projectDisplay: {
     marginTop: theme.spacing(-1.75),
     fontSize: 12,
-    color: theme.palette.projectDisplayColor,
+    color: theme.palette.text.disabled,
   },
   // Style for ProfileDropdownSection and ProfileDropdownItems.
   avatarBackground: {
-    backgroundColor: theme.palette.totalRunsCountColor,
-    color: theme.palette.customColors.white(1),
+    backgroundColor: theme.palette.primary.light,
+    color: theme.palette.common.white,
     marginBottom: theme.spacing(2),
     marginTop: theme.spacing(1),
   },
 
   // Styles for ProfileDropdownItems.
   popover: {
-    background: theme.palette.customColors.white(1),
+    background: theme.palette.cards.background,
     borderRadius: theme.shape.borderRadius,
     width: '100%',
     maxWidth: theme.spacing(36.5),
@@ -113,7 +113,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   userName: {
-    color: theme.palette.userNameTextColor,
+    color: theme.palette.text.primary,
     fontSize: '0.875rem',
   },
 
@@ -152,7 +152,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingBottom: theme.spacing(1),
     paddingLeft: theme.spacing(8),
     paddingRight: theme.spacing(8),
-    color: theme.palette.buttonEditProfile,
+    color: theme.palette.common.black,
   },
 
   dividerTop: {

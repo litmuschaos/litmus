@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   }),
   root: { borderRadius: '3px' },
   date: {
-    background: theme.palette.primary.dark,
+    background: theme.palette.success.main,
     borderRadius: '3px 3px 0px 0px',
     paddingTop: theme.spacing(0.5),
   },
@@ -50,14 +50,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'block',
   },
   dateIcon: {
-    backgroundColor: theme.palette.primary.dark,
+    backgroundColor: theme.palette.success.main,
     width: 23,
     height: 22,
     paddingLeft: theme.spacing(0.375),
     marginTop: theme.spacing(0.25),
   },
   resilienceScoreIcon: {
-    backgroundColor: theme.palette.resilienceScore,
+    backgroundColor: theme.palette.warning.main,
     width: 18,
     height: 18,
   },
@@ -78,12 +78,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: 20,
   },
   checkMarkIcon: {
-    color: theme.palette.primary.dark,
+    color: theme.palette.success.main,
     width: 20,
     height: 20,
   },
   cancelMarkIcon: {
-    color: theme.palette.error.dark,
+    color: theme.palette.error.main,
     width: 20,
     height: 20,
   },

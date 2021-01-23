@@ -27,11 +27,11 @@ const CountryMap = () => {
         data={parsedData}
         options={{
           colorAxis: {
-            colors: theme.palette.map.countryMap.colorAxis,
+            colors: [theme.palette.primary.main, theme.palette.primary.dark],
           },
-          backgroundColor: theme.palette.map.countryMap.backgroundMap, // White Theme
-          datalessRegionColor: theme.palette.map.countryMap.datalessRegion,
-          defaultColor: theme.palette.map.countryMap.default,
+          backgroundColor: theme.palette.cards.background, // White Theme
+          datalessRegionColor: theme.palette.primary.light,
+          defaultColor: theme.palette.background.default,
         }}
         rootProps={{ 'data-testid': '1' }}
       />

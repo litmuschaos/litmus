@@ -1,13 +1,13 @@
 /* eslint-disable max-len */
 /* eslint-disable no-console */
-import React, { useEffect } from 'react';
-import Plotly from 'plotly.js';
-import createPlotlyComponent from 'react-plotly.js/factory';
-import moment from 'moment';
-import { useTheme } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
-import useStyles from './styles';
+import { useTheme } from '@material-ui/core/styles';
+import moment from 'moment';
+import Plotly from 'plotly.js';
+import React, { useEffect } from 'react';
+import createPlotlyComponent from 'react-plotly.js/factory';
 import Loader from '../../../../components/Loader';
+import useStyles from './styles';
 
 const Plot = createPlotlyComponent(Plotly);
 
@@ -60,10 +60,10 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
     y: number;
   }>({ x: 0, y: 0 });
   const [colorsPassed, setColorsPassed] = React.useState<string[]>(
-    Array(workflowRunData.length).fill(palette.primary.dark)
+    Array(workflowRunData.length).fill(palette.success.main)
   );
   const [colorsFailed, setColorsFailed] = React.useState<string[]>(
-    Array(workflowRunData.length).fill(palette.error.dark)
+    Array(workflowRunData.length).fill(palette.error.main)
   );
 
   // Function to convert UNIX time in format of DD MMM YYY
@@ -170,15 +170,15 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
         showgrid: false,
         showline: true,
         showticklabels: true,
-        linecolor: palette.graphAnnotationsColor,
+        linecolor: palette.border.main,
         linewidth: 0.5,
         ticks: 'outside',
-        tickcolor: palette.graphAnnotationsColor,
+        tickcolor: palette.border.main,
         tickwidth: 0,
         ticklen: 0,
         tickfont: {
           family: 'Ubuntu, monospace',
-          color: palette.customColors.black(0.4),
+          color: palette.text.disabled,
         },
         rangeselector: selectorOptions,
         rangeslider: { visible: true },
@@ -188,15 +188,15 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
         zeroline: false,
         showline: false,
         showticklabels: false,
-        linecolor: palette.graphAnnotationsColor,
+        linecolor: palette.border.main,
         linewidth: 0.5,
         ticks: 'outside',
-        tickcolor: palette.graphAnnotationsColor,
+        tickcolor: palette.border.main,
         tickwidth: 0,
         ticklen: 0,
         tickfont: {
           family: 'Ubuntu, monospace',
-          color: palette.customColors.black(0.4),
+          color: palette.text.disabled,
         },
       },
       cliponaxis: true,
@@ -212,7 +212,7 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
       },
       font: {
         family: 'Ubuntu, monospace',
-        color: palette.customColors.black(0.4),
+        color: palette.text.disabled,
       },
       barmode: 'stack',
       showlegend: true,
@@ -317,7 +317,7 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
               const newFailedColours = [];
               let loc = { x: 0, y: 0 };
               for (let i = 0; i < colorsPassed.length; i++) {
-                if (colorsPassed[i] === palette.graphHoverColors.passedTests) {
+                if (colorsPassed[i] === palette.success.light) {
                   recolour = true;
                 }
               }
@@ -331,17 +331,17 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
                 }
                 for (let i = 0; i < colorsPassed.length; i++) {
                   if (i !== ind) {
-                    newPassedColours.push(palette.graphHoverColors.passedTests);
-                    newFailedColours.push(palette.graphHoverColors.failedTests);
+                    newPassedColours.push(palette.success.light);
+                    newFailedColours.push(palette.error.light);
                   } else {
-                    newPassedColours.push(palette.primary.dark);
-                    newFailedColours.push(palette.error.dark);
+                    newPassedColours.push(palette.success.main);
+                    newFailedColours.push(palette.error.main);
                   }
                 }
               } else {
                 for (let i = 0; i < colorsPassed.length; i++) {
-                  newPassedColours.push(palette.primary.dark);
-                  newFailedColours.push(palette.error.dark);
+                  newPassedColours.push(palette.success.main);
+                  newFailedColours.push(palette.error.main);
                 }
               }
               setVisibleIndex(ind);
@@ -359,11 +359,11 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
               }
               for (let i = 0; i < colorsPassed.length; i++) {
                 if (i !== ind) {
-                  newPassedColours.push(palette.graphHoverColors.passedTests);
-                  newFailedColours.push(palette.graphHoverColors.failedTests);
+                  newPassedColours.push(palette.success.light);
+                  newFailedColours.push(palette.error.light);
                 } else {
-                  newPassedColours.push(palette.primary.dark);
-                  newFailedColours.push(palette.error.dark);
+                  newPassedColours.push(palette.success.main);
+                  newFailedColours.push(palette.error.main);
                 }
               }
               setColorsPassed(newPassedColours);
@@ -376,8 +376,8 @@ const WorkflowRunsBarChart: React.FC<WorkflowRunsBarChartProps> = ({
               const newPassedColours = [];
               const newFailedColours = [];
               for (let i = 0; i < colorsPassed.length; i++) {
-                newPassedColours.push(palette.primary.dark);
-                newFailedColours.push(palette.error.dark);
+                newPassedColours.push(palette.success.main);
+                newFailedColours.push(palette.error.main);
               }
               setColorsPassed(newPassedColours);
               setColorsFailed(newFailedColours);

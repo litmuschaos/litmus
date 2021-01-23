@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(4),
     marginTop: theme.spacing(4),
     border: '0.0625rem solid',
-    borderColor: theme.palette.customColors.black(0.07),
+    borderColor: theme.palette.border.main,
     backgroundColor: theme.palette.common.white,
     borderRadius: '0.1875rem',
     paddingBottom: theme.spacing(4),
@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(5),
     marginTop: theme.spacing(5),
   },
+  w7: { width: '7rem' },
   firstCol: {
     display: 'flex',
     alignItems: 'center',
@@ -36,9 +37,7 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(5),
     marginLeft: theme.spacing(2),
   },
-  checkCluster: {
-    marginRight: theme.spacing(2),
-  },
+
   version: {
     marginTop: theme.spacing(2),
   },
@@ -48,9 +47,20 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(5),
     marginTop: theme.spacing(4),
   },
+  linkBox: {
+    backgroundColor: theme.palette.common.white,
+    paddingRight: theme.spacing(9),
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+    wordWrap: 'break-word',
+    justifyContent: 'space-between',
+  },
   status: {
     display: 'flex',
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: '1rem',
   },
   expDiv: {
     display: 'flex',
@@ -67,6 +77,10 @@ const useStyles = makeStyles((theme) => ({
   },
   rightMargin: {
     marginRight: theme.spacing(8),
+  },
+  buttonBox: {
+    display: 'flex',
+    paddingLeft: theme.spacing(4),
   },
   connectdevice: {
     fontSize: '1rem',
@@ -92,15 +106,48 @@ const useStyles = makeStyles((theme) => ({
   },
   active: {
     color: theme.palette.primary.dark,
-    background: theme.palette.customColors.menuOption.active,
+    background: theme.palette.success.light,
   },
   notactive: {
     color: theme.palette.error.dark,
     backgroundColor: theme.palette.error.light,
   },
   pending: {
-    background: theme.palette.customColors.menuOption.pending,
+    background: theme.palette.warning.light,
     color: theme.palette.warning.main,
+  },
+  body: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: theme.spacing(7.5),
+  },
+  // styles for text
+  text: {
+    width: '31.93rem',
+    height: '5.875rem',
+    marginTop: theme.spacing(3.75),
+    marginBottom: theme.spacing(3.75),
+  },
+  typo: {
+    fontSize: '2rem',
+  },
+  textSecond: {
+    width: '29.06rem',
+    height: '1.6875rem',
+    marginTop: theme.spacing(1.875),
+    marginBottom: theme.spacing(3.75),
+  },
+  typoSub: {
+    fontSize: '1rem',
+  },
+  // for yes or no buttons
+  buttonGroup: {
+    display: 'flex',
+    gap: '1rem',
+    marginTop: theme.spacing(2.5),
+    justifyContent: 'space-between',
   },
 }));
 

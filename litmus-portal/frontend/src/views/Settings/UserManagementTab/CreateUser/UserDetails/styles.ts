@@ -49,10 +49,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   // Style for ProfileDropdownSection and ProfileDropdownItems.
   avatarBackground: {
-    backgroundColor: theme.palette.totalRunsCountColor,
+    backgroundColor: theme.palette.primary.light,
     width: '4.81rem',
     height: '4.81rem',
-    color: theme.palette.customColors.white(1),
+    color: theme.palette.common.white,
     marginBottom: theme.spacing(1.625),
     [theme.breakpoints.down('sm')]: {
       marginLeft: theme.spacing(2.5),

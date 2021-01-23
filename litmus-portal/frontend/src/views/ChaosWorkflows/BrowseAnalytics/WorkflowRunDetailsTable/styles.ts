@@ -27,19 +27,19 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     justifyContent: 'center',
     height: '6rem',
-    border: `1px solid ${theme.palette.customColors.black(0.07)}`,
-    backgroundColor: theme.palette.homePageCardBackgroundColor,
+    border: `1px solid ${theme.palette.disabledBackground}`,
+    backgroundColor: theme.palette.cards.background,
   },
 
   search: {
     marginRight: 'auto',
     marginLeft: theme.spacing(6.25),
-    borderBottom: `1px solid ${theme.palette.customColors.black(0.07)}`,
+    borderBottom: `1px solid ${theme.palette.disabledBackground}`,
   },
 
   tableMain: {
     marginTop: theme.spacing(-0.5),
-    border: `1px solid ${theme.palette.customColors.black(0.07)}`,
+    border: `1px solid ${theme.palette.disabledBackground}`,
     backgroundColor: theme.palette.common.white,
     minHeight: '25rem',
     '&::-webkit-scrollbar': {
@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
       webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
     },
     '&::-webkit-scrollbar-thumb': {
-      backgroundColor: theme.palette.secondary.dark,
+      backgroundColor: theme.palette.primary.main,
     },
   },
 
@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   testName: {
-    borderRight: `1px solid ${theme.palette.customColors.black(0.07)}`,
+    borderRight: `1px solid ${theme.palette.disabledBackground}`,
     paddingLeft: theme.spacing(10),
   },
 
@@ -95,13 +95,13 @@ const useStyles = makeStyles((theme) => ({
   },
 
   markerIconDown: {
-    color: theme.palette.customColors.black(0.4),
+    color: theme.palette.text.primary,
     paddingTop: theme.spacing(0.5),
     margin: 0,
   },
 
   markerIconUp: {
-    color: theme.palette.customColors.black(0.4),
+    color: theme.palette.text.primary,
     paddingTop: theme.spacing(0.5),
     margin: 0,
   },
@@ -126,7 +126,7 @@ const useStyles = makeStyles((theme) => ({
     alignContent: 'space-between',
     justifyContent: 'space-between',
     height: '4.5rem',
-    backgroundColor: theme.palette.homePageCardBackgroundColor,
+    backgroundColor: theme.palette.cards.background,
     marginTop: theme.spacing(-0.175),
   },
 
@@ -143,7 +143,7 @@ const useStyles = makeStyles((theme) => ({
 
   resultText: {
     fontSize: '1.125rem',
-    color: theme.palette.customColors.black(0.6),
+    color: theme.palette.text.primary,
     width: '20rem',
     marginTop: theme.spacing(3),
     verticalAlign: 'middle',
@@ -174,7 +174,7 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '9rem',
     border: '1.7px solid',
     borderRadius: 4,
-    borderColor: theme.palette.secondary.main,
+    borderColor: theme.palette.primary.main,
     marginRight: theme.spacing(3),
     textTransform: 'none',
   },

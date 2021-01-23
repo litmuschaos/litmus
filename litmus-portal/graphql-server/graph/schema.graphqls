@@ -20,6 +20,11 @@ type Cluster {
   no_of_schedules: Int
   no_of_workflows: Int
   token: String!
+  agent_namespace: String
+  serviceaccount: String
+  agent_scope: String!
+  agent_ns_exists: Boolean
+  agent_sa_exists: Boolean
 }
 
 input ClusterInput {
@@ -28,6 +33,11 @@ input ClusterInput {
   platform_name: String!
   project_id: ID!
   cluster_type: String!
+  agent_namespace: String
+  serviceaccount: String
+  agent_scope: String!
+  agent_ns_exists: Boolean
+  agent_sa_exists: Boolean
 }
 
 type ClusterEvent {
@@ -39,9 +49,9 @@ type ClusterEvent {
 }
 
 type ActionPayload {
-  request_type: String
-  k8s_manifest: String
-  namespace: String
+  request_type: String!
+  k8s_manifest: String!
+  namespace: String!
   external_data: String
 }
 
@@ -84,6 +94,7 @@ type weightages {
 }
 
 input ChaosWorkFlowInput {
+  workflow_id: String
   workflow_manifest: String!
   cronSyntax: String!
   workflow_name: String!
@@ -120,6 +131,7 @@ input WorkflowRunInput {
   workflow_name: String!
   execution_data: String!
   cluster_id: ClusterIdentity!
+  completed: Boolean!
 }
 
 type PodLogResponse {
@@ -163,6 +175,7 @@ type ScheduledWorkflows {
   project_id: ID!
   cluster_id: ID!
   cluster_type: String!
+  isRemoved: Boolean!
 }
 
 type Workflow {
@@ -179,6 +192,7 @@ type Workflow {
   project_id: ID!
   cluster_id: ID!
   cluster_type: String!
+  isRemoved: Boolean!
   workflow_runs: [WorkflowRuns]
 }
 
@@ -210,6 +224,14 @@ type Query {
   getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
 
   ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
+
+  getCharts(HubName: String!, projectID: String!): [Chart!]! @authorized
+
+  getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
+
+  getHubStatus(projectID: String!): [MyHubStatus]! @authorized
+
+  getYAMLData(experimentInput: ExperimentInput!): String!
 }
 
 type Mutation {
@@ -243,6 +265,15 @@ type Mutation {
   chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
 
   podLog(log: PodLog!): String!
+
+  addMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
+
+  syncHub(projectID: String!, HubName: String!): [MyHubStatus!]! @authorized
+
+  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
+    @authorized
+
+  deleteClusterReg(cluster_id: String!): String! @authorized
 }
 
 type Subscription {

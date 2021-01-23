@@ -21,7 +21,13 @@ const CustomBreadcrumbs: React.FC<CustomBreadcrumbsProps> = ({ location }) => {
           // If Template/Workflow Name is clicked [Workflow / Workflow-name / Template]
           // it would redirect to /workflows
           if (pathname[2] === 'template' && path === pathname[3]) {
-            return <span>{path}</span>;
+            return <span key="path">{path}</span>;
+          }
+          if (
+            pathname[2] === 'schedule' &&
+            (path === pathname[3] || path === pathname[4])
+          ) {
+            return <span key="schedule">{path}</span>;
           }
           const link = (
             <Link

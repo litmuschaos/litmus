@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
   toolbar: {
     maxWidth: '63.75rem',
     minWidth: '39.0625rem',
-    borderBottom: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    borderBottom: `1px solid ${theme.palette.border.main}`,
     marginBottom: theme.spacing(1.25),
   },
   InviteBtn: {
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.secondary.main,
     width: '2.56rem',
     height: '2.56rem',
-    color: theme.palette.customColors.white(1),
+    color: theme.palette.common.white,
     marginRight: theme.spacing(2.5),
     [theme.breakpoints.down('sm')]: {
       marginLeft: theme.spacing(2.5),
@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
   },
   menuOpt: {
     '&:hover': {
-      background: theme.palette.customColors.menuOption.active,
+      background: theme.palette.success.light,
     },
   },
   optionBtn: {

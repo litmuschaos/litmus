@@ -37,6 +37,7 @@ import 'ace-builds/src-min-noconflict/ext-statusbar';
 import 'ace-builds/src-min-noconflict/ext-textarea';
 import 'ace-builds/src-min-noconflict/ext-themelist';
 import 'ace-builds/src-min-noconflict/ext-whitespace';
+import YAML from 'yaml';
 import { AceValidations, parseYamlValidations } from './Validations';
 import useStyles from './styles';
 import useActions from '../../redux/actions';
@@ -102,7 +103,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
       });
       const nodeStyleError = (document.getElementsByClassName(
         'ace_gutter-cell'
-      )[stateObject.annotations[0].row] as any).style;
+      )[stateObject.annotations[0].row - 1] as any).style;
       nodeStyleError.background = 'red';
       nodeStyleError.color = '#FFFFFF';
     } else {
@@ -121,8 +122,8 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
         (nodeStyleErrorList[i] as any).style.color = 'rgba(255, 255, 255, 0.4)';
       }
     }
-    setEditorState(stateObject as any);
     setModifiedYaml(value);
+    setEditorState(stateObject as any);
     workflow.setWorkflowDetails({
       name: filename,
       link: yamlLink,
@@ -230,6 +231,12 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
       });
     }
     setEditorState(stateObject as any);
+    const yamlData = YAML.parse(content);
+    if (readOnly !== true) {
+      workflow.setWorkflowDetails({
+        namespace: yamlData.metadata.namespace,
+      });
+    }
   }, []);
 
   return (
@@ -499,7 +506,6 @@ const YamlEditor: React.FC<YamlEditorProps> = ({
                   autoScrollEditorIntoView: true,
                   tooltipFollowsMouse: true,
                 });
-                (YamlAce.current!.editor as any).focus();
 
                 const nodeStyleActiveList = document.getElementsByClassName(
                   'ace_gutter-cell'

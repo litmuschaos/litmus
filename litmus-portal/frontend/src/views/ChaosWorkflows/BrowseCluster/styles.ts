@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     justifyContent: 'center',
     border: '0.0625rem solid',
-    borderColor: theme.palette.customColors.black(0.07),
+    borderColor: theme.palette.border.main,
     backgroundColor: theme.palette.common.white,
   },
   popOver: {
@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
   search: {
     fontSize: '1rem',
     marginRight: 'auto',
-    borderBottom: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    borderBottom: `1px solid ${theme.palette.border.main}`,
     marginLeft: theme.spacing(6.25),
   },
   // Form Select Properties
@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
   },
   tableMain: {
     marginTop: theme.spacing(4.25),
-    border: `1px solid ${theme.palette.customColors.black(0.07)}`,
+    border: `1px solid ${theme.palette.border.main}`,
     backgroundColor: theme.palette.common.white,
     height: '28.219rem',
     '&::-webkit-scrollbar': {
@@ -70,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
   },
   tableRows: {
     padding: theme.spacing(4),
-    color: theme.palette.customColors.black(0.4),
+    color: theme.palette.text.primary,
     height: '4.6875rem',
   },
   dataRow: {
@@ -78,17 +78,17 @@ const useStyles = makeStyles((theme) => ({
   },
   headerStatus: {
     paddingLeft: theme.spacing(7),
-    color: theme.palette.customColors.black(0.4),
+    color: theme.palette.text.primary,
   },
   workflowName: {
-    borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
-    color: theme.palette.customColors.black(0.4),
+    borderRight: `1px solid ${theme.palette.border.main}`,
+    color: theme.palette.text.primary,
   },
   sortDiv: {
     paddingLeft: theme.spacing(1.5),
   },
   headData: {
-    color: theme.palette.customColors.black(0.4),
+    color: theme.palette.text.primary,
   },
   tableDataStatus: {
     paddingLeft: theme.spacing(5),
@@ -101,12 +101,12 @@ const useStyles = makeStyles((theme) => ({
   },
   workflowNameData: {
     maxWidth: '15.625rem',
-    borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    borderRight: `1px solid ${theme.palette.border.main}`,
     paddingLeft: theme.spacing(4),
   },
   targetCluster: {
     paddingLeft: theme.spacing(3.75),
-    color: theme.palette.customColors.black(0.4),
+    color: theme.palette.text.primary,
   },
   clusterName: {
     marginLeft: theme.spacing(4),
@@ -169,15 +169,15 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.dark,
   },
   active: {
-    color: theme.palette.primary.dark,
-    background: theme.palette.customColors.menuOption.active,
+    color: theme.palette.status.completed.text,
+    background: theme.palette.success.light,
   },
   notactive: {
     color: theme.palette.error.dark,
     backgroundColor: theme.palette.error.light,
   },
   pending: {
-    background: theme.palette.customColors.menuOption.pending,
+    background: theme.palette.warning.light,
     color: theme.palette.warning.main,
   },
   statusFont: {
@@ -213,11 +213,12 @@ const useStyles = makeStyles((theme) => ({
   // for yes or no buttons
   buttonGroup: {
     display: 'flex',
-    width: '10.75rem',
-    height: '2.75rem',
     marginTop: theme.spacing(2.5),
     justifyContent: 'space-between',
+    gap: '1rem',
   },
+
+  w7: { width: '7rem' },
   // delete user
   delDiv: {
     maxWidth: '8.56rem',
@@ -246,6 +247,11 @@ const useStyles = makeStyles((theme) => ({
       borderColor: theme.palette.error.main,
       color: theme.palette.error.main,
     },
+  },
+  customTooltip: {
+    backgroundColor: theme.palette.secondary.light,
+    color: theme.palette.text.primary,
+    fontSize: '0.775rem',
   },
 }));
 

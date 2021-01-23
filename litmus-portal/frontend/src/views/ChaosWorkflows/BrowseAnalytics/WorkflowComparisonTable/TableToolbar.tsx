@@ -1,24 +1,24 @@
 import {
-  Typography,
-  InputBase,
-  InputAdornment,
+  Avatar,
+  Button,
   FormControl,
+  IconButton,
+  InputAdornment,
+  InputBase,
   InputLabel,
   MenuItem,
   Select,
-  Button,
-  IconButton,
-  Avatar,
+  Typography,
 } from '@material-ui/core';
-import React, { ChangeEvent, useRef, useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import SearchIcon from '@material-ui/icons/Search';
-import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import useTheme from '@material-ui/core/styles/useTheme';
-import DateRangeSelector from '../../../../components/DateRangeSelector';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import SearchIcon from '@material-ui/icons/Search';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ButtonOutline from '../../../../components/Button/ButtonOutline';
+import DateRangeSelector from '../../../../components/DateRangeSelector';
 import useStyles from './styles';
 
 interface ClusterCallBackType {
@@ -197,7 +197,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
       <FormControl
         variant="outlined"
         className={classes.formControl}
-        color="secondary"
+        color="primary"
         focused
       >
         <InputLabel className={classes.selectText}>
@@ -208,7 +208,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           value={cluster}
           onChange={handleClusterChange}
           className={classes.selectText}
-          color="secondary"
+          color="primary"
         >
           <MenuItem value="All">All</MenuItem>
           {clusters.map((cluster: string) => (
@@ -221,16 +221,21 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         <ButtonOutline
           isDisabled={!(numSelected > 1)}
           handleClick={handleClick}
+          className={classes.button}
         >
           <Typography className={classes.dateRangeDefault}>
             {t('analytics.compareWorkflows')}
           </Typography>
         </ButtonOutline>
       ) : (
-        <ButtonOutline handleClick={handleExport} isDisabled={false}>
+        <ButtonOutline
+          handleClick={handleExport}
+          isDisabled={false}
+          className={classes.button}
+        >
           <div className={classes.export}>
             <Avatar className={classes.exportIcon}>
-              <DescriptionOutlinedIcon htmlColor={palette.secondary.dark} />
+              <DescriptionOutlinedIcon htmlColor={palette.primary.main} />
             </Avatar>
             <Typography className={classes.dateRangeDefault} display="inline">
               {t('analytics.exportPDF')}

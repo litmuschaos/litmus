@@ -5,9 +5,9 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(2),
   },
   cityMapMarkerStyles: {
-    fill: theme.palette.map.cityMap.marker.fill,
+    fill: theme.palette.primary.dark,
     '& circle': {
-      stroke: theme.palette.map.cityMap.marker.stroke,
+      stroke: theme.palette.cards.background,
       strokeWidth: 2,
       strokeLinecap: 'round',
       strokeLinejoin: 'round',
@@ -17,15 +17,15 @@ const useStyles = makeStyles((theme) => ({
       r: 4,
     },
     '&:hover': {
-      fill: theme.palette.map.cityMap.marker.hover,
+      fill: theme.palette.border.main,
     },
   },
   cityMapGeography: {
-    fill: theme.palette.map.cityMap.geography.fill,
-    stroke: theme.palette.map.cityMap.geography.stroke,
+    fill: theme.palette.primary.light,
+    stroke: theme.palette.background.default,
     '&:hover': {
-      stroke: theme.palette.map.cityMap.geography.hover.stroke,
-      fill: theme.palette.map.cityMap.geography.hover.fill,
+      stroke: theme.palette.background.default,
+      fill: theme.palette.border.main,
     },
   },
   cityMapComposableMap: {
@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
   map: {
     flexGrow: 1,
     textAlign: 'center',
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
       width: '100%',
@@ -52,10 +52,10 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   cityMap: {
-    backgroundColor: theme.palette.map.cityMap.backgroundColor,
+    backgroundColor: theme.palette.cards.background,
   },
   countryMap: {
-    backgroundColor: theme.palette.map.countryMap.background,
+    backgroundColor: theme.palette.cards.background,
   },
 }));
 

@@ -6,6 +6,8 @@ import (
 	"log"
 	"time"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
+
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
@@ -38,6 +40,15 @@ func CreateProjectWithUser(ctx context.Context, projectName string, user *dbSche
 		log.Print("ERROR", err)
 		return nil, err
 	}
+
+	defaultHub := model.CreateMyHub{
+		HubName:    "Chaos Hub",
+		RepoURL:    "https://github.com/litmuschaos/chaos-charts",
+		RepoBranch: "master",
+	}
+
+	log.Print("Cloning https://github.com/litmuschaos/chaos-charts")
+	go myhub.AddMyHub(context.Background(), defaultHub, newProject.ID)
 
 	return newProject.GetOutputProject(), nil
 }

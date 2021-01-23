@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginLeft: theme.spacing(2),
-    borderBottom: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    borderBottom: `1px solid ${theme.palette.border.main}`,
     backgroundColor: 'inherit',
   },
   Head: {

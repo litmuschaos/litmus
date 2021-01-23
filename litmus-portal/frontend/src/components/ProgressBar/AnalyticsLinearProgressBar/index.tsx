@@ -1,6 +1,6 @@
+import { useTheme } from '@material-ui/core/styles';
 import { Line } from 'rc-progress';
 import React from 'react';
-import { useTheme } from '@material-ui/core/styles';
 
 interface LinearProgressBarProps {
   value: number;
@@ -23,7 +23,7 @@ const AnalyticsLinearProgressBar: React.FC<LinearProgressBarProps> = ({
       percent={resultValue}
       strokeWidth={width}
       trailWidth={width}
-      strokeColor={isInTable ? palette.primary.dark : palette.secondary.dark}
+      strokeColor={isInTable ? palette.success.main : palette.primary.main}
     />
   );
 };

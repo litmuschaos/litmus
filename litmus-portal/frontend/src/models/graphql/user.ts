@@ -29,6 +29,13 @@ export interface UserDetails {
   role: string;
 }
 
+export interface MyHubDetail {
+  id: string;
+  HubName: string;
+  RepoBranch: string;
+  RepoURL: string;
+}
+
 export interface CurrentUserDetails {
   getUser: UserDetails;
 }

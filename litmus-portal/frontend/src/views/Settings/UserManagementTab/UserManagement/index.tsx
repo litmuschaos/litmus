@@ -37,8 +37,8 @@ import useStyles from './styles';
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
     head: {
-      backgroundColor: theme.palette.homePageCardBackgroundColor,
-      color: theme.palette.teamingTabHeadTextColor,
+      backgroundColor: theme.palette.cards.background,
+      color: theme.palette.text.primary,
     },
     body: {
       fontSize: '0.875rem',
@@ -193,7 +193,7 @@ const UserManagement: React.FC = () => {
                       <FormControl
                         variant="outlined"
                         className={classes.formControl}
-                        color="secondary"
+                        color="primary"
                         focused
                       >
                         <InputLabel className={classes.selectText}>
@@ -210,7 +210,7 @@ const UserManagement: React.FC = () => {
                             setPaginationData({ ...paginationData, pageNo: 0 });
                           }}
                           className={classes.selectText}
-                          color="secondary"
+                          color="primary"
                         >
                           <MenuItem value="all">
                             {t('settings.userManagementTab.label.options.all')}

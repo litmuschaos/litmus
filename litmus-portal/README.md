@@ -17,9 +17,9 @@ Litmus-Portal provides console and UI experience for managing, monitoring, and e
 ## **Installation**
 
 #### Applying k8s manifest
-> Alpha 1 (Stable)
+> Beta 1 (Stable)
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/v1.9.x/litmus-portal/cluster-k8s-manifest.yml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/v1.12.x/litmus-portal/cluster-k8s-manifest.yml
 ```
 
 Or
@@ -78,9 +78,9 @@ View the User Guide <b>[here](https://docs.google.com/document/d/1fiN25BrZpvqg0U
 
 ### **Uninstallation**
 
-> Alpha 1 (Stable)
+> Beta 1 (Stable)
 ```bash
-kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/v1.9.x/litmus-portal/cluster-k8s-manifest.yml
+kubectl delete -f https://raw.githubusercontent.com/litmuschaos/litmus/v1.12.x/litmus-portal/cluster-k8s-manifest.yml
 ```
 
 Or

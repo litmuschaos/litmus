@@ -1,23 +1,24 @@
+import { useLazyQuery, useMutation } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMutation, useLazyQuery } from '@apollo/client';
 import { useSelector } from 'react-redux';
-import { history } from '../../../redux/configureStore';
-import ButtonOutline from '../../Button/ButtonOutline';
-import TargetCopy from '../TargetCopy';
-import useStyles from './styles';
 import Scaffold from '../../../containers/layouts/Scaffold';
+import Unimodal from '../../../containers/layouts/Unimodal';
+import { GET_CLUSTER, USER_CLUSTER_REG } from '../../../graphql';
 import {
+  Cluster,
   CreateClusterInput,
   CreateClusterInputResponse,
-  Cluster,
 } from '../../../models/graphql/clusterData';
-import { USER_CLUSTER_REG, GET_CLUSTER } from '../../../graphql';
+import { history } from '../../../redux/configureStore';
 import { RootState } from '../../../redux/reducers';
-import Loader from '../../Loader';
+import BackButton from '../../Button/BackButton';
 import ButtonFilled from '../../Button/ButtonFilled';
-import Unimodal from '../../../containers/layouts/Unimodal';
+import ButtonOutline from '../../Button/ButtonOutline';
+import Loader from '../../Loader';
+import TargetCopy from '../TargetCopy';
+import useStyles from './styles';
 
 const ConnectTarget = () => {
   const classes = useStyles();
@@ -25,10 +26,6 @@ const ConnectTarget = () => {
   const [link, setLink] = React.useState('');
   const [id, setID] = React.useState('');
   const [modal, setModal] = React.useState(false);
-
-  const handleClick = () => {
-    history.push('/targets');
-  };
 
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
@@ -70,6 +67,11 @@ const ConnectTarget = () => {
       platform_name: '',
       project_id: selectedProjectID,
       cluster_type: 'external',
+      agent_scope: 'cluster',
+      agent_namespace: 'litmus',
+      serviceaccount: '',
+      agent_sa_exists: false,
+      agent_ns_exists: false,
     };
     createClusterReg({
       variables: { ClusterInput: createClusterInput },
@@ -86,13 +88,9 @@ const ConnectTarget = () => {
     <Scaffold>
       <section className="Header section">
         <div className={classes.backBotton}>
-          <ButtonOutline
-            isDisabled={false}
-            handleClick={handleClick}
-            data-cy="backSelect"
-          >
+          <BackButton isDisabled={false}>
             <Typography>Back</Typography>
-          </ButtonOutline>
+          </BackButton>
           <div className={classes.header}>
             <Typography variant="h4">
               {t('targets.connectHome.connectText')}
@@ -139,13 +137,15 @@ const ConnectTarget = () => {
       <div>
         <Unimodal
           open={modal}
-          handleClose={handleClick}
+          handleClose={() => {
+            history.push('/targets');
+          }}
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           hasCloseBtn
         >
           <div className={classes.body}>
-            <img src="icons/finish.svg" className={classes.mark} alt="mark" />
+            <img src="/icons/finish.svg" className={classes.mark} alt="mark" />
             <Typography className={classes.heading}>
               {t('ConnectTargets.title')}
               <br />

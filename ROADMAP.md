@@ -41,6 +41,7 @@ This document captures only the high level roadmap items. For the detailed backl
 
 ### Backlog
 
+-   Add pre-defined chaos workflows for the [podtato-head](https://github.com/cncf/podtato-head) model app from CNCF Ap-Delivery SIG 
 -   Pre-defined chaos workflows to inject chaos during application benchmark runs 
 -   Support for cloudevents compliant chaos events
 -   Increased chaos metrics via prometheus chaos exporter

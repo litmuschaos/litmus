@@ -7,6 +7,8 @@ data:
   AgentNamespace: ${LITMUS_PORTAL_NAMESPACE}
   DataBaseServer: "mongodb://mongo-service:27017"
   JWTSecret: "litmus-portal@123"
+  DB_USER: "admin"
+  DB_PASSWORD: "1234"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -33,7 +35,13 @@ spec:
               memory: 400Mi
           imagePullPolicy: Always
           ports:
-            - containerPort: 80
+            - containerPort: 8080
+          env:
+            - name: AGENT_SCOPE
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: AgentScope
 ---
 apiVersion: v1
 kind: Service
@@ -44,38 +52,9 @@ spec:
   ports:
     - name: http
       port: 9091
-      targetPort: 80
+      targetPort: 8080
   selector:
     component: litmusportal-frontend
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: self-deployer-namespace-account
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: Role
-metadata:
-  name: deployer-namespace
-  labels:
-    name: deployer-namespace
-rules:
-  - apiGroups: ["*"]
-    resources: ["*"]
-    verbs: ["*"]
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: RoleBinding
-metadata:
-  name: deployer-namespace-rb
-subjects:
-  - kind: ServiceAccount
-    name: self-deployer-namespace-account
-    namespace: ${LITMUS_PORTAL_NAMESPACE}
-roleRef:
-  kind: Role
-  name: deployer-namespace
-  apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -172,10 +151,18 @@ spec:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
                   key: AgentNamespace
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: DB_PASSWORD
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos/litmusportal-subscriber:ci"
-            - name: DEPLOYER_IMAGE
-              value: "litmuschaos/litmusportal-self-deployer:ci"
             - name: ARGO_SERVER_IMAGE
               value: "argoproj/argocli:v2.9.3"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
@@ -183,9 +170,9 @@ spec:
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "argoproj/argoexec:v2.9.3"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:1.8.2"
+              value: "litmuschaos/chaos-operator:1.12.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:1.8.2"
+              value: "litmuschaos/chaos-runner:1.12.0"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
@@ -210,6 +197,16 @@ spec:
               value: "admin"
             - name: ADMIN_PASSWORD
               value: "litmus"
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: DB_PASSWORD
           ports:
             - containerPort: 3000
           imagePullPolicy: Always
@@ -260,6 +257,17 @@ spec:
           volumeMounts:
             - name: mongo-persistent-storage
               mountPath: /data/db
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: DB_USER
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: DB_PASSWORD
       volumes:
         - name: mongo-persistent-storage
           persistentVolumeClaim:

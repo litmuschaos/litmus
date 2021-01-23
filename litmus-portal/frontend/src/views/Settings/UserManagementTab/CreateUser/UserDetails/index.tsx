@@ -1,7 +1,7 @@
 import { Avatar, Button, Typography } from '@material-ui/core';
+import { InputField } from 'kubera-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import InputFieldOutline from '../../../../../components/InputFieldOutline';
 import Unimodal from '../../../../../containers/layouts/Unimodal';
 import {
   validateEmail,
@@ -80,7 +80,7 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
           {/* Fields for details including Full name, email, username */}
           <div className={classes.details1}>
             <div data-cy="InputName">
-              <InputFieldOutline
+              <InputField
                 required
                 helperText={
                   validateStartEmptySpacing(nameValue)
@@ -89,15 +89,18 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
                 }
                 value={nameValue}
                 disabled={nameIsDisabled}
-                handleChange={handleNameChange}
-                validationError={validateStartEmptySpacing(nameValue)}
+                onChange={handleNameChange}
+                variant={
+                  validateStartEmptySpacing(nameValue) ? 'error' : 'primary'
+                }
                 label={t(
                   'settings.userManagementTab.createUser.userDetails.label.fullName'
                 )}
               />
             </div>
+            <div style={{ width: '2rem' }} />
             <div data-cy="InputEmail">
-              <InputFieldOutline
+              <InputField
                 required
                 helperText={
                   validateEmail(emailValue) ? 'Should be a valid email' : ''
@@ -105,25 +108,26 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
                 type="email"
                 value={emailValue}
                 disabled={emailIsDisabled}
-                handleChange={handleEmailChange}
-                validationError={validateEmail(emailValue)}
+                onChange={handleEmailChange}
+                variant={validateEmail(emailValue) ? 'error' : 'primary'}
                 label={t(
                   'settings.userManagementTab.createUser.userDetails.label.email'
                 )}
               />
             </div>
             {/* Username is not editable by non admin user */}
+            <div style={{ marginTop: '5rem' }} />
             <div data-cy="username">
-              <InputFieldOutline
-                value={userValue}
-                handleChange={handleUserChange}
-                disabled={usernameIsDisabled}
-                validationError={validateUsername(userValue)}
+              <InputField
                 helperText={
                   validateUsername(userValue)
                     ? 'Should contain alphanumeric characters or period(.)'
                     : ''
                 }
+                value={userValue}
+                disabled={usernameIsDisabled}
+                onChange={handleUserChange}
+                variant={validateUsername(userValue) ? 'error' : 'primary'}
                 label={t(
                   'settings.userManagementTab.createUser.userDetails.label.username'
                 )}

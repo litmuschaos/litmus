@@ -74,7 +74,13 @@ func SendWorkflowUpdates(clusterData map[string]string, event chan types.Workflo
 		eventMap[eventData.UID] = eventData
 
 		// generate gql payload
-		payload, err := GenerateWorkflowPayload(clusterData["CID"], clusterData["KEY"], eventData)
+		payload, err := GenerateWorkflowPayload(clusterData["CID"], clusterData["KEY"], "false", eventData)
+
+		if eventData.FinishedAt != "" {
+			payload, err = GenerateWorkflowPayload(clusterData["CID"], clusterData["KEY"], "true", eventData)
+			delete(eventMap, eventData.UID)
+		}
+
 		if err != nil {
 			logrus.WithError(err).Print("ERROR PARSING WORKFLOW EVENT")
 		}
@@ -84,10 +90,6 @@ func SendWorkflowUpdates(clusterData map[string]string, event chan types.Workflo
 			logrus.Print(err.Error())
 		}
 		logrus.Print("RESPONSE ", body)
-
-		if eventData.FinishedAt != "" {
-			delete(eventMap, eventData.UID)
-		}
 	}
 }
 

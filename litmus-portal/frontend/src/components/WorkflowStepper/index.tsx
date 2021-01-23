@@ -8,7 +8,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import workflowsList from '../PredifinedWorkflows/data';
 import Unimodal from '../../containers/layouts/Unimodal';
 import { CREATE_WORKFLOW } from '../../graphql';
 import {
@@ -19,10 +18,12 @@ import {
 import { experimentMap, WorkflowData } from '../../models/redux/workflow';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
-import * as WorkflowActions from '../../redux/actions/workflow';
 import * as TemplateSelectionActions from '../../redux/actions/template';
+import * as WorkflowActions from '../../redux/actions/workflow';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
+import { validateWorkflowName } from '../../utils/validate';
+import { cronWorkflow, workflowOnce } from '../../utils/workflowTemplate';
 import parsed from '../../utils/yamlUtils';
 import ChooseWorkflow from '../../views/CreateWorkflow/ChooseWorkflow/index';
 import ReliablityScore from '../../views/CreateWorkflow/ReliabilityScore';
@@ -98,7 +99,7 @@ function getStepContent(
         <ChooseAWorkflowCluster gotoStep={(page: number) => gotoStep(page)} />
       );
     case 1:
-      return <ChooseWorkflow />;
+      return <ChooseWorkflow isEditable />;
     case 2:
       return <TuneWorkflow />;
     case 3:
@@ -106,7 +107,9 @@ function getStepContent(
     case 4:
       return <ScheduleWorkflow />;
     case 5:
-      return <VerifyCommit gotoStep={(page: number) => gotoStep(page)} />;
+      return (
+        <VerifyCommit isEditable gotoStep={(page: number) => gotoStep(page)} />
+      );
     default:
       return (
         <ChooseAWorkflowCluster gotoStep={(page: number) => gotoStep(page)} />
@@ -116,14 +119,12 @@ function getStepContent(
 
 const CustomStepper = () => {
   const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(0);
   const { t } = useTranslation();
   const template = useActions(TemplateSelectionActions);
   const workflowData: WorkflowData = useSelector(
     (state: RootState) => state.workflowData
   );
   const {
-    id,
     yaml,
     weights,
     description,
@@ -133,6 +134,10 @@ const CustomStepper = () => {
     clusterid,
     scheduleType,
   } = workflowData;
+
+  const defaultStep = isCustomWorkflow ? 2 : 0;
+
+  const [activeStep, setActiveStep] = React.useState(defaultStep);
 
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
@@ -145,68 +150,52 @@ const CustomStepper = () => {
   const workflow = useActions(WorkflowActions);
   const [invalidYaml, setinValidYaml] = React.useState(false);
   const steps = getSteps();
+  const scheduleOnce = workflowOnce;
+  const scheduleMore = cronWorkflow;
 
   function EditYaml() {
     const oldParsedYaml = YAML.parse(yaml);
-    let NewLink: string = ' ';
-    let NewYaml: string = ' ';
+    const NewLink: string = ' ';
     if (
       oldParsedYaml.kind === 'Workflow' &&
       scheduleType.scheduleOnce !== 'now'
     ) {
-      NewLink = workflowsList[parseInt(id, 10)].chaosWkfCRDLink_Recur as string;
-      fetch(NewLink)
-        .then((data) => {
-          data.text().then((yamlText) => {
-            const oldParsedYaml = YAML.parse(yaml);
-            const newParsedYaml = YAML.parse(yamlText);
-            delete newParsedYaml.spec.workflowSpec;
-            newParsedYaml.spec.schedule = cronSyntax;
-            delete newParsedYaml.metadata.generateName;
-            newParsedYaml.metadata.name = workflowData.name;
-            newParsedYaml.spec.workflowSpec = oldParsedYaml.spec;
-            const tz = {
-              timezone:
-                Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
-            };
-            Object.entries(tz).forEach(([key, value]) => {
-              newParsedYaml.spec[key] = value;
-            });
-            NewYaml = YAML.stringify(newParsedYaml);
-            workflow.setWorkflowDetails({
-              link: NewLink,
-              yaml: NewYaml,
-            });
-          });
-        })
-        .catch((err) => {
-          console.error(`Unable to fetch the yaml text${err}`);
-        });
+      const oldParsedYaml = YAML.parse(yaml);
+      const newParsedYaml = YAML.parse(scheduleMore);
+      delete newParsedYaml.spec.workflowSpec;
+      newParsedYaml.spec.schedule = cronSyntax;
+      delete newParsedYaml.metadata.generateName;
+      newParsedYaml.metadata.name = workflowData.name;
+      newParsedYaml.metadata.namespace = workflowData.namespace;
+      newParsedYaml.spec.workflowSpec = oldParsedYaml.spec;
+      const timeZone = {
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+      };
+      Object.entries(timeZone).forEach(([key, value]) => {
+        newParsedYaml.spec[key] = value;
+      });
+      const NewYaml = YAML.stringify(newParsedYaml);
+      workflow.setWorkflowDetails({
+        link: NewLink,
+        yaml: NewYaml,
+      });
     }
     if (
       oldParsedYaml.kind === 'CronWorkflow' &&
       scheduleType.scheduleOnce === 'now'
     ) {
-      NewLink = workflowsList[parseInt(id, 10)].chaosWkfCRDLink as string;
-      fetch(NewLink)
-        .then((data) => {
-          data.text().then((yamlText) => {
-            const oldParsedYaml = YAML.parse(yaml);
-            const newParsedYaml = YAML.parse(yamlText);
-            delete newParsedYaml.spec;
-            delete newParsedYaml.metadata.generateName;
-            newParsedYaml.metadata.name = workflowData.name;
-            newParsedYaml.spec = oldParsedYaml.spec.workflowSpec;
-            NewYaml = YAML.stringify(newParsedYaml);
-            workflow.setWorkflowDetails({
-              link: NewLink,
-              yaml: NewYaml,
-            });
-          });
-        })
-        .catch((err) => {
-          console.error(`Unable to fetch the yaml text${err}`);
-        });
+      const oldParsedYaml = YAML.parse(yaml);
+      const newParsedYaml = YAML.parse(scheduleOnce);
+      delete newParsedYaml.spec;
+      delete newParsedYaml.metadata.generateName;
+      newParsedYaml.metadata.name = workflowData.name;
+      newParsedYaml.spec = oldParsedYaml.spec.workflowSpec;
+      newParsedYaml.metadata.namespace = workflowData.namespace;
+      const NewYaml = YAML.stringify(newParsedYaml);
+      workflow.setWorkflowDetails({
+        link: NewLink,
+        yaml: NewYaml,
+      });
     }
     if (
       oldParsedYaml.kind === 'CronWorkflow' &&
@@ -216,13 +205,14 @@ const CustomStepper = () => {
       newParsedYaml.spec.schedule = cronSyntax;
       delete newParsedYaml.metadata.generateName;
       newParsedYaml.metadata.name = workflowData.name;
-      const tz = {
+      newParsedYaml.metadata.namespace = workflowData.namespace;
+      const timeZone = {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
       };
-      Object.entries(tz).forEach(([key, value]) => {
+      Object.entries(timeZone).forEach(([key, value]) => {
         newParsedYaml.spec[key] = value;
       });
-      NewYaml = YAML.stringify(newParsedYaml);
+      const NewYaml = YAML.stringify(newParsedYaml);
       workflow.setWorkflowDetails({
         link: NewLink,
         yaml: NewYaml,
@@ -245,12 +235,14 @@ const CustomStepper = () => {
         }
         arr.push({ experimentName: test, weight: value });
       });
-      workflow.setWorkflowDetails({
-        weights: arr,
-      });
       if (arr.length === 0) {
         setinValidYaml(true);
       } else {
+        const yamlData = YAML.parse(yaml);
+        workflow.setWorkflowDetails({
+          namespace: yamlData.metadata.namespace,
+          weights: arr,
+        });
         setinValidYaml(false);
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       }
@@ -401,19 +393,20 @@ const CustomStepper = () => {
             >
               <div>
                 <img
-                  src="icons/finish.svg"
+                  src="/icons/finish.svg"
                   className={classes.mark}
                   alt="mark"
                 />
                 <div className={classes.heading}>
-                  A new chaos workflow,
+                  {t('workflowStepper.aNewChaosWorkflow')}
                   <br />
-                  <strong>was successfully created!</strong>
+                  <span className={classes.successful}>{name}</span>,
+                  <br />
+                  <strong>{t('workflowStepper.successful')}</strong>
                 </div>
                 <div className={classes.headWorkflow}>
-                  Congratulations on creating your first workflow! Now
-                  information about <br /> it will be displayed on the main
-                  screen of the application.
+                  {t('workflowStepper.congratulationsSub1')} <br />{' '}
+                  {t('workflowStepper.congratulationsSub2')}
                 </div>
                 <div className={classes.button}>
                   <ButtonFilled
@@ -425,7 +418,7 @@ const CustomStepper = () => {
                       history.push('/workflows');
                     }}
                   >
-                    <div>Back to workflow</div>
+                    <div>{t('workflowStepper.workflowBtn')}</div>
                   </ButtonFilled>
                 </div>
               </div>
@@ -439,7 +432,11 @@ const CustomStepper = () => {
                 <Typography>Back</Typography>
               </ButtonOutline>
               {activeStep === steps.length - 1 ? (
-                <ButtonFilled handleClick={handleOpen} isPrimary>
+                <ButtonFilled
+                  isDisabled={validateWorkflowName(name)}
+                  handleClick={handleOpen}
+                  isPrimary
+                >
                   <div>Finish</div>
                 </ButtonFilled>
               ) : (

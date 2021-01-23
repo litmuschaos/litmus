@@ -2,13 +2,13 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useQontoStepIconStyles = makeStyles((theme: Theme) => ({
   root: {
-    color: theme.palette.primary.light,
+    color: theme.palette.secondary.main,
     display: 'flex',
     height: theme.spacing(2.5),
     alignItems: 'center',
   },
   active: {
-    color: theme.palette.primary.light,
+    color: theme.palette.secondary.main,
     width: theme.spacing(2.5),
     height: theme.spacing(2.5),
   },
@@ -19,7 +19,7 @@ const useQontoStepIconStyles = makeStyles((theme: Theme) => ({
     backgroundColor: 'currentColor',
   },
   completed: {
-    background: theme.palette.grey[800],
+    background: theme.palette.horizontalStepper.completed,
     width: theme.spacing(2.5),
     height: theme.spacing(2.5),
     borderRadius: '50%',
@@ -30,7 +30,7 @@ const useQontoStepIconStyles = makeStyles((theme: Theme) => ({
     width: theme.spacing(2.5),
     height: theme.spacing(2.5),
     borderRadius: '50%',
-    backgroundColor: theme.palette.grey[400],
+    backgroundColor: theme.palette.horizontalStepper.pending,
   },
   innerCircle: {
     position: 'relative',

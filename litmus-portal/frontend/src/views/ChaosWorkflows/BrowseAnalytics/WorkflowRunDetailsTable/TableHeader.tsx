@@ -1,14 +1,14 @@
 import {
+  IconButton,
+  TableCell,
   TableHead,
   TableRow,
-  TableCell,
   Typography,
-  IconButton,
 } from '@material-ui/core';
+import ExpandLessTwoToneIcon from '@material-ui/icons/ExpandLessTwoTone';
+import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
-import ExpandLessTwoToneIcon from '@material-ui/icons/ExpandLessTwoTone';
 import ButtonOutline from '../../../../components/Button/ButtonOutline';
 import useStyles from './styles';
 

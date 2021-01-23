@@ -1,12 +1,12 @@
 /* eslint-disable */
 import { Typography } from '@material-ui/core';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import { RootState } from '../../../redux/reducers';
 import timeDifference from '../../../utils/datesModifier';
 import NodeLogs from '../NodeLogs';
-import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
 
 interface WorkflowNodeInfoProps {
@@ -51,18 +51,12 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
         <></>
       )}
 
-      {/* Node Name */}
-      <div className={classes.heightMaintainer}>
-        <Typography className={classes.nodeSpacing}>
-          <span className={classes.bold}>{t('workflowNodeInfo.name')}:</span>
-          <br />
-          {pod_name}
-        </Typography>
-      </div>
       {/* Node Type */}
       <div className={classes.heightMaintainer}>
         <Typography className={classes.nodeSpacing}>
-          <span className={classes.bold}>{t('workflowNodeInfo.type')}:</span>{' '}
+          <span className={classes.bold}>
+            {t('workflowDetailsView.workflowNodeInfo.type')}:
+          </span>{' '}
           {type}
         </Typography>
       </div>
@@ -72,7 +66,9 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
       <div className={classes.nodeSpacing}>
         <div className={classes.heightMaintainer}>
           <Typography>
-            <span className={classes.bold}>{t('workflowNodeInfo.phase')}:</span>{' '}
+            <span className={classes.bold}>
+              {t('workflowDetailsView.workflowNodeInfo.phase')}:
+            </span>{' '}
             {phase}
           </Typography>
         </div>
@@ -84,35 +80,42 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
         <div className={classes.heightMaintainer}>
           <Typography>
             <span className={classes.bold}>
-              {t('workflowNodeInfo.startTime')}:
+              {t('workflowDetailsView.workflowNodeInfo.startTime')}:
             </span>{' '}
             {timeDifference(startedAt)}
           </Typography>
           <Typography>
             <span className={classes.bold}>
-              {t('workflowNodeInfo.endTime')}:
+              {t('workflowDetailsView.workflowNodeInfo.endTime')}:
             </span>{' '}
-            {timeDifference(finishedAt)}
+            {finishedAt !== ''
+              ? timeDifference(finishedAt)
+              : 'Not yet finished'}
           </Typography>
           <Typography>
             <span className={classes.bold}>
-              {t('workflowNodeInfo.duration')}:{' '}
+              {t('workflowDetailsView.workflowNodeInfo.duration')}:{' '}
             </span>{' '}
-            {(
-              (parseInt(finishedAt, 10) - parseInt(startedAt, 10)) /
-              60
-            ).toFixed(1)}{' '}
+            {finishedAt !== ''
+              ? (
+                  (parseInt(finishedAt, 10) - parseInt(startedAt, 10)) /
+                  60
+                ).toFixed(1)
+              : (
+                  (new Date().getTime() / 1000 - parseInt(startedAt, 10)) /
+                  60
+                ).toFixed(1)}{' '}
             minutes
           </Typography>
         </div>
       </div>
       <hr />
-      {/* Node Name */}
+      {/* Step Name */}
       <div className={classes.nodeSpacing}>
         <div className={classes.heightMaintainer}>
           <Typography>
             <span className={classes.bold}>
-              {t('workflowNodeInfo.nodeName')}:
+              {t('workflowDetailsView.workflowNodeInfo.nodeName')}:
             </span>{' '}
             {name}
           </Typography>
@@ -120,7 +123,7 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
       </div>
       <div className={classes.footerButton}>
         <ButtonOutline isDisabled={false} handleClick={() => setLogsOpen(true)}>
-          {t('workflowNodeInfo.button.logs')}
+          {t('workflowDetailsView.workflowNodeInfo.button.logs')}
         </ButtonOutline>
       </div>
     </div>

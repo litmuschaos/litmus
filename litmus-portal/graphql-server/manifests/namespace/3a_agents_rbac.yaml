@@ -1,0 +1,163 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: subscriber-namespace
+  namespace: #{AGENT-NAMESPACE}
+  labels:
+    name: subscriber-namespace
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - create
+      - delete
+  - apiGroups:
+      - litmuschaos.io
+    resources:
+      - chaosengines
+      - chaosresults
+    verbs:
+      - get
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - workflows
+      - workflows/finalizers
+      - workflowtemplates
+      - workflowtemplates/finalizers
+      - cronworkflows
+      - cronworkflows/finalizers
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+      - delete
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - pods/log
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - "apps"
+    resources:
+      - deployments
+    verbs:
+      - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: subscriber-namespace-rb
+  namespace: #{AGENT-NAMESPACE}
+subjects:
+  - kind: ServiceAccount
+    name: #{SUBSCRIBER-SERVICE-ACCOUNT}
+    namespace: #{AGENT-NAMESPACE}
+roleRef:
+  kind: Role
+  name: subscriber-namespace
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: litmus-namespace-admin
+  namespace: #{AGENT-NAMESPACE}
+  labels:
+    name: litmus-namespace-admin
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: litmus-namespace-admin
+  namespace: #{AGENT-NAMESPACE}
+  labels:
+    name: litmus-namespace-admin
+rules:
+  - apiGroups: ["", "apps", "batch", "extensions", "litmuschaos.io"]
+    resources:
+      [
+          "pods",
+          "pods/exec",
+          "pods/log",
+          "pods/eviction",
+          "jobs",
+          "deployments",
+          "daemonsets",
+          "statefulsets",
+          "events",
+          "configmaps",
+          "services",
+          "chaosengines",
+          "chaosexperiments",
+          "chaosresults",
+      ]
+    verbs:
+      [
+          "get",
+          "create",
+          "update",
+          "patch",
+          "delete",
+          "list",
+          "watch",
+          "deletecollection",
+      ]
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: litmus-namespace-admin
+  namespace: #{AGENT-NAMESPACE}
+  labels:
+    name: litmus-namespace-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: litmus-namespace-admin
+subjects:
+  - kind: ServiceAccount
+    name: litmus-namespace-admin
+    namespace: #{AGENT-NAMESPACE}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: argo-chaos
+  namespace: #{AGENT-NAMESPACE}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: chaos-role
+  namespace: #{AGENT-NAMESPACE}
+rules:
+  - apiGroups:
+      - "*"
+    resources:
+      - "*"
+    verbs:
+      - "*"
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: chaos-role-binding
+  namespace: #{AGENT-NAMESPACE}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: chaos-role
+subjects:
+  - kind: ServiceAccount
+    name: argo-chaos
+    namespace: #{AGENT-NAMESPACE}

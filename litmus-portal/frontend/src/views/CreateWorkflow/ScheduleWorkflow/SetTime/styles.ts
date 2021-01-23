@@ -4,7 +4,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   /* for each select */
   select: {
     padding: theme.spacing(2.5),
-    border: `1px solid ${theme.palette.customColors.black(0.2)}`,
+    border: `1px solid ${theme.palette.border.main}`,
     borderRadius: '0.1875rem',
     fontSize: '0.75rem',
     height: '2.75rem',
@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingLeft: theme.spacing(1),
     borderRadius: '0.0625rem',
     '&:hover': {
-      background: theme.palette.customColors.black(0.2),
+      background: theme.palette.background.default,
     },
   },
   formControl: {

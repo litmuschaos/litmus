@@ -10,14 +10,13 @@ const useStyles = makeStyles((theme) => ({
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    border: '1px solid ',
-    borderColor: theme.palette.customColors.black(0.07),
-    backgroundColor: theme.palette.homePageCardBackgroundColor,
+    border: '1px solid rgba(0, 0, 0, 0.05)',
+    backgroundColor: theme.palette.cards.background,
   },
   search: {
     fontSize: '0.875rem',
     marginRight: 'auto',
-    borderBottom: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    borderBottom: `1px solid ${theme.palette.border.main}`,
     marginLeft: theme.spacing(6.25),
   },
   root: {
@@ -43,8 +42,8 @@ const useStyles = makeStyles((theme) => ({
   },
   tableMain: {
     marginTop: theme.spacing(4.25),
-    border: `1px solid ${theme.palette.customColors.black(0.07)}`,
-    backgroundColor: theme.palette.homePageCardBackgroundColor,
+    border: `1px solid ${theme.palette.disabledBackground}`,
+    backgroundColor: theme.palette.cards.background,
     height: '29.220rem',
     '&::-webkit-scrollbar': {
       width: '0.2em',
@@ -53,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
       webkitBoxShadow: `inset 0 0 6px ${theme.palette.common.black}`,
     },
     '&::-webkit-scrollbar-thumb': {
-      backgroundColor: theme.palette.secondary.dark,
+      backgroundColor: theme.palette.primary.main,
     },
   },
   tableHead: {
@@ -63,12 +62,12 @@ const useStyles = makeStyles((theme) => ({
       fontWeight: 'bold',
     },
     '& th': {
-      backgroundColor: theme.palette.homePageCardBackgroundColor,
+      backgroundColor: theme.palette.cards.background,
     },
   },
   headerStatus: {
     paddingLeft: theme.spacing(10),
-    color: theme.palette.customColors.black(0.4),
+    color: theme.palette.text.disabled,
   },
   headerStatus1: {
     paddingLeft: theme.spacing(8),
@@ -80,8 +79,8 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(1.75),
   },
   workflowName: {
-    borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
-    color: theme.palette.customColors.black(0.4),
+    border: '1px solid rgba(0, 0, 0, 0.1)',
+    color: theme.palette.text.disabled,
   },
   sortDiv: {
     display: 'flex',
@@ -91,13 +90,13 @@ const useStyles = makeStyles((theme) => ({
   workflowNameData: {
     maxWidth: '15.625rem',
     paddingLeft: theme.spacing(6.25),
-    borderRight: `1px solid ${theme.palette.customColors.black(0.1)}`,
+    border: '1px solid rgba(0, 0, 0, 0.1)',
   },
   regularity: {
-    color: theme.palette.customColors.black(0.4),
+    color: theme.palette.text.disabled,
   },
   targetCluster: {
-    color: theme.palette.customColors.black(0.4),
+    color: theme.palette.text.disabled,
   },
   clusterStartDate: {
     paddingLeft: theme.spacing(10),
@@ -123,7 +122,7 @@ const useStyles = makeStyles((theme) => ({
   },
   showExp: {
     paddingLeft: theme.spacing(1),
-    color: theme.palette.customColors.black(0.4),
+    color: theme.palette.text.disabled,
   },
   clusterData: {
     paddingTop: theme.spacing(1.25),
@@ -152,11 +151,22 @@ const useStyles = makeStyles((theme) => ({
   btnText: {
     paddingLeft: theme.spacing(1.625),
   },
-
+  downloadText: {
+    paddingLeft: theme.spacing(1.2),
+  },
+  downloadBtn: {
+    marginTop: theme.spacing(0.375),
+    marginLeft: theme.spacing(-0.375),
+    width: '1.2rem',
+    height: '1.2rem',
+  },
   // Experiment Weights PopOver Property
   weightDiv: {
     width: '15.1875rem',
     padding: theme.spacing(3.125, 2.6),
+  },
+  dark: {
+    color: theme.palette.text.disabled,
   },
   weightInfo: {
     display: 'flex',
@@ -166,13 +176,42 @@ const useStyles = makeStyles((theme) => ({
   points: {
     marginLeft: 'auto',
     color: (props) =>
-      props >= 4 && props <= 6
+      props >= 3 && props <= 6
         ? theme.palette.warning.main
         : props >= 7
-        ? theme.palette.primary.dark
-        : theme.palette.error.dark,
+        ? theme.palette.success.main
+        : theme.palette.error.main,
     fontWeight: 500,
   },
+
+  // Modal
+  modalDiv: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '25rem',
+    marginTop: '10%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalHeader: {
+    fontSize: '2.125rem',
+    fontWeight: 400,
+    marginBottom: theme.spacing(2.5),
+    marginTop: theme.spacing(2.5),
+    width: '31.25rem',
+  },
+  modalConfirm: {
+    fontSize: '1.25rem',
+    marginBottom: theme.spacing(5),
+    width: '31.25rem',
+  },
+  modalBtns: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '16rem',
+  },
+  w7: { width: '7rem' },
 }));
 
 export default useStyles;

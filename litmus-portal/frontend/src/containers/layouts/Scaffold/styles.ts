@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   content: {
     gridArea: 'content',
-    background: theme.palette.layoutBackground,
+    background: theme.palette.background.default,
     padding: theme.spacing(3),
     overflowY: 'scroll',
   },

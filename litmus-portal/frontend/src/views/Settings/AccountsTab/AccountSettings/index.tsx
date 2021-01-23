@@ -1,8 +1,8 @@
 import { Divider, Typography } from '@material-ui/core';
+import { InputField } from 'kubera-ui';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
-import InputFieldOutline from '../../../../components/InputFieldOutline';
 import Loader from '../../../../components/Loader';
 import config from '../../../../config';
 import Unimodal from '../../../../containers/layouts/Unimodal';
@@ -127,24 +127,24 @@ const AccountSettings: React.FC = () => {
             <form className={classes.innerPass}>
               {/* Current Password */}
               <div data-cy="currPassword">
-                <InputFieldOutline
+                <InputField
                   required
                   value={password.currPassword}
-                  handleChange={handleCurrPassword('currPassword')}
+                  onChange={handleCurrPassword('currPassword')}
                   type="password"
                   label={t(
                     'settings.accountsTab.accountsSettings.label.currPassword'
                   )}
-                  validationError={false}
+                  variant="primary"
                 />
               </div>
               {/* New Password */}
+              <div style={{ marginTop: '1rem' }} />
               <div data-cy="newPassword">
-                <InputFieldOutline
+                <InputField
                   required
                   type="password"
-                  handleChange={handleNewPassword('newPassword')}
-                  success={isSuccess.current}
+                  onChange={handleNewPassword('newPassword')}
                   helperText={
                     validateStartEmptySpacing(password.newPassword)
                       ? 'Should not start with empty space'
@@ -153,15 +153,20 @@ const AccountSettings: React.FC = () => {
                   label={t(
                     'settings.accountsTab.accountsSettings.label.newPassword'
                   )}
-                  validationError={validateStartEmptySpacing(
-                    password.newPassword
-                  )}
+                  variant={
+                    validateStartEmptySpacing(password.newPassword)
+                      ? 'error'
+                      : isSuccess.current
+                      ? 'success'
+                      : 'primary'
+                  }
                   value={password.newPassword}
                 />
               </div>
               {/* Confirm new password */}
+              <div style={{ marginTop: '1rem' }} />
               <div data-cy="confPassword">
-                <InputFieldOutline
+                <InputField
                   helperText={
                     validateConfirmPassword(
                       password.newPassword,
@@ -172,15 +177,20 @@ const AccountSettings: React.FC = () => {
                   }
                   required
                   type="password"
-                  handleChange={handleConfPassword('confNewPassword')}
-                  success={isSuccess.current}
+                  onChange={handleConfPassword('confNewPassword')}
                   label={t(
                     'settings.accountsTab.accountsSettings.label.confNewPassword'
                   )}
-                  validationError={validateConfirmPassword(
-                    password.newPassword,
-                    password.confNewPassword
-                  )}
+                  variant={
+                    validateConfirmPassword(
+                      password.newPassword,
+                      password.confNewPassword
+                    )
+                      ? 'error'
+                      : isSuccess.current
+                      ? 'success'
+                      : 'error'
+                  }
                   value={password.confNewPassword}
                 />
               </div>

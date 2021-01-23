@@ -1,11 +1,14 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import { useQuery } from '@apollo/client';
-import { Card, CardActionArea, Typography } from '@material-ui/core';
+import { CardActionArea, Typography, useTheme } from '@material-ui/core';
 import Backdrop from '@material-ui/core/Backdrop/Backdrop';
+import IconButton from '@material-ui/core/IconButton';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import { ButtonFilled, KuberaCard } from 'kubera-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import IconButton from '@material-ui/core/IconButton';
 import InfoFilledWrap from '../../components/InfoFilled';
 import Loader from '../../components/Loader';
 import QuickActionCard from '../../components/QuickActionCard';
@@ -23,39 +26,49 @@ import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import * as TemplateSelectionActions from '../../redux/actions/template';
 import * as UserActions from '../../redux/actions/user';
+import * as WorkflowActions from '../../redux/actions/workflow';
 import configureStore, { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import ReturningHome from '../../views/Home/ReturningHome';
 import useStyles from './style';
-import ButtonFilled from '../../components/Button/ButtonFilled';
 
 const CreateWorkflowCard: React.FC = () => {
   const { t } = useTranslation();
   const classes = useStyles();
   const template = useActions(TemplateSelectionActions);
-
+  const workflowAction = useActions(WorkflowActions);
   const handleCreateWorkflow = () => {
+    workflowAction.setWorkflowDetails({
+      isCustomWorkflow: false,
+      customWorkflows: [],
+    });
     template.selectTemplate({ selectedTemplateID: 0, isDisable: true });
     history.push('/create-workflow');
   };
 
   return (
-    <Card
-      elevation={3}
-      className={classes.createWorkflowCard}
-      onClick={handleCreateWorkflow}
+    <KuberaCard
+      width="15rem"
+      height="100%"
+      borderColor={useTheme().palette.highlight}
       data-cy="createWorkflow"
     >
-      <CardActionArea>
-        <Typography className={classes.createWorkflowHeading}>
-          {t('home.workflow.heading')}
-        </Typography>
-        <Typography className={classes.createWorkflowTitle}>
-          {t('home.workflow.info')}
-        </Typography>
-        <ArrowForwardIcon className={classes.arrowForwardIcon} />
-      </CardActionArea>
-    </Card>
+      <div
+        aria-hidden="true"
+        style={{ height: '100%' }}
+        onClick={handleCreateWorkflow}
+      >
+        <CardActionArea classes={{ root: classes.cardAreaBody }}>
+          <Typography className={classes.createWorkflowHeading}>
+            {t('home.workflow.heading')}
+          </Typography>
+          <Typography className={classes.createWorkflowTitle}>
+            {t('home.workflow.info')}
+          </Typography>
+          <ArrowForwardIcon className={classes.arrowForwardIcon} />
+        </CardActionArea>
+      </div>
+    </KuberaCard>
   );
 };
 
@@ -110,6 +123,7 @@ const HomePage: React.FC = () => {
           selectedProjectID: isOwnerOfProject.id,
           userRole: 'Owner',
           selectedProjectName: isOwnerOfProject.name,
+          selectedProjectOwner: userData.username,
         });
         user.updateUserDetails({ loader: false });
         // Flush data to persistor immediately
@@ -164,11 +178,11 @@ const HomePage: React.FC = () => {
                       </Typography>
                       <div className={classes.predefinedBtn}>
                         <ButtonFilled
-                          handleClick={() => {
+                          variant="success"
+                          onClick={() => {
                             tabs.changeWorkflowsTabs(2);
                             history.push('/workflows');
                           }}
-                          isPrimary={false}
                         >
                           <Typography variant="subtitle1">
                             {t('home.button1')}

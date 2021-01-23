@@ -1,24 +1,28 @@
 import { Typography } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
+import { ButtonFilled, InputField } from 'kubera-ui';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import ButtonFilled from '../../../components/Button/ButtonFilled';
+import { useSelector } from 'react-redux';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
-import InputField from '../../../components/InputField';
 import PredifinedWorkflows from '../../../components/PredifinedWorkflows';
 import workflowsList from '../../../components/PredifinedWorkflows/data';
 import Unimodal from '../../../containers/layouts/Unimodal';
+import { WorkflowData } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as TemplateSelectionActions from '../../../redux/actions/template';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import { validateWorkflowName } from '../../../utils/validate';
-import useStyles, { CssTextField } from './styles';
+import useStyles from './styles';
 
 // import { getWkfRunCount } from "../../utils";
 
-const ChooseWorkflow: React.FC = () => {
+interface ChooseWorkflowProps {
+  isEditable?: boolean;
+}
+
+const ChooseWorkflow: React.FC<ChooseWorkflowProps> = ({ isEditable }) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
@@ -29,6 +33,9 @@ const ChooseWorkflow: React.FC = () => {
   );
   const selectedTemplateID = useSelector(
     (state: RootState) => state.selectTemplate.selectedTemplateID
+  );
+  const workflowData: WorkflowData = useSelector(
+    (state: RootState) => state.workflowData
   );
 
   const [open, setOpen] = React.useState(false);
@@ -92,17 +99,24 @@ const ChooseWorkflow: React.FC = () => {
   const selectWorkflow = (index: number) => {
     template.selectTemplate({ selectedTemplateID: index, isDisable: false });
 
-    const timeStampBasedWorkflowName: string = `argowf-chaos-${
-      workflowsList[index].title
-    }-${Math.round(new Date().getTime() / 1000)}`;
+    const timeStampBasedWorkflowName: string = isEditable
+      ? `argowf-chaos-${workflowsList[index].title}-${Math.round(
+          new Date().getTime() / 1000
+        )}`
+      : workflowData.name;
 
     workflow.setWorkflowDetails({
       name: timeStampBasedWorkflowName,
       link: workflowsList[index].chaosWkfCRDLink,
       id: workflowsList[index].workflowID,
       yaml: 'none',
-      description: workflowsList[index].description,
-      isCustomWorkflow: workflowsList[index].isCustom,
+      description: isEditable
+        ? workflowsList[index].description
+        : workflowData.description,
+      isCustomWorkflow: isEditable
+        ? workflowsList[index].isCustom
+        : workflowData.isCustomWorkflow,
+      isRecurring: false,
     });
 
     setWorkflowData({
@@ -119,16 +133,22 @@ const ChooseWorkflow: React.FC = () => {
   useEffect(() => {
     const index = selectedTemplateID;
 
-    const timeStampBasedWorkflowName: string = `argowf-chaos-${
-      workflowsList[index].title
-    }-${Math.round(new Date().getTime() / 1000)}`;
+    const timeStampBasedWorkflowName: string = isEditable
+      ? `argowf-chaos-${workflowsList[index].title}-${Math.round(
+          new Date().getTime() / 1000
+        )}`
+      : workflowData.name;
+
     workflow.setWorkflowDetails({
       name: timeStampBasedWorkflowName,
       link: workflowsList[index].chaosWkfCRDLink,
       id: workflowsList[index].workflowID,
       yaml: 'none',
       description: workflowsList[index].description,
-      isCustomWorkflow: workflowsList[index].isCustom,
+      isCustomWorkflow: isEditable
+        ? workflowsList[index].isCustom
+        : workflowData.isCustomWorkflow,
+      isRecurring: false,
     });
 
     setWorkflowData({
@@ -157,14 +177,15 @@ const ChooseWorkflow: React.FC = () => {
               selectWorkflow(index);
             }}
             workflows={workflowsList}
+            isCustomWorkflowVisible
           />
           <div className={classes.paddedTop}>
             <ButtonFilled
-              handleClick={() => {
+              onClick={() => {
                 setOpen(true);
               }}
-              isPrimary={false}
-              isDisabled={isDisable}
+              variant="success"
+              disabled={isDisable}
             >
               <div>{t('createWorkflow.chooseWorkflow.button.edit')}</div>
             </ButtonFilled>
@@ -198,60 +219,52 @@ const ChooseWorkflow: React.FC = () => {
               <InputField
                 // id="filled-workflowname-input"
                 label={t('createWorkflow.chooseWorkflow.label.workflowName')}
-                styles={{
-                  width: '100%',
-                }}
                 data-cy="inputWorkflow"
+                fullWidth
                 helperText={
                   validateWorkflowName(workflowDetails.workflowName)
-                    ? 'Should not contain spaces or upper case letters'
+                    ? t('createWorkflow.chooseWorkflow.validate')
                     : ''
                 }
-                success={isSuccess.current}
-                validationError={validateWorkflowName(
-                  workflowDetails.workflowName
-                )}
-                // className={classes.textfieldworkflowname}
-                handleChange={WorkflowNameChangeHandler}
+                variant={
+                  validateWorkflowName(workflowDetails.workflowName)
+                    ? 'error'
+                    : 'primary'
+                }
+                disabled={!isEditable}
+                onChange={WorkflowNameChangeHandler}
                 value={workflowDetails.workflowName}
               />
-              <div className={classes.inputAreaDescription}>
-                <CssTextField
-                  id="filled-workflowdescription-input"
-                  label={t('createWorkflow.chooseWorkflow.label.desc')}
-                  InputProps={{
-                    disableUnderline: true,
-                    classes: {
-                      input: classes.resize,
-                    },
-                  }}
-                  data-cy="inputWorkflowDescription"
-                  className={classes.textfieldworkflowdescription}
-                  value={workflowDetails.workflowDesc}
-                  onChange={WorkflowDescriptionChangeHandler}
-                  multiline
-                  rows={12}
-                />
-              </div>
+              <div aria-details="spacer" style={{ margin: '1rem 0' }} />
+              <InputField
+                id="filled-workflowdescription-input"
+                label={t('createWorkflow.chooseWorkflow.label.desc')}
+                fullWidth
+                InputProps={{
+                  disableUnderline: true,
+                }}
+                data-cy="inputWorkflowDescription"
+                value={workflowDetails.workflowDesc}
+                onChange={WorkflowDescriptionChangeHandler}
+                multiline
+                rows={12}
+              />
             </div>
             <div className={classes.buttons}>
-              <div className={classes.cancelButton}>
-                <ButtonOutline
-                  handleClick={() => setOpen(false)}
-                  isDisabled={false}
-                >
-                  <div>{t('createWorkflow.chooseWorkflow.button.cancel')}</div>
-                </ButtonOutline>
-              </div>
-              <div className={classes.saveButton}>
-                <ButtonFilled
-                  isPrimary={false}
-                  isDisabled={!isSuccess.current}
-                  handleClick={() => handleSave()}
-                >
-                  <div>{t('createWorkflow.chooseWorkflow.button.save')}</div>
-                </ButtonFilled>
-              </div>
+              <ButtonOutline
+                handleClick={() => setOpen(false)}
+                isDisabled={false}
+              >
+                <div>{t('createWorkflow.chooseWorkflow.button.cancel')}</div>
+              </ButtonOutline>
+
+              <ButtonFilled
+                variant="success"
+                disabled={!isSuccess.current}
+                onClick={() => handleSave()}
+              >
+                <div>{t('createWorkflow.chooseWorkflow.button.save')}</div>
+              </ButtonFilled>
             </div>
           </div>
         </div>

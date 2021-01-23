@@ -1,7 +1,4 @@
 /* eslint-disable max-len */
-import React, { useEffect } from 'react';
-import Plotly from 'plotly.js';
-import createPlotlyComponent from 'react-plotly.js/factory';
 import {
   FormControl,
   IconButton,
@@ -10,14 +7,17 @@ import {
   Select,
   Tooltip,
 } from '@material-ui/core';
-import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
-import { useTranslation } from 'react-i18next';
 import { useTheme } from '@material-ui/core/styles';
-import useStyles from './style';
-import Score from './Score';
-import { history } from '../../../redux/configureStore';
+import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
+import Plotly from 'plotly.js';
+import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import createPlotlyComponent from 'react-plotly.js/factory';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
+import { history } from '../../../redux/configureStore';
+import Score from './Score';
+import useStyles from './style';
 
 const Plot = createPlotlyComponent(Plotly);
 
@@ -80,10 +80,10 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
       dataY = yData.Monthly;
     }
     const colors = [
-      palette.error.dark,
-      palette.primary.dark,
+      palette.primary.main,
       palette.warning.main,
       palette.secondary.main,
+      palette.error.main,
     ];
     const lineSize = [3, 3, 3, 3];
     const data = [];
@@ -203,15 +203,15 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         showgrid: true,
         showline: false,
         showticklabels: true,
-        linecolor: palette.graphAnnotationsColor,
+        linecolor: palette.border.main,
         linewidth: 0.5,
         ticks: 'outside',
-        tickcolor: palette.graphAnnotationsColor,
+        tickcolor: palette.border.main,
         tickwidth: 2,
         ticklen: 5,
         tickfont: {
           family: 'Ubuntu',
-          color: palette.customColors.black(0.4),
+          color: palette.text.disabled,
         },
         mirror: true,
         rangeselector: selectorOptions as any,
@@ -222,15 +222,15 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         zeroline: false,
         showline: false,
         showticklabels: true,
-        linecolor: palette.graphAnnotationsColor,
+        linecolor: palette.border.main,
         linewidth: 0.5,
         ticks: 'outside',
-        tickcolor: palette.graphAnnotationsColor,
+        tickcolor: palette.border.main,
         tickwidth: 2,
         ticklen: 5,
         tickfont: {
           family: 'Ubuntu',
-          color: palette.customColors.black(0.4),
+          color: palette.text.disabled,
         },
         mirror: true,
         tickmode: 'array',
@@ -250,7 +250,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
       },
       font: {
         family: 'Ubuntu, monospace',
-        color: palette.customColors.black(0.4),
+        color: palette.text.disabled,
       },
     };
     setPlotLayout(layout);
@@ -286,7 +286,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         <FormControl
           variant="outlined"
           className={classes.formControl}
-          color="secondary"
+          color="primary"
           focused
         >
           <InputLabel
@@ -323,7 +323,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
             className={classes.analyticsBtnPos}
           >
             <AssessmentOutlinedIcon
-              color="secondary"
+              color="primary"
               className={classes.analyticsButton}
             />
           </IconButton>
