@@ -14,6 +14,7 @@ Please send PRs to add or remove organizations/users.
 |[Keptn](https://keptn.sh)|[Chaos Engineering integration in CD](https://www.youtube.com/watch?v=aa5SzQmv4EQ)|To Be Added|
 |[AkriData](https://www.akridata.com/)|Pod Chaos Experiments in AWS & Azure|[Our Story](adopters/organizations/akridata.md)|
 |[Raspbernetes](https://github.com/raspbernetes)|Resilience of OpenEBS & other apps on ARM64 based clusters|[Our Story](adopters/organizations/raspbernetes.md)
+|[Kublr](https://kublr.com/)|Identify the weak spots and components prone to failures under stress|[Our Story](adopters/organizations/kublr.md)
 
 | User | Usecase | Details |
 | :--- | :---    | :---    |
