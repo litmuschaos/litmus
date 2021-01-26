@@ -13,11 +13,12 @@ Please send PRs to add or remove organizations/users.
 |[NetApp](https://www.netapp.com)|[Chaos Engineering](https://www.netapp.com/us/index.aspx)|[Our Story](adopters/organizations/netapp.md)|
 |[Keptn](https://keptn.sh)|[Chaos Engineering integration in CD](https://www.youtube.com/watch?v=aa5SzQmv4EQ)|To Be Added|
 |[AkriData](https://www.akridata.com/)|Pod Chaos Experiments in AWS & Azure|[Our Story](adopters/organizations/akridata.md)|
-|[Raspbernetes](https://github.com/raspbernetes)|Resilience of OpenEBS & other apps on ARM64 based clusters|[Our Story](adopters/organizations/raspbernetes.md)
+|[Raspbernetes](https://github.com/raspbernetes)|Resilience of OpenEBS & other apps on ARM64 based clusters|[Our Story](adopters/organizations/raspbernetes.md)|
+|[Kublr](https://kublr.com/)|Identify the weak spots and components prone to failures under stress|[Our Story](adopters/organizations/kublr.md)|
 
 | User | Usecase | Details |
 | :--- | :---    | :---    |
-| [Laura Henning](https://github.com/LaumiH)|Reasearch on how to do chaos engineering in minikube clusters like [these](https://github.com/LaumiH/k8sstuff)|[My Story](adopters/users/Laura_Henning.md) 
+| [Laura Henning](https://github.com/LaumiH)|Reasearch on how to do chaos engineering in minikube clusters like [these](https://github.com/LaumiH/k8sstuff)|[My Story](adopters/users/Laura_Henning.md) |
 | [Johnny Jacob](https://github.com/johnnyjacob)|Testing deployment designs for resiliency|Coming Soon!|
 | [Jayesh Kumar Tank](https://github.com/k8s-dev)|Create Cloud Native Validation Suite on [Microservices Application](https://github.com/k8s-dev/microservices-demo)|[My Story](adopters/users/Jayesh_Kumar_Tank.md)|
 | [Bhaumik Shah](https://github.com/Bhaumik1802)|Use LitmusChaos for Kafka Resiliency on Dev/Staging|[My Story](adopters/users/Bhaumik_Shah.md)|
