@@ -192,7 +192,7 @@ const MyHub = () => {
                         >
                           <CardActionArea>
                             <CardContent className={classes.cardContent}>
-                              <img src="./icons/add-hub.svg" alt="add-hub" />
+                              <img src="/icons/add-hub.svg" alt="add-hub" />
                               <Typography variant="h6" align="center">
                                 {t('myhub.mainPage.connectNewHub')}
                               </Typography>
@@ -206,7 +206,7 @@ const MyHub = () => {
               ) : (
                 //  No GitHub connected div
                 <div className={classes.noGithubAccount}>
-                  <img src="./icons/myhub-crossed.svg" alt="myhub" />
+                  <img src="/icons/myhub-crossed.svg" alt="myhub" />
                   <Typography variant="h4" className={classes.noGitHubText}>
                     <strong>{t('myhub.mainPage.noGithubCredentials')}</strong>
                   </Typography>

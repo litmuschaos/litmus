@@ -631,7 +631,7 @@ myhub:
     edit: Edit the Hub
     click: Then click on the update button
     submit: Update My Hub
-    wait: Please what while we are updating your repo!
+    wait: Please wait while we are updating your repo!
     updating: while updating My Hub
     success: My Hub successfully updated
     desc: My Hub will be updated in the main page of the My Hubs section
