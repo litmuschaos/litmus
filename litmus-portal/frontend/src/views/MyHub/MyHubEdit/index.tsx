@@ -110,9 +110,9 @@ const MyHub = () => {
   useEffect(() => {
     if (hubData !== undefined) {
       setGitHub({
-        HubName: hubData?.HubName,
-        GitURL: hubData?.RepoURL,
-        GitBranch: hubData?.RepoBranch,
+        HubName: hubData.HubName,
+        GitURL: hubData.RepoURL,
+        GitBranch: hubData.RepoBranch,
       });
       if (hubData.IsPrivate) {
         setIsToggled({

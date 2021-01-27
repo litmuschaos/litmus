@@ -171,6 +171,7 @@ const MyHub = () => {
                       {totalHubs &&
                         totalHubs.map((hub: HubDetails) => (
                           <CustomMyHubCard
+                            key={hub.id}
                             hub={hub}
                             loader={loader}
                             keyValue={key}
