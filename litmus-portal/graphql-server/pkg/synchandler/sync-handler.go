@@ -6,7 +6,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/gitops"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/myhub_ops"
 )
 
 const (
@@ -34,7 +34,7 @@ func RecurringHubSync() {
 				SSHPrivateKey: myhub.SSHPrivateKey,
 			}
 
-			gitops.GitSyncHandlerForProjects(chartsInput)
+			myhub_ops.GitSyncHandlerForProjects(chartsInput)
 		}
 
 		//Syncing Completed

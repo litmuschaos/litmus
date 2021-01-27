@@ -1,4 +1,4 @@
-package gitops
+package myhub_ops
 
 import (
 	"crypto/rand"

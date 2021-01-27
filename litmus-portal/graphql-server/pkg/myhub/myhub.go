@@ -10,7 +10,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
 	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/gitops"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/myhub_ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/handler"
 	"go.mongodb.org/mongo-driver/bson"
 	"io"
@@ -46,7 +46,7 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (*
 	}
 
 	//Cloning the repository at a path from myhub link structure.
-	err = gitops.GitClone(cloneHub)
+	err = myhub_ops.GitClone(cloneHub)
 	if err != nil {
 		return nil, err
 	}
@@ -210,7 +210,7 @@ func GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.
 	ChartsPath := handler.GetChartsPath(ctx, chartsInput)
 	ChartsData, err := handler.GetChartsData(ChartsPath)
 	if err != nil {
-		err = gitops.GitClone(chartsInput)
+		err = myhub_ops.GitClone(chartsInput)
 		if err != nil {
 			return nil, err
 		}
@@ -259,7 +259,7 @@ func SyncHub(ctx context.Context, hubID string) ([]*model.MyHubStatus, error) {
 	query := bson.D{{"myhub_id", hubID}, {"IsRemoved", false}}
 	update := bson.D{{"$set", bson.D{{"last_synced_at", time}}}}
 
-	err = gitops.GitSyncHandlerForProjects(syncHubInput)
+	err = myhub_ops.GitSyncHandlerForProjects(syncHubInput)
 	if err != nil {
 		return nil, err
 	}
@@ -329,12 +329,12 @@ func UpdateMyHub(ctx context.Context, myhub model.UpdateMyHub, projectID string)
 	// Syncing/Cloning the repository at a path from myhub link structure.
 	if prevMyHub.RepoURL != myhub.RepoURL || prevMyHub.RepoBranch != myhub.RepoBranch || prevMyHub.IsPrivate != myhub.IsPrivate || prevMyHub.AuthType != myhub.AuthType.String() {
 		fmt.Println(myhub.AuthType.String())
-		err := gitops.GitClone(cloneHub)
+		err := myhub_ops.GitClone(cloneHub)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		err := gitops.GitSyncHandlerForProjects(cloneHub)
+		err := myhub_ops.GitSyncHandlerForProjects(cloneHub)
 		if err != nil {
 			return nil, err
 		}

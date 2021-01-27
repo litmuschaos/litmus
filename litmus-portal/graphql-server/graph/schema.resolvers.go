@@ -20,7 +20,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/queries"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/subscriptions"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/gitops"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/myhub_ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usermanagement"
 	"go.mongodb.org/mongo-driver/bson"
@@ -99,7 +99,7 @@ func (r *mutationResolver) DeleteClusterReg(ctx context.Context, clusterID strin
 }
 
 func (r *mutationResolver) GeneraterSSHKey(ctx context.Context) (*model.SSHKey, error) {
-	publicKey, privateKey, err := gitops.GenerateKeys()
+	publicKey, privateKey, err := myhub_ops.GenerateKeys()
 	if err != nil {
 		return nil, err
 	}
