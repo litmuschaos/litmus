@@ -249,6 +249,14 @@ export const GET_HUB_STATUS = gql`
       RepoURL
       TotalExp
       IsAvailable
+      AuthType
+      IsPrivate
+      Token
+      UserName
+      Password
+      SSHPrivateKey
+      SSHPublicKey
+      LastSyncedAt
     }
   }
 `;

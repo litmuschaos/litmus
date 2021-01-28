@@ -63,7 +63,9 @@ const MyHub = () => {
   videoURL = video ? video.Url : '';
 
   // State for default icon URL
-  const urltoIcon = `${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/charts/${paramData.chart}/icons/${paramData.experiment}.png`;
+  const urltoIcon = UserHub?.IsPrivate
+    ? '/icons/default-experiment.svg'
+    : `${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/charts/${paramData.chart}/icons/${paramData.experiment}.png`;
 
   const { t } = useTranslation();
 

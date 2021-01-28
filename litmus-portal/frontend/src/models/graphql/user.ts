@@ -58,3 +58,47 @@ export interface UpdateUser {
     email: string;
   };
 }
+
+export interface SSHKey {
+  privateKey: string;
+  publicKey: string;
+}
+
+export interface SSHKeys {
+  generaterSSHKey: SSHKey;
+}
+
+export interface MyHubInput {
+  id?: string;
+  HubName: string;
+  RepoURL: string;
+  RepoBranch: string;
+  IsPrivate: Boolean;
+  AuthType: MyHubType;
+  Token?: string;
+  UserName?: string;
+  Password?: string;
+  SSHPrivateKey?: string;
+  SSHPublicKey?: string;
+}
+
+export interface MyHubData {
+  id: string;
+  RepoURL: string;
+  RepoBranch: string;
+  ProjectID: string;
+  HubName: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
+export interface CreateMyHub {
+  MyHubDetails: MyHubInput;
+  projectID: string;
+}
+
+export enum MyHubType {
+  basic = 'basic',
+  token = 'token',
+  ssh = 'ssh',
+}
