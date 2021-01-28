@@ -126,6 +126,7 @@ const MyHub = () => {
               .map((expName: ChartName) => {
                 return (
                   <ChartCard
+                    key={`${expName.ChaosName}-${expName.ExperimentName}`}
                     expName={expName}
                     UserHub={UserHub}
                     setSearch={setSearch}
