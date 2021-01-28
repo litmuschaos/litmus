@@ -181,9 +181,6 @@ export const GET_CHARTS_DATA = gql`
           Desc
         }
       }
-      Experiments {
-        ApiVersion
-      }
     }
   }
 `;
@@ -232,9 +229,6 @@ export const GET_EXPERIMENT_DATA = gql`
           CSV
           Desc
         }
-      }
-      Experiments {
-        ApiVersion
       }
     }
   }

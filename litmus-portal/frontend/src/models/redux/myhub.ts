@@ -6,7 +6,6 @@ export interface Chart {
   Metadata: Metadata;
   Spec: Spec;
   PackageInfo: PackageInfo;
-  Experiments: Chart[];
 }
 
 export interface Spec {

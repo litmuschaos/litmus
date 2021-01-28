@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { IconButton, Typography } from '@material-ui/core';
 import useStyles from './styles';
 
@@ -15,6 +15,7 @@ const ExperimentHeader: React.FC<ExpInfoProps> = ({
 }) => {
   const classes = useStyles();
   const desc = description?.split('.').slice(0, 1);
+  const [expImg, setExpImg] = useState(urlToIcon);
   return (
     <div className={classes.root}>
       <IconButton
@@ -28,7 +29,12 @@ const ExperimentHeader: React.FC<ExpInfoProps> = ({
           className={classes.backBtnImg}
         />
       </IconButton>
-      <img src={urlToIcon} alt="exp icon" className={classes.expImg} />
+      <img
+        src={expImg}
+        alt="exp icon"
+        className={classes.expImg}
+        onError={() => setExpImg('/icons/default-experiment.svg')}
+      />
       <div className={classes.titleDiv}>
         <Typography className={classes.expHeader}>{title}</Typography>
         <Typography>{desc}.</Typography>
