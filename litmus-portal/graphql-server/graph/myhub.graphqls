@@ -1,107 +1,172 @@
+enum AuthType {
+	basic
+	token
+	ssh
+}
+
 type MyHub {
-  id: ID!
-  RepoURL: String!
-  RepoBranch: String!
-  ProjectID: String!
-  HubName: String!
-  CreatedAt: String!
-  UpdatedAt: String!
+	id: ID!
+	RepoURL: String!
+	RepoBranch: String!
+	ProjectID: String!
+	HubName: String!
+	IsPrivate: Boolean!
+	# Auth Types-
+	#  token: Token based authentication
+	#  basic: Username/Password based authentication
+	#  ssh: SSH based authentication
+	AuthType: AuthType!
+	Token: String
+	UserName: String
+	Password: String
+	SSHPrivateKey: String
+	IsRemoved: Boolean!
+	CreatedAt: String!
+	UpdatedAt: String!
+	LastSyncedAt: String!
 }
 
 type Charts {
-  Charts: [Chart!]!
+	Charts: [Chart!]!
 }
 
 type Chart {
-  ApiVersion: String!
-  Kind: String!
-  Metadata: Metadata!
-  Spec: Spec!
-  PackageInfo: PackageInformation!
-  Experiments: [Chart!]!
+	ApiVersion: String!
+	Kind: String!
+	Metadata: Metadata!
+	Spec: Spec!
+	PackageInfo: PackageInformation!
 }
 
 type Maintainer {
-  Name: String!
-  Email: String!
+	Name: String!
+	Email: String!
 }
 
 type Link {
-  Name: String!
-  Url: String!
+	Name: String!
+	Url: String!
 }
 
 type Metadata {
-  Name: String!
-  Version: String!
-  Annotations: Annotation!
+	Name: String!
+	Version: String!
+	Annotations: Annotation!
 }
 
 type Annotation {
-  Categories: String!
-  Vendor: String!
-  CreatedAt: String!
-  Repository: String!
-  Support: String!
-  ChartDescription: String!
+	Categories: String!
+	Vendor: String!
+	CreatedAt: String!
+	Repository: String!
+	Support: String!
+	ChartDescription: String!
 }
 
 type Spec {
-  DisplayName: String!
-  CategoryDescription: String!
-  Keywords: [String!]!
-  Maturity: String!
-  Maintainers: [Maintainer!]!
-  MinKubeVersion: String!
-  Provider: String!
-  Links: [Link!]!
-  Experiments: [String!]!
-  ChaosExpCRDLink: String!
-  Platforms: [String!]!
-  ChaosType: String
+	DisplayName: String!
+	CategoryDescription: String!
+	Keywords: [String!]!
+	Maturity: String!
+	Maintainers: [Maintainer!]!
+	MinKubeVersion: String!
+	Provider: String!
+	Links: [Link!]!
+	Experiments: [String!]!
+	ChaosExpCRDLink: String!
+	Platforms: [String!]!
+	ChaosType: String
 }
 
 type Provider {
-  Name: String!
+	Name: String!
 }
 
 type PackageInformation {
-  PackageName: String!
-  Experiments: [Experiments!]!
+	PackageName: String!
+	Experiments: [Experiments!]!
 }
 
 type Experiments {
-  Name: String!
-  CSV: String!
-  Desc: String!
+	Name: String!
+	CSV: String!
+	Desc: String!
 }
 
 type MyHubStatus {
-  id: ID!
-  RepoURL: String!
-  RepoBranch: String!
-  IsAvailable: Boolean!
-  TotalExp: String!
-  HubName: String!
+	id: ID!
+	RepoURL: String!
+	RepoBranch: String!
+	IsAvailable: Boolean!
+	TotalExp: String!
+	HubName: String!
+	IsPrivate: Boolean!
+	# Auth Types-
+	#  token: Token based authentication
+	#  basic: Username/Password based authentication
+	#  ssh: SSH based authentication
+	AuthType: AuthType!
+	Token: String
+	UserName: String
+	Password: String
+	IsRemoved: Boolean!
+	SSHPrivateKey: String
+	SSHPublicKey: String
+	LastSyncedAt: String!
 }
 
 input CreateMyHub {
-  HubName: String!
-  RepoURL: String!
-  RepoBranch: String!
+	HubName: String!
+	RepoURL: String!
+	RepoBranch: String!
+	IsPrivate: Boolean!
+	# Auth Types-
+	#  token: Token based authentication
+	#  basic: Username/Password based authentication
+	#  ssh: SSH based authentication
+	AuthType: AuthType!
+	Token: String
+	UserName: String
+	Password: String
+	SSHPrivateKey: String
+	SSHPublicKey: String
 }
 
 input ExperimentInput {
-  ProjectID: String!
-  ChartName: String!
-  ExperimentName: String!
-  HubName: String!
-  FileType: String
+	ProjectID: String!
+	ChartName: String!
+	ExperimentName: String!
+	HubName: String!
+	FileType: String
 }
 
 input CloningInput {
-  HubName: String!
-  ProjectID: String!
-  RepoBranch: String!
-  RepoURL: String!
+	HubName: String!
+	ProjectID: String!
+	RepoBranch: String!
+	RepoURL: String!
+	IsPrivate: Boolean!
+	# Auth Types-
+	#  token: Token based authentication
+	#  basic: Username/Password based authentication
+	#  ssh: SSH based authentication
+	AuthType: AuthType!
+	Token: String
+	UserName: String
+	Password: String
+	SSHPrivateKey: String
+}
+
+input UpdateMyHub {
+	id: String!
+	HubName: String!
+	RepoURL: String!
+	RepoBranch: String!
+	IsPrivate: Boolean!
+	AuthType: AuthType!
+	Token: String
+	UserName: String
+	Password: String
+	SSHPrivateKey: String
+	SSHPublicKey: String
 }
