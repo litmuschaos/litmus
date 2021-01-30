@@ -6,7 +6,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/gitops"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/myhub_ops"
 )
 
 const (
@@ -22,13 +22,19 @@ func RecurringHubSync() {
 		for _, myhub := range myhubs {
 
 			chartsInput := model.CloningInput{
-				HubName:    myhub.HubName,
-				ProjectID:  myhub.ProjectID,
-				RepoURL:    myhub.RepoURL,
-				RepoBranch: myhub.RepoBranch,
+				HubName:       myhub.HubName,
+				ProjectID:     myhub.ProjectID,
+				RepoURL:       myhub.RepoURL,
+				RepoBranch:    myhub.RepoBranch,
+				IsPrivate:     myhub.IsPrivate,
+				AuthType:      myhub.AuthType,
+				Token:         myhub.Token,
+				UserName:      myhub.UserName,
+				Password:      myhub.Password,
+				SSHPrivateKey: myhub.SSHPrivateKey,
 			}
 
-			gitops.GitSyncHandlerForProjects(chartsInput)
+			myhub_ops.GitSyncHandlerForProjects(chartsInput)
 		}
 
 		//Syncing Completed

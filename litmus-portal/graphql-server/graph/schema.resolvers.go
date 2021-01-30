@@ -20,6 +20,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/queries"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/subscriptions"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/myhub_ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usermanagement"
 	"go.mongodb.org/mongo-driver/bson"
@@ -81,8 +82,12 @@ func (r *mutationResolver) AddMyHub(ctx context.Context, myhubInput model.Create
 	return myhub.AddMyHub(ctx, myhubInput, projectID)
 }
 
-func (r *mutationResolver) SyncHub(ctx context.Context, projectID string, hubName string) ([]*model.MyHubStatus, error) {
-	return myhub.SyncHub(ctx, projectID, hubName)
+func (r *mutationResolver) SaveMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error) {
+	return myhub.SaveMyHub(ctx, myhubInput, projectID)
+}
+
+func (r *mutationResolver) SyncHub(ctx context.Context, id string) ([]*model.MyHubStatus, error) {
+	return myhub.SyncHub(ctx, id)
 }
 
 func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
@@ -91,6 +96,26 @@ func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, input *model
 
 func (r *mutationResolver) DeleteClusterReg(ctx context.Context, clusterID string) (string, error) {
 	return mutations.DeleteCluster(clusterID, *store)
+}
+
+func (r *mutationResolver) GeneraterSSHKey(ctx context.Context) (*model.SSHKey, error) {
+	publicKey, privateKey, err := myhub_ops.GenerateKeys()
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.SSHKey{
+		PrivateKey: privateKey,
+		PublicKey:  publicKey,
+	}, nil
+}
+
+func (r *mutationResolver) UpdateMyHub(ctx context.Context, myhubInput model.UpdateMyHub, projectID string) (*model.MyHub, error) {
+	return myhub.UpdateMyHub(ctx, myhubInput, projectID)
+}
+
+func (r *mutationResolver) DeleteMyHub(ctx context.Context, hubID string) (bool, error) {
+	return myhub.DeleteMyHub(ctx, hubID)
 }
 
 func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {

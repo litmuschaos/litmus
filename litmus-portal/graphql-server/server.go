@@ -15,11 +15,11 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
-	"github.com/rs/cors"
-
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/file_handlers"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
+	"github.com/rs/cors"
 )
 
 const defaultPort = "8080"
@@ -63,6 +63,7 @@ func main() {
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", authorization.Middleware(srv))
 	router.HandleFunc("/file/{key}{path:.yaml}", file_handlers.FileHandler)
+	router.Handle("/icon/{ProjectID}/{HubName}/{ChartName}/{IconName}", authorization.RestMiddleware(myhub.GetIconHandler)).Methods("GET")
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
 

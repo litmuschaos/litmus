@@ -304,10 +304,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 value="construct"
                 control={
                   <Radio
-                    classes={{
-                      root: classes.radio,
-                      checked: classes.checked,
-                    }}
+                    classes={{ root: classes.radio, checked: classes.checked }}
                   />
                 }
                 disabled={data?.getHubStatus.length === 0}
