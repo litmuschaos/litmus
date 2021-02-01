@@ -213,6 +213,17 @@ type SSHKey {
 	privateKey: String!
 }
 
+input GitConfig {
+	ProjectID: String!
+	Branch: String!
+	RepoURL: String!
+	AuthType: AuthType!
+	Token: String
+	UserName: String
+	Password: String
+	SSHPrivateKey: String
+}
+
 type Query {
 	# [Deprecated soon]
 	getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
@@ -287,6 +298,14 @@ type Mutation {
 	updateMyHub(myhubInput: UpdateMyHub!, projectID: String!): MyHub! @authorized
 
 	deleteMyHub(hub_id: String!): Boolean! @authorized
+
+	# Gitops
+
+	gitopsNotifer(clusterInfo: ClusterIdentity!, workflow_id: String!): String!
+
+	enableGitOps(config: GitConfig!): Boolean! @authorized
+
+	disableGitOps(project_id: String!): Boolean! @authorized
 }
 
 type Subscription {

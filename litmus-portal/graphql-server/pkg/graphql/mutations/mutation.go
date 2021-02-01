@@ -1,11 +1,9 @@
 package mutations
 
 import (
-	"encoding/json"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/handler"
 	"log"
-	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql"
@@ -20,8 +18,6 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/subscriptions"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"github.com/pkg/errors"
-	"github.com/tidwall/gjson"
-	"github.com/tidwall/sjson"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -143,7 +139,7 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		return "Workflow Run Discarded[Duplicate Event]", nil
 	}
 
-	subscriptions.SendWorkflowEvent(model.WorkflowRun{
+	handler.SendWorkflowEvent(model.WorkflowRun{
 		ClusterID:     cluster.ClusterID,
 		ClusterName:   cluster.ClusterName,
 		ProjectID:     cluster.ProjectID,
@@ -152,7 +148,7 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		WorkflowName:  input.WorkflowName,
 		ExecutionData: input.ExecutionData,
 		WorkflowID:    input.WorkflowID,
-	}, r)
+	}, &r)
 
 	return "Workflow Run Accepted", nil
 }
@@ -176,70 +172,6 @@ func LogsHandler(podLog model.PodLog, r store.StateData) (string, error) {
 		return "LOGS SENT SUCCESSFULLY", nil
 	}
 	return "LOG REQUEST CANCELLED", nil
-}
-
-func CreateChaosWorkflow(input *model.ChaosWorkFlowInput, r store.StateData) (*model.ChaosWorkFlowResponse, error) {
-
-	var Weightages []*database.WeightagesInput
-	copier.Copy(&Weightages, &input.Weightages)
-
-	workflow_id := uuid.New().String()
-
-	var workflow map[string]interface{}
-	err := json.Unmarshal([]byte(input.WorkflowManifest), &workflow)
-	if err != nil {
-		return nil, err
-	}
-
-	newWorkflowManifest, _ := sjson.Set(input.WorkflowManifest, "metadata.labels.workflow_id", workflow_id)
-	if strings.ToLower(workflow["kind"].(string)) == "cronworkflow" {
-		newWorkflowManifest, _ = sjson.Set(input.WorkflowManifest, "spec.workflowMetadata.labels.workflow_id", workflow_id)
-	}
-
-	isRemoved := false
-
-	newChaosWorkflow := database.ChaosWorkFlowInput{
-		WorkflowID:          workflow_id,
-		WorkflowManifest:    newWorkflowManifest,
-		CronSyntax:          input.CronSyntax,
-		WorkflowName:        input.WorkflowName,
-		WorkflowDescription: input.WorkflowDescription,
-		IsCustomWorkflow:    input.IsCustomWorkflow,
-		ProjectID:           input.ProjectID,
-		ClusterID:           input.ClusterID,
-		Weightages:          Weightages,
-		CreatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
-		UpdatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
-		WorkflowRuns:        []*database.WorkflowRun{},
-		IsRemoved:           isRemoved,
-	}
-
-	err = database.InsertChaosWorkflow(newChaosWorkflow)
-	if err != nil {
-		return nil, err
-	}
-
-	workflowNamespace := gjson.Get(newWorkflowManifest, "metadata.namespace").String()
-
-	if workflowNamespace == "" {
-		workflowNamespace = os.Getenv("AGENT_NAMESPACE")
-	}
-
-	subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
-		K8sManifest: newWorkflowManifest,
-		RequestType: "create",
-		ProjectID:   input.ProjectID,
-		ClusterID:   input.ClusterID,
-		Namespace:   workflowNamespace,
-	}, r)
-
-	return &model.ChaosWorkFlowResponse{
-		WorkflowID:          workflow_id,
-		CronSyntax:          input.CronSyntax,
-		WorkflowName:        input.WorkflowName,
-		WorkflowDescription: input.WorkflowDescription,
-		IsCustomWorkflow:    input.IsCustomWorkflow,
-	}, nil
 }
 
 func DeleteCluster(cluster_id string, r store.StateData) (string, error) {
@@ -287,89 +219,4 @@ func DeleteCluster(cluster_id string, r store.StateData) (string, error) {
 	}
 
 	return "Successfully deleted cluster", nil
-}
-
-func UpdateWorkflow(workflow *model.ChaosWorkFlowInput, r store.StateData) (*model.ChaosWorkFlowResponse, error) {
-
-	var newWeightages []*database.WeightagesInput
-	copier.Copy(&newWeightages, &workflow.Weightages)
-
-	var workflowManifest map[string]interface{}
-	err := json.Unmarshal([]byte(workflow.WorkflowManifest), &workflowManifest)
-	if err != nil {
-		return nil, err
-	}
-
-	newWorkflowManifest, err := sjson.Set(workflow.WorkflowManifest, "metadata.labels.workflow_id", workflow.WorkflowID)
-	if err != nil {
-		return nil, err
-	}
-
-	if strings.ToLower(workflowManifest["kind"].(string)) == "cronworkflow" {
-		newWorkflowManifest, _ = sjson.Set(workflow.WorkflowManifest, "spec.workflowMetadata.labels.workflow_id", workflow.WorkflowID)
-	}
-
-	query := bson.D{{"workflow_id", workflow.WorkflowID}}
-	update := bson.D{{"$set", bson.D{{"workflow_manifest", newWorkflowManifest}, {"cronSyntax", workflow.CronSyntax}, {"Workflow_name", workflow.WorkflowName}, {"Workflow_description", workflow.WorkflowDescription}, {"isCustomWorkflow", workflow.IsCustomWorkflow}, {"Weightages", newWeightages}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
-
-	err = database.UpdateChaosWorkflow(query, update)
-	if err != nil {
-		return nil, err
-	}
-
-	workflowNamespace := gjson.Get(workflow.WorkflowManifest, "metadata.namespace").String()
-
-	if workflowNamespace == "" {
-		workflowNamespace = os.Getenv("AGENT_NAMESPACE")
-	}
-
-	subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
-		K8sManifest: newWorkflowManifest,
-		RequestType: "update",
-		ProjectID:   workflow.ProjectID,
-		ClusterID:   workflow.ClusterID,
-		Namespace:   workflowNamespace,
-	}, r)
-
-	return &model.ChaosWorkFlowResponse{
-		WorkflowID:          *workflow.WorkflowID,
-		CronSyntax:          workflow.CronSyntax,
-		WorkflowName:        workflow.WorkflowName,
-		WorkflowDescription: workflow.WorkflowDescription,
-		IsCustomWorkflow:    workflow.IsCustomWorkflow,
-	}, nil
-}
-
-func DeleteWorkflow(workflow_id string, r store.StateData) (bool, error) {
-
-	workflows, err := database.GetWorkflowsByIDs([]*string{&workflow_id})
-	if err != nil {
-		return false, err
-	}
-
-	query := bson.D{{"workflow_id", workflow_id}}
-	update := bson.D{{"$set", bson.D{{"isRemoved", true}}}}
-
-	err = database.UpdateChaosWorkflow(query, update)
-	if err != nil {
-		return false, err
-	}
-
-	for _, workflow := range workflows {
-		workflowNamespace := gjson.Get(workflow.WorkflowManifest, "metadata.namespace").String()
-
-		if workflowNamespace == "" {
-			workflowNamespace = os.Getenv("AGENT_NAMESPACE")
-		}
-
-		subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
-			K8sManifest: workflow.WorkflowManifest,
-			RequestType: "delete",
-			ProjectID:   workflow.ProjectID,
-			ClusterID:   workflow.ClusterID,
-			Namespace:   workflowNamespace,
-		}, r)
-	}
-
-	return true, nil
 }

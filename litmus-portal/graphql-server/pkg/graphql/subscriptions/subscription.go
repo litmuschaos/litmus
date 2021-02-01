@@ -27,17 +27,6 @@ func SendClusterEvent(eventType, eventName, description string, cluster model.Cl
 	r.Mutex.Unlock()
 }
 
-//SendWorkflowEvent sends workflow events from the clusters to the appropriate users listening for the events
-func SendWorkflowEvent(wfRun model.WorkflowRun, r store.StateData) {
-	r.Mutex.Lock()
-	if r.WorkflowEventPublish != nil {
-		for _, observer := range r.WorkflowEventPublish[wfRun.ProjectID] {
-			observer <- &wfRun
-		}
-	}
-	r.Mutex.Unlock()
-}
-
 func SendRequestToSubscriber(subscriberRequest graphql.SubscriberRequests, r store.StateData) {
 	if os.Getenv("AGENT_SCOPE") == "cluster" {
 		/*

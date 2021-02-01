@@ -274,7 +274,7 @@ func (c MyHubConfig) generateAuthMethod() (transport.AuthMethod, error) {
 	var auth transport.AuthMethod
 	if c.AuthType == model.AuthTypeToken {
 		auth = &http.BasicAuth{
-			Username: "kubera", // this can be anything except an empty string
+			Username: "litmus", // this can be anything except an empty string
 			Password: *c.Token,
 		}
 	} else if c.AuthType == model.AuthTypeBasic {

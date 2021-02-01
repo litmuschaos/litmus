@@ -15,7 +15,7 @@ type StateData struct {
 	Mutex                *sync.Mutex
 }
 
-func New() *StateData {
+func NewStore() *StateData {
 	return &StateData{
 		ClusterEventPublish:  make(map[string][]chan *model.ClusterEvent),
 		ConnectedCluster:     make(map[string]chan *model.ClusterAction),
@@ -24,3 +24,5 @@ func New() *StateData {
 		Mutex:                &sync.Mutex{},
 	}
 }
+
+var Store = NewStore()

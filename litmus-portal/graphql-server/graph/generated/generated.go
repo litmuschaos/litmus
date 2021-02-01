@@ -168,7 +168,10 @@ type ComplexityRoot struct {
 		DeleteChaosWorkflow func(childComplexity int, workflowid string) int
 		DeleteClusterReg    func(childComplexity int, clusterID string) int
 		DeleteMyHub         func(childComplexity int, hubID string) int
+		DisableGitOps       func(childComplexity int, projectID string) int
+		EnableGitOps        func(childComplexity int, config model.GitConfig) int
 		GeneraterSSHKey     func(childComplexity int) int
+		GitopsNotifer       func(childComplexity int, clusterInfo model.ClusterIdentity, workflowID string) int
 		NewClusterEvent     func(childComplexity int, clusterEvent model.ClusterEventInput) int
 		PodLog              func(childComplexity int, log model.PodLog) int
 		RemoveInvitation    func(childComplexity int, member model.MemberInput) int
@@ -386,6 +389,9 @@ type MutationResolver interface {
 	GeneraterSSHKey(ctx context.Context) (*model.SSHKey, error)
 	UpdateMyHub(ctx context.Context, myhubInput model.UpdateMyHub, projectID string) (*model.MyHub, error)
 	DeleteMyHub(ctx context.Context, hubID string) (bool, error)
+	GitopsNotifer(ctx context.Context, clusterInfo model.ClusterIdentity, workflowID string) (string, error)
+	EnableGitOps(ctx context.Context, config model.GitConfig) (bool, error)
+	DisableGitOps(ctx context.Context, projectID string) (bool, error)
 }
 type QueryResolver interface {
 	GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error)
@@ -1018,12 +1024,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteMyHub(childComplexity, args["hub_id"].(string)), true
 
+	case "Mutation.disableGitOps":
+		if e.complexity.Mutation.DisableGitOps == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_disableGitOps_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DisableGitOps(childComplexity, args["project_id"].(string)), true
+
+	case "Mutation.enableGitOps":
+		if e.complexity.Mutation.EnableGitOps == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_enableGitOps_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EnableGitOps(childComplexity, args["config"].(model.GitConfig)), true
+
 	case "Mutation.generaterSSHKey":
 		if e.complexity.Mutation.GeneraterSSHKey == nil {
 			break
 		}
 
 		return e.complexity.Mutation.GeneraterSSHKey(childComplexity), true
+
+	case "Mutation.gitopsNotifer":
+		if e.complexity.Mutation.GitopsNotifer == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_gitopsNotifer_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.GitopsNotifer(childComplexity, args["clusterInfo"].(model.ClusterIdentity), args["workflow_id"].(string)), true
 
 	case "Mutation.newClusterEvent":
 		if e.complexity.Mutation.NewClusterEvent == nil {
@@ -2214,6 +2256,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 
 var sources = []*ast.Source{
 	&ast.Source{Name: "graph/myhub.graphqls", Input: `enum AuthType {
+	none
 	basic
 	token
 	ssh
@@ -2633,6 +2676,17 @@ type SSHKey {
 	privateKey: String!
 }
 
+input GitConfig {
+	ProjectID: String!
+	Branch: String!
+	RepoURL: String!
+	AuthType: AuthType!
+	Token: String
+	UserName: String
+	Password: String
+	SSHPrivateKey: String
+}
+
 type Query {
 	# [Deprecated soon]
 	getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
@@ -2707,6 +2761,14 @@ type Mutation {
 	updateMyHub(myhubInput: UpdateMyHub!, projectID: String!): MyHub! @authorized
 
 	deleteMyHub(hub_id: String!): Boolean! @authorized
+
+	# Gitops
+
+	gitopsNotifer(clusterInfo: ClusterIdentity!, workflow_id: String!): String!
+
+	enableGitOps(config: GitConfig!): Boolean! @authorized
+
+	disableGitOps(project_id: String!): Boolean! @authorized
 }
 
 type Subscription {
@@ -2903,6 +2965,56 @@ func (ec *executionContext) field_Mutation_deleteMyHub_args(ctx context.Context,
 		}
 	}
 	args["hub_id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_disableGitOps_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["project_id"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["project_id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_enableGitOps_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.GitConfig
+	if tmp, ok := rawArgs["config"]; ok {
+		arg0, err = ec.unmarshalNGitConfig2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐGitConfig(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["config"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_gitopsNotifer_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.ClusterIdentity
+	if tmp, ok := rawArgs["clusterInfo"]; ok {
+		arg0, err = ec.unmarshalNClusterIdentity2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterIdentity(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["clusterInfo"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["workflow_id"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["workflow_id"] = arg1
 	return args, nil
 }
 
@@ -6770,6 +6882,169 @@ func (ec *executionContext) _Mutation_deleteMyHub(ctx context.Context, field gra
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().DeleteMyHub(rctx, args["hub_id"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_gitopsNotifer(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_gitopsNotifer_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().GitopsNotifer(rctx, args["clusterInfo"].(model.ClusterIdentity), args["workflow_id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_enableGitOps(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_enableGitOps_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().EnableGitOps(rctx, args["config"].(model.GitConfig))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_disableGitOps(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_disableGitOps_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().DisableGitOps(rctx, args["project_id"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -13174,6 +13449,66 @@ func (ec *executionContext) unmarshalInputExperimentInput(ctx context.Context, o
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputGitConfig(ctx context.Context, obj interface{}) (model.GitConfig, error) {
+	var it model.GitConfig
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "ProjectID":
+			var err error
+			it.ProjectID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "Branch":
+			var err error
+			it.Branch, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "RepoURL":
+			var err error
+			it.RepoURL, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "AuthType":
+			var err error
+			it.AuthType, err = ec.unmarshalNAuthType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAuthType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "Token":
+			var err error
+			it.Token, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "UserName":
+			var err error
+			it.UserName, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "Password":
+			var err error
+			it.Password, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "SSHPrivateKey":
+			var err error
+			it.SSHPrivateKey, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputMemberInput(ctx context.Context, obj interface{}) (model.MemberInput, error) {
 	var it model.MemberInput
 	var asMap = obj.(map[string]interface{})
@@ -14238,6 +14573,21 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "deleteMyHub":
 			out.Values[i] = ec._Mutation_deleteMyHub(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "gitopsNotifer":
+			out.Values[i] = ec._Mutation_gitopsNotifer(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "enableGitOps":
+			out.Values[i] = ec._Mutation_enableGitOps(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "disableGitOps":
+			out.Values[i] = ec._Mutation_disableGitOps(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -15854,6 +16204,10 @@ func (ec *executionContext) marshalNExperiments2ᚖgithubᚗcomᚋlitmuschaosᚋ
 		return graphql.Null
 	}
 	return ec._Experiments(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNGitConfig2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐGitConfig(ctx context.Context, v interface{}) (model.GitConfig, error) {
+	return ec.unmarshalInputGitConfig(ctx, v)
 }
 
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {

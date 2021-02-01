@@ -1,4 +1,5 @@
 enum AuthType {
+	none
 	basic
 	token
 	ssh
