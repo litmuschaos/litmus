@@ -8,12 +8,16 @@ import (
 
 type contextKey string
 
-const AuthKey = contextKey("authorization")
+const (
+	AuthKey    = contextKey("authorization")
+	UserClaim  = contextKey("user-claims")
+	CookieName = "token"
+)
 
 func Middleware(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		jwt := ""
-		auth, err := r.Cookie("token")
+		auth, err := r.Cookie(CookieName)
 		if err == nil {
 			jwt = auth.Value
 		} else if r.Header.Get("Authorization") != "" {
@@ -30,7 +34,7 @@ func Middleware(handler http.Handler) http.Handler {
 func RestMiddleware(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		jwt := ""
-		auth, err := r.Cookie("token")
+		auth, err := r.Cookie(CookieName)
 		fmt.Println("auth: ", auth)
 		if err == nil {
 			jwt = auth.Value

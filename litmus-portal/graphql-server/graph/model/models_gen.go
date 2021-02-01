@@ -176,6 +176,17 @@ type Experiments struct {
 	Desc string `json:"Desc"`
 }
 
+type GitConfig struct {
+	ProjectID     string   `json:"ProjectID"`
+	Branch        string   `json:"Branch"`
+	RepoURL       string   `json:"RepoURL"`
+	AuthType      AuthType `json:"AuthType"`
+	Token         *string  `json:"Token"`
+	UserName      *string  `json:"UserName"`
+	Password      *string  `json:"Password"`
+	SSHPrivateKey *string  `json:"SSHPrivateKey"`
+}
+
 type Link struct {
 	Name string `json:"Name"`
 	URL  string `json:"Url"`
@@ -427,12 +438,14 @@ type Weightages struct {
 type AuthType string
 
 const (
+	AuthTypeNone  AuthType = "none"
 	AuthTypeBasic AuthType = "basic"
 	AuthTypeToken AuthType = "token"
 	AuthTypeSSH   AuthType = "ssh"
 )
 
 var AllAuthType = []AuthType{
+	AuthTypeNone,
 	AuthTypeBasic,
 	AuthTypeToken,
 	AuthTypeSSH,
@@ -440,7 +453,7 @@ var AllAuthType = []AuthType{
 
 func (e AuthType) IsValid() bool {
 	switch e {
-	case AuthTypeBasic, AuthTypeToken, AuthTypeSSH:
+	case AuthTypeNone, AuthTypeBasic, AuthTypeToken, AuthTypeSSH:
 		return true
 	}
 	return false

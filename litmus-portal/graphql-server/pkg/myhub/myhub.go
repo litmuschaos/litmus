@@ -21,6 +21,10 @@ import (
 	"time"
 )
 
+const (
+	timeInterval = 6 * time.Hour
+)
+
 //AddMyHub is used for Adding a new MyHub
 func AddMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (*model.MyHub, error) {
 
@@ -390,3 +394,32 @@ var GetIconHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Reques
 	w.Header().Set("Content-Type", "image/png") // <-- set the content-type header
 	io.Copy(w, img)
 })
+
+//RecurringHubSync is used for syncing
+func RecurringHubSync() {
+	for {
+		//Started Syncing of hubs
+		myhubs, _ := GetAllHubs(nil)
+
+		for _, myhub := range myhubs {
+
+			chartsInput := model.CloningInput{
+				HubName:       myhub.HubName,
+				ProjectID:     myhub.ProjectID,
+				RepoURL:       myhub.RepoURL,
+				RepoBranch:    myhub.RepoBranch,
+				IsPrivate:     myhub.IsPrivate,
+				AuthType:      myhub.AuthType,
+				Token:         myhub.Token,
+				UserName:      myhub.UserName,
+				Password:      myhub.Password,
+				SSHPrivateKey: myhub.SSHPrivateKey,
+			}
+
+			myhub_ops.GitSyncHandlerForProjects(chartsInput)
+		}
+
+		//Syncing Completed
+		time.Sleep(timeInterval)
+	}
+}
