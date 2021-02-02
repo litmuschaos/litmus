@@ -182,6 +182,7 @@ rules:
       - daemonsets
       - statefulsets
       - pods
+      - configmaps
     verbs:
       - get
       - list
