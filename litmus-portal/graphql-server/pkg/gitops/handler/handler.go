@@ -105,7 +105,9 @@ func GitOpsNotificationHandler(ctx context.Context, clusterInfo model.ClusterIde
 		log.Print("Could not get workflow :", err)
 		return "could not get workflow", err
 	}
-
+	if len(workflows) == 0 {
+		return "", errors.New("no such workflow found")
+	}
 	resKind := gjson.Get(workflows[0].WorkflowManifest, "kind").String()
 	if strings.ToLower(resKind) == "cronworkflow" { // no op
 		return "Request Acknowledged for workflowID: " + workflowID, nil
