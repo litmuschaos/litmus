@@ -164,7 +164,9 @@ Run chaos experiments on percona application with grafana dashboard to monitor i
 
   ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/import-dashboard.png?raw=true)
 
-- (optional) Import the grafana dashboard "Sock-Shop Performance" provided [here](https://raw.githubusercontent.com/ishangupta-ds/litmus/percona/monitoring/grafana-dashboards/percona-sql/db.json)
+- (optional) Import the grafana dashboard "mySql Performance" provided [here](https://raw.githubusercontent.com/ishangupta-ds/litmus/percona/monitoring/grafana-dashboards/percona-sql/sql_overview.json)
+
+- (optional) Import the grafana dashboard "PXC Galera Node summary Performance" provided [here](https://raw.githubusercontent.com/ishangupta-ds/litmus/percona/monitoring/grafana-dashboards/percona-sql/PXC_Galera_Node_Summary_Interleaved.json)
 
 - (optional) Use PMM for monitoring.
 
