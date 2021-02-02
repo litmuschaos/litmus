@@ -171,7 +171,7 @@ Run chaos experiments on percona application with grafana dashboard to monitor i
 ### Step-4: Execute the Chaos Experiments
 
 ```
-kubectl apply -f utils/sample-chaos-injectors/chaos-experiments/percona/percona-network-loss.yaml
+kubectl apply -f ../../../utils/sample-chaos-injectors/chaos-experiments/percona/percona-network-loss.yaml
 ```
 
 
