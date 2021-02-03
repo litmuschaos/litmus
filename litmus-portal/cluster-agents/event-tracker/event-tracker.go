@@ -118,9 +118,9 @@ func runDeploymentInformer(factory informers.SharedInformerFactory) {
 		// When a new resource gets created
 		AddFunc: func(obj interface{}) {
 			depObj := obj.(*v1.Deployment)
+			var worflowid = depObj.GetAnnotations()["litmuschaos.io/workflow"]
 
-			if depObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" {
-				var worflowid = depObj.GetAnnotations()["litmuschaos.io/workflow"]
+			if depObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
 				log.Print("EventType: Add")
 				log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "Deployment", depObj.Name, depObj.Namespace)
 				response, err := SendRequest(worflowid)
@@ -181,8 +181,8 @@ func runStsInformer(factory informers.SharedInformerFactory) {
 		AddFunc: func(obj interface{}) {
 			stsObj := obj.(*v1.StatefulSet)
 
-			if stsObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" {
-				var worflowid = stsObj.GetAnnotations()["litmuschaos.io/workflow"]
+			var worflowid = stsObj.GetAnnotations()["litmuschaos.io/workflow"]
+			if stsObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
 				log.Print("EventType: Add")
 				log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "StateFulSet", stsObj.Name, stsObj.Namespace)
 				response, err := SendRequest(worflowid)
@@ -243,8 +243,8 @@ func runDSInformer(factory informers.SharedInformerFactory) {
 		AddFunc: func(obj interface{}) {
 			dsObj := obj.(*v1.DaemonSet)
 
-			if dsObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" {
-				var worflowid = dsObj.GetAnnotations()["litmuschaos.io/workflow"]
+			var worflowid = dsObj.GetAnnotations()["litmuschaos.io/workflow"]
+			if dsObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
 				log.Print("EventType: Add")
 				log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "DaemonSet", dsObj.Name, dsObj.Namespace)
 				response, err := SendRequest(worflowid)
