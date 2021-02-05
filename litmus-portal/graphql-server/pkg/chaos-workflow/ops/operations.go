@@ -70,7 +70,7 @@ func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowIn
 		}
 
 		workflowManifest.Labels = map[string]string{
-			"workflow_id": workflow_id,
+			"workflow_id": *workflow.WorkflowID,
 			"cluster_id":  workflow.ClusterID,
 		}
 
@@ -142,13 +142,13 @@ func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowIn
 		}
 
 		cronWorkflowManifest.Labels = map[string]string{
-			"workflow_id": workflow_id,
+			"workflow_id": *workflow.WorkflowID,
 			"cluster_id":  workflow.ClusterID,
 		}
 
 		cronWorkflowManifest.Spec.WorkflowMetadata = &v1.ObjectMeta{
 			Labels: map[string]string{
-				"workflow_id": workflow_id,
+				"workflow_id": *workflow.WorkflowID,
 				"cluster_id":  workflow.ClusterID,
 			},
 		}
