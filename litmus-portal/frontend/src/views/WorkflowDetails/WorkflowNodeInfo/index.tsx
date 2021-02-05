@@ -1,12 +1,12 @@
 /* eslint-disable */
 import { Typography } from '@material-ui/core';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import { RootState } from '../../../redux/reducers';
 import timeDifference from '../../../utils/datesModifier';
 import NodeLogs from '../NodeLogs';
-import { useTranslation } from 'react-i18next';
 import useStyles from './styles';
 
 interface WorkflowNodeInfoProps {
@@ -51,16 +51,6 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
         <></>
       )}
 
-      {/* Node Name */}
-      <div className={classes.heightMaintainer}>
-        <Typography className={classes.nodeSpacing}>
-          <span className={classes.bold}>
-            {t('workflowDetailsView.workflowNodeInfo.name')}:
-          </span>
-          <br />
-          {pod_name}
-        </Typography>
-      </div>
       {/* Node Type */}
       <div className={classes.heightMaintainer}>
         <Typography className={classes.nodeSpacing}>
@@ -120,7 +110,7 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
         </div>
       </div>
       <hr />
-      {/* Node Name */}
+      {/* Step Name */}
       <div className={classes.nodeSpacing}>
         <div className={classes.heightMaintainer}>
           <Typography>

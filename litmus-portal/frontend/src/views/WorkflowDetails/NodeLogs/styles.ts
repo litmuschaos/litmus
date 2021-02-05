@@ -4,8 +4,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   root: {
     width: '100%',
     height: '90%',
+    padding: theme.spacing(2.5),
+    overflowY: 'scroll',
     background: theme.palette.common.black,
-    color: theme.palette.common.white,
+    color: theme.palette.text.secondary,
+  },
+  text: {
+    fontSize: '1rem',
   },
 }));
 

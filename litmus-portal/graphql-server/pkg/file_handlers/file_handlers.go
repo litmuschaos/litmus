@@ -16,6 +16,7 @@ var subscriberConfiguration = &types.SubscriberConfigurationVars{
 	AgentNamespace:          os.Getenv("AGENT_NAMESPACE"),
 	AgentScope:              os.Getenv("AGENT_SCOPE"),
 	SubscriberImage:         os.Getenv("SUBSCRIBER_IMAGE"),
+	EventTrackerImage:       os.Getenv("EVENT_TRACKER_IMAGE"),
 	ArgoServerImage:         os.Getenv("ARGO_SERVER_IMAGE"),
 	WorkflowControllerImage: os.Getenv("ARGO_WORKFLOW_CONTROLLER_IMAGE"),
 	ChaosOperatorImage:      os.Getenv("LITMUS_CHAOS_OPERATOR_IMAGE"),

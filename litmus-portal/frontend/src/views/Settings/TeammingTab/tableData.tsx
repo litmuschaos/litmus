@@ -9,7 +9,7 @@ import ButtonOutline from '../../../components/Button/ButtonOutline';
 import Loader from '../../../components/Loader';
 import Unimodal from '../../../containers/layouts/Unimodal';
 import { REMOVE_INVITATION } from '../../../graphql/mutations';
-import { GET_USER } from '../../../graphql/quries';
+import { GET_USER } from '../../../graphql/queries';
 import { MemberInvitation } from '../../../models/graphql/invite';
 import { Member } from '../../../models/graphql/user';
 import { RootState } from '../../../redux/reducers';

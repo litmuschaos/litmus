@@ -169,7 +169,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.dark,
   },
   active: {
-    color: theme.palette.primary.dark,
+    color: theme.palette.status.completed.text,
     background: theme.palette.success.light,
   },
   notactive: {
@@ -217,6 +217,8 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     gap: '1rem',
   },
+
+  w7: { width: '7rem' },
   // delete user
   delDiv: {
     maxWidth: '8.56rem',

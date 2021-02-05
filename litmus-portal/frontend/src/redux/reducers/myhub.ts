@@ -12,6 +12,13 @@ const initialState: HubDetails = {
   RepoBranch: '',
   TotalExp: '',
   IsAvailable: true,
+  IsPrivate: false,
+  Token: '',
+  UserName: '',
+  Password: '',
+  SSHPrivateKey: '',
+  SSHPublicKey: '',
+  LastSyncedAt: '',
 };
 
 export const hubDetails = createReducer<HubDetails>(initialState, {

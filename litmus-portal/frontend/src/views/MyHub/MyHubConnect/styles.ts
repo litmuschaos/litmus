@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     border: `1px solid ${theme.palette.border.main}`,
     padding: theme.spacing(2.5),
   },
@@ -36,9 +36,20 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2.5),
     marginLeft: theme.spacing(-1.25),
   },
-  inputField: {
+  hubNameInput: {
     marginBottom: theme.spacing(2.5),
-    width: '25rem',
+    marginLeft: theme.spacing(2),
+  },
+  inputField: {
+    marginLeft: theme.spacing(2),
+    marginBottom: theme.spacing(2.5),
+    width: '20rem',
+  },
+  inputFieldBranch: {
+    marginBottom: theme.spacing(2.5),
+    marginRight: theme.spacing(2.5),
+    marginLeft: theme.spacing(2.5),
+    width: '10rem',
   },
   modalDiv: {
     display: 'flex',
@@ -79,6 +90,108 @@ const useStyles = makeStyles((theme) => ({
   quickActionDiv: {
     marginLeft: theme.spacing(5.625),
   },
+  rowDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+
+  copyBtnImg: {
+    paddingRight: '0.625rem',
+  },
+  done: {
+    color: theme.palette.primary.main,
+    paddingRight: theme.spacing(0.625),
+  },
+  mainPrivateRepo: {
+    border: `1px solid ${theme.palette.border.main}`,
+    padding: theme.spacing(2.5),
+    margin: theme.spacing(2.5, 3.75, 2.5, 2),
+    borderRadius: 4,
+    width: 'fit-content',
+  },
+  privateRepoDiv: {
+    width: 'fit-content',
+    marginTop: theme.spacing(-6.25),
+    padding: theme.spacing(1.25),
+    backgroundColor: theme.palette.background.paper,
+  },
+  inputFieldDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop: theme.spacing(2.5),
+  },
+  privateRepoDetails: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop: theme.spacing(2.5),
+  },
+  formControl: {
+    marginLeft: theme.spacing(3.125),
+  },
+  sshDiv: {
+    backgroundColor: theme.palette.disabledBackground,
+    padding: theme.spacing(2.5),
+  },
+  alertText: {
+    marginBottom: theme.spacing(2.5),
+    fontSize: '0.75rem',
+    color: theme.palette.common.black,
+    opacity: 0.4,
+  },
+  sshDataDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    backgroundColor: theme.palette.cards.background,
+    padding: theme.spacing(2.5),
+    borderRadius: 4,
+  },
+  sshText: {
+    wordBreak: 'break-all',
+    fontSize: '0.875rem',
+  },
+  copyBtn: {
+    margin: 'auto',
+    marginLeft: theme.spacing(2.5),
+    borderLeft: `1px solid ${theme.palette.primary.main}`,
+    paddingLeft: theme.spacing(2.5),
+  },
+  privateToggleDiv: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  sshRadioBtn: {
+    marginTop: theme.spacing(1.25),
+  },
+  toggleActive: {
+    height: '2.25rem',
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.text.secondary,
+    width: '6.25rem',
+    textTransform: 'none',
+    '&:hover': {
+      backgroundColor: theme.palette.primary.main,
+    },
+  },
+  toggleInactive: {
+    height: '2.25rem',
+    backgroundColor: theme.palette.disabledBackground,
+    color: theme.palette.text.hint,
+    width: '6.25rem',
+    textTransform: 'none',
+    '&:hover': {
+      backgroundColor: theme.palette.disabledBackground,
+    },
+  },
+  toggleFont: {
+    fontSize: '0.875rem',
+  },
+  radio: {
+    color: theme.palette.primary.main,
+    '&$checked': {
+      color: theme.palette.primary.main,
+    },
+  },
+  checked: {},
 }));
 
 export default useStyles;

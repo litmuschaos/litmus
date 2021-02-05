@@ -75,25 +75,7 @@ func UpdateWorkflowRun(workflow_id string, wfRun WorkflowRun) (int, error) {
 	return updateCount, nil
 }
 
-func GetWorkflowsByProjectID(project_id string) ([]ChaosWorkFlowInput, error) {
-	query := bson.D{{"project_id", project_id}}
-	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-
-	cursor, err := workflowCollection.Find(ctx, query)
-	if err != nil {
-		return nil, err
-	}
-
-	var workflows []ChaosWorkFlowInput
-	err = cursor.All(ctx, &workflows)
-	if err != nil {
-		return nil, err
-	}
-	return workflows, nil
-}
-
-func GetWorkflowsByIDs(workflow_ids []*string) ([]ChaosWorkFlowInput, error) {
-	query := bson.M{"workflow_id": bson.M{"$in": workflow_ids}}
+func GetWorkflows(query bson.D) ([]ChaosWorkFlowInput, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
 	cursor, err := workflowCollection.Find(ctx, query)

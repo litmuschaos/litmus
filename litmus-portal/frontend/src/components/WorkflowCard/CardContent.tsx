@@ -1,9 +1,11 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
+import { Tooltip, Zoom } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { preDefinedWorkflowData } from '../../models/predefinedWorkflow';
 import { RootState } from '../../redux/reducers';
+import trimString from '../../utils/trim';
 import parsed from '../../utils/yamlUtils';
 import useStyles from './styles';
 
@@ -104,11 +106,27 @@ const CardContent: React.FC<preDefinedWorkflowData> = ({
             <div className={classes.provider}>Contributed by {provider}</div>
           </div>
           {description ? (
-            <div className={classes.description}>{description}</div>
+            description.length > 30 ? (
+              <Tooltip
+                disableFocusListener
+                disableTouchListener
+                title={description}
+                placement="left"
+                TransitionComponent={Zoom}
+                className={classes.tooltip}
+              >
+                <div className={classes.description}>
+                  {trimString(description, 31)}
+                </div>
+              </Tooltip>
+            ) : (
+              <div className={classes.description}>
+                {trimString(description, 31)}
+              </div>
+            )
           ) : (
             <span />
           )}
-          {description ? description.length < 28 ? <br /> : <div /> : <span />}
         </div>
         {/* <Divider variant="fullWidth" className={classes.horizontalLine} />
         <div className={classes.details}>

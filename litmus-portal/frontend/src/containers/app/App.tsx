@@ -32,6 +32,7 @@ const MyHub = lazy(() => import('../../pages/MyHub'));
 const MyHubConnect = lazy(() => import('../../views/MyHub/MyHubConnect'));
 const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
 const MyHubExperiment = lazy(() => import('../../views/MyHub/MyHubExperiment'));
+const MyHubEdit = lazy(() => import('../../views/MyHub/MyHubEdit'));
 const CreateCustomWorkflow = lazy(() =>
   import('../../pages/CreateCustomWorkflow')
 );
@@ -101,18 +102,17 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
         />
         {/* Redirects */}
         <Redirect exact path="/login" to="/" />
-        <Redirect exact path="/workflows/details" to="/workflows" />
         <Redirect exact path="/workflows/schedule" to="/workflows" />
         <Redirect exact path="/workflows/template" to="/workflows" />
         <Redirect exact path="/workflows/analytics" to="/workflows" />
         <Route
           exact
-          path="/workflows/details/:workflowRunId"
+          path="/workflows/:workflowRunId"
           component={WorkflowDetails}
         />
         <Route
           exact
-          path="/workflows/schedule/:scheduleId"
+          path="/workflows/schedule/:projectID/:workflowName"
           component={SchedulePage}
         />
         <Route
@@ -131,6 +131,7 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
         <Route exact path="/target-connect" component={ConnectTargets} />
         <Route exact path="/myhub" component={MyHub} />
         <Route exact path="/myhub/connect" component={MyHubConnect} />
+        <Route exact path="/myhub/edit/:hubname" component={MyHubEdit} />
         <Route exact path="/myhub/:hubname" component={ChaosChart} />
         <Route
           exact

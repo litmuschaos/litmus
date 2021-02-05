@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
     height: '12.5rem',
     border: '1px solid rgba(0, 0, 0, 0.2)',
     '&:hover': {
-      border: `1.8px solid ${theme.palette.secondary.dark}`,
+      border: `1.8px solid ${theme.palette.primary.light}`,
       cursor: 'pointer',
     },
     borderRadius: theme.spacing(0.5),
@@ -92,9 +92,13 @@ const useStyles = makeStyles((theme) => ({
   categoryName: {
     marginTop: theme.spacing(2),
     fontSize: '1rem',
-    color: theme.palette.secondary.dark,
+    color: theme.palette.primary.dark,
   },
   expName: {
+    fontSize: '0.875rem',
+  },
+  lastSyncText: {
+    marginTop: theme.spacing(1.875),
     fontSize: '0.875rem',
   },
 }));

@@ -1,6 +1,7 @@
 import { useLazyQuery, useQuery } from '@apollo/client';
 import {
   Button,
+  ClickAwayListener,
   FormControl,
   FormControlLabel,
   IconButton,
@@ -14,28 +15,28 @@ import {
   RadioGroup,
   Select,
   Typography,
-  ClickAwayListener,
 } from '@material-ui/core';
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import { InputField } from 'kubera-ui';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
-import InputField from '../../../../components/InputField';
 import Loader from '../../../../components/Loader';
 import { GET_CHARTS_DATA, GET_HUB_STATUS } from '../../../../graphql';
+import { GET_EXPERIMENT_YAML } from '../../../../graphql/queries';
 import { MyHubDetail } from '../../../../models/graphql/user';
 import { Charts, HubStatus } from '../../../../models/redux/myhub';
-import * as WorkflowActions from '../../../../redux/actions/workflow';
-import useActions from '../../../../redux/actions';
-import { RootState } from '../../../../redux/reducers';
-import useStyles, { CustomTextField, MenuProps } from './styles';
 import WorkflowDetails from '../../../../pages/WorkflowDetails';
-import { GET_EXPERIMENT_YAML } from '../../../../graphql/quries';
-import BackButton from '../BackButton';
+import useActions from '../../../../redux/actions';
 import * as TemplateSelectionActions from '../../../../redux/actions/template';
+import * as WorkflowActions from '../../../../redux/actions/workflow';
 import { history } from '../../../../redux/configureStore';
+import { RootState } from '../../../../redux/reducers';
+import { validateWorkflowName } from '../../../../utils/validate';
+import BackButton from '../BackButton';
+import useStyles, { MenuProps } from './styles';
 
 interface WorkflowDetails {
   workflow_name: string;
@@ -238,12 +239,19 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             </Typography>
             <InputField
               label="Workflow Name"
-              styles={{
-                width: '100%',
-              }}
+              fullWidth
               data-cy="inputWorkflowName"
-              validationError={false}
-              handleChange={(e) => {
+              variant={
+                validateWorkflowName(workflowData.workflow_name)
+                  ? 'error'
+                  : 'primary'
+              }
+              helperText={
+                validateWorkflowName(workflowData.workflow_name)
+                  ? t('createWorkflow.chooseWorkflow.validate')
+                  : ''
+              }
+              onChange={(e) => {
                 setWorkflowData({
                   workflow_name: e.target.value,
                   workflow_desc: workflowData.workflow_desc,
@@ -257,14 +265,11 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             <Typography variant="h6" className={classes.titleText}>
               {t('customWorkflow.createWorkflow.workflowDesc')}:
             </Typography>
-            <CustomTextField
+            <InputField
               label="Description"
               data-cy="inputWorkflowDesc"
               InputProps={{
                 disableUnderline: true,
-                classes: {
-                  input: classes.resize,
-                },
               }}
               onChange={(e) => {
                 setWorkflowData({
@@ -297,7 +302,11 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             >
               <FormControlLabel
                 value="construct"
-                control={<Radio />}
+                control={
+                  <Radio
+                    classes={{ root: classes.radio, checked: classes.checked }}
+                  />
+                }
                 disabled={data?.getHubStatus.length === 0}
                 label={
                   <Typography className={classes.radioText}>
@@ -374,7 +383,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                                 }}
                                 edge="end"
                               >
-                                <ArrowDropDownIcon />
+                                <ArrowDropDownIcon color="secondary" />
                               </IconButton>
                             </InputAdornment>
                           }
@@ -463,7 +472,11 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
 
               <FormControlLabel
                 value="upload"
-                control={<Radio />}
+                control={
+                  <Radio
+                    classes={{ root: classes.radio, checked: classes.checked }}
+                  />
+                }
                 disabled={workflowDetails.customWorkflows.length !== 0}
                 label={
                   <Typography className={classes.radioText}>

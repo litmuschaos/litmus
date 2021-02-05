@@ -24,7 +24,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import Loader from '../../../../components/Loader';
-import { WORKFLOW_LIST_DETAILS } from '../../../../graphql/quries';
+import { WORKFLOW_LIST_DETAILS } from '../../../../graphql/queries';
 import {
   ExecutionData,
   WeightageMap,
@@ -461,7 +461,7 @@ const WorkflowComparisonTable = () => {
         const doc = new jsPDF('p', 'mm', 'a4'); // A4 size page of PDF
         const position = -45;
         doc.setFontSize(10);
-        doc.text('Litmus Portal Report Version: 1.11', 10, 10);
+        doc.text('Litmus Portal Report Version: 1.12', 10, 10);
         doc.text('Time of Generation:', 10, 15);
         doc.text(new Date().toString(), 42, 15);
         doc.text(
@@ -597,7 +597,7 @@ const WorkflowComparisonTable = () => {
                 className={classes.buttonBack}
               >
                 <ExpandMoreTwoToneIcon
-                  htmlColor={palette.secondary.dark}
+                  htmlColor={palette.primary.main}
                   className={classes.buttonBackStyle}
                 />
               </IconButton>

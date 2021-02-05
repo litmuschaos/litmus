@@ -1,18 +1,18 @@
-import { Typography } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
-import YAML from 'yaml';
-import { useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
 import { useLazyQuery } from '@apollo/client';
-import BackButton from '../BackButton';
+import { Typography } from '@material-ui/core';
+import { InputField } from 'kubera-ui';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import YAML from 'yaml';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
-import InputField from '../../../../components/InputField';
-import useStyles from './styles';
-import { RootState } from '../../../../redux/reducers';
+import Loader from '../../../../components/Loader';
+import { GET_ENGINE_YAML } from '../../../../graphql/queries';
 import useActions from '../../../../redux/actions';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
-import Loader from '../../../../components/Loader';
-import { GET_ENGINE_YAML } from '../../../../graphql/quries';
+import { RootState } from '../../../../redux/reducers';
+import BackButton from '../BackButton';
+import useStyles from './styles';
 
 interface EnvValues {
   name: string;
@@ -70,14 +70,14 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
 
   const changeKey = (
     index: number,
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
     overrideEnvs[index].name = event.target.value;
     setOverrideEnvs([...overrideEnvs]);
   };
   const changeValue = (
     index: number,
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
     overrideEnvs[index].value = event.target.value;
     setOverrideEnvs([...overrideEnvs]);
@@ -88,7 +88,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
 
   const changeOriginalEnvValue = (
     index: number,
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
     env[index].value = event.target.value;
     setEnv([...env]);
@@ -261,12 +261,9 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 <div className={classes.inputField}>
                   <InputField
                     label="appns"
-                    styles={{
-                      width: '100%',
-                    }}
                     data-cy="inputWorkflow"
-                    validationError={false}
-                    handleChange={(event) =>
+                    variant="primary"
+                    onChange={(event) =>
                       setAppInfo({
                         ...appInfo,
                         appns: event.target.value.toLowerCase(),
@@ -277,6 +274,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 </div>
               </div>
             ) : null}
+            <div aria-details="spacer" style={{ margin: '1rem' }} />
             {YAML.parse(yaml).spec.appinfo?.applabel ? (
               <div className={classes.appInfoDiv}>
                 <Typography className={classes.appInfoText}>
@@ -285,12 +283,9 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 <div className={classes.inputField}>
                   <InputField
                     label="applabel"
-                    styles={{
-                      width: '100%',
-                    }}
                     data-cy="inputWorkflow"
-                    validationError={false}
-                    handleChange={(event) =>
+                    variant="primary"
+                    onChange={(event) =>
                       setAppInfo({
                         ...appInfo,
                         applabel: event.target.value.toLowerCase(),
@@ -301,6 +296,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 </div>
               </div>
             ) : null}
+            <div aria-details="spacer" style={{ margin: '1rem' }} />
             {YAML.parse(yaml).spec.appinfo?.appkind ? (
               <div className={classes.appKind}>
                 <Typography className={classes.appInfoText}>
@@ -309,12 +305,9 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 <div className={classes.inputField}>
                   <InputField
                     label="appkind"
-                    styles={{
-                      width: '100%',
-                    }}
                     data-cy="inputWorkflow"
-                    validationError={false}
-                    handleChange={(event) =>
+                    variant="primary"
+                    onChange={(event) =>
                       setAppInfo({
                         ...appInfo,
                         appkind: event.target.value.toLowerCase(),
@@ -325,6 +318,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 </div>
               </div>
             ) : null}
+            <div aria-details="spacer" style={{ margin: '1rem' }} />
             {YAML.parse(yaml).spec.annotationCheck ? (
               <div className={classes.appKind}>
                 <Typography className={classes.appInfoText}>
@@ -333,12 +327,9 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 <div className={classes.inputField}>
                   <InputField
                     label="annotationCheck"
-                    styles={{
-                      width: '100%',
-                    }}
                     data-cy="inputWorkflow"
-                    validationError={false}
-                    handleChange={(event) => setAnnotation(event.target.value)}
+                    variant="primary"
+                    onChange={(event) => setAnnotation(event.target.value)}
                     value={annotation}
                   />
                 </div>
@@ -353,12 +344,9 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 <Typography className={classes.envName}>{data.name}</Typography>
                 <InputField
                   label="Value"
-                  styles={{
-                    width: '40%',
-                  }}
                   data-cy="inputWorkflow"
-                  validationError={false}
-                  handleChange={(event) => changeOriginalEnvValue(index, event)}
+                  variant="primary"
+                  onChange={(event) => changeOriginalEnvValue(index, event)}
                   value={data.value}
                 />
               </div>
@@ -374,22 +362,16 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             <div className={classes.inputDivEnv}>
               <InputField
                 label="Key"
-                styles={{
-                  width: '40%',
-                }}
                 data-cy="inputWorkflow"
-                validationError={false}
-                handleChange={(event) => changeKey(index, event)}
+                variant="primary"
+                onChange={(event) => changeKey(index, event)}
                 value={data.name}
               />
               <InputField
                 label="Value"
-                styles={{
-                  width: '40%',
-                }}
                 data-cy="inputWorkflow"
-                validationError={false}
-                handleChange={(event) => changeValue(index, event)}
+                variant="primary"
+                onChange={(event) => changeValue(index, event)}
                 value={data.value}
               />
               {overrideEnvs[index + 1] ? null : (

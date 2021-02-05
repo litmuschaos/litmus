@@ -18,10 +18,12 @@ import {
 import { experimentMap, WorkflowData } from '../../models/redux/workflow';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
-import * as WorkflowActions from '../../redux/actions/workflow';
 import * as TemplateSelectionActions from '../../redux/actions/template';
+import * as WorkflowActions from '../../redux/actions/workflow';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
+import { validateWorkflowName } from '../../utils/validate';
+import { cronWorkflow, workflowOnce } from '../../utils/workflowTemplate';
 import parsed from '../../utils/yamlUtils';
 import ChooseWorkflow from '../../views/CreateWorkflow/ChooseWorkflow/index';
 import ReliablityScore from '../../views/CreateWorkflow/ReliabilityScore';
@@ -34,7 +36,6 @@ import ButtonOutline from '../Button/ButtonOutline';
 import QontoConnector from './quontoConnector';
 import useStyles from './styles';
 import useQontoStepIconStyles from './useQontoStepIconStyles';
-import { cronWorkflow, workflowOnce } from '../../utils/workflowTemplate';
 
 function getSteps(): string[] {
   return [
@@ -98,7 +99,7 @@ function getStepContent(
         <ChooseAWorkflowCluster gotoStep={(page: number) => gotoStep(page)} />
       );
     case 1:
-      return <ChooseWorkflow />;
+      return <ChooseWorkflow isEditable />;
     case 2:
       return <TuneWorkflow />;
     case 3:
@@ -106,7 +107,9 @@ function getStepContent(
     case 4:
       return <ScheduleWorkflow />;
     case 5:
-      return <VerifyCommit gotoStep={(page: number) => gotoStep(page)} />;
+      return (
+        <VerifyCommit isEditable gotoStep={(page: number) => gotoStep(page)} />
+      );
     default:
       return (
         <ChooseAWorkflowCluster gotoStep={(page: number) => gotoStep(page)} />
@@ -390,19 +393,20 @@ const CustomStepper = () => {
             >
               <div>
                 <img
-                  src="icons/finish.svg"
+                  src="/icons/finish.svg"
                   className={classes.mark}
                   alt="mark"
                 />
                 <div className={classes.heading}>
-                  A new chaos workflow,
+                  {t('workflowStepper.aNewChaosWorkflow')}
                   <br />
-                  <strong>was successfully created!</strong>
+                  <span className={classes.successful}>{name}</span>,
+                  <br />
+                  <strong>{t('workflowStepper.successful')}</strong>
                 </div>
                 <div className={classes.headWorkflow}>
-                  Congratulations on creating your first workflow! Now
-                  information about <br /> it will be displayed on the main
-                  screen of the application.
+                  {t('workflowStepper.congratulationsSub1')} <br />{' '}
+                  {t('workflowStepper.congratulationsSub2')}
                 </div>
                 <div className={classes.button}>
                   <ButtonFilled
@@ -414,7 +418,7 @@ const CustomStepper = () => {
                       history.push('/workflows');
                     }}
                   >
-                    <div>Back to workflow</div>
+                    <div>{t('workflowStepper.workflowBtn')}</div>
                   </ButtonFilled>
                 </div>
               </div>
@@ -428,7 +432,11 @@ const CustomStepper = () => {
                 <Typography>Back</Typography>
               </ButtonOutline>
               {activeStep === steps.length - 1 ? (
-                <ButtonFilled handleClick={handleOpen} isPrimary>
+                <ButtonFilled
+                  isDisabled={validateWorkflowName(name)}
+                  handleClick={handleOpen}
+                  isPrimary
+                >
                   <div>Finish</div>
                 </ButtonFilled>
               ) : (

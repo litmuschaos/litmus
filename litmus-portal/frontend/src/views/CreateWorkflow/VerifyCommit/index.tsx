@@ -1,14 +1,14 @@
 import { Divider, IconButton, Typography } from '@material-ui/core';
-import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import EditIcon from '@material-ui/icons/Edit';
 import cronstrue from 'cronstrue';
-import YAML from 'yaml';
+import { EditableText } from 'kubera-ui';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import YAML from 'yaml';
 import AdjustedWeights from '../../../components/AdjustedWeights';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline/index';
-import CustomText from '../../../components/CustomText';
 import YamlEditor from '../../../components/YamlEditor/Editor';
 import {
   AceValidations,
@@ -23,9 +23,13 @@ import useStyles from './styles';
 
 interface VerifyCommitProps {
   gotoStep: (page: number) => void;
+  isEditable?: boolean;
 }
 
-const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
+const VerifyCommit: React.FC<VerifyCommitProps> = ({
+  gotoStep,
+  isEditable,
+}) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
@@ -43,6 +47,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     description,
     weights,
     cronSyntax,
+    isDisabled,
     clustername,
   } = workflowData;
 
@@ -93,9 +98,9 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       annotations: editorValidations.annotations,
     };
     if (stateObject.annotations.length > 0) {
-      setYamlStatus('Error in CRHeloD Yaml.');
+      setYamlStatus(`${t('createWorkflow.verifyCommit.errYaml')}`);
     } else {
-      setYamlStatus('Your code is fine. You can move on !');
+      setYamlStatus(`${t('createWorkflow.verifyCommit.codeIsFine')}`);
     }
   }, [modified]);
 
@@ -114,7 +119,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             </Typography>
           </div>
           <img
-            src="./icons/b-finance.png"
+            src="/icons/b-finance.png"
             alt="bfinance"
             className={classes.bfinIcon}
           />
@@ -133,12 +138,14 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               </Typography>
             </div>
             <div className={classes.col2}>
-              <CustomText
+              <EditableText
                 value={name}
                 id="name"
-                onchange={(changedName: string) =>
-                  handleNameChange({ changedName })
+                fullWidth
+                onChange={(e) =>
+                  handleNameChange({ changedName: e.target.value })
                 }
+                disabled={workflowData.isRecurring}
               />
             </div>
           </div>
@@ -160,18 +167,15 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 {t('createWorkflow.verifyCommit.summary.desc')}:
               </Typography>
             </div>
-            <div
-              className={classes.col2}
-              style={{
-                width: 724,
-              }}
-            >
-              <CustomText
+            <div className={classes.col2}>
+              <EditableText
                 value={description}
                 id="desc"
-                onchange={(changedDesc: string) =>
-                  handleDescChange({ changedDesc })
+                fullWidth
+                onChange={(e) =>
+                  handleDescChange({ changedDesc: e.target.value })
                 }
+                disabled={!isEditable}
               />
             </div>
           </div>
@@ -189,7 +193,11 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 ampm
                 disabled={edit}
               /> */}
-              {cronSyntax === '' ? (
+              {isDisabled ? (
+                <Typography className={classes.schedule}>
+                  {t('createWorkflow.verifyCommit.summary.disabled')}
+                </Typography>
+              ) : cronSyntax === '' ? (
                 <Typography className={classes.schedule}>
                   {t('createWorkflow.verifyCommit.summary.schedulingNow')}
                 </Typography>
@@ -233,7 +241,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                 </div>
                 {/* <div className={classes.editButton2}> */}
                 <ButtonOutline
-                  isDisabled={false}
+                  isDisabled={workflowData.isRecurring}
                   handleClick={() => gotoStep(3)}
                   data-cy="testRunButton"
                 >

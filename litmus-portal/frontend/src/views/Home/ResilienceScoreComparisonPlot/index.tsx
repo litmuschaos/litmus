@@ -80,10 +80,10 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
       dataY = yData.Monthly;
     }
     const colors = [
-      palette.secondary.main,
+      palette.primary.main,
       palette.warning.main,
-      palette.primary.dark,
-      palette.error.dark,
+      palette.secondary.main,
+      palette.error.main,
     ];
     const lineSize = [3, 3, 3, 3];
     const data = [];
@@ -211,7 +211,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         ticklen: 5,
         tickfont: {
           family: 'Ubuntu',
-          color: palette.text.primary,
+          color: palette.text.disabled,
         },
         mirror: true,
         rangeselector: selectorOptions as any,
@@ -230,7 +230,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
         ticklen: 5,
         tickfont: {
           family: 'Ubuntu',
-          color: palette.text.primary,
+          color: palette.text.disabled,
         },
         mirror: true,
         tickmode: 'array',
@@ -250,7 +250,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
       },
       font: {
         family: 'Ubuntu, monospace',
-        color: palette.text.primary,
+        color: palette.text.disabled,
       },
     };
     setPlotLayout(layout);
@@ -323,7 +323,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
             className={classes.analyticsBtnPos}
           >
             <AssessmentOutlinedIcon
-              color="secondary"
+              color="primary"
               className={classes.analyticsButton}
             />
           </IconButton>

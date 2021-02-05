@@ -59,6 +59,18 @@ export const DELETE_SCHEDULE = gql`
   }
 `;
 
+export const UPDATE_SCHEDULE = gql`
+  mutation updateChaos($ChaosWorkFlowInput: ChaosWorkFlowInput!) {
+    updateChaosWorkflow(input: $ChaosWorkFlowInput) {
+      workflow_id
+      workflow_name
+      workflow_description
+      isCustomWorkflow
+      cronSyntax
+    }
+  }
+`;
+
 export const UPDATE_DETAILS = gql`
   mutation updateUser($user: UpdateUserInput!) {
     updateUser(user: $user)
@@ -85,15 +97,50 @@ export const ADD_MY_HUB = gql`
   }
 `;
 
+export const SAVE_MY_HUB = gql`
+  mutation saveMyHub($MyHubDetails: CreateMyHub!, $projectID: String!) {
+    saveMyHub(myhubInput: $MyHubDetails, projectID: $projectID) {
+      HubName
+      RepoURL
+      RepoBranch
+    }
+  }
+`;
+
+export const UPDATE_MY_HUB = gql`
+  mutation updateMyHub($MyHubDetails: UpdateMyHub!, $projectID: String!) {
+    updateMyHub(myhubInput: $MyHubDetails, projectID: $projectID) {
+      HubName
+      RepoURL
+      RepoBranch
+    }
+  }
+`;
+
 export const SYNC_REPO = gql`
-  mutation syncHub($projectID: String!, $HubName: String!) {
-    syncHub(projectID: $projectID, HubName: $HubName) {
+  mutation syncHub($id: ID!) {
+    syncHub(id: $id) {
       id
       RepoURL
       RepoBranch
       IsAvailable
       TotalExp
       HubName
+    }
+  }
+`;
+
+export const DELETE_HUB = gql`
+  mutation deleteMyHub($hub_id: String!) {
+    deleteMyHub(hub_id: $hub_id)
+  }
+`;
+
+export const GENERATE_SSH = gql`
+  mutation generateSSHKey {
+    generaterSSHKey {
+      privateKey
+      publicKey
     }
   }
 `;

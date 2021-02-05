@@ -2,6 +2,7 @@ package operations
 
 import (
 	"context"
+	"errors"
 	"log"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
@@ -28,7 +29,7 @@ func CreateMyHub(ctx context.Context, myhub *dbSchema.MyHub) error {
 
 //GetMyHubByProjectID ...
 func GetMyHubByProjectID(ctx context.Context, projectID string) ([]dbSchema.MyHub, error) {
-	query := bson.M{"project_id": projectID}
+	query := bson.M{"project_id": projectID, "IsRemoved": false}
 	cursor, err := myhubCollection.Find(ctx, query)
 	if err != nil {
 		log.Print("ERROR GETTING USERS : ", err)
@@ -59,4 +60,28 @@ func GetHubs(ctx context.Context) ([]dbSchema.MyHub, error) {
 		return []dbSchema.MyHub{}, err
 	}
 	return MyHubs, nil
+}
+
+//GetHubByID
+func GetHubByID(ctx context.Context, hubID string) (dbSchema.MyHub, error) {
+	var myHub dbSchema.MyHub
+	err := myhubCollection.FindOne(ctx, bson.M{"myhub_id": hubID}).Decode(&myHub)
+	if err != nil {
+		return dbSchema.MyHub{}, err
+	}
+
+	return myHub, nil
+}
+
+func UpdateMyHub(ctx context.Context, query bson.D, update bson.D) error {
+	updateResult, err := myhubCollection.UpdateOne(ctx, query, update)
+	if err != nil {
+		return err
+	}
+
+	if updateResult.MatchedCount == 0 {
+		return errors.New("Myhub collection query didn't matched")
+	}
+
+	return nil
 }

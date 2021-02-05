@@ -163,6 +163,8 @@ spec:
                   key: DB_PASSWORD
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos/litmusportal-subscriber:ci"
+            - name: EVENT_TRACKER_IMAGE
+              value: "litmuschaos/litmusportal-event-tracker:ci"
             - name: ARGO_SERVER_IMAGE
               value: "argoproj/argocli:v2.9.3"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
@@ -170,9 +172,9 @@ spec:
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "argoproj/argoexec:v2.9.3"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:1.11.0"
+              value: "litmuschaos/chaos-operator:1.12.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:1.11.0"
+              value: "litmuschaos/chaos-runner:1.12.0"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always

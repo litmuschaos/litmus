@@ -1,15 +1,9 @@
-import {
-  TableHead,
-  TableRow,
-  TableCell,
-  Checkbox,
-  IconButton,
-} from '@material-ui/core';
+import { IconButton, TableCell, TableHead, TableRow } from '@material-ui/core';
+import ExpandLessTwoToneIcon from '@material-ui/icons/ExpandLessTwoTone';
+import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
-import ExpandLessTwoToneIcon from '@material-ui/icons/ExpandLessTwoTone';
-import useStyles from './styles';
+import useStyles, { StyledCheckbox } from './styles';
 
 interface SortData {
   startDate: { sort: boolean; ascending: boolean };
@@ -54,7 +48,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({
       <TableRow className={classes.tableHead}>
         <TableCell padding="checkbox" className={classes.checkbox}>
           {comparisonState === false ? (
-            <Checkbox
+            <StyledCheckbox
               indeterminate={numSelected > 0 && numSelected < rowCount}
               checked={rowCount > 0 && numSelected === rowCount}
               onChange={onSelectAllClick}

@@ -40,6 +40,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   radioText: {
     fontSize: '0.875rem',
+    color: theme.palette.text.primary,
   },
   description: {
     width: '32.18rem',
@@ -58,6 +59,14 @@ const useStyles = makeStyles((theme: Theme) => ({
   scFormControl: {
     marginTop: theme.spacing(5),
   },
+
+  radio: {
+    color: theme.palette.primary.dark,
+    '&$checked': {
+      color: theme.palette.primary.dark,
+    },
+  },
+  checked: {},
 
   /* For recurring schedule options */
   scRandom: {

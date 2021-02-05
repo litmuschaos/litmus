@@ -2,6 +2,7 @@ package mongodb
 
 import (
 	"context"
+	"go.mongodb.org/mongo-driver/bson"
 	"log"
 	"os"
 	"time"
@@ -54,9 +55,9 @@ type ChaosWorkFlowInput struct {
 	WorkflowID          string             `bson:"workflow_id"`
 	WorkflowManifest    string             `bson:"workflow_manifest"`
 	CronSyntax          string             `bson:"cronSyntax"`
-	WorkflowName        string             `bson:"Workflow_name"`
-	WorkflowDescription string             `bson:"Workflow_description"`
-	Weightages          []*WeightagesInput `bson:"Weightages"`
+	WorkflowName        string             `bson:"workflow_name"`
+	WorkflowDescription string             `bson:"workflow_description"`
+	Weightages          []*WeightagesInput `bson:"weightages"`
 	IsCustomWorkflow    bool               `bson:"isCustomWorkflow"`
 	UpdatedAt           string             `bson:"updated_at"`
 	CreatedAt           string             `bson:"created_at"`
@@ -120,4 +121,21 @@ func init() {
 func initAllCollections() {
 	clusterCollection = Database.Collection(collections["Cluster"])
 	workflowCollection = Database.Collection(collections["Workflow"])
+	_, err := workflowCollection.Indexes().CreateMany(backgroundContext, []mongo.IndexModel{
+		{
+			Keys: bson.M{
+				"workflow_id": 1,
+			},
+			Options: options.Index().SetUnique(true),
+		},
+		{
+			Keys: bson.M{
+				"workflow_name": 1,
+			},
+			Options: options.Index().SetUnique(true),
+		},
+	})
+	if err != nil {
+		log.Fatal("Error Creating Index for Workflow Collection: ", err)
+	}
 }
