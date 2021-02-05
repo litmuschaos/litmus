@@ -1,56 +1,218 @@
 package ops
 
 import (
+	"encoding/json"
 	"errors"
+	"github.com/ghodss/yaml"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
+	chaostypes "github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/subscriptions"
 	"github.com/tidwall/gjson"
-	"github.com/tidwall/sjson"
 	"go.mongodb.org/mongo-driver/bson"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 //ProcessWorkflow takes the workflow and processes it as required
 func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowInput, error) {
-	// workflow name in struct should match with actual workflow name
-	workflowName := gjson.Get(workflow.WorkflowManifest, "metadata.name").String()
-	if workflow.WorkflowName != workflowName {
-		return nil, errors.New("workflow name doesn't match")
-	}
-
 	// security check for cluster access
 	cluster, err := database.GetCluster(workflow.ClusterID)
 	if err != nil {
 		return nil, err
 	}
+
 	if cluster.ProjectID != workflow.ProjectID {
 		return nil, errors.New("cluster doesn't belong to this project")
 	}
 
+	var (
+		workflow_id = uuid.New().String()
+		weights     = make(map[string]int)
+		newWeights  []*model.WeightagesInput
+		objmeta     v1alpha1.Workflow
+	)
+
+	if len(workflow.Weightages) > 0 {
+		for _, weight := range workflow.Weightages {
+			weights[weight.ExperimentName] = weight.Weightage
+		}
+	}
+
 	if workflow.WorkflowID == nil {
-		workflow_id := uuid.New().String()
 		workflow.WorkflowID = &workflow_id
 	}
 
-	resKind := gjson.Get(workflow.WorkflowManifest, "kind").String()
-
-	newWorkflowManifest, _ := sjson.Set(workflow.WorkflowManifest, "metadata.labels.workflow_id", workflow.WorkflowID)
-	newWorkflowManifest, _ = sjson.Set(newWorkflowManifest, "metadata.labels.cluster_id", workflow.ClusterID)
-
-	if strings.ToLower(resKind) == "cronworkflow" {
-		newWorkflowManifest, _ = sjson.Set(workflow.WorkflowManifest, "spec.workflowMetadata.labels.workflow_id", workflow.WorkflowID)
-		newWorkflowManifest, _ = sjson.Set(newWorkflowManifest, "spec.workflowMetadata.labels.cluster_id", workflow.ClusterID)
+	err = json.Unmarshal([]byte(workflow.WorkflowManifest), &objmeta)
+	if err != nil {
+		return nil, errors.New("failed to unmarshal workflow manifest1")
 	}
-	workflow.WorkflowManifest = newWorkflowManifest
+
+	// workflow name in struct should match with actual workflow name
+	if workflow.WorkflowName != objmeta.Name {
+		return nil, errors.New(objmeta.Kind + " name doesn't match")
+	}
+
+	if strings.ToLower(objmeta.Kind) == "workflow" {
+		var workflowManifest v1alpha1.Workflow
+		err = json.Unmarshal([]byte(workflow.WorkflowManifest), &workflowManifest)
+		if err != nil {
+			return nil, errors.New("failed to unmarshal workflow manifest")
+		}
+
+		workflowManifest.Labels = map[string]string{
+			"workflow_id": workflow_id,
+			"cluster_id":  workflow.ClusterID,
+		}
+
+		for i, template := range workflowManifest.Spec.Templates {
+			artifact := template.Inputs.Artifacts
+			if len(artifact) > 0 {
+				var data = artifact[0].Raw.Data
+				if len(data) > 0 {
+					// This replacement is required because chaos engine yaml have a syntax template. example:{{ workflow.parameters.adminModeNamespace }}
+					// And it is not able the unmarshal the yamlstring to chaos engine struct
+					data = strings.ReplaceAll(data, "{{", "")
+					data = strings.ReplaceAll(data, "}}", "")
+
+					var meta chaostypes.ChaosEngine
+					err := yaml.Unmarshal([]byte(data), &meta)
+					if err != nil {
+						return nil, errors.New("failed to unmarshal chaosengine")
+					}
+
+					if strings.ToLower(meta.Kind) == "chaosengine" {
+						var exprname string
+						if len(meta.Spec.Experiments) > 0 {
+							exprname = meta.Spec.Experiments[0].Name
+							if len(exprname) == 0 {
+								return nil, errors.New("empty chaos engine name")
+							}
+						}
+
+						if val, ok := weights[exprname]; ok {
+							workflowManifest.Spec.Templates[i].Metadata.Labels = map[string]string{
+								"weight": strconv.Itoa(val),
+							}
+						} else if val, ok := workflowManifest.Spec.Templates[i].Metadata.Labels["weight"]; ok {
+							intVal, err := strconv.Atoi(val)
+							if err != nil {
+								return nil, errors.New("failed to convert")
+							}
+							newWeights = append(newWeights, &model.WeightagesInput{
+								ExperimentName: exprname,
+								Weightage:      intVal,
+							})
+						} else {
+							newWeights = append(newWeights, &model.WeightagesInput{
+								ExperimentName: exprname,
+								Weightage:      10,
+							})
+
+							workflowManifest.Spec.Templates[i].Metadata.Labels = map[string]string{
+								"weight": "10",
+							}
+						}
+					}
+				}
+			}
+		}
+
+		workflow.Weightages = append(workflow.Weightages, newWeights...)
+		out, err := json.Marshal(workflowManifest)
+		if err != nil {
+			return nil, nil
+		}
+
+		workflow.WorkflowManifest = string(out)
+	} else if strings.ToLower(objmeta.Kind) == "cronworkflow" {
+		var cronWorkflowManifest v1alpha1.CronWorkflow
+		err = json.Unmarshal([]byte(workflow.WorkflowManifest), &cronWorkflowManifest)
+		if err != nil {
+			return nil, errors.New("failed to unmarshal workflow manifest")
+		}
+
+		cronWorkflowManifest.Labels = map[string]string{
+			"workflow_id": workflow_id,
+			"cluster_id":  workflow.ClusterID,
+		}
+
+		cronWorkflowManifest.Spec.WorkflowMetadata = &v1.ObjectMeta{
+			Labels: map[string]string{
+				"workflow_id": workflow_id,
+				"cluster_id":  workflow.ClusterID,
+			},
+		}
+
+		for i, template := range cronWorkflowManifest.Spec.WorkflowSpec.Templates {
+
+			artifact := template.Inputs.Artifacts
+			if len(artifact) > 0 {
+				var data = artifact[0].Raw.Data
+				if len(data) > 0 {
+					// This replacement is required because chaos engine yaml have a syntax template. example:{{ workflow.parameters.adminModeNamespace }}
+					// And it is not able the unmarshal the yamlstring to chaos engine struct
+					data = strings.ReplaceAll(data, "{{", "")
+					data = strings.ReplaceAll(data, "}}", "")
+
+					var meta chaostypes.ChaosEngine
+					err = yaml.Unmarshal([]byte(data), &meta)
+					if err != nil {
+						return nil, errors.New("failed to unmarshal chaosengine")
+					}
+
+					if strings.ToLower(meta.Kind) == "chaosengine" {
+						var exprname string
+						if len(meta.Spec.Experiments) > 0 {
+							exprname = meta.Spec.Experiments[0].Name
+							if len(exprname) == 0 {
+								return nil, errors.New("empty chaos engine name")
+							}
+						}
+						if val, ok := weights[exprname]; ok {
+							cronWorkflowManifest.Spec.WorkflowSpec.Templates[i].Metadata.Labels = map[string]string{
+								"weight": strconv.Itoa(val),
+							}
+						} else if val, ok := cronWorkflowManifest.Spec.WorkflowSpec.Templates[i].Metadata.Labels["weight"]; ok {
+							intVal, err := strconv.Atoi(val)
+							if err != nil {
+								return nil, errors.New("failed to convert")
+							}
+							newWeights = append(newWeights, &model.WeightagesInput{
+								ExperimentName: exprname,
+								Weightage:      intVal,
+							})
+						} else {
+							newWeights = append(newWeights, &model.WeightagesInput{
+								ExperimentName: exprname,
+								Weightage:      10,
+							})
+							cronWorkflowManifest.Spec.WorkflowSpec.Templates[i].Metadata.Labels = map[string]string{
+								"weight": "10",
+							}
+						}
+					}
+				}
+			}
+		}
+
+		workflow.Weightages = append(workflow.Weightages, newWeights...)
+		out, err := json.Marshal(cronWorkflowManifest)
+		if err != nil {
+			return nil, nil
+		}
+
+		workflow.WorkflowManifest = string(out)
+	}
 
 	return workflow, nil
 }
