@@ -2,8 +2,8 @@ package gitops
 
 import "os"
 
-// pathExists checks for the existence of this path
-func pathExists(path string) (bool, error) {
+// PathExists checks for the existence of this path
+func PathExists(path string) (bool, error) {
 	_, err := os.Stat(path)
 	if err != nil {
 		if os.IsNotExist(err) {

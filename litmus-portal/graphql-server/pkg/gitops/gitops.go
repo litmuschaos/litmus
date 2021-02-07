@@ -112,7 +112,7 @@ func (c GitConfig) setupGitRepo(user GitUser) error {
 	}
 
 	// check if project dir already present in repo
-	exists, err := pathExists(projectPath + "/.info")
+	exists, err := PathExists(projectPath + "/.info")
 	if err != nil {
 		return err
 	}
@@ -455,7 +455,7 @@ func SetupGitOps(user GitUser, config schema.GitConfigDB) (string, error) {
 
 //SyncDBToGit syncs the DB with the GitRepo for the project
 func SyncDBToGit(ctx context.Context, config GitConfig) error {
-	repositoryExists, err := pathExists(config.LocalPath)
+	repositoryExists, err := PathExists(config.LocalPath)
 	if err != nil {
 		return fmt.Errorf("Error while checking repo exists, err: %s", err)
 	}
@@ -481,7 +481,7 @@ func SyncDBToGit(ctx context.Context, config GitConfig) error {
 			continue
 		}
 		//check if file was deleted or not
-		exists, err := pathExists(config.LocalPath + "/" + file)
+		exists, err := PathExists(config.LocalPath + "/" + file)
 		if err != nil {
 			return errors.New("Error checking file in local repo : " + file + " | " + err.Error())
 		}
