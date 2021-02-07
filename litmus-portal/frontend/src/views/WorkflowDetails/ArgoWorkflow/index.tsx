@@ -107,20 +107,6 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
           </ButtonOutline>
           <Typography component="span">Horizontal</Typography>
         </div>
-        {/* <div>
-          <ButtonOutline
-            className={classes.layoutButton}
-            handleClick={() => scrollGraph(true)}
-          >
-            <AddRoundedIcon />
-          </ButtonOutline>
-          <ButtonOutline
-            className={classes.layoutButton}
-            handleClick={() => scrollGraph(false)}
-          >
-            <RemoveRoundedIcon />
-          </ButtonOutline>
-        </div> */}
       </div>
 
       <DagreGraph

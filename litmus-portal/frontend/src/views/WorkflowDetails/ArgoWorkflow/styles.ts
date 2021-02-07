@@ -81,8 +81,8 @@ const useStyles = makeStyles((theme: Theme) => ({
       },
       '& g.StepGroup': {
         '& rect': {
-          x: -1.5,
-          y: -1.5,
+          x: '-1.5px',
+          y: '-1.5px',
           width: '0.2rem',
           height: '0.2rem',
           rx: '0.625rem !important',
