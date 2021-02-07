@@ -205,12 +205,12 @@ func DeleteWorkflowFromGit(ctx context.Context, workflow *model.ChaosWorkFlowInp
 	}
 
 	workflowPath := gitops.ProjectDataPath + "/" + gitConfig.ProjectID + "/" + workflow.WorkflowName + ".yaml"
-	exists, err := gitops.PathExists(workflowPath)
+	exists, err := gitops.PathExists(gitConfig.LocalPath + "/" + workflowPath)
 	if err != nil {
 		return errors.New("Cannot delete workflow from git : " + err.Error())
 	}
 	if !exists {
-		log.Print("File not found in git!")
+		log.Print("File not found in git : ", gitConfig.LocalPath+"/"+workflowPath)
 		return nil
 	}
 	err = os.RemoveAll(gitConfig.LocalPath + "/" + workflowPath)
