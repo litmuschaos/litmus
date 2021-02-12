@@ -355,7 +355,7 @@ const ScheduleWorkflow: React.FC = () => {
                 />
               ) : YAML.parse(workflowData.yaml).spec.suspend === true ? (
                 <></>
-              ) : !workflowData.isDisabled ? (
+              ) : workflowData.isRecurring ? (
                 <FormControlLabel
                   value="disable"
                   control={

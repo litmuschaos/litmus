@@ -97,6 +97,7 @@ func ManifestParser(cluster database.Cluster, rootPath string, subscriberConfig 
 		newContent = strings.Replace(newContent, "#{KEY}", cluster.AccessKey, -1)
 		newContent = strings.Replace(newContent, "#{SERVER}", subscriberConfig.GQLServerURI, -1)
 		newContent = strings.Replace(newContent, "#{SUB-IMAGE}", subscriberConfig.SubscriberImage, -1)
+		newContent = strings.Replace(newContent, "#{EVENT-TRACKER-IMAGE}", subscriberConfig.EventTrackerImage, -1)
 		newContent = strings.Replace(newContent, "#{AGENT-NAMESPACE}", AgentNamespace, -1)
 		newContent = strings.Replace(newContent, "#{SUBSCRIBER-SERVICE-ACCOUNT}", ServiceAccountName, -1)
 		newContent = strings.Replace(newContent, "#{AGENT-SCOPE}", cluster.AgentScope, -1)

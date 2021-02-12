@@ -562,6 +562,16 @@ internetIssues:
 ############     MyHub     ###########
 ######################################
 myhub:
+  title: My Hubs
+  connectTarget: Connect the target
+  viewMyHub: View My Hub
+  error: '[Error: could not connect]'
+  view: View
+  validationEmptySpace: Should not start with an empty space
+  validURL: Enter a valid URL
+  edit: Edit Hub
+  refresh: Refresh Hub
+  disconnect: Disconnect Hub
   mainPage:
     header: My Hub
     github: github.com/
@@ -575,6 +585,11 @@ myhub:
     videoDescription: Get resilient and compliance scores for your Kuberenetes product
     sync: Syncing Repo...
     retry: Retry Connection
+    disconnectHeader: Are you sure you want to disconnect My Hub?
+    disconnectDesc: Action is not revertable
+    cancel: Cancel
+    deleteHub: Delete Hub
+    syncError: Failed while syncing repo, try again!
   myhubChart:
     header: My Hub
     github: github.com/
@@ -592,6 +607,11 @@ myhub:
     newHubCreated: A new chaos hub will be added to the main page of the My hubs section
     myHub: Back to my hubs
     videoDesc: Get resilient and compliance scores for your Kuberenetes product
+    accessToken: Access Token
+    ssh: SSH
+    sshText: Please enable read / write access on the above git repository for the following key
+    saveLater: Save for later
+    updateHub: Update the My Hub with correct details from the My Hubs section
   videoCarousel:
     video: Video Tips
   installChaos:
@@ -607,6 +627,15 @@ myhub:
     installRBACDesc: Create a service account using the following command
     installEngine: Sample Chaos Engine
     installEngineDesc: Copy and edit this sample Chaos Engine yaml according to your application needs
+  editPage:
+    edit: Edit the Hub
+    click: Then click on the update button
+    submit: Update My Hub
+    wait: Please wait while we are updating your repo!
+    updating: while updating My Hub
+    success: My Hub successfully updated
+    desc: My Hub will be updated in the main page of the My Hubs section
+    error: Error while updating My Hub
 
 ######################################
 ########   Custom Workflow     #######

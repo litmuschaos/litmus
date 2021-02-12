@@ -161,3 +161,42 @@ subjects:
   - kind: ServiceAccount
     name: argo-chaos
     namespace: #{AGENT-NAMESPACE}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: litmus-event-tracker-sa
+  namespace: #{AGENT-NAMESPACE}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: litmus-event-tracker-cluster-role
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - apps
+    resources:
+      - deployments
+      - daemonsets
+      - statefulsets
+      - pods
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: litmus-event-tracker-clusterole-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: litmus-event-tracker-cluster-role
+subjects:
+  - kind: ServiceAccount
+    name: litmus-event-tracker-sa
+    namespace: #{AGENT-NAMESPACE}

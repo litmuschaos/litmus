@@ -6,6 +6,7 @@ type SubscriberConfigurationVars struct {
 	AgentScope              string
 	GQLServerURI            string
 	SubscriberImage         string
+	EventTrackerImage       string
 	ArgoServerImage         string
 	WorkflowControllerImage string
 	ChaosOperatorImage      string

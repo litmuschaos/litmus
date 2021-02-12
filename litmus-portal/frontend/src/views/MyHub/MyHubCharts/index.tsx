@@ -1,15 +1,10 @@
-import {
-  Backdrop,
-  Card,
-  CardContent,
-  Link,
-  Typography,
-} from '@material-ui/core';
+import { Backdrop, Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import moment from 'moment';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import useStyles from './styles';
 import { GET_CHARTS_DATA, GET_HUB_STATUS } from '../../../graphql';
@@ -18,7 +13,7 @@ import { Chart, Charts, HubStatus } from '../../../models/redux/myhub';
 import Loader from '../../../components/Loader';
 import Center from '../../../containers/layouts/Center';
 import HeaderSection from './headerSection';
-import { history } from '../../../redux/configureStore';
+import ChartCard from './chartCard';
 
 interface ChartName {
   ChaosName: string;
@@ -49,7 +44,6 @@ const MyHub = () => {
 
   const classes = useStyles();
 
-  const experimentDefaultImagePath = `${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/charts/`;
   const { t } = useTranslation();
 
   // Query to get charts of selected MyHub
@@ -70,6 +64,14 @@ const MyHub = () => {
   };
   const [totalExp, setTotalExperiment] = useState<ChartName[]>([]);
   const exp: ChartName[] = [];
+
+  // Function to convert UNIX time in format of DD MMM YYY
+  const formatDate = (date: string) => {
+    const updated = new Date(parseInt(date, 10) * 1000).toString();
+    const resDate = moment(updated).format('DD MMM YYYY hh:mm:ss A');
+    if (date) return resDate;
+    return 'Date not available';
+  };
 
   useEffect(() => {
     if (data !== undefined) {
@@ -99,14 +101,17 @@ const MyHub = () => {
     <Scaffold>
       <div className={classes.header}>
         <Typography variant="h3" gutterBottom>
-          {t('myhub.myhubChart.header')}
+          {UserHub?.HubName}
         </Typography>
         <Typography variant="h4">
           <strong>
-            {UserHub?.HubName}/{UserHub?.RepoURL.split('/')[4]}/
-            {UserHub?.RepoBranch}
+            {UserHub?.RepoURL}/{UserHub?.RepoBranch}
           </strong>
         </Typography>
+        <Typography className={classes.lastSyncText}>
+          Last synced at: {formatDate(UserHub ? UserHub.LastSyncedAt : '')}
+        </Typography>
+        {/* </div> */}
       </div>
       <div className={classes.mainDiv}>
         <HeaderSection searchValue={search} changeSearch={changeSearch} />
@@ -120,42 +125,13 @@ const MyHub = () => {
               )
               .map((expName: ChartName) => {
                 return (
-                  <Card
-                    key={expName.ExperimentName}
-                    elevation={3}
-                    className={classes.cardDiv}
-                    onClick={() =>
-                      history.push(
-                        `${UserHub?.HubName}/${expName.ChaosName}/${expName.ExperimentName}`
-                      )
-                    }
-                  >
-                    <CardContent className={classes.cardContent}>
-                      <img
-                        src={`${experimentDefaultImagePath}${expName.ChaosName}/icons/${expName.ExperimentName}.png`}
-                        alt={expName.ExperimentName}
-                        className={classes.cardImage}
-                      />
-                      <Link
-                        href="#"
-                        onClick={(e: any) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setSearch(expName.ChaosName);
-                        }}
-                        className={classes.categoryName}
-                      >
-                        {expName.ChaosName}/
-                      </Link>
-                      <Typography
-                        className={classes.expName}
-                        variant="h6"
-                        align="center"
-                      >
-                        {expName.ExperimentName}
-                      </Typography>
-                    </CardContent>
-                  </Card>
+                  <ChartCard
+                    key={`${expName.ChaosName}-${expName.ExperimentName}`}
+                    expName={expName}
+                    UserHub={UserHub}
+                    setSearch={setSearch}
+                    projectID={userData.selectedProjectID}
+                  />
                 );
               })
           ) : (

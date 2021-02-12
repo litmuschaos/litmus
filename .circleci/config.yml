@@ -42,6 +42,7 @@ jobs:
             echo 'export AUTHENTICATION_SERVER_IMAGE="litmusportal-auth-server"' >> workspace/env-vars
             echo 'export FRONTEND_IMAGE="litmusportal-frontend"' >> workspace/env-vars
             echo 'export SUBSCRIBER_IMAGE="litmusportal-subscriber"' >> workspace/env-vars
+            echo 'export EVENT_TRACKER="litmusportal-event-tracker"' >> workspace/env-vars
             echo 'export IMGTAG="ci"' >> workspace/env-vars
             cat workspace/env-vars >> $BASH_ENV
             source $BASH_ENV
@@ -81,12 +82,20 @@ jobs:
       - run:
           name: Save subscriber docker image
           command: docker save -o /tmp/workspace/${SUBSCRIBER_IMAGE}.tar ${REPONAME}/${SUBSCRIBER_IMAGE}:${IMGTAG}
+      - run:
+          name: Build event tracker docker image
+          command: docker build . -f build/Dockerfile -t ${REPONAME}/${EVENT_TRACKER}:${IMGTAG}
+          working_directory: ~/project/litmus-portal/cluster-agents/event-tracker
+      - run:
+          name: Save event tracker docker image
+          command: docker save -o /tmp/workspace/${EVENT_TRACKER}.tar ${REPONAME}/${EVENT_TRACKER}:${IMGTAG}
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
             - litmusportal-server.tar
             - litmusportal-subscriber.tar
             - litmusportal-auth-server.tar
+            - litmusportal-event-tracker.tar
   docker-build-frontend:
     machine:
       image: circleci/classic:201808-01
@@ -128,6 +137,7 @@ jobs:
             docker load -i /tmp/workspace/${SUBSCRIBER_IMAGE}.tar
             docker load -i /tmp/workspace/${AUTHENTICATION_SERVER_IMAGE}.tar
             docker load -i /tmp/workspace/${FRONTEND_IMAGE}.tar
+            docker load -i /tmp/workspace/${EVENT_TRACKER}.tar
       - run:
           name: Pushing graphql server image
           command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${GRAPHQL_SERVER_IMAGE} --IMGTAG=${IMGTAG}
@@ -140,6 +150,10 @@ jobs:
       - run:
           name: Pushing subscriber server image
           command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${SUBSCRIBER_IMAGE} --IMGTAG=${IMGTAG}
+      - run:
+          name: Pushing event-tracker
+          command: bash ./hack/push --TYPE=ci --REPONAME=${REPONAME} --IMGNAME=${EVENT_TRACKER} --IMGTAG=${IMGTAG}
+
   release:
     machine:
       image: circleci/classic:201808-01
@@ -158,6 +172,7 @@ jobs:
             docker load -i /tmp/workspace/${SUBSCRIBER_IMAGE}.tar
             docker load -i /tmp/workspace/${AUTHENTICATION_SERVER_IMAGE}.tar
             docker load -i /tmp/workspace/${FRONTEND_IMAGE}.tar
+            docker load -i /tmp/workspace/${EVENT_TRACKER}.tar
       - run:
           name: Docker images
           command: docker images
@@ -173,6 +188,10 @@ jobs:
       - run:
           name: Pushing subscriber server image
           command: bash ./hack/push --TYPE=release --REPONAME=${REPONAME} --IMGNAME=${SUBSCRIBER_IMAGE} --IMGTAG=${IMGTAG}
+      - run:
+          name: Pushing event-tracker
+          command: bash ./hack/push --TYPE=release --REPONAME=${REPONAME} --IMGNAME=${EVENT_TRACKER} --IMGTAG=${IMGTAG}
+
 workflows:
   version: 2
   litmus-portal:

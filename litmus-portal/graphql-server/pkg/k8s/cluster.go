@@ -1,7 +1,6 @@
 package k8s
 
 import (
-	"context"
 	"log"
 	"os"
 	"strconv"
@@ -56,7 +55,7 @@ func ClusterResource(manifest string, namespace string) (*unstructured.Unstructu
 		dr = dynamicClient.Resource(mapping.Resource)
 	}
 
-	response, err := dr.Create(context.TODO(), obj, metav1.CreateOptions{})
+	response, err := dr.Create(obj, metav1.CreateOptions{})
 	if errors.IsAlreadyExists(err) {
 		// This doesnt ever happen even if it does already exist
 		log.Print("Already exists")
@@ -85,11 +84,11 @@ func GetPortalEndpoint() (string, error) {
 		return "", err
 	}
 
-	podList, _ := clientset.CoreV1().Pods(LitmusPortalNS).List(context.TODO(), metav1.ListOptions{
+	podList, _ := clientset.CoreV1().Pods(LitmusPortalNS).List(metav1.ListOptions{
 		LabelSelector: "component=litmusportal-server",
 	})
 
-	svc, err := clientset.CoreV1().Services(LitmusPortalNS).Get(context.TODO(), "litmusportal-server-service", metav1.GetOptions{})
+	svc, err := clientset.CoreV1().Services(LitmusPortalNS).Get("litmusportal-server-service", metav1.GetOptions{})
 	if err != nil {
 		return "", err
 	}
@@ -100,7 +99,7 @@ func GetPortalEndpoint() (string, error) {
 		}
 	}
 
-	nodeIP, err := clientset.CoreV1().Nodes().Get(context.TODO(), podList.Items[0].Spec.NodeName, metav1.GetOptions{})
+	nodeIP, err := clientset.CoreV1().Nodes().Get(podList.Items[0].Spec.NodeName, metav1.GetOptions{})
 	if err != nil {
 		return "", err
 	}

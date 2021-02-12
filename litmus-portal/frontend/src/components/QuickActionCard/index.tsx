@@ -74,7 +74,7 @@ const QuickActionCard = () => {
           </QuickActionItems>
           <QuickActionItems>
             <div className={classes.imgDiv}>
-              <img src="./icons/docs.png" alt="docs" />
+              <img src="/icons/docs.png" alt="docs" />
             </div>
             <a href={apiDocsUrl} className={classes.listItem} target="_">
               {t('quickActionCard.readAPIDocs')}

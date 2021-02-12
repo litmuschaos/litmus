@@ -14,6 +14,7 @@ import InstallChaos from '../../../components/InstallChaos';
 import { GET_EXPERIMENT_DATA, GET_HUB_STATUS } from '../../../graphql';
 import { ExperimentDetail, HubStatus, Link } from '../../../models/redux/myhub';
 import Loader from '../../../components/Loader';
+import config from '../../../config';
 
 interface URLParams {
   chart: string;
@@ -63,7 +64,8 @@ const MyHub = () => {
   videoURL = video ? video.Url : '';
 
   // State for default icon URL
-  const urltoIcon = `${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/charts/${paramData.chart}/icons/${paramData.experiment}.png`;
+  const experimentDefaultImagePath = `${config.grahqlEndpoint}/icon`;
+  const imageURL = `${experimentDefaultImagePath}/${userData.selectedProjectID}/${paramData.hubname}/${paramData.chart}/${paramData.experiment}.png`;
 
   const { t } = useTranslation();
 
@@ -82,7 +84,7 @@ const MyHub = () => {
                   description={
                     experimentData?.Spec.CategoryDescription.split('.')[0]
                   }
-                  urlToIcon={urltoIcon}
+                  urlToIcon={imageURL}
                 />
               </div>
             </div>
