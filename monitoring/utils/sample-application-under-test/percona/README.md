@@ -92,7 +92,7 @@ Run chaos experiments on percona application with grafana dashboard to monitor i
   kubectl apply -f https://hub.litmuschaos.io/api/chaos/1.12.0?file=charts/generic/experiments.yaml -n litmus
   ```
 
-### Step-3: Setup the Monitoring Infrastructure
+### Step-3: Setup the Monitoring Infrastructure (if not using PMM)
 
 - Create monitoring namespace on the cluster
 
@@ -100,14 +100,14 @@ Run chaos experiments on percona application with grafana dashboard to monitor i
   kubectl create ns monitoring
   ```
 
-- Setup prometheus TSDB
+- Setup prometheus TSDB (Using mySQLd exporter for percona SQL metrics)
   
-  > Model-1 (optional): Service monitor and prometheus operator model.(Using mySQLd exporter for percona SQL metrics)
+  > Model-1 (optional): Service monitor and prometheus operator model.
 
     Create the operator to instantiate all CRDs
 
     ```
-    kubectl -n monitoring apply -f utils/prometheus/prometheus-operator/
+    kubectl -n monitoring apply -f ../../../utils/prometheus/prometheus-operator/
     ```
 
     Deploy monitoring components
@@ -126,7 +126,8 @@ Run chaos experiments on percona application with grafana dashboard to monitor i
     Note: To change the service type to NodePort, perform a `kubectl edit svc prometheus-k8s -n monitoring` and replace `type: LoadBalancer` to `type: NodePort`
 
 
-  > Model-2 (optional): Prometheus scrape config model.(Using pmm server for all percona metrics)
+  > Model-2 (optional): Prometheus scrape config model.
+
 
     Deploy prometheus components
 
@@ -138,15 +139,16 @@ Run chaos experiments on percona application with grafana dashboard to monitor i
 
     ```
     kubectl -n litmus apply -f ../../../utils/metrics-exporters/litmus-metrics/chaos-exporter/
+    kubectl -n litmus apply -f ../../../utils/metrics-exporters/mysqld-exporter/
     ```
 
-- (if not using PMM) Apply the grafana manifests after deploying prometheus for all metrics.
+- Apply the grafana manifests after deploying prometheus for all metrics.
 
   ```
   kubectl -n monitoring apply -f ../../../utils/grafana/
   ```
 
-- (if not using PMM) You may access the grafana dashboard via the LoadBalancer (or NodePort) service IP or via a port-forward operation on localhost
+- You may access the grafana dashboard via the LoadBalancer (or NodePort) service IP or via a port-forward operation on localhost
 
   View the services running in the monitoring namespace
   ```
@@ -175,7 +177,6 @@ Run chaos experiments on percona application with grafana dashboard to monitor i
 ```
 kubectl apply -f ../../../utils/sample-chaos-injectors/chaos-experiments/percona/percona-network-loss.yaml
 ```
-
 
 - Verify execution of chaos experiments
 
