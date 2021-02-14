@@ -118,9 +118,9 @@ func runDeploymentInformer(factory informers.SharedInformerFactory) {
 		// When a new resource gets created
 		AddFunc: func(obj interface{}) {
 			depObj := obj.(*v1.Deployment)
+			var worflowid = depObj.GetAnnotations()["litmuschaos.io/workflow"]
 
-			if depObj.GetAnnotations()["kuberachaos.io/gitops"] == "true" {
-				var worflowid = depObj.GetAnnotations()["kuberachaos.io/workflow"]
+			if depObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
 				log.Print("EventType: Add")
 				log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "Deployment", depObj.Name, depObj.Namespace)
 				response, err := SendRequest(worflowid)
@@ -133,17 +133,29 @@ func runDeploymentInformer(factory informers.SharedInformerFactory) {
 
 		// When a resource gets updated
 		UpdateFunc: func(oldObj interface{}, newObj interface{}) {
-			depObj := newObj.(*v1.Deployment)
+			newDepObj := newObj.(*v1.Deployment)
+			oldDepObj := oldObj.(*v1.Deployment)
 
-			if depObj.GetAnnotations()["kuberachaos.io/gitops"] == "true" {
-				var worflowid = depObj.GetAnnotations()["kuberachaos.io/workflow"]
-				log.Print("EventType: Update")
-				log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "Deployment", depObj.Name, depObj.Namespace)
-				response, err := SendRequest(worflowid)
-				if err != nil {
-					log.Print("error", err)
+			var worflowid = newDepObj.GetAnnotations()["litmuschaos.io/workflow"]
+			if newDepObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
+				var trigger_flag = false
+				for _, new_container := range newDepObj.Spec.Template.Spec.Containers {
+					for _, old_container := range oldDepObj.Spec.Template.Spec.Containers {
+						if old_container.Name == new_container.Name && old_container.Image != new_container.Image {
+							trigger_flag = true
+						}
+					}
 				}
-				log.Print(response)
+
+				if trigger_flag == true {
+					log.Print("EventType: Update")
+					log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "Deployment", newDepObj.Name, newDepObj.Namespace)
+					response, err := SendRequest(worflowid)
+					if err != nil {
+						log.Print("error", err)
+					}
+					log.Print(response)
+				}
 			}
 		},
 	})
@@ -169,8 +181,8 @@ func runStsInformer(factory informers.SharedInformerFactory) {
 		AddFunc: func(obj interface{}) {
 			stsObj := obj.(*v1.StatefulSet)
 
-			if stsObj.GetAnnotations()["kuberachaos.io/gitops"] == "true" {
-				var worflowid = stsObj.GetAnnotations()["kuberachaos.io/workflow"]
+			var worflowid = stsObj.GetAnnotations()["litmuschaos.io/workflow"]
+			if stsObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
 				log.Print("EventType: Add")
 				log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "StateFulSet", stsObj.Name, stsObj.Namespace)
 				response, err := SendRequest(worflowid)
@@ -183,17 +195,29 @@ func runStsInformer(factory informers.SharedInformerFactory) {
 
 		// When a resource gets updated
 		UpdateFunc: func(oldObj interface{}, newObj interface{}) {
-			stsObj := newObj.(*v1.StatefulSet)
+			newStsObj := newObj.(*v1.StatefulSet)
+			oldStsObj := oldObj.(*v1.StatefulSet)
 
-			if stsObj.GetAnnotations()["kuberachaos.io/gitops"] == "true" {
-				var worflowid = stsObj.GetAnnotations()["kuberachaos.io/workflow"]
-				log.Print("EventType: Update")
-				log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "StateFulSet", stsObj.Name, stsObj.Namespace)
-				response, err := SendRequest(worflowid)
-				if err != nil {
-					log.Print("error", err)
+			var worflowid = newStsObj.GetAnnotations()["litmuschaos.io/workflow"]
+			if newStsObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
+				var trigger_flag = false
+				for _, new_container := range newStsObj.Spec.Template.Spec.Containers {
+					for _, old_container := range oldStsObj.Spec.Template.Spec.Containers {
+						if old_container.Name == new_container.Name && old_container.Image != new_container.Image {
+							trigger_flag = true
+						}
+					}
 				}
-				log.Print(response)
+
+				if trigger_flag == true {
+					log.Print("EventType: Update")
+					log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "StateFulSet", newStsObj.Name, newStsObj.Namespace)
+					response, err := SendRequest(worflowid)
+					if err != nil {
+						log.Print("error", err)
+					}
+					log.Print(response)
+				}
 			}
 		},
 	})
@@ -219,8 +243,8 @@ func runDSInformer(factory informers.SharedInformerFactory) {
 		AddFunc: func(obj interface{}) {
 			dsObj := obj.(*v1.DaemonSet)
 
-			if dsObj.GetAnnotations()["kuberachaos.io/gitops"] == "true" {
-				var worflowid = dsObj.GetAnnotations()["kuberachaos.io/workflow"]
+			var worflowid = dsObj.GetAnnotations()["litmuschaos.io/workflow"]
+			if dsObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
 				log.Print("EventType: Add")
 				log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "DaemonSet", dsObj.Name, dsObj.Namespace)
 				response, err := SendRequest(worflowid)
@@ -233,19 +257,30 @@ func runDSInformer(factory informers.SharedInformerFactory) {
 
 		// When a resource gets updated
 		UpdateFunc: func(oldObj interface{}, newObj interface{}) {
-			dsObj := newObj.(*v1.DaemonSet)
+			newDsObj := newObj.(*v1.DaemonSet)
+			oldDsObj := oldObj.(*v1.DaemonSet)
 
-			if dsObj.GetAnnotations()["kuberachaos.io/gitops"] == "true" {
-				var worflowid = dsObj.GetAnnotations()["kuberachaos.io/workflow"]
-				log.Print("EventType: Update")
-				log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "DaemonSet", dsObj.Name, dsObj.Namespace)
-				response, err := SendRequest(worflowid)
-				if err != nil {
-					log.Print("error", err)
+			var worflowid = newDsObj.GetAnnotations()["litmuschaos.io/workflow"]
+			if newDsObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
+				var trigger_flag = false
+				for _, new_container := range newDsObj.Spec.Template.Spec.Containers {
+					for _, old_container := range oldDsObj.Spec.Template.Spec.Containers {
+						if old_container.Name == new_container.Name && old_container.Image != new_container.Image {
+							trigger_flag = true
+						}
+					}
 				}
-				log.Print(response)
-			}
 
+				if trigger_flag == true {
+					log.Print("EventType: Update")
+					log.Printf("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "DaemonSet", newDsObj.Name, newDsObj.Namespace)
+					response, err := SendRequest(worflowid)
+					if err != nil {
+						log.Print("error", err)
+					}
+					log.Print(response)
+				}
+			}
 		},
 	})
 

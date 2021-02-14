@@ -12,6 +12,10 @@ interface CreateLabel {
   (props: CreateLabelProps): SVGElement;
 }
 
+// Firefox 1.0+
+// @ts-ignore
+const isFirefox = typeof InstallTrigger !== 'undefined';
+
 const createLabel: CreateLabel = ({ label, tooltip, phase, horizontal }) => {
   const g = getNode('g');
 
@@ -37,7 +41,7 @@ const createLabel: CreateLabel = ({ label, tooltip, phase, horizontal }) => {
   for (let i = 0; i < label.length; i += increment) {
     const tspan = getNode('tspan', {
       x: horizontal || label.length > 25 ? -3 * increment : -label.length * 3,
-      y: 20 + i * (horizontal ? 1.2 : 0.6),
+      y: (isFirefox ? 35 : 20) + i * (horizontal ? 1.2 : 0.6),
       dy: '1rem',
     });
     tspan.innerHTML =

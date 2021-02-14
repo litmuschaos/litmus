@@ -4,6 +4,7 @@ import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { InputField } from 'kubera-ui';
 import config from '../../config';
 import { CREATE_USER } from '../../graphql';
 import { CreateUserData } from '../../models/graphql/user';
@@ -18,7 +19,6 @@ import {
 } from '../../utils/validate';
 import ButtonFilled from '../Button/ButtonFilled';
 import ButtonOutline from '../Button/ButtonOutline';
-import InputField from '../InputField';
 import ModalPage from './Modalpage';
 import useStyles from './styles';
 
@@ -273,19 +273,18 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                   <InputField
                     label={t('welcomeModal.case-0.label')}
                     value={info.project_name}
-                    required
                     helperText={
                       validateStartEmptySpacing(info.project_name)
                         ? 'Should not start with an empty space'
                         : ''
                     }
-                    validationError={validateStartEmptySpacing(
-                      info.project_name
-                    )}
-                    type="text"
-                    handleChange={(event) => {
-                      setData('project_name', event.target.value);
-                    }}
+                    variant={
+                      validateStartEmptySpacing(info.project_name)
+                        ? 'error'
+                        : 'primary'
+                    }
+                    required
+                    onChange={(e) => setData('project_name', e.target.value)}
                     onKeyPress={keyPress}
                   />
                 </div>
@@ -315,8 +314,10 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                         ? 'Should not start with an empty space'
                         : ''
                     }
-                    validationError={validateStartEmptySpacing(info.name)}
-                    handleChange={(event) => {
+                    variant={
+                      validateStartEmptySpacing(info.name) ? 'error' : 'primary'
+                    }
+                    onChange={(event) => {
                       setData('name', event.target.value);
                     }}
                     onKeyPress={keyPress}
@@ -337,15 +338,15 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                 className={classes.passwordSetterDiv}
                 data-cy="InputPassword"
               >
+                <div aria-details="spacer" style={{ margin: '0.5rem 0' }} />
                 <div className={classes.passwordArea}>
                   <InputField
                     label={t('welcomeModal.case-2.label')}
                     type="password"
                     required
-                    validationError={false}
                     value={values.password}
-                    success={isSuccess.current}
-                    handleChange={(event) =>
+                    variant={isSuccess.current ? 'primary' : 'error'}
+                    onChange={(event) =>
                       setValues({
                         password: event.target.value,
                         confirmPassword: values.confirmPassword,
@@ -354,6 +355,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                     onKeyPress={keyPress}
                   />
                 </div>
+                <div aria-details="spacer" style={{ margin: '0.5rem 0' }} />
                 <div className={classes.passwordArea}>
                   <InputField
                     label={t('welcomeModal.case-2.cnfLabel')}
@@ -368,15 +370,15 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                         ? 'Password is not same'
                         : ''
                     }
-                    success={isSuccess.current}
-                    validationError={
-                      // validatePassword(values.confirmPassword) &&
+                    variant={
                       validateConfirmPassword(
                         values.password,
                         values.confirmPassword
                       )
+                        ? 'error'
+                        : 'primary'
                     }
-                    handleChange={(event) =>
+                    onChange={(event) =>
                       setValues({
                         password: values.password,
                         confirmPassword: event.target.value,
@@ -405,8 +407,8 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
                     helperText={
                       validateEmail(info.email) ? 'Should be a valid email' : ''
                     }
-                    validationError={validateEmail(info.email)}
-                    handleChange={(event) => {
+                    variant={validateEmail(info.email) ? 'error' : 'primary'}
+                    onChange={(event) => {
                       setData('email', event.target.value);
                     }}
                     onKeyPress={keyPress}
