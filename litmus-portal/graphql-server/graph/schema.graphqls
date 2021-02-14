@@ -248,6 +248,12 @@ type Query {
 	getHubStatus(projectID: String!): [MyHubStatus]! @authorized
 
 	getYAMLData(experimentInput: ExperimentInput!): String!
+
+	ListDataSource(project_id: String!): [DSResponse]! @authorized
+
+  GetPromQuery(query: promInput): [promResponse!]! @authorized
+
+  ListDashboard(project_id: String!): [listDashboardReponse] @authorized
 }
 
 type Mutation {
@@ -306,6 +312,22 @@ type Mutation {
 	enableGitOps(config: GitConfig!): Boolean! @authorized
 
 	disableGitOps(project_id: String!): Boolean! @authorized
+
+	# Analytics
+
+	createDataSource(datasource: DSInput): DSResponse @authorized
+
+  createDashBoard(dashboard: createDBInput): String! @authorized
+
+  updateDataSource(datasource: DSInput!): DSResponse! @authorized
+
+  updateDashboard(dashboard: updataDBInput): String! @authorized
+
+  updatePanel(panelInput: [panel]): String! @authorized
+
+  deleteDashboard(db_id: String): Boolean! @authorized
+
+  deleteDataSource(input: deleteDSInput!): Boolean! @authorized
 }
 
 type Subscription {
