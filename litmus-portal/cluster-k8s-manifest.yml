@@ -36,7 +36,7 @@ spec:
     spec:
       containers:
         - name: litmusportal-frontend
-          image: litmuschaos/litmusportal-frontend:ci
+          image: litmuschaos/litmusportal-frontend:1.13.0
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -115,7 +115,7 @@ spec:
     spec:
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:ci
+          image: litmuschaos/litmusportal-server:1.13.0
           env:
             - name: DB_SERVER
               valueFrom:
@@ -156,9 +156,9 @@ spec:
             - name: PORTAL_SCOPE
               value: "cluster"
             - name: SUBSCRIBER_IMAGE
-              value: "litmuschaos/litmusportal-subscriber:ci"
+              value: "litmuschaos/litmusportal-subscriber:1.13.0"
             - name: EVENT_TRACKER_IMAGE
-              value: "litmuschaos/litmusportal-event-tracker:ci"
+              value: "litmuschaos/litmusportal-event-tracker:1.13.0"
             - name: ARGO_SERVER_IMAGE
               value: "argoproj/argocli:v2.9.3"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
@@ -166,14 +166,14 @@ spec:
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "argoproj/argoexec:v2.9.3"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:1.12.0"
+              value: "litmuschaos/chaos-operator:1.13.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:1.12.0"
+              value: "litmuschaos/chaos-runner:1.13.0"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
         - name: auth-server
-          image: litmuschaos/litmusportal-auth-server:ci
+          image: litmuschaos/litmusportal-auth-server:1.13.0
           env:
             - name: DB_SERVER
               valueFrom:
