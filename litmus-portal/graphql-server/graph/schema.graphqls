@@ -251,9 +251,9 @@ type Query {
 
 	ListDataSource(project_id: String!): [DSResponse]! @authorized
 
-  GetPromQuery(query: promInput): [promResponse!]! @authorized
+  	GetPromQuery(query: promInput): [promResponse!]! @authorized
 
-  ListDashboard(project_id: String!): [listDashboardReponse] @authorized
+  	ListDashboard(project_id: String!): [listDashboardReponse] @authorized
 }
 
 type Mutation {
@@ -317,17 +317,17 @@ type Mutation {
 
 	createDataSource(datasource: DSInput): DSResponse @authorized
 
-  createDashBoard(dashboard: createDBInput): String! @authorized
+  	createDashBoard(dashboard: createDBInput): String! @authorized
 
-  updateDataSource(datasource: DSInput!): DSResponse! @authorized
+  	updateDataSource(datasource: DSInput!): DSResponse! @authorized
 
-  updateDashboard(dashboard: updataDBInput): String! @authorized
+  	updateDashboard(dashboard: updataDBInput): String! @authorized
 
-  updatePanel(panelInput: [panel]): String! @authorized
+  	updatePanel(panelInput: [panel]): String! @authorized
 
-  deleteDashboard(db_id: String): Boolean! @authorized
+  	deleteDashboard(db_id: String): Boolean! @authorized
 
-  deleteDataSource(input: deleteDSInput!): Boolean! @authorized
+  	deleteDataSource(input: deleteDSInput!): Boolean! @authorized
 }
 
 type Subscription {
