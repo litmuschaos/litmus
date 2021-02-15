@@ -12,7 +12,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: v1.12.0
+    app.kubernetes.io/version: 1.13.0
     app.kubernetes.io/component: operator-serviceaccount
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -26,7 +26,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: v1.12.0
+    app.kubernetes.io/version: 1.13.0
     app.kubernetes.io/component: operator-clusterrole
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -62,7 +62,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: v1.12.0
+    app.kubernetes.io/version: 1.13.0
     app.kubernetes.io/component: operator-clusterrolebinding
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -83,7 +83,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: v1.12.0
+    app.kubernetes.io/version: 1.13.0
     app.kubernetes.io/component: operator
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -101,7 +101,7 @@ spec:
         app.kubernetes.io/name: litmus
         # provide unique instance-id if applicable
         # app.kubernetes.io/instance: litmus-abcxzy
-        app.kubernetes.io/version: v1.12.0
+        app.kubernetes.io/version: 1.13.0
         app.kubernetes.io/component: operator
         app.kubernetes.io/part-of: litmus
         app.kubernetes.io/managed-by: kubectl
@@ -110,13 +110,13 @@ spec:
       serviceAccountName: litmus
       containers:
         - name: chaos-operator
-          image: litmuschaos/chaos-operator:1.12.0
+          image: litmuschaos/chaos-operator:1.13.0
           command:
           - chaos-operator
           imagePullPolicy: Always
           env:
             - name: CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:1.12.0"
+              value: "litmuschaos/chaos-runner:1.13.0"
             - name: WATCH_NAMESPACE
               value: ""
             - name: POD_NAME
@@ -279,9 +279,39 @@ spec:
                                   url:
                                     type: string
                                     minLength: 1
-                                  expectedResponseCode:
-                                    type: string
+                                  insecureSkipVerify:
+                                    type: boolean
                                     minLength: 1
+                                  method:
+                                    type: object
+                                    minProperties: 1
+                                    maxProperties: 1
+                                    properties:
+                                      get:
+                                        type: object
+                                        properties:
+                                          criteria:
+                                            type: string
+                                            minLength: 1
+                                          responseCode:
+                                            type: string
+                                            minLength: 1
+                                      post:
+                                        type: object
+                                        properties:
+                                          contentType:
+                                            type: string
+                                            minLength: 1
+                                          body:
+                                            type: string
+                                          bodyPath: 
+                                            type: string
+                                          criteria:
+                                            type: string
+                                            minLength: 1
+                                          responseCode:
+                                            type: string
+                                            minLength: 1                                       
                               promProbe/inputs:
                                 type: object
                                 properties:
