@@ -14,8 +14,7 @@ import (
 )
 
 var (
-	gitOpsCollection  *mongo.Collection
-	backgroundContext = context.Background()
+	gitOpsCollection *mongo.Collection
 )
 
 const timeout = 15 * time.Second

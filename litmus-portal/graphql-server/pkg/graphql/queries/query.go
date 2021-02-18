@@ -6,11 +6,14 @@ import (
 	"log"
 
 	"github.com/jinzhu/copier"
-	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/tsdb/prometheus"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/tsdbs/prometheus"
+	database_operations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/types"
+
 	"go.mongodb.org/mongo-driver/bson"
+
+	prom_utils "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/tsdbs/prometheus"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
@@ -46,7 +49,7 @@ func GetLogs(reqID string, pod model.PodLogRequest, r store.StateData) {
 }
 
 func QueryGetClusters(projectID string, clusterType *string) ([]*model.Cluster, error) {
-	clusters, err := database.GetClusterWithProjectID(projectID, clusterType)
+	clusters, err := database_operations.GetClusterWithProjectID(projectID, clusterType)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +58,7 @@ func QueryGetClusters(projectID string, clusterType *string) ([]*model.Cluster, 
 	for _, cluster := range clusters {
 		var totalNoOfSchedules int
 
-		workflows, err := database.GetWorkflowsByClusterID(cluster.ClusterID)
+		workflows, err := database_operations.GetWorkflowsByClusterID(cluster.ClusterID)
 		if err != nil {
 			return nil, err
 		}
@@ -77,7 +80,7 @@ func QueryGetClusters(projectID string, clusterType *string) ([]*model.Cluster, 
 func QueryListDataSource(projectID string) ([]*model.DSResponse, error) {
 	query := bson.M{"project_id": projectID, "is_removed": false}
 
-	datasource, err := database.ListDataSource(query)
+	datasource, err := database_operations.ListDataSource(query)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +89,7 @@ func QueryListDataSource(projectID string) ([]*model.DSResponse, error) {
 	copier.Copy(&newDatasources, &datasource)
 
 	for _, datasource := range newDatasources {
-		datasource.HealthStatus = utils.TSDBHealthCheck(*datasource.DsURL, *datasource.DsType)
+		datasource.HealthStatus = prom_utils.TSDBHealthCheck(*datasource.DsURL, *datasource.DsType)
 	}
 
 	return newDatasources, nil
@@ -95,7 +98,7 @@ func QueryListDataSource(projectID string) ([]*model.DSResponse, error) {
 func GetPromQuery(promInput *model.PromInput) ([]*model.PromResponse, error) {
 	var newPromResponse []*model.PromResponse
 	for _, v := range promInput.Queries {
-		newPromQuery := graphql.PromQuery{
+		newPromQuery := types.PromQuery{
 			Queryid:    v.Queryid,
 			Query:      v.Query,
 			Legend:     v.Legend,
@@ -118,7 +121,7 @@ func GetPromQuery(promInput *model.PromInput) ([]*model.PromResponse, error) {
 func QueryListDashboard(projectID string) ([]*model.ListDashboardReponse, error) {
 	query := bson.M{"project_id": projectID, "is_removed": false}
 
-	dashboards, err := database.ListDashboard(query)
+	dashboards, err := database_operations.ListDashboard(query)
 	if err != nil {
 		return nil, fmt.Errorf("error on query from dashboard collection by projectid", err)
 	}
@@ -127,7 +130,7 @@ func QueryListDashboard(projectID string) ([]*model.ListDashboardReponse, error)
 	copier.Copy(&newListDashboard, &dashboards)
 
 	for _, dashboard := range newListDashboard {
-		datasource, err := database.GetDataSourceByID(dashboard.DsID)
+		datasource, err := database_operations.GetDataSourceByID(dashboard.DsID)
 		if err != nil {
 			return nil, fmt.Errorf("error on querying from datasource collection", err)
 		}
@@ -135,7 +138,7 @@ func QueryListDashboard(projectID string) ([]*model.ListDashboardReponse, error)
 		dashboard.DsType = &datasource.DsType
 		dashboard.DsName = &datasource.DsName
 
-		cluster, err := database.GetCluster(dashboard.ClusterID)
+		cluster, err := database_operations.GetCluster(dashboard.ClusterID)
 		if err != nil {
 			return nil, fmt.Errorf("error on querying from cluster collection", err)
 		}
@@ -144,7 +147,7 @@ func QueryListDashboard(projectID string) ([]*model.ListDashboardReponse, error)
 
 		for _, panelgroup := range dashboard.PanelGroups {
 			query := bson.M{"panel_group_id": panelgroup.PanelGroupID, "is_removed": false}
-			panels, err := database.ListPanel(query)
+			panels, err := database_operations.ListPanel(query)
 			if err != nil {
 				return nil, fmt.Errorf("error on querying from promquery collection", err)
 			}

@@ -9,7 +9,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/ops"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	database_operations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
 	gitops_handler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -45,7 +45,7 @@ func CreateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r
 
 func DeleteWorkflow(ctx context.Context, workflow_id string, r *store.StateData) (bool, error) {
 	query := bson.D{{Key: "workflow_id", Value: workflow_id}}
-	workflows, err := database.GetWorkflows(query)
+	workflows, err := database_operations.GetWorkflows(query)
 	if len(workflows) == 0 {
 		return false, errors.New("no such workflow found")
 	}
@@ -102,14 +102,14 @@ func UpdateWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *sto
 
 //GetWorkflowRuns sends all the workflow runs for a project from the DB
 func QueryWorkflowRuns(project_id string) ([]*model.WorkflowRun, error) {
-	workflows, err := database.GetWorkflows(bson.D{{"project_id", project_id}})
+	workflows, err := database_operations.GetWorkflows(bson.D{{"project_id", project_id}})
 	if err != nil {
 		return nil, err
 	}
 	result := []*model.WorkflowRun{}
 
 	for _, workflow := range workflows {
-		cluster, err := database.GetCluster(workflow.ClusterID)
+		cluster, err := database_operations.GetCluster(workflow.ClusterID)
 		if err != nil {
 			return nil, err
 		}
@@ -132,14 +132,14 @@ func QueryWorkflowRuns(project_id string) ([]*model.WorkflowRun, error) {
 }
 
 func QueryWorkflows(project_id string) ([]*model.ScheduledWorkflows, error) {
-	chaosWorkflows, err := database.GetWorkflows(bson.D{{"project_id", project_id}})
+	chaosWorkflows, err := database_operations.GetWorkflows(bson.D{{"project_id", project_id}})
 	if err != nil {
 		return nil, err
 	}
 
 	result := []*model.ScheduledWorkflows{}
 	for _, workflow := range chaosWorkflows {
-		cluster, err := database.GetCluster(workflow.ClusterID)
+		cluster, err := database_operations.GetCluster(workflow.ClusterID)
 		if err != nil {
 			return nil, err
 		}
@@ -171,7 +171,7 @@ func QueryWorkflows(project_id string) ([]*model.ScheduledWorkflows, error) {
 }
 
 func QueryListWorkflow(project_id string) ([]*model.Workflow, error) {
-	chaosWorkflows, err := database.GetWorkflows(bson.D{{"project_id", project_id}})
+	chaosWorkflows, err := database_operations.GetWorkflows(bson.D{{"project_id", project_id}})
 	if err != nil {
 		return nil, err
 	}
@@ -179,7 +179,7 @@ func QueryListWorkflow(project_id string) ([]*model.Workflow, error) {
 	result := []*model.Workflow{}
 	for _, workflow := range chaosWorkflows {
 
-		cluster, err := database.GetCluster(workflow.ClusterID)
+		cluster, err := database_operations.GetCluster(workflow.ClusterID)
 		if err != nil {
 			return nil, err
 		}
@@ -213,14 +213,14 @@ func QueryListWorkflow(project_id string) ([]*model.Workflow, error) {
 
 func QueryListWorkflowByIDs(workflow_ids []*string) ([]*model.Workflow, error) {
 
-	chaosWorkflows, err := database.GetWorkflows(bson.D{{"workflow_id", bson.M{"$in": workflow_ids}}})
+	chaosWorkflows, err := database_operations.GetWorkflows(bson.D{{"workflow_id", bson.M{"$in": workflow_ids}}})
 	if err != nil {
 		return nil, err
 	}
 	result := []*model.Workflow{}
 
 	for _, workflow := range chaosWorkflows {
-		cluster, err := database.GetCluster(workflow.ClusterID)
+		cluster, err := database_operations.GetCluster(workflow.ClusterID)
 		if err != nil {
 			return nil, err
 		}

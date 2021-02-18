@@ -1,4 +1,4 @@
-package graphql
+package types
 
 type PromQuery struct {
 	Queryid    string

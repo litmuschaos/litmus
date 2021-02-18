@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/types"
 )
 
@@ -30,7 +30,7 @@ func RandomString(n int) string {
 }
 
 //ManifestParser parses manifests yaml and generates dynamic manifest with specified keys
-func ManifestParser(cluster database.Cluster, rootPath string, subscriberConfig *types.SubscriberConfigurationVars) ([]byte, error) {
+func ManifestParser(cluster dbSchema.Cluster, rootPath string, subscriberConfig *types.SubscriberConfigurationVars) ([]byte, error) {
 	var (
 		generatedYAML             []string
 		defaultState              = false

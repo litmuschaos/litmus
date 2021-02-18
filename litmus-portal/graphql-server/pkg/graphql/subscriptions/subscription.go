@@ -1,7 +1,8 @@
 package subscriptions
 
 import (
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/types"
+
 	"os"
 
 	"github.com/google/uuid"
@@ -27,7 +28,7 @@ func SendClusterEvent(eventType, eventName, description string, cluster model.Cl
 	r.Mutex.Unlock()
 }
 
-func SendRequestToSubscriber(subscriberRequest graphql.SubscriberRequests, r store.StateData) {
+func SendRequestToSubscriber(subscriberRequest types.SubscriberRequests, r store.StateData) {
 	if os.Getenv("AGENT_SCOPE") == "cluster" {
 		/*
 			namespace = Obtain from WorkflowManifest or

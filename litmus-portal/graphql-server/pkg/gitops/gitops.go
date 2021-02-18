@@ -24,8 +24,8 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/ops"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
+	database_operations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
@@ -623,7 +623,7 @@ func updateWorkflow(data, wfID, file string, config GitConfig) error {
 		return errors.New("file name doesn't match workflow name")
 	}
 
-	workflow, err := mongodb.GetWorkflows(bson.D{{"workflow_id", wfID}, {"project_id", config.ProjectID}, {"isRemoved", false}})
+	workflow, err := database_operations.GetWorkflows(bson.D{{"workflow_id", wfID}, {"project_id", config.ProjectID}, {"isRemoved", false}})
 	if len(workflow) == 0 {
 		return errors.New("No such workflow found : " + wfID)
 	}

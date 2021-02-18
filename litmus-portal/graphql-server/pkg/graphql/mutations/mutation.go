@@ -7,20 +7,22 @@ import (
 	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/handler"
-
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/types"
 
 	"github.com/jinzhu/copier"
 
 	"github.com/google/uuid"
+	prom_utils "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/tsdbs/prometheus"
+	"github.com/pkg/errors"
+	"go.mongodb.org/mongo-driver/bson"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	database_operations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
+	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/subscriptions"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
-	"github.com/pkg/errors"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 //ClusterRegister creates an entry for a new cluster in DB and generates the url used to apply manifest
@@ -32,7 +34,7 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		return &model.ClusterRegResponse{}, err
 	}
 
-	newCluster := database.Cluster{
+	newCluster := dbSchema.Cluster{
 		ClusterID:      clusterID,
 		ClusterName:    input.ClusterName,
 		Description:    input.Description,
@@ -51,7 +53,7 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		IsRemoved:      false,
 	}
 
-	err = database.InsertCluster(newCluster)
+	err = database_operations.InsertCluster(newCluster)
 	if err != nil {
 		return &model.ClusterRegResponse{}, err
 	}
@@ -67,7 +69,7 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 
 //ConfirmClusterRegistration takes the cluster_id and access_key from the subscriber and validates it, if validated generates and sends new access_key
 func ConfirmClusterRegistration(identity model.ClusterIdentity, r store.StateData) (*model.ClusterConfirmResponse, error) {
-	cluster, err := database.GetCluster(identity.ClusterID)
+	cluster, err := database_operations.GetCluster(identity.ClusterID)
 	if err != nil {
 		return &model.ClusterConfirmResponse{IsClusterConfirmed: false}, err
 	}
@@ -78,7 +80,7 @@ func ConfirmClusterRegistration(identity model.ClusterIdentity, r store.StateDat
 		query := bson.D{{"cluster_id", identity.ClusterID}}
 		update := bson.D{{"$unset", bson.D{{"token", ""}}}, {"$set", bson.D{{"access_key", newKey}, {"is_registered", true}, {"is_cluster_confirmed", true}, {"updated_at", time}}}}
 
-		err = database.UpdateCluster(query, update)
+		err = database_operations.UpdateCluster(query, update)
 		if err != nil {
 			return &model.ClusterConfirmResponse{IsClusterConfirmed: false}, err
 		}
@@ -99,7 +101,7 @@ func ConfirmClusterRegistration(identity model.ClusterIdentity, r store.StateDat
 
 //NewEvent takes a event from a subscriber, validates identity and broadcasts the event to the users
 func NewEvent(clusterEvent model.ClusterEventInput, r store.StateData) (string, error) {
-	cluster, err := database.GetCluster(clusterEvent.ClusterID)
+	cluster, err := database_operations.GetCluster(clusterEvent.ClusterID)
 	if err != nil {
 		return "", err
 	}
@@ -125,8 +127,8 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		return "", err
 	}
 
-	//err = database.UpdateWorkflowRun(database.WorkflowRun(newWorkflowRun))
-	count, err := database.UpdateWorkflowRun(input.WorkflowID, database.WorkflowRun{
+	//err = database_operations.UpdateWorkflowRun(database_operations.WorkflowRun(newWorkflowRun))
+	count, err := database_operations.UpdateWorkflowRun(input.WorkflowID, dbSchema.WorkflowRun{
 		WorkflowRunID: input.WorkflowRunID,
 		LastUpdated:   strconv.FormatInt(time.Now().Unix(), 10),
 		ExecutionData: input.ExecutionData,
@@ -178,11 +180,11 @@ func LogsHandler(podLog model.PodLog, r store.StateData) (string, error) {
 
 func CreateDataSource(datasource *model.DSInput) (*model.DSResponse, error) {
 
-	datasourceStatus := utils.TSDBHealthCheck(datasource.DsURL, datasource.DsType)
+	datasourceStatus := prom_utils.TSDBHealthCheck(datasource.DsURL, datasource.DsType)
 
 	if datasourceStatus == "Active" {
 
-		newDS := database.DataSource{
+		newDS := dbSchema.DataSource{
 			DsID:              uuid.New().String(),
 			DsName:            datasource.DsName,
 			DsType:            datasource.DsType,
@@ -199,7 +201,7 @@ func CreateDataSource(datasource *model.DSInput) (*model.DSResponse, error) {
 			UpdatedAt:         strconv.FormatInt(time.Now().Unix(), 10),
 		}
 
-		err := database.InsertDataSource(newDS)
+		err := database_operations.InsertDataSource(newDS)
 		if err != nil {
 			return nil, err
 		}
@@ -215,7 +217,7 @@ func CreateDataSource(datasource *model.DSInput) (*model.DSResponse, error) {
 
 func CreateDashboard(dashboard *model.CreateDBInput) (string, error) {
 
-	newDashboard := database.DashBoard{
+	newDashboard := dbSchema.DashBoard{
 		DbID:        uuid.New().String(),
 		DbName:      dashboard.DbName,
 		DbType:      dashboard.DbType,
@@ -231,8 +233,8 @@ func CreateDashboard(dashboard *model.CreateDBInput) (string, error) {
 	}
 
 	var (
-		newPanelGroups = make([]database.PanelGroup, len(dashboard.PanelGroups))
-		newPanels      []*database.Panel
+		newPanelGroups = make([]dbSchema.PanelGroup, len(dashboard.PanelGroups))
+		newPanels      []*dbSchema.Panel
 	)
 
 	for i, panel_group := range dashboard.PanelGroups {
@@ -242,13 +244,13 @@ func CreateDashboard(dashboard *model.CreateDBInput) (string, error) {
 		newPanelGroups[i].PanelGroupName = panel_group.PanelGroupName
 
 		for _, panel := range panel_group.Panels {
-			var newPromQueries []*database.PromQuery
+			var newPromQueries []*dbSchema.PromQuery
 			copier.Copy(&newPromQueries, &panel.PromQueries)
 
-			var newPanelOptions database.PanelOption
+			var newPanelOptions dbSchema.PanelOption
 			copier.Copy(&newPanelOptions, &panel.PanelOptions)
 
-			newPanel := database.Panel{
+			newPanel := dbSchema.Panel{
 				PanelID:      uuid.New().String(),
 				PanelOptions: &newPanelOptions,
 				PanelName:    panel.PanelName,
@@ -266,7 +268,7 @@ func CreateDashboard(dashboard *model.CreateDBInput) (string, error) {
 			newPanels = append(newPanels, &newPanel)
 		}
 	}
-	err := database.InsertPanel(newPanels)
+	err := database_operations.InsertPanel(newPanels)
 	if err != nil {
 		return "", errors.Errorf("error on inserting panel data", err)
 	}
@@ -274,7 +276,7 @@ func CreateDashboard(dashboard *model.CreateDBInput) (string, error) {
 
 	newDashboard.PanelGroups = newPanelGroups
 
-	err = database.InsertDashBoard(newDashboard)
+	err = database_operations.InsertDashBoard(newDashboard)
 	if err != nil {
 		return "", errors.Errorf("error on inserting panel data", err)
 	}
@@ -299,7 +301,7 @@ func UpdateDataSource(datasource model.DSInput) (*model.DSResponse, error) {
 		{"query_timeout", datasource.QueryTimeout}, {"http_method", datasource.HTTPMethod},
 		{"updated_at", timestamp}}}}
 
-	err := database.UpdateDataSource(query, update)
+	err := database_operations.UpdateDataSource(query, update)
 	if err != nil {
 		return nil, err
 	}
@@ -334,7 +336,7 @@ func UpdateDashBoard(dashboard *model.UpdataDBInput) (string, error) {
 		{"start_time", dashboard.StartTime}, {"refresh_rate", dashboard.RefreshRate},
 		{"panel_groups", dashboard.PanelGroups}, {"updated_at", timestamp}}}}
 
-	err := database.UpdateDashboard(query, update)
+	err := database_operations.UpdateDashboard(query, update)
 	if err != nil {
 		return "", err
 	}
@@ -351,10 +353,10 @@ func UpdatePanel(panels []*model.Panel) (string, error) {
 			return "", errors.New("DashBoard ID or Datasource is nil or empty")
 		}
 
-		var newPanelOption database.PanelOption
+		var newPanelOption dbSchema.PanelOption
 		copier.Copy(&newPanelOption, &panel.PanelOptions)
 
-		var newPromQueries []database.PromQuery
+		var newPromQueries []dbSchema.PromQuery
 		copier.Copy(&newPromQueries, panel.PromQueries)
 
 		query := bson.D{{"panel_id", panel.PanelID}}
@@ -365,7 +367,7 @@ func UpdatePanel(panels []*model.Panel) (string, error) {
 			{"y_axis_left", panel.YAxisLeft}, {"y_axis_right", panel.YAxisRight},
 			{"x_axis_down", panel.XAxisDown}, {"unit", panel.Unit}}}}
 
-		err := database.UpdatePanel(query, update)
+		err := database_operations.UpdatePanel(query, update)
 		if err != nil {
 			return "", err
 		}
@@ -377,14 +379,14 @@ func UpdatePanel(panels []*model.Panel) (string, error) {
 func DeleteDashboard(db_id *string) (bool, error) {
 
 	dashboardQuery := bson.M{"db_id": db_id, "is_removed": false}
-	dashboard, err := database.GetDashboard(dashboardQuery)
+	dashboard, err := database_operations.GetDashboard(dashboardQuery)
 	if err != nil {
 		return false, fmt.Errorf("failed to list dashboard, error: %v", err)
 	}
 
 	for _, panelGroup := range dashboard.PanelGroups {
 		listPanelQuery := bson.M{"panel_group_id": panelGroup.PanelGroupID, "is_removed": false}
-		panels, err := database.ListPanel(listPanelQuery)
+		panels, err := database_operations.ListPanel(listPanelQuery)
 		if err != nil {
 			return false, fmt.Errorf("failed to list Panel, error: %v", err)
 		}
@@ -395,7 +397,7 @@ func DeleteDashboard(db_id *string) (bool, error) {
 			query := bson.D{{"panel_id", panel.PanelID}, {"is_removed", false}}
 			update := bson.D{{"$set", bson.D{{"is_removed", true}, {"updated_at", time}}}}
 
-			err := database.UpdatePanel(query, update)
+			err := database_operations.UpdatePanel(query, update)
 			if err != nil {
 				return false, fmt.Errorf("failed to delete panel, error: %v", err)
 			}
@@ -407,7 +409,7 @@ func DeleteDashboard(db_id *string) (bool, error) {
 	query := bson.D{{"db_id", db_id}}
 	update := bson.D{{"$set", bson.D{{"is_removed", true}, {"updated_at", time}}}}
 
-	err = database.UpdateDashboard(query, update)
+	err = database_operations.UpdateDashboard(query, update)
 	if err != nil {
 		return false, fmt.Errorf("failed to delete dashboard, error: %v", err)
 	}
@@ -420,7 +422,7 @@ func DeleteDataSource(input model.DeleteDSInput) (bool, error) {
 	time := strconv.FormatInt(time.Now().Unix(), 10)
 
 	listDBQuery := bson.M{"ds_id": input.DsID, "is_removed": false}
-	dashboards, err := database.ListDashboard(listDBQuery)
+	dashboards, err := database_operations.ListDashboard(listDBQuery)
 	if err != nil {
 		return false, fmt.Errorf("failed to list dashboard, error: %v", err)
 	}
@@ -430,7 +432,7 @@ func DeleteDataSource(input model.DeleteDSInput) (bool, error) {
 
 			for _, panelGroup := range dashboard.PanelGroups {
 				listPanelQuery := bson.M{"panel_group_id": panelGroup.PanelGroupID, "is_removed": false}
-				panels, err := database.ListPanel(listPanelQuery)
+				panels, err := database_operations.ListPanel(listPanelQuery)
 				if err != nil {
 					return false, fmt.Errorf("failed to list Panel, error: %v", err)
 				}
@@ -439,7 +441,7 @@ func DeleteDataSource(input model.DeleteDSInput) (bool, error) {
 					query := bson.D{{"panel_id", panel.PanelID}, {"is_removed", false}}
 					update := bson.D{{"$set", bson.D{{"is_removed", true}, {"updated_at", time}}}}
 
-					err := database.UpdatePanel(query, update)
+					err := database_operations.UpdatePanel(query, update)
 					if err != nil {
 						return false, fmt.Errorf("failed to delete panel, error: %v", err)
 					}
@@ -448,7 +450,7 @@ func DeleteDataSource(input model.DeleteDSInput) (bool, error) {
 			updateDBQuery := bson.D{{"db_id", dashboard.DbID}}
 			update := bson.D{{"$set", bson.D{{"is_removed", true}, {"updated_at", time}}}}
 
-			err = database.UpdateDashboard(updateDBQuery, update)
+			err = database_operations.UpdateDashboard(updateDBQuery, update)
 			if err != nil {
 				return false, fmt.Errorf("failed to delete dashboard, error: %v", err)
 			}
@@ -466,7 +468,7 @@ func DeleteDataSource(input model.DeleteDSInput) (bool, error) {
 	updateDSQuery := bson.D{{"ds_id", input.DsID}}
 	update := bson.D{{"$set", bson.D{{"is_removed", true}, {"updated_at", time}}}}
 
-	err = database.UpdateDataSource(updateDSQuery, update)
+	err = database_operations.UpdateDataSource(updateDSQuery, update)
 	if err != nil {
 		return false, fmt.Errorf("failed to delete datasource, error: %v", err)
 	}
@@ -480,11 +482,11 @@ func DeleteCluster(cluster_id string, r store.StateData) (string, error) {
 	query := bson.D{{"cluster_id", cluster_id}}
 	update := bson.D{{"$set", bson.D{{"is_removed", true}, {"updated_at", time}}}}
 
-	err := database.UpdateCluster(query, update)
+	err := database_operations.UpdateCluster(query, update)
 	if err != nil {
 		return "", err
 	}
-	cluster, err := database.GetCluster(cluster_id)
+	cluster, err := database_operations.GetCluster(cluster_id)
 	if err != nil {
 		return "", nil
 	}
@@ -509,7 +511,7 @@ func DeleteCluster(cluster_id string, r store.StateData) (string, error) {
 	}
 
 	for _, request := range requests {
-		subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
+		subscriptions.SendRequestToSubscriber(types.SubscriberRequests{
 			K8sManifest: request,
 			RequestType: "delete",
 			ProjectID:   cluster.ProjectID,

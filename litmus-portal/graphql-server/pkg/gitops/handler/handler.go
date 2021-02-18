@@ -7,7 +7,8 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
+
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 	"io/ioutil"
@@ -19,8 +20,7 @@ import (
 
 	"github.com/ghodss/yaml"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
+	database_operations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
@@ -42,13 +42,13 @@ func EnableGitOpsHandler(ctx context.Context, config model.GitConfig) (bool, err
 	gitLock.Lock(config.RepoURL, &config.Branch)
 	defer gitLock.Unlock(config.RepoURL, &config.Branch)
 
-	_, err := operations.GetProject(ctx, config.ProjectID)
+	_, err := database_operations.GetProject(ctx, config.ProjectID)
 	if err != nil {
 		return false, errors.New("Failed to setup GitOps : " + err.Error())
 	}
 
 	log.Print("Enabling Gitops")
-	gitDB := schema.GetGitConfigDB(config)
+	gitDB := dbSchema.GetGitConfigDB(config)
 
 	commit, err := gitops.SetupGitOps(gitops.GitUserFromContext(ctx), gitDB)
 	if err != nil {
@@ -56,7 +56,7 @@ func EnableGitOpsHandler(ctx context.Context, config model.GitConfig) (bool, err
 	}
 	gitDB.LatestCommit = commit
 
-	err = operations.AddGitConfig(ctx, &gitDB)
+	err = database_operations.AddGitConfig(ctx, &gitDB)
 	if err != nil {
 		return false, errors.New("Failed to enable GitOps in DB : " + err.Error())
 	}
@@ -70,7 +70,7 @@ func DisableGitOpsHandler(ctx context.Context, projectID string) (bool, error) {
 	defer gitLock.Unlock(projectID, nil)
 
 	log.Print("Disabling Gitops")
-	err := operations.DeleteGitConfig(ctx, projectID)
+	err := database_operations.DeleteGitConfig(ctx, projectID)
 	if err != nil {
 		return false, errors.New("Failed to delete git config from DB : " + err.Error())
 	}
@@ -92,7 +92,7 @@ func GitOpsNotificationHandler(ctx context.Context, clusterInfo model.ClusterIde
 	}
 	gitLock.Lock(cInfo.ProjectID, nil)
 	defer gitLock.Unlock(cInfo.ProjectID, nil)
-	config, err := operations.GetGitConfig(ctx, cInfo.ProjectID)
+	config, err := database_operations.GetGitConfig(ctx, cInfo.ProjectID)
 	if err != nil {
 		return "", errors.New("Cannot get Git Config from DB : " + err.Error())
 	}
@@ -100,7 +100,7 @@ func GitOpsNotificationHandler(ctx context.Context, clusterInfo model.ClusterIde
 		return "Gitops Disabled", nil
 	}
 	query := bson.D{{"cluster_id", clusterInfo.ClusterID}, {"workflow_id", workflowID}, {"isRemoved", false}}
-	workflows, err := mongodb.GetWorkflows(query)
+	workflows, err := database_operations.GetWorkflows(query)
 	if err != nil {
 		log.Print("Could not get workflow :", err)
 		return "could not get workflow", err
@@ -132,7 +132,7 @@ func GitOpsNotificationHandler(ctx context.Context, clusterInfo model.ClusterIde
 func UpsertWorkflowToGit(ctx context.Context, workflow *model.ChaosWorkFlowInput) error {
 	gitLock.Lock(workflow.ProjectID, nil)
 	defer gitLock.Unlock(workflow.ProjectID, nil)
-	config, err := operations.GetGitConfig(ctx, workflow.ProjectID)
+	config, err := database_operations.GetGitConfig(ctx, workflow.ProjectID)
 	if err != nil {
 		return errors.New("Cannot get Git Config from DB : " + err.Error())
 	}
@@ -173,7 +173,7 @@ func UpsertWorkflowToGit(ctx context.Context, workflow *model.ChaosWorkFlowInput
 
 	query := bson.D{{"project_id", gitConfig.ProjectID}}
 	update := bson.D{{"$set", bson.D{{"latest_commit", commit}}}}
-	err = operations.UpdateGitConfig(ctx, query, update)
+	err = database_operations.UpdateGitConfig(ctx, query, update)
 	if err != nil {
 		return errors.New("Failed to update git config : " + err.Error())
 	}
@@ -187,7 +187,7 @@ func DeleteWorkflowFromGit(ctx context.Context, workflow *model.ChaosWorkFlowInp
 	gitLock.Lock(workflow.ProjectID, nil)
 	defer gitLock.Unlock(workflow.ProjectID, nil)
 
-	config, err := operations.GetGitConfig(ctx, workflow.ProjectID)
+	config, err := database_operations.GetGitConfig(ctx, workflow.ProjectID)
 	if err != nil {
 		return errors.New("Cannot get Git Config from DB : " + err.Error())
 	}
@@ -232,7 +232,7 @@ func DeleteWorkflowFromGit(ctx context.Context, workflow *model.ChaosWorkFlowInp
 
 	query := bson.D{{"project_id", gitConfig.ProjectID}}
 	update := bson.D{{"$set", bson.D{{"latest_commit", commit}}}}
-	err = operations.UpdateGitConfig(ctx, query, update)
+	err = database_operations.UpdateGitConfig(ctx, query, update)
 	if err != nil {
 		return errors.New("Failed to update git config : " + err.Error())
 	}
@@ -241,7 +241,7 @@ func DeleteWorkflowFromGit(ctx context.Context, workflow *model.ChaosWorkFlowInp
 }
 
 //GitSyncHelper sync a particular repo with DB
-func GitSyncHelper(config schema.GitConfigDB, wg *sync.WaitGroup) {
+func GitSyncHelper(config dbSchema.GitConfigDB, wg *sync.WaitGroup) {
 	if wg != nil {
 		defer wg.Done()
 	}
@@ -255,7 +255,7 @@ func GitSyncHelper(config schema.GitConfigDB, wg *sync.WaitGroup) {
 	ctx, cancel := context.WithTimeout(backgroundContext, timeout)
 	defer cancel()
 	// get most recent data from db after acquiring lock
-	conf, err := operations.GetGitConfig(ctx, config.ProjectID)
+	conf, err := database_operations.GetGitConfig(ctx, config.ProjectID)
 	if err != nil {
 		log.Print("Repo Sync ERROR: ", config.ProjectID, err.Error())
 	}
@@ -278,7 +278,7 @@ func GitOpsSyncHandler(singleRun bool) {
 	for {
 		ctx, cancel := context.WithTimeout(backgroundContext, timeout)
 		log.Print("Running GitOps DB Sync...")
-		configs, err := operations.GetAllGitConfig(ctx)
+		configs, err := database_operations.GetAllGitConfig(ctx)
 		cancel()
 		if err != nil {
 			log.Print("Failed to get git configs from db : ", err)

@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
-	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
+	database_operations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
 	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/handler"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/myhub_ops"
@@ -77,7 +77,7 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (*
 	}
 
 	//Adding the new hub into database with the given username.
-	err = database.CreateMyHub(ctx, newHub)
+	err = database_operations.CreateMyHub(ctx, newHub)
 	if err != nil {
 		log.Print("ERROR", err)
 		return nil, err
@@ -119,7 +119,7 @@ func SaveMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (
 	}
 
 	//Adding the new hub into database with the given username without cloning.
-	err = database.CreateMyHub(ctx, newHub)
+	err = database_operations.CreateMyHub(ctx, newHub)
 	if err != nil {
 		log.Print("ERROR", err)
 		return nil, err
@@ -131,7 +131,7 @@ func SaveMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (
 //HubStatus returns the array of hubdetails with their current status.
 func HubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, error) {
 
-	allHubs, err := database.GetMyHubByProjectID(ctx, projectID)
+	allHubs, err := database_operations.GetMyHubByProjectID(ctx, projectID)
 	if err != nil {
 		return nil, err
 	}
@@ -182,7 +182,7 @@ func HubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, err
 
 //IsMyHubAvailable is used for checking if hub already exist or not
 func IsMyHubAvailable(ctx context.Context, hubname string, projectID string) (bool, error) {
-	myhubs, err := database.GetMyHubByProjectID(ctx, projectID)
+	myhubs, err := database_operations.GetMyHubByProjectID(ctx, projectID)
 	if err != nil {
 		return true, err
 	}
@@ -199,7 +199,7 @@ func IsMyHubAvailable(ctx context.Context, hubname string, projectID string) (bo
 func GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error) {
 
 	chartsInput := model.CloningInput{}
-	myhubs, err := database.GetMyHubByProjectID(ctx, projectID)
+	myhubs, err := database_operations.GetMyHubByProjectID(ctx, projectID)
 	for _, n := range myhubs {
 		if n.HubName == hubName {
 			chartsInput = model.CloningInput{
@@ -241,7 +241,7 @@ func GetExperiment(ctx context.Context, experimentInput model.ExperimentInput) (
 
 //SyncHub is used for syncing the hub again if some not present or some error happens.
 func SyncHub(ctx context.Context, hubID string) ([]*model.MyHubStatus, error) {
-	myhub, err := database.GetHubByID(ctx, hubID)
+	myhub, err := database_operations.GetHubByID(ctx, hubID)
 	if err != nil {
 		return nil, err
 	}
@@ -268,7 +268,7 @@ func SyncHub(ctx context.Context, hubID string) ([]*model.MyHubStatus, error) {
 		return nil, err
 	}
 	//Updating the last_synced_at time using hubID
-	err = database.UpdateMyHub(ctx, query, update)
+	err = database_operations.UpdateMyHub(ctx, query, update)
 	if err != nil {
 		log.Print("ERROR", err)
 		return nil, err
@@ -289,7 +289,7 @@ func GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (st
 //GetAllHubs ...
 func GetAllHubs(ctx context.Context) ([]*model.MyHub, error) {
 
-	myhubs, err := database.GetHubs(ctx)
+	myhubs, err := database_operations.GetHubs(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -317,7 +317,7 @@ func UpdateMyHub(ctx context.Context, myhub model.UpdateMyHub, projectID string)
 		SSHPrivateKey: myhub.SSHPrivateKey,
 	}
 
-	prevMyHub, err := database.GetHubByID(ctx, myhub.ID)
+	prevMyHub, err := database_operations.GetHubByID(ctx, myhub.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -353,7 +353,7 @@ func UpdateMyHub(ctx context.Context, myhub model.UpdateMyHub, projectID string)
 		{"SSHPrivateKey", myhub.SSHPrivateKey}, {"SSHPublicKey", myhub.SSHPublicKey}, {"updated_at", time}}}}
 
 	//Updating the new hub into database with the given username.
-	err = database.UpdateMyHub(ctx, query, update)
+	err = database_operations.UpdateMyHub(ctx, query, update)
 	if err != nil {
 		log.Print("ERROR", err)
 		return nil, err
@@ -371,7 +371,7 @@ func DeleteMyHub(ctx context.Context, hubID string) (bool, error) {
 	query := bson.D{{"myhub_id", hubID}}
 	update := bson.D{{"$set", bson.D{{"IsRemoved", true}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
-	err := database.UpdateMyHub(ctx, query, update)
+	err := database_operations.UpdateMyHub(ctx, query, update)
 	if err != nil {
 		log.Print("ERROR", err)
 		return false, err

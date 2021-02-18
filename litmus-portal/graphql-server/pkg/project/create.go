@@ -10,7 +10,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
-	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
+	database_operations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
 	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 )
 
@@ -35,7 +35,7 @@ func CreateProjectWithUser(ctx context.Context, projectName string, user *dbSche
 		CreatedAt: time.Now().String(),
 	}
 
-	err := database.CreateProject(ctx, newProject)
+	err := database_operations.CreateProject(ctx, newProject)
 	if err != nil {
 		log.Print("ERROR", err)
 		return nil, err
@@ -55,7 +55,7 @@ func CreateProjectWithUser(ctx context.Context, projectName string, user *dbSche
 
 //GetProject ...
 func GetProject(ctx context.Context, projectID string) (*model.Project, error) {
-	project, err := database.GetProject(ctx, projectID)
+	project, err := database_operations.GetProject(ctx, projectID)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func GetProject(ctx context.Context, projectID string) (*model.Project, error) {
 
 //GetProjectsByUserID ...
 func GetProjectsByUserID(ctx context.Context, userID string) ([]*model.Project, error) {
-	projects, err := database.GetProjectsByUserID(ctx, userID)
+	projects, err := database_operations.GetProjectsByUserID(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -87,11 +87,11 @@ func SendInvitation(ctx context.Context, member model.MemberInput) (*model.Membe
 	if invitation == dbSchema.AcceptedInvitation {
 		return nil, errors.New("This user is already a member of this project")
 	} else if invitation == dbSchema.PendingInvitation || invitation == dbSchema.DeclinedInvitation {
-		err = database.UpdateInvite(ctx, member.ProjectID, member.UserName, dbSchema.PendingInvitation, member.Role)
+		err = database_operations.UpdateInvite(ctx, member.ProjectID, member.UserName, dbSchema.PendingInvitation, member.Role)
 		return nil, err
 	}
 
-	user, err := database.GetUserByUserName(ctx, member.UserName)
+	user, err := database_operations.GetUserByUserName(ctx, member.UserName)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +105,7 @@ func SendInvitation(ctx context.Context, member model.MemberInput) (*model.Membe
 		Invitation: dbSchema.PendingInvitation,
 	}
 
-	err = database.AddMember(ctx, member.ProjectID, newMember)
+	err = database_operations.AddMember(ctx, member.ProjectID, newMember)
 	return newMember.GetOutputMember(), err
 }
 
@@ -120,7 +120,7 @@ func AcceptInvitation(ctx context.Context, member model.MemberInput) (string, er
 	if invitation == dbSchema.AcceptedInvitation {
 		return "Unsuccessful", errors.New("You are already a member of this project")
 	} else if invitation == dbSchema.PendingInvitation {
-		err := database.UpdateInvite(ctx, member.ProjectID, member.UserName, dbSchema.AcceptedInvitation, nil)
+		err := database_operations.UpdateInvite(ctx, member.ProjectID, member.UserName, dbSchema.AcceptedInvitation, nil)
 		if err != nil {
 			return "Unsuccessful", err
 		}
@@ -143,7 +143,7 @@ func DeclineInvitation(ctx context.Context, member model.MemberInput) (string, e
 	if invitation == dbSchema.AcceptedInvitation {
 		return "Unsuccessful", errors.New("You are already a member of this project")
 	} else if invitation == dbSchema.PendingInvitation {
-		err := database.UpdateInvite(ctx, member.ProjectID, member.UserName, dbSchema.DeclinedInvitation, nil)
+		err := database_operations.UpdateInvite(ctx, member.ProjectID, member.UserName, dbSchema.DeclinedInvitation, nil)
 		if err != nil {
 			return "Unsuccessful", err
 		}
@@ -158,7 +158,7 @@ func DeclineInvitation(ctx context.Context, member model.MemberInput) (string, e
 //getInvitation
 func getInvitation(ctx context.Context, member model.MemberInput) (dbSchema.Invitation, error) {
 
-	project, err := database.GetProject(ctx, member.ProjectID)
+	project, err := database_operations.GetProject(ctx, member.ProjectID)
 	if err != nil {
 		return "", err
 	}
@@ -180,7 +180,7 @@ func RemoveInvitation(ctx context.Context, member model.MemberInput) (string, er
 		return "Unsuccessful", err
 	}
 	if invitation == dbSchema.AcceptedInvitation || invitation == dbSchema.PendingInvitation {
-		er := database.RemoveInvitation(ctx, member.ProjectID, member.UserName, invitation)
+		er := database_operations.RemoveInvitation(ctx, member.ProjectID, member.UserName, invitation)
 		if er != nil {
 			return "Unsuccessful", er
 		}
