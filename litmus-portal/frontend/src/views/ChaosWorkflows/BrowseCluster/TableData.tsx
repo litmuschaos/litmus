@@ -1,5 +1,5 @@
 import { IconButton, TableCell, Tooltip, Typography } from '@material-ui/core';
-import { ButtonFilled } from 'kubera-ui';
+import { ButtonFilled } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

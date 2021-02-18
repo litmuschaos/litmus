@@ -5,7 +5,7 @@ import { CardActionArea, Typography, useTheme } from '@material-ui/core';
 import Backdrop from '@material-ui/core/Backdrop/Backdrop';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import { ButtonFilled, KuberaCard } from 'kubera-ui';
+import { ButtonFilled, LitmusCard } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -47,7 +47,7 @@ const CreateWorkflowCard: React.FC = () => {
   };
 
   return (
-    <KuberaCard
+    <LitmusCard
       width="15rem"
       height="100%"
       borderColor={useTheme().palette.highlight}
@@ -68,7 +68,7 @@ const CreateWorkflowCard: React.FC = () => {
           <ArrowForwardIcon className={classes.arrowForwardIcon} />
         </CardActionArea>
       </div>
-    </KuberaCard>
+    </LitmusCard>
   );
 };
 

@@ -1,6 +1,6 @@
 import { Typography } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
-import { ButtonFilled, InputField } from 'kubera-ui';
+import { ButtonFilled, InputField } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';

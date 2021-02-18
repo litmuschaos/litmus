@@ -1,5 +1,5 @@
 import { Avatar, Button, Typography } from '@material-ui/core';
-import { InputField } from 'kubera-ui';
+import { InputField } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Unimodal from '../../../../../containers/layouts/Unimodal';

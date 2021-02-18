@@ -1,7 +1,7 @@
 import { Divider, IconButton, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import cronstrue from 'cronstrue';
-import { EditableText } from 'kubera-ui';
+import { EditableText } from 'litmus-ui';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
