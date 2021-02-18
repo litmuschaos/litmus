@@ -1,5 +1,5 @@
 import React from 'react';
-import Unimodal from '../../containers/layouts/Unimodal';
+import { Modal } from 'litmus-ui';
 import ModalStepper from './Stepper';
 import useStyles from './styles';
 
@@ -16,21 +16,16 @@ const Welcomemodal: React.FC<WelcomemodalProps> = ({ handleIsOpen }) => {
     handleIsOpen();
   };
 
-  const body = (
-    <div className={classes.rootContainer}>
-      <ModalStepper handleModal={handleClose} />
-    </div>
-  );
-
   return (
-    <Unimodal
+    <Modal
       open
-      handleClose={handleClose}
-      hasCloseBtn={false}
+      width="60%"
+      className={classes.modal}
+      onClose={handleClose}
       disableBackdropClick
     >
-      {body}
-    </Unimodal>
+      <ModalStepper handleModal={handleClose} />
+    </Modal>
   );
 };
 

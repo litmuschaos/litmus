@@ -27,6 +27,10 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2),
   },
 
+  modal: {
+    padding: theme.spacing(10),
+  },
+
   modalHeading: {
     marginTop: theme.spacing(1.5),
     fontFamily: 'Ubuntu',

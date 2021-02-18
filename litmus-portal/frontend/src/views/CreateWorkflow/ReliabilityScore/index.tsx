@@ -1,11 +1,11 @@
 import { Typography } from '@material-ui/core';
+import { Modal } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import Center from '../../../containers/layouts/Center';
-import Unimodal from '../../../containers/layouts/Unimodal';
 import { experimentMap, WorkflowData } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
@@ -104,11 +104,7 @@ const ReliablityScore = () => {
               {/* <div className={classes.toolTipDiv}>
                 <InfoTooltip value="Text Default" />
                 </div> */}
-              <Unimodal
-                open={open}
-                handleClose={() => setOpen(false)}
-                hasCloseBtn={false}
-              >
+              <Modal open={open} onClose={() => setOpen(false)}>
                 <div>
                   <ResultTable testValue={testWeights} testNames={testNames} />
                   <hr className={classes.horizontalLineResult} />
@@ -125,7 +121,7 @@ const ReliablityScore = () => {
                     </ButtonFilled>
                   </Center>
                 </div>
-              </Unimodal>
+              </Modal>
             </div>
             <div>
               <Typography className={classes.testInfo}>

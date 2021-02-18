@@ -10,14 +10,13 @@ import React, { useState } from 'react';
 import Done from '@material-ui/icons/DoneAllTwoTone';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { InputField } from 'litmus-ui';
+import { InputField, Modal, ButtonOutlined } from 'litmus-ui';
 import BackButton from '../../../components/Button/BackButton';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import Loader from '../../../components/Loader';
 import QuickActionCard from '../../../components/QuickActionCard';
 import Scaffold from '../../../containers/layouts/Scaffold';
-import Unimodal from '../../../containers/layouts/Unimodal';
 import {
   ADD_MY_HUB,
   GENERATE_SSH,
@@ -447,7 +446,15 @@ const MyHub = () => {
                   {t('myhub.connectHubPage.submitBtn')}
                 </ButtonFilled>
               </div>
-              <Unimodal open={isOpen} handleClose={handleClose} hasCloseBtn>
+              <Modal
+                open={isOpen}
+                onClose={handleClose}
+                modalActions={
+                  <ButtonOutlined onClick={handleClose}>
+                    &#x2715;
+                  </ButtonOutlined>
+                }
+              >
                 <div className={classes.modalDiv}>
                   {cloningRepo ? (
                     <div>
@@ -488,8 +495,16 @@ const MyHub = () => {
                     </div>
                   )}
                 </div>
-              </Unimodal>
-              <Unimodal open={isSaveOpen} handleClose={handleClose} hasCloseBtn>
+              </Modal>
+              <Modal
+                open={isSaveOpen}
+                onClose={handleClose}
+                modalActions={
+                  <ButtonOutlined onClick={handleClose}>
+                    &#x2715;
+                  </ButtonOutlined>
+                }
+              >
                 <div className={classes.modalDiv}>
                   {savingHub ? (
                     <div>
@@ -521,7 +536,7 @@ const MyHub = () => {
                     </div>
                   )}
                 </div>
-              </Unimodal>
+              </Modal>
             </div>
           </form>
         </div>

@@ -1,11 +1,10 @@
 import { useMutation } from '@apollo/client';
 import { Typography } from '@material-ui/core';
-import { ButtonFilled } from 'litmus-ui';
+import { ButtonFilled, Modal, ButtonOutlined } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import Scaffold from '../../../containers/layouts/Scaffold';
-import Unimodal from '../../../containers/layouts/Unimodal';
 import { DELETE_CLUSTER } from '../../../graphql';
 import { Cluster, DeleteCluster } from '../../../models/graphql/clusterData';
 import { LocationState } from '../../../models/routerModel';
@@ -134,12 +133,17 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
           <div>
             {open ? (
               <div>
-                <Unimodal
+                <Modal
                   open={open}
-                  handleClose={() => {
+                  onClose={() => {
                     setOpen(false);
                   }}
-                  hasCloseBtn
+                  width="60%"
+                  modalActions={
+                    <ButtonOutlined onClick={() => setOpen(false)}>
+                      &#x2715;
+                    </ButtonOutlined>
+                  }
                 >
                   <div className={classes.body}>
                     <img src="/icons/bin-red-delete.svg" alt="Delete" />
@@ -173,7 +177,7 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
                       </ButtonFilled>
                     </div>
                   </div>
-                </Unimodal>
+                </Modal>
               </div>
             ) : null}
           </div>

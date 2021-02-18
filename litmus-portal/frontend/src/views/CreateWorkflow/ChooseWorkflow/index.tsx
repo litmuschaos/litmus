@@ -1,13 +1,12 @@
 import { Typography } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
-import { ButtonFilled, InputField } from 'litmus-ui';
+import { ButtonFilled, InputField, Modal, ButtonOutlined } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import PredifinedWorkflows from '../../../components/PredifinedWorkflows';
 import workflowsList from '../../../components/PredifinedWorkflows/data';
-import Unimodal from '../../../containers/layouts/Unimodal';
 import { WorkflowData } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as TemplateSelectionActions from '../../../redux/actions/template';
@@ -206,8 +205,17 @@ const ChooseWorkflow: React.FC<ChooseWorkflowProps> = ({ isEditable }) => {
           </div>
         </div>
       </div>
-      <Unimodal open={open} handleClose={() => setOpen(false)} hasCloseBtn>
-        <div>
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        width="70%"
+        modalActions={
+          <ButtonOutlined onClick={() => setOpen(false)}>
+            &#x2715;
+          </ButtonOutlined>
+        }
+      >
+        <div className={classes.modal}>
           <Typography className={classes.modalHeading} display="inline">
             {t('createWorkflow.chooseWorkflow.modalHeading')}{' '}
             <strong>
@@ -268,7 +276,7 @@ const ChooseWorkflow: React.FC<ChooseWorkflowProps> = ({ isEditable }) => {
             </div>
           </div>
         </div>
-      </Unimodal>
+      </Modal>
     </div>
   );
 };
