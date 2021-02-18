@@ -31,6 +31,7 @@ func getChaosData(engineName, engineNS string, chaosClient *v1alpha12.Litmuschao
 		if err != nil {
 			return nil, err
 		}
+		cd.ChaosResult = expRes
 		cd.ProbeSuccessPercentage = expRes.Status.ExperimentStatus.ProbeSuccessPercentage
 		cd.FailStep = expRes.Status.ExperimentStatus.FailStep
 		cd.ExperimentPod = crd.Status.Experiments[0].ExpPod
