@@ -1,24 +1,26 @@
 package mutations
 
 import (
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/handler"
 	"log"
 	"strconv"
 	"time"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/handler"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql"
 
 	"github.com/jinzhu/copier"
 
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
+	"go.mongodb.org/mongo-driver/bson"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/subscriptions"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
-	"github.com/pkg/errors"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 //ClusterRegister creates an entry for a new cluster in DB and generates the url used to apply manifest

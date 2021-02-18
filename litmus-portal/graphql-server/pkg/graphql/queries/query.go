@@ -5,10 +5,10 @@ import (
 	"log"
 
 	"github.com/jinzhu/copier"
-	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
+	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 )
 
 //GetLogs query is used to fetch the logs from the cluster
