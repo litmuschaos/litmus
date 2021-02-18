@@ -1,5 +1,5 @@
 // This Component will work as a Theme Wrapper for the component to be tested.
-import { KuberaThemeProvider } from 'kubera-ui';
+import { LitmusThemeProvider } from 'litmus-ui';
 import React from 'react';
 
 interface ThemeWrapperProps {
@@ -8,9 +8,9 @@ interface ThemeWrapperProps {
 
 const ThemeWrapper: React.FC<ThemeWrapperProps> = ({ children }) => {
   return (
-    <KuberaThemeProvider platform="litmus-portal">
+    <LitmusThemeProvider platform="litmus-portal">
       {children}
-    </KuberaThemeProvider>
+    </LitmusThemeProvider>
   );
 };
 
