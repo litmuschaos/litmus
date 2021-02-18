@@ -1,5 +1,5 @@
 import { Divider, Typography } from '@material-ui/core';
-import { InputField } from 'kubera-ui';
+import { InputField } from 'litmus-ui';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
