@@ -1,2 +1,2 @@
 /// <reference types="react-scripts" />
-/// <reference types="kubera-ui" />
+/// <reference types="litmus-ui" />

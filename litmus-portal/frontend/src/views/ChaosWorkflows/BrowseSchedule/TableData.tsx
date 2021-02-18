@@ -12,7 +12,7 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import cronstrue from 'cronstrue';
-import { ButtonFilled } from 'kubera-ui';
+import { ButtonFilled } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
