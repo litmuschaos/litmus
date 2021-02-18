@@ -1,16 +1,5 @@
 package graphql
 
-type PromQuery struct {
-	Queryid    string
-	Query      string
-	Legend     *string
-	Resolution *string
-	Minstep    int
-	URL        string
-	Start      string
-	End        string
-}
-
 type SubscriberRequests struct {
 	RequestType  string  `json:"request_type"`
 	K8sManifest  string  `json:"k8s_manifest"`

@@ -1,17 +1,16 @@
-package utils
+package prometheus
 
 import (
 	"bytes"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics"
 	"log"
 	"net/http"
 )
 
-type STATE string
-
 const (
-	ACTIVE    STATE = "ACTIVE"
-	NOT_READY STATE = "NOT READY"
-	INACTIVE  STATE = "INACTIVE"
+	ACTIVE    analytics.STATE = "ACTIVE"
+	NOT_READY analytics.STATE = "NOT READY"
+	INACTIVE  analytics.STATE = "INACTIVE"
 )
 
 func TSDBHealthCheck(url, datasourceType string) string {
@@ -39,7 +38,7 @@ func TSDBHealthCheck(url, datasourceType string) string {
 	return dbHealth
 }
 
-func pingCheck(url string) (STATE, string) {
+func pingCheck(url string) (analytics.STATE, string) {
 	client := http.Client{}
 	resp, err := client.Get(url)
 
@@ -54,7 +53,7 @@ func pingCheck(url string) (STATE, string) {
 	return NOT_READY, "Server reachable but returned [" + resp.Status + "]"
 }
 
-func prometheusHealthCheck(url string) (STATE, string) {
+func prometheusHealthCheck(url string) (analytics.STATE, string) {
 	client := http.Client{}
 	resp, err := client.Get(url + "/-/healthy")
 
@@ -73,7 +72,7 @@ func prometheusHealthCheck(url string) (STATE, string) {
 	return NOT_READY, "Server reachable but returned [" + bodyString + "]"
 }
 
-func prometheusReadinessCheck(url string) (STATE, string) {
+func prometheusReadinessCheck(url string) (analytics.STATE, string) {
 	client := http.Client{}
 	resp, err := client.Get(url + "/-/ready")
 

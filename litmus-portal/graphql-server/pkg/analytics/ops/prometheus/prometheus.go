@@ -11,8 +11,8 @@ import (
 
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql"
-	api "github.com/prometheus/client_golang/api"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics"
+	"github.com/prometheus/client_golang/api"
 	apiv1 "github.com/prometheus/client_golang/api/prometheus/v1"
 	md "github.com/prometheus/common/model"
 )
@@ -33,7 +33,7 @@ func CreateClient(url string) (apiv1.API, error) {
 	return apiv1.NewAPI(client), nil
 }
 
-func Query(prom graphql.PromQuery) (model.PromResponse, error) {
+func Query(prom analytics.PromQuery) (model.PromResponse, error) {
 	client, err := CreateClient(prom.URL)
 	if err != nil {
 		return model.PromResponse{}, err
@@ -67,20 +67,20 @@ func Query(prom graphql.PromQuery) (model.PromResponse, error) {
 	}
 
 	var (
-		newResponse Response
-		newTSVs     [][]*TimeStampValue
+		newResponse analytics.Response
+		newTSVs     [][]*analytics.TimeStampValue
 		newLegends  [][]*string
 	)
 
 	for _, v := range data {
 
 		var (
-			tempTSV     []*TimeStampValue
+			tempTSV     []*analytics.TimeStampValue
 			tempLegends []*string
 		)
 
 		for _, value := range v.Values {
-			temp := &TimeStampValue{
+			temp := &analytics.TimeStampValue{
 				Timestamp: func(str string) *string { return &str }(fmt.Sprint(value.Timestamp)),
 				Value:     func(str string) *string { return &str }(fmt.Sprint(value.Value)),
 			}
@@ -121,15 +121,4 @@ func Query(prom graphql.PromQuery) (model.PromResponse, error) {
 	copier.Copy(&resp, &newResponse)
 
 	return resp, nil
-}
-
-type Response struct {
-	Queryid string              `json:"queryid"`
-	Legends [][]*string         `json:"legends"`
-	Tsvs    [][]*TimeStampValue `json:"tsvs"`
-}
-
-type TimeStampValue struct {
-	Timestamp *string `json:"timestamp"`
-	Value     *string `json:"value"`
 }
