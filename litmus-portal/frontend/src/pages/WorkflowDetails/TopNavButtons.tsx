@@ -1,8 +1,8 @@
+import { ButtonOutlined } from 'litmus-ui';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import BackButton from '../../components/Button/BackButton';
 import ButtonFilled from '../../components/Button/ButtonFilled';
-import ButtonOutline from '../../components/Button/ButtonOutline';
 import useActions from '../../redux/actions';
 import * as ToggleButtonAction from '../../redux/actions/button';
 import { RootState } from '../../redux/reducers';
@@ -40,10 +40,9 @@ const TopNavButtons: React.FC = () => {
             Info
           </ButtonFilled>
         ) : (
-          <ButtonOutline
-            styles={{ height: '2.2rem' }}
-            isDisabled={false}
-            handleClick={() =>
+          <ButtonOutlined
+            // styles={{ height: '2.2rem' }}
+            onClick={() =>
               toggleButtonAction.toggleInfoButton({
                 isInfoToggled: true,
               })
@@ -55,7 +54,7 @@ const TopNavButtons: React.FC = () => {
               className={classes.icon}
             />
             Info
-          </ButtonOutline>
+          </ButtonOutlined>
         )}
       </div>
     </div>

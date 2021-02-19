@@ -1,10 +1,10 @@
 import { Typography, Paper } from '@material-ui/core';
+import { ButtonOutlined } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
-import ButtonOutline from '../../../../components/Button/ButtonOutline';
 import { customWorkflow } from '../../../../models/redux/workflow';
 import { RootState } from '../../../../redux/reducers';
 import useStyles from './styles';
@@ -251,9 +251,8 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                     </Typography>
 
                     <div className={classes.buttonsDiv}>
-                      <ButtonOutline
-                        isDisabled={false}
-                        handleClick={() => {
+                      <ButtonOutlined
+                        onClick={() => {
                           viewYaml(index);
                         }}
                       >
@@ -263,10 +262,9 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                             {t('customWorkflow.scheduleWorkflow.viewYAML')}
                           </Typography>
                         </div>
-                      </ButtonOutline>
-                      <ButtonOutline
-                        isDisabled={false}
-                        handleClick={() => {
+                      </ButtonOutlined>
+                      <ButtonOutlined
+                        onClick={() => {
                           editExperiment(index);
                         }}
                       >
@@ -276,10 +274,9 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                             {t('customWorkflow.scheduleWorkflow.editBtn')}
                           </Typography>
                         </div>
-                      </ButtonOutline>
-                      <ButtonOutline
-                        isDisabled={false}
-                        handleClick={() => {
+                      </ButtonOutlined>
+                      <ButtonOutlined
+                        onClick={() => {
                           deleteExperiment(index);
                         }}
                       >
@@ -293,7 +290,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                             {t('customWorkflow.scheduleWorkflow.deleteBtn')}
                           </Typography>
                         </div>
-                      </ButtonOutline>
+                      </ButtonOutlined>
                     </div>
                   </Paper>
                 </li>

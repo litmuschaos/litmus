@@ -1,14 +1,13 @@
 import { Divider, IconButton, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import cronstrue from 'cronstrue';
-import { EditableText } from 'litmus-ui';
+import { EditableText, ButtonOutlined } from 'litmus-ui';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import AdjustedWeights from '../../../components/AdjustedWeights';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
-import ButtonOutline from '../../../components/Button/ButtonOutline/index';
 import YamlEditor from '../../../components/YamlEditor/Editor';
 import {
   AceValidations,
@@ -240,15 +239,15 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
                   ))}
                 </div>
                 {/* <div className={classes.editButton2}> */}
-                <ButtonOutline
-                  isDisabled={workflowData.isRecurring}
-                  handleClick={() => gotoStep(3)}
+                <ButtonOutlined
+                  disabled={workflowData.isRecurring}
+                  onClick={() => gotoStep(3)}
                   data-cy="testRunButton"
                 >
                   <Typography className={classes.buttonOutlineText}>
                     {t('createWorkflow.verifyCommit.button.edit')}
                   </Typography>
-                </ButtonOutline>
+                </ButtonOutlined>
                 {/* </div> */}
               </div>
             )}

@@ -5,11 +5,11 @@ import {
   CardContent,
   Typography,
 } from '@material-ui/core';
+import { ButtonOutlined } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ButtonFilled from '../../components/Button/ButtonFilled';
-import ButtonOutline from '../../components/Button/ButtonOutline';
 import DeveloperGuide from '../../components/DeveloperGuide';
 import Loader from '../../components/Loader';
 import QuickActionCard from '../../components/QuickActionCard';
@@ -236,12 +236,9 @@ const MyHub = () => {
                       {t('myhub.mainPage.disconnectDesc')}
                     </Typography>
                     <div className={classes.disconnectBtns}>
-                      <ButtonOutline
-                        isDisabled={false}
-                        handleClick={handleClose}
-                      >
+                      <ButtonOutlined onClick={handleClose}>
                         {t('myhub.mainPage.cancel')}
-                      </ButtonOutline>
+                      </ButtonOutlined>
                       <ButtonFilled
                         isPrimary={false}
                         isWarning

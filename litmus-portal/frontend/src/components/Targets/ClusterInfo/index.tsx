@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/client';
 import { Typography } from '@material-ui/core';
-import { ButtonFilled } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -12,7 +12,6 @@ import { LocationState } from '../../../models/routerModel';
 import { history } from '../../../redux/configureStore';
 import { RootState } from '../../../redux/reducers';
 import BackButton from '../../Button/BackButton';
-import ButtonOutline from '../../Button/ButtonOutline';
 import TargetCopy from '../TargetCopy';
 // import BrowseWorkflow from '../TargetHome/BrowseWorkflow';
 import useStyles from './styles';
@@ -89,9 +88,9 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
                   </div>
                 </div>
                 <div className={classes.buttonBox}>
-                  <ButtonOutline
-                    isDisabled={userRole === 'Viewer'}
-                    handleClick={() => {
+                  <ButtonOutlined
+                    disabled={userRole === 'Viewer'}
+                    onClick={() => {
                       setOpen(true);
                     }}
                   >
@@ -99,7 +98,7 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
                       <img src="/icons/bin-red.svg" alt="Delete" />
                       <div> {t('targets.modalDelete.delete')} </div>
                     </div>
-                  </ButtonOutline>
+                  </ButtonOutlined>
                 </div>
               </div>
             </div>
@@ -155,14 +154,13 @@ const ClusterInfo: React.FC<ClusterVarsProps> = ({ location }) => {
                       </Typography>
                     </div>
                     <div className={classes.buttonGroup}>
-                      <ButtonOutline
-                        isDisabled={false}
-                        handleClick={() => {
+                      <ButtonOutlined
+                        onClick={() => {
                           setOpen(false);
                         }}
                       >
                         <> {t('targets.modalDelete.no')}</>
-                      </ButtonOutline>
+                      </ButtonOutlined>
 
                       <ButtonFilled
                         variant="error"

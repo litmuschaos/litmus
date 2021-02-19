@@ -1,10 +1,9 @@
 import { IconButton, TableCell, Tooltip, Typography } from '@material-ui/core';
-import { ButtonFilled } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import ButtonOutline from '../../../components/Button/ButtonOutline';
 import Unimodal from '../../../containers/layouts/Unimodal';
 import { Cluster } from '../../../models/graphql/clusterData';
 import { history } from '../../../redux/configureStore';
@@ -129,14 +128,13 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                     </Typography>
                   </div>
                   <div className={classes.buttonGroup}>
-                    <ButtonOutline
-                      isDisabled={false}
-                      handleClick={() => {
+                    <ButtonOutlined
+                      onClick={() => {
                         setOpen(false);
                       }}
                     >
                       <> {t('targets.modalDelete.no')}</>
-                    </ButtonOutline>
+                    </ButtonOutlined>
 
                     <ButtonFilled
                       disabled={userRole === 'Viewer'}

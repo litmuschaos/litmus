@@ -1,8 +1,8 @@
 import { Typography } from '@material-ui/core';
+import { ButtonOutlined } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
-import ButtonOutline from '../../../../../components/Button/ButtonOutline';
 import Unimodal from '../../../../../containers/layouts/Unimodal';
 import useStyles from './styles';
 // props for DelUser component
@@ -57,14 +57,13 @@ const DelUser: React.FC<DelUserProps> = ({
             </Typography>
           </div>
           <div className={classes.buttonGroup}>
-            <ButtonOutline
-              isDisabled={false}
-              handleClick={() => {
+            <ButtonOutlined
+              onClick={() => {
                 setOpen(false);
               }}
             >
               <> {t('settings.teamingTab.deleteModal.noButton')}</>
-            </ButtonOutline>
+            </ButtonOutlined>
 
             <ButtonFilled
               isDisabled={false}

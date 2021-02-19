@@ -2,8 +2,8 @@ import { Typography } from '@material-ui/core';
 import Done from '@material-ui/icons/DoneAllTwoTone';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ButtonOutlined } from 'litmus-ui';
 import useStyles from './styles';
-import ButtonOutline from '../Button/ButtonOutline';
 
 interface InstallProps {
   title: string;
@@ -44,10 +44,7 @@ const InstallChaos: React.FC<InstallProps> = ({
         </Typography>
 
         <div className={classes.buttonBox}>
-          <ButtonOutline
-            isDisabled={false}
-            handleClick={() => copyTextToClipboard(yaml)}
-          >
+          <ButtonOutlined onClick={() => copyTextToClipboard(yaml)}>
             {!copying ? (
               <div className={classes.rowDiv}>
                 <img
@@ -63,7 +60,7 @@ const InstallChaos: React.FC<InstallProps> = ({
                 <Typography>{t('myhub.installChaos.copied')}</Typography>
               </div>
             )}
-          </ButtonOutline>
+          </ButtonOutlined>
         </div>
       </div>
     </div>

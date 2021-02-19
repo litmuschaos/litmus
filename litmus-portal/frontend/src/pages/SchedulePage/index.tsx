@@ -4,13 +4,13 @@ import { StepIconProps } from '@material-ui/core/StepIcon';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
 import Typography from '@material-ui/core/Typography';
+import { ButtonOutlined } from 'litmus-ui';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import YAML from 'yaml';
 import ButtonFilled from '../../components/Button/ButtonFilled';
-import ButtonOutline from '../../components/Button/ButtonOutline';
 import Loader from '../../components/Loader';
 import QontoConnector from '../../components/WorkflowStepper/quontoConnector';
 import useStyles from '../../components/WorkflowStepper/styles';
@@ -519,13 +519,13 @@ const EditScheduledWorkflow = () => {
 
               <div className={classes.buttonGroup}>
                 {activeStep === steps.length - 2 ? (
-                  <ButtonOutline isDisabled handleClick={handleBack}>
+                  <ButtonOutlined disabled onClick={handleBack}>
                     <Typography>Back</Typography>
-                  </ButtonOutline>
+                  </ButtonOutlined>
                 ) : activeStep !== 1 ? (
-                  <ButtonOutline isDisabled={false} handleClick={handleBack}>
+                  <ButtonOutlined onClick={handleBack}>
                     <Typography>Back</Typography>
-                  </ButtonOutline>
+                  </ButtonOutlined>
                 ) : null}
                 {activeStep === steps.length - 1 ? (
                   <ButtonFilled

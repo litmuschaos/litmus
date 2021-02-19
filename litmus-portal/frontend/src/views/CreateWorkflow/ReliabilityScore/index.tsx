@@ -1,9 +1,9 @@
 import { Typography } from '@material-ui/core';
+import { ButtonOutlined } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
-import ButtonOutline from '../../../components/Button/ButtonOutline';
 import Center from '../../../containers/layouts/Center';
 import Unimodal from '../../../containers/layouts/Unimodal';
 import { experimentMap, WorkflowData } from '../../../models/redux/workflow';
@@ -89,9 +89,9 @@ const ReliablityScore = () => {
           <hr className={classes.horizontalLine} />
           <div className={classes.modalDiv}>
             <div className={classes.divRow}>
-              <ButtonOutline
-                isDisabled
-                handleClick={() => setOpen(true)}
+              <ButtonOutlined
+                disabled
+                onClick={() => setOpen(true)}
                 data-cy="testRunButton"
               >
                 <div className={classes.buttonOutlineDiv}>
@@ -100,7 +100,7 @@ const ReliablityScore = () => {
                     {t('createWorkflow.reliabilityScore.button.demo')}
                   </Typography>
                 </div>
-              </ButtonOutline>
+              </ButtonOutlined>
               {/* <div className={classes.toolTipDiv}>
                 <InfoTooltip value="Text Default" />
                 </div> */}

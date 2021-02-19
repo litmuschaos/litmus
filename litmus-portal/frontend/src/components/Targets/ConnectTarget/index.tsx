@@ -1,5 +1,6 @@
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { Typography } from '@material-ui/core';
+import { ButtonOutlined } from 'litmus-ui';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -15,7 +16,6 @@ import { history } from '../../../redux/configureStore';
 import { RootState } from '../../../redux/reducers';
 import BackButton from '../../Button/BackButton';
 import ButtonFilled from '../../Button/ButtonFilled';
-import ButtonOutline from '../../Button/ButtonOutline';
 import Loader from '../../Loader';
 import TargetCopy from '../TargetCopy';
 import useStyles from './styles';
@@ -156,15 +156,14 @@ const ConnectTarget = () => {
               {t('ConnectTargets.mainLine')}
             </Typography>
             <div className={classes.buttonModal}>
-              <ButtonOutline
-                isDisabled={false}
-                handleClick={() => {
+              <ButtonOutlined
+                onClick={() => {
                   history.push('/targets');
                   setOpen(false);
                 }}
               >
                 <div>{t('ConnectTargets.button.buttonBack')}</div>
-              </ButtonOutline>
+              </ButtonOutlined>
 
               <ButtonFilled
                 data-cy="connectTarget"

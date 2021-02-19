@@ -15,9 +15,9 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import SearchIcon from '@material-ui/icons/Search';
+import { ButtonOutlined } from 'litmus-ui';
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ButtonOutline from '../../../../components/Button/ButtonOutline';
 import DateRangeSelector from '../../../../components/DateRangeSelector';
 import useStyles from './styles';
 
@@ -218,21 +218,17 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
       </FormControl>
 
       {compare === false || comparisonState === false ? (
-        <ButtonOutline
-          isDisabled={!(numSelected > 1)}
-          handleClick={handleClick}
+        <ButtonOutlined
+          disabled={!(numSelected > 1)}
+          onClick={handleClick}
           className={classes.button}
         >
           <Typography className={classes.dateRangeDefault}>
             {t('analytics.compareWorkflows')}
           </Typography>
-        </ButtonOutline>
+        </ButtonOutlined>
       ) : (
-        <ButtonOutline
-          handleClick={handleExport}
-          isDisabled={false}
-          className={classes.button}
-        >
+        <ButtonOutlined onClick={handleExport} className={classes.button}>
           <div className={classes.export}>
             <Avatar className={classes.exportIcon}>
               <DescriptionOutlinedIcon htmlColor={palette.primary.main} />
@@ -241,7 +237,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
               {t('analytics.exportPDF')}
             </Typography>
           </div>
-        </ButtonOutline>
+        </ButtonOutlined>
       )}
       <DateRangeSelector
         anchorEl={dateRangeSelectorRef.current as HTMLElement}

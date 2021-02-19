@@ -1,8 +1,8 @@
 import { Typography } from '@material-ui/core';
 import Done from '@material-ui/icons/DoneAllTwoTone';
+import { ButtonOutlined } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ButtonOutline from '../../Button/ButtonOutline';
 import useStyles from './styles';
 
 interface InstallProps {
@@ -43,10 +43,7 @@ const TargetCopy: React.FC<InstallProps> = ({ yamlLink }) => {
       <div className={classes.linkBox}>
         <Typography className={classes.yamlLink}>{engineUrl}</Typography>
         <div className={classes.buttonBox}>
-          <ButtonOutline
-            isDisabled={false}
-            handleClick={() => copyTextToClipboard(engineUrl)}
-          >
+          <ButtonOutlined onClick={() => copyTextToClipboard(engineUrl)}>
             {!copying ? (
               <div className={classes.copyText}>
                 <img
@@ -64,7 +61,7 @@ const TargetCopy: React.FC<InstallProps> = ({ yamlLink }) => {
                 </div>
               </>
             )}
-          </ButtonOutline>
+          </ButtonOutlined>
         </div>
       </div>
     </div>

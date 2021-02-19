@@ -7,11 +7,11 @@ import {
   TableRow,
   Typography,
 } from '@material-ui/core';
+import { ButtonOutlined } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
-import ButtonOutline from '../../../../../components/Button/ButtonOutline';
 import {
   ACCEPT_INVITE,
   DECLINE_INVITE,
@@ -139,8 +139,8 @@ const ReceivedInvitations: React.FC = () => {
                       </div>
                     </div>
                     <div className={classes.buttonDiv}>
-                      <ButtonOutline
-                        handleClick={() => {
+                      <ButtonOutlined
+                        onClick={() => {
                           setAcceptDecline(row.username);
                           declineInvite({
                             variables: {
@@ -151,14 +151,13 @@ const ReceivedInvitations: React.FC = () => {
                             },
                           });
                         }}
-                        isDisabled={false}
                       >
                         <div>
                           {t(
                             'settings.teamingTab.invitation.receivedInvitation.button.ignore'
                           )}
                         </div>
-                      </ButtonOutline>
+                      </ButtonOutlined>
                       <div data-cy="receivedInvitationAccept">
                         <ButtonFilled
                           isPrimary={false}

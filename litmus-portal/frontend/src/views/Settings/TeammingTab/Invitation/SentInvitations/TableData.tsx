@@ -7,11 +7,11 @@ import {
   TableCell,
   Typography,
 } from '@material-ui/core';
+import { ButtonOutlined } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
-import ButtonOutline from '../../../../../components/Button/ButtonOutline';
 import Loader from '../../../../../components/Loader';
 import {
   REMOVE_INVITATION,
@@ -172,8 +172,8 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
               </Menu>
             </div>
             <div data-cy="cancelInviteDoneButton">
-              <ButtonOutline
-                handleClick={() =>
+              <ButtonOutlined
+                onClick={() =>
                   CancelInvite({
                     variables: {
                       data: {
@@ -183,10 +183,10 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                     },
                   })
                 }
-                isDisabled={row.invitation === 'Declined' || loadingA}
+                disabled={row.invitation === 'Declined' || loadingA}
               >
                 {loadingA ? <Loader size={20} /> : 'Cancel'}
-              </ButtonOutline>
+              </ButtonOutlined>
             </div>
             <div data-cy="resendInviteDoneButton">
               <ButtonFilled

@@ -11,10 +11,9 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { InputField } from 'litmus-ui';
+import { ButtonOutlined, InputField } from 'litmus-ui';
 import BackButton from '../../../components/Button/BackButton';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
-import ButtonOutline from '../../../components/Button/ButtonOutline';
 import Loader from '../../../components/Loader';
 import QuickActionCard from '../../../components/QuickActionCard';
 import Scaffold from '../../../containers/layouts/Scaffold';
@@ -372,9 +371,8 @@ const MyHub = () => {
                                         {sshKey.publicKey}
                                       </Typography>
                                       <div className={classes.copyBtn}>
-                                        <ButtonOutline
-                                          isDisabled={false}
-                                          handleClick={() =>
+                                        <ButtonOutlined
+                                          onClick={() =>
                                             copyTextToClipboard(
                                               sshKey.publicKey
                                             )
@@ -399,7 +397,7 @@ const MyHub = () => {
                                               </Typography>
                                             </div>
                                           )}
-                                        </ButtonOutline>
+                                        </ButtonOutlined>
                                       </div>
                                     </>
                                   )}

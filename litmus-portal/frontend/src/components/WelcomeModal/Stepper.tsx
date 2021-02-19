@@ -4,7 +4,7 @@ import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { InputField } from 'litmus-ui';
+import { InputField, ButtonOutlined } from 'litmus-ui';
 import config from '../../config';
 import { CREATE_USER } from '../../graphql';
 import { CreateUserData } from '../../models/graphql/user';
@@ -18,7 +18,6 @@ import {
   validateStartEmptySpacing,
 } from '../../utils/validate';
 import ButtonFilled from '../Button/ButtonFilled';
-import ButtonOutline from '../Button/ButtonOutline';
 import ModalPage from './Modalpage';
 import useStyles from './styles';
 
@@ -204,9 +203,9 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
       return (
         <div className={classes.buttonDiv}>
           <div data-cy="backButton">
-            <ButtonOutline isDisabled={false} handleClick={handleBack}>
+            <ButtonOutlined onClick={handleBack}>
               <>{t('welcomeModal.button.back')}</>
-            </ButtonOutline>
+            </ButtonOutlined>
           </div>
           <div data-cy="startButton">
             <ButtonFilled
@@ -224,13 +223,9 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
     return (
       <div className={classes.buttonDiv}>
         <div data-cy="backButton">
-          <ButtonOutline
-            isDisabled={false}
-            handleClick={handleBack}
-            data-cy="Back"
-          >
+          <ButtonOutlined onClick={handleBack} data-cy="Back">
             <>{t('welcomeModal.button.back')}</>
-          </ButtonOutline>
+          </ButtonOutlined>
         </div>
         <div data-cy="startButton">
           <ButtonFilled
