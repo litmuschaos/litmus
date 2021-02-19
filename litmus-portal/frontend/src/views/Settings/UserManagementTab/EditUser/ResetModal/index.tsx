@@ -1,10 +1,10 @@
 import { Typography } from '@material-ui/core';
+import { Modal, ButtonOutlined } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import Loader from '../../../../../components/Loader';
 import config from '../../../../../config';
-import Unimodal from '../../../../../containers/layouts/Unimodal';
 import getToken from '../../../../../utils/getToken';
 import useStyles from './styles';
 
@@ -88,7 +88,13 @@ const ResetModal: React.FC<ResetModalProps> = ({
             )}
           </ButtonFilled>
         </div>
-        <Unimodal open={open} handleClose={handleClose} hasCloseBtn>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          modalActions={
+            <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
+          }
+        >
           {error.length ? (
             <div className={classes.errDiv}>
               <div className={classes.textError}>
@@ -152,7 +158,7 @@ const ResetModal: React.FC<ResetModalProps> = ({
               </div>
             </div>
           )}
-        </Unimodal>
+        </Modal>
       </div>
     </div>
   );

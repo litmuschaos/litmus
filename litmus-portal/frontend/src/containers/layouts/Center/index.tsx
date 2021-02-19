@@ -12,12 +12,12 @@ const useStyles = makeStyles({
 });
 
 interface CenterProps {
-  children: React.ReactNode;
+  className?: string;
 }
 
-const Center: React.FC<CenterProps> = ({ children }) => {
+const Center: React.FC<CenterProps> = ({ children, className }) => {
   const classes = useStyles();
-  return <div className={classes.center}>{children}</div>;
+  return <div className={`${classes.center} ${className}`}>{children}</div>;
 };
 
 export default Center;

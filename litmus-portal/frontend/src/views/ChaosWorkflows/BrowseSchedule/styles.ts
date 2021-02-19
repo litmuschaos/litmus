@@ -188,16 +188,17 @@ const useStyles = makeStyles((theme) => ({
   modalDiv: {
     display: 'flex',
     flexDirection: 'column',
-    height: '25rem',
-    marginTop: '10%',
     alignItems: 'center',
     justifyContent: 'center',
+    padding: theme.spacing(5),
+    [theme.breakpoints.up('lg')]: {
+      padding: theme.spacing(15),
+    },
   },
   modalHeader: {
     fontSize: '2.125rem',
     fontWeight: 400,
-    marginBottom: theme.spacing(2.5),
-    marginTop: theme.spacing(2.5),
+    marginBottom: theme.spacing(2),
     width: '31.25rem',
   },
   modalConfirm: {

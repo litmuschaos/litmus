@@ -1,10 +1,10 @@
 import { useQuery, useSubscription } from '@apollo/client';
 import { Typography } from '@material-ui/core';
+import { ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import useStyles from './styles';
-import Unimodal from '../../../containers/layouts/Unimodal';
 import { WORKFLOW_DETAILS, WORKFLOW_LOGS } from '../../../graphql';
 import {
   PodLogRequest,
@@ -151,22 +151,27 @@ const NodeLogs: React.FC<NodeLogsProps> = ({
   };
 
   return (
-    <Unimodal
+    <Modal
       open={logsOpen}
-      handleClose={handleClose}
-      hasCloseBtn
-      textAlign="left"
+      onClose={handleClose}
+      modalActions={
+        <ButtonOutlined className={classes.closeButton} onClick={handleClose}>
+          &#x2715;
+        </ButtonOutlined>
+      }
     >
       <div className={classes.root}>
-        {data !== undefined ? (
-          <div>{parseLogs(data.getPodLog.log)}</div>
-        ) : (
-          <Typography variant="h5">
-            {t('workflowDetailsView.nodeLogs.fetching')}
-          </Typography>
-        )}
+        <div className={classes.logs}>
+          {data !== undefined ? (
+            <div>{parseLogs(data.getPodLog.log)}</div>
+          ) : (
+            <Typography variant="h5">
+              {t('workflowDetailsView.nodeLogs.fetching')}
+            </Typography>
+          )}
+        </div>
       </div>
-    </Unimodal>
+    </Modal>
   );
 };
 

@@ -1,7 +1,7 @@
+import { ButtonOutlined, Modal } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
-import Unimodal from '../../../../containers/layouts/Unimodal';
 import Invite from './Invite';
 import useStyles from './styles';
 
@@ -27,17 +27,21 @@ const InviteNew: React.FC = () => {
         </ButtonFilled>
       </div>
 
-      <Unimodal
+      <Modal
         data-cy="modal"
         open={open}
-        handleClose={handleClose}
-        hasCloseBtn
-        textAlign="center"
+        width="43.75rem"
+        disableBackdropClick
+        disableEscapeKeyDown
+        onClose={handleClose}
+        modalActions={
+          <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
+        }
       >
         <div data-cy="inviteNewMemberModal" className={classes.body}>
           <Invite handleModal={handleClose} />
         </div>
-      </Unimodal>
+      </Modal>
     </div>
   );
 };

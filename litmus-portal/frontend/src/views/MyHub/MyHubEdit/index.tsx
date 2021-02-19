@@ -11,14 +11,13 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { InputField } from 'litmus-ui';
+import { InputField, Modal, ButtonOutlined } from 'litmus-ui';
 import BackButton from '../../../components/Button/BackButton';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import Loader from '../../../components/Loader';
 import QuickActionCard from '../../../components/QuickActionCard';
 import Scaffold from '../../../containers/layouts/Scaffold';
-import Unimodal from '../../../containers/layouts/Unimodal';
 import { GENERATE_SSH, GET_HUB_STATUS, UPDATE_MY_HUB } from '../../../graphql';
 import { history } from '../../../redux/configureStore';
 import {
@@ -417,7 +416,15 @@ const MyHub = () => {
                     {t('myhub.editPage.submit')}
                   </ButtonFilled>
                 </div>
-                <Unimodal open={isOpen} handleClose={handleClose} hasCloseBtn>
+                <Modal
+                  open={isOpen}
+                  onClose={handleClose}
+                  modalActions={
+                    <ButtonOutlined onClick={handleClose}>
+                      &#x2715;
+                    </ButtonOutlined>
+                  }
+                >
                   <div className={classes.modalDiv}>
                     {cloningRepo ? (
                       <div>
@@ -467,7 +474,7 @@ const MyHub = () => {
                       </div>
                     )}
                   </div>
-                </Unimodal>
+                </Modal>
               </div>
             </form>
           </div>

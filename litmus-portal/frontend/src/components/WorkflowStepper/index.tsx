@@ -4,11 +4,11 @@ import { StepIconProps } from '@material-ui/core/StepIcon';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
 import Typography from '@material-ui/core/Typography';
+import { Modal, ButtonOutlined } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import Unimodal from '../../containers/layouts/Unimodal';
 import { CREATE_WORKFLOW } from '../../graphql';
 import {
   CreateWorkFlowInput,
@@ -384,17 +384,20 @@ const CustomStepper = () => {
       <div>
         <div>
           <div>
-            <Unimodal
+            <Modal
               open={open}
-              handleClose={handleClose}
+              onClose={handleClose}
+              width="60%"
               aria-labelledby="simple-modal-title"
               aria-describedby="simple-modal-description"
-              hasCloseBtn
+              modalActions={
+                <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
+              }
             >
-              <div>
+              <div className={classes.modal}>
                 <img
                   src="/icons/finish.svg"
-                  className={classes.mark}
+                  // className={classes.mark}
                   alt="mark"
                 />
                 <div className={classes.heading}>
@@ -422,7 +425,7 @@ const CustomStepper = () => {
                   </ButtonFilled>
                 </div>
               </div>
-            </Unimodal>
+            </Modal>
             {getStepContent(activeStep, (page: number) => gotoStep({ page }))}
           </div>
           {/* Control Buttons */}
