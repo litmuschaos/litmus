@@ -18,6 +18,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics"
 )
 
+// CreateClient creates a prometheus client from a URL
 func CreateClient(url string) (apiV1.API, error) {
 	var DefaultRT = api.DefaultRoundTripper
 
@@ -34,6 +35,7 @@ func CreateClient(url string) (apiV1.API, error) {
 	return apiV1.NewAPI(client), nil
 }
 
+// Query is used to query prometheus using client
 func Query(prom analytics.PromQuery) (model.PromResponse, error) {
 	client, err := CreateClient(prom.URL)
 	if err != nil {

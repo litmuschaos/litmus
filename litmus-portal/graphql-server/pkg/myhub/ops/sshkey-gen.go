@@ -1,4 +1,4 @@
-package myhub_ops
+package myhubOps
 
 import (
 	"crypto/rand"
