@@ -121,7 +121,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: theme.spacing(7.5),
+    margin: theme.spacing(7.5),
   },
   // styles for text
   text: {

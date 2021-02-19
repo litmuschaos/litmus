@@ -42,14 +42,16 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   /* Finish modal content style */
-  mark: {
-    marginTop: theme.spacing(7),
-    textAlign: 'center',
+  modal: {
+    [theme.breakpoints.up('lg')]: {
+      padding: theme.spacing(10),
+    },
+    padding: theme.spacing(3),
   },
   heading: {
     fontSize: '2rem',
     textalign: 'center',
-    marginTop: theme.spacing(5),
+    marginTop: theme.spacing(3),
     color: theme.palette.common.black,
   },
   headWorkflow: {
@@ -57,12 +59,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     lineheight: '170%',
     textalign: 'center',
     color: theme.palette.common.black,
-    marginTop: theme.spacing(6),
+    marginTop: theme.spacing(3),
   },
   button: {
     color: theme.palette.common.white,
     textAlign: 'center',
-    marginTop: theme.spacing(6),
+    marginTop: theme.spacing(5),
   },
   successful: {
     fontSize: '2.2rem',

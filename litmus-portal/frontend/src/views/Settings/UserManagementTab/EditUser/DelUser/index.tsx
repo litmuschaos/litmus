@@ -1,9 +1,9 @@
 import { Typography } from '@material-ui/core';
+import { Modal, ButtonOutlined } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../../../components/Button/ButtonOutline';
-import Unimodal from '../../../../../containers/layouts/Unimodal';
 import useStyles from './styles';
 // props for DelUser component
 interface DelUserProps {
@@ -34,7 +34,13 @@ const DelUser: React.FC<DelUserProps> = ({
 
   return (
     <div>
-      <Unimodal open={open} handleClose={handleClose} hasCloseBtn>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        modalActions={
+          <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
+        }
+      >
         <div className={classes.body}>
           <img src="./icons/userDel.svg" alt="lock" />
           <div className={classes.text}>
@@ -75,7 +81,7 @@ const DelUser: React.FC<DelUserProps> = ({
             </ButtonFilled>
           </div>
         </div>
-      </Unimodal>
+      </Modal>
     </div>
   );
 };

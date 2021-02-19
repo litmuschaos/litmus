@@ -1,9 +1,9 @@
 import { Box, Paper, Tab, Tabs, Typography } from '@material-ui/core';
+import { Modal, ButtonOutlined } from 'litmus-ui';
 import React from 'react';
 import useTheme from '@material-ui/core/styles/useTheme';
 import { useTranslation } from 'react-i18next';
 import ButtonOutline from '../../../../components/Button/ButtonOutline';
-import Unimodal from '../../../../containers/layouts/Unimodal';
 import ReceivedInvitations from './ReceivedInvitations';
 import SentInvitations from './SentInvitations';
 import useStyles from './styles';
@@ -67,11 +67,14 @@ const Invitation: React.FC = () => {
         </ButtonOutline>
       </div>
 
-      <Unimodal
+      <Modal
         data-cy="modal"
+        width="60%"
         open={open}
-        handleClose={handleClose}
-        hasCloseBtn
+        onClose={handleClose}
+        modalActions={
+          <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
+        }
       >
         <div data-cy="invitationModal" className={classes.body}>
           <Typography className={classes.Header}>
@@ -103,7 +106,7 @@ const Invitation: React.FC = () => {
             </TabPanel>
           </div>
         </div>
-      </Unimodal>
+      </Modal>
     </div>
   );
 };

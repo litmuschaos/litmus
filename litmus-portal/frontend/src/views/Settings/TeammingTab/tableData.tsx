@@ -1,13 +1,13 @@
 import { useMutation } from '@apollo/client/react/hooks';
 import { Avatar, IconButton, TableCell, Typography } from '@material-ui/core';
 import moment from 'moment';
+import { Modal, ButtonOutlined } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import Loader from '../../../components/Loader';
-import Unimodal from '../../../containers/layouts/Unimodal';
 import { REMOVE_INVITATION } from '../../../graphql/mutations';
 import { GET_USER } from '../../../graphql/queries';
 import { MemberInvitation } from '../../../models/graphql/invite';
@@ -82,12 +82,16 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
           <img alt="delete" src="./icons/bin-grey.svg" />
         </IconButton>
       </TableCell>
-      <Unimodal
+      <Modal
         open={open}
-        handleClose={() => {
+        onClose={() => {
           setOpen(false);
         }}
-        hasCloseBtn
+        modalActions={
+          <ButtonOutlined onClick={() => setOpen(false)}>
+            &#x2715;
+          </ButtonOutlined>
+        }
       >
         <div className={classes.body}>
           <img src="./icons/userDel.svg" alt="lock" />
@@ -138,7 +142,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
             </ButtonFilled>
           </div>
         </div>
-      </Unimodal>
+      </Modal>
     </>
   );
 };
