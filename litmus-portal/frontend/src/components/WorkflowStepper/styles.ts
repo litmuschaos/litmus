@@ -1,12 +1,41 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    width: '100%',
-    background: theme.palette.background.paper,
+  // Header
+  headWrapper: {
+    width: '88%',
+    margin: theme.spacing(0.5, 'auto'),
+    [theme.breakpoints.up('lg')]: {
+      width: '87%',
+      margin: theme.spacing(2, 'auto'),
+    },
   },
+  header: {
+    fontSize: '2rem',
+    fontWeight: 400,
+    [theme.breakpoints.up('lg')]: {
+      fontSize: '2.3rem',
+    },
+  },
+  headerButtonWrapper: {
+    display: 'flex',
+    width: '17%',
+    justifyContent: 'space-between',
+    [theme.breakpoints.up('lg')]: {
+      width: '11%',
+    },
+  },
+  bottomButtonWrapper: {
+    display: 'flex',
+    width: '100%',
+    justifyContent: 'space-between',
+  },
+
+  // Stepper
   stepper: {
+    backgroundColor: 'transparent',
     marginTop: theme.spacing(5),
+    marginBottom: theme.spacing(-4),
   },
   backButton: {
     marginRight: theme.spacing(1),
@@ -16,12 +45,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'row',
     gap: '1rem',
     marginLeft: '9%',
+    marginBottom: theme.spacing(6),
   },
   yamlError: {
     marginTop: theme.spacing(1.5),
   },
   activeLabel: {
-    color: theme.palette.secondary.main,
+    color: theme.palette.horizontalStepper.active,
     marginTop: theme.spacing(-9),
     fontWeight: 'bold',
     fontSize: theme.spacing(1.5),
@@ -30,7 +60,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   normalLabel: {
-    color: theme.palette.grey[600],
+    color: theme.palette.text.secondary,
+    fontSize: theme.spacing(1.5),
+    marginTop: theme.spacing(-9),
+    [theme.breakpoints.down('sm')]: {
+      fontSize: theme.spacing(1),
+    },
+  },
+  completedLabel: {
+    color: theme.palette.primary.light,
     fontSize: theme.spacing(1.5),
     marginTop: theme.spacing(-9),
     [theme.breakpoints.down('sm')]: {
@@ -42,31 +80,45 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   /* Finish modal content style */
-  mark: {
-    marginTop: theme.spacing(7),
-    textAlign: 'center',
+  modal: {
+    [theme.breakpoints.up('lg')]: {
+      padding: theme.spacing(10),
+    },
+    padding: theme.spacing(3),
   },
   heading: {
     fontSize: '2rem',
     textalign: 'center',
-    marginTop: theme.spacing(5),
-    color: theme.palette.common.black,
+    marginTop: theme.spacing(3),
+    color: theme.palette.text.secondary,
   },
   headWorkflow: {
     fontsize: '2rem',
-    lineheight: '170%',
     textalign: 'center',
-    color: theme.palette.common.black,
-    marginTop: theme.spacing(6),
+    color: theme.palette.text.secondary,
+    marginTop: theme.spacing(3),
   },
   button: {
-    color: theme.palette.common.white,
+    color: theme.palette.text.secondary,
     textAlign: 'center',
-    marginTop: theme.spacing(6),
+    marginTop: theme.spacing(5),
+  },
+  closeButton: {
+    borderColor: theme.palette.border.main,
   },
   successful: {
     fontSize: '2.2rem',
     fontWeight: 'bold',
+  },
+
+  // Bottom
+  bottomWrapper: {
+    width: '88%',
+    margin: theme.spacing(1, 'auto'),
+    [theme.breakpoints.up('lg')]: {
+      width: '87%',
+      margin: theme.spacing(2, 'auto'),
+    },
   },
 }));
 

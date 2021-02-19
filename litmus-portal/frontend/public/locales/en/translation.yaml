@@ -52,11 +52,14 @@ customWorkflowCard:
 
 workflowStepper:
   continueError: To continue, please check the error in code.
+  scheduleNewChaosWorkflow: Schedule a new chaos workflow,
   aNewChaosWorkflow: A new chaos workflow,
   successful: is successfully created!
   congratulationsSub1: Congratulations on creating your workflow! Now information about
   congratulationsSub2: it will be displayed on the workflow schedules.
   workflowBtn: Go to Workflow
+  step1:
+    errorSnackbar: You haven't selected any Target Agent
   finish: Finish
   next: Next
 
@@ -542,6 +545,13 @@ workflowCluster:
       clusterInfo: Cluster information
       about: About Litmus Cluster
       back: Back
+workflowAgent:
+  header:
+    chooseAgent: Choose Agent to send the chaos workflow to
+    creatingNew: You are creating a new chaos workflow
+    selectAgent: Select a target Kubernetes cluster to run this workflow
+  search:
+    placeholder: Search
 
 workflows:
   browseWorkflows: Browse workflows

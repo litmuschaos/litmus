@@ -1,14 +1,17 @@
 import { useMutation } from '@apollo/client';
+import Snackbar from '@material-ui/core/Snackbar';
 import Step from '@material-ui/core/Step';
 import { StepIconProps } from '@material-ui/core/StepIcon';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
 import Typography from '@material-ui/core/Typography';
+import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
+import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import Unimodal from '../../containers/layouts/Unimodal';
+import Row from '../../containers/layouts/Row';
 import { CREATE_WORKFLOW } from '../../graphql';
 import {
   CreateWorkFlowInput,
@@ -26,26 +29,32 @@ import { validateWorkflowName } from '../../utils/validate';
 import { cronWorkflow, workflowOnce } from '../../utils/workflowTemplate';
 import parsed from '../../utils/yamlUtils';
 import ChooseWorkflow from '../../views/CreateWorkflow/ChooseWorkflow/index';
+import ChooseAWorkflowAgent from '../../views/CreateWorkflow/ChooseAWorkflowAgent';
 import ReliablityScore from '../../views/CreateWorkflow/ReliabilityScore';
 import ScheduleWorkflow from '../../views/CreateWorkflow/ScheduleWorkflow';
 import TuneWorkflow from '../../views/CreateWorkflow/TuneWorkflow/index';
 import VerifyCommit from '../../views/CreateWorkflow/VerifyCommit';
-import ChooseAWorkflowCluster from '../../views/CreateWorkflow/WorkflowCluster';
-import ButtonFilled from '../Button/ButtonFilled';
-import ButtonOutline from '../Button/ButtonOutline';
 import QontoConnector from './quontoConnector';
 import useStyles from './styles';
 import useQontoStepIconStyles from './useQontoStepIconStyles';
 
+interface ControlButtonProps {
+  position: string;
+}
+
 function getSteps(): string[] {
   return [
-    'Target Cluster',
+    'Choose Agent',
     'Choose a workflow',
     'Tune workflow',
     'Reliability score',
     'Schedule',
     'Verify and Commit',
   ];
+}
+
+function Alert(props: AlertProps) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
 function QontoStepIcon(props: StepIconProps) {
@@ -95,9 +104,7 @@ function getStepContent(
 ): React.ReactNode {
   switch (stepIndex) {
     case 0:
-      return (
-        <ChooseAWorkflowCluster gotoStep={(page: number) => gotoStep(page)} />
-      );
+      return <ChooseAWorkflowAgent />;
     case 1:
       return <ChooseWorkflow isEditable />;
     case 2:
@@ -111,9 +118,7 @@ function getStepContent(
         <VerifyCommit isEditable gotoStep={(page: number) => gotoStep(page)} />
       );
     default:
-      return (
-        <ChooseAWorkflowCluster gotoStep={(page: number) => gotoStep(page)} />
-      );
+      return <ChooseAWorkflowAgent />;
   }
 }
 
@@ -138,6 +143,7 @@ const CustomStepper = () => {
   const defaultStep = isCustomWorkflow ? 2 : 0;
 
   const [activeStep, setActiveStep] = React.useState(defaultStep);
+  const [isAlertOpen, setIsAlertOpen] = React.useState(false);
 
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
@@ -148,7 +154,8 @@ const CustomStepper = () => {
   const userRole = useSelector((state: RootState) => state.userData.userRole);
   const tabs = useActions(TabActions);
   const workflow = useActions(WorkflowActions);
-  const [invalidYaml, setinValidYaml] = React.useState(false);
+  // Might be used later
+  const [invalidYaml, setinValidYaml] = React.useState(false); // eslint-disable-line
   const steps = getSteps();
   const scheduleOnce = workflowOnce;
   const scheduleMore = cronWorkflow;
@@ -189,8 +196,8 @@ const CustomStepper = () => {
       delete newParsedYaml.spec;
       delete newParsedYaml.metadata.generateName;
       newParsedYaml.metadata.name = workflowData.name;
-      newParsedYaml.spec = oldParsedYaml.spec.workflowSpec;
       newParsedYaml.metadata.namespace = workflowData.namespace;
+      newParsedYaml.spec = oldParsedYaml.spec.workflowSpec;
       const NewYaml = YAML.stringify(newParsedYaml);
       workflow.setWorkflowDetails({
         link: NewLink,
@@ -221,6 +228,9 @@ const CustomStepper = () => {
   }
 
   const handleNext = () => {
+    if (activeStep === 1) {
+      workflow.setWorkflowDetails({ isBack: false });
+    }
     if (activeStep === 2) {
       const tests = parsed(yaml);
       const arr: experimentMap[] = [];
@@ -240,8 +250,8 @@ const CustomStepper = () => {
       } else {
         const yamlData = YAML.parse(yaml);
         workflow.setWorkflowDetails({
-          namespace: yamlData.metadata.namespace,
           weights: arr,
+          namespace: yamlData.metadata.namespace,
         });
         setinValidYaml(false);
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -249,6 +259,8 @@ const CustomStepper = () => {
     } else if (activeStep === 4) {
       EditYaml();
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    } else if (activeStep === 0 && clusterid === '') {
+      setIsAlertOpen(true);
     } else {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
@@ -257,6 +269,11 @@ const CustomStepper = () => {
   const [open, setOpen] = React.useState(false);
 
   const handleBack = () => {
+    if (activeStep === 2) {
+      workflow.setWorkflowDetails({ isBack: true });
+    } else {
+      workflow.setWorkflowDetails({ isBack: false });
+    }
     if (activeStep === 2) {
       setinValidYaml(false);
     } else if (activeStep === 4 && isDisable === true) {
@@ -329,15 +346,14 @@ const CustomStepper = () => {
           align="center"
           style={{ marginTop: '10rem', marginBottom: '3rem' }}
         >
-          Missing sufficient permissions :(
+          {t(`schedule.missingPerm`)}
         </Typography>
         <Typography variant="h6" align="center">
-          Looks like you do not have the required permission to create a new
-          workflow on this project.
+          {t(`schedule.requiredPerm`)}
         </Typography>
         <br />
         <Typography variant="body1" align="center">
-          Contact portal administrator to upgrade your permission.
+          {t(`schedule.contact`)}
         </Typography>
 
         {/* Back Button */}
@@ -348,15 +364,80 @@ const CustomStepper = () => {
             marginTop: '1rem',
           }}
         >
-          <ButtonFilled isPrimary handleClick={() => history.goBack()}>
-            Go Back
-          </ButtonFilled>
+          <ButtonFilled onClick={() => history.goBack()}>Go Back</ButtonFilled>
         </div>
       </>
     );
 
+  /** 
+    Control Buttons
+    ------------------------------------------------------------------------------
+    When active step is zero (First Step) there won't be a Back button
+    When active step is the last step in the stepper the button will change to Finish
+    All steps in the middle will have next and back buttons
+  * */
+
+  const ControlButton: React.FC<ControlButtonProps> = ({ position }) => {
+    return (
+      <>
+        {activeStep === 0 && position === 'top' ? ( // Only show Next button at Top for Step 0
+          <ButtonFilled onClick={() => handleNext()}>Next</ButtonFilled>
+        ) : activeStep === 0 && position !== 'top' ? ( // Don't show Next button at Bottom for Step 0
+          <></>
+        ) : activeStep === steps.length - 1 ? ( // Show Finish button at Bottom for Last Step
+          <ButtonFilled
+            disabled={validateWorkflowName(name)}
+            onClick={handleOpen}
+          >
+            Finish
+          </ButtonFilled>
+        ) : position === 'top' ? ( // Apply headerButtonWrapper style for top button's div
+          <div className={classes.headerButtonWrapper} aria-label="buttons">
+            <ButtonOutlined onClick={() => handleBack()}>Back</ButtonOutlined>
+            <ButtonFilled onClick={() => handleNext()} disabled={isDisable}>
+              Next
+            </ButtonFilled>
+          </div>
+        ) : (
+          // Apply bottomButtonWrapper style for top button's div
+          <div className={classes.bottomButtonWrapper} aria-label="buttons">
+            <ButtonOutlined onClick={() => handleBack()}>Back</ButtonOutlined>
+            <ButtonFilled onClick={() => handleNext()} disabled={isDisable}>
+              Next
+            </ButtonFilled>
+          </div>
+        )}
+      </>
+    );
+  };
+
   return (
-    <div className={classes.root}>
+    <div>
+      {/* Alert */}
+      {isAlertOpen ? (
+        <Snackbar
+          open={isAlertOpen}
+          autoHideDuration={6000}
+          onClose={() => setIsAlertOpen(false)}
+        >
+          <Alert onClose={() => setIsAlertOpen(false)} severity="error">
+            {t(`workflowStepper.step1.errorSnackbar`)}
+          </Alert>
+        </Snackbar>
+      ) : (
+        <></>
+      )}
+      {/* Header */}
+      <div className={classes.headWrapper}>
+        <Row justifyContent="space-between">
+          <Typography className={classes.header}>
+            {t(`workflowStepper.scheduleNewChaosWorkflow`)}
+          </Typography>
+          <ControlButton position="top" />
+        </Row>
+      </div>
+      <br />
+      {/* Stepper */}
       <Stepper
         activeStep={activeStep}
         connector={<QontoConnector />}
@@ -373,7 +454,14 @@ const CustomStepper = () => {
               </StepLabel>
             ) : (
               <StepLabel StepIconComponent={QontoStepIcon}>
-                <div className={classes.normalLabel} data-cy="labelText">
+                <div
+                  className={
+                    i > activeStep
+                      ? classes.normalLabel
+                      : classes.completedLabel
+                  }
+                  data-cy="labelText"
+                >
                   {label}
                 </div>
               </StepLabel>
@@ -384,17 +472,25 @@ const CustomStepper = () => {
       <div>
         <div>
           <div>
-            <Unimodal
+            <Modal
               open={open}
-              handleClose={handleClose}
+              onClose={handleClose}
+              width="60%"
               aria-labelledby="simple-modal-title"
               aria-describedby="simple-modal-description"
-              hasCloseBtn
+              modalActions={
+                <ButtonOutlined
+                  className={classes.closeButton}
+                  onClick={handleClose}
+                >
+                  &#x2715;
+                </ButtonOutlined>
+              }
             >
-              <div>
+              <div className={classes.modal}>
                 <img
-                  src="/icons/finish.svg"
-                  className={classes.mark}
+                  src="./icons/finish.svg"
+                  // className={classes.mark}
                   alt="mark"
                 />
                 <div className={classes.heading}>
@@ -410,9 +506,8 @@ const CustomStepper = () => {
                 </div>
                 <div className={classes.button}>
                   <ButtonFilled
-                    isPrimary
                     data-cy="selectFinish"
-                    handleClick={() => {
+                    onClick={() => {
                       setOpen(false);
                       tabs.changeWorkflowsTabs(0);
                       history.push('/workflows');
@@ -422,46 +517,13 @@ const CustomStepper = () => {
                   </ButtonFilled>
                 </div>
               </div>
-            </Unimodal>
+            </Modal>
             {getStepContent(activeStep, (page: number) => gotoStep({ page }))}
           </div>
           {/* Control Buttons */}
-          {activeStep !== 0 ? (
-            <div className={classes.buttonGroup}>
-              <ButtonOutline isDisabled={false} handleClick={handleBack}>
-                <Typography>Back</Typography>
-              </ButtonOutline>
-              {activeStep === steps.length - 1 ? (
-                <ButtonFilled
-                  isDisabled={validateWorkflowName(name)}
-                  handleClick={handleOpen}
-                  isPrimary
-                >
-                  <div>Finish</div>
-                </ButtonFilled>
-              ) : (
-                <ButtonFilled
-                  handleClick={() => handleNext()}
-                  isPrimary
-                  isDisabled={isDisable}
-                >
-                  <div>
-                    Next
-                    <img
-                      alt="next"
-                      src="icons/nextArrow.svg"
-                      className={classes.nextArrow}
-                    />
-                  </div>
-                </ButtonFilled>
-              )}
-              {invalidYaml ? (
-                <Typography className={classes.yamlError}>
-                  <strong>{t('workflowStepper.continueError')}</strong>
-                </Typography>
-              ) : null}
-            </div>
-          ) : null}
+          <div className={classes.bottomWrapper}>
+            <ControlButton position="bottom" />
+          </div>
         </div>
       </div>
     </div>
