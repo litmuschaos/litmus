@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/99designs/gqlgen/graphql"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 )

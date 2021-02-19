@@ -1,6 +1,6 @@
 package types
 
-//SubscriberConfigurationVars contains the required configurable parameters for subscriber installation
+// SubscriberConfigurationVars contains the required configurable parameters for subscriber installation
 type SubscriberConfigurationVars struct {
 	AgentNamespace          string
 	AgentScope              string

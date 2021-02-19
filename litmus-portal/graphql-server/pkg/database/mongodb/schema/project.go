@@ -2,7 +2,7 @@ package schema
 
 import "github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 
-//Project ...
+// Project ...
 type Project struct {
 	ID        string    `bson:"_id"`
 	Name      string    `bson:"name"`

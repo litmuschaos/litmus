@@ -3,13 +3,15 @@ package operations
 import (
 	"context"
 	"errors"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
-	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
+	"log"
+	"time"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
-	"time"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 )
 
 var (

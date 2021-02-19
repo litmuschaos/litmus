@@ -4,13 +4,6 @@ package handler
 import (
 	"context"
 	"errors"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/ops"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
-	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
-
-	"github.com/tidwall/gjson"
-	"github.com/tidwall/sjson"
 	"io/ioutil"
 	"os"
 	"strconv"
@@ -18,12 +11,21 @@ import (
 	"sync"
 	"time"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/ops"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
+	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
+	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
+
+	"github.com/tidwall/gjson"
+	"github.com/tidwall/sjson"
+
 	"github.com/ghodss/yaml"
+	log "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops"
-	log "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 const timeout = time.Second * 5

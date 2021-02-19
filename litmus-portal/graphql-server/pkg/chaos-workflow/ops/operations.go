@@ -3,28 +3,30 @@ package ops
 import (
 	"encoding/json"
 	"errors"
-	"github.com/ghodss/yaml"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/ghodss/yaml"
+
 	"github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
-	chaostypes "github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
-	cluster_handler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
-	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
-	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
+	chaosTypes "github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	"github.com/tidwall/gjson"
 	"go.mongodb.org/mongo-driver/bson"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	clusterOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
+	clusterHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
+	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
+	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
+	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 )
 
-//ProcessWorkflow takes the workflow and processes it as required
+// ProcessWorkflow takes the workflow and processes it as required
 func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowInput, error) {
 	// security check for cluster access
 	cluster, err := dbOperations.GetCluster(workflow.ClusterID)
@@ -85,7 +87,7 @@ func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowIn
 					data = strings.ReplaceAll(data, "{{", "")
 					data = strings.ReplaceAll(data, "}}", "")
 
-					var meta chaostypes.ChaosEngine
+					var meta chaosTypes.ChaosEngine
 					err := yaml.Unmarshal([]byte(data), &meta)
 					if err != nil {
 						return nil, errors.New("failed to unmarshal chaosengine")
@@ -165,7 +167,7 @@ func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowIn
 					data = strings.ReplaceAll(data, "{{", "")
 					data = strings.ReplaceAll(data, "}}", "")
 
-					var meta chaostypes.ChaosEngine
+					var meta chaosTypes.ChaosEngine
 					err = yaml.Unmarshal([]byte(data), &meta)
 					if err != nil {
 						return nil, errors.New("failed to unmarshal chaosengine")
@@ -218,7 +220,7 @@ func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowIn
 	return workflow, nil
 }
 
-//ProcessWorkflowCreation creates new workflow entry and sends the workflow to the specific agent for execution
+// ProcessWorkflowCreation creates new workflow entry and sends the workflow to the specific agent for execution
 func ProcessWorkflowCreation(input *model.ChaosWorkFlowInput, r *store.StateData) error {
 	var Weightages []*dbSchema.WeightagesInput
 	if input.Weightages != nil {
@@ -307,7 +309,7 @@ func SendWorkflowToSubscriber(workflow *model.ChaosWorkFlowInput, reqType string
 	if workflowNamespace == "" {
 		workflowNamespace = os.Getenv("AGENT_NAMESPACE")
 	}
-	cluster_handler.SendRequestToSubscriber(cluster.SubscriberRequests{
+	clusterHandler.SendRequestToSubscriber(clusterOps.SubscriberRequests{
 		K8sManifest: workflow.WorkflowManifest,
 		RequestType: reqType,
 		ProjectID:   workflow.ProjectID,

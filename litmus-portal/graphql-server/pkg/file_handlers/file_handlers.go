@@ -1,15 +1,17 @@
 package file_handlers
 
 import (
+	"log"
+	"net/http"
+	"os"
+
 	"github.com/gorilla/mux"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/types"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
-	"log"
-	"net/http"
-	"os"
 )
 
 var subscriberConfiguration = &types.SubscriberConfigurationVars{
@@ -24,7 +26,7 @@ var subscriberConfiguration = &types.SubscriberConfigurationVars{
 	ChaosRunnerImage:        os.Getenv("LITMUS_CHAOS_RUNNER_IMAGE"),
 }
 
-//FileHandler dynamically generates the manifest file and sends it as a response
+// FileHandler dynamically generates the manifest file and sends it as a response
 func FileHandler(w http.ResponseWriter, r *http.Request) {
 	var (
 		vars  = mux.Vars(r)

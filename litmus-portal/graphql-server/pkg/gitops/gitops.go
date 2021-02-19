@@ -20,6 +20,11 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/transport"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/go-git/go-git/v5/plumbing/transport/ssh"
+	log "github.com/sirupsen/logrus"
+	"github.com/tidwall/gjson"
+	"go.mongodb.org/mongo-driver/bson"
+	ssh2 "golang.org/x/crypto/ssh"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/ops"
@@ -27,13 +32,9 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
 	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
-	log "github.com/sirupsen/logrus"
-	"github.com/tidwall/gjson"
-	"go.mongodb.org/mongo-driver/bson"
-	ssh2 "golang.org/x/crypto/ssh"
 )
 
-//GitConfig structure for the GitOps settings
+// GitConfig structure for the GitOps settings
 type GitConfig struct {
 	ProjectID     string
 	RepositoryURL string

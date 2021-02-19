@@ -3,17 +3,19 @@ package handler
 import (
 	"errors"
 	"fmt"
+	"log"
+	"strconv"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
+	"go.mongodb.org/mongo-driver/bson"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/ops/prometheus"
 	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
 	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
-	"go.mongodb.org/mongo-driver/bson"
-	"log"
-	"strconv"
-	"time"
 )
 
 func CreateDataSource(datasource *model.DSInput) (*model.DSResponse, error) {

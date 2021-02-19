@@ -1,27 +1,29 @@
 package handler
 
 import (
-	"github.com/google/uuid"
-	"github.com/jinzhu/copier"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
-	cluster_ops "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
-	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
-	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
-	"github.com/pkg/errors"
-	"go.mongodb.org/mongo-driver/bson"
 	"log"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/jinzhu/copier"
+	"github.com/pkg/errors"
+	"go.mongodb.org/mongo-driver/bson"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	clusterOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
+	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
+	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
+	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 )
 
-//ClusterRegister creates an entry for a new cluster in DB and generates the url used to apply manifest
+// ClusterRegister creates an entry for a new cluster in DB and generates the url used to apply manifest
 func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error) {
 	clusterID := uuid.New().String()
 
-	token, err := cluster_ops.ClusterCreateJWT(clusterID)
+	token, err := clusterOps.ClusterCreateJWT(clusterID)
 	if err != nil {
 		return &model.ClusterRegResponse{}, err
 	}
@@ -59,7 +61,7 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 	}, nil
 }
 
-//ConfirmClusterRegistration takes the cluster_id and access_key from the subscriber and validates it, if validated generates and sends new access_key
+// ConfirmClusterRegistration takes the cluster_id and access_key from the subscriber and validates it, if validated generates and sends new access_key
 func ConfirmClusterRegistration(identity model.ClusterIdentity, r store.StateData) (*model.ClusterConfirmResponse, error) {
 	cluster, err := dbOperations.GetCluster(identity.ClusterID)
 	if err != nil {
@@ -91,7 +93,7 @@ func ConfirmClusterRegistration(identity model.ClusterIdentity, r store.StateDat
 	return &model.ClusterConfirmResponse{IsClusterConfirmed: false}, err
 }
 
-//NewEvent takes a event from a subscriber, validates identity and broadcasts the event to the users
+// NewEvent takes a event from a subscriber, validates identity and broadcasts the event to the users
 func NewEvent(clusterEvent model.ClusterEventInput, r store.StateData) (string, error) {
 	cluster, err := dbOperations.GetCluster(clusterEvent.ClusterID)
 	if err != nil {
@@ -147,7 +149,7 @@ func DeleteCluster(clusterID string, r store.StateData) (string, error) {
 	}
 
 	for _, request := range requests {
-		SendRequestToSubscriber(cluster_ops.SubscriberRequests{
+		SendRequestToSubscriber(clusterOps.SubscriberRequests{
 			K8sManifest: request,
 			RequestType: "delete",
 			ProjectID:   cluster.ProjectID,
@@ -208,7 +210,7 @@ func SendClusterEvent(eventType, eventName, description string, cluster model.Cl
 }
 
 // SendRequestToSubscriber sends events from the graphQL server to the subscribers listening for the requests
-func SendRequestToSubscriber(subscriberRequest cluster_ops.SubscriberRequests, r store.StateData) {
+func SendRequestToSubscriber(subscriberRequest clusterOps.SubscriberRequests, r store.StateData) {
 	if os.Getenv("AGENT_SCOPE") == "cluster" {
 		/*
 			namespace = Obtain from WorkflowManifest or

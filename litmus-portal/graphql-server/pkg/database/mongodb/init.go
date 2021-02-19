@@ -2,15 +2,16 @@ package mongodb
 
 import (
 	"context"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"os"
 	"time"
+
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var (
-	//Database ...
+	// Database ...
 	Database *mongo.Database
 	dbName   = "litmus"
 
@@ -18,7 +19,7 @@ var (
 	err               error
 )
 
-//init initializes database connection
+// init initializes database connection
 func init() {
 
 	var (

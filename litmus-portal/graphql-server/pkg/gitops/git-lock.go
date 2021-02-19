@@ -7,13 +7,13 @@ import (
 	"sync"
 )
 
-//GitMutexLock structure for the Git MutexLock
+// GitMutexLock structure for the Git MutexLock
 type GitMutexLock struct {
 	mapMutex sync.Mutex
 	gitMutex map[string]*sync.Mutex
 }
 
-//Lock acquires a lock on particular project or repo for access
+// Lock acquires a lock on particular project or repo for access
 func (g *GitMutexLock) Lock(repo string, branch *string) {
 	key := getKey(repo, branch)
 

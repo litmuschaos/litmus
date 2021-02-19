@@ -12,13 +12,14 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
+	"github.com/rs/cors"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/file_handlers"
 	gitops_handler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
-	"github.com/rs/cors"
 )
 
 const defaultPort = "8080"

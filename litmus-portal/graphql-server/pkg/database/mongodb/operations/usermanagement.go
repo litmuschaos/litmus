@@ -4,11 +4,12 @@ import (
 	"context"
 	"log"
 
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
-	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 )
 
 var userCollection *mongo.Collection
@@ -32,7 +33,7 @@ func InsertUser(ctx context.Context, user *dbSchema.User) error {
 //GetUserByUserName ...
 func GetUserByUserName(ctx context.Context, username string) (*dbSchema.User, error) {
 	// ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	var user *dbSchema.User = new(dbSchema.User)
+	var user = new(dbSchema.User)
 	query := bson.M{"username": username}
 	err := userCollection.FindOne(ctx, query).Decode(user)
 	if err != nil {

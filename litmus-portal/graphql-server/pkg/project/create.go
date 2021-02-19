@@ -9,12 +9,13 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 
 	"github.com/google/uuid"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
 	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 )
 
-//CreateProjectWithUser ...
+// CreateProjectWithUser ...
 func CreateProjectWithUser(ctx context.Context, projectName string, user *dbSchema.User) (*model.Project, error) {
 
 	uuid := uuid.New()

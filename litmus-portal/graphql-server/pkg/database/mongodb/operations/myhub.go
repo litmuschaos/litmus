@@ -5,10 +5,11 @@ import (
 	"errors"
 	"log"
 
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
-	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 )
 
 var myhubCollection *mongo.Collection
@@ -17,7 +18,7 @@ func init() {
 	myhubCollection = mongodb.Database.Collection("myhub")
 }
 
-//CreateMyHub ...
+// CreateMyHub ...
 func CreateMyHub(ctx context.Context, myhub *dbSchema.MyHub) error {
 	_, err := myhubCollection.InsertOne(ctx, myhub)
 	if err != nil {
@@ -27,7 +28,7 @@ func CreateMyHub(ctx context.Context, myhub *dbSchema.MyHub) error {
 	return nil
 }
 
-//GetMyHubByProjectID ...
+// GetMyHubByProjectID ...
 func GetMyHubByProjectID(ctx context.Context, projectID string) ([]dbSchema.MyHub, error) {
 	query := bson.M{"project_id": projectID, "IsRemoved": false}
 	cursor, err := myhubCollection.Find(ctx, query)

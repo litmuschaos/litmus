@@ -4,28 +4,30 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/google/uuid"
-	"github.com/gorilla/mux"
-	"github.com/jinzhu/copier"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
-	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
-	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/handler"
-	myhub_ops "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/ops"
-	"go.mongodb.org/mongo-driver/bson"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/gorilla/mux"
+	"github.com/jinzhu/copier"
+	"go.mongodb.org/mongo-driver/bson"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
+	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/handler"
+	myHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/ops"
 )
 
 const (
 	timeInterval = 6 * time.Hour
 )
 
-//AddMyHub is used for Adding a new MyHub
+// AddMyHub is used for Adding a new MyHub
 func AddMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (*model.MyHub, error) {
 
 	IsExist, err := IsMyHubAvailable(ctx, myhub.HubName, projectID)
@@ -49,13 +51,13 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (*
 		SSHPrivateKey: myhub.SSHPrivateKey,
 	}
 
-	//Cloning the repository at a path from myhub link structure.
-	err = myhub_ops.GitClone(cloneHub)
+	// Cloning the repository at a path from myhub link structure.
+	err = myHubOps.GitClone(cloneHub)
 	if err != nil {
 		return nil, err
 	}
 
-	//Initialize a UID for new Hub.
+	// Initialize a UID for new Hub.
 	uuid := uuid.New()
 	newHub := &dbSchema.MyHub{
 		ID:            uuid.String(),
@@ -214,7 +216,7 @@ func GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.
 	ChartsPath := handler.GetChartsPath(ctx, chartsInput)
 	ChartsData, err := handler.GetChartsData(ChartsPath)
 	if err != nil {
-		err = myhub_ops.GitClone(chartsInput)
+		err = myHubOps.GitClone(chartsInput)
 		if err != nil {
 			return nil, err
 		}
@@ -263,7 +265,7 @@ func SyncHub(ctx context.Context, hubID string) ([]*model.MyHubStatus, error) {
 	query := bson.D{{"myhub_id", hubID}, {"IsRemoved", false}}
 	update := bson.D{{"$set", bson.D{{"last_synced_at", time}}}}
 
-	err = myhub_ops.GitSyncHandlerForProjects(syncHubInput)
+	err = myHubOps.GitSyncHandlerForProjects(syncHubInput)
 	if err != nil {
 		return nil, err
 	}
@@ -333,12 +335,12 @@ func UpdateMyHub(ctx context.Context, myhub model.UpdateMyHub, projectID string)
 	// Syncing/Cloning the repository at a path from myhub link structure.
 	if prevMyHub.RepoURL != myhub.RepoURL || prevMyHub.RepoBranch != myhub.RepoBranch || prevMyHub.IsPrivate != myhub.IsPrivate || prevMyHub.AuthType != myhub.AuthType.String() {
 		fmt.Println(myhub.AuthType.String())
-		err := myhub_ops.GitClone(cloneHub)
+		err := myHubOps.GitClone(cloneHub)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		err := myhub_ops.GitSyncHandlerForProjects(cloneHub)
+		err := myHubOps.GitSyncHandlerForProjects(cloneHub)
 		if err != nil {
 			return nil, err
 		}
@@ -416,7 +418,7 @@ func RecurringHubSync() {
 				SSHPrivateKey: myhub.SSHPrivateKey,
 			}
 
-			myhub_ops.GitSyncHandlerForProjects(chartsInput)
+			myHubOps.GitSyncHandlerForProjects(chartsInput)
 		}
 
 		//Syncing Completed

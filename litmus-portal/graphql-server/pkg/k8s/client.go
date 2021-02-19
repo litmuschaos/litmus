@@ -1,12 +1,13 @@
 package k8s
 
 import (
+	"os"
+
 	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
-	"os"
 )
 
 func GetKubeConfig() (*rest.Config, error) {

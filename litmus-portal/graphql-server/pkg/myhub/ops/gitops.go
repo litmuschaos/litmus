@@ -2,20 +2,22 @@ package myhub_ops
 
 import (
 	"fmt"
+	"os"
+	"strings"
+
 	ssh2 "golang.org/x/crypto/ssh"
 	"gopkg.in/src-d/go-git.v4/plumbing/transport"
 	"gopkg.in/src-d/go-git.v4/plumbing/transport/http"
 	"gopkg.in/src-d/go-git.v4/plumbing/transport/ssh"
-	"os"
-	"strings"
 
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 )
 
-//MyHubConfig ...
+// MyHubConfig ...
 type MyHubConfig struct {
 	ProjectID     string
 	RepositoryURL string

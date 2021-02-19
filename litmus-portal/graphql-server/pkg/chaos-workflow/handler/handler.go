@@ -17,7 +17,7 @@ import (
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
 	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
-	gitops_handler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
+	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
 )
 
 func CreateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *store.StateData) (*model.ChaosWorkFlowResponse, error) {
@@ -27,8 +27,8 @@ func CreateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r
 		return nil, err
 	}
 
-	// Gitops Update
-	err = gitops_handler.UpsertWorkflowToGit(ctx, input)
+	// GitOps Update
+	err = gitOpsHandler.UpsertWorkflowToGit(ctx, input)
 	if err != nil {
 		log.Print("Error performing git push: ", err)
 		return nil, err
@@ -62,8 +62,8 @@ func DeleteWorkflow(ctx context.Context, workflow_id string, r *store.StateData)
 		WorkflowName: workflows[0].WorkflowName,
 	}
 
-	//gitops delete
-	err = gitops_handler.DeleteWorkflowFromGit(ctx, &wf)
+	// gitOps delete
+	err = gitOpsHandler.DeleteWorkflowFromGit(ctx, &wf)
 	if err != nil {
 		log.Print("Error performing git push: ", err)
 		return false, err
@@ -84,8 +84,8 @@ func UpdateWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *sto
 		return nil, err
 	}
 
-	// Gitops Update
-	err = gitops_handler.UpsertWorkflowToGit(ctx, input)
+	// GitOps Update
+	err = gitOpsHandler.UpsertWorkflowToGit(ctx, input)
 	if err != nil {
 		log.Print("Error performing git push: ", err)
 		return nil, err
@@ -106,7 +106,7 @@ func UpdateWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *sto
 	}, nil
 }
 
-//GetWorkflowRuns sends all the workflow runs for a project from the DB
+// GetWorkflowRuns sends all the workflow runs for a project from the DB
 func QueryWorkflowRuns(project_id string) ([]*model.WorkflowRun, error) {
 	workflows, err := dbOperations.GetWorkflows(bson.D{{"project_id", project_id}})
 	if err != nil {
@@ -267,7 +267,7 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		return "", err
 	}
 
-	//err = dbOperations.UpdateWorkflowRun(dbOperations.WorkflowRun(newWorkflowRun))
+	// err = dbOperations.UpdateWorkflowRun(dbOperations.WorkflowRun(newWorkflowRun))
 	count, err := dbOperations.UpdateWorkflowRun(input.WorkflowID, dbSchema.WorkflowRun{
 		WorkflowRunID: input.WorkflowRunID,
 		LastUpdated:   strconv.FormatInt(time.Now().Unix(), 10),
@@ -318,7 +318,7 @@ func LogsHandler(podLog model.PodLog, r store.StateData) (string, error) {
 	return "LOG REQUEST CANCELLED", nil
 }
 
-//GetLogs query is used to fetch the logs from the cluster
+// GetLogs query is used to fetch the logs from the cluster
 func GetLogs(reqID string, pod model.PodLogRequest, r store.StateData) {
 	data, err := json.Marshal(pod)
 	if err != nil {

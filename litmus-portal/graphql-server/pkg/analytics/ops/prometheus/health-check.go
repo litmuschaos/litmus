@@ -2,9 +2,10 @@ package prometheus
 
 import (
 	"bytes"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics"
 	"log"
 	"net/http"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics"
 )
 
 const (

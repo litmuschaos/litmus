@@ -6,11 +6,12 @@ import (
 	"log"
 	"time"
 
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
-	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 )
 
 var (

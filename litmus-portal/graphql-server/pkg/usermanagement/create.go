@@ -8,17 +8,19 @@ import (
 	"strings"
 	"time"
 
-	self_deployer "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/self-deployer"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	selfDeployer "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/self-deployer"
+
 	"github.com/google/uuid"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
 	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
 )
 
-//CreateUser ...
+// CreateUser ...
 func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error) {
 
 	var (
@@ -57,7 +59,7 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 
 	if strings.ToLower(self_cluster) == "true" && strings.ToLower(outputUser.Username) == "admin" {
 		log.Print("Starting self deployer")
-		go self_deployer.StartDeployer(project.ID)
+		go selfDeployer.StartDeployer(project.ID)
 	}
 
 	return outputUser, nil
