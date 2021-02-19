@@ -112,7 +112,7 @@ function getStepContent(
     case 0:
       return <ChooseAWorkflowAgent />;
     case 1:
-      return <ChooseWorkflow isEditable={false} />;
+      return <ChooseWorkflow />;
     case 2:
       return <TuneWorkflow />;
     case 3:

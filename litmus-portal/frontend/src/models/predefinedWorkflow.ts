@@ -2,7 +2,7 @@ import React from 'react';
 
 export interface preDefinedWorkflowData {
   chaosWkfCRDLink?: string;
-  title?: string;
+  title: string;
   urlToIcon?: string;
   gitLink?: string;
   handleClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;

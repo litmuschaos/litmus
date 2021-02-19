@@ -43,6 +43,7 @@ const initialState: WorkflowData = {
   customWorkflows: [],
   stepperActiveStep: 1,
   clustername: '',
+  workflowIcon: '',
 };
 
 export const workflowData = createReducer<WorkflowData>(initialState, {
