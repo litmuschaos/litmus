@@ -47,6 +47,7 @@ export interface WorkflowData {
   customWorkflow: customWorkflow;
   customWorkflows: customWorkflow[];
   stepperActiveStep: number;
+  workflowIcon: string;
 }
 
 export enum WorkflowActions {

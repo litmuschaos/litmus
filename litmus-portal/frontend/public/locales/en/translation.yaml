@@ -386,12 +386,23 @@ homeView:
 
 createWorkflow:
   chooseWorkflow:
+    title: Start creating your chaos workflow
+    subtitle: Simulate the workflow run and see the suggested reliability score
     header: Select or design workflow
     info: Select one of the pre-defined chaos workflows or design your own workflow.
     preDefined: pre-defined workflows
     saved: Name saved as
     modalHeading: Create your
     modalHeadingStrong: workflow name
+    settings: Workflow Settings
+    description: You have selected a pre-defined workflow Kafka Chaos. Provide a name and description to the new workflow.
+    edit: Edit Photo
+    changeImage: Change workflow logo
+    changeImgDescription: You can choose a logo from given below
+    saveChanges: Save Changes
+    imageNotChanged: You have not changed the image.
+    continue: Do you want to continue?
+    continueBtn: Continue
     validate: Workflow name can only contain - and alphanumeric characters
     label:
       workflowName: Workflow name
@@ -665,15 +676,16 @@ customWorkflow:
     construct: Using experiments from MyHub
     upload: Upload your
     yaml: YAML
-    uploadFile: Upload File
+    uploadFile: Select YAML file from your device
     uploadSuccess: Successfully uploaded
-    drag: Drag & Drop here
+    drag: Drag & Drop YAML file to upload
     chooseExp: Choose the experiment
     loadingExp: Loading Experiments, please wait...
     selectExp: Select the experiment
     selectAnExp: Select an experiment
     noExp: No experiments found
     nextBtn: Next
+
   scheduleWorkflow:
     scheduleHeader: Schedule a new chaos workflow
     addedExp: Your added experiments to the workflow

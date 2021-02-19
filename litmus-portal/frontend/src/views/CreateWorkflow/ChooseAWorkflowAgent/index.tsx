@@ -58,6 +58,7 @@ const ChooseWorkflowAgent: React.FC = () => {
                 time: new Date(),
                 date: new Date(),
               },
+              workflowIcon: '',
             });
           }
         });
@@ -115,7 +116,11 @@ const ChooseWorkflowAgent: React.FC = () => {
           </div>
           {/* Dart Icon */}
           <div aria-label="headerRight">
-            <img src="./icons/dart.svg" className={classes.check} alt="Check" />
+            <img
+              src="./icons/check.png"
+              className={classes.check}
+              alt="Check"
+            />
           </div>
         </div>
 
