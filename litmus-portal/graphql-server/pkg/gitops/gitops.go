@@ -476,7 +476,7 @@ func SyncDBToGit(ctx context.Context, config GitConfig) error {
 	}
 	log.Print(latestCommit, " ", config.LatestCommit, "File Changes: ", files)
 	newWorkflows := false
-	for file, _ := range files {
+	for file := range files {
 		if !strings.HasSuffix(file, ".yaml") {
 			continue
 		}
