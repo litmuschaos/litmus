@@ -1,5 +1,6 @@
 package schema
 
+// Cluster contains the required fields to be stored in the database for a cluster
 type Cluster struct {
 	ClusterID          string  `bson:"cluster_id"`
 	ProjectID          string  `bson:"project_id"`

@@ -1,33 +1,27 @@
 package handler
 
 import (
-	"log"
-	"strconv"
-	"time"
-
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/types"
-
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
-
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	cluster_ops "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-
-	"github.com/pkg/errors"
-	"go.mongodb.org/mongo-driver/bson"
-
 	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
-
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+	"github.com/pkg/errors"
+	"go.mongodb.org/mongo-driver/bson"
+	"log"
+	"os"
+	"strconv"
+	"time"
 )
 
 //ClusterRegister creates an entry for a new cluster in DB and generates the url used to apply manifest
 func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error) {
 	clusterID := uuid.New().String()
 
-	token, err := cluster.ClusterCreateJWT(clusterID)
+	token, err := cluster_ops.ClusterCreateJWT(clusterID)
 	if err != nil {
 		return &model.ClusterRegResponse{}, err
 	}
@@ -117,17 +111,18 @@ func NewEvent(clusterEvent model.ClusterEventInput, r store.StateData) (string, 
 	return "", errors.New("ERROR WITH CLUSTER EVENT")
 }
 
-func DeleteCluster(cluster_id string, r store.StateData) (string, error) {
+// DeleteCluster takes clusterID and r parameters, deletes the cluster from the database and sends a request to the subscriber for clean-up
+func DeleteCluster(clusterID string, r store.StateData) (string, error) {
 	time := strconv.FormatInt(time.Now().Unix(), 10)
 
-	query := bson.D{{"cluster_id", cluster_id}}
+	query := bson.D{{"cluster_id", clusterID}}
 	update := bson.D{{"$set", bson.D{{"is_removed", true}, {"updated_at", time}}}}
 
 	err := dbOperations.UpdateCluster(query, update)
 	if err != nil {
 		return "", err
 	}
-	cluster, err := dbOperations.GetCluster(cluster_id)
+	cluster, err := dbOperations.GetCluster(clusterID)
 	if err != nil {
 		return "", nil
 	}
@@ -152,11 +147,11 @@ func DeleteCluster(cluster_id string, r store.StateData) (string, error) {
 	}
 
 	for _, request := range requests {
-		utils.SendRequestToSubscriber(types.SubscriberRequests{
+		SendRequestToSubscriber(cluster_ops.SubscriberRequests{
 			K8sManifest: request,
 			RequestType: "delete",
 			ProjectID:   cluster.ProjectID,
-			ClusterID:   cluster_id,
+			ClusterID:   clusterID,
 			Namespace:   *cluster.AgentNamespace,
 		}, r)
 	}
@@ -164,6 +159,7 @@ func DeleteCluster(cluster_id string, r store.StateData) (string, error) {
 	return "Successfully deleted cluster", nil
 }
 
+// QueryGetClusters takes a projectID and clusterType to filter and return a list of clusters
 func QueryGetClusters(projectID string, clusterType *string) ([]*model.Cluster, error) {
 	clusters, err := dbOperations.GetClusterWithProjectID(projectID, clusterType)
 	if err != nil {
@@ -208,5 +204,32 @@ func SendClusterEvent(eventType, eventName, description string, cluster model.Cl
 			observer <- &newEvent
 		}
 	}
+	r.Mutex.Unlock()
+}
+
+// SendRequestToSubscriber sends events from the graphQL server to the subscribers listening for the requests
+func SendRequestToSubscriber(subscriberRequest cluster_ops.SubscriberRequests, r store.StateData) {
+	if os.Getenv("AGENT_SCOPE") == "cluster" {
+		/*
+			namespace = Obtain from WorkflowManifest or
+			from frontend as a separate workflowNamespace field under ChaosWorkFlowInput model
+			for CreateChaosWorkflow mutation to be passed to this function.
+		*/
+	}
+	newAction := &model.ClusterAction{
+		ProjectID: subscriberRequest.ProjectID,
+		Action: &model.ActionPayload{
+			K8sManifest: subscriberRequest.K8sManifest,
+			Namespace:   subscriberRequest.Namespace,
+			RequestType: subscriberRequest.RequestType,
+		},
+	}
+
+	r.Mutex.Lock()
+
+	if observer, ok := r.ConnectedCluster[subscriberRequest.ClusterID]; ok {
+		observer <- newAction
+	}
+
 	r.Mutex.Unlock()
 }

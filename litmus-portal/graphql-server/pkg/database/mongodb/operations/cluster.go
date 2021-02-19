@@ -22,6 +22,7 @@ func init() {
 	clusterCollection = mongodb.Database.Collection("cluster-collection")
 }
 
+// InsertCluster takes details of a cluster and inserts into the database collection
 func InsertCluster(cluster dbSchema.Cluster) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	_, err := clusterCollection.InsertOne(ctx, cluster)
@@ -32,9 +33,10 @@ func InsertCluster(cluster dbSchema.Cluster) error {
 	return nil
 }
 
-func GetCluster(cluster_id string) (dbSchema.Cluster, error) {
+// GetCluster takes a clusterID to retrieve the cluster details from the database
+func GetCluster(clusterID string) (dbSchema.Cluster, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	query := bson.M{"cluster_id": cluster_id}
+	query := bson.M{"cluster_id": clusterID}
 
 	var cluster dbSchema.Cluster
 	err = clusterCollection.FindOne(ctx, query).Decode(&cluster)
@@ -45,6 +47,7 @@ func GetCluster(cluster_id string) (dbSchema.Cluster, error) {
 	return cluster, nil
 }
 
+// UpdateCluster takes query and update parameters to update the cluster details in the database
 func UpdateCluster(query bson.D, update bson.D) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
@@ -56,13 +59,14 @@ func UpdateCluster(query bson.D, update bson.D) error {
 	return nil
 }
 
-func GetClusterWithProjectID(project_id string, cluster_type *string) ([]*dbSchema.Cluster, error) {
+// GetClusterWithProjectID takes projectID and clusterType parameters to retrieve the cluster details from the database
+func GetClusterWithProjectID(projectID string, clusterType *string) ([]*dbSchema.Cluster, error) {
 
 	var query bson.M
-	if cluster_type == nil {
-		query = bson.M{"project_id": project_id, "is_removed": false}
+	if clusterType == nil {
+		query = bson.M{"project_id": projectID, "is_removed": false}
 	} else {
-		query = bson.M{"project_id": project_id, "cluster_type": cluster_type, "is_removed": false}
+		query = bson.M{"project_id": projectID, "cluster_type": clusterType, "is_removed": false}
 	}
 
 	fmt.Print(query)

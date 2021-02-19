@@ -14,11 +14,11 @@ import (
 	"github.com/jinzhu/copier"
 	chaostypes "github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
+	cluster_handler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
 	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/types"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"github.com/tidwall/gjson"
 	"go.mongodb.org/mongo-driver/bson"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -307,7 +307,7 @@ func SendWorkflowToSubscriber(workflow *model.ChaosWorkFlowInput, reqType string
 	if workflowNamespace == "" {
 		workflowNamespace = os.Getenv("AGENT_NAMESPACE")
 	}
-	utils.SendRequestToSubscriber(types.SubscriberRequests{
+	cluster_handler.SendRequestToSubscriber(cluster.SubscriberRequests{
 		K8sManifest: workflow.WorkflowManifest,
 		RequestType: reqType,
 		ProjectID:   workflow.ProjectID,
