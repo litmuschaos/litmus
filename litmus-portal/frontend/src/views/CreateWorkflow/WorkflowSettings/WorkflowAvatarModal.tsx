@@ -73,6 +73,7 @@ const WorkflowAvatarModal: React.FC<WorkflowAvatarModalProps> = ({
                 <Avatar
                   data-cy="avatar"
                   className={classes.selectAvatar}
+                  key={av}
                   alt="User"
                   src={av}
                   onClick={() => handleChange(av)}

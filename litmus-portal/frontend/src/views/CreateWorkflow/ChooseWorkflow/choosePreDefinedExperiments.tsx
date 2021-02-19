@@ -75,6 +75,7 @@ const ChoosePreDefinedExperiments = () => {
               <LitmusCard
                 width="100%"
                 height="5rem"
+                key={workflowData.workflowID}
                 borderColor={palette.border.main}
                 className={classes.predefinedWorkflowCard}
               >
