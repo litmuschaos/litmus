@@ -12,8 +12,11 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
+	"go.mongodb.org/mongo-driver/bson"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	analytics_handler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/handler"
 	wf_handler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/handler"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
@@ -26,7 +29,6 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/myhub_ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usermanagement"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (*model.ClusterRegResponse, error) {
@@ -134,31 +136,31 @@ func (r *mutationResolver) DisableGitOps(ctx context.Context, projectID string) 
 }
 
 func (r *mutationResolver) CreateDataSource(ctx context.Context, datasource *model.DSInput) (*model.DSResponse, error) {
-	return mutations.CreateDataSource(datasource)
+	return analytics_handler.CreateDataSource(datasource)
 }
 
 func (r *mutationResolver) CreateDashBoard(ctx context.Context, dashboard *model.CreateDBInput) (string, error) {
-	return mutations.CreateDashboard(dashboard)
+	return analytics_handler.CreateDashboard(dashboard)
 }
 
 func (r *mutationResolver) UpdateDataSource(ctx context.Context, datasource model.DSInput) (*model.DSResponse, error) {
-	return mutations.UpdateDataSource(datasource)
+	return analytics_handler.UpdateDataSource(datasource)
 }
 
 func (r *mutationResolver) UpdateDashboard(ctx context.Context, dashboard *model.UpdataDBInput) (string, error) {
-	return mutations.UpdateDashBoard(dashboard)
+	return analytics_handler.UpdateDashBoard(dashboard)
 }
 
 func (r *mutationResolver) UpdatePanel(ctx context.Context, panelInput []*model.Panel) (string, error) {
-	return mutations.UpdatePanel(panelInput)
+	return analytics_handler.UpdatePanel(panelInput)
 }
 
 func (r *mutationResolver) DeleteDashboard(ctx context.Context, dbID *string) (bool, error) {
-	return mutations.DeleteDashboard(dbID)
+	return analytics_handler.DeleteDashboard(dbID)
 }
 
 func (r *mutationResolver) DeleteDataSource(ctx context.Context, input model.DeleteDSInput) (bool, error) {
-	return mutations.DeleteDataSource(input)
+	return analytics_handler.DeleteDataSource(input)
 }
 
 func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) ([]*model.WorkflowRun, error) {
@@ -210,15 +212,15 @@ func (r *queryResolver) GetYAMLData(ctx context.Context, experimentInput model.E
 }
 
 func (r *queryResolver) ListDataSource(ctx context.Context, projectID string) ([]*model.DSResponse, error) {
-	return queries.QueryListDataSource(projectID)
+	return analytics_handler.QueryListDataSource(projectID)
 }
 
 func (r *queryResolver) GetPromQuery(ctx context.Context, query *model.PromInput) ([]*model.PromResponse, error) {
-	return queries.GetPromQuery(query)
+	return analytics_handler.GetPromQuery(query)
 }
 
 func (r *queryResolver) ListDashboard(ctx context.Context, projectID string) ([]*model.ListDashboardReponse, error) {
-	return queries.QueryListDashboard(projectID)
+	return analytics_handler.QueryListDashboard(projectID)
 }
 
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {

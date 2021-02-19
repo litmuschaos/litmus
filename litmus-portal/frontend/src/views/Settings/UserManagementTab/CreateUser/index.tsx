@@ -1,5 +1,5 @@
 import { Divider, IconButton, Typography } from '@material-ui/core';
-import { InputField } from 'kubera-ui';
+import { InputField } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {

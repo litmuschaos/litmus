@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/client';
 import { Typography } from '@material-ui/core';
-import { ButtonFilled } from 'kubera-ui';
+import { ButtonFilled } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';

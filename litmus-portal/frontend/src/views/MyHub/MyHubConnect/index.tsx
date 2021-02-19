@@ -10,7 +10,7 @@ import React, { useState } from 'react';
 import Done from '@material-ui/icons/DoneAllTwoTone';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { InputField } from 'kubera-ui';
+import { InputField } from 'litmus-ui';
 import BackButton from '../../../components/Button/BackButton';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';

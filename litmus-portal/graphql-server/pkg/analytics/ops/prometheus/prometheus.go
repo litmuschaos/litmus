@@ -10,12 +10,11 @@ import (
 	"time"
 
 	"github.com/jinzhu/copier"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics"
 	"github.com/prometheus/client_golang/api"
 	apiv1 "github.com/prometheus/client_golang/api/prometheus/v1"
 	md "github.com/prometheus/common/model"
-
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/types"
 )
 
 func CreateClient(url string) (apiv1.API, error) {
@@ -34,7 +33,7 @@ func CreateClient(url string) (apiv1.API, error) {
 	return apiv1.NewAPI(client), nil
 }
 
-func Query(prom types.PromQuery) (model.PromResponse, error) {
+func Query(prom analytics.PromQuery) (model.PromResponse, error) {
 	client, err := CreateClient(prom.URL)
 	if err != nil {
 		return model.PromResponse{}, err
@@ -68,20 +67,20 @@ func Query(prom types.PromQuery) (model.PromResponse, error) {
 	}
 
 	var (
-		newResponse types.Response
-		newTSVs     [][]*types.TimeStampValue
+		newResponse analytics.Response
+		newTSVs     [][]*analytics.TimeStampValue
 		newLegends  [][]*string
 	)
 
 	for _, v := range data {
 
 		var (
-			tempTSV     []*types.TimeStampValue
+			tempTSV     []*analytics.TimeStampValue
 			tempLegends []*string
 		)
 
 		for _, value := range v.Values {
-			temp := &types.TimeStampValue{
+			temp := &analytics.TimeStampValue{
 				Timestamp: func(str string) *string { return &str }(fmt.Sprint(value.Timestamp)),
 				Value:     func(str string) *string { return &str }(fmt.Sprint(value.Value)),
 			}

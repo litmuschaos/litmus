@@ -30,7 +30,7 @@ welcomeModal:
 
 sidebar:
   title: Litmus
-  version: 'Version: 1.12'
+  version: 'Version: 1.13'
 
 header:
   notificationDropdown:
@@ -532,7 +532,7 @@ workflowCluster:
       tableCluster: Target agent
       name: Name
       time: Time
-      run: Last Run
+      run: Last workflow run
       connectionDate: Connection Date
       noWorkflows: No. of workflows
       noSchedules: No. of schedules

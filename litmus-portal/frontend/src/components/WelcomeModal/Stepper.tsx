@@ -4,7 +4,7 @@ import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { InputField } from 'kubera-ui';
+import { InputField } from 'litmus-ui';
 import config from '../../config';
 import { CREATE_USER } from '../../graphql';
 import { CreateUserData } from '../../models/graphql/user';

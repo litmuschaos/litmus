@@ -55,7 +55,7 @@ spec:
       serviceAccountName: scheduler
       containers:
         - name: chaos-scheduler
-          image: litmuschaos/chaos-scheduler:v1.12.0
+          image: litmuschaos/chaos-scheduler:1.12.0
           command:
           - chaos-scheduler
           imagePullPolicy: Always

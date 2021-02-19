@@ -1,6 +1,6 @@
 /* eslint-disable react/no-danger */
 import { Typography } from '@material-ui/core';
-import { ButtonFilled, InputField } from 'kubera-ui';
+import { ButtonFilled, InputField } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../components/Loader';
