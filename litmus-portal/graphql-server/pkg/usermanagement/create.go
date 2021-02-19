@@ -13,7 +13,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
-	database_operations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
+	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
 	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
 )
@@ -41,7 +41,7 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 		CreatedAt:   time.Now().Format(time.RFC1123Z),
 	}
 
-	err = database_operations.InsertUser(ctx, newUser)
+	err = dbOperations.InsertUser(ctx, newUser)
 	if err != nil {
 		log.Print("ERROR", err)
 		return nil, err
@@ -66,7 +66,7 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 //GetUser ...
 func GetUser(ctx context.Context, username string) (*model.User, error) {
 
-	user, err := database_operations.GetUserByUserName(ctx, username)
+	user, err := dbOperations.GetUserByUserName(ctx, username)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +84,7 @@ func GetUser(ctx context.Context, username string) (*model.User, error) {
 //GetUsers ...
 func GetUsers(ctx context.Context) ([]*model.User, error) {
 
-	users, err := database_operations.GetUsers(ctx)
+	users, err := dbOperations.GetUsers(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +107,7 @@ func UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error)
 		Name:        user.Name,
 		UpdatedAt:   time.Now().Format(time.RFC1123Z),
 	}
-	err := database_operations.UpdateUser(ctx, dbUser)
+	err := dbOperations.UpdateUser(ctx, dbUser)
 	if err != nil {
 		return "Updating user aborted", err
 	}

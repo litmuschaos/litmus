@@ -3,7 +3,7 @@ package file_handlers
 import (
 	"github.com/gorilla/mux"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
-	database_operations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
+	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/types"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
@@ -51,7 +51,7 @@ func GetManifest(token string) ([]byte, int, error) {
 		return nil, 404, err
 	}
 
-	reqCluster, err := database_operations.GetCluster(id)
+	reqCluster, err := dbOperations.GetCluster(id)
 	if err != nil {
 		return nil, 500, err
 	}

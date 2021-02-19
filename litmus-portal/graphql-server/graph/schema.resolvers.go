@@ -19,20 +19,18 @@ import (
 	analytics_handler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/handler"
 	wf_handler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/handler"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
+	cluster_handler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	database_operations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
+	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/mutations"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/queries"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/subscriptions"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/myhub_ops"
+	myhub_ops "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usermanagement"
 )
 
 func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (*model.ClusterRegResponse, error) {
-	return mutations.ClusterRegister(clusterInput)
+	return cluster_handler.ClusterRegister(clusterInput)
 }
 
 func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
@@ -68,19 +66,19 @@ func (r *mutationResolver) RemoveInvitation(ctx context.Context, member model.Me
 }
 
 func (r *mutationResolver) ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error) {
-	return mutations.ConfirmClusterRegistration(identity, *store.Store)
+	return cluster_handler.ConfirmClusterRegistration(identity, *store.Store)
 }
 
 func (r *mutationResolver) NewClusterEvent(ctx context.Context, clusterEvent model.ClusterEventInput) (string, error) {
-	return mutations.NewEvent(clusterEvent, *store.Store)
+	return cluster_handler.NewEvent(clusterEvent, *store.Store)
 }
 
 func (r *mutationResolver) ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error) {
-	return mutations.WorkFlowRunHandler(workflowData, *store.Store)
+	return wf_handler.WorkFlowRunHandler(workflowData, *store.Store)
 }
 
 func (r *mutationResolver) PodLog(ctx context.Context, log model.PodLog) (string, error) {
-	return mutations.LogsHandler(log, *store.Store)
+	return wf_handler.LogsHandler(log, *store.Store)
 }
 
 func (r *mutationResolver) AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error) {
@@ -100,7 +98,7 @@ func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, input *model
 }
 
 func (r *mutationResolver) DeleteClusterReg(ctx context.Context, clusterID string) (string, error) {
-	return mutations.DeleteCluster(clusterID, *store.Store)
+	return cluster_handler.DeleteCluster(clusterID, *store.Store)
 }
 
 func (r *mutationResolver) GeneraterSSHKey(ctx context.Context) (*model.SSHKey, error) {
@@ -168,7 +166,7 @@ func (r *queryResolver) GetWorkFlowRuns(ctx context.Context, projectID string) (
 }
 
 func (r *queryResolver) GetCluster(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error) {
-	return queries.QueryGetClusters(projectID, clusterType)
+	return cluster_handler.QueryGetClusters(projectID, clusterType)
 }
 
 func (r *queryResolver) GetUser(ctx context.Context, username string) (*model.User, error) {
@@ -263,7 +261,7 @@ func (r *subscriptionResolver) GetPodLog(ctx context.Context, podDetails model.P
 		log.Print("CLOSED LOG LISTENER", podDetails.ClusterID, podDetails.PodName)
 		delete(store.Store.WorkflowLog, reqID.String())
 	}()
-	go queries.GetLogs(reqID.String(), podDetails, *store.Store)
+	go wf_handler.GetLogs(reqID.String(), podDetails, *store.Store)
 	return workflowLog, nil
 }
 
@@ -290,7 +288,7 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 		newVerifiedCluster := model.Cluster{}
 		copier.Copy(&newVerifiedCluster, &verifiedCluster)
 
-		subscriptions.SendClusterEvent("cluster-status", "Cluster Offline", "Cluster Disconnect", newVerifiedCluster, *store.Store)
+		cluster_handler.SendClusterEvent("cluster-status", "Cluster Offline", "Cluster Disconnect", newVerifiedCluster, *store.Store)
 
 		store.Store.Mutex.Lock()
 		delete(store.Store.ConnectedCluster, clusterInfo.ClusterID)
@@ -298,7 +296,7 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 		query := bson.D{{"cluster_id", clusterInfo.ClusterID}}
 		update := bson.D{{"$set", bson.D{{"is_active", false}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
-		err = database_operations.UpdateCluster(query, update)
+		err = dbOperations.UpdateCluster(query, update)
 		if err != nil {
 			log.Print("Error", err)
 		}
@@ -307,7 +305,7 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 	query := bson.D{{"cluster_id", clusterInfo.ClusterID}}
 	update := bson.D{{"$set", bson.D{{"is_active", true}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
-	err = database_operations.UpdateCluster(query, update)
+	err = dbOperations.UpdateCluster(query, update)
 	if err != nil {
 		return clusterAction, err
 	}
@@ -316,7 +314,7 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 	copier.Copy(&newVerifiedCluster, &verifiedCluster)
 
 	verifiedCluster.IsActive = true
-	subscriptions.SendClusterEvent("cluster-status", "Cluster Live", "Cluster is Live and Connected", newVerifiedCluster, *store.Store)
+	cluster_handler.SendClusterEvent("cluster-status", "Cluster Live", "Cluster is Live and Connected", newVerifiedCluster, *store.Store)
 	return clusterAction, nil
 }
 

@@ -1,6 +1,7 @@
 package self_deployer
 
 import (
+	cluster_handler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/file_handlers"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 	"log"
@@ -8,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/mutations"
 )
 
 // StartDeployer registers a new internal self-cluster and starts the deployer
@@ -29,7 +29,7 @@ func StartDeployer(projectID string) {
 		AgentNamespace: &deployerNamespace,
 	}
 
-	resp, err := mutations.ClusterRegister(clusterInput)
+	resp, err := cluster_handler.ClusterRegister(clusterInput)
 	if err != nil {
 		log.Print("SELF CLUSTER REG FAILED[DB-REG] : ", err)
 	}

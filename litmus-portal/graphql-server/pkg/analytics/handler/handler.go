@@ -8,7 +8,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/ops/prometheus"
-	database_operations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
+	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
 	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 	"go.mongodb.org/mongo-driver/bson"
 	"log"
@@ -39,7 +39,7 @@ func CreateDataSource(datasource *model.DSInput) (*model.DSResponse, error) {
 			UpdatedAt:         strconv.FormatInt(time.Now().Unix(), 10),
 		}
 
-		err := database_operations.InsertDataSource(newDS)
+		err := dbOperations.InsertDataSource(newDS)
 		if err != nil {
 			return nil, err
 		}
@@ -106,7 +106,7 @@ func CreateDashboard(dashboard *model.CreateDBInput) (string, error) {
 			newPanels = append(newPanels, &newPanel)
 		}
 	}
-	err := database_operations.InsertPanel(newPanels)
+	err := dbOperations.InsertPanel(newPanels)
 	if err != nil {
 		return "", fmt.Errorf("error on inserting panel data", err)
 	}
@@ -114,7 +114,7 @@ func CreateDashboard(dashboard *model.CreateDBInput) (string, error) {
 
 	newDashboard.PanelGroups = newPanelGroups
 
-	err = database_operations.InsertDashBoard(newDashboard)
+	err = dbOperations.InsertDashBoard(newDashboard)
 	if err != nil {
 		return "", fmt.Errorf("error on inserting panel data", err)
 	}
@@ -139,7 +139,7 @@ func UpdateDataSource(datasource model.DSInput) (*model.DSResponse, error) {
 		{"query_timeout", datasource.QueryTimeout}, {"http_method", datasource.HTTPMethod},
 		{"updated_at", timestamp}}}}
 
-	err := database_operations.UpdateDataSource(query, update)
+	err := dbOperations.UpdateDataSource(query, update)
 	if err != nil {
 		return nil, err
 	}
@@ -174,7 +174,7 @@ func UpdateDashBoard(dashboard *model.UpdataDBInput) (string, error) {
 		{"start_time", dashboard.StartTime}, {"refresh_rate", dashboard.RefreshRate},
 		{"panel_groups", dashboard.PanelGroups}, {"updated_at", timestamp}}}}
 
-	err := database_operations.UpdateDashboard(query, update)
+	err := dbOperations.UpdateDashboard(query, update)
 	if err != nil {
 		return "", err
 	}
@@ -205,7 +205,7 @@ func UpdatePanel(panels []*model.Panel) (string, error) {
 			{"y_axis_left", panel.YAxisLeft}, {"y_axis_right", panel.YAxisRight},
 			{"x_axis_down", panel.XAxisDown}, {"unit", panel.Unit}}}}
 
-		err := database_operations.UpdatePanel(query, update)
+		err := dbOperations.UpdatePanel(query, update)
 		if err != nil {
 			return "", err
 		}
@@ -217,14 +217,14 @@ func UpdatePanel(panels []*model.Panel) (string, error) {
 func DeleteDashboard(db_id *string) (bool, error) {
 
 	dashboardQuery := bson.M{"db_id": db_id, "is_removed": false}
-	dashboard, err := database_operations.GetDashboard(dashboardQuery)
+	dashboard, err := dbOperations.GetDashboard(dashboardQuery)
 	if err != nil {
 		return false, fmt.Errorf("failed to list dashboard, error: %v", err)
 	}
 
 	for _, panelGroup := range dashboard.PanelGroups {
 		listPanelQuery := bson.M{"panel_group_id": panelGroup.PanelGroupID, "is_removed": false}
-		panels, err := database_operations.ListPanel(listPanelQuery)
+		panels, err := dbOperations.ListPanel(listPanelQuery)
 		if err != nil {
 			return false, fmt.Errorf("failed to list Panel, error: %v", err)
 		}
@@ -235,7 +235,7 @@ func DeleteDashboard(db_id *string) (bool, error) {
 			query := bson.D{{"panel_id", panel.PanelID}, {"is_removed", false}}
 			update := bson.D{{"$set", bson.D{{"is_removed", true}, {"updated_at", time}}}}
 
-			err := database_operations.UpdatePanel(query, update)
+			err := dbOperations.UpdatePanel(query, update)
 			if err != nil {
 				return false, fmt.Errorf("failed to delete panel, error: %v", err)
 			}
@@ -247,7 +247,7 @@ func DeleteDashboard(db_id *string) (bool, error) {
 	query := bson.D{{"db_id", db_id}}
 	update := bson.D{{"$set", bson.D{{"is_removed", true}, {"updated_at", time}}}}
 
-	err = database_operations.UpdateDashboard(query, update)
+	err = dbOperations.UpdateDashboard(query, update)
 	if err != nil {
 		return false, fmt.Errorf("failed to delete dashboard, error: %v", err)
 	}
@@ -260,7 +260,7 @@ func DeleteDataSource(input model.DeleteDSInput) (bool, error) {
 	time := strconv.FormatInt(time.Now().Unix(), 10)
 
 	listDBQuery := bson.M{"ds_id": input.DsID, "is_removed": false}
-	dashboards, err := database_operations.ListDashboard(listDBQuery)
+	dashboards, err := dbOperations.ListDashboard(listDBQuery)
 	if err != nil {
 		return false, fmt.Errorf("failed to list dashboard, error: %v", err)
 	}
@@ -270,7 +270,7 @@ func DeleteDataSource(input model.DeleteDSInput) (bool, error) {
 
 			for _, panelGroup := range dashboard.PanelGroups {
 				listPanelQuery := bson.M{"panel_group_id": panelGroup.PanelGroupID, "is_removed": false}
-				panels, err := database_operations.ListPanel(listPanelQuery)
+				panels, err := dbOperations.ListPanel(listPanelQuery)
 				if err != nil {
 					return false, fmt.Errorf("failed to list Panel, error: %v", err)
 				}
@@ -279,7 +279,7 @@ func DeleteDataSource(input model.DeleteDSInput) (bool, error) {
 					query := bson.D{{"panel_id", panel.PanelID}, {"is_removed", false}}
 					update := bson.D{{"$set", bson.D{{"is_removed", true}, {"updated_at", time}}}}
 
-					err := database_operations.UpdatePanel(query, update)
+					err := dbOperations.UpdatePanel(query, update)
 					if err != nil {
 						return false, fmt.Errorf("failed to delete panel, error: %v", err)
 					}
@@ -288,7 +288,7 @@ func DeleteDataSource(input model.DeleteDSInput) (bool, error) {
 			updateDBQuery := bson.D{{"db_id", dashboard.DbID}}
 			update := bson.D{{"$set", bson.D{{"is_removed", true}, {"updated_at", time}}}}
 
-			err = database_operations.UpdateDashboard(updateDBQuery, update)
+			err = dbOperations.UpdateDashboard(updateDBQuery, update)
 			if err != nil {
 				return false, fmt.Errorf("failed to delete dashboard, error: %v", err)
 			}
@@ -306,7 +306,7 @@ func DeleteDataSource(input model.DeleteDSInput) (bool, error) {
 	updateDSQuery := bson.D{{"ds_id", input.DsID}}
 	update := bson.D{{"$set", bson.D{{"is_removed", true}, {"updated_at", time}}}}
 
-	err = database_operations.UpdateDataSource(updateDSQuery, update)
+	err = dbOperations.UpdateDataSource(updateDSQuery, update)
 	if err != nil {
 		return false, fmt.Errorf("failed to delete datasource, error: %v", err)
 	}
@@ -317,7 +317,7 @@ func DeleteDataSource(input model.DeleteDSInput) (bool, error) {
 func QueryListDataSource(projectID string) ([]*model.DSResponse, error) {
 	query := bson.M{"project_id": projectID, "is_removed": false}
 
-	datasource, err := database_operations.ListDataSource(query)
+	datasource, err := dbOperations.ListDataSource(query)
 	if err != nil {
 		return nil, err
 	}
@@ -358,7 +358,7 @@ func GetPromQuery(promInput *model.PromInput) ([]*model.PromResponse, error) {
 func QueryListDashboard(projectID string) ([]*model.ListDashboardReponse, error) {
 	query := bson.M{"project_id": projectID, "is_removed": false}
 
-	dashboards, err := database_operations.ListDashboard(query)
+	dashboards, err := dbOperations.ListDashboard(query)
 	if err != nil {
 		return nil, fmt.Errorf("error on query from dashboard collection by projectid", err)
 	}
@@ -367,7 +367,7 @@ func QueryListDashboard(projectID string) ([]*model.ListDashboardReponse, error)
 	copier.Copy(&newListDashboard, &dashboards)
 
 	for _, dashboard := range newListDashboard {
-		datasource, err := database_operations.GetDataSourceByID(dashboard.DsID)
+		datasource, err := dbOperations.GetDataSourceByID(dashboard.DsID)
 		if err != nil {
 			return nil, fmt.Errorf("error on querying from datasource collection", err)
 		}
@@ -375,7 +375,7 @@ func QueryListDashboard(projectID string) ([]*model.ListDashboardReponse, error)
 		dashboard.DsType = &datasource.DsType
 		dashboard.DsName = &datasource.DsName
 
-		cluster, err := database_operations.GetCluster(dashboard.ClusterID)
+		cluster, err := dbOperations.GetCluster(dashboard.ClusterID)
 		if err != nil {
 			return nil, fmt.Errorf("error on querying from cluster collection", err)
 		}
@@ -384,7 +384,7 @@ func QueryListDashboard(projectID string) ([]*model.ListDashboardReponse, error)
 
 		for _, panelgroup := range dashboard.PanelGroups {
 			query := bson.M{"panel_group_id": panelgroup.PanelGroupID, "is_removed": false}
-			panels, err := database_operations.ListPanel(query)
+			panels, err := dbOperations.ListPanel(query)
 			if err != nil {
 				return nil, fmt.Errorf("error on querying from promquery collection", err)
 			}
