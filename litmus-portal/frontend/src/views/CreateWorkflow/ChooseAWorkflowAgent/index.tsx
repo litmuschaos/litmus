@@ -133,6 +133,7 @@ const ChooseWorkflowAgent: React.FC = () => {
         <div className={classes.agentWrapperDiv}>
           {filteredCluster.map((cluster) => (
             <LitmusCard
+              key={cluster.cluster_id}
               glow={currentlySelectedAgent === cluster.cluster_id}
               width="100%"
               height="4rem"
