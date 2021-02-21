@@ -38,6 +38,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
+  btnFilled: {
+    height: '2.2rem',
+  },
 }));
 
 export default useStyles;

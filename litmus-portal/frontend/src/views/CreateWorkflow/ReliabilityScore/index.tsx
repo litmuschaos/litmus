@@ -1,9 +1,8 @@
 import { Typography } from '@material-ui/core';
-import { ButtonOutlined } from 'litmus-ui';
+import { ButtonOutlined, ButtonFilled } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import ButtonFilled from '../../../components/Button/ButtonFilled';
 import Center from '../../../containers/layouts/Center';
 import Unimodal from '../../../containers/layouts/Unimodal';
 import { experimentMap, WorkflowData } from '../../../models/redux/workflow';
@@ -114,10 +113,9 @@ const ReliablityScore = () => {
                   <hr className={classes.horizontalLineResult} />
                   <Center>
                     <ButtonFilled
-                      handleClick={() => setOpen(false)}
+                      onClick={() => setOpen(false)}
                       data-cy="gotItButton"
-                      isPrimary
-                      styles={classes.gotItBtn}
+                      className={classes.gotItBtn}
                     >
                       <div>
                         {t('createWorkflow.reliabilityScore.button.gotIt')}

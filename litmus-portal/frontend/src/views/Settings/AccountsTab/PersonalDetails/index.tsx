@@ -1,9 +1,9 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
+import { ButtonFilled } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Loader from '../../../../components/Loader';
 import config from '../../../../config';
 import Unimodal from '../../../../containers/layouts/Unimodal';
@@ -139,9 +139,8 @@ const PersonalDetails: React.FC = () => {
         <div className={classes.saveButton}>
           <div data-cy="save">
             <ButtonFilled
-              isDisabled={!(personaData.fullName.length && !loading)}
-              isPrimary
-              handleClick={handleSubmit}
+              disabled={!(personaData.fullName.length && !loading)}
+              onClick={handleSubmit}
             >
               {loading ? (
                 <div>
@@ -178,11 +177,7 @@ const PersonalDetails: React.FC = () => {
                   </Typography>
                 </div>
                 <div data-cy="done" className={classes.buttonModal}>
-                  <ButtonFilled
-                    isPrimary
-                    isDisabled={false}
-                    handleClick={handleClose}
-                  >
+                  <ButtonFilled onClick={handleClose}>
                     <>{t('settings.accountsTab.personalDetails.button.done')}</>
                   </ButtonFilled>
                 </div>
@@ -206,11 +201,7 @@ const PersonalDetails: React.FC = () => {
                   </Typography>
                 </div>
                 <div data-cy="done">
-                  <ButtonFilled
-                    isPrimary
-                    isDisabled={false}
-                    handleClick={handleClose}
-                  >
+                  <ButtonFilled onClick={handleClose}>
                     <>{t('settings.accountsTab.personalDetails.button.done')}</>
                   </ButtonFilled>
                 </div>

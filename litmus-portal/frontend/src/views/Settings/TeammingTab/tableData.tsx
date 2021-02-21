@@ -1,11 +1,10 @@
 import { useMutation } from '@apollo/client/react/hooks';
 import { Avatar, IconButton, TableCell, Typography } from '@material-ui/core';
 import moment from 'moment';
-import { ButtonOutlined } from 'litmus-ui';
+import { ButtonOutlined, ButtonFilled } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import ButtonFilled from '../../../components/Button/ButtonFilled';
 import Loader from '../../../components/Loader';
 import Unimodal from '../../../containers/layouts/Unimodal';
 import { REMOVE_INVITATION } from '../../../graphql/mutations';
@@ -112,9 +111,8 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
             </ButtonOutlined>
 
             <ButtonFilled
-              isDisabled={loading}
-              isPrimary
-              handleClick={() => {
+              disabled={loading}
+              onClick={() => {
                 removeMember({
                   variables: {
                     data: {

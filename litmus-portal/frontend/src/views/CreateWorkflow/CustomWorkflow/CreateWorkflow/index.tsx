@@ -17,12 +17,11 @@ import {
   Typography,
 } from '@material-ui/core';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import { InputField } from 'litmus-ui';
+import { InputField, ButtonFilled } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Loader from '../../../../components/Loader';
 import { GET_CHARTS_DATA, GET_HUB_STATUS } from '../../../../graphql';
 import { GET_EXPERIMENT_YAML } from '../../../../graphql/queries';
@@ -545,7 +544,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       </div>
       <div className={classes.nextButtonDiv}>
         <ButtonFilled
-          handleClick={() => {
+          onClick={() => {
             if (constructYAML === 'upload' && uploadedYAML !== '') {
               history.push('/create-workflow');
               template.selectTemplate({ isDisable: false });
@@ -565,8 +564,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             });
             getExperimentYaml();
           }}
-          isPrimary
-          isDisabled={
+          disabled={
             constructYAML === 'construct' &&
             (selectedExp === 'Select an experiment' ||
               filteredExperiment.length !== 1 ||

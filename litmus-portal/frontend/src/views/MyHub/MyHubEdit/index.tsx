@@ -11,9 +11,8 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { ButtonOutlined, InputField } from 'litmus-ui';
+import { ButtonOutlined, ButtonFilled, InputField } from 'litmus-ui';
 import BackButton from '../../../components/Button/BackButton';
-import ButtonFilled from '../../../components/Button/ButtonFilled';
 import Loader from '../../../components/Loader';
 import QuickActionCard from '../../../components/QuickActionCard';
 import Scaffold from '../../../containers/layouts/Scaffold';
@@ -411,7 +410,7 @@ const MyHub = () => {
                   </div>
                 </div>
                 <div className={classes.submitBtnDiv}>
-                  <ButtonFilled isPrimary={false} type="submit">
+                  <ButtonFilled variant="success" type="submit">
                     {t('myhub.editPage.submit')}
                   </ButtonFilled>
                 </div>
@@ -455,8 +454,8 @@ const MyHub = () => {
                               {t('myhub.editPage.desc')}
                             </Typography>
                             <ButtonFilled
-                              isPrimary={false}
-                              handleClick={handleClose}
+                              variant="success"
+                              onClick={handleClose}
                             >
                               {t('myhub.connectHubPage.myHub')}
                             </ButtonFilled>

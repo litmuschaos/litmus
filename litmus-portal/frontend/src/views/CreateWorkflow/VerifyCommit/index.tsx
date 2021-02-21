@@ -1,13 +1,12 @@
 import { Divider, IconButton, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import cronstrue from 'cronstrue';
-import { EditableText, ButtonOutlined } from 'litmus-ui';
+import { EditableText, ButtonOutlined, ButtonFilled } from 'litmus-ui';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import AdjustedWeights from '../../../components/AdjustedWeights';
-import ButtonFilled from '../../../components/Button/ButtonFilled';
 import YamlEditor from '../../../components/YamlEditor/Editor';
 import {
   AceValidations,
@@ -266,7 +265,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
                 <Typography>{yamlStatus}</Typography>
               )}
               <div className={classes.yamlButton}>
-                <ButtonFilled handleClick={handleOpen} isPrimary>
+                <ButtonFilled onClick={handleOpen}>
                   <div>{t('createWorkflow.verifyCommit.button.viewYaml')}</div>
                 </ButtonFilled>
               </div>

@@ -1,6 +1,6 @@
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { Typography } from '@material-ui/core';
-import { ButtonOutlined } from 'litmus-ui';
+import { ButtonOutlined, ButtonFilled } from 'litmus-ui';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -15,7 +15,6 @@ import {
 import { history } from '../../../redux/configureStore';
 import { RootState } from '../../../redux/reducers';
 import BackButton from '../../Button/BackButton';
-import ButtonFilled from '../../Button/ButtonFilled';
 import Loader from '../../Loader';
 import TargetCopy from '../TargetCopy';
 import useStyles from './styles';
@@ -167,8 +166,7 @@ const ConnectTarget = () => {
 
               <ButtonFilled
                 data-cy="connectTarget"
-                isPrimary={false}
-                handleClick={() => {
+                onClick={() => {
                   history.push('/create-workflow');
                   setOpen(false);
                 }}

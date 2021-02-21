@@ -1,10 +1,9 @@
 import { Typography, Paper } from '@material-ui/core';
-import { ButtonOutlined } from 'litmus-ui';
+import { ButtonOutlined, ButtonFilled } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import { useTranslation } from 'react-i18next';
-import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import { customWorkflow } from '../../../../models/redux/workflow';
 import { RootState } from '../../../../redux/reducers';
 import useStyles from './styles';
@@ -304,11 +303,10 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       </div>
       <div className={classes.nextButtonDiv}>
         <ButtonFilled
-          handleClick={() => {
+          onClick={() => {
             customYAMLGenerator();
           }}
-          isPrimary
-          isDisabled={workflows.length === 0}
+          disabled={workflows.length === 0}
         >
           <div>
             <img

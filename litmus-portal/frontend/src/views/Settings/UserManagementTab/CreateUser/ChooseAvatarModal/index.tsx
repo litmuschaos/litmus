@@ -1,7 +1,7 @@
 import { Avatar, Badge, Typography } from '@material-ui/core';
+import { ButtonFilled } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import useStyles from './styles';
 
 // Props for ChooseAvatarModal component
@@ -136,7 +136,7 @@ const ChooseAvatarModal: React.FC<ChooseAvatarModalProps> = ({
           })}
         </div>
       </div>
-      <ButtonFilled isDisabled={isDefault} isPrimary handleClick={handleSubmit}>
+      <ButtonFilled disabled={isDefault} onClick={handleSubmit}>
         {t('settings.userManagementTab.createUser.chooseAvatarModal.button')}
       </ButtonFilled>
     </div>
