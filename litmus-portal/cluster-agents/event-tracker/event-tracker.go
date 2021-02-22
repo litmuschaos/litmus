@@ -5,11 +5,6 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
-	"log"
-	"net/http"
-	"os"
-	"time"
-
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/informers"
@@ -17,6 +12,11 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/tools/clientcmd"
+	"log"
+	"net/http"
+	"os"
+	sys_runtime "runtime"
+	"time"
 
 	v1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -305,6 +305,8 @@ func init() {
 }
 
 func main() {
+	log.Printf("Go Version: %s", sys_runtime.Version())
+	log.Printf("Go OS/Arch: %s/%s", sys_runtime.GOOS, sys_runtime.GOARCH)
 
 	log.Print("Starting event tracker ...")
 	clientset, err := getK8sClient()

@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"runtime"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -26,6 +27,9 @@ const defaultPort = "8080"
 var err error
 
 func init() {
+	log.Printf("Go Version: %s", runtime.Version())
+	log.Printf("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH)
+
 	if os.Getenv("LITMUS_CHAOS_RUNNER_IMAGE") == "" || os.Getenv("LITMUS_CHAOS_OPERATOR_IMAGE") == "" || os.Getenv("SUBSCRIBER_IMAGE") == "" || os.Getenv("ARGO_SERVER_IMAGE") == "" || os.Getenv("ARGO_WORKFLOW_EXECUTOR_IMAGE") == "" || os.Getenv("ARGO_WORKFLOW_EXECUTOR_IMAGE") == "" || os.Getenv("JWT_SECRET") == "" || os.Getenv("PORTAL_SCOPE") == "" {
 		log.Fatal("Some environment variable are not setup")
 	}
