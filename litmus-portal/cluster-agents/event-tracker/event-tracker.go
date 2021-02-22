@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"os"
 	"time"
-
+	sys_runtime "runtime"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/informers"
@@ -305,6 +305,8 @@ func init() {
 }
 
 func main() {
+	log.Printf("Go Version: %s", sys_runtime.Version())
+	log.Printf("Go OS/Arch: %s/%s", sys_runtime.GOOS, sys_runtime.GOARCH)
 
 	log.Print("Starting event tracker ...")
 	clientset, err := getK8sClient()
