@@ -21,7 +21,8 @@ type UserCredentials struct {
 	Password string `bson:"password,omitempty"`
 	Email    string `bson:"email,omitempty"`
 	Name     string `bson:"name,omitempty"`
-	// UserID		string       `bson:"user_id"`
+	UID      string      `bson:"uid"`
+	Role     	Role      `bson:"role"`
 	LoggedIn    bool         `bson:"logged_in,omitempty"`
 	SocialAuths []SocialAuth `bson:"social_auths,omitempty"`
 	CreatedAt   *time.Time   `bson:"created_at,omitempty"`
@@ -30,8 +31,16 @@ type UserCredentials struct {
 	State       State        `bson:"state,omitempty"`
 }
 
+// Role states the role of the user in the portal
+type Role string
+
+const (
+	//RoleAdmin gives the admin permissions to a user
+	RoleAdmin Role = "admin"
+)
+
 //DefaultUser is the admin user created by default
-var DefaultUser *UserCredentials = &UserCredentials{
+var DefaultUser = &UserCredentials{
 	UserName: types.DefaultUserName,
 	Password: types.DefaultUserPassword,
 }
@@ -39,6 +48,8 @@ var DefaultUser *UserCredentials = &UserCredentials{
 //PublicUserInfo displays the information of the user that is publicly available
 type PublicUserInfo struct {
 	ID        string     `json:"_id"`
+	UID      string      `json:"uid"`
+	Role     	Role      `json:"role"`
 	UserName  string     `json:"username"`
 	Email     string     `json:"email"`
 	Name      string     `json:"name"`
@@ -127,6 +138,10 @@ func (u *UserCredentials) GetLoggedIn() bool {
 	return u.LoggedIn
 }
 
+func (u *UserCredentials) GetUID() string {
+	return u.UID
+}
+
 // GetPublicInfo fetches the pubicUserInfo from User
 func (u *UserCredentials) GetPublicInfo() *PublicUserInfo {
 	return &PublicUserInfo{
@@ -134,6 +149,8 @@ func (u *UserCredentials) GetPublicInfo() *PublicUserInfo {
 		UserName:  u.GetUserName(),
 		Email:     u.GetEmail(),
 		ID:        u.GetID(),
+		UID: 	u.GetUID(),
+		Role: 	   RoleAdmin,
 		LoggedIn:  u.GetLoggedIn(),
 		CreatedAt: u.GetCreatedAt(),
 		UpdatedAt: u.GetUpdatedAt(),
@@ -142,7 +159,7 @@ func (u *UserCredentials) GetPublicInfo() *PublicUserInfo {
 	}
 }
 
-// GetUserName user username
+//GetUserName user username
 func (uinfo *PublicUserInfo) GetUserName() string {
 	return uinfo.UserName
 }
@@ -165,6 +182,11 @@ func (uinfo *PublicUserInfo) GetCreatedAt() *time.Time {
 // GetID user ID
 func (uinfo *PublicUserInfo) GetID() string {
 	return uinfo.ID
+}
+
+// GetUID
+func (uinfo *PublicUserInfo) GetUID() string {
+	return uinfo.UID
 }
 
 // GetLoggedIn user loggedIn

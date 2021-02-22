@@ -25,6 +25,7 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 		uuid         = uuid.New()
 		self_cluster = os.Getenv("SELF_CLUSTER")
 	)
+
 	outputUser, err := GetUser(ctx, user.Username)
 	if err != nil && err != mongo.ErrNoDocuments {
 		return nil, err
