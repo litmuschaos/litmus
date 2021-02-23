@@ -19,7 +19,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/file_handlers"
-	gitops_handler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
+	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 )
 
@@ -64,10 +64,10 @@ func main() {
 		AllowCredentials: true,
 	}).Handler)
 
-	gitops_handler.GitOpsSyncHandler(true) // sync all previous existing repos before start
+	gitOpsHandler.GitOpsSyncHandler(true) // sync all previous existing repos before start
 
-	go myhub.RecurringHubSync()                //go routine for syncing hubs for all users
-	go gitops_handler.GitOpsSyncHandler(false) // routine to sync git repos for gitops
+	go myhub.RecurringHubSync()               // go routine for syncing hubs for all users
+	go gitOpsHandler.GitOpsSyncHandler(false) // routine to sync git repos for gitOps
 
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", authorization.Middleware(srv))
