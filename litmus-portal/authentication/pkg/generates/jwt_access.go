@@ -2,7 +2,6 @@ package generates
 
 import (
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
@@ -16,11 +15,11 @@ import (
 
 // JWTAccessClaims jwt claims
 type JWTAccessClaims struct {
-	Role	models.Role	`json:"role,omitempty"`
-	UID      string           `json:"uid,omitempty"`
-	UserName string `json:"username,omitempty"`
-	Email    string `json:"email,omitempty"`
-	Name     string `json:"name,omitempty"`
+	Role     models.Role `json:"role,omitempty"`
+	UID      string      `json:"uid,omitempty"`
+	UserName string      `json:"username,omitempty"`
+	Email    string      `json:"email,omitempty"`
+	Name     string      `json:"name,omitempty"`
 	jwt.StandardClaims
 }
 
@@ -51,15 +50,14 @@ func (a *JWTAccessGenerate) Token(data *GenerateBasic) (string, error) {
 		UserName: data.UserInfo.GetUserName(),
 		Email:    data.UserInfo.GetEmail(),
 		Name:     data.UserInfo.GetName(),
-		Role: 	models.RoleAdmin,
-		UID: data.UserInfo.GetUID(),
+		Role:     models.RoleAdmin,
+		UID:      data.UserInfo.GetUID(),
 		StandardClaims: jwt.StandardClaims{
 			IssuedAt:  time.Now().Unix(),
 			ExpiresAt: data.TokenInfo.GetAccessCreateAt().Add(data.TokenInfo.GetAccessExpiresIn()).Unix(),
 		},
 	}
 
-	log.Print("Role", claims.Role)
 	token := jwt.NewWithClaims(a.SignedMethod, claims)
 	var key interface{}
 	if a.isEs() {

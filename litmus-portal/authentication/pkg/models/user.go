@@ -16,13 +16,13 @@ func init() {
 
 //UserCredentials contains the user information
 type UserCredentials struct {
-	ID       string `bson:"_id,omitempty"`
-	UserName string `bson:"username,omitempty"`
-	Password string `bson:"password,omitempty"`
-	Email    string `bson:"email,omitempty"`
-	Name     string `bson:"name,omitempty"`
-	UID      string      `bson:"uid"`
-	Role     	Role      `bson:"role"`
+	ID          string       `bson:"_id,omitempty"`
+	UserName    string       `bson:"username,omitempty"`
+	Password    string       `bson:"password,omitempty"`
+	Email       string       `bson:"email,omitempty"`
+	Name        string       `bson:"name,omitempty"`
+	UID         string       `bson:"uid"`
+	Role        Role         `bson:"role"`
 	LoggedIn    bool         `bson:"logged_in,omitempty"`
 	SocialAuths []SocialAuth `bson:"social_auths,omitempty"`
 	CreatedAt   *time.Time   `bson:"created_at,omitempty"`
@@ -51,8 +51,8 @@ var DefaultUser = &UserCredentials{
 //PublicUserInfo displays the information of the user that is publicly available
 type PublicUserInfo struct {
 	ID        string     `json:"_id"`
-	UID      string      `json:"uid"`
-	Role     	Role      `json:"role"`
+	UID       string     `json:"uid"`
+	Role      Role       `json:"role"`
 	UserName  string     `json:"username"`
 	Email     string     `json:"email"`
 	Name      string     `json:"name"`
@@ -152,8 +152,8 @@ func (u *UserCredentials) GetPublicInfo() *PublicUserInfo {
 		UserName:  u.GetUserName(),
 		Email:     u.GetEmail(),
 		ID:        u.GetID(),
-		UID: 	u.GetUID(),
-		Role: 	   RoleAdmin,
+		UID:       u.GetUID(),
+		Role:      RoleAdmin,
 		LoggedIn:  u.GetLoggedIn(),
 		CreatedAt: u.GetCreatedAt(),
 		UpdatedAt: u.GetUpdatedAt(),
