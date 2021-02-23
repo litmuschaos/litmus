@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"os/signal"
+	"runtime"
 
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/cluster/events"
 	"log"
@@ -26,6 +27,9 @@ var (
 )
 
 func init() {
+	log.Printf("Go Version: %s", runtime.Version())
+	log.Printf("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH)
+
 	k8s.KubeConfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
 	flag.Parse()
 
