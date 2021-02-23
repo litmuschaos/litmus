@@ -155,6 +155,7 @@ type CreateMyHub struct {
 }
 
 type CreateUserInput struct {
+	UserID      string  `json:"user_id"`
 	Username    string  `json:"username"`
 	Email       *string `json:"email"`
 	CompanyName *string `json:"company_name"`

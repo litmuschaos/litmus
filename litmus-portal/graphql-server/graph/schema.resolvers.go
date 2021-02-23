@@ -17,7 +17,7 @@ import (
 	analytics_handler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/handler"
 	wf_handler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/handler"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
-	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
+	data_store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/mutations"
@@ -35,7 +35,7 @@ func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput mode
 }
 
 func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
-	return wf_handler.CreateChaosWorkflow(ctx, &input, store.Store)
+	return wf_handler.CreateChaosWorkflow(ctx, &input, data_store.Store)
 }
 
 func (r *mutationResolver) CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error) {
@@ -47,7 +47,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, user model.UpdateUser
 }
 
 func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid string) (bool, error) {
-	return wf_handler.DeleteWorkflow(ctx, workflowid, store.Store)
+	return wf_handler.DeleteWorkflow(ctx, workflowid, data_store.Store)
 }
 
 func (r *mutationResolver) SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error) {
@@ -67,19 +67,19 @@ func (r *mutationResolver) RemoveInvitation(ctx context.Context, member model.Me
 }
 
 func (r *mutationResolver) ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error) {
-	return mutations.ConfirmClusterRegistration(identity, *store.Store)
+	return mutations.ConfirmClusterRegistration(identity, *data_store.Store)
 }
 
 func (r *mutationResolver) NewClusterEvent(ctx context.Context, clusterEvent model.ClusterEventInput) (string, error) {
-	return mutations.NewEvent(clusterEvent, *store.Store)
+	return mutations.NewEvent(clusterEvent, *data_store.Store)
 }
 
 func (r *mutationResolver) ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error) {
-	return mutations.WorkFlowRunHandler(workflowData, *store.Store)
+	return mutations.WorkFlowRunHandler(workflowData, *data_store.Store)
 }
 
 func (r *mutationResolver) PodLog(ctx context.Context, log model.PodLog) (string, error) {
-	return mutations.LogsHandler(log, *store.Store)
+	return mutations.LogsHandler(log, *data_store.Store)
 }
 
 func (r *mutationResolver) AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error) {
@@ -95,11 +95,11 @@ func (r *mutationResolver) SyncHub(ctx context.Context, id string) ([]*model.MyH
 }
 
 func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
-	return wf_handler.UpdateWorkflow(ctx, input, store.Store)
+	return wf_handler.UpdateWorkflow(ctx, input, data_store.Store)
 }
 
 func (r *mutationResolver) DeleteClusterReg(ctx context.Context, clusterID string) (string, error) {
-	return mutations.DeleteCluster(clusterID, *store.Store)
+	return mutations.DeleteCluster(clusterID, *data_store.Store)
 }
 
 func (r *mutationResolver) GeneraterSSHKey(ctx context.Context) (*model.SSHKey, error) {
@@ -226,9 +226,9 @@ func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, project
 	log.Print("NEW EVENT ", projectID)
 	clusterEvent := make(chan *model.ClusterEvent, 1)
 
-	store.Store.Mutex.Lock()
-	store.Store.ClusterEventPublish[projectID] = append(store.Store.ClusterEventPublish[projectID], clusterEvent)
-	store.Store.Mutex.Unlock()
+	data_store.Store.Mutex.Lock()
+	data_store.Store.ClusterEventPublish[projectID] = append(data_store.Store.ClusterEventPublish[projectID], clusterEvent)
+	data_store.Store.Mutex.Unlock()
 
 	go func() {
 		<-ctx.Done()
@@ -240,9 +240,9 @@ func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, project
 func (r *subscriptionResolver) WorkflowEventListener(ctx context.Context, projectID string) (<-chan *model.WorkflowRun, error) {
 	log.Print("NEW WORKFLOW EVENT LISTENER", projectID)
 	workflowEvent := make(chan *model.WorkflowRun, 1)
-	store.Store.Mutex.Lock()
-	store.Store.WorkflowEventPublish[projectID] = append(store.Store.WorkflowEventPublish[projectID], workflowEvent)
-	store.Store.Mutex.Unlock()
+	data_store.Store.Mutex.Lock()
+	data_store.Store.WorkflowEventPublish[projectID] = append(data_store.Store.WorkflowEventPublish[projectID], workflowEvent)
+	data_store.Store.Mutex.Unlock()
 	go func() {
 		<-ctx.Done()
 		log.Print("CLOSED WORKFLOW LISTENER", projectID)
@@ -254,15 +254,15 @@ func (r *subscriptionResolver) GetPodLog(ctx context.Context, podDetails model.P
 	log.Print("NEW LOG REQUEST", podDetails.ClusterID, podDetails.PodName)
 	workflowLog := make(chan *model.PodLogResponse, 1)
 	reqID := uuid.New()
-	store.Store.Mutex.Lock()
-	store.Store.WorkflowLog[reqID.String()] = workflowLog
-	store.Store.Mutex.Unlock()
+	data_store.Store.Mutex.Lock()
+	data_store.Store.WorkflowLog[reqID.String()] = workflowLog
+	data_store.Store.Mutex.Unlock()
 	go func() {
 		<-ctx.Done()
 		log.Print("CLOSED LOG LISTENER", podDetails.ClusterID, podDetails.PodName)
-		delete(store.Store.WorkflowLog, reqID.String())
+		delete(data_store.Store.WorkflowLog, reqID.String())
 	}()
-	go queries.GetLogs(reqID.String(), podDetails, *store.Store)
+	go queries.GetLogs(reqID.String(), podDetails, *data_store.Store)
 	return workflowLog, nil
 }
 
@@ -275,13 +275,13 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 		return clusterAction, err
 	}
 
-	store.Store.Mutex.Lock()
-	if _, ok := store.Store.ConnectedCluster[clusterInfo.ClusterID]; ok {
-		store.Store.Mutex.Unlock()
+	data_store.Store.Mutex.Lock()
+	if _, ok := data_store.Store.ConnectedCluster[clusterInfo.ClusterID]; ok {
+		data_store.Store.Mutex.Unlock()
 		return clusterAction, errors.New("CLUSTER ALREADY CONNECTED")
 	}
-	store.Store.ConnectedCluster[clusterInfo.ClusterID] = clusterAction
-	store.Store.Mutex.Unlock()
+	data_store.Store.ConnectedCluster[clusterInfo.ClusterID] = clusterAction
+	data_store.Store.Mutex.Unlock()
 	go func() {
 		<-ctx.Done()
 		verifiedCluster.IsActive = false
@@ -289,11 +289,11 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 		newVerifiedCluster := model.Cluster{}
 		copier.Copy(&newVerifiedCluster, &verifiedCluster)
 
-		subscriptions.SendClusterEvent("cluster-status", "Cluster Offline", "Cluster Disconnect", newVerifiedCluster, *store.Store)
+		subscriptions.SendClusterEvent("cluster-status", "Cluster Offline", "Cluster Disconnect", newVerifiedCluster, *data_store.Store)
 
-		store.Store.Mutex.Lock()
-		delete(store.Store.ConnectedCluster, clusterInfo.ClusterID)
-		store.Store.Mutex.Unlock()
+		data_store.Store.Mutex.Lock()
+		delete(data_store.Store.ConnectedCluster, clusterInfo.ClusterID)
+		data_store.Store.Mutex.Unlock()
 		query := bson.D{{"cluster_id", clusterInfo.ClusterID}}
 		update := bson.D{{"$set", bson.D{{"is_active", false}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
@@ -315,7 +315,7 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 	copier.Copy(&newVerifiedCluster, &verifiedCluster)
 
 	verifiedCluster.IsActive = true
-	subscriptions.SendClusterEvent("cluster-status", "Cluster Live", "Cluster is Live and Connected", newVerifiedCluster, *store.Store)
+	subscriptions.SendClusterEvent("cluster-status", "Cluster Live", "Cluster is Live and Connected", newVerifiedCluster, *data_store.Store)
 	return clusterAction, nil
 }
 

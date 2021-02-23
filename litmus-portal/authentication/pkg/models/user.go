@@ -37,6 +37,9 @@ type Role string
 const (
 	//RoleAdmin gives the admin permissions to a user
 	RoleAdmin Role = "admin"
+
+	//RoleUser gives the normal user permissions to a user
+	RoleUser Role = "user"
 )
 
 //DefaultUser is the admin user created by default

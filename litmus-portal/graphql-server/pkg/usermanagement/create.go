@@ -11,7 +11,6 @@ import (
 	self_deployer "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/self-deployer"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
 	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
@@ -22,7 +21,6 @@ import (
 func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error) {
 
 	var (
-		uuid         = uuid.New()
 		self_cluster = os.Getenv("SELF_CLUSTER")
 	)
 
@@ -34,7 +32,7 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 	}
 
 	newUser := &dbSchema.User{
-		ID:          uuid.String(),
+		ID:          user.UserID,
 		Username:    user.Username,
 		Email:       user.Email,
 		CompanyName: user.CompanyName,
