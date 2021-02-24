@@ -222,6 +222,10 @@ func (r *queryResolver) ListDashboard(ctx context.Context, projectID string) ([]
 	return analytics_handler.QueryListDashboard(projectID)
 }
 
+func (r *queryResolver) GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error) {
+	return handler.GetGitOpsDetailsHandler(ctx, projectID)
+}
+
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {
 	log.Print("NEW EVENT ", projectID)
 	clusterEvent := make(chan *model.ClusterEvent, 1)

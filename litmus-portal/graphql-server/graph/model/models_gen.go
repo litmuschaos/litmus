@@ -220,6 +220,18 @@ type GitConfig struct {
 	SSHPrivateKey *string  `json:"SSHPrivateKey"`
 }
 
+type GitConfigResponse struct {
+	Enabled       bool      `json:"Enabled"`
+	ProjectID     string    `json:"ProjectID"`
+	Branch        *string   `json:"Branch"`
+	RepoURL       *string   `json:"RepoURL"`
+	AuthType      *AuthType `json:"AuthType"`
+	Token         *string   `json:"Token"`
+	UserName      *string   `json:"UserName"`
+	Password      *string   `json:"Password"`
+	SSHPrivateKey *string   `json:"SSHPrivateKey"`
+}
+
 type Link struct {
 	Name string `json:"Name"`
 	URL  string `json:"Url"`
