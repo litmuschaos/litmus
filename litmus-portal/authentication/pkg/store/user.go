@@ -91,7 +91,6 @@ func (us *UserStore) cHandler(name string, handler func(c *mgo.Collection)) {
 func (us *UserStore) Set(user *models.UserCredentials) (err error) {
 	us.cHandler(us.ucfg.UsersCName, func(c *mgo.Collection) {
 		user.ID = uuid.Must(uuid.NewRandom()).String()
-		user.UID = uuid.Must(uuid.NewRandom()).String()
 		currentTime := time.Now()
 		user.CreatedAt = &currentTime
 		if cerr := c.Insert(user); cerr != nil {

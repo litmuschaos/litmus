@@ -21,7 +21,6 @@ type UserCredentials struct {
 	Password    string       `bson:"password,omitempty"`
 	Email       string       `bson:"email,omitempty"`
 	Name        string       `bson:"name,omitempty"`
-	UID         string       `bson:"uid"`
 	Role        Role         `bson:"role"`
 	LoggedIn    bool         `bson:"logged_in,omitempty"`
 	SocialAuths []SocialAuth `bson:"social_auths,omitempty"`
@@ -141,10 +140,6 @@ func (u *UserCredentials) GetLoggedIn() bool {
 	return u.LoggedIn
 }
 
-func (u *UserCredentials) GetUID() string {
-	return u.UID
-}
-
 // GetPublicInfo fetches the pubicUserInfo from User
 func (u *UserCredentials) GetPublicInfo() *PublicUserInfo {
 	return &PublicUserInfo{
@@ -152,7 +147,6 @@ func (u *UserCredentials) GetPublicInfo() *PublicUserInfo {
 		UserName:  u.GetUserName(),
 		Email:     u.GetEmail(),
 		ID:        u.GetID(),
-		UID:       u.GetUID(),
 		Role:      RoleAdmin,
 		LoggedIn:  u.GetLoggedIn(),
 		CreatedAt: u.GetCreatedAt(),
@@ -185,11 +179,6 @@ func (uinfo *PublicUserInfo) GetCreatedAt() *time.Time {
 // GetID user ID
 func (uinfo *PublicUserInfo) GetID() string {
 	return uinfo.ID
-}
-
-// GetUID
-func (uinfo *PublicUserInfo) GetUID() string {
-	return uinfo.UID
 }
 
 // GetLoggedIn user loggedIn

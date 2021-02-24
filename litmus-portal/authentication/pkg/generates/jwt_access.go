@@ -51,7 +51,7 @@ func (a *JWTAccessGenerate) Token(data *GenerateBasic) (string, error) {
 		Email:    data.UserInfo.GetEmail(),
 		Name:     data.UserInfo.GetName(),
 		Role:     models.RoleAdmin,
-		UID:      data.UserInfo.GetUID(),
+		UID:      data.UserInfo.GetID(),
 		StandardClaims: jwt.StandardClaims{
 			IssuedAt:  time.Now().Unix(),
 			ExpiresAt: data.TokenInfo.GetAccessCreateAt().Add(data.TokenInfo.GetAccessExpiresIn()).Unix(),
