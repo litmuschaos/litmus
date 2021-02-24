@@ -3609,7 +3609,6 @@ type Subscription {
 }
 
 input CreateUserInput {
-  user_id: String!
   username: String!
   email: String
   company_name: String
@@ -16710,12 +16709,6 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 
 	for k, v := range asMap {
 		switch k {
-		case "user_id":
-			var err error
-			it.UserID, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "username":
 			var err error
 			it.Username, err = ec.unmarshalNString2string(ctx, v)

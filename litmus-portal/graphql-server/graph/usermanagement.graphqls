@@ -14,7 +14,6 @@ type User {
 }
 
 input CreateUserInput {
-  user_id: String!
   username: String!
   email: String
   company_name: String

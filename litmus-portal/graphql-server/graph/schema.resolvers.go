@@ -10,11 +10,13 @@ import (
 	"strconv"
 	"time"
 
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	analytics_handler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/handler"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	wf_handler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/handler"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	data_store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
@@ -39,7 +41,11 @@ func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.
 }
 
 func (r *mutationResolver) CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error) {
-	return usermanagement.CreateUser(ctx, user)
+	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
+	userUID := claims["uid"].(string)
+	role := claims["role"].(string)
+
+	return usermanagement.CreateUser(ctx, user, userUID, role)
 }
 
 func (r *mutationResolver) UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error) {
