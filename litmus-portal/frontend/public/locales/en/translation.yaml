@@ -335,6 +335,17 @@ settings:
       deleteUser:
         deleteModal:
           body: The user will lose access to the portal
+  gitopsTab:
+    choose: Choose where to store the Workflow configuration
+    locally: Locally in Litmus
+    disconnect: Are you sure you want to disconnect?
+    save: Save Locally
+    repo: Git Repository
+    desc: If there are any active workflows, then the configuration of such workflows will be moved to this repository
+    connect: Connect
+    branch: Branch
+    URL: Git URL
+    setting: Back to settings
 
 workflowDetailsView:
   argoWorkflow:

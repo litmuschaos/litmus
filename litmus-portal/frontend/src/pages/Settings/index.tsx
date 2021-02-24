@@ -7,6 +7,7 @@ import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
 import AccountSettings from '../../views/Settings/AccountsTab/AccountSettings';
+import GitOpsTab from '../../views/Settings/GitOpsTab';
 import TeammingTab from '../../views/Settings/TeammingTab';
 import UserManagement from '../../views/Settings/UserManagementTab/UserManagement';
 import useStyles from './styles';
@@ -84,6 +85,7 @@ const Settings: React.FC = () => {
           ) : (
             <></>
           )}
+          <Tab data-cy="teaming" label="GitOps" {...tabProps(3)} />
         </Tabs>
       </Paper>
       <TabPanel value={settingsTabValue} index={0}>
@@ -101,6 +103,11 @@ const Settings: React.FC = () => {
       ) : (
         <></>
       )}
+      <div data-cy="GitOpsPanel">
+        <TabPanel value={settingsTabValue} index={3}>
+          <GitOpsTab />
+        </TabPanel>
+      </div>
     </Scaffold>
   );
 };

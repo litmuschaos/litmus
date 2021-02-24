@@ -12,7 +12,7 @@ interface Props {
   setIsToggled: React.Dispatch<React.SetStateAction<MyHubToggleProps>>;
 }
 
-const MyHubToggleButtons: React.FC<Props> = ({ isToggled, setIsToggled }) => {
+const GitHubToggleButton: React.FC<Props> = ({ isToggled, setIsToggled }) => {
   const classes = useStyles();
   const setFilledButtonState = (buttonName: string) => {
     return (
@@ -80,4 +80,4 @@ const MyHubToggleButtons: React.FC<Props> = ({ isToggled, setIsToggled }) => {
   );
 };
 
-export default MyHubToggleButtons;
+export default GitHubToggleButton;

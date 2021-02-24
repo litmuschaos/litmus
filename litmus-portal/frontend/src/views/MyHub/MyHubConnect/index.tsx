@@ -25,9 +25,7 @@ import {
 import { history } from '../../../redux/configureStore';
 import { RootState } from '../../../redux/reducers';
 import { validateStartEmptySpacing } from '../../../utils/validate';
-import MyHubInput from './myHubInput';
 import useStyles from './styles';
-import MyHubToggleButtons from './toggleButton';
 import {
   CreateMyHub,
   MyHubData,
@@ -36,6 +34,8 @@ import {
   SSHKeys,
 } from '../../../models/graphql/user';
 import VideoCarousel from '../../../components/VideoCarousel';
+import GithubInputFields from '../../../components/GitHubComponents/GithubInputFields/GithubInputFields';
+import GitHubToggleButton from '../../../components/GitHubComponents/GitHubToggleButtons/GitHubToggleButton';
 
 interface GitHub {
   HubName: string;
@@ -290,7 +290,7 @@ const MyHub = () => {
               <div>
                 <div className={classes.mainPrivateRepo}>
                   <div className={classes.privateRepoDiv}>
-                    <MyHubToggleButtons
+                    <GitHubToggleButton
                       isToggled={isToggled}
                       setIsToggled={setIsToggled}
                     />
@@ -298,7 +298,7 @@ const MyHub = () => {
                   {/* If Public Repo is clicked */}
                   {isToggled.isPublicToggled ? (
                     <div className={classes.inputFieldDiv}>
-                      <MyHubInput
+                      <GithubInputFields
                         gitURL={gitHub.GitURL}
                         gitBranch={gitHub.GitBranch}
                         setGitURL={handleGitURL}
@@ -310,7 +310,7 @@ const MyHub = () => {
                   {isToggled.isPrivateToggled ? (
                     <div className={classes.privateToggleDiv}>
                       <div className={classes.privateRepoDetails}>
-                        <MyHubInput
+                        <GithubInputFields
                           gitURL={gitHub.GitURL}
                           gitBranch={gitHub.GitBranch}
                           setGitURL={handleGitURL}

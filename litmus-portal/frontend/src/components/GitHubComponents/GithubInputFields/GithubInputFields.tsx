@@ -18,7 +18,7 @@ interface MyHubInputProps {
   ) => void;
 }
 
-const MyHubInput: React.FC<MyHubInputProps> = ({
+const GithubInputFields: React.FC<MyHubInputProps> = ({
   gitURL,
   gitBranch,
   setGitBranch,
@@ -58,4 +58,4 @@ const MyHubInput: React.FC<MyHubInputProps> = ({
   );
 };
 
-export default MyHubInput;
+export default GithubInputFields;

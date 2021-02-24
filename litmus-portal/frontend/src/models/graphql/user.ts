@@ -101,4 +101,5 @@ export enum MyHubType {
   basic = 'basic',
   token = 'token',
   ssh = 'ssh',
+  none = 'none',
 }
