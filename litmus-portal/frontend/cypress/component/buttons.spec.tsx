@@ -34,10 +34,7 @@ describe('Button Outline', () => {
   });
   it('The button is enabled', () => {
     mount(
-      <ButtonOutlined
-        disabled={false}
-        onClick={() => console.log('Handle Click')}
-      >
+      <ButtonOutlined onClick={() => console.log('Handle Click')}>
         <Typography>Test</Typography>
       </ButtonOutlined>
     );

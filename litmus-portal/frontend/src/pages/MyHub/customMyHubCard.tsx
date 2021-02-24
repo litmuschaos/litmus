@@ -172,7 +172,6 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
                 onClick={() => {
                   history.push(`/myhub/${hub.HubName}`);
                 }}
-                variant="success"
                 fullWidth
               >
                 {t('myhub.view')}

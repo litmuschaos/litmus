@@ -165,6 +165,7 @@ const ConnectTarget = () => {
               </ButtonOutlined>
 
               <ButtonFilled
+                variant="success"
                 data-cy="connectTarget"
                 onClick={() => {
                   history.push('/create-workflow');
