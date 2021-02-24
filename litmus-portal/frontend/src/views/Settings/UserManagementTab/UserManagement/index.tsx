@@ -24,9 +24,9 @@ import {
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import SearchIcon from '@material-ui/icons/Search';
 import moment from 'moment';
+import { ButtonFilled } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import config from '../../../../config';
 import getToken from '../../../../utils/getToken';
 import CreateUser from '../CreateUser';
@@ -231,10 +231,9 @@ const UserManagement: React.FC = () => {
                   </div>
                   <div data-cy="createUser">
                     <ButtonFilled
-                      handleClick={() => {
+                      onClick={() => {
                         setShowDiv(true);
                       }}
-                      isPrimary
                     >
                       <div>{t('settings.userManagementTab.button.create')}</div>
                     </ButtonFilled>

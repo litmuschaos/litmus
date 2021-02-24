@@ -1,9 +1,9 @@
 /* eslint-disable */
 import { Typography } from '@material-ui/core';
+import { ButtonOutlined } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import ButtonOutline from '../../../components/Button/ButtonOutline';
 import { RootState } from '../../../redux/reducers';
 import timeDifference from '../../../utils/datesModifier';
 import NodeLogs from '../NodeLogs';
@@ -122,9 +122,9 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
         </div>
       </div>
       <div className={classes.footerButton}>
-        <ButtonOutline isDisabled={false} handleClick={() => setLogsOpen(true)}>
+        <ButtonOutlined onClick={() => setLogsOpen(true)}>
           {t('workflowDetailsView.workflowNodeInfo.button.logs')}
-        </ButtonOutline>
+        </ButtonOutlined>
       </div>
     </div>
   );

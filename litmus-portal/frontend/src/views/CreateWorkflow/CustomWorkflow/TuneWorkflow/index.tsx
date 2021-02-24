@@ -1,11 +1,10 @@
 import { useLazyQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
-import { InputField } from 'litmus-ui';
+import { InputField, ButtonFilled } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Loader from '../../../../components/Loader';
 import { GET_ENGINE_YAML } from '../../../../graphql/queries';
 import useActions from '../../../../redux/actions';
@@ -377,11 +376,11 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               {overrideEnvs[index + 1] ? null : (
                 <div className={classes.addEnvBtn}>
                   <ButtonFilled
-                    handleClick={() => {
+                    onClick={() => {
                       AddEnvPair();
                     }}
-                    isPrimary={false}
-                    isDisabled={
+                    variant="success"
+                    disabled={
                       !!(
                         overrideEnvs[index].name === '' ||
                         overrideEnvs[index].value === ''
@@ -398,12 +397,11 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       </div>
       <div className={classes.nextBtn}>
         <ButtonFilled
-          handleClick={() => {
+          onClick={() => {
             handleEnvModification();
             gotoStep(2);
           }}
-          isPrimary
-          isDisabled={loadingEnv}
+          disabled={loadingEnv}
         >
           <div>
             <img

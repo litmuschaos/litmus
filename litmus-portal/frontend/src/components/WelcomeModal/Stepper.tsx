@@ -4,7 +4,7 @@ import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { InputField } from 'litmus-ui';
+import { InputField, ButtonOutlined, ButtonFilled } from 'litmus-ui';
 import config from '../../config';
 import { CREATE_USER } from '../../graphql';
 import { CreateUserData } from '../../models/graphql/user';
@@ -17,8 +17,6 @@ import {
   validateEmail,
   validateStartEmptySpacing,
 } from '../../utils/validate';
-import ButtonFilled from '../Button/ButtonFilled';
-import ButtonOutline from '../Button/ButtonOutline';
 import ModalPage from './Modalpage';
 import useStyles from './styles';
 
@@ -190,11 +188,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
     if (activeStep === 0) {
       return (
         <div className={classes.buttonDiv} data-cy="Continue">
-          <ButtonFilled
-            isPrimary
-            isDisabled={isError.current}
-            handleClick={handleNext}
-          >
+          <ButtonFilled disabled={isError.current} onClick={handleNext}>
             <div>{t('welcomeModal.button.continue')}</div>
           </ButtonFilled>
         </div>
@@ -204,15 +198,14 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
       return (
         <div className={classes.buttonDiv}>
           <div data-cy="backButton">
-            <ButtonOutline isDisabled={false} handleClick={handleBack}>
+            <ButtonOutlined onClick={handleBack}>
               <>{t('welcomeModal.button.back')}</>
-            </ButtonOutline>
+            </ButtonOutlined>
           </div>
           <div data-cy="startButton">
             <ButtonFilled
-              isPrimary
-              isDisabled={isError.current}
-              handleClick={handleSubmit}
+              disabled={isError.current}
+              onClick={handleSubmit}
               data-cy="Start"
             >
               <div>{t('welcomeModal.button.letsStart')}</div>
@@ -224,19 +217,14 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
     return (
       <div className={classes.buttonDiv}>
         <div data-cy="backButton">
-          <ButtonOutline
-            isDisabled={false}
-            handleClick={handleBack}
-            data-cy="Back"
-          >
+          <ButtonOutlined onClick={handleBack} data-cy="Back">
             <>{t('welcomeModal.button.back')}</>
-          </ButtonOutline>
+          </ButtonOutlined>
         </div>
         <div data-cy="startButton">
           <ButtonFilled
-            isPrimary
-            isDisabled={isError.current}
-            handleClick={handleNext}
+            disabled={isError.current}
+            onClick={handleNext}
             data-cy="Continue"
           >
             <div>{t('welcomeModal.button.continue')}</div>

@@ -12,13 +12,12 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import cronstrue from 'cronstrue';
-import { ButtonFilled } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import ButtonOutline from '../../../components/Button/ButtonOutline';
 import Unimodal from '../../../containers/layouts/Unimodal';
 import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
 import useActions from '../../../redux/actions';
@@ -312,12 +311,9 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
               {t('createWorkflow.scheduleWorkflow.modalSubheader')}
             </Typography>
             <div className={classes.modalBtns}>
-              <ButtonOutline
-                isDisabled={false}
-                handleClick={() => setIsModalOpen(false)}
-              >
+              <ButtonOutlined onClick={() => setIsModalOpen(false)}>
                 {t('createWorkflow.scheduleWorkflow.cancelBtn')}
-              </ButtonOutline>
+              </ButtonOutlined>
               <ButtonFilled
                 variant="error"
                 className={classes.w7}

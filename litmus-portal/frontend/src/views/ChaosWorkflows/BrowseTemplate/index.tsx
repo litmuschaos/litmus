@@ -1,7 +1,6 @@
 import { Divider, Typography } from '@material-ui/core';
+import { ButtonOutlined, ButtonFilled } from 'litmus-ui';
 import React from 'react';
-import ButtonFilled from '../../../components/Button/ButtonFilled';
-import ButtonOutlined from '../../../components/Button/ButtonOutline';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import { preDefinedWorkflowData } from '../../../models/predefinedWorkflow';
 import { LocationState } from '../../../models/routerModel';
@@ -60,15 +59,12 @@ const BrowseAWorkflow: React.FC<BrowseTemplateProps> = ({ location }) => {
 
           {/* Buttons */}
           <div className={classes.spaceBetween}>
-            <ButtonOutlined
-              isDisabled={false}
-              handleClick={() => history.push('/workflows')}
-            >
+            <ButtonOutlined onClick={() => history.push('/workflows')}>
               <>Back</>
             </ButtonOutlined>
             <ButtonFilled
-              isPrimary={false}
-              handleClick={() => {
+              variant="success"
+              onClick={() => {
                 workflowAction.setWorkflowDetails({
                   description: '',
                   isCustomWorkflow: false,

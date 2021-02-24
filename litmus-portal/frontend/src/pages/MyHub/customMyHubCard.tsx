@@ -6,11 +6,11 @@ import {
   Menu,
   MenuItem,
 } from '@material-ui/core';
+import { ButtonFilled } from 'litmus-ui';
 import React from 'react';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
-import ButtonFilled from '../../components/Button/ButtonFilled';
 import useStyles from './styles';
 import { HubDetails } from '../../models/redux/myhub';
 import { history } from '../../redux/configureStore';
@@ -169,27 +169,21 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
             <hr className={classes.horizontalLine} />
             {hub.IsAvailable ? (
               <ButtonFilled
-                styles={{
-                  width: '100%',
-                }}
-                handleClick={() => {
+                onClick={() => {
                   history.push(`/myhub/${hub.HubName}`);
                 }}
-                isPrimary
+                fullWidth
               >
                 {t('myhub.view')}
               </ButtonFilled>
             ) : (
               <ButtonFilled
-                styles={{
-                  width: '100%',
-                }}
-                isWarning
-                isPrimary={false}
-                isDisabled={keyValue === hub.id && loader}
-                handleClick={() => {
+                variant="error"
+                disabled={keyValue === hub.id && loader}
+                onClick={() => {
                   handleSync(hub.id);
                 }}
+                fullWidth
               >
                 {keyValue === hub.id && loader
                   ? t('myhub.mainPage.sync')

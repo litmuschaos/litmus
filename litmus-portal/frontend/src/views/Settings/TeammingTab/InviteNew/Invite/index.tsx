@@ -9,10 +9,10 @@ import {
   Toolbar,
   Typography,
 } from '@material-ui/core';
+import { ButtonFilled } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import Loader from '../../../../../components/Loader';
 import { SEND_INVITE } from '../../../../../graphql/mutations';
 import { ALL_USERS, GET_USER } from '../../../../../graphql/queries';
@@ -210,11 +210,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                     data-cy="inviteNewMemberSuccessModalDoneButton"
                     className={classes.buttonModal}
                   >
-                    <ButtonFilled
-                      isPrimary
-                      isDisabled={false}
-                      handleClick={handleModal}
-                    >
+                    <ButtonFilled onClick={handleModal}>
                       <>
                         {t('settings.teamingTab.inviteNew.invite.button.done')}
                       </>
@@ -269,9 +265,8 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                 className={classes.InviteBtn}
               >
                 <ButtonFilled
-                  isPrimary
-                  isDisabled={!selected.length}
-                  handleClick={() => {
+                  disabled={!selected.length}
+                  onClick={() => {
                     setShowsuccess(true);
                     selected.map(
                       (s) =>

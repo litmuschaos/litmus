@@ -1,8 +1,8 @@
 import { Box, Paper, Tab, Tabs, Typography } from '@material-ui/core';
+import { ButtonOutlined } from 'litmus-ui';
 import React from 'react';
 import useTheme from '@material-ui/core/styles/useTheme';
 import { useTranslation } from 'react-i18next';
-import ButtonOutline from '../../../../components/Button/ButtonOutline';
 import Unimodal from '../../../../containers/layouts/Unimodal';
 import ReceivedInvitations from './ReceivedInvitations';
 import SentInvitations from './SentInvitations';
@@ -62,9 +62,9 @@ const Invitation: React.FC = () => {
   return (
     <div data-cy="invitationButton">
       <div className={classes.button}>
-        <ButtonOutline handleClick={handleOpen} isDisabled={false}>
+        <ButtonOutlined onClick={handleOpen}>
           <div>{t('settings.teamingTab.invitation.button.invitation')}</div>
-        </ButtonOutline>
+        </ButtonOutlined>
       </div>
 
       <Unimodal

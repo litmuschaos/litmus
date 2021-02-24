@@ -7,9 +7,9 @@ import {
 } from '@material-ui/core';
 import ExpandLessTwoToneIcon from '@material-ui/icons/ExpandLessTwoTone';
 import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
+import { ButtonOutlined } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ButtonOutline from '../../../../components/Button/ButtonOutline';
 import useStyles from './styles';
 
 interface SortData {
@@ -179,16 +179,15 @@ const TableHeader: React.FC<TableHeaderProps> = ({
           </div>
         </TableCell>
         <TableCell>
-          <ButtonOutline
-            handleClick={() => {
+          <ButtonOutlined
+            onClick={() => {
               callBackToClose(true);
             }}
-            isDisabled={false}
           >
             <Typography className={classes.dateRangeDefault}>
               {t('analytics.workflowRunDetailsTable.close')}
             </Typography>
-          </ButtonOutline>
+          </ButtonOutlined>
         </TableCell>
       </TableRow>
     </TableHead>

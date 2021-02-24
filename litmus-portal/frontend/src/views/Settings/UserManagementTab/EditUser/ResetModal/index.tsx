@@ -1,7 +1,7 @@
 import { Typography } from '@material-ui/core';
+import { ButtonFilled } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import Loader from '../../../../../components/Loader';
 import config from '../../../../../config';
 import Unimodal from '../../../../../containers/layouts/Unimodal';
@@ -71,9 +71,8 @@ const ResetModal: React.FC<ResetModalProps> = ({
       <div>
         <div data-cy="edit" className={classes.buttonFilled}>
           <ButtonFilled
-            isPrimary={false}
-            isDisabled={!(new_password.length && !loading)}
-            handleClick={handleClick}
+            disabled={!(new_password.length && !loading)}
+            onClick={handleClick}
           >
             {loading ? (
               <div>
@@ -108,11 +107,7 @@ const ResetModal: React.FC<ResetModalProps> = ({
                 </Typography>
               </div>
               <div data-cy="done" className={classes.buttonModal}>
-                <ButtonFilled
-                  isPrimary
-                  isDisabled={false}
-                  handleClick={handleClose}
-                >
+                <ButtonFilled onClick={handleClose}>
                   <>
                     {t(
                       'settings.userManagementTab.editUser.resetModal.button.done'
@@ -140,11 +135,7 @@ const ResetModal: React.FC<ResetModalProps> = ({
                 </Typography>
               </div>
               <div data-cy="done">
-                <ButtonFilled
-                  isPrimary
-                  isDisabled={false}
-                  handleClick={handleModal}
-                >
+                <ButtonFilled onClick={handleModal}>
                   {t(
                     'settings.userManagementTab.editUser.resetModal.button.done'
                   )}

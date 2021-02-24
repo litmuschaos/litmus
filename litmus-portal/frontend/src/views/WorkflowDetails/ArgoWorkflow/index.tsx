@@ -1,8 +1,8 @@
 import { Typography } from '@material-ui/core';
 import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';
+import { ButtonOutlined } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ButtonOutline from '../../../components/Button/ButtonOutline';
 import DagreGraph, { d3Link, d3Node } from '../../../components/DagreGraph';
 import { Nodes } from '../../../models/graphql/workflowData';
 import useActions from '../../../redux/actions';
@@ -99,12 +99,12 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
     <>
       <div className={classes.graphOptions}>
         <div>
-          <ButtonOutline
+          <ButtonOutlined
             className={classes.layoutButton}
-            handleClick={() => setHorizontal(!horizontal)}
+            onClick={() => setHorizontal(!horizontal)}
           >
             <AccountTreeRoundedIcon />
-          </ButtonOutline>
+          </ButtonOutlined>
           <Typography component="span">Horizontal</Typography>
         </div>
       </div>

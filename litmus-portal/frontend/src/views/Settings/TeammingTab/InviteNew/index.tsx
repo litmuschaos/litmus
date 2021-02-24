@@ -1,6 +1,6 @@
+import { ButtonFilled } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Unimodal from '../../../../containers/layouts/Unimodal';
 import Invite from './Invite';
 import useStyles from './styles';
@@ -22,7 +22,7 @@ const InviteNew: React.FC = () => {
   return (
     <div data-cy="inviteNewMemberButton">
       <div className={classes.button}>
-        <ButtonFilled handleClick={handleOpen} isDisabled={false} isPrimary>
+        <ButtonFilled onClick={handleOpen}>
           <div>{t('settings.teamingTab.inviteNew.header')}</div>
         </ButtonFilled>
       </div>

@@ -1,8 +1,7 @@
 import { Divider, Typography } from '@material-ui/core';
-import { InputField } from 'litmus-ui';
+import { InputField, ButtonFilled } from 'litmus-ui';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Loader from '../../../../components/Loader';
 import config from '../../../../config';
 import Unimodal from '../../../../containers/layouts/Unimodal';
@@ -197,15 +196,14 @@ const AccountSettings: React.FC = () => {
               <div data-cy="change-password" className={classes.buttonModal}>
                 <ButtonFilled
                   data-cy="button"
-                  isPrimary
-                  isDisabled={
+                  disabled={
                     !(
                       isSuccess.current &&
                       password.currPassword.length > 0 &&
                       !loading
                     )
                   }
-                  handleClick={handleChangePassword}
+                  onClick={handleChangePassword}
                 >
                   {loading ? (
                     <div>
@@ -249,11 +247,7 @@ const AccountSettings: React.FC = () => {
                       </Typography>
                     </div>
                     <div data-cy="done" className={classes.buttonModal}>
-                      <ButtonFilled
-                        isPrimary
-                        isDisabled={false}
-                        handleClick={handleClose}
-                      >
+                      <ButtonFilled onClick={handleClose}>
                         <>
                           {t(
                             'settings.accountsTab.accountsSettings.button.done'
@@ -284,11 +278,7 @@ const AccountSettings: React.FC = () => {
                       </Typography>
                     </div>
                     <div data-cy="done" className={classes.buttonModal}>
-                      <ButtonFilled
-                        isPrimary
-                        isDisabled={false}
-                        handleClick={handleClose}
-                      >
+                      <ButtonFilled onClick={handleClose}>
                         <>
                           {t(
                             'settings.accountsTab.accountsSettings.button.done'

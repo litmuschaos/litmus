@@ -1,7 +1,7 @@
 import { Typography } from '@material-ui/core';
+import { ButtonFilled } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import Loader from '../../../../../components/Loader';
 import config from '../../../../../config';
 import Unimodal from '../../../../../containers/layouts/Unimodal';
@@ -70,9 +70,8 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
     <div>
       <div data-cy="createNewUserButton" className={classes.button}>
         <ButtonFilled
-          isPrimary={false}
-          isDisabled={!(username.length > 0 && password.length > 0 && !loading)}
-          handleClick={handleOpen}
+          disabled={!(username.length > 0 && password.length > 0 && !loading)}
+          onClick={handleOpen}
         >
           {loading ? (
             <div>
@@ -111,11 +110,7 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
               </Typography>
             </div>
             <div data-cy="newUserDoneButton" className={classes.buttonModal}>
-              <ButtonFilled
-                isPrimary
-                isDisabled={false}
-                handleClick={handleClose}
-              >
+              <ButtonFilled onClick={handleClose}>
                 <>
                   {t(
                     'settings.userManagementTab.createUser.newUserModal.button.done'
@@ -142,11 +137,7 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
               </Typography>
             </div>
             <div data-cy="newUserDoneButton" className={classes.buttonModal}>
-              <ButtonFilled
-                isPrimary
-                isDisabled={false}
-                handleClick={handleClose}
-              >
+              <ButtonFilled onClick={handleClose}>
                 <>
                   {t(
                     'settings.userManagementTab.createUser.newUserModal.button.done'
