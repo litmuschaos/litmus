@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     gridTemplateColumns: '1fr 1fr',
     gridGap: '1.5rem',
   },
-  kuberaCard: {
+  litmusCard: {
     background: theme.palette.cards.background,
   },
   agentRadioButton: {

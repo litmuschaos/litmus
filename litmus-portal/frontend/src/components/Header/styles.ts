@@ -4,7 +4,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   // Styles for Header
   appBar: {
     width: '100%',
-    height: '100%',
+    height: '4rem', // Temporary Fix
     background: theme.palette.background.default,
   },
 

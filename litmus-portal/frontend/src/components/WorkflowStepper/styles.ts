@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   headerButtonWrapper: {
     display: 'flex',
-    width: '17%',
+    width: '15%',
     justifyContent: 'space-between',
     [theme.breakpoints.up('lg')]: {
       width: '11%',

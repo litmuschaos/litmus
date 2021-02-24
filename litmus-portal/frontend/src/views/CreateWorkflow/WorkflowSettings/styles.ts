@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
   headerDiv: {
     marginLeft: theme.spacing(2.5),
   },
-  headerFont: {
+  header: {
     fontSize: '1.5rem',
     fontWeight: 700,
   },
@@ -28,10 +28,10 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 700,
     marginTop: theme.spacing(2.5),
   },
-  descriptionFont: {
+  description: {
     fontSize: '1rem',
     fontWeight: 500,
-    maxWidth: '28.125rem',
+    width: '70%',
     marginTop: theme.spacing(1.25),
   },
   avatar: {

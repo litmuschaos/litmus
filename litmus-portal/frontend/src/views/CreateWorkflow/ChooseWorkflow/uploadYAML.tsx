@@ -1,17 +1,16 @@
 import { AccordionDetails, Button, Paper, Typography } from '@material-ui/core';
+import localforage from 'localforage';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import YAML from 'yaml';
 import { useSelector } from 'react-redux';
-import localforage from 'localforage';
-import useStyles from './styles';
-import * as WorkflowActions from '../../../redux/actions/workflow';
+import YAML from 'yaml';
 import useActions from '../../../redux/actions';
+import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
+import useStyles from './styles';
 
 interface ChooseWorkflowRadio {
   selected: string;
-  id: string;
 }
 
 const UploadYAML = () => {
@@ -25,7 +24,6 @@ const UploadYAML = () => {
   useEffect(() => {
     const selection: ChooseWorkflowRadio = {
       selected: 'D',
-      id: '',
     };
     localforage.setItem('selectedScheduleOption', selection);
   }, []);
