@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   normalLabel: {
-    color: theme.palette.text.secondary,
+    color: theme.palette.horizontalStepper.pending,
     fontSize: theme.spacing(1.5),
     marginTop: theme.spacing(-9),
     [theme.breakpoints.down('sm')]: {
@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   completedLabel: {
-    color: theme.palette.primary.light,
+    color: theme.palette.horizontalStepper.completed,
     fontSize: theme.spacing(1.5),
     marginTop: theme.spacing(-9),
     [theme.breakpoints.down('sm')]: {

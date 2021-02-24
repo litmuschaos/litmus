@@ -60,6 +60,8 @@ workflowStepper:
   workflowBtn: Go to Workflow
   step1:
     errorSnackbar: You haven't selected any Target Agent
+  step2:
+    errorSnackbar: Please select a workflow type
   finish: Finish
   next: Next
 
