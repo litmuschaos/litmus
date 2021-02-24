@@ -266,3 +266,19 @@ export const GET_EXPERIMENT_YAML = gql`
     getYAMLData(experimentInput: $experimentInput)
   }
 `;
+
+export const GET_GITOPS_DATA = gql`
+  query gitOPsData($data: String!) {
+    getGitOpsDetails(project_id: $data) {
+      Enabled
+      ProjectID
+      Branch
+      RepoURL
+      AuthType
+      Token
+      UserName
+      Password
+      SSHPrivateKey
+    }
+  }
+`;

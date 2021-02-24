@@ -30,10 +30,10 @@ import {
 import { HubStatus } from '../../../models/redux/myhub';
 import { RootState } from '../../../redux/reducers';
 import { validateStartEmptySpacing } from '../../../utils/validate';
-import MyHubInput from '../MyHubConnect/myHubInput';
-import MyHubToggleButtons from '../MyHubConnect/toggleButton';
 import useStyles from './styles';
 import VideoCarousel from '../../../components/VideoCarousel';
+import GitHubToggleButton from '../../../components/GitHubComponents/GitHubToggleButtons/GitHubToggleButton';
+import GithubInputFields from '../../../components/GitHubComponents/GithubInputFields/GithubInputFields';
 
 interface MyHubParams {
   hubname: string;
@@ -259,7 +259,7 @@ const MyHub = () => {
                 <div>
                   <div className={classes.mainPrivateRepo}>
                     <div className={classes.privateRepoDiv}>
-                      <MyHubToggleButtons
+                      <GitHubToggleButton
                         isToggled={isToggled}
                         setIsToggled={setIsToggled}
                       />
@@ -267,7 +267,7 @@ const MyHub = () => {
                     {/* If Public Repo is clicked */}
                     {isToggled.isPublicToggled ? (
                       <div className={classes.inputFieldDiv}>
-                        <MyHubInput
+                        <GithubInputFields
                           gitURL={gitHub.GitURL}
                           gitBranch={gitHub.GitBranch}
                           setGitURL={handleGitURL}
@@ -279,7 +279,7 @@ const MyHub = () => {
                     {isToggled.isPrivateToggled ? (
                       <div className={classes.privateToggleDiv}>
                         <div className={classes.privateRepoDetails}>
-                          <MyHubInput
+                          <GithubInputFields
                             gitURL={gitHub.GitURL}
                             gitBranch={gitHub.GitBranch}
                             setGitURL={handleGitURL}
