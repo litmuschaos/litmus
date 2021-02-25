@@ -1,7 +1,8 @@
-package schema
+package gitops
 
 import "github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 
+// GitConfigDB ...
 type GitConfigDB struct {
 	ProjectID     string         `bson:"project_id"`
 	RepositoryURL string         `bson:"repo_url"`
@@ -14,6 +15,7 @@ type GitConfigDB struct {
 	SSHPrivateKey *string        `bson:"ssh_private_key"`
 }
 
+// GetGitConfigDB ...
 func GetGitConfigDB(config model.GitConfig) GitConfigDB {
 	return GitConfigDB{
 		ProjectID:     config.ProjectID,

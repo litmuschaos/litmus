@@ -1,4 +1,4 @@
-package operations
+package gitops
 
 import (
 	"context"
@@ -6,11 +6,11 @@ import (
 	"log"
 	"time"
 
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
-	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 )
 
 var (
@@ -35,8 +35,8 @@ func init() {
 	}
 }
 
-//AddGitConfig inserts new git config for project
-func AddGitConfig(ctx context.Context, config *dbSchema.GitConfigDB) error {
+// AddGitConfig inserts new git config for project
+func AddGitConfig(ctx context.Context, config *GitConfigDB) error {
 	ctx, cancel := context.WithTimeout(backgroundContext, timeout)
 	defer cancel()
 	_, err := gitOpsCollection.InsertOne(ctx, config)
@@ -46,12 +46,12 @@ func AddGitConfig(ctx context.Context, config *dbSchema.GitConfigDB) error {
 	return nil
 }
 
-//GetGitConfig retrieves git config using project id
-func GetGitConfig(ctx context.Context, projectID string) (*dbSchema.GitConfigDB, error) {
+// GetGitConfig retrieves git config using project id
+func GetGitConfig(ctx context.Context, projectID string) (*GitConfigDB, error) {
 	ctx, cancel := context.WithTimeout(backgroundContext, timeout)
 	defer cancel()
 	query := bson.M{"project_id": projectID}
-	var res dbSchema.GitConfigDB
+	var res GitConfigDB
 	err := gitOpsCollection.FindOne(ctx, query).Decode(&res)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -63,8 +63,8 @@ func GetGitConfig(ctx context.Context, projectID string) (*dbSchema.GitConfigDB,
 	return &res, nil
 }
 
-//GetAllGitConfig retrieves all git configs from db
-func GetAllGitConfig(ctx context.Context) ([]dbSchema.GitConfigDB, error) {
+// GetAllGitConfig retrieves all git configs from db
+func GetAllGitConfig(ctx context.Context) ([]GitConfigDB, error) {
 	ctx, cancel := context.WithTimeout(backgroundContext, timeout)
 	defer cancel()
 	query := bson.D{{}}
@@ -72,7 +72,7 @@ func GetAllGitConfig(ctx context.Context) ([]dbSchema.GitConfigDB, error) {
 	if err != nil {
 		return nil, err
 	}
-	var configs []dbSchema.GitConfigDB
+	var configs []GitConfigDB
 	err = cursor.All(ctx, &configs)
 	if err != nil {
 		return nil, err
@@ -80,7 +80,7 @@ func GetAllGitConfig(ctx context.Context) ([]dbSchema.GitConfigDB, error) {
 	return configs, nil
 }
 
-//UpdateGitConfig update git config matching the query
+// UpdateGitConfig update git config matching the query
 func UpdateGitConfig(ctx context.Context, query bson.D, update bson.D) error {
 	ctx, cancel := context.WithTimeout(backgroundContext, timeout)
 	defer cancel()
@@ -96,7 +96,7 @@ func UpdateGitConfig(ctx context.Context, query bson.D, update bson.D) error {
 	return nil
 }
 
-//DeleteGitConfig removes git config corresponding to the given project id
+// DeleteGitConfig removes git config corresponding to the given project id
 func DeleteGitConfig(ctx context.Context, projectID string) error {
 	ctx, cancel := context.WithTimeout(backgroundContext, timeout)
 	defer cancel()

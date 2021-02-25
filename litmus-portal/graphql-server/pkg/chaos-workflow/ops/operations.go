@@ -3,30 +3,34 @@ package ops
 import (
 	"encoding/json"
 	"errors"
-	"github.com/ghodss/yaml"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/ghodss/yaml"
+
 	"github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
-	chaostypes "github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
-	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql/subscriptions"
+	chaosTypes "github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	"github.com/tidwall/gjson"
 	"go.mongodb.org/mongo-driver/bson"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	clusterOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
+	clusterHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
+	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
+	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
+	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
+	dbSchemaWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 )
 
-//ProcessWorkflow takes the workflow and processes it as required
+// ProcessWorkflow takes the workflow and processes it as required
 func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowInput, error) {
 	// security check for cluster access
-	cluster, err := database.GetCluster(workflow.ClusterID)
+	cluster, err := dbOperationsCluster.GetCluster(workflow.ClusterID)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +88,7 @@ func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowIn
 					data = strings.ReplaceAll(data, "{{", "")
 					data = strings.ReplaceAll(data, "}}", "")
 
-					var meta chaostypes.ChaosEngine
+					var meta chaosTypes.ChaosEngine
 					err := yaml.Unmarshal([]byte(data), &meta)
 					if err != nil {
 						return nil, errors.New("failed to unmarshal chaosengine")
@@ -164,7 +168,7 @@ func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowIn
 					data = strings.ReplaceAll(data, "{{", "")
 					data = strings.ReplaceAll(data, "}}", "")
 
-					var meta chaostypes.ChaosEngine
+					var meta chaosTypes.ChaosEngine
 					err = yaml.Unmarshal([]byte(data), &meta)
 					if err != nil {
 						return nil, errors.New("failed to unmarshal chaosengine")
@@ -217,14 +221,14 @@ func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowIn
 	return workflow, nil
 }
 
-//ProcessWorkflowCreation creates new workflow entry and sends the workflow to the specific agent for execution
+// ProcessWorkflowCreation creates new workflow entry and sends the workflow to the specific agent for execution
 func ProcessWorkflowCreation(input *model.ChaosWorkFlowInput, r *store.StateData) error {
-	var Weightages []*database.WeightagesInput
+	var Weightages []*dbSchemaWorkflow.WeightagesInput
 	if input.Weightages != nil {
 		copier.Copy(&Weightages, &input.Weightages)
 	}
 
-	newChaosWorkflow := database.ChaosWorkFlowInput{
+	newChaosWorkflow := dbSchemaWorkflow.ChaosWorkFlowInput{
 		WorkflowID:          *input.WorkflowID,
 		WorkflowManifest:    input.WorkflowManifest,
 		CronSyntax:          input.CronSyntax,
@@ -236,11 +240,11 @@ func ProcessWorkflowCreation(input *model.ChaosWorkFlowInput, r *store.StateData
 		Weightages:          Weightages,
 		CreatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
 		UpdatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
-		WorkflowRuns:        []*database.WorkflowRun{},
+		WorkflowRuns:        []*dbSchemaWorkflow.ChaosWorkflowRun{},
 		IsRemoved:           false,
 	}
 
-	err := database.InsertChaosWorkflow(newChaosWorkflow)
+	err := dbOperationsWorkflow.InsertChaosWorkflow(newChaosWorkflow)
 	if err != nil {
 		return err
 	}
@@ -252,9 +256,9 @@ func ProcessWorkflowCreation(input *model.ChaosWorkFlowInput, r *store.StateData
 	return nil
 }
 
-//ProcessWorkflowUpdate updates the workflow entry and sends update resource request to required agent
+// ProcessWorkflowUpdate updates the workflow entry and sends update resource request to required agent
 func ProcessWorkflowUpdate(workflow *model.ChaosWorkFlowInput, r *store.StateData) error {
-	var Weightages []*database.WeightagesInput
+	var Weightages []*dbSchemaWorkflow.WeightagesInput
 	if workflow.Weightages != nil {
 		copier.Copy(&Weightages, &workflow.Weightages)
 	}
@@ -262,7 +266,7 @@ func ProcessWorkflowUpdate(workflow *model.ChaosWorkFlowInput, r *store.StateDat
 	query := bson.D{{"workflow_id", workflow.WorkflowID}, {"project_id", workflow.ProjectID}}
 	update := bson.D{{"$set", bson.D{{"workflow_manifest", workflow.WorkflowManifest}, {"cronSyntax", workflow.CronSyntax}, {"workflow_name", workflow.WorkflowName}, {"workflow_description", workflow.WorkflowDescription}, {"isCustomWorkflow", workflow.IsCustomWorkflow}, {"weightages", Weightages}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
-	err := database.UpdateChaosWorkflow(query, update)
+	err := dbOperationsWorkflow.UpdateChaosWorkflow(query, update)
 	if err != nil {
 		return err
 	}
@@ -273,16 +277,16 @@ func ProcessWorkflowUpdate(workflow *model.ChaosWorkFlowInput, r *store.StateDat
 	return nil
 }
 
-//ProcessWorkflowDelete deletes the workflow entry and sends delete resource request to required agent
+// ProcessWorkflowDelete deletes the workflow entry and sends delete resource request to required agent
 func ProcessWorkflowDelete(query bson.D, r *store.StateData) error {
-	workflows, err := database.GetWorkflows(query)
+	workflows, err := dbOperationsWorkflow.GetWorkflows(query)
 	if err != nil {
 		return err
 	}
 
 	update := bson.D{{"$set", bson.D{{"isRemoved", true}}}}
 
-	err = database.UpdateChaosWorkflow(query, update)
+	err = dbOperationsWorkflow.UpdateChaosWorkflow(query, update)
 
 	if err != nil {
 		return err
@@ -306,11 +310,22 @@ func SendWorkflowToSubscriber(workflow *model.ChaosWorkFlowInput, reqType string
 	if workflowNamespace == "" {
 		workflowNamespace = os.Getenv("AGENT_NAMESPACE")
 	}
-	subscriptions.SendRequestToSubscriber(graphql.SubscriberRequests{
+	clusterHandler.SendRequestToSubscriber(clusterOps.SubscriberRequests{
 		K8sManifest: workflow.WorkflowManifest,
 		RequestType: reqType,
 		ProjectID:   workflow.ProjectID,
 		ClusterID:   workflow.ClusterID,
 		Namespace:   workflowNamespace,
 	}, *r)
+}
+
+// SendWorkflowEvent sends workflow events from the clusters to the appropriate users listening for the events
+func SendWorkflowEvent(wfRun model.WorkflowRun, r *store.StateData) {
+	r.Mutex.Lock()
+	if r.WorkflowEventPublish != nil {
+		for _, observer := range r.WorkflowEventPublish[wfRun.ProjectID] {
+			observer <- &wfRun
+		}
+	}
+	r.Mutex.Unlock()
 }

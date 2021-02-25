@@ -1,5 +1,6 @@
-package schema
+package analytics
 
+// DataSource ...
 type DataSource struct {
 	DsID              string  `bson:"ds_id"`
 	DsName            string  `bson:"ds_name"`
@@ -18,6 +19,7 @@ type DataSource struct {
 	IsRemoved         bool    `bson:"is_removed"`
 }
 
+// DashBoard ...
 type DashBoard struct {
 	DbID        string       `bson:"db_id"`
 	DsID        string       `bson:"ds_id"`
@@ -34,11 +36,13 @@ type DashBoard struct {
 	IsRemoved   bool         `bson:"is_removed"`
 }
 
+// PanelGroup ...
 type PanelGroup struct {
 	PanelGroupName string `bson:"panel_group_name"`
 	PanelGroupID   string `bson:"panel_group_id"`
 }
 
+// Panel ...
 type Panel struct {
 	PanelID      string       `bson:"panel_id"`
 	PanelOptions *PanelOption `bson:"panel_options"`
@@ -54,12 +58,14 @@ type Panel struct {
 	IsRemoved    bool         `bson:"is_removed"`
 }
 
+// PanelOption ...
 type PanelOption struct {
 	Points   *bool `bson:"points"`
 	Grids    *bool `bson:"grids"`
 	LeftAxis *bool `bson:"left_axis"`
 }
 
+// PromQuery ...
 type PromQuery struct {
 	Queryid       string  `bson:"queryid"`
 	PromQueryName *string `bson:"prom_query_name"`

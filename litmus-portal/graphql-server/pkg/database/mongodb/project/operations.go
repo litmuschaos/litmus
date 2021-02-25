@@ -1,16 +1,16 @@
-package operations
+package project
 
 import (
 	"context"
 	"log"
 	"time"
 
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
-	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 )
 
 var projectCollection *mongo.Collection
@@ -20,7 +20,7 @@ func init() {
 }
 
 // CreateProject ...
-func CreateProject(ctx context.Context, project *dbSchema.Project) error {
+func CreateProject(ctx context.Context, project *Project) error {
 	// ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	_, err := projectCollection.InsertOne(ctx, project)
 	if err != nil {
@@ -31,10 +31,10 @@ func CreateProject(ctx context.Context, project *dbSchema.Project) error {
 	return nil
 }
 
-//GetProject ...
-func GetProject(ctx context.Context, projectID string) (*dbSchema.Project, error) {
+// GetProject ...
+func GetProject(ctx context.Context, projectID string) (*Project, error) {
 	// ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	var project *dbSchema.Project = new(dbSchema.Project)
+	var project = new(Project)
 	query := bson.M{"_id": projectID}
 	err := projectCollection.FindOne(ctx, query).Decode(project)
 	if err != nil {
@@ -45,11 +45,11 @@ func GetProject(ctx context.Context, projectID string) (*dbSchema.Project, error
 	return project, err
 }
 
-//GetProjectsByUserID ...
-func GetProjectsByUserID(ctx context.Context, userID string) ([]dbSchema.Project, error) {
+// GetProjectsByUserID ...
+func GetProjectsByUserID(ctx context.Context, userID string) ([]Project, error) {
 	// ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	projects := []dbSchema.Project{}
-	query := bson.M{"members": bson.M{"$elemMatch": bson.M{"user_id": userID, "invitation": bson.M{"$ne": dbSchema.DeclinedInvitation}}}}
+	projects := []Project{}
+	query := bson.M{"members": bson.M{"$elemMatch": bson.M{"user_id": userID, "invitation": bson.M{"$ne": DeclinedInvitation}}}}
 	cursor, err := projectCollection.Find(ctx, query)
 	if err != nil {
 		log.Print("Error getting project with userID: ", userID, " error: ", err)
@@ -64,8 +64,8 @@ func GetProjectsByUserID(ctx context.Context, userID string) ([]dbSchema.Project
 	return projects, err
 }
 
-//AddMember ...
-func AddMember(ctx context.Context, projectID string, member *dbSchema.Member) error {
+// AddMember ...
+func AddMember(ctx context.Context, projectID string, member *Member) error {
 
 	query := bson.M{"_id": projectID}
 	update := bson.M{"$push": bson.M{"members": member}}
@@ -77,13 +77,13 @@ func AddMember(ctx context.Context, projectID string, member *dbSchema.Member) e
 	return nil
 }
 
-//RemoveInvitation ...
-func RemoveInvitation(ctx context.Context, projectID string, userName string, invitation dbSchema.Invitation) error {
+// RemoveInvitation ...
+func RemoveInvitation(ctx context.Context, projectID string, userName string, invitation Invitation) error {
 	query := bson.M{"_id": projectID}
 	update := bson.M{"$pull": bson.M{"members": bson.M{"username": userName}}}
 	_, err := projectCollection.UpdateOne(ctx, query, update)
 	if err != nil {
-		if invitation == dbSchema.AcceptedInvitation {
+		if invitation == AcceptedInvitation {
 			log.Print("Error Removing the member with username:", userName, "from project with project id: ", projectID, err)
 			return err
 		}
@@ -94,8 +94,8 @@ func RemoveInvitation(ctx context.Context, projectID string, userName string, in
 	return nil
 }
 
-//UpdateInvite ...
-func UpdateInvite(ctx context.Context, projectID, userName string, invitation dbSchema.Invitation, Role *model.MemberRole) error {
+// UpdateInvite ...
+func UpdateInvite(ctx context.Context, projectID, userName string, invitation Invitation, Role *model.MemberRole) error {
 	options := options.Update().SetArrayFilters(options.ArrayFilters{
 		Filters: []interface{}{
 			bson.M{"elem.username": userName},
@@ -106,11 +106,11 @@ func UpdateInvite(ctx context.Context, projectID, userName string, invitation db
 	var update bson.M
 
 	switch invitation {
-	case dbSchema.PendingInvitation:
+	case PendingInvitation:
 		update = bson.M{"$set": bson.M{"members.$[elem].invitation": invitation, "members.$[elem].role": Role}}
-	case dbSchema.DeclinedInvitation:
+	case DeclinedInvitation:
 		update = bson.M{"$set": bson.M{"members.$[elem].invitation": invitation}}
-	case dbSchema.AcceptedInvitation:
+	case AcceptedInvitation:
 		update = bson.M{"$set": bson.M{"members.$[elem].invitation": invitation, "members.$[elem].joined_at": time.Now().Format(time.RFC1123Z)}}
 
 	}

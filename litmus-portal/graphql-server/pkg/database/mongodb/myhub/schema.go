@@ -1,8 +1,8 @@
-package schema
+package myhub
 
 import "github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 
-//MyHub ...
+// MyHub ...
 type MyHub struct {
 	ID            string  `bson:"myhub_id"`
 	ProjectID     string  `bson:"project_id"`
@@ -22,7 +22,7 @@ type MyHub struct {
 	LastSyncedAt  string  `bson:"last_synced_at"`
 }
 
-//GetOutputMyHub ...
+// GetOutputMyHub ...
 func (myhub *MyHub) GetOutputMyHub() *model.MyHub {
 
 	return &model.MyHub{

@@ -1,59 +1,56 @@
-package mongodb
+package workflow
 
 import (
 	"context"
 	"errors"
-	"fmt"
+	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 )
 
-func InsertCluster(cluster Cluster) error {
-	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	_, err := clusterCollection.InsertOne(ctx, cluster)
-	if err != nil {
-		return err
-	}
+var (
+	workflowCollection *mongo.Collection
+	backgroundContext  = context.Background()
+)
 
-	return nil
+func init() {
+	workflowCollection = mongodb.Database.Collection("workflow-collection")
+	_, err := workflowCollection.Indexes().CreateMany(backgroundContext, []mongo.IndexModel{
+		{
+			Keys: bson.M{
+				"workflow_id": 1,
+			},
+			Options: options.Index().SetUnique(true),
+		},
+		{
+			Keys: bson.M{
+				"workflow_name": 1,
+			},
+			Options: options.Index().SetUnique(true),
+		},
+	})
+	if err != nil {
+		log.Fatal("Error Creating Index for Workflow Collection: ", err)
+	}
 }
 
-func GetCluster(cluster_id string) (Cluster, error) {
-	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	query := bson.M{"cluster_id": cluster_id}
-
-	var cluster Cluster
-	err = clusterCollection.FindOne(ctx, query).Decode(&cluster)
-	if err != nil {
-		return Cluster{}, err
-	}
-
-	return cluster, nil
-}
-
-func UpdateCluster(query bson.D, update bson.D) error {
+// UpdateWorkflowRun takes workflowID and wfRun parameters to update the workflow run details in the database
+func UpdateWorkflowRun(workflowID string, wfRun ChaosWorkflowRun) (int, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
-	_, err := clusterCollection.UpdateOne(ctx, query, update)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func UpdateWorkflowRun(workflow_id string, wfRun WorkflowRun) (int, error) {
-	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-
-	count, err := workflowCollection.CountDocuments(ctx, bson.M{"workflow_id": workflow_id, "workflow_runs.workflow_run_id": wfRun.WorkflowRunID})
+	count, err := workflowCollection.CountDocuments(ctx, bson.M{"workflow_id": workflowID, "workflow_runs.workflow_run_id": wfRun.WorkflowRunID})
 	if err != nil {
 		return 0, err
 	}
 
 	updateCount := 1
 	if count == 0 {
-		filter := bson.M{"workflow_id": workflow_id}
+		filter := bson.M{"workflow_id": workflowID}
 		update := bson.M{"$push": bson.M{"workflow_runs": wfRun}}
 		updateResp, err := workflowCollection.UpdateOne(ctx, filter, update)
 		if err != nil {
@@ -63,7 +60,7 @@ func UpdateWorkflowRun(workflow_id string, wfRun WorkflowRun) (int, error) {
 			return 0, errors.New("workflow not found")
 		}
 	} else if count == 1 {
-		filter := bson.M{"workflow_id": workflow_id, "workflow_runs.workflow_run_id": wfRun.WorkflowRunID, "workflow_runs.completed": false}
+		filter := bson.M{"workflow_id": workflowID, "workflow_runs.workflow_run_id": wfRun.WorkflowRunID, "workflow_runs.completed": false}
 		update := bson.M{"$set": bson.M{"workflow_runs.$.last_updated": wfRun.LastUpdated, "workflow_runs.$.execution_data": wfRun.ExecutionData, "workflow_runs.$.completed": wfRun.Completed}}
 		updateResp, err := workflowCollection.UpdateOne(ctx, filter, update)
 		if err != nil {
@@ -75,6 +72,7 @@ func UpdateWorkflowRun(workflow_id string, wfRun WorkflowRun) (int, error) {
 	return updateCount, nil
 }
 
+// GetWorkflows takes a query parameter to retrieve the workflow details from the database
 func GetWorkflows(query bson.D) ([]ChaosWorkFlowInput, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
@@ -92,8 +90,9 @@ func GetWorkflows(query bson.D) ([]ChaosWorkFlowInput, error) {
 	return workflows, nil
 }
 
-func GetWorkflowsByClusterID(cluster_id string) ([]ChaosWorkFlowInput, error) {
-	query := bson.D{{"cluster_id", cluster_id}}
+// GetWorkflowsByClusterID takes a clusterID parameter to retrieve the workflow details from the database
+func GetWorkflowsByClusterID(clusterID string) ([]ChaosWorkFlowInput, error) {
+	query := bson.D{{"cluster_id", clusterID}}
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
 	cursor, err := workflowCollection.Find(ctx, query)
@@ -109,32 +108,7 @@ func GetWorkflowsByClusterID(cluster_id string) ([]ChaosWorkFlowInput, error) {
 	return workflows, nil
 }
 
-func GetClusterWithProjectID(project_id string, cluster_type *string) ([]*Cluster, error) {
-
-	var query bson.M
-	if cluster_type == nil {
-		query = bson.M{"project_id": project_id, "is_removed": false}
-	} else {
-		query = bson.M{"project_id": project_id, "cluster_type": cluster_type, "is_removed": false}
-	}
-
-	fmt.Print(query)
-	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	var clusters []*Cluster
-
-	cursor, err := clusterCollection.Find(ctx, query)
-	if err != nil {
-		return []*Cluster{}, err
-	}
-
-	err = cursor.All(ctx, &clusters)
-	if err != nil {
-		return []*Cluster{}, err
-	}
-
-	return clusters, nil
-}
-
+// InsertChaosWorkflow takes details of a workflow and inserts into the database collection
 func InsertChaosWorkflow(chaosWorkflow ChaosWorkFlowInput) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	_, err := workflowCollection.InsertOne(ctx, chaosWorkflow)
@@ -145,6 +119,7 @@ func InsertChaosWorkflow(chaosWorkflow ChaosWorkFlowInput) error {
 	return nil
 }
 
+// UpdateChaosWorkflow takes query and update parameters to update the workflow details in the database
 func UpdateChaosWorkflow(query bson.D, update bson.D) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 

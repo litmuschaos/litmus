@@ -10,14 +10,16 @@ import (
 	"time"
 
 	"github.com/jinzhu/copier"
+	"github.com/prometheus/client_golang/api"
+	apiV1 "github.com/prometheus/client_golang/api/prometheus/v1"
+	md "github.com/prometheus/common/model"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics"
-	"github.com/prometheus/client_golang/api"
-	apiv1 "github.com/prometheus/client_golang/api/prometheus/v1"
-	md "github.com/prometheus/common/model"
 )
 
-func CreateClient(url string) (apiv1.API, error) {
+// CreateClient creates a prometheus client from a URL
+func CreateClient(url string) (apiV1.API, error) {
 	var DefaultRT = api.DefaultRoundTripper
 
 	cfg := api.Config{
@@ -30,9 +32,10 @@ func CreateClient(url string) (apiv1.API, error) {
 		return nil, err
 	}
 
-	return apiv1.NewAPI(client), nil
+	return apiV1.NewAPI(client), nil
 }
 
+// Query is used to query prometheus using client
 func Query(prom analytics.PromQuery) (model.PromResponse, error) {
 	client, err := CreateClient(prom.URL)
 	if err != nil {
@@ -49,7 +52,7 @@ func Query(prom analytics.PromQuery) (model.PromResponse, error) {
 		return model.PromResponse{}, err
 	}
 
-	timeRange := apiv1.Range{
+	timeRange := apiV1.Range{
 		Start: time.Unix(startTime, 0).UTC(),
 		End:   time.Unix(endTime, 0).UTC(),
 		Step:  time.Duration(int64(prom.Minstep)) * time.Second,

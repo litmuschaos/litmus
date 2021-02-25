@@ -2,21 +2,27 @@ package handler
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
-	"github.com/tidwall/gjson"
-	"github.com/tidwall/sjson"
 	"log"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/tidwall/gjson"
+	"github.com/tidwall/sjson"
+
 	"github.com/jinzhu/copier"
+	"go.mongodb.org/mongo-driver/bson"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/ops"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
-	gitops_handler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
-	"go.mongodb.org/mongo-driver/bson"
+	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
+	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
+	dbSchemaWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
+	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
 )
 
 func CreateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *store.StateData) (*model.ChaosWorkFlowResponse, error) {
@@ -26,8 +32,8 @@ func CreateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r
 		return nil, err
 	}
 
-	// Gitops Update
-	err = gitops_handler.UpsertWorkflowToGit(ctx, input)
+	// GitOps Update
+	err = gitOpsHandler.UpsertWorkflowToGit(ctx, input)
 	if err != nil {
 		log.Print("Error performing git push: ", err)
 		return nil, err
@@ -50,7 +56,7 @@ func CreateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r
 
 func DeleteWorkflow(ctx context.Context, workflow_id string, r *store.StateData) (bool, error) {
 	query := bson.D{{Key: "workflow_id", Value: workflow_id}}
-	workflows, err := database.GetWorkflows(query)
+	workflows, err := dbOperationsWorkflow.GetWorkflows(query)
 	if len(workflows) == 0 {
 		return false, errors.New("no such workflow found")
 	}
@@ -61,8 +67,8 @@ func DeleteWorkflow(ctx context.Context, workflow_id string, r *store.StateData)
 		WorkflowName: workflows[0].WorkflowName,
 	}
 
-	//gitops delete
-	err = gitops_handler.DeleteWorkflowFromGit(ctx, &wf)
+	// gitOps delete
+	err = gitOpsHandler.DeleteWorkflowFromGit(ctx, &wf)
 	if err != nil {
 		log.Print("Error performing git push: ", err)
 		return false, err
@@ -83,8 +89,8 @@ func UpdateWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *sto
 		return nil, err
 	}
 
-	// Gitops Update
-	err = gitops_handler.UpsertWorkflowToGit(ctx, input)
+	// GitOps Update
+	err = gitOpsHandler.UpsertWorkflowToGit(ctx, input)
 	if err != nil {
 		log.Print("Error performing git push: ", err)
 		return nil, err
@@ -105,16 +111,16 @@ func UpdateWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *sto
 	}, nil
 }
 
-//GetWorkflowRuns sends all the workflow runs for a project from the DB
+// GetWorkflowRuns sends all the workflow runs for a project from the DB
 func QueryWorkflowRuns(project_id string) ([]*model.WorkflowRun, error) {
-	workflows, err := database.GetWorkflows(bson.D{{"project_id", project_id}})
+	workflows, err := dbOperationsWorkflow.GetWorkflows(bson.D{{"project_id", project_id}})
 	if err != nil {
 		return nil, err
 	}
 	result := []*model.WorkflowRun{}
 
 	for _, workflow := range workflows {
-		cluster, err := database.GetCluster(workflow.ClusterID)
+		cluster, err := dbOperationsCluster.GetCluster(workflow.ClusterID)
 		if err != nil {
 			return nil, err
 		}
@@ -137,14 +143,14 @@ func QueryWorkflowRuns(project_id string) ([]*model.WorkflowRun, error) {
 }
 
 func QueryWorkflows(project_id string) ([]*model.ScheduledWorkflows, error) {
-	chaosWorkflows, err := database.GetWorkflows(bson.D{{"project_id", project_id}})
+	chaosWorkflows, err := dbOperationsWorkflow.GetWorkflows(bson.D{{"project_id", project_id}})
 	if err != nil {
 		return nil, err
 	}
 
 	result := []*model.ScheduledWorkflows{}
 	for _, workflow := range chaosWorkflows {
-		cluster, err := database.GetCluster(workflow.ClusterID)
+		cluster, err := dbOperationsCluster.GetCluster(workflow.ClusterID)
 		if err != nil {
 			return nil, err
 		}
@@ -176,7 +182,7 @@ func QueryWorkflows(project_id string) ([]*model.ScheduledWorkflows, error) {
 }
 
 func QueryListWorkflow(project_id string) ([]*model.Workflow, error) {
-	chaosWorkflows, err := database.GetWorkflows(bson.D{{"project_id", project_id}})
+	chaosWorkflows, err := dbOperationsWorkflow.GetWorkflows(bson.D{{"project_id", project_id}})
 	if err != nil {
 		return nil, err
 	}
@@ -184,7 +190,7 @@ func QueryListWorkflow(project_id string) ([]*model.Workflow, error) {
 	result := []*model.Workflow{}
 	for _, workflow := range chaosWorkflows {
 
-		cluster, err := database.GetCluster(workflow.ClusterID)
+		cluster, err := dbOperationsCluster.GetCluster(workflow.ClusterID)
 		if err != nil {
 			return nil, err
 		}
@@ -218,14 +224,14 @@ func QueryListWorkflow(project_id string) ([]*model.Workflow, error) {
 
 func QueryListWorkflowByIDs(workflow_ids []*string) ([]*model.Workflow, error) {
 
-	chaosWorkflows, err := database.GetWorkflows(bson.D{{"workflow_id", bson.M{"$in": workflow_ids}}})
+	chaosWorkflows, err := dbOperationsWorkflow.GetWorkflows(bson.D{{"workflow_id", bson.M{"$in": workflow_ids}}})
 	if err != nil {
 		return nil, err
 	}
 	result := []*model.Workflow{}
 
 	for _, workflow := range chaosWorkflows {
-		cluster, err := database.GetCluster(workflow.ClusterID)
+		cluster, err := dbOperationsCluster.GetCluster(workflow.ClusterID)
 		if err != nil {
 			return nil, err
 		}
@@ -258,10 +264,98 @@ func QueryListWorkflowByIDs(workflow_ids []*string) ([]*model.Workflow, error) {
 	return result, nil
 }
 
-//ReRunWorkflow sends workflow run request(single run workflow only) to agent on workflow re-run request
+// WorkFlowRunHandler Updates or Inserts a new Workflow Run into the DB
+func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string, error) {
+	cluster, err := cluster.VerifyCluster(*input.ClusterID)
+	if err != nil {
+		log.Print("ERROR", err)
+		return "", err
+	}
+
+	// err = dbOperationsWorkflow.UpdateWorkflowRun(dbOperationsWorkflow.WorkflowRun(newWorkflowRun))
+	count, err := dbOperationsWorkflow.UpdateWorkflowRun(input.WorkflowID, dbSchemaWorkflow.ChaosWorkflowRun{
+		WorkflowRunID: input.WorkflowRunID,
+		LastUpdated:   strconv.FormatInt(time.Now().Unix(), 10),
+		ExecutionData: input.ExecutionData,
+		Completed:     input.Completed,
+	})
+	if err != nil {
+		log.Print("ERROR", err)
+		return "", err
+	}
+
+	if count == 0 {
+		return "Workflow Run Discarded[Duplicate Event]", nil
+	}
+
+	ops.SendWorkflowEvent(model.WorkflowRun{
+		ClusterID:     cluster.ClusterID,
+		ClusterName:   cluster.ClusterName,
+		ProjectID:     cluster.ProjectID,
+		LastUpdated:   strconv.FormatInt(time.Now().Unix(), 10),
+		WorkflowRunID: input.WorkflowRunID,
+		WorkflowName:  input.WorkflowName,
+		ExecutionData: input.ExecutionData,
+		WorkflowID:    input.WorkflowID,
+	}, &r)
+
+	return "Workflow Run Accepted", nil
+}
+
+// LogsHandler receives logs from the workflow-agent and publishes to frontend clients
+func LogsHandler(podLog model.PodLog, r store.StateData) (string, error) {
+	_, err := cluster.VerifyCluster(*podLog.ClusterID)
+	if err != nil {
+		log.Print("ERROR", err)
+		return "", err
+	}
+	if reqChan, ok := r.WorkflowLog[podLog.RequestID]; ok {
+		resp := model.PodLogResponse{
+			PodName:       podLog.PodName,
+			WorkflowRunID: podLog.WorkflowRunID,
+			PodType:       podLog.PodType,
+			Log:           podLog.Log,
+		}
+		reqChan <- &resp
+		close(reqChan)
+		return "LOGS SENT SUCCESSFULLY", nil
+	}
+	return "LOG REQUEST CANCELLED", nil
+}
+
+// GetLogs query is used to fetch the logs from the cluster
+func GetLogs(reqID string, pod model.PodLogRequest, r store.StateData) {
+	data, err := json.Marshal(pod)
+	if err != nil {
+		log.Print("ERROR WHILE MARSHALLING POD DETAILS")
+	}
+	reqType := "logs"
+	externalData := string(data)
+	payload := model.ClusterAction{
+		ProjectID: reqID,
+		Action: &model.ActionPayload{
+			RequestType:  reqType,
+			ExternalData: &externalData,
+		},
+	}
+	if clusterChan, ok := r.ConnectedCluster[pod.ClusterID]; ok {
+		clusterChan <- &payload
+	} else if reqChan, ok := r.WorkflowLog[reqID]; ok {
+		resp := model.PodLogResponse{
+			PodName:       pod.PodName,
+			WorkflowRunID: pod.WorkflowRunID,
+			PodType:       pod.PodType,
+			Log:           "CLUSTER ERROR : CLUSTER NOT CONNECTED",
+		}
+		reqChan <- &resp
+		close(reqChan)
+	}
+}
+
+// ReRunWorkflow sends workflow run request(single run workflow only) to agent on workflow re-run request
 func ReRunWorkflow(workflowID string) (string, error) {
 	query := bson.D{{"workflow_id", workflowID}, {"isRemoved", false}}
-	workflows, err := database.GetWorkflows(query)
+	workflows, err := dbOperationsWorkflow.GetWorkflows(query)
 	if err != nil {
 		log.Print("Could not get workflow :", err)
 		return "could not get workflow", err
@@ -287,15 +381,4 @@ func ReRunWorkflow(workflowID string) (string, error) {
 	}, "create", store.Store)
 
 	return "Request for re-run acknowledged, workflowID: " + workflowID, nil
-}
-
-//SendWorkflowEvent sends workflow events from the clusters to the appropriate users listening for the events
-func SendWorkflowEvent(wfRun model.WorkflowRun, r *store.StateData) {
-	r.Mutex.Lock()
-	if r.WorkflowEventPublish != nil {
-		for _, observer := range r.WorkflowEventPublish[wfRun.ProjectID] {
-			observer <- &wfRun
-		}
-	}
-	r.Mutex.Unlock()
 }

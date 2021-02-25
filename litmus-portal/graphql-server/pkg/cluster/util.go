@@ -3,14 +3,15 @@ package cluster
 import (
 	"errors"
 
-	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
+	dbSchemaCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 )
 
-//VerifyCluster utils function used to verify cluster identity
-func VerifyCluster(identity model.ClusterIdentity) (*database.Cluster, error) {
-	cluster, err := database.GetCluster(identity.ClusterID)
+// VerifyCluster utils function used to verify cluster identity
+func VerifyCluster(identity model.ClusterIdentity) (*dbSchemaCluster.Cluster, error) {
+	cluster, err := dbOperationsCluster.GetCluster(identity.ClusterID)
 	if err != nil {
 		return nil, err
 	}

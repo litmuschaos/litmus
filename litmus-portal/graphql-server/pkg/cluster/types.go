@@ -1,5 +1,6 @@
-package graphql
+package cluster
 
+// SubscriberRequests contains the required configurable parameters for the requests sent to the subscriber
 type SubscriberRequests struct {
 	RequestType  string  `json:"request_type"`
 	K8sManifest  string  `json:"k8s_manifest"`
