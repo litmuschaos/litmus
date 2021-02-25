@@ -162,3 +162,9 @@ export const DISABLE_GITOPS = gql`
     disableGitOps(project_id: $data)
   }
 `;
+
+export const RERUN_CHAOS_WORKFLOW = gql`
+  mutation rerunChaosWorkflow($data: String!) {
+    reRunChaosWorkFlow(workflowID: $data)
+  }
+`;

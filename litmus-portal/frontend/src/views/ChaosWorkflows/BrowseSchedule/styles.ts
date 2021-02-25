@@ -160,6 +160,12 @@ const useStyles = makeStyles((theme) => ({
     width: '1.2rem',
     height: '1.2rem',
   },
+  rerunBtn: {
+    marginTop: theme.spacing(0.1),
+    marginLeft: theme.spacing(-0.375),
+    width: '1.2rem',
+    height: '1.2rem',
+  },
   // Experiment Weights PopOver Property
   weightDiv: {
     width: '15.1875rem',
