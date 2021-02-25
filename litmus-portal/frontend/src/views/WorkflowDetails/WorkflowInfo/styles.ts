@@ -1,25 +1,62 @@
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core';
 
-const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    width: '100%',
-    marginTop: '1rem',
+const useStyles = makeStyles((theme) => ({
+  // Header Section Properties
+  rootLight: {
+    backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing(5),
   },
-  header: {
-    color: theme.palette.secondary.dark,
+
+  rootHeader: {
+    backgroundColor: theme.palette.cards.header,
+    padding: theme.spacing(5),
   },
-  bold: {
-    fontWeight: 500,
+
+  resilliencyScore: {
+    color: theme.palette.highlight,
+    fontSize: '1.5rem',
   },
-  workflowSpacing: {
-    margin: '1rem 0',
+
+  headerFlex: {
+    display: 'flex',
   },
-  divider: {
-    background: theme.palette.primary.main,
-    height: '0.2rem',
+
+  headerItemFlex: {
+    width: '25%',
   },
-  heightMaintainer: {
-    lineHeight: '2rem',
+
+  headerMiniItemFlex: {
+    width: '50%',
+  },
+
+  headerMiniItemText: {
+    color: theme.palette.text.disabled,
+    fontSize: '1rem',
+  },
+
+  descTextBold: {
+    fontSize: '1.5rem',
+    fontWeight: 'bold',
+    marginBottom: theme.spacing(2),
+  },
+
+  textBold: {
+    fontSize: '1.3rem',
+    fontWeight: 'bold',
+    marginBottom: theme.spacing(2),
+  },
+
+  applicationDetails: {
+    display: 'flex',
+  },
+
+  viewLogs: {
+    marginLeft: theme.spacing(1),
+    color: theme.palette.highlight,
+  },
+
+  arrowMargin: {
+    marginLeft: theme.spacing(1),
   },
 }));
 

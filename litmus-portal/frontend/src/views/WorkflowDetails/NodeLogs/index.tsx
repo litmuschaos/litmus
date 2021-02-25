@@ -1,14 +1,12 @@
 import { useQuery, useSubscription } from '@apollo/client';
 import { Typography } from '@material-ui/core';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import useStyles from './styles';
-import Unimodal from '../../../containers/layouts/Unimodal';
 import { WORKFLOW_DETAILS, WORKFLOW_LOGS } from '../../../graphql';
 import {
-  PodLogRequest,
   PodLog,
+  PodLogRequest,
   PodLogVars,
 } from '../../../models/graphql/podLog';
 import {
@@ -16,11 +14,9 @@ import {
   WorkflowDataVars,
 } from '../../../models/graphql/workflowData';
 import { RootState } from '../../../redux/reducers';
+import useStyles from './styles';
 
-interface NodeLogsProps extends PodLogRequest {
-  logsOpen: boolean;
-  handleClose: () => void;
-}
+interface NodeLogsProps extends PodLogRequest {}
 
 interface ChaosDataVar {
   exp_pod: string;
@@ -29,8 +25,6 @@ interface ChaosDataVar {
 }
 
 const NodeLogs: React.FC<NodeLogsProps> = ({
-  logsOpen,
-  handleClose,
   cluster_id,
   workflow_run_id,
   pod_namespace,
@@ -61,7 +55,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({
   useEffect(() => {
     if (workflow !== undefined) {
       const nodeData = JSON.parse(workflow.execution_data).nodes[pod_name];
-      if (nodeData.chaosData)
+      if (nodeData && nodeData.chaosData)
         setChaosData({
           exp_pod: nodeData.chaosData.experimentPod,
           runner_pod: nodeData.chaosData.runnerPod,
@@ -132,7 +126,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({
             {podLogs?.chaos_logs != null ? (
               <div style={{ whiteSpace: 'pre-wrap' }}>
                 <Typography className={classes.text}>
-                  {chaosLogs(podLogs.chaos_logs)}
+                  {chaosLogs(podLogs?.chaos_logs)}
                 </Typography>
               </div>
             ) : (
@@ -151,13 +145,11 @@ const NodeLogs: React.FC<NodeLogsProps> = ({
   };
 
   return (
-    <Unimodal
-      open={logsOpen}
-      handleClose={handleClose}
-      hasCloseBtn
-      textAlign="left"
-    >
-      <div className={classes.root}>
+    <div className={classes.root}>
+      <Typography className={classes.logsHeading}>
+        Logs for this step
+      </Typography>
+      <div className={classes.logs}>
         {data !== undefined ? (
           <div>{parseLogs(data.getPodLog.log)}</div>
         ) : (
@@ -166,7 +158,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({
           </Typography>
         )}
       </div>
-    </Unimodal>
+    </div>
   );
 };
 

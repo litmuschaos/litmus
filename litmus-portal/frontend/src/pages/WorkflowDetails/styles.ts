@@ -2,44 +2,49 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    marginTop: theme.spacing(3),
-    height: '75vh',
+    margin: '0 auto',
   },
-  icon: {
-    margin: theme.spacing(-0.4, 1),
-    width: '1rem',
-  },
+
+  // Back Button
   button: {
-    position: 'relative',
-    display: 'flex',
-    justifyContent: 'space-between',
-    margin: theme.spacing(4, 0, 0, 4),
+    margin: theme.spacing(0, 0, 0, -1),
   },
+
+  // WorkflowName Header
   heading: {
-    fontSize: '2rem',
+    margin: theme.spacing(2, 0, 0, 0),
+    fontSize: '1.5rem',
     fontWeight: 'bold',
   },
-  workflowGraph: {
-    padding: '0 3rem',
-    width: '100%',
+
+  // Second Heading
+  heading1: {
+    margin: theme.spacing(2, 0, 0, 0),
+    fontSize: '1rem',
   },
-  workflowSideBar: {
-    width: '20rem',
-  },
-  loaderDiv: {
-    height: '100%',
-  },
+
+  // AppBar and Tabs
   appBar: {
     background: 'transparent',
     boxShadow: 'none',
-    paddingLeft: theme.spacing(1.5),
-    display: 'flex',
-    flexDirection: 'column',
   },
-  btnFilled: {
-    height: '2.2rem',
+
+  // Graphical View
+  workflowGraph: {
+    height: '40vh',
+    width: '100%',
+  },
+
+  graphView: {
+    padding: '0.5rem 0.5rem',
+    height: '100%',
+    marginTop: theme.spacing(3),
+    marginLeft: theme.spacing(-1.5),
+    backgroundColor: theme.palette.cards.header,
+  },
+
+  nodeTable: {
+    marginLeft: theme.spacing(-1.5),
   },
 }));
 

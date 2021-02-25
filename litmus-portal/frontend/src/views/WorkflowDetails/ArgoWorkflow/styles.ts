@@ -7,14 +7,14 @@ interface StyleProps {
 const useStyles = makeStyles((theme: Theme) => ({
   // Graph options
   graphOptions: {
-    color: theme.palette.text.disabled,
+    color: theme.palette.text.primary,
     display: 'flex',
     justifyContent: 'space-between',
     marginTop: theme.spacing(2),
   },
   layoutButton: {
     minWidth: 0,
-    borderColor: theme.palette.text.hint,
+    borderColor: theme.palette.text.disabled,
     marginRight: theme.spacing(2),
     '& svg': {
       fill: theme.palette.text.disabled,
@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme: Theme) => ({
           transform: (props: StyleProps) =>
             props.horizontal ? 'translate(0, 0)' : 'translate(0, -5px)',
           '& path': {
-            fill: theme.palette.common.white,
+            fill: theme.palette.text.secondary,
           },
         },
         '& text': {
@@ -61,28 +61,30 @@ const useStyles = makeStyles((theme: Theme) => ({
       },
       '& g.Succeeded': {
         '& circle': {
-          fill: theme.palette.success.main,
+          fill: theme.palette.status.completed.text,
         },
       },
       '& g.Running': {
         '& circle': {
-          fill: theme.palette.warning.main,
+          fill: theme.palette.status.running.text,
         },
       },
       '& g.Pending': {
         '& circle': {
-          fill: theme.palette.horizontalStepper.completed,
+          fill: theme.palette.status.pending.text,
         },
       },
       '& g.Failed': {
         '& circle': {
-          fill: theme.palette.error.dark,
+          fill: theme.palette.status.failed.text,
         },
       },
       '& g.StepGroup': {
+        fill: theme.palette.status.pending.text,
+        cursor: 'default',
         '& rect': {
-          x: '-1.5px',
-          y: '-1.5px',
+          x: -1.5,
+          y: -1.5,
           width: '0.2rem',
           height: '0.2rem',
           rx: '0.625rem !important',
@@ -90,36 +92,36 @@ const useStyles = makeStyles((theme: Theme) => ({
         },
       },
       '& g.StepGroup.Succeeded': {
-        fill: theme.palette.success.main,
+        fill: theme.palette.status.completed.text,
       },
       '& g.StepGroup.Running': {
-        fill: theme.palette.warning.main,
+        fill: theme.palette.status.running.text,
       },
       '& g.StepGroup.Pending': {
-        fill: theme.palette.horizontalStepper.completed,
+        fill: theme.palette.status.pending.text,
       },
       '& g.StepGroup.Failed': {
-        fill: theme.palette.error.dark,
+        fill: theme.palette.status.failed.text,
       },
     },
 
     // Styles for edges
     '& g g.edgePaths': {
       '& g.Succeeded': {
-        fill: theme.palette.success.main,
-        stroke: theme.palette.success.main,
+        fill: theme.palette.status.completed.text,
+        stroke: theme.palette.status.completed.text,
       },
       '& g.Running': {
-        fill: theme.palette.warning.main,
-        stroke: theme.palette.warning.main,
+        fill: theme.palette.status.running.text,
+        stroke: theme.palette.status.running.text,
       },
       '& g.Pending': {
-        fill: theme.palette.horizontalStepper.completed,
-        stroke: theme.palette.horizontalStepper.completed,
+        fill: theme.palette.status.pending.text,
+        stroke: theme.palette.status.pending.text,
       },
       '& g.Failed': {
-        fill: theme.palette.error.dark,
-        stroke: theme.palette.error.dark,
+        fill: theme.palette.status.failed.text,
+        stroke: theme.palette.status.failed.text,
       },
     },
   },

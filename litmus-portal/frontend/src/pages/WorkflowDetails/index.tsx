@@ -8,6 +8,7 @@ import { useLocation } from 'react-router-dom';
 import Loader from '../../components/Loader';
 import { StyledTab, TabPanel } from '../../components/Tabs';
 import Scaffold from '../../containers/layouts/Scaffold';
+import BackButton from '../../components/Button/BackButton';
 import { WORKFLOW_DETAILS, WORKFLOW_EVENTS } from '../../graphql';
 import {
   ExecutionData,
@@ -19,10 +20,10 @@ import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
 import ArgoWorkflow from '../../views/WorkflowDetails/ArgoWorkflow';
-import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
 import WorkflowNodeInfo from '../../views/WorkflowDetails/WorkflowNodeInfo';
 import useStyles from './styles';
-import TopNavButtons from './TopNavButtons';
+import NodeTable from '../../views/WorkflowDetails/workflowTable';
+import WorkflowInfo from '../../views/WorkflowDetails/WorkflowInfo';
 
 const WorkflowDetails: React.FC = () => {
   const classes = useStyles();
@@ -37,9 +38,7 @@ const WorkflowDetails: React.FC = () => {
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
   );
-  const isInfoToggled = useSelector(
-    (state: RootState) => state.toggleInfoButton.isInfoToggled
-  );
+
   const workflowDetailsTabValue = useSelector(
     (state: RootState) => state.tabNumber.node
   );
@@ -95,6 +94,8 @@ const WorkflowDetails: React.FC = () => {
     tabs.changeWorkflowDetailsTabs(newValue);
   };
 
+  const { pod_name } = useSelector((state: RootState) => state.selectedNode);
+
   // On fresh screen refresh 'Workflow' Tab would be selected
   useEffect(() => {
     tabs.changeWorkflowDetailsTabs(0);
@@ -102,62 +103,60 @@ const WorkflowDetails: React.FC = () => {
 
   return (
     <Scaffold>
-      <TopNavButtons />
-      {/* If workflow data is present then display the workflow details */}
-      {workflow ? (
-        <div className={classes.root}>
-          <div className={classes.workflowGraph}>
+      <div className={classes.root}>
+        <div className={classes.button}>
+          <BackButton isDisabled={false} />
+        </div>
+        {/* If workflow data is present then display the workflow details */}
+        {workflow ? (
+          <div>
             <Typography data-cy="wfName" className={classes.heading}>
-              {workflow.workflow_name}
+              {t('workflowDetailsView.headerDesc')} {workflow.workflow_name}
             </Typography>
-            <Typography>{t('workflowDetails.detailedLog')}</Typography>
+            <Typography className={classes.heading1}>
+              {t('workflowDetailsView.headerMiniDesc')}
+            </Typography>
 
-            {/* Argo Workflow DAG Graph */}
-            <ArgoWorkflow
-              nodes={
-                (JSON.parse(workflow.execution_data) as ExecutionData).nodes
-              }
-            />
-          </div>
-          {isInfoToggled ? (
-            <div className={classes.workflowSideBar}>
-              <AppBar
-                position="static"
-                color="default"
-                className={classes.appBar}
+            {/* AppBar */}
+            <AppBar
+              position="static"
+              color="default"
+              className={classes.appBar}
+            >
+              <Tabs
+                value={workflowDetailsTabValue || 0}
+                onChange={handleChange}
+                TabIndicatorProps={{
+                  style: {
+                    backgroundColor: theme.palette.secondary.dark,
+                  },
+                }}
+                variant="fullWidth"
               >
-                <Tabs
-                  value={workflowDetailsTabValue || 0}
-                  onChange={handleChange}
-                  TabIndicatorProps={{
-                    style: {
-                      backgroundColor: theme.palette.primary.main,
-                    },
-                  }}
-                  variant="fullWidth"
-                >
-                  <StyledTab label="Workflow" />
-                  <StyledTab label="Steps" />
-                </Tabs>
-              </AppBar>
-              <TabPanel value={workflowDetailsTabValue} index={0}>
-                <div data-cy="browseWorkflow">
-                  <WorkflowInfo
-                    workflow_name={workflow.workflow_name}
-                    execution_data={
-                      JSON.parse(workflow?.execution_data) as ExecutionData
+                <StyledTab label="Graph View" />
+                <StyledTab label="Table View" />
+              </Tabs>
+            </AppBar>
+            <TabPanel value={workflowDetailsTabValue} index={0}>
+              <div className={classes.graphView}>
+                <div className={classes.workflowGraph}>
+                  {/* Argo Workflow DAG Graph */}
+                  <ArgoWorkflow
+                    nodes={
+                      (JSON.parse(workflow.execution_data) as ExecutionData)
+                        .nodes
                     }
-                    cluster_name={workflow.cluster_name}
                   />
                 </div>
-              </TabPanel>
-              <TabPanel
-                data-cy="scheduleWorkflow"
-                value={workflowDetailsTabValue}
-                index={1}
-              >
-                <div data-cy="browseWorkflow">
+                {/* Workflow Details and Experiment Logs */}
+                {pod_name !==
+                JSON.parse(workflow.execution_data).nodes[
+                  Object.keys(
+                    JSON.parse(workflow?.execution_data as string).nodes
+                  )[0]
+                ].name ? (
                   <WorkflowNodeInfo
+                    workflow_name={workflow.workflow_name}
                     cluster_id={workflow.cluster_id}
                     workflow_run_id={workflow.workflow_run_id}
                     pod_namespace={
@@ -165,18 +164,34 @@ const WorkflowDetails: React.FC = () => {
                         .namespace
                     }
                   />
-                </div>
-              </TabPanel>
-            </div>
-          ) : (
-            <></>
-          )}
-        </div>
-      ) : error ? (
-        <Typography>{t('workflowDetails.fetchError')}</Typography>
-      ) : (
-        <Loader />
-      )}
+                ) : (
+                  <WorkflowInfo
+                    tab={1}
+                    cluster_name={workflow.cluster_name}
+                    data={JSON.parse(workflow.execution_data) as ExecutionData}
+                  />
+                )}
+              </div>
+            </TabPanel>
+            <TabPanel value={workflowDetailsTabValue} index={1}>
+              <div className={classes.nodeTable}>
+                <WorkflowInfo
+                  tab={2}
+                  cluster_name={workflow.cluster_name}
+                  data={JSON.parse(workflow.execution_data) as ExecutionData}
+                />
+                <NodeTable
+                  data={JSON.parse(workflow.execution_data) as ExecutionData}
+                />
+              </div>
+            </TabPanel>
+          </div>
+        ) : error ? (
+          <Typography>{t('workflowDetails.fetchError')}</Typography>
+        ) : (
+          <Loader />
+        )}
+      </div>
     </Scaffold>
   );
 };
