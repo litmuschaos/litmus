@@ -341,7 +341,7 @@ settings:
     disconnect: Are you sure you want to disconnect?
     save: Save Locally
     repo: Git Repository
-    desc: If there are any active workflows, then the configuration of such workflows will be moved to this repository
+    desc: '* Any existing or active workflows saved locally will not be synced into the git repository'
     connect: Connect
     branch: Branch
     URL: Git URL

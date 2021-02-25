@@ -43,8 +43,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   infoText: {
     maxWidth: '25rem',
-    color: theme.palette.warning.main,
+    color: theme.palette.error.main,
     fontSize: '0.75rem',
+    marginLeft: theme.spacing(2),
   },
   gitInfo: {
     marginTop: theme.spacing(1.5),
