@@ -42,6 +42,7 @@ const ChoosePreDefinedExperiments = () => {
     }
   );
 
+  // Selects Option A -> Sub Experiment Options which was already selected by the user
   useEffect(() => {
     localforage
       .getItem('selectedScheduleOption')

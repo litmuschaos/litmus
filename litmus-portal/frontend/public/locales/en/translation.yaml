@@ -52,7 +52,7 @@ customWorkflowCard:
 
 workflowStepper:
   continueError: To continue, please check the error in code.
-  scheduleNewChaosWorkflow: Schedule a new chaos workflow,
+  scheduleNewChaosWorkflow: Schedule a new chaos workflow
   aNewChaosWorkflow: A new chaos workflow,
   successful: is successfully created!
   congratulationsSub1: Congratulations on creating your workflow! Now information about
@@ -60,6 +60,8 @@ workflowStepper:
   workflowBtn: Go to Workflow
   step1:
     errorSnackbar: You haven't selected any Target Agent
+  step2:
+    errorSnackbar: Please select a workflow type
   finish: Finish
   next: Next
 
@@ -395,7 +397,8 @@ createWorkflow:
     modalHeading: Create your
     modalHeadingStrong: workflow name
     settings: Workflow Settings
-    description: You have selected a pre-defined workflow Kafka Chaos. Provide a name and description to the new workflow.
+    description1: You have selected a pre-defined workflow 
+    description2: Provide a name and description to the new workflow.
     edit: Edit Photo
     changeImage: Change workflow logo
     changeImgDescription: You can choose a logo from given below
@@ -461,8 +464,8 @@ createWorkflow:
     fail: Fail
   tuneWorkflow:
     header: Tune the selected workflow
-    info: The following tests are run in sequence. The sequence of tests cannot be changed.
-    infoExtended: Select the tests you want to keep in the workflow and adjust the variables in the selected test.
+    selectedWorkflowInfo: You have selected
+    description: Fine tune the application  names and other variables to suit your needs
   verifyCommit:
     header: Confirmation of Results
     info: Before committing the workflow changes to your, verify and if needed go back to a corresponding section of the wizard to modify.

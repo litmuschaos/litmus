@@ -1,17 +1,16 @@
 import { AccordionDetails, Button, Paper, Typography } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import YAML from 'yaml';
-import { useSelector } from 'react-redux';
 import localforage from 'localforage';
-import useStyles from './styles';
-import * as WorkflowActions from '../../../redux/actions/workflow';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import YAML from 'yaml';
 import useActions from '../../../redux/actions';
+import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
+import useStyles from './styles';
 
 interface ChooseWorkflowRadio {
   selected: string;
-  id: string;
 }
 
 const UploadYAML = () => {
@@ -22,13 +21,12 @@ const UploadYAML = () => {
   const workflowAction = useActions(WorkflowActions);
   const workflowDetails = useSelector((state: RootState) => state.workflowData);
 
-  useEffect(() => {
+  const saveToLocalForage = () => {
     const selection: ChooseWorkflowRadio = {
       selected: 'D',
-      id: '',
     };
     localforage.setItem('selectedScheduleOption', selection);
-  }, []);
+  };
 
   // Function to handle when a File is dragged on the upload field
   const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
@@ -53,6 +51,7 @@ const UploadYAML = () => {
           yaml: YAML.stringify(parsedYaml),
         });
       });
+    saveToLocalForage();
   };
 
   // Function to handle File upload on button click
@@ -82,6 +81,7 @@ const UploadYAML = () => {
         yaml: '',
       });
     }
+    saveToLocalForage();
   };
   return (
     <AccordionDetails>

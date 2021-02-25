@@ -116,11 +116,7 @@ const ChooseWorkflowAgent: React.FC = () => {
           </div>
           {/* Dart Icon */}
           <div aria-label="headerRight">
-            <img
-              src="./icons/check.png"
-              className={classes.check}
-              alt="Check"
-            />
+            <img src="./icons/dart.svg" className={classes.check} alt="Check" />
           </div>
         </div>
 
@@ -142,10 +138,10 @@ const ChooseWorkflowAgent: React.FC = () => {
               glow={currentlySelectedAgent === cluster.cluster_id}
               width="100%"
               height="4rem"
-              className={classes.kuberaCard}
+              className={classes.litmusCard}
               borderColor={
                 currentlySelectedAgent === cluster.cluster_id
-                  ? palette.success.main
+                  ? palette.primary.main
                   : palette.border.main
               }
             >

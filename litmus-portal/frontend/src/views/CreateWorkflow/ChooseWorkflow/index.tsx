@@ -14,7 +14,7 @@ import UploadYAML from './uploadYAML';
 
 interface ChooseWorkflowRadio {
   selected: string;
-  id: string;
+  id?: string;
 }
 
 const ChooseWorkflow: React.FC = () => {
@@ -30,7 +30,11 @@ const ChooseWorkflow: React.FC = () => {
   useEffect(() => {
     localforage
       .getItem('selectedScheduleOption')
-      .then((value) => setSelected((value as ChooseWorkflowRadio).selected));
+      .then((value) =>
+        value
+          ? setSelected((value as ChooseWorkflowRadio).selected)
+          : setSelected('')
+      );
   }, []);
 
   return (

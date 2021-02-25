@@ -1,67 +1,62 @@
 import { Avatar, Typography } from '@material-ui/core';
 import { ButtonOutlined, InputField, Modal } from 'litmus-ui';
-import React, { useState } from 'react';
+import localforage from 'localforage';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import YAML from 'yaml';
-import { WorkflowData } from '../../../models/redux/workflow';
-import { RootState } from '../../../redux/reducers';
+import data from '../../../components/PredifinedWorkflows/data';
+import capitalize from '../../../utils/capitalize';
 import { validateWorkflowName } from '../../../utils/validate';
 import useStyles from './styles';
-import WorkflowAvatarModal from './WorkflowAvatarModal';
-import * as WorkflowActions from '../../../redux/actions/workflow';
-import useActions from '../../../redux/actions';
+
+interface ChooseWorkflowRadio {
+  selected: string;
+  id?: string;
+}
+
+interface WorkflowDetailsProps {
+  name: string;
+  description: string;
+  icon: string;
+}
 
 const WorkflowSettings: React.FC = () => {
   const classes = useStyles();
 
-  const workflowData: WorkflowData = useSelector(
-    (state: RootState) => state.workflowData
-  );
-  const workflow = useActions(WorkflowActions);
-  const [workflowDetails, setWorkflowData] = useState({
-    workflowName: workflowData.name,
-    workflowDesc: 'Personal Description',
+  const [avatarModal, setAvatarModal] = useState<boolean>(false);
+  const [workflowDetails, setWorkflowDetails] = useState<WorkflowDetailsProps>({
+    name: 'Workflow Name',
+    description: 'Workflow Description',
+    icon: '',
   });
-  const [avatarModal, setAvatarModal] = useState(false);
 
   const { t } = useTranslation();
 
+  // Loading Workflow Related Data for Workflow Settings
+  useEffect(() => {
+    localforage.getItem('selectedScheduleOption').then((value) =>
+      // Map over the list of predefined workflows and extract the name and detail
+      data.map((w) => {
+        if (w.workflowID.toString() === (value as ChooseWorkflowRadio).id) {
+          setWorkflowDetails({
+            name: w.title,
+            description: w.details,
+            icon: w.urlToIcon,
+          });
+        }
+        return null;
+      })
+    );
+  }, [workflowDetails]);
+
   // Workflow Name change handler
-  const WorkflowNameChangeHandler = (
-    event: React.ChangeEvent<{ value: string }>
-  ) => {
-    setWorkflowData({
-      workflowName: (event.target as HTMLInputElement).value,
-      workflowDesc: workflowDetails.workflowDesc,
-    });
-    const parsedYaml = YAML.parse(workflowData.yaml);
-    parsedYaml.metadata.name = event.target.value;
-    workflow.setWorkflowDetails({
-      name: event.target.value,
-      yaml: YAML.stringify(parsedYaml),
-    });
-  };
+  const WorkflowNameChangeHandler = () =>
+    // event: React.ChangeEvent<{ value: string }>
+    {};
 
   // Workflow Description change handler
-  const WorkflowDescriptionChangeHandler = (
-    event: React.ChangeEvent<{ value: string }>
-  ) => {
-    setWorkflowData({
-      workflowName: workflowDetails.workflowName,
-      workflowDesc: (event.target as HTMLInputElement).value,
-    });
-    workflow.setWorkflowDetails({
-      description: event.target.value,
-    });
-  };
-
-  // Default avatar state
-  const [avatar, setAvatar] = useState<string>(
-    workflowData.workflowIcon === ''
-      ? './avatars/kafka.svg'
-      : workflowData.workflowIcon
-  );
+  const WorkflowDescriptionChangeHandler = () =>
+    // event: React.ChangeEvent<{ value: string }>
+    {};
 
   const handleClose = () => {
     setAvatarModal(false);
@@ -70,11 +65,16 @@ const WorkflowSettings: React.FC = () => {
   return (
     <div className={classes.root}>
       <div className={classes.headerDiv}>
-        <Typography className={classes.headerFont}>
+        <Typography className={classes.header}>
           {t('createWorkflow.chooseWorkflow.settings')}
         </Typography>
-        <Typography className={classes.descriptionFont}>
-          {t('createWorkflow.chooseWorkflow.description')}
+        <Typography className={classes.description}>
+          {t('createWorkflow.chooseWorkflow.description1')}{' '}
+          {workflowDetails.name
+            .split('-')
+            .map((text) => `${capitalize(text)} `)}
+          <br />
+          {t('createWorkflow.chooseWorkflow.description2')}
         </Typography>
       </div>
       <div className={classes.avatarDiv}>
@@ -84,7 +84,7 @@ const WorkflowSettings: React.FC = () => {
             className={classes.avatar}
             data-cy="avatar"
             alt="User"
-            src={avatar}
+            src={workflowDetails.icon}
           />
           <Typography
             className={classes.editText}
@@ -100,17 +100,15 @@ const WorkflowSettings: React.FC = () => {
               data-cy="inputWorkflow"
               fullWidth
               helperText={
-                validateWorkflowName(workflowDetails.workflowName)
+                validateWorkflowName(workflowDetails.name)
                   ? t('createWorkflow.chooseWorkflow.validate')
                   : ''
               }
               variant={
-                validateWorkflowName(workflowDetails.workflowName)
-                  ? 'error'
-                  : 'primary'
+                validateWorkflowName(workflowDetails.name) ? 'error' : 'primary'
               }
               onChange={WorkflowNameChangeHandler}
-              value={workflowDetails.workflowName}
+              value={workflowDetails.name}
             />
           </div>
           <div aria-details="spacer" style={{ margin: '3rem 0' }} />
@@ -122,7 +120,7 @@ const WorkflowSettings: React.FC = () => {
               disableUnderline: true,
             }}
             data-cy="inputWorkflowDescription"
-            value={workflowDetails.workflowDesc}
+            value={workflowDetails.description}
             onChange={WorkflowDescriptionChangeHandler}
             multiline
             rows={8}
@@ -138,15 +136,27 @@ const WorkflowSettings: React.FC = () => {
             <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
           }
         >
-          <WorkflowAvatarModal
-            setAvatar={setAvatar}
-            setAvatarModal={setAvatarModal}
-            avatar={avatar}
-          />
+          <div
+            style={{
+              padding: '2.5rem',
+              fontSize: '2rem',
+              marginBottom: '15rem',
+            }}
+          >
+            Modal
+          </div>
         </Modal>
       ) : null}
     </div>
   );
 };
+
+// Modal Content
+
+/* <WorkflowAvatarModal
+    setAvatar={setWorkflowDetails}
+    setAvatarModal={setAvatarModal}
+    avatar={workflowDetails.icon}
+  /> */
 
 export default WorkflowSettings;

@@ -7,7 +7,8 @@ import Stepper from '@material-ui/core/Stepper';
 import Typography from '@material-ui/core/Typography';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
-import React from 'react';
+import localforage from 'localforage';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
@@ -24,8 +25,8 @@ import * as TabActions from '../../redux/actions/tabs';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import { validateWorkflowName } from '../../utils/validate';
-import ChooseWorkflow from '../../views/CreateWorkflow/ChooseWorkflow/index';
 import ChooseAWorkflowAgent from '../../views/CreateWorkflow/ChooseAWorkflowAgent';
+import ChooseWorkflow from '../../views/CreateWorkflow/ChooseWorkflow/index';
 import ReliablityScore from '../../views/CreateWorkflow/ReliabilityScore';
 import ScheduleWorkflow from '../../views/CreateWorkflow/ScheduleWorkflow';
 import TuneWorkflow from '../../views/CreateWorkflow/TuneWorkflow/index';
@@ -37,6 +38,10 @@ import useQontoStepIconStyles from './useQontoStepIconStyles';
 
 interface ControlButtonProps {
   position: string;
+}
+
+interface AlertBoxProps {
+  message: string;
 }
 
 function getSteps(): string[] {
@@ -141,7 +146,8 @@ const WorkflowStepper = () => {
   const defaultStep = isCustomWorkflow ? 2 : 0;
 
   const [activeStep, setActiveStep] = React.useState(defaultStep);
-  const [isAlertOpen, setIsAlertOpen] = React.useState(false);
+  const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
+  const [proceed, shouldProceed] = React.useState<boolean>(false);
 
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
@@ -150,9 +156,19 @@ const WorkflowStepper = () => {
   const tabs = useActions(TabActions);
   const steps = getSteps();
 
+  useEffect(() => {
+    localforage
+      .getItem('selectedScheduleOption')
+      .then((value) => (value ? shouldProceed(true) : shouldProceed(false)));
+  }, [proceed]);
+
   const handleNext = () => {
     if (activeStep === 0 && clusterid === '') {
       // No Cluster has been selected and user clicked on Next
+      setIsAlertOpen(true);
+    } else if (activeStep === 1 && !proceed) {
+      // If none of the workflow options (Choose Predefined, Create Custom,  ..)
+      // are selected then do not proceed
       setIsAlertOpen(true);
     } else {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -294,22 +310,48 @@ const WorkflowStepper = () => {
     );
   };
 
+  /** 
+    Alert
+    ------------------------------------------------------------------------------
+    Displays a snackbar with the appropriate message whenever a condition is not satisfied
+  * */
+
+  const AlertBox: React.FC<AlertBoxProps> = ({ message }) => {
+    return (
+      <div>
+        {isAlertOpen ? (
+          <Snackbar
+            open={isAlertOpen}
+            autoHideDuration={6000}
+            onClose={() => setIsAlertOpen(false)}
+          >
+            <Alert onClose={() => setIsAlertOpen(false)} severity="error">
+              {message}
+            </Alert>
+          </Snackbar>
+        ) : (
+          <></>
+        )}
+      </div>
+    );
+  };
+
+  function getAlertMessage(stepNumber: number) {
+    switch (stepNumber) {
+      case 0:
+        return t(`workflowStepper.step1.errorSnackbar`);
+      case 1:
+        return t(`workflowStepper.step2.errorSnackbar`);
+      default:
+        return '';
+    }
+  }
+
   return (
     <div>
       {/* Alert */}
-      {isAlertOpen ? (
-        <Snackbar
-          open={isAlertOpen}
-          autoHideDuration={6000}
-          onClose={() => setIsAlertOpen(false)}
-        >
-          <Alert onClose={() => setIsAlertOpen(false)} severity="error">
-            {t(`workflowStepper.step1.errorSnackbar`)}
-          </Alert>
-        </Snackbar>
-      ) : (
-        <></>
-      )}
+      <AlertBox message={getAlertMessage(activeStep)} />
+
       {/* Header */}
       <div className={classes.headWrapper}>
         <Row justifyContent="space-between">
