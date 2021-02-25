@@ -40,7 +40,7 @@ func init() {
 }
 
 // UpdateWorkflowRun takes workflowID and wfRun parameters to update the workflow run details in the database
-func UpdateWorkflowRun(workflowID string, wfRun WorkflowRun) (int, error) {
+func UpdateWorkflowRun(workflowID string, wfRun ChaosWorkflowRun) (int, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
 	count, err := workflowCollection.CountDocuments(ctx, bson.M{"workflow_id": workflowID, "workflow_runs.workflow_run_id": wfRun.WorkflowRunID})

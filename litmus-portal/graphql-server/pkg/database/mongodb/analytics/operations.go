@@ -24,6 +24,7 @@ func init() {
 	dashBoardCollection = mongodb.Database.Collection("dashboard-collection")
 }
 
+// InsertDataSource takes details of a data source and inserts into the database collection
 func InsertDataSource(datasource DataSource) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
@@ -35,6 +36,7 @@ func InsertDataSource(datasource DataSource) error {
 	return nil
 }
 
+// InsertDashBoard takes details of a dashboard and inserts into the database collection
 func InsertDashBoard(dashboard DashBoard) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
@@ -46,6 +48,7 @@ func InsertDashBoard(dashboard DashBoard) error {
 	return nil
 }
 
+// InsertPanel takes details of a dashboard panel and inserts into the database collection
 func InsertPanel(panels []*Panel) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
@@ -62,6 +65,7 @@ func InsertPanel(panels []*Panel) error {
 	return nil
 }
 
+// ListDataSource takes a query parameter to retrieve the data source details from the database
 func ListDataSource(query bson.M) ([]*DataSource, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
@@ -79,6 +83,7 @@ func ListDataSource(query bson.M) ([]*DataSource, error) {
 	return datasources, nil
 }
 
+// ListDashboard takes a query parameter to retrieve the dashboard details from the database
 func ListDashboard(query bson.M) ([]*DashBoard, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
@@ -96,6 +101,7 @@ func ListDashboard(query bson.M) ([]*DashBoard, error) {
 	return dashboards, nil
 }
 
+// ListPanel takes a query parameter to retrieve the dashboard panel details from the database
 func ListPanel(query bson.M) ([]*Panel, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
@@ -113,9 +119,10 @@ func ListPanel(query bson.M) ([]*Panel, error) {
 	return panels, nil
 }
 
-func GetDataSourceByID(ds_id string) (*DataSource, error) {
+// GetDataSourceByID takes a dsID parameter to retrieve the data source details from the database
+func GetDataSourceByID(dsID string) (*DataSource, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	query := bson.M{"ds_id": ds_id}
+	query := bson.M{"ds_id": dsID}
 
 	var datasource *DataSource
 	err := dataSourceCollection.FindOne(ctx, query).Decode(&datasource)
@@ -126,6 +133,7 @@ func GetDataSourceByID(ds_id string) (*DataSource, error) {
 	return datasource, nil
 }
 
+// UpdateDataSource takes query and update parameters to update the data source details in the database
 func UpdateDataSource(query bson.D, update bson.D) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
@@ -137,6 +145,7 @@ func UpdateDataSource(query bson.D, update bson.D) error {
 	return nil
 }
 
+// UpdateDashboard takes query and update parameters to update the dashboard details in the database
 func UpdateDashboard(query bson.D, update bson.D) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
@@ -148,6 +157,7 @@ func UpdateDashboard(query bson.D, update bson.D) error {
 	return nil
 }
 
+// UpdatePanel takes query and update parameters to update the dashboard panel details in the database
 func UpdatePanel(query bson.D, update bson.D) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
@@ -163,6 +173,7 @@ func UpdatePanel(query bson.D, update bson.D) error {
 	return nil
 }
 
+// GetDashboard takes a query parameter to retrieve the dashboard details from the database
 func GetDashboard(query bson.M) (DashBoard, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 

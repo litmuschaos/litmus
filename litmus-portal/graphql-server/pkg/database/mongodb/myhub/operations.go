@@ -62,7 +62,7 @@ func GetHubs(ctx context.Context) ([]MyHub, error) {
 	return MyHubs, nil
 }
 
-// GetHubByID
+// GetHubByID ...
 func GetHubByID(ctx context.Context, hubID string) (MyHub, error) {
 	var myHub MyHub
 	err := myhubCollection.FindOne(ctx, bson.M{"myhub_id": hubID}).Decode(&myHub)
@@ -73,6 +73,7 @@ func GetHubByID(ctx context.Context, hubID string) (MyHub, error) {
 	return myHub, nil
 }
 
+// UpdateMyHub ...
 func UpdateMyHub(ctx context.Context, query bson.D, update bson.D) error {
 	updateResult, err := myhubCollection.UpdateOne(ctx, query, update)
 	if err != nil {

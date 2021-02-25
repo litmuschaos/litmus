@@ -240,7 +240,7 @@ func ProcessWorkflowCreation(input *model.ChaosWorkFlowInput, r *store.StateData
 		Weightages:          Weightages,
 		CreatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
 		UpdatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
-		WorkflowRuns:        []*dbSchemaWorkflow.WorkflowRun{},
+		WorkflowRuns:        []*dbSchemaWorkflow.ChaosWorkflowRun{},
 		IsRemoved:           false,
 	}
 
