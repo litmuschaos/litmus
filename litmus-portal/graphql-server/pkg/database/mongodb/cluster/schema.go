@@ -1,4 +1,4 @@
-package schema
+package cluster
 
 // Cluster contains the required fields to be stored in the database for a cluster
 type Cluster struct {

@@ -29,9 +29,9 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/ops"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
-	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
+	dbOperationsGitOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/gitops"
+	dbSchemaGitOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/gitops"
+	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 )
 
 // GitConfig structure for the GitOps settings
@@ -83,8 +83,8 @@ func GitUserFromContext(ctx context.Context) GitUser {
 	}
 }
 
-//GetGitOpsConfig is used for constructing the GitConfig from schema.GitConfigDB
-func GetGitOpsConfig(repoData schema.GitConfigDB) GitConfig {
+// GetGitOpsConfig is used for constructing the GitConfig from schema.GitConfigDB
+func GetGitOpsConfig(repoData dbSchemaGitOps.GitConfigDB) GitConfig {
 	gitConfig := GitConfig{
 		ProjectID:     repoData.ProjectID,
 		RepositoryURL: repoData.RepositoryURL,
@@ -102,7 +102,7 @@ func GetGitOpsConfig(repoData schema.GitConfigDB) GitConfig {
 	return gitConfig
 }
 
-//setupGitRepo helps clones and sets up the repo for gitops
+// setupGitRepo helps clones and sets up the repo for gitops
 func (c GitConfig) setupGitRepo(user GitUser) error {
 	projectPath := c.LocalPath + "/" + ProjectDataPath + "/" + c.ProjectID
 
@@ -143,7 +143,7 @@ func (c GitConfig) setupGitRepo(user GitUser) error {
 	return c.GitPush()
 }
 
-//GitClone clones the repo
+// GitClone clones the repo
 func (c GitConfig) GitClone() (*git.Repository, error) {
 	// clean the local path
 	os.RemoveAll(c.LocalPath)
@@ -162,7 +162,7 @@ func (c GitConfig) GitClone() (*git.Repository, error) {
 	})
 }
 
-//getAuthMethod returns the AuthMethod instance required for the current repo access [read/writes]
+// getAuthMethod returns the AuthMethod instance required for the current repo access [read/writes]
 func (c GitConfig) getAuthMethod() (transport.AuthMethod, error) {
 
 	switch c.AuthType {
@@ -195,7 +195,7 @@ func (c GitConfig) getAuthMethod() (transport.AuthMethod, error) {
 	}
 }
 
-//UnsafeGitPull executes git pull after a hard reset when uncommited changes are present in repo. Not safe.
+// UnsafeGitPull executes git pull after a hard reset when uncommited changes are present in repo. Not safe.
 func (c GitConfig) UnsafeGitPull() error {
 	cleanStatus, err := c.GitGetStatus()
 	if err != nil {
@@ -224,7 +224,7 @@ func (c GitConfig) GitGetStatus() (bool, error) {
 	return status.IsClean(), nil
 }
 
-//getRepositoryWorktreeReference returns the git.Repository and git.Worktree instanes for the repo
+// getRepositoryWorktreeReference returns the git.Repository and git.Worktree instanes for the repo
 func (c GitConfig) getRepositoryWorktreeReference() (*git.Repository, *git.Worktree, error) {
 	repo, err := git.PlainOpen(c.LocalPath)
 	if err != nil {
@@ -237,7 +237,7 @@ func (c GitConfig) getRepositoryWorktreeReference() (*git.Repository, *git.Workt
 	return repo, workTree, nil
 }
 
-//handlerForDirtyStatus calls relative functions if the GitGetStatus gives a clean status as a result
+// handlerForDirtyStatus calls relative functions if the GitGetStatus gives a clean status as a result
 func (c GitConfig) handlerForDirtyStatus() error {
 	if err := c.GitHardReset(); err != nil {
 		return err
@@ -245,7 +245,7 @@ func (c GitConfig) handlerForDirtyStatus() error {
 	return c.GitPull()
 }
 
-//GitHardReset executes "git reset --hard HEAD" in provided Repository Path
+// GitHardReset executes "git reset --hard HEAD" in provided Repository Path
 func (c GitConfig) GitHardReset() error {
 	_, workTree, err := c.getRepositoryWorktreeReference()
 	if err != nil {
@@ -257,7 +257,7 @@ func (c GitConfig) GitHardReset() error {
 	return nil
 }
 
-//GitPull updates the repository in provided Path
+// GitPull updates the repository in provided Path
 func (c GitConfig) GitPull() error {
 	_, workTree, err := c.getRepositoryWorktreeReference()
 	if err != nil {
@@ -279,7 +279,7 @@ func (c GitConfig) GitPull() error {
 	return nil
 }
 
-//GitCheckout changes the current active branch to specified branch in GitConfig
+// GitCheckout changes the current active branch to specified branch in GitConfig
 func (c GitConfig) GitCheckout() error {
 	r, w, err := c.getRepositoryWorktreeReference()
 	if err != nil {
@@ -297,7 +297,7 @@ func (c GitConfig) GitCheckout() error {
 	})
 }
 
-//GitPush pushes the current changes to remote set in GitConfig, always needs auth credentials
+// GitPush pushes the current changes to remote set in GitConfig, always needs auth credentials
 func (c GitConfig) GitPush() error {
 	if c.AuthType == model.AuthTypeNone {
 		return errors.New("cannot write/push without credentials, auth type = none")
@@ -322,7 +322,7 @@ func (c GitConfig) GitPush() error {
 	return err
 }
 
-//GitCommit saves the changes in the repo and commits them with the message provided
+// GitCommit saves the changes in the repo and commits them with the message provided
 func (c GitConfig) GitCommit(user GitUser, message string, deleteFile *string) (string, error) {
 	_, w, err := c.getRepositoryWorktreeReference()
 	if err != nil {
@@ -353,7 +353,7 @@ func (c GitConfig) GitCommit(user GitUser, message string, deleteFile *string) (
 	return hash.String(), nil
 }
 
-//GetChanges returns the LatestCommit and list of files changed(since previous LatestCommit) in the project directory mentioned in GitConfig
+// GetChanges returns the LatestCommit and list of files changed(since previous LatestCommit) in the project directory mentioned in GitConfig
 func (c GitConfig) GetChanges() (string, map[string]int, error) {
 	path := ProjectDataPath + "/" + c.ProjectID + "/"
 
@@ -415,7 +415,7 @@ func (c GitConfig) GetChanges() (string, map[string]int, error) {
 	return c.LatestCommit, visited, nil
 }
 
-//GetLatestCommitHash returns the latest commit hash in the local repo for the project directory
+// GetLatestCommitHash returns the latest commit hash in the local repo for the project directory
 func (c GitConfig) GetLatestCommitHash() (string, error) {
 	path := ProjectDataPath + "/" + c.ProjectID + "/"
 	r, _, err := c.getRepositoryWorktreeReference()
@@ -440,8 +440,8 @@ func (c GitConfig) GetLatestCommitHash() (string, error) {
 	return commit.Hash.String(), nil
 }
 
-//SetupGitOps clones and sets up the repo for gitops and returns the LatestCommit
-func SetupGitOps(user GitUser, config schema.GitConfigDB) (string, error) {
+// SetupGitOps clones and sets up the repo for gitops and returns the LatestCommit
+func SetupGitOps(user GitUser, config dbSchemaGitOps.GitConfigDB) (string, error) {
 	gitConfig := GetGitOpsConfig(config)
 	err := gitConfig.setupGitRepo(user)
 	if err != nil {
@@ -454,7 +454,7 @@ func SetupGitOps(user GitUser, config schema.GitConfigDB) (string, error) {
 	return commitHash, err
 }
 
-//SyncDBToGit syncs the DB with the GitRepo for the project
+// SyncDBToGit syncs the DB with the GitRepo for the project
 func SyncDBToGit(ctx context.Context, config GitConfig) error {
 	repositoryExists, err := PathExists(config.LocalPath)
 	if err != nil {
@@ -481,7 +481,7 @@ func SyncDBToGit(ctx context.Context, config GitConfig) error {
 		if !strings.HasSuffix(file, ".yaml") {
 			continue
 		}
-		//check if file was deleted or not
+		// check if file was deleted or not
 		exists, err := PathExists(config.LocalPath + "/" + file)
 		if err != nil {
 			return errors.New("Error checking file in local repo : " + file + " | " + err.Error())
@@ -494,7 +494,7 @@ func SyncDBToGit(ctx context.Context, config GitConfig) error {
 			}
 			continue
 		}
-		//read changes [new additions/updates]
+		// read changes [new additions/updates]
 		data, err := ioutil.ReadFile(config.LocalPath + "/" + file)
 		if err != nil {
 			log.Print("Error reading data from git file : " + file + " | " + err.Error())
@@ -549,9 +549,9 @@ func SyncDBToGit(ctx context.Context, config GitConfig) error {
 	if ctx == nil {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 		defer cancel()
-		err = operations.UpdateGitConfig(ctx, query, update)
+		err = dbOperationsGitOps.UpdateGitConfig(ctx, query, update)
 	} else {
-		err = operations.UpdateGitConfig(ctx, query, update)
+		err = dbOperationsGitOps.UpdateGitConfig(ctx, query, update)
 	}
 
 	if err != nil {
@@ -560,7 +560,7 @@ func SyncDBToGit(ctx context.Context, config GitConfig) error {
 	return nil
 }
 
-//createWorkflow helps in creating a new workflow during the SyncDBToGit operation
+// createWorkflow helps in creating a new workflow during the SyncDBToGit operation
 func createWorkflow(data, file string, config GitConfig) (bool, error) {
 	_, fileName := filepath.Split(file)
 	fileName = strings.Replace(fileName, ".yaml", "", -1)
@@ -608,7 +608,7 @@ func createWorkflow(data, file string, config GitConfig) (bool, error) {
 	return true, nil
 }
 
-//updateWorkflow helps in updating a existing workflow during the SyncDBToGit operation
+// updateWorkflow helps in updating a existing workflow during the SyncDBToGit operation
 func updateWorkflow(data, wfID, file string, config GitConfig) error {
 	_, fileName := filepath.Split(file)
 	fileName = strings.Replace(fileName, ".yaml", "", -1)
@@ -624,7 +624,7 @@ func updateWorkflow(data, wfID, file string, config GitConfig) error {
 		return errors.New("file name doesn't match workflow name")
 	}
 
-	workflow, err := dbOperations.GetWorkflows(bson.D{{"workflow_id", wfID}, {"project_id", config.ProjectID}, {"isRemoved", false}})
+	workflow, err := dbOperationsWorkflow.GetWorkflows(bson.D{{"workflow_id", wfID}, {"project_id", config.ProjectID}, {"isRemoved", false}})
 	if len(workflow) == 0 {
 		return errors.New("No such workflow found : " + wfID)
 	}
@@ -654,7 +654,7 @@ func updateWorkflow(data, wfID, file string, config GitConfig) error {
 
 }
 
-//deleteWorkflow helps in deleting a workflow from DB during the SyncDBToGit operation
+// deleteWorkflow helps in deleting a workflow from DB during the SyncDBToGit operation
 func deleteWorkflow(file string, config GitConfig) error {
 	_, fileName := filepath.Split(file)
 	fileName = strings.Replace(fileName, ".yaml", "", -1)

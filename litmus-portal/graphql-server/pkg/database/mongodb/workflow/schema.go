@@ -1,4 +1,4 @@
-package schema
+package workflow
 
 // ChaosWorkFlowInput contains the required fields to be stored in the database for a chaos workflow input
 type ChaosWorkFlowInput struct {

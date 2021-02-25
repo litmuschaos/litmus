@@ -1,4 +1,4 @@
-package schema
+package usermanagement
 
 import "github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 
@@ -17,7 +17,7 @@ type User struct {
 	RemovedAt       string  `bson:"removed_at"`
 }
 
-//GetOutputUser ...
+// GetOutputUser ...
 func (user User) GetOutputUser() *model.User {
 
 	return &model.User{

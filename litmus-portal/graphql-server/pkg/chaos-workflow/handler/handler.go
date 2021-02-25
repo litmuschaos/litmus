@@ -15,8 +15,9 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
-	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
+	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
+	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
+	dbSchemaWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
 )
 
@@ -51,7 +52,7 @@ func CreateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r
 
 func DeleteWorkflow(ctx context.Context, workflow_id string, r *store.StateData) (bool, error) {
 	query := bson.D{{Key: "workflow_id", Value: workflow_id}}
-	workflows, err := dbOperations.GetWorkflows(query)
+	workflows, err := dbOperationsWorkflow.GetWorkflows(query)
 	if len(workflows) == 0 {
 		return false, errors.New("no such workflow found")
 	}
@@ -108,14 +109,14 @@ func UpdateWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *sto
 
 // GetWorkflowRuns sends all the workflow runs for a project from the DB
 func QueryWorkflowRuns(project_id string) ([]*model.WorkflowRun, error) {
-	workflows, err := dbOperations.GetWorkflows(bson.D{{"project_id", project_id}})
+	workflows, err := dbOperationsWorkflow.GetWorkflows(bson.D{{"project_id", project_id}})
 	if err != nil {
 		return nil, err
 	}
 	result := []*model.WorkflowRun{}
 
 	for _, workflow := range workflows {
-		cluster, err := dbOperations.GetCluster(workflow.ClusterID)
+		cluster, err := dbOperationsCluster.GetCluster(workflow.ClusterID)
 		if err != nil {
 			return nil, err
 		}
@@ -138,14 +139,14 @@ func QueryWorkflowRuns(project_id string) ([]*model.WorkflowRun, error) {
 }
 
 func QueryWorkflows(project_id string) ([]*model.ScheduledWorkflows, error) {
-	chaosWorkflows, err := dbOperations.GetWorkflows(bson.D{{"project_id", project_id}})
+	chaosWorkflows, err := dbOperationsWorkflow.GetWorkflows(bson.D{{"project_id", project_id}})
 	if err != nil {
 		return nil, err
 	}
 
 	result := []*model.ScheduledWorkflows{}
 	for _, workflow := range chaosWorkflows {
-		cluster, err := dbOperations.GetCluster(workflow.ClusterID)
+		cluster, err := dbOperationsCluster.GetCluster(workflow.ClusterID)
 		if err != nil {
 			return nil, err
 		}
@@ -177,7 +178,7 @@ func QueryWorkflows(project_id string) ([]*model.ScheduledWorkflows, error) {
 }
 
 func QueryListWorkflow(project_id string) ([]*model.Workflow, error) {
-	chaosWorkflows, err := dbOperations.GetWorkflows(bson.D{{"project_id", project_id}})
+	chaosWorkflows, err := dbOperationsWorkflow.GetWorkflows(bson.D{{"project_id", project_id}})
 	if err != nil {
 		return nil, err
 	}
@@ -185,7 +186,7 @@ func QueryListWorkflow(project_id string) ([]*model.Workflow, error) {
 	result := []*model.Workflow{}
 	for _, workflow := range chaosWorkflows {
 
-		cluster, err := dbOperations.GetCluster(workflow.ClusterID)
+		cluster, err := dbOperationsCluster.GetCluster(workflow.ClusterID)
 		if err != nil {
 			return nil, err
 		}
@@ -219,14 +220,14 @@ func QueryListWorkflow(project_id string) ([]*model.Workflow, error) {
 
 func QueryListWorkflowByIDs(workflow_ids []*string) ([]*model.Workflow, error) {
 
-	chaosWorkflows, err := dbOperations.GetWorkflows(bson.D{{"workflow_id", bson.M{"$in": workflow_ids}}})
+	chaosWorkflows, err := dbOperationsWorkflow.GetWorkflows(bson.D{{"workflow_id", bson.M{"$in": workflow_ids}}})
 	if err != nil {
 		return nil, err
 	}
 	result := []*model.Workflow{}
 
 	for _, workflow := range chaosWorkflows {
-		cluster, err := dbOperations.GetCluster(workflow.ClusterID)
+		cluster, err := dbOperationsCluster.GetCluster(workflow.ClusterID)
 		if err != nil {
 			return nil, err
 		}
@@ -267,8 +268,8 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		return "", err
 	}
 
-	// err = dbOperations.UpdateWorkflowRun(dbOperations.WorkflowRun(newWorkflowRun))
-	count, err := dbOperations.UpdateWorkflowRun(input.WorkflowID, dbSchema.WorkflowRun{
+	// err = dbOperationsWorkflow.UpdateWorkflowRun(dbOperationsWorkflow.WorkflowRun(newWorkflowRun))
+	count, err := dbOperationsWorkflow.UpdateWorkflowRun(input.WorkflowID, dbSchemaWorkflow.WorkflowRun{
 		WorkflowRunID: input.WorkflowRunID,
 		LastUpdated:   strconv.FormatInt(time.Now().Unix(), 10),
 		ExecutionData: input.ExecutionData,

@@ -1,4 +1,4 @@
-package operations
+package workflow
 
 import (
 	"context"
@@ -11,11 +11,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
-	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 )
 
 var (
 	workflowCollection *mongo.Collection
+	backgroundContext  = context.Background()
 )
 
 func init() {
@@ -40,7 +40,7 @@ func init() {
 }
 
 // UpdateWorkflowRun takes workflowID and wfRun parameters to update the workflow run details in the database
-func UpdateWorkflowRun(workflowID string, wfRun dbSchema.WorkflowRun) (int, error) {
+func UpdateWorkflowRun(workflowID string, wfRun WorkflowRun) (int, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
 	count, err := workflowCollection.CountDocuments(ctx, bson.M{"workflow_id": workflowID, "workflow_runs.workflow_run_id": wfRun.WorkflowRunID})
@@ -73,7 +73,7 @@ func UpdateWorkflowRun(workflowID string, wfRun dbSchema.WorkflowRun) (int, erro
 }
 
 // GetWorkflows takes a query parameter to retrieve the workflow details from the database
-func GetWorkflows(query bson.D) ([]dbSchema.ChaosWorkFlowInput, error) {
+func GetWorkflows(query bson.D) ([]ChaosWorkFlowInput, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
 	cursor, err := workflowCollection.Find(ctx, query)
@@ -81,7 +81,7 @@ func GetWorkflows(query bson.D) ([]dbSchema.ChaosWorkFlowInput, error) {
 		return nil, err
 	}
 
-	var workflows []dbSchema.ChaosWorkFlowInput
+	var workflows []ChaosWorkFlowInput
 	err = cursor.All(ctx, &workflows)
 	if err != nil {
 		return nil, err
@@ -91,7 +91,7 @@ func GetWorkflows(query bson.D) ([]dbSchema.ChaosWorkFlowInput, error) {
 }
 
 // GetWorkflowsByClusterID takes a clusterID parameter to retrieve the workflow details from the database
-func GetWorkflowsByClusterID(clusterID string) ([]dbSchema.ChaosWorkFlowInput, error) {
+func GetWorkflowsByClusterID(clusterID string) ([]ChaosWorkFlowInput, error) {
 	query := bson.D{{"cluster_id", clusterID}}
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
@@ -100,7 +100,7 @@ func GetWorkflowsByClusterID(clusterID string) ([]dbSchema.ChaosWorkFlowInput, e
 		return nil, err
 	}
 
-	var workflows []dbSchema.ChaosWorkFlowInput
+	var workflows []ChaosWorkFlowInput
 	err = cursor.All(ctx, &workflows)
 	if err != nil {
 		return nil, err
@@ -109,7 +109,7 @@ func GetWorkflowsByClusterID(clusterID string) ([]dbSchema.ChaosWorkFlowInput, e
 }
 
 // InsertChaosWorkflow takes details of a workflow and inserts into the database collection
-func InsertChaosWorkflow(chaosWorkflow dbSchema.ChaosWorkFlowInput) error {
+func InsertChaosWorkflow(chaosWorkflow ChaosWorkFlowInput) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	_, err := workflowCollection.InsertOne(ctx, chaosWorkflow)
 	if err != nil {

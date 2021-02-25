@@ -1,4 +1,4 @@
-package schema
+package analytics
 
 type DataSource struct {
 	DsID              string  `bson:"ds_id"`

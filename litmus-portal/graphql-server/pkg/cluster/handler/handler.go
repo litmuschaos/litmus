@@ -14,8 +14,9 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	clusterOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
-	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
+	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
+	dbSchemaCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
+	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 )
 
@@ -28,7 +29,7 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		return &model.ClusterRegResponse{}, err
 	}
 
-	newCluster := dbSchema.Cluster{
+	newCluster := dbSchemaCluster.Cluster{
 		ClusterID:      clusterID,
 		ClusterName:    input.ClusterName,
 		Description:    input.Description,
@@ -47,7 +48,7 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		IsRemoved:      false,
 	}
 
-	err = dbOperations.InsertCluster(newCluster)
+	err = dbOperationsCluster.InsertCluster(newCluster)
 	if err != nil {
 		return &model.ClusterRegResponse{}, err
 	}
@@ -63,7 +64,7 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 
 // ConfirmClusterRegistration takes the cluster_id and access_key from the subscriber and validates it, if validated generates and sends new access_key
 func ConfirmClusterRegistration(identity model.ClusterIdentity, r store.StateData) (*model.ClusterConfirmResponse, error) {
-	cluster, err := dbOperations.GetCluster(identity.ClusterID)
+	cluster, err := dbOperationsCluster.GetCluster(identity.ClusterID)
 	if err != nil {
 		return &model.ClusterConfirmResponse{IsClusterConfirmed: false}, err
 	}
@@ -74,7 +75,7 @@ func ConfirmClusterRegistration(identity model.ClusterIdentity, r store.StateDat
 		query := bson.D{{"cluster_id", identity.ClusterID}}
 		update := bson.D{{"$unset", bson.D{{"token", ""}}}, {"$set", bson.D{{"access_key", newKey}, {"is_registered", true}, {"is_cluster_confirmed", true}, {"updated_at", time}}}}
 
-		err = dbOperations.UpdateCluster(query, update)
+		err = dbOperationsCluster.UpdateCluster(query, update)
 		if err != nil {
 			return &model.ClusterConfirmResponse{IsClusterConfirmed: false}, err
 		}
@@ -95,7 +96,7 @@ func ConfirmClusterRegistration(identity model.ClusterIdentity, r store.StateDat
 
 // NewEvent takes a event from a subscriber, validates identity and broadcasts the event to the users
 func NewEvent(clusterEvent model.ClusterEventInput, r store.StateData) (string, error) {
-	cluster, err := dbOperations.GetCluster(clusterEvent.ClusterID)
+	cluster, err := dbOperationsCluster.GetCluster(clusterEvent.ClusterID)
 	if err != nil {
 		return "", err
 	}
@@ -120,11 +121,11 @@ func DeleteCluster(clusterID string, r store.StateData) (string, error) {
 	query := bson.D{{"cluster_id", clusterID}}
 	update := bson.D{{"$set", bson.D{{"is_removed", true}, {"updated_at", time}}}}
 
-	err := dbOperations.UpdateCluster(query, update)
+	err := dbOperationsCluster.UpdateCluster(query, update)
 	if err != nil {
 		return "", err
 	}
-	cluster, err := dbOperations.GetCluster(clusterID)
+	cluster, err := dbOperationsCluster.GetCluster(clusterID)
 	if err != nil {
 		return "", nil
 	}
@@ -163,7 +164,7 @@ func DeleteCluster(clusterID string, r store.StateData) (string, error) {
 
 // QueryGetClusters takes a projectID and clusterType to filter and return a list of clusters
 func QueryGetClusters(projectID string, clusterType *string) ([]*model.Cluster, error) {
-	clusters, err := dbOperations.GetClusterWithProjectID(projectID, clusterType)
+	clusters, err := dbOperationsCluster.GetClusterWithProjectID(projectID, clusterType)
 	if err != nil {
 		return nil, err
 	}
@@ -172,7 +173,7 @@ func QueryGetClusters(projectID string, clusterType *string) ([]*model.Cluster, 
 	for _, cluster := range clusters {
 		var totalNoOfSchedules int
 
-		workflows, err := dbOperations.GetWorkflowsByClusterID(cluster.ClusterID)
+		workflows, err := dbOperationsWorkflow.GetWorkflowsByClusterID(cluster.ClusterID)
 		if err != nil {
 			return nil, err
 		}
@@ -191,7 +192,7 @@ func QueryGetClusters(projectID string, clusterType *string) ([]*model.Cluster, 
 	return newClusters, nil
 }
 
-//SendClusterEvent sends events from the clusters to the appropriate users listening for the events
+// SendClusterEvent sends events from the clusters to the appropriate users listening for the events
 func SendClusterEvent(eventType, eventName, description string, cluster model.Cluster, r store.StateData) {
 	newEvent := model.ClusterEvent{
 		EventID:     uuid.New().String(),

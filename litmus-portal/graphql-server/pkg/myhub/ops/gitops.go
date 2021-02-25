@@ -38,13 +38,13 @@ const (
 	defaultPath = "/tmp/version/"
 )
 
-//GetClonePath is used to construct path for Repository.
+// GetClonePath is used to construct path for Repository.
 func GetClonePath(c MyHubConfig) string {
 	RepoPath := defaultPath + c.ProjectID + "/" + c.HubName
 	return RepoPath
 }
 
-//GitConfigConstruct is used for constructing the gitconfig
+// GitConfigConstruct is used for constructing the gitconfig
 func GitConfigConstruct(repoData model.CloningInput) MyHubConfig {
 	gitConfig := MyHubConfig{
 		ProjectID:     repoData.ProjectID,
@@ -63,7 +63,7 @@ func GitConfigConstruct(repoData model.CloningInput) MyHubConfig {
 	return gitConfig
 }
 
-//GitClone Trigger is reponsible for setting off the go routine for git-op
+// GitClone Trigger is reponsible for setting off the go routine for git-op
 func GitClone(repoData model.CloningInput) error {
 	gitConfig := GitConfigConstruct(repoData)
 	if repoData.IsPrivate {
@@ -80,11 +80,11 @@ func GitClone(repoData model.CloningInput) error {
 		}
 
 	}
-	//Successfully Cloned
+	// Successfully Cloned
 	return nil
 }
 
-//getChaosChartVersion is responsible for plain cloning the repository
+// getChaosChartVersion is responsible for plain cloning the repository
 func (c MyHubConfig) getChaosChartRepo() (string, error) {
 	ClonePath := GetClonePath(c)
 	os.RemoveAll(ClonePath)
@@ -95,7 +95,7 @@ func (c MyHubConfig) getChaosChartRepo() (string, error) {
 	return c.Branch, err
 }
 
-//getPrivateChaosChartVersion is responsible for plain cloning the private repository
+// getPrivateChaosChartVersion is responsible for plain cloning the private repository
 func (c MyHubConfig) getPrivateChaosChartRepo() (string, error) {
 	ClonePath := GetClonePath(c)
 	os.RemoveAll(ClonePath)
@@ -114,14 +114,14 @@ func (c MyHubConfig) getPrivateChaosChartRepo() (string, error) {
 	return c.Branch, err
 }
 
-//GitSyncHandlerForProjects ...
+// GitSyncHandlerForProjects ...
 func GitSyncHandlerForProjects(repoData model.CloningInput) error {
 	gitConfig := GitConfigConstruct(repoData)
 	if err := gitConfig.chaosChartSyncHandler(); err != nil {
 		log.Error(err)
 		return err
 	}
-	//Repository syncing completed
+	// Repository syncing completed
 
 	return nil
 }

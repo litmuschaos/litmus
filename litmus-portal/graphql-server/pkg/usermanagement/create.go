@@ -15,8 +15,8 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
-	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
-	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
+	dbOperationsUserManagement "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/usermanagement"
+	dbSchemaUserManagement "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/usermanagement"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
 )
 
@@ -34,7 +34,7 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 		return outputUser, errors.New("User already exists")
 	}
 
-	newUser := &dbSchema.User{
+	newUser := &dbSchemaUserManagement.User{
 		ID:          uuid.String(),
 		Username:    user.Username,
 		Email:       user.Email,
@@ -43,7 +43,7 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 		CreatedAt:   time.Now().Format(time.RFC1123Z),
 	}
 
-	err = dbOperations.InsertUser(ctx, newUser)
+	err = dbOperationsUserManagement.InsertUser(ctx, newUser)
 	if err != nil {
 		log.Print("ERROR", err)
 		return nil, err
@@ -65,10 +65,10 @@ func CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, e
 	return outputUser, nil
 }
 
-//GetUser ...
+// GetUser ...
 func GetUser(ctx context.Context, username string) (*model.User, error) {
 
-	user, err := dbOperations.GetUserByUserName(ctx, username)
+	user, err := dbOperationsUserManagement.GetUserByUserName(ctx, username)
 	if err != nil {
 		return nil, err
 	}
@@ -83,10 +83,10 @@ func GetUser(ctx context.Context, username string) (*model.User, error) {
 	return outputUser, nil
 }
 
-//GetUsers ...
+// GetUsers ...
 func GetUsers(ctx context.Context) ([]*model.User, error) {
 
-	users, err := dbOperations.GetUsers(ctx)
+	users, err := dbOperationsUserManagement.GetUsers(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -99,17 +99,17 @@ func GetUsers(ctx context.Context) ([]*model.User, error) {
 	return outputUsers, nil
 }
 
-//UpdateUser ...
+// UpdateUser ...
 func UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error) {
 
-	dbUser := &dbSchema.User{
+	dbUser := &dbSchemaUserManagement.User{
 		ID:          user.ID,
 		Email:       user.Email,
 		CompanyName: user.CompanyName,
 		Name:        user.Name,
 		UpdatedAt:   time.Now().Format(time.RFC1123Z),
 	}
-	err := dbOperations.UpdateUser(ctx, dbUser)
+	err := dbOperationsUserManagement.UpdateUser(ctx, dbUser)
 	if err != nil {
 		return "Updating user aborted", err
 	}

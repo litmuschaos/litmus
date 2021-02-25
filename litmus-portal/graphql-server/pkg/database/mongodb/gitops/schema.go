@@ -1,4 +1,4 @@
-package schema
+package gitops
 
 import "github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 

@@ -1,4 +1,4 @@
-package schema
+package project
 
 import "github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 
@@ -13,7 +13,7 @@ type Project struct {
 	RemovedAt string    `bson:"removed_at"`
 }
 
-//GetOutputProject ...
+// GetOutputProject ...
 func (project *Project) GetOutputProject() *model.Project {
 
 	return &model.Project{
@@ -27,7 +27,7 @@ func (project *Project) GetOutputProject() *model.Project {
 	}
 }
 
-//GetOutputMembers ...
+// GetOutputMembers ...
 func (project *Project) GetOutputMembers() []*model.Member {
 
 	outputMembers := []*model.Member{}
@@ -39,7 +39,7 @@ func (project *Project) GetOutputMembers() []*model.Member {
 	return outputMembers
 }
 
-//Member ...
+// Member ...
 type Member struct {
 	UserID     string           `bson:"user_id"`
 	UserName   string           `bson:"username"`
@@ -50,7 +50,7 @@ type Member struct {
 	JoinedAt   string           `bson:"joined_at"`
 }
 
-//GetOutputMember ...
+// GetOutputMember ...
 func (member *Member) GetOutputMember() *model.Member {
 
 	return &model.Member{
@@ -64,16 +64,16 @@ func (member *Member) GetOutputMember() *model.Member {
 	}
 }
 
-//Invitation ...
+// Invitation ...
 type Invitation string
 
 const (
-	//PendingInvitation ...
+	// PendingInvitation ...
 	PendingInvitation Invitation = "Pending"
 
-	//AcceptedInvitation ...
+	// AcceptedInvitation ...
 	AcceptedInvitation Invitation = "Accepted"
 
-	//DeclinedInvitation ...
+	// DeclinedInvitation ...
 	DeclinedInvitation Invitation = "Declined"
 )

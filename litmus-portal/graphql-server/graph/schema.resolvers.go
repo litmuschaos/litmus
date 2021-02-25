@@ -21,7 +21,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	clusterHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
+	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	myHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/ops"
@@ -296,7 +296,7 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 		query := bson.D{{"cluster_id", clusterInfo.ClusterID}}
 		update := bson.D{{"$set", bson.D{{"is_active", false}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
-		err = dbOperations.UpdateCluster(query, update)
+		err = dbOperationsCluster.UpdateCluster(query, update)
 		if err != nil {
 			log.Print("Error", err)
 		}
@@ -305,7 +305,7 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 	query := bson.D{{"cluster_id", clusterInfo.ClusterID}}
 	update := bson.D{{"$set", bson.D{{"is_active", true}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
-	err = dbOperations.UpdateCluster(query, update)
+	err = dbOperationsCluster.UpdateCluster(query, update)
 	if err != nil {
 		return clusterAction, err
 	}

@@ -1,4 +1,4 @@
-package operations
+package analytics
 
 import (
 	"context"
@@ -9,13 +9,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
-	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
 )
 
 var (
 	dataSourceCollection *mongo.Collection
 	panelCollection      *mongo.Collection
 	dashBoardCollection  *mongo.Collection
+	backgroundContext    = context.Background()
 )
 
 func init() {
@@ -24,7 +24,7 @@ func init() {
 	dashBoardCollection = mongodb.Database.Collection("dashboard-collection")
 }
 
-func InsertDataSource(datasource dbSchema.DataSource) error {
+func InsertDataSource(datasource DataSource) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
 	_, err := dataSourceCollection.InsertOne(ctx, datasource)
@@ -35,7 +35,7 @@ func InsertDataSource(datasource dbSchema.DataSource) error {
 	return nil
 }
 
-func InsertDashBoard(dashboard dbSchema.DashBoard) error {
+func InsertDashBoard(dashboard DashBoard) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
 	_, err := dashBoardCollection.InsertOne(ctx, dashboard)
@@ -46,7 +46,7 @@ func InsertDashBoard(dashboard dbSchema.DashBoard) error {
 	return nil
 }
 
-func InsertPanel(panels []*dbSchema.Panel) error {
+func InsertPanel(panels []*Panel) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
 	var newInterface []interface{}
@@ -62,62 +62,62 @@ func InsertPanel(panels []*dbSchema.Panel) error {
 	return nil
 }
 
-func ListDataSource(query bson.M) ([]*dbSchema.DataSource, error) {
+func ListDataSource(query bson.M) ([]*DataSource, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
-	var datasources []*dbSchema.DataSource
+	var datasources []*DataSource
 	cursor, err := dataSourceCollection.Find(ctx, query)
 	if err != nil {
-		return []*dbSchema.DataSource{}, err
+		return []*DataSource{}, err
 	}
 
 	err = cursor.All(ctx, &datasources)
 	if err != nil {
-		return []*dbSchema.DataSource{}, err
+		return []*DataSource{}, err
 	}
 
 	return datasources, nil
 }
 
-func ListDashboard(query bson.M) ([]*dbSchema.DashBoard, error) {
+func ListDashboard(query bson.M) ([]*DashBoard, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
-	var dashboards []*dbSchema.DashBoard
+	var dashboards []*DashBoard
 	cursor, err := dashBoardCollection.Find(ctx, query)
 	if err != nil {
-		return []*dbSchema.DashBoard{}, err
+		return []*DashBoard{}, err
 	}
 
 	err = cursor.All(ctx, &dashboards)
 	if err != nil {
-		return []*dbSchema.DashBoard{}, err
+		return []*DashBoard{}, err
 	}
 
 	return dashboards, nil
 }
 
-func ListPanel(query bson.M) ([]*dbSchema.Panel, error) {
+func ListPanel(query bson.M) ([]*Panel, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
-	var panels []*dbSchema.Panel
+	var panels []*Panel
 	cursor, err := panelCollection.Find(ctx, query)
 	if err != nil {
-		return []*dbSchema.Panel{}, err
+		return []*Panel{}, err
 	}
 
 	err = cursor.All(ctx, &panels)
 	if err != nil {
-		return []*dbSchema.Panel{}, err
+		return []*Panel{}, err
 	}
 
 	return panels, nil
 }
 
-func GetDataSourceByID(ds_id string) (*dbSchema.DataSource, error) {
+func GetDataSourceByID(ds_id string) (*DataSource, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	query := bson.M{"ds_id": ds_id}
 
-	var datasource *dbSchema.DataSource
+	var datasource *DataSource
 	err := dataSourceCollection.FindOne(ctx, query).Decode(&datasource)
 	if err != nil {
 		return nil, err
@@ -163,13 +163,13 @@ func UpdatePanel(query bson.D, update bson.D) error {
 	return nil
 }
 
-func GetDashboard(query bson.M) (dbSchema.DashBoard, error) {
+func GetDashboard(query bson.M) (DashBoard, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
-	var dashboard dbSchema.DashBoard
+	var dashboard DashBoard
 	err := dashBoardCollection.FindOne(ctx, query).Decode(&dashboard)
 	if err != nil {
-		return dbSchema.DashBoard{}, err
+		return DashBoard{}, err
 	}
 
 	return dashboard, nil

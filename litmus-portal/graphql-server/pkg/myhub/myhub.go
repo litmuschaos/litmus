@@ -17,8 +17,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
-	dbOperations "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/operations"
-	dbSchema "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/schema"
+	dbOperationsMyHub "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/myhub"
+	dbSchemaMyHub "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/myhub"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/handler"
 	myHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/ops"
 )
@@ -59,7 +59,7 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (*
 
 	// Initialize a UID for new Hub.
 	uuid := uuid.New()
-	newHub := &dbSchema.MyHub{
+	newHub := &dbSchemaMyHub.MyHub{
 		ID:            uuid.String(),
 		ProjectID:     projectID,
 		RepoURL:       myhub.RepoURL,
@@ -78,8 +78,8 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (*
 		LastSyncedAt:  strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
-	//Adding the new hub into database with the given username.
-	err = dbOperations.CreateMyHub(ctx, newHub)
+	// Adding the new hub into database with the given username.
+	err = dbOperationsMyHub.CreateMyHub(ctx, newHub)
 	if err != nil {
 		log.Print("ERROR", err)
 		return nil, err
@@ -88,7 +88,7 @@ func AddMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (*
 	return newHub.GetOutputMyHub(), nil
 }
 
-//SaveMyHub is used for Adding a new MyHub
+// SaveMyHub is used for Adding a new MyHub
 func SaveMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (*model.MyHub, error) {
 
 	IsExist, err := IsMyHubAvailable(ctx, myhub.HubName, projectID)
@@ -99,9 +99,9 @@ func SaveMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (
 		return nil, errors.New("HubName Already exists")
 	}
 
-	//Initialize a UID for new Hub.
+	// Initialize a UID for new Hub.
 	uuid := uuid.New()
-	newHub := &dbSchema.MyHub{
+	newHub := &dbSchemaMyHub.MyHub{
 		ID:            uuid.String(),
 		ProjectID:     projectID,
 		RepoURL:       myhub.RepoURL,
@@ -120,8 +120,8 @@ func SaveMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (
 		LastSyncedAt:  strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
-	//Adding the new hub into database with the given username without cloning.
-	err = dbOperations.CreateMyHub(ctx, newHub)
+	// Adding the new hub into database with the given username without cloning.
+	err = dbOperationsMyHub.CreateMyHub(ctx, newHub)
 	if err != nil {
 		log.Print("ERROR", err)
 		return nil, err
@@ -130,10 +130,10 @@ func SaveMyHub(ctx context.Context, myhub model.CreateMyHub, projectID string) (
 	return newHub.GetOutputMyHub(), nil
 }
 
-//HubStatus returns the array of hubdetails with their current status.
+// HubStatus returns the array of hubdetails with their current status.
 func HubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, error) {
 
-	allHubs, err := dbOperations.GetMyHubByProjectID(ctx, projectID)
+	allHubs, err := dbOperationsMyHub.GetMyHubByProjectID(ctx, projectID)
 	if err != nil {
 		return nil, err
 	}
@@ -182,9 +182,9 @@ func HubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, err
 
 }
 
-//IsMyHubAvailable is used for checking if hub already exist or not
+// IsMyHubAvailable is used for checking if hub already exist or not
 func IsMyHubAvailable(ctx context.Context, hubname string, projectID string) (bool, error) {
-	myhubs, err := dbOperations.GetMyHubByProjectID(ctx, projectID)
+	myhubs, err := dbOperationsMyHub.GetMyHubByProjectID(ctx, projectID)
 	if err != nil {
 		return true, err
 	}
@@ -197,11 +197,11 @@ func IsMyHubAvailable(ctx context.Context, hubname string, projectID string) (bo
 	return false, nil
 }
 
-//GetCharts is responsible for getting the charts details
+// GetCharts is responsible for getting the charts details
 func GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error) {
 
 	chartsInput := model.CloningInput{}
-	myhubs, err := dbOperations.GetMyHubByProjectID(ctx, projectID)
+	myhubs, err := dbOperationsMyHub.GetMyHubByProjectID(ctx, projectID)
 	for _, n := range myhubs {
 		if n.HubName == hubName {
 			chartsInput = model.CloningInput{
@@ -229,7 +229,7 @@ func GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.
 	return ChartsData, nil
 }
 
-//GetExperiment is used for getting details of a given experiment using chartserviceversion.yaml.
+// GetExperiment is used for getting details of a given experiment using chartserviceversion.yaml.
 func GetExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error) {
 
 	ExperimentPath := handler.GetExperimentChartsVersionYamlPath(ctx, experimentInput)
@@ -241,9 +241,9 @@ func GetExperiment(ctx context.Context, experimentInput model.ExperimentInput) (
 	return ExperimentData, nil
 }
 
-//SyncHub is used for syncing the hub again if some not present or some error happens.
+// SyncHub is used for syncing the hub again if some not present or some error happens.
 func SyncHub(ctx context.Context, hubID string) ([]*model.MyHubStatus, error) {
-	myhub, err := dbOperations.GetHubByID(ctx, hubID)
+	myhub, err := dbOperationsMyHub.GetHubByID(ctx, hubID)
 	if err != nil {
 		return nil, err
 	}
@@ -269,8 +269,8 @@ func SyncHub(ctx context.Context, hubID string) ([]*model.MyHubStatus, error) {
 	if err != nil {
 		return nil, err
 	}
-	//Updating the last_synced_at time using hubID
-	err = dbOperations.UpdateMyHub(ctx, query, update)
+	// Updating the last_synced_at time using hubID
+	err = dbOperationsMyHub.UpdateMyHub(ctx, query, update)
 	if err != nil {
 		log.Print("ERROR", err)
 		return nil, err
@@ -288,10 +288,10 @@ func GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (st
 	return YAMLData, nil
 }
 
-//GetAllHubs ...
+// GetAllHubs ...
 func GetAllHubs(ctx context.Context) ([]*model.MyHub, error) {
 
-	myhubs, err := dbOperations.GetHubs(ctx)
+	myhubs, err := dbOperationsMyHub.GetHubs(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -319,7 +319,7 @@ func UpdateMyHub(ctx context.Context, myhub model.UpdateMyHub, projectID string)
 		SSHPrivateKey: myhub.SSHPrivateKey,
 	}
 
-	prevMyHub, err := dbOperations.GetHubByID(ctx, myhub.ID)
+	prevMyHub, err := dbOperationsMyHub.GetHubByID(ctx, myhub.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -354,8 +354,8 @@ func UpdateMyHub(ctx context.Context, myhub model.UpdateMyHub, projectID string)
 		{"Token", myhub.Token}, {"UserName", myhub.UserName}, {"Password", myhub.Password},
 		{"SSHPrivateKey", myhub.SSHPrivateKey}, {"SSHPublicKey", myhub.SSHPublicKey}, {"updated_at", time}}}}
 
-	//Updating the new hub into database with the given username.
-	err = dbOperations.UpdateMyHub(ctx, query, update)
+	// Updating the new hub into database with the given username.
+	err = dbOperationsMyHub.UpdateMyHub(ctx, query, update)
 	if err != nil {
 		log.Print("ERROR", err)
 		return nil, err
@@ -373,7 +373,7 @@ func DeleteMyHub(ctx context.Context, hubID string) (bool, error) {
 	query := bson.D{{"myhub_id", hubID}}
 	update := bson.D{{"$set", bson.D{{"IsRemoved", true}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
-	err := dbOperations.UpdateMyHub(ctx, query, update)
+	err := dbOperationsMyHub.UpdateMyHub(ctx, query, update)
 	if err != nil {
 		log.Print("ERROR", err)
 		return false, err
@@ -397,10 +397,10 @@ var GetIconHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Reques
 	io.Copy(w, img)
 })
 
-//RecurringHubSync is used for syncing
+// RecurringHubSync is used for syncing
 func RecurringHubSync() {
 	for {
-		//Started Syncing of hubs
+		// Started Syncing of hubs
 		myhubs, _ := GetAllHubs(nil)
 
 		for _, myhub := range myhubs {
@@ -421,7 +421,7 @@ func RecurringHubSync() {
 			myHubOps.GitSyncHandlerForProjects(chartsInput)
 		}
 
-		//Syncing Completed
+		// Syncing Completed
 		time.Sleep(timeInterval)
 	}
 }
