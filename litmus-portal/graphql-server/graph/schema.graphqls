@@ -223,7 +223,17 @@ input GitConfig {
 	Password: String
 	SSHPrivateKey: String
 }
-
+type GitConfigResponse{
+	Enabled:Boolean!
+	ProjectID: String!
+	Branch: String
+	RepoURL: String
+	AuthType: AuthType
+	Token: String
+	UserName: String
+	Password: String
+	SSHPrivateKey: String
+}
 type Query {
 	# [Deprecated soon]
 	getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
@@ -254,6 +264,9 @@ type Query {
   	GetPromQuery(query: promInput): [promResponse!]! @authorized
 
   	ListDashboard(project_id: String!): [listDashboardReponse] @authorized
+
+	# Git Ops
+	getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
 }
 
 type Mutation {
@@ -261,8 +274,9 @@ type Mutation {
 	userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
 	#It is used to create chaosworkflow
-	createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
-		@authorized
+	createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
+
+	reRunChaosWorkFlow(workflowID: String!): String! @authorized
 
 	createUser(user: CreateUserInput!): User! @authorized
 

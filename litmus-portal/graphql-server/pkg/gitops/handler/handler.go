@@ -87,6 +87,42 @@ func DisableGitOpsHandler(ctx context.Context, projectID string) (bool, error) {
 	return true, nil
 }
 
+// GetGitOpsDetailsHandler
+func GetGitOpsDetailsHandler(ctx context.Context, projectID string) (*model.GitConfigResponse, error) {
+	gitLock.Lock(projectID, nil)
+	defer gitLock.Unlock(projectID, nil)
+	config, err := dbOperationsGitOps.GetGitConfig(ctx, projectID)
+	if err != nil {
+		return nil, errors.New("Cannot get Git Config from DB : " + err.Error())
+	}
+	if config == nil {
+		return &model.GitConfigResponse{
+			ProjectID: projectID,
+			Enabled:   false,
+		}, nil
+	}
+	resp := model.GitConfigResponse{
+		Enabled:   true,
+		ProjectID: config.ProjectID,
+		Branch:    &config.Branch,
+		RepoURL:   &config.RepositoryURL,
+		AuthType:  &config.AuthType,
+	}
+	switch config.AuthType {
+
+	case model.AuthTypeToken:
+		resp.Token = config.Token
+
+	case model.AuthTypeBasic:
+		resp.UserName = config.UserName
+		resp.Password = config.Password
+
+	case model.AuthTypeSSH:
+		resp.SSHPrivateKey = config.SSHPrivateKey
+	}
+	return &resp, nil
+}
+
 // GitOpsNotificationHandler sends workflow run request(single run workflow only) to agent on gitops notification
 func GitOpsNotificationHandler(ctx context.Context, clusterInfo model.ClusterIdentity, workflowID string) (string, error) {
 	cInfo, err := cluster.VerifyCluster(clusterInfo)

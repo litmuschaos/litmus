@@ -83,7 +83,7 @@ func GitUserFromContext(ctx context.Context) GitUser {
 	}
 }
 
-// GetGitOpsConfig is used for constructing the GitConfig from schema.GitConfigDB
+// GetGitOpsConfig is used for constructing the GitConfig from dbSchemaGitOps.GitConfigDB
 func GetGitOpsConfig(repoData dbSchemaGitOps.GitConfigDB) GitConfig {
 	gitConfig := GitConfig{
 		ProjectID:     repoData.ProjectID,

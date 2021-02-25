@@ -22,7 +22,7 @@ import (
 	clusterHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
+	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	myHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
@@ -35,6 +35,10 @@ func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput mode
 
 func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
 	return wfHandler.CreateChaosWorkflow(ctx, &input, store.Store)
+}
+
+func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, workflowID string) (string, error) {
+	return wfHandler.ReRunWorkflow(workflowID)
 }
 
 func (r *mutationResolver) CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error) {
@@ -122,15 +126,15 @@ func (r *mutationResolver) DeleteMyHub(ctx context.Context, hubID string) (bool,
 }
 
 func (r *mutationResolver) GitopsNotifer(ctx context.Context, clusterInfo model.ClusterIdentity, workflowID string) (string, error) {
-	return handler.GitOpsNotificationHandler(ctx, clusterInfo, workflowID)
+	return gitOpsHandler.GitOpsNotificationHandler(ctx, clusterInfo, workflowID)
 }
 
 func (r *mutationResolver) EnableGitOps(ctx context.Context, config model.GitConfig) (bool, error) {
-	return handler.EnableGitOpsHandler(ctx, config)
+	return gitOpsHandler.EnableGitOpsHandler(ctx, config)
 }
 
 func (r *mutationResolver) DisableGitOps(ctx context.Context, projectID string) (bool, error) {
-	return handler.DisableGitOpsHandler(ctx, projectID)
+	return gitOpsHandler.DisableGitOpsHandler(ctx, projectID)
 }
 
 func (r *mutationResolver) CreateDataSource(ctx context.Context, datasource *model.DSInput) (*model.DSResponse, error) {
@@ -219,6 +223,10 @@ func (r *queryResolver) GetPromQuery(ctx context.Context, query *model.PromInput
 
 func (r *queryResolver) ListDashboard(ctx context.Context, projectID string) ([]*model.ListDashboardReponse, error) {
 	return analyticsHandler.QueryListDashboard(projectID)
+}
+
+func (r *queryResolver) GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error) {
+	return gitOpsHandler.GetGitOpsDetailsHandler(ctx, projectID)
 }
 
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {

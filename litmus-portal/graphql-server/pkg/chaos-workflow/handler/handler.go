@@ -6,7 +6,11 @@ import (
 	"errors"
 	"log"
 	"strconv"
+	"strings"
 	"time"
+
+	"github.com/tidwall/gjson"
+	"github.com/tidwall/sjson"
 
 	"github.com/jinzhu/copier"
 	"go.mongodb.org/mongo-driver/bson"
@@ -346,4 +350,35 @@ func GetLogs(reqID string, pod model.PodLogRequest, r store.StateData) {
 		reqChan <- &resp
 		close(reqChan)
 	}
+}
+
+// ReRunWorkflow sends workflow run request(single run workflow only) to agent on workflow re-run request
+func ReRunWorkflow(workflowID string) (string, error) {
+	query := bson.D{{"workflow_id", workflowID}, {"isRemoved", false}}
+	workflows, err := dbOperationsWorkflow.GetWorkflows(query)
+	if err != nil {
+		log.Print("Could not get workflow :", err)
+		return "could not get workflow", err
+	}
+	if len(workflows) == 0 {
+		return "", errors.New("no such workflow found")
+	}
+	resKind := gjson.Get(workflows[0].WorkflowManifest, "kind").String()
+	if strings.ToLower(resKind) == "cronworkflow" { // no op
+		return "", errors.New("cronworkflows cannot be re-run")
+	}
+
+	workflows[0].WorkflowManifest, err = sjson.Set(workflows[0].WorkflowManifest, "metadata.name", workflows[0].WorkflowName+"-"+strconv.FormatInt(time.Now().Unix(), 10))
+	if err != nil {
+		log.Print("Failed to updated workflow name [re-run] :", err)
+		return "", errors.New("Failed to updated workflow name " + err.Error())
+	}
+
+	ops.SendWorkflowToSubscriber(&model.ChaosWorkFlowInput{
+		WorkflowManifest: workflows[0].WorkflowManifest,
+		ProjectID:        workflows[0].ProjectID,
+		ClusterID:        workflows[0].ClusterID,
+	}, "create", store.Store)
+
+	return "Request for re-run acknowledged, workflowID: " + workflowID, nil
 }

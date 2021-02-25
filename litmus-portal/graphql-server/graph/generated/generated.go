@@ -149,6 +149,18 @@ type ComplexityRoot struct {
 		Name func(childComplexity int) int
 	}
 
+	GitConfigResponse struct {
+		AuthType      func(childComplexity int) int
+		Branch        func(childComplexity int) int
+		Enabled       func(childComplexity int) int
+		Password      func(childComplexity int) int
+		ProjectID     func(childComplexity int) int
+		RepoURL       func(childComplexity int) int
+		SSHPrivateKey func(childComplexity int) int
+		Token         func(childComplexity int) int
+		UserName      func(childComplexity int) int
+	}
+
 	Link struct {
 		Name func(childComplexity int) int
 		URL  func(childComplexity int) int
@@ -196,6 +208,7 @@ type ComplexityRoot struct {
 		GitopsNotifer       func(childComplexity int, clusterInfo model.ClusterIdentity, workflowID string) int
 		NewClusterEvent     func(childComplexity int, clusterEvent model.ClusterEventInput) int
 		PodLog              func(childComplexity int, log model.PodLog) int
+		ReRunChaosWorkFlow  func(childComplexity int, workflowID string) int
 		RemoveInvitation    func(childComplexity int, member model.MemberInput) int
 		SaveMyHub           func(childComplexity int, myhubInput model.CreateMyHub, projectID string) int
 		SendInvitation      func(childComplexity int, member model.MemberInput) int
@@ -274,6 +287,7 @@ type ComplexityRoot struct {
 	Query struct {
 		GetCharts             func(childComplexity int, hubName string, projectID string) int
 		GetCluster            func(childComplexity int, projectID string, clusterType *string) int
+		GetGitOpsDetails      func(childComplexity int, projectID string) int
 		GetHubExperiment      func(childComplexity int, experimentInput model.ExperimentInput) int
 		GetHubStatus          func(childComplexity int, projectID string) int
 		GetProject            func(childComplexity int, projectID string) int
@@ -460,6 +474,7 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (*model.ClusterRegResponse, error)
 	CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error)
+	ReRunChaosWorkFlow(ctx context.Context, workflowID string) (string, error)
 	CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error)
 	UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error)
 	DeleteChaosWorkflow(ctx context.Context, workflowid string) (bool, error)
@@ -505,6 +520,7 @@ type QueryResolver interface {
 	ListDataSource(ctx context.Context, projectID string) ([]*model.DSResponse, error)
 	GetPromQuery(ctx context.Context, query *model.PromInput) ([]*model.PromResponse, error)
 	ListDashboard(ctx context.Context, projectID string) ([]*model.ListDashboardReponse, error)
+	GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error)
 }
 type SubscriptionResolver interface {
 	ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error)
@@ -1011,6 +1027,69 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Experiments.Name(childComplexity), true
 
+	case "GitConfigResponse.AuthType":
+		if e.complexity.GitConfigResponse.AuthType == nil {
+			break
+		}
+
+		return e.complexity.GitConfigResponse.AuthType(childComplexity), true
+
+	case "GitConfigResponse.Branch":
+		if e.complexity.GitConfigResponse.Branch == nil {
+			break
+		}
+
+		return e.complexity.GitConfigResponse.Branch(childComplexity), true
+
+	case "GitConfigResponse.Enabled":
+		if e.complexity.GitConfigResponse.Enabled == nil {
+			break
+		}
+
+		return e.complexity.GitConfigResponse.Enabled(childComplexity), true
+
+	case "GitConfigResponse.Password":
+		if e.complexity.GitConfigResponse.Password == nil {
+			break
+		}
+
+		return e.complexity.GitConfigResponse.Password(childComplexity), true
+
+	case "GitConfigResponse.ProjectID":
+		if e.complexity.GitConfigResponse.ProjectID == nil {
+			break
+		}
+
+		return e.complexity.GitConfigResponse.ProjectID(childComplexity), true
+
+	case "GitConfigResponse.RepoURL":
+		if e.complexity.GitConfigResponse.RepoURL == nil {
+			break
+		}
+
+		return e.complexity.GitConfigResponse.RepoURL(childComplexity), true
+
+	case "GitConfigResponse.SSHPrivateKey":
+		if e.complexity.GitConfigResponse.SSHPrivateKey == nil {
+			break
+		}
+
+		return e.complexity.GitConfigResponse.SSHPrivateKey(childComplexity), true
+
+	case "GitConfigResponse.Token":
+		if e.complexity.GitConfigResponse.Token == nil {
+			break
+		}
+
+		return e.complexity.GitConfigResponse.Token(childComplexity), true
+
+	case "GitConfigResponse.UserName":
+		if e.complexity.GitConfigResponse.UserName == nil {
+			break
+		}
+
+		return e.complexity.GitConfigResponse.UserName(childComplexity), true
+
 	case "Link.Name":
 		if e.complexity.Link.Name == nil {
 			break
@@ -1343,6 +1422,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.PodLog(childComplexity, args["log"].(model.PodLog)), true
+
+	case "Mutation.reRunChaosWorkFlow":
+		if e.complexity.Mutation.ReRunChaosWorkFlow == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_reRunChaosWorkFlow_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.ReRunChaosWorkFlow(childComplexity, args["workflowID"].(string)), true
 
 	case "Mutation.removeInvitation":
 		if e.complexity.Mutation.RemoveInvitation == nil {
@@ -1807,6 +1898,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetCluster(childComplexity, args["project_id"].(string), args["cluster_type"].(*string)), true
+
+	case "Query.getGitOpsDetails":
+		if e.complexity.Query.GetGitOpsDetails == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getGitOpsDetails_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetGitOpsDetails(childComplexity, args["project_id"].(string)), true
 
 	case "Query.getHubExperiment":
 		if e.complexity.Query.GetHubExperiment == nil {
@@ -3474,7 +3577,17 @@ input GitConfig {
 	Password: String
 	SSHPrivateKey: String
 }
-
+type GitConfigResponse{
+	Enabled:Boolean!
+	ProjectID: String!
+	Branch: String
+	RepoURL: String
+	AuthType: AuthType
+	Token: String
+	UserName: String
+	Password: String
+	SSHPrivateKey: String
+}
 type Query {
 	# [Deprecated soon]
 	getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
@@ -3502,9 +3615,12 @@ type Query {
 
 	ListDataSource(project_id: String!): [DSResponse]! @authorized
 
-  GetPromQuery(query: promInput): [promResponse!]! @authorized
+  	GetPromQuery(query: promInput): [promResponse!]! @authorized
 
-  ListDashboard(project_id: String!): [listDashboardReponse] @authorized
+  	ListDashboard(project_id: String!): [listDashboardReponse] @authorized
+
+	# Git Ops
+	getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
 }
 
 type Mutation {
@@ -3512,8 +3628,9 @@ type Mutation {
 	userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
 	#It is used to create chaosworkflow
-	createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
-		@authorized
+	createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
+
+	reRunChaosWorkFlow(workflowID: String!): String! @authorized
 
 	createUser(user: CreateUserInput!): User! @authorized
 
@@ -3568,17 +3685,17 @@ type Mutation {
 
 	createDataSource(datasource: DSInput): DSResponse @authorized
 
-  createDashBoard(dashboard: createDBInput): String! @authorized
+  	createDashBoard(dashboard: createDBInput): String! @authorized
 
-  updateDataSource(datasource: DSInput!): DSResponse! @authorized
+  	updateDataSource(datasource: DSInput!): DSResponse! @authorized
 
-  updateDashboard(dashboard: updataDBInput): String! @authorized
+  	updateDashboard(dashboard: updataDBInput): String! @authorized
 
-  updatePanel(panelInput: [panel]): String! @authorized
+  	updatePanel(panelInput: [panel]): String! @authorized
 
-  deleteDashboard(db_id: String): Boolean! @authorized
+  	deleteDashboard(db_id: String): Boolean! @authorized
 
-  deleteDataSource(input: deleteDSInput!): Boolean! @authorized
+  	deleteDataSource(input: deleteDSInput!): Boolean! @authorized
 }
 
 type Subscription {
@@ -3912,6 +4029,20 @@ func (ec *executionContext) field_Mutation_podLog_args(ctx context.Context, rawA
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_reRunChaosWorkFlow_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["workflowID"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["workflowID"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_removeInvitation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -4201,6 +4332,20 @@ func (ec *executionContext) field_Query_getCluster_args(ctx context.Context, raw
 		}
 	}
 	args["cluster_type"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getGitOpsDetails_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["project_id"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["project_id"] = arg0
 	return args, nil
 }
 
@@ -6671,6 +6816,291 @@ func (ec *executionContext) _Experiments_Desc(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _GitConfigResponse_Enabled(ctx context.Context, field graphql.CollectedField, obj *model.GitConfigResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "GitConfigResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Enabled, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GitConfigResponse_ProjectID(ctx context.Context, field graphql.CollectedField, obj *model.GitConfigResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "GitConfigResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProjectID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GitConfigResponse_Branch(ctx context.Context, field graphql.CollectedField, obj *model.GitConfigResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "GitConfigResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Branch, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GitConfigResponse_RepoURL(ctx context.Context, field graphql.CollectedField, obj *model.GitConfigResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "GitConfigResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RepoURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GitConfigResponse_AuthType(ctx context.Context, field graphql.CollectedField, obj *model.GitConfigResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "GitConfigResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AuthType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.AuthType)
+	fc.Result = res
+	return ec.marshalOAuthType2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAuthType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GitConfigResponse_Token(ctx context.Context, field graphql.CollectedField, obj *model.GitConfigResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "GitConfigResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Token, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GitConfigResponse_UserName(ctx context.Context, field graphql.CollectedField, obj *model.GitConfigResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "GitConfigResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GitConfigResponse_Password(ctx context.Context, field graphql.CollectedField, obj *model.GitConfigResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "GitConfigResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Password, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GitConfigResponse_SSHPrivateKey(ctx context.Context, field graphql.CollectedField, obj *model.GitConfigResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "GitConfigResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SSHPrivateKey, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Link_Name(ctx context.Context, field graphql.CollectedField, obj *model.Link) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -7267,6 +7697,67 @@ func (ec *executionContext) _Mutation_createChaosWorkFlow(ctx context.Context, f
 	res := resTmp.(*model.ChaosWorkFlowResponse)
 	fc.Result = res
 	return ec.marshalNChaosWorkFlowResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_reRunChaosWorkFlow(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_reRunChaosWorkFlow_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().ReRunChaosWorkFlow(rctx, args["workflowID"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(string); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -11213,6 +11704,67 @@ func (ec *executionContext) _Query_ListDashboard(ctx context.Context, field grap
 	res := resTmp.([]*model.ListDashboardReponse)
 	fc.Result = res
 	return ec.marshalOlistDashboardReponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListDashboardReponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getGitOpsDetails(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getGitOpsDetails_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetGitOpsDetails(rctx, args["project_id"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.GitConfigResponse); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.GitConfigResponse`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.GitConfigResponse)
+	fc.Result = res
+	return ec.marshalNGitConfigResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐGitConfigResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -18213,6 +18765,52 @@ func (ec *executionContext) _Experiments(ctx context.Context, sel ast.SelectionS
 	return out
 }
 
+var gitConfigResponseImplementors = []string{"GitConfigResponse"}
+
+func (ec *executionContext) _GitConfigResponse(ctx context.Context, sel ast.SelectionSet, obj *model.GitConfigResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, gitConfigResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GitConfigResponse")
+		case "Enabled":
+			out.Values[i] = ec._GitConfigResponse_Enabled(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "ProjectID":
+			out.Values[i] = ec._GitConfigResponse_ProjectID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Branch":
+			out.Values[i] = ec._GitConfigResponse_Branch(ctx, field, obj)
+		case "RepoURL":
+			out.Values[i] = ec._GitConfigResponse_RepoURL(ctx, field, obj)
+		case "AuthType":
+			out.Values[i] = ec._GitConfigResponse_AuthType(ctx, field, obj)
+		case "Token":
+			out.Values[i] = ec._GitConfigResponse_Token(ctx, field, obj)
+		case "UserName":
+			out.Values[i] = ec._GitConfigResponse_UserName(ctx, field, obj)
+		case "Password":
+			out.Values[i] = ec._GitConfigResponse_Password(ctx, field, obj)
+		case "SSHPrivateKey":
+			out.Values[i] = ec._GitConfigResponse_SSHPrivateKey(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var linkImplementors = []string{"Link"}
 
 func (ec *executionContext) _Link(ctx context.Context, sel ast.SelectionSet, obj *model.Link) graphql.Marshaler {
@@ -18393,6 +18991,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "createChaosWorkFlow":
 			out.Values[i] = ec._Mutation_createChaosWorkFlow(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "reRunChaosWorkFlow":
+			out.Values[i] = ec._Mutation_reRunChaosWorkFlow(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -19074,6 +19677,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_ListDashboard(ctx, field)
+				return res
+			})
+		case "getGitOpsDetails":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getGitOpsDetails(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			})
 		case "__type":
@@ -20526,6 +21143,20 @@ func (ec *executionContext) unmarshalNGitConfig2githubᚗcomᚋlitmuschaosᚋlit
 	return ec.unmarshalInputGitConfig(ctx, v)
 }
 
+func (ec *executionContext) marshalNGitConfigResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐGitConfigResponse(ctx context.Context, sel ast.SelectionSet, v model.GitConfigResponse) graphql.Marshaler {
+	return ec._GitConfigResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNGitConfigResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐGitConfigResponse(ctx context.Context, sel ast.SelectionSet, v *model.GitConfigResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._GitConfigResponse(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
 	return graphql.UnmarshalID(v)
 }
@@ -21635,6 +22266,30 @@ func (ec *executionContext) marshalNweightages2ᚖgithubᚗcomᚋlitmuschaosᚋl
 		return graphql.Null
 	}
 	return ec._weightages(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOAuthType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAuthType(ctx context.Context, v interface{}) (model.AuthType, error) {
+	var res model.AuthType
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalOAuthType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAuthType(ctx context.Context, sel ast.SelectionSet, v model.AuthType) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalOAuthType2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAuthType(ctx context.Context, v interface{}) (*model.AuthType, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOAuthType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAuthType(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOAuthType2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAuthType(ctx context.Context, sel ast.SelectionSet, v *model.AuthType) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
