@@ -38,6 +38,10 @@ func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.
 	return wf_handler.CreateChaosWorkflow(ctx, &input, store.Store)
 }
 
+func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, workflowID string) (string, error) {
+	return wf_handler.ReRunWorkflow(workflowID)
+}
+
 func (r *mutationResolver) CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error) {
 	return usermanagement.CreateUser(ctx, user)
 }
