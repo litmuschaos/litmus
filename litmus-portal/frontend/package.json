@@ -12,7 +12,7 @@
     "unit:ci": "cypress run --config video=false"
   },
   "dependencies": {
-    "@apollo/client": "^3.1.2",
+    "@apollo/client": "^3.3.7",
     "@date-io/date-fns": "^1.3.13",
     "@material-ui/core": "^4.10.2",
     "@material-ui/icons": "^4.9.1",
