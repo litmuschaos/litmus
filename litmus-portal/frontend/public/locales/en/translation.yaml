@@ -30,7 +30,7 @@ welcomeModal:
 
 sidebar:
   title: Litmus
-  version: 'Version: 1.12'
+  version: 'Version: 1.13'
 
 header:
   notificationDropdown:
@@ -335,6 +335,17 @@ settings:
       deleteUser:
         deleteModal:
           body: The user will lose access to the portal
+  gitopsTab:
+    choose: Choose where to store the Workflow configuration
+    locally: Locally in Litmus
+    disconnect: Are you sure you want to disconnect?
+    save: Save Locally
+    repo: Git Repository
+    desc: '* Any existing or active workflows saved locally will not be synced into the git repository'
+    connect: Connect
+    branch: Branch
+    URL: Git URL
+    setting: Back to settings
 
 workflowDetailsView:
   argoWorkflow:
@@ -532,7 +543,7 @@ workflowCluster:
       tableCluster: Target agent
       name: Name
       time: Time
-      run: Last Run
+      run: Last workflow run
       connectionDate: Connection Date
       noWorkflows: No. of workflows
       noSchedules: No. of schedules

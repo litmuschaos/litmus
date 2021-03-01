@@ -8,18 +8,18 @@ import (
 	"os"
 	"strings"
 
-	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	dbSchemaCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/types"
 )
 
-//WriteHeaders adds important headers to API responses
+// WriteHeaders adds important headers to API responses
 func WriteHeaders(w *http.ResponseWriter, statusCode int) {
 	(*w).Header().Set("Content-Type", "application/json; charset=utf-8")
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 	(*w).WriteHeader(statusCode)
 }
 
-//RandomString generates random strings, can be used to create ids or random secrets
+// RandomString generates random strings, can be used to create ids or random secrets
 func RandomString(n int) string {
 	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-")
 	s := make([]rune, n)
@@ -29,8 +29,8 @@ func RandomString(n int) string {
 	return string(s)
 }
 
-//ManifestParser parses manifests yaml and generates dynamic manifest with specified keys
-func ManifestParser(cluster database.Cluster, rootPath string, subscriberConfig *types.SubscriberConfigurationVars) ([]byte, error) {
+// ManifestParser parses manifests yaml and generates dynamic manifest with specified keys
+func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriberConfig *types.SubscriberConfigurationVars) ([]byte, error) {
 	var (
 		generatedYAML             []string
 		defaultState              = false

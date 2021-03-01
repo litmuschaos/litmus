@@ -6,11 +6,12 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"gopkg.in/yaml.v2"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 )
 
-//Chart ...
+// Chart ...
 type Chart struct {
 	APIVersion  string             `yaml:"apiVersion"`
 	Kind        string             `yaml:"kind"`
@@ -20,26 +21,26 @@ type Chart struct {
 	Experiments []Chart            `yaml:"experiments"`
 }
 
-//Maintainer ...
+// Maintainer ...
 type Maintainer struct {
 	Name  string
 	Email string
 }
 
-//Link ...
+// Link ...
 type Link struct {
 	Name string
 	URL  string
 }
 
-//Metadata ...
+// Metadata ...
 type Metadata struct {
 	Name        string     `yaml:"name"`
 	Version     string     `yaml:"version"`
 	Annotations Annotation `yaml:"annotations"`
 }
 
-//Annotation ...
+// Annotation ...
 type Annotation struct {
 	Categories       string `yaml:"categories"`
 	Vendor           string `yaml:"vendor"`
@@ -49,7 +50,7 @@ type Annotation struct {
 	ChartDescription string `yaml:"chartDescription"`
 }
 
-//Spec ...
+// Spec ...
 type Spec struct {
 	DisplayName         string       `yaml:"displayName"`
 	CategoryDescription string       `yaml:"categoryDescription"`
@@ -67,7 +68,7 @@ type Spec struct {
 	ChaosType       string   `yaml:"chaosType"`
 }
 
-//PackageInformation ...
+// PackageInformation ...
 type PackageInformation struct {
 	PackageName string `yaml:"packageName"`
 	Experiments []struct {
@@ -77,15 +78,15 @@ type PackageInformation struct {
 	} `yaml:"experiments"`
 }
 
-//Charts ...
+// Charts ...
 type Charts []Chart
 
-//default path for storing local clones
+// default path for storing local clones
 const (
 	defaultPath = "/tmp/version/"
 )
 
-//GetChartsPath is used to construct path for given chart.
+// GetChartsPath is used to construct path for given chart.
 func GetChartsPath(ctx context.Context, chartsInput model.CloningInput) string {
 	ProjectID := chartsInput.ProjectID
 	HubName := chartsInput.HubName
@@ -93,7 +94,7 @@ func GetChartsPath(ctx context.Context, chartsInput model.CloningInput) string {
 	return ChartsPath
 }
 
-//GetExperimentChartsVersionYamlPath is used to construct path for given chartsversion.yaml.
+// GetExperimentChartsVersionYamlPath is used to construct path for given chartsversion.yaml.
 func GetExperimentChartsVersionYamlPath(ctx context.Context, experimentInput model.ExperimentInput) string {
 	ProjectID := experimentInput.ProjectID
 	HubName := experimentInput.HubName
@@ -103,7 +104,7 @@ func GetExperimentChartsVersionYamlPath(ctx context.Context, experimentInput mod
 	return ExperimentPath
 }
 
-//GetExperimentYAMLPath is used to construct path for given experiment/engine.
+// GetExperimentYAMLPath is used to construct path for given experiment/engine.
 func GetExperimentYAMLPath(ctx context.Context, experimentInput model.ExperimentInput) string {
 	ProjectID := experimentInput.ProjectID
 	HubName := experimentInput.HubName
@@ -114,7 +115,7 @@ func GetExperimentYAMLPath(ctx context.Context, experimentInput model.Experiment
 	return ExperimentYAMLPath
 }
 
-//GetChartsData is used to get details of charts like experiments.
+// GetChartsData is used to get details of charts like experiments.
 func GetChartsData(ChartsPath string) ([]*model.Chart, error) {
 	var AllChartsDetails Charts
 	Charts, err := ioutil.ReadDir(ChartsPath)
@@ -134,7 +135,7 @@ func GetChartsData(ChartsPath string) ([]*model.Chart, error) {
 	return data1, nil
 }
 
-//GetExperimentData is used for getting details of selected Experiment path
+// GetExperimentData is used for getting details of selected Experiment path
 func GetExperimentData(experimentFilePath string) (*model.Chart, error) {
 	data, _ := ReadExperimentFile(experimentFilePath)
 	e, _ := json.Marshal(data)
@@ -143,7 +144,7 @@ func GetExperimentData(experimentFilePath string) (*model.Chart, error) {
 	return data1, nil
 }
 
-//ReadExperimentFile is used for reading a experiment file from given path
+// ReadExperimentFile is used for reading a experiment file from given path
 func ReadExperimentFile(path string) (Chart, error) {
 	var experiment Chart
 	experimentFile, err := ioutil.ReadFile(path)
@@ -157,7 +158,7 @@ func ReadExperimentFile(path string) (Chart, error) {
 	return experiment, nil
 }
 
-//ReadExperimentYAMLFile is used for reading a experiment/engine file from given path
+// ReadExperimentYAMLFile is used for reading a experiment/engine file from given path
 func ReadExperimentYAMLFile(path string) (string, error) {
 	var s string
 	YAMLData, err := ioutil.ReadFile(path)

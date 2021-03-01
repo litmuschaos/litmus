@@ -1,8 +1,7 @@
 import { Avatar, Button, Typography } from '@material-ui/core';
-import { InputField } from 'kubera-ui';
+import { InputField, Modal, ButtonOutlined } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Unimodal from '../../../../../containers/layouts/Unimodal';
 import {
   validateEmail,
   validateStartEmptySpacing,
@@ -68,13 +67,19 @@ const UserDetails: React.FC<PersonalDetailsProps> = ({
             <Button className={classes.edit} onClick={handleOpen} disabled>
               {t('settings.userManagementTab.createUser.userDetails.button')}
             </Button>
-            <Unimodal open={open} handleClose={handleClose} hasCloseBtn>
+            <Modal
+              open={open}
+              onClose={handleClose}
+              modalActions={
+                <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
+              }
+            >
               <ChooseAvatarModal
                 avatar={avatar}
                 setAvatar={setAvatar}
                 handleSubmit={handleClose}
               />
-            </Unimodal>
+            </Modal>
           </div>
           {/* Fields for details including Full name, email, username */}
           <div className={classes.details1}>

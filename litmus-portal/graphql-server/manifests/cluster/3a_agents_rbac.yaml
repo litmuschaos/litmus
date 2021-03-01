@@ -49,7 +49,7 @@ rules:
           "services",
           "events",
       ]
-    verbs: ["create", "delete", "get", "list", "patch", "update"]
+    verbs: ["create", "delete", "get", "list", "patch", "update", "deletecollection"]
   - apiGroups: [""]
     resources: ["nodes"]
     verbs: ["get", "list", "patch", "update"]

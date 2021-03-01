@@ -1,11 +1,10 @@
 import { Divider, Typography } from '@material-ui/core';
-import { InputField } from 'kubera-ui';
+import { InputField, Modal } from 'litmus-ui';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Loader from '../../../../components/Loader';
 import config from '../../../../config';
-import Unimodal from '../../../../containers/layouts/Unimodal';
 import getToken from '../../../../utils/getToken';
 import {
   validateConfirmPassword,
@@ -220,11 +219,7 @@ const AccountSettings: React.FC = () => {
                   )}
                 </ButtonFilled>
               </div>
-              <Unimodal
-                open={open}
-                handleClose={handleClose}
-                hasCloseBtn={false}
-              >
+              <Modal open={open} onClose={handleClose}>
                 {error.length ? (
                   <div className={classes.errDiv}>
                     <div className={classes.textError}>
@@ -298,7 +293,7 @@ const AccountSettings: React.FC = () => {
                     </div>
                   </div>
                 )}
-              </Unimodal>
+              </Modal>
             </form>
             <div className={classes.col2}>
               <img src="./icons/pass.svg" data-cy="lock" alt="lockIcon" />

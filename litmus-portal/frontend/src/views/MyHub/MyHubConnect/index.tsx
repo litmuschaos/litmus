@@ -10,14 +10,13 @@ import React, { useState } from 'react';
 import Done from '@material-ui/icons/DoneAllTwoTone';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { InputField } from 'kubera-ui';
+import { InputField, Modal, ButtonOutlined } from 'litmus-ui';
 import BackButton from '../../../components/Button/BackButton';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import Loader from '../../../components/Loader';
 import QuickActionCard from '../../../components/QuickActionCard';
 import Scaffold from '../../../containers/layouts/Scaffold';
-import Unimodal from '../../../containers/layouts/Unimodal';
 import {
   ADD_MY_HUB,
   GENERATE_SSH,
@@ -26,9 +25,7 @@ import {
 import { history } from '../../../redux/configureStore';
 import { RootState } from '../../../redux/reducers';
 import { validateStartEmptySpacing } from '../../../utils/validate';
-import MyHubInput from './myHubInput';
 import useStyles from './styles';
-import MyHubToggleButtons from './toggleButton';
 import {
   CreateMyHub,
   MyHubData,
@@ -37,6 +34,8 @@ import {
   SSHKeys,
 } from '../../../models/graphql/user';
 import VideoCarousel from '../../../components/VideoCarousel';
+import GithubInputFields from '../../../components/GitHubComponents/GithubInputFields/GithubInputFields';
+import GitHubToggleButton from '../../../components/GitHubComponents/GitHubToggleButtons/GitHubToggleButton';
 
 interface GitHub {
   HubName: string;
@@ -291,7 +290,7 @@ const MyHub = () => {
               <div>
                 <div className={classes.mainPrivateRepo}>
                   <div className={classes.privateRepoDiv}>
-                    <MyHubToggleButtons
+                    <GitHubToggleButton
                       isToggled={isToggled}
                       setIsToggled={setIsToggled}
                     />
@@ -299,7 +298,7 @@ const MyHub = () => {
                   {/* If Public Repo is clicked */}
                   {isToggled.isPublicToggled ? (
                     <div className={classes.inputFieldDiv}>
-                      <MyHubInput
+                      <GithubInputFields
                         gitURL={gitHub.GitURL}
                         gitBranch={gitHub.GitBranch}
                         setGitURL={handleGitURL}
@@ -311,7 +310,7 @@ const MyHub = () => {
                   {isToggled.isPrivateToggled ? (
                     <div className={classes.privateToggleDiv}>
                       <div className={classes.privateRepoDetails}>
-                        <MyHubInput
+                        <GithubInputFields
                           gitURL={gitHub.GitURL}
                           gitBranch={gitHub.GitBranch}
                           setGitURL={handleGitURL}
@@ -447,7 +446,15 @@ const MyHub = () => {
                   {t('myhub.connectHubPage.submitBtn')}
                 </ButtonFilled>
               </div>
-              <Unimodal open={isOpen} handleClose={handleClose} hasCloseBtn>
+              <Modal
+                open={isOpen}
+                onClose={handleClose}
+                modalActions={
+                  <ButtonOutlined onClick={handleClose}>
+                    &#x2715;
+                  </ButtonOutlined>
+                }
+              >
                 <div className={classes.modalDiv}>
                   {cloningRepo ? (
                     <div>
@@ -488,8 +495,16 @@ const MyHub = () => {
                     </div>
                   )}
                 </div>
-              </Unimodal>
-              <Unimodal open={isSaveOpen} handleClose={handleClose} hasCloseBtn>
+              </Modal>
+              <Modal
+                open={isSaveOpen}
+                onClose={handleClose}
+                modalActions={
+                  <ButtonOutlined onClick={handleClose}>
+                    &#x2715;
+                  </ButtonOutlined>
+                }
+              >
                 <div className={classes.modalDiv}>
                   {savingHub ? (
                     <div>
@@ -521,7 +536,7 @@ const MyHub = () => {
                     </div>
                   )}
                 </div>
-              </Unimodal>
+              </Modal>
             </div>
           </form>
         </div>

@@ -1,4 +1,4 @@
-import { KuberaThemeProvider } from 'kubera-ui';
+import { LitmusThemeProvider } from 'litmus-ui';
 import React, { lazy, Suspense, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
@@ -166,7 +166,7 @@ function App() {
     }
   }, [token]);
   return (
-    <KuberaThemeProvider platform="litmus-portal">
+    <LitmusThemeProvider platform="litmus-portal">
       <Suspense fallback={<Loader />}>
         <Router history={history}>
           <div className={classes.root}>
@@ -180,7 +180,7 @@ function App() {
           </div>
         </Router>
       </Suspense>
-    </KuberaThemeProvider>
+    </LitmusThemeProvider>
   );
 }
 

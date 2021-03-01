@@ -274,9 +274,38 @@ spec:
                                 url:
                                   type: string
                                   minLength: 1
-                                expectedResponseCode:
-                                  type: string
+                                insecureSkipVerify:
+                                  type: boolean
                                   minLength: 1
+                                method:
+                                  type: object
+                                  minProperties: 1
+                                  properties:
+                                    get:
+                                      type: object
+                                      properties:
+                                        criteria:
+                                          type: string
+                                          minLength: 1
+                                        responseCode:
+                                          type: string
+                                          minLength: 1
+                                    post:
+                                      type: object
+                                      properties:
+                                        contentType:
+                                          type: string
+                                          minLength: 1
+                                        body:
+                                          type: string
+                                        bodyPath: 
+                                          type: string
+                                        criteria:
+                                          type: string
+                                          minLength: 1
+                                        responseCode:
+                                          type: string
+                                          minLength: 1  
                             promProbe/inputs:
                               type: object
                               properties:

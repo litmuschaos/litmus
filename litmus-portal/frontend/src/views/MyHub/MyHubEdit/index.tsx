@@ -11,14 +11,13 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { InputField } from 'kubera-ui';
+import { InputField, Modal, ButtonOutlined } from 'litmus-ui';
 import BackButton from '../../../components/Button/BackButton';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
 import Loader from '../../../components/Loader';
 import QuickActionCard from '../../../components/QuickActionCard';
 import Scaffold from '../../../containers/layouts/Scaffold';
-import Unimodal from '../../../containers/layouts/Unimodal';
 import { GENERATE_SSH, GET_HUB_STATUS, UPDATE_MY_HUB } from '../../../graphql';
 import { history } from '../../../redux/configureStore';
 import {
@@ -31,10 +30,10 @@ import {
 import { HubStatus } from '../../../models/redux/myhub';
 import { RootState } from '../../../redux/reducers';
 import { validateStartEmptySpacing } from '../../../utils/validate';
-import MyHubInput from '../MyHubConnect/myHubInput';
-import MyHubToggleButtons from '../MyHubConnect/toggleButton';
 import useStyles from './styles';
 import VideoCarousel from '../../../components/VideoCarousel';
+import GitHubToggleButton from '../../../components/GitHubComponents/GitHubToggleButtons/GitHubToggleButton';
+import GithubInputFields from '../../../components/GitHubComponents/GithubInputFields/GithubInputFields';
 
 interface MyHubParams {
   hubname: string;
@@ -260,7 +259,7 @@ const MyHub = () => {
                 <div>
                   <div className={classes.mainPrivateRepo}>
                     <div className={classes.privateRepoDiv}>
-                      <MyHubToggleButtons
+                      <GitHubToggleButton
                         isToggled={isToggled}
                         setIsToggled={setIsToggled}
                       />
@@ -268,7 +267,7 @@ const MyHub = () => {
                     {/* If Public Repo is clicked */}
                     {isToggled.isPublicToggled ? (
                       <div className={classes.inputFieldDiv}>
-                        <MyHubInput
+                        <GithubInputFields
                           gitURL={gitHub.GitURL}
                           gitBranch={gitHub.GitBranch}
                           setGitURL={handleGitURL}
@@ -280,7 +279,7 @@ const MyHub = () => {
                     {isToggled.isPrivateToggled ? (
                       <div className={classes.privateToggleDiv}>
                         <div className={classes.privateRepoDetails}>
-                          <MyHubInput
+                          <GithubInputFields
                             gitURL={gitHub.GitURL}
                             gitBranch={gitHub.GitBranch}
                             setGitURL={handleGitURL}
@@ -417,7 +416,15 @@ const MyHub = () => {
                     {t('myhub.editPage.submit')}
                   </ButtonFilled>
                 </div>
-                <Unimodal open={isOpen} handleClose={handleClose} hasCloseBtn>
+                <Modal
+                  open={isOpen}
+                  onClose={handleClose}
+                  modalActions={
+                    <ButtonOutlined onClick={handleClose}>
+                      &#x2715;
+                    </ButtonOutlined>
+                  }
+                >
                   <div className={classes.modalDiv}>
                     {cloningRepo ? (
                       <div>
@@ -467,7 +474,7 @@ const MyHub = () => {
                       </div>
                     )}
                   </div>
-                </Unimodal>
+                </Modal>
               </div>
             </form>
           </div>

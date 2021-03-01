@@ -223,7 +223,17 @@ input GitConfig {
 	Password: String
 	SSHPrivateKey: String
 }
-
+type GitConfigResponse{
+	Enabled:Boolean!
+	ProjectID: String!
+	Branch: String
+	RepoURL: String
+	AuthType: AuthType
+	Token: String
+	UserName: String
+	Password: String
+	SSHPrivateKey: String
+}
 type Query {
 	# [Deprecated soon]
 	getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
@@ -248,6 +258,15 @@ type Query {
 	getHubStatus(projectID: String!): [MyHubStatus]! @authorized
 
 	getYAMLData(experimentInput: ExperimentInput!): String!
+
+	ListDataSource(project_id: String!): [DSResponse]! @authorized
+
+  	GetPromQuery(query: promInput): [promResponse!]! @authorized
+
+  	ListDashboard(project_id: String!): [listDashboardReponse] @authorized
+
+	# Git Ops
+	getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
 }
 
 type Mutation {
@@ -255,8 +274,9 @@ type Mutation {
 	userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
 	#It is used to create chaosworkflow
-	createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
-		@authorized
+	createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
+
+	reRunChaosWorkFlow(workflowID: String!): String! @authorized
 
 	createUser(user: CreateUserInput!): User! @authorized
 
@@ -306,6 +326,22 @@ type Mutation {
 	enableGitOps(config: GitConfig!): Boolean! @authorized
 
 	disableGitOps(project_id: String!): Boolean! @authorized
+
+	# Analytics
+
+	createDataSource(datasource: DSInput): DSResponse @authorized
+
+  	createDashBoard(dashboard: createDBInput): String! @authorized
+
+  	updateDataSource(datasource: DSInput!): DSResponse! @authorized
+
+  	updateDashboard(dashboard: updataDBInput): String! @authorized
+
+  	updatePanel(panelInput: [panel]): String! @authorized
+
+  	deleteDashboard(db_id: String): Boolean! @authorized
+
+  	deleteDataSource(input: deleteDSInput!): Boolean! @authorized
 }
 
 type Subscription {

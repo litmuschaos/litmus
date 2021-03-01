@@ -1,11 +1,10 @@
 import { IconButton, TableCell, Tooltip, Typography } from '@material-ui/core';
-import { ButtonFilled } from 'kubera-ui';
+import { ButtonFilled, Modal, ButtonOutlined } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
-import Unimodal from '../../../containers/layouts/Unimodal';
 import { Cluster } from '../../../models/graphql/clusterData';
 import { history } from '../../../redux/configureStore';
 import { RootState } from '../../../redux/reducers';
@@ -108,12 +107,21 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
         <div>
           {open ? (
             <div>
-              <Unimodal
+              <Modal
                 open={open}
-                handleClose={() => {
+                onClose={() => {
                   setOpen(false);
                 }}
-                hasCloseBtn
+                width="60%"
+                modalActions={
+                  <ButtonOutlined
+                    onClick={() => {
+                      setOpen(false);
+                    }}
+                  >
+                    &#x2715;
+                  </ButtonOutlined>
+                }
               >
                 <div className={classes.body}>
                   <img src="/icons/bin-red-delete.svg" alt="Delete" />
@@ -148,7 +156,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                     </ButtonFilled>
                   </div>
                 </div>
-              </Unimodal>
+              </Modal>
             </div>
           ) : null}
         </div>
