@@ -5,6 +5,10 @@ data:
       scrape_interval: 5s
     rule_files:
       - "/etc/prometheus-rules/alert.rules"
+    alerting:
+      alertmanagers:
+        - static_configs:
+          - targets: ["alertmanager:9093"]
     scrape_configs:
       - job_name: 'chaos-monitor'
         static_configs:
@@ -13,39 +17,15 @@ data:
         static_configs:
           - targets: ['mysql-exporter.monitoring.svc.cluster.local:9104']
             labels:
-            alias: db1
+              alias: db1
       - job_name: 'kube-state-metrics'
-        bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
-        tlsConfig:
-          insecureSkipVerify: true
         static_configs:
           - targets: ['kube-state-metrics.monitoring.svc.cluster.local:8443']
-        relabel_configs:
-          - source_labels:
-              - __meta_kubernetes_namespace
-              - __meta_kubernetes_service_name
-              - __meta_kubernetes_pod_node_name
-              - __meta_kubernetes_pod_label_name
-              - __meta_kubernetes_service_label_kubernetes_io_cluster_service
-              - __meta_kubernetes_service_label_component
-            regex: (pod|service|endpoint|namespace)
-            action: labeldrop
-            target_label: __scheme__
-            replacement: https
       - job_name: 'node'
-        bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
-        relabel_configs:
-          - source_labels:
-              - __meta_kubernetes_pod_node_name
-            regex: (.*)
-            action: replace
-            target_label: instance
-            replacement: $1
-        scheme: https
-        tlsConfig:
-          insecureSkipVerify: true
         static_configs:
           - targets: ['node-exporter.monitoring.svc.cluster.local:9100']
+            labels:
+              alias: node
       - job_name: kubernetes-service-endpoints
         kubernetes_sd_configs:
           - role: endpoints
