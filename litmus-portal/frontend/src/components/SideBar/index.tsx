@@ -150,12 +150,10 @@ const SideBar: React.FC = () => {
           </CustomisedListItem>
         )}
       </List>
-      {/* <div className={classes.versionDiv}> */}
       <Typography className={classes.versionDiv}>
         <b>Version: </b> {version} <br />
         <b>Build Time: </b> {buildTime}
       </Typography>
-      {/* </div> */}
     </Drawer>
   );
 };
