@@ -1,8 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
-import { Modal, ButtonOutlined } from 'litmus-ui';
+import { ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Loader from '../../../../components/Loader';
@@ -13,8 +12,7 @@ import {
   CurrentUserDetails,
 } from '../../../../models/graphql/user';
 import { UpdateUser } from '../../../../models/redux/user';
-import { RootState } from '../../../../redux/reducers';
-import getToken from '../../../../utils/getToken';
+import { getToken, getUsername } from '../../../../utils/auth';
 import UserDetails from '../../UserManagementTab/CreateUser/UserDetails';
 import useStyles from './styles';
 
@@ -29,7 +27,7 @@ const PersonalDetails: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const username = useSelector((state: RootState) => state.userData.username);
+  const username = getUsername();
   const [loading, setLoading] = React.useState(false);
   // Query to get user details
   const { data: dataA } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
@@ -37,7 +35,7 @@ const PersonalDetails: React.FC = () => {
     { variables: { username } }
   );
   const [error, setError] = useState<string>('');
-  const name: string = dataA?.getUser.name ?? '';
+  const name: string = dataA?.getUser.name ?? ''; // Check if can be replaced with JWT based data.
   const email: string = dataA?.getUser.email ?? '';
   const [personaData, setPersonaData] = React.useState<personaData>({
     email,

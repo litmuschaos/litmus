@@ -8,7 +8,6 @@ import {
   Typography,
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../../../components/Button/ButtonOutline';
@@ -22,7 +21,7 @@ import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
 } from '../../../../../models/graphql/user';
-import { RootState } from '../../../../../redux/reducers';
+import { getUsername } from '../../../../../utils/auth';
 import userAvatar from '../../../../../utils/user';
 import useStyles from './styles';
 
@@ -40,7 +39,7 @@ const ReceivedInvitations: React.FC = () => {
   // for response data
   const [rows, setRows] = useState<ReceivedInvitation[]>([]);
 
-  const username = useSelector((state: RootState) => state.userData.username);
+  const username = getUsername();
 
   // stores the user whose invitation is accepted/declined
   const [acceptDecline, setAcceptDecline] = useState<string>('');

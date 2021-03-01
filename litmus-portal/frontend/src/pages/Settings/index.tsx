@@ -6,8 +6,8 @@ import Scaffold from '../../containers/layouts/Scaffold';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
+import { getUserRole } from '../../utils/auth';
 import AccountSettings from '../../views/Settings/AccountsTab/AccountSettings';
-import GitOpsTab from '../../views/Settings/GitOpsTab';
 import TeammingTab from '../../views/Settings/TeammingTab';
 import UserManagement from '../../views/Settings/UserManagementTab/UserManagement';
 import useStyles from './styles';
@@ -49,7 +49,7 @@ const Settings: React.FC = () => {
   const settingsTabValue = useSelector(
     (state: RootState) => state.tabNumber.settings
   );
-  const userData = useSelector((state: RootState) => state.userData);
+  const role = getUserRole();
   const tabs = useActions(TabActions);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
@@ -76,7 +76,7 @@ const Settings: React.FC = () => {
         >
           <Tab data-cy="my-account" label="My Account" {...tabProps(0)} />
           <Tab data-cy="teaming" label="Team" {...tabProps(1)} />
-          {userData.username === 'admin' ? (
+          {role === 'admin' ? (
             <Tab
               data-cy="user-management"
               label="User Management"
@@ -85,7 +85,6 @@ const Settings: React.FC = () => {
           ) : (
             <></>
           )}
-          <Tab data-cy="teaming" label="GitOps" {...tabProps(3)} />
         </Tabs>
       </Paper>
       <TabPanel value={settingsTabValue} index={0}>
@@ -96,18 +95,13 @@ const Settings: React.FC = () => {
           <TeammingTab />
         </TabPanel>
       </div>
-      {userData.username === 'admin' ? (
+      {role === 'admin' ? (
         <TabPanel value={settingsTabValue} index={2}>
           <UserManagement />
         </TabPanel>
       ) : (
         <></>
       )}
-      <div data-cy="GitOpsPanel">
-        <TabPanel value={settingsTabValue} index={3}>
-          <GitOpsTab />
-        </TabPanel>
-      </div>
     </Scaffold>
   );
 };
