@@ -17,7 +17,7 @@ spec:
         app: chaos-monitor
     spec:
       containers:
-        - image: litmuschaos/chaos-exporter:ci
+        - image: litmuschaos/chaos-exporter:v1.13.0
           imagePullPolicy: Always
           name: chaos-exporter
       serviceAccountName: litmus
