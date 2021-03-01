@@ -17,10 +17,9 @@ spec:
         app: chaos-monitor
     spec:
       containers:
-      - image: litmuschaos/chaos-exporter:ci
-        imagePullPolicy: Always
-        name: chaos-exporter
-      serviceAccount: litmus
+        - image: litmuschaos/chaos-exporter:ci
+          imagePullPolicy: Always
+          name: chaos-exporter
       serviceAccountName: litmus
 ---
 apiVersion: v1
@@ -32,9 +31,10 @@ metadata:
   namespace: litmus
 spec:
   ports:
-  - port: 8080
-    protocol: TCP
-    targetPort: 8080
+    - port: 8080
+      name: tcp
+      protocol: TCP
+      targetPort: 8080
   selector:
     app: chaos-monitor
   type: ClusterIP

@@ -57,51 +57,48 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
   ```
 
 - Setup prometheus TSDB
-  
+
   > Model-1 (optional): Service monitor and prometheus operator model.
 
-    Create the operator to instantiate all CRDs
+  Create the operator to instantiate all CRDs
 
-    ```
-    kubectl -n monitoring apply -f utils/prometheus/prometheus-operator/
-    ```
+  ```
+  kubectl -n monitoring apply -f utils/prometheus/prometheus-operator/
+  ```
 
-    Deploy monitoring components
+  Deploy monitoring components
 
-    ```
-    kubectl -n monitoring apply -f utils/metrics-exporters-with-service-monitors/node-exporter/
-    kubectl -n monitoring apply -f utils/metrics-exporters-with-service-monitors/kube-state-metrics/
-    kubectl -n monitoring apply -f utils/alert-manager-with-service-monitor/
-    kubectl -n sock-shop apply -f utils/sample-application-service-monitors/sock-shop/
-    kubectl -n litmus apply -f utils/metrics-exporters-with-service-monitors/litmus-metrics/chaos-exporter/
-    kubectl -n litmus apply -f utils/metrics-exporters-with-service-monitors/litmus-metrics/litmus-event-router/
-    ```   
+  ```
+  kubectl -n monitoring apply -f utils/metrics-exporters-with-service-monitors/node-exporter/
+  kubectl -n monitoring apply -f utils/metrics-exporters-with-service-monitors/kube-state-metrics/
+  kubectl -n monitoring apply -f utils/alert-manager-with-service-monitor/
+  kubectl -n sock-shop apply -f utils/sample-application-service-monitors/sock-shop/
+  kubectl -n litmus apply -f utils/metrics-exporters-with-service-monitors/litmus-metrics/chaos-exporter/
+  ```
 
-    Deploy prometheus instance and all the service monitors for targets
+  Deploy prometheus instance and all the service monitors for targets
 
-    ```
-    kubectl -n monitoring apply -f utils/prometheus/prometheus-configuration/
-    ```
+  ```
+  kubectl -n monitoring apply -f utils/prometheus/prometheus-configuration/
+  ```
 
-    Note: To change the service type to NodePort, perform a `kubectl edit svc prometheus-k8s -n monitoring` and replace `type: LoadBalancer` to `type: NodePort`
-
+  Note: To change the service type to NodePort, perform a `kubectl edit svc prometheus-k8s -n monitoring` and replace `type: LoadBalancer` to `type: NodePort`
 
   > Model-2 (optional): Prometheus scrape config model.
 
-    Deploy prometheus components
+  Deploy prometheus components
 
-    ```
-    kubectl -n monitoring apply -f utils/prometheus/prometheus-scrape-configuration/
-    ```
+  ```
+  kubectl -n monitoring apply -f utils/prometheus/prometheus-scrape-configuration/
+  ```
 
-    Deploy metrics exporters
+  Deploy metrics exporters
 
-    ```
-    kubectl -n monitoring apply -f utils/metrics-exporters/kube-state-metrics/
-    kubectl -n monitoring apply -f utils/metrics-exporters/node-exporter/
-    kubectl -n litmus apply -f utils/metrics-exporters/litmus-metrics/chaos-exporter/
-    kubectl -n litmus apply -f utils/metrics-exporters/litmus-metrics/litmus-event-router/
-    ```
+  ```
+  kubectl -n monitoring apply -f utils/metrics-exporters/kube-state-metrics/
+  kubectl -n monitoring apply -f utils/metrics-exporters/node-exporter/
+  kubectl -n litmus apply -f utils/metrics-exporters/litmus-metrics/chaos-exporter/
+  ```
 
 - Apply the grafana manifests after deploying prometheus for all metrics.
 
@@ -112,10 +109,12 @@ Run chaos experiments and workflows on sock-shop application with grafana dashbo
 - You may access the grafana dashboard via the LoadBalancer (or NodePort) service IP or via a port-forward operation on localhost
 
   View the services running in the monitoring namespace
+
   ```
   kubectl get svc -n monitoring
   ```
-  Now copy the EXTERNAL-IP of grafana and view it in the browser 
+
+  Now copy the EXTERNAL-IP of grafana and view it in the browser
 
   Default username/password credentials: `admin/admin`
 
@@ -219,11 +218,13 @@ kubectl apply -f utils/sample-chaos-injectors/chaos-experiments/orders/orders-no
 - Run one or more of the litmuschaos experiments as Chaos workflows using argo CLI or kubectl.
 
   > Node CPU hog
+
   ```bash
   argo cron create utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/catalogue/catalogue-node-cpu-hog-workflow.yaml -n litmus
   ```
 
   > Node memory hog
+
   ```bash
   argo cron create utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-node-memory-hog-workflow.yaml -n litmus
   ```
@@ -235,6 +236,7 @@ kubectl apply -f utils/sample-chaos-injectors/chaos-experiments/orders/orders-no
   ```
 
   > Pod memory hog
+
   ```bash
   kubectl apply -f utils/sample-chaos-injectors/chaos-workflows-with-argo-CD/orders/orders-pod-memory-hog-workflow.yaml -n litmus
   ```

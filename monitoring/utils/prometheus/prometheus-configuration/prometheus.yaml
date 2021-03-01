@@ -53,7 +53,6 @@ spec:
           - payment
           - user-db
           - user
-          - litmus-event-router
           - chaos-exporter
           - mysql-exporter
   version: v2.19.2
