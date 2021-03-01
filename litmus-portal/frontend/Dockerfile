@@ -5,6 +5,12 @@ FROM node:12.18.0 as react-build
 # Add Maintainer Info
 LABEL maintainer="LitmusChaos"
 
+ARG REACT_APP_KB_CHAOS_VERSION
+ARG REACT_APP_BUILD_TIME
+
+# Checking environment variables
+RUN env
+
 # A directory within the virtualized Docker environment
 # Becomes more relevant when using Docker Compose later
 WORKDIR /frontend
