@@ -4,13 +4,12 @@
 
 Run chaos experiments on percona application with grafana dashboard to monitor it.
 
-### Step-1: Setup Percona Application
-
+### Setup Percona Application
 
 - Setup Percona.
 
   ```
-  kubectl apply -f ../../../utils/sample-application-under-test/percona/deploy/crd.yaml
+  kubectl apply -f ../../sample-application-under-test/percona/deploy/crd.yaml
   ```
 
   ```
@@ -18,17 +17,16 @@ Run chaos experiments on percona application with grafana dashboard to monitor i
   ```
 
   ```
-  kubectl -n pxc apply -f ../../../utils/sample-application-under-test/percona/deploy/rbac.yaml
+  kubectl -n pxc apply -f ../../sample-application-under-test/percona/deploy/rbac.yaml
   ```
 
   ```
-  kubectl -n pxc apply -f ../../../utils/sample-application-under-test/percona/deploy/operator.yaml
+  kubectl -n pxc apply -f ../../sample-application-under-test/percona/deploy/operator.yaml
   ```
 
   ```
-  kubectl -n pxc apply -f ../../../utils/sample-application-under-test/percona/deploy/secrets.yaml
+  kubectl -n pxc apply -f ../../sample-application-under-test/percona/deploy/secrets.yaml
   ```
-
 
 - (optional-PMM) Setup PMM for Percona
 
@@ -44,10 +42,7 @@ Run chaos experiments on percona application with grafana dashboard to monitor i
   helm install monitoring percona/pmm-server --set platform=kubernetes --version 2.7.0 --set "credentials.password=newpass"
   ```
 
-
 - Wait until all services are up. Verify via `kubectl get pods -n pxc`
-
-
 
 - (optional-PMM) Check for logs and monitoring service
 
@@ -59,11 +54,10 @@ Run chaos experiments on percona application with grafana dashboard to monitor i
   kubectl get service/monitoring-service -o wide
   ```
 
-
 - Apply the CR
-  
+
   ```
-  kubectl -n pxc apply -f ../../../utils/sample-application-under-test/percona/deploy/cr.yaml
+  kubectl -n pxc apply -f ../../sample-application-under-test/percona/deploy/cr.yaml
   ```
 
 - To Check connectivity to newly created cluster
@@ -72,27 +66,7 @@ Run chaos experiments on percona application with grafana dashboard to monitor i
   kubectl run -i --rm --tty percona-client --image=percona:8.0 --restart=Never -- bash -il percona-client:/$ mysql -h cluster1-haproxy -uroot -proot_password
   ```
 
-### Step-2: Setup the LitmusChaos Infrastructure
-
-- Install the litmus chaos operator and CRDs
-
-  ```
-  kubectl apply -f https://litmuschaos.github.io/litmus/litmus-operator-v1.12.0.yaml
-  ```
-
-- Install the litmus-admin serviceaccount for centralized/admin-mode of chaos execution
-
-  ```
-  kubectl apply -f https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml
-  ```
-
-- Install the chaos experiments in admin(litmus) namespace
-
-  ```
-  kubectl apply -f https://hub.litmuschaos.io/api/chaos/1.12.0?file=charts/generic/experiments.yaml -n litmus
-  ```
-
-### Step-3: Setup the Monitoring Infrastructure (if not using PMM)
+### Setup the Monitoring Infrastructure (if not using PMM)
 
 - Create monitoring namespace on the cluster
 
@@ -101,64 +75,66 @@ Run chaos experiments on percona application with grafana dashboard to monitor i
   ```
 
 - Setup prometheus TSDB (Using mySQLd exporter for percona SQL metrics)
-  
+
   > Model-1 (optional): Service monitor and prometheus operator model.
 
-    Create the operator to instantiate all CRDs
+      Create the operator to instantiate all CRDs
 
-    ```
-    kubectl -n monitoring apply -f ../../../utils/prometheus/prometheus-operator/
-    ```
+      ```
+      kubectl -n monitoring apply -f ../../prometheus/prometheus-operator/
+      ```
 
-    Deploy monitoring components
+      Deploy monitoring components
 
-    ```
-    kubectl -n litmus apply -f ../../../utils/metrics-exporters-with-service-monitors/litmus-metrics/chaos-exporter/
-    kubectl -n monitoring apply -f ../../../utils/metrics-exporters-with-service-monitors/mysqld-exporter/
-    ```   
+      ```
+      kubectl -n litmus apply -f ../../metrics-exporters-with-service-monitors/litmus-metrics/chaos-exporter/
+      kubectl -n monitoring apply -f ../../metrics-exporters-with-service-monitors/mysqld-exporter/
+      ```
 
-    Deploy prometheus instance and all the service monitors for targets
+      Deploy prometheus instance and all the service monitors for targets
 
-    ```
-    kubectl -n monitoring apply -f ../../../utils/prometheus/prometheus-configuration/
-    ```
+      ```
+      kubectl -n monitoring apply -f ../../prometheus/prometheus-configuration/
+      ```
 
-    Note: To change the service type to NodePort, perform a `kubectl edit svc prometheus-k8s -n monitoring` and replace `type: LoadBalancer` to `type: NodePort`
-
+      Note: To change the service type to NodePort, perform a `kubectl edit svc prometheus-k8s -n monitoring` and replace `type: LoadBalancer` to `type: NodePort`
 
   > Model-2 (optional): Prometheus scrape config model.
 
+      Deploy prometheus components
 
-    Deploy prometheus components
+      ```
+      kubectl -n monitoring apply -f ../../prometheus/prometheus-scrape-configuration/
+      ```
 
-    ```
-    kubectl -n monitoring apply -f ../../../utils/prometheus/prometheus-scrape-configuration/
-    ```
+      Deploy metrics exporters
 
-    Deploy metrics exporters
-
-    ```
-    kubectl -n litmus apply -f ../../../utils/metrics-exporters/litmus-metrics/chaos-exporter/
-    kubectl -n litmus apply -f ../../../utils/metrics-exporters/mysqld-exporter/
-    ```
+      ```
+      kubectl -n litmus apply -f ../../metrics-exporters/litmus-metrics/chaos-exporter/
+      kubectl -n litmus apply -f ../../metrics-exporters/mysqld-exporter/
+      ```
 
 - Apply the grafana manifests after deploying prometheus for all metrics.
 
   ```
-  kubectl -n monitoring apply -f ../../../utils/grafana/
+  kubectl -n monitoring apply -f ../../grafana/
   ```
 
 - You may access the grafana dashboard via the LoadBalancer (or NodePort) service IP or via a port-forward operation on localhost
 
   View the services running in the monitoring namespace
+
   ```
   kubectl get svc -n monitoring
   ```
-  Now copy the EXTERNAL-IP of grafana and view it in the browser 
+
+  Now copy the EXTERNAL-IP of grafana and view it in the browser
 
   Default username/password credentials: `admin/admin`
 
-- Add the prometheus datasource from monitoring namespace as DS_PROMETHEUS for Grafana via the Grafana Settings menu
+### Configure the Monitoring Infrastructure
+
+- Add the prometheus datasource from monitoring namespace as DS_PROMETHEUS for Grafana via the Grafana Settings menu for PMM
 
   ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/data-source-config.png?raw=true)
 
@@ -172,10 +148,10 @@ Run chaos experiments on percona application with grafana dashboard to monitor i
 
 - (optional) Use PMM for monitoring.
 
-### Step-4: Execute the Chaos Experiments
+### Execute the Chaos Experiments
 
 ```
-kubectl apply -f ../../../utils/sample-chaos-injectors/chaos-experiments/percona/percona-network-loss.yaml
+kubectl apply -f ../../sample-chaos-injectors/chaos-experiments/percona/percona-network-loss.yaml
 ```
 
 - Verify execution of chaos experiments
@@ -184,4 +160,10 @@ kubectl apply -f ../../../utils/sample-chaos-injectors/chaos-experiments/percona
   kubectl describe chaosengine percona-network-chaos -n litmus
   ```
 
-### Step-5: Visualize Chaos Impact
+### Visualize Chaos Impact
+
+![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/Galera-Node-Summary-1.png?raw=true)
+
+![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/Galera-Node-Summary-2.png?raw=true)
+
+![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/mySQL-Overview.png?raw=true)
