@@ -15,6 +15,7 @@ Please send PRs to add or remove organizations/users.
 |[AkriData](https://www.akridata.com/)|Pod Chaos Experiments in AWS & Azure|[Our Story](adopters/organizations/akridata.md)|
 |[Raspbernetes](https://github.com/raspbernetes)|Resilience of OpenEBS & other apps on ARM64 based clusters|[Our Story](adopters/organizations/raspbernetes.md)|
 |[Kublr](https://kublr.com/)|Identify the weak spots and components prone to failures under stress|[Our Story](adopters/organizations/kublr.md)|
+|[Orange](https://www.orange.com)|[Cloud Infra Resiliency](https://youtu.be/UOhjFbCrncw?list=PLBuYBMjBLBzHPuPsvdbJvKu1KxSowWDYl&t=186...a)|[Our Story](adopters/organizations/orange.md)|
 
 | User | Usecase | Details |
 | :--- | :---    | :---    |
