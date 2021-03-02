@@ -496,10 +496,10 @@ targets:
     copying: Command copied to clickboard
   newTarget:
     head: Connect a new target on your devices
-    head1: 1.Open the cluster console
-    head2: 2.Copy the command
-    head3: 3.Paste it into the cluster console
-    head4: 4.Click on the button
+    head1: 1. Open the cluster console
+    head2: 2. Copy the command
+    head3: 3. Paste it into the cluster console
+    head4: 4. Click on the button
     head5: Connect the target
     conformation: Kuberenetes Agent is confirming, Please wait...
     clusterDetails: Cluster Details
