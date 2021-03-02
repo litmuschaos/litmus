@@ -43,7 +43,13 @@ jobs:
             echo 'export FRONTEND_IMAGE="litmusportal-frontend"' >> workspace/env-vars
             echo 'export SUBSCRIBER_IMAGE="litmusportal-subscriber"' >> workspace/env-vars
             echo 'export EVENT_TRACKER="litmusportal-event-tracker"' >> workspace/env-vars
-            echo 'export IMGTAG="ci"' >> workspace/env-vars
+            tag=""
+            if [ "$CIRCLE_BRANCH" == "" ]; then
+                tag="$CIRCLE_TAG"
+            else
+                tag="ci"
+            fi;
+            echo export IMGTAG=$tag >> workspace/env-vars
             cat workspace/env-vars >> $BASH_ENV
             source $BASH_ENV
       - persist_to_workspace:
@@ -110,7 +116,9 @@ jobs:
       - run:
           name: Build frontend docker image
           no_output_timeout: 20m
-          command: docker build . -f Dockerfile -t ${REPONAME}/${FRONTEND_IMAGE}:${IMGTAG}
+          command: |
+            timestamp=`date "+%s"`
+            docker build . -f Dockerfile -t ${REPONAME}/${FRONTEND_IMAGE}:${IMGTAG} --build-arg REACT_APP_KB_CHAOS_VERSION=${IMGTAG} --build-arg REACT_APP_BUILD_TIME="$timestamp"
           working_directory: ~/project/litmus-portal/frontend
       - run:
           name: Save frontend docker image

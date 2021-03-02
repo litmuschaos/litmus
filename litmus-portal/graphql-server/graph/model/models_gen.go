@@ -70,26 +70,27 @@ type CloningInput struct {
 }
 
 type Cluster struct {
-	ClusterID          string  `json:"cluster_id"`
-	ProjectID          string  `json:"project_id"`
-	ClusterName        string  `json:"cluster_name"`
-	Description        *string `json:"description"`
-	PlatformName       string  `json:"platform_name"`
-	AccessKey          string  `json:"access_key"`
-	IsRegistered       bool    `json:"is_registered"`
-	IsClusterConfirmed bool    `json:"is_cluster_confirmed"`
-	IsActive           bool    `json:"is_active"`
-	UpdatedAt          string  `json:"updated_at"`
-	CreatedAt          string  `json:"created_at"`
-	ClusterType        string  `json:"cluster_type"`
-	NoOfSchedules      *int    `json:"no_of_schedules"`
-	NoOfWorkflows      *int    `json:"no_of_workflows"`
-	Token              string  `json:"token"`
-	AgentNamespace     *string `json:"agent_namespace"`
-	Serviceaccount     *string `json:"serviceaccount"`
-	AgentScope         string  `json:"agent_scope"`
-	AgentNsExists      *bool   `json:"agent_ns_exists"`
-	AgentSaExists      *bool   `json:"agent_sa_exists"`
+	ClusterID             string  `json:"cluster_id"`
+	ProjectID             string  `json:"project_id"`
+	ClusterName           string  `json:"cluster_name"`
+	Description           *string `json:"description"`
+	PlatformName          string  `json:"platform_name"`
+	AccessKey             string  `json:"access_key"`
+	IsRegistered          bool    `json:"is_registered"`
+	IsClusterConfirmed    bool    `json:"is_cluster_confirmed"`
+	IsActive              bool    `json:"is_active"`
+	UpdatedAt             string  `json:"updated_at"`
+	CreatedAt             string  `json:"created_at"`
+	ClusterType           string  `json:"cluster_type"`
+	NoOfSchedules         *int    `json:"no_of_schedules"`
+	NoOfWorkflows         *int    `json:"no_of_workflows"`
+	Token                 string  `json:"token"`
+	AgentNamespace        *string `json:"agent_namespace"`
+	Serviceaccount        *string `json:"serviceaccount"`
+	AgentScope            string  `json:"agent_scope"`
+	AgentNsExists         *bool   `json:"agent_ns_exists"`
+	AgentSaExists         *bool   `json:"agent_sa_exists"`
+	LastWorkflowTimestamp string  `json:"last_workflow_timestamp"`
 }
 
 type ClusterAction struct {
