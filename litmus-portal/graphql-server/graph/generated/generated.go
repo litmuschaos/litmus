@@ -206,6 +206,7 @@ type ComplexityRoot struct {
 		EnableGitOps        func(childComplexity int, config model.GitConfig) int
 		GeneraterSSHKey     func(childComplexity int) int
 		GitopsNotifer       func(childComplexity int, clusterInfo model.ClusterIdentity, workflowID string) int
+		LeaveProject        func(childComplexity int, member model.MemberInput) int
 		NewClusterEvent     func(childComplexity int, clusterEvent model.ClusterEventInput) int
 		PodLog              func(childComplexity int, log model.PodLog) int
 		ReRunChaosWorkFlow  func(childComplexity int, workflowID string) int
@@ -298,6 +299,7 @@ type ComplexityRoot struct {
 		GetYAMLData           func(childComplexity int, experimentInput model.ExperimentInput) int
 		ListDashboard         func(childComplexity int, projectID string) int
 		ListDataSource        func(childComplexity int, projectID string) int
+		ListProjects          func(childComplexity int) int
 		ListWorkflow          func(childComplexity int, projectID string, workflowIds []*string) int
 		Users                 func(childComplexity int) int
 	}
@@ -482,6 +484,7 @@ type MutationResolver interface {
 	AcceptInvitation(ctx context.Context, member model.MemberInput) (string, error)
 	DeclineInvitation(ctx context.Context, member model.MemberInput) (string, error)
 	RemoveInvitation(ctx context.Context, member model.MemberInput) (string, error)
+	LeaveProject(ctx context.Context, member model.MemberInput) (string, error)
 	ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error)
 	NewClusterEvent(ctx context.Context, clusterEvent model.ClusterEventInput) (string, error)
 	ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error)
@@ -510,6 +513,7 @@ type QueryResolver interface {
 	GetCluster(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error)
 	GetUser(ctx context.Context, username string) (*model.User, error)
 	GetProject(ctx context.Context, projectID string) (*model.Project, error)
+	ListProjects(ctx context.Context) ([]*model.Project, error)
 	Users(ctx context.Context) ([]*model.User, error)
 	GetScheduledWorkflows(ctx context.Context, projectID string) ([]*model.ScheduledWorkflows, error)
 	ListWorkflow(ctx context.Context, projectID string, workflowIds []*string) ([]*model.Workflow, error)
@@ -1399,6 +1403,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.GitopsNotifer(childComplexity, args["clusterInfo"].(model.ClusterIdentity), args["workflow_id"].(string)), true
 
+	case "Mutation.leaveProject":
+		if e.complexity.Mutation.LeaveProject == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_leaveProject_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.LeaveProject(childComplexity, args["member"].(model.MemberInput)), true
+
 	case "Mutation.newClusterEvent":
 		if e.complexity.Mutation.NewClusterEvent == nil {
 			break
@@ -2030,6 +2046,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.ListDataSource(childComplexity, args["project_id"].(string)), true
+
+	case "Query.listProjects":
+		if e.complexity.Query.ListProjects == nil {
+			break
+		}
+
+		return e.complexity.Query.ListProjects(childComplexity), true
 
 	case "Query.ListWorkflow":
 		if e.complexity.Query.ListWorkflow == nil {
@@ -3359,355 +3382,367 @@ enum MemberRole {
 directive @authorized on FIELD_DEFINITION
 
 type Cluster {
-	cluster_id: ID!
-	project_id: ID!
-	cluster_name: String!
-	description: String
-	platform_name: String!
-	access_key: String!
-	is_registered: Boolean!
-	is_cluster_confirmed: Boolean!
-	is_active: Boolean!
-	updated_at: String!
-	created_at: String!
-	cluster_type: String!
-	no_of_schedules: Int
-	no_of_workflows: Int
-	token: String!
-	agent_namespace: String
-	serviceaccount: String
-	agent_scope: String!
-	agent_ns_exists: Boolean
-	agent_sa_exists: Boolean
+  cluster_id: ID!
+  project_id: ID!
+  cluster_name: String!
+  description: String
+  platform_name: String!
+  access_key: String!
+  is_registered: Boolean!
+  is_cluster_confirmed: Boolean!
+  is_active: Boolean!
+  updated_at: String!
+  created_at: String!
+  cluster_type: String!
+  no_of_schedules: Int
+  no_of_workflows: Int
+  token: String!
+  agent_namespace: String
+  serviceaccount: String
+  agent_scope: String!
+  agent_ns_exists: Boolean
+  agent_sa_exists: Boolean
 }
 
 input ClusterInput {
-	cluster_name: String!
-	description: String
-	platform_name: String!
-	project_id: ID!
-	cluster_type: String!
-	agent_namespace: String
-	serviceaccount: String
-	agent_scope: String!
-	agent_ns_exists: Boolean
-	agent_sa_exists: Boolean
+  cluster_name: String!
+  description: String
+  platform_name: String!
+  project_id: ID!
+  cluster_type: String!
+  agent_namespace: String
+  serviceaccount: String
+  agent_scope: String!
+  agent_ns_exists: Boolean
+  agent_sa_exists: Boolean
 }
 
 type ClusterEvent {
-	event_id: ID!
-	event_type: String!
-	event_name: String!
-	description: String!
-	cluster: Cluster!
+  event_id: ID!
+  event_type: String!
+  event_name: String!
+  description: String!
+  cluster: Cluster!
 }
 
 type ActionPayload {
-	request_type: String!
-	k8s_manifest: String!
-	namespace: String!
-	external_data: String
+  request_type: String!
+  k8s_manifest: String!
+  namespace: String!
+  external_data: String
 }
 
 type ClusterAction {
-	project_id: ID!
-	action: ActionPayload!
+  project_id: ID!
+  action: ActionPayload!
 }
 
 input ClusterActionInput {
-	cluster_id: ID!
-	action: String!
+  cluster_id: ID!
+  action: String!
 }
 
 input ClusterEventInput {
-	event_name: String!
-	description: String!
-	cluster_id: String!
-	access_key: String!
+  event_name: String!
+  description: String!
+  cluster_id: String!
+  access_key: String!
 }
 
 input ClusterIdentity {
-	cluster_id: String!
-	access_key: String!
+  cluster_id: String!
+  access_key: String!
 }
 
 type ClusterConfirmResponse {
-	isClusterConfirmed: Boolean!
-	newClusterKey: String
-	cluster_id: String
+  isClusterConfirmed: Boolean!
+  newClusterKey: String
+  cluster_id: String
 }
 
 input WeightagesInput {
-	experiment_name: String!
-	weightage: Int!
+  experiment_name: String!
+  weightage: Int!
 }
 
 type weightages {
-	experiment_name: String!
-	weightage: Int!
+  experiment_name: String!
+  weightage: Int!
 }
 
 input ChaosWorkFlowInput {
-	workflow_id: String
-	workflow_manifest: String!
-	cronSyntax: String!
-	workflow_name: String!
-	workflow_description: String!
-	weightages: [WeightagesInput!]!
-	isCustomWorkflow: Boolean!
-	project_id: ID!
-	cluster_id: ID!
+  workflow_id: String
+  workflow_manifest: String!
+  cronSyntax: String!
+  workflow_name: String!
+  workflow_description: String!
+  weightages: [WeightagesInput!]!
+  isCustomWorkflow: Boolean!
+  project_id: ID!
+  cluster_id: ID!
 }
 
 type ChaosWorkFlowResponse {
-	workflow_id: String!
-	cronSyntax: String!
-	workflow_name: String!
-	workflow_description: String!
-	isCustomWorkflow: Boolean!
+  workflow_id: String!
+  cronSyntax: String!
+  workflow_name: String!
+  workflow_description: String!
+  isCustomWorkflow: Boolean!
 }
 
 type WorkflowRun {
-	workflow_run_id: ID!
-	workflow_id: ID!
-	cluster_name: String!
-	last_updated: String!
-	project_id: ID!
-	cluster_id: ID!
-	workflow_name: String!
-	cluster_type: String
-	execution_data: String!
+  workflow_run_id: ID!
+  workflow_id: ID!
+  cluster_name: String!
+  last_updated: String!
+  project_id: ID!
+  cluster_id: ID!
+  workflow_name: String!
+  cluster_type: String
+  execution_data: String!
 }
 
 input WorkflowRunInput {
-	workflow_id: ID!
-	workflow_run_id: ID!
-	workflow_name: String!
-	execution_data: String!
-	cluster_id: ClusterIdentity!
-	completed: Boolean!
+  workflow_id: ID!
+  workflow_run_id: ID!
+  workflow_name: String!
+  execution_data: String!
+  cluster_id: ClusterIdentity!
+  completed: Boolean!
 }
 
 type PodLogResponse {
-	workflow_run_id: ID!
-	pod_name: String!
-	pod_type: String!
-	log: String!
+  workflow_run_id: ID!
+  pod_name: String!
+  pod_type: String!
+  log: String!
 }
 
 input PodLog {
-	cluster_id: ClusterIdentity!
-	request_id: ID!
-	workflow_run_id: ID!
-	pod_name: String!
-	pod_type: String!
-	log: String!
+  cluster_id: ClusterIdentity!
+  request_id: ID!
+  workflow_run_id: ID!
+  pod_name: String!
+  pod_type: String!
+  log: String!
 }
 
 input PodLogRequest {
-	cluster_id: ID!
-	workflow_run_id: ID!
-	pod_name: String!
-	pod_namespace: String!
-	pod_type: String!
-	exp_pod: String
-	runner_pod: String
-	chaos_namespace: String
+  cluster_id: ID!
+  workflow_run_id: ID!
+  pod_name: String!
+  pod_namespace: String!
+  pod_type: String!
+  exp_pod: String
+  runner_pod: String
+  chaos_namespace: String
 }
 
 type ScheduledWorkflows {
-	workflow_id: String!
-	workflow_manifest: String!
-	cronSyntax: String!
-	cluster_name: String!
-	workflow_name: String!
-	workflow_description: String!
-	weightages: [weightages!]!
-	isCustomWorkflow: Boolean!
-	updated_at: String!
-	created_at: String!
-	project_id: ID!
-	cluster_id: ID!
-	cluster_type: String!
-	isRemoved: Boolean!
+  workflow_id: String!
+  workflow_manifest: String!
+  cronSyntax: String!
+  cluster_name: String!
+  workflow_name: String!
+  workflow_description: String!
+  weightages: [weightages!]!
+  isCustomWorkflow: Boolean!
+  updated_at: String!
+  created_at: String!
+  project_id: ID!
+  cluster_id: ID!
+  cluster_type: String!
+  isRemoved: Boolean!
 }
 
 type Workflow {
-	workflow_id: String!
-	workflow_manifest: String!
-	cronSyntax: String!
-	cluster_name: String!
-	workflow_name: String!
-	workflow_description: String!
-	weightages: [weightages!]!
-	isCustomWorkflow: Boolean!
-	updated_at: String!
-	created_at: String!
-	project_id: ID!
-	cluster_id: ID!
-	cluster_type: String!
-	isRemoved: Boolean!
-	workflow_runs: [WorkflowRuns]
+  workflow_id: String!
+  workflow_manifest: String!
+  cronSyntax: String!
+  cluster_name: String!
+  workflow_name: String!
+  workflow_description: String!
+  weightages: [weightages!]!
+  isCustomWorkflow: Boolean!
+  updated_at: String!
+  created_at: String!
+  project_id: ID!
+  cluster_id: ID!
+  cluster_type: String!
+  isRemoved: Boolean!
+  workflow_runs: [WorkflowRuns]
 }
 
 type WorkflowRuns {
-	execution_data: String!
-	workflow_run_id: ID!
-	last_updated: String!
+  execution_data: String!
+  workflow_run_id: ID!
+  last_updated: String!
 }
 
 type clusterRegResponse {
-	token: String!
-	cluster_id: String!
-	cluster_name: String!
+  token: String!
+  cluster_id: String!
+  cluster_name: String!
 }
 
 type SSHKey {
-	publicKey: String!
-	privateKey: String!
+  publicKey: String!
+  privateKey: String!
 }
 
 input GitConfig {
-	ProjectID: String!
-	Branch: String!
-	RepoURL: String!
-	AuthType: AuthType!
-	Token: String
-	UserName: String
-	Password: String
-	SSHPrivateKey: String
+  ProjectID: String!
+  Branch: String!
+  RepoURL: String!
+  AuthType: AuthType!
+  Token: String
+  UserName: String
+  Password: String
+  SSHPrivateKey: String
 }
-type GitConfigResponse{
-	Enabled:Boolean!
-	ProjectID: String!
-	Branch: String
-	RepoURL: String
-	AuthType: AuthType
-	Token: String
-	UserName: String
-	Password: String
-	SSHPrivateKey: String
+type GitConfigResponse {
+  Enabled: Boolean!
+  ProjectID: String!
+  Branch: String
+  RepoURL: String
+  AuthType: AuthType
+  Token: String
+  UserName: String
+  Password: String
+  SSHPrivateKey: String
 }
 type Query {
-	# [Deprecated soon]
-	getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
+  # [Deprecated soon]
+  getWorkFlowRuns(project_id: String!): [WorkflowRun!]! @authorized
 
-	getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
+  getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
 
-	getUser(username: String!): User! @authorized
+  getUser(username: String!): User! @authorized
 
-	getProject(projectID: String!): Project! @authorized
+  #It is used to get projects by projectID
+  getProject(projectID: String!): Project! @authorized
 
-	users: [User!]! @authorized
+  #It is used to get projects by userID
+  listProjects: [Project!]! @authorized
 
-	# [Deprecated soon]
-	getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
+  users: [User!]! @authorized
 
-	ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
+  # [Deprecated soon]
+  getScheduledWorkflows(project_id: String!): [ScheduledWorkflows]! @authorized
 
-	getCharts(HubName: String!, projectID: String!): [Chart!]! @authorized
+  ListWorkflow(project_id: String!, workflow_ids: [ID]): [Workflow]! @authorized
 
-	getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
+  getCharts(HubName: String!, projectID: String!): [Chart!]! @authorized
 
-	getHubStatus(projectID: String!): [MyHubStatus]! @authorized
+  getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
 
-	getYAMLData(experimentInput: ExperimentInput!): String!
+  getHubStatus(projectID: String!): [MyHubStatus]! @authorized
 
-	ListDataSource(project_id: String!): [DSResponse]! @authorized
+  getYAMLData(experimentInput: ExperimentInput!): String!
 
-  	GetPromQuery(query: promInput): [promResponse!]! @authorized
+  ListDataSource(project_id: String!): [DSResponse]! @authorized
 
-  	ListDashboard(project_id: String!): [listDashboardReponse] @authorized
+  GetPromQuery(query: promInput): [promResponse!]! @authorized
 
-	# Git Ops
-	getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
+  ListDashboard(project_id: String!): [listDashboardReponse] @authorized
+
+  # Git Ops
+  getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
 }
 
 type Mutation {
-	#It is used to create external cluster.
-	userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
+  #It is used to create external cluster.
+  userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
-	#It is used to create chaosworkflow
-	createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse! @authorized
+  #It is used to create chaosworkflow
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
+    @authorized
 
-	reRunChaosWorkFlow(workflowID: String!): String! @authorized
+  reRunChaosWorkFlow(workflowID: String!): String! @authorized
 
-	createUser(user: CreateUserInput!): User! @authorized
+  createUser(user: CreateUserInput!): User! @authorized
 
-	updateUser(user: UpdateUserInput!): String! @authorized
+  updateUser(user: UpdateUserInput!): String! @authorized
 
-	deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
+  deleteChaosWorkflow(workflowid: String!): Boolean! @authorized
 
-	sendInvitation(member: MemberInput!): Member @authorized
+  #Used for sending invitation
+  sendInvitation(member: MemberInput!): Member @authorized
 
-	acceptInvitation(member: MemberInput!): String! @authorized
+  #Used for accepting invitation
+  acceptInvitation(member: MemberInput!): String! @authorized
 
-	declineInvitation(member: MemberInput!): String! @authorized
+  #Used for declining the invitation
+  declineInvitation(member: MemberInput!): String! @authorized
 
-	removeInvitation(member: MemberInput!): String! @authorized
+  #Used for cancelling the sent invitation
+  removeInvitation(member: MemberInput!): String! @authorized
 
-	#It is used to confirm the subscriber registration
-	clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
+  #Used for leaving a project
+  leaveProject(member: MemberInput!): String! @authorized
 
-	#It is used to send cluster related events from the subscriber
-	newClusterEvent(clusterEvent: ClusterEventInput!): String!
+  #It is used to confirm the subscriber registration
+  clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
 
-	chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
+  #It is used to send cluster related events from the subscriber
+  newClusterEvent(clusterEvent: ClusterEventInput!): String!
 
-	podLog(log: PodLog!): String!
+  chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
 
-	addMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
+  podLog(log: PodLog!): String!
 
-	saveMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
+  addMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
-	syncHub(id: ID!): [MyHubStatus!]! @authorized
+  saveMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
-	updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
-		@authorized
+  syncHub(id: ID!): [MyHubStatus!]! @authorized
 
-	deleteClusterReg(cluster_id: String!): String! @authorized
+  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
+    @authorized
 
-	generaterSSHKey: SSHKey! @authorized
+  deleteClusterReg(cluster_id: String!): String! @authorized
 
-	updateMyHub(myhubInput: UpdateMyHub!, projectID: String!): MyHub! @authorized
+  generaterSSHKey: SSHKey! @authorized
 
-	deleteMyHub(hub_id: String!): Boolean! @authorized
+  updateMyHub(myhubInput: UpdateMyHub!, projectID: String!): MyHub! @authorized
 
-	# Gitops
+  deleteMyHub(hub_id: String!): Boolean! @authorized
 
-	gitopsNotifer(clusterInfo: ClusterIdentity!, workflow_id: String!): String!
+  # Gitops
 
-	enableGitOps(config: GitConfig!): Boolean! @authorized
+  gitopsNotifer(clusterInfo: ClusterIdentity!, workflow_id: String!): String!
 
-	disableGitOps(project_id: String!): Boolean! @authorized
+  enableGitOps(config: GitConfig!): Boolean! @authorized
 
-	# Analytics
+  disableGitOps(project_id: String!): Boolean! @authorized
 
-	createDataSource(datasource: DSInput): DSResponse @authorized
+  # Analytics
 
-  	createDashBoard(dashboard: createDBInput): String! @authorized
+  createDataSource(datasource: DSInput): DSResponse @authorized
 
-  	updateDataSource(datasource: DSInput!): DSResponse! @authorized
+  createDashBoard(dashboard: createDBInput): String! @authorized
 
-  	updateDashboard(dashboard: updataDBInput): String! @authorized
+  updateDataSource(datasource: DSInput!): DSResponse! @authorized
 
-  	updatePanel(panelInput: [panel]): String! @authorized
+  updateDashboard(dashboard: updataDBInput): String! @authorized
 
-  	deleteDashboard(db_id: String): Boolean! @authorized
+  updatePanel(panelInput: [panel]): String! @authorized
 
-  	deleteDataSource(input: deleteDSInput!): Boolean! @authorized
+  deleteDashboard(db_id: String): Boolean! @authorized
+
+  deleteDataSource(input: deleteDSInput!): Boolean! @authorized
 }
 
 type Subscription {
-	#It is used to listen cluster events from the graphql server
-	clusterEventListener(project_id: String!): ClusterEvent! @authorized
+  #It is used to listen cluster events from the graphql server
+  clusterEventListener(project_id: String!): ClusterEvent! @authorized
 
-	workflowEventListener(project_id: String!): WorkflowRun! @authorized
+  workflowEventListener(project_id: String!): WorkflowRun! @authorized
 
-	getPodLog(podDetails: PodLogRequest!): PodLogResponse! @authorized
+  getPodLog(podDetails: PodLogRequest!): PodLogResponse! @authorized
 
-	#It is used to listen cluster operation request from the graphql server
-	clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
+  #It is used to listen cluster operation request from the graphql server
+  clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/usermanagement.graphqls", Input: `type User {
@@ -3998,6 +4033,20 @@ func (ec *executionContext) field_Mutation_gitopsNotifer_args(ctx context.Contex
 		}
 	}
 	args["workflow_id"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_leaveProject_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.MemberInput
+	if tmp, ok := rawArgs["member"]; ok {
+		arg0, err = ec.unmarshalNMemberInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["member"] = arg0
 	return args, nil
 }
 
@@ -8184,6 +8233,67 @@ func (ec *executionContext) _Mutation_removeInvitation(ctx context.Context, fiel
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_leaveProject(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_leaveProject_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().LeaveProject(rctx, args["member"].(model.MemberInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(string); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_clusterConfirm(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -11124,6 +11234,60 @@ func (ec *executionContext) _Query_getProject(ctx context.Context, field graphql
 	res := resTmp.(*model.Project)
 	fc.Result = res
 	return ec.marshalNProject2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProject(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_listProjects(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().ListProjects(rctx)
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.Project); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.Project`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Project)
+	fc.Result = res
+	return ec.marshalNProject2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProjectᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_users(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -19031,6 +19195,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "leaveProject":
+			out.Values[i] = ec._Mutation_leaveProject(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "clusterConfirm":
 			out.Values[i] = ec._Mutation_clusterConfirm(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -19537,6 +19706,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getProject(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "listProjects":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_listProjects(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

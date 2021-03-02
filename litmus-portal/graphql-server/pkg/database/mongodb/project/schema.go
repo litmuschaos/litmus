@@ -76,4 +76,7 @@ const (
 
 	// DeclinedInvitation ...
 	DeclinedInvitation Invitation = "Declined"
+
+	//ExitedProject ...
+	ExitedProject Invitation = "Exited"
 )

@@ -74,6 +74,10 @@ func (r *mutationResolver) RemoveInvitation(ctx context.Context, member model.Me
 	return project.RemoveInvitation(ctx, member)
 }
 
+func (r *mutationResolver) LeaveProject(ctx context.Context, member model.MemberInput) (string, error) {
+	return project.LeaveProject(ctx, member)
+}
+
 func (r *mutationResolver) ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error) {
 	return clusterHandler.ConfirmClusterRegistration(identity, *data_store.Store)
 }
@@ -184,6 +188,12 @@ func (r *queryResolver) GetUser(ctx context.Context, username string) (*model.Us
 
 func (r *queryResolver) GetProject(ctx context.Context, projectID string) (*model.Project, error) {
 	return project.GetProject(ctx, projectID)
+}
+
+func (r *queryResolver) ListProjects(ctx context.Context) ([]*model.Project, error) {
+	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
+	userUID := claims["uid"].(string)
+	return project.GetProjectsByUserID(ctx, userUID)
 }
 
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
