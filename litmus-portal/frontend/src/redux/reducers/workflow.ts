@@ -35,7 +35,7 @@ const initialState: WorkflowData = {
     hubName: '',
     repoUrl: '',
     repoBranch: '',
-    yamlLink: '',
+    experimentYAML: '',
     yaml: '',
     index: -1,
     description: '',

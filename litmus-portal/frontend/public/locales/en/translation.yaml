@@ -378,6 +378,7 @@ workflowDetailsView:
     nodeName: Step Name
     button:
       logs: Logs
+      result: Chaos Result
 
 homeView:
   averageResilienceScore:
@@ -685,6 +686,12 @@ customWorkflow:
     deleteBtn: Delete
     addExp: Add a new experiment
     finish: Finish adding experiments
+    proceed: Proceed to construct the
+    selection: YAML based on the experiment selection.
+    revert: Revert Chaos
+    unselect: Unselect the check box if you don't want to have revert chaos stage at the end of workflow.
+    cancel: Cancel
+    construct: Construct Workflow
   tuneExperiment:
     headerText: Tune the chaos engine
     addKey: Add keys for add experiments

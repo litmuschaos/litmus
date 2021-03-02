@@ -46,6 +46,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   const [env, setEnv] = useState<EnvValues[]>([]);
   const [yaml, setYaml] = useState<string>('');
   const [loadingEnv, setLoadingEnv] = useState(true);
+  const [jobCleanup, setJobCleanup] = useState('delete');
 
   const { t } = useTranslation();
   const userData = useSelector((state: RootState) => state.userData);
@@ -61,6 +62,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         });
       }
       setAnnotation(parsedYaml.spec.annotationCheck);
+      setJobCleanup(parsedYaml.spec.jobCleanUpPolicy);
       setYaml(YAML.stringify(parsedYaml));
       setLoadingEnv(false);
     },
@@ -118,6 +120,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         });
       }
       setAnnotation(parsedYaml.spec.annotationCheck);
+      setJobCleanup(parsedYaml.spec.jobCleanUpPolicy);
       setEnv([...parsedYaml.spec.experiments[0].spec.components.env]);
       setYaml(customWorkflow.yaml as string);
       setLoadingEnv(false);
@@ -173,6 +176,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       parsedYaml.spec.appinfo.appkind = appInfo.appkind;
     }
     parsedYaml.spec.annotationCheck = annotation;
+    parsedYaml.spec.jobCleanUpPolicy = jobCleanup;
     parsedYaml.metadata.name = customWorkflow.experiment_name?.split('/')[1];
     parsedYaml.metadata.namespace =
       '{{workflow.parameters.adminModeNamespace}}';
@@ -189,7 +193,7 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             hubName: customWorkflow.hubName,
             repoUrl: customWorkflow.repoUrl,
             repoBranch: customWorkflow.repoBranch,
-            yamlLink: customWorkflow.yamlLink,
+            experimentYAML: customWorkflow.experimentYAML,
             yaml: YamlString,
             description: customWorkflow.description,
           },
@@ -331,6 +335,23 @@ const TuneCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                     variant="primary"
                     onChange={(event) => setAnnotation(event.target.value)}
                     value={annotation}
+                  />
+                </div>
+              </div>
+            ) : null}
+            <div aria-details="spacer" style={{ margin: '1rem' }} />
+            {YAML.parse(yaml).spec.jobCleanUpPolicy ? (
+              <div className={classes.appKind}>
+                <Typography className={classes.appInfoText}>
+                  jobCleanUpPolicy:
+                </Typography>
+                <div className={classes.inputField}>
+                  <InputField
+                    label="jobCleanUpPolicy"
+                    data-cy="inputWorkflow"
+                    variant="primary"
+                    onChange={(event) => setJobCleanup(event.target.value)}
+                    value={jobCleanup}
                   />
                 </div>
               </div>
