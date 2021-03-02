@@ -1,5 +1,5 @@
 import { Typography } from '@material-ui/core';
-import { Modal, ButtonOutlined } from 'litmus-ui';
+import { ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
@@ -28,7 +28,7 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
-
+  const role = 'user';
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const handleClose = () => {
@@ -44,7 +44,7 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
         'Content-Type': 'application/json',
         Authorization: `Bearer ${getToken()}`,
       },
-      body: JSON.stringify({ email, username, name, password }),
+      body: JSON.stringify({ email, username, name, password, role }),
     })
       .then((response) => {
         return response.json();

@@ -8,7 +8,8 @@ import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
 import { getUserRole } from '../../utils/auth';
 import AccountSettings from '../../views/Settings/AccountsTab/AccountSettings';
-import TeammingTab from '../../views/Settings/TeammingTab';
+import GitOpsTab from '../../views/Settings/GitOpsTab';
+import TeamingTab from '../../views/Settings/TeamingTab/Team';
 import UserManagement from '../../views/Settings/UserManagementTab/UserManagement';
 import useStyles from './styles';
 
@@ -85,6 +86,7 @@ const Settings: React.FC = () => {
           ) : (
             <></>
           )}
+          <Tab data-cy="gitOps" label="GitOps" {...tabProps(3)} />
         </Tabs>
       </Paper>
       <TabPanel value={settingsTabValue} index={0}>
@@ -92,7 +94,7 @@ const Settings: React.FC = () => {
       </TabPanel>
       <div data-cy="teamTabPanel">
         <TabPanel value={settingsTabValue} index={1}>
-          <TeammingTab />
+          <TeamingTab />
         </TabPanel>
       </div>
       {role === 'admin' ? (
@@ -102,6 +104,11 @@ const Settings: React.FC = () => {
       ) : (
         <></>
       )}
+      <div data-cy="GitOpsPanel">
+        <TabPanel value={settingsTabValue} index={3}>
+          <GitOpsTab />
+        </TabPanel>
+      </div>
     </Scaffold>
   );
 };

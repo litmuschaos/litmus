@@ -1,4 +1,5 @@
-import { useMutation, useQuery } from '@apollo/client/react/hooks';
+/* eslint-disable no-unused-expressions */
+import { useMutation, useQuery } from '@apollo/client/react';
 import {
   Input,
   InputAdornment,
@@ -9,21 +10,20 @@ import {
   Toolbar,
   Typography,
 } from '@material-ui/core';
+import { useTheme } from '@material-ui/core/styles';
+import { ButtonFilled } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import Loader from '../../../../../components/Loader';
-import { SEND_INVITE } from '../../../../../graphql/mutations';
-import { ALL_USERS, GET_USER } from '../../../../../graphql/queries';
+import { ALL_USERS, GET_PROJECT, SEND_INVITE } from '../../../../../graphql';
 import {
   MemberInviteNew,
   UserInvite,
 } from '../../../../../models/graphql/invite';
 import {
-  CurrentUserDedtailsVars,
-  CurrentUserDetails,
-  Project,
+  ProjectDetail,
+  ProjectDetailVars,
 } from '../../../../../models/graphql/user';
 import { RootState } from '../../../../../redux/reducers';
 import useStyles from './styles';
@@ -39,17 +39,18 @@ interface InviteProps {
 
 interface SelectedUser {
   user_name: string;
+  user_uid: string;
   role: string;
-  project_id: string;
 }
 
 interface Role {
-  username: string;
+  user_uid: string;
   role: string;
 }
 
 const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   const classes = useStyles();
+  const theme = useTheme();
   const { t } = useTranslation();
 
   // for response data
@@ -64,53 +65,47 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   const [selected, setSelected] = React.useState<SelectedUser[]>([]);
 
   // Sets the user role while inviting
-  const setUserRole = (username: string, role: string) => {
+  const setUserRole = (user_uid: string, role: string) => {
     setSelected(
-      selected.map((r) => (r.user_name === username ? { ...r, role } : r))
+      selected.map((r) => (r.user_uid === user_uid ? { ...r, role } : r))
     );
-    if (roles.find((ele) => ele.username === username)) {
+    if (roles.find((ele) => ele.user_uid === user_uid)) {
       setRoles(
-        roles.map((r) => (r.username === username ? { username, role } : r))
+        roles.map((r) => (r.user_uid === user_uid ? { user_uid, role } : r))
       );
     } else {
-      setRoles([...roles, { username, role }]);
+      setRoles([...roles, { user_uid, role }]);
     }
   };
 
-  // query for getting all the data for the logged in user
-  const { data: dataB } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
-    GET_USER,
+  const { loading, data: dataB } = useQuery<ProjectDetail, ProjectDetailVars>(
+    GET_PROJECT,
     {
-      variables: { username: userData.username },
+      variables: { projectID: userData.selectedProjectID },
       fetchPolicy: 'cache-and-network',
     }
   );
 
-  // query to list all the users
-  const memberList = new Map();
-  const { data: dataA } = useQuery(ALL_USERS, {
+  useQuery(ALL_USERS, {
     skip: !dataB,
-    onCompleted: () => {
+    onCompleted: (data) => {
+      const memberList = new Map();
       const users: UserInvite[] = [];
-      if (dataA !== undefined) {
-        if (dataB?.getUser.username === userData.username) {
-          const projectList: Project[] = dataB?.getUser.projects;
-          projectList.forEach(
-            (project) =>
-              project.id === userData.selectedProjectID &&
-              project.members.map(
-                (member) =>
-                  member.invitation !== 'Declined' &&
-                  memberList.set(member.user_name, 1)
-              )
-          );
-          // login for displaying only those users who are not the part of team
-          dataA.users.map(
-            (data: UserInvite) =>
-              !memberList.has(data.username) && users.push(data)
-          );
-        }
-        setRows(users);
+      if (dataB !== undefined) {
+        dataB.getProject.members.forEach((member) => {
+          if (
+            member.invitation === 'Accepted' ||
+            member.invitation === 'Pending'
+          ) {
+            memberList.set(member.user_id, 1);
+          }
+        });
+        // check for displaying only those users who are not the part of team
+        data &&
+          data.users.forEach((user: UserInvite) => {
+            if (!memberList.has(user.id)) users.push(user);
+          });
+        setRows([...users]);
       }
     },
   });
@@ -120,43 +115,48 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
     MemberInviteNew
   >(SEND_INVITE, {
     refetchQueries: [
-      { query: GET_USER, variables: { username: userData.username } },
+      {
+        query: GET_PROJECT,
+        variables: { projectID: userData.selectedProjectID },
+      },
     ],
   });
 
   // Checks if the user the already selected or not
   const isSelected = (user: UserInvite) => {
-    const usernames = new Map();
-    selected.map((el) => usernames.set(el.user_name, el.role));
-    return usernames.has(user.username);
+    const user_uids = new Map();
+    selected.map((el) => user_uids.set(el.user_uid, el.role));
+    return user_uids.has(user.id);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, user: UserInvite) => {
-    const names = selected.map((el) => el.user_name);
-    const selectedIndex = names.indexOf(user.username);
+  const handleClick = (
+    event: React.MouseEvent<unknown>,
+    selectedUser: UserInvite
+  ) => {
+    const selectedIds = selected.map((el) => el.user_uid);
+    const isUserAlreadySelected = selectedIds.indexOf(selectedUser.id);
     let newSelected: SelectedUser[] = [];
-
-    if (selectedIndex === -1) {
+    if (isUserAlreadySelected === -1) {
       const userrole = () => {
-        const r = roles.find((ele) => ele.username === user.username);
+        const r = roles.find((ele) => ele.user_uid === selectedUser.id);
         if (r) {
           return r.role;
         }
         return 'Viewer';
       };
       newSelected = newSelected.concat(selected, {
-        user_name: user.username,
+        user_name: selectedUser.username,
+        user_uid: selectedUser.id,
         role: userrole(),
-        project_id: 'abc',
       });
-    } else if (selectedIndex === 0) {
+    } else if (isUserAlreadySelected === 0) {
       newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
+    } else if (isUserAlreadySelected === selected.length - 1) {
       newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
+    } else if (isUserAlreadySelected > 0) {
       newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
+        selected.slice(0, isUserAlreadySelected),
+        selected.slice(isUserAlreadySelected + 1)
       );
     }
     setSelected(newSelected);
@@ -167,9 +167,13 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
     search: '',
   });
 
-  const filteredData = rows.filter((dataRow) =>
-    dataRow?.username.toLowerCase().includes(filters.search.toLowerCase())
-  );
+  const filteredData = !loading
+    ? rows.filter((dataRow) => {
+        return dataRow.username
+          .toLowerCase()
+          .includes(filters.search.toLowerCase());
+      })
+    : [];
 
   const [showsuccess, setShowsuccess] = useState<boolean>(false);
 
@@ -182,7 +186,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
               <Loader />
             </>
           ) : (
-            <>
+            <Typography>
               {errorB ? (
                 <Typography>{errorB.message}</Typography>
               ) : (
@@ -210,11 +214,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                     data-cy="inviteNewMemberSuccessModalDoneButton"
                     className={classes.buttonModal}
                   >
-                    <ButtonFilled
-                      isPrimary
-                      isDisabled={false}
-                      handleClick={handleModal}
-                    >
+                    <ButtonFilled disabled={false} onClick={handleModal}>
                       <>
                         {t('settings.teamingTab.inviteNew.invite.button.done')}
                       </>
@@ -222,7 +222,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                   </div>
                 </div>
               )}
-            </>
+            </Typography>
           )}
         </>
       ) : (
@@ -256,10 +256,11 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                   }
                   disableUnderline
                   inputProps={{
+                    className: classes.input,
                     style: {
-                      color: 'none',
-                      maxWidth: '31.75rem',
-                      minWidth: '31.375rem',
+                      color: theme.palette.text.primary,
+                      maxWidth: '21.38rem',
+                      minWidth: '21.38rem',
                     },
                   }}
                 />
@@ -269,9 +270,9 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                 className={classes.InviteBtn}
               >
                 <ButtonFilled
-                  isPrimary
-                  isDisabled={!selected.length}
-                  handleClick={() => {
+                  className={classes.btnFilled}
+                  disabled={!selected.length}
+                  onClick={() => {
                     setShowsuccess(true);
                     selected.map(
                       (s) =>
@@ -310,7 +311,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                     <TableRow
                       data-cy="inviteNewMemberCheckBox"
                       role="checkbox"
-                      key={row.username}
+                      key={row.id}
                       aria-checked={isItemSelected}
                       selected={isItemSelected}
                     >
@@ -326,7 +327,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                 })
               ) : (
                 <TableRow>
-                  <TableCell colSpan={2}>
+                  <TableCell colSpan={2} className={classes.tableCell}>
                     <Typography align="center">
                       {t('settings.teamingTab.inviteNew.invite.noUsers')}
                     </Typography>

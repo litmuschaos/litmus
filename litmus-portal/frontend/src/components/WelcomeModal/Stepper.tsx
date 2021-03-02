@@ -3,13 +3,15 @@ import MobileStepper from '@material-ui/core/MobileStepper';
 import { InputField } from 'litmus-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import config from '../../config';
 import { CREATE_USER } from '../../graphql';
 import { CreateUserData } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
-import { getToken, getUserDetailsFromJwt } from '../../utils/auth';
+import { RootState } from '../../redux/reducers';
+import { getToken } from '../../utils/auth';
 import {
   validateConfirmPassword,
   validateEmail,
@@ -27,7 +29,7 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const userData = getUserDetailsFromJwt();
+  const userData = useSelector((state: RootState) => state.userData);
   const userLoader = useActions(UserActions);
   const [activeStep, setActiveStep] = React.useState<number>(0);
   const isError = useRef(true);
@@ -290,7 +292,9 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
               </div>
             }
             setName={
-              userData.role === 'admin' ? 'Administrator' : userData.username
+              userData.username === 'admin'
+                ? 'Administrator'
+                : userData.username
             }
             setText={t('welcomeModal.case-0.info')}
           />

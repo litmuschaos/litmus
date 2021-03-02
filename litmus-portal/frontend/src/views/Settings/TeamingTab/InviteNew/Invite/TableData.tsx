@@ -18,7 +18,7 @@ interface TableDataProps {
   labelId: string;
   handleCheck: (event: React.MouseEvent<unknown>, row: UserInvite) => void;
   isItemSelected: boolean;
-  sendInvite: (username: string, role: string) => void;
+  sendInvite: (user_uid: string, role: string) => void;
 }
 const TableData: React.FC<TableDataProps> = ({
   row,
@@ -38,7 +38,7 @@ const TableData: React.FC<TableDataProps> = ({
 
   return (
     <>
-      <TableCell id={labelId}>
+      <TableCell id={labelId} className={classes.tableCell}>
         <div className={classes.rowDiv}>
           <div className={classes.firstCol}>
             <Checkbox
@@ -62,7 +62,7 @@ const TableData: React.FC<TableDataProps> = ({
             </Avatar>
             <div className={classes.detail}>
               <div> {row.username}</div>
-              <div>{row.email}</div>
+              <div className={classes.email}>{row.email}</div>
             </div>
           </div>
           <div>
@@ -89,7 +89,7 @@ const TableData: React.FC<TableDataProps> = ({
                 onClick={() => {
                   setRole('Editor');
                   setAnchorEl(null);
-                  sendInvite(row.username, 'Editor');
+                  sendInvite(row.id, 'Editor');
                 }}
                 className={classes.menuOpt}
               >
@@ -121,7 +121,7 @@ const TableData: React.FC<TableDataProps> = ({
                 onClick={() => {
                   setRole('Viewer');
                   setAnchorEl(null);
-                  sendInvite(row.username, 'Viewer');
+                  sendInvite(row.id, 'Viewer');
                 }}
                 className={classes.menuOpt}
               >
