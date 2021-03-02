@@ -540,13 +540,13 @@ workflowCluster:
       menu6: Pending
       # For Table
       tableStatus: Status
-      tableCluster: Target agent
+      tableCluster: Target Agent
       name: Name
       time: Time
-      run: Last workflow run
+      run: Last Workflow run
       connectionDate: Connection Date
-      noWorkflows: No. of workflows
-      noSchedules: No. of schedules
+      noWorkflows: No. of Workflows
+      noSchedules: No. of Schedules
       fetchingError: Unable to fetch data
       recordAvailable: No records available
       delete: Delete

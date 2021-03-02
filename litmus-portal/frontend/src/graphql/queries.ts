@@ -121,6 +121,7 @@ export const GET_CLUSTER = gql`
       agent_scope
       agent_ns_exists
       agent_sa_exists
+      last_workflow_timestamp
     }
   }
 `;

@@ -73,13 +73,19 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
       </TableCell>
       <TableCell>
         <Typography className={classes.stepsData}>
-          {data.no_of_schedules}
+          {data.no_of_workflows}
         </Typography>
       </TableCell>
       <TableCell className={classes.stepsDataschedule}>
-        <Typography>{data.no_of_workflows}</Typography>
+        <Typography>{data.no_of_schedules}</Typography>
       </TableCell>
-      <TableCell>{timeDifferenceForDate(data.updated_at)}</TableCell>
+      <TableCell>
+        {data.last_workflow_timestamp === '0' ? (
+          <Typography>Not Yet</Typography>
+        ) : (
+          timeDifferenceForDate(data.last_workflow_timestamp)
+        )}
+      </TableCell>
       <TableCell>
         <Tooltip
           classes={{

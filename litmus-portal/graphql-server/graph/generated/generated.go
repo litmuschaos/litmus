@@ -84,26 +84,27 @@ type ComplexityRoot struct {
 	}
 
 	Cluster struct {
-		AccessKey          func(childComplexity int) int
-		AgentNamespace     func(childComplexity int) int
-		AgentNsExists      func(childComplexity int) int
-		AgentSaExists      func(childComplexity int) int
-		AgentScope         func(childComplexity int) int
-		ClusterID          func(childComplexity int) int
-		ClusterName        func(childComplexity int) int
-		ClusterType        func(childComplexity int) int
-		CreatedAt          func(childComplexity int) int
-		Description        func(childComplexity int) int
-		IsActive           func(childComplexity int) int
-		IsClusterConfirmed func(childComplexity int) int
-		IsRegistered       func(childComplexity int) int
-		NoOfSchedules      func(childComplexity int) int
-		NoOfWorkflows      func(childComplexity int) int
-		PlatformName       func(childComplexity int) int
-		ProjectID          func(childComplexity int) int
-		Serviceaccount     func(childComplexity int) int
-		Token              func(childComplexity int) int
-		UpdatedAt          func(childComplexity int) int
+		AccessKey             func(childComplexity int) int
+		AgentNamespace        func(childComplexity int) int
+		AgentNsExists         func(childComplexity int) int
+		AgentSaExists         func(childComplexity int) int
+		AgentScope            func(childComplexity int) int
+		ClusterID             func(childComplexity int) int
+		ClusterName           func(childComplexity int) int
+		ClusterType           func(childComplexity int) int
+		CreatedAt             func(childComplexity int) int
+		Description           func(childComplexity int) int
+		IsActive              func(childComplexity int) int
+		IsClusterConfirmed    func(childComplexity int) int
+		IsRegistered          func(childComplexity int) int
+		LastWorkflowTimestamp func(childComplexity int) int
+		NoOfSchedules         func(childComplexity int) int
+		NoOfWorkflows         func(childComplexity int) int
+		PlatformName          func(childComplexity int) int
+		ProjectID             func(childComplexity int) int
+		Serviceaccount        func(childComplexity int) int
+		Token                 func(childComplexity int) int
+		UpdatedAt             func(childComplexity int) int
 	}
 
 	ClusterAction struct {
@@ -781,6 +782,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Cluster.IsRegistered(childComplexity), true
+
+	case "Cluster.last_workflow_timestamp":
+		if e.complexity.Cluster.LastWorkflowTimestamp == nil {
+			break
+		}
+
+		return e.complexity.Cluster.LastWorkflowTimestamp(childComplexity), true
 
 	case "Cluster.no_of_schedules":
 		if e.complexity.Cluster.NoOfSchedules == nil {
@@ -2970,7 +2978,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "graph/analytics.graphqls", Input: `input DSInput {
+	&ast.Source{Name: "graph/analytics.graphqls", Input: `input DSInput {
     ds_id: String
     ds_name: String!
     ds_type: String!
@@ -3146,7 +3154,7 @@ input deleteDSInput {
     force_delete: Boolean!
     ds_id: String!
 }`, BuiltIn: false},
-	{Name: "graph/myhub.graphqls", Input: `enum AuthType {
+	&ast.Source{Name: "graph/myhub.graphqls", Input: `enum AuthType {
 	none
 	basic
 	token
@@ -3320,7 +3328,7 @@ input UpdateMyHub {
 	SSHPublicKey: String
 }
 `, BuiltIn: false},
-	{Name: "graph/project.graphqls", Input: `type Project {
+	&ast.Source{Name: "graph/project.graphqls", Input: `type Project {
   id: ID!
   name: String!
   members: [Member!]!
@@ -3352,7 +3360,7 @@ enum MemberRole {
   Viewer
 }
 `, BuiltIn: false},
-	{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
+	&ast.Source{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
 
@@ -3379,6 +3387,8 @@ type Cluster {
 	agent_scope: String!
 	agent_ns_exists: Boolean
 	agent_sa_exists: Boolean
+	last_workflow_timestamp: String!
+
 }
 
 input ClusterInput {
@@ -3710,7 +3720,7 @@ type Subscription {
 	clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
 }
 `, BuiltIn: false},
-	{Name: "graph/usermanagement.graphqls", Input: `type User {
+	&ast.Source{Name: "graph/usermanagement.graphqls", Input: `type User {
   id: ID!
   username: String!
   email: String
@@ -5907,6 +5917,40 @@ func (ec *executionContext) _Cluster_agent_sa_exists(ctx context.Context, field 
 	res := resTmp.(*bool)
 	fc.Result = res
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Cluster_last_workflow_timestamp(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Cluster",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastWorkflowTimestamp, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ClusterAction_project_id(ctx context.Context, field graphql.CollectedField, obj *model.ClusterAction) (ret graphql.Marshaler) {
@@ -18549,6 +18593,11 @@ func (ec *executionContext) _Cluster(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = ec._Cluster_agent_ns_exists(ctx, field, obj)
 		case "agent_sa_exists":
 			out.Values[i] = ec._Cluster_agent_sa_exists(ctx, field, obj)
+		case "last_workflow_timestamp":
+			out.Values[i] = ec._Cluster_last_workflow_timestamp(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
