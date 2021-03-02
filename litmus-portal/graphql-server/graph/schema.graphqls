@@ -25,6 +25,7 @@ type Cluster {
 	agent_scope: String!
 	agent_ns_exists: Boolean
 	agent_sa_exists: Boolean
+	last_workflow_timestamp: String!
 }
 
 input ClusterInput {
