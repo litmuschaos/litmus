@@ -156,7 +156,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({
       onClose={handleClose}
       modalActions={
         <ButtonOutlined className={classes.closeButton} onClick={handleClose}>
-          &#x2715;
+          <Typography className={classes.crossMark}> &#x2715; </Typography>
         </ButtonOutlined>
       }
     >

@@ -676,6 +676,7 @@ customWorkflow:
     selectAnExp: Select an experiment
     noExp: No experiments found
     nextBtn: Next
+    uploadFailMessage: Failed to upload YAML, please check the syntax
   scheduleWorkflow:
     scheduleHeader: Schedule a new chaos workflow
     addedExp: Your added experiments to the workflow

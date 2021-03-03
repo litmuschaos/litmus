@@ -102,7 +102,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       gotoStep(1);
     },
   });
-
+  const [verifyYAML, setVerifyYAML] = useState(true);
   // Graphql query to get charts
   const [getCharts, { loading: chartsLoading }] = useLazyQuery<Charts>(
     GET_CHARTS_DATA,
@@ -186,11 +186,18 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         const readFile = await file.text();
         setUploadedYAML(readFile);
         setFileName(file.name);
-        const parsedYaml = YAML.parse(readFile);
-        workflowAction.setWorkflowDetails({
-          ...workflowDetails,
-          yaml: YAML.stringify(parsedYaml),
-        });
+        try {
+          const parsedYaml = YAML.parse(readFile);
+          setVerifyYAML(true);
+          workflowAction.setWorkflowDetails({
+            ...workflowDetails,
+            yaml: YAML.stringify(parsedYaml),
+          });
+        } catch (err) {
+          console.error(err);
+          setVerifyYAML(false);
+          setUploadedYAML('');
+        }
       });
   };
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -202,11 +209,18 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     if ((extension === 'yaml' || extension === 'yml') && readFile) {
       readFile.text().then((response) => {
         setUploadedYAML(response);
-        const parsedYaml = YAML.parse(response);
-        workflowAction.setWorkflowDetails({
-          ...workflowDetails,
-          yaml: YAML.stringify(parsedYaml),
-        });
+        try {
+          const parsedYaml = YAML.parse(response);
+          setVerifyYAML(true);
+          workflowAction.setWorkflowDetails({
+            ...workflowDetails,
+            yaml: YAML.stringify(parsedYaml),
+          });
+        } catch (err) {
+          console.error(err);
+          setVerifyYAML(false);
+          setUploadedYAML('');
+        }
       });
     } else {
       workflowAction.setWorkflowDetails({
@@ -527,6 +541,11 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                     </div>
                   )}
                 </Paper>
+              ) : null}
+              {!verifyYAML ? (
+                <Typography className={classes.uploadTextWarning}>
+                  {t('customWorkflow.createWorkflow.uploadFailMessage')}{' '}
+                </Typography>
               ) : null}
             </RadioGroup>
           </FormControl>

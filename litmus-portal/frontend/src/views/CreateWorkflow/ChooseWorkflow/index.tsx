@@ -91,6 +91,7 @@ const ChooseWorkflow: React.FC<ChooseWorkflowProps> = ({ isEditable }) => {
       link: '',
       id: '',
       isCustomWorkflow: true,
+      chaosEngineChanged: false,
     });
   }, []);
 

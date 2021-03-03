@@ -16,6 +16,7 @@ const initialState: WorkflowData = {
   isCustomWorkflow: false,
   isRecurring: false,
   isDisabled: false,
+  chaosEngineChanged: false,
   namespace: 'litmus',
   clusterid: '',
   cronSyntax: '',

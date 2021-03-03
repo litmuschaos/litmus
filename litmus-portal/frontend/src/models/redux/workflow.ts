@@ -37,6 +37,7 @@ export interface WorkflowData {
   isCustomWorkflow: boolean;
   isRecurring: boolean;
   isDisabled: boolean;
+  chaosEngineChanged: boolean;
   namespace: string;
   workflow_id?: string;
   clustername: string;

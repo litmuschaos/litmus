@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   text: {
     fontSize: '1rem',
+    padding: theme.spacing(2.5),
   },
 }));
 
