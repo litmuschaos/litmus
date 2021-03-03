@@ -27,7 +27,7 @@ import * as TabActions from '../../redux/actions/tabs';
 import * as UserActions from '../../redux/actions/user';
 import configureStore, { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
-import getToken from '../../utils/getToken';
+import { getToken } from '../../utils/auth';
 import userAvatar from '../../utils/user';
 import ProjectListItem from './ProjectListItem';
 import useStyles from './styles';

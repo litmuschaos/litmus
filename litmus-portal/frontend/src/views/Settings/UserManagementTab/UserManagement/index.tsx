@@ -28,7 +28,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import config from '../../../../config';
-import getToken from '../../../../utils/getToken';
+import { getToken } from '../../../../utils/auth';
 import CreateUser from '../CreateUser';
 import EditUser from '../EditUser';
 import useStyles from './styles';

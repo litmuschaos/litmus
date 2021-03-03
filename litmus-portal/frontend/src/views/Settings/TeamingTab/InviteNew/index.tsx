@@ -1,12 +1,15 @@
+import { IconButton } from '@material-ui/core';
 import { ButtonOutlined, Modal } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import Invite from './Invite';
 import useStyles from './styles';
 
 // NewUserModal displays a modal on creating a new user
-const InviteNew: React.FC = () => {
+interface InviteNewProps {
+  showModal: () => void;
+}
+const InviteNew: React.FC<InviteNewProps> = ({ showModal }) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
@@ -14,6 +17,7 @@ const InviteNew: React.FC = () => {
 
   const handleClose = () => {
     setOpen(false);
+    showModal();
   };
   const handleOpen = () => {
     setOpen(true);
@@ -22,9 +26,9 @@ const InviteNew: React.FC = () => {
   return (
     <div data-cy="inviteNewMemberButton">
       <div className={classes.button}>
-        <ButtonFilled handleClick={handleOpen} isDisabled={false} isPrimary>
+        <ButtonOutlined onClick={handleOpen} disabled={false}>
           <div>{t('settings.teamingTab.inviteNew.header')}</div>
-        </ButtonFilled>
+        </ButtonOutlined>
       </div>
 
       <Modal
@@ -35,7 +39,11 @@ const InviteNew: React.FC = () => {
         disableEscapeKeyDown
         onClose={handleClose}
         modalActions={
-          <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
+          <div className={classes.closeModal}>
+            <IconButton onClick={handleClose}>
+              <img src="./icons/closeBtn.svg" alt="close" />
+            </IconButton>
+          </div>
         }
       >
         <div data-cy="inviteNewMemberModal" className={classes.body}>
