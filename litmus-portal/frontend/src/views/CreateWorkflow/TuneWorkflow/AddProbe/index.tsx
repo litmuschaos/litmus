@@ -5,26 +5,26 @@ import React from 'react';
 import useStyles from './styles';
 
 interface AddProbeProps {
+  addProbe: () => void;
   handleClose: () => void;
   open: boolean;
-  addProbe: () => void;
 }
 
-const AddProbe: React.FC<AddProbeProps> = ({ open, handleClose, addProbe }) => {
+const AddProbe: React.FC<AddProbeProps> = ({ addProbe, handleClose, open }) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
   const [probeData, setProbeData] = React.useState({
-    probeName: '',
-    probeType: '',
-    probeProperties: '',
-    timeout: '',
-    retry: '',
-    interval: '',
-    pollingInterval: '',
-    intervalDelaySeconds: '',
-    url: '',
     expectedResponseCode: '',
+    interval: '',
+    intervalDelaySeconds: '',
+    pollingInterval: '',
+    probeName: '',
+    probeProperties: '',
+    probeType: '',
+    retry: '',
+    timeout: '',
+    url: '',
   });
 
   return (
@@ -50,7 +50,6 @@ const AddProbe: React.FC<AddProbeProps> = ({ open, handleClose, addProbe }) => {
               {t('createWorkflow.tuneWorkflow.addProbe.headingStrong')}
             </strong>
           </div>
-
           <div className={classes.formField}>
             <InputLabel htmlFor="probe-name" className={classes.formLabel}>
               {t('createWorkflow.tuneWorkflow.addProbe.labels.probeName')}
@@ -66,7 +65,6 @@ const AddProbe: React.FC<AddProbeProps> = ({ open, handleClose, addProbe }) => {
               }
             />
           </div>
-
           <div className={classes.formField}>
             <InputLabel className={classes.formLabel} htmlFor="probe-type">
               {t('createWorkflow.tuneWorkflow.addProbe.labels.probeType')}
@@ -135,11 +133,9 @@ const AddProbe: React.FC<AddProbeProps> = ({ open, handleClose, addProbe }) => {
             </Select>
           </div>
           <hr className={classes.detailContainer} />
-
           <div className={classes.subHeading}>
             {t('createWorkflow.tuneWorkflow.addProbe.labels.probeProp')}
           </div>
-
           <div className={classes.detailContainer}>
             <div className={classes.formField}>
               <InputLabel className={classes.formLabel} htmlFor="timeout">
@@ -207,7 +203,6 @@ const AddProbe: React.FC<AddProbeProps> = ({ open, handleClose, addProbe }) => {
               />
             </div>
           </div>
-
           <div className={classes.formField}>
             <InputLabel className={classes.formLabel} htmlFor="interval-delay">
               {t('createWorkflow.tuneWorkflow.addProbe.labels.intervalDelay')}
@@ -227,11 +222,9 @@ const AddProbe: React.FC<AddProbeProps> = ({ open, handleClose, addProbe }) => {
             />
           </div>
           <hr className={classes.detailContainer} />
-
           <div className={classes.subHeading}>
             {t('createWorkflow.tuneWorkflow.addProbe.labels.probeDetails')}
           </div>
-
           <div className={classes.formField}>
             <InputLabel className={classes.formLabel} htmlFor="url">
               {t('createWorkflow.tuneWorkflow.addProbe.labels.url')}
