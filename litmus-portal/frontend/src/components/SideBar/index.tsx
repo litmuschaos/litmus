@@ -5,6 +5,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import React from 'react';
+import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
@@ -52,6 +53,10 @@ const SideBar: React.FC = () => {
   const tabs = useActions(TabActions);
   const { t } = useTranslation();
   const pathName = useLocation().pathname.split('/')[1];
+  const version = process.env.REACT_APP_KB_CHAOS_VERSION;
+  const buildTime = moment
+    .unix(Number(process.env.REACT_APP_BUILD_TIME))
+    .format('DD MMM YYYY HH:MM:SS');
 
   return (
     <Drawer
@@ -145,16 +150,10 @@ const SideBar: React.FC = () => {
           </CustomisedListItem>
         )}
       </List>
-      <div className={classes.versionDiv}>
-        <img
-          src="/icons/litmusPurple.svg"
-          alt="litmus logo"
-          className={classes.versionlogo}
-        />
-        <Typography className={classes.versionText}>
-          {t('sidebar.version')}
-        </Typography>
-      </div>
+      <Typography className={classes.versionDiv}>
+        <b>Version: </b> {version} <br />
+        <b>Build Time: </b> {buildTime}
+      </Typography>
     </Drawer>
   );
 };

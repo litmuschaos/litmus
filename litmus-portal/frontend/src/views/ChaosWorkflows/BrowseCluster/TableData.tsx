@@ -1,10 +1,9 @@
 import { IconButton, TableCell, Tooltip, Typography } from '@material-ui/core';
-import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import Unimodal from '../../../containers/layouts/Unimodal';
 import { Cluster } from '../../../models/graphql/clusterData';
 import { history } from '../../../redux/configureStore';
 import { RootState } from '../../../redux/reducers';
@@ -73,13 +72,19 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
       </TableCell>
       <TableCell>
         <Typography className={classes.stepsData}>
-          {data.no_of_schedules}
+          {data.no_of_workflows}
         </Typography>
       </TableCell>
       <TableCell className={classes.stepsDataschedule}>
-        <Typography>{data.no_of_workflows}</Typography>
+        <Typography>{data.no_of_schedules}</Typography>
       </TableCell>
-      <TableCell>{timeDifferenceForDate(data.updated_at)}</TableCell>
+      <TableCell>
+        {data.last_workflow_timestamp === '0' ? (
+          <Typography>Not Yet</Typography>
+        ) : (
+          timeDifferenceForDate(data.last_workflow_timestamp)
+        )}
+      </TableCell>
       <TableCell>
         <Tooltip
           classes={{
@@ -107,12 +112,21 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
         <div>
           {open ? (
             <div>
-              <Unimodal
+              <Modal
                 open={open}
-                handleClose={() => {
+                onClose={() => {
                   setOpen(false);
                 }}
-                hasCloseBtn
+                width="60%"
+                modalActions={
+                  <ButtonOutlined
+                    onClick={() => {
+                      setOpen(false);
+                    }}
+                  >
+                    &#x2715;
+                  </ButtonOutlined>
+                }
               >
                 <div className={classes.body}>
                   <img src="/icons/bin-red-delete.svg" alt="Delete" />
@@ -146,7 +160,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                     </ButtonFilled>
                   </div>
                 </div>
-              </Unimodal>
+              </Modal>
             </div>
           ) : null}
         </div>

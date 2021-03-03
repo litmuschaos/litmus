@@ -1,11 +1,10 @@
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { Typography } from '@material-ui/core';
-import { ButtonOutlined, ButtonFilled } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import Scaffold from '../../../containers/layouts/Scaffold';
-import Unimodal from '../../../containers/layouts/Unimodal';
 import { GET_CLUSTER, USER_CLUSTER_REG } from '../../../graphql';
 import {
   Cluster,
@@ -134,14 +133,18 @@ const ConnectTarget = () => {
         </div>
       </section>
       <div>
-        <Unimodal
+        <Modal
           open={modal}
-          handleClose={() => {
+          onClose={() => {
             history.push('/targets');
           }}
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
-          hasCloseBtn
+          modalActions={
+            <ButtonOutlined onClick={() => history.push('/targets')}>
+              &#x2715;
+            </ButtonOutlined>
+          }
         >
           <div className={classes.body}>
             <img src="/icons/finish.svg" className={classes.mark} alt="mark" />
@@ -176,7 +179,7 @@ const ConnectTarget = () => {
               </ButtonFilled>
             </div>
           </div>
-        </Unimodal>
+        </Modal>
       </div>
     </Scaffold>
   );

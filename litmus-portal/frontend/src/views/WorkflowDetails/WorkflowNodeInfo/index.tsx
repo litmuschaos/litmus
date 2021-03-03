@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/reducers';
 import timeDifference from '../../../utils/datesModifier';
+import ChaosResult from '../ChaosResult';
 import NodeLogs from '../NodeLogs';
 import useStyles from './styles';
 
@@ -24,7 +25,7 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
   const { t } = useTranslation();
 
   const [logsOpen, setLogsOpen] = useState<boolean>(false);
-
+  const [resultModal, setResultModal] = useState(false);
   // Get the nelected node from redux
   const { name, phase, pod_name, type, startedAt, finishedAt } = useSelector(
     (state: RootState) => state.selectedNode
@@ -33,7 +34,9 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
   const handleClose = () => {
     setLogsOpen(false);
   };
-
+  const handleResultClose = () => {
+    setResultModal(false);
+  };
   return (
     <div className={classes.root}>
       {/* Logs Modal */}
@@ -50,7 +53,15 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
       ) : (
         <></>
       )}
-
+      {/* Chaos Result Modal */}
+      {resultModal ? (
+        <ChaosResult
+          chaosResultOpen={resultModal}
+          handleResultClose={handleResultClose}
+          workflow_run_id={workflow_run_id}
+          pod_name={pod_name}
+        />
+      ) : null}
       {/* Node Type */}
       <div className={classes.heightMaintainer}>
         <Typography className={classes.nodeSpacing}>
@@ -125,6 +136,13 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
         <ButtonOutlined onClick={() => setLogsOpen(true)}>
           {t('workflowDetailsView.workflowNodeInfo.button.logs')}
         </ButtonOutlined>
+        <div className={classes.resultBtn}>
+          {type === 'ChaosEngine' ? (
+            <ButtonOutlined onClick={() => setResultModal(true)}>
+              {t('workflowDetailsView.workflowNodeInfo.button.result')}
+            </ButtonOutlined>
+          ) : null}
+        </div>
       </div>
     </div>
   );

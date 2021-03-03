@@ -70,26 +70,27 @@ type CloningInput struct {
 }
 
 type Cluster struct {
-	ClusterID          string  `json:"cluster_id"`
-	ProjectID          string  `json:"project_id"`
-	ClusterName        string  `json:"cluster_name"`
-	Description        *string `json:"description"`
-	PlatformName       string  `json:"platform_name"`
-	AccessKey          string  `json:"access_key"`
-	IsRegistered       bool    `json:"is_registered"`
-	IsClusterConfirmed bool    `json:"is_cluster_confirmed"`
-	IsActive           bool    `json:"is_active"`
-	UpdatedAt          string  `json:"updated_at"`
-	CreatedAt          string  `json:"created_at"`
-	ClusterType        string  `json:"cluster_type"`
-	NoOfSchedules      *int    `json:"no_of_schedules"`
-	NoOfWorkflows      *int    `json:"no_of_workflows"`
-	Token              string  `json:"token"`
-	AgentNamespace     *string `json:"agent_namespace"`
-	Serviceaccount     *string `json:"serviceaccount"`
-	AgentScope         string  `json:"agent_scope"`
-	AgentNsExists      *bool   `json:"agent_ns_exists"`
-	AgentSaExists      *bool   `json:"agent_sa_exists"`
+	ClusterID             string  `json:"cluster_id"`
+	ProjectID             string  `json:"project_id"`
+	ClusterName           string  `json:"cluster_name"`
+	Description           *string `json:"description"`
+	PlatformName          string  `json:"platform_name"`
+	AccessKey             string  `json:"access_key"`
+	IsRegistered          bool    `json:"is_registered"`
+	IsClusterConfirmed    bool    `json:"is_cluster_confirmed"`
+	IsActive              bool    `json:"is_active"`
+	UpdatedAt             string  `json:"updated_at"`
+	CreatedAt             string  `json:"created_at"`
+	ClusterType           string  `json:"cluster_type"`
+	NoOfSchedules         *int    `json:"no_of_schedules"`
+	NoOfWorkflows         *int    `json:"no_of_workflows"`
+	Token                 string  `json:"token"`
+	AgentNamespace        *string `json:"agent_namespace"`
+	Serviceaccount        *string `json:"serviceaccount"`
+	AgentScope            string  `json:"agent_scope"`
+	AgentNsExists         *bool   `json:"agent_ns_exists"`
+	AgentSaExists         *bool   `json:"agent_sa_exists"`
+	LastWorkflowTimestamp string  `json:"last_workflow_timestamp"`
 }
 
 type ClusterAction struct {
@@ -162,6 +163,39 @@ type CreateUserInput struct {
 	ProjectName string  `json:"project_name"`
 }
 
+type DSInput struct {
+	DsID              *string `json:"ds_id"`
+	DsName            string  `json:"ds_name"`
+	DsType            string  `json:"ds_type"`
+	DsURL             string  `json:"ds_url"`
+	AccessType        string  `json:"access_type"`
+	AuthType          string  `json:"auth_type"`
+	BasicAuthUsername *string `json:"basic_auth_username"`
+	BasicAuthPassword *string `json:"basic_auth_password"`
+	ScrapeInterval    int     `json:"scrape_interval"`
+	QueryTimeout      int     `json:"query_timeout"`
+	HTTPMethod        string  `json:"http_method"`
+	ProjectID         *string `json:"project_id"`
+}
+
+type DSResponse struct {
+	DsID              *string `json:"ds_id"`
+	DsName            *string `json:"ds_name"`
+	DsType            *string `json:"ds_type"`
+	DsURL             *string `json:"ds_url"`
+	AccessType        *string `json:"access_type"`
+	AuthType          *string `json:"auth_type"`
+	BasicAuthUsername *string `json:"basic_auth_username"`
+	BasicAuthPassword *string `json:"basic_auth_password"`
+	ScrapeInterval    *int    `json:"scrape_interval"`
+	QueryTimeout      *int    `json:"query_timeout"`
+	HTTPMethod        *string `json:"http_method"`
+	ProjectID         string  `json:"project_id"`
+	HealthStatus      string  `json:"health_status"`
+	CreatedAt         *string `json:"created_at"`
+	UpdatedAt         *string `json:"updated_at"`
+}
+
 type ExperimentInput struct {
 	ProjectID      string  `json:"ProjectID"`
 	ChartName      string  `json:"ChartName"`
@@ -185,6 +219,18 @@ type GitConfig struct {
 	UserName      *string  `json:"UserName"`
 	Password      *string  `json:"Password"`
 	SSHPrivateKey *string  `json:"SSHPrivateKey"`
+}
+
+type GitConfigResponse struct {
+	Enabled       bool      `json:"Enabled"`
+	ProjectID     string    `json:"ProjectID"`
+	Branch        *string   `json:"Branch"`
+	RepoURL       *string   `json:"RepoURL"`
+	AuthType      *AuthType `json:"AuthType"`
+	Token         *string   `json:"Token"`
+	UserName      *string   `json:"UserName"`
+	Password      *string   `json:"Password"`
+	SSHPrivateKey *string   `json:"SSHPrivateKey"`
 }
 
 type Link struct {
@@ -428,6 +474,150 @@ type ClusterRegResponse struct {
 	Token       string `json:"token"`
 	ClusterID   string `json:"cluster_id"`
 	ClusterName string `json:"cluster_name"`
+}
+
+type CreateDBInput struct {
+	DsID        string        `json:"ds_id"`
+	DbName      string        `json:"db_name"`
+	DbType      string        `json:"db_type"`
+	PanelGroups []*PanelGroup `json:"panel_groups"`
+	EndTime     string        `json:"end_time"`
+	StartTime   string        `json:"start_time"`
+	ProjectID   string        `json:"project_id"`
+	ClusterID   string        `json:"cluster_id"`
+	RefreshRate string        `json:"refresh_rate"`
+}
+
+type DeleteDSInput struct {
+	ForceDelete bool   `json:"force_delete"`
+	DsID        string `json:"ds_id"`
+}
+
+type ListDashboardReponse struct {
+	DsID        string                `json:"ds_id"`
+	DbID        string                `json:"db_id"`
+	DbName      string                `json:"db_name"`
+	DbType      string                `json:"db_type"`
+	ClusterName *string               `json:"cluster_name"`
+	DsName      *string               `json:"ds_name"`
+	DsType      *string               `json:"ds_type"`
+	PanelGroups []*PanelGroupResponse `json:"panel_groups"`
+	EndTime     string                `json:"end_time"`
+	StartTime   string                `json:"start_time"`
+	RefreshRate string                `json:"refresh_rate"`
+	ProjectID   string                `json:"project_id"`
+	ClusterID   string                `json:"cluster_id"`
+	CreatedAt   *string               `json:"created_at"`
+	UpdatedAt   *string               `json:"updated_at"`
+}
+
+type Panel struct {
+	PanelID      *string      `json:"panel_id"`
+	DbID         *string      `json:"db_id"`
+	YAxisLeft    *string      `json:"y_axis_left"`
+	YAxisRight   *string      `json:"y_axis_right"`
+	XAxisDown    *string      `json:"x_axis_down"`
+	Unit         *string      `json:"unit"`
+	PanelGroupID *string      `json:"panel_group_id"`
+	PromQueries  []*PromQuery `json:"prom_queries"`
+	PanelOptions *PanelOption `json:"panel_options"`
+	PanelName    string       `json:"panel_name"`
+}
+
+type PanelGroup struct {
+	Panels         []*Panel `json:"panels"`
+	PanelGroupName string   `json:"panel_group_name"`
+}
+
+type PanelGroupResponse struct {
+	Panels         []*PanelResponse `json:"panels"`
+	PanelGroupName string           `json:"panel_group_name"`
+	PanelGroupID   *string          `json:"panel_group_id"`
+}
+
+type PanelOption struct {
+	Points   *bool `json:"points"`
+	Grids    *bool `json:"grids"`
+	LeftAxis *bool `json:"left_axis"`
+}
+
+type PanelOptionResponse struct {
+	Points   *bool `json:"points"`
+	Grids    *bool `json:"grids"`
+	LeftAxis *bool `json:"left_axis"`
+}
+
+type PanelResponse struct {
+	PanelID      string               `json:"panel_id"`
+	YAxisLeft    *string              `json:"y_axis_left"`
+	YAxisRight   *string              `json:"y_axis_right"`
+	XAxisDown    *string              `json:"x_axis_down"`
+	Unit         *string              `json:"unit"`
+	PromQueries  []*PromQueryResponse `json:"prom_queries"`
+	PanelOptions *PanelOptionResponse `json:"panel_options"`
+	PanelName    *string              `json:"panel_name"`
+}
+
+type PromInput struct {
+	Queries []*PromQueryInput `json:"queries"`
+	URL     string            `json:"url"`
+	Start   string            `json:"start"`
+	End     string            `json:"end"`
+}
+
+type PromQuery struct {
+	Queryid       string  `json:"queryid"`
+	PromQueryName *string `json:"prom_query_name"`
+	Legend        *string `json:"legend"`
+	Resolution    *string `json:"resolution"`
+	Minstep       *string `json:"minstep"`
+	Line          *bool   `json:"line"`
+	CloseArea     *bool   `json:"close_area"`
+}
+
+type PromQueryInput struct {
+	Queryid    string  `json:"queryid"`
+	Query      string  `json:"query"`
+	Legend     *string `json:"legend"`
+	Resolution *string `json:"resolution"`
+	Minstep    int     `json:"minstep"`
+}
+
+type PromQueryResponse struct {
+	Queryid       string  `json:"queryid"`
+	PromQueryName *string `json:"prom_query_name"`
+	Legend        *string `json:"legend"`
+	Resolution    *string `json:"resolution"`
+	Minstep       *string `json:"minstep"`
+	Line          *bool   `json:"line"`
+	CloseArea     *bool   `json:"close_area"`
+}
+
+type PromResponse struct {
+	Queryid string              `json:"queryid"`
+	Legends [][]*string         `json:"legends"`
+	Tsvs    [][]*TimeStampValue `json:"tsvs"`
+}
+
+type TimeStampValue struct {
+	Timestamp *string `json:"timestamp"`
+	Value     *string `json:"value"`
+}
+
+type UpdataDBInput struct {
+	DbID        string                   `json:"db_id"`
+	DsID        string                   `json:"ds_id"`
+	DbName      string                   `json:"db_name"`
+	DbType      string                   `json:"db_type"`
+	EndTime     string                   `json:"end_time"`
+	StartTime   string                   `json:"start_time"`
+	RefreshRate string                   `json:"refresh_rate"`
+	PanelGroups []*UpdatePanelGroupInput `json:"panel_groups"`
+}
+
+type UpdatePanelGroupInput struct {
+	PanelGroupName string `json:"panel_group_name"`
+	PanelGroupID   string `json:"panel_group_id"`
 }
 
 type Weightages struct {

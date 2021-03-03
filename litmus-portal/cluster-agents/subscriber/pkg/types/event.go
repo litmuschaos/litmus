@@ -1,5 +1,7 @@
 package types
 
+import "github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
+
 // workflow data
 type WorkflowEvent struct {
 	WorkflowID        string          `json:"-"`
@@ -29,15 +31,16 @@ type Node struct {
 
 // chaos data
 type ChaosData struct {
-	EngineUID              string `json:"engineUID"`
-	EngineName             string `json:"engineName"`
-	Namespace              string `json:"namespace"`
-	ExperimentName         string `json:"experimentName"`
-	ExperimentStatus       string `json:"experimentStatus"`
-	LastUpdatedAt          string `json:"lastUpdatedAt"`
-	ExperimentVerdict      string `json:"experimentVerdict"`
-	ExperimentPod          string `json:"experimentPod"`
-	RunnerPod              string `json:"runnerPod"`
-	ProbeSuccessPercentage string `json:"probeSuccessPercentage"`
-	FailStep               string `json:"failStep"`
+	EngineUID              string                `json:"engineUID"`
+	EngineName             string                `json:"engineName"`
+	Namespace              string                `json:"namespace"`
+	ExperimentName         string                `json:"experimentName"`
+	ExperimentStatus       string                `json:"experimentStatus"`
+	LastUpdatedAt          string                `json:"lastUpdatedAt"`
+	ExperimentVerdict      string                `json:"experimentVerdict"`
+	ExperimentPod          string                `json:"experimentPod"`
+	RunnerPod              string                `json:"runnerPod"`
+	ProbeSuccessPercentage string                `json:"probeSuccessPercentage"`
+	FailStep               string                `json:"failStep"`
+	ChaosResult            *v1alpha1.ChaosResult `json:"chaosResult"`
 }

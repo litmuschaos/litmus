@@ -22,7 +22,7 @@ export interface customWorkflow {
   repoUrl?: string;
   repoBranch?: string;
   description: string;
-  yamlLink?: string;
+  experimentYAML?: string;
   yaml?: string;
   index?: number;
 }
@@ -37,6 +37,7 @@ export interface WorkflowData {
   isCustomWorkflow: boolean;
   isRecurring: boolean;
   isDisabled: boolean;
+  chaosEngineChanged: boolean;
   namespace: string;
   workflow_id?: string;
   clustername: string;

@@ -1,17 +1,17 @@
 import { useMutation } from '@apollo/client/react/hooks';
 import MobileStepper from '@material-ui/core/MobileStepper';
+import { ButtonFilled, ButtonOutlined, InputField } from 'litmus-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { InputField, ButtonOutlined, ButtonFilled } from 'litmus-ui';
 import config from '../../config';
 import { CREATE_USER } from '../../graphql';
 import { CreateUserData } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
 import { RootState } from '../../redux/reducers';
-import getToken from '../../utils/getToken';
+import { getToken } from '../../utils/auth';
 import {
   validateConfirmPassword,
   validateEmail,

@@ -1,15 +1,17 @@
 package file_handlers
 
 import (
-	"github.com/gorilla/mux"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
-	database "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/types"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/gorilla/mux"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
+	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/types"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 )
 
 var subscriberConfiguration = &types.SubscriberConfigurationVars{
@@ -24,7 +26,7 @@ var subscriberConfiguration = &types.SubscriberConfigurationVars{
 	ChaosRunnerImage:        os.Getenv("LITMUS_CHAOS_RUNNER_IMAGE"),
 }
 
-//FileHandler dynamically generates the manifest file and sends it as a response
+// FileHandler dynamically generates the manifest file and sends it as a response
 func FileHandler(w http.ResponseWriter, r *http.Request) {
 	var (
 		vars  = mux.Vars(r)
@@ -51,7 +53,7 @@ func GetManifest(token string) ([]byte, int, error) {
 		return nil, 404, err
 	}
 
-	reqCluster, err := database.GetCluster(id)
+	reqCluster, err := dbOperationsCluster.GetCluster(id)
 	if err != nil {
 		return nil, 500, err
 	}

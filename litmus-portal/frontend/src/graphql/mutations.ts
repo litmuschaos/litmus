@@ -150,3 +150,27 @@ export const DELETE_CLUSTER = gql`
     deleteClusterReg(cluster_id: $cluster_id)
   }
 `;
+
+export const ENABLE_GITOPS = gql`
+  mutation enableGitOps($gitConfig: GitConfig!) {
+    enableGitOps(config: $gitConfig)
+  }
+`;
+
+export const DISABLE_GITOPS = gql`
+  mutation disableGitOPs($data: String!) {
+    disableGitOps(project_id: $data)
+  }
+`;
+
+export const RERUN_CHAOS_WORKFLOW = gql`
+  mutation rerunChaosWorkflow($data: String!) {
+    reRunChaosWorkFlow(workflowID: $data)
+  }
+`;
+
+export const LEAVE_PROJECT = gql`
+  mutation LeaveProject($data: MemberInput!) {
+    leaveProject(member: $data)
+  }
+`;

@@ -160,6 +160,12 @@ const useStyles = makeStyles((theme) => ({
     width: '1.2rem',
     height: '1.2rem',
   },
+  rerunBtn: {
+    marginTop: theme.spacing(0.1),
+    marginLeft: theme.spacing(-0.375),
+    width: '1.2rem',
+    height: '1.2rem',
+  },
   // Experiment Weights PopOver Property
   weightDiv: {
     width: '15.1875rem',
@@ -188,16 +194,17 @@ const useStyles = makeStyles((theme) => ({
   modalDiv: {
     display: 'flex',
     flexDirection: 'column',
-    height: '25rem',
-    marginTop: '10%',
     alignItems: 'center',
     justifyContent: 'center',
+    padding: theme.spacing(5),
+    [theme.breakpoints.up('lg')]: {
+      padding: theme.spacing(15),
+    },
   },
   modalHeader: {
     fontSize: '2.125rem',
     fontWeight: 400,
-    marginBottom: theme.spacing(2.5),
-    marginTop: theme.spacing(2.5),
+    marginBottom: theme.spacing(2),
     width: '31.25rem',
   },
   modalConfirm: {

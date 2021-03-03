@@ -1,3 +1,4 @@
+import { useMutation } from '@apollo/client';
 import {
   Button,
   IconButton,
@@ -11,16 +12,18 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import ReplayIcon from '@material-ui/icons/Replay';
 import cronstrue from 'cronstrue';
-import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
-import Unimodal from '../../../containers/layouts/Unimodal';
+import { RERUN_CHAOS_WORKFLOW } from '../../../graphql/mutations';
 import { ScheduleWorkflow } from '../../../models/graphql/scheduleData';
 import useActions from '../../../redux/actions';
+import * as TabActions from '../../../redux/actions/tabs';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { history } from '../../../redux/configureStore';
 import { RootState } from '../../../redux/reducers';
@@ -33,11 +36,6 @@ interface TableDataProps {
   deleteRow: (wfid: string) => void;
 }
 
-interface Weights {
-  experimentName: string;
-  weight: number;
-}
-
 const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -47,7 +45,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
     null
   );
   const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
-
+  const tabs = useActions(TabActions);
   const open = Boolean(anchorEl);
   const isOpen = Boolean(popAnchorEl);
   const id = isOpen ? 'simple-popover' : undefined;
@@ -106,6 +104,20 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
       isRecurring: true,
     });
   }
+
+  const [reRunChaosWorkFlow] = useMutation(RERUN_CHAOS_WORKFLOW, {
+    onCompleted: () => {
+      tabs.changeWorkflowsTabs(0);
+    },
+  });
+
+  const reRunSchedule = () => {
+    reRunChaosWorkFlow({
+      variables: {
+        data: data.workflow_id,
+      },
+    });
+  };
 
   return (
     <>
@@ -242,6 +254,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
         >
           <MoreVertIcon />
         </IconButton>
+
         <Menu
           id="long-menu"
           anchorEl={anchorEl}
@@ -259,6 +272,18 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                 />
                 <Typography data-cy="editSchedule" className={classes.btnText}>
                   Edit Schedule
+                </Typography>
+              </div>
+            </MenuItem>
+          ) : (
+            <></>
+          )}
+          {data.cronSyntax === '' ? (
+            <MenuItem value="Rerun_Schedule" onClick={() => reRunSchedule()}>
+              <div className={classes.expDiv}>
+                <ReplayIcon className={classes.rerunBtn} />
+                <Typography data-cy="reRunSchedule" className={classes.btnText}>
+                  Re-Run Schedule
                 </Typography>
               </div>
             </MenuItem>
@@ -301,7 +326,14 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
         </Menu>
       </TableCell>
       {isModalOpen ? (
-        <Unimodal open={isModalOpen} handleClose={handleClose} hasCloseBtn>
+        <Modal
+          open={isModalOpen}
+          onClose={handleClose}
+          width="60%"
+          modalActions={
+            <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
+          }
+        >
           <div className={classes.modalDiv}>
             <CrossMarkIcon />
             <Typography className={classes.modalHeader}>
@@ -326,7 +358,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
               </ButtonFilled>
             </div>
           </div>
-        </Unimodal>
+        </Modal>
       ) : (
         <></>
       )}

@@ -121,6 +121,7 @@ export const GET_CLUSTER = gql`
       agent_scope
       agent_ns_exists
       agent_sa_exists
+      last_workflow_timestamp
     }
   }
 `;
@@ -264,5 +265,61 @@ export const GET_ENGINE_YAML = gql`
 export const GET_EXPERIMENT_YAML = gql`
   query getExperimentData($experimentInput: ExperimentInput!) {
     getYAMLData(experimentInput: $experimentInput)
+  }
+`;
+
+export const GET_GITOPS_DATA = gql`
+  query gitOPsData($data: String!) {
+    getGitOpsDetails(project_id: $data) {
+      Enabled
+      ProjectID
+      Branch
+      RepoURL
+      AuthType
+      Token
+      UserName
+      Password
+      SSHPrivateKey
+    }
+  }
+`;
+
+export const LIST_PROJECTS = gql`
+  query listProjects {
+    listProjects {
+      id
+      name
+      members {
+        user_name
+        user_id
+        role
+        invitation
+        joined_at
+      }
+      state
+      created_at
+      updated_at
+      removed_at
+    }
+  }
+`;
+
+export const GET_PROJECT = gql`
+  query getProject($projectID: String!) {
+    getProject(projectID: $projectID) {
+      id
+      name
+      members {
+        user_id
+        user_name
+        role
+        invitation
+        joined_at
+      }
+      state
+      created_at
+      updated_at
+      removed_at
+    }
   }
 `;

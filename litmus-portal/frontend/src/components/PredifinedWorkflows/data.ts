@@ -1,6 +1,33 @@
 export default [
   {
     workflowID: 0,
+    title: 'sock-shop-resiliency-check',
+    urlToIcon:
+      'https://hub.litmuschaos.io/api/icon/1.7.0/generic/pod-delete.png',
+    chaosWkfCRDLink:
+      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/sock-shop-demo/usingCmdProbe/workflow.yaml',
+    chaosWkfCRDLink_Recur:
+      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/sock-shop-demo/usingCmdProbe/workflow_cron.yaml',
+    gitLink:
+      'https://github.com/litmuschaos/chaos-charts/tree/master/workflows/sock-shop-demo',
+    provider: 'ChaosNative',
+    description: 'Induces chaos on Sock-Shop application',
+    totalRuns: 110,
+    isCustom: false,
+    details:
+      'This workflow installs and executes chaos on the popular demo application sock-shop, ' +
+      'that simulates an e-commerce website selling socks. It injects a transient fault on an upstream microservice ' +
+      'pod (socks catalogue) while continuously checking the availability of the website. This workflow allows execution ' +
+      'of the same chaos experiment against two versions of the sock-shop deployment: weak and resilient. ' +
+      'The weak is expected to result in a failed workflow while the resilient succeeds, ' +
+      'essentially highlighting the need for deployment best-practices.',
+    recommendation:
+      'Check whether the application is resilient to the pod failure, once the workflow is completed.',
+    experimentinfo:
+      'Provide the application info in spec.appinfo Override the experiment tunables if desired in experiments.spec.components.env',
+  },
+  {
+    workflowID: 1,
     title: 'node-cpu-hog',
     urlToIcon:
       'https://hub.litmuschaos.io/api/icon/1.7.0/generic/node-cpu-hog.png',
@@ -26,7 +53,7 @@ export default [
       'The desired chaos library can be selected by setting litmus as value for the env variable LIB',
   },
   {
-    workflowID: 1,
+    workflowID: 2,
     title: 'node-memory-hog',
     urlToIcon:
       'https://hub.litmuschaos.io/api/icon/1.7.0/generic/node-memory-hog.png',
@@ -55,7 +82,7 @@ export default [
       'info (ns & labels) in spec.auxiliaryAppInfo',
   },
   {
-    workflowID: 2,
+    workflowID: 3,
     title: 'pod-cpu-hog',
     urlToIcon:
       'https://hub.litmuschaos.io/api/icon/1.7.0/generic/pod-cpu-hog.png',
@@ -81,7 +108,7 @@ export default [
       'This example consists of the minimum necessary role permissions to execute the experiment.',
   },
   {
-    workflowID: 3,
+    workflowID: 4,
     title: 'pod-memory-hog',
     urlToIcon:
       'https://hub.litmuschaos.io/api/icon/1.7.0/generic/pod-memory-hog.png',
@@ -105,7 +132,7 @@ export default [
       'Pod Memory can be effected using the chaos library: litmus',
   },
   {
-    workflowID: 4,
+    workflowID: 5,
     title: 'pod-delete',
     urlToIcon:
       'https://hub.litmuschaos.io/api/icon/1.7.0/generic/pod-delete.png',
@@ -131,7 +158,7 @@ export default [
       'in experiments.spec.components.env ',
   },
   {
-    workflowID: 5,
+    workflowID: 6,
     title: 'kube-proxy-chaos',
     urlToIcon: 'https://hub.litmuschaos.io/api/icon/1.8.0/generic/generic.png',
     chaosWkfCRDLink:
@@ -155,7 +182,7 @@ export default [
       'in experiments.spec.components.env ',
   },
   {
-    workflowID: 6,
+    workflowID: 7,
     title: 'namespaced-scope-chaos',
     urlToIcon:
       'https://hub.litmuschaos.io/api/icon/1.7.0/generic/pod-delete.png',
