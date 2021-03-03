@@ -112,12 +112,8 @@ const NodeTable: React.FC<NodeTableProps> = ({ data, handleClose }) => {
                     paginationData.rowsPerPage
                 )
                 .map((node: SelectedNodeType) => (
-                  <TableRow data-cy="browseScheduleData">
-                    <TableData
-                      data={node}
-                      key={node.id}
-                      handleClose={() => handleClose()}
-                    />
+                  <TableRow key={node.id}>
+                    <TableData data={node} handleClose={() => handleClose()} />
                   </TableRow>
                 ))}
             </TableBody>
