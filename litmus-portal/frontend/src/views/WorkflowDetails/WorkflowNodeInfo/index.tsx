@@ -7,6 +7,7 @@ import ButtonOutline from '../../../components/Button/ButtonOutline';
 import { RootState } from '../../../redux/reducers';
 import timeDifference from '../../../utils/datesModifier';
 import NodeLogs from '../NodeLogs';
+import ChaosResult from '../ChaosResult';
 import useStyles from './styles';
 
 interface WorkflowNodeInfoProps {
@@ -24,7 +25,7 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
   const { t } = useTranslation();
 
   const [logsOpen, setLogsOpen] = useState<boolean>(false);
-
+  const [resultModal, setResultModal] = useState(false);
   // Get the nelected node from redux
   const { name, phase, pod_name, type, startedAt, finishedAt } = useSelector(
     (state: RootState) => state.selectedNode
@@ -33,7 +34,9 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
   const handleClose = () => {
     setLogsOpen(false);
   };
-
+  const handleResultClose = () => {
+    setResultModal(false);
+  };
   return (
     <div className={classes.root}>
       {/* Logs Modal */}
@@ -50,7 +53,15 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
       ) : (
         <></>
       )}
-
+      {/* Chaos Result Modal */}
+      {resultModal ? (
+        <ChaosResult
+          chaosResultOpen={resultModal}
+          handleResultClose={handleResultClose}
+          workflow_run_id={workflow_run_id}
+          pod_name={pod_name}
+        />
+      ) : null}
       {/* Node Type */}
       <div className={classes.heightMaintainer}>
         <Typography className={classes.nodeSpacing}>
@@ -125,6 +136,16 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
         <ButtonOutline isDisabled={false} handleClick={() => setLogsOpen(true)}>
           {t('workflowDetailsView.workflowNodeInfo.button.logs')}
         </ButtonOutline>
+        <div className={classes.resultBtn}>
+          {type === 'ChaosEngine' ? (
+            <ButtonOutline
+              isDisabled={false}
+              handleClick={() => setResultModal(true)}
+            >
+              {t('workflowDetailsView.workflowNodeInfo.button.result')}
+            </ButtonOutline>
+          ) : null}
+        </div>
       </div>
     </div>
   );

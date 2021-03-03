@@ -399,6 +399,7 @@ workflowDetailsView:
     nodeName: Step Name
     button:
       logs: Logs
+      result: Chaos Result
 
 homeView:
   averageResilienceScore:
@@ -696,6 +697,7 @@ customWorkflow:
     selectAnExp: Select an experiment
     noExp: No experiments found
     nextBtn: Next
+    uploadFailMessage: Failed to upload YAML, please check the syntax
   scheduleWorkflow:
     scheduleHeader: Schedule a new chaos workflow
     addedExp: Your added experiments to the workflow
@@ -706,6 +708,12 @@ customWorkflow:
     deleteBtn: Delete
     addExp: Add a new experiment
     finish: Finish adding experiments
+    proceed: Proceed to construct the
+    selection: YAML based on the experiment selection.
+    revert: Revert Chaos
+    unselect: Unselect the check box if you don't want to have revert chaos stage at the end of workflow.
+    cancel: Cancel
+    construct: Construct Workflow
   tuneExperiment:
     headerText: Tune the chaos engine
     addKey: Add keys for add experiments

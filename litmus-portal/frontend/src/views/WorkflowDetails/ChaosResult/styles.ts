@@ -4,6 +4,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   root: {
     padding: theme.spacing(5),
   },
+  modalRoot: {
+    padding: theme.spacing(5),
+  },
   logs: {
     overflowY: 'scroll',
     [theme.breakpoints.up('lg')]: {
@@ -17,12 +20,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   closeButton: {
     borderColor: theme.palette.border.main,
   },
+  crossMark: {
+    color: theme.palette.common.white,
+  },
   text: {
     fontSize: '1rem',
     padding: theme.spacing(2.5),
-  },
-  crossMark: {
-    color: theme.palette.common.white,
   },
 }));
 
