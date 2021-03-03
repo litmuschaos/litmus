@@ -29,6 +29,7 @@ const PredifinedWorkflows: React.FC<PredifinedWorkflowsProps> = ({
               key={w.workflowID}
               title={w.title}
               urlToIcon={w.urlToIcon}
+              chaosinfra={w.chaosinfra}
               provider={w.provider}
               chaosWkfCRDLink={w.chaosWkfCRDLink}
               selectedID={w.workflowID}

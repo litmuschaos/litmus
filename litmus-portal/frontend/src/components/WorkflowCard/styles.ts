@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.cards.background,
     height: '16rem',
     width: '11.875rem',
-    borderRadius: 3,
+    borderRadius: '3rem',
     fontSize: '0.875rem',
     textAlign: 'center',
     cursor: 'pointer',
@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
   // CardContent
 
   card: {
-    width: theme.spacing(23),
+    width: '11.8rem',
     background: theme.palette.background.paper,
     borderRadius: 3,
     height: '16rem',
@@ -117,7 +117,8 @@ const useStyles = makeStyles((theme) => ({
 
   cardAnalytics: {
     display: 'flex',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
     marginLeft: theme.spacing(1.5),
@@ -157,8 +158,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.secondary.dark,
     color: theme.palette.secondary.contrastText,
     borderRadius: 3,
-    paddingTop: theme.spacing(0.375),
-    paddingBottom: theme.spacing(0.375),
+    paddingTop: theme.spacing(0.275),
+    paddingBottom: theme.spacing(0.275),
     paddingLeft: theme.spacing(0.75),
     paddingRight: theme.spacing(0.75),
     fontSize: '0.625rem',
@@ -184,6 +185,19 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 500,
     fontSize: '0.75rem',
     lineHeight: '130%',
+  },
+  infrachaos: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: theme.spacing(0.275, 0.75, 0.275, 0.75),
+    backgroundColor: theme.palette.secondary.light,
+    color: theme.palette.secondary.contrastText,
+    borderRadius: 3,
+  },
+  infraChaosMain: {
+    fontSize: '0.625rem',
+    fontWeight: 500,
   },
 }));
 
