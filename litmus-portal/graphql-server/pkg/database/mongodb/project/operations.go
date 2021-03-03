@@ -112,7 +112,8 @@ func UpdateInvite(ctx context.Context, projectID, userName string, invitation In
 		update = bson.M{"$set": bson.M{"members.$[elem].invitation": invitation}}
 	case AcceptedInvitation:
 		update = bson.M{"$set": bson.M{"members.$[elem].invitation": invitation, "members.$[elem].joined_at": time.Now().Format(time.RFC1123Z)}}
-
+	case ExitedProject:
+		update = bson.M{"$set": bson.M{"members.$[elem].invitation": invitation}}
 	}
 	_, err := projectCollection.UpdateOne(ctx, query, update, options)
 	if err != nil {

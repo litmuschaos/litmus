@@ -26,7 +26,7 @@ export const userData = createReducer<UserData>(initialState, {
       const jwt = action.payload as string;
       const data: any = jwtDecode.decode(jwt);
       const expirationTime = (data.exp - data.iat) / 3600;
-      setCookie('token', jwt, expirationTime);
+      setCookie({ name: 'token', value: jwt, exhours: expirationTime });
 
       return {
         ...state,
@@ -46,7 +46,7 @@ export const userData = createReducer<UserData>(initialState, {
     };
   },
   [UserActions.LOGOUT_USER](state: UserData, action: UserAction) {
-    setCookie('token', '', 1);
+    setCookie({ name: 'token', value: '', exhours: 1 });
     return {
       ...initialState,
     };

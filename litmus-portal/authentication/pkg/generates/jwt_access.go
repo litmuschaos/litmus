@@ -15,9 +15,11 @@ import (
 
 // JWTAccessClaims jwt claims
 type JWTAccessClaims struct {
-	UserName string `json:"username,omitempty"`
-	Email    string `json:"email,omitempty"`
-	Name     string `json:"name,omitempty"`
+	Role     models.Role `json:"role,omitempty"`
+	UID      string      `json:"uid,omitempty"`
+	UserName string      `json:"username,omitempty"`
+	Email    string      `json:"email,omitempty"`
+	Name     string      `json:"name,omitempty"`
 	jwt.StandardClaims
 }
 
@@ -48,11 +50,14 @@ func (a *JWTAccessGenerate) Token(data *GenerateBasic) (string, error) {
 		UserName: data.UserInfo.GetUserName(),
 		Email:    data.UserInfo.GetEmail(),
 		Name:     data.UserInfo.GetName(),
+		Role:     models.RoleAdmin,
+		UID:      data.UserInfo.GetID(),
 		StandardClaims: jwt.StandardClaims{
 			IssuedAt:  time.Now().Unix(),
 			ExpiresAt: data.TokenInfo.GetAccessCreateAt().Add(data.TokenInfo.GetAccessExpiresIn()).Unix(),
 		},
 	}
+
 	token := jwt.NewWithClaims(a.SignedMethod, claims)
 	var key interface{}
 	if a.isEs() {
