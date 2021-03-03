@@ -18,12 +18,7 @@ spec:
         app.kubernetes.io/version: latest
     spec:
       containers:
-        - args:
-            - --host=127.0.0.1
-            - --port=8081
-            - --telemetry-host=127.0.0.1
-            - --telemetry-port=8082
-          image: quay.io/coreos/kube-state-metrics:latest
+        - image: k8s.gcr.io/kube-state-metrics/kube-state-metrics:v2.0.0-beta
           securityContext:
             runAsUser: 65534
           livenessProbe:

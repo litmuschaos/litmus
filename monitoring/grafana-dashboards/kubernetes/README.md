@@ -1,13 +1,10 @@
 # Node and Pod K8s metrics dashboard
 
-This dashboard visualizes Node and Pod level CPU and memory utilization metrics interleaved with chaos events. 
+This dashboard visualizes Node and Pod level CPU and memory utilization metrics interleaved with chaos events.
 
-
-## Prerequisites 
+## Prerequisites
 
 - Node exporter and kube state metrics exporter with service monitor.
-
-- Litmus event router with service monitor.
 
 - Prometheus operator and deployment configured for using the service monitors.
 
@@ -16,7 +13,6 @@ OR
 - prometheus deployment with a scrape job for litmus and node exporter metrics.
 
 - Chaos engine name must match the labels used in PromQL for the grafana dashboard.
-
 
 ## Instructions
 
@@ -32,7 +28,6 @@ OR
 
 - Tune the PromQL queries to match the labels with engine name and other parameters as per need.
 
-
 ## Screenshot
 
-  ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/Node-and-Pod-metrics-Dashboard.png?raw=true)
+![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/Node-and-Pod-metrics-Dashboard.png?raw=true)

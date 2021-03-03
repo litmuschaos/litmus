@@ -133,7 +133,7 @@ data:
           - source_labels:
               - __meta_kubernetes_namespace
               - __meta_kubernetes_pod_label_name
-            action: keep
+            action: drop
             regex: ^kube-system;weave-net$
           - source_labels:
               - __meta_kubernetes_pod_container_name

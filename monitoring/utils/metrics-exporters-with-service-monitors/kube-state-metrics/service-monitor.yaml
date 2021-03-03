@@ -12,18 +12,18 @@ spec:
     - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
       honorLabels: true
       interval: 30s
-      port: https-main
+      port: http-metrics
       relabelings:
         - action: labeldrop
           regex: (pod|service|endpoint|namespace)
-      scheme: https
+      scheme: http
       scrapeTimeout: 30s
       tlsConfig:
         insecureSkipVerify: true
     - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
       interval: 30s
-      port: https-self
-      scheme: https
+      port: telemetry
+      scheme: http
       tlsConfig:
         insecureSkipVerify: true
   jobLabel: app.kubernetes.io/name
