@@ -11,14 +11,14 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   // WorkflowName Header
-  heading: {
+  title: {
     margin: theme.spacing(2, 0, 0, 0),
     fontSize: '1.5rem',
     fontWeight: 'bold',
   },
 
   // Second Heading
-  heading1: {
+  subtitle: {
     margin: theme.spacing(2, 0, 0, 0),
     fontSize: '1rem',
   },
@@ -30,21 +30,26 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   // Graphical View
-  workflowGraph: {
-    height: '40vh',
-    width: '100%',
-  },
-
   graphView: {
+    display: 'flex',
+    flexDirection: 'column',
     padding: '0.5rem 0.5rem',
-    height: '100%',
-    marginTop: theme.spacing(3),
-    marginLeft: theme.spacing(-1.5),
+    height: '68vh',
     backgroundColor: theme.palette.cards.header,
   },
 
-  nodeTable: {
+  nodesTable: {
     marginLeft: theme.spacing(-1.5),
+  },
+
+  infoDashboard: {
+    backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing(2),
+  },
+
+  closeButton: {
+    float: 'right',
+    borderColor: theme.palette.border.main,
   },
 }));
 

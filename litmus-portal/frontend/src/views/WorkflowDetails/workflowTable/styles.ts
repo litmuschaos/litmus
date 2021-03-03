@@ -11,19 +11,6 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
   },
 
-  applicationDetails: {
-    display: 'flex',
-  },
-
-  viewLogs: {
-    marginLeft: theme.spacing(1),
-    color: theme.palette.highlight,
-  },
-
-  arrowMargin: {
-    marginLeft: theme.spacing(1),
-  },
-
   // Table and Table Data Properties
   tableMain: {
     border: `1px solid ${theme.palette.cards.background}`,
@@ -41,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
       borderBottom: 0,
     },
   },
+
   tableHead: {
     height: '4.6875rem',
     '& p': {
@@ -55,30 +43,28 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 
-  columnWidth: {
-    maxWidth: '16.625rem',
-  },
-
   tableRows: {
     padding: theme.spacing(4),
     color: theme.palette.text.hint,
     height: '4.6875rem',
   },
 
-  dark: {
-    color: theme.palette.text.disabled,
+  tableCellWidth: {
+    maxWidth: '16.625rem',
   },
 
-  // runningText: {
-  //   color: theme.palette.text.disabled,
-  // },
-
-  failedText: {
-    color: theme.palette.error.main,
+  // Table Cell Buttons
+  applicationDetails: {
+    display: 'flex',
   },
 
-  successText: {
-    color: theme.palette.success.main,
+  viewLogs: {
+    marginLeft: theme.spacing(1),
+    color: theme.palette.highlight,
+  },
+
+  arrowMargin: {
+    marginLeft: theme.spacing(1),
   },
 
   // Pagination
@@ -86,6 +72,27 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(-0.25),
     borderTop: `1px solid ${theme.palette.border.main}`,
     width: '100%',
+  },
+
+  disabledText: {
+    color: theme.palette.text.disabled,
+  },
+
+  // Status Text Colors
+  running: {
+    color: theme.palette.highlight,
+  },
+
+  failed: {
+    color: theme.palette.error.main,
+  },
+
+  succeeded: {
+    color: theme.palette.success.main,
+  },
+
+  pending: {
+    color: theme.palette.text.primary,
   },
 
   status: {

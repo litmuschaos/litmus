@@ -146,9 +146,6 @@ const NodeLogs: React.FC<NodeLogsProps> = ({
 
   return (
     <div className={classes.root}>
-      <Typography className={classes.logsHeading}>
-        Logs for this step
-      </Typography>
       <div className={classes.logs}>
         {data !== undefined ? (
           <div>{parseLogs(data.getPodLog.log)}</div>

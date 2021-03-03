@@ -5,26 +5,10 @@ interface StyleProps {
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
-  // Graph options
-  graphOptions: {
-    color: theme.palette.text.primary,
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginTop: theme.spacing(2),
-  },
-  layoutButton: {
-    minWidth: 0,
-    borderColor: theme.palette.text.disabled,
-    marginRight: theme.spacing(2),
-    '& svg': {
-      fill: theme.palette.text.disabled,
-    },
-  },
-
   // Workflow Graph
   dagreGraph: {
     width: '100%',
-    height: '90%',
+    height: '100%',
     cursor: 'grab',
 
     // Styles for nodes
@@ -40,6 +24,7 @@ const useStyles = makeStyles((theme: Theme) => ({
           },
         },
         '& text': {
+          fontSize: '0.5rem',
           fill: theme.palette.text.primary,
         },
       },
@@ -66,7 +51,7 @@ const useStyles = makeStyles((theme: Theme) => ({
       },
       '& g.Running': {
         '& circle': {
-          fill: theme.palette.status.running.text,
+          fill: theme.palette.highlight,
         },
       },
       '& g.Pending': {
@@ -112,8 +97,8 @@ const useStyles = makeStyles((theme: Theme) => ({
         stroke: theme.palette.status.completed.text,
       },
       '& g.Running': {
-        fill: theme.palette.status.running.text,
-        stroke: theme.palette.status.running.text,
+        fill: theme.palette.highlight,
+        stroke: theme.palette.highlight,
       },
       '& g.Pending': {
         fill: theme.palette.status.pending.text,

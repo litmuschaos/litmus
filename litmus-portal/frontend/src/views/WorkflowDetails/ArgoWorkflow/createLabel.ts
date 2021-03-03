@@ -40,7 +40,7 @@ const createLabel: CreateLabel = ({ label, tooltip, phase, horizontal }) => {
   const increment = horizontal ? 10 : 25;
   for (let i = 0; i < label.length; i += increment) {
     const tspan = getNode('tspan', {
-      x: horizontal || label.length > 25 ? -3 * increment : -label.length * 3,
+      x: horizontal || label.length > 25 ? -2 * increment : -label.length * 3,
       y: (isFirefox ? 35 : 20) + i * (horizontal ? 1.2 : 0.6),
       dy: '1rem',
     });

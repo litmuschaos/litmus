@@ -8,17 +8,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.cards.background,
     padding: '1rem 1rem',
   },
-  bold: {
-    fontSize: '1rem',
-    fontWeight: 500,
-  },
-  header: {
-    color: theme.palette.secondary.dark,
-  },
-  nodeDetails: {
+
+  leftPanel: {
     width: '45%',
     marginRight: theme.spacing(2),
   },
+
+  workflowHeader: {
+    fontSize: '1rem',
+    marginBottom: theme.spacing(1),
+  },
+
   heightMaintainer: {
     marginTop: theme.spacing(2),
     display: 'flex',
@@ -26,9 +26,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'space-between',
   },
 
-  textMargin: {
+  subSection: {
     display: 'flex',
-    lineHeight: '2rem',
     justifyContent: 'space-between',
     margin: theme.spacing(0, 0, 1, 0),
   },
@@ -49,6 +48,16 @@ const useStyles = makeStyles((theme: Theme) => ({
   icon: {
     marginRight: theme.spacing(1),
   },
+
+  logsHeight: {
+    width: '100%',
+    height: '15rem',
+  },
+
+  runningStatusText: {
+    color: theme.palette.highlight,
+  },
+
   runningSmallIcon: {
     animation: 'runningSmallNodeSpinAnimation 2s ease-in-out infinite',
   },

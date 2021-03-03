@@ -33,13 +33,11 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
   return (
     <div className={classes.root}>
       {/* Node Details */}
-      <div className={classes.nodeDetails}>
-        <div className={classes.textMargin}>
-          <Typography className={classes.bold}>
-            {t('workflowDetailsView.workflowInfo.header')}:
-          </Typography>
-        </div>
-        <div className={classes.textMargin}>
+      <div className={classes.leftPanel}>
+        <Typography className={classes.workflowHeader}>
+          <strong>{t('workflowDetailsView.workflowInfo.header')}:</strong>
+        </Typography>
+        <div className={classes.subSection}>
           <Typography className={classes.text}>
             {trimstring(workflow_name, 30)}
           </Typography>
@@ -60,18 +58,22 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
         <hr />
         <div className={classes.heightMaintainer}>
           <div>
-            <div className={classes.textMargin}>
-              <Typography className={classes.bold}>
-                {t('workflowDetailsView.workflowNodeInfo.startTime')}:
+            <div className={classes.subSection}>
+              <Typography>
+                <strong>
+                  {t('workflowDetailsView.workflowNodeInfo.startTime')}:
+                </strong>
               </Typography>
               &nbsp;&nbsp;&nbsp;
               <Typography className={classes.text}>
                 {timeDifference(startedAt)}
               </Typography>
             </div>
-            <div className={classes.textMargin}>
-              <Typography className={classes.bold}>
-                {t('workflowDetailsView.workflowNodeInfo.duration')}:{' '}
+            <div className={classes.subSection}>
+              <Typography>
+                <strong>
+                  {t('workflowDetailsView.workflowNodeInfo.duration')}:{' '}
+                </strong>
               </Typography>
               &nbsp;&nbsp;&nbsp;
               <Typography className={classes.text}>
@@ -88,39 +90,49 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
               </Typography>
             </div>
           </div>
-          <div className={classes.textMargin}>
-            <Typography className={classes.bold}>
-              {t('workflowDetailsView.workflowNodeInfo.endTime')}:
+          <div className={classes.subSection}>
+            <Typography>
+              <strong>
+                {t('workflowDetailsView.workflowNodeInfo.endTime')}:
+              </strong>
             </Typography>
             &nbsp;&nbsp;&nbsp;
             <Typography className={classes.text}>
-              {finishedAt !== ''
-                ? timeDifference(finishedAt)
-                : 'Not yet finished'}
+              {finishedAt !== '' ? (
+                <span>{timeDifference(finishedAt)}</span>
+              ) : (
+                <span className={classes.runningStatusText}>Running</span>
+              )}
             </Typography>
           </div>
         </div>
         <div className={classes.marginTop}>
           <img className={classes.icon} src={'/icons/filledDownArrow.svg'} />
-          <Typography className={classes.bold}>
-            {t('workflowDetailsView.workflowNodeInfo.viewPairs')}
+          <Typography className={classes.text}>
+            <strong>
+              {t('workflowDetailsView.workflowNodeInfo.viewPairs')}
+            </strong>
           </Typography>
         </div>
         <div className={classes.marginTop}>
           <img className={classes.icon} src={'/icons/filledDownArrow.svg'} />
-          <Typography className={classes.bold}>
-            {t('workflowDetailsView.workflowNodeInfo.viewApplicationDetails')}
+          <Typography className={classes.text}>
+            <strong>
+              {t('workflowDetailsView.workflowNodeInfo.viewApplicationDetails')}
+            </strong>
           </Typography>
         </div>
       </div>
       {/* Node Logs*/}
-      <NodeLogs
-        cluster_id={cluster_id}
-        workflow_run_id={workflow_run_id}
-        pod_namespace={pod_namespace}
-        pod_name={pod_name}
-        pod_type={type}
-      />
+      <div className={classes.logsHeight}>
+        <NodeLogs
+          cluster_id={cluster_id}
+          workflow_run_id={workflow_run_id}
+          pod_namespace={pod_namespace}
+          pod_name={pod_name}
+          pod_type={type}
+        />
+      </div>
     </div>
   );
 };
