@@ -13,19 +13,39 @@ data:
       - job_name: 'chaos-monitor'
         static_configs:
           - targets: ['chaos-monitor.litmus.svc.cluster.local:8080']
-      - job_name: mysql_server1
+      - job_name: 'mysql_server1'
         static_configs:
           - targets: ['mysql-exporter.monitoring.svc.cluster.local:9104']
             labels:
               alias: db1
       - job_name: 'kube-state-metrics'
         static_configs:
-          - targets: ['kube-state-metrics.monitoring.svc.cluster.local:8443']
-      - job_name: 'node'
+          - targets: ['kube-state-metrics.monitoring.svc.cluster.local:8080']
+      - job_name: 'node-exporter'
         static_configs:
           - targets: ['node-exporter.monitoring.svc.cluster.local:9100']
-            labels:
-              alias: node
+        kubernetes_sd_configs:
+          - role: endpoints
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_endpoints_name]
+          regex: 'node-exporter'
+          action: keep
+      - job_name: 'cAdvisor'
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        kubernetes_sd_configs:
+        - role: node
+        relabel_configs:
+        - action: labelmap
+          regex: __meta_kubernetes_node_label_(.+)
+        - target_label: __address__
+          replacement: kubernetes.default.svc:443
+        - source_labels: [__meta_kubernetes_node_name]
+          regex: (.+)
+          target_label: __metrics_path__
+          replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
       - job_name: kubernetes-service-endpoints
         kubernetes_sd_configs:
           - role: endpoints

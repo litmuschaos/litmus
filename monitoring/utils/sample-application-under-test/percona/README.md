@@ -9,7 +9,7 @@ Run chaos experiments on percona application with grafana dashboard to monitor i
 - Setup Percona.
 
   ```
-  kubectl apply -f ../../sample-application-under-test/percona/deploy/crd.yaml
+  kubectl apply -f ../../sample-application-under-test/percona/crd.yaml
   ```
 
   ```
@@ -17,15 +17,15 @@ Run chaos experiments on percona application with grafana dashboard to monitor i
   ```
 
   ```
-  kubectl -n pxc apply -f ../../sample-application-under-test/percona/deploy/rbac.yaml
+  kubectl -n pxc apply -f ../../sample-application-under-test/percona/rbac.yaml
   ```
 
   ```
-  kubectl -n pxc apply -f ../../sample-application-under-test/percona/deploy/operator.yaml
+  kubectl -n pxc apply -f ../../sample-application-under-test/percona/operator.yaml
   ```
 
   ```
-  kubectl -n pxc apply -f ../../sample-application-under-test/percona/deploy/secrets.yaml
+  kubectl -n pxc apply -f ../../sample-application-under-test/percona/secrets.yaml
   ```
 
 - (optional-PMM) Setup PMM for Percona
@@ -54,13 +54,13 @@ Run chaos experiments on percona application with grafana dashboard to monitor i
   kubectl get service/monitoring-service -o wide
   ```
 
-- Apply the CR
+- Apply the CR with pmm:enabled: true OR false
 
   ```
-  kubectl -n pxc apply -f ../../sample-application-under-test/percona/deploy/cr.yaml
+  kubectl -n pxc apply -f ../../sample-application-under-test/percona/cr.yaml
   ```
 
-- To Check connectivity to newly created cluster
+- To Check connectivity to newly created cluster for PMM
 
   ```
   kubectl run -i --rm --tty percona-client --image=percona:8.0 --restart=Never -- bash -il percona-client:/$ mysql -h cluster1-haproxy -uroot -proot_password
@@ -75,6 +75,10 @@ Run chaos experiments on percona application with grafana dashboard to monitor i
   ```
 
 - Setup prometheus TSDB (Using mySQLd exporter for percona SQL metrics)
+
+  ```
+  kubectl create ns monitoring
+  ```
 
   > Model-1 (optional): Service monitor and prometheus operator model.
 
@@ -111,7 +115,7 @@ Run chaos experiments on percona application with grafana dashboard to monitor i
 
       ```
       kubectl -n litmus apply -f ../../metrics-exporters/litmus-metrics/chaos-exporter/
-      kubectl -n litmus apply -f ../../metrics-exporters/mysqld-exporter/
+      kubectl -n monitoring apply -f ../../metrics-exporters/mysqld-exporter/
       ```
 
 - Apply the grafana manifests after deploying prometheus for all metrics.
@@ -142,7 +146,7 @@ Run chaos experiments on percona application with grafana dashboard to monitor i
 
   ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/import-dashboard.png?raw=true)
 
-- (optional) Import the grafana dashboard "mySql Performance" provided [here](https://raw.githubusercontent.com/ishangupta-ds/litmus/percona/monitoring/grafana-dashboards/percona-sql/sql_overview.json)
+- (optional) Import the grafana dashboard "MySQL Overview" provided [here](https://raw.githubusercontent.com/ishangupta-ds/litmus/percona/monitoring/grafana-dashboards/percona-sql/MySQL-Overview-Interleaved.json)
 
 - (optional) Import the grafana dashboard "PXC Galera Node summary Performance" provided [here](https://raw.githubusercontent.com/ishangupta-ds/litmus/percona/monitoring/grafana-dashboards/percona-sql/PXC_Galera_Node_Summary_Interleaved.json)
 
@@ -162,8 +166,10 @@ kubectl apply -f ../../sample-chaos-injectors/chaos-experiments/percona/percona-
 
 ### Visualize Chaos Impact
 
+![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/mySQL-Overview-1.png?raw=true)
+
+![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/mySQL-Overview-2.png?raw=true)
+
 ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/Galera-Node-Summary-1.png?raw=true)
 
 ![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/Galera-Node-Summary-2.png?raw=true)
-
-![image](https://github.com/litmuschaos/litmus/blob/master/monitoring/screenshots/mySQL-Overview.png?raw=true)

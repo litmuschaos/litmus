@@ -328,7 +328,7 @@ spec:
   #        memory: 200M
   #        cpu: 500m
   pmm:
-    enabled: true
+    enabled: true #Switch to false for non-PMM setup.
     image: percona/pmm-client:2.12.0
     serverHost: monitoring-service
     serverUser: admin
