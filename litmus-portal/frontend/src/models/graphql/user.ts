@@ -103,3 +103,15 @@ export enum MyHubType {
   ssh = 'ssh',
   none = 'none',
 }
+
+export interface Projects {
+  listProjects: Project[];
+}
+
+export interface ProjectDetail {
+  getProject: Project;
+}
+
+export interface ProjectDetailVars {
+  projectID: string;
+}

@@ -10,6 +10,7 @@ export interface ChaosData {
   namespace: string;
   probeSuccessPercentage: string;
   runnerPod: string;
+  chaosResult?: any;
 }
 
 export interface Node {

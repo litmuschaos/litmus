@@ -3,28 +3,27 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme) => ({
   Header: {
     fontSize: '2.25rem',
-
-    marginLeft: theme.spacing(-43),
+    marginLeft: theme.spacing(-23),
   },
   toolbar: {
-    maxWidth: '63.75rem',
-    minWidth: '39.0625rem',
+    maxWidth: '31.18rem',
     borderBottom: `1px solid ${theme.palette.border.main}`,
     marginBottom: theme.spacing(1.25),
   },
-  InviteBtn: {
-    marginRight: theme.spacing(-5),
-  },
+  InviteBtn: {},
   table: {
-    maxWidth: '63.75rem',
-    minWidth: '39.0625rem',
+    maxWidth: '31.18rem',
     maxHeight: '20.1875rem',
+  },
+  btnFilled: {
+    width: '6.93rem',
+    marginRight: theme.spacing(16.75),
   },
   avatarBackground: {
     backgroundColor: theme.palette.secondary.main,
     width: '2.56rem',
     height: '2.56rem',
-    color: theme.palette.common.white,
+    color: theme.palette.text.primary,
     marginRight: theme.spacing(2.5),
     [theme.breakpoints.down('sm')]: {
       marginLeft: theme.spacing(2.5),
@@ -67,6 +66,15 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3.75),
     marginBottom: theme.spacing(2),
   },
+  email: {
+    color: `${theme.palette.text.hint}99`,
+  },
+  input: {
+    '&:-webkit-autofill': {
+      WebkitTextFillColor: theme.palette.text.secondary,
+      WebkitBoxShadow: `0 0 0 1000px ${theme.palette.background.paper} inset`,
+    },
+  },
   typo: {
     fontSize: '2.25rem',
   },
@@ -89,6 +97,13 @@ const useStyles = makeStyles((theme) => ({
   inviteSomeone: {
     display: 'flex',
     justifyContent: 'space-between',
+  },
+  tableCell: {
+    borderBottom: `1px solid  ${theme.palette.border.main}`,
+  },
+  topBar: {
+    borderBottom: `1px solid ${theme.palette.border.main}`,
+    marginBottom: -2,
   },
 }));
 export default useStyles;

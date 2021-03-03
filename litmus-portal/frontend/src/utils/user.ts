@@ -1,6 +1,6 @@
-export default function userAvatar(name: string) {
+export default function userAvatar(name?: string) {
   return name
-    .match(/(\b\S)?/g)
+    ?.match(/(\b\S)?/g)
     ?.join('')
     .match(/(^\S|\S$)?/g)
     ?.join('')

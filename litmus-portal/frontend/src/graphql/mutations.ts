@@ -168,3 +168,9 @@ export const RERUN_CHAOS_WORKFLOW = gql`
     reRunChaosWorkFlow(workflowID: $data)
   }
 `;
+
+export const LEAVE_PROJECT = gql`
+  mutation LeaveProject($data: MemberInput!) {
+    leaveProject(member: $data)
+  }
+`;

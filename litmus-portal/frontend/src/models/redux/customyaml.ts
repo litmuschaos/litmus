@@ -38,7 +38,7 @@ export interface Inputs {
 }
 
 export interface Template {
-  name: string;
+  name?: string;
   steps?: Steps[][];
   container?: Container;
   inputs?: Inputs;

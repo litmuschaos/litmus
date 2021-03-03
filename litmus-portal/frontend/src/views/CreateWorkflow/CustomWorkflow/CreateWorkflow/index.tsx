@@ -18,7 +18,7 @@ import {
 } from '@material-ui/core';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import { InputField } from 'litmus-ui';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
@@ -96,12 +96,13 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         customWorkflow: {
           ...workflowDetails.customWorkflow,
           description: parsedYaml.description.message,
+          experimentYAML: data.getYAMLData,
         },
       });
       gotoStep(1);
     },
   });
-
+  const [verifyYAML, setVerifyYAML] = useState(true);
   // Graphql query to get charts
   const [getCharts, { loading: chartsLoading }] = useLazyQuery<Charts>(
     GET_CHARTS_DATA,
@@ -140,9 +141,14 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       }
     },
   });
-  const [constructYAML, setConstructYAML] = useState(
-    data?.getHubStatus.length ? 'construct' : 'upload'
-  );
+  const [constructYAML, setConstructYAML] = useState('construct');
+  useEffect(() => {
+    if (data?.getHubStatus.length) {
+      setConstructYAML('construct');
+    } else {
+      setConstructYAML('upload');
+    }
+  }, [data]);
   // Function to get charts of a particular hub
   const findChart = (hubname: string) => {
     const myHubData = data?.getHubStatus.filter((myHub) => {
@@ -180,11 +186,18 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         const readFile = await file.text();
         setUploadedYAML(readFile);
         setFileName(file.name);
-        const parsedYaml = YAML.parse(readFile);
-        workflowAction.setWorkflowDetails({
-          ...workflowDetails,
-          yaml: YAML.stringify(parsedYaml),
-        });
+        try {
+          const parsedYaml = YAML.parse(readFile);
+          setVerifyYAML(true);
+          workflowAction.setWorkflowDetails({
+            ...workflowDetails,
+            yaml: YAML.stringify(parsedYaml),
+          });
+        } catch (err) {
+          console.error(err);
+          setVerifyYAML(false);
+          setUploadedYAML('');
+        }
       });
   };
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -196,11 +209,18 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     if ((extension === 'yaml' || extension === 'yml') && readFile) {
       readFile.text().then((response) => {
         setUploadedYAML(response);
-        const parsedYaml = YAML.parse(response);
-        workflowAction.setWorkflowDetails({
-          ...workflowDetails,
-          yaml: YAML.stringify(parsedYaml),
-        });
+        try {
+          const parsedYaml = YAML.parse(response);
+          setVerifyYAML(true);
+          workflowAction.setWorkflowDetails({
+            ...workflowDetails,
+            yaml: YAML.stringify(parsedYaml),
+          });
+        } catch (err) {
+          console.error(err);
+          setVerifyYAML(false);
+          setUploadedYAML('');
+        }
       });
     } else {
       workflowAction.setWorkflowDetails({
@@ -404,23 +424,6 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                                           `${exp.ChaosName}/${exp.ExperimentName}`
                                         );
                                         setOpen(false);
-                                        if (selectedHub === 'Public Hub') {
-                                          workflowAction.setWorkflowDetails({
-                                            customWorkflow: {
-                                              ...workflowDetails.customWorkflow,
-                                              experiment_name: `${exp.ChaosName}/${exp.ExperimentName}`,
-                                              yamlLink: `${workflowDetails.customWorkflow.repoUrl}/raw/${workflowDetails.customWorkflow.repoBranch}/charts/${exp.ChaosName}/${exp.ExperimentName}/engine.yaml`,
-                                            },
-                                          });
-                                        } else {
-                                          workflowAction.setWorkflowDetails({
-                                            customWorkflow: {
-                                              ...workflowDetails.customWorkflow,
-                                              experiment_name: `${exp.ChaosName}/${exp.ExperimentName}`,
-                                              yamlLink: `${selectedHubDetails?.RepoURL}/raw/${selectedHubDetails?.RepoBranch}/charts/${exp.ChaosName}/${exp.ExperimentName}/engine.yaml`,
-                                            },
-                                          });
-                                        }
                                       }}
                                     >
                                       {exp.ExperimentName}
@@ -539,6 +542,11 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
                   )}
                 </Paper>
               ) : null}
+              {!verifyYAML ? (
+                <Typography className={classes.uploadTextWarning}>
+                  {t('customWorkflow.createWorkflow.uploadFailMessage')}{' '}
+                </Typography>
+              ) : null}
             </RadioGroup>
           </FormControl>
         </div>
@@ -547,6 +555,13 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
         <ButtonFilled
           handleClick={() => {
             if (constructYAML === 'upload' && uploadedYAML !== '') {
+              const parsedYaml = YAML.parse(workflowDetails.yaml);
+              parsedYaml.metadata.name = workflowData.workflow_name;
+              parsedYaml.metadata.namespace = workflowData.namespace;
+              workflowAction.setWorkflowDetails({
+                ...workflowDetails,
+                yaml: YAML.stringify(parsedYaml),
+              });
               history.push('/create-workflow');
               template.selectTemplate({ isDisable: false });
             }
@@ -557,6 +572,7 @@ const CreateWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
               customWorkflow: {
                 ...workflowDetails.customWorkflow,
                 hubName: selectedHub,
+                experiment_name: selectedExp,
                 repoUrl: selectedHubDetails?.RepoURL,
                 repoBranch: selectedHubDetails?.RepoBranch,
                 yaml: '',

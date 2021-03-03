@@ -47,7 +47,7 @@ interface YamlEditorProps {
   id: string;
   content: string;
   filename: string;
-  yamlLink: string;
+  yamlLink?: string;
   description: string;
   readOnly: boolean;
 }

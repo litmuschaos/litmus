@@ -37,7 +37,6 @@ const ExperimentEditor: React.FC<ExperimentEditorProps> = ({ gotoStep }) => {
         <YamlEditor
           content={customWorkflow.yaml as string}
           filename={customWorkflow.experiment_name as string}
-          yamlLink={customWorkflow.yamlLink as string}
           id="1"
           description={description}
           readOnly

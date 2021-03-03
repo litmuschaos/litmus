@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import ButtonFilled from '../../../../../components/Button/ButtonFilled';
 import Loader from '../../../../../components/Loader';
 import config from '../../../../../config';
-import getToken from '../../../../../utils/getToken';
+import { getToken } from '../../../../../utils/auth';
 import useStyles from './styles';
 
 // props for ResetModal component

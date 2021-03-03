@@ -114,6 +114,11 @@ const useStyles = makeStyles((theme) => ({
     margin: 'auto',
     paddingTop: theme.spacing(3.125),
   },
+  uploadTextWarning: {
+    fontSize: '1rem',
+    marginTop: theme.spacing(1.5),
+    color: theme.palette.error.main,
+  },
   uploadBtn: {
     textTransform: 'none',
     width: '8.5rem',

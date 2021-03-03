@@ -17,6 +17,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   heightMaintainer: {
     lineHeight: '2rem',
   },
+  resultBtn: {
+    marginLeft: theme.spacing(2.25),
+  },
   footerButton: {
     marginLeft: 'auto',
     display: 'flex',
