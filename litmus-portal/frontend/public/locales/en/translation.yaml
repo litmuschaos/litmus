@@ -374,6 +374,8 @@ settings:
     setting: Back to settings
 
 workflowDetailsView:
+  headerDesc: Workflow dashboard of
+  headerMiniDesc: Description of the workflow
   argoWorkflow:
     loading: Loading Graph...
   nodeLogs:
@@ -382,18 +384,21 @@ workflowDetailsView:
     couldNot: Could not get logs
     chaosLogs: Chaos logs unavailable
   workflowInfo:
-    header: Workflow name
-    cluster: Cluster
-    param:
-      state: State
-      startTime: Start Time
-      endTime: End Time
-      duration: Duration
-      namespace: Namespace
-    nodeDetails:
-      curr: Currently Running Nodes
-      exec: Executed Nodes
-      noExec: No executed nodes
+    header: Overall Workflow Description
+    resilienceScore: Resilience Score
+    runTime: 
+      runTimeHeader: Run Time
+      startTime: "Start Time :"
+      endTime: "End Time :"
+    hostedOn:
+      hostedOnHeader: Hosted On
+      cluster: "Cluster :"
+      namespace: "Namespace :"
+    targets:
+      targetsHeader: Targets
+      cluster: "Cluster :"
+      namespace: "Namespace :"
+    application: "Application :"
   workflowNodeInfo:
     name: Name
     type: Type
@@ -401,6 +406,17 @@ workflowDetailsView:
     startTime: Start Time
     endTime: End Time
     duration: Duration
+    viewPairs: View the key value pairs
+    viewApplicationDetails: View the application details
+  tableView:
+    tableHeader:
+      stepName: Step Name
+      status: Status
+      duration: Duration
+      startTime: Start Time
+      applicationDetails: Application Details 
+    showProperties: Show properties
+    viewLogs: View Logs
     nodeName: Step Name
     button:
       logs: Logs

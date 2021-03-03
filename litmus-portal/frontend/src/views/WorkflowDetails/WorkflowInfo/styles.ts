@@ -1,25 +1,58 @@
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles((theme) => ({
+  // root
   root: {
-    width: '100%',
-    marginTop: '1rem',
+    padding: theme.spacing(5),
   },
+
+  // Class to be used when WorkflowInfo is in Bottom of DagreGraph.
+  rootBottom: {
+    backgroundColor: theme.palette.background.paper,
+  },
+
+  // Class to be used when WorkflowInfo is in Header of Nodes Table.
+  rootHeader: {
+    backgroundColor: theme.palette.cards.header,
+  },
+
+  // Header
   header: {
-    color: theme.palette.secondary.dark,
+    fontSize: '1.5rem',
+    marginBottom: theme.spacing(2),
   },
-  bold: {
-    fontWeight: 500,
+
+  // Section divided into 4 parts in flex display.
+  section: {
+    display: 'flex',
   },
-  workflowSpacing: {
-    margin: '1rem 0',
+
+  // Division in 4 parts
+  subSection: {
+    width: '25%',
   },
-  divider: {
-    background: theme.palette.primary.main,
-    height: '0.2rem',
+
+  // Sub section division in 2 parts
+  subCategorySection: {
+    width: '50%',
   },
-  heightMaintainer: {
-    lineHeight: '2rem',
+
+  // Sub Section Title
+  subSectionTitle: {
+    fontSize: '1.3rem',
+    fontWeight: 'bold',
+    marginBottom: theme.spacing(2),
+  },
+
+  // Sub category Section Title
+  subCategorySectionTitle: {
+    color: theme.palette.text.disabled,
+    fontSize: '1rem',
+  },
+
+  resilliencyScore: {
+    color: theme.palette.highlight,
+    fontSize: '1.5rem',
   },
 }));
 

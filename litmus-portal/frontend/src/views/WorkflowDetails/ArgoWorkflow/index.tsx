@@ -1,6 +1,3 @@
-import { Typography } from '@material-ui/core';
-import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';
-import { ButtonOutlined } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import DagreGraph, { d3Link, d3Node } from '../../../components/DagreGraph';
@@ -8,7 +5,6 @@ import { Nodes } from '../../../models/graphql/workflowData';
 import useActions from '../../../redux/actions';
 import * as ToggleButtonAction from '../../../redux/actions/button';
 import * as NodeSelectionActions from '../../../redux/actions/nodeSelection';
-import * as TabActions from '../../../redux/actions/tabs';
 import { createLabel } from './createLabel';
 import useStyles from './styles';
 
@@ -24,12 +20,11 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
   const { t } = useTranslation();
 
   // Graph orientation
-  const [horizontal, setHorizontal] = useState(false);
+  const horizontal = true;
 
   const classes = useStyles({ horizontal });
   // Redux action call for updating selected node
   const nodeSelection = useActions(NodeSelectionActions);
-  const tabs = useActions(TabActions);
   const toggleButtonAction = useActions(ToggleButtonAction);
 
   const [graphData, setGraphData] = useState<GraphData>({
@@ -97,18 +92,6 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
 
   return graphData.nodes.length ? (
     <>
-      <div className={classes.graphOptions}>
-        <div>
-          <ButtonOutlined
-            className={classes.layoutButton}
-            onClick={() => setHorizontal(!horizontal)}
-          >
-            <AccountTreeRoundedIcon />
-          </ButtonOutlined>
-          <Typography component="span">Horizontal</Typography>
-        </div>
-      </div>
-
       <DagreGraph
         className={classes.dagreGraph}
         nodes={graphData.nodes}
@@ -127,7 +110,6 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({ nodes }) => {
             (key) => key === original?.id
           )[0];
           setSelectedNodeID(nodeID);
-          tabs.changeWorkflowDetailsTabs(1);
           toggleButtonAction.toggleInfoButton({
             isInfoToggled: true,
           });
