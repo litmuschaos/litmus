@@ -20,7 +20,11 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
   const { t } = useTranslation();
 
   return (
-    <div className={tab === 1 ? classes.rootLight : classes.rootHeader}>
+    <div
+      className={`${classes.root} ${
+        tab === 1 ? classes.rootBottom : classes.rootHeader
+      }`}
+    >
       {/* Workflow Information */}
 
       {/* Header Section */}

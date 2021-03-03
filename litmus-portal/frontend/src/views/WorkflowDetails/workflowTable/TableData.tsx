@@ -38,23 +38,19 @@ const TableData: React.FC<TableDataProps> = ({ data, handleClose }) => {
             />
           </span>
           <Typography>
-            {data.phase === 'Succeeded' ? (
-              <span className={classes.succeeded}>
-                <strong>{data.phase}</strong>
-              </span>
-            ) : data.phase === 'failed' ? (
-              <span className={classes.failed}>
-                <strong>{data.phase}</strong>
-              </span>
-            ) : data.phase === 'Running' ? (
-              <span className={classes.running}>
-                <strong>{data.phase}</strong>
-              </span>
-            ) : (
-              <span className={classes.pending}>
-                <strong>{data.phase}</strong>
-              </span>
-            )}
+            <span
+              className={`${
+                data.phase === 'Succeeded'
+                  ? classes.succeeded
+                  : data.phase === 'failed'
+                  ? classes.failed
+                  : data.phase === 'Running'
+                  ? classes.running
+                  : classes.pending
+              }`}
+            >
+              <strong>{data.phase}</strong>
+            </span>
           </Typography>
         </div>
       </StyledTableCell>

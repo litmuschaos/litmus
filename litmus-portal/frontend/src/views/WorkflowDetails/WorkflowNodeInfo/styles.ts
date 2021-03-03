@@ -10,8 +10,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   leftPanel: {
-    width: '45%',
     marginRight: theme.spacing(2),
+    width: '45%',
   },
 
   workflowHeader: {

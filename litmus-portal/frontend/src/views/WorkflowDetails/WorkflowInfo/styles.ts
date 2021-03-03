@@ -1,16 +1,19 @@
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
-  // Class to be used when WorkflowInfo is in Bottom of DagreGraph.
-  rootLight: {
-    backgroundColor: theme.palette.background.paper,
+  // root
+  root: {
     padding: theme.spacing(5),
   },
 
-  // Classto be used when WorkflowInfo is in Header of Nodes Table.
+  // Class to be used when WorkflowInfo is in Bottom of DagreGraph.
+  rootBottom: {
+    backgroundColor: theme.palette.background.paper,
+  },
+
+  // Class to be used when WorkflowInfo is in Header of Nodes Table.
   rootHeader: {
     backgroundColor: theme.palette.cards.header,
-    padding: theme.spacing(5),
   },
 
   // Header

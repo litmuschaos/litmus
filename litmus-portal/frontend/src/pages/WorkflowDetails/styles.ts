@@ -19,8 +19,8 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // Second Heading
   subtitle: {
-    margin: theme.spacing(2, 0, 0, 0),
     fontSize: '1rem',
+    margin: theme.spacing(2, 0, 0, 0),
   },
 
   // AppBar and Tabs
@@ -48,8 +48,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   closeButton: {
-    float: 'right',
     borderColor: theme.palette.border.main,
+    float: 'right',
   },
 }));
 

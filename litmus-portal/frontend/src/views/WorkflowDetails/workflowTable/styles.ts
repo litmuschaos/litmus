@@ -13,8 +13,8 @@ const useStyles = makeStyles((theme) => ({
 
   // Table and Table Data Properties
   tableMain: {
-    border: `1px solid ${theme.palette.cards.background}`,
     backgroundColor: theme.palette.cards.background,
+    border: `1px solid ${theme.palette.cards.background}`,
     '&::-webkit-scrollbar': {
       width: '0.2em',
     },

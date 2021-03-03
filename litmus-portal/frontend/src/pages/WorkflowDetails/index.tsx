@@ -171,7 +171,7 @@ const WorkflowDetails: React.FC = () => {
                     {pod_name !==
                     JSON.parse(workflow.execution_data).nodes[
                       Object.keys(
-                        JSON.parse(workflow?.execution_data as string).nodes
+                        JSON.parse(workflow.execution_data as string).nodes
                       )[0]
                     ].name ? (
                       /* Node details and Logs */

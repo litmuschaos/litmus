@@ -7,34 +7,34 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // Header
   header: {
-    display: 'flex',
     alignItems: 'center',
+    display: 'flex',
     height: '8rem',
   },
 
   // Header title
   title: {
-    fontWeight: 'bold',
     fontSize: '1.5rem',
+    fontWeight: 'bold',
   },
 
   // Section
   section: {
-    width: '100%',
     display: 'flex',
+    width: '100%',
   },
 
   // Left side panel for Nodes data
   nodesData: {
-    width: '35%',
     margin: theme.spacing(7, 2, 2, 2),
+    width: '35%',
   },
 
   // One Node data
   nodeData: {
-    marginTop: theme.spacing(2),
     display: 'flex',
     justifyContent: 'space-between',
+    marginTop: theme.spacing(2),
   },
 
   // Experiment
@@ -45,15 +45,15 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // Node Title
   nodeName: {
-    fontSize: '1rem',
     cursor: 'pointer',
+    fontSize: '1rem',
   },
 
   // Node Status Block
   status: {
     display: 'flex',
-    flexDirection: 'row',
     float: 'left',
+    flexDirection: 'row',
   },
 
   // Icon with right margin

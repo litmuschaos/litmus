@@ -7,9 +7,9 @@ interface StyleProps {
 const useStyles = makeStyles((theme: Theme) => ({
   // Workflow Graph
   dagreGraph: {
-    width: '100%',
-    height: '100%',
     cursor: 'grab',
+    height: '100%',
+    width: '100%',
 
     // Styles for nodes
     '& g g.nodes': {

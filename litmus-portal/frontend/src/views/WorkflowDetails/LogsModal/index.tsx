@@ -90,7 +90,7 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
             <img src="/icons/workflow_icon.svg" alt="Workflow Icon" />
           </span>
           <Typography className={classes.title}>
-            Workflow Dashboard of {workflow_name}
+            {t('workflowDetailsView.headerDesc')} {workflow_name}
           </Typography>
         </div>
         <hr />
@@ -100,6 +100,7 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
               <div
                 className={classes.nodeData}
                 onClick={() => changeNodeLogs(node.id)}
+                key={node.id}
               >
                 <div className={classes.experiment}>
                   <span className={classes.icon}>
@@ -125,23 +126,19 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
                     />
                   </span>
                   <Typography>
-                    {node.phase === 'Succeeded' ? (
-                      <span className={classes.succeeded}>
-                        <strong>{node.phase}</strong>
-                      </span>
-                    ) : node.phase === 'Failed' ? (
-                      <span className={classes.failed}>
-                        <strong>{node.phase}</strong>
-                      </span>
-                    ) : node.phase === 'Running' ? (
-                      <span className={classes.running}>
-                        <strong>{node.phase}</strong>
-                      </span>
-                    ) : (
-                      <span className={classes.pending}>
-                        <strong>{node.phase}</strong>
-                      </span>
-                    )}
+                    <span
+                      className={`${
+                        node.phase === 'Succeeded'
+                          ? classes.succeeded
+                          : node.phase === 'failed'
+                          ? classes.failed
+                          : node.phase === 'Running'
+                          ? classes.running
+                          : classes.pending
+                      }`}
+                    >
+                      <strong>{node.phase}</strong>
+                    </span>
                   </Typography>
                 </div>
               </div>
@@ -170,23 +167,19 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
                   />
                 </span>
                 <Typography>
-                  {phase === 'Succeeded' ? (
-                    <span className={classes.succeeded}>
-                      <strong>{phase}</strong>
-                    </span>
-                  ) : phase === 'failed' ? (
-                    <span className={classes.failed}>
-                      <strong>{phase}</strong>
-                    </span>
-                  ) : phase === 'Running' ? (
-                    <span className={classes.running}>
-                      <strong>{phase}</strong>
-                    </span>
-                  ) : (
-                    <span className={classes.pending}>
-                      <strong>{phase}</strong>
-                    </span>
-                  )}
+                  <span
+                    className={`${
+                      phase === 'Succeeded'
+                        ? classes.succeeded
+                        : phase === 'failed'
+                        ? classes.failed
+                        : phase === 'Running'
+                        ? classes.running
+                        : classes.pending
+                    }`}
+                  >
+                    <strong>{phase}</strong>
+                  </span>
                 </Typography>
               </div>
               <div>
