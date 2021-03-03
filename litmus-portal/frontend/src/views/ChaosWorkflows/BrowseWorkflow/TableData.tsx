@@ -46,7 +46,9 @@ const TableData: React.FC<TableDataProps> = ({ data, exeData }) => {
   return (
     <>
       <TableCell className={classes.tableDataStatus}>
-        <CustomStatus status={exeData.phase} />
+        <CustomStatus
+          status={exeData.finishedAt.length === 0 ? 'Running' : exeData.phase}
+        />
       </TableCell>
       <TableCell className={classes.workflowNameData}>
         <Typography data-cy="workflowName">

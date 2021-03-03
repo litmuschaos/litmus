@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -172,7 +173,7 @@ func QueryGetClusters(projectID string, clusterType *string) ([]*model.Cluster, 
 
 	for _, cluster := range clusters {
 		var totalNoOfSchedules int
-
+		lastWorkflowTimestamp := "0"
 		workflows, err := dbOperationsWorkflow.GetWorkflowsByClusterID(cluster.ClusterID)
 		if err != nil {
 			return nil, err
@@ -181,9 +182,14 @@ func QueryGetClusters(projectID string, clusterType *string) ([]*model.Cluster, 
 		copier.Copy(&newCluster, &cluster)
 		newCluster.NoOfWorkflows = func(i int) *int { return &i }(len(workflows))
 		for _, workflow := range workflows {
-			totalNoOfSchedules = totalNoOfSchedules + len(workflow.WorkflowRuns)
+			if workflow.IsRemoved == false {
+				totalNoOfSchedules = totalNoOfSchedules + len(workflow.WorkflowRuns)
+			}
+			if strings.Compare(workflow.UpdatedAt, lastWorkflowTimestamp) == 1 {
+				lastWorkflowTimestamp = workflow.UpdatedAt
+			}
 		}
-
+		newCluster.LastWorkflowTimestamp = lastWorkflowTimestamp
 		newCluster.NoOfSchedules = func(i int) *int { return &i }(totalNoOfSchedules)
 
 		newClusters = append(newClusters, &newCluster)

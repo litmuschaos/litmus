@@ -7,7 +7,7 @@ import useActions from '../../redux/actions';
 import * as AnalyticsActions from '../../redux/actions/analytics';
 import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
-import getToken from '../../utils/getToken';
+import { getToken } from '../../utils/auth';
 import useStyles from './App-styles';
 
 const ErrorPage = lazy(() => import('../../pages/ErrorPage'));
@@ -44,12 +44,6 @@ interface RoutesProps {
 
 const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
   const classes = useStyles();
-  const iframe = () => {
-    return {
-      __html:
-        '<iframe src="/api-doc/index.html" style="width:100%; height:100vh;"></iframe>',
-    };
-  };
 
   if (getToken() === '') {
     return (
@@ -58,9 +52,7 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
           <Route
             exact
             path="/api-doc"
-            component={() => {
-              return <div dangerouslySetInnerHTML={iframe()} />;
-            }}
+            render={() => <Redirect to="/api-doc/index.html" />}
           />
           <Route exact path="/login" component={LoginPage} />
           <Route path="/" render={() => <Redirect to="/login" />} />
@@ -77,9 +69,7 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
           <Route
             exact
             path="/api-doc"
-            component={() => {
-              return <div dangerouslySetInnerHTML={iframe()} />;
-            }}
+            render={() => <Redirect to="/api-doc/index.html" />}
           />
           <Route path="/" render={() => <Redirect to="/" />} />
         </Switch>
@@ -96,9 +86,7 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
         <Route
           exact
           path="/api-doc"
-          component={() => {
-            return <div dangerouslySetInnerHTML={iframe()} />;
-          }}
+          render={() => <Redirect to="/api-doc/index.html" />}
         />
         {/* Redirects */}
         <Redirect exact path="/login" to="/" />

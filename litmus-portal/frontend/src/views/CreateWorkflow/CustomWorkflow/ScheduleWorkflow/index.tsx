@@ -1,8 +1,14 @@
-import { Typography, Paper } from '@material-ui/core';
+import {
+  Typography,
+  Paper,
+  FormControlLabel,
+  Checkbox,
+} from '@material-ui/core';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import { useTranslation } from 'react-i18next';
+import { ButtonOutlined, Modal } from 'litmus-ui';
 import ButtonFilled from '../../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../../components/Button/ButtonOutline';
 import { customWorkflow } from '../../../../models/redux/workflow';
@@ -25,6 +31,8 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
   );
   const workflowAction = useActions(WorkflowActions);
   const template = useActions(TemplateSelectionActions);
+  const [revertChaos, setRevertChaos] = useState(true);
+  const [confirmModal, setConfirmModal] = useState(false);
   const [draggedItem, setDraggedItem] = useState<customWorkflow>();
   const classes = useStyles();
   const { t } = useTranslation();
@@ -82,7 +90,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
     });
   };
   // State to generate a custom YAML
-  const [generatedYAML, setGeneratedYAML] = useState<CustomYAML>({
+  const yamlTemplate: CustomYAML = {
     apiVersion: 'argoproj.io/v1alpha1',
     kind: 'Workflow',
     metadata: {
@@ -113,60 +121,85 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
             command: [],
             args: [],
           },
-          inputs: {
-            artifacts: [
-              {
-                name: '',
-                path: '',
-                raw: {
-                  data: '',
-                },
-              },
-            ],
-          },
         },
       ],
     },
-  });
-  // Initial step in experiment
-  const customSteps: Steps[][] = [
-    [
-      {
-        name: 'install-chaos-experiments',
-        template: 'install-chaos-experiments',
-      },
-    ],
-  ];
+  };
+
+  const [generatedYAML, setGeneratedYAML] = useState<CustomYAML>(yamlTemplate);
+
   // Function to generate custom YAML
   const customYAMLGenerator = () => {
+    // Install all experiment string
     let installAllExp = '';
+
+    // Remove chaosEngine
+    let removeChaosEngine = '';
+
+    // Initial step in experiment
+    const customSteps: Steps[][] = [
+      [
+        {
+          name: 'install-chaos-experiments',
+          template: 'install-chaos-experiments',
+        },
+      ],
+    ];
     workflows.forEach((data) => {
+      installAllExp = `${installAllExp}kubectl apply -f /tmp/${
+        data.experiment_name?.split('/')[1]
+      }.yaml -n {{workflow.parameters.adminModeNamespace}} | `;
+      removeChaosEngine = `${removeChaosEngine} ${
+        data.experiment_name?.split('/')[1]
+      } `;
       customSteps.push([
         {
           name: data.experiment_name?.split('/')[1] as string,
           template: data.experiment_name?.split('/')[1] as string,
         },
       ]);
-      installAllExp = `${installAllExp}kubectl apply -f ${data.repoUrl}/raw/${data.repoBranch}/charts/${data.experiment_name}/experiment.yaml -n {{workflow.parameters.adminModeNamespace}} | `;
     });
-    customSteps.push([
-      {
-        name: 'revert-chaos',
-        template: 'revert-chaos',
-      },
-    ]);
+    if (revertChaos) {
+      customSteps.push([
+        {
+          name: 'revert-chaos',
+          template: 'revert-chaos',
+        },
+      ]);
+    }
+
+    // Step 1 in template (creating array of chaos-steps)
     generatedYAML.spec.templates[0] = {
       name: 'custom-chaos',
       steps: customSteps,
     };
+
+    // Step 2 in template (experiment YAMLs of all experiments)
     generatedYAML.spec.templates[1] = {
       name: 'install-chaos-experiments',
+      inputs: {
+        artifacts: [],
+      },
       container: {
         args: [`${installAllExp}sleep 30`],
         command: ['sh', '-c'],
         image: 'lachlanevenson/k8s-kubectl',
       },
     };
+    workflows.forEach((data) => {
+      const experimentData = generatedYAML.spec.templates[1].inputs?.artifacts;
+      if (experimentData !== undefined) {
+        experimentData.push({
+          name: data.experiment_name?.split('/')[1] as string,
+          path: `/tmp/${data.experiment_name?.split('/')[1]}.yaml`,
+          raw: {
+            data: data.experimentYAML as string,
+          },
+        });
+      }
+    });
+
+    // Step 3 in template (engine YAMLs of all experiments)
     workflows.forEach((data) => {
       generatedYAML.spec.templates.push({
         name: data.experiment_name?.split('/')[1] as string,
@@ -195,23 +228,32 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       });
     });
 
-    generatedYAML.spec.templates[generatedYAML.spec.templates.length] = {
-      name: 'revert-chaos',
-      container: {
-        args: [
-          'kubectl delete chaosengines --all -n {{workflow.parameters.adminModeNamespace}}',
-        ],
-        command: ['sh', '-c'],
-        image: 'lachlanevenson/k8s-kubectl',
-      },
-    };
+    if (revertChaos) {
+      generatedYAML.spec.templates[generatedYAML.spec.templates.length] = {
+        name: 'revert-chaos',
+        container: {
+          args: [
+            `kubectl delete chaosengine ${removeChaosEngine} -n {{workflow.parameters.adminModeNamespace}}`,
+          ],
+          command: ['sh', '-c'],
+          image: 'lachlanevenson/k8s-kubectl',
+        },
+      };
+    }
+
     setGeneratedYAML(generatedYAML);
     workflowAction.setWorkflowDetails({
       yaml: YAML.stringify(generatedYAML),
       stepperActiveStep: 2,
     });
-    template.selectTemplate({ isDisable: false });
+    template.selectTemplate({
+      isDisable: false,
+    });
     history.push('/create-workflow');
+  };
+
+  const handleModalClose = () => {
+    setConfirmModal(false);
   };
 
   return (
@@ -308,7 +350,7 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
       <div className={classes.nextButtonDiv}>
         <ButtonFilled
           handleClick={() => {
-            customYAMLGenerator();
+            setConfirmModal(true);
           }}
           isPrimary
           isDisabled={workflows.length === 0}
@@ -323,6 +365,69 @@ const ScheduleCustomWorkflow: React.FC<VerifyCommitProps> = ({ gotoStep }) => {
           </div>
         </ButtonFilled>
       </div>
+      {/* Revert Chaos Confirmation Modal */}
+      <Modal
+        open={confirmModal}
+        onClose={handleModalClose}
+        width="60%"
+        modalActions={
+          <ButtonOutlined onClick={handleModalClose}>&#x2715;</ButtonOutlined>
+        }
+      >
+        <div className={classes.modalDiv}>
+          <div style={{ textAlign: 'left' }}>
+            <Typography className={classes.modalHeaderText}>
+              {t('customWorkflow.scheduleWorkflow.proceed')}
+            </Typography>
+            <Typography className={classes.modalExpName}>
+              {' '}
+              {workflowDetails.name}{' '}
+            </Typography>
+            <Typography className={classes.modalHeaderText}>
+              {t('customWorkflow.scheduleWorkflow.selection')}
+            </Typography>
+            <FormControlLabel
+              className={classes.checkBox}
+              control={
+                <Checkbox
+                  checked={revertChaos}
+                  onChange={(event) => {
+                    return (
+                      setRevertChaos(event.target.checked),
+                      setGeneratedYAML(yamlTemplate)
+                    );
+                  }}
+                  className={classes.checkBoxDefault}
+                  name="checkedB"
+                  color="primary"
+                />
+              }
+              label={
+                <Typography className={classes.checkBoxText}>
+                  {t('customWorkflow.scheduleWorkflow.revert')}
+                </Typography>
+              }
+            />
+            <Typography className={classes.unselectText}>
+              {t('customWorkflow.scheduleWorkflow.unselect')}
+            </Typography>
+            <div className={classes.modalBtnDiv}>
+              <ButtonOutlined onClick={() => setConfirmModal(false)}>
+                {t('customWorkflow.scheduleWorkflow.cancel')}
+              </ButtonOutlined>
+              <div className={classes.constructBtn}>
+                <ButtonFilled
+                  isPrimary
+                  handleClick={customYAMLGenerator}
+                  isDisabled={workflows.length === 0}
+                >
+                  {t('customWorkflow.scheduleWorkflow.construct')}
+                </ButtonFilled>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
