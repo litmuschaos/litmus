@@ -96,7 +96,11 @@ const AcceptedInvitations: React.FC = () => {
     <>
       {projectOther.length ? (
         projectOther.map((project) => (
-          <div data-cy="receivedInvitationModal" className={classes.rootDiv}>
+          <div
+            data-cy="receivedInvitationModal"
+            className={classes.rootDiv}
+            key={`${project}`}
+          >
             <Paper className={classes.root}>
               <div className={classes.projectDiv}>
                 <img src="./icons/litmus-icon.svg" alt="chaos" />

@@ -440,7 +440,7 @@ const TeamingTab: React.FC = () => {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {acceptedFilteredData.length > 0 ? (
+                        {acceptedFilteredData?.length > 0 ? (
                           acceptedFilteredData
                             .slice(
                               paginationData.pageNo *
@@ -523,7 +523,7 @@ const TeamingTab: React.FC = () => {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {notAcceptedFilteredData.length > 0 ? (
+                        {notAcceptedFilteredData?.length > 0 ? (
                           notAcceptedFilteredData
                             .slice(
                               paginationData.pageNo *

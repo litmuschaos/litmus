@@ -43,7 +43,6 @@ const ReceivedInvitations: React.FC = () => {
     onCompleted: () => {
       setRows(rows.filter((row) => row.user_id !== acceptDecline));
     },
-    onError: () => {},
     refetchQueries: [{ query: LIST_PROJECTS }],
   });
 
@@ -52,7 +51,6 @@ const ReceivedInvitations: React.FC = () => {
     onCompleted: () => {
       setRows(rows.filter((row) => row.user_id !== acceptDecline));
     },
-    onError: () => {},
     refetchQueries: [{ query: LIST_PROJECTS }],
   });
 
@@ -105,7 +103,7 @@ const ReceivedInvitations: React.FC = () => {
         <>
           {rows.length > 0 ? (
             rows.map((row) => (
-              <Paper className={classes.root}>
+              <Paper className={classes.root} key={`${row}`}>
                 <div className={classes.avatarDiv}>
                   <Avatar
                     data-cy="avatar"
@@ -122,9 +120,9 @@ const ReceivedInvitations: React.FC = () => {
                   <div>
                     <Typography className={classes.name}>
                       {
-                        allUsers.filter((data) => {
+                        allUsers?.filter((data) => {
                           return row.user_id === data.id;
-                        })[0].name
+                        })[0]?.name
                       }
                     </Typography>
                     <Typography className={classes.email}>
