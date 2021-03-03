@@ -1,11 +1,10 @@
-import StepConnector from '@material-ui/core/StepConnector';
-import { Theme, withStyles } from '@material-ui/core/styles';
+import { StepConnector, Theme, withStyles } from '@material-ui/core';
 
-const QontoConnector = withStyles((theme: Theme) => ({
+const LitmusStepConnector = withStyles((theme: Theme) => ({
   alternativeLabel: {
     top: 10,
-    marginLeft: theme.spacing(-1),
-    marginRight: theme.spacing(-1),
+    marginLeft: theme.spacing(-1.375),
+    marginRight: theme.spacing(-1.375),
   },
   active: {
     '& $line': {
@@ -19,10 +18,9 @@ const QontoConnector = withStyles((theme: Theme) => ({
     },
   },
   line: {
-    borderColor: theme.palette.disabledBackground,
+    borderColor: theme.palette.horizontalStepper.pending,
     borderTopWidth: 3,
-    borderRadius: 1,
   },
 }))(StepConnector);
 
-export default QontoConnector;
+export { LitmusStepConnector };

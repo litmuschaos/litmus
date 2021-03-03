@@ -1,11 +1,17 @@
 import { useLazyQuery } from '@apollo/client';
 import { Typography, useTheme } from '@material-ui/core';
 import { LitmusCard, RadioButton, Search } from 'litmus-ui';
-import React, { useEffect, useState } from 'react';
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { GET_CLUSTER } from '../../../graphql';
 import useActions from '../../../redux/actions';
+import * as AlertActions from '../../../redux/actions/alert';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import useStyles from './styles';
@@ -16,15 +22,20 @@ interface Cluster {
   cluster_id: string;
 }
 
-const ChooseWorkflowAgent: React.FC = () => {
+const ChooseWorkflowAgent = forwardRef((_, ref) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const { palette } = useTheme();
 
   const workflow = useActions(WorkflowActions);
+  const alert = useActions(AlertActions);
   const selectedProjectID = useSelector(
     (state: RootState) => state.userData.selectedProjectID
   );
+  const clusterid: string = useSelector(
+    (state: RootState) => state.workflowData.clusterid
+  );
+
   const [clusterData, setClusterData] = useState<Cluster[]>([]);
   const [search, setSearch] = useState<string | null>(null);
   const [currentlySelectedAgent, setCurrentlySelectedAgent] = useState<string>(
@@ -68,6 +79,14 @@ const ChooseWorkflowAgent: React.FC = () => {
     fetchPolicy: 'cache-and-network',
   });
 
+  function onNext() {
+    if (clusterid === '') {
+      alert.changeAlertState(true); // No Cluster has been selected and user clicked on Next
+      return false;
+    }
+    return true;
+  }
+
   // Rendering once to get the cluster data
   useEffect(() => {
     getCluster({ variables: { project_id: selectedProjectID } });
@@ -99,6 +118,10 @@ const ChooseWorkflowAgent: React.FC = () => {
       });
     }
   }, [currentlySelectedAgent]);
+
+  useImperativeHandle(ref, () => ({
+    onNext,
+  }));
 
   return (
     <div className={classes.root}>
@@ -159,6 +182,6 @@ const ChooseWorkflowAgent: React.FC = () => {
       </div>
     </div>
   );
-};
+});
 
 export default ChooseWorkflowAgent;

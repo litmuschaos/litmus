@@ -1,14 +1,17 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
-  // Header
-  headWrapper: {
-    width: '88%',
-    margin: theme.spacing(0.5, 'auto'),
+  root: {
+    width: '97.5%',
+    margin: '0 auto',
     [theme.breakpoints.up('lg')]: {
-      width: '87%',
+      width: '98%',
       margin: theme.spacing(2, 'auto'),
     },
+  },
+  // Header
+  headWrapper: {
+    margin: theme.spacing(0.5, 'auto'),
   },
   header: {
     fontSize: '2rem',

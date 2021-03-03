@@ -4,14 +4,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   root: {
     background: theme.palette.background.paper,
     color: theme.palette.text.primary,
-    padding: theme.spacing(4, 2),
+    padding: theme.spacing(0, 2),
     margin: '0 auto',
-    width: '88%',
     height: '100%',
     flexDirection: 'column',
-    [theme.breakpoints.up('lg')]: {
-      width: '87%',
-    },
   },
 
   // Inner Container
