@@ -49,6 +49,8 @@ quickActionCard:
 
 customWorkflowCard:
   customWorkflow: Create your own workflow
+  infraChaos: Infra-Chaos
+  
 
 workflowStepper:
   continueError: To continue, please check the error in code.

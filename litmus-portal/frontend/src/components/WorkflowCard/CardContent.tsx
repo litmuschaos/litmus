@@ -3,6 +3,9 @@
 import { Tooltip, Zoom } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import Typography from '@material-ui/core/Typography';
+import { useTranslation } from 'react-i18next';
 import { preDefinedWorkflowData } from '../../models/predefinedWorkflow';
 import { RootState } from '../../redux/reducers';
 import trimString from '../../utils/trim';
@@ -17,10 +20,12 @@ const CardContent: React.FC<preDefinedWorkflowData> = ({
   handleClick,
   description,
   chaosWkfCRDLink,
+  chaosinfra,
 }) => {
   const selectedTemplateID = useSelector(
     (state: RootState) => state.selectTemplate.selectedTemplateID
   );
+  const { t } = useTranslation();
 
   const isSelected: boolean =
     workflowID !== undefined && workflowID === selectedTemplateID;
@@ -74,19 +79,23 @@ const CardContent: React.FC<preDefinedWorkflowData> = ({
         onClick={handleClick}
       >
         <div className={classes.cardAnalytics}>
-          {/* {totalRuns ? (
-            <span
-              className={
-                selectedID === workflowID
-                  ? classes.totalRunsSelected
-                  : classes.totalRuns
-              }
-            >
-              {formatCount(totalRuns)}+
+          {chaosinfra === true ? (
+            <span>
+              <Tooltip
+                title="Uses kube-proxy for identification of pod"
+                interactive
+              >
+                <div className={classes.infrachaos}>
+                  <InfoOutlinedIcon />
+                  <Typography className={classes.infraChaosMain}>
+                    {t('customWorkflowCard.infraChaos')}
+                  </Typography>
+                </div>
+              </Tooltip>
             </span>
           ) : (
             <span />
-          )} */}
+          )}
           <span className={classes.expCount}>
             {exptCount} {exptCount > 1 ? 'Experiments' : 'Experiment'}
           </span>

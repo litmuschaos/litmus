@@ -2,6 +2,7 @@ export default [
   {
     workflowID: 0,
     title: 'sock-shop-resiliency-check',
+    chaosinfra: false,
     urlToIcon:
       'https://hub.litmuschaos.io/api/icon/1.7.0/generic/pod-delete.png',
     chaosWkfCRDLink:
@@ -29,6 +30,7 @@ export default [
   {
     workflowID: 1,
     title: 'node-cpu-hog',
+    chaosinfra: true,
     urlToIcon:
       'https://hub.litmuschaos.io/api/icon/1.7.0/generic/node-cpu-hog.png',
     chaosWkfCRDLink:
@@ -55,6 +57,7 @@ export default [
   {
     workflowID: 2,
     title: 'node-memory-hog',
+    chaosinfra: true,
     urlToIcon:
       'https://hub.litmuschaos.io/api/icon/1.7.0/generic/node-memory-hog.png',
     chaosWkfCRDLink:
@@ -83,83 +86,8 @@ export default [
   },
   {
     workflowID: 3,
-    title: 'pod-cpu-hog',
-    urlToIcon:
-      'https://hub.litmuschaos.io/api/icon/1.7.0/generic/pod-cpu-hog.png',
-    chaosWkfCRDLink:
-      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/pod-cpu-hog/workflow.yaml',
-    chaosWkfCRDLink_Recur:
-      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/pod-cpu-hog/workflow_cron.yaml',
-    gitLink:
-      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/pod-cpu-hog',
-    provider: 'MayaData',
-    description: 'Injects a CPU spike on a pod',
-    totalRuns: 5000,
-    isCustom: false,
-    details:
-      'This experiment consumes the CPU resources on the application container (upward of 80%) ' +
-      'on specified number of cores It simulates conditions where app pods experience CPU spikes ' +
-      'either due to expected/undesired processes thereby testing how the overall application ' +
-      'stack behaves when this occurs.',
-    recommendation:
-      'Check whether the application stack is resilient to CPU spikes on the app replica, once the experiment (job) is completed.',
-    experimentinfo:
-      'Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. ' +
-      'This example consists of the minimum necessary role permissions to execute the experiment.',
-  },
-  {
-    workflowID: 4,
-    title: 'pod-memory-hog',
-    urlToIcon:
-      'https://hub.litmuschaos.io/api/icon/1.7.0/generic/pod-memory-hog.png',
-    chaosWkfCRDLink:
-      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/pod-memory-hog/workflow.yaml',
-    chaosWkfCRDLink_Recur:
-      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/pod-memory-hog/workflow_cron.yaml',
-    gitLink:
-      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/pod-memory-hog',
-    provider: 'MayaData',
-    description: 'Injects a memory spike on a pod',
-    totalRuns: 3005,
-    isCustom: false,
-    details:
-      'This experiment consumes the Memory resources on the application container on specified memory in' +
-      'megabytes. It simulates conditions where app pods experience Memory spikes either due to ' +
-      'expected/undesired processes thereby testing how the overall application stack behaves when this occurs.',
-    recommendation:
-      'Check whether the application stack is resilient to Memory spikes on the app replica, once the experiment (job) is completed.',
-    experimentinfo:
-      'Pod Memory can be effected using the chaos library: litmus',
-  },
-  {
-    workflowID: 5,
-    title: 'pod-delete',
-    urlToIcon:
-      'https://hub.litmuschaos.io/api/icon/1.7.0/generic/pod-delete.png',
-    chaosWkfCRDLink:
-      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/pod-delete/workflow.yaml',
-    chaosWkfCRDLink_Recur:
-      'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/pod-delete/workflow_cron.yaml',
-    gitLink:
-      'https://github.com/litmuschaos/chaos-charts/blob/master/workflows/pod-delete',
-    provider: 'MayaData',
-    description: 'Deletes a pod',
-    totalRuns: 6700,
-    isCustom: false,
-    details:
-      'Causes (forced/graceful) pod failure of specific/random replicas of an application resources ' +
-      'Tests deployment sanity (replica availability & uninterrupted service) and recovery workflow ' +
-      'of the application The pod delete by Powerfulseal is only supporting single pod ' +
-      'failure (kill_count = 1).',
-    recommendation:
-      'Check whether the application is resilient to the pod failure, once the experiment (job) is completed.',
-    experimentinfo:
-      'Provide the application info in spec.appinfo Override the experiment tunables if desired ' +
-      'in experiments.spec.components.env ',
-  },
-  {
-    workflowID: 6,
     title: 'kube-proxy-chaos',
+    chaosinfra: false,
     urlToIcon: 'https://hub.litmuschaos.io/api/icon/1.8.0/generic/generic.png',
     chaosWkfCRDLink:
       'https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/workflows/kube-proxy-all/workflow.yaml',
@@ -182,8 +110,9 @@ export default [
       'in experiments.spec.components.env ',
   },
   {
-    workflowID: 7,
+    workflowID: 4,
     title: 'namespaced-scope-chaos',
+    chaosinfra: false,
     urlToIcon:
       'https://hub.litmuschaos.io/api/icon/1.7.0/generic/pod-delete.png',
     chaosWkfCRDLink:
