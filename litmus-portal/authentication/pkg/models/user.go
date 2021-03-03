@@ -95,7 +95,7 @@ func (u *UserCredentials) GetUserName() string {
 	return u.UserName
 }
 
-// GetRole user username
+// GetRole role
 func (u *UserCredentials) GetRole() Role {
 	return u.Role
 }
