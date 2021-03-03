@@ -54,9 +54,10 @@ const TuneWorkflow: React.FC = () => {
 
                 // Condition to check the namespace
                 if (typeof chaosEngine.metadata.namespace === 'object') {
+                  // Removes any whitespace in '{{workflow.parameters.adminModeNamespace}}'
                   const namespace = Object.keys(
                     chaosEngine.metadata.namespace
-                  )[0];
+                  )[0].replace(/\s/g, '');
                   chaosEngine.metadata.namespace = `{${namespace}}`;
                 }
 
@@ -64,7 +65,10 @@ const TuneWorkflow: React.FC = () => {
                 // Required because while parsing the chaos engine
                 // '{{workflow.parameters.adminModeNamespace}}' changes to a JSON object
                 if (typeof chaosEngine.spec.appinfo.appns === 'object') {
-                  const appns = Object.keys(chaosEngine.spec.appinfo.appns)[0];
+                  // Removes any whitespace in '{{workflow.parameters.adminModeNamespace}}'
+                  const appns = Object.keys(
+                    chaosEngine.spec.appinfo.appns
+                  )[0].replace(/\s/g, '');
                   chaosEngine.spec.appinfo.appns = `{${appns}}`;
                 }
                 engineName += `${updatedEngineName} `;
