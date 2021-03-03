@@ -1,5 +1,6 @@
 import { Modal, ButtonOutlined, ButtonFilled, InputField } from 'litmus-ui';
 import { MenuItem, Select, InputLabel } from '@material-ui/core';
+import { useTranslation } from 'react-i18next';
 import React from 'react';
 import useStyles from './styles';
 
@@ -11,6 +12,8 @@ interface AddProbeProps {
 
 const AddProbe: React.FC<AddProbeProps> = ({ open, handleClose, addProbe }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
+
   const [probeData, setProbeData] = React.useState({
     probeName: '',
     probeType: '',
@@ -41,12 +44,16 @@ const AddProbe: React.FC<AddProbeProps> = ({ open, handleClose, addProbe }) => {
       <div className={classes.modal}>
         <form onSubmit={addProbe} className={classes.form}>
           <div className={classes.heading}>
-            Add<strong> Probe</strong>
+            {t('createWorkflow.tuneWorkflow.addProbe.heading')}
+            <strong>
+              {' '}
+              {t('createWorkflow.tuneWorkflow.addProbe.headingStrong')}
+            </strong>
           </div>
 
           <div className={classes.formField}>
             <InputLabel htmlFor="probe-name" className={classes.formLabel}>
-              Probe Name
+              {t('createWorkflow.tuneWorkflow.addProbe.labels.probeName')}
             </InputLabel>
             <InputField
               variant="primary"
@@ -62,7 +69,7 @@ const AddProbe: React.FC<AddProbeProps> = ({ open, handleClose, addProbe }) => {
 
           <div className={classes.formField}>
             <InputLabel className={classes.formLabel} htmlFor="probe-type">
-              Probe Type
+              {t('createWorkflow.tuneWorkflow.addProbe.labels.probeType')}
             </InputLabel>
             <Select
               value={probeData.probeType}
@@ -78,15 +85,23 @@ const AddProbe: React.FC<AddProbeProps> = ({ open, handleClose, addProbe }) => {
                 id: 'probe-type',
               }}
             >
-              <MenuItem value="Http">Http</MenuItem>
-              <MenuItem value="cmd">cmd</MenuItem>
-              <MenuItem value="k8s">k8s</MenuItem>
-              <MenuItem value="Prom">Prom</MenuItem>
+              <MenuItem value="Http">
+                {t('createWorkflow.tuneWorkflow.addProbe.select.http')}
+              </MenuItem>
+              <MenuItem value="cmd">
+                {t('createWorkflow.tuneWorkflow.addProbe.select.cmd')}
+              </MenuItem>
+              <MenuItem value="k8s">
+                {t('createWorkflow.tuneWorkflow.addProbe.select.k8s')}
+              </MenuItem>
+              <MenuItem value="Prom">
+                {t('createWorkflow.tuneWorkflow.addProbe.select.prom')}
+              </MenuItem>
             </Select>
           </div>
           <div className={classes.formField}>
             <InputLabel className={classes.formLabel} htmlFor="probe-prop">
-              Probe Properties
+              {t('createWorkflow.tuneWorkflow.addProbe.labels.probeProp')}
             </InputLabel>
             <Select
               value={probeData.probeProperties}
@@ -102,21 +117,33 @@ const AddProbe: React.FC<AddProbeProps> = ({ open, handleClose, addProbe }) => {
                 id: 'probe-prop',
               }}
             >
-              <MenuItem value="SoT">SoT</MenuItem>
-              <MenuItem value="EoT">EoT</MenuItem>
-              <MenuItem value="Edge">Edge</MenuItem>
-              <MenuItem value="Continous">Continuos</MenuItem>
-              <MenuItem value="onChaos">onChaos</MenuItem>
+              <MenuItem value="SoT">
+                {t('createWorkflow.tuneWorkflow.addProbe.select.sot')}
+              </MenuItem>
+              <MenuItem value="EoT">
+                {t('createWorkflow.tuneWorkflow.addProbe.select.eot')}
+              </MenuItem>
+              <MenuItem value="Edge">
+                {t('createWorkflow.tuneWorkflow.addProbe.select.edge')}
+              </MenuItem>
+              <MenuItem value="Continous">
+                {t('createWorkflow.tuneWorkflow.addProbe.select.continuos')}
+              </MenuItem>
+              <MenuItem value="onChaos">
+                {t('createWorkflow.tuneWorkflow.addProbe.select.onChaos')}
+              </MenuItem>
             </Select>
           </div>
-          <hr style={{ width: '100%' }} />
+          <hr className={classes.detailContainer} />
 
-          <div className={classes.subHeading}>Probe Properties</div>
+          <div className={classes.subHeading}>
+            {t('createWorkflow.tuneWorkflow.addProbe.labels.probeProp')}
+          </div>
 
-          <div style={{ display: 'flex', width: '100%' }}>
+          <div className={classes.detailContainer}>
             <div className={classes.formField}>
               <InputLabel className={classes.formLabel} htmlFor="timeout">
-                Timeout
+                {t('createWorkflow.tuneWorkflow.addProbe.labels.timeout')}
               </InputLabel>
               <InputField
                 variant="primary"
@@ -131,7 +158,7 @@ const AddProbe: React.FC<AddProbeProps> = ({ open, handleClose, addProbe }) => {
             </div>
             <div className={classes.formField}>
               <InputLabel className={classes.formLabel} htmlFor="retry">
-                Retry
+                {t('createWorkflow.tuneWorkflow.addProbe.labels.retry')}
               </InputLabel>
               <InputField
                 variant="primary"
@@ -145,10 +172,10 @@ const AddProbe: React.FC<AddProbeProps> = ({ open, handleClose, addProbe }) => {
               />
             </div>
           </div>
-          <div style={{ display: 'flex', width: '100%' }}>
+          <div className={classes.detailContainer}>
             <div className={classes.formField}>
               <InputLabel className={classes.formLabel} htmlFor="interval">
-                Interval
+                {t('createWorkflow.tuneWorkflow.addProbe.labels.interval')}
               </InputLabel>
               <InputField
                 variant="primary"
@@ -163,7 +190,7 @@ const AddProbe: React.FC<AddProbeProps> = ({ open, handleClose, addProbe }) => {
             </div>
             <div className={classes.formField}>
               <InputLabel className={classes.formLabel} htmlFor="polling">
-                Polling Interval
+                {t('createWorkflow.tuneWorkflow.addProbe.labels.polling')}
               </InputLabel>
               <InputField
                 variant="primary"
@@ -183,7 +210,7 @@ const AddProbe: React.FC<AddProbeProps> = ({ open, handleClose, addProbe }) => {
 
           <div className={classes.formField}>
             <InputLabel className={classes.formLabel} htmlFor="interval-delay">
-              Interval Delay seconds
+              {t('createWorkflow.tuneWorkflow.addProbe.labels.intervalDelay')}
             </InputLabel>
             <InputField
               variant="primary"
@@ -199,13 +226,15 @@ const AddProbe: React.FC<AddProbeProps> = ({ open, handleClose, addProbe }) => {
               }
             />
           </div>
-          <hr style={{ width: '100%' }} />
+          <hr className={classes.detailContainer} />
 
-          <div className={classes.subHeading}>Probe details</div>
+          <div className={classes.subHeading}>
+            {t('createWorkflow.tuneWorkflow.addProbe.labels.probeDetails')}
+          </div>
 
           <div className={classes.formField}>
             <InputLabel className={classes.formLabel} htmlFor="url">
-              URL
+              {t('createWorkflow.tuneWorkflow.addProbe.labels.url')}
             </InputLabel>
             <InputField
               variant="primary"
@@ -220,7 +249,7 @@ const AddProbe: React.FC<AddProbeProps> = ({ open, handleClose, addProbe }) => {
           </div>
           <div className={classes.formField}>
             <InputLabel className={classes.formLabel} htmlFor="response">
-              Expected response code
+              {t('createWorkflow.tuneWorkflow.addProbe.labels.expectedRes')}
             </InputLabel>
             <InputField
               variant="primary"
@@ -238,8 +267,12 @@ const AddProbe: React.FC<AddProbeProps> = ({ open, handleClose, addProbe }) => {
           </div>
 
           <div className={classes.buttonDiv}>
-            <ButtonOutlined onClick={handleClose}>Cancel</ButtonOutlined>
-            <ButtonFilled type="submit">Add Probe</ButtonFilled>
+            <ButtonOutlined onClick={handleClose}>
+              {t('createWorkflow.tuneWorkflow.addProbe.button.cancel')}
+            </ButtonOutlined>
+            <ButtonFilled type="submit">
+              {t('createWorkflow.tuneWorkflow.addProbe.button.addProbe')}
+            </ButtonFilled>
           </div>
         </form>
       </div>

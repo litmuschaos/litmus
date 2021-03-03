@@ -49,6 +49,10 @@ const useStyles = makeStyles((theme) => ({
   closeButton: {
     borderColor: theme.palette.border.main,
   },
+  detailContainer: {
+    display: 'flex',
+    width: '100%',
+  },
   buttonDiv: {
     width: '100%',
     display: 'flex',

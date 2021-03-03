@@ -466,6 +466,34 @@ createWorkflow:
     header: Tune the selected workflow
     selectedWorkflowInfo: You have selected
     description: Fine tune the application  names and other variables to suit your needs
+    addProbe:
+      heading: Add
+      headingStrong: Probe
+      labels:
+        probeName: Probe Name
+        probeType: Probe Type
+        probeProp: Probe Properties
+        probeDetails: Probe Details
+        timeout: Timeout
+        retry: Retry
+        interval: Interval
+        polling: Polling interval
+        intervalDelay: Interval Delay seconds
+        expectedRes: Expected response code
+        url: URL
+      button:
+        cancel: Cancel
+        addProbe: Add Probe
+      select:
+        http: Http
+        cmd: cmd
+        k8s: k8s
+        prom: Prom
+        sot: SoT
+        eot: EoT
+        edge: Edge
+        onChaos: onChaos
+        continuos: Continuos
   verifyCommit:
     header: Confirmation of Results
     info: Before committing the workflow changes to your, verify and if needed go back to a corresponding section of the wizard to modify.
