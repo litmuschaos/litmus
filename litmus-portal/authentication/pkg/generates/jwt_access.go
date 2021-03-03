@@ -50,7 +50,7 @@ func (a *JWTAccessGenerate) Token(data *GenerateBasic) (string, error) {
 		UserName: data.UserInfo.GetUserName(),
 		Email:    data.UserInfo.GetEmail(),
 		Name:     data.UserInfo.GetName(),
-		Role:     models.RoleAdmin,
+		Role:     data.UserInfo.GetRole(),
 		UID:      data.UserInfo.GetID(),
 		StandardClaims: jwt.StandardClaims{
 			IssuedAt:  time.Now().Unix(),
