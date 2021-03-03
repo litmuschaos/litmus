@@ -1,12 +1,13 @@
 package k8s
 
 import (
+	"os"
+
 	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
-	"os"
 )
 
 func GetKubeConfig() (*rest.Config, error) {
@@ -28,7 +29,7 @@ func GetGenericK8sClient() (*kubernetes.Clientset, error) {
 	return kubernetes.NewForConfig(config)
 }
 
-//This function returns dynamic client and discovery client
+// This function returns dynamic client and discovery client
 func GetDynamicAndDiscoveryClient() (discovery.DiscoveryInterface, dynamic.Interface, error) {
 	// returns a config object which uses the service account kubernetes gives to pods
 	config, err := GetKubeConfig()

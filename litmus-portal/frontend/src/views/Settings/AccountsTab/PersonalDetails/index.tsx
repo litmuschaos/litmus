@@ -1,20 +1,17 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
-import { ButtonFilled } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../../components/Loader';
 import config from '../../../../config';
-import Unimodal from '../../../../containers/layouts/Unimodal';
 import { GET_USER, UPDATE_DETAILS } from '../../../../graphql';
 import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
 } from '../../../../models/graphql/user';
 import { UpdateUser } from '../../../../models/redux/user';
-import { RootState } from '../../../../redux/reducers';
-import getToken from '../../../../utils/getToken';
+import { getToken, getUsername } from '../../../../utils/auth';
 import UserDetails from '../../UserManagementTab/CreateUser/UserDetails';
 import useStyles from './styles';
 
@@ -29,7 +26,7 @@ const PersonalDetails: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const username = useSelector((state: RootState) => state.userData.username);
+  const username = getUsername();
   const [loading, setLoading] = React.useState(false);
   // Query to get user details
   const { data: dataA } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
@@ -37,7 +34,7 @@ const PersonalDetails: React.FC = () => {
     { variables: { username } }
   );
   const [error, setError] = useState<string>('');
-  const name: string = dataA?.getUser.name ?? '';
+  const name: string = dataA?.getUser.name ?? ''; // Check if can be replaced with JWT based data.
   const email: string = dataA?.getUser.email ?? '';
   const [personaData, setPersonaData] = React.useState<personaData>({
     email,
@@ -153,7 +150,13 @@ const PersonalDetails: React.FC = () => {
               )}
             </ButtonFilled>
           </div>
-          <Unimodal open={open} handleClose={handleClose} hasCloseBtn>
+          <Modal
+            open={open}
+            onClose={handleClose}
+            modalActions={
+              <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
+            }
+          >
             {error.length ? (
               <div className={classes.errDiv}>
                 {/* <img src="./icons/checkmark.svg" alt="checkmark" /> */}
@@ -207,7 +210,7 @@ const PersonalDetails: React.FC = () => {
                 </div>
               </div>
             )}
-          </Unimodal>
+          </Modal>
         </div>
       </form>
     </div>

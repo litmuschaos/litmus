@@ -105,6 +105,50 @@ const useStyles = makeStyles((theme) => ({
     listStyle: 'none',
     width: '100%',
   },
+  closeButton: {
+    borderColor: theme.palette.border.main,
+  },
+  modalExpName: {
+    fontSize: '1.875rem',
+    fontStyle: 'italic',
+  },
+  checkBox: {
+    marginTop: theme.spacing(5),
+  },
+  checkBoxText: {
+    fontSize: '1.25rem',
+    fontWeight: 400,
+  },
+  checkBoxDefault: {
+    color: theme.palette.primary.main,
+  },
+  unselectText: {
+    color: theme.palette.text.primary,
+    opacity: 0.6,
+    fontSize: '1rem',
+    width: '25rem',
+    marginTop: theme.spacing(2.5),
+  },
+  modalBtnDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: 'max-content',
+    marginLeft: 'auto',
+    marginTop: theme.spacing(15),
+  },
+  constructBtn: {
+    marginLeft: theme.spacing(3.75),
+  },
+  modalDiv: {
+    display: 'flex',
+    flexDirection: 'column',
+    padding: theme.spacing(6.25),
+    marginTop: theme.spacing(3.75),
+    marginLeft: theme.spacing(3.75),
+  },
+  modalHeaderText: {
+    fontSize: '1.875rem',
+  },
 }));
 export default useStyles;
 

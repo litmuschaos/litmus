@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/reducers';
 import timeDifference from '../../../utils/datesModifier';
+import ChaosResult from '../ChaosResult';
 import NodeLogs from '../NodeLogs';
 import useStyles from './styles';
 import trimstring from '../../../utils/trim';

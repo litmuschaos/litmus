@@ -1,7 +1,7 @@
 import { Divider, IconButton, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import cronstrue from 'cronstrue';
-import { EditableText, ButtonOutlined, ButtonFilled } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, EditableText, Modal } from 'litmus-ui';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -12,7 +12,6 @@ import {
   AceValidations,
   parseYamlValidations,
 } from '../../../components/YamlEditor/Validations';
-import Unimodal from '../../../containers/layouts/Unimodal';
 import { experimentMap, WorkflowData } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
@@ -275,12 +274,13 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
         <Divider />
       </div>
 
-      <Unimodal
+      <Modal
         open={open}
-        handleClose={handleClose}
-        hasCloseBtn
-        isDark
-        textAlign="left"
+        onClose={handleClose}
+        width="60%"
+        modalActions={
+          <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
+        }
       >
         <YamlEditor
           content={yaml}
@@ -290,7 +290,7 @@ const VerifyCommit: React.FC<VerifyCommitProps> = ({
           description={description}
           readOnly
         />
-      </Unimodal>
+      </Modal>
     </div>
   );
 };

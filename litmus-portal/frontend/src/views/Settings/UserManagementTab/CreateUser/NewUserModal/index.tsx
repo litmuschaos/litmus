@@ -1,11 +1,10 @@
 import { Typography } from '@material-ui/core';
-import { ButtonFilled } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../../../components/Loader';
 import config from '../../../../../config';
-import Unimodal from '../../../../../containers/layouts/Unimodal';
-import getToken from '../../../../../utils/getToken';
+import { getToken } from '../../../../../utils/auth';
 import useStyles from './styles';
 
 // Props for NewUserModal component
@@ -28,7 +27,7 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
-
+  const role = 'user';
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const handleClose = () => {
@@ -44,7 +43,7 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
         'Content-Type': 'application/json',
         Authorization: `Bearer ${getToken()}`,
       },
-      body: JSON.stringify({ email, username, name, password }),
+      body: JSON.stringify({ email, username, name, password, role }),
     })
       .then((response) => {
         return response.json();
@@ -86,7 +85,13 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
           )}
         </ButtonFilled>
       </div>
-      <Unimodal open={open} handleClose={handleClose} hasCloseBtn>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        modalActions={
+          <ButtonOutlined onClick={handleClose}>&#x2715;</ButtonOutlined>
+        }
+      >
         {error.length ? (
           <div className={classes.errDiv}>
             {/* <img src="./icons/checkmark.svg" alt="checkmark" /> */}
@@ -147,7 +152,7 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
             </div>
           </div>
         )}
-      </Unimodal>
+      </Modal>
     </div>
   );
 };

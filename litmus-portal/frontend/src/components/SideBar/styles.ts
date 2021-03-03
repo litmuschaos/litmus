@@ -77,11 +77,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '0.75rem',
   },
   versionDiv: {
-    display: 'flex',
-    flexDirection: 'row',
     marginTop: 'auto',
     marginBottom: theme.spacing(2),
     marginLeft: theme.spacing(4),
+    fontSize: '0.75rem',
   },
 }));
 

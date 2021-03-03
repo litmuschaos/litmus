@@ -219,8 +219,14 @@ settings:
         done: Done
 
   teamingTab:
+    projects: Projects
+    project: Project
+    yourProject: Your Project
+    projectInvite: Projects by invite
+    invitations: Invitations
+    manageTeam: Manage your team, invite a member to your project or change the role of members in the team
     header: Members
-    description: Manage your team - invite a member to your project or change the role of exisiting members in the team
+    invitedProject: Projects you were invited to
     noUsers: No users available
     label:
       search: Search...
@@ -235,10 +241,17 @@ settings:
       role: Role
       email: Email
       joined: Joined to team
+      status: Status
     deleteModal:
+      header: Are you sure you want to remove the invitation to
+      text: the current user?
+      body: The user will lose access to the team’s work.
+      yesButton: Yes
+      noButton: No
+    deleteUser:
       header: Are you sure
       text: to remove the current user?
-      body: The user will lose access to the team’s work and all
+      body: The user will lose access to the team’s work
       yesButton: Yes
       noButton: No
     inviteNew:
@@ -264,9 +277,17 @@ settings:
       receivedInvitation:
         noInvites: No invitations received.
         button:
-          accept: accept
-          ignore: ignore
+          accept: Accept
+          ignore: Decline
+          leave: Leave Project
+        inviteTextFirst: has invited you as
+        inviteTextSecond: to the project
+        receivedHeading:
+          You have been invited to the following projects. Once accepted,
+          they will be available to browse on the top right section of
+          this portal.
       sentInvitation:
+        resend: Resend
         noInvites: There is no one waiting for your invitation.
         menuItem:
           editorRole:
@@ -340,6 +361,17 @@ settings:
       deleteUser:
         deleteModal:
           body: The user will lose access to the portal
+  gitopsTab:
+    choose: Choose where to store the Workflow configuration
+    locally: Locally in Litmus
+    disconnect: Are you sure you want to disconnect?
+    save: Save Locally
+    repo: Git Repository
+    desc: '* Any existing or active workflows saved locally will not be synced into the git repository'
+    connect: Connect
+    branch: Branch
+    URL: Git URL
+    setting: Back to settings
 
 workflowDetailsView:
   headerDesc: Workflow dashboard of
@@ -385,6 +417,10 @@ workflowDetailsView:
       applicationDetails: Application Details 
     showProperties: Show properties
     viewLogs: View Logs
+    nodeName: Step Name
+    button:
+      logs: Logs
+      result: Chaos Result
 
 homeView:
   averageResilienceScore:
@@ -515,10 +551,10 @@ targets:
     copying: Command copied to clickboard
   newTarget:
     head: Connect a new target on your devices
-    head1: 1.Open the cluster console
-    head2: 2.Copy the command
-    head3: 3.Paste it into the cluster console
-    head4: 4.Click on the button
+    head1: 1. Open the cluster console
+    head2: 2. Copy the command
+    head3: 3. Paste it into the cluster console
+    head4: 4. Click on the button
     head5: Connect the target
     conformation: Kuberenetes Agent is confirming, Please wait...
     clusterDetails: Cluster Details
@@ -559,13 +595,13 @@ workflowCluster:
       menu6: Pending
       # For Table
       tableStatus: Status
-      tableCluster: Target agent
+      tableCluster: Target Agent
       name: Name
       time: Time
-      run: Last workflow run
+      run: Last Workflow run
       connectionDate: Connection Date
-      noWorkflows: No. of workflows
-      noSchedules: No. of schedules
+      noWorkflows: No. of Workflows
+      noSchedules: No. of Schedules
       fetchingError: Unable to fetch data
       recordAvailable: No records available
       delete: Delete
@@ -701,7 +737,7 @@ customWorkflow:
     selectAnExp: Select an experiment
     noExp: No experiments found
     nextBtn: Next
-
+    uploadFailMessage: Failed to upload YAML, please check the syntax
   scheduleWorkflow:
     scheduleHeader: Schedule a new chaos workflow
     addedExp: Your added experiments to the workflow
@@ -712,6 +748,12 @@ customWorkflow:
     deleteBtn: Delete
     addExp: Add a new experiment
     finish: Finish adding experiments
+    proceed: Proceed to construct the
+    selection: YAML based on the experiment selection.
+    revert: Revert Chaos
+    unselect: Unselect the check box if you don't want to have revert chaos stage at the end of workflow.
+    cancel: Cancel
+    construct: Construct Workflow
   tuneExperiment:
     headerText: Tune the chaos engine
     addKey: Add keys for add experiments

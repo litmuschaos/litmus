@@ -19,6 +19,10 @@ interface NodeTableProps {
   handleClose: () => void;
 }
 
+interface SelectedNodeType extends Node {
+  id: string;
+}
+
 interface PaginationData {
   pageNo: number;
   rowsPerPage: number;
@@ -33,13 +37,13 @@ const NodeTable: React.FC<NodeTableProps> = ({ data, handleClose }) => {
     rowsPerPage: 5,
   });
 
-  const [nodesArray, setNodesArray] = useState<Node[]>([]);
+  const [nodesArray, setNodesArray] = useState<SelectedNodeType[]>([]);
 
   useEffect(() => {
-    const filteredNodes: Node[] = [];
+    const filteredNodes: SelectedNodeType[] = [];
     Object.keys(data.nodes).forEach((key) => {
       if (data.nodes[key].type !== 'StepGroup') {
-        filteredNodes.push(data.nodes[key]);
+        filteredNodes.push({ ...data.nodes[key], id: key });
       }
     });
     setNodesArray([...filteredNodes]);
@@ -101,15 +105,19 @@ const NodeTable: React.FC<NodeTableProps> = ({ data, handleClose }) => {
 
             {/* Table Body Section */}
             <TableBody>
-              {(nodesArray as Node[])
+              {(nodesArray as SelectedNodeType[])
                 .slice(
                   paginationData.pageNo * paginationData.rowsPerPage,
                   paginationData.pageNo * paginationData.rowsPerPage +
                     paginationData.rowsPerPage
                 )
-                .map((node: Node) => (
+                .map((node: SelectedNodeType) => (
                   <TableRow data-cy="browseScheduleData">
-                    <TableData data={node} handleClose={() => handleClose()} />
+                    <TableData
+                      data={node}
+                      key={node.id}
+                      handleClose={() => handleClose()}
+                    />
                   </TableRow>
                 ))}
             </TableBody>

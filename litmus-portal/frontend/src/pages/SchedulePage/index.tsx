@@ -1,21 +1,15 @@
 import { useMutation, useQuery } from '@apollo/client';
-import Step from '@material-ui/core/Step';
-import { StepIconProps } from '@material-ui/core/StepIcon';
-import StepLabel from '@material-ui/core/StepLabel';
-import Stepper from '@material-ui/core/Stepper';
 import Typography from '@material-ui/core/Typography';
-import { ButtonOutlined, ButtonFilled } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import YAML from 'yaml';
+import { LitmusStepper } from '../../components/LitmusStepper';
 import Loader from '../../components/Loader';
-import QontoConnector from '../../components/WorkflowStepper/quontoConnector';
 import useStyles from '../../components/WorkflowStepper/styles';
-import useQontoStepIconStyles from '../../components/WorkflowStepper/useQontoStepIconStyles';
 import Scaffold from '../../containers/layouts/Scaffold';
-import Unimodal from '../../containers/layouts/Unimodal';
 import { UPDATE_SCHEDULE } from '../../graphql/mutations';
 import { SCHEDULE_DETAILS } from '../../graphql/queries';
 import {
@@ -26,7 +20,6 @@ import {
 import { ScheduleDataVars, Schedules } from '../../models/graphql/scheduleData';
 import { experimentMap, WorkflowData } from '../../models/redux/workflow';
 import useActions from '../../redux/actions';
-import * as TabActions from '../../redux/actions/tabs';
 import * as TemplateSelectionActions from '../../redux/actions/template';
 import * as WorkflowActions from '../../redux/actions/workflow';
 import { history } from '../../redux/configureStore';
@@ -60,47 +53,6 @@ function getSteps(): string[] {
     'Schedule',
     'Verify and Commit',
   ];
-}
-
-function QontoStepIcon(props: StepIconProps) {
-  const classes = useQontoStepIconStyles();
-  const { active, completed } = props;
-
-  if (completed) {
-    return (
-      <div
-        className={`${classes.root} ${
-          active ? classes.active : classes.completed
-        }`}
-      >
-        <img src="/icons/NotPass.png" alt="Not Completed Icon" />
-      </div>
-    );
-  }
-  if (active) {
-    return (
-      <div
-        className={`${classes.root} ${
-          active ? classes.active : classes.completed
-        }`}
-      >
-        <div className={classes.circle} />
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className={`${classes.root} ${
-        active ? classes.active : classes.completed
-      }`}
-    >
-      {/* <img src="./icons/workflowNotActive.svg" /> */}
-      <div className={classes.outerCircle}>
-        <div className={classes.innerCircle} />
-      </div>
-    </div>
-  );
 }
 
 function getStepContent(
@@ -214,7 +166,6 @@ const EditScheduledWorkflow = () => {
     (state: RootState) => state.selectTemplate.isDisable
   );
   const userRole = useSelector((state: RootState) => state.userData.userRole);
-  const tabs = useActions(TabActions);
   const scheduleOnce = workflowOnce;
   const scheduleMore = cronWorkflow;
   const [invalidYaml, setinValidYaml] = React.useState(false);
@@ -341,8 +292,6 @@ const EditScheduledWorkflow = () => {
     }
   };
 
-  const [open, setOpen] = React.useState(false);
-
   const handleBack = () => {
     if (activeStep === 2) {
       setinValidYaml(false);
@@ -355,11 +304,7 @@ const EditScheduledWorkflow = () => {
   const [createChaosWorkFlow] = useMutation<
     UpdateWorkflowResponse,
     CreateWorkFlowInput
-  >(UPDATE_SCHEDULE, {
-    onCompleted: () => {
-      setOpen(true);
-    },
-  });
+  >(UPDATE_SCHEDULE);
 
   const handleMutation = () => {
     if (name.length !== 0 && description.length !== 0 && weights.length !== 0) {
@@ -397,12 +342,6 @@ const EditScheduledWorkflow = () => {
 
   const handleOpen = () => {
     handleMutation();
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    history.push('/workflows');
-    setOpen(false);
   };
 
   function gotoStep({ page }: { page: number }) {
@@ -449,111 +388,52 @@ const EditScheduledWorkflow = () => {
         <Loader />
       ) : (
         <div>
-          <Stepper
+          <LitmusStepper
+            steps={getSteps()}
             activeStep={activeStep}
-            connector={<QontoConnector />}
-            className={classes.stepper}
-            alternativeLabel
+            handleBack={handleBack}
+            handleNext={handleNext}
+            finishAction={() => {}}
           >
-            {steps.map((label, i) => (
-              <Step key={label}>
-                {activeStep === i ? (
-                  <StepLabel StepIconComponent={QontoStepIcon}>
-                    <div className={classes.activeLabel} data-cy="labelText">
-                      {label}
-                    </div>
-                  </StepLabel>
-                ) : (
-                  <StepLabel StepIconComponent={QontoStepIcon}>
-                    <div className={classes.normalLabel} data-cy="labelText">
-                      {label}
-                    </div>
-                  </StepLabel>
-                )}
-              </Step>
-            ))}
-          </Stepper>
-          <div>
-            <div>
-              <div>
-                <Unimodal
-                  open={open}
-                  handleClose={handleClose}
-                  aria-labelledby="simple-modal-title"
-                  aria-describedby="simple-modal-description"
-                  hasCloseBtn
-                >
-                  <div>
-                    <img src="/icons/finish.svg" alt="mark" />
-                    <div className={classes.heading}>
-                      {t('schedule.chaosWorkflow')}
-                      <br />
-                      <strong>{t('schedule.successful')}</strong>
-                    </div>
-                    <div className={classes.headWorkflow}>
-                      {t('schedule.congratulationsSub1')}
-                      <br />
-                      {t('schedule.congratulationsSub2')}
-                    </div>
-                    <div className={classes.button}>
-                      <ButtonFilled
-                        data-cy="selectFinish"
-                        onClick={() => {
-                          setOpen(false);
-                          tabs.changeWorkflowsTabs(0);
-                          history.push('/workflows');
-                        }}
-                      >
-                        <div>{t('workflowStepper.workflowBtn')}</div>
-                      </ButtonFilled>
-                    </div>
-                  </div>
-                </Unimodal>
-                {getStepContent(activeStep, (page: number) =>
-                  gotoStep({ page })
-                )}
-              </div>
-              {/* Control Buttons */}
+            {getStepContent(activeStep, (page: number) => gotoStep({ page }))}
+          </LitmusStepper>
 
-              <div className={classes.buttonGroup}>
-                {activeStep === steps.length - 2 ? (
-                  <ButtonOutlined disabled onClick={handleBack}>
-                    <Typography>Back</Typography>
-                  </ButtonOutlined>
-                ) : activeStep !== 1 ? (
-                  <ButtonOutlined onClick={handleBack}>
-                    <Typography>Back</Typography>
-                  </ButtonOutlined>
-                ) : null}
-                {activeStep === steps.length - 1 ? (
-                  <ButtonFilled
-                    disabled={validateWorkflowName(name)}
-                    onClick={handleOpen}
-                  >
-                    <div>{t('workflowStepper.finish')}</div>
-                  </ButtonFilled>
-                ) : (
-                  <ButtonFilled
-                    onClick={() => handleNext()}
-                    disabled={isDisable}
-                  >
-                    <div>
-                      {t('workflowStepper.next')}
-                      <img
-                        alt="next"
-                        src="/icons/nextArrow.svg"
-                        className={classes.nextArrow}
-                      />
-                    </div>
-                  </ButtonFilled>
-                )}
-                {invalidYaml ? (
-                  <Typography className={classes.yamlError}>
-                    <strong>{t('workflowStepper.continueError')}</strong>
-                  </Typography>
-                ) : null}
-              </div>
-            </div>
+          {/* Control Buttons */}
+
+          <div className={classes.buttonGroup}>
+            {activeStep === steps.length - 2 ? (
+              <ButtonOutlined disabled onClick={handleBack}>
+                <Typography>Back</Typography>
+              </ButtonOutlined>
+            ) : activeStep !== 1 ? (
+              <ButtonOutlined onClick={handleBack}>
+                <Typography>Back</Typography>
+              </ButtonOutlined>
+            ) : null}
+            {activeStep === steps.length - 1 ? (
+              <ButtonFilled
+                disabled={validateWorkflowName(name)}
+                onClick={handleOpen}
+              >
+                <div>{t('workflowStepper.finish')}</div>
+              </ButtonFilled>
+            ) : (
+              <ButtonFilled onClick={() => handleNext()} disabled={isDisable}>
+                <div>
+                  {t('workflowStepper.next')}
+                  <img
+                    alt="next"
+                    src="/icons/nextArrow.svg"
+                    className={classes.nextArrow}
+                  />
+                </div>
+              </ButtonFilled>
+            )}
+            {invalidYaml ? (
+              <Typography className={classes.yamlError}>
+                <strong>{t('workflowStepper.continueError')}</strong>
+              </Typography>
+            ) : null}
           </div>
         </div>
       )}

@@ -11,7 +11,7 @@ import (
 
 var secret = os.Getenv("JWT_SECRET")
 
-//UserValidateJWT validates the cluster jwt
+// UserValidateJWT validates the cluster jwt
 func UserValidateJWT(token string) (jwt.MapClaims, error) {
 	tkn, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if ok := token.Method.Alg() == jwt.SigningMethodHS512.Alg(); !ok {

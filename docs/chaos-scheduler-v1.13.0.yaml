@@ -226,7 +226,6 @@ spec:
                                     method:
                                       type: object
                                       minProperties: 1
-                                      maxProperties: 1
                                       properties:
                                         get:
                                           type: object

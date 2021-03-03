@@ -3,13 +3,14 @@ package cluster
 import (
 	"errors"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
 	"os"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 var secret = os.Getenv("JWT_SECRET")
 
-//ClusterCreateJWT generates jwt used in cluster registration
+// ClusterCreateJWT generates jwt used in cluster registration
 func ClusterCreateJWT(id string) (string, error) {
 	claims := jwt.MapClaims{}
 	claims["cluster_id"] = id
@@ -23,7 +24,7 @@ func ClusterCreateJWT(id string) (string, error) {
 	return tokenString, nil
 }
 
-//ClusterValidateJWT validates the cluster jwt
+// ClusterValidateJWT validates the cluster jwt
 func ClusterValidateJWT(token string) (string, error) {
 	tkn, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {

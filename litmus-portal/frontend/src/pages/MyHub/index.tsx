@@ -5,7 +5,7 @@ import {
   CardContent,
   Typography,
 } from '@material-ui/core';
-import { ButtonOutlined, ButtonFilled } from 'litmus-ui';
+import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -14,7 +14,6 @@ import Loader from '../../components/Loader';
 import QuickActionCard from '../../components/QuickActionCard';
 import VideoCarousel from '../../components/VideoCarousel';
 import Scaffold from '../../containers/layouts/Scaffold';
-import Unimodal from '../../containers/layouts/Unimodal';
 import { DELETE_HUB, GET_HUB_STATUS, SYNC_REPO } from '../../graphql';
 import { HubDetails, HubStatus } from '../../models/redux/myhub';
 import { history } from '../../redux/configureStore';
@@ -221,10 +220,14 @@ const MyHub = () => {
                 </div>
               )}
               {deleteHub.deleteHubModal ? (
-                <Unimodal
+                <Modal
                   open={deleteHub.deleteHubModal}
-                  handleClose={handleClose}
-                  hasCloseBtn
+                  onClose={handleClose}
+                  modalActions={
+                    <ButtonOutlined onClick={handleClose}>
+                      &#x2715;
+                    </ButtonOutlined>
+                  }
                 >
                   <div className={classes.modalDiv}>
                     <img src="/icons/red-cross.svg" alt="disconnect" />
@@ -243,7 +246,7 @@ const MyHub = () => {
                       </ButtonFilled>
                     </div>
                   </div>
-                </Unimodal>
+                </Modal>
               ) : null}
             </div>
 
