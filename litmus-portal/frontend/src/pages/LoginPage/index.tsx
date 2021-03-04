@@ -5,12 +5,9 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../components/Loader';
 import config from '../../config';
-import useActions from '../../redux/actions';
-import * as UserActions from '../../redux/actions/user';
-import { history } from '../../redux/configureStore';
+import { setUserDetails } from '../../utils/auth';
 import { validateStartEmptySpacing } from '../../utils/validate';
 import useStyles from './styles';
-
 interface authData {
   username: string;
   password: string;
@@ -18,7 +15,6 @@ interface authData {
 
 const LoginPage = () => {
   const { t } = useTranslation();
-  const user = useActions(UserActions);
   const classes = useStyles();
 
   const [isError, setIsError] = useState<boolean>(false);
@@ -53,9 +49,9 @@ const LoginPage = () => {
         if ('error' in data) {
           console.error(data);
         } else {
-          user.setUserDetails(data.access_token);
+          setUserDetails(data.access_token);
           setIsLoading(false);
-          history.push('/');
+          window.location.assign("/projectID/home");
         }
       })
       .catch((err) => {

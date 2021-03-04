@@ -4,11 +4,11 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import React from 'react';
 import moment from 'moment';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { Link, useLocation } from 'react-router-dom';
+import { generatePath, Link, useLocation, useParams } from 'react-router-dom';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { history } from '../../redux/configureStore';
@@ -47,6 +47,10 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
   );
 };
 
+interface ParamType {
+  projectID: string;
+}
+
 const SideBar: React.FC = () => {
   const classes = useStyles();
   const userRole = useSelector((state: RootState) => state.userData.userRole);
@@ -57,6 +61,7 @@ const SideBar: React.FC = () => {
   const buildTime = moment
     .unix(Number(process.env.REACT_APP_BUILD_TIME))
     .format('DD MMM YYYY HH:MM:SS');
+  const { projectID } = useParams<ParamType>();
 
   return (
     <Drawer
@@ -85,7 +90,10 @@ const SideBar: React.FC = () => {
         <CustomisedListItem
           key="home"
           handleClick={() => {
-            history.push('/');
+            const path = generatePath('/:projectID/home', {
+              projectID,
+            });
+            history.replace(path);
           }}
           label="Home"
           selected={pathName === ''}
@@ -96,7 +104,10 @@ const SideBar: React.FC = () => {
           <CustomisedListItem
             key="workflow"
             handleClick={() => {
-              history.push('/workflows');
+              const path = generatePath('/:projectID/workflows', {
+                projectID,
+              });
+              history.replace(path);
               tabs.changeWorkflowsTabs(0);
             }}
             label="Workflows"
@@ -109,7 +120,10 @@ const SideBar: React.FC = () => {
           <CustomisedListItem
             key="myhub"
             handleClick={() => {
-              history.push('/myhub');
+              const path = generatePath('/:projectID/myhub', {
+                projectID,
+              });
+              history.replace(path);
             }}
             label="My Hub"
             selected={pathName === 'myhub'}
@@ -120,7 +134,10 @@ const SideBar: React.FC = () => {
         <CustomisedListItem
           key="targets"
           handleClick={() => {
-            history.push('/targets');
+            const path = generatePath('/:projectID/targets', {
+              projectID,
+            });
+            history.replace(path);
           }}
           label="Targets"
           selected={pathName === 'targets'}
@@ -130,7 +147,10 @@ const SideBar: React.FC = () => {
         <CustomisedListItem
           key="community"
           handleClick={() => {
-            history.push('/community');
+            const path = generatePath('/:projectID/community', {
+              projectID,
+            });
+            history.replace(path);
           }}
           label="Community"
           selected={pathName === 'community'}
@@ -141,7 +161,10 @@ const SideBar: React.FC = () => {
           <CustomisedListItem
             key="settings"
             handleClick={() => {
-              history.push('/settings');
+              const path = generatePath('/:projectID/settings', {
+                projectID,
+              });
+              history.replace(path);
             }}
             label="Settings"
             selected={pathName === 'settings'}

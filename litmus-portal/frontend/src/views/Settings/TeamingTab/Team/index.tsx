@@ -28,6 +28,7 @@ import { Search } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import Center from '../../../../containers/layouts/Center';
 import { ALL_USERS, GET_PROJECT, LIST_PROJECTS } from '../../../../graphql';
 import { UserInvite } from '../../../../models/graphql/invite';
@@ -60,6 +61,10 @@ const StyledTableCell = withStyles((theme: Theme) =>
     },
   })
 )(TableCell);
+
+interface ParamType {
+  projectID: string;
+}
 
 interface FilterOptions {
   search: string;
@@ -108,7 +113,9 @@ const TeamingTab: React.FC = () => {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const userData = useSelector((state: RootState) => state.userData);
+  const userData = useSelector((state: RootState) => state.userData);   //Check below for dependency
+  const { projectID } = useParams<ParamType>();
+
   const [loading, setLoading] = useState(true);
 
   const userID = getUserId();
@@ -128,7 +135,7 @@ const TeamingTab: React.FC = () => {
   const { data: dataB, refetch } = useQuery<ProjectDetail, ProjectDetailVars>(
     GET_PROJECT,
     {
-      variables: { projectID: userData.selectedProjectID },
+      variables: { projectID: projectID },
 
       fetchPolicy: 'cache-and-network',
     }
@@ -305,6 +312,7 @@ const TeamingTab: React.FC = () => {
                 <div className={classes.project}>
                   <img src="./icons/chaos-logo.svg" alt="Chaos Logo" />
                   <Typography className={classes.projectName}>
+                    {/* Check for removal of userData */}
                     {userData.selectedProjectName}
                   </Typography>
                 </div>

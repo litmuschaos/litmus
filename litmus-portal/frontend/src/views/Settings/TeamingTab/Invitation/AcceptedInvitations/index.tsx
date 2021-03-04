@@ -4,6 +4,7 @@ import { ButtonFilled } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import {
   GET_PROJECT,
   LEAVE_PROJECT,
@@ -15,8 +16,12 @@ import useActions from '../../../../../redux/actions';
 import * as UserActions from '../../../../../redux/actions/user';
 import configureStore, { history } from '../../../../../redux/configureStore';
 import { RootState } from '../../../../../redux/reducers';
-import { getUserId, getUsername } from '../../../../../utils/auth';
+import { getUserId, getUsername, getUserRole } from '../../../../../utils/auth';
 import useStyles from './styles';
+
+interface ParamType {
+  projectID: string;
+}
 
 const AcceptedInvitations: React.FC = () => {
   const classes = useStyles();
@@ -34,7 +39,8 @@ const AcceptedInvitations: React.FC = () => {
       }
     },
   });
-  const userData = useSelector((state: RootState) => state.userData);
+  // const userData = useSelector((state: RootState) => state.userData);
+  const { projectID } = useParams<ParamType>();
 
   // stores the user who has left the project
   const [exitedMember, setExitedMember] = useState<string>('');
@@ -46,7 +52,7 @@ const AcceptedInvitations: React.FC = () => {
     refetchQueries: [
       {
         query: GET_PROJECT,
-        variables: { projectID: userData.selectedProjectID },
+        variables: { projectID: projectID },
       },
       { query: LIST_PROJECTS },
     ],
@@ -68,29 +74,29 @@ const AcceptedInvitations: React.FC = () => {
     setProjectOther([...otherProject]);
   }, [projects]);
 
-  const setSelectedProjectID = (selectedProjectID: string) => {
-    return dataProject?.listProjects.forEach((project) => {
-      if (selectedProjectID === project.id) {
-        const memberList: Member[] = project.members;
+  // const setSelectedProjectID = (selectedProjectID: string) => {
+  //   return dataProject?.listProjects.forEach((project) => {
+  //     if (selectedProjectID === project.id) {
+  //       const memberList: Member[] = project.members;
 
-        memberList.forEach((member) => {
-          if (member.user_id === userID) {
-            user.updateUserDetails({
-              selectedProjectID,
-              userRole: member.role,
-              selectedProjectName: project.name,
-            });
-            // Flush data to persistor immediately
-            persistor.flush();
+  //       memberList.forEach((member) => {
+  //         if (member.user_id === userID) {
+  //           user.updateUserDetails({
+  //             selectedProjectID,
+  //             userRole: member.role,
+  //             selectedProjectName: project.name,
+  //           });
+  //           // Flush data to persistor immediately
+  //           persistor.flush();
 
-            if (member.role !== 'Owner') {
-              history.push('/');
-            }
-          }
-        });
-      }
-    });
-  };
+  //           if (member.role !== 'Owner') {
+  //             history.push('/');
+  //           }
+  //         }
+  //       });
+  //     }
+  //   });
+  // };
 
   return (
     <>
@@ -107,11 +113,12 @@ const AcceptedInvitations: React.FC = () => {
                 <Typography className={classes.projectName}>
                   {project.name}
                 </Typography>
-                <IconButton onClick={() => setSelectedProjectID(project.id)}>
+                {/* <IconButton onClick={() => setSelectedProjectID(project.id)}> */}
                   <Typography className={classes.viewProject}>
+                    {/* TODO:: Add translation */}
                     View Project
                   </Typography>
-                </IconButton>
+                {/* </IconButton> */}
               </div>
               <div className={classes.buttonDiv}>
                 <div data-cy="LeaveProject">
@@ -124,7 +131,7 @@ const AcceptedInvitations: React.FC = () => {
                           data: {
                             project_id: project.id,
                             user_name: getUsername(),
-                            role: userData.userRole,
+                            role: getUserRole(),
                           },
                         },
                       });

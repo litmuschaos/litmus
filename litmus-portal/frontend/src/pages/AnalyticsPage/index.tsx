@@ -7,7 +7,7 @@ import moment from 'moment';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
 import Scaffold from '../../containers/layouts/Scaffold';
@@ -23,6 +23,10 @@ import PopOver from '../../views/ChaosWorkflows/BrowseAnalytics/PopOver';
 import WorkflowDetailsTable from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowRunDetailsTable';
 import WorkflowRunsBarChart from '../../views/ChaosWorkflows/BrowseAnalytics/WorkflowRunsBarChart';
 import useStyles from './styles';
+
+interface ParamType {
+  projectID: string;
+}
 
 interface WorkflowRunData {
   testsPassed: number;
@@ -85,16 +89,14 @@ const AnalyticsPage: React.FC = () => {
   });
 
   // get ProjectID
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const { projectID } = useParams<ParamType>();
 
   // Apollo query to get the scheduled workflow data
   const { data, error } = useQuery<WorkflowList, WorkflowListDataVars>(
     WORKFLOW_LIST_DETAILS,
     {
       pollInterval: 50,
-      variables: { projectID: selectedProjectID, workflowIDs: [] },
+      variables: { projectID: projectID, workflowIDs: [] },
     }
   );
 

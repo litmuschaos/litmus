@@ -65,13 +65,13 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
     return (
       <div className={classes.content}>
         <Switch>
-          <Route exact path="/" component={HomePage} />
+          <Route exact path="/:projectID/home" component={HomePage} />
           <Route
             exact
             path="/api-doc"
             render={() => <Redirect to="/api-doc/index.html" />}
           />
-          <Route path="/" render={() => <Redirect to="/" />} />
+          {/* <Route path="/" render={() => <Redirect to="/:projectID/home" />} /> */}
         </Switch>
       </div>
     );
@@ -80,9 +80,13 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
   return (
     <div className={classes.content}>
       <Switch>
-        <Route exact path="/" component={HomePage} />
-        <Route exact path="/workflows" component={Workflows} />
-        <Route exact path="/create-workflow" component={CreateWorkflow} />
+        <Route exact path="/:projectID/home" component={HomePage} />
+        <Route exact path="/:projectID/workflows" component={Workflows} />
+        <Route
+          exact
+          path="/:projectID/create-workflow"
+          component={CreateWorkflow}
+        />
         <Route
           exact
           path="/api-doc"
@@ -113,14 +117,30 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
           path="/workflows/analytics/:workflowRunId"
           component={AnalyticsPage}
         />
-        <Route exact path="/community" component={Community} />
-        <Route exact path="/targets" component={TargetHome} />
-        <Route exact path="/targets/cluster" component={ClusterInfo} />
-        <Route exact path="/target-connect" component={ConnectTargets} />
-        <Route exact path="/myhub" component={MyHub} />
-        <Route exact path="/myhub/connect" component={MyHubConnect} />
-        <Route exact path="/myhub/edit/:hubname" component={MyHubEdit} />
-        <Route exact path="/myhub/:hubname" component={ChaosChart} />
+        <Route exact path="/:projectID/community" component={Community} />
+        <Route exact path="/:projectID/targets" component={TargetHome} />
+        <Route
+          exact
+          path="/:projectID/targets/cluster"
+          component={ClusterInfo}
+        />
+        <Route
+          exact
+          path="/:projectID/target-connect"
+          component={ConnectTargets}
+        />
+        <Route exact path="/:projectID/myhub" component={MyHub} />
+        <Route
+          exact
+          path="/:projectID/myhub/connect"
+          component={MyHubConnect}
+        />
+        <Route
+          exact
+          path="/:projectID/myhub/edit/:hubname"
+          component={MyHubEdit}
+        />
+        <Route exact path="/:projectID/myhub/:hubname" component={ChaosChart} />
         <Route
           exact
           path="/myhub/:hubname/:chart/:experiment"
@@ -128,16 +148,16 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
         />
         <Route
           exact
-          path="/create-workflow/custom"
+          path="/:projectID/create-workflow/custom"
           component={CreateCustomWorkflow}
         />
         {isOwner ? (
-          <Route exact path="/settings" component={Settings} />
+          <Route path="/:projectID/settings" component={Settings} />
         ) : (
           <Redirect to="/" />
         )}
         <Route exact path="/404" component={ErrorPage} />
-        <Redirect to="/404" />
+        {/* <Redirect to="/404" /> */}
       </Switch>
     </div>
   );

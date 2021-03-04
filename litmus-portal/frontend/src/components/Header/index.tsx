@@ -4,18 +4,20 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
-import { GET_USER } from '../../graphql';
+import { useLocation, useParams } from 'react-router-dom';
+import { GET_USER, LIST_PROJECTS } from '../../graphql';
 import {
   CurrentUserDedtailsVars,
   CurrentUserDetails,
   Member,
   Project,
+  Projects,
 } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
 import configureStore, { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
+import { getUserId } from '../../utils/auth';
 import CustomBreadCrumbs from '../BreadCrumbs';
 import ProfileDropdownSection from './ProfileDropdownSection';
 import useStyles from './styles';
@@ -24,6 +26,10 @@ interface SelectedProjectDetails {
   selectedProjectID: string;
   selectedProjectName: string;
   selectedUserRole: string;
+}
+
+interface ParamType {
+  projectID: string;
 }
 
 const Header: React.FC = () => {
@@ -42,57 +48,78 @@ const Header: React.FC = () => {
   const email: string = data?.getUser.email ?? '';
   const projects: Project[] = data?.getUser.projects ?? [];
 
-  const [selectedProjectDetails, setSelectedProjectDetails] = useState<
-    SelectedProjectDetails
-  >({
-    selectedProjectID: userData.selectedProjectID,
-    selectedProjectName: userData.selectedProjectName,
-    selectedUserRole: userData.userRole,
-  });
+  // const [selectedProjectDetails, setSelectedProjectDetails] = useState<
+  //   SelectedProjectDetails
+  // >({
+  //   selectedProjectID: userData.selectedProjectID,
+  //   selectedProjectName: userData.selectedProjectName,
+  //   selectedUserRole: userData.userRole,
+  // });
 
-  const setSelectedProjectID = (selectedProjectID: string) => {
-    projects.forEach((project) => {
-      if (selectedProjectID === project.id) {
-        const memberList: Member[] = project.members;
+  // const setSelectedProjectID = (selectedProjectID: string) => {
+  //   projects.forEach((project) => {
+  //     if (selectedProjectID === project.id) {
+  //       const memberList: Member[] = project.members;
 
-        memberList.forEach((member) => {
-          if (member.role === 'Owner') {
-            user.updateUserDetails({
-              selectedProjectOwner: member.user_name,
-            });
-          }
+  //       memberList.forEach((member) => {
+  //         if (member.role === 'Owner') {
+  //           user.updateUserDetails({
+  //             selectedProjectOwner: member.user_name,
+  //           });
+  //         }
 
-          if (member.user_name === data?.getUser.username) {
-            user.updateUserDetails({
-              selectedProjectID,
-              userRole: member.role,
-              selectedProjectName: project.name,
-            });
-            // Flush data to persistor immediately
-            persistor.flush();
+  //         if (member.user_name === data?.getUser.username) {
+  //           user.updateUserDetails({
+  //             selectedProjectID,
+  //             userRole: member.role,
+  //             selectedProjectName: project.name,
+  //           });
+  //           // Flush data to persistor immediately
+  //           persistor.flush();
 
-            setSelectedProjectDetails({
-              selectedProjectID,
-              selectedUserRole: member.role,
-              selectedProjectName: project.name,
-            });
+  //           setSelectedProjectDetails({
+  //             selectedProjectID,
+  //             selectedUserRole: member.role,
+  //             selectedProjectName: project.name,
+  //           });
 
-            if (member.role !== 'Owner') {
-              history.push('/');
+  //           if (member.role !== 'Owner') {
+  //             history.push('/');
+  //           }
+  //         }
+  //       });
+  //     }
+  //   });
+  // };
+
+  const userID = getUserId();
+  const { projectID } = useParams<ParamType>();
+
+  console.log('Header Mounted');
+
+  useQuery<Projects>(LIST_PROJECTS, {
+    onCompleted: (data) => {
+      if (data?.listProjects) {
+        data?.listProjects.map((project) => {
+          project.members.forEach((member: Member) => {
+            if (member.user_id === userID && member.role === 'Owner') {
+              console.log(projectID);
+              if (!projectID) history.push(`${project.id}/home`);
             }
-          }
+          });
         });
       }
-    });
-  };
+    },
+    fetchPolicy: 'no-cache',
+  });
 
-  useEffect(() => {
-    setSelectedProjectDetails({
-      selectedProjectID: userData.selectedProjectID,
-      selectedProjectName: userData.selectedProjectName,
-      selectedUserRole: userData.userRole,
-    });
-  }, [userData.selectedProjectID]);
+  // useEffect(() => {
+  //   setSelectedProjectDetails({
+  //     selectedProjectID: userData.selectedProjectID,
+  //     selectedProjectName: userData.selectedProjectName,
+  //     selectedUserRole: userData.userRole,
+  //   });
+  // }, [userData.selectedProjectID]);
 
   return (
     <div data-cy="headerComponent">
@@ -112,7 +139,7 @@ const Header: React.FC = () => {
   */}
               </Box>
               <Box p={1} flexGrow={1} className={classes.headerFlexProfile}>
-                <ProfileDropdownSection
+                {/* <ProfileDropdownSection
                   name={name}
                   email={email}
                   username={userData.username}
@@ -122,7 +149,7 @@ const Header: React.FC = () => {
                     selectedProjectDetails.selectedProjectName
                   }
                   userRole={selectedProjectDetails.selectedUserRole}
-                />
+                /> */}
               </Box>
             </Box>
           </div>

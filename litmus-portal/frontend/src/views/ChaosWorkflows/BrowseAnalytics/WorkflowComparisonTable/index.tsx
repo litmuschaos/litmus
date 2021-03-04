@@ -23,6 +23,7 @@ import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import Loader from '../../../../components/Loader';
 import { WORKFLOW_LIST_DETAILS } from '../../../../graphql/queries';
 import {
@@ -44,6 +45,10 @@ import useStyles from './styles';
 import TableData from './TableData';
 import TableHeader from './TableHeader';
 import TableToolBar from './TableToolbar';
+
+interface ParamType {
+  projectID: string;
+}
 
 interface RangeType {
   startDate: string;
@@ -128,15 +133,14 @@ const WorkflowComparisonTable = () => {
     totalValidWorkflowRunsCount,
     setTotalValidWorkflowRunsCount,
   ] = React.useState<number>(0);
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+
+  const { projectID } = useParams<ParamType>();
 
   // Apollo query to get the scheduled workflow data
   const { data, loading, error } = useQuery<WorkflowList, WorkflowListDataVars>(
     WORKFLOW_LIST_DETAILS,
     {
-      variables: { projectID: selectedProjectID, workflowIDs: [] },
+      variables: { projectID: projectID, workflowIDs: [] },
       fetchPolicy: 'cache-and-network',
     }
   );

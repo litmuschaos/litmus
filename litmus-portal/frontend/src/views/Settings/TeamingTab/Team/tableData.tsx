@@ -4,7 +4,7 @@ import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import Loader from '../../../../components/Loader';
 import { GET_PROJECT, GET_USER, REMOVE_INVITATION } from '../../../../graphql';
 import { MemberInvitation } from '../../../../models/graphql/invite';
@@ -14,9 +14,12 @@ import {
   Member,
 } from '../../../../models/graphql/user';
 import { CurrentUserData } from '../../../../models/userData';
-import { RootState } from '../../../../redux/reducers';
 import userAvatar from '../../../../utils/user';
 import useStyles from './styles';
+
+interface ParamType {
+  projectID: string;
+}
 
 interface TableDataProps {
   row: Member;
@@ -24,7 +27,8 @@ interface TableDataProps {
 }
 const TableData: React.FC<TableDataProps> = ({ row }) => {
   const classes = useStyles();
-  const userData = useSelector((state: RootState) => state.userData);
+  const { projectID } = useParams<ParamType>();
+
   const { t } = useTranslation();
 
   const [open, setOpen] = React.useState(false);
@@ -45,7 +49,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
       refetchQueries: [
         {
           query: GET_PROJECT,
-          variables: { projectID: userData.selectedProjectID },
+          variables: { projectID: projectID },
         },
       ],
     }
@@ -157,7 +161,7 @@ const TableData: React.FC<TableDataProps> = ({ row }) => {
                   removeMember({
                     variables: {
                       data: {
-                        project_id: userData.selectedProjectID,
+                        project_id: projectID,
                         user_name: row.user_name,
                         role: row.role,
                       },

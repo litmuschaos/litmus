@@ -16,6 +16,11 @@ import {
   WorkflowDataVars,
 } from '../../../models/graphql/workflowData';
 import { RootState } from '../../../redux/reducers';
+import { useParams } from 'react-router-dom';
+
+interface ParamType {
+  projectID: string;
+}
 
 interface NodeLogsProps extends PodLogRequest {
   logsOpen: boolean;
@@ -39,13 +44,11 @@ const NodeLogs: React.FC<NodeLogsProps> = ({
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const { projectID } = useParams<ParamType>();
 
   const { data: workflow_data } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS,
-    { variables: { projectID: selectedProjectID } }
+    { variables: { projectID: projectID } }
   );
 
   const workflow = workflow_data?.getWorkFlowRuns.filter(

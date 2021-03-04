@@ -14,7 +14,7 @@ import { useTheme } from '@material-ui/core/styles';
 import { ButtonFilled } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import Loader from '../../../../../components/Loader';
 import { ALL_USERS, GET_PROJECT, SEND_INVITE } from '../../../../../graphql';
 import {
@@ -25,9 +25,12 @@ import {
   ProjectDetail,
   ProjectDetailVars,
 } from '../../../../../models/graphql/user';
-import { RootState } from '../../../../../redux/reducers';
 import useStyles from './styles';
 import TableData from './TableData';
+
+interface ParamType {
+  projectID: string;
+}
 
 interface FilterOptions {
   search: string;
@@ -56,7 +59,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   // for response data
   const [rows, setRows] = useState<UserInvite[]>([]);
 
-  const userData = useSelector((state: RootState) => state.userData);
+  const { projectID } = useParams<ParamType>();
 
   // for setting the role of the user while sending invitation
   const [roles, setRoles] = useState<Role[]>([]);
@@ -81,7 +84,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   const { loading, data: dataB } = useQuery<ProjectDetail, ProjectDetailVars>(
     GET_PROJECT,
     {
-      variables: { projectID: userData.selectedProjectID },
+      variables: { projectID: projectID },
       fetchPolicy: 'cache-and-network',
     }
   );
@@ -117,7 +120,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
     refetchQueries: [
       {
         query: GET_PROJECT,
-        variables: { projectID: userData.selectedProjectID },
+        variables: { projectID: projectID },
       },
     ],
   });
@@ -281,7 +284,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                         SendInvite({
                           variables: {
                             member: {
-                              project_id: userData.selectedProjectID,
+                              project_id: projectID,
                               user_name: s.user_name,
                               role: s.role,
                             },

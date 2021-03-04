@@ -37,26 +37,6 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2.75),
   },
 
-  cardAreaBody: {
-    height: '100%',
-  },
-
-  createWorkflowHeading: {
-    fontSize: '0.9375rem',
-    position: 'absolute',
-    marginLeft: theme.spacing(3.75),
-    top: '10%',
-  },
-
-  createWorkflowTitle: {
-    fontSize: 25,
-    position: 'absolute',
-    color: theme.palette.primary.main,
-    fontWeight: 'bold',
-    marginLeft: theme.spacing(3.75),
-    top: '30%',
-  },
-
   headingDiv: {
     display: 'flex',
     flexDirection: 'row',
@@ -64,13 +44,6 @@ const useStyles = makeStyles((theme) => ({
       display: 'flex',
       flexDirection: 'column',
     },
-  },
-
-  arrowForwardIcon: {
-    color: theme.palette.primary.main,
-    marginLeft: theme.spacing(22.5),
-    position: 'absolute',
-    bottom: '10%',
   },
 
   mainHeading: {

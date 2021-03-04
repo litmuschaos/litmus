@@ -7,11 +7,11 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import config from '../../config';
 import { CREATE_USER } from '../../graphql';
-import { CreateUserData } from '../../models/graphql/user';
+import { CreateUserData, Projects } from '../../models/graphql/user';
 import useActions from '../../redux/actions';
 import * as UserActions from '../../redux/actions/user';
 import { RootState } from '../../redux/reducers';
-import { getToken } from '../../utils/auth';
+import { getToken, getUserId } from '../../utils/auth';
 import {
   validateConfirmPassword,
   validateEmail,
@@ -59,19 +59,20 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
     }
   };
   const rerender = () => {
-    window.location.reload();
+    // window.location.reload();
   };
 
   const [CreateUser] = useMutation<CreateUserData>(CREATE_USER, {
     onCompleted: () => {
-      rerender();
+      // rerender();
+      handleModal();
     },
   });
 
   // Submit entered data to /update endpoint
   const handleSubmit = () => {
     Object.assign(info, { password: values.password });
-    userLoader.updateUserDetails({ loader: true });
+    // userLoader.updateUserDetails({ loader: true });
 
     fetch(`${config.auth.url}/update/details`, {
       method: 'POST',
@@ -107,8 +108,6 @@ const CStepper: React.FC<CStepperProps> = ({ handleModal }) => {
         isError.current = true;
         console.error(err);
       });
-
-    handleModal();
   };
 
   const setData = (key: string, value: string) => {

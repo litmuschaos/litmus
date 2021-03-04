@@ -1,9 +1,9 @@
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { Typography } from '@material-ui/core';
-import { Modal, ButtonOutlined } from 'litmus-ui';
+import { ButtonOutlined, Modal } from 'litmus-ui';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import { GET_CLUSTER, USER_CLUSTER_REG } from '../../../graphql';
 import {
@@ -12,13 +12,16 @@ import {
   CreateClusterInputResponse,
 } from '../../../models/graphql/clusterData';
 import { history } from '../../../redux/configureStore';
-import { RootState } from '../../../redux/reducers';
 import BackButton from '../../Button/BackButton';
 import ButtonFilled from '../../Button/ButtonFilled';
 import ButtonOutline from '../../Button/ButtonOutline';
 import Loader from '../../Loader';
 import TargetCopy from '../TargetCopy';
 import useStyles from './styles';
+
+interface ParamType {
+  projectID: string;
+}
 
 const ConnectTarget = () => {
   const classes = useStyles();
@@ -27,9 +30,7 @@ const ConnectTarget = () => {
   const [id, setID] = React.useState('');
   const [modal, setModal] = React.useState(false);
 
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const { projectID } = useParams<ParamType>();
 
   const [createClusterReg] = useMutation<
     CreateClusterInputResponse,
@@ -65,7 +66,7 @@ const ConnectTarget = () => {
       cluster_name: Math.random().toString(36).substring(7),
       description: 'external agent',
       platform_name: '',
-      project_id: selectedProjectID,
+      project_id: projectID,
       cluster_type: 'external',
       agent_scope: 'cluster',
       agent_namespace: 'litmus',
@@ -78,7 +79,7 @@ const ConnectTarget = () => {
     });
 
     getCluster({
-      variables: { project_id: selectedProjectID },
+      variables: { project_id: projectID },
     });
   }, []);
 

@@ -25,6 +25,11 @@ import { GitOpsDetail } from '../../../models/graphql/gitOps';
 import { RootState } from '../../../redux/reducers';
 import { validateStartEmptySpacing } from '../../../utils/validate';
 import useStyles from './styles';
+import { useParams } from 'react-router-dom';
+
+interface ParamType {
+  projectID: string;
+}
 
 interface GitHub {
   GitURL: string;
@@ -39,7 +44,7 @@ interface GitOpsResult {
 const GitOpsTab = () => {
   const classes = useStyles();
   const [value, setValue] = React.useState('disabled');
-  const userData = useSelector((state: RootState) => state.userData);
+  const { projectID } = useParams<ParamType>();
   const { t } = useTranslation();
   // Local State Variables for Github Data and GitOps result data
   const [gitHub, setGitHub] = useState<GitHub>({
@@ -84,7 +89,7 @@ const GitOpsTab = () => {
 
   // Query to fetch GitOps Data
   const { data, refetch } = useQuery<GitOpsDetail>(GET_GITOPS_DATA, {
-    variables: { data: userData.selectedProjectID },
+    variables: { data: projectID },
     fetchPolicy: 'cache-and-network',
   });
 
@@ -178,7 +183,7 @@ const GitOpsTab = () => {
       enableGitOps({
         variables: {
           gitConfig: {
-            ProjectID: userData.selectedProjectID,
+            ProjectID: projectID,
             RepoURL: gitHub.GitURL,
             Branch: gitHub.GitBranch,
             AuthType:
@@ -230,7 +235,7 @@ const GitOpsTab = () => {
                     onClick={() =>
                       disableGitOps({
                         variables: {
-                          data: userData.selectedProjectID,
+                          data: projectID,
                         },
                       })
                     }

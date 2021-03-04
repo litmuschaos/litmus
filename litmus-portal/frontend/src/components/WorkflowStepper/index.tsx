@@ -8,6 +8,7 @@ import { Modal, ButtonOutlined } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import YAML from 'yaml';
 import { CREATE_WORKFLOW } from '../../graphql';
 import {
@@ -36,6 +37,10 @@ import ButtonOutline from '../Button/ButtonOutline';
 import QontoConnector from './quontoConnector';
 import useStyles from './styles';
 import useQontoStepIconStyles from './useQontoStepIconStyles';
+
+interface ParamType {
+  projectID: string;
+}
 
 function getSteps(): string[] {
   return [
@@ -139,9 +144,8 @@ const CustomStepper = () => {
 
   const [activeStep, setActiveStep] = React.useState(defaultStep);
 
-  const selectedProjectID = useSelector(
-    (state: RootState) => state.userData.selectedProjectID
-  );
+  const { projectID } = useParams<ParamType>();
+
   const isDisable = useSelector(
     (state: RootState) => state.selectTemplate.isDisable
   );
@@ -297,7 +301,7 @@ const CustomStepper = () => {
         workflow_description: description,
         isCustomWorkflow,
         weightages: weightData,
-        project_id: selectedProjectID,
+        project_id: projectID,
         cluster_id: clusterid,
       };
       createChaosWorkFlow({
