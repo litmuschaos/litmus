@@ -50,9 +50,10 @@ const PanelContent: React.FC<PanelResponse> = ({
     typeof elem === 'string' ? elem : palette.graph.dashboard.lightBlue
   );
 
-  const [prometheusQueryData, setPrometheusQueryData] = React.useState<
-    PrometheusQueryInput
-  >({
+  const [
+    prometheusQueryData,
+    setPrometheusQueryData,
+  ] = React.useState<PrometheusQueryInput>({
     url: '',
     start: '',
     end: '',

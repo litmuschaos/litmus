@@ -118,9 +118,10 @@ const WorkflowComparisonTable = () => {
   const [compare, setCompare] = React.useState<Boolean>(false);
   const [isDataAvailable, setIsDataAvailable] = React.useState<Boolean>(true);
   const [showAll, setShowAll] = React.useState<Boolean>(true);
-  const [plotDataForComparison, setPlotDataForComparison] = React.useState<
-    ResilienceScoreComparisonPlotProps
-  >();
+  const [
+    plotDataForComparison,
+    setPlotDataForComparison,
+  ] = React.useState<ResilienceScoreComparisonPlotProps>();
   const [totalValidWorkflowRuns, setTotalValidWorkflowRuns] = React.useState<
     WorkflowDataForExport[]
   >([]);
