@@ -20,7 +20,7 @@ export const validateEmail = (value: string) => {
 };
 
 export const validateUsername = (value: string) => {
-  const usernameValid = /^[a-zA-Z\d@\.]+$/;
+  const usernameValid = /^[a-zA-Z\d-_@\.]+$/;
   if (value.length > 0) {
     if (value.match(usernameValid)) return false;
     return true;
