@@ -103,7 +103,10 @@ const TuneWorkflow: React.FC = () => {
       .then((data) => {
         data.text().then((yamlText) => {
           const parsedYaml = YAML.parse(yamlText);
-          delete parsedYaml.metadata.generateName;
+          // Edge case to remove the generateName Field
+          if (parsedYaml.metadata.generateName) {
+            delete parsedYaml.metadata.generateName;
+          }
           parsedYaml.metadata.name = workflowData.name;
           const modifiedYAML = changeEngineName(parsedYaml);
           setYamlFile(modifiedYAML);
