@@ -20,7 +20,6 @@ const useStyles = makeStyles((theme) => ({
 
   quickActionDiv: {
     marginTop: theme.spacing(4),
-    borderLeft: `1px solid ${theme.palette.disabledBackground}`,
     paddingLeft: theme.spacing(3),
   },
 
@@ -54,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: theme.spacing(1.25),
     textDecoration: 'none',
     textTransform: 'none',
-    color: theme.palette.primary.main,
+    color: theme.palette.secondary.dark,
   },
 
   resilienceScoresDiv: { width: '63%' },
@@ -73,16 +72,17 @@ const useStyles = makeStyles((theme) => ({
   },
 
   extrasDiv: {
-    marginRight: theme.spacing(2.5),
+    marginRight: theme.spacing(8),
+    marginTop: theme.spacing(20),
   },
 
   fixedRecents: {
     height: '15rem',
     width: '20rem',
-    color: theme.palette.text.primary,
+    color: theme.palette.text.secondary,
     // (Uncomment when recent activities are available.)
     // backgroundColor: theme.palette.secondary.contrastText,
-    background: 'rgba(0, 0, 0, 0.4)',
+    background: theme.palette.background.paper,
   },
 
   backgroundFix: {
@@ -91,7 +91,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   comingSoon: {
-    color: theme.palette.text.secondary,
+    color: theme.palette.secondary.contrastText,
     marginLeft: theme.spacing(8.25),
     marginTop: theme.spacing(12),
   },

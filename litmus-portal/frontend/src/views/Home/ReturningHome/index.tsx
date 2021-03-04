@@ -6,7 +6,7 @@ import { useQuery } from '@apollo/client';
 import { Paper, Typography } from '@material-ui/core';
 import * as _ from 'lodash';
 import moment from 'moment';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import Loader from '../../../components/Loader';
@@ -15,14 +15,14 @@ import { WORKFLOW_LIST_DETAILS } from '../../../graphql';
 import { ExecutionData } from '../../../models/graphql/workflowData';
 import {
   WeightageMap,
+  Workflow,
   WorkflowList,
   WorkflowListDataVars,
 } from '../../../models/graphql/workflowListData';
-import { Message } from '../../../models/header';
 import { RootState } from '../../../redux/reducers';
+import { sortNumDesc } from '../../../utils/sort';
 import AverageResilienceScore from '../AverageResilienceScore';
 import PassedVsFailed from '../PassedVsFailed';
-import RecentActivity from '../RecentActivity';
 import ResilienceScoreComparisonPlot from '../ResilienceScoreComparisonPlot';
 import TotalWorkflows from '../TotalWorkflows';
 import useStyles from './style';
@@ -79,7 +79,7 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
     totalValidWorkflowRunsCount,
     setTotalValidWorkflowRunsCount,
   ] = React.useState<number>(0);
-  const [messageActive, setMessageActive] = useState<boolean>(false);
+  // const [messageActive, setMessageActive] = useState<boolean>(false);
   const [analyticsData, setAnalyticsData] = useState<Analyticsdata>({
     avgWorkflows: 0,
     maxWorkflows: 0,
@@ -93,6 +93,7 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
     WORKFLOW_LIST_DETAILS,
     {
       variables: { projectID: userData.selectedProjectID, workflowIDs: [] },
+      fetchPolicy: 'network-only',
     }
   );
 
@@ -119,110 +120,129 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
       resilience_score: 0,
     };
     const workflowRunsPerWeek: number[] = [];
-    data?.ListWorkflow.forEach((workflowData) => {
-      const runs = workflowData ? workflowData.workflow_runs : [];
-      const workflowTimeSeriesData: DatedResilienceScore[] = [];
-      let isWorkflowValid: boolean = false;
-      if (data?.ListWorkflow.length === 1 && runs === null) {
-        setWorkflowDataPresent(false);
-      }
-      try {
-        runs.forEach((data) => {
+    if (data && data.ListWorkflow && data.ListWorkflow.length) {
+      const sortedWorkflowsData = data?.ListWorkflow.slice().sort(
+        (a: Workflow, b: Workflow) => {
+          const x = parseInt(a.created_at, 10);
+          const y = parseInt(b.created_at, 10);
+          sortNumDesc(y, x);
+          return 0;
+        }
+      );
+      if (sortedWorkflowsData && sortedWorkflowsData.length) {
+        sortedWorkflowsData.forEach((workflowData: Workflow) => {
+          const runs = workflowData ? workflowData.workflow_runs : [];
+          const workflowTimeSeriesData: DatedResilienceScore[] = [];
+          let isWorkflowValid: boolean = false;
+          if (data?.ListWorkflow.length === 1 && runs === null) {
+            setWorkflowDataPresent(false);
+          }
           try {
-            const executionData: ExecutionData = JSON.parse(
-              data.execution_data
-            );
-            const { nodes } = executionData;
-            const experimentTestResultsArrayPerWorkflowRun: number[] = [];
-            let totalExperimentsPassed: number = 0;
-            let weightsSum: number = 0;
-            let isValid: boolean = false;
-            for (const key of Object.keys(nodes)) {
-              const node = nodes[key];
-              if (node.chaosData) {
-                const { chaosData } = node;
-                if (
-                  chaosData.experimentVerdict === 'Pass' ||
-                  chaosData.experimentVerdict === 'Fail'
-                ) {
-                  const weightageMap: WeightageMap[] = workflowData
-                    ? workflowData.weightages
-                    : [];
-                  weightageMap.forEach((weightage) => {
+            runs.forEach((data) => {
+              try {
+                const executionData: ExecutionData = JSON.parse(
+                  data.execution_data
+                );
+                const { nodes } = executionData;
+                const experimentTestResultsArrayPerWorkflowRun: number[] = [];
+                let totalExperimentsPassed: number = 0;
+                let weightsSum: number = 0;
+                let isValid: boolean = false;
+                for (const key of Object.keys(nodes)) {
+                  const node = nodes[key];
+                  if (node.chaosData) {
+                    const { chaosData } = node;
                     if (
-                      weightage.experiment_name === chaosData.experimentName
+                      chaosData.experimentVerdict === 'Pass' ||
+                      chaosData.experimentVerdict === 'Fail'
                     ) {
-                      if (chaosData.experimentVerdict === 'Pass') {
-                        experimentTestResultsArrayPerWorkflowRun.push(
-                          weightage.weightage
-                        );
-                        totalExperimentsPassed += 1;
-                      }
-                      if (chaosData.experimentVerdict === 'Fail') {
-                        experimentTestResultsArrayPerWorkflowRun.push(0);
-                      }
-                      if (
-                        chaosData.experimentVerdict === 'Pass' ||
-                        chaosData.experimentVerdict === 'Fail'
-                      ) {
-                        weightsSum += weightage.weightage;
-                        isValid = true;
-                        isWorkflowValid = true;
-                      }
+                      const weightageMap: WeightageMap[] = workflowData
+                        ? workflowData.weightages
+                        : [];
+                      weightageMap.forEach((weightage) => {
+                        if (
+                          weightage.experiment_name === chaosData.experimentName
+                        ) {
+                          if (chaosData.experimentVerdict === 'Pass') {
+                            experimentTestResultsArrayPerWorkflowRun.push(
+                              (weightage.weightage *
+                                parseInt(
+                                  chaosData.probeSuccessPercentage,
+                                  10
+                                )) /
+                                100
+                            );
+                            totalExperimentsPassed += 1;
+                          }
+                          if (chaosData.experimentVerdict === 'Fail') {
+                            experimentTestResultsArrayPerWorkflowRun.push(0);
+                          }
+                          if (
+                            chaosData.experimentVerdict === 'Pass' ||
+                            chaosData.experimentVerdict === 'Fail'
+                          ) {
+                            weightsSum += weightage.weightage;
+                            isValid = true;
+                            isWorkflowValid = true;
+                          }
+                        }
+                      });
                     }
+                  }
+                }
+                if (executionData.event_type === 'UPDATE' && isValid) {
+                  totalValidRuns += 1;
+                  totalValidWorkflowRuns.tests_passed += totalExperimentsPassed;
+                  totalValidWorkflowRuns.tests_failed +=
+                    experimentTestResultsArrayPerWorkflowRun.length -
+                    totalExperimentsPassed;
+                  totalValidWorkflowRuns.resilience_score += experimentTestResultsArrayPerWorkflowRun.length
+                    ? (experimentTestResultsArrayPerWorkflowRun.reduce(
+                        (a, b) => a + b,
+                        0
+                      ) /
+                        weightsSum) *
+                      100
+                    : 0;
+                  workflowTimeSeriesData.push({
+                    date: data.last_updated,
+                    value: experimentTestResultsArrayPerWorkflowRun.length
+                      ? (experimentTestResultsArrayPerWorkflowRun.reduce(
+                          (a, b) => a + b,
+                          0
+                        ) /
+                          weightsSum) *
+                        100
+                      : 0,
+                  });
+                  timeSeriesArrayForAveragePerWeek.push({
+                    date: data.last_updated,
+                    value: experimentTestResultsArrayPerWorkflowRun.length
+                      ? (experimentTestResultsArrayPerWorkflowRun.reduce(
+                          (a, b) => a + b,
+                          0
+                        ) /
+                          weightsSum) *
+                        100
+                      : 0,
                   });
                 }
+              } catch (error) {
+                console.error(error);
               }
-            }
-            if (executionData.event_type === 'UPDATE' && isValid) {
-              totalValidRuns += 1;
-              totalValidWorkflowRuns.tests_passed += totalExperimentsPassed;
-              totalValidWorkflowRuns.tests_failed +=
-                experimentTestResultsArrayPerWorkflowRun.length -
-                totalExperimentsPassed;
-              totalValidWorkflowRuns.resilience_score += experimentTestResultsArrayPerWorkflowRun.length
-                ? (experimentTestResultsArrayPerWorkflowRun.reduce(
-                    (a, b) => a + b,
-                    0
-                  ) /
-                    weightsSum) *
-                  100
-                : 0;
-              workflowTimeSeriesData.push({
-                date: data.last_updated,
-                value: experimentTestResultsArrayPerWorkflowRun.length
-                  ? (experimentTestResultsArrayPerWorkflowRun.reduce(
-                      (a, b) => a + b,
-                      0
-                    ) /
-                      weightsSum) *
-                    100
-                  : 0,
-              });
-              timeSeriesArrayForAveragePerWeek.push({
-                date: data.last_updated,
-                value: experimentTestResultsArrayPerWorkflowRun.length
-                  ? (experimentTestResultsArrayPerWorkflowRun.reduce(
-                      (a, b) => a + b,
-                      0
-                    ) /
-                      weightsSum) *
-                    100
-                  : 0,
-              });
-            }
+            });
           } catch (error) {
-            console.error(error);
+            console.log(error);
+          }
+          if (isWorkflowValid && plotData.labels.length < 4) {
+            plotData.labels.push(
+              workflowData ? workflowData.workflow_name : ''
+            );
+            timeSeriesArray.push(workflowTimeSeriesData);
           }
         });
-      } catch (error) {
-        console.log(error);
       }
-      if (isWorkflowValid) {
-        plotData.labels.push(workflowData ? workflowData.workflow_name : '');
-        timeSeriesArray.push(workflowTimeSeriesData);
-      }
-    });
+    }
 
     if (totalValidRuns === 0) {
       setWorkflowDataPresent(false);
@@ -308,7 +328,9 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
           ? 100 - testsPassedPercentage
           : 0,
       avgResilienceScore:
-        totalValidWorkflowRuns.resilience_score / totalValidRuns,
+        totalValidRuns > 0
+          ? totalValidWorkflowRuns.resilience_score / totalValidRuns
+          : 0,
     });
   };
 
@@ -327,7 +349,7 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
   useEffect(() => {
     callbackToSetDataPresent(workflowDataPresent);
   }, [workflowDataPresent]);
-
+  /*
   const [activities, setActivities] = useState<Message[]>([]);
 
   const fetchRandomActivities = useCallback(() => {
@@ -399,7 +421,7 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
   useEffect(() => {
     fetchRandomActivities();
   }, []);
-
+*/
   return (
     <div>
       {' '}
@@ -445,22 +467,20 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
                   </Paper>
                 </div>
                 <div className={classes.extrasDiv}>
-                  <div>
+                  {/* <div>
                     <div className={classes.btnHeaderDiv}>
                       <Typography className={classes.statsHeading}>
                         <strong>{t('home.recentActivity')}</strong>
                       </Typography>
-                      {/*
-                  <Button className={classes.seeAllBtn}>
-                    <div className={classes.btnSpan}>
-                      <Typography className={classes.btnText}>
-                        {t('home.analytics.moreInfo')}
-                      </Typography>
-                      <img src="icons/next.png" alt="next" />
-                    </div>
-                  </Button>
-                  */}
-                    </div>
+                      <Button className={classes.seeAllBtn}>
+                        <div className={classes.btnSpan}>
+                          <Typography className={classes.btnText}>
+                            {t('home.analytics.moreInfo')}
+                          </Typography>
+                          <img src="./icons/next.png" alt="next" />
+                        </div>
+                      </Button>
+                   </div>
                     <Paper
                       variant="outlined"
                       className={classes.fixedRecents}
@@ -479,9 +499,10 @@ const ReturningHome: React.FC<ReturningHomeProps> = ({
                         <RecentActivity activities={activities} />
                       )}
                     </Paper>
-                  </div>
+                    </div>
+                    */}
                   <div className={classes.quickActionDiv}>
-                    <QuickActionCard />
+                    <QuickActionCard analyticsHome nonAdmin={false} />
                   </div>
                 </div>
               </div>

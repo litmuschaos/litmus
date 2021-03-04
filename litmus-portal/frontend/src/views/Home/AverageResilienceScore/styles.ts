@@ -6,7 +6,7 @@ const useStyles = makeStyles((theme) => ({
     height: '14.6875rem',
     marginRight: theme.spacing(3),
     color: theme.palette.text.primary,
-    backgroundColor: theme.palette.cards.background,
+    backgroundColor: theme.palette.background.paper,
   },
   headerMain: {
     fontWeight: 'bold',
@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(-6),
   },
   progressIndicator: {
-    color: theme.palette.primary.main,
+    color: theme.palette.secondary.dark,
   },
   progressIndicatorCompleterDiv: {
     transform: 'rotate(270deg)',
@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
   },
   progressIcon: {
     borderRadius: '50%',
-    background: theme.palette.primary.main,
+    background: theme.palette.secondary.dark,
     padding: theme.spacing(1),
     height: '2.1875rem',
     width: '2.1875rem',

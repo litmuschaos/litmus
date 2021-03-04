@@ -7,19 +7,21 @@ import {
   Typography,
 } from '@material-ui/core';
 import { Done } from '@material-ui/icons';
+import { ButtonOutlined, InputField, Modal } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { InputField, Modal, ButtonOutlined } from 'litmus-ui';
 import BackButton from '../../../components/Button/BackButton';
 import ButtonFilled from '../../../components/Button/ButtonFilled';
 import ButtonOutline from '../../../components/Button/ButtonOutline';
+import GithubInputFields from '../../../components/GitHubComponents/GithubInputFields/GithubInputFields';
+import GitHubToggleButton from '../../../components/GitHubComponents/GitHubToggleButtons/GitHubToggleButton';
 import Loader from '../../../components/Loader';
 import QuickActionCard from '../../../components/QuickActionCard';
+import VideoCarousel from '../../../components/VideoCarousel';
 import Scaffold from '../../../containers/layouts/Scaffold';
 import { GENERATE_SSH, GET_HUB_STATUS, UPDATE_MY_HUB } from '../../../graphql';
-import { history } from '../../../redux/configureStore';
 import {
   CreateMyHub,
   MyHubData,
@@ -28,12 +30,10 @@ import {
   SSHKeys,
 } from '../../../models/graphql/user';
 import { HubStatus } from '../../../models/redux/myhub';
+import { history } from '../../../redux/configureStore';
 import { RootState } from '../../../redux/reducers';
 import { validateStartEmptySpacing } from '../../../utils/validate';
 import useStyles from './styles';
-import VideoCarousel from '../../../components/VideoCarousel';
-import GitHubToggleButton from '../../../components/GitHubComponents/GitHubToggleButtons/GitHubToggleButton';
-import GithubInputFields from '../../../components/GitHubComponents/GithubInputFields/GithubInputFields';
 
 interface MyHubParams {
   hubname: string;
@@ -485,7 +485,7 @@ const MyHub = () => {
             {t('myhub.connectHubPage.videoDesc')}
           </Typography>
           <div className={classes.quickActionDiv}>
-            <QuickActionCard />
+            <QuickActionCard analyticsHome={false} nonAdmin />
           </div>
         </div>
       </div>

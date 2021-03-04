@@ -9,12 +9,20 @@ import * as TabActions from '../../redux/actions/tabs';
 import { RootState } from '../../redux/reducers';
 import useStyles from './style';
 
+interface QuickActionCardProps {
+  analyticsHome: boolean;
+  nonAdmin: boolean;
+}
+
 const QuickActionItems: React.FC = ({ children }) => {
   const classes = useStyles();
   return <ListItem className={classes.listItems}>{children}</ListItem>;
 };
 
-const QuickActionCard = () => {
+const QuickActionCard: React.FC<QuickActionCardProps> = ({
+  analyticsHome,
+  nonAdmin,
+}) => {
   const classes = useStyles();
   const userRole = useSelector((state: RootState) => state.userData.userRole);
   const tabs = useActions(TabActions);
@@ -28,12 +36,22 @@ const QuickActionCard = () => {
           {t('quickActionCard.quickActions')}
         </Typography>
         <List>
-          {/* <QuickActionItems>
-            <img src="/icons/cluster.png" alt="cluster" />
-            <Link to="/" className={classes.listItem}>
-              Connect a new cluster
-            </Link>
-          </QuickActionItems> */}
+          {!nonAdmin && analyticsHome && (
+            <QuickActionItems>
+              <img src="./icons/calendarWorkflowIcon.svg" alt="Calender" />
+              <Link to="/create-workflow" className={classes.listItem}>
+                {t('quickActionCard.scheduleWorkflow')}
+              </Link>
+            </QuickActionItems>
+          )}
+          {analyticsHome && (
+            <QuickActionItems>
+              <img src="./icons/targets.svg" alt="agent" />
+              <Link to="/target-connect" className={classes.listItem}>
+                {t('quickActionCard.connectNewAgent')}
+              </Link>
+            </QuickActionItems>
+          )}
           {userRole === 'Owner' && (
             <QuickActionItems>
               <div className={classes.imgDiv}>

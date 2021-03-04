@@ -28,6 +28,22 @@ const ConnectTargets = lazy(() =>
 const SchedulePage = lazy(() => import('../../pages/SchedulePage'));
 const AnalyticsPage = lazy(() => import('../../pages/AnalyticsPage'));
 const ClusterInfo = lazy(() => import('../../components/Targets/ClusterInfo'));
+const AnalyticsDashboard = lazy(() =>
+  import('../../pages/AnalyticsDashboards')
+);
+const DataSourceSelectPage = lazy(() =>
+  import('../../pages/SelectAndConfigureDataSource/Select')
+);
+const DataSourceConfigurePage = lazy(() =>
+  import('../../pages/SelectAndConfigureDataSource/Configure')
+);
+const DashboardSelectPage = lazy(() =>
+  import('../../pages/SelectAndConfigureDashboards/Select')
+);
+const DashboardConfigurePage = lazy(() =>
+  import('../../pages/SelectAndConfigureDashboards/Configure')
+);
+const DashboardPage = lazy(() => import('../../pages/MonitoringDashboardPage'));
 const MyHub = lazy(() => import('../../pages/MyHub'));
 const MyHubConnect = lazy(() => import('../../views/MyHub/MyHubConnect'));
 const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
@@ -82,6 +98,42 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
       <Switch>
         <Route exact path="/" component={HomePage} />
         <Route exact path="/workflows" component={Workflows} />
+        <Route exact path="/analytics" component={AnalyticsDashboard} />
+        <Route
+          exact
+          path="/analytics/datasource/select"
+          component={DataSourceSelectPage}
+        />
+        <Route
+          exact
+          path="/analytics/datasource/create"
+          component={() => <DataSourceConfigurePage configure={false} />}
+        />
+        <Route
+          exact
+          path="/analytics/datasource/configure"
+          component={() => <DataSourceConfigurePage configure />}
+        />
+        <Route
+          exact
+          path="/analytics/dashboard/select"
+          component={DashboardSelectPage}
+        />
+        <Route
+          exact
+          path="/analytics/dashboard/create"
+          component={() => <DashboardConfigurePage configure={false} />}
+        />
+        <Route
+          exact
+          path="/analytics/dashboard/configure"
+          component={() => <DashboardConfigurePage configure />}
+        />
+        <Route
+          exact
+          path="/analytics/dashboard"
+          component={() => <DashboardPage />}
+        />
         <Route exact path="/create-workflow" component={CreateWorkflow} />
         <Route
           exact
@@ -93,6 +145,12 @@ const Routes: React.FC<RoutesProps> = ({ isOwner, isProjectAvailable }) => {
         <Redirect exact path="/workflows/schedule" to="/workflows" />
         <Redirect exact path="/workflows/template" to="/workflows" />
         <Redirect exact path="/workflows/analytics" to="/workflows" />
+
+        <Redirect exact path="/analytics/overview" to="/analytics" />
+        <Redirect exact path="/analytics/litmusdashboard" to="/analytics" />
+        <Redirect exact path="/analytics/kubernetesdashborad" to="/analytics" />
+        <Redirect exact path="/analytics/datasource" to="/analytics" />
+
         <Route
           exact
           path="/workflows/:workflowRunId"

@@ -1,12 +1,11 @@
-import React from 'react';
 import {
   ListItem,
   ListItemAvatar,
   ListItemText,
   Typography,
 } from '@material-ui/core';
+import React from 'react';
 import { Message } from '../../../models/header';
-
 import useStyles from './style';
 
 interface RecentActivityListItemProps {

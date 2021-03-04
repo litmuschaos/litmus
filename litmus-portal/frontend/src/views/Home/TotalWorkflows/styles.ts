@@ -5,7 +5,7 @@ const useStyles = makeStyles((theme) => ({
     width: '20.3125rem',
     height: '14.6875rem',
     color: theme.palette.text.primary,
-    backgroundColor: theme.palette.cards.background,
+    backgroundColor: theme.palette.background.paper,
   },
   heading: {
     textAlign: 'center',
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2.5),
   },
   avgCount: {
-    color: theme.palette.primary.main,
+    color: theme.palette.secondary.dark,
   },
   maxCount: {
     color: theme.palette.text.disabled,
@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
     opacity: 0.6,
   },
   avatarStyle: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.secondary.dark,
     width: '2.5rem',
     height: '2.5rem',
     marginTop: theme.spacing(0.625),

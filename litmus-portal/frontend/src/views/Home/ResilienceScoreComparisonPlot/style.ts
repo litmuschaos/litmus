@@ -12,6 +12,12 @@ const useStyles = makeStyles((theme) => ({
     width: '7rem',
   },
 
+  selectText: {
+    color: theme.palette.text.secondary,
+    backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing(0.4),
+  },
+
   flexDisplay: {
     display: 'flex',
     flexDirection: 'row',
@@ -24,11 +30,19 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: 'column',
       height: '100%',
     },
+    backgroundColor: theme.palette.background.paper,
   },
 
   root: {
-    height: '2.5rem',
+    height: '3rem',
     padding: theme.spacing(0.5),
+    backgroundColor: theme.palette.background.paper,
+  },
+
+  rootLabel: {
+    height: '2rem',
+    padding: theme.spacing(0.5),
+    backgroundColor: theme.palette.background.paper,
   },
 
   adjust: {
@@ -36,10 +50,12 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       marginLeft: 0,
     },
+    backgroundColor: theme.palette.background.paper,
   },
 
   plot: {
     marginTop: theme.spacing(2),
+    backgroundColor: theme.palette.background.paper,
   },
 
   analyticsButton: {
@@ -52,6 +68,7 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       marginLeft: theme.spacing(7.5),
     },
+    backgroundColor: theme.palette.background.paper,
   },
 
   mainDiv: {
@@ -63,12 +80,14 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       marginLeft: 0,
     },
+    backgroundColor: theme.palette.background.paper,
   },
 
   mainDivRow: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    backgroundColor: theme.palette.background.paper,
   },
 
   button: {
@@ -78,6 +97,7 @@ const useStyles = makeStyles((theme) => ({
   typographyScores: {
     fontWeight: 500,
     fontSize: '0.75rem',
+    color: theme.palette.secondary.contrastText,
   },
 
   typographyScoresResult: {
@@ -85,6 +105,23 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '0.75rem',
     marginLeft: theme.spacing(2.5),
   },
+}));
+
+export const useOutlinedInputStyles = makeStyles((theme) => ({
+  root: {
+    '& $notchedOutline': {
+      borderColor: theme.palette.border.main,
+    },
+    '&:hover $notchedOutline': {
+      borderColor: theme.palette.border.main,
+    },
+    '&$focused $notchedOutline': {
+      borderColor: theme.palette.border.main,
+    },
+    height: '2.8rem',
+  },
+  focused: {},
+  notchedOutline: {},
 }));
 
 export default useStyles;

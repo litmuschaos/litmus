@@ -1,4 +1,6 @@
 import { AnalyticsAction } from './analytics';
+import { DashboardSelectionAction } from './dashboards';
+import { DataSourceSelectionAction } from './dataSource';
 import { MyHubAction } from './myhub';
 import { NodeSelectionAction } from './nodeSelection';
 import { TabAction } from './tabs';
@@ -13,4 +15,6 @@ export type Action =
   | NodeSelectionAction
   | TabAction
   | TemplateSelectionAction
-  | MyHubAction;
+  | MyHubAction
+  | DataSourceSelectionAction
+  | DashboardSelectionAction;
