@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.cards.background,
     height: '16rem',
     width: '11.875rem',
-    borderRadius: '3rem',
+    borderRadius: 3,
     fontSize: '0.875rem',
     textAlign: 'center',
     cursor: 'pointer',

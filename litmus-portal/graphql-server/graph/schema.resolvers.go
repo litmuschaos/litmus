@@ -146,6 +146,10 @@ func (r *mutationResolver) DisableGitOps(ctx context.Context, projectID string) 
 	return gitOpsHandler.DisableGitOpsHandler(ctx, projectID)
 }
 
+func (r *mutationResolver) UpdateGitOps(ctx context.Context, config model.GitConfig) (bool, error) {
+	return gitOpsHandler.UpdateGitOpsDetailsHandler(ctx, config)
+}
+
 func (r *mutationResolver) CreateDataSource(ctx context.Context, datasource *model.DSInput) (*model.DSResponse, error) {
 	return analyticsHandler.CreateDataSource(datasource)
 }

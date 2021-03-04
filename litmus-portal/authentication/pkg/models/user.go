@@ -45,6 +45,7 @@ const (
 var DefaultUser = &UserCredentials{
 	UserName: types.DefaultUserName,
 	Password: types.DefaultUserPassword,
+	Role:     RoleAdmin,
 }
 
 //PublicUserInfo displays the information of the user that is publicly available
