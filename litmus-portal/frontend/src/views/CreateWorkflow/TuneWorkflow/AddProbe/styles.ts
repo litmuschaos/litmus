@@ -7,12 +7,16 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'flex-end',
     gap: '1.5rem',
   },
+  line: {
+    width: '100%',
+  },
   closeButton: {
     borderColor: theme.palette.border.main,
   },
   detailContainer: {
     display: 'flex',
-    width: '100%',
+    gap: '1rem',
+    width: '90%',
   },
   form: {
     alignItems: 'left',
@@ -27,9 +31,18 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     display: 'flex',
     fontSize: '1rem',
-    gap: '1rem',
-    justifyContent: 'flex-start',
+    width: '90%',
+    justifyContent: 'space-between',
   },
+  inputFormField: {
+    alignItems: 'center',
+    display: 'flex',
+    fontSize: '1rem',
+    width: '80%',
+    justifyContent: 'space-between',
+    marginLeft: theme.spacing(10),
+  },
+
   formLabel: {
     color: theme.palette.text.hint,
     fontSize: '1rem',
@@ -52,11 +65,19 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   select: {
+    width: '70%',
+  },
+  inputSelect: {
     width: '50%',
   },
   subHeading: {
     fontSize: '1.5rem',
     marginTop: theme.spacing(2),
+    textAlign: 'left',
+  },
+  inputSub: {
+    fontSize: '1.2rem',
+    marginTop: theme.spacing(1),
     textAlign: 'left',
   },
 }));

@@ -3,6 +3,7 @@ import { MenuItem, Select, InputLabel } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import React from 'react';
 import useStyles from './styles';
+import ProbeDetails from './ProbeDetails';
 
 interface AddProbeProps {
   addProbe: () => void;
@@ -15,17 +16,43 @@ const AddProbe: React.FC<AddProbeProps> = ({ addProbe, handleClose, open }) => {
   const { t } = useTranslation();
 
   const [probeData, setProbeData] = React.useState({
-    expectedResponseCode: '',
-    interval: '',
-    intervalDelaySeconds: '',
-    pollingInterval: '',
-    probeName: '',
-    probeProperties: '',
-    probeType: '',
-    retry: '',
-    timeout: '',
-    url: '',
+    name: '',
+    type: 'http',
+    mode: 'Continuous',
+    runProperties: {
+      probeTimeout: '',
+      retry: '',
+      interval: '',
+      probePollingInterval: '',
+      initialDelaySeconds: '',
+    },
+    inputs: {},
   });
+
+  const handleRunProps = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setProbeData({
+      ...probeData,
+      runProperties: {
+        ...probeData.runProperties,
+        [e.target.name]: e.target.value,
+      },
+    });
+  };
+
+  const onTypeChange = (
+    e: React.ChangeEvent<{
+      name?: string | undefined;
+      value: unknown;
+    }>
+  ) => {
+    setProbeData({
+      ...probeData,
+      type: e.target.value as string,
+      inputs: {},
+    });
+  };
 
   return (
     <Modal
@@ -51,39 +78,35 @@ const AddProbe: React.FC<AddProbeProps> = ({ addProbe, handleClose, open }) => {
             </strong>
           </div>
           <div className={classes.formField}>
-            <InputLabel htmlFor="probe-name" className={classes.formLabel}>
+            <InputLabel htmlFor="name" className={classes.formLabel}>
               {t('createWorkflow.tuneWorkflow.addProbe.labels.probeName')}
             </InputLabel>
             <InputField
               variant="primary"
-              width="50%"
-              id="probe-name"
+              id="name"
+              name="name"
               type="text"
-              value={probeData.probeName}
+              value={probeData.name}
               onChange={(e) =>
-                setProbeData({ ...probeData, probeName: e.target.value })
+                setProbeData({ ...probeData, name: e.target.value })
               }
             />
           </div>
           <div className={classes.formField}>
-            <InputLabel className={classes.formLabel} htmlFor="probe-type">
+            <InputLabel className={classes.formLabel} htmlFor="type">
               {t('createWorkflow.tuneWorkflow.addProbe.labels.probeType')}
             </InputLabel>
             <Select
-              value={probeData.probeType}
+              value={probeData.type}
               className={classes.select}
               variant="outlined"
-              onChange={(e) =>
-                setProbeData({
-                  ...probeData,
-                  probeType: e.target.value as string,
-                })
-              }
+              onChange={onTypeChange}
               inputProps={{
-                id: 'probe-type',
+                id: 'type',
+                name: 'type',
               }}
             >
-              <MenuItem value="Http">
+              <MenuItem value="http">
                 {t('createWorkflow.tuneWorkflow.addProbe.select.http')}
               </MenuItem>
               <MenuItem value="cmd">
@@ -92,50 +115,53 @@ const AddProbe: React.FC<AddProbeProps> = ({ addProbe, handleClose, open }) => {
               <MenuItem value="k8s">
                 {t('createWorkflow.tuneWorkflow.addProbe.select.k8s')}
               </MenuItem>
-              <MenuItem value="Prom">
+              <MenuItem value="prom">
                 {t('createWorkflow.tuneWorkflow.addProbe.select.prom')}
               </MenuItem>
             </Select>
           </div>
           <div className={classes.formField}>
-            <InputLabel className={classes.formLabel} htmlFor="probe-prop">
-              {t('createWorkflow.tuneWorkflow.addProbe.labels.probeProp')}
+            <InputLabel className={classes.formLabel} htmlFor="mode">
+              {t('createWorkflow.tuneWorkflow.addProbe.labels.probeMode')}
             </InputLabel>
             <Select
-              value={probeData.probeProperties}
+              value={probeData.mode}
               className={classes.select}
               variant="outlined"
               onChange={(e) =>
                 setProbeData({
                   ...probeData,
-                  probeProperties: e.target.value as string,
+                  mode: e.target.value as string,
                 })
               }
               inputProps={{
-                id: 'probe-prop',
+                id: 'mode',
+                name: 'mode',
               }}
             >
-              <MenuItem value="SoT">
+              <MenuItem value="SOT">
                 {t('createWorkflow.tuneWorkflow.addProbe.select.sot')}
               </MenuItem>
-              <MenuItem value="EoT">
+              <MenuItem value="EOT">
                 {t('createWorkflow.tuneWorkflow.addProbe.select.eot')}
               </MenuItem>
               <MenuItem value="Edge">
                 {t('createWorkflow.tuneWorkflow.addProbe.select.edge')}
               </MenuItem>
-              <MenuItem value="Continous">
-                {t('createWorkflow.tuneWorkflow.addProbe.select.continuos')}
+              <MenuItem value="Continuous">
+                {t('createWorkflow.tuneWorkflow.addProbe.select.continuous')}
               </MenuItem>
-              <MenuItem value="onChaos">
-                {t('createWorkflow.tuneWorkflow.addProbe.select.onChaos')}
+              <MenuItem value="OnChaos">
+                {t('createWorkflow.tuneWorkflow.addProbe.select.onchaos')}
               </MenuItem>
             </Select>
           </div>
-          <hr className={classes.detailContainer} />
+          <hr className={classes.line} />
+
           <div className={classes.subHeading}>
             {t('createWorkflow.tuneWorkflow.addProbe.labels.probeProp')}
           </div>
+
           <div className={classes.detailContainer}>
             <div className={classes.formField}>
               <InputLabel className={classes.formLabel} htmlFor="timeout">
@@ -145,11 +171,10 @@ const AddProbe: React.FC<AddProbeProps> = ({ addProbe, handleClose, open }) => {
                 variant="primary"
                 width="50%"
                 id="timeout"
+                name="probeTimeout"
                 type="number"
-                value={probeData.timeout}
-                onChange={(e) =>
-                  setProbeData({ ...probeData, timeout: e.target.value })
-                }
+                value={probeData.runProperties.probeTimeout}
+                onChange={handleRunProps}
               />
             </div>
             <div className={classes.formField}>
@@ -160,11 +185,10 @@ const AddProbe: React.FC<AddProbeProps> = ({ addProbe, handleClose, open }) => {
                 variant="primary"
                 width="50%"
                 id="retry"
+                name="retry"
                 type="number"
-                value={probeData.retry}
-                onChange={(e) =>
-                  setProbeData({ ...probeData, retry: e.target.value })
-                }
+                value={probeData.runProperties.retry}
+                onChange={handleRunProps}
               />
             </div>
           </div>
@@ -177,11 +201,10 @@ const AddProbe: React.FC<AddProbeProps> = ({ addProbe, handleClose, open }) => {
                 variant="primary"
                 width="50%"
                 id="interval"
+                name="interval"
                 type="number"
-                value={probeData.interval}
-                onChange={(e) =>
-                  setProbeData({ ...probeData, interval: e.target.value })
-                }
+                value={probeData.runProperties.interval}
+                onChange={handleRunProps}
               />
             </div>
             <div className={classes.formField}>
@@ -192,72 +215,33 @@ const AddProbe: React.FC<AddProbeProps> = ({ addProbe, handleClose, open }) => {
                 variant="primary"
                 width="50%"
                 id="polling"
+                name="probePollingInterval"
                 type="number"
-                value={probeData.pollingInterval}
-                onChange={(e) =>
-                  setProbeData({
-                    ...probeData,
-                    pollingInterval: e.target.value,
-                  })
-                }
+                value={probeData.runProperties.probePollingInterval}
+                onChange={handleRunProps}
               />
             </div>
           </div>
           <div className={classes.formField}>
-            <InputLabel className={classes.formLabel} htmlFor="interval-delay">
-              {t('createWorkflow.tuneWorkflow.addProbe.labels.intervalDelay')}
+            <InputLabel className={classes.formLabel} htmlFor="initial-delay">
+              {t('createWorkflow.tuneWorkflow.addProbe.labels.initialDelay')}
             </InputLabel>
             <InputField
               variant="primary"
-              width="30%"
-              id="interval-delay"
+              width="70%"
+              id="initial-delay"
+              name="initialDelaySeconds"
               type="number"
-              value={probeData.intervalDelaySeconds}
-              onChange={(e) =>
-                setProbeData({
-                  ...probeData,
-                  intervalDelaySeconds: e.target.value,
-                })
-              }
+              value={probeData.runProperties.initialDelaySeconds}
+              onChange={handleRunProps}
             />
           </div>
-          <hr className={classes.detailContainer} />
+          <hr className={classes.line} />
           <div className={classes.subHeading}>
             {t('createWorkflow.tuneWorkflow.addProbe.labels.probeDetails')}
           </div>
-          <div className={classes.formField}>
-            <InputLabel className={classes.formLabel} htmlFor="url">
-              {t('createWorkflow.tuneWorkflow.addProbe.labels.url')}
-            </InputLabel>
-            <InputField
-              variant="primary"
-              width="50%"
-              id="url"
-              type="text"
-              value={probeData.url}
-              onChange={(e) =>
-                setProbeData({ ...probeData, url: e.target.value })
-              }
-            />
-          </div>
-          <div className={classes.formField}>
-            <InputLabel className={classes.formLabel} htmlFor="response">
-              {t('createWorkflow.tuneWorkflow.addProbe.labels.expectedRes')}
-            </InputLabel>
-            <InputField
-              variant="primary"
-              width="50%"
-              id="response"
-              type="number"
-              value={probeData.expectedResponseCode}
-              onChange={(e) =>
-                setProbeData({
-                  ...probeData,
-                  expectedResponseCode: e.target.value,
-                })
-              }
-            />
-          </div>
+
+          <ProbeDetails setProbeData={setProbeData} probeData={probeData} />
 
           <div className={classes.buttonDiv}>
             <ButtonOutlined onClick={handleClose}>
